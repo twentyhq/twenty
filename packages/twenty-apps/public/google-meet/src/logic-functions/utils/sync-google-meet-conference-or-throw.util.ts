@@ -102,7 +102,6 @@ export const syncGoogleMeetConferenceOrThrow = async ({
       }),
       summaryMarkdown,
       transcriptEntries,
-      recordings,
       calendarEvent,
     }),
   });

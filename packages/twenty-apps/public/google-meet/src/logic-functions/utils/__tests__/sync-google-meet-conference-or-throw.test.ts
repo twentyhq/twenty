@@ -199,6 +199,44 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
     expect(coreApiClient.mutation).not.toHaveBeenCalled();
   });
 
+  it('should keep a conference that only has a recording processing', async () => {
+    fetchMock.mockImplementation(async (url) =>
+      url ===
+      `${MEET_API_URL}/conferenceRecords/first/recordings?pageSize=100`
+        ? new Response(
+            JSON.stringify({
+              recordings: [
+                {
+                  name: 'conferenceRecords/first/recordings/fourth',
+                  state: 'FILE_GENERATED',
+                },
+              ],
+            }),
+          )
+        : new Response('{}'),
+    );
+
+    const coreApiClient = buildCoreApiClient();
+
+    await expect(
+      syncGoogleMeetConferenceOrThrow({
+        accessToken: 'token',
+        coreApiClient,
+        conferenceRecord: {
+          name: CONFERENCE_RECORD.name,
+          startTime: CONFERENCE_RECORD.startTime,
+        },
+      }),
+    ).resolves.toEqual({ outcome: 'CREATED', shouldGenerateAiSummary: false });
+
+    const recordingData =
+      coreApiClient.mutation.mock.calls[0][0].createCallRecording.__args.data;
+
+    expect(recordingData.status).toBe('PROCESSING');
+    expect(recordingData).not.toHaveProperty('transcript');
+    expect(recordingData).not.toHaveProperty('summary');
+  });
+
   it('should name a conference without calendar event after its transcript document', async () => {
     const coreApiClient = buildCoreApiClient();
 

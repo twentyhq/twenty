@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-sdk/utils';
 import { type CalendarEventCandidate } from 'src/logic-functions/types/calendar-event-candidate.type';
 import { type CallRecordingSyncFields } from 'src/logic-functions/types/call-recording-sync-fields.type';
 import { type GoogleMeetConferenceRecord } from 'src/logic-functions/types/google-meet-conference-record.type';
-import { type GoogleMeetRecording } from 'src/logic-functions/types/google-meet-recording.type';
 import { type TranscriptEntry } from 'src/logic-functions/types/transcript-entry.type';
 
 export const buildGoogleMeetCallRecordingSyncFields = ({
@@ -12,7 +11,6 @@ export const buildGoogleMeetCallRecordingSyncFields = ({
   title,
   summaryMarkdown,
   transcriptEntries,
-  recordings,
   calendarEvent,
 }: {
   conferenceRecord: Pick<
@@ -22,15 +20,12 @@ export const buildGoogleMeetCallRecordingSyncFields = ({
   title: string | undefined;
   summaryMarkdown: string | undefined;
   transcriptEntries: TranscriptEntry[];
-  recordings: Pick<GoogleMeetRecording, 'state'>[];
   calendarEvent: Pick<CalendarEventCandidate, 'id'> | undefined;
 }): CallRecordingSyncFields => {
   return {
     ...(isNonEmptyString(title) ? { title } : {}),
     status:
-      isNonEmptyArray(transcriptEntries) ||
-      isNonEmptyString(summaryMarkdown) ||
-      recordings.some(({ state }) => state === 'FILE_GENERATED')
+      isNonEmptyArray(transcriptEntries) || isNonEmptyString(summaryMarkdown)
         ? 'COMPLETED'
         : 'PROCESSING',
     externalRecordingId: conferenceRecord.name,
