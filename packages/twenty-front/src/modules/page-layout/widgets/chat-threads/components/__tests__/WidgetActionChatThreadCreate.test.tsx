@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { getConversationTargetsFromSerializedDocument } from '@/ai-chat/utils/getConversationTargetsFromSerializedDocument';
+import { getConversationTargetsFromSerializedDocument } from '@/ai-chat/composer/utils/getConversationTargetsFromSerializedDocument';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { WidgetActionChatThreadCreate } from '@/page-layout/widgets/chat-threads/components/WidgetActionChatThreadCreate';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
