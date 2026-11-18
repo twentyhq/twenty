@@ -35,6 +35,8 @@ const LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER =
 
 const LOGIC_FUNCTION_RESPONSE = { ran: true };
 
+const BUILT_HANDLER_CODE = 'export const main = async () => ({ ran: true });\n';
+
 const logicFunctionManifest: LogicFunctionManifest = {
   universalIdentifier: LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'suspended-workspace-function',
@@ -97,9 +99,7 @@ describe('Logic function runs on a suspended workspace (integration)', () => {
       applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
       fileFolder: 'BuiltLogicFunction',
       filePath: logicFunctionManifest.builtHandlerPath,
-      fileBuffer: Buffer.from(
-        `export const main = async () => (${JSON.stringify(LOGIC_FUNCTION_RESPONSE)});\n`,
-      ),
+      fileBuffer: Buffer.from(BUILT_HANDLER_CODE),
       filename: 'suspended-workspace-function.mjs',
       contentType: 'application/javascript',
       expectToFail: false,
