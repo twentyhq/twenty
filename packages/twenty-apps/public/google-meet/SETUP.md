@@ -107,9 +107,10 @@ its owner workspace.
 
 - A member connects their Google account from the app's settings. Twenty
   subscribes to that account's Meet events.
-- When a transcript or Gemini notes are ready, Google publishes an event,
-  Pub/Sub pushes it to Twenty, and the call is imported as a Call Recording in
-  the member's workspace, with the notes as its summary.
+- When a transcript, Gemini notes or a recording is ready, Google publishes an
+  event, Pub/Sub pushes it to Twenty, and the call is imported as a Call
+  Recording in the member's workspace, with the notes as its summary and the
+  recording as its video.
 - When a call has a transcript but no Gemini notes, an AI agent writes its
   summary instead. This uses AI credits; each member can turn off AI
   summaries for their own calls in Settings, under Apps preferences.
@@ -119,7 +120,8 @@ its owner workspace.
 
 ## Limits
 
-- Only calls the member organized are imported, and only when transcription
-  or Gemini notes were on. Google keeps conference data for 30 days.
+- Only calls the member organized are imported, and only when transcription,
+  Gemini notes or recording was on. Google keeps conference data for 30 days.
+- A call keeps the video of its first recording, up to 500 MB.
 - A Google account delivers events to one workspace per Twenty server. A second
   workspace connecting the same account only gets the daily import.

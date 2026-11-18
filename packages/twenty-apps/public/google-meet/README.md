@@ -1,10 +1,10 @@
 # Meet
 
-**Your Google Meet transcripts and Gemini notes, right inside your CRM.**
+**Your Google Meet transcripts, Gemini notes and recordings, right inside your CRM.**
 
 ## ✨ What you get
 
-- **Google Meet transcripts and Gemini notes saved to Call Recordings**
+- **Google Meet transcripts, Gemini notes and recording videos saved to Call Recordings**
 - **Each call linked to its calendar event**
 - **AI summaries for calls without Gemini notes**
 
@@ -17,7 +17,8 @@ own calls in **Settings**, under **Apps preferences**.
 
 1. Install **Meet** from **Settings → Applications**.
 2. Each member connects their own Google account from the app's settings.
-3. Turn on transcription, or Gemini notes, in the calls you want imported.
+3. Turn on transcription, Gemini notes or recording in the calls you want
+   imported.
 
 **Self-hosting?** Your admin sets up a Google Cloud project, an OAuth client and
 a Pub/Sub topic once, and needs a public HTTPS server URL: see the
@@ -29,5 +30,7 @@ a Pub/Sub topic once, and needs a public HTTPS server URL: see the
   Calls from before you connect are imported only if they started in the last
   two days.
 - **Imports are shared with your workspace.**
+- **One video per call.** The first recording of a call is imported, up to
+  500 MB.
 - **Needs a paid Google plan.** The organizer needs a Google Workspace plan
-  with Meet transcripts, or a Google AI plan for Gemini notes.
+  with Meet transcripts or recording, or a Google AI plan for Gemini notes.
