@@ -24,9 +24,9 @@ const WORKFLOW_PREDICATE = `
     AND cwv."coreWorkflowId" = cw.id
     AND cwv."workspaceWorkflowVersionId" = cw."lastPublishedVersionId"`;
 
-@RegisteredWorkspaceCommand('2.60.0', 1794938107776)
+@RegisteredWorkspaceCommand('2.61.0', 1794996665547)
 @Command({
-  name: 'upgrade:2-60:backfill-legacy-workflow-version-links',
+  name: 'upgrade:2-61:backfill-legacy-workflow-version-links',
   description:
     'Backfill coreWorkflowVersionId on command menu items and lastPublishedCoreWorkflowVersionId on core workflows that only hold a legacy workspace workflow version id, through the core version alias',
 })
