@@ -44,7 +44,7 @@ export const assignManyToOneRelationRecords = ({
       continue;
     }
 
-    if (selectedColumns.deletedAt === true) {
+    if (selectedColumns.deletedAt) {
       parentRecord[sourceFieldName] = matchedRelation;
 
       continue;

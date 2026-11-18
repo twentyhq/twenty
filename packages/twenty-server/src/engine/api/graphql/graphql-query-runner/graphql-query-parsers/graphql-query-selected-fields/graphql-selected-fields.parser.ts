@@ -276,10 +276,10 @@ export class GraphqlQuerySelectedFieldsParser {
       );
     }
 
-    return Object.keys(fieldValue)
-      .filter((subFieldKey) => subFieldKey !== '__typename')
-      .reduce(
-        (acc, subFieldKey) => {
+    return Object.fromEntries(
+      Object.keys(fieldValue)
+        .filter((subFieldKey) => subFieldKey !== '__typename')
+        .map((subFieldKey): [string, true] => {
           const subFieldMetadata = compositeType.properties.find(
             (property) => property.name === subFieldKey,
           );
@@ -290,13 +290,8 @@ export class GraphqlQuerySelectedFieldsParser {
             );
           }
 
-          const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
-
-          acc[fullFieldName] = true;
-
-          return acc;
-        },
-        {} as Record<string, true>,
-      );
+          return [`${fieldMetadata.name}${capitalize(subFieldKey)}`, true];
+        }),
+    );
   }
 }
