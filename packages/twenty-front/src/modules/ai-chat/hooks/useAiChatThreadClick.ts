@@ -1,7 +1,7 @@
 import { useSelectAiChatThread } from '@/ai-chat/hooks/useSelectAiChatThread';
 import { useNavigateToAiChatPage } from '@/ai-chat/hooks/useNavigateToAiChatPage';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
-import { type AiChatThreadRecord } from '@/ai-chat/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { isInboxPath } from '~/utils/isInboxPath';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 

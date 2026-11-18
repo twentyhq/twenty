@@ -484,6 +484,11 @@ msgstr "Dovednost s tímto názvem již existuje"
 msgid "A skill with this name already exists."
 msgstr "Dovednost s tímto názvem již existuje."
 
+#. js-lingui-id: ESdD/i
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
+msgid "A sort can only use a related record field on a many-to-one relation field"
+msgstr ""
+
 #. js-lingui-id: IAfaPi
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-create-side-effect-handler.service.ts
 msgid "A standard object required to provision default relations could not be found"
@@ -10034,6 +10039,11 @@ msgstr "Pouze sloupec odkazující na jeden záznam může zobrazit pole daného
 msgid "Only a draft or scheduled campaign can be sent."
 msgstr "Odeslat lze pouze koncept nebo naplánovanou kampaň."
 
+#. js-lingui-id: 82FEG0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
+msgid "Only a field linking to one record can be sorted by a field of that record"
+msgstr ""
+
 #. js-lingui-id: v581MX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
 msgid "Only a root row level permission predicate group can grant operations"
@@ -11485,6 +11495,16 @@ msgstr "Stav požadavku na nahrávání"
 msgctxt "fieldMetadata.description"
 msgid "Recording summary"
 msgstr "Souhrn nahrávky"
+
+#. js-lingui-id: vyBbUK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
+msgid "Records cannot be sorted by a deactivated field"
+msgstr ""
+
+#. js-lingui-id: PbYQoA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
+msgid "Records cannot be sorted by a relation of the related record"
+msgstr ""
 
 #. js-lingui-id: BlbWk5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -14062,6 +14082,7 @@ msgstr "Pole nakonfigurované pro tento widget nebylo nalezeno."
 
 #. js-lingui-id: 0J6BFZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "The field must belong to the related object"
 msgstr "Pole musí patřit souvisejícímu objektu"
 
@@ -14336,16 +14357,19 @@ msgstr "Obsah přijatého e‑mailu již není k dispozici."
 
 #. js-lingui-id: dXHirT
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "The related record field cannot be a relation"
 msgstr "Pole souvisejícího záznamu nemůže být vztahem"
 
 #. js-lingui-id: X5MbyB
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "The related record field must be active"
 msgstr "Pole souvisejícího záznamu musí být aktivní"
 
 #. js-lingui-id: pm7NPy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "The related record field must belong to the relation target object"
 msgstr "Pole souvisejícího záznamu musí patřit cílovému objektu vztahu"
 
