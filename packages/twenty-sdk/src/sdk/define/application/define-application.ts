@@ -167,7 +167,7 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
 
   if (Object.values(recurringCharges).some(isDefined)) {
     warnings.push(
-      '`billing.recurring` is deprecated. Use `billing.subscriptions` instead.',
+      '`billing.recurring` is deprecated in favor of `billing.subscriptions`. Subscription plans are not billed yet: keep your recurring charges until they are.',
     );
   }
 
