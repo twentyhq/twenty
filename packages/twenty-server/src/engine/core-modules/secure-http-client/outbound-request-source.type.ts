@@ -5,4 +5,5 @@ export type OutboundRequestSource =
   | 'ai-http-tool'
   | 'logic-function'
   | 'mcp-server'
-  | 'connection-provider';
+  | 'connection-provider'
+  | 'web-push';

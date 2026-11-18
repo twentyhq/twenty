@@ -116,6 +116,11 @@ msgstr "在網域 \"{domainName}\" 中找到 {hostnameCount} 個主機名稱。�
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{aggregateFieldLabel} 的 {operationLabel}"
 
+#. js-lingui-id: nzKj4z
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util.ts
+msgid "{senderName} in {threadLabel}"
+msgstr ""
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -6101,6 +6106,12 @@ msgstr "表單操作字段的名稱必須唯一"
 msgid "Form action must have at least one field"
 msgstr "表單操作必須至少有一個字段"
 
+#. js-lingui-id: CjVkbV
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util.ts
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util.ts
+msgid "Former member"
+msgstr ""
+
 #. js-lingui-id: JRr+QW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
 msgid "Forwarded request headers must be a list of header names"
@@ -6704,6 +6715,18 @@ msgstr "進行中"
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Inbox is not enabled for this workspace."
 msgstr "此工作區未啟用收件匣。"
+
+#. js-lingui-id: XB5CcM
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Inbox notification preview"
+msgstr ""
+
+#. js-lingui-id: t20nDR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Inbox notifications"
+msgstr ""
 
 #. js-lingui-id: iffSt5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
@@ -9383,6 +9406,11 @@ msgstr "新"
 msgid "New backup codes were generated for your account"
 msgstr "已為您的帳戶產生新的備用代碼"
 
+#. js-lingui-id: hIQkLb
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util.ts
+msgid "New chat"
+msgstr ""
+
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -9398,6 +9426,11 @@ msgstr "新聊天"
 #. js-lingui-id: TYhxR+
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "New email must be different from current email"
+msgstr ""
+
+#. js-lingui-id: mTBAsF
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util.ts
+msgid "New message"
 msgstr ""
 
 #. js-lingui-id: nXXBKB
@@ -9725,6 +9758,11 @@ msgstr "備註目標記錄位置"
 msgctxt "fieldMetadata.description"
 msgid "NoteTarget target"
 msgstr "備註目標的目標"
+
+#. js-lingui-id: OEmEnk
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "Notifications can only be turned on from a signed-in browser."
+msgstr ""
 
 #. js-lingui-id: t9QlBd
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -14735,6 +14773,16 @@ msgstr "不支援此應用程式變數範圍。"
 msgid "This billing arrangement has invalid settings."
 msgstr "此計費安排的設定無效。"
 
+#. js-lingui-id: CHSdNs
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "This browser subscribed to notifications with an outdated key. Reload the page to try again."
+msgstr ""
+
+#. js-lingui-id: 7F4yS5
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "This browser's notification service is not supported."
+msgstr ""
+
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign cannot be sent while the workspace subscription is inactive."
@@ -15795,6 +15843,11 @@ msgstr "找到過多的管理員候選人。"
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "與會者過多：{attendeeCount}。允許的最大數量為 {MAX_EMAIL_RECIPIENTS}。"
+
+#. js-lingui-id: QarV/J
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "Too many browsers receive notifications for this account."
+msgstr ""
 
 #. js-lingui-id: 4kqJG4
 #: src/engine/core-modules/file/file.exception.ts
@@ -17320,6 +17373,12 @@ msgctxt "fieldMetadata.description"
 msgid "Whether current participant rules justify this target"
 msgstr "目前參與者規則是否使此目標成立"
 
+#. js-lingui-id: qjkyvm
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Whether inbox notifications show the message text"
+msgstr ""
+
 #. js-lingui-id: rJ6Dbr
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -17349,6 +17408,12 @@ msgstr "這是否為一般聊天或標準直接訊息"
 msgctxt "fieldMetadata.description"
 msgid "Whether this message is an unsent draft synced from the provider"
 msgstr "此訊息是否為從提供者同步的未發送草稿"
+
+#. js-lingui-id: zXbRSm
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Which new inbox messages send a notification"
+msgstr ""
 
 #. js-lingui-id: 5JE8rv
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts

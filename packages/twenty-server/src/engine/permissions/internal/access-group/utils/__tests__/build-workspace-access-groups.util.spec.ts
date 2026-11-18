@@ -104,6 +104,8 @@ const workspaceMember: FlatWorkspaceMember = {
   name: { firstName: 'Jane', lastName: 'Doe' },
   colorScheme: 'System',
   uiScale: 'Default',
+  inboxNotificationLevel: 'ALL_FOLLOWED',
+  isInboxNotificationPreviewEnabled: true,
   openRecordIn: 'SIDE_PANEL',
   locale: 'en',
   avatarUrl: null,

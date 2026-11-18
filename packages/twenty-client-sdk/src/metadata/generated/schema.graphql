@@ -1505,6 +1505,7 @@ type ClientConfig {
   serverUrl: String!
   signInPrefilled: Boolean!
   support: Support!
+  webPushVapidPublicKey: String
 }
 
 type ClientConfigMaintenanceMode {
@@ -2103,6 +2104,10 @@ input DeleteOneIndexInput {
 input DeleteOneObjectInput {
   """The id of the record to delete."""
   id: UUID!
+}
+
+input DeletePushSubscriptionInput {
+  endpoint: String!
 }
 
 type DeleteSso {
@@ -3645,6 +3650,7 @@ type Mutation {
   deleteOneObject(input: DeleteOneObjectInput!): Object!
   deleteOneRole(roleId: UUID!): String!
   deletePublicDomain(domain: String!): Boolean!
+  deletePushSubscription(input: DeletePushSubscriptionInput!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
   deleteRelatedRecordPath(id: UUID!): RelatedRecordPath!
   deleteSSOIdentityProvider(input: DeleteSsoInput!): DeleteSso!
@@ -3793,6 +3799,7 @@ type Mutation {
   updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
   updateGettingStarted(input: UpdateGettingStartedInput!): GettingStartedProgress!
+  updateInboxPresence(input: UpdateInboxPresenceInput!): Boolean!
   updateLabPublicFeatureFlag(input: UpdateLabPublicFeatureFlagInput!): FeatureFlag!
   updateManyNavigationMenuItems(inputs: [UpdateOneNavigationMenuItemInput!]!): [NavigationMenuItem!]!
   updateManyObjects(inputs: [UpdateOneObjectInput!]!): [Object!]!
@@ -3844,6 +3851,7 @@ type Mutation {
   upsertFieldsWidget(input: UpsertFieldsWidgetInput!): View!
   upsertObjectPermissions(upsertObjectPermissionsInput: UpsertObjectPermissionsInput!): [ObjectPermission!]!
   upsertPermissionFlags(upsertPermissionFlagsInput: UpsertPermissionFlagsInput!): [RolePermissionFlag!]!
+  upsertPushSubscription(input: UpsertPushSubscriptionInput!): Boolean!
   upsertRowLevelPermissionRules(input: UpsertRowLevelPermissionRulesInput!): UpsertRowLevelPermissionRulesResult!
   upsertViewWidget(input: UpsertViewWidgetInput!): View!
   validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
@@ -5517,6 +5525,11 @@ input UpdateGettingStartedInput {
   snoozedUntil: String
 }
 
+input UpdateInboxPresenceInput {
+  isFocused: Boolean!
+  tabId: String!
+}
+
 input UpdateLabPublicFeatureFlagInput {
   publicFeatureFlag: String!
   value: Boolean!
@@ -5991,6 +6004,13 @@ input UpsertObjectPermissionsInput {
 input UpsertPermissionFlagsInput {
   permissionFlagKeys: [String!]!
   roleId: UUID!
+}
+
+input UpsertPushSubscriptionInput {
+  applicationServerKey: String!
+  authSecret: String!
+  endpoint: String!
+  p256dhKey: String!
 }
 
 input UpsertRowLevelPermissionRulesInput {
@@ -6799,6 +6819,8 @@ type WorkspaceMember {
   colorScheme: String!
   dateFormat: WorkspaceMemberDateFormatEnum
   id: UUID!
+  inboxNotificationLevel: String!
+  isInboxNotificationPreviewEnabled: Boolean!
   locale: String
   name: FullName!
   numberFormat: WorkspaceMemberNumberFormatEnum

@@ -1345,6 +1345,7 @@ export interface ClientConfig {
     serverUrl: Scalars['String']
     signInPrefilled: Scalars['Boolean']
     support: Support
+    webPushVapidPublicKey?: Scalars['String']
     __typename: 'ClientConfig'
 }
 
@@ -2559,6 +2560,7 @@ export interface Mutation {
     deleteOneObject: Object
     deleteOneRole: Scalars['String']
     deletePublicDomain: Scalars['Boolean']
+    deletePushSubscription: Scalars['Boolean']
     deleteQueuedChatMessage: Scalars['Boolean']
     deleteRelatedRecordPath: RelatedRecordPath
     deleteSSOIdentityProvider: DeleteSso
@@ -2711,6 +2713,7 @@ export interface Mutation {
     updateEmailGroupChannel: MessageChannel
     updateFrontComponent: FrontComponent
     updateGettingStarted: GettingStartedProgress
+    updateInboxPresence: Scalars['Boolean']
     updateLabPublicFeatureFlag: FeatureFlag
     updateManyNavigationMenuItems: NavigationMenuItem[]
     updateManyObjects: Object[]
@@ -2768,6 +2771,7 @@ export interface Mutation {
     upsertFieldsWidget: View
     upsertObjectPermissions: ObjectPermission[]
     upsertPermissionFlags: RolePermissionFlag[]
+    upsertPushSubscription: Scalars['Boolean']
     upsertRowLevelPermissionRules: UpsertRowLevelPermissionRulesResult
     upsertViewWidget: View
     validateApprovedAccessDomain: ApprovedAccessDomain
@@ -4509,6 +4513,8 @@ export interface WorkspaceMember {
     colorScheme: Scalars['String']
     dateFormat?: WorkspaceMemberDateFormatEnum
     id: Scalars['UUID']
+    inboxNotificationLevel: Scalars['String']
+    isInboxNotificationPreviewEnabled: Scalars['Boolean']
     locale?: Scalars['String']
     name: FullName
     numberFormat?: WorkspaceMemberNumberFormatEnum
@@ -5987,6 +5993,7 @@ export interface ClientConfigGenqlSelection{
     serverUrl?: boolean | number
     signInPrefilled?: boolean | number
     support?: SupportGenqlSelection
+    webPushVapidPublicKey?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6240,6 +6247,8 @@ id: Scalars['UUID']}
 export interface DeleteOneObjectInput {
 /** The id of the record to delete. */
 id: Scalars['UUID']}
+
+export interface DeletePushSubscriptionInput {endpoint: Scalars['String']}
 
 export interface DeleteSsoGenqlSelection{
     identityProviderId?: boolean | number
@@ -7446,6 +7455,7 @@ export interface MutationGenqlSelection{
     deleteOneObject?: (ObjectGenqlSelection & { __args: {input: DeleteOneObjectInput} })
     deleteOneRole?: { __args: {roleId: Scalars['UUID']} }
     deletePublicDomain?: { __args: {domain: Scalars['String']} }
+    deletePushSubscription?: { __args: {input: DeletePushSubscriptionInput} }
     deleteQueuedChatMessage?: { __args: {messageId: Scalars['UUID']} }
     deleteRelatedRecordPath?: (RelatedRecordPathGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteSSOIdentityProvider?: (DeleteSsoGenqlSelection & { __args: {input: DeleteSsoInput} })
@@ -7598,6 +7608,7 @@ export interface MutationGenqlSelection{
     updateEmailGroupChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateEmailGroupChannelInput} })
     updateFrontComponent?: (FrontComponentGenqlSelection & { __args: {input: UpdateFrontComponentInput} })
     updateGettingStarted?: (GettingStartedProgressGenqlSelection & { __args: {input: UpdateGettingStartedInput} })
+    updateInboxPresence?: { __args: {input: UpdateInboxPresenceInput} }
     updateLabPublicFeatureFlag?: (FeatureFlagGenqlSelection & { __args: {input: UpdateLabPublicFeatureFlagInput} })
     updateManyNavigationMenuItems?: (NavigationMenuItemGenqlSelection & { __args: {inputs: UpdateOneNavigationMenuItemInput[]} })
     updateManyObjects?: (ObjectGenqlSelection & { __args: {inputs: UpdateOneObjectInput[]} })
@@ -7655,6 +7666,7 @@ export interface MutationGenqlSelection{
     upsertFieldsWidget?: (ViewGenqlSelection & { __args: {input: UpsertFieldsWidgetInput} })
     upsertObjectPermissions?: (ObjectPermissionGenqlSelection & { __args: {upsertObjectPermissionsInput: UpsertObjectPermissionsInput} })
     upsertPermissionFlags?: (RolePermissionFlagGenqlSelection & { __args: {upsertPermissionFlagsInput: UpsertPermissionFlagsInput} })
+    upsertPushSubscription?: { __args: {input: UpsertPushSubscriptionInput} }
     upsertRowLevelPermissionRules?: (UpsertRowLevelPermissionRulesResultGenqlSelection & { __args: {input: UpsertRowLevelPermissionRulesInput} })
     upsertViewWidget?: (ViewGenqlSelection & { __args: {input: UpsertViewWidgetInput} })
     validateApprovedAccessDomain?: (ApprovedAccessDomainGenqlSelection & { __args: {input: ValidateApprovedAccessDomainInput} })
@@ -9034,6 +9046,8 @@ export interface UpdateFrontComponentInputUpdates {description?: (Scalars['Strin
 
 export interface UpdateGettingStartedInput {completedStepActionKey?: (GettingStartedStepActionKey | null),completedStepChatThreadId?: (Scalars['String'] | null),isHidden?: (Scalars['Boolean'] | null),selectedStepActionKey?: (GettingStartedStepActionKey | null),snoozedUntil?: (Scalars['String'] | null)}
 
+export interface UpdateInboxPresenceInput {isFocused: Scalars['Boolean'],tabId: Scalars['String']}
+
 export interface UpdateLabPublicFeatureFlagInput {publicFeatureFlag: Scalars['String'],value: Scalars['Boolean']}
 
 export interface UpdateLogicFunctionFromSourceInput {
@@ -9191,6 +9205,8 @@ widgetId: Scalars['UUID']}
 export interface UpsertObjectPermissionsInput {objectPermissions: ObjectPermissionInput[],roleId: Scalars['UUID']}
 
 export interface UpsertPermissionFlagsInput {permissionFlagKeys: Scalars['String'][],roleId: Scalars['UUID']}
+
+export interface UpsertPushSubscriptionInput {applicationServerKey: Scalars['String'],authSecret: Scalars['String'],endpoint: Scalars['String'],p256dhKey: Scalars['String']}
 
 export interface UpsertRowLevelPermissionRulesInput {objectMetadataId: Scalars['UUID'],roleId: Scalars['UUID'],rules: RowLevelPermissionRuleInput[]}
 
@@ -9824,6 +9840,8 @@ export interface WorkspaceMemberGenqlSelection{
     colorScheme?: boolean | number
     dateFormat?: boolean | number
     id?: boolean | number
+    inboxNotificationLevel?: boolean | number
+    isInboxNotificationPreviewEnabled?: boolean | number
     locale?: boolean | number
     name?: FullNameGenqlSelection
     numberFormat?: boolean | number

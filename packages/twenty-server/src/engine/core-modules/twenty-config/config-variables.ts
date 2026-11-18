@@ -1911,6 +1911,37 @@ export class ConfigVariables {
   FALLBACK_ENCRYPTION_KEY: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'VAPID public key for web push notifications (base64url). Overrides the key pair derived from ENCRYPTION_KEY; set it together with WEB_PUSH_VAPID_PRIVATE_KEY.',
+    isEnvOnly: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  WEB_PUSH_VAPID_PUBLIC_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    isSensitive: true,
+    description:
+      'VAPID private key for web push notifications (base64url). Overrides the key pair derived from ENCRYPTION_KEY; set it together with WEB_PUSH_VAPID_PUBLIC_KEY.',
+    isEnvOnly: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  WEB_PUSH_VAPID_PRIVATE_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Contact for push services in web push requests (https: URL or mailto: address). Defaults to SERVER_URL when it is https, else to EMAIL_FROM_ADDRESS.',
+    isEnvOnly: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  WEB_PUSH_SUBJECT: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
       'Days the current JWT signing key stays valid before the rotation cron issues a new one. Leave unset to disable auto-rotation.',

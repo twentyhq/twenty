@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { type AgentChatInboxNotificationLevel } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -70,6 +71,8 @@ export class WorkspaceMemberTranspiler {
       userEmail,
       colorScheme,
       uiScale,
+      inboxNotificationLevel,
+      isInboxNotificationPreviewEnabled,
       openRecordIn,
       locale,
       timeFormat,
@@ -104,6 +107,9 @@ export class WorkspaceMemberTranspiler {
       colorScheme,
       openRecordIn: openRecordIn as OpenRecordIn,
       uiScale,
+      inboxNotificationLevel:
+        inboxNotificationLevel as AgentChatInboxNotificationLevel,
+      isInboxNotificationPreviewEnabled,
       dateFormat: dateFormat as WorkspaceMemberDateFormatEnum,
       locale,
       timeFormat: timeFormat as WorkspaceMemberTimeFormatEnum,

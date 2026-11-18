@@ -19,6 +19,8 @@ export type WorkspaceMember = {
   locale: string | null;
   colorScheme: ColorScheme;
   uiScale?: UiScale | null;
+  inboxNotificationLevel?: string | null;
+  isInboxNotificationPreviewEnabled?: boolean | null;
   openRecordIn?: OpenRecordIn;
   createdAt: string;
   updatedAt: string;

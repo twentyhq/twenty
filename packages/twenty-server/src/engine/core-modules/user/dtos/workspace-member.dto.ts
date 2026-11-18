@@ -1,5 +1,6 @@
 import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 
+import { type AgentChatInboxNotificationLevel } from 'twenty-shared/ai';
 import { OpenRecordIn } from 'twenty-shared/types';
 import { Max, Min } from 'class-validator';
 
@@ -38,6 +39,12 @@ export class WorkspaceMemberDTO {
 
   @Field({ nullable: false })
   uiScale: string;
+
+  @Field(() => String, { nullable: false })
+  inboxNotificationLevel: AgentChatInboxNotificationLevel;
+
+  @Field(() => Boolean, { nullable: false })
+  isInboxNotificationPreviewEnabled: boolean;
 
   @Field(() => OpenRecordIn, { nullable: false })
   openRecordIn: OpenRecordIn;

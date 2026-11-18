@@ -5,6 +5,9 @@ import { InboxChannelsEffect } from '@/inbox/components/InboxChannelsEffect';
 import { InboxRecentThreadListSyncEffect } from '@/inbox/components/InboxRecentThreadListSyncEffect';
 import { InboxThreadInitializationEffect } from '@/inbox/components/InboxThreadInitializationEffect';
 import { InboxThreadRecordOperationsEffect } from '@/inbox/components/InboxThreadRecordOperationsEffect';
+import { InboxPresenceEffect } from '@/web-push/components/InboxPresenceEffect';
+import { PushNotificationClickEffect } from '@/web-push/components/PushNotificationClickEffect';
+import { PushSubscriptionEffect } from '@/web-push/components/PushSubscriptionEffect';
 
 export const InboxEffects = () => {
   const aiChatPageThreadId = useAiChatPageThreadId();
@@ -14,6 +17,9 @@ export const InboxEffects = () => {
       <InboxThreadInitializationEffect />
       <InboxThreadRecordOperationsEffect />
       <InboxChannelsEffect />
+      <PushSubscriptionEffect />
+      <InboxPresenceEffect />
+      <PushNotificationClickEffect />
       {isDefined(aiChatPageThreadId) && (
         <InboxRecentThreadListSyncEffect threadId={aiChatPageThreadId} />
       )}
