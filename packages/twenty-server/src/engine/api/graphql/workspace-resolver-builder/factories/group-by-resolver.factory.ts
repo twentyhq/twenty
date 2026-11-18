@@ -48,7 +48,10 @@ export class GroupByResolverFactory implements WorkspaceResolverBuilderFactoryIn
             resolverContext.objectIdByNameSingular,
           );
 
-        const { results } = await this.commonGroupByQueryRunnerService.execute(
+        const {
+          results,
+          args: { selectedFieldsResult },
+        } = await this.commonGroupByQueryRunnerService.execute(
           { ...args, selectedFields, includeRecords: shouldIncludeRecords },
           resolverContext,
         );
@@ -58,7 +61,7 @@ export class GroupByResolverFactory implements WorkspaceResolverBuilderFactoryIn
             objectRecords: group.records ?? [],
             objectName: resolverContext.flatObjectMetadata.nameSingular,
             objectRecordsAggregatedValues: {},
-            selectedAggregatedFields: {},
+            selection: selectedFieldsResult,
             take: group.records?.length || 0,
             totalCount: Number(group.totalCount ?? 0),
             hasNextPage: false,
