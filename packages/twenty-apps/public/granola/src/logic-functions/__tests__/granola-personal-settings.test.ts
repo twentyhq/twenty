@@ -1,0 +1,153 @@
+import {
+  kv,
+  listConnections,
+  type AppConnection,
+} from 'twenty-sdk/logic-function';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+import { GRANOLA_PERSONAL_CONNECTION_PROVIDER_NAME } from 'src/constants/granola-personal-connection.constant';
+import { granolaPersonalSettingsHandler } from 'src/logic-functions/granola-personal-settings';
+import { getGranolaPersonalFolderSelectionKey } from 'src/logic-functions/utils/get-granola-personal-folder-selection-key.util';
+
+vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('twenty-sdk/logic-function')>()),
+  listConnections: vi.fn(),
+  kv: { get: vi.fn(), set: vi.fn() },
+}));
+
+const OWN_CONNECTION: AppConnection = {
+  id: '486c773a-3e7e-4aa8-9b39-6fef855f94a4',
+  providerName: GRANOLA_PERSONAL_CONNECTION_PROVIDER_NAME,
+  name: 'My Granola',
+  handle: 'member@example.com',
+  externalAccountId: null,
+  scope: 'USER',
+  visibility: 'user',
+  userWorkspaceId: 'member',
+  workspaceMemberId: 'workspace-member',
+  providerType: 'api-key',
+  accessToken: 'grn_personal_test',
+  scopes: [],
+  authFailedAt: null,
+  authFailedReason: null,
+};
+const OTHER_CONNECTION: AppConnection = {
+  ...OWN_CONNECTION,
+  id: 'f41ff81d-4baa-41ff-ae3c-34e5cbc2ff51',
+  userWorkspaceId: 'other-member',
+};
+const CUSTOMER_FOLDER_ID = 'fol_customerCalls1';
+const PARTNER_FOLDER_ID = 'fol_partnerCalls12';
+const SAVED_AT = '2026-11-17T12:00:00.000Z';
+const OPTED_IN_AT = '2026-11-18T12:00:00.000Z';
+
+const requestSettings = (body: unknown) =>
+  granolaPersonalSettingsHandler(
+    {
+      body,
+      headers: {},
+      queryStringParameters: {},
+      pathParameters: {},
+      isBase64Encoded: false,
+      requestContext: {
+        http: { method: 'POST', path: '/granola/personal-settings' },
+      },
+      userWorkspaceId: OWN_CONNECTION.userWorkspaceId,
+    },
+    { userWorkspaceId: OWN_CONNECTION.userWorkspaceId },
+  );
+
+afterEach(() => {
+  vi.resetAllMocks();
+  vi.unstubAllGlobals();
+  vi.useRealTimers();
+});
+
+describe('Granola personal settings', () => {
+  it('returns connection labels only for the requesting member', async () => {
+    vi.mocked(listConnections).mockResolvedValue([
+      OWN_CONNECTION,
+      OTHER_CONNECTION,
+    ]);
+
+    await expect(
+      requestSettings({ action: 'list-connections' }),
+    ).resolves.toEqual({
+      success: true,
+      connections: [{ id: OWN_CONNECTION.id, name: OWN_CONNECTION.name }],
+    });
+  });
+
+  it('rejects a folder write for someone else’s connection', async () => {
+    vi.mocked(listConnections).mockResolvedValue([
+      OWN_CONNECTION,
+      OTHER_CONNECTION,
+    ]);
+    const fetchProvider = vi.fn<typeof fetch>();
+    vi.stubGlobal('fetch', fetchProvider);
+
+    await expect(
+      requestSettings({
+        action: 'save-folders',
+        connectionId: OTHER_CONNECTION.id,
+        folderIds: [],
+      }),
+    ).resolves.toMatchObject({ success: false });
+    expect(fetchProvider).not.toHaveBeenCalled();
+    expect(kv.set).not.toHaveBeenCalled();
+  });
+
+  it('validates folders with the member key and timestamps new selections', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(OPTED_IN_AT));
+    vi.mocked(listConnections).mockResolvedValue([OWN_CONNECTION]);
+    vi.mocked(kv.get).mockResolvedValue([
+      { folderId: CUSTOMER_FOLDER_ID, selectedAt: SAVED_AT },
+    ]);
+    const fetchProvider = vi.fn<typeof fetch>().mockResolvedValue(
+      Response.json({
+        folders: [
+          {
+            id: CUSTOMER_FOLDER_ID,
+            object: 'folder',
+            name: 'Customer calls',
+            parent_folder_id: null,
+          },
+          {
+            id: PARTNER_FOLDER_ID,
+            object: 'folder',
+            name: 'Partner calls',
+            parent_folder_id: null,
+          },
+        ],
+        hasMore: false,
+        cursor: null,
+      }),
+    );
+    vi.stubGlobal('fetch', fetchProvider);
+
+    await expect(
+      requestSettings({
+        action: 'save-folders',
+        connectionId: OWN_CONNECTION.id,
+        folderIds: [CUSTOMER_FOLDER_ID, PARTNER_FOLDER_ID],
+      }),
+    ).resolves.toEqual({
+      success: true,
+      folderIds: [CUSTOMER_FOLDER_ID, PARTNER_FOLDER_ID],
+    });
+    expect(fetchProvider).toHaveBeenCalledWith(
+      expect.any(URL),
+      expect.objectContaining({
+        headers: { Authorization: `Bearer ${OWN_CONNECTION.accessToken}` },
+      }),
+    );
+    expect(kv.set).toHaveBeenCalledWith(
+      getGranolaPersonalFolderSelectionKey(OWN_CONNECTION.id),
+      [
+        { folderId: CUSTOMER_FOLDER_ID, selectedAt: SAVED_AT },
+        { folderId: PARTNER_FOLDER_ID, selectedAt: OPTED_IN_AT },
+      ],
+    );
+  });
+});
