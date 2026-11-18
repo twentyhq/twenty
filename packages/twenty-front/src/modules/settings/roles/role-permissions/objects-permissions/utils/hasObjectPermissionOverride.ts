@@ -4,7 +4,6 @@ import { getObjectRowLevelPermissionPredicates } from '@/settings/roles/role-per
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { isDefined } from 'twenty-shared/utils';
 
-// Compared to nothing but the object's own settings, so changing the all-objects access keeps the list stable
 export const hasObjectPermissionOverride = ({
   role,
   objectMetadataId,

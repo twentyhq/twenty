@@ -1,7 +1,6 @@
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { isDefined } from 'twenty-shared/utils';
 
-// Related record paths are edited from the object settings, so they and their groups outlive the role page override
 export const getRoleWithoutObjectRowLevelPermissionRules = ({
   role,
   objectMetadataId,
