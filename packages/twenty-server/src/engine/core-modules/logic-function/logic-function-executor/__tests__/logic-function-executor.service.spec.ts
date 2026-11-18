@@ -156,6 +156,7 @@ describe('LogicFunctionExecutorService.executeBuiltCode', () => {
       code: LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED,
     });
 
+    expect(consumeToken).toHaveBeenCalledTimes(1);
     expect(consumeToken).toHaveBeenCalledWith('workspace-id');
   });
 });
@@ -178,6 +179,7 @@ describe('LogicFunctionExecutorService.execute', () => {
       code: LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED,
     });
 
+    expect(consumeToken).toHaveBeenCalledTimes(1);
     expect(consumeToken).toHaveBeenCalledWith('workspace-id');
   });
 });
