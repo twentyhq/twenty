@@ -1619,7 +1619,7 @@ export type ClientConfig = {
   serverUrl: Scalars['String']['output'];
   signInPrefilled: Scalars['Boolean']['output'];
   support: Support;
-  webPushVapidPublicKey?: Maybe<Scalars['String']['output']>;
+  webPushVapidPublicKey: Scalars['String']['output'];
 };
 
 export type ClientConfigMaintenanceMode = {
@@ -3983,9 +3983,9 @@ export type Mutation = {
   updateCalendarChannel: CalendarChannel;
   updateCommandMenuItem: CommandMenuItem;
   updateEmailGroupChannel: MessageChannel;
+  updateFocusedTab: Scalars['Boolean']['output'];
   updateFrontComponent: FrontComponent;
   updateGettingStarted: GettingStartedProgress;
-  updateInboxPresence: Scalars['Boolean']['output'];
   updateLabPublicFeatureFlag: FeatureFlag;
   updateManyNavigationMenuItems: Array<NavigationMenuItem>;
   updateManyObjects: Array<Object>;
@@ -5290,6 +5290,11 @@ export type MutationUpdateEmailGroupChannelArgs = {
 };
 
 
+export type MutationUpdateFocusedTabArgs = {
+  input: UpdateFocusedTabInput;
+};
+
+
 export type MutationUpdateFrontComponentArgs = {
   input: UpdateFrontComponentInput;
 };
@@ -5297,11 +5302,6 @@ export type MutationUpdateFrontComponentArgs = {
 
 export type MutationUpdateGettingStartedArgs = {
   input: UpdateGettingStartedInput;
-};
-
-
-export type MutationUpdateInboxPresenceArgs = {
-  input: UpdateInboxPresenceInput;
 };
 
 
@@ -7928,6 +7928,11 @@ export type UpdateFieldInput = {
   universalIdentifier?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type UpdateFocusedTabInput = {
+  isFocused: Scalars['Boolean']['input'];
+  tabId: Scalars['String']['input'];
+};
+
 export type UpdateFrontComponentInput = {
   /** The id of the front component to update */
   id: Scalars['UUID']['input'];
@@ -7946,11 +7951,6 @@ export type UpdateGettingStartedInput = {
   isHidden?: InputMaybe<Scalars['Boolean']['input']>;
   selectedStepActionKey?: InputMaybe<GettingStartedStepActionKey>;
   snoozedUntil?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type UpdateInboxPresenceInput = {
-  isFocused: Scalars['Boolean']['input'];
-  tabId: Scalars['String']['input'];
 };
 
 export type UpdateLabPublicFeatureFlagInput = {
