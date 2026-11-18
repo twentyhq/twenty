@@ -17,6 +17,7 @@ export const createGranolaWebhookEndpointOrThrow = async ({
   url,
   preferredScopes,
   folderIds,
+  isPersonalConnection,
 }: {
   client: Pick<
     ReturnType<typeof createGranolaClientOrThrow>,
@@ -25,12 +26,21 @@ export const createGranolaWebhookEndpointOrThrow = async ({
   url: string;
   preferredScopes: GranolaWebhookScope[] | undefined;
   folderIds: string[];
+  isPersonalConnection?: boolean;
 }) => {
-  const scopeCandidates = [
-    preferredScopes,
-    GRANOLA_WORKSPACE_KEY_SCOPES,
-    GRANOLA_PERSONAL_KEY_SCOPES,
-  ]
+  if (isPersonalConnection && !isNonEmptyArray(folderIds)) {
+    throw new Error('A personal Granola webhook requires selected folders.');
+  }
+
+  const scopesForKey: (GranolaWebhookScope[] | undefined)[] =
+    isPersonalConnection
+      ? [GRANOLA_PERSONAL_KEY_SCOPES, ['personal'], ['public']]
+      : [
+          preferredScopes,
+          GRANOLA_WORKSPACE_KEY_SCOPES,
+          GRANOLA_PERSONAL_KEY_SCOPES,
+        ];
+  const scopeCandidates = scopesForKey
     .filter(isDefined)
     .filter(
       (scopes, index, candidates) =>

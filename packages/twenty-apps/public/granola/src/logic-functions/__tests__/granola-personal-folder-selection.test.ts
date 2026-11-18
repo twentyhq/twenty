@@ -1,4 +1,5 @@
 import {
+  enqueueJobs,
   kv,
   listConnections,
   reportConnectionAuthFailure,
@@ -14,6 +15,7 @@ import { getGranolaPersonalFolderSelectionKey } from 'src/logic-functions/utils/
 
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   ...(await importOriginal<typeof import('twenty-sdk/logic-function')>()),
+  enqueueJobs: vi.fn(),
   listConnections: vi.fn(),
   reportConnectionAuthFailure: vi.fn(),
   kv: { get: vi.fn(), set: vi.fn() },
@@ -73,6 +75,13 @@ describe('granolaPersonalFolderSelectionHandler', () => {
   });
 
   it('validates folders with the member key and timestamps new selections', async () => {
+    vi.mocked(enqueueJobs).mockResolvedValue({
+      enqueued: true,
+      logicFunctionUniversalIdentifier: 'reconcile',
+      enqueuedJobsCount: 1,
+      jobIds: ['reconcile-job'],
+      jobs: [],
+    });
     vi.useFakeTimers();
     vi.setSystemTime(new Date(OPTED_IN_AT));
     vi.mocked(listConnections).mockResolvedValue([OWN_CONNECTION]);
@@ -119,6 +128,18 @@ describe('granolaPersonalFolderSelectionHandler', () => {
       expect.any(URL),
       expect.objectContaining({
         headers: { Authorization: `Bearer ${OWN_CONNECTION.accessToken}` },
+      }),
+    );
+    expect(enqueueJobs).toHaveBeenCalledWith(
+      expect.objectContaining({
+        jobs: [
+          expect.objectContaining({
+            payload: {
+              connectedAccountId: OWN_CONNECTION.id,
+              userWorkspaceId: OWN_CONNECTION.userWorkspaceId,
+            },
+          }),
+        ],
       }),
     );
     expect(kv.set).toHaveBeenCalledWith(

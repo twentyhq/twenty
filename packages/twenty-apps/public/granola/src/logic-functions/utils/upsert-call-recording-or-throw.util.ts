@@ -1,4 +1,5 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { type CallRecordingSyncFields } from 'src/logic-functions/types/call-recording-sync-fields.type';
 import { doesCallRecordingExistOrThrow } from 'src/logic-functions/utils/does-call-recording-exist-or-throw.util';
@@ -25,7 +26,29 @@ export const upsertCallRecordingOrThrow = async ({
     return { callRecordingId, created: false, skipped: true };
   }
 
-  if (await doesCallRecordingExistOrThrow({ coreApiClient, callRecordingId })) {
+  const personalNoteUpdatedAt = fields.granolaPersonalNoteUpdatedAt;
+
+  const updateExistingRecordingOrThrow = async () => {
+    if (isDefined(personalNoteUpdatedAt)) {
+      // A workspace write clears the personal revision and takes precedence over in-flight personal deliveries.
+      const result = await coreApiClient.mutation({
+        updateCallRecordings: {
+          __args: {
+            filter: {
+              id: { eq: callRecordingId },
+              granolaPersonalNoteUpdatedAt: { lt: personalNoteUpdatedAt },
+            },
+            data: toCallRecordingMutationFields(fields),
+          },
+          id: true,
+        },
+      });
+
+      return (result.updateCallRecordings ?? []).length > 0
+        ? { callRecordingId, created: false }
+        : { callRecordingId, created: false, skipped: true };
+    }
+
     await updateCallRecordingOrThrow({
       coreApiClient,
       callRecordingId,
@@ -33,6 +56,10 @@ export const upsertCallRecordingOrThrow = async ({
     });
 
     return { callRecordingId, created: false };
+  };
+
+  if (await doesCallRecordingExistOrThrow({ coreApiClient, callRecordingId })) {
+    return updateExistingRecordingOrThrow();
   }
 
   try {
@@ -56,12 +83,6 @@ export const upsertCallRecordingOrThrow = async ({
       throw error;
     }
 
-    await updateCallRecordingOrThrow({
-      coreApiClient,
-      callRecordingId,
-      fields,
-    });
-
-    return { callRecordingId, created: false };
+    return updateExistingRecordingOrThrow();
   }
 };

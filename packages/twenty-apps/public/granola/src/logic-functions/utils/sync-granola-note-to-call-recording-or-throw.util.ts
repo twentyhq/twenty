@@ -2,6 +2,7 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { type GranolaNote } from 'src/logic-functions/types/granola-api.type';
 import { computeCallRecordingIdForGranolaNote } from 'src/logic-functions/utils/compute-call-recording-id-for-granola-note.util';
 import { type createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { fetchGranolaNoteWithTranscriptOrThrow } from 'src/logic-functions/utils/fetch-granola-note-with-transcript-or-throw.util';
@@ -16,6 +17,7 @@ export const syncGranolaNoteToCallRecordingOrThrow = async ({
   coreApiClient,
   client,
   noteId,
+  canImportPersonalNote,
 }: {
   coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   client: Pick<
@@ -23,6 +25,7 @@ export const syncGranolaNoteToCallRecordingOrThrow = async ({
     'getNote' | 'listTranscriptPage'
   >;
   noteId: string;
+  canImportPersonalNote?: (note: GranolaNote) => Promise<boolean>;
 }) => {
   const note = await fetchGranolaNoteWithTranscriptOrThrow({ client, noteId });
   const callRecordingId = computeCallRecordingIdForGranolaNote(note.id);
@@ -39,6 +42,12 @@ export const syncGranolaNoteToCallRecordingOrThrow = async ({
     note,
   });
   const hasContent = isNonEmptyArray(transcript) || isNonEmptyString(summary);
+  if (
+    isDefined(canImportPersonalNote) &&
+    !(await canImportPersonalNote(note))
+  ) {
+    return { callRecordingId, created: false, skipped: true };
+  }
   const result = await upsertCallRecordingOrThrow({
     coreApiClient,
     callRecordingId,
@@ -47,6 +56,9 @@ export const syncGranolaNoteToCallRecordingOrThrow = async ({
       status: hasContent ? 'COMPLETED' : 'PROCESSING',
       recordingRequestStatus: 'REQUESTED',
       externalRecordingId: note.id,
+      granolaPersonalNoteUpdatedAt: isDefined(canImportPersonalNote)
+        ? note.updated_at
+        : null,
       startedAt,
       endedAt,
       ...(isNonEmptyArray(transcript) ? { transcript } : {}),
