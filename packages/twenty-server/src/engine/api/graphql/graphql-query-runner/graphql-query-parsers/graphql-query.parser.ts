@@ -8,7 +8,10 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { type CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import {
+  type CommonSelectedFields,
+  type CommonSelectedFieldsResult,
+} from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.type';
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
 import { GraphqlQueryOrderGroupByParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order-group-by.parser';
@@ -239,17 +242,13 @@ export class GraphqlQueryParser {
   }
 
   public parseSelectedFields(
-    // oxlint-disable-next-line typescript/no-explicit-any
-    graphqlSelectedFields: Partial<Record<string, any>>,
+    selectedFields: CommonSelectedFields,
   ): CommonSelectedFieldsResult {
     const selectedFieldsParser = new GraphqlQuerySelectedFieldsParser(
       this.flatObjectMetadataMaps,
       this.flatFieldMetadataMaps,
     );
 
-    return selectedFieldsParser.parse(
-      graphqlSelectedFields,
-      this.flatObjectMetadata,
-    );
+    return selectedFieldsParser.parse(selectedFields, this.flatObjectMetadata);
   }
 }

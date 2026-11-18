@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { OrderByDirection } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { CommonCreateManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service';
 import { CommonCreateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-one-query-runner.service';
@@ -22,6 +21,10 @@ import {
   GraphqlDirectExecutionException,
   GraphqlDirectExecutionExceptionCode,
 } from 'src/engine/api/graphql/direct-execution/errors/graphql-direct-execution.exception';
+import {
+  buildConnectionSelectedFields,
+  buildRecordSelectedFields,
+} from 'src/engine/api/graphql/direct-execution/utils/build-common-selected-fields.util';
 import { assertCreateManyArgs } from 'src/engine/api/graphql/direct-execution/utils/assert-create-many-args.util';
 import { assertCreateOneArgs } from 'src/engine/api/graphql/direct-execution/utils/assert-create-one-args.util';
 import { assertDeleteManyArgs } from 'src/engine/api/graphql/direct-execution/utils/assert-delete-many-args.util';
@@ -40,10 +43,16 @@ import { assertUpdateOneArgs } from 'src/engine/api/graphql/direct-execution/uti
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 import { type WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { type GraphqlResolverResult } from 'src/engine/api/graphql/direct-execution/types/graphql-resolver-result.type';
-import { type ResolverSelectedFields } from 'src/engine/api/graphql/workspace-resolver-builder/types/resolver-selected-fields.type';
+import { type GraphqlFieldSelection } from 'src/engine/api/graphql/workspace-resolver-builder/types/graphql-field-selection.type';
 import { createQueryRunnerContext } from 'src/engine/api/graphql/workspace-resolver-builder/utils/create-query-runner-context.util';
 import { type WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
+
+const CONNECTION_RESOLVER_METHOD_NAMES = new Set<string>([
+  RESOLVER_METHOD_NAMES.FIND_MANY,
+  RESOLVER_METHOD_NAMES.FIND_DUPLICATES,
+  RESOLVER_METHOD_NAMES.GROUP_BY,
+]);
 
 @Injectable()
 export class WorkspaceResolverRunnerService {
@@ -68,16 +77,27 @@ export class WorkspaceResolverRunnerService {
   async run({
     method,
     args,
-    selectedFields,
+    fieldSelections,
     workspaceSchemaBuilderContext,
   }: {
     method: WorkspaceResolverBuilderMethodNames;
     args: unknown;
-    selectedFields: ResolverSelectedFields;
+    fieldSelections: GraphqlFieldSelection[];
     workspaceSchemaBuilderContext: WorkspaceSchemaBuilderContext;
   }): Promise<GraphqlResolverResult> {
     const queryRunnerContext = createQueryRunnerContext({
       workspaceSchemaBuilderContext,
+    });
+    const buildSelectedFields = CONNECTION_RESOLVER_METHOD_NAMES.has(method)
+      ? buildConnectionSelectedFields
+      : buildRecordSelectedFields;
+    const selectedFields = buildSelectedFields({
+      fieldSelections,
+      flatObjectMetadata: workspaceSchemaBuilderContext.flatObjectMetadata,
+      flatObjectMetadataMaps:
+        workspaceSchemaBuilderContext.flatObjectMetadataMaps,
+      flatFieldMetadataMaps:
+        workspaceSchemaBuilderContext.flatFieldMetadataMaps,
     });
 
     switch (method) {
@@ -134,8 +154,8 @@ export class WorkspaceResolverRunnerService {
             ...args,
             selectedFields,
             includeRecords:
-              isDefined(selectedFields.edges?.node) &&
-              Object.keys(selectedFields.edges.node).length > 0,
+              Object.keys(selectedFields.fields).length > 0 ||
+              Object.keys(selectedFields.relations).length > 0,
           },
           queryRunnerContext,
         );

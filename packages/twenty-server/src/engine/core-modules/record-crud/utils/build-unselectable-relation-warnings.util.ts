@@ -42,7 +42,7 @@ export const buildUnselectableRelationWarningsByFieldName = ({
       | 'nameSingular'
     >
   >;
-  selectableRelationFields: CommonSelectedFields;
+  selectableRelationFields: CommonSelectedFields['relations'];
   unreadableFieldMetadataIds: ReadonlySet<string>;
 }): Map<string, string> => {
   const warningsByFieldName = new Map<string, string>();

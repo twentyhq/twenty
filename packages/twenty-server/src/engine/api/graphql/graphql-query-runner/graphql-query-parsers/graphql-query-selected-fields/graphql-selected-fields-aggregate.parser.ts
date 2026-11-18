@@ -12,8 +12,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 
 export class GraphqlQuerySelectedFieldsAggregateParser {
   parse(
-    // oxlint-disable-next-line typescript/no-explicit-any
-    graphqlSelectedFields: Partial<Record<string, any>>,
+    selectedAggregates: string[],
     flatObjectMetadata: FlatObjectMetadata,
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     accumulator: CommonSelectedFieldsResult,
@@ -30,7 +29,7 @@ export class GraphqlQuerySelectedFieldsAggregateParser {
     const availableAggregations: Record<string, AggregationField> =
       getAvailableAggregationsFromObjectFields(fields);
 
-    for (const selectedField of Object.keys(graphqlSelectedFields)) {
+    for (const selectedField of selectedAggregates) {
       const selectedAggregation = availableAggregations[selectedField];
 
       if (!selectedAggregation) {

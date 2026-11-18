@@ -52,7 +52,7 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
       } = await this.commonFindManyQueryRunnerService.execute(
         {
           ...queryArgs,
-          selectedFields: { ...selectedFields, totalCount: true },
+          selectedFields: { ...selectedFields, aggregates: ['totalCount'] },
         },
         {
           authContext,
