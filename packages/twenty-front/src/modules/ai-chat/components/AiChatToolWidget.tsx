@@ -1,9 +1,9 @@
 import { type DynamicToolUIPart, getToolName, type ToolUIPart } from 'ai';
 
 import { AiChatToolFrontComponent } from '@/ai-chat/components/AiChatToolFrontComponent';
-import { ThinkingToolStepRow } from '@/ai-chat/components/ThinkingToolStepRow';
+import { ThinkingToolStepRow } from '@/ai-chat/thinking-steps/components/ThinkingToolStepRow';
 import { type ToolInput } from '@/ai/types/ToolInput';
-import { isThinkingStepPartActive } from '@/ai-chat/utils/isThinkingStepPartActive';
+import { isThinkingStepPartActive } from '@/ai-chat/thinking-steps/utils/isThinkingStepPartActive';
 import { unwrapToolInput } from '@/ai/utils/tool-display/unwrapToolInput';
 
 type AiChatToolWidgetProps = {
