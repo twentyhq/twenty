@@ -10,6 +10,7 @@ import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types
 export type ToolSetToDescriptorsOptions = {
   includeSchemas?: boolean;
   icon?: string;
+  destructiveToolNames?: ReadonlySet<string>;
 };
 
 export const humanizeToolName = (name: string): string =>
@@ -35,6 +36,9 @@ export const toolSetToDescriptors = (
       category,
       executionRef: { kind: 'static' as const, toolId: name },
       ...(options?.icon && { icon: options.icon }),
+      ...(options?.destructiveToolNames?.has(name) === true && {
+        isDestructive: true,
+      }),
     };
 
     if (!includeSchemas) {

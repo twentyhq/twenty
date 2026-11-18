@@ -15,6 +15,7 @@ const deleteRoleInputSchema = z.object({
 
 @DefineTool({
   name: 'delete_role',
+  isDestructive: true,
   category: ToolCategory.ROLE,
   accessPolicy: ROLE_WRITE_ACCESS_POLICY,
   description: `Delete a role. Members, agents and API keys assigned to it are reassigned to the workspace default role.

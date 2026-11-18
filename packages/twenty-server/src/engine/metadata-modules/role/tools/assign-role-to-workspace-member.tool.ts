@@ -17,6 +17,7 @@ const assignRoleToWorkspaceMemberInputSchema = z.object({
 
 @DefineTool({
   name: 'assign_role_to_workspace_member',
+  isDestructive: true,
   category: ToolCategory.ROLE,
   accessPolicy: ROLE_ASSIGNMENT_ACCESS_POLICY,
   description: `Assign a role to a workspace member, replacing their current role.

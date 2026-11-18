@@ -46,6 +46,7 @@ const updatePageLayoutWidgetSchema = z.object({
 
 @DefineTool({
   name: 'update_page_layout_widget',
+  isDestructive: true,
   description: `Update a widget's properties, position, or configuration in a page layout (dashboard or record page).
 
 Use get_dashboard or list_record_page_layouts first to find the widgetId and tab layoutMode. Record-page changes affect the shared layout for that object, not only the currently open record.

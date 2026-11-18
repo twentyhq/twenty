@@ -33,6 +33,7 @@ const updateViewFilterInputSchema = z.object({
 
 @DefineTool({
   name: 'update_view_filter',
+  isDestructive: true,
   category: ToolCategory.VIEW,
   accessPolicy: VIEW_FILTER_ACCESS_POLICY,
   description:

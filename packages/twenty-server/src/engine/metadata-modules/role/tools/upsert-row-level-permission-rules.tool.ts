@@ -137,6 +137,7 @@ const upsertRowLevelPermissionRulesInputSchema = z.object({
 
 @DefineTool({
   name: 'upsert_row_level_permission_rules',
+  isDestructive: true,
   category: ToolCategory.ROLE,
   accessPolicy: ROLE_WRITE_ACCESS_POLICY,
   description: `Set row-level permission rules restricting which records members with a role can see on a given object (enterprise feature).

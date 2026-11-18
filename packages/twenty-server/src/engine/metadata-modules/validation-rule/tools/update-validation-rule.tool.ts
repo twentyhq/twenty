@@ -36,6 +36,7 @@ const updateValidationRuleInputSchema = z.object({
 
 @DefineTool({
   name: 'update_validation_rule',
+  isDestructive: true,
   category: ToolCategory.METADATA,
   accessPolicy: VALIDATION_RULE_WRITE_ACCESS_POLICY,
   icon: 'IconSettings',

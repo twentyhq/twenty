@@ -23,6 +23,7 @@ const deleteAgentInputSchema = z.object({
 
 @DefineTool({
   name: 'delete_agent',
+  isDestructive: true,
   category: ToolCategory.AGENT,
   accessPolicy: {
     ...AGENT_WRITE_ACCESS_POLICY,

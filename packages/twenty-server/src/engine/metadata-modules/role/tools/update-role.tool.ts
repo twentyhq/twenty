@@ -24,6 +24,7 @@ const updateRoleInputSchema = z.object({
 
 @DefineTool({
   name: 'update_role',
+  isDestructive: true,
   category: ToolCategory.ROLE,
   accessPolicy: ROLE_WRITE_ACCESS_POLICY,
   description: `Update an existing role's label, description, icon, global record permissions, settings access, or assignability.
