@@ -39,6 +39,7 @@ export class UpdateManyResolverFactory implements WorkspaceResolverBuilderFactor
       try {
         const {
           results: records,
+          relationAggregatedValues,
           args: { selectedFieldsResult },
         } = await this.commonUpdateManyQueryRunnerService.execute(
           { ...args, selectedFields },
@@ -56,6 +57,7 @@ export class UpdateManyResolverFactory implements WorkspaceResolverBuilderFactor
           typeORMObjectRecordsParser.processRecord({
             objectRecord: record,
             objectName: resolverContext.flatObjectMetadata.nameSingular,
+            relationAggregatedValues,
             selection: selectedFieldsResult,
             take: 1,
             totalCount: 1,
