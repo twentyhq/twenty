@@ -30,6 +30,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   viewField: {
     view: true,
     fieldMetadata: true,
+    fieldMetadataOption: true,
     objectMetadata: true,
     viewFieldGroup: true,
   },

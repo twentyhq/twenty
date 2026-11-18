@@ -13,6 +13,8 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateFlatViewFieldRelationScope } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util';
+import { validateFlatViewFieldRelationScopeNotOverridden } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-not-overridden.util';
 import { validateFlatViewFieldRelationTarget } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util';
 import { validateFlatViewFieldRelationTargetNotOverridden } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util';
 import { validateLabelIdentifierFieldMetadataIdFlatViewField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util';
@@ -29,6 +31,7 @@ export class FlatViewFieldValidatorService {
       flatViewMaps,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
     },
     buildOptions,
   }: FlatEntityUpdateValidationArgs<
@@ -77,6 +80,14 @@ export class FlatViewFieldValidatorService {
       }),
     );
 
+    validationResult.errors.push(
+      ...validateFlatViewFieldRelationScopeNotOverridden({
+        existingFlatViewField,
+        updatedFlatViewField,
+        buildOptions,
+      }),
+    );
+
     const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
       universalIdentifier:
         updatedFlatViewField.fieldMetadataUniversalIdentifier,
@@ -91,6 +102,17 @@ export class FlatViewFieldValidatorService {
           flatFieldMetadataMaps,
         }),
       );
+
+      if (flatEntityUpdate.universalRelationScope !== undefined) {
+        validationResult.errors.push(
+          ...validateFlatViewFieldRelationScope({
+            flatViewField: updatedFlatViewField,
+            flatFieldMetadata,
+            flatFieldMetadataMaps,
+            flatFieldMetadataOptionMaps,
+          }),
+        );
+      }
     }
 
     const flatView = findFlatEntityByUniversalIdentifier({
@@ -191,6 +213,7 @@ export class FlatViewFieldValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewFieldMaps: optimisticFlatViewFieldMaps,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
       flatViewMaps,
       flatObjectMetadataMaps,
     },
@@ -240,6 +263,12 @@ export class FlatViewFieldValidatorService {
           flatViewField: flatViewFieldToValidate,
           flatFieldMetadata,
           flatFieldMetadataMaps,
+        }),
+        ...validateFlatViewFieldRelationScope({
+          flatViewField: flatViewFieldToValidate,
+          flatFieldMetadata,
+          flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
         }),
       );
     }
