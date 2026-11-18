@@ -134,10 +134,10 @@ export const MobileNavigationBar = () => {
                 >
                   <StyledIconContainer>
                     <Icon className={navigationIconClassName} aria-hidden />
-                    {isUnread === true && <StyledUnreadDot aria-hidden />}
+                    {isUnread && <StyledUnreadDot aria-hidden />}
                   </StyledIconContainer>
                 </IconButton>
-                {hasDividerAfter === true && <StyledDivider aria-hidden />}
+                {hasDividerAfter && <StyledDivider aria-hidden />}
               </Fragment>
             ),
           )}

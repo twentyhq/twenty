@@ -1,5 +1,6 @@
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
+import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { useNavigationMenuTabIdsWithUnreadChats } from '@/navigation-menu-item/display/hooks/useNavigationMenuTabIdsWithUnreadChats';
@@ -75,6 +76,9 @@ export const useMobileNavigationBarItems = (): {
   const setNavigationDrawerActiveTab = useSetAtomState(
     navigationDrawerActiveTabState,
   );
+  const setCurrentNavigationMenuItemFolderId = useSetAtomState(
+    currentNavigationMenuItemFolderIdState,
+  );
 
   const setContextStoreCurrentObjectMetadataItemId = useSetAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -103,6 +107,7 @@ export const useMobileNavigationBarItems = (): {
     closeSettingsDrawer();
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     setCurrentNavigationMenuTabId(tabId);
+    setCurrentNavigationMenuItemFolderId(null);
     navigate(AppPath.Home, { replace: isSettingsDrawer });
   };
 
@@ -126,9 +131,9 @@ export const useMobileNavigationBarItems = (): {
         onClick: () => openHomePageOnTab(null),
       },
       ...navigationMenuTabs.map((tab, index): MobileNavigationBarItem => {
-        const isUnread =
-          activeNavigationMenuTab?.id !== tab.id &&
-          tabIdsWithUnreadChats.has(tab.id);
+        const isOpenOnHomePage =
+          pathname === AppPath.Home && activeNavigationMenuTab?.id === tab.id;
+        const isUnread = !isOpenOnHomePage && tabIdsWithUnreadChats.has(tab.id);
 
         return {
           name: `tab-${tab.id}`,
