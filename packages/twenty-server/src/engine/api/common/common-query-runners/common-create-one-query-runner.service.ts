@@ -17,10 +17,6 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
-import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 
 @Injectable()
@@ -77,22 +73,6 @@ export class CommonCreateOneQueryRunnerService extends CommonBaseQueryRunnerServ
     };
   }
 
-  async processQueryResult(
-    queryResult: ObjectRecord,
-    flatObjectMetadata: FlatObjectMetadata,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    authContext: WorkspaceAuthContext,
-  ): Promise<ObjectRecord> {
-    return this.commonResultGettersService.processRecord(
-      queryResult,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      authContext.workspace.id,
-    );
-  }
-
   async validate(
     args: CommonInput<CreateOneQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
@@ -118,7 +98,7 @@ export class CommonCreateOneQueryRunnerService extends CommonBaseQueryRunnerServ
     } = queryRunnerContext;
 
     return computeMaxFieldCountPerRecord({
-      selectedFieldsResult,
+      selection: selectedFieldsResult,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
