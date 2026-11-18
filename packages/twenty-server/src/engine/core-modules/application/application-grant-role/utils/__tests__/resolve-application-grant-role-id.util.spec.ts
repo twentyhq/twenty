@@ -9,17 +9,17 @@ const WORKSPACE_CUSTOM_APPLICATION_ID = 'workspace-custom-application-id';
 
 const resolve = ({
   applicationId = APPLICATION_ID,
-  defaultRoleId = 'requested-role-id',
+  requestedRoleId = 'requested-role-id',
   sourceType = ApplicationRegistrationSourceType.NPM,
   grantRoleId,
 }: {
   applicationId?: string;
-  defaultRoleId?: string | null;
+  requestedRoleId?: string | null;
   sourceType?: ApplicationRegistrationSourceType;
   grantRoleId?: string;
 }) =>
   resolveApplicationGrantRoleId({
-    flatApplication: { id: applicationId, defaultRoleId, sourceType },
+    flatApplication: { id: applicationId, requestedRoleId, sourceType },
     workspaceId: WORKSPACE_ID,
     workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
     flatRoleTargetByApplicationIdMaps:
@@ -54,7 +54,7 @@ describe('resolveApplicationGrantRoleId', () => {
     expect(
       resolve({
         applicationId: 'twenty-standard-application-id',
-        defaultRoleId: 'admin-role-id',
+        requestedRoleId: 'admin-role-id',
         sourceType: ApplicationRegistrationSourceType.LOCAL,
         grantRoleId: 'admin-grant-role-id',
       }),
@@ -65,7 +65,7 @@ describe('resolveApplicationGrantRoleId', () => {
     expect(
       resolve({
         applicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
-        defaultRoleId: 'custom-application-role-id',
+        requestedRoleId: 'custom-application-role-id',
       }),
     ).toBe('custom-application-role-id');
     expect(warnSpy).not.toHaveBeenCalled();
@@ -83,7 +83,7 @@ describe('resolveApplicationGrantRoleId', () => {
 
   it('resolves an application without a requested role to no role, even with a leftover grant', () => {
     expect(
-      resolve({ defaultRoleId: null, grantRoleId: 'grant-role-id' }),
+      resolve({ requestedRoleId: null, grantRoleId: 'grant-role-id' }),
     ).toBeUndefined();
   });
 

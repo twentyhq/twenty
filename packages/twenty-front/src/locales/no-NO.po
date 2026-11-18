@@ -46,7 +46,7 @@ msgid "—"
 msgstr "—"
 
 #. js-lingui-id: /c8CZ4
-#: src/modules/ai/components/AiChatThreadTitle.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadTitle.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
 msgid ", unread"
 msgstr ", ulest"
@@ -172,7 +172,7 @@ msgid "(selected: {selectedIconKey})"
 msgstr "(valgt: {selectedIconKey})"
 
 #. js-lingui-id: ZBGbuw
-#: src/modules/ai/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -240,7 +240,7 @@ msgstr "{0, plural, one {# chat} other {# chatter}}"
 
 #. js-lingui-id: jitezQ
 #. placeholder {0}: emails.length
-#: src/modules/ai/components/AiChatApprovalEmailConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailConfirmation.tsx
 msgid "{0, plural, one {# email selected · 0 emails skipped} other {# emails selected · 0 emails skipped}}"
 msgstr "{0, plural, one {# e-post valgt · 0 e-poster hoppet over} other {# e-poster valgt · 0 e-poster hoppet over}}"
 
@@ -288,7 +288,7 @@ msgstr "{0, plural, one {# Objekt} other {# Objekter}}"
 
 #. js-lingui-id: zHa4lw
 #. placeholder {0}: parts.length
-#: src/modules/ai/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingStepsDisplay.tsx
 msgid "{0, plural, one {# step} other {# steps}}"
 msgstr "{0, plural, one {# steg} other {# steg}}"
 
@@ -300,7 +300,7 @@ msgstr "{0, plural, one {# arbeidsområde har feilet eller er på etterskudd} ot
 
 #. js-lingui-id: fkfOKg
 #. placeholder {0}: agentIds.length
-#: src/modules/ai/components/AiChatMessageReactions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactions.tsx
 msgid "{0, plural, one {an agent} other {# agents}}"
 msgstr "{0, plural, one {en agent} other {# agenter}}"
 
@@ -486,8 +486,8 @@ msgstr "{0} valgt"
 #. placeholder {0}: card.selectedCount
 #. placeholder {1}: activeCard.skippedCount
 #. placeholder {1}: card.skippedCount
-#: src/modules/ai/components/AiChatApprovalConfirmation.tsx
-#: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "{0} selected · {1} skipped"
 msgstr "{0} valgt · {1} hoppet over"
 
@@ -574,7 +574,7 @@ msgstr "{0}, tilbake til felt"
 #. js-lingui-id: kofqAN
 #. placeholder {0}: selectedResolvedTier.label
 #. placeholder {1}: selectedResolvedTier.model.label
-#: src/modules/ai/components/AiModelTierDropdown.tsx
+#: src/modules/ai-chat/components/AiModelTierDropdown.tsx
 msgid "{0}: {1}"
 msgstr "{0}: {1}"
 
@@ -667,7 +667,7 @@ msgid "{callRecordingHours, plural, one {{formattedCallRecordingHours} hour} oth
 msgstr "{callRecordingHours, plural, one {{formattedCallRecordingHours} time} other {{formattedCallRecordingHours} timer}}"
 
 #. js-lingui-id: g0wkzt
-#: src/modules/ai/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
 msgid "{cardCount, plural, one {Approve # action?} other {Approve # actions?}}"
 msgstr "{cardCount, plural, one {Godkjenne # handling?} other {Godkjenne # handlinger?}}"
 
@@ -789,7 +789,7 @@ msgid "{earnedCredits, plural, one {{formattedEarnedCredits} credit} other {{for
 msgstr "{earnedCredits, plural, one {{formattedEarnedCredits} kreditt} other {{formattedEarnedCredits} kreditter}}"
 
 #. js-lingui-id: +dlsP9
-#: src/modules/ai/components/AiChatMessageReactions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactions.tsx
 msgid "{emoji} by {reactorNames}"
 msgstr "{emoji} av {reactorNames}"
 
@@ -830,7 +830,7 @@ msgid "{formattedFailedRunCount} of {formattedRunCount} runs failed"
 msgstr "{formattedFailedRunCount} av {formattedRunCount} kjøringer mislyktes"
 
 #. js-lingui-id: EjjpWm
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "{formattedPercentage}% used, {formattedConversationSize} of {formattedContextWindow} tokens"
 msgstr "{formattedPercentage}% brukt, {formattedConversationSize} av {formattedContextWindow} tokener"
 
@@ -838,11 +838,6 @@ msgstr "{formattedPercentage}% brukt, {formattedConversationSize} av {formattedC
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
 msgid "{goalCredits, plural, one {free credit} other {free credits}}"
 msgstr "{goalCredits, plural, one {gratis kreditt} other {gratis kreditter}}"
-
-#. js-lingui-id: YF/a2j
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
-msgid "{grantedBy, plural, one {Granted for {grantedBy} object} other {Granted for {grantedBy} objects}}"
-msgstr "{grantedBy, plural, one {Tildelt for {grantedBy} objekt} other {Tildelt for {grantedBy} objekter}}"
 
 #. js-lingui-id: Ae2fyu
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -993,7 +988,7 @@ msgid "{newlyEarnedCredits, plural, one {You earned {formattedNewlyEarnedCredits
 msgstr "{newlyEarnedCredits, plural, one {Du tjente {formattedNewlyEarnedCredits} gratis kreditt} other {Du tjente {formattedNewlyEarnedCredits} gratis kreditter}}"
 
 #. js-lingui-id: hKZAJk
-#: src/modules/ai/hooks/useWarnAboutParticipantMentionsNotAdded.ts
+#: src/modules/ai-chat/composer/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "{notAddedLabels} could not be added to this chat because they can't reply in it."
 msgstr "{notAddedLabels} kunne ikke legges til i denne chatten fordi de ikke kan svare i den."
 
@@ -1007,6 +1002,11 @@ msgstr "{num, selectordinal, one {{num}.} other {{num}.}}"
 msgid "{numberOfSelectedItems} workspace members"
 msgstr "{numberOfSelectedItems} medlemmer i arbeidsområdet"
 
+#. js-lingui-id: DQ+6r7
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
+msgid "{objectLabelPlural} permissions"
+msgstr "{objectLabelPlural} rettigheter"
+
 #. js-lingui-id: luWGLQ
 #: src/modules/workflow/workflow-variables/utils/generate/generateWaitForEventOutputSchema.ts
 msgid "{objectLabelSingular} Before Update"
@@ -1018,22 +1018,22 @@ msgid "{p95DurationInMs} ms"
 msgstr "{p95DurationInMs} ms"
 
 #. js-lingui-id: dKtfA2
-#: src/modules/ai/components/AiChatParticipantMentionBar.tsx
+#: src/modules/ai-chat/composer/components/AiChatParticipantMentionBar.tsx
 msgid "{participantLabels} will be added as a participant and get access to this chat"
 msgstr "{participantLabels} blir lagt til som deltaker og får tilgang til denne chatten"
 
 #. js-lingui-id: MDJKup
-#: src/modules/ai/components/AiChatParticipantMentionBar.tsx
+#: src/modules/ai-chat/composer/components/AiChatParticipantMentionBar.tsx
 msgid "{participantLabels} will be added as participants and get access to this chat"
 msgstr "{participantLabels} blir lagt til som deltakere og får tilgang til denne chatten"
 
 #. js-lingui-id: jCjuhm
-#: src/modules/ai/components/AiChatTypingIndicator.tsx
+#: src/modules/ai-chat/messages/components/AiChatTypingIndicator.tsx
 msgid "{participantNames} are typing…"
 msgstr "{participantNames} skriver…"
 
 #. js-lingui-id: E0CZYQ
-#: src/modules/ai/components/AiChatTypingIndicator.tsx
+#: src/modules/ai-chat/messages/components/AiChatTypingIndicator.tsx
 msgid "{participantNames} is typing…"
 msgstr "{participantNames} skriver…"
 
@@ -1053,12 +1053,12 @@ msgid "{positionLabel} record holds priority"
 msgstr "{positionLabel}-oppføringen har prioritet"
 
 #. js-lingui-id: i2Rv/S
-#: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 msgid "{positionLabel}: {name}"
 msgstr "{positionLabel}: {name}"
 
 #. js-lingui-id: tSROzD
-#: src/modules/ai/components/AiChatFormCardContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormCardContent.tsx
 msgid "{prefilledCount} of {fieldCount} fields prefilled"
 msgstr "{prefilledCount} av {fieldCount} felt er forhåndsutfylt"
 
@@ -1090,12 +1090,12 @@ msgid "{remainingBackupCodeCount, plural, one {# backup code left} other {# back
 msgstr "{remainingBackupCodeCount, plural, one {# sikkerhetskode gjenstår} other {# sikkerhetskoder gjenstår}}"
 
 #. js-lingui-id: N7gP92
-#: src/modules/ai/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 msgid "{remainingCount} more"
 msgstr "{remainingCount} til"
 
 #. js-lingui-id: uVxzex
-#: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "{remainingDraftCount, plural, =0 {No more drafts after this one} one {# more draft after this one} other {# more drafts after this one}}"
 msgstr "{remainingDraftCount, plural, =0 {Ingen flere utkast etter dette} one {# utkast til etter dette} other {# utkast til etter dette}}"
 
@@ -1114,21 +1114,6 @@ msgstr "{retentionInHours, plural, one {# time} other {# timer}}"
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
 msgid "{retriedCount, plural, one {Successfully retried {retriedCount} job} other {Successfully retried {retriedCount} jobs}}"
 msgstr "{retriedCount, plural, one {Vellykket prøvd {retriedCount} jobb på nytt} other {Vellykket prøvd {retriedCount} jobber på nytt}}"
-
-#. js-lingui-id: hcRYEH
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
-msgid "{revokedBy, plural, one {Revoked for {revokedBy} object} other {Revoked for {revokedBy} objects}}"
-msgstr "{revokedBy, plural, one {Inndratt for {revokedBy} objekt} other {Inndratt for {revokedBy} objekter}}"
-
-#. js-lingui-id: OeIgEg
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
-msgid "{roleLabel} can {humanReadableAction} {objectLabel} records"
-msgstr "{roleLabel} kan {humanReadableAction} {objectLabel} poster"
-
-#. js-lingui-id: D0C09b
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
-msgid "{roleLabel} can't {humanReadableAction} {objectLabel} records"
-msgstr "{roleLabel} kan ikke {humanReadableAction} {objectLabel} poster"
 
 #. js-lingui-id: uHZWwU
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
@@ -1191,7 +1176,7 @@ msgid "{selectedCount, plural, one {Retry {selectedCount} Job} other {Retry {sel
 msgstr "{selectedCount, plural, one {Prøv {selectedCount} jobb på nytt} other {Prøv {selectedCount} jobber på nytt}}"
 
 #. js-lingui-id: 1MJWid
-#: src/modules/ai/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
 msgid "{selectedCount} records selected · {skippedCount} records skipped"
 msgstr "{selectedCount} poster valgt · {skippedCount} poster hoppet over"
 
@@ -1206,7 +1191,7 @@ msgid "{selectedOptionCount} options"
 msgstr "{selectedOptionCount} alternativer"
 
 #. js-lingui-id: tz1jJj
-#: src/modules/ai/utils/getAiChatThreadPreviewText.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadPreviewText.ts
 msgid "{senderLabel}: {text}"
 msgstr "{senderLabel}: {text}"
 
@@ -1536,11 +1521,6 @@ msgstr "1. E-post"
 msgid "1. Select a field type"
 msgstr "1. Velg en felttype"
 
-#. js-lingui-id: XSdCGq
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-msgid "1. Select an object"
-msgstr "1. Velg et objekt"
-
 #. js-lingui-id: 6WQdu8
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -1577,11 +1557,6 @@ msgstr "2 år"
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "2. Configure field"
 msgstr "2. Konfigurer felt"
-
-#. js-lingui-id: 0Tx9MD
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
-msgid "2. Set {objectLabelPlural} permissions"
-msgstr "2. Angi {objectLabelPlural} rettigheter"
 
 #. js-lingui-id: 23g1gf
 #: src/modules/navigation/constants/LogsSwitchPhrases.ts
@@ -1696,7 +1671,7 @@ msgid "A new one each time the step runs"
 msgstr "En ny hver gang steget kjøres"
 
 #. js-lingui-id: 3pDKsj
-#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "A newer revision exists. Open the latest preview to save."
 msgstr "En nyere revisjon finnes. Åpne den nyeste forhåndsvisningen for å lagre."
 
@@ -1830,6 +1805,7 @@ msgstr "Godkjente og signerte DPA-er for dette arbeidsområdet, med malversjon o
 
 #. js-lingui-id: LuXP9q
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionsTable.tsx
 msgid "Access"
 msgstr "Tilgang"
@@ -1948,7 +1924,7 @@ msgid "Action on click"
 msgstr "Handling ved klikk"
 
 #. js-lingui-id: pTIviA
-#: src/modules/ai/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 msgid "Action progress"
 msgstr "Handlingsfremdrift"
 
@@ -1960,7 +1936,6 @@ msgstr "Handling som skal godkjennes"
 #. js-lingui-id: 7L01XJ
 #: src/modules/command-menu-item/components/CommandMenuDropdownAtCursor.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/side-panel/pages/create-related-record/components/SidePanelCreateRelatedRecordPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -2119,17 +2094,17 @@ msgid "Add a meeting link"
 msgstr "Legg til en møtelenke"
 
 #. js-lingui-id: CZDwqQ
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Add a new company we're in touch with (e.g. name, website, industry). Details: "
 msgstr "Legg til et nytt selskap vi er i kontakt med (f.eks. navn, nettsted, bransje). Detaljer: "
 
 #. js-lingui-id: 5xxrhm
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note"
 msgstr "Legg til et notat"
 
 #. js-lingui-id: uza/B9
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note to this record: "
 msgstr "Legg til et notat i denne oppføringen: "
 
@@ -2139,12 +2114,12 @@ msgid "Add a person with an email to this company first"
 msgstr "Legg først til en person med en e-postadresse i dette selskapet."
 
 #. js-lingui-id: +mN79K
-#: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "Add a recipient before sending"
 msgstr "Legg til en mottaker før sending"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai/hooks/useAiChat.ts
+#: src/modules/ai-chat/hooks/useAiChat.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "Legg til en mottaker eller en kanal før du sender."
 
@@ -2154,13 +2129,13 @@ msgid "Add a related record"
 msgstr "Legg til en relatert oppføring"
 
 #. js-lingui-id: eMc2xs
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement.tsx
 msgid "Add a step"
 msgstr "Legg til et trinn"
 
 #. js-lingui-id: BKYXUk
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a step to this workflow that "
 msgstr "Legg til et trinn i denne arbeidsflyten som "
 
@@ -2207,7 +2182,7 @@ msgid "Add an Agent"
 msgstr "Legg til en agent"
 
 #. js-lingui-id: dGjQL8
-#: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
+#: src/modules/ai-chat/components/AiChatApiKeyNotConfiguredMessage.tsx
 msgid "Add an API key to enable AI."
 msgstr "Legg til en API-nøkkel for å aktivere AI."
 
@@ -2306,7 +2281,7 @@ msgid "Add credit card"
 msgstr "Legg til kredittkort"
 
 #. js-lingui-id: NKMrde
-#: src/modules/ai/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "Add Credit Card"
 msgstr "Legg til kredittkort"
@@ -2349,7 +2324,7 @@ msgid "Add embedded website"
 msgstr "Legg til innebygd nettsted"
 
 #. js-lingui-id: 6kC3KJ
-#: src/modules/ai/components/internal/AiChatToolCallApprovalCardLayout.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCardLayout.tsx
 msgid "Add feedback"
 msgstr "Legg til tilbakemelding"
 
@@ -2371,8 +2346,8 @@ msgid "Add file"
 msgstr "Legg til fil"
 
 #. js-lingui-id: yCsT+y
-#: src/modules/ai/components/AiChatAddMenu.tsx
-#: src/modules/ai/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
 msgid "Add files, records or skills"
 msgstr "Legg til filer, oppføringer eller ferdigheter"
 
@@ -2482,16 +2457,12 @@ msgid "Add node"
 msgstr "Legg til node"
 
 #. js-lingui-id: dEO3Zx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
 msgstr "Legg til objekt"
-
-#. js-lingui-id: mFtRj8
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-msgid "Add object permission"
-msgstr "Legg til objektrettighet"
 
 #. js-lingui-id: Dl5lVI
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -2519,8 +2490,8 @@ msgid "Add payment method"
 msgstr "Legg til betalingsmåte"
 
 #. js-lingui-id: bL/gCs
-#: src/modules/ai/components/AiChatNewThreadRecipientField.tsx
-#: src/modules/ai/components/AiChatNewThreadRecipientField.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientField.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientField.tsx
 msgid "Add people or a channel"
 msgstr "Legg til personer eller en kanal"
 
@@ -2547,8 +2518,8 @@ msgid "Add question"
 msgstr "Legg til spørsmål"
 
 #. js-lingui-id: 9OEgyT
-#: src/modules/ai/components/AiChatMessageReactionPicker.tsx
-#: src/modules/ai/components/AiChatMessageReactionPicker.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPicker.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPicker.tsx
 msgid "Add reaction"
 msgstr "Legg til reaksjon"
 
@@ -2585,7 +2556,6 @@ msgstr "Legg til rad under"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
@@ -2600,6 +2570,11 @@ msgstr "Legg til regel"
 msgid "Add rule group"
 msgstr "Legg til regelgruppe"
 
+#. js-lingui-id: RxFV0G
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "Add section"
+msgstr "Legg til seksjon"
+
 #. js-lingui-id: TdZwYb
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
@@ -2613,6 +2588,12 @@ msgstr "Legg til sortering"
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCardWrapper.tsx
 msgid "Add SSO Identity Provider"
 msgstr "Legg til SSO-identitetsleverandør"
+
+#. js-lingui-id: hjO0Mq
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
+msgid "Add tab"
+msgstr "Legg til fane"
 
 #. js-lingui-id: O6B1gJ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -2925,6 +2906,7 @@ msgstr "Administratorer"
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverrideRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Advanced"
 msgstr "Avansert"
@@ -2990,7 +2972,7 @@ msgid "agent"
 msgstr "agent"
 
 #. js-lingui-id: iEQQyu
-#: src/modules/ai/utils/getAiChatAgentAuthor.ts
+#: src/modules/ai-chat/messages/utils/getAiChatAgentAuthor.ts
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
@@ -3148,7 +3130,7 @@ msgstr "AI-kreditter"
 
 #. js-lingui-id: leS03Y
 #. placeholder {0}: userCreditsUsage.daysUntilReset
-#: src/modules/ai/components/AiChatUserCreditsExhaustedMessage.tsx
+#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "AI-kreditter fornyes om {0, plural, one {# dag} other {# dager}}."
 
@@ -3245,22 +3227,22 @@ msgid "AI Usage by Workspace"
 msgstr "AI-bruk etter arbeidsområde"
 
 #. js-lingui-id: 6ktJa0
-#: src/modules/ai/components/AiChatUsageLimitReachedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUsageLimitReachedBanner.tsx
 msgid "AI usage limit reached for this period."
 msgstr "Grensen for AI-bruk er nådd for denne perioden."
 
 #. js-lingui-id: JQW6M/
-#: src/modules/ai/components/AiChatUsageLimitReachedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUsageLimitReachedBanner.tsx
 msgid "AI usage limit reached. Ask an admin to raise the limit."
 msgstr "Grensen for AI-bruk er nådd. Be en administrator om å øke grensen."
 
 #. js-lingui-id: YfXPCQ
-#: src/modules/ai/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Ask an admin to upgrade the plan."
 msgstr "AI-bruksgrensen er nådd. Be en administrator om å oppgradere planen."
 
 #. js-lingui-id: wBA/cx
-#: src/modules/ai/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Contact support to upgrade."
 msgstr "AI-bruksgrensen er nådd. Kontakt brukerstøtte for å oppgradere."
 
@@ -3329,8 +3311,6 @@ msgstr "Justering"
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow.tsx
 #: src/modules/views/view-picker/components/ViewPickerDropdown.tsx
 msgid "All"
@@ -3461,6 +3441,7 @@ msgid "all objects"
 msgstr "alle objekter"
 
 #. js-lingui-id: zIk4M6
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAllObjectsCard.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 msgid "All objects"
 msgstr "Alle objekter"
@@ -3468,7 +3449,6 @@ msgstr "Alle objekter"
 #. js-lingui-id: aFE/OW
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "All Objects"
 msgstr "Alle objekter"
 
@@ -3490,6 +3470,7 @@ msgstr "alle poster"
 
 #. js-lingui-id: rAUKN+
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "All records"
 msgstr "Alle oppføringer"
 
@@ -3529,11 +3510,6 @@ msgstr "Alle de grunnleggende felttypene du trenger for å komme i gang"
 msgid "All the layout items declared on your workspace"
 msgstr "Alle oppsettselementene som er definert i arbeidsområdet ditt"
 
-#. js-lingui-id: XuuWVF
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "All the standard objects"
-msgstr "Alle standardobjektene"
-
 #. js-lingui-id: 35148H
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
 msgid "All tools"
@@ -3568,11 +3544,6 @@ msgstr "Alle arbeidsområdemedlemmer har allerede denne rollen"
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspaceSelect.tsx
 msgid "All workspaces"
 msgstr "Alle arbeidsområder"
-
-#. js-lingui-id: pPTmfc
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "All your custom objects"
-msgstr "Alle dine egendefinerte objekter"
 
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -3645,10 +3616,21 @@ msgstr "Tillat opplasting av filer og vedlegg"
 msgid "Allow users to sign in with an email and password."
 msgstr "Tillat brukere å logge inn med en e-post og passord."
 
+#. js-lingui-id: Vwi3xW
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect.tsx
+msgid "Allowed actions"
+msgstr "Tillatte handlinger"
+
 #. js-lingui-id: vj+OHl
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Allowed redirect URIs for OAuth flows"
 msgstr "Tillatte omdirigerings-URI-er for OAuth-flyter"
+
+#. js-lingui-id: L36XXB
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Allows"
+msgstr "Tillater"
 
 #. js-lingui-id: Yn0ZH1
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -3718,7 +3700,7 @@ msgid "An error occurred while loading this widget."
 msgstr "Det oppstod en feil under innlasting av denne widgeten."
 
 #. js-lingui-id: I/scZd
-#: src/modules/ai/components/AiChatErrorMessage.tsx
+#: src/modules/ai-chat/components/AiChatErrorMessage.tsx
 msgid "An error occurred while processing your message"
 msgstr "En feil oppstod ved behandling av meldingen din"
 
@@ -3796,7 +3778,7 @@ msgid "An object with this name already exists"
 msgstr "Et objekt med dette navnet finnes allerede"
 
 #. js-lingui-id: lxentK
-#: src/modules/ai/utils/toAiChatError.ts
+#: src/modules/ai-chat/utils/toAiChatError.ts
 msgid "An unexpected error occurred"
 msgstr "En uventet feil oppstod"
 
@@ -3814,7 +3796,7 @@ msgid "And"
 msgstr "Og"
 
 #. js-lingui-id: U/Q98U
-#: src/modules/ai/components/ToolRecordsWidget.tsx
+#: src/modules/ai-chat/thinking-steps/components/ToolRecordsWidget.tsx
 msgid "and {hiddenCount} more"
 msgstr "og {hiddenCount} til"
 
@@ -3840,7 +3822,7 @@ msgid "Answered"
 msgstr "Besvart"
 
 #. js-lingui-id: +qygei
-#: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema.ts
 msgid "Answers"
 msgstr "Svar"
@@ -4142,6 +4124,11 @@ msgstr "Applikasjonene nedenfor har ikke blitt gjennomgått av Twenty. Bruk på 
 msgid "Applies to"
 msgstr "Gjelder for"
 
+#. js-lingui-id: 9xcLbN
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAllObjectsCard.tsx
+msgid "Applies to all objects before overrides"
+msgstr "Gjelder for alle objekter før overstyringer"
+
 #. js-lingui-id: DB8zMK
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
@@ -4159,18 +4146,18 @@ msgid "Apply{progressText}"
 msgstr "Bruk{progressText}"
 
 #. js-lingui-id: YLFgbC
-#: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Approval review"
 msgstr "Godkjenningsgjennomgang"
 
 #. js-lingui-id: Z7ZXbT
-#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
-#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Approve"
 msgstr "Godkjenn"
 
 #. js-lingui-id: IkcmiN
-#: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Approve all {pendingCardCount}"
 msgstr "Godkjenn alle {pendingCardCount}"
 
@@ -4180,7 +4167,7 @@ msgid "Approve media access for {applicationName}?"
 msgstr "Godkjenne medietilgang for {applicationName}?"
 
 #. js-lingui-id: 7kb4LU
-#: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Approved"
 msgstr "Godkjent"
 
@@ -4190,7 +4177,7 @@ msgid "Approved access domain validated"
 msgstr "Godkjent tilgangsdomene validert"
 
 #. js-lingui-id: nfUdWT
-#: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Approved but it failed"
 msgstr "Godkjent, men mislyktes"
 
@@ -4242,7 +4229,7 @@ msgid "Arabic"
 msgstr "Arabisk"
 
 #. js-lingui-id: DzER9P
-#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
+#: src/modules/ai-chat/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Arch"
 msgstr "Bue"
 
@@ -4328,13 +4315,13 @@ msgid "Are you sure? Your current information will not be saved."
 msgstr "Er du sikker? Din nåværende informasjon vil ikke bli lagret."
 
 #. js-lingui-id: OgB1k4
-#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsEditor.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsEditor.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 msgid "Arguments"
 msgstr "Argumenter"
 
 #. js-lingui-id: qUFEtj
-#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsEditor.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsEditor.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Arguments must be a valid JSON object."
 msgstr "Argumentene må være et gyldig JSON-objekt."
@@ -4450,7 +4437,7 @@ msgid "Ask AI"
 msgstr "Spør AI"
 
 #. js-lingui-id: IRCQfx
-#: src/modules/ai/components/AiChatQuotaLimitExhaustedMessage.tsx
+#: src/modules/ai-chat/usage/components/AiChatQuotaLimitExhaustedMessage.tsx
 msgid "Ask an admin to raise the limit."
 msgstr "Be en administrator om å øke grensen."
 
@@ -4465,12 +4452,12 @@ msgid "Ask for human input"
 msgstr "Be om menneskelig inndata"
 
 #. js-lingui-id: mc9nK2
-#: src/modules/ai/hooks/useAiChatEditor.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatEditor.ts
 msgid "Ask, search or make anything..."
 msgstr "Spør, søk eller lag hva som helst..."
 
 #. js-lingui-id: QVL/hg
-#: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 msgid "Asking questions..."
 msgstr "Stiller spørsmål..."
 
@@ -4540,7 +4527,7 @@ msgid "Assigned to me"
 msgstr "Tilordnet til meg"
 
 #. js-lingui-id: 7RNUhk
-#: src/modules/ai/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 msgid "Assigned to you"
 msgstr "Tilordnet til deg"
 
@@ -4555,8 +4542,8 @@ msgid "Assignment"
 msgstr "Tilordning"
 
 #. js-lingui-id: d/bvvp
-#: src/modules/ai/hooks/useAiChatEditor.ts
-#: src/modules/ai/utils/getAiChatMessageAuthor.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatEditor.ts
+#: src/modules/ai-chat/messages/utils/getAiChatMessageAuthor.ts
 msgid "Assistant"
 msgstr "Assistent"
 
@@ -4666,7 +4653,7 @@ msgstr "Legg ved fil"
 #. js-lingui-id: N7m8E+
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/ai/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Attach files"
@@ -4916,17 +4903,17 @@ msgid "Availability"
 msgstr "Tilgjengelighet"
 
 #. js-lingui-id: C2F7IU
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Availability calendars"
 msgstr "Tilgjengelighetskalendere"
 
 #. js-lingui-id: caqRwP
-#: src/modules/ai/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 msgid "Availability was not checked for {uncheckedAttendeeList}. You can still send an invite."
 msgstr "Tilgjengelighet ble ikke kontrollert for {uncheckedAttendeeList}. Du kan fortsatt sende en invitasjon."
 
 #. js-lingui-id: bUNt5P
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Available times"
 msgstr "Tilgjengelige tider"
 
@@ -5223,7 +5210,7 @@ msgid "Block style"
 msgstr "Blokkstil"
 
 #. js-lingui-id: 32TndD
-#: src/modules/ai/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Blocked"
 msgstr "Blokkert"
@@ -5255,8 +5242,8 @@ msgid "Blue"
 msgstr "Blå"
 
 #. js-lingui-id: bGQplw
-#: src/modules/ai/components/AiChatApprovalEmailReview.tsx
-#: src/modules/ai/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
 #: src/modules/side-panel/pages/email-block-settings/components/EmailPageStyleSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -5461,7 +5448,7 @@ msgid "Bundled with {applicationName}"
 msgstr "Leveres sammen med {applicationName}"
 
 #. js-lingui-id: /blpUq
-#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
+#: src/modules/ai-chat/constants/AiChatAssistantAvatarShapeLabels.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Burst"
 msgstr "Spissbelastning"
@@ -5533,8 +5520,8 @@ msgid "Cached creation"
 msgstr "Bufret opprettelse"
 
 #. js-lingui-id: hmxr83
-#: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Cached input"
 msgstr "Bufret inndata"
 
@@ -5590,7 +5577,7 @@ msgid "Calendar access needs approval"
 msgstr "Kalendertilgang må godkjennes"
 
 #. js-lingui-id: DZrVwO
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Calendar availability could not be checked."
 msgstr "Kalendertilgjengeligheten kunne ikke kontrolleres."
 
@@ -5754,7 +5741,7 @@ msgid "Canada"
 msgstr "Canada"
 
 #. js-lingui-id: dEgA5A
-#: src/modules/ai/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
 #: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -5873,7 +5860,7 @@ msgid "Canceled at"
 msgstr "Avbrutt den"
 
 #. js-lingui-id: vv7kpg
-#: src/modules/ai/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 msgid "Cancelled"
 msgstr "Avbrutt"
@@ -6074,7 +6061,7 @@ msgid "Change Password"
 msgstr "Endre passord"
 
 #. js-lingui-id: 98W3AT
-#: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 msgid "Change status in {scopeLabel}"
 msgstr "Endre status i {scopeLabel}"
 
@@ -6121,7 +6108,7 @@ msgid "channel"
 msgstr "kanal"
 
 #. js-lingui-id: HdE1If
-#: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientPicker.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 msgid "Channel"
@@ -6199,7 +6186,7 @@ msgid "Chat Sessions"
 msgstr "Chatøkter"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
 msgid "Chat stopped: no more available credits."
 msgstr "Chatten er stoppet: ingen tilgjengelige kreditter igjen."
 
@@ -6232,7 +6219,7 @@ msgid "Check List"
 msgstr "Sjekkliste"
 
 #. js-lingui-id: oa2dNe
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check recent runs"
 msgstr "Sjekk nylige kjøringer"
 
@@ -6247,12 +6234,12 @@ msgid "Check the event dates"
 msgstr "Kontroller hendelsesdatoene"
 
 #. js-lingui-id: EXMtgb
-#: src/modules/ai/components/__stories__/AiChatApprovalMergeReviewExample.tsx
+#: src/modules/ai-chat/tool-calls/components/__stories__/AiChatApprovalMergeReviewExample.tsx
 msgid "Check the merge result before trying again"
 msgstr "Kontroller fletteresultatet før du prøver på nytt"
 
 #. js-lingui-id: PaKTa7
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check this workflow's recent runs and tell me whether any failed and why."
 msgstr "Sjekk denne arbeidsflytens nylige kjøringer, og fortell meg om noen mislyktes og hvorfor."
 
@@ -6282,7 +6269,7 @@ msgid "Checked only when the record this rule belongs to is saved. Editing the r
 msgstr "Kontrolleres bare når posten denne regelen tilhører, lagres. Redigering av den relaterte posten kontrollerer den ikke på nytt."
 
 #. js-lingui-id: DMUK+4
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Checking calendar availability…"
 msgstr "Kontrollerer kalendertilgjengelighet…"
 
@@ -6318,26 +6305,26 @@ msgid "Choose {intervalAdjective} credits"
 msgstr "Velg {intervalAdjective} kreditter"
 
 #. js-lingui-id: HC7flO
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
-#: src/modules/ai/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 #: src/modules/ui/input/components/internal/date/components/DatePickerCalendar.tsx
 msgid "Choose a date"
 msgstr "Velg en dato"
 
 #. js-lingui-id: mXw+D5
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Choose a date to see available times."
 msgstr "Velg en dato for å se tilgjengelige tider."
 
 #. js-lingui-id: n5pcaT
-#: src/modules/ai/components/AiModelTierDropdown.tsx
-#: src/modules/ai/components/AiModelTierDropdown.tsx
+#: src/modules/ai-chat/components/AiModelTierDropdown.tsx
+#: src/modules/ai-chat/components/AiModelTierDropdown.tsx
 msgid "Choose a model mode"
 msgstr "Velg en modellmodus"
 
 #. js-lingui-id: Vgi70q
-#: src/modules/ai/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "Choose a source record to keep"
 msgstr "Velg en kildepost som skal beholdes"
 
@@ -6347,12 +6334,12 @@ msgid "Choose a spender"
 msgstr "Velg en forbruker"
 
 #. js-lingui-id: ZLmzD4
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose a time zone"
 msgstr "Velg en tidssone"
 
 #. js-lingui-id: 2cQMP+
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose a time zone."
 msgstr "Velg en tidssone."
 
@@ -6382,12 +6369,12 @@ msgid "Choose an access level available to all selected recipients."
 msgstr "Velg et tilgangsnivå som er tilgjengelig for alle valgte mottakere."
 
 #. js-lingui-id: bTsJ+r
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose an available calendar that can send invitations."
 msgstr "Velg en tilgjengelig kalender som kan sende invitasjoner."
 
 #. js-lingui-id: 4yF6C2
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose an organizer calendar"
 msgstr "Velg en kalender for arrangøren"
 
@@ -6494,7 +6481,7 @@ msgid "Choose when {assistantName} participates in conversations across your wor
 msgstr "Velg når {assistantName} deltar i samtaler på tvers av arbeidsområdet ditt"
 
 #. js-lingui-id: GF9DB4
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose when you are available and which calendar sends invitations."
 msgstr "Velg når du er tilgjengelig, og hvilken kalender som sender invitasjoner."
 
@@ -6529,7 +6516,7 @@ msgid "Choose your preferences for the apps installed on your workspace by the a
 msgstr "Velg preferansene dine for appene som administratoren har installert på arbeidsområdet ditt"
 
 #. js-lingui-id: 7xMmki
-#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
+#: src/modules/ai-chat/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Circle"
 msgstr "Sirkel"
 
@@ -6755,7 +6742,7 @@ msgid "Clipboard requires a secure connection (HTTPS). Please access this app ov
 msgstr "Utklippstavlen krever en sikker tilkobling (HTTPS). Åpne denne appen over HTTPS for å aktivere kopiering."
 
 #. js-lingui-id: yz7wBu
-#: src/modules/ai/components/AiChatCloseButton.tsx
+#: src/modules/ai-chat/components/AiChatCloseButton.tsx
 #: src/modules/front-components/media-session/components/FrontComponentMediaPermissionModal.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -6826,7 +6813,7 @@ msgid "Closes in 6 days"
 msgstr "Avsluttes om 6 dager"
 
 #. js-lingui-id: XLMJ7O
-#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
+#: src/modules/ai-chat/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Cloud"
 msgstr "Sky"
 
@@ -6836,7 +6823,7 @@ msgid "Cloudflare may expect a name relative to the zone rather than the full ho
 msgstr "Cloudflare kan forvente et navn relativt til sonen i stedet for det fullstendige vertsnavnet. Unngå å legge til domenet to ganger. Vis meg de foreslåtte endringene og be om bekreftelse før du lagrer dem."
 
 #. js-lingui-id: ExH3eu
-#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
+#: src/modules/ai-chat/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Clover"
 msgstr "Kløver"
 
@@ -6848,7 +6835,7 @@ msgstr "kode"
 
 #. js-lingui-id: EWPtMO
 #: src/modules/advanced-text-editor/components/TextBubbleMenu.tsx
-#: src/modules/ai/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 msgid "Code"
 msgstr "Kode"
@@ -6864,7 +6851,7 @@ msgid "Code Block"
 msgstr "Kodeblokk"
 
 #. js-lingui-id: 80c4+P
-#: src/modules/ai/components/MarkdownCodeBlock.tsx
+#: src/modules/ai-chat/message-content/components/MarkdownCodeBlock.tsx
 msgid "Code copied to clipboard"
 msgstr "Kode kopiert til utklippstavlen"
 
@@ -6915,7 +6902,7 @@ msgid "collapse"
 msgstr "lukk"
 
 #. js-lingui-id: H86f9p
-#: src/modules/ai/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
@@ -7182,7 +7169,7 @@ msgstr "fullført"
 
 #. js-lingui-id: qqWcBV
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
-#: src/modules/ai/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -7202,7 +7189,7 @@ msgid "Complexity"
 msgstr "Kompleksitet"
 
 #. js-lingui-id: ST17km
-#: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
+#: src/modules/ai-chat/tool-calls/hooks/useAiChatFrontComponentPreview.ts
 msgid "Component failed to render."
 msgstr "Komponenten kunne ikke gjengis."
 
@@ -7212,7 +7199,7 @@ msgid "Component name"
 msgstr "Komponentnavn"
 
 #. js-lingui-id: WcUICq
-#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Component preview with sample data"
 msgstr "Forhåndsvisning av komponent med eksempeldata"
 
@@ -7428,7 +7415,7 @@ msgid "Confirm"
 msgstr "Bekreft"
 
 #. js-lingui-id: MrMPwB
-#: src/modules/ai/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
 msgid "Confirm approval"
 msgstr "Bekreft godkjenning"
 
@@ -7629,7 +7616,7 @@ msgid "Connection successfully updated"
 msgstr "Tilkobling oppdatert"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "Tilkoblingen til assistenten ble brutt. Last inn på nytt for å se svaret."
 
@@ -7692,22 +7679,22 @@ msgid "Context"
 msgstr "Kontekst"
 
 #. js-lingui-id: /vXJ9Y
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Context and usage"
 msgstr "Kontekst og bruk"
 
 #. js-lingui-id: uEf5Og
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Context and usage, {formattedPercentage}% of context window used"
 msgstr "Kontekst og bruk, {formattedPercentage}% av kontekstvinduet er brukt"
 
 #. js-lingui-id: 4NJlEz
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Context and usage, context window unavailable"
 msgstr "Kontekst og bruk, kontekstvinduet er ikke tilgjengelig"
 
 #. js-lingui-id: LXIm4m
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Context window"
 msgstr "Kontekstvindu"
@@ -7793,7 +7780,7 @@ msgstr "Kontroller hvilke typer enheter denne rollen kan tildeles til"
 
 #. js-lingui-id: YyNOE7
 #: src/modules/activities/emails/utils/getTimelineThreadLabel.ts
-#: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 #: src/modules/inbox/components/InboxConversationPane.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -7847,7 +7834,7 @@ msgid "Cook"
 msgstr "Cook"
 
 #. js-lingui-id: SB9yVb
-#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
+#: src/modules/ai-chat/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Cookie"
 msgstr "Kjeks"
 
@@ -7890,10 +7877,10 @@ msgid "Copy audio download link"
 msgstr "Kopier nedlastingslenke for lyd"
 
 #. js-lingui-id: NmPNJJ
-#: src/modules/ai/components/CodeExecutionDisplay.tsx
-#: src/modules/ai/components/CodeExecutionDisplay.tsx
-#: src/modules/ai/components/MarkdownCodeBlock.tsx
-#: src/modules/ai/components/MarkdownCodeBlock.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/MarkdownCodeBlock.tsx
+#: src/modules/ai-chat/message-content/components/MarkdownCodeBlock.tsx
 msgid "Copy code"
 msgstr "Kopier kode"
 
@@ -7935,8 +7922,8 @@ msgid "Copy link to view"
 msgstr "Kopier lenke for å vise"
 
 #. js-lingui-id: VBIlvI
-#: src/modules/ai/components/TerminalOutput.tsx
-#: src/modules/ai/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 msgid "Copy output"
 msgstr "Kopier utdata"
 
@@ -8020,7 +8007,7 @@ msgid "Cost"
 msgstr "Kostnad"
 
 #. js-lingui-id: R0dp36
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 msgid "Cost index"
 msgstr "Kostnadsindeks"
 
@@ -8060,7 +8047,7 @@ msgid "Could not attach this conversation to the {objectLabel}"
 msgstr "Kunne ikke knytte denne samtalen til {objectLabel}"
 
 #. js-lingui-id: E/YqmF
-#: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Could not be proposed"
 msgstr "Kunne ikke foreslås"
 
@@ -8101,8 +8088,8 @@ msgid "Could not load Getting started."
 msgstr "Kunne ikke laste inn Kom i gang."
 
 #. js-lingui-id: Y5qCpF
-#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
-#: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFrontComponentCard.tsx
+#: src/modules/ai-chat/tool-calls/hooks/useAiChatFrontComponentPreview.ts
 msgid "Could not load preview."
 msgstr "Kunne ikke laste inn forhåndsvisning."
 
@@ -8162,7 +8149,7 @@ msgid "Could not react with {emoji}"
 msgstr "Kunne ikke reagere med {emoji}"
 
 #. js-lingui-id: 6GjSMn
-#: src/modules/ai/hooks/useRefreshFrontComponents.ts
+#: src/modules/ai-chat/tool-calls/hooks/useRefreshFrontComponents.ts
 msgid "Could not refresh components. Reload to see saved changes."
 msgstr "Kunne ikke oppdatere komponenter. Last inn på nytt for å se lagrede endringer."
 
@@ -8370,12 +8357,12 @@ msgid "Create {objectLabelSingular}"
 msgstr "Opprett {objectLabelSingular}"
 
 #. js-lingui-id: RRkWki
-#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Create {recordCount} {objectLabel}"
 msgstr "Opprett {recordCount} {objectLabel}"
 
 #. js-lingui-id: TryTER
-#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Create {selectedCount}"
 msgstr "Opprett {selectedCount}"
 
@@ -8386,18 +8373,18 @@ msgid "Create a few {0} to preview this rule on real records."
 msgstr "Opprett noen {0} for å forhåndsvise denne regelen på ekte poster."
 
 #. js-lingui-id: fQFALn
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a new contact and link them to a company. Details: "
 msgstr "Opprett en ny kontakt og koble vedkommende til et selskap. Detaljer: "
 
 #. js-lingui-id: j85EUk
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a new record in this view. Details: "
 msgstr "Opprett en ny oppføring i denne visningen. Detaljer: "
 
 #. js-lingui-id: n1Nbbe
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a record"
 msgstr "Opprett en post"
 
@@ -8407,23 +8394,23 @@ msgid "Create a relation with other objects"
 msgstr "Opprett en relasjon med andre objekter"
 
 #. js-lingui-id: OW4ZDC
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task"
 msgstr "Opprett en oppgave"
 
 #. js-lingui-id: Jk5UrD
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task for this company: "
 msgstr "Opprett en oppgave for dette selskapet: "
 
 #. js-lingui-id: T9fLSG
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task for this record: "
 msgstr "Opprett en oppgave for denne oppføringen: "
 
 #. js-lingui-id: Xn2Nlq
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a workflow"
 msgstr "Opprett en arbeidsflyt"
 
@@ -8790,8 +8777,8 @@ msgid "credits"
 msgstr "kreditter"
 
 #. js-lingui-id: lDIOek
-#: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentCreditsPerDayChart.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -9015,7 +9002,7 @@ msgid "Current workspace member not found."
 msgstr "Nåværende arbeidsområdemedlem ikke funnet."
 
 #. js-lingui-id: dUDTUc
-#: src/modules/ai/components/internal/AiChatToolCallApprovalCurrentValue.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCurrentValue.tsx
 msgid "Currently:"
 msgstr "For øyeblikket:"
 
@@ -9034,7 +9021,6 @@ msgstr "tilpasset"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 #: src/modules/settings/data-model/utils/getSettingsObjectFieldType.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Custom"
 msgstr "Tilpasset"
@@ -9350,7 +9336,7 @@ msgid "Dashboard duplicated successfully"
 msgstr "Dashbordet ble duplisert"
 
 #. js-lingui-id: xLSe09
-#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Dashboard widget"
 msgstr "Dashbord-widget"
 
@@ -9653,8 +9639,8 @@ msgstr "Reduser verdi"
 
 #. js-lingui-id: ovBPCi
 #: src/modules/advanced-text-editor/components/RichTextColorDropdown.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/modules/ai/components/AiModelPinSelect.tsx
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/admin-panel/config-variables/constants/ConfigVariableSourceOptions.ts
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
@@ -9791,6 +9777,7 @@ msgstr "slett"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage.tsx
@@ -9861,7 +9848,7 @@ msgid "Delete {objectLabelPlural}"
 msgstr "Slett {objectLabelPlural}"
 
 #. js-lingui-id: CF0F8U
-#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Delete {recordCount} {objectLabel}"
 msgstr "Slett {recordCount} {objectLabel}"
 
@@ -9871,7 +9858,7 @@ msgid "Delete {relationObjectLabelSingular}"
 msgstr "Slett {relationObjectLabelSingular}"
 
 #. js-lingui-id: ++479H
-#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Delete {selectedCount}"
 msgstr "Slett {selectedCount}"
 
@@ -10024,8 +10011,8 @@ msgid "Delete MCP server"
 msgstr "Slett MCP-server"
 
 #. js-lingui-id: KDfTdX
-#: src/modules/ai/components/AiChatMessage.tsx
-#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
 msgid "Delete message"
 msgstr "Slett melding"
 
@@ -10048,11 +10035,6 @@ msgstr "Slett eller overfør denne app-registreringen"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/DeleteRecordAction.ts
 msgid "Delete Record"
 msgstr "Slett post"
-
-#. js-lingui-id: mcXHCJ
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Delete Records on All Objects"
-msgstr "Slett oppføringer på alle objekter"
 
 #. js-lingui-id: Ptdfm4
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
@@ -10083,6 +10065,11 @@ msgstr "Slett rad"
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 msgid "Delete Skill"
 msgstr "Slett ferdighet"
+
+#. js-lingui-id: drg4t8
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
+msgid "Delete tab"
+msgstr "Slett fane"
 
 #. js-lingui-id: +RYIn9
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
@@ -10239,7 +10226,7 @@ msgid "Delivery"
 msgstr "Levering"
 
 #. js-lingui-id: cFCKYZ
-#: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Deny"
 msgstr "Avslå"
 
@@ -10330,6 +10317,7 @@ msgstr "ødelegg"
 
 #. js-lingui-id: 2xxBws
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
+#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
 msgid "Destroy"
 msgstr "Ødelegg"
 
@@ -10347,11 +10335,6 @@ msgstr "Ødelegg {objectLabelPlural}"
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Destroy all records"
 msgstr "Ødelegg alle poster"
-
-#. js-lingui-id: L68qSB
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Destroy Records on All Objects"
-msgstr "Ødelegg oppføringer på alle objekter"
 
 #. js-lingui-id: FOcBn3
 #: src/modules/inbox/components/InboxThreadActionsDropdown.tsx
@@ -10448,17 +10431,17 @@ msgid "Diagram controls"
 msgstr "Diagramkontroller"
 
 #. js-lingui-id: PFS3WB
-#: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
+#: src/modules/ai-chat/dictation/utils/getDictationFailureMessage.ts
 msgid "Dictation did not respond in this browser. Try Safari, or type instead."
 msgstr "Diktering svarte ikke i denne nettleseren. Prøv Safari, eller skriv i stedet."
 
 #. js-lingui-id: qXiOAF
-#: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
+#: src/modules/ai-chat/dictation/utils/getDictationFailureMessage.ts
 msgid "Dictation failed. Try again."
 msgstr "Diktering mislyktes. Prøv igjen."
 
 #. js-lingui-id: MDy8Vw
-#: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
+#: src/modules/ai-chat/dictation/utils/getDictationFailureMessage.ts
 msgid "Dictation is not supported in this browser."
 msgstr "Diktering støttes ikke i denne nettleseren."
 
@@ -10473,7 +10456,7 @@ msgid "Direct messages"
 msgstr "Direktemeldinger"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Direktemeldinger støtter ikke vedlegg."
 
@@ -10516,7 +10499,7 @@ msgid "Disabled"
 msgstr "Deaktivert"
 
 #. js-lingui-id: bzSI52
-#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Discard"
@@ -10558,7 +10541,7 @@ msgid "Discovery on {defaultDomain}"
 msgstr "Oppdagbar på {defaultDomain}"
 
 #. js-lingui-id: 1QfxQT
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Dismiss"
 msgstr "Avvis"
 
@@ -10737,7 +10720,7 @@ msgid "Don't import events marked as private"
 msgstr "Ikke importer hendelser merket som private"
 
 #. js-lingui-id: DPfwMq
-#: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 #: src/modules/inbox/components/InboxBulkActions.tsx
 #: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 #: src/modules/inbox/constants/InboxChannelNavigationItems.ts
@@ -10748,7 +10731,7 @@ msgid "Done"
 msgstr "Ferdig"
 
 #. js-lingui-id: y+f/uY
-#: src/modules/ai/components/AiChatThreadActivityTime.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadActivityTime.tsx
 msgid "Done {doneTime}"
 msgstr "Ferdig {doneTime}"
 
@@ -10792,7 +10775,7 @@ msgid "Download"
 msgstr "Last ned"
 
 #. js-lingui-id: qnTwse
-#: src/modules/ai/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Download {filename}"
 msgstr "Last ned {filename}"
 
@@ -10829,7 +10812,7 @@ msgstr "Last ned eksempelfil"
 
 #. js-lingui-id: eneWvv
 #: src/modules/activities/emails/components/EmailThreadPreview.tsx
-#: src/modules/ai/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 #: src/modules/object-core/workflows/constants/CoreWorkflowStatusFilterOptions.ts
 #: src/modules/object-core/workflows/versions/constants/CoreWorkflowVersionStatusLabels.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -10838,17 +10821,17 @@ msgid "Draft"
 msgstr "Utkast"
 
 #. js-lingui-id: 1qZ7C3
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Draft an email"
 msgstr "Skriv et e-postutkast"
 
 #. js-lingui-id: /b72oP
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Draft an email to this company about "
 msgstr "Skriv et e-postutkast til dette selskapet om "
 
 #. js-lingui-id: DbAw4C
-#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Draft email"
 msgstr "E-postutkast"
@@ -11087,8 +11070,8 @@ msgstr "eddy@gmail.com, @apple.com"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/profile/components/EmailField.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Edit"
 msgstr "Rediger"
@@ -11166,7 +11149,6 @@ msgstr "Rediger feltverdier"
 
 #. js-lingui-id: oKQ7ls
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
 msgid "Edit Fields"
 msgstr "Rediger felt"
@@ -11211,8 +11193,8 @@ msgid "Edit linked records"
 msgstr "Rediger tilknyttede poster"
 
 #. js-lingui-id: QjH+ZX
-#: src/modules/ai/components/AiChatMessage.tsx
-#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
 msgid "Edit message"
 msgstr "Rediger melding"
 
@@ -11254,11 +11236,6 @@ msgstr "Rediger profilinformasjon"
 msgid "Edit Record Table"
 msgstr "Rediger oppføringstabell"
 
-#. js-lingui-id: 6n2zpV
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Edit Records on All Objects"
-msgstr "Rediger oppføringer på alle objekter"
-
 #. js-lingui-id: 4QhQge
 #: src/modules/page-layout/widgets/field/components/FieldWidgetRelationEditAction.tsx
 msgid "Edit relation"
@@ -11270,8 +11247,8 @@ msgid "Edit rule"
 msgstr "Rediger regel"
 
 #. js-lingui-id: i5BTxr
-#: src/modules/ai/components/AiChatThreadLabelsField.tsx
-#: src/modules/ai/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "Edit shared labels"
 msgstr "Rediger delte etiketter"
 
@@ -11327,7 +11304,7 @@ msgid "Editor"
 msgstr "Redigerer"
 
 #. js-lingui-id: QyUT/d
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 msgid "Effort"
 msgstr "Innsats"
 
@@ -11614,8 +11591,8 @@ msgstr "Ansatte"
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
-#: src/modules/ai/components/AiChatRecordApprovalReview.tsx
-#: src/modules/ai/components/internal/AiChatToolCallApprovalCurrentValue.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCurrentValue.tsx
 #: src/modules/log-console/components/LogConsoleRecordChangeDetail.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx
@@ -11624,7 +11601,7 @@ msgid "Empty"
 msgstr "Tom"
 
 #. js-lingui-id: OMbipf
-#: src/modules/ai/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -11643,7 +11620,7 @@ msgid "Empty Array"
 msgstr "Tom Array"
 
 #. js-lingui-id: 3hSGoJ
-#: src/modules/ai/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -11746,7 +11723,7 @@ msgid "End date must be after start date."
 msgstr "Sluttdato må være etter startdato."
 
 #. js-lingui-id: xus58/
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "End time must be after start time."
 msgstr "Sluttiden må være etter starttiden."
 
@@ -11883,7 +11860,7 @@ msgid "Enter a number"
 msgstr "Skriv inn et tall"
 
 #. js-lingui-id: LsUGyx
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Enter a start and end time."
 msgstr "Angi en start- og sluttid."
 
@@ -12544,6 +12521,11 @@ msgstr "hvert minutt"
 msgid "Every Monday"
 msgstr "Hver mandag"
 
+#. js-lingui-id: QU6LCC
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+msgid "Every object follows the all objects access."
+msgstr "Alle objekter følger tilgangsnivået for alle objekter."
+
 #. js-lingui-id: JsIvOW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Every object of this workspace as CSV files in one zip, kept for 1 day. Works for suspended workspaces."
@@ -12729,7 +12711,7 @@ msgid "Exit import flow"
 msgstr "Avslutt importflyt"
 
 #. js-lingui-id: 1A3EXy
-#: src/modules/ai/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -12863,12 +12845,12 @@ msgid "Expires in less than a day"
 msgstr "Utløper om mindre enn en dag"
 
 #. js-lingui-id: VJKLVq
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain this workflow"
 msgstr "Forklar denne arbeidsflyten"
 
 #. js-lingui-id: p8KUPY
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain what this workflow does, step by step."
 msgstr "Forklar hva denne arbeidsflyten gjør, trinn for trinn."
 
@@ -12981,9 +12963,9 @@ msgstr "Ansikt"
 
 #. js-lingui-id: 7Bj3x9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
-#: src/modules/ai/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai/components/CodeExecutionDisplay.tsx
-#: src/modules/ai/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
@@ -13229,7 +13211,7 @@ msgid "Failed to generate backup codes."
 msgstr "Kunne ikke generere reservekoder."
 
 #. js-lingui-id: Ukrbw5
-#: src/modules/ai/components/AiChatErrorMessage.tsx
+#: src/modules/ai-chat/components/AiChatErrorMessage.tsx
 msgid "Failed to get response"
 msgstr "Kunne ikke få svar"
 
@@ -13261,7 +13243,7 @@ msgid "Failed to link the related records to this event"
 msgstr "Kunne ikke koble de relaterte oppføringene til denne hendelsen"
 
 #. js-lingui-id: XC1d54
-#: src/modules/ai/components/AiChatAgentAuthorResolver.tsx
+#: src/modules/ai-chat/messages/components/AiChatAgentAuthorResolver.tsx
 msgid "Failed to load agent details."
 msgstr "Kunne ikke laste inn agentdetaljer."
 
@@ -13568,7 +13550,7 @@ msgid "Failed to upload file \"{fileNameForError}\": {errorMessage}"
 msgstr "Kunne ikke laste opp filen \"{fileNameForError}\": {errorMessage}"
 
 #. js-lingui-id: cQPyHI
-#: src/modules/ai/hooks/useAiChatFileUpload.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatFileUpload.ts
 msgid "Failed to upload file: {fileName}"
 msgstr "Kunne ikke laste opp fil: {fileName}"
 
@@ -13646,7 +13628,7 @@ msgid "Features active until"
 msgstr "Funksjoner aktive til"
 
 #. js-lingui-id: YirHq7
-#: src/modules/ai/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 msgid "Feedback"
 msgstr "Tilbakemelding"
@@ -13786,6 +13768,11 @@ msgstr "Felter"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
 msgid "Fields (Optional)"
 msgstr "Felt (valgfritt)"
+
+#. js-lingui-id: fiU2kl
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Fields and rule"
+msgstr "Felt og regel"
 
 #. js-lingui-id: Tnz22x
 #: src/modules/object-record/record-merge/components/MergePrioritySettings.tsx
@@ -14004,12 +13991,12 @@ msgid "Filter opt-outs"
 msgstr "Filtrer reservasjoner"
 
 #. js-lingui-id: FG3LyE
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Filter this view"
 msgstr "Filtrer denne visningen"
 
 #. js-lingui-id: xitJ93
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Filter this view to only show "
 msgstr "Filtrer denne visningen slik at den bare viser "
 
@@ -14071,11 +14058,6 @@ msgstr "Fullfør redigeringen av oppsettet for å åpne Innboks"
 msgid "Finish editing the layout to open Settings"
 msgstr "Fullfør redigeringen av oppsettet for å åpne Innstillinger"
 
-#. js-lingui-id: 1yKuEJ
-#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
-msgid "Finish editing the layout to open this tab"
-msgstr "Fullfør redigeringen av oppsettet for å åpne denne fanen"
-
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Finish flow with errors"
@@ -14092,7 +14074,7 @@ msgid "Finish your setup"
 msgstr "Fullfør oppsettet ditt"
 
 #. js-lingui-id: 4dQFvz
-#: src/modules/ai/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 msgid "Finished"
 msgstr "Fullført"
 
@@ -14181,7 +14163,7 @@ msgid "Flow"
 msgstr "Flyt"
 
 #. js-lingui-id: abEdHK
-#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
+#: src/modules/ai-chat/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Flower"
 msgstr "Blomst"
 
@@ -14212,7 +14194,7 @@ msgid "Folders"
 msgstr "Mapper"
 
 #. js-lingui-id: 2z3uoE
-#: src/modules/ai/components/AiChatThreadFollowersField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
 msgid "Follow for me"
 msgstr "Følg på mine vegne"
 
@@ -14222,7 +14204,7 @@ msgid "Follow us on X"
 msgstr "Følg oss på X"
 
 #. js-lingui-id: y6sq5j
-#: src/modules/ai/components/AiChatThreadFollowersField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
 msgid "Following"
 msgstr "Følger"
 
@@ -14263,7 +14245,7 @@ msgid "Forgot your password?"
 msgstr "Glemt passordet ditt?"
 
 #. js-lingui-id: QRAWTO
-#: src/modules/ai/components/AiChatFormCardContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormCardContent.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/FormAction.ts
 msgid "Form"
@@ -14275,12 +14257,12 @@ msgid "Form Data"
 msgstr "Skjemadata"
 
 #. js-lingui-id: oiy48l
-#: src/modules/ai/components/AiChatFormStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Form skipped"
 msgstr "Skjema hoppet over"
 
 #. js-lingui-id: 6vS9Zq
-#: src/modules/ai/components/AiChatFormStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Form submitted"
 msgstr "Skjema sendt inn"
 
@@ -14307,8 +14289,8 @@ msgid "Formats"
 msgstr "Formater"
 
 #. js-lingui-id: CjVkbV
-#: src/modules/ai/hooks/useAiChatThreadDisplayLabel.ts
-#: src/modules/ai/utils/getAiChatSenderLabel.ts
+#: src/modules/ai-chat/threads/hooks/useAiChatThreadDisplayLabel.ts
+#: src/modules/ai-chat/utils/getAiChatSenderLabel.ts
 #: src/modules/inbox/components/InboxDirectMessageTitle.tsx
 #: src/modules/inbox/components/NavigationDrawerDirectMessageItem.tsx
 msgid "Former member"
@@ -14386,7 +14368,7 @@ msgid "French"
 msgstr "Fransk"
 
 #. js-lingui-id: 39y5bn
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Friday"
 msgstr "Fredag"
 
@@ -14574,7 +14556,7 @@ msgid "GDPR"
 msgstr "GDPR"
 
 #. js-lingui-id: WFxtuG
-#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
+#: src/modules/ai-chat/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Gem"
 msgstr "Edelstein"
 
@@ -14669,7 +14651,7 @@ msgid "Generate recovery code"
 msgstr "Generer gjenopprettingskode"
 
 #. js-lingui-id: wu9eMO
-#: src/modules/ai/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Generated Files"
 msgstr "Genererte filer"
 
@@ -14689,7 +14671,7 @@ msgid "Germany"
 msgstr "Tyskland"
 
 #. js-lingui-id: Et23WT
-#: src/modules/ai/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Get more credits"
 msgstr "Få flere kreditter"
@@ -15245,7 +15227,7 @@ msgid "Help improve Twenty"
 msgstr "Hjelp oss med å forbedre Twenty"
 
 #. js-lingui-id: tIb8bD
-#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
+#: src/modules/ai-chat/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Hexagon"
 msgstr "Sekskant"
 
@@ -15379,7 +15361,7 @@ msgid "Hire a partner to help you implement and customize Twenty."
 msgstr "Lei inn en partner for å hjelpe deg med å implementere og tilpasse Twenty."
 
 #. js-lingui-id: i0qMbr
-#: src/modules/ai/components/AiChatNewThreadPageActions.tsx
+#: src/modules/ai-chat/components/AiChatNewThreadPageActions.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 msgid "Home"
@@ -15418,7 +15400,7 @@ msgid "Hours between triggers"
 msgstr "Timer mellom utløsere"
 
 #. js-lingui-id: 3WYTm2
-#: src/modules/ai/components/suggested-prompts/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
 msgid "How can I help you?"
 msgstr "Hvordan kan jeg hjelpe deg?"
 
@@ -16080,7 +16062,7 @@ msgid "Info"
 msgstr "Info"
 
 #. js-lingui-id: nSkB8g
-#: src/modules/ai/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 msgid "Information"
 msgstr "Informasjon"
 
@@ -16100,7 +16082,7 @@ msgid "Initial values"
 msgstr "Opprinnelige verdier"
 
 #. js-lingui-id: XU5AOg
-#: src/modules/ai/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -16131,8 +16113,8 @@ msgid "Input settings"
 msgstr "Innstillinger for inndata"
 
 #. js-lingui-id: cjbZw+
-#: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Input tokens"
 msgstr "Inndata-tokens"
 
@@ -16319,7 +16301,7 @@ msgid "Integrations - Settings"
 msgstr "Integrasjoner - Innstillinger"
 
 #. js-lingui-id: Gzw2pq
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Intelligence"
 msgstr "Intelligens"
@@ -16987,7 +16969,7 @@ msgid "Label must contain at least one alphanumeric character"
 msgstr "Etikett må inneholde minst ett alfanumerisk tegn"
 
 #. js-lingui-id: h8DugX
-#: src/modules/ai/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "Labels"
 msgstr "Etiketter"
 
@@ -17188,7 +17170,7 @@ msgid "Last event"
 msgstr "Siste hendelse"
 
 #. js-lingui-id: c5zxSg
-#: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Last message"
 msgstr "Siste melding"
 
@@ -17276,7 +17258,7 @@ msgid "Last Updated: {0}"
 msgstr "Sist oppdatert: {0}"
 
 #. js-lingui-id: p9uaTd
-#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Later today"
 msgstr "Senere i dag"
 
@@ -17461,7 +17443,7 @@ msgid "Legend"
 msgstr ""
 
 #. js-lingui-id: xu7RPQ
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Less"
 msgstr "Mindre"
 
@@ -17899,7 +17881,7 @@ msgid "Loading chats..."
 msgstr "Laster chatter..."
 
 #. js-lingui-id: w81Nov
-#: src/modules/ai/components/AiChatEditorSection.tsx
+#: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
 msgid "Loading conversation…"
 msgstr "Laster inn samtale…"
 
@@ -17926,7 +17908,7 @@ msgid "Loading emails"
 msgstr "Laster e-poster"
 
 #. js-lingui-id: lwb3JB
-#: src/modules/ai/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
 msgid "Loading emojis"
 msgstr "Laster inn emojier"
 
@@ -17964,12 +17946,12 @@ msgid "Loading more..."
 msgstr "Laster inn mer..."
 
 #. js-lingui-id: nSgEqx
-#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Loading preview…"
 msgstr "Laster inn forhåndsvisning …"
 
 #. js-lingui-id: WepeNQ
-#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
 msgid "Loading records"
 msgstr "Laster inn poster"
 
@@ -17989,7 +17971,7 @@ msgid "Loading sharing settings"
 msgstr "Laster inn delingsinnstillinger"
 
 #. js-lingui-id: VeVIIk
-#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 msgid "Loading skills"
 msgstr "Laster ferdigheter"
 
@@ -18024,7 +18006,7 @@ msgid "Loading..."
 msgstr "Laster inn..."
 
 #. js-lingui-id: Pwqkdw
-#: src/modules/ai/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingLimitSpenderOptionList.tsx
 msgid "Loading…"
@@ -18063,7 +18045,7 @@ msgid "Lock diagram"
 msgstr "Lås diagram"
 
 #. js-lingui-id: B6ANJW
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "Loggfør en ny avtale (selskap, beløp, fase, forventet avslutning). Detaljer: "
 
@@ -18483,7 +18465,7 @@ msgid "Markdown"
 msgstr "Markdown"
 
 #. js-lingui-id: OybNQG
-#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "Markert som ferdig {eventTime}"
 
@@ -18688,7 +18670,7 @@ msgid "Medium section heading"
 msgstr ""
 
 #. js-lingui-id: OvoEq7
-#: src/modules/ai/components/AiChatThreadAvatar.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadAvatar.tsx
 #: src/modules/log-console/constants/LogConsolePageViewColumns.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -18724,7 +18706,6 @@ msgstr ""
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
@@ -18743,7 +18724,7 @@ msgid "Members & invitees"
 msgstr "Medlemmer og inviterte"
 
 #. js-lingui-id: pbIEgB
-#: src/modules/ai/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 msgid "Mentioned you"
 msgstr "Nevnte deg"
 
@@ -18760,18 +18741,18 @@ msgid "Menu item actions"
 msgstr "Handlinger for menyelement"
 
 #. js-lingui-id: UODtG8
-#: src/modules/ai/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 msgid "Merge"
 msgstr "Slå sammen"
 
 #. js-lingui-id: yDKct3
-#: src/modules/ai/components/__stories__/AiChatApprovalMergeReviewExample.tsx
+#: src/modules/ai-chat/tool-calls/components/__stories__/AiChatApprovalMergeReviewExample.tsx
 msgid "Merge {firstSourceName} and {secondSourceName}"
 msgstr "Slå sammen {firstSourceName} og {secondSourceName}"
 
 #. js-lingui-id: TTHfsp
-#: src/modules/ai/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "Merge all {pendingPairCount}"
 msgstr "Slå sammen alle {pendingPairCount}"
 
@@ -18781,7 +18762,7 @@ msgid "Merge cells"
 msgstr "Slå sammen celler"
 
 #. js-lingui-id: d2c8f+
-#: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 msgid "Merge preview"
 msgstr "Forhåndsvisning av sammenslåing"
@@ -18793,7 +18774,7 @@ msgid "Merge records"
 msgstr "Slå sammen oppføringer"
 
 #. js-lingui-id: PXTjHO
-#: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 msgid "Merge review tabs"
 msgstr "Faner for gjennomgang av sammenslåing"
 
@@ -18912,7 +18893,7 @@ msgid "Microphone access enabled"
 msgstr "Mikrofontilgang aktivert"
 
 #. js-lingui-id: P9IeiA
-#: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
+#: src/modules/ai-chat/dictation/utils/getDictationFailureMessage.ts
 msgid "Microphone access is blocked. Allow it in your browser settings to dictate."
 msgstr "Mikrofontilgang er blokkert. Tillat den i nettleserinnstillingene for å diktere."
 
@@ -19034,9 +19015,9 @@ msgid "Mode"
 msgstr "Modus"
 
 #. js-lingui-id: scu3wk
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierSlider.tsx
 #: src/modules/ai/components/AiModelPicker.tsx
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
-#: src/modules/ai/components/AiModelTierSlider.tsx
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
@@ -19072,7 +19053,7 @@ msgid "Model ID is required"
 msgstr "Modell-ID er påkrevd"
 
 #. js-lingui-id: E6zx5y
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 msgid "Model information"
 msgstr "Modellinformasjon"
 
@@ -19110,7 +19091,7 @@ msgid "Models for this provider. Toggle to enable or disable."
 msgstr "Modeller for denne tilbyderen. Veksle for å aktivere eller deaktivere."
 
 #. js-lingui-id: hty0d5
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Monday"
@@ -19151,7 +19132,7 @@ msgid "month"
 msgstr "måned"
 
 #. js-lingui-id: HajiZl
-#: src/modules/ai/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -19191,7 +19172,7 @@ msgid "months"
 msgstr ""
 
 #. js-lingui-id: 2FYpfJ
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
 msgid "More"
 msgstr "Mer"
@@ -19248,8 +19229,8 @@ msgid "More options"
 msgstr "Flere alternativer"
 
 #. js-lingui-id: G3/0PS
-#: src/modules/ai/components/AiChatMessageReactionPickerContent.tsx
-#: src/modules/ai/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
 msgid "More reactions"
 msgstr "Flere reaksjoner"
 
@@ -19277,6 +19258,7 @@ msgstr "For det meste tomt"
 
 #. js-lingui-id: 3Ib6FN
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 msgid "Move down"
 msgstr "Flytt ned"
 
@@ -19293,6 +19275,7 @@ msgstr "Flytt chattene til"
 
 #. js-lingui-id: iSLA/r
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
@@ -19301,6 +19284,7 @@ msgstr "Flytt til venstre"
 
 #. js-lingui-id: Ubl2by
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
@@ -19342,6 +19326,7 @@ msgstr "Bytt til den nye {planLabel}-planen?"
 
 #. js-lingui-id: QyioBP
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 msgid "Move up"
 msgstr "Flytt opp"
 
@@ -19619,7 +19604,7 @@ msgid "Needs a Select field"
 msgstr "Trenger et nedtrekksfelt"
 
 #. js-lingui-id: k3/EHQ
-#: src/modules/ai/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Needs input"
 msgstr "Trenger inndata"
@@ -19664,7 +19649,7 @@ msgid "Never, by Twenty or providers"
 msgstr "Aldri, av Twenty eller leverandører"
 
 #. js-lingui-id: isRobC
-#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerNewForm.tsx
@@ -19731,7 +19716,7 @@ msgid "New channel"
 msgstr "Ny kanal"
 
 #. js-lingui-id: hIQkLb
-#: src/modules/ai/components/AiChatPageHeader.tsx
+#: src/modules/ai-chat/components/AiChatPageHeader.tsx
 #: src/modules/inbox/components/InboxListHeader.tsx
 #: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
@@ -19863,8 +19848,13 @@ msgstr "Ny grense for overføring"
 msgid "New rule"
 msgstr "Ny regel"
 
+#. js-lingui-id: SagCAA
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "New section"
+msgstr "Ny seksjon"
+
 #. js-lingui-id: MdpSC1
-#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 msgid "New skill"
 msgstr "Ny ferdighet"
 
@@ -19886,6 +19876,7 @@ msgid "New SSO provider"
 msgstr "Ny SSO-leverandør"
 
 #. js-lingui-id: 3YvS+c
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
 msgid "New tab"
 msgstr "Ny fane"
@@ -19953,7 +19944,7 @@ msgid "Next"
 msgstr "Neste"
 
 #. js-lingui-id: IbfvuD
-#: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Next approval"
 msgstr "Neste godkjenning"
 
@@ -19988,13 +19979,13 @@ msgid "Next iteration"
 msgstr "Neste iterasjon"
 
 #. js-lingui-id: g8JmSC
-#: src/modules/ai/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 msgid "Next month"
 msgstr "Neste måned"
 
 #. js-lingui-id: DnlugB
-#: src/modules/ai/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "Next pair"
 msgstr "Neste par"
 
@@ -20004,7 +19995,7 @@ msgid "Next period"
 msgstr "Neste periode"
 
 #. js-lingui-id: jdU2p1
-#: src/modules/ai/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 msgid "Next question"
 msgstr "Neste spørsmål"
 
@@ -20014,7 +20005,7 @@ msgid "Next record"
 msgstr "Neste post"
 
 #. js-lingui-id: +VXdSO
-#: src/modules/ai/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
 msgid "Next request"
 msgstr "Neste forespørsel"
 
@@ -20035,12 +20026,12 @@ msgid "Next Step"
 msgstr "Neste steg"
 
 #. js-lingui-id: IT903p
-#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Next week"
 msgstr "Neste uke"
 
 #. js-lingui-id: 97rmcs
-#: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Next: {nextTitles}"
 msgstr "Neste: {nextTitles}"
 
@@ -20052,8 +20043,6 @@ msgstr "Niende"
 #. js-lingui-id: 1UzENP
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -20085,11 +20074,12 @@ msgstr "Ingen {objectLabelSingular} funnet"
 
 #. js-lingui-id: oPoLg+
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/utils/getObjectOperationsSummary.ts
 msgid "No access"
 msgstr "Ingen tilgang"
 
 #. js-lingui-id: IeiB4r
-#: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "No actions to review"
 msgstr "Ingen handlinger å gjennomgå"
 
@@ -20149,8 +20139,8 @@ msgid "No AI model on this workspace meets these settings."
 msgstr "Ingen KI-modell i dette arbeidsområdet oppfyller disse innstillingene."
 
 #. js-lingui-id: iH1iv+
-#: src/modules/ai/components/AiChatEditorSection.tsx
-#: src/modules/ai/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
+#: src/modules/ai-chat/hooks/useAiChat.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "Ingen AI-leverandør er konfigurert på denne instansen."
@@ -20212,7 +20202,7 @@ msgid "No available tabs"
 msgstr "Ingen tilgjengelige faner"
 
 #. js-lingui-id: vmUMKh
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "No available times. Choose another date."
 msgstr "Ingen tilgjengelige tidspunkter. Velg en annen dato."
 
@@ -20228,12 +20218,12 @@ msgid "No body"
 msgstr "Ingen body"
 
 #. js-lingui-id: 15bIDe
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "No calendars available."
 msgstr "Ingen kalendere tilgjengelig."
 
 #. js-lingui-id: +Rmf7F
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "No calendars match your search."
 msgstr "Ingen kalendere samsvarer med søket ditt."
 
@@ -20411,7 +20401,7 @@ msgid "No email threads found"
 msgstr "Ingen e-posttråder funnet"
 
 #. js-lingui-id: quWMra
-#: src/modules/ai/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
 msgid "No emoji found"
 msgstr "Ingen emoji funnet"
 
@@ -20537,7 +20527,7 @@ msgid "No jobs were retried{errorDetails}"
 msgstr "Ingen jobber ble forsøkt på nytt{errorDetails}"
 
 #. js-lingui-id: VkcRtM
-#: src/modules/ai/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "No labels available"
 msgstr "Ingen etiketter tilgjengelig"
 
@@ -20552,7 +20542,7 @@ msgid "No latest version found"
 msgstr "Ingen nyeste versjon funnet"
 
 #. js-lingui-id: qtoOYG
-#: src/modules/ai/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 msgid "No limit"
 msgstr "Ingen grense"
@@ -20634,7 +20624,7 @@ msgid "No metrics data available"
 msgstr "Ingen metrikkdata tilgjengelig"
 
 #. js-lingui-id: RUBcco
-#: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
+#: src/modules/ai-chat/dictation/utils/getDictationFailureMessage.ts
 msgid "No microphone is available. Connect one and try again."
 msgstr "Ingen mikrofon er tilgjengelig. Koble til en og prøv igjen."
 
@@ -20652,6 +20642,11 @@ msgstr "Ingen modell er tilgjengelig for denne modusen."
 #: src/modules/activities/notes/components/NotesCardContent.tsx
 msgid "No notes"
 msgstr "Ingen notater"
+
+#. js-lingui-id: arel2K
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
+msgid "No objects found"
+msgstr "Ingen objekter funnet"
 
 #. js-lingui-id: fq3TKy
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
@@ -20676,7 +20671,7 @@ msgid "No options found"
 msgstr "Ingen alternativer funnet"
 
 #. js-lingui-id: XRc1G9
-#: src/modules/ai/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "No output"
@@ -20703,11 +20698,6 @@ msgstr "Ingen parametere"
 msgid "No payment method found. Please update your billing details."
 msgstr "Ingen betalingsmetode funnet. Vennligst oppdater faktureringsinformasjonen din."
 
-#. js-lingui-id: kSCxfd
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "No permissions have been set for individual objects."
-msgstr "Ingen tillatelser er satt for individuelle objekter."
-
 #. js-lingui-id: pRxlf6
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "No provenance attestation was found for this package. Publish it from GitHub Actions with npm trusted publishing, then try claiming again."
@@ -20719,7 +20709,7 @@ msgid "No rate limit hit in this period"
 msgstr "Ingen frekvensgrense nådd i denne perioden"
 
 #. js-lingui-id: UW90md
-#: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientPicker.tsx
 msgid "No recipients found"
 msgstr "Ingen mottakere funnet"
 
@@ -20752,7 +20742,7 @@ msgid "No record selected"
 msgstr "Ingen oppføring valgt"
 
 #. js-lingui-id: EqGTpW
-#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
 #: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItems.tsx
@@ -20766,7 +20756,7 @@ msgid "No records matching the filter criteria were found."
 msgstr "Fant ingen oppføringer som samsvarer med filterkriteriene."
 
 #. js-lingui-id: To7xRG
-#: src/modules/ai/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "No records to review"
 msgstr "Ingen oppføringer å gjennomgå"
 
@@ -20900,7 +20890,7 @@ msgid "No SingleSignOnService with HTTP-Redirect or HTTP-POST binding was found"
 msgstr "Ingen SingleSignOnService med HTTP-Redirect- eller HTTP-POST-binding ble funnet"
 
 #. js-lingui-id: b5hW1u
-#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 msgid "No skills found"
 msgstr "Ingen ferdigheter funnet"
 
@@ -20936,7 +20926,7 @@ msgid "No test result yet"
 msgstr "Ingen testresultater ennå"
 
 #. js-lingui-id: hn2q8h
-#: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
+#: src/modules/ai-chat/messages/components/AiChatQuotedMessagePreview.tsx
 msgid "No text content"
 msgstr "Ikke noe tekstinnhold"
 
@@ -21138,8 +21128,8 @@ msgid "Node settings"
 msgstr "Nodeinnstillinger"
 
 #. js-lingui-id: EdQY6l
-#: src/modules/ai/components/AiChatThreadFollowersField.tsx
-#: src/modules/ai/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
@@ -21191,12 +21181,12 @@ msgid "Not all columns matched"
 msgstr "Ikke alle kolonner er matchet"
 
 #. js-lingui-id: OJx3wK
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
-#: src/modules/ai/components/internal/AiChatUsageMetricRow.tsx
-#: src/modules/ai/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatUsageMetricRow.tsx
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 msgid "Not available"
 msgstr "Ikke tilgjengelig"
 
@@ -21249,7 +21239,7 @@ msgid "Not listed"
 msgstr "Ikke oppført"
 
 #. js-lingui-id: zLXWou
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 msgid "Not measured at this effort yet, so these are the base model's readings."
 msgstr "Ennå ikke målt ved denne innsatsen, så dette er basismodellens målinger."
 
@@ -21284,7 +21274,7 @@ msgid "Not Recorded"
 msgstr "Ikke tatt opp"
 
 #. js-lingui-id: gnnpkq
-#: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Not run: the record changed since it was proposed"
 msgstr "Ikke kjørt: oppføringen har endret seg siden den ble foreslått"
 
@@ -21332,7 +21322,7 @@ msgid "Not synced"
 msgstr "Ikke synkronisert"
 
 #. js-lingui-id: 5xvHen
-#: src/modules/ai/components/AiChatMessageReceipt.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReceipt.tsx
 msgid "Not yet"
 msgstr "Ikke ennå"
 
@@ -21546,11 +21536,6 @@ msgstr "Objekt ikke delt"
 msgid "object permission"
 msgstr "objektrettighet"
 
-#. js-lingui-id: ecLxgy
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
-msgid "Object permission options"
-msgstr "Alternativer for objekttillatelser"
-
 #. js-lingui-id: HN7O/H
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "Object settings"
@@ -21567,7 +21552,6 @@ msgid "Object unique fields"
 msgstr "Objekt unike felt"
 
 #. js-lingui-id: YJgmMZ
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 msgid "Object-Level"
 msgstr "Objektnivå"
@@ -21619,7 +21603,7 @@ msgid "Official app"
 msgstr "Offisiell app"
 
 #. js-lingui-id: 6Aih4U
-#: src/modules/ai/components/AiChatMemberPresence.tsx
+#: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Offline"
 msgstr "Frakoblet"
 
@@ -21761,7 +21745,7 @@ msgid "One-to-one conversations between people"
 msgstr "Én-til-én-samtaler mellom personer"
 
 #. js-lingui-id: oXOSPE
-#: src/modules/ai/components/AiChatMemberPresence.tsx
+#: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Online"
 msgstr "Pålogget"
 
@@ -21873,7 +21857,7 @@ msgid "Only you will be able to see your emails and events"
 msgstr "Bare du vil kunne se e-postene og hendelsene dine"
 
 #. js-lingui-id: 1TNIig
-#: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 #: src/modules/inbox/constants/InboxChannelNavigationItems.ts
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
@@ -22295,17 +22279,17 @@ msgid "Organization license activated successfully"
 msgstr "Organisasjonslisensen ble aktivert."
 
 #. js-lingui-id: G5RhpL
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Organizer"
 msgstr "Arrangør"
 
 #. js-lingui-id: vryTU3
-#: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
+#: src/modules/ai-chat/messages/components/AiChatQuotedMessagePreview.tsx
 msgid "Original message unavailable"
 msgstr "Opprinnelig melding er ikke tilgjengelig"
 
 #. js-lingui-id: /IX/7x
-#: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionOtherOption.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
@@ -22401,7 +22385,7 @@ msgid "Outcome"
 msgstr "Resultat"
 
 #. js-lingui-id: nCQvd7
-#: src/modules/ai/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 msgid "Outcome unknown"
 msgstr "Ukjent utfall"
 
@@ -22411,10 +22395,10 @@ msgid "Outlook"
 msgstr "Outlook"
 
 #. js-lingui-id: gh06VD
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
-#: src/modules/ai/components/CodeExecutionDisplay.tsx
-#: src/modules/ai/components/TerminalOutput.tsx
-#: src/modules/ai/components/ThinkingToolStepRow.tsx
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
@@ -22437,13 +22421,13 @@ msgid "Output saved"
 msgstr "Utdata lagret"
 
 #. js-lingui-id: iFE7ti
-#: src/modules/ai/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 msgid "Output stream"
 msgstr "Utdatastrøm"
 
 #. js-lingui-id: i1+tKD
-#: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Output tokens"
 msgstr "Utdata-tokens"
 
@@ -22457,6 +22441,11 @@ msgstr "Overstyring"
 #: src/modules/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton.tsx
 msgid "Override Draft"
 msgstr "Erstatt utkast"
+
+#. js-lingui-id: sJNF3W
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+msgid "Overrides"
+msgstr "Overstyringer"
 
 #. js-lingui-id: 6/dCYd
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -22775,7 +22764,7 @@ msgid "PDF"
 msgstr "PDF"
 
 #. js-lingui-id: UbRKMZ
-#: src/modules/ai/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 #: src/modules/settings/domains/components/SettingsPublicDomainsListCard.tsx
 #: src/modules/settings/emailing-domains/utils/getEmailingDomainStatusDisplay.ts
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -22783,7 +22772,7 @@ msgid "Pending"
 msgstr "Avventer"
 
 #. js-lingui-id: 2B0V9T
-#: src/modules/ai/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
 msgid "Pending requests"
 msgstr "Ventende forespørsler"
 
@@ -22949,7 +22938,7 @@ msgid "Personal AI usage"
 msgstr "Personlig AI-bruk"
 
 #. js-lingui-id: /SoAQl
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Personal usage"
 msgstr "Personlig bruk"
 
@@ -22990,7 +22979,7 @@ msgid "Pick a color"
 msgstr "Velg en farge"
 
 #. js-lingui-id: B8mlc2
-#: src/modules/ai/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 msgid "Pick a date"
 msgstr "Velg en dato"
 
@@ -23068,7 +23057,7 @@ msgid "Pie Chart"
 msgstr "Sirkeldiagram"
 
 #. js-lingui-id: qoLYkj
-#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
+#: src/modules/ai-chat/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Pill"
 msgstr "Pille"
 
@@ -23331,7 +23320,7 @@ msgid "Prefix of the tool names agents see. Cannot be changed later."
 msgstr "Prefiks for verktøynavnene agentene ser. Kan ikke endres senere."
 
 #. js-lingui-id: IHoyJS
-#: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Preparing an action to approve..."
 msgstr "Forbereder en handling for godkjenning..."
 
@@ -23377,7 +23366,7 @@ msgid "Preview of the page recipients see when they unsubscribe"
 msgstr "Forhåndsvisning av siden som mottakerne ser når de avslutter abonnementet"
 
 #. js-lingui-id: DHhJ7s
-#: src/modules/ai/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 #: src/modules/page-layout/widgets/graph/components/GraphWidgetLegend.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/settings/components/layout/SettingsWizardStepBar.tsx
@@ -23396,7 +23385,7 @@ msgid "Previous 7 days"
 msgstr "Siste 7 dager"
 
 #. js-lingui-id: ap92qV
-#: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Previous approval"
 msgstr "Forrige godkjenning"
 
@@ -23416,13 +23405,13 @@ msgid "Previous iteration"
 msgstr "Forrige iterasjon"
 
 #. js-lingui-id: 1xwZj/
-#: src/modules/ai/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 msgid "Previous month"
 msgstr "Forrige måned"
 
 #. js-lingui-id: 7BDoFf
-#: src/modules/ai/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "Previous pair"
 msgstr "Forrige par"
 
@@ -23437,7 +23426,7 @@ msgid "Previous record"
 msgstr "Forrige oppføring"
 
 #. js-lingui-id: ToM1t/
-#: src/modules/ai/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
 msgid "Previous request"
 msgstr "Forrige forespørsel"
 
@@ -23452,7 +23441,7 @@ msgid "Previous step"
 msgstr "Forrige steg"
 
 #. js-lingui-id: rLvhNs
-#: src/modules/ai/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Previous value:"
 msgstr "Forrige verdi:"
 
@@ -23645,7 +23634,7 @@ msgid "Property value"
 msgstr "Egenskapsverdi"
 
 #. js-lingui-id: nHD0EI
-#: src/modules/ai/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Proposed value:"
 msgstr "Foreslått verdi:"
 
@@ -23724,7 +23713,7 @@ msgid "Purple"
 msgstr "Lilla"
 
 #. js-lingui-id: GUpZQM
-#: src/modules/ai/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Python Code Execution"
 msgstr "Kjøring av Python-kode"
 
@@ -23761,18 +23750,18 @@ msgid "Question"
 msgstr "Spørsmål"
 
 #. js-lingui-id: pA8K5M
-#: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 msgid "Question skipped"
 msgstr "Spørsmål hoppet over"
 
 #. js-lingui-id: enzGAL
-#: src/modules/ai/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
 msgid "Questions"
 msgstr "Spørsmål"
 
 #. js-lingui-id: Wzbxi7
-#: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 msgid "Questions skipped"
 msgstr "Spørsmål hoppet over"
 
@@ -23792,12 +23781,12 @@ msgid "Queue: {queueName}"
 msgstr "Kø: {queueName}"
 
 #. js-lingui-id: 8wu9lr
-#: src/modules/ai/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 msgid "Queued"
 msgstr "I kø"
 
 #. js-lingui-id: Eldtfl
-#: src/modules/ai/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 msgid "Queued messages"
 msgstr "Meldinger i kø"
 
@@ -23921,12 +23910,12 @@ msgid "Read and write data model configuration"
 msgstr "Les og skriv datamodellkonfigurasjon"
 
 #. js-lingui-id: RXivwU
-#: src/modules/ai/components/AiChatMessageReceipt.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReceipt.tsx
 msgid "Read by {readerCount} of {recipientCount}"
 msgstr "Lest av {readerCount} av {recipientCount}"
 
 #. js-lingui-id: bgP1Ip
-#: src/modules/ai/components/AiChatMessageReceipt.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReceipt.tsx
 msgid "Read by {readerNames}"
 msgstr "Lest av {readerNames}"
 
@@ -23992,7 +23981,7 @@ msgid "Read-only {entityTypeLabel} definition shipped by this app"
 msgstr "Skrivebeskyttet {entityTypeLabel}-definisjon levert av denne appen"
 
 #. js-lingui-id: EqZQdT
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Read-only calendar"
 msgstr "Skrivebeskyttet kalender"
 
@@ -24093,7 +24082,7 @@ msgid "Recipient count unavailable"
 msgstr "Antall mottakere er ikke tilgjengelig"
 
 #. js-lingui-id: ar7XM1
-#: src/modules/ai/hooks/useWarnAboutParticipantMentionsNotAdded.ts
+#: src/modules/ai-chat/composer/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "Recipient delivery could not be verified. Check the chat participants."
 msgstr "Det kunne ikke bekreftes at mottakeren mottok meldingen. Sjekk chatdeltakerne."
 
@@ -24104,7 +24093,7 @@ msgstr "recipient@example.com"
 
 #. js-lingui-id: yPrbsy
 #: src/modules/activities/emails/components/ChatThreadNewMessage.tsx
-#: src/modules/ai/components/AiChatNewThreadRecipientField.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientField.tsx
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Recipients"
@@ -24116,8 +24105,8 @@ msgid "Recipients are recounted at send time. You can cancel until then."
 msgstr "Mottakerne telles på nytt ved sending. Du kan avbryte frem til da."
 
 #. js-lingui-id: WEYdDv
-#: src/modules/ai/components/AiChatQuestionCard.tsx
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
 msgid "Recommended"
 msgstr "Anbefalt"
@@ -24273,7 +24262,7 @@ msgid "Record page"
 msgstr "Oppføringsside"
 
 #. js-lingui-id: J5b8Hz
-#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Record page widget"
 msgstr "Widget for oppføringsside"
 
@@ -24321,7 +24310,7 @@ msgid "Record-level filter"
 msgstr "Filter på oppføringsnivå"
 
 #. js-lingui-id: jdetKb
-#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "Record:"
 msgstr "Oppføring:"
 
@@ -24353,15 +24342,14 @@ msgid "records"
 msgstr "poster"
 
 #. js-lingui-id: PWlTvh
-#: src/modules/ai/components/AiChatAddMenu.tsx
-#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItems.tsx
 #: src/modules/settings/applications/hooks/useApplicationContentItemDisplay.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 #: src/modules/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema.ts
@@ -24373,6 +24361,11 @@ msgstr "Poster"
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 msgid "Records by date"
 msgstr "Oppføringer etter dato"
+
+#. js-lingui-id: b/xmDA
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Records matching the rule"
+msgstr "Oppføringer som samsvarer med regelen"
 
 #. js-lingui-id: CjlKOu
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -24433,7 +24426,7 @@ msgid "Redirection URI"
 msgstr "Omdirigerings-URI"
 
 #. js-lingui-id: lCF0wC
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 #: src/modules/log-console/components/LogConsoleResults.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -24441,7 +24434,7 @@ msgid "Refresh"
 msgstr "Oppdater"
 
 #. js-lingui-id: IevXlZ
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Refresh availability for this date."
 msgstr "Oppdater tilgjengeligheten for denne datoen."
 
@@ -24510,13 +24503,13 @@ msgid "Registered with Twenty as the official {appName}"
 msgstr "Registrert med Twenty som den offisielle {appName}"
 
 #. js-lingui-id: 1t/NnN
-#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
-#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Reject"
 msgstr "Avvis"
 
 #. js-lingui-id: ekCRTP
-#: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Rejected"
 msgstr "Avvist"
 
@@ -24668,7 +24661,7 @@ msgid "Remove {0} navigation menu items?"
 msgstr "Fjern {0} navigasjonsmenyelementer?"
 
 #. js-lingui-id: boQErO
-#: src/modules/ai/components/internal/AiChatFilePreview.tsx
+#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "Fjern {displayName}"
 
@@ -24813,6 +24806,11 @@ msgstr "Fjern alternativ"
 msgid "Remove output field"
 msgstr "Fjern utdatafelt"
 
+#. js-lingui-id: c8Kx/b
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Remove override"
+msgstr "Fjern overstyring"
+
 #. js-lingui-id: cp/fZQ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsFlagRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsPermissionRow.tsx
@@ -24831,12 +24829,12 @@ msgid "Remove provider \"{0}\""
 msgstr "Fjern tilbyder \"{0}\""
 
 #. js-lingui-id: +WeuHF
-#: src/modules/ai/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 msgid "Remove queued message"
 msgstr "Fjern melding i kø"
 
 #. js-lingui-id: 6nFc2C
-#: src/modules/ai/components/AiChatComposerQuotePreview.tsx
+#: src/modules/ai-chat/composer/components/AiChatComposerQuotePreview.tsx
 msgid "Remove quote"
 msgstr "Fjern sitat"
 
@@ -24847,7 +24845,6 @@ msgstr "Fjern omdirigerings-URI"
 
 #. js-lingui-id: SjxzXf
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
 msgid "Remove rule"
 msgstr "Fjern regel"
 
@@ -24860,6 +24857,11 @@ msgstr "Fjern regelgruppe"
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Remove searchable field"
 msgstr "Fjern søkbart felt"
+
+#. js-lingui-id: uXfxoE
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Remove section"
+msgstr "Fjern seksjon"
 
 #. js-lingui-id: jCt40X
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -24882,7 +24884,7 @@ msgid "Remove this provider and disconnect all its models"
 msgstr "Fjern denne tilbyderen og koble fra alle tilknyttede modeller"
 
 #. js-lingui-id: XrlYG5
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Remove unavailable calendars"
 msgstr "Fjern utilgjengelige kalendere"
 
@@ -24922,7 +24924,7 @@ msgid "Rename group"
 msgstr "Gi gruppen nytt navn"
 
 #. js-lingui-id: cwObXL
-#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Rendering preview…"
 msgstr "Gjengir forhåndsvisning …"
 
@@ -24978,8 +24980,8 @@ msgid "Replit install links require an HTTPS MCP URL."
 msgstr "Replit-installasjonslenker krever en HTTPS MCP-URL."
 
 #. js-lingui-id: ImOQa9
-#: src/modules/ai/components/AiChatMessage.tsx
-#: src/modules/ai/components/AiChatThreadRequestActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadRequestActions.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
@@ -24987,7 +24989,7 @@ msgid "Reply"
 msgstr "Svar"
 
 #. js-lingui-id: VKsaTi
-#: src/modules/ai/components/AiChatComposerQuotePreview.tsx
+#: src/modules/ai-chat/composer/components/AiChatComposerQuotePreview.tsx
 msgid "Replying to"
 msgstr "Svarer til"
 
@@ -25007,7 +25009,7 @@ msgid "Request"
 msgstr "Forespørsel"
 
 #. js-lingui-id: tZ7Xci
-#: src/modules/ai/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
 msgid "Request {requestNumber} of {requestCount}"
 msgstr "Forespørsel {requestNumber} av {requestCount}"
 
@@ -25048,12 +25050,12 @@ msgid "Reschedule Campaign"
 msgstr "Planlegg kampanje på nytt"
 
 #. js-lingui-id: Vae65A
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Research this company"
 msgstr "Undersøk dette selskapet"
 
 #. js-lingui-id: ycHL5x
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Research this company and summarize what they do, how big they are and any recent news."
 msgstr "Undersøk dette selskapet og oppsummer hva de gjør, hvor store de er og eventuelle nylige nyheter."
 
@@ -25094,7 +25096,7 @@ msgid "Reset all overrides on this layout to return it to the app default"
 msgstr "Tilbakestill alle overstyringer i dette oppsettet for å gå tilbake til appens standardoppsett"
 
 #. js-lingui-id: n8HLXo
-#: src/modules/ai/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 msgid "Reset in {daysUntilReset, plural, one {# day} other {# days}} ({percentage}%)"
 msgstr "Tilbakestilles om {daysUntilReset, plural, one {# dag} other {# dager}} ({percentage}%)"
 
@@ -25192,7 +25194,7 @@ msgid "Resources"
 msgstr "Ressurser"
 
 #. js-lingui-id: qrqIfV
-#: src/modules/ai/components/AiChatThreadRequestActions.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadRequestActions.tsx
 msgid "Respond to request"
 msgstr "Svar på forespørsel"
 
@@ -25288,7 +25290,7 @@ msgstr "Loggoppbevaring"
 
 #. js-lingui-id: 6gRgw8
 #: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
-#: src/modules/ai/components/AiChatErrorMessage.tsx
+#: src/modules/ai-chat/components/AiChatErrorMessage.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
@@ -25483,7 +25485,6 @@ msgstr "Rolle oppdatert vellykket"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Roles"
 msgstr "Roller"
@@ -25642,7 +25643,7 @@ msgid "Run tool"
 msgstr "Kjør verktøy"
 
 #. js-lingui-id: RiQMUh
-#: src/modules/ai/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
 msgid "Running"
@@ -25669,8 +25670,8 @@ msgid "Running the tool..."
 msgstr "Kjører verktøyet..."
 
 #. js-lingui-id: LTC198
-#: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
-#: src/modules/ai/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Running..."
 msgstr "Kjører..."
 
@@ -25759,7 +25760,7 @@ msgid "SAML/OIDC"
 msgstr "SAML/OIDC"
 
 #. js-lingui-id: b/zjTD
-#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Sample data"
 msgstr "Eksempeldata"
 
@@ -25774,7 +25775,7 @@ msgid "Satisfied"
 msgstr "Oppfylt"
 
 #. js-lingui-id: +5kO8P
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Saturday"
@@ -25805,7 +25806,7 @@ msgid "Save Agent"
 msgstr "Lagre agent"
 
 #. js-lingui-id: 8tM8+a
-#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 msgid "Save as draft"
 msgstr "Lagre som utkast"
 
@@ -25846,7 +25847,7 @@ msgid "Saved tables, boards and calendars"
 msgstr "Lagrede tabeller, tavler og kalendere"
 
 #. js-lingui-id: A0/0NU
-#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Saved to Workspace app"
 msgstr "Lagret i Workspace-appen"
 
@@ -25899,7 +25900,7 @@ msgid "Scheduled maintenance: {startFormatted} — {endFormatted}"
 msgstr "Planlagt vedlikehold: {startFormatted} — {endFormatted}"
 
 #. js-lingui-id: SxCO0O
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Scheduling preferences"
 msgstr "Planleggingsinnstillinger"
 
@@ -25932,12 +25933,12 @@ msgid "Score"
 msgstr "Poengsum"
 
 #. js-lingui-id: oOi11l
-#: src/modules/ai/components/AiChatScrollToBottomButton.tsx
+#: src/modules/ai-chat/messages/components/AiChatScrollToBottomButton.tsx
 msgid "Scroll to bottom"
 msgstr "Rull til bunnen"
 
 #. js-lingui-id: SIucTL
-#: src/modules/ai/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Scrollable record review"
 msgstr "Rullbar gjennomgang av oppføringer"
 
@@ -26088,11 +26089,6 @@ msgstr "Søk etter en tildelt {roleTargetDisplayName}..."
 msgid "Search an index..."
 msgstr "Søk i et indeks..."
 
-#. js-lingui-id: pFe0YS
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "Search an object"
-msgstr "Søk etter et objekt"
-
 #. js-lingui-id: S+MGem
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownAnyFieldSearchInput.tsx
 #: src/modules/views/components/AnyFieldSearchDropdownContentMenuHeader.tsx
@@ -26108,7 +26104,7 @@ msgid "Search API keys"
 msgstr "Søk etter API-nøkler"
 
 #. js-lingui-id: fLbp9m
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Search availability calendars"
 msgstr "Søk etter tilgjengelighetskalendere"
 
@@ -26133,7 +26129,7 @@ msgid "Search by workspace name, subdomain, or ID..."
 msgstr "Søk etter navn på arbeidsområde, underdomene eller ID..."
 
 #. js-lingui-id: R/iIxI
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Search calendars"
 msgstr "Søk etter kalendere"
 
@@ -26175,7 +26171,7 @@ msgid "Search email threads"
 msgstr "Søk etter e-posttråder"
 
 #. js-lingui-id: Sb71rQ
-#: src/modules/ai/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
 msgid "Search emojis"
 msgstr "Søk etter emojier"
 
@@ -26259,6 +26255,8 @@ msgstr "Søk etter medlemmer"
 
 #. js-lingui-id: two5rl
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableDataSourceDropdownContent.tsx
@@ -26279,8 +26277,8 @@ msgid "Search options"
 msgstr "Søkealternativer"
 
 #. js-lingui-id: IMeaSJ
-#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
-#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerSearchInput.tsx
 msgid "Search records"
 msgstr "Søk i poster"
@@ -26307,8 +26305,8 @@ msgid "Search relations"
 msgstr "Søk i relasjoner"
 
 #. js-lingui-id: BlLxpG
-#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
-#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 msgid "Search skills"
 msgstr "Søk etter ferdigheter"
 
@@ -26477,6 +26475,16 @@ msgstr "seksjon"
 msgid "Section"
 msgstr "Seksjon"
 
+#. js-lingui-id: 8gtQoG
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Section actions"
+msgstr "Seksjonshandlinger"
+
+#. js-lingui-id: vKc3fL
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Section name"
+msgstr "Seksjonsnavn"
+
 #. js-lingui-id: R4OWFD
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
@@ -26500,6 +26508,7 @@ msgstr "se"
 #. js-lingui-id: h+8V38
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
 msgid "See"
 msgstr "Se"
 
@@ -26539,11 +26548,6 @@ msgstr "Se appsiden"
 msgid "See data model settings"
 msgstr "Se innstillinger for datamodell"
 
-#. js-lingui-id: oGROXc
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
-msgid "See Fields"
-msgstr "Se felter"
-
 #. js-lingui-id: RpeN29
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
 msgid "See function"
@@ -26576,18 +26580,13 @@ msgstr "Se på markedsplassen"
 msgid "See records"
 msgstr "Se oppføringer"
 
-#. js-lingui-id: irbH/8
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "See Records on All Objects"
-msgstr "Se oppføringer på alle objekter"
-
 #. js-lingui-id: SXaufV
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
 msgid "See Turns"
 msgstr "Se omganger"
 
 #. js-lingui-id: boSDrg
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "See what I can do"
 msgstr "Se hva jeg kan gjøre"
 
@@ -26630,7 +26629,7 @@ msgstr "Velg"
 
 #. js-lingui-id: 02ePaq
 #. placeholder {0}: record.label
-#: src/modules/ai/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Select {0}"
 msgstr "Velg {0}"
 
@@ -26792,7 +26791,7 @@ msgid "Select all loaded rows"
 msgstr "Velg alle innlastede rader"
 
 #. js-lingui-id: rRpCVj
-#: src/modules/ai/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Select all records"
 msgstr "Velg alle oppføringer"
 
@@ -26817,17 +26816,17 @@ msgid "Select an option"
 msgstr "Velg et alternativ"
 
 #. js-lingui-id: Wh3uKH
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Select at least one available calendar to check for conflicts."
 msgstr "Velg minst én tilgjengelig kalender for å se etter konflikter."
 
 #. js-lingui-id: AXQ2Fr
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Select at least one working day."
 msgstr "Velg minst én arbeidsdag."
 
 #. js-lingui-id: 0yxhOL
-#: src/modules/ai/components/AiChatThreadRow.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadRow.tsx
 msgid "Select chat"
 msgstr "Velg chat"
 
@@ -26909,7 +26908,7 @@ msgid "Select options"
 msgstr "Velg alternativer"
 
 #. js-lingui-id: TC9hnQ
-#: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientPicker.tsx
 msgid "Select recipients"
 msgstr "Velg mottakere"
 
@@ -27009,15 +27008,15 @@ msgstr "Utvalg"
 
 #. js-lingui-id: JlFcis
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
-#: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
-#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Send"
 msgstr "Send"
 
 #. js-lingui-id: h3fYlJ
-#: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "Send all {pendingEmailCount}"
 msgstr "Send alle {pendingEmailCount}"
 
@@ -27040,8 +27039,8 @@ msgid "Send Campaign"
 msgstr "Send kampanje"
 
 #. js-lingui-id: 65dxv8
-#: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
-#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Send email"
 msgstr "Send e-post"
@@ -27086,7 +27085,7 @@ msgid "Send invitations"
 msgstr "Send invitasjoner"
 
 #. js-lingui-id: Hvnq/n
-#: src/modules/ai/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 msgid "Send invite"
 msgstr "Send invitasjon"
 
@@ -27096,8 +27095,8 @@ msgid "Send later"
 msgstr "Send senere"
 
 #. js-lingui-id: pi1oME
-#: src/modules/ai/components/AiChatQuestionCard.tsx
-#: src/modules/ai/components/internal/SendMessageButton.tsx
+#: src/modules/ai-chat/composer/components/SendMessageButton.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 msgid "Send message"
 msgstr "Send melding"
 
@@ -27376,8 +27375,8 @@ msgid "Setting up your <0>database</0>..."
 msgstr "Konfigurerer <0>databasen</0>..."
 
 #. js-lingui-id: Tz0i8g
-#: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -27455,8 +27454,8 @@ msgid "Shape, color, face"
 msgstr "Form, farge, ansikt"
 
 #. js-lingui-id: Z8lGw6
-#: src/modules/ai/components/AiChatThreadShareButton.tsx
-#: src/modules/ai/components/AiChatThreadShareButton.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadShareButton.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadShareButton.tsx
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 #: src/modules/side-panel/hooks/useOpenShareRecordInSidePanel.ts
 msgid "Share"
@@ -27498,8 +27497,8 @@ msgid "Shared by key, across runs"
 msgstr "Delt etter nøkkel, på tvers av kjøringer"
 
 #. js-lingui-id: 11KprE
-#: src/modules/ai/components/AiChatThreadLabelsField.tsx
-#: src/modules/ai/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "Shared conversation labels"
 msgstr "Delte samtaleetiketter"
 
@@ -27647,8 +27646,8 @@ msgid "Show inbox"
 msgstr "Vis innboks"
 
 #. js-lingui-id: 6lGV3K
-#: src/modules/ai/components/AiChatQueuedMessageList.tsx
-#: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/messages/components/AiChatUserMessageCollapsibleContent.tsx
 #: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
 msgid "Show less"
 msgstr "Vis mindre"
@@ -27659,7 +27658,7 @@ msgid "Show logs"
 msgstr "Vis logger"
 
 #. js-lingui-id: fMPkxb
-#: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatUserMessageCollapsibleContent.tsx
 #: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
@@ -27892,8 +27891,8 @@ msgid "Skill not found"
 msgstr "Ferdighet ble ikke funnet"
 
 #. js-lingui-id: PCSkw2
-#: src/modules/ai/components/AiChatAddMenu.tsx
-#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
@@ -27901,11 +27900,11 @@ msgid "Skills"
 msgstr "Ferdigheter"
 
 #. js-lingui-id: 6Uau97
-#: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
-#: src/modules/ai/components/AiChatApprovalMergeReview.tsx
-#: src/modules/ai/components/AiChatFormCardContent.tsx
-#: src/modules/ai/components/AiChatQuestionCard.tsx
-#: src/modules/ai/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormCardContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/onboarding/components/OnboardingSkipButton.tsx
 msgid "Skip"
 msgstr "Hopp over"
@@ -27936,8 +27935,8 @@ msgid "Skip the junction object (similar to many-to-many relations)"
 msgstr "Hopp over koblingsobjektet (ligner på mange-til-mange-relasjoner)"
 
 #. js-lingui-id: 9NyAH9
-#: src/modules/ai/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
 msgid "Skipped"
 msgstr "Hoppet over"
@@ -28019,7 +28018,7 @@ msgid "snippet"
 msgstr "utdrag"
 
 #. js-lingui-id: 7+i6oV
-#: src/modules/ai/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/inbox/components/InboxBulkActions.tsx
 #: src/modules/inbox/components/InboxThreadTriageButtons.tsx
@@ -28028,17 +28027,17 @@ msgid "Snooze"
 msgstr "Utsett"
 
 #. js-lingui-id: aqkwib
-#: src/modules/ai/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 msgid "Snooze chat"
 msgstr "Utsett chat"
 
 #. js-lingui-id: xKw3A1
-#: src/modules/ai/components/AiChatThreadActivityTime.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadActivityTime.tsx
 msgid "Snooze ended"
 msgstr "Utsettelsen er avsluttet"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "Utsettelsen ble avsluttet {eventTime}"
 
@@ -28054,14 +28053,14 @@ msgid "Snooze until {snoozedUntilLabel}"
 msgstr "Utsett til {snoozedUntilLabel}"
 
 #. js-lingui-id: rz6s8e
-#: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 #: src/modules/inbox/constants/InboxChannelNavigationItems.ts
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Snoozed"
 msgstr "Utsatt"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "Utsatt til {eventTime}"
 
@@ -28074,12 +28073,6 @@ msgstr "SOC 2"
 #: src/modules/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels.ts
 msgid "Soft cap"
 msgstr "Mykt tak"
-
-#. js-lingui-id: zfjcH5
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
-msgid "Some"
-msgstr "Noen"
 
 #. js-lingui-id: RwCYVZ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
@@ -28099,12 +28092,12 @@ msgid "Some log data was dropped to fit the size limit ({0} entries, {1} bytes).
 msgstr "Noe loggdata ble forkastet for å overholde størrelsesgrensen ({0} oppføringer, {1} byte)."
 
 #. js-lingui-id: b5Z5wY
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Some selected calendars are no longer available."
 msgstr "Noen valgte kalendere er ikke lenger tilgjengelige."
 
 #. js-lingui-id: 2c+W2z
-#: src/modules/ai/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 msgid "Someone replies"
 msgstr "Noen svarer"
 
@@ -28239,7 +28232,7 @@ msgid "Source Email Address"
 msgstr "Kilde-e-postadresse"
 
 #. js-lingui-id: Jvqt/3
-#: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 msgid "Source records"
 msgstr "Kildeoppføringer"
 
@@ -28254,12 +28247,12 @@ msgid "Spanish"
 msgstr "Spansk"
 
 #. js-lingui-id: NWZxCM
-#: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
+#: src/modules/ai-chat/dictation/utils/getDictationFailureMessage.ts
 msgid "Speech recognition could not be reached. Check your connection."
 msgstr "Kunne ikke nå talegjenkjenning. Kontroller tilkoblingen."
 
 #. js-lingui-id: l9wI00
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Speed"
 msgstr "Hastighet"
@@ -28361,7 +28354,6 @@ msgstr "Frittstående"
 #. js-lingui-id: TJBHlP
 #: src/modules/applications/utils/getApplicationDisplayName.ts
 #: src/modules/settings/data-model/utils/getSettingsObjectFieldType.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Standard"
 msgstr "Standard"
@@ -28383,7 +28375,7 @@ msgid "Start date"
 msgstr "Startdato"
 
 #. js-lingui-id: HUKGLi
-#: src/modules/ai/dictation/components/AiChatDictationButton.tsx
+#: src/modules/ai-chat/dictation/components/AiChatDictationButton.tsx
 msgid "Start dictation"
 msgstr "Start diktering"
 
@@ -28462,8 +28454,8 @@ msgid "Statistics"
 msgstr "Statistikk"
 
 #. js-lingui-id: uAQUqI
-#: src/modules/ai/components/AiChatApprovalRecordReview.tsx
-#: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleWebhookStatusColumn.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
@@ -28543,7 +28535,7 @@ msgid "Stop capture for {ownerName}"
 msgstr "Stopp opptak for {ownerName}"
 
 #. js-lingui-id: 9QwrMz
-#: src/modules/ai/dictation/components/AiChatDictationButton.tsx
+#: src/modules/ai-chat/dictation/components/AiChatDictationButton.tsx
 msgid "Stop dictation"
 msgstr "Stopp diktering"
 
@@ -28553,7 +28545,7 @@ msgid "Stop impersonating"
 msgstr "Stopp brukerimitasjon"
 
 #. js-lingui-id: lQeGNv
-#: src/modules/ai/components/internal/SendMessageButton.tsx
+#: src/modules/ai-chat/composer/components/SendMessageButton.tsx
 msgid "Stop response"
 msgstr "Stopp svar"
 
@@ -28720,9 +28712,9 @@ msgstr ""
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/ai/components/AiChatApprovalEmailReview.tsx
-#: src/modules/ai/components/AiChatApprovalEmailReview.tsx
-#: src/modules/ai/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Subject"
 msgstr "Emne"
@@ -28748,7 +28740,7 @@ msgid "Subject, body and attachments will be shared with your team."
 msgstr "Emne, kropp og vedlegg vil bli delt med teamet ditt."
 
 #. js-lingui-id: hQRttt
-#: src/modules/ai/components/AiChatFormCardContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormCardContent.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormStepSubmitButton.tsx
@@ -28766,7 +28758,7 @@ msgid "Subscribe"
 msgstr "Abonner"
 
 #. js-lingui-id: ShbDuS
-#: src/modules/ai/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCardHeaderActions.tsx
 msgid "Subscribe Now"
 msgstr "Abonner nå"
@@ -28839,7 +28831,7 @@ msgid "subtitle"
 msgstr ""
 
 #. js-lingui-id: KAbcm2
-#: src/modules/ai/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 msgid "Succeeded"
 msgstr "Vellykket"
 
@@ -28881,22 +28873,22 @@ msgid "Sum"
 msgstr "Sum"
 
 #. js-lingui-id: UjjqZc
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize the records in this view and point out anything that needs attention."
 msgstr "Oppsummer oppføringene i denne visningen og fremhev alt som trenger oppmerksomhet."
 
 #. js-lingui-id: UcEfIM
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this record"
 msgstr "Oppsummer denne oppføringen"
 
 #. js-lingui-id: jhr7if
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this record and its recent activity."
 msgstr "Oppsummer denne oppføringen og den nylige aktiviteten."
 
 #. js-lingui-id: uN7gsS
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this view"
 msgstr "Oppsummer denne visningen"
 
@@ -28912,7 +28904,7 @@ msgid "Summary Not Available"
 msgstr "Sammendrag ikke tilgjengelig"
 
 #. js-lingui-id: DBC3t5
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Sunday"
@@ -28954,7 +28946,7 @@ msgid "Surprised"
 msgstr "Overrasket"
 
 #. js-lingui-id: LbFYgh
-#: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 msgid "Survives"
 msgstr "Beholdes"
 
@@ -29176,6 +29168,16 @@ msgstr "Fane {0}"
 msgid "Tab {tabNumber}: {0}"
 msgstr "Fane {tabNumber}: {0}"
 
+#. js-lingui-id: OqZEsq
+#: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
+msgid "Tab actions"
+msgstr "Fanehandlinger"
+
+#. js-lingui-id: FFaDQL
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
+msgid "Tab name"
+msgstr "Fanenavn"
+
 #. js-lingui-id: zr20ox
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Tab Settings"
@@ -29289,7 +29291,7 @@ msgid "Teammate's email {0}"
 msgstr "Teammedlems e-post {0}"
 
 #. js-lingui-id: g4mm2M
-#: src/modules/ai/hooks/useAiChatEditor.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatEditor.ts
 #: src/modules/mention/hooks/useWorkspaceMemberMentionSearch.ts
 msgid "Teammates"
 msgstr "Teammedlemmer"
@@ -29300,7 +29302,7 @@ msgid "Teammates see who you talk to, not what you write."
 msgstr "Teammedlemmer kan se hvem du snakker med, men ikke hva du skriver."
 
 #. js-lingui-id: XpPpz7
-#: src/modules/ai/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
 msgid "Tell the agent what to change"
 msgstr "Fortell agenten hva som skal endres"
 
@@ -29414,7 +29416,7 @@ msgid "Text Editor"
 msgstr "Tekstredigering"
 
 #. js-lingui-id: kv9l5H
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "That time is no longer available. Choose another time."
 msgstr "Dette tidspunktet er ikke lenger tilgjengelig. Velg et annet tidspunkt."
 
@@ -29494,7 +29496,7 @@ msgid "The code of the Twenty partner who referred you"
 msgstr "Koden til Twenty-partneren som henviste deg"
 
 #. js-lingui-id: aXzQ65
-#: src/modules/ai/components/AiChatCompactionIndicator.tsx
+#: src/modules/ai-chat/messages/components/AiChatCompactionIndicator.tsx
 msgid "The conversation has been compacted"
 msgstr "Samtalen er komprimert"
 
@@ -29676,7 +29678,7 @@ msgid "The PDF is pre-signed by Twenty and executed with your legal entity and a
 msgstr "PDF-en er forhåndssignert av Twenty og inngått med din juridiske enhet og autoriserte undertegner."
 
 #. js-lingui-id: iz994T
-#: src/modules/ai/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "The priority record keeps its identity"
 msgstr "Oppføringen med prioritet beholder identiteten sin"
 
@@ -29856,8 +29858,8 @@ msgid "Thickness"
 msgstr "Tykkelse"
 
 #. js-lingui-id: AUV+TY
-#: src/modules/ai/components/ThinkingStepsDisplay.tsx
-#: src/modules/ai/utils/getReasoningStepLabel.ts
+#: src/modules/ai-chat/thinking-steps/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai-chat/thinking-steps/utils/getReasoningStepLabel.ts
 msgid "Thinking"
 msgstr "Tenker"
 
@@ -30105,8 +30107,8 @@ msgid "This connection does not exist or is not available for this application."
 msgstr "Denne tilkoblingen finnes ikke eller er ikke tilgjengelig for denne applikasjonen."
 
 #. js-lingui-id: HWM4G8
-#: src/modules/ai/components/AiChatEditorSection.tsx
-#: src/modules/ai/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
+#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
 msgid "This conversation is no longer available."
 msgstr "Denne samtalen er ikke lenger tilgjengelig."
 
@@ -30126,7 +30128,7 @@ msgid "This device"
 msgstr "Denne enheten"
 
 #. js-lingui-id: GyVWfy
-#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 msgid "This evening"
 msgstr "I kveld"
 
@@ -30302,7 +30304,7 @@ msgid "This record"
 msgstr "Denne oppføringen"
 
 #. js-lingui-id: Wf1hgt
-#: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalRecord.tsx
 msgid "This record could not be loaded."
 msgstr "Denne oppføringen kunne ikke lastes inn."
 
@@ -30312,12 +30314,12 @@ msgid "This record has been deleted"
 msgstr "Denne oppføringen er slettet"
 
 #. js-lingui-id: CS0+Ao
-#: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalRecord.tsx
 msgid "This record no longer exists or you cannot see it."
 msgstr "Denne oppføringen finnes ikke lenger, eller du kan ikke se den."
 
 #. js-lingui-id: TG0qsx
-#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "This record will be deleted:"
 msgstr "Denne oppføringen blir slettet:"
 
@@ -30476,7 +30478,7 @@ msgid "This will revoke {0} for {userLabel}."
 msgstr "Dette vil tilbakekalle {0} for {userLabel}."
 
 #. js-lingui-id: f8HOUp
-#: src/modules/ai/utils/getReasoningStepLabel.ts
+#: src/modules/ai-chat/thinking-steps/utils/getReasoningStepLabel.ts
 msgid "Thought"
 msgstr "Tanke"
 
@@ -30491,7 +30493,7 @@ msgid "Three columns side by side"
 msgstr "Tre kolonner side om side"
 
 #. js-lingui-id: kkDQ8m
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Thursday"
 msgstr "Torsdag"
 
@@ -30521,7 +30523,7 @@ msgstr "Tidsformat"
 
 #. js-lingui-id: Mz2JN2
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsTimeZoneSelect.tsx
@@ -30606,7 +30608,7 @@ msgid "Title"
 msgstr "Tittel"
 
 #. js-lingui-id: dMtLDE
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "to"
 msgstr "til"
 
@@ -30633,7 +30635,7 @@ msgid "Today"
 msgstr "I dag"
 
 #. js-lingui-id: TNXmKt
-#: src/modules/ai/hooks/useFormatAiChatThreadDate.ts
+#: src/modules/ai-chat/threads/hooks/useFormatAiChatThreadDate.ts
 msgid "Today, {time}"
 msgstr "I dag, {time}"
 
@@ -30663,11 +30665,6 @@ msgstr "Veksle {0}-gruppen"
 #: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
 msgid "Toggle all folders"
 msgstr "Veksle alle mapper"
-
-#. js-lingui-id: XArpJK
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
-msgid "Toggle all object permissions"
-msgstr "Veksle alle objektrettigheter"
 
 #. js-lingui-id: MxmNZq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -30727,7 +30724,7 @@ msgid "Tomato"
 msgstr "Tomat"
 
 #. js-lingui-id: BRMXj0
-#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "I morgen"
@@ -30785,7 +30782,7 @@ msgid "Tool deleted"
 msgstr "Verktøy slettet"
 
 #. js-lingui-id: RO68oO
-#: src/modules/ai/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 msgid "Tool details: {displayMessage}"
 msgstr "Verktøydetaljer: {displayMessage}"
 
@@ -31133,7 +31130,7 @@ msgstr "Sann/usann"
 
 #. js-lingui-id: KDw4GX
 #: src/modules/activities/emails/components/EmailsCardErrorState.tsx
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
@@ -31170,7 +31167,7 @@ msgid "TTL"
 msgstr "TTL"
 
 #. js-lingui-id: G3myU+
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Tuesday"
 msgstr "Tirsdag"
 
@@ -31348,7 +31345,7 @@ msgid "Type anything..."
 msgstr "Skriv hva som helst..."
 
 #. js-lingui-id: SILT51
-#: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionOtherOption.tsx
 msgid "Type your own answer here"
 msgstr "Skriv inn ditt eget svar her"
 
@@ -31416,8 +31413,8 @@ msgstr "Ikke tildelt"
 #. js-lingui-id: jqzUyM
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Unavailable"
@@ -31469,7 +31466,7 @@ msgid "Undisplayed data: max {maxItems} slices per chart."
 msgstr ""
 
 #. js-lingui-id: 9uI/rE
-#: src/modules/ai/components/AiChatParticipantMentionBar.tsx
+#: src/modules/ai-chat/composer/components/AiChatParticipantMentionBar.tsx
 msgid "Undo"
 msgstr "Angre"
 
@@ -31484,7 +31481,7 @@ msgid "Unexpected error in cron expression parsing"
 msgstr "Uventet feil ved tolkning av cron-uttrykk"
 
 #. js-lingui-id: 6Y7jUZ
-#: src/modules/ai/components/AiChatThreadFollowersField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
 msgid "Unfollow for me"
 msgstr "Slutt å følge for meg"
 
@@ -31607,7 +31604,7 @@ msgid "Unknown error"
 msgstr "Ukjent feil"
 
 #. js-lingui-id: IU3aCs
-#: src/modules/ai/hooks/useGetBrowsingContext.ts
+#: src/modules/ai-chat/hooks/useGetBrowsingContext.ts
 msgid "Unknown field"
 msgstr "Ukjent felt"
 
@@ -31622,7 +31619,7 @@ msgid "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
 msgstr "Ukjent felt \"{fieldName}\" på \"{relationFieldName}\""
 
 #. js-lingui-id: +K1Lj4
-#: src/modules/ai/components/internal/AiChatFilePreview.tsx
+#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "Ukjent fil"
 
@@ -31639,7 +31636,7 @@ msgstr "Ukjent tolkningsfeil"
 
 #. js-lingui-id: lZSo+Q
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
-#: src/modules/ai/utils/getAiChatMessageAuthor.ts
+#: src/modules/ai-chat/messages/utils/getAiChatMessageAuthor.ts
 msgid "Unknown sender"
 msgstr "Ukjent avsender"
 
@@ -31817,12 +31814,12 @@ msgid "Unsubscribed"
 msgstr "Avmeldt"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "Avmeldt {eventTime}. Nye meldinger holdes utenfor innboksen din med mindre du blir nevnt."
 
 #. js-lingui-id: 7fkcOT
-#: src/modules/ai/components/AiChatThreadActivityTime.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadActivityTime.tsx
 msgid "Unsubscribed {unsubscribedTime}"
 msgstr "Avmeldt {unsubscribedTime}"
 
@@ -31837,12 +31834,12 @@ msgid "Unsupported image format"
 msgstr "Ikke støttet bildeformat"
 
 #. js-lingui-id: I9zMVO
-#: src/modules/ai/components/AiChatThreadActivityTime.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadActivityTime.tsx
 msgid "Until {snoozedUntilDay}"
 msgstr "Til {snoozedUntilDay}"
 
 #. js-lingui-id: wja8aL
-#: src/modules/ai/components/AiChatThreadTitle.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadTitle.tsx
 #: src/modules/inbox/components/InboxThreadListItem.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/components/LogConsoleRecordCell.tsx
@@ -31970,12 +31967,12 @@ msgid "Update {contextStoreNumberOfSelectedRecords} records"
 msgstr "Oppdater {contextStoreNumberOfSelectedRecords} oppføringer"
 
 #. js-lingui-id: AHNNTF
-#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Update {recordCount} {objectLabel}"
 msgstr "Oppdater {recordCount} {objectLabel}"
 
 #. js-lingui-id: ECfdor
-#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Update {selectedCount}"
 msgstr "Oppdater {selectedCount}"
 
@@ -32084,8 +32081,8 @@ msgid "Updating..."
 msgstr "Oppdaterer..."
 
 #. js-lingui-id: kwkhPe
-#: src/modules/ai/components/AiChatNoMoreBillingCreditsBanner.tsx
-#: src/modules/ai/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/application-monitoring/constants/ApplicationLogSourceLabels.ts
@@ -32134,7 +32131,7 @@ msgstr "Oppgrader til {0}"
 #. placeholder {0}: nextResourceCreditsAmount ?? ''
 #. placeholder {1}: nextResourceCreditPrice ?? ''
 #. placeholder {2}: nextTierInterval ?? ''
-#: src/modules/ai/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Upgrade to {0} credits for ${1}/{2}."
 msgstr "Oppgrader til {0} kreditter for ${1}/{2}."
@@ -32366,7 +32363,7 @@ msgid "us-east-1"
 msgstr "us-east-1"
 
 #. js-lingui-id: 7FaY4u
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleUsageEventColumns.tsx
@@ -32897,7 +32894,7 @@ msgid "View billing details"
 msgstr "Vis faktureringsdetaljer"
 
 #. js-lingui-id: SXCuo2
-#: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
+#: src/modules/ai-chat/components/AiChatApiKeyNotConfiguredMessage.tsx
 msgid "View Docs"
 msgstr ""
 
@@ -32968,12 +32965,12 @@ msgid "View not shared"
 msgstr "Visning ikke delt"
 
 #. js-lingui-id: K946OL
-#: src/modules/ai/components/AiChatEditorSection.tsx
+#: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
 msgid "View only — You can read this conversation."
 msgstr "Bare visning — Du kan lese denne samtalen."
 
 #. js-lingui-id: lD7M9Z
-#: src/modules/ai/components/AiChatMessageReplyQuote.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReplyQuote.tsx
 msgid "View original message"
 msgstr "Vis opprinnelig melding"
 
@@ -33090,7 +33087,7 @@ msgid "Visualize data model"
 msgstr "Visualiser datamodell"
 
 #. js-lingui-id: Ii6BOL
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 msgid "Vs Balanced mode"
 msgstr "Sammenlignet med balansert modus"
 
@@ -33105,7 +33102,7 @@ msgid "Wait for Event"
 msgstr "Vent på hendelse"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai/hooks/useAiChat.ts
+#: src/modules/ai-chat/hooks/useAiChat.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Vent til vedleggene er ferdig opplastet."
 
@@ -33121,12 +33118,12 @@ msgid "Waiting Children"
 msgstr "Ventende barn"
 
 #. js-lingui-id: 7YxIQV
-#: src/modules/ai/components/AiChatFormStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Waiting for a form to be filled in"
 msgstr "Venter på at et skjema skal fylles ut"
 
 #. js-lingui-id: TdQd9Q
-#: src/modules/ai/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 msgid "Waiting for output..."
 msgstr "Venter på utdata..."
 
@@ -33136,7 +33133,7 @@ msgid "Waiting for permission"
 msgstr "Venter på tillatelse"
 
 #. js-lingui-id: /gO/m8
-#: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Waiting for your approval"
 msgstr "Venter på godkjenningen din"
 
@@ -33419,7 +33416,7 @@ msgid "Websites whose iframe widgets can ask members for their microphone or cam
 msgstr "Nettsteder med iframe-widgets som kan be medlemmer om tilgang til mikrofonen eller kameraet deres. Endringer trer i kraft etter at siden lastes inn på nytt."
 
 #. js-lingui-id: VAcXNz
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Wednesday"
 msgstr "Onsdag"
 
@@ -33442,17 +33439,17 @@ msgid "Weekly"
 msgstr "Ukentlig"
 
 #. js-lingui-id: fWh1RG
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Ask an admin to enable workspace credits."
 msgstr "Ukentlig personlig AI-bruk er nådd. Be en administrator om å aktivere arbeidsområdekreditter."
 
 #. js-lingui-id: GkVwb2
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Enable workspace credits to continue."
 msgstr "Ukentlig personlig AI-bruk er nådd. Aktiver arbeidsområdekreditter for å fortsette."
 
 #. js-lingui-id: Kf6mmq
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Now using workspace credits."
 msgstr "Ukentlig personlig AI-bruk er nådd. Bruker nå arbeidsområdekreditter."
 
@@ -33488,12 +33485,12 @@ msgid "What AI model should your agent run on"
 msgstr "Hvilken AI-modell skal agenten din kjøre med"
 
 #. js-lingui-id: Itn+J7
-#: src/modules/ai/components/suggested-prompts/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
 msgid "What can I help you with?"
 msgstr "Hva kan jeg hjelpe deg med?"
 
 #. js-lingui-id: ivJ1Xk
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "What can you do?"
 msgstr "Hva kan du gjøre?"
 
@@ -33544,22 +33541,22 @@ msgid "Whatsapp"
 msgstr "WhatsApp"
 
 #. js-lingui-id: 8ssTdk
-#: src/modules/ai/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 msgid "When {assistantName} finishes"
 msgstr "Når {assistantName} er ferdig"
 
 #. js-lingui-id: m7GziZ
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "When a deal's stage changes to Closed Won, create a task assigned to the deal owner, due 7 days after the close date, with title \"Post-sale check-in\" and the company name in the description."
 msgstr "Når fasen til en avtale endres til Closed Won, opprett en oppgave som tildeles avtaleeieren, med frist 7 dager etter avslutningsdatoen, med tittelen \"Post-sale check-in\" og selskapsnavnet i beskrivelsen."
 
 #. js-lingui-id: IHLoUB
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "When a new lead is created with source \"Website\", assign it to the sales rep whose territory (by region/country) matches the lead's address; if no match, assign to the team lead."
 msgstr "Når et nytt lead opprettes med kilden \"Website\", tildel det til selgeren hvis territorium (etter region/land) samsvarer med leadets adresse; hvis det ikke er samsvar, tildel til teamlederen."
 
 #. js-lingui-id: haFWB2
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "When any deal with amount over $100,000 has its stage or amount updated, send a notification to the sales channel with the deal name, company, new stage, amount and owner."
 msgstr "Når en hvilken som helst avtale med beløp over $100,000 får oppdatert fase eller beløp, send en varsling til salgskanalen med avtalenavn, selskap, ny fase, beløp og eier."
 
@@ -33739,7 +33736,7 @@ msgstr "uten kredittkort"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)
-#: src/modules/ai/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingStepsDisplay.tsx
 msgid "Worked for {0}"
 msgstr "Arbeidet i {0}"
 
@@ -33843,22 +33840,22 @@ msgid "Workflows, functions and agents that act for your team."
 msgstr "Arbeidsflyter, funksjoner og agenter som handler på vegne av teamet ditt."
 
 #. js-lingui-id: OskBrZ
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Working days"
 msgstr "Arbeidsdager"
 
 #. js-lingui-id: zBOlTP
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Working hours"
 msgstr "Arbeidstid"
 
 #. js-lingui-id: Gfrltr
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Working hours end"
 msgstr "Arbeidstid slutter"
 
 #. js-lingui-id: LYfzu/
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Working hours start"
 msgstr "Arbeidstid starter"
 
@@ -33945,7 +33942,6 @@ msgstr "Arbeidstid starter"
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -34137,7 +34133,7 @@ msgid "Write a message"
 msgstr "Skriv en melding"
 
 #. js-lingui-id: PxYBOj
-#: src/modules/ai/hooks/useAiChatEditor.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatEditor.ts
 msgid "Write a message..."
 msgstr "Skriv en melding..."
 
@@ -34152,7 +34148,7 @@ msgid "Write some instructions"
 msgstr "Skriv noen instruksjoner"
 
 #. js-lingui-id: P28Nzv
-#: src/modules/ai/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
 msgid "Write the email"
 msgstr "Skriv e-posten"
 
@@ -34202,7 +34198,7 @@ msgid "year"
 msgstr "år"
 
 #. js-lingui-id: 3PAU4M
-#: src/modules/ai/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 #: src/modules/ui/input/components/internal/date/components/DatePickerCalendar.tsx
@@ -34263,9 +34259,9 @@ msgstr "I går"
 
 #. js-lingui-id: kWJmRL
 #: src/modules/activities/timeline-activities/utils/getTimelineActivityAuthorFullName.ts
-#: src/modules/ai/components/AiChatComposerQuote.tsx
-#: src/modules/ai/components/AiChatMessageReplyQuote.tsx
-#: src/modules/ai/utils/getAiChatSenderLabel.ts
+#: src/modules/ai-chat/composer/components/AiChatComposerQuote.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReplyQuote.tsx
+#: src/modules/ai-chat/utils/getAiChatSenderLabel.ts
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "You"
@@ -34413,7 +34409,7 @@ msgid "You're about to change your workspace subdomain. This action will log out
 msgstr "Du er i ferd med å endre arbeidsområdets subdomene. Denne handlingen vil logge ut alle brukere."
 
 #. js-lingui-id: 6x8lJe
-#: src/modules/ai/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 msgid "You’ve reached your AI usage limit."
 msgstr "Du har nådd grensen for AI-bruk."
 
@@ -34485,7 +34481,7 @@ msgid "Your handler receives this object. The body is empty because GET requests
 msgstr "Handleren din mottar dette objektet. body er tom fordi GET-forespørsler ikke har noen nyttelast."
 
 #. js-lingui-id: HCqgJ0
-#: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 msgid "Your inbox"
 msgstr "Innboksen din"
 
@@ -34520,7 +34516,7 @@ msgid "Your other events"
 msgstr "Dine andre hendelser"
 
 #. js-lingui-id: Wxs+Cg
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Your own AI usage, separate from the workspace credits"
 msgstr "Din egen AI-bruk, atskilt fra arbeidsområdets kreditter"
 

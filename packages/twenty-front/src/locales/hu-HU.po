@@ -46,7 +46,7 @@ msgid "—"
 msgstr "—"
 
 #. js-lingui-id: /c8CZ4
-#: src/modules/ai/components/AiChatThreadTitle.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadTitle.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
 msgid ", unread"
 msgstr ", olvasatlan"
@@ -172,7 +172,7 @@ msgid "(selected: {selectedIconKey})"
 msgstr "(kiválasztva: {selectedIconKey})"
 
 #. js-lingui-id: ZBGbuw
-#: src/modules/ai/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -240,7 +240,7 @@ msgstr "{0, plural, one {# csevegés} other {# csevegés}}"
 
 #. js-lingui-id: jitezQ
 #. placeholder {0}: emails.length
-#: src/modules/ai/components/AiChatApprovalEmailConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailConfirmation.tsx
 msgid "{0, plural, one {# email selected · 0 emails skipped} other {# emails selected · 0 emails skipped}}"
 msgstr "{0, plural, one {# e-mail kiválasztva · 0 e-mail kihagyva} other {# e-mail kiválasztva · 0 e-mail kihagyva}}"
 
@@ -288,7 +288,7 @@ msgstr "{0, plural, one {# Objektum} other {# Objektumok}}"
 
 #. js-lingui-id: zHa4lw
 #. placeholder {0}: parts.length
-#: src/modules/ai/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingStepsDisplay.tsx
 msgid "{0, plural, one {# step} other {# steps}}"
 msgstr "{0, plural, one {# lépés} other {# lépés}}"
 
@@ -300,7 +300,7 @@ msgstr "{0, plural, one {# munkaterület sikertelen vagy lemaradásban van} othe
 
 #. js-lingui-id: fkfOKg
 #. placeholder {0}: agentIds.length
-#: src/modules/ai/components/AiChatMessageReactions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactions.tsx
 msgid "{0, plural, one {an agent} other {# agents}}"
 msgstr "{0, plural, one {egy ügynök} other {# ügynök}}"
 
@@ -486,8 +486,8 @@ msgstr "{0} kiválasztva"
 #. placeholder {0}: card.selectedCount
 #. placeholder {1}: activeCard.skippedCount
 #. placeholder {1}: card.skippedCount
-#: src/modules/ai/components/AiChatApprovalConfirmation.tsx
-#: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "{0} selected · {1} skipped"
 msgstr "{0} kiválasztva · {1} kihagyva"
 
@@ -574,7 +574,7 @@ msgstr "{0}, vissza a mezőkhöz"
 #. js-lingui-id: kofqAN
 #. placeholder {0}: selectedResolvedTier.label
 #. placeholder {1}: selectedResolvedTier.model.label
-#: src/modules/ai/components/AiModelTierDropdown.tsx
+#: src/modules/ai-chat/components/AiModelTierDropdown.tsx
 msgid "{0}: {1}"
 msgstr "{0}: {1}"
 
@@ -667,7 +667,7 @@ msgid "{callRecordingHours, plural, one {{formattedCallRecordingHours} hour} oth
 msgstr "{callRecordingHours, plural, one {{formattedCallRecordingHours} óra} other {{formattedCallRecordingHours} óra}}"
 
 #. js-lingui-id: g0wkzt
-#: src/modules/ai/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
 msgid "{cardCount, plural, one {Approve # action?} other {Approve # actions?}}"
 msgstr "{cardCount, plural, one {Jóváhagy # műveletet?} other {Jóváhagy # műveletet?}}"
 
@@ -789,7 +789,7 @@ msgid "{earnedCredits, plural, one {{formattedEarnedCredits} credit} other {{for
 msgstr "{earnedCredits, plural, one {{formattedEarnedCredits} kredit} other {{formattedEarnedCredits} kredit}}"
 
 #. js-lingui-id: +dlsP9
-#: src/modules/ai/components/AiChatMessageReactions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactions.tsx
 msgid "{emoji} by {reactorNames}"
 msgstr "{emoji} – {reactorNames}"
 
@@ -830,7 +830,7 @@ msgid "{formattedFailedRunCount} of {formattedRunCount} runs failed"
 msgstr "{formattedRunCount} futtatásból {formattedFailedRunCount} sikertelen"
 
 #. js-lingui-id: EjjpWm
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "{formattedPercentage}% used, {formattedConversationSize} of {formattedContextWindow} tokens"
 msgstr "{formattedPercentage}% felhasználva, {formattedConversationSize} / {formattedContextWindow} token"
 
@@ -838,11 +838,6 @@ msgstr "{formattedPercentage}% felhasználva, {formattedConversationSize} / {for
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
 msgid "{goalCredits, plural, one {free credit} other {free credits}}"
 msgstr "{goalCredits, plural, one {ingyenes kredit} other {ingyenes kredit}}"
-
-#. js-lingui-id: YF/a2j
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
-msgid "{grantedBy, plural, one {Granted for {grantedBy} object} other {Granted for {grantedBy} objects}}"
-msgstr "{grantedBy, plural, one {Engedélyezve {grantedBy} objektumra} other {Engedélyezve {grantedBy} objektumokra}}"
 
 #. js-lingui-id: Ae2fyu
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -993,7 +988,7 @@ msgid "{newlyEarnedCredits, plural, one {You earned {formattedNewlyEarnedCredits
 msgstr "{newlyEarnedCredits, plural, one {Szerzett {formattedNewlyEarnedCredits} ingyenes kreditet} other {Szerzett {formattedNewlyEarnedCredits} ingyenes kreditet}}"
 
 #. js-lingui-id: hKZAJk
-#: src/modules/ai/hooks/useWarnAboutParticipantMentionsNotAdded.ts
+#: src/modules/ai-chat/composer/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "{notAddedLabels} could not be added to this chat because they can't reply in it."
 msgstr "{notAddedLabels} nem adható hozzá ehhez a csevegéshez, mert nem tudnak válaszolni benne."
 
@@ -1007,6 +1002,11 @@ msgstr "{num, selectordinal, one {{num}-ik} other {{num}-ik}}"
 msgid "{numberOfSelectedItems} workspace members"
 msgstr "{numberOfSelectedItems} munkaterületi tag"
 
+#. js-lingui-id: DQ+6r7
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
+msgid "{objectLabelPlural} permissions"
+msgstr "{objectLabelPlural} jogosultságai"
+
 #. js-lingui-id: luWGLQ
 #: src/modules/workflow/workflow-variables/utils/generate/generateWaitForEventOutputSchema.ts
 msgid "{objectLabelSingular} Before Update"
@@ -1018,22 +1018,22 @@ msgid "{p95DurationInMs} ms"
 msgstr "{p95DurationInMs} ms"
 
 #. js-lingui-id: dKtfA2
-#: src/modules/ai/components/AiChatParticipantMentionBar.tsx
+#: src/modules/ai-chat/composer/components/AiChatParticipantMentionBar.tsx
 msgid "{participantLabels} will be added as a participant and get access to this chat"
 msgstr "{participantLabels} résztvevőként lesz hozzáadva, és hozzáférést kap ehhez a csevegéshez"
 
 #. js-lingui-id: MDJKup
-#: src/modules/ai/components/AiChatParticipantMentionBar.tsx
+#: src/modules/ai-chat/composer/components/AiChatParticipantMentionBar.tsx
 msgid "{participantLabels} will be added as participants and get access to this chat"
 msgstr "{participantLabels} résztvevőként lesznek hozzáadva, és hozzáférést kapnak ehhez a csevegéshez"
 
 #. js-lingui-id: jCjuhm
-#: src/modules/ai/components/AiChatTypingIndicator.tsx
+#: src/modules/ai-chat/messages/components/AiChatTypingIndicator.tsx
 msgid "{participantNames} are typing…"
 msgstr "{participantNames} gépelnek…"
 
 #. js-lingui-id: E0CZYQ
-#: src/modules/ai/components/AiChatTypingIndicator.tsx
+#: src/modules/ai-chat/messages/components/AiChatTypingIndicator.tsx
 msgid "{participantNames} is typing…"
 msgstr "{participantNames} gépel…"
 
@@ -1053,12 +1053,12 @@ msgid "{positionLabel} record holds priority"
 msgstr "{positionLabel} rekord prioritást élvez"
 
 #. js-lingui-id: i2Rv/S
-#: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 msgid "{positionLabel}: {name}"
 msgstr "{positionLabel}: {name}"
 
 #. js-lingui-id: tSROzD
-#: src/modules/ai/components/AiChatFormCardContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormCardContent.tsx
 msgid "{prefilledCount} of {fieldCount} fields prefilled"
 msgstr "{fieldCount} mezőből {prefilledCount} előre kitöltve"
 
@@ -1090,12 +1090,12 @@ msgid "{remainingBackupCodeCount, plural, one {# backup code left} other {# back
 msgstr "{remainingBackupCodeCount, plural, one {# biztonsági kód maradt} other {# biztonsági kód maradt}}"
 
 #. js-lingui-id: N7gP92
-#: src/modules/ai/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 msgid "{remainingCount} more"
 msgstr "még {remainingCount}"
 
 #. js-lingui-id: uVxzex
-#: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "{remainingDraftCount, plural, =0 {No more drafts after this one} one {# more draft after this one} other {# more drafts after this one}}"
 msgstr "{remainingDraftCount, plural, =0 {Nincs több piszkozat ez után} one {# további piszkozat ez után} other {# további piszkozat ez után}}"
 
@@ -1114,21 +1114,6 @@ msgstr "{retentionInHours, plural, one {# óra} other {# óra}}"
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
 msgid "{retriedCount, plural, one {Successfully retried {retriedCount} job} other {Successfully retried {retriedCount} jobs}}"
 msgstr "{retriedCount, plural, one {Sikeresen újraindítva {retriedCount} állás} other {Sikeresen újraindítva {retriedCount} állások}}"
-
-#. js-lingui-id: hcRYEH
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
-msgid "{revokedBy, plural, one {Revoked for {revokedBy} object} other {Revoked for {revokedBy} objects}}"
-msgstr "{revokedBy, plural, one {Visszavonva {revokedBy} objektum számára} other {Visszavonva {revokedBy} objektumok számára}}"
-
-#. js-lingui-id: OeIgEg
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
-msgid "{roleLabel} can {humanReadableAction} {objectLabel} records"
-msgstr "{roleLabel} végrehajthatja a {humanReadableAction} műveletet a(z) {objectLabel} rekordokon"
-
-#. js-lingui-id: D0C09b
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
-msgid "{roleLabel} can't {humanReadableAction} {objectLabel} records"
-msgstr "{roleLabel} nem tudja végrehajtani a {humanReadableAction} műveletet a(z) {objectLabel} rekordokon"
 
 #. js-lingui-id: uHZWwU
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
@@ -1191,7 +1176,7 @@ msgid "{selectedCount, plural, one {Retry {selectedCount} Job} other {Retry {sel
 msgstr "{selectedCount, plural, one {Újraindít {selectedCount} állás} other {Újraindít {selectedCount} állások}}"
 
 #. js-lingui-id: 1MJWid
-#: src/modules/ai/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
 msgid "{selectedCount} records selected · {skippedCount} records skipped"
 msgstr "{selectedCount} rekord kiválasztva · {skippedCount} rekord kihagyva"
 
@@ -1206,7 +1191,7 @@ msgid "{selectedOptionCount} options"
 msgstr "{selectedOptionCount} lehetőség kiválasztva."
 
 #. js-lingui-id: tz1jJj
-#: src/modules/ai/utils/getAiChatThreadPreviewText.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadPreviewText.ts
 msgid "{senderLabel}: {text}"
 msgstr "{senderLabel}: {text}"
 
@@ -1536,11 +1521,6 @@ msgstr "1. E-mail"
 msgid "1. Select a field type"
 msgstr "1. Válasszon mezőtípust"
 
-#. js-lingui-id: XSdCGq
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-msgid "1. Select an object"
-msgstr "1. Válasszon egy objektumot"
-
 #. js-lingui-id: 6WQdu8
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -1577,11 +1557,6 @@ msgstr "2 év"
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "2. Configure field"
 msgstr "2. Mező konfigurálása"
-
-#. js-lingui-id: 0Tx9MD
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
-msgid "2. Set {objectLabelPlural} permissions"
-msgstr "2. Állítsa be a(z) {objectLabelPlural} jogosultságokat"
 
 #. js-lingui-id: 23g1gf
 #: src/modules/navigation/constants/LogsSwitchPhrases.ts
@@ -1696,7 +1671,7 @@ msgid "A new one each time the step runs"
 msgstr "Új minden alkalommal, amikor a lépés lefut"
 
 #. js-lingui-id: 3pDKsj
-#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "A newer revision exists. Open the latest preview to save."
 msgstr "Újabb verzió érhető el. A mentéshez nyissa meg a legújabb előnézetet."
 
@@ -1830,6 +1805,7 @@ msgstr "Az ehhez a munkaterülethez elfogadott és aláírt DPA-k, a sablon verz
 
 #. js-lingui-id: LuXP9q
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionsTable.tsx
 msgid "Access"
 msgstr "Hozzáférés"
@@ -1948,7 +1924,7 @@ msgid "Action on click"
 msgstr "Kattintáskor végrehajtandó művelet"
 
 #. js-lingui-id: pTIviA
-#: src/modules/ai/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 msgid "Action progress"
 msgstr "Művelet folyamata"
 
@@ -1960,7 +1936,6 @@ msgstr "Jóváhagyandó művelet"
 #. js-lingui-id: 7L01XJ
 #: src/modules/command-menu-item/components/CommandMenuDropdownAtCursor.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/side-panel/pages/create-related-record/components/SidePanelCreateRelatedRecordPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -2119,17 +2094,17 @@ msgid "Add a meeting link"
 msgstr "Értekezlet-hivatkozás hozzáadása"
 
 #. js-lingui-id: CZDwqQ
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Add a new company we're in touch with (e.g. name, website, industry). Details: "
 msgstr "Adjon hozzá egy új céget, amellyel kapcsolatban állunk (pl. név, webhely, iparág). Részletek: "
 
 #. js-lingui-id: 5xxrhm
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note"
 msgstr "Megjegyzés hozzáadása."
 
 #. js-lingui-id: uza/B9
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a note to this record: "
 msgstr "Megjegyzés hozzáadása ehhez a rekordhoz: "
 
@@ -2139,12 +2114,12 @@ msgid "Add a person with an email to this company first"
 msgstr "Először adjon hozzá egy e-mail-címmel rendelkező személyt ehhez a vállalathoz"
 
 #. js-lingui-id: +mN79K
-#: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "Add a recipient before sending"
 msgstr "Küldés előtt adjon hozzá egy címzettet"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai/hooks/useAiChat.ts
+#: src/modules/ai-chat/hooks/useAiChat.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "Küldés előtt adjon hozzá egy címzettet vagy egy csatornát."
 
@@ -2154,13 +2129,13 @@ msgid "Add a related record"
 msgstr "Kapcsolódó rekord hozzáadása"
 
 #. js-lingui-id: eMc2xs
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement.tsx
 msgid "Add a step"
 msgstr "Lépés hozzáadása"
 
 #. js-lingui-id: BKYXUk
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Add a step to this workflow that "
 msgstr "Adjon hozzá egy lépést ehhez a munkafolyamathoz, amely "
 
@@ -2207,7 +2182,7 @@ msgid "Add an Agent"
 msgstr "Ügynök hozzáadása"
 
 #. js-lingui-id: dGjQL8
-#: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
+#: src/modules/ai-chat/components/AiChatApiKeyNotConfiguredMessage.tsx
 msgid "Add an API key to enable AI."
 msgstr "Adjon hozzá API-kulcsot az AI engedélyezéséhez."
 
@@ -2306,7 +2281,7 @@ msgid "Add credit card"
 msgstr "Bankkártya hozzáadása"
 
 #. js-lingui-id: NKMrde
-#: src/modules/ai/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "Add Credit Card"
 msgstr "Bankkártya hozzáadása"
@@ -2349,7 +2324,7 @@ msgid "Add embedded website"
 msgstr "Beágyazott webhely hozzáadása"
 
 #. js-lingui-id: 6kC3KJ
-#: src/modules/ai/components/internal/AiChatToolCallApprovalCardLayout.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCardLayout.tsx
 msgid "Add feedback"
 msgstr "Visszajelzés hozzáadása"
 
@@ -2371,8 +2346,8 @@ msgid "Add file"
 msgstr "Fájl hozzáadása"
 
 #. js-lingui-id: yCsT+y
-#: src/modules/ai/components/AiChatAddMenu.tsx
-#: src/modules/ai/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
 msgid "Add files, records or skills"
 msgstr "Fájlok, rekordok vagy készségek hozzáadása"
 
@@ -2482,16 +2457,12 @@ msgid "Add node"
 msgstr "Csomópont hozzáadása"
 
 #. js-lingui-id: dEO3Zx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
 msgstr "Objektum hozzáadása"
-
-#. js-lingui-id: mFtRj8
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-msgid "Add object permission"
-msgstr "Objektumjogosultság hozzáadása"
 
 #. js-lingui-id: Dl5lVI
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -2519,8 +2490,8 @@ msgid "Add payment method"
 msgstr "Fizetési mód hozzáadása"
 
 #. js-lingui-id: bL/gCs
-#: src/modules/ai/components/AiChatNewThreadRecipientField.tsx
-#: src/modules/ai/components/AiChatNewThreadRecipientField.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientField.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientField.tsx
 msgid "Add people or a channel"
 msgstr "Személyek vagy csatorna hozzáadása"
 
@@ -2547,8 +2518,8 @@ msgid "Add question"
 msgstr "Kérdés hozzáadása"
 
 #. js-lingui-id: 9OEgyT
-#: src/modules/ai/components/AiChatMessageReactionPicker.tsx
-#: src/modules/ai/components/AiChatMessageReactionPicker.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPicker.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPicker.tsx
 msgid "Add reaction"
 msgstr "Reakció hozzáadása"
 
@@ -2585,7 +2556,6 @@ msgstr "Sor hozzáadása alulra"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
@@ -2600,6 +2570,11 @@ msgstr "Szabály hozzáadása"
 msgid "Add rule group"
 msgstr "Szabálycsoport hozzáadása"
 
+#. js-lingui-id: RxFV0G
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "Add section"
+msgstr "Szakasz hozzáadása"
+
 #. js-lingui-id: TdZwYb
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
@@ -2613,6 +2588,12 @@ msgstr "Rendezés hozzáadása"
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCardWrapper.tsx
 msgid "Add SSO Identity Provider"
 msgstr "SSO Identitásszolgáltató hozzáadása"
+
+#. js-lingui-id: hjO0Mq
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
+msgid "Add tab"
+msgstr "Lap hozzáadása"
 
 #. js-lingui-id: O6B1gJ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -2925,6 +2906,7 @@ msgstr "Adminisztrátorok"
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverrideRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Advanced"
 msgstr "Haladó"
@@ -2990,7 +2972,7 @@ msgid "agent"
 msgstr "ügynök"
 
 #. js-lingui-id: iEQQyu
-#: src/modules/ai/utils/getAiChatAgentAuthor.ts
+#: src/modules/ai-chat/messages/utils/getAiChatAgentAuthor.ts
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
@@ -3148,7 +3130,7 @@ msgstr "AI-kreditek"
 
 #. js-lingui-id: leS03Y
 #. placeholder {0}: userCreditsUsage.daysUntilReset
-#: src/modules/ai/components/AiChatUserCreditsExhaustedMessage.tsx
+#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "Az AI-kreditek {0, plural, one {# nap} other {# nap}} múlva megújulnak."
 
@@ -3245,22 +3227,22 @@ msgid "AI Usage by Workspace"
 msgstr "AI-használat munkaterületenként"
 
 #. js-lingui-id: 6ktJa0
-#: src/modules/ai/components/AiChatUsageLimitReachedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUsageLimitReachedBanner.tsx
 msgid "AI usage limit reached for this period."
 msgstr "Az erre az időszakra vonatkozó AI-használati korlát elérve."
 
 #. js-lingui-id: JQW6M/
-#: src/modules/ai/components/AiChatUsageLimitReachedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUsageLimitReachedBanner.tsx
 msgid "AI usage limit reached. Ask an admin to raise the limit."
 msgstr "Az AI-használati korlát elérve. Kérj meg egy rendszergazdát a korlát emelésére."
 
 #. js-lingui-id: YfXPCQ
-#: src/modules/ai/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Ask an admin to upgrade the plan."
 msgstr "Elérte az AI-használati korlátot. Kérjen meg egy rendszergazdát a csomag frissítésére."
 
 #. js-lingui-id: wBA/cx
-#: src/modules/ai/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 msgid "AI usage limit reached. Contact support to upgrade."
 msgstr "Elérte az AI-használati korlátot. Forduljon az ügyfélszolgálathoz a frissítéshez."
 
@@ -3329,8 +3311,6 @@ msgstr "Igazítás"
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow.tsx
 #: src/modules/views/view-picker/components/ViewPickerDropdown.tsx
 msgid "All"
@@ -3461,6 +3441,7 @@ msgid "all objects"
 msgstr "összes objektum"
 
 #. js-lingui-id: zIk4M6
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAllObjectsCard.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 msgid "All objects"
 msgstr "Összes objektum"
@@ -3468,7 +3449,6 @@ msgstr "Összes objektum"
 #. js-lingui-id: aFE/OW
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "All Objects"
 msgstr "Összes Objektum"
 
@@ -3490,6 +3470,7 @@ msgstr "összes rekord"
 
 #. js-lingui-id: rAUKN+
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "All records"
 msgstr "Összes rekord"
 
@@ -3529,11 +3510,6 @@ msgstr "Minden alapvető mezőtípus, amelyre a kezdéshez szüksége van"
 msgid "All the layout items declared on your workspace"
 msgstr "A munkaterületeden megadott összes elrendezési elem"
 
-#. js-lingui-id: XuuWVF
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "All the standard objects"
-msgstr "Minden szabványos objektum"
-
 #. js-lingui-id: 35148H
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
 msgid "All tools"
@@ -3568,11 +3544,6 @@ msgstr "Az összes munkaterület-tag már rendelkezik ezzel a szerepkörrel"
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspaceSelect.tsx
 msgid "All workspaces"
 msgstr "Minden munkaterület"
-
-#. js-lingui-id: pPTmfc
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "All your custom objects"
-msgstr "Az összes egyedi objektumod"
 
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -3645,10 +3616,21 @@ msgstr "Fájlok és mellékletek feltöltésének engedélyezése"
 msgid "Allow users to sign in with an email and password."
 msgstr "Engedélyezze a felhasználóknak a bejelentkezést e-mail és jelszó segítségével."
 
+#. js-lingui-id: Vwi3xW
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect.tsx
+msgid "Allowed actions"
+msgstr "Engedélyezett műveletek"
+
 #. js-lingui-id: vj+OHl
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Allowed redirect URIs for OAuth flows"
 msgstr "Engedélyezett átirányítási URI-k az OAuth-folyamatokhoz"
+
+#. js-lingui-id: L36XXB
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Allows"
+msgstr "Engedélyezi"
 
 #. js-lingui-id: Yn0ZH1
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -3718,7 +3700,7 @@ msgid "An error occurred while loading this widget."
 msgstr "Hiba történt a widget betöltése közben."
 
 #. js-lingui-id: I/scZd
-#: src/modules/ai/components/AiChatErrorMessage.tsx
+#: src/modules/ai-chat/components/AiChatErrorMessage.tsx
 msgid "An error occurred while processing your message"
 msgstr "Hiba történt az üzenet feldolgozása során"
 
@@ -3796,7 +3778,7 @@ msgid "An object with this name already exists"
 msgstr "Már létezik ilyen nevű objektum"
 
 #. js-lingui-id: lxentK
-#: src/modules/ai/utils/toAiChatError.ts
+#: src/modules/ai-chat/utils/toAiChatError.ts
 msgid "An unexpected error occurred"
 msgstr "Váratlan hiba történt"
 
@@ -3814,7 +3796,7 @@ msgid "And"
 msgstr "És"
 
 #. js-lingui-id: U/Q98U
-#: src/modules/ai/components/ToolRecordsWidget.tsx
+#: src/modules/ai-chat/thinking-steps/components/ToolRecordsWidget.tsx
 msgid "and {hiddenCount} more"
 msgstr "és további {hiddenCount}"
 
@@ -3840,7 +3822,7 @@ msgid "Answered"
 msgstr "Megválaszolt"
 
 #. js-lingui-id: +qygei
-#: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema.ts
 msgid "Answers"
 msgstr "Válaszok"
@@ -4142,6 +4124,11 @@ msgstr "Az alábbi alkalmazásokat a Twenty nem vizsgálta felül. Használja sa
 msgid "Applies to"
 msgstr "Erre vonatkozik"
 
+#. js-lingui-id: 9xcLbN
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAllObjectsCard.tsx
+msgid "Applies to all objects before overrides"
+msgstr "A felülbírálások előtt minden objektumra érvényes"
+
 #. js-lingui-id: DB8zMK
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
@@ -4159,18 +4146,18 @@ msgid "Apply{progressText}"
 msgstr "Alkalmaz{progressText}"
 
 #. js-lingui-id: YLFgbC
-#: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Approval review"
 msgstr "Jóváhagyás felülvizsgálata"
 
 #. js-lingui-id: Z7ZXbT
-#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
-#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Approve"
 msgstr "Jóváhagyás"
 
 #. js-lingui-id: IkcmiN
-#: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Approve all {pendingCardCount}"
 msgstr "Az összes {pendingCardCount} jóváhagyása"
 
@@ -4180,7 +4167,7 @@ msgid "Approve media access for {applicationName}?"
 msgstr "Médiához való hozzáférés jóváhagyása ennél: {applicationName}?"
 
 #. js-lingui-id: 7kb4LU
-#: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Approved"
 msgstr "Jóváhagyva"
 
@@ -4190,7 +4177,7 @@ msgid "Approved access domain validated"
 msgstr "Jóváhagyott hozzáférési tartomány megerősítve"
 
 #. js-lingui-id: nfUdWT
-#: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Approved but it failed"
 msgstr "Jóváhagyva, de sikertelen"
 
@@ -4242,7 +4229,7 @@ msgid "Arabic"
 msgstr "Arab"
 
 #. js-lingui-id: DzER9P
-#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
+#: src/modules/ai-chat/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Arch"
 msgstr "Ív"
 
@@ -4328,13 +4315,13 @@ msgid "Are you sure? Your current information will not be saved."
 msgstr "Biztos vagy benne? A jelenlegi adatok nem lesznek mentve."
 
 #. js-lingui-id: OgB1k4
-#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsEditor.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsEditor.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 msgid "Arguments"
 msgstr "Argumentumok"
 
 #. js-lingui-id: qUFEtj
-#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsEditor.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsEditor.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Arguments must be a valid JSON object."
 msgstr "Az argumentumoknak érvényes JSON-objektumnak kell lenniük."
@@ -4450,7 +4437,7 @@ msgid "Ask AI"
 msgstr "Kérdezze a MI-t"
 
 #. js-lingui-id: IRCQfx
-#: src/modules/ai/components/AiChatQuotaLimitExhaustedMessage.tsx
+#: src/modules/ai-chat/usage/components/AiChatQuotaLimitExhaustedMessage.tsx
 msgid "Ask an admin to raise the limit."
 msgstr "Kérjen meg egy rendszergazdát a korlát megemelésére."
 
@@ -4465,12 +4452,12 @@ msgid "Ask for human input"
 msgstr "Emberi bevitel kérése"
 
 #. js-lingui-id: mc9nK2
-#: src/modules/ai/hooks/useAiChatEditor.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatEditor.ts
 msgid "Ask, search or make anything..."
 msgstr "Kérdezzen, keressen vagy készítsen bármit..."
 
 #. js-lingui-id: QVL/hg
-#: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 msgid "Asking questions..."
 msgstr "Kérdések feltevése..."
 
@@ -4540,7 +4527,7 @@ msgid "Assigned to me"
 msgstr "Hozzám rendelve"
 
 #. js-lingui-id: 7RNUhk
-#: src/modules/ai/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 msgid "Assigned to you"
 msgstr "Önhöz rendelve"
 
@@ -4555,8 +4542,8 @@ msgid "Assignment"
 msgstr "Hozzárendelés"
 
 #. js-lingui-id: d/bvvp
-#: src/modules/ai/hooks/useAiChatEditor.ts
-#: src/modules/ai/utils/getAiChatMessageAuthor.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatEditor.ts
+#: src/modules/ai-chat/messages/utils/getAiChatMessageAuthor.ts
 msgid "Assistant"
 msgstr "Asszisztens"
 
@@ -4666,7 +4653,7 @@ msgstr "Fájl csatolása"
 #. js-lingui-id: N7m8E+
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/ai/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Attach files"
@@ -4916,17 +4903,17 @@ msgid "Availability"
 msgstr "Elérhetőség"
 
 #. js-lingui-id: C2F7IU
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Availability calendars"
 msgstr "Rendelkezésre állási naptárak"
 
 #. js-lingui-id: caqRwP
-#: src/modules/ai/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 msgid "Availability was not checked for {uncheckedAttendeeList}. You can still send an invite."
 msgstr "{uncheckedAttendeeList} esetében nem ellenőriztük a rendelkezésre állást. Az meghívót ettől függetlenül elküldheti."
 
 #. js-lingui-id: bUNt5P
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Available times"
 msgstr "Elérhető időpontok"
 
@@ -5223,7 +5210,7 @@ msgid "Block style"
 msgstr "Blokk stílusa"
 
 #. js-lingui-id: 32TndD
-#: src/modules/ai/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Blocked"
 msgstr "Blokkolva"
@@ -5255,8 +5242,8 @@ msgid "Blue"
 msgstr "Kék"
 
 #. js-lingui-id: bGQplw
-#: src/modules/ai/components/AiChatApprovalEmailReview.tsx
-#: src/modules/ai/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
 #: src/modules/side-panel/pages/email-block-settings/components/EmailPageStyleSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -5461,7 +5448,7 @@ msgid "Bundled with {applicationName}"
 msgstr "A(z) {applicationName} részeként"
 
 #. js-lingui-id: /blpUq
-#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
+#: src/modules/ai-chat/constants/AiChatAssistantAvatarShapeLabels.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "Burst"
 msgstr "Csúcsérték"
@@ -5533,8 +5520,8 @@ msgid "Cached creation"
 msgstr "Gyorsítótár-létrehozás"
 
 #. js-lingui-id: hmxr83
-#: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Cached input"
 msgstr "Gyorsítótárazott bemenet"
 
@@ -5590,7 +5577,7 @@ msgid "Calendar access needs approval"
 msgstr "A naptárhoz való hozzáférés jóváhagyást igényel"
 
 #. js-lingui-id: DZrVwO
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Calendar availability could not be checked."
 msgstr "Nem sikerült ellenőrizni a naptár rendelkezésre állását."
 
@@ -5754,7 +5741,7 @@ msgid "Canada"
 msgstr "Kanada"
 
 #. js-lingui-id: dEgA5A
-#: src/modules/ai/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
 #: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -5873,7 +5860,7 @@ msgid "Canceled at"
 msgstr "Lemondva ekkor"
 
 #. js-lingui-id: vv7kpg
-#: src/modules/ai/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 msgid "Cancelled"
 msgstr "Lemondva"
@@ -6074,7 +6061,7 @@ msgid "Change Password"
 msgstr "Jelszó megváltoztatása"
 
 #. js-lingui-id: 98W3AT
-#: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 msgid "Change status in {scopeLabel}"
 msgstr "Állapot módosítása itt: {scopeLabel}"
 
@@ -6121,7 +6108,7 @@ msgid "channel"
 msgstr "csatorna"
 
 #. js-lingui-id: HdE1If
-#: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientPicker.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 msgid "Channel"
@@ -6199,7 +6186,7 @@ msgid "Chat Sessions"
 msgstr "Beszélgetési munkamenetek"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
 msgid "Chat stopped: no more available credits."
 msgstr "A csevegés leállt: nincs több elérhető kredit."
 
@@ -6232,7 +6219,7 @@ msgid "Check List"
 msgstr "Ellenőrzőlista"
 
 #. js-lingui-id: oa2dNe
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check recent runs"
 msgstr "Legutóbbi futások ellenőrzése"
 
@@ -6247,12 +6234,12 @@ msgid "Check the event dates"
 msgstr "Ellenőrizze az esemény dátumait"
 
 #. js-lingui-id: EXMtgb
-#: src/modules/ai/components/__stories__/AiChatApprovalMergeReviewExample.tsx
+#: src/modules/ai-chat/tool-calls/components/__stories__/AiChatApprovalMergeReviewExample.tsx
 msgid "Check the merge result before trying again"
 msgstr "Újrapróbálkozás előtt ellenőrizze az egyesítés eredményét"
 
 #. js-lingui-id: PaKTa7
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Check this workflow's recent runs and tell me whether any failed and why."
 msgstr "Ellenőrizze ennek a munkafolyamatnak a legutóbbi futásait, és mondja meg, hogy volt-e sikertelen, és miért."
 
@@ -6282,7 +6269,7 @@ msgid "Checked only when the record this rule belongs to is saved. Editing the r
 msgstr "Csak akkor ellenőrzi, amikor a szabályhoz tartozó rekord mentésre kerül. A kapcsolódó rekord szerkesztése nem ellenőrzi újra."
 
 #. js-lingui-id: DMUK+4
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Checking calendar availability…"
 msgstr "Naptár rendelkezésre állásának ellenőrzése…"
 
@@ -6318,26 +6305,26 @@ msgid "Choose {intervalAdjective} credits"
 msgstr "Válasszon {intervalAdjective} kreditet"
 
 #. js-lingui-id: HC7flO
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
-#: src/modules/ai/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 #: src/modules/ui/input/components/internal/date/components/DatePickerCalendar.tsx
 msgid "Choose a date"
 msgstr "Válasszon dátumot"
 
 #. js-lingui-id: mXw+D5
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Choose a date to see available times."
 msgstr "Az elérhető időpontok megtekintéséhez válasszon dátumot."
 
 #. js-lingui-id: n5pcaT
-#: src/modules/ai/components/AiModelTierDropdown.tsx
-#: src/modules/ai/components/AiModelTierDropdown.tsx
+#: src/modules/ai-chat/components/AiModelTierDropdown.tsx
+#: src/modules/ai-chat/components/AiModelTierDropdown.tsx
 msgid "Choose a model mode"
 msgstr "Válasszon modellmódot"
 
 #. js-lingui-id: Vgi70q
-#: src/modules/ai/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "Choose a source record to keep"
 msgstr "Válassza ki a megtartandó forrásrekordot"
 
@@ -6347,12 +6334,12 @@ msgid "Choose a spender"
 msgstr "Válasszon költőt"
 
 #. js-lingui-id: ZLmzD4
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose a time zone"
 msgstr "Válasszon időzónát"
 
 #. js-lingui-id: 2cQMP+
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose a time zone."
 msgstr "Válasszon időzónát."
 
@@ -6382,12 +6369,12 @@ msgid "Choose an access level available to all selected recipients."
 msgstr "Válasszon minden kiválasztott címzett számára elérhető hozzáférési szintet."
 
 #. js-lingui-id: bTsJ+r
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose an available calendar that can send invitations."
 msgstr "Válasszon egy elérhető naptárt, amely képes meghívókat küldeni."
 
 #. js-lingui-id: 4yF6C2
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose an organizer calendar"
 msgstr "Válasszon szervezői naptárt"
 
@@ -6494,7 +6481,7 @@ msgid "Choose when {assistantName} participates in conversations across your wor
 msgstr "Válaszd ki, hogy {assistantName} mikor vegyen részt a munkaterületed beszélgetéseiben"
 
 #. js-lingui-id: GF9DB4
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose when you are available and which calendar sends invitations."
 msgstr "Válassza ki, mikor ér rá, és melyik naptár küldi a meghívókat."
 
@@ -6529,7 +6516,7 @@ msgid "Choose your preferences for the apps installed on your workspace by the a
 msgstr "Válassza ki a rendszergazda által a munkaterületére telepített alkalmazások beállításait"
 
 #. js-lingui-id: 7xMmki
-#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
+#: src/modules/ai-chat/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Circle"
 msgstr "Kör"
 
@@ -6755,7 +6742,7 @@ msgid "Clipboard requires a secure connection (HTTPS). Please access this app ov
 msgstr ""
 
 #. js-lingui-id: yz7wBu
-#: src/modules/ai/components/AiChatCloseButton.tsx
+#: src/modules/ai-chat/components/AiChatCloseButton.tsx
 #: src/modules/front-components/media-session/components/FrontComponentMediaPermissionModal.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -6826,7 +6813,7 @@ msgid "Closes in 6 days"
 msgstr "6 nap múlva zárul"
 
 #. js-lingui-id: XLMJ7O
-#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
+#: src/modules/ai-chat/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Cloud"
 msgstr "Felhő"
 
@@ -6836,7 +6823,7 @@ msgid "Cloudflare may expect a name relative to the zone rather than the full ho
 msgstr "Előfordulhat, hogy a Cloudflare a zónához viszonyított nevet várja a teljes gépnév helyett; ne fűzze hozzá kétszer a domaint. Mentés előtt mutassa meg a javasolt módosításokat, és kérjen megerősítést."
 
 #. js-lingui-id: ExH3eu
-#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
+#: src/modules/ai-chat/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Clover"
 msgstr "Lóhere"
 
@@ -6848,7 +6835,7 @@ msgstr "kód"
 
 #. js-lingui-id: EWPtMO
 #: src/modules/advanced-text-editor/components/TextBubbleMenu.tsx
-#: src/modules/ai/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 msgid "Code"
 msgstr "Kód"
@@ -6864,7 +6851,7 @@ msgid "Code Block"
 msgstr "Kódblokk"
 
 #. js-lingui-id: 80c4+P
-#: src/modules/ai/components/MarkdownCodeBlock.tsx
+#: src/modules/ai-chat/message-content/components/MarkdownCodeBlock.tsx
 msgid "Code copied to clipboard"
 msgstr "Kód vágólapra másolva"
 
@@ -6915,7 +6902,7 @@ msgid "collapse"
 msgstr "összecsuk"
 
 #. js-lingui-id: H86f9p
-#: src/modules/ai/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
@@ -7182,7 +7169,7 @@ msgstr "kész"
 
 #. js-lingui-id: qqWcBV
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
-#: src/modules/ai/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -7202,7 +7189,7 @@ msgid "Complexity"
 msgstr "Komplexitás"
 
 #. js-lingui-id: ST17km
-#: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
+#: src/modules/ai-chat/tool-calls/hooks/useAiChatFrontComponentPreview.ts
 msgid "Component failed to render."
 msgstr "A komponens megjelenítése sikertelen."
 
@@ -7212,7 +7199,7 @@ msgid "Component name"
 msgstr "Komponens neve"
 
 #. js-lingui-id: WcUICq
-#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Component preview with sample data"
 msgstr "Komponens-előnézet mintaadatokkal"
 
@@ -7428,7 +7415,7 @@ msgid "Confirm"
 msgstr "Megerősítés"
 
 #. js-lingui-id: MrMPwB
-#: src/modules/ai/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
 msgid "Confirm approval"
 msgstr "Jóváhagyás megerősítése"
 
@@ -7629,7 +7616,7 @@ msgid "Connection successfully updated"
 msgstr "Kapcsolat sikeresen frissítve"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "Megszakadt a kapcsolat az asszisztenssel. Töltse újra az oldalt a válasz megtekintéséhez."
 
@@ -7692,22 +7679,22 @@ msgid "Context"
 msgstr "Összefüggés"
 
 #. js-lingui-id: /vXJ9Y
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Context and usage"
 msgstr "Kontextus és használat"
 
 #. js-lingui-id: uEf5Og
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Context and usage, {formattedPercentage}% of context window used"
 msgstr "Kontextus és használat: a kontextusablakból {formattedPercentage}% felhasználva"
 
 #. js-lingui-id: 4NJlEz
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Context and usage, context window unavailable"
 msgstr "Kontextus és használat, a kontextusablak nem érhető el"
 
 #. js-lingui-id: LXIm4m
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Context window"
 msgstr "Kontextusablak"
@@ -7793,7 +7780,7 @@ msgstr "Szabályozza, hogy milyen típusú entitásokhoz rendelhető ez a szerep
 
 #. js-lingui-id: YyNOE7
 #: src/modules/activities/emails/utils/getTimelineThreadLabel.ts
-#: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 #: src/modules/inbox/components/InboxConversationPane.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -7847,7 +7834,7 @@ msgid "Cook"
 msgstr "Cook"
 
 #. js-lingui-id: SB9yVb
-#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
+#: src/modules/ai-chat/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Cookie"
 msgstr "Süti"
 
@@ -7890,10 +7877,10 @@ msgid "Copy audio download link"
 msgstr "Hangletöltési hivatkozás másolása"
 
 #. js-lingui-id: NmPNJJ
-#: src/modules/ai/components/CodeExecutionDisplay.tsx
-#: src/modules/ai/components/CodeExecutionDisplay.tsx
-#: src/modules/ai/components/MarkdownCodeBlock.tsx
-#: src/modules/ai/components/MarkdownCodeBlock.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/MarkdownCodeBlock.tsx
+#: src/modules/ai-chat/message-content/components/MarkdownCodeBlock.tsx
 msgid "Copy code"
 msgstr "Kód másolása"
 
@@ -7935,8 +7922,8 @@ msgid "Copy link to view"
 msgstr "Link másolása a megtekintéshez"
 
 #. js-lingui-id: VBIlvI
-#: src/modules/ai/components/TerminalOutput.tsx
-#: src/modules/ai/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 msgid "Copy output"
 msgstr "Kimenet másolása"
 
@@ -8020,7 +8007,7 @@ msgid "Cost"
 msgstr "Költség"
 
 #. js-lingui-id: R0dp36
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 msgid "Cost index"
 msgstr "Költségindex"
 
@@ -8060,7 +8047,7 @@ msgid "Could not attach this conversation to the {objectLabel}"
 msgstr "Nem sikerült a beszélgetést a következőhöz csatolni: {objectLabel}"
 
 #. js-lingui-id: E/YqmF
-#: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Could not be proposed"
 msgstr "Nem lehetett javasolni"
 
@@ -8101,8 +8088,8 @@ msgid "Could not load Getting started."
 msgstr "Nem sikerült betölteni az Első lépéseket."
 
 #. js-lingui-id: Y5qCpF
-#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
-#: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFrontComponentCard.tsx
+#: src/modules/ai-chat/tool-calls/hooks/useAiChatFrontComponentPreview.ts
 msgid "Could not load preview."
 msgstr "Az előnézetet nem sikerült betölteni."
 
@@ -8162,7 +8149,7 @@ msgid "Could not react with {emoji}"
 msgstr "Nem sikerült reagálni ezzel: {emoji}"
 
 #. js-lingui-id: 6GjSMn
-#: src/modules/ai/hooks/useRefreshFrontComponents.ts
+#: src/modules/ai-chat/tool-calls/hooks/useRefreshFrontComponents.ts
 msgid "Could not refresh components. Reload to see saved changes."
 msgstr "Nem sikerült frissíteni az összetevőket. Töltse újra az oldalt a mentett módosítások megtekintéséhez."
 
@@ -8370,12 +8357,12 @@ msgid "Create {objectLabelSingular}"
 msgstr "{objectLabelSingular} létrehozása"
 
 #. js-lingui-id: RRkWki
-#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Create {recordCount} {objectLabel}"
 msgstr "{recordCount} {objectLabel} létrehozása"
 
 #. js-lingui-id: TryTER
-#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Create {selectedCount}"
 msgstr "{selectedCount} létrehozása"
 
@@ -8386,18 +8373,18 @@ msgid "Create a few {0} to preview this rule on real records."
 msgstr "Hozzon létre néhány {0} elemet, hogy valódi rekordokon tekinthesse meg a szabály előnézetét."
 
 #. js-lingui-id: fQFALn
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a new contact and link them to a company. Details: "
 msgstr "Hozzon létre egy új kapcsolattartót, és kapcsolja össze egy vállalattal. Részletek: "
 
 #. js-lingui-id: j85EUk
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a new record in this view. Details: "
 msgstr "Új rekord létrehozása ebben a nézetben. Részletek: "
 
 #. js-lingui-id: n1Nbbe
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a record"
 msgstr "Rekord létrehozása"
 
@@ -8407,23 +8394,23 @@ msgid "Create a relation with other objects"
 msgstr "Kapcsolat létrehozása más objektumokkal"
 
 #. js-lingui-id: OW4ZDC
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task"
 msgstr "Feladat létrehozása"
 
 #. js-lingui-id: Jk5UrD
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task for this company: "
 msgstr "Feladat létrehozása ehhez a vállalathoz: "
 
 #. js-lingui-id: T9fLSG
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Create a task for this record: "
 msgstr "Feladat létrehozása ehhez a rekordhoz: "
 
 #. js-lingui-id: Xn2Nlq
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a workflow"
 msgstr "Munkafolyamat létrehozása"
 
@@ -8790,8 +8777,8 @@ msgid "credits"
 msgstr "kreditek"
 
 #. js-lingui-id: lDIOek
-#: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentCreditsPerDayChart.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -9015,7 +9002,7 @@ msgid "Current workspace member not found."
 msgstr "Nem található az aktuális munkaterület tagja."
 
 #. js-lingui-id: dUDTUc
-#: src/modules/ai/components/internal/AiChatToolCallApprovalCurrentValue.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCurrentValue.tsx
 msgid "Currently:"
 msgstr "Jelenleg:"
 
@@ -9034,7 +9021,6 @@ msgstr "egyéni"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 #: src/modules/settings/data-model/utils/getSettingsObjectFieldType.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Custom"
 msgstr "Egyéni"
@@ -9350,7 +9336,7 @@ msgid "Dashboard duplicated successfully"
 msgstr "Irányítópult sikeresen duplikálva"
 
 #. js-lingui-id: xLSe09
-#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Dashboard widget"
 msgstr "Irányítópult-widget"
 
@@ -9653,8 +9639,8 @@ msgstr "Érték csökkentése"
 
 #. js-lingui-id: ovBPCi
 #: src/modules/advanced-text-editor/components/RichTextColorDropdown.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/modules/ai/components/AiModelPinSelect.tsx
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/admin-panel/config-variables/constants/ConfigVariableSourceOptions.ts
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
@@ -9791,6 +9777,7 @@ msgstr "törlés"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage.tsx
@@ -9861,7 +9848,7 @@ msgid "Delete {objectLabelPlural}"
 msgstr "Törlés {objectLabelPlural}"
 
 #. js-lingui-id: CF0F8U
-#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Delete {recordCount} {objectLabel}"
 msgstr "{recordCount} {objectLabel} törlése"
 
@@ -9871,7 +9858,7 @@ msgid "Delete {relationObjectLabelSingular}"
 msgstr "{relationObjectLabelSingular} törlése"
 
 #. js-lingui-id: ++479H
-#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Delete {selectedCount}"
 msgstr "{selectedCount} törlése"
 
@@ -10024,8 +10011,8 @@ msgid "Delete MCP server"
 msgstr "MCP szerver törlése"
 
 #. js-lingui-id: KDfTdX
-#: src/modules/ai/components/AiChatMessage.tsx
-#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
 msgid "Delete message"
 msgstr "Üzenet törlése"
 
@@ -10048,11 +10035,6 @@ msgstr "Az alkalmazásregisztráció törlése vagy átruházása"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/DeleteRecordAction.ts
 msgid "Delete Record"
 msgstr "Rekord törlése"
-
-#. js-lingui-id: mcXHCJ
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Delete Records on All Objects"
-msgstr "Rekordok törlése minden objektumon"
 
 #. js-lingui-id: Ptdfm4
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
@@ -10083,6 +10065,11 @@ msgstr "Sor törlése"
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 msgid "Delete Skill"
 msgstr "Készség törlése"
+
+#. js-lingui-id: drg4t8
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
+msgid "Delete tab"
+msgstr "Lap törlése"
 
 #. js-lingui-id: +RYIn9
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
@@ -10239,7 +10226,7 @@ msgid "Delivery"
 msgstr "Kézbesítés"
 
 #. js-lingui-id: cFCKYZ
-#: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Deny"
 msgstr "Elutasítás"
 
@@ -10330,6 +10317,7 @@ msgstr "törlés"
 
 #. js-lingui-id: 2xxBws
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
+#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
 msgid "Destroy"
 msgstr "Megsemmisítés"
 
@@ -10347,11 +10335,6 @@ msgstr "Megsemmisítés {objectLabelPlural}"
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Destroy all records"
 msgstr "Összes rekord megsemmisítése"
-
-#. js-lingui-id: L68qSB
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Destroy Records on All Objects"
-msgstr "Rekordok megsemmisítése minden objektumon"
 
 #. js-lingui-id: FOcBn3
 #: src/modules/inbox/components/InboxThreadActionsDropdown.tsx
@@ -10448,17 +10431,17 @@ msgid "Diagram controls"
 msgstr "Diagramvezérlők"
 
 #. js-lingui-id: PFS3WB
-#: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
+#: src/modules/ai-chat/dictation/utils/getDictationFailureMessage.ts
 msgid "Dictation did not respond in this browser. Try Safari, or type instead."
 msgstr "A diktálás nem válaszolt ebben a böngészőben. Próbálja meg a Safarit, vagy inkább gépeljen."
 
 #. js-lingui-id: qXiOAF
-#: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
+#: src/modules/ai-chat/dictation/utils/getDictationFailureMessage.ts
 msgid "Dictation failed. Try again."
 msgstr "A diktálás sikertelen volt. Próbálja újra."
 
 #. js-lingui-id: MDy8Vw
-#: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
+#: src/modules/ai-chat/dictation/utils/getDictationFailureMessage.ts
 msgid "Dictation is not supported in this browser."
 msgstr "A diktálás nem támogatott ebben a böngészőben."
 
@@ -10473,7 +10456,7 @@ msgid "Direct messages"
 msgstr "Közvetlen üzenetek"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "A közvetlen üzenetek nem támogatják a mellékleteket."
 
@@ -10516,7 +10499,7 @@ msgid "Disabled"
 msgstr "Letiltott"
 
 #. js-lingui-id: bzSI52
-#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Discard"
@@ -10558,7 +10541,7 @@ msgid "Discovery on {defaultDomain}"
 msgstr "Felfedezés a(z) {defaultDomain} tartományon"
 
 #. js-lingui-id: 1QfxQT
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Dismiss"
 msgstr "Bezárás"
 
@@ -10737,7 +10720,7 @@ msgid "Don't import events marked as private"
 msgstr "Ne importálja a privátként megjelölt eseményeket"
 
 #. js-lingui-id: DPfwMq
-#: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 #: src/modules/inbox/components/InboxBulkActions.tsx
 #: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 #: src/modules/inbox/constants/InboxChannelNavigationItems.ts
@@ -10748,7 +10731,7 @@ msgid "Done"
 msgstr "Kész"
 
 #. js-lingui-id: y+f/uY
-#: src/modules/ai/components/AiChatThreadActivityTime.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadActivityTime.tsx
 msgid "Done {doneTime}"
 msgstr "Kész: {doneTime}"
 
@@ -10792,7 +10775,7 @@ msgid "Download"
 msgstr "Letöltés"
 
 #. js-lingui-id: qnTwse
-#: src/modules/ai/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Download {filename}"
 msgstr "{filename} letöltése"
 
@@ -10829,7 +10812,7 @@ msgstr "Minta letöltése"
 
 #. js-lingui-id: eneWvv
 #: src/modules/activities/emails/components/EmailThreadPreview.tsx
-#: src/modules/ai/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 #: src/modules/object-core/workflows/constants/CoreWorkflowStatusFilterOptions.ts
 #: src/modules/object-core/workflows/versions/constants/CoreWorkflowVersionStatusLabels.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -10838,17 +10821,17 @@ msgid "Draft"
 msgstr "Piszkozat"
 
 #. js-lingui-id: 1qZ7C3
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Draft an email"
 msgstr "E-mail-piszkozat készítése"
 
 #. js-lingui-id: /b72oP
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Draft an email to this company about "
 msgstr "E-mail-piszkozat készítése ennek a vállalatnak a következő témában: "
 
 #. js-lingui-id: DbAw4C
-#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Draft email"
 msgstr "E-mail piszkozat"
@@ -11087,8 +11070,8 @@ msgstr "eddy@gmail.com, @apple.com"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/profile/components/EmailField.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Edit"
 msgstr "Szerkesztés"
@@ -11166,7 +11149,6 @@ msgstr "Mezőérték szerkesztése"
 
 #. js-lingui-id: oKQ7ls
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
 msgid "Edit Fields"
 msgstr "Mezők szerkesztése"
@@ -11211,8 +11193,8 @@ msgid "Edit linked records"
 msgstr "Kapcsolt rekordok szerkesztése"
 
 #. js-lingui-id: QjH+ZX
-#: src/modules/ai/components/AiChatMessage.tsx
-#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
 msgid "Edit message"
 msgstr "Üzenet szerkesztése"
 
@@ -11254,11 +11236,6 @@ msgstr "Profiladatok szerkesztése"
 msgid "Edit Record Table"
 msgstr "Rekordtábla szerkesztése"
 
-#. js-lingui-id: 6n2zpV
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Edit Records on All Objects"
-msgstr "Rekordok szerkesztése minden objektumon"
-
 #. js-lingui-id: 4QhQge
 #: src/modules/page-layout/widgets/field/components/FieldWidgetRelationEditAction.tsx
 msgid "Edit relation"
@@ -11270,8 +11247,8 @@ msgid "Edit rule"
 msgstr "Szabály szerkesztése"
 
 #. js-lingui-id: i5BTxr
-#: src/modules/ai/components/AiChatThreadLabelsField.tsx
-#: src/modules/ai/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "Edit shared labels"
 msgstr "Megosztott címkék szerkesztése"
 
@@ -11327,7 +11304,7 @@ msgid "Editor"
 msgstr "Szerkesztő"
 
 #. js-lingui-id: QyUT/d
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 msgid "Effort"
 msgstr "Erőfeszítés"
 
@@ -11614,8 +11591,8 @@ msgstr "Alkalmazottak"
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
-#: src/modules/ai/components/AiChatRecordApprovalReview.tsx
-#: src/modules/ai/components/internal/AiChatToolCallApprovalCurrentValue.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCurrentValue.tsx
 #: src/modules/log-console/components/LogConsoleRecordChangeDetail.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx
@@ -11624,7 +11601,7 @@ msgid "Empty"
 msgstr "Üres"
 
 #. js-lingui-id: OMbipf
-#: src/modules/ai/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -11643,7 +11620,7 @@ msgid "Empty Array"
 msgstr "Üres tömb"
 
 #. js-lingui-id: 3hSGoJ
-#: src/modules/ai/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -11746,7 +11723,7 @@ msgid "End date must be after start date."
 msgstr "A befejezés dátumának a kezdés dátuma után kell lennie."
 
 #. js-lingui-id: xus58/
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "End time must be after start time."
 msgstr "A befejezési időnek a kezdési idő után kell lennie."
 
@@ -11883,7 +11860,7 @@ msgid "Enter a number"
 msgstr "Adjon meg egy számot"
 
 #. js-lingui-id: LsUGyx
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Enter a start and end time."
 msgstr "Adjon meg kezdési és befejezési időt."
 
@@ -12544,6 +12521,11 @@ msgstr "minden percben"
 msgid "Every Monday"
 msgstr "Minden hétfőn"
 
+#. js-lingui-id: QU6LCC
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+msgid "Every object follows the all objects access."
+msgstr "Minden objektum az összes objektum hozzáférési beállításait követi."
+
 #. js-lingui-id: JsIvOW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Every object of this workspace as CSV files in one zip, kept for 1 day. Works for suspended workspaces."
@@ -12729,7 +12711,7 @@ msgid "Exit import flow"
 msgstr "Kilépés importálási folyamatból"
 
 #. js-lingui-id: 1A3EXy
-#: src/modules/ai/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
@@ -12863,12 +12845,12 @@ msgid "Expires in less than a day"
 msgstr "Kevesebb mint egy nap múlva jár le"
 
 #. js-lingui-id: VJKLVq
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain this workflow"
 msgstr "Munkafolyamat magyarázata"
 
 #. js-lingui-id: p8KUPY
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain what this workflow does, step by step."
 msgstr "Magyarázza el lépésről lépésre, mit csinál ez a munkafolyamat."
 
@@ -12981,9 +12963,9 @@ msgstr "Arc"
 
 #. js-lingui-id: 7Bj3x9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
-#: src/modules/ai/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai/components/CodeExecutionDisplay.tsx
-#: src/modules/ai/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
@@ -13229,7 +13211,7 @@ msgid "Failed to generate backup codes."
 msgstr "Nem sikerült létrehozni a tartalékkódokat."
 
 #. js-lingui-id: Ukrbw5
-#: src/modules/ai/components/AiChatErrorMessage.tsx
+#: src/modules/ai-chat/components/AiChatErrorMessage.tsx
 msgid "Failed to get response"
 msgstr "Nem sikerült a válasz megszerzése"
 
@@ -13261,7 +13243,7 @@ msgid "Failed to link the related records to this event"
 msgstr "Nem sikerült a kapcsolódó rekordokat ehhez az eseményhez kapcsolni"
 
 #. js-lingui-id: XC1d54
-#: src/modules/ai/components/AiChatAgentAuthorResolver.tsx
+#: src/modules/ai-chat/messages/components/AiChatAgentAuthorResolver.tsx
 msgid "Failed to load agent details."
 msgstr "Nem sikerült betölteni az ügynök adatait."
 
@@ -13568,7 +13550,7 @@ msgid "Failed to upload file \"{fileNameForError}\": {errorMessage}"
 msgstr "A fájl \"{fileNameForError}\" feltöltése nem sikerült: {errorMessage}"
 
 #. js-lingui-id: cQPyHI
-#: src/modules/ai/hooks/useAiChatFileUpload.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatFileUpload.ts
 msgid "Failed to upload file: {fileName}"
 msgstr "Fájl feltöltése nem sikerült: {fileName}"
 
@@ -13646,7 +13628,7 @@ msgid "Features active until"
 msgstr "Funkciók aktívak eddig:"
 
 #. js-lingui-id: YirHq7
-#: src/modules/ai/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 msgid "Feedback"
 msgstr "Visszajelzés"
@@ -13786,6 +13768,11 @@ msgstr "Mezők"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
 msgid "Fields (Optional)"
 msgstr "Mezők (nem kötelező)"
+
+#. js-lingui-id: fiU2kl
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Fields and rule"
+msgstr "Mezők és szabály"
 
 #. js-lingui-id: Tnz22x
 #: src/modules/object-record/record-merge/components/MergePrioritySettings.tsx
@@ -14004,12 +13991,12 @@ msgid "Filter opt-outs"
 msgstr "Leiratkozások szűrése"
 
 #. js-lingui-id: FG3LyE
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Filter this view"
 msgstr "Nézet szűrése"
 
 #. js-lingui-id: xitJ93
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Filter this view to only show "
 msgstr "Szűrje ezt a nézetet úgy, hogy csak a következőket jelenítse meg: "
 
@@ -14071,11 +14058,6 @@ msgstr "Fejezze be az elrendezés szerkesztését a Beérkezett üzenetek megnyi
 msgid "Finish editing the layout to open Settings"
 msgstr "Fejezze be az elrendezés szerkesztését a Beállítások megnyitásához"
 
-#. js-lingui-id: 1yKuEJ
-#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
-msgid "Finish editing the layout to open this tab"
-msgstr "Fejezze be az elrendezés szerkesztését a lap megnyitásához"
-
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "Finish flow with errors"
@@ -14092,7 +14074,7 @@ msgid "Finish your setup"
 msgstr "Fejezze be a beállítást"
 
 #. js-lingui-id: 4dQFvz
-#: src/modules/ai/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 msgid "Finished"
 msgstr "Befejezve"
 
@@ -14181,7 +14163,7 @@ msgid "Flow"
 msgstr "Folyamat"
 
 #. js-lingui-id: abEdHK
-#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
+#: src/modules/ai-chat/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Flower"
 msgstr "Virág"
 
@@ -14212,7 +14194,7 @@ msgid "Folders"
 msgstr "Mappák"
 
 #. js-lingui-id: 2z3uoE
-#: src/modules/ai/components/AiChatThreadFollowersField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
 msgid "Follow for me"
 msgstr "Követés helyettem"
 
@@ -14222,7 +14204,7 @@ msgid "Follow us on X"
 msgstr "Kövessen minket X-en"
 
 #. js-lingui-id: y6sq5j
-#: src/modules/ai/components/AiChatThreadFollowersField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
 msgid "Following"
 msgstr "Követés"
 
@@ -14263,7 +14245,7 @@ msgid "Forgot your password?"
 msgstr "Elfelejtette a jelszavát?"
 
 #. js-lingui-id: QRAWTO
-#: src/modules/ai/components/AiChatFormCardContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormCardContent.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/FormAction.ts
 msgid "Form"
@@ -14275,12 +14257,12 @@ msgid "Form Data"
 msgstr "Űrlapadatok"
 
 #. js-lingui-id: oiy48l
-#: src/modules/ai/components/AiChatFormStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Form skipped"
 msgstr "Űrlap kihagyva"
 
 #. js-lingui-id: 6vS9Zq
-#: src/modules/ai/components/AiChatFormStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Form submitted"
 msgstr "Űrlap elküldve"
 
@@ -14307,8 +14289,8 @@ msgid "Formats"
 msgstr "Formátumok"
 
 #. js-lingui-id: CjVkbV
-#: src/modules/ai/hooks/useAiChatThreadDisplayLabel.ts
-#: src/modules/ai/utils/getAiChatSenderLabel.ts
+#: src/modules/ai-chat/threads/hooks/useAiChatThreadDisplayLabel.ts
+#: src/modules/ai-chat/utils/getAiChatSenderLabel.ts
 #: src/modules/inbox/components/InboxDirectMessageTitle.tsx
 #: src/modules/inbox/components/NavigationDrawerDirectMessageItem.tsx
 msgid "Former member"
@@ -14386,7 +14368,7 @@ msgid "French"
 msgstr "Francia"
 
 #. js-lingui-id: 39y5bn
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Friday"
 msgstr "Péntek"
 
@@ -14574,7 +14556,7 @@ msgid "GDPR"
 msgstr "GDPR"
 
 #. js-lingui-id: WFxtuG
-#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
+#: src/modules/ai-chat/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Gem"
 msgstr "Drágakő"
 
@@ -14669,7 +14651,7 @@ msgid "Generate recovery code"
 msgstr "Helyreállítási kód létrehozása"
 
 #. js-lingui-id: wu9eMO
-#: src/modules/ai/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Generated Files"
 msgstr "Létrehozott fájlok"
 
@@ -14689,7 +14671,7 @@ msgid "Germany"
 msgstr "Németország"
 
 #. js-lingui-id: Et23WT
-#: src/modules/ai/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Get more credits"
 msgstr "További kreditek vásárlása"
@@ -15245,7 +15227,7 @@ msgid "Help improve Twenty"
 msgstr "Segítsen a Twenty fejlesztésében"
 
 #. js-lingui-id: tIb8bD
-#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
+#: src/modules/ai-chat/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Hexagon"
 msgstr "Hatszög"
 
@@ -15379,7 +15361,7 @@ msgid "Hire a partner to help you implement and customize Twenty."
 msgstr "Fogadj fel egy partnert, hogy segítsen a Twenty bevezetésében és testreszabásában."
 
 #. js-lingui-id: i0qMbr
-#: src/modules/ai/components/AiChatNewThreadPageActions.tsx
+#: src/modules/ai-chat/components/AiChatNewThreadPageActions.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 msgid "Home"
@@ -15418,7 +15400,7 @@ msgid "Hours between triggers"
 msgstr "Órák a triggerek között"
 
 #. js-lingui-id: 3WYTm2
-#: src/modules/ai/components/suggested-prompts/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
 msgid "How can I help you?"
 msgstr "Miben segíthetek?"
 
@@ -16080,7 +16062,7 @@ msgid "Info"
 msgstr "Információ"
 
 #. js-lingui-id: nSkB8g
-#: src/modules/ai/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 msgid "Information"
 msgstr "Információ"
 
@@ -16100,7 +16082,7 @@ msgid "Initial values"
 msgstr "Kezdeti értékek"
 
 #. js-lingui-id: XU5AOg
-#: src/modules/ai/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
@@ -16131,8 +16113,8 @@ msgid "Input settings"
 msgstr "Bemeneti beállítások"
 
 #. js-lingui-id: cjbZw+
-#: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Input tokens"
 msgstr "Bemeneti tokenek"
 
@@ -16319,7 +16301,7 @@ msgid "Integrations - Settings"
 msgstr "Integrációk - Beállítások"
 
 #. js-lingui-id: Gzw2pq
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Intelligence"
 msgstr "Intelligencia"
@@ -16987,7 +16969,7 @@ msgid "Label must contain at least one alphanumeric character"
 msgstr "A címkének legalább egy alfanumerikus karaktert kell tartalmaznia"
 
 #. js-lingui-id: h8DugX
-#: src/modules/ai/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "Labels"
 msgstr "Címkék"
 
@@ -17188,7 +17170,7 @@ msgid "Last event"
 msgstr "Utolsó esemény"
 
 #. js-lingui-id: c5zxSg
-#: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Last message"
 msgstr "Utolsó üzenet"
 
@@ -17276,7 +17258,7 @@ msgid "Last Updated: {0}"
 msgstr "Utolsó frissítés: {0}"
 
 #. js-lingui-id: p9uaTd
-#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Later today"
 msgstr "Ma később"
 
@@ -17461,7 +17443,7 @@ msgid "Legend"
 msgstr ""
 
 #. js-lingui-id: xu7RPQ
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Less"
 msgstr "Kevesebb"
 
@@ -17899,7 +17881,7 @@ msgid "Loading chats..."
 msgstr "Csevegések betöltése..."
 
 #. js-lingui-id: w81Nov
-#: src/modules/ai/components/AiChatEditorSection.tsx
+#: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
 msgid "Loading conversation…"
 msgstr "Beszélgetés betöltése…"
 
@@ -17926,7 +17908,7 @@ msgid "Loading emails"
 msgstr "E-mailek betöltése"
 
 #. js-lingui-id: lwb3JB
-#: src/modules/ai/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
 msgid "Loading emojis"
 msgstr "Emojik betöltése"
 
@@ -17964,12 +17946,12 @@ msgid "Loading more..."
 msgstr "Töltés, kérem várjon..."
 
 #. js-lingui-id: nSgEqx
-#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Loading preview…"
 msgstr "Előnézet betöltése…"
 
 #. js-lingui-id: WepeNQ
-#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
 msgid "Loading records"
 msgstr "Rekordok betöltése"
 
@@ -17989,7 +17971,7 @@ msgid "Loading sharing settings"
 msgstr "Megosztási beállítások betöltése"
 
 #. js-lingui-id: VeVIIk
-#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 msgid "Loading skills"
 msgstr "Készségek betöltése"
 
@@ -18024,7 +18006,7 @@ msgid "Loading..."
 msgstr "Betöltés..."
 
 #. js-lingui-id: Pwqkdw
-#: src/modules/ai/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCard.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingLimitSpenderOptionList.tsx
 msgid "Loading…"
@@ -18063,7 +18045,7 @@ msgid "Lock diagram"
 msgstr "Diagram zárolása"
 
 #. js-lingui-id: B6ANJW
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "Log a new deal (company, amount, stage, expected close). Details: "
 msgstr "Rögzítsen egy új ügyletet (vállalat, összeg, szakasz, várható lezárás). Részletek: "
 
@@ -18483,7 +18465,7 @@ msgid "Markdown"
 msgstr "Markdown"
 
 #. js-lingui-id: OybNQG
-#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "Késznek jelölve: {eventTime}"
 
@@ -18688,7 +18670,7 @@ msgid "Medium section heading"
 msgstr "Közepes méretű szakaszcím"
 
 #. js-lingui-id: OvoEq7
-#: src/modules/ai/components/AiChatThreadAvatar.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadAvatar.tsx
 #: src/modules/log-console/constants/LogConsolePageViewColumns.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -18724,7 +18706,6 @@ msgstr "Tag eltávolítva a munkaterületről"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
@@ -18743,7 +18724,7 @@ msgid "Members & invitees"
 msgstr "Tagok és meghívottak"
 
 #. js-lingui-id: pbIEgB
-#: src/modules/ai/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 msgid "Mentioned you"
 msgstr "Megemlítette Önt"
 
@@ -18760,18 +18741,18 @@ msgid "Menu item actions"
 msgstr "Menüelem műveletei"
 
 #. js-lingui-id: UODtG8
-#: src/modules/ai/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 msgid "Merge"
 msgstr "Összevonás"
 
 #. js-lingui-id: yDKct3
-#: src/modules/ai/components/__stories__/AiChatApprovalMergeReviewExample.tsx
+#: src/modules/ai-chat/tool-calls/components/__stories__/AiChatApprovalMergeReviewExample.tsx
 msgid "Merge {firstSourceName} and {secondSourceName}"
 msgstr "{firstSourceName} és {secondSourceName} összevonása"
 
 #. js-lingui-id: TTHfsp
-#: src/modules/ai/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "Merge all {pendingPairCount}"
 msgstr "Az összes {pendingPairCount} pár egyesítése"
 
@@ -18781,7 +18762,7 @@ msgid "Merge cells"
 msgstr "Cellák összevonása"
 
 #. js-lingui-id: d2c8f+
-#: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 msgid "Merge preview"
 msgstr "Összevonás előnézet"
@@ -18793,7 +18774,7 @@ msgid "Merge records"
 msgstr "Rekordok összevonása"
 
 #. js-lingui-id: PXTjHO
-#: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 msgid "Merge review tabs"
 msgstr "Összevonási felülvizsgálati lapok"
 
@@ -18912,7 +18893,7 @@ msgid "Microphone access enabled"
 msgstr "Mikrofonhozzáférés engedélyezve"
 
 #. js-lingui-id: P9IeiA
-#: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
+#: src/modules/ai-chat/dictation/utils/getDictationFailureMessage.ts
 msgid "Microphone access is blocked. Allow it in your browser settings to dictate."
 msgstr "A mikrofonhoz való hozzáférés blokkolva van. A diktáláshoz engedélyezze a böngésző beállításaiban."
 
@@ -19034,9 +19015,9 @@ msgid "Mode"
 msgstr "Mód"
 
 #. js-lingui-id: scu3wk
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierSlider.tsx
 #: src/modules/ai/components/AiModelPicker.tsx
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
-#: src/modules/ai/components/AiModelTierSlider.tsx
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
@@ -19072,7 +19053,7 @@ msgid "Model ID is required"
 msgstr "A modellazonosító megadása kötelező"
 
 #. js-lingui-id: E6zx5y
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 msgid "Model information"
 msgstr "Modellinformációk"
 
@@ -19110,7 +19091,7 @@ msgid "Models for this provider. Toggle to enable or disable."
 msgstr "Modellek ehhez a szolgáltatóhoz. Kapcsolóval engedélyezheti vagy letilthatja."
 
 #. js-lingui-id: hty0d5
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Monday"
@@ -19151,7 +19132,7 @@ msgid "month"
 msgstr "hónap"
 
 #. js-lingui-id: HajiZl
-#: src/modules/ai/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -19191,7 +19172,7 @@ msgid "months"
 msgstr "hónapok"
 
 #. js-lingui-id: 2FYpfJ
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
 msgid "More"
 msgstr "Több"
@@ -19248,8 +19229,8 @@ msgid "More options"
 msgstr "További opciók"
 
 #. js-lingui-id: G3/0PS
-#: src/modules/ai/components/AiChatMessageReactionPickerContent.tsx
-#: src/modules/ai/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
 msgid "More reactions"
 msgstr "További reakciók"
 
@@ -19277,6 +19258,7 @@ msgstr "Többnyire üres"
 
 #. js-lingui-id: 3Ib6FN
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 msgid "Move down"
 msgstr "Mozgatás lefelé"
 
@@ -19293,6 +19275,7 @@ msgstr "Csevegéseinek áthelyezése ide"
 
 #. js-lingui-id: iSLA/r
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
@@ -19301,6 +19284,7 @@ msgstr "Mozgatás balra"
 
 #. js-lingui-id: Ubl2by
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems.ts
@@ -19342,6 +19326,7 @@ msgstr "Átvált az új {planLabel} csomagra?"
 
 #. js-lingui-id: QyioBP
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuContainerReorderOptions.ts
 msgid "Move up"
 msgstr "Mozgatás felfelé"
 
@@ -19619,7 +19604,7 @@ msgid "Needs a Select field"
 msgstr "Választó mező szükséges"
 
 #. js-lingui-id: k3/EHQ
-#: src/modules/ai/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Needs input"
 msgstr "Bevitelt igényel"
@@ -19664,7 +19649,7 @@ msgid "Never, by Twenty or providers"
 msgstr "Soha, sem a Twenty, sem a szolgáltatók által"
 
 #. js-lingui-id: isRobC
-#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerNewForm.tsx
@@ -19731,7 +19716,7 @@ msgid "New channel"
 msgstr "Új csatorna"
 
 #. js-lingui-id: hIQkLb
-#: src/modules/ai/components/AiChatPageHeader.tsx
+#: src/modules/ai-chat/components/AiChatPageHeader.tsx
 #: src/modules/inbox/components/InboxListHeader.tsx
 #: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
@@ -19863,8 +19848,13 @@ msgstr "Új átvitel-limit"
 msgid "New rule"
 msgstr "Új szabály"
 
+#. js-lingui-id: SagCAA
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "New section"
+msgstr "Új szakasz"
+
 #. js-lingui-id: MdpSC1
-#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 msgid "New skill"
 msgstr "Új készség"
 
@@ -19886,6 +19876,7 @@ msgid "New SSO provider"
 msgstr "Új SSO szolgáltató"
 
 #. js-lingui-id: 3YvS+c
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
 msgid "New tab"
 msgstr "Új lap"
@@ -19953,7 +19944,7 @@ msgid "Next"
 msgstr "Következő"
 
 #. js-lingui-id: IbfvuD
-#: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Next approval"
 msgstr "Következő jóváhagyás"
 
@@ -19988,13 +19979,13 @@ msgid "Next iteration"
 msgstr "Következő iteráció"
 
 #. js-lingui-id: g8JmSC
-#: src/modules/ai/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 msgid "Next month"
 msgstr "Következő hónap"
 
 #. js-lingui-id: DnlugB
-#: src/modules/ai/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "Next pair"
 msgstr "Következő pár"
 
@@ -20004,7 +19995,7 @@ msgid "Next period"
 msgstr "Következő időszak"
 
 #. js-lingui-id: jdU2p1
-#: src/modules/ai/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 msgid "Next question"
 msgstr "Következő kérdés"
 
@@ -20014,7 +20005,7 @@ msgid "Next record"
 msgstr "Következő rekord"
 
 #. js-lingui-id: +VXdSO
-#: src/modules/ai/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
 msgid "Next request"
 msgstr "Következő kérés"
 
@@ -20035,12 +20026,12 @@ msgid "Next Step"
 msgstr "Következő lépés"
 
 #. js-lingui-id: IT903p
-#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Next week"
 msgstr "Jövő hét"
 
 #. js-lingui-id: 97rmcs
-#: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Next: {nextTitles}"
 msgstr "Következő: {nextTitles}"
 
@@ -20052,8 +20043,6 @@ msgstr "Kilencedik"
 #. js-lingui-id: 1UzENP
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -20085,11 +20074,12 @@ msgstr "Nem található {objectLabelSingular}"
 
 #. js-lingui-id: oPoLg+
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/utils/getObjectOperationsSummary.ts
 msgid "No access"
 msgstr "Nincs hozzáférés"
 
 #. js-lingui-id: IeiB4r
-#: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "No actions to review"
 msgstr "Nincsenek felülvizsgálandó műveletek"
 
@@ -20149,8 +20139,8 @@ msgid "No AI model on this workspace meets these settings."
 msgstr "Ezen a munkaterületen egyetlen MI-modell sem felel meg ezeknek a beállításoknak."
 
 #. js-lingui-id: iH1iv+
-#: src/modules/ai/components/AiChatEditorSection.tsx
-#: src/modules/ai/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
+#: src/modules/ai-chat/hooks/useAiChat.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "Nincs AI-szolgáltató beállítva ezen a példányon."
@@ -20212,7 +20202,7 @@ msgid "No available tabs"
 msgstr "Nincsenek elérhető lapok"
 
 #. js-lingui-id: vmUMKh
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "No available times. Choose another date."
 msgstr "Nincsenek elérhető időpontok. Válasszon másik dátumot."
 
@@ -20228,12 +20218,12 @@ msgid "No body"
 msgstr "Nincs törzs"
 
 #. js-lingui-id: 15bIDe
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "No calendars available."
 msgstr "Nincsenek elérhető naptárak."
 
 #. js-lingui-id: +Rmf7F
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "No calendars match your search."
 msgstr "Egyetlen naptár sem felel meg a keresésének."
 
@@ -20411,7 +20401,7 @@ msgid "No email threads found"
 msgstr "Nem találhatók e-mail-szálak"
 
 #. js-lingui-id: quWMra
-#: src/modules/ai/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
 msgid "No emoji found"
 msgstr "Nem található emoji"
 
@@ -20537,7 +20527,7 @@ msgid "No jobs were retried{errorDetails}"
 msgstr "Nem újraindítottak állást{errorDetails}"
 
 #. js-lingui-id: VkcRtM
-#: src/modules/ai/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "No labels available"
 msgstr "Nincsenek elérhető címkék"
 
@@ -20552,7 +20542,7 @@ msgid "No latest version found"
 msgstr "Nincs találat az újabb verziókra"
 
 #. js-lingui-id: qtoOYG
-#: src/modules/ai/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 msgid "No limit"
 msgstr "Nincs korlát"
@@ -20634,7 +20624,7 @@ msgid "No metrics data available"
 msgstr "Nincs elérhető metrikai adat"
 
 #. js-lingui-id: RUBcco
-#: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
+#: src/modules/ai-chat/dictation/utils/getDictationFailureMessage.ts
 msgid "No microphone is available. Connect one and try again."
 msgstr "Nem érhető el mikrofon. Csatlakoztasson egyet, és próbálja újra."
 
@@ -20652,6 +20642,11 @@ msgstr "Ehhez a módhoz nincs elérhető modell."
 #: src/modules/activities/notes/components/NotesCardContent.tsx
 msgid "No notes"
 msgstr "Nincsenek jegyzetek"
+
+#. js-lingui-id: arel2K
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
+msgid "No objects found"
+msgstr "Nem található objektum"
 
 #. js-lingui-id: fq3TKy
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
@@ -20676,7 +20671,7 @@ msgid "No options found"
 msgstr "Nem találhatók lehetőségek"
 
 #. js-lingui-id: XRc1G9
-#: src/modules/ai/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 msgid "No output"
@@ -20703,11 +20698,6 @@ msgstr "Nincsenek paraméterek"
 msgid "No payment method found. Please update your billing details."
 msgstr "Nincs fizetési módszer található. Kérjük, frissítse a számlázási adatait."
 
-#. js-lingui-id: kSCxfd
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "No permissions have been set for individual objects."
-msgstr "Nincs jogosultság beállítva az egyes objektumokhoz."
-
 #. js-lingui-id: pRxlf6
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "No provenance attestation was found for this package. Publish it from GitHub Actions with npm trusted publishing, then try claiming again."
@@ -20719,7 +20709,7 @@ msgid "No rate limit hit in this period"
 msgstr "Ebben az időszakban nem érték el a sebességkorlátot"
 
 #. js-lingui-id: UW90md
-#: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientPicker.tsx
 msgid "No recipients found"
 msgstr "Nem találhatók címzettek"
 
@@ -20752,7 +20742,7 @@ msgid "No record selected"
 msgstr "Nincs bejegyzés kiválasztva"
 
 #. js-lingui-id: EqGTpW
-#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
 #: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItems.tsx
@@ -20766,7 +20756,7 @@ msgid "No records matching the filter criteria were found."
 msgstr "A szűrési feltételeknek megfelelő rekordok nem találhatók."
 
 #. js-lingui-id: To7xRG
-#: src/modules/ai/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "No records to review"
 msgstr "Nincsenek felülvizsgálandó rekordok"
 
@@ -20900,7 +20890,7 @@ msgid "No SingleSignOnService with HTTP-Redirect or HTTP-POST binding was found"
 msgstr "Nem található HTTP-Redirect vagy HTTP-POST kötéssel rendelkező SingleSignOnService"
 
 #. js-lingui-id: b5hW1u
-#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 msgid "No skills found"
 msgstr "Nem találhatók készségek"
 
@@ -20936,7 +20926,7 @@ msgid "No test result yet"
 msgstr "Még nincs teszteredmény."
 
 #. js-lingui-id: hn2q8h
-#: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
+#: src/modules/ai-chat/messages/components/AiChatQuotedMessagePreview.tsx
 msgid "No text content"
 msgstr "Nincs szöveges tartalom"
 
@@ -21138,8 +21128,8 @@ msgid "Node settings"
 msgstr "Csomópont beállításai"
 
 #. js-lingui-id: EdQY6l
-#: src/modules/ai/components/AiChatThreadFollowersField.tsx
-#: src/modules/ai/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
@@ -21191,12 +21181,12 @@ msgid "Not all columns matched"
 msgstr "Nem minden oszlopot egyeztettünk"
 
 #. js-lingui-id: OJx3wK
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
-#: src/modules/ai/components/internal/AiChatUsageMetricRow.tsx
-#: src/modules/ai/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatUsageMetricRow.tsx
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 msgid "Not available"
 msgstr "Nem elérhető"
 
@@ -21249,7 +21239,7 @@ msgid "Not listed"
 msgstr "Nincs felsorolva"
 
 #. js-lingui-id: zLXWou
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 msgid "Not measured at this effort yet, so these are the base model's readings."
 msgstr "Ezen az erőfeszítési szinten még nem történt mérés, ezért ezek az alapmodell értékei."
 
@@ -21284,7 +21274,7 @@ msgid "Not Recorded"
 msgstr "Nincs rögzítve"
 
 #. js-lingui-id: gnnpkq
-#: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Not run: the record changed since it was proposed"
 msgstr "Nem futott le: a rekord megváltozott a javaslat óta"
 
@@ -21332,7 +21322,7 @@ msgid "Not synced"
 msgstr "Nincs szinkronizálva"
 
 #. js-lingui-id: 5xvHen
-#: src/modules/ai/components/AiChatMessageReceipt.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReceipt.tsx
 msgid "Not yet"
 msgstr "Még nem"
 
@@ -21546,11 +21536,6 @@ msgstr "Objektum nincs megosztva"
 msgid "object permission"
 msgstr "objektumjogosultság"
 
-#. js-lingui-id: ecLxgy
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
-msgid "Object permission options"
-msgstr "Objektumengedély opciói"
-
 #. js-lingui-id: HN7O/H
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "Object settings"
@@ -21567,7 +21552,6 @@ msgid "Object unique fields"
 msgstr "Egyedi objektummezők"
 
 #. js-lingui-id: YJgmMZ
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 msgid "Object-Level"
 msgstr "Objektum szintű"
@@ -21619,7 +21603,7 @@ msgid "Official app"
 msgstr "Hivatalos alkalmazás"
 
 #. js-lingui-id: 6Aih4U
-#: src/modules/ai/components/AiChatMemberPresence.tsx
+#: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Offline"
 msgstr "Kapcsolat გარეშე"
 
@@ -21761,7 +21745,7 @@ msgid "One-to-one conversations between people"
 msgstr "Két ember közötti beszélgetések"
 
 #. js-lingui-id: oXOSPE
-#: src/modules/ai/components/AiChatMemberPresence.tsx
+#: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Online"
 msgstr "Online"
 
@@ -21873,7 +21857,7 @@ msgid "Only you will be able to see your emails and events"
 msgstr "Csak Ön fogja látni az e-mailjeit és eseményeit"
 
 #. js-lingui-id: 1TNIig
-#: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 #: src/modules/inbox/constants/InboxChannelNavigationItems.ts
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
@@ -22295,17 +22279,17 @@ msgid "Organization license activated successfully"
 msgstr "A szervezeti licenc aktiválása sikeres volt"
 
 #. js-lingui-id: G5RhpL
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Organizer"
 msgstr "Szervező"
 
 #. js-lingui-id: vryTU3
-#: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
+#: src/modules/ai-chat/messages/components/AiChatQuotedMessagePreview.tsx
 msgid "Original message unavailable"
 msgstr "Az eredeti üzenet nem érhető el"
 
 #. js-lingui-id: /IX/7x
-#: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionOtherOption.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
@@ -22401,7 +22385,7 @@ msgid "Outcome"
 msgstr "Eredmény"
 
 #. js-lingui-id: nCQvd7
-#: src/modules/ai/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 msgid "Outcome unknown"
 msgstr "Ismeretlen eredmény"
 
@@ -22411,10 +22395,10 @@ msgid "Outlook"
 msgstr "Outlook"
 
 #. js-lingui-id: gh06VD
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 #: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
-#: src/modules/ai/components/CodeExecutionDisplay.tsx
-#: src/modules/ai/components/TerminalOutput.tsx
-#: src/modules/ai/components/ThinkingToolStepRow.tsx
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
@@ -22437,13 +22421,13 @@ msgid "Output saved"
 msgstr "Kimenet mentve"
 
 #. js-lingui-id: iFE7ti
-#: src/modules/ai/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 msgid "Output stream"
 msgstr "Kimeneti adatfolyam"
 
 #. js-lingui-id: i1+tKD
-#: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
-#: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageDetails.tsx
 msgid "Output tokens"
 msgstr "Kimeneti tokenek"
 
@@ -22457,6 +22441,11 @@ msgstr "Felülbírálás"
 #: src/modules/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton.tsx
 msgid "Override Draft"
 msgstr "Vázlat felülírása"
+
+#. js-lingui-id: sJNF3W
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+msgid "Overrides"
+msgstr "Felülbírálások"
 
 #. js-lingui-id: 6/dCYd
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -22775,7 +22764,7 @@ msgid "PDF"
 msgstr "PDF"
 
 #. js-lingui-id: UbRKMZ
-#: src/modules/ai/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 #: src/modules/settings/domains/components/SettingsPublicDomainsListCard.tsx
 #: src/modules/settings/emailing-domains/utils/getEmailingDomainStatusDisplay.ts
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -22783,7 +22772,7 @@ msgid "Pending"
 msgstr "Függőben"
 
 #. js-lingui-id: 2B0V9T
-#: src/modules/ai/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
 msgid "Pending requests"
 msgstr "Függőben lévő kérések"
 
@@ -22949,7 +22938,7 @@ msgid "Personal AI usage"
 msgstr "Személyes AI-használat"
 
 #. js-lingui-id: /SoAQl
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Personal usage"
 msgstr "Személyes használat"
 
@@ -22990,7 +22979,7 @@ msgid "Pick a color"
 msgstr "Válasszon színt"
 
 #. js-lingui-id: B8mlc2
-#: src/modules/ai/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 msgid "Pick a date"
 msgstr "Válasszon dátumot"
 
@@ -23068,7 +23057,7 @@ msgid "Pie Chart"
 msgstr "Kördiagram"
 
 #. js-lingui-id: qoLYkj
-#: src/modules/ai/constants/AiChatAssistantAvatarShapeLabels.ts
+#: src/modules/ai-chat/constants/AiChatAssistantAvatarShapeLabels.ts
 msgid "Pill"
 msgstr "Kapszula"
 
@@ -23331,7 +23320,7 @@ msgid "Prefix of the tool names agents see. Cannot be changed later."
 msgstr "Az ügynökök által látott eszköznevek előtagja. Később nem módosítható."
 
 #. js-lingui-id: IHoyJS
-#: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Preparing an action to approve..."
 msgstr "Jóváhagyásra váró művelet előkészítése..."
 
@@ -23377,7 +23366,7 @@ msgid "Preview of the page recipients see when they unsubscribe"
 msgstr "Előnézet arról az oldalról, amelyet a címzettek leiratkozáskor látnak"
 
 #. js-lingui-id: DHhJ7s
-#: src/modules/ai/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 #: src/modules/page-layout/widgets/graph/components/GraphWidgetLegend.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/settings/components/layout/SettingsWizardStepBar.tsx
@@ -23396,7 +23385,7 @@ msgid "Previous 7 days"
 msgstr "Elmúlt 7 nap"
 
 #. js-lingui-id: ap92qV
-#: src/modules/ai/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Previous approval"
 msgstr "Előző jóváhagyás"
 
@@ -23416,13 +23405,13 @@ msgid "Previous iteration"
 msgstr "Előző iteráció"
 
 #. js-lingui-id: 1xwZj/
-#: src/modules/ai/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 msgid "Previous month"
 msgstr "Előző hónap"
 
 #. js-lingui-id: 7BDoFf
-#: src/modules/ai/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "Previous pair"
 msgstr "Előző pár"
 
@@ -23437,7 +23426,7 @@ msgid "Previous record"
 msgstr "Előző rekord"
 
 #. js-lingui-id: ToM1t/
-#: src/modules/ai/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
 msgid "Previous request"
 msgstr "Előző kérés"
 
@@ -23452,7 +23441,7 @@ msgid "Previous step"
 msgstr "Előző lépés"
 
 #. js-lingui-id: rLvhNs
-#: src/modules/ai/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Previous value:"
 msgstr "Előző érték:"
 
@@ -23645,7 +23634,7 @@ msgid "Property value"
 msgstr "Tulajdonság értéke"
 
 #. js-lingui-id: nHD0EI
-#: src/modules/ai/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Proposed value:"
 msgstr "Javasolt érték:"
 
@@ -23724,7 +23713,7 @@ msgid "Purple"
 msgstr "Lila"
 
 #. js-lingui-id: GUpZQM
-#: src/modules/ai/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 msgid "Python Code Execution"
 msgstr "Python-kód végrehajtása"
 
@@ -23761,18 +23750,18 @@ msgid "Question"
 msgstr "Kérdés"
 
 #. js-lingui-id: pA8K5M
-#: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 msgid "Question skipped"
 msgstr "Kérdés kihagyva"
 
 #. js-lingui-id: enzGAL
-#: src/modules/ai/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
 msgid "Questions"
 msgstr "Kérdések"
 
 #. js-lingui-id: Wzbxi7
-#: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 msgid "Questions skipped"
 msgstr "Kérdések kihagyva"
 
@@ -23792,12 +23781,12 @@ msgid "Queue: {queueName}"
 msgstr "Sor: {queueName}"
 
 #. js-lingui-id: 8wu9lr
-#: src/modules/ai/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 msgid "Queued"
 msgstr "Várólistán"
 
 #. js-lingui-id: Eldtfl
-#: src/modules/ai/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 msgid "Queued messages"
 msgstr "Várólistára helyezett üzenetek"
 
@@ -23921,12 +23910,12 @@ msgid "Read and write data model configuration"
 msgstr "Adatmodell-konfiguráció olvasása és írása"
 
 #. js-lingui-id: RXivwU
-#: src/modules/ai/components/AiChatMessageReceipt.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReceipt.tsx
 msgid "Read by {readerCount} of {recipientCount}"
 msgstr "Elolvasta: {readerCount}/{recipientCount}"
 
 #. js-lingui-id: bgP1Ip
-#: src/modules/ai/components/AiChatMessageReceipt.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReceipt.tsx
 msgid "Read by {readerNames}"
 msgstr "Elolvasta: {readerNames}"
 
@@ -23992,7 +23981,7 @@ msgid "Read-only {entityTypeLabel} definition shipped by this app"
 msgstr "Az alkalmazás által szállított, csak olvasható {entityTypeLabel} definíció"
 
 #. js-lingui-id: EqZQdT
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Read-only calendar"
 msgstr "Csak olvasható naptár"
 
@@ -24093,7 +24082,7 @@ msgid "Recipient count unavailable"
 msgstr "A címzettek száma nem érhető el"
 
 #. js-lingui-id: ar7XM1
-#: src/modules/ai/hooks/useWarnAboutParticipantMentionsNotAdded.ts
+#: src/modules/ai-chat/composer/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "Recipient delivery could not be verified. Check the chat participants."
 msgstr "A kézbesítés nem ellenőrizhető a címzett számára. Ellenőrizze a csevegés résztvevőit."
 
@@ -24104,7 +24093,7 @@ msgstr "recipient@example.com"
 
 #. js-lingui-id: yPrbsy
 #: src/modules/activities/emails/components/ChatThreadNewMessage.tsx
-#: src/modules/ai/components/AiChatNewThreadRecipientField.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientField.tsx
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Recipients"
@@ -24116,8 +24105,8 @@ msgid "Recipients are recounted at send time. You can cancel until then."
 msgstr "A címzettek számát küldéskor számoljuk újra. Addig lemondhatja."
 
 #. js-lingui-id: WEYdDv
-#: src/modules/ai/components/AiChatQuestionCard.tsx
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
 msgid "Recommended"
 msgstr "Ajánlott"
@@ -24273,7 +24262,7 @@ msgid "Record page"
 msgstr "Rekordoldal"
 
 #. js-lingui-id: J5b8Hz
-#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Record page widget"
 msgstr "Rekordoldal-widget"
 
@@ -24321,7 +24310,7 @@ msgid "Record-level filter"
 msgstr "Rekordszintű szűrő"
 
 #. js-lingui-id: jdetKb
-#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "Record:"
 msgstr "Rekord:"
 
@@ -24353,15 +24342,14 @@ msgid "records"
 msgstr "rekordok"
 
 #. js-lingui-id: PWlTvh
-#: src/modules/ai/components/AiChatAddMenu.tsx
-#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItems.tsx
 #: src/modules/settings/applications/hooks/useApplicationContentItemDisplay.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 #: src/modules/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema.ts
@@ -24373,6 +24361,11 @@ msgstr "Rekordok"
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 msgid "Records by date"
 msgstr "Bejegyzések dátum szerint"
+
+#. js-lingui-id: b/xmDA
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Records matching the rule"
+msgstr "A szabálynak megfelelő rekordok"
 
 #. js-lingui-id: CjlKOu
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -24433,7 +24426,7 @@ msgid "Redirection URI"
 msgstr "Átirányítási URI"
 
 #. js-lingui-id: lCF0wC
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 #: src/modules/log-console/components/LogConsoleResults.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -24441,7 +24434,7 @@ msgid "Refresh"
 msgstr "Frissítés"
 
 #. js-lingui-id: IevXlZ
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Refresh availability for this date."
 msgstr "Frissítse az adott dátum elérhetőségét."
 
@@ -24510,13 +24503,13 @@ msgid "Registered with Twenty as the official {appName}"
 msgstr "A Twenty hivatalos {appName} alkalmazásaként regisztrálva"
 
 #. js-lingui-id: 1t/NnN
-#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
-#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Reject"
 msgstr "Elutasítás"
 
 #. js-lingui-id: ekCRTP
-#: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Rejected"
 msgstr "Elutasítva"
 
@@ -24668,7 +24661,7 @@ msgid "Remove {0} navigation menu items?"
 msgstr "Eltávolít {0} navigációs menüelemet?"
 
 #. js-lingui-id: boQErO
-#: src/modules/ai/components/internal/AiChatFilePreview.tsx
+#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "{displayName} eltávolítása"
 
@@ -24813,6 +24806,11 @@ msgstr "Opció eltávolítása"
 msgid "Remove output field"
 msgstr "Kimeneti mező eltávolítása"
 
+#. js-lingui-id: c8Kx/b
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Remove override"
+msgstr "Felülbírálás eltávolítása"
+
 #. js-lingui-id: cp/fZQ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsFlagRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsPermissionRow.tsx
@@ -24831,12 +24829,12 @@ msgid "Remove provider \"{0}\""
 msgstr "A \"{0}\" szolgáltató eltávolítása"
 
 #. js-lingui-id: +WeuHF
-#: src/modules/ai/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 msgid "Remove queued message"
 msgstr "Sorban álló üzenet eltávolítása"
 
 #. js-lingui-id: 6nFc2C
-#: src/modules/ai/components/AiChatComposerQuotePreview.tsx
+#: src/modules/ai-chat/composer/components/AiChatComposerQuotePreview.tsx
 msgid "Remove quote"
 msgstr "Idézet eltávolítása"
 
@@ -24847,7 +24845,6 @@ msgstr "Visszairányítási URI eltávolítása"
 
 #. js-lingui-id: SjxzXf
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
 msgid "Remove rule"
 msgstr "Szabály eltávolítása"
 
@@ -24860,6 +24857,11 @@ msgstr "Szabálycsoport eltávolítása"
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Remove searchable field"
 msgstr "Kereshető mező eltávolítása"
+
+#. js-lingui-id: uXfxoE
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Remove section"
+msgstr "Szakasz eltávolítása"
 
 #. js-lingui-id: jCt40X
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -24882,7 +24884,7 @@ msgid "Remove this provider and disconnect all its models"
 msgstr "Távolítsa el ezt a szolgáltatót, és válassza le az összes modelljét"
 
 #. js-lingui-id: XrlYG5
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Remove unavailable calendars"
 msgstr "Nem elérhető naptárak eltávolítása"
 
@@ -24922,7 +24924,7 @@ msgid "Rename group"
 msgstr "Csoport átnevezése"
 
 #. js-lingui-id: cwObXL
-#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Rendering preview…"
 msgstr "Előnézet megjelenítése…"
 
@@ -24978,8 +24980,8 @@ msgid "Replit install links require an HTTPS MCP URL."
 msgstr "A Replit telepítési hivatkozásokhoz HTTPS MCP URL szükséges."
 
 #. js-lingui-id: ImOQa9
-#: src/modules/ai/components/AiChatMessage.tsx
-#: src/modules/ai/components/AiChatThreadRequestActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadRequestActions.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
@@ -24987,7 +24989,7 @@ msgid "Reply"
 msgstr "Válasz"
 
 #. js-lingui-id: VKsaTi
-#: src/modules/ai/components/AiChatComposerQuotePreview.tsx
+#: src/modules/ai-chat/composer/components/AiChatComposerQuotePreview.tsx
 msgid "Replying to"
 msgstr "Válasz erre"
 
@@ -25007,7 +25009,7 @@ msgid "Request"
 msgstr "Kérés"
 
 #. js-lingui-id: tZ7Xci
-#: src/modules/ai/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
 msgid "Request {requestNumber} of {requestCount}"
 msgstr "{requestNumber}. kérés / {requestCount}"
 
@@ -25048,12 +25050,12 @@ msgid "Reschedule Campaign"
 msgstr "Kampány átütemezése"
 
 #. js-lingui-id: Vae65A
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Research this company"
 msgstr "Vállalat kutatása"
 
 #. js-lingui-id: ycHL5x
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Research this company and summarize what they do, how big they are and any recent news."
 msgstr "Kutassa fel ezt a vállalatot, és foglalja össze, mivel foglalkozik, mekkora, valamint a legfrissebb híreket."
 
@@ -25094,7 +25096,7 @@ msgid "Reset all overrides on this layout to return it to the app default"
 msgstr "Állítsa vissza az ezen az elrendezésen végzett összes felülírást az alkalmazás alapértelmezettre"
 
 #. js-lingui-id: n8HLXo
-#: src/modules/ai/utils/getAiChatUsageLabel.ts
+#: src/modules/ai-chat/usage/utils/getAiChatUsageLabel.ts
 msgid "Reset in {daysUntilReset, plural, one {# day} other {# days}} ({percentage}%)"
 msgstr "Visszaállítás ennyi idő múlva: {daysUntilReset, plural, one {# nap} other {# nap}} ({percentage}%)"
 
@@ -25192,7 +25194,7 @@ msgid "Resources"
 msgstr "Erőforrások"
 
 #. js-lingui-id: qrqIfV
-#: src/modules/ai/components/AiChatThreadRequestActions.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadRequestActions.tsx
 msgid "Respond to request"
 msgstr "Válasz a kérésre"
 
@@ -25288,7 +25290,7 @@ msgstr "Megőrzési idő"
 
 #. js-lingui-id: 6gRgw8
 #: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
-#: src/modules/ai/components/AiChatErrorMessage.tsx
+#: src/modules/ai-chat/components/AiChatErrorMessage.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
@@ -25483,7 +25485,6 @@ msgstr "Szerep sikeresen frissítve"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Roles"
 msgstr "Szerepkörök"
@@ -25642,7 +25643,7 @@ msgid "Run tool"
 msgstr "Eszköz futtatása"
 
 #. js-lingui-id: RiQMUh
-#: src/modules/ai/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
 msgid "Running"
@@ -25669,8 +25670,8 @@ msgid "Running the tool..."
 msgstr "Az eszköz futtatása..."
 
 #. js-lingui-id: LTC198
-#: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
-#: src/modules/ai/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Running..."
 msgstr "Fut..."
 
@@ -25759,7 +25760,7 @@ msgid "SAML/OIDC"
 msgstr "SAML/OIDC"
 
 #. js-lingui-id: b/zjTD
-#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Sample data"
 msgstr "Mintaadatok"
 
@@ -25774,7 +25775,7 @@ msgid "Satisfied"
 msgstr "Teljesül"
 
 #. js-lingui-id: +5kO8P
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Saturday"
@@ -25805,7 +25806,7 @@ msgid "Save Agent"
 msgstr "Ügynök mentése"
 
 #. js-lingui-id: 8tM8+a
-#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 msgid "Save as draft"
 msgstr "Mentés vázlatként"
 
@@ -25846,7 +25847,7 @@ msgid "Saved tables, boards and calendars"
 msgstr "Mentett táblázatok, táblák és naptárak"
 
 #. js-lingui-id: A0/0NU
-#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Saved to Workspace app"
 msgstr "Mentve a Workspace alkalmazásba"
 
@@ -25899,7 +25900,7 @@ msgid "Scheduled maintenance: {startFormatted} — {endFormatted}"
 msgstr "Ütemezett karbantartás: {startFormatted} — {endFormatted}"
 
 #. js-lingui-id: SxCO0O
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Scheduling preferences"
 msgstr "Ütemezési beállítások"
 
@@ -25932,12 +25933,12 @@ msgid "Score"
 msgstr "Pontszám"
 
 #. js-lingui-id: oOi11l
-#: src/modules/ai/components/AiChatScrollToBottomButton.tsx
+#: src/modules/ai-chat/messages/components/AiChatScrollToBottomButton.tsx
 msgid "Scroll to bottom"
 msgstr "Görgetés az aljára"
 
 #. js-lingui-id: SIucTL
-#: src/modules/ai/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Scrollable record review"
 msgstr "Görgethető rekordfelülvizsgálat"
 
@@ -26088,11 +26089,6 @@ msgstr "Keresés a hozzárendelt {roleTargetDisplayName} között..."
 msgid "Search an index..."
 msgstr "Index keresése..."
 
-#. js-lingui-id: pFe0YS
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "Search an object"
-msgstr "Objektum keresése"
-
 #. js-lingui-id: S+MGem
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownAnyFieldSearchInput.tsx
 #: src/modules/views/components/AnyFieldSearchDropdownContentMenuHeader.tsx
@@ -26108,7 +26104,7 @@ msgid "Search API keys"
 msgstr "API kulcsok keresése"
 
 #. js-lingui-id: fLbp9m
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Search availability calendars"
 msgstr "Elérhetőségi naptárak keresése"
 
@@ -26133,7 +26129,7 @@ msgid "Search by workspace name, subdomain, or ID..."
 msgstr "Keresés munkaterület neve, aldomain vagy azonosító alapján..."
 
 #. js-lingui-id: R/iIxI
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Search calendars"
 msgstr "Naptárak keresése"
 
@@ -26175,7 +26171,7 @@ msgid "Search email threads"
 msgstr "E-mail-szálak keresése"
 
 #. js-lingui-id: Sb71rQ
-#: src/modules/ai/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
 msgid "Search emojis"
 msgstr "Emojik keresése"
 
@@ -26259,6 +26255,8 @@ msgstr "Tagok keresése"
 
 #. js-lingui-id: two5rl
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableDataSourceDropdownContent.tsx
@@ -26279,8 +26277,8 @@ msgid "Search options"
 msgstr "Keresési beállítások"
 
 #. js-lingui-id: IMeaSJ
-#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
-#: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerSearchInput.tsx
 msgid "Search records"
 msgstr "Rekordok keresése"
@@ -26307,8 +26305,8 @@ msgid "Search relations"
 msgstr "Relációk keresése"
 
 #. js-lingui-id: BlLxpG
-#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
-#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 msgid "Search skills"
 msgstr "Készségek keresése"
 
@@ -26477,6 +26475,16 @@ msgstr "szakasz"
 msgid "Section"
 msgstr "Szakasz"
 
+#. js-lingui-id: 8gtQoG
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Section actions"
+msgstr "Szakasz műveletei"
+
+#. js-lingui-id: vKc3fL
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Section name"
+msgstr "Szakasz neve"
+
 #. js-lingui-id: R4OWFD
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
@@ -26500,6 +26508,7 @@ msgstr "megnéz"
 #. js-lingui-id: h+8V38
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
 msgid "See"
 msgstr "Megnéz"
 
@@ -26539,11 +26548,6 @@ msgstr "Alkalmazás oldalának megtekintése"
 msgid "See data model settings"
 msgstr "Adatmodell beállításainak megtekintése"
 
-#. js-lingui-id: oGROXc
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
-msgid "See Fields"
-msgstr "Mezők megtekintése"
-
 #. js-lingui-id: RpeN29
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
 msgid "See function"
@@ -26576,18 +26580,13 @@ msgstr "Megtekintés a piactéren"
 msgid "See records"
 msgstr "Rekordok megtekintése"
 
-#. js-lingui-id: irbH/8
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "See Records on All Objects"
-msgstr "Rekordok megtekintése minden objektumon"
-
 #. js-lingui-id: SXaufV
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
 msgid "See Turns"
 msgstr "Fordulók megtekintése"
 
 #. js-lingui-id: boSDrg
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "See what I can do"
 msgstr "Nézze meg, mire vagyok képes"
 
@@ -26630,7 +26629,7 @@ msgstr "Kiválasztás"
 
 #. js-lingui-id: 02ePaq
 #. placeholder {0}: record.label
-#: src/modules/ai/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Select {0}"
 msgstr "{0} kijelölése"
 
@@ -26792,7 +26791,7 @@ msgid "Select all loaded rows"
 msgstr "Az összes betöltött sor kijelölése"
 
 #. js-lingui-id: rRpCVj
-#: src/modules/ai/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Select all records"
 msgstr "Összes rekord kijelölése"
 
@@ -26817,17 +26816,17 @@ msgid "Select an option"
 msgstr "Válasszon egy opciót"
 
 #. js-lingui-id: Wh3uKH
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Select at least one available calendar to check for conflicts."
 msgstr "Válasszon ki legalább egy elérhető naptárat az ütközések ellenőrzéséhez."
 
 #. js-lingui-id: AXQ2Fr
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Select at least one working day."
 msgstr "Válasszon ki legalább egy munkanapot."
 
 #. js-lingui-id: 0yxhOL
-#: src/modules/ai/components/AiChatThreadRow.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadRow.tsx
 msgid "Select chat"
 msgstr "Beszélgetés kiválasztása"
 
@@ -26909,7 +26908,7 @@ msgid "Select options"
 msgstr "Beállítások kiválasztása"
 
 #. js-lingui-id: TC9hnQ
-#: src/modules/ai/components/AiChatNewThreadRecipientPicker.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientPicker.tsx
 msgid "Select recipients"
 msgstr "Címzettek kiválasztása"
 
@@ -27009,15 +27008,15 @@ msgstr "Kijelölés"
 
 #. js-lingui-id: JlFcis
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
-#: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
-#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Send"
 msgstr "Küldés"
 
 #. js-lingui-id: h3fYlJ
-#: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "Send all {pendingEmailCount}"
 msgstr "Az összes {pendingEmailCount} e-mail elküldése"
 
@@ -27040,8 +27039,8 @@ msgid "Send Campaign"
 msgstr "Kampány küldése"
 
 #. js-lingui-id: 65dxv8
-#: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
-#: src/modules/ai/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Send email"
 msgstr "E-mail küldése"
@@ -27086,7 +27085,7 @@ msgid "Send invitations"
 msgstr "Meghívások küldése"
 
 #. js-lingui-id: Hvnq/n
-#: src/modules/ai/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 msgid "Send invite"
 msgstr "Meghívó küldése"
 
@@ -27096,8 +27095,8 @@ msgid "Send later"
 msgstr "Küldés később"
 
 #. js-lingui-id: pi1oME
-#: src/modules/ai/components/AiChatQuestionCard.tsx
-#: src/modules/ai/components/internal/SendMessageButton.tsx
+#: src/modules/ai-chat/composer/components/SendMessageButton.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 msgid "Send message"
 msgstr "Üzenet küldése"
 
@@ -27376,8 +27375,8 @@ msgid "Setting up your <0>database</0>..."
 msgstr "Az Ön <0>adatbázisának</0> beállítása..."
 
 #. js-lingui-id: Tz0i8g
-#: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -27455,8 +27454,8 @@ msgid "Shape, color, face"
 msgstr "Alak, szín, arc"
 
 #. js-lingui-id: Z8lGw6
-#: src/modules/ai/components/AiChatThreadShareButton.tsx
-#: src/modules/ai/components/AiChatThreadShareButton.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadShareButton.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadShareButton.tsx
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 #: src/modules/side-panel/hooks/useOpenShareRecordInSidePanel.ts
 msgid "Share"
@@ -27498,8 +27497,8 @@ msgid "Shared by key, across runs"
 msgstr "Kulcs szerint megosztva, futtatások között"
 
 #. js-lingui-id: 11KprE
-#: src/modules/ai/components/AiChatThreadLabelsField.tsx
-#: src/modules/ai/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "Shared conversation labels"
 msgstr "Megosztott beszélgetéscímkék"
 
@@ -27647,8 +27646,8 @@ msgid "Show inbox"
 msgstr "Beérkezett üzenetek megjelenítése"
 
 #. js-lingui-id: 6lGV3K
-#: src/modules/ai/components/AiChatQueuedMessageList.tsx
-#: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/messages/components/AiChatUserMessageCollapsibleContent.tsx
 #: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
 msgid "Show less"
 msgstr "Kevesebb megjelenítése"
@@ -27659,7 +27658,7 @@ msgid "Show logs"
 msgstr "Naplók megjelenítése"
 
 #. js-lingui-id: fMPkxb
-#: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatUserMessageCollapsibleContent.tsx
 #: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
@@ -27892,8 +27891,8 @@ msgid "Skill not found"
 msgstr "A készség nem található"
 
 #. js-lingui-id: PCSkw2
-#: src/modules/ai/components/AiChatAddMenu.tsx
-#: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
@@ -27901,11 +27900,11 @@ msgid "Skills"
 msgstr "Készségek"
 
 #. js-lingui-id: 6Uau97
-#: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
-#: src/modules/ai/components/AiChatApprovalMergeReview.tsx
-#: src/modules/ai/components/AiChatFormCardContent.tsx
-#: src/modules/ai/components/AiChatQuestionCard.tsx
-#: src/modules/ai/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormCardContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/onboarding/components/OnboardingSkipButton.tsx
 msgid "Skip"
 msgstr "Átugrás"
@@ -27936,8 +27935,8 @@ msgid "Skip the junction object (similar to many-to-many relations)"
 msgstr "Hagyja ki a kapcsoló objektumot (hasonló a több-a-többhöz kapcsolatokhoz)"
 
 #. js-lingui-id: 9NyAH9
-#: src/modules/ai/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
 msgid "Skipped"
 msgstr "Kihagyva"
@@ -28019,7 +28018,7 @@ msgid "snippet"
 msgstr "kódrészlet"
 
 #. js-lingui-id: 7+i6oV
-#: src/modules/ai/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/inbox/components/InboxBulkActions.tsx
 #: src/modules/inbox/components/InboxThreadTriageButtons.tsx
@@ -28028,17 +28027,17 @@ msgid "Snooze"
 msgstr "Elhalasztás"
 
 #. js-lingui-id: aqkwib
-#: src/modules/ai/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 msgid "Snooze chat"
 msgstr "Csevegés elhalasztása"
 
 #. js-lingui-id: xKw3A1
-#: src/modules/ai/components/AiChatThreadActivityTime.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadActivityTime.tsx
 msgid "Snooze ended"
 msgstr "Az elhalasztás véget ért"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "Az elhalasztás véget ért: {eventTime}"
 
@@ -28054,14 +28053,14 @@ msgid "Snooze until {snoozedUntilLabel}"
 msgstr "Elhalasztás eddig: {snoozedUntilLabel}"
 
 #. js-lingui-id: rz6s8e
-#: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 #: src/modules/inbox/constants/InboxChannelNavigationItems.ts
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Snoozed"
 msgstr "Elhalasztva"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "Elhalasztva eddig: {eventTime}"
 
@@ -28074,12 +28073,6 @@ msgstr "SOC 2"
 #: src/modules/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels.ts
 msgid "Soft cap"
 msgstr "Rugalmas korlát"
-
-#. js-lingui-id: zfjcH5
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
-msgid "Some"
-msgstr "Néhány"
 
 #. js-lingui-id: RwCYVZ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
@@ -28099,12 +28092,12 @@ msgid "Some log data was dropped to fit the size limit ({0} entries, {1} bytes).
 msgstr "Néhány naplóadat el lett dobva a méretkorlát betartása érdekében ({0} bejegyzés, {1} bájt)."
 
 #. js-lingui-id: b5Z5wY
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Some selected calendars are no longer available."
 msgstr "Néhány kijelölt naptár már nem érhető el."
 
 #. js-lingui-id: 2c+W2z
-#: src/modules/ai/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 msgid "Someone replies"
 msgstr "Valaki válaszol"
 
@@ -28239,7 +28232,7 @@ msgid "Source Email Address"
 msgstr "Forrás e-mail cím"
 
 #. js-lingui-id: Jvqt/3
-#: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 msgid "Source records"
 msgstr "Forrásrekordok"
 
@@ -28254,12 +28247,12 @@ msgid "Spanish"
 msgstr "Spanyol"
 
 #. js-lingui-id: NWZxCM
-#: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
+#: src/modules/ai-chat/dictation/utils/getDictationFailureMessage.ts
 msgid "Speech recognition could not be reached. Check your connection."
 msgstr "A beszédfelismerés nem érhető el. Ellenőrizze a kapcsolatát."
 
 #. js-lingui-id: l9wI00
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Speed"
 msgstr "Sebesség"
@@ -28361,7 +28354,6 @@ msgstr "Önálló"
 #. js-lingui-id: TJBHlP
 #: src/modules/applications/utils/getApplicationDisplayName.ts
 #: src/modules/settings/data-model/utils/getSettingsObjectFieldType.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Standard"
 msgstr "Szabvány"
@@ -28383,7 +28375,7 @@ msgid "Start date"
 msgstr "Kezdés dátuma"
 
 #. js-lingui-id: HUKGLi
-#: src/modules/ai/dictation/components/AiChatDictationButton.tsx
+#: src/modules/ai-chat/dictation/components/AiChatDictationButton.tsx
 msgid "Start dictation"
 msgstr "Diktálás indítása"
 
@@ -28462,8 +28454,8 @@ msgid "Statistics"
 msgstr "Statisztikák"
 
 #. js-lingui-id: uAQUqI
-#: src/modules/ai/components/AiChatApprovalRecordReview.tsx
-#: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleWebhookStatusColumn.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
@@ -28543,7 +28535,7 @@ msgid "Stop capture for {ownerName}"
 msgstr "Rögzítés leállítása ehhez: {ownerName}"
 
 #. js-lingui-id: 9QwrMz
-#: src/modules/ai/dictation/components/AiChatDictationButton.tsx
+#: src/modules/ai-chat/dictation/components/AiChatDictationButton.tsx
 msgid "Stop dictation"
 msgstr "Diktálás leállítása"
 
@@ -28553,7 +28545,7 @@ msgid "Stop impersonating"
 msgstr "Megszemélyesítés leállítása"
 
 #. js-lingui-id: lQeGNv
-#: src/modules/ai/components/internal/SendMessageButton.tsx
+#: src/modules/ai-chat/composer/components/SendMessageButton.tsx
 msgid "Stop response"
 msgstr "Válasz leállítása"
 
@@ -28720,9 +28712,9 @@ msgstr "alfejezet"
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/ai/components/AiChatApprovalEmailReview.tsx
-#: src/modules/ai/components/AiChatApprovalEmailReview.tsx
-#: src/modules/ai/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Subject"
 msgstr "Tárgy"
@@ -28748,7 +28740,7 @@ msgid "Subject, body and attachments will be shared with your team."
 msgstr "A téma, a test és a mellékletek meg lesznek osztva a csapatával."
 
 #. js-lingui-id: hQRttt
-#: src/modules/ai/components/AiChatFormCardContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormCardContent.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormStepSubmitButton.tsx
@@ -28766,7 +28758,7 @@ msgid "Subscribe"
 msgstr "Feliratkozás"
 
 #. js-lingui-id: ShbDuS
-#: src/modules/ai/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCardHeaderActions.tsx
 msgid "Subscribe Now"
 msgstr "Feliratkozás"
@@ -28839,7 +28831,7 @@ msgid "subtitle"
 msgstr "alcím"
 
 #. js-lingui-id: KAbcm2
-#: src/modules/ai/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 msgid "Succeeded"
 msgstr "Sikeres"
 
@@ -28881,22 +28873,22 @@ msgid "Sum"
 msgstr "Összeg"
 
 #. js-lingui-id: UjjqZc
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize the records in this view and point out anything that needs attention."
 msgstr "Foglalja össze az ebben a nézetben lévő rekordokat, és emelje ki azokat, amelyek figyelmet igényelnek."
 
 #. js-lingui-id: UcEfIM
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this record"
 msgstr "Rekord összegzése"
 
 #. js-lingui-id: jhr7if
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this record and its recent activity."
 msgstr "Foglalja össze ezt a rekordot és annak legutóbbi tevékenységét."
 
 #. js-lingui-id: uN7gsS
-#: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Summarize this view"
 msgstr "Nézet összegzése"
 
@@ -28912,7 +28904,7 @@ msgid "Summary Not Available"
 msgstr "Az összegzés nem érhető el"
 
 #. js-lingui-id: DBC3t5
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Sunday"
@@ -28954,7 +28946,7 @@ msgid "Surprised"
 msgstr "Meglepett"
 
 #. js-lingui-id: LbFYgh
-#: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 msgid "Survives"
 msgstr "Megmarad"
 
@@ -29176,6 +29168,16 @@ msgstr "{0}. fül"
 msgid "Tab {tabNumber}: {0}"
 msgstr "Fül {tabNumber}: {0}"
 
+#. js-lingui-id: OqZEsq
+#: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
+msgid "Tab actions"
+msgstr "Lap műveletei"
+
+#. js-lingui-id: FFaDQL
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
+msgid "Tab name"
+msgstr "Lap neve"
+
 #. js-lingui-id: zr20ox
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Tab Settings"
@@ -29289,7 +29291,7 @@ msgid "Teammate's email {0}"
 msgstr "Csapattárs e-mail-címe: {0}"
 
 #. js-lingui-id: g4mm2M
-#: src/modules/ai/hooks/useAiChatEditor.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatEditor.ts
 #: src/modules/mention/hooks/useWorkspaceMemberMentionSearch.ts
 msgid "Teammates"
 msgstr "Csapattársak"
@@ -29300,7 +29302,7 @@ msgid "Teammates see who you talk to, not what you write."
 msgstr "A csapattársak azt látják, kivel beszél, nem azt, mit ír."
 
 #. js-lingui-id: XpPpz7
-#: src/modules/ai/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
 msgid "Tell the agent what to change"
 msgstr "Mondja el az ügynöknek, min változtasson"
 
@@ -29414,7 +29416,7 @@ msgid "Text Editor"
 msgstr "Szövegszerkesztő"
 
 #. js-lingui-id: kv9l5H
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "That time is no longer available. Choose another time."
 msgstr "Az az időpont már nem elérhető. Válasszon másik időpontot."
 
@@ -29494,7 +29496,7 @@ msgid "The code of the Twenty partner who referred you"
 msgstr "Az Önt ajánló Twenty-partner kódja"
 
 #. js-lingui-id: aXzQ65
-#: src/modules/ai/components/AiChatCompactionIndicator.tsx
+#: src/modules/ai-chat/messages/components/AiChatCompactionIndicator.tsx
 msgid "The conversation has been compacted"
 msgstr "A beszélgetés tömörítve lett"
 
@@ -29676,7 +29678,7 @@ msgid "The PDF is pre-signed by Twenty and executed with your legal entity and a
 msgstr "A PDF-et a Twenty előre aláírta, és az Ön jogi entitásával és felhatalmazott aláírójával kerül végrehajtásra."
 
 #. js-lingui-id: iz994T
-#: src/modules/ai/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "The priority record keeps its identity"
 msgstr "A prioritást élvező rekord megtartja az azonosságát"
 
@@ -29856,8 +29858,8 @@ msgid "Thickness"
 msgstr "Vastagság"
 
 #. js-lingui-id: AUV+TY
-#: src/modules/ai/components/ThinkingStepsDisplay.tsx
-#: src/modules/ai/utils/getReasoningStepLabel.ts
+#: src/modules/ai-chat/thinking-steps/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai-chat/thinking-steps/utils/getReasoningStepLabel.ts
 msgid "Thinking"
 msgstr "Gondolkodás"
 
@@ -30105,8 +30107,8 @@ msgid "This connection does not exist or is not available for this application."
 msgstr "Ez a kapcsolat nem létezik, vagy nem érhető el ehhez az alkalmazáshoz."
 
 #. js-lingui-id: HWM4G8
-#: src/modules/ai/components/AiChatEditorSection.tsx
-#: src/modules/ai/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
+#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
 msgid "This conversation is no longer available."
 msgstr "Ez a beszélgetés már nem érhető el."
 
@@ -30126,7 +30128,7 @@ msgid "This device"
 msgstr "Ez az eszköz"
 
 #. js-lingui-id: GyVWfy
-#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 msgid "This evening"
 msgstr "Ma este"
 
@@ -30302,7 +30304,7 @@ msgid "This record"
 msgstr "Ez a bejegyzés"
 
 #. js-lingui-id: Wf1hgt
-#: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalRecord.tsx
 msgid "This record could not be loaded."
 msgstr "Ezt a rekordot nem sikerült betölteni."
 
@@ -30312,12 +30314,12 @@ msgid "This record has been deleted"
 msgstr "Ez a rekord törölve lett"
 
 #. js-lingui-id: CS0+Ao
-#: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalRecord.tsx
 msgid "This record no longer exists or you cannot see it."
 msgstr "Ez a rekord már nem létezik, vagy nem láthatja."
 
 #. js-lingui-id: TG0qsx
-#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "This record will be deleted:"
 msgstr "Ez a rekord törölve lesz:"
 
@@ -30476,7 +30478,7 @@ msgid "This will revoke {0} for {userLabel}."
 msgstr "Ez visszavonja a(z) {0} jogosultságot {userLabel} számára."
 
 #. js-lingui-id: f8HOUp
-#: src/modules/ai/utils/getReasoningStepLabel.ts
+#: src/modules/ai-chat/thinking-steps/utils/getReasoningStepLabel.ts
 msgid "Thought"
 msgstr "Gondolat"
 
@@ -30491,7 +30493,7 @@ msgid "Three columns side by side"
 msgstr "Három oszlop egymás mellett"
 
 #. js-lingui-id: kkDQ8m
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Thursday"
 msgstr "Csütörtök"
 
@@ -30521,7 +30523,7 @@ msgstr "Időformátum"
 
 #. js-lingui-id: Mz2JN2
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsTimeZoneSelect.tsx
@@ -30606,7 +30608,7 @@ msgid "Title"
 msgstr "Cím"
 
 #. js-lingui-id: dMtLDE
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "to"
 msgstr "címzett"
 
@@ -30633,7 +30635,7 @@ msgid "Today"
 msgstr "Ma"
 
 #. js-lingui-id: TNXmKt
-#: src/modules/ai/hooks/useFormatAiChatThreadDate.ts
+#: src/modules/ai-chat/threads/hooks/useFormatAiChatThreadDate.ts
 msgid "Today, {time}"
 msgstr "Ma, {time}"
 
@@ -30663,11 +30665,6 @@ msgstr "{0} csoport váltása"
 #: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
 msgid "Toggle all folders"
 msgstr "Összes mappa átkapcsolása"
-
-#. js-lingui-id: XArpJK
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
-msgid "Toggle all object permissions"
-msgstr "Összes objektum jogosultság váltása"
 
 #. js-lingui-id: MxmNZq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -30727,7 +30724,7 @@ msgid "Tomato"
 msgstr "Paradicsom"
 
 #. js-lingui-id: BRMXj0
-#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "\"Holnap\""
@@ -30785,7 +30782,7 @@ msgid "Tool deleted"
 msgstr "Eszköz törölve"
 
 #. js-lingui-id: RO68oO
-#: src/modules/ai/components/ThinkingToolStepRow.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
 msgid "Tool details: {displayMessage}"
 msgstr "Eszköz részletei: {displayMessage}"
 
@@ -31133,7 +31130,7 @@ msgstr "Igaz/Hamis"
 
 #. js-lingui-id: KDw4GX
 #: src/modules/activities/emails/components/EmailsCardErrorState.tsx
-#: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
@@ -31170,7 +31167,7 @@ msgid "TTL"
 msgstr "TTL"
 
 #. js-lingui-id: G3myU+
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Tuesday"
 msgstr "Kedd"
 
@@ -31348,7 +31345,7 @@ msgid "Type anything..."
 msgstr "Írjon be bármit..."
 
 #. js-lingui-id: SILT51
-#: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionOtherOption.tsx
 msgid "Type your own answer here"
 msgstr "Írja be ide a saját válaszát"
 
@@ -31416,8 +31413,8 @@ msgstr "Nincs hozzárendelve"
 #. js-lingui-id: jqzUyM
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Unavailable"
@@ -31469,7 +31466,7 @@ msgid "Undisplayed data: max {maxItems} slices per chart."
 msgstr ""
 
 #. js-lingui-id: 9uI/rE
-#: src/modules/ai/components/AiChatParticipantMentionBar.tsx
+#: src/modules/ai-chat/composer/components/AiChatParticipantMentionBar.tsx
 msgid "Undo"
 msgstr "Visszavonás"
 
@@ -31484,7 +31481,7 @@ msgid "Unexpected error in cron expression parsing"
 msgstr "Váratlan hiba a cron-kifejezés elemzésekor"
 
 #. js-lingui-id: 6Y7jUZ
-#: src/modules/ai/components/AiChatThreadFollowersField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
 msgid "Unfollow for me"
 msgstr "Követés megszüntetése számomra"
 
@@ -31607,7 +31604,7 @@ msgid "Unknown error"
 msgstr "Ismeretlen hiba"
 
 #. js-lingui-id: IU3aCs
-#: src/modules/ai/hooks/useGetBrowsingContext.ts
+#: src/modules/ai-chat/hooks/useGetBrowsingContext.ts
 msgid "Unknown field"
 msgstr "Ismeretlen mező"
 
@@ -31622,7 +31619,7 @@ msgid "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
 msgstr "Ismeretlen \"{fieldName}\" mező ezen: \"{relationFieldName}\""
 
 #. js-lingui-id: +K1Lj4
-#: src/modules/ai/components/internal/AiChatFilePreview.tsx
+#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "Ismeretlen fájl"
 
@@ -31639,7 +31636,7 @@ msgstr "Ismeretlen elemzési hiba"
 
 #. js-lingui-id: lZSo+Q
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
-#: src/modules/ai/utils/getAiChatMessageAuthor.ts
+#: src/modules/ai-chat/messages/utils/getAiChatMessageAuthor.ts
 msgid "Unknown sender"
 msgstr "Ismeretlen feladó"
 
@@ -31817,12 +31814,12 @@ msgid "Unsubscribed"
 msgstr "Leiratkozva"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "Leiratkozva: {eventTime}. Az új üzenetek nem kerülnek a postaládájába, hacsak meg nem említik."
 
 #. js-lingui-id: 7fkcOT
-#: src/modules/ai/components/AiChatThreadActivityTime.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadActivityTime.tsx
 msgid "Unsubscribed {unsubscribedTime}"
 msgstr "Leiratkozva: {unsubscribedTime}"
 
@@ -31837,12 +31834,12 @@ msgid "Unsupported image format"
 msgstr "Nem támogatott képformátum"
 
 #. js-lingui-id: I9zMVO
-#: src/modules/ai/components/AiChatThreadActivityTime.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadActivityTime.tsx
 msgid "Until {snoozedUntilDay}"
 msgstr "Eddig: {snoozedUntilDay}"
 
 #. js-lingui-id: wja8aL
-#: src/modules/ai/components/AiChatThreadTitle.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadTitle.tsx
 #: src/modules/inbox/components/InboxThreadListItem.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/components/LogConsoleRecordCell.tsx
@@ -31970,12 +31967,12 @@ msgid "Update {contextStoreNumberOfSelectedRecords} records"
 msgstr "{contextStoreNumberOfSelectedRecords} rekord frissítése"
 
 #. js-lingui-id: AHNNTF
-#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Update {recordCount} {objectLabel}"
 msgstr "{recordCount} {objectLabel} frissítése"
 
 #. js-lingui-id: ECfdor
-#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Update {selectedCount}"
 msgstr "{selectedCount} frissítése"
 
@@ -32084,8 +32081,8 @@ msgid "Updating..."
 msgstr "Frissítés..."
 
 #. js-lingui-id: kwkhPe
-#: src/modules/ai/components/AiChatNoMoreBillingCreditsBanner.tsx
-#: src/modules/ai/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/application-monitoring/constants/ApplicationLogSourceLabels.ts
@@ -32134,7 +32131,7 @@ msgstr "Frissítés erre: {0}"
 #. placeholder {0}: nextResourceCreditsAmount ?? ''
 #. placeholder {1}: nextResourceCreditPrice ?? ''
 #. placeholder {2}: nextTierInterval ?? ''
-#: src/modules/ai/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Upgrade to {0} credits for ${1}/{2}."
 msgstr "Frissítsen {0} kreditre ${1}/{2} áron."
@@ -32366,7 +32363,7 @@ msgid "us-east-1"
 msgstr "us-east-1"
 
 #. js-lingui-id: 7FaY4u
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleUsageEventColumns.tsx
@@ -32897,7 +32894,7 @@ msgid "View billing details"
 msgstr "Számlázási részletek megtekintése"
 
 #. js-lingui-id: SXCuo2
-#: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
+#: src/modules/ai-chat/components/AiChatApiKeyNotConfiguredMessage.tsx
 msgid "View Docs"
 msgstr "Dokumentáció megtekintése"
 
@@ -32968,12 +32965,12 @@ msgid "View not shared"
 msgstr "Nézet nincs megosztva"
 
 #. js-lingui-id: K946OL
-#: src/modules/ai/components/AiChatEditorSection.tsx
+#: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
 msgid "View only — You can read this conversation."
 msgstr "Csak megtekintés — Elolvashatja ezt a beszélgetést."
 
 #. js-lingui-id: lD7M9Z
-#: src/modules/ai/components/AiChatMessageReplyQuote.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReplyQuote.tsx
 msgid "View original message"
 msgstr "Eredeti üzenet megtekintése"
 
@@ -33090,7 +33087,7 @@ msgid "Visualize data model"
 msgstr "Adatmodell vizualizálása"
 
 #. js-lingui-id: Ii6BOL
-#: src/modules/ai/components/AiModelTierInformationButton.tsx
+#: src/modules/ai-chat/components/AiModelTierInformationButton.tsx
 msgid "Vs Balanced mode"
 msgstr "A kiegyensúlyozott módhoz képest"
 
@@ -33105,7 +33102,7 @@ msgid "Wait for Event"
 msgstr "Várakozás eseményre"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai/hooks/useAiChat.ts
+#: src/modules/ai-chat/hooks/useAiChat.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Várja meg, amíg a mellékletek feltöltése befejeződik."
 
@@ -33121,12 +33118,12 @@ msgid "Waiting Children"
 msgstr "Várakozó gyermekek"
 
 #. js-lingui-id: 7YxIQV
-#: src/modules/ai/components/AiChatFormStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Waiting for a form to be filled in"
 msgstr "Űrlap kitöltésére vár"
 
 #. js-lingui-id: TdQd9Q
-#: src/modules/ai/components/TerminalOutput.tsx
+#: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 msgid "Waiting for output..."
 msgstr "Kimenetre vár..."
 
@@ -33136,7 +33133,7 @@ msgid "Waiting for permission"
 msgstr "Engedélyre várakozás"
 
 #. js-lingui-id: /gO/m8
-#: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Waiting for your approval"
 msgstr "Az Ön jóváhagyására vár"
 
@@ -33419,7 +33416,7 @@ msgid "Websites whose iframe widgets can ask members for their microphone or cam
 msgstr "Azok a webhelyek, որոնց iframe-widgetjei mikrofon- vagy kamera-hozzáférést kérhetnek a tagoktól. A módosítások az oldal újratöltése után lépnek érvénybe."
 
 #. js-lingui-id: VAcXNz
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Wednesday"
 msgstr "Szerda"
 
@@ -33442,17 +33439,17 @@ msgid "Weekly"
 msgstr "Heti"
 
 #. js-lingui-id: fWh1RG
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Ask an admin to enable workspace credits."
 msgstr "Elérte a heti személyes MI-használati keretét. Kérjen meg egy rendszergazdát, hogy engedélyezze a munkaterületi krediteket."
 
 #. js-lingui-id: GkVwb2
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Enable workspace credits to continue."
 msgstr "Elérte a heti személyes MI-használati keretét. A folytatáshoz engedélyezze a munkaterületi krediteket."
 
 #. js-lingui-id: Kf6mmq
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Now using workspace credits."
 msgstr "Elérte a heti személyes MI-használati keretét. Most munkaterületi krediteket használ."
 
@@ -33488,12 +33485,12 @@ msgid "What AI model should your agent run on"
 msgstr "Melyik AI-modellen fusson az ügynöke"
 
 #. js-lingui-id: Itn+J7
-#: src/modules/ai/components/suggested-prompts/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
 msgid "What can I help you with?"
 msgstr "Miben segíthetek?"
 
 #. js-lingui-id: ivJ1Xk
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "What can you do?"
 msgstr "Mire vagy képes?"
 
@@ -33544,22 +33541,22 @@ msgid "Whatsapp"
 msgstr "WhatsApp"
 
 #. js-lingui-id: 8ssTdk
-#: src/modules/ai/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 msgid "When {assistantName} finishes"
 msgstr "Amikor {assistantName} befejezi"
 
 #. js-lingui-id: m7GziZ
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "When a deal's stage changes to Closed Won, create a task assigned to the deal owner, due 7 days after the close date, with title \"Post-sale check-in\" and the company name in the description."
 msgstr "Amikor egy ügylet szakasza Closed Won állapotra változik, hozzon létre egy feladatot az ügylet tulajdonosához rendelve, amelynek határideje a zárás dátuma utáni 7. nap, a címe \"Értékesítés utáni ellenőrzés\", és a leírás tartalmazza a vállalat nevét."
 
 #. js-lingui-id: IHLoUB
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "When a new lead is created with source \"Website\", assign it to the sales rep whose territory (by region/country) matches the lead's address; if no match, assign to the team lead."
 msgstr "Amikor új érdeklődő jön létre \"Website\" forrással, azt ahhoz az értékesítőhöz rendelje, akinek területe (régió/ország szerint) megegyezik az érdeklődő címével; ha nincs egyezés, rendelje a csapatvezetőhöz."
 
 #. js-lingui-id: haFWB2
-#: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
+#: src/modules/ai-chat/suggested-prompts/default-suggested-prompts.ts
 msgid "When any deal with amount over $100,000 has its stage or amount updated, send a notification to the sales channel with the deal name, company, new stage, amount and owner."
 msgstr "Amikor bármely $100,000 feletti összegű ügylet szakasza vagy összege frissül, küldjön értesítést az értékesítési csatornának az ügylet nevével, a vállalattal, az új szakasszal, az összeggel és a tulajdonossal."
 
@@ -33739,7 +33736,7 @@ msgstr "hitelkártya nélkül"
 
 #. js-lingui-id: pUiINK
 #. placeholder {0}: formatRoundedDuration(workDurationMs)
-#: src/modules/ai/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai-chat/thinking-steps/components/ThinkingStepsDisplay.tsx
 msgid "Worked for {0}"
 msgstr "Ennyi ideig működött: {0}"
 
@@ -33843,22 +33840,22 @@ msgid "Workflows, functions and agents that act for your team."
 msgstr "A csapata nevében működő munkafolyamatok, függvények és ügynökök."
 
 #. js-lingui-id: OskBrZ
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Working days"
 msgstr "Munkanapok"
 
 #. js-lingui-id: zBOlTP
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Working hours"
 msgstr "Munkaidő"
 
 #. js-lingui-id: Gfrltr
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Working hours end"
 msgstr "Munkaidő vége"
 
 #. js-lingui-id: LYfzu/
-#: src/modules/ai/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Working hours start"
 msgstr "Munkaidő kezdete"
 
@@ -33945,7 +33942,6 @@ msgstr "Munkaidő kezdete"
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -34137,7 +34133,7 @@ msgid "Write a message"
 msgstr "Üzenet írása"
 
 #. js-lingui-id: PxYBOj
-#: src/modules/ai/hooks/useAiChatEditor.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatEditor.ts
 msgid "Write a message..."
 msgstr "Írjon üzenetet..."
 
@@ -34152,7 +34148,7 @@ msgid "Write some instructions"
 msgstr "Írjon néhány utasítást"
 
 #. js-lingui-id: P28Nzv
-#: src/modules/ai/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
 msgid "Write the email"
 msgstr "E-mail írása"
 
@@ -34202,7 +34198,7 @@ msgid "year"
 msgstr "év"
 
 #. js-lingui-id: 3PAU4M
-#: src/modules/ai/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 #: src/modules/ui/input/components/internal/date/components/DatePickerCalendar.tsx
@@ -34263,9 +34259,9 @@ msgstr "Tegnap"
 
 #. js-lingui-id: kWJmRL
 #: src/modules/activities/timeline-activities/utils/getTimelineActivityAuthorFullName.ts
-#: src/modules/ai/components/AiChatComposerQuote.tsx
-#: src/modules/ai/components/AiChatMessageReplyQuote.tsx
-#: src/modules/ai/utils/getAiChatSenderLabel.ts
+#: src/modules/ai-chat/composer/components/AiChatComposerQuote.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReplyQuote.tsx
+#: src/modules/ai-chat/utils/getAiChatSenderLabel.ts
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "You"
@@ -34413,7 +34409,7 @@ msgid "You're about to change your workspace subdomain. This action will log out
 msgstr "A munkahelyi aldomain megváltoztatása előtt áll. Ez a művelet minden felhasználót kijelentkeztet."
 
 #. js-lingui-id: 6x8lJe
-#: src/modules/ai/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 msgid "You’ve reached your AI usage limit."
 msgstr "Elérte az AI-használati korlátját."
 
@@ -34485,7 +34481,7 @@ msgid "Your handler receives this object. The body is empty because GET requests
 msgstr "A kezelő megkapja ezt az objektumot. A body üres, mert a GET kérések nem tartalmaznak payloadot."
 
 #. js-lingui-id: HCqgJ0
-#: src/modules/ai/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 msgid "Your inbox"
 msgstr "Beérkező üzenetei"
 
@@ -34520,7 +34516,7 @@ msgid "Your other events"
 msgstr "Az Ön többi eseménye"
 
 #. js-lingui-id: Wxs+Cg
-#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "Your own AI usage, separate from the workspace credits"
 msgstr "Az Ön saját AI-használata, elkülönítve a munkaterületi kreditektől"
 

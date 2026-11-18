@@ -6,7 +6,7 @@ import { GRANOLA_PAGE_PARAMETERS_INPUT_SCHEMA } from 'src/constants/granola-page
 import { GRANOLA_LIST_FOLDERS_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { GRANOLA_NOT_CONNECTED_ERROR_MESSAGE } from 'src/logic-functions/constants/granola-not-connected-error-message.constant';
 import { GRANOLA_PAGE_PARAMETERS_SCHEMA } from 'src/logic-functions/schemas/granola-page-parameters.schema';
-import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
+import { createWorkspaceGranolaClientOrThrow } from 'src/logic-functions/utils/create-workspace-granola-client-or-throw.util';
 import { isGranolaApiKeySet } from 'src/logic-functions/utils/is-granola-api-key-set.util';
 
 const GRANOLA_LIST_FOLDERS_INPUT_SCHEMA: InputJsonSchema = {
@@ -29,7 +29,7 @@ export const granolaListFoldersHandler = async (parameters: unknown) => {
     return { success: false, error: GRANOLA_NOT_CONNECTED_ERROR_MESSAGE };
   }
 
-  const page = await createGranolaClientOrThrow().listFolders({
+  const page = await createWorkspaceGranolaClientOrThrow().listFolders({
     cursor: parsed.data.cursor,
     page_size: parsed.data.limit,
   });

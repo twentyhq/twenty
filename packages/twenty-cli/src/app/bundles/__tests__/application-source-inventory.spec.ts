@@ -145,6 +145,7 @@ describe('application source inventory', { timeout: 30_000 }, () => {
       manifest,
       builtFileInfos: result.builtFileInfos,
       frontComponentSourcePaths: result.frontComponentSourcePaths,
+      logicFunctionSourcePaths: result.logicFunctionSourcePaths,
     });
     expect(updated.sourceFiles?.map((file) => file.filePath)).toEqual([
       'config/base.json',
@@ -156,6 +157,16 @@ describe('application source inventory', { timeout: 30_000 }, () => {
       'src/logo.png',
       'src/nested.css',
       'src/style.css',
+      'src/types.ts',
+      'tsconfig.json',
+    ]);
+    expect(
+      updated.logicFunctions[0].sourceFiles?.map((file) => file.filePath),
+    ).toEqual([
+      'config/base.json',
+      'src/function-helper.ts',
+      'src/function.ts',
+      'src/helper.ts',
       'src/types.ts',
       'tsconfig.json',
     ]);
