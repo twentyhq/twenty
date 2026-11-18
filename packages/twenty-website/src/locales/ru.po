@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-16 12:22\n"
+"PO-Revision-Date: 2026-11-18 16:12\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -135,7 +135,7 @@ msgstr "← Партнёры Twenty"
 #. js-lingui-id: WYQYI0
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "+ Client briefs"
-msgstr ""
+msgstr "+ Брифы клиентов"
 
 #. js-lingui-id: foGG8A
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -459,7 +459,7 @@ msgstr "49 $/польз./мес"
 #. js-lingui-id: +GoalU
 #: src/sections/partner-hero/creator-hero-stats.data.ts
 msgid "$50"
-msgstr ""
+msgstr "50 $"
 
 #. js-lingui-id: ft5bJk
 #: src/sections/compare/compare-data.ts
@@ -560,7 +560,7 @@ msgstr ""
 #: src/sections/partner-hero/integrator-hero-stats.data.ts
 #: src/sections/partner-hero/creator-hero-stats.data.ts
 msgid "12 months"
-msgstr ""
+msgstr "12 месяцев"
 
 #. js-lingui-id: HeDrOu
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -2343,7 +2343,7 @@ msgstr "Сопоставление столбцов и полей (включа�
 #. js-lingui-id: AUYALh
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "Coming soon"
-msgstr ""
+msgstr "Скоро"
 
 #. js-lingui-id: ofoEsM
 #: src/sections/pricing-salesfarce/salesfarce-data.ts

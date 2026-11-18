@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-16 12:22\n"
+"PO-Revision-Date: 2026-11-18 16:12\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -135,7 +135,7 @@ msgstr "← Twenty 파트너 목록으로"
 #. js-lingui-id: WYQYI0
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "+ Client briefs"
-msgstr ""
+msgstr "+ 고객 브리프"
 
 #. js-lingui-id: foGG8A
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -459,7 +459,7 @@ msgstr "$49/사용자/월"
 #. js-lingui-id: +GoalU
 #: src/sections/partner-hero/creator-hero-stats.data.ts
 msgid "$50"
-msgstr ""
+msgstr "$50"
 
 #. js-lingui-id: ft5bJk
 #: src/sections/compare/compare-data.ts
@@ -558,7 +558,7 @@ msgstr "권한 그룹 11개"
 #: src/sections/partner-hero/integrator-hero-stats.data.ts
 #: src/sections/partner-hero/creator-hero-stats.data.ts
 msgid "12 months"
-msgstr ""
+msgstr "12개월"
 
 #. js-lingui-id: HeDrOu
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -2341,7 +2341,7 @@ msgstr "컬럼–필드 매핑(관계 포함)"
 #. js-lingui-id: AUYALh
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "Coming soon"
-msgstr ""
+msgstr "곧 제공됩니다"
 
 #. js-lingui-id: ofoEsM
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
