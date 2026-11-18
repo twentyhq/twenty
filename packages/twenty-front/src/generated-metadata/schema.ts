@@ -1278,6 +1278,7 @@ export type BillingProductDto = {
 
 /** The different billing products available */
 export enum BillingProductKey {
+  APPLICATION = 'APPLICATION',
   BASE_PRODUCT = 'BASE_PRODUCT',
   RESOURCE_CREDIT = 'RESOURCE_CREDIT'
 }
@@ -1285,7 +1286,7 @@ export enum BillingProductKey {
 export type BillingProductMetadata = {
   __typename?: 'BillingProductMetadata';
   isLegacy?: Maybe<Scalars['String']['output']>;
-  planKey: BillingPlanKey;
+  planKey?: Maybe<BillingPlanKey>;
   priceUsageBased: BillingUsageType;
   productKey: BillingProductKey;
 };
@@ -6506,6 +6507,7 @@ export type QueryEventLogsArgs = {
 
 export type QueryExportApplicationArgs = {
   shouldIncludeDependencies?: InputMaybe<Scalars['Boolean']['input']>;
+  shouldIncludeLogicFunctionSources?: InputMaybe<Scalars['Boolean']['input']>;
   shouldIncludePublicAssets?: InputMaybe<Scalars['Boolean']['input']>;
   shouldIncludeSourceDependencies?: InputMaybe<Scalars['Boolean']['input']>;
   shouldIncludeSourceFiles?: InputMaybe<Scalars['Boolean']['input']>;

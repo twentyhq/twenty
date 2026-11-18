@@ -9,7 +9,6 @@ import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-
 
 import { CommonFindManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-many-query-runner.service';
 import { getFindManyPageSize } from 'src/engine/api/common/common-query-runners/utils/get-find-many-page-size.util';
-import { buildSelectedAggregatedFields } from 'src/engine/api/graphql/graphql-query-runner/utils/build-selected-aggregated-fields.util';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
@@ -46,6 +45,7 @@ export class FindManyResolverFactory implements WorkspaceResolverBuilderFactoryI
             orderByValuesByRecordId,
             selectedFieldsResult,
           },
+          relationAggregatedValues,
           args: processedArgs,
         } = await this.commonFindManyQueryRunnerService.execute(
           { ...args, selectedFields },
@@ -61,9 +61,9 @@ export class FindManyResolverFactory implements WorkspaceResolverBuilderFactoryI
 
         return typeORMObjectRecordsParser.createConnection({
           objectRecords: records,
-          objectRecordsAggregatedValues: aggregatedValues,
-          selectedAggregatedFields:
-            buildSelectedAggregatedFields(selectedFieldsResult),
+          aggregatedValues,
+          relationAggregatedValues,
+          selection: selectedFieldsResult,
           objectName: resolverContext.flatObjectMetadata.nameSingular,
           take: getFindManyPageSize(args),
           totalCount,

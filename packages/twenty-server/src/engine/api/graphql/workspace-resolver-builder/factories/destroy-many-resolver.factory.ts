@@ -37,11 +37,14 @@ export class DestroyManyResolverFactory implements WorkspaceResolverBuilderFacto
       });
 
       try {
-        const { results: records } =
-          await this.commonDestroyManyQueryRunnerService.execute(
-            { ...args, selectedFields },
-            resolverContext,
-          );
+        const {
+          results: records,
+          relationAggregatedValues,
+          args: { selectedFieldsResult },
+        } = await this.commonDestroyManyQueryRunnerService.execute(
+          { ...args, selectedFields },
+          resolverContext,
+        );
 
         const typeORMObjectRecordsParser =
           new ObjectRecordsToGraphqlConnectionHelper(
@@ -54,6 +57,8 @@ export class DestroyManyResolverFactory implements WorkspaceResolverBuilderFacto
           typeORMObjectRecordsParser.processRecord({
             objectRecord: record,
             objectName: resolverContext.flatObjectMetadata.nameSingular,
+            relationAggregatedValues,
+            selection: selectedFieldsResult,
             take: 1,
             totalCount: 1,
           }),
