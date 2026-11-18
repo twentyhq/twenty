@@ -1057,7 +1057,7 @@ export type BillingProductKey = 'APPLICATION' | 'BASE_PRODUCT' | 'RESOURCE_CREDI
 
 export interface BillingProductMetadata {
     isLegacy?: Scalars['String']
-    planKey: BillingPlanKey
+    planKey?: BillingPlanKey
     priceUsageBased: BillingUsageType
     productKey: BillingProductKey
     __typename: 'BillingProductMetadata'
