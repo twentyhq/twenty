@@ -70,10 +70,22 @@ export const isSubscriptionPlanMonthlyAmount = (
   value > 0 &&
   value <= MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS;
 
+export const SUBSCRIPTION_PLAN_UNITS = [
+  'WORKSPACE_MEMBER',
+  'CONNECTED_ACCOUNT',
+] as const;
+
+export type SubscriptionPlanUnit = (typeof SUBSCRIPTION_PLAN_UNITS)[number];
+
+export const isSubscriptionPlanUnit = (
+  value: unknown,
+): value is SubscriptionPlanUnit =>
+  SUBSCRIPTION_PLAN_UNITS.some((unit) => unit === value);
+
 export type SubscriptionPlan = {
   label: string;
   monthlyAmountCents: number;
-  per?: RecurringChargeUnit;
+  per?: SubscriptionPlanUnit;
 };
 
 export type SubscriptionPlans = Partial<Record<string, SubscriptionPlan>>;
