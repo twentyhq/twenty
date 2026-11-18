@@ -15,7 +15,7 @@ export const validateApplicationSourceInventoryOrThrow = ({
   resource,
 }: {
   inventory: unknown;
-  resource: ApplicationSourceResource;
+  resource: Pick<ApplicationSourceResource, 'metadata' | 'sourcePath'>;
 }) => {
   if (!isPlainObject(inventory)) {
     throw new ApplicationException(
