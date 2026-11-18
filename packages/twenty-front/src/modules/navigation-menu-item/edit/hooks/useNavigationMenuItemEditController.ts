@@ -1,7 +1,7 @@
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { useLingui } from '@lingui/react/macro';
 import {
-  type NavigationMenuItemType,
+  NavigationMenuItemType,
   type NativePageKey,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,7 +13,6 @@ import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/
 import { useUpdateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useUpdateManyNavigationMenuItems';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { buildCreateNavigationMenuItemInput } from '@/navigation-menu-item/common/utils/buildCreateNavigationMenuItemInput';
-import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/common/utils/computeInsertIndexAndPosition';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -72,19 +71,21 @@ export const useNavigationMenuItemEditController = (
     { targetFolderId, targetIndex }: CreateItemOptions = {},
   ): string => {
     const parentId = targetFolderId ?? null;
-    const isNewItemTabOrSection = isNavigationMenuItemTabOrSection(input);
-    const isSibling = (item: NavigationMenuItem) =>
-      isNavigationMenuItemTabOrSection(item) === isNewItemTabOrSection;
-    const itemsInFolder = currentItems.filter(
-      (item) => (item.parentId ?? null) === parentId && isSibling(item),
-    );
-    const index = targetIndex ?? itemsInFolder.length;
-    const { flatIndex, position } = computeInsertIndexAndPosition(
-      currentItems,
-      parentId,
-      index,
-      isSibling,
-    );
+    const isTabOrSection = (type: NavigationMenuItemType) =>
+      type === NavigationMenuItemType.TAB ||
+      type === NavigationMenuItemType.SECTION;
+    const siblings = currentItems
+      .filter(
+        (item) =>
+          (item.parentId ?? null) === parentId &&
+          isTabOrSection(item.type) === isTabOrSection(input.type),
+      )
+      .sort((a, b) => a.position - b.position);
+    const { flatIndex, position } = computeInsertIndexAndPosition({
+      items: currentItems,
+      siblings,
+      targetIndex: targetIndex ?? siblings.length,
+    });
 
     const id = v4();
     const newItem: NavigationMenuItem = {
