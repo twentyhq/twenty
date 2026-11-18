@@ -51,7 +51,6 @@ const buildPublishedFlatUniversalWorkflowVersion = ({
   trigger: WorkflowTrigger;
 }): UniversalFlatWorkflowVersion & { id: string } => ({
   ...version,
-  workspaceWorkflowVersionId: null,
   isSystemSideEffect: true,
   status: WorkflowVersionStatus.ACTIVE,
   triggers: [trigger],
@@ -140,9 +139,6 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
     visibility: WorkflowVisibility.WORKSPACE,
     createdByUserWorkspaceId: null,
     workspaceWorkflowId: null,
-    lastPublishedVersionId: isDefined(keptActiveVersion)
-      ? (existingWorkflow?.lastPublishedVersionId ?? null)
-      : null,
     lastPublishedCoreWorkflowVersionId: versionId,
     navigationMenuItemUniversalIdentifiers: [],
     createdAt: existingWorkflow?.createdAt ?? now,

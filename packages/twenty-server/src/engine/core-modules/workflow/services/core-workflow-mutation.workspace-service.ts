@@ -550,7 +550,6 @@ export class CoreWorkflowMutationWorkspaceService {
       isSystem: false,
       visibility: visibility ?? WorkflowVisibility.WORKSPACE,
       createdByUserWorkspaceId: userWorkspaceId ?? null,
-      lastPublishedVersionId: null,
       lastPublishedCoreWorkflowVersionId: null,
       versionDefinitionHash: null,
       createdAt,

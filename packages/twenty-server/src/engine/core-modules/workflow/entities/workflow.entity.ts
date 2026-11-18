@@ -54,7 +54,7 @@ export class WorkflowEntity extends SyncableEntity {
   versionDefinitionHash: string | null;
 
   @Column({ type: 'uuid', nullable: true })
-  lastPublishedVersionId: string | null;
+  lastPublishedVersionId: WasRemovedInUpgrade<string | null>;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:

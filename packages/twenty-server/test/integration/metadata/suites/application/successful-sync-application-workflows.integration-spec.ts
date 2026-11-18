@@ -115,7 +115,7 @@ const MANIFEST: Manifest = buildBaseManifest({
 
 const findDefinitions = () =>
   globalThis.testDataSource.query(
-    `SELECT w.id AS "workflowId", w."workspaceWorkflowId", w."versionDefinitionHash", w."lastPublishedCoreWorkflowVersionId", v.id AS "versionId", v."workspaceWorkflowVersionId", v."isSystemSideEffect", v.status, v.steps, f.id AS "functionId"
+    `SELECT w.id AS "workflowId", w."workspaceWorkflowId", w."versionDefinitionHash", w."lastPublishedCoreWorkflowVersionId", v.id AS "versionId", v."isSystemSideEffect", v.status, v.steps, f.id AS "functionId"
    FROM core.workflow w
    JOIN core."workflowVersion" v ON v."coreWorkflowId" = w.id
    JOIN core."logicFunction" f ON f."applicationId" = w."applicationId" AND f."universalIdentifier" = $3
@@ -239,7 +239,6 @@ describe('application-owned core workflows', () => {
       isSystemSideEffect: true,
       versionDefinitionHash: expect.any(String),
       workspaceWorkflowId: null,
-      workspaceWorkflowVersionId: null,
       lastPublishedCoreWorkflowVersionId: installed.versionId,
     });
     expect(installed.steps[0].settings.input).toEqual({

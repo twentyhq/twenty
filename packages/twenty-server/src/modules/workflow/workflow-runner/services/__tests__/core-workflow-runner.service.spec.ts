@@ -74,7 +74,6 @@ const buildService = (triggerType: WorkflowTriggerType) => {
           id: versionId,
           coreWorkflowId: versionId.replace('version-of-', ''),
           workflowId: null,
-          workspaceWorkflowVersionId: null,
           triggers: [{ type: triggerType }],
           steps: [],
         })),

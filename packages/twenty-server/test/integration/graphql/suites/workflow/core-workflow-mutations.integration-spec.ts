@@ -89,15 +89,12 @@ describe('coreWorkflow mutations (e2e)', () => {
     const coreVersionRows: {
       status: string;
       workflowId: string | null;
-      workspaceWorkflowVersionId: string | null;
     }[] = await global.testDataSource.query(
-      `SELECT status, "workflowId", "workspaceWorkflowVersionId" FROM core."workflowVersion" WHERE "coreWorkflowId" = $1`,
+      `SELECT status, "workflowId" FROM core."workflowVersion" WHERE "coreWorkflowId" = $1`,
       [coreWorkflowId],
     );
 
-    expect(coreVersionRows).toEqual([
-      { status: 'DRAFT', workflowId: null, workspaceWorkflowVersionId: null },
-    ]);
+    expect(coreVersionRows).toEqual([{ status: 'DRAFT', workflowId: null }]);
   });
 
   it('should delete workflows and unlist them synchronously', async () => {
