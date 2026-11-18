@@ -1,6 +1,6 @@
 import {
+  MAX_APPLICATION_BILLING_PRICE_AMOUNT_CENTS,
   MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT,
-  MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS,
 } from 'twenty-shared/application';
 import { MAX_ALLOWED_IFRAME_ORIGINS } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -360,7 +360,7 @@ describe('defineApplication', () => {
     expect(result.success).toBe(true);
     expect(result.errors).toEqual([]);
     expect(result.warnings).toEqual([
-      '`billing.recurring` is deprecated in favor of `billing.subscriptions`. Subscription plans are not billed yet: keep your recurring charges until they are.',
+      '`billing.recurring` is deprecated in favor of `billing.prices`. Prices are not billed yet: keep your recurring charges until they are.',
     ]);
   });
 
@@ -449,24 +449,29 @@ describe('defineApplication', () => {
     expect(result.success).toBe(true);
   });
 
-  it('should accept a flat and a per member subscription plan', () => {
+  it('should accept a flat and a per member price', () => {
     const result = defineApplication({
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
       displayName: 'My App',
       description: 'My app description',
       billing: {
-        subscriptions: {
-          platform: {
-            monthlyAmountCents: MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS,
+        prices: [
+          {
             label: 'Platform',
+            type: 'recurring',
+            billingPeriod: 'monthly',
+            amountCents: MAX_APPLICATION_BILLING_PRICE_AMOUNT_CENTS,
           },
-          seat: {
-            monthlyAmountCents: 1000,
+          {
+            label: 'Per member',
+            description: 'Monthly price per workspace member',
+            type: 'recurring',
+            billingPeriod: 'monthly',
+            amountCents: 1000,
             currency: 'USD',
             per: 'WORKSPACE_MEMBER',
-            label: 'Per member',
           },
-        },
+        ],
       },
     });
 
@@ -475,50 +480,65 @@ describe('defineApplication', () => {
     expect(result.warnings).toEqual([]);
   });
 
-  it('should return error when a subscription plan monthly amount is not a positive integer or exceeds the maximum', () => {
+  it('should return error when a price amount is not a positive integer or exceeds the maximum', () => {
     const result = defineApplication({
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
       displayName: 'My App',
       description: 'My app description',
       billing: {
-        subscriptions: {
-          free: { monthlyAmountCents: 0, label: 'Free' },
-          fractional: { monthlyAmountCents: 9.99, label: 'Fractional' },
-          excessive: {
-            monthlyAmountCents: MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS + 1,
-            label: 'Excessive',
+        prices: [
+          {
+            label: 'Free',
+            type: 'recurring',
+            billingPeriod: 'monthly',
+            amountCents: 0,
           },
-        },
+          {
+            label: 'Fractional',
+            type: 'recurring',
+            billingPeriod: 'monthly',
+            amountCents: 9.99,
+          },
+          {
+            label: 'Excessive',
+            type: 'recurring',
+            billingPeriod: 'monthly',
+            amountCents: MAX_APPLICATION_BILLING_PRICE_AMOUNT_CENTS + 1,
+          },
+        ],
       },
     });
 
     expect(result.success).toBe(false);
     expect(result.errors).toEqual([
-      `Subscription plan "free" must have a positive integer monthlyAmountCents of at most ${MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS}`,
-      `Subscription plan "fractional" must have a positive integer monthlyAmountCents of at most ${MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS}`,
-      `Subscription plan "excessive" must have a positive integer monthlyAmountCents of at most ${MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS}`,
+      `billing.prices[0] must have a positive integer amountCents of at most ${MAX_APPLICATION_BILLING_PRICE_AMOUNT_CENTS}`,
+      `billing.prices[1] must have a positive integer amountCents of at most ${MAX_APPLICATION_BILLING_PRICE_AMOUNT_CENTS}`,
+      `billing.prices[2] must have a positive integer amountCents of at most ${MAX_APPLICATION_BILLING_PRICE_AMOUNT_CENTS}`,
     ]);
   });
 
-  it('should return error when a subscription plan has an empty label', () => {
+  it('should return error when a price has an empty label or description', () => {
     const result = defineApplication({
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
       displayName: 'My App',
       description: 'My app description',
       billing: {
-        subscriptions: {
-          seat: {
-            monthlyAmountCents: 1000,
-            per: 'WORKSPACE_MEMBER',
+        prices: [
+          {
             label: '',
+            description: '',
+            type: 'recurring',
+            billingPeriod: 'monthly',
+            amountCents: 1000,
           },
-        },
+        ],
       },
     });
 
     expect(result.success).toBe(false);
     expect(result.errors).toEqual([
-      'Subscription plan "seat" must have a non empty label',
+      'billing.prices[0] must have a non empty label',
+      'billing.prices[0] must have a non empty description when set',
     ]);
   });
 

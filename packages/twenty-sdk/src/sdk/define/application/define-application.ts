@@ -1,21 +1,25 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
+  APPLICATION_BILLING_PRICE_CURRENCIES,
+  APPLICATION_BILLING_PRICE_PERIODS,
+  APPLICATION_BILLING_PRICE_TYPES,
+  APPLICATION_BILLING_PRICE_UNITS,
   APPLICATION_CATEGORIES,
   APPLICATION_VARIABLE_SCOPES,
+  isApplicationBillingPriceAmount,
+  isApplicationBillingPriceCurrency,
+  isApplicationBillingPricePeriod,
+  isApplicationBillingPriceType,
+  isApplicationBillingPriceUnit,
   isApplicationVariableScope,
   isKnownApplicationCategory,
   isRecurringChargePeriod,
   isRecurringChargeUnit,
-  isSubscriptionPlanCurrency,
-  isSubscriptionPlanMonthlyAmount,
-  isSubscriptionPlanUnit,
   isUsageOperationTypeValue,
+  MAX_APPLICATION_BILLING_PRICE_AMOUNT_CENTS,
   MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT,
-  MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS,
   RECURRING_CHARGE_PERIODS,
   RECURRING_CHARGE_UNITS,
-  SUBSCRIPTION_PLAN_CURRENCIES,
-  SUBSCRIPTION_PLAN_UNITS,
   USAGE_OPERATION_TYPES,
 } from 'twenty-shared/application';
 import { MAX_ALLOWED_IFRAME_ORIGINS } from 'twenty-shared/constants';
@@ -169,51 +173,62 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
 
   if (Object.values(recurringCharges).some(isDefined)) {
     warnings.push(
-      '`billing.recurring` is deprecated in favor of `billing.subscriptions`. Subscription plans are not billed yet: keep your recurring charges until they are.',
+      '`billing.recurring` is deprecated in favor of `billing.prices`. Prices are not billed yet: keep your recurring charges until they are.',
     );
   }
 
-  for (const [planName, subscriptionPlan] of Object.entries(
-    config.billing?.subscriptions ?? {},
-  )) {
-    if (!isDefined(subscriptionPlan)) {
-      continue;
+  (config.billing?.prices ?? []).forEach((price, index) => {
+    const priceName = `billing.prices[${index}]`;
+
+    if (!isNonEmptyString(price.label)) {
+      errors.push(`${priceName} must have a non empty label`);
     }
 
-    if (!isSubscriptionPlanMonthlyAmount(subscriptionPlan.monthlyAmountCents)) {
+    if (isDefined(price.description) && !isNonEmptyString(price.description)) {
+      errors.push(`${priceName} must have a non empty description when set`);
+    }
+
+    if (!isApplicationBillingPriceType(price.type)) {
       errors.push(
-        `Subscription plan "${planName}" must have a positive integer monthlyAmountCents of at most ${MAX_SUBSCRIPTION_PLAN_MONTHLY_AMOUNT_CENTS}`,
+        `${priceName} must have a known type (${APPLICATION_BILLING_PRICE_TYPES.join(
+          ', ',
+        )})`,
+      );
+    }
+
+    if (!isApplicationBillingPricePeriod(price.billingPeriod)) {
+      errors.push(
+        `${priceName} must have a known billingPeriod (${APPLICATION_BILLING_PRICE_PERIODS.join(
+          ', ',
+        )})`,
+      );
+    }
+
+    if (!isApplicationBillingPriceAmount(price.amountCents)) {
+      errors.push(
+        `${priceName} must have a positive integer amountCents of at most ${MAX_APPLICATION_BILLING_PRICE_AMOUNT_CENTS}`,
       );
     }
 
     if (
-      isDefined(subscriptionPlan.currency) &&
-      !isSubscriptionPlanCurrency(subscriptionPlan.currency)
+      isDefined(price.currency) &&
+      !isApplicationBillingPriceCurrency(price.currency)
     ) {
       errors.push(
-        `Subscription plan "${planName}" must be priced in a supported currency (${SUBSCRIPTION_PLAN_CURRENCIES.join(
+        `${priceName} must be priced in a supported currency (${APPLICATION_BILLING_PRICE_CURRENCIES.join(
           ', ',
         )}) or omit \`currency\``,
       );
     }
 
-    if (
-      isDefined(subscriptionPlan.per) &&
-      !isSubscriptionPlanUnit(subscriptionPlan.per)
-    ) {
+    if (isDefined(price.per) && !isApplicationBillingPriceUnit(price.per)) {
       errors.push(
-        `Subscription plan "${planName}" must be billed per a known unit (${SUBSCRIPTION_PLAN_UNITS.join(
+        `${priceName} must be billed per a known unit (${APPLICATION_BILLING_PRICE_UNITS.join(
           ', ',
         )}) or omit \`per\` for a flat fee`,
       );
     }
-
-    if (!isNonEmptyString(subscriptionPlan.label)) {
-      errors.push(
-        `Subscription plan "${planName}" must have a non empty label`,
-      );
-    }
-  }
+  });
 
   for (const [variableName, variable] of Object.entries(
     config.serverVariables ?? {},
