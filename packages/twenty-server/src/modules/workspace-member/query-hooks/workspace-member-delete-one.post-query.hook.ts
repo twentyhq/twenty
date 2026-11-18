@@ -13,7 +13,9 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { detachAgentChatChannelThreadsFromWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/detach-agent-chat-channel-threads-from-workspace-member.util';
+import { CoreWorkflowOwnershipTransferService } from 'src/engine/core-modules/workflow/services/core-workflow-ownership-transfer.service';
 import { ConnectedAccountOwnershipTransferService } from 'src/engine/metadata-modules/connected-account/services/connected-account-ownership-transfer.service';
+import { ViewOwnershipTransferService } from 'src/engine/metadata-modules/view/services/view-ownership-transfer.service';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -36,6 +38,8 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly connectedAccountOwnershipTransferService: ConnectedAccountOwnershipTransferService,
+    private readonly viewOwnershipTransferService: ViewOwnershipTransferService,
+    private readonly coreWorkflowOwnershipTransferService: CoreWorkflowOwnershipTransferService,
     private readonly recordShareSystemWriteService: RecordShareSystemWriteService,
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly agentChatThreadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -94,24 +98,35 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
       );
     }
 
+    const actingUserWorkspaceId =
+      'userWorkspaceId' in authContext
+        ? authContext.userWorkspaceId
+        : undefined;
+
     await this.connectedAccountOwnershipTransferService.transferConnectedAccountsOwnershipToSuccessor(
       {
         removedUserWorkspace: userWorkspace,
-        actingUserWorkspaceId:
-          'userWorkspaceId' in authContext
-            ? authContext.userWorkspaceId
-            : undefined,
+        actingUserWorkspaceId,
       },
     );
 
     await this.recordShareSystemWriteService.transferRecordSharesToSuccessor({
       removedUserWorkspace: userWorkspace,
       removedWorkspaceMemberId: workspaceMember.id,
-      actingUserWorkspaceId:
-        'userWorkspaceId' in authContext
-          ? authContext.userWorkspaceId
-          : undefined,
+      actingUserWorkspaceId,
     });
+
+    await this.viewOwnershipTransferService.transferPrivateViewsToSuccessor({
+      removedUserWorkspace: userWorkspace,
+      actingUserWorkspaceId,
+    });
+
+    await this.coreWorkflowOwnershipTransferService.transferPrivateWorkflowsToSuccessor(
+      {
+        removedUserWorkspace: userWorkspace,
+        actingUserWorkspaceId,
+      },
+    );
 
     await this.userWorkspaceService.deleteUserWorkspace({
       userWorkspaceId: userWorkspace.id,

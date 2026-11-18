@@ -44,7 +44,9 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
 import { RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
+import { CoreWorkflowOwnershipTransferService } from 'src/engine/core-modules/workflow/services/core-workflow-ownership-transfer.service';
 import { ConnectedAccountOwnershipTransferService } from 'src/engine/metadata-modules/connected-account/services/connected-account-ownership-transfer.service';
+import { ViewOwnershipTransferService } from 'src/engine/metadata-modules/view/services/view-ownership-transfer.service';
 import { detachAgentChatChannelThreadsFromWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/detach-agent-chat-channel-threads-from-workspace-member.util';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -61,6 +63,8 @@ export class UserService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly connectedAccountOwnershipTransferService: ConnectedAccountOwnershipTransferService,
+    private readonly viewOwnershipTransferService: ViewOwnershipTransferService,
+    private readonly coreWorkflowOwnershipTransferService: CoreWorkflowOwnershipTransferService,
     private readonly recordShareSystemWriteService: RecordShareSystemWriteService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly emailVerificationService: EmailVerificationService,
@@ -404,6 +408,18 @@ export class UserService {
       removedWorkspaceMemberId: workspaceMember.id,
       actingUserWorkspaceId,
     });
+
+    await this.viewOwnershipTransferService.transferPrivateViewsToSuccessor({
+      removedUserWorkspace: userWorkspace,
+      actingUserWorkspaceId,
+    });
+
+    await this.coreWorkflowOwnershipTransferService.transferPrivateWorkflowsToSuccessor(
+      {
+        removedUserWorkspace: userWorkspace,
+        actingUserWorkspaceId,
+      },
+    );
 
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [

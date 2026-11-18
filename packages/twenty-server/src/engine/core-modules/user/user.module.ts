@@ -18,7 +18,9 @@ import { UserResolver } from 'src/engine/core-modules/user/user.resolver';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
+import { CoreWorkflowOwnershipTransferModule } from 'src/engine/core-modules/workflow/core-workflow-ownership-transfer.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
+import { ViewOwnershipTransferModule } from 'src/engine/metadata-modules/view/view-ownership-transfer.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { RoleAssignmentModule } from 'src/engine/permissions/role-assignment/role-assignment.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -36,6 +38,8 @@ import { UserService } from './services/user.service';
     UserWorkspaceModule,
     RoleAssignmentModule,
     ConnectedAccountMetadataModule,
+    ViewOwnershipTransferModule,
+    CoreWorkflowOwnershipTransferModule,
     RecordShareModule,
     AgentHistoryModule,
     PermissionsModule,
