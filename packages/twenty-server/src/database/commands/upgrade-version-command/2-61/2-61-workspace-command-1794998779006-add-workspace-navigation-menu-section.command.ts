@@ -7,7 +7,7 @@ import { v4 } from 'uuid';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildWorkspaceNavigationMenuSectionOperations } from 'src/database/commands/upgrade-version-command/2-60/utils/build-workspace-navigation-menu-section-operations.util';
+import { buildWorkspaceNavigationMenuSectionOperations } from 'src/database/commands/upgrade-version-command/2-61/utils/build-workspace-navigation-menu-section-operations.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -15,9 +15,9 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.60.0', 1794995371200)
+@RegisteredWorkspaceCommand('2.61.0', 1794998779006)
 @Command({
-  name: 'upgrade:2-60:add-workspace-navigation-menu-section',
+  name: 'upgrade:2-61:add-workspace-navigation-menu-section',
   description:
     'For workspaces with the customizable sidebar on, add a Workspace section and move the shared top-level sidebar items into it',
 })

@@ -1,6 +1,6 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
-import { buildWorkspaceNavigationMenuSectionOperations } from 'src/database/commands/upgrade-version-command/2-60/utils/build-workspace-navigation-menu-section-operations.util';
+import { buildWorkspaceNavigationMenuSectionOperations } from 'src/database/commands/upgrade-version-command/2-61/utils/build-workspace-navigation-menu-section-operations.util';
 import { WORKSPACE_NAVIGATION_MENU_SECTION_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/flat-navigation-menu-item/constants/workspace-navigation-menu-section-universal-identifier.constant';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 
