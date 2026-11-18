@@ -1053,7 +1053,7 @@ export type BillingProductDTO = (BillingLicensedProduct | BillingMeteredProduct)
 
 
 /** The different billing products available */
-export type BillingProductKey = 'BASE_PRODUCT' | 'RESOURCE_CREDIT'
+export type BillingProductKey = 'BASE_PRODUCT' | 'RESOURCE_CREDIT' | 'APPLICATION'
 
 export interface BillingProductMetadata {
     isLegacy?: Scalars['String']
@@ -13076,7 +13076,8 @@ export const enumBillingPlanKey = {
 
 export const enumBillingProductKey = {
    BASE_PRODUCT: 'BASE_PRODUCT' as const,
-   RESOURCE_CREDIT: 'RESOURCE_CREDIT' as const
+   RESOURCE_CREDIT: 'RESOURCE_CREDIT' as const,
+   APPLICATION: 'APPLICATION' as const
 }
 
 export const enumBillingSubscriptionCollectionMethod = {

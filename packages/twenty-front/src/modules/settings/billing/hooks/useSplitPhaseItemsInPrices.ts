@@ -13,12 +13,10 @@ export const useSplitPhaseItemsInPrices = () => {
 
   const splitedPhaseItemsInPrices = (nextBillingPhase?.items ?? []).reduce(
     (acc, item) => {
-      const { price, billingUsage } = getPriceAndBillingUsageByPriceId(
-        item.price,
-      );
+      const priceAndBillingUsage = getPriceAndBillingUsageByPriceId(item.price);
 
-      if (billingUsage === BillingUsageType.LICENSED) {
-        const licensedPrice = price as BillingPriceLicensed;
+      if (priceAndBillingUsage?.billingUsage === BillingUsageType.LICENSED) {
+        const licensedPrice = priceAndBillingUsage.price;
         if (isDefined(licensedPrice.creditAmount)) {
           acc.nextResourceCreditPrice = licensedPrice;
         } else {

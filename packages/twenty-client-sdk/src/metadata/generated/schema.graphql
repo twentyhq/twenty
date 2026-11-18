@@ -1194,6 +1194,7 @@ interface BillingProductDTO {
 enum BillingProductKey {
   BASE_PRODUCT
   RESOURCE_CREDIT
+  APPLICATION
 }
 
 type BillingProductMetadata {
