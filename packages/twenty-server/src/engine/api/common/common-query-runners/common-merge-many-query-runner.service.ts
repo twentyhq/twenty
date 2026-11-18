@@ -6,7 +6,6 @@ import chunk from 'lodash.chunk';
 import {
   MUTATION_MAX_MERGE_RECORDS,
   QUERY_MAX_RECORDS,
-  QUERY_MAX_RECORDS_FROM_RELATION,
 } from 'twenty-shared/constants';
 import {
   FieldMetadataSettingsMapping,
@@ -28,7 +27,6 @@ import { computeDuplicateKeyColumnGroupsForJoinColumn } from 'src/engine/api/com
 import { findRecordKeysChangedByMerge } from 'src/engine/api/common/common-query-runners/utils/find-record-keys-changed-by-merge.util';
 import { splitRelatedRecordIdsToMigrateAndSoftDelete } from 'src/engine/api/common/common-query-runners/utils/split-related-record-ids-to-migrate-and-soft-delete.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
-import { type CommonRelationsAggregatedValues } from 'src/engine/api/common/types/common-aggregated-values.type';
 import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
@@ -113,9 +111,9 @@ export class CommonMergeManyQueryRunnerService extends CommonRecordQueryRunnerSe
     });
 
     const relationAggregatedValues = await this.processNestedRelations({
-      args,
+      records: [updatedRecord],
+      selection: args.selectedFieldsResult,
       queryRunnerContext,
-      updatedRecords: [updatedRecord],
     });
 
     return { result: updatedRecord, relationAggregatedValues };
@@ -161,15 +159,10 @@ export class CommonMergeManyQueryRunnerService extends CommonRecordQueryRunnerSe
     const recordsToMerge = fetchedRecords;
 
     if (args.dryRun) {
-      await this.processNestedRelationsHelper.processNestedRelations({
-        flatObjectMetadataMaps: context.flatObjectMetadataMaps,
-        flatFieldMetadataMaps: context.flatFieldMetadataMaps,
-        parentObjectMetadataItem: context.flatObjectMetadata,
-        parentObjectRecords: recordsToMerge,
+      await this.processNestedRelations({
+        records: recordsToMerge,
         selection: args.selectedFieldsResult,
-        limit: QUERY_MAX_RECORDS_FROM_RELATION,
-        authContext: context.authContext,
-        ...this.getNestedRelationsReadPathOptions(),
+        queryRunnerContext: context,
       });
     }
 
@@ -651,34 +644,6 @@ export class CommonMergeManyQueryRunnerService extends CommonRecordQueryRunnerSe
         return updatedRecords[0];
       },
     );
-  }
-
-  private async processNestedRelations({
-    args,
-    queryRunnerContext,
-    updatedRecords,
-  }: {
-    args: CommonExtendedInput<MergeManyQueryArgs>;
-    queryRunnerContext: CommonExtendedQueryRunnerContext;
-    updatedRecords: ObjectRecord[];
-  }): Promise<CommonRelationsAggregatedValues> {
-    const {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatObjectMetadata,
-      authContext,
-    } = queryRunnerContext;
-
-    return await this.processNestedRelationsHelper.processNestedRelations({
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      parentObjectMetadataItem: flatObjectMetadata,
-      parentObjectRecords: updatedRecords,
-      selection: args.selectedFieldsResult,
-      limit: QUERY_MAX_RECORDS_FROM_RELATION,
-      authContext,
-      ...this.getNestedRelationsReadPathOptions(),
-    });
   }
 
   async computeArgs(

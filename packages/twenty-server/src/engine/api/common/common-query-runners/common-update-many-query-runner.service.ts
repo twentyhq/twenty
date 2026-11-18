@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
 
 import { CommonRecordQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-record-query-runner.service';
@@ -18,7 +17,6 @@ import {
   CommonQueryNames,
   UpdateManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 
@@ -33,41 +31,13 @@ export class CommonUpdateManyQueryRunnerService extends CommonRecordQueryRunnerS
     args: CommonExtendedInput<UpdateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<CommonQueryRunResult<ObjectRecord[]>> {
-    const {
-      authContext,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatObjectMetadata,
-    } = queryRunnerContext;
-
-    const columnsToReturn = buildColumnsToReturn({
-      selection: args.selectedFieldsResult,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    });
-
-    const updatedRecords = await this.runFilteredMutation({
+    return this.runFilteredMutation({
       queryRunnerContext,
       filter: args.filter,
-      columnsToReturn,
+      selection: args.selectedFieldsResult,
       kind: 'update',
       data: args.data,
     });
-
-    const relationAggregatedValues =
-      await this.processNestedRelationsHelper.processNestedRelations({
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        parentObjectMetadataItem: flatObjectMetadata,
-        parentObjectRecords: updatedRecords,
-        selection: args.selectedFieldsResult,
-        limit: QUERY_MAX_RECORDS_FROM_RELATION,
-        authContext,
-        ...this.getNestedRelationsReadPathOptions(),
-      });
-
-    return { result: updatedRecords, relationAggregatedValues };
   }
 
   async computeArgs(
