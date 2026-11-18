@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-18 16:12\n"
+"PO-Revision-Date: 2026-11-18 18:13\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -629,7 +629,7 @@ msgstr "20 × Sales Hub Enterprise($150)"
 #: src/sections/partner-hero/integrator-hero-stats.data.ts
 #: src/sections/partner-hero/creator-hero-stats.data.ts
 msgid "20%"
-msgstr ""
+msgstr "20%"
 
 #. js-lingui-id: vbPxj+
 #: src/sections/faq/become-partner-faq.data.ts
@@ -639,7 +639,7 @@ msgstr "직접 유치한 모든 고객의 시트 매출의 20%를 12개월간 �
 #. js-lingui-id: NmKuTq
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "20% on every client you bring"
-msgstr ""
+msgstr "소개하는 모든 고객당 20%"
 
 #. js-lingui-id: g1xpgV
 #: src/sections/partner-programs/partner-levels.data.ts
@@ -676,12 +676,12 @@ msgstr "3개 제품 라인"
 #. js-lingui-id: M5Eoob
 #: src/sections/partner-hero/integrator-hero-stats.data.ts
 msgid "3 steps"
-msgstr ""
+msgstr "3단계"
 
 #. js-lingui-id: P9cEa2
 #: src/sections/partner-hero/creator-hero-stats.data.ts
 msgid "30 days"
-msgstr ""
+msgstr "30일"
 
 #. js-lingui-id: /wTvaM
 #: src/sections/faq/affiliate-program-faq.data.ts
@@ -809,7 +809,7 @@ msgstr "커스텀 CRM은 조직에 우위를 제공하지만, *직접 구축하�
 #. js-lingui-id: /Ywl2k
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "A directory profile"
-msgstr ""
+msgstr "디렉터리 프로필"
 
 #. js-lingui-id: 4lAzBW
 #: src/sections/compare/compare-data.ts
@@ -1382,7 +1382,7 @@ msgstr "고객과의 작업을 확인한 후, 자체 리드를 맡길 수 있는
 #. js-lingui-id: fjtTAL
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "An integrator we trust with our own leads."
-msgstr ""
+msgstr "당사의 리드를 맡길 만큼 신뢰하는 통합 파트너입니다."
 
 #. js-lingui-id: t4V3jR
 #: src/sections/pricing-plans/plans-data.ts
@@ -1573,7 +1573,7 @@ msgstr "AI에게 워크스페이스 데이터로 대시보드와 보기를 구�
 #. js-lingui-id: gXJd56
 #: src/app/[locale]/(site)/partners/integrators/page.tsx
 msgid "Ask our team and partners on the partner Discord."
-msgstr ""
+msgstr "파트너 Discord에서 저희 팀과 파트너에게 문의하세요."
 
 #. js-lingui-id: S+Q+1d
 #: src/sections/product-hero/ProductHero.tsx
@@ -2254,12 +2254,12 @@ msgstr "이제 통화 녹음 위젯에서 통화를 클릭하면 요약, 대화 
 #. js-lingui-id: yuosVb
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "Client briefs"
-msgstr ""
+msgstr "고객 브리프"
 
 #. js-lingui-id: oA4gy0
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "Clients from briefs do not earn a commission"
-msgstr ""
+msgstr "브리프를 통해 유입된 고객에는 수수료가 지급되지 않습니다"
 
 #. js-lingui-id: yz7wBu
 #: src/partners-marketplace/CaseStudyModal.tsx
@@ -2367,12 +2367,12 @@ msgstr "커머셜"
 #. js-lingui-id: uM200J
 #: src/app/[locale]/(site)/partners/creators/page.tsx
 msgid "Commission on Cloud Organization and Enterprise plans"
-msgstr ""
+msgstr "Cloud Organization 및 Enterprise 플랜 수수료"
 
 #. js-lingui-id: XeFlm0
 #: src/app/[locale]/(site)/partners/integrators/page.tsx
 msgid "Commission on Organization and Enterprise plans"
-msgstr ""
+msgstr "Organization 및 Enterprise 플랜 수수료"
 
 #. js-lingui-id: /XN91V
 #: src/sections/affiliate-program/affiliate-audiences.data.ts
@@ -3490,7 +3490,7 @@ msgstr "각 워크스페이스는 이제 더 안전한 사용 환경을 위해 �
 #. js-lingui-id: OD5uww
 #: src/sections/partner-programs/creator-steps.data.ts
 msgid "Earn 20% for 12 months"
-msgstr ""
+msgstr "12개월 동안 20% 적립"
 
 #. js-lingui-id: LZphlk
 #: src/sections/partner-programs/integrator-steps.data.ts
@@ -3863,7 +3863,7 @@ msgstr "모든 스레드를, 올바른 레코드에."
 #. js-lingui-id: CygPzD
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "Everything in Integrator, plus"
-msgstr ""
+msgstr "Integrator의 모든 혜택에 추가로"
 
 #. js-lingui-id: Gy9kTe
 #: src/sections/pricing-plans/plans-data.ts
@@ -4260,7 +4260,7 @@ msgstr "한 팀을 위해, 자체 서버에서."
 #. js-lingui-id: oRdST7
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "For partners with extensive experience implementing Twenty"
-msgstr ""
+msgstr "Twenty 구현 경험이 풍부한 파트너 대상"
 
 #. js-lingui-id: jCGEo0
 #: src/sections/pricing-plans/plans-data.ts
@@ -4340,7 +4340,7 @@ msgstr "신청부터 *고객 확보까지*"
 #. js-lingui-id: J8YeMT
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "From companies looking for a Twenty partner"
-msgstr ""
+msgstr "Twenty 파트너를 찾는 기업에서"
 
 #. js-lingui-id: Iuxc00
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -4478,7 +4478,7 @@ msgstr "Germany 🇩🇪"
 #. js-lingui-id: KoRwQ3
 #: src/app/[locale]/(site)/partners/integrators/page.tsx
 msgid "Get help anytime"
-msgstr ""
+msgstr "언제든지 도움받기"
 
 #. js-lingui-id: zn+MlF
 #: src/platform/routing/static-website-routes.ts
@@ -4495,7 +4495,7 @@ msgstr "매칭 받기"
 #. js-lingui-id: k3465f
 #: src/sections/partner-programs/creator-steps.data.ts
 msgid "Get paid monthly"
-msgstr ""
+msgstr "매월 지급받기"
 
 #. js-lingui-id: WClQV1
 #: src/sections/menu/data/menu.ts
@@ -4670,7 +4670,7 @@ msgstr "헬프 센터"
 #. js-lingui-id: Xh+YpE
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "Help from our team and other partners"
-msgstr ""
+msgstr "저희 팀과 다른 파트너의 도움"
 
 #. js-lingui-id: WorXzH
 #: src/sections/pricing-plans/plans-data.ts
@@ -5551,12 +5551,12 @@ msgstr "저희가 *매칭*해 드릴게요"
 #. js-lingui-id: aAvjMq
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "Level 01"
-msgstr ""
+msgstr "레벨 01"
 
 #. js-lingui-id: /70BjY
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "Level 02"
-msgstr ""
+msgstr "레벨 02"
 
 #. js-lingui-id: rJargy
 #: src/partner-application/data/partner-country-options.ts
@@ -5653,7 +5653,7 @@ msgstr "목록 보기"
 #. js-lingui-id: 2ypJDK
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "Listed in the Twenty partner directory"
-msgstr ""
+msgstr "Twenty 파트너 디렉터리에 등록"
 
 #. js-lingui-id: 2WIZYd
 #: src/partner-application/data/partner-country-options.ts
@@ -5949,7 +5949,7 @@ msgstr "최소 10명 사용자"
 #. js-lingui-id: 8jQGWT
 #: src/sections/partner-hero/creator-hero-stats.data.ts
 msgid "Minimum payout"
-msgstr ""
+msgstr "최소 지급액"
 
 #. js-lingui-id: 5IvRfo
 #: src/partner-application/partner-application-copy.ts
@@ -6432,23 +6432,23 @@ msgstr "이제 객체, 폴더, 링크 및 페이지에 사이드바, 헤더 및 
 #. js-lingui-id: 7+RZba
 #: src/sections/partner-hero/creator-hero-stats.data.ts
 msgid "Of credit per click"
-msgstr ""
+msgstr "클릭당 크레딧"
 
 #. js-lingui-id: EucUI+
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "of seat revenue"
-msgstr ""
+msgstr "좌석 매출의"
 
 #. js-lingui-id: snThJv
 #: src/sections/partner-hero/integrator-hero-stats.data.ts
 #: src/sections/partner-hero/creator-hero-stats.data.ts
 msgid "Of seat revenue"
-msgstr ""
+msgstr "좌석 매출의"
 
 #. js-lingui-id: T4tAHU
 #: src/sections/partner-programs/creator-steps.data.ts
 msgid "Of seat revenue on Cloud Organization and Enterprise plans, per customer, counted from their first payment."
-msgstr ""
+msgstr "각 고객의 첫 결제일부터 계산한 Cloud Organization 및 Enterprise 플랜의 좌석 매출 중."
 
 #. js-lingui-id: pkrZnO
 #: src/case-studies/case-study-stories.ts
@@ -6748,7 +6748,7 @@ msgstr "파트너 신청"
 #. js-lingui-id: Jk02cO
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "Partner Discord"
-msgstr ""
+msgstr "파트너 Discord"
 
 #. js-lingui-id: mYGIvm
 #: src/partners-marketplace/PartnerProfile.tsx
@@ -6783,7 +6783,7 @@ msgstr "파트너 추천 후기"
 #. js-lingui-id: c8VLsy
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "Partner training"
-msgstr ""
+msgstr "파트너 교육"
 
 #. js-lingui-id: 7nUw36
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -6821,17 +6821,17 @@ msgstr "사람들"
 #. js-lingui-id: EvCCGa
 #: src/sections/affiliate-program/AffiliateAudiences.tsx
 msgid "People that teams trust *to pick their tools*"
-msgstr ""
+msgstr "팀이 *도구를 선택할 때* 신뢰하는 사람들"
 
 #. js-lingui-id: 4GZOjx
 #: src/sections/partner-hero/integrator-hero-stats.data.ts
 msgid "Per client you bring"
-msgstr ""
+msgstr "소개하는 고객당"
 
 #. js-lingui-id: 58ybKx
 #: src/sections/partner-hero/creator-hero-stats.data.ts
 msgid "Per customer"
-msgstr ""
+msgstr "고객당"
 
 #. js-lingui-id: nU1kSZ
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -7329,7 +7329,7 @@ msgstr "실시간은 기능이 아니라 마음가짐입니다."
 #. js-lingui-id: /ajiMH
 #: src/sections/affiliate-program/affiliate-audiences.data.ts
 msgid "Recommend Twenty to your clients, even on projects you don't implement."
-msgstr ""
+msgstr "직접 구현하지 않는 프로젝트에서도 고객에게 Twenty를 추천하세요."
 
 #. js-lingui-id: v5nqef
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -7868,7 +7868,7 @@ msgstr "레코드 검색"
 #. js-lingui-id: yUHbxC
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "Seat revenue on Organization or Enterprise, for 12 months"
-msgstr ""
+msgstr "Organization 또는 Enterprise의 좌석 매출, 12개월간"
 
 #. js-lingui-id: HVOGoW
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -8154,12 +8154,12 @@ msgstr "CRM 프로젝트 개요를 공유해 주시면, 저희 팀이 공인 Twe
 #. js-lingui-id: 36Zpp9
 #: src/sections/partner-programs/creator-steps.data.ts
 msgid "Share your link"
-msgstr ""
+msgstr "링크 공유하기"
 
 #. js-lingui-id: WzpFll
 #: src/app/[locale]/(site)/partners/creators/page.tsx
 msgid "Share your link, we credit the signups it brings, and you get paid every month the customer stays, for up to 12 months."
-msgstr ""
+msgstr "링크를 공유하면 해당 링크를 통한 가입이 적립되며, 고객이 유지되는 동안 최대 12개월간 매월 지급받습니다."
 
 #. js-lingui-id: /beeoq
 #: src/partners-marketplace/MarketplaceMatchCard.tsx
@@ -8745,7 +8745,7 @@ msgstr "구현 내용에 대해 알려 주세요 *"
 #. js-lingui-id: 5aDkVu
 #: src/sections/partner-programs/integrator-steps.data.ts
 msgid "Tell us about your company, the clients you work with and what you have built with Twenty. It takes a few minutes."
-msgstr ""
+msgstr "회사, 함께 일하는 고객, 그리고 Twenty로 구축한 내용을 알려주세요. 몇 분이면 됩니다."
 
 #. js-lingui-id: 5N30dV
 #: src/client-brief/client-brief-copy.ts
@@ -9161,7 +9161,7 @@ msgstr "이 기능을 사용하면 두 개의 레코드를 하나로 병합할 �
 #. js-lingui-id: 8Zj6he
 #: src/app/[locale]/(site)/partners/integrators/page.tsx
 msgid "Three steps, and no fee to join. You set your own rates and keep what you bill."
-msgstr ""
+msgstr "세 단계만 거치면 가입할 수 있으며 가입비는 없습니다. 직접 요율을 정하고 청구한 금액을 모두 받습니다."
 
 #. js-lingui-id: cklVjM
 #: src/client-brief/client-brief-copy.ts
@@ -9181,12 +9181,12 @@ msgstr "프라이버시를 강화하기 위해 이제 \"Accounts\" 설정 내에
 #. js-lingui-id: nbbO2k
 #: src/sections/partner-hero/integrator-hero-stats.data.ts
 msgid "To get started"
-msgstr ""
+msgstr "시작하려면"
 
 #. js-lingui-id: N4bU08
 #: src/sections/partner-hero/integrator-hero-stats.data.ts
 msgid "To join"
-msgstr ""
+msgstr "가입하려면"
 
 #. js-lingui-id: ijf9QM
 #: src/platform/releases/ReleaseNotes.tsx
@@ -10522,7 +10522,7 @@ msgstr "배포 파이프라인을 기성품으로 사지 않듯이, 스키마를
 #. js-lingui-id: ioTagD
 #: src/app/[locale]/(site)/partners/creators/page.tsx
 msgid "You implement Twenty *for your clients?*"
-msgstr ""
+msgstr "고객을 *위해?* Twenty를 구현하시나요"
 
 #. js-lingui-id: lcwHh9
 #: src/sections/partner-programs/partner-levels.data.ts

@@ -128,19 +128,17 @@ export const buildRelationSelectionFromDepth = ({
 
     const nextLevelIsAJunctionTable = flatFieldIsJoinColumn;
 
-    const nestedRelations = shouldRecurseIntoRelation
-      ? buildRelationSelectionFromDepth({
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          flatFields: relationFlatFields,
-          unreadableFieldMetadataIds,
-          readableObjectMetadataIds,
-          depth: 1,
-          onlyUseLabelIdentifierFieldsInRelations,
-          currentDepthLevelIsAJunctionTable: nextLevelIsAJunctionTable,
-          recurseIntoJunctionTableRelations,
-        })
-      : {};
+    const nestedRelations = buildRelationSelectionFromDepth({
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatFields: relationFlatFields,
+      unreadableFieldMetadataIds,
+      readableObjectMetadataIds,
+      depth: shouldRecurseIntoRelation ? 1 : 0,
+      onlyUseLabelIdentifierFieldsInRelations,
+      currentDepthLevelIsAJunctionTable: nextLevelIsAJunctionTable,
+      recurseIntoJunctionTableRelations,
+    });
 
     relationsSelectFields[flatField.name] = {
       fieldName: flatField.name,

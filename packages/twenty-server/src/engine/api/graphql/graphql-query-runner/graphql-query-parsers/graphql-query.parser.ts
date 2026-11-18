@@ -249,6 +249,9 @@ export class GraphqlQueryParser {
       this.flatFieldMetadataMaps,
     );
 
-    return selectedFieldsParser.parse(selectedFields, this.flatObjectMetadata);
+    return selectedFieldsParser.parse({
+      selectedFields,
+      flatObjectMetadata: this.flatObjectMetadata,
+    });
   }
 }

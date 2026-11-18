@@ -1,10 +1,7 @@
 import { Kind, parse } from 'graphql';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
-import {
-  buildConnectionSelectedFields,
-  buildRecordSelectedFields,
-} from 'src/engine/api/graphql/direct-execution/utils/build-common-selected-fields.util';
+import { buildCommonSelectedFields } from 'src/engine/api/graphql/direct-execution/utils/build-common-selected-fields.util';
 import { type GraphqlFieldSelection } from 'src/engine/api/graphql/workspace-resolver-builder/types/graphql-field-selection.type';
 import { computeSelectionKey } from 'src/engine/api/graphql/workspace-resolver-builder/utils/compute-selection-key.util';
 import { getGraphqlFieldSelections } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-graphql-field-selections.util';
@@ -141,7 +138,8 @@ const buildRecord = ({
   query: string;
   flatObjectMetadata: FlatObjectMetadata;
 }) =>
-  buildRecordSelectedFields({
+  buildCommonSelectedFields({
+    selectionKind: 'record',
     fieldSelections: getRootFieldSelections(query),
     flatObjectMetadata,
     flatObjectMetadataMaps,
@@ -155,14 +153,15 @@ const buildConnection = ({
   query: string;
   flatObjectMetadata: FlatObjectMetadata;
 }) =>
-  buildConnectionSelectedFields({
+  buildCommonSelectedFields({
+    selectionKind: 'connection',
     fieldSelections: getRootFieldSelections(query),
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   });
 
-describe('buildRecordSelectedFields', () => {
+describe('buildCommonSelectedFields for a record', () => {
   it('separates scalars, join columns and composites from a to-one relation', () => {
     expect(
       buildRecord({
@@ -323,7 +322,7 @@ describe('buildRecordSelectedFields', () => {
   });
 });
 
-describe('buildConnectionSelectedFields', () => {
+describe('buildCommonSelectedFields for a connection', () => {
   it('takes aggregates from the names next to edges and fields from edges.node', () => {
     expect(
       buildConnection({

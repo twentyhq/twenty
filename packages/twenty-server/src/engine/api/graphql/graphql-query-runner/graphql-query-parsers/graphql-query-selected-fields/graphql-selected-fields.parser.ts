@@ -11,6 +11,7 @@ import {
 import {
   type CommonSelectedFields,
   type CommonSelectedFieldsResult,
+  type CommonSelectedRelation,
 } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { GraphqlQuerySelectedFieldsAggregateParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-aggregate.parser';
@@ -29,7 +30,7 @@ const isFieldSelected = ({
   selectedFields,
   fieldName,
 }: {
-  selectedFields: CommonSelectedFields;
+  selectedFields: Pick<CommonSelectedFields, 'fields'>;
   fieldName: string;
 }): boolean =>
   Object.prototype.hasOwnProperty.call(selectedFields.fields, fieldName);
@@ -54,11 +55,15 @@ export class GraphqlQuerySelectedFieldsParser {
     this.aggregateParser = new GraphqlQuerySelectedFieldsAggregateParser();
   }
 
-  parse(
-    selectedFields: CommonSelectedFields,
-    flatObjectMetadata: FlatObjectMetadata,
-    isFromOneToManyRelation?: boolean,
-  ): CommonSelectedFieldsResult {
+  parse({
+    selectedFields,
+    flatObjectMetadata,
+    isFromOneToManyRelation,
+  }: {
+    selectedFields: CommonSelectedFields;
+    flatObjectMetadata: FlatObjectMetadata;
+    isFromOneToManyRelation?: boolean;
+  }): CommonSelectedFieldsResult {
     const accumulator: CommonSelectedFieldsResult = {
       columns: {},
       aggregates: {},
@@ -67,12 +72,14 @@ export class GraphqlQuerySelectedFieldsParser {
       hasAtLeastTwoNestedOneToManyRelations: false,
     };
 
-    this.aggregateParser.parse(
-      selectedFields.aggregates,
+    const selectedRelationEntries = Object.entries(selectedFields.relations);
+
+    this.aggregateParser.parse({
+      selectedAggregates: selectedFields.aggregates,
       flatObjectMetadata,
-      this.flatFieldMetadataMaps,
+      flatFieldMetadataMaps: this.flatFieldMetadataMaps,
       accumulator,
-    );
+    });
 
     for (const fieldMetadataId of flatObjectMetadata.fieldIds) {
       const fieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -86,6 +93,7 @@ export class GraphqlQuerySelectedFieldsParser {
         this.parseRelationSelections({
           fieldMetadata,
           selectedFields,
+          selectedRelationEntries,
           accumulator,
           isFromOneToManyRelation,
         });
@@ -115,6 +123,7 @@ export class GraphqlQuerySelectedFieldsParser {
         this.parseRelationSelections({
           fieldMetadata,
           selectedFields,
+          selectedRelationEntries,
           accumulator,
           isFromOneToManyRelation,
         });
@@ -148,13 +157,15 @@ export class GraphqlQuerySelectedFieldsParser {
   private parseRelationSelections({
     fieldMetadata,
     selectedFields,
+    selectedRelationEntries,
     accumulator,
     isFromOneToManyRelation,
   }: {
     fieldMetadata:
       | FlatFieldMetadata<FieldMetadataType.RELATION>
       | FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
-    selectedFields: CommonSelectedFields;
+    selectedFields: Pick<CommonSelectedFields, 'fields'>;
+    selectedRelationEntries: [string, CommonSelectedRelation][];
     accumulator: CommonSelectedFieldsResult;
     isFromOneToManyRelation?: boolean;
   }): void {
@@ -166,20 +177,18 @@ export class GraphqlQuerySelectedFieldsParser {
       accumulator.columns[joinColumnName] = true;
     }
 
-    for (const [relationKey, selectedRelation] of Object.entries(
-      selectedFields.relations,
-    )) {
+    for (const [relationKey, selectedRelation] of selectedRelationEntries) {
       if (selectedRelation.fieldName !== fieldMetadata.name) {
         continue;
       }
 
-      this.graphqlQuerySelectedFieldsRelationParser.parseRelationField(
+      this.graphqlQuerySelectedFieldsRelationParser.parseRelationField({
         fieldMetadata,
         relationKey,
         selectedRelation,
         accumulator,
         isFromOneToManyRelation,
-      );
+      });
     }
   }
 

@@ -19,7 +19,6 @@ import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandM
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { CoreAgentPinnedCommandMenuItems } from '@/object-core/commands/components/CoreAgentPinnedCommandMenuItems';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
-import { SettingsRoleDraftSyncEffect } from '@/settings/roles/role/components/SettingsRoleDraftSyncEffect';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
@@ -34,6 +33,7 @@ import { CoreAgentDeleteConfirmationModal } from '@/object-core/agents/component
 import { CoreAgentAvatarPicker } from '@/object-core/agents/components/CoreAgentAvatarPicker';
 import { CoreAgentOverviewTab } from '@/object-core/agents/components/CoreAgentOverviewTab';
 import { CoreAgentNewRoleDraftEffect } from '@/object-core/agents/components/CoreAgentNewRoleDraftEffect';
+import { CoreAgentRoleDraftSyncEffect } from '@/object-core/agents/components/CoreAgentRoleDraftSyncEffect';
 import { CORE_AGENT_CANCEL_EDITION_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentCancelEditionCommandId';
 import { CORE_AGENT_SAVE_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentSaveCommandId';
 import { CoreAgentRunsContent } from '@/object-core/agents/components/CoreAgentRunsContent';
@@ -108,7 +108,10 @@ export const CoreAgentFormContent = ({
     <>
       <SettingsRolesQueryEffect />
       {isNonEmptyString(agent.roleId) ? (
-        <SettingsRoleDraftSyncEffect roleId={agent.roleId} />
+        <CoreAgentRoleDraftSyncEffect
+          agentId={agent.id}
+          roleId={agent.roleId}
+        />
       ) : (
         <CoreAgentNewRoleDraftEffect agent={agent} />
       )}

@@ -4,7 +4,6 @@ import { renderHook } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { type ReactNode } from 'react';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
-import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useCanRetryCurrentAiChatTurn } from '@/ai-chat/messages/hooks/useCanRetryCurrentAiChatTurn';
 import { useCurrentAiChatThreadAccess } from '@/ai-chat/threads/hooks/useCurrentAiChatThreadAccess';
@@ -15,14 +14,13 @@ import {
 
 const wrapper = ({ children }: { children: ReactNode }) => (
   <Provider store={jotaiStore}>
-    <AiChatTestInstance>{children}</AiChatTestInstance>
+    <AiChatTestInstance threadId="thread">{children}</AiChatTestInstance>
   </Provider>
 );
 
 describe('Shared chat execution controls', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(aiChatTestInstanceThreadIdState.atom, 'thread');
     jotaiStore.set(currentWorkspaceMemberState.atom, {
       id: 'bob',
     } as never);

@@ -1,6 +1,5 @@
 import { type CommonSelection } from 'src/engine/api/common/types/common-selection.type';
 
-// What an API asks for, by field name; the parser resolves it to columns as a CommonSelection
 export type CommonSelectedFields = {
   // Scalars and join columns; a composite field lists its sub-fields
   fields: Record<string, boolean | Record<string, boolean>>;
