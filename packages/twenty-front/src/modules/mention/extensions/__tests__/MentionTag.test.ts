@@ -6,7 +6,7 @@ import { Text } from '@tiptap/extension-text';
 import { MentionTag } from '@/mention/extensions/MentionTag';
 import { getMentionTagContent } from '@/mention/utils/getMentionTagContent';
 import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
-import { isAiChatAssistantMentionedInSerializedDocument } from '@/ai-chat/utils/isAiChatAssistantMentionedInSerializedDocument';
+import { isAiChatAssistantMentionedInSerializedDocument } from '@/ai-chat/composer/utils/isAiChatAssistantMentionedInSerializedDocument';
 import { parseChatReferences } from '@/ai-chat/message-content/utils/parseChatReferences';
 import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
