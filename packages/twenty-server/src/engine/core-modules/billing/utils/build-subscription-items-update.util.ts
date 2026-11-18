@@ -11,23 +11,24 @@ import { resolveManagedItemPrice } from 'src/engine/core-modules/billing/utils/r
 
 type SubscriptionItemToUpdate = Pick<
   BillingSubscriptionItemEntity,
-  'stripeSubscriptionItemId'
-> &
-  Partial<Pick<BillingSubscriptionItemEntity, 'stripePriceId' | 'quantity'>> & {
-    billingProduct?: {
-      metadata?: Pick<BillingProductMetadata, 'productKey'> | null;
-    } | null;
-  };
+  'stripeSubscriptionItemId' | 'stripePriceId'
+> & {
+  billingProduct?: {
+    metadata?: Pick<BillingProductMetadata, 'productKey'> | null;
+  } | null;
+};
 
 export const buildSubscriptionItemsUpdate = ({
   billingSubscriptionItems,
+  stripeSubscriptionItems,
   toUpdatePrices,
 }: {
   billingSubscriptionItems: SubscriptionItemToUpdate[];
+  stripeSubscriptionItems: Pick<Stripe.SubscriptionItem, 'id' | 'quantity'>[];
   toUpdatePrices: SubscriptionStripePrices;
 }): Stripe.SubscriptionUpdateParams.Item[] =>
   billingSubscriptionItems.flatMap(
-    ({ stripeSubscriptionItemId, stripePriceId, quantity, billingProduct }) => {
+    ({ stripeSubscriptionItemId, stripePriceId, billingProduct }) => {
       const managedPrice = resolveManagedItemPrice({
         productKey: billingProduct?.metadata?.productKey,
         toUpdatePrices,
@@ -37,11 +38,10 @@ export const buildSubscriptionItemsUpdate = ({
         return [{ id: stripeSubscriptionItemId, ...managedPrice }];
       }
 
-      const applicationPriceId = isDefined(stripePriceId)
-        ? toUpdatePrices.targetApplicationPriceIdByCurrentPriceId?.get(
-            stripePriceId,
-          )
-        : undefined;
+      const applicationPriceId =
+        toUpdatePrices.targetApplicationPriceIdByCurrentPriceId?.get(
+          stripePriceId,
+        );
 
       return isDefined(applicationPriceId) &&
         applicationPriceId !== stripePriceId
@@ -49,7 +49,9 @@ export const buildSubscriptionItemsUpdate = ({
             {
               id: stripeSubscriptionItemId,
               price: applicationPriceId,
-              quantity: quantity ?? undefined,
+              quantity: stripeSubscriptionItems.find(
+                ({ id }) => id === stripeSubscriptionItemId,
+              )?.quantity,
             },
           ]
         : [];

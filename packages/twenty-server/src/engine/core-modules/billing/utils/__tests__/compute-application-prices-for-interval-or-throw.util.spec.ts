@@ -46,7 +46,7 @@ describe('computeApplicationPricesForIntervalOrThrow', () => {
     ).toEqual(new Map());
   });
 
-  it('throws when an application price has no billing product', () => {
+  it('throws when an application price is not in the catalog', () => {
     expect(() =>
       computeApplicationPricesForIntervalOrThrow({
         applicationPriceIds: ['price_application_month'],

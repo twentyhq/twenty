@@ -33,7 +33,7 @@ export const computeApplicationPricesForIntervalOrThrow = ({
 
       if (!isDefined(billingProduct)) {
         throw new BillingException(
-          `Application price ${currentPriceId} has no billing product`,
+          `Application price ${currentPriceId} is not in the billing catalog or has no billing product`,
           BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
         );
       }

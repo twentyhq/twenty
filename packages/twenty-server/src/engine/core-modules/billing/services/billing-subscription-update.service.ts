@@ -398,6 +398,7 @@ export class BillingSubscriptionUpdateService {
       const updatedStripeSubscription = isDefined(immediateSubscriptionUpdate)
         ? await this.applyImmediateSubscriptionUpdate({
             subscription,
+            stripeSubscriptionItems: stripeSubscription.items.data,
             subscriptionUpdate: immediateSubscriptionUpdate,
             currentPrices,
             toUpdateCurrentPrices,
@@ -584,11 +585,13 @@ export class BillingSubscriptionUpdateService {
 
   private async applyImmediateSubscriptionUpdate({
     subscription,
+    stripeSubscriptionItems,
     subscriptionUpdate,
     currentPrices,
     toUpdateCurrentPrices,
   }: {
     subscription: BillingSubscriptionEntity;
+    stripeSubscriptionItems: Stripe.SubscriptionItem[];
     subscriptionUpdate: SubscriptionUpdate;
     currentPrices: SubscriptionStripePrices;
     toUpdateCurrentPrices: SubscriptionStripePrices;
@@ -617,6 +620,7 @@ export class BillingSubscriptionUpdateService {
       {
         items: buildSubscriptionItemsUpdate({
           billingSubscriptionItems: subscription.billingSubscriptionItems,
+          stripeSubscriptionItems,
           toUpdatePrices: toUpdateCurrentPrices,
         }),
         proration_behavior: proration,
