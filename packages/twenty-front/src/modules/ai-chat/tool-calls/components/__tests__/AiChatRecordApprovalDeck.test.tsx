@@ -1,4 +1,4 @@
-import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
+import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -130,9 +130,9 @@ describe('AiChatRecordApprovalDeck', () => {
   it('keeps answering in its conversation when the person opens another one', async () => {
     const user = userEvent.setup();
     const store = createStore();
-    store.set(aiChatTestInstanceThreadIdState.atom, 'thread-1');
+    store.set(newAiChatThreadIdState.atom, 'thread-1');
     answerAiChatToolCall.mockImplementation(async () => {
-      store.set(aiChatTestInstanceThreadIdState.atom, 'thread-2');
+      store.set(newAiChatThreadIdState.atom, 'thread-2');
 
       return true;
     });

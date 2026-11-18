@@ -1,4 +1,3 @@
-import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
 import { AiChatTestInstance } from '@/ai-chat/testing/AiChatTestInstance';
 import { type CombinedGraphQLErrors } from '@apollo/client/errors';
 import { renderHook } from '@testing-library/react';
@@ -20,7 +19,7 @@ const THREAD_ID = 'thread-1';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
-    <AiChatTestInstance>{children}</AiChatTestInstance>
+    <AiChatTestInstance threadId={THREAD_ID}>{children}</AiChatTestInstance>
   </JotaiProvider>
 );
 
@@ -66,7 +65,6 @@ const renderHasReachedAiChatCreditsCap = () =>
 describe('useHasReachedAiChatCreditsCap', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(aiChatTestInstanceThreadIdState.atom, THREAD_ID);
   });
 
   it('should return false when the workspace has credits left and the thread has no error', () => {

@@ -1,4 +1,3 @@
-import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
 import { render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
@@ -54,7 +53,7 @@ const PARTICIPANT: AgentChatThreadParticipantFieldsFragment = {
 const renderChatView = () =>
   render(
     <JotaiProvider store={jotaiStore}>
-      <AiChatTestInstance>
+      <AiChatTestInstance threadId={THREAD_ID}>
         <AiChatThreadMarkAsReadEffect />
       </AiChatTestInstance>
     </JotaiProvider>,
@@ -83,7 +82,6 @@ describe('AiChatThreadMarkAsReadEffect', () => {
     jotaiStore.set(aiChatThreadParticipantsState.atom, {
       [THREAD_ID]: PARTICIPANT,
     });
-    jotaiStore.set(aiChatTestInstanceThreadIdState.atom, THREAD_ID);
   });
 
   it('marks the thread on screen as read and keeps where the member left off', () => {
