@@ -2,19 +2,20 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
-import { useCallback } from 'react';
+import { type KeyboardEvent, useCallback } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
-import { IconButton } from 'twenty-ui/components/input';
-import { IconSend, IconTrash } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
+import { FormFieldRow, IconButton } from 'twenty-ui/components/input';
+import { IconArrowUp, IconUsers } from 'twenty-ui/icon';
+import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 
 import { useStartAppChannelConversation } from '@/activities/emails/hooks/useStartAppChannelConversation';
-import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
+import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { startAppConversationIdempotencyKeyComponentState } from '@/side-panel/pages/start-app-conversation/states/startAppConversationIdempotencyKeyComponentState';
@@ -23,11 +24,12 @@ import { startAppConversationTextComponentState } from '@/side-panel/pages/start
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
-import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+
+const RECIPIENT_MAX_WIDTH = 240;
 
 const StyledContainer = styled.div`
   display: flex;
@@ -35,18 +37,14 @@ const StyledContainer = styled.div`
   height: 100%;
 `;
 
-const StyledContent = styled.div`
-  display: flex;
+const StyledBody = styled.div`
   flex: 1;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  overflow-y: auto;
-  padding: ${themeCssVariables.spacing[4]};
+  min-height: 0;
 `;
 
-const StyledChannelLabel = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
+const StyledComposer = styled.div`
+  flex-shrink: 0;
+  padding: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledTextarea = styled(TextareaAutosize)`
@@ -65,6 +63,11 @@ const StyledTextarea = styled(TextareaAutosize)`
   }
 `;
 
+const StyledActions = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`;
+
 export const SidePanelStartAppConversationPage = () => {
   const { t } = useLingui();
   const store = useStore();
@@ -73,6 +76,10 @@ export const SidePanelStartAppConversationPage = () => {
   );
   const startAppConversationTarget = useAtomComponentStateValue(
     startAppConversationTargetComponentState,
+  );
+  const recordStore = useAtomFamilyStateValue(
+    recordStoreFamilyState,
+    startAppConversationTarget?.personId ?? '',
   );
   const { goBackFromSidePanel } = useSidePanelHistory();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
@@ -146,58 +153,82 @@ export const SidePanelStartAppConversationPage = () => {
     t,
   ]);
 
-  useHotkeysOnFocusedElement({
-    keys: ['ctrl+Enter,meta+Enter'],
-    callback: handleSend,
-    focusId: SIDE_PANEL_FOCUS_ID,
-    dependencies: [handleSend],
-  });
+  const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSend();
+    }
+  };
 
   if (!isDefined(startAppConversationTarget)) {
     return null;
   }
 
-  const channelLabel = startAppConversationTarget.channelLabel;
+  const recipientName = recordStore?.name?.firstName ?? '';
+  const recipientFullName =
+    `${recipientName} ${recordStore?.name?.lastName ?? ''}`.trim();
 
   return (
     <StyledContainer>
-      <StyledContent>
-        <StyledChannelLabel>{t`Send from ${channelLabel}`}</StyledChannelLabel>
-        <StyledTextarea
-          aria-label={t`Message`}
-          placeholder={t`Write a message`}
-          minRows={4}
-          value={startAppConversationText}
-          disabled={loading}
-          onChange={(event) => {
-            setStartAppConversationText(event.target.value);
-            setStartAppConversationIdempotencyKey(null);
-          }}
-        />
-      </StyledContent>
-      <SidePanelFooter
-        actions={[
-          <IconButton
-            key="discard"
+      {isNonEmptyString(recipientFullName) && (
+        <FormFieldRow
+          aria-label={t`Recipients`}
+          startIcon={<IconUsers size={themeCssVariables.icon.size.md} />}
+          hasDivider
+        >
+          <Chip
             size="sm"
-            variant="outline"
-            aria-label={t`Discard`}
-            onClick={goBackFromSidePanel}
+            variant="soft"
+            maxWidth={RECIPIENT_MAX_WIDTH}
+            startElement={
+              <Avatar
+                name={recipientFullName}
+                colorSeed={startAppConversationTarget.personId}
+                src={recordStore?.avatarUrl}
+                size="sm"
+                shape="circle"
+              />
+            }
           >
-            <IconTrash />
-          </IconButton>,
-          <Button
-            key="send"
-            size="sm"
-            startIcon={<IconSend />}
-            shortcut={['Mod', 'Enter']}
-            onClick={handleSend}
-            disabled={!canSend}
-            variant="solid"
-            color="accent"
-          >{t`Send`}</Button>,
-        ]}
-      />
+            {recipientFullName}
+          </Chip>
+        </FormFieldRow>
+      )}
+      <StyledBody />
+      <StyledComposer>
+        <StyledChatComposerBox>
+          <StyledTextarea
+            aria-label={t`Message`}
+            placeholder={
+              isNonEmptyString(recipientName)
+                ? t`Message ${recipientName}`
+                : t`Write a message`
+            }
+            minRows={1}
+            maxRows={8}
+            value={startAppConversationText}
+            disabled={loading}
+            onChange={(event) => {
+              setStartAppConversationText(event.target.value);
+              setStartAppConversationIdempotencyKey(null);
+            }}
+            onKeyDown={handleKeyDown}
+          />
+          <StyledActions>
+            <IconButton
+              variant="solid"
+              color="accent"
+              shape="round"
+              size="sm"
+              aria-label={t`Send`}
+              disabled={!canSend}
+              onClick={handleSend}
+            >
+              <IconArrowUp />
+            </IconButton>
+          </StyledActions>
+        </StyledChatComposerBox>
+      </StyledComposer>
     </StyledContainer>
   );
 };
