@@ -151,16 +151,17 @@ export class CoreWorkflowLifecycleWorkspaceService {
       },
     );
 
-    assertVersionCanBeActivated(
-      {
+    assertVersionCanBeActivated({
+      workflowVersion: {
         id: coreWorkflowVersion.id,
         status: coreWorkflowVersion.status,
         trigger,
         steps,
       },
-      coreWorkflow.lastPublishedCoreWorkflowVersionId ===
+      isLastPublishedVersion:
+        coreWorkflow.lastPublishedCoreWorkflowVersionId ===
         coreWorkflowVersion.id,
-    );
+    });
 
     const { objectIdByNameSingular, flatFieldMetadataMaps } =
       await this.workflowCommonWorkspaceService.getFlatEntityMaps(workspaceId);
