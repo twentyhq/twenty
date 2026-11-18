@@ -422,6 +422,7 @@ export interface Application {
     content?: ApplicationContent
     createdAt: Scalars['DateTime']
     defaultLogicFunctionRole?: Role
+    /** @deprecated Use requestedRoleId instead */
     defaultRoleId?: Scalars['String']
     description?: Scalars['String']
     frontComponents: FrontComponent[]
@@ -438,6 +439,7 @@ export interface Application {
     packageJsonChecksum?: Scalars['String']
     packageJsonFileId?: Scalars['UUID']
     requestedIframeMediaPermissions: IframeMediaPermission[]
+    requestedRoleId?: Scalars['UUID']
     runHealthCheckOnUserPreferences: Scalars['Boolean']
     settingsCustomTabFrontComponentId?: Scalars['UUID']
     settingsMenuItems?: SettingsMenuItem[]
@@ -5009,6 +5011,7 @@ export interface ApplicationGenqlSelection{
     content?: ApplicationContentGenqlSelection
     createdAt?: boolean | number
     defaultLogicFunctionRole?: RoleGenqlSelection
+    /** @deprecated Use requestedRoleId instead */
     defaultRoleId?: boolean | number
     description?: boolean | number
     frontComponents?: FrontComponentGenqlSelection
@@ -5025,6 +5028,7 @@ export interface ApplicationGenqlSelection{
     packageJsonChecksum?: boolean | number
     packageJsonFileId?: boolean | number
     requestedIframeMediaPermissions?: IframeMediaPermissionGenqlSelection
+    requestedRoleId?: boolean | number
     runHealthCheckOnUserPreferences?: boolean | number
     settingsCustomTabFrontComponentId?: boolean | number
     settingsMenuItems?: SettingsMenuItemGenqlSelection
