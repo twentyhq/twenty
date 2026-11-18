@@ -39,19 +39,23 @@ export const buildAgentChatPushNotification = ({
   >;
   isPreviewEnabled: boolean;
 }): Omit<WebPushNotification, 'renotify'> => {
-  const getWorkspaceMemberName = (workspaceMemberId: string | null) => {
+  const formerMemberName = i18n._(msg`Former member`);
+
+  const getWorkspaceMemberName = (workspaceMemberId: string | null): string => {
     const workspaceMember = isDefined(workspaceMemberId)
       ? workspaceMemberById[workspaceMemberId]
       : undefined;
 
     if (!isDefined(workspaceMember) || isDefined(workspaceMember.deletedAt)) {
-      return i18n._(msg`Former member`);
+      return formerMemberName;
     }
 
     const fullName =
       `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`.trim();
 
-    return isNonEmptyString(fullName) ? fullName : workspaceMember.userEmail;
+    return isNonEmptyString(fullName)
+      ? fullName
+      : (workspaceMember.userEmail ?? formerMemberName);
   };
 
   const isDirectMessage =
