@@ -4,10 +4,12 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconPlus } from 'twenty-ui/icon';
 
 import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
+import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
+import { type NavigationMenuBuiltInSectionType } from '@/navigation-menu-item/common/types/NavigationMenuBuiltInSectionType';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
-import { useCreateNavigationMenuTabOrSection } from '@/navigation-menu-item/edit/hooks/useCreateNavigationMenuTabOrSection';
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -15,6 +17,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   FeatureFlagKey,
@@ -37,8 +40,10 @@ export const NavigationMenuAddSectionButton = ({
   );
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
-  const { createSection, createBuiltInSection } =
-    useCreateNavigationMenuTabOrSection();
+  const { createItem } = useNavigationMenuItemEditController('workspace');
+  const setNavigationMenuItemIdToRename = useSetAtomState(
+    navigationMenuItemIdToRenameState,
+  );
   const { closeDropdown } = useCloseDropdown();
   const dropdownId = `navigation-menu-add-section-${containerId ?? 'home'}`;
 
@@ -60,8 +65,19 @@ export const NavigationMenuAddSectionButton = ({
       ),
   );
 
-  const add = (create: () => void) => {
-    create();
+  const handleCustomSectionClick = () => {
+    const sectionId = createItem(
+      { type: NavigationMenuItemType.SECTION, name: t`New section` },
+      { targetFolderId: containerId },
+    );
+    setNavigationMenuItemIdToRename(sectionId);
+    closeDropdown(dropdownId);
+  };
+
+  const handleBuiltInSectionClick = (
+    type: NavigationMenuBuiltInSectionType,
+  ) => {
+    createItem({ type }, { targetFolderId: containerId });
     closeDropdown(dropdownId);
   };
 
@@ -93,7 +109,7 @@ export const NavigationMenuAddSectionButton = ({
                   id: NavigationMenuItemType.SECTION,
                   label: t`Custom section`,
                   Icon: IconPlus,
-                  onClick: () => add(() => createSection(containerId)),
+                  onClick: handleCustomSectionClick,
                 }}
               />
               {builtInSectionsToOffer.map((builtInSection) => (
@@ -103,12 +119,7 @@ export const NavigationMenuAddSectionButton = ({
                     id: builtInSection.type,
                     label: t(builtInSection.label),
                     onClick: () =>
-                      add(() =>
-                        createBuiltInSection({
-                          containerId,
-                          type: builtInSection.type,
-                        }),
-                      ),
+                      handleBuiltInSectionClick(builtInSection.type),
                   }}
                 />
               ))}
