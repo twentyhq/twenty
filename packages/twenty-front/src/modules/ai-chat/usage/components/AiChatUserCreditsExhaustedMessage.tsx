@@ -4,8 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatErrorMessage } from '@/ai-chat/components/AiChatErrorMessage';
 import { useAiChatUserCreditsUsage } from '@/ai-chat/usage/hooks/useAiChatUserCreditsUsage';
-import { useCanRetryCurrentAiChatTurn } from '@/ai-chat/hooks/useCanRetryCurrentAiChatTurn';
-import { useRetryChatMessage } from '@/ai-chat/hooks/useRetryChatMessage';
+import { useCanRetryCurrentAiChatTurn } from '@/ai-chat/messages/hooks/useCanRetryCurrentAiChatTurn';
+import { useRetryChatMessage } from '@/ai-chat/messages/hooks/useRetryChatMessage';
 import { type AiChatError } from '@/ai-chat/types/AiChatError';
 
 type AiChatUserCreditsExhaustedMessageProps = {
