@@ -356,6 +356,7 @@ export class FieldMetadataService {
       flatViewFiltersToDelete,
       flatViewFiltersToUpdate,
       flatViewFieldsToDelete,
+      flatViewFieldsToUpdate,
       flatViewsToUpdate,
       flatViewsToDelete,
     } = inputTranspilationResult.result;
@@ -406,7 +407,7 @@ export class FieldMetadataService {
             viewField: {
               flatEntityToCreate: [],
               flatEntityToDelete: flatViewFieldsToDelete,
-              flatEntityToUpdate: [],
+              flatEntityToUpdate: flatViewFieldsToUpdate,
             },
           },
           workspaceId,
