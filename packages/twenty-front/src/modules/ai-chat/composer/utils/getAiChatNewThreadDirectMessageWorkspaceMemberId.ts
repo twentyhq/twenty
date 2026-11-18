@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AiChatNewThreadRecipients } from '@/ai-chat/composer/types/AiChatNewThreadRecipients';
+import { type AiChatNewThreadRecipients } from '@/ai-chat/types/AiChatNewThreadRecipients';
 import { type AiChatParticipantMention } from '@/ai-chat/composer/types/AiChatParticipantMention';
 
 export const getAiChatNewThreadDirectMessageWorkspaceMemberId = ({

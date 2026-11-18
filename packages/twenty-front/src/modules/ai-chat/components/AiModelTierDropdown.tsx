@@ -4,8 +4,8 @@ import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiModelTierBars } from '@/ai-chat/composer/components/AiModelTierBars';
-import { AiModelTierSlider } from '@/ai-chat/composer/components/AiModelTierSlider';
+import { AiModelTierBars } from '@/ai-chat/components/AiModelTierBars';
+import { AiModelTierSlider } from '@/ai-chat/components/AiModelTierSlider';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useIsWorkspaceSetupChat } from '@/ai-chat/workspace-setup/hooks/useIsWorkspaceSetupChat';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';

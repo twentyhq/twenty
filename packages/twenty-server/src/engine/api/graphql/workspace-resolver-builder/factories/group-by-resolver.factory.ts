@@ -60,7 +60,6 @@ export class GroupByResolverFactory implements WorkspaceResolverBuilderFactoryIn
           const formattedRecords = typeORMObjectRecordsParser.createConnection({
             objectRecords: group.records ?? [],
             objectName: resolverContext.flatObjectMetadata.nameSingular,
-            objectRecordsAggregatedValues: {},
             selection: selectedFieldsResult,
             take: group.records?.length || 0,
             totalCount: Number(group.totalCount ?? 0),
