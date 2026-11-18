@@ -3,10 +3,10 @@ import { PUBLISH_FRONT_COMPONENT_TOOL_NAME } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatFrontComponentPreview } from '@/ai-chat/components/AiChatFrontComponentPreview';
-import { ThinkingToolStepRow } from '@/ai-chat/components/ThinkingToolStepRow';
+import { ThinkingToolStepRow } from '@/ai-chat/thinking-steps/components/ThinkingToolStepRow';
 import { useAiChatPendingToolCalls } from '@/ai-chat/hooks/useAiChatPendingToolCalls';
 import { getFrontComponentDraftId } from '@/ai-chat/utils/getFrontComponentDraftId';
-import { isThinkingStepPartActive } from '@/ai-chat/utils/isThinkingStepPartActive';
+import { isThinkingStepPartActive } from '@/ai-chat/thinking-steps/utils/isThinkingStepPartActive';
 
 type AiChatFrontComponentToolPreviewProps = {
   toolPart: ToolUIPart | DynamicToolUIPart;
