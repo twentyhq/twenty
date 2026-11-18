@@ -67,8 +67,8 @@ describe('Application requestedRoleId is written alongside defaultRoleId', () =>
           [application.id],
         );
 
-      expect(defaultRoleId).toBe(application.defaultRoleId);
-      expect(requestedRoleId).toBe(defaultRoleId);
+      expect(requestedRoleId).toBe(application.requestedRoleId);
+      expect(defaultRoleId).toBe(requestedRoleId);
     });
   });
 });
