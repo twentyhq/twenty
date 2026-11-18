@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/client/react';
 import { useEffect, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 import { UPDATE_INBOX_PRESENCE } from '@/web-push/graphql/mutations/updateInboxPresence';
 import { useIsWebPushAvailable } from '@/web-push/hooks/useIsWebPushAvailable';
@@ -12,7 +13,7 @@ const isDocumentFocused = () =>
 
 export const InboxPresenceEffect = () => {
   const isWebPushAvailable = useIsWebPushAvailable();
-  const [tabId] = useState(() => crypto.randomUUID());
+  const [tabId] = useState(() => uuidv4());
   const [updateInboxPresence] = useMutation(UPDATE_INBOX_PRESENCE);
 
   useEffect(() => {

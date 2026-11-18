@@ -41,17 +41,19 @@ self.addEventListener('push', (event) => {
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
-  const { url } = event.notification.data;
+  const url = event.notification.data?.url;
 
   event.waitUntil(
     self.clients
       .matchAll({ type: 'window', includeUncontrolled: true })
       .then(([windowClient]) => {
         if (windowClient === undefined) {
-          return self.clients.openWindow(url);
+          return self.clients.openWindow(url ?? '/');
         }
 
-        windowClient.postMessage({ type: 'push-notification-click', url });
+        if (url !== undefined) {
+          windowClient.postMessage({ type: 'push-notification-click', url });
+        }
 
         return windowClient.focus();
       }),
