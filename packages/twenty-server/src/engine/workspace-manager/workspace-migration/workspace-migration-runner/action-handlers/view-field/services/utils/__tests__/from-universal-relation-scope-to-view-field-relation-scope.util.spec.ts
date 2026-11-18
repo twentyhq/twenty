@@ -22,7 +22,11 @@ const CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-3333-4333-8333-000000000003';
 const FILTER_GROUP_ID = '33333333-3333-4333-8333-333333333333';
 
-const flatFieldMetadatas = [
+const fieldMetadataRows: [
+  id: string,
+  universalIdentifier: string,
+  type: FieldMetadataType,
+][] = [
   [TASK_FIELD_ID, TASK_FIELD_UNIVERSAL_IDENTIFIER, FieldMetadataType.RELATION],
   [
     STATUS_FIELD_ID,
@@ -34,13 +38,16 @@ const flatFieldMetadatas = [
     CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER,
     FieldMetadataType.DATE_TIME,
   ],
-].map(([id, universalIdentifier, type]) =>
-  getFlatFieldMetadataMock({
-    id,
-    universalIdentifier,
-    objectMetadataId: 'task-target-object-id',
-    type: type as FieldMetadataType,
-  }),
+];
+
+const flatFieldMetadatas = fieldMetadataRows.map(
+  ([id, universalIdentifier, type]) =>
+    getFlatFieldMetadataMock({
+      id,
+      universalIdentifier,
+      objectMetadataId: 'task-target-object-id',
+      type,
+    }),
 );
 
 const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {

@@ -7,6 +7,8 @@ import {
   ViewSortDirection,
 } from 'twenty-shared/types';
 
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { validateFlatViewFieldRelationScope } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util';
 
@@ -16,18 +18,16 @@ const FILTER_GROUP_ID = '33333333-3333-4333-8333-333333333333';
 const OTHER_FILTER_GROUP_ID = '44444444-4444-4444-8444-444444444444';
 
 const buildFlatFieldMetadata = (
-  flatFieldMetadata: Partial<UniversalFlatFieldMetadata> &
+  flatFieldMetadata: Partial<FlatFieldMetadata> &
     Pick<
-      UniversalFlatFieldMetadata,
+      FlatFieldMetadata,
       'universalIdentifier' | 'type' | 'objectMetadataUniversalIdentifier'
     >,
 ) =>
-  ({
-    isActive: true,
-    relationTargetObjectMetadataUniversalIdentifier: null,
-    universalSettings: null,
+  getFlatFieldMetadataMock({
+    objectMetadataId: flatFieldMetadata.objectMetadataUniversalIdentifier,
     ...flatFieldMetadata,
-  }) as UniversalFlatFieldMetadata;
+  });
 
 const companyTaskTargetsField = buildFlatFieldMetadata({
   universalIdentifier: 'company-task-targets',
@@ -164,10 +164,13 @@ const validate = ({
     flatFieldMetadataOptionMaps: { byUniversalIdentifier: {} },
   });
 
-const expectOneErrorContaining = (
-  universalRelationScope: UniversalViewFieldRelationScope,
-  expectedMessage: string,
-) =>
+const expectOneErrorContaining = ({
+  universalRelationScope,
+  expectedMessage,
+}: {
+  universalRelationScope: UniversalViewFieldRelationScope;
+  expectedMessage: string;
+}) =>
   expect(validate({ universalRelationScope })).toMatchObject([
     { message: expect.stringContaining(expectedMessage) },
   ]);
@@ -228,10 +231,10 @@ describe('validateFlatViewFieldRelationScope', () => {
     { title: 'a non-relation field', flatFieldMetadata: companyNameField },
     {
       title: 'a morph relation',
-      flatFieldMetadata: {
+      flatFieldMetadata: buildFlatFieldMetadata({
         ...companyTaskTargetsField,
         type: FieldMetadataType.MORPH_RELATION,
-      } as UniversalFlatFieldMetadata,
+      }),
     },
   ])('rejects a scope on $title', ({ flatFieldMetadata }) => {
     expect(
@@ -251,8 +254,8 @@ describe('validateFlatViewFieldRelationScope', () => {
   ])(
     'rejects a filter on a field that is $title',
     ({ fieldMetadataUniversalIdentifier }) =>
-      expectOneErrorContaining(
-        {
+      expectOneErrorContaining({
+        universalRelationScope: {
           ...OPEN_TASKS_SCOPE,
           filters: [
             {
@@ -263,13 +266,13 @@ describe('validateFlatViewFieldRelationScope', () => {
             },
           ],
         },
-        'must belong to the relation target object',
-      ),
+        expectedMessage: 'must belong to the relation target object',
+      }),
   );
 
   it('rejects a filter on a deactivated field', () =>
-    expectOneErrorContaining(
-      {
+    expectOneErrorContaining({
+      universalRelationScope: {
         ...OPEN_TASKS_SCOPE,
         filters: [
           {
@@ -280,12 +283,12 @@ describe('validateFlatViewFieldRelationScope', () => {
           },
         ],
       },
-      'must be active',
-    ));
+      expectedMessage: 'must be active',
+    }));
 
   it('rejects a filter on a one-to-many relation of the related object', () =>
-    expectOneErrorContaining(
-      {
+    expectOneErrorContaining({
+      universalRelationScope: {
         ...OPEN_TASKS_SCOPE,
         filters: [
           {
@@ -296,12 +299,12 @@ describe('validateFlatViewFieldRelationScope', () => {
           },
         ],
       },
-      'cannot be one-to-many relations',
-    ));
+      expectedMessage: 'cannot be one-to-many relations',
+    }));
 
   it('rejects a related record field on a field that is not a many-to-one relation', () =>
-    expectOneErrorContaining(
-      {
+    expectOneErrorContaining({
+      universalRelationScope: {
         ...OPEN_TASKS_SCOPE,
         filters: [
           {
@@ -310,8 +313,8 @@ describe('validateFlatViewFieldRelationScope', () => {
           },
         ],
       },
-      'can only be used on a many-to-one relation field',
-    ));
+      expectedMessage: 'can only be used on a many-to-one relation field',
+    }));
 
   it.each([
     {
@@ -332,8 +335,8 @@ describe('validateFlatViewFieldRelationScope', () => {
   ])(
     'rejects a related record field that is $title',
     ({ relationTargetFieldMetadataUniversalIdentifier, expectedMessage }) =>
-      expectOneErrorContaining(
-        {
+      expectOneErrorContaining({
+        universalRelationScope: {
           ...OPEN_TASKS_SCOPE,
           filters: [],
           sorts: [
@@ -341,7 +344,7 @@ describe('validateFlatViewFieldRelationScope', () => {
           ],
         },
         expectedMessage,
-      ),
+      }),
   );
 
   it('treats a null related record field as none', () => {
@@ -362,53 +365,53 @@ describe('validateFlatViewFieldRelationScope', () => {
   });
 
   it('rejects an operand the related record field does not support', () =>
-    expectOneErrorContaining(
-      {
+    expectOneErrorContaining({
+      universalRelationScope: {
         ...OPEN_TASKS_SCOPE,
         filters: [{ ...openTasksFilter, operand: ViewFilterOperand.CONTAINS }],
       },
-      'is not supported on field type',
-    ));
+      expectedMessage: 'is not supported on field type',
+    }));
 
   it('rejects a select option the related record field does not have', () =>
-    expectOneErrorContaining(
-      {
+    expectOneErrorContaining({
+      universalRelationScope: {
         ...OPEN_TASKS_SCOPE,
         filters: [{ ...openTasksFilter, value: ['ARCHIVED'] }],
       },
-      'ARCHIVED',
-    ));
+      expectedMessage: 'ARCHIVED',
+    }));
 
   it('rejects duplicated filter ids', () =>
-    expectOneErrorContaining(
-      {
+    expectOneErrorContaining({
+      universalRelationScope: {
         ...OPEN_TASKS_SCOPE,
         filters: [openTasksFilter, openTasksFilter],
       },
-      'filter ids must be unique UUIDs',
-    ));
+      expectedMessage: 'filter ids must be unique UUIDs',
+    }));
 
   it('rejects a filter id that is not a UUID', () =>
-    expectOneErrorContaining(
-      {
+    expectOneErrorContaining({
+      universalRelationScope: {
         ...OPEN_TASKS_SCOPE,
         filters: [{ ...openTasksFilter, id: 'open' }],
       },
-      'filter ids must be unique UUIDs',
-    ));
+      expectedMessage: 'filter ids must be unique UUIDs',
+    }));
 
   it('rejects a filter in a group the scope does not declare', () =>
-    expectOneErrorContaining(
-      {
+    expectOneErrorContaining({
+      universalRelationScope: {
         ...OPEN_TASKS_SCOPE,
         filters: [{ ...openTasksFilter, filterGroupId: FILTER_GROUP_ID }],
       },
-      'filter group not found',
-    ));
+      expectedMessage: 'filter group not found',
+    }));
 
   it('rejects a filter group whose parent the scope does not declare', () =>
-    expectOneErrorContaining(
-      {
+    expectOneErrorContaining({
+      universalRelationScope: {
         ...OPEN_TASKS_SCOPE,
         filterGroups: [
           {
@@ -418,8 +421,8 @@ describe('validateFlatViewFieldRelationScope', () => {
           },
         ],
       },
-      'filter group parent not found',
-    ));
+      expectedMessage: 'filter group parent not found',
+    }));
 
   it('rejects filter groups nested in each other', () => {
     expect(
@@ -447,8 +450,8 @@ describe('validateFlatViewFieldRelationScope', () => {
   });
 
   it('rejects a sort on a one-to-many relation', () =>
-    expectOneErrorContaining(
-      {
+    expectOneErrorContaining({
+      universalRelationScope: {
         ...OPEN_TASKS_SCOPE,
         sorts: [
           {
@@ -457,23 +460,23 @@ describe('validateFlatViewFieldRelationScope', () => {
           },
         ],
       },
-      'cannot be one-to-many relations',
-    ));
+      expectedMessage: 'cannot be one-to-many relations',
+    }));
 
   it('rejects an invalid sort direction', () =>
-    expectOneErrorContaining(
-      {
+    expectOneErrorContaining({
+      universalRelationScope: {
         ...OPEN_TASKS_SCOPE,
         sorts: [{ ...dueAtSort, direction: 'UP' as ViewSortDirection }],
       },
-      'invalid direction',
-    ));
+      expectedMessage: 'invalid direction',
+    }));
 
   it.each([0, 61, 1.5])('rejects a limit of %s', (limit) =>
-    expectOneErrorContaining(
-      { ...OPEN_TASKS_SCOPE, limit },
-      'limit must be an integer between 1 and 60',
-    ),
+    expectOneErrorContaining({
+      universalRelationScope: { ...OPEN_TASKS_SCOPE, limit },
+      expectedMessage: 'limit must be an integer between 1 and 60',
+    }),
   );
 
   it('accepts the maximum limit', () => {
