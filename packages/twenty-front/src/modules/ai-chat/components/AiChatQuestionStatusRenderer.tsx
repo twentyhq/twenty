@@ -11,9 +11,9 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatAskStatusRow } from '@/ai-chat/components/AiChatAskStatusRow';
 import { useIsAiChatToolCallAskedInComposer } from '@/ai-chat/hooks/useIsAiChatToolCallAskedInComposer';
-import { TextWithChatReferences } from '@/ai-chat/components/TextWithChatReferences';
+import { TextWithChatReferences } from '@/ai-chat/message-content/components/TextWithChatReferences';
 import { getAskedQuestionEntries } from '@/ai-chat/utils/getAskedQuestionEntries';
-import { getChatReferenceSegments } from '@/ai-chat/utils/getChatReferenceSegments';
+import { getChatReferenceSegments } from '@/ai-chat/message-content/utils/getChatReferenceSegments';
 import { StyledAiChatAskStatusDetail } from '@/ai-chat/components/StyledAiChatAskStatusDetail';
 import { StyledAiChatAskStatusMessage } from '@/ai-chat/components/StyledAiChatAskStatusMessage';
 
