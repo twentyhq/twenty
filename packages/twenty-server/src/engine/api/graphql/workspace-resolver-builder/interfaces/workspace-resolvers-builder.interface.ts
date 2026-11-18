@@ -1,4 +1,3 @@
-import { type GraphQLFieldResolver } from 'graphql';
 import {
   type ObjectRecord,
   type OrderByWithGroupBy,
@@ -12,10 +11,7 @@ import {
 
 import { type ShareWithInput } from 'src/engine/permissions/record-share/types/share-with-input.type';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
-import { type workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
-
-// oxlint-disable-next-line typescript/no-explicit-any
-export type Resolver<Args = any> = GraphQLFieldResolver<any, any, Args>;
+import { type workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/constants/workspace-resolver-builder-method-names';
 
 export const ResolverArgsType = RESOLVER_METHOD_NAMES;
 

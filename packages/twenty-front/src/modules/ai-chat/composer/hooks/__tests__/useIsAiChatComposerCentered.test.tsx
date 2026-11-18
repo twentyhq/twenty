@@ -8,7 +8,6 @@ import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
 import { useIsAiChatComposerCentered } from '@/ai-chat/composer/hooks/useIsAiChatComposerCentered';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { aiChatMessagesLoadingFamilyState } from '@/ai-chat/states/aiChatMessagesLoadingFamilyState';
-import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { type AiChatSurface } from '@/ai-chat/types/AiChatSurface';
@@ -21,15 +20,15 @@ const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
 
 const renderForSurface = ({
   surface = AI_CHAT_SURFACE.PAGE,
+  threadId,
 }: {
   surface?: AiChatSurface;
+  threadId?: string;
 } = {}) => {
   const Wrapper = ({ children }: { children: ReactNode }) => (
     <JotaiProvider store={jotaiStore}>
       <AiChatSurfaceContext.Provider value={surface}>
-        <AiChatTestInstance>
-          <AiChatTestInstance>{children}</AiChatTestInstance>
-        </AiChatTestInstance>
+        <AiChatTestInstance threadId={threadId}>{children}</AiChatTestInstance>
       </AiChatSurfaceContext.Provider>
     </JotaiProvider>
   );
@@ -41,7 +40,6 @@ describe('useIsAiChatComposerCentered', () => {
   beforeEach(() => {
     resetJotaiStore();
     jotaiStore.set(newAiChatThreadIdState.atom, THREAD_ID);
-    jotaiStore.set(aiChatTestInstanceThreadIdState.atom, THREAD_ID);
   });
 
   it('should center the composer on an empty full page chat', () => {
@@ -63,8 +61,7 @@ describe('useIsAiChatComposerCentered', () => {
   });
 
   it('keeps an existing conversation bottom-aligned before, during and after fetching messages', () => {
-    jotaiStore.set(aiChatTestInstanceThreadIdState.atom, 'existing-thread');
-    const { result } = renderForSurface();
+    const { result } = renderForSurface({ threadId: 'existing-thread' });
 
     expect(result.current).toBe(false);
     const loadingAtom = aiChatMessagesLoadingFamilyState.atomFamily({

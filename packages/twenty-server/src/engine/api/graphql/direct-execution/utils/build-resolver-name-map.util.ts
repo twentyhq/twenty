@@ -1,4 +1,4 @@
-import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
+import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/constants/workspace-resolver-builder-method-names';
 import { type WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { getResolverName } from 'src/engine/utils/get-resolver-name.util';
