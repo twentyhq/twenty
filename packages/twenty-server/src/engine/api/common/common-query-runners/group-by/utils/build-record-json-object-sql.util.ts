@@ -2,7 +2,7 @@ import chunk from 'lodash.chunk';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type GroupByDefinition } from 'src/engine/api/common/common-query-runners/types/group-by-definition.type';
-import { JSONB_BUILD_OBJECT_MAX_PAIRS } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.constants';
+import { JSONB_BUILD_OBJECT_MAX_PAIRS } from 'src/engine/api/common/common-query-runners/group-by/services/group-by-with-records.constants';
 import {
   escapeIdentifier,
   escapeLiteral,

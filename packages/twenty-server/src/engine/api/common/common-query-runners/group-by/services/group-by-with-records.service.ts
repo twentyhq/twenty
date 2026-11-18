@@ -17,17 +17,17 @@ import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
 import { CommonQueryParser } from 'src/engine/api/common/common-query-parsers/common-query.parser';
-import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
+import { formatResultWithGroupByDimensionValues } from 'src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util';
 import {
   RECORDS_PER_GROUP_LIMIT,
   RELATIONS_PER_RECORD_LIMIT,
   SUB_QUERY_ALIAS,
-} from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.constants';
-import { buildGroupByRecordConditions } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/build-group-by-record-conditions.util';
-import { buildRecordJsonObjectSql } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/build-record-json-object-sql.util';
-import { getGroupLimit } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/get-group-limit.util';
+} from 'src/engine/api/common/common-query-runners/group-by/services/group-by-with-records.constants';
+import { buildGroupByRecordConditions } from 'src/engine/api/common/common-query-runners/group-by/utils/build-group-by-record-conditions.util';
+import { buildRecordJsonObjectSql } from 'src/engine/api/common/common-query-runners/group-by/utils/build-record-json-object-sql.util';
+import { getGroupLimit } from 'src/engine/api/common/common-query-runners/group-by/utils/get-group-limit.util';
 import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
-import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
+import { buildColumnsToSelect } from 'src/engine/api/common/utils/build-columns-to-select';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';

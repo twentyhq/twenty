@@ -1,9 +1,9 @@
 import { type GroupByDefinition } from 'src/engine/api/common/common-query-runners/types/group-by-definition.type';
-import { buildRecordJsonObjectSql } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/build-record-json-object-sql.util';
+import { buildRecordJsonObjectSql } from 'src/engine/api/common/common-query-runners/group-by/utils/build-record-json-object-sql.util';
 import {
   JSONB_BUILD_OBJECT_MAX_PAIRS,
   SUB_QUERY_ALIAS,
-} from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.constants';
+} from 'src/engine/api/common/common-query-runners/group-by/services/group-by-with-records.constants';
 import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
 
 const buildGroupByDefinition = (

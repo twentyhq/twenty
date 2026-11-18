@@ -36,9 +36,9 @@ import {
   MergeManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.util';
-import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
-import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
-import { mergeFieldValues } from 'src/engine/api/graphql/graphql-query-runner/utils/merge-field-values.util';
+import { buildColumnsToReturn } from 'src/engine/api/common/utils/build-columns-to-return';
+import { hasRecordFieldValue } from 'src/engine/api/common/utils/has-record-field-value.util';
+import { mergeFieldValues } from 'src/engine/api/common/common-query-runners/utils/merge-field-values.util';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';

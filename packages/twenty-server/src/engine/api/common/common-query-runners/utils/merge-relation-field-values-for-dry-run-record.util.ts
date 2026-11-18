@@ -1,7 +1,7 @@
 import { type ObjectRecord, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { defaultMergeFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/default-merge-field-value.util';
+import { defaultMergeFieldValue } from 'src/engine/api/common/common-query-runners/utils/default-merge-field-value.util';
 
 export const mergeRelationFieldValuesForDryRunRecord = (
   recordsWithValues: { value: unknown; recordId: string }[],
