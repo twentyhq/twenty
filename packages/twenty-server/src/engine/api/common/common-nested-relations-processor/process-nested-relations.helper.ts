@@ -28,10 +28,10 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
-import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
-import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
+import { CommonQueryParser } from 'src/engine/api/common/common-query-parsers/common-query.parser';
+import { ProcessAggregateHelper } from 'src/engine/api/common/utils/process-aggregate.helper';
+import { buildColumnsToSelect } from 'src/engine/api/common/utils/build-columns-to-select';
+import { getTargetObjectMetadataOrThrow } from 'src/engine/api/common/utils/get-target-object-metadata.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -283,7 +283,7 @@ export class ProcessNestedRelationsHelper {
           parentRecordsCount: parentObjectRecords.length,
           targetObjectNameSingular,
           relationSelection,
-          relationQueryParser: new GraphqlQueryParser(
+          relationQueryParser: new CommonQueryParser(
             targetObjectMetadata,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
@@ -405,7 +405,7 @@ export class ProcessNestedRelationsHelper {
       CommonRelationSelection,
       'selection' | 'filter' | 'orderBy'
     >;
-    relationQueryParser: GraphqlQueryParser;
+    relationQueryParser: CommonQueryParser;
   }): Promise<{
     // oxlint-disable-next-line typescript/no-explicit-any
     relationResults: any[];
@@ -529,7 +529,7 @@ export class ProcessNestedRelationsHelper {
     ids: string[];
     perParentLimit: number;
     relationSelection: Pick<CommonRelationSelection, 'filter' | 'orderBy'>;
-    relationQueryParser: GraphqlQueryParser;
+    relationQueryParser: CommonQueryParser;
   }): Promise<string[]> {
     const sanitizedIds = ids.filter(isValidUuid);
 
@@ -589,7 +589,7 @@ export class ProcessNestedRelationsHelper {
     queryBuilder: WorkspaceSelectQueryBuilder;
     targetObjectNameSingular: string;
     relationSelection: Pick<CommonRelationSelection, 'filter'>;
-    relationQueryParser: GraphqlQueryParser;
+    relationQueryParser: CommonQueryParser;
   }): void {
     if (!isDefined(relationSelection.filter)) {
       return;
