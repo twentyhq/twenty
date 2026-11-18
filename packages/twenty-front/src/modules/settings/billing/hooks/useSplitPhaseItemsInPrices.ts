@@ -1,15 +1,20 @@
 import { useAllBillingPrices } from '@/settings/billing/hooks/useAllBillingPrices';
 import { useNextBillingPhase } from '@/settings/billing/hooks/useNextBillingPhase';
-import { splitPhaseItemsInPrices } from '@/settings/billing/utils/splitPhaseItemsInPrices';
+import { splitPhaseItemsInPricesOrThrow } from '@/settings/billing/utils/splitPhaseItemsInPricesOrThrow';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useSplitPhaseItemsInPrices = () => {
   const { nextBillingPhase } = useNextBillingPhase();
   const { allBillingPrices } = useAllBillingPrices();
 
-  const splitedPhaseItemsInPrices = splitPhaseItemsInPrices({
-    phaseItems: nextBillingPhase?.items ?? [],
-    billingPrices: allBillingPrices,
-  });
+  const splitedPhaseItemsInPrices: Partial<
+    ReturnType<typeof splitPhaseItemsInPricesOrThrow>
+  > = isDefined(nextBillingPhase)
+    ? splitPhaseItemsInPricesOrThrow({
+        phaseItems: nextBillingPhase.items,
+        billingPrices: allBillingPrices,
+      })
+    : {};
 
   return { splitedPhaseItemsInPrices };
 };
