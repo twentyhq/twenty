@@ -27,6 +27,7 @@ import {
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { isBillingExemptApplication } from 'src/engine/core-modules/application/application-marketplace/utils/is-billing-exempt-application.util';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
@@ -60,6 +61,7 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/user/utils/resolve-workspace-member-id-for-user.util';
+import { isWorkspaceSuspended } from 'src/engine/core-modules/workspace/utils/is-workspace-suspended.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -136,6 +138,7 @@ export class LogicFunctionExecutorService {
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly applicationService: ApplicationService,
     private readonly applicationStopService: ApplicationStopService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
@@ -274,6 +277,11 @@ export class LogicFunctionExecutorService {
     // Before the shared workspace throttle so a stopped app's flood cannot drain other apps' token bucket.
     await this.assertApplicationNotStopped(flatApplication);
 
+    // Lifecycle hooks opt out so uninstall and disconnect cleanup still run while a workspace is suspended or deleted.
+    if (shouldEnforceUsageLimits) {
+      await this.assertWorkspaceNotSuspended(workspaceId);
+    }
+
     await this.throttleExecution(workspaceId);
 
     if (shouldEnforceUsageLimits) {
@@ -383,6 +391,23 @@ export class LogicFunctionExecutorService {
       throw new LogicFunctionException(
         `Application ${flatApplication.universalIdentifier} is temporarily stopped`,
         LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED,
+      );
+    }
+  }
+
+  private async assertWorkspaceNotSuspended(
+    workspaceId: string,
+  ): Promise<void> {
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      workspaceId,
+    );
+
+    // The cache skips soft-deleted workspaces, so a missing entry means a deleted one.
+    if (!isDefined(workspace) || isWorkspaceSuspended(workspace)) {
+      throw new LogicFunctionException(
+        `Workspace ${workspaceId} is suspended or deleted`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_WORKSPACE_SUSPENDED,
       );
     }
   }

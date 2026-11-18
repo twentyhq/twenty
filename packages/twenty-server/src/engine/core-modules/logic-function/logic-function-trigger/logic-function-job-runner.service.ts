@@ -78,11 +78,13 @@ export class LogicFunctionJobRunnerService {
         logicFunctionExecutionResult.error.errorMessage,
       );
     } catch (error) {
-      // A stopped application must not fail the job: failing would make
-      // the queue retry an execution that is intentionally blocked.
+      // A stopped application or a suspended workspace must not fail the job:
+      // failing would make the queue retry an execution that is intentionally blocked.
       if (
         error instanceof LogicFunctionException &&
-        error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED
+        (error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED ||
+          error.code ===
+            LogicFunctionExceptionCode.LOGIC_FUNCTION_WORKSPACE_SUSPENDED)
       ) {
         return;
       }
