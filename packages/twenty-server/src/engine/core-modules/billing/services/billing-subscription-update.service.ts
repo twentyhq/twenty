@@ -572,7 +572,7 @@ export class BillingSubscriptionUpdateService {
       baseProductPriceId: basePlanPrice.stripePriceId,
       seats: basePlanPhaseItem.quantity,
       resourceCreditPriceId: resourceCreditPrice.stripePriceId,
-      applicationPriceIdByCurrentPriceId: new Map(
+      targetApplicationPriceIdByCurrentPriceId: new Map(
         phaseItemPrices
           .filter(
             (price) =>
@@ -951,7 +951,7 @@ export class BillingSubscriptionUpdateService {
       });
 
     const applicationPriceIds = [
-      ...currentPrices.applicationPriceIdByCurrentPriceId.keys(),
+      ...currentPrices.targetApplicationPriceIdByCurrentPriceId.keys(),
     ];
 
     const applicationPrices = isNonEmptyArray(applicationPriceIds)
@@ -965,10 +965,10 @@ export class BillingSubscriptionUpdateService {
       ...currentPrices,
       baseProductPriceId: targetBaseProductPrice.stripePriceId,
       resourceCreditPriceId: targetResourceCreditPrice.stripePriceId,
-      applicationPriceIdByCurrentPriceId:
+      targetApplicationPriceIdByCurrentPriceId:
         computeApplicationPricesForIntervalOrThrow({
-          applicationPriceIdByCurrentPriceId:
-            currentPrices.applicationPriceIdByCurrentPriceId,
+          targetApplicationPriceIdByCurrentPriceId:
+            currentPrices.targetApplicationPriceIdByCurrentPriceId,
           applicationPrices,
           interval: newInterval,
         }),

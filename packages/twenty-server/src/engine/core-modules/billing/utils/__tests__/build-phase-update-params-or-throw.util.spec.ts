@@ -16,7 +16,7 @@ const toUpdatePrices = {
   baseProductPriceId: 'price_base_year',
   seats: 7,
   resourceCreditPriceId: 'price_credit_year',
-  applicationPriceIdByCurrentPriceId: new Map<string, string>(),
+  targetApplicationPriceIdByCurrentPriceId: new Map<string, string>(),
 };
 
 const PHASE_START = 1_700_000_000;
@@ -63,7 +63,7 @@ describe('buildPhaseUpdateParamsOrThrow', () => {
       ]),
       toUpdatePrices: {
         ...toUpdatePrices,
-        applicationPriceIdByCurrentPriceId: new Map([
+        targetApplicationPriceIdByCurrentPriceId: new Map([
           ['price_application_month', 'price_application_year'],
         ]),
       },

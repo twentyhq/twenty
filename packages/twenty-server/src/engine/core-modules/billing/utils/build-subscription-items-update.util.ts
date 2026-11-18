@@ -38,7 +38,9 @@ export const buildSubscriptionItemsUpdate = ({
       }
 
       const applicationPriceId = isDefined(stripePriceId)
-        ? toUpdatePrices.applicationPriceIdByCurrentPriceId.get(stripePriceId)
+        ? toUpdatePrices.targetApplicationPriceIdByCurrentPriceId.get(
+            stripePriceId,
+          )
         : undefined;
 
       return isDefined(applicationPriceId) &&
