@@ -48,8 +48,7 @@ export const handleFieldMetadataDeactivationSideEffects = ({
     flatEntityMaps: flatViewFieldMaps,
   });
 
-  // relationTargetFieldMetadataId and relationScope have no inverse relation on field metadata.
-  // A scope column is removed rather than dropping its condition, which would widen it
+  // No inverse relation to scan; scope columns are removed since dropping a condition would widen them
   const flatViewFieldsReferencingField = Object.values(
     flatViewFieldMaps.byUniversalIdentifier,
   ).filter(
