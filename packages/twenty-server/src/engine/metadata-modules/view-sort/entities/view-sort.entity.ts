@@ -66,8 +66,10 @@ export class ViewSortEntity extends SyncableEntity {
   @Column({ nullable: true, type: 'uuid', default: null })
   relationTargetFieldMetadataId: string | null;
 
+  // Not CASCADE: a sync deletes fields before it updates view sorts, so a cascade would drop a sort
+  // the same sync repoints. fieldRelationTargetViewSortsOnDelete deletes the sorts left on the field.
   @ManyToOne(() => FieldMetadataEntity, {
-    onDelete: 'CASCADE',
+    onDelete: 'SET NULL',
     nullable: true,
   })
   @JoinColumn({ name: 'relationTargetFieldMetadataId' })
