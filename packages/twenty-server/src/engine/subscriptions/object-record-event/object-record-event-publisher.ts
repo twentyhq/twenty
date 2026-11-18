@@ -9,7 +9,6 @@ import {
   type RecordGqlOperationSignature,
 } from 'twenty-shared/types';
 import { isDefined, isRecordGqlOperationSignature } from 'twenty-shared/utils';
-import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
@@ -320,8 +319,7 @@ export class ObjectRecordEventPublisher {
       flatFieldMetadataMaps,
     );
 
-    const selectedFieldsResult =
-      commonQueryParser.parseSelectedFields(selectedFields);
+    const selection = commonQueryParser.parseSelectedFields(selectedFields);
 
     // The ambient context is the writer's, so relations load as the subscriber
     const resolvedSubscriberAuthContext = await subscriberAuthContext;
@@ -335,11 +333,7 @@ export class ObjectRecordEventPublisher {
           parentObjectRecords: allRecords,
           authContext: resolvedSubscriberAuthContext,
           limit: QUERY_MAX_RECORDS_FROM_RELATION,
-          relations: selectedFieldsResult.relations as Record<
-            string,
-            FindOptionsRelations<ObjectLiteral>
-          >,
-          selectedFields: selectedFieldsResult.select,
+          selection,
         }),
       resolvedSubscriberAuthContext,
     );
