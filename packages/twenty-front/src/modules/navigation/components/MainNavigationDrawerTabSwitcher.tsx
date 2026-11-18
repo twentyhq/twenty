@@ -74,6 +74,7 @@ export const MainNavigationDrawerTabSwitcher = () => {
     type: NavigationMenuItemType.TAB,
     containerId: null,
   });
+  const tabCountIncludingHome = navigationMenuTabs.length + 1;
   const activeNavigationMenuTab = useActiveNavigationMenuTab();
   const { unreadOpenThreadCount } = useInboxOpenThreadsSummary();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
@@ -187,7 +188,7 @@ export const MainNavigationDrawerTabSwitcher = () => {
             />
           )),
           ...(isLayoutCustomizationModeEnabled &&
-          navigationMenuTabs.length < NAVIGATION_MENU_TAB_MAX_COUNT
+          tabCountIncludingHome < NAVIGATION_MENU_TAB_MAX_COUNT
             ? [
                 <MainNavigationDrawerAddTabButton
                   key="add-tab"
