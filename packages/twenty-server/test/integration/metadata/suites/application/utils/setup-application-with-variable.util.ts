@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export type ApplicationWithVariable = {
   id: string;
-  defaultRoleId: string;
+  requestedRoleId: string;
   universalIdentifier: string;
   variableKey: string;
 };
@@ -92,20 +92,20 @@ export const setupApplicationWithVariable = async ({
     input: { universalIdentifier: applicationUniversalIdentifier },
     gqlFields: `
       id
-      defaultRoleId
+      requestedRoleId
     `,
     expectToFail: false,
   });
 
-  const { id, defaultRoleId } = data.findOneApplication;
+  const { id, requestedRoleId } = data.findOneApplication;
 
-  if (defaultRoleId === undefined) {
+  if (requestedRoleId === undefined) {
     throw new Error(`Application ${name} synced without its declared role`);
   }
 
   return {
     id,
-    defaultRoleId,
+    requestedRoleId,
     universalIdentifier: applicationUniversalIdentifier,
     variableKey,
   };

@@ -6,13 +6,14 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const SEE_VERSION_WORKFLOW_RUN_UNIVERSAL_IDENTIFIER =
   'cc3a065c-c89e-40ac-9449-4272c55b1bb8';
+const SEE_VERSION_WORKFLOW_RUN_ENGINE_COMPONENT_KEY: string =
+  'SEE_VERSION_WORKFLOW_RUN';
 
 @RegisteredWorkspaceCommand('2.45.0', 1790860694324)
 @Command({
@@ -46,7 +47,7 @@ export class RemoveSeeVersionWorkflowRunCommandMenuItemCommand extends Provision
     if (
       !isDefined(seeVersionWorkflowRun) ||
       seeVersionWorkflowRun.engineComponentKey !==
-        EngineComponentKey.SEE_VERSION_WORKFLOW_RUN
+        SEE_VERSION_WORKFLOW_RUN_ENGINE_COMPONENT_KEY
     ) {
       return;
     }
