@@ -21,7 +21,8 @@ const assertIsNotReservedFieldNameOrThrow = (fieldName: string) => {
   }
 };
 
-const buildSelectedFields = (
+// Keyed by what to load, so aliases sharing a field and its arguments load once
+export const buildResolverSelectedFields = (
   fieldSelections: GraphqlFieldSelection[],
 ): ResolverSelectedFields => {
   const fieldSelectionsByKey = new Map<string, GraphqlFieldSelection[]>();
@@ -47,7 +48,7 @@ const buildSelectedFields = (
           ...(Object.keys(fieldArguments).length > 0
             ? { __arguments: fieldArguments }
             : {}),
-          ...buildSelectedFields(
+          ...buildResolverSelectedFields(
             sameKeySelections.flatMap(({ selections }) => selections),
           ),
         },
@@ -56,8 +57,7 @@ const buildSelectedFields = (
   );
 };
 
-// Keyed by what to load, so aliases sharing a field and its arguments load once
 export const getResolverSelectedFields = (
   info: Pick<GraphQLResolveInfo, 'fieldNodes' | 'fragments' | 'variableValues'>,
 ): ResolverSelectedFields =>
-  buildSelectedFields(getGraphqlFieldSelections(info));
+  buildResolverSelectedFields(getGraphqlFieldSelections(info));
