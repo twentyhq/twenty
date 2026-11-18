@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, Repository } from 'typeorm';
 
-import { PermissionFlagType } from 'twenty-shared/constants';
 import {
   CalendarChannelSyncStage,
   CalendarChannelVisibility,
@@ -19,11 +18,9 @@ import { CalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel
 import { type PublicCalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/public-calendar-channel.dto';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type CalendarChannelDeletedEvent } from 'src/engine/metadata-modules/calendar-channel/types/calendar-channel-deleted.type';
-import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { type ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto';
 import { buildPublicConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/build-public-connected-account.util';
-import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 @Injectable()
@@ -33,7 +30,6 @@ export class CalendarChannelMetadataService {
     private readonly repository: Repository<CalendarChannelEntity>,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    private readonly settingPermissionsService: SettingPermissionsService,
   ) {}
 
   async findAll(workspaceId: string): Promise<CalendarChannelDTO[]> {
@@ -43,7 +39,7 @@ export class CalendarChannelMetadataService {
   async findAllPublic(
     workspaceId: string,
   ): Promise<PublicCalendarChannelDTO[]> {
-    return this.repository.find({
+    const calendarChannels = await this.repository.find({
       where: { workspaceId },
       select: {
         id: true,
@@ -52,44 +48,56 @@ export class CalendarChannelMetadataService {
         connectedAccountId: true,
       },
     });
+
+    const connectedAccounts =
+      await this.connectedAccountMetadataService.findByIds({
+        ids: [
+          ...new Set(
+            calendarChannels.map(
+              ({ connectedAccountId }) => connectedAccountId,
+            ),
+          ),
+        ],
+        workspaceId,
+      });
+
+    const connectedAccountById = new Map(
+      connectedAccounts.map((connectedAccount) => [
+        connectedAccount.id,
+        connectedAccount,
+      ]),
+    );
+
+    return calendarChannels.map(
+      ({ id, handle, visibility, connectedAccountId }) => ({
+        id,
+        handle,
+        visibility,
+        connectedAccountId,
+        connectedAccount: buildPublicConnectedAccount(
+          connectedAccountById.get(connectedAccountId) ?? null,
+        ),
+      }),
+    );
   }
 
   async findPublicConnectedAccountForCaller({
     connectedAccountId,
     workspaceId,
     userWorkspaceId,
-    applicationId,
   }: {
     connectedAccountId: string;
     workspaceId: string;
     userWorkspaceId?: string;
-    applicationId?: string;
   }): Promise<ConnectedAccountPublicDTO | null> {
-    if (isDefined(userWorkspaceId)) {
-      const connectedAccount =
-        await this.connectedAccountMetadataService.findByIdAndUserWorkspaceId({
-          id: connectedAccountId,
-          userWorkspaceId,
-          workspaceId,
-        });
-
-      return buildPublicConnectedAccount(connectedAccount);
-    }
-
-    const canApplicationReadPrivateChannels =
-      isDefined(applicationId) &&
-      (await this.settingPermissionsService.hasPermissionFlag({
-        authContext: workspaceAuthContextStorage.getStore(),
-        permissionFlag: PermissionFlagType.READ_PRIVATE_CHANNELS,
-      }));
-
-    if (!canApplicationReadPrivateChannels) {
+    if (!isDefined(userWorkspaceId)) {
       return null;
     }
 
     const connectedAccount =
-      await this.connectedAccountMetadataService.findById({
+      await this.connectedAccountMetadataService.findByIdAndUserWorkspaceId({
         id: connectedAccountId,
+        userWorkspaceId,
         workspaceId,
       });
 

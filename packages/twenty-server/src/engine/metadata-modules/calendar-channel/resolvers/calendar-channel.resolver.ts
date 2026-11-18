@@ -6,9 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
@@ -53,14 +51,12 @@ export class CalendarChannelResolver {
     @Parent() calendarChannel: CalendarChannelDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true }) userWorkspaceId?: string,
-    @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
   ): Promise<ConnectedAccountPublicDTO | null> {
     return this.calendarChannelMetadataService.findPublicConnectedAccountForCaller(
       {
         connectedAccountId: calendarChannel.connectedAccountId,
         workspaceId: workspace.id,
         userWorkspaceId,
-        applicationId: application?.id,
       },
     );
   }
