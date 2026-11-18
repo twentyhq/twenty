@@ -35,7 +35,7 @@ import { useLoadInboxThreadList } from '@/inbox/hooks/useLoadInboxThreadList';
 import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
-import { type AiChatThreadRecord } from '@/ai-chat/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { isSidePanelItemShowingAiChat } from '@/ai-chat/utils/isSidePanelItemShowingAiChat';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { RecordSelectionDragSelect } from '@/object-record/record-selection/components/RecordSelectionDragSelect';
