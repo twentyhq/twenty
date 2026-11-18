@@ -436,5 +436,49 @@ describe('getTabsWithVisibleWidgets', () => {
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe('always');
     });
+
+    it('should respect target object write permissions in widget conditions', () => {
+      const permissionGatedWidget = createMockWidget('widget-admin', {
+        '===': [
+          { var: 'targetObjectWritePermissions.notificationTypeSetting' },
+          true,
+        ],
+      });
+
+      const tabs = [
+        createMockTab('admin-tab', [permissionGatedWidget]),
+        createMockTab('public-tab', [createMockWidget('w-public')]),
+      ];
+
+      const adminResult = getTabsWithVisibleWidgets({
+        tabs,
+        isEditMode: false,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+          targetObjectWritePermissions: {
+            notificationTypeSetting: true,
+          },
+        }),
+      });
+
+      expect(adminResult).toHaveLength(2);
+      expect(adminResult.map((t) => t.id)).toEqual(['admin-tab', 'public-tab']);
+
+      const nonAdminResult = getTabsWithVisibleWidgets({
+        tabs,
+        isEditMode: false,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+          targetObjectWritePermissions: {
+            notificationTypeSetting: false,
+          },
+        }),
+      });
+
+      expect(nonAdminResult).toHaveLength(1);
+      expect(nonAdminResult[0].id).toBe('public-tab');
+    });
   });
 });

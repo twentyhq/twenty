@@ -6,6 +6,8 @@ type BuildWidgetVisibilityContextParams = {
   isInSidePanel: boolean;
   targetRecord?: Record<string, unknown>;
   featureFlags?: Record<string, boolean>;
+  targetObjectReadPermissions?: Record<string, boolean>;
+  targetObjectWritePermissions?: Record<string, boolean>;
 };
 
 export const buildWidgetVisibilityContext = ({
@@ -13,11 +15,15 @@ export const buildWidgetVisibilityContext = ({
   isInSidePanel,
   targetRecord,
   featureFlags,
+  targetObjectReadPermissions,
+  targetObjectWritePermissions,
 }: BuildWidgetVisibilityContextParams): WidgetVisibilityContext => {
   return {
     device: isMobile || isInSidePanel ? 'MOBILE' : 'DESKTOP',
     // Plural to share the command menu grammar; empty when absent so record-gated widgets stay hidden until load.
     selectedRecords: isDefined(targetRecord) ? [targetRecord] : [],
     featureFlags: featureFlags ?? {},
+    targetObjectReadPermissions: targetObjectReadPermissions ?? {},
+    targetObjectWritePermissions: targetObjectWritePermissions ?? {},
   };
 };

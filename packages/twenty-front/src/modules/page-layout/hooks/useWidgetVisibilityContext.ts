@@ -1,3 +1,4 @@
+import { commandMenuTargetObjectPermissionsSelector } from '@/command-menu-item/states/commandMenuTargetObjectPermissionsSelector';
 import { useHiddenWorkspaceWorkflowRunRelationFields } from '@/object-core/workflows/hooks/useHiddenWorkspaceWorkflowRunRelationFields';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
@@ -5,6 +6,7 @@ import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVis
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useWorkspaceFeatureFlagsMap } from '@/workspace/hooks/useWorkspaceFeatureFlagsMap';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -15,6 +17,8 @@ export const useWidgetVisibilityContext = (): WidgetVisibilityContext => {
   const { targetRecordIdentifier } = useLayoutRenderingContext();
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
   const featureFlags = useWorkspaceFeatureFlagsMap();
+  const { targetObjectReadPermissions, targetObjectWritePermissions } =
+    useAtomStateValue(commandMenuTargetObjectPermissionsSelector);
 
   const recordStore = useAtomFamilyStateValue(
     recordStoreFamilyState,
@@ -34,6 +38,8 @@ export const useWidgetVisibilityContext = (): WidgetVisibilityContext => {
         isInSidePanel,
         targetRecord: isDefined(recordStore) ? recordStore : undefined,
         featureFlags,
+        targetObjectReadPermissions,
+        targetObjectWritePermissions,
       }),
       hiddenFieldMetadataIdsOrNames,
     }),
@@ -43,6 +49,8 @@ export const useWidgetVisibilityContext = (): WidgetVisibilityContext => {
       recordStore,
       hiddenFieldMetadataIdsOrNames,
       featureFlags,
+      targetObjectReadPermissions,
+      targetObjectWritePermissions,
     ],
   );
 };
