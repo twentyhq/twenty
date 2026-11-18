@@ -1,4 +1,5 @@
 import { MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-closed-world-read-only-tool-annotations.constant';
+import { MCP_DESTRUCTIVE_WRITE_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-destructive-write-tool-annotations.constant';
 import { MCP_EXECUTE_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-execute-tool-annotations.const';
 import { getMcpRegistryToolAnnotations } from 'src/engine/api/mcp/utils/get-mcp-registry-tool-annotations.util';
 import { type DatabaseCrudOperation } from 'src/engine/core-modules/tool-provider/constants/database-crud-operation.const';
@@ -18,17 +19,8 @@ describe('getMcpRegistryToolAnnotations', () => {
     },
   );
 
-  it.each<[DatabaseCrudOperation]>([
-    ['create_one'],
-    ['create_many'],
-    ['update_one'],
-    ['update_many'],
-    ['upsert_many'],
-    ['delete_one'],
-    ['delete_many'],
-    ['merge_many'],
-  ])(
-    'should return execute annotations for the database write operation %p',
+  it.each<[DatabaseCrudOperation]>([['create_one'], ['create_many']])(
+    'should return non-destructive execute annotations for the database write operation %p',
     (operation) => {
       expect(
         getMcpRegistryToolAnnotations({
@@ -37,6 +29,26 @@ describe('getMcpRegistryToolAnnotations', () => {
           operation,
         }),
       ).toEqual(MCP_EXECUTE_TOOL_ANNOTATIONS);
+    },
+  );
+
+  it.each<[DatabaseCrudOperation]>([
+    ['update_one'],
+    ['update_many'],
+    ['upsert_many'],
+    ['delete_one'],
+    ['delete_many'],
+    ['merge_many'],
+  ])(
+    'should flag the database write operation %p as destructive',
+    (operation) => {
+      expect(
+        getMcpRegistryToolAnnotations({
+          kind: 'database_crud',
+          objectNameSingular: 'person',
+          operation,
+        }),
+      ).toEqual(MCP_DESTRUCTIVE_WRITE_TOOL_ANNOTATIONS);
     },
   );
 
