@@ -2595,6 +2595,11 @@ msgstr ""
 msgid "Add rule group"
 msgstr ""
 
+#. js-lingui-id: RxFV0G
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "Add section"
+msgstr ""
+
 #. js-lingui-id: TdZwYb
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
@@ -2607,6 +2612,12 @@ msgstr ""
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCard.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCardWrapper.tsx
 msgid "Add SSO Identity Provider"
+msgstr ""
+
+#. js-lingui-id: hjO0Mq
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
+msgid "Add tab"
 msgstr ""
 
 #. js-lingui-id: O6B1gJ
@@ -10079,6 +10090,11 @@ msgstr ""
 msgid "Delete Skill"
 msgstr ""
 
+#. js-lingui-id: drg4t8
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
+msgid "Delete tab"
+msgstr ""
+
 #. js-lingui-id: +RYIn9
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
 msgid "Delete this index?"
@@ -14028,11 +14044,6 @@ msgstr ""
 #. js-lingui-id: 6cOXRd
 #: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Finish editing the layout to open Settings"
-msgstr ""
-
-#. js-lingui-id: 1yKuEJ
-#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
-msgid "Finish editing the layout to open this tab"
 msgstr ""
 
 #. js-lingui-id: SNdnlf
@@ -19822,6 +19833,11 @@ msgstr ""
 msgid "New rule"
 msgstr ""
 
+#. js-lingui-id: SagCAA
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "New section"
+msgstr ""
+
 #. js-lingui-id: MdpSC1
 #: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
 msgid "New skill"
@@ -19845,6 +19861,7 @@ msgid "New SSO provider"
 msgstr ""
 
 #. js-lingui-id: 3YvS+c
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
 msgid "New tab"
 msgstr ""
@@ -24820,6 +24837,11 @@ msgstr ""
 msgid "Remove searchable field"
 msgstr ""
 
+#. js-lingui-id: uXfxoE
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Remove section"
+msgstr ""
+
 #. js-lingui-id: jCt40X
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Remove some guests before creating this event."
@@ -26434,6 +26456,16 @@ msgstr ""
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 msgid "Section"
+msgstr ""
+
+#. js-lingui-id: 8gtQoG
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Section actions"
+msgstr ""
+
+#. js-lingui-id: vKc3fL
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Section name"
 msgstr ""
 
 #. js-lingui-id: R4OWFD
@@ -29133,6 +29165,16 @@ msgstr ""
 #. placeholder {0}: tab.title
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 msgid "Tab {tabNumber}: {0}"
+msgstr ""
+
+#. js-lingui-id: OqZEsq
+#: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
+msgid "Tab actions"
+msgstr ""
+
+#. js-lingui-id: FFaDQL
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
+msgid "Tab name"
 msgstr ""
 
 #. js-lingui-id: zr20ox

@@ -2600,6 +2600,11 @@ msgstr "הוסף כלל"
 msgid "Add rule group"
 msgstr "הוסף קבוצת כללים"
 
+#. js-lingui-id: RxFV0G
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "Add section"
+msgstr ""
+
 #. js-lingui-id: TdZwYb
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
@@ -2613,6 +2618,12 @@ msgstr "הוסף מיון"
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCardWrapper.tsx
 msgid "Add SSO Identity Provider"
 msgstr "הוסף ספק זיהוי של SSO"
+
+#. js-lingui-id: hjO0Mq
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
+msgid "Add tab"
+msgstr ""
 
 #. js-lingui-id: O6B1gJ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -10084,6 +10095,11 @@ msgstr "מחק שורה"
 msgid "Delete Skill"
 msgstr "מחק מיומנות"
 
+#. js-lingui-id: drg4t8
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
+msgid "Delete tab"
+msgstr ""
+
 #. js-lingui-id: +RYIn9
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
 msgid "Delete this index?"
@@ -14070,11 +14086,6 @@ msgstr "סיימו לערוך את הפריסה כדי לפתוח את תיבת 
 #: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Finish editing the layout to open Settings"
 msgstr "סיים לערוך את הפריסה כדי לפתוח את ההגדרות"
-
-#. js-lingui-id: 1yKuEJ
-#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
-msgid "Finish editing the layout to open this tab"
-msgstr "סיים את עריכת הפריסה כדי לפתוח לשונית זו"
 
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -19863,6 +19874,11 @@ msgstr "מגבלת העברה חדשה"
 msgid "New rule"
 msgstr "כלל חדש"
 
+#. js-lingui-id: SagCAA
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "New section"
+msgstr ""
+
 #. js-lingui-id: MdpSC1
 #: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
 msgid "New skill"
@@ -19886,6 +19902,7 @@ msgid "New SSO provider"
 msgstr "ספק SSO חדש"
 
 #. js-lingui-id: 3YvS+c
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
 msgid "New tab"
 msgstr "לשונית חדשה"
@@ -24861,6 +24878,11 @@ msgstr "הסר קבוצת כללים"
 msgid "Remove searchable field"
 msgstr "הסר שדה ניתן לחיפוש"
 
+#. js-lingui-id: uXfxoE
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Remove section"
+msgstr ""
+
 #. js-lingui-id: jCt40X
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Remove some guests before creating this event."
@@ -26476,6 +26498,16 @@ msgstr "קטע"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 msgid "Section"
 msgstr "קטע"
+
+#. js-lingui-id: 8gtQoG
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Section actions"
+msgstr ""
+
+#. js-lingui-id: vKc3fL
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Section name"
+msgstr ""
 
 #. js-lingui-id: R4OWFD
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
@@ -29175,6 +29207,16 @@ msgstr "כרטיסייה {0}"
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 msgid "Tab {tabNumber}: {0}"
 msgstr "כרטיסייה {tabNumber}: {0}"
+
+#. js-lingui-id: OqZEsq
+#: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
+msgid "Tab actions"
+msgstr ""
+
+#. js-lingui-id: FFaDQL
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
+msgid "Tab name"
+msgstr ""
 
 #. js-lingui-id: zr20ox
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts

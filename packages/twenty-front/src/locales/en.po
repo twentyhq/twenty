@@ -2595,6 +2595,11 @@ msgstr "Add rule"
 msgid "Add rule group"
 msgstr "Add rule group"
 
+#. js-lingui-id: RxFV0G
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "Add section"
+msgstr "Add section"
+
 #. js-lingui-id: TdZwYb
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
@@ -2608,6 +2613,12 @@ msgstr "Add sort"
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCardWrapper.tsx
 msgid "Add SSO Identity Provider"
 msgstr "Add SSO Identity Provider"
+
+#. js-lingui-id: hjO0Mq
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
+msgid "Add tab"
+msgstr "Add tab"
 
 #. js-lingui-id: O6B1gJ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -10079,6 +10090,11 @@ msgstr "Delete row"
 msgid "Delete Skill"
 msgstr "Delete Skill"
 
+#. js-lingui-id: drg4t8
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
+msgid "Delete tab"
+msgstr "Delete tab"
+
 #. js-lingui-id: +RYIn9
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
 msgid "Delete this index?"
@@ -14065,11 +14081,6 @@ msgstr "Finish editing the layout to open Inbox"
 #: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
 msgid "Finish editing the layout to open Settings"
 msgstr "Finish editing the layout to open Settings"
-
-#. js-lingui-id: 1yKuEJ
-#: src/modules/navigation/components/MainNavigationDrawerTabSwitcher.tsx
-msgid "Finish editing the layout to open this tab"
-msgstr "Finish editing the layout to open this tab"
 
 #. js-lingui-id: SNdnlf
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -19858,6 +19869,11 @@ msgstr "New rollover limit"
 msgid "New rule"
 msgstr "New rule"
 
+#. js-lingui-id: SagCAA
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "New section"
+msgstr "New section"
+
 #. js-lingui-id: MdpSC1
 #: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
 msgid "New skill"
@@ -19881,6 +19897,7 @@ msgid "New SSO provider"
 msgstr "New SSO provider"
 
 #. js-lingui-id: 3YvS+c
+#: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
 msgid "New tab"
 msgstr "New tab"
@@ -24856,6 +24873,11 @@ msgstr "Remove rule group"
 msgid "Remove searchable field"
 msgstr "Remove searchable field"
 
+#. js-lingui-id: uXfxoE
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Remove section"
+msgstr "Remove section"
+
 #. js-lingui-id: jCt40X
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Remove some guests before creating this event."
@@ -26471,6 +26493,16 @@ msgstr "section"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 msgid "Section"
 msgstr "Section"
+
+#. js-lingui-id: 8gtQoG
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Section actions"
+msgstr "Section actions"
+
+#. js-lingui-id: vKc3fL
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+msgid "Section name"
+msgstr "Section name"
 
 #. js-lingui-id: R4OWFD
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
@@ -29170,6 +29202,16 @@ msgstr "Tab {0}"
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 msgid "Tab {tabNumber}: {0}"
 msgstr "Tab {tabNumber}: {0}"
+
+#. js-lingui-id: OqZEsq
+#: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
+msgid "Tab actions"
+msgstr "Tab actions"
+
+#. js-lingui-id: FFaDQL
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
+msgid "Tab name"
+msgstr "Tab name"
 
 #. js-lingui-id: zr20ox
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
