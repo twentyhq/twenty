@@ -37,6 +37,7 @@ export class LogicFunctionTriggerJob {
       await this.logicFunctionJobRunnerService.run({
         logicFunctionPayload,
         retryLimit: jobContext.retryLimit,
+        attemptsMade: jobContext.attemptsMade,
         persistRetryCount: (applicationRetryCount) =>
           jobContext.updateData(
             Array.isArray(jobData)

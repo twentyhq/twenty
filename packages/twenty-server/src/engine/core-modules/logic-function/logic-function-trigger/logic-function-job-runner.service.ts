@@ -41,19 +41,22 @@ export class LogicFunctionJobRunnerService {
   async run({
     logicFunctionPayload,
     retryLimit,
+    attemptsMade,
     persistRetryCount,
   }: {
     logicFunctionPayload: LogicFunctionJobPayload;
     retryLimit: number;
+    attemptsMade: number;
     persistRetryCount: (applicationRetryCount: number) => Promise<void>;
   }): Promise<void> {
     try {
       const retryCount = logicFunctionPayload.applicationRetryCount ?? 0;
+      // Platform failures also spend queue attempts, so cap app retries by what the queue has left.
       const retry = {
         retryCount,
         maxRetries: Math.min(
           LOGIC_FUNCTION_APPLICATION_RETRY_LIMIT,
-          retryLimit,
+          retryCount + retryLimit - attemptsMade,
         ),
       };
       const logicFunctionExecutionResult =

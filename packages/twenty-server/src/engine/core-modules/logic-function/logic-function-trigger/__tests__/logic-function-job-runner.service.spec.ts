@@ -55,13 +55,16 @@ describe('LogicFunctionJobRunnerService', () => {
           applicationRetryCount: 1,
         },
         retryLimit: 3,
+        attemptsMade: 1,
         persistRetryCount,
       }),
     ).rejects.toThrow(RetryableLogicFunctionError);
 
+    expect(execute).toHaveBeenCalledTimes(1);
     expect(execute).toHaveBeenCalledWith(
       expect.objectContaining({ retry: { retryCount: 1, maxRetries: 3 } }),
     );
+    expect(persistRetryCount).toHaveBeenCalledTimes(1);
     expect(persistRetryCount).toHaveBeenCalledWith(2);
   });
 
@@ -78,10 +81,35 @@ describe('LogicFunctionJobRunnerService', () => {
           applicationRetryCount: 3,
         },
         retryLimit: 3,
+        attemptsMade: 3,
         persistRetryCount,
       }),
     ).resolves.toBeUndefined();
 
+    expect(persistRetryCount).not.toHaveBeenCalled();
+  });
+
+  it('treats an attempt as the last one when platform failures used up the queue retries', async () => {
+    const execute = jest.fn().mockResolvedValue(RETRYABLE_RESULT);
+    const jobRunnerService = await createJobRunnerService(execute);
+    const persistRetryCount = jest.fn();
+
+    await expect(
+      jobRunnerService.run({
+        logicFunctionPayload: {
+          ...LOGIC_FUNCTION_PAYLOAD,
+          applicationRetryCount: 2,
+        },
+        retryLimit: 3,
+        attemptsMade: 3,
+        persistRetryCount,
+      }),
+    ).resolves.toBeUndefined();
+
+    expect(execute).toHaveBeenCalledTimes(1);
+    expect(execute).toHaveBeenCalledWith(
+      expect.objectContaining({ retry: { retryCount: 2, maxRetries: 2 } }),
+    );
     expect(persistRetryCount).not.toHaveBeenCalled();
   });
 
@@ -94,6 +122,7 @@ describe('LogicFunctionJobRunnerService', () => {
       jobRunnerService.run({
         logicFunctionPayload: LOGIC_FUNCTION_PAYLOAD,
         retryLimit: 3,
+        attemptsMade: 0,
         persistRetryCount: jest.fn(),
       }),
     ).rejects.toThrow('Lambda unavailable');

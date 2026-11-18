@@ -694,7 +694,6 @@ export class LogicFunctionExecutorService {
   }) {
     const executionId = v4();
 
-    // An attempt the queue will retry is not a failure yet; only the last one counts as an error.
     const willRetry = willRetryLogicFunctionExecution(result.error, retry);
 
     const logLines = [
