@@ -1,4 +1,4 @@
-import { type AiChatApprovalReviewStatus } from '@/ai-chat/types/AiChatApprovalReviewStatus';
+import { type AiChatApprovalReviewStatus } from '@/ai-chat/tool-calls/types/AiChatApprovalReviewStatus';
 
 export const getAiChatApprovalReviewRecordStatus = ({
   status,

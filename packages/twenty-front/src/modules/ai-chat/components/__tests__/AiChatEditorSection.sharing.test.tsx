@@ -21,7 +21,7 @@ jest.mock('@/ai-chat/components/AiChatStandaloneError', () => ({
   AiChatStandaloneError: () => null,
 }));
 // The gate's cards pull in a rich text editor Jest cannot load.
-jest.mock('@/ai-chat/components/AiChatPendingAskGate', () => ({
+jest.mock('@/ai-chat/tool-calls/components/AiChatPendingAskGate', () => ({
   AiChatPendingAskGate: ({ children }: { children: ReactNode }) => children,
 }));
 const Wrapper = ({ children }: { children: ReactNode }) => (

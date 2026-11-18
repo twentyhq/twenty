@@ -3,12 +3,12 @@ import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatApprovalEmailConfirmation } from '@/ai-chat/components/AiChatApprovalEmailConfirmation';
-import { AiChatApprovalEmailReviewDeck } from '@/ai-chat/components/AiChatApprovalEmailReviewDeck';
+import { AiChatApprovalEmailConfirmation } from '@/ai-chat/tool-calls/components/AiChatApprovalEmailConfirmation';
+import { AiChatApprovalEmailReviewDeck } from '@/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck';
 import { AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES } from '@/ai-chat/components/__stories__/aiChatApprovalEmailReviewFixtures';
 import { type AiChatApprovalEmailReviewSnapshot } from '@/ai-chat/components/__stories__/AiChatApprovalEmailReviewSnapshot';
-import { type AiChatApprovalReviewEmail } from '@/ai-chat/types/AiChatApprovalReviewEmail';
-import { type AiChatApprovalReviewEmailDraft } from '@/ai-chat/types/AiChatApprovalReviewEmailDraft';
+import { type AiChatApprovalReviewEmail } from '@/ai-chat/tool-calls/types/AiChatApprovalReviewEmail';
+import { type AiChatApprovalReviewEmailDraft } from '@/ai-chat/tool-calls/types/AiChatApprovalReviewEmailDraft';
 
 const StyledExample = styled.div`
   display: flex;

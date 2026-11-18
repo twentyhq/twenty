@@ -33,15 +33,18 @@ jest.mock('@/ai-chat/message-content/components/CodeExecutionDisplay', () => ({
   CodeExecutionDisplay: () => <div data-testid="code-execution-display" />,
 }));
 
-jest.mock('@/ai-chat/components/AiChatToolWidget', () => ({
+jest.mock('@/ai-chat/tool-calls/components/AiChatToolWidget', () => ({
   AiChatToolWidget: ({ toolPart }: { toolPart: { type: string } }) => (
     <div data-testid="tool-widget">{toolPart.type}</div>
   ),
 }));
 
-jest.mock('@/ai-chat/components/AiChatFrontComponentToolPreview', () => ({
-  AiChatFrontComponentToolPreview: () => <div>Component preview</div>,
-}));
+jest.mock(
+  '@/ai-chat/tool-calls/components/AiChatFrontComponentToolPreview',
+  () => ({
+    AiChatFrontComponentToolPreview: () => <div>Component preview</div>,
+  }),
+);
 
 let mockIsFrontComponentPreviewEnabled = true;
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
@@ -54,7 +57,7 @@ const mockUseFrontComponentIdByToolName = jest.fn(
   () => new Map<string, string>(),
 );
 
-jest.mock('@/ai-chat/hooks/useFrontComponentIdByToolName', () => ({
+jest.mock('@/ai-chat/tool-calls/hooks/useFrontComponentIdByToolName', () => ({
   useFrontComponentIdByToolName: () => mockUseFrontComponentIdByToolName(),
 }));
 

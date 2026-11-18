@@ -1,4 +1,4 @@
-import { type AiChatSchedulingSlot } from '@/ai-chat/types/AiChatSchedulingSlot';
+import { type AiChatSchedulingSlot } from '@/ai-chat/tool-calls/types/AiChatSchedulingSlot';
 
 export const hasMixedTimeZoneOffsets = ({
   slots,

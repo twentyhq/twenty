@@ -2,15 +2,15 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AiChatApprovalConfirmation } from '@/ai-chat/components/AiChatApprovalConfirmation';
-import { AiChatApprovalMergeReview } from '@/ai-chat/components/AiChatApprovalMergeReview';
+import { AiChatApprovalConfirmation } from '@/ai-chat/tool-calls/components/AiChatApprovalConfirmation';
+import { AiChatApprovalMergeReview } from '@/ai-chat/tool-calls/components/AiChatApprovalMergeReview';
 import { type AiChatApprovalMergeFixture } from '@/ai-chat/components/__stories__/AiChatApprovalMergeFixture';
 import { AiChatApprovalMergeReviewFields } from '@/ai-chat/components/__stories__/AiChatApprovalMergeReviewFields';
 import { type AiChatApprovalMergeReviewSnapshot } from '@/ai-chat/components/__stories__/AiChatApprovalMergeReviewSnapshot';
 import { AI_CHAT_APPROVAL_MERGE_FIXTURES } from '@/ai-chat/components/__stories__/aiChatApprovalMergeFixtures';
-import { type AiChatApprovalMergePair } from '@/ai-chat/types/AiChatApprovalMergePair';
-import { type AiChatApprovalMergeSourceRecord } from '@/ai-chat/types/AiChatApprovalMergeSourceRecord';
-import { type AiChatApprovalReviewStatus } from '@/ai-chat/types/AiChatApprovalReviewStatus';
+import { type AiChatApprovalMergePair } from '@/ai-chat/tool-calls/types/AiChatApprovalMergePair';
+import { type AiChatApprovalMergeSourceRecord } from '@/ai-chat/tool-calls/types/AiChatApprovalMergeSourceRecord';
+import { type AiChatApprovalReviewStatus } from '@/ai-chat/tool-calls/types/AiChatApprovalReviewStatus';
 
 const createSourceRecord = (
   source: AiChatApprovalMergeFixture['sources'][number],

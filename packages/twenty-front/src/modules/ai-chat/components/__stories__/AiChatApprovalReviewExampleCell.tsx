@@ -3,7 +3,7 @@ import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
 import { Input } from 'twenty-ui/primitives/input';
 
 import { type AiChatApprovalReviewFixture } from '@/ai-chat/components/__stories__/AiChatApprovalReviewFixture';
-import { type AiChatApprovalReviewColumn } from '@/ai-chat/types/AiChatApprovalReviewColumn';
+import { type AiChatApprovalReviewColumn } from '@/ai-chat/tool-calls/types/AiChatApprovalReviewColumn';
 import { TextDisplay } from '@/ui/field/display/components/TextDisplay/TextDisplay';
 
 const StyledNumericEditor = styled.span<{ contentWidth: number }>`

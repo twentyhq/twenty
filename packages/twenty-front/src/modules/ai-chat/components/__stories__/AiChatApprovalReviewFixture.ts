@@ -1,4 +1,4 @@
-import { type AiChatApprovalReviewColumn } from '@/ai-chat/types/AiChatApprovalReviewColumn';
+import { type AiChatApprovalReviewColumn } from '@/ai-chat/tool-calls/types/AiChatApprovalReviewColumn';
 
 export type AiChatApprovalReviewFixture = {
   id: string;

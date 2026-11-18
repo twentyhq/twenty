@@ -13,7 +13,7 @@ import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';
 import { AiChatInlineBanner } from '@/ai-chat/components/AiChatInlineBanner';
 import { AiChatEmptyState } from '@/ai-chat/components/AiChatEmptyState';
 import { AiChatParticipantMentionBar } from '@/ai-chat/components/AiChatParticipantMentionBar';
-import { AiChatPendingAskGate } from '@/ai-chat/components/AiChatPendingAskGate';
+import { AiChatPendingAskGate } from '@/ai-chat/tool-calls/components/AiChatPendingAskGate';
 import { AiChatNoMoreBillingCreditsBanner } from '@/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner';
 import { AiChatUsageLimitReachedBanner } from '@/ai-chat/usage/components/AiChatUsageLimitReachedBanner';
 import { AiChatUserCreditsExhaustedBanner } from '@/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner';

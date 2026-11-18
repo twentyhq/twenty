@@ -1,4 +1,4 @@
-import { type AiChatSchedulingAvailability } from '@/ai-chat/types/AiChatSchedulingAvailability';
+import { type AiChatSchedulingAvailability } from '@/ai-chat/tool-calls/types/AiChatSchedulingAvailability';
 
 export const AI_CHAT_TIME_PICKER_FIXTURE = {
   date: '2026-10-07',

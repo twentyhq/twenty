@@ -27,7 +27,7 @@ jest.mock('@/ai-chat/usage/hooks/useHasReachedAiChatUsageLimit', () => ({
 jest.mock('@/ai-chat/components/AiChatStandaloneError', () => ({
   AiChatStandaloneError: () => null,
 }));
-jest.mock('@/ai-chat/components/AiChatPendingAskGate', () => ({
+jest.mock('@/ai-chat/tool-calls/components/AiChatPendingAskGate', () => ({
   AiChatPendingAskGate: ({ children }: { children: ReactNode }) => children,
 }));
 

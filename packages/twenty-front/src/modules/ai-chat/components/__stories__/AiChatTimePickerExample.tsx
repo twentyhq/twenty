@@ -4,10 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatTimePickerCard } from '@/ai-chat/components/AiChatTimePickerCard';
+import { AiChatTimePickerCard } from '@/ai-chat/tool-calls/components/AiChatTimePickerCard';
 import { AI_CHAT_TIME_PICKER_FIXTURE } from '@/ai-chat/components/__stories__/aiChatTimePickerFixture';
-import { type AiChatSchedulingAvailability } from '@/ai-chat/types/AiChatSchedulingAvailability';
-import { type AiChatSchedulingSelection } from '@/ai-chat/types/AiChatSchedulingSelection';
+import { type AiChatSchedulingAvailability } from '@/ai-chat/tool-calls/types/AiChatSchedulingAvailability';
+import { type AiChatSchedulingSelection } from '@/ai-chat/tool-calls/types/AiChatSchedulingSelection';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 
 const StyledExample = styled.div`

@@ -4,15 +4,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconBuildingSkyscraper, IconTrash, IconUser } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatApprovalConfirmation } from '@/ai-chat/components/AiChatApprovalConfirmation';
-import { AiChatApprovalRecordReview } from '@/ai-chat/components/AiChatApprovalRecordReview';
-import { AiChatApprovalReviewDeck } from '@/ai-chat/components/AiChatApprovalReviewDeck';
+import { AiChatApprovalConfirmation } from '@/ai-chat/tool-calls/components/AiChatApprovalConfirmation';
+import { AiChatApprovalRecordReview } from '@/ai-chat/tool-calls/components/AiChatApprovalRecordReview';
+import { AiChatApprovalReviewDeck } from '@/ai-chat/tool-calls/components/AiChatApprovalReviewDeck';
 import { AI_CHAT_APPROVAL_REVIEW_FIXTURES } from '@/ai-chat/components/__stories__/aiChatApprovalReviewFixtures';
 import { AiChatApprovalReviewExampleCell } from '@/ai-chat/components/__stories__/AiChatApprovalReviewExampleCell';
 import { type AiChatApprovalReviewSnapshot } from '@/ai-chat/components/__stories__/AiChatApprovalReviewSnapshot';
 import { getAiChatApprovalReviewRecordStatus } from '@/ai-chat/components/__stories__/getAiChatApprovalReviewRecordStatus';
-import { type AiChatApprovalReviewCard } from '@/ai-chat/types/AiChatApprovalReviewCard';
-import { type AiChatApprovalReviewStatus } from '@/ai-chat/types/AiChatApprovalReviewStatus';
+import { type AiChatApprovalReviewCard } from '@/ai-chat/tool-calls/types/AiChatApprovalReviewCard';
+import { type AiChatApprovalReviewStatus } from '@/ai-chat/tool-calls/types/AiChatApprovalReviewStatus';
 import { TextDisplay } from '@/ui/field/display/components/TextDisplay/TextDisplay';
 
 const APPROVAL_REVIEW_ICON_SIZE = 16;

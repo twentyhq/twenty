@@ -1,20 +1,20 @@
-import { AiChatFrontComponentToolPreview } from '@/ai-chat/components/AiChatFrontComponentToolPreview';
+import { AiChatFrontComponentToolPreview } from '@/ai-chat/tool-calls/components/AiChatFrontComponentToolPreview';
 import { AiChatCompactionIndicator } from '@/ai-chat/components/AiChatCompactionIndicator';
 import { AiChatInitialLoadingIndicator } from '@/ai-chat/components/AiChatInitialLoadingIndicator';
 import { CodeExecutionDisplay } from '@/ai-chat/message-content/components/CodeExecutionDisplay';
 import { ThinkingStepsDisplay } from '@/ai-chat/thinking-steps/components/ThinkingStepsDisplay';
 
-import { AiChatFormStatusRenderer } from '@/ai-chat/components/AiChatFormStatusRenderer';
-import { AiChatQuestionStatusRenderer } from '@/ai-chat/components/AiChatQuestionStatusRenderer';
-import { AiChatToolCallApprovalStatusRenderer } from '@/ai-chat/components/AiChatToolCallApprovalStatusRenderer';
-import { AiChatToolWidget } from '@/ai-chat/components/AiChatToolWidget';
+import { AiChatFormStatusRenderer } from '@/ai-chat/tool-calls/components/AiChatFormStatusRenderer';
+import { AiChatQuestionStatusRenderer } from '@/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer';
+import { AiChatToolCallApprovalStatusRenderer } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer';
+import { AiChatToolWidget } from '@/ai-chat/tool-calls/components/AiChatToolWidget';
 import { LazyMarkdownContent } from '@/ai-chat/message-content/components/LazyMarkdownRenderer';
 import { type AssistantMessageRenderItem } from '@/ai-chat/types/AssistantMessageRenderItem';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-import { useFrontComponentIdByToolName } from '@/ai-chat/hooks/useFrontComponentIdByToolName';
-import { getEffectiveToolName } from '@/ai-chat/utils/getEffectiveToolName';
-import { shouldToolPartRenderStandalone } from '@/ai-chat/utils/shouldToolPartRenderStandalone';
+import { useFrontComponentIdByToolName } from '@/ai-chat/tool-calls/hooks/useFrontComponentIdByToolName';
+import { getEffectiveToolName } from '@/ai-chat/tool-calls/utils/getEffectiveToolName';
+import { shouldToolPartRenderStandalone } from '@/ai-chat/tool-calls/utils/shouldToolPartRenderStandalone';
 import { groupContiguousThinkingStepParts } from '@/ai-chat/thinking-steps/utils/groupContiguousThinkingStepParts';
 import { isEmptyReasoningPart } from '@/ai-chat/thinking-steps/utils/isEmptyReasoningPart';
 import { isHiddenCompleteWorkspaceSetupToolPart } from '@/ai-chat/utils/isHiddenCompleteWorkspaceSetupToolPart';

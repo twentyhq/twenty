@@ -4,7 +4,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
-import { AiChatApprovalEmailReview } from '@/ai-chat/components/AiChatApprovalEmailReview';
+import { AiChatApprovalEmailReview } from '@/ai-chat/tool-calls/components/AiChatApprovalEmailReview';
 import { AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES } from '@/ai-chat/components/__stories__/aiChatApprovalEmailReviewFixtures';
 
 const REPLACEMENT_BODY = serializeJsonContentAsAdvancedTextEditorDocument({
