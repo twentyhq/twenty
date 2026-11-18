@@ -1,7 +1,7 @@
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { AI_CHAT_SURFACE } from '@/ai-chat/constants/AiChatSurface';
-import { MarkdownLoadingSkeleton } from '@/ai-chat/components/LazyMarkdownRenderer';
+import { MarkdownLoadingSkeleton } from '@/ai-chat/message-content/components/LazyMarkdownRenderer';
 import { StyledAiChatContentContainer } from '@/ai-chat/components/StyledAiChatContentContainer';
 import { AiChatErrorUnderMessageList } from '@/ai-chat/components/AiChatErrorUnderMessageList';
 import { AiChatLastMessageWithStreamingState } from '@/ai-chat/components/AiChatLastMessageWithStreamingState';

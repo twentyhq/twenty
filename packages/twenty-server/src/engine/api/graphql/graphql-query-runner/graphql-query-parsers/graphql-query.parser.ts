@@ -8,6 +8,7 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { type CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.type';
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
 import { GraphqlQueryOrderGroupByParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order-group-by.parser';
@@ -16,10 +17,7 @@ import {
   type OrderByClause,
   type RelationJoinInfo,
 } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
-import {
-  GraphqlQuerySelectedFieldsParser,
-  type GraphqlQuerySelectedFieldsResult,
-} from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
+import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -243,7 +241,7 @@ export class GraphqlQueryParser {
   public parseSelectedFields(
     // oxlint-disable-next-line typescript/no-explicit-any
     graphqlSelectedFields: Partial<Record<string, any>>,
-  ): GraphqlQuerySelectedFieldsResult {
+  ): CommonSelectedFieldsResult {
     const selectedFieldsParser = new GraphqlQuerySelectedFieldsParser(
       this.flatObjectMetadataMaps,
       this.flatFieldMetadataMaps,
