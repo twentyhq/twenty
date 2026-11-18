@@ -1,11 +1,14 @@
 import { isApplicationBillingPricePeriod } from '@/application/isApplicationBillingPricePeriod';
 
 describe('isApplicationBillingPricePeriod', () => {
-  it('should accept monthly', () => {
-    expect(isApplicationBillingPricePeriod('monthly')).toBe(true);
+  it('should accept MONTHLY', () => {
+    expect(isApplicationBillingPricePeriod('MONTHLY')).toBe(true);
   });
 
-  it.each([['yearly'], ['MONTH'], [undefined]])('should reject %p', (value) => {
-    expect(isApplicationBillingPricePeriod(value)).toBe(false);
-  });
+  it.each([['YEARLY'], ['monthly'], [undefined]])(
+    'should reject %p',
+    (value) => {
+      expect(isApplicationBillingPricePeriod(value)).toBe(false);
+    },
+  );
 });

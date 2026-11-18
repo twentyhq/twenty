@@ -1,1 +1,1 @@
-export const APPLICATION_BILLING_PRICE_PERIODS = ['monthly'] as const;
+export const APPLICATION_BILLING_PRICE_PERIODS = ['MONTHLY'] as const;

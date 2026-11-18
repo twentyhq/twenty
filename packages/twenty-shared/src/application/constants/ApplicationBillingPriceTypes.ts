@@ -1,1 +1,1 @@
-export const APPLICATION_BILLING_PRICE_TYPES = ['recurring'] as const;
+export const APPLICATION_BILLING_PRICE_TYPES = ['RECURRING'] as const;

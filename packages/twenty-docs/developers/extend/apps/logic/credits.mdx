@@ -98,16 +98,16 @@ billing: {
     {
       universalIdentifier: '3f0c9a52-6b1e-4d7a-9c35-8e2f1a4b7d60',
       label: 'Platform',
-      type: 'recurring',
-      billingPeriod: 'monthly',
+      type: 'RECURRING',
+      billingPeriod: 'MONTHLY',
       amountCents: 2000,
     },
     {
       universalIdentifier: 'b7e41d08-2a93-4f5c-8d16-0c9e3b5a7f21',
       label: 'Per member',
       description: 'Monthly price per workspace member',
-      type: 'recurring',
-      billingPeriod: 'monthly',
+      type: 'RECURRING',
+      billingPeriod: 'MONTHLY',
       amountCents: 1000,
       currency: 'USD',
       per: 'WORKSPACE_MEMBER',
@@ -121,8 +121,8 @@ billing: {
 | `universalIdentifier` | A UUID that identifies the price across versions of your app. Generate it once and never change it: a new identifier is a new price |
 | `label` | What admins read for that line |
 | `description` | Optional. A longer explanation of what the price covers |
-| `type` | `recurring`, the only type for now |
-| `billingPeriod` | `monthly`, the only period for now |
+| `type` | `RECURRING`, the only type for now |
+| `billingPeriod` | `MONTHLY`, the only period for now |
 | `amountCents` | Price per month in USD cents, a positive integer up to 8,333,333 |
 | `currency` | Optional. `USD` is the only supported currency for now, and the default |
 | `per` | Omit for a flat fee. `WORKSPACE_MEMBER` makes the amount a rate per workspace member |
