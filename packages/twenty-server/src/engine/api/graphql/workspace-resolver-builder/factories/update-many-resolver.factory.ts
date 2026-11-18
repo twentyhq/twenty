@@ -37,11 +37,13 @@ export class UpdateManyResolverFactory implements WorkspaceResolverBuilderFactor
       });
 
       try {
-        const { results: records } =
-          await this.commonUpdateManyQueryRunnerService.execute(
-            { ...args, selectedFields },
-            resolverContext,
-          );
+        const {
+          results: records,
+          args: { selectedFieldsResult },
+        } = await this.commonUpdateManyQueryRunnerService.execute(
+          { ...args, selectedFields },
+          resolverContext,
+        );
 
         const typeORMObjectRecordsParser =
           new ObjectRecordsToGraphqlConnectionHelper(
@@ -54,6 +56,7 @@ export class UpdateManyResolverFactory implements WorkspaceResolverBuilderFactor
           typeORMObjectRecordsParser.processRecord({
             objectRecord: record,
             objectName: resolverContext.flatObjectMetadata.nameSingular,
+            selection: selectedFieldsResult,
             take: 1,
             totalCount: 1,
           }),

@@ -1,5 +1,6 @@
 import { Kind, parse, type FragmentDefinitionNode } from 'graphql';
 
+import { computeSelectionKey } from 'src/engine/api/graphql/workspace-resolver-builder/utils/compute-selection-key.util';
 import { getResolverSelectedFields } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-resolver-selected-fields.util';
 
 const getSelectedFields = (
@@ -31,8 +32,13 @@ const getSelectedFields = (
   });
 };
 
+const FIRST_PERSON_KEY = computeSelectionKey({
+  fieldName: 'people',
+  arguments: { first: 1 },
+});
+
 describe('getResolverSelectedFields', () => {
-  it('keeps the arguments of a relation next to its selection', () => {
+  it('keys a relation with arguments by field name and arguments', () => {
     expect(
       getSelectedFields(`
         query {
@@ -48,7 +54,10 @@ describe('getResolverSelectedFields', () => {
         }
       `).edges.node,
     ).toEqual({
-      people: {
+      [computeSelectionKey({
+        fieldName: 'people',
+        arguments: { orderBy: [{ name: 'AscNullsLast' }], first: 1 },
+      })]: {
         __arguments: { first: 1, orderBy: [{ name: 'AscNullsLast' }] },
         edges: { node: { id: {} } },
       },
@@ -56,51 +65,69 @@ describe('getResolverSelectedFields', () => {
   });
 
   it('resolves variables in arguments', () => {
+    const filter = { city: { eq: 'Paris' } };
+
     expect(
       getSelectedFields(
         `query ($filter: PersonFilterInput) {
           companies { edges { node { people(filter: $filter) { totalCount } } } }
         }`,
-        { filter: { city: { eq: 'Paris' } } },
-      ).edges.node.people.__arguments,
-    ).toEqual({ filter: { city: { eq: 'Paris' } } });
+        { filter },
+      ).edges.node[
+        computeSelectionKey({ fieldName: 'people', arguments: { filter } })
+      ].__arguments,
+    ).toEqual({ filter });
   });
 
-  it('rejects aliases of one relation with different arguments', () => {
-    expect(() =>
-      getSelectedFields(`
-        query {
-          companies {
-            edges {
-              node {
-                firstPerson: people(first: 1) { totalCount }
-                twoPeople: people(first: 2) { totalCount }
-              }
-            }
-          }
-        }
-      `),
-    ).toThrow('Conflicting arguments for "people"');
-  });
-
-  it('accepts aliases of one relation with the same arguments', () => {
+  it('loads aliases of one relation with different arguments separately', () => {
     expect(
       getSelectedFields(`
         query {
           companies {
             edges {
               node {
+                name: people { totalCount }
                 firstPerson: people(first: 1) { totalCount }
+                twoPeople: people(first: 2) { edges { node { id } } }
+              }
+            }
+          }
+        }
+      `).edges.node,
+    ).toEqual({
+      people: { totalCount: {} },
+      [FIRST_PERSON_KEY]: { __arguments: { first: 1 }, totalCount: {} },
+      [computeSelectionKey({ fieldName: 'people', arguments: { first: 2 } })]: {
+        __arguments: { first: 2 },
+        edges: { node: { id: {} } },
+      },
+    });
+  });
+
+  it('loads aliases of one relation with the same arguments once', () => {
+    expect(
+      getSelectedFields(`
+        query {
+          companies {
+            first: edges {
+              node {
+                firstPerson: people(first: 1) { totalCount }
+              }
+            }
+            second: edges {
+              node {
                 samePerson: people(first: 1) { edges { node { id } } }
               }
             }
           }
         }
-      `).edges.node.people,
+      `).edges.node,
     ).toEqual({
-      __arguments: { first: 1 },
-      totalCount: {},
-      edges: { node: { id: {} } },
+      [FIRST_PERSON_KEY]: {
+        __arguments: { first: 1 },
+        totalCount: {},
+        edges: { node: { id: {} } },
+      },
     });
   });
 
@@ -125,28 +152,35 @@ describe('getResolverSelectedFields', () => {
     ).toEqual({ id: {}, domainName: { primaryLinkUrl: {} } });
   });
 
-  it('keeps a field named __proto__ as an ordinary key', () => {
+  it('keeps response keys out of the plan', () => {
     const selectedFields = getSelectedFields(`
       query {
         companies {
           edges {
             node {
-              __proto__(first: 1) { id }
+              __proto__: people(first: 1) { kind: __typename }
+              __arguments: name
             }
           }
         }
       }
     `).edges.node;
 
-    expect(
-      Object.prototype.hasOwnProperty.call(selectedFields, '__proto__'),
-    ).toBe(true);
-    expect(selectedFields['__proto__']).toEqual({
+    expect(Object.keys(selectedFields)).toEqual([FIRST_PERSON_KEY, 'name']);
+    expect(selectedFields[FIRST_PERSON_KEY]).toEqual({
       __arguments: { first: 1 },
-      id: {},
+      __typename: {},
     });
-    expect(
-      Object.prototype.hasOwnProperty.call(Object.prototype, '__arguments'),
-    ).toBe(false);
   });
+
+  it.each(['__proto__', '__arguments', '__schema'])(
+    'rejects a field named %s',
+    (fieldName) => {
+      expect(() =>
+        getSelectedFields(`
+          query { companies { edges { node { ${fieldName} { id } } } } }
+        `),
+      ).toThrow(`Cannot query field "${fieldName}"`);
+    },
+  );
 });

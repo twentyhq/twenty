@@ -5,12 +5,13 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { pathExists } from '@/app/fs-utils';
+import { getPullSourceDefinitions } from '@/app/pull/get-pull-source-definitions';
 import { type PullWrite } from '@/app/pull/plan-pull-writes';
 import { type AppExportFile } from '@/app/types/app-export.type';
 import { CliError } from '@/output/cli-error';
 import { hashContent } from '@/utils/hash-content';
 
-export const planFrontComponentSourceWrites = async ({
+export const planApplicationSourceWrites = async ({
   appPath,
   manifest,
   files,
@@ -19,15 +20,15 @@ export const planFrontComponentSourceWrites = async ({
   sourceFingerprints = {},
 }: {
   appPath: string;
-  manifest: Pick<Manifest, 'frontComponents'>;
+  manifest: Pick<Manifest, 'frontComponents' | 'logicFunctions'>;
   files: AppExportFile[];
   reservedPaths: ReadonlySet<string>;
   remoteSourceFingerprints?: Record<string, string>;
   sourceFingerprints?: Record<string, string>;
 }) => {
   const entryPaths = new Set(
-    (manifest.frontComponents ?? []).map(
-      (component) => component.sourceComponentPath,
+    getPullSourceDefinitions(manifest).map(
+      (definition) => definition.sourcePath,
     ),
   );
   const writes: PullWrite<Buffer>[] = [];

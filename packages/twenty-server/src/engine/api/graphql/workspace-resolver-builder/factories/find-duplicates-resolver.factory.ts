@@ -37,11 +37,13 @@ export class FindDuplicatesResolverFactory implements WorkspaceResolverBuilderFa
       });
 
       try {
-        const { results: paginatedDuplicates } =
-          await this.commonFindDuplicatesQueryRunnerService.execute(
-            { ...args, selectedFields },
-            resolverContext,
-          );
+        const {
+          results: paginatedDuplicates,
+          args: { selectedFieldsResult },
+        } = await this.commonFindDuplicatesQueryRunnerService.execute(
+          { ...args, selectedFields },
+          resolverContext,
+        );
 
         const typeORMObjectRecordsParser =
           new ObjectRecordsToGraphqlConnectionHelper(
@@ -54,6 +56,7 @@ export class FindDuplicatesResolverFactory implements WorkspaceResolverBuilderFa
           typeORMObjectRecordsParser.createConnection({
             objectRecords: duplicate.records,
             objectName: resolverContext.flatObjectMetadata.nameSingular,
+            selection: selectedFieldsResult,
             take: duplicate.records.length,
             totalCount: duplicate.totalCount,
             order: [{ id: OrderByDirection.AscNullsFirst }],

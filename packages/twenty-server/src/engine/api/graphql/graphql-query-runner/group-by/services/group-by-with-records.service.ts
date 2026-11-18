@@ -130,6 +130,7 @@ export class GroupByWithRecordsService {
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      selection: selectedFieldsResult,
       processRecord: (record: ObjectRecord) =>
         this.commonResultGettersService.processRecord({
           record,
