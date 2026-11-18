@@ -10,9 +10,9 @@ describe('parseAggregateFieldsRestRequest', () => {
       query: { aggregate: '["countNotEmptyId"]' },
     };
 
-    expect(parseAggregateFieldsRestRequest(request)).toEqual({
-      countNotEmptyId: true,
-    });
+    expect(parseAggregateFieldsRestRequest(request)).toEqual([
+      'countNotEmptyId',
+    ]);
   });
 
   it('should parse multiple aggregate fields', () => {
@@ -22,10 +22,10 @@ describe('parseAggregateFieldsRestRequest', () => {
       },
     };
 
-    expect(parseAggregateFieldsRestRequest(request)).toEqual({
-      countNotEmptyId: true,
-      countEmptyId: true,
-    });
+    expect(parseAggregateFieldsRestRequest(request)).toEqual([
+      'countNotEmptyId',
+      'countEmptyId',
+    ]);
   });
 
   it('should parse empty array', () => {
@@ -33,7 +33,7 @@ describe('parseAggregateFieldsRestRequest', () => {
       query: { aggregate: '[]' },
     };
 
-    expect(parseAggregateFieldsRestRequest(request)).toEqual({});
+    expect(parseAggregateFieldsRestRequest(request)).toEqual([]);
   });
 
   it('should throw if aggregate parameter is not a string', () => {
@@ -67,6 +67,6 @@ describe('parseAggregateFieldsRestRequest', () => {
       query: {},
     };
 
-    expect(parseAggregateFieldsRestRequest(request)).toEqual({});
+    expect(parseAggregateFieldsRestRequest(request)).toEqual([]);
   });
 });

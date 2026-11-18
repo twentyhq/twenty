@@ -108,7 +108,14 @@ describe('GraphqlQuerySelectedFieldsParser relation fields', () => {
     // Boolean selections carry no sub-fields; only the object form hydrates
     const parser = new GraphqlQuerySelectedFieldsParser(objectMaps, fieldMaps);
 
-    const result = parser.parse({ id: true, fund: true }, investorLeadObject);
+    const result = parser.parse(
+      {
+        fields: { id: true, fund: true },
+        aggregates: [],
+        relations: {},
+      },
+      investorLeadObject,
+    );
 
     expect(result.columns).toEqual({ id: true });
     expect(result.relations).toEqual({});
@@ -119,7 +126,20 @@ describe('GraphqlQuerySelectedFieldsParser relation fields', () => {
     const parser = new GraphqlQuerySelectedFieldsParser(objectMaps, fieldMaps);
 
     const result = parser.parse(
-      { id: true, fund: { id: true, name: true } },
+      {
+        fields: { id: true },
+        aggregates: [],
+        relations: {
+          fund: {
+            fieldName: 'fund',
+            selectedFields: {
+              fields: { id: true, name: true },
+              aggregates: [],
+              relations: {},
+            },
+          },
+        },
+      },
       investorLeadObject,
     );
 
@@ -144,9 +164,27 @@ describe('GraphqlQuerySelectedFieldsParser relation fields', () => {
 
     const result = parser.parse(
       {
-        id: {},
-        fund: { edges: { node: { name: {} } } },
-        [firstFundKey]: { __arguments: { first: 2 }, edges: { node: {} } },
+        fields: { id: true },
+        aggregates: [],
+        relations: {
+          fund: {
+            fieldName: 'fund',
+            selectedFields: {
+              fields: { name: true },
+              aggregates: ['edges'],
+              relations: {},
+            },
+          },
+          [firstFundKey]: {
+            fieldName: 'fund',
+            arguments: { first: 2 },
+            selectedFields: {
+              fields: {},
+              aggregates: ['edges'],
+              relations: {},
+            },
+          },
+        },
       },
       investorLeadObject,
     );

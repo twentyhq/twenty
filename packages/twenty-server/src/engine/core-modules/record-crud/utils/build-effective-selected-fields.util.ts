@@ -245,7 +245,7 @@ export const buildEffectiveSelectedFields = ({
   return {
     effectiveSelectedFields: {
       fields: buildSelectedFieldsOverride(
-        cleanSelect,
+        cleanSelect.filter((fieldName) => !relationSelect.includes(fieldName)),
         selectedFields.fields,
         fieldNameToType,
       ),
