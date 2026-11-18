@@ -4,8 +4,8 @@ import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
-import { useAiChatPageThreadId } from '@/ai/hooks/useAiChatPageThreadId';
-import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
+import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
+import { useAiChatThreadClick } from '@/ai-chat/hooks/useAiChatThreadClick';
 import { InboxThreadListFetchMoreTrigger } from '@/inbox/components/InboxThreadListFetchMoreTrigger';
 import { NavigationDrawerInboxThreadSection } from '@/inbox/components/NavigationDrawerInboxThreadSection';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
