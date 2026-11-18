@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
+import { type CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import {
   type AggregationField,
   getAvailableAggregationsFromObjectFields,
@@ -16,7 +16,7 @@ export class GraphqlQuerySelectedFieldsAggregateParser {
     graphqlSelectedFields: Partial<Record<string, any>>,
     flatObjectMetadata: FlatObjectMetadata,
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    accumulator: GraphqlQuerySelectedFieldsResult,
+    accumulator: CommonSelectedFieldsResult,
   ): void {
     const fields = flatObjectMetadata.fieldIds
       .map((id) =>
@@ -37,7 +37,7 @@ export class GraphqlQuerySelectedFieldsAggregateParser {
         continue;
       }
 
-      accumulator.aggregate[selectedField] = selectedAggregation;
+      accumulator.aggregates[selectedField] = selectedAggregation;
     }
   }
 }
