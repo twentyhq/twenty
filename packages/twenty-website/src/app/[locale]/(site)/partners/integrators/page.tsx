@@ -83,7 +83,7 @@ export default async function IntegratorProgramPage({
           steps={INTEGRATOR_STEPS}
           closingRow={{
             title: msg`Get help anytime`,
-            body: msg`Ask our team and partners on Discord.`,
+            body: msg`Ask our team and partners on the partner Discord.`,
             marker: <DiscordMark size={16} />,
           }}
           footer={[
