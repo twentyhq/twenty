@@ -6,10 +6,10 @@ import { AiChatComposerQuotePreview } from '@/ai-chat/composer/components/AiChat
 import { AiChatMessageAuthorResolver } from '@/ai-chat/messages/components/AiChatMessageAuthorResolver';
 import { useAiChatMessageAuthor } from '@/ai-chat/messages/hooks/useAiChatMessageAuthor';
 import { useIsOwnAiChatMessage } from '@/ai-chat/messages/hooks/useIsOwnAiChatMessage';
-import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/composer/states/aiChatQuotedMessageIdFamilyState';
+import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/states/aiChatQuotedMessageIdFamilyState';
 import { aiChatHasMessageFamilySelector } from '@/ai-chat/states/selectors/aiChatHasMessageFamilySelector';
 import { aiChatThreadMessageFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadMessageFamilySelector';
-import { getAiChatMessageQuoteExcerpt } from '@/ai-chat/composer/utils/getAiChatMessageQuoteExcerpt';
+import { getAiChatMessageQuoteExcerpt } from '@/ai-chat/messages/utils/getAiChatMessageQuoteExcerpt';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 

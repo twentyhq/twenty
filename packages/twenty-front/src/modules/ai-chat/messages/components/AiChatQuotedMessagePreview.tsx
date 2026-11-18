@@ -6,7 +6,7 @@ import { Text } from 'twenty-ui/primitives/typography';
 import { IconArrowBackUp } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { type AiChatQuotedMessageSource } from '@/ai-chat/composer/types/AiChatQuotedMessageSource';
+import { type AiChatQuotedMessageSource } from '@/ai-chat/messages/types/AiChatQuotedMessageSource';
 
 const StyledReply = styled.div`
   align-items: center;
