@@ -1005,7 +1005,7 @@ msgstr "{numberOfSelectedItems} membres de l'espai de treball"
 #. js-lingui-id: DQ+6r7
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 msgid "{objectLabelPlural} permissions"
-msgstr ""
+msgstr "Permisos de {objectLabelPlural}"
 
 #. js-lingui-id: luWGLQ
 #: src/modules/workflow/workflow-variables/utils/generate/generateWaitForEventOutputSchema.ts
@@ -2573,7 +2573,7 @@ msgstr "Afegeix un grup de regles"
 #. js-lingui-id: RxFV0G
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "Add section"
-msgstr ""
+msgstr "Afegeix una secció"
 
 #. js-lingui-id: TdZwYb
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
@@ -2593,7 +2593,7 @@ msgstr "Afegeix un proveïdor d'identitats SSO"
 #: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
 msgid "Add tab"
-msgstr ""
+msgstr "Afegeix una pestanya"
 
 #. js-lingui-id: O6B1gJ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -3620,7 +3620,7 @@ msgstr "Permetre als usuaris iniciar sessió amb un correu electrònic i contras
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect.tsx
 msgid "Allowed actions"
-msgstr ""
+msgstr "Accions permeses"
 
 #. js-lingui-id: vj+OHl
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
@@ -3630,7 +3630,7 @@ msgstr "URI de redirecció permesos per als fluxos d'OAuth"
 #. js-lingui-id: L36XXB
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Allows"
-msgstr ""
+msgstr "Permet"
 
 #. js-lingui-id: Yn0ZH1
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -4127,7 +4127,7 @@ msgstr "S'aplica a"
 #. js-lingui-id: 9xcLbN
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAllObjectsCard.tsx
 msgid "Applies to all objects before overrides"
-msgstr ""
+msgstr "S'aplica a tots els objectes abans de les excepcions"
 
 #. js-lingui-id: DB8zMK
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
@@ -10069,7 +10069,7 @@ msgstr "Suprimeix l'habilitat"
 #. js-lingui-id: drg4t8
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
 msgid "Delete tab"
-msgstr ""
+msgstr "Elimina la pestanya"
 
 #. js-lingui-id: +RYIn9
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
@@ -12524,7 +12524,7 @@ msgstr "Cada dilluns"
 #. js-lingui-id: QU6LCC
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Every object follows the all objects access."
-msgstr ""
+msgstr "Tots els objectes segueixen l'accés de tots els objectes."
 
 #. js-lingui-id: JsIvOW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
@@ -13772,7 +13772,7 @@ msgstr "Camps (opcional)"
 #. js-lingui-id: fiU2kl
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Fields and rule"
-msgstr ""
+msgstr "Camps i regla"
 
 #. js-lingui-id: Tnz22x
 #: src/modules/object-record/record-merge/components/MergePrioritySettings.tsx
@@ -19851,7 +19851,7 @@ msgstr "Regla nova"
 #. js-lingui-id: SagCAA
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "New section"
-msgstr ""
+msgstr "Secció nova"
 
 #. js-lingui-id: MdpSC1
 #: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
@@ -20646,7 +20646,7 @@ msgstr "Sense notes"
 #. js-lingui-id: arel2K
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
 msgid "No objects found"
-msgstr ""
+msgstr "No s'ha trobat cap objecte"
 
 #. js-lingui-id: fq3TKy
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
@@ -22445,7 +22445,7 @@ msgstr "Sobreescriu Esborrany"
 #. js-lingui-id: sJNF3W
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Overrides"
-msgstr ""
+msgstr "Excepcions"
 
 #. js-lingui-id: 6/dCYd
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -24365,7 +24365,7 @@ msgstr "Registres per data"
 #. js-lingui-id: b/xmDA
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Records matching the rule"
-msgstr ""
+msgstr "Registres que coincideixen amb la regla"
 
 #. js-lingui-id: CjlKOu
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -24809,7 +24809,7 @@ msgstr "Elimina el camp de sortida"
 #. js-lingui-id: c8Kx/b
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Remove override"
-msgstr ""
+msgstr "Elimina l'excepció"
 
 #. js-lingui-id: cp/fZQ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsFlagRow.tsx
@@ -24861,7 +24861,7 @@ msgstr "Elimina el camp de cerca"
 #. js-lingui-id: uXfxoE
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
 msgid "Remove section"
-msgstr ""
+msgstr "Elimina la secció"
 
 #. js-lingui-id: jCt40X
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -26478,12 +26478,12 @@ msgstr "Secció"
 #. js-lingui-id: 8gtQoG
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
 msgid "Section actions"
-msgstr ""
+msgstr "Accions de la secció"
 
 #. js-lingui-id: vKc3fL
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
 msgid "Section name"
-msgstr ""
+msgstr "Nom de la secció"
 
 #. js-lingui-id: R4OWFD
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
@@ -29171,12 +29171,12 @@ msgstr "Pestanya {tabNumber}: {0}"
 #. js-lingui-id: OqZEsq
 #: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
 msgid "Tab actions"
-msgstr ""
+msgstr "Accions de la pestanya"
 
 #. js-lingui-id: FFaDQL
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
 msgid "Tab name"
-msgstr ""
+msgstr "Nom de la pestanya"
 
 #. js-lingui-id: zr20ox
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
