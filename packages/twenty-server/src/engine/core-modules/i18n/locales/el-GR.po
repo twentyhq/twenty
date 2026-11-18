@@ -6296,6 +6296,11 @@ msgstr "Η συνάρτηση δεν βρέθηκε."
 msgid "Function provider is busy. Try again in a few minutes."
 msgstr "Ο πάροχος συναρτήσεων είναι απασχολημένος. Δοκιμάστε ξανά σε λίγα λεπτά."
 
+#. js-lingui-id: xSrz+r
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Functions cannot run while the workspace is suspended."
+msgstr ""
+
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
 msgid "General"

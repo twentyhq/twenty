@@ -6296,6 +6296,11 @@ msgstr "함수를 찾을 수 없음."
 msgid "Function provider is busy. Try again in a few minutes."
 msgstr "함수 공급자가 사용 중입니다. 몇 분 후에 다시 시도하세요."
 
+#. js-lingui-id: xSrz+r
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Functions cannot run while the workspace is suspended."
+msgstr ""
+
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
 msgid "General"

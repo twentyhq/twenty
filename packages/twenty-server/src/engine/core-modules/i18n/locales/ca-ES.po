@@ -6296,6 +6296,11 @@ msgstr "Funció no trobada."
 msgid "Function provider is busy. Try again in a few minutes."
 msgstr "El proveïdor de funcions està ocupat. Torna-ho a provar d'aquí a uns minuts."
 
+#. js-lingui-id: xSrz+r
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Functions cannot run while the workspace is suspended."
+msgstr ""
+
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
 msgid "General"
