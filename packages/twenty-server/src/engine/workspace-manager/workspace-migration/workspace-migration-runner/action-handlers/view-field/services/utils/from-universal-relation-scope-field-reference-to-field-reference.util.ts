@@ -60,7 +60,7 @@ export const fromUniversalRelationScopeFieldReferenceToFieldReference = ({
     fieldMetadataUniversalIdentifier,
     flatFieldMetadataMaps,
   }),
-  ...(relationTargetFieldMetadataUniversalIdentifier !== undefined
+  ...(isDefined(relationTargetFieldMetadataUniversalIdentifier)
     ? {
         relationTargetFieldMetadataId: toFieldMetadataIdOrThrow({
           fieldMetadataUniversalIdentifier:

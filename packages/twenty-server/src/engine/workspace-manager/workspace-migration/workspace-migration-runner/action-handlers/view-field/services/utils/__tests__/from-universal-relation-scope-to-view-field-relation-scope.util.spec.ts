@@ -130,7 +130,7 @@ describe('relation scope universal conversion', () => {
     });
   });
 
-  it('marks ids that no longer resolve as null instead of dropping them', () => {
+  it('marks a field reference whose relation target no longer resolves as unresolved', () => {
     const universalRelationScope = toUniversal({
       ...RELATION_SCOPE,
       filters: [
@@ -142,8 +142,26 @@ describe('relation scope universal conversion', () => {
     });
 
     expect(universalRelationScope.filters[0]).toMatchObject({
-      fieldMetadataUniversalIdentifier: TASK_FIELD_UNIVERSAL_IDENTIFIER,
-      relationTargetFieldMetadataUniversalIdentifier: null,
+      fieldMetadataUniversalIdentifier: null,
+    });
+    expect(universalRelationScope.filters[0]).not.toHaveProperty(
+      'relationTargetFieldMetadataUniversalIdentifier',
+    );
+  });
+
+  it('marks a field id that no longer resolves as null', () => {
+    const universalRelationScope = toUniversal({
+      ...RELATION_SCOPE,
+      filters: [
+        {
+          ...RELATION_SCOPE.filters[1],
+          fieldMetadataId: '99999999-9999-4999-8999-999999999999',
+        },
+      ],
+    });
+
+    expect(universalRelationScope.filters[0]).toMatchObject({
+      fieldMetadataUniversalIdentifier: null,
     });
   });
 
@@ -154,6 +172,31 @@ describe('relation scope universal conversion', () => {
         flatFieldMetadataMaps,
       }),
     ).toEqual(RELATION_SCOPE);
+  });
+
+  it('reads a null relation target as none', () => {
+    expect(
+      fromUniversalRelationScopeToViewFieldRelationScope({
+        universalRelationScope: {
+          filters: [],
+          filterGroups: [],
+          sorts: [
+            {
+              fieldMetadataUniversalIdentifier:
+                CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER,
+              relationTargetFieldMetadataUniversalIdentifier: null,
+              direction: ViewSortDirection.ASC,
+            },
+          ],
+        },
+        flatFieldMetadataMaps,
+      }).sorts,
+    ).toEqual([
+      {
+        fieldMetadataId: CREATED_AT_FIELD_ID,
+        direction: ViewSortDirection.ASC,
+      },
+    ]);
   });
 
   it('throws when a universal identifier does not resolve', () => {

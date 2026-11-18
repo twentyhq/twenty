@@ -320,11 +320,6 @@ describe('validateFlatViewFieldRelationScope', () => {
       expectedMessage: 'must belong to the relation target object',
     },
     {
-      title: 'unresolved',
-      relationTargetFieldMetadataUniversalIdentifier: null,
-      expectedMessage: 'must belong to the relation target object',
-    },
-    {
       title: 'deactivated',
       relationTargetFieldMetadataUniversalIdentifier: 'task-deactivated',
       expectedMessage: 'must be active',
@@ -348,6 +343,23 @@ describe('validateFlatViewFieldRelationScope', () => {
         expectedMessage,
       ),
   );
+
+  it('treats a null related record field as none', () => {
+    expect(
+      validate({
+        universalRelationScope: {
+          ...OPEN_TASKS_SCOPE,
+          filters: [],
+          sorts: [
+            {
+              ...dueAtSort,
+              relationTargetFieldMetadataUniversalIdentifier: null,
+            },
+          ],
+        },
+      }),
+    ).toEqual([]);
+  });
 
   it('rejects an operand the related record field does not support', () =>
     expectOneErrorContaining(

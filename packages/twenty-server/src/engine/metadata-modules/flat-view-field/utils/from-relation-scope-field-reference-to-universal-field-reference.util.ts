@@ -15,21 +15,29 @@ type UniversalRelationScopeFieldReference = Pick<
   | 'relationTargetFieldMetadataUniversalIdentifier'
 >;
 
-// An id that no longer resolves becomes null, which the view field validator rejects
+// An unresolved id nulls fieldMetadataUniversalIdentifier, which the view field validator rejects,
+// because a null relation target means the filter or sort has none
 export const fromRelationScopeFieldReferenceToUniversalFieldReference = ({
   fieldReference: { fieldMetadataId, relationTargetFieldMetadataId },
   fieldMetadataUniversalIdentifierById,
 }: {
   fieldReference: RelationScopeFieldReference;
   fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
-}): UniversalRelationScopeFieldReference => ({
-  fieldMetadataUniversalIdentifier:
-    fieldMetadataUniversalIdentifierById[fieldMetadataId] ?? null,
-  ...(isDefined(relationTargetFieldMetadataId)
+}): UniversalRelationScopeFieldReference => {
+  const fieldMetadataUniversalIdentifier =
+    fieldMetadataUniversalIdentifierById[fieldMetadataId] ?? null;
+
+  if (!isDefined(relationTargetFieldMetadataId)) {
+    return { fieldMetadataUniversalIdentifier };
+  }
+
+  const relationTargetFieldMetadataUniversalIdentifier =
+    fieldMetadataUniversalIdentifierById[relationTargetFieldMetadataId];
+
+  return isDefined(relationTargetFieldMetadataUniversalIdentifier)
     ? {
-        relationTargetFieldMetadataUniversalIdentifier:
-          fieldMetadataUniversalIdentifierById[relationTargetFieldMetadataId] ??
-          null,
+        fieldMetadataUniversalIdentifier,
+        relationTargetFieldMetadataUniversalIdentifier,
       }
-    : {}),
-});
+    : { fieldMetadataUniversalIdentifier: null };
+};

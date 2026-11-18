@@ -111,7 +111,7 @@ const resolveRelationScopeFieldReference = ({
     };
   }
 
-  if (relationTargetFieldMetadataUniversalIdentifier === undefined) {
+  if (!isDefined(relationTargetFieldMetadataUniversalIdentifier)) {
     if (isOneToManyFlatFieldMetadata(flatFieldMetadata)) {
       return {
         errors: [
@@ -142,14 +142,10 @@ const resolveRelationScopeFieldReference = ({
     };
   }
 
-  const relationTargetFlatFieldMetadata = isDefined(
-    relationTargetFieldMetadataUniversalIdentifier,
-  )
-    ? findFlatEntityByUniversalIdentifier({
-        universalIdentifier: relationTargetFieldMetadataUniversalIdentifier,
-        flatEntityMaps: flatFieldMetadataMaps,
-      })
-    : undefined;
+  const relationTargetFlatFieldMetadata = findFlatEntityByUniversalIdentifier({
+    universalIdentifier: relationTargetFieldMetadataUniversalIdentifier,
+    flatEntityMaps: flatFieldMetadataMaps,
+  });
 
   if (
     !isDefined(relationTargetFlatFieldMetadata) ||
