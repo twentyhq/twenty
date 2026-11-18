@@ -7,10 +7,10 @@ Workspace members then only connect their Google account.
 
 1. Create or pick a Google Cloud project with billing enabled.
 2. Enable the Google Meet REST API, the Google Workspace Events API, the
-   Google Docs API and the Cloud Pub/Sub API:
+   Google Docs API, the Google Drive API and the Cloud Pub/Sub API:
 
    ```bash
-   gcloud services enable meet.googleapis.com workspaceevents.googleapis.com docs.googleapis.com pubsub.googleapis.com
+   gcloud services enable meet.googleapis.com workspaceevents.googleapis.com docs.googleapis.com drive.googleapis.com pubsub.googleapis.com
    ```
 
 3. Configure the OAuth consent screen with these scopes:
@@ -20,10 +20,12 @@ Workspace members then only connect their Google account.
    | `openid`, `email`                                         | Identify the connected Google account                       |
    | `https://www.googleapis.com/auth/meetings.space.readonly` | Read conferences and transcripts, and subscribe to events   |
    | `https://www.googleapis.com/auth/documents.readonly`      | Read the call's name and Gemini notes from Meet's documents |
+   | `https://www.googleapis.com/auth/drive.meet.readonly`     | Download the video of Meet recordings from Google Drive     |
 
-   The Meet and Docs scopes are sensitive: an app used outside your own Google
-   Workspace organization needs Google's verification before members can
-   connect.
+   The Meet and Docs scopes are sensitive and the Drive scope is restricted: an
+   app used outside your own Google Workspace organization needs Google's
+   verification before members can connect, and the restricted scope also
+   needs a yearly security assessment.
 
 4. Create an OAuth client of type **Web application** with this redirect URI:
 
