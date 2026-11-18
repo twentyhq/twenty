@@ -117,7 +117,11 @@ describe('useMobileNavigationBarItems', () => {
     ]);
     expect(
       result.current.items.find(({ name }) => name === 'tab-sales-tab'),
-    ).toMatchObject({ label: 'Sales', isUnread: true, hasDividerAfter: true });
+    ).toMatchObject({
+      label: 'Sales, 1 unread',
+      isUnread: true,
+      hasDividerAfter: true,
+    });
 
     act(() => tapItem(result, 'tab-sales-tab'));
 

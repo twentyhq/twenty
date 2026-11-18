@@ -67,7 +67,8 @@ export const useMobileNavigationBarItems = (): {
     containerId: null,
   });
   const activeNavigationMenuTab = useActiveNavigationMenuTab();
-  const { tabIdsWithUnreadChats } = useNavigationMenuTabIdsWithUnreadChats();
+  const { tabIdsWithUnreadChats, unreadOpenThreadCount } =
+    useNavigationMenuTabIdsWithUnreadChats();
   const setCurrentNavigationMenuTabId = useSetAtomState(
     currentNavigationMenuTabIdState,
   );
@@ -124,16 +125,22 @@ export const useMobileNavigationBarItems = (): {
         Icon: IconHome,
         onClick: () => openHomePageOnTab(null),
       },
-      ...navigationMenuTabs.map((tab, index): MobileNavigationBarItem => ({
-        name: `tab-${tab.id}`,
-        label: tab.name,
-        Icon: getIcon(tab.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT),
-        onClick: () => openHomePageOnTab(tab.id),
-        isUnread:
+      ...navigationMenuTabs.map((tab, index): MobileNavigationBarItem => {
+        const isUnread =
           activeNavigationMenuTab?.id !== tab.id &&
-          tabIdsWithUnreadChats.has(tab.id),
-        hasDividerAfter: index === navigationMenuTabs.length - 1,
-      })),
+          tabIdsWithUnreadChats.has(tab.id);
+
+        return {
+          name: `tab-${tab.id}`,
+          label: isUnread
+            ? t`${tab.name}, ${unreadOpenThreadCount} unread`
+            : tab.name,
+          Icon: getIcon(tab.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT),
+          onClick: () => openHomePageOnTab(tab.id),
+          isUnread,
+          hasDividerAfter: index === navigationMenuTabs.length - 1,
+        };
+      }),
       {
         name: 'search',
         label: t`Search`,
