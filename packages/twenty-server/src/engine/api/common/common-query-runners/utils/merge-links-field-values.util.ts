@@ -3,7 +3,7 @@ import { type LinkMetadata, type LinksMetadata } from 'twenty-shared/types';
 
 import { hasRecordFieldValue } from 'src/engine/api/common/utils/has-record-field-value.util';
 
-import { parseArrayOrJsonStringToArray } from 'src/engine/api/common/utils/parse-additional-items.util';
+import { parseArrayOrJsonStringToArray } from 'src/engine/api/graphql/graphql-query-runner/utils/parse-additional-items.util';
 
 export const mergeLinksFieldValues = (
   recordsWithValues: { value: LinksMetadata; recordId: string }[],
