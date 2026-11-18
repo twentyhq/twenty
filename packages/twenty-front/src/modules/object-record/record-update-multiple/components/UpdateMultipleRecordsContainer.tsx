@@ -123,7 +123,7 @@ export const UpdateMultipleRecordsContainer = ({
     (value) => value !== undefined,
   );
 
-  const handleFieldChange = (fieldName: string, value: any) => {
+  const handleFieldChange = (fieldName: string, value: unknown) => {
     setFieldUpdates((prevState) => ({
       ...prevState,
       [fieldName]: value,
