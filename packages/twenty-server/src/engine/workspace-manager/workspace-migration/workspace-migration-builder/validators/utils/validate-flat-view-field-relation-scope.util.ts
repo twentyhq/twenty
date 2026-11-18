@@ -42,10 +42,17 @@ type ResolvedRelationScopeFieldReference = {
   relationTargetFlatFieldMetadata?: UniversalFlatFieldMetadata;
 };
 
-const invalidRelationScopeError = (
-  message: string,
-  userFriendlyMessage: FlatEntityValidationError['userFriendlyMessage'],
-): FlatEntityValidationError => ({
+const VIEW_FILTER_GROUP_LOGICAL_OPERATORS = Object.values(
+  ViewFilterGroupLogicalOperator,
+);
+
+const invalidRelationScopeError = ({
+  message,
+  userFriendlyMessage,
+}: Pick<
+  FlatEntityValidationError,
+  'message' | 'userFriendlyMessage'
+>): FlatEntityValidationError => ({
   code: ViewExceptionCode.INVALID_VIEW_DATA,
   message,
   userFriendlyMessage,
@@ -74,25 +81,25 @@ const getRelationTargetError = (
 ): FlatEntityValidationError => {
   switch (failureReason) {
     case 'NOT_A_MANY_TO_ONE_RELATION':
-      return invalidRelationScopeError(
-        t`A relation scope related record field can only be used on a many-to-one relation field`,
-        msg`Only a field linking to one record can use a field of that record`,
-      );
+      return invalidRelationScopeError({
+        message: t`A relation scope related record field can only be used on a many-to-one relation field`,
+        userFriendlyMessage: msg`Only a field linking to one record can use a field of that record`,
+      });
     case 'NOT_ON_RELATION_TARGET_OBJECT':
-      return invalidRelationScopeError(
-        t`The relation scope related record field must belong to the relation target object`,
-        msg`The field must belong to the related object`,
-      );
+      return invalidRelationScopeError({
+        message: t`The relation scope related record field must belong to the relation target object`,
+        userFriendlyMessage: msg`The field must belong to the related object`,
+      });
     case 'INACTIVE':
-      return invalidRelationScopeError(
-        t`The relation scope related record field must be active`,
-        msg`A deactivated field cannot be used to filter or sort related records`,
-      );
+      return invalidRelationScopeError({
+        message: t`The relation scope related record field must be active`,
+        userFriendlyMessage: msg`A deactivated field cannot be used to filter or sort related records`,
+      });
     case 'IS_A_RELATION':
-      return invalidRelationScopeError(
-        t`The relation scope related record field cannot be a relation`,
-        msg`A related record's relation cannot be used to filter or sort`,
-      );
+      return invalidRelationScopeError({
+        message: t`The relation scope related record field cannot be a relation`,
+        userFriendlyMessage: msg`A related record's relation cannot be used to filter or sort`,
+      });
   }
 };
 
@@ -122,10 +129,10 @@ const resolveRelationScopeFieldReference = ({
   ) {
     return {
       errors: [
-        invalidRelationScopeError(
-          t`Relation scope fields must belong to the relation target object`,
-          msg`Related records can only be filtered or sorted by their own fields`,
-        ),
+        invalidRelationScopeError({
+          message: t`Relation scope fields must belong to the relation target object`,
+          userFriendlyMessage: msg`Related records can only be filtered or sorted by their own fields`,
+        }),
       ],
     };
   }
@@ -133,10 +140,10 @@ const resolveRelationScopeFieldReference = ({
   if (!isActiveFlatFieldMetadata(flatFieldMetadata)) {
     return {
       errors: [
-        invalidRelationScopeError(
-          t`Relation scope fields must be active`,
-          msg`A deactivated field cannot be used to filter or sort related records`,
-        ),
+        invalidRelationScopeError({
+          message: t`Relation scope fields must be active`,
+          userFriendlyMessage: msg`A deactivated field cannot be used to filter or sort related records`,
+        }),
       ],
     };
   }
@@ -145,10 +152,10 @@ const resolveRelationScopeFieldReference = ({
     if (isOneToManyFlatFieldMetadata(flatFieldMetadata)) {
       return {
         errors: [
-          invalidRelationScopeError(
-            t`Relation scope fields cannot be one-to-many relations`,
-            msg`Related records cannot be filtered or sorted by a list of records`,
-          ),
+          invalidRelationScopeError({
+            message: t`Relation scope fields cannot be one-to-many relations`,
+            userFriendlyMessage: msg`Related records cannot be filtered or sorted by a list of records`,
+          }),
         ],
       };
     }
@@ -186,23 +193,21 @@ const validateRelationScopeFilterGroups = (
       parentFilterGroupIdById.has(filterGroup.id)
     ) {
       errors.push(
-        invalidRelationScopeError(
-          t`Relation scope filter group ids must be unique UUIDs`,
-          msg`Related records filter groups are invalid`,
-        ),
+        invalidRelationScopeError({
+          message: t`Relation scope filter group ids must be unique UUIDs`,
+          userFriendlyMessage: msg`Related records filter groups are invalid`,
+        }),
       );
     }
 
     if (
-      !Object.values(ViewFilterGroupLogicalOperator).includes(
-        filterGroup.logicalOperator,
-      )
+      !VIEW_FILTER_GROUP_LOGICAL_OPERATORS.includes(filterGroup.logicalOperator)
     ) {
       errors.push(
-        invalidRelationScopeError(
-          t`Relation scope filter group has an invalid logical operator`,
-          msg`Related records filter groups are invalid`,
-        ),
+        invalidRelationScopeError({
+          message: t`Relation scope filter group has an invalid logical operator`,
+          userFriendlyMessage: msg`Related records filter groups are invalid`,
+        }),
       );
     }
 
@@ -218,10 +223,10 @@ const validateRelationScopeFilterGroups = (
       !parentFilterGroupIdById.has(filterGroup.parentFilterGroupId)
     ) {
       errors.push(
-        invalidRelationScopeError(
-          t`Relation scope filter group parent not found`,
-          msg`Related records filter groups are invalid`,
-        ),
+        invalidRelationScopeError({
+          message: t`Relation scope filter group parent not found`,
+          userFriendlyMessage: msg`Related records filter groups are invalid`,
+        }),
       );
       continue;
     }
@@ -232,10 +237,10 @@ const validateRelationScopeFilterGroups = (
     while (isDefined(parentFilterGroupId)) {
       if (visitedFilterGroupIds.has(parentFilterGroupId)) {
         errors.push(
-          invalidRelationScopeError(
-            t`Relation scope filter groups cannot be nested in themselves`,
-            msg`Related records filter groups are invalid`,
-          ),
+          invalidRelationScopeError({
+            message: t`Relation scope filter groups cannot be nested in themselves`,
+            userFriendlyMessage: msg`Related records filter groups are invalid`,
+          }),
         );
         break;
       }
@@ -267,10 +272,10 @@ const validateRelationScopeFilter = ({
 
   if (!isValidUuid(filter.id) || filterIds.has(filter.id)) {
     errors.push(
-      invalidRelationScopeError(
-        t`Relation scope filter ids must be unique UUIDs`,
-        msg`Related records filters are invalid`,
-      ),
+      invalidRelationScopeError({
+        message: t`Relation scope filter ids must be unique UUIDs`,
+        userFriendlyMessage: msg`Related records filters are invalid`,
+      }),
     );
   }
 
@@ -281,10 +286,10 @@ const validateRelationScopeFilter = ({
     !filterGroupIds.has(filter.filterGroupId)
   ) {
     errors.push(
-      invalidRelationScopeError(
-        t`Relation scope filter group not found`,
-        msg`Related records filters are invalid`,
-      ),
+      invalidRelationScopeError({
+        message: t`Relation scope filter group not found`,
+        userFriendlyMessage: msg`Related records filters are invalid`,
+      }),
     );
   }
 
@@ -372,10 +377,10 @@ const validateRelationScopeSort = ({
 
   if (!Object.values(ViewSortDirection).includes(sort.direction)) {
     errors.push(
-      invalidRelationScopeError(
-        t`Relation scope sort has an invalid direction`,
-        msg`Related records sort direction should be ascending or descending`,
-      ),
+      invalidRelationScopeError({
+        message: t`Relation scope sort has an invalid direction`,
+        userFriendlyMessage: msg`Related records sort direction should be ascending or descending`,
+      }),
     );
   }
 
@@ -395,10 +400,10 @@ const validateRelationScopeLimit = (
   }
 
   return [
-    invalidRelationScopeError(
-      t`Relation scope limit must be an integer between 1 and ${QUERY_MAX_RECORDS_FROM_RELATION}`,
-      msg`The number of related records to show is out of range`,
-    ),
+    invalidRelationScopeError({
+      message: t`Relation scope limit must be an integer between 1 and ${QUERY_MAX_RECORDS_FROM_RELATION}`,
+      userFriendlyMessage: msg`The number of related records to show is out of range`,
+    }),
   ];
 };
 
@@ -422,10 +427,10 @@ export const validateFlatViewFieldRelationScope = ({
 
   if (isCanonical) {
     return [
-      invalidRelationScopeError(
-        t`Only non-canonical view fields can have a relation scope`,
-        msg`Only added columns can filter, sort or limit related records`,
-      ),
+      invalidRelationScopeError({
+        message: t`Only non-canonical view fields can have a relation scope`,
+        userFriendlyMessage: msg`Only added columns can filter, sort or limit related records`,
+      }),
     ];
   }
 
@@ -440,10 +445,10 @@ export const validateFlatViewFieldRelationScope = ({
     !isDefined(objectMetadataUniversalIdentifier)
   ) {
     return [
-      invalidRelationScopeError(
-        t`A relation scope can only be set on a one-to-many relation field`,
-        msg`Only a column listing related records can filter, sort or limit them`,
-      ),
+      invalidRelationScopeError({
+        message: t`A relation scope can only be set on a one-to-many relation field`,
+        userFriendlyMessage: msg`Only a column listing related records can filter, sort or limit them`,
+      }),
     ];
   }
 
