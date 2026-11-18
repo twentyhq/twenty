@@ -8,6 +8,11 @@ import {
   type AgentRunExecution,
   captureAgentRunExecution,
 } from 'test/integration/graphql/suites/user-session/utils/capture-agent-run-execution.util';
+import {
+  answerWith,
+  mockScriptedAiModel,
+} from 'test/integration/ai/utils/mock-scripted-ai-model.util';
+import { runAgentQueryFactory } from 'test/integration/graphql/suites/user-session/utils/run-agent-query-factory.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import {
@@ -239,6 +244,45 @@ describe('Agent run conversation should be recorded for the caller', () => {
     }
 
     return execution;
+  };
+
+  const runAgentAndListOfferedToolNames = async ({
+    token,
+    runAsWorkspaceMemberId,
+  }: {
+    token: string;
+    runAsWorkspaceMemberId?: string;
+  }) => {
+    const systemPrompts: string[] = [];
+    const offeredToolNamesByCall = mockScriptedAiModel(({ options }) => {
+      systemPrompts.push(
+        ...options.prompt.flatMap((message) =>
+          message.role === 'system' ? [message.content] : [],
+        ),
+      );
+
+      return answerWith('Done');
+    });
+
+    try {
+      const response = await makeMetadataApiRequest(
+        runAgentQueryFactory({
+          agentUniversalIdentifier: globalTestContext.agentUniversalIdentifier,
+          prompt: 'Run',
+          thread: { key: randomUUID() },
+          runAsWorkspaceMemberId,
+        }),
+        token,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      threadIds.push(response.body.data.runAgent.threadId);
+    } finally {
+      jest.restoreAllMocks();
+    }
+
+    // a lazily loaded tool is only named in the catalog the prompt carries
+    return [...offeredToolNamesByCall.flat(), ...systemPrompts].join('\n');
   };
 
   beforeAll(async () => {
@@ -486,6 +530,21 @@ describe('Agent run conversation should be recorded for the caller', () => {
       }),
     ).resolves.toMatchObject({ success: false });
     expect(await countThreadTargets(execution.threadId)).toBe(0);
+  });
+
+  it('should offer filing the conversation under records only to a run made as a member', async () => {
+    await expect(
+      runAgentAndListOfferedToolNames({
+        token: globalTestContext.applicationToken,
+        runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      }),
+    ).resolves.toContain(ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME);
+
+    await expect(
+      runAgentAndListOfferedToolNames({
+        token: globalTestContext.applicationToken,
+      }),
+    ).resolves.not.toContain(ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME);
   });
 
   it('should show a member only the text of a turn another member sent in the same thread', async () => {

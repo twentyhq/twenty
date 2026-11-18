@@ -13,6 +13,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
+import { AiException } from 'src/engine/metadata-modules/ai/ai.exception';
 
 const ATTACH_CONVERSATION_TO_RECORDS_MAX_RECORDS = 100;
 
@@ -137,10 +138,11 @@ export class AttachConversationToRecordsTool extends BaseTool<
         });
         result.attached.push(record);
       } catch (error) {
-        result.failed.push({
-          ...record,
-          error: error instanceof Error ? error.message : String(error),
-        });
+        if (!(error instanceof AiException)) {
+          throw error;
+        }
+
+        result.failed.push({ ...record, error: error.message });
       }
     }
 
