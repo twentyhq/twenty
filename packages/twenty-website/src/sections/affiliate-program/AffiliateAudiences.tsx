@@ -1,5 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import NextImage from 'next/image';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import {
@@ -47,10 +49,33 @@ const AudienceCard = styled.div`
   background-color: ${color('white')};
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(2)};
-  padding: ${spacing(5)} ${spacing(6)};
+  padding: ${spacing(6)};
 
   & > * + * {
     margin-top: ${spacing(2)};
+  }
+
+  & > * + h3 {
+    margin-top: ${spacing(4)};
+  }
+`;
+
+// One slot height for every card, so titles align whether or not the
+// audience has its icon yet.
+const AudienceVisual = styled.div`
+  align-items: flex-start;
+  display: flex;
+  height: ${spacing(20)};
+`;
+
+const AudienceIcon = styled.div<{ $widthPx: number }>`
+  height: 100%;
+  position: relative;
+  width: ${({ $widthPx }) => `${$widthPx}px`};
+
+  img {
+    object-fit: contain;
+    object-position: left top;
   }
 `;
 
@@ -75,7 +100,7 @@ export function AffiliateAudiences() {
   const i18n = getServerI18n();
 
   return (
-    <SectionShell rhythm="section" scheme="light">
+    <SectionShell rhythm="section" scheme="muted">
       <SectionStack>
         <SectionIntro>
           <Eyebrow>{i18n._(msg`Who it's for`)}</Eyebrow>
@@ -88,7 +113,20 @@ export function AffiliateAudiences() {
         <AudienceGrid>
           {AFFILIATE_AUDIENCES.map((audience) => (
             <AudienceCard key={audience.title.id}>
-              <AudienceMarker aria-hidden />
+              <AudienceVisual aria-hidden>
+                {isDefined(audience.icon) ? (
+                  <AudienceIcon $widthPx={audience.icon.widthPx}>
+                    <NextImage
+                      alt=""
+                      fill
+                      sizes={`${audience.icon.widthPx}px`}
+                      src={audience.icon.src}
+                    />
+                  </AudienceIcon>
+                ) : (
+                  <AudienceMarker />
+                )}
+              </AudienceVisual>
               <AudienceTitle>{i18n._(audience.title)}</AudienceTitle>
               <Body muted size="sm">
                 {i18n._(audience.body)}
