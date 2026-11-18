@@ -214,4 +214,24 @@ describe('collectRecordsByObjectNameSingular', () => {
       }).size,
     ).toBe(0);
   });
+
+  it('should throw when a returned relation cannot be resolved to a target object', () => {
+    const records: ObjectRecord[] = [
+      { id: 'person-1', unknownRelation: [{ id: 'unknown-1' }] },
+    ];
+
+    expect(() =>
+      collect({
+        records,
+        flatObjectMetadata: person,
+        selection: buildSelection({
+          unknownRelation: {
+            fieldName: 'unknownRelation',
+            selection: buildSelection(),
+          },
+        }),
+        objectNameSingulars: ['calendarEvent'],
+      }),
+    ).toThrow('Target object of relation unknownRelation on person not found');
+  });
 });

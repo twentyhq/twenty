@@ -1,3 +1,4 @@
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ApplicationPublicAssetExportService } from 'src/engine/core-modules/application/application-manifest/services/application-public-asset-export.service';
 import { APPLICATION_EXPORT_FILE_BUDGET_BYTES } from 'src/engine/core-modules/application/application-manifest/constants/application-export-file-budget-bytes.constant';
 import { type ApplicationExportFileBudget } from 'src/engine/core-modules/application/application-manifest/types/application-export-file-budget.type';
@@ -5,7 +6,7 @@ import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import { createHash } from 'node:crypto';
 import { type Manifest } from 'twenty-shared/application';
-import { ApplicationFrontComponentSourceService } from 'src/engine/core-modules/application/application-manifest/services/application-front-component-source.service';
+import { ApplicationSourceService } from 'src/engine/core-modules/application/application-manifest/services/application-source.service';
 import { Readable } from 'node:stream';
 import { Test } from '@nestjs/testing';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
@@ -55,7 +56,7 @@ describe('ApplicationFrontComponentExportService', () => {
   const repository = { find: jest.fn() };
   let assetService: ApplicationPublicAssetExportService;
   let service: ApplicationFrontComponentExportService;
-  let sourceService: ApplicationFrontComponentSourceService;
+  let sourceService: ApplicationSourceService;
   const run = ({
     shouldIncludeSourceFiles = true,
     shouldIncludeSourceDependencies = true,
@@ -88,7 +89,8 @@ describe('ApplicationFrontComponentExportService', () => {
     const module = await Test.createTestingModule({
       providers: [
         ApplicationFrontComponentExportService,
-        ApplicationFrontComponentSourceService,
+        ApplicationSourceService,
+        { provide: WorkspaceCacheService, useValue: {} },
         ApplicationPublicAssetExportService,
         {
           provide: getWorkspaceScopedRepositoryToken(FileEntity),
@@ -98,7 +100,7 @@ describe('ApplicationFrontComponentExportService', () => {
       ],
     }).compile();
     service = module.get(ApplicationFrontComponentExportService);
-    sourceService = module.get(ApplicationFrontComponentSourceService);
+    sourceService = module.get(ApplicationSourceService);
     assetService = module.get(ApplicationPublicAssetExportService);
     storage.writeFile.mockReset();
     storage.checkFileExists.mockReset();
