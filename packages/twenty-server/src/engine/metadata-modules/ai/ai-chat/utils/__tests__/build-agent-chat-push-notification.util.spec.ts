@@ -12,12 +12,10 @@ const workspaceMemberById = {
   [FELIX]: {
     name: { firstName: 'Felix', lastName: 'Martin' },
     userEmail: 'felix@example.com',
-    deletedAt: null,
   },
   [ME]: {
     name: { firstName: 'Grace', lastName: 'Hopper' },
     userEmail: 'grace@example.com',
-    deletedAt: null,
   },
 };
 

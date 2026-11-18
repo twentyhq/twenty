@@ -4,14 +4,13 @@ import { type AgentChatInboxState } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { In } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
-import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { WebPushService } from 'src/engine/core-modules/web-push/services/web-push.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { type SendAgentChatPushNotificationsJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/send-agent-chat-push-notifications.job';
@@ -23,7 +22,9 @@ import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const RENOTIFY_COOLDOWN_MS = 15_000;
 
@@ -43,7 +44,7 @@ export class AgentChatPushNotificationService {
     private readonly i18nService: I18nService,
     private readonly sharingService: AgentChatSharingService,
     private readonly webPushService: WebPushService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   async sendPushNotifications({
@@ -69,24 +70,28 @@ export class AgentChatPushNotificationService {
       workspaceId,
       threadId: thread.id,
     });
-    const { flatWorkspaceMemberMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkspaceMemberMaps',
-      ]);
-    const recipientWorkspaceMemberIds = new Set(
-      [
-        ...participants.keys(),
-        thread.directMessageFirstWorkspaceMemberId,
-        thread.directMessageSecondWorkspaceMemberId,
-        thread.assigneeId,
+    const recipientWorkspaceMemberIds = [
+      ...new Set(
+        [
+          ...participants.keys(),
+          thread.directMessageFirstWorkspaceMemberId,
+          thread.directMessageSecondWorkspaceMemberId,
+          thread.assigneeId,
+        ].filter(isDefined),
+      ),
+    ];
+    const workspaceMemberById = await this.findWorkspaceMemberById({
+      workspaceId,
+      workspaceMemberIds: [
+        ...recipientWorkspaceMemberIds,
+        thread.lastMessageSenderWorkspaceMemberId,
       ].filter(isDefined),
-    );
+    });
 
     for (const recipientWorkspaceMemberId of recipientWorkspaceMemberIds) {
-      const recipient =
-        flatWorkspaceMemberMaps.byId[recipientWorkspaceMemberId];
+      const recipient = workspaceMemberById[recipientWorkspaceMemberId];
 
-      if (!isDefined(recipient) || isDefined(recipient.deletedAt)) {
+      if (!isDefined(recipient)) {
         continue;
       }
 
@@ -96,7 +101,7 @@ export class AgentChatPushNotificationService {
           thread,
           recipient,
           participant: participants.get(recipient.id),
-          workspaceMemberById: flatWorkspaceMemberMaps.byId,
+          workspaceMemberById,
         });
       } catch (error) {
         this.logger.warn(
@@ -117,9 +122,11 @@ export class AgentChatPushNotificationService {
   }: {
     workspaceId: string;
     thread: AgentChatThreadWorkspaceEntity;
-    recipient: FlatWorkspaceMember;
+    recipient: WorkspaceMemberWorkspaceEntity;
     participant: AgentChatInboxState | undefined;
-    workspaceMemberById: FlatWorkspaceMemberMaps['byId'];
+    workspaceMemberById: Partial<
+      Record<string, WorkspaceMemberWorkspaceEntity>
+    >;
   }): Promise<void> {
     const reason = getAgentChatPushNotificationReason({
       thread,
@@ -204,6 +211,33 @@ export class AgentChatPushNotificationService {
           lastMentionedAt: toIsoStringOrNull(row.lastMentionedAt),
           mentionsResolvedAt: toIsoStringOrNull(row.mentionsResolvedAt),
         },
+      ]),
+    );
+  }
+
+  private async findWorkspaceMemberById({
+    workspaceId,
+    workspaceMemberIds,
+  }: {
+    workspaceId: string;
+    workspaceMemberIds: string[];
+  }): Promise<Partial<Record<string, WorkspaceMemberWorkspaceEntity>>> {
+    const workspaceMembers =
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workspaceMemberRepository =
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
+            'workspaceMember',
+          );
+
+        return workspaceMemberRepository.find({
+          where: { id: In(workspaceMemberIds) },
+        });
+      }, buildSystemAuthContext(workspaceId));
+
+    return Object.fromEntries(
+      workspaceMembers.map((workspaceMember) => [
+        workspaceMember.id,
+        workspaceMember,
       ]),
     );
   }

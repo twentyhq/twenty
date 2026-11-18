@@ -7,10 +7,10 @@ import {
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
 import { type WebPushNotification } from 'src/engine/core-modules/web-push/types/web-push-notification.type';
 import { getAgentChatPushNotificationPreviewText } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-push-notification-preview-text.util';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export const buildAgentChatPushNotification = ({
   i18n,
@@ -32,10 +32,7 @@ export const buildAgentChatPushNotification = ({
   >;
   recipientWorkspaceMemberId: string;
   workspaceMemberById: Partial<
-    Record<
-      string,
-      Pick<FlatWorkspaceMember, 'name' | 'userEmail' | 'deletedAt'>
-    >
+    Record<string, Pick<WorkspaceMemberWorkspaceEntity, 'name' | 'userEmail'>>
   >;
   isPreviewEnabled: boolean;
 }): Omit<WebPushNotification, 'renotify'> => {
@@ -46,7 +43,7 @@ export const buildAgentChatPushNotification = ({
       ? workspaceMemberById[workspaceMemberId]
       : undefined;
 
-    if (!isDefined(workspaceMember) || isDefined(workspaceMember.deletedAt)) {
+    if (!isDefined(workspaceMember)) {
       return formerMemberName;
     }
 
