@@ -18,7 +18,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
-import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { CommonRecordQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-record-query-runner.service';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -57,7 +57,7 @@ import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/
 import { type CommonQueryResultProcessingArgs } from 'src/engine/api/common/types/common-query-result-processing-args.type';
 
 @Injectable()
-export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerService<
+export class CommonMergeManyQueryRunnerService extends CommonRecordQueryRunnerService<
   MergeManyQueryArgs,
   ObjectRecord
 > {

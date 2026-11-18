@@ -6,7 +6,7 @@ import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Brackets, In, InsertResult, ObjectLiteral } from 'typeorm';
 
-import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { CommonRecordQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-record-query-runner.service';
 import { type ConflictingFieldGroup } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/conflicting-field-group.type';
 import { PartialObjectRecordWithId } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/partial-object-record-with-id.type';
 import { buildWhereConditions } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/build-where-conditions.util';
@@ -55,7 +55,7 @@ import { getNestedRelationFieldNames } from 'src/engine/twenty-orm/utils/get-nes
 const MAX_NESTED_RELATION_CREATE_DEPTH = 5;
 
 @Injectable()
-export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerService<
+export class CommonCreateManyQueryRunnerService extends CommonRecordQueryRunnerService<
   CreateManyQueryArgs,
   ObjectRecord[]
 > {

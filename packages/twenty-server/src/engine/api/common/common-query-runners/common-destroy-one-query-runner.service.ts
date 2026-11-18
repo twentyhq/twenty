@@ -4,7 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { CommonRecordQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-record-query-runner.service';
 import { CommonDestroyManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-destroy-many-query-runner.service';
 import {
   CommonQueryRunnerException,
@@ -22,7 +22,7 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 
 @Injectable()
-export class CommonDestroyOneQueryRunnerService extends CommonBaseQueryRunnerService<
+export class CommonDestroyOneQueryRunnerService extends CommonRecordQueryRunnerService<
   DestroyOneQueryArgs,
   ObjectRecord
 > {

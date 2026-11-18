@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
 
-import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { CommonRecordQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-record-query-runner.service';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -23,7 +23,7 @@ import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 
 @Injectable()
-export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerService<
+export class CommonUpdateManyQueryRunnerService extends CommonRecordQueryRunnerService<
   UpdateManyQueryArgs,
   ObjectRecord[]
 > {
