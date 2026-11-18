@@ -13,6 +13,7 @@ import {
 import { AggregateOperations } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ViewFieldRelationScopeInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/view-field-relation-scope.input';
 
 @InputType()
 class UpdateViewFieldInputUpdates {
@@ -45,6 +46,12 @@ class UpdateViewFieldInputUpdates {
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
   relationTargetFieldMetadataId?: string | null;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ViewFieldRelationScopeInput)
+  @Field(() => ViewFieldRelationScopeInput, { nullable: true })
+  relationScope?: ViewFieldRelationScopeInput | null;
 }
 
 @InputType()

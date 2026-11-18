@@ -1,15 +1,18 @@
 import { Field, HideField, InputType } from '@nestjs/graphql';
 
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
   IsNumber,
   IsOptional,
   IsUUID,
+  ValidateNested,
 } from 'class-validator';
 import { AggregateOperations } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ViewFieldRelationScopeInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/view-field-relation-scope.input';
 
 @InputType()
 export class CreateViewFieldInput {
@@ -60,6 +63,12 @@ export class CreateViewFieldInput {
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
   relationTargetFieldMetadataId?: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ViewFieldRelationScopeInput)
+  @Field(() => ViewFieldRelationScopeInput, { nullable: true })
+  relationScope?: ViewFieldRelationScopeInput;
 
   @HideField()
   universalIdentifier?: string;

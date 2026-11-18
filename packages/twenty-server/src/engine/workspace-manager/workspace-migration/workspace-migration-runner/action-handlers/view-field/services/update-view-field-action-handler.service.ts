@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
@@ -10,6 +13,7 @@ import {
   UniversalUpdateViewFieldAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/types/workspace-migration-view-field-action.type';
 import { fromUniversalOverridesToViewFieldOverrides } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-field/services/utils/from-universal-overrides-to-view-field-overrides.util';
+import { fromUniversalRelationScopeToViewFieldRelationScope } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-field/services/utils/from-universal-relation-scope-to-view-field-relation-scope.util';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -34,14 +38,17 @@ export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunne
       universalIdentifier: action.universalIdentifier,
     });
 
-    const { universalOverrides, ...updateWithResolvedForeignKeys } =
-      resolveUniversalUpdateRelationIdentifiersToIds({
-        metadataName: 'viewField',
-        universalUpdate: action.update,
-        allFlatEntityMaps,
-      });
+    const {
+      universalOverrides,
+      universalRelationScope,
+      ...updateWithResolvedForeignKeys
+    } = resolveUniversalUpdateRelationIdentifiersToIds({
+      metadataName: 'viewField',
+      universalUpdate: action.update,
+      allFlatEntityMaps,
+    });
 
-    const update =
+    const updateWithOverrides =
       universalOverrides === undefined
         ? updateWithResolvedForeignKeys
         : universalOverrides === null
@@ -54,6 +61,20 @@ export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunne
                   allFlatEntityMaps.flatViewFieldGroupMaps,
               }),
             };
+
+    const update =
+      universalRelationScope === undefined
+        ? updateWithOverrides
+        : {
+            ...updateWithOverrides,
+            relationScope: isDefined(universalRelationScope)
+              ? fromUniversalRelationScopeToViewFieldRelationScope({
+                  universalRelationScope,
+                  flatFieldMetadataMaps:
+                    allFlatEntityMaps.flatFieldMetadataMaps,
+                })
+              : null,
+          };
 
     return {
       type: 'update',
@@ -72,7 +93,11 @@ export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunne
     const viewFieldRepository =
       queryRunner.manager.getRepository<ViewFieldEntity>(ViewFieldEntity);
 
-    await viewFieldRepository.update({ id: entityId, workspaceId }, update);
+    // TypeORM's deep partial cannot express the jsonb filter value union
+    await viewFieldRepository.update(
+      { id: entityId, workspaceId },
+      update as QueryDeepPartialEntity<ViewFieldEntity>,
+    );
   }
 
   async executeForWorkspaceSchema(

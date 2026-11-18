@@ -257,6 +257,7 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
       position,
       aggregateOperation: null,
       relationTargetFieldMetadataUniversalIdentifier: null,
+      universalRelationScope: null,
       isActive: true,
       isSystemSideEffect: true,
       isCanonical: true,

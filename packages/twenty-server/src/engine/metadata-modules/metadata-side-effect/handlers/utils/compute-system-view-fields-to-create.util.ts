@@ -53,6 +53,7 @@ export const computeSystemViewFieldsToCreate = ({
     position: startPosition + index,
     aggregateOperation: null,
     relationTargetFieldMetadataUniversalIdentifier: null,
+    universalRelationScope: null,
     isActive: true,
     isSystemSideEffect: true,
     isCanonical: true,

@@ -41,6 +41,7 @@ export const buildInitialViewFieldFlatEntity = ({
   position,
   aggregateOperation,
   relationTargetFieldMetadataUniversalIdentifier: null,
+  universalRelationScope: null,
   isActive,
   isSystemSideEffect: false,
   isCanonical: true,
