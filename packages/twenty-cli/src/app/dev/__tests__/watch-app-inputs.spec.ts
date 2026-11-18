@@ -66,16 +66,26 @@ const fixture = async () => {
   const onChange = vi.fn();
   const onError = vi.fn();
   const onWarning = vi.fn();
+  const onScopeChange = vi.fn(async () => {});
   const watcher = await watchAppInputs({
     appPath,
     signal: new AbortController().signal,
     onChange,
     onError,
     onWarning,
+    onScopeChange,
   });
   cleanups.push(watcher.close);
 
-  return { root, appPath, watcher, onChange, onError, onWarning };
+  return {
+    root,
+    appPath,
+    watcher,
+    onChange,
+    onError,
+    onWarning,
+    onScopeChange,
+  };
 };
 const collect = async (file: string) =>
   (
@@ -239,6 +249,39 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
     await writeFile(external, 'after');
     await watcher.update(inputs, true);
     expect(onChange).toHaveBeenCalled();
+  });
+
+  it('reports changed scope, retaining successful inputs on failure and dropping obsolete paths on success', async () => {
+    const { root, watcher, onScopeChange } = await fixture();
+    const home = join(root, 'home');
+    await mkdir(home);
+    watcherOptions.homeDirectory = await realpath(home);
+    const external = join(home, 'helper.ts');
+    await writeFile(external, 'initial');
+    const inputs = await collect(external);
+    await watcher.update(inputs, true);
+    await watcher.update([...inputs].reverse(), false);
+    expect(onScopeChange).toHaveBeenCalledOnce();
+    expect(onScopeChange).toHaveBeenLastCalledWith({
+      filePaths: [await realpath(external)],
+      directoryPaths: [],
+      excludedDirectoryPaths: [await realpath(home)],
+    });
+
+    const missing = join(home, 'missing.ts');
+    await watcher.update(await collect(missing), false);
+    expect(onScopeChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        filePaths: [await realpath(external), missing].sort(),
+      }),
+    );
+    await watcher.update([], true);
+    expect(onScopeChange).toHaveBeenCalledTimes(3);
+    expect(onScopeChange).toHaveBeenLastCalledWith({
+      filePaths: [],
+      directoryPaths: [],
+      excludedDirectoryPaths: [],
+    });
   });
 
   it('never lists broad directories or their symlink aliases while collecting or attaching inputs', async () => {

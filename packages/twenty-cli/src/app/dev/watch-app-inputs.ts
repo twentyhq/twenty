@@ -8,6 +8,7 @@ import { isBroadWatchDirectory } from '@/app/dev/is-broad-watch-directory';
 import { isIgnoredWatchPath } from '@/app/dev/is-ignored-watch-path';
 import { readWatchInputStamp } from '@/app/dev/read-watch-input-stamp';
 import { type WatchInputs } from '@/app/dev/types/watch-inputs.type';
+import { type WatchScope } from '@/app/dev/types/watch-scope.type';
 import { type Output } from '@/output/types/output.type';
 import { isInsideDirectory } from '@/utils/is-inside-directory';
 
@@ -46,12 +47,14 @@ export const watchAppInputs = async ({
   onChange,
   onError,
   onWarning,
+  onScopeChange,
 }: {
   appPath: string;
   signal: AbortSignal;
   onChange: () => void;
   onError: (error: Error) => void;
   onWarning?: Output['warn'];
+  onScopeChange?: (scope: WatchScope) => Promise<void>;
 }) => {
   appPath = await realpath(appPath);
   const rootWatcher = watch(appPath, {
@@ -67,6 +70,7 @@ export const watchAppInputs = async ({
   let stopExternalWatchers: (() => void)[] = [];
   let excludedDirectories = new Set<string>();
   let successfulInputs: WatchInputs = [];
+  let previousScopeKey: string | undefined;
 
   const close = async () => {
     for (const stop of stopExternalWatchers) stop();
@@ -136,6 +140,29 @@ export const watchAppInputs = async ({
         stopExternalWatchers.push(() => unwatchFile(input.path, changed));
       }
       for (const stop of previousWatchers) stop();
+
+      if (onScopeChange) {
+        const scope: WatchScope = {
+          filePaths: [...uniqueInputs.values()]
+            .filter((input) => input.kind === 'file')
+            .map((input) => input.path)
+            .sort(),
+          directoryPaths: [...uniqueInputs.values()]
+            .filter(
+              (input) =>
+                input.kind === 'directory' &&
+                !excludedDirectories.has(input.path),
+            )
+            .map((input) => input.path)
+            .sort(),
+          excludedDirectoryPaths: [...excludedDirectories].sort(),
+        };
+        const scopeKey = JSON.stringify(scope);
+        if (scopeKey !== previousScopeKey) {
+          await onScopeChange(scope);
+          previousScopeKey = scopeKey;
+        }
+      }
 
       if (inputs.some((input) => readWatchInputStamp(input) !== input.stamp)) {
         onChange();
