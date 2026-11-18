@@ -172,7 +172,7 @@ describe('A delegated application without the flag is refused', () => {
       delegatedApplications;
 
     const { errors } = await deleteOneRole({
-      input: { idToDelete: flaggedApplication.defaultRoleId },
+      input: { idToDelete: flaggedApplication.requestedRoleId },
       token: flaggedApplicationToken,
       expectToFail: true,
     });
@@ -183,13 +183,13 @@ describe('A delegated application without the flag is refused', () => {
       input: { id: flaggedApplication.id },
       gqlFields: `
         id
-        defaultRoleId
+        requestedRoleId
       `,
       expectToFail: false,
     });
 
-    expect(data.findOneApplication.defaultRoleId).toBe(
-      flaggedApplication.defaultRoleId,
+    expect(data.findOneApplication.requestedRoleId).toBe(
+      flaggedApplication.requestedRoleId,
     );
   });
 
