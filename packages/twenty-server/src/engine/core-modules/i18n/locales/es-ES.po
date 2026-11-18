@@ -487,7 +487,7 @@ msgstr "Ya existe una habilidad con este nombre."
 #. js-lingui-id: ESdD/i
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "A sort can only use a related record field on a many-to-one relation field"
-msgstr ""
+msgstr "Una ordenación solo puede usar un campo de registro relacionado en un campo de relación de varios a uno"
 
 #. js-lingui-id: IAfaPi
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-create-side-effect-handler.service.ts
@@ -1582,7 +1582,7 @@ msgstr "Las aplicaciones no pueden actualizar estos campos: {fieldsList}."
 #: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
 #: src/engine/core-modules/application/application-manifest/utils/validate-application-source-inventory-or-throw.util.ts
 msgid "Apply or publish the application again to restore its application sources."
-msgstr ""
+msgstr "Vuelve a aplicar o publicar la aplicación para restaurar sus fuentes de aplicación."
 
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -6299,7 +6299,7 @@ msgstr "El proveedor de funciones está ocupado. Inténtelo de nuevo dentro de u
 #. js-lingui-id: xSrz+r
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Functions cannot run while the workspace is suspended."
-msgstr ""
+msgstr "Las funciones no pueden ejecutarse mientras el espacio de trabajo está suspendido."
 
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -10047,7 +10047,7 @@ msgstr "Solo se puede enviar una campaña en borrador o programada."
 #. js-lingui-id: 82FEG0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "Only a field linking to one record can be sorted by a field of that record"
-msgstr ""
+msgstr "Solo se puede ordenar un campo que vincula a un registro por un campo de ese registro"
 
 #. js-lingui-id: v581MX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
@@ -11504,12 +11504,12 @@ msgstr "Resumen de la grabación"
 #. js-lingui-id: vyBbUK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "Records cannot be sorted by a deactivated field"
-msgstr ""
+msgstr "Los registros no se pueden ordenar por un campo desactivado"
 
 #. js-lingui-id: PbYQoA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "Records cannot be sorted by a relation of the related record"
-msgstr ""
+msgstr "Los registros no se pueden ordenar por una relación del registro relacionado"
 
 #. js-lingui-id: BlbWk5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

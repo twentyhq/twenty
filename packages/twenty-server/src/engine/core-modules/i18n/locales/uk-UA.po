@@ -487,7 +487,7 @@ msgstr "Навичка з такою назвою вже існує."
 #. js-lingui-id: ESdD/i
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "A sort can only use a related record field on a many-to-one relation field"
-msgstr ""
+msgstr "Сортування може використовувати поле пов’язаного запису лише для поля зв’язку «багато до одного»"
 
 #. js-lingui-id: IAfaPi
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-create-side-effect-handler.service.ts
@@ -1582,7 +1582,7 @@ msgstr "Застосунки не можуть оновлювати ці пол�
 #: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
 #: src/engine/core-modules/application/application-manifest/utils/validate-application-source-inventory-or-throw.util.ts
 msgid "Apply or publish the application again to restore its application sources."
-msgstr ""
+msgstr "Застосуйте або опублікуйте застосунок знову, щоб відновити його джерела."
 
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -6299,7 +6299,7 @@ msgstr "Постачальник функцій зайнятий. Спробуй
 #. js-lingui-id: xSrz+r
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Functions cannot run while the workspace is suspended."
-msgstr ""
+msgstr "Функції не можуть виконуватися, коли робочий простір призупинено."
 
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -10047,7 +10047,7 @@ msgstr "Надіслати можна лише чернетку або запл�
 #. js-lingui-id: 82FEG0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "Only a field linking to one record can be sorted by a field of that record"
-msgstr ""
+msgstr "Лише поле, пов’язане з одним записом, можна сортувати за полем цього запису"
 
 #. js-lingui-id: v581MX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
@@ -11504,12 +11504,12 @@ msgstr "Короткий зміст запису"
 #. js-lingui-id: vyBbUK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "Records cannot be sorted by a deactivated field"
-msgstr ""
+msgstr "Записи не можна сортувати за деактивованим полем"
 
 #. js-lingui-id: PbYQoA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "Records cannot be sorted by a relation of the related record"
-msgstr ""
+msgstr "Записи не можна сортувати за зв’язком пов’язаного запису"
 
 #. js-lingui-id: BlbWk5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
