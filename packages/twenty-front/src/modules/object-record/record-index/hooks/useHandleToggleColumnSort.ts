@@ -30,7 +30,13 @@ export const useHandleToggleColumnSort = ({
   const store = useStore();
 
   const handleToggleColumnSort = useCallback(
-    (fieldMetadataId: string) => {
+    ({
+      fieldMetadataId,
+      relationTargetFieldMetadataId,
+    }: {
+      fieldMetadataId: string;
+      relationTargetFieldMetadataId?: string;
+    }) => {
       const correspondingColumnDefinition = columnDefinitions.find(
         (columnDefinition) =>
           columnDefinition.fieldMetadataId === fieldMetadataId,
@@ -43,13 +49,17 @@ export const useHandleToggleColumnSort = ({
       const currentRecordSorts = store.get(currentRecordSortsCallbackState);
 
       const existingSort = currentRecordSorts.find(
-        (sort) => sort.fieldMetadataId === fieldMetadataId,
+        (sort) =>
+          sort.fieldMetadataId === fieldMetadataId &&
+          (sort.relationTargetFieldMetadataId ?? undefined) ===
+            relationTargetFieldMetadataId,
       );
 
       const newSort: RecordSort = {
         ...existingSort,
         id: existingSort?.id ?? v4(),
         fieldMetadataId,
+        relationTargetFieldMetadataId,
         direction: existingSort
           ? existingSort.direction === ViewSortDirection.ASC
             ? ViewSortDirection.DESC
