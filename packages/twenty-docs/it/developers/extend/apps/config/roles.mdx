@@ -242,9 +242,9 @@ Note:
 * I predicati possono fare riferimento a campi di proprietà della tua app o degli oggetti standard di Twenty.
 * La sicurezza a livello di riga è applicata agli spazi di lavoro con il **piano Organization o superiore**. Con altri
   piani le regole dichiarate in un manifest dell'app vengono comunque sincronizzate, semplicemente non vengono applicate.
-* L'API Metadata si comporta qui in modo diverso rispetto al manifesto: senza il diritto,
-  `upsertRowLevelPermissionPredicates` viene rifiutato con
-  `ROW_LEVEL_PERMISSION_FEATURE_DISABLED` anziché essere sincronizzato. Uno spazio di lavoro con un piano che non
+* L'API Metadata si comporta diversamente dal manifest in questo caso: senza l'entitlement,
+  `upsertRowLevelPermissionRules` viene rifiutato con
+  `ROW_LEVEL_PERMISSION_FEATURE_DISABLED` anziché sincronizzarsi. Uno spazio di lavoro con un piano che non
   include la sicurezza a livello di riga non può quindi creare predicati al di fuori di un manifesto dell'app, anche
   se il campo `rowLevelPermissionPredicates` è presente nel tipo `Role` quando si esegue l'introspezione
   dello schema.

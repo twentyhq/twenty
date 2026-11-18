@@ -1210,6 +1210,9 @@ export default {
             "requestedIframeMediaPermissions": [
                 326
             ],
+            "requestedRoleId": [
+                565
+            ],
             "runHealthCheckOnUserPreferences": [
                 1
             ],

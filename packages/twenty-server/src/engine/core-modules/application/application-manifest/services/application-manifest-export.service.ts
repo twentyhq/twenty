@@ -282,7 +282,7 @@ export class ApplicationManifestExportService {
         defaultRoleUniversalIdentifier:
           findUniversalIdentifierById({
             flatEntityMaps: allFlatEntityMaps.flatRoleMaps,
-            id: flatApplication.defaultRoleId,
+            id: flatApplication.requestedRoleId,
           }) ?? PLACEHOLDER_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
       }),
       objects,

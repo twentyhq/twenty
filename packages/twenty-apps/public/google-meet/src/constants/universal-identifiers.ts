@@ -1,6 +1,6 @@
-export const APP_DISPLAY_NAME = 'Google Meet';
+export const APP_DISPLAY_NAME = 'Meet';
 export const APP_DESCRIPTION =
-  'Import Google Meet recordings, transcripts and Gemini notes into Call Recordings.';
+  'Import Google Meet transcripts, Gemini notes and recordings into Call Recordings.';
 export const APPLICATION_UNIVERSAL_IDENTIFIER =
   '6d3edf97-994f-4489-8207-3822fed19c38';
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
@@ -23,3 +23,13 @@ export const GOOGLE_MEET_EVENTS_RESOLVER_UNIVERSAL_IDENTIFIER =
   '99d08b46-5857-4d4c-bf6a-62ccf90305cd';
 export const GOOGLE_MEET_REFRESH_CONNECTIONS_UNIVERSAL_IDENTIFIER =
   '457d16c0-1407-4a62-b538-ffb7c9ac7b35';
+export const GOOGLE_MEET_CALL_SUMMARIZER_AGENT_UNIVERSAL_IDENTIFIER =
+  '2263105b-d57c-45a2-a3df-cf4f953d5371';
+export const GOOGLE_MEET_SUMMARIZE_CALL_RECORDING_UNIVERSAL_IDENTIFIER =
+  '707864b1-2b1c-438a-b1b8-f4a0ba99a413';
+export const GOOGLE_MEET_IMPORT_RECORDING_UNIVERSAL_IDENTIFIER =
+  'b1076ce0-d85c-4270-a420-ed34c2bb5cca';
+export const CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER =
+  'bb9523d3-457e-4f4b-8c79-27a77afb87da';
+export const GOOGLE_MEET_AI_SUMMARY_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER =
+  '1a154ff0-35c9-475c-9abf-ac2e7d5904eb';

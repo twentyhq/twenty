@@ -11,6 +11,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { VIEW_CHILD_METADATA_NAMES } from 'src/engine/metadata-modules/view/constants/view-child-metadata-names.constant';
 import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
@@ -117,10 +118,21 @@ export class CallWebhookJobsForMetadataJob {
     'metadataName' | 'workspaceId' | 'events'
   >): Promise<MetadataEventBatch['events']> {
     if (metadataName === 'view') {
-      return events.filter(
-        (event) =>
-          getWebhookEventRecord(event)?.visibility === ViewVisibility.WORKSPACE,
-      );
+      return events.filter((event) => {
+        const record = getWebhookEventRecord(event);
+
+        return (
+          isDefined(record) &&
+          resolveEffectiveFlatEntityProperty({
+            metadataName: 'view',
+            flatEntity: {
+              visibility: record.visibility,
+              overrides: record.overrides,
+            },
+            property: 'visibility',
+          }) === ViewVisibility.WORKSPACE
+        );
+      });
     }
 
     if (VIEW_CHILD_METADATA_NAMES.includes(metadataName)) {

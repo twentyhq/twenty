@@ -23,7 +23,7 @@ const mockUser = {
 const mockApplication = {
   id: 'application-id',
   name: 'Test App',
-  defaultRoleId: 'app-role-id',
+  requestedRoleId: 'app-role-id',
 } as Request['application'];
 
 const mockApiKey = {

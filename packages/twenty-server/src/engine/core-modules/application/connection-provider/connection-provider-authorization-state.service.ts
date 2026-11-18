@@ -120,7 +120,7 @@ export class ConnectionProviderAuthorizationStateService {
     return flowSecrets;
   }
 
-  async findErrorRedirectTarget(state: string): Promise<{
+  async findRedirectTarget(state: string): Promise<{
     workspaceId: string;
     redirectLocation: string | null;
   } | null> {
@@ -130,7 +130,7 @@ export class ConnectionProviderAuthorizationStateService {
       return { workspaceId, redirectLocation };
     } catch (error) {
       this.logger.warn(
-        `Could not read the OAuth state for the error redirect: ${error instanceof Error ? error.message : String(error)}`,
+        `Could not read the OAuth state for the redirect: ${error instanceof Error ? error.message : String(error)}`,
       );
 
       return null;
