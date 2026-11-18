@@ -11,7 +11,7 @@ import { getGraphqlFieldSelections } from 'src/engine/api/graphql/workspace-reso
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 
 // Direct execution skips validation; such names are never schema fields and would collide with __arguments
-const assertIsNotReservedFieldName = (fieldName: string) => {
+const assertIsNotReservedFieldNameOrThrow = (fieldName: string) => {
   if (fieldName.startsWith('__') && fieldName !== '__typename') {
     throw new CommonQueryRunnerException(
       `Cannot query field "${fieldName}": names starting with "__" are reserved`,
@@ -27,7 +27,7 @@ const buildSelectedFields = (
   const fieldSelectionsByKey = new Map<string, GraphqlFieldSelection[]>();
 
   for (const fieldSelection of fieldSelections) {
-    assertIsNotReservedFieldName(fieldSelection.fieldName);
+    assertIsNotReservedFieldNameOrThrow(fieldSelection.fieldName);
 
     const selectionKey = computeSelectionKey(fieldSelection);
 

@@ -1,7 +1,5 @@
-import {
-  computeSelectionKey,
-  getFieldNameFromSelectionKey,
-} from 'src/engine/api/graphql/workspace-resolver-builder/utils/compute-selection-key.util';
+import { computeSelectionKey } from 'src/engine/api/graphql/workspace-resolver-builder/utils/compute-selection-key.util';
+import { getFieldNameFromSelectionKey } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-field-name-from-selection-key.util';
 
 describe('computeSelectionKey', () => {
   it('returns the field name for a field without arguments', () => {

@@ -244,12 +244,13 @@ export class ObjectRecordsToGraphqlConnectionHelper {
         this.flatObjectMetadataMaps,
       );
 
+      const isToManyRelation =
+        relationFieldMetadata.settings?.relationType ===
+        RelationType.ONE_TO_MANY;
       const relationValue =
-        objectRecord[key] ??
-        (relationFieldMetadata.settings?.relationType ===
-        RelationType.ONE_TO_MANY
+        isToManyRelation && !isDefined(objectRecord[key])
           ? []
-          : undefined);
+          : objectRecord[key];
 
       if (Array.isArray(relationValue)) {
         processedObjectRecord[key] = this.createConnection({

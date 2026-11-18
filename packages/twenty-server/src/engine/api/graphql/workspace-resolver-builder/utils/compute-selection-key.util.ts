@@ -2,10 +2,8 @@ import { createHash } from 'crypto';
 
 import { isPlainObject } from 'twenty-shared/utils';
 
+import { SELECTION_KEY_SEPARATOR } from 'src/engine/api/graphql/workspace-resolver-builder/constants/selection-key-separator';
 import { type GraphqlFieldSelection } from 'src/engine/api/graphql/workspace-resolver-builder/types/graphql-field-selection.type';
-
-// A colon cannot appear in a field name, so a key with arguments never shadows a column
-const SELECTION_KEY_SEPARATOR = ':';
 
 // Not sortKeysDeeply: graphql-js builds argument objects without a prototype, which it leaves unsorted
 const sortKeysRecursively = (value: unknown): unknown => {
@@ -39,6 +37,3 @@ export const computeSelectionKey = ({
 
   return `${fieldName}${SELECTION_KEY_SEPARATOR}${argumentsHash}`;
 };
-
-export const getFieldNameFromSelectionKey = (selectionKey: string): string =>
-  selectionKey.split(SELECTION_KEY_SEPARATOR)[0];
