@@ -19,6 +19,7 @@ const mockClientConfig = {
   signInPrefilled: false,
   isMultiWorkspaceEnabled: true,
   isEmailVerificationRequired: false,
+  isEmailDeliveryConfigured: true,
   defaultSubdomain: 'app',
   frontDomain: 'localhost',
   serverUrl: 'http://localhost:3000',

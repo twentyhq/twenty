@@ -35,3 +35,15 @@ exports[`Joining a workspace with the address of a pending invitation and no inv
   "name": "ForbiddenError",
 }
 `;
+
+exports[`Joining a workspace with the address of a pending invitation and no invitation token should fail without email verification on a multi-workspace instance when logging in to the workspace with an account that has not verified its email 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "Open your invitation link to join this workspace.",
+  },
+  "message": "Invitation link required to join the workspace",
+  "name": "ForbiddenError",
+}
+`;

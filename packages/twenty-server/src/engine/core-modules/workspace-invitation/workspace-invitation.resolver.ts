@@ -119,6 +119,18 @@ export class WorkspaceInvitationResolver {
     );
   }
 
+  @Query(() => String)
+  @UseGuards(AccessPolicyGuard(WORKSPACE_INVITATION_WRITE_ACCESS_POLICY))
+  async getWorkspaceInvitationLink(
+    @Args('appTokenId') appTokenId: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ) {
+    return this.workspaceInvitationService.getWorkspaceInvitationLink(
+      appTokenId,
+      workspace,
+    );
+  }
+
   @Query(() => [WorkspaceInvitation])
   @UseGuards(
     AccessPolicyGuard({

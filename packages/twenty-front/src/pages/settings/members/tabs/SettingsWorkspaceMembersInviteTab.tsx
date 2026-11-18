@@ -1,5 +1,6 @@
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isEmailDeliveryConfiguredState } from '@/client-config/states/isEmailDeliveryConfiguredState';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
 import { SettingsApprovedAccessDomainsListCard } from '@/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard';
@@ -9,6 +10,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { WorkspaceInvitationCopyLinkButton } from '@/workspace-invitation/components/WorkspaceInvitationCopyLinkButton';
 import { useDeleteWorkspaceInvitation } from '@/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
 import { useResendWorkspaceInvitation } from '@/workspace-invitation/hooks/useResendWorkspaceInvitation';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
@@ -82,6 +84,9 @@ export const SettingsWorkspaceMembersInviteTab = () => {
   const { deleteWorkspaceInvitation } = useDeleteWorkspaceInvitation();
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const isEmailDeliveryConfigured = useAtomStateValue(
+    isEmailDeliveryConfiguredState,
+  );
 
   const { data: invitationsData, error: invitationsError } = useQuery(
     GetWorkspaceInvitationsDocument,
@@ -111,12 +116,14 @@ export const SettingsWorkspaceMembersInviteTab = () => {
     }
   };
 
+  const isExpired = (expiresAt: string) =>
+    new Date(expiresAt).getTime() <= Date.now();
+
   const getExpiresAtText = (expiresAt: string) => {
-    const expirationDate = new Date(expiresAt);
-    if (expirationDate.getTime() <= Date.now()) {
+    if (isExpired(expiresAt)) {
       return t`Expired`;
     }
-    return formatDistanceToNow(expirationDate, { locale: localeCatalog });
+    return formatDistanceToNow(new Date(expiresAt), { locale: localeCatalog });
   };
 
   return (
@@ -139,7 +146,11 @@ export const SettingsWorkspaceMembersInviteTab = () => {
       <Section.Root>
         <Section.Header
           title={t`Invite by email`}
-          description={t`Send an invite email to your team`}
+          description={
+            isEmailDeliveryConfigured
+              ? t`Send an invite email to your team`
+              : t`Generate personal invite links to share with your team`
+          }
         />
         <WorkspaceInviteTeam roles={roles} />
         {isNonEmptyArray(workspaceInvitations) && (
@@ -206,18 +217,25 @@ export const SettingsWorkspaceMembersInviteTab = () => {
                     </TableCell>
                     <TableCell align="right">
                       <StyledButtonContainer>
-                        <IconButton
-                          aria-label={t`Resend invitation`}
-                          onClick={() => {
-                            handleResendWorkspaceInvitation(
-                              workspaceInvitation.id,
-                            );
-                          }}
-                          variant="ghost"
-                          size="md"
-                        >
-                          <IconReload />
-                        </IconButton>
+                        {!isEmailDeliveryConfigured &&
+                        !isExpired(workspaceInvitation.expiresAt) ? (
+                          <WorkspaceInvitationCopyLinkButton
+                            appTokenId={workspaceInvitation.id}
+                          />
+                        ) : (
+                          <IconButton
+                            aria-label={t`Resend invitation`}
+                            onClick={() => {
+                              handleResendWorkspaceInvitation(
+                                workspaceInvitation.id,
+                              );
+                            }}
+                            variant="ghost"
+                            size="md"
+                          >
+                            <IconReload />
+                          </IconButton>
+                        )}
                         <IconButton
                           aria-label={t`Remove invitation`}
                           onClick={() => {

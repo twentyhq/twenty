@@ -8,6 +8,7 @@ export const mockedClientConfig: ClientConfig = {
   signInPrefilled: true,
   isMultiWorkspaceEnabled: false,
   isEmailVerificationRequired: false,
+  isEmailDeliveryConfigured: true,
   authProviders: {
     google: true,
     magicLink: false,

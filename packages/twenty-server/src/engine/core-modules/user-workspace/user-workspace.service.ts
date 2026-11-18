@@ -44,6 +44,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { requiresInvitationLinkToJoin } from 'src/engine/core-modules/workspace-invitation/utils/requires-invitation-link-to-join.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
@@ -726,9 +727,15 @@ export class UserWorkspaceService {
     authProvider: AuthProviderEnum,
     canAutoLoginIntoWorkspaces = true,
   ) {
-    const shouldHideInvitations =
-      this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED') &&
-      !user.isEmailVerified;
+    const shouldHideInvitations = requiresInvitationLinkToJoin({
+      isEmailVerified: user.isEmailVerified,
+      isEmailVerificationRequired: this.twentyConfigService.get(
+        'IS_EMAIL_VERIFICATION_REQUIRED',
+      ),
+      isMultiWorkspaceEnabled: this.twentyConfigService.get(
+        'IS_MULTIWORKSPACE_ENABLED',
+      ),
+    });
 
     const availableWorkspacesForSignUpToList = shouldHideInvitations
       ? availableWorkspaces.availableWorkspacesForSignUp.filter(

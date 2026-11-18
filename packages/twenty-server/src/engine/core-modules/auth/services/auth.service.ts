@@ -77,6 +77,7 @@ import { INVITATION_APP_TOKEN_TYPES } from 'src/engine/core-modules/workspace-in
 import { type WorkspaceInvitation } from 'src/engine/core-modules/workspace-invitation/dtos/workspace-invitation.dto';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { castAppTokenToWorkspaceInvitationUtil } from 'src/engine/core-modules/workspace-invitation/utils/cast-app-token-to-workspace-invitation.util';
+import { requiresInvitationLinkToJoin } from 'src/engine/core-modules/workspace-invitation/utils/requires-invitation-link-to-join.util';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
@@ -227,6 +228,26 @@ export class AuthService {
     await assertUserPasswordIsValidOrThrow({ user, password: input.password });
 
     await this.checkIsEmailVerified(user.isEmailVerified);
+
+    if (
+      requiresInvitationLinkToJoin({
+        isEmailVerified: user.isEmailVerified,
+        isEmailVerificationRequired: this.twentyConfigService.get(
+          'IS_EMAIL_VERIFICATION_REQUIRED',
+        ),
+        isMultiWorkspaceEnabled: this.twentyConfigService.get(
+          'IS_MULTIWORKSPACE_ENABLED',
+        ),
+      })
+    ) {
+      throw new AuthException(
+        'Invitation link required to join the workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: msg`Open your invitation link to join this workspace.`,
+        },
+      );
+    }
 
     await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
       user,

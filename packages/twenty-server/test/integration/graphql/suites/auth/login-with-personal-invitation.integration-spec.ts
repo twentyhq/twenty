@@ -93,7 +93,23 @@ describe('getLoginTokenFromCredentials with a personal invitation (integration)'
     expect(await findWorkspaceInvitationsByEmail({ email })).toHaveLength(1);
   });
 
-  it('joins the workspace through the invitation on the right password', async () => {
+  it('keeps the invitation and does not join the workspace while the email is unverified', async () => {
+    const response = await loginOnAppleWorkspace(email, PASSWORD);
+
+    expect(response.body.data?.getLoginTokenFromCredentials).toBeFalsy();
+    expect(response.body.errors[0].message).toBe(
+      'Invitation link required to join the workspace',
+    );
+    expect(await findWorkspaceInvitationsByEmail({ email })).toHaveLength(1);
+    expect(await countAppleWorkspaceMemberships(email)).toBe(0);
+  });
+
+  it('joins the workspace through the invitation on the right password once the email is verified', async () => {
+    await testDataSource.query(
+      'UPDATE core."user" SET "isEmailVerified" = true WHERE email = $1',
+      [email],
+    );
+
     const response = await loginOnAppleWorkspace(email, PASSWORD);
 
     expect(response.body.errors).toBeUndefined();

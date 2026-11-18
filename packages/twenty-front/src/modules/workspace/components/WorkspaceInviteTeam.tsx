@@ -1,21 +1,25 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { styled } from '@linaria/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { isEmailDeliveryConfiguredState } from '@/client-config/states/isEmailDeliveryConfiguredState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
+import { WorkspaceInvitationLinkList } from '@/workspace/components/WorkspaceInvitationLinkList';
 import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
 import { i18n } from '@lingui/core';
 import { msg, t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
 import {
+  IconLink,
   IconLock,
   IconSend,
   IconUser,
@@ -99,12 +103,21 @@ type WorkspaceInviteTeamProps = {
   roles: RoleWithPartialMembers[];
 };
 
+type InviteLink = {
+  email: string;
+  link: string;
+};
+
 export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
 
   const { enqueueToast } = useToast();
   const { sendInvitation } = useCreateWorkspaceInvitation();
+  const isEmailDeliveryConfigured = useAtomStateValue(
+    isEmailDeliveryConfiguredState,
+  );
+  const [inviteLinks, setInviteLinks] = useState<InviteLink[]>([]);
 
   const roleOptions: Array<{
     label: string;
@@ -148,9 +161,16 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
 
     if (data.sendInvitations.result.length > 0) {
       const invitationCount = data.sendInvitations.result.length;
+
+      if (!isEmailDeliveryConfigured) {
+        setInviteLinks(data.sendInvitations.inviteLinks);
+      }
+
       enqueueToast({
         status: 'success',
-        children: t`${invitationCount} invitations sent`,
+        children: isEmailDeliveryConfigured
+          ? t`${invitationCount} invitations sent`
+          : t`${invitationCount} invitation links generated`,
         duration: 2000,
       });
 
@@ -218,13 +238,21 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
           />
         </StyledRoleContainer>
         <Button
-          startIcon={<IconSend />}
+          startIcon={isEmailDeliveryConfigured ? <IconSend /> : <IconLink />}
           type="submit"
           disabled={isEmailsEmpty || !!errors.emails}
           variant="solid"
           color="accent"
-        >{t`Invite`}</Button>
+        >
+          {isEmailDeliveryConfigured ? t`Invite` : t`Generate links`}
+        </Button>
       </StyledContainer>
+      {!isEmailDeliveryConfigured && isNonEmptyArray(inviteLinks) && (
+        <WorkspaceInvitationLinkList
+          key={inviteLinks[0].link}
+          inviteLinks={inviteLinks}
+        />
+      )}
     </form>
   );
 };

@@ -20,6 +20,7 @@ import { isCloudflareIntegrationEnabledState } from '@/client-config/states/isCl
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { enterpriseInstanceTypeState } from '@/client-config/states/enterpriseInstanceTypeState';
 import { isEmailingDomainInDemoModeState } from '@/client-config/states/isEmailingDomainInDemoModeState';
+import { isEmailDeliveryConfiguredState } from '@/client-config/states/isEmailDeliveryConfiguredState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
@@ -69,6 +70,9 @@ export const useClientConfig = (): UseClientConfigResult => {
   );
   const setIsEmailVerificationRequired = useSetAtomState(
     isEmailVerificationRequiredState,
+  );
+  const setIsEmailDeliveryConfigured = useSetAtomState(
+    isEmailDeliveryConfiguredState,
   );
 
   const setBilling = useSetAtomState(billingState);
@@ -197,6 +201,7 @@ export const useClientConfig = (): UseClientConfigResult => {
         setIsEmailVerificationRequired(
           clientConfig.isEmailVerificationRequired,
         );
+        setIsEmailDeliveryConfigured(clientConfig.isEmailDeliveryConfigured);
         setBilling(clientConfig.billing);
         setSupportChat(clientConfig.support);
 
@@ -302,6 +307,7 @@ export const useClientConfig = (): UseClientConfigResult => {
       setIsConfigVariablesInDbEnabled,
       setIsDeveloperDefaultSignInPrefilled,
       setIsEmailVerificationRequired,
+      setIsEmailDeliveryConfigured,
       setIsImapSmtpCaldavEnabled,
       setIsMultiWorkspaceEnabled,
       setIsEmailingDomainInDemoMode,

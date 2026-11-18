@@ -34,6 +34,7 @@ export type ClientConfig = {
   publicFunctionDomain?: string | null;
   isAttachmentPreviewEnabled: boolean;
   isConfigVariablesInDbEnabled: boolean;
+  isEmailDeliveryConfigured: boolean;
   isEmailVerificationRequired: boolean;
   isGoogleCalendarEnabled: boolean;
   isGoogleMessagingEnabled: boolean;

@@ -1458,6 +1458,7 @@ type ClientConfig {
   isCompanyEnrichmentEnabled: Boolean!
   isConfigVariablesInDbEnabled: Boolean!
   isCookieSessionEnabled: Boolean!
+  isEmailDeliveryConfigured: Boolean!
   isEmailVerificationRequired: Boolean!
   isEmailingDomainInDemoMode: Boolean!
   isGoogleCalendarEnabled: Boolean!
@@ -4507,6 +4508,7 @@ type Query {
   getViewSorts(viewId: String): [ViewSort!]!
   getViews(objectMetadataId: String, viewTypes: [ViewType!]): [View!]!
   getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDTO!
+  getWorkspaceInvitationLink(appTokenId: String!): String!
   gettingStartedProgress: GettingStartedProgress!
   gettingStartedWorkflowPreviews: [GettingStartedWorkflowPreview!]!
   githubClaimAuthorizationUrl(applicationRegistrationId: String!): String!
@@ -5018,6 +5020,11 @@ type SendInboxMessageResult {
 
 type SendInvitations {
   errors: [String!]!
+
+  """
+  Links to share with the invitees, only returned when no email provider is configured
+  """
+  inviteLinks: [WorkspaceInvitationLink!]!
   result: [WorkspaceInvitation!]!
 
   """Boolean that confirms query was dispatched"""
@@ -6800,6 +6807,11 @@ type WorkspaceInvitation {
   expiresAt: DateTime!
   id: UUID!
   roleId: UUID
+}
+
+type WorkspaceInvitationLink {
+  email: String!
+  link: String!
 }
 
 type WorkspaceInviteHashValid {

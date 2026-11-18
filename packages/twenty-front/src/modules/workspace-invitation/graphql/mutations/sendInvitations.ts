@@ -13,6 +13,10 @@ export const SEND_INVITATIONS = gql`
           expiresAt
         }
       }
+      inviteLinks {
+        email
+        link
+      }
     }
   }
 `;
