@@ -97,7 +97,6 @@ billing: {
     },
     seat: {
       monthlyAmountCents: 1000,
-      yearlyAmountCents: 10_000,
       per: 'WORKSPACE_MEMBER',
       label: 'Per member',
     },
@@ -107,14 +106,13 @@ billing: {
 
 | Field | Description |
 |-------|-------------|
-| `monthlyAmountCents` | Price per month in USD cents, a positive integer |
-| `yearlyAmountCents` | Optional price per year in USD cents. Defaults to 12 times `monthlyAmountCents` |
+| `monthlyAmountCents` | Price per month in USD cents, a positive integer up to 8,333,333 |
 | `per` | Omit for a flat fee. `WORKSPACE_MEMBER` makes the amount a rate per workspace member |
 | `label` | What admins read for that line |
 
-A plan follows the billing interval of the workspace: a workspace on a monthly Twenty plan pays the monthly amount, a workspace on a yearly plan pays the yearly amount once a year.
+A plan follows the billing interval of the workspace: a workspace on a monthly Twenty plan pays the monthly amount, a workspace on a yearly plan pays 12 times the monthly amount once a year.
 
-The build rejects an amount that is not a positive integer or exceeds 99,999,999 cents (declared or derived for the year), an unknown `per`, and an empty `label`.
+The build rejects a `monthlyAmountCents` that is not a positive integer or exceeds 8,333,333 (12 times that is the most Stripe accepts for one price), an unknown `per`, and an empty `label`.
 
 ## Billable operations
 
