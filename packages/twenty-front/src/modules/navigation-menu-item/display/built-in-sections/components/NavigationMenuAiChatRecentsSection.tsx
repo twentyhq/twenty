@@ -5,6 +5,7 @@ import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
 import { useAiChatPageThreadId } from '@/ai/hooks/useAiChatPageThreadId';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
+import { InboxThreadListFetchMoreTrigger } from '@/inbox/components/InboxThreadListFetchMoreTrigger';
 import { NavigationDrawerInboxThreadSection } from '@/inbox/components/NavigationDrawerInboxThreadSection';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
@@ -31,7 +32,9 @@ export const NavigationMenuAiChatRecentsSection = ({
   const isDirectMessageEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,
   );
-  const { threads } = useInboxThreadList(INBOX_RECENT_THREAD_LIST_SOURCE);
+  const { threads, inboxThreadList } = useInboxThreadList(
+    INBOX_RECENT_THREAD_LIST_SOURCE,
+  );
   const favoriteThreadIds = new Set(
     useAtomStateValue(inboxFavoriteThreadsSelector).map(({ id }) => id),
   );
@@ -49,7 +52,8 @@ export const NavigationMenuAiChatRecentsSection = ({
   }
 
   const hasHiddenThreads =
-    recentThreads.length > NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT;
+    recentThreads.length > NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT ||
+    inboxThreadList?.hasNextPage === true;
 
   const displayedThreads =
     hasHiddenThreads && !isShowingAllThreads
@@ -65,13 +69,20 @@ export const NavigationMenuAiChatRecentsSection = ({
       onThreadClick={handleThreadClick}
       footer={
         hasHiddenThreads && (
-          <NavigationDrawerItem
-            label={isShowingAllThreads ? t`See less` : t`See more`}
-            Icon={isShowingAllThreads ? IconChevronUp : IconChevronDown}
-            variant="tertiary"
-            preventCollapseOnMobile
-            onClick={() => setIsShowingAllThreads(!isShowingAllThreads)}
-          />
+          <>
+            {isShowingAllThreads && (
+              <InboxThreadListFetchMoreTrigger
+                source={INBOX_RECENT_THREAD_LIST_SOURCE}
+              />
+            )}
+            <NavigationDrawerItem
+              label={isShowingAllThreads ? t`See less` : t`See more`}
+              Icon={isShowingAllThreads ? IconChevronUp : IconChevronDown}
+              variant="tertiary"
+              preventCollapseOnMobile
+              onClick={() => setIsShowingAllThreads(!isShowingAllThreads)}
+            />
+          </>
         )
       }
     />
