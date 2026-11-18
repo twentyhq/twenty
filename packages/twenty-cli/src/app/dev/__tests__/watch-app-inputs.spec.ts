@@ -300,6 +300,11 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
       parse(root).root,
     ]) {
       const inputs = await collect(join(directory, 'not-created.ts'));
+      expect(inputs).toContainEqual({
+        path: await realpath(directory),
+        kind: 'directory',
+        stamp: null,
+      });
       const stamp = readWatchInputStamp({ path: directory, kind: 'directory' });
       expect(stamp).toBeNull();
       await watcher.update(
