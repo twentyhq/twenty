@@ -252,7 +252,13 @@ describe('View field filtering, sorting and limiting its related records', () =>
       `,
     });
 
-    const findField = (objectMetadataId: string, name: string) => {
+    const findField = ({
+      objectMetadataId,
+      name,
+    }: {
+      objectMetadataId: string;
+      name: string;
+    }) => {
       const field = fields
         .map(({ node }: { node: FieldNode }) => node)
         .find(
@@ -265,10 +271,10 @@ describe('View field filtering, sorting and limiting its related records', () =>
       return field.id;
     };
 
-    testContext.companyDealsFieldId = findField(
-      testContext.companyObjectId,
-      'deals',
-    );
+    testContext.companyDealsFieldId = findField({
+      objectMetadataId: testContext.companyObjectId,
+      name: 'deals',
+    });
     testContext.companyViewId = await createView(testContext.companyObjectId);
     testContext.dealViewId = await createView(testContext.dealObjectId);
   });
