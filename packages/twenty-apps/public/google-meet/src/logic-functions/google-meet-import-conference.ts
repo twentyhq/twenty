@@ -82,6 +82,7 @@ export const googleMeetImportConferenceHandler = async ({
           connectedAccountId,
           conferenceRecordName,
           recordingName: recordingNameToImport,
+          now: new Date(),
         }),
       ],
     });

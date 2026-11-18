@@ -2,35 +2,51 @@ import { describe, expect, it } from 'vitest';
 
 import { buildGoogleMeetRecordingImportJob } from 'src/logic-functions/utils/build-google-meet-recording-import-job.util';
 
-describe('buildGoogleMeetRecordingImportJob', () => {
-  it('should build one import job per recording', () => {
-    const job = buildGoogleMeetRecordingImportJob({
-      connectedAccountId: 'connected-account-id',
-      conferenceRecordName: 'conferenceRecords/first',
-      recordingName: 'conferenceRecords/first/recordings/second',
-    });
+const buildJob = ({
+  recordingName,
+  now,
+}: {
+  recordingName: string;
+  now: string;
+}) =>
+  buildGoogleMeetRecordingImportJob({
+    connectedAccountId: 'connected-account-id',
+    conferenceRecordName: 'conferenceRecords/first',
+    recordingName,
+    now: new Date(now),
+  });
 
-    expect(job).toEqual({
-      jobId: expect.stringMatching(/^google-meet-recording-[0-9a-f]{64}$/),
+describe('buildGoogleMeetRecordingImportJob', () => {
+  it('should carry the connection, conference and recording to import', () => {
+    expect(
+      buildJob({
+        recordingName: 'conferenceRecords/first/recordings/second',
+        now: '2026-11-17T10:15:00Z',
+      }),
+    ).toEqual({
+      jobId: expect.stringMatching(/^google-meet-recording-[0-9a-f]{64}-498586$/),
       payload: {
         connectedAccountId: 'connected-account-id',
         conferenceRecordName: 'conferenceRecords/first',
         recordingName: 'conferenceRecords/first/recordings/second',
       },
     });
+  });
+
+  it('should reuse the job id within an hour and change it the next hour or for another recording', () => {
+    const recordingName = 'conferenceRecords/first/recordings/second';
+
+    expect(buildJob({ recordingName, now: '2026-11-17T10:59:59Z' }).jobId).toBe(
+      buildJob({ recordingName, now: '2026-11-17T10:00:00Z' }).jobId,
+    );
     expect(
-      buildGoogleMeetRecordingImportJob({
-        connectedAccountId: 'other-connected-account-id',
-        conferenceRecordName: 'conferenceRecords/first',
-        recordingName: 'conferenceRecords/first/recordings/second',
-      }).jobId,
-    ).toBe(job.jobId);
+      buildJob({ recordingName, now: '2026-11-17T11:00:00Z' }).jobId,
+    ).not.toBe(buildJob({ recordingName, now: '2026-11-17T10:59:59Z' }).jobId);
     expect(
-      buildGoogleMeetRecordingImportJob({
-        connectedAccountId: 'connected-account-id',
-        conferenceRecordName: 'conferenceRecords/first',
+      buildJob({
         recordingName: 'conferenceRecords/first/recordings/third',
+        now: '2026-11-17T10:00:00Z',
       }).jobId,
-    ).not.toBe(job.jobId);
+    ).not.toBe(buildJob({ recordingName, now: '2026-11-17T10:00:00Z' }).jobId);
   });
 });
