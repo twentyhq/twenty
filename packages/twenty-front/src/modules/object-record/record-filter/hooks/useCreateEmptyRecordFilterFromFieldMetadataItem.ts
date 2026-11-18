@@ -2,6 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { useGetInitialFilterValue } from '@/object-record/object-filter-dropdown/hooks/useGetInitialFilterValue';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
+import { getRelationTargetFieldLabel } from '@/object-metadata/utils/getRelationTargetFieldLabel';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -42,7 +43,32 @@ export const useCreateEmptyRecordFilterFromFieldMetadataItem = () => {
     return { newRecordFilter };
   };
 
+  const createEmptyRelationTargetRecordFilter = ({
+    sourceFieldMetadataItem,
+    relationTargetFieldMetadataItem,
+  }: {
+    sourceFieldMetadataItem: Pick<FieldMetadataItem, 'id' | 'label'>;
+    relationTargetFieldMetadataItem: FieldMetadataItem;
+  }) => {
+    const { newRecordFilter } = createEmptyRecordFilterFromFieldMetadataItem(
+      relationTargetFieldMetadataItem,
+    );
+
+    return {
+      newRecordFilter: {
+        ...newRecordFilter,
+        fieldMetadataId: sourceFieldMetadataItem.id,
+        relationTargetFieldMetadataId: relationTargetFieldMetadataItem.id,
+        label: getRelationTargetFieldLabel({
+          sourceFieldMetadataItem,
+          relationTargetFieldMetadataItem,
+        }),
+      } satisfies RecordFilter,
+    };
+  };
+
   return {
     createEmptyRecordFilterFromFieldMetadataItem,
+    createEmptyRelationTargetRecordFilter,
   };
 };

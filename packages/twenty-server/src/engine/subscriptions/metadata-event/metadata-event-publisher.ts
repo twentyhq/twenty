@@ -6,7 +6,9 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { VIEW_CHILD_METADATA_NAMES } from 'src/engine/metadata-modules/view/constants/view-child-metadata-names.constant';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 import { enrichFieldMetadataEventRecord } from 'src/engine/subscriptions/metadata-event/utils/enrich-field-metadata-event-record.util';
@@ -21,6 +23,8 @@ type BroadcastEventRecord = {
   createdByUserWorkspaceId?: string | null;
   coreWorkflowId?: string | null;
   viewId?: string | null;
+  overrides?: FlatView['overrides'];
+  applicationUniversalIdentifier?: string;
 };
 
 const getBroadcastEventRecord = (event: MetadataEventBatch['events'][number]) =>
@@ -28,19 +32,41 @@ const getBroadcastEventRecord = (event: MetadataEventBatch['events'][number]) =>
     ? event.properties.before
     : event.properties.after) as BroadcastEventRecord | undefined;
 
-const getPrivateWorkflowOwner = (record: BroadcastEventRecord | undefined) =>
-  record?.visibility === WorkflowVisibility.PRIVATE
-    ? (record.createdByUserWorkspaceId ?? undefined)
-    : undefined;
-
-const getViewRecipientUserWorkspaceIds = (
-  view: Pick<BroadcastEventRecord, 'visibility' | 'createdByUserWorkspaceId'>,
+const getWorkflowRecipientUserWorkspaceIds = (
+  workflow: Pick<
+    BroadcastEventRecord,
+    'visibility' | 'createdByUserWorkspaceId'
+  >,
 ): string[] | undefined => {
-  if (view.visibility === ViewVisibility.WORKSPACE) {
+  if (workflow.visibility !== WorkflowVisibility.PRIVATE) {
     return undefined;
   }
 
-  return view.visibility === ViewVisibility.UNLISTED &&
+  return isNonEmptyString(workflow.createdByUserWorkspaceId)
+    ? [workflow.createdByUserWorkspaceId]
+    : [];
+};
+
+const getViewRecipientUserWorkspaceIds = (
+  view: Pick<
+    BroadcastEventRecord,
+    | 'visibility'
+    | 'createdByUserWorkspaceId'
+    | 'overrides'
+    | 'applicationUniversalIdentifier'
+  >,
+): string[] | undefined => {
+  const visibility = resolveEffectiveFlatEntityProperty({
+    metadataName: 'view',
+    flatEntity: view,
+    property: 'visibility',
+  });
+
+  if (visibility === ViewVisibility.WORKSPACE) {
+    return undefined;
+  }
+
+  return visibility === ViewVisibility.UNLISTED &&
     isNonEmptyString(view.createdByUserWorkspaceId)
     ? [view.createdByUserWorkspaceId]
     : [];
@@ -137,13 +163,10 @@ export class MetadataEventPublisher {
           return isNonEmptyString(record?.userWorkspaceId)
             ? [record.userWorkspaceId]
             : undefined;
-        case 'workflow': {
-          const ownerUserWorkspaceId = getPrivateWorkflowOwner(record);
-
-          return isNonEmptyString(ownerUserWorkspaceId)
-            ? [ownerUserWorkspaceId]
+        case 'workflow':
+          return isDefined(record)
+            ? getWorkflowRecipientUserWorkspaceIds(record)
             : undefined;
-        }
         case 'workflowVersion': {
           const coreWorkflowId = record?.coreWorkflowId;
 
@@ -163,12 +186,7 @@ export class MetadataEventPublisher {
             return [];
           }
 
-          const ownerUserWorkspaceId =
-            getPrivateWorkflowOwner(parentFlatWorkflow);
-
-          return isNonEmptyString(ownerUserWorkspaceId)
-            ? [ownerUserWorkspaceId]
-            : undefined;
+          return getWorkflowRecipientUserWorkspaceIds(parentFlatWorkflow);
         }
         default:
           return undefined;

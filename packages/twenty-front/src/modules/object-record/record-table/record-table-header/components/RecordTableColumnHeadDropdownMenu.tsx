@@ -3,6 +3,7 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { isFieldMetadataItemFilterableAndSortableSelector } from '@/object-metadata/states/isFieldMetadataItemFilterableAndSortableSelector';
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
+import { useRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useRecordFieldLookupTarget';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
@@ -12,6 +13,7 @@ import { useMoveTableColumn } from '@/object-record/record-table/hooks/useMoveTa
 import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import {
   IconArrowLeft,
@@ -94,14 +96,29 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const { openRecordFilterChipFromTableHeader } =
     useOpenRecordFilterChipFromTableHeader();
 
+  const lookupTargetFieldMetadataItem =
+    useRecordFieldLookupTarget(recordField)?.lookupTargetFieldMetadataItem;
+
   const handleFilterClick = () => {
-    openRecordFilterChipFromTableHeader(recordField.fieldMetadataItemId);
+    openRecordFilterChipFromTableHeader({
+      fieldMetadataItemId: recordField.fieldMetadataItemId,
+      relationTargetFieldMetadataItem: lookupTargetFieldMetadataItem,
+    });
   };
 
-  const { isFilterable, isSortable } = useAtomFamilySelectorValue(
+  const filterableAndSortable = useAtomFamilySelectorValue(
     isFieldMetadataItemFilterableAndSortableSelector,
-    { fieldMetadataItemId: recordField.fieldMetadataItemId },
+    {
+      fieldMetadataItemId:
+        lookupTargetFieldMetadataItem?.id ?? recordField.fieldMetadataItemId,
+    },
   );
+
+  const isFilterable = filterableAndSortable.isFilterable;
+  // Sorting by a related record's field needs a relation target on view sorts
+  const isSortable =
+    filterableAndSortable.isSortable &&
+    !isDefined(lookupTargetFieldMetadataItem);
 
   const { canPersistChanges } = useCanPersistViewChanges();
   const isCanonical = isCanonicalRecordField(recordField);
