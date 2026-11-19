@@ -37,13 +37,17 @@ export default defineApplication({
 });
 ```
 
-* `recurring` — taxe fixe și per membru pe care **platforma** le aplică pentru dvs., o dată per perioadă de facturare.
+* `recurring` — învechit, vezi [prețuri](#prices). Taxe fixe și per membru pe care **platforma** le percepe pentru tine, o dată pe perioadă de facturare.
 * `operations` — pentru ce taxați pe măsură ce este utilizat, dintr-o funcție logică.
 * `description` — un rând prietenos afișat cumpărătorilor în listarea dvs. din marketplace.
 
 Toate trei ajung la același contor de credite și la aceeași defalcare din **Setări > Utilizare**, astfel încât un spațiu de lucru vede o singură factură.
 
 ## Taxe recurente
+
+<Warning>
+  Învechit în favoarea [prețuri](#prices). Compilarea avertizează cu privire la taxele recurente, însă acestea continuă să fie percepute: prețurile nu sunt încă facturate, așa că păstrează-le pe ale tale până când vor fi.
+</Warning>
 
 O taxă recurentă este o taxă de abonament: o sumă lunară fixă, o sumă per membru al spațiului de lucru sau ambele. Declarați suma, iar platforma o taxează. Aplicația dvs. nu apelează niciodată `chargeCredits` pentru acestea.
 
@@ -79,6 +83,53 @@ Cum sunt aplicate:
 * Taxele per membru iau în calcul toți membrii spațiului de lucru în momentul în care este aplicată taxa, astfel încât un spațiu de lucru care crește la mijlocul perioadei plătește numărul mai mare începând cu perioada următoare.
 * Doar pentru abonamente lunare. Un spațiu de lucru cu un plan anual nu este taxat cu o taxă `MONTH`, în loc să fie taxat o dată pentru întregul an.
 * Limitate. Un tarif declarat peste $100 sau o taxă per membru al cărei tarif, înmulțit cu numărul de membri, ar depăși $1.000 pentru perioadă sunt refuzate și nu sunt percepute. Platforma aplică singură aceste taxe, astfel încât nu va înregistra un debit pe care nu îl poate justifica.
+
+## Prețuri
+
+<Warning>
+  Doar declarație pentru moment. Compilarea validează `billing.prices`, însă platforma nu le facturează încă.
+</Warning>
+
+Un preț este perceput în monedă reală în loc de credite. Este facturat ca o poziție din propriul abonament Twenty al spațiului de lucru, astfel încât spațiul de lucru păstrează o singură factură. Prețurile sunt momentan doar în dolari americani.
+
+```ts src/application-config.ts
+billing: {
+  prices: [
+    {
+      universalIdentifier: '3f0c9a52-6b1e-4d7a-9c35-8e2f1a4b7d60',
+      label: 'Platform',
+      type: 'RECURRING',
+      billingPeriod: 'MONTHLY',
+      amountCents: 2000,
+    },
+    {
+      universalIdentifier: 'b7e41d08-2a93-4f5c-8d16-0c9e3b5a7f21',
+      label: 'Per member',
+      description: 'Monthly price per workspace member',
+      type: 'RECURRING',
+      billingPeriod: 'MONTHLY',
+      amountCents: 1000,
+      currency: 'USD',
+      per: 'WORKSPACE_MEMBER',
+    },
+  ],
+},
+```
+
+| Câmp                  | Descriere                                                                                                                                                            |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier` | Un UUID care identifică prețul în toate versiunile aplicației tale. Generează-l o singură dată și nu-l modifica niciodată: un identificator nou înseamnă un preț nou |
+| `label`               | Ce citesc administratorii pentru acea poziție                                                                                                                        |
+| `description`         | Opțional. O explicație mai detaliată despre ce acoperă prețul                                                                                                        |
+| `type`                | `RECURRING`, singurul tip disponibil momentan                                                                                                                        |
+| `billingPeriod`       | `MONTHLY`, singura perioadă disponibilă momentan                                                                                                                     |
+| `amountCents`         | Preț lunar în cenți USD, un număr întreg pozitiv de până la 8.333.333                                                                                                |
+| `monedă`              | Opțional. `USD` este momentan singura monedă acceptată și cea implicită                                                                                              |
+| `per`                 | Omite pentru o taxă fixă. `WORKSPACE_MEMBER` face ca suma să fie o rată per membru al spațiului de lucru                                                             |
+
+Un preț urmează intervalul de facturare al spațiului de lucru: un spațiu de lucru cu un plan Twenty lunar plătește suma lunară, iar un spațiu de lucru cu un plan anual plătește o dată pe an de 12 ori suma lunară.
+
+Compilarea respinge un `universalIdentifier` lipsă, duplicat sau nevalid, un `label` sau o `description` goale, un `type`, `billingPeriod` sau `per` necunoscut, un `amountCents` care nu este un număr întreg pozitiv sau depășește 8.333.333 (de 12 ori această valoare este maximul acceptat de Stripe pentru un singur preț) și o `currency` diferită de `USD`.
 
 ## Operațiuni facturabile
 

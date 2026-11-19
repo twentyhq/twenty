@@ -1,0 +1,3 @@
+export const MAX_APPLICATION_BILLING_PRICE_AMOUNT_CENTS = Math.floor(
+  99_999_999 / 12,
+);

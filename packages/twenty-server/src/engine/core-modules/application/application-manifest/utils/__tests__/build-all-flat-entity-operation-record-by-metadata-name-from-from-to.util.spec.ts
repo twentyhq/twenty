@@ -123,6 +123,7 @@ const NAVIGATION_MENU_ITEM: FlatNavigationMenuItem = {
   name: 'App link',
   link: 'https://example.com',
   nativePageKey: null,
+  builtInSectionKey: null,
   icon: null,
   color: null,
   parentId: null,

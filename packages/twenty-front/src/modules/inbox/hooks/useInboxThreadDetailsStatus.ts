@@ -1,14 +1,14 @@
-import { AI_CHAT_THREAD_STATUS_ACTION_BY_TRIAGE_STATUS } from '@/ai-chat/constants/AiChatThreadStatusActionByTriageStatus';
+import { AI_CHAT_THREAD_STATUS_ACTION_BY_TRIAGE_STATUS } from '@/ai-chat/threads/constants/AiChatThreadStatusActionByTriageStatus';
 import { useInboxThreadTriage } from '@/inbox/hooks/useInboxThreadTriage';
-import { useExecuteAiChatThreadStatusAction } from '@/ai-chat/hooks/useExecuteAiChatThreadStatusAction';
-import { aiChatChannelsState } from '@/ai-chat/states/aiChatChannelsState';
-import { aiChatThreadPermissionsFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadPermissionsFamilySelector';
-import { aiChatThreadRecordFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadRecordFamilySelector';
-import { type AiChatThreadTriageStatus } from '@/ai-chat/types/AiChatThreadTriageStatus';
-import { getAiChatThreadChannelIdOutsideInbox } from '@/ai-chat/utils/getAiChatThreadChannelIdOutsideInbox';
-import { getAiChatThreadDetailsStatusAccess } from '@/ai-chat/utils/getAiChatThreadDetailsStatusAccess';
-import { getAiChatThreadStatusScope } from '@/ai-chat/utils/getAiChatThreadStatusScope';
-import { isAiChatThreadStatusChangeNoOp } from '@/ai-chat/utils/isAiChatThreadStatusChangeNoOp';
+import { useExecuteAiChatThreadStatusAction } from '@/ai-chat/threads/hooks/useExecuteAiChatThreadStatusAction';
+import { aiChatChannelsState } from '@/ai-chat/threads/states/aiChatChannelsState';
+import { aiChatThreadPermissionsFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadPermissionsFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
+import { type AiChatThreadTriageStatus } from '@/ai-chat/threads/types/AiChatThreadTriageStatus';
+import { getAiChatThreadChannelIdOutsideInbox } from '@/ai-chat/threads/utils/getAiChatThreadChannelIdOutsideInbox';
+import { getAiChatThreadDetailsStatusAccess } from '@/ai-chat/threads/utils/getAiChatThreadDetailsStatusAccess';
+import { getAiChatThreadStatusScope } from '@/ai-chat/threads/utils/getAiChatThreadStatusScope';
+import { isAiChatThreadStatusChangeNoOp } from '@/ai-chat/threads/utils/isAiChatThreadStatusChangeNoOp';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 

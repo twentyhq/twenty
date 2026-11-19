@@ -8,9 +8,9 @@ import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThre
 import { aiChatOpenThreadIdByInstanceIdState } from '@/ai-chat/states/aiChatOpenThreadIdByInstanceIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
 import { aiChatPrepromptState } from '@/ai-chat/states/aiChatPrepromptState';
-import { aiChatUploadedFilesFamilyState } from '@/ai-chat/states/aiChatUploadedFilesFamilyState';
+import { aiChatUploadedFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadedFilesFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { type AiChatFileUIPart } from '@/ai-chat/types/AiChatFileUIPart';
+import { type AiChatFileUIPart } from '@/ai-chat/composer/types/AiChatFileUIPart';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const NEW_CHAT_THREAD_ID = 'new-chat-thread-id';
@@ -38,7 +38,7 @@ jest.mock('@/ai-chat/hooks/useSwitchToNewAiChat', () => ({
   }),
 }));
 
-jest.mock('@/ai-chat/hooks/useAiChatFileUpload', () => ({
+jest.mock('@/ai-chat/composer/hooks/useAiChatFileUpload', () => ({
   useAiChatFileUpload: () => ({
     uploadFiles: () =>
       new Promise<AiChatFileUIPart[]>((resolve) => {

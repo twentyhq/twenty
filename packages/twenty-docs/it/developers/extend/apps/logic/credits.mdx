@@ -37,13 +37,17 @@ export default defineApplication({
 });
 ```
 
-* `recurring` — tariffe fisse e per membro che la **piattaforma** applica per te, una volta per periodo di fatturazione.
+* `recurring` — deprecato, consulta [prezzi](#prices). Tariffe fisse e per membro che la **piattaforma** addebita per te, una volta per periodo di fatturazione.
 * `operations` — ciò per cui addebiti durante l'utilizzo, da una funzione di logica.
 * `description` — una riga descrittiva visualizzata agli acquirenti nella scheda della tua app sul marketplace.
 
 Tutti e tre confluiscono nello stesso contatore di crediti e nella stessa ripartizione in **Impostazioni > Utilizzo**, quindi un workspace vede un'unica fattura.
 
 ## Addebiti ricorrenti
+
+<Warning>
+  Deprecato a favore di [prezzi](#prices). La build avvisa riguardo alle tariffe ricorrenti, ma continuano a essere addebitate: i prezzi non sono ancora fatturati, quindi mantieni le tue finché non lo saranno.
+</Warning>
 
 Un addebito ricorrente è una tariffa di abbonamento: un importo mensile fisso, un importo per membro del workspace o entrambi. Dichiari l'importo e la piattaforma lo addebita. La tua app non chiama mai `chargeCredits` per questi.
 
@@ -79,6 +83,53 @@ Modalità di applicazione:
 * Gli addebiti per membro conteggiano tutti i membri del workspace nel momento in cui viene applicato l'addebito, quindi un workspace che cresce a metà periodo paga il conteggio più alto a partire dal periodo successivo.
 * Solo per gli abbonamenti mensili. A un workspace con piano annuale non viene addebitata una tariffa `MONTH`, anziché essere addebitato una volta per l'intero anno.
 * Limitati. Una tariffa dichiarata superiore a $100, o un addebito per membro la cui tariffa moltiplicata per il numero di membri supererebbe $1.000 per il periodo, viene rifiutata e non viene aumentata. La piattaforma applica questi addebiti autonomamente, quindi non registrerà un addebito che non può giustificare.
+
+## Prezzi
+
+<Warning>
+  Solo dichiarazione per ora. La build convalida `billing.prices`, ma la piattaforma non li fattura ancora.
+</Warning>
+
+Un prezzo viene addebitato in valuta reale anziché in crediti. Viene fatturato come voce dell'abbonamento Twenty dello spazio di lavoro, in modo che lo spazio di lavoro mantenga un'unica fattura. Per ora i prezzi sono solo in dollari statunitensi.
+
+```ts src/application-config.ts
+billing: {
+  prices: [
+    {
+      universalIdentifier: '3f0c9a52-6b1e-4d7a-9c35-8e2f1a4b7d60',
+      label: 'Platform',
+      type: 'RECURRING',
+      billingPeriod: 'MONTHLY',
+      amountCents: 2000,
+    },
+    {
+      universalIdentifier: 'b7e41d08-2a93-4f5c-8d16-0c9e3b5a7f21',
+      label: 'Per member',
+      description: 'Monthly price per workspace member',
+      type: 'RECURRING',
+      billingPeriod: 'MONTHLY',
+      amountCents: 1000,
+      currency: 'USD',
+      per: 'WORKSPACE_MEMBER',
+    },
+  ],
+},
+```
+
+| Campo                 | Descrizione                                                                                                                                                     |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier` | Un UUID che identifica il prezzo tra le versioni della tua app. Generalo una volta e non modificarlo mai: un nuovo identificatore corrisponde a un nuovo prezzo |
+| `label`               | Ciò che gli amministratori leggono per quella voce                                                                                                              |
+| `description`         | Facoltativo. Una spiegazione più dettagliata di ciò che copre il prezzo                                                                                         |
+| `type`                | `RECURRING`, l'unico tipo per ora                                                                                                                               |
+| `billingPeriod`       | `MONTHLY`, l'unico periodo per ora                                                                                                                              |
+| `amountCents`         | Prezzo mensile in centesimi USD, un numero intero positivo fino a 8.333.333                                                                                     |
+| `valuta`              | Facoltativo. `USD` è per ora l'unica valuta supportata, nonché quella predefinita                                                                               |
+| `per`                 | Ometti per una tariffa fissa. `WORKSPACE_MEMBER` rende l'importo una tariffa per membro dello spazio di lavoro                                                  |
+
+Un prezzo segue l'intervallo di fatturazione dello spazio di lavoro: uno spazio di lavoro con un piano Twenty mensile paga l'importo mensile, mentre uno spazio di lavoro con un piano annuale paga una volta all'anno 12 volte l'importo mensile.
+
+La build rifiuta un `universalIdentifier` mancante, duplicato o non valido, un `label` o una `description` vuoti, un `type`, `billingPeriod` o `per` sconosciuto, un `amountCents` che non sia un numero intero positivo o che superi 8.333.333 (12 volte tale valore è il massimo che Stripe accetta per un singolo prezzo) e una `currency` diversa da `USD`.
 
 ## Operazioni fatturabili
 

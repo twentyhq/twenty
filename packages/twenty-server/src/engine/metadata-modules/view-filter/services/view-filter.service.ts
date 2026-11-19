@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
+import { findFlatViewAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-available-to-user.util';
+import { findManyFlatViewChildrenAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-available-to-user.util';
+import { sortByPositionInViewFilterGroup } from 'src/engine/metadata-modules/flat-view/utils/sort-by-position-in-view-filter-group.util';
 import { fromCreateViewFilterInputToFlatViewFilterToCreate } from 'src/engine/metadata-modules/flat-view-filter/utils/from-create-view-filter-input-to-flat-view-filter-to-create.util';
 import { fromDestroyViewFilterInputToFlatViewFilterOrThrow } from 'src/engine/metadata-modules/flat-view-filter/utils/from-destroy-view-filter-input-to-flat-view-filter-or-throw.util';
 import { fromUpdateViewFilterInputToFlatViewFilterToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-filter/utils/from-update-view-filter-input-to-flat-view-filter-to-update-or-throw.util';
@@ -26,20 +29,13 @@ import { DeleteViewFilterInput } from 'src/engine/metadata-modules/view-filter/d
 import { DestroyViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/destroy-view-filter.input';
 import { UpdateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/update-view-filter.input';
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
-import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { fromFlatViewFilterToViewFilterDto } from 'src/engine/metadata-modules/view-filter/utils/from-flat-view-filter-to-view-filter-dto.util';
-import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
-import { isViewAvailableToUser } from 'src/engine/metadata-modules/view/utils/is-view-available-to-user.util';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class ViewFilterService {
   constructor(
-    @InjectWorkspaceScopedRepository(ViewFilterEntity)
-    private readonly viewFilterRepository: WorkspaceScopedRepository<ViewFilterEntity>,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
@@ -280,8 +276,13 @@ export class ViewFilterService {
   }: {
     workspaceId: string;
     userWorkspaceId: string | undefined;
-  }): Promise<ViewFilterEntity[]> {
-    return this.findManyVisibleToUser({ workspaceId, userWorkspaceId });
+  }): Promise<ViewFilterDTO[]> {
+    const flatViewFilters = await this.findManyFlatViewFiltersVisibleToUser({
+      workspaceId,
+      userWorkspaceId,
+    });
+
+    return flatViewFilters.map(fromFlatViewFilterToViewFilterDto);
   }
 
   async findManyPaginated({
@@ -295,40 +296,11 @@ export class ViewFilterService {
     userWorkspaceId: string | undefined;
     pagination: MetadataCursorPagination;
   }): Promise<MetadataCursorPage<ViewFilterDTO> & { totalCount: number }> {
-    const { flatViewFilterMaps, flatViewMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewFilterMaps', 'flatViewMaps'],
-        },
-      );
-    const flatViewFilters = Object.values(
-      flatViewFilterMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter(
-        (flatViewFilter) =>
-          flatViewFilter.workspaceId === workspaceId &&
-          flatViewFilter.deletedAt === null &&
-          (!isDefined(viewId) || flatViewFilter.viewId === viewId),
-      )
-      .filter((flatViewFilter) => {
-        const flatView = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: flatViewFilter.viewId,
-          flatEntityMaps: flatViewMaps,
-        });
-
-        return (
-          isDefined(flatView) &&
-          isViewAvailableToUser({ flatView, userWorkspaceId })
-        );
-      })
-      .sort(
-        (first, second) =>
-          (first.positionInViewFilterGroup ?? Number.POSITIVE_INFINITY) -
-            (second.positionInViewFilterGroup ?? Number.POSITIVE_INFINITY) ||
-          first.id.localeCompare(second.id),
-      );
+    const flatViewFilters = await this.findManyFlatViewFiltersVisibleToUser({
+      workspaceId,
+      viewId,
+      userWorkspaceId,
+    });
     const page = paginateMetadataOrderedItems({
       items: flatViewFilters,
       pagination,
@@ -349,15 +321,17 @@ export class ViewFilterService {
     workspaceId: string;
     viewId: string;
     userWorkspaceId: string | undefined;
-  }): Promise<ViewFilterEntity[]> {
-    return this.findManyVisibleToUser({
+  }): Promise<ViewFilterDTO[]> {
+    const flatViewFilters = await this.findManyFlatViewFiltersVisibleToUser({
       workspaceId,
       viewId,
       userWorkspaceId,
     });
+
+    return flatViewFilters.map(fromFlatViewFilterToViewFilterDto);
   }
 
-  private async findManyVisibleToUser({
+  private async findManyFlatViewFiltersVisibleToUser({
     workspaceId,
     viewId,
     userWorkspaceId,
@@ -365,20 +339,23 @@ export class ViewFilterService {
     workspaceId: string;
     viewId?: string;
     userWorkspaceId: string | undefined;
-  }): Promise<ViewFilterEntity[]> {
-    const viewFilters = await this.viewFilterRepository.find(workspaceId, {
-      where: {
-        ...(isDefined(viewId) ? { viewId } : {}),
-        deletedAt: IsNull(),
-      },
-      order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
-      relations: ['workspace', 'view', 'viewFilterGroup'],
-    });
+  }): Promise<FlatViewFilter[]> {
+    const { flatViewFilterMaps, flatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFilterMaps', 'flatViewMaps'],
+        },
+      );
 
-    return viewFilters.filter(
-      (viewFilter) =>
-        isDefined(viewFilter.view) &&
-        isViewVisibleToUser(viewFilter.view, userWorkspaceId),
+    return sortByPositionInViewFilterGroup(
+      findManyFlatViewChildrenAvailableToUser({
+        flatViewMaps,
+        flatViewChildMaps: flatViewFilterMaps,
+        flatViewChildIdsKey: 'viewFilterIds',
+        viewId,
+        userWorkspaceId,
+      }),
     );
   }
 
@@ -390,19 +367,29 @@ export class ViewFilterService {
     id: string;
     workspaceId: string;
     userWorkspaceId: string | undefined;
-  }): Promise<ViewFilterEntity> {
-    const viewFilter = await this.viewFilterRepository.findOne(workspaceId, {
-      where: {
-        id,
-        deletedAt: IsNull(),
-      },
-      relations: ['workspace', 'view', 'viewFilterGroup'],
+  }): Promise<ViewFilterDTO> {
+    const { flatViewFilterMaps, flatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFilterMaps', 'flatViewMaps'],
+        },
+      );
+    const flatViewFilter = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatViewFilterMaps,
     });
 
     if (
-      !isDefined(viewFilter) ||
-      !isDefined(viewFilter.view) ||
-      !isViewVisibleToUser(viewFilter.view, userWorkspaceId)
+      !isDefined(flatViewFilter) ||
+      flatViewFilter.deletedAt !== null ||
+      !isDefined(
+        findFlatViewAvailableToUser({
+          viewId: flatViewFilter.viewId,
+          flatViewMaps,
+          userWorkspaceId,
+        }),
+      )
     ) {
       throw new ViewFilterException(
         generateViewFilterExceptionMessage(
@@ -418,6 +405,6 @@ export class ViewFilterService {
       );
     }
 
-    return viewFilter;
+    return fromFlatViewFilterToViewFilterDto(flatViewFilter);
   }
 }

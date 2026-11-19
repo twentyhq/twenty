@@ -1,6 +1,6 @@
 import { CalendarStartDay } from 'twenty-shared/constants';
 
-import { type AiChatThreadRecord } from '@/ai-chat/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { groupThreadsByDate } from '@/inbox/utils/groupThreadsByDate';
 
 describe('groupThreadsByDate', () => {

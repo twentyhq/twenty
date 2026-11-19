@@ -80,7 +80,7 @@ describe('cancelRecallBotOnCallRecordingDeleteHandler', () => {
         return new Response(
           JSON.stringify({ detail: 'cancellation rejected' }),
           {
-            status: 400,
+            status: 405,
           },
         );
       }

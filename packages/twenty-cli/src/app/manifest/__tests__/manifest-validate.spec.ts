@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   getFieldUniversalIdentifier,
+  type ApplicationBillingPrice,
   type ApplicationManifest,
   type ConnectionProviderManifest,
   type FieldManifest,
@@ -297,6 +298,56 @@ describe('manifestValidate', () => {
       expect(result.isValid).toBe(false);
       expect(result.errors).toContain(
         'Duplicate universal identifiers: 550e8400-e29b-41d4-a716-446655440001',
+      );
+    });
+
+    it('should fail when two billing prices share a universalIdentifier', () => {
+      const billingPrice: ApplicationBillingPrice = {
+        universalIdentifier: '3f0c9a52-6b1e-4d7a-9c35-8e2f1a4b7d60',
+        label: 'Platform',
+        type: 'RECURRING',
+        billingPeriod: 'MONTHLY',
+        amountCents: 2000,
+      };
+
+      const result = manifestValidate({
+        ...validManifest,
+        application: {
+          ...validApplication,
+          billing: {
+            prices: [billingPrice, { ...billingPrice, label: 'Per member' }],
+          },
+        },
+      });
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContain(
+        'Duplicate universal identifiers: 3f0c9a52-6b1e-4d7a-9c35-8e2f1a4b7d60',
+      );
+    });
+
+    it('should fail when a billing price universalIdentifier is not a valid UUID', () => {
+      const result = manifestValidate({
+        ...validManifest,
+        application: {
+          ...validApplication,
+          billing: {
+            prices: [
+              {
+                universalIdentifier: 'not-a-uuid',
+                label: 'Platform',
+                type: 'RECURRING',
+                billingPeriod: 'MONTHLY',
+                amountCents: 2000,
+              },
+            ],
+          },
+        },
+      });
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors.join(' ')).toContain(
+        'Invalid universal identifiers',
       );
     });
 

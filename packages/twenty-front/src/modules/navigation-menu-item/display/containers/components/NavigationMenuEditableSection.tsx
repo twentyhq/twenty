@@ -1,13 +1,16 @@
+import { NavigationMenuContainerEditableItems } from '@/navigation-menu-item/display/containers/components/NavigationMenuContainerEditableItems';
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
 import { useNavigationMenuContainerItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuContainerItems';
 import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemSection';
 import { StyledNavigationMenuItemSectionContentGapOffset } from '@/navigation-menu-item/display/sections/components/StyledNavigationMenuItemSectionContentGapOffset';
-import { WorkspaceSectionListReadOnly } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly';
 import { NavigationMenuSectionMenu } from '@/navigation-menu-item/edit/components/NavigationMenuSectionMenu';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 
 type NavigationMenuEditableSectionProps = {
-  section: Pick<NamedNavigationMenuItem, 'id' | 'name' | 'icon' | 'parentId'>;
+  section: Pick<
+    NamedNavigationMenuItem,
+    'id' | 'name' | 'icon' | 'parentId' | 'type'
+  >;
 };
 
 export const NavigationMenuEditableSection = ({
@@ -32,8 +35,9 @@ export const NavigationMenuEditableSection = ({
         </StyledNavigationMenuItemSectionContentGapOffset>
       )}
     >
-      <WorkspaceSectionListReadOnly
-        filteredItems={topLevelItems}
+      <NavigationMenuContainerEditableItems
+        containerId={section.id}
+        topLevelItems={topLevelItems}
         folderChildrenById={folderChildrenById}
       />
     </NavigationMenuItemSection>

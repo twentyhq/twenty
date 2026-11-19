@@ -46,7 +46,7 @@ msgid "—"
 msgstr "—"
 
 #. js-lingui-id: /c8CZ4
-#: src/modules/ai-chat/components/AiChatThreadTitle.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadTitle.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
 msgid ", unread"
 msgstr ", okunmamış"
@@ -240,7 +240,7 @@ msgstr "{0, plural, one {# sohbet} other {# sohbet}}"
 
 #. js-lingui-id: jitezQ
 #. placeholder {0}: emails.length
-#: src/modules/ai-chat/components/AiChatApprovalEmailConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailConfirmation.tsx
 msgid "{0, plural, one {# email selected · 0 emails skipped} other {# emails selected · 0 emails skipped}}"
 msgstr "{0, plural, one {# e-posta seçildi · 0 e-posta atlandı} other {# e-posta seçildi · 0 e-posta atlandı}}"
 
@@ -300,7 +300,7 @@ msgstr ""
 
 #. js-lingui-id: fkfOKg
 #. placeholder {0}: agentIds.length
-#: src/modules/ai-chat/components/AiChatMessageReactions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactions.tsx
 msgid "{0, plural, one {an agent} other {# agents}}"
 msgstr "{0, plural, one {bir temsilci} other {# temsilci}}"
 
@@ -486,8 +486,8 @@ msgstr "{0} seçildi"
 #. placeholder {0}: card.selectedCount
 #. placeholder {1}: activeCard.skippedCount
 #. placeholder {1}: card.skippedCount
-#: src/modules/ai-chat/components/AiChatApprovalConfirmation.tsx
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "{0} selected · {1} skipped"
 msgstr "{0} seçildi · {1} atlandı"
 
@@ -598,6 +598,16 @@ msgstr "{agentLabel} Ajan Rolü"
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel}, {fieldLabel}'in"
 
+#. js-lingui-id: zEkduP
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "{allowedFieldCount} of {fieldCount}"
+msgstr ""
+
+#. js-lingui-id: LoDOIo
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "{allowedFieldCount} of {fieldCount} fields"
+msgstr ""
+
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{apiKeyCount, plural, one {{apiKeyCount} API key} other {{apiKeyCount} API keys}}"
@@ -667,7 +677,7 @@ msgid "{callRecordingHours, plural, one {{formattedCallRecordingHours} hour} oth
 msgstr "{callRecordingHours, plural, one {{formattedCallRecordingHours} saat} other {{formattedCallRecordingHours} saat}}"
 
 #. js-lingui-id: g0wkzt
-#: src/modules/ai-chat/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
 msgid "{cardCount, plural, one {Approve # action?} other {Approve # actions?}}"
 msgstr "{cardCount, plural, one {# işlemi onayla?} other {# işlemi onayla?}}"
 
@@ -789,7 +799,7 @@ msgid "{earnedCredits, plural, one {{formattedEarnedCredits} credit} other {{for
 msgstr "{earnedCredits, plural, one {{formattedEarnedCredits} kredi} other {{formattedEarnedCredits} kredi}}"
 
 #. js-lingui-id: +dlsP9
-#: src/modules/ai-chat/components/AiChatMessageReactions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactions.tsx
 msgid "{emoji} by {reactorNames}"
 msgstr "{reactorNames} tarafından {emoji}"
 
@@ -838,11 +848,6 @@ msgstr "{formattedPercentage}% kullanıldı, {formattedContextWindow} belirtecin
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
 msgid "{goalCredits, plural, one {free credit} other {free credits}}"
 msgstr "{goalCredits, plural, one {ücretsiz kredi} other {ücretsiz kredi}}"
-
-#. js-lingui-id: YF/a2j
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
-msgid "{grantedBy, plural, one {Granted for {grantedBy} object} other {Granted for {grantedBy} objects}}"
-msgstr "{grantedBy, plural, one {{grantedBy} nesne için verildi} other {{grantedBy} nesneler için verildi}}"
 
 #. js-lingui-id: Ae2fyu
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -993,7 +998,7 @@ msgid "{newlyEarnedCredits, plural, one {You earned {formattedNewlyEarnedCredits
 msgstr "{newlyEarnedCredits, plural, one {Ücretsiz {formattedNewlyEarnedCredits} kredi kazandınız} other {Ücretsiz {formattedNewlyEarnedCredits} kredi kazandınız}}"
 
 #. js-lingui-id: hKZAJk
-#: src/modules/ai-chat/hooks/useWarnAboutParticipantMentionsNotAdded.ts
+#: src/modules/ai-chat/composer/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "{notAddedLabels} could not be added to this chat because they can't reply in it."
 msgstr "{notAddedLabels}, bu sohbette yanıt veremedikleri için bu sohbete eklenemedi."
 
@@ -1007,6 +1012,11 @@ msgstr "{num, selectordinal, one {{num}'inci} other {{num}'inci}}"
 msgid "{numberOfSelectedItems} workspace members"
 msgstr "{numberOfSelectedItems} çalışma alanı üyesi"
 
+#. js-lingui-id: DQ+6r7
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
+msgid "{objectLabelPlural} permissions"
+msgstr "{objectLabelPlural} izinleri"
+
 #. js-lingui-id: luWGLQ
 #: src/modules/workflow/workflow-variables/utils/generate/generateWaitForEventOutputSchema.ts
 msgid "{objectLabelSingular} Before Update"
@@ -1018,22 +1028,22 @@ msgid "{p95DurationInMs} ms"
 msgstr "{p95DurationInMs} milisaniye"
 
 #. js-lingui-id: dKtfA2
-#: src/modules/ai-chat/components/AiChatParticipantMentionBar.tsx
+#: src/modules/ai-chat/composer/components/AiChatParticipantMentionBar.tsx
 msgid "{participantLabels} will be added as a participant and get access to this chat"
 msgstr "{participantLabels}, katılımcı olarak eklenecek ve bu sohbete erişim kazanacak"
 
 #. js-lingui-id: MDJKup
-#: src/modules/ai-chat/components/AiChatParticipantMentionBar.tsx
+#: src/modules/ai-chat/composer/components/AiChatParticipantMentionBar.tsx
 msgid "{participantLabels} will be added as participants and get access to this chat"
 msgstr "{participantLabels}, katılımcı olarak eklenecek ve bu sohbete erişim kazanacak"
 
 #. js-lingui-id: jCjuhm
-#: src/modules/ai-chat/components/AiChatTypingIndicator.tsx
+#: src/modules/ai-chat/messages/components/AiChatTypingIndicator.tsx
 msgid "{participantNames} are typing…"
 msgstr "{participantNames} yazıyor…"
 
 #. js-lingui-id: E0CZYQ
-#: src/modules/ai-chat/components/AiChatTypingIndicator.tsx
+#: src/modules/ai-chat/messages/components/AiChatTypingIndicator.tsx
 msgid "{participantNames} is typing…"
 msgstr "{participantNames} yazıyor…"
 
@@ -1053,12 +1063,12 @@ msgid "{positionLabel} record holds priority"
 msgstr "{positionLabel} kaydı önceliklidir"
 
 #. js-lingui-id: i2Rv/S
-#: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 msgid "{positionLabel}: {name}"
 msgstr "{positionLabel}: {name}"
 
 #. js-lingui-id: tSROzD
-#: src/modules/ai-chat/components/AiChatFormCardContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormCardContent.tsx
 msgid "{prefilledCount} of {fieldCount} fields prefilled"
 msgstr "{fieldCount} alanın {prefilledCount} tanesi önceden dolduruldu"
 
@@ -1090,12 +1100,12 @@ msgid "{remainingBackupCodeCount, plural, one {# backup code left} other {# back
 msgstr "{remainingBackupCodeCount, plural, one {# yedek kod kaldı} other {# yedek kod kaldı}}"
 
 #. js-lingui-id: N7gP92
-#: src/modules/ai-chat/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 msgid "{remainingCount} more"
 msgstr "{remainingCount} tane daha"
 
 #. js-lingui-id: uVxzex
-#: src/modules/ai-chat/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "{remainingDraftCount, plural, =0 {No more drafts after this one} one {# more draft after this one} other {# more drafts after this one}}"
 msgstr "{remainingDraftCount, plural, =0 {Bundan sonra başka taslak yok} one {Bundan sonra # taslak daha var} other {Bundan sonra # taslak daha var}}"
 
@@ -1114,21 +1124,6 @@ msgstr "{retentionInHours, plural, one {# saat} other {# saat}}"
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
 msgid "{retriedCount, plural, one {Successfully retried {retriedCount} job} other {Successfully retried {retriedCount} jobs}}"
 msgstr "{retriedCount, plural, one {{retriedCount} iş başarıyla yeniden denendi} other {{retriedCount} iş başarıyla yeniden denendi}}"
-
-#. js-lingui-id: hcRYEH
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
-msgid "{revokedBy, plural, one {Revoked for {revokedBy} object} other {Revoked for {revokedBy} objects}}"
-msgstr "{revokedBy, plural, one {{revokedBy} nesne için iptal edildi} other {{revokedBy} nesneler için iptal edildi}}"
-
-#. js-lingui-id: OeIgEg
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
-msgid "{roleLabel} can {humanReadableAction} {objectLabel} records"
-msgstr "{roleLabel} {objectLabel} kayıtlarını {humanReadableAction} yapabilir"
-
-#. js-lingui-id: D0C09b
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
-msgid "{roleLabel} can't {humanReadableAction} {objectLabel} records"
-msgstr "{roleLabel} {objectLabel} kayıtlarını {humanReadableAction} yapamaz"
 
 #. js-lingui-id: uHZWwU
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
@@ -1191,7 +1186,7 @@ msgid "{selectedCount, plural, one {Retry {selectedCount} Job} other {Retry {sel
 msgstr "{selectedCount, plural, one {{selectedCount} İşi Yeniden Dene} other {{selectedCount} İşlerini Yeniden Dene}}"
 
 #. js-lingui-id: 1MJWid
-#: src/modules/ai-chat/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
 msgid "{selectedCount} records selected · {skippedCount} records skipped"
 msgstr "{selectedCount} kayıt seçildi · {skippedCount} kayıt atlandı"
 
@@ -1206,7 +1201,7 @@ msgid "{selectedOptionCount} options"
 msgstr "{selectedOptionCount} seçenek"
 
 #. js-lingui-id: tz1jJj
-#: src/modules/ai-chat/utils/getAiChatThreadPreviewText.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadPreviewText.ts
 msgid "{senderLabel}: {text}"
 msgstr "{senderLabel}: {text}"
 
@@ -1536,11 +1531,6 @@ msgstr "1. E-posta"
 msgid "1. Select a field type"
 msgstr "1. Bir alan türü seçin"
 
-#. js-lingui-id: XSdCGq
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-msgid "1. Select an object"
-msgstr "1. Bir nesne seçin"
-
 #. js-lingui-id: 6WQdu8
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -1577,11 +1567,6 @@ msgstr "2 yıl"
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "2. Configure field"
 msgstr "2. Alanı Yapılandır"
-
-#. js-lingui-id: 0Tx9MD
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
-msgid "2. Set {objectLabelPlural} permissions"
-msgstr "2. {objectLabelPlural} izinlerini ayarlayın"
 
 #. js-lingui-id: 23g1gf
 #: src/modules/navigation/constants/LogsSwitchPhrases.ts
@@ -1696,7 +1681,7 @@ msgid "A new one each time the step runs"
 msgstr "Adım her çalıştığında yeni bir tane"
 
 #. js-lingui-id: 3pDKsj
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "A newer revision exists. Open the latest preview to save."
 msgstr "Daha yeni bir revizyon mevcut. Kaydetmek için en son önizlemeyi açın."
 
@@ -1775,11 +1760,6 @@ msgstr "Bir kullanıcının etkileşim kurabileceği kayıtları filtreleme yetk
 msgid "Ability to filter the records a user can interact with."
 msgstr "Bir kullanıcının etkileşim kurabileceği kayıtları filtreleme yetkisi."
 
-#. js-lingui-id: wTKqOI
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
-msgid "Ability to interact with this object's fields."
-msgstr "Bu nesnenin alanlarıyla etkileşim kurma yeteneği."
-
 #. js-lingui-id: ssjjFt
 #: src/modules/settings/components/SettingsImageInput.tsx
 msgid "Abort"
@@ -1830,6 +1810,7 @@ msgstr "Bu çalışma alanı için kabul edilmiş ve imzalanmış DPA'lar, şabl
 
 #. js-lingui-id: LuXP9q
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionsTable.tsx
 msgid "Access"
 msgstr "Erişim"
@@ -1948,7 +1929,7 @@ msgid "Action on click"
 msgstr "Tıklandığında yapılacak işlem"
 
 #. js-lingui-id: pTIviA
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 msgid "Action progress"
 msgstr "İşlem ilerlemesi"
 
@@ -1959,8 +1940,6 @@ msgstr "Onaylanacak eylem"
 
 #. js-lingui-id: 7L01XJ
 #: src/modules/command-menu-item/components/CommandMenuDropdownAtCursor.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/side-panel/pages/create-related-record/components/SidePanelCreateRelatedRecordPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -1973,11 +1952,6 @@ msgstr "Eylemler"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Actions in the command menu"
 msgstr "Komut menüsündeki eylemler"
-
-#. js-lingui-id: N4ZcCd
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Actions users can perform on this object"
-msgstr "Kullanıcıların bu nesne üzerinde gerçekleştirebileceği eylemler"
 
 #. js-lingui-id: FQBaXG
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -2139,7 +2113,7 @@ msgid "Add a person with an email to this company first"
 msgstr "Önce bu şirkete e-posta adresi olan bir kişi ekleyin"
 
 #. js-lingui-id: +mN79K
-#: src/modules/ai-chat/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "Add a recipient before sending"
 msgstr "Göndermeden önce bir alıcı ekleyin"
 
@@ -2349,7 +2323,7 @@ msgid "Add embedded website"
 msgstr "Gömülü web sitesi ekle"
 
 #. js-lingui-id: 6kC3KJ
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalCardLayout.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCardLayout.tsx
 msgid "Add feedback"
 msgstr "Geri bildirim ekle"
 
@@ -2371,8 +2345,8 @@ msgid "Add file"
 msgstr "Dosya ekle"
 
 #. js-lingui-id: yCsT+y
-#: src/modules/ai-chat/components/AiChatAddMenu.tsx
-#: src/modules/ai-chat/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
 msgid "Add files, records or skills"
 msgstr "Dosya, kayıt veya beceri ekle"
 
@@ -2482,16 +2456,12 @@ msgid "Add node"
 msgstr "Düğüm ekle"
 
 #. js-lingui-id: dEO3Zx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
 msgstr "Nesne Ekle"
-
-#. js-lingui-id: mFtRj8
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-msgid "Add object permission"
-msgstr "Nesne izni ekle"
 
 #. js-lingui-id: Dl5lVI
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -2519,8 +2489,8 @@ msgid "Add payment method"
 msgstr "Ödeme yöntemi ekle"
 
 #. js-lingui-id: bL/gCs
-#: src/modules/ai-chat/components/AiChatNewThreadRecipientField.tsx
-#: src/modules/ai-chat/components/AiChatNewThreadRecipientField.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientField.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientField.tsx
 msgid "Add people or a channel"
 msgstr "Kişileri veya bir kanalı ekleyin"
 
@@ -2547,8 +2517,8 @@ msgid "Add question"
 msgstr "Soru ekle"
 
 #. js-lingui-id: 9OEgyT
-#: src/modules/ai-chat/components/AiChatMessageReactionPicker.tsx
-#: src/modules/ai-chat/components/AiChatMessageReactionPicker.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPicker.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPicker.tsx
 msgid "Add reaction"
 msgstr "Tepki ekle"
 
@@ -2585,7 +2555,6 @@ msgstr "Alta satır ekle"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
@@ -2603,7 +2572,7 @@ msgstr "Kural grubu ekle"
 #. js-lingui-id: RxFV0G
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "Add section"
-msgstr ""
+msgstr "Bölüm ekle"
 
 #. js-lingui-id: TdZwYb
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
@@ -2623,7 +2592,7 @@ msgstr "SSO Kimlik Sağlayıcısı Ekle"
 #: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
 msgid "Add tab"
-msgstr ""
+msgstr "Sekme ekle"
 
 #. js-lingui-id: O6B1gJ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -2936,6 +2905,7 @@ msgstr "Yöneticiler"
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverrideRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Advanced"
 msgstr "Gelişmiş"
@@ -3001,7 +2971,7 @@ msgid "agent"
 msgstr "temsilci"
 
 #. js-lingui-id: iEQQyu
-#: src/modules/ai-chat/utils/getAiChatAgentAuthor.ts
+#: src/modules/ai-chat/messages/utils/getAiChatAgentAuthor.ts
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
@@ -3159,7 +3129,7 @@ msgstr "Yapay zeka kredileri"
 
 #. js-lingui-id: leS03Y
 #. placeholder {0}: userCreditsUsage.daysUntilReset
-#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedMessage.tsx
+#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "AI kredileri {0, plural, one {# gün} other {# gün}} içinde yenilenir."
 
@@ -3340,9 +3310,6 @@ msgstr "Hizalama"
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow.tsx
 #: src/modules/views/view-picker/components/ViewPickerDropdown.tsx
 msgid "All"
 msgstr "Tüm"
@@ -3417,6 +3384,8 @@ msgid "All failed jobs have been retried"
 msgstr "Tüm başarısız işler yeniden denendi"
 
 #. js-lingui-id: 3xugyj
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "All fields"
 msgstr "Tüm alanlar"
@@ -3472,6 +3441,7 @@ msgid "all objects"
 msgstr "tüm Nesneler"
 
 #. js-lingui-id: zIk4M6
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAllObjectsCard.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 msgid "All objects"
 msgstr "Tüm Nesneler"
@@ -3479,7 +3449,6 @@ msgstr "Tüm Nesneler"
 #. js-lingui-id: aFE/OW
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "All Objects"
 msgstr "Tüm Nesneler"
 
@@ -3501,6 +3470,7 @@ msgstr "tüm kayıtlar"
 
 #. js-lingui-id: rAUKN+
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "All records"
 msgstr "Tüm kayıtlar"
 
@@ -3540,11 +3510,6 @@ msgstr "Başlamak için ihtiyacınız olan tüm temel alan türleri"
 msgid "All the layout items declared on your workspace"
 msgstr "Çalışma alanınızda tanımlanmış tüm düzen öğeleri"
 
-#. js-lingui-id: XuuWVF
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "All the standard objects"
-msgstr "Tüm standart nesneler"
-
 #. js-lingui-id: 35148H
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
 msgid "All tools"
@@ -3579,11 +3544,6 @@ msgstr "Tüm çalışma alanı üyelerine bu rol zaten atanmış."
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspaceSelect.tsx
 msgid "All workspaces"
 msgstr "Tüm çalışma alanları"
-
-#. js-lingui-id: pPTmfc
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "All your custom objects"
-msgstr "Tüm özel nesneleriniz"
 
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -3656,10 +3616,21 @@ msgstr "Dosyalar ve eklerin yüklenmesine izin ver"
 msgid "Allow users to sign in with an email and password."
 msgstr "Kullanıcıların e-posta ve şifre ile oturum açmasına izin ver."
 
+#. js-lingui-id: Vwi3xW
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect.tsx
+msgid "Allowed actions"
+msgstr "İzin verilen eylemler"
+
 #. js-lingui-id: vj+OHl
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Allowed redirect URIs for OAuth flows"
 msgstr "OAuth akışları için izin verilen yönlendirme URI'leri"
+
+#. js-lingui-id: L36XXB
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Allows"
+msgstr "İzin verir"
 
 #. js-lingui-id: Yn0ZH1
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -3681,6 +3652,12 @@ msgstr "Zaten kenar çubuğunda"
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Alt text"
 msgstr "Alt metin"
+
+#. js-lingui-id: Lz58MZ
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Always visible"
+msgstr ""
 
 #. js-lingui-id: Tco16H
 #: src/modules/localization/utils/formatZonedDateTimeTimePart.ts
@@ -3825,7 +3802,7 @@ msgid "And"
 msgstr "Ve"
 
 #. js-lingui-id: U/Q98U
-#: src/modules/ai-chat/components/ToolRecordsWidget.tsx
+#: src/modules/ai-chat/thinking-steps/components/ToolRecordsWidget.tsx
 msgid "and {hiddenCount} more"
 msgstr "ve {hiddenCount} tane daha"
 
@@ -3851,7 +3828,7 @@ msgid "Answered"
 msgstr "Yanıtlandı"
 
 #. js-lingui-id: +qygei
-#: src/modules/ai-chat/components/AiChatQuestionStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema.ts
 msgid "Answers"
 msgstr "Yanıtlar"
@@ -4153,6 +4130,11 @@ msgstr "Aşağıdaki uygulamalar Twenty tarafından incelenmemiştir. Kendi soru
 msgid "Applies to"
 msgstr "Şunun için geçerlidir"
 
+#. js-lingui-id: 9xcLbN
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAllObjectsCard.tsx
+msgid "Applies to all objects before overrides"
+msgstr "Geçersiz kılmalardan önce tüm nesnelere uygulanır"
+
 #. js-lingui-id: DB8zMK
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
@@ -4170,18 +4152,18 @@ msgid "Apply{progressText}"
 msgstr "Uygula{progressText}"
 
 #. js-lingui-id: YLFgbC
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Approval review"
 msgstr "Onay incelemesi"
 
 #. js-lingui-id: Z7ZXbT
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Approve"
 msgstr "Onayla"
 
 #. js-lingui-id: IkcmiN
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Approve all {pendingCardCount}"
 msgstr "Tüm {pendingCardCount} öğeyi onayla"
 
@@ -4191,7 +4173,7 @@ msgid "Approve media access for {applicationName}?"
 msgstr "{applicationName} için medya erişimi onaylansın mı?"
 
 #. js-lingui-id: 7kb4LU
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Approved"
 msgstr "Onaylandı"
 
@@ -4201,7 +4183,7 @@ msgid "Approved access domain validated"
 msgstr "Onaylı erişim alanı doğrulandı"
 
 #. js-lingui-id: nfUdWT
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Approved but it failed"
 msgstr "Onaylandı ancak başarısız oldu"
 
@@ -4339,13 +4321,13 @@ msgid "Are you sure? Your current information will not be saved."
 msgstr "Emin misiniz? Mevcut bilgileriniz kaydedilmeyecek."
 
 #. js-lingui-id: OgB1k4
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalArgumentsEditor.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsEditor.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 msgid "Arguments"
 msgstr "Bağımsız değişkenler"
 
 #. js-lingui-id: qUFEtj
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalArgumentsEditor.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsEditor.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Arguments must be a valid JSON object."
 msgstr "Bağımsız değişkenler geçerli bir JSON nesnesi olmalıdır."
@@ -4461,7 +4443,7 @@ msgid "Ask AI"
 msgstr "AI Sor"
 
 #. js-lingui-id: IRCQfx
-#: src/modules/ai-chat/components/AiChatQuotaLimitExhaustedMessage.tsx
+#: src/modules/ai-chat/usage/components/AiChatQuotaLimitExhaustedMessage.tsx
 msgid "Ask an admin to raise the limit."
 msgstr "Sınırı artırması için bir yöneticiden isteyin."
 
@@ -4476,12 +4458,12 @@ msgid "Ask for human input"
 msgstr "İnsan girdisi iste"
 
 #. js-lingui-id: mc9nK2
-#: src/modules/ai-chat/hooks/useAiChatEditor.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatEditor.ts
 msgid "Ask, search or make anything..."
 msgstr "Bir şey sorun, arayın veya oluşturun..."
 
 #. js-lingui-id: QVL/hg
-#: src/modules/ai-chat/components/AiChatQuestionStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 msgid "Asking questions..."
 msgstr "Sorular soruluyor..."
 
@@ -4551,7 +4533,7 @@ msgid "Assigned to me"
 msgstr "Bana Atanan"
 
 #. js-lingui-id: 7RNUhk
-#: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 msgid "Assigned to you"
 msgstr "Size atanan"
 
@@ -4566,8 +4548,8 @@ msgid "Assignment"
 msgstr "Atama"
 
 #. js-lingui-id: d/bvvp
-#: src/modules/ai-chat/hooks/useAiChatEditor.ts
-#: src/modules/ai-chat/utils/getAiChatMessageAuthor.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatEditor.ts
+#: src/modules/ai-chat/messages/utils/getAiChatMessageAuthor.ts
 msgid "Assistant"
 msgstr "Asistan"
 
@@ -4677,7 +4659,7 @@ msgstr "Dosya ekle"
 #. js-lingui-id: N7m8E+
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/ai-chat/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Attach files"
@@ -4927,17 +4909,17 @@ msgid "Availability"
 msgstr "Mevcutluk"
 
 #. js-lingui-id: C2F7IU
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Availability calendars"
 msgstr "Uygunluk takvimleri"
 
 #. js-lingui-id: caqRwP
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 msgid "Availability was not checked for {uncheckedAttendeeList}. You can still send an invite."
 msgstr "{uncheckedAttendeeList} için uygunluk kontrol edilmedi. Yine de davet gönderebilirsiniz."
 
 #. js-lingui-id: bUNt5P
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Available times"
 msgstr "Uygun saatler"
 
@@ -5234,7 +5216,7 @@ msgid "Block style"
 msgstr "Blok stili"
 
 #. js-lingui-id: 32TndD
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Blocked"
 msgstr "Engellendi"
@@ -5266,8 +5248,8 @@ msgid "Blue"
 msgstr "Mavi"
 
 #. js-lingui-id: bGQplw
-#: src/modules/ai-chat/components/AiChatApprovalEmailReview.tsx
-#: src/modules/ai-chat/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
 #: src/modules/side-panel/pages/email-block-settings/components/EmailPageStyleSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -5601,7 +5583,7 @@ msgid "Calendar access needs approval"
 msgstr "Takvim erişimi onay gerektiriyor"
 
 #. js-lingui-id: DZrVwO
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Calendar availability could not be checked."
 msgstr "Takvim uygunluğu kontrol edilemedi."
 
@@ -5749,6 +5731,16 @@ msgstr "Kampanya {sendTime} için zamanlandı"
 msgid "Campaign unscheduled and back in your drafts"
 msgstr "Kampanyanın zamanlaması kaldırıldı ve taslaklarınıza geri döndü"
 
+#. js-lingui-id: AnhtKd
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Can't be edited"
+msgstr ""
+
+#. js-lingui-id: XccYlu
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Can't be seen"
+msgstr ""
+
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Can't scan? Copy the"
@@ -5765,7 +5757,7 @@ msgid "Canada"
 msgstr "Kanada"
 
 #. js-lingui-id: dEgA5A
-#: src/modules/ai-chat/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
 #: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -5884,7 +5876,7 @@ msgid "Canceled at"
 msgstr "İptal edildiği tarih"
 
 #. js-lingui-id: vv7kpg
-#: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 msgid "Cancelled"
 msgstr "İptal edildi"
@@ -6085,7 +6077,7 @@ msgid "Change Password"
 msgstr "Şifre Değiştir"
 
 #. js-lingui-id: 98W3AT
-#: src/modules/ai-chat/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 msgid "Change status in {scopeLabel}"
 msgstr "{scopeLabel} içindeki durumu değiştir"
 
@@ -6132,7 +6124,7 @@ msgid "channel"
 msgstr "kanal"
 
 #. js-lingui-id: HdE1If
-#: src/modules/ai-chat/components/AiChatNewThreadRecipientPicker.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientPicker.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 msgid "Channel"
@@ -6156,6 +6148,7 @@ msgstr "kanal rolü"
 
 #. js-lingui-id: lfFsZ4
 #: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
 msgid "Channels"
@@ -6258,7 +6251,7 @@ msgid "Check the event dates"
 msgstr "Etkinlik tarihlerini kontrol edin"
 
 #. js-lingui-id: EXMtgb
-#: src/modules/ai-chat/components/__stories__/AiChatApprovalMergeReviewExample.tsx
+#: src/modules/ai-chat/tool-calls/components/__stories__/AiChatApprovalMergeReviewExample.tsx
 msgid "Check the merge result before trying again"
 msgstr "Yeniden denemeden önce birleştirme sonucunu kontrol edin"
 
@@ -6293,7 +6286,7 @@ msgid "Checked only when the record this rule belongs to is saved. Editing the r
 msgstr "Yalnızca bu kuralın ait olduğu kayıt kaydedildiğinde kontrol edilir. İlgili kaydın düzenlenmesi tekrar kontrol edilmesini sağlamaz."
 
 #. js-lingui-id: DMUK+4
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Checking calendar availability…"
 msgstr "Takvim uygunluğu kontrol ediliyor…"
 
@@ -6329,15 +6322,15 @@ msgid "Choose {intervalAdjective} credits"
 msgstr "{intervalAdjective} kredi seçin"
 
 #. js-lingui-id: HC7flO
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 #: src/modules/ui/input/components/internal/date/components/DatePickerCalendar.tsx
 msgid "Choose a date"
 msgstr "Bir tarih seçin"
 
 #. js-lingui-id: mXw+D5
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Choose a date to see available times."
 msgstr "Uygun saatleri görmek için bir tarih seçin."
 
@@ -6348,7 +6341,7 @@ msgid "Choose a model mode"
 msgstr "Bir model modu seçin"
 
 #. js-lingui-id: Vgi70q
-#: src/modules/ai-chat/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "Choose a source record to keep"
 msgstr "Korunacak kaynak kaydı seçin"
 
@@ -6358,12 +6351,12 @@ msgid "Choose a spender"
 msgstr "Bir harcayıcı seçin"
 
 #. js-lingui-id: ZLmzD4
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose a time zone"
 msgstr "Bir saat dilimi seçin"
 
 #. js-lingui-id: 2cQMP+
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose a time zone."
 msgstr "Bir saat dilimi seçin."
 
@@ -6393,12 +6386,12 @@ msgid "Choose an access level available to all selected recipients."
 msgstr "Seçili tüm alıcılar için kullanılabilir bir erişim düzeyi seçin."
 
 #. js-lingui-id: bTsJ+r
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose an available calendar that can send invitations."
 msgstr "Davet gönderebilen uygun bir takvim seçin."
 
 #. js-lingui-id: 4yF6C2
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose an organizer calendar"
 msgstr "Bir düzenleyici takvimi seçin"
 
@@ -6505,7 +6498,7 @@ msgid "Choose when {assistantName} participates in conversations across your wor
 msgstr "{assistantName} öğesinin çalışma alanınızdaki konuşmalara ne zaman katılacağını seçin"
 
 #. js-lingui-id: GF9DB4
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose when you are available and which calendar sends invitations."
 msgstr "Ne zaman uygun olduğunuzu ve hangi takvimin davet göndereceğini seçin."
 
@@ -7213,7 +7206,7 @@ msgid "Complexity"
 msgstr "Karmaşıklık"
 
 #. js-lingui-id: ST17km
-#: src/modules/ai-chat/hooks/useAiChatFrontComponentPreview.ts
+#: src/modules/ai-chat/tool-calls/hooks/useAiChatFrontComponentPreview.ts
 msgid "Component failed to render."
 msgstr "Bileşen oluşturulamadı."
 
@@ -7223,7 +7216,7 @@ msgid "Component name"
 msgstr "Bileşen adı"
 
 #. js-lingui-id: WcUICq
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Component preview with sample data"
 msgstr "Örnek verilerle bileşen önizlemesi"
 
@@ -7439,7 +7432,7 @@ msgid "Confirm"
 msgstr "Onayla"
 
 #. js-lingui-id: MrMPwB
-#: src/modules/ai-chat/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
 msgid "Confirm approval"
 msgstr "Onayı doğrula"
 
@@ -7560,8 +7553,10 @@ msgid "Connect via IMAP/SMTP"
 msgstr "IMAP/SMTP ile Bağlan"
 
 #. js-lingui-id: LqKH42
+#. placeholder {0}: connectionProvider.displayName
 #. placeholder {0}: provider.displayName
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
 msgid "Connect with {0}"
 msgstr "{0} ile bağlan"
 
@@ -7592,6 +7587,12 @@ msgstr "E-postanızı ve takviminizi bağlayarak tüm ağınızı anında görü
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
 msgid "Connect your own {0} account for this app to use on your behalf."
 msgstr "Bu uygulamanın sizin adınıza kullanması için kendi {0} hesabınızı bağlayın."
+
+#. js-lingui-id: Y1cA8P
+#. placeholder {0}: connectionProvider.displayName
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
+msgid "Connect your own {0} account for this server to use on your behalf."
+msgstr "Sizin adınıza kullanmak için bu sunucuya kendi {0} hesabınızı bağlayın."
 
 #. js-lingui-id: QHcLEN
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
@@ -8071,7 +8072,7 @@ msgid "Could not attach this conversation to the {objectLabel}"
 msgstr "Bu sohbet {objectLabel} nesnesine eklenemedi"
 
 #. js-lingui-id: E/YqmF
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Could not be proposed"
 msgstr "Önerilemedi"
 
@@ -8112,8 +8113,8 @@ msgid "Could not load Getting started."
 msgstr "Başlarken yüklenemedi."
 
 #. js-lingui-id: Y5qCpF
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
-#: src/modules/ai-chat/hooks/useAiChatFrontComponentPreview.ts
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFrontComponentCard.tsx
+#: src/modules/ai-chat/tool-calls/hooks/useAiChatFrontComponentPreview.ts
 msgid "Could not load preview."
 msgstr "Önizleme yüklenemedi."
 
@@ -8173,7 +8174,7 @@ msgid "Could not react with {emoji}"
 msgstr "{emoji} ile tepki verilemedi"
 
 #. js-lingui-id: 6GjSMn
-#: src/modules/ai-chat/hooks/useRefreshFrontComponents.ts
+#: src/modules/ai-chat/tool-calls/hooks/useRefreshFrontComponents.ts
 msgid "Could not refresh components. Reload to see saved changes."
 msgstr "Bileşenler yenilenemedi. Kaydedilen değişiklikleri görmek için yeniden yükleyin."
 
@@ -8381,12 +8382,12 @@ msgid "Create {objectLabelSingular}"
 msgstr "{objectLabelSingular} oluştur"
 
 #. js-lingui-id: RRkWki
-#: src/modules/ai-chat/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Create {recordCount} {objectLabel}"
 msgstr "{recordCount} {objectLabel} oluştur"
 
 #. js-lingui-id: TryTER
-#: src/modules/ai-chat/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Create {selectedCount}"
 msgstr "{selectedCount} oluştur"
 
@@ -9026,7 +9027,7 @@ msgid "Current workspace member not found."
 msgstr "Geçerli çalışma alanı üyesi bulunamadı."
 
 #. js-lingui-id: dUDTUc
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalCurrentValue.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCurrentValue.tsx
 msgid "Currently:"
 msgstr "Şu anda:"
 
@@ -9045,7 +9046,6 @@ msgstr "özel"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 #: src/modules/settings/data-model/utils/getSettingsObjectFieldType.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Custom"
 msgstr "Özel"
@@ -9174,6 +9174,11 @@ msgstr "Özel sağlayıcılar, {0} koltuğa kadar ücretsizdir. Bu örnekte {1} 
 msgid "Custom roles"
 msgstr "Özel roller"
 
+#. js-lingui-id: 2jzCZZ
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "Custom section"
+msgstr ""
+
 #. js-lingui-id: BjGDEB
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Custom View"
@@ -9274,6 +9279,12 @@ msgstr "Sayfa düzenlerini ve kullanıcı arayüzü yapısını özelleştir"
 msgid "Customize record page"
 msgstr "Kayıt sayfasını özelleştir"
 
+#. js-lingui-id: hxjpaE
+#: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
+msgid "Customize sidebar"
+msgstr "Kenar çubuğunu özelleştir"
+
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Customize the workspace record page"
@@ -9361,7 +9372,7 @@ msgid "Dashboard duplicated successfully"
 msgstr "Gösterge paneli başarıyla çoğaltıldı"
 
 #. js-lingui-id: xLSe09
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Dashboard widget"
 msgstr "Gösterge paneli widget'ı"
 
@@ -9459,7 +9470,6 @@ msgstr "Veri Yerleşimi"
 #. js-lingui-id: r+cVRP
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "Data type"
 msgstr "Veri tipi"
 
@@ -9774,7 +9784,6 @@ msgstr "Gecikti"
 
 #. js-lingui-id: HNlEFZ
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "delete"
 msgstr "sil"
 
@@ -9802,6 +9811,7 @@ msgstr "sil"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage.tsx
@@ -9866,13 +9876,8 @@ msgstr "{objectLabel} öğesini sil"
 msgid "Delete {objectLabel} object?"
 msgstr "{objectLabel} nesnesi silinsin mi?"
 
-#. js-lingui-id: 65N6Yr
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Delete {objectLabelPlural}"
-msgstr "{objectLabelPlural} Sil"
-
 #. js-lingui-id: CF0F8U
-#: src/modules/ai-chat/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Delete {recordCount} {objectLabel}"
 msgstr "{recordCount} {objectLabel} sil"
 
@@ -9882,7 +9887,7 @@ msgid "Delete {relationObjectLabelSingular}"
 msgstr "{relationObjectLabelSingular} öğesini sil"
 
 #. js-lingui-id: ++479H
-#: src/modules/ai-chat/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Delete {selectedCount}"
 msgstr "{selectedCount} öğesini sil"
 
@@ -10035,8 +10040,8 @@ msgid "Delete MCP server"
 msgstr "MCP Sunucusunu sil"
 
 #. js-lingui-id: KDfTdX
-#: src/modules/ai-chat/components/AiChatMessage.tsx
-#: src/modules/ai-chat/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
 msgid "Delete message"
 msgstr "Mesajı sil"
 
@@ -10059,11 +10064,6 @@ msgstr "Bu uygulama kaydını silin veya devredin"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/DeleteRecordAction.ts
 msgid "Delete Record"
 msgstr "Kayıt Sil"
-
-#. js-lingui-id: mcXHCJ
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Delete Records on All Objects"
-msgstr "Tüm Nesnelerde Kayıtları Silin"
 
 #. js-lingui-id: Ptdfm4
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
@@ -10098,7 +10098,7 @@ msgstr "Beceriyi sil"
 #. js-lingui-id: drg4t8
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
 msgid "Delete tab"
-msgstr ""
+msgstr "Sekmeyi sil"
 
 #. js-lingui-id: +RYIn9
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
@@ -10255,7 +10255,7 @@ msgid "Delivery"
 msgstr "Teslimat"
 
 #. js-lingui-id: cFCKYZ
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Deny"
 msgstr "Reddet"
 
@@ -10340,12 +10340,12 @@ msgstr "Masaüstü"
 
 #. js-lingui-id: +ow7t4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "destroy"
 msgstr "yok Et"
 
 #. js-lingui-id: 2xxBws
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
+#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
 msgid "Destroy"
 msgstr "Yok Et"
 
@@ -10354,20 +10354,10 @@ msgstr "Yok Et"
 msgid "Destroy {objectLabel}"
 msgstr "{objectLabel} Yok Et"
 
-#. js-lingui-id: YI3c7h
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Destroy {objectLabelPlural}"
-msgstr "{objectLabelPlural} Yok Et"
-
 #. js-lingui-id: ud791S
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Destroy all records"
 msgstr "Tüm kayıtları yok et"
-
-#. js-lingui-id: L68qSB
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Destroy Records on All Objects"
-msgstr "Tüm Nesnelerde Kayıtları Yok Edin"
 
 #. js-lingui-id: FOcBn3
 #: src/modules/inbox/components/InboxThreadActionsDropdown.tsx
@@ -10489,7 +10479,7 @@ msgid "Direct messages"
 msgstr "Doğrudan mesajlar"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Doğrudan mesajlar ekleri desteklemez."
 
@@ -10532,7 +10522,7 @@ msgid "Disabled"
 msgstr "Devre dışı"
 
 #. js-lingui-id: bzSI52
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Discard"
@@ -10753,7 +10743,7 @@ msgid "Don't import events marked as private"
 msgstr "Özel olarak işaretlenmiş etkinlikleri içe aktarma"
 
 #. js-lingui-id: DPfwMq
-#: src/modules/ai-chat/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 #: src/modules/inbox/components/InboxBulkActions.tsx
 #: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 #: src/modules/inbox/constants/InboxChannelNavigationItems.ts
@@ -10764,7 +10754,7 @@ msgid "Done"
 msgstr "Bitti"
 
 #. js-lingui-id: y+f/uY
-#: src/modules/ai-chat/components/AiChatThreadActivityTime.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadActivityTime.tsx
 msgid "Done {doneTime}"
 msgstr "Tamamlandı {doneTime}"
 
@@ -10845,7 +10835,7 @@ msgstr "Örnek dosyayı indir"
 
 #. js-lingui-id: eneWvv
 #: src/modules/activities/emails/components/EmailThreadPreview.tsx
-#: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 #: src/modules/object-core/workflows/constants/CoreWorkflowStatusFilterOptions.ts
 #: src/modules/object-core/workflows/versions/constants/CoreWorkflowVersionStatusLabels.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -10864,7 +10854,7 @@ msgid "Draft an email to this company about "
 msgstr "Bu şirkete şu konuda bir e-posta taslağı oluştur: "
 
 #. js-lingui-id: DbAw4C
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Draft email"
 msgstr "Taslak e-posta"
@@ -11103,8 +11093,7 @@ msgstr "eddy@gmail.com, @apple.com"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/profile/components/EmailField.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Edit"
 msgstr "Düzenle"
@@ -11118,11 +11107,6 @@ msgstr "{label}, {description} öğesini düzenle"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
 msgid "Edit {objectLabel}"
 msgstr "{objectLabel} Düzenle"
-
-#. js-lingui-id: zQXUkv
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Edit {objectLabelPlural}"
-msgstr "{objectLabelPlural} Düzenle"
 
 #. js-lingui-id: GsbKaa
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
@@ -11182,7 +11166,6 @@ msgstr "Alan değerlerini düzenle"
 
 #. js-lingui-id: oKQ7ls
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
 msgid "Edit Fields"
 msgstr "Alanları Düzenle"
@@ -11227,8 +11210,8 @@ msgid "Edit linked records"
 msgstr "Bağlı kayıtları düzenle"
 
 #. js-lingui-id: QjH+ZX
-#: src/modules/ai-chat/components/AiChatMessage.tsx
-#: src/modules/ai-chat/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
 msgid "Edit message"
 msgstr "Mesajı düzenle"
 
@@ -11270,11 +11253,6 @@ msgstr "Profil bilgilerini düzenle"
 msgid "Edit Record Table"
 msgstr "Kayıt Tablosunu Düzenle"
 
-#. js-lingui-id: 6n2zpV
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Edit Records on All Objects"
-msgstr "Tüm Nesnelerdeki Kayıtları Düzenle"
-
 #. js-lingui-id: 4QhQge
 #: src/modules/page-layout/widgets/field/components/FieldWidgetRelationEditAction.tsx
 msgid "Edit relation"
@@ -11286,8 +11264,8 @@ msgid "Edit rule"
 msgstr "Kuralı düzenle"
 
 #. js-lingui-id: i5BTxr
-#: src/modules/ai-chat/components/AiChatThreadLabelsField.tsx
-#: src/modules/ai-chat/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "Edit shared labels"
 msgstr "Paylaşılan etiketleri düzenle"
 
@@ -11630,8 +11608,8 @@ msgstr "Çalışanlar"
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
-#: src/modules/ai-chat/components/AiChatRecordApprovalReview.tsx
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalCurrentValue.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCurrentValue.tsx
 #: src/modules/log-console/components/LogConsoleRecordChangeDetail.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx
@@ -11762,7 +11740,7 @@ msgid "End date must be after start date."
 msgstr "Bitiş tarihi başlangıç tarihinden sonra olmalıdır."
 
 #. js-lingui-id: xus58/
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "End time must be after start time."
 msgstr "Bitiş saati başlangıç saatinden sonra olmalıdır."
 
@@ -11899,7 +11877,7 @@ msgid "Enter a number"
 msgstr "Bir sayı girin"
 
 #. js-lingui-id: LsUGyx
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Enter a start and end time."
 msgstr "Bir başlangıç ve bitiş saati girin."
 
@@ -12560,6 +12538,11 @@ msgstr "her dakika"
 msgid "Every Monday"
 msgstr "Her Pazartesi"
 
+#. js-lingui-id: QU6LCC
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+msgid "Every object follows the all objects access."
+msgstr "Her nesne, tüm nesneler erişimini izler."
+
 #. js-lingui-id: JsIvOW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Every object of this workspace as CSV files in one zip, kept for 1 day. Works for suspended workspaces."
@@ -12997,9 +12980,9 @@ msgstr "Yüz"
 
 #. js-lingui-id: 7Bj3x9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai-chat/constants/AiChatThreadReasons.ts
 #: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
@@ -13277,7 +13260,7 @@ msgid "Failed to link the related records to this event"
 msgstr "İlişkili kayıtlar bu etkinliğe bağlanamadı"
 
 #. js-lingui-id: XC1d54
-#: src/modules/ai-chat/components/AiChatAgentAuthorResolver.tsx
+#: src/modules/ai-chat/messages/components/AiChatAgentAuthorResolver.tsx
 msgid "Failed to load agent details."
 msgstr "Aracı ayrıntıları yüklenemedi."
 
@@ -13584,7 +13567,7 @@ msgid "Failed to upload file \"{fileNameForError}\": {errorMessage}"
 msgstr "Dosya \"{fileNameForError}\" yüklenemedi: {errorMessage}"
 
 #. js-lingui-id: cQPyHI
-#: src/modules/ai-chat/hooks/useAiChatFileUpload.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatFileUpload.ts
 msgid "Failed to upload file: {fileName}"
 msgstr "Dosya yükleme başarısız: {fileName}"
 
@@ -13639,8 +13622,14 @@ msgstr "Yanlış"
 msgid "Fast"
 msgstr "Hızlı"
 
+#. js-lingui-id: x77Ptp
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+msgid "Favorite chats"
+msgstr ""
+
 #. js-lingui-id: X9kySA
 #: src/modules/inbox/components/NavigationDrawerInboxFavoritesSection.tsx
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 msgid "Favorites"
 msgstr "Favoriler"
@@ -13662,7 +13651,7 @@ msgid "Features active until"
 msgstr "Özelliklerin etkin kalacağı tarih"
 
 #. js-lingui-id: YirHq7
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 msgid "Feedback"
 msgstr "Geri Bildirim"
@@ -13784,6 +13773,7 @@ msgstr "Alan seviyesi izinleri"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectIndexTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetFieldDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -13823,11 +13813,6 @@ msgstr "Alan grubu"
 msgid "Fields members with the Edit Profile permission can change"
 msgstr "Profili Düzenle iznine sahip üyelerin değiştirebileceği alanlar"
 
-#. js-lingui-id: 5UU7Q6
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
-msgid "Fields Permissions"
-msgstr "Alan İzinleri"
-
 #. js-lingui-id: n7J1Rh
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Fields Settings"
@@ -13837,6 +13822,16 @@ msgstr "Alan Ayarları"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Fields shown in each view, and their order"
 msgstr "Her görünümde gösterilen alanlar ve sıraları"
+
+#. js-lingui-id: RWZvyt
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Fields to edit"
+msgstr ""
+
+#. js-lingui-id: YsJAML
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Fields to see"
+msgstr ""
 
 #. js-lingui-id: HrM5BL
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
@@ -14103,7 +14098,7 @@ msgid "Finish your setup"
 msgstr "Kurulumunuzu tamamlayın"
 
 #. js-lingui-id: 4dQFvz
-#: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 msgid "Finished"
 msgstr "Tamamlandı"
 
@@ -14223,7 +14218,7 @@ msgid "Folders"
 msgstr "Klasörler"
 
 #. js-lingui-id: 2z3uoE
-#: src/modules/ai-chat/components/AiChatThreadFollowersField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
 msgid "Follow for me"
 msgstr "Benim için takip et"
 
@@ -14233,7 +14228,7 @@ msgid "Follow us on X"
 msgstr "Bizi X'te takip edin"
 
 #. js-lingui-id: y6sq5j
-#: src/modules/ai-chat/components/AiChatThreadFollowersField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
 msgid "Following"
 msgstr "Takip ediliyor"
 
@@ -14274,7 +14269,7 @@ msgid "Forgot your password?"
 msgstr "Parolanızı mı unuttunuz?"
 
 #. js-lingui-id: QRAWTO
-#: src/modules/ai-chat/components/AiChatFormCardContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormCardContent.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/FormAction.ts
 msgid "Form"
@@ -14286,12 +14281,12 @@ msgid "Form Data"
 msgstr "Form Verisi"
 
 #. js-lingui-id: oiy48l
-#: src/modules/ai-chat/components/AiChatFormStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Form skipped"
 msgstr "Form atlandı"
 
 #. js-lingui-id: 6vS9Zq
-#: src/modules/ai-chat/components/AiChatFormStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Form submitted"
 msgstr "Form gönderildi"
 
@@ -14318,7 +14313,7 @@ msgid "Formats"
 msgstr "Formatlar"
 
 #. js-lingui-id: CjVkbV
-#: src/modules/ai-chat/hooks/useAiChatThreadDisplayLabel.ts
+#: src/modules/ai-chat/threads/hooks/useAiChatThreadDisplayLabel.ts
 #: src/modules/ai-chat/utils/getAiChatSenderLabel.ts
 #: src/modules/inbox/components/InboxDirectMessageTitle.tsx
 #: src/modules/inbox/components/NavigationDrawerDirectMessageItem.tsx
@@ -14397,7 +14392,7 @@ msgid "French"
 msgstr "Fransızca"
 
 #. js-lingui-id: 39y5bn
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Friday"
 msgstr "Cuma"
 
@@ -14914,11 +14909,6 @@ msgstr "Bu çalışma alanına {parsedAmount} kredi verildi."
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "Granted credits"
 msgstr "Verilen krediler"
-
-#. js-lingui-id: WUgtid
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
-msgid "Granted for this object"
-msgstr "Bu nesne için verildi"
 
 #. js-lingui-id: MkDC2z
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -16091,7 +16081,7 @@ msgid "Info"
 msgstr "Bilgi"
 
 #. js-lingui-id: nSkB8g
-#: src/modules/ai-chat/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 msgid "Information"
 msgstr "Bilgi"
 
@@ -16998,7 +16988,7 @@ msgid "Label must contain at least one alphanumeric character"
 msgstr "Etiket en az bir alfanümerik karakter içermelidir"
 
 #. js-lingui-id: h8DugX
-#: src/modules/ai-chat/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "Labels"
 msgstr "Etiketler"
 
@@ -17287,7 +17277,7 @@ msgid "Last Updated: {0}"
 msgstr "Son Güncelleme: {0}"
 
 #. js-lingui-id: p9uaTd
-#: src/modules/ai-chat/utils/getAiChatThreadSnoozeOptions.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Later today"
 msgstr "Bugün daha sonra"
 
@@ -17910,7 +17900,7 @@ msgid "Loading chats..."
 msgstr "Sohbetler yükleniyor..."
 
 #. js-lingui-id: w81Nov
-#: src/modules/ai-chat/components/AiChatEditorSection.tsx
+#: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
 msgid "Loading conversation…"
 msgstr "Sohbet yükleniyor…"
 
@@ -17937,7 +17927,7 @@ msgid "Loading emails"
 msgstr "E-postalar yükleniyor"
 
 #. js-lingui-id: lwb3JB
-#: src/modules/ai-chat/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
 msgid "Loading emojis"
 msgstr "Emojiler yükleniyor"
 
@@ -17975,12 +17965,12 @@ msgid "Loading more..."
 msgstr "Daha fazla yükleniyor..."
 
 #. js-lingui-id: nSgEqx
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Loading preview…"
 msgstr "Önizleme yükleniyor…"
 
 #. js-lingui-id: WepeNQ
-#: src/modules/ai-chat/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
 msgid "Loading records"
 msgstr "Kayıtlar yükleniyor"
 
@@ -18000,7 +17990,7 @@ msgid "Loading sharing settings"
 msgstr "Paylaşım ayarları yükleniyor"
 
 #. js-lingui-id: VeVIIk
-#: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 msgid "Loading skills"
 msgstr "Beceriler yükleniyor"
 
@@ -18494,7 +18484,7 @@ msgid "Markdown"
 msgstr "Markdown"
 
 #. js-lingui-id: OybNQG
-#: src/modules/ai-chat/components/AiChatThreadStatusNotice.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "Tamamlandı olarak işaretlendi {eventTime}"
 
@@ -18699,7 +18689,7 @@ msgid "Medium section heading"
 msgstr ""
 
 #. js-lingui-id: OvoEq7
-#: src/modules/ai-chat/components/AiChatThreadAvatar.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadAvatar.tsx
 #: src/modules/log-console/constants/LogConsolePageViewColumns.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -18735,7 +18725,6 @@ msgstr ""
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
@@ -18754,7 +18743,7 @@ msgid "Members & invitees"
 msgstr "Üyeler ve davetliler"
 
 #. js-lingui-id: pbIEgB
-#: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 msgid "Mentioned you"
 msgstr "Sizden bahsetti"
 
@@ -18771,18 +18760,18 @@ msgid "Menu item actions"
 msgstr "Menü öğesi işlemleri"
 
 #. js-lingui-id: UODtG8
-#: src/modules/ai-chat/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 msgid "Merge"
 msgstr "Birleştir"
 
 #. js-lingui-id: yDKct3
-#: src/modules/ai-chat/components/__stories__/AiChatApprovalMergeReviewExample.tsx
+#: src/modules/ai-chat/tool-calls/components/__stories__/AiChatApprovalMergeReviewExample.tsx
 msgid "Merge {firstSourceName} and {secondSourceName}"
 msgstr "{firstSourceName} ile {secondSourceName} öğelerini birleştir"
 
 #. js-lingui-id: TTHfsp
-#: src/modules/ai-chat/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "Merge all {pendingPairCount}"
 msgstr "{pendingPairCount} öğesinin tümünü birleştir"
 
@@ -18792,7 +18781,7 @@ msgid "Merge cells"
 msgstr "Hücreleri birleştir"
 
 #. js-lingui-id: d2c8f+
-#: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 msgid "Merge preview"
 msgstr "Birleştirme önizlemesi"
@@ -18804,7 +18793,7 @@ msgid "Merge records"
 msgstr "Kayıtları birleştir"
 
 #. js-lingui-id: PXTjHO
-#: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 msgid "Merge review tabs"
 msgstr "Birleştirme inceleme sekmeleri"
 
@@ -19121,7 +19110,7 @@ msgid "Models for this provider. Toggle to enable or disable."
 msgstr "Bu sağlayıcıya ait modeller. Etkinleştirmek veya devre dışı bırakmak için geçiş yapın."
 
 #. js-lingui-id: hty0d5
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Monday"
@@ -19162,7 +19151,7 @@ msgid "month"
 msgstr "ay"
 
 #. js-lingui-id: HajiZl
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -19259,8 +19248,8 @@ msgid "More options"
 msgstr "Daha fazla seçenek"
 
 #. js-lingui-id: G3/0PS
-#: src/modules/ai-chat/components/AiChatMessageReactionPickerContent.tsx
-#: src/modules/ai-chat/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
 msgid "More reactions"
 msgstr "Daha fazla tepki"
 
@@ -19482,8 +19471,6 @@ msgstr "Uygulanamaz"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -19634,7 +19621,7 @@ msgid "Needs a Select field"
 msgstr "Bir Seçim alanına ihtiyaç var"
 
 #. js-lingui-id: k3/EHQ
-#: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Needs input"
 msgstr "Girdi gerekiyor"
@@ -19679,7 +19666,7 @@ msgid "Never, by Twenty or providers"
 msgstr "Twenty veya sağlayıcılar tarafından asla"
 
 #. js-lingui-id: isRobC
-#: src/modules/ai-chat/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerNewForm.tsx
@@ -19881,10 +19868,10 @@ msgstr "Yeni kural"
 #. js-lingui-id: SagCAA
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "New section"
-msgstr ""
+msgstr "Yeni bölüm"
 
 #. js-lingui-id: MdpSC1
-#: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 msgid "New skill"
 msgstr "Yeni beceri"
 
@@ -19974,7 +19961,7 @@ msgid "Next"
 msgstr "Sonraki"
 
 #. js-lingui-id: IbfvuD
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Next approval"
 msgstr "Sonraki onay"
 
@@ -20009,13 +19996,13 @@ msgid "Next iteration"
 msgstr "Sonraki yineleme"
 
 #. js-lingui-id: g8JmSC
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 msgid "Next month"
 msgstr "Sonraki ay"
 
 #. js-lingui-id: DnlugB
-#: src/modules/ai-chat/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "Next pair"
 msgstr "Sonraki çift"
 
@@ -20025,7 +20012,7 @@ msgid "Next period"
 msgstr "Sonraki dönem"
 
 #. js-lingui-id: jdU2p1
-#: src/modules/ai-chat/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 msgid "Next question"
 msgstr "Sonraki soru"
 
@@ -20035,7 +20022,7 @@ msgid "Next record"
 msgstr "Sonraki kayıt"
 
 #. js-lingui-id: +VXdSO
-#: src/modules/ai-chat/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
 msgid "Next request"
 msgstr "Sonraki istek"
 
@@ -20056,12 +20043,12 @@ msgid "Next Step"
 msgstr "Sonraki Adım"
 
 #. js-lingui-id: IT903p
-#: src/modules/ai-chat/utils/getAiChatThreadSnoozeOptions.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Next week"
 msgstr "Gelecek hafta"
 
 #. js-lingui-id: 97rmcs
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Next: {nextTitles}"
 msgstr "Sonraki: {nextTitles}"
 
@@ -20073,8 +20060,6 @@ msgstr "Dokuzuncu"
 #. js-lingui-id: 1UzENP
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -20106,11 +20091,12 @@ msgstr "Hiç {objectLabelSingular} bulunamadı"
 
 #. js-lingui-id: oPoLg+
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/utils/getObjectOperationsSummary.ts
 msgid "No access"
 msgstr "Erişim yok"
 
 #. js-lingui-id: IeiB4r
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "No actions to review"
 msgstr "İncelenecek işlem yok"
 
@@ -20170,7 +20156,7 @@ msgid "No AI model on this workspace meets these settings."
 msgstr "Bu çalışma alanındaki hiçbir yapay zeka modeli bu ayarları karşılamıyor."
 
 #. js-lingui-id: iH1iv+
-#: src/modules/ai-chat/components/AiChatEditorSection.tsx
+#: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
 #: src/modules/ai-chat/hooks/useAiChat.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
@@ -20233,7 +20219,7 @@ msgid "No available tabs"
 msgstr "Kullanılabilir sekme yok"
 
 #. js-lingui-id: vmUMKh
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "No available times. Choose another date."
 msgstr "Uygun saat yok. Başka bir tarih seçin."
 
@@ -20249,12 +20235,12 @@ msgid "No body"
 msgstr "Gövde yok"
 
 #. js-lingui-id: 15bIDe
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "No calendars available."
 msgstr "Kullanılabilir takvim yok."
 
 #. js-lingui-id: +Rmf7F
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "No calendars match your search."
 msgstr "Aramanızla eşleşen takvim yok."
 
@@ -20432,7 +20418,7 @@ msgid "No email threads found"
 msgstr "E-posta dizisi bulunamadı"
 
 #. js-lingui-id: quWMra
-#: src/modules/ai-chat/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
 msgid "No emoji found"
 msgstr "Emoji bulunamadı"
 
@@ -20478,6 +20464,11 @@ msgstr "Başarısız çalıştırma yok"
 msgid "No field configured"
 msgstr "Yapılandırılmış alan yok"
 
+#. js-lingui-id: gRHpoy
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "No fields"
+msgstr ""
+
 #. js-lingui-id: /hvarH
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionTargetObjectFieldsView.tsx
@@ -20487,6 +20478,7 @@ msgstr ""
 
 #. js-lingui-id: VEYHd4
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
@@ -20558,7 +20550,7 @@ msgid "No jobs were retried{errorDetails}"
 msgstr "İşler yeniden denenmedi{errorDetails}"
 
 #. js-lingui-id: VkcRtM
-#: src/modules/ai-chat/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "No labels available"
 msgstr "Kullanılabilir etiket yok"
 
@@ -20674,6 +20666,11 @@ msgstr "Bu mod için kullanılabilir model yok."
 msgid "No notes"
 msgstr "Not yok"
 
+#. js-lingui-id: arel2K
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
+msgid "No objects found"
+msgstr "Nesne bulunamadı"
+
 #. js-lingui-id: fq3TKy
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
 msgid "No objects match your search"
@@ -20724,11 +20721,6 @@ msgstr "Parametre yok"
 msgid "No payment method found. Please update your billing details."
 msgstr "Ödeme yöntemi bulunamadı. Lütfen fatura bilgilerinizi güncelleyin."
 
-#. js-lingui-id: kSCxfd
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "No permissions have been set for individual objects."
-msgstr "Bireysel nesneler için izinler ayarlanmadı."
-
 #. js-lingui-id: pRxlf6
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "No provenance attestation was found for this package. Publish it from GitHub Actions with npm trusted publishing, then try claiming again."
@@ -20740,7 +20732,7 @@ msgid "No rate limit hit in this period"
 msgstr "Bu dönemde hız sınırına ulaşılmadı"
 
 #. js-lingui-id: UW90md
-#: src/modules/ai-chat/components/AiChatNewThreadRecipientPicker.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientPicker.tsx
 msgid "No recipients found"
 msgstr "Hiçbir alıcı bulunamadı"
 
@@ -20773,7 +20765,7 @@ msgid "No record selected"
 msgstr "Kayıt Seçilmedi"
 
 #. js-lingui-id: EqGTpW
-#: src/modules/ai-chat/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
 #: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItems.tsx
@@ -20787,7 +20779,7 @@ msgid "No records matching the filter criteria were found."
 msgstr "Filtre kriterleriyle eşleşen kayıt bulunamadı."
 
 #. js-lingui-id: To7xRG
-#: src/modules/ai-chat/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "No records to review"
 msgstr "İncelenecek kayıt yok"
 
@@ -20921,7 +20913,7 @@ msgid "No SingleSignOnService with HTTP-Redirect or HTTP-POST binding was found"
 msgstr "HTTP-Redirect veya HTTP-POST bağlamalı SingleSignOnService bulunamadı"
 
 #. js-lingui-id: b5hW1u
-#: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 msgid "No skills found"
 msgstr "Beceri bulunamadı"
 
@@ -20957,7 +20949,7 @@ msgid "No test result yet"
 msgstr "Henüz test sonucu yok"
 
 #. js-lingui-id: hn2q8h
-#: src/modules/ai-chat/components/AiChatQuotedMessagePreview.tsx
+#: src/modules/ai-chat/messages/components/AiChatQuotedMessagePreview.tsx
 msgid "No text content"
 msgstr "Metin içeriği yok"
 
@@ -21159,8 +21151,8 @@ msgid "Node settings"
 msgstr "Düğüm ayarları"
 
 #. js-lingui-id: EdQY6l
-#: src/modules/ai-chat/components/AiChatThreadFollowersField.tsx
-#: src/modules/ai-chat/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
@@ -21305,7 +21297,7 @@ msgid "Not Recorded"
 msgstr "Kaydedilmedi"
 
 #. js-lingui-id: gnnpkq
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Not run: the record changed since it was proposed"
 msgstr "Çalıştırılmadı: önerildiğinden beri kayıt değişti"
 
@@ -21353,7 +21345,7 @@ msgid "Not synced"
 msgstr "Senkronize edilmedi"
 
 #. js-lingui-id: 5xvHen
-#: src/modules/ai-chat/components/AiChatMessageReceipt.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReceipt.tsx
 msgid "Not yet"
 msgstr "Henüz değil"
 
@@ -21567,11 +21559,6 @@ msgstr "Nesne paylaşılmadı"
 msgid "object permission"
 msgstr "nesne izni"
 
-#. js-lingui-id: ecLxgy
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
-msgid "Object permission options"
-msgstr "Nesne izni seçenekleri"
-
 #. js-lingui-id: HN7O/H
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "Object settings"
@@ -21586,12 +21573,6 @@ msgstr "Nesne türü"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
 msgid "Object unique fields"
 msgstr "Nesne benzersiz alanları"
-
-#. js-lingui-id: YJgmMZ
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Object-Level"
-msgstr "Nesne Düzeyi"
 
 #. js-lingui-id: B3toQF
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -21640,7 +21621,7 @@ msgid "Official app"
 msgstr "Resmi uygulama"
 
 #. js-lingui-id: 6Aih4U
-#: src/modules/ai-chat/components/AiChatMemberPresence.tsx
+#: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Offline"
 msgstr "Çevrimdışı"
 
@@ -21782,7 +21763,7 @@ msgid "One-to-one conversations between people"
 msgstr "Kişiler arasındaki bire bir konuşmalar"
 
 #. js-lingui-id: oXOSPE
-#: src/modules/ai-chat/components/AiChatMemberPresence.tsx
+#: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Online"
 msgstr "Çevrimiçi"
 
@@ -21894,7 +21875,7 @@ msgid "Only you will be able to see your emails and events"
 msgstr "Yalnızca siz e-postalarınızı ve etkinliklerinizi görebileceksiniz"
 
 #. js-lingui-id: 1TNIig
-#: src/modules/ai-chat/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 #: src/modules/inbox/constants/InboxChannelNavigationItems.ts
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
@@ -22316,17 +22297,17 @@ msgid "Organization license activated successfully"
 msgstr "Kuruluş lisansı başarıyla etkinleştirildi"
 
 #. js-lingui-id: G5RhpL
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Organizer"
 msgstr "Düzenleyen"
 
 #. js-lingui-id: vryTU3
-#: src/modules/ai-chat/components/AiChatQuotedMessagePreview.tsx
+#: src/modules/ai-chat/messages/components/AiChatQuotedMessagePreview.tsx
 msgid "Original message unavailable"
 msgstr "Orijinal mesaj kullanılamıyor"
 
 #. js-lingui-id: /IX/7x
-#: src/modules/ai-chat/components/internal/AiChatQuestionOtherOption.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionOtherOption.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
@@ -22422,7 +22403,7 @@ msgid "Outcome"
 msgstr "Sonuç"
 
 #. js-lingui-id: nCQvd7
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 msgid "Outcome unknown"
 msgstr "Sonuç bilinmiyor"
 
@@ -22478,6 +22459,11 @@ msgstr "Geçersiz kıl"
 #: src/modules/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton.tsx
 msgid "Override Draft"
 msgstr "Taslağı Geçersiz Kıl"
+
+#. js-lingui-id: sJNF3W
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+msgid "Overrides"
+msgstr "Geçersiz kılmalar"
 
 #. js-lingui-id: 6/dCYd
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -22796,7 +22782,7 @@ msgid "PDF"
 msgstr "PDF"
 
 #. js-lingui-id: UbRKMZ
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 #: src/modules/settings/domains/components/SettingsPublicDomainsListCard.tsx
 #: src/modules/settings/emailing-domains/utils/getEmailingDomainStatusDisplay.ts
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -22804,7 +22790,7 @@ msgid "Pending"
 msgstr "Beklemede"
 
 #. js-lingui-id: 2B0V9T
-#: src/modules/ai-chat/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
 msgid "Pending requests"
 msgstr "Bekleyen istekler"
 
@@ -23011,7 +22997,7 @@ msgid "Pick a color"
 msgstr "Bir renk seç"
 
 #. js-lingui-id: B8mlc2
-#: src/modules/ai-chat/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 msgid "Pick a date"
 msgstr "Bir tarih seçin"
 
@@ -23352,7 +23338,7 @@ msgid "Prefix of the tool names agents see. Cannot be changed later."
 msgstr "Ajanların gördüğü araç adlarının öneki. Daha sonra değiştirilemez."
 
 #. js-lingui-id: IHoyJS
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Preparing an action to approve..."
 msgstr "Onaylanacak bir eylem hazırlanıyor..."
 
@@ -23398,7 +23384,7 @@ msgid "Preview of the page recipients see when they unsubscribe"
 msgstr "Alıcıların abonelikten çıkarken gördüğü sayfanın önizlemesi"
 
 #. js-lingui-id: DHhJ7s
-#: src/modules/ai-chat/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 #: src/modules/page-layout/widgets/graph/components/GraphWidgetLegend.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/settings/components/layout/SettingsWizardStepBar.tsx
@@ -23417,7 +23403,7 @@ msgid "Previous 7 days"
 msgstr "Önceki 7 gün"
 
 #. js-lingui-id: ap92qV
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Previous approval"
 msgstr "Önceki onay"
 
@@ -23437,13 +23423,13 @@ msgid "Previous iteration"
 msgstr "Önceki yineleme"
 
 #. js-lingui-id: 1xwZj/
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 msgid "Previous month"
 msgstr "Önceki ay"
 
 #. js-lingui-id: 7BDoFf
-#: src/modules/ai-chat/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "Previous pair"
 msgstr "Önceki çift"
 
@@ -23458,7 +23444,7 @@ msgid "Previous record"
 msgstr "Önceki kayıt"
 
 #. js-lingui-id: ToM1t/
-#: src/modules/ai-chat/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
 msgid "Previous request"
 msgstr "Önceki istek"
 
@@ -23473,7 +23459,7 @@ msgid "Previous step"
 msgstr "Önceki adım"
 
 #. js-lingui-id: rLvhNs
-#: src/modules/ai-chat/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Previous value:"
 msgstr "Önceki değer:"
 
@@ -23666,7 +23652,7 @@ msgid "Property value"
 msgstr "Özellik değeri"
 
 #. js-lingui-id: nHD0EI
-#: src/modules/ai-chat/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Proposed value:"
 msgstr "Önerilen değer:"
 
@@ -23782,18 +23768,18 @@ msgid "Question"
 msgstr "Soru"
 
 #. js-lingui-id: pA8K5M
-#: src/modules/ai-chat/components/AiChatQuestionStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 msgid "Question skipped"
 msgstr "Soru atlandı"
 
 #. js-lingui-id: enzGAL
-#: src/modules/ai-chat/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
 msgid "Questions"
 msgstr "Sorular"
 
 #. js-lingui-id: Wzbxi7
-#: src/modules/ai-chat/components/AiChatQuestionStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 msgid "Questions skipped"
 msgstr "Sorular atlandı"
 
@@ -23813,12 +23799,12 @@ msgid "Queue: {queueName}"
 msgstr "Kuyruk: {queueName}"
 
 #. js-lingui-id: 8wu9lr
-#: src/modules/ai-chat/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 msgid "Queued"
 msgstr "Kuyruğa alındı"
 
 #. js-lingui-id: Eldtfl
-#: src/modules/ai-chat/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 msgid "Queued messages"
 msgstr "Sıraya alınan mesajlar"
 
@@ -23942,12 +23928,12 @@ msgid "Read and write data model configuration"
 msgstr "Veri modeli yapılandırmasını oku ve yaz"
 
 #. js-lingui-id: RXivwU
-#: src/modules/ai-chat/components/AiChatMessageReceipt.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReceipt.tsx
 msgid "Read by {readerCount} of {recipientCount}"
 msgstr "{recipientCount} kişiden {readerCount} kişi okudu"
 
 #. js-lingui-id: bgP1Ip
-#: src/modules/ai-chat/components/AiChatMessageReceipt.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReceipt.tsx
 msgid "Read by {readerNames}"
 msgstr "{readerNames} okudu"
 
@@ -23974,6 +23960,11 @@ msgstr "E-postaları oku"
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read system prompts"
 msgstr "Sistem istemlerini okuyun"
+
+#. js-lingui-id: /nZe2L
+#: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
+msgid "Read the address, owner and account status of members' private channels"
+msgstr "Üyelerin özel kanallarının adresini, sahibini ve hesap durumunu okuma"
 
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -24013,7 +24004,7 @@ msgid "Read-only {entityTypeLabel} definition shipped by this app"
 msgstr "Bu uygulamayla birlikte gelen, salt okunur {entityTypeLabel} tanımı"
 
 #. js-lingui-id: EqZQdT
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Read-only calendar"
 msgstr "Salt okunur takvim"
 
@@ -24079,6 +24070,12 @@ msgstr "Şifre güncelleme bağlantısı içeren e-posta alın"
 msgid "Recent"
 msgstr "Son kullanılanlar"
 
+#. js-lingui-id: 3qyrqD
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
+msgid "Recent chats"
+msgstr ""
+
 #. js-lingui-id: ZVr1+K
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "Recent Events (oldest → newest)"
@@ -24114,7 +24111,7 @@ msgid "Recipient count unavailable"
 msgstr "Alıcı sayısı kullanılamıyor"
 
 #. js-lingui-id: ar7XM1
-#: src/modules/ai-chat/hooks/useWarnAboutParticipantMentionsNotAdded.ts
+#: src/modules/ai-chat/composer/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "Recipient delivery could not be verified. Check the chat participants."
 msgstr "Alıcıya teslim doğrulanamadı. Sohbet katılımcılarını kontrol edin."
 
@@ -24125,7 +24122,7 @@ msgstr "recipient@example.com"
 
 #. js-lingui-id: yPrbsy
 #: src/modules/activities/emails/components/ChatThreadNewMessage.tsx
-#: src/modules/ai-chat/components/AiChatNewThreadRecipientField.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientField.tsx
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Recipients"
@@ -24137,8 +24134,8 @@ msgid "Recipients are recounted at send time. You can cancel until then."
 msgstr "Alıcılar gönderim sırasında yeniden sayılır. O zamana kadar iptal edebilirsiniz."
 
 #. js-lingui-id: WEYdDv
-#: src/modules/ai-chat/components/AiChatQuestionCard.tsx
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
 msgid "Recommended"
 msgstr "Önerilen"
@@ -24294,7 +24291,7 @@ msgid "Record page"
 msgstr "Kayıt sayfası"
 
 #. js-lingui-id: J5b8Hz
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Record page widget"
 msgstr "Kayıt sayfası widget'ı"
 
@@ -24342,7 +24339,7 @@ msgid "Record-level filter"
 msgstr "Kayıt düzeyi filtresi"
 
 #. js-lingui-id: jdetKb
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "Record:"
 msgstr "Kayıt:"
 
@@ -24374,15 +24371,14 @@ msgid "records"
 msgstr "kayıtlar"
 
 #. js-lingui-id: PWlTvh
-#: src/modules/ai-chat/components/AiChatAddMenu.tsx
-#: src/modules/ai-chat/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItems.tsx
 #: src/modules/settings/applications/hooks/useApplicationContentItemDisplay.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 #: src/modules/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema.ts
@@ -24394,6 +24390,11 @@ msgstr "Kayıtlar"
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 msgid "Records by date"
 msgstr "Tarihe göre kayıtlar"
+
+#. js-lingui-id: b/xmDA
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Records matching the rule"
+msgstr "Kuralla eşleşen kayıtlar"
 
 #. js-lingui-id: CjlKOu
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -24454,7 +24455,7 @@ msgid "Redirection URI"
 msgstr "Yönlendirme URI'si"
 
 #. js-lingui-id: lCF0wC
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 #: src/modules/log-console/components/LogConsoleResults.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -24462,7 +24463,7 @@ msgid "Refresh"
 msgstr "Yenile"
 
 #. js-lingui-id: IevXlZ
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Refresh availability for this date."
 msgstr "Bu tarih için uygunluk durumunu yenileyin."
 
@@ -24531,13 +24532,13 @@ msgid "Registered with Twenty as the official {appName}"
 msgstr "Resmî {appName} olarak Twenty'ye kaydedildi"
 
 #. js-lingui-id: 1t/NnN
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Reject"
 msgstr "Reddet"
 
 #. js-lingui-id: ekCRTP
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Rejected"
 msgstr "Reddedildi"
 
@@ -24689,7 +24690,7 @@ msgid "Remove {0} navigation menu items?"
 msgstr "{0} gezinti menüsü öğesi kaldırılsın mı?"
 
 #. js-lingui-id: boQErO
-#: src/modules/ai-chat/components/internal/AiChatFilePreview.tsx
+#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "{displayName} öğesini kaldır"
 
@@ -24834,6 +24835,11 @@ msgstr "Seçeneği kaldır"
 msgid "Remove output field"
 msgstr "Çıktı alanını kaldır"
 
+#. js-lingui-id: c8Kx/b
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Remove override"
+msgstr "Geçersiz kılmayı kaldır"
+
 #. js-lingui-id: cp/fZQ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsFlagRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsPermissionRow.tsx
@@ -24852,12 +24858,12 @@ msgid "Remove provider \"{0}\""
 msgstr "Sağlayıcı \"{0}\" öğesini kaldır"
 
 #. js-lingui-id: +WeuHF
-#: src/modules/ai-chat/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 msgid "Remove queued message"
 msgstr "Sıraya alınmış mesajı kaldır"
 
 #. js-lingui-id: 6nFc2C
-#: src/modules/ai-chat/components/AiChatComposerQuotePreview.tsx
+#: src/modules/ai-chat/composer/components/AiChatComposerQuotePreview.tsx
 msgid "Remove quote"
 msgstr "Alıntıyı kaldır"
 
@@ -24868,7 +24874,6 @@ msgstr "Yönlendirme URI'sini kaldır"
 
 #. js-lingui-id: SjxzXf
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
 msgid "Remove rule"
 msgstr "Kuralı kaldır"
 
@@ -24885,7 +24890,7 @@ msgstr "Aranabilir alanı kaldır"
 #. js-lingui-id: uXfxoE
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
 msgid "Remove section"
-msgstr ""
+msgstr "Bölümü kaldır"
 
 #. js-lingui-id: jCt40X
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -24908,7 +24913,7 @@ msgid "Remove this provider and disconnect all its models"
 msgstr "Bu sağlayıcıyı kaldırın ve tüm modellerinin bağlantısını kesin"
 
 #. js-lingui-id: XrlYG5
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Remove unavailable calendars"
 msgstr "Kullanılamayan takvimleri kaldır"
 
@@ -24948,7 +24953,7 @@ msgid "Rename group"
 msgstr "Grubu yeniden adlandır"
 
 #. js-lingui-id: cwObXL
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Rendering preview…"
 msgstr "Önizleme oluşturuluyor…"
 
@@ -25004,8 +25009,8 @@ msgid "Replit install links require an HTTPS MCP URL."
 msgstr "Replit kurulum bağlantıları, HTTPS MCP URL'si gerektirir."
 
 #. js-lingui-id: ImOQa9
-#: src/modules/ai-chat/components/AiChatMessage.tsx
-#: src/modules/ai-chat/components/AiChatThreadRequestActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadRequestActions.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
@@ -25013,7 +25018,7 @@ msgid "Reply"
 msgstr "Cevapla"
 
 #. js-lingui-id: VKsaTi
-#: src/modules/ai-chat/components/AiChatComposerQuotePreview.tsx
+#: src/modules/ai-chat/composer/components/AiChatComposerQuotePreview.tsx
 msgid "Replying to"
 msgstr "Şuna yanıt veriliyor"
 
@@ -25033,7 +25038,7 @@ msgid "Request"
 msgstr "İstek"
 
 #. js-lingui-id: tZ7Xci
-#: src/modules/ai-chat/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
 msgid "Request {requestNumber} of {requestCount}"
 msgstr "{requestCount} istekten {requestNumber}. istek"
 
@@ -25218,7 +25223,7 @@ msgid "Resources"
 msgstr "Kaynaklar"
 
 #. js-lingui-id: qrqIfV
-#: src/modules/ai-chat/components/AiChatThreadRequestActions.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadRequestActions.tsx
 msgid "Respond to request"
 msgstr "İsteği yanıtla"
 
@@ -25420,11 +25425,6 @@ msgstr "İmzalama anahtarını iptal et"
 msgid "Revoked"
 msgstr "İptal edildi"
 
-#. js-lingui-id: GG37FL
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
-msgid "Revoked for this object"
-msgstr "Bu nesne için iptal edildi"
-
 #. js-lingui-id: lrTLOv
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal.tsx
 msgid "Revoking this key will invalidate every JWT signed with it. Users with active tokens signed by this key will be logged out."
@@ -25509,7 +25509,6 @@ msgstr "Rol başarıyla güncellendi"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Roles"
 msgstr "Roller"
@@ -25602,6 +25601,11 @@ msgstr "lastik ördek: açık"
 msgid "Ruby"
 msgstr "Yakut"
 
+#. js-lingui-id: oAN4H/
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Rule"
+msgstr ""
+
 #. js-lingui-id: tijGcA
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Rule activated."
@@ -25668,7 +25672,7 @@ msgid "Run tool"
 msgstr "Aracı çalıştır"
 
 #. js-lingui-id: RiQMUh
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
 msgid "Running"
@@ -25695,8 +25699,8 @@ msgid "Running the tool..."
 msgstr "Araç çalıştırılıyor..."
 
 #. js-lingui-id: LTC198
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Running..."
 msgstr "Çalıştırılıyor..."
 
@@ -25785,7 +25789,7 @@ msgid "SAML/OIDC"
 msgstr "SAML/OIDC"
 
 #. js-lingui-id: b/zjTD
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Sample data"
 msgstr "Örnek veriler"
 
@@ -25800,7 +25804,7 @@ msgid "Satisfied"
 msgstr "Karşılandı"
 
 #. js-lingui-id: +5kO8P
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Saturday"
@@ -25831,7 +25835,7 @@ msgid "Save Agent"
 msgstr "Temsilciyi kaydet"
 
 #. js-lingui-id: 8tM8+a
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 msgid "Save as draft"
 msgstr "Taslak olarak kaydet"
 
@@ -25872,7 +25876,7 @@ msgid "Saved tables, boards and calendars"
 msgstr "Kaydedilmiş tablolar, panolar ve takvimler"
 
 #. js-lingui-id: A0/0NU
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Saved to Workspace app"
 msgstr "Workspace uygulamasına kaydedildi"
 
@@ -25925,7 +25929,7 @@ msgid "Scheduled maintenance: {startFormatted} — {endFormatted}"
 msgstr "Planlanan bakım: {startFormatted} — {endFormatted}"
 
 #. js-lingui-id: SxCO0O
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Scheduling preferences"
 msgstr "Zamanlama tercihleri"
 
@@ -25958,12 +25962,12 @@ msgid "Score"
 msgstr "Puan"
 
 #. js-lingui-id: oOi11l
-#: src/modules/ai-chat/components/AiChatScrollToBottomButton.tsx
+#: src/modules/ai-chat/messages/components/AiChatScrollToBottomButton.tsx
 msgid "Scroll to bottom"
 msgstr "En alta kaydır"
 
 #. js-lingui-id: SIucTL
-#: src/modules/ai-chat/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Scrollable record review"
 msgstr "Kaydırılabilir kayıt incelemesi"
 
@@ -26033,7 +26037,6 @@ msgstr "1 alanı ara"
 #. js-lingui-id: l1/uy2
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "Search a field..."
 msgstr "Bir alan ara..."
 
@@ -26114,11 +26117,6 @@ msgstr "Atanmış {roleTargetDisplayName} Ara..."
 msgid "Search an index..."
 msgstr "Bir indeks ara..."
 
-#. js-lingui-id: pFe0YS
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "Search an object"
-msgstr "Bir nesne ara"
-
 #. js-lingui-id: S+MGem
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownAnyFieldSearchInput.tsx
 #: src/modules/views/components/AnyFieldSearchDropdownContentMenuHeader.tsx
@@ -26134,7 +26132,7 @@ msgid "Search API keys"
 msgstr "API Anahtarları Ara"
 
 #. js-lingui-id: fLbp9m
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Search availability calendars"
 msgstr "Uygunluk takvimlerinde ara"
 
@@ -26159,7 +26157,7 @@ msgid "Search by workspace name, subdomain, or ID..."
 msgstr "İş alanı adına, alt alan adına veya kimliğe göre ara..."
 
 #. js-lingui-id: R/iIxI
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Search calendars"
 msgstr "Takvimlerde ara"
 
@@ -26201,7 +26199,7 @@ msgid "Search email threads"
 msgstr "E-posta dizilerinde ara"
 
 #. js-lingui-id: Sb71rQ
-#: src/modules/ai-chat/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
 msgid "Search emojis"
 msgstr "Emoji ara"
 
@@ -26230,6 +26228,8 @@ msgstr "alan meta verisini ara"
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
@@ -26285,6 +26285,8 @@ msgstr "Üyeleri ara"
 
 #. js-lingui-id: two5rl
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableDataSourceDropdownContent.tsx
@@ -26305,8 +26307,8 @@ msgid "Search options"
 msgstr "Seçenekleri ara"
 
 #. js-lingui-id: IMeaSJ
-#: src/modules/ai-chat/components/AiChatAddMenuRecordsPage.tsx
-#: src/modules/ai-chat/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerSearchInput.tsx
 msgid "Search records"
 msgstr "Kayıtları ara"
@@ -26333,8 +26335,8 @@ msgid "Search relations"
 msgstr "İlişkilerde ara"
 
 #. js-lingui-id: BlLxpG
-#: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
-#: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 msgid "Search skills"
 msgstr "Becerileri ara"
 
@@ -26506,12 +26508,12 @@ msgstr "Bölüm"
 #. js-lingui-id: 8gtQoG
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
 msgid "Section actions"
-msgstr ""
+msgstr "Bölüm işlemleri"
 
 #. js-lingui-id: vKc3fL
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
 msgid "Section name"
-msgstr ""
+msgstr "Bölüm adı"
 
 #. js-lingui-id: R4OWFD
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
@@ -26528,14 +26530,9 @@ msgstr "Bölümler"
 msgid "Security"
 msgstr "Güvenlik"
 
-#. js-lingui-id: i0zibG
-#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
-msgid "see"
-msgstr "görmek"
-
 #. js-lingui-id: h+8V38
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
 msgid "See"
 msgstr "Gör"
 
@@ -26543,11 +26540,6 @@ msgstr "Gör"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
 msgid "See {objectLabel}"
 msgstr "{objectLabel} Görüntüle"
-
-#. js-lingui-id: aOvXdk
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "See {objectLabelPlural}"
-msgstr "{objectLabelPlural} Görüntüle"
 
 #. js-lingui-id: R+sqCn
 #: src/modules/page-layout/widgets/components/WidgetActionFieldSeeAll.tsx
@@ -26574,11 +26566,6 @@ msgstr "Uygulama sayfasını görüntüle"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "See data model settings"
 msgstr "Veri modeli ayarlarını görüntüle"
-
-#. js-lingui-id: oGROXc
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
-msgid "See Fields"
-msgstr "Alanları Gör"
 
 #. js-lingui-id: RpeN29
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
@@ -26611,11 +26598,6 @@ msgstr "Pazaryerinde görüntüle"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "See records"
 msgstr "Kayıtları görüntüle"
-
-#. js-lingui-id: irbH/8
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "See Records on All Objects"
-msgstr "Tüm Nesnelerdeki Kayıtları Görüntüle"
 
 #. js-lingui-id: SXaufV
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
@@ -26666,7 +26648,7 @@ msgstr "Seç"
 
 #. js-lingui-id: 02ePaq
 #. placeholder {0}: record.label
-#: src/modules/ai-chat/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Select {0}"
 msgstr "{0} seçin"
 
@@ -26828,7 +26810,7 @@ msgid "Select all loaded rows"
 msgstr "Yüklenen tüm satırları seç"
 
 #. js-lingui-id: rRpCVj
-#: src/modules/ai-chat/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Select all records"
 msgstr "Tüm kayıtları seç"
 
@@ -26853,17 +26835,17 @@ msgid "Select an option"
 msgstr "Bir seçenek belirleyin"
 
 #. js-lingui-id: Wh3uKH
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Select at least one available calendar to check for conflicts."
 msgstr "Çakışmaları kontrol etmek için en az bir kullanılabilir takvim seçin."
 
 #. js-lingui-id: AXQ2Fr
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Select at least one working day."
 msgstr "En az bir çalışma günü seçin."
 
 #. js-lingui-id: 0yxhOL
-#: src/modules/ai-chat/components/AiChatThreadRow.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadRow.tsx
 msgid "Select chat"
 msgstr "Sohbet seç"
 
@@ -26945,7 +26927,7 @@ msgid "Select options"
 msgstr "Seçenekleri seçin"
 
 #. js-lingui-id: TC9hnQ
-#: src/modules/ai-chat/components/AiChatNewThreadRecipientPicker.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientPicker.tsx
 msgid "Select recipients"
 msgstr "Alıcıları seç"
 
@@ -27045,15 +27027,15 @@ msgstr "Seçim"
 
 #. js-lingui-id: JlFcis
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
-#: src/modules/ai-chat/components/AiChatApprovalEmailReviewDeck.tsx
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Send"
 msgstr "Gönder"
 
 #. js-lingui-id: h3fYlJ
-#: src/modules/ai-chat/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "Send all {pendingEmailCount}"
 msgstr "{pendingEmailCount} e-postanın tümünü gönder"
 
@@ -27076,8 +27058,8 @@ msgid "Send Campaign"
 msgstr "Kampanya gönder"
 
 #. js-lingui-id: 65dxv8
-#: src/modules/ai-chat/components/AiChatApprovalEmailReviewDeck.tsx
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Send email"
 msgstr "E-posta gönder"
@@ -27122,7 +27104,7 @@ msgid "Send invitations"
 msgstr "Davetiyeleri gönder"
 
 #. js-lingui-id: Hvnq/n
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 msgid "Send invite"
 msgstr "Daveti gönder"
 
@@ -27132,8 +27114,8 @@ msgid "Send later"
 msgstr "Daha sonra gönder"
 
 #. js-lingui-id: pi1oME
-#: src/modules/ai-chat/components/AiChatQuestionCard.tsx
-#: src/modules/ai-chat/components/internal/SendMessageButton.tsx
+#: src/modules/ai-chat/composer/components/SendMessageButton.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 msgid "Send message"
 msgstr "Mesaj gönder"
 
@@ -27412,7 +27394,7 @@ msgid "Setting up your <0>database</0>..."
 msgstr "<0>Veritabanınız</0> ayarlanıyor..."
 
 #. js-lingui-id: Tz0i8g
-#: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
@@ -27491,8 +27473,8 @@ msgid "Shape, color, face"
 msgstr "Şekil, renk, yüz"
 
 #. js-lingui-id: Z8lGw6
-#: src/modules/ai-chat/components/AiChatThreadShareButton.tsx
-#: src/modules/ai-chat/components/AiChatThreadShareButton.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadShareButton.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadShareButton.tsx
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 #: src/modules/side-panel/hooks/useOpenShareRecordInSidePanel.ts
 msgid "Share"
@@ -27534,8 +27516,8 @@ msgid "Shared by key, across runs"
 msgstr "Anahtara göre, çalıştırmalar arasında paylaşılan"
 
 #. js-lingui-id: 11KprE
-#: src/modules/ai-chat/components/AiChatThreadLabelsField.tsx
-#: src/modules/ai-chat/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "Shared conversation labels"
 msgstr "Paylaşılan konuşma etiketleri"
 
@@ -27683,8 +27665,8 @@ msgid "Show inbox"
 msgstr "Gelen kutusunu göster"
 
 #. js-lingui-id: 6lGV3K
-#: src/modules/ai-chat/components/AiChatQueuedMessageList.tsx
-#: src/modules/ai-chat/components/AiChatUserMessageCollapsibleContent.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/messages/components/AiChatUserMessageCollapsibleContent.tsx
 #: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
 msgid "Show less"
 msgstr "Daha az göster"
@@ -27695,7 +27677,7 @@ msgid "Show logs"
 msgstr "Günlükleri göster"
 
 #. js-lingui-id: fMPkxb
-#: src/modules/ai-chat/components/AiChatUserMessageCollapsibleContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatUserMessageCollapsibleContent.tsx
 #: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
@@ -27928,8 +27910,8 @@ msgid "Skill not found"
 msgstr "Beceri bulunamadı"
 
 #. js-lingui-id: PCSkw2
-#: src/modules/ai-chat/components/AiChatAddMenu.tsx
-#: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
@@ -27937,11 +27919,11 @@ msgid "Skills"
 msgstr "Beceriler"
 
 #. js-lingui-id: 6Uau97
-#: src/modules/ai-chat/components/AiChatApprovalEmailReviewDeck.tsx
-#: src/modules/ai-chat/components/AiChatApprovalMergeReview.tsx
-#: src/modules/ai-chat/components/AiChatFormCardContent.tsx
-#: src/modules/ai-chat/components/AiChatQuestionCard.tsx
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormCardContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/onboarding/components/OnboardingSkipButton.tsx
 msgid "Skip"
 msgstr "Atla"
@@ -27972,8 +27954,8 @@ msgid "Skip the junction object (similar to many-to-many relations)"
 msgstr "Bağlantı nesnesini atla (çoktan çoğa ilişkilere benzer)"
 
 #. js-lingui-id: 9NyAH9
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
 msgid "Skipped"
 msgstr "Atlandı"
@@ -28055,7 +28037,7 @@ msgid "snippet"
 msgstr "parçacık"
 
 #. js-lingui-id: 7+i6oV
-#: src/modules/ai-chat/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/inbox/components/InboxBulkActions.tsx
 #: src/modules/inbox/components/InboxThreadTriageButtons.tsx
@@ -28064,17 +28046,17 @@ msgid "Snooze"
 msgstr "Ertele"
 
 #. js-lingui-id: aqkwib
-#: src/modules/ai-chat/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 msgid "Snooze chat"
 msgstr "Sohbeti ertele"
 
 #. js-lingui-id: xKw3A1
-#: src/modules/ai-chat/components/AiChatThreadActivityTime.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadActivityTime.tsx
 msgid "Snooze ended"
 msgstr "Erteleme sona erdi"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/ai-chat/components/AiChatThreadStatusNotice.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "Erteleme sona erdi: {eventTime}"
 
@@ -28090,14 +28072,14 @@ msgid "Snooze until {snoozedUntilLabel}"
 msgstr "{snoozedUntilLabel} tarihine kadar ertele"
 
 #. js-lingui-id: rz6s8e
-#: src/modules/ai-chat/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 #: src/modules/inbox/constants/InboxChannelNavigationItems.ts
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Snoozed"
 msgstr "Ertelendi"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/ai-chat/components/AiChatThreadStatusNotice.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "{eventTime} tarihine kadar ertelendi"
 
@@ -28110,12 +28092,6 @@ msgstr "SOC 2"
 #: src/modules/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels.ts
 msgid "Soft cap"
 msgstr "Esnek üst sınır"
-
-#. js-lingui-id: zfjcH5
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
-msgid "Some"
-msgstr "Bazı"
 
 #. js-lingui-id: RwCYVZ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
@@ -28135,12 +28111,12 @@ msgid "Some log data was dropped to fit the size limit ({0} entries, {1} bytes).
 msgstr "Boyut sınırına uyması için bazı günlük verileri çıkarıldı ({0} kayıt, {1} bayt)."
 
 #. js-lingui-id: b5Z5wY
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Some selected calendars are no longer available."
 msgstr "Seçilen bazı takvimler artık kullanılamıyor."
 
 #. js-lingui-id: 2c+W2z
-#: src/modules/ai-chat/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 msgid "Someone replies"
 msgstr "Biri yanıt verdiğinde"
 
@@ -28275,7 +28251,7 @@ msgid "Source Email Address"
 msgstr "Kaynak E-posta Adresi"
 
 #. js-lingui-id: Jvqt/3
-#: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 msgid "Source records"
 msgstr "Kaynak kayıtlar"
 
@@ -28397,7 +28373,6 @@ msgstr "Bağımsız"
 #. js-lingui-id: TJBHlP
 #: src/modules/applications/utils/getApplicationDisplayName.ts
 #: src/modules/settings/data-model/utils/getSettingsObjectFieldType.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Standard"
 msgstr "Standart"
@@ -28498,8 +28473,8 @@ msgid "Statistics"
 msgstr "İstatistikler"
 
 #. js-lingui-id: uAQUqI
-#: src/modules/ai-chat/components/AiChatApprovalRecordReview.tsx
-#: src/modules/ai-chat/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleWebhookStatusColumn.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
@@ -28589,7 +28564,7 @@ msgid "Stop impersonating"
 msgstr "Kişileştirmeyi durdur"
 
 #. js-lingui-id: lQeGNv
-#: src/modules/ai-chat/components/internal/SendMessageButton.tsx
+#: src/modules/ai-chat/composer/components/SendMessageButton.tsx
 msgid "Stop response"
 msgstr "Yanıtı durdur"
 
@@ -28756,9 +28731,9 @@ msgstr ""
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/ai-chat/components/AiChatApprovalEmailReview.tsx
-#: src/modules/ai-chat/components/AiChatApprovalEmailReview.tsx
-#: src/modules/ai-chat/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Subject"
 msgstr "Konu"
@@ -28784,7 +28759,7 @@ msgid "Subject, body and attachments will be shared with your team."
 msgstr "Konu, gövde ve ekler ekibinizle paylaşılacak."
 
 #. js-lingui-id: hQRttt
-#: src/modules/ai-chat/components/AiChatFormCardContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormCardContent.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormStepSubmitButton.tsx
@@ -28875,7 +28850,7 @@ msgid "subtitle"
 msgstr ""
 
 #. js-lingui-id: KAbcm2
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 msgid "Succeeded"
 msgstr "Başarılı"
 
@@ -28948,7 +28923,7 @@ msgid "Summary Not Available"
 msgstr "Özet Kullanılamıyor"
 
 #. js-lingui-id: DBC3t5
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Sunday"
@@ -28990,7 +28965,7 @@ msgid "Surprised"
 msgstr "Şaşkın"
 
 #. js-lingui-id: LbFYgh
-#: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 msgid "Survives"
 msgstr "Hayatta kalır"
 
@@ -29215,12 +29190,12 @@ msgstr "Sekme {tabNumber}: {0}"
 #. js-lingui-id: OqZEsq
 #: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
 msgid "Tab actions"
-msgstr ""
+msgstr "Sekme işlemleri"
 
 #. js-lingui-id: FFaDQL
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
 msgid "Tab name"
-msgstr ""
+msgstr "Sekme adı"
 
 #. js-lingui-id: zr20ox
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -29335,7 +29310,7 @@ msgid "Teammate's email {0}"
 msgstr "Ekip arkadaşının e-posta adresi {0}"
 
 #. js-lingui-id: g4mm2M
-#: src/modules/ai-chat/hooks/useAiChatEditor.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatEditor.ts
 #: src/modules/mention/hooks/useWorkspaceMemberMentionSearch.ts
 msgid "Teammates"
 msgstr "Ekip arkadaşları"
@@ -29346,7 +29321,7 @@ msgid "Teammates see who you talk to, not what you write."
 msgstr "Ekip arkadaşları kiminle konuştuğunuzu görür, ne yazdığınızı değil."
 
 #. js-lingui-id: XpPpz7
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
 msgid "Tell the agent what to change"
 msgstr "Temsilciye neyi değiştireceğini söyleyin"
 
@@ -29460,7 +29435,7 @@ msgid "Text Editor"
 msgstr "Metin Düzenleyici"
 
 #. js-lingui-id: kv9l5H
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "That time is no longer available. Choose another time."
 msgstr "Bu saat artık uygun değil. Başka bir saat seçin."
 
@@ -29540,7 +29515,7 @@ msgid "The code of the Twenty partner who referred you"
 msgstr "Sizi yönlendiren Twenty iş ortağının kodu"
 
 #. js-lingui-id: aXzQ65
-#: src/modules/ai-chat/components/AiChatCompactionIndicator.tsx
+#: src/modules/ai-chat/messages/components/AiChatCompactionIndicator.tsx
 msgid "The conversation has been compacted"
 msgstr "Sohbet sıkıştırıldı"
 
@@ -29722,7 +29697,7 @@ msgid "The PDF is pre-signed by Twenty and executed with your legal entity and a
 msgstr "PDF, Twenty tarafından önceden imzalanmıştır ve tüzel kişiliğiniz ve yetkili imza sahibiniz ile yürürlüğe konur."
 
 #. js-lingui-id: iz994T
-#: src/modules/ai-chat/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "The priority record keeps its identity"
 msgstr "Öncelikli kayıt kimliğini korur"
 
@@ -30151,7 +30126,7 @@ msgid "This connection does not exist or is not available for this application."
 msgstr "Bu bağlantı mevcut değil veya bu uygulama için kullanılamıyor."
 
 #. js-lingui-id: HWM4G8
-#: src/modules/ai-chat/components/AiChatEditorSection.tsx
+#: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
 #: src/modules/ai-chat/hooks/useAiChatSubscription.ts
 msgid "This conversation is no longer available."
 msgstr "Bu sohbet artık kullanılamıyor."
@@ -30172,7 +30147,7 @@ msgid "This device"
 msgstr "Bu cihaz"
 
 #. js-lingui-id: GyVWfy
-#: src/modules/ai-chat/utils/getAiChatThreadSnoozeOptions.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 msgid "This evening"
 msgstr "Bu akşam"
 
@@ -30348,7 +30323,7 @@ msgid "This record"
 msgstr "Bu kayıt"
 
 #. js-lingui-id: Wf1hgt
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalRecord.tsx
 msgid "This record could not be loaded."
 msgstr "Bu kayıt yüklenemedi."
 
@@ -30358,19 +30333,14 @@ msgid "This record has been deleted"
 msgstr "Bu kayıt silindi"
 
 #. js-lingui-id: CS0+Ao
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalRecord.tsx
 msgid "This record no longer exists or you cannot see it."
 msgstr "Bu kayıt artık mevcut değil veya onu göremiyorsunuz."
 
 #. js-lingui-id: TG0qsx
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "This record will be deleted:"
 msgstr "Bu kayıt silinecek:"
-
-#. js-lingui-id: vbLBMd
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
-msgid "This role can {humanReadableAction} all records"
-msgstr "Bu rol, tüm kayıtları {humanReadableAction} yapabilir"
 
 #. js-lingui-id: BifDEA
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -30537,7 +30507,7 @@ msgid "Three columns side by side"
 msgstr "Yan yana üç sütun"
 
 #. js-lingui-id: kkDQ8m
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Thursday"
 msgstr "Perşembe"
 
@@ -30567,7 +30537,7 @@ msgstr "Zaman formatı"
 
 #. js-lingui-id: Mz2JN2
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsTimeZoneSelect.tsx
@@ -30652,7 +30622,7 @@ msgid "Title"
 msgstr "Başlık"
 
 #. js-lingui-id: dMtLDE
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "to"
 msgstr "kime"
 
@@ -30679,7 +30649,7 @@ msgid "Today"
 msgstr "Bugün"
 
 #. js-lingui-id: TNXmKt
-#: src/modules/ai-chat/hooks/useFormatAiChatThreadDate.ts
+#: src/modules/ai-chat/threads/hooks/useFormatAiChatThreadDate.ts
 msgid "Today, {time}"
 msgstr "Bugün, {time}"
 
@@ -30709,11 +30679,6 @@ msgstr "{0} grubunu aç/kapat"
 #: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
 msgid "Toggle all folders"
 msgstr "Tüm klasörleri değiştir"
-
-#. js-lingui-id: XArpJK
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
-msgid "Toggle all object permissions"
-msgstr "Tüm nesne izinlerini değiştirin"
 
 #. js-lingui-id: MxmNZq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -30773,7 +30738,7 @@ msgid "Tomato"
 msgstr "Domates"
 
 #. js-lingui-id: BRMXj0
-#: src/modules/ai-chat/utils/getAiChatThreadSnoozeOptions.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "Yarın"
@@ -30998,6 +30963,7 @@ msgstr "Çeviriler"
 
 #. js-lingui-id: R3UKip
 #: src/modules/inbox/components/NavigationDrawerInboxTriageSection.tsx
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 msgid "Triage"
 msgstr "Önceliklendirme"
 
@@ -31179,7 +31145,7 @@ msgstr "Doğru/Yanlış"
 
 #. js-lingui-id: KDw4GX
 #: src/modules/activities/emails/components/EmailsCardErrorState.tsx
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
@@ -31216,7 +31182,7 @@ msgid "TTL"
 msgstr "TTL"
 
 #. js-lingui-id: G3myU+
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Tuesday"
 msgstr "Salı"
 
@@ -31394,7 +31360,7 @@ msgid "Type anything..."
 msgstr "Bir şeyler yazın..."
 
 #. js-lingui-id: SILT51
-#: src/modules/ai-chat/components/internal/AiChatQuestionOtherOption.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionOtherOption.tsx
 msgid "Type your own answer here"
 msgstr "Cevabınızı buraya yazın"
 
@@ -31462,8 +31428,8 @@ msgstr "Atanmamış"
 #. js-lingui-id: jqzUyM
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Unavailable"
@@ -31515,7 +31481,7 @@ msgid "Undisplayed data: max {maxItems} slices per chart."
 msgstr ""
 
 #. js-lingui-id: 9uI/rE
-#: src/modules/ai-chat/components/AiChatParticipantMentionBar.tsx
+#: src/modules/ai-chat/composer/components/AiChatParticipantMentionBar.tsx
 msgid "Undo"
 msgstr "Geri al"
 
@@ -31530,7 +31496,7 @@ msgid "Unexpected error in cron expression parsing"
 msgstr "Cron ifadesi ayrıştırılırken beklenmeyen hata"
 
 #. js-lingui-id: 6Y7jUZ
-#: src/modules/ai-chat/components/AiChatThreadFollowersField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
 msgid "Unfollow for me"
 msgstr "Benim için takibi bırak"
 
@@ -31668,7 +31634,7 @@ msgid "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
 msgstr "\"{relationFieldName}\" üzerinde bilinmeyen alan \"{fieldName}\""
 
 #. js-lingui-id: +K1Lj4
-#: src/modules/ai-chat/components/internal/AiChatFilePreview.tsx
+#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "Bilinmeyen dosya"
 
@@ -31685,7 +31651,7 @@ msgstr "Bilinmeyen ayrıştırma hatası"
 
 #. js-lingui-id: lZSo+Q
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
-#: src/modules/ai-chat/utils/getAiChatMessageAuthor.ts
+#: src/modules/ai-chat/messages/utils/getAiChatMessageAuthor.ts
 msgid "Unknown sender"
 msgstr "Bilinmeyen gönderen"
 
@@ -31863,12 +31829,12 @@ msgid "Unsubscribed"
 msgstr "Abonelikten çıkıldı"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/ai-chat/components/AiChatThreadStatusNotice.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "{eventTime} tarihinde abonelikten çıktınız. Sizden bahsedilmedikçe yeni mesajlar gelen kutunuzun dışında kalır."
 
 #. js-lingui-id: 7fkcOT
-#: src/modules/ai-chat/components/AiChatThreadActivityTime.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadActivityTime.tsx
 msgid "Unsubscribed {unsubscribedTime}"
 msgstr "{unsubscribedTime} tarihinde abonelikten çıktı"
 
@@ -31883,12 +31849,12 @@ msgid "Unsupported image format"
 msgstr "Desteklenmeyen görsel biçimi"
 
 #. js-lingui-id: I9zMVO
-#: src/modules/ai-chat/components/AiChatThreadActivityTime.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadActivityTime.tsx
 msgid "Until {snoozedUntilDay}"
 msgstr "{snoozedUntilDay} tarihine kadar"
 
 #. js-lingui-id: wja8aL
-#: src/modules/ai-chat/components/AiChatThreadTitle.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadTitle.tsx
 #: src/modules/inbox/components/InboxThreadListItem.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/components/LogConsoleRecordCell.tsx
@@ -31991,7 +31957,6 @@ msgstr ""
 
 #. js-lingui-id: Y8zko3
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "update"
 msgstr "güncelle"
 
@@ -32016,12 +31981,12 @@ msgid "Update {contextStoreNumberOfSelectedRecords} records"
 msgstr "{contextStoreNumberOfSelectedRecords} kaydı güncelle"
 
 #. js-lingui-id: AHNNTF
-#: src/modules/ai-chat/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Update {recordCount} {objectLabel}"
 msgstr "{recordCount} {objectLabel} güncelle"
 
 #. js-lingui-id: ECfdor
-#: src/modules/ai-chat/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Update {selectedCount}"
 msgstr "{selectedCount} güncelle"
 
@@ -33014,12 +32979,12 @@ msgid "View not shared"
 msgstr "Görünüm paylaşılmadı"
 
 #. js-lingui-id: K946OL
-#: src/modules/ai-chat/components/AiChatEditorSection.tsx
+#: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
 msgid "View only — You can read this conversation."
 msgstr "Salt görüntüleme — Bu sohbeti okuyabilirsiniz."
 
 #. js-lingui-id: lD7M9Z
-#: src/modules/ai-chat/components/AiChatMessageReplyQuote.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReplyQuote.tsx
 msgid "View original message"
 msgstr "Orijinal mesajı görüntüle"
 
@@ -33167,7 +33132,7 @@ msgid "Waiting Children"
 msgstr "Bekleyen Çocuklar"
 
 #. js-lingui-id: 7YxIQV
-#: src/modules/ai-chat/components/AiChatFormStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Waiting for a form to be filled in"
 msgstr "Bir formun doldurulması bekleniyor"
 
@@ -33182,7 +33147,7 @@ msgid "Waiting for permission"
 msgstr "İzin bekleniyor"
 
 #. js-lingui-id: /gO/m8
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Waiting for your approval"
 msgstr "Onayınız bekleniyor"
 
@@ -33465,7 +33430,7 @@ msgid "Websites whose iframe widgets can ask members for their microphone or cam
 msgstr "Iframe bileşenleri üyelerden mikrofonlarını veya kameralarını kullanma izni isteyebilen web siteleri. Değişiklikler sayfa yeniden yüklendikten sonra uygulanır."
 
 #. js-lingui-id: VAcXNz
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Wednesday"
 msgstr "Çarşamba"
 
@@ -33590,7 +33555,7 @@ msgid "Whatsapp"
 msgstr "WhatsApp"
 
 #. js-lingui-id: 8ssTdk
-#: src/modules/ai-chat/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 msgid "When {assistantName} finishes"
 msgstr "{assistantName} tamamladığında"
 
@@ -33889,22 +33854,22 @@ msgid "Workflows, functions and agents that act for your team."
 msgstr "Ekibiniz adına hareket eden iş akışları, işlevler ve aracılar."
 
 #. js-lingui-id: OskBrZ
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Working days"
 msgstr "Çalışma günleri"
 
 #. js-lingui-id: zBOlTP
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Working hours"
 msgstr "Çalışma saatleri"
 
 #. js-lingui-id: Gfrltr
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Working hours end"
 msgstr "Çalışma saatleri bitişi"
 
 #. js-lingui-id: LYfzu/
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Working hours start"
 msgstr "Çalışma saatleri başlangıcı"
 
@@ -33991,7 +33956,6 @@ msgstr "Çalışma saatleri başlangıcı"
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -34183,7 +34147,7 @@ msgid "Write a message"
 msgstr "Bir mesaj yazın"
 
 #. js-lingui-id: PxYBOj
-#: src/modules/ai-chat/hooks/useAiChatEditor.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatEditor.ts
 msgid "Write a message..."
 msgstr "Bir mesaj yazın..."
 
@@ -34198,7 +34162,7 @@ msgid "Write some instructions"
 msgstr "Talimatlar yazın"
 
 #. js-lingui-id: P28Nzv
-#: src/modules/ai-chat/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
 msgid "Write the email"
 msgstr "E-postayı yaz"
 
@@ -34248,7 +34212,7 @@ msgid "year"
 msgstr "yıl"
 
 #. js-lingui-id: 3PAU4M
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 #: src/modules/ui/input/components/internal/date/components/DatePickerCalendar.tsx
@@ -34309,8 +34273,8 @@ msgstr "Dün"
 
 #. js-lingui-id: kWJmRL
 #: src/modules/activities/timeline-activities/utils/getTimelineActivityAuthorFullName.ts
-#: src/modules/ai-chat/components/AiChatComposerQuote.tsx
-#: src/modules/ai-chat/components/AiChatMessageReplyQuote.tsx
+#: src/modules/ai-chat/composer/components/AiChatComposerQuote.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReplyQuote.tsx
 #: src/modules/ai-chat/utils/getAiChatSenderLabel.ts
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
@@ -34492,6 +34456,8 @@ msgstr "Kartınız kaydedildi, ancak ödeme hâlâ ilgi gerektiriyor."
 #. js-lingui-id: OD3Fzl
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerSignInSection.tsx
 msgid "Your connections could not be loaded. Check your connection and try again."
 msgstr "Bağlantılarınız yüklenemedi. İnternet bağlantınızı kontrol edip tekrar deneyin."
 
@@ -34531,7 +34497,7 @@ msgid "Your handler receives this object. The body is empty because GET requests
 msgstr "İşleyiciniz bu nesneyi alır. Gövde boştur çünkü GET istekleri herhangi bir yük taşımaz."
 
 #. js-lingui-id: HCqgJ0
-#: src/modules/ai-chat/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 msgid "Your inbox"
 msgstr "Gelen kutunuz"
 

@@ -1,7 +1,7 @@
 import { type ReactNode, useContext, useMemo } from 'react';
 
 import { AiChatInstanceRegistrationEffect } from '@/ai-chat/components/AiChatInstanceRegistrationEffect';
-import { AiChatPrepromptEffect } from '@/ai-chat/components/AiChatPrepromptEffect';
+import { AiChatPrepromptEffect } from '@/ai-chat/composer/components/AiChatPrepromptEffect';
 import { AiChatSendMessageEffect } from '@/ai-chat/components/AiChatSendMessageEffect';
 import { AiChatRuntimeContext } from '@/ai-chat/contexts/AiChatRuntimeContext';
 import { useIsAiChatRuntimeEnabled } from '@/ai-chat/hooks/useIsAiChatRuntimeEnabled';

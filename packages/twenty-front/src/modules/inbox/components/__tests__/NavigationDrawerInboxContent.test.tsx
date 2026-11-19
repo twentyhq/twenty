@@ -9,7 +9,7 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { NavigationDrawerInboxContent } from '@/inbox/components/NavigationDrawerInboxContent';
 import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
 import { type InboxThreadListItemData } from '@/inbox/types/InboxThreadListItemData';
-import { type AiChatThreadRecord } from '@/ai-chat/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { type DirectMessageSidebarItem } from '@/inbox/types/DirectMessageSidebarItem';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -17,7 +17,7 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import { type AiChatChannel } from '@/ai-chat/types/AiChatChannel';
+import { type AiChatChannel } from '@/ai-chat/threads/types/AiChatChannel';
 import { messages } from '~/locales/generated/en';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 

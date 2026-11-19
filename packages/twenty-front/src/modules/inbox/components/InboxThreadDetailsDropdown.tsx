@@ -17,18 +17,18 @@ import {
 } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { AiChatChannelIcon } from '@/ai-chat/components/AiChatChannelIcon';
+import { AiChatChannelIcon } from '@/ai-chat/threads/components/AiChatChannelIcon';
 import { InboxThreadChannelPicker } from '@/inbox/components/InboxThreadChannelPicker';
-import { AiChatThreadDetailsFollowing } from '@/ai-chat/components/AiChatThreadDetailsFollowing';
+import { AiChatThreadDetailsFollowing } from '@/ai-chat/threads/components/AiChatThreadDetailsFollowing';
 import { InboxThreadDetailsStatus } from '@/inbox/components/InboxThreadDetailsStatus';
-import { AiChatThreadLabelsField } from '@/ai-chat/components/AiChatThreadLabelsField';
-import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai-chat/constants/AiChatThreadDetailsLabelWidthInPx';
-import { aiChatChannelsState } from '@/ai-chat/states/aiChatChannelsState';
-import { useAiChatThreadRecordTargets } from '@/ai-chat/hooks/useAiChatThreadRecordTargets';
-import { useChatTargetNavigation } from '@/ai-chat/hooks/useChatTargetNavigation';
+import { AiChatThreadLabelsField } from '@/ai-chat/threads/components/AiChatThreadLabelsField';
+import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai-chat/threads/constants/AiChatThreadDetailsLabelWidthInPx';
+import { aiChatChannelsState } from '@/ai-chat/threads/states/aiChatChannelsState';
+import { useAiChatThreadRecordTargets } from '@/ai-chat/threads/hooks/useAiChatThreadRecordTargets';
+import { useChatTargetNavigation } from '@/ai-chat/threads/hooks/useChatTargetNavigation';
 import { useIsAiChatArtifactSurface } from '@/ai-chat/hooks/useIsAiChatArtifactSurface';
-import { aiChatThreadRecordFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadRecordFamilySelector';
-import { aiChatThreadPermissionsFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadPermissionsFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
+import { aiChatThreadPermissionsFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadPermissionsFamilySelector';
 import { useOpenAssignAiChatInSidePanel } from '@/side-panel/hooks/useOpenAssignAiChatInSidePanel';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';

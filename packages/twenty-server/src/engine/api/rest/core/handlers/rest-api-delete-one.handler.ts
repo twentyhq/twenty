@@ -3,6 +3,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { ObjectRecord } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
+import { ID_ONLY_SELECTED_FIELDS } from 'src/engine/api/common/constants/id-only-selected-fields.constant';
 import { CommonDeleteOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-delete-one-query-runner.service';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
 import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
@@ -31,7 +32,7 @@ export class RestApiDeleteOneHandler extends RestApiBaseHandler {
 
       const { results: record } =
         await this.commonDeleteOneQueryRunnerService.execute(
-          { id, selectedFields: { id: true } },
+          { id, selectedFields: ID_ONLY_SELECTED_FIELDS },
           {
             authContext,
             flatObjectMetadata,
