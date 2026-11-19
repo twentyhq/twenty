@@ -1,6 +1,6 @@
 import { type ExpressionSyntaxError } from '@/types/ExpressionSyntaxError';
-import { tokenizeExpression } from '@/utils/expression/tokenizeExpression';
 import { isDefined } from '@/utils/validation/isDefined';
+import { tokenizeValidationRuleExpression } from '@/utils/validation-rule/tokenizeValidationRuleExpression';
 
 const UNKNOWN_CHARACTER_PATTERN = /Unknown character "(.+)"/;
 const UNEXPECTED_TOKEN_PATTERN = /^unexpected T[A-Z]+: (.+)$/;
@@ -16,7 +16,7 @@ export const getExpressionSyntaxError = ({
 }): ExpressionSyntaxError => {
   const parserMessage = error instanceof Error ? error.message : String(error);
 
-  const hasUnclosedText = tokenizeExpression(expression).some(
+  const hasUnclosedText = tokenizeValidationRuleExpression(expression).some(
     (token) => token.type === 'unclosedString',
   );
 
