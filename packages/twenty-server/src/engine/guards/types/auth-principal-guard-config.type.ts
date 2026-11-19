@@ -1,3 +1,5 @@
+import { type ImpersonationLevel } from 'src/engine/core-modules/impersonation/types/impersonation-level.type';
+
 // Every kind and every variant is required, so a kind or variant added later
 // fails to compile at every endpoint until someone decides for it.
 export type AuthPrincipalGuardConfig = {
@@ -5,7 +7,7 @@ export type AuthPrincipalGuardConfig = {
     | boolean
     | {
         standard: boolean;
-        impersonated: boolean;
+        impersonated: boolean | Record<ImpersonationLevel, boolean>;
         playground: boolean;
         workspaceAgnostic: boolean;
       };
