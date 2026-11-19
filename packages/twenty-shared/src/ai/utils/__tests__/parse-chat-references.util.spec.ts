@@ -328,10 +328,10 @@ describe('parseChatReferences', () => {
       '[[object:partner:Partners]][[object:company:Companies]]',
     );
 
-    expect(references).toHaveLength(2);
-    expect(references[0].displayName).toBe('Partners');
-    expect(references[1].displayName).toBe('Companies');
-    expect(references[1].index).toBe(27);
+    expect(references).toMatchObject([
+      { displayName: 'Partners' },
+      { displayName: 'Companies', index: 27 },
+    ]);
   });
 
   it('should not let an unclosed reference swallow the next one', () => {
@@ -339,8 +339,7 @@ describe('parseChatReferences', () => {
       'Open [[object:partner:Partners [[object:company:Companies]]',
     );
 
-    expect(references).toHaveLength(1);
-    expect(references[0].displayName).toBe('Companies');
+    expect(references).toMatchObject([{ displayName: 'Companies' }]);
   });
 
   it.each([
