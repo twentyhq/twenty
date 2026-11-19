@@ -12,7 +12,7 @@ import {
   STOP_WORKFLOW_RUN_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
   STOP_WORKFLOW_RUN_LEGACY_AVAILABILITY_EXPRESSION,
 } from 'src/database/commands/upgrade-version-command/2-61/constants/drop-not-started-workflow-run-status.constant';
-import { type DropNotStartedWorkflowRunStatusCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795082316248-drop-not-started-workflow-run-status.command';
+import { type DropNotStartedWorkflowRunStatusCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795095338141-drop-not-started-workflow-run-status.command';
 import { computeFieldMetadataOptionOperationsForFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/compute-field-metadata-option-operations-for-field-metadatas.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -76,7 +76,7 @@ describe('2-61 workspace command - drop not started workflow run status (integra
     }
 
     const statusOptions = statusField.options ?? [];
-    const statusFieldToUpdate = statusOptions.some(
+    const statusFieldsToUpdate = statusOptions.some(
       ({ value }) => value === LEGACY_NOT_STARTED_OPTION.value,
     )
       ? []
@@ -101,11 +101,11 @@ describe('2-61 workspace command - drop not started workflow run status (integra
             fieldMetadata: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: statusFieldToUpdate,
+              flatEntityToUpdate: statusFieldsToUpdate,
             },
             fieldMetadataOption:
               computeFieldMetadataOptionOperationsForFieldMetadatas({
-                flatFieldMetadatasToUpdate: statusFieldToUpdate,
+                flatFieldMetadatasToUpdate: statusFieldsToUpdate,
                 existingFlatFieldMetadataOptionMaps:
                   flatFieldMetadataOptionMaps,
                 applicationUniversalIdentifier:

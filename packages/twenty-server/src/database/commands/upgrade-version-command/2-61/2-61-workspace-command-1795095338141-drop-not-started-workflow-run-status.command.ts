@@ -25,7 +25,7 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-@RegisteredWorkspaceCommand('2.61.0', 1795082316248)
+@RegisteredWorkspaceCommand('2.61.0', 1795095338141)
 @Command({
   name: 'upgrade:2-61:drop-not-started-workflow-run-status',
   description:

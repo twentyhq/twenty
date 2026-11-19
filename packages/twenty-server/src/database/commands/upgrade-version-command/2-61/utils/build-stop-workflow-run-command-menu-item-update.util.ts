@@ -6,7 +6,6 @@ import {
 } from 'src/database/commands/upgrade-version-command/2-61/constants/drop-not-started-workflow-run-status.constant';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 
-// Only the expression shipped before 2.61 is replaced, so an edited one is left as it is
 export const buildStopWorkflowRunCommandMenuItemUpdate = ({
   stopCommandMenuItem,
   now,
