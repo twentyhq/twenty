@@ -351,7 +351,7 @@ const handler = async (event: RoutePayload) => {
   للاطلاع على تفاصيل الفوترة والتشغيل.
 </Note>
 
-**عقد الـ Resolver.** يفرض نوع `LogicFunctionConfig` في حزمة SDK هذا في وقت الترجمة: بمجرد تعيينك لـ `serverRouteTriggerSettings`، يُقيَّد الـ handler الخاص بك بأن يُرجِع إما `Response`، أو `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (أو `Promise` لأيٍّ منهما). على مسار الإرسال (dispatch path)، يجب أن يكون `workspaceId` لمساحة عمل تكون الدالة المستهدفة مثبّتة فيها، وإلا فسيتم رفض الطلب مع `404`. أي نتيجة لا تطابق أياً من البنيتين — بما في ذلك تلك التي لا تكون معرّفاتها UUIDs — تُرفَض مع رمز الحالة `502`.
+**عقد الـ Resolver.** يفرض نوع `LogicFunctionConfig` في حزمة SDK هذا في وقت الترجمة: بمجرد تعيينك لـ `serverRouteTriggerSettings`، يُقيَّد الـ handler الخاص بك بأن يُرجِع إما `Response`، أو `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (أو `Promise` لأيٍّ منهما). في مسار الإرسال، إذا لم يكن التطبيق مثبّتًا في `workspaceId`، فلن يتم تشغيل أي شيء، وسيتم الإقرار بالطلب باستخدام `200` و`{ queued: false, reason: "APPLICATION_NOT_INSTALLED" }`، وبالتالي يتوقف المزوّد عن إعادة تسليم حدث لا يمكن لأي مساحة عمل معالجته. إذا كان التطبيق مثبّتًا هناك ولكنه لا يحتوي على دالة لها `targetLogicFunctionUniversalIdentifier`، فسيتم رفض الطلب باستخدام `404`. أي نتيجة لا تطابق أياً من البنيتين — بما في ذلك تلك التي لا تكون معرّفاتها UUIDs — تُرفَض مع رمز الحالة `502`.
 
 | الحقل                                    | النوع              | الملاحظات                                                              |
 | ---------------------------------------- | ------------------ | ---------------------------------------------------------------------- |
