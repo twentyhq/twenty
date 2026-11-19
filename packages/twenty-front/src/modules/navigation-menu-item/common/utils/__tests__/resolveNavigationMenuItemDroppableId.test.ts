@@ -44,10 +44,10 @@ describe('resolveNavigationMenuItemDroppableId', () => {
     ).toEqual({ kind: 'folder', parentId: 'folder-1' });
   });
 
-  it('should treat a list with an unknown parent as a folder', () => {
+  it('should not resolve a list whose parent is unknown', () => {
     expect(
       resolve(`${NavigationMenuItemDroppableIds.WORKSPACE_LIST_PREFIX}missing`),
-    ).toEqual({ kind: 'folder', parentId: 'missing' });
+    ).toBeNull();
   });
 
   it('should resolve a folder header', () => {

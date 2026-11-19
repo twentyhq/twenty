@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG } from '@/navigation-menu-item/common/constants/NavigationMenuItemSectionDroppableConfig';
 import type { NavigationMenuItemDroppableTarget } from '@/navigation-menu-item/common/types/NavigationMenuItemDroppableTarget';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
@@ -33,15 +35,17 @@ export const resolveNavigationMenuItemDroppableId = ({
     return null;
   }
 
-  const parentId = droppableId.slice(listPrefix.length) || null;
-  const parent =
-    parentId === null ? undefined : getNavigationMenuItemById(parentId);
+  const parentId = droppableId.slice(listPrefix.length);
+  const parent = getNavigationMenuItemById(parentId);
+
+  if (!isDefined(parent)) {
+    return null;
+  }
 
   return {
-    kind:
-      parent !== undefined && isNavigationMenuItemTabOrSection(parent)
-        ? 'tabOrSectionList'
-        : 'folder',
+    kind: isNavigationMenuItemTabOrSection(parent)
+      ? 'tabOrSectionList'
+      : 'folder',
     parentId,
   };
 };

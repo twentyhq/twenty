@@ -150,7 +150,11 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       navigationMenuItemSection: section,
       getNavigationMenuItemById,
     });
-    const destinationParentId = destinationTarget?.parentId ?? null;
+    if (!isDefined(destinationTarget)) {
+      return;
+    }
+
+    const destinationParentId = destinationTarget.parentId;
     const sourceParentId =
       resolveNavigationMenuItemDroppableId({
         droppableId: source.droppableId,
@@ -159,14 +163,14 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       })?.parentId ?? null;
 
     const isDestinationFolder =
-      destinationTarget?.kind === 'folder' ||
-      destinationTarget?.kind === 'folderHeader';
+      destinationTarget.kind === 'folder' ||
+      destinationTarget.kind === 'folderHeader';
 
     if (isNavigationMenuItemFolder(draggedItem) && isDestinationFolder) {
       return;
     }
 
-    if (destinationTarget?.kind === 'folderHeader') {
+    if (destinationTarget.kind === 'folderHeader') {
       if (destinationParentId === null) {
         throw new Error(doNotTranslate('Invalid folder header ID'));
       }
