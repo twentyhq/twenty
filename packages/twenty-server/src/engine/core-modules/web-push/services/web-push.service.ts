@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import groupBy from 'lodash.groupby';
+import { FOCUSED_TAB_HEARTBEAT_INTERVAL_MS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Not } from 'typeorm';
 import { generateRequestDetails } from 'web-push';
@@ -24,7 +25,7 @@ import { isWebPushEndpointAllowed } from 'src/engine/core-modules/web-push/utils
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-const FOCUSED_TAB_TTL_MS = 45_000;
+const FOCUSED_TAB_TTL_MS = FOCUSED_TAB_HEARTBEAT_INTERVAL_MS * 2;
 const WEB_PUSH_SERVICE_MESSAGE_TTL_SECONDS = 3600;
 const EXPIRED_WEB_PUSH_SUBSCRIPTION_STATUS_CODES = [404, 410];
 
