@@ -26,6 +26,9 @@ export const fromFlatNavigationMenuItemToNavigationMenuItemManifest = ({
   ...(isDefined(flatNavigationMenuItem.nativePageKey)
     ? { nativePageKey: flatNavigationMenuItem.nativePageKey }
     : {}),
+  ...(isDefined(flatNavigationMenuItem.builtInSectionKey)
+    ? { builtInSectionKey: flatNavigationMenuItem.builtInSectionKey }
+    : {}),
   ...(isDefined(flatNavigationMenuItem.parentUniversalIdentifier)
     ? {
         parentUniversalIdentifier:

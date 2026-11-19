@@ -5,6 +5,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
+import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
 import { NavigationMenuItemContainerNameEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemContainerNameEditor';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { NavigationMenuItemDropdownOpenEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemDropdownOpenEffect';
@@ -20,7 +21,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 type NavigationMenuSectionMenuProps = {
   section: Pick<
     NavigationMenuItem,
-    'id' | 'name' | 'icon' | 'parentId' | 'type'
+    'id' | 'name' | 'icon' | 'parentId' | 'type' | 'builtInSectionKey'
   >;
 };
 
@@ -64,7 +65,7 @@ export const NavigationMenuSectionMenu = ({
         align="start"
         width={GenericDropdownContentWidth.Large}
       >
-        {section.type === NavigationMenuItemType.SECTION && (
+        {!isNavigationMenuItemBuiltInSection(section) && (
           <>
             <NavigationMenuItemContainerNameEditor
               item={section}
