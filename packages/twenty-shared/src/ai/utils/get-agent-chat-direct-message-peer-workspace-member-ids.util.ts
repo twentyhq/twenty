@@ -1,18 +1,15 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@/utils/validation/isDefined';
 
-import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
-
-export const getAiChatDirectMessagePeerWorkspaceMemberIds = ({
+export const getAgentChatDirectMessagePeerWorkspaceMemberIds = ({
   thread,
   currentWorkspaceMemberId,
 }: {
-  thread: Pick<
-    AiChatThreadRecord,
-    | 'directMessageFirstWorkspaceMemberId'
-    | 'directMessageSecondWorkspaceMemberId'
-  >;
+  thread: {
+    directMessageFirstWorkspaceMemberId?: string | null;
+    directMessageSecondWorkspaceMemberId?: string | null;
+  };
   currentWorkspaceMemberId: string | undefined;
-}) =>
+}): string[] =>
   [
     thread.directMessageFirstWorkspaceMemberId,
     thread.directMessageSecondWorkspaceMemberId,

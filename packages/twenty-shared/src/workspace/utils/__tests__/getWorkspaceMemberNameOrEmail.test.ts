@@ -1,4 +1,4 @@
-import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
+import { getWorkspaceMemberNameOrEmail } from '@/workspace/utils/getWorkspaceMemberNameOrEmail';
 
 describe('getWorkspaceMemberNameOrEmail', () => {
   it('uses the full name when there is one', () => {

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 import { normalizeSearchText } from 'twenty-ui/utilities';
 
 import { AI_CHAT_ASSISTANT_RECIPIENT_SUGGESTION_ID } from '@/ai-chat/composer/constants/AiChatAssistantRecipientSuggestionId';
@@ -12,7 +13,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type UseAiChatNewThreadRecipientSuggestionsParams = {
