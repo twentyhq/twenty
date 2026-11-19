@@ -1,4 +1,5 @@
 import { type AiChatRestoreEditorContentEventDetail } from '@/ai-chat/composer/types/AiChatRestoreEditorContentEventDetail';
+import { setAiChatDraft } from '@/ai-chat/utils/setAiChatDraft';
 import { type AiChatInstanceEventDetail } from '@/ai-chat/types/AiChatInstanceEventDetail';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { useCallback } from 'react';
@@ -28,7 +29,9 @@ import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowse
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { aiChatDraftFamilySelector } from '@/ai-chat/states/selectors/aiChatDraftFamilySelector';
+import { useStore } from 'jotai';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -39,7 +42,8 @@ export const useAiChatEditor = () => {
   const { displayName: assistantDisplayName } = useAiChatAssistantProfile();
   const { instanceId, threadId: draftKey } = useAiChatInstanceOrThrow();
   const aiModels = useAtomStateValue(aiModelsState);
-  const [aiChatDraftsByThreadId, setAiChatDraftsByThreadId] = useAtomState(
+  const store = useStore();
+  const setAiChatDraftsByThreadId = useSetAtomState(
     aiChatDraftsByThreadIdState,
   );
   const { searchMentionRecords } = useMentionSearch();
@@ -57,7 +61,9 @@ export const useAiChatEditor = () => {
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const initialDraft = aiChatDraftsByThreadId[draftKey] ?? '';
+  const initialDraft = store.get(
+    aiChatDraftFamilySelector.selectorFamily(draftKey),
+  );
   const editor = useAdvancedTextEditor({
     profile: AI_CHAT_EDITOR_PROFILE,
     placeholder: isDirectMessage
@@ -110,10 +116,9 @@ export const useAiChatEditor = () => {
     onUpdate: (currentEditor) => {
       const serializedDraft = serializeAiChatEditorDraft(currentEditor);
 
-      setAiChatDraftsByThreadId((prev) => ({
-        ...prev,
-        [draftKey]: serializedDraft,
-      }));
+      setAiChatDraftsByThreadId((drafts) =>
+        setAiChatDraft({ drafts, threadId: draftKey, draft: serializedDraft }),
+      );
     },
     onFocus: () => {
       pushFocusItemToFocusStack({

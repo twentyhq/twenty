@@ -1,4 +1,5 @@
 import { dispatchAiChatRefetchMessagesEvent } from '@/ai-chat/utils/dispatchAiChatRefetchMessagesEvent';
+import { setAiChatDraft } from '@/ai-chat/utils/setAiChatDraft';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -152,8 +153,9 @@ export const useAiChat = () => {
       const lastSentBrowsingContext = store.get(lastSentBrowsingContextAtom);
       const isBrowsingContextChanged = isUndefined(lastSentBrowsingContext)
         ? isDefined(browsingContext)
-        : JSON.stringify(browsingContext) !==
-          JSON.stringify(lastSentBrowsingContext);
+        : !isDeeplyEqual(browsingContext, lastSentBrowsingContext, {
+            strict: true,
+          });
       const browsingContextToSend = isBrowsingContextChanged
         ? browsingContext
         : null;
@@ -337,10 +339,9 @@ export const useAiChat = () => {
           });
         }
 
-        setAiChatDraftsByThreadId((prev) => ({
-          ...prev,
-          [threadId]: serializedContentToSend,
-        }));
+        setAiChatDraftsByThreadId((drafts) =>
+          setAiChatDraft({ drafts, threadId, draft: serializedContentToSend }),
+        );
         store.set(uploadedFilesAtom, (currentUploadedFiles) => [
           ...aiChatUploadedFiles,
           ...currentUploadedFiles,
@@ -556,10 +557,9 @@ export const useAiChat = () => {
       onThreadChange(threadId);
     }
 
-    setAiChatDraftsByThreadId((prev) => ({
-      ...prev,
-      [threadId]: '',
-    }));
+    setAiChatDraftsByThreadId((drafts) =>
+      setAiChatDraft({ drafts, threadId, draft: '' }),
+    );
     store.set(quotedMessageIdAtom, null);
 
     dispatchBrowserEvent<AiChatRestoreEditorContentEventDetail>(

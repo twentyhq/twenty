@@ -19,12 +19,10 @@ import { aiChatHandleEventCallbackFamilyState } from '@/ai-chat/states/aiChatHan
 import { aiChatIsAwaitingPersistedRefetchFamilyState } from '@/ai-chat/states/aiChatIsAwaitingPersistedRefetchFamilyState';
 import { aiChatMessagesLoadingFamilyState } from '@/ai-chat/states/aiChatMessagesLoadingFamilyState';
 import { aiChatQueuedMessagesFamilyState } from '@/ai-chat/composer/states/aiChatQueuedMessagesFamilyState';
-import { skipMessagesSkeletonUntilLoadedState } from '@/ai-chat/states/skipMessagesSkeletonUntilLoadedState';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import { useQueryWithCallbacks } from '@/apollo/hooks/useQueryWithCallbacks';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   GetChatMessagesDocument,
   type GetChatMessagesQuery,
@@ -48,10 +46,6 @@ export const AiChatMessagesFetchEffect = ({
     { threadId },
   );
 
-  const setSkipMessagesSkeletonUntilLoaded = useSetAtomState(
-    skipMessagesSkeletonUntilLoadedState,
-  );
-
   const setAiChatFetchedMessages = useSetAtomFamilyState(
     aiChatFetchedMessagesFamilyState,
     { threadId },
@@ -65,13 +59,6 @@ export const AiChatMessagesFetchEffect = ({
   const setAiChatIsAwaitingPersistedRefetch = useSetAtomFamilyState(
     aiChatIsAwaitingPersistedRefetchFamilyState,
     { threadId },
-  );
-
-  const handleFirstLoad = useCallback(
-    (_data: GetChatMessagesQuery) => {
-      setSkipMessagesSkeletonUntilLoaded(false);
-    },
-    [setSkipMessagesSkeletonUntilLoaded],
   );
 
   const handleDataLoaded = useCallback(
@@ -170,7 +157,6 @@ export const AiChatMessagesFetchEffect = ({
       variables: { threadId },
       fetchPolicy: 'network-only',
       skip: isNewThread,
-      onFirstLoad: handleFirstLoad,
       onDataLoaded: handleDataLoaded,
       onLoadingChange: handleLoadingChange,
     },

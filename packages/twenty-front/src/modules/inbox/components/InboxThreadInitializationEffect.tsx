@@ -1,4 +1,5 @@
 import { useStore } from 'jotai';
+import { isAiChatThreadRecordComplete } from '@/ai-chat/threads/utils/isAiChatThreadRecordComplete';
 import { useEffect } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import {
@@ -71,7 +72,7 @@ export const InboxThreadInitializationEffect = () => {
 
     const hasUnloadedFavoriteThreads = store
       .get(inboxFavoriteThreadsSelector.atom)
-      .some(({ conversationType }) => !isDefined(conversationType));
+      .some((thread) => !isAiChatThreadRecordComplete(thread));
 
     if (!inboxRecentThreadsLoading && !hasUnloadedFavoriteThreads) {
       return;

@@ -1,6 +1,6 @@
 import { useStore } from 'jotai';
+import { isAiChatThreadRecordComplete } from '@/ai-chat/threads/utils/isAiChatThreadRecordComplete';
 import { useEffect } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 import { useLoadAiChatThread } from '@/ai-chat/hooks/useLoadAiChatThread';
 import { useSelectAiChatThread } from '@/ai-chat/hooks/useSelectAiChatThread';
@@ -23,8 +23,7 @@ export const AiChatPageThreadLoadEffect = ({
       aiChatThreadRecordFamilySelector.selectorFamily(threadId),
     );
 
-    // A live update or a favorite can store a thread before it is fetched
-    if (isDefined(storedThread?.conversationType)) {
+    if (isAiChatThreadRecordComplete(storedThread)) {
       return;
     }
 

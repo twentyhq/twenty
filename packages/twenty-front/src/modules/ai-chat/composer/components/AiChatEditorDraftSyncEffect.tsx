@@ -4,9 +4,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
-import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
+import { aiChatDraftFamilySelector } from '@/ai-chat/states/selectors/aiChatDraftFamilySelector';
 import { serializeAiChatEditorDraft } from '@/ai-chat/composer/utils/serializeAiChatEditorDraft';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 type AiChatEditorDraftSyncEffectProps = {
   editor: Editor | null;
@@ -16,7 +16,7 @@ export const AiChatEditorDraftSyncEffect = ({
   editor,
 }: AiChatEditorDraftSyncEffectProps) => {
   const { threadId } = useAiChatInstanceOrThrow();
-  const draft = useAtomStateValue(aiChatDraftsByThreadIdState)[threadId] ?? '';
+  const draft = useAtomFamilySelectorValue(aiChatDraftFamilySelector, threadId);
 
   useEffect(() => {
     if (
