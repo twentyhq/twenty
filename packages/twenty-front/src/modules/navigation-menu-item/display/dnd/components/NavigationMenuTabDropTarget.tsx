@@ -6,7 +6,6 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { NavigationDropTargetContext } from '@/navigation-menu-item/common/contexts/NavigationDropTargetContext';
 import type { DroppableData } from '@/navigation-menu-item/common/types/NavigationMenuItemDndKitDroppableData';
-import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
 import { getNavigationMenuItemListDroppableId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemListDroppableId';
 import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
@@ -46,7 +45,7 @@ export const NavigationMenuTabDropTarget = ({
       (item.parentId ?? null) === tabId &&
       !isNavigationMenuItemTabOrSection(item),
   ).length;
-  const id = getDndKitDropTargetId(droppableId, appendIndex);
+  const id = `navigation-menu-tab-drop-target-${tabId ?? 'home'}`;
   const data: DroppableData = { droppableId, index: appendIndex };
 
   const { ref } = useDroppable({
