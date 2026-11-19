@@ -1,10 +1,9 @@
 import { CONDITIONAL_AVAILABILITY_SUBJECT_DEFINITIONS } from '@/conditional-availability/constants/ConditionalAvailabilitySubjectDefinitions';
-import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/hooks/useConditionalAvailabilityEditorContext';
+import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/contexts/ConditionalAvailabilityEditorContext';
+import { type ConditionalAvailabilityPathSubject } from '@/conditional-availability/types/ConditionalAvailabilityPathSubject';
 import { type ConditionalAvailabilityRow } from '@/conditional-availability/types/ConditionalAvailabilityRow';
-import { type ConditionalAvailabilitySubject } from '@/conditional-availability/types/ConditionalAvailabilitySubject';
-import { type ConditionalAvailabilitySubjectSection } from '@/conditional-availability/types/ConditionalAvailabilitySubjectSection';
+import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { CONDITION_BUILDER_DROPDOWN_SIDE_OFFSET } from '@/ui/layout/condition-builder/constants/ConditionBuilderDropdownSideOffset';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -43,15 +42,12 @@ export const ConditionalAvailabilitySubjectSelect = ({
     return control;
   }
 
-  const getSectionSubjects = (section: ConditionalAvailabilitySubjectSection) =>
-    availableSubjects.filter(
-      (availableSubject) =>
-        CONDITIONAL_AVAILABILITY_SUBJECT_DEFINITIONS[availableSubject]
-          .section === section,
-    );
-
-  const currentUserSubjects = getSectionSubjects('currentUser');
-  const deviceSubjects = getSectionSubjects('device');
+  const currentUserSubjects = availableSubjects.filter(
+    (availableSubject) => availableSubject !== 'device',
+  );
+  const deviceSubjects = availableSubjects.filter(
+    (availableSubject) => availableSubject === 'device',
+  );
 
   const handleSubjectChange = (nextSubject: string | null) => {
     const selectedSubject = availableSubjects.find(
@@ -66,7 +62,7 @@ export const ConditionalAvailabilitySubjectSelect = ({
   };
 
   const renderSubjectOption = (
-    optionSubject: ConditionalAvailabilitySubject,
+    optionSubject: ConditionalAvailabilityPathSubject,
   ) => {
     const { Icon: SubjectIcon, label } =
       CONDITIONAL_AVAILABILITY_SUBJECT_DEFINITIONS[optionSubject];
@@ -94,7 +90,7 @@ export const ConditionalAvailabilitySubjectSelect = ({
       <DropdownContent
         width={GenericDropdownContentWidth.Large}
         align="start"
-        sideOffset={CONDITION_BUILDER_DROPDOWN_SIDE_OFFSET}
+        sideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}
       >
         {!isNonEmptyArray(availableSubjects) && (
           <Dropdown.Empty>{t`No results`}</Dropdown.Empty>

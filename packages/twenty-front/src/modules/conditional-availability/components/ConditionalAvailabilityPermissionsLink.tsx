@@ -1,4 +1,4 @@
-import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/hooks/useConditionalAvailabilityEditorContext';
+import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/contexts/ConditionalAvailabilityEditorContext';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';

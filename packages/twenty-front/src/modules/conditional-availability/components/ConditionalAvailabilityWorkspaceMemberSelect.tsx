@@ -1,7 +1,6 @@
 import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorkspaceDeletedMembersState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { ConditionalAvailabilityOptionsSelect } from '@/conditional-availability/components/ConditionalAvailabilityOptionsSelect';
-import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/hooks/useConditionalAvailabilityEditorContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { useLingui } from '@lingui/react/macro';
@@ -22,7 +21,6 @@ export const ConditionalAvailabilityWorkspaceMemberSelect = ({
   onChange,
 }: ConditionalAvailabilityWorkspaceMemberSelectProps) => {
   const { t } = useLingui();
-  const { isReadOnly } = useConditionalAvailabilityEditorContext();
 
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
@@ -54,15 +52,7 @@ export const ConditionalAvailabilityWorkspaceMemberSelect = ({
       firstOption.label.localeCompare(secondOption.label),
     );
 
-  const getValueLabel = (value: string) => {
-    const workspaceMember = currentWorkspaceMembers.find(
-      (candidate) => candidate.id === value,
-    );
-
-    if (isDefined(workspaceMember)) {
-      return getWorkspaceMemberNameOrEmail(workspaceMember);
-    }
-
+  const getUnknownValueLabel = (value: string) => {
     const deletedWorkspaceMember = currentWorkspaceDeletedMembers.find(
       (candidate) => candidate.id === value,
     );
@@ -83,12 +73,10 @@ export const ConditionalAvailabilityWorkspaceMemberSelect = ({
       dropdownId={dropdownId}
       options={options}
       values={values}
-      getValueLabel={getValueLabel}
+      getUnknownValueLabel={getUnknownValueLabel}
       isMultiple={isMultiple}
       searchPlaceholder={t`Search members`}
       placeholder={isMultiple ? t`Select members` : t`Select a member`}
-      isDisabled={isReadOnly}
-      isLoading={false}
       onChange={onChange}
     />
   );
