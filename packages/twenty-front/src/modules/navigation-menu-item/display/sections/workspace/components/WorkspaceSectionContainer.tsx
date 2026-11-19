@@ -128,11 +128,16 @@ export const WorkspaceSectionContainer = ({
     />
   );
 
-  if (!isDefined(sectionTitle)) {
-    if (!isLayoutCustomizationModeEnabled && filteredItems.length === 0) {
-      return null;
-    }
+  const isUntitledListEmpty =
+    !isDefined(sectionTitle) &&
+    !isLayoutCustomizationModeEnabled &&
+    filteredItems.length === 0;
 
+  if (isUntitledListEmpty) {
+    return null;
+  }
+
+  if (!isDefined(sectionTitle)) {
     return <NavigationDrawerSection>{list}</NavigationDrawerSection>;
   }
 
