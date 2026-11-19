@@ -7,7 +7,6 @@ import { InboxThreadInitializationEffect } from '@/inbox/components/InboxThreadI
 import { InboxThreadRecordOperationsEffect } from '@/inbox/components/InboxThreadRecordOperationsEffect';
 import { useIsInboxWebPushEnabled } from '@/inbox/hooks/useIsInboxWebPushEnabled';
 import { FocusedTabEffect } from '@/web-push/components/FocusedTabEffect';
-import { WebPushNotificationClickEffect } from '@/web-push/components/WebPushNotificationClickEffect';
 import { WebPushSubscriptionEffect } from '@/web-push/components/WebPushSubscriptionEffect';
 
 export const InboxEffects = () => {
@@ -23,7 +22,6 @@ export const InboxEffects = () => {
         <>
           <WebPushSubscriptionEffect />
           <FocusedTabEffect />
-          <WebPushNotificationClickEffect />
         </>
       )}
       {isDefined(aiChatPageThreadId) && (

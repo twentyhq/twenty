@@ -27,7 +27,7 @@ export const useSubscribeToWebPushNotifications = () => {
     ).toJSON();
 
     if (!isDefined(endpoint) || !isDefined(keys)) {
-      return;
+      throw new Error('Browser web push subscription has no endpoint or keys');
     }
 
     await upsertWebPushSubscription({

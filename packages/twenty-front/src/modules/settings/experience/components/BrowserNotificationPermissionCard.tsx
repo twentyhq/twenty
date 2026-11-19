@@ -25,18 +25,34 @@ export const BrowserNotificationPermissionCard = () => {
     unsupported: t`This browser cannot show notifications`,
   };
 
-  const allowNotifications = async () => {
-    setPermission(await Notification.requestPermission());
+  const subscribeToWebPushNotificationsOrShowError = async () => {
+    try {
+      await subscribeToWebPushNotifications();
 
-    await subscribeToWebPushNotifications().catch(() =>
+      return true;
+    } catch {
       enqueueToast({
         status: 'error',
         children: t`This browser could not turn on notifications`,
-      }),
-    );
+      });
+
+      return false;
+    }
+  };
+
+  const allowNotifications = async () => {
+    setPermission(await Notification.requestPermission());
+
+    await subscribeToWebPushNotificationsOrShowError();
   };
 
   const sendTestNotification = async () => {
+    const isSubscribed = await subscribeToWebPushNotificationsOrShowError();
+
+    if (!isSubscribed) {
+      return;
+    }
+
     const registration = await navigator.serviceWorker.ready;
 
     await registration.showNotification(t`Notifications are on`, {

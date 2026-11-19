@@ -12,7 +12,7 @@ import {
 import { SettingsRadioSettingsCard } from '@/settings/components/SettingsRadioSettingsCard';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useUpdateWorkspaceMemberSettings } from '@/workspace-member/hooks/useUpdateWorkspaceMemberSettings';
 
 const inboxNotificationLevelOptions = [
@@ -38,9 +38,7 @@ const inboxNotificationLevelOptions = [
 
 export const InboxNotificationPreferences = () => {
   const { t } = useLingui();
-  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useAtomState(
-    currentWorkspaceMemberState,
-  );
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
 
   if (!isDefined(currentWorkspaceMember)) {
@@ -58,7 +56,6 @@ export const InboxNotificationPreferences = () => {
       'inboxNotificationLevel' | 'isInboxNotificationPreviewEnabled'
     >,
   ) => {
-    setCurrentWorkspaceMember({ ...currentWorkspaceMember, ...update });
     await updateWorkspaceMemberSettings({
       workspaceMemberId: currentWorkspaceMember.id,
       update,

@@ -38,30 +38,13 @@ self.addEventListener('push', (event) => {
   );
 });
 
-const getInboxPath = (url) =>
-  typeof url === 'string' && url.startsWith('/inbox/') ? url : undefined;
+const getPathToOpenOnClick = (url) =>
+  typeof url === 'string' && url.startsWith('/inbox/') ? url : '/';
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
-  const inboxPath = getInboxPath(event.notification.data?.url);
-
   event.waitUntil(
-    self.clients
-      .matchAll({ type: 'window', includeUncontrolled: true })
-      .then(([windowClient]) => {
-        if (windowClient === undefined) {
-          return self.clients.openWindow(inboxPath ?? '/');
-        }
-
-        if (inboxPath !== undefined) {
-          windowClient.postMessage({
-            type: 'web-push-notification-click',
-            url: inboxPath,
-          });
-        }
-
-        return windowClient.focus();
-      }),
+    self.clients.openWindow(getPathToOpenOnClick(event.notification.data?.url)),
   );
 });

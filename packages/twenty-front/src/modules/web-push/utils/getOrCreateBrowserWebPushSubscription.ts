@@ -4,22 +4,22 @@ import { base64UrlEncode, isDefined } from 'twenty-shared/utils';
 export const getOrCreateBrowserWebPushSubscription = async (
   vapidPublicKey: string,
 ): Promise<PushSubscription> => {
-  const registration =
-    await navigator.serviceWorker.register('/service-worker.js');
+  await navigator.serviceWorker.register('/service-worker.js');
+
+  const registration = await navigator.serviceWorker.ready;
   const existingSubscription = await registration.pushManager.getSubscription();
+  const existingVapidPublicKey =
+    existingSubscription?.options.applicationServerKey;
 
-  if (isDefined(existingSubscription)) {
-    const existingKey = existingSubscription.options.applicationServerKey;
-
-    if (
-      isDefined(existingKey) &&
-      base64UrlEncode(Buffer.from(existingKey)) === vapidPublicKey
-    ) {
-      return existingSubscription;
-    }
-
-    await existingSubscription.unsubscribe();
+  if (
+    isDefined(existingSubscription) &&
+    isDefined(existingVapidPublicKey) &&
+    base64UrlEncode(Buffer.from(existingVapidPublicKey)) === vapidPublicKey
+  ) {
+    return existingSubscription;
   }
+
+  await existingSubscription?.unsubscribe();
 
   return registration.pushManager.subscribe({
     userVisibleOnly: true,
