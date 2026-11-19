@@ -20,7 +20,7 @@ export const ConditionalAvailabilityValueInput = ({
   const isMultiple = getConditionalAvailabilityValueArity({ row }) === 'list';
 
   const handleChange = (values: string[]) => {
-    changeRowValues(row.id, values);
+    changeRowValues({ rowId: row.id, values });
   };
 
   switch (row.subject) {

@@ -58,7 +58,10 @@ export const ConditionalAvailabilitySubjectSelect = ({
       return;
     }
 
-    changeRowSubject(row.id, { subject: selectedSubject });
+    changeRowSubject({
+      rowId: row.id,
+      rowSubject: { subject: selectedSubject },
+    });
   };
 
   const renderSubjectOption = (

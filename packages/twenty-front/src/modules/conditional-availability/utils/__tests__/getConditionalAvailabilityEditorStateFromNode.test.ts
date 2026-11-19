@@ -1,29 +1,37 @@
 import { buildConditionalAvailabilityNode } from '@/conditional-availability/utils/buildConditionalAvailabilityNode';
 import { getConditionalAvailabilityEditorStateFromNode } from '@/conditional-availability/utils/getConditionalAvailabilityEditorStateFromNode';
-import {
-  type ConditionalAvailabilityLogicalOperator,
-  type ConditionalAvailabilityNode,
-} from 'twenty-shared/types';
+import { type ConditionalAvailabilityNode } from 'twenty-shared/types';
 
 const ADMIN = '20202020-0000-4000-8000-000000000001';
 const SALES = '20202020-0000-4000-8000-000000000002';
 const MEMBER_ID = '20202020-1111-4000-8000-000000000001';
 const OTHER_MEMBER_ID = '20202020-1111-4000-8000-000000000002';
 
-const group = (
-  logicalOperator: ConditionalAvailabilityLogicalOperator,
+const and = (
   children: ConditionalAvailabilityNode[],
 ): ConditionalAvailabilityNode => ({
   type: 'GROUP',
-  logicalOperator,
+  logicalOperator: 'AND',
   children,
 });
 
-const comparison = (
-  operator: 'EQUAL' | 'NOT_EQUAL',
-  path: string,
-  value: string,
+const or = (
+  children: ConditionalAvailabilityNode[],
 ): ConditionalAvailabilityNode => ({
+  type: 'GROUP',
+  logicalOperator: 'OR',
+  children,
+});
+
+const comparison = ({
+  operator,
+  path,
+  value,
+}: {
+  operator: 'EQUAL' | 'NOT_EQUAL';
+  path: string;
+  value: string;
+}): ConditionalAvailabilityNode => ({
   type: 'COMPARISON',
   operator,
   left: { type: 'PATH', path },
@@ -31,10 +39,22 @@ const comparison = (
 });
 
 const roleIs = (role: string) =>
-  comparison('EQUAL', 'currentRole.universalIdentifier', role);
+  comparison({
+    operator: 'EQUAL',
+    path: 'currentRole.universalIdentifier',
+    value: role,
+  });
 const memberIsNot = (memberId: string) =>
-  comparison('NOT_EQUAL', 'currentWorkspaceMember.id', memberId);
-const MOBILE = comparison('EQUAL', 'device', 'MOBILE');
+  comparison({
+    operator: 'NOT_EQUAL',
+    path: 'currentWorkspaceMember.id',
+    value: memberId,
+  });
+const MOBILE = comparison({
+  operator: 'EQUAL',
+  path: 'device',
+  value: 'MOBILE',
+});
 
 const read = (node: ConditionalAvailabilityNode | null) =>
   getConditionalAvailabilityEditorStateFromNode({
@@ -60,9 +80,7 @@ describe('getConditionalAvailabilityEditorStateFromNode', () => {
   });
 
   it('should read a chain of roles as one row and a device as another', () => {
-    const tree = readTree(
-      group('AND', [group('OR', [roleIs(ADMIN), roleIs(SALES)]), MOBILE]),
-    );
+    const tree = readTree(and([or([roleIs(ADMIN), roleIs(SALES)]), MOBILE]));
 
     expect(tree).toMatchObject({
       logicalOperator: 'AND',
@@ -92,9 +110,8 @@ describe('getConditionalAvailabilityEditorStateFromNode', () => {
     ]);
 
     expect(
-      readTree(
-        group('AND', [memberIsNot(MEMBER_ID), memberIsNot(OTHER_MEMBER_ID)]),
-      ).children,
+      readTree(and([memberIsNot(MEMBER_ID), memberIsNot(OTHER_MEMBER_ID)]))
+        .children,
     ).toMatchObject([
       {
         type: 'row',
@@ -108,9 +125,7 @@ describe('getConditionalAvailabilityEditorStateFromNode', () => {
   });
 
   it('should read a nested group of rows', () => {
-    const tree = readTree(
-      group('AND', [roleIs(SALES), group('OR', [roleIs(ADMIN), MOBILE])]),
-    );
+    const tree = readTree(and([roleIs(SALES), or([roleIs(ADMIN), MOBILE])]));
 
     expect(tree.children).toMatchObject([
       { type: 'row', row: { subject: 'role', values: [SALES] } },
@@ -130,27 +145,32 @@ describe('getConditionalAvailabilityEditorStateFromNode', () => {
   it.each([
     {
       title: 'a third level of groups',
-      node: group('AND', [
-        MOBILE,
-        group('OR', [roleIs(ADMIN), group('AND', [MOBILE, roleIs(SALES)])]),
-      ]),
+      node: and([MOBILE, or([roleIs(ADMIN), and([MOBILE, roleIs(SALES)])])]),
     },
     { title: 'a negation', node: { type: 'NOT' as const, child: MOBILE } },
     {
       title: 'the same role twice',
-      node: group('OR', [roleIs(ADMIN), roleIs(ADMIN)]),
+      node: or([roleIs(ADMIN), roleIs(ADMIN)]),
     },
     {
       title: 'a device that is not a device',
-      node: comparison('EQUAL', 'device', 'TABLET'),
+      node: comparison({ operator: 'EQUAL', path: 'device', value: 'TABLET' }),
     },
     {
       title: 'a device excluded',
-      node: comparison('NOT_EQUAL', 'device', 'MOBILE'),
+      node: comparison({
+        operator: 'NOT_EQUAL',
+        path: 'device',
+        value: 'MOBILE',
+      }),
     },
     {
       title: 'a variable the builder has no row for',
-      node: comparison('EQUAL', 'featureFlags.IS_AI_ENABLED', 'true'),
+      node: comparison({
+        operator: 'EQUAL',
+        path: 'featureFlags.IS_AI_ENABLED',
+        value: 'true',
+      }),
     },
   ])('should not read $title as rows', ({ node }) => {
     expect(read(node)).toEqual({ mode: 'unsupportedRule' });
