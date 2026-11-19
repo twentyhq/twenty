@@ -9,7 +9,6 @@ import { type ApplicationSuggestedViewField } from '~/generated-metadata/graphql
 export type SuggestedViewFieldGroup = {
   viewId: string;
   viewName: string;
-  objectLabelPlural: string;
   fields: { id: string; label: string }[];
 };
 
@@ -55,7 +54,6 @@ export const computeSuggestedViewFieldGroups = ({
     const group = groupsByViewId.get(view.id) ?? {
       viewId: view.id,
       viewName: resolveViewNamePlaceholders(view.name, objectMetadataItem),
-      objectLabelPlural: objectMetadataItem.labelPlural,
       fields: [],
     };
 

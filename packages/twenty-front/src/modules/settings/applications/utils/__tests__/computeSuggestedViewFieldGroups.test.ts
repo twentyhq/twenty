@@ -42,7 +42,6 @@ describe('computeSuggestedViewFieldGroups', () => {
       {
         viewId: 'index-view-id',
         viewName: 'All Companies',
-        objectLabelPlural: 'Companies',
         fields: [
           { id: 'industry-field-id', label: 'Industry' },
           { id: 'employees-field-id', label: 'Employees' },

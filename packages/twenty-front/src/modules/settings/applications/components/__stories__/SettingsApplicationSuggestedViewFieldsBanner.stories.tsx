@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { aiChatPrepromptState } from '@/ai-chat/states/aiChatPrepromptState';
@@ -137,14 +137,13 @@ export const SendsSuggestionsToAiChat: Story = {
       expect(jotaiStore.get(aiChatPrepromptState.atom)?.mode).toBe('SEND');
     });
 
-    const serializedDocument = jotaiStore.get(
-      aiChatPrepromptState.atom,
-    )?.serializedDocument;
-
-    expect(serializedDocument).toContain(
-      `${jobTitleField.label} (field ID ${jobTitleField.id}), ${cityField.label} (field ID ${cityField.id})`,
+    expect(
+      tipTapDocumentToMarkdown(
+        jotaiStore.get(aiChatPrepromptState.atom)?.serializedDocument ?? '',
+      ),
+    ).toContain(
+      `- **All People**: ${jobTitleField.label}, ${cityField.label} \`${allPeopleView?.id}\``,
     );
-    expect(serializedDocument).toContain(`(view ID ${allPeopleView?.id})`);
     expect(canvas.queryByText(BANNER_TITLE)).not.toBeInTheDocument();
   },
 };

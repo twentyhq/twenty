@@ -7,7 +7,7 @@ import { Callout } from 'twenty-ui/components/feedback';
 import { IconInfoCircle } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
+import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
 import { useCanSendAiChatMessage } from '@/ai-chat/composer/hooks/useCanSendAiChatMessage';
 import { useOpenAskAiPageWithPreprompt } from '@/ai-chat/hooks/useOpenAskAiPageWithPreprompt';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -81,7 +81,7 @@ export const SettingsApplicationSuggestedViewFieldsBanner = ({
     setIsHidden(true);
 
     void openAskAiPageWithPreprompt({
-      serializedDocument: serializePlainTextAsAdvancedTextEditorDocument(
+      serializedDocument: serializeJsonContentAsAdvancedTextEditorDocument(
         buildSuggestedViewFieldsAiPrompt({
           applicationName,
           suggestedViewFieldGroups,
@@ -126,6 +126,7 @@ export const SettingsApplicationSuggestedViewFieldsBanner = ({
       }
       closeLabel={t`Dismiss`}
       onDismiss={handleDismiss}
+      fullWidth
     />
   );
 };

@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { type JSONContent } from '@tiptap/core';
 
 import { type SuggestedViewFieldGroup } from '@/settings/applications/utils/computeSuggestedViewFieldGroups';
 
@@ -8,20 +9,37 @@ export const buildSuggestedViewFieldsAiPrompt = ({
 }: {
   applicationName: string;
   suggestedViewFieldGroups: SuggestedViewFieldGroup[];
-}): string => {
-  const groupLines = suggestedViewFieldGroups.map(
-    ({ viewId, viewName, objectLabelPlural, fields }) => {
-      const fieldList = fields
-        .map(({ id, label }) => t`${label} (field ID ${id})`)
-        .join(', ');
-
-      return `- ${t`${objectLabelPlural}, view "${viewName}" (view ID ${viewId}): ${fieldList}`}`;
+}): JSONContent => ({
+  type: 'doc',
+  content: [
+    {
+      type: 'paragraph',
+      content: [
+        {
+          type: 'text',
+          text: t`Add these ${applicationName} columns at the end of my views:`,
+        },
+      ],
     },
-  );
-
-  return [
-    t`${applicationName} suggests adding these fields as columns. Add each one, visible, after the existing columns of its view:`,
-    '',
-    ...groupLines,
-  ].join('\n');
-};
+    {
+      type: 'bulletList',
+      content: suggestedViewFieldGroups.map(({ viewId, viewName, fields }) => ({
+        type: 'listItem',
+        content: [
+          {
+            type: 'paragraph',
+            content: [
+              { type: 'text', text: viewName, marks: [{ type: 'bold' }] },
+              {
+                type: 'text',
+                text: `: ${fields.map(({ label }) => label).join(', ')} `,
+              },
+              // The hidden INDEX view shares the initial view's name, so the id disambiguates.
+              { type: 'text', text: viewId, marks: [{ type: 'code' }] },
+            ],
+          },
+        ],
+      })),
+    },
+  ],
+});
