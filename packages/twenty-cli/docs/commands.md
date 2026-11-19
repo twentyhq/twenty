@@ -844,6 +844,12 @@ Known files in those locations remain watched. If an unresolved import needs an
 excluded directory, dev prints `WATCH_SCOPE_LIMITED`; after fixing the import,
 edit an app file or restart dev.
 
+Use `twenty app dev --verbose` to list the app folder, external files, shallow
+external directories and excluded directories. The list appears after the first
+build attempt and whenever those paths change, including after a failed build.
+With `--format ndjson`, `watch-scope` progress events include `appPath`,
+`filePaths`, `directoryPaths` and `excludedDirectoryPaths`.
+
 The last successful input graph stays watched after a failure. `.git`,
 `.twenty`, `node_modules`, root `dist`, editor temporary files and `.DS_Store`
 are ignored. Arbitrary filesystem reads inside app code are not discovered.

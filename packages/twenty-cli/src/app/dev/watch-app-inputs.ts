@@ -2,11 +2,13 @@ import { realpath } from 'node:fs/promises';
 import { relative, sep } from 'node:path';
 
 import { watch, type FSWatcher } from 'chokidar';
+import { isDefined } from 'twenty-shared/utils';
 
 import { isBroadWatchDirectory } from '@/app/dev/is-broad-watch-directory';
 import { isIgnoredWatchPath } from '@/app/dev/is-ignored-watch-path';
 import { readWatchInputStamp } from '@/app/dev/read-watch-input-stamp';
 import { type WatchInputs } from '@/app/dev/types/watch-inputs.type';
+import { type WatchScope } from '@/app/dev/types/watch-scope.type';
 import { watchExternalInput } from '@/app/dev/watch-external-input';
 import { type Output } from '@/output/types/output.type';
 import { isInsideDirectory } from '@/utils/is-inside-directory';
@@ -46,12 +48,14 @@ export const watchAppInputs = async ({
   onChange,
   onError,
   onWarning,
+  onScopeChange,
 }: {
   appPath: string;
   signal: AbortSignal;
   onChange: () => void;
   onError: (error: Error) => void;
   onWarning?: Output['warn'];
+  onScopeChange?: (scope: WatchScope) => Promise<void>;
 }) => {
   appPath = await realpath(appPath);
   const rootWatcher = watch(appPath, {
@@ -67,6 +71,32 @@ export const watchAppInputs = async ({
   let stopExternalWatchers: (() => void)[] = [];
   let excludedDirectories = new Set<string>();
   let successfulInputs: WatchInputs = [];
+  let previousScopeKey: string | undefined;
+
+  const reportScopeChange = async (inputs: WatchInputs) => {
+    if (!isDefined(onScopeChange)) {
+      return;
+    }
+
+    const scope: WatchScope = {
+      filePaths: inputs
+        .filter((input) => input.kind === 'file')
+        .map((input) => input.path)
+        .sort(),
+      directoryPaths: inputs
+        .filter((input) => input.kind === 'directory')
+        .map((input) => input.path)
+        .sort(),
+      excludedDirectoryPaths: [...excludedDirectories].sort(),
+    };
+    const scopeKey = JSON.stringify(scope);
+    if (scopeKey === previousScopeKey) {
+      return;
+    }
+
+    await onScopeChange(scope);
+    previousScopeKey = scopeKey;
+  };
 
   const close = async () => {
     for (const stop of stopExternalWatchers) stop();
@@ -128,6 +158,8 @@ export const watchAppInputs = async ({
         );
       }
       for (const stop of previousWatchers) stop();
+
+      await reportScopeChange(watchedInputs);
 
       if (inputs.some((input) => readWatchInputStamp(input) !== input.stamp)) {
         onChange();
