@@ -18,7 +18,7 @@ export const syncGranolaNoteToCallRecordingOrThrow = async ({
   coreApiClient,
   client,
   noteId,
-  canImportPersonalNote,
+  personalImport,
 }: {
   coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   client: Pick<
@@ -26,7 +26,9 @@ export const syncGranolaNoteToCallRecordingOrThrow = async ({
     'getNote' | 'listTranscriptPage'
   >;
   noteId: string;
-  canImportPersonalNote?: (note: GranolaNote) => Promise<boolean>;
+  personalImport?: {
+    canWriteNote: (note: GranolaNote) => Promise<boolean>;
+  };
 }) => {
   const note = await fetchGranolaNoteWithTranscriptOrThrow({ client, noteId });
   const callRecordingId = computeCallRecordingIdForGranolaNote(note.id);
@@ -43,10 +45,10 @@ export const syncGranolaNoteToCallRecordingOrThrow = async ({
     note,
   });
   const hasContent = isNonEmptyArray(transcript) || isNonEmptyString(summary);
-  const canWriteCallRecording = isDefined(canImportPersonalNote)
-    ? () => canImportPersonalNote(note)
+  const canWriteCallRecording = isDefined(personalImport)
+    ? () => personalImport.canWriteNote(note)
     : undefined;
-  const personalNoteUpdatedAt = isDefined(canImportPersonalNote)
+  const personalNoteUpdatedAt = isDefined(personalImport)
     ? note.updated_at
     : null;
   const result = await upsertCallRecordingOrThrow({

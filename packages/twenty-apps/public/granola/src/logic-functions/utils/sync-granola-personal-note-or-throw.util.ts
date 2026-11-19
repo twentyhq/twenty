@@ -21,7 +21,9 @@ export const syncGranolaPersonalNoteOrThrow = async ({
   apiKeyFingerprint: string;
   noteId: string;
 }) => {
-  const sync = await loadGranolaPersonalSync({ ...scope, apiKeyFingerprint });
+  const loadCurrentSync = () =>
+    loadGranolaPersonalSync({ ...scope, apiKeyFingerprint });
+  const sync = await loadCurrentSync();
 
   if (!isDefined(sync)) {
     return { skipped: true };
@@ -34,40 +36,36 @@ export const syncGranolaPersonalNoteOrThrow = async ({
       coreApiClient: new CoreApiClient({ runAs: 'application' }),
       client,
       noteId,
-      canImportPersonalNote: async (note) => {
-        const requiresAncestry =
-          !isGranolaPersonalNoteSelected({
-            note,
-            selection: sync.selection,
-            folders: [],
-          }) &&
-          note.folder_membership.some(({ parent_folder_id }) =>
-            isDefined(parent_folder_id),
-          );
-        const folders = requiresAncestry
-          ? await listAllGranolaFoldersOrThrow({ client })
-          : [];
-        const current = await loadGranolaPersonalSync({
-          ...scope,
-          apiKeyFingerprint,
-        });
+      personalImport: {
+        canWriteNote: async (note) => {
+          const shouldFetchAncestry =
+            !isGranolaPersonalNoteSelected({
+              note,
+              selection: sync.selection,
+              folders: [],
+            }) &&
+            note.folder_membership.some(({ parent_folder_id }) =>
+              isDefined(parent_folder_id),
+            );
+          const folders = shouldFetchAncestry
+            ? await listAllGranolaFoldersOrThrow({ client })
+            : [];
+          const current = await loadCurrentSync();
 
-        return (
-          isDefined(current) &&
-          isGranolaPersonalNoteSelected({
-            note,
-            selection: current.selection,
-            folders,
-          })
-        );
+          return (
+            isDefined(current) &&
+            isGranolaPersonalNoteSelected({
+              note,
+              selection: current.selection,
+              folders,
+            })
+          );
+        },
       },
     });
   } catch (error) {
     if (error instanceof GranolaApiError && error.status === 401) {
-      const current = await loadGranolaPersonalSync({
-        ...scope,
-        apiKeyFingerprint,
-      });
+      const current = await loadCurrentSync();
 
       if (!isDefined(current)) {
         return { skipped: true };
