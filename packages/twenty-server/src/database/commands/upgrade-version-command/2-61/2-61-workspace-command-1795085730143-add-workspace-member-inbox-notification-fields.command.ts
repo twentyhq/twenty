@@ -22,7 +22,7 @@ const INBOX_NOTIFICATION_FIELD_UNIVERSAL_IDENTIFIERS = [
   WORKSPACE_MEMBER.fields.isInboxNotificationPreviewEnabled.universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.61.0', 1795030530856)
+@RegisteredWorkspaceCommand('2.61.0', 1795085730143)
 @Command({
   name: 'upgrade:2-61:add-workspace-member-inbox-notification-fields',
   description: doNotTranslate(
