@@ -27,6 +27,20 @@ describe('checkConditionalAvailabilityNode', () => {
     ).toEqual({ isValid: true, node: DEVICE_IS_MOBILE });
   });
 
+  it('should accept a widget rule on the current role', () => {
+    const node = {
+      ...DEVICE_IS_MOBILE,
+      left: { type: 'PATH', path: 'currentRole.universalIdentifier' },
+    };
+
+    expect(
+      checkConditionalAvailabilityNode({
+        node,
+        metadataName: 'pageLayoutWidget',
+      }),
+    ).toEqual({ isValid: true, node });
+  });
+
   it.each([
     ['a text instead of a tree', 'device == "MOBILE"', ''],
     ['an unknown kind of node', { type: 'ASSIGNMENT' }, 'type'],

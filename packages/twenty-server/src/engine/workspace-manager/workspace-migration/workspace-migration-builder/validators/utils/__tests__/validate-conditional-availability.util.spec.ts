@@ -37,6 +37,17 @@ describe('validateConditionalAvailability', () => {
     ).toEqual([]);
   });
 
+  it('should accept a rule on the current role', () => {
+    expect(
+      validate({
+        type: 'COMPARISON',
+        operator: 'EQUAL',
+        left: { type: 'PATH', path: 'currentRole.universalIdentifier' },
+        right: { type: 'LITERAL', value: 'sales-role-universal-identifier' },
+      }),
+    ).toEqual([]);
+  });
+
   it('should refuse a value that is not a tree', () => {
     expect(validate({ type: 'UNKNOWN_KIND' })).toMatchObject([
       {

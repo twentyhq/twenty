@@ -1,0 +1,155 @@
+import { buildConditionalAvailabilityNode } from '@/conditional-availability/utils/buildConditionalAvailabilityNode';
+import { readConditionalAvailabilityNode } from '@/conditional-availability/utils/readConditionalAvailabilityNode';
+import {
+  type ConditionalAvailabilityLogicalOperator,
+  type ConditionalAvailabilityNode,
+} from 'twenty-shared/types';
+
+const ADMIN = '20202020-0000-4000-8000-000000000001';
+const SALES = '20202020-0000-4000-8000-000000000002';
+const MEMBER_ID = '20202020-1111-4000-8000-000000000001';
+const OTHER_MEMBER_ID = '20202020-1111-4000-8000-000000000002';
+
+const group = (
+  logicalOperator: ConditionalAvailabilityLogicalOperator,
+  children: ConditionalAvailabilityNode[],
+): ConditionalAvailabilityNode => ({
+  type: 'GROUP',
+  logicalOperator,
+  children,
+});
+
+const comparison = (
+  operator: 'EQUAL' | 'NOT_EQUAL',
+  path: string,
+  value: string,
+): ConditionalAvailabilityNode => ({
+  type: 'COMPARISON',
+  operator,
+  left: { type: 'PATH', path },
+  right: { type: 'LITERAL', value },
+});
+
+const roleIs = (role: string) =>
+  comparison('EQUAL', 'currentRole.universalIdentifier', role);
+const memberIsNot = (memberId: string) =>
+  comparison('NOT_EQUAL', 'currentWorkspaceMember.id', memberId);
+const MOBILE = comparison('EQUAL', 'device', 'MOBILE');
+
+const read = (node: ConditionalAvailabilityNode | null) =>
+  readConditionalAvailabilityNode({ node, metadataName: 'pageLayoutWidget' });
+
+const readTree = (node: ConditionalAvailabilityNode) => {
+  const result = read(node);
+
+  if (result.status !== 'rows') {
+    throw new Error(`The rule was read as ${result.status}`);
+  }
+
+  expect(buildConditionalAvailabilityNode({ tree: result.tree })).toEqual(node);
+
+  return result.tree;
+};
+
+describe('readConditionalAvailabilityNode', () => {
+  it('should read no rule as empty', () => {
+    expect(read(null)).toEqual({ status: 'empty' });
+  });
+
+  it('should read a chain of roles as one row and a device as another', () => {
+    const tree = readTree(
+      group('AND', [group('OR', [roleIs(ADMIN), roleIs(SALES)]), MOBILE]),
+    );
+
+    expect(tree).toMatchObject({
+      logicalOperator: 'AND',
+      children: [
+        {
+          type: 'row',
+          row: { subject: 'role', operator: 'isAnyOf', values: [ADMIN, SALES] },
+        },
+        {
+          type: 'row',
+          row: { subject: 'device', operator: 'is', values: ['MOBILE'] },
+        },
+      ],
+    });
+  });
+
+  it('should read one workspace member as "is not" and several as "is none of"', () => {
+    expect(readTree(memberIsNot(MEMBER_ID)).children).toMatchObject([
+      {
+        type: 'row',
+        row: {
+          subject: 'workspaceMember',
+          operator: 'isNot',
+          values: [MEMBER_ID],
+        },
+      },
+    ]);
+
+    expect(
+      readTree(
+        group('AND', [memberIsNot(MEMBER_ID), memberIsNot(OTHER_MEMBER_ID)]),
+      ).children,
+    ).toMatchObject([
+      {
+        type: 'row',
+        row: {
+          subject: 'workspaceMember',
+          operator: 'isNoneOf',
+          values: [MEMBER_ID, OTHER_MEMBER_ID],
+        },
+      },
+    ]);
+  });
+
+  it('should read a nested group of rows', () => {
+    const tree = readTree(
+      group('AND', [roleIs(SALES), group('OR', [roleIs(ADMIN), MOBILE])]),
+    );
+
+    expect(tree.children).toMatchObject([
+      { type: 'row', row: { subject: 'role', values: [SALES] } },
+      {
+        type: 'group',
+        group: {
+          logicalOperator: 'OR',
+          rows: [
+            { subject: 'role', values: [ADMIN] },
+            { subject: 'device', values: ['MOBILE'] },
+          ],
+        },
+      },
+    ]);
+  });
+
+  it.each([
+    {
+      title: 'a third level of groups',
+      node: group('AND', [
+        MOBILE,
+        group('OR', [roleIs(ADMIN), group('AND', [MOBILE, roleIs(SALES)])]),
+      ]),
+    },
+    { title: 'a negation', node: { type: 'NOT' as const, child: MOBILE } },
+    {
+      title: 'the same role twice',
+      node: group('OR', [roleIs(ADMIN), roleIs(ADMIN)]),
+    },
+    {
+      title: 'a device that is not a device',
+      node: comparison('EQUAL', 'device', 'TABLET'),
+    },
+    {
+      title: 'a device excluded',
+      node: comparison('NOT_EQUAL', 'device', 'MOBILE'),
+    },
+    {
+      title: 'a variable the builder has no row for',
+      node: comparison('EQUAL', 'featureFlags.IS_AI_ENABLED', 'true'),
+    },
+  ])('should not read $title as rows', ({ node }) => {
+    expect(read(node)).toEqual({ status: 'unsupported' });
+  });
+});

@@ -1,5 +1,4 @@
-export type WidgetVisibilityContext = {
-  device: 'MOBILE' | 'DESKTOP';
-  selectedRecords: Record<string, unknown>[];
-  featureFlags: Record<string, boolean>;
-};
+import { type ConditionalAvailabilityContextByMetadataName } from 'twenty-shared/types';
+
+export type WidgetVisibilityContext =
+  ConditionalAvailabilityContextByMetadataName['pageLayoutWidget'];

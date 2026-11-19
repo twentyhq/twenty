@@ -81,6 +81,9 @@ export type { ConditionalAvailabilityCheckError } from './ConditionalAvailabilit
 export type { ConditionalAvailabilityCheckResult } from './ConditionalAvailabilityCheckResult';
 export type { ConditionalAvailabilityComparisonOperator } from './ConditionalAvailabilityComparisonOperator';
 export type { ConditionalAvailabilityContextByMetadataName } from './ConditionalAvailabilityContextByMetadataName';
+export type { ConditionalAvailabilityCurrentWorkspaceMember } from './ConditionalAvailabilityCurrentWorkspaceMember';
+export type { ConditionalAvailabilityDevice } from './ConditionalAvailabilityDevice';
+export type { ConditionalAvailabilityGlobalContext } from './ConditionalAvailabilityGlobalContext';
 export type { ConditionalAvailabilityLogicalOperator } from './ConditionalAvailabilityLogicalOperator';
 export type { ConditionalAvailabilityMetadataName } from './ConditionalAvailabilityMetadataName';
 export type { ConditionalAvailabilityNode } from './ConditionalAvailabilityNode';
