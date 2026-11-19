@@ -1,6 +1,7 @@
 import { IconMessage } from 'twenty-ui/icon';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useId } from 'react';
 
 import { InboxThreadActionsDropdown } from '@/inbox/components/InboxThreadActionsDropdown';
@@ -36,7 +37,7 @@ export const NavigationDrawerInboxThreadItem = ({
     commitRename,
   } = useAiChatThreadRename(thread);
 
-  const isDeleted = Boolean(thread.deletedAt);
+  const isDeleted = isNonEmptyString(thread.deletedAt);
   const isShownAsUnread = useIsAiChatThreadShownAsUnread(thread);
   const displayLabel = useAiChatThreadDisplayLabel({
     thread,
