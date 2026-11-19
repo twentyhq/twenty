@@ -1,4 +1,4 @@
-import { type MCP_SERVER_INFO } from 'src/engine/api/mcp/constants/mcp-server-info.const';
+import { type MCP_SERVER_INFO } from 'src/engine/api/mcp/constants/mcp-server-info.constant';
 
 export type McpInitializeResult = {
   protocolVersion: string;

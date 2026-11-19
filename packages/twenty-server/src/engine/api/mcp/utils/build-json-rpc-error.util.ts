@@ -2,7 +2,7 @@ import { HttpException } from '@nestjs/common';
 
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
+import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.constant';
 import {
   McpException,
   McpExceptionCode,

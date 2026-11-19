@@ -1,4 +1,4 @@
-import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
+import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.constant';
 
 type BuildMcpServerCardArgs = {
   baseUrl: string;
