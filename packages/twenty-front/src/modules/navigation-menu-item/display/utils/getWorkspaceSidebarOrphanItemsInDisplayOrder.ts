@@ -37,20 +37,20 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
   containerId = null,
   flattenedSectionIds = new Set(),
 }: GetWorkspaceSidebarOrphanItemsInDisplayOrderArgs): NavigationMenuItem[] => {
+  const isInFlattenedSection = (item: NavigationMenuItem) =>
+    isDefined(item.parentId) && flattenedSectionIds.has(item.parentId);
+
   const flatWorkspaceItems = workspaceNavigationMenuItems
     .filter(
       (item) =>
         ((item.parentId ?? null) === containerId ||
-          (isDefined(item.parentId) &&
-            flattenedSectionIds.has(item.parentId))) &&
+          isInFlattenedSection(item)) &&
         !isNavigationMenuItemTabOrSection(item),
     )
     .sort((a, b) => a.position - b.position);
 
   const toTopLevelItem = (item: NavigationMenuItem): NavigationMenuItem =>
-    isDefined(item.parentId) && flattenedSectionIds.has(item.parentId)
-      ? { ...item, parentId: null }
-      : item;
+    isInFlattenedSection(item) ? { ...item, parentId: null } : item;
 
   const processedItemsById = new Map(
     workspaceNavigationMenuItemsSorted.map((item) => [item.id, item]),

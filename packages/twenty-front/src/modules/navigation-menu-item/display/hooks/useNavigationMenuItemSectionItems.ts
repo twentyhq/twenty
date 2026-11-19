@@ -22,10 +22,24 @@ export type NavigationMenuItemClickParams = {
   objectMetadataItem?: EnrichedObjectMetadataItem | null;
 };
 
-export const useNavigationMenuItemSectionItems = (
-  containerId: string | null = null,
-  { flattenTopLevelSections }: { flattenTopLevelSections?: boolean } = {},
-): NavigationMenuItem[] => {
+const getTopLevelSectionIds = (navigationMenuItems: NavigationMenuItem[]) =>
+  new Set(
+    navigationMenuItems
+      .filter(
+        (item) =>
+          item.type === NavigationMenuItemType.SECTION &&
+          !isDefined(item.parentId),
+      )
+      .map((item) => item.id),
+  );
+
+export const useNavigationMenuItemSectionItems = ({
+  containerId = null,
+  flattenTopLevelSections,
+}: {
+  containerId?: string | null;
+  flattenTopLevelSections?: boolean;
+} = {}): NavigationMenuItem[] => {
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { workspaceNavigationMenuItemsByFolder } =
@@ -43,17 +57,10 @@ export const useNavigationMenuItemSectionItems = (
   const shouldFlattenTopLevelSections =
     flattenTopLevelSections ?? !isCustomizableSidebarEnabled;
 
-  const flattenedSectionIds = new Set(
+  const flattenedSectionIds =
     shouldFlattenTopLevelSections && containerId === null
-      ? workspaceNavigationMenuItems
-          .filter(
-            (item) =>
-              item.type === NavigationMenuItemType.SECTION &&
-              !isDefined(item.parentId),
-          )
-          .map((item) => item.id)
-      : [],
-  );
+      ? getTopLevelSectionIds(workspaceNavigationMenuItems)
+      : new Set<string>();
 
   const flatItems = getWorkspaceSidebarOrphanItemsInDisplayOrder({
     workspaceNavigationMenuItems,

@@ -24,6 +24,15 @@ const hiddenObjectBackedItem = {
   position: 2,
 } as NavigationMenuItem;
 
+const buildNavigationMenuItem = (
+  properties: Pick<NavigationMenuItem, 'id' | 'type' | 'position'> &
+    Partial<NavigationMenuItem>,
+): NavigationMenuItem => ({
+  createdAt: '2026-11-19T00:00:00.000Z',
+  updatedAt: '2026-11-19T00:00:00.000Z',
+  ...properties,
+});
+
 describe('getWorkspaceSidebarOrphanItemsInDisplayOrder', () => {
   it('drops an object-backed item whose object is absent from the metadata in customization mode', () => {
     const result = getWorkspaceSidebarOrphanItemsInDisplayOrder({
@@ -113,22 +122,22 @@ describe('getWorkspaceSidebarOrphanItemsInDisplayOrder', () => {
   });
 
   it('lists the items of a flattened section with the top-level items', () => {
-    const section = {
+    const section = buildNavigationMenuItem({
       id: 'workspace-section',
       type: NavigationMenuItemType.SECTION,
       position: 0,
-    } as NavigationMenuItem;
-    const folderInSection = {
+    });
+    const folderInSection = buildNavigationMenuItem({
       id: 'folder-in-section',
       type: NavigationMenuItemType.FOLDER,
       parentId: section.id,
       position: 1,
-    } as NavigationMenuItem;
-    const topLevelFolder = {
+    });
+    const topLevelFolder = buildNavigationMenuItem({
       id: 'top-level-folder',
       type: NavigationMenuItemType.FOLDER,
       position: 2,
-    } as NavigationMenuItem;
+    });
 
     const result = getWorkspaceSidebarOrphanItemsInDisplayOrder({
       workspaceNavigationMenuItems: [section, folderInSection, topLevelFolder],
