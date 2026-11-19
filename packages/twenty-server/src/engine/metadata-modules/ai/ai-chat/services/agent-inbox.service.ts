@@ -187,12 +187,6 @@ export class AgentInboxService {
     );
 
     if (isWritten) {
-      await this.threadService.recordThreadActivity({
-        workspaceId,
-        threadId,
-        text: input.text,
-        threadBefore: thread,
-      });
       await this.mentionParticipants({
         workspaceId,
         thread,
@@ -200,6 +194,12 @@ export class AgentInboxService {
         workspaceMemberIds: extractInboxMessageMentionedWorkspaceMemberIds(
           input.text,
         ),
+      });
+      await this.threadService.recordThreadActivity({
+        workspaceId,
+        threadId,
+        text: input.text,
+        threadBefore: thread,
       });
     }
 
