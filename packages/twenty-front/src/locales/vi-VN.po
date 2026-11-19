@@ -9257,6 +9257,12 @@ msgstr "Tùy chỉnh bố cục trang và cấu trúc giao diện người dùng
 msgid "Customize record page"
 msgstr "Tùy chỉnh trang bản ghi"
 
+#. js-lingui-id: hxjpaE
+#: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
+msgid "Customize sidebar"
+msgstr ""
+
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Customize the workspace record page"

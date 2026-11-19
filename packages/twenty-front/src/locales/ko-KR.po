@@ -9257,6 +9257,12 @@ msgstr "페이지 레이아웃 및 UI 구조 맞춤화"
 msgid "Customize record page"
 msgstr "레코드 페이지 맞춤 설정"
 
+#. js-lingui-id: hxjpaE
+#: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
+msgid "Customize sidebar"
+msgstr ""
+
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Customize the workspace record page"

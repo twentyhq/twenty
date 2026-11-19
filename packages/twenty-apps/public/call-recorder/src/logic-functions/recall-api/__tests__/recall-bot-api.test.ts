@@ -994,7 +994,7 @@ describe('recall bot api', () => {
 
       fetchMock.mockImplementation(async (_url: string, init: RequestInit) => ({
         ok: false,
-        status: init.method === 'DELETE' ? 409 : 500,
+        status: init.method === 'DELETE' ? 405 : 500,
         json: async () => ({
           detail:
             init.method === 'DELETE'
@@ -1017,6 +1017,27 @@ describe('recall bot api', () => {
         expect.stringContaining('HTTP 500: {"detail":"leave call failed"}'),
       );
       warnSpy.mockRestore();
+    });
+
+    it('does not eject a bot whose delete fails for another reason than having joined', async () => {
+      vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      fetchMock.mockResolvedValue({
+        ok: false,
+        status: 409,
+        json: async () => ({ detail: 'conflict' }),
+      });
+
+      const resultPromise = cancelOrEjectRecallBot('recall-bot-id');
+
+      await vi.runAllTimersAsync();
+
+      expect(await resultPromise).toBe(false);
+      expect(fetchMock.mock.calls.map(([, init]) => init.method)).toEqual([
+        'DELETE',
+        'DELETE',
+        'DELETE',
+      ]);
     });
 
     it('defers 507 adhoc pool exhaustion instead of sleeping in-process', async () => {
