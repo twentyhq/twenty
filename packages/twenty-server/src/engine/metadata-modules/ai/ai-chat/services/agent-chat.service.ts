@@ -17,7 +17,7 @@ import {
   isNonEmptyArray,
   isNonEmptyString,
 } from 'twenty-shared/utils';
-import { In, IsNull, Not, Or } from 'typeorm';
+import { Equal, In, IsNull, Not, Or } from 'typeorm';
 
 import { isBuiltInAssistantMessage } from 'src/engine/metadata-modules/ai/ai-history/utils/is-built-in-assistant-message.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
@@ -435,7 +435,7 @@ export class AgentChatService {
       if (shouldPickIcon && !isNonEmptyString(thread.icon)) {
         await this.threadRepository.update(
           workspaceId,
-          { id: threadId },
+          { id: threadId, icon: Or(IsNull(), Equal('')) },
           {
             icon: icon ?? AGENT_CHAT_THREAD_DEFAULT_ICON_NAME,
             iconColor:
