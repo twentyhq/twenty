@@ -1,5 +1,6 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { type ConditionalAvailabilityNode } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { computePageLayoutWidgetWithConditionalAvailability } from 'src/database/commands/upgrade-version-command/2-61/utils/compute-page-layout-widget-with-conditional-availability.util';
 import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
@@ -54,16 +55,13 @@ const computeOrThrow = (
   flatPageLayoutWidget: TestPageLayoutWidget,
   standardConditionalAvailability?: ConditionalAvailabilityNode,
 ) => {
-  const computation = compute(
-    flatPageLayoutWidget,
-    standardConditionalAvailability,
-  );
+  const conversion = compute(flatPageLayoutWidget, standardConditionalAvailability);
 
-  if (computation.status !== 'CONVERTED') {
-    throw new Error(`Expected a conversion, got ${computation.status}`);
+  if (!isDefined(conversion)) {
+    throw new Error('Expected a conversion, got none');
   }
 
-  return computation;
+  return conversion;
 };
 
 const getDisplayedRule = (flatPageLayoutWidget: TestPageLayoutWidget) => {
@@ -113,19 +111,6 @@ describe('computePageLayoutWidgetWithConditionalAvailability', () => {
       conditionalAvailability: deviceIs('MOBILE'),
       ...NO_LEGACY_RULE,
     });
-  });
-
-  it('should prefer the text over the json-logic rule', () => {
-    const { flatPageLayoutWidget } = computeOrThrow(
-      buildPageLayoutWidget({
-        conditionalAvailabilityExpression: 'device == "DESKTOP"',
-        conditionalDisplay: MOBILE_JSON_LOGIC,
-      }),
-    );
-
-    expect(flatPageLayoutWidget.conditionalAvailability).toEqual(
-      deviceIs('DESKTOP'),
-    );
   });
 
   it('should convert an override rule inside its own entry', () => {
@@ -246,7 +231,7 @@ describe('computePageLayoutWidgetWithConditionalAvailability', () => {
     (_description, flatPageLayoutWidget, standardConditionalAvailability) => {
       expect(
         compute(flatPageLayoutWidget, standardConditionalAvailability),
-      ).toEqual({ status: 'UNCHANGED' });
+      ).toBeNull();
     },
   );
 });

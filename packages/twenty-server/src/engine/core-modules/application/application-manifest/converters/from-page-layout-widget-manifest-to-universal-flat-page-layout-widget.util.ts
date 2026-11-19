@@ -24,9 +24,9 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
       conditionalDisplay: pageLayoutWidgetManifest.conditionalDisplay,
     });
 
-  if (!ruleConversion.isConvertible) {
+  if (!ruleConversion.isValid) {
     throw new ApplicationException(
-      `Page layout widget "${pageLayoutWidgetManifest.title}" has an invalid visibility rule: ${ruleConversion.message}`,
+      `Page layout widget "${pageLayoutWidgetManifest.title}" has an invalid visibility rule: ${ruleConversion.errorMessage}`,
       ApplicationExceptionCode.INVALID_INPUT,
     );
   }
@@ -41,7 +41,7 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
     type: pageLayoutWidgetManifest.type,
     objectMetadataUniversalIdentifier:
       pageLayoutWidgetManifest.objectUniversalIdentifier ?? null,
-    conditionalAvailability: ruleConversion.conditionalAvailability,
+    conditionalAvailability: ruleConversion.node,
     conditionalDisplay: null,
     position: pageLayoutWidgetManifest.position,
     universalConfiguration:

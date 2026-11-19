@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ConditionalAvailabilityNode } from 'twenty-shared/types';
+import { type ConditionalAvailabilityParseResult } from 'twenty-shared/types';
 import {
   checkConditionalAvailabilityNode,
   isDefined,
@@ -8,37 +8,28 @@ import {
 
 import { fromPageLayoutWidgetJsonLogicToConditionalAvailability } from 'src/engine/metadata-modules/page-layout-widget/utils/from-page-layout-widget-json-logic-to-conditional-availability.util';
 
-type LegacyPageLayoutWidgetRuleConversion =
-  | {
-      isConvertible: true;
-      conditionalAvailability: ConditionalAvailabilityNode | null;
-    }
-  | { isConvertible: false; reason: string; message: string };
-
 export const fromLegacyPageLayoutWidgetRuleToConditionalAvailability = ({
   conditionalAvailabilityExpression,
   conditionalDisplay,
 }: {
   conditionalAvailabilityExpression: string | null | undefined;
   conditionalDisplay: unknown;
-}): LegacyPageLayoutWidgetRuleConversion => {
+}):
+  | ConditionalAvailabilityParseResult
+  | {
+      isValid: false;
+      errorCode: 'UNSUPPORTED_CONDITIONAL_DISPLAY';
+      errorMessage: string;
+    } => {
   if (isNonEmptyString(conditionalAvailabilityExpression)) {
-    const parseResult = parseConditionalAvailabilityExpression({
+    return parseConditionalAvailabilityExpression({
       expression: conditionalAvailabilityExpression,
       metadataName: 'pageLayoutWidget',
     });
-
-    return parseResult.isValid
-      ? { isConvertible: true, conditionalAvailability: parseResult.node }
-      : {
-          isConvertible: false,
-          reason: parseResult.errorCode,
-          message: parseResult.errorMessage,
-        };
   }
 
   if (!isDefined(conditionalDisplay)) {
-    return { isConvertible: true, conditionalAvailability: null };
+    return { isValid: true, node: null };
   }
 
   const node =
@@ -46,22 +37,14 @@ export const fromLegacyPageLayoutWidgetRuleToConditionalAvailability = ({
 
   if (!isDefined(node)) {
     return {
-      isConvertible: false,
-      reason: 'UNSUPPORTED_CONDITIONAL_DISPLAY',
-      message: 'The json-logic rule has a shape that cannot be converted',
+      isValid: false,
+      errorCode: 'UNSUPPORTED_CONDITIONAL_DISPLAY',
+      errorMessage: 'The json-logic rule has a shape that cannot be converted',
     };
   }
 
-  const checkResult = checkConditionalAvailabilityNode({
+  return checkConditionalAvailabilityNode({
     node,
     metadataName: 'pageLayoutWidget',
   });
-
-  return checkResult.isValid
-    ? { isConvertible: true, conditionalAvailability: checkResult.node }
-    : {
-        isConvertible: false,
-        reason: checkResult.errorCode,
-        message: checkResult.errorMessage,
-      };
 };
