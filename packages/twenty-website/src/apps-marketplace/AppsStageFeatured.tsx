@@ -120,7 +120,7 @@ const PanelLink = styled(LocalizedLink)`
   color: inherit;
   display: grid;
   isolation: isolate;
-  min-height: 340px;
+
   position: relative;
   text-decoration: none;
 
@@ -182,14 +182,13 @@ const PanelText = styled.div`
   animation: apps-stage-featured-in ${DURATION.md} ${EASING.gentle} backwards;
   display: flex;
   flex-direction: column;
-  gap: ${spacing(12)};
-  justify-content: space-between;
+  gap: ${spacing(5)};
   padding: ${spacing(6)};
   position: relative;
   z-index: 1;
 
   ${mediaUp('md')} {
-    padding: ${spacing(9)};
+    padding: ${spacing(8)};
   }
 
   @keyframes apps-stage-featured-in {
@@ -264,12 +263,15 @@ const Tagline = styled.p`
   max-width: 440px;
 `;
 
-// The halftone logo's box: a fixed height on mobile, the panel's half above.
+// The halftone logo is decoration: it takes the panel's right half from md,
+// and is left out below, where it would only push the text apart.
 const Visual = styled.div`
-  height: 260px;
+  display: none;
 
   ${mediaUp('md')} {
-    height: auto;
+    display: block;
+    height: 240px;
+    margin-block: auto;
   }
 `;
 

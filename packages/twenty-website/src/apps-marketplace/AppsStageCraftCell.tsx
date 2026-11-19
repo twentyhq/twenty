@@ -34,15 +34,12 @@ const Cell = styled.article`
   border-right: 1px solid ${semanticColor.line};
   display: flex;
   flex-direction: column;
-  gap: ${spacing(8)};
-  justify-content: space-between;
-  min-height: 188px;
+  gap: ${spacing(5)};
   padding: ${spacing(6)};
   position: relative;
   transition: opacity ${DURATION.xs} ${EASING.gentle};
 
   ${mediaUp('md')} {
-    min-height: 220px;
     padding: ${spacing(7)};
   }
 
