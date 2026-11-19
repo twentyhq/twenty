@@ -11,6 +11,9 @@ import { type WatchInputs } from '@/app/dev/types/watch-inputs.type';
 import { type Output } from '@/output/types/output.type';
 import { isInsideDirectory } from '@/utils/is-inside-directory';
 
+const EXTERNAL_WATCH_INTERVAL_MS = 1000;
+const LARGE_EXTERNAL_WATCH_PATH_COUNT = 500;
+
 const waitUntilReady = (watcher: FSWatcher, signal: AbortSignal) =>
   new Promise<void>((resolve, reject) => {
     const cleanup = () => {
@@ -67,6 +70,7 @@ export const watchAppInputs = async ({
   let stopExternalWatchers: (() => void)[] = [];
   let excludedDirectories = new Set<string>();
   let successfulInputs: WatchInputs = [];
+  let previousPollingPathCount = 0;
 
   const close = async () => {
     for (const stop of stopExternalWatchers) stop();
@@ -117,11 +121,24 @@ export const watchAppInputs = async ({
       const uniqueInputs = new Map(
         externalInputs.map((input) => [`${input.kind}:${input.path}`, input]),
       );
+      const watchedInputs = [...uniqueInputs.values()].filter(
+        (input) =>
+          input.kind !== 'directory' || !excludedDirectories.has(input.path),
+      );
+      const pollingPathCount = new Set(watchedInputs.map((input) => input.path))
+        .size;
+      if (
+        pollingPathCount >= LARGE_EXTERNAL_WATCH_PATH_COUNT &&
+        pollingPathCount !== previousPollingPathCount
+      ) {
+        onWarning?.({
+          code: 'WATCH_SCOPE_LARGE',
+          message: `Polling ${pollingPathCount} external paths every ${EXTERNAL_WATCH_INTERVAL_MS} ms. Large linked source packages can increase CPU usage.`,
+        });
+      }
+      previousPollingPathCount = pollingPathCount;
 
-      for (const input of uniqueInputs.values()) {
-        if (input.kind === 'directory' && excludedDirectories.has(input.path)) {
-          continue;
-        }
+      for (const input of watchedInputs) {
         let stamp = readWatchInputStamp(input);
         const changed = () => {
           const nextStamp = readWatchInputStamp(input);
@@ -132,7 +149,11 @@ export const watchAppInputs = async ({
         };
 
         // Exact-path polling never widens to parents when an input disappears.
-        watchFile(input.path, { interval: 250, persistent: false }, changed);
+        watchFile(
+          input.path,
+          { interval: EXTERNAL_WATCH_INTERVAL_MS, persistent: false },
+          changed,
+        );
         stopExternalWatchers.push(() => unwatchFile(input.path, changed));
       }
       for (const stop of previousWatchers) stop();

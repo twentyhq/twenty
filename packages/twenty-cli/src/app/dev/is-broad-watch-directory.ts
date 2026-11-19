@@ -15,7 +15,9 @@ const canonicalPath = (path: string) => {
 export const isBroadWatchDirectory = (path: string) => {
   const directory = canonicalPath(path);
 
-  if (parse(directory).root === directory) return true;
+  if (parse(directory).root === directory) {
+    return true;
+  }
 
   return [
     homedir(),
