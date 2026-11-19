@@ -84,9 +84,15 @@ const DockLabel = styled.p`
   }
 `;
 
+type AppsStageApplyDockProps = {
+  // Defaults to the marketplace's own pitch: build an app, read the docs.
+  action?: { href: string; label: string };
+  label?: string;
+};
+
 // Shows whenever none of the page's primary buttons (marked
 // data-apps-stage-primary) is on screen, so the action never shows twice.
-export function AppsStageApplyDock() {
+export function AppsStageApplyDock({ action, label }: AppsStageApplyDockProps) {
   const { i18n } = useLingui();
   const [isVisible, setIsVisible] = useState(false);
 
@@ -118,10 +124,10 @@ export function AppsStageApplyDock() {
       data-scheme="dark"
       data-visible={isVisible ? '' : undefined}
     >
-      <DockLabel>{i18n._(msg`Build your own app`)}</DockLabel>
+      <DockLabel>{label ?? i18n._(msg`Build your own app`)}</DockLabel>
       <Button
-        href={SITE_URLS.docsDevelopers}
-        label={i18n._(msg`Read the docs`)}
+        href={action?.href ?? SITE_URLS.docsDevelopers}
+        label={action?.label ?? i18n._(msg`Read the docs`)}
         variant="filled"
       />
     </DockRoot>

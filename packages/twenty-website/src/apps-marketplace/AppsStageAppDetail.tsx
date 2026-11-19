@@ -22,7 +22,7 @@ import {
 import { Button, ExternalLink, Heading, SectionShell } from '@/ui';
 
 import { AppsStageAppIcon } from './AppsStageAppIcon';
-import { AppsStageAppStage } from './AppsStageAppStage';
+import { AppsStageApplyDock } from './AppsStageApplyDock';
 import { AppsStageAppStory } from './AppsStageAppStory';
 import { AppsStageCraftClosing } from './AppsStageCraftClosing';
 import { type AppsStageAppContent } from './apps-stage-app-content';
@@ -113,6 +113,13 @@ const Cover = styled.div`
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(2)};
   overflow: hidden;
+`;
+
+// The screenshot whole, at its own ratio: gallery images are made as covers.
+const CoverImage = styled.img`
+  display: block;
+  height: auto;
+  width: 100%;
 `;
 
 const Header = styled.div`
@@ -217,32 +224,6 @@ const Main = styled.div`
   & > * + * {
     margin-top: ${spacing(10)};
   }
-`;
-
-const Media = styled.div`
-  display: grid;
-  gap: ${spacing(3)};
-`;
-
-const MediaTile = styled.div`
-  border: 1px solid ${semanticColor.line};
-  border-radius: ${radius(2)};
-  height: 240px;
-
-  ${mediaUp('md')} {
-    height: 340px;
-  }
-
-  overflow: hidden;
-  position: relative;
-`;
-
-const Screenshot = styled.img`
-  display: block;
-  height: 100%;
-  object-fit: cover;
-  object-position: left top;
-  width: 100%;
 `;
 
 // What the app adds, in the side column, grouped by the product's own sections
@@ -531,6 +512,7 @@ export function AppsStageAppDetail({
     </>
   );
 
+  const cover = app.screenshots[0];
   const names = (labels: readonly string[] = []) =>
     labels.filter(isReadableLabel);
   const fieldCount = content.fields?.length ?? 0;
@@ -594,11 +576,16 @@ export function AppsStageAppDetail({
             </BackLink>
           </Rise>
 
-          <Rise style={{ ['--apps-stage-delay' as string]: '30ms' }}>
-            <Cover>
-              <AppsStageAppStage app={app} pastel={pastel} variant="cover" />
-            </Cover>
-          </Rise>
+          {cover !== undefined && (
+            <Rise style={{ ['--apps-stage-delay' as string]: '30ms' }}>
+              <Cover>
+                <CoverImage
+                  alt={i18n._(msg`${app.name} screenshot`)}
+                  src={cover}
+                />
+              </Cover>
+            </Rise>
+          )}
 
           <Rise style={{ ['--apps-stage-delay' as string]: '60ms' }}>
             <Header>
@@ -629,7 +616,7 @@ export function AppsStageAppDetail({
                   )}
                 </Meta>
               </HeaderText>
-              <HeaderAction>
+              <HeaderAction data-apps-stage-primary="">
                 <Button
                   href={buildAppInstallUrl(app.universalIdentifier)}
                   label={i18n._(msg`Install app`)}
@@ -641,18 +628,9 @@ export function AppsStageAppDetail({
 
           <Body>
             <Main>
-              <Rise style={{ ['--apps-stage-delay' as string]: '140ms' }}>
-                <Media>
-                  {app.screenshots.slice(0, 1).map((screenshot) => (
-                    <MediaTile key={screenshot}>
-                      <Screenshot
-                        alt={i18n._(msg`${app.name} screenshot`)}
-                        src={screenshot}
-                      />
-                    </MediaTile>
-                  ))}
-                </Media>
-              </Rise>
+              <Rise
+                style={{ ['--apps-stage-delay' as string]: '140ms' }}
+              ></Rise>
               <Rise style={{ ['--apps-stage-delay' as string]: '220ms' }}>
                 {overview}
               </Rise>
@@ -682,7 +660,7 @@ export function AppsStageAppDetail({
                     <PackageName>{app.sourcePackage}</PackageName>
                   </Fact>
                 )}
-                <SideAction>
+                <SideAction data-apps-stage-primary="">
                   <Button
                     href={buildAppInstallUrl(app.universalIdentifier)}
                     label={i18n._(msg`Install app`)}
@@ -782,6 +760,14 @@ export function AppsStageAppDetail({
           </Body>
         </Frame>
       </SectionShell>
+
+      <AppsStageApplyDock
+        action={{
+          href: buildAppInstallUrl(app.universalIdentifier),
+          label: i18n._(msg`Install app`),
+        }}
+        label={app.name}
+      />
 
       <AppsStageCraftClosing
         actions={

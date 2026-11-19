@@ -8,69 +8,59 @@ import {
   FONT_WEIGHT,
   fontFamily,
   fontSize,
-  mediaUp,
   radius,
   semanticColor,
   spacing,
-  typeRampDeclarations,
 } from '@/tokens';
 import { ExternalLink } from '@/ui';
 
 import { stripLeadingMarkdownTitle } from './strip-leading-markdown-title';
 
-// PROTOTYPE (?direction=e): an app's README set the way the site writes, as on
-// /why-twenty: the opening line as a light serif heading, each section opened
-// by an eyebrow after a hairline, body copy at the site's small body size,
-// lists as ruled rows. The README is the source; only its setting changes.
+// PROTOTYPE (?direction=e): an app's README set like Linear's integration
+// pages: one calm column, sans headings with generous space above, body at
+// 15/24 in a light grey, plain lists. The README is the source; only its
+// setting changes.
 const Story = styled.div`
-  color: ${semanticColor.inkMuted};
+  color: ${color('white-80')};
   font-family: ${fontFamily('sans')};
-  ${typeRampDeclarations('bodySm')}
+  font-size: ${fontSize(3.75)};
+  line-height: 24px;
+  max-width: 624px;
 
   & > * + * {
     margin-top: ${spacing(4)};
   }
 
-  & p {
-    max-width: 640px;
-  }
-
   & h2,
   & h3 {
-    align-items: center;
     color: ${semanticColor.ink};
-    display: flex;
     font-family: ${fontFamily('sans')};
-    font-size: ${fontSize(4.5)};
     font-weight: ${FONT_WEIGHT.medium};
-    gap: ${spacing(2)};
-    letter-spacing: -0.04em;
-    line-height: 24px;
   }
 
-  /* The eyebrow's marker, in the app's category colour. */
-  & h2::before {
-    background-color: var(--apps-stage-pastel, ${color('blue')});
-    border-radius: 1px;
-    content: '';
-    flex-shrink: 0;
-    height: 7px;
-    width: 14px;
+  & h2 {
+    font-size: ${fontSize(6)};
+    letter-spacing: -0.012em;
+    line-height: 32px;
   }
 
-  & > h2 {
-    border-top: 1px solid ${semanticColor.line};
-    margin-top: ${spacing(12)};
-    padding-top: ${spacing(10)};
+  & h3 {
+    font-size: ${fontSize(5)};
+    line-height: 32px;
   }
 
-  & > h2 + * {
-    margin-top: ${spacing(5)};
-  }
-
+  & > h2,
   & > h3 {
-    font-size: ${fontSize(4)};
-    margin-top: ${spacing(8)};
+    margin-top: ${spacing(14)};
+  }
+
+  & > :first-child {
+    margin-top: 0;
+  }
+
+  & > h2 + *,
+  & > h3 + * {
+    margin-top: ${spacing(3)};
   }
 
   & strong {
@@ -80,36 +70,23 @@ const Story = styled.div`
 
   & ul,
   & ol {
-    border-bottom: 1px solid ${semanticColor.line};
-    list-style: none;
-    max-width: 640px;
-    padding: 0;
+    padding-left: ${spacing(5)};
   }
 
-  & li {
-    border-top: 1px solid ${semanticColor.line};
-    padding-block: ${spacing(3)};
+  & ul {
+    list-style: disc;
   }
 
   & ol {
-    counter-reset: apps-stage-story;
+    list-style: decimal;
   }
 
-  /* The number sits in the gutter; the item's text flows as one line box. */
-  & ol > li {
-    counter-increment: apps-stage-story;
-    padding-left: ${spacing(10)};
-    position: relative;
-  }
-
-  & ol > li::before {
+  & li::marker {
     color: ${semanticColor.inkSubtle};
-    content: counter(apps-stage-story, decimal-leading-zero);
-    font-family: ${fontFamily('mono')};
-    font-size: ${fontSize(3)};
-    left: 0;
-    position: absolute;
-    top: calc(${spacing(3)} + 2px);
+  }
+
+  & li + li {
+    margin-top: ${spacing(2)};
   }
 
   & li > p + p {
@@ -118,6 +95,7 @@ const Story = styled.div`
 
   & code {
     background-color: ${color('white-5')};
+    border: 1px solid ${semanticColor.line};
     border-radius: ${radius(1)};
     color: ${semanticColor.ink};
     font-family: ${fontFamily('mono')};
@@ -136,14 +114,9 @@ const Story = styled.div`
     text-decoration-color: ${semanticColor.ink};
   }
 
-  /* A README note (a caveat, a plan limit): a quiet panel, not a quote. */
   & blockquote {
-    background-color: ${color('white-5')};
-    border-radius: ${radius(2)};
-    font-size: ${fontSize(3.5)};
-    line-height: 1.55;
-    max-width: 640px;
-    padding: ${spacing(4)} ${spacing(5)};
+    border-left: 1px solid ${semanticColor.lineStrong};
+    padding-left: ${spacing(4)};
   }
 
   & blockquote > * + * {
@@ -171,14 +144,16 @@ const Story = styled.div`
 // The list itself is a row of chips, each with the site's checkmark.
 const Chips = styled.ul`
   && {
-    border-bottom: none;
     display: flex;
+    list-style: none;
+    padding-left: 0;
     flex-wrap: wrap;
     gap: ${spacing(2)};
     max-width: none;
   }
 
   && > li {
+    margin-top: 0;
     align-items: center;
     border: 1px solid ${semanticColor.line};
     border-radius: ${radius(2)};
@@ -196,21 +171,6 @@ const Chips = styled.ul`
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='m2.5 6 2.5 2.5 4.5-5' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
       center / contain no-repeat;
     width: 10px;
-  }
-`;
-
-const Lede = styled.p`
-  color: ${color('neutral')};
-  font-family: ${fontFamily('serif')};
-  font-size: ${fontSize(6.5)};
-  font-weight: ${FONT_WEIGHT.light};
-  letter-spacing: -0.02em;
-  line-height: 1.25;
-  max-width: 640px;
-  text-wrap: balance;
-
-  ${mediaUp('md')} {
-    font-size: ${fontSize(8)};
   }
 `;
 
@@ -298,7 +258,7 @@ export function AppsStageAppStory({
 
   return (
     <Story style={{ ['--apps-stage-pastel' as string]: pastel }}>
-      {lede !== undefined && <Lede>{lede}</Lede>}
+      {lede !== undefined && <p>{lede}</p>}
       <Markdown
         components={COMPONENTS}
         disallowedElements={['img']}
