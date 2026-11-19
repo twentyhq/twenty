@@ -1,11 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
-type WebPushService = {
+const WEB_PUSH_SERVICES: {
   isHostnameAllowed: (hostname: string) => boolean;
   pathnamePrefixes: string[];
-};
-
-const WEB_PUSH_SERVICES: WebPushService[] = [
+}[] = [
   {
     isHostnameAllowed: (hostname) => hostname === 'fcm.googleapis.com',
     pathnamePrefixes: ['/fcm/send/', '/wp/'],
