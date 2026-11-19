@@ -1,6 +1,6 @@
 import { getRoleWithUpsertedObjectPermission } from '@/settings/roles/role-permissions/object-level-permissions/utils/getRoleWithUpsertedObjectPermission';
 import { useResetObjectPermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useResetObjectPermission';
-import { getRoleWithoutObjectRowLevelPermissionRules } from '@/settings/roles/role-permissions/objects-permissions/utils/getRoleWithoutObjectRowLevelPermissionRules';
+import { getRoleWithoutRowLevelPermissionRules } from '@/settings/roles/role-permissions/objects-permissions/utils/getRoleWithoutRowLevelPermissionRules';
 import { resolveSettingsRoleObjectRecordsGrant } from '@/settings/roles/role/utils/resolveSettingsRoleObjectRecordsGrant';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsRoleExpandedObjectOverrideIdsFamilyState } from '@/settings/roles/states/settingsRoleExpandedObjectOverrideIdsFamilyState';
@@ -54,9 +54,11 @@ export const useSettingsRoleObjectOverrides = (roleId: string) => {
   const removeObjectOverride = (objectMetadataId: string) => {
     resetObjectPermission(objectMetadataId);
     setSettingsDraftRole((currentSettingsDraftRole) =>
-      getRoleWithoutObjectRowLevelPermissionRules({
+      getRoleWithoutRowLevelPermissionRules({
         role: currentSettingsDraftRole,
-        objectMetadataId,
+        ruleIds: (currentSettingsDraftRole.rowLevelPermissionRules ?? [])
+          .filter((rule) => rule.objectMetadataId === objectMetadataId)
+          .map(({ id }) => id),
       }),
     );
     setSettingsRoleExpandedObjectOverrideIds((currentIds) =>

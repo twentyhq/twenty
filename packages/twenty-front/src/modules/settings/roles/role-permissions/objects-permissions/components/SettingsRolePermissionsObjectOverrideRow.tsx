@@ -6,7 +6,6 @@ import { OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/ro
 import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/objects-permissions/hooks/useSettingsRoleObjectOverrides';
 import { getObjectOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperations';
 import { getObjectOperationsSummary } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperationsSummary';
-import { getObjectRowLevelPermissionPredicates } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionPredicates';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsRoleExpandedObjectOverrideIdsFamilyState } from '@/settings/roles/states/settingsRoleExpandedObjectOverrideIdsFamilyState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -52,10 +51,9 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
     objectMetadataItem.id,
   );
 
-  const rulePredicates = getObjectRowLevelPermissionPredicates({
-    role: settingsDraftRole,
-    objectMetadataId: objectMetadataItem.id,
-  });
+  const hasRule = (settingsDraftRole.rowLevelPermissionRules ?? []).some(
+    (rule) => rule.objectMetadataId === objectMetadataItem.id,
+  );
 
   const hasFieldRestriction = (settingsDraftRole.fieldPermissions ?? []).some(
     (fieldPermission) =>
@@ -68,7 +66,7 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
-  const isAdvanced = rulePredicates.length > 0 || hasFieldRestriction;
+  const isAdvanced = hasRule || hasFieldRestriction;
 
   const { label, Icon: AccessIcon } = getObjectOperationsSummary({
     operations,
