@@ -107,14 +107,16 @@ const computeNodeValue = ({
         left: computeChildValue(node.left),
         right: computeChildValue(node.right),
       });
-    case 'GROUP':
-      return node.logicalOperator === 'AND'
-        ? node.children.every((childNode) =>
-            Boolean(computeChildValue(childNode)),
-          )
-        : node.children.some((childNode) =>
-            Boolean(computeChildValue(childNode)),
-          );
+    case 'GROUP': {
+      const isChildTruthy = (childNode: ConditionalAvailabilityNode) =>
+        Boolean(computeChildValue(childNode));
+
+      if (node.logicalOperator === 'AND') {
+        return node.children.every(isChildTruthy);
+      }
+
+      return node.children.some(isChildTruthy);
+    }
     case 'NOT':
       return !computeChildValue(node.child);
     case 'CALL': {
