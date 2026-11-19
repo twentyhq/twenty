@@ -281,8 +281,9 @@ export const useSaveDraftRoleToDB = ({
     );
 
     for (const objectMetadataId of objectMetadataIds) {
-      const isOfObject = (entity: { objectMetadataId: string }) =>
-        entity.objectMetadataId === objectMetadataId;
+      const isOfObject = (rowLevelPermissionItem: {
+        objectMetadataId: string;
+      }) => rowLevelPermissionItem.objectMetadataId === objectMetadataId;
 
       await upsertRowLevelPermissionRules({
         variables: {
