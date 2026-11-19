@@ -601,12 +601,12 @@ msgstr "{aggregateLabel} của {fieldLabel}"
 #. js-lingui-id: zEkduP
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "{allowedFieldCount} of {fieldCount}"
-msgstr ""
+msgstr "{allowedFieldCount} của {fieldCount}"
 
 #. js-lingui-id: LoDOIo
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "{allowedFieldCount} of {fieldCount} fields"
-msgstr ""
+msgstr "{allowedFieldCount} trong số {fieldCount} trường"
 
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -3657,7 +3657,7 @@ msgstr "Văn bản thay thế"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Always visible"
-msgstr ""
+msgstr "Luôn hiển thị"
 
 #. js-lingui-id: Tco16H
 #: src/modules/localization/utils/formatZonedDateTimeTimePart.ts
@@ -5734,12 +5734,12 @@ msgstr "Đã hủy lịch chiến dịch và đưa lại vào bản nháp của 
 #. js-lingui-id: AnhtKd
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Can't be edited"
-msgstr ""
+msgstr "Không thể chỉnh sửa"
 
 #. js-lingui-id: XccYlu
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Can't be seen"
-msgstr ""
+msgstr "Không thể xem"
 
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
@@ -9177,7 +9177,7 @@ msgstr "Vai trò tùy chỉnh"
 #. js-lingui-id: 2jzCZZ
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "Custom section"
-msgstr ""
+msgstr "Phần tùy chỉnh"
 
 #. js-lingui-id: BjGDEB
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -13625,7 +13625,7 @@ msgstr "Nhanh"
 #. js-lingui-id: x77Ptp
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 msgid "Favorite chats"
-msgstr ""
+msgstr "Cuộc trò chuyện yêu thích"
 
 #. js-lingui-id: X9kySA
 #: src/modules/inbox/components/NavigationDrawerInboxFavoritesSection.tsx
@@ -13826,12 +13826,12 @@ msgstr "Các trường hiển thị trong mỗi chế độ xem và thứ tự c
 #. js-lingui-id: RWZvyt
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Fields to edit"
-msgstr ""
+msgstr "Các trường cần chỉnh sửa"
 
 #. js-lingui-id: YsJAML
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Fields to see"
-msgstr ""
+msgstr "Các trường cần xem"
 
 #. js-lingui-id: HrM5BL
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
@@ -20467,7 +20467,7 @@ msgstr "Chưa cấu hình trường nào"
 #. js-lingui-id: gRHpoy
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "No fields"
-msgstr ""
+msgstr "Không có trường nào"
 
 #. js-lingui-id: /hvarH
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
@@ -24074,7 +24074,7 @@ msgstr "Gần đây"
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
 msgid "Recent chats"
-msgstr ""
+msgstr "Các cuộc trò chuyện gần đây"
 
 #. js-lingui-id: ZVr1+K
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -25604,7 +25604,7 @@ msgstr "Ruby"
 #. js-lingui-id: oAN4H/
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Rule"
-msgstr ""
+msgstr "Quy tắc"
 
 #. js-lingui-id: tijGcA
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx

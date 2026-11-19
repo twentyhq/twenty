@@ -601,12 +601,12 @@ msgstr "{aggregateLabel} του {fieldLabel}"
 #. js-lingui-id: zEkduP
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "{allowedFieldCount} of {fieldCount}"
-msgstr ""
+msgstr "{allowedFieldCount} του {fieldCount}"
 
 #. js-lingui-id: LoDOIo
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "{allowedFieldCount} of {fieldCount} fields"
-msgstr ""
+msgstr "{allowedFieldCount} από {fieldCount} πεδία"
 
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -3657,7 +3657,7 @@ msgstr "Εναλλακτικό κείμενο"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Always visible"
-msgstr ""
+msgstr "Πάντα ορατό"
 
 #. js-lingui-id: Tco16H
 #: src/modules/localization/utils/formatZonedDateTimeTimePart.ts
@@ -5734,12 +5734,12 @@ msgstr "Ο προγραμματισμός της καμπάνιας ακυρώθ
 #. js-lingui-id: AnhtKd
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Can't be edited"
-msgstr ""
+msgstr "Δεν μπορεί να επεξεργαστεί"
 
 #. js-lingui-id: XccYlu
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Can't be seen"
-msgstr ""
+msgstr "Δεν μπορεί να προβληθεί"
 
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
@@ -9177,7 +9177,7 @@ msgstr "Προσαρμοσμένοι ρόλοι"
 #. js-lingui-id: 2jzCZZ
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "Custom section"
-msgstr ""
+msgstr "Προσαρμοσμένη ενότητα"
 
 #. js-lingui-id: BjGDEB
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -13625,7 +13625,7 @@ msgstr "Γρήγορο"
 #. js-lingui-id: x77Ptp
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 msgid "Favorite chats"
-msgstr ""
+msgstr "Αγαπημένες συνομιλίες"
 
 #. js-lingui-id: X9kySA
 #: src/modules/inbox/components/NavigationDrawerInboxFavoritesSection.tsx
@@ -13826,12 +13826,12 @@ msgstr "Πεδία που εμφανίζονται σε κάθε προβολή 
 #. js-lingui-id: RWZvyt
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Fields to edit"
-msgstr ""
+msgstr "Πεδία προς επεξεργασία"
 
 #. js-lingui-id: YsJAML
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Fields to see"
-msgstr ""
+msgstr "Πεδία προς προβολή"
 
 #. js-lingui-id: HrM5BL
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
@@ -20467,7 +20467,7 @@ msgstr "Δεν έχει ρυθμιστεί πεδίο"
 #. js-lingui-id: gRHpoy
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "No fields"
-msgstr ""
+msgstr "Χωρίς πεδία"
 
 #. js-lingui-id: /hvarH
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
@@ -24074,7 +24074,7 @@ msgstr "Πρόσφατο"
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
 msgid "Recent chats"
-msgstr ""
+msgstr "Πρόσφατες συνομιλίες"
 
 #. js-lingui-id: ZVr1+K
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -25604,7 +25604,7 @@ msgstr "Ρουμπινί"
 #. js-lingui-id: oAN4H/
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Rule"
-msgstr ""
+msgstr "Κανόνας"
 
 #. js-lingui-id: tijGcA
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx

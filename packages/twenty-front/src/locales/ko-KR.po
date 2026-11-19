@@ -601,12 +601,12 @@ msgstr "{fieldLabel}의 {aggregateLabel}"
 #. js-lingui-id: zEkduP
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "{allowedFieldCount} of {fieldCount}"
-msgstr ""
+msgstr "{fieldCount}의 {allowedFieldCount}"
 
 #. js-lingui-id: LoDOIo
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "{allowedFieldCount} of {fieldCount} fields"
-msgstr ""
+msgstr "필드 {fieldCount}개 중 {allowedFieldCount}개"
 
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -3657,7 +3657,7 @@ msgstr "대체 텍스트"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Always visible"
-msgstr ""
+msgstr "항상 표시"
 
 #. js-lingui-id: Tco16H
 #: src/modules/localization/utils/formatZonedDateTimeTimePart.ts
@@ -5734,12 +5734,12 @@ msgstr "캠페인 예약이 취소되어 초안으로 돌아갔습니다"
 #. js-lingui-id: AnhtKd
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Can't be edited"
-msgstr ""
+msgstr "편집할 수 없음"
 
 #. js-lingui-id: XccYlu
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Can't be seen"
-msgstr ""
+msgstr "볼 수 없음"
 
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
@@ -9177,7 +9177,7 @@ msgstr "사용자 정의 역할"
 #. js-lingui-id: 2jzCZZ
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "Custom section"
-msgstr ""
+msgstr "사용자 지정 섹션"
 
 #. js-lingui-id: BjGDEB
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -13625,7 +13625,7 @@ msgstr "빠름"
 #. js-lingui-id: x77Ptp
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 msgid "Favorite chats"
-msgstr ""
+msgstr "즐겨찾는 채팅"
 
 #. js-lingui-id: X9kySA
 #: src/modules/inbox/components/NavigationDrawerInboxFavoritesSection.tsx
@@ -13826,12 +13826,12 @@ msgstr "각 보기에 표시되는 필드와 그 순서"
 #. js-lingui-id: RWZvyt
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Fields to edit"
-msgstr ""
+msgstr "편집할 필드"
 
 #. js-lingui-id: YsJAML
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Fields to see"
-msgstr ""
+msgstr "볼 필드"
 
 #. js-lingui-id: HrM5BL
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
@@ -20467,7 +20467,7 @@ msgstr "설정된 필드가 없습니다"
 #. js-lingui-id: gRHpoy
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "No fields"
-msgstr ""
+msgstr "필드 없음"
 
 #. js-lingui-id: /hvarH
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
@@ -24074,7 +24074,7 @@ msgstr "최근"
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
 msgid "Recent chats"
-msgstr ""
+msgstr "최근 채팅"
 
 #. js-lingui-id: ZVr1+K
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -25604,7 +25604,7 @@ msgstr "루비"
 #. js-lingui-id: oAN4H/
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Rule"
-msgstr ""
+msgstr "규칙"
 
 #. js-lingui-id: tijGcA
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx

@@ -601,12 +601,12 @@ msgstr "{fieldLabel}-ի {aggregateLabel}"
 #. js-lingui-id: zEkduP
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "{allowedFieldCount} of {fieldCount}"
-msgstr ""
+msgstr "{fieldCount}-ի {allowedFieldCount}"
 
 #. js-lingui-id: LoDOIo
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "{allowedFieldCount} of {fieldCount} fields"
-msgstr ""
+msgstr "{allowedFieldCount}-ը {fieldCount} դաշտերից"
 
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -3657,7 +3657,7 @@ msgstr "Այլընտրանքային տեքստ"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Always visible"
-msgstr ""
+msgstr "Միշտ տեսանելի"
 
 #. js-lingui-id: Tco16H
 #: src/modules/localization/utils/formatZonedDateTimeTimePart.ts
@@ -5734,12 +5734,12 @@ msgstr "Արշավի պլանավորումը չեղարկվել է, և այն �
 #. js-lingui-id: AnhtKd
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Can't be edited"
-msgstr ""
+msgstr "Չի կարող խմբագրվել"
 
 #. js-lingui-id: XccYlu
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Can't be seen"
-msgstr ""
+msgstr "Չի կարող տեսանելի լինել"
 
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
@@ -9177,7 +9177,7 @@ msgstr "Հատուկ դերեր"
 #. js-lingui-id: 2jzCZZ
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "Custom section"
-msgstr ""
+msgstr "Անհատական բաժին"
 
 #. js-lingui-id: BjGDEB
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -13625,7 +13625,7 @@ msgstr "Արագ"
 #. js-lingui-id: x77Ptp
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 msgid "Favorite chats"
-msgstr ""
+msgstr "Նախընտրած զրույցներ"
 
 #. js-lingui-id: X9kySA
 #: src/modules/inbox/components/NavigationDrawerInboxFavoritesSection.tsx
@@ -13826,12 +13826,12 @@ msgstr "Յուրաքանչյուր տեսքում ցուցադրվող դաշտ�
 #. js-lingui-id: RWZvyt
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Fields to edit"
-msgstr ""
+msgstr "Խմբագրվող դաշտեր"
 
 #. js-lingui-id: YsJAML
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Fields to see"
-msgstr ""
+msgstr "Տեսանելի դաշտեր"
 
 #. js-lingui-id: HrM5BL
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
@@ -20467,7 +20467,7 @@ msgstr "Դաշտը կարգավորված չէ"
 #. js-lingui-id: gRHpoy
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "No fields"
-msgstr ""
+msgstr "Դաշտեր չկան"
 
 #. js-lingui-id: /hvarH
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
@@ -24074,7 +24074,7 @@ msgstr "Վերջին"
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
 msgid "Recent chats"
-msgstr ""
+msgstr "Վերջին զրույցներ"
 
 #. js-lingui-id: ZVr1+K
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -25604,7 +25604,7 @@ msgstr "Ruby"
 #. js-lingui-id: oAN4H/
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Rule"
-msgstr ""
+msgstr "Կանոն"
 
 #. js-lingui-id: tijGcA
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
