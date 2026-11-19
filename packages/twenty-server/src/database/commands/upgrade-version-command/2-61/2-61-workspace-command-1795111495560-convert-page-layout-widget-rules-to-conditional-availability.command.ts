@@ -65,7 +65,7 @@ export class ConvertPageLayoutWidgetRulesToConditionalAvailabilityCommand extend
         (flatPageLayoutWidget) => !isDefined(flatPageLayoutWidget.deletedAt),
       )
       .flatMap((flatPageLayoutWidget) => {
-        const computation = computePageLayoutWidgetWithConditionalAvailability({
+        const conversion = computePageLayoutWidgetWithConditionalAvailability({
           flatPageLayoutWidget,
           standardConditionalAvailability:
             flatPageLayoutWidget.applicationUniversalIdentifier ===
@@ -81,17 +81,17 @@ export class ConvertPageLayoutWidgetRulesToConditionalAvailabilityCommand extend
           now,
         });
 
-        if (computation.status === 'UNCHANGED') {
+        if (!isDefined(conversion)) {
           return [];
         }
 
-        if (isDefined(computation.unreadableRuleReason)) {
+        if (isDefined(conversion.unreadableRuleReason)) {
           this.logger.warn(
-            `Workspace ${workspaceId}: the rule of page layout widget ${flatPageLayoutWidget.universalIdentifier} could not be read, the widget is now hidden (${computation.unreadableRuleReason})`,
+            `Workspace ${workspaceId}: the rule of page layout widget ${flatPageLayoutWidget.universalIdentifier} could not be read, the widget is now hidden (${conversion.unreadableRuleReason})`,
           );
         }
 
-        return [computation.flatPageLayoutWidget];
+        return [conversion.flatPageLayoutWidget];
       });
 
     if (!isNonEmptyArray(pageLayoutWidgetsToUpdate)) {

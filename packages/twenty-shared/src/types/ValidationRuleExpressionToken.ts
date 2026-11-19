@@ -1,4 +1,4 @@
-export type ExpressionToken = {
+export type ValidationRuleExpressionToken = {
   type:
     | 'path'
     | 'number'

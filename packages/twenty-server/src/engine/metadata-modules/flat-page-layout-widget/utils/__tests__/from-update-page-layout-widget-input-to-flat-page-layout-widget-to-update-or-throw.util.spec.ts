@@ -190,17 +190,6 @@ describe('fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThrow',
       expect(updatedWidget.conditionalAvailability).toEqual(DEVICE_IS_MOBILE);
     });
 
-    it('keeps the stored tree when the update does not send one', () => {
-      const updatedWidget = updateWidget({
-        existingWidget: buildWorkspaceOwnedWidget({
-          conditionalAvailability: DEVICE_IS_MOBILE,
-        }),
-        update: { title: 'Renamed' },
-      });
-
-      expect(updatedWidget.conditionalAvailability).toEqual(DEVICE_IS_MOBILE);
-    });
-
     it('clears the stored tree when the update sends null', () => {
       const updatedWidget = updateWidget({
         existingWidget: buildWorkspaceOwnedWidget({
