@@ -169,7 +169,7 @@ export class WebPushService {
       workspaceId,
       {
         where: {
-          applicationServerKey: deriveWebPushVapidKeyPair({
+          vapidPublicKey: deriveWebPushVapidKeyPair({
             twentyConfigService: this.twentyConfigService,
           }).publicKey,
           userSession: {
@@ -225,8 +225,8 @@ export class WebPushService {
           {
             endpoint: webPushSubscription.endpoint,
             keys: {
-              p256dh: webPushSubscription.p256dhKey,
-              auth: webPushSubscription.authSecret,
+              p256dh: webPushSubscription.browserPublicKey,
+              auth: webPushSubscription.browserAuthSecret,
             },
           },
           JSON.stringify(notification),
