@@ -18,10 +18,19 @@ export const requestCaptchaTokenFromProvider = ({
       );
     case CaptchaDriverType.TURNSTILE:
       return new Promise<string>((resolve, reject) => {
+        const widgetRoot = document.querySelector(CAPTCHA_WIDGET_SELECTOR);
+
+        if (!isDefined(widgetRoot)) {
+          reject(
+            new Error(doNotTranslate('Captcha widget container is missing')),
+          );
+          return;
+        }
+
         // Turnstile rejects a second render in a container that already holds a widget
         const container = document.createElement('div');
 
-        document.querySelector(CAPTCHA_WIDGET_SELECTOR)?.appendChild(container);
+        widgetRoot.appendChild(container);
 
         let widgetId: string | undefined;
 

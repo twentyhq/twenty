@@ -47,6 +47,8 @@ describe('useRequestFreshCaptchaToken', () => {
       return 'turnstile-widget-id';
     });
 
+    document.body.innerHTML = '<div id="captcha-widget"></div>';
+
     jotaiStore.set(captchaState.atom, null);
     jotaiStore.set(captchaTokenState.atom, undefined);
     jotaiStore.set(isCaptchaScriptLoadedState.atom, true);
@@ -104,6 +106,14 @@ describe('useRequestFreshCaptchaToken', () => {
     );
     expect(captchaToken?.token).toBe('turnstile-token');
     expect(mockTurnstileRemove).toHaveBeenCalledWith('turnstile-widget-id');
+  });
+
+  it('should resolve to undefined when the Turnstile widget container is missing', async () => {
+    setCaptchaProvider(CaptchaDriverType.TURNSTILE);
+    document.body.innerHTML = '';
+
+    expect(await requestFreshCaptchaToken()).toBeUndefined();
+    expect(mockTurnstileRender).not.toHaveBeenCalled();
   });
 
   it('should wait for the captcha script before requesting a token', async () => {

@@ -1,13 +1,9 @@
 import { CAPTCHA_TOKEN_REQUEST_TIMEOUT_IN_MS } from '@/captcha/constants/CaptchaTokenRequestTimeoutInMs';
 import { captchaTokenState } from '@/captcha/states/captchaTokenState';
-import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { type CaptchaToken } from '@/captcha/types/CaptchaToken';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
-import { requestCaptchaTokenFromProvider } from '@/captcha/utils/requestCaptchaTokenFromProvider';
-import { waitForAtomValue } from '@/captcha/utils/waitForAtomValue';
+import { requestCaptchaTokenWhenReady } from '@/captcha/utils/requestCaptchaTokenWhenReady';
 import { withTimeout } from '@/captcha/utils/withTimeout';
-import { captchaState } from '@/client-config/states/captchaState';
-import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -24,31 +20,9 @@ export const useRequestFreshCaptchaToken = () => {
       return undefined;
     }
 
-    const requestToken = async () => {
-      await waitForAtomValue({
-        store,
-        atom: clientConfigApiStatusState.atom,
-        isExpectedValue: ({ isLoadedOnce }) => isLoadedOnce,
-      });
-
-      const { provider, siteKey } = store.get(captchaState.atom) ?? {};
-
-      if (!isDefined(provider) || !isDefined(siteKey)) {
-        return undefined;
-      }
-
-      await waitForAtomValue({
-        store,
-        atom: isCaptchaScriptLoadedState.atom,
-        isExpectedValue: (isCaptchaScriptLoaded) => isCaptchaScriptLoaded,
-      });
-
-      return requestCaptchaTokenFromProvider({ provider, siteKey });
-    };
-
     try {
       const token = await withTimeout({
-        promise: requestToken(),
+        promise: requestCaptchaTokenWhenReady({ store }),
         timeoutInMs: CAPTCHA_TOKEN_REQUEST_TIMEOUT_IN_MS,
         timeoutMessage: doNotTranslate('Captcha token request timed out'),
       });
