@@ -1,4 +1,5 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
+import { lazy, type ReactNode, Suspense } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Badge } from 'twenty-ui/primitives/data-display';
@@ -27,6 +28,12 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const MAX_DISPLAYED_UNREAD_COUNT = 99;
+
+const LazyNavigationMenuTabDropTarget = lazy(() =>
+  import('@/navigation-menu-item/display/dnd/components/NavigationMenuTabDropTarget').then(
+    (module) => ({ default: module.NavigationMenuTabDropTarget }),
+  ),
+);
 
 // Expanded, the row matches the page card header so their borders read as one line.
 const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
@@ -97,6 +104,17 @@ export const MainNavigationDrawerTabSwitcher = () => {
 
   const shouldShowTooltips = !isExpanded && !isMobile;
 
+  const withTabDropTarget = (tabId: string | null, tabButton: ReactNode) =>
+    isLayoutCustomizationModeEnabled ? (
+      <Suspense key={tabId ?? 'home'} fallback={tabButton}>
+        <LazyNavigationMenuTabDropTarget tabId={tabId}>
+          {tabButton}
+        </LazyNavigationMenuTabDropTarget>
+      </Suspense>
+    ) : (
+      tabButton
+    );
+
   return (
     <StyledSwitcher
       isExpanded={isExpanded}
@@ -159,20 +177,23 @@ export const MainNavigationDrawerTabSwitcher = () => {
         }
 
         return [
-          drawerTabButton,
-          ...navigationMenuTabs.map((tab) => (
-            <MainNavigationDrawerSidebarTab
-              key={tab.id}
-              tab={tab}
-              isActive={activeNavigationMenuTab?.id === tab.id}
-              isExpanded={isExpanded}
-              shouldShowTooltip={shouldShowTooltips}
-              isUnread={
-                activeNavigationMenuTab?.id !== tab.id &&
-                tabIdsWithUnreadChats.has(tab.id)
-              }
-            />
-          )),
+          withTabDropTarget(null, drawerTabButton),
+          ...navigationMenuTabs.map((tab) =>
+            withTabDropTarget(
+              tab.id,
+              <MainNavigationDrawerSidebarTab
+                key={tab.id}
+                tab={tab}
+                isActive={activeNavigationMenuTab?.id === tab.id}
+                isExpanded={isExpanded}
+                shouldShowTooltip={shouldShowTooltips}
+                isUnread={
+                  activeNavigationMenuTab?.id !== tab.id &&
+                  tabIdsWithUnreadChats.has(tab.id)
+                }
+              />,
+            ),
+          ),
           ...(isLayoutCustomizationModeEnabled &&
           tabCountIncludingHome < NAVIGATION_MENU_TAB_MAX_COUNT
             ? [
