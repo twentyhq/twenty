@@ -21,10 +21,10 @@ import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-jest.mock('@/ai-chat/hooks/useRetryChatMessage', () => ({
+jest.mock('@/ai-chat/messages/hooks/useRetryChatMessage', () => ({
   useRetryChatMessage: () => ({ retryChatMessage: jest.fn() }),
 }));
-jest.mock('@/ai-chat/hooks/useCanRetryCurrentAiChatTurn', () => ({
+jest.mock('@/ai-chat/messages/hooks/useCanRetryCurrentAiChatTurn', () => ({
   useCanRetryCurrentAiChatTurn: () => true,
 }));
 

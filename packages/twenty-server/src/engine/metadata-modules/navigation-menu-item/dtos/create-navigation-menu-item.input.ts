@@ -1,6 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { NATIVE_PAGE_KEYS, type NativePageKey } from 'twenty-shared/types';
+import {
+  BUILT_IN_SECTION_KEYS,
+  type BuiltInSectionKey,
+  NATIVE_PAGE_KEYS,
+  type NativePageKey,
+} from 'twenty-shared/types';
 import {
   IsEnum,
   IsIn,
@@ -58,6 +63,11 @@ export class CreateNavigationMenuItemInput {
   @IsIn(NATIVE_PAGE_KEYS)
   @Field(() => String, { nullable: true })
   nativePageKey?: NativePageKey | null;
+
+  @IsOptional()
+  @IsIn(BUILT_IN_SECTION_KEYS)
+  @Field(() => String, { nullable: true })
+  builtInSectionKey?: BuiltInSectionKey | null;
 
   @IsOptional()
   @IsString()

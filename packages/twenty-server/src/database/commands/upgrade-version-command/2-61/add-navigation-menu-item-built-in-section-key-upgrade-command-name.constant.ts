@@ -1,0 +1,2 @@
+export const ADD_NAVIGATION_MENU_ITEM_BUILT_IN_SECTION_KEY_UPGRADE_COMMAND_NAME =
+  '2.61.0_AddNavigationMenuItemBuiltInSectionKeyFastInstanceCommand_1795087899814';

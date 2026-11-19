@@ -2,15 +2,16 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Badge } from 'twenty-ui/primitives/data-display';
-import { useIcons } from 'twenty-ui/icon/provider';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useInboxOpenThreadsSummary } from '@/inbox/hooks/useInboxOpenThreadsSummary';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
+import { NAVIGATION_MENU_TAB_MAX_COUNT } from '@/navigation-menu-item/common/constants/NavigationMenuTabMaxCount';
+import { MainNavigationDrawerAddTabButton } from '@/navigation/components/MainNavigationDrawerAddTabButton';
+import { MainNavigationDrawerSidebarTab } from '@/navigation/components/MainNavigationDrawerSidebarTab';
 import { MainNavigationDrawerTab } from '@/navigation/components/MainNavigationDrawerTab';
 import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
@@ -41,7 +42,11 @@ const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
       : themeCssVariables.betweenSiblingsGap};
   height: ${({ isExpanded }) =>
     isExpanded ? themeCssVariables.spacing[10] : 'auto'};
+  margin: ${({ isExpanded }) =>
+    isExpanded ? `0 calc(-1 * ${themeCssVariables.spacing[2]})` : '0'};
   min-width: 0;
+  padding: ${({ isExpanded }) =>
+    isExpanded ? `0 ${themeCssVariables.spacing[2]}` : '0'};
 `;
 
 const StyledUnreadBadge = styled.span`
@@ -53,7 +58,6 @@ const StyledUnreadBadge = styled.span`
 
 export const MainNavigationDrawerTabSwitcher = () => {
   const { t } = useLingui();
-  const { getIcon } = useIcons();
 
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
@@ -62,8 +66,7 @@ export const MainNavigationDrawerTabSwitcher = () => {
   const isExpanded = useIsNavigationDrawerContentExpanded();
   const drawerTabs = useNavigationDrawerTabs();
   const activeNavigationDrawerTab = useActiveNavigationDrawerTab();
-  const { switchNavigationDrawerTab, switchToNavigationMenuTab } =
-    useSwitchNavigationDrawerTab();
+  const { switchNavigationDrawerTab } = useSwitchNavigationDrawerTab();
   const navigationMenuTabs = useWorkspaceNavigationMenuContainers({
     type: NavigationMenuItemType.TAB,
     containerId: null,
@@ -156,22 +159,24 @@ export const MainNavigationDrawerTabSwitcher = () => {
         return [
           drawerTabButton,
           ...navigationMenuTabs.map((tab) => (
-            <MainNavigationDrawerTab
+            <MainNavigationDrawerSidebarTab
               key={tab.id}
-              Icon={getIcon(tab.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT)}
-              label={tab.name}
+              tab={tab}
               isActive={activeNavigationMenuTab?.id === tab.id}
               isExpanded={isExpanded}
-              isDisabled={isLayoutCustomizationModeEnabled}
-              tooltip={
-                isLayoutCustomizationModeEnabled
-                  ? t`Finish editing the layout to open this tab`
-                  : tab.name
-              }
               shouldShowTooltip={shouldShowTooltips}
-              onClick={() => switchToNavigationMenuTab(tab.id)}
             />
           )),
+          ...(isLayoutCustomizationModeEnabled &&
+          navigationMenuTabs.length < NAVIGATION_MENU_TAB_MAX_COUNT
+            ? [
+                <MainNavigationDrawerAddTabButton
+                  key="add-tab"
+                  isExpanded={isExpanded}
+                  shouldShowTooltip={shouldShowTooltips}
+                />,
+              ]
+            : []),
         ];
       })}
     </StyledSwitcher>

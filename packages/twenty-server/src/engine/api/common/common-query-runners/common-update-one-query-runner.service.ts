@@ -3,14 +3,14 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { type ObjectRecord } from 'twenty-shared/types';
 
-import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { CommonRecordQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-record-query-runner.service';
 import { CommonUpdateManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-update-many-query-runner.service';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
   CommonExtendedInput,
@@ -19,13 +19,10 @@ import {
   UpdateOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
-import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 
 @Injectable()
-export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerService<
+export class CommonUpdateOneQueryRunnerService extends CommonRecordQueryRunnerService<
   UpdateOneQueryArgs,
   ObjectRecord
 > {
@@ -39,14 +36,15 @@ export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerServ
   async run(
     args: CommonExtendedInput<UpdateOneQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<ObjectRecord> {
-    const result = await this.commonUpdateManyQueryRunnerService.run(
-      {
-        ...args,
-        filter: { id: { eq: args.id } },
-      },
-      queryRunnerContext,
-    );
+  ): Promise<CommonQueryRunResult<ObjectRecord>> {
+    const { result, relationAggregatedValues } =
+      await this.commonUpdateManyQueryRunnerService.run(
+        {
+          ...args,
+          filter: { id: { eq: args.id } },
+        },
+        queryRunnerContext,
+      );
 
     if (!result || result.length === 0) {
       throw new CommonQueryRunnerException(
@@ -58,7 +56,7 @@ export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerServ
       );
     }
 
-    return result[0];
+    return { result: result[0], relationAggregatedValues };
   }
 
   async computeArgs(
@@ -85,22 +83,6 @@ export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerServ
         })
       )[0],
     };
-  }
-
-  async processQueryResult(
-    queryResult: ObjectRecord,
-    flatObjectMetadata: FlatObjectMetadata,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    authContext: WorkspaceAuthContext,
-  ): Promise<ObjectRecord> {
-    return this.commonResultGettersService.processRecord(
-      queryResult,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      authContext.workspace.id,
-    );
   }
 
   async validate(

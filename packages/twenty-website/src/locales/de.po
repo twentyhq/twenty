@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-16 12:22\n"
+"PO-Revision-Date: 2026-11-18 16:12\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -131,6 +131,11 @@ msgstr "← Zurück"
 #: src/partners-marketplace/BackToMarketplaceLink.tsx
 msgid "← Twenty partners"
 msgstr "← Twenty‑Partner"
+
+#. js-lingui-id: WYQYI0
+#: src/sections/partner-programs/partner-levels.data.ts
+msgid "+ Client briefs"
+msgstr "+ Kundenbriefings"
 
 #. js-lingui-id: foGG8A
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -272,6 +277,7 @@ msgstr "≈ 7× weniger"
 
 #. js-lingui-id: be30i9
 #: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/partner-hero/integrator-hero-stats.data.ts
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$0"
@@ -450,6 +456,11 @@ msgstr "42.000 $/Jahr"
 msgid "$49/user/mo"
 msgstr "49 $ pro Benutzer/Monat"
 
+#. js-lingui-id: +GoalU
+#: src/sections/partner-hero/creator-hero-stats.data.ts
+msgid "$50"
+msgstr "50 $"
+
 #. js-lingui-id: ft5bJk
 #: src/sections/compare/compare-data.ts
 msgid "$500/user/mo"
@@ -545,6 +556,12 @@ msgstr ""
 "11 Berechtigungs-\n"
 "gruppen"
 
+#. js-lingui-id: J00CPN
+#: src/sections/partner-hero/integrator-hero-stats.data.ts
+#: src/sections/partner-hero/creator-hero-stats.data.ts
+msgid "12 months"
+msgstr "12 Monate"
+
 #. js-lingui-id: HeDrOu
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "12k newsletter subscribers"
@@ -609,20 +626,22 @@ msgstr "20 × Sales Enterprise (105 $)"
 msgid "20 × Sales Hub Enterprise ($150)"
 msgstr "20 × Sales Hub Enterprise (150 $)"
 
-#. js-lingui-id: MgOdrm
-#: src/sections/partner-programs/creator-steps.data.ts
-msgid "20% commission"
-msgstr "20 % Provision"
-
-#. js-lingui-id: bE7K26
+#. js-lingui-id: ewzpPG
 #: src/sections/partner-programs/partner-levels.data.ts
-msgid "20% of seat revenue for 12 months on every client you bring"
-msgstr "20 % der Sitzplatzumsätze für 12 Monate für jeden von dir gewonnenen Kunden"
+#: src/sections/partner-hero/integrator-hero-stats.data.ts
+#: src/sections/partner-hero/creator-hero-stats.data.ts
+msgid "20%"
+msgstr "20 %"
 
 #. js-lingui-id: vbPxj+
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "20% of the seat revenue of every client you bring, for 12 months, plus the partner Discord where our team and other partners answer your questions. Partner training is coming soon."
 msgstr "20 % der Sitzplatzumsätze jedes von dir gewonnenen Kunden für 12 Monate sowie Zugang zum Partner-Discord, wo unser Team und andere Partner deine Fragen beantworten. Partner-Schulungen folgen in Kürze."
+
+#. js-lingui-id: NmKuTq
+#: src/sections/partner-programs/partner-levels.data.ts
+msgid "20% on every client you bring"
+msgstr "20% für jeden Kunden, den du vermittelst"
 
 #. js-lingui-id: g1xpgV
 #: src/sections/partner-programs/partner-levels.data.ts
@@ -656,15 +675,20 @@ msgstr ""
 msgid "3 product lines"
 msgstr "3 Produktlinien"
 
+#. js-lingui-id: M5Eoob
+#: src/sections/partner-hero/integrator-hero-stats.data.ts
+msgid "3 steps"
+msgstr "3 Schritte"
+
+#. js-lingui-id: P9cEa2
+#: src/sections/partner-hero/creator-hero-stats.data.ts
+msgid "30 days"
+msgstr "30 Tage"
+
 #. js-lingui-id: /wTvaM
 #: src/sections/faq/affiliate-program-faq.data.ts
 msgid "30 days after the click. If the visitor creates their workspace within that time and later becomes a paying Cloud Organization or Enterprise customer, the commission is yours. If they click another partner's link before creating their workspace, that partner gets the credit. Once the workspace is created, the credit is final."
 msgstr "30 Tage nach dem Klick. Wenn der Besucher innerhalb dieser Zeit seinen Arbeitsbereich erstellt und später zahlender Cloud-Organization- oder Enterprise-Kunde wird, steht Ihnen die Provision zu. Wenn er vor der Erstellung seines Arbeitsbereichs auf den Link eines anderen Partners klickt, erhält dieser Partner die Zuordnung. Sobald der Arbeitsbereich erstellt ist, ist die Zuordnung endgültig."
-
-#. js-lingui-id: gICgcn
-#: src/sections/partner-programs/creator-steps.data.ts
-msgid "30 days of credit"
-msgstr "30 Tage Guthaben"
 
 #. js-lingui-id: MW3Qpb
 #: src/partners-marketplace/PartnerProfileCtas.tsx
@@ -784,6 +808,11 @@ msgstr "Ein individuelles agentenbasiertes CRM für ein Team."
 msgid "A custom CRM gives your org an edge, *but building one* comes with *tradeoffs*"
 msgstr "Ein individuelles CRM verschafft Ihrer Organisation einen Vorsprung – *aber es zu bauen* bringt *Kompromisse* mit sich"
 
+#. js-lingui-id: /Ywl2k
+#: src/sections/partner-programs/partner-levels.data.ts
+msgid "A directory profile"
+msgstr "Ein Verzeichnisprofil"
+
 #. js-lingui-id: 4lAzBW
 #: src/sections/compare/compare-data.ts
 msgid ""
@@ -846,11 +875,6 @@ msgstr "Eine Plattform, bereit zu *wachsen*"
 #: src/case-studies/case-study-stories.ts
 msgid "A platform ready to grow"
 msgstr "Eine Plattform, bereit für Wachstum"
-
-#. js-lingui-id: 8Gqdcv
-#: src/sections/partner-programs/partner-levels.data.ts
-msgid "A profile in the Twenty partner directory"
-msgstr "Ein Profil im Twenty-Partnerverzeichnis"
 
 #. js-lingui-id: GGXFEW
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1357,6 +1381,11 @@ msgstr "Eine von einem Datensatz gesendete E-Mail wird jetzt mit diesem Datensat
 msgid "An integrator we trust with our own leads, once we have seen their work with clients. Lead Integrators get client briefs and a profile in the partner directory, on top of everything integrators get."
 msgstr "Ein Integrator, dem wir unsere eigenen Leads anvertrauen, nachdem wir seine Arbeit mit Kunden gesehen haben. Lead-Integratoren erhalten Kundenbriefings und ein Profil im Partnerverzeichnis, zusätzlich zu allem, was Integratoren erhalten."
 
+#. js-lingui-id: fjtTAL
+#: src/sections/partner-programs/partner-levels.data.ts
+msgid "An integrator we trust with our own leads."
+msgstr "Ein Integrator, dem wir unsere eigenen Leads anvertrauen."
+
 #. js-lingui-id: t4V3jR
 #: src/sections/pricing-plans/plans-data.ts
 msgid "And more apps from our marketplace"
@@ -1456,6 +1485,7 @@ msgstr "Bewerbung eingegangen"
 
 #. js-lingui-id: DB8zMK
 #: src/sections/partner-programs/integrator-steps.data.ts
+#: src/sections/partner-programs/creator-steps.data.ts
 msgid "Apply"
 msgstr "Bewerben"
 
@@ -1542,10 +1572,10 @@ msgstr "Bitten Sie die KI, Dateien, die Sie im Chat hochladen, direkt an Datens�
 msgid "Ask AI to build or reconfigure dashboards and views from your workspace data."
 msgstr "Bitten Sie die KI, Dashboards und Ansichten anhand Ihrer Arbeitsbereichsdaten zu erstellen oder neu zu konfigurieren."
 
-#. js-lingui-id: jXOJoW
-#: src/sections/partner-programs/integrator-steps.data.ts
-msgid "Ask our team and other partners on the partner Discord."
-msgstr "Fragen Sie unser Team und andere Partner im Partner-Discord."
+#. js-lingui-id: gXJd56
+#: src/app/[locale]/(site)/partners/integrators/page.tsx
+msgid "Ask our team and partners on the partner Discord."
+msgstr "Frag unser Team und unsere Partner im Partner-Discord."
 
 #. js-lingui-id: S+Q+1d
 #: src/sections/product-hero/ProductHero.tsx
@@ -2223,10 +2253,15 @@ msgstr "Klicken Sie auf „Als Integrator bewerben“ und füllen Sie die kurze 
 msgid "Clicking a call in the Call recordings widget now opens its calendar event, with the summary, transcript and participants in one place."
 msgstr "Durch Klicken auf einen Anruf im Widget „Anrufaufzeichnungen“ wird jetzt dessen Kalenderereignis geöffnet, mit Zusammenfassung, Transkript und Teilnehmern an einem Ort."
 
-#. js-lingui-id: mmtQBv
+#. js-lingui-id: yuosVb
 #: src/sections/partner-programs/partner-levels.data.ts
-msgid "Client briefs from companies looking for a Twenty partner"
-msgstr "Kundenbriefings von Unternehmen, die einen Twenty-Partner suchen"
+msgid "Client briefs"
+msgstr "Kundenbriefings"
+
+#. js-lingui-id: oA4gy0
+#: src/sections/partner-programs/partner-levels.data.ts
+msgid "Clients from briefs do not earn a commission"
+msgstr "Kunden aus Briefings erhalten keine Provision"
 
 #. js-lingui-id: yz7wBu
 #: src/partners-marketplace/CaseStudyModal.tsx
@@ -2305,6 +2340,11 @@ msgstr "Farbige Symbole in der gesamten App"
 msgid "Column-to-field mapping (including relations)"
 msgstr "Spalten‑zu‑Feld‑Mapping (einschließlich Relationen)"
 
+#. js-lingui-id: AUYALh
+#: src/sections/partner-programs/partner-levels.data.ts
+msgid "Coming soon"
+msgstr "Kommt bald"
+
 #. js-lingui-id: ofoEsM
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -2325,6 +2365,16 @@ msgstr "Kommerzielle Lizenz (keine AGPL‑Verpflichtungen)"
 #: src/partner-application/partner-application-copy.ts
 msgid "Commercials"
 msgstr "Kommerzielle Informationen"
+
+#. js-lingui-id: uM200J
+#: src/app/[locale]/(site)/partners/creators/page.tsx
+msgid "Commission on Cloud Organization and Enterprise plans"
+msgstr "Provision für Cloud-Organization- und Enterprise-Tarife"
+
+#. js-lingui-id: XeFlm0
+#: src/app/[locale]/(site)/partners/integrators/page.tsx
+msgid "Commission on Organization and Enterprise plans"
+msgstr "Provision für Organization- und Enterprise-Tarife"
 
 #. js-lingui-id: /XN91V
 #: src/sections/affiliate-program/affiliate-audiences.data.ts
@@ -3439,6 +3489,11 @@ msgstr "Jedes Mitglied hat ein eigenes KI-Kontingent, das jeden Montag erneuert 
 msgid "Each workspace now gets a dedicated sub-domain for a more secure experience. And soon you will be able to set your own domain."
 msgstr "Jeder Workspace erhält jetzt eine eigene Subdomain für ein sichereres Erlebnis. Und bald können Sie Ihre eigene Domain festlegen."
 
+#. js-lingui-id: OD5uww
+#: src/sections/partner-programs/creator-steps.data.ts
+msgid "Earn 20% for 12 months"
+msgstr "Verdiene 20% für 12 Monate"
+
 #. js-lingui-id: LZphlk
 #: src/sections/partner-programs/integrator-steps.data.ts
 msgid "Earn 20% of seat revenue for 12 months on every client on Organization or Enterprise."
@@ -3807,6 +3862,11 @@ msgstr "Jeder Partner wird von Twenty zertifiziert und vor der Aufnahme in das V
 msgid "Every thread, on the right record."
 msgstr "Jeder Thread, beim richtigen Datensatz."
 
+#. js-lingui-id: CygPzD
+#: src/sections/partner-programs/partner-levels.data.ts
+msgid "Everything in Integrator, plus"
+msgstr "Alles aus Integrator, plus"
+
 #. js-lingui-id: Gy9kTe
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Everything in Organization, plus"
@@ -3816,11 +3876,6 @@ msgstr "Alles aus Organization, plus"
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Everything in Pro, plus"
 msgstr "Alles aus Pro, plus"
-
-#. js-lingui-id: LD8aEt
-#: src/sections/partner-programs/partner-levels.data.ts
-msgid "Everything integrators get, once we have seen your work with clients."
-msgstr "Alles, was Integratoren erhalten, nachdem wir Ihre Arbeit mit Kunden gesehen haben."
 
 #. js-lingui-id: zoNk7e
 #: src/sections/feature-cards/feature-cards.data.ts
@@ -4194,11 +4249,6 @@ msgstr "Follow-up zur Diskussion"
 msgid "Footer"
 msgstr "Footer"
 
-#. js-lingui-id: v3LiLT
-#: src/sections/partner-programs/creator-steps.data.ts
-msgid "For 12 months"
-msgstr "Für 12 Monate"
-
 #. js-lingui-id: CKQ0za
 #: src/case-studies/case-study-stories.ts
 msgid "For a firm that once ran on sticky notes, this is more than an upgrade. It is a complete transformation."
@@ -4208,6 +4258,11 @@ msgstr "Für ein Unternehmen, das einst mit Haftnotizen arbeitete, ist dies mehr
 #: src/sections/pricing-plans/plans-data.ts
 msgid "For one team, on your servers."
 msgstr "Für ein Team, auf Ihren Servern."
+
+#. js-lingui-id: oRdST7
+#: src/sections/partner-programs/partner-levels.data.ts
+msgid "For partners with extensive experience implementing Twenty"
+msgstr "Für Partner mit umfangreicher Erfahrung bei der Implementierung von Twenty"
 
 #. js-lingui-id: jCGEo0
 #: src/sections/pricing-plans/plans-data.ts
@@ -4247,11 +4302,6 @@ msgstr "Gründer, Wintactix"
 msgid "Four kinds of work, delivered by teams that build on Twenty every day."
 msgstr "Vier Arten von Leistungen, erbracht von Teams, die jeden Tag mit Twenty arbeiten."
 
-#. js-lingui-id: L2irvT
-#: src/app/[locale]/(site)/partners/integrators/page.tsx
-msgid "Four steps, and no fee to join. You set your own rates and keep what you bill."
-msgstr "Vier Schritte und keine Teilnahmegebühr. Sie legen Ihre eigenen Preise fest und behalten, was Sie in Rechnung stellen."
-
 #. js-lingui-id: 671GY5
 #: src/partner-application/data/partner-country-options.ts
 msgid "France 🇫🇷"
@@ -4288,6 +4338,11 @@ msgstr "Ab 50 $, nach einer Sperrfrist von 30 Tagen."
 #: src/app/[locale]/(site)/partners/integrators/page.tsx
 msgid "From application *to clients*"
 msgstr "Von der Bewerbung *zu Kunden*"
+
+#. js-lingui-id: J8YeMT
+#: src/sections/partner-programs/partner-levels.data.ts
+msgid "From companies looking for a Twenty partner"
+msgstr "Von Unternehmen, die einen Twenty-Partner suchen"
 
 #. js-lingui-id: Iuxc00
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -4422,10 +4477,10 @@ msgstr "Deutsch"
 msgid "Germany 🇩🇪"
 msgstr "Deutschland 🇩🇪"
 
-#. js-lingui-id: pMzICZ
-#: src/sections/partner-programs/integrator-steps.data.ts
-msgid "Get help when you need it"
-msgstr "Erhalten Sie Unterstützung, wenn Sie sie brauchen"
+#. js-lingui-id: KoRwQ3
+#: src/app/[locale]/(site)/partners/integrators/page.tsx
+msgid "Get help anytime"
+msgstr "Jederzeit Hilfe erhalten"
 
 #. js-lingui-id: zn+MlF
 #: src/platform/routing/static-website-routes.ts
@@ -4438,6 +4493,11 @@ msgstr "Erhalten Sie Hilfe zu Twenty, unabhängig davon, ob Sie es in unserer Cl
 #: src/client-brief/ClientBriefModal.tsx
 msgid "Get matched"
 msgstr "Passenden Partner finden"
+
+#. js-lingui-id: k3465f
+#: src/sections/partner-programs/creator-steps.data.ts
+msgid "Get paid monthly"
+msgstr "Monatlich bezahlt werden"
 
 #. js-lingui-id: WClQV1
 #: src/sections/menu/data/menu.ts
@@ -4608,6 +4668,11 @@ msgstr "Hilfe"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Help center"
 msgstr "Help Center"
+
+#. js-lingui-id: Xh+YpE
+#: src/sections/partner-programs/partner-levels.data.ts
+msgid "Help from our team and other partners"
+msgstr "Hilfe von unserem Team und anderen Partnern"
 
 #. js-lingui-id: WorXzH
 #: src/sections/pricing-plans/plans-data.ts
@@ -5046,6 +5111,7 @@ msgstr "Inbegriffen!"
 
 #. js-lingui-id: 11h9eK
 #: src/sections/pricing-plans/plans-data.ts
+#: src/sections/partner-programs/partner-levels.data.ts
 msgid "Includes"
 msgstr "Enthält"
 
@@ -5125,11 +5191,6 @@ msgstr "Integration"
 #: src/sections/partner-programs/partner-levels.data.ts
 msgid "Integrator"
 msgstr "Integrationspartner"
-
-#. js-lingui-id: b+6eiV
-#: src/app/[locale]/(site)/partners/creators/page.tsx
-msgid "Integrators earn 20% on the clients they bring, and Lead Integrators also get client briefs."
-msgstr "Integratoren verdienen 20 % an den Kunden, die sie vermitteln, und Lead-Integratoren erhalten zudem Kundenbriefings."
 
 #. js-lingui-id: mQhHfc
 #: src/platform/releases/ReleaseNotes.tsx
@@ -5226,11 +5287,6 @@ msgstr "Die Arbeit damit ist einfach eine viel angenehmere Erfahrung, als sich m
 #: src/case-studies/case-study-stories.ts
 msgid "It is just such a nicer experience than dealing with a Salesforce or a HubSpot. My mission has been to get every tool API-accessible, so everything talks to each other. Twenty made that possible in a way older CRM platforms simply do not."
 msgstr "Die Arbeit damit ist einfach eine viel angenehmere Erfahrung, als sich mit Salesforce oder HubSpot herumzuschlagen. Meine Mission war es, jedes Tool API‑zugänglich zu machen, damit alles miteinander spricht. Twenty hat das auf eine Weise möglich gemacht, wie es ältere CRM‑Plattformen einfach nicht tun."
-
-#. js-lingui-id: T6VZ3f
-#: src/app/[locale]/(site)/partners/integrators/page.tsx
-msgid "It takes a few minutes. We review every application by hand."
-msgstr "Es dauert nur wenige Minuten. Wir prüfen jede Bewerbung manuell."
 
 #. js-lingui-id: kqIAbN
 #: src/case-studies/case-study-stories.ts
@@ -5494,10 +5550,15 @@ msgstr "Lesotho 🇱🇸"
 msgid "Let us *match* you"
 msgstr "Lassen Sie uns *den passenden Partner* für Sie finden"
 
-#. js-lingui-id: JAeCrU
-#: src/sections/partner-programs/PartnerLevels.tsx
-msgid "Levels"
-msgstr "Stufen"
+#. js-lingui-id: aAvjMq
+#: src/sections/partner-programs/partner-levels.data.ts
+msgid "Level 01"
+msgstr "Stufe 01"
+
+#. js-lingui-id: /70BjY
+#: src/sections/partner-programs/partner-levels.data.ts
+msgid "Level 02"
+msgstr "Stufe 02"
 
 #. js-lingui-id: rJargy
 #: src/partner-application/data/partner-country-options.ts
@@ -5590,6 +5651,11 @@ msgstr "Listenpreise von Salesforces öffentlicher Preisseite, jährlich abgerec
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "List view"
 msgstr "Listenansicht"
+
+#. js-lingui-id: 2ypJDK
+#: src/sections/partner-programs/partner-levels.data.ts
+msgid "Listed in the Twenty partner directory"
+msgstr "Im Twenty-Partnerverzeichnis gelistet"
 
 #. js-lingui-id: 2WIZYd
 #: src/partner-application/data/partner-country-options.ts
@@ -5882,6 +5948,11 @@ msgstr "Minimieren"
 msgid "Minimum 10 users"
 msgstr "Mindestens 10 Benutzer"
 
+#. js-lingui-id: 8jQGWT
+#: src/sections/partner-hero/creator-hero-stats.data.ts
+msgid "Minimum payout"
+msgstr "Mindestauszahlung"
+
 #. js-lingui-id: 5IvRfo
 #: src/partner-application/partner-application-copy.ts
 msgid "Minimum project budget *"
@@ -5931,11 +6002,6 @@ msgstr "Monatliche Credits, die der Arbeitsbereich für Workflows, KI-Agenten un
 #: src/sections/compare/compare-data.ts
 msgid "Monthly or yearly, cancel anytime"
 msgstr "Monatlich oder jährlich, jederzeit kündbar"
-
-#. js-lingui-id: rE6Bl1
-#: src/sections/partner-programs/creator-steps.data.ts
-msgid "Monthly payouts"
-msgstr "Monatliche Auszahlungen"
 
 #. js-lingui-id: Gie65U
 #: src/sections/faq/affiliate-program-faq.data.ts
@@ -6365,10 +6431,26 @@ msgstr "Anzahl der Dashboards"
 msgid "Objects, folders, links and pages now have colored icons in the sidebar, headers and pickers."
 msgstr "Objekte, Ordner, Links und Seiten haben jetzt farbige Symbole in der Seitenleiste, in Kopfzeilen und in Auswahlfeldern."
 
-#. js-lingui-id: 7DiXw2
+#. js-lingui-id: 7+RZba
+#: src/sections/partner-hero/creator-hero-stats.data.ts
+msgid "Of credit per click"
+msgstr "An Guthaben pro Klick"
+
+#. js-lingui-id: EucUI+
+#: src/sections/partner-programs/partner-levels.data.ts
+msgid "of seat revenue"
+msgstr "des Umsatzes pro Sitz"
+
+#. js-lingui-id: snThJv
+#: src/sections/partner-hero/integrator-hero-stats.data.ts
+#: src/sections/partner-hero/creator-hero-stats.data.ts
+msgid "Of seat revenue"
+msgstr "Des Umsatzes pro Sitz"
+
+#. js-lingui-id: T4tAHU
 #: src/sections/partner-programs/creator-steps.data.ts
-msgid "Of seat revenue on Cloud Organization and Enterprise plans."
-msgstr "Der Sitzplatzumsätze in den Cloud-Organization- und Enterprise-Tarifen."
+msgid "Of seat revenue on Cloud Organization and Enterprise plans, per customer, counted from their first payment."
+msgstr "Des Umsatzes pro Sitz bei Cloud-Organization- und Enterprise-Tarifen, pro Kunde, gerechnet ab der ersten Zahlung."
 
 #. js-lingui-id: pkrZnO
 #: src/case-studies/case-study-stories.ts
@@ -6665,10 +6747,10 @@ msgstr "Paraguay 🇵🇾"
 msgid "Partner application"
 msgstr "Partneranfrage"
 
-#. js-lingui-id: 99Qame
+#. js-lingui-id: Jk02cO
 #: src/sections/partner-programs/partner-levels.data.ts
-msgid "Partner Discord: help from our team and other partners"
-msgstr "Partner-Discord: Hilfe von unserem Team und anderen Partnern"
+msgid "Partner Discord"
+msgstr "Partner-Discord"
 
 #. js-lingui-id: mYGIvm
 #: src/partners-marketplace/PartnerProfile.tsx
@@ -6700,10 +6782,10 @@ msgstr "Teilnahmebedingungen des Partnerprogramms | Twenty"
 msgid "Partner testimonials"
 msgstr "Partner-Testimonials"
 
-#. js-lingui-id: 59ovfO
+#. js-lingui-id: c8VLsy
 #: src/sections/partner-programs/partner-levels.data.ts
-msgid "Partner training, coming soon"
-msgstr "Partnerschulung, demnächst verfügbar"
+msgid "Partner training"
+msgstr "Partner-Schulung"
 
 #. js-lingui-id: 7nUw36
 #: src/affiliate-application/affiliate-application-copy.ts
@@ -6738,15 +6820,20 @@ msgstr "Aufzeichnungs-Bot pausieren"
 msgid "People"
 msgstr "Personen"
 
-#. js-lingui-id: R7/Gcc
+#. js-lingui-id: EvCCGa
 #: src/sections/affiliate-program/AffiliateAudiences.tsx
-msgid "People teams trust *to pick their tools*"
-msgstr "denen People-Teams vertrauen, *um ihre Tools auszuwählen*"
+msgid "People that teams trust *to pick their tools*"
+msgstr "Menschen, denen Teams vertrauen, *ihre Tools auszuwählen*"
 
-#. js-lingui-id: Aui87G
-#: src/sections/partner-programs/creator-steps.data.ts
-msgid "Per customer, counted from their first payment."
-msgstr "Pro Kunde, gerechnet ab dessen erster Zahlung."
+#. js-lingui-id: 4GZOjx
+#: src/sections/partner-hero/integrator-hero-stats.data.ts
+msgid "Per client you bring"
+msgstr "Pro Kunde, den du vermittelst"
+
+#. js-lingui-id: 58ybKx
+#: src/sections/partner-hero/creator-hero-stats.data.ts
+msgid "Per customer"
+msgstr "Pro Kunde"
 
 #. js-lingui-id: nU1kSZ
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -7191,7 +7278,6 @@ msgid "Ready for your security review"
 msgstr "Bereit für Ihre Sicherheitsprüfung"
 
 #. js-lingui-id: a9GTrA
-#: src/app/[locale]/(site)/partners/integrators/page.tsx
 #: src/app/[locale]/(site)/partners/creators/page.tsx
 msgid "Ready to *apply?*"
 msgstr "Bereit, sich *zu bewerben?*"
@@ -7242,10 +7328,10 @@ msgstr "Echtzeit‑Daten"
 msgid "Real-time is a state of mind, not a feature."
 msgstr "Echtzeit ist ein Geisteszustand, kein Feature."
 
-#. js-lingui-id: rqSGSr
+#. js-lingui-id: /ajiMH
 #: src/sections/affiliate-program/affiliate-audiences.data.ts
-msgid "Recommend Twenty to clients, even on projects you don't implement."
-msgstr "Empfehlen Sie Twenty Ihren Kunden, auch bei Projekten, die Sie nicht umsetzen."
+msgid "Recommend Twenty to your clients, even on projects you don't implement."
+msgstr "Empfiehl Twenty deinen Kunden, auch bei Projekten, die du nicht implementierst."
 
 #. js-lingui-id: v5nqef
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -7781,6 +7867,11 @@ msgstr "Die Suche in Feldauswahlen und \"Spalte hinzufügen\"-Menüs beschleunig
 msgid "Search Records"
 msgstr "Datensätze suchen"
 
+#. js-lingui-id: yUHbxC
+#: src/sections/partner-programs/partner-levels.data.ts
+msgid "Seat revenue on Organization or Enterprise, for 12 months"
+msgstr "Umsatz pro Sitz bei Organization oder Enterprise, für 12 Monate"
+
 #. js-lingui-id: HVOGoW
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Seats limit"
@@ -8062,10 +8153,15 @@ msgstr "Anruferkenntnisse teilen"
 msgid "Share your CRM project brief and our team will match you with a certified Twenty partner."
 msgstr "Teilen Sie uns die Eckdaten Ihres CRM-Projekts mit, und unser Team bringt Sie mit einem zertifizierten Twenty-Partner zusammen."
 
-#. js-lingui-id: 7A75Sv
+#. js-lingui-id: 36Zpp9
+#: src/sections/partner-programs/creator-steps.data.ts
+msgid "Share your link"
+msgstr "Teile deinen Link"
+
+#. js-lingui-id: WzpFll
 #: src/app/[locale]/(site)/partners/creators/page.tsx
-msgid "Share your link, we credit the signups it brings, and you get paid every month the customer stays."
-msgstr "Teilen Sie Ihren Link, wir rechnen die dadurch erzeugten Anmeldungen Ihnen zu, und Sie werden jeden Monat bezahlt, solange der Kunde bleibt."
+msgid "Share your link, we credit the signups it brings, and you get paid every month the customer stays, for up to 12 months."
+msgstr "Teile deinen Link. Wir schreiben dir die dadurch erzielten Anmeldungen gut und du wirst für jeden Monat, in dem der Kunde bleibt, bis zu 12 Monate lang bezahlt."
 
 #. js-lingui-id: /beeoq
 #: src/partners-marketplace/MarketplaceMatchCard.tsx
@@ -8648,10 +8744,10 @@ msgstr "Technische Fähigkeiten"
 msgid "Tell us about the implementation *"
 msgstr "Erzähle uns etwas über die Implementierung *"
 
-#. js-lingui-id: AvrleA
+#. js-lingui-id: 5aDkVu
 #: src/sections/partner-programs/integrator-steps.data.ts
-msgid "Tell us about your company, the clients you work with and what you have built with Twenty."
-msgstr "Erzählen Sie uns von Ihrem Unternehmen, den Kunden, mit denen Sie arbeiten, und was Sie mit Twenty entwickelt haben."
+msgid "Tell us about your company, the clients you work with and what you have built with Twenty. It takes a few minutes."
+msgstr "Erzähl uns von deinem Unternehmen, den Kunden, mit denen du arbeitest, und was du mit Twenty aufgebaut hast. Es dauert nur ein paar Minuten."
 
 #. js-lingui-id: 5N30dV
 #: src/client-brief/client-brief-copy.ts
@@ -9064,6 +9160,11 @@ msgstr "Denkt nach"
 msgid "This feature gives you the ability to merge two records into one. This combines their information and keeps linked data, helping you remove duplicates and keep records accurate."
 msgstr "Mit dieser Funktion können Sie zwei Datensätze zu einem zusammenführen. Dadurch werden ihre Informationen kombiniert und verknüpfte Daten erhalten, sodass Sie Duplikate entfernen und Datensätze korrekt halten können."
 
+#. js-lingui-id: 8Zj6he
+#: src/app/[locale]/(site)/partners/integrators/page.tsx
+msgid "Three steps, and no fee to join. You set your own rates and keep what you bill."
+msgstr "Drei Schritte und keine Teilnahmegebühr. Du legst deine eigenen Preise fest und behältst, was du in Rechnung stellst."
+
 #. js-lingui-id: cklVjM
 #: src/client-brief/client-brief-copy.ts
 msgid "Timeline"
@@ -9078,6 +9179,16 @@ msgstr "Timor‑Leste 🇹🇱"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "To enhance privacy, you can now add specific email addresses to a blocklist within the \"Accounts\" settings. This feature prevents sensitive content from being synced to the CRM when corresponding with certain individuals. This can be particularly useful when managing sensitive deals."
 msgstr "Zur Verbesserung des Datenschutzes können Sie jetzt bestimmte E-Mail-Adressen in den \"Accounts\"-Einstellungen zu einer Blockliste hinzufügen. Diese Funktion verhindert, dass sensible Inhalte beim Austausch mit bestimmten Personen mit dem CRM synchronisiert werden. Das ist besonders nützlich beim Management sensibler Deals."
+
+#. js-lingui-id: nbbO2k
+#: src/sections/partner-hero/integrator-hero-stats.data.ts
+msgid "To get started"
+msgstr "Für den Einstieg"
+
+#. js-lingui-id: N4bU08
+#: src/sections/partner-hero/integrator-hero-stats.data.ts
+msgid "To join"
+msgstr "Zum Beitritt"
 
 #. js-lingui-id: ijf9QM
 #: src/platform/releases/ReleaseNotes.tsx
@@ -9769,6 +9880,7 @@ msgid "We review every application by hand, then send you your partner code."
 msgstr "Wir prüfen jede Bewerbung manuell und senden Ihnen anschließend Ihren Partnercode."
 
 #. js-lingui-id: 7YB68b
+#: src/sections/partner-programs/creator-steps.data.ts
 #: src/app/[locale]/(site)/partners/creators/page.tsx
 #: src/affiliate-application/affiliate-application-copy.ts
 msgid "We review every application within 5 business days and send your link once you're approved."
@@ -10419,10 +10531,10 @@ msgstr "Sie können Ihre Datensätze jetzt in einer monatlichen Kalenderansicht 
 msgid "You don't buy your deployment pipeline off the shelf. You don't rent your data warehouse from a vendor who decides the schema. You build it, you own it, you iterate on it every week. CRM is going the same way. The teams that treat it as infrastructure they own will compound an advantage every quarter."
 msgstr "Ihre Deployment‑Pipeline kaufen Sie nicht von der Stange. Ihr Data Warehouse mieten Sie nicht von einem Anbieter, der das Schema festlegt. Sie bauen es, Sie besitzen es, Sie iterieren jede Woche daran. Mit CRM ist es genauso. Teams, die es als Infrastruktur behandeln, die ihnen gehört, werden sich jedes Quartal einen Vorteil aufbauen."
 
-#. js-lingui-id: S7c1dR
+#. js-lingui-id: ioTagD
 #: src/app/[locale]/(site)/partners/creators/page.tsx
-msgid "You implement Twenty *for clients?*"
-msgstr "Sie implementieren Twenty *für Kunden?*"
+msgid "You implement Twenty *for your clients?*"
+msgstr "Du implementierst Twenty *für deine Kunden?*"
 
 #. js-lingui-id: lcwHh9
 #: src/sections/partner-programs/partner-levels.data.ts

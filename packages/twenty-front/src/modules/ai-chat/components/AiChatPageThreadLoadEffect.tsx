@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useLoadAiChatThread } from '@/ai-chat/hooks/useLoadAiChatThread';
 import { useSelectAiChatThread } from '@/ai-chat/hooks/useSelectAiChatThread';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { aiChatThreadRecordFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadRecordFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 
 type AiChatPageThreadLoadEffectProps = {
   threadId: string;

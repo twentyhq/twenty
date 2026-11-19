@@ -34,12 +34,11 @@ targets) are excluded from the inventory without rejecting existing builds.
 Retained paths and file bytes are preserved. A fresh build replaces the
 inventory.
 
-Each frontend component also records its own `sourceFiles` subset. Helpers
-shared with other components are stored once. The server saves this inventory
-with the deployed component's entry path and bundle checksum after sync, so
+Each frontend component and logic function also records its own `sourceFiles`
+subset. Helpers shared with other entries are stored once. The server saves
+this inventory with the deployed entry path and bundle checksum after sync, so
 pull can restore its files without enumerating unrelated storage. The same sync
-path handles direct apply, dev and package installs. Logic-function source pull
-remains separate.
+path handles direct apply, dev and package installs.
 
 Direct apply uploads these artifacts, and package installs require all
 inventoried sources while accepting older packages without an inventory.

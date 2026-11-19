@@ -37,6 +37,9 @@ describe('useHandleToggleColumnSort', () => {
   const nameFieldMetadataItemId = getFieldMetadataItemId('name');
   const employeesFieldMetadataItemId = getFieldMetadataItemId('employees');
   const addressFieldMetadataItemId = getFieldMetadataItemId('address');
+  const accountOwnerFieldMetadataItemId =
+    getFieldMetadataItemId('accountOwner');
+  const accountOwnerNameFieldMetadataItemId = 'account-owner-name';
 
   const savedSort: RecordSort = {
     id: 'saved-sort',
@@ -74,7 +77,9 @@ describe('useHandleToggleColumnSort', () => {
     const { result } = renderUseHandleToggleColumnSort();
 
     act(() => {
-      result.current.handleToggleColumnSort(employeesFieldMetadataItemId);
+      result.current.handleToggleColumnSort({
+        fieldMetadataId: employeesFieldMetadataItemId,
+      });
     });
 
     expect(result.current.currentRecordSorts).toEqual([
@@ -94,7 +99,9 @@ describe('useHandleToggleColumnSort', () => {
     });
 
     act(() => {
-      result.current.handleToggleColumnSort(employeesFieldMetadataItemId);
+      result.current.handleToggleColumnSort({
+        fieldMetadataId: employeesFieldMetadataItemId,
+      });
     });
 
     expect(result.current.currentRecordSorts).toEqual([
@@ -121,7 +128,9 @@ describe('useHandleToggleColumnSort', () => {
     });
 
     act(() => {
-      result.current.handleToggleColumnSort(employeesFieldMetadataItemId);
+      result.current.handleToggleColumnSort({
+        fieldMetadataId: employeesFieldMetadataItemId,
+      });
     });
 
     expect(result.current.currentRecordSorts).toEqual([
@@ -149,7 +158,9 @@ describe('useHandleToggleColumnSort', () => {
     });
 
     act(() => {
-      result.current.handleToggleColumnSort(addressFieldMetadataItemId);
+      result.current.handleToggleColumnSort({
+        fieldMetadataId: addressFieldMetadataItemId,
+      });
     });
 
     expect(result.current.currentRecordSorts).toEqual([
@@ -158,6 +169,50 @@ describe('useHandleToggleColumnSort', () => {
         fieldMetadataId: addressFieldMetadataItemId,
         direction: ViewSortDirection.DESC,
         subFieldName: 'addressCountry',
+      },
+    ]);
+  });
+
+  it('should sort a lookup column by its looked-up field', () => {
+    const { result } = renderUseHandleToggleColumnSort();
+
+    act(() => {
+      result.current.setCurrentRecordSorts([
+        {
+          id: 'account-owner-sort',
+          fieldMetadataId: accountOwnerFieldMetadataItemId,
+          direction: ViewSortDirection.ASC,
+        },
+      ]);
+    });
+
+    act(() => {
+      result.current.handleToggleColumnSort({
+        fieldMetadataId: accountOwnerFieldMetadataItemId,
+        relationTargetFieldMetadataId: accountOwnerNameFieldMetadataItemId,
+      });
+    });
+
+    expect(result.current.currentRecordSorts).toEqual([
+      {
+        id: expect.not.stringMatching('account-owner-sort'),
+        fieldMetadataId: accountOwnerFieldMetadataItemId,
+        relationTargetFieldMetadataId: accountOwnerNameFieldMetadataItemId,
+        direction: ViewSortDirection.ASC,
+      },
+    ]);
+
+    act(() => {
+      result.current.handleToggleColumnSort({
+        fieldMetadataId: accountOwnerFieldMetadataItemId,
+        relationTargetFieldMetadataId: accountOwnerNameFieldMetadataItemId,
+      });
+    });
+
+    expect(result.current.currentRecordSorts).toMatchObject([
+      {
+        relationTargetFieldMetadataId: accountOwnerNameFieldMetadataItemId,
+        direction: ViewSortDirection.DESC,
       },
     ]);
   });

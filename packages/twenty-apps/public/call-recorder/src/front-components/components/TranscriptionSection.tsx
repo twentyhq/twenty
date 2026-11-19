@@ -1,27 +1,26 @@
 import { useId, useState } from 'react';
 import { Section } from 'twenty-ui/components/layout';
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
 
 import { CALL_RECORDER_TRANSCRIPT_PROVIDER_OPTIONS } from 'src/constants/call-recorder-transcript-provider-options';
-import { LabelledSettingsField } from 'src/front-components/components/LabelledSettingsField';
 import { SettingsOptionCardContentSelect } from 'src/front-components/components/SettingsOptionCardContentSelect';
-import { SettingsOptionCardContentToggle } from 'src/front-components/components/SettingsOptionCardContentToggle';
-import { StyledDimmable } from 'src/front-components/components/StyledDimmable';
-import { StyledSettingsCard } from 'src/front-components/components/StyledSettingsCard';
+import { SettingsOptionCardContentSwitch } from 'src/front-components/components/SettingsOptionCardContentSwitch';
 import { StyledSettingsSectionStack } from 'src/front-components/components/StyledSettingsSectionStack';
-import { StyledSettingsTextArea } from 'src/front-components/components/StyledSettingsTextArea';
 import { TranscriptProviderControl } from 'src/front-components/components/TranscriptProviderControl';
 import {
   CALL_RECORDER_SUMMARY_ENABLED_ROW,
   CALL_RECORDER_SUMMARY_PROMPT_FIELD,
   CALL_RECORDER_TRANSCRIPT_PROVIDER_ROW,
 } from 'src/front-components/constants/call-recorder-settings-layout.constant';
+import { SETTINGS_TEXTAREA_ROWS } from 'src/front-components/constants/settings-textarea-rows.constant';
 import { useAutosaveApplicationVariable } from 'src/front-components/hooks/use-autosave-application-variable';
 import { getApplicationVariableValue } from 'src/front-components/utils/get-application-variable-value.util';
 import { serializeRichTextMarkdown } from 'src/front-components/utils/serialize-rich-text-markdown.util';
 import { extractRichTextMarkdown } from 'src/logic-functions/utils/extract-rich-text-markdown.util';
 
 export const TranscriptionSection = () => {
-  const inputId = useId();
+  const providerTitleId = useId();
   const [providerValue, setProviderValue] = useState(() =>
     getApplicationVariableValue(
       CALL_RECORDER_TRANSCRIPT_PROVIDER_ROW.variableKey,
@@ -80,43 +79,43 @@ export const TranscriptionSection = () => {
         description="What happens to a recording once the call ends."
       />
       <StyledSettingsSectionStack>
-        <StyledSettingsCard>
+        <Card.Root fullWidth>
           <SettingsOptionCardContentSelect
             Icon={CALL_RECORDER_TRANSCRIPT_PROVIDER_ROW.Icon}
             title={CALL_RECORDER_TRANSCRIPT_PROVIDER_ROW.title}
+            titleId={providerTitleId}
             description={CALL_RECORDER_TRANSCRIPT_PROVIDER_ROW.description}
             divider
           >
             <TranscriptProviderControl
               value={providerValue}
               options={CALL_RECORDER_TRANSCRIPT_PROVIDER_OPTIONS}
+              labelledBy={providerTitleId}
               onChange={handleProviderChange}
             />
           </SettingsOptionCardContentSelect>
-          <SettingsOptionCardContentToggle
+          <SettingsOptionCardContentSwitch
             Icon={CALL_RECORDER_SUMMARY_ENABLED_ROW.Icon}
             title={CALL_RECORDER_SUMMARY_ENABLED_ROW.title}
             description={CALL_RECORDER_SUMMARY_ENABLED_ROW.description}
             checked={isSummaryEnabled}
             onChange={handleSummaryEnabledChange}
           />
-        </StyledSettingsCard>
-        <StyledDimmable $dimmed={!isSummaryEnabled}>
-          <LabelledSettingsField
-            label={CALL_RECORDER_SUMMARY_PROMPT_FIELD.label}
-            inputId={inputId}
-            hint={CALL_RECORDER_SUMMARY_PROMPT_FIELD.hint}
-          >
-            <StyledSettingsTextArea
-              id={inputId}
-              placeholder="Value"
-              disabled={!isSummaryEnabled}
-              value={promptMarkdown}
-              onChange={(event) => handlePromptChange(event.target.value)}
-              onBlur={() => savePromptDebounced.flush()}
-            />
-          </LabelledSettingsField>
-        </StyledDimmable>
+        </Card.Root>
+        <Field.Root disabled={!isSummaryEnabled}>
+          <Field.Label>{CALL_RECORDER_SUMMARY_PROMPT_FIELD.label}</Field.Label>
+          <Textarea
+            autoResize
+            rows={SETTINGS_TEXTAREA_ROWS}
+            placeholder="Value"
+            value={promptMarkdown}
+            onValueChange={handlePromptChange}
+            onBlur={() => savePromptDebounced.flush()}
+          />
+          <Field.Description>
+            {CALL_RECORDER_SUMMARY_PROMPT_FIELD.hint}
+          </Field.Description>
+        </Field.Root>
       </StyledSettingsSectionStack>
     </Section.Root>
   );

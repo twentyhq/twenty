@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { MoreThan } from 'typeorm';
 
 import { FilterArgProcessorService } from 'src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { CommonQueryParser } from 'src/engine/api/common/common-query-parsers/common-query.parser';
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -145,17 +145,24 @@ export class AddPeopleToMessageListService {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     });
-    const queryParser = new GraphqlQueryParser(
+    const queryParser = new CommonQueryParser({
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-    );
+    });
     const queryBuilder = this.workspaceOrmManager
       .getRepository<PersonWorkspaceEntity>('person')
       .createQueryBuilder('person');
 
-    queryParser.applyFilterToBuilder(queryBuilder, 'person', filter);
-    queryParser.applyDeletedAtToBuilder(queryBuilder, filter);
+    queryParser.applyFilterToBuilder({
+      queryBuilder,
+      objectNameSingular: 'person',
+      recordFilter: filter,
+    });
+    queryParser.applyDeletedAtToBuilder({
+      queryBuilder,
+      recordFilter: filter,
+    });
 
     return queryBuilder;
   }

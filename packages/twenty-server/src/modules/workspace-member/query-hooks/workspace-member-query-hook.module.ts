@@ -3,9 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
+import { UserWorkspaceSuccessorTransferModule } from 'src/engine/core-modules/user-workspace/user-workspace-successor-transfer.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
-import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
-import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { WorkspaceMemberCreateManyPreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-create-many.pre-query.hook';
 import { WorkspaceMemberCreateOnePreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-create-one.pre-query.hook';
 import { WorkspaceMemberDeleteManyPreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-delete-many.pre-query.hook';
@@ -33,8 +32,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   ],
   imports: [
     UserWorkspaceModule,
-    ConnectedAccountMetadataModule,
-    RecordShareModule,
+    UserWorkspaceSuccessorTransferModule,
     AgentHistoryModule,
     WorkspaceCacheModule,
     TypeOrmModule.forFeature([UserWorkspaceEntity]),

@@ -19,7 +19,7 @@ import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs
 import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import { type RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { type AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { type AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';

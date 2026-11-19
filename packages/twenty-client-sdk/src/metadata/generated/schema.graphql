@@ -1109,20 +1109,12 @@ enum BillingEntitlementKey {
   VALIDATION_RULES
 }
 
-type BillingLicensedProduct implements BillingProductDTO {
+type BillingLicensedProduct {
   description: String!
   images: [String!]
   metadata: BillingProductMetadata!
   name: String!
   prices: [BillingPriceLicensed!]
-}
-
-type BillingMeteredProduct implements BillingProductDTO {
-  description: String!
-  images: [String!]
-  metadata: BillingProductMetadata!
-  name: String!
-  prices: [BillingPriceMetered!]
 }
 
 type BillingPartnerCode {
@@ -1140,7 +1132,6 @@ type BillingPlan {
   downgradePlanKeys: [BillingPlanKey!]!
   isCheckoutDefault: Boolean!
   isSellable: Boolean!
-  meteredProducts: [BillingMeteredProduct!]!
   planKey: BillingPlanKey!
   resourceCreditProducts: [BillingLicensedProduct!]!
   upgradePlanKeys: [BillingPlanKey!]!
@@ -1157,23 +1148,9 @@ enum BillingPlanKey {
 type BillingPriceLicensed {
   creditAmount: Float
   isSellable: Boolean!
-  priceUsageType: BillingUsageType!
   recurringInterval: SubscriptionInterval!
   stripePriceId: String!
   unitAmount: Float!
-}
-
-type BillingPriceMetered {
-  priceUsageType: BillingUsageType!
-  recurringInterval: SubscriptionInterval!
-  stripePriceId: String!
-  tiers: [BillingPriceTier!]!
-}
-
-type BillingPriceTier {
-  flatAmount: Float
-  unitAmount: Float
-  upTo: Float
 }
 
 type BillingProduct {
@@ -1183,23 +1160,16 @@ type BillingProduct {
   name: String!
 }
 
-interface BillingProductDTO {
-  description: String!
-  images: [String!]
-  metadata: BillingProductMetadata!
-  name: String!
-}
-
 """The different billing products available"""
 enum BillingProductKey {
+  APPLICATION
   BASE_PRODUCT
   RESOURCE_CREDIT
 }
 
 type BillingProductMetadata {
   isLegacy: String
-  planKey: BillingPlanKey!
-  priceUsageBased: BillingUsageType!
+  planKey: BillingPlanKey
   productKey: BillingProductKey!
 }
 
@@ -1240,7 +1210,7 @@ enum BillingSubscriptionCollectionMethod {
 }
 
 type BillingSubscriptionItem {
-  billingProduct: BillingProductDTO!
+  billingProduct: BillingProduct!
   creditAmount: Float
   hasReachedCurrentPeriodCap: Boolean!
   id: UUID!
@@ -1273,17 +1243,13 @@ type BillingUpdate {
   currentBillingSubscription: BillingSubscription!
 }
 
-enum BillingUsageType {
-  LICENSED
-  METERED
-}
-
 input BooleanFieldComparison {
   is: Boolean
   isNot: Boolean
 }
 
 type CalendarChannel {
+  connectedAccount: ConnectedAccountPublicDTO
   connectedAccountId: UUID!
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy!
   createdAt: DateTime!
@@ -1814,6 +1780,7 @@ input CreateMessageSuppressionInput {
 input CreateNavigationMenuItemInput {
   agentChatChannelId: UUID
   agentId: UUID
+  builtInSectionKey: String
   color: String
   folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
@@ -2037,6 +2004,7 @@ input CreateViewSortInput {
   direction: ViewSortDirection = ASC
   fieldMetadataId: UUID!
   id: UUID
+  relationTargetFieldMetadataId: UUID
   subFieldName: String
   viewId: UUID!
 }
@@ -3862,6 +3830,7 @@ type NavigationMenuItem {
   agentChatChannelId: UUID
   agentId: UUID
   applicationId: UUID
+  builtInSectionKey: String
   color: String
   createdAt: DateTime!
   folderId: UUID @deprecated(reason: "Use parentId instead.")
@@ -4254,6 +4223,7 @@ enum PermissionFlagType {
   LAYOUTS
   MARKETPLACE_APPS
   PROFILE_INFORMATION
+  READ_PRIVATE_CHANNELS
   ROLES
   SECURITY
   SEND_EMAIL_TOOL
@@ -4340,6 +4310,14 @@ type PublicApplicationRegistration {
   websiteUrl: String
 }
 
+type PublicCalendarChannel {
+  connectedAccount: ConnectedAccountPublicDTO
+  connectedAccountId: UUID!
+  handle: String!
+  id: UUID!
+  visibility: CalendarChannelVisibility!
+}
+
 type PublicConnectionParametersOutput {
   connectionSecurity: EmailConnectionSecurity
   host: String!
@@ -4421,6 +4399,7 @@ type Query {
   billingPartnerCode: BillingPartnerCode!
   billingPlans: [BillingPlan!]!
   billingPortalSession(forPaymentMethodUpdate: Boolean, returnUrlPath: String): BillingSession!
+  calendarChannels: [PublicCalendarChannel!]!
   callRecordingIdForCalendarEvent(calendarEventId: UUID!): UUID
   chatMessages(agentUniversalIdentifier: UUID, threadId: UUID, threadKey: String): [AgentMessage!]!
   chatStreamCatchupChunks(agentUniversalIdentifier: UUID, threadId: UUID, threadKey: String): ChatStreamCatchupChunks!
@@ -4438,7 +4417,7 @@ type Query {
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
   eventLogs(input: EventLogQueryInput!): EventLogQueryResult!
-  exportApplication(shouldIncludeDependencies: Boolean = false, shouldIncludePublicAssets: Boolean = false, shouldIncludeSourceDependencies: Boolean = false, shouldIncludeSourceFiles: Boolean = false, universalIdentifier: UUID!): ApplicationExport!
+  exportApplication(shouldIncludeDependencies: Boolean = false, shouldIncludeLogicFunctionSources: Boolean = false, shouldIncludePublicAssets: Boolean = false, shouldIncludeSourceDependencies: Boolean = false, shouldIncludeSourceFiles: Boolean = false, universalIdentifier: UUID!): ApplicationExport!
   field(
     """The id of the record to find."""
     id: UUID!
@@ -5869,6 +5848,7 @@ input UpdateViewSortInput {
 
 input UpdateViewSortInputUpdates {
   direction: ViewSortDirection
+  relationTargetFieldMetadataId: UUID
   subFieldName: String
 }
 
@@ -6534,6 +6514,7 @@ type ViewSort {
   direction: ViewSortDirection!
   fieldMetadataId: UUID!
   id: UUID!
+  relationTargetFieldMetadataId: UUID
   subFieldName: String
   updatedAt: DateTime!
   viewId: UUID!
