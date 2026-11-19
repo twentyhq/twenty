@@ -1,0 +1,2 @@
+export const ADD_CONDITIONAL_AVAILABILITY_TO_PAGE_LAYOUT_WIDGET_UPGRADE_COMMAND_NAME =
+  '2.61.0_AddConditionalAvailabilityToPageLayoutWidgetFastInstanceCommand_1795096991328';

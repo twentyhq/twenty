@@ -943,6 +943,18 @@ describe('reconstructPageLayoutsManifest', () => {
             conditionalAvailabilityExpression: 'device === "mobile"',
           }),
           buildFlatPageLayoutWidget({
+            pageLayoutWidgetManifest: buildNotesWidgetManifest(
+              'conditional-tree-widget',
+            ),
+            pageLayoutTabUniversalIdentifier: OVERVIEW_TAB_UID,
+            conditionalAvailability: {
+              type: 'COMPARISON',
+              operator: 'EQUAL',
+              left: { type: 'PATH', path: 'device' },
+              right: { type: 'LITERAL', value: 'MOBILE' },
+            },
+          }),
+          buildFlatPageLayoutWidget({
             pageLayoutWidgetManifest: {
               ...buildNotesWidgetManifest('missing-object-widget'),
               objectUniversalIdentifier: MISSING_UID,
@@ -1054,6 +1066,9 @@ describe('reconstructPageLayoutsManifest', () => {
     );
     expect(reasonOf(coverage, 'conditional-widget')).toBe(
       'page layout widget with a conditional availability expression',
+    );
+    expect(reasonOf(coverage, 'conditional-tree-widget')).toBe(
+      'page layout widget with a conditional availability tree',
     );
     expect(reasonOf(coverage, 'missing-object-widget')).toBe(
       'page layout widget on an object that does not exist',

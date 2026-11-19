@@ -6,6 +6,7 @@ import {
 } from '@nestjs/graphql';
 import GraphQLJSON from 'graphql-type-json';
 import {
+  ConditionalAvailabilityNode,
   PageLayoutWidgetConditionalDisplay,
   PageLayoutWidgetPosition,
   WidgetType,
@@ -78,6 +79,9 @@ export class PageLayoutWidgetDTO {
 
   @Field(() => String, { nullable: true })
   conditionalAvailabilityExpression?: string | null;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  conditionalAvailability?: ConditionalAvailabilityNode | null;
 
   @Field()
   createdAt: Date;

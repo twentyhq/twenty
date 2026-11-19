@@ -6,7 +6,7 @@ import {
   PageLayoutTabLayoutMode,
   PageLayoutWidgetPosition,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 
 import { validateTabViewportConstraints } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-tab-viewport-constraints.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -26,6 +26,7 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { type FlatEntityCreationValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-creation-validation-args.type';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateConditionalAvailability } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-conditional-availability.util';
 
 type EffectivePageLayoutWidget = Omit<
   UniversalFlatPageLayoutWidget,
@@ -145,6 +146,25 @@ export class FlatPageLayoutWidgetValidatorService {
       );
 
     validationResult.errors.push(...typeSpecificityErrors);
+
+    const previousEffectiveWidget = this.getEffectiveWidget(
+      existingFlatPageLayoutWidget,
+    );
+
+    if (
+      !fastDeepEqual(
+        previousEffectiveWidget.conditionalAvailability,
+        effectiveWidget.conditionalAvailability,
+      )
+    ) {
+      validationResult.errors.push(
+        ...validateConditionalAvailability({
+          conditionalAvailability: effectiveWidget.conditionalAvailability,
+          metadataName: 'pageLayoutWidget',
+          code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+        }),
+      );
+    }
 
     return validationResult;
   }
@@ -275,6 +295,13 @@ export class FlatPageLayoutWidgetValidatorService {
       );
 
     validationResult.errors.push(...typeSpecificityErrors);
+    validationResult.errors.push(
+      ...validateConditionalAvailability({
+        conditionalAvailability: effectiveWidget.conditionalAvailability,
+        metadataName: 'pageLayoutWidget',
+        code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      }),
+    );
 
     return validationResult;
   }

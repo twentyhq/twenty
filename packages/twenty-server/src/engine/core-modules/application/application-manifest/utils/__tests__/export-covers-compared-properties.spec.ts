@@ -727,6 +727,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
       ...PAGE_LAYOUT_KIND_GAPS,
       conditionalAvailabilityExpression:
         'no manifest slot; a widget carrying one is reported as unsupported',
+      conditionalAvailability:
+        'no manifest slot; a widget carrying one is reported as unsupported',
     },
   },
   {
