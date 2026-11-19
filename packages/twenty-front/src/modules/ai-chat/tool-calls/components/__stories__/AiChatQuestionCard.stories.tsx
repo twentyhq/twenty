@@ -1,12 +1,9 @@
 import { AiChatInstanceDecorator } from '~/testing/decorators/AiChatInstanceDecorator';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useStore } from 'jotai';
-import { useEffect } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatQuestionCard } from '@/ai-chat/tool-calls/components/AiChatQuestionCard';
-import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
 import { type AiChatPendingQuestion } from '@/ai-chat/tool-calls/types/AiChatPendingQuestion';
 
 import { styled } from '@linaria/react';
@@ -86,24 +83,14 @@ const multiSelectQuestion: AiChatPendingQuestion = {
   },
 };
 
-const StoreSeederEffect = () => {
-  const store = useStore();
-
-  useEffect(() => {
-    store.set(aiChatTestInstanceThreadIdState.atom, 'thread-1');
-  }, [store]);
-
-  return null;
-};
-
 const meta: Meta<typeof AiChatQuestionCard> = {
   title: 'Modules/AiChat/AiChatQuestionCard',
   component: AiChatQuestionCard,
+  parameters: { aiChatThreadId: 'thread-1' },
   decorators: [
     AiChatInstanceDecorator,
     (Story) => (
       <StyledContainer>
-        <StoreSeederEffect />
         <Story />
       </StyledContainer>
     ),

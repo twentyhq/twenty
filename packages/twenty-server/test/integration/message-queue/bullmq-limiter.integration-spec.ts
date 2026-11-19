@@ -83,9 +83,7 @@ describe('BullMQDriver limiter (integration)', () => {
         recordHistogram: jest.fn(),
         incrementCounterForEvent: jest.fn().mockResolvedValue(undefined),
       } as never,
-      {
-        get: (key: string) => key === 'IS_WORKER_GROUP_LIMITER_ENABLED',
-      } as never,
+      { get: () => undefined } as never,
       new EventEmitter2(),
     );
     driver.register(QUEUE);

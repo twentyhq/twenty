@@ -23,8 +23,7 @@ const TRIGGER_PAYLOAD = {
   recordId: 'refused-record-id',
   properties: { after: { name: 'Refused record' } },
 };
-const SIZE_LIMIT_CONFIG: Record<string, boolean | number> = {
-  IS_REDIS_MEMORY_FAIRNESS_ENABLED: true,
+const SIZE_LIMIT_CONFIG: Record<string, number> = {
   JOB_QUEUE_MAX_JOB_SIZE_BYTES: 1,
 };
 

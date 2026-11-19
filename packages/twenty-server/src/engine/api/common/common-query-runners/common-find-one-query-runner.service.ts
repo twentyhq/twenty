@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -21,7 +20,7 @@ import {
   CommonQueryNames,
   FindOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
+import { buildColumnsToSelect } from 'src/engine/api/common/utils/build-columns-to-select';
 
 @Injectable()
 export class CommonFindOneQueryRunnerService extends CommonRecordQueryRunnerService<
@@ -35,7 +34,6 @@ export class CommonFindOneQueryRunnerService extends CommonRecordQueryRunnerServ
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<CommonQueryRunResult<ObjectRecord>> {
     const {
-      authContext,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatObjectMetadata,
@@ -48,16 +46,16 @@ export class CommonFindOneQueryRunnerService extends CommonRecordQueryRunnerServ
       flatObjectMetadata.nameSingular,
     );
 
-    commonQueryParser.applyFilterToBuilder(
+    commonQueryParser.applyFilterToBuilder({
       queryBuilder,
-      flatObjectMetadata.nameSingular,
-      args.filter ?? ({} as ObjectRecordFilter),
-    );
+      objectNameSingular: flatObjectMetadata.nameSingular,
+      recordFilter: args.filter ?? {},
+    });
 
-    commonQueryParser.applyDeletedAtToBuilder(
+    commonQueryParser.applyDeletedAtToBuilder({
       queryBuilder,
-      args.filter ?? ({} as ObjectRecordFilter),
-    );
+      recordFilter: args.filter ?? {},
+    });
 
     const columnsToSelect = buildColumnsToSelect({
       selection: args.selectedFieldsResult,
@@ -84,17 +82,11 @@ export class CommonFindOneQueryRunnerService extends CommonRecordQueryRunnerServ
 
     const objectRecords = [objectRecord] as ObjectRecord[];
 
-    const relationAggregatedValues =
-      await this.processNestedRelationsHelper.processNestedRelations({
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        parentObjectMetadataItem: flatObjectMetadata,
-        parentObjectRecords: objectRecords,
-        selection: args.selectedFieldsResult,
-        limit: QUERY_MAX_RECORDS_FROM_RELATION,
-        authContext,
-        ...this.getNestedRelationsReadPathOptions(),
-      });
+    const relationAggregatedValues = await this.processNestedRelations({
+      records: objectRecords,
+      selection: args.selectedFieldsResult,
+      queryRunnerContext,
+    });
 
     return { result: objectRecords[0], relationAggregatedValues };
   }

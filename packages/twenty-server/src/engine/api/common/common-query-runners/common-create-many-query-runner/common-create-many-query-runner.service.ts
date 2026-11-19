@@ -6,6 +6,7 @@ import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Brackets, In, InsertResult, ObjectLiteral } from 'typeorm';
 
+import { ID_ONLY_SELECTED_FIELDS } from 'src/engine/api/common/constants/id-only-selected-fields.constant';
 import { CommonRecordQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-record-query-runner.service';
 import { type ConflictingFieldGroup } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/conflicting-field-group.type';
 import { PartialObjectRecordWithId } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/partial-object-record-with-id.type';
@@ -30,8 +31,8 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
-import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
-import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
+import { buildColumnsToReturn } from 'src/engine/api/common/utils/build-columns-to-return';
+import { buildColumnsToSelect } from 'src/engine/api/common/utils/build-columns-to-select';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.util';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -165,49 +166,14 @@ export class CommonCreateManyQueryRunnerService extends CommonRecordQueryRunnerS
     });
 
     const relationAggregatedValues = await this.processNestedRelations({
-      args,
       records: upsertedRecords,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      authContext,
+      selection: args.selectedFieldsResult,
+      queryRunnerContext,
+      limit: QUERY_MAX_RECORDS,
       repository,
-      nestedRelationsReadPathOptions: this.getNestedRelationsReadPathOptions(),
     });
 
     return { result: upsertedRecords, relationAggregatedValues };
-  }
-
-  private async processNestedRelations({
-    args,
-    records,
-    flatObjectMetadata,
-    flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
-    authContext,
-    repository,
-    nestedRelationsReadPathOptions,
-  }: {
-    args: CommonExtendedInput<CreateManyQueryArgs>;
-    records: ObjectRecord[];
-    flatObjectMetadata: FlatObjectMetadata;
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-    authContext: WorkspaceAuthContext;
-    repository: WorkspaceRepository<ObjectRecord>;
-    nestedRelationsReadPathOptions: NestedRelationsReadPathOptions;
-  }): Promise<CommonRelationsAggregatedValues> {
-    return await this.processNestedRelationsHelper.processNestedRelations({
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      parentObjectMetadataItem: flatObjectMetadata,
-      parentObjectRecords: records,
-      selection: args.selectedFieldsResult,
-      limit: QUERY_MAX_RECORDS,
-      authContext,
-      repository,
-      ...nestedRelationsReadPathOptions,
-    });
   }
 
   async computeArgs(
@@ -671,7 +637,7 @@ export class CommonCreateManyQueryRunnerService extends CommonRecordQueryRunnerS
           {
             data: targetRecords,
             shareWith,
-            selectedFields: { id: true },
+            selectedFields: ID_ONLY_SELECTED_FIELDS,
           },
           {
             ...queryRunnerContext,
