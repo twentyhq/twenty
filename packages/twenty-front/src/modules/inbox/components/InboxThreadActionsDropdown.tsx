@@ -102,18 +102,13 @@ export const InboxThreadActionsDropdown = ({
 
   const canUpdate = isDefined(permissions) && permissions.canUpdate;
   const isDeleted = isDefined(thread.deletedAt);
-  const canRename =
-    isDefined(onRenameRequested) &&
+  const canEditThread =
     canUpdate &&
     !isDeleted &&
     thread.conversationType !== AgentChatThreadConversationType.DIRECT_MESSAGE;
-
+  const canRename = isDefined(onRenameRequested) && canEditThread;
   const canChangeImage =
-    isDefined(iconPickerDropdownId) &&
-    canCustomizeImage &&
-    canUpdate &&
-    !isDeleted &&
-    thread.conversationType !== AgentChatThreadConversationType.DIRECT_MESSAGE;
+    isDefined(iconPickerDropdownId) && canCustomizeImage && canEditThread;
 
   const imageUrl = thread.imageFile?.[0]?.url;
 

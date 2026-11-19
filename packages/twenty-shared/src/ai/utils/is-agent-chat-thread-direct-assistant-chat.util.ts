@@ -13,7 +13,7 @@ export const isAgentChatThreadDirectAssistantChat = (
   thread: AgentChatThreadParticipationFields,
 ): boolean =>
   thread.conversationType === AgentChatThreadConversationType.STANDARD &&
-  thread.isAssistantParticipant === true &&
+  (thread.isAssistantParticipant ?? false) &&
   !isDefined(thread.channelId) &&
   (thread.writerWorkspaceMemberIds ?? []).every(
     (writerWorkspaceMemberId) =>
