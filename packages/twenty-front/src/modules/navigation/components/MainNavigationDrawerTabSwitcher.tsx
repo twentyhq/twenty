@@ -1,5 +1,4 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { lazy, type ReactNode, Suspense } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Badge } from 'twenty-ui/primitives/data-display';
@@ -14,6 +13,7 @@ import { NAVIGATION_MENU_TAB_MAX_COUNT } from '@/navigation-menu-item/common/con
 import { MainNavigationDrawerAddTabButton } from '@/navigation/components/MainNavigationDrawerAddTabButton';
 import { MainNavigationDrawerSidebarTab } from '@/navigation/components/MainNavigationDrawerSidebarTab';
 import { MainNavigationDrawerTab } from '@/navigation/components/MainNavigationDrawerTab';
+import { MainNavigationDrawerTabDropTarget } from '@/navigation/components/MainNavigationDrawerTabDropTarget';
 import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationDrawerTabs } from '@/navigation/hooks/useNavigationDrawerTabs';
@@ -28,12 +28,6 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const MAX_DISPLAYED_UNREAD_COUNT = 99;
-
-const LazyNavigationMenuTabDropTarget = lazy(() =>
-  import('@/navigation-menu-item/display/dnd/components/NavigationMenuTabDropTarget').then(
-    (module) => ({ default: module.NavigationMenuTabDropTarget }),
-  ),
-);
 
 // Expanded, the row matches the page card header so their borders read as one line.
 const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
@@ -104,17 +98,6 @@ export const MainNavigationDrawerTabSwitcher = () => {
 
   const shouldShowTooltips = !isExpanded && !isMobile;
 
-  const withTabDropTarget = (tabId: string | null, tabButton: ReactNode) =>
-    isLayoutCustomizationModeEnabled ? (
-      <Suspense key={tabId ?? 'home'} fallback={tabButton}>
-        <LazyNavigationMenuTabDropTarget tabId={tabId}>
-          {tabButton}
-        </LazyNavigationMenuTabDropTarget>
-      </Suspense>
-    ) : (
-      tabButton
-    );
-
   return (
     <StyledSwitcher
       isExpanded={isExpanded}
@@ -177,12 +160,12 @@ export const MainNavigationDrawerTabSwitcher = () => {
         }
 
         return [
-          withTabDropTarget(null, drawerTabButton),
-          ...navigationMenuTabs.map((tab) =>
-            withTabDropTarget(
-              tab.id,
+          <MainNavigationDrawerTabDropTarget key={drawerTab} tabId={null}>
+            {drawerTabButton}
+          </MainNavigationDrawerTabDropTarget>,
+          ...navigationMenuTabs.map((tab) => (
+            <MainNavigationDrawerTabDropTarget key={tab.id} tabId={tab.id}>
               <MainNavigationDrawerSidebarTab
-                key={tab.id}
                 tab={tab}
                 isActive={activeNavigationMenuTab?.id === tab.id}
                 isExpanded={isExpanded}
@@ -191,9 +174,9 @@ export const MainNavigationDrawerTabSwitcher = () => {
                   activeNavigationMenuTab?.id !== tab.id &&
                   tabIdsWithUnreadChats.has(tab.id)
                 }
-              />,
-            ),
-          ),
+              />
+            </MainNavigationDrawerTabDropTarget>
+          )),
           ...(isLayoutCustomizationModeEnabled &&
           tabCountIncludingHome < NAVIGATION_MENU_TAB_MAX_COUNT
             ? [
