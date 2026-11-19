@@ -341,10 +341,8 @@ const buildScenarioJobScope = ({
 };
 
 export const createFairnessHarness = async ({
-  isGroupLimiterEnabled = false,
   groupLimiter,
 }: {
-  isGroupLimiterEnabled?: boolean;
   groupLimiter?: MessageQueueLimiter;
 } = {}) => {
   const redis: Redis = new RedisMock();
@@ -361,12 +359,7 @@ export const createFairnessHarness = async ({
   const driver = new BullMQDriver(
     { prefix: KEY_PREFIX, connection: {} },
     metricsService as never,
-    {
-      get: (key: string) =>
-        key === 'IS_WORKER_GROUP_LIMITER_ENABLED'
-          ? isGroupLimiterEnabled
-          : undefined,
-    } as never,
+    { get: () => undefined } as never,
     { emit: jest.fn() } as never,
   );
 

@@ -14,6 +14,7 @@ const deletePageLayoutWidgetSchema = z.object({
 
 @DefineTool({
   name: 'delete_page_layout_widget',
+  isDestructive: true,
   description: `Delete a widget from a page layout (dashboard or record page). Use get_dashboard or list_record_page_layouts first to find the widgetId. Record-page changes affect the shared layout for that object, not only the currently open record.`,
   category: ToolCategory.PAGE_LAYOUT,
   accessPolicy: PAGE_LAYOUT_TOOL_ACCESS_POLICY,

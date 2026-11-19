@@ -88,6 +88,7 @@ export class ListNavigationMenuItemsTool extends BaseTool<
             pageLayoutId: item.pageLayoutId,
             agentChatChannelId: item.agentChatChannelId,
             nativePageKey: item.nativePageKey,
+            builtInSectionKey: item.builtInSectionKey,
             workflowId: item.workflowId,
             agentId: item.agentId,
           })),
