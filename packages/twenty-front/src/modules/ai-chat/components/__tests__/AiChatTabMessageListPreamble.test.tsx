@@ -1,4 +1,3 @@
-import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
 import { act, render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -85,7 +84,7 @@ const THREAD_ID = 'thread-1';
 const renderPreambleBranch = () =>
   render(
     <JotaiProvider store={jotaiStore}>
-      <AiChatTestInstance>
+      <AiChatTestInstance threadId={THREAD_ID}>
         <AiChatTabMessageList />
       </AiChatTestInstance>
     </JotaiProvider>,
@@ -95,7 +94,6 @@ describe('AiChatTabMessageList preamble branch', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
-    jotaiStore.set(aiChatTestInstanceThreadIdState.atom, THREAD_ID);
   });
 
   it('should render the preamble with the pending response loader when the displayed thread is awaiting its first chunk', () => {
@@ -125,7 +123,6 @@ describe('AiChatTabMessageList loading', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
-    jotaiStore.set(aiChatTestInstanceThreadIdState.atom, THREAD_ID);
     jotaiStore.set(
       aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
       [{ id: 'message-1', role: 'user', parts: [] }],
