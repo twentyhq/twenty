@@ -7,7 +7,9 @@ import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMe
 
 export const resolveViewNamePlaceholders = (
   viewName: string | undefined,
-  objectMetadataItem: FlatObjectMetadataItem | undefined,
+  objectMetadataItem:
+    | Pick<FlatObjectMetadataItem, 'labelSingular' | 'labelPlural'>
+    | undefined,
 ): string => {
   if (!isDefined(viewName) || !isDefined(objectMetadataItem)) {
     return viewName ?? '';

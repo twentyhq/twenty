@@ -953,6 +953,15 @@ export type ApplicationRegistrationVariable = {
   value?: Maybe<Scalars['String']['output']>;
 };
 
+export type ApplicationSuggestedViewField = {
+  __typename?: 'ApplicationSuggestedViewField';
+  fieldMetadataId: Scalars['UUID']['output'];
+  objectMetadataId: Scalars['UUID']['output'];
+  position: Scalars['Float']['output'];
+  universalIdentifier: Scalars['UUID']['output'];
+  viewId: Scalars['UUID']['output'];
+};
+
 export type ApplicationTokenPair = {
   __typename?: 'ApplicationTokenPair';
   applicationAccessToken: AuthToken;
@@ -2258,6 +2267,11 @@ export type DevelopmentApplication = {
   __typename?: 'DevelopmentApplication';
   id: Scalars['String']['output'];
   universalIdentifier: Scalars['String']['output'];
+};
+
+export type DismissApplicationSuggestedViewFieldsInput = {
+  applicationId: Scalars['UUID']['input'];
+  universalIdentifiers: Array<Scalars['UUID']['input']>;
 };
 
 export type DomainRecord = {
@@ -3826,6 +3840,7 @@ export type Mutation = {
   destroyViewSort: Scalars['Boolean']['output'];
   detachRecordFromInboxThread: Scalars['Boolean']['output'];
   disconnectConnectedAccount: ConnectedAccountPublicDto;
+  dismissApplicationSuggestedViewFields: Scalars['Boolean']['output'];
   duplicateDashboard: DuplicatedDashboard;
   duplicateMessageList: DuplicatedMessageList;
   editSSOIdentityProvider: EditSso;
@@ -4666,6 +4681,11 @@ export type MutationDetachRecordFromInboxThreadArgs = {
 
 export type MutationDisconnectConnectedAccountArgs = {
   id: Scalars['UUID']['input'];
+};
+
+
+export type MutationDismissApplicationSuggestedViewFieldsArgs = {
+  input: DismissApplicationSuggestedViewFieldsInput;
 };
 
 
@@ -6181,6 +6201,7 @@ export type Query = {
   applicationCoreGraphqlSchema: Scalars['String']['output'];
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']['output']>;
   applicationSdkClientChecksums?: Maybe<SdkClientChecksums>;
+  applicationSuggestedViewFields: Array<ApplicationSuggestedViewField>;
   barChartData: BarChartData;
   billingPartnerCode: BillingPartnerCode;
   billingPlans: Array<BillingPlan>;
@@ -6398,6 +6419,11 @@ export type QueryApplicationRegistrationTarballUrlArgs = {
 
 
 export type QueryApplicationSdkClientChecksumsArgs = {
+  applicationId: Scalars['UUID']['input'];
+};
+
+
+export type QueryApplicationSuggestedViewFieldsArgs = {
   applicationId: Scalars['UUID']['input'];
 };
 

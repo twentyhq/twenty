@@ -32,6 +32,7 @@ import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type ApplicationManifestSyncResult } from 'src/engine/core-modules/application/application-manifest/types/application-manifest-sync-result.type';
+import { partitionStandaloneViewFieldManifests } from 'src/engine/core-modules/application/application-manifest/utils/partition-standalone-view-field-manifests.util';
 
 @Injectable()
 export class ApplicationManifestMigrationService {
@@ -215,9 +216,31 @@ export class ApplicationManifestMigrationService {
       fromAllFlatEntityMaps: existingAllFlatEntityMaps,
     });
 
+    const { twentyStandardFlatApplication, workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const isEngineOwnedApplication = [
+      twentyStandardFlatApplication.id,
+      workspaceCustomFlatApplication.id,
+    ].includes(ownerFlatApplication.id);
+
+    // A third-party app only suggests view fields on views it does not own: users add them through the AI chat.
+    const manifestToCompute = isEngineOwnedApplication
+      ? manifest
+      : {
+          ...manifest,
+          viewFields: partitionStandaloneViewFieldManifests({
+            manifest,
+            applicationUniversalIdentifier:
+              ownerFlatApplication.universalIdentifier,
+          }).ownViewFieldManifests,
+        };
+
     const toAllUniversalFlatEntityMaps =
       this.computeManifestFlatEntityMapsService.compute({
-        manifest,
+        manifest: manifestToCompute,
         ownerFlatApplication,
         fromAllFlatEntityMaps,
         existingAllFlatEntityMaps,
@@ -233,11 +256,6 @@ export class ApplicationManifestMigrationService {
     });
 
     const hasWorkflows = (manifest.workflows ?? []).length > 0;
-
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
 
     const idByUniversalIdentifierByMetadataName = hasWorkflows
       ? preallocateWorkflowReferenceIds({
@@ -260,7 +278,7 @@ export class ApplicationManifestMigrationService {
       existingAllFlatEntityMaps,
       idByUniversalIdentifierByMetadataName,
       isWorkspaceCustomApplication:
-        ownerFlatApplication.id === workspaceCustomFlatApplication?.id,
+        ownerFlatApplication.id === workspaceCustomFlatApplication.id,
       connectedAccounts,
       now,
     });

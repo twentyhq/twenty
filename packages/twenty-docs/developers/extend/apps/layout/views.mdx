@@ -128,6 +128,33 @@ The `value` field is always a JSON-serializable value, but its expected shape de
 | `IS_EMPTY`, `IS_NOT_EMPTY`                            | empty string                   | `''`                     |
 | `IS` on `BOOLEAN`                                     | `'true'` or `'false'`          | `'true'`                 |
 
+## Suggesting columns on views you don't own
+
+Your app can't change a view it doesn't own: a standard view such as "All People", a view a user created, or a view of another app. To get your fields shown there, declare a standalone `defineViewField()` on that view. Twenty treats it as a **suggestion**: installing or syncing the app creates no column.
+
+```ts
+import {
+  defineViewField,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+export default defineViewField({
+  universalIdentifier: '...',
+  viewUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.views.allPeople
+      .universalIdentifier,
+  fieldMetadataUniversalIdentifier: SENIORITY_FIELD_UNIVERSAL_IDENTIFIER,
+  position: 0,
+  isVisible: true,
+});
+```
+
+- While a suggested field is missing from its view, your app's page in Settings shows a banner. **Review** opens the AI chat and asks it to add the columns, as the user: they become regular columns the user owns, which your next sync doesn't touch.
+- A suggestion on an object's main list view targets the view people land on, since that list view is hidden once the object has another view.
+- `position` only orders your suggestions for a view: they are added after its existing columns.
+- Users can dismiss the banner. A new version of your app that suggests other fields shows it again for those.
+- Suggest a handful of fields, not every field your app adds.
+
 ## How views show up in the UI
 
 A view by itself isn't reachable from the sidebar. To make it appear there, pair it with a [navigation menu item](/developers/extend/apps/layout/navigation-menu-items) of type `VIEW` that points at the view's `universalIdentifier`. That's the canonical pattern: every custom object gets a default index view auto-generated at creation, so you only need to ship the sidebar entry that opens it.

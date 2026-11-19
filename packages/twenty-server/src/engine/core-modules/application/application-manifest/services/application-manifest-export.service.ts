@@ -37,6 +37,7 @@ import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/con
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
+import { partitionStandaloneViewFieldManifests } from 'src/engine/core-modules/application/application-manifest/utils/partition-standalone-view-field-manifests.util';
 
 const PLACEHOLDER_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   STANDARD_ROLE.admin.universalIdentifier;
@@ -101,12 +102,13 @@ export class ApplicationManifestExportService {
 
     assertFlatApplicationIsExportable(flatApplication);
 
-    await this.applicationRegistrationLookupService.findOneOwnedByWorkspaceOrThrow(
-      {
-        universalIdentifier: applicationUniversalIdentifier,
-        workspaceId,
-      },
-    );
+    const applicationRegistration =
+      await this.applicationRegistrationLookupService.findOneOwnedByWorkspaceOrThrow(
+        {
+          universalIdentifier: applicationUniversalIdentifier,
+          workspaceId,
+        },
+      );
 
     const applicationAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
       applicationIds: [flatApplication.id],
@@ -296,7 +298,17 @@ export class ApplicationManifestExportService {
       agents,
       publicAssets,
       views,
-      viewFields,
+      viewFields: [
+        ...viewFields,
+        // Suggestions are never synced as view fields, so only the registration manifest holds them.
+        ...(flatApplication.id === workspaceCustomFlatApplication.id
+          ? []
+          : partitionStandaloneViewFieldManifests({
+              manifest: applicationRegistration.manifest ?? {},
+              applicationUniversalIdentifier:
+                flatApplication.universalIdentifier,
+            }).suggestedViewFieldManifests),
+      ],
       navigationMenuItems,
       pageLayouts,
       pageLayoutWidgets,

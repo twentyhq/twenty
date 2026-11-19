@@ -51,6 +51,7 @@ import { SettingsApplicationHealthCheckEffect } from '@/settings/applications/co
 import { WORKSPACE_APPLICATION_HEALTH_CHECK_RUNNER } from '@/settings/applications/constants/WorkspaceApplicationHealthCheckRunner';
 import { useSaveApplicationVariablesAndRecheckHealth } from '@/settings/applications/hooks/useSaveApplicationVariablesAndRecheckHealth';
 import { SettingsApplicationMissingConfigurationBanner } from '@/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
+import { SettingsApplicationSuggestedViewFieldsBanner } from '@/settings/applications/components/SettingsApplicationSuggestedViewFieldsBanner';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationNotFound } from '~/pages/settings/applications/components/SettingsApplicationNotFound';
 import { SettingsBuiltInAccountAppDetails } from '~/pages/settings/applications/SettingsBuiltInAccountAppDetails';
@@ -396,6 +397,10 @@ export const SettingsApplicationDetails = () => {
                 WORKSPACE_APPLICATION_HEALTH_CHECK_RUNNER.healthCheckFamilyState
               }
               fallbackLocation={configurationTabLocation}
+            />
+            <SettingsApplicationSuggestedViewFieldsBanner
+              applicationId={application.id}
+              applicationName={displayName}
             />
           </>
         )}

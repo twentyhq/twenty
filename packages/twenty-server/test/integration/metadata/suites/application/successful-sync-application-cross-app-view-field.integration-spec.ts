@@ -1,5 +1,7 @@
+import { findApplicationSuggestedViewFields } from 'test/integration/metadata/suites/application/utils/application-suggested-view-fields.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { findOneApplication } from 'test/integration/metadata/suites/application/utils/find-one-application.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
@@ -35,7 +37,7 @@ const appBPersonField: FieldManifest = {
   objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
 };
 
-describe('Sync application should succeed when extending another app view with a view field', () => {
+describe('Sync application should suggest, not create, a view field on another app view', () => {
   beforeAll(async () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: APP_A_ID,
@@ -89,7 +91,7 @@ describe('Sync application should succeed when extending another app view with a
     });
   });
 
-  it('accepts a standalone view field from App B targeting an App A view', async () => {
+  it('suggests a standalone view field from App B targeting an App A view without creating it', async () => {
     const { errors } = await syncApplication({
       manifest: buildBaseManifest({
         appId: APP_B_ID,
@@ -158,6 +160,23 @@ describe('Sync application should succeed when extending another app view with a
       (viewField) => viewField.fieldMetadataId === appBField?.id,
     );
 
-    expect(appBViewField).toBeDefined();
+    expect(appBViewField).toBeUndefined();
+
+    const { data: appBData } = await findOneApplication({
+      input: { universalIdentifier: APP_B_ID },
+      expectToFail: false,
+    });
+
+    expect(
+      await findApplicationSuggestedViewFields({
+        applicationId: appBData.findOneApplication.id,
+      }),
+    ).toEqual([
+      expect.objectContaining({
+        universalIdentifier: APP_B_VIEW_FIELD_ID,
+        viewId: appAView?.id,
+        fieldMetadataId: appBField?.id,
+      }),
+    ]);
   }, 60000);
 });
