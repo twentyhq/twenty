@@ -7,7 +7,7 @@ export const isCaptchaTokenFresh = ({
   provider,
   now,
 }: {
-  captchaToken: CaptchaToken;
+  captchaToken: Pick<CaptchaToken, 'issuedAt'>;
   provider: CaptchaDriverType;
   now: number;
 }): boolean =>
