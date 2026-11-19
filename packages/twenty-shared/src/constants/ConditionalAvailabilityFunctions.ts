@@ -1,18 +1,7 @@
-import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 
-import { safeGetNestedProperty } from '@/utils/conditional-availability/safeGetNestedProperty';
+import { createArrayPropertyCheck } from '@/utils/conditional-availability/createArrayPropertyCheck';
 import { isDefined } from '@/utils/validation/isDefined';
-
-const createArrayPropertyCheck =
-  (
-    method: 'every' | 'some',
-    predicate: (propertyValue: unknown, value: unknown) => boolean,
-  ) =>
-  (array: unknown, propertyPath: string, value?: unknown) =>
-    isNonEmptyArray(array) &&
-    array[method]((item) =>
-      predicate(safeGetNestedProperty(item, propertyPath), value),
-    );
 
 export const CONDITIONAL_AVAILABILITY_FUNCTIONS = {
   isDefined: (value: unknown) => isDefined(value),
