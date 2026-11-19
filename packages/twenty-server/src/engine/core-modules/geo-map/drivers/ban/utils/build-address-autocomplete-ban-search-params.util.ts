@@ -30,7 +30,7 @@ export const buildAddressAutocompleteBanSearchParams = ({
     limit: String(RESULTS_LIMIT),
   });
 
-  if (isCityOnly === true) {
+  if (isCityOnly) {
     searchParams.set('type', 'municipality');
   }
 

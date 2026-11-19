@@ -180,7 +180,7 @@ export class BillingReminderService {
   private isWithCreditCardTrial(
     subscription: BillingSubscriptionEntity,
   ): boolean {
-    if (subscription.billingCustomer?.hasPaymentMethod === true) {
+    if (subscription.billingCustomer?.hasPaymentMethod) {
       return true;
     }
 

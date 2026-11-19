@@ -41,7 +41,7 @@ export class AddressAutocompleteGooglePlacesDriver implements AddressAutocomplet
       searchParams.set('components', `country:${country}`);
     }
 
-    if (isCityOnly === true) {
+    if (isCityOnly) {
       searchParams.set('types', '(cities)');
     }
 

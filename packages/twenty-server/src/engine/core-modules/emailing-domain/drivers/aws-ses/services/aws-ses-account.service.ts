@@ -18,7 +18,7 @@ export class AwsSesAccountService {
       .send(new GetAccountCommand({}));
 
     return {
-      isProductionAccessEnabled: account.ProductionAccessEnabled === true,
+      isProductionAccessEnabled: account.ProductionAccessEnabled ?? false,
     };
   }
 }

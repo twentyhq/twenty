@@ -57,8 +57,8 @@ export class ConfigStorageService implements ConfigStorageInterface {
 
     return (
       typeof value === 'string' &&
-      metadata?.isSensitive === true &&
-      metadata.type === ConfigVariableType.STRING
+      (metadata?.isSensitive ?? false) &&
+      metadata?.type === ConfigVariableType.STRING
     );
   }
 
