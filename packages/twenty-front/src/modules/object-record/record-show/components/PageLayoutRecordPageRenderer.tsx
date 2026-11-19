@@ -46,7 +46,7 @@ export const PageLayoutRecordPageRenderer = ({
   isRecordIdentifierBarHidden = false,
 }: {
   targetRecordIdentifier: TargetRecordIdentifier;
-  isTargetRecordLoading: boolean;
+  isTargetRecordLoading?: boolean;
   isRecordIdentifierBarHidden?: boolean;
 }) => {
   const displaySidePanelFooter = useDisplaySidePanelFooter(

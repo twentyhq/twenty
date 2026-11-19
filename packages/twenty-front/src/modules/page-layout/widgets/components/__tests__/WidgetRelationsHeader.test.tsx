@@ -29,7 +29,6 @@ const renderHeader = (targetObjectNameSingular: string) => {
         <FileUploadProvider>
           <LayoutRenderingProvider
             value={{
-              isTargetRecordLoading: false,
               targetRecordIdentifier: {
                 id: RECORD_ID,
                 targetObjectNameSingular,

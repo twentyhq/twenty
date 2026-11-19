@@ -39,7 +39,6 @@ export const StandalonePageLayoutPage = () => {
       >
         <LayoutRenderingProvider
           value={{
-            isTargetRecordLoading: false,
             targetRecordIdentifier: undefined,
             layoutType: PageLayoutType.STANDALONE_PAGE,
           }}

@@ -287,7 +287,6 @@ const meta: Meta<typeof PageLayoutTabListPlayground> = {
         >
           <LayoutRenderingProvider
             value={{
-              isTargetRecordLoading: false,
               layoutType:
                 args.presentation === 'identifier-bar'
                   ? PageLayoutType.RECORD_PAGE
