@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
   cancelOpenScheduledCallRecordingRequests: vi.fn(),
-  cancelWorkspaceRecallBots: vi.fn(),
+  cancelWorkspaceRecallBotsOrThrow: vi.fn(),
   findOpenScheduledCallRecordings: vi.fn(),
 }));
 
@@ -26,7 +26,7 @@ vi.mock(
 );
 
 vi.mock('src/logic-functions/flows/cancel-workspace-recall-bots.util', () => ({
-  cancelWorkspaceRecallBots: mocks.cancelWorkspaceRecallBots,
+  cancelWorkspaceRecallBotsOrThrow: mocks.cancelWorkspaceRecallBotsOrThrow,
 }));
 
 import uninstallLogicFunction, {
@@ -49,12 +49,9 @@ describe('cancel-recall-bots-on-uninstall', () => {
       { id: 'call-recording-3', externalBotId: 'known-bot' },
     ]);
     mocks.cancelOpenScheduledCallRecordingRequests.mockResolvedValue(3);
-    mocks.cancelWorkspaceRecallBots.mockResolvedValue({
+    mocks.cancelWorkspaceRecallBotsOrThrow.mockResolvedValue({
       scannedBotCount: 1,
       canceledExternalBotIds: ['known-bot'],
-      failedExternalBotIds: [],
-      truncatedBotList: false,
-      cutoffReached: false,
     });
     vi.spyOn(console, 'warn').mockImplementation(() => {});
   });
@@ -81,7 +78,7 @@ describe('cancel-recall-bots-on-uninstall', () => {
       ['call-recording-1', 'call-recording-2', 'call-recording-3'],
       expect.any(Function),
     );
-    expect(mocks.cancelWorkspaceRecallBots).toHaveBeenCalledWith({
+    expect(mocks.cancelWorkspaceRecallBotsOrThrow).toHaveBeenCalledWith({
       knownExternalBotIds: ['known-bot'],
       joinAtAfter: '2025-12-31T07:00:00.000Z',
       cancellationCutoffEpochMs: new Date('2026-01-01T08:00:15.000Z').getTime(),
@@ -90,10 +87,20 @@ describe('cancel-recall-bots-on-uninstall', () => {
       canceledCallRecordingRequestCount: 3,
       scannedBotCount: 1,
       canceledExternalBotIds: ['known-bot'],
-      failedExternalBotIds: [],
-      truncatedBotList: false,
-      cutoffReached: false,
     });
+  });
+
+  it('fails when Recall bots are left after the cleanup', async () => {
+    mocks.cancelWorkspaceRecallBotsOrThrow.mockRejectedValue(
+      new Error(
+        'uninstall bot cleanup incomplete: cancellation cutoff reached',
+      ),
+    );
+
+    await expect(cancelRecallBotsOnUninstallHandler()).rejects.toThrow(
+      'uninstall bot cleanup incomplete: cancellation cutoff reached',
+    );
+    expect(mocks.cancelOpenScheduledCallRecordingRequests).toHaveBeenCalled();
   });
 
   it('reserves the remaining cancellation window when record reads consume their budget', async () => {
@@ -115,7 +122,7 @@ describe('cancel-recall-bots-on-uninstall', () => {
     expect(
       mocks.cancelOpenScheduledCallRecordingRequests,
     ).not.toHaveBeenCalled();
-    expect(mocks.cancelWorkspaceRecallBots).toHaveBeenCalledWith({
+    expect(mocks.cancelWorkspaceRecallBotsOrThrow).toHaveBeenCalledWith({
       knownExternalBotIds: ['known-bot'],
       joinAtAfter: '2025-12-31T07:00:00.000Z',
       cancellationCutoffEpochMs: new Date('2026-01-01T08:00:15.000Z').getTime(),
@@ -130,7 +137,7 @@ describe('cancel-recall-bots-on-uninstall', () => {
     await expect(cancelRecallBotsOnUninstallHandler()).rejects.toThrow(
       'failed to cancel open call recording requests: Cannot update records',
     );
-    expect(mocks.cancelWorkspaceRecallBots).toHaveBeenCalledWith({
+    expect(mocks.cancelWorkspaceRecallBotsOrThrow).toHaveBeenCalledWith({
       knownExternalBotIds: ['known-bot'],
       joinAtAfter: '2025-12-31T07:00:00.000Z',
       cancellationCutoffEpochMs: new Date('2026-01-01T08:00:15.000Z').getTime(),
@@ -148,7 +155,7 @@ describe('cancel-recall-bots-on-uninstall', () => {
     expect(
       mocks.cancelOpenScheduledCallRecordingRequests,
     ).not.toHaveBeenCalled();
-    expect(mocks.cancelWorkspaceRecallBots).toHaveBeenCalledWith({
+    expect(mocks.cancelWorkspaceRecallBotsOrThrow).toHaveBeenCalledWith({
       knownExternalBotIds: [],
       joinAtAfter: '2025-12-31T07:00:00.000Z',
       cancellationCutoffEpochMs: new Date('2026-01-01T08:00:15.000Z').getTime(),

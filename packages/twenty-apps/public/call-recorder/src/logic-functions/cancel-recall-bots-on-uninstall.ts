@@ -6,7 +6,7 @@ import { RECALL_API_MAX_IN_PROCESS_RETRY_WAIT_MS } from 'src/logic-functions/con
 import { cancelOpenScheduledCallRecordingRequests } from 'src/logic-functions/data/cancel-open-scheduled-call-recording-requests.util';
 import { findOpenScheduledCallRecordings } from 'src/logic-functions/data/find-open-scheduled-call-recordings.util';
 import {
-  cancelWorkspaceRecallBots,
+  cancelWorkspaceRecallBotsOrThrow,
   type CancelWorkspaceRecallBotsResult,
 } from 'src/logic-functions/flows/cancel-workspace-recall-bots.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
@@ -78,7 +78,7 @@ export const cancelRecallBotsOnUninstallHandler =
     }
 
     const workspaceRecallBotCancellationResult =
-      await cancelWorkspaceRecallBots({
+      await cancelWorkspaceRecallBotsOrThrow({
         knownExternalBotIds,
         joinAtAfter: new Date(
           uninstallStartedAt.getTime() -
@@ -110,7 +110,7 @@ export default defineUninstallLogicFunction({
     CANCEL_RECALL_BOTS_ON_UNINSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'cancel-recall-bots-on-uninstall',
   description:
-    'Cancels open call recording requests and the workspace Recall bots discoverable within the uninstall request budget.',
+    'Cancels open call recording requests and the workspace Recall bots, ejecting bots already in a call, and fails while any bot is left.',
   timeoutSeconds: UNINSTALL_TIMEOUT_SECONDS,
   handler: cancelRecallBotsOnUninstallHandler,
 });
