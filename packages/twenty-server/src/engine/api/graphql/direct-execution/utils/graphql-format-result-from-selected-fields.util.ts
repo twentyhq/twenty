@@ -14,158 +14,193 @@ import {
   pascalCase,
 } from 'twenty-shared/utils';
 
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
+import { type CommonRelationsAggregatedValues } from 'src/engine/api/common/types/common-aggregated-values.type';
+import { CONNECTION_MAX_DEPTH } from 'src/engine/api/common/constants/connection-max-depth.constant';
 import {
-  GraphqlDirectExecutionException,
-  GraphqlDirectExecutionExceptionCode,
-} from 'src/engine/api/graphql/direct-execution/errors/graphql-direct-execution.exception';
-import {
-  isConnection,
-  isConnectionArray,
-  isGroupByConnection,
-  isObjectRecord,
-  isObjectRecordArray,
-} from 'src/engine/api/graphql/direct-execution/utils/graphql-is-resolver-output-type.util';
-import { type IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
-import { type IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
-import { type ResolverOutput } from 'src/engine/api/graphql/workspace-query-runner/interfaces/resolver-output';
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { encodeCursor } from 'src/engine/api/common/utils/cursors.util';
+import { getTargetObjectMetadataOrThrow } from 'src/engine/api/common/utils/get-target-object-metadata.util';
+import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type GraphqlFieldSelection } from 'src/engine/api/graphql/workspace-resolver-builder/types/graphql-field-selection.type';
+import {
+  type GraphqlConnectionResult,
+  type GraphqlResolverResult,
+} from 'src/engine/api/graphql/direct-execution/types/graphql-resolver-result.type';
 import { computeSelectionKey } from 'src/engine/api/graphql/workspace-resolver-builder/utils/compute-selection-key.util';
 import { getCompositeSubFieldObjectTypeName } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-composite-sub-field-gql-types.util';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-type ObjectRecordConnection = IConnection<ObjectRecord, IEdge<ObjectRecord>>;
-
-type GraphqlFormatContext = {
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-  objectIdByNameSingular: Record<string, string>;
-  fieldMetadataByNameCache: Map<string, Map<string, OrmFlatFieldMetadata>>;
-};
-
 type FormatArgs = {
   fieldSelections: GraphqlFieldSelection[];
-  objectNameSingular: string;
-  context: GraphqlFormatContext;
+  flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+};
+
+type RecordFormatArgs = FormatArgs & {
+  relationAggregatedValues?: CommonRelationsAggregatedValues;
+  // Nested connections encode their cursors with the root order
+  order?: ObjectRecordOrderBy;
+  depth: number;
 };
 
 // Response keys are only ever written here: rows are keyed by field name, relations by selection key
 export const graphQLFormatResultFromSelectedFields = ({
   result,
-  fieldSelections,
-  objectNameSingular,
-  flatObjectMetadataMaps,
-  flatFieldMetadataMaps,
-  objectIdByNameSingular,
-}: {
-  result: ResolverOutput;
-  fieldSelections: GraphqlFieldSelection[];
-  objectNameSingular: string;
-} & Omit<GraphqlFormatContext, 'fieldMetadataByNameCache'>): unknown => {
-  const formatArgs: FormatArgs = {
-    fieldSelections,
-    objectNameSingular,
-    context: {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      objectIdByNameSingular,
-      fieldMetadataByNameCache: new Map(),
-    },
-  };
-
-  if (isObjectRecord(result)) {
-    return formatObjectRecord({ record: result, ...formatArgs });
+  ...formatArgs
+}: FormatArgs & { result: GraphqlResolverResult }): unknown => {
+  switch (result.kind) {
+    case 'record':
+      return isDefined(result.record)
+        ? formatObjectRecord({
+            record: result.record,
+            relationAggregatedValues: result.relationAggregatedValues,
+            depth: 0,
+            ...formatArgs,
+          })
+        : result.record;
+    case 'records':
+      return result.records.map((record) =>
+        formatObjectRecord({
+          record,
+          relationAggregatedValues: result.relationAggregatedValues,
+          depth: 0,
+          ...formatArgs,
+        }),
+      );
+    case 'connection':
+      return formatConnection({
+        connection: result.connection,
+        depth: 0,
+        ...formatArgs,
+      });
+    case 'connections':
+      return result.connections.map((connection) =>
+        formatConnection({ connection, depth: 0, ...formatArgs }),
+      );
+    case 'groupByConnections':
+      return result.connections.map((connection) =>
+        formatConnection({
+          connection,
+          connectionTypename: getGroupByConnectionTypename(
+            formatArgs.flatObjectMetadata.nameSingular,
+          ),
+          depth: 0,
+          ...formatArgs,
+        }),
+      );
   }
-
-  if (isObjectRecordArray(result)) {
-    return result.map((record) =>
-      formatObjectRecord({ record, ...formatArgs }),
-    );
-  }
-
-  if (isGroupByConnection(result)) {
-    return formatConnection({
-      connection: result,
-      connectionTypename: getGroupByConnectionTypename(objectNameSingular),
-      ...formatArgs,
-    });
-  }
-
-  if (isConnection(result)) {
-    return formatConnection({ connection: result, ...formatArgs });
-  }
-
-  if (isConnectionArray(result)) {
-    return result.map((connection) =>
-      formatConnection({ connection, ...formatArgs }),
-    );
-  }
-
-  if (result === null || result === undefined) {
-    return result;
-  }
-
-  throw new GraphqlDirectExecutionException(
-    'Invalid result type',
-    GraphqlDirectExecutionExceptionCode.INVALID_RESULT_TYPE,
-    { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-  );
 };
 
 const formatObjectRecord = ({
   record,
   fieldSelections,
   ...formatArgs
-}: FormatArgs & { record: ObjectRecord }): Record<string, unknown> =>
-  Object.fromEntries(
+}: RecordFormatArgs & { record: ObjectRecord }): Record<string, unknown> => {
+  if (formatArgs.depth >= CONNECTION_MAX_DEPTH) {
+    throw new CommonQueryRunnerException(
+      `Maximum depth of ${CONNECTION_MAX_DEPTH} reached`,
+      CommonQueryRunnerExceptionCode.MAX_DEPTH_REACHED,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+    );
+  }
+
+  return Object.fromEntries(
     fieldSelections.map((fieldSelection) => [
       fieldSelection.responseKey,
       formatObjectRecordField({ record, fieldSelection, ...formatArgs }),
     ]),
   );
+};
 
 const formatObjectRecordField = ({
   record,
   fieldSelection,
-  objectNameSingular,
-  context,
-}: Omit<FormatArgs, 'fieldSelections'> & {
+  flatObjectMetadata,
+  relationAggregatedValues,
+  order,
+  depth,
+  ...metadataMaps
+}: Omit<RecordFormatArgs, 'fieldSelections'> & {
   record: ObjectRecord;
   fieldSelection: GraphqlFieldSelection;
 }): unknown => {
   const { fieldName, selections } = fieldSelection;
 
   if (fieldName === '__typename') {
-    return getNodeTypename(objectNameSingular);
+    return getNodeTypename(flatObjectMetadata.nameSingular);
   }
 
-  const relationInfo = findRelationInfo({
-    objectNameSingular,
-    fieldName,
-    context,
+  const { fieldIdByName, fieldIdByJoinColumnName } =
+    buildFieldMapsFromFlatObjectMetadata(
+      metadataMaps.flatFieldMetadataMaps,
+      flatObjectMetadata,
+    );
+  const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: fieldIdByName[fieldName],
+    flatEntityMaps: metadataMaps.flatFieldMetadataMaps,
   });
 
-  if (isDefined(relationInfo)) {
-    const relationValue = record[computeSelectionKey(fieldSelection)];
+  if (!isDefined(fieldMetadata)) {
+    return isDefined(fieldIdByJoinColumnName[fieldName])
+      ? (record[fieldName] ?? null)
+      : null;
+  }
 
-    if (!isDefined(relationValue)) {
+  if (isMorphOrRelationFlatFieldMetadata(fieldMetadata)) {
+    const selectionKey = computeSelectionKey(fieldSelection);
+    const relationValue: ObjectRecord | ObjectRecord[] | null | undefined =
+      record[selectionKey];
+    const relationFormatArgs: RecordFormatArgs = {
+      fieldSelections: selections,
+      flatObjectMetadata: getTargetObjectMetadataOrThrow(
+        fieldMetadata,
+        metadataMaps.flatObjectMetadataMaps,
+      ),
+      relationAggregatedValues:
+        relationAggregatedValues?.[selectionKey]?.relations,
+      order,
+      depth: depth + 1,
+      ...metadataMaps,
+    };
+
+    if (fieldMetadata.settings.relationType === RelationType.ONE_TO_MANY) {
+      const relationRecords = Array.isArray(relationValue) ? relationValue : [];
+      const aggregatedValues =
+        relationAggregatedValues?.[selectionKey]?.valuesByParentRecordId[
+          record.id
+        ];
+
+      return formatConnection({
+        connection: {
+          records: relationRecords,
+          connectionValues: {
+            ...aggregatedValues,
+            totalCount: aggregatedValues?.totalCount ?? relationRecords.length,
+          },
+          relationAggregatedValues: relationFormatArgs.relationAggregatedValues,
+          hasNextPage: false,
+          hasPreviousPage: false,
+          order,
+        },
+        ...relationFormatArgs,
+      });
+    }
+
+    if (!isDefined(relationValue) || Array.isArray(relationValue)) {
       return null;
     }
 
-    const relationFormatArgs: FormatArgs = {
-      fieldSelections: selections,
-      objectNameSingular: relationInfo.targetObjectNameSingular,
-      context,
-    };
-
-    return relationInfo.relationType === RelationType.ONE_TO_MANY
-      ? formatConnection({ connection: relationValue, ...relationFormatArgs })
-      : formatObjectRecord({ record: relationValue, ...relationFormatArgs });
+    return formatObjectRecord({ record: relationValue, ...relationFormatArgs });
   }
 
   const value = record[fieldName];
@@ -174,24 +209,14 @@ const formatObjectRecordField = ({
     return null;
   }
 
-  const fieldMetadata = getFieldMetadataByName({
-    objectNameSingular,
-    context,
-  }).get(fieldName);
-
-  if (
-    selections.length === 0 ||
-    !isDefined(fieldMetadata) ||
-    !isCompositeFieldMetadataType(fieldMetadata.type)
-  ) {
-    return value;
-  }
-
-  return formatCompositeField({
-    value,
-    fieldSelections: selections,
-    fieldMetadataType: fieldMetadata.type,
-  });
+  return selections.length > 0 &&
+    isCompositeFieldMetadataType(fieldMetadata.type)
+    ? formatCompositeField({
+        value,
+        fieldSelections: selections,
+        fieldMetadataType: fieldMetadata.type,
+      })
+    : value;
 };
 
 const formatCompositeField = ({
@@ -267,13 +292,67 @@ const formatConnection = ({
   connection,
   connectionTypename,
   fieldSelections,
+  depth,
   ...formatArgs
 }: FormatArgs & {
-  connection: ObjectRecordConnection;
+  connection: GraphqlConnectionResult;
   connectionTypename?: string;
+  depth: number;
 }): Record<string, unknown> => {
-  const connectionValues: Record<string, unknown> = connection;
-  const pageInfoValues: Record<string, unknown> = connection.pageInfo;
+  const { nameSingular } = formatArgs.flatObjectMetadata;
+  const computeCursor = (record: ObjectRecord | undefined): string | null =>
+    isDefined(record)
+      ? encodeCursor({
+          objectRecord: record,
+          order: connection.order,
+          orderByValuesFromScan:
+            connection.orderByValuesByRecordId?.[record.id],
+          ...formatArgs,
+        })
+      : null;
+  const formatPageInfoField = (
+    pageInfoFieldName: string,
+  ): string | boolean | null => {
+    switch (pageInfoFieldName) {
+      case '__typename':
+        return 'PageInfo';
+      case 'hasNextPage':
+        return connection.hasNextPage;
+      case 'hasPreviousPage':
+        return connection.hasPreviousPage;
+      case 'startCursor':
+        return computeCursor(connection.records[0]);
+      case 'endCursor':
+        return computeCursor(connection.records[connection.records.length - 1]);
+      default:
+        return null;
+    }
+  };
+  const formatEdgeField = ({
+    record,
+    edgeSelection: { fieldName, selections },
+  }: {
+    record: ObjectRecord;
+    edgeSelection: GraphqlFieldSelection;
+  }): string | Record<string, unknown> | null => {
+    switch (fieldName) {
+      case '__typename':
+        return getEdgeTypename(nameSingular);
+      case 'cursor':
+        return computeCursor(record);
+      case 'node':
+        return formatObjectRecord({
+          record,
+          fieldSelections: selections,
+          relationAggregatedValues: connection.relationAggregatedValues,
+          order: connection.order,
+          depth,
+          ...formatArgs,
+        });
+      default:
+        return null;
+    }
+  };
 
   return Object.fromEntries(
     fieldSelections.map(({ responseKey, fieldName, selections }) => {
@@ -281,14 +360,24 @@ const formatConnection = ({
         case '__typename':
           return [
             responseKey,
-            connectionTypename ??
-              getConnectionTypename(formatArgs.objectNameSingular),
+            connectionTypename ?? getConnectionTypename(nameSingular),
           ];
         case 'edges':
           return [
             responseKey,
-            connection.edges.map((edge) =>
-              formatEdge({ edge, fieldSelections: selections, ...formatArgs }),
+            connection.records.map((record) =>
+              Object.fromEntries(
+                selections
+                  .filter((edgeSelection) =>
+                    ['__typename', 'cursor', 'node'].includes(
+                      edgeSelection.fieldName,
+                    ),
+                  )
+                  .map((edgeSelection) => [
+                    edgeSelection.responseKey,
+                    formatEdgeField({ record, edgeSelection }),
+                  ]),
+              ),
             ),
           ];
         case 'pageInfo':
@@ -297,128 +386,23 @@ const formatConnection = ({
             Object.fromEntries(
               selections.map((pageInfoSelection) => [
                 pageInfoSelection.responseKey,
-                pageInfoSelection.fieldName === '__typename'
-                  ? 'PageInfo'
-                  : (pageInfoValues[pageInfoSelection.fieldName] ?? null),
+                formatPageInfoField(pageInfoSelection.fieldName),
               ]),
             ),
           ];
         default: {
-          const aggregateValue = connectionValues[fieldName] ?? null;
+          const connectionValue =
+            connection.connectionValues[fieldName] ?? null;
 
           return [
             responseKey,
-            isNonEmptyString(aggregateValue) && isFinite(Number(aggregateValue))
-              ? Number(aggregateValue)
-              : aggregateValue,
+            isNonEmptyString(connectionValue) &&
+            isFinite(Number(connectionValue))
+              ? Number(connectionValue)
+              : connectionValue,
           ];
         }
       }
     }),
   );
-};
-
-const formatEdge = ({
-  edge,
-  fieldSelections,
-  ...formatArgs
-}: FormatArgs & { edge: IEdge<ObjectRecord> }): Record<string, unknown> =>
-  Object.fromEntries(
-    fieldSelections.flatMap(
-      ({ responseKey, fieldName, selections }): [string, unknown][] => {
-        switch (fieldName) {
-          case '__typename':
-            return [
-              [responseKey, getEdgeTypename(formatArgs.objectNameSingular)],
-            ];
-          case 'cursor':
-            return [[responseKey, edge.cursor]];
-          case 'node':
-            return [
-              [
-                responseKey,
-                formatObjectRecord({
-                  record: edge.node,
-                  fieldSelections: selections,
-                  ...formatArgs,
-                }),
-              ],
-            ];
-          default:
-            return [];
-        }
-      },
-    ),
-  );
-
-const getFieldMetadataByName = ({
-  objectNameSingular,
-  context,
-}: Pick<FormatArgs, 'objectNameSingular' | 'context'>): Map<
-  string,
-  OrmFlatFieldMetadata
-> => {
-  const cachedFieldMetadataByName =
-    context.fieldMetadataByNameCache.get(objectNameSingular);
-
-  if (isDefined(cachedFieldMetadataByName)) {
-    return cachedFieldMetadataByName;
-  }
-
-  const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-    flatEntityId: context.objectIdByNameSingular[objectNameSingular],
-    flatEntityMaps: context.flatObjectMetadataMaps,
-  });
-
-  const fieldMetadataByName = new Map(
-    (flatObjectMetadata?.fieldIds ?? [])
-      .map((fieldId) =>
-        findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: fieldId,
-          flatEntityMaps: context.flatFieldMetadataMaps,
-        }),
-      )
-      .filter(isDefined)
-      .map((fieldMetadata) => [fieldMetadata.name, fieldMetadata]),
-  );
-
-  context.fieldMetadataByNameCache.set(objectNameSingular, fieldMetadataByName);
-
-  return fieldMetadataByName;
-};
-
-const findRelationInfo = ({
-  objectNameSingular,
-  fieldName,
-  context,
-}: Pick<FormatArgs, 'objectNameSingular' | 'context'> & {
-  fieldName: string;
-}):
-  | { targetObjectNameSingular: string; relationType: RelationType }
-  | undefined => {
-  const fieldMetadata = getFieldMetadataByName({
-    objectNameSingular,
-    context,
-  }).get(fieldName);
-
-  if (
-    !isDefined(fieldMetadata) ||
-    !isMorphOrRelationFlatFieldMetadata(fieldMetadata)
-  ) {
-    return undefined;
-  }
-
-  const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-    flatEntityId: fieldMetadata.relationTargetObjectMetadataId,
-    flatEntityMaps: context.flatObjectMetadataMaps,
-  });
-
-  if (!isDefined(targetObjectMetadata)) {
-    return undefined;
-  }
-
-  return {
-    targetObjectNameSingular: targetObjectMetadata.nameSingular,
-    relationType: fieldMetadata.settings.relationType,
-  };
 };

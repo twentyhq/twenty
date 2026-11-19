@@ -1,5 +1,4 @@
 import { computeSelectionKey } from 'src/engine/api/graphql/workspace-resolver-builder/utils/compute-selection-key.util';
-import { getFieldNameFromSelectionKey } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-field-name-from-selection-key.util';
 
 describe('computeSelectionKey', () => {
   it('returns the field name for a field without arguments', () => {
@@ -42,14 +41,5 @@ describe('computeSelectionKey', () => {
     ).not.toBe(
       computeSelectionKey({ fieldName: 'people', arguments: { first: 2 } }),
     );
-  });
-
-  it('gives the field name back from a key', () => {
-    expect(
-      getFieldNameFromSelectionKey(
-        computeSelectionKey({ fieldName: 'people', arguments: { first: 1 } }),
-      ),
-    ).toBe('people');
-    expect(getFieldNameFromSelectionKey('people')).toBe('people');
   });
 });
