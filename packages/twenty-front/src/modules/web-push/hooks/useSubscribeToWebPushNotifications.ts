@@ -11,7 +11,8 @@ import { getBrowserNotificationPermission } from '@/web-push/utils/getBrowserNot
 const getOrCreateBrowserWebPushSubscription = async (
   applicationServerKey: string,
 ): Promise<PushSubscription> => {
-  const registration = await navigator.serviceWorker.register('/sw.js');
+  const registration =
+    await navigator.serviceWorker.register('/service-worker.js');
   const existingSubscription = await registration.pushManager.getSubscription();
 
   if (isDefined(existingSubscription)) {
