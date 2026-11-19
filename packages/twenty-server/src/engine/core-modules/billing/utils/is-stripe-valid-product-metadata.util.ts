@@ -6,7 +6,6 @@ import type Stripe from 'stripe';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
-import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { type BillingProductMetadata } from 'src/engine/core-modules/billing/types/billing-product-metadata.type';
 
 export function isStripeValidProductMetadata(
@@ -19,20 +18,12 @@ export function isStripeValidProductMetadata(
   const isPlanKeyOptional =
     metadata.productKey === BillingProductKey.APPLICATION &&
     !isDefined(metadata.planKey);
-  const hasPriceUsageBased = isValidEnumValue(
-    metadata.priceUsageBased,
-    BillingUsageType,
-  );
   const hasProductKey = isValidEnumValue(
     metadata.productKey,
     BillingProductKey,
   );
 
-  return (
-    (hasBillingPlanKey || isPlanKeyOptional) &&
-    hasPriceUsageBased &&
-    hasProductKey
-  );
+  return (hasBillingPlanKey || isPlanKeyOptional) && hasProductKey;
 }
 
 const isValidEnumValue = <T>(

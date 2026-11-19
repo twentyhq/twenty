@@ -17,6 +17,7 @@ const updateViewInputSchema = z.object({
 
 @DefineTool({
   name: 'update_view',
+  isDestructive: true,
   category: ToolCategory.VIEW,
   accessPolicy: VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY,
   description: 'Update an existing view. You can change the name and icon.',
