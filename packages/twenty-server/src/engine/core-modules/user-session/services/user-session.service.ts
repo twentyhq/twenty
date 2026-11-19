@@ -434,6 +434,14 @@ export class UserSessionService {
     });
   }
 
+  async findActiveSessionByToken(
+    sessionToken: string,
+  ): Promise<UserSessionEntity | null> {
+    const session = await this.findSessionByToken(sessionToken);
+
+    return isDefined(session) && this.isSessionActive(session) ? session : null;
+  }
+
   // A session belongs to the workspace its exchange selected, so other workspaces' sessions stay out;
   // workspace-agnostic ones belong to no list.
   async findActiveSessionsForUserWorkspace({

@@ -68,7 +68,12 @@ describe('buildAgentChatPushNotification', () => {
     ).toBe('Felix Martin');
   });
 
-  it('should hide the message text when the preview is off', () => {
-    expect(build({ isPreviewEnabled: false }).body).toBe('New message');
+  it('should hide the sender, the chat and the message text when the preview is off', () => {
+    expect(build({ isPreviewEnabled: false })).toEqual({
+      title: 'New message',
+      body: '',
+      url: '/inbox/thread-1',
+      tag: 'inbox-thread-1',
+    });
   });
 });

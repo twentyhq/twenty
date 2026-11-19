@@ -35,7 +35,12 @@ export class AgentChatPushNotificationListener {
       ({ properties: { updatedFields, after: thread } }) =>
         updatedFields.includes('lastActivityAt') &&
         isDefined(thread.lastActivityAt)
-          ? [{ thread, lastActivityAt: thread.lastActivityAt }]
+          ? [
+              {
+                threadId: thread.id,
+                lastActivityAt: new Date(thread.lastActivityAt).toISOString(),
+              },
+            ]
           : [],
     );
 
@@ -49,13 +54,12 @@ export class AgentChatPushNotificationListener {
       return;
     }
 
-    for (const { thread, lastActivityAt } of threadActivities) {
+    for (const { threadId, lastActivityAt } of threadActivities) {
       await this.pushNotificationQueueService.add<SendAgentChatPushNotificationsJobData>(
         SendAgentChatPushNotificationsJob.name,
-        { workspaceId: payload.workspaceId, thread },
+        { workspaceId: payload.workspaceId, threadId, lastActivityAt },
         {
-          id: `push-${thread.id}-${new Date(lastActivityAt).getTime()}`,
-          doNotCheckDuplicatesBasedOnPrefix: true,
+          deduplication: { id: `push-${threadId}-${lastActivityAt}` },
           workspaceId: payload.workspaceId,
           isWorkspaceJob: true,
         },
