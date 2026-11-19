@@ -1,13 +1,13 @@
 {
   "name": "@twentyhq/linkedin",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "LinkedIn messages in Twenty: each member connects their LinkedIn account through Unipile and their conversations land on People timelines.",
   "license": "MIT",
   "engines": {
     "node": "^26.5.1",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2",
-    "twenty": ">=2.59.0"
+    "twenty": ">=2.61.0"
   },
   "keywords": [
     "twenty-app"
