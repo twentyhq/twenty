@@ -1,11 +1,13 @@
 import { useLingui } from '@lingui/react/macro';
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import {
+  type BuiltInSectionKey,
+  NavigationMenuItemType,
+} from 'twenty-shared/types';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconPlus } from 'twenty-ui/icon';
 
 import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
-import { type NavigationMenuBuiltInSectionType } from '@/navigation-menu-item/common/types/NavigationMenuBuiltInSectionType';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
@@ -54,13 +56,10 @@ export const NavigationMenuAddSectionButton = ({
   const builtInSectionsToOffer = NAVIGATION_MENU_BUILT_IN_SECTIONS.filter(
     (builtInSection) =>
       (!builtInSection.isAi || (hasAiPermission && isAiChatInboxEnabled)) &&
-      !(
-        builtInSection.type === NavigationMenuItemType.FAVORITES &&
-        containerId === null
-      ) &&
+      !(builtInSection.key === 'favorites' && containerId === null) &&
       !workspaceNavigationMenuItems.some(
         (item) =>
-          item.type === builtInSection.type &&
+          item.builtInSectionKey === builtInSection.key &&
           (item.parentId ?? null) === containerId,
       ),
   );
@@ -74,10 +73,11 @@ export const NavigationMenuAddSectionButton = ({
     closeDropdown(dropdownId);
   };
 
-  const handleBuiltInSectionClick = (
-    type: NavigationMenuBuiltInSectionType,
-  ) => {
-    createItem({ type }, { targetFolderId: containerId });
+  const handleBuiltInSectionClick = (builtInSectionKey: BuiltInSectionKey) => {
+    createItem(
+      { type: NavigationMenuItemType.SECTION, builtInSectionKey },
+      { targetFolderId: containerId },
+    );
     closeDropdown(dropdownId);
   };
 
@@ -114,12 +114,12 @@ export const NavigationMenuAddSectionButton = ({
               />
               {builtInSectionsToOffer.map((builtInSection) => (
                 <NavigationMenuItemSelectableItem
-                  key={builtInSection.type}
+                  key={builtInSection.key}
                   item={{
-                    id: builtInSection.type,
+                    id: builtInSection.key,
                     label: t(builtInSection.label),
                     onClick: () =>
-                      handleBuiltInSectionClick(builtInSection.type),
+                      handleBuiltInSectionClick(builtInSection.key),
                   }}
                 />
               ))}

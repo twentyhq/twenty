@@ -1,29 +1,28 @@
 import { msg } from '@lingui/core/macro';
-import { NavigationMenuItemType } from 'twenty-shared/types';
 
 export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
   {
-    type: NavigationMenuItemType.FAVORITES,
+    key: 'favorites',
     label: msg`Favorites`,
     isAi: false,
   },
   {
-    type: NavigationMenuItemType.AI_CHAT_INBOX,
+    key: 'aiChatInbox',
     label: msg`Triage`,
     isAi: true,
   },
   {
-    type: NavigationMenuItemType.AI_CHAT_FAVORITES,
+    key: 'aiChatFavorites',
     label: msg`Favorite chats`,
     isAi: true,
   },
   {
-    type: NavigationMenuItemType.AI_CHAT_CHANNELS,
+    key: 'aiChatChannels',
     label: msg`Channels`,
     isAi: true,
   },
   {
-    type: NavigationMenuItemType.AI_CHAT_RECENTS,
+    key: 'aiChatRecents',
     label: msg`Recent chats`,
     isAi: true,
   },

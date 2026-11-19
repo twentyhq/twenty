@@ -18,10 +18,9 @@ export const getNavigationMenuContainersInDisplayOrder = ({
     .filter(
       (item) =>
         (item.parentId ?? null) === containerId &&
-        (type === NavigationMenuItemType.SECTION &&
-        isNavigationMenuItemBuiltInSection(item)
-          ? true
-          : item.type === type && isNonEmptyString(item.name)),
+        item.type === type &&
+        (isNonEmptyString(item.name) ||
+          isNavigationMenuItemBuiltInSection(item)),
     )
     .map((item) => ({ ...item, name: item.name ?? '' }))
     .sort((a, b) => a.position - b.position);
