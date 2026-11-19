@@ -147,11 +147,11 @@ export abstract class CommonBaseQueryRunnerService<
 
     await this.validate(args, queryRunnerContext);
 
-    const commonQueryParser = new CommonQueryParser(
+    const commonQueryParser = new CommonQueryParser({
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-    );
+    });
 
     const selectedFieldsResult = commonQueryParser.parseSelectedFields(
       args.selectedFields,
