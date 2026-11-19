@@ -5,7 +5,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse } from 'msw';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import {
   type CompositeFieldSubFieldName,
@@ -236,13 +236,9 @@ const ConditionalAvailabilityEditorStory = ({
   onNodeChange,
 }: ConditionalAvailabilityEditorStoryProps) => {
   const [node, setNode] = useState(initialNode);
-  const objectMetadataItem = useMemo(
-    () =>
-      isDefined(objectNameSingular)
-        ? getMockObjectMetadataItemOrThrow(objectNameSingular)
-        : null,
-    [objectNameSingular],
-  );
+  const objectMetadataItem = isDefined(objectNameSingular)
+    ? getMockObjectMetadataItemOrThrow(objectNameSingular)
+    : null;
   const visibilityStatus = useConditionalAvailabilityVisibilityStatus({
     itemKey: STORY_ITEM_KEY,
     node,

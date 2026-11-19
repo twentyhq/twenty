@@ -113,7 +113,7 @@ export const ConditionalAvailabilityRecordFieldValueInput = ({
           dropdownId={dropdownId}
           values={row.values}
           isMultiple={isMultiple}
-          withMe
+          hasCurrentWorkspaceMemberOption
           onChange={onChange}
         />
       );

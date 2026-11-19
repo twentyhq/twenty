@@ -44,7 +44,7 @@ export const ConditionalAvailabilityValueInput = ({
           dropdownId={dropdownId}
           values={row.values}
           isMultiple={isMultiple}
-          withMe={false}
+          hasCurrentWorkspaceMemberOption={false}
           onChange={handleChange}
         />
       );

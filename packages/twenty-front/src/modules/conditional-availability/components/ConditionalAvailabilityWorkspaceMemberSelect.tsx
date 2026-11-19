@@ -14,7 +14,7 @@ type ConditionalAvailabilityWorkspaceMemberSelectProps = {
   dropdownId: string;
   values: string[];
   isMultiple: boolean;
-  withMe: boolean;
+  hasCurrentWorkspaceMemberOption: boolean;
   onChange: (values: string[]) => void;
 };
 
@@ -22,7 +22,7 @@ export const ConditionalAvailabilityWorkspaceMemberSelect = ({
   dropdownId,
   values,
   isMultiple,
-  withMe,
+  hasCurrentWorkspaceMemberOption,
   onChange,
 }: ConditionalAvailabilityWorkspaceMemberSelectProps) => {
   const { t } = useLingui();
@@ -87,7 +87,9 @@ export const ConditionalAvailabilityWorkspaceMemberSelect = ({
   return (
     <ConditionalAvailabilityOptionsSelect
       dropdownId={dropdownId}
-      options={withMe ? [meOption, ...options] : options}
+      options={
+        hasCurrentWorkspaceMemberOption ? [meOption, ...options] : options
+      }
       values={values}
       getUnknownValueLabel={getUnknownValueLabel}
       isMultiple={isMultiple}
