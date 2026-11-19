@@ -1,12 +1,29 @@
 import { isDefined } from 'twenty-shared/utils';
 
-const WEB_PUSH_SERVICE_HOSTNAMES = [
-  'fcm.googleapis.com',
-  'updates.push.services.mozilla.com',
-  'web.push.apple.com',
-];
+type WebPushService = {
+  isHostnameAllowed: (hostname: string) => boolean;
+  pathnamePrefixes: string[];
+};
 
-const WEB_PUSH_SERVICE_HOSTNAME_SUFFIXES = ['.notify.windows.com'];
+const WEB_PUSH_SERVICES: WebPushService[] = [
+  {
+    isHostnameAllowed: (hostname) => hostname === 'fcm.googleapis.com',
+    pathnamePrefixes: ['/fcm/send/', '/wp/'],
+  },
+  {
+    isHostnameAllowed: (hostname) =>
+      hostname === 'updates.push.services.mozilla.com',
+    pathnamePrefixes: ['/wpush/'],
+  },
+  {
+    isHostnameAllowed: (hostname) => hostname === 'web.push.apple.com',
+    pathnamePrefixes: ['/'],
+  },
+  {
+    isHostnameAllowed: (hostname) => hostname.endsWith('.notify.windows.com'),
+    pathnamePrefixes: ['/w/'],
+  },
+];
 
 export const isWebPushEndpointAllowed = (endpoint: string): boolean => {
   const endpointUrl = URL.parse(endpoint);
@@ -15,14 +32,24 @@ export const isWebPushEndpointAllowed = (endpoint: string): boolean => {
     return false;
   }
 
-  const { protocol, hostname, port } = endpointUrl;
+  const { protocol, username, password, port, hash, hostname, pathname } =
+    endpointUrl;
 
-  return (
-    protocol === 'https:' &&
-    port === '' &&
-    (WEB_PUSH_SERVICE_HOSTNAMES.includes(hostname) ||
-      WEB_PUSH_SERVICE_HOSTNAME_SUFFIXES.some((hostnameSuffix) =>
-        hostname.endsWith(hostnameSuffix),
-      ))
+  if (
+    protocol !== 'https:' ||
+    username !== '' ||
+    password !== '' ||
+    port !== '' ||
+    hash !== ''
+  ) {
+    return false;
+  }
+
+  return WEB_PUSH_SERVICES.some(
+    ({ isHostnameAllowed, pathnamePrefixes }) =>
+      isHostnameAllowed(hostname) &&
+      pathnamePrefixes.some((pathnamePrefix) =>
+        pathname.startsWith(pathnamePrefix),
+      ),
   );
 };

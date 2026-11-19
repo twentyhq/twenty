@@ -12,9 +12,10 @@ export const deriveWebPushVapidKeyPair = ({
   const { primary } = resolveEncryptionKeysOrThrow({
     environmentConfigDriver: twentyConfigService,
   });
+  const serverOrigin = new URL(twentyConfigService.get('SERVER_URL')).origin;
   const privateKey = deriveInstanceHmacKey({
     rawKey: primary,
-    purpose: 'web-push-vapid',
+    purpose: `web-push-vapid:${serverOrigin}`,
   });
   const ecdh = createECDH('prime256v1');
 

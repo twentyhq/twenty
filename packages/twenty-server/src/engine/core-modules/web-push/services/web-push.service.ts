@@ -73,7 +73,7 @@ export class WebPushService {
     }
 
     const session = isNonEmptyString(sessionToken)
-      ? await this.userSessionService.findSessionByToken(sessionToken)
+      ? await this.userSessionService.findActiveSessionByToken(sessionToken)
       : null;
 
     if (!isDefined(session) || session.userWorkspaceId !== userWorkspaceId) {
