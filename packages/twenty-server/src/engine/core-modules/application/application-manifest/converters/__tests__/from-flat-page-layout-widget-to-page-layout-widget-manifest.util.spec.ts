@@ -18,13 +18,12 @@ const WIDGET_UID = '55555555-5555-4555-8555-555555555555';
 const NOW = '2026-09-08T10:00:00.000Z';
 
 const WIDGET_MANIFEST: Required<
-  Omit<PageLayoutWidgetManifest, 'heightBehavior'>
+  Omit<PageLayoutWidgetManifest, 'heightBehavior' | 'conditionalDisplay'>
 > = {
   universalIdentifier: WIDGET_UID,
   title: 'Fields',
   type: WidgetType.FIELDS,
   objectUniversalIdentifier: OBJECT_UID,
-  conditionalDisplay: { device: 'DESKTOP' },
   position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 2 },
   configuration: {
     configurationType: 'FIELDS',
@@ -68,6 +67,50 @@ describe('fromFlatPageLayoutWidgetToPageLayoutWidgetManifest', () => {
       }),
     ).toEqual(WIDGET_MANIFEST);
   });
+
+  it('should store a json-logic rule as a tree and leave the old fields empty', () => {
+    expect(
+      forward({
+        ...MINIMAL_WIDGET_MANIFEST,
+        conditionalDisplay: {
+          and: [
+            { '===': [{ var: 'device' }, 'MOBILE'] },
+            { '!=': [{ var: 'selectedRecords.0.status' }, 'DRAFT'] },
+          ],
+        },
+      }),
+    ).toMatchObject({
+      conditionalAvailability: {
+        type: 'GROUP',
+        logicalOperator: 'AND',
+        children: [
+          {
+            type: 'COMPARISON',
+            operator: 'EQUAL',
+            left: { type: 'PATH', path: 'device' },
+            right: { type: 'LITERAL', value: 'MOBILE' },
+          },
+          { type: 'CALL', functionName: 'noneEquals' },
+        ],
+      },
+      conditionalAvailabilityExpression: null,
+      conditionalDisplay: null,
+    });
+  });
+
+  it.each([
+    ['a shape it cannot convert', { device: 'DESKTOP' }],
+    ['a variable a widget cannot read', { '===': [{ var: 'role' }, 'ADMIN'] }],
+  ])(
+    'should refuse a manifest whose json-logic rule has %s',
+    (_description, conditionalDisplay) => {
+      expect(() =>
+        forward({ ...MINIMAL_WIDGET_MANIFEST, conditionalDisplay }),
+      ).toThrow(
+        'Page layout widget "Notes" has an invalid visibility rule: The json-logic rule has a shape that cannot be converted',
+      );
+    },
+  );
 
   it('should write the position the forward converter derived from the tab for a minimal manifest', () => {
     expect(

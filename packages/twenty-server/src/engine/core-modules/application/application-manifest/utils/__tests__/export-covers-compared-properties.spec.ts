@@ -199,7 +199,7 @@ const PAGE_LAYOUT_WIDGET_MANIFEST: NormalizedPageLayoutWidgetManifest = {
   title: 'Fields',
   type: WidgetType.FIELDS,
   objectUniversalIdentifier: OBJECT_UID,
-  conditionalDisplay: { device: 'DESKTOP' },
+  conditionalDisplay: { and: [{ '===': [{ var: 'device' }, 'DESKTOP'] }] },
   position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 0 },
   configuration: {
     configurationType: 'FIELDS',
@@ -729,6 +729,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
         'no manifest slot; a widget carrying one is reported as unsupported',
       conditionalAvailability:
         'no manifest slot; a widget carrying one is reported as unsupported',
+      conditionalDisplay:
+        'legacy json-logic; emitted only by a widget whose rule is not a tree yet',
     },
   },
   {

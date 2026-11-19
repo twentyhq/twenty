@@ -1,5 +1,10 @@
 import { type NormalizedPageLayoutWidgetManifest } from 'twenty-shared/application';
 
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
+import { fromLegacyPageLayoutWidgetRuleToConditionalAvailability } from 'src/engine/metadata-modules/page-layout-widget/utils/from-legacy-page-layout-widget-rule-to-conditional-availability.util';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 
 export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
@@ -13,6 +18,19 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
   applicationUniversalIdentifier: string;
   now: string;
 }): UniversalFlatPageLayoutWidget => {
+  const ruleConversion =
+    fromLegacyPageLayoutWidgetRuleToConditionalAvailability({
+      conditionalAvailabilityExpression: null,
+      conditionalDisplay: pageLayoutWidgetManifest.conditionalDisplay,
+    });
+
+  if (!ruleConversion.isConvertible) {
+    throw new ApplicationException(
+      `Page layout widget "${pageLayoutWidgetManifest.title}" has an invalid visibility rule: ${ruleConversion.message}`,
+      ApplicationExceptionCode.INVALID_INPUT,
+    );
+  }
+
   return {
     universalIdentifier: pageLayoutWidgetManifest.universalIdentifier,
     applicationUniversalIdentifier,
@@ -23,7 +41,8 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
     type: pageLayoutWidgetManifest.type,
     objectMetadataUniversalIdentifier:
       pageLayoutWidgetManifest.objectUniversalIdentifier ?? null,
-    conditionalDisplay: pageLayoutWidgetManifest.conditionalDisplay ?? null,
+    conditionalAvailability: ruleConversion.conditionalAvailability,
+    conditionalDisplay: null,
     position: pageLayoutWidgetManifest.position,
     universalConfiguration:
       pageLayoutWidgetManifest.configuration as UniversalFlatPageLayoutWidget['universalConfiguration'],
@@ -31,7 +50,6 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
     updatedAt: now,
     deletedAt: null,
     conditionalAvailabilityExpression: null,
-    conditionalAvailability: null,
     universalOverrides: null,
   };
 };
