@@ -22,10 +22,13 @@ export const computeRecipientsWhoLostAccess = ({
     return { excludedUserWorkspaceIds: recipientUserWorkspaceIdsAfter };
   }
 
+  const recipientUserWorkspaceIdsAfterSet = new Set(
+    recipientUserWorkspaceIdsAfter,
+  );
   const recipientUserWorkspaceIdsWhoLostAccess =
     recipientUserWorkspaceIdsBefore.filter(
       (userWorkspaceId) =>
-        !recipientUserWorkspaceIdsAfter.includes(userWorkspaceId),
+        !recipientUserWorkspaceIdsAfterSet.has(userWorkspaceId),
     );
 
   return recipientUserWorkspaceIdsWhoLostAccess.length > 0
