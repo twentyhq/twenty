@@ -74,15 +74,15 @@ const applyFilterEntry = (
       );
       break;
     default:
-      context.fieldParser.parse(
-        whereExpression,
-        context.outerQueryBuilder,
-        context.objectNameSingular,
-        filterKey,
+      context.fieldParser.parse({
+        queryBuilder: whereExpression,
+        outerQueryBuilder: context.outerQueryBuilder,
+        objectNameSingular: context.objectNameSingular,
+        key: filterKey,
         filterValue,
         isFirst,
-        context.useDirectTableReference,
-      );
+        useDirectTableReference: context.useDirectTableReference,
+      });
       break;
   }
 };
