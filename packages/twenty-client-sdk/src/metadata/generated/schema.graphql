@@ -1816,6 +1816,7 @@ input CreateMessageSuppressionInput {
 input CreateNavigationMenuItemInput {
   agentChatChannelId: UUID
   agentId: UUID
+  builtInSectionKey: String
   color: String
   folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
@@ -3865,6 +3866,7 @@ type NavigationMenuItem {
   agentChatChannelId: UUID
   agentId: UUID
   applicationId: UUID
+  builtInSectionKey: String
   color: String
   createdAt: DateTime!
   folderId: UUID @deprecated(reason: "Use parentId instead.")

@@ -4019,6 +4019,9 @@ export default {
             "agentId": [
                 566
             ],
+            "builtInSectionKey": [
+                4
+            ],
             "color": [
                 4
             ],
@@ -10376,6 +10379,9 @@ export default {
             ],
             "applicationId": [
                 566
+            ],
+            "builtInSectionKey": [
+                4
             ],
             "color": [
                 4

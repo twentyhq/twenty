@@ -1936,6 +1936,7 @@ export type CreateMessageSuppressionInput = {
 export type CreateNavigationMenuItemInput = {
   agentChatChannelId?: InputMaybe<Scalars['UUID']['input']>;
   agentId?: InputMaybe<Scalars['UUID']['input']>;
+  builtInSectionKey?: InputMaybe<Scalars['String']['input']>;
   color?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['UUID']['input']>;
@@ -5621,6 +5622,7 @@ export type NavigationMenuItem = {
   agentChatChannelId?: Maybe<Scalars['UUID']['output']>;
   agentId?: Maybe<Scalars['UUID']['output']>;
   applicationId?: Maybe<Scalars['UUID']['output']>;
+  builtInSectionKey?: Maybe<Scalars['String']['output']>;
   color?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   /** @deprecated Use parentId instead. */
