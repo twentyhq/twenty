@@ -2,7 +2,7 @@ import { type ConditionalAvailabilityVisibilityStatus } from '@/conditional-avai
 import { t } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-export const getConditionalAvailabilityValueLabel = ({
+export const getConditionalAvailabilityVisibilityStatusLabel = ({
   visibilityStatus,
 }: {
   visibilityStatus: ConditionalAvailabilityVisibilityStatus;
