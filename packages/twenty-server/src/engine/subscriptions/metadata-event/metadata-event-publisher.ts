@@ -92,8 +92,6 @@ const getViewRecipientUserWorkspaceIds = (
     : [];
 };
 
-// Unowned private workflows stay workspace-wide on purpose, as the read path opens them once the creator leaves;
-// versions whose parent is gone fail closed, since a parent is deleted before its versions are published
 const resolveRecipientUserWorkspaceIds = ({
   metadataName,
   record,
