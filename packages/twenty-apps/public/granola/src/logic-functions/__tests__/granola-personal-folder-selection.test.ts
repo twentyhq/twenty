@@ -51,6 +51,23 @@ describe('granolaPersonalFolderSelectionHandler', () => {
     expect(kv.set).not.toHaveBeenCalled();
   });
 
+  it('rejects an account without an active Twenty workspace membership', async () => {
+    vi.mocked(listConnections).mockResolvedValue([
+      { ...OWN_CONNECTION, workspaceMemberId: null },
+    ]);
+    const fetchProvider = vi.fn<typeof fetch>();
+    vi.stubGlobal('fetch', fetchProvider);
+
+    await expect(
+      granolaPersonalFolderSelectionHandler(
+        { body: { connectionId: OWN_CONNECTION.id, folderIds: [] } },
+        context,
+      ),
+    ).resolves.toMatchObject({ status: 404 });
+    expect(fetchProvider).not.toHaveBeenCalled();
+    expect(kv.set).not.toHaveBeenCalled();
+  });
+
   it('marks a rejected personal key for reconnect before saving', async () => {
     vi.mocked(listConnections).mockResolvedValue([OWN_CONNECTION]);
     vi.stubGlobal(

@@ -1,4 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { kv, reportConnectionAuthFailure } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
@@ -7,7 +6,7 @@ import { type GranolaPersonalFolderSelection } from 'src/logic-functions/types/g
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { getGranolaPersonalFolderSelectionKey } from 'src/logic-functions/utils/get-granola-personal-folder-selection-key.util';
 import { listAllGranolaFoldersOrThrow } from 'src/logic-functions/utils/list-all-granola-folders-or-throw.util';
-import { listGranolaPersonalConnections } from 'src/logic-functions/utils/list-granola-personal-connections.util';
+import { findGranolaPersonalConnection } from 'src/logic-functions/utils/find-granola-personal-connection.util';
 
 export const loadGranolaPersonalFolderSettings = async ({
   connectionId,
@@ -16,14 +15,12 @@ export const loadGranolaPersonalFolderSettings = async ({
   connectionId: string;
   userWorkspaceId: string;
 }) => {
-  const connections = await listGranolaPersonalConnections(userWorkspaceId);
-  const connection = connections.find(({ id }) => id === connectionId);
+  const connection = await findGranolaPersonalConnection({
+    connectionId,
+    userWorkspaceId,
+  });
 
-  if (
-    !isDefined(connection) ||
-    isDefined(connection.authFailedAt) ||
-    !isNonEmptyString(connection.accessToken)
-  ) {
+  if (!isDefined(connection)) {
     return undefined;
   }
 
