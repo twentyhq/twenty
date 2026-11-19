@@ -1,5 +1,5 @@
 import { buildConditionalAvailabilityNode } from '@/conditional-availability/utils/buildConditionalAvailabilityNode';
-import { readConditionalAvailabilityNode } from '@/conditional-availability/utils/readConditionalAvailabilityNode';
+import { getConditionalAvailabilityEditorStateFromNode } from '@/conditional-availability/utils/getConditionalAvailabilityEditorStateFromNode';
 import {
   type ConditionalAvailabilityLogicalOperator,
   type ConditionalAvailabilityNode,
@@ -37,13 +37,16 @@ const memberIsNot = (memberId: string) =>
 const MOBILE = comparison('EQUAL', 'device', 'MOBILE');
 
 const read = (node: ConditionalAvailabilityNode | null) =>
-  readConditionalAvailabilityNode({ node, metadataName: 'pageLayoutWidget' });
+  getConditionalAvailabilityEditorStateFromNode({
+    node,
+    metadataName: 'pageLayoutWidget',
+  });
 
 const readTree = (node: ConditionalAvailabilityNode) => {
   const result = read(node);
 
-  if (result.status !== 'rows') {
-    throw new Error(`The rule was read as ${result.status}`);
+  if (result.mode !== 'customRule') {
+    throw new Error(`The rule was read as ${result.mode}`);
   }
 
   expect(buildConditionalAvailabilityNode({ tree: result.tree })).toEqual(node);
@@ -51,9 +54,9 @@ const readTree = (node: ConditionalAvailabilityNode) => {
   return result.tree;
 };
 
-describe('readConditionalAvailabilityNode', () => {
-  it('should read no rule as empty', () => {
-    expect(read(null)).toEqual({ status: 'empty' });
+describe('getConditionalAvailabilityEditorStateFromNode', () => {
+  it('should read no rule as everyone', () => {
+    expect(read(null)).toEqual({ mode: 'everyone' });
   });
 
   it('should read a chain of roles as one row and a device as another', () => {
@@ -150,6 +153,6 @@ describe('readConditionalAvailabilityNode', () => {
       node: comparison('EQUAL', 'featureFlags.IS_AI_ENABLED', 'true'),
     },
   ])('should not read $title as rows', ({ node }) => {
-    expect(read(node)).toEqual({ status: 'unsupported' });
+    expect(read(node)).toEqual({ mode: 'unsupportedRule' });
   });
 });

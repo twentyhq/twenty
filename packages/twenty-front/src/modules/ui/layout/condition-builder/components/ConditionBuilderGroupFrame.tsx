@@ -2,12 +2,9 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
+const StyledContainer = styled.div`
   align-items: start;
-  background-color: ${({ isGrayBackground }) =>
-    isGrayBackground
-      ? themeCssVariables.background.transparent.lighter
-      : 'transparent'};
+  background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
@@ -18,13 +15,11 @@ const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`
 `;
 
 type ConditionBuilderGroupFrameProps = {
-  isNested: boolean;
   children: ReactNode;
 };
 
 export const ConditionBuilderGroupFrame = ({
-  isNested,
   children,
 }: ConditionBuilderGroupFrameProps) => (
-  <StyledContainer isGrayBackground={isNested}>{children}</StyledContainer>
+  <StyledContainer>{children}</StyledContainer>
 );

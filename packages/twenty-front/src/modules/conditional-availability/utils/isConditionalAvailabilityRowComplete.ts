@@ -1,5 +1,4 @@
 import { CONDITIONAL_AVAILABILITY_DEVICES } from '@/conditional-availability/constants/ConditionalAvailabilityDevices';
-import { CONDITIONAL_AVAILABILITY_VALUE_COUNT_RANGE_BY_ARITY } from '@/conditional-availability/constants/ConditionalAvailabilityValueCountRangeByArity';
 import { type ConditionalAvailabilityRow } from '@/conditional-availability/types/ConditionalAvailabilityRow';
 import { getConditionalAvailabilityValueArity } from '@/conditional-availability/utils/getConditionalAvailabilityValueArity';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -18,19 +17,26 @@ const isValueValid = ({
   return isNonEmptyString(value);
 };
 
+const hasExpectedValueCount = ({
+  row,
+}: {
+  row: ConditionalAvailabilityRow;
+}): boolean => {
+  switch (getConditionalAvailabilityValueArity({ row })) {
+    case 'single':
+      return row.values.length === 1;
+    case 'list':
+      return row.values.length >= 1;
+  }
+};
+
 export const isConditionalAvailabilityRowComplete = ({
   row,
 }: {
   row: ConditionalAvailabilityRow;
 }): boolean => {
-  const { min, max } =
-    CONDITIONAL_AVAILABILITY_VALUE_COUNT_RANGE_BY_ARITY[
-      getConditionalAvailabilityValueArity({ row })
-    ];
-
   return (
-    row.values.length >= min &&
-    row.values.length <= max &&
+    hasExpectedValueCount({ row }) &&
     new Set(row.values).size === row.values.length &&
     row.values.every((value) => isValueValid({ row, value }))
   );

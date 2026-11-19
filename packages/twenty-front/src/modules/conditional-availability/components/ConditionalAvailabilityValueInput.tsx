@@ -1,7 +1,7 @@
 import { ConditionalAvailabilityDeviceSelect } from '@/conditional-availability/components/ConditionalAvailabilityDeviceSelect';
 import { ConditionalAvailabilityRoleSelect } from '@/conditional-availability/components/ConditionalAvailabilityRoleSelect';
 import { ConditionalAvailabilityWorkspaceMemberSelect } from '@/conditional-availability/components/ConditionalAvailabilityWorkspaceMemberSelect';
-import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/hooks/useConditionalAvailabilityEditorContext';
+import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/contexts/ConditionalAvailabilityEditorContext';
 import { type ConditionalAvailabilityRow } from '@/conditional-availability/types/ConditionalAvailabilityRow';
 import { getConditionalAvailabilityValueArity } from '@/conditional-availability/utils/getConditionalAvailabilityValueArity';
 import { assertUnreachable } from 'twenty-shared/utils';

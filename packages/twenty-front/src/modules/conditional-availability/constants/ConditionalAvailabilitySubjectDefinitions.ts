@@ -1,5 +1,4 @@
-import { type ConditionalAvailabilitySubject } from '@/conditional-availability/types/ConditionalAvailabilitySubject';
-import { type ConditionalAvailabilitySubjectSection } from '@/conditional-availability/types/ConditionalAvailabilitySubjectSection';
+import { type ConditionalAvailabilityPathSubject } from '@/conditional-availability/types/ConditionalAvailabilityPathSubject';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import {
@@ -11,24 +10,20 @@ import {
 
 export const CONDITIONAL_AVAILABILITY_SUBJECT_DEFINITIONS = {
   role: {
-    section: 'currentUser',
     Icon: IconUserCircle,
     label: msg`Role`,
   },
   workspaceMember: {
-    section: 'currentUser',
     Icon: IconUser,
     label: msg`Workspace member`,
   },
   device: {
-    section: 'device',
     Icon: IconPhone,
     label: msg`Device`,
   },
 } as const satisfies Record<
-  ConditionalAvailabilitySubject,
+  ConditionalAvailabilityPathSubject,
   {
-    section: ConditionalAvailabilitySubjectSection;
     Icon: IconComponent;
     label: MessageDescriptor;
   }

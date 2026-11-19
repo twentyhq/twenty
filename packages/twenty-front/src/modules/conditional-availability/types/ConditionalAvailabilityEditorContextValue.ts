@@ -1,13 +1,13 @@
 import { type ConditionalAvailabilityOperator } from '@/conditional-availability/types/ConditionalAvailabilityOperator';
+import { type ConditionalAvailabilityPathSubject } from '@/conditional-availability/types/ConditionalAvailabilityPathSubject';
 import { type ConditionalAvailabilityRowSubject } from '@/conditional-availability/types/ConditionalAvailabilityRowSubject';
-import { type ConditionalAvailabilitySubject } from '@/conditional-availability/types/ConditionalAvailabilitySubject';
 import { type ConditionalAvailabilityLogicalOperator } from 'twenty-shared/types';
 import { type GetConditionalAvailabilityRolesQuery } from '~/generated-metadata/graphql';
 
 export type ConditionalAvailabilityEditorContextValue = {
   itemKey: string;
   isReadOnly: boolean;
-  availableSubjects: ConditionalAvailabilitySubject[];
+  availableSubjects: ConditionalAvailabilityPathSubject[];
   hasRolesPermission: boolean;
   roles: GetConditionalAvailabilityRolesQuery['getRoles'];
   isLoadingRoles: boolean;

@@ -1,5 +1,9 @@
 import { type ConditionalAvailabilityEditorContextValue } from '@/conditional-availability/types/ConditionalAvailabilityEditorContextValue';
-import { createContext } from 'react';
+import { createRequiredContext } from '~/utils/createRequiredContext';
 
-export const ConditionalAvailabilityEditorContext =
-  createContext<ConditionalAvailabilityEditorContextValue | null>(null);
+export const [
+  ConditionalAvailabilityEditorProvider,
+  useConditionalAvailabilityEditorContext,
+] = createRequiredContext<ConditionalAvailabilityEditorContextValue>(
+  'ConditionalAvailabilityEditor',
+);

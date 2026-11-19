@@ -1,10 +1,10 @@
-import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/hooks/useConditionalAvailabilityEditorContext';
+import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/contexts/ConditionalAvailabilityEditorContext';
 import { type ConditionalAvailabilityOperator } from '@/conditional-availability/types/ConditionalAvailabilityOperator';
 import { type ConditionalAvailabilityRow } from '@/conditional-availability/types/ConditionalAvailabilityRow';
 import { getConditionalAvailabilityOperatorLabel } from '@/conditional-availability/utils/getConditionalAvailabilityOperatorLabel';
 import { getConditionalAvailabilityRowOperators } from '@/conditional-availability/utils/getConditionalAvailabilityRowOperators';
+import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
 import { Select } from '@/ui/input/components/Select';
-import { CONDITION_BUILDER_DROPDOWN_SIDE_OFFSET } from '@/ui/layout/condition-builder/constants/ConditionBuilderDropdownSideOffset';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 type ConditionalAvailabilityOperatorSelectProps = {
@@ -37,7 +37,7 @@ export const ConditionalAvailabilityOperatorSelect = ({
       value={row.operator}
       onChange={handleOperatorChange}
       disabled={isReadOnly}
-      dropdownSideOffset={CONDITION_BUILDER_DROPDOWN_SIDE_OFFSET}
+      dropdownSideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}
       dropdownWidth={GenericDropdownContentWidth.Large}
       fullWidth
     />

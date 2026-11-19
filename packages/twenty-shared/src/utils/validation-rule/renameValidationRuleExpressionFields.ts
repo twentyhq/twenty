@@ -1,6 +1,6 @@
 import { type ValidationRuleBindings } from '@/types/ValidationRuleBindings';
 import { renameValidationRulePath } from '@/utils/validation-rule/renameValidationRulePath';
-import { tokenizeExpression } from '@/utils/expression/tokenizeExpression';
+import { tokenizeValidationRuleExpression } from '@/utils/validation-rule/tokenizeValidationRuleExpression';
 
 export const renameValidationRuleExpressionFields = ({
   expression,
@@ -11,7 +11,7 @@ export const renameValidationRuleExpressionFields = ({
   bindings: ValidationRuleBindings;
   fieldNameByUniversalIdentifier: Map<string, string>;
 }): string =>
-  tokenizeExpression(expression)
+  tokenizeValidationRuleExpression(expression)
     .map((token) =>
       token.type === 'path'
         ? renameValidationRulePath({
