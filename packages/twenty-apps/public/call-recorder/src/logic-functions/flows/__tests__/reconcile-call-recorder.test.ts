@@ -454,7 +454,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     expect(recallBotCreateCalls()).toHaveLength(1);
   });
 
-  it('updates an existing in-progress recording', async () => {
+  it('updates an existing in-progress recording without updating its dispatched bot', async () => {
     const client = buildFakeCoreApiClient({
       calendarEvents: [
         buildCalendarEvent({
@@ -496,6 +496,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         recordingRequestStatus: 'REQUESTED',
       }),
     ]);
+    expect(recallBotUpdateCalls()).toEqual([]);
   });
 
   it('updates an existing policy-managed scheduled call recording', async () => {
@@ -748,7 +749,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     ]);
   });
 
-  it('does not reset the status of a recording whose bot is already live', async () => {
+  it('does not reset the status or update the bot of a recording whose bot is already live', async () => {
     const client = buildFakeCoreApiClient({
       calendarEvents: [
         buildCalendarEvent({
@@ -788,6 +789,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         status: 'JOINING',
       }),
     ]);
+    expect(recallBotUpdateCalls()).toEqual([]);
   });
 
   it('resets a NOT_RECORDED recording to SCHEDULED and clears its reason for an upcoming meeting', async () => {
