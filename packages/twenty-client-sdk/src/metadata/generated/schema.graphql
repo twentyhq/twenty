@@ -1816,6 +1816,7 @@ input CreateMessageSuppressionInput {
 input CreateNavigationMenuItemInput {
   agentChatChannelId: UUID
   agentId: UUID
+  builtInSectionKey: String
   color: String
   folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
@@ -3865,6 +3866,7 @@ type NavigationMenuItem {
   agentChatChannelId: UUID
   agentId: UUID
   applicationId: UUID
+  builtInSectionKey: String
   color: String
   createdAt: DateTime!
   folderId: UUID @deprecated(reason: "Use parentId instead.")
@@ -4344,6 +4346,14 @@ type PublicApplicationRegistration {
   websiteUrl: String
 }
 
+type PublicCalendarChannel {
+  connectedAccount: ConnectedAccountPublicDTO
+  connectedAccountId: UUID!
+  handle: String!
+  id: UUID!
+  visibility: CalendarChannelVisibility!
+}
+
 type PublicConnectionParametersOutput {
   connectionSecurity: EmailConnectionSecurity
   host: String!
@@ -4425,6 +4435,7 @@ type Query {
   billingPartnerCode: BillingPartnerCode!
   billingPlans: [BillingPlan!]!
   billingPortalSession(forPaymentMethodUpdate: Boolean, returnUrlPath: String): BillingSession!
+  calendarChannels: [PublicCalendarChannel!]!
   callRecordingIdForCalendarEvent(calendarEventId: UUID!): UUID
   chatMessages(agentUniversalIdentifier: UUID, threadId: UUID, threadKey: String): [AgentMessage!]!
   chatStreamCatchupChunks(agentUniversalIdentifier: UUID, threadId: UUID, threadKey: String): ChatStreamCatchupChunks!
