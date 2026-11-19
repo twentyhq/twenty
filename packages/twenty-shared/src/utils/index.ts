@@ -43,6 +43,7 @@ export { conditionalAvailabilityStrictParser } from './conditional-availability/
 export { createArrayPropCheck } from './conditional-availability/createArrayPropCheck';
 export { createArrayPropValueCheck } from './conditional-availability/createArrayPropValueCheck';
 export { evaluateConditionalAvailabilityExpression } from './conditional-availability/evaluateConditionalAvailabilityExpression';
+export { evaluateConditionalAvailabilityNode } from './conditional-availability/evaluateConditionalAvailabilityNode';
 export { listConditionalAvailabilityNodes } from './conditional-availability/listConditionalAvailabilityNodes';
 export { parseConditionalAvailabilityExpression } from './conditional-availability/parseConditionalAvailabilityExpression';
 export { printConditionalAvailabilityNode } from './conditional-availability/printConditionalAvailabilityNode';
