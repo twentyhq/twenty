@@ -23,7 +23,7 @@ const THREAD_IMAGE_FIELD_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.agentChatThread.fields.imageFile.universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.61.0', 1795107171946)
+@RegisteredWorkspaceCommand('2.61.0', 1795112566688)
 @Command({
   name: 'upgrade:2-61:add-agent-chat-thread-image-fields',
   description: doNotTranslate(
