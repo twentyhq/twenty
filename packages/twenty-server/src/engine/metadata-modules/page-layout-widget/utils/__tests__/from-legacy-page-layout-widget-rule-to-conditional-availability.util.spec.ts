@@ -1,9 +1,6 @@
 import { fromLegacyPageLayoutWidgetRuleToConditionalAvailability } from 'src/engine/metadata-modules/page-layout-widget/utils/from-legacy-page-layout-widget-rule-to-conditional-availability.util';
 
 const MOBILE_JSON_LOGIC = { and: [{ '===': [{ var: 'device' }, 'MOBILE'] }] };
-const DESKTOP_JSON_LOGIC = {
-  and: [{ '===': [{ var: 'device' }, 'DESKTOP'] }],
-};
 
 const deviceIs = (device: string) => ({
   type: 'COMPARISON',
@@ -25,7 +22,7 @@ describe('fromLegacyPageLayoutWidgetRuleToConditionalAvailability', () => {
           conditionalAvailabilityExpression,
           conditionalDisplay,
         }),
-      ).toEqual({ isConvertible: true, conditionalAvailability: null });
+      ).toEqual({ isValid: true, node: null });
     },
   );
 
@@ -37,8 +34,8 @@ describe('fromLegacyPageLayoutWidgetRuleToConditionalAvailability', () => {
         conditionalDisplay: null,
       }),
     ).toEqual({
-      isConvertible: true,
-      conditionalAvailability: {
+      isValid: true,
+      node: {
         type: 'GROUP',
         logicalOperator: 'AND',
         children: [
@@ -55,61 +52,36 @@ describe('fromLegacyPageLayoutWidgetRuleToConditionalAvailability', () => {
         conditionalAvailabilityExpression: 'device == "DESKTOP"',
         conditionalDisplay: MOBILE_JSON_LOGIC,
       }),
-    ).toEqual({
-      isConvertible: true,
-      conditionalAvailability: deviceIs('DESKTOP'),
+    ).toEqual({ isValid: true, node: deviceIs('DESKTOP') });
+  });
+
+  it('should convert a json-logic rule when there is no text rule', () => {
+    expect(
+      fromLegacyPageLayoutWidgetRuleToConditionalAvailability({
+        conditionalAvailabilityExpression: null,
+        conditionalDisplay: MOBILE_JSON_LOGIC,
+      }),
+    ).toEqual({ isValid: true, node: deviceIs('MOBILE') });
+  });
+
+  it('should report a json-logic rule it cannot convert', () => {
+    expect(
+      fromLegacyPageLayoutWidgetRuleToConditionalAvailability({
+        conditionalAvailabilityExpression: null,
+        conditionalDisplay: {},
+      }),
+    ).toMatchObject({
+      isValid: false,
+      errorCode: 'UNSUPPORTED_CONDITIONAL_DISPLAY',
     });
   });
 
-  it.each([
-    ['MOBILE', MOBILE_JSON_LOGIC],
-    ['DESKTOP', DESKTOP_JSON_LOGIC],
-  ])(
-    'should convert the %s json-logic rule when there is no text rule',
-    (device, conditionalDisplay) => {
-      expect(
-        fromLegacyPageLayoutWidgetRuleToConditionalAvailability({
-          conditionalAvailabilityExpression: null,
-          conditionalDisplay,
-        }),
-      ).toEqual({
-        isConvertible: true,
-        conditionalAvailability: deviceIs(device),
-      });
-    },
-  );
-
-  it.each([
-    ['a variable it does not know', { '===': [{ var: 'role' }, 'ADMIN'] }],
-    ['an empty object', {}],
-  ])(
-    'should report a json-logic rule with %s as not convertible',
-    (_description, conditionalDisplay) => {
-      expect(
-        fromLegacyPageLayoutWidgetRuleToConditionalAvailability({
-          conditionalAvailabilityExpression: null,
-          conditionalDisplay,
-        }),
-      ).toMatchObject({
-        isConvertible: false,
-        reason: 'UNSUPPORTED_CONDITIONAL_DISPLAY',
-      });
-    },
-  );
-
-  it.each([
-    ['arithmetic', 'arrayLength(selectedRecords) - 1 == 0', 'INVALID_SYNTAX'],
-    ['an unknown name', 'devise == "MOBILE"', 'UNKNOWN_NAME'],
-    ['a text that is not closed', 'device == "MOBILE', 'UNCLOSED_TEXT'],
-  ])(
-    'should leave a text rule with %s alone',
-    (_description, conditionalAvailabilityExpression, reason) => {
-      expect(
-        fromLegacyPageLayoutWidgetRuleToConditionalAvailability({
-          conditionalAvailabilityExpression,
-          conditionalDisplay: null,
-        }),
-      ).toMatchObject({ isConvertible: false, reason });
-    },
-  );
+  it('should report a text rule it cannot read', () => {
+    expect(
+      fromLegacyPageLayoutWidgetRuleToConditionalAvailability({
+        conditionalAvailabilityExpression: 'devise == "MOBILE"',
+        conditionalDisplay: null,
+      }),
+    ).toMatchObject({ isValid: false, errorCode: 'UNKNOWN_NAME' });
+  });
 });

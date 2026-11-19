@@ -1,4 +1,4 @@
-import { CONDITION_BUILDER_DROPDOWN_SIDE_OFFSET } from '@/ui/layout/condition-builder/constants/ConditionBuilderDropdownSideOffset';
+import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { IconButton } from 'twenty-ui/components/input';
@@ -9,7 +9,6 @@ type ConditionBuilderRowMenuProps = {
   dropdownId: string;
   ariaLabel: string;
   deleteLabel: string;
-  align: 'start' | 'end';
   onDelete: () => void;
 };
 
@@ -17,7 +16,6 @@ export const ConditionBuilderRowMenu = ({
   dropdownId,
   ariaLabel,
   deleteLabel,
-  align,
   onDelete,
 }: ConditionBuilderRowMenuProps) => (
   <DropdownRoot dropdownId={dropdownId} type="menu">
@@ -29,8 +27,8 @@ export const ConditionBuilderRowMenu = ({
       }
     />
     <DropdownContent
-      align={align}
-      sideOffset={CONDITION_BUILDER_DROPDOWN_SIDE_OFFSET}
+      align="end"
+      sideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}
     >
       <Dropdown.Section>
         <Dropdown.ActionItem

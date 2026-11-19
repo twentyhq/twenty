@@ -1,24 +1,25 @@
-import {
-  type ConditionalAvailabilityGlobalContext,
-  type ConditionalAvailabilityNode,
-} from 'twenty-shared/types';
+import { type ConditionalAvailabilityNode } from 'twenty-shared/types';
 
+import { EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT } from '@/page-layout/testing/EmptyConditionalAvailabilityGlobalContext';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
-import { CONDITIONAL_AVAILABILITY_DEVICE_DESKTOP } from '@/side-panel/pages/page-layout/constants/ConditionalAvailabilityDeviceDesktop';
-import { CONDITIONAL_AVAILABILITY_DEVICE_MOBILE } from '@/side-panel/pages/page-layout/constants/ConditionalAvailabilityDeviceMobile';
 import {
   PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 
-const GLOBAL_CONTEXT: ConditionalAvailabilityGlobalContext = {
-  featureFlags: {},
-  permissionFlags: {},
-  currentRole: null,
-  currentWorkspaceMember: null,
+const CONDITIONAL_AVAILABILITY_DEVICE_MOBILE: ConditionalAvailabilityNode = {
+  type: 'COMPARISON',
+  operator: 'EQUAL',
+  left: { type: 'PATH', path: 'device' },
+  right: { type: 'LITERAL', value: 'MOBILE' },
+};
+
+const CONDITIONAL_AVAILABILITY_DEVICE_DESKTOP: ConditionalAvailabilityNode = {
+  ...CONDITIONAL_AVAILABILITY_DEVICE_MOBILE,
+  right: { type: 'LITERAL', value: 'DESKTOP' },
 };
 
 describe('getTabsWithVisibleWidgets', () => {
@@ -88,7 +89,7 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: false,
         context: buildWidgetVisibilityContext({
-          globalContext: GLOBAL_CONTEXT,
+          globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -113,7 +114,7 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: false,
         context: buildWidgetVisibilityContext({
-          globalContext: GLOBAL_CONTEXT,
+          globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -138,7 +139,7 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: false,
         context: buildWidgetVisibilityContext({
-          globalContext: GLOBAL_CONTEXT,
+          globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -159,7 +160,7 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: false,
         context: buildWidgetVisibilityContext({
-          globalContext: GLOBAL_CONTEXT,
+          globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -177,7 +178,7 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: false,
         context: buildWidgetVisibilityContext({
-          globalContext: GLOBAL_CONTEXT,
+          globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -203,7 +204,7 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: true,
         context: buildWidgetVisibilityContext({
-          globalContext: GLOBAL_CONTEXT,
+          globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -225,7 +226,7 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: true,
         context: buildWidgetVisibilityContext({
-          globalContext: GLOBAL_CONTEXT,
+          globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -244,7 +245,7 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: true,
         context: buildWidgetVisibilityContext({
-          globalContext: GLOBAL_CONTEXT,
+          globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -267,7 +268,7 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: true,
         context: buildWidgetVisibilityContext({
-          globalContext: GLOBAL_CONTEXT,
+          globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -285,7 +286,7 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs: [],
         isEditMode: false,
         context: buildWidgetVisibilityContext({
-          globalContext: GLOBAL_CONTEXT,
+          globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -307,7 +308,7 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: false,
         context: buildWidgetVisibilityContext({
-          globalContext: GLOBAL_CONTEXT,
+          globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -338,7 +339,7 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs,
         isEditMode: false,
         context: buildWidgetVisibilityContext({
-          globalContext: GLOBAL_CONTEXT,
+          globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -376,7 +377,7 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs: [sentOnlyTab(), createMockTab('always', [createMockWidget('w')])],
         isEditMode: false,
         context: buildWidgetVisibilityContext({
-          globalContext: GLOBAL_CONTEXT,
+          globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
           targetRecord: { id: 'record-1', status: 'DRAFT' },
@@ -392,7 +393,7 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs: [sentOnlyTab(), createMockTab('always', [createMockWidget('w')])],
         isEditMode: false,
         context: buildWidgetVisibilityContext({
-          globalContext: GLOBAL_CONTEXT,
+          globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
           targetRecord: { id: 'record-1', status: 'SENT' },
@@ -409,7 +410,7 @@ describe('getTabsWithVisibleWidgets', () => {
         tabs: [sentOnlyTab(), createMockTab('always', [createMockWidget('w')])],
         isEditMode: false,
         context: buildWidgetVisibilityContext({
-          globalContext: GLOBAL_CONTEXT,
+          globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),
@@ -429,7 +430,7 @@ describe('getTabsWithVisibleWidgets', () => {
         ],
         isEditMode: false,
         context: buildWidgetVisibilityContext({
-          globalContext: GLOBAL_CONTEXT,
+          globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
           isMobile: false,
           isInSidePanel: false,
         }),

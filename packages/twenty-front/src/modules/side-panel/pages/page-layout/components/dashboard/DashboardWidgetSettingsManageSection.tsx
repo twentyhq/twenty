@@ -22,8 +22,7 @@ export const DashboardWidgetSettingsManageSection = ({
   return (
     <SidePanelGroup heading={t`Manage`}>
       <PageLayoutSettingsVisibilityItem
-        widgetId={widgetInEditMode.id}
-        node={widgetInEditMode.conditionalAvailability ?? null}
+        widget={widgetInEditMode}
         selectableItemId={
           WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION
         }

@@ -1,7 +1,7 @@
 import { createStore } from 'jotai';
 import { type ConditionalAvailabilityNode } from 'twenty-shared/types';
 
-import { conditionalAvailabilityEditorStatesState } from '@/conditional-availability/states/conditionalAvailabilityEditorStatesState';
+import { conditionalAvailabilityEditorEntriesState } from '@/conditional-availability/states/conditionalAvailabilityEditorEntriesState';
 import { type ConditionalAvailabilityEditorEntry } from '@/conditional-availability/types/ConditionalAvailabilityEditorEntry';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
 import { hasIncompleteLayoutCustomizationConditionalAvailabilityDraftSelector } from '@/layout-customization/states/hasIncompleteLayoutCustomizationConditionalAvailabilityDraftSelector';
@@ -25,7 +25,7 @@ const buildIncompleteEntry = (
   node: ConditionalAvailabilityNode | null,
 ): ConditionalAvailabilityEditorEntry => ({
   metadataName: 'pageLayoutWidget',
-  node,
+  storedNode: node,
   editorState: {
     mode: 'customRule',
     tree: {
@@ -89,7 +89,7 @@ const isIncomplete = (
 ) => {
   const store = buildStore();
 
-  store.set(conditionalAvailabilityEditorStatesState.atom, editorEntries);
+  store.set(conditionalAvailabilityEditorEntriesState.atom, editorEntries);
 
   return store.get(
     hasIncompleteLayoutCustomizationConditionalAvailabilityDraftSelector.atom,
@@ -110,7 +110,7 @@ describe('hasIncompleteLayoutCustomizationConditionalAvailabilityDraftSelector',
       isIncomplete({
         'pageLayoutWidget:widget-1': {
           metadataName: 'pageLayoutWidget',
-          node: STORED_NODE,
+          storedNode: STORED_NODE,
           editorState: { mode: 'everyone' },
         },
       }),

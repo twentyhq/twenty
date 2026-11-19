@@ -1,6 +1,9 @@
 import { VALIDATION_RULE_FUNCTIONS } from 'twenty-shared/constants';
-import { type ExpressionToken } from 'twenty-shared/types';
-import { isDefined, tokenizeExpression } from 'twenty-shared/utils';
+import { type ValidationRuleExpressionToken } from 'twenty-shared/types';
+import {
+  isDefined,
+  tokenizeValidationRuleExpression,
+} from 'twenty-shared/utils';
 
 import { VALIDATION_RULE_KEYWORDS } from '@/validation-rules/constants/ValidationRuleKeywords';
 import {
@@ -13,7 +16,7 @@ const KEYWORD_NAMES = VALIDATION_RULE_KEYWORDS.map(({ name }) => name);
 const OPERATOR_CHARACTERS = '=!<>+-*/%?:|&';
 
 const getHighlightKind = (
-  token: ExpressionToken,
+  token: ValidationRuleExpressionToken,
 ): ValidationRuleExpressionHighlightKind | null => {
   switch (token.type) {
     case 'string':
@@ -37,7 +40,7 @@ const getHighlightKind = (
 export const computeValidationRuleExpressionHighlights = (
   expression: string,
 ): ValidationRuleExpressionHighlight[] =>
-  tokenizeExpression(expression).flatMap((token) => {
+  tokenizeValidationRuleExpression(expression).flatMap((token) => {
     const kind = getHighlightKind(token);
 
     return isDefined(kind)

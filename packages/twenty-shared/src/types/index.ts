@@ -76,7 +76,6 @@ export {
   richTextValueSchema,
 } from './composite-types/rich-text.composite-type';
 export type { CompositeFieldSubFieldName } from './CompositeFieldSubFieldNameType';
-export type { ConditionalAvailabilityArrayMethod } from './ConditionalAvailabilityArrayMethod';
 export type { ConditionalAvailabilityCheckError } from './ConditionalAvailabilityCheckError';
 export type { ConditionalAvailabilityCheckResult } from './ConditionalAvailabilityCheckResult';
 export type { ConditionalAvailabilityComparisonOperator } from './ConditionalAvailabilityComparisonOperator';
@@ -114,7 +113,6 @@ export type { ExpressionDatePart } from './ExpressionDatePart';
 export type { ExpressionDateUnit } from './ExpressionDateUnit';
 export type { ExpressionSyntaxError } from './ExpressionSyntaxError';
 export type { ExpressionSyntaxErrorCode } from './ExpressionSyntaxErrorCode';
-export type { ExpressionToken } from './ExpressionToken';
 export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEndsWithId';
 export type { ExtractPropertiesThatEndsWithIds } from './ExtractPropertiesThatEndsWithIds';
 export type { ExtractSerializedRelationProperties } from './ExtractSerializedRelationProperties';
@@ -287,7 +285,6 @@ export type { PageLayoutWidgetUniversalConfiguration } from './page-layout/PageL
 export { PageLayoutWidgetVerticalListHeightBehavior } from './page-layout/PageLayoutWidgetVerticalListHeightBehavior';
 export type { RatioAggregateConfig } from './page-layout/RatioAggregateConfig';
 export { WidgetType } from './page-layout/WidgetType';
-export type { PageLayoutConditionalAvailabilityContext } from './PageLayoutConditionalAvailabilityContext';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';
 export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOption';
 export type { QueryCursorDirection } from './QueryCursorDirection';
@@ -377,6 +374,7 @@ export type { ValidationRuleDatabaseEventAction } from './ValidationRuleDatabase
 export type { ValidationRuleErrorCode } from './ValidationRuleErrorCode';
 export type { ValidationRuleErrorParams } from './ValidationRuleErrorParams';
 export type { ValidationRuleEvaluationResult } from './ValidationRuleEvaluationResult';
+export type { ValidationRuleExpressionToken } from './ValidationRuleExpressionToken';
 export type { ValidationRuleFieldDescriptor } from './ValidationRuleFieldDescriptor';
 export type { ValidationRuleFunctionName } from './ValidationRuleFunctionName';
 export { IsValidGraphQLEnumName } from './validators/is-valid-graphql-enum-name.validator';

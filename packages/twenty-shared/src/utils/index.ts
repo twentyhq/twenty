@@ -40,15 +40,11 @@ export { checkConditionalAvailabilityNode } from './conditional-availability/che
 export { conditionalAvailabilityNodeSchema } from './conditional-availability/conditionalAvailabilityNodeSchema';
 export { conditionalAvailabilityParser } from './conditional-availability/conditionalAvailabilityParser';
 export { conditionalAvailabilityStrictParser } from './conditional-availability/conditionalAvailabilityStrictParser';
-export { createArrayPropCheck } from './conditional-availability/createArrayPropCheck';
-export { createArrayPropValueCheck } from './conditional-availability/createArrayPropValueCheck';
 export { evaluateConditionalAvailabilityExpression } from './conditional-availability/evaluateConditionalAvailabilityExpression';
 export { evaluateConditionalAvailabilityNode } from './conditional-availability/evaluateConditionalAvailabilityNode';
-export { listConditionalAvailabilityFieldMetadataUniversalIdentifiers } from './conditional-availability/listConditionalAvailabilityFieldMetadataUniversalIdentifiers';
 export { listConditionalAvailabilityNodes } from './conditional-availability/listConditionalAvailabilityNodes';
 export { parseConditionalAvailabilityExpression } from './conditional-availability/parseConditionalAvailabilityExpression';
 export { printConditionalAvailabilityNode } from './conditional-availability/printConditionalAvailabilityNode';
-export { printConditionalAvailabilityText } from './conditional-availability/printConditionalAvailabilityText';
 export { safeGetNestedProperty } from './conditional-availability/safeGetNestedProperty';
 export { toConditionalAvailabilityNode } from './conditional-availability/toConditionalAvailabilityNode';
 export { toConditionalAvailabilitySelectedRecordsNode } from './conditional-availability/toConditionalAvailabilitySelectedRecordsNode';
@@ -105,7 +101,6 @@ export { toExpressionDateTimeInUtc } from './expression-date/toExpressionDateTim
 export { truncateExpressionDate } from './expression-date/truncateExpressionDate';
 export { truncateTowardZero } from './expression-date/truncateTowardZero';
 export { getExpressionSyntaxError } from './expression/getExpressionSyntaxError';
-export { tokenizeExpression } from './expression/tokenizeExpression';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { computeMorphRelationGqlFieldName } from './fieldMetadata/compute-morph-relation-gql-field-name';
 export {
@@ -430,6 +425,7 @@ export { renameValidationRuleExpressionFields } from './validation-rule/renameVa
 export { renameValidationRuleExpressionToCurrentFieldNames } from './validation-rule/renameValidationRuleExpressionToCurrentFieldNames';
 export { renameValidationRulePath } from './validation-rule/renameValidationRulePath';
 export { resolveValidationRuleIdentifierPath } from './validation-rule/resolveValidationRuleIdentifierPath';
+export { tokenizeValidationRuleExpression } from './validation-rule/tokenizeValidationRuleExpression';
 export { validationRuleParser } from './validation-rule/validationRuleParser';
 export {
   validationRuleNullPlaceholders,

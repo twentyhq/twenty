@@ -3,17 +3,9 @@ import { ConditionalAvailabilitySubjectSelect } from '@/conditional-availability
 import { ConditionalAvailabilityValueInput } from '@/conditional-availability/components/ConditionalAvailabilityValueInput';
 import { type ConditionalAvailabilityRow } from '@/conditional-availability/types/ConditionalAvailabilityRow';
 import { isConditionalAvailabilityRowComplete } from '@/conditional-availability/utils/isConditionalAvailabilityRowComplete';
-import { styled } from '@linaria/react';
+import { AdvancedFilterSidePanelColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelColumn';
 import { useLingui } from '@lingui/react/macro';
 import { Field } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledFields = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-  width: 100%;
-`;
 
 type ConditionalAvailabilityRowFieldsProps = {
   row: ConditionalAvailabilityRow;
@@ -28,7 +20,7 @@ export const ConditionalAvailabilityRowFields = ({
     row.subject === 'recordField' ? row.propertyPath : row.subject;
 
   return (
-    <Field.Root render={<StyledFields />}>
+    <Field.Root render={<AdvancedFilterSidePanelColumn />}>
       <ConditionalAvailabilitySubjectSelect row={row} />
       <ConditionalAvailabilityOperatorSelect row={row} />
       <ConditionalAvailabilityValueInput

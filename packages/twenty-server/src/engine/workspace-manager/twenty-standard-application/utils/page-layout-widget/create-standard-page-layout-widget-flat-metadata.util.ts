@@ -92,9 +92,9 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
       conditionalDisplay,
     });
 
-  if (!ruleConversion.isConvertible) {
+  if (!ruleConversion.isValid) {
     throw new Error(
-      `Invalid conditional availability rule ${layoutName} ${tabTitle} ${widgetName}: ${ruleConversion.message}`,
+      `Invalid conditional availability rule ${layoutName} ${tabTitle} ${widgetName}: ${ruleConversion.errorMessage}`,
     );
   }
 
@@ -124,7 +124,7 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     deletedAt: null,
     conditionalDisplay: null,
     conditionalAvailabilityExpression: null,
-    conditionalAvailability: ruleConversion.conditionalAvailability,
+    conditionalAvailability: ruleConversion.node,
     overrides: null,
     universalOverrides: null,
   };

@@ -7,14 +7,16 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/icon';
 
 type ConditionBuilderAddRuleMenuProps = {
-  dropdownId: string;
   onAddRule: () => void;
-} & ({ canAddGroup: true; onAddGroup: () => void } | { canAddGroup: false });
+} & (
+  | { canAddGroup: true; dropdownId: string; onAddGroup: () => void }
+  | { canAddGroup: false }
+);
 
 export const ConditionBuilderAddRuleMenu = (
   props: ConditionBuilderAddRuleMenuProps,
 ) => {
-  const { dropdownId, onAddRule } = props;
+  const { onAddRule } = props;
   const { t } = useLingui();
 
   if (!props.canAddGroup) {
@@ -32,7 +34,7 @@ export const ConditionBuilderAddRuleMenu = (
   }
 
   return (
-    <DropdownRoot dropdownId={dropdownId} type="menu">
+    <DropdownRoot dropdownId={props.dropdownId} type="menu">
       <Dropdown.Trigger
         render={
           <NavigationButton

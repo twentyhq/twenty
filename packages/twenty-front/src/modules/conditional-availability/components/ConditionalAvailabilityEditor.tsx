@@ -1,17 +1,19 @@
-import { ConditionalAvailabilityHelperText } from '@/conditional-availability/components/ConditionalAvailabilityHelperText';
+import { ConditionalAvailabilityPermissionsLink } from '@/conditional-availability/components/ConditionalAvailabilityPermissionsLink';
 import { ConditionalAvailabilityReadOnlyNote } from '@/conditional-availability/components/ConditionalAvailabilityReadOnlyNote';
 import { ConditionalAvailabilityRowList } from '@/conditional-availability/components/ConditionalAvailabilityRowList';
 import { ConditionalAvailabilityUnsupportedRule } from '@/conditional-availability/components/ConditionalAvailabilityUnsupportedRule';
-import { ConditionalAvailabilityEditorContext } from '@/conditional-availability/contexts/ConditionalAvailabilityEditorContext';
+import { ConditionalAvailabilityEditorProvider } from '@/conditional-availability/contexts/ConditionalAvailabilityEditorContext';
 import { useConditionalAvailabilityDraft } from '@/conditional-availability/hooks/useConditionalAvailabilityDraft';
 import { useConditionalAvailabilityFields } from '@/conditional-availability/hooks/useConditionalAvailabilityFields';
 import { useConditionalAvailabilityRoles } from '@/conditional-availability/hooks/useConditionalAvailabilityRoles';
-import { type ConditionalAvailabilityEditorTopSelectValue } from '@/conditional-availability/types/ConditionalAvailabilityEditorTopSelectValue';
+import { type ConditionalAvailabilityEditorState } from '@/conditional-availability/types/ConditionalAvailabilityEditorState';
 import { getConditionalAvailabilityReadOnlyReason } from '@/conditional-availability/utils/getConditionalAvailabilityReadOnlyReason';
+import { getConditionalAvailabilityVisibilityStatusIcon } from '@/conditional-availability/utils/getConditionalAvailabilityVisibilityStatusIcon';
+import { getConditionalAvailabilityVisibilityStatusLabel } from '@/conditional-availability/utils/getConditionalAvailabilityVisibilityStatusLabel';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { Select } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   type ConditionalAvailabilityMetadataName,
   type ConditionalAvailabilityNode,
@@ -21,7 +23,6 @@ import {
   isDefined,
   printConditionalAvailabilityNode,
 } from 'twenty-shared/utils';
-import { IconEye, IconEyeX } from 'twenty-ui/icon';
 import { Field, type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -36,6 +37,16 @@ const StyledHeader = styled.div`
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
 `;
+
+type ConditionalAvailabilityEditorTopSelectValue = Exclude<
+  ConditionalAvailabilityEditorState['mode'],
+  'unsupportedRule'
+>;
+
+const TOP_SELECT_VALUES: ConditionalAvailabilityEditorTopSelectValue[] = [
+  'everyone',
+  'customRule',
+];
 
 type ConditionalAvailabilityEditorProps = {
   metadataName: ConditionalAvailabilityMetadataName;
@@ -52,7 +63,6 @@ export const ConditionalAvailabilityEditor = ({
   objectMetadataItem,
   onNodeChange,
 }: ConditionalAvailabilityEditorProps) => {
-  const { t } = useLingui();
   const conditionalAvailabilityRoles = useConditionalAvailabilityRoles();
   const { hasRolesPermission } = conditionalAvailabilityRoles;
 
@@ -76,7 +86,7 @@ export const ConditionalAvailabilityEditor = ({
     node,
     hasRolesPermission,
   });
-  const isReadOnly = readOnlyReason.status === 'readOnly';
+  const isReadOnly = isDefined(readOnlyReason);
   const hasRule = editorState.mode !== 'everyone';
 
   const handleTopSelectChange = (
@@ -95,15 +105,16 @@ export const ConditionalAvailabilityEditor = ({
   };
 
   const topSelectOptions: SelectOption<ConditionalAvailabilityEditorTopSelectValue>[] =
-    [
-      {
-        value: 'everyone',
-        label: t`Everyone`,
-        Icon: IconEye,
-        disabled: isReadOnly,
-      },
-      { value: 'customRule', label: t`Custom rule`, Icon: IconEyeX },
-    ];
+    TOP_SELECT_VALUES.map((value) => ({
+      value,
+      label: getConditionalAvailabilityVisibilityStatusLabel({
+        visibilityStatus: value,
+      }),
+      Icon: getConditionalAvailabilityVisibilityStatusIcon({
+        visibilityStatus: value,
+      }),
+      disabled: value === 'everyone' && isReadOnly,
+    }));
 
   const renderBody = () => {
     switch (editorState.mode) {
@@ -117,11 +128,13 @@ export const ConditionalAvailabilityEditor = ({
           />
         );
       case 'unsupportedRule':
+        if (!isDefined(node)) {
+          return null;
+        }
+
         return (
           <ConditionalAvailabilityUnsupportedRule
-            expression={
-              isDefined(node) ? printConditionalAvailabilityNode({ node }) : ''
-            }
+            expression={printConditionalAvailabilityNode({ node })}
           />
         );
       default:
@@ -130,7 +143,7 @@ export const ConditionalAvailabilityEditor = ({
   };
 
   return (
-    <ConditionalAvailabilityEditorContext.Provider
+    <ConditionalAvailabilityEditorProvider
       value={{
         ...conditionalAvailabilityDraft,
         ...conditionalAvailabilityRoles,
@@ -150,16 +163,23 @@ export const ConditionalAvailabilityEditor = ({
             fullWidth
           />
           {hasRule && (
-            <ConditionalAvailabilityHelperText metadataName={metadataName} />
+            <Field.Description>
+              <Trans>
+                Visibility hides this item on the page. It does not restrict
+                access to data;{' '}
+                <ConditionalAvailabilityPermissionsLink>
+                  role permissions
+                </ConditionalAvailabilityPermissionsLink>{' '}
+                do that.
+              </Trans>
+            </Field.Description>
           )}
-          {readOnlyReason.status === 'readOnly' && (
-            <ConditionalAvailabilityReadOnlyNote
-              reason={readOnlyReason.reason}
-            />
+          {isDefined(readOnlyReason) && (
+            <ConditionalAvailabilityReadOnlyNote reason={readOnlyReason} />
           )}
         </Field.Root>
         {renderBody()}
       </StyledContainer>
-    </ConditionalAvailabilityEditorContext.Provider>
+    </ConditionalAvailabilityEditorProvider>
   );
 };

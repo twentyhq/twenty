@@ -2,7 +2,6 @@ import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorksp
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { ConditionalAvailabilityOptionsSelect } from '@/conditional-availability/components/ConditionalAvailabilityOptionsSelect';
 import { CONDITIONAL_AVAILABILITY_CURRENT_WORKSPACE_MEMBER_OPTION_VALUE } from '@/conditional-availability/constants/ConditionalAvailabilityCurrentWorkspaceMemberOptionValue';
-import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/hooks/useConditionalAvailabilityEditorContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { useLingui } from '@lingui/react/macro';
@@ -28,7 +27,6 @@ export const ConditionalAvailabilityWorkspaceMemberSelect = ({
 }: ConditionalAvailabilityWorkspaceMemberSelectProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { isReadOnly } = useConditionalAvailabilityEditorContext();
 
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
@@ -66,17 +64,9 @@ export const ConditionalAvailabilityWorkspaceMemberSelect = ({
     startIcon: <IconUser size={theme.icon.size.md} />,
   };
 
-  const getValueLabel = (value: string) => {
+  const getUnknownValueLabel = (value: string) => {
     if (value === meOption.value) {
       return meOption.label;
-    }
-
-    const workspaceMember = currentWorkspaceMembers.find(
-      (candidate) => candidate.id === value,
-    );
-
-    if (isDefined(workspaceMember)) {
-      return getWorkspaceMemberNameOrEmail(workspaceMember);
     }
 
     const deletedWorkspaceMember = currentWorkspaceDeletedMembers.find(
@@ -99,12 +89,10 @@ export const ConditionalAvailabilityWorkspaceMemberSelect = ({
       dropdownId={dropdownId}
       options={withMe ? [meOption, ...options] : options}
       values={values}
-      getValueLabel={getValueLabel}
+      getUnknownValueLabel={getUnknownValueLabel}
       isMultiple={isMultiple}
       searchPlaceholder={t`Search members`}
       placeholder={isMultiple ? t`Select members` : t`Select a member`}
-      isDisabled={isReadOnly}
-      isLoading={false}
       onChange={onChange}
     />
   );

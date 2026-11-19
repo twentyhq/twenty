@@ -1,4 +1,4 @@
-import { useRemovePageLayoutWidgetConditionalAvailabilityEditorEntries } from '@/page-layout/hooks/useRemovePageLayoutWidgetConditionalAvailabilityEditorEntries';
+import { useRemovePageLayoutWidgetConditionalAvailabilityEditorEntry } from '@/page-layout/hooks/useRemovePageLayoutWidgetConditionalAvailabilityEditorEntry';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -42,8 +42,8 @@ export const useRemovePageLayoutWidgetAndPreservePosition = (
 
   const store = useStore();
 
-  const { removePageLayoutWidgetConditionalAvailabilityEditorEntries } =
-    useRemovePageLayoutWidgetConditionalAvailabilityEditorEntries();
+  const { removePageLayoutWidgetConditionalAvailabilityEditorEntry } =
+    useRemovePageLayoutWidgetConditionalAvailabilityEditorEntry();
 
   const removePageLayoutWidgetAndPreservePosition = useCallback(
     (widgetId: string) => {
@@ -90,14 +90,14 @@ export const useRemovePageLayoutWidgetAndPreservePosition = (
 
       store.set(pageLayoutEditingWidgetIdState, null);
 
-      removePageLayoutWidgetConditionalAvailabilityEditorEntries(widgetId);
+      removePageLayoutWidgetConditionalAvailabilityEditorEntry(widgetId);
     },
     [
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
       pageLayoutDraggedAreaState,
       pageLayoutEditingWidgetIdState,
-      removePageLayoutWidgetConditionalAvailabilityEditorEntries,
+      removePageLayoutWidgetConditionalAvailabilityEditorEntry,
       store,
     ],
   );

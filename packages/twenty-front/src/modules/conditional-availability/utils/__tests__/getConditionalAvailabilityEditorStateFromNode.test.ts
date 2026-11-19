@@ -1,6 +1,6 @@
 import { CONDITIONAL_AVAILABILITY_CURRENT_WORKSPACE_MEMBER_OPTION_VALUE } from '@/conditional-availability/constants/ConditionalAvailabilityCurrentWorkspaceMemberOptionValue';
 import { buildConditionalAvailabilityNode } from '@/conditional-availability/utils/buildConditionalAvailabilityNode';
-import { readConditionalAvailabilityNode } from '@/conditional-availability/utils/readConditionalAvailabilityNode';
+import { getConditionalAvailabilityEditorStateFromNode } from '@/conditional-availability/utils/getConditionalAvailabilityEditorStateFromNode';
 import {
   type CompositeFieldSubFieldName,
   type ConditionalAvailabilityLogicalOperator,
@@ -77,7 +77,7 @@ const read = ({
   node: ConditionalAvailabilityNode | null;
   objectNameSingular?: string;
 }) =>
-  readConditionalAvailabilityNode({
+  getConditionalAvailabilityEditorStateFromNode({
     node,
     metadataName: 'pageLayoutWidget',
     fields: getMockObjectMetadataItemOrThrow(objectNameSingular).fields,
@@ -90,8 +90,8 @@ const readTree = (
 ) => {
   const result = read(parameters);
 
-  if (result.status !== 'rows') {
-    throw new Error(`The rule was read as ${result.status}`);
+  if (result.mode !== 'customRule') {
+    throw new Error(`The rule was read as ${result.mode}`);
   }
 
   expect(buildConditionalAvailabilityNode({ tree: result.tree })).toEqual(
@@ -101,9 +101,9 @@ const readTree = (
   return result.tree;
 };
 
-describe('readConditionalAvailabilityNode', () => {
-  it('should read no rule as empty', () => {
-    expect(read({ node: null })).toEqual({ status: 'empty' });
+describe('getConditionalAvailabilityEditorStateFromNode', () => {
+  it('should read no rule as everyone', () => {
+    expect(read({ node: null })).toEqual({ mode: 'everyone' });
   });
 
   it('should read a chain of roles as one row and a device as another', () => {
@@ -443,12 +443,12 @@ describe('readConditionalAvailabilityNode', () => {
       }),
     },
   ])('should not read $title as rows', ({ node }) => {
-    expect(read({ node })).toEqual({ status: 'unsupported' });
+    expect(read({ node })).toEqual({ mode: 'unsupportedRule' });
   });
 
   it('should not read a record filter as rows without the fields of the object', () => {
     expect(
-      readConditionalAvailabilityNode({
+      getConditionalAvailabilityEditorStateFromNode({
         node: recordFilter({
           fieldName: 'name',
           operand: RecordFilterOperand.CONTAINS,
@@ -457,6 +457,6 @@ describe('readConditionalAvailabilityNode', () => {
         metadataName: 'pageLayoutWidget',
         fields: [],
       }),
-    ).toEqual({ status: 'unsupported' });
+    ).toEqual({ mode: 'unsupportedRule' });
   });
 });

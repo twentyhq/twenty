@@ -1,4 +1,4 @@
-import { CONDITIONAL_AVAILABILITY_FORBIDDEN_PATH_SEGMENT_PATTERN } from '@/constants/ConditionalAvailabilityForbiddenPathSegmentPattern';
+import { CONDITIONAL_AVAILABILITY_FORBIDDEN_PROPERTY_NAMES } from '@/constants/ConditionalAvailabilityForbiddenPropertyNames';
 import { CONDITIONAL_AVAILABILITY_FUNCTIONS } from '@/constants/ConditionalAvailabilityFunctions';
 import { CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT } from '@/constants/ConditionalAvailabilityMaxNodeCount';
 import { CONDITIONAL_AVAILABILITY_SELECTED_RECORDS_VARIABLE_NAME } from '@/constants/ConditionalAvailabilitySelectedRecordsVariableName';
@@ -40,7 +40,7 @@ const getUnknownName = ({
       }
 
       return segments.find((segment) =>
-        CONDITIONAL_AVAILABILITY_FORBIDDEN_PATH_SEGMENT_PATTERN.test(segment),
+        CONDITIONAL_AVAILABILITY_FORBIDDEN_PROPERTY_NAMES.has(segment),
       );
     }
     case 'CALL':

@@ -1,7 +1,7 @@
 import { ConditionalAvailabilityOptionsSelect } from '@/conditional-availability/components/ConditionalAvailabilityOptionsSelect';
 import { ConditionalAvailabilityRecordSelect } from '@/conditional-availability/components/ConditionalAvailabilityRecordSelect';
 import { ConditionalAvailabilityWorkspaceMemberSelect } from '@/conditional-availability/components/ConditionalAvailabilityWorkspaceMemberSelect';
-import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/hooks/useConditionalAvailabilityEditorContext';
+import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/contexts/ConditionalAvailabilityEditorContext';
 import { type ConditionalAvailabilityRow } from '@/conditional-availability/types/ConditionalAvailabilityRow';
 import { getConditionalAvailabilityRecordFieldSelectOptions } from '@/conditional-availability/utils/getConditionalAvailabilityRecordFieldSelectOptions';
 import { FormDateFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateFieldInput';
@@ -62,54 +62,40 @@ export const ConditionalAvailabilityRecordFieldValueInput = ({
           }
         />
       );
-    case 'boolean': {
-      const options = [
-        { value: 'true', label: t`True` },
-        { value: 'false', label: t`False` },
-      ];
-
+    case 'boolean':
       return (
         <ConditionalAvailabilityOptionsSelect
           dropdownId={dropdownId}
-          options={options}
+          options={[
+            { value: 'true', label: t`True` },
+            { value: 'false', label: t`False` },
+          ]}
           values={row.values}
-          getValueLabel={(optionValue) =>
-            options.find((option) => option.value === optionValue)?.label ??
-            optionValue
-          }
+          getUnknownValueLabel={(optionValue) => optionValue}
           isMultiple={false}
           searchPlaceholder={null}
           placeholder={t`Select a value`}
-          isDisabled={isReadOnly}
-          isLoading={false}
           onChange={onChange}
         />
       );
-    }
     case 'select':
-    case 'multiSelect': {
-      const options = getConditionalAvailabilityRecordFieldSelectOptions({
-        field,
-      });
-
+    case 'multiSelect':
       return (
         <ConditionalAvailabilityOptionsSelect
           dropdownId={dropdownId}
-          options={options}
+          options={getConditionalAvailabilityRecordFieldSelectOptions({
+            field,
+          })}
           values={row.values}
-          getValueLabel={(optionValue) =>
-            options.find((option) => option.value === optionValue)?.label ??
+          getUnknownValueLabel={(optionValue) =>
             t`Unknown option ${optionValue}`
           }
           isMultiple
           searchPlaceholder={t`Search options`}
           placeholder={t`Select options`}
-          isDisabled={isReadOnly}
-          isLoading={false}
           onChange={onChange}
         />
       );
-    }
     case 'date':
     case 'dateTime':
       return (

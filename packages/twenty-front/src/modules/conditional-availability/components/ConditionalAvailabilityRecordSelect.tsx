@@ -1,7 +1,7 @@
 import { ConditionalAvailabilityRecordMultipleSelect } from '@/conditional-availability/components/ConditionalAvailabilityRecordMultipleSelect';
 import { ConditionalAvailabilityRecordSingleSelect } from '@/conditional-availability/components/ConditionalAvailabilityRecordSingleSelect';
 import { ConditionalAvailabilityValueControl } from '@/conditional-availability/components/ConditionalAvailabilityValueControl';
-import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/hooks/useConditionalAvailabilityEditorContext';
+import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/contexts/ConditionalAvailabilityEditorContext';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';

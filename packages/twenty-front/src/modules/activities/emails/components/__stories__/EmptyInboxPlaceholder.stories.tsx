@@ -98,7 +98,6 @@ const meta: Meta<typeof EmptyInboxPlaceholder> = {
     (Story) => (
       <LayoutRenderingProvider
         value={{
-          isTargetRecordLoading: false,
           layoutType: PageLayoutType.RECORD_PAGE,
           targetRecordIdentifier: {
             id: 'story-company',

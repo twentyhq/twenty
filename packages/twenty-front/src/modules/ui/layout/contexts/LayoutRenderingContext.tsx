@@ -5,7 +5,7 @@ import { type TargetRecordIdentifier } from './TargetRecordIdentifier';
 export type LayoutRenderingContextType = {
   targetRecordIdentifier: TargetRecordIdentifier | undefined;
 
-  isTargetRecordLoading: boolean;
+  isTargetRecordLoading?: boolean;
 
   layoutType: PageLayoutType;
 

@@ -10,9 +10,9 @@ import { computeRelationGqlFieldJoinColumnName } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 const ADDRESS_SUB_FIELD_NAMES = [
+  'addressCity',
   'addressStreet1',
   'addressStreet2',
-  'addressCity',
   'addressState',
   'addressPostcode',
 ] as const satisfies CompositeFieldSubFieldName[];
@@ -121,12 +121,12 @@ export const getConditionalAvailabilityRecordFieldSubjects = ({
       );
     case FieldMetadataType.ACTOR:
       return [
-        buildSubject({ field, fieldKind: 'select', subFieldName: 'source' }),
         buildSubject({
           field,
           fieldKind: 'workspaceMemberRelation',
           subFieldName: 'workspaceMemberId',
         }),
+        buildSubject({ field, fieldKind: 'select', subFieldName: 'source' }),
         buildSubject({ field, fieldKind: 'text', subFieldName: 'name' }),
       ];
     case FieldMetadataType.RELATION: {

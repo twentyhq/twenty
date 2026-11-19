@@ -1,9 +1,27 @@
-import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/hooks/useConditionalAvailabilityEditorContext';
+import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/contexts/ConditionalAvailabilityEditorContext';
 import { getConditionalAvailabilityLogicalOperatorLabel } from '@/conditional-availability/utils/getConditionalAvailabilityLogicalOperatorLabel';
-import { ConditionBuilderLogicalOperatorCell } from '@/ui/layout/condition-builder/components/ConditionBuilderLogicalOperatorCell';
+import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
+import { Select } from '@/ui/input/components/Select';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { type ConditionalAvailabilityLogicalOperator } from 'twenty-shared/types';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+const StyledText = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.primary};
+  display: flex;
+  height: ${themeCssVariables.spacing[8]};
+`;
+
+const StyledContainer = styled.div`
+  align-items: start;
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+  min-width: ${themeCssVariables.spacing[20]};
+`;
 
 type ConditionalAvailabilityLogicalOperatorCellProps = {
   index: number;
@@ -20,6 +38,24 @@ export const ConditionalAvailabilityLogicalOperatorCell = ({
   const { itemKey, isReadOnly, setLogicalOperator } =
     useConditionalAvailabilityEditorContext();
 
+  if (index === 0) {
+    return (
+      <StyledContainer>
+        <StyledText>{t`Where`}</StyledText>
+      </StyledContainer>
+    );
+  }
+
+  if (index > 1) {
+    return (
+      <StyledContainer>
+        <StyledText>
+          {getConditionalAvailabilityLogicalOperatorLabel({ logicalOperator })}
+        </StyledText>
+      </StyledContainer>
+    );
+  }
+
   const logicalOperators: ConditionalAvailabilityLogicalOperator[] = [
     doNotTranslate('AND'),
     doNotTranslate('OR'),
@@ -32,19 +68,18 @@ export const ConditionalAvailabilityLogicalOperatorCell = ({
   }));
 
   return (
-    <ConditionBuilderLogicalOperatorCell
-      index={index}
-      value={logicalOperator}
-      options={options}
-      onChange={(nextLogicalOperator) =>
-        setLogicalOperator(groupId, nextLogicalOperator)
-      }
-      isReadOnly={isReadOnly}
-      dropdownId={`conditional-availability-logical-operator-${itemKey}-${groupId ?? 'root'}`}
-      firstLabel={t`Where`}
-      laterLabel={getConditionalAvailabilityLogicalOperatorLabel({
-        logicalOperator,
-      })}
-    />
+    <StyledContainer>
+      <Select
+        dropdownWidth={GenericDropdownContentWidth.Narrow}
+        dropdownId={`conditional-availability-logical-operator-${itemKey}-${groupId ?? 'root'}`}
+        value={logicalOperator}
+        onChange={(nextLogicalOperator) =>
+          setLogicalOperator(groupId, nextLogicalOperator)
+        }
+        options={options}
+        dropdownSideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}
+        disabled={isReadOnly}
+      />
+    </StyledContainer>
   );
 };

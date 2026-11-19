@@ -265,7 +265,6 @@ const SeedEmailThreadPageLayoutEffect = () => {
 
 type EmailThreadStoryArgs = PageDecoratorArgs & {
   targetRecordIdentifier: TargetRecordIdentifier;
-  isTargetRecordLoading: boolean;
 };
 
 const meta: Meta<EmailThreadStoryArgs> = {
@@ -307,7 +306,6 @@ const meta: Meta<EmailThreadStoryArgs> = {
       id: THREAD_ID,
       targetObjectNameSingular: StandardObjectNameSingular.MessageThread,
     },
-    isTargetRecordLoading: false,
   },
   parameters: {
     layout: 'fullscreen',

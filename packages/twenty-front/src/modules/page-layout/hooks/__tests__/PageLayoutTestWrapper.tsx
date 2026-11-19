@@ -36,7 +36,6 @@ const PageLayoutTestEditModeProvider = ({
   return (
     <LayoutRenderingProvider
       value={{
-        isTargetRecordLoading: false,
         targetRecordIdentifier: undefined,
         layoutType: resolvedLayoutType,
       }}

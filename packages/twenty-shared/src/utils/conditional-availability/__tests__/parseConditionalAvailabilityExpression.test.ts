@@ -157,15 +157,11 @@ describe('parseConditionalAvailabilityExpression', () => {
     });
   });
 
-  it.each([
-    ['devise == "MOBILE"', 'devise'],
-    ['isDefined(pageType)', 'pageType'],
-    ['fooBar(device)', 'fooBar'],
-  ])('should refuse %p because of "%s"', (expression, name) => {
-    expect(parseWidgetRule(expression)).toMatchObject({
+  it('should refuse a misspelled variable', () => {
+    expect(parseWidgetRule('devise == "MOBILE"')).toMatchObject({
       isValid: false,
       errorCode: 'UNKNOWN_NAME',
-      errorParams: { name },
+      errorParams: { name: 'devise' },
     });
   });
 

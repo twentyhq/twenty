@@ -133,6 +133,24 @@ describe('validateFieldMetadataNotUsedByConditionalAvailabilityCrossEntity', () 
     );
   });
 
+  it('should count a rule once when it uses the field twice', () => {
+    const { fieldMetadata } = validate({
+      widgets: [
+        {
+          conditionalAvailability: {
+            type: 'GROUP',
+            logicalOperator: 'OR',
+            children: [STAGE_RULE, { type: 'NOT', child: STAGE_RULE }],
+          },
+        },
+      ],
+    });
+
+    expect(fieldMetadata[0]?.errors[0]?.message).toBe(
+      'Field stage is used by 1 visibility rule(s)',
+    );
+  });
+
   it('should let a field go when no rule uses it', () => {
     expect(
       validate({

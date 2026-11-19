@@ -1,6 +1,6 @@
 import { ConditionalAvailabilityLogicalOperatorCell } from '@/conditional-availability/components/ConditionalAvailabilityLogicalOperatorCell';
 import { ConditionalAvailabilityRowFields } from '@/conditional-availability/components/ConditionalAvailabilityRowFields';
-import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/hooks/useConditionalAvailabilityEditorContext';
+import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/contexts/ConditionalAvailabilityEditorContext';
 import { type ConditionalAvailabilityRow as ConditionalAvailabilityRowType } from '@/conditional-availability/types/ConditionalAvailabilityRow';
 import { ConditionBuilderRowFrame } from '@/ui/layout/condition-builder/components/ConditionBuilderRowFrame';
 import { ConditionBuilderRowMenu } from '@/ui/layout/condition-builder/components/ConditionBuilderRowMenu';
@@ -39,7 +39,6 @@ export const ConditionalAvailabilityRow = ({
             dropdownId={`conditional-availability-row-menu-${itemKey}-${row.id}`}
             ariaLabel={t`Rule options`}
             deleteLabel={t`Delete`}
-            align="end"
             onDelete={() => removeNode(row.id)}
           />
         )

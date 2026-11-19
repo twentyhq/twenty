@@ -59,7 +59,6 @@ const meta: Meta<typeof WidgetActionMessagesFilter> = {
     (Story) => (
       <LayoutRenderingProvider
         value={{
-          isTargetRecordLoading: false,
           layoutType: PageLayoutType.RECORD_PAGE,
           targetRecordIdentifier: {
             id: TARGET_RECORD_ID,

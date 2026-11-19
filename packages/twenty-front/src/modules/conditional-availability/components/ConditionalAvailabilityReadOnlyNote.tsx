@@ -4,10 +4,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import { Field } from 'twenty-ui/primitives/input';
 
 type ConditionalAvailabilityReadOnlyNoteProps = {
-  reason: Extract<
-    ConditionalAvailabilityReadOnlyReason,
-    { status: 'readOnly' }
-  >['reason'];
+  reason: ConditionalAvailabilityReadOnlyReason;
 };
 
 export const ConditionalAvailabilityReadOnlyNote = ({

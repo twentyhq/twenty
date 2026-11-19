@@ -1,4 +1,4 @@
-import { conditionalAvailabilityEditorStatesState } from '@/conditional-availability/states/conditionalAvailabilityEditorStatesState';
+import { conditionalAvailabilityEditorEntriesState } from '@/conditional-availability/states/conditionalAvailabilityEditorEntriesState';
 import { type ConditionalAvailabilityVisibilityStatus } from '@/conditional-availability/types/ConditionalAvailabilityVisibilityStatus';
 import { isConditionalAvailabilityEditorEntryIncomplete } from '@/conditional-availability/utils/isConditionalAvailabilityEditorEntryIncomplete';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -12,13 +12,13 @@ export const useConditionalAvailabilityVisibilityStatus = ({
   itemKey: string;
   node: ConditionalAvailabilityNode | null;
 }): ConditionalAvailabilityVisibilityStatus => {
-  const conditionalAvailabilityEditorStates = useAtomStateValue(
-    conditionalAvailabilityEditorStatesState,
+  const conditionalAvailabilityEditorEntries = useAtomStateValue(
+    conditionalAvailabilityEditorEntriesState,
   );
 
   if (
     isConditionalAvailabilityEditorEntryIncomplete({
-      editorEntry: conditionalAvailabilityEditorStates[itemKey],
+      editorEntry: conditionalAvailabilityEditorEntries[itemKey],
       node,
     })
   ) {

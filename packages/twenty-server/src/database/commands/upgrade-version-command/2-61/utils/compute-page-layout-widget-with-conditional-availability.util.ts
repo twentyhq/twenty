@@ -5,6 +5,7 @@ import { UNREADABLE_RULE_CONDITIONAL_AVAILABILITY } from 'src/database/commands/
 import { fromLegacyPageLayoutWidgetRuleToConditionalAvailability } from 'src/engine/metadata-modules/page-layout-widget/utils/from-legacy-page-layout-widget-rule-to-conditional-availability.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { fromPageLayoutWidgetOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-overrides-to-universal-overrides.util';
+import { type OverrideAuthorContext } from 'src/engine/metadata-modules/overrides/types/override-author-context.type';
 import { dispatchUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-update-to-authored-override.util';
 import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
 import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
@@ -21,13 +22,10 @@ type PageLayoutWidgetRuleProperties = Pick<
   | 'updatedAt'
 >;
 
-type PageLayoutWidgetConditionalAvailabilityComputation<TPageLayoutWidget> =
-  | { status: 'UNCHANGED' }
-  | {
-      status: 'CONVERTED';
-      flatPageLayoutWidget: TPageLayoutWidget;
-      unreadableRuleReason: string | null;
-    };
+type LegacyRuleProperties = Pick<
+  FlatPageLayoutWidget,
+  'conditionalAvailabilityExpression' | 'conditionalDisplay'
+>;
 
 const RULE_PROPERTIES = [
   'conditionalAvailability',
@@ -38,19 +36,13 @@ const RULE_PROPERTIES = [
 const hasLegacyRule = ({
   conditionalAvailabilityExpression,
   conditionalDisplay,
-}: Pick<
-  PageLayoutWidgetRuleProperties,
-  'conditionalAvailabilityExpression' | 'conditionalDisplay'
->): boolean =>
+}: LegacyRuleProperties): boolean =>
   isDefined(conditionalAvailabilityExpression) || isDefined(conditionalDisplay);
 
 const convertLegacyRule = ({
   conditionalAvailabilityExpression,
   conditionalDisplay,
-}: Pick<
-  PageLayoutWidgetRuleProperties,
-  'conditionalAvailabilityExpression' | 'conditionalDisplay'
->): {
+}: LegacyRuleProperties): {
   conditionalAvailability: ConditionalAvailabilityNode | null;
   unreadableRuleReason: string | null;
 } => {
@@ -59,14 +51,14 @@ const convertLegacyRule = ({
     conditionalDisplay,
   });
 
-  return conversion.isConvertible
+  return conversion.isValid
     ? {
-        conditionalAvailability: conversion.conditionalAvailability,
+        conditionalAvailability: conversion.node,
         unreadableRuleReason: null,
       }
     : {
         conditionalAvailability: UNREADABLE_RULE_CONDITIONAL_AVAILABILITY,
-        unreadableRuleReason: conversion.reason,
+        unreadableRuleReason: conversion.errorCode,
       };
 };
 
@@ -88,6 +80,54 @@ const convertColumns = <
   };
 };
 
+const moveRuleIntoAuthoredOverride = <
+  TPageLayoutWidget extends PageLayoutWidgetRuleProperties,
+>({
+  pageLayoutWidget,
+  conditionalAvailability,
+  existingOverrides,
+  authorContext,
+  pageLayoutTabUniversalIdentifierById,
+}: {
+  pageLayoutWidget: TPageLayoutWidget;
+  conditionalAvailability: ConditionalAvailabilityNode | null;
+  existingOverrides: TPageLayoutWidget['overrides'];
+  authorContext: OverrideAuthorContext;
+  pageLayoutTabUniversalIdentifierById: Partial<Record<string, string>>;
+}): TPageLayoutWidget => {
+  const { overrides } = dispatchUpdateToAuthoredOverride<
+    {
+      conditionalAvailability: ConditionalAvailabilityNode | null;
+      conditionalAvailabilityExpression: null;
+      conditionalDisplay: null;
+    },
+    PageLayoutWidgetOverrides
+  >({
+    metadataName: 'pageLayoutWidget',
+    updatedProperties: {
+      conditionalAvailability,
+      conditionalAvailabilityExpression: null,
+      conditionalDisplay: null,
+    },
+    existingEntity: pageLayoutWidget,
+    existingOverrides,
+    authorUniversalIdentifier:
+      authorContext.workspaceCustomApplicationUniversalIdentifier,
+    authorContext,
+  });
+
+  return {
+    ...pageLayoutWidget,
+    overrides,
+    universalOverrides: isDefined(overrides)
+      ? fromPageLayoutWidgetOverridesToUniversalOverrides({
+          overrides,
+          pageLayoutTabUniversalIdentifierById,
+        })
+      : null,
+  };
+};
+
 export const computePageLayoutWidgetWithConditionalAvailability = <
   TPageLayoutWidget extends PageLayoutWidgetRuleProperties,
 >({
@@ -102,7 +142,10 @@ export const computePageLayoutWidgetWithConditionalAvailability = <
   workspaceCustomApplicationUniversalIdentifier: string;
   pageLayoutTabUniversalIdentifierById: Partial<Record<string, string>>;
   now: string;
-}): PageLayoutWidgetConditionalAvailabilityComputation<TPageLayoutWidget> => {
+}): {
+  flatPageLayoutWidget: TPageLayoutWidget;
+  unreadableRuleReason: string | null;
+} | null => {
   const authorContext = {
     workspaceCustomApplicationUniversalIdentifier,
     ownerApplicationUniversalIdentifier:
@@ -133,7 +176,7 @@ export const computePageLayoutWidgetWithConditionalAvailability = <
     !hasLegacyRule(effectivePageLayoutWidget) &&
     !isStandardRuleRestored
   ) {
-    return { status: 'UNCHANGED' };
+    return null;
   }
 
   const displayedRule = hasLegacyRule(effectivePageLayoutWidget)
@@ -158,59 +201,21 @@ export const computePageLayoutWidgetWithConditionalAvailability = <
       }) !== undefined,
   );
 
-  if (!isRuleOverridden) {
-    return fastDeepEqual(
-      pageLayoutWidgetWithConvertedColumns,
-      flatPageLayoutWidget,
-    )
-      ? { status: 'UNCHANGED' }
-      : {
-          status: 'CONVERTED',
-          flatPageLayoutWidget: {
-            ...pageLayoutWidgetWithConvertedColumns,
-            updatedAt: now,
-          },
-          unreadableRuleReason: displayedRule.unreadableRuleReason,
-        };
-  }
-
-  const { overrides } = dispatchUpdateToAuthoredOverride<
-    {
-      conditionalAvailability: ConditionalAvailabilityNode | null;
-      conditionalAvailabilityExpression: null;
-      conditionalDisplay: null;
-    },
-    PageLayoutWidgetOverrides
-  >({
-    metadataName: 'pageLayoutWidget',
-    updatedProperties: {
-      conditionalAvailability: displayedRule.conditionalAvailability,
-      conditionalAvailabilityExpression: null,
-      conditionalDisplay: null,
-    },
-    existingEntity: pageLayoutWidgetWithConvertedColumns,
-    existingOverrides: flatPageLayoutWidget.overrides,
-    authorUniversalIdentifier: workspaceCustomApplicationUniversalIdentifier,
-    authorContext,
-  });
-
-  const convertedPageLayoutWidget: TPageLayoutWidget = {
-    ...pageLayoutWidgetWithConvertedColumns,
-    overrides,
-    universalOverrides: isDefined(overrides)
-      ? fromPageLayoutWidgetOverridesToUniversalOverrides({
-          overrides,
-          pageLayoutTabUniversalIdentifierById,
-        })
-      : null,
-  };
+  const convertedPageLayoutWidget = isRuleOverridden
+    ? moveRuleIntoAuthoredOverride({
+        pageLayoutWidget: pageLayoutWidgetWithConvertedColumns,
+        conditionalAvailability: displayedRule.conditionalAvailability,
+        existingOverrides: flatPageLayoutWidget.overrides,
+        authorContext,
+        pageLayoutTabUniversalIdentifierById,
+      })
+    : pageLayoutWidgetWithConvertedColumns;
 
   if (fastDeepEqual(convertedPageLayoutWidget, flatPageLayoutWidget)) {
-    return { status: 'UNCHANGED' };
+    return null;
   }
 
   return {
-    status: 'CONVERTED',
     flatPageLayoutWidget: { ...convertedPageLayoutWidget, updatedAt: now },
     unreadableRuleReason: displayedRule.unreadableRuleReason,
   };

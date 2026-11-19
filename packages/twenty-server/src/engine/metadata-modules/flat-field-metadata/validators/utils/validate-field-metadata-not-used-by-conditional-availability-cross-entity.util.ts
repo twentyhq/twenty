@@ -1,7 +1,7 @@
 import { msg, t } from '@lingui/core/macro';
 import {
   isDefined,
-  listConditionalAvailabilityFieldMetadataUniversalIdentifiers,
+  listConditionalAvailabilityNodes,
 } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
@@ -44,7 +44,7 @@ export const validateFieldMetadataNotUsedByConditionalAvailabilityCrossEntity =
       return validationErrors;
     }
 
-    const ruleNodes = Object.values(
+    const usedFieldMetadataUniversalIdentifiers = Object.values(
       optimisticUniversalFlatMaps.flatPageLayoutWidgetMaps
         .byUniversalIdentifier,
     )
@@ -54,25 +54,16 @@ export const validateFieldMetadataNotUsedByConditionalAvailabilityCrossEntity =
           (override) => override?.conditionalAvailability,
         ),
       ])
-      .filter(isDefined);
-
-    const ruleCountByFieldMetadataUniversalIdentifier = new Map<
-      string,
-      number
-    >();
-
-    for (const node of ruleNodes) {
-      for (const fieldMetadataUniversalIdentifier of listConditionalAvailabilityFieldMetadataUniversalIdentifiers(
-        { node },
-      )) {
-        ruleCountByFieldMetadataUniversalIdentifier.set(
-          fieldMetadataUniversalIdentifier,
-          (ruleCountByFieldMetadataUniversalIdentifier.get(
-            fieldMetadataUniversalIdentifier,
-          ) ?? 0) + 1,
-        );
-      }
-    }
+      .filter(isDefined)
+      .flatMap((node) => [
+        ...new Set(
+          listConditionalAvailabilityNodes({ node }).flatMap((childNode) =>
+            childNode.type === 'SELECTED_RECORDS'
+              ? [childNode.recordFilter.fieldMetadataUniversalIdentifier]
+              : [],
+          ),
+        ),
+      ]);
 
     const deletedObjectUniversalIdentifiers = new Set(
       orchestratorActionsReport.objectMetadata.delete.map(
@@ -85,10 +76,9 @@ export const validateFieldMetadataNotUsedByConditionalAvailabilityCrossEntity =
         fromFlatFieldMetadataMaps.byUniversalIdentifier[
           deleteAction.universalIdentifier
         ];
-      const ruleCount =
-        ruleCountByFieldMetadataUniversalIdentifier.get(
-          deleteAction.universalIdentifier,
-        ) ?? 0;
+      const ruleCount = usedFieldMetadataUniversalIdentifiers.filter(
+        (identifier) => identifier === deleteAction.universalIdentifier,
+      ).length;
 
       if (
         !isDefined(fromFlatFieldMetadata) ||

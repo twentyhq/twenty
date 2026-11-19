@@ -1,17 +1,62 @@
 import { Parser } from 'expr-eval-fork';
 
 import { CONDITIONAL_AVAILABILITY_FUNCTIONS } from '@/constants/ConditionalAvailabilityFunctions';
-import { CONDITIONAL_AVAILABILITY_OPERATORS } from '@/constants/ConditionalAvailabilityOperators';
 
 export const conditionalAvailabilityStrictParser = new Parser({
   allowMemberAccess: true,
-  operators: CONDITIONAL_AVAILABILITY_OPERATORS,
+  operators: {
+    comparison: true,
+    logical: true,
+    subtract: true,
+    add: false,
+    multiply: false,
+    divide: false,
+    remainder: false,
+    power: false,
+    factorial: false,
+    concatenate: false,
+    conditional: false,
+    in: false,
+    length: false,
+    assignment: false,
+    fndef: false,
+    array: false,
+    random: false,
+    min: false,
+    max: false,
+    sin: false,
+    cos: false,
+    tan: false,
+    asin: false,
+    acos: false,
+    atan: false,
+    sinh: false,
+    cosh: false,
+    tanh: false,
+    asinh: false,
+    acosh: false,
+    atanh: false,
+    sqrt: false,
+    cbrt: false,
+    log: false,
+    log2: false,
+    ln: false,
+    lg: false,
+    log10: false,
+    expm1: false,
+    log1p: false,
+    abs: false,
+    ceil: false,
+    floor: false,
+    round: false,
+    trunc: false,
+    exp: false,
+    sign: false,
+  },
 });
 
 conditionalAvailabilityStrictParser.consts = { true: true, false: false };
 
-conditionalAvailabilityStrictParser.functions = Object.fromEntries(
-  Object.entries(CONDITIONAL_AVAILABILITY_FUNCTIONS).map(
-    ([name, { evaluate }]) => [name, evaluate],
-  ),
-);
+conditionalAvailabilityStrictParser.functions = {
+  ...CONDITIONAL_AVAILABILITY_FUNCTIONS,
+};

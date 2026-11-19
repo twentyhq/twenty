@@ -2,16 +2,15 @@ import { ConditionalAvailabilityRecordFieldSubFieldMenu } from '@/conditional-av
 import { ConditionalAvailabilityRecordFieldSubjectSection } from '@/conditional-availability/components/ConditionalAvailabilityRecordFieldSubjectSection';
 import { CONDITIONAL_AVAILABILITY_SUB_FIELD_PAGE_ID } from '@/conditional-availability/constants/ConditionalAvailabilitySubFieldPageId';
 import { CONDITIONAL_AVAILABILITY_SUBJECT_DEFINITIONS } from '@/conditional-availability/constants/ConditionalAvailabilitySubjectDefinitions';
-import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/hooks/useConditionalAvailabilityEditorContext';
+import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/contexts/ConditionalAvailabilityEditorContext';
+import { type ConditionalAvailabilityPathSubject } from '@/conditional-availability/types/ConditionalAvailabilityPathSubject';
 import { type ConditionalAvailabilityRecordFieldOption } from '@/conditional-availability/types/ConditionalAvailabilityRecordFieldOption';
 import { type ConditionalAvailabilityRecordFieldSubject } from '@/conditional-availability/types/ConditionalAvailabilityRecordFieldSubject';
 import { type ConditionalAvailabilityRow } from '@/conditional-availability/types/ConditionalAvailabilityRow';
-import { type ConditionalAvailabilitySubject } from '@/conditional-availability/types/ConditionalAvailabilitySubject';
-import { type ConditionalAvailabilitySubjectSection } from '@/conditional-availability/types/ConditionalAvailabilitySubjectSection';
 import { getConditionalAvailabilityRecordFieldRowSubject } from '@/conditional-availability/utils/getConditionalAvailabilityRecordFieldRowSubject';
 import { getConditionalAvailabilityRecordFieldSubjectLabel } from '@/conditional-availability/utils/getConditionalAvailabilityRecordFieldSubjectLabel';
+import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { CONDITION_BUILDER_DROPDOWN_SIDE_OFFSET } from '@/ui/layout/condition-builder/constants/ConditionBuilderDropdownSideOffset';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -121,15 +120,12 @@ export const ConditionalAvailabilitySubjectSelect = ({
       ),
   );
 
-  const getSectionSubjects = (section: ConditionalAvailabilitySubjectSection) =>
-    matchingSubjects.filter(
-      (matchingSubject) =>
-        CONDITIONAL_AVAILABILITY_SUBJECT_DEFINITIONS[matchingSubject]
-          .section === section,
-    );
-
-  const currentUserSubjects = getSectionSubjects('currentUser');
-  const deviceSubjects = getSectionSubjects('device');
+  const currentUserSubjects = matchingSubjects.filter(
+    (matchingSubject) => matchingSubject !== 'device',
+  );
+  const deviceSubjects = matchingSubjects.filter(
+    (matchingSubject) => matchingSubject === 'device',
+  );
 
   const handleSubjectChange = (nextSubject: string | null) => {
     const selectedSubject = availableSubjects.find(
@@ -154,7 +150,7 @@ export const ConditionalAvailabilitySubjectSelect = ({
   };
 
   const renderSubjectOption = (
-    optionSubject: ConditionalAvailabilitySubject,
+    optionSubject: ConditionalAvailabilityPathSubject,
   ) => {
     const { Icon: SubjectIcon, label } =
       CONDITIONAL_AVAILABILITY_SUBJECT_DEFINITIONS[optionSubject];
@@ -192,7 +188,7 @@ export const ConditionalAvailabilitySubjectSelect = ({
       <DropdownContent
         width={GenericDropdownContentWidth.Large}
         align="start"
-        sideOffset={CONDITION_BUILDER_DROPDOWN_SIDE_OFFSET}
+        sideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}
       >
         <Dropdown.Page id="root">
           <Dropdown.Search
