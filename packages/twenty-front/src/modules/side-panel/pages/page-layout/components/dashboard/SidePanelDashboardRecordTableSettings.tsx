@@ -21,6 +21,8 @@ import { RecordTableCalendarLayoutDropdownContent } from '@/side-panel/pages/pag
 import { RecordTableLayoutSelectionSection } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutSelectionSection';
 import { RecordTableSettingsFilterAndSortRows } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFilterAndSortRows';
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
+import { DashboardWidgetSettingsManageSection } from '@/side-panel/pages/page-layout/components/dashboard/DashboardWidgetSettingsManageSection';
+import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { useRecordTableSettingsDescriptions } from '@/side-panel/pages/page-layout/hooks/useRecordTableSettingsDescriptions';
 import { useRecordTableWidgetInEditModeView } from '@/side-panel/pages/page-layout/hooks/useRecordTableWidgetInEditModeView';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
@@ -202,6 +204,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
             : []),
         ]
       : []),
+    WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
   ];
 
   return (
@@ -432,6 +435,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                 </>
               )}
             </SidePanelGroup>
+            <DashboardWidgetSettingsManageSection pageLayoutId={pageLayoutId} />
           </SidePanelList>
         </StyledSettingsContainer>
         <WidgetSettingsFooter pageLayoutId={pageLayoutId} />
