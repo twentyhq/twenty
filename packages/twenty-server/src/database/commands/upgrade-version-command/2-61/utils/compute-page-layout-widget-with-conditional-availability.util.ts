@@ -62,7 +62,7 @@ const convertLegacyRule = ({
       };
 };
 
-const convertColumns = <
+const replaceLegacyRuleWithConditionalAvailability = <
   TPageLayoutWidget extends PageLayoutWidgetRuleProperties,
 >(
   flatPageLayoutWidget: TPageLayoutWidget,
@@ -187,9 +187,10 @@ export const computePageLayoutWidgetWithConditionalAvailability = <
         unreadableRuleReason: null,
       };
 
-  const pageLayoutWidgetWithConvertedColumns = convertColumns(
-    pageLayoutWidgetWithStandardRule,
-  );
+  const pageLayoutWidgetWithConvertedRule =
+    replaceLegacyRuleWithConditionalAvailability(
+      pageLayoutWidgetWithStandardRule,
+    );
 
   const isRuleOverridden = RULE_PROPERTIES.some(
     (property) =>
@@ -203,13 +204,13 @@ export const computePageLayoutWidgetWithConditionalAvailability = <
 
   const convertedPageLayoutWidget = isRuleOverridden
     ? moveRuleIntoAuthoredOverride({
-        pageLayoutWidget: pageLayoutWidgetWithConvertedColumns,
+        pageLayoutWidget: pageLayoutWidgetWithConvertedRule,
         conditionalAvailability: displayedRule.conditionalAvailability,
         existingOverrides: flatPageLayoutWidget.overrides,
         authorContext,
         pageLayoutTabUniversalIdentifierById,
       })
-    : pageLayoutWidgetWithConvertedColumns;
+    : pageLayoutWidgetWithConvertedRule;
 
   if (fastDeepEqual(convertedPageLayoutWidget, flatPageLayoutWidget)) {
     return null;
