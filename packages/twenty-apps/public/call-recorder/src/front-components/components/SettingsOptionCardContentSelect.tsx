@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-sdk/utils';
 import { type IconComponent } from 'twenty-ui/icon';
@@ -51,7 +52,7 @@ export const SettingsOptionCardContentSelect = ({
           <StyledSettingsCardTitle id={titleId}>
             {title}
           </StyledSettingsCardTitle>
-          {description && (
+          {isNonEmptyString(description) && (
             <StyledSettingsCardDescription>
               <OverflowingTextWithTooltip text={description} />
             </StyledSettingsCardDescription>
