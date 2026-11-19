@@ -1,9 +1,5 @@
 # Changelog
 
-## 1.12.0
-
-- Suggest showing Last contact, Last contact by and Last contact item on All People, Last contact and Last contact item on All Companies, and Last contact on the Opportunities By Stage board. On Twenty 2.61 or later, the app's page in Settings offers these columns and Review asks the AI to add them to your views.
-
 ## 1.11.0
 
 - Ignore draft emails. A draft linked to a person was counted as a contact, both when its participant was linked and in the backfill, so writing an email without sending it moved the person's last contact.
