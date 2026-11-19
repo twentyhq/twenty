@@ -4,7 +4,7 @@ import {
   AgentChatThreadConversationType,
 } from 'twenty-shared/ai';
 
-import { getAgentChatPushNotificationReason } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-push-notification-reason.util';
+import { getAgentChatWebPushNotificationReason } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-web-push-notification-reason.util';
 
 const ME = 'member-me';
 const FELIX = 'member-felix';
@@ -37,9 +37,11 @@ const unreadFollowedParticipant: AgentChatInboxState = {
 };
 
 const getReason = (
-  overrides: Partial<Parameters<typeof getAgentChatPushNotificationReason>[0]>,
+  overrides: Partial<
+    Parameters<typeof getAgentChatWebPushNotificationReason>[0]
+  >,
 ) =>
-  getAgentChatPushNotificationReason({
+  getAgentChatWebPushNotificationReason({
     thread: channelThread,
     participant: unreadFollowedParticipant,
     workspaceMemberId: ME,
@@ -47,7 +49,7 @@ const getReason = (
     ...overrides,
   });
 
-describe('getAgentChatPushNotificationReason', () => {
+describe('getAgentChatWebPushNotificationReason', () => {
   it('should notify for an unread message in a followed chat', () => {
     expect(getReason({})).toBe('FOLLOWED');
   });

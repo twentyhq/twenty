@@ -1,7 +1,7 @@
 import { setupI18n } from '@lingui/core';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 
-import { buildAgentChatPushNotification } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util';
+import { buildAgentChatWebPushNotification } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util';
 
 const i18n = setupI18n({ locale: 'en', messages: { en: {} } });
 
@@ -33,9 +33,9 @@ const channelThread = {
 };
 
 const build = (
-  overrides: Partial<Parameters<typeof buildAgentChatPushNotification>[0]>,
+  overrides: Partial<Parameters<typeof buildAgentChatWebPushNotification>[0]>,
 ) =>
-  buildAgentChatPushNotification({
+  buildAgentChatWebPushNotification({
     i18n,
     thread: channelThread,
     recipientWorkspaceMemberId: ME,
@@ -44,7 +44,7 @@ const build = (
     ...overrides,
   });
 
-describe('buildAgentChatPushNotification', () => {
+describe('buildAgentChatWebPushNotification', () => {
   it('should name the sender and the chat', () => {
     expect(build({})).toEqual({
       title: 'Felix Martin in Roadmap',
