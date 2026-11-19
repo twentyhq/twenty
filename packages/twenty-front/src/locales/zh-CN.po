@@ -7575,7 +7575,7 @@ msgstr "连接您自己的 {0} 帐户，以便此应用代表您使用。"
 #. placeholder {0}: connectionProvider.displayName
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
 msgid "Connect your own {0} account for this server to use on your behalf."
-msgstr ""
+msgstr "连接您自己的 {0} 账户，以便代表您用于此服务器。"
 
 #. js-lingui-id: QHcLEN
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
@@ -9261,7 +9261,7 @@ msgstr "自定义记录页面"
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
-msgstr ""
+msgstr "自定义侧边栏"
 
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx

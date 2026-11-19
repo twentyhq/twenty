@@ -7575,7 +7575,7 @@ msgstr "Підключіть власний обліковий запис {0} д
 #. placeholder {0}: connectionProvider.displayName
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
 msgid "Connect your own {0} account for this server to use on your behalf."
-msgstr ""
+msgstr "Підключіть власний обліковий запис {0} для цього сервера, щоб використовувати його від вашого імені."
 
 #. js-lingui-id: QHcLEN
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
@@ -9261,7 +9261,7 @@ msgstr "Налаштувати сторінку запису"
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
-msgstr ""
+msgstr "Налаштувати бічну панель"
 
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
