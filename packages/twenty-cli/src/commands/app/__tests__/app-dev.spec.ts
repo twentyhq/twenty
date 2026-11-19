@@ -79,6 +79,78 @@ afterEach(() => {
 });
 
 describe('twenty app dev', () => {
+  it.each(['human', 'ndjson'])(
+    'shows watch scope with --verbose in %s output',
+    async (format) => {
+      const scope = {
+        filePaths: ['/shared/helper.ts'],
+        directoryPaths: ['/shared'],
+        excludedDirectoryPaths: ['/home/developer'],
+      };
+      vi.mocked(watchAppInputs).mockImplementation(
+        async ({ onScopeChange }) => ({
+          close,
+          update: async () => {
+            await onScopeChange?.(scope);
+          },
+        }),
+      );
+      vi.mocked(buildDevSnapshot).mockImplementation(
+        async ({ updateWatchInputs }) => {
+          await updateWatchInputs([], true);
+          return makeSnapshot('verbose');
+        },
+      );
+      const session = runCliForTest([
+        'app',
+        'dev',
+        '--verbose',
+        '--format',
+        format,
+      ]);
+      await vi.waitFor(() => expect(generateClient).toHaveBeenCalledOnce());
+      process.emit('SIGINT');
+      const result = await session;
+
+      if (format === 'human') {
+        expect(result.stderr).toContain('App folder (recursive): /test-app');
+        expect(result.stderr).toContain(
+          'External files:\n    /shared/helper.ts',
+        );
+        expect(result.stderr).toContain(
+          'Excluded directories:\n    /home/developer',
+        );
+      } else {
+        const events = result.stdout
+          .trim()
+          .split('\n')
+          .map((line) => JSON.parse(line));
+        expect(events).toContainEqual(
+          expect.objectContaining({
+            type: 'progress',
+            data: expect.objectContaining({
+              kind: 'watch-scope',
+              appPath: '/test-app',
+              ...scope,
+            }),
+          }),
+        );
+      }
+    },
+  );
+
+  it('keeps watch scope reporting disabled by default', async () => {
+    vi.mocked(buildDevSnapshot).mockResolvedValue(makeSnapshot('quiet'));
+    const session = runCliForTest(['app', 'dev', '--format', 'ndjson']);
+    await vi.waitFor(() => expect(generateClient).toHaveBeenCalledOnce());
+    process.emit('SIGINT');
+    const result = await session;
+    expect(
+      vi.mocked(watchAppInputs).mock.calls[0][0].onScopeChange,
+    ).toBeUndefined();
+    expect(result.stdout).not.toContain('watch-scope');
+  });
+
   it('rejects finite JSON before target lookup or starting a watcher', async () => {
     const result = await runCliForTest(['app', 'dev', '--json']);
     expect(JSON.parse(result.stdout)).toMatchObject({
