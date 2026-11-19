@@ -19,10 +19,9 @@ export { COMPOSITE_FIELD_SUB_FIELD_LABELS } from './CompositeFieldSubFieldLabels
 export { COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES } from './CompositeFieldTypeSubFieldsNames';
 export { CONDITIONAL_AVAILABILITY_COMPARISON_OPERATOR_SYMBOLS } from './ConditionalAvailabilityComparisonOperatorSymbols';
 export { CONDITIONAL_AVAILABILITY_EXPRESSION_MAX_LENGTH } from './ConditionalAvailabilityExpressionMaxLength';
-export { CONDITIONAL_AVAILABILITY_FORBIDDEN_PATH_SEGMENT_PATTERN } from './ConditionalAvailabilityForbiddenPathSegmentPattern';
+export { CONDITIONAL_AVAILABILITY_FORBIDDEN_PROPERTY_NAMES } from './ConditionalAvailabilityForbiddenPropertyNames';
 export { CONDITIONAL_AVAILABILITY_FUNCTIONS } from './ConditionalAvailabilityFunctions';
 export { CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT } from './ConditionalAvailabilityMaxNodeCount';
-export { CONDITIONAL_AVAILABILITY_OPERATORS } from './ConditionalAvailabilityOperators';
 export { CONDITIONAL_AVAILABILITY_PATH_PATTERN } from './ConditionalAvailabilityPathPattern';
 export { CONDITIONAL_AVAILABILITY_VARIABLES } from './ConditionalAvailabilityVariables';
 export { CORE_PICTURE_MIME_TYPES } from './CorePictureMimeTypes';

@@ -1,5 +1,9 @@
-import { type PageLayoutConditionalAvailabilityContext } from './PageLayoutConditionalAvailabilityContext';
+import { type ObjectRecord } from './ObjectRecord';
 
 export type ConditionalAvailabilityContextByMetadataName = {
-  pageLayoutWidget: PageLayoutConditionalAvailabilityContext;
+  pageLayoutWidget: {
+    device: 'MOBILE' | 'DESKTOP';
+    selectedRecords: ObjectRecord[];
+    featureFlags: Record<string, boolean>;
+  };
 };
