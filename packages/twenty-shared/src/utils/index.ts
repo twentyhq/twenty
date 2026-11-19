@@ -40,6 +40,7 @@ export { checkConditionalAvailabilityNode } from './conditional-availability/che
 export { conditionalAvailabilityNodeSchema } from './conditional-availability/conditionalAvailabilityNodeSchema';
 export { conditionalAvailabilityParser } from './conditional-availability/conditionalAvailabilityParser';
 export { conditionalAvailabilityStrictParser } from './conditional-availability/conditionalAvailabilityStrictParser';
+export { createArrayPropertyCheck } from './conditional-availability/createArrayPropertyCheck';
 export { evaluateConditionalAvailabilityExpression } from './conditional-availability/evaluateConditionalAvailabilityExpression';
 export { evaluateConditionalAvailabilityNode } from './conditional-availability/evaluateConditionalAvailabilityNode';
 export { listConditionalAvailabilityNodes } from './conditional-availability/listConditionalAvailabilityNodes';
