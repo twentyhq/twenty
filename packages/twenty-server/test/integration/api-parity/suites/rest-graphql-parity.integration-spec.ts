@@ -57,10 +57,13 @@ const pickSelectedPersonFields = (
   emails: person.emails,
 });
 
-const queryGraphql = async (
-  query: ReturnType<typeof gql>,
-  variables: Record<string, unknown> = {},
-) => {
+const queryGraphql = async ({
+  query,
+  variables = {},
+}: {
+  query: ReturnType<typeof gql>;
+  variables?: Record<string, unknown>;
+}) => {
   const response = await makeGraphqlApiRequest({ query, variables });
 
   expect(response.body.errors).toBeUndefined();
@@ -106,7 +109,8 @@ describe('REST and GraphQL parity', () => {
       path: '/people?filter=position[gte]:1&order_by=position[DescNullsLast]&limit=2&depth=0',
     }).expect(200);
 
-    const { people } = await queryGraphql(gql`
+    const { people } = await queryGraphql({
+      query: gql`
       query {
         people(
           filter: { position: { gte: 1 } }
@@ -126,7 +130,8 @@ describe('REST and GraphQL parity', () => {
           }
         }
       }
-    `);
+    `,
+    });
 
     expect(restResponse.body.data.people.map(pickSelectedPersonFields)).toEqual(
       people.edges.map(({ node }: { node: SelectedPersonFields }) => node),
@@ -156,10 +161,11 @@ describe('REST and GraphQL parity', () => {
         }
       }
     `;
-    const graphqlNextPage = await queryGraphql(nextPageQuery, {
-      after: firstRestPage.body.pageInfo.endCursor,
+    const graphqlNextPage = await queryGraphql({
+      query: nextPageQuery,
+      variables: { after: firstRestPage.body.pageInfo.endCursor },
     });
-    const graphqlFirstPage = await queryGraphql(nextPageQuery);
+    const graphqlFirstPage = await queryGraphql({ query: nextPageQuery });
 
     const restNextPage = await makeRestApiRequest({
       method: 'get',
@@ -184,16 +190,16 @@ describe('REST and GraphQL parity', () => {
       path: `/people/${TEST_PERSON_2_ID}?depth=0`,
     }).expect(200);
 
-    const { person } = await queryGraphql(
-      gql`
+    const { person } = await queryGraphql({
+      query: gql`
         query Person($id: UUID!) {
           person(filter: { id: { eq: $id } }) {
             ${PERSON_FIELDS}
           }
         }
       `,
-      { id: TEST_PERSON_2_ID },
-    );
+      variables: { id: TEST_PERSON_2_ID },
+    });
 
     expect(pickSelectedPersonFields(restResponse.body.data.person)).toEqual(
       person,
@@ -206,21 +212,23 @@ describe('REST and GraphQL parity', () => {
       path: '/people?order_by=position[AscNullsLast]&depth=1',
     }).expect(200);
 
-    const { people } = await queryGraphql(gql`
-      query {
-        people(orderBy: [{ position: AscNullsLast }]) {
-          edges {
-            node {
-              id
-              company {
+    const { people } = await queryGraphql({
+      query: gql`
+        query {
+          people(orderBy: [{ position: AscNullsLast }]) {
+            edges {
+              node {
                 id
-                name
+                company {
+                  id
+                  name
+                }
               }
             }
           }
         }
-      }
-    `);
+      `,
+    });
 
     expect(
       restResponse.body.data.people.map((person: PersonWithCompany) => ({
@@ -241,8 +249,8 @@ describe('REST and GraphQL parity', () => {
       path: `/companies/${TEST_COMPANY_1_ID}?depth=1`,
     }).expect(200);
 
-    const { company } = await queryGraphql(
-      gql`
+    const { company } = await queryGraphql({
+      query: gql`
         query Company($id: UUID!) {
           company(filter: { id: { eq: $id } }) {
             id
@@ -257,8 +265,8 @@ describe('REST and GraphQL parity', () => {
           }
         }
       `,
-      { id: TEST_COMPANY_1_ID },
-    );
+      variables: { id: TEST_COMPANY_1_ID },
+    });
 
     const sortById = <TRecord extends { id: string }>(records: TRecord[]) =>
       [...records].sort((left, right) => left.id.localeCompare(right.id));
@@ -288,14 +296,16 @@ describe('REST and GraphQL parity', () => {
       path: `/people/groupBy?group_by=${encodeURIComponent('[{"companyId":true}]')}&aggregate=${encodeURIComponent('["totalCount"]')}`,
     }).expect(200);
 
-    const { peopleGroupBy } = await queryGraphql(gql`
-      query {
-        peopleGroupBy(groupBy: [{ companyId: true }]) {
-          groupByDimensionValues
-          totalCount
+    const { peopleGroupBy } = await queryGraphql({
+      query: gql`
+        query {
+          peopleGroupBy(groupBy: [{ companyId: true }]) {
+            groupByDimensionValues
+            totalCount
+          }
         }
-      }
-    `);
+      `,
+    });
 
     const toComparableGroups = (
       groups: {
