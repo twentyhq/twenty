@@ -104,7 +104,7 @@ export class AddWorkspaceNavigationMenuSectionCommand extends ProvisionedWorkspa
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
+            workspaceCustomFlatApplication.universalIdentifier,
           allFlatEntityOperationByMetadataName: {
             navigationMenuItem: {
               flatEntityToCreate,
