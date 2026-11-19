@@ -8967,15 +8967,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "isSearchable": false,
               "createdAt": "2026-04-10T08:55:56.200Z",
               "updatedAt": "2026-04-10T08:55:56.200Z",
-              "defaultValue": "'NOT_STARTED'",
+              "defaultValue": "'ENQUEUED'",
               "options": [
-                {
-                  "id": "20202020-2ec6-40d8-b9e1-1b1e567bcca9",
-                  "color": "gray",
-                  "label": "Not started",
-                  "value": "NOT_STARTED",
-                  "position": 0
-                },
                 {
                   "id": "20202020-3166-46be-995a-67cb1f4c41d5",
                   "color": "yellow",
