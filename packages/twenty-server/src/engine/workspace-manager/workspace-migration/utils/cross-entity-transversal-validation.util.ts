@@ -1,4 +1,5 @@
 import { validateFieldMetadataDefaultValueOptionCrossEntity } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util';
+import { validateFieldMetadataNotUsedByConditionalAvailabilityCrossEntity } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-conditional-availability-cross-entity.util';
 import { validateFieldMetadataNotUsedByRowLevelPermissionPredicateCrossEntity } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util';
 import { validateNavigationMenuItemPageLayoutReferenceCrossEntity } from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util';
 import { validateObjectMetadataCrossEntity } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-cross-entity.util';
@@ -65,6 +66,13 @@ export const crossEntityTransversalValidation = ({
       orchestratorActionsReport,
     });
 
+  const { fieldMetadata: fieldMetadataConditionalAvailability } =
+    validateFieldMetadataNotUsedByConditionalAvailabilityCrossEntity({
+      fromFlatFieldMetadataMaps,
+      optimisticUniversalFlatMaps,
+      orchestratorActionsReport,
+    });
+
   const { fieldMetadata: fieldMetadataDefaultValue } =
     validateFieldMetadataDefaultValueOptionCrossEntity({
       fromFlatFieldMetadataOptionMaps,
@@ -87,6 +95,7 @@ export const crossEntityTransversalValidation = ({
   crossEntityFailureReport.navigationMenuItem.push(...navigationMenuItem);
   crossEntityFailureReport.fieldMetadata.push(
     ...fieldMetadata,
+    ...fieldMetadataConditionalAvailability,
     ...fieldMetadataDefaultValue,
   );
 

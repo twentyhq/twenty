@@ -4,9 +4,11 @@ import { ConditionalAvailabilityRowList } from '@/conditional-availability/compo
 import { ConditionalAvailabilityUnsupportedRule } from '@/conditional-availability/components/ConditionalAvailabilityUnsupportedRule';
 import { ConditionalAvailabilityEditorContext } from '@/conditional-availability/contexts/ConditionalAvailabilityEditorContext';
 import { useConditionalAvailabilityDraft } from '@/conditional-availability/hooks/useConditionalAvailabilityDraft';
+import { useConditionalAvailabilityFields } from '@/conditional-availability/hooks/useConditionalAvailabilityFields';
 import { useConditionalAvailabilityRoles } from '@/conditional-availability/hooks/useConditionalAvailabilityRoles';
 import { type ConditionalAvailabilityEditorTopSelectValue } from '@/conditional-availability/types/ConditionalAvailabilityEditorTopSelectValue';
 import { getConditionalAvailabilityReadOnlyReason } from '@/conditional-availability/utils/getConditionalAvailabilityReadOnlyReason';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { Select } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -39,6 +41,7 @@ type ConditionalAvailabilityEditorProps = {
   metadataName: ConditionalAvailabilityMetadataName;
   itemKey: string;
   node: ConditionalAvailabilityNode | null;
+  objectMetadataItem: EnrichedObjectMetadataItem | null;
   onNodeChange: (node: ConditionalAvailabilityNode | null) => void;
 };
 
@@ -46,16 +49,23 @@ export const ConditionalAvailabilityEditor = ({
   metadataName,
   itemKey,
   node,
+  objectMetadataItem,
   onNodeChange,
 }: ConditionalAvailabilityEditorProps) => {
   const { t } = useLingui();
   const conditionalAvailabilityRoles = useConditionalAvailabilityRoles();
   const { hasRolesPermission } = conditionalAvailabilityRoles;
 
+  const conditionalAvailabilityFields = useConditionalAvailabilityFields({
+    metadataName,
+    objectMetadataItem,
+  });
+
   const conditionalAvailabilityDraft = useConditionalAvailabilityDraft({
     metadataName,
     itemKey,
     node,
+    fields: conditionalAvailabilityFields.fields,
     hasRolesPermission,
     onNodeChange,
   });
@@ -124,6 +134,7 @@ export const ConditionalAvailabilityEditor = ({
       value={{
         ...conditionalAvailabilityDraft,
         ...conditionalAvailabilityRoles,
+        ...conditionalAvailabilityFields,
         itemKey,
         isReadOnly,
       }}

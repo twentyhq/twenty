@@ -1,17 +1,21 @@
 import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorkspaceDeletedMembersState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { ConditionalAvailabilityOptionsSelect } from '@/conditional-availability/components/ConditionalAvailabilityOptionsSelect';
+import { CONDITIONAL_AVAILABILITY_CURRENT_WORKSPACE_MEMBER_OPTION_VALUE } from '@/conditional-availability/constants/ConditionalAvailabilityCurrentWorkspaceMemberOptionValue';
 import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/hooks/useConditionalAvailabilityEditorContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { IconUser } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
+import { useTheme } from 'twenty-ui/theme';
 
 type ConditionalAvailabilityWorkspaceMemberSelectProps = {
   dropdownId: string;
   values: string[];
   isMultiple: boolean;
+  withMe: boolean;
   onChange: (values: string[]) => void;
 };
 
@@ -19,9 +23,11 @@ export const ConditionalAvailabilityWorkspaceMemberSelect = ({
   dropdownId,
   values,
   isMultiple,
+  withMe,
   onChange,
 }: ConditionalAvailabilityWorkspaceMemberSelectProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const { isReadOnly } = useConditionalAvailabilityEditorContext();
 
   const currentWorkspaceMembers = useAtomStateValue(
@@ -54,7 +60,17 @@ export const ConditionalAvailabilityWorkspaceMemberSelect = ({
       firstOption.label.localeCompare(secondOption.label),
     );
 
+  const meOption = {
+    value: CONDITIONAL_AVAILABILITY_CURRENT_WORKSPACE_MEMBER_OPTION_VALUE,
+    label: t`Me`,
+    startIcon: <IconUser size={theme.icon.size.md} />,
+  };
+
   const getValueLabel = (value: string) => {
+    if (value === meOption.value) {
+      return meOption.label;
+    }
+
     const workspaceMember = currentWorkspaceMembers.find(
       (candidate) => candidate.id === value,
     );
@@ -81,7 +97,7 @@ export const ConditionalAvailabilityWorkspaceMemberSelect = ({
   return (
     <ConditionalAvailabilityOptionsSelect
       dropdownId={dropdownId}
-      options={options}
+      options={withMe ? [meOption, ...options] : options}
       values={values}
       getValueLabel={getValueLabel}
       isMultiple={isMultiple}
