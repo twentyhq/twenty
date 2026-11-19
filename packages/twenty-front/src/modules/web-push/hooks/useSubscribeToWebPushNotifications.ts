@@ -1,6 +1,7 @@
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
 import { webPushVapidPublicKeyState } from '@/client-config/states/webPushVapidPublicKeyState';
@@ -27,7 +28,9 @@ export const useSubscribeToWebPushNotifications = () => {
     ).toJSON();
 
     if (!isDefined(endpoint) || !isDefined(keys)) {
-      throw new Error('Browser web push subscription has no endpoint or keys');
+      throw new Error(
+        doNotTranslate('Browser web push subscription has no endpoint or keys'),
+      );
     }
 
     await upsertWebPushSubscription({
