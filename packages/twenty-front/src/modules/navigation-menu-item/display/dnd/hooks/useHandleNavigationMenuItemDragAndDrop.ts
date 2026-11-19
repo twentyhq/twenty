@@ -1,7 +1,6 @@
 import { useStore } from 'jotai';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
-import { doNotTranslate } from 'twenty-shared/i18n';
 
 import type { NavigationMenuItemDropResult } from '@/navigation-menu-item/common/types/NavigationMenuItemDropResult';
 
@@ -11,18 +10,11 @@ import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/sta
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
-import { computeDndReorderPosition } from '@/navigation-menu-item/common/utils/computeDndReorderPosition';
-import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
-import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
+import { computeNavigationMenuItemDropPlacement } from '@/navigation-menu-item/common/utils/computeNavigationMenuItemDropPlacement';
 import { resolveNavigationMenuItemDroppableId } from '@/navigation-menu-item/common/utils/resolveNavigationMenuItemDroppableId';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-
-const matchesParentId = (
-  item: { parentId?: string | null },
-  parentId: string | null,
-): boolean => (item.parentId ?? null) === parentId;
 
 export const useHandleNavigationMenuItemDragAndDrop = (
   section: NavigationMenuItemSection,
@@ -85,20 +77,6 @@ export const useHandleNavigationMenuItemDragAndDrop = (
     }
   };
 
-  const computeAndApplyReorder = async (
-    draggableId: string,
-    list: Array<{ id: string; position: number }>,
-    destinationIndex: number,
-    newFolderId?: string | null,
-  ) => {
-    const newPosition = computeDndReorderPosition({
-      sortedList: list,
-      draggableId,
-      destinationIndex,
-    });
-    await applyReorder(draggableId, newPosition, newFolderId);
-  };
-
   const isDropAllowed = (
     sourceDroppableId: string,
     destinationDroppableId: string,
@@ -154,7 +132,6 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       return;
     }
 
-    const destinationParentId = destinationTarget.parentId;
     const sourceParentId =
       resolveNavigationMenuItemDroppableId({
         droppableId: source.droppableId,
@@ -162,64 +139,30 @@ export const useHandleNavigationMenuItemDragAndDrop = (
         getNavigationMenuItemById,
       })?.parentId ?? null;
 
-    const isDestinationFolder =
-      destinationTarget.kind === 'folder' ||
-      destinationTarget.kind === 'folderHeader';
+    const placement = computeNavigationMenuItemDropPlacement({
+      draggedItem,
+      sourceParentId,
+      destinationTarget,
+      destinationIndex: destination.index,
+      insertBeforeItemId: result.insertBeforeItemId,
+      sortedItems: getSortedItems(),
+    });
 
-    if (isNavigationMenuItemFolder(draggedItem) && isDestinationFolder) {
+    if (!isDefined(placement)) {
       return;
     }
 
-    if (destinationTarget.kind === 'folderHeader') {
-      if (destinationParentId === null) {
-        throw new Error(doNotTranslate('Invalid folder header ID'));
-      }
+    await applyReorder(draggableId, placement.position, placement.parentId);
 
-      const folderList = getSortedItems().filter((item) =>
-        matchesParentId(item, destinationParentId),
-      );
+    const { folderIdToOpen } = placement;
 
-      await computeAndApplyReorder(
-        draggableId,
-        folderList,
-        folderList.length,
-        destinationParentId,
-      );
+    if (isDefined(folderIdToOpen)) {
       setOpenNavigationMenuItemFolderIds((current) =>
-        current.includes(destinationParentId)
+        current.includes(folderIdToOpen)
           ? current
-          : [...current, destinationParentId],
+          : [...current, folderIdToOpen],
       );
-      return;
     }
-
-    const isSameParent = sourceParentId === destinationParentId;
-
-    const destinationList = getSortedItems().filter(
-      (item) =>
-        matchesParentId(item, destinationParentId) &&
-        !isNavigationMenuItemTabOrSection(item),
-    );
-
-    if (
-      isSameParent &&
-      !destinationList.some((item) => item.id === draggableId)
-    ) {
-      return;
-    }
-
-    const insertBeforeIndex = isDefined(result.insertBeforeItemId)
-      ? destinationList.findIndex(
-          (item) => item.id === result.insertBeforeItemId,
-        )
-      : -1;
-
-    await computeAndApplyReorder(
-      draggableId,
-      destinationList,
-      insertBeforeIndex >= 0 ? insertBeforeIndex : destination.index,
-      isSameParent ? undefined : destinationParentId,
-    );
   };
 
   return { handleNavigationMenuItemDragAndDrop };
