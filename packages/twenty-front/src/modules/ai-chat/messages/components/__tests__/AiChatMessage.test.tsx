@@ -10,8 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { AiChatComposerQuote } from '@/ai-chat/composer/components/AiChatComposerQuote';
 import { AiChatMessage } from '@/ai-chat/messages/components/AiChatMessage';
 import { AiChatTestInstance } from '@/ai-chat/testing/AiChatTestInstance';
-import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/composer/states/aiChatQuotedMessageIdFamilyState';
-import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
+import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/states/aiChatQuotedMessageIdFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -222,7 +221,6 @@ const renderMessage = ({
       avatarUrl: null,
     },
   ]);
-  jotaiStore.set(aiChatTestInstanceThreadIdState.atom, THREAD_ID);
   jotaiStore.set(newAiChatThreadIdState.atom, THREAD_ID);
   jotaiStore.set(
     aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
@@ -431,7 +429,7 @@ describe('AiChatMessage', () => {
     expect(screen.getByText('Replying to')).toBeInTheDocument();
 
     act(() => {
-      jotaiStore.set(aiChatTestInstanceThreadIdState.atom, 'another-thread');
+      jotaiStore.set(newAiChatThreadIdState.atom, 'another-thread');
       jotaiStore.set(
         aiChatQuotedMessageIdFamilyState.atomFamily({
           threadId: 'another-thread',

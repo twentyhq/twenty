@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 
+import { DiscordMark } from '@/icons';
 import {
   BecomePartnerButton,
   PartnerApplicationModalRoot,
@@ -18,12 +19,11 @@ import {
 } from '@/platform/seo';
 import { BecomePartnerFaq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
-import { PartnerHero } from '@/sections/partner-hero';
+import { INTEGRATOR_HERO_STATS, PartnerHero } from '@/sections/partner-hero';
 import {
   INTEGRATOR_STEPS,
   PartnerLevels,
   ProgramExplainer,
-  ProgramStrip,
 } from '@/sections/partner-programs';
 import { PartnerTestimonials } from '@/sections/testimonials';
 import { Button } from '@/ui';
@@ -62,6 +62,8 @@ export default async function IntegratorProgramPage({
           badge={msg`Beta`}
           heading={msg`Become a\n*Twenty integrator*`}
           body={msg`Implement Twenty for your clients. Earn 20% on every client you bring, every month for a year.`}
+          stats={INTEGRATOR_HERO_STATS}
+          statsNote={msg`Commission on Organization and Enterprise plans`}
           actions={
             <>
               <BecomePartnerButton label={msg`Apply as an integrator`} />
@@ -77,22 +79,28 @@ export default async function IntegratorProgramPage({
           anchorId={HOW_IT_WORKS_ANCHOR_ID}
           eyebrow={msg`How it works`}
           heading={msg`From application *to clients*`}
-          body={msg`Four steps, and no fee to join. You set your own rates and keep what you bill.`}
+          body={msg`Three steps, and no fee to join. You set your own rates and keep what you bill.`}
           steps={INTEGRATOR_STEPS}
+          closingRow={{
+            title: msg`Get help anytime`,
+            body: msg`Ask our team and partners on the partner Discord.`,
+            marker: <DiscordMark size={16} />,
+          }}
+          footer={[
+            {
+              id: 'levels',
+              node: (
+                <PartnerLevels
+                  action={
+                    <BecomePartnerButton label={msg`Apply as an integrator`} />
+                  }
+                />
+              ),
+            },
+          ]}
         />
         <PartnerTestimonials />
-        <PartnerLevels />
         <BecomePartnerFaq />
-        <ProgramStrip
-          heading={msg`Ready to *apply?*`}
-          body={msg`It takes a few minutes. We review every application by hand.`}
-          action={
-            <BecomePartnerButton
-              label={msg`Apply as an integrator`}
-              variant="outlined"
-            />
-          }
-        />
       </main>
     </PartnerApplicationModalRoot>
   );

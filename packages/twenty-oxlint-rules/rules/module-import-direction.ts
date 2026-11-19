@@ -4,7 +4,7 @@ export const RULE_NAME = 'module-import-direction';
 
 type ModuleImportDirection = {
   sourcePath: string;
-  forbiddenImportPrefix: string;
+  forbiddenImportPrefixes: string[];
   ignoredSourcePaths?: string[];
   reason: string;
 };
@@ -15,12 +15,14 @@ const findViolatedDirection = (
   directions: ModuleImportDirection[],
 ) =>
   directions.find(
-    ({ sourcePath, forbiddenImportPrefix, ignoredSourcePaths = [] }) =>
+    ({ sourcePath, forbiddenImportPrefixes, ignoredSourcePaths = [] }) =>
       filename.includes(sourcePath) &&
       !ignoredSourcePaths.some((ignoredSourcePath) =>
         filename.includes(ignoredSourcePath),
       ) &&
-      importSource.startsWith(forbiddenImportPrefix),
+      forbiddenImportPrefixes.some((forbiddenImportPrefix) =>
+        importSource.startsWith(forbiddenImportPrefix),
+      ),
   );
 
 export const rule = defineRule({
@@ -43,14 +45,17 @@ export const rule = defineRule({
               type: 'object',
               properties: {
                 sourcePath: { type: 'string' },
-                forbiddenImportPrefix: { type: 'string' },
+                forbiddenImportPrefixes: {
+                  type: 'array',
+                  items: { type: 'string' },
+                },
                 ignoredSourcePaths: {
                   type: 'array',
                   items: { type: 'string' },
                 },
                 reason: { type: 'string' },
               },
-              required: ['sourcePath', 'forbiddenImportPrefix', 'reason'],
+              required: ['sourcePath', 'forbiddenImportPrefixes', 'reason'],
             },
           },
         },

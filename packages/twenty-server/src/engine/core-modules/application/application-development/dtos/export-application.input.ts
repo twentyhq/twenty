@@ -29,5 +29,10 @@ export class ExportApplicationInput {
   @Field(() => Boolean, { nullable: true, defaultValue: false })
   @IsOptional()
   @IsBoolean()
+  shouldIncludeLogicFunctionSources?: boolean;
+
+  @Field(() => Boolean, { nullable: true, defaultValue: false })
+  @IsOptional()
+  @IsBoolean()
   shouldIncludePublicAssets?: boolean;
 }

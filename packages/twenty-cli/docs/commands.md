@@ -803,6 +803,10 @@ files may be incomplete: fix the problem, then run `twenty app generate-client`,
 which regenerates the client without syncing again. Ctrl+C exits with 130 and
 reports the step it interrupted.
 
+Apply and dev record component and logic function definitions from the manifest
+just synced. They fetch the other baseline metadata without downloading source
+files again.
+
 Remote changes made between the plan and the sync can change what the sync does.
 Remote changes between the acknowledged sync and the export can also enter the
 saved baseline without appearing in local source; this is not an atomic server
@@ -952,18 +956,19 @@ dependencies automatically.
 
 ### What is restored
 
-| Content                             | Local result                                                           | Limits                                                                         |
-| ----------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| Supported metadata and translations | App definitions and locale catalogs                                    | Unsupported metadata is reported, not regenerated                              |
-| Workflows                           | `defineWorkflow` files in `src/workflows`                              | Unsupported steps or references leave the local file intact                    |
-| Skills and agents                   | `defineSkill` and `defineAgent` files in `src/skills` and `src/agents` | Definitions the server cannot reproduce become coverage gaps                   |
-| Front component source        | Original TSX, preserving identifiers and supported widget references   | Inventoried local imports, configs and assets are restored; missing source becomes a coverage gap |
-| Dependencies                        | `package.json` and `yarn.lock` at the project root                     | Only the stored `dependencies` pair is restored                                |
-| Public assets                       | Exact image, font and other asset bytes under `public/`                | Only `public-asset` files with safe paths are accepted                         |
+| Content                             | Local result                                                           | Limits                                                                                            |
+| ----------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Supported metadata and translations | App definitions and locale catalogs                                    | Unsupported metadata is reported, not regenerated                                                 |
+| Workflows                           | `defineWorkflow` files in `src/workflows`                              | Unsupported steps or references leave the local file intact                                       |
+| Skills and agents                   | `defineSkill` and `defineAgent` files in `src/skills` and `src/agents` | Definitions the server cannot reproduce become coverage gaps                                      |
+| Front component source              | Original TSX, preserving identifiers and supported widget references   | Inventoried local imports, configs and assets are restored; missing source becomes a coverage gap |
+| Logic function source               | Original definitions, handlers and inventoried local imports           | Requires a source inventory from the current CLI; missing or stale sources become coverage gaps   |
+| Dependencies                        | `package.json` and `yarn.lock` at the project root                     | Only the stored `dependencies` pair is restored                                                   |
+| Public assets                       | Exact image, font and other asset bytes under `public/`                | Only `public-asset` files with safe paths are accepted                                            |
 
-Logic-function source is not exported yet. Only declared front component source
-paths are accepted. Record attachments and other file categories are refused
-before writing. Each export response is limited to 16 MiB.
+Only declared frontend component and logic function source paths are accepted.
+Record attachments and other file categories are refused before writing. Each
+export response is limited to 16 MiB.
 
 A workflow changed in the workflow builder is normally a coverage gap. The
 workspace custom application is the exception: its workflows are pulled from
@@ -971,13 +976,17 @@ their active version, and apply publishes changed definitions as new versions.
 An agent on more than one role is another example of a coverage gap. These gaps
 preserve the corresponding local files.
 
-Front component imports keep their original paths. New deployments include
-local helpers, type declarations, TypeScript configs, CSS and imported assets;
-shared files are restored once. Older deployments without an inventory still
-export only the entry file. Files no longer inventoried stay untouched locally.
-Install dependencies before building or applying. If exported `package.json`
-omits `twenty-sdk`, as the workspace custom application does, pull keeps the
-local SDK dependency. The installed generated client is left alone.
+Frontend component and logic function imports keep their original paths. New
+deployments include local helpers, type declarations, TypeScript configs, CSS
+and imported assets; shared files are restored once. Older frontend deployments
+without an inventory still export only the entry file. Logic functions without
+an inventory remain coverage gaps until the application is applied with the
+current CLI. Changes made to a function's stored metadata after that apply also
+produce a coverage gap, so pull does not silently restore an outdated trigger
+or timeout. Files no longer inventoried stay untouched locally. Install
+dependencies before building or applying. If exported `package.json` omits
+`twenty-sdk`, as the workspace custom application does, pull keeps the local
+SDK dependency. The installed generated client is left alone.
 
 Run `yarn install` after pulling dependency changes into an existing project.
 

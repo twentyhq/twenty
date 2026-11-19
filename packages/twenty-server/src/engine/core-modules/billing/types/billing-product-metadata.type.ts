@@ -8,8 +8,8 @@ import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-
 
 @ObjectType()
 export class BillingProductMetadata {
-  @Field(() => BillingPlanKey)
-  planKey: BillingPlanKey;
+  @Field(() => BillingPlanKey, { nullable: true })
+  planKey?: BillingPlanKey;
 
   @Field(() => BillingUsageType)
   priceUsageBased: BillingUsageType;

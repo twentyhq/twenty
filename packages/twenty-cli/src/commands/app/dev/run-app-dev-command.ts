@@ -235,6 +235,10 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
           appPath: project.path,
           universalIdentifier: applied.acknowledgedUniversalIdentifier,
           sourceFingerprints: snapshot.sourceFingerprints,
+          appliedManifest: {
+            frontComponents: snapshot.build.manifest.frontComponents,
+            logicFunctions: snapshot.build.manifest.logicFunctions,
+          },
           context: currentContext,
         });
 

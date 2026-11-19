@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { IconMessageCirclePlus } from 'twenty-ui/icon';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
-import { useStageAiChatPreprompt } from '@/ai-chat/composer/hooks/useStageAiChatPreprompt';
+import { useStageAiChatPreprompt } from '@/ai-chat/hooks/useStageAiChatPreprompt';
 import { useSwitchToNewAiChat } from '@/ai-chat/hooks/useSwitchToNewAiChat';
 import { COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID } from '@/command-menu-item/constants/CommandMenuAskAiFallbackItemId';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';

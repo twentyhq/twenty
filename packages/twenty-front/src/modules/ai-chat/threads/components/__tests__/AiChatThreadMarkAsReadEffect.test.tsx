@@ -1,8 +1,8 @@
-import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
-import { render } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { AiChatThreadMarkAsReadEffect } from '@/ai-chat/threads/components/AiChatThreadMarkAsReadEffect';
+import { AiChatThreadOpenViewEffect } from '@/ai-chat/threads/components/AiChatThreadOpenViewEffect';
 import { AiChatTestInstance } from '@/ai-chat/testing/AiChatTestInstance';
 import { aiChatReopenedThreadActivityState } from '@/ai-chat/threads/states/aiChatReopenedThreadActivityState';
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
@@ -54,11 +54,17 @@ const PARTICIPANT: AgentChatThreadParticipantFieldsFragment = {
 const renderChatView = () =>
   render(
     <JotaiProvider store={jotaiStore}>
-      <AiChatTestInstance>
+      <AiChatTestInstance threadId={THREAD_ID}>
+        <AiChatThreadOpenViewEffect threadId={THREAD_ID} />
         <AiChatThreadMarkAsReadEffect />
       </AiChatTestInstance>
     </JotaiProvider>,
   );
+
+const leaveChatView = async (view: ReturnType<typeof renderChatView>) => {
+  view.unmount();
+  await act(() => Promise.resolve());
+};
 
 describe('AiChatThreadMarkAsReadEffect', () => {
   beforeEach(() => {
@@ -83,7 +89,6 @@ describe('AiChatThreadMarkAsReadEffect', () => {
     jotaiStore.set(aiChatThreadParticipantsState.atom, {
       [THREAD_ID]: PARTICIPANT,
     });
-    jotaiStore.set(aiChatTestInstanceThreadIdState.atom, THREAD_ID);
   });
 
   it('marks the thread on screen as read and keeps where the member left off', () => {
@@ -130,11 +135,11 @@ describe('AiChatThreadMarkAsReadEffect', () => {
     });
   });
 
-  it('keeps the visit while another view still shows the thread', () => {
+  it('keeps the visit while another view still shows the thread', async () => {
     const sidePanelView = renderChatView();
     const recordPageView = renderChatView();
 
-    sidePanelView.unmount();
+    await leaveChatView(sidePanelView);
 
     expect(
       jotaiStore.get(
@@ -142,7 +147,7 @@ describe('AiChatThreadMarkAsReadEffect', () => {
       )?.threadId,
     ).toBe(THREAD_ID);
 
-    recordPageView.unmount();
+    await leaveChatView(recordPageView);
 
     expect(
       jotaiStore.get(
@@ -157,10 +162,10 @@ describe('AiChatThreadMarkAsReadEffect', () => {
         [THREAD_ID]: { ...PARTICIPANT, lastReadAt },
       });
 
-    it('files a chat the member read up to the agent reply', () => {
+    it('files a chat the member read up to the agent reply', async () => {
       setReadUpTo(LAST_ACTIVITY_AT);
 
-      renderChatView().unmount();
+      await leaveChatView(renderChatView());
 
       expect(updateAgentChatThreadInboxState).toHaveBeenCalledWith({
         threadIds: [THREAD_ID],
@@ -168,19 +173,19 @@ describe('AiChatThreadMarkAsReadEffect', () => {
       });
     });
 
-    it('keeps a chat in the inbox while another view still shows it', () => {
+    it('keeps a chat in the inbox while another view still shows it', async () => {
       setReadUpTo(LAST_ACTIVITY_AT);
 
       const sidePanelView = renderChatView();
       const recordPageView = renderChatView();
 
-      sidePanelView.unmount();
+      await leaveChatView(sidePanelView);
 
       expect(updateAgentChatThreadInboxState).not.toHaveBeenCalledWith(
         expect.objectContaining({ action: 'ARCHIVE' }),
       );
 
-      recordPageView.unmount();
+      await leaveChatView(recordPageView);
 
       expect(updateAgentChatThreadInboxState).toHaveBeenCalledWith({
         threadIds: [THREAD_ID],
@@ -188,26 +193,26 @@ describe('AiChatThreadMarkAsReadEffect', () => {
       });
     });
 
-    it('keeps a chat the member reopened since its last activity', () => {
+    it('keeps a chat the member reopened since its last activity', async () => {
       setReadUpTo(LAST_ACTIVITY_AT);
       jotaiStore.set(aiChatReopenedThreadActivityState.atom, {
         [THREAD_ID]: LAST_ACTIVITY_AT,
       });
 
-      renderChatView().unmount();
+      await leaveChatView(renderChatView());
 
       expect(updateAgentChatThreadInboxState).not.toHaveBeenCalledWith(
         expect.objectContaining({ action: 'ARCHIVE' }),
       );
     });
 
-    it('files a reopened chat once something new happened in it', () => {
+    it('files a reopened chat once something new happened in it', async () => {
       setReadUpTo(LAST_ACTIVITY_AT);
       jotaiStore.set(aiChatReopenedThreadActivityState.atom, {
         [THREAD_ID]: '2026-10-01T08:00:00.000Z',
       });
 
-      renderChatView().unmount();
+      await leaveChatView(renderChatView());
 
       expect(updateAgentChatThreadInboxState).toHaveBeenCalledWith({
         threadIds: [THREAD_ID],
@@ -215,12 +220,87 @@ describe('AiChatThreadMarkAsReadEffect', () => {
       });
     });
 
-    it('keeps a chat whose reply the member has not read', () => {
-      renderChatView().unmount();
+    it('keeps a chat whose reply the member has not read', async () => {
+      await leaveChatView(renderChatView());
 
       expect(updateAgentChatThreadInboxState).not.toHaveBeenCalledWith(
         expect.objectContaining({ action: 'ARCHIVE' }),
       );
+    });
+
+    it('files a chat once when all its views close in the same render', async () => {
+      setReadUpTo(LAST_ACTIVITY_AT);
+
+      const view = render(
+        <JotaiProvider store={jotaiStore}>
+          <AiChatTestInstance>
+            <AiChatThreadOpenViewEffect threadId={THREAD_ID} />
+            <AiChatThreadMarkAsReadEffect />
+          </AiChatTestInstance>
+          <AiChatTestInstance>
+            <AiChatThreadOpenViewEffect threadId={THREAD_ID} />
+            <AiChatThreadMarkAsReadEffect />
+          </AiChatTestInstance>
+        </JotaiProvider>,
+      );
+
+      await leaveChatView(view);
+
+      expect(updateAgentChatThreadInboxState).toHaveBeenCalledTimes(1);
+      expect(updateAgentChatThreadInboxState).toHaveBeenCalledWith({
+        threadIds: [THREAD_ID],
+        action: 'ARCHIVE',
+      });
+    });
+
+    it('keeps a chat its page shows until the page leaves it', async () => {
+      setReadUpTo(LAST_ACTIVITY_AT);
+
+      const page = render(
+        <JotaiProvider store={jotaiStore}>
+          <AiChatThreadOpenViewEffect threadId={THREAD_ID} />
+        </JotaiProvider>,
+      );
+
+      await leaveChatView(renderChatView());
+
+      expect(updateAgentChatThreadInboxState).not.toHaveBeenCalledWith(
+        expect.objectContaining({ action: 'ARCHIVE' }),
+      );
+
+      page.unmount();
+      await act(() => Promise.resolve());
+
+      expect(updateAgentChatThreadInboxState).toHaveBeenCalledWith({
+        threadIds: [THREAD_ID],
+        action: 'ARCHIVE',
+      });
+    });
+
+    it('keeps a chat handed to another view in the same render', async () => {
+      setReadUpTo(LAST_ACTIVITY_AT);
+
+      const renderViewOf = (page: string) => (
+        <JotaiProvider store={jotaiStore}>
+          <AiChatTestInstance key={page} threadId={THREAD_ID}>
+            <AiChatThreadOpenViewEffect threadId={THREAD_ID} />
+            <AiChatThreadMarkAsReadEffect />
+          </AiChatTestInstance>
+        </JotaiProvider>
+      );
+      const view = render(renderViewOf('new-chat-page'));
+
+      view.rerender(renderViewOf('thread-page'));
+      await act(() => Promise.resolve());
+
+      expect(updateAgentChatThreadInboxState).not.toHaveBeenCalledWith(
+        expect.objectContaining({ action: 'ARCHIVE' }),
+      );
+      expect(
+        jotaiStore.get(
+          aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+        )?.threadId,
+      ).toBe(THREAD_ID);
     });
   });
 });
