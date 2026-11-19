@@ -71,6 +71,7 @@ export const COMMAND_MENU_ITEM_SECTION_BY_ENGINE_COMPONENT_KEY = {
   [EngineComponentKey.CREATE_NEW_VIEW]: 'THIS_OBJECT',
   [EngineComponentKey.IMPORT_RECORDS]: 'THIS_OBJECT',
   [EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT]: 'THIS_OBJECT',
+  [EngineComponentKey.SELECT_ALL_AI_CHATS]: 'THIS_OBJECT',
 
   [EngineComponentKey.ASK_AI]: 'ASK_AND_FIND',
   [EngineComponentKey.SEARCH_RECORDS]: 'ASK_AND_FIND',

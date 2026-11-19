@@ -67,6 +67,7 @@ describe('AI chat inbox command menu items', () => {
         'markAiChatAsRead',
         'markAiChatAsUnread',
         'assignAiChat',
+        'selectAllAiChats',
       ] as const
     ).filter((name) =>
       evaluateConditionalAvailabilityExpression(
@@ -145,5 +146,20 @@ describe('AI chat inbox command menu items', () => {
 
   it('keeps the assignee subscribed', () => {
     expect(getAvailableSubscriptionCommands(true, 'assignedToMe')).toEqual([]);
+  });
+
+  it('offers select all with no chat selected', () => {
+    expect(
+      evaluateConditionalAvailabilityExpression(
+        STANDARD_COMMAND_MENU_ITEMS.selectAllAiChats
+          .conditionalAvailabilityExpression,
+        {
+          numberOfSelectedRecords: 0,
+          permissionFlags: { AI: true },
+          featureFlags: { IS_AI_CHAT_INBOX_ENABLED: true },
+          selectedRecords: [],
+        },
+      ),
+    ).toBe(true);
   });
 });

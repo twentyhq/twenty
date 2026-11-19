@@ -1,3 +1,4 @@
+import { getCommandMenuItemShortcut } from '@/command-menu/utils/getCommandMenuItemShortcut';
 import { getCommandMenuItemStartIcon } from '@/command-menu/utils/getCommandMenuItemStartIcon';
 import { type CommandMenuItemProps } from '@/command-menu/types/CommandMenuItemProps';
 import { useLingui } from '@lingui/react/macro';
@@ -75,7 +76,9 @@ export const CommandMenuItem = ({
     }),
     description,
     descriptionPlacement,
-    shortcut: isDefined(hotKeys) ? hotKeys.map((key) => [key]) : undefined,
+    shortcut: isDefined(hotKeys)
+      ? getCommandMenuItemShortcut(hotKeys)
+      : undefined,
     shortcutJoinLabel: t`then`,
     focused: !disabled && isSelectedItemId,
     endIcon: (

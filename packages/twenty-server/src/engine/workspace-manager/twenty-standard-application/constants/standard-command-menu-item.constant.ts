@@ -1059,6 +1059,26 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.ASSIGN_AI_CHAT,
     hotKeys: ['A'],
   },
+  selectAllAiChats: {
+    universalIdentifier: '311acfe6-286d-4822-bfcc-5a5d124d6a27',
+    label: i18nLabel(
+      msg({ message: `Select all`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconListCheck',
+    isPinned: false,
+    position: 81,
+    shortLabel: i18nLabel(
+      msg({ message: `Select all`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
+    conditionalAvailabilityExpression:
+      'permissionFlags.AI and featureFlags.IS_AI_CHAT_INBOX_ENABLED',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SELECT_ALL_AI_CHATS,
+    hotKeys: ['Mod', 'A'],
+  },
   // Chats have their own Share item; it is a system object, so this one never shows there
   shareAnyRecord: {
     universalIdentifier: '1e703e2c-9f3a-4a23-8448-107b01be509c',

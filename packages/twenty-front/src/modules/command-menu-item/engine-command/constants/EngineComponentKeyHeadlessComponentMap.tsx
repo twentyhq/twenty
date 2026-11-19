@@ -26,6 +26,7 @@ import { CreateNewViewNoSelectionRecordCommand } from '@/command-menu-item/engin
 import { HideDeletedRecordsNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/HideDeletedRecordsNoSelectionRecordCommand';
 import { ImportRecordsNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/ImportRecordsNoSelectionRecordCommand';
 import { SeeDeletedRecordsNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/SeeDeletedRecordsNoSelectionRecordCommand';
+import { SelectAllAiChatsNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/SelectAllAiChatsNoSelectionRecordCommand';
 import { AddToFavoritesCommand } from '@/command-menu-item/engine-command/record/components/AddToFavoritesCommand';
 import { MergeWithRecordSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/MergeWithRecordSingleRecordCommand';
 import { NavigateToNextRecordSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/NavigateToNextRecordSingleRecordCommand';
@@ -292,6 +293,9 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   ),
   [EngineComponentKey.ASSIGN_AI_CHAT]: (
     <InboxThreadInboxCommand action="assign" />
+  ),
+  [EngineComponentKey.SELECT_ALL_AI_CHATS]: (
+    <SelectAllAiChatsNoSelectionRecordCommand />
   ),
   [EngineComponentKey.COMPOSE_EMAIL]: <ComposeEmailCommand />,
   [EngineComponentKey.COMPOSE_CAMPAIGN]: <ComposeCampaignCommand />,

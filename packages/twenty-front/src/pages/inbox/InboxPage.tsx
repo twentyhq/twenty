@@ -16,6 +16,7 @@ import { InboxBreadcrumb } from '@/inbox/components/InboxBreadcrumb';
 import { InboxCommandMenuScope } from '@/inbox/components/InboxCommandMenuScope';
 import { InboxConversationPane } from '@/inbox/components/InboxConversationPane';
 import { InboxListHeader } from '@/inbox/components/InboxListHeader';
+import { InboxListRecordSelectionInstanceIdEffect } from '@/inbox/components/InboxListRecordSelectionInstanceIdEffect';
 import { InboxNewThreadChannelEffect } from '@/inbox/components/InboxNewThreadChannelEffect';
 import { InboxSelectionEffect } from '@/inbox/components/InboxSelectionEffect';
 import { InboxSelectionPane } from '@/inbox/components/InboxSelectionPane';
@@ -27,6 +28,7 @@ import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai-chat/constants/AiChatNewTh
 import { useInboxRecordSelectionInstanceId } from '@/inbox/hooks/useInboxRecordSelectionInstanceId';
 import { useIsInboxShowingDirectMessage } from '@/inbox/hooks/useIsInboxShowingDirectMessage';
 import { useIsInboxSplitView } from '@/inbox/hooks/useIsInboxSplitView';
+import { useSelectAllInboxThreads } from '@/inbox/hooks/useSelectAllInboxThreads';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { InboxThreadListFetchMoreTrigger } from '@/inbox/components/InboxThreadListFetchMoreTrigger';
 import { InboxThreadListLoadEffect } from '@/inbox/components/InboxThreadListLoadEffect';
@@ -241,6 +243,20 @@ const InboxPageContent = () => {
     options: { enableOnContentEditable: false, enableOnFormTags: false },
   });
 
+  const { selectAllInboxThreads } = useSelectAllInboxThreads();
+
+  // An open chat keeps the shortcut for selecting its own text
+  const isSelectAllHotkeyEnabled =
+    isListShown && !isThreadShown && !isNewThreadShown;
+
+  useGlobalHotkeys({
+    keys: isSelectAllHotkeyEnabled ? ['ctrl+a', 'meta+a'] : [],
+    callback: selectAllInboxThreads,
+    containsModifier: true,
+    dependencies: [selectAllInboxThreads],
+    options: { enableOnContentEditable: false, enableOnFormTags: false },
+  });
+
   const backToInboxButton = (
     <IconButton
       size="sm"
@@ -279,6 +295,7 @@ const InboxPageContent = () => {
       <InboxThreadListLoadEffect source={inboxSelectedThreadListSource} />
       <InboxNewThreadChannelEffect key={newAiChatThreadId} />
       <RecordSelectionRecordIdsEffect records={threads} />
+      {isListShown && <InboxListRecordSelectionInstanceIdEffect />}
       <InboxSelectionEffect
         key={selectedThreadId}
         selectedThreadId={selectedThreadId}
