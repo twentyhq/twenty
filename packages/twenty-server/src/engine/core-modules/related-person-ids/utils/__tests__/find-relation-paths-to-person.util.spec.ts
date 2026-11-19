@@ -170,6 +170,56 @@ describe('findRelationPathsToPerson', () => {
     ]);
   });
 
+  it('ignores a relation without an inverse field', () => {
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      buildGraphFixtures({
+        company: [
+          {
+            fieldName: 'people',
+            relationType: RelationType.ONE_TO_MANY,
+            targetObjectNameSingular: 'person',
+            inverseFieldName: 'company',
+          },
+        ],
+        person: [],
+      });
+    const filteredRelationId = fieldId('company', 'activePeople');
+
+    flatFieldMetadataMaps.byUniversalIdentifier[filteredRelationId] =
+      getFlatFieldMetadataMock({
+        id: filteredRelationId,
+        universalIdentifier: filteredRelationId,
+        name: 'activePeople',
+        objectMetadataId: 'company',
+        type: FieldMetadataType.RELATION,
+        relationTargetObjectMetadataId: 'person',
+        relationTargetFieldMetadataId: null,
+        settings: { relationType: RelationType.ONE_TO_MANY },
+        universalSettings: { relationType: RelationType.ONE_TO_MANY },
+      });
+    flatFieldMetadataMaps.universalIdentifierById[filteredRelationId] =
+      filteredRelationId;
+    flatObjectMetadataMaps.byUniversalIdentifier.company?.fieldIds.push(
+      filteredRelationId,
+    );
+
+    expect(
+      findRelationPathsToPerson({
+        rootObjectNameSingular: 'company',
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      }),
+    ).toEqual([
+      [
+        {
+          direction: RelationType.ONE_TO_MANY,
+          queryObjectNameSingular: 'person',
+          joinColumnName: 'companyId',
+        },
+      ],
+    ]);
+  });
+
   it('resolves person through a two-hop join object', () => {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       buildGraphFixtures({

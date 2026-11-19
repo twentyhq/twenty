@@ -1,3 +1,4 @@
+import { type NonNullableRequired } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -12,7 +13,9 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 
 export type GetRelationFlatFieldMetadatasUtilArgs = {
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  flatFieldMetadata: FlatFieldMetadata<MorphOrRelationFieldMetadataType>;
+  flatFieldMetadata: NonNullableRequired<
+    Pick<FlatFieldMetadata, 'relationTargetFieldMetadataId'>
+  >;
 };
 
 export const findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow = ({

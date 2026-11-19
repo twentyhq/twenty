@@ -1,4 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { hasInverseRelationField } from 'twenty-shared/utils';
 
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -39,7 +40,10 @@ export const resolveMorphRelationsFromFlatFieldMetadata = ({
   ];
 
   return allMorphFlatFieldMetadatas.flatMap((sourceFlatFieldMetadata) => {
-    if (!isMorphOrRelationFlatFieldMetadata(sourceFlatFieldMetadata)) {
+    if (
+      !isMorphOrRelationFlatFieldMetadata(sourceFlatFieldMetadata) ||
+      !hasInverseRelationField(sourceFlatFieldMetadata)
+    ) {
       return [];
     }
 

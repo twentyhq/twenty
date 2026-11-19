@@ -2,7 +2,11 @@ import {
   FieldMetadataType,
   type RelationUpdatePayload,
 } from 'twenty-shared/types';
-import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
+import {
+  hasInverseRelationField,
+  isDefined,
+  isMorphRelationHead,
+} from 'twenty-shared/utils';
 
 import {
   FieldMetadataException,
@@ -74,7 +78,10 @@ export const computeFlatFieldToUpdateFromMorphRelationUpdatePayload = ({
       .filter(isMorphRelationTargetFlatFieldMetadata)
       .sort((a, b) => a.name.localeCompare(b.name))[0];
 
-  if (!isDefined(existingMorphTargetFlatFieldMetadata)) {
+  if (
+    !isDefined(existingMorphTargetFlatFieldMetadata) ||
+    !hasInverseRelationField(existingMorphTargetFlatFieldMetadata)
+  ) {
     throw new FieldMetadataException(
       'Morph relation head has no target to add destinations from',
       FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,

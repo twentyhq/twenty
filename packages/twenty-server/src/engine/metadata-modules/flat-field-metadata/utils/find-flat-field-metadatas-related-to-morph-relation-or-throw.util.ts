@@ -1,4 +1,4 @@
-import { isMorphRelationHead } from 'twenty-shared/utils';
+import { hasInverseRelationField } from 'twenty-shared/utils';
 import { type FieldMetadataType } from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -33,7 +33,7 @@ export const findFlatFieldMetadatasRelatedToMorphRelationOrThrow = ({
     morphRelationFlatFieldMetadata,
     ...morphRelationFlatFieldMetadatas,
   ]
-    .filter((fieldMetadata) => !isMorphRelationHead(fieldMetadata))
+    .filter(hasInverseRelationField)
     .map((flatFieldMetadata) =>
       findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow({
         flatFieldMetadata,

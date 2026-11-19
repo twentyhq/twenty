@@ -199,7 +199,7 @@ export class FieldMetadataEntity<
 
   @Column({ nullable: true, type: 'uuid' })
   relationTargetFieldMetadataId: AssignTypeIfIsMorphOrRelationFieldMetadataType<
-    string,
+    string | null,
     TFieldMetadataType
   >;
 
@@ -210,7 +210,7 @@ export class FieldMetadataEntity<
   )
   @JoinColumn({ name: 'relationTargetFieldMetadataId' })
   relationTargetFieldMetadata: AssignTypeIfIsMorphOrRelationFieldMetadataType<
-    Relation<FieldMetadataEntity>,
+    Relation<FieldMetadataEntity> | null,
     TFieldMetadataType
   >;
 
