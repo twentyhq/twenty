@@ -25,13 +25,13 @@ import {
 } from 'src/engine/api/common/types/common-selection.type';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
-import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
-import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { CommonQueryParser } from 'src/engine/api/common/common-query-parsers/common-query.parser';
+import { ProcessAggregateHelper } from 'src/engine/api/common/utils/process-aggregate.helper';
+import { buildColumnsToSelect } from 'src/engine/api/common/utils/build-columns-to-select';
+import { getTargetObjectMetadataOrThrow } from 'src/engine/api/common/utils/get-target-object-metadata.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -173,9 +173,9 @@ export class ProcessNestedRelationsHelper {
     }
 
     if (!sourceFieldMetadata.settings) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Relation settings not found for field ${relationFieldName}`,
-        GraphqlQueryRunnerExceptionCode.RELATION_SETTINGS_NOT_FOUND,
+        CommonQueryRunnerExceptionCode.RELATION_SETTINGS_NOT_FOUND,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
@@ -250,9 +250,9 @@ export class ProcessNestedRelationsHelper {
       relationType === RelationType.ONE_TO_MANY &&
       !isDefined(targetRelationName)
     ) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Could not resolve target relation for one-to-many field ${relationFieldName}`,
-        GraphqlQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND,
+        CommonQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
@@ -283,7 +283,7 @@ export class ProcessNestedRelationsHelper {
           parentRecordsCount: parentObjectRecords.length,
           targetObjectNameSingular,
           relationSelection,
-          relationQueryParser: new GraphqlQueryParser(
+          relationQueryParser: new CommonQueryParser(
             targetObjectMetadata,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
@@ -347,9 +347,9 @@ export class ProcessNestedRelationsHelper {
     });
 
     if (!targetFieldMetadata) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Field ${sourceFieldName} not found on object ${parentObjectMetadataItem.nameSingular}`,
-        GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND,
+        CommonQueryRunnerExceptionCode.FIELD_NOT_FOUND,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
@@ -363,9 +363,9 @@ export class ProcessNestedRelationsHelper {
       !targetFieldMetadata.relationTargetObjectMetadataId ||
       !targetFieldMetadata.relationTargetFieldMetadataId
     ) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Relation target object metadata id or field metadata id not found for field ${sourceFieldName}`,
-        GraphqlQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND,
+        CommonQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
@@ -405,7 +405,7 @@ export class ProcessNestedRelationsHelper {
       CommonRelationSelection,
       'selection' | 'filter' | 'orderBy'
     >;
-    relationQueryParser: GraphqlQueryParser;
+    relationQueryParser: CommonQueryParser;
   }): Promise<{
     // oxlint-disable-next-line typescript/no-explicit-any
     relationResults: any[];
@@ -529,7 +529,7 @@ export class ProcessNestedRelationsHelper {
     ids: string[];
     perParentLimit: number;
     relationSelection: Pick<CommonRelationSelection, 'filter' | 'orderBy'>;
-    relationQueryParser: GraphqlQueryParser;
+    relationQueryParser: CommonQueryParser;
   }): Promise<string[]> {
     const sanitizedIds = ids.filter(isValidUuid);
 
@@ -589,7 +589,7 @@ export class ProcessNestedRelationsHelper {
     queryBuilder: WorkspaceSelectQueryBuilder;
     targetObjectNameSingular: string;
     relationSelection: Pick<CommonRelationSelection, 'filter'>;
-    relationQueryParser: GraphqlQueryParser;
+    relationQueryParser: CommonQueryParser;
   }): void {
     if (!isDefined(relationSelection.filter)) {
       return;

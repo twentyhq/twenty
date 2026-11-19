@@ -19,6 +19,7 @@ import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/us
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 import {
   FeatureFlagKey,
@@ -40,6 +41,9 @@ export const WorkspaceSection = () => {
   );
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -95,7 +99,8 @@ export const WorkspaceSection = () => {
                 </LightIconButton>
               </NavigationMenuItemAddDropdown>
             ) : (
-              hasLayoutsPermission && (
+              hasLayoutsPermission &&
+              !isCustomizableSidebarEnabled && (
                 <div onMouseEnter={preloadNavigationMenuItemDndKit}>
                   <LightIconButton
                     emphasis="subtle"
