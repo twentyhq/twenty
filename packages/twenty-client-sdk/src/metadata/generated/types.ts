@@ -10280,20 +10280,11 @@ export default {
                     ]
                 }
             ],
-            "upsertPushSubscription": [
-                1,
+            "upsertRowLevelPermissionRules": [
+                643,
                 {
                     "input": [
                         642,
-                        "UpsertPushSubscriptionInput!"
-                    ]
-                }
-            ],
-            "upsertRowLevelPermissionRules": [
-                644,
-                {
-                    "input": [
-                        643,
                         "UpsertRowLevelPermissionRulesInput!"
                     ]
                 }
@@ -10302,8 +10293,17 @@ export default {
                 679,
                 {
                     "input": [
-                        645,
+                        644,
                         "UpsertViewWidgetInput!"
+                    ]
+                }
+            ],
+            "upsertWebPushSubscription": [
+                1,
+                {
+                    "input": [
+                        650,
+                        "UpsertWebPushSubscriptionInput!"
                     ]
                 }
             ],
@@ -15831,23 +15831,6 @@ export default {
                 4
             ]
         },
-        "UpsertPushSubscriptionInput": {
-            "applicationServerKey": [
-                4
-            ],
-            "authSecret": [
-                4
-            ],
-            "endpoint": [
-                4
-            ],
-            "p256dhKey": [
-                4
-            ],
-            "__typename": [
-                4
-            ]
-        },
         "UpsertRowLevelPermissionRulesInput": {
             "objectMetadataId": [
                 565
@@ -15878,19 +15861,19 @@ export default {
         },
         "UpsertViewWidgetInput": {
             "view": [
-                649
-            ],
-            "viewFields": [
-                646
-            ],
-            "viewFilterGroups": [
-                647
-            ],
-            "viewFilters": [
                 648
             ],
+            "viewFields": [
+                645
+            ],
+            "viewFilterGroups": [
+                646
+            ],
+            "viewFilters": [
+                647
+            ],
             "viewSorts": [
-                650
+                649
             ],
             "widgetId": [
                 565
@@ -16012,6 +15995,23 @@ export default {
             ],
             "id": [
                 565
+            ],
+            "__typename": [
+                4
+            ]
+        },
+        "UpsertWebPushSubscriptionInput": {
+            "applicationServerKey": [
+                4
+            ],
+            "authSecret": [
+                4
+            ],
+            "endpoint": [
+                4
+            ],
+            "p256dhKey": [
+                4
             ],
             "__typename": [
                 4

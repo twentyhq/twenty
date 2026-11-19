@@ -3848,9 +3848,9 @@ type Mutation {
   upsertFieldsWidget(input: UpsertFieldsWidgetInput!): View!
   upsertObjectPermissions(upsertObjectPermissionsInput: UpsertObjectPermissionsInput!): [ObjectPermission!]!
   upsertPermissionFlags(upsertPermissionFlagsInput: UpsertPermissionFlagsInput!): [RolePermissionFlag!]!
-  upsertPushSubscription(input: UpsertPushSubscriptionInput!): Boolean!
   upsertRowLevelPermissionRules(input: UpsertRowLevelPermissionRulesInput!): UpsertRowLevelPermissionRulesResult!
   upsertViewWidget(input: UpsertViewWidgetInput!): View!
+  upsertWebPushSubscription(input: UpsertWebPushSubscriptionInput!): Boolean!
   validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
   verifyEmailAndGetLoginToken(captchaToken: String, email: String!, emailVerificationToken: String!, origin: String!): VerifyEmailAndGetLoginToken!
   verifyEmailAndGetWorkspaceAgnosticToken(captchaToken: String, email: String!, emailVerificationToken: String!): AvailableWorkspacesAndAccessTokens!
@@ -6004,13 +6004,6 @@ input UpsertPermissionFlagsInput {
   roleId: UUID!
 }
 
-input UpsertPushSubscriptionInput {
-  applicationServerKey: String!
-  authSecret: String!
-  endpoint: String!
-  p256dhKey: String!
-}
-
 input UpsertRowLevelPermissionRulesInput {
   objectMetadataId: UUID!
   roleId: UUID!
@@ -6103,6 +6096,13 @@ input UpsertViewWidgetViewSortInput {
   direction: ViewSortDirection = ASC
   fieldMetadataId: UUID!
   id: UUID
+}
+
+input UpsertWebPushSubscriptionInput {
+  applicationServerKey: String!
+  authSecret: String!
+  endpoint: String!
+  p256dhKey: String!
 }
 
 type UsageAnalytics {
