@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isObjectType, type GraphQLObjectType } from 'graphql';
 
-import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
+import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/constants/workspace-resolver-builder-method-names';
 import { GqlOperation } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-operation.enum';
 import { RootTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/root-types/root-type.generator';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
