@@ -2790,6 +2790,7 @@ export interface NavigationMenuItem {
     agentChatChannelId?: Scalars['UUID']
     agentId?: Scalars['UUID']
     applicationId?: Scalars['UUID']
+    builtInSectionKey?: Scalars['String']
     color?: Scalars['String']
     createdAt: Scalars['DateTime']
     /** @deprecated Use parentId instead. */
@@ -2813,7 +2814,7 @@ export interface NavigationMenuItem {
     __typename: 'NavigationMenuItem'
 }
 
-export type NavigationMenuItemType = 'AGENT' | 'AGENT_CHAT_CHANNEL' | 'AI_AGENTS' | 'AI_CHAT_CHANNELS' | 'AI_CHAT_FAVORITES' | 'AI_CHAT_INBOX' | 'AI_CHAT_RECENTS' | 'FAVORITES' | 'FOLDER' | 'LINK' | 'NATIVE_PAGE' | 'OBJECT' | 'PAGE_LAYOUT' | 'RECORD' | 'SECTION' | 'TAB' | 'VIEW' | 'WORKFLOW'
+export type NavigationMenuItemType = 'AGENT' | 'AGENT_CHAT_CHANNEL' | 'FOLDER' | 'LINK' | 'NATIVE_PAGE' | 'OBJECT' | 'PAGE_LAYOUT' | 'RECORD' | 'SECTION' | 'TAB' | 'VIEW' | 'WORKFLOW'
 
 export interface NotesConfiguration {
     configurationType: WidgetConfigurationType
@@ -6158,7 +6159,7 @@ export interface CreateMcpServerInput {connectionProviderId?: (Scalars['UUID'] |
 
 export interface CreateMessageSuppressionInput {emailAddress: Scalars['String'],unsubscribeTopicId?: (Scalars['UUID'] | null)}
 
-export interface CreateNavigationMenuItemInput {agentChatChannelId?: (Scalars['UUID'] | null),agentId?: (Scalars['UUID'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),nativePageKey?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),parentId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,userWorkspaceId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null),workflowId?: (Scalars['UUID'] | null)}
+export interface CreateNavigationMenuItemInput {agentChatChannelId?: (Scalars['UUID'] | null),agentId?: (Scalars['UUID'] | null),builtInSectionKey?: (Scalars['String'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),nativePageKey?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),parentId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,userWorkspaceId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null),workflowId?: (Scalars['UUID'] | null)}
 
 export interface CreateObjectInput {color?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isRemote?: (Scalars['Boolean'] | null),labelPlural: Scalars['String'],labelSingular: Scalars['String'],namePlural: Scalars['String'],nameSingular: Scalars['String'],primaryKeyColumnType?: (Scalars['String'] | null),primaryKeyFieldMetadataSettings?: (Scalars['JSON'] | null),shortcut?: (Scalars['String'] | null),skipNameField?: (Scalars['Boolean'] | null)}
 
@@ -7682,6 +7683,7 @@ export interface NavigationMenuItemGenqlSelection{
     agentChatChannelId?: boolean | number
     agentId?: boolean | number
     applicationId?: boolean | number
+    builtInSectionKey?: boolean | number
     color?: boolean | number
     createdAt?: boolean | number
     /** @deprecated Use parentId instead. */
@@ -13518,12 +13520,6 @@ export const enumModelFamily = {
 export const enumNavigationMenuItemType = {
    AGENT: 'AGENT' as const,
    AGENT_CHAT_CHANNEL: 'AGENT_CHAT_CHANNEL' as const,
-   AI_AGENTS: 'AI_AGENTS' as const,
-   AI_CHAT_CHANNELS: 'AI_CHAT_CHANNELS' as const,
-   AI_CHAT_FAVORITES: 'AI_CHAT_FAVORITES' as const,
-   AI_CHAT_INBOX: 'AI_CHAT_INBOX' as const,
-   AI_CHAT_RECENTS: 'AI_CHAT_RECENTS' as const,
-   FAVORITES: 'FAVORITES' as const,
    FOLDER: 'FOLDER' as const,
    LINK: 'LINK' as const,
    NATIVE_PAGE: 'NATIVE_PAGE' as const,

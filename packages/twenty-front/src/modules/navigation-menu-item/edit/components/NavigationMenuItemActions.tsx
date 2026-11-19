@@ -21,6 +21,7 @@ import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hoo
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { type NavigationMenuItemAddTarget } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddTarget';
 import { getNavigationMenuItemContainerId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemContainerId';
+import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
@@ -56,6 +57,7 @@ export const NavigationMenuItemActions = ({
       ? workspaceNavigationMenuItems.filter(
           (candidate) =>
             candidate.type === NavigationMenuItemType.SECTION &&
+            !isNavigationMenuItemBuiltInSection(candidate) &&
             candidate.id !== containerId,
         )
       : [];

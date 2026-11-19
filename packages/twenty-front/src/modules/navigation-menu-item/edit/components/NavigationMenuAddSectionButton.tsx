@@ -1,12 +1,14 @@
 import { useLingui } from '@lingui/react/macro';
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import {
+  type BuiltInSectionKey,
+  NavigationMenuItemType,
+} from 'twenty-shared/types';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconPlus } from 'twenty-ui/icon';
 
 import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
 import { canAddBuiltInSectionToContainer } from '@/navigation-menu-item/common/utils/canAddBuiltInSectionToContainer';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
-import { type NavigationMenuBuiltInSectionType } from '@/navigation-menu-item/common/types/NavigationMenuBuiltInSectionType';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
@@ -56,7 +58,7 @@ export const NavigationMenuAddSectionButton = ({
     (builtInSection) =>
       (!builtInSection.isAi || (hasAiPermission && isAiChatInboxEnabled)) &&
       canAddBuiltInSectionToContainer({
-        type: builtInSection.type,
+        builtInSectionKey: builtInSection.key,
         containerId,
         items: workspaceNavigationMenuItems,
       }),
@@ -71,10 +73,11 @@ export const NavigationMenuAddSectionButton = ({
     closeDropdown(dropdownId);
   };
 
-  const handleBuiltInSectionClick = (
-    type: NavigationMenuBuiltInSectionType,
-  ) => {
-    createItem({ type }, { targetFolderId: containerId });
+  const handleBuiltInSectionClick = (builtInSectionKey: BuiltInSectionKey) => {
+    createItem(
+      { type: NavigationMenuItemType.SECTION, builtInSectionKey },
+      { targetFolderId: containerId },
+    );
     closeDropdown(dropdownId);
   };
 
@@ -111,12 +114,12 @@ export const NavigationMenuAddSectionButton = ({
               />
               {builtInSectionsToOffer.map((builtInSection) => (
                 <NavigationMenuItemSelectableItem
-                  key={builtInSection.type}
+                  key={builtInSection.key}
                   item={{
-                    id: builtInSection.type,
+                    id: builtInSection.key,
                     label: t(builtInSection.label),
                     onClick: () =>
-                      handleBuiltInSectionClick(builtInSection.type),
+                      handleBuiltInSectionClick(builtInSection.key),
                   }}
                 />
               ))}
