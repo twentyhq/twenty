@@ -200,19 +200,29 @@ const pushInstruction = (
         CONDITIONAL_AVAILABILITY_RECORD_QUANTIFIER_FUNCTION_NAMES,
       ).find(([, functionName]) => functionName === callee.path)?.[0];
 
-      const callNode = isDefined(quantifier)
-        ? toConditionalAvailabilitySelectedRecordsNode({
-            quantifier,
-            callArguments,
-          })
-        : {
-            type: 'CALL' as const,
+      if (!isDefined(quantifier)) {
+        return replaceTopNodes({
+          nodes,
+          count: argumentCount + 1,
+          node: {
+            type: 'CALL',
             functionName: callee.path,
             arguments: callArguments,
-          };
+          },
+        });
+      }
 
-      return isDefined(callNode)
-        ? replaceTopNodes({ nodes, count: argumentCount + 1, node: callNode })
+      const selectedRecordsNode = toConditionalAvailabilitySelectedRecordsNode({
+        quantifier,
+        callArguments,
+      });
+
+      return isDefined(selectedRecordsNode)
+        ? replaceTopNodes({
+            nodes,
+            count: argumentCount + 1,
+            node: selectedRecordsNode,
+          })
         : { unexpectedToken: callee.path };
     }
     case 'IENDSTATEMENT':

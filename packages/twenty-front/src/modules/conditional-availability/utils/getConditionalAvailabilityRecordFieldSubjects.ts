@@ -6,7 +6,10 @@ import {
   type CompositeFieldSubFieldName,
   StandardObjectNameSingular,
 } from 'twenty-shared/types';
-import { computeRelationGqlFieldJoinColumnName } from 'twenty-shared/utils';
+import {
+  computeRelationGqlFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 const ADDRESS_SUB_FIELD_NAMES = [
@@ -22,7 +25,7 @@ const buildSubject = ({
   fieldKind,
   subFieldName,
 }: {
-  field: FieldMetadataItem;
+  field: Pick<FieldMetadataItem, 'universalIdentifier' | 'name'>;
   fieldKind: ConditionalAvailabilityRecordFieldKind;
   subFieldName: CompositeFieldSubFieldName | null;
 }): ConditionalAvailabilityRecordFieldSubject => ({
@@ -30,8 +33,9 @@ const buildSubject = ({
   fieldName: field.name,
   subFieldName,
   fieldKind,
-  propertyPath:
-    subFieldName === null ? field.name : `${field.name}.${subFieldName}`,
+  propertyPath: isDefined(subFieldName)
+    ? `${field.name}.${subFieldName}`
+    : field.name,
 });
 
 export const getConditionalAvailabilityRecordFieldSubjects = ({
