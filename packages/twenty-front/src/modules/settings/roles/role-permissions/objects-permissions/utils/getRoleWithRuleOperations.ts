@@ -1,0 +1,33 @@
+import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
+import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
+
+export const getRoleWithRuleOperations = ({
+  role,
+  ruleId,
+  operations,
+}: {
+  role: RoleWithPartialMembers;
+  ruleId: string;
+  operations: SettingsRoleObjectPermissionKey[];
+}): RoleWithPartialMembers => ({
+  ...role,
+  rowLevelPermissionRules: (role.rowLevelPermissionRules ?? []).map((rule) => {
+    if (rule.id !== ruleId) {
+      return rule;
+    }
+
+    const canUpdateRecords = operations.includes('canUpdateObjectRecords');
+
+    return {
+      ...rule,
+      canReadRecords: operations.includes('canReadObjectRecords'),
+      canCreateRecords:
+        canUpdateRecords === rule.canUpdateRecords
+          ? rule.canCreateRecords
+          : canUpdateRecords,
+      canUpdateRecords,
+      canSoftDeleteRecords: operations.includes('canSoftDeleteObjectRecords'),
+      canDestroyRecords: operations.includes('canDestroyObjectRecords'),
+    };
+  }),
+});

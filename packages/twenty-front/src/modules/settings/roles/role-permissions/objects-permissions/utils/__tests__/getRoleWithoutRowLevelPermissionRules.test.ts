@@ -104,7 +104,7 @@ describe('getRoleWithoutRowLevelPermissionRules', () => {
           buildFieldPermission({ id: 'object-field', groupId: null }),
         ],
       },
-      ruleIds: ['owner'],
+      shouldRemoveRule: (rule) => rule.id === 'owner',
     });
 
     expect(role.rowLevelPermissionRules?.map(({ id }) => id)).toEqual(['team']);

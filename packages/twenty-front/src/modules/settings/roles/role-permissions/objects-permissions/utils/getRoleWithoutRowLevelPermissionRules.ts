@@ -1,13 +1,18 @@
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { isDefined } from 'twenty-shared/utils';
+import { type RowLevelPermissionRule } from '~/generated-metadata/graphql';
 
 export const getRoleWithoutRowLevelPermissionRules = ({
   role,
-  ruleIds,
+  shouldRemoveRule,
 }: {
   role: RoleWithPartialMembers;
-  ruleIds: string[];
+  shouldRemoveRule: (rule: RowLevelPermissionRule) => boolean;
 }): RoleWithPartialMembers => {
+  const ruleIds = (role.rowLevelPermissionRules ?? [])
+    .filter(shouldRemoveRule)
+    .map(({ id }) => id);
+
   const isOfRemovedRule = ({
     rowLevelPermissionRuleId,
   }: {

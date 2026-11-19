@@ -1,4 +1,5 @@
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
+import { getRoleWithRuleOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getRoleWithRuleOperations';
 import { getRoleWithoutRowLevelPermissionRules } from '@/settings/roles/role-permissions/objects-permissions/utils/getRoleWithoutRowLevelPermissionRules';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
@@ -40,32 +41,20 @@ export const useRowLevelPermissionRulesInDraftRole = (roleId: string) => {
     ruleId: string;
     operations: SettingsRoleObjectPermissionKey[];
   }) => {
-    setSettingsDraftRole((currentSettingsDraftRole) => ({
-      ...currentSettingsDraftRole,
-      rowLevelPermissionRules: (
-        currentSettingsDraftRole.rowLevelPermissionRules ?? []
-      ).map((rule) =>
-        rule.id === ruleId
-          ? {
-              ...rule,
-              canReadRecords: operations.includes('canReadObjectRecords'),
-              canCreateRecords: operations.includes('canUpdateObjectRecords'),
-              canUpdateRecords: operations.includes('canUpdateObjectRecords'),
-              canSoftDeleteRecords: operations.includes(
-                'canSoftDeleteObjectRecords',
-              ),
-              canDestroyRecords: operations.includes('canDestroyObjectRecords'),
-            }
-          : rule,
-      ),
-    }));
+    setSettingsDraftRole((currentSettingsDraftRole) =>
+      getRoleWithRuleOperations({
+        role: currentSettingsDraftRole,
+        ruleId,
+        operations,
+      }),
+    );
   };
 
   const deleteRule = (ruleId: string) => {
     setSettingsDraftRole((currentSettingsDraftRole) =>
       getRoleWithoutRowLevelPermissionRules({
         role: currentSettingsDraftRole,
-        ruleIds: [ruleId],
+        shouldRemoveRule: (rule) => rule.id === ruleId,
       }),
     );
   };

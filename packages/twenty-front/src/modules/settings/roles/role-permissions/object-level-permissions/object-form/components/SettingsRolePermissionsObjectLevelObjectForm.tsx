@@ -153,6 +153,13 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
     navigate(finishButtonPath);
   };
 
+  const handleBack = () => {
+    if (rulePredicates.length === 0) {
+      deleteRule(rule.id);
+    }
+    navigate(finishButtonPath);
+  };
+
   return (
     <SettingsPageLayout
       title={headerTitle}
@@ -161,7 +168,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
       secondaryBar={
         <SettingsWizardStepBar
           label={t`${objectLabelPlural} rule`}
-          onBack={() => navigate(finishButtonPath)}
+          onBack={handleBack}
           trailing={
             <StyledTrailingActions>
               <Button

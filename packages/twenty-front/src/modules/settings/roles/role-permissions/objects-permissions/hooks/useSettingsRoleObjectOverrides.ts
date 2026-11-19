@@ -56,9 +56,7 @@ export const useSettingsRoleObjectOverrides = (roleId: string) => {
     setSettingsDraftRole((currentSettingsDraftRole) =>
       getRoleWithoutRowLevelPermissionRules({
         role: currentSettingsDraftRole,
-        ruleIds: (currentSettingsDraftRole.rowLevelPermissionRules ?? [])
-          .filter((rule) => rule.objectMetadataId === objectMetadataId)
-          .map(({ id }) => id),
+        shouldRemoveRule: (rule) => rule.objectMetadataId === objectMetadataId,
       }),
     );
     setSettingsRoleExpandedObjectOverrideIds((currentIds) =>

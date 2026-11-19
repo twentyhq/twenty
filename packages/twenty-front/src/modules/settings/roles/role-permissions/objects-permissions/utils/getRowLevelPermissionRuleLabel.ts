@@ -56,10 +56,11 @@ const getPredicateValueLabel = ({
       (field) => field.id === predicate.workspaceMemberFieldMetadataId,
     );
 
-    if (
-      !isDefined(workspaceMemberField) ||
-      workspaceMemberField.name === 'id'
-    ) {
+    if (!isDefined(workspaceMemberField)) {
+      return t`my unknown field`;
+    }
+
+    if (workspaceMemberField.name === 'id') {
       return t`me`;
     }
 

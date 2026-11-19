@@ -21,7 +21,13 @@ export const getObjectRowLevelPermissionRules = ({
   objectMetadataId: string;
 }): ObjectRowLevelPermissionRule[] =>
   (role.rowLevelPermissionRules ?? [])
-    .filter((rule) => rule.objectMetadataId === objectMetadataId)
+    .filter(
+      (rule) =>
+        rule.objectMetadataId === objectMetadataId &&
+        (role.rowLevelPermissionPredicates ?? []).some(
+          (predicate) => predicate.rowLevelPermissionRuleId === rule.id,
+        ),
+    )
     .map((rule) => ({
       rule,
       predicates: (role.rowLevelPermissionPredicates ?? []).filter(
