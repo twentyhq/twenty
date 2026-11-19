@@ -1,4 +1,5 @@
 import gql from 'graphql-tag';
+import { isDefined } from 'twenty-shared/utils';
 import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.constants';
 import {
   TEST_PERSON_1_ID,
@@ -233,7 +234,7 @@ describe('REST and GraphQL parity', () => {
     expect(
       restResponse.body.data.people.map((person: PersonWithCompany) => ({
         id: person.id,
-        company: person.company
+        company: isDefined(person.company)
           ? { id: person.company.id, name: person.company.name }
           : null,
       })),
