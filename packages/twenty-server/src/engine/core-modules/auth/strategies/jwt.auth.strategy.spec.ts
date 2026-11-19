@@ -1281,6 +1281,7 @@ describe('JwtAuthStrategy', () => {
       expect(result.impersonationContext?.impersonatedUserWorkspaceId).toBe(
         validUserWorkspaceId,
       );
+      expect(result.impersonationContext?.level).toBe('workspace');
     });
 
     it('should successfully validate server level impersonation with permission', async () => {
@@ -1358,6 +1359,7 @@ describe('JwtAuthStrategy', () => {
       expect(result.impersonationContext?.impersonatedUserWorkspaceId).toBe(
         validUserWorkspaceId,
       );
+      expect(result.impersonationContext?.level).toBe('server');
     });
   });
 

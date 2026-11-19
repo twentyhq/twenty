@@ -13,8 +13,11 @@ import {
 } from 'src/constants/granola-api.constant';
 import { GRANOLA_PERSONAL_FOLDER_SELECTION_ROUTE_PATH } from 'src/constants/granola-personal-connection.constant';
 import { GRANOLA_PERSONAL_FOLDER_SELECTION_ROUTE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { enqueueGranolaPersonalReconcileOrThrow } from 'src/logic-functions/utils/enqueue-granola-personal-reconcile-or-throw.util';
 import { getGranolaSelectedParentFolders } from 'src/logic-functions/utils/get-granola-selected-parent-folders.util';
+import { isGranolaPersonalSyncEnabled } from 'src/logic-functions/utils/is-granola-personal-sync-enabled.util';
 import { loadGranolaPersonalFolderSettings } from 'src/logic-functions/utils/load-granola-personal-folder-settings.util';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 const FOLDER_SELECTION_SCHEMA = z.object({
   connectionId: z.uuid(),
@@ -71,6 +74,26 @@ export const granolaPersonalFolderSelectionHandler = async (
       selectedAt: selectedAtByFolderId.get(folderId) ?? selectedAt,
     })),
   );
+
+  if (!isGranolaPersonalSyncEnabled()) {
+    return { success: true, folderIds };
+  }
+
+  try {
+    await enqueueGranolaPersonalReconcileOrThrow({
+      connectionId: request.data.connectionId,
+      userWorkspaceId,
+    });
+  } catch (error) {
+    console.error(
+      `[granola] Could not start personal sync reconciliation. ${toErrorMessage(error)}`,
+    );
+
+    return new Response(
+      { error: 'SYNC_RECONCILIATION_UNAVAILABLE' },
+      { status: 503 },
+    );
+  }
 
   return { success: true, folderIds };
 };

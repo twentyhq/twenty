@@ -23960,7 +23960,7 @@ msgstr "시스템 프롬프트 읽기"
 #. js-lingui-id: /nZe2L
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Read the address, owner and account status of members' private channels"
-msgstr ""
+msgstr "구성원의 비공개 채널 주소, 소유자 및 계정 상태 읽기"
 
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
