@@ -1,37 +1,22 @@
 import { randomUUID } from 'crypto';
 
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
+import { restoreLegacyNotStartedWorkflowRunStatus } from 'test/integration/upgrade/utils/restore-legacy-not-started-workflow-run-status.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import {
   STOP_WORKFLOW_RUN_AVAILABILITY_EXPRESSION,
   STOP_WORKFLOW_RUN_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
-  STOP_WORKFLOW_RUN_LEGACY_AVAILABILITY_EXPRESSION,
 } from 'src/database/commands/upgrade-version-command/2-61/constants/drop-not-started-workflow-run-status.constant';
 import { type DropNotStartedWorkflowRunStatusCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795095338141-drop-not-started-workflow-run-status.command';
-import { computeFieldMetadataOptionOperationsForFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/compute-field-metadata-option-operations-for-field-metadatas.util';
-import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
 const STATUS_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.workflowRun.fields.status.universalIdentifier;
-
-const LEGACY_NOT_STARTED_OPTION = {
-  id: '20202020-2ec6-40d8-b9e1-1b1e567bcca9',
-  value: 'NOT_STARTED',
-  label: 'Not started',
-  position: 0,
-  color: 'gray' as const,
-};
 
 const RUN_ON_WORKSPACE_ARGS = {
   workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -42,97 +27,7 @@ const RUN_ON_WORKSPACE_ARGS = {
 
 describe('2-61 workspace command - drop not started workflow run status (integration)', () => {
   let command: DropNotStartedWorkflowRunStatusCommand;
-  let workspaceCacheService: WorkspaceCacheService;
-  let workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService;
   const insertedRunIds: string[] = [];
-
-  // Reproduces a workspace created before 2.61, whatever metadata the test database was seeded with
-  const restoreLegacyStatus = async () => {
-    const {
-      flatFieldMetadataMaps,
-      flatFieldMetadataOptionMaps,
-      flatCommandMenuItemMaps,
-    } = await workspaceCacheService.getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
-      'flatFieldMetadataMaps',
-      'flatFieldMetadataOptionMaps',
-      'flatCommandMenuItemMaps',
-    ]);
-
-    const statusField =
-      flatFieldMetadataMaps.byUniversalIdentifier[
-        STATUS_FIELD_UNIVERSAL_IDENTIFIER
-      ];
-    const stopCommandMenuItem =
-      flatCommandMenuItemMaps.byUniversalIdentifier[
-        STOP_WORKFLOW_RUN_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER
-      ];
-
-    if (
-      !isDefined(statusField) ||
-      !isFlatFieldMetadataOfType(statusField, FieldMetadataType.SELECT) ||
-      !isDefined(stopCommandMenuItem)
-    ) {
-      throw new Error('Seeded workspace is missing the workflowRun metadata');
-    }
-
-    const statusOptions = statusField.options ?? [];
-    const statusFieldsToUpdate = statusOptions.some(
-      ({ value }) => value === LEGACY_NOT_STARTED_OPTION.value,
-    )
-      ? []
-      : [
-          {
-            ...statusField,
-            options: [LEGACY_NOT_STARTED_OPTION, ...statusOptions],
-            defaultValue: "'NOT_STARTED'",
-            updatedAt: new Date().toISOString(),
-          },
-        ];
-
-    const result =
-      await workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
-        {
-          shouldDeferActions: false,
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          isSystemBuild: true,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          allFlatEntityOperationByMetadataName: {
-            fieldMetadata: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: statusFieldsToUpdate,
-            },
-            fieldMetadataOption:
-              computeFieldMetadataOptionOperationsForFieldMetadatas({
-                flatFieldMetadatasToUpdate: statusFieldsToUpdate,
-                existingFlatFieldMetadataOptionMaps:
-                  flatFieldMetadataOptionMaps,
-                applicationUniversalIdentifier:
-                  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-              }),
-            commandMenuItem: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [
-                {
-                  ...stopCommandMenuItem,
-                  conditionalAvailabilityExpression:
-                    STOP_WORKFLOW_RUN_LEGACY_AVAILABILITY_EXPRESSION,
-                  updatedAt: new Date().toISOString(),
-                },
-              ],
-            },
-          },
-        },
-      );
-
-    if (result.status === 'fail') {
-      throw new Error(
-        `Failed to restore the legacy status: ${JSON.stringify(result)}`,
-      );
-    }
-  };
 
   const insertNotStartedRun = async (): Promise<string> => {
     const workflowRunId = randomUUID();
@@ -190,13 +85,6 @@ describe('2-61 workspace command - drop not started workflow run status (integra
     command = getAppProviderByClassName<DropNotStartedWorkflowRunStatusCommand>(
       'DropNotStartedWorkflowRunStatusCommand',
     );
-    workspaceCacheService = getAppProviderByClassName<WorkspaceCacheService>(
-      'WorkspaceCacheService',
-    );
-    workspaceMigrationValidateBuildAndRunService =
-      getAppProviderByClassName<WorkspaceMigrationValidateBuildAndRunService>(
-        'WorkspaceMigrationValidateBuildAndRunService',
-      );
   });
 
   afterAll(async () => {
@@ -208,7 +96,7 @@ describe('2-61 workspace command - drop not started workflow run status (integra
   });
 
   it('changes nothing on a dry run', async () => {
-    await restoreLegacyStatus();
+    await restoreLegacyNotStartedWorkflowRunStatus(SEED_APPLE_WORKSPACE_ID);
     const workflowRunId = await insertNotStartedRun();
     const stateBefore = await readState(workflowRunId);
 
@@ -222,7 +110,7 @@ describe('2-61 workspace command - drop not started workflow run status (integra
   });
 
   it('converts the runs, drops the status and is a no-op on a second run', async () => {
-    await restoreLegacyStatus();
+    await restoreLegacyNotStartedWorkflowRunStatus(SEED_APPLE_WORKSPACE_ID);
     const workflowRunId = await insertNotStartedRun();
 
     await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
