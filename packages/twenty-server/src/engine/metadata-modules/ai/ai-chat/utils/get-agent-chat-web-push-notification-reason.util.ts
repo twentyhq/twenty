@@ -8,13 +8,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 
-const MAX_DELAY_BETWEEN_MENTION_AND_ACTIVITY_WRITES_MS = 2_000;
-
 export const getAgentChatWebPushNotificationReason = ({
   thread,
   participant,
   workspaceMemberId,
   inboxNotificationLevel,
+  hasUnalertedMention,
 }: {
   thread: Pick<
     AgentChatThreadWorkspaceEntity,
@@ -29,6 +28,7 @@ export const getAgentChatWebPushNotificationReason = ({
   participant: AgentChatInboxState | undefined;
   workspaceMemberId: string;
   inboxNotificationLevel: string;
+  hasUnalertedMention: boolean;
 }): 'DIRECT_MESSAGE' | 'MENTION' | 'ASSIGNED' | 'FOLLOWED' | null => {
   const { lastActivityAt } = thread;
 
@@ -41,7 +41,7 @@ export const getAgentChatWebPushNotificationReason = ({
     return null;
   }
 
-  const { isUnread, isMentioned, scope } = getAgentChatThreadInboxStatus({
+  const { isUnread, scope } = getAgentChatThreadInboxStatus({
     lastActivityAt,
     participant,
   });
@@ -59,15 +59,7 @@ export const getAgentChatWebPushNotificationReason = ({
     return 'DIRECT_MESSAGE';
   }
 
-  const lastMentionedAt = participant?.lastMentionedAt;
-  const isMentionedInLastMessage =
-    isMentioned &&
-    isDefined(lastMentionedAt) &&
-    Math.abs(
-      new Date(lastMentionedAt).getTime() - new Date(lastActivityAt).getTime(),
-    ) <= MAX_DELAY_BETWEEN_MENTION_AND_ACTIVITY_WRITES_MS;
-
-  if (isMentionedInLastMessage) {
+  if (hasUnalertedMention) {
     return 'MENTION';
   }
 

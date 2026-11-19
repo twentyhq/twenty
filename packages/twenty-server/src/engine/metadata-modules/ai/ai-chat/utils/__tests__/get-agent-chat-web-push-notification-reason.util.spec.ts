@@ -46,6 +46,7 @@ const getReason = (
     participant: unreadFollowedParticipant,
     workspaceMemberId: ME,
     inboxNotificationLevel: AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.ALL_FOLLOWED,
+    hasUnalertedMention: false,
     ...overrides,
   });
 
@@ -79,27 +80,26 @@ describe('getAgentChatWebPushNotificationReason', () => {
     ).toBe('DIRECT_MESSAGE');
   });
 
-  it('should notify for a mention in this message only', () => {
+  it('should notify for a mention only until it has been alerted', () => {
     const inboxNotificationLevel =
       AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.DIRECT_MENTIONS_AND_ASSIGNED;
+    const mentionedParticipant = {
+      ...unreadFollowedParticipant,
+      isSubscribed: false,
+      lastMentionedAt: '2026-11-16T09:30:00.000Z',
+    };
 
     expect(
       getReason({
         inboxNotificationLevel,
-        participant: {
-          ...unreadFollowedParticipant,
-          isSubscribed: false,
-          lastMentionedAt: '2026-11-16T09:59:59.500Z',
-        },
+        participant: mentionedParticipant,
+        hasUnalertedMention: true,
       }),
     ).toBe('MENTION');
     expect(
       getReason({
         inboxNotificationLevel,
-        participant: {
-          ...unreadFollowedParticipant,
-          lastMentionedAt: '2026-11-16T09:30:00.000Z',
-        },
+        participant: mentionedParticipant,
       }),
     ).toBeNull();
   });
