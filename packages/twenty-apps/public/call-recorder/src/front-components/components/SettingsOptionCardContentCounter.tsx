@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode, useId } from 'react';
+import { useTranslate } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
 import {
   NumberStepper,
@@ -53,6 +54,7 @@ export const SettingsOptionCardContentCounter = ({
   onValueChange,
   onBlur,
 }: SettingsOptionCardContentCounterProps) => {
+  const { t } = useTranslate();
   const counterId = useId();
   const titleId = `${counterId}-title`;
   const descriptionId = `${counterId}-description`;
@@ -84,8 +86,8 @@ export const SettingsOptionCardContentCounter = ({
             min={minValue}
             max={maxValue}
             disabled={disabled}
-            decrementLabel="Decrease value"
-            incrementLabel="Increase value"
+            decrementLabel={t('Decrease value')}
+            incrementLabel={t('Increase value')}
             onValueChange={onValueChange}
             onBlur={onBlur}
           />
