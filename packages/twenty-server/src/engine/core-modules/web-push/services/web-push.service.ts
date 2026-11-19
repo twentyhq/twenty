@@ -22,8 +22,8 @@ import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-
 
 const FOCUSED_TAB_TTL_MS = 45_000;
 
-const getFocusedTabKey = (workspaceId: string, userId: string) =>
-  `focused-tab:${workspaceId}:${userId}`;
+const getFocusedTabKey = (workspaceId: string, workspaceMemberId: string) =>
+  `focused-tab:${workspaceId}:${workspaceMemberId}`;
 
 @Injectable()
 export class WebPushService {
@@ -93,16 +93,16 @@ export class WebPushService {
 
   async updateFocusedTab({
     workspaceId,
-    userId,
+    workspaceMemberId,
     tabId,
     isFocused,
   }: {
     workspaceId: string;
-    userId: string;
+    workspaceMemberId: string;
     tabId: string;
     isFocused: boolean;
   }): Promise<void> {
-    const focusedTabKey = getFocusedTabKey(workspaceId, userId);
+    const focusedTabKey = getFocusedTabKey(workspaceId, workspaceMemberId);
 
     if (isFocused) {
       await this.cacheStorageService.set(
