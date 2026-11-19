@@ -6,9 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueException } from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -20,15 +19,8 @@ import {
 import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
-import {
-  WorkflowRunEnqueueJob,
-  type WorkflowRunEnqueueJobData,
-} from 'src/modules/workflow/workflow-runner/workflow-run-queue/jobs/workflow-run-enqueue.job';
-import { WorkflowRunEnqueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-enqueue.workspace-service';
-import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
 import { WorkflowRunJobScopeWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-job-scope.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
-import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 @Injectable()
 export class CoreWorkflowRunnerService {
@@ -39,10 +31,7 @@ export class CoreWorkflowRunnerService {
     private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly billingUsageService: BillingUsageService,
-    private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
-    private readonly metricsService: MetricsService,
     private readonly workflowRunJobScopeWorkspaceService: WorkflowRunJobScopeWorkspaceService,
-    private readonly workflowRunEnqueueWorkspaceService: WorkflowRunEnqueueWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -72,13 +61,6 @@ export class CoreWorkflowRunnerService {
       );
     }
 
-    const isHardThrottled = await this.checkHardThrottleLimit(workspaceId);
-    const isManualTrigger = trigger.type === WorkflowTriggerType.MANUAL;
-    const status = isHardThrottled
-      ? WorkflowRunStatus.FAILED
-      : isManualTrigger
-        ? WorkflowRunStatus.ENQUEUED
-        : WorkflowRunStatus.NOT_STARTED;
     const createdBy = buildWorkflowRunCreatedBy({
       source,
       workflowApplicationId: workflow.applicationId,
@@ -92,40 +74,34 @@ export class CoreWorkflowRunnerService {
         steps,
         createdBy,
         workflowRunId,
-        status,
+        status: WorkflowRunStatus.ENQUEUED,
         triggerPayload: payload,
-        error: isHardThrottled ? 'Throttle limit reached' : undefined,
         workspaceId,
       });
 
-    if (isHardThrottled) {
-      return { workflowRunId: createdWorkflowRunId };
-    }
+    try {
+      await this.messageQueueService.add<RunWorkflowJobData>(
+        RunWorkflowJob.name,
+        { workflowRunId: createdWorkflowRunId, workspaceId },
+        buildRunWorkflowJobOptions({
+          workflowRunId: createdWorkflowRunId,
+          scope:
+            await this.workflowRunJobScopeWorkspaceService.resolveForCoreWorkflow(
+              { workspaceId, coreWorkflowId: workflow.id },
+            ),
+        }),
+      );
+    } catch (error) {
+      if (!(error instanceof MessageQueueException)) {
+        throw error;
+      }
 
-    if (isManualTrigger) {
-      const scope =
-        await this.workflowRunJobScopeWorkspaceService.resolveForCoreWorkflow({
-          workspaceId,
-          coreWorkflowId: workflow.id,
-        });
-
-      await this.workflowRunEnqueueWorkspaceService.enqueueRunOrFailIt({
-        workspaceId,
+      await this.workflowRunWorkspaceService.endWorkflowRun({
         workflowRunId: createdWorkflowRunId,
-        scope,
-      });
-    } else {
-      await this.workflowThrottlingWorkspaceService.increaseWorkflowRunNotStartedCount(
         workspaceId,
-      );
-      await this.messageQueueService.add<WorkflowRunEnqueueJobData>(
-        WorkflowRunEnqueueJob.name,
-        { workspaceId, isCacheMode: true },
-        {
-          workspaceId,
-          isWorkspaceJob: true,
-        },
-      );
+        status: WorkflowRunStatus.FAILED,
+        error: error.message,
+      });
     }
 
     return { workflowRunId: createdWorkflowRunId };
@@ -211,22 +187,5 @@ export class CoreWorkflowRunnerService {
       trigger: workflowVersion.triggers[0],
       steps: workflowVersion.steps,
     };
-  }
-
-  private async checkHardThrottleLimit(workspaceId: string): Promise<boolean> {
-    try {
-      await this.workflowThrottlingWorkspaceService.throttleOrThrowIfHardLimitReached(
-        workspaceId,
-      );
-
-      return false;
-    } catch {
-      void this.metricsService.incrementCounterForEvent({
-        key: MetricsKeys.WorkflowRunThrottled,
-        eventId: workspaceId,
-      });
-
-      return true;
-    }
   }
 }

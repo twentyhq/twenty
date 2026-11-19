@@ -4,7 +4,6 @@ import { WORKFLOW_RUN_GQL_FIELDS } from 'test/integration/constants/workflow-gql
 const client = request(`http://localhost:${APP_PORT}`);
 
 export type WorkflowRunStatusType =
-  | 'NOT_STARTED'
   | 'RUNNING'
   | 'COMPLETED'
   | 'FAILED'
@@ -85,7 +84,6 @@ export const destroyWorkflowRun = async (
 };
 
 const PENDING_WORKFLOW_RUN_STATUSES: WorkflowRunStatusType[] = [
-  'NOT_STARTED',
   'ENQUEUED',
   'RUNNING',
   'STOPPING',
