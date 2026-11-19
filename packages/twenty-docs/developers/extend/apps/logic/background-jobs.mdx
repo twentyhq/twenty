@@ -123,6 +123,7 @@ Declare a job config when a run must not start more often than a third-party API
 import { defineJobConfig } from 'twenty-sdk/define';
 
 export default defineJobConfig({
+  universalIdentifier: 'a4887e5e-9cdb-4eed-b1da-142572e7e184',
   key: 'contacts-api',
   limiter: { max: 50, durationMs: 60_000 },
 });

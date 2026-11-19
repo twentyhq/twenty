@@ -781,6 +781,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
           "durationMs": 60000,
           "max": 10,
         },
+        "universalIdentifier": "4c8006e5-38ab-4fac-a5f1-8012755413a2",
       },
     ],
     "logicFunctions": [

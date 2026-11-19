@@ -1173,6 +1173,25 @@ describe('buildPullEntities', () => {
     ).toBe('src/permission-flags/export-pets.permission-flag.ts');
   });
 
+  it('should write a job config verbatim into src/job-configs, named after its key', () => {
+    const jobConfigManifest = {
+      universalIdentifier: 'b7e2c4a1-3d5f-4a6b-8c9d-0e1f2a3b4c5d',
+      key: 'contacts-api',
+      limiter: { max: 50, durationMs: 60_000 },
+    };
+    const { entities, skipped } = buildPullEntities({
+      manifest: buildManifest({ jobConfigs: [jobConfigManifest] }),
+    });
+    const jobConfig = entities.find((entity) => entity.kind === 'jobConfig');
+
+    expect(skipped).toEqual([]);
+    expect(jobConfig?.definer).toBe('defineJobConfig');
+    expect(jobConfig?.config).toEqual(jobConfigManifest);
+    expect(
+      `${jobConfig?.defaultFolder}/${jobConfig?.fileBaseName}${jobConfig?.fileSuffix}`,
+    ).toBe('src/job-configs/contacts-api.job-config.ts');
+  });
+
   it('should write the default role with defineApplicationRole and the other roles with defineRole into src/roles under the role enum bindings', () => {
     const { entities } = buildPullEntities({
       manifest: buildManifest({

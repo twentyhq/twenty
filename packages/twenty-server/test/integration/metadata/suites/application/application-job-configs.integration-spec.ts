@@ -18,6 +18,7 @@ const TEST_ROLE_ID = 'd1a6c0b2-0002-4000-a000-000000000002';
 const TEST_LOGIC_FUNCTION_ID = 'd1a6c0b2-0003-4000-a000-000000000003';
 
 const API_JOB_CONFIG: JobConfigManifest = {
+  universalIdentifier: 'd1a6c0b2-0004-4000-a000-000000000004',
   key: 'api',
   limiter: { max: 1, durationMs: 60_000 },
 };

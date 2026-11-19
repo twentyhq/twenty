@@ -1,5 +1,6 @@
 import { JOB_CONFIG_KEY_PATTERN } from '@/application/constants/JobConfigKeyPattern';
 import { type JobConfigManifest } from '@/application/jobConfigManifestType';
+import { isValidUniversalIdentifier } from '@/application/utils/isValidUniversalIdentifier';
 
 export const getJobConfigManifestErrors = (
   jobConfig: Partial<JobConfigManifest>,
@@ -7,6 +8,12 @@ export const getJobConfigManifestErrors = (
   const errors: string[] = [];
   const max = jobConfig.limiter?.max;
   const durationMs = jobConfig.limiter?.durationMs;
+
+  if (!isValidUniversalIdentifier(jobConfig.universalIdentifier ?? '')) {
+    errors.push(
+      `Job config "${jobConfig.key}" must have a valid universalIdentifier`,
+    );
+  }
 
   if (!JOB_CONFIG_KEY_PATTERN.test(jobConfig.key ?? '')) {
     errors.push(

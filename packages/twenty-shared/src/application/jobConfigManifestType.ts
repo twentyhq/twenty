@@ -1,10 +1,11 @@
+import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
+
 export type JobConfigLimiter = {
   max: number;
   durationMs: number;
 };
 
-// No universalIdentifier: the key identifies a job config within its application
-export type JobConfigManifest = {
+export type JobConfigManifest = SyncableEntityOptions & {
   key: string;
   limiter: JobConfigLimiter;
 };

@@ -14,13 +14,21 @@ export const getJobConfigsManifestErrors = ({
 }): string[] => {
   const errors = jobConfigs.flatMap(getJobConfigManifestErrors);
   const jobConfigKeys = new Set<string>();
+  const jobConfigUniversalIdentifiers = new Set<string>();
 
-  for (const { key } of jobConfigs) {
+  for (const { key, universalIdentifier } of jobConfigs) {
     if (jobConfigKeys.has(key)) {
       errors.push(`Job config key "${key}" is declared more than once`);
     }
 
+    if (jobConfigUniversalIdentifiers.has(universalIdentifier)) {
+      errors.push(
+        `Job config universalIdentifier ${universalIdentifier} is declared more than once`,
+      );
+    }
+
     jobConfigKeys.add(key);
+    jobConfigUniversalIdentifiers.add(universalIdentifier);
   }
 
   for (const logicFunction of logicFunctions) {

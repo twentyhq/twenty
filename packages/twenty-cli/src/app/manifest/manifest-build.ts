@@ -806,7 +806,7 @@ export const buildManifest = async (
         messagingProviders: messagingProviders.sort(byId),
         mcpServers: mcpServers.sort(byId),
         logicFunctions: logicFunctions.sort(byId),
-        jobConfigs: jobConfigs.sort((a, b) => a.key.localeCompare(b.key)),
+        jobConfigs: jobConfigs.sort(byId),
         frontComponents: frontComponents.sort(byId),
         publicAssets: publicAssets.sort(byPath),
         views: views.sort(byId),

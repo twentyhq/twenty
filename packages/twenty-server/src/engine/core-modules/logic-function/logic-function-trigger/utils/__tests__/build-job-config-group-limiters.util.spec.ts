@@ -9,8 +9,16 @@ describe('buildJobConfigGroupLimiters', () => {
       buildJobConfigGroupLimiters({
         applicationUniversalIdentifier: 'app-1',
         jobConfigs: [
-          { key: 'api', limiter: API_LIMITER },
-          { key: 'backfill', limiter: BACKFILL_LIMITER },
+          {
+            universalIdentifier: '94f170ef-9343-4930-8b15-1e6efd354e1e',
+            key: 'api',
+            limiter: API_LIMITER,
+          },
+          {
+            universalIdentifier: '9db40a36-4e53-4312-8350-1572a82ea97b',
+            key: 'backfill',
+            limiter: BACKFILL_LIMITER,
+          },
         ],
         jobConfigKeys: ['api', 'backfill', 'api', undefined],
       }),
