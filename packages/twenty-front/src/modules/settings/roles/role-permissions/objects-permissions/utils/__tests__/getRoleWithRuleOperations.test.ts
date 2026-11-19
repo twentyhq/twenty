@@ -20,7 +20,7 @@ describe('getRoleWithRuleOperations', () => {
   it('should keep the create grant while edit does not change', () => {
     const role = getRoleWithRuleOperations({
       role: ROLE,
-      ruleId: 'rule-id',
+      rowLevelPermissionRuleId: 'rule-id',
       operations: [
         'canReadObjectRecords',
         'canUpdateObjectRecords',
@@ -44,7 +44,7 @@ describe('getRoleWithRuleOperations', () => {
           canCreateRecords: true,
         })),
       },
-      ruleId: 'rule-id',
+      rowLevelPermissionRuleId: 'rule-id',
       operations: ['canReadObjectRecords'],
     });
 

@@ -9,7 +9,7 @@ export const getRoleWithoutRowLevelPermissionRules = ({
   role: RoleWithPartialMembers;
   shouldRemoveRule: (rule: RowLevelPermissionRule) => boolean;
 }): RoleWithPartialMembers => {
-  const ruleIds = (role.rowLevelPermissionRules ?? [])
+  const rowLevelPermissionRuleIds = (role.rowLevelPermissionRules ?? [])
     .filter(shouldRemoveRule)
     .map(({ id }) => id);
 
@@ -19,7 +19,7 @@ export const getRoleWithoutRowLevelPermissionRules = ({
     rowLevelPermissionRuleId?: string | null;
   }) =>
     isDefined(rowLevelPermissionRuleId) &&
-    ruleIds.includes(rowLevelPermissionRuleId);
+    rowLevelPermissionRuleIds.includes(rowLevelPermissionRuleId);
 
   const removedPredicateGroupIds = new Set(
     (role.rowLevelPermissionPredicateGroups ?? [])
@@ -30,7 +30,7 @@ export const getRoleWithoutRowLevelPermissionRules = ({
   return {
     ...role,
     rowLevelPermissionRules: role.rowLevelPermissionRules?.filter(
-      (rule) => !ruleIds.includes(rule.id),
+      (rule) => !rowLevelPermissionRuleIds.includes(rule.id),
     ),
     rowLevelPermissionPredicates: role.rowLevelPermissionPredicates?.filter(
       (predicate) => !isOfRemovedRule(predicate),

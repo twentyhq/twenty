@@ -3,16 +3,16 @@ import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPart
 
 export const getRoleWithRuleOperations = ({
   role,
-  ruleId,
+  rowLevelPermissionRuleId,
   operations,
 }: {
   role: RoleWithPartialMembers;
-  ruleId: string;
+  rowLevelPermissionRuleId: string;
   operations: SettingsRoleObjectPermissionKey[];
 }): RoleWithPartialMembers => ({
   ...role,
   rowLevelPermissionRules: (role.rowLevelPermissionRules ?? []).map((rule) => {
-    if (rule.id !== ruleId) {
+    if (rule.id !== rowLevelPermissionRuleId) {
       return rule;
     }
 

@@ -143,11 +143,11 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
     );
   };
 
-  const openRulePage = (ruleId: string) => {
+  const openRulePage = (rowLevelPermissionRuleId: string) => {
     navigateSettings(
       SettingsPath.RoleObjectLevel,
       { roleId, objectMetadataId: objectMetadataItem.id },
-      { ruleId },
+      { rowLevelPermissionRuleId },
     );
   };
 
@@ -235,7 +235,10 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
                 dropdownId={`settings-role-rule-actions-${rule.id}`}
                 selectedOperations={getRuleOperations(rule)}
                 onChange={(operations) =>
-                  setRuleOperations({ ruleId: rule.id, operations })
+                  setRuleOperations({
+                    rowLevelPermissionRuleId: rule.id,
+                    operations,
+                  })
                 }
                 disabled={!isEditable}
               />

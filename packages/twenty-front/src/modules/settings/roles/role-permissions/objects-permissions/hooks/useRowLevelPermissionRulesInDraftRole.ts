@@ -12,7 +12,7 @@ export const useRowLevelPermissionRulesInDraftRole = (roleId: string) => {
   );
 
   const createRule = (objectMetadataId: string) => {
-    const ruleId = v4();
+    const rowLevelPermissionRuleId = v4();
 
     setSettingsDraftRole((currentSettingsDraftRole) => ({
       ...currentSettingsDraftRole,
@@ -20,7 +20,7 @@ export const useRowLevelPermissionRulesInDraftRole = (roleId: string) => {
         ...(currentSettingsDraftRole.rowLevelPermissionRules ?? []),
         {
           __typename: 'RowLevelPermissionRule',
-          id: ruleId,
+          id: rowLevelPermissionRuleId,
           objectMetadataId,
           canReadRecords: true,
           canCreateRecords: false,
@@ -31,30 +31,30 @@ export const useRowLevelPermissionRulesInDraftRole = (roleId: string) => {
       ],
     }));
 
-    return ruleId;
+    return rowLevelPermissionRuleId;
   };
 
   const setRuleOperations = ({
-    ruleId,
+    rowLevelPermissionRuleId,
     operations,
   }: {
-    ruleId: string;
+    rowLevelPermissionRuleId: string;
     operations: SettingsRoleObjectPermissionKey[];
   }) => {
     setSettingsDraftRole((currentSettingsDraftRole) =>
       getRoleWithRuleOperations({
         role: currentSettingsDraftRole,
-        ruleId,
+        rowLevelPermissionRuleId,
         operations,
       }),
     );
   };
 
-  const deleteRule = (ruleId: string) => {
+  const deleteRule = (rowLevelPermissionRuleId: string) => {
     setSettingsDraftRole((currentSettingsDraftRole) =>
       getRoleWithoutRowLevelPermissionRules({
         role: currentSettingsDraftRole,
-        shouldRemoveRule: (rule) => rule.id === ruleId,
+        shouldRemoveRule: (rule) => rule.id === rowLevelPermissionRuleId,
       }),
     );
   };

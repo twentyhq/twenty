@@ -15,7 +15,7 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 
 type UseRecordLevelPermissionSyncToDraftRoleProps = {
   roleId: string;
-  ruleId: string;
+  rowLevelPermissionRuleId: string;
   objectMetadataItem: EnrichedObjectMetadataItem;
   currentRecordFilters: RecordFilter[];
   currentRecordFilterGroups: RecordFilterGroup[];
@@ -24,7 +24,7 @@ type UseRecordLevelPermissionSyncToDraftRoleProps = {
 
 export const useRecordLevelPermissionSyncToDraftRole = ({
   roleId,
-  ruleId,
+  rowLevelPermissionRuleId,
   objectMetadataItem,
   currentRecordFilters,
   currentRecordFilterGroups,
@@ -41,13 +41,15 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
         previousRole.rowLevelPermissionPredicates ?? []
       ).filter(
         (predicate) =>
-          predicate.rowLevelPermissionRuleId !== ruleId ||
+          predicate.rowLevelPermissionRuleId !== rowLevelPermissionRuleId ||
           isDefined(predicate.relationFieldMetadataId),
       );
 
       const otherRuleGroups = (
         previousRole.rowLevelPermissionPredicateGroups ?? []
-      ).filter((group) => group.rowLevelPermissionRuleId !== ruleId);
+      ).filter(
+        (group) => group.rowLevelPermissionRuleId !== rowLevelPermissionRuleId,
+      );
 
       const newPredicates = currentRecordFilters.map((filter) => ({
         ...convertRecordFilterToPredicate(
@@ -55,7 +57,7 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
           roleId,
           objectMetadataItem.id,
         ),
-        rowLevelPermissionRuleId: ruleId,
+        rowLevelPermissionRuleId,
       }));
 
       const previousPredicateGroupById = new Map(
@@ -71,7 +73,7 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
           objectMetadataId: objectMetadataItem.id,
           existingPredicateGroup: previousPredicateGroupById.get(group.id),
         }),
-        rowLevelPermissionRuleId: ruleId,
+        rowLevelPermissionRuleId,
       }));
 
       return {
@@ -91,7 +93,7 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
     currentRecordFilterGroups,
     objectMetadataItem.id,
     roleId,
-    ruleId,
+    rowLevelPermissionRuleId,
     setSettingsDraftRole,
   ]);
 

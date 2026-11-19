@@ -22,10 +22,10 @@ const buildRule = (id: string): RowLevelPermissionRule => ({
 
 const buildPredicateGroup = ({
   id,
-  ruleId,
+  rowLevelPermissionRuleId,
 }: {
   id: string;
-  ruleId: string;
+  rowLevelPermissionRuleId: string;
 }): RowLevelPermissionPredicateGroup => ({
   __typename: 'RowLevelPermissionPredicateGroup',
   id,
@@ -38,16 +38,16 @@ const buildPredicateGroup = ({
   canDestroyRecords: false,
   roleId: 'role-id',
   objectMetadataId: 'company',
-  rowLevelPermissionRuleId: ruleId,
+  rowLevelPermissionRuleId,
 });
 
 const buildPredicate = ({
   id,
-  ruleId,
+  rowLevelPermissionRuleId,
   relationFieldMetadataId = null,
 }: {
   id: string;
-  ruleId: string;
+  rowLevelPermissionRuleId: string;
   relationFieldMetadataId?: string | null;
 }): RowLevelPermissionPredicate => ({
   __typename: 'RowLevelPermissionPredicate',
@@ -56,8 +56,8 @@ const buildPredicate = ({
   relationFieldMetadataId,
   objectMetadataId: 'company',
   operand: RowLevelPermissionPredicateOperand.IS,
-  rowLevelPermissionPredicateGroupId: `${ruleId}-group`,
-  rowLevelPermissionRuleId: ruleId,
+  rowLevelPermissionPredicateGroupId: `${rowLevelPermissionRuleId}-group`,
+  rowLevelPermissionRuleId,
   roleId: 'role-id',
   value: 'value',
 });
@@ -86,17 +86,29 @@ describe('getRoleWithoutRowLevelPermissionRules', () => {
         ...DEFAULT_SETTINGS_DRAFT_ROLE,
         rowLevelPermissionRules: [buildRule('owner'), buildRule('team')],
         rowLevelPermissionPredicates: [
-          buildPredicate({ id: 'owner-predicate', ruleId: 'owner' }),
+          buildPredicate({
+            id: 'owner-predicate',
+            rowLevelPermissionRuleId: 'owner',
+          }),
           buildPredicate({
             id: 'owner-related-predicate',
-            ruleId: 'owner',
+            rowLevelPermissionRuleId: 'owner',
             relationFieldMetadataId: 'relation-field-id',
           }),
-          buildPredicate({ id: 'team-predicate', ruleId: 'team' }),
+          buildPredicate({
+            id: 'team-predicate',
+            rowLevelPermissionRuleId: 'team',
+          }),
         ],
         rowLevelPermissionPredicateGroups: [
-          buildPredicateGroup({ id: 'owner-group', ruleId: 'owner' }),
-          buildPredicateGroup({ id: 'team-group', ruleId: 'team' }),
+          buildPredicateGroup({
+            id: 'owner-group',
+            rowLevelPermissionRuleId: 'owner',
+          }),
+          buildPredicateGroup({
+            id: 'team-group',
+            rowLevelPermissionRuleId: 'team',
+          }),
         ],
         fieldPermissions: [
           buildFieldPermission({ id: 'owner-field', groupId: 'owner-group' }),

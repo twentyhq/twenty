@@ -49,7 +49,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const fromAgentId = searchParams.get('fromAgent');
-  const ruleId = searchParams.get('ruleId');
+  const rowLevelPermissionRuleId = searchParams.get('rowLevelPermissionRuleId');
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
@@ -122,7 +122,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
 
   const rule = settingsDraftRole.rowLevelPermissionRules?.find(
     (draftRule) =>
-      draftRule.id === ruleId &&
+      draftRule.id === rowLevelPermissionRuleId &&
       draftRule.objectMetadataId === objectMetadataItem.id,
   );
 
@@ -193,7 +193,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
         <SettingsRolePermissionsObjectLevelRecordLevelSection
           objectMetadataItem={objectMetadataItem}
           roleId={roleId}
-          ruleId={rule.id}
+          rowLevelPermissionRuleId={rule.id}
           hasOrganizationPlan={isRLSBillingEntitlementEnabled}
         />
       </SettingsPageContainer>
