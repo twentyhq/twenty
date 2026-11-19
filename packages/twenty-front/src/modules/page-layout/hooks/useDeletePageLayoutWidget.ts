@@ -1,4 +1,4 @@
-import { useRemovePageLayoutWidgetConditionalAvailabilityEditorEntries } from '@/page-layout/hooks/useRemovePageLayoutWidgetConditionalAvailabilityEditorEntries';
+import { useRemovePageLayoutWidgetConditionalAvailabilityEditorEntry } from '@/page-layout/hooks/useRemovePageLayoutWidgetConditionalAvailabilityEditorEntry';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -35,8 +35,8 @@ export const useDeletePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
-  const { removePageLayoutWidgetConditionalAvailabilityEditorEntries } =
-    useRemovePageLayoutWidgetConditionalAvailabilityEditorEntries();
+  const { removePageLayoutWidgetConditionalAvailabilityEditorEntry } =
+    useRemovePageLayoutWidgetConditionalAvailabilityEditorEntry();
 
   const store = useStore();
 
@@ -75,14 +75,14 @@ export const useDeletePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
         store.set(pageLayoutEditingWidgetIdState, null);
       }
 
-      removePageLayoutWidgetConditionalAvailabilityEditorEntries(widgetId);
+      removePageLayoutWidgetConditionalAvailabilityEditorEntry(widgetId);
     },
     [
       closeSidePanelMenu,
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
       pageLayoutEditingWidgetIdState,
-      removePageLayoutWidgetConditionalAvailabilityEditorEntries,
+      removePageLayoutWidgetConditionalAvailabilityEditorEntry,
       store,
     ],
   );

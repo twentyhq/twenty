@@ -1,7 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
-import { useRemovePageLayoutWidgetConditionalAvailabilityEditorEntries } from '@/page-layout/hooks/useRemovePageLayoutWidgetConditionalAvailabilityEditorEntries';
 import { useResetPageLayoutWidgetToDefault } from '@/page-layout/hooks/useResetPageLayoutWidgetToDefault';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
@@ -56,9 +55,6 @@ export const WidgetSettingsManageSection = ({
 
   const { openDialog } = useDialog();
 
-  const { removePageLayoutWidgetConditionalAvailabilityEditorEntries } =
-    useRemovePageLayoutWidgetConditionalAvailabilityEditorEntries();
-
   if (!isDefined(pageLayoutEditingWidgetId)) {
     return null;
   }
@@ -76,9 +72,6 @@ export const WidgetSettingsManageSection = ({
   };
 
   const handleConfirmReset = () => {
-    removePageLayoutWidgetConditionalAvailabilityEditorEntries(
-      pageLayoutEditingWidgetId,
-    );
     resetPageLayoutWidgetToDefault(pageLayoutEditingWidgetId);
   };
 
@@ -89,13 +82,14 @@ export const WidgetSettingsManageSection = ({
   return (
     <>
       <SidePanelGroup heading={t`Manage`}>
-        <PageLayoutSettingsVisibilityItem
-          widgetId={pageLayoutEditingWidgetId}
-          node={widgetInEditMode?.conditionalAvailability ?? null}
-          selectableItemId={
-            WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION
-          }
-        />
+        {isDefined(widgetInEditMode) && (
+          <PageLayoutSettingsVisibilityItem
+            widget={widgetInEditMode}
+            selectableItemId={
+              WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION
+            }
+          />
+        )}
         <Tooltip
           delay={TooltipDelay.mediumDelay}
           content={t`No default configuration available for this widget`}

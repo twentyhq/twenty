@@ -1,7 +1,7 @@
 import { objectColorsDraftState } from '@/layout-customization/states/objectColorsDraftState';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
-import { conditionalAvailabilityEditorStatesState } from '@/conditional-availability/states/conditionalAvailabilityEditorStatesState';
+import { conditionalAvailabilityEditorEntriesState } from '@/conditional-availability/states/conditionalAvailabilityEditorEntriesState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -34,7 +34,7 @@ export const useExitLayoutCustomizationMode = () => {
 
   const exitLayoutCustomizationMode = useCallback(() => {
     store.set(objectColorsDraftState.atom, {});
-    store.set(conditionalAvailabilityEditorStatesState.atom, {});
+    store.set(conditionalAvailabilityEditorEntriesState.atom, {});
     const activePageLayoutIds = store.get(
       activeCustomizationPageLayoutIdsState.atom,
     );
