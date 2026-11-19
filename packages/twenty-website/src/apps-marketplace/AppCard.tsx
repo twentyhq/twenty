@@ -3,74 +3,45 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import { type CSSProperties } from 'react';
 
 import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import {
+  CardFrame,
+  type PartnerCardIndexStyle,
+} from '@/partners-marketplace/MarketplaceCardFrame';
+import {
   color,
-  EASING,
   FONT_WEIGHT,
   fontFamily,
   fontSize,
   radius,
-  REDUCED_MOTION,
   semanticColor,
-  SHADOW,
   spacing,
 } from '@/tokens';
-import { Button } from '@/ui';
+
+import { useSearchParams } from 'next/navigation';
 
 import { AppLogo } from './AppLogo';
-import { buildAppInstallUrl } from './build-app-install-url';
+// PROTOTYPE (?shape=notched): remove with NotchedFrame.
+import { NotchedFrame } from './NotchedFrame';
 import { type MarketplaceApp } from './marketplace-app';
 
-type AppCardStyle = CSSProperties & {
-  '--app-card-index': number;
-};
+const CardArticle = styled(CardFrame)`
+  gap: ${spacing(3.5)};
+  padding: ${spacing(5.5)} ${spacing(5.5)} ${spacing(4.5)};
+  will-change: transform;
+`;
 
-const CardArticle = styled.article`
-  @keyframes appCardEnter {
-    from {
-      opacity: 0;
-      transform: translate3d(0, 18px, 0);
-    }
-    to {
-      opacity: 1;
-      transform: translate3d(0, 0, 0);
-    }
-  }
-
-  animation: appCardEnter 700ms ${EASING.standard} both;
-  animation-delay: calc(var(--app-card-index) * 90ms + 180ms);
-  background-color: ${color('white')};
-  border: 1px solid ${semanticColor.line};
-  border-radius: ${radius(2)};
+const NotchedArticle = styled.article`
   display: flex;
   flex-direction: column;
-  gap: ${spacing(5)};
   isolation: isolate;
-  padding: ${spacing(6)};
   position: relative;
-  transition:
-    border-color 0.25s ease,
-    box-shadow 0.25s ease,
-    transform 0.25s ease;
-  will-change: transform;
+`;
 
-  &:hover {
-    border-color: ${semanticColor.lineStrong};
-    box-shadow: ${SHADOW.card};
-    transform: translateY(-2px);
-  }
-
-  ${REDUCED_MOTION} {
-    animation: none;
-    transition: none;
-
-    &:hover {
-      transform: none;
-    }
-  }
+const NotchedContent = styled(NotchedFrame)`
+  gap: ${spacing(3.5)};
+  padding: ${spacing(1.5)} ${spacing(5.5)} ${spacing(4.5)};
 `;
 
 const CardHeader = styled.div`
@@ -85,17 +56,17 @@ const HeaderText = styled.div`
   min-width: 0;
 
   & > * + * {
-    margin-top: ${spacing(1)};
+    margin-top: ${spacing(0.75)};
   }
 `;
 
 const AppName = styled.h3`
   color: ${semanticColor.ink};
-  font-family: ${fontFamily('serif')};
-  font-size: ${fontSize(6)};
-  font-weight: ${FONT_WEIGHT.light};
-  letter-spacing: -0.02em;
-  line-height: ${fontSize(7)};
+  font-family: ${fontFamily('sans')};
+  font-size: ${fontSize(4.25)};
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
 `;
 
 const NameLink = styled(LocalizedLink)`
@@ -132,33 +103,36 @@ const Tagline = styled.p`
   color: ${semanticColor.inkMuted};
   display: -webkit-box;
   font-family: ${fontFamily('sans')};
-  font-size: ${fontSize(4)};
-  line-height: ${fontSize(5.5)};
+  font-size: ${fontSize(3.625)};
+  line-height: 1.5;
   overflow: hidden;
 `;
 
-const CtaRow = styled.div`
+const CardFoot = styled.div`
   align-items: center;
+  border-top: 1px solid ${semanticColor.line};
   display: flex;
-  gap: ${spacing(4)};
+  gap: ${spacing(3.5)};
+  justify-content: space-between;
   margin-top: auto;
-  position: relative;
-  z-index: 1;
+  padding-top: ${spacing(3.5)};
 `;
 
-const LearnMoreLink = styled(LocalizedLink)`
+const AuthorLine = styled.p`
   color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('mono')};
-  font-size: ${fontSize(3)};
+  font-family: ${fontFamily('sans')};
+  font-size: ${fontSize(3.5)};
   font-weight: ${FONT_WEIGHT.medium};
-  letter-spacing: 0.02em;
-  text-decoration: none;
-  text-transform: uppercase;
-  transition: color 0.2s ease;
+  line-height: 1.4;
+`;
 
-  &:hover {
-    color: ${semanticColor.ink};
-  }
+const CardCta = styled.span`
+  color: ${color('blue')};
+  font-family: ${fontFamily('mono')};
+  font-size: ${fontSize(2.75)};
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
 `;
 
 type AppCardProps = {
@@ -169,11 +143,12 @@ type AppCardProps = {
 export function AppCard({ app, index }: AppCardProps) {
   const { i18n } = useLingui();
   const headingId = `app-card-heading-${app.slug}`;
-  const style: AppCardStyle = { '--app-card-index': index };
+  const style: PartnerCardIndexStyle = { '--partner-card-index': index };
   const detailHref = `/apps/${app.slug}`;
 
-  return (
-    <CardArticle aria-labelledby={headingId} style={style}>
+  const isNotched = useSearchParams().get('shape') === 'notched';
+  const content = (
+    <>
       <CardHeader>
         <AppLogo name={app.name} logoUrl={app.logoUrl} />
         <HeaderText>
@@ -188,20 +163,24 @@ export function AppCard({ app, index }: AppCardProps) {
 
       <Tagline>{app.tagline}</Tagline>
 
-      <CtaRow>
-        <Button
-          href={buildAppInstallUrl(app.universalIdentifier)}
-          label={i18n._(msg`Install`)}
-          variant="filled"
-          size="small"
-        />
-        <LearnMoreLink
-          href={detailHref}
-          aria-label={i18n._(msg`Learn more about ${app.name}`)}
-        >
-          {i18n._(msg`Learn more`)}
-        </LearnMoreLink>
-      </CtaRow>
+      <CardFoot>
+        <AuthorLine>{i18n._(msg`By ${app.author}`)}</AuthorLine>
+        <CardCta>{i18n._(msg`View app`)} →</CardCta>
+      </CardFoot>
+    </>
+  );
+
+  if (isNotched) {
+    return (
+      <NotchedArticle aria-labelledby={headingId}>
+        <NotchedContent>{content}</NotchedContent>
+      </NotchedArticle>
+    );
+  }
+
+  return (
+    <CardArticle aria-labelledby={headingId} style={style}>
+      {content}
     </CardArticle>
   );
 }

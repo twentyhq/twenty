@@ -64,9 +64,13 @@ const ALL_CATEGORIES = 'all';
 
 type AppsMarketplaceClientProps = {
   apps: readonly MarketplaceApp[];
+  isUnavailable: boolean;
 };
 
-export function AppsMarketplaceClient({ apps }: AppsMarketplaceClientProps) {
+export function AppsMarketplaceClient({
+  apps,
+  isUnavailable,
+}: AppsMarketplaceClientProps) {
   const { i18n } = useLingui();
   const [activeCategory, setActiveCategory] = useState<string>(ALL_CATEGORIES);
 
@@ -93,7 +97,11 @@ export function AppsMarketplaceClient({ apps }: AppsMarketplaceClientProps) {
       {apps.length === 0 ? (
         <EmptyState>
           <Body muted size="md">
-            {i18n._(msg`No apps are available right now. Check back soon.`)}
+            {isUnavailable
+              ? i18n._(
+                  msg`Apps can't be loaded right now. Try again in a few minutes.`,
+                )
+              : i18n._(msg`No apps are available right now. Check back soon.`)}
           </Body>
         </EmptyState>
       ) : (

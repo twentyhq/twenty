@@ -41,22 +41,18 @@ const normalizeApp = (apiApp: ApiMarketplaceApp): MarketplaceApp => ({
   sourcePackage: apiApp.sourcePackage ?? undefined,
 });
 
+// Throws when the marketplace API is unreachable or shapeless: an outage must
+// not read as an empty catalog, or every app page turns into a 404.
 export async function fetchMarketplaceApps(): Promise<
   readonly MarketplaceApp[]
 > {
-  try {
-    const data = await marketplaceGraphqlRequest<FindManyMarketplaceAppsData>(
-      FIND_MANY_MARKETPLACE_APPS_QUERY,
-    );
+  const data = await marketplaceGraphqlRequest<FindManyMarketplaceAppsData>(
+    FIND_MANY_MARKETPLACE_APPS_QUERY,
+  );
 
-    if (!Array.isArray(data.publicMarketplaceApps)) {
-      throw new Error('marketplace API response missing apps array');
-    }
-
-    return data.publicMarketplaceApps.map(normalizeApp);
-  } catch (error) {
-    console.error('[apps-marketplace] live fetch failed:', error);
-
-    return [];
+  if (!Array.isArray(data.publicMarketplaceApps)) {
+    throw new Error('marketplace API response missing apps array');
   }
+
+  return data.publicMarketplaceApps.map(normalizeApp);
 }

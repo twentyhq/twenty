@@ -3,7 +3,10 @@ import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
+import { SITE_URLS } from '@/platform/site-urls';
 import {
+  color,
   FONT_WEIGHT,
   fontFamily,
   fontSize,
@@ -12,12 +15,23 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
-import { Body, Button, ExternalLink, Heading, SectionShell } from '@/ui';
+import {
+  Body,
+  Button,
+  EngagementBand,
+  ExternalLink,
+  Heading,
+  SectionShell,
+} from '@/ui';
 
 import { AppLogo } from './AppLogo';
 import { AppReadme } from './AppReadme';
+import { AppsGrid } from './AppsGrid';
 import { buildAppInstallUrl } from './build-app-install-url';
-import { type MarketplaceAppDetail } from './marketplace-app';
+import {
+  type MarketplaceApp,
+  type MarketplaceAppDetail,
+} from './marketplace-app';
 
 const HeroRow = styled.div`
   align-items: flex-start;
@@ -39,31 +53,40 @@ const HeroText = styled.div`
   min-width: 0;
 `;
 
-const CategoryEyebrow = styled.span`
+const BackLink = styled(LocalizedLink)`
   color: ${semanticColor.inkMuted};
   font-family: ${fontFamily('mono')};
   font-size: ${fontSize(3)};
-  font-weight: ${FONT_WEIGHT.medium};
-  letter-spacing: 0.08em;
-  line-height: ${fontSize(4)};
-  text-transform: uppercase;
+  text-decoration: none;
+  transition: color 150ms ease;
+
+  &:hover {
+    color: ${semanticColor.ink};
+  }
 `;
 
-const HeroActions = styled.div`
-  align-items: center;
+const DetailInner = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  gap: ${spacing(4)};
-  margin-top: ${spacing(2)};
+  flex-direction: column;
+  gap: ${spacing(10)};
+  margin-inline: auto;
+  max-width: 1240px;
+  width: 100%;
 `;
 
 const ContentGrid = styled.div`
-  display: grid;
-  gap: ${spacing(8)};
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing(10)};
+
+  ${mediaUp('md')} {
+    column-gap: ${spacing(9)};
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(18.5rem, 21rem);
+  }
 
   ${mediaUp('lg')} {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    column-gap: ${spacing(10)};
   }
 `;
 
@@ -72,6 +95,11 @@ const MainColumn = styled.div`
   flex-direction: column;
   gap: ${spacing(6)};
   min-width: 0;
+
+  ${mediaUp('md')} {
+    grid-column: 1;
+    grid-row: 1;
+  }
 `;
 
 const ScreenshotList = styled.div`
@@ -93,12 +121,21 @@ const Screenshot = styled.img`
 
 const Sidebar = styled.aside`
   align-self: flex-start;
-  border: 1px solid ${semanticColor.line};
+  background-color: ${color('black-5')};
   border-radius: ${radius(2)};
   display: flex;
   flex-direction: column;
   gap: ${spacing(4)};
   padding: ${spacing(6)};
+  width: 100%;
+
+  ${mediaUp('md')} {
+    grid-column: 2;
+    grid-row: 1;
+    padding: ${spacing(7.5)};
+    position: sticky;
+    top: ${spacing(20)};
+  }
 `;
 
 const DetailRow = styled.div`
@@ -110,7 +147,7 @@ const DetailRow = styled.div`
 const DetailLabel = styled.span`
   color: ${semanticColor.inkMuted};
   font-family: ${fontFamily('mono')};
-  font-size: ${fontSize(2)};
+  font-size: ${fontSize(2.75)};
   font-weight: ${FONT_WEIGHT.medium};
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -140,95 +177,112 @@ const Divider = styled.hr`
 
 type AppDetailProps = {
   app: MarketplaceAppDetail;
+  relatedApps: readonly MarketplaceApp[];
 };
 
-export function AppDetail({ app }: AppDetailProps) {
+export function AppDetail({ app, relatedApps }: AppDetailProps) {
   const i18n = getServerI18n();
   const installUrl = buildAppInstallUrl(app.universalIdentifier);
 
   return (
     <>
       <SectionShell rhythm="hero" scheme="light">
-        <HeroRow>
-          <AppLogo
-            name={app.name}
-            logoUrl={app.logoUrl}
-            size={96}
-            loading="eager"
-          />
-          <HeroText>
-            {app.category.length > 0 && (
-              <CategoryEyebrow>{app.category}</CategoryEyebrow>
-            )}
-            <Heading as="h1" size="lg" weight="light">
-              {app.name}
-            </Heading>
-            <Body muted size="md">
-              {app.tagline}
-            </Body>
-            <HeroActions>
+        <DetailInner>
+          <BackLink href="/apps">{i18n._(msg`← Twenty apps`)}</BackLink>
+          <HeroRow>
+            <AppLogo
+              name={app.name}
+              logoUrl={app.logoUrl}
+              size={96}
+              loading="eager"
+            />
+            <HeroText>
+              <Heading as="h1" size="lg" weight="light">
+                {app.name}
+              </Heading>
+              <Body muted size="md">
+                {app.tagline}
+              </Body>
+            </HeroText>
+          </HeroRow>
+
+          <ContentGrid>
+            <Sidebar>
               <Button
                 href={installUrl}
                 label={i18n._(msg`Install`)}
                 variant="filled"
               />
-            </HeroActions>
-          </HeroText>
-        </HeroRow>
+              <Divider aria-hidden="true" />
+              <DetailRow>
+                <DetailLabel>{i18n._(msg`Developer`)}</DetailLabel>
+                <DetailValue>{app.author}</DetailValue>
+              </DetailRow>
+              {app.category.length > 0 && (
+                <DetailRow>
+                  <DetailLabel>{i18n._(msg`Category`)}</DetailLabel>
+                  <DetailValue>{app.category}</DetailValue>
+                </DetailRow>
+              )}
+              {isDefined(app.latestAvailableVersion) && (
+                <DetailRow>
+                  <DetailLabel>{i18n._(msg`Version`)}</DetailLabel>
+                  <DetailValue>{app.latestAvailableVersion}</DetailValue>
+                </DetailRow>
+              )}
+              {app.websiteUrl !== undefined && (
+                <DetailRow>
+                  <DetailLabel>{i18n._(msg`Source`)}</DetailLabel>
+                  <DetailLink href={app.websiteUrl}>GitHub</DetailLink>
+                </DetailRow>
+              )}
+            </Sidebar>
+
+            <MainColumn>
+              {app.screenshots.length > 0 && (
+                <ScreenshotList>
+                  {app.screenshots.map((screenshot) => (
+                    <Screenshot
+                      key={screenshot}
+                      src={screenshot}
+                      alt={i18n._(msg`${app.name} screenshot`)}
+                      loading="lazy"
+                    />
+                  ))}
+                </ScreenshotList>
+              )}
+              {isDefined(app.aboutDescription) && (
+                <AppReadme markdown={app.aboutDescription} />
+              )}
+            </MainColumn>
+          </ContentGrid>
+        </DetailInner>
       </SectionShell>
 
-      <SectionShell rhythm="section" scheme="light">
-        <ContentGrid>
-          <MainColumn>
-            {app.screenshots.length > 0 && (
-              <ScreenshotList>
-                {app.screenshots.map((screenshot) => (
-                  <Screenshot
-                    key={screenshot}
-                    src={screenshot}
-                    alt={i18n._(msg`${app.name} screenshot`)}
-                    loading="lazy"
-                  />
-                ))}
-              </ScreenshotList>
-            )}
-            {isDefined(app.aboutDescription) && (
-              <AppReadme markdown={app.aboutDescription} />
-            )}
-          </MainColumn>
+      {relatedApps.length > 0 && (
+        <SectionShell rhythm="section" scheme="muted">
+          <DetailInner>
+            <Heading as="h2" size="xs" weight="regular">
+              {i18n._(msg`More in ${app.category}`)}
+            </Heading>
+            <AppsGrid apps={relatedApps} />
+          </DetailInner>
+        </SectionShell>
+      )}
 
-          <Sidebar>
-            <Button
-              href={installUrl}
-              label={i18n._(msg`Install on Twenty`)}
-              variant="filled"
-            />
-            <Divider aria-hidden="true" />
-            <DetailRow>
-              <DetailLabel>{i18n._(msg`Developer`)}</DetailLabel>
-              <DetailValue>{app.author}</DetailValue>
-            </DetailRow>
-            {app.category.length > 0 && (
-              <DetailRow>
-                <DetailLabel>{i18n._(msg`Category`)}</DetailLabel>
-                <DetailValue>{app.category}</DetailValue>
-              </DetailRow>
-            )}
-            {app.sourcePackage !== undefined && (
-              <DetailRow>
-                <DetailLabel>{i18n._(msg`Package`)}</DetailLabel>
-                <DetailValue>{app.sourcePackage}</DetailValue>
-              </DetailRow>
-            )}
-            {app.websiteUrl !== undefined && (
-              <DetailRow>
-                <DetailLabel>{i18n._(msg`Website`)}</DetailLabel>
-                <DetailLink href={app.websiteUrl}>{app.websiteUrl}</DetailLink>
-              </DetailRow>
-            )}
-          </Sidebar>
-        </ContentGrid>
-      </SectionShell>
+      <EngagementBand
+        heading={i18n._(msg`Build your own app`)}
+        body={i18n._(
+          msg`Add objects, logic and interface to Twenty, then publish it for every workspace.`,
+        )}
+        actions={
+          <Button
+            href={SITE_URLS.docsDevelopers}
+            label={i18n._(msg`Read the docs`)}
+            variant="filled"
+          />
+        }
+      />
     </>
   );
 }
