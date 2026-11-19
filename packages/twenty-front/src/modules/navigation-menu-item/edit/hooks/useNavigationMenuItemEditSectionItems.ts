@@ -10,7 +10,9 @@ export const useNavigationMenuItemEditSectionItems = (
   section: NavigationMenuItemSection,
   containerId: string | null = null,
 ): NavigationMenuItem[] => {
-  const workspaceSectionItems = useNavigationMenuItemSectionItems(containerId);
+  const workspaceSectionItems = useNavigationMenuItemSectionItems({
+    containerId,
+  });
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { userNavigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
 
