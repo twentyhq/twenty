@@ -2,6 +2,7 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WORKSPACE_OWNED_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/workspace-owned-properties-by-metadata-name.constant';
+import { pickWorkspaceOwnedProperties } from 'src/engine/metadata-modules/flat-entity/utils/pick-workspace-owned-properties.util';
 
 type FlatEntityMapsByUniversalIdentifier = {
   byUniversalIdentifier: Partial<Record<string, Record<string, unknown>>>;
@@ -20,10 +21,7 @@ export const keepWorkspaceOwnedProperties = <
   fromFlatEntityMaps: TFlatEntityMaps;
   toFlatEntityMaps: TFlatEntityMaps;
 }): TFlatEntityMaps => {
-  const workspaceOwnedProperties =
-    WORKSPACE_OWNED_PROPERTIES_BY_METADATA_NAME[metadataName];
-
-  if (!isDefined(workspaceOwnedProperties)) {
+  if (!isDefined(WORKSPACE_OWNED_PROPERTIES_BY_METADATA_NAME[metadataName])) {
     return toFlatEntityMaps;
   }
 
@@ -41,15 +39,12 @@ export const keepWorkspaceOwnedProperties = <
 
     // A property missing from the workspace entity means its cache predates the
     // property, and the application default is the only value to go on.
-    const keptProperties = Object.fromEntries(
-      workspaceOwnedProperties
-        .map((property) => [property, fromFlatEntity[property]])
-        .filter(([, value]) => isDefined(value)),
-    );
-
     byUniversalIdentifier[universalIdentifier] = {
       ...toFlatEntity,
-      ...keptProperties,
+      ...pickWorkspaceOwnedProperties({
+        metadataName,
+        flatEntity: fromFlatEntity,
+      }),
     };
   }
 
