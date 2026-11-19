@@ -8,7 +8,6 @@ import { FieldRelatedRecordPathsOnDeleteSideEffectHandlerService } from 'src/eng
 import { FieldSearchFieldMetadataOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-search-field-metadata-on-create-side-effect-handler.service';
 import { FieldSearchFieldMetadataOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-search-field-metadata-on-delete-side-effect-handler.service';
 import { FieldIndexViewFieldOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-index-view-field-on-create-side-effect-handler.service';
-import { FieldInitialObjectViewFieldOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-initial-object-view-field-on-create-side-effect-handler.service';
 import { FieldRecordFormWidgetOnCreateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-record-form-widget-on-create-side-effect-handler.service';
 import { FieldRecordFormWidgetOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-record-form-widget-on-delete-side-effect-handler.service';
 import { FieldRecordFormWidgetOnUpdateSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/services/field-record-form-widget-on-update-side-effect-handler.service';
@@ -53,7 +52,6 @@ import { ObjectValidationRulesOnDeleteSideEffectHandlerService } from 'src/engin
     FieldSearchFieldMetadataOnDeleteSideEffectHandlerService,
     FieldSearchFieldMetadataOnUpdateSideEffectHandlerService,
     FieldIndexViewFieldOnCreateSideEffectHandlerService,
-    FieldInitialObjectViewFieldOnCreateSideEffectHandlerService,
     FieldRecordPageViewFieldOnCreateSideEffectHandlerService,
     FieldRecordFormWidgetOnCreateSideEffectHandlerService,
     FieldRecordFormWidgetOnDeleteSideEffectHandlerService,
