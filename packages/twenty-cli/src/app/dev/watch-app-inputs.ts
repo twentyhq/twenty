@@ -73,6 +73,31 @@ export const watchAppInputs = async ({
   let successfulInputs: WatchInputs = [];
   let previousScopeKey: string | undefined;
 
+  const reportScopeChange = async (inputs: WatchInputs) => {
+    if (!isDefined(onScopeChange)) {
+      return;
+    }
+
+    const scope: WatchScope = {
+      filePaths: inputs
+        .filter((input) => input.kind === 'file')
+        .map((input) => input.path)
+        .sort(),
+      directoryPaths: inputs
+        .filter((input) => input.kind === 'directory')
+        .map((input) => input.path)
+        .sort(),
+      excludedDirectoryPaths: [...excludedDirectories].sort(),
+    };
+    const scopeKey = JSON.stringify(scope);
+    if (scopeKey === previousScopeKey) {
+      return;
+    }
+
+    await onScopeChange(scope);
+    previousScopeKey = scopeKey;
+  };
+
   const close = async () => {
     for (const stop of stopExternalWatchers) stop();
     stopExternalWatchers = [];
@@ -134,28 +159,7 @@ export const watchAppInputs = async ({
       }
       for (const stop of previousWatchers) stop();
 
-      if (isDefined(onScopeChange)) {
-        const scope: WatchScope = {
-          filePaths: [...uniqueInputs.values()]
-            .filter((input) => input.kind === 'file')
-            .map((input) => input.path)
-            .sort(),
-          directoryPaths: [...uniqueInputs.values()]
-            .filter(
-              (input) =>
-                input.kind === 'directory' &&
-                !excludedDirectories.has(input.path),
-            )
-            .map((input) => input.path)
-            .sort(),
-          excludedDirectoryPaths: [...excludedDirectories].sort(),
-        };
-        const scopeKey = JSON.stringify(scope);
-        if (scopeKey !== previousScopeKey) {
-          await onScopeChange(scope);
-          previousScopeKey = scopeKey;
-        }
-      }
+      await reportScopeChange(watchedInputs);
 
       if (inputs.some((input) => readWatchInputStamp(input) !== input.stamp)) {
         onChange();
