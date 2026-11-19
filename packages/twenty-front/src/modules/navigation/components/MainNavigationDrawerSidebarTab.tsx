@@ -15,8 +15,8 @@ import { useSwitchNavigationDrawerTab } from '@/navigation/hooks/useSwitchNaviga
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-drawer/components/StyledNavigationDrawerUnreadDot';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledUnreadDot = styled(StyledNavigationDrawerUnreadDot)`
@@ -33,7 +33,7 @@ type MainNavigationDrawerSidebarTabProps = {
   isActive: boolean;
   isExpanded: boolean;
   shouldShowTooltip: boolean;
-  unreadCount: number;
+  isUnread: boolean;
 };
 
 export const MainNavigationDrawerSidebarTab = ({
@@ -41,7 +41,7 @@ export const MainNavigationDrawerSidebarTab = ({
   isActive,
   isExpanded,
   shouldShowTooltip,
-  unreadCount,
+  isUnread,
 }: MainNavigationDrawerSidebarTabProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
@@ -71,10 +71,8 @@ export const MainNavigationDrawerSidebarTab = ({
       tooltip={tab.name}
       shouldShowTooltip={shouldShowTooltip}
       onClick={handleClick}
-      ariaLabel={
-        unreadCount > 0 ? t`${tab.name}, ${unreadCount} unread` : tab.name
-      }
-      iconAccessory={unreadCount > 0 && <StyledUnreadDot aria-hidden="true" />}
+      ariaLabel={isUnread ? t`${tab.name}, unread` : tab.name}
+      iconAccessory={isUnread && <StyledUnreadDot aria-hidden="true" />}
     />
   );
 
