@@ -26,7 +26,7 @@ export const ConditionalAvailabilityOperatorSelect = ({
 
   const handleOperatorChange = (operator: ConditionalAvailabilityOperator) => {
     if (operator !== row.operator) {
-      changeRowOperator(row.id, operator);
+      changeRowOperator({ rowId: row.id, operator });
     }
   };
 

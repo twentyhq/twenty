@@ -1,5 +1,5 @@
 import { getConditionalAvailabilityRecordFilterFieldByUniversalIdentifier } from '@/conditional-availability/utils/getConditionalAvailabilityRecordFilterFieldByUniversalIdentifier';
-import { isRecordMatchingConditionalAvailabilityRecordFilter } from '@/conditional-availability/utils/isRecordMatchingConditionalAvailabilityRecordFilter';
+import { isRecordMatchingConditionalAvailabilityRecordFilterOrThrow } from '@/conditional-availability/utils/isRecordMatchingConditionalAvailabilityRecordFilterOrThrow';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useMemo } from 'react';
@@ -17,7 +17,7 @@ export const useConditionalAvailabilityRecordFilterMatcher =
         });
 
       return ({ record, recordFilter }) =>
-        isRecordMatchingConditionalAvailabilityRecordFilter({
+        isRecordMatchingConditionalAvailabilityRecordFilterOrThrow({
           record,
           recordFilter,
           recordFilterFieldByUniversalIdentifier,

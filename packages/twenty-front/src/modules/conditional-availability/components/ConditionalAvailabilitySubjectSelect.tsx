@@ -132,7 +132,10 @@ export const ConditionalAvailabilitySubjectSelect = ({
       return;
     }
 
-    changeRowSubject(row.id, { subject: selectedSubject });
+    changeRowSubject({
+      rowId: row.id,
+      rowSubject: { subject: selectedSubject },
+    });
   };
 
   const handleRecordFieldSubjectSelect = (
@@ -142,7 +145,10 @@ export const ConditionalAvailabilitySubjectSelect = ({
       return;
     }
 
-    changeRowSubject(row.id, { subject: 'recordField', ...recordFieldSubject });
+    changeRowSubject({
+      rowId: row.id,
+      rowSubject: { subject: 'recordField', ...recordFieldSubject },
+    });
   };
 
   const renderSubjectOption = (

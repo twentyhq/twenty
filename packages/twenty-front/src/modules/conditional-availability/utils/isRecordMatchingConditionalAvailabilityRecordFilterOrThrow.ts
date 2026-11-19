@@ -13,7 +13,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-export const isRecordMatchingConditionalAvailabilityRecordFilter = ({
+export const isRecordMatchingConditionalAvailabilityRecordFilterOrThrow = ({
   record,
   recordFilter,
   recordFilterFieldByUniversalIdentifier,

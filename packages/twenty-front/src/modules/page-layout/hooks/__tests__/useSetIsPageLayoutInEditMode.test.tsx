@@ -1,3 +1,4 @@
+import { conditionalAvailabilityEditorEntriesState } from '@/conditional-availability/states/conditionalAvailabilityEditorEntriesState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import {
@@ -85,6 +86,13 @@ describe('useSetIsPageLayoutInEditMode', () => {
       }),
       MOCK_DASHBOARD_LAYOUT,
     );
+    store.set(conditionalAvailabilityEditorEntriesState.atom, {
+      'widget-left-from-an-earlier-session': {
+        metadataName: 'pageLayoutWidget',
+        storedNode: null,
+        editorState: { mode: 'everyone' },
+      },
+    });
 
     const { result } = renderHook(
       () => useSetIsPageLayoutInEditMode(PAGE_LAYOUT_TEST_INSTANCE_ID),
@@ -104,5 +112,8 @@ describe('useSetIsPageLayoutInEditMode', () => {
         }),
       ),
     ).toBe(true);
+    expect(store.get(conditionalAvailabilityEditorEntriesState.atom)).toEqual(
+      {},
+    );
   });
 });

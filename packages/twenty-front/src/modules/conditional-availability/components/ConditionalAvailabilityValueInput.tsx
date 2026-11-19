@@ -22,7 +22,7 @@ export const ConditionalAvailabilityValueInput = ({
   const isMultiple = valueArity === 'list';
 
   const handleChange = (values: string[]) => {
-    changeRowValues(row.id, values);
+    changeRowValues({ rowId: row.id, values });
   };
 
   if (valueArity === 'none') {

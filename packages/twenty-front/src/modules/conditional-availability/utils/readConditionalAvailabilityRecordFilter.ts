@@ -16,7 +16,7 @@ export const readConditionalAvailabilityRecordFilter = ({
   fields,
 }: {
   node: ConditionalAvailabilityNode;
-  offeredSubjects: ConditionalAvailabilityOfferedSubjects;
+  offeredSubjects: Pick<ConditionalAvailabilityOfferedSubjects, 'recordField'>;
   fields: FieldMetadataItem[];
 }): ConditionalAvailabilityRow | null => {
   if (

@@ -127,10 +127,13 @@ export const useConditionalAvailabilityDraft = ({
     });
   };
 
-  const updateRow = (
-    rowId: string,
-    update: (row: ConditionalAvailabilityRow) => ConditionalAvailabilityRow,
-  ) => {
+  const updateRow = ({
+    rowId,
+    update,
+  }: {
+    rowId: string;
+    update: (row: ConditionalAvailabilityRow) => ConditionalAvailabilityRow;
+  }) => {
     updateTree((tree) =>
       updateConditionalAvailabilityRow({ tree, rowId, update }),
     );
@@ -176,10 +179,13 @@ export const useConditionalAvailabilityDraft = ({
     );
   };
 
-  const setLogicalOperator = (
-    groupId: string | null,
-    logicalOperator: ConditionalAvailabilityLogicalOperator,
-  ) => {
+  const setLogicalOperator = ({
+    groupId,
+    logicalOperator,
+  }: {
+    groupId: string | null;
+    logicalOperator: ConditionalAvailabilityLogicalOperator;
+  }) => {
     updateTree((tree) =>
       setConditionalAvailabilityRowTreeLogicalOperator({
         tree,
@@ -189,28 +195,42 @@ export const useConditionalAvailabilityDraft = ({
     );
   };
 
-  const changeRowSubject = (
-    rowId: string,
-    rowSubject: ConditionalAvailabilityRowSubject,
-  ) => {
-    updateRow(
+  const changeRowSubject = ({
+    rowId,
+    rowSubject,
+  }: {
+    rowId: string;
+    rowSubject: ConditionalAvailabilityRowSubject;
+  }) => {
+    updateRow({
       rowId,
-      (row) =>
+      update: (row) =>
         createConditionalAvailabilityRow({ id: rowId, rowSubject }) ?? row,
-    );
+    });
   };
 
-  const changeRowOperator = (
-    rowId: string,
-    operator: ConditionalAvailabilityOperator,
-  ) => {
-    updateRow(rowId, (row) =>
-      changeConditionalAvailabilityRowOperator({ row, operator }),
-    );
+  const changeRowOperator = ({
+    rowId,
+    operator,
+  }: {
+    rowId: string;
+    operator: ConditionalAvailabilityOperator;
+  }) => {
+    updateRow({
+      rowId,
+      update: (row) =>
+        changeConditionalAvailabilityRowOperator({ row, operator }),
+    });
   };
 
-  const changeRowValues = (rowId: string, values: string[]) => {
-    updateRow(rowId, (row) => ({ ...row, values }));
+  const changeRowValues = ({
+    rowId,
+    values,
+  }: {
+    rowId: string;
+    values: string[];
+  }) => {
+    updateRow({ rowId, update: (row) => ({ ...row, values }) });
   };
 
   const replaceWithRules = () => {

@@ -1,3 +1,4 @@
+import { conditionalAvailabilityEditorEntriesState } from '@/conditional-availability/states/conditionalAvailabilityEditorEntriesState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
@@ -79,6 +80,7 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
         store.set(fieldsWidgetUngroupedFieldsDraftState, {});
         store.set(fieldsWidgetEditorModeDraftState, {});
         store.set(hasInitializedFieldsWidgetGroupsDraftState, {});
+        store.set(conditionalAvailabilityEditorEntriesState.atom, {});
       } else {
         store.set(pageLayoutEditingWidgetIdState, null);
       }

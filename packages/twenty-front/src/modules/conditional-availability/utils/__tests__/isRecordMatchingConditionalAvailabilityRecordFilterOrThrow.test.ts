@@ -1,5 +1,5 @@
 import { getConditionalAvailabilityRecordFilterFieldByUniversalIdentifier } from '@/conditional-availability/utils/getConditionalAvailabilityRecordFilterFieldByUniversalIdentifier';
-import { isRecordMatchingConditionalAvailabilityRecordFilter } from '@/conditional-availability/utils/isRecordMatchingConditionalAvailabilityRecordFilter';
+import { isRecordMatchingConditionalAvailabilityRecordFilterOrThrow } from '@/conditional-availability/utils/isRecordMatchingConditionalAvailabilityRecordFilterOrThrow';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import {
   type ConditionalAvailabilityRecordFilter,
@@ -57,7 +57,7 @@ const isMatching = ({
   record: unknown;
   recordFilter: ConditionalAvailabilityRecordFilter;
 }) =>
-  isRecordMatchingConditionalAvailabilityRecordFilter({
+  isRecordMatchingConditionalAvailabilityRecordFilterOrThrow({
     record,
     recordFilter,
     recordFilterFieldByUniversalIdentifier,
@@ -68,7 +68,7 @@ const isMatching = ({
     },
   });
 
-describe('isRecordMatchingConditionalAvailabilityRecordFilter', () => {
+describe('isRecordMatchingConditionalAvailabilityRecordFilterOrThrow', () => {
   it.each([
     {
       title: 'a text that is the value',

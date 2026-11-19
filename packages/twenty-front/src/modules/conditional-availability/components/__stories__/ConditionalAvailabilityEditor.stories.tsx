@@ -9,7 +9,6 @@ import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import {
   type CompositeFieldSubFieldName,
-  type ConditionalAvailabilityLogicalOperator,
   type ConditionalAvailabilityNode,
   RecordFilterOperand,
 } from 'twenty-shared/types';
@@ -56,16 +55,29 @@ const ROLES = [
   },
 ];
 
-const group = (
-  logicalOperator: ConditionalAvailabilityLogicalOperator,
+const and = (
   children: ConditionalAvailabilityNode[],
 ): ConditionalAvailabilityNode => ({
   type: 'GROUP',
-  logicalOperator,
+  logicalOperator: 'AND',
   children,
 });
 
-const equals = (path: string, value: string): ConditionalAvailabilityNode => ({
+const or = (
+  children: ConditionalAvailabilityNode[],
+): ConditionalAvailabilityNode => ({
+  type: 'GROUP',
+  logicalOperator: 'OR',
+  children,
+});
+
+const equals = ({
+  path,
+  value,
+}: {
+  path: string;
+  value: string;
+}): ConditionalAvailabilityNode => ({
   type: 'COMPARISON',
   operator: 'EQUAL',
   left: { type: 'PATH', path },
@@ -98,19 +110,19 @@ const recordFilter = ({
   },
 });
 
-const ADMIN_ROLE_NODE = equals(
-  'currentRole.universalIdentifier',
-  ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
-);
-const SALES_ROLE_NODE = equals(
-  'currentRole.universalIdentifier',
-  SALES_ROLE_UNIVERSAL_IDENTIFIER,
-);
-const MOBILE_NODE = equals('device', 'MOBILE');
-const WORKSPACE_MEMBER_NODE = equals(
-  'currentWorkspaceMember.id',
-  WORKSPACE_MEMBER_ID,
-);
+const ADMIN_ROLE_NODE = equals({
+  path: 'currentRole.universalIdentifier',
+  value: ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
+});
+const SALES_ROLE_NODE = equals({
+  path: 'currentRole.universalIdentifier',
+  value: SALES_ROLE_UNIVERSAL_IDENTIFIER,
+});
+const MOBILE_NODE = equals({ path: 'device', value: 'MOBILE' });
+const WORKSPACE_MEMBER_NODE = equals({
+  path: 'currentWorkspaceMember.id',
+  value: WORKSPACE_MEMBER_ID,
+});
 const DEVICE_EXCLUDED_NODE: ConditionalAvailabilityNode = {
   type: 'COMPARISON',
   operator: 'NOT_EQUAL',
@@ -128,7 +140,7 @@ const ACCOUNT_OWNER_IS_ME_NODE = recordFilter({
   }),
 });
 
-const COMPANY_RECORD_FIELDS_NODE = group('AND', [
+const COMPANY_RECORD_FIELDS_NODE = and([
   recordFilter({
     objectNameSingular: 'company',
     fieldName: 'name',
@@ -173,7 +185,7 @@ const COMPANY_RECORD_FIELDS_NODE = group('AND', [
   ACCOUNT_OWNER_IS_ME_NODE,
 ]);
 
-const OPPORTUNITY_RECORD_FIELDS_NODE = group('AND', [
+const OPPORTUNITY_RECORD_FIELDS_NODE = and([
   recordFilter({
     objectNameSingular: 'opportunity',
     fieldName: 'stage',
@@ -204,7 +216,7 @@ const OPPORTUNITY_RECORD_FIELDS_NODE = group('AND', [
   }),
 ]);
 
-const REMOVED_FIELD_NODE = group('AND', [
+const REMOVED_FIELD_NODE = and([
   ADMIN_ROLE_NODE,
   {
     type: 'SELECTED_RECORDS',
@@ -332,7 +344,7 @@ export const OneRoleRow: Story = {
 
     await waitFor(() =>
       expect(args.onNodeChange).toHaveBeenLastCalledWith(
-        group('OR', [ADMIN_ROLE_NODE, SALES_ROLE_NODE]),
+        or([ADMIN_ROLE_NODE, SALES_ROLE_NODE]),
       ),
     );
   },
@@ -351,7 +363,7 @@ export const WorkspaceMemberRow: Story = {
 
 export const RoleAndDeviceJoinedByAnd: Story = {
   args: {
-    initialNode: group('AND', [ADMIN_ROLE_NODE, MOBILE_NODE]),
+    initialNode: and([ADMIN_ROLE_NODE, MOBILE_NODE]),
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -366,7 +378,7 @@ export const RoleAndDeviceJoinedByAnd: Story = {
 
     await waitFor(() =>
       expect(args.onNodeChange).toHaveBeenLastCalledWith(
-        group('OR', [ADMIN_ROLE_NODE, MOBILE_NODE]),
+        or([ADMIN_ROLE_NODE, MOBILE_NODE]),
       ),
     );
   },
@@ -374,10 +386,7 @@ export const RoleAndDeviceJoinedByAnd: Story = {
 
 export const Group: Story = {
   args: {
-    initialNode: group('AND', [
-      SALES_ROLE_NODE,
-      group('OR', [ADMIN_ROLE_NODE, MOBILE_NODE]),
-    ]),
+    initialNode: and([SALES_ROLE_NODE, or([ADMIN_ROLE_NODE, MOBILE_NODE])]),
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
