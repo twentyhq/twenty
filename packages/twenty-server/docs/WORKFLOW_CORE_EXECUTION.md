@@ -27,7 +27,7 @@ Legacy and core run mutations delegate to the same core runner. Core-owned mappi
 | `ResumeDelayedWorkflowJob` and form submission | Existing run ID and step ID; the continuation reads the run snapshot. |
 | Database event listener | Core-derived automated trigger cache, with workspace business records and metadata used for filtering. |
 | `WorkflowCronTriggerCronJob` | Current active core cron definition, including when decoding old Redis entries. |
-| Enqueue sweeps, throttling, stalled-run repair | Workspace run rows and run counters; no workflow definition lookup. |
+| Stalled-run repair | Workspace run rows and in-flight queue jobs; no workflow definition lookup. |
 | Workflow run retention | Core workflow identity, with a legacy fallback for historical runs. |
 
 Cron workers share the historical workflow lock key for mapped workflows and the core ID for mirrorless workflows. Cached cron entries are normalized before taking the lock, so an obsolete entry cannot consume the current definition's occurrence. Queue producers retain legacy aliases when available, and consumers continue accepting old envelopes.

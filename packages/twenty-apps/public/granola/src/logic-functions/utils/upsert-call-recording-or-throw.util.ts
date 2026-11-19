@@ -8,26 +8,42 @@ import { isCallRecordingSoftDeletedOrThrow } from 'src/logic-functions/utils/is-
 import { toCallRecordingMutationFields } from 'src/logic-functions/utils/to-call-recording-mutation-fields.util';
 import { updateCallRecordingOrThrow } from 'src/logic-functions/utils/update-call-recording-or-throw.util';
 
+type CallRecordingUpsertResult = {
+  callRecordingId: string;
+  created: boolean;
+  skipped?: boolean;
+};
+
 export const upsertCallRecordingOrThrow = async ({
   coreApiClient,
   callRecordingId,
   fields,
+  canWriteCallRecording,
 }: {
   coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   callRecordingId: string;
   fields: CallRecordingSyncFields;
-}): Promise<{
-  callRecordingId: string;
-  created: boolean;
-  skipped?: boolean;
-}> => {
+  canWriteCallRecording?: () => Promise<boolean>;
+}): Promise<CallRecordingUpsertResult> => {
+  const skipped = { callRecordingId, created: false, skipped: true };
+
   if (
     await isCallRecordingSoftDeletedOrThrow({ coreApiClient, callRecordingId })
   ) {
-    return { callRecordingId, created: false, skipped: true };
+    return skipped;
   }
 
   const personalNoteUpdatedAt = fields.granolaPersonalNoteUpdatedAt;
+
+  const writeRecordingOrSkip = async (
+    writeRecordingOrThrow: () => Promise<CallRecordingUpsertResult>,
+  ) => {
+    if (isDefined(canWriteCallRecording) && !(await canWriteCallRecording())) {
+      return skipped;
+    }
+
+    return writeRecordingOrThrow();
+  };
 
   const updateExistingRecordingOrThrow = async () => {
     if (isDefined(personalNoteUpdatedAt)) {
@@ -47,7 +63,7 @@ export const upsertCallRecordingOrThrow = async ({
 
       return isNonEmptyArray(result.updateCallRecordings)
         ? { callRecordingId, created: false }
-        : { callRecordingId, created: false, skipped: true };
+        : skipped;
     }
 
     await updateCallRecordingOrThrow({
@@ -60,30 +76,34 @@ export const upsertCallRecordingOrThrow = async ({
   };
 
   if (await doesCallRecordingExistOrThrow({ coreApiClient, callRecordingId })) {
-    return updateExistingRecordingOrThrow();
+    return writeRecordingOrSkip(updateExistingRecordingOrThrow);
   }
 
-  try {
-    await coreApiClient.mutation({
-      createCallRecording: {
-        __args: {
-          data: {
-            id: callRecordingId,
-            ...toCallRecordingMutationFields(fields),
+  const createRecordingOrThrow = async () => {
+    try {
+      await coreApiClient.mutation({
+        createCallRecording: {
+          __args: {
+            data: {
+              id: callRecordingId,
+              ...toCallRecordingMutationFields(fields),
+            },
           },
+          id: true,
         },
-        id: true,
-      },
-    });
+      });
 
-    return { callRecordingId, created: true };
-  } catch (error) {
-    if (
-      !(await doesCallRecordingExistOrThrow({ coreApiClient, callRecordingId }))
-    ) {
-      throw error;
+      return { callRecordingId, created: true };
+    } catch (error) {
+      if (
+        !(await doesCallRecordingExistOrThrow({ coreApiClient, callRecordingId }))
+      ) {
+        throw error;
+      }
+
+      return writeRecordingOrSkip(updateExistingRecordingOrThrow);
     }
+  };
 
-    return updateExistingRecordingOrThrow();
-  }
+  return writeRecordingOrSkip(createRecordingOrThrow);
 };
