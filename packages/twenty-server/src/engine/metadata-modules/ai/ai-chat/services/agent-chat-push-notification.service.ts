@@ -17,6 +17,8 @@ import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/
 import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
 import { buildAgentChatPushNotification } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util';
 import { getAgentChatPushNotificationReason } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-push-notification-reason.util';
+import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -32,6 +34,8 @@ export class AgentChatPushNotificationService {
   private readonly logger = new Logger(AgentChatPushNotificationService.name);
 
   constructor(
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     @InjectCacheStorage(CacheStorageNamespace.EngineWebPush)
     private readonly cacheStorageService: CacheStorageService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
@@ -43,7 +47,8 @@ export class AgentChatPushNotificationService {
 
   async sendPushNotifications({
     workspaceId,
-    thread,
+    threadId,
+    lastActivityAt,
   }: SendAgentChatPushNotificationsJobData): Promise<void> {
     const workspace = await this.coreEntityCacheService.get(
       'workspaceEntity',
@@ -51,6 +56,19 @@ export class AgentChatPushNotificationService {
     );
 
     if (workspace?.activationStatus !== WorkspaceActivationStatus.ACTIVE) {
+      return;
+    }
+
+    const thread = await this.threadRepository.findOne(workspaceId, {
+      where: { id: threadId },
+    });
+
+    if (
+      !isDefined(thread) ||
+      !isDefined(thread.lastActivityAt) ||
+      new Date(thread.lastActivityAt).getTime() >
+        new Date(lastActivityAt).getTime()
+    ) {
       return;
     }
 

@@ -47,6 +47,7 @@ import {
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { assertWorkspaceMemberSelfOnlySettingsUpdatedBySelf } from 'src/engine/core-modules/user/utils/assert-workspace-member-self-only-settings-updated-by-self.util';
 import { assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly } from 'src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util';
 import { assertWorkspaceMemberUpdateValuesAreValid } from 'src/engine/core-modules/user/utils/assert-workspace-member-update-values-are-valid.util';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
@@ -599,6 +600,11 @@ export class UserResolver {
 
     assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly({
       update: input.update,
+    });
+
+    assertWorkspaceMemberSelfOnlySettingsUpdatedBySelf({
+      update: input.update,
+      isUpdatingSelf,
     });
 
     assertWorkspaceMemberUpdateValuesAreValid({

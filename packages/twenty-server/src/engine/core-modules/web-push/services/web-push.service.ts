@@ -205,13 +205,20 @@ export class WebPushService {
     const subject = serverUrl.startsWith('https:')
       ? serverUrl
       : `mailto:${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}`;
-    const httpClient = this.secureHttpClientService.getHttpClient(undefined, {
-      workspaceId,
-      source: 'web-push',
-      userId,
-    });
+    const httpClient = this.secureHttpClientService.getHttpClient(
+      { maxRedirects: 0 },
+      { workspaceId, source: 'web-push', userId },
+    );
 
     for (const pushSubscription of pushSubscriptions) {
+      if (!isWebPushEndpointAllowed(pushSubscription.endpoint)) {
+        await this.pushSubscriptionRepository.delete(workspaceId, {
+          id: pushSubscription.id,
+        });
+
+        continue;
+      }
+
       try {
         const { endpoint, headers, body } = generateRequestDetails(
           {
@@ -238,7 +245,7 @@ export class WebPushService {
           await this.pushSubscriptionRepository.delete(workspaceId, {
             id: pushSubscription.id,
           });
-        } else if (response.status >= 400) {
+        } else if (response.status >= 300) {
           this.logger.warn(
             `Push service answered ${response.status} for push subscription ${pushSubscription.id} in workspace ${workspaceId}`,
           );

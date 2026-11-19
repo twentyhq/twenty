@@ -36,6 +36,14 @@ export const buildAgentChatPushNotification = ({
   >;
   isPreviewEnabled: boolean;
 }): Omit<WebPushNotification, 'renotify'> => {
+  const url = `/inbox/${thread.id}`;
+  const tag = getAgentChatPushNotificationTag(thread.id);
+  const newMessageLabel = i18n._(msg`New message`);
+
+  if (!isPreviewEnabled) {
+    return { title: newMessageLabel, body: '', url, tag };
+  }
+
   const formerMemberName = i18n._(msg`Former member`);
 
   const getWorkspaceMemberName = (workspaceMemberId: string | null): string => {
@@ -71,19 +79,17 @@ export const buildAgentChatPushNotification = ({
   const senderName = isDefined(senderWorkspaceMemberId)
     ? getWorkspaceMemberName(senderWorkspaceMemberId)
     : null;
-  const previewText = isPreviewEnabled
-    ? getAgentChatPushNotificationPreviewText(thread.lastMessageText ?? '')
-    : '';
+  const previewText = getAgentChatPushNotificationPreviewText(
+    thread.lastMessageText ?? '',
+  );
 
   return {
     title:
       isDefined(senderName) && !isDirectMessage
         ? i18n._(msg`${senderName} in ${threadLabel}`)
         : threadLabel,
-    body: isNonEmptyString(previewText)
-      ? previewText
-      : i18n._(msg`New message`),
-    url: `/inbox/${thread.id}`,
-    tag: getAgentChatPushNotificationTag(thread.id),
+    body: isNonEmptyString(previewText) ? previewText : newMessageLabel,
+    url,
+    tag,
   };
 };

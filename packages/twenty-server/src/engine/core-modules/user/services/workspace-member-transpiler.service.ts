@@ -25,7 +25,7 @@ import { FileFolder, OpenRecordIn } from 'twenty-shared/types';
 const INBOX_NOTIFICATION_LEVEL_BEFORE_2_61_UPGRADE =
   AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.ALL_FOLLOWED;
 
-const IS_INBOX_NOTIFICATION_PREVIEW_ENABLED_BEFORE_2_61_UPGRADE = true;
+const IS_INBOX_NOTIFICATION_PREVIEW_ENABLED_BEFORE_2_61_UPGRADE = false;
 
 export type ToWorkspaceMemberDtoArgs = {
   workspaceMemberEntity: WorkspaceMemberWorkspaceEntity;
