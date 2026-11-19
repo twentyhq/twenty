@@ -32,7 +32,23 @@ const PERSON_FIELDS = `
   }
 `;
 
-const pickSelectedPersonFields = (person: Record<string, unknown>) => ({
+type SelectedPersonFields = {
+  id: string;
+  jobTitle: string;
+  position: number;
+  companyId: string | null;
+  name: { firstName: string; lastName: string };
+  emails: { primaryEmail: string; additionalEmails: string[] | null };
+};
+
+type PersonWithCompany = {
+  id: string;
+  company: { id: string; name: string } | null;
+};
+
+const pickSelectedPersonFields = (
+  person: SelectedPersonFields,
+): SelectedPersonFields => ({
   id: person.id,
   jobTitle: person.jobTitle,
   position: person.position,
@@ -113,7 +129,7 @@ describe('REST and GraphQL parity', () => {
     `);
 
     expect(restResponse.body.data.people.map(pickSelectedPersonFields)).toEqual(
-      people.edges.map(({ node }: { node: unknown }) => node),
+      people.edges.map(({ node }: { node: SelectedPersonFields }) => node),
     );
     expect(restResponse.body.totalCount).toBe(people.totalCount);
     expect(restResponse.body.totalCount).toBe(3);
@@ -207,18 +223,15 @@ describe('REST and GraphQL parity', () => {
     `);
 
     expect(
-      restResponse.body.data.people.map(
-        (person: {
-          id: string;
-          company: { id: string; name: string } | null;
-        }) => ({
-          id: person.id,
-          company: person.company
-            ? { id: person.company.id, name: person.company.name }
-            : null,
-        }),
-      ),
-    ).toEqual(people.edges.map(({ node }: { node: unknown }) => node));
+      restResponse.body.data.people.map((person: PersonWithCompany) => ({
+        id: person.id,
+        company: person.company
+          ? { id: person.company.id, name: person.company.name }
+          : null,
+      })),
+    ).toEqual(
+      people.edges.map(({ node }: { node: PersonWithCompany }) => node),
+    );
     expect(people.edges[3].node.company).toBeNull();
   });
 
@@ -285,7 +298,10 @@ describe('REST and GraphQL parity', () => {
     `);
 
     const toComparableGroups = (
-      groups: { groupByDimensionValues: unknown[]; totalCount: number }[],
+      groups: {
+        groupByDimensionValues: (string | null)[];
+        totalCount: number;
+      }[],
     ) =>
       groups
         .map(({ groupByDimensionValues, totalCount }) => ({
