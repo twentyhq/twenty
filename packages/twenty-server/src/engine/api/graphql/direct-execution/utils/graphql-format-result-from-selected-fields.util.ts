@@ -15,7 +15,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { type CommonRelationsAggregatedValues } from 'src/engine/api/common/types/common-aggregated-values.type';
-import { CONNECTION_MAX_DEPTH } from 'src/engine/api/graphql/graphql-query-runner/constants/connection-max-depth.constant';
+import { CONNECTION_MAX_DEPTH } from 'src/engine/api/common/constants/connection-max-depth.constant';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
