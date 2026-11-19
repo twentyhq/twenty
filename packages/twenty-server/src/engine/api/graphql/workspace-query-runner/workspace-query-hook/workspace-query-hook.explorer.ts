@@ -16,9 +16,9 @@ import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { isQueryResultFieldValueAConnection } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/guards/is-query-result-field-value-a-connection.guard';
 import { isQueryResultFieldValueANestedRecordArray } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/guards/is-query-result-field-value-a-nested-record-array.guard';
 import { isQueryResultFieldValueARecordArray } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/guards/is-query-result-field-value-a-record-array.guard';
@@ -147,9 +147,9 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
       return [payload];
     }
 
-    throw new GraphqlQueryRunnerException(
+    throw new CommonQueryRunnerException(
       `Unsupported payload type: ${payload}`,
-      GraphqlQueryRunnerExceptionCode.INVALID_POST_HOOK_PAYLOAD,
+      CommonQueryRunnerExceptionCode.INVALID_POST_HOOK_PAYLOAD,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
   }

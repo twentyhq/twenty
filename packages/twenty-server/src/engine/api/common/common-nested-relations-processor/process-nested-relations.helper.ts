@@ -25,9 +25,9 @@ import {
 } from 'src/engine/api/common/types/common-selection.type';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { CommonQueryParser } from 'src/engine/api/common/common-query-parsers/common-query.parser';
 import { ProcessAggregateHelper } from 'src/engine/api/common/utils/process-aggregate.helper';
 import { buildColumnsToSelect } from 'src/engine/api/common/utils/build-columns-to-select';
@@ -173,9 +173,9 @@ export class ProcessNestedRelationsHelper {
     }
 
     if (!sourceFieldMetadata.settings) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Relation settings not found for field ${relationFieldName}`,
-        GraphqlQueryRunnerExceptionCode.RELATION_SETTINGS_NOT_FOUND,
+        CommonQueryRunnerExceptionCode.RELATION_SETTINGS_NOT_FOUND,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
@@ -250,9 +250,9 @@ export class ProcessNestedRelationsHelper {
       relationType === RelationType.ONE_TO_MANY &&
       !isDefined(targetRelationName)
     ) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Could not resolve target relation for one-to-many field ${relationFieldName}`,
-        GraphqlQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND,
+        CommonQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
@@ -347,9 +347,9 @@ export class ProcessNestedRelationsHelper {
     });
 
     if (!targetFieldMetadata) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Field ${sourceFieldName} not found on object ${parentObjectMetadataItem.nameSingular}`,
-        GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND,
+        CommonQueryRunnerExceptionCode.FIELD_NOT_FOUND,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
@@ -363,9 +363,9 @@ export class ProcessNestedRelationsHelper {
       !targetFieldMetadata.relationTargetObjectMetadataId ||
       !targetFieldMetadata.relationTargetFieldMetadataId
     ) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Relation target object metadata id or field metadata id not found for field ${sourceFieldName}`,
-        GraphqlQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND,
+        CommonQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
