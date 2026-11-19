@@ -2,7 +2,7 @@ import { useMutation } from '@apollo/client/react';
 import { DeleteManyNavigationMenuItemsDocument } from '~/generated-metadata/graphql';
 
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
-import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
+import { navigationMenuItemsWithHiddenSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsWithHiddenSelector';
 import { useStore } from 'jotai';
 
 export const useDeleteManyNavigationMenuItems = () => {
@@ -20,7 +20,7 @@ export const useDeleteManyNavigationMenuItems = () => {
       return;
     }
 
-    const previousItems = store.get(navigationMenuItemsSelector.atom);
+    const previousItems = store.get(navigationMenuItemsWithHiddenSelector.atom);
 
     removeFromDraft({ key: 'navigationMenuItems', itemIds: ids });
     applyChanges();

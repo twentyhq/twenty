@@ -11,6 +11,7 @@ import { buildUpdateInputsFromDraft } from '@/navigation-menu-item/edit/utils/bu
 import { getObjectMetadataColorUpdates } from '@/navigation-menu-item/edit/utils/getObjectMetadataColorUpdates';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { useStore } from 'jotai';
+import { v4 } from 'uuid';
 
 export const useSaveNavigationMenuItemsDraft = () => {
   const { createManyNavigationMenuItems } = useCreateManyNavigationMenuItems();
@@ -74,7 +75,10 @@ export const useSaveNavigationMenuItemsDraft = () => {
 
     await deleteManyNavigationMenuItems(recreateIds);
 
-    const allItemsToCreate = [...itemsToCreate, ...idsToRecreate];
+    const allItemsToCreate = [
+      ...itemsToCreate,
+      ...idsToRecreate.map((item) => ({ ...item, id: v4() })),
+    ];
     const resolveFolderId = (draftFolderId: string): string => draftFolderId;
 
     const createInputs = allItemsToCreate.map((draftItem) =>

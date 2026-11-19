@@ -1,6 +1,10 @@
+import { splitEntitiesByRemovalStrategy } from 'src/engine/metadata-modules/flat-entity/utils/split-entities-by-removal-strategy.util';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
-import { dispatchIsActiveUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-update-to-authored-override.util';
-import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
+
+type NavigationMenuItemParent = Pick<
+  FlatNavigationMenuItem,
+  'parentId' | 'parentUniversalIdentifier'
+>;
 
 export const computeNavigationMenuItemRemovalOperations = ({
   rootNavigationMenuItems,
@@ -21,80 +25,65 @@ export const computeNavigationMenuItemRemovalOperations = ({
   const deletedById = new Map<string, FlatNavigationMenuItem>();
   const updatedById = new Map<string, FlatNavigationMenuItem>();
 
-  const isOwnedByAnotherApplication = (
-    navigationMenuItem: FlatNavigationMenuItem,
+  const splitByRemovalStrategy = (
+    navigationMenuItems: FlatNavigationMenuItem[],
   ) =>
-    isCallerOverridingEntity({
-      callerApplicationUniversalIdentifier:
-        workspaceCustomApplicationUniversalIdentifier,
-      entityApplicationUniversalIdentifier:
-        navigationMenuItem.applicationUniversalIdentifier,
+    splitEntitiesByRemovalStrategy({
+      metadataName: 'navigationMenuItem',
+      entitiesToRemove: navigationMenuItems.map(
+        (navigationMenuItem) =>
+          updatedById.get(navigationMenuItem.id) ?? navigationMenuItem,
+      ),
       workspaceCustomApplicationUniversalIdentifier,
-      isSystemSideEffect: false,
+      now,
     });
 
-  const deactivate = (
-    navigationMenuItem: FlatNavigationMenuItem,
-    parent: Pick<
-      FlatNavigationMenuItem,
-      'parentId' | 'parentUniversalIdentifier'
-    >,
-  ) => {
-    const latestNavigationMenuItem =
-      updatedById.get(navigationMenuItem.id) ?? navigationMenuItem;
-
-    updatedById.set(navigationMenuItem.id, {
-      ...dispatchIsActiveUpdateToAuthoredOverride({
-        metadataName: 'navigationMenuItem',
-        flatEntity: latestNavigationMenuItem,
-        isActive: false,
-        authorUniversalIdentifier:
-          workspaceCustomApplicationUniversalIdentifier,
-        workspaceCustomApplicationUniversalIdentifier,
-      }),
-      parentId: parent.parentId,
-      parentUniversalIdentifier: parent.parentUniversalIdentifier,
-      updatedAt: now,
-    });
-  };
-
-  const deleteWithOwnedDescendants = (
-    navigationMenuItem: FlatNavigationMenuItem,
-    survivingParent: Pick<
-      FlatNavigationMenuItem,
-      'parentId' | 'parentUniversalIdentifier'
-    >,
-  ) => {
+  const deleteWithOwnedDescendants = ({
+    navigationMenuItem,
+    survivingParent,
+  }: {
+    navigationMenuItem: FlatNavigationMenuItem;
+    survivingParent: NavigationMenuItemParent;
+  }) => {
     const children =
       childrenByUserWorkspaceIdAndParentId[
         navigationMenuItem.userWorkspaceId ?? 'null'
       ]?.[navigationMenuItem.id] ?? [];
+    const { toHardDelete, toDeactivate } = splitByRemovalStrategy(children);
 
-    for (const child of children) {
-      if (isOwnedByAnotherApplication(child)) {
-        deactivate(child, survivingParent);
-      } else {
-        deleteWithOwnedDescendants(child, survivingParent);
-      }
+    for (const deactivatedChild of toDeactivate) {
+      updatedById.set(deactivatedChild.id, {
+        ...deactivatedChild,
+        parentId: survivingParent.parentId,
+        parentUniversalIdentifier: survivingParent.parentUniversalIdentifier,
+      });
+    }
+
+    for (const ownedChild of toHardDelete) {
+      deleteWithOwnedDescendants({
+        navigationMenuItem: ownedChild,
+        survivingParent,
+      });
     }
 
     deletedById.set(navigationMenuItem.id, navigationMenuItem);
   };
 
-  for (const rootNavigationMenuItem of rootNavigationMenuItems) {
-    if (deletedById.has(rootNavigationMenuItem.id)) {
-      continue;
-    }
+  const { toHardDelete, toDeactivate } = splitByRemovalStrategy(
+    rootNavigationMenuItems,
+  );
 
-    if (isOwnedByAnotherApplication(rootNavigationMenuItem)) {
-      deactivate(
-        rootNavigationMenuItem,
-        updatedById.get(rootNavigationMenuItem.id) ?? rootNavigationMenuItem,
-      );
-      continue;
-    }
+  for (const deactivatedRoot of toDeactivate) {
+    updatedById.set(deactivatedRoot.id, deactivatedRoot);
+  }
 
-    deleteWithOwnedDescendants(rootNavigationMenuItem, rootNavigationMenuItem);
+  for (const ownedRoot of toHardDelete) {
+    if (!deletedById.has(ownedRoot.id)) {
+      deleteWithOwnedDescendants({
+        navigationMenuItem: ownedRoot,
+        survivingParent: ownedRoot,
+      });
+    }
   }
 
   return {
