@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -61,9 +62,7 @@ export class AuthSsoService {
     }
 
     return await this.workspaceRepository.findOne({
-      where: {
-        id: workspaceId,
-      },
+      where: isDefined(workspaceId) ? { id: workspaceId } : {},
       relations: ['approvedAccessDomains'],
     });
   }

@@ -97,6 +97,27 @@ describe('AuthSsoService', () => {
       });
     });
 
+    it('should return the only workspace when single-workspace mode gets no workspaceId', async () => {
+      const mockWorkspace = { id: 'workspace-id-789' } as WorkspaceEntity;
+
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue(false);
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue(mockWorkspace);
+
+      const result =
+        await authSsoService.findWorkspaceFromWorkspaceIdOrAuthProvider({
+          authProvider: AuthProviderEnum.Google,
+          email: 'test@example.com',
+        });
+
+      expect(result).toEqual(mockWorkspace);
+      expect(workspaceRepository.findOne).toHaveBeenCalledWith({
+        where: {},
+        relations: ['approvedAccessDomains'],
+      });
+    });
+
     it('should return undefined if no workspace is found when multi-workspace mode is enabled', async () => {
       jest.spyOn(twentyConfigService, 'get').mockReturnValue(true);
       jest.spyOn(workspaceRepository, 'findOne').mockResolvedValue(null);
