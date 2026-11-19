@@ -21334,11 +21334,6 @@ msgstr "{notSharedByFullName} tomonidan ulashilmagan"
 msgid "Not shared with"
 msgstr "Quyidagilar bilan ulashilmagan"
 
-#. js-lingui-id: mu1gVr
-#: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
-msgid "Not started"
-msgstr "Boshlanmagan"
-
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"

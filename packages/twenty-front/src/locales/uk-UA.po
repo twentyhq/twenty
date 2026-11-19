@@ -21334,11 +21334,6 @@ msgstr "Не поділився {notSharedByFullName}"
 msgid "Not shared with"
 msgstr "Не поширено на"
 
-#. js-lingui-id: mu1gVr
-#: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
-msgid "Not started"
-msgstr "Не розпочато"
-
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"
