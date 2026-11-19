@@ -14,6 +14,7 @@ import {
   createStandardNavigationMenuItemFolderFlatMetadata,
   createStandardNavigationMenuItemFolderItemFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-folder-flat-metadata.util';
+import { createStandardNavigationMenuItemSectionFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-section-flat-metadata.util';
 
 const FLAT_NAVIGATION_MENU_ITEM_NAMES = [
   'allCompanies',
@@ -56,6 +57,23 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
     byUserWorkspaceIdAndParentId: {},
   };
 
+  const workspaceSectionDefinition =
+    STANDARD_NAVIGATION_MENU_ITEMS.workspaceSection;
+  const workspaceSection = createStandardNavigationMenuItemSectionFlatMetadata({
+    universalIdentifier: workspaceSectionDefinition.universalIdentifier,
+    name: workspaceSectionDefinition.name,
+    position: workspaceSectionDefinition.position,
+    navigationMenuItemId: v4(),
+    workspaceId,
+    twentyStandardApplicationId,
+    now,
+  });
+
+  addFlatNavigationMenuItemToMapsAndUpdateIndex({
+    flatNavigationMenuItem: workspaceSection,
+    flatNavigationMenuItemMaps,
+  });
+
   for (const navigationMenuItemName of FLAT_NAVIGATION_MENU_ITEM_NAMES) {
     const navigationMenuItemDefinition =
       STANDARD_NAVIGATION_MENU_ITEMS[navigationMenuItemName];
@@ -68,6 +86,7 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
           navigationMenuItemDefinition.viewUniversalIdentifier,
         position: navigationMenuItemDefinition.position,
         navigationMenuItemId: v4(),
+        parent: workspaceSection,
         dependencyFlatEntityMaps: {
           flatViewMaps,
         },
@@ -92,6 +111,7 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
       color: STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS[folderName] ?? null,
       position: folderDefinition.position,
       navigationMenuItemId: folderId,
+      parent: workspaceSection,
       workspaceId,
       twentyStandardApplicationId,
       now,

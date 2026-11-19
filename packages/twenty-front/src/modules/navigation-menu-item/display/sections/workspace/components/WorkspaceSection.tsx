@@ -1,8 +1,7 @@
-import { NavigationMenuItemAddDropdown } from '@/navigation-menu-item/edit/components/NavigationMenuItemAddDropdown';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { IconPlus, IconTool } from 'twenty-ui/icon';
+import { IconTool } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -19,6 +18,7 @@ import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/us
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { WorkspaceSectionHeaderAddDropdown } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionHeaderAddDropdown';
 
 import {
   FeatureFlagKey,
@@ -81,19 +81,9 @@ export const WorkspaceSection = () => {
         isMobile ? undefined : (
           <StyledRightIconsContainer>
             {isLayoutCustomizationModeEnabled ? (
-              <NavigationMenuItemAddDropdown
-                instanceId="workspace-header"
-                position={0}
+              <WorkspaceSectionHeaderAddDropdown
                 onOpen={openNavigationSection}
-              >
-                <LightIconButton
-                  emphasis="subtle"
-                  size="sm"
-                  aria-label={t`Add`}
-                >
-                  <IconPlus />
-                </LightIconButton>
-              </NavigationMenuItemAddDropdown>
+              />
             ) : (
               hasLayoutsPermission &&
               !isCustomizableSidebarEnabled && (
