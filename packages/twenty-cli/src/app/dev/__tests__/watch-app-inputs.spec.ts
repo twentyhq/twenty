@@ -13,6 +13,7 @@ import { tmpdir } from 'node:os';
 import type * as nodeOperatingSystem from 'node:os';
 import { dirname, join, parse } from 'node:path';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import type * as chokidar from 'chokidar';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -37,7 +38,10 @@ vi.mock('node:os', async (importOriginal) => {
   const actual = await importOriginal<typeof nodeOperatingSystem>();
   return {
     ...actual,
-    homedir: () => watcherOptions.homeDirectory || actual.homedir(),
+    homedir: () =>
+      isNonEmptyString(watcherOptions.homeDirectory)
+        ? watcherOptions.homeDirectory
+        : actual.homedir(),
   };
 });
 
