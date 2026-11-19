@@ -7,7 +7,6 @@ import { type ConditionalAvailabilityPathSubject } from '@/conditional-availabil
 import { type ConditionalAvailabilityRecordFieldOption } from '@/conditional-availability/types/ConditionalAvailabilityRecordFieldOption';
 import { type ConditionalAvailabilityRecordFieldSubject } from '@/conditional-availability/types/ConditionalAvailabilityRecordFieldSubject';
 import { type ConditionalAvailabilityRow } from '@/conditional-availability/types/ConditionalAvailabilityRow';
-import { getConditionalAvailabilityRecordFieldRowSubject } from '@/conditional-availability/utils/getConditionalAvailabilityRecordFieldRowSubject';
 import { getConditionalAvailabilityRecordFieldSubjectLabel } from '@/conditional-availability/utils/getConditionalAvailabilityRecordFieldSubjectLabel';
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
 import { SelectControl } from '@/ui/input/components/SelectControl';
@@ -66,20 +65,17 @@ export const ConditionalAvailabilitySubjectSelect = ({
           Icon: CONDITIONAL_AVAILABILITY_SUBJECT_DEFINITIONS[row.subject].Icon,
         };
       case 'recordField': {
-        const recordFieldRowSubject =
-          getConditionalAvailabilityRecordFieldRowSubject({
-            fields,
-            fieldName: row.fieldName,
-            propertyPath: row.propertyPath,
-          });
+        const field = fields.find(
+          (candidate) => candidate.name === row.fieldName,
+        );
 
-        return isDefined(recordFieldRowSubject)
+        return isDefined(field)
           ? {
               label: getConditionalAvailabilityRecordFieldSubjectLabel({
-                field: recordFieldRowSubject.field,
-                subFieldName: recordFieldRowSubject.subject.subFieldName,
+                field,
+                subFieldName: row.subFieldName,
               }),
-              Icon: getIcon(recordFieldRowSubject.field.icon),
+              Icon: getIcon(field.icon),
             }
           : { label: row.fieldName, Icon: IconQuestionMark };
       }
