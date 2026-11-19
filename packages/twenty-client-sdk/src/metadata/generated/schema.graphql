@@ -4259,6 +4259,7 @@ enum PermissionFlagType {
   LAYOUTS
   MARKETPLACE_APPS
   PROFILE_INFORMATION
+  READ_PRIVATE_CHANNELS
   ROLES
   SECURITY
   SEND_EMAIL_TOOL
@@ -4345,6 +4346,14 @@ type PublicApplicationRegistration {
   websiteUrl: String
 }
 
+type PublicCalendarChannel {
+  connectedAccount: ConnectedAccountPublicDTO
+  connectedAccountId: UUID!
+  handle: String!
+  id: UUID!
+  visibility: CalendarChannelVisibility!
+}
+
 type PublicConnectionParametersOutput {
   connectionSecurity: EmailConnectionSecurity
   host: String!
@@ -4426,6 +4435,7 @@ type Query {
   billingPartnerCode: BillingPartnerCode!
   billingPlans: [BillingPlan!]!
   billingPortalSession(forPaymentMethodUpdate: Boolean, returnUrlPath: String): BillingSession!
+  calendarChannels: [PublicCalendarChannel!]!
   callRecordingIdForCalendarEvent(calendarEventId: UUID!): UUID
   chatMessages(agentUniversalIdentifier: UUID, threadId: UUID, threadKey: String): [AgentMessage!]!
   chatStreamCatchupChunks(agentUniversalIdentifier: UUID, threadId: UUID, threadKey: String): ChatStreamCatchupChunks!
