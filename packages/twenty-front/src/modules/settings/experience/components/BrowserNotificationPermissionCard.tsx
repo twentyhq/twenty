@@ -6,7 +6,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
 
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
-import { useSubscribeToPushNotifications } from '@/web-push/hooks/useSubscribeToPushNotifications';
+import { useSubscribeToWebPushNotifications } from '@/web-push/hooks/useSubscribeToWebPushNotifications';
 import { getBrowserNotificationPermission } from '@/web-push/utils/getBrowserNotificationPermission';
 
 export const BrowserNotificationPermissionCard = () => {
@@ -15,7 +15,8 @@ export const BrowserNotificationPermissionCard = () => {
   const [permission, setPermission] = useState(
     getBrowserNotificationPermission,
   );
-  const { subscribeToPushNotifications } = useSubscribeToPushNotifications();
+  const { subscribeToWebPushNotifications } =
+    useSubscribeToWebPushNotifications();
 
   const descriptionByPermission = {
     default: t`Allow this browser to show new inbox messages as notifications`,
@@ -27,7 +28,7 @@ export const BrowserNotificationPermissionCard = () => {
   const allowNotifications = async () => {
     setPermission(await Notification.requestPermission());
 
-    await subscribeToPushNotifications().catch(() =>
+    await subscribeToWebPushNotifications().catch(() =>
       enqueueToast({
         status: 'error',
         children: t`This browser could not turn on notifications`,

@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getBrowserNotificationPermission } from '@/web-push/utils/getBrowserNotificationPermission';
 
-export const closePushNotificationsAndUnsubscribe = async () => {
+export const closeWebPushNotificationsAndUnsubscribe = async () => {
   if (getBrowserNotificationPermission() === 'unsupported') {
     return;
   }
@@ -13,12 +13,12 @@ export const closePushNotificationsAndUnsubscribe = async () => {
     return;
   }
 
-  const [notifications, pushSubscription] = await Promise.all([
+  const [notifications, webPushSubscription] = await Promise.all([
     registration.getNotifications(),
     registration.pushManager.getSubscription(),
   ]);
 
   notifications.forEach((notification) => notification.close());
 
-  await pushSubscription?.unsubscribe();
+  await webPushSubscription?.unsubscribe();
 };

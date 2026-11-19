@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { isInboxPushNotificationPath } from '@/web-push/utils/isInboxPushNotificationPath';
+import { isInboxWebPushNotificationPath } from '@/web-push/utils/isInboxWebPushNotificationPath';
 
-export const PushNotificationClickEffect = () => {
+export const WebPushNotificationClickEffect = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,8 +15,8 @@ export const PushNotificationClickEffect = () => {
       event: MessageEvent<{ type?: string; url?: string }>,
     ) => {
       if (
-        event.data?.type === 'push-notification-click' &&
-        isInboxPushNotificationPath(event.data.url)
+        event.data?.type === 'web-push-notification-click' &&
+        isInboxWebPushNotificationPath(event.data.url)
       ) {
         navigate(event.data.url);
       }

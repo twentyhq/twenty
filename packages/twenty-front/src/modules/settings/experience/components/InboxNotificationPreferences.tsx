@@ -23,7 +23,7 @@ const inboxNotificationLevelOptions = [
     cardMedia: <SettingsOptionIconCustomizer Icon={IconBell} />,
   },
   {
-    value: AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.DIRECT_AND_MENTIONS,
+    value: AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.DIRECT_MENTIONS_AND_ASSIGNED,
     title: msg`Direct messages and mentions`,
     description: msg`Direct messages, mentions and chats assigned to you`,
     cardMedia: <SettingsOptionIconCustomizer Icon={IconAt} />,

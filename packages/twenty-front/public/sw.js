@@ -56,7 +56,7 @@ self.addEventListener('notificationclick', (event) => {
 
         if (inboxPath !== undefined) {
           windowClient.postMessage({
-            type: 'push-notification-click',
+            type: 'web-push-notification-click',
             url: inboxPath,
           });
         }

@@ -5,10 +5,10 @@ import { useCallback } from 'react';
 import { base64UrlEncode, isDefined } from 'twenty-shared/utils';
 
 import { webPushVapidPublicKeyState } from '@/client-config/states/webPushVapidPublicKeyState';
-import { UPSERT_PUSH_SUBSCRIPTION } from '@/web-push/graphql/mutations/upsertPushSubscription';
+import { UPSERT_WEB_PUSH_SUBSCRIPTION } from '@/web-push/graphql/mutations/upsertWebPushSubscription';
 import { getBrowserNotificationPermission } from '@/web-push/utils/getBrowserNotificationPermission';
 
-const getOrCreateBrowserPushSubscription = async (
+const getOrCreateBrowserWebPushSubscription = async (
   applicationServerKey: string,
 ): Promise<PushSubscription> => {
   const registration = await navigator.serviceWorker.register('/sw.js');
@@ -33,11 +33,11 @@ const getOrCreateBrowserPushSubscription = async (
   });
 };
 
-export const useSubscribeToPushNotifications = () => {
+export const useSubscribeToWebPushNotifications = () => {
   const store = useStore();
-  const [upsertPushSubscription] = useMutation(UPSERT_PUSH_SUBSCRIPTION);
+  const [upsertWebPushSubscription] = useMutation(UPSERT_WEB_PUSH_SUBSCRIPTION);
 
-  const subscribeToPushNotifications = useCallback(async () => {
+  const subscribeToWebPushNotifications = useCallback(async () => {
     const applicationServerKey = store.get(webPushVapidPublicKeyState.atom);
 
     if (
@@ -48,14 +48,14 @@ export const useSubscribeToPushNotifications = () => {
     }
 
     const { endpoint, keys } = (
-      await getOrCreateBrowserPushSubscription(applicationServerKey)
+      await getOrCreateBrowserWebPushSubscription(applicationServerKey)
     ).toJSON();
 
     if (!isDefined(endpoint) || !isDefined(keys)) {
       return;
     }
 
-    await upsertPushSubscription({
+    await upsertWebPushSubscription({
       variables: {
         input: {
           endpoint,
@@ -65,7 +65,7 @@ export const useSubscribeToPushNotifications = () => {
         },
       },
     });
-  }, [store, upsertPushSubscription]);
+  }, [store, upsertWebPushSubscription]);
 
-  return { subscribeToPushNotifications };
+  return { subscribeToWebPushNotifications };
 };

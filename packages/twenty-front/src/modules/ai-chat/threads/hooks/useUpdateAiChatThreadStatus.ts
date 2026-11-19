@@ -13,7 +13,7 @@ import {
 } from '@/ai-chat/threads/states/aiChatThreadVisitFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { closeInboxPushNotifications } from '@/web-push/utils/closeInboxPushNotifications';
+import { closeAiChatThreadWebPushNotifications } from '@/ai-chat/threads/utils/closeAiChatThreadWebPushNotifications';
 import {
   AgentChatInboxAction,
   UpdateAgentChatThreadInboxStateDocument,
@@ -79,7 +79,7 @@ export const useUpdateAiChatThreadStatus = () => {
         action === AgentChatInboxAction.READ ||
         action === AgentChatInboxAction.ARCHIVE
       ) {
-        closeInboxPushNotifications(threadIds).catch(logError);
+        closeAiChatThreadWebPushNotifications(threadIds).catch(logError);
       }
 
       if (action === AgentChatInboxAction.MOVE_TO_INBOX) {

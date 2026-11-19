@@ -3,9 +3,9 @@ import { useLingui } from '@lingui/react/macro';
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { useIsInboxWebPushEnabled } from '@/inbox/hooks/useIsInboxWebPushEnabled';
 import { BrowserNotificationPermissionCard } from '@/settings/experience/components/BrowserNotificationPermissionCard';
 import { InboxNotificationPreferences } from '@/settings/experience/components/InboxNotificationPreferences';
-import { useIsWebPushEnabled } from '@/web-push/hooks/useIsWebPushEnabled';
 
 const StyledNotificationControls = styled.div`
   display: flex;
@@ -15,9 +15,9 @@ const StyledNotificationControls = styled.div`
 
 export const SettingsExperienceNotificationsSection = () => {
   const { t } = useLingui();
-  const isWebPushEnabled = useIsWebPushEnabled();
+  const isInboxWebPushEnabled = useIsInboxWebPushEnabled();
 
-  if (!isWebPushEnabled) {
+  if (!isInboxWebPushEnabled) {
     return null;
   }
 

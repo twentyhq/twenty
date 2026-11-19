@@ -60,7 +60,7 @@ import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { isChooseWorkspaceActionRequested } from '@/auth/utils/isChooseWorkspaceActionRequested';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
-import { closePushNotificationsAndUnsubscribe } from '@/web-push/utils/closePushNotificationsAndUnsubscribe';
+import { closeWebPushNotificationsAndUnsubscribe } from '@/web-push/utils/closeWebPushNotificationsAndUnsubscribe';
 import { i18n } from '@lingui/core';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -467,7 +467,7 @@ export const useAuth = () => {
       store.set(isPendingServerSignOutState.atom, false);
     } catch {}
 
-    await closePushNotificationsAndUnsubscribe().catch(logError);
+    await closeWebPushNotificationsAndUnsubscribe().catch(logError);
 
     broadcastSignOutToOtherTabs();
     clearSession();

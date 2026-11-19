@@ -1,7 +1,9 @@
-import { getAgentChatPushNotificationTag } from 'twenty-shared/ai';
+import { getAgentChatWebPushNotificationTag } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-export const closeInboxPushNotifications = async (threadIds: string[]) => {
+export const closeAiChatThreadWebPushNotifications = async (
+  threadIds: string[],
+) => {
   if (!('serviceWorker' in navigator)) {
     return;
   }
@@ -15,7 +17,7 @@ export const closeInboxPushNotifications = async (threadIds: string[]) => {
   const notifications = await Promise.all(
     threadIds.map((threadId) =>
       registration.getNotifications({
-        tag: getAgentChatPushNotificationTag(threadId),
+        tag: getAgentChatWebPushNotificationTag(threadId),
       }),
     ),
   );

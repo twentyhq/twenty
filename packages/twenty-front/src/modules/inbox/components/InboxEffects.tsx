@@ -5,25 +5,25 @@ import { InboxChannelsEffect } from '@/inbox/components/InboxChannelsEffect';
 import { InboxRecentThreadListSyncEffect } from '@/inbox/components/InboxRecentThreadListSyncEffect';
 import { InboxThreadInitializationEffect } from '@/inbox/components/InboxThreadInitializationEffect';
 import { InboxThreadRecordOperationsEffect } from '@/inbox/components/InboxThreadRecordOperationsEffect';
+import { useIsInboxWebPushEnabled } from '@/inbox/hooks/useIsInboxWebPushEnabled';
 import { FocusedTabEffect } from '@/web-push/components/FocusedTabEffect';
-import { PushNotificationClickEffect } from '@/web-push/components/PushNotificationClickEffect';
-import { PushSubscriptionEffect } from '@/web-push/components/PushSubscriptionEffect';
-import { useIsWebPushEnabled } from '@/web-push/hooks/useIsWebPushEnabled';
+import { WebPushNotificationClickEffect } from '@/web-push/components/WebPushNotificationClickEffect';
+import { WebPushSubscriptionEffect } from '@/web-push/components/WebPushSubscriptionEffect';
 
 export const InboxEffects = () => {
   const aiChatPageThreadId = useAiChatPageThreadId();
-  const isWebPushEnabled = useIsWebPushEnabled();
+  const isInboxWebPushEnabled = useIsInboxWebPushEnabled();
 
   return (
     <>
       <InboxThreadInitializationEffect />
       <InboxThreadRecordOperationsEffect />
       <InboxChannelsEffect />
-      {isWebPushEnabled && (
+      {isInboxWebPushEnabled && (
         <>
-          <PushSubscriptionEffect />
+          <WebPushSubscriptionEffect />
           <FocusedTabEffect />
-          <PushNotificationClickEffect />
+          <WebPushNotificationClickEffect />
         </>
       )}
       {isDefined(aiChatPageThreadId) && (
