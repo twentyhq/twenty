@@ -76,6 +76,15 @@ export {
   richTextValueSchema,
 } from './composite-types/rich-text.composite-type';
 export type { CompositeFieldSubFieldName } from './CompositeFieldSubFieldNameType';
+export type { ConditionalAvailabilityArrayMethod } from './ConditionalAvailabilityArrayMethod';
+export type { ConditionalAvailabilityCheckError } from './ConditionalAvailabilityCheckError';
+export type { ConditionalAvailabilityCheckResult } from './ConditionalAvailabilityCheckResult';
+export type { ConditionalAvailabilityComparisonOperator } from './ConditionalAvailabilityComparisonOperator';
+export type { ConditionalAvailabilityContextByMetadataName } from './ConditionalAvailabilityContextByMetadataName';
+export type { ConditionalAvailabilityLogicalOperator } from './ConditionalAvailabilityLogicalOperator';
+export type { ConditionalAvailabilityMetadataName } from './ConditionalAvailabilityMetadataName';
+export type { ConditionalAvailabilityNode } from './ConditionalAvailabilityNode';
+export type { ConditionalAvailabilityVariableDeclaration } from './ConditionalAvailabilityVariableDeclaration';
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export type { ConfirmationModalCaller } from './ConfirmationModalCaller';
 export type { ConnectedAccountEmailFields } from './ConnectedAccountEmailFields';
@@ -271,6 +280,7 @@ export type { PageLayoutWidgetUniversalConfiguration } from './page-layout/PageL
 export { PageLayoutWidgetVerticalListHeightBehavior } from './page-layout/PageLayoutWidgetVerticalListHeightBehavior';
 export type { RatioAggregateConfig } from './page-layout/RatioAggregateConfig';
 export { WidgetType } from './page-layout/WidgetType';
+export type { PageLayoutConditionalAvailabilityContext } from './PageLayoutConditionalAvailabilityContext';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';
 export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOption';
 export type { QueryCursorDirection } from './QueryCursorDirection';
