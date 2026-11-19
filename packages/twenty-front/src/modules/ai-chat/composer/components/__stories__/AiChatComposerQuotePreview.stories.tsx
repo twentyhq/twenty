@@ -5,7 +5,7 @@ import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatComposerQuotePreview } from '@/ai-chat/composer/components/AiChatComposerQuotePreview';
-import { type AiChatQuotedMessageSource } from '@/ai-chat/composer/types/AiChatQuotedMessageSource';
+import { type AiChatQuotedMessageSource } from '@/ai-chat/messages/types/AiChatQuotedMessageSource';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 
 const quotedSource: AiChatQuotedMessageSource = {

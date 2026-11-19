@@ -1053,11 +1053,11 @@ export type BillingProductDTO = (BillingLicensedProduct | BillingMeteredProduct)
 
 
 /** The different billing products available */
-export type BillingProductKey = 'BASE_PRODUCT' | 'RESOURCE_CREDIT'
+export type BillingProductKey = 'APPLICATION' | 'BASE_PRODUCT' | 'RESOURCE_CREDIT'
 
 export interface BillingProductMetadata {
     isLegacy?: Scalars['String']
-    planKey: BillingPlanKey
+    planKey?: BillingPlanKey
     priceUsageBased: BillingUsageType
     productKey: BillingProductKey
     __typename: 'BillingProductMetadata'
@@ -1140,6 +1140,7 @@ export interface BillingUpdate {
 export type BillingUsageType = 'LICENSED' | 'METERED'
 
 export interface CalendarChannel {
+    connectedAccount?: ConnectedAccountPublicDTO
     connectedAccountId: Scalars['UUID']
     contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy
     createdAt: Scalars['DateTime']
@@ -3104,7 +3105,7 @@ export interface PermissionFlag {
     __typename: 'PermissionFlag'
 }
 
-export type PermissionFlagType = 'AI' | 'AI_SETTINGS' | 'API_KEYS_AND_WEBHOOKS' | 'APPLICATIONS' | 'BILLING' | 'CODE_INTERPRETER_TOOL' | 'CONNECTED_ACCOUNTS' | 'CREATE_CALENDAR_EVENT_TOOL' | 'DATA_MODEL' | 'DOWNLOAD_FILE' | 'EXPORT_CSV' | 'HTTP_REQUEST_TOOL' | 'IMPERSONATE' | 'IMPORT_CSV' | 'LAYOUTS' | 'MARKETPLACE_APPS' | 'PROFILE_INFORMATION' | 'ROLES' | 'SECURITY' | 'SEND_EMAIL_TOOL' | 'SSO_BYPASS' | 'UPLOAD_FILE' | 'VIEWS' | 'WORKFLOWS' | 'WORKSPACE' | 'WORKSPACE_MEMBERS'
+export type PermissionFlagType = 'AI' | 'AI_SETTINGS' | 'API_KEYS_AND_WEBHOOKS' | 'APPLICATIONS' | 'BILLING' | 'CODE_INTERPRETER_TOOL' | 'CONNECTED_ACCOUNTS' | 'CREATE_CALENDAR_EVENT_TOOL' | 'DATA_MODEL' | 'DOWNLOAD_FILE' | 'EXPORT_CSV' | 'HTTP_REQUEST_TOOL' | 'IMPERSONATE' | 'IMPORT_CSV' | 'LAYOUTS' | 'MARKETPLACE_APPS' | 'PROFILE_INFORMATION' | 'READ_PRIVATE_CHANNELS' | 'ROLES' | 'SECURITY' | 'SEND_EMAIL_TOOL' | 'SSO_BYPASS' | 'UPLOAD_FILE' | 'VIEWS' | 'WORKFLOWS' | 'WORKSPACE' | 'WORKSPACE_MEMBERS'
 
 export interface PieChartConfiguration {
     aggregateFieldMetadataId: Scalars['UUID']
@@ -5780,6 +5781,7 @@ export interface BillingUpdateGenqlSelection{
 export interface BooleanFieldComparison {is?: (Scalars['Boolean'] | null),isNot?: (Scalars['Boolean'] | null)}
 
 export interface CalendarChannelGenqlSelection{
+    connectedAccount?: ConnectedAccountPublicDTOGenqlSelection
     connectedAccountId?: boolean | number
     contactAutoCreationPolicy?: boolean | number
     createdAt?: boolean | number
@@ -8205,7 +8207,7 @@ export interface QueryGenqlSelection{
     enterprisePortalSession?: { __args: {returnUrlPath?: (Scalars['String'] | null)} } | boolean | number
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTOGenqlSelection
     eventLogs?: (EventLogQueryResultGenqlSelection & { __args: {input: EventLogQueryInput} })
-    exportApplication?: (ApplicationExportGenqlSelection & { __args: {shouldIncludeDependencies?: (Scalars['Boolean'] | null), shouldIncludePublicAssets?: (Scalars['Boolean'] | null), shouldIncludeSourceDependencies?: (Scalars['Boolean'] | null), shouldIncludeSourceFiles?: (Scalars['Boolean'] | null), universalIdentifier: Scalars['UUID']} })
+    exportApplication?: (ApplicationExportGenqlSelection & { __args: {shouldIncludeDependencies?: (Scalars['Boolean'] | null), shouldIncludeLogicFunctionSources?: (Scalars['Boolean'] | null), shouldIncludePublicAssets?: (Scalars['Boolean'] | null), shouldIncludeSourceDependencies?: (Scalars['Boolean'] | null), shouldIncludeSourceFiles?: (Scalars['Boolean'] | null), universalIdentifier: Scalars['UUID']} })
     field?: (FieldGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
@@ -13077,6 +13079,7 @@ export const enumBillingPlanKey = {
 }
 
 export const enumBillingProductKey = {
+   APPLICATION: 'APPLICATION' as const,
    BASE_PRODUCT: 'BASE_PRODUCT' as const,
    RESOURCE_CREDIT: 'RESOURCE_CREDIT' as const
 }
@@ -13599,6 +13602,7 @@ export const enumPermissionFlagType = {
    LAYOUTS: 'LAYOUTS' as const,
    MARKETPLACE_APPS: 'MARKETPLACE_APPS' as const,
    PROFILE_INFORMATION: 'PROFILE_INFORMATION' as const,
+   READ_PRIVATE_CHANNELS: 'READ_PRIVATE_CHANNELS' as const,
    ROLES: 'ROLES' as const,
    SECURITY: 'SECURITY' as const,
    SEND_EMAIL_TOOL: 'SEND_EMAIL_TOOL' as const,

@@ -2789,6 +2789,9 @@ export default {
             ]
         },
         "CalendarChannel": {
+            "connectedAccount": [
+                175
+            ],
             "connectedAccountId": [
                 565
             ],
@@ -11749,6 +11752,9 @@ export default {
                 66,
                 {
                     "shouldIncludeDependencies": [
+                        1
+                    ],
+                    "shouldIncludeLogicFunctionSources": [
                         1
                     ],
                     "shouldIncludePublicAssets": [

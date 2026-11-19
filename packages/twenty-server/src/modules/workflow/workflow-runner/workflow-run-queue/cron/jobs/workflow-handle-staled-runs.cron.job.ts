@@ -157,8 +157,12 @@ export class WorkflowHandleStaledRunsCronJob {
     const thresholdDate = new Date(Date.now() - STALED_RUNS_THRESHOLD_MS);
 
     const result = await this.coreDataSource.query(
-      `SELECT 1 FROM ${schemaName}."workflowRun" WHERE "status" = $1 AND ("enqueuedAt" < $2 OR "enqueuedAt" IS NULL) LIMIT 1`,
-      [WorkflowRunStatus.ENQUEUED, thresholdDate],
+      `SELECT 1 FROM ${schemaName}."workflowRun" WHERE "status" = $1 OR ("status" = $2 AND ("enqueuedAt" < $3 OR "enqueuedAt" IS NULL)) LIMIT 1`,
+      [
+        WorkflowRunStatus.NOT_STARTED,
+        WorkflowRunStatus.ENQUEUED,
+        thresholdDate,
+      ],
     );
 
     return result.length > 0;

@@ -7,6 +7,7 @@ import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
+import { MainNavigationDrawerEditButton } from '@/navigation/components/MainNavigationDrawerEditButton';
 import { MultiWorkspaceDropdownButton } from '@/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
@@ -85,6 +86,7 @@ export const NavigationDrawerHeader = () => {
           <StyledRightActions>
             <MediaAccessIndicator />
             {searchButton}
+            <MainNavigationDrawerEditButton />
             <NavigationDrawerCollapseButton
               direction="left"
               size={isMobile ? 'md' : 'sm'}

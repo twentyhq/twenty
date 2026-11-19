@@ -5,6 +5,7 @@ import { isLogicFunctionHttpResponse } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectQueryBuilder } from 'typeorm';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import { ApplicationRepeatedEventRecorderService } from 'src/engine/core-modules/event-logs/emit/application-repeated-event-recorder.service';
 import {
@@ -26,13 +27,16 @@ import {
   type RouteTriggerResponse,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
 import { DEFAULT_SERVER_ROUTE_HTTP_METHODS } from 'src/engine/core-modules/server-route-trigger/constants/default-server-route-http-methods.constant';
+import { SERVER_ROUTE_APPLICATION_NOT_INSTALLED_REASON } from 'src/engine/core-modules/server-route-trigger/constants/server-route-application-not-installed-reason.constant';
 import { SERVER_ROUTE_DISPATCH_JOB_PRIORITY } from 'src/engine/core-modules/server-route-trigger/constants/server-route-dispatch-job-priority.constant';
 import {
   ServerRouteTriggerException,
   ServerRouteTriggerExceptionCode,
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import { ServerRouteAuthorizationHeaderService } from 'src/engine/core-modules/server-route-trigger/server-route-authorization-header.service';
+import { type ServerRouteLogResolver } from 'src/engine/core-modules/server-route-trigger/types/server-route-log-resolver.type';
 import { buildServerRouteFailureLogEntry } from 'src/engine/core-modules/server-route-trigger/utils/build-server-route-failure-log-entry.util';
+import { buildServerRouteSkippedDispatchLogEntry } from 'src/engine/core-modules/server-route-trigger/utils/build-server-route-skipped-dispatch-log-entry.util';
 import { isAppFacingServerRouteError } from 'src/engine/core-modules/server-route-trigger/utils/is-app-facing-server-route-error.util';
 import { isUuidShaped } from 'src/engine/core-modules/server-route-trigger/utils/is-uuid-shaped.util';
 import { parseResolverDispatchResultOrThrow } from 'src/engine/core-modules/server-route-trigger/utils/parse-resolver-dispatch-result-or-throw.util';
@@ -65,6 +69,8 @@ export class ServerRouteTriggerService {
   constructor(
     @InjectWorkspaceScopedRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -174,6 +180,7 @@ export class ServerRouteTriggerService {
 
       return {
         response: await this.enqueueTargetFunction({
+          resolver,
           logicFunctionUniversalIdentifier:
             dispatchResult.targetLogicFunctionUniversalIdentifier,
           workspaceId: dispatchResult.workspaceId,
@@ -336,21 +343,32 @@ export class ServerRouteTriggerService {
   }
 
   private async enqueueTargetFunction({
+    resolver,
     logicFunctionUniversalIdentifier,
     workspaceId,
     payload,
     applicationRegistrationId,
   }: {
+    resolver: ServerRouteLogResolver;
     logicFunctionUniversalIdentifier: string;
     workspaceId: string;
     payload: object;
     applicationRegistrationId: string;
   }): Promise<RouteTriggerResponse> {
-    const logicFunction = await this.findLogicFunctionOrFail({
+    const logicFunction = await this.findLogicFunction({
       logicFunctionUniversalIdentifier,
       workspaceId,
       applicationRegistrationId,
     });
+
+    if (!isDefined(logicFunction)) {
+      return this.skipDispatchToWorkspaceWithoutApplicationOrThrow({
+        resolver,
+        logicFunctionUniversalIdentifier,
+        workspaceId,
+        applicationRegistrationId,
+      });
+    }
 
     await this.messageQueueService.add<LogicFunctionTriggerJobData>(
       LogicFunctionTriggerJob.name,
@@ -372,6 +390,46 @@ export class ServerRouteTriggerService {
     return { statusCode: 200, headers: {}, body: { queued: true } };
   }
 
+  private async skipDispatchToWorkspaceWithoutApplicationOrThrow({
+    resolver,
+    logicFunctionUniversalIdentifier,
+    workspaceId,
+    applicationRegistrationId,
+  }: {
+    resolver: ServerRouteLogResolver;
+    logicFunctionUniversalIdentifier: string;
+    workspaceId: string;
+    applicationRegistrationId: string;
+  }): Promise<RouteTriggerResponse> {
+    const isApplicationInstalled = await this.applicationRepository.existsBy(
+      workspaceId,
+      { applicationRegistrationId },
+    );
+
+    if (isApplicationInstalled) {
+      throw this.buildLogicFunctionNotFoundException({
+        logicFunctionUniversalIdentifier,
+        workspaceId,
+      });
+    }
+
+    this.applicationRepeatedEventRecorderService.record({
+      entry: buildServerRouteSkippedDispatchLogEntry({
+        resolver,
+        applicationRegistrationId,
+      }),
+    });
+
+    return {
+      statusCode: 200,
+      headers: {},
+      body: {
+        queued: false,
+        reason: SERVER_ROUTE_APPLICATION_NOT_INSTALLED_REASON,
+      },
+    };
+  }
+
   private async findLogicFunctionOrFail({
     logicFunctionUniversalIdentifier,
     workspaceId,
@@ -381,29 +439,55 @@ export class ServerRouteTriggerService {
     workspaceId: string;
     applicationRegistrationId?: string;
   }): Promise<LogicFunctionEntity> {
-    const logicFunction = await this.logicFunctionRepository.findOne(
+    const logicFunction = await this.findLogicFunction({
+      logicFunctionUniversalIdentifier,
       workspaceId,
-      {
-        where: {
-          universalIdentifier: logicFunctionUniversalIdentifier,
-          ...(isDefined(applicationRegistrationId)
-            ? { application: { applicationRegistrationId } }
-            : {}),
-        },
-        ...(isDefined(applicationRegistrationId)
-          ? { relations: { application: true } }
-          : {}),
-      },
-    );
+      applicationRegistrationId,
+    });
 
     if (!isDefined(logicFunction)) {
-      throw new ServerRouteTriggerException(
-        `Logic function ${logicFunctionUniversalIdentifier} not found in workspace ${workspaceId}`,
-        ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
-      );
+      throw this.buildLogicFunctionNotFoundException({
+        logicFunctionUniversalIdentifier,
+        workspaceId,
+      });
     }
 
     return logicFunction;
+  }
+
+  private buildLogicFunctionNotFoundException({
+    logicFunctionUniversalIdentifier,
+    workspaceId,
+  }: {
+    logicFunctionUniversalIdentifier: string;
+    workspaceId: string;
+  }): ServerRouteTriggerException {
+    return new ServerRouteTriggerException(
+      `Logic function ${logicFunctionUniversalIdentifier} not found in workspace ${workspaceId}`,
+      ServerRouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+    );
+  }
+
+  private async findLogicFunction({
+    logicFunctionUniversalIdentifier,
+    workspaceId,
+    applicationRegistrationId,
+  }: {
+    logicFunctionUniversalIdentifier: string;
+    workspaceId: string;
+    applicationRegistrationId?: string;
+  }): Promise<LogicFunctionEntity | null> {
+    return this.logicFunctionRepository.findOne(workspaceId, {
+      where: {
+        universalIdentifier: logicFunctionUniversalIdentifier,
+        ...(isDefined(applicationRegistrationId)
+          ? { application: { applicationRegistrationId } }
+          : {}),
+      },
+      ...(isDefined(applicationRegistrationId)
+        ? { relations: { application: true } }
+        : {}),
+    });
   }
 
   private async runFunction({

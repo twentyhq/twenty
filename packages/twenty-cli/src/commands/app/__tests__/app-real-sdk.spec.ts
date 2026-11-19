@@ -167,21 +167,6 @@ const server = await startTestServer((request, response) => {
   }
 
   if (query.includes('exportApplication')) {
-    const components =
-      isPlainObject(syncedManifest) && isArray(syncedManifest.frontComponents)
-        ? syncedManifest.frontComponents
-        : [];
-    const sourcePaths = new Set(
-      components.filter(isPlainObject).flatMap((component) => {
-        if (!isArray(component.sourceFiles)) {
-          return [];
-        }
-        return component.sourceFiles
-          .filter(isPlainObject)
-          .map((file) => file.filePath)
-          .filter(isString);
-      }),
-    );
     return sendJson(response, 200, {
       data: {
         exportApplication: {
@@ -192,13 +177,13 @@ const server = await startTestServer((request, response) => {
               : {}),
             sourceType: 'LOCAL',
           },
-          manifest: syncedManifest,
+          manifest: {
+            ...(isPlainObject(syncedManifest) ? syncedManifest : {}),
+            frontComponents: [],
+            logicFunctions: [],
+          },
           coverage: [],
-          files: [...sourcePaths].map((path) => ({
-            folder: 'source',
-            path,
-            content: uploadedSources.get(path),
-          })),
+          files: [],
         },
       },
     });

@@ -75,7 +75,7 @@ describe('parsePullFiles', () => {
       parsePullFiles({ value: [sourceFile], frontComponents: [component] }),
     ).toEqual([sourceFile]);
     expect(() => parsePullFiles({ value: [sourceFile] })).toThrow(
-      'declared front component',
+      'declared frontend component',
     );
     expect(() =>
       parsePullFiles({
@@ -160,7 +160,7 @@ describe('parsePullFiles', () => {
     const files = [sourceFile, { ...helper, path }];
     expect(() =>
       parsePullFiles({ value: files, frontComponents: withInventory(files) }),
-    ).toThrow('invalid front component source inventory');
+    ).toThrow('invalid application source inventory');
   });
   it('accepts explicitly inventoried generated helpers under dist', () => {
     const files = [sourceFile, { ...helper, path: 'generated/dist/helper.js' }];

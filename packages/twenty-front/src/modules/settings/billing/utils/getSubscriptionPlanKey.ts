@@ -9,7 +9,10 @@ type SubscriptionWithPlan = {
   billingSubscriptionItems?:
     | {
         billingProduct: {
-          metadata: { productKey: BillingProductKey; planKey: BillingPlanKey };
+          metadata: {
+            productKey: BillingProductKey;
+            planKey?: BillingPlanKey | null;
+          };
         };
       }[]
     | null;
@@ -20,4 +23,4 @@ export const getSubscriptionPlanKey = (
   billingSubscription: SubscriptionWithPlan | null | undefined,
 ): BillingPlanKey | undefined =>
   findBaseProductSubscriptionItem(billingSubscription?.billingSubscriptionItems)
-    ?.billingProduct.metadata.planKey;
+    ?.billingProduct.metadata.planKey ?? undefined;

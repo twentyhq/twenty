@@ -54,7 +54,7 @@ jest.mock('@/ai-chat/message-content/components/LazyMarkdownRenderer', () => ({
   ),
 }));
 
-jest.mock('@/ai-chat/tool-calls/components/ToolRecordsWidget', () => ({
+jest.mock('@/ai-chat/thinking-steps/components/ToolRecordsWidget', () => ({
   ToolRecordsWidget: ({
     recordReferences,
   }: {

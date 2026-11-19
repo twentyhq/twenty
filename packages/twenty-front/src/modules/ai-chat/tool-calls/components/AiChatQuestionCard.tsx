@@ -30,7 +30,7 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { StyledAiChatAskCard } from '@/ai-chat/tool-calls/components/StyledAiChatAskCard';
 import { TextWithChatReferences } from '@/ai-chat/message-content/components/TextWithChatReferences';
-import { AiChatComposerActionsRow } from '@/ai-chat/composer/components/AiChatComposerActionsRow';
+import { AiChatComposerActionsRow } from '@/ai-chat/components/AiChatComposerActionsRow';
 import { AiChatContextUsageButton } from '@/ai-chat/usage/components/AiChatContextUsageButton';
 import { AiChatQuestionOtherOption } from '@/ai-chat/tool-calls/components/AiChatQuestionOtherOption';
 import { useAnswerAiChatToolCall } from '@/ai-chat/tool-calls/hooks/useAnswerAiChatToolCall';

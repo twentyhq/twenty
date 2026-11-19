@@ -1278,6 +1278,7 @@ export type BillingProductDto = {
 
 /** The different billing products available */
 export enum BillingProductKey {
+  APPLICATION = 'APPLICATION',
   BASE_PRODUCT = 'BASE_PRODUCT',
   RESOURCE_CREDIT = 'RESOURCE_CREDIT'
 }
@@ -1285,7 +1286,7 @@ export enum BillingProductKey {
 export type BillingProductMetadata = {
   __typename?: 'BillingProductMetadata';
   isLegacy?: Maybe<Scalars['String']['output']>;
-  planKey: BillingPlanKey;
+  planKey?: Maybe<BillingPlanKey>;
   priceUsageBased: BillingUsageType;
   productKey: BillingProductKey;
 };
@@ -1379,6 +1380,7 @@ export type BooleanFieldComparison = {
 
 export type CalendarChannel = {
   __typename?: 'CalendarChannel';
+  connectedAccount?: Maybe<ConnectedAccountPublicDto>;
   connectedAccountId: Scalars['UUID']['output'];
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy;
   createdAt: Scalars['DateTime']['output'];
@@ -6034,6 +6036,7 @@ export enum PermissionFlagType {
   LAYOUTS = 'LAYOUTS',
   MARKETPLACE_APPS = 'MARKETPLACE_APPS',
   PROFILE_INFORMATION = 'PROFILE_INFORMATION',
+  READ_PRIVATE_CHANNELS = 'READ_PRIVATE_CHANNELS',
   ROLES = 'ROLES',
   SECURITY = 'SECURITY',
   SEND_EMAIL_TOOL = 'SEND_EMAIL_TOOL',
@@ -6499,6 +6502,7 @@ export type QueryEventLogsArgs = {
 
 export type QueryExportApplicationArgs = {
   shouldIncludeDependencies?: InputMaybe<Scalars['Boolean']['input']>;
+  shouldIncludeLogicFunctionSources?: InputMaybe<Scalars['Boolean']['input']>;
   shouldIncludePublicAssets?: InputMaybe<Scalars['Boolean']['input']>;
   shouldIncludeSourceDependencies?: InputMaybe<Scalars['Boolean']['input']>;
   shouldIncludeSourceFiles?: InputMaybe<Scalars['Boolean']['input']>;

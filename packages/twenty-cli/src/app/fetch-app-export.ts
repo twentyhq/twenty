@@ -96,6 +96,7 @@ export const fetchAppExport = async ({
     shouldIncludeSourceFiles,
     shouldIncludePublicAssets,
     shouldIncludeSourceDependencies: shouldIncludeSourceFiles,
+    shouldIncludeLogicFunctionSources: shouldIncludeSourceFiles,
   };
   const fileOptionKeys = typedObjectEntries(fileOptions).map(([key]) => key);
   const query = () =>

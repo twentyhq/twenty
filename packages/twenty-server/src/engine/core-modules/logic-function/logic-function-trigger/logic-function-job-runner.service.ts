@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { RetryableLogicFunctionError } from 'twenty-shared/logic-function';
+import { isDefined } from 'twenty-shared/utils';
 
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import {
@@ -8,8 +9,8 @@ import {
   LogicFunctionExecutionExceptionCode,
   LogicFunctionExecutorService,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { isLogicFunctionRetryScheduled } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/is-logic-function-retry-scheduled.util';
 import { LOGIC_FUNCTION_APPLICATION_RETRY_LIMIT } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-application-retry-limit.constant';
-import { isRetryableLogicFunctionExecutionError } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/is-retryable-logic-function-execution-error.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
@@ -41,18 +42,24 @@ export class LogicFunctionJobRunnerService {
   async run({
     logicFunctionPayload,
     retryLimit,
+    attemptsMade,
     persistRetryCount,
   }: {
     logicFunctionPayload: LogicFunctionJobPayload;
     retryLimit: number;
+    attemptsMade: number;
     persistRetryCount: (applicationRetryCount: number) => Promise<void>;
   }): Promise<void> {
     try {
       const retryCount = logicFunctionPayload.applicationRetryCount ?? 0;
-      const maxRetries = Math.min(
-        LOGIC_FUNCTION_APPLICATION_RETRY_LIMIT,
-        retryLimit,
-      );
+      // Platform failures also spend queue attempts, so cap app retries by what the queue has left.
+      const retry = {
+        retryCount,
+        maxRetries: Math.min(
+          LOGIC_FUNCTION_APPLICATION_RETRY_LIMIT,
+          retryCount + retryLimit - attemptsMade,
+        ),
+      };
       const logicFunctionExecutionResult =
         await this.logicFunctionExecutorService.execute({
           logicFunctionId: logicFunctionPayload.logicFunctionId,
@@ -60,23 +67,21 @@ export class LogicFunctionJobRunnerService {
           payload: logicFunctionPayload.payload ?? {},
           userId: logicFunctionPayload.userId,
           userWorkspaceId: logicFunctionPayload.userWorkspaceId,
-          retry: { retryCount, maxRetries },
+          retry,
         });
 
+      const { error: executionError } = logicFunctionExecutionResult;
+
       if (
-        !isRetryableLogicFunctionExecutionError(
-          logicFunctionExecutionResult.error,
-        ) ||
-        retryCount >= maxRetries
+        !isDefined(executionError) ||
+        !isLogicFunctionRetryScheduled({ error: executionError, retry })
       ) {
         return;
       }
 
       await persistRetryCount(retryCount + 1);
 
-      throw new RetryableLogicFunctionError(
-        logicFunctionExecutionResult.error.errorMessage,
-      );
+      throw new RetryableLogicFunctionError(executionError.errorMessage);
     } catch (error) {
       // Failing would make the queue retry a run that is intentionally blocked.
       if (

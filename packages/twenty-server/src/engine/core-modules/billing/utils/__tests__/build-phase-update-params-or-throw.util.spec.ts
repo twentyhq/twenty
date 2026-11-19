@@ -16,6 +16,7 @@ const toUpdatePrices = {
   baseProductPriceId: 'price_base_year',
   seats: 7,
   resourceCreditPriceId: 'price_credit_year',
+  applicationPriceIds: [],
 };
 
 const PHASE_START = 1_700_000_000;
@@ -46,6 +47,34 @@ describe('buildPhaseUpdateParamsOrThrow', () => {
       { price: 'price_base_year', quantity: 7 },
       { price: 'price_credit_year', quantity: 1 },
       { price: ADD_ON_PRICE_ID, quantity: 1 },
+    ]);
+  });
+
+  it('moves an application item to its price for the new interval and keeps its quantity', () => {
+    const phase = buildPhaseUpdateParamsOrThrow({
+      currentPhase: buildPhase([
+        { price: BASE_PRICE_ID, quantity: 3 },
+        { price: CREDIT_PRICE_ID, quantity: 1 },
+        { price: 'price_application_month', quantity: 4 },
+      ]),
+      productKeyByPriceId: new Map([
+        ...productKeyByPriceId,
+        ['price_application_month', BillingProductKey.APPLICATION],
+      ]),
+      toUpdatePrices: {
+        ...toUpdatePrices,
+        targetApplicationPriceIdByCurrentPriceId: new Map([
+          ['price_application_month', 'price_application_year'],
+        ]),
+      },
+      startDate: NEW_START,
+      endDate: undefined,
+    });
+
+    expect(phase.items).toEqual([
+      { price: 'price_base_year', quantity: 7 },
+      { price: 'price_credit_year', quantity: 1 },
+      { price: 'price_application_year', quantity: 4 },
     ]);
   });
 
