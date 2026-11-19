@@ -1,4 +1,6 @@
 import { Inject } from '@nestjs/common';
+
+import { msg } from '@lingui/core/macro';
 import { Command } from 'nest-commander';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -12,6 +14,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -70,7 +73,9 @@ export class AddWorkspaceNavigationMenuSectionCommand extends ProvisionedWorkspa
           flatNavigationMenuItemMaps.byUniversalIdentifier,
         ).filter(isDefined),
         sectionId: v4(),
-        sectionName: 'Workspace',
+        sectionName: i18nLabel(
+          msg({ message: `Workspace`, context: 'navigationMenuItem.name' }),
+        ),
         movableApplicationIds: new Set([
           twentyStandardFlatApplication.id,
           workspaceCustomFlatApplication.id,
