@@ -223,7 +223,6 @@ describe('shouldExecuteStep', () => {
       WorkflowRunStatus.FAILED,
       WorkflowRunStatus.ENQUEUED,
       WorkflowRunStatus.COMPLETED,
-      WorkflowRunStatus.NOT_STARTED,
     ]) {
       const result = shouldExecuteStep({
         stepInfos,

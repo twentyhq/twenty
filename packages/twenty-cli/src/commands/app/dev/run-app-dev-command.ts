@@ -11,6 +11,8 @@ import { createDevClientGenerator } from '@/app/dev/generate-dev-client';
 import { createDevOutput } from '@/app/dev/create-dev-output';
 import { runDevLoop } from '@/app/dev/run-dev-loop';
 import { watchAppInputs } from '@/app/dev/watch-app-inputs';
+import { formatWatchScope } from '@/app/dev/format-watch-scope';
+import { type WatchScope } from '@/app/dev/types/watch-scope.type';
 import { isToolingDiagnostic } from '@/app/parse-tooling-result';
 import { formatToolingDiagnostic } from '@/app/format-tooling-diagnostic';
 import { recordPullBase } from '@/app/record-pull-base';
@@ -37,6 +39,17 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
   let watcher: Awaited<ReturnType<typeof watchAppInputs>>;
   let hasWarnedAboutNode = false;
 
+  const reportWatchScope = (scope: WatchScope) =>
+    emit(
+      {
+        kind: 'watch-scope',
+        message: formatWatchScope({ appPath: project.path, scope }),
+        appPath: project.path,
+        ...scope,
+      },
+      context.signal,
+    );
+
   await runDevLoop<BuiltDevSnapshot>({
     signal: context.signal,
     subscribe: async (invalidate, fail) => {
@@ -45,6 +58,10 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
         signal: context.signal,
         onChange: invalidate,
         onError: fail,
+        onWarning: output.warn,
+        onScopeChange: readBooleanOption(context.options, 'verbose')
+          ? reportWatchScope
+          : undefined,
       });
       try {
         await emit(
