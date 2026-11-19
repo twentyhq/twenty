@@ -28,7 +28,6 @@ describe('ApplyMessageChannelMessageAssociationsVisibilityRestrictionsService', 
   });
 
   it('masks the read state of an association selected without its id', async () => {
-    // the API can return an association without the id it was not asked for
     const records = [{ isRead: false }] as unknown as ObjectRecord[];
 
     await service.applyVisibilityRestrictions({ records, authContext });

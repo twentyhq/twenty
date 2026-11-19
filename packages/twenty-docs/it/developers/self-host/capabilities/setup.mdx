@@ -279,10 +279,9 @@ Redis della coda viene eseguito con `noeviction`: una volta pieno, ogni accodame
 
 | Variabile                                                    | Predefinito | Cosa fa                                                                            |
 | ------------------------------------------------------------ | ----------- | ---------------------------------------------------------------------------------- |
-| `IS_REDIS_MEMORY_FAIRNESS_ENABLED`                           | `falso`     | Rifiuta i job che superano il limite di dimensione o la propria quota.             |
-| `JOB_QUEUE_MAX_JOB_SIZE_BYTES`                               | `5242880`   | Job serializzato più grande accettato.                                             |
-| `JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID`                     | `0.3`       | Quota della memoria libera che un workspace può detenere.                          |
-| `JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER` | `0.4`       | Quota della memoria libera che un'applicazione può detenere, in tutti i workspace. |
+| `JOB_QUEUE_MAX_JOB_SIZE_BYTES`                               | `20971520`  | Job serializzato più grande accettato.                                             |
+| `JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID`                     | `0.4`       | Quota della memoria libera che un workspace può detenere.                          |
+| `JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER` | `0.6`       | Quota della memoria libera che un'applicazione può detenere, in tutti i workspace. |
 | `JOB_QUEUE_MEMORY_RESERVE`                                   | `0.1`       | Quota di `maxmemory` che non viene mai assegnata ai job.                           |
 
 Il limite della quota richiede l'impostazione di `maxmemory` su Redis della coda. I rifiuti vengono registrati e conteggiati in `job_memory_limit_refused_total` in base a coda, nome del job e motivo, mentre `twenty_queue_memory_used_ratio` monitora l'uso della memoria. Se il provider riserva una parte di `maxmemory` (ad esempio `reserved-memory-percent` di ElastiCache), includila in `JOB_QUEUE_MEMORY_RESERVE`, a meno che `maxmemory` non la escluda già.

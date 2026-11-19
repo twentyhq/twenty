@@ -260,7 +260,11 @@ export class ExcludeDeletedRecordsFromUniqueFieldIndexesCommand extends Provisio
       migrations: [],
       subscribers: [],
       poolSize: 1,
-      extra: { ...dataSource.options.extra, query_timeout: undefined },
+      extra: {
+        ...dataSource.options.extra,
+        query_timeout: undefined,
+        statement_timeout: undefined,
+      },
     }).initialize();
 
     try {

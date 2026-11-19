@@ -7,7 +7,10 @@ import { NavigationMenuSectionMenu } from '@/navigation-menu-item/edit/component
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 
 type NavigationMenuEditableSectionProps = {
-  section: Pick<NamedNavigationMenuItem, 'id' | 'name' | 'icon' | 'parentId'>;
+  section: Pick<
+    NamedNavigationMenuItem,
+    'id' | 'name' | 'icon' | 'parentId' | 'type'
+  >;
 };
 
 export const NavigationMenuEditableSection = ({

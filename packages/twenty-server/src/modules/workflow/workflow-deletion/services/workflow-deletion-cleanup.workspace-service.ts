@@ -5,17 +5,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { countLiveNotStartedWorkflowRuns } from 'src/modules/workflow/workflow-deletion/utils/count-live-not-started-workflow-runs.util';
-import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
 
 const WORKFLOW_RUN_DELETION_BATCH_SIZE = 200;
 
 @Injectable()
 export class WorkflowDeletionCleanupWorkspaceService {
-  constructor(
-    private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
-  ) {}
+  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
   async deleteWorkflowRuns({
     workspaceId,
@@ -28,23 +23,18 @@ export class WorkflowDeletionCleanupWorkspaceService {
   }): Promise<void> {
     await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
-        this.deleteRuns({
-          workspaceId,
-          where: isDefined(coreWorkflowVersionId)
+        this.deleteRuns(
+          isDefined(coreWorkflowVersionId)
             ? { coreWorkflowVersionId }
             : { coreWorkflowId },
-        }),
+        ),
       buildSystemAuthContext(workspaceId),
     );
   }
 
-  private async deleteRuns({
-    workspaceId,
-    where,
-  }: {
-    workspaceId: string;
-    where: { coreWorkflowId: string } | { coreWorkflowVersionId: string };
-  }): Promise<void> {
+  private async deleteRuns(
+    where: { coreWorkflowId: string } | { coreWorkflowVersionId: string },
+  ): Promise<void> {
     const workflowRunRepository =
       this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowRunWorkspaceEntity>(
         'workflowRun',
@@ -61,25 +51,7 @@ export class WorkflowDeletionCleanupWorkspaceService {
     let batchRuns = await findRunBatch();
 
     while (batchRuns.length > 0) {
-      const deletedRuns: Pick<
-        WorkflowRunWorkspaceEntity,
-        'status' | 'deletedAt'
-      >[] = (
-        await workflowRunRepository.delete(
-          batchRuns.map(({ id }) => id),
-          { columnsToReturn: ['status', 'deletedAt'] },
-        )
-      ).raw;
-
-      const removedNotStartedRunCount =
-        countLiveNotStartedWorkflowRuns(deletedRuns);
-
-      if (removedNotStartedRunCount > 0) {
-        await this.workflowThrottlingWorkspaceService.decreaseWorkflowRunNotStartedCount(
-          workspaceId,
-          removedNotStartedRunCount,
-        );
-      }
+      await workflowRunRepository.delete(batchRuns.map(({ id }) => id));
 
       batchRuns = await findRunBatch();
     }
