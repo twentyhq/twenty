@@ -7,6 +7,7 @@ import {
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { GRANOLA_PERSONAL_RECONCILE_TIMEOUT_SECONDS } from 'src/constants/granola-personal-connection.constant';
 import { GRANOLA_PERSONAL_RECONCILE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
 import { type GranolaPersonalFolderSelection } from 'src/logic-functions/types/granola-personal-folder-selection.type';
@@ -104,6 +105,7 @@ export const granolaPersonalReconcileHandler = async ({
       client,
       apiKeyFingerprint,
       folderIds: selectedFolderIds,
+      selection: current.selection,
     });
 
     return { success: true, ...result };
@@ -135,6 +137,6 @@ export default defineLogicFunction({
   name: 'granola-personal-reconcile',
   description:
     'Reconciles folder-scoped webhook delivery for a personal Granola connection.',
-  timeoutSeconds: 120,
+  timeoutSeconds: GRANOLA_PERSONAL_RECONCILE_TIMEOUT_SECONDS,
   handler: granolaPersonalReconcileHandler,
 });
