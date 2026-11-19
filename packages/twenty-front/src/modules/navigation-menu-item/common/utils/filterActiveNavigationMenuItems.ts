@@ -16,10 +16,13 @@ export const filterActiveNavigationMenuItems = <
     ]),
   );
 
-  const isActiveWithAncestors = (
-    navigationMenuItem: TNavigationMenuItem,
-    visitedIds: Set<string>,
-  ): boolean => {
+  const isActiveWithAncestors = ({
+    navigationMenuItem,
+    visitedIds,
+  }: {
+    navigationMenuItem: TNavigationMenuItem;
+    visitedIds: Set<string>;
+  }): boolean => {
     if (navigationMenuItem.isActive === false) {
       return false;
     }
@@ -39,10 +42,10 @@ export const filterActiveNavigationMenuItems = <
 
     visitedIds.add(navigationMenuItem.id);
 
-    return isActiveWithAncestors(parent, visitedIds);
+    return isActiveWithAncestors({ navigationMenuItem: parent, visitedIds });
   };
 
   return navigationMenuItems.filter((navigationMenuItem) =>
-    isActiveWithAncestors(navigationMenuItem, new Set()),
+    isActiveWithAncestors({ navigationMenuItem, visitedIds: new Set() }),
   );
 };

@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { computeNavigationMenuItemRemovalOperations } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/compute-navigation-menu-item-removal-operations.util';
@@ -56,7 +58,7 @@ const computeRemoval = ({
     {};
 
   for (const navigationMenuItem of navigationMenuItems) {
-    if (navigationMenuItem.parentId !== null) {
+    if (isDefined(navigationMenuItem.parentId)) {
       childrenByParentId[navigationMenuItem.parentId] = [
         ...(childrenByParentId[navigationMenuItem.parentId] ?? []),
         navigationMenuItem,
