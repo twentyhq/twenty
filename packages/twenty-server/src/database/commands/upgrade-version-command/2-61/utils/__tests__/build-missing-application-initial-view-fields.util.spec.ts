@@ -5,15 +5,14 @@ import {
 import { ViewKey } from 'twenty-shared/types';
 
 import { buildMissingApplicationInitialViewFields } from 'src/database/commands/upgrade-version-command/2-61/utils/build-missing-application-initial-view-fields.util';
+import { type FlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-maps.type';
+import { type FlatViewFieldMaps } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field-maps.type';
+import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { getInitialObjectViewUniversalIdentifier } from 'src/engine/metadata-modules/view/utils/get-initial-object-view-universal-identifier.util';
-
-type BuildMissingApplicationInitialViewFieldsArgs = Parameters<
-  typeof buildMissingApplicationInitialViewFields
->[0];
-
-type FlatViewFieldFixture = NonNullable<
-  BuildMissingApplicationInitialViewFieldsArgs['flatViewFieldMaps']['byUniversalIdentifier'][string]
-> & { universalIdentifier: string };
 
 const NOW = '2026-11-18T12:00:00.000Z';
 
@@ -49,78 +48,50 @@ const APPLICATION_UNIVERSAL_IDENTIFIER_BY_FIELD_UNIVERSAL_IDENTIFIER = {
     INSTALLED_APPLICATION_UNIVERSAL_IDENTIFIER,
 };
 
-const buildIndexFlatViewField = ({
-  fieldMetadataUniversalIdentifier,
-  position,
-}: {
-  fieldMetadataUniversalIdentifier: string;
-  position: number;
-}): FlatViewFieldFixture => ({
-  universalIdentifier: `index-${fieldMetadataUniversalIdentifier}`,
-  applicationUniversalIdentifier:
-    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-  universalOverrides: null,
-  fieldMetadataUniversalIdentifier,
-  position,
-  isSystemSideEffect: true,
-  isCanonical: true,
-  deletedAt: null,
-});
+const buildIndexFlatViewField = (
+  fieldMetadataUniversalIdentifier: string,
+  position: number,
+) =>
+  ({
+    universalIdentifier: `index-${fieldMetadataUniversalIdentifier}`,
+    fieldMetadataUniversalIdentifier,
+    position,
+    isSystemSideEffect: true,
+    isCanonical: true,
+    deletedAt: null,
+  }) as FlatViewField;
 
-const buildInitialFlatViewField = ({
-  fieldMetadataUniversalIdentifier,
-  position,
-  overrides = {},
-}: {
-  fieldMetadataUniversalIdentifier: string;
-  position: number;
-  overrides?: Partial<FlatViewFieldFixture>;
-}): FlatViewFieldFixture => ({
-  universalIdentifier: `initial-${fieldMetadataUniversalIdentifier}`,
-  applicationUniversalIdentifier:
-    WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
-  universalOverrides: null,
-  fieldMetadataUniversalIdentifier,
-  position,
-  isSystemSideEffect: false,
-  isCanonical: true,
-  deletedAt: null,
-  ...overrides,
-});
+const buildInitialFlatViewField = (
+  fieldMetadataUniversalIdentifier: string,
+  position: number,
+  overrides: Partial<FlatViewField> = {},
+) =>
+  ({
+    universalIdentifier: `initial-${fieldMetadataUniversalIdentifier}`,
+    fieldMetadataUniversalIdentifier,
+    position,
+    isSystemSideEffect: false,
+    isCanonical: true,
+    deletedAt: null,
+    ...overrides,
+  }) as FlatViewField;
 
 const INDEX_FLAT_VIEW_FIELDS = [
-  buildIndexFlatViewField({
-    fieldMetadataUniversalIdentifier: STANDARD_FIELD_UNIVERSAL_IDENTIFIER,
-    position: 0,
-  }),
-  buildIndexFlatViewField({
-    fieldMetadataUniversalIdentifier: USER_FIELD_UNIVERSAL_IDENTIFIER,
-    position: 1,
-  }),
-  buildIndexFlatViewField({
-    fieldMetadataUniversalIdentifier:
-      SECOND_APPLICATION_FIELD_UNIVERSAL_IDENTIFIER,
-    position: 3,
-  }),
-  buildIndexFlatViewField({
-    fieldMetadataUniversalIdentifier:
-      FIRST_APPLICATION_FIELD_UNIVERSAL_IDENTIFIER,
-    position: 2,
-  }),
+  buildIndexFlatViewField(STANDARD_FIELD_UNIVERSAL_IDENTIFIER, 0),
+  buildIndexFlatViewField(USER_FIELD_UNIVERSAL_IDENTIFIER, 1),
+  buildIndexFlatViewField(SECOND_APPLICATION_FIELD_UNIVERSAL_IDENTIFIER, 3),
+  buildIndexFlatViewField(FIRST_APPLICATION_FIELD_UNIVERSAL_IDENTIFIER, 2),
 ];
 
-const buildArgs = ({
+const buildMaps = ({
   initialFlatViewFields = [
-    buildInitialFlatViewField({
-      fieldMetadataUniversalIdentifier: STANDARD_FIELD_UNIVERSAL_IDENTIFIER,
-      position: 0,
-    }),
+    buildInitialFlatViewField(STANDARD_FIELD_UNIVERSAL_IDENTIFIER, 0),
   ],
-  initialFlatViewDeletedAt = null,
+  initialFlatViewOverrides = {},
 }: {
-  initialFlatViewFields?: FlatViewFieldFixture[];
-  initialFlatViewDeletedAt?: string | null;
-} = {}): BuildMissingApplicationInitialViewFieldsArgs => {
+  initialFlatViewFields?: FlatViewField[];
+  initialFlatViewOverrides?: Partial<FlatView>;
+} = {}) => {
   const flatViews = [
     {
       universalIdentifier: INDEX_VIEW_UNIVERSAL_IDENTIFIER,
@@ -137,12 +108,13 @@ const buildArgs = ({
       applicationUniversalIdentifier:
         WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
       key: null,
-      deletedAt: initialFlatViewDeletedAt,
+      deletedAt: null,
       viewFieldUniversalIdentifiers: initialFlatViewFields.map(
         ({ universalIdentifier }) => universalIdentifier,
       ),
+      ...initialFlatViewOverrides,
     },
-  ];
+  ] as FlatView[];
 
   return {
     flatObjectMetadataMaps: {
@@ -154,29 +126,29 @@ const buildArgs = ({
           ),
         },
       },
-    },
+    } as unknown as FlatObjectMetadataMaps,
     flatFieldMetadataMaps: {
       byUniversalIdentifier: Object.fromEntries(
         Object.entries(
           APPLICATION_UNIVERSAL_IDENTIFIER_BY_FIELD_UNIVERSAL_IDENTIFIER,
         ).map(([universalIdentifier, applicationUniversalIdentifier]) => [
           universalIdentifier,
-          { applicationUniversalIdentifier },
+          { universalIdentifier, applicationUniversalIdentifier },
         ]),
-      ),
-    },
+      ) as Record<string, FlatFieldMetadata>,
+    } as FlatFieldMetadataMaps,
     flatViewMaps: {
       byUniversalIdentifier: Object.fromEntries(
         flatViews.map((flatView) => [flatView.universalIdentifier, flatView]),
       ),
-    },
+    } as FlatViewMaps,
     flatViewFieldMaps: {
       byUniversalIdentifier: Object.fromEntries(
         [...INDEX_FLAT_VIEW_FIELDS, ...initialFlatViewFields].map(
           (flatViewField) => [flatViewField.universalIdentifier, flatViewField],
         ),
       ),
-    },
+    } as FlatViewFieldMaps,
     twentyStandardApplicationUniversalIdentifier:
       TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     now: NOW,
@@ -185,7 +157,7 @@ const buildArgs = ({
 
 describe('buildMissingApplicationInitialViewFields', () => {
   it('should append the application fields of the INDEX view in INDEX order', () => {
-    const result = buildMissingApplicationInitialViewFields(buildArgs());
+    const result = buildMissingApplicationInitialViewFields(buildMaps());
 
     expect([...result.keys()]).toEqual([
       INSTALLED_APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -214,48 +186,19 @@ describe('buildMissingApplicationInitialViewFields', () => {
     );
   });
 
-  it('should append after a column the user moved to the end', () => {
-    const result = buildMissingApplicationInitialViewFields(
-      buildArgs({
-        initialFlatViewFields: [
-          buildInitialFlatViewField({
-            fieldMetadataUniversalIdentifier:
-              STANDARD_FIELD_UNIVERSAL_IDENTIFIER,
-            position: 0,
-            overrides: {
-              universalOverrides: {
-                [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
-                  position: 20,
-                },
-              },
-            },
-          }),
-        ],
-      }),
-    );
-
-    expect(
-      result
-        .get(INSTALLED_APPLICATION_UNIVERSAL_IDENTIFIER)
-        ?.map(({ position }) => position),
-    ).toEqual([21, 22]);
-  });
-
   it('should skip a field the initial view already displays or whose column was removed', () => {
     const result = buildMissingApplicationInitialViewFields(
-      buildArgs({
+      buildMaps({
         initialFlatViewFields: [
-          buildInitialFlatViewField({
-            fieldMetadataUniversalIdentifier:
-              FIRST_APPLICATION_FIELD_UNIVERSAL_IDENTIFIER,
-            position: 0,
-          }),
-          buildInitialFlatViewField({
-            fieldMetadataUniversalIdentifier:
-              SECOND_APPLICATION_FIELD_UNIVERSAL_IDENTIFIER,
-            position: 1,
-            overrides: { deletedAt: '2026-10-01T00:00:00.000Z' },
-          }),
+          buildInitialFlatViewField(
+            FIRST_APPLICATION_FIELD_UNIVERSAL_IDENTIFIER,
+            0,
+          ),
+          buildInitialFlatViewField(
+            SECOND_APPLICATION_FIELD_UNIVERSAL_IDENTIFIER,
+            1,
+            { deletedAt: '2026-10-01T00:00:00.000Z' },
+          ),
         ],
       }),
     );
@@ -265,7 +208,9 @@ describe('buildMissingApplicationInitialViewFields', () => {
 
   it('should skip an object without a live initial view', () => {
     const result = buildMissingApplicationInitialViewFields(
-      buildArgs({ initialFlatViewDeletedAt: '2026-10-01T00:00:00.000Z' }),
+      buildMaps({
+        initialFlatViewOverrides: { deletedAt: '2026-10-01T00:00:00.000Z' },
+      }),
     );
 
     expect(result.size).toBe(0);

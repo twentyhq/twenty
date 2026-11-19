@@ -2,19 +2,13 @@ import { getSystemViewFieldUniversalIdentifier } from 'twenty-shared/application
 import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
-import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
-import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
-import { resolveEffectiveUniversalFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-universal-flat-entity-property.util';
 import { getInitialObjectViewUniversalIdentifier } from 'src/engine/metadata-modules/view/utils/get-initial-object-view-universal-identifier.util';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
-type ByUniversalIdentifier<TFlatEntity> = {
-  byUniversalIdentifier: Partial<Record<string, TFlatEntity>>;
-};
-
+// Mirrors onto each object initial view the INDEX columns of fields contributed
+// by an installed application, which predate fieldInitialObjectViewFieldOnCreate.
 export const buildMissingApplicationInitialViewFields = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
@@ -22,35 +16,13 @@ export const buildMissingApplicationInitialViewFields = ({
   flatViewFieldMaps,
   twentyStandardApplicationUniversalIdentifier,
   now,
-}: {
-  flatObjectMetadataMaps: ByUniversalIdentifier<
-    Pick<FlatObjectMetadata, 'universalIdentifier' | 'viewUniversalIdentifiers'>
-  >;
-  flatFieldMetadataMaps: ByUniversalIdentifier<
-    Pick<FlatFieldMetadata, 'applicationUniversalIdentifier'>
-  >;
-  flatViewMaps: ByUniversalIdentifier<
-    Pick<
-      FlatView,
-      | 'universalIdentifier'
-      | 'applicationUniversalIdentifier'
-      | 'key'
-      | 'deletedAt'
-      | 'viewFieldUniversalIdentifiers'
-    >
-  >;
-  flatViewFieldMaps: ByUniversalIdentifier<
-    Pick<
-      FlatViewField,
-      | 'applicationUniversalIdentifier'
-      | 'universalOverrides'
-      | 'fieldMetadataUniversalIdentifier'
-      | 'position'
-      | 'isSystemSideEffect'
-      | 'isCanonical'
-      | 'deletedAt'
-    >
-  >;
+}: Pick<
+  AllFlatEntityMaps,
+  | 'flatObjectMetadataMaps'
+  | 'flatFieldMetadataMaps'
+  | 'flatViewMaps'
+  | 'flatViewFieldMaps'
+> & {
   twentyStandardApplicationUniversalIdentifier: string;
   now: string;
 }): Map<string, UniversalFlatViewField[]> => {
@@ -99,16 +71,7 @@ export const buildMissingApplicationInitialViewFields = ({
               viewFieldUniversalIdentifier
             ],
         )
-        .filter(isDefined)
-        .map((flatViewField) => ({
-          flatViewField,
-          // A user's column move is stored as an override, not in position.
-          effectivePosition: resolveEffectiveUniversalFlatEntityProperty({
-            metadataName: 'viewField',
-            universalFlatEntity: flatViewField,
-            property: 'position',
-          }),
-        }));
+        .filter(isDefined);
 
     const initialFlatViewFields = findFlatViewFields(
       initialFlatView.viewFieldUniversalIdentifiers,
@@ -117,18 +80,16 @@ export const buildMissingApplicationInitialViewFields = ({
     // Soft-deleted view fields count: a column the user removed stays removed.
     const displayedFieldMetadataUniversalIdentifiers = new Set(
       initialFlatViewFields
-        .filter(({ flatViewField }) => flatViewField.isCanonical)
-        .map(
-          ({ flatViewField }) => flatViewField.fieldMetadataUniversalIdentifier,
-        ),
+        .filter((flatViewField) => flatViewField.isCanonical)
+        .map((flatViewField) => flatViewField.fieldMetadataUniversalIdentifier),
     );
 
     let nextPosition =
       initialFlatViewFields
-        .filter(({ flatViewField }) => !isDefined(flatViewField.deletedAt))
+        .filter((flatViewField) => !isDefined(flatViewField.deletedAt))
         .reduce(
-          (maxPosition, { effectivePosition }) =>
-            Math.max(maxPosition, effectivePosition),
+          (maxPosition, flatViewField) =>
+            Math.max(maxPosition, flatViewField.position),
           -1,
         ) + 1;
 
@@ -136,18 +97,17 @@ export const buildMissingApplicationInitialViewFields = ({
       indexFlatView.viewFieldUniversalIdentifiers,
     )
       .filter(
-        ({ flatViewField }) =>
+        (flatViewField) =>
           flatViewField.isSystemSideEffect &&
           flatViewField.isCanonical &&
           !isDefined(flatViewField.deletedAt),
       )
       .sort(
-        (indexFlatViewFieldA, indexFlatViewFieldB) =>
-          indexFlatViewFieldA.effectivePosition -
-          indexFlatViewFieldB.effectivePosition,
+        (flatViewFieldA, flatViewFieldB) =>
+          flatViewFieldA.position - flatViewFieldB.position,
       );
 
-    for (const { flatViewField: indexFlatViewField } of indexFlatViewFields) {
+    for (const indexFlatViewField of indexFlatViewFields) {
       const { fieldMetadataUniversalIdentifier } = indexFlatViewField;
 
       const flatFieldMetadata =

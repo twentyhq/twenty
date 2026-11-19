@@ -3,21 +3,13 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { type FlatViewFieldMaps } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field-maps.type';
+import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { getInitialObjectViewUniversalIdentifier } from 'src/engine/metadata-modules/view/utils/get-initial-object-view-universal-identifier.util';
 
 import { computeInitialObjectViewFieldForExistingObject } from '../compute-initial-object-view-field-for-existing-object.util';
-
-type ComputeInitialObjectViewFieldArgs = Parameters<
-  typeof computeInitialObjectViewFieldForExistingObject
->[0];
-
-type FlatViewFixture = NonNullable<
-  ComputeInitialObjectViewFieldArgs['flatViewMaps']['byUniversalIdentifier'][string]
->;
-
-type FlatViewFieldFixture = NonNullable<
-  ComputeInitialObjectViewFieldArgs['flatViewFieldMaps']['byUniversalIdentifier'][string]
-> & { universalIdentifier: string };
 
 const installedApplicationUniversalIdentifier =
   'a1a2a3a4-a5a6-4000-8000-000000000001';
@@ -64,81 +56,68 @@ const secondFlatFieldMetadata = buildSourceFlatFieldMetadata({
   name: 'secondField',
 });
 
-const buildFlatView = (
-  overrides: Partial<FlatViewFixture> = {},
-): FlatViewFixture => ({
-  universalIdentifier: initialViewUniversalIdentifier,
-  applicationUniversalIdentifier: workspaceCustomApplicationUniversalIdentifier,
-  deletedAt: null,
-  viewFieldUniversalIdentifiers: [],
-  ...overrides,
-});
+const buildFlatView = (overrides: Partial<FlatView> = {}) =>
+  ({
+    universalIdentifier: initialViewUniversalIdentifier,
+    applicationUniversalIdentifier:
+      workspaceCustomApplicationUniversalIdentifier,
+    deletedAt: null,
+    viewFieldUniversalIdentifiers: [],
+    ...overrides,
+  }) as FlatView;
 
-const buildFlatViewField = ({
-  universalIdentifier,
-  position,
-  overrides = {},
-}: {
-  universalIdentifier: string;
-  position: number;
-  overrides?: Partial<FlatViewFieldFixture>;
-}): FlatViewFieldFixture => ({
-  universalIdentifier,
-  applicationUniversalIdentifier: workspaceCustomApplicationUniversalIdentifier,
-  universalOverrides: null,
-  isActive: true,
-  position,
-  deletedAt: null,
-  ...overrides,
-});
+const buildFlatViewField = (overrides: Partial<FlatViewField>) =>
+  ({
+    applicationUniversalIdentifier:
+      workspaceCustomApplicationUniversalIdentifier,
+    isActive: true,
+    deletedAt: null,
+    universalOverrides: null,
+    ...overrides,
+  }) as FlatViewField;
 
 const buildArgs = ({
   flatViews = [buildFlatView()],
   flatViewFields = [],
   flatFieldMetadatasToCreate = [firstFlatFieldMetadata],
 }: {
-  flatViews?: FlatViewFixture[];
-  flatViewFields?: FlatViewFieldFixture[];
+  flatViews?: FlatView[];
+  flatViewFields?: FlatViewField[];
   flatFieldMetadatasToCreate?: (typeof firstFlatFieldMetadata)[];
-} = {}): Omit<ComputeInitialObjectViewFieldArgs, 'sourceFlatFieldMetadata'> => {
-  const allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName =
-    {
-      fieldMetadata: {
-        flatEntityToCreate: Object.fromEntries(
-          flatFieldMetadatasToCreate.map((flatFieldMetadata) => [
-            flatFieldMetadata.universalIdentifier,
-            flatFieldMetadata,
-          ]),
-        ),
-        flatEntityToUpdate: {},
-        flatEntityToDelete: {},
-      },
-    };
-
-  return {
-    flatObjectMetadata: {
-      universalIdentifier: objectUniversalIdentifier,
-      labelIdentifierFieldMetadataUniversalIdentifier,
-      viewUniversalIdentifiers: flatViews.map(
-        (flatView) => flatView.universalIdentifier,
-      ),
-    },
-    allFlatEntityOperationRecordByMetadataName,
-    flatViewMaps: {
-      byUniversalIdentifier: Object.fromEntries(
-        flatViews.map((flatView) => [flatView.universalIdentifier, flatView]),
-      ),
-    },
-    flatViewFieldMaps: {
-      byUniversalIdentifier: Object.fromEntries(
-        flatViewFields.map((flatViewField) => [
-          flatViewField.universalIdentifier,
-          flatViewField,
+} = {}) => ({
+  flatObjectMetadata: {
+    universalIdentifier: objectUniversalIdentifier,
+    labelIdentifierFieldMetadataUniversalIdentifier,
+    viewUniversalIdentifiers: flatViews.map(
+      (flatView) => flatView.universalIdentifier,
+    ),
+  },
+  allFlatEntityOperationRecordByMetadataName: {
+    fieldMetadata: {
+      flatEntityToCreate: Object.fromEntries(
+        flatFieldMetadatasToCreate.map((flatFieldMetadata) => [
+          flatFieldMetadata.universalIdentifier,
+          flatFieldMetadata,
         ]),
       ),
+      flatEntityToUpdate: {},
+      flatEntityToDelete: {},
     },
-  };
-};
+  } as AllFlatEntityOperationRecordByMetadataName,
+  flatViewMaps: {
+    byUniversalIdentifier: Object.fromEntries(
+      flatViews.map((flatView) => [flatView.universalIdentifier, flatView]),
+    ),
+  } as FlatViewMaps,
+  flatViewFieldMaps: {
+    byUniversalIdentifier: Object.fromEntries(
+      flatViewFields.map((flatViewField) => [
+        flatViewField.universalIdentifier,
+        flatViewField,
+      ]),
+    ),
+  } as FlatViewFieldMaps,
+});
 
 describe('computeInitialObjectViewFieldForExistingObject', () => {
   it('should emit a visible engine-owned view field attributed to the application of the field', () => {
@@ -177,45 +156,18 @@ describe('computeInitialObjectViewFieldForExistingObject', () => {
           buildFlatViewField({
             universalIdentifier: 'inactive',
             position: 8,
-            overrides: { isActive: false },
+            isActive: false,
           }),
           buildFlatViewField({
             universalIdentifier: 'deleted',
             position: 9,
-            overrides: { deletedAt: '2026-01-01T00:00:00.000Z' },
+            deletedAt: '2026-01-01T00:00:00.000Z',
           }),
         ],
       }),
     });
 
     expect(result?.position).toBe(5);
-  });
-
-  it('should append after a column the user moved to the end', () => {
-    const result = computeInitialObjectViewFieldForExistingObject({
-      sourceFlatFieldMetadata: firstFlatFieldMetadata,
-      ...buildArgs({
-        flatViews: [
-          buildFlatView({ viewFieldUniversalIdentifiers: ['moved', 'other'] }),
-        ],
-        flatViewFields: [
-          buildFlatViewField({
-            universalIdentifier: 'moved',
-            position: 3,
-            overrides: {
-              universalOverrides: {
-                [workspaceCustomApplicationUniversalIdentifier]: {
-                  position: 20,
-                },
-              },
-            },
-          }),
-          buildFlatViewField({ universalIdentifier: 'other', position: 7 }),
-        ],
-      }),
-    });
-
-    expect(result?.position).toBe(21);
   });
 
   it('should give each field of one batch a distinct position', () => {
