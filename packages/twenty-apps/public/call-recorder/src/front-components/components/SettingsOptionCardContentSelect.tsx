@@ -2,14 +2,15 @@ import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-sdk/utils';
 import { type IconComponent } from 'twenty-ui/icon';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsCardSeparator } from 'src/front-components/components/SettingsCardSeparator';
 import {
-  StyledSettingsCardContent,
   StyledSettingsCardDescription,
   StyledSettingsCardIcon,
+  StyledSettingsCardRow,
   StyledSettingsCardTextContainer,
   StyledSettingsCardTitle,
 } from 'src/front-components/components/SettingsCardContentBase';
@@ -39,22 +40,26 @@ export const SettingsOptionCardContentSelect = ({
   children,
 }: SettingsOptionCardContentSelectProps) => (
   <>
-    <StyledSettingsCardContent>
-      {isDefined(Icon) && (
-        <StyledSettingsCardIcon>
-          <SettingsOptionIconCustomizer Icon={Icon} />
-        </StyledSettingsCardIcon>
-      )}
-      <StyledSettingsCardTextContainer>
-        <StyledSettingsCardTitle id={titleId}>{title}</StyledSettingsCardTitle>
-        {description && (
-          <StyledSettingsCardDescription>
-            <OverflowingTextWithTooltip text={description} />
-          </StyledSettingsCardDescription>
+    <Card.Content>
+      <StyledSettingsCardRow>
+        {isDefined(Icon) && (
+          <StyledSettingsCardIcon>
+            <SettingsOptionIconCustomizer Icon={Icon} />
+          </StyledSettingsCardIcon>
         )}
-      </StyledSettingsCardTextContainer>
-      <StyledSelectContainer>{children}</StyledSelectContainer>
-    </StyledSettingsCardContent>
+        <StyledSettingsCardTextContainer>
+          <StyledSettingsCardTitle id={titleId}>
+            {title}
+          </StyledSettingsCardTitle>
+          {description && (
+            <StyledSettingsCardDescription>
+              <OverflowingTextWithTooltip text={description} />
+            </StyledSettingsCardDescription>
+          )}
+        </StyledSettingsCardTextContainer>
+        <StyledSelectContainer>{children}</StyledSelectContainer>
+      </StyledSettingsCardRow>
+    </Card.Content>
     {divider && <SettingsCardSeparator />}
   </>
 );

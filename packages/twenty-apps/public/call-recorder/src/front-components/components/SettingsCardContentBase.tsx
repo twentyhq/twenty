@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
-import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-export const StyledSettingsCardContent = styled(Card.Content)`
+export const StyledSettingsCardRow = styled.div`
   align-items: center;
   display: flex;
   gap: ${() => themeCssVariables.spacing[3]};

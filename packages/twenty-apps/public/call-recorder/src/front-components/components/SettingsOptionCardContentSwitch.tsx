@@ -6,22 +6,16 @@ import { type IconComponent } from 'twenty-ui/icon';
 import { Switch } from 'twenty-ui/primitives/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsCardSeparator } from 'src/front-components/components/SettingsCardSeparator';
 import {
   StyledSettingsCardDescription,
   StyledSettingsCardIcon,
+  StyledSettingsCardRow,
   StyledSettingsCardTextContainer,
   StyledSettingsCardTitle,
 } from 'src/front-components/components/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from 'src/front-components/components/SettingsOptionIconCustomizer';
-
-const StyledSettingsCardSwitchContent = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${() => themeCssVariables.spacing[3]};
-`;
 
 const StyledSettingsCardDescriptionText = styled.span`
   display: block;
@@ -65,7 +59,7 @@ export const SettingsOptionCardContentSwitch = ({
           disabled={disabled}
           render={<label htmlFor={switchId} aria-labelledby={titleId} />}
         />
-        <StyledSettingsCardSwitchContent>
+        <StyledSettingsCardRow>
           {isDefined(Icon) && (
             <StyledSettingsCardIcon>
               <SettingsOptionIconCustomizer Icon={Icon} />
@@ -101,7 +95,7 @@ export const SettingsOptionCardContentSwitch = ({
               size="sm"
             />
           </Card.Control>
-        </StyledSettingsCardSwitchContent>
+        </StyledSettingsCardRow>
       </Card.Content>
       {divider && <SettingsCardSeparator />}
     </>

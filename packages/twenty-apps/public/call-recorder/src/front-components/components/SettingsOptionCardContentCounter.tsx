@@ -8,14 +8,15 @@ import {
   type NumberStepperProps,
 } from 'twenty-ui/components/input';
 import { type IconComponent } from 'twenty-ui/icon';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsCardSeparator } from 'src/front-components/components/SettingsCardSeparator';
 import {
-  StyledSettingsCardContent,
   StyledSettingsCardDescription,
   StyledSettingsCardIcon,
+  StyledSettingsCardRow,
   StyledSettingsCardTextContainer,
   StyledSettingsCardTitle,
 } from 'src/front-components/components/SettingsCardContentBase';
@@ -62,37 +63,39 @@ export const SettingsOptionCardContentCounter = ({
 
   return (
     <>
-      <StyledSettingsCardContent>
-        {isDefined(Icon) && (
-          <StyledSettingsCardIcon>
-            <SettingsOptionIconCustomizer Icon={Icon} />
-          </StyledSettingsCardIcon>
-        )}
-        <StyledSettingsCardTextContainer>
-          <StyledSettingsCardTitle id={titleId}>
-            {title}
-          </StyledSettingsCardTitle>
-          {hasDescription && (
-            <StyledSettingsCardDescription id={descriptionId}>
-              <OverflowingTextWithTooltip text={description} />
-            </StyledSettingsCardDescription>
+      <Card.Content>
+        <StyledSettingsCardRow>
+          {isDefined(Icon) && (
+            <StyledSettingsCardIcon>
+              <SettingsOptionIconCustomizer Icon={Icon} />
+            </StyledSettingsCardIcon>
           )}
-        </StyledSettingsCardTextContainer>
-        <StyledCounterContainer>
-          <NumberStepper
-            aria-labelledby={titleId}
-            aria-describedby={hasDescription ? descriptionId : undefined}
-            value={value}
-            min={minValue}
-            max={maxValue}
-            disabled={disabled}
-            decrementLabel={t('Decrease value')}
-            incrementLabel={t('Increase value')}
-            onValueChange={onValueChange}
-            onBlur={onBlur}
-          />
-        </StyledCounterContainer>
-      </StyledSettingsCardContent>
+          <StyledSettingsCardTextContainer>
+            <StyledSettingsCardTitle id={titleId}>
+              {title}
+            </StyledSettingsCardTitle>
+            {hasDescription && (
+              <StyledSettingsCardDescription id={descriptionId}>
+                <OverflowingTextWithTooltip text={description} />
+              </StyledSettingsCardDescription>
+            )}
+          </StyledSettingsCardTextContainer>
+          <StyledCounterContainer>
+            <NumberStepper
+              aria-labelledby={titleId}
+              aria-describedby={hasDescription ? descriptionId : undefined}
+              value={value}
+              min={minValue}
+              max={maxValue}
+              disabled={disabled}
+              decrementLabel={t('Decrease value')}
+              incrementLabel={t('Increase value')}
+              onValueChange={onValueChange}
+              onBlur={onBlur}
+            />
+          </StyledCounterContainer>
+        </StyledSettingsCardRow>
+      </Card.Content>
       {divider && <SettingsCardSeparator />}
     </>
   );
