@@ -5,9 +5,9 @@ import { type UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-res
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import {
   ActorFromAuthContextService,
@@ -27,9 +27,9 @@ export class UpdatedByUpdateOnePreQueryHook implements WorkspacePreQueryHookInst
     payload: UpdateOneResolverArgs<RecordInput>,
   ): Promise<UpdateOneResolverArgs<RecordInput>> {
     if (!isDefined(payload.data)) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         'Payload data is required',
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
