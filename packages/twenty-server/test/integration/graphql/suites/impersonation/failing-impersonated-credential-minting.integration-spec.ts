@@ -1,8 +1,11 @@
 import { authorizeApp } from 'test/integration/graphql/suites/user-session/utils/authorize-app.util';
 import { generatePlaygroundToken } from 'test/integration/graphql/suites/user-session/utils/generate-playground-token.util';
+import { assignRoleToApiKey } from 'test/integration/graphql/utils/assign-role-to-api-key.util';
+import { createApiKey } from 'test/integration/graphql/utils/create-api-key.util';
 import { generateApiKeyToken } from 'test/integration/graphql/utils/generate-api-key-token.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { impersonate } from 'test/integration/graphql/utils/impersonate.util';
+import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
@@ -66,6 +69,44 @@ describe('Impersonation - credential minting denial (integration)', () => {
       it('should refuse to mint an API key token', async () => {
         const response = await generateApiKeyToken({
           apiKeyId: API_KEY_DATA_SEED_IDS.ID_1,
+          accessToken: impersonationAccessToken,
+        });
+
+        expectAuthPrincipalRefused(response.body.errors);
+      });
+
+      it('should refuse to create an API key', async () => {
+        const response = await createApiKey({
+          name: 'Impersonated key',
+          expiresAt: '2099-01-01T00:00:00.000Z',
+          roleId: uuidv4(),
+          accessToken: impersonationAccessToken,
+        });
+
+        expectAuthPrincipalRefused(response.body.errors);
+      });
+
+      it('should refuse to create an API key through REST', async () => {
+        const response = await makeRestApiRequest({
+          method: 'post',
+          path: '/apiKeys',
+          bearer: impersonationAccessToken,
+          body: {
+            name: 'Impersonated key',
+            expiresAt: '2099-01-01T00:00:00.000Z',
+          },
+        });
+
+        expect(response.status).toBe(403);
+        expect(response.body.messages).toStrictEqual([
+          AUTH_PRINCIPAL_REFUSED_MESSAGE,
+        ]);
+      });
+
+      it('should refuse to assign a role to an API key', async () => {
+        const response = await assignRoleToApiKey({
+          apiKeyId: API_KEY_DATA_SEED_IDS.ID_1,
+          roleId: uuidv4(),
           accessToken: impersonationAccessToken,
         });
 
