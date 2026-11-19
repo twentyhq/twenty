@@ -155,6 +155,7 @@ export class AgentChatWebPushNotificationService {
           isRenotifyForced: reason === 'DIRECT_MESSAGE' || reason === 'MENTION',
           webPushSubscriptions,
           workspaceMemberById,
+          assistantDisplayName: workspace.aiChatAssistantProfile.displayName,
         });
       } catch (error) {
         this.logger.warn(
@@ -173,6 +174,7 @@ export class AgentChatWebPushNotificationService {
     isRenotifyForced,
     webPushSubscriptions,
     workspaceMemberById,
+    assistantDisplayName,
   }: {
     workspaceId: string;
     thread: AgentChatThreadWorkspaceEntity;
@@ -185,6 +187,7 @@ export class AgentChatWebPushNotificationService {
     workspaceMemberById: Partial<
       Record<string, WorkspaceMemberWorkspaceEntity>
     >;
+    assistantDisplayName: string;
   }): Promise<void> {
     const [readableThreadId] = await this.sharingService.findReadableThreadIds({
       workspaceId,
@@ -214,6 +217,7 @@ export class AgentChatWebPushNotificationService {
           recipientWorkspaceMemberId: recipient.id,
           workspaceMemberById,
           isPreviewEnabled: recipient.isInboxNotificationPreviewEnabled,
+          assistantDisplayName,
         }),
         renotify: isRenotifyForced || isOutsideRenotifyCooldown,
       },

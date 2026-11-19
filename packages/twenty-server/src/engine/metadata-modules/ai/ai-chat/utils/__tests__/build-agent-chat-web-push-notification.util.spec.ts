@@ -43,6 +43,7 @@ const build = (
     recipientWorkspaceMemberId: ME,
     workspaceMemberById,
     isPreviewEnabled: true,
+    assistantDisplayName: 'Twenty AI',
     ...overrides,
   });
 
@@ -68,6 +69,18 @@ describe('buildAgentChatWebPushNotification', () => {
         },
       }).title,
     ).toBe('Felix Martin');
+  });
+
+  it('should show the message like the inbox preview', () => {
+    expect(
+      build({
+        thread: {
+          ...channelThread,
+          lastMessageText:
+            '**Ship it** with [[record:agentChatAssistant:agentChatAssistant:Ada]] and [[record:workspaceMember:20202020-0000-4000-8000-000000000001:Jane Austen]]',
+        },
+      }).body,
+    ).toBe('Ship it with @Twenty AI and Jane Austen');
   });
 
   it('should hide the sender, the chat and the message text when the preview is off', () => {

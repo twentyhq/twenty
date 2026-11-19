@@ -1,4 +1,4 @@
-import { replaceMalformedChatReferencesWithDisplayName } from '@/ai-chat/message-content/utils/replaceMalformedChatReferencesWithDisplayName';
+import { replaceMalformedChatReferencesWithDisplayName } from '@/ai/utils/replace-malformed-chat-references-with-display-name.util';
 
 describe('replaceMalformedChatReferencesWithDisplayName', () => {
   it('should leave plain text unchanged', () => {
