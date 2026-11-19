@@ -1,10 +1,12 @@
-import { defineApplication } from 'twenty-sdk/define';
+import { defineApplication, FieldType } from 'twenty-sdk/define';
+import { GRANOLA_PERSONAL_SYNC_ENABLED_ENV_VAR_NAME } from 'src/constants/granola-personal-connection.constant';
 import { GRANOLA_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/granola-api-key-env-var-name';
 import {
   APP_DESCRIPTION,
   APP_DISPLAY_NAME,
   APPLICATION_UNIVERSAL_IDENTIFIER,
   GRANOLA_API_KEY_VARIABLE_UNIVERSAL_IDENTIFIER,
+  GRANOLA_PERSONAL_SYNC_ENABLED_VARIABLE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
 export default defineApplication({
@@ -29,6 +31,16 @@ export default defineApplication({
       description:
         'Workspace or personal API key from Granola Settings → Connectors → API keys.',
       isSecret: true,
+    },
+    [GRANOLA_PERSONAL_SYNC_ENABLED_ENV_VAR_NAME]: {
+      universalIdentifier:
+        GRANOLA_PERSONAL_SYNC_ENABLED_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Personal sync',
+      description: 'Allow members to sync new notes from folders they select.',
+      type: FieldType.BOOLEAN,
+      isSecret: false,
+      scope: 'WORKSPACE',
+      value: true,
     },
   },
 });
