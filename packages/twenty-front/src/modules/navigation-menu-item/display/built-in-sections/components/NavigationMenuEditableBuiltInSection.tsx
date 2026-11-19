@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro';
-import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
 import { NavigationMenuBuiltInSection } from '@/navigation-menu-item/display/built-in-sections/components/NavigationMenuBuiltInSection';
@@ -12,7 +11,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 type NavigationMenuEditableBuiltInSectionProps = {
   section: Pick<
     NavigationMenuItem,
-    'id' | 'name' | 'icon' | 'parentId' | 'type'
+    'id' | 'name' | 'icon' | 'parentId' | 'type' | 'builtInSectionKey'
   >;
 };
 
@@ -22,7 +21,7 @@ export const NavigationMenuEditableBuiltInSection = ({
   const { t } = useLingui();
   const areAiChatSectionsAvailable = useAreAiChatSectionsAvailable();
   const builtInSection = NAVIGATION_MENU_BUILT_IN_SECTIONS.find(
-    ({ type }) => type === section.type,
+    ({ key }) => key === section.builtInSectionKey,
   );
 
   if (builtInSection === undefined) {
@@ -31,7 +30,7 @@ export const NavigationMenuEditableBuiltInSection = ({
 
   const sectionMenu = <NavigationMenuSectionMenu section={section} />;
   const canShowContent =
-    builtInSection.type !== NavigationMenuItemType.FAVORITES &&
+    builtInSection.key !== 'favorites' &&
     areAiChatSectionsAvailable;
 
   if (canShowContent) {

@@ -1,5 +1,4 @@
 import { type ReactNode } from 'react';
-import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { NavigationDrawerInboxChannelsSection } from '@/inbox/components/NavigationDrawerInboxChannelsSection';
 import { NavigationDrawerInboxTriageSection } from '@/inbox/components/NavigationDrawerInboxTriageSection';
@@ -10,7 +9,7 @@ import { useAreAiChatSectionsAvailable } from '@/navigation-menu-item/display/ho
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type NavigationMenuBuiltInSectionProps = {
-  section: Pick<NavigationMenuItem, 'id' | 'type'>;
+  section: Pick<NavigationMenuItem, 'id' | 'builtInSectionKey'>;
   headerAction?: ReactNode;
 };
 
@@ -20,7 +19,7 @@ export const NavigationMenuBuiltInSection = ({
 }: NavigationMenuBuiltInSectionProps) => {
   const areAiChatSectionsAvailable = useAreAiChatSectionsAvailable();
 
-  if (section.type === NavigationMenuItemType.FAVORITES) {
+  if (section.builtInSectionKey === 'favorites') {
     return <FavoritesSectionDispatcher />;
   }
 
@@ -28,18 +27,18 @@ export const NavigationMenuBuiltInSection = ({
     return null;
   }
 
-  switch (section.type) {
-    case NavigationMenuItemType.AI_CHAT_INBOX:
+  switch (section.builtInSectionKey) {
+    case 'aiChatInbox':
       return <NavigationDrawerInboxTriageSection headerAction={headerAction} />;
-    case NavigationMenuItemType.AI_CHAT_FAVORITES:
+    case 'aiChatFavorites':
       return (
         <NavigationMenuAiChatFavoritesSection headerAction={headerAction} />
       );
-    case NavigationMenuItemType.AI_CHAT_CHANNELS:
+    case 'aiChatChannels':
       return (
         <NavigationDrawerInboxChannelsSection headerAction={headerAction} />
       );
-    case NavigationMenuItemType.AI_CHAT_RECENTS:
+    case 'aiChatRecents':
       return (
         <NavigationMenuAiChatRecentsSection
           sectionId={section.id}
