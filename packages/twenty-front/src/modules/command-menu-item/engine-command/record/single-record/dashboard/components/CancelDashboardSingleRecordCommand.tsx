@@ -1,11 +1,9 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
-import { conditionalAvailabilityEditorEntriesState } from '@/conditional-availability/states/conditionalAvailabilityEditorEntriesState';
 import { useResetDraftPageLayoutToPersistedPageLayout } from '@/page-layout/hooks/useResetDraftPageLayoutToPersistedPageLayout';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { PageLayoutType } from '~/generated-metadata/graphql';
@@ -42,13 +40,10 @@ export const CancelDashboardSingleRecordCommand = () => {
       tabListInstanceId,
     });
 
-  const store = useStore();
-
   const handleExecute = () => {
     closeSidePanelMenu();
 
     resetDraftPageLayoutToPersistedPageLayout();
-    store.set(conditionalAvailabilityEditorEntriesState.atom, {});
     setIsPageLayoutInEditMode(false);
   };
 

@@ -74,7 +74,10 @@ export const ConditionalAvailabilityLogicalOperatorCell = ({
         dropdownId={`conditional-availability-logical-operator-${itemKey}-${groupId ?? 'root'}`}
         value={logicalOperator}
         onChange={(nextLogicalOperator) =>
-          setLogicalOperator(groupId, nextLogicalOperator)
+          setLogicalOperator({
+            groupId,
+            logicalOperator: nextLogicalOperator,
+          })
         }
         options={options}
         dropdownSideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}

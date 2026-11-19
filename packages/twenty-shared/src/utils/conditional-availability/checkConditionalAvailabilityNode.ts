@@ -65,6 +65,14 @@ const getUnknownName = ({
   }
 };
 
+const safeParseNodeSchema = (node: unknown) => {
+  try {
+    return conditionalAvailabilityNodeSchema.safeParse(node);
+  } catch {
+    return undefined;
+  }
+};
+
 export const checkConditionalAvailabilityNode = ({
   node,
   metadataName,
@@ -76,31 +84,27 @@ export const checkConditionalAvailabilityNode = ({
     return { isValid: true, node: null };
   }
 
-  let parsedNode: ConditionalAvailabilityNode;
+  const schemaResult = safeParseNodeSchema(node);
 
-  try {
-    const schemaResult = conditionalAvailabilityNodeSchema.safeParse(node);
-
-    if (!schemaResult.success) {
-      const [firstIssue] = schemaResult.error.issues;
-      const path = firstIssue?.path.join('.') ?? '';
-
-      return {
-        isValid: false,
-        errorCode: 'INVALID_NODE',
-        errorMessage: isDefined(firstIssue)
-          ? `Invalid rule at "${path}": ${firstIssue.message}`
-          : INVALID_NODE_AT_ROOT.errorMessage,
-        errorParams: { path },
-      };
-    }
-
-    parsedNode = schemaResult.data;
-  } catch {
+  if (!isDefined(schemaResult)) {
     return INVALID_NODE_AT_ROOT;
   }
 
-  const nodes = listConditionalAvailabilityNodes({ node: parsedNode });
+  if (!schemaResult.success) {
+    const [firstIssue] = schemaResult.error.issues;
+    const path = firstIssue?.path.join('.') ?? '';
+
+    return {
+      isValid: false,
+      errorCode: 'INVALID_NODE',
+      errorMessage: isDefined(firstIssue)
+        ? `Invalid rule at "${path}": ${firstIssue.message}`
+        : INVALID_NODE_AT_ROOT.errorMessage,
+      errorParams: { path },
+    };
+  }
+
+  const nodes = listConditionalAvailabilityNodes({ node: schemaResult.data });
 
   if (nodes.length > CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT) {
     return {
@@ -124,5 +128,5 @@ export const checkConditionalAvailabilityNode = ({
     };
   }
 
-  return { isValid: true, node: parsedNode };
+  return { isValid: true, node: schemaResult.data };
 };

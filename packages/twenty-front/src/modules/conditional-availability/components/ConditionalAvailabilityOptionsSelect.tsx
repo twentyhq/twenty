@@ -78,17 +78,53 @@ export const ConditionalAvailabilityOptionsSelect = ({
     onChange(isDefined(nextValue) ? [nextValue] : []);
   };
 
-  const renderOptions = () =>
-    matchingOptions.map((option) => (
-      <Dropdown.OptionItem
-        key={option.value}
-        value={option.value}
-        indicator={isMultiple ? 'checkbox' : 'check'}
-        startIcon={option.startIcon}
+  const renderOptionList = () => {
+    if (isLoading) {
+      return <Dropdown.Loading />;
+    }
+
+    if (!isNonEmptyArray(matchingOptions)) {
+      return <Dropdown.Empty>{t`No results`}</Dropdown.Empty>;
+    }
+
+    const optionItems = (
+      <Dropdown.Section scrollable>
+        {matchingOptions.map((option) => (
+          <Dropdown.OptionItem
+            key={option.value}
+            value={option.value}
+            indicator={isMultiple ? 'checkbox' : 'check'}
+            startIcon={option.startIcon}
+          >
+            {option.label}
+          </Dropdown.OptionItem>
+        ))}
+      </Dropdown.Section>
+    );
+
+    if (isMultiple) {
+      return (
+        <Dropdown.SelectionGroup
+          aria-label={placeholder}
+          multiple
+          value={values}
+          onValueChange={handleMultipleValuesChange}
+        >
+          {optionItems}
+        </Dropdown.SelectionGroup>
+      );
+    }
+
+    return (
+      <Dropdown.SelectionGroup
+        aria-label={placeholder}
+        value={values[0] ?? null}
+        onValueChange={handleSingleValueChange}
       >
-        {option.label}
-      </Dropdown.OptionItem>
-    ));
+        {optionItems}
+      </Dropdown.SelectionGroup>
+    );
+  };
 
   return (
     <DropdownRoot
@@ -120,28 +156,7 @@ export const ConditionalAvailabilityOptionsSelect = ({
           (isLoading || isNonEmptyArray(matchingOptions)) && (
             <Dropdown.Separator />
           )}
-        {isLoading ? (
-          <Dropdown.Loading />
-        ) : !isNonEmptyArray(matchingOptions) ? (
-          <Dropdown.Empty>{t`No results`}</Dropdown.Empty>
-        ) : isMultiple ? (
-          <Dropdown.SelectionGroup
-            aria-label={placeholder}
-            multiple
-            value={values}
-            onValueChange={handleMultipleValuesChange}
-          >
-            <Dropdown.Section scrollable>{renderOptions()}</Dropdown.Section>
-          </Dropdown.SelectionGroup>
-        ) : (
-          <Dropdown.SelectionGroup
-            aria-label={placeholder}
-            value={values[0] ?? null}
-            onValueChange={handleSingleValueChange}
-          >
-            <Dropdown.Section scrollable>{renderOptions()}</Dropdown.Section>
-          </Dropdown.SelectionGroup>
-        )}
+        {renderOptionList()}
       </DropdownContent>
     </DropdownRoot>
   );
