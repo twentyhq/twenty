@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { AgentOwnershipTransferService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-ownership-transfer.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { CoreWorkflowOwnershipTransferService } from 'src/engine/core-modules/workflow/services/core-workflow-ownership-transfer.service';
 import { ConnectedAccountOwnershipTransferService } from 'src/engine/metadata-modules/connected-account/services/connected-account-ownership-transfer.service';
@@ -13,6 +14,7 @@ export class UserWorkspaceSuccessorTransferService {
     private readonly recordShareSystemWriteService: RecordShareSystemWriteService,
     private readonly viewOwnershipTransferService: ViewOwnershipTransferService,
     private readonly coreWorkflowOwnershipTransferService: CoreWorkflowOwnershipTransferService,
+    private readonly agentOwnershipTransferService: AgentOwnershipTransferService,
   ) {}
 
   async transferToSuccessor({
@@ -48,5 +50,10 @@ export class UserWorkspaceSuccessorTransferService {
         actingUserWorkspaceId,
       },
     );
+
+    await this.agentOwnershipTransferService.transferPrivateAgentsToSuccessor({
+      removedUserWorkspace,
+      actingUserWorkspaceId,
+    });
   }
 }
