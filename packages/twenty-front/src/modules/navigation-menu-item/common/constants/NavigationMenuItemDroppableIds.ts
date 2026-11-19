@@ -8,5 +8,4 @@ export enum NavigationMenuItemDroppableIds {
   WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS = 'workspace-orphan-navigation-menu-items',
   WORKSPACE_LIST_PREFIX = 'workspace-list-',
   WORKSPACE_FOLDER_HEADER_PREFIX = 'workspace-folder-header-',
-  WORKSPACE_CONTAINER_PREFIX = 'workspace-container-',
 }
