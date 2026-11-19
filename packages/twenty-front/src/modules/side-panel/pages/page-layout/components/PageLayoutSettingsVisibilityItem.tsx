@@ -10,7 +10,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useLingui } from '@lingui/react/macro';
 
 type PageLayoutSettingsVisibilityItemProps = {
-  widget: PageLayoutWidget;
+  widget: Pick<PageLayoutWidget, 'id' | 'conditionalAvailability'>;
   selectableItemId: string;
 };
 

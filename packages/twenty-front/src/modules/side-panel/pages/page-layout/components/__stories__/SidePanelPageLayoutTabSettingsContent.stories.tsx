@@ -189,7 +189,7 @@ const meta: Meta<typeof SidePanelPageLayoutTabSettingsContent> = {
           <TabListComponentInstanceContext.Provider
             value={{ instanceId: TAB_LIST_INSTANCE_ID }}
           >
-            {parameters.withLayoutCustomizationBar === true && (
+            {parameters.withLayoutCustomizationBar && (
               <LayoutCustomizationBar />
             )}
             <SidePanelPageComponentInstanceContext.Provider
