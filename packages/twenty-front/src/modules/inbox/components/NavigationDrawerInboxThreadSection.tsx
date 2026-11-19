@@ -1,3 +1,5 @@
+import { type ReactNode } from 'react';
+
 import { NavigationDrawerInboxThreadItem } from '@/inbox/components/NavigationDrawerInboxThreadItem';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { type InboxThreadListItemData } from '@/inbox/types/InboxThreadListItemData';
@@ -8,6 +10,7 @@ export type NavigationDrawerInboxThreadSectionProps = {
   threads: InboxThreadListItemData[];
   currentThreadId: string | null;
   onThreadClick: (thread: InboxThreadListItemData) => void;
+  footer?: ReactNode;
 };
 
 export const NavigationDrawerInboxThreadSection = ({
@@ -16,6 +19,7 @@ export const NavigationDrawerInboxThreadSection = ({
   threads,
   currentThreadId,
   onThreadClick,
+  footer,
 }: NavigationDrawerInboxThreadSectionProps) => {
   return (
     <CollapsibleNavigationDrawerSection sectionId={sectionId} label={title}>
@@ -27,6 +31,7 @@ export const NavigationDrawerInboxThreadSection = ({
           onClick={onThreadClick}
         />
       ))}
+      {footer}
     </CollapsibleNavigationDrawerSection>
   );
 };
