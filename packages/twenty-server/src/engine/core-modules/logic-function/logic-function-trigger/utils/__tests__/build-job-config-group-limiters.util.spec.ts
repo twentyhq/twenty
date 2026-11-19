@@ -40,4 +40,14 @@ describe('buildJobConfigGroupLimiters', () => {
       }),
     ).toEqual([]);
   });
+
+  it('should not pace jobs before the job config columns exist', () => {
+    expect(
+      buildJobConfigGroupLimiters({
+        applicationUniversalIdentifier: 'app-1',
+        jobConfigs: undefined,
+        jobConfigKeys: undefined,
+      }),
+    ).toEqual([]);
+  });
 });

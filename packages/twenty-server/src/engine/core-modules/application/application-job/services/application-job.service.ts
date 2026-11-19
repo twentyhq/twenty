@@ -128,7 +128,9 @@ export class ApplicationJobService {
       .filter(
         (jobConfigKey) =>
           isDefined(jobConfigKey) &&
-          !application.jobConfigs.some(({ key }) => key === jobConfigKey),
+          !(application.jobConfigs ?? []).some(
+            ({ key }) => key === jobConfigKey,
+          ),
       );
 
     if (unknownJobConfigKeys.length > 0) {
@@ -156,7 +158,7 @@ export class ApplicationJobService {
             applicationUniversalIdentifier: application.universalIdentifier,
             jobConfigs: application.jobConfigs,
             jobConfigKeys: [
-              ...flatLogicFunction.jobConfigKeys,
+              ...(flatLogicFunction.jobConfigKeys ?? []),
               jobItem.jobConfigKey,
             ],
           }),

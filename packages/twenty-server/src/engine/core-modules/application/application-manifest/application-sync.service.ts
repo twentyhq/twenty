@@ -139,6 +139,14 @@ export class ApplicationSyncService {
       throw enrichApplicationManifestSyncError({ error, manifest });
     }
 
+    if (!dryRun && !shouldDeferActions) {
+      await this.dropJobConfigsRemovedFromManifest({
+        workspaceId,
+        manifest,
+        ownerFlatApplication,
+      });
+    }
+
     if (!dryRun) {
       try {
         await this.applicationSourceService.store({ workspaceId, manifest });
@@ -169,6 +177,27 @@ export class ApplicationSyncService {
     );
 
     return syncResult;
+  }
+
+  private async dropJobConfigsRemovedFromManifest({
+    workspaceId,
+    manifest,
+    ownerFlatApplication,
+  }: {
+    workspaceId: string;
+    manifest: Manifest;
+    ownerFlatApplication: FlatApplication;
+  }): Promise<void> {
+    const jobConfigs = manifest.jobConfigs ?? [];
+
+    if ((ownerFlatApplication.jobConfigs ?? []).length === jobConfigs.length) {
+      return;
+    }
+
+    await this.applicationService.update(ownerFlatApplication.id, {
+      jobConfigs,
+      workspaceId,
+    });
   }
 
   private async resolveDryRunOwnerFlatApplication({
@@ -331,7 +360,16 @@ export class ApplicationSyncService {
         packageJsonChecksum: storedFilesChecksums.packageJsonChecksum,
         yarnLockChecksum: storedFilesChecksums.yarnLockChecksum,
         billing: manifest.application.billing ?? {},
-        jobConfigs: manifest.jobConfigs ?? [],
+        // Removed configs stay until the logic functions are migrated, so a failed sync keeps their pacing
+        jobConfigs: [
+          ...(manifest.jobConfigs ?? []),
+          ...(application.jobConfigs ?? []).filter(
+            ({ key }) =>
+              !(manifest.jobConfigs ?? []).some(
+                (jobConfig) => jobConfig.key === key,
+              ),
+          ),
+        ],
         grantedCapabilities: resolveSyncedApplicationCapabilities({
           sourceType: application.sourceType,
           grantedCapabilities: application.grantedCapabilities,

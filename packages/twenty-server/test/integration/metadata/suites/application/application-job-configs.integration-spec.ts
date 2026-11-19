@@ -9,6 +9,7 @@ import {
   type JobConfigManifest,
   type Manifest,
 } from 'twenty-shared/application';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -43,14 +44,17 @@ const GET_JOBS = gql`
 const buildManifest = ({
   jobConfigs,
   jobConfigKeys,
+  overrides,
 }: {
   jobConfigs: JobConfigManifest[];
   jobConfigKeys: string[];
+  overrides?: Partial<Manifest>;
 }): Manifest =>
   buildBaseManifest({
     appId: TEST_APP_ID,
     roleId: TEST_ROLE_ID,
     overrides: {
+      ...overrides,
       jobConfigs,
       logicFunctions: [
         {
@@ -144,6 +148,31 @@ describe('Application job configs', () => {
     });
   }, 60_000);
 
+  it('keeps the job configs of the logic functions when the metadata sync fails', async () => {
+    await syncApplication({
+      manifest: buildManifest({
+        jobConfigs: [],
+        jobConfigKeys: [],
+        overrides: {
+          navigationMenuItems: [
+            {
+              universalIdentifier: 'd1a6c0b2-0005-4000-a000-000000000005',
+              type: NavigationMenuItemType.LINK,
+              position: 0,
+              name: 'Link without url',
+            },
+          ],
+        },
+      }),
+      expectToFail: true,
+    });
+
+    expect(await readStoredJobConfigs()).toEqual({
+      jobConfigs: [API_JOB_CONFIG],
+      jobConfigKeys: ['api'],
+    });
+  }, 60_000);
+
   it('refuses to enqueue a job with an unknown job config key', async () => {
     const response = await makeMetadataApiRequest(
       {
@@ -192,4 +221,16 @@ describe('Application job configs', () => {
       )?.state,
     ).toBe('DELAYED');
   });
+
+  it('drops a job config once no logic function uses it', async () => {
+    await syncApplication({
+      manifest: buildManifest({ jobConfigs: [], jobConfigKeys: [] }),
+      expectToFail: false,
+    });
+
+    expect(await readStoredJobConfigs()).toEqual({
+      jobConfigs: [],
+      jobConfigKeys: [],
+    });
+  }, 60_000);
 });

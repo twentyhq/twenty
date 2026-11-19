@@ -173,10 +173,9 @@ export class CallDatabaseEventTriggerJobsJob {
             groupLimiters: buildJobConfigGroupLimiters({
               applicationUniversalIdentifier: application.universalIdentifier,
               jobConfigs: application.jobConfigs,
-              jobConfigKeys:
-                jobConfigKeysByLogicFunctionId.get(
-                  logicFunctionPayload.logicFunctionId,
-                ) ?? [],
+              jobConfigKeys: jobConfigKeysByLogicFunctionId.get(
+                logicFunctionPayload.logicFunctionId,
+              ),
             }),
             workspaceId: workspaceEventBatch.workspaceId,
             applicationUniversalIdentifier: application.universalIdentifier,

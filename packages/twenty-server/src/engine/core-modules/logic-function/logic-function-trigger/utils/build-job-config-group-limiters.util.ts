@@ -10,18 +10,21 @@ export const buildJobConfigGroupLimiters = ({
   jobConfigKeys,
 }: {
   applicationUniversalIdentifier: string;
-  jobConfigs: JobConfigManifest[];
-  jobConfigKeys: (string | undefined)[];
+  // Undefined until the 2.61 instance command adds the columns
+  jobConfigs: JobConfigManifest[] | undefined;
+  jobConfigKeys: (string | undefined)[] | undefined;
 }): GroupLimiter[] =>
-  [...new Set(jobConfigKeys.filter(isDefined))].flatMap((jobConfigKey) => {
-    const jobConfig = jobConfigs.find(({ key }) => key === jobConfigKey);
+  [...new Set((jobConfigKeys ?? []).filter(isDefined))].flatMap(
+    (jobConfigKey) => {
+      const jobConfig = jobConfigs?.find(({ key }) => key === jobConfigKey);
 
-    return isDefined(jobConfig)
-      ? [
-          {
-            groupKey: `${buildApplicationGroupKey(applicationUniversalIdentifier)}:jobConfig:${jobConfigKey}`,
-            limiter: jobConfig.limiter,
-          },
-        ]
-      : [];
-  });
+      return isDefined(jobConfig)
+        ? [
+            {
+              groupKey: `${buildApplicationGroupKey(applicationUniversalIdentifier)}:jobConfig:${jobConfigKey}`,
+              limiter: jobConfig.limiter,
+            },
+          ]
+        : [];
+    },
+  );

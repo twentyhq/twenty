@@ -155,7 +155,7 @@ export class ConnectionProviderLifecycleHookService {
           groupLimiters: buildJobConfigGroupLimiters({
             applicationUniversalIdentifier:
               logicFunction.applicationUniversalIdentifier,
-            jobConfigs: application?.jobConfigs ?? [],
+            jobConfigs: application?.jobConfigs,
             jobConfigKeys: logicFunction.jobConfigKeys,
           }),
         },
