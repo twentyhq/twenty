@@ -51,13 +51,10 @@ type InboxThreadActionsDropdownProps = {
   thread: {
     id: string;
     title?: string | null;
-    icon?: string | null;
-    iconColor?: string | null;
-    imageFile?: AiChatThreadRecord['imageFile'];
     conversationType?: AiChatThreadRecord['conversationType'];
     deletedAt?: string | null;
     lastActivityAt?: string | null;
-  };
+  } & Partial<Pick<AiChatThreadRecord, 'icon' | 'iconColor' | 'imageFile'>>;
   instanceId: string;
   iconPickerDropdownId?: string;
   onRenameRequested?: () => void;
