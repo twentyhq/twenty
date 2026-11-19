@@ -33,6 +33,7 @@ Set these on the application registration after installing
 | `RECALL_API_KEY` | Yes | Recall.ai API key for the configured region; used to schedule, update, and cancel bots. |
 | `RECALL_REGION` | No | Recall.ai region for API requests. Defaults to `eu-central-1` (Europe / Frankfurt). |
 | `CALL_RECORDER_RECORDING_RETENTION_HOURS` | No | How long Recall.ai retains the source media after processing. Defaults to `166` hours (6 days 22 hours), just under Recall's 168-hour free-storage window. Values above `168` may incur Recall storage charges. Twenty's ingested copy is unaffected. |
+| `CALL_RECORDER_MEDIA_UPLOAD_BASE_URL` | No | Base URL the app uploads recording media to, such as `http://localhost:3000`. Unset, it uploads to the URL the server issues, built from `SERVER_URL`. Set it when the public URL sits behind a proxy that caps request size (Google Cloud Run rejects requests over 32 MiB, so longer recordings would fail to import), pointing at an address of the Twenty server that logic functions reach directly. |
 | `RECALL_WEBHOOK_SECRET` | Yes | Svix signing secret (`whsec_…`) used to verify incoming Recall webhooks. |
 
 > **Calendar scheduling** (`CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED`,
