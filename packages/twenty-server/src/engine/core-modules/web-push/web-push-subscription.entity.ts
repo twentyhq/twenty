@@ -13,15 +13,15 @@ import {
 import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-session.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
-@Entity({ name: 'pushSubscription', schema: 'core' })
+@Entity({ name: 'webPushSubscription', schema: 'core' })
 @Index(
-  'IDX_PUSH_SUBSCRIPTION_WORKSPACE_ID_ENDPOINT_UNIQUE',
+  'IDX_WEB_PUSH_SUBSCRIPTION_WORKSPACE_ID_ENDPOINT_UNIQUE',
   ['workspaceId', 'endpoint'],
   {
     unique: true,
   },
 )
-export class PushSubscriptionEntity {
+export class WebPushSubscriptionEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -48,7 +48,7 @@ export class PushSubscriptionEntity {
   @JoinColumn({ name: 'userSessionId' })
   userSession: Relation<UserSessionEntity>;
 
-  @Index('IDX_PUSH_SUBSCRIPTION_USER_SESSION_ID')
+  @Index('IDX_WEB_PUSH_SUBSCRIPTION_USER_SESSION_ID')
   @Column({ type: 'uuid' })
   userSessionId: string;
 

@@ -9,7 +9,7 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { type PushSubscriptionEntity } from 'src/engine/core-modules/web-push/push-subscription.entity';
+import { type WebPushSubscriptionEntity } from 'src/engine/core-modules/web-push/web-push-subscription.entity';
 import { WebPushService } from 'src/engine/core-modules/web-push/services/web-push.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { type SendAgentChatPushNotificationsJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/send-agent-chat-push-notifications.job';
@@ -129,8 +129,8 @@ export class AgentChatPushNotificationService {
       return;
     }
 
-    const pushSubscriptionsByUserId =
-      await this.webPushService.findPushSubscriptionsByUserId({
+    const webPushSubscriptionsByUserId =
+      await this.webPushService.findWebPushSubscriptionsByUserId({
         workspaceId,
         userIds: recipients.map(
           ({ workspaceMember }) => workspaceMember.userId,
@@ -138,10 +138,10 @@ export class AgentChatPushNotificationService {
       });
 
     for (const { workspaceMember, reason } of recipients) {
-      const pushSubscriptions =
-        pushSubscriptionsByUserId[workspaceMember.userId];
+      const webPushSubscriptions =
+        webPushSubscriptionsByUserId[workspaceMember.userId];
 
-      if (!isNonEmptyArray(pushSubscriptions)) {
+      if (!isNonEmptyArray(webPushSubscriptions)) {
         continue;
       }
 
@@ -151,7 +151,7 @@ export class AgentChatPushNotificationService {
           thread,
           recipient: workspaceMember,
           isRenotifyForced: reason === 'DIRECT_MESSAGE' || reason === 'MENTION',
-          pushSubscriptions,
+          webPushSubscriptions,
           workspaceMemberById,
         });
       } catch (error) {
@@ -169,14 +169,14 @@ export class AgentChatPushNotificationService {
     thread,
     recipient,
     isRenotifyForced,
-    pushSubscriptions,
+    webPushSubscriptions,
     workspaceMemberById,
   }: {
     workspaceId: string;
     thread: AgentChatThreadWorkspaceEntity;
     recipient: WorkspaceMemberWorkspaceEntity;
     isRenotifyForced: boolean;
-    pushSubscriptions: PushSubscriptionEntity[];
+    webPushSubscriptions: WebPushSubscriptionEntity[];
     workspaceMemberById: Partial<
       Record<string, WorkspaceMemberWorkspaceEntity>
     >;
@@ -201,7 +201,7 @@ export class AgentChatPushNotificationService {
     await this.webPushService.sendNotification({
       workspaceId,
       userId: recipient.userId,
-      pushSubscriptions,
+      webPushSubscriptions,
       notification: {
         ...buildAgentChatPushNotification({
           i18n: this.i18nService.getI18nInstance(recipient.locale),

@@ -8,7 +8,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { UpdateFocusedTabInput } from 'src/engine/core-modules/web-push/dtos/update-focused-tab.input';
-import { UpsertPushSubscriptionInput } from 'src/engine/core-modules/web-push/dtos/upsert-push-subscription.input';
+import { UpsertWebPushSubscriptionInput } from 'src/engine/core-modules/web-push/dtos/upsert-web-push-subscription.input';
 import { WebPushService } from 'src/engine/core-modules/web-push/services/web-push.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -42,13 +42,13 @@ export class WebPushResolver {
   ) {}
 
   @Mutation(() => Boolean)
-  async upsertPushSubscription(
-    @Args('input') input: UpsertPushSubscriptionInput,
+  async upsertWebPushSubscription(
+    @Args('input') input: UpsertWebPushSubscriptionInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Context() context: { req: Request },
   ): Promise<boolean> {
-    await this.webPushService.upsertPushSubscription({
+    await this.webPushService.upsertWebPushSubscription({
       input,
       workspaceId: workspace.id,
       userWorkspaceId,

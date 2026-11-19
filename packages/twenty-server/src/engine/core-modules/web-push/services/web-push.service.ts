@@ -16,8 +16,8 @@ import {
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
-import { type UpsertPushSubscriptionInput } from 'src/engine/core-modules/web-push/dtos/upsert-push-subscription.input';
-import { PushSubscriptionEntity } from 'src/engine/core-modules/web-push/push-subscription.entity';
+import { type UpsertWebPushSubscriptionInput } from 'src/engine/core-modules/web-push/dtos/upsert-web-push-subscription.input';
+import { WebPushSubscriptionEntity } from 'src/engine/core-modules/web-push/web-push-subscription.entity';
 import { type WebPushNotification } from 'src/engine/core-modules/web-push/types/web-push-notification.type';
 import { deriveWebPushVapidKeyPair } from 'src/engine/core-modules/web-push/utils/derive-web-push-vapid-key-pair.util';
 import { isWebPushEndpointAllowed } from 'src/engine/core-modules/web-push/utils/is-web-push-endpoint-allowed.util';
@@ -25,8 +25,8 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 const FOCUSED_TAB_TTL_MS = 45_000;
-const PUSH_SERVICE_MESSAGE_TTL_SECONDS = 3600;
-const EXPIRED_PUSH_SUBSCRIPTION_STATUS_CODES = [404, 410];
+const WEB_PUSH_SERVICE_MESSAGE_TTL_SECONDS = 3600;
+const EXPIRED_WEB_PUSH_SUBSCRIPTION_STATUS_CODES = [404, 410];
 
 const getFocusedTabKey = (workspaceId: string, workspaceMemberId: string) =>
   `focused-tab:${workspaceId}:${workspaceMemberId}`;
@@ -36,8 +36,8 @@ export class WebPushService {
   private readonly logger = new Logger(WebPushService.name);
 
   constructor(
-    @InjectWorkspaceScopedRepository(PushSubscriptionEntity)
-    private readonly pushSubscriptionRepository: WorkspaceScopedRepository<PushSubscriptionEntity>,
+    @InjectWorkspaceScopedRepository(WebPushSubscriptionEntity)
+    private readonly webPushSubscriptionRepository: WorkspaceScopedRepository<WebPushSubscriptionEntity>,
     @InjectCacheStorage(CacheStorageNamespace.EngineWebPush)
     private readonly cacheStorageService: CacheStorageService,
     private readonly secureHttpClientService: SecureHttpClientService,
@@ -45,20 +45,20 @@ export class WebPushService {
     private readonly userSessionService: UserSessionService,
   ) {}
 
-  async upsertPushSubscription({
+  async upsertWebPushSubscription({
     input,
     workspaceId,
     userWorkspaceId,
     sessionToken,
   }: {
-    input: UpsertPushSubscriptionInput;
+    input: UpsertWebPushSubscriptionInput;
     workspaceId: string;
     userWorkspaceId: string;
     sessionToken: string | undefined;
   }): Promise<void> {
     if (!isWebPushEndpointAllowed(input.endpoint)) {
       throw new UserInputError(
-        'Push subscription endpoint is not on an allowed push service',
+        'Web push subscription endpoint is not on an allowed push service',
       );
     }
 
@@ -68,7 +68,7 @@ export class WebPushService {
 
     if (input.applicationServerKey !== publicKey) {
       throw new UserInputError(
-        'Push subscription was created with an unknown application server key',
+        'Web push subscription was created with an unknown application server key',
       );
     }
 
@@ -78,16 +78,16 @@ export class WebPushService {
 
     if (!isDefined(session) || session.userWorkspaceId !== userWorkspaceId) {
       throw new ForbiddenError(
-        'Push subscription request has no session for this user workspace',
+        'Web push subscription request has no session for this user workspace',
       );
     }
 
-    await this.pushSubscriptionRepository.delete(workspaceId, {
+    await this.webPushSubscriptionRepository.delete(workspaceId, {
       userSessionId: session.id,
       endpoint: Not(input.endpoint),
     });
 
-    await this.pushSubscriptionRepository.upsert(
+    await this.webPushSubscriptionRepository.upsert(
       workspaceId,
       {
         endpoint: input.endpoint,
@@ -153,18 +153,18 @@ export class WebPushService {
     );
   }
 
-  async findPushSubscriptionsByUserId({
+  async findWebPushSubscriptionsByUserId({
     workspaceId,
     userIds,
   }: {
     workspaceId: string;
     userIds: string[];
-  }): Promise<Partial<Record<string, PushSubscriptionEntity[]>>> {
+  }): Promise<Partial<Record<string, WebPushSubscriptionEntity[]>>> {
     if (userIds.length === 0) {
       return {};
     }
 
-    const pushSubscriptions = await this.pushSubscriptionRepository.find(
+    const webPushSubscriptions = await this.webPushSubscriptionRepository.find(
       workspaceId,
       {
         where: {
@@ -182,20 +182,20 @@ export class WebPushService {
     );
 
     return groupBy(
-      pushSubscriptions,
-      (pushSubscription) => pushSubscription.userSession.userId,
+      webPushSubscriptions,
+      (webPushSubscription) => webPushSubscription.userSession.userId,
     );
   }
 
   async sendNotification({
     workspaceId,
     userId,
-    pushSubscriptions,
+    webPushSubscriptions,
     notification,
   }: {
     workspaceId: string;
     userId: string;
-    pushSubscriptions: PushSubscriptionEntity[];
+    webPushSubscriptions: WebPushSubscriptionEntity[];
     notification: WebPushNotification;
   }): Promise<void> {
     const vapidKeyPair = deriveWebPushVapidKeyPair({
@@ -210,10 +210,10 @@ export class WebPushService {
       { workspaceId, source: 'web-push', userId },
     );
 
-    for (const pushSubscription of pushSubscriptions) {
-      if (!isWebPushEndpointAllowed(pushSubscription.endpoint)) {
-        await this.pushSubscriptionRepository.delete(workspaceId, {
-          id: pushSubscription.id,
+    for (const webPushSubscription of webPushSubscriptions) {
+      if (!isWebPushEndpointAllowed(webPushSubscription.endpoint)) {
+        await this.webPushSubscriptionRepository.delete(workspaceId, {
+          id: webPushSubscription.id,
         });
 
         continue;
@@ -222,16 +222,16 @@ export class WebPushService {
       try {
         const { endpoint, headers, body } = generateRequestDetails(
           {
-            endpoint: pushSubscription.endpoint,
+            endpoint: webPushSubscription.endpoint,
             keys: {
-              p256dh: pushSubscription.p256dhKey,
-              auth: pushSubscription.authSecret,
+              p256dh: webPushSubscription.p256dhKey,
+              auth: webPushSubscription.authSecret,
             },
           },
           JSON.stringify(notification),
           {
             vapidDetails: { subject, ...vapidKeyPair },
-            TTL: PUSH_SERVICE_MESSAGE_TTL_SECONDS,
+            TTL: WEB_PUSH_SERVICE_MESSAGE_TTL_SECONDS,
             urgency: 'high',
           },
         );
@@ -241,18 +241,20 @@ export class WebPushService {
           validateStatus: () => true,
         });
 
-        if (EXPIRED_PUSH_SUBSCRIPTION_STATUS_CODES.includes(response.status)) {
-          await this.pushSubscriptionRepository.delete(workspaceId, {
-            id: pushSubscription.id,
+        if (
+          EXPIRED_WEB_PUSH_SUBSCRIPTION_STATUS_CODES.includes(response.status)
+        ) {
+          await this.webPushSubscriptionRepository.delete(workspaceId, {
+            id: webPushSubscription.id,
           });
         } else if (response.status >= 300) {
           this.logger.warn(
-            `Push service answered ${response.status} for push subscription ${pushSubscription.id} in workspace ${workspaceId}`,
+            `Push service answered ${response.status} for web push subscription ${webPushSubscription.id} in workspace ${workspaceId}`,
           );
         }
       } catch (error) {
         this.logger.warn(
-          `Could not send to push subscription ${pushSubscription.id} in workspace ${workspaceId}: ${
+          `Could not send to web push subscription ${webPushSubscription.id} in workspace ${workspaceId}: ${
             error instanceof Error ? error.message : String(error)
           }`,
         );

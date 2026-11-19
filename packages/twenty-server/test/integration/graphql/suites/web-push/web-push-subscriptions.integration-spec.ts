@@ -12,14 +12,14 @@ import { In } from 'typeorm';
 
 import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-session.entity';
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
-import { PushSubscriptionEntity } from 'src/engine/core-modules/web-push/push-subscription.entity';
+import { WebPushSubscriptionEntity } from 'src/engine/core-modules/web-push/web-push-subscription.entity';
 
 const SERVER_URL = `http://localhost:${APP_PORT}`;
 const ENDPOINT = 'https://fcm.googleapis.com/fcm/send/integration-push';
 const ROTATED_ENDPOINT =
   'https://fcm.googleapis.com/fcm/send/integration-push-rotated';
 
-const upsertPushSubscription = ({
+const upsertWebPushSubscription = ({
   cookieHeader,
   applicationServerKey,
   endpoint = ENDPOINT,
@@ -31,8 +31,10 @@ const upsertPushSubscription = ({
   postMetadataOperationWithHeaders(
     {
       query: gql`
-        mutation UpsertPushSubscription($input: UpsertPushSubscriptionInput!) {
-          upsertPushSubscription(input: $input)
+        mutation UpsertWebPushSubscription(
+          $input: UpsertWebPushSubscriptionInput!
+        ) {
+          upsertWebPushSubscription(input: $input)
         }
       `,
       variables: {
@@ -65,12 +67,14 @@ const signInSession = async (email: string) => {
   return { cookieHeader: sessionCookie.cookieHeader, sessionId: session.id };
 };
 
-const findPushSubscription = (endpoint = ENDPOINT) =>
-  getCoreRepository<PushSubscriptionEntity>(PushSubscriptionEntity).findOneBy({
+const findWebPushSubscription = (endpoint = ENDPOINT) =>
+  getCoreRepository<WebPushSubscriptionEntity>(
+    WebPushSubscriptionEntity,
+  ).findOneBy({
     endpoint,
   });
 
-describe('push subscriptions (integration)', () => {
+describe('web push subscriptions (integration)', () => {
   let applicationServerKey: string;
 
   beforeAll(async () => {
@@ -82,8 +86,8 @@ describe('push subscriptions (integration)', () => {
   });
 
   afterEach(async () => {
-    await getCoreRepository<PushSubscriptionEntity>(
-      PushSubscriptionEntity,
+    await getCoreRepository<WebPushSubscriptionEntity>(
+      WebPushSubscriptionEntity,
     ).delete({ endpoint: In([ENDPOINT, ROTATED_ENDPOINT]) });
   });
 
@@ -91,21 +95,21 @@ describe('push subscriptions (integration)', () => {
     const tim = await signInSession('tim@apple.dev');
     const jony = await signInSession('jony.ive@apple.dev');
 
-    await upsertPushSubscription({
+    await upsertWebPushSubscription({
       cookieHeader: tim.cookieHeader,
       applicationServerKey,
     });
 
-    expect(await findPushSubscription()).toMatchObject({
+    expect(await findWebPushSubscription()).toMatchObject({
       userSessionId: tim.sessionId,
     });
 
-    await upsertPushSubscription({
+    await upsertWebPushSubscription({
       cookieHeader: jony.cookieHeader,
       applicationServerKey,
     });
 
-    expect(await findPushSubscription()).toMatchObject({
+    expect(await findWebPushSubscription()).toMatchObject({
       userSessionId: jony.sessionId,
     });
   });
@@ -113,18 +117,18 @@ describe('push subscriptions (integration)', () => {
   it('should keep one subscription per session when the browser rotates its endpoint', async () => {
     const tim = await signInSession('tim@apple.dev');
 
-    await upsertPushSubscription({
+    await upsertWebPushSubscription({
       cookieHeader: tim.cookieHeader,
       applicationServerKey,
     });
-    await upsertPushSubscription({
+    await upsertWebPushSubscription({
       cookieHeader: tim.cookieHeader,
       applicationServerKey,
       endpoint: ROTATED_ENDPOINT,
     });
 
-    expect(await findPushSubscription()).toBeNull();
-    expect(await findPushSubscription(ROTATED_ENDPOINT)).toMatchObject({
+    expect(await findWebPushSubscription()).toBeNull();
+    expect(await findWebPushSubscription(ROTATED_ENDPOINT)).toMatchObject({
       userSessionId: tim.sessionId,
     });
   });
@@ -132,12 +136,12 @@ describe('push subscriptions (integration)', () => {
   it('should refuse a key this server did not issue', async () => {
     const tim = await signInSession('tim@apple.dev');
 
-    const response = await upsertPushSubscription({
+    const response = await upsertWebPushSubscription({
       cookieHeader: tim.cookieHeader,
       applicationServerKey: 'not-a-server-key',
     });
 
     expect(response.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
-    expect(await findPushSubscription()).toBeNull();
+    expect(await findWebPushSubscription()).toBeNull();
   });
 });
