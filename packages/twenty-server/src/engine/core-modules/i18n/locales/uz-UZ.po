@@ -138,7 +138,7 @@ msgstr "{type} navigatsiya menyusi elementi {parentType} ichiga joylashtirilishi
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
 msgid "A {type} navigation menu item cannot be placed inside a built-in section"
-msgstr ""
+msgstr "{type} navigatsiya menyusi elementi o‘rnatilgan bo‘lim ichiga joylashtirilmaydi"
 
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
@@ -154,7 +154,7 @@ msgstr "O‘rnatilgan provayder allaqachon bu nomdan foydalanmoqda. Boshqa yorli
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A builtInSectionKey is only allowed on SECTION type"
-msgstr ""
+msgstr "builtInSectionKey faqat SECTION turida ruxsat etiladi"
 
 #. js-lingui-id: RsTRse
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -569,7 +569,7 @@ msgstr "AGENT turi uchun to‘g‘ri agentUniversalIdentifier talab qilinadi"
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid builtInSectionKey is required for a built-in SECTION"
-msgstr ""
+msgstr "O‘rnatilgan SECTION uchun yaroqli builtInSectionKey talab qilinadi"
 
 #. js-lingui-id: Dwa/Bm
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -9615,12 +9615,6 @@ msgstr "Yozib olinmagan"
 msgid "Not Set"
 msgstr "O‘rnatilmagan"
 
-#. js-lingui-id: H1P40W
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Not started"
-msgstr "Boshlanmagan"
-
 #. js-lingui-id: O2bgDc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -17759,6 +17753,12 @@ msgstr "engineComponentKey FRONT_COMPONENT_RENDERER bo‘lganda workflowVersionI
 msgctxt "fieldMetadata.label"
 msgid "Workspace"
 msgstr "Ish maydoni"
+
+#. js-lingui-id: 3JWXMp
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
+msgid "Workspace"
+msgstr ""
 
 #. js-lingui-id: bK8AyJ
 #: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts

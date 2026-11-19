@@ -3,6 +3,7 @@ import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/ty
 import { NavigationMenuItemInsertionPreviewEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemInsertionPreviewEffect';
 import { useNavigationMenuItemAddOptions } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions';
 import { type NavigationMenuItemAddStep } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddStep';
+import { getNavigationMenuItemTabId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemTabId';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
@@ -69,6 +70,18 @@ export const NavigationMenuItemAddDropdownContent = ({
       (item) => (item.parentId ?? null) === (parentId ?? null),
     ).length;
 
+  const targetTabId = getNavigationMenuItemTabId({
+    parentId,
+    items: currentItems,
+  });
+  const currentTabItems = currentItems.filter(
+    (item) =>
+      getNavigationMenuItemTabId({
+        parentId: item.parentId,
+        items: currentItems,
+      }) === targetTabId,
+  );
+
   const navigate = (next: Step) => {
     goToPage(next);
     setSearch('');
@@ -98,7 +111,7 @@ export const NavigationMenuItemAddDropdownContent = ({
     search,
     objectId,
     parentId,
-    currentItems,
+    currentItems: currentTabItems,
     isSearchingAllItems,
     addItem,
     navigateToStep: navigate,
