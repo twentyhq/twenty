@@ -13,7 +13,6 @@ import { enqueueGranolaJobsOrThrow } from 'src/logic-functions/utils/enqueue-gra
 import { excludeDeletedGranolaNotesOrThrow } from 'src/logic-functions/utils/exclude-deleted-granola-notes-or-throw.util';
 import { getGranolaNextPage } from 'src/logic-functions/utils/get-granola-next-page.util';
 import { getGranolaNoteImportSchedule } from 'src/logic-functions/utils/get-granola-note-import-schedule.util';
-import { isGranolaPersonalSyncEnabled } from 'src/logic-functions/utils/is-granola-personal-sync-enabled.util';
 import { loadGranolaPersonalSync } from 'src/logic-functions/utils/load-granola-personal-sync.util';
 import { rethrowKnownOrWrapGranolaError } from 'src/logic-functions/utils/rethrow-known-or-wrap-granola-error.util';
 import { syncGranolaPersonalNoteOrThrow } from 'src/logic-functions/utils/sync-granola-personal-note-or-throw.util';
@@ -35,10 +34,6 @@ const enqueueCatchUpOrThrow = async ({
 export const granolaPersonalCatchUpWorkerHandler = async (
   payload: GranolaPersonalCatchUpPayload,
 ) => {
-  if (!isGranolaPersonalSyncEnabled()) {
-    return { success: true, skipped: true };
-  }
-
   const { scope, apiKeyFingerprint, updatedAfter } = payload;
   const loadCurrentSync = () =>
     loadGranolaPersonalSync({ ...scope, apiKeyFingerprint });
