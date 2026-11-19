@@ -9274,7 +9274,7 @@ type?: (ViewType | null)}
 
 export interface UpsertViewWidgetViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null)}
 
-export interface UpsertWebPushSubscriptionInput {applicationServerKey: Scalars['String'],authSecret: Scalars['String'],endpoint: Scalars['String'],p256dhKey: Scalars['String']}
+export interface UpsertWebPushSubscriptionInput {browserAuthSecret: Scalars['String'],browserPublicKey: Scalars['String'],endpoint: Scalars['String'],vapidPublicKey: Scalars['String']}
 
 export interface UsageAnalyticsGenqlSelection{
     periodEnd?: boolean | number

@@ -6112,10 +6112,10 @@ input UpsertViewWidgetViewSortInput {
 }
 
 input UpsertWebPushSubscriptionInput {
-  applicationServerKey: String!
-  authSecret: String!
+  browserAuthSecret: String!
+  browserPublicKey: String!
   endpoint: String!
-  p256dhKey: String!
+  vapidPublicKey: String!
 }
 
 type UsageAnalytics {

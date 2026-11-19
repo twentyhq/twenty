@@ -12,15 +12,15 @@ export class UpsertWebPushSubscriptionInput {
   @Field(() => String)
   @IsString()
   @IsNotEmpty()
-  p256dhKey: string;
+  browserPublicKey: string;
 
   @Field(() => String)
   @IsString()
   @IsNotEmpty()
-  authSecret: string;
+  browserAuthSecret: string;
 
   @Field(() => String)
   @IsString()
   @IsNotEmpty()
-  applicationServerKey: string;
+  vapidPublicKey: string;
 }

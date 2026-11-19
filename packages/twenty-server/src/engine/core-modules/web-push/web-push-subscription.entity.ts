@@ -36,13 +36,13 @@ export class WebPushSubscriptionEntity {
   endpoint: string;
 
   @Column({ type: 'varchar' })
-  p256dhKey: string;
+  browserPublicKey: string;
 
   @Column({ type: 'varchar' })
-  authSecret: string;
+  browserAuthSecret: string;
 
   @Column({ type: 'varchar' })
-  applicationServerKey: string;
+  vapidPublicKey: string;
 
   @ManyToOne(() => UserSessionEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userSessionId' })
