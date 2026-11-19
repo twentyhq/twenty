@@ -15,6 +15,7 @@ const listAgentsInputSchema = z.object({});
 
 @DefineTool({
   name: 'list_agents',
+  isReadOnly: true,
   category: ToolCategory.AGENT,
   accessPolicy: {
     ...AGENT_READ_ACCESS_POLICY,

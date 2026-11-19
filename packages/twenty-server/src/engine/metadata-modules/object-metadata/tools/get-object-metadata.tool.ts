@@ -62,6 +62,7 @@ const getObjectMetadataInputSchema = z.object({
 
 @DefineTool({
   name: 'get_object_metadata',
+  isReadOnly: true,
   category: ToolCategory.METADATA,
   accessPolicy: OBJECT_METADATA_READ_ACCESS_POLICY,
   icon: 'IconSettings',
