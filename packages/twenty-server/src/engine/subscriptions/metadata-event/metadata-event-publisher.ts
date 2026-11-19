@@ -11,10 +11,12 @@ import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-m
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { VIEW_CHILD_METADATA_NAMES } from 'src/engine/metadata-modules/view/constants/view-child-metadata-names.constant';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
+import { computeRecipientsWhoLostAccess } from 'src/engine/subscriptions/metadata-event/utils/compute-recipients-who-lost-access.util';
 import { enrichFieldMetadataEventRecord } from 'src/engine/subscriptions/metadata-event/utils/enrich-field-metadata-event-record.util';
 import { filterMorphRelationDuplicateFieldMetadataEvents } from 'src/engine/subscriptions/metadata-event/utils/filter-morph-relation-duplicate-field-metadata-events.util';
 import { getRequiredPermissionFlagForBroadcastEntityName } from 'src/engine/subscriptions/constants/required-permission-flag-by-broadcast-entity-name.constant';
 import { pickBroadcastEventProperties } from 'src/engine/subscriptions/utils/pick-broadcast-event-properties.util';
+import { type WorkspaceBroadcastEvent } from 'src/engine/subscriptions/workspace-event-broadcaster/types/workspace-broadcast-event.type';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
 type BroadcastEventRecord = {
@@ -101,39 +103,69 @@ export class MetadataEventPublisher {
     const enrichedBatch =
       await this.enrichMetadataEventBatch(metadataEventBatch);
 
-    const recipientUserWorkspaceIdsByRecordId =
-      await this.resolveRecipientUserWorkspaceIdsByRecordId(enrichedBatch);
+    const resolveRecipients = await this.buildRecipientResolver(enrichedBatch);
 
     await this.workspaceEventBroadcaster.broadcast({
       workspaceId: enrichedBatch.workspaceId,
       updatedCollectionHash: enrichedBatch.updatedCollectionHash,
-      events: enrichedBatch.events.map((event) => {
-        const recipientUserWorkspaceIds =
-          recipientUserWorkspaceIdsByRecordId.get(event.recordId);
+      events: enrichedBatch.events.flatMap((event) => {
+        const properties = pickBroadcastEventProperties({
+          entityName: event.metadataName,
+          properties: event.properties as Record<string, unknown>,
+        });
+        const requiredPermissionFlag =
+          getRequiredPermissionFlagForBroadcastEntityName(event.metadataName);
+        const recipientUserWorkspaceIds = resolveRecipients(
+          getBroadcastEventRecord(event),
+        );
 
-        return {
+        const broadcastEvent: WorkspaceBroadcastEvent = {
           type: event.type,
           entityName: event.metadataName,
           recordId: event.recordId,
-          properties: pickBroadcastEventProperties({
-            entityName: event.metadataName,
-            properties: event.properties as Record<string, unknown>,
-          }),
+          properties,
           recipientUserWorkspaceIds,
-          requiredPermissionFlag:
-            getRequiredPermissionFlagForBroadcastEntityName(event.metadataName),
+          requiredPermissionFlag,
         };
+
+        if (event.type !== 'updated') {
+          return [broadcastEvent];
+        }
+
+        const recipientsWhoLostAccess = computeRecipientsWhoLostAccess({
+          recipientUserWorkspaceIdsBefore: resolveRecipients(
+            event.properties.before as BroadcastEventRecord,
+          ),
+          recipientUserWorkspaceIdsAfter: recipientUserWorkspaceIds,
+        });
+
+        if (!isDefined(recipientsWhoLostAccess)) {
+          return [broadcastEvent];
+        }
+
+        return [
+          broadcastEvent,
+          {
+            type: 'deleted',
+            entityName: event.metadataName,
+            recordId: event.recordId,
+            properties: { before: properties.before },
+            ...recipientsWhoLostAccess,
+            requiredPermissionFlag,
+          },
+        ];
       }),
     });
   }
 
   // Unowned private workflows stay workspace-wide on purpose, as the read path opens them once the creator leaves;
   // versions whose parent is gone fail closed, since a parent is deleted before its versions are published
-  private async resolveRecipientUserWorkspaceIdsByRecordId({
+  private async buildRecipientResolver({
     metadataName,
     workspaceId,
-    events,
-  }: MetadataEventBatch): Promise<Map<string, string[]>> {
+  }: MetadataEventBatch): Promise<
+    (record: BroadcastEventRecord | undefined) => string[] | undefined
+  > {
     const flatWorkflowMaps =
       metadataName === 'workflowVersion'
         ? (
@@ -210,22 +242,7 @@ export class MetadataEventPublisher {
       }
     };
 
-    const recipientUserWorkspaceIdsByRecordId = new Map<string, string[]>();
-
-    for (const event of events) {
-      const recipientUserWorkspaceIds = resolveRecipients(
-        getBroadcastEventRecord(event),
-      );
-
-      if (isDefined(recipientUserWorkspaceIds)) {
-        recipientUserWorkspaceIdsByRecordId.set(
-          event.recordId,
-          recipientUserWorkspaceIds,
-        );
-      }
-    }
-
-    return recipientUserWorkspaceIdsByRecordId;
+    return resolveRecipients;
   }
 
   private async enrichMetadataEventBatch(
