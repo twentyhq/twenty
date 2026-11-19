@@ -31,9 +31,6 @@ import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-functi
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatViewAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-available-to-user.util';
 import { findManyFlatViewChildrenAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-available-to-user.util';
-import { sortByPositionInViewFilterGroup } from 'src/engine/metadata-modules/flat-view/utils/sort-by-position-in-view-filter-group.util';
-import { sortViewGroupsByPosition } from 'src/engine/metadata-modules/flat-view/utils/sort-view-groups-by-position.util';
-import { sortViewSortsByCreation } from 'src/engine/metadata-modules/flat-view/utils/sort-view-sorts-by-creation.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
@@ -901,15 +898,13 @@ export class DataloaderService {
         );
 
       return dataLoaderParams.map(({ viewId, userWorkspaceId }) =>
-        sortByPositionInViewFilterGroup(
-          findManyFlatViewChildrenAvailableToUser({
-            flatViewMaps,
-            flatViewChildMaps: flatViewFilterMaps,
-            flatViewChildIdsKey: 'viewFilterIds',
-            viewId,
-            userWorkspaceId,
-          }),
-        ).map(fromFlatViewFilterToViewFilterDto),
+        findManyFlatViewChildrenAvailableToUser({
+          flatViewMaps,
+          flatViewChildMaps: flatViewFilterMaps,
+          flatViewChildIdsKey: 'viewFilterIds',
+          viewId,
+          userWorkspaceId,
+        }).map(fromFlatViewFilterToViewFilterDto),
       );
     });
   }
@@ -930,15 +925,13 @@ export class DataloaderService {
         );
 
       return dataLoaderParams.map(({ viewId, userWorkspaceId }) =>
-        sortViewSortsByCreation(
-          findManyFlatViewChildrenAvailableToUser({
-            flatViewMaps,
-            flatViewChildMaps: flatViewSortMaps,
-            flatViewChildIdsKey: 'viewSortIds',
-            viewId,
-            userWorkspaceId,
-          }).map(fromFlatViewSortToViewSortDto),
-        ),
+        findManyFlatViewChildrenAvailableToUser({
+          flatViewMaps,
+          flatViewChildMaps: flatViewSortMaps,
+          flatViewChildIdsKey: 'viewSortIds',
+          viewId,
+          userWorkspaceId,
+        }).map(fromFlatViewSortToViewSortDto),
       );
     });
   }
@@ -959,15 +952,13 @@ export class DataloaderService {
         );
 
       return dataLoaderParams.map(({ viewId, userWorkspaceId }) =>
-        sortViewGroupsByPosition(
-          findManyFlatViewChildrenAvailableToUser({
-            flatViewMaps,
-            flatViewChildMaps: flatViewGroupMaps,
-            flatViewChildIdsKey: 'viewGroupIds',
-            viewId,
-            userWorkspaceId,
-          }),
-        ).map(fromFlatViewGroupToViewGroupDto),
+        findManyFlatViewChildrenAvailableToUser({
+          flatViewMaps,
+          flatViewChildMaps: flatViewGroupMaps,
+          flatViewChildIdsKey: 'viewGroupIds',
+          viewId,
+          userWorkspaceId,
+        }).map(fromFlatViewGroupToViewGroupDto),
       );
     });
   }
@@ -988,15 +979,13 @@ export class DataloaderService {
         );
 
       return dataLoaderParams.map(({ viewId, userWorkspaceId }) =>
-        sortByPositionInViewFilterGroup(
-          findManyFlatViewChildrenAvailableToUser({
-            flatViewMaps,
-            flatViewChildMaps: flatViewFilterGroupMaps,
-            flatViewChildIdsKey: 'viewFilterGroupIds',
-            viewId,
-            userWorkspaceId,
-          }),
-        ).map(fromFlatViewFilterGroupToViewFilterGroupDto),
+        findManyFlatViewChildrenAvailableToUser({
+          flatViewMaps,
+          flatViewChildMaps: flatViewFilterGroupMaps,
+          flatViewChildIdsKey: 'viewFilterGroupIds',
+          viewId,
+          userWorkspaceId,
+        }).map(fromFlatViewFilterGroupToViewFilterGroupDto),
       );
     });
   }
