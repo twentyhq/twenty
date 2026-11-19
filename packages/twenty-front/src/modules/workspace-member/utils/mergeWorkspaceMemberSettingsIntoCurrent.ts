@@ -1,11 +1,7 @@
-import { isBoolean, isNull, isNumber, isString } from '@sniptt/guards';
+import { isNull, isNumber, isString } from '@sniptt/guards';
 
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { isOpenRecordIn } from '@/workspace-member/utils/toOpenRecordInPreference';
-import {
-  AGENT_CHAT_INBOX_NOTIFICATION_LEVEL,
-  type AgentChatInboxNotificationLevel,
-} from 'twenty-shared/ai';
 import { type OpenRecordIn } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import {
@@ -33,8 +29,6 @@ export type WorkspaceMemberSettingsUpdateInput = {
   timeFormat?: string;
   numberFormat?: string;
   position?: number;
-  inboxNotificationLevel?: AgentChatInboxNotificationLevel;
-  isInboxNotificationPreviewEnabled?: boolean;
 };
 
 const isColorScheme = (value: unknown): value is ColorScheme =>
@@ -66,15 +60,6 @@ const isWorkspaceMemberNumberFormat = (
   value: unknown,
 ): value is NonNullable<CurrentWorkspaceMember['numberFormat']> =>
   isString(value) && WORKSPACE_MEMBER_NUMBER_FORMAT_VALUES.has(value);
-
-const INBOX_NOTIFICATION_LEVEL_VALUES: ReadonlySet<string> = new Set(
-  Object.values(AGENT_CHAT_INBOX_NOTIFICATION_LEVEL),
-);
-
-const isInboxNotificationLevel = (
-  value: unknown,
-): value is AgentChatInboxNotificationLevel =>
-  isString(value) && INBOX_NOTIFICATION_LEVEL_VALUES.has(value);
 
 export const mergeWorkspaceMemberSettingsIntoCurrent = (
   previous: CurrentWorkspaceMember,
@@ -197,24 +182,6 @@ export const mergeWorkspaceMemberSettingsIntoCurrent = (
     } else if (isNumber(value) && Number.isFinite(value)) {
       next = { ...next, calendarStartDay: value };
     }
-  }
-
-  if (
-    'inboxNotificationLevel' in payload &&
-    isInboxNotificationLevel(payload.inboxNotificationLevel)
-  ) {
-    next = { ...next, inboxNotificationLevel: payload.inboxNotificationLevel };
-  }
-
-  if (
-    'isInboxNotificationPreviewEnabled' in payload &&
-    isBoolean(payload.isInboxNotificationPreviewEnabled)
-  ) {
-    next = {
-      ...next,
-      isInboxNotificationPreviewEnabled:
-        payload.isInboxNotificationPreviewEnabled,
-    };
   }
 
   return next;

@@ -1,3 +1,4 @@
+import { useMutation } from '@apollo/client/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { AGENT_CHAT_INBOX_NOTIFICATION_LEVEL } from 'twenty-shared/ai';
@@ -5,15 +6,21 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconAt, IconBell, IconBellOff, IconEye } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 
-import {
-  type CurrentWorkspaceMember,
-  currentWorkspaceMemberState,
-} from '@/auth/states/currentWorkspaceMemberState';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { SettingsRadioSettingsCard } from '@/settings/components/SettingsRadioSettingsCard';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useUpdateWorkspaceMemberSettings } from '@/workspace-member/hooks/useUpdateWorkspaceMemberSettings';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { UPDATE_INBOX_NOTIFICATION_SETTINGS } from '@/web-push/graphql/mutations/updateInboxNotificationSettings';
+import {
+  type UpdateInboxNotificationSettingsInput,
+  type UserWorkspace,
+} from '~/generated-metadata/graphql';
+
+type InboxNotificationSettings = Pick<
+  UserWorkspace,
+  'inboxNotificationLevel' | 'isInboxNotificationPreviewEnabled'
+>;
 
 const inboxNotificationLevelOptions = [
   {
@@ -38,28 +45,54 @@ const inboxNotificationLevelOptions = [
 
 export const InboxNotificationPreferences = () => {
   const { t } = useLingui();
-  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
+  const [currentUserWorkspace, setCurrentUserWorkspace] = useAtomState(
+    currentUserWorkspaceState,
+  );
+  const [updateInboxNotificationSettings] = useMutation<
+    { updateInboxNotificationSettings: InboxNotificationSettings },
+    { input: UpdateInboxNotificationSettingsInput }
+  >(UPDATE_INBOX_NOTIFICATION_SETTINGS);
 
-  if (!isDefined(currentWorkspaceMember)) {
+  if (!isDefined(currentUserWorkspace)) {
     return null;
   }
 
   const inboxNotificationLevel =
     inboxNotificationLevelOptions.find(
-      ({ value }) => value === currentWorkspaceMember.inboxNotificationLevel,
+      ({ value }) => value === currentUserWorkspace.inboxNotificationLevel,
     )?.value ?? AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.ALL_FOLLOWED;
+  const isInboxNotificationPreviewEnabled =
+    currentUserWorkspace.isInboxNotificationPreviewEnabled ?? false;
 
-  const updateInboxNotificationPreferences = async (
-    update: Pick<
-      CurrentWorkspaceMember,
-      'inboxNotificationLevel' | 'isInboxNotificationPreviewEnabled'
-    >,
+  const saveInboxNotificationSettings = async (
+    update: Partial<UpdateInboxNotificationSettingsInput>,
   ) => {
-    await updateWorkspaceMemberSettings({
-      workspaceMemberId: currentWorkspaceMember.id,
-      update,
+    const { data } = await updateInboxNotificationSettings({
+      variables: {
+        input: {
+          inboxNotificationLevel,
+          isInboxNotificationPreviewEnabled,
+          ...update,
+        },
+      },
     });
+
+    const savedSettings = data?.updateInboxNotificationSettings;
+
+    if (!isDefined(savedSettings)) {
+      return;
+    }
+
+    setCurrentUserWorkspace((previousUserWorkspace) =>
+      isDefined(previousUserWorkspace)
+        ? {
+            ...previousUserWorkspace,
+            inboxNotificationLevel: savedSettings.inboxNotificationLevel,
+            isInboxNotificationPreviewEnabled:
+              savedSettings.isInboxNotificationPreviewEnabled,
+          }
+        : previousUserWorkspace,
+    );
   };
 
   return (
@@ -67,7 +100,7 @@ export const InboxNotificationPreferences = () => {
       <SettingsRadioSettingsCard
         name="inbox-notification-level"
         onChange={(selectedInboxNotificationLevel) =>
-          void updateInboxNotificationPreferences({
+          void saveInboxNotificationSettings({
             inboxNotificationLevel: selectedInboxNotificationLevel,
           })
         }
@@ -79,14 +112,12 @@ export const InboxNotificationPreferences = () => {
           Icon={IconEye}
           title={t`Show message preview`}
           description={t`Show the sender, the chat and the message text in notifications. Leave it off on shared screens and devices`}
-          checked={
-            currentWorkspaceMember.isInboxNotificationPreviewEnabled ?? false
-          }
+          checked={isInboxNotificationPreviewEnabled}
           disabled={
             inboxNotificationLevel === AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.NONE
           }
           onChange={(isChecked) =>
-            void updateInboxNotificationPreferences({
+            void saveInboxNotificationSettings({
               isInboxNotificationPreviewEnabled: isChecked,
             })
           }
