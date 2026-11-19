@@ -1140,6 +1140,7 @@ export interface BillingUpdate {
 export type BillingUsageType = 'LICENSED' | 'METERED'
 
 export interface CalendarChannel {
+    connectedAccount?: ConnectedAccountPublicDTO
     connectedAccountId: Scalars['UUID']
     contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy
     createdAt: Scalars['DateTime']
@@ -5780,6 +5781,7 @@ export interface BillingUpdateGenqlSelection{
 export interface BooleanFieldComparison {is?: (Scalars['Boolean'] | null),isNot?: (Scalars['Boolean'] | null)}
 
 export interface CalendarChannelGenqlSelection{
+    connectedAccount?: ConnectedAccountPublicDTOGenqlSelection
     connectedAccountId?: boolean | number
     contactAutoCreationPolicy?: boolean | number
     createdAt?: boolean | number

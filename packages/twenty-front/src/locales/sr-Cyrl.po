@@ -7575,7 +7575,7 @@ msgstr "Повежите сопствени {0} налог да би га ова
 #. placeholder {0}: connectionProvider.displayName
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
 msgid "Connect your own {0} account for this server to use on your behalf."
-msgstr ""
+msgstr "Повежите сопствени {0} налог за овај сервер да бисте га користили у своје име."
 
 #. js-lingui-id: QHcLEN
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
@@ -9261,7 +9261,7 @@ msgstr "Прилагодите страницу записа"
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
-msgstr ""
+msgstr "Прилагодите бочну траку"
 
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx

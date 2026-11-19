@@ -7575,7 +7575,7 @@ msgstr "Conectează propriul cont {0} pentru ca această aplicație să îl util
 #. placeholder {0}: connectionProvider.displayName
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
 msgid "Connect your own {0} account for this server to use on your behalf."
-msgstr ""
+msgstr "Conectează propriul cont {0} pentru acest server, pentru a-l utiliza în numele tău."
 
 #. js-lingui-id: QHcLEN
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
@@ -9261,7 +9261,7 @@ msgstr "Personalizează pagina înregistrării"
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
-msgstr ""
+msgstr "Personalizează bara laterală"
 
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
