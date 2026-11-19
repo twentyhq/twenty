@@ -50,7 +50,7 @@ export const useNavigationMenuItemSectionItems = ({
 
   const workspaceSidebarRootSectionId = useWorkspaceSidebarRootSectionId();
   const isRootContainer =
-    containerId === null || containerId === workspaceSidebarRootSectionId;
+    !isDefined(containerId) || containerId === workspaceSidebarRootSectionId;
   const rootSectionId =
     isFlatteningTopLevelSections && isRootContainer
       ? workspaceSidebarRootSectionId
