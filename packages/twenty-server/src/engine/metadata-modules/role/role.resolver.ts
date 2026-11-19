@@ -26,6 +26,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { isAgentVisibleToUser } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-agent-visible-to-user.util';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
@@ -370,11 +371,17 @@ export class RoleResolver {
     @Parent() role: RoleDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<AgentDTO[]> {
-    return context.loaders.agentsByRoleIdLoader.load({
+    const agents = await context.loaders.agentsByRoleIdLoader.load({
       workspaceId: workspace.id,
       roleId: role.id,
     });
+
+    return agents.filter((agent) =>
+      isAgentVisibleToUser({ agent, userWorkspaceId }),
+    );
   }
 
   @ResolveField('apiKeys', () => [ApiKeyForRoleDTO])

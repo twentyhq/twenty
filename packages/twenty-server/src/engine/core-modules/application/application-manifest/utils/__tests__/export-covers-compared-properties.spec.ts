@@ -934,7 +934,11 @@ const EXPORTED_KINDS: ExportedKind[] = [
     metadataName: 'agent',
     emittedProperties: Object.keys(EXPORTED_AGENT_MANIFEST),
     renamedProperties: {},
-    workspaceLocalProperties: WORKSPACE_LOCAL_PROPERTIES,
+    workspaceLocalProperties: [
+      ...WORKSPACE_LOCAL_PROPERTIES,
+      'isPrivate',
+      'createdByUserWorkspaceId',
+    ],
     knownGaps: {
       modelConfiguration:
         'no manifest slot; an agent with one is reported as unsupported',
