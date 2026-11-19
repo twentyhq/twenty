@@ -91,14 +91,16 @@ const toEqualityNode = ({
   const left = toOperandNode(firstOperand);
   const right = toOperandNode(secondOperand);
 
-  return isDefined(left) && isDefined(right)
-    ? {
-        type: 'COMPARISON',
-        operator: isNegated ? 'NOT_EQUAL' : 'EQUAL',
-        left,
-        right,
-      }
-    : undefined;
+  if (!isDefined(left) || !isDefined(right)) {
+    return undefined;
+  }
+
+  return {
+    type: 'COMPARISON',
+    operator: isNegated ? 'NOT_EQUAL' : 'EQUAL',
+    left,
+    right,
+  };
 };
 
 const toComparisonNode = ({

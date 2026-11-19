@@ -10,9 +10,9 @@ export const changeConditionalAvailabilityRowOperator = ({
   operator: ConditionalAvailabilityOperator;
 }): ConditionalAvailabilityRow => {
   const nextRow = { ...row, operator };
-  const keepsValues =
+  const shouldKeepValues =
     getConditionalAvailabilityValueArity({ row: nextRow }) === 'list' ||
     row.values.length <= 1;
 
-  return { ...nextRow, values: keepsValues ? row.values : [] };
+  return { ...nextRow, values: shouldKeepValues ? row.values : [] };
 };

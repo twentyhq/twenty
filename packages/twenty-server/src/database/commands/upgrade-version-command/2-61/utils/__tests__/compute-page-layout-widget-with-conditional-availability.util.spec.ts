@@ -39,10 +39,15 @@ const buildPageLayoutWidget = (
   ...properties,
 });
 
-const compute = (
-  flatPageLayoutWidget: TestPageLayoutWidget,
-  standardConditionalAvailability?: ConditionalAvailabilityNode,
-) =>
+type ComputeParameters = {
+  flatPageLayoutWidget: TestPageLayoutWidget;
+  standardConditionalAvailability?: ConditionalAvailabilityNode;
+};
+
+const compute = ({
+  flatPageLayoutWidget,
+  standardConditionalAvailability,
+}: ComputeParameters) =>
   computePageLayoutWidgetWithConditionalAvailability({
     flatPageLayoutWidget,
     standardConditionalAvailability,
@@ -51,11 +56,8 @@ const compute = (
     now: NOW,
   });
 
-const computeOrThrow = (
-  flatPageLayoutWidget: TestPageLayoutWidget,
-  standardConditionalAvailability?: ConditionalAvailabilityNode,
-) => {
-  const conversion = compute(flatPageLayoutWidget, standardConditionalAvailability);
+const computeOrThrow = (computeParameters: ComputeParameters) => {
+  const conversion = compute(computeParameters);
 
   if (!isDefined(conversion)) {
     throw new Error('Expected a conversion, got none');
@@ -87,12 +89,12 @@ const getDisplayedRule = (flatPageLayoutWidget: TestPageLayoutWidget) => {
 
 describe('computePageLayoutWidgetWithConditionalAvailability', () => {
   it('should store a text rule as a tree and clear both old columns', () => {
-    const { flatPageLayoutWidget } = computeOrThrow(
-      buildPageLayoutWidget({
+    const { flatPageLayoutWidget } = computeOrThrow({
+      flatPageLayoutWidget: buildPageLayoutWidget({
         applicationUniversalIdentifier: WORKSPACE_CUSTOM_APPLICATION,
         conditionalAvailabilityExpression: 'device == "MOBILE"',
       }),
-    );
+    });
 
     expect(flatPageLayoutWidget).toMatchObject({
       conditionalAvailability: deviceIs('MOBILE'),
@@ -103,9 +105,11 @@ describe('computePageLayoutWidgetWithConditionalAvailability', () => {
   });
 
   it('should store a json-logic rule as a tree', () => {
-    const { flatPageLayoutWidget } = computeOrThrow(
-      buildPageLayoutWidget({ conditionalDisplay: MOBILE_JSON_LOGIC }),
-    );
+    const { flatPageLayoutWidget } = computeOrThrow({
+      flatPageLayoutWidget: buildPageLayoutWidget({
+        conditionalDisplay: MOBILE_JSON_LOGIC,
+      }),
+    });
 
     expect(flatPageLayoutWidget).toMatchObject({
       conditionalAvailability: deviceIs('MOBILE'),
@@ -114,8 +118,8 @@ describe('computePageLayoutWidgetWithConditionalAvailability', () => {
   });
 
   it('should convert an override rule inside its own entry', () => {
-    const { flatPageLayoutWidget } = computeOrThrow(
-      buildPageLayoutWidget({
+    const { flatPageLayoutWidget } = computeOrThrow({
+      flatPageLayoutWidget: buildPageLayoutWidget({
         conditionalAvailabilityExpression: 'device == "MOBILE"',
         overrides: {
           [WORKSPACE_CUSTOM_APPLICATION]: {
@@ -123,7 +127,7 @@ describe('computePageLayoutWidgetWithConditionalAvailability', () => {
           },
         },
       }),
-    );
+    });
 
     expect(flatPageLayoutWidget).toMatchObject({
       conditionalAvailability: deviceIs('MOBILE'),
@@ -136,8 +140,8 @@ describe('computePageLayoutWidgetWithConditionalAvailability', () => {
   });
 
   it('should keep an override that shows the widget to everyone', () => {
-    const { flatPageLayoutWidget } = computeOrThrow(
-      buildPageLayoutWidget({
+    const { flatPageLayoutWidget } = computeOrThrow({
+      flatPageLayoutWidget: buildPageLayoutWidget({
         conditionalAvailabilityExpression: 'device == "MOBILE"',
         overrides: {
           [WORKSPACE_CUSTOM_APPLICATION]: {
@@ -145,7 +149,7 @@ describe('computePageLayoutWidgetWithConditionalAvailability', () => {
           },
         },
       }),
-    );
+    });
 
     expect(flatPageLayoutWidget.conditionalAvailability).toEqual(
       deviceIs('MOBILE'),
@@ -170,9 +174,9 @@ describe('computePageLayoutWidgetWithConditionalAvailability', () => {
   ])(
     'should hide a widget whose %s rule cannot be read and give the reason',
     (_ruleKind, properties, reason) => {
-      const { flatPageLayoutWidget, unreadableRuleReason } = computeOrThrow(
-        buildPageLayoutWidget(properties),
-      );
+      const { flatPageLayoutWidget, unreadableRuleReason } = computeOrThrow({
+        flatPageLayoutWidget: buildPageLayoutWidget(properties),
+      });
 
       expect(unreadableRuleReason).toBe(reason);
       expect(flatPageLayoutWidget).toMatchObject({
@@ -184,8 +188,10 @@ describe('computePageLayoutWidgetWithConditionalAvailability', () => {
 
   it('should give a built-in widget storing no rule its built-in rule back', () => {
     expect(
-      computeOrThrow(buildPageLayoutWidget({}), deviceIs('MOBILE'))
-        .flatPageLayoutWidget,
+      computeOrThrow({
+        flatPageLayoutWidget: buildPageLayoutWidget({}),
+        standardConditionalAvailability: deviceIs('MOBILE'),
+      }).flatPageLayoutWidget,
     ).toEqual(
       buildPageLayoutWidget({
         conditionalAvailability: deviceIs('MOBILE'),
@@ -198,18 +204,18 @@ describe('computePageLayoutWidgetWithConditionalAvailability', () => {
     ['a widget with no rule', buildPageLayoutWidget({}), undefined],
     [
       'a converted rule',
-      computeOrThrow(
-        buildPageLayoutWidget({
+      computeOrThrow({
+        flatPageLayoutWidget: buildPageLayoutWidget({
           conditionalAvailabilityExpression: 'device == "MOBILE"',
           conditionalDisplay: MOBILE_JSON_LOGIC,
         }),
-      ).flatPageLayoutWidget,
+      }).flatPageLayoutWidget,
       undefined,
     ],
     [
       'a converted override',
-      computeOrThrow(
-        buildPageLayoutWidget({
+      computeOrThrow({
+        flatPageLayoutWidget: buildPageLayoutWidget({
           conditionalAvailabilityExpression: 'device == "MOBILE"',
           overrides: {
             [WORKSPACE_CUSTOM_APPLICATION]: {
@@ -217,20 +223,22 @@ describe('computePageLayoutWidgetWithConditionalAvailability', () => {
             },
           },
         }),
-      ).flatPageLayoutWidget,
+      }).flatPageLayoutWidget,
       undefined,
     ],
     [
       'a restored built-in rule',
-      computeOrThrow(buildPageLayoutWidget({}), deviceIs('MOBILE'))
-        .flatPageLayoutWidget,
+      computeOrThrow({
+        flatPageLayoutWidget: buildPageLayoutWidget({}),
+        standardConditionalAvailability: deviceIs('MOBILE'),
+      }).flatPageLayoutWidget,
       deviceIs('MOBILE'),
     ],
   ])(
     'should change nothing on %s',
     (_description, flatPageLayoutWidget, standardConditionalAvailability) => {
       expect(
-        compute(flatPageLayoutWidget, standardConditionalAvailability),
+        compute({ flatPageLayoutWidget, standardConditionalAvailability }),
       ).toBeNull();
     },
   );
