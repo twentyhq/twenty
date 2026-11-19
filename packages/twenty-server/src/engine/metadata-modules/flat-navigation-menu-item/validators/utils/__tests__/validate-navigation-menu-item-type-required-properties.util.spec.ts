@@ -15,6 +15,7 @@ const buildFlatNavigationMenuItem = (
     name: null,
     link: null,
     nativePageKey: null,
+    builtInSectionKey: null,
     icon: null,
     color: null,
     position: 0,
@@ -193,14 +194,43 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
     ]);
   });
 
-  it('should accept a built-in section without a name or target', () => {
+  it('should accept a built-in section without a name', () => {
     expect(
       validateNavigationMenuItemTypeRequiredProperties({
         flatNavigationMenuItem: buildFlatNavigationMenuItem({
-          type: NavigationMenuItemType.FAVORITES,
+          type: NavigationMenuItemType.SECTION,
+          builtInSectionKey: 'favorites',
         }),
       }),
     ).toEqual([]);
+  });
+
+  it('should report an error when the built-in section key is unknown', () => {
+    const errors = validateNavigationMenuItemTypeRequiredProperties({
+      flatNavigationMenuItem: buildFlatNavigationMenuItem({
+        type: NavigationMenuItemType.SECTION,
+        builtInSectionKey:
+          'unknown' as UniversalFlatNavigationMenuItem['builtInSectionKey'],
+      }),
+    });
+
+    expect(errors.map(({ message }) => message)).toEqual([
+      'A valid builtInSectionKey is required for a built-in SECTION',
+    ]);
+  });
+
+  it('should report an error when a built-in section key is set on another type', () => {
+    const errors = validateNavigationMenuItemTypeRequiredProperties({
+      flatNavigationMenuItem: buildFlatNavigationMenuItem({
+        type: NavigationMenuItemType.FOLDER,
+        name: 'Folder',
+        builtInSectionKey: 'favorites',
+      }),
+    });
+
+    expect(errors.map(({ message }) => message)).toEqual([
+      'A builtInSectionKey is only allowed on SECTION type',
+    ]);
   });
 
   it('should return an error when type is unknown', () => {

@@ -1935,6 +1935,7 @@ export type CreateMessageSuppressionInput = {
 export type CreateNavigationMenuItemInput = {
   agentChatChannelId?: InputMaybe<Scalars['UUID']['input']>;
   agentId?: InputMaybe<Scalars['UUID']['input']>;
+  builtInSectionKey?: InputMaybe<Scalars['String']['input']>;
   color?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['UUID']['input']>;
@@ -5620,6 +5621,7 @@ export type NavigationMenuItem = {
   agentChatChannelId?: Maybe<Scalars['UUID']['output']>;
   agentId?: Maybe<Scalars['UUID']['output']>;
   applicationId?: Maybe<Scalars['UUID']['output']>;
+  builtInSectionKey?: Maybe<Scalars['String']['output']>;
   color?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   /** @deprecated Use parentId instead. */
@@ -5645,12 +5647,6 @@ export type NavigationMenuItem = {
 export enum NavigationMenuItemType {
   AGENT = 'AGENT',
   AGENT_CHAT_CHANNEL = 'AGENT_CHAT_CHANNEL',
-  AI_AGENTS = 'AI_AGENTS',
-  AI_CHAT_CHANNELS = 'AI_CHAT_CHANNELS',
-  AI_CHAT_FAVORITES = 'AI_CHAT_FAVORITES',
-  AI_CHAT_INBOX = 'AI_CHAT_INBOX',
-  AI_CHAT_RECENTS = 'AI_CHAT_RECENTS',
-  FAVORITES = 'FAVORITES',
   FOLDER = 'FOLDER',
   LINK = 'LINK',
   NATIVE_PAGE = 'NATIVE_PAGE',
