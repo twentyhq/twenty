@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
-import { type UseFormReturn } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { MemoryRouter } from 'react-router-dom';
 
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -62,23 +62,22 @@ const credentials: Form = {
   captchaToken: '',
 };
 
-const form = {
-  getValues: () => 'someone@example.com',
-} as unknown as UseFormReturn<Form>;
-
 const renderUseSignInUp = (workspacePublicData: PublicWorkspaceData | null) => {
   jotaiStore.set(workspacePublicDataState.atom, workspacePublicData);
   jotaiStore.set(signInUpModeState.atom, SignInUpMode.SignUp);
 
-  return renderHook(() => useSignInUp(form), {
-    wrapper: ({ children }) => (
-      <JotaiProvider store={jotaiStore}>
-        <I18nProvider i18n={i18n}>
-          <MemoryRouter>{children}</MemoryRouter>
-        </I18nProvider>
-      </JotaiProvider>
-    ),
-  });
+  return renderHook(
+    () => useSignInUp(useForm<Form>({ defaultValues: credentials })),
+    {
+      wrapper: ({ children }) => (
+        <JotaiProvider store={jotaiStore}>
+          <I18nProvider i18n={i18n}>
+            <MemoryRouter>{children}</MemoryRouter>
+          </I18nProvider>
+        </JotaiProvider>
+      ),
+    },
+  );
 };
 
 describe('useSignInUp > submitCredentials > sign-up routing', () => {
