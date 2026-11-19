@@ -1,5 +1,5 @@
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { CaptchaDriverType } from '~/generated-metadata/graphql';
 
 const CAPTCHA_WIDGET_SELECTOR = '#captcha-widget';
@@ -23,12 +23,16 @@ export const requestCaptchaTokenFromProvider = ({
 
         document.querySelector(CAPTCHA_WIDGET_SELECTOR)?.appendChild(container);
 
+        let widgetId: string | undefined;
+
         const removeWidget = () => {
-          window.turnstile.remove(widgetId);
+          if (isDefined(widgetId)) {
+            window.turnstile.remove(widgetId);
+          }
           container.remove();
         };
 
-        const widgetId = window.turnstile.render(container, {
+        widgetId = window.turnstile.render(container, {
           sitekey: siteKey,
           callback: (token: string) => {
             removeWidget();
