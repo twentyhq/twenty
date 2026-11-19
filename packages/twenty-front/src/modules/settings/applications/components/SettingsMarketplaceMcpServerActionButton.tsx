@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath, getUrlSafely, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { IconPlus, IconSettings } from 'twenty-ui/icon';
 
@@ -11,10 +11,12 @@ import { FindManyMcpServersDocument } from '~/generated-metadata/graphql';
 
 type SettingsMarketplaceMcpServerActionButtonProps = {
   universalIdentifier: string;
+  mcpServerUrl: string;
 };
 
 export const SettingsMarketplaceMcpServerActionButton = ({
   universalIdentifier,
+  mcpServerUrl,
 }: SettingsMarketplaceMcpServerActionButtonProps) => {
   const { t } = useLingui();
   const { data, loading: isLoading } = useQuery(FindManyMcpServersDocument);
@@ -24,8 +26,11 @@ export const SettingsMarketplaceMcpServerActionButton = ({
     return null;
   }
 
+  const marketplaceUrl = getUrlSafely(mcpServerUrl)?.toString();
   const addedMcpServer = data?.mcpServers.find(
-    (mcpServer) => mcpServer.universalIdentifier === universalIdentifier,
+    (mcpServer) =>
+      mcpServer.universalIdentifier === universalIdentifier ||
+      getUrlSafely(mcpServer.url)?.toString() === marketplaceUrl,
   );
 
   if (isDefined(addedMcpServer)) {

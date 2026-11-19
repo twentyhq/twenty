@@ -25,6 +25,7 @@ import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 import { v4 } from 'uuid';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { findMarketplaceMcpServer } from 'src/engine/core-modules/application/application-marketplace/marketplace-mcp-server-catalog/utils/find-marketplace-mcp-server.util';
 import { shouldRefreshApplicationRegistrationOnInstall } from 'src/engine/core-modules/application/application-install/utils/should-refresh-application-registration-on-install.util';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { MARKETPLACE_FEATURED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-featured-applications.constant';
@@ -884,6 +885,14 @@ export class ApplicationRegistrationService {
       ...rawParams,
       universalIdentifier: rawParams.universalIdentifier.toLowerCase(),
     };
+
+    if (isDefined(findMarketplaceMcpServer(params.universalIdentifier))) {
+      this.logger.warn(
+        `Skipping catalog entry from package ${params.sourcePackage}: universal identifier ${params.universalIdentifier} is reserved for a marketplace MCP server`,
+      );
+
+      return null;
+    }
 
     const existing =
       await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(

@@ -1,3 +1,4 @@
+import { MarketplaceAppKind } from 'src/engine/core-modules/application/application-marketplace/enums/marketplace-app-kind.enum';
 import { type MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { type MarketplaceBuiltInApplication } from 'src/engine/core-modules/application/application-marketplace/types/marketplace-built-in-application.type';
 
@@ -25,4 +26,5 @@ export const toMarketplaceBuiltInAppDTO = ({
   logoUrl: new URL(builtInApplication.logoPath, frontBaseUrl).toString(),
   connectUrl: builtInApplication.connectUrl,
   isListed: true,
+  kind: MarketplaceAppKind.OAUTH_CLIENT,
 });

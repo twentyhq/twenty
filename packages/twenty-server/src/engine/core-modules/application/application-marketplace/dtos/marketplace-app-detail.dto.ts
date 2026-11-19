@@ -19,6 +19,7 @@ import { MarketplaceAppObjectDTO } from 'src/engine/core-modules/application/app
 import { MarketplaceAppRoleDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-role.dto';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { IframeMediaPermissionDTO } from 'src/engine/core-modules/workspace/dtos/iframe-media-permission.dto';
+import { MarketplaceAppKind } from 'src/engine/core-modules/application/application-marketplace/enums/marketplace-app-kind.enum';
 
 @ObjectType('MarketplaceAppDetail')
 export class MarketplaceAppDetailDTO {
@@ -53,6 +54,9 @@ export class MarketplaceAppDetailDTO {
   @IsBoolean()
   @Field(() => Boolean)
   isListed: boolean;
+
+  @Field(() => MarketplaceAppKind)
+  kind: MarketplaceAppKind;
 
   @IsOptional()
   @IsString()

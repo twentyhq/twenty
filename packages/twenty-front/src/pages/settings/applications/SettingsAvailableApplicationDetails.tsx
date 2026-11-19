@@ -30,6 +30,7 @@ import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconEyeOff, IconShoppingBag } from 'twenty-ui/icon';
 import {
   ApplicationRegistrationSourceType,
+  MarketplaceAppKind,
   FindMarketplaceAppDetailDocument,
   FindOneApplicationByUniversalIdentifierDocument,
   PermissionFlagType,
@@ -235,10 +236,14 @@ export const SettingsAvailableApplicationDetails = () => {
       );
     }
 
-    if (isNonEmptyString(detail.mcpServerUrl)) {
+    if (
+      detail.kind === MarketplaceAppKind.MCP_SERVER &&
+      isNonEmptyString(detail.mcpServerUrl)
+    ) {
       return (
         <SettingsMarketplaceMcpServerActionButton
           universalIdentifier={detail.universalIdentifier}
+          mcpServerUrl={detail.mcpServerUrl}
         />
       );
     }

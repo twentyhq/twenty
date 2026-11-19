@@ -7,6 +7,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
+import { MarketplaceAppKind } from 'src/engine/core-modules/application/application-marketplace/enums/marketplace-app-kind.enum';
 
 @ObjectType('MarketplaceApp')
 export class MarketplaceAppDTO {
@@ -56,4 +57,7 @@ export class MarketplaceAppDTO {
   @IsBoolean()
   @Field(() => Boolean)
   isListed: boolean;
+
+  @Field(() => MarketplaceAppKind)
+  kind: MarketplaceAppKind;
 }

@@ -12,5 +12,6 @@ export const MARKETPLACE_APP_FRAGMENT = gql`
     mcpServerUrl
     sourcePackage
     isListed
+    kind
   }
 `;

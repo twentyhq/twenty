@@ -14,7 +14,9 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { buildApplicationContentFromManifest } from 'src/engine/core-modules/application/application-content/utils/build-application-content-from-manifest.util';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
-import { MarketplaceMcpServerCatalogService } from 'src/engine/core-modules/application/application-marketplace/marketplace-mcp-server-catalog/marketplace-mcp-server-catalog.service';
+import { MarketplaceAppKind } from 'src/engine/core-modules/application/application-marketplace/enums/marketplace-app-kind.enum';
+import { MARKETPLACE_MCP_SERVERS } from 'src/engine/core-modules/application/application-marketplace/marketplace-mcp-server-catalog/constants/marketplace-mcp-servers.constant';
+import { findMarketplaceMcpServer } from 'src/engine/core-modules/application/application-marketplace/marketplace-mcp-server-catalog/utils/find-marketplace-mcp-server.util';
 import { toMarketplaceMcpServerAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/marketplace-mcp-server-catalog/utils/to-marketplace-mcp-server-app-detail-dto.util';
 import { toMarketplaceMcpServerAppDTO } from 'src/engine/core-modules/application/application-marketplace/marketplace-mcp-server-catalog/utils/to-marketplace-mcp-server-app-dto.util';
 import { MARKETPLACE_BUILT_IN_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-built-in-applications.constant';
@@ -46,7 +48,6 @@ export class MarketplaceQueryService {
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly applicationService: ApplicationService,
     private readonly domainServerConfigService: DomainServerConfigService,
-    private readonly marketplaceMcpServerCatalogService: MarketplaceMcpServerCatalogService,
   ) {}
 
   async findManyMarketplaceApps({
@@ -79,9 +80,10 @@ export class MarketplaceQueryService {
       ...(shouldIncludeBuiltInApplications
         ? this.findBuiltInApps(universalIdentifiers)
         : []),
-      ...catalogApps,
+      // Entries cached before the field existed carry no kind
+      ...catalogApps.map((app) => ({ ...app, kind: MarketplaceAppKind.APP })),
       ...(shouldIncludeMcpServers
-        ? await this.findMcpServerApps(universalIdentifiers)
+        ? this.findMcpServerApps(universalIdentifiers)
         : []),
     ];
 
@@ -107,19 +109,14 @@ export class MarketplaceQueryService {
     );
   }
 
-  private async findMcpServerApps(
+  private findMcpServerApps(
     universalIdentifiers?: string[],
-  ): Promise<MarketplaceAppDTO[]> {
-    const marketplaceMcpServers =
-      await this.marketplaceMcpServerCatalogService.findMany();
-
-    return marketplaceMcpServers
-      .filter(
-        ({ universalIdentifier }) =>
-          !isNonEmptyArray(universalIdentifiers) ||
-          universalIdentifiers.includes(universalIdentifier),
-      )
-      .map(toMarketplaceMcpServerAppDTO);
+  ): MarketplaceAppDTO[] {
+    return MARKETPLACE_MCP_SERVERS.filter(
+      ({ universalIdentifier }) =>
+        !isNonEmptyArray(universalIdentifiers) ||
+        universalIdentifiers.includes(universalIdentifier),
+    ).map(toMarketplaceMcpServerAppDTO);
   }
 
   async findMarketplaceAppDetail({
@@ -143,9 +140,7 @@ export class MarketplaceQueryService {
     }
 
     const marketplaceMcpServer = shouldIncludeMcpServers
-      ? await this.marketplaceMcpServerCatalogService.findOne(
-          universalIdentifier,
-        )
+      ? findMarketplaceMcpServer(universalIdentifier)
       : undefined;
 
     if (isDefined(marketplaceMcpServer)) {
@@ -199,6 +194,7 @@ export class MarketplaceQueryService {
       sourcePackage: registration.sourcePackage ?? undefined,
       latestAvailableVersion: registration.latestAvailableVersion ?? undefined,
       isListed: registration.isListed,
+      kind: MarketplaceAppKind.APP,
       description:
         registration.description ??
         registration.manifest?.application?.description ??

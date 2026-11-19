@@ -106,23 +106,8 @@ export class McpServerResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<McpServerDTO> {
-    return await this.mcpServerService.create(
+    return await this.mcpServerService.create({
       input,
-      workspace.id,
-      userWorkspaceId,
-    );
-  }
-
-  @Mutation(() => McpServerDTO)
-  @UseGuards(AccessPolicyGuard(MCP_SERVER_WRITE_ACCESS_POLICY))
-  async addMarketplaceMcpServer(
-    @Args('universalIdentifier') universalIdentifier: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
-  ): Promise<McpServerDTO> {
-    return await this.mcpServerService.addFromMarketplace({
-      universalIdentifier,
       workspaceId: workspace.id,
       userWorkspaceId,
     });

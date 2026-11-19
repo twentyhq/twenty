@@ -8,7 +8,8 @@ import { ApplicationRegistrationModule } from 'src/engine/core-modules/applicati
 import { ApplicationRegistrationVersionModule } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.module';
 import { MarketplaceCatalogSyncCronCommand } from 'src/engine/core-modules/application/application-marketplace/crons/commands/marketplace-catalog-sync.cron.command';
 import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
-import { MarketplaceMcpServerCatalogModule } from 'src/engine/core-modules/application/application-marketplace/marketplace-mcp-server-catalog/marketplace-mcp-server-catalog.module';
+import { MarketplaceMcpServerService } from 'src/engine/core-modules/application/application-marketplace/marketplace-mcp-server-catalog/marketplace-mcp-server.service';
+import { McpServerModule } from 'src/engine/metadata-modules/mcp-server/mcp-server.module';
 import { MarketplaceCatalogCacheProviderService } from 'src/engine/core-modules/application/application-marketplace/marketplace-catalog-cache-provider.service';
 import { MarketplaceCatalogSyncService } from 'src/engine/core-modules/application/application-marketplace/marketplace-catalog-sync.service';
 import { MarketplacePublicResolver } from 'src/engine/core-modules/application/application-marketplace/marketplace-public.resolver';
@@ -30,13 +31,14 @@ import { MarketplaceCatalogSyncCommand } from 'src/engine/core-modules/applicati
     CoreEntityCacheModule,
     DomainServerConfigModule,
     FeatureFlagModule,
-    MarketplaceMcpServerCatalogModule,
+    McpServerModule,
     PermissionsModule,
   ],
   providers: [
     MarketplaceService,
     MarketplaceCatalogSyncService,
     MarketplaceQueryService,
+    MarketplaceMcpServerService,
     MarketplaceCatalogCacheProviderService,
     MarketplaceCatalogSyncCronJob,
     MarketplaceCatalogSyncCronCommand,

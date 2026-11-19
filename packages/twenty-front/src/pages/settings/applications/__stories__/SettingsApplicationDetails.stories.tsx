@@ -19,6 +19,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { isDefined } from 'twenty-shared/utils';
 import {
   ApplicationRegistrationSourceType,
+  MarketplaceAppKind,
   type FindMarketplaceAppDetailQuery,
 } from '~/generated-metadata/graphql';
 
@@ -127,6 +128,7 @@ const MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarketplaceAppD
     websiteUrl: null,
     connectUrl: null,
     mcpServerUrl: null,
+    kind: MarketplaceAppKind.APP,
     aboutDescription: null,
     pricingDescription: null,
     termsUrl: null,

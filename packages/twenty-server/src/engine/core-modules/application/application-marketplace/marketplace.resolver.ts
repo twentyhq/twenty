@@ -15,6 +15,10 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { MarketplaceMcpServerService } from 'src/engine/core-modules/application/application-marketplace/marketplace-mcp-server-catalog/marketplace-mcp-server.service';
+import { McpServerDTO } from 'src/engine/metadata-modules/mcp-server/dtos/mcp-server.dto';
+import { McpServerGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/mcp-server/interceptors/mcp-server-graphql-api-exception.interceptor';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -36,6 +40,12 @@ const MARKETPLACE_READ_ACCESS_POLICY: AccessPolicy = {
   requiredPermissionFlags: [],
 };
 
+const MARKETPLACE_MCP_SERVER_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: MARKETPLACE_READ_ACCESS_POLICY.authPrincipals,
+  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
+  requiredFeatureFlags: [FeatureFlagKey.IS_MCP_SERVERS_ENABLED],
+};
+
 @MetadataResolver()
 @UseFilters(
   ApplicationRegistrationExceptionFilter,
@@ -48,6 +58,7 @@ export class MarketplaceResolver {
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly marketplaceMcpServerService: MarketplaceMcpServerService,
   ) {}
 
   @Query(() => [MarketplaceAppDTO])
@@ -78,6 +89,22 @@ export class MarketplaceResolver {
       universalIdentifier,
       shouldIncludeBuiltInApplications: true,
       shouldIncludeMcpServers: await this.isMcpServersEnabled(workspace.id),
+    });
+  }
+
+  @Mutation(() => McpServerDTO)
+  @UseInterceptors(McpServerGraphqlApiExceptionInterceptor)
+  @UseGuards(AccessPolicyGuard(MARKETPLACE_MCP_SERVER_WRITE_ACCESS_POLICY))
+  async addMarketplaceMcpServer(
+    @Args('universalIdentifier') universalIdentifier: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
+  ): Promise<McpServerDTO> {
+    return this.marketplaceMcpServerService.addToWorkspace({
+      universalIdentifier,
+      workspaceId: workspace.id,
+      userWorkspaceId,
     });
   }
 

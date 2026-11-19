@@ -2163,6 +2163,7 @@ export interface MarketplaceApp {
     description: Scalars['String']
     id: Scalars['String']
     isListed: Scalars['Boolean']
+    kind: MarketplaceAppKind
     logoUrl?: Scalars['String']
     mcpServerUrl?: Scalars['String']
     name: Scalars['String']
@@ -2185,6 +2186,7 @@ export interface MarketplaceAppDetail {
     installCount: Scalars['Int']
     isListed: Scalars['Boolean']
     issueReportUrl?: Scalars['String']
+    kind: MarketplaceAppKind
     latestAvailableVersion?: Scalars['String']
     logoUrl?: Scalars['String']
     /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
@@ -2205,6 +2207,8 @@ export interface MarketplaceAppDetail {
     websiteUrl?: Scalars['String']
     __typename: 'MarketplaceAppDetail'
 }
+
+export type MarketplaceAppKind = 'APP' | 'MCP_SERVER' | 'OAUTH_CLIENT'
 
 export interface MarketplaceAppObject {
     labelPlural: Scalars['String']
@@ -7036,6 +7040,7 @@ export interface MarketplaceAppGenqlSelection{
     description?: boolean | number
     id?: boolean | number
     isListed?: boolean | number
+    kind?: boolean | number
     logoUrl?: boolean | number
     mcpServerUrl?: boolean | number
     name?: boolean | number
@@ -7059,6 +7064,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     installCount?: boolean | number
     isListed?: boolean | number
     issueReportUrl?: boolean | number
+    kind?: boolean | number
     latestAvailableVersion?: boolean | number
     logoUrl?: boolean | number
     /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
@@ -13350,6 +13356,12 @@ export const enumLogicFunctionExecutionStatus = {
    ERROR: 'ERROR' as const,
    IDLE: 'IDLE' as const,
    SUCCESS: 'SUCCESS' as const
+}
+
+export const enumMarketplaceAppKind = {
+   APP: 'APP' as const,
+   MCP_SERVER: 'MCP_SERVER' as const,
+   OAUTH_CLIENT: 'OAUTH_CLIENT' as const
 }
 
 export const enumMessageChannelContactAutoCreationPolicy = {

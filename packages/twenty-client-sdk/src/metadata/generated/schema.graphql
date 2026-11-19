@@ -3188,6 +3188,7 @@ type MarketplaceApp {
   description: String!
   id: String!
   isListed: Boolean!
+  kind: MarketplaceAppKind!
   logoUrl: String
   mcpServerUrl: String
   name: String!
@@ -3209,6 +3210,7 @@ type MarketplaceAppDetail {
   installCount: Int!
   isListed: Boolean!
   issueReportUrl: String
+  kind: MarketplaceAppKind!
   latestAvailableVersion: String
   logoUrl: String
   manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")
@@ -3225,6 +3227,12 @@ type MarketplaceAppDetail {
   termsUrl: String
   universalIdentifier: String!
   websiteUrl: String
+}
+
+enum MarketplaceAppKind {
+  APP
+  MCP_SERVER
+  OAUTH_CLIENT
 }
 
 type MarketplaceAppObject {

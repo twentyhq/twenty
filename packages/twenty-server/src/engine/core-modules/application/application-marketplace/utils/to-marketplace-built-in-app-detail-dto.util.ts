@@ -1,3 +1,4 @@
+import { MarketplaceAppKind } from 'src/engine/core-modules/application/application-marketplace/enums/marketplace-app-kind.enum';
 import { type MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
 import { type MarketplaceBuiltInApplication } from 'src/engine/core-modules/application/application-marketplace/types/marketplace-built-in-application.type';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -14,6 +15,7 @@ export const toMarketplaceBuiltInAppDetailDTO = ({
   name: builtInApplication.name,
   sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
   isListed: true,
+  kind: MarketplaceAppKind.OAUTH_CLIENT,
   description: builtInApplication.description,
   aboutDescription: builtInApplication.aboutDescription,
   author: builtInApplication.author,

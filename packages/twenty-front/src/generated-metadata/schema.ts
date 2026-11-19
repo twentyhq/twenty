@@ -3350,6 +3350,7 @@ export type MarketplaceApp = {
   description: Scalars['String']['output'];
   id: Scalars['String']['output'];
   isListed: Scalars['Boolean']['output'];
+  kind: MarketplaceAppKind;
   logoUrl?: Maybe<Scalars['String']['output']>;
   mcpServerUrl?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
@@ -3372,6 +3373,7 @@ export type MarketplaceAppDetail = {
   installCount: Scalars['Int']['output'];
   isListed: Scalars['Boolean']['output'];
   issueReportUrl?: Maybe<Scalars['String']['output']>;
+  kind: MarketplaceAppKind;
   latestAvailableVersion?: Maybe<Scalars['String']['output']>;
   logoUrl?: Maybe<Scalars['String']['output']>;
   /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
@@ -3391,6 +3393,12 @@ export type MarketplaceAppDetail = {
   universalIdentifier: Scalars['String']['output'];
   websiteUrl?: Maybe<Scalars['String']['output']>;
 };
+
+export enum MarketplaceAppKind {
+  APP = 'APP',
+  MCP_SERVER = 'MCP_SERVER',
+  OAUTH_CLIENT = 'OAUTH_CLIENT'
+}
 
 export type MarketplaceAppObject = {
   __typename?: 'MarketplaceAppObject';

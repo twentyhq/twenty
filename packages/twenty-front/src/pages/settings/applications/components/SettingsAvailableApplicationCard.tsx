@@ -11,7 +11,10 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { Avatar, Tag } from 'twenty-ui/primitives/data-display';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { type MarketplaceApp } from '~/generated-metadata/graphql';
+import {
+  type MarketplaceApp,
+  MarketplaceAppKind,
+} from '~/generated-metadata/graphql';
 import { getApplicationDescriptionSummary } from '@/settings/applications/utils/getApplicationDescriptionSummary';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { useLingui } from '@lingui/react/macro';
@@ -95,7 +98,7 @@ export const SettingsAvailableApplicationCard = ({
             <StyledAuthor>{t`by ${author}`}</StyledAuthor>
           )}
         </StyledTextColumn>
-        {isNonEmptyString(application.mcpServerUrl) && (
+        {application.kind === MarketplaceAppKind.MCP_SERVER && (
           <Tag color="gray">{t`MCP`}</Tag>
         )}
       </StyledApplicationCardContent>

@@ -1,6 +1,8 @@
 import { type MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
+import { MarketplaceAppKind } from 'src/engine/core-modules/application/application-marketplace/enums/marketplace-app-kind.enum';
+import { MARKETPLACE_MCP_SERVER_CATEGORY } from 'src/engine/core-modules/application/application-marketplace/marketplace-mcp-server-catalog/constants/marketplace-mcp-server-category.constant';
 import { type MarketplaceMcpServer } from 'src/engine/core-modules/application/application-marketplace/marketplace-mcp-server-catalog/types/marketplace-mcp-server.type';
-import { MARKETPLACE_MCP_SERVER_CATEGORY } from 'src/engine/core-modules/application/application-marketplace/marketplace-mcp-server-catalog/utils/to-marketplace-mcp-server-app-dto.util';
+import { buildMarketplaceMcpServerAboutDescription } from 'src/engine/core-modules/application/application-marketplace/marketplace-mcp-server-catalog/utils/build-marketplace-mcp-server-about-description.util';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 
 export const toMarketplaceMcpServerAppDetailDTO = (
@@ -9,14 +11,15 @@ export const toMarketplaceMcpServerAppDetailDTO = (
   universalIdentifier: marketplaceMcpServer.universalIdentifier,
   id: marketplaceMcpServer.universalIdentifier,
   name: marketplaceMcpServer.label,
-  // Like the built-in clients, a listed MCP server ships no code
   sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
   isListed: true,
+  kind: MarketplaceAppKind.MCP_SERVER,
   description: marketplaceMcpServer.description,
-  aboutDescription: `Add the ${marketplaceMcpServer.label} MCP server so your agents and workflows can use its tools.\n\nTools run on ${marketplaceMcpServer.author}'s server at ${marketplaceMcpServer.url}: agents send it the data each call needs.`,
+  aboutDescription:
+    buildMarketplaceMcpServerAboutDescription(marketplaceMcpServer),
   author: marketplaceMcpServer.author,
   category: MARKETPLACE_MCP_SERVER_CATEGORY,
-  logoUrl: marketplaceMcpServer.logoUrl,
+  logoUrl: marketplaceMcpServer.logoUrl ?? undefined,
   websiteUrl: marketplaceMcpServer.websiteUrl,
   mcpServerUrl: marketplaceMcpServer.url,
   screenshots: [],

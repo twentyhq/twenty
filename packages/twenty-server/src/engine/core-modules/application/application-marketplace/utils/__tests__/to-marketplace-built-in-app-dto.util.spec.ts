@@ -24,6 +24,7 @@ describe('toMarketplaceBuiltInAppDTO', () => {
       logoUrl: 'https://app.example.com/images/oauth-clients/claude.webp',
       connectUrl: 'https://claude.ai/connect?url={mcpServerUrl}',
       isListed: true,
+      kind: 'OAUTH_CLIENT',
     });
   });
 });

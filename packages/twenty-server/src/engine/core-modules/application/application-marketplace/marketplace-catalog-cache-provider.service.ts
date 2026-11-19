@@ -6,6 +6,7 @@ import { MARKETPLACE_FEATURED_APPLICATIONS } from 'src/engine/core-modules/appli
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
+import { MarketplaceAppKind } from 'src/engine/core-modules/application/application-marketplace/enums/marketplace-app-kind.enum';
 import {
   type ApplicationRegistrationCatalogCard,
   ApplicationRegistrationService,
@@ -102,6 +103,7 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
       logoUrl: catalogCard.logoUrl ?? undefined,
       sourcePackage: catalogCard.sourcePackage ?? undefined,
       isListed: catalogCard.isListed,
+      kind: MarketplaceAppKind.APP,
     };
   }
 }
