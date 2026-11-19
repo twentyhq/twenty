@@ -16,7 +16,7 @@ import { getObjectOperations } from '@/settings/roles/role-permissions/objects-p
 import { getObjectOperationsWithReadDependency } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperationsWithReadDependency';
 import { getObjectRowLevelPermissionRules } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionRules';
 import { getRowLevelPermissionRuleLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel';
-import { getRuleOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getRuleOperations';
+import { getRecordsGrantOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getRecordsGrantOperations';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -233,7 +233,7 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
             <TableCell onClick={(event) => event.stopPropagation()}>
               <SettingsRolePermissionsObjectActionsSelect
                 dropdownId={`settings-role-rule-actions-${rule.id}`}
-                selectedOperations={getRuleOperations(rule)}
+                selectedOperations={getRecordsGrantOperations(rule)}
                 onChange={(operations) =>
                   setRuleOperations({
                     rowLevelPermissionRuleId: rule.id,

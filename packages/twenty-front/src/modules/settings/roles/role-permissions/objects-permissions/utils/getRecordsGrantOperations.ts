@@ -2,8 +2,8 @@ import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-perm
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionKeys';
 import { type RowLevelPermissionRule } from '~/generated-metadata/graphql';
 
-export const getRuleOperations = (
-  rule: Pick<
+export const getRecordsGrantOperations = (
+  recordsGrant: Pick<
     RowLevelPermissionRule,
     | 'canReadRecords'
     | 'canUpdateRecords'
@@ -12,10 +12,10 @@ export const getRuleOperations = (
   >,
 ): SettingsRoleObjectPermissionKey[] => {
   const isOperationAllowed: Record<SettingsRoleObjectPermissionKey, boolean> = {
-    canReadObjectRecords: rule.canReadRecords,
-    canUpdateObjectRecords: rule.canUpdateRecords,
-    canSoftDeleteObjectRecords: rule.canSoftDeleteRecords,
-    canDestroyObjectRecords: rule.canDestroyRecords,
+    canReadObjectRecords: recordsGrant.canReadRecords,
+    canUpdateObjectRecords: recordsGrant.canUpdateRecords,
+    canSoftDeleteObjectRecords: recordsGrant.canSoftDeleteRecords,
+    canDestroyObjectRecords: recordsGrant.canDestroyRecords,
   };
 
   return SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.filter(

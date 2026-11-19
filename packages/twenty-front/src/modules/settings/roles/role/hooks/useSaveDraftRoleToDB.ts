@@ -273,11 +273,9 @@ export const useSaveDraftRoleToDB = ({
     const predicateGroups = draftRole.rowLevelPermissionPredicateGroups ?? [];
 
     const objectMetadataIds = new Set(
-      [
-        ...rules,
-        ...predicates,
-        ...(settingsPersistedRole?.rowLevelPermissionRules ?? []),
-      ].map(({ objectMetadataId }) => objectMetadataId),
+      [...rules, ...(settingsPersistedRole?.rowLevelPermissionRules ?? [])].map(
+        ({ objectMetadataId }) => objectMetadataId,
+      ),
     );
 
     for (const objectMetadataId of objectMetadataIds) {
