@@ -2,8 +2,13 @@ import { CONDITIONAL_AVAILABILITY_CURRENT_WORKSPACE_MEMBER_OPTION_VALUE } from '
 import { CONDITIONAL_AVAILABILITY_DEVICES } from '@/conditional-availability/constants/ConditionalAvailabilityDevices';
 import { type ConditionalAvailabilityRow } from '@/conditional-availability/types/ConditionalAvailabilityRow';
 import { getConditionalAvailabilityValueArity } from '@/conditional-availability/utils/getConditionalAvailabilityValueArity';
-import { isConditionalAvailabilityDayValue } from '@/conditional-availability/utils/isConditionalAvailabilityDayValue';
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDateWithoutTime } from 'twenty-shared/utils';
+
+const isDayValue = (value: string): boolean =>
+  isDateWithoutTime(value) &&
+  !Number.isNaN(Date.parse(value)) &&
+  new Date(value).toISOString().startsWith(value);
 
 const isValueValid = ({
   row,
@@ -28,7 +33,7 @@ const isValueValid = ({
       return value === 'true' || value === 'false';
     case 'date':
     case 'dateTime':
-      return isConditionalAvailabilityDayValue({ value });
+      return isDayValue(value);
     case 'recordRelation':
       return (
         isNonEmptyString(value) &&
