@@ -3,9 +3,11 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import { IconFolderSymlink, IconHome, IconTrash } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
+import { isDefined } from 'twenty-shared/utils';
 
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { canAddBuiltInSectionToContainer } from '@/navigation-menu-item/common/utils/canAddBuiltInSectionToContainer';
+import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { NavigationMenuItemContainerNameEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemContainerNameEditor';
@@ -18,7 +20,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 type NavigationMenuSectionMenuContentProps = {
   section: Pick<
     NavigationMenuItem,
-    'id' | 'name' | 'icon' | 'parentId' | 'type'
+    'id' | 'name' | 'icon' | 'parentId' | 'type' | 'builtInSectionKey'
   >;
   onClose: () => void;
 };
@@ -44,13 +46,13 @@ export const NavigationMenuSectionMenuContent = ({
     onMoved: onClose,
   });
 
-  const isBuiltInSection = section.type !== NavigationMenuItemType.SECTION;
+  const isBuiltInSection = isNavigationMenuItemBuiltInSection(section);
 
   const canMoveTo = (containerId: string | null) =>
     containerId !== currentContainerId &&
-    (!isBuiltInSection ||
+    (!isDefined(section.builtInSectionKey) ||
       canAddBuiltInSectionToContainer({
-        type: section.type,
+        builtInSectionKey: section.builtInSectionKey,
         containerId,
         items: workspaceNavigationMenuItems,
       }));

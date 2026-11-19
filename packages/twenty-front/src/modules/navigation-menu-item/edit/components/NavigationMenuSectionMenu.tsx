@@ -16,7 +16,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 type NavigationMenuSectionMenuProps = {
   section: Pick<
     NavigationMenuItem,
-    'id' | 'name' | 'icon' | 'parentId' | 'type'
+    'id' | 'name' | 'icon' | 'parentId' | 'type' | 'builtInSectionKey'
   >;
 };
 

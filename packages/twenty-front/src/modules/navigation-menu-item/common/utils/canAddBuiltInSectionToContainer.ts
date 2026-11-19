@@ -1,17 +1,17 @@
-import { NavigationMenuItemType } from 'twenty-shared/types';
-
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export const canAddBuiltInSectionToContainer = ({
-  type,
+  builtInSectionKey,
   containerId,
   items,
 }: {
-  type: NavigationMenuItemType;
+  builtInSectionKey: string;
   containerId: string | null;
-  items: Pick<NavigationMenuItem, 'type' | 'parentId'>[];
+  items: Pick<NavigationMenuItem, 'builtInSectionKey' | 'parentId'>[];
 }) =>
-  !(type === NavigationMenuItemType.FAVORITES && containerId === null) &&
+  !(builtInSectionKey === 'favorites' && containerId === null) &&
   !items.some(
-    (item) => item.type === type && (item.parentId ?? null) === containerId,
+    (item) =>
+      item.builtInSectionKey === builtInSectionKey &&
+      (item.parentId ?? null) === containerId,
   );
