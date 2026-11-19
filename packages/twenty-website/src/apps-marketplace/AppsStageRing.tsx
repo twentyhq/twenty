@@ -18,14 +18,16 @@ import { useAppsStageLogoInks } from './use-apps-stage-logo-inks';
 // PROTOTYPE (?direction=e): app tiles standing on a floor tilted 48°, the
 // ring turning once every 100 s. Ported from the approved Paper render
 // (_draft/site-four-pages/paper-assets/logo-ring-source.html).
-const SLOT_COUNT = 24;
+// 30 slots of 80px, as on Profound's integrations hero: denser and finer
+// than 24 of 104px.
+const SLOT_COUNT = 30;
 // With the floor at 0°, this slot faces the viewer: the entrance starts here.
 const FRONT_SLOT_INDEX = SLOT_COUNT / 2;
 const RING_RADIUS_PX = 550;
 
 // The stage fades the ring's sides and back into the page.
 const Stage = styled.div`
-  --apps-stage-ring-scale: 0.46;
+  --apps-stage-ring-scale: 0.6;
   --apps-stage-ring-top: 300px;
   inset: 0;
   /* Stacked copy is taller than the ring's back: only the front shows. */
@@ -39,7 +41,7 @@ const Stage = styled.div`
   position: absolute;
 
   ${mediaUp('sm')} {
-    --apps-stage-ring-scale: 0.7;
+    --apps-stage-ring-scale: 0.8;
     --apps-stage-ring-top: 300px;
     mask-image: linear-gradient(
       to bottom,
@@ -51,11 +53,32 @@ const Stage = styled.div`
   ${mediaUp('md')} {
     --apps-stage-ring-scale: 1;
     --apps-stage-ring-top: 200px;
+    /* One soft fade from the bottom centre: the sides die out gradually. */
     mask-image: radial-gradient(
-      ellipse 50% 110% at 50% 100%,
-      ${color('black')} 58%,
-      transparent 90%
+      ellipse at 50% 100%,
+      ${color('black')} 0%,
+      transparent 70%
     );
+  }
+`;
+
+// The whole ring arrives from a blur, a little low and tipped back (0.6 s),
+// as on Profound; the tiles then cascade in on top.
+const Enter = styled.div`
+  animation: apps-stage-ring-enter ${DURATION.xl} ${EASING.standard} backwards;
+  inset: 0;
+  position: absolute;
+
+  @keyframes apps-stage-ring-enter {
+    from {
+      filter: blur(8px);
+      opacity: 0;
+      transform: translateY(24px) rotateX(26deg);
+    }
+  }
+
+  ${REDUCED_MOTION} {
+    animation: none;
   }
 `;
 
@@ -108,17 +131,17 @@ const Slot = styled.div`
 const Tile = styled.div`
   align-items: center;
   background-color: ${color('neutral')};
-  border-radius: ${radius(3)};
+  border-radius: ${radius(5)};
   box-shadow: inset 0 0 0 1px ${color('white-10')};
   clip-path: polygon(0 0, 100% 0, 100% 82%, 82% 100%, 0 100%);
   display: flex;
-  height: 104px;
+  height: 80px;
   justify-content: center;
-  left: -52px;
+  left: -40px;
   overflow: hidden;
   position: absolute;
-  top: -52px;
-  width: 104px;
+  top: -40px;
+  width: 80px;
 
   /* Tiles wait for their logo to be read, then rise from the front slot
      outwards. Unread after 3 s (no JS, slow network): they show anyway. */
@@ -158,14 +181,14 @@ const Tile = styled.div`
 `;
 
 const Logo = styled.img`
-  height: 56px;
+  height: 44px;
   object-fit: contain;
-  width: 56px;
+  width: 44px;
 
   ${Tile}[data-kind='plate'] & {
-    height: 104px;
+    height: 80px;
     object-fit: cover;
-    width: 104px;
+    width: 80px;
   }
 
   ${Tile}[data-kind='unknown'] & {
@@ -213,30 +236,32 @@ export function AppsStageRing({ apps }: AppsStageRingProps) {
       data-paused={isOffScreen ? '' : undefined}
       ref={stageRef}
     >
-      <Scaler>
-        <Floor>
-          {appsWithLogo.length > 0 &&
-            Array.from({ length: SLOT_COUNT }, (_, slotIndex) => {
-              const app = appsWithLogo[slotIndex % appsWithLogo.length];
-              const offset = Math.abs(slotIndex - FRONT_SLOT_INDEX);
-              const style: SlotStyle = {
-                '--apps-stage-slot-angle': `${(360 / SLOT_COUNT) * slotIndex}deg`,
-                '--apps-stage-slot-distance': Math.min(
-                  offset,
-                  SLOT_COUNT - offset,
-                ),
-              };
+      <Enter>
+        <Scaler>
+          <Floor>
+            {appsWithLogo.length > 0 &&
+              Array.from({ length: SLOT_COUNT }, (_, slotIndex) => {
+                const app = appsWithLogo[slotIndex % appsWithLogo.length];
+                const offset = Math.abs(slotIndex - FRONT_SLOT_INDEX);
+                const style: SlotStyle = {
+                  '--apps-stage-slot-angle': `${(360 / SLOT_COUNT) * slotIndex}deg`,
+                  '--apps-stage-slot-distance': Math.min(
+                    offset,
+                    SLOT_COUNT - offset,
+                  ),
+                };
 
-              return (
-                <Slot key={slotIndex} style={style}>
-                  <Tile data-kind={inks[app.slug]?.kind ?? 'unknown'}>
-                    <Logo alt="" decoding="async" src={app.logoUrl} />
-                  </Tile>
-                </Slot>
-              );
-            })}
-        </Floor>
-      </Scaler>
+                return (
+                  <Slot key={slotIndex} style={style}>
+                    <Tile data-kind={inks[app.slug]?.kind ?? 'unknown'}>
+                      <Logo alt="" decoding="async" src={app.logoUrl} />
+                    </Tile>
+                  </Slot>
+                );
+              })}
+          </Floor>
+        </Scaler>
+      </Enter>
     </Stage>
   );
 }

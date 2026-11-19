@@ -19,9 +19,10 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
-import { Body, Heading, SectionShell } from '@/ui';
+import { Body, Heading, SectionShell, TextField } from '@/ui';
 
 import { AppsStageCraftCell } from './AppsStageCraftCell';
+import { AppsStageCraftRow } from './AppsStageCraftRow';
 import { APPS_STAGE_BETA_APP_NAMES } from './apps-stage-beta-apps';
 import { APPS_STAGE_CRAFT_COLUMN } from './apps-stage-craft-column';
 import { getAppsStagePastel } from './apps-stage-pastels';
@@ -165,6 +166,21 @@ const MainHeader = styled.div`
   }
 `;
 
+const SearchField = styled.div`
+  max-width: 420px;
+  padding-top: ${spacing(4)};
+`;
+
+// Rows sit flush with the headings: their padding hangs into the gutter.
+const RowList = styled.ul`
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing(0.5)};
+  list-style: none;
+  margin-inline: calc(${spacing(3)} * -1);
+  padding: 0;
+`;
+
 // The grid is one rounded box: cells draw the inner lines (right and bottom)
 // and drop them on the box's own edges.
 const Grid = styled.div`
@@ -268,11 +284,14 @@ const toCategoryId = (category: string) =>
 type AppsStageCraftCatalogueProps = {
   apps: readonly MarketplaceApp[];
   isUnavailable: boolean;
+  // PROTOTYPE switch (?view=list): rows and a search instead of card grids.
+  view?: 'grid' | 'list';
 };
 
 export function AppsStageCraftCatalogue({
   apps,
   isUnavailable,
+  view = 'grid',
 }: AppsStageCraftCatalogueProps) {
   const { i18n } = useLingui();
   const inks = useAppsStageLogoInks(apps);
@@ -297,6 +316,25 @@ export function AppsStageCraftCatalogue({
   }, [apps, i18n]);
 
   const categoryNames = categories.map(([category]) => category);
+  const [query, setQuery] = useState('');
+  const normalizedQuery = query.trim().toLowerCase();
+  const shownCategories =
+    normalizedQuery.length === 0
+      ? categories
+      : categories
+          .map(
+            ([category, categoryApps]) =>
+              [
+                category,
+                categoryApps.filter((app) =>
+                  [app.name, app.tagline, app.category, app.author]
+                    .join(' ')
+                    .toLowerCase()
+                    .includes(normalizedQuery),
+                ),
+              ] as const,
+          )
+          .filter(([, categoryApps]) => categoryApps.length > 0);
   const [activeCategory, setActiveCategory] = useState<string | undefined>(
     categoryNames[0],
   );
@@ -358,7 +396,7 @@ export function AppsStageCraftCatalogue({
       window.removeEventListener('scroll', handleScroll);
       revealObserver.disconnect();
     };
-  }, [categories]);
+  }, [shownCategories]);
 
   const jumpTo = (event: MouseEvent<HTMLAnchorElement>, category: string) => {
     const target = document.getElementById(toCategoryId(category));
@@ -387,7 +425,7 @@ export function AppsStageCraftCatalogue({
           <SidebarInner>
             <SidebarLabel>{i18n._(msg`Categories`)}</SidebarLabel>
             <Index aria-label={i18n._(msg`App categories`)}>
-              {categories.map(([category, categoryApps]) => (
+              {shownCategories.map(([category, categoryApps]) => (
                 <IndexItem
                   aria-current={activeCategory === category}
                   href={`#${toCategoryId(category)}`}
@@ -420,7 +458,25 @@ export function AppsStageCraftCatalogue({
                 msg`Built by Twenty and reviewed for security and quality.`,
               )}
             </Body>
+            {view === 'list' && categories.length > 0 && (
+              <SearchField>
+                <TextField
+                  ariaLabel={i18n._(msg`Search apps`)}
+                  name="apps-search"
+                  onValueChange={setQuery}
+                  placeholder={i18n._(msg`Search apps`)}
+                  value={query}
+                />
+              </SearchField>
+            )}
           </MainHeader>
+          {categories.length > 0 && shownCategories.length === 0 && (
+            <EmptyState>
+              <Body muted size="sm">
+                {i18n._(msg`No apps match “${query.trim()}”.`)}
+              </Body>
+            </EmptyState>
+          )}
           {categories.length === 0 ? (
             <EmptyState>
               <Body muted size="sm">
@@ -435,7 +491,7 @@ export function AppsStageCraftCatalogue({
             </EmptyState>
           ) : (
             <Categories ref={categoriesRef}>
-              {categories.map(([category, categoryApps]) => (
+              {shownCategories.map(([category, categoryApps]) => (
                 <Category
                   aria-labelledby={`${toCategoryId(category)}-title`}
                   data-apps-stage-waiting={
@@ -452,20 +508,38 @@ export function AppsStageCraftCatalogue({
                     </CategoryTitle>
                     <CategoryCount>{categoryApps.length}</CategoryCount>
                   </CategoryHeader>
-                  <Grid>
-                    {categoryApps.map((app, index) => (
-                      <AppsStageCraftCell
-                        app={app}
-                        index={index}
-                        ink={inks[app.slug]}
-                        isBeta={APPS_STAGE_BETA_APP_NAMES.includes(
-                          app.name.trim().toLowerCase(),
-                        )}
-                        key={app.slug}
-                        pastel={getAppsStagePastel(app.category, categoryNames)}
-                      />
-                    ))}
-                  </Grid>
+                  {view === 'list' ? (
+                    <RowList>
+                      {categoryApps.map((app, index) => (
+                        <AppsStageCraftRow
+                          app={app}
+                          index={index}
+                          isBeta={APPS_STAGE_BETA_APP_NAMES.includes(
+                            app.name.trim().toLowerCase(),
+                          )}
+                          key={app.slug}
+                        />
+                      ))}
+                    </RowList>
+                  ) : (
+                    <Grid>
+                      {categoryApps.map((app, index) => (
+                        <AppsStageCraftCell
+                          app={app}
+                          index={index}
+                          ink={inks[app.slug]}
+                          isBeta={APPS_STAGE_BETA_APP_NAMES.includes(
+                            app.name.trim().toLowerCase(),
+                          )}
+                          key={app.slug}
+                          pastel={getAppsStagePastel(
+                            app.category,
+                            categoryNames,
+                          )}
+                        />
+                      ))}
+                    </Grid>
+                  )}
                 </Category>
               ))}
             </Categories>

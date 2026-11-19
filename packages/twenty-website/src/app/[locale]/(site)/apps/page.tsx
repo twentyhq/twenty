@@ -43,7 +43,11 @@ export default async function AppsMarketplacePage({
   searchParams,
 }: {
   params: Promise<LocaleRouteParams>;
-  searchParams: Promise<{ direction?: string; tone?: string }>;
+  searchParams: Promise<{
+    direction?: string;
+    tone?: string;
+    view?: string;
+  }>;
 }) {
   const prototype = await searchParams;
   const isDirectionB = prototype.direction === 'b';
@@ -87,6 +91,7 @@ export default async function AppsMarketplacePage({
           <AppsStageCraftCatalogue
             apps={apps ?? []}
             isUnavailable={apps === null}
+            view={prototype.view === 'list' ? 'list' : 'grid'}
           />
           <AppsStageCraftClosing
             heading={i18n._(msg`Build your own *app*`)}
