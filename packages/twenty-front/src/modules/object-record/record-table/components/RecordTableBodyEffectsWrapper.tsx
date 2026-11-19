@@ -6,6 +6,7 @@ import { RecordTableBodyFocusKeyboardEffect } from '@/object-record/record-table
 import { RecordTableRecordGroupBodyEffects } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupBodyEffects';
 import { RecordTableRecordGroupsSSESubscribeEffect } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupsSSESubscribeEffect';
 import { RecordTableNoRecordGroupScrollToPreviousRecordEffect } from '@/object-record/record-table/virtualization/components/RecordTableNoRecordGroupScrollToPreviousRecordEffect';
+import { RecordTableVirtualizedEvictRecordsCacheOnUnmountEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedEvictRecordsCacheOnUnmountEffect';
 import { RecordTableVirtualizedFieldMetadataUpdateEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedFieldMetadataUpdateEffect';
 import { RecordTableVirtualizedInitialDataLoadEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedInitialDataLoadEffect';
 
@@ -31,6 +32,7 @@ export const RecordTableBodyEffectsWrapper = ({
           <RecordTableNoRecordGroupScrollToPreviousRecordEffect />
           <RecordTableVirtualizedInitialDataLoadEffect />
           <RecordTableVirtualizedFieldMetadataUpdateEffect />
+          <RecordTableVirtualizedEvictRecordsCacheOnUnmountEffect />
         </>
       )}
       <RecordSelectionEscapeHotkeyEffect />
