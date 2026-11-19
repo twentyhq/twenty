@@ -46,13 +46,17 @@ export const readConditionalAvailabilityRecordFilterValues = ({
         : result.data.selectedRecordIds;
     }
     case 'dateTime':
+      if (
+        !value.endsWith(CONDITIONAL_AVAILABILITY_DATE_TIME_DAY_START_SUFFIX)
+      ) {
+        return [value];
+      }
+
       return [
-        value.endsWith(CONDITIONAL_AVAILABILITY_DATE_TIME_DAY_START_SUFFIX)
-          ? value.slice(
-              0,
-              -CONDITIONAL_AVAILABILITY_DATE_TIME_DAY_START_SUFFIX.length,
-            )
-          : value,
+        value.slice(
+          0,
+          -CONDITIONAL_AVAILABILITY_DATE_TIME_DAY_START_SUFFIX.length,
+        ),
       ];
     default:
       return [value];
