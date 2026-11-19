@@ -839,11 +839,6 @@ msgstr "Χρησιμοποιήθηκε {formattedPercentage}%, {formattedConvers
 msgid "{goalCredits, plural, one {free credit} other {free credits}}"
 msgstr "{goalCredits, plural, one {δωρεάν πίστωση} other {δωρεάν πιστώσεις}}"
 
-#. js-lingui-id: YF/a2j
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
-msgid "{grantedBy, plural, one {Granted for {grantedBy} object} other {Granted for {grantedBy} objects}}"
-msgstr "{grantedBy, plural, one {Granted για {grantedBy} αντικείμενο} other {Granted για {grantedBy} αντικείμενα}}"
-
 #. js-lingui-id: Ae2fyu
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "{grantedCreditsDisplay} credits"
@@ -1007,6 +1002,11 @@ msgstr "{num, selectordinal, one {{num}η} other {{num}η}}"
 msgid "{numberOfSelectedItems} workspace members"
 msgstr "{numberOfSelectedItems} μέλη χώρου εργασίας"
 
+#. js-lingui-id: DQ+6r7
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
+msgid "{objectLabelPlural} permissions"
+msgstr "Δικαιώματα {objectLabelPlural}"
+
 #. js-lingui-id: luWGLQ
 #: src/modules/workflow/workflow-variables/utils/generate/generateWaitForEventOutputSchema.ts
 msgid "{objectLabelSingular} Before Update"
@@ -1114,21 +1114,6 @@ msgstr "{retentionInHours, plural, one {# ώρα} other {# ώρες}}"
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
 msgid "{retriedCount, plural, one {Successfully retried {retriedCount} job} other {Successfully retried {retriedCount} jobs}}"
 msgstr "{retriedCount, plural, one {Επιτυχής επαναποστολή {retriedCount} εργασίας} other {Επιτυχής επαναποστολή {retriedCount} εργασιών}}"
-
-#. js-lingui-id: hcRYEH
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
-msgid "{revokedBy, plural, one {Revoked for {revokedBy} object} other {Revoked for {revokedBy} objects}}"
-msgstr "{revokedBy, plural, one {Ανακλήθηκε για {revokedBy} αντικείμενο} other {Ανακλήθηκε για {revokedBy} αντικείμενα}}"
-
-#. js-lingui-id: OeIgEg
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
-msgid "{roleLabel} can {humanReadableAction} {objectLabel} records"
-msgstr "{roleLabel} μπορεί να {humanReadableAction} αρχεία {objectLabel}"
-
-#. js-lingui-id: D0C09b
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
-msgid "{roleLabel} can't {humanReadableAction} {objectLabel} records"
-msgstr "{roleLabel} δεν μπορεί να {humanReadableAction} αρχεία {objectLabel}"
 
 #. js-lingui-id: uHZWwU
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
@@ -1536,11 +1521,6 @@ msgstr "1. Ηλεκτρονικό ταχυδρομείο"
 msgid "1. Select a field type"
 msgstr "1. Επιλέξτε έναν τύπο πεδίου"
 
-#. js-lingui-id: XSdCGq
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-msgid "1. Select an object"
-msgstr "1. Επιλέξτε ένα αντικείμενο"
-
 #. js-lingui-id: 6WQdu8
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -1577,11 +1557,6 @@ msgstr "2 χρόνια"
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "2. Configure field"
 msgstr "2. Διαμόρφωση πεδίου"
-
-#. js-lingui-id: 0Tx9MD
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
-msgid "2. Set {objectLabelPlural} permissions"
-msgstr "2. Ορίστε δικαιώματα {objectLabelPlural}"
 
 #. js-lingui-id: 23g1gf
 #: src/modules/navigation/constants/LogsSwitchPhrases.ts
@@ -1830,6 +1805,7 @@ msgstr "Αποδεκτές και υπογεγραμμένες DPA για αυτ
 
 #. js-lingui-id: LuXP9q
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionsTable.tsx
 msgid "Access"
 msgstr "Πρόσβαση"
@@ -1960,7 +1936,6 @@ msgstr "Ενέργεια προς έγκριση"
 #. js-lingui-id: 7L01XJ
 #: src/modules/command-menu-item/components/CommandMenuDropdownAtCursor.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/side-panel/pages/create-related-record/components/SidePanelCreateRelatedRecordPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -2482,16 +2457,12 @@ msgid "Add node"
 msgstr "Προσθήκη κόμβου"
 
 #. js-lingui-id: dEO3Zx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
 msgstr "Προσθήκη αντικειμένου"
-
-#. js-lingui-id: mFtRj8
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-msgid "Add object permission"
-msgstr "Προσθέστε δικαίωμα αντικειμένου"
 
 #. js-lingui-id: Dl5lVI
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -2585,7 +2556,6 @@ msgstr "Προσθήκη γραμμής κάτω"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
@@ -2603,7 +2573,7 @@ msgstr "Προσθήκη ομάδας κανόνων"
 #. js-lingui-id: RxFV0G
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "Add section"
-msgstr ""
+msgstr "Προσθήκη ενότητας"
 
 #. js-lingui-id: TdZwYb
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
@@ -2623,7 +2593,7 @@ msgstr "Προσθήκη παρόχου ταυτότητας SSO"
 #: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
 msgid "Add tab"
-msgstr ""
+msgstr "Προσθήκη καρτέλας"
 
 #. js-lingui-id: O6B1gJ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -2936,6 +2906,7 @@ msgstr "Διαχειριστές"
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverrideRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Advanced"
 msgstr "Προηγμένο"
@@ -3340,8 +3311,6 @@ msgstr "Στοίχιση"
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow.tsx
 #: src/modules/views/view-picker/components/ViewPickerDropdown.tsx
 msgid "All"
@@ -3472,6 +3441,7 @@ msgid "all objects"
 msgstr "όλα τα Αντικείμενα"
 
 #. js-lingui-id: zIk4M6
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAllObjectsCard.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 msgid "All objects"
 msgstr "Όλα τα Αντικείμενα"
@@ -3479,7 +3449,6 @@ msgstr "Όλα τα Αντικείμενα"
 #. js-lingui-id: aFE/OW
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "All Objects"
 msgstr "Όλα τα Αντικείμενα"
 
@@ -3501,6 +3470,7 @@ msgstr "όλες οι εγγραφές"
 
 #. js-lingui-id: rAUKN+
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "All records"
 msgstr "Όλες οι εγγραφές"
 
@@ -3540,11 +3510,6 @@ msgstr "Όλοι οι βασικοί τύποι πεδίων που χρειάζ
 msgid "All the layout items declared on your workspace"
 msgstr "Όλα τα στοιχεία διάταξης που έχουν δηλωθεί στον χώρο εργασίας σας"
 
-#. js-lingui-id: XuuWVF
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "All the standard objects"
-msgstr "Όλα τα τυπικά αντικείμενα"
-
 #. js-lingui-id: 35148H
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
 msgid "All tools"
@@ -3579,11 +3544,6 @@ msgstr "Όλα τα μέλη του χώρου εργασίας έχουν ήδ�
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspaceSelect.tsx
 msgid "All workspaces"
 msgstr "Όλοι οι χώροι εργασίας"
-
-#. js-lingui-id: pPTmfc
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "All your custom objects"
-msgstr "Όλα τα προσαρμοσμένα αντικείμενά σας"
 
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -3656,10 +3616,21 @@ msgstr "Επιτρέπεται η ανάρτηση αρχείων και συν�
 msgid "Allow users to sign in with an email and password."
 msgstr "Επιτρέψτε στους χρήστες να συνδέονται με email και κωδικό πρόσβασης."
 
+#. js-lingui-id: Vwi3xW
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect.tsx
+msgid "Allowed actions"
+msgstr "Επιτρεπόμενες ενέργειες"
+
 #. js-lingui-id: vj+OHl
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Allowed redirect URIs for OAuth flows"
 msgstr "Επιτρεπόμενα URI ανακατεύθυνσης για ροές OAuth"
+
+#. js-lingui-id: L36XXB
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Allows"
+msgstr "Επιτρέπει"
 
 #. js-lingui-id: Yn0ZH1
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -4152,6 +4123,11 @@ msgstr "Οι παρακάτω εφαρμογές δεν έχουν ελεγχθ�
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Applies to"
 msgstr "Εφαρμόζεται σε"
+
+#. js-lingui-id: 9xcLbN
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAllObjectsCard.tsx
+msgid "Applies to all objects before overrides"
+msgstr "Εφαρμόζεται σε όλα τα αντικείμενα πριν από τις παρακάμψεις"
 
 #. js-lingui-id: DB8zMK
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
@@ -7560,8 +7536,10 @@ msgid "Connect via IMAP/SMTP"
 msgstr "Σύνδεση μέσω IMAP/SMTP"
 
 #. js-lingui-id: LqKH42
+#. placeholder {0}: connectionProvider.displayName
 #. placeholder {0}: provider.displayName
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
 msgid "Connect with {0}"
 msgstr "Συνδεθείτε με το {0}"
 
@@ -7592,6 +7570,12 @@ msgstr "Συνδέστε το email και το ημερολόγιό σας γι
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
 msgid "Connect your own {0} account for this app to use on your behalf."
 msgstr "Συνδέστε τον δικό σας λογαριασμό {0} για να τον χρησιμοποιεί αυτή η εφαρμογή εκ μέρους σας."
+
+#. js-lingui-id: Y1cA8P
+#. placeholder {0}: connectionProvider.displayName
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
+msgid "Connect your own {0} account for this server to use on your behalf."
+msgstr ""
 
 #. js-lingui-id: QHcLEN
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
@@ -9045,7 +9029,6 @@ msgstr "προσαρμοσμένο"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 #: src/modules/settings/data-model/utils/getSettingsObjectFieldType.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Custom"
 msgstr "Προσαρμοσμένο"
@@ -9273,6 +9256,12 @@ msgstr "Προσαρμογή διατάξεων σελίδας και δομής
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Customize record page"
 msgstr "Προσαρμογή της σελίδας εγγραφής"
+
+#. js-lingui-id: hxjpaE
+#: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
+msgid "Customize sidebar"
+msgstr ""
 
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
@@ -9802,6 +9791,7 @@ msgstr "διαγραφή"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage.tsx
@@ -10060,11 +10050,6 @@ msgstr "Διαγράψτε ή μεταβιβάστε αυτήν την κατα�
 msgid "Delete Record"
 msgstr "Διαγραφή Εγγραφής"
 
-#. js-lingui-id: mcXHCJ
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Delete Records on All Objects"
-msgstr "Διαγραφή εγγραφών σε όλα τα αντικείμενα"
-
 #. js-lingui-id: Ptdfm4
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 msgid "Delete Related {relationObjectLabelSingular}"
@@ -10098,7 +10083,7 @@ msgstr "Διαγραφή δεξιότητας"
 #. js-lingui-id: drg4t8
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
 msgid "Delete tab"
-msgstr ""
+msgstr "Διαγραφή καρτέλας"
 
 #. js-lingui-id: +RYIn9
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
@@ -10346,6 +10331,7 @@ msgstr "καταστροφή"
 
 #. js-lingui-id: 2xxBws
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
+#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
 msgid "Destroy"
 msgstr "Καταστροφή"
 
@@ -10363,11 +10349,6 @@ msgstr "Καταστροφή {objectLabelPlural}"
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Destroy all records"
 msgstr "Οριστική διαγραφή όλων των εγγραφών"
-
-#. js-lingui-id: L68qSB
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Destroy Records on All Objects"
-msgstr "Καταστροφή εγγραφών σε όλα τα αντικείμενα"
 
 #. js-lingui-id: FOcBn3
 #: src/modules/inbox/components/InboxThreadActionsDropdown.tsx
@@ -11103,8 +11084,8 @@ msgstr "eddy@gmail.com, @apple.com"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/profile/components/EmailField.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Edit"
 msgstr "Επεξεργασία"
@@ -11182,7 +11163,6 @@ msgstr "Επεξεργασία τιμών πεδίων"
 
 #. js-lingui-id: oKQ7ls
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
 msgid "Edit Fields"
 msgstr "Επεξεργασία πεδίων"
@@ -11269,11 +11249,6 @@ msgstr "Επεξεργασία πληροφοριών προφίλ"
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
 msgid "Edit Record Table"
 msgstr "Επεξεργασία πίνακα εγγραφών"
-
-#. js-lingui-id: 6n2zpV
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Edit Records on All Objects"
-msgstr "Επεξεργασία εγγραφών σε όλα τα αντικείμενα"
 
 #. js-lingui-id: 4QhQge
 #: src/modules/page-layout/widgets/field/components/FieldWidgetRelationEditAction.tsx
@@ -12560,6 +12535,11 @@ msgstr "κάθε λεπτό"
 msgid "Every Monday"
 msgstr "Κάθε Δευτέρα"
 
+#. js-lingui-id: QU6LCC
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+msgid "Every object follows the all objects access."
+msgstr "Κάθε αντικείμενο ακολουθεί την πρόσβαση όλων των αντικειμένων."
+
 #. js-lingui-id: JsIvOW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Every object of this workspace as CSV files in one zip, kept for 1 day. Works for suspended workspaces."
@@ -13802,6 +13782,11 @@ msgstr "Πεδία"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
 msgid "Fields (Optional)"
 msgstr "Πεδία (Προαιρετικό)"
+
+#. js-lingui-id: fiU2kl
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Fields and rule"
+msgstr "Πεδία και κανόνας"
 
 #. js-lingui-id: Tnz22x
 #: src/modules/object-record/record-merge/components/MergePrioritySettings.tsx
@@ -18735,7 +18720,6 @@ msgstr ""
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
@@ -19881,7 +19865,7 @@ msgstr "Νέος κανόνας"
 #. js-lingui-id: SagCAA
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "New section"
-msgstr ""
+msgstr "Νέα ενότητα"
 
 #. js-lingui-id: MdpSC1
 #: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
@@ -20073,8 +20057,6 @@ msgstr "Ένατος"
 #. js-lingui-id: 1UzENP
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -20106,6 +20088,7 @@ msgstr "Δεν βρέθηκε {objectLabelSingular}"
 
 #. js-lingui-id: oPoLg+
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/utils/getObjectOperationsSummary.ts
 msgid "No access"
 msgstr "Χωρίς πρόσβαση"
 
@@ -20674,6 +20657,11 @@ msgstr "Δεν υπάρχει διαθέσιμο μοντέλο για αυτή�
 msgid "No notes"
 msgstr "Δεν υπάρχουν σημειώσεις"
 
+#. js-lingui-id: arel2K
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
+msgid "No objects found"
+msgstr "Δεν βρέθηκαν αντικείμενα"
+
 #. js-lingui-id: fq3TKy
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
 msgid "No objects match your search"
@@ -20723,11 +20711,6 @@ msgstr "Χωρίς παραμέτρους"
 #: src/modules/settings/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "No payment method found. Please update your billing details."
 msgstr "Δεν βρέθηκε μέθοδος πληρωμής. Ενημερώστε τα στοιχεία χρέωσής σας."
-
-#. js-lingui-id: kSCxfd
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "No permissions have been set for individual objects."
-msgstr "Δεν έχουν οριστεί δικαιώματα για μεμονωμένα αντικείμενα."
 
 #. js-lingui-id: pRxlf6
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -21567,11 +21550,6 @@ msgstr ""
 msgid "object permission"
 msgstr "δικαίωμα αντικειμένου"
 
-#. js-lingui-id: ecLxgy
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
-msgid "Object permission options"
-msgstr "Επιλογές δικαιωμάτων αντικειμένου"
-
 #. js-lingui-id: HN7O/H
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "Object settings"
@@ -21588,7 +21566,6 @@ msgid "Object unique fields"
 msgstr "Αντικείμενα μοναδικά πεδία"
 
 #. js-lingui-id: YJgmMZ
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 msgid "Object-Level"
 msgstr "Επίπεδο αντικειμένου"
@@ -22478,6 +22455,11 @@ msgstr "Παράκαμψη"
 #: src/modules/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton.tsx
 msgid "Override Draft"
 msgstr "Αντικατάσταση Προχείρου"
+
+#. js-lingui-id: sJNF3W
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+msgid "Overrides"
+msgstr "Παρακάμψεις"
 
 #. js-lingui-id: 6/dCYd
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -24382,7 +24364,6 @@ msgstr "εγγραφές"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 #: src/modules/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema.ts
@@ -24394,6 +24375,11 @@ msgstr "Εγγραφές"
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 msgid "Records by date"
 msgstr "Εγγραφές κατά ημερομηνία"
+
+#. js-lingui-id: b/xmDA
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Records matching the rule"
+msgstr "Εγγραφές που αντιστοιχούν στον κανόνα"
 
 #. js-lingui-id: CjlKOu
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -24834,6 +24820,11 @@ msgstr "Αφαίρεση επιλογής"
 msgid "Remove output field"
 msgstr "Αφαίρεση πεδίου εξόδου"
 
+#. js-lingui-id: c8Kx/b
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Remove override"
+msgstr "Κατάργηση παράκαμψης"
+
 #. js-lingui-id: cp/fZQ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsFlagRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsPermissionRow.tsx
@@ -24868,7 +24859,6 @@ msgstr "Αφαίρεση URI ανακατεύθυνσης"
 
 #. js-lingui-id: SjxzXf
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
 msgid "Remove rule"
 msgstr "Αφαίρεση κανόνα"
 
@@ -24885,7 +24875,7 @@ msgstr "Αφαίρεση πεδίου με δυνατότητα αναζήτησ
 #. js-lingui-id: uXfxoE
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
 msgid "Remove section"
-msgstr ""
+msgstr "Αφαίρεση ενότητας"
 
 #. js-lingui-id: jCt40X
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -25509,7 +25499,6 @@ msgstr "Ο ρόλος ενημερώθηκε με επιτυχία"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Roles"
 msgstr "Ρόλοι"
@@ -26114,11 +26103,6 @@ msgstr "Αναζήτηση ανατεθέντος {roleTargetDisplayName}..."
 msgid "Search an index..."
 msgstr "Αναζήτηση ευρετηρίου..."
 
-#. js-lingui-id: pFe0YS
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "Search an object"
-msgstr "Αναζήτηση αντικειμένου"
-
 #. js-lingui-id: S+MGem
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownAnyFieldSearchInput.tsx
 #: src/modules/views/components/AnyFieldSearchDropdownContentMenuHeader.tsx
@@ -26285,6 +26269,8 @@ msgstr "Αναζήτηση μελών"
 
 #. js-lingui-id: two5rl
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableDataSourceDropdownContent.tsx
@@ -26506,12 +26492,12 @@ msgstr "Ενότητα"
 #. js-lingui-id: 8gtQoG
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
 msgid "Section actions"
-msgstr ""
+msgstr "Ενέργειες ενότητας"
 
 #. js-lingui-id: vKc3fL
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
 msgid "Section name"
-msgstr ""
+msgstr "Όνομα ενότητας"
 
 #. js-lingui-id: R4OWFD
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
@@ -26536,6 +26522,7 @@ msgstr "δείτε"
 #. js-lingui-id: h+8V38
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
 msgid "See"
 msgstr "Δείτε"
 
@@ -26575,11 +26562,6 @@ msgstr "Δείτε τη σελίδα της εφαρμογής"
 msgid "See data model settings"
 msgstr "Προβολή ρυθμίσεων μοντέλου δεδομένων"
 
-#. js-lingui-id: oGROXc
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
-msgid "See Fields"
-msgstr "Δείτε Πεδία"
-
 #. js-lingui-id: RpeN29
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
 msgid "See function"
@@ -26611,11 +26593,6 @@ msgstr "Δείτε στο marketplace"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "See records"
 msgstr "Προβολή εγγραφών"
-
-#. js-lingui-id: irbH/8
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "See Records on All Objects"
-msgstr "Δείτε εγγραφές σε όλα τα αντικείμενα"
 
 #. js-lingui-id: SXaufV
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
@@ -28111,12 +28088,6 @@ msgstr "SOC 2"
 msgid "Soft cap"
 msgstr "Ήπιο όριο"
 
-#. js-lingui-id: zfjcH5
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
-msgid "Some"
-msgstr "Μερικά"
-
 #. js-lingui-id: RwCYVZ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Some folders"
@@ -28397,7 +28368,6 @@ msgstr "Αυτόνομο"
 #. js-lingui-id: TJBHlP
 #: src/modules/applications/utils/getApplicationDisplayName.ts
 #: src/modules/settings/data-model/utils/getSettingsObjectFieldType.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Standard"
 msgstr "Τυπικό"
@@ -29215,12 +29185,12 @@ msgstr "Καρτέλα {tabNumber}: {0}"
 #. js-lingui-id: OqZEsq
 #: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
 msgid "Tab actions"
-msgstr ""
+msgstr "Ενέργειες καρτέλας"
 
 #. js-lingui-id: FFaDQL
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
 msgid "Tab name"
-msgstr ""
+msgstr "Όνομα καρτέλας"
 
 #. js-lingui-id: zr20ox
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -30711,11 +30681,6 @@ msgstr "Εναλλαγή ομάδας {0}"
 #: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
 msgid "Toggle all folders"
 msgstr "Εναλλαγή όλων των φακέλων"
-
-#. js-lingui-id: XArpJK
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
-msgid "Toggle all object permissions"
-msgstr "Εναλλαγή όλων των δικαιωμάτων αντικειμένων"
 
 #. js-lingui-id: MxmNZq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -33993,7 +33958,6 @@ msgstr "Έναρξη εργάσιμων ωρών"
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -34494,6 +34458,8 @@ msgstr "Η κάρτα σας αποθηκεύτηκε, αλλά η πληρωμ�
 #. js-lingui-id: OD3Fzl
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerSignInSection.tsx
 msgid "Your connections could not be loaded. Check your connection and try again."
 msgstr "Δεν ήταν δυνατή η φόρτωση των συνδέσεών σας. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά."
 

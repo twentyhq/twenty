@@ -11,7 +11,6 @@ import {
 import { GRANOLA_WEBHOOK_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { GRANOLA_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/granola-api-key-env-var-name';
 import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
-import { GRANOLA_WEBHOOK_PAYLOAD_SCHEMA } from 'src/logic-functions/types/granola-api.type';
 import { GranolaInvalidResponseError } from 'src/logic-functions/types/granola-invalid-response-error';
 import { GranolaTranscriptLimitError } from 'src/logic-functions/types/granola-transcript-limit-error';
 import { type GranolaWebhookRegistration } from 'src/logic-functions/types/granola-webhook-registration.type';
@@ -19,9 +18,8 @@ import { assertGranolaFolderSelectionReadyOrThrow } from 'src/logic-functions/ut
 import { buildRetryableGranolaError } from 'src/logic-functions/utils/build-retryable-granola-error.util';
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { getGranolaApiKeyFingerprint } from 'src/logic-functions/utils/get-granola-api-key-fingerprint.util';
-import { parseJsonOrUndefined } from 'src/logic-functions/utils/parse-json-or-undefined.util';
+import { parseSignedGranolaWebhookEvent } from 'src/logic-functions/utils/parse-signed-granola-webhook-event.util';
 import { syncGranolaNoteToCallRecordingOrThrow } from 'src/logic-functions/utils/sync-granola-note-to-call-recording-or-throw.util';
-import { verifyStandardWebhookSignature } from 'src/logic-functions/utils/verify-standard-webhook-signature.util';
 
 export const granolaWebhookHandler = async ({
   routePayload,
@@ -54,37 +52,19 @@ export const granolaWebhookHandler = async ({
       error: 'Unknown Granola registration',
     };
   }
-  const rawBody = routePayload.rawBody;
-  const webhookId = routePayload.headers['webhook-id'];
-  const timestamp = routePayload.headers['webhook-timestamp'];
-  const signature = routePayload.headers['webhook-signature'];
-  if (
-    !isNonEmptyString(rawBody) ||
-    !isNonEmptyString(webhookId) ||
-    !isNonEmptyString(timestamp) ||
-    !isNonEmptyString(signature) ||
-    !verifyStandardWebhookSignature({
-      signingSecret: registration.signingSecret,
-      webhookId,
-      timestamp,
-      signature,
-      rawBody,
-      receivedAt,
-    })
-  ) {
-    return { success: false, error: 'Invalid Granola webhook signature' };
-  }
-  const parsed = GRANOLA_WEBHOOK_PAYLOAD_SCHEMA.safeParse(
-    parseJsonOrUndefined(rawBody),
-  );
-  if (!parsed.success || parsed.data.event_id !== webhookId) {
-    return { success: false, error: 'Invalid Granola webhook event' };
+  const parsed = parseSignedGranolaWebhookEvent({
+    routePayload,
+    receivedAt,
+    signingSecret: registration.signingSecret,
+  });
+  if (!isDefined(parsed.event)) {
+    return { success: false, error: parsed.error };
   }
   await assertGranolaFolderSelectionReadyOrThrow();
   const result = await syncGranolaNoteToCallRecordingOrThrow({
     coreApiClient: new CoreApiClient({ runAs: 'application' }),
-    client: createGranolaClientOrThrow(),
-    noteId: parsed.data.note_id,
+    client: createGranolaClientOrThrow({ apiKey }),
+    noteId: parsed.event.note_id,
   }).catch((error: unknown) => {
     if (
       error instanceof GranolaApiError ||
