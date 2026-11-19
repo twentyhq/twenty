@@ -121,7 +121,9 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
       upsertFieldPermissionInDraftRole({
         ...fieldPermission,
         canReadFieldValue: isAllowed ? null : false,
-        canUpdateFieldValue: isAllowed ? null : false,
+        canUpdateFieldValue: isAllowed
+          ? fieldPermission.canUpdateFieldValue
+          : false,
       });
       return;
     }
@@ -145,10 +147,15 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
   const allowedFieldCount = allowedFieldIds.length;
   const fieldCount = fieldMetadataItems.length;
   const areAllFieldsAllowed = allowedFieldCount === fieldCount;
+  const areAllEditableFieldsAllowed = editableFieldMetadataItems.every(
+    (field) => allowedFieldIds.includes(field.id),
+  );
 
   const handleAllFieldsSelect = () => {
     handleAllowedFieldIdsChange(
-      areAllFieldsAllowed ? [] : fieldMetadataItems.map((field) => field.id),
+      areAllEditableFieldsAllowed
+        ? []
+        : fieldMetadataItems.map((field) => field.id),
     );
   };
 
@@ -227,7 +234,7 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
         <Dropdown.Section>
           <Dropdown.OptionItem
             indicator="checkbox"
-            selected={areAllFieldsAllowed}
+            selected={areAllEditableFieldsAllowed}
             closeOnSelect={false}
             description={t`${allowedFieldCount} of ${fieldCount}`}
             onSelect={handleAllFieldsSelect}
