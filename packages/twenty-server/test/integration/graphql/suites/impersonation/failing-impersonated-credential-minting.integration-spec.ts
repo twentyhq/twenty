@@ -1,5 +1,6 @@
 import { authorizeApp } from 'test/integration/graphql/suites/user-session/utils/authorize-app.util';
 import { generatePlaygroundToken } from 'test/integration/graphql/suites/user-session/utils/generate-playground-token.util';
+import { generateApiKeyToken } from 'test/integration/graphql/utils/generate-api-key-token.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { impersonate } from 'test/integration/graphql/utils/impersonate.util';
 import { v4 as uuidv4 } from 'uuid';
@@ -14,6 +15,7 @@ import {
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
+import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
 
 const expectAuthPrincipalRefused = (errors: BaseGraphQLError[]) => {
   expect(errors).toHaveLength(1);
@@ -59,6 +61,15 @@ describe('Impersonation - credential minting denial (integration)', () => {
         });
 
         expectAuthPrincipalRefused(errors);
+      });
+
+      it('should refuse to mint an API key token', async () => {
+        const response = await generateApiKeyToken({
+          apiKeyId: API_KEY_DATA_SEED_IDS.ID_1,
+          accessToken: impersonationAccessToken,
+        });
+
+        expectAuthPrincipalRefused(response.body.errors);
       });
 
       it('should refuse to consent to an OAuth client', async () => {

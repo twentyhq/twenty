@@ -1231,7 +1231,7 @@ export class AuthResolver {
       authPrincipals: {
         userSession: {
           standard: true,
-          impersonated: true,
+          impersonated: false,
           playground: false,
           workspaceAgnostic: false,
         },
