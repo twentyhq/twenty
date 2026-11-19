@@ -3,6 +3,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type AuthPrincipalGuardConfig } from 'src/engine/guards/types/auth-principal-guard-config.type';
 import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
+import { isUserSessionVariantAccepted } from 'src/engine/guards/utils/is-user-session-variant-accepted.util';
 
 const isVariantAccepted = <TVariant extends string>(
   kindConfig: boolean | Record<TVariant, boolean>,
@@ -18,10 +19,10 @@ export const isAuthPrincipalVariantAccepted = ({
 }): boolean => {
   switch (authPrincipalVariant.kind) {
     case 'userSession':
-      return isVariantAccepted(
-        authPrincipalGuardConfig.userSession,
-        authPrincipalVariant.variant,
-      );
+      return isUserSessionVariantAccepted({
+        userSessionGuardConfig: authPrincipalGuardConfig.userSession,
+        userSessionVariant: authPrincipalVariant.variant,
+      });
     case 'apiKey':
       return authPrincipalGuardConfig.apiKey;
     case 'oauthClient':
