@@ -15,7 +15,7 @@ import {
 } from '@/tokens';
 
 import { type MarketplaceApp } from './marketplace-app';
-import { useAppsStageLogoInks } from './use-apps-stage-logo-inks';
+import { AppsStageLogoHalftone } from './AppsStageLogoHalftone';
 
 // PROTOTYPE (?direction=e): the app page's scene, after Profound's
 // integration pages. Twenty's tile and the app's tile, joined by a line a
@@ -35,6 +35,31 @@ const Stage = styled.div`
     --apps-stage-gap: 200px;
     min-height: 380px;
   }
+
+  /* The cover at the top of the app page: the app drawn large, bleeding
+     past the band's edges. */
+  &[data-variant='cover'] {
+    --apps-stage-art: 200px;
+    --apps-stage-gap: 56px;
+    --apps-stage-tile: 72px;
+    min-height: 220px;
+  }
+
+  ${mediaUp('md')} {
+    &[data-variant='cover'] {
+      --apps-stage-art: 380px;
+      --apps-stage-gap: 140px;
+      --apps-stage-tile: 104px;
+      min-height: 320px;
+    }
+  }
+`;
+
+const CoverArt = styled.div`
+  flex-shrink: 0;
+  height: calc(var(--apps-stage-art) * 1.1);
+  position: relative;
+  width: var(--apps-stage-art);
 `;
 
 // Twenty's dots, tone on tone, fading out from the middle.
@@ -86,10 +111,6 @@ const Tile = styled.div`
     --apps-stage-from: -24px;
   }
 
-  &[data-kind='glyph'] {
-    background-color: ${color('neutral')};
-  }
-
   @keyframes apps-stage-app-tile-in {
     from {
       opacity: 0;
@@ -112,29 +133,13 @@ const TwentyMark = styled.div`
   }
 `;
 
-const Logo = styled.img`
-  height: 56%;
-  object-fit: contain;
-  width: 56%;
-
-  [data-kind='plate'] > & {
-    height: 100%;
-    object-fit: cover;
-    width: 100%;
-  }
-
-  [data-kind='unknown'] > & {
-    opacity: 0;
-  }
-`;
-
 // The line draws once both tiles are in, then the point starts travelling.
 const Connector = styled.div`
   animation: apps-stage-app-line-in ${DURATION.xl} ${EASING.standard} 420ms both;
   border-top: 1px dashed ${color('white-20')};
   left: var(--apps-stage-tile);
   position: absolute;
-  right: var(--apps-stage-tile);
+  right: var(--apps-stage-art, var(--apps-stage-tile));
   top: 50%;
   transform-origin: 0 50%;
 
@@ -191,15 +196,18 @@ type StageStyle = CSSProperties & { '--apps-stage-pastel': string };
 type AppsStageAppStageProps = {
   app: MarketplaceApp;
   pastel: string;
+  variant?: 'scene' | 'cover';
 };
 
-export function AppsStageAppStage({ app, pastel }: AppsStageAppStageProps) {
-  const inks = useAppsStageLogoInks([app]);
-  const kind = inks[app.slug]?.kind ?? 'unknown';
+export function AppsStageAppStage({
+  app,
+  pastel,
+  variant = 'scene',
+}: AppsStageAppStageProps) {
   const style: StageStyle = { '--apps-stage-pastel': pastel };
 
   return (
-    <Stage aria-hidden style={style}>
+    <Stage aria-hidden data-variant={variant} style={style}>
       <Floor />
       <Row>
         <Tile data-side="twenty">
@@ -210,9 +218,26 @@ export function AppsStageAppStage({ app, pastel }: AppsStageAppStageProps) {
         <Connector>
           <Pulse />
         </Connector>
-        <Tile data-kind={kind} data-side="app">
-          {app.logoUrl !== undefined && <Logo alt="" src={app.logoUrl} />}
-        </Tile>
+        {/* The app, redrawn in Twenty's halftone. */}
+        {variant === 'cover' ? (
+          <CoverArt>
+            {app.logoUrl !== undefined && (
+              <AppsStageLogoHalftone
+                logoUrl={app.logoUrl}
+                previewDistance={3.4}
+              />
+            )}
+          </CoverArt>
+        ) : (
+          <Tile data-side="app">
+            {app.logoUrl !== undefined && (
+              <AppsStageLogoHalftone
+                logoUrl={app.logoUrl}
+                previewDistance={4.6}
+              />
+            )}
+          </Tile>
+        )}
       </Row>
     </Stage>
   );

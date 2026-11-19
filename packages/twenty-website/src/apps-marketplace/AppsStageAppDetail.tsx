@@ -12,65 +12,55 @@ import {
   FONT_WEIGHT,
   fontFamily,
   fontSize,
+  MENU_HEIGHT_PX,
   mediaUp,
   radius,
   REDUCED_MOTION,
   semanticColor,
   spacing,
 } from '@/tokens';
-import { Body, Button, ExternalLink, Heading, SectionShell } from '@/ui';
+import { Button, ExternalLink, Heading, SectionShell } from '@/ui';
 
-import { AppReadme } from './AppReadme';
-import { AppsStageAppRelated } from './AppsStageAppRelated';
+import { AppsStageAppIcon } from './AppsStageAppIcon';
 import { AppsStageAppStage } from './AppsStageAppStage';
+import { AppsStageAppStory } from './AppsStageAppStory';
 import { AppsStageCraftClosing } from './AppsStageCraftClosing';
+import { type AppsStageAppContent } from './apps-stage-app-content';
 import { APPS_STAGE_BETA_APP_NAMES } from './apps-stage-beta-apps';
 import { APPS_STAGE_CRAFT_COLUMN } from './apps-stage-craft-column';
 import { getAppsStagePastel } from './apps-stage-pastels';
 import { buildAppInstallUrl } from './build-app-install-url';
-import {
-  type MarketplaceAppAdditionKind,
-  type MarketplaceAppAdditions,
-} from './fetch-marketplace-app-additions';
+import { type MarketplaceAppAdditions } from './fetch-marketplace-app-additions';
 import {
   type MarketplaceApp,
   type MarketplaceAppDetail,
 } from './marketplace-app';
 
-// PROTOTYPE (?direction=e): an app's own page in the "craft" direction. The
-// scene and facts after Profound's integration pages, then what the app adds
-// to a workspace (read from the public API), its overview, related apps.
+// PROTOTYPE (?direction=e): an app's own page. Laid out like Raycast's
+// extension pages (compact header, tabs, a side column of facts), with
+// Profound's scene of Twenty and the app joined as the first media tile.
 const Frame = styled.div`
   border-inline: 1px solid ${semanticColor.line};
-  padding: ${spacing(10)} ${spacing(4)};
+  padding: ${spacing(10)} ${spacing(4)} ${spacing(16)};
   ${APPS_STAGE_CRAFT_COLUMN}
 
   & > * + * {
-    margin-top: ${spacing(8)};
+    margin-top: ${spacing(10)};
   }
 
   ${mediaUp('md')} {
-    padding: ${spacing(16)} ${spacing(12)};
-  }
-
-  &[data-divided] {
-    border-bottom: 1px solid ${semanticColor.line};
+    padding: ${spacing(14)} ${spacing(12)} ${spacing(24)};
   }
 `;
 
-// Below the fold, blocks rise in as they scroll into view; browsers without
-// scroll timelines simply show them.
-const Reveal = styled.div`
-  @supports (animation-timeline: view()) {
-    animation: apps-stage-app-reveal linear both;
-    animation-range: entry 0% entry 60%;
-    animation-timeline: view();
-  }
+const Rise = styled.div`
+  animation: apps-stage-app-rise ${DURATION.xl} ${EASING.standard} backwards;
+  animation-delay: var(--apps-stage-delay, 0ms);
 
-  @keyframes apps-stage-app-reveal {
+  @keyframes apps-stage-app-rise {
     from {
       opacity: 0;
-      transform: translateY(16px);
+      transform: translateY(12px);
     }
   }
 
@@ -119,17 +109,50 @@ const BackLink = styled(LocalizedLink)`
   }
 `;
 
-const Head = styled.div`
-  & > * + * {
-    margin-top: ${spacing(4)};
+const Cover = styled.div`
+  border: 1px solid ${semanticColor.line};
+  border-radius: ${radius(2)};
+  overflow: hidden;
+`;
+
+const Header = styled.div`
+  align-items: start;
+  display: grid;
+  gap: ${spacing(5)};
+  grid-template-columns: auto minmax(0, 1fr);
+
+  ${mediaUp('md')} {
+    align-items: center;
+    gap: ${spacing(6)};
+    grid-template-columns: auto minmax(0, 1fr);
   }
 `;
 
-const TitleRow = styled.div`
+const HeaderText = styled.div`
+  min-width: 0;
+
+  & > * + * {
+    margin-top: ${spacing(2)};
+  }
+`;
+
+const Tagline = styled.p`
+  color: ${semanticColor.inkMuted};
+  font-family: ${fontFamily('sans')};
+  font-size: ${fontSize(3.75)};
+  line-height: 22px;
+  max-width: 640px;
+`;
+
+const Meta = styled.div`
   align-items: center;
+  color: ${semanticColor.inkMuted};
   display: flex;
   flex-wrap: wrap;
-  gap: ${spacing(3)};
+  font-family: ${fontFamily('sans')};
+  font-size: ${fontSize(3.25)};
+  gap: ${spacing(2)} ${spacing(5)};
+  padding-top: ${spacing(1)};
 `;
 
 const MonoLabel = styled.span`
@@ -158,148 +181,112 @@ const CategoryLabel = styled(MonoLabel)`
   padding: 4px ${spacing(1.5)};
 `;
 
-const Lede = styled.p`
-  color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('sans')};
-  font-size: ${fontSize(4.25)};
-  line-height: 1.55;
-  max-width: 640px;
+// Install lives in the side column; below md that column comes after the
+// content, so the header keeps its own copy there.
+const HeaderAction = styled.div`
+  grid-column: 1 / -1;
+
+  ${mediaUp('md')} {
+    display: none;
+  }
 `;
 
-const Card = styled.div`
+const SideAction = styled.div`
+  display: none;
+  padding-top: ${spacing(2)};
+
+  ${mediaUp('md')} {
+    display: block;
+  }
+`;
+
+const Body = styled.div`
+  display: grid;
+  gap: ${spacing(12)};
+
+  ${mediaUp('md')} {
+    align-items: start;
+    gap: ${spacing(16)};
+    grid-template-columns: minmax(0, 1fr) 260px;
+  }
+`;
+
+const Main = styled.div`
+  min-width: 0;
+
+  & > * + * {
+    margin-top: ${spacing(10)};
+  }
+`;
+
+const Media = styled.div`
+  display: grid;
+  gap: ${spacing(3)};
+`;
+
+const MediaTile = styled.div`
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(2)};
-  display: grid;
+  height: 240px;
+
+  ${mediaUp('md')} {
+    height: 340px;
+  }
+
   overflow: hidden;
-
-  ${mediaUp('md')} {
-    grid-template-columns: minmax(0, 1fr) 320px;
-  }
+  position: relative;
 `;
 
-const Facts = styled.div`
-  border-top: 1px solid ${semanticColor.line};
-  display: flex;
-  flex-direction: column;
-  gap: ${spacing(8)};
-  justify-content: space-between;
-  padding: ${spacing(6)};
-
-  ${mediaUp('md')} {
-    border-left: 1px solid ${semanticColor.line};
-    border-top: none;
-  }
+const Screenshot = styled.img`
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  object-position: left top;
+  width: 100%;
 `;
 
-const FactList = styled.dl`
+// What the app adds, in the side column, grouped by the product's own sections
+// (Data, Interface, Automation and AI, Access) so the site says what the app
+// page will show after install. Names when they read; counts otherwise.
+const AddsSections = styled.div`
   & > * + * {
-    margin-top: ${spacing(5)};
+    margin-top: ${spacing(4)};
   }
 `;
 
-const Fact = styled.div`
+const AddsSection = styled.div`
   & > * + * {
     margin-top: ${spacing(1.5)};
   }
 `;
 
-const FactLabel = styled.dt`
-  color: ${semanticColor.inkSubtle};
-  font-family: ${fontFamily('mono')};
-  font-size: ${fontSize(2.75)};
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-`;
-
-const FactValue = styled.dd`
-  color: ${semanticColor.ink};
-  font-family: ${fontFamily('sans')};
-  font-size: ${fontSize(3.75)};
-  line-height: 20px;
-`;
-
-const FactLink = styled(ExternalLink)`
+const AddsTitle = styled.p`
   align-items: center;
   color: ${semanticColor.ink};
-  display: inline-flex;
-  gap: ${spacing(1)};
-  text-decoration: underline;
-  text-decoration-color: ${semanticColor.lineStrong};
-  text-underline-offset: 3px;
-
-  &:hover {
-    text-decoration-color: ${semanticColor.ink};
-  }
-
-  & > svg {
-    height: 12px;
-    width: 12px;
-  }
-`;
-
-const SectionHead = styled.div`
-  align-items: end;
   display: flex;
-  flex-wrap: wrap;
-  gap: ${spacing(4)};
-  justify-content: space-between;
-
-  & > div > * + * {
-    margin-top: ${spacing(2)};
-  }
-`;
-
-const Additions = styled.div`
-  display: grid;
-  gap: ${spacing(3)};
-  grid-template-columns: minmax(0, 1fr);
-
-  ${mediaUp('sm')} {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  ${mediaUp('md')} {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-`;
-
-const Addition = styled.div`
-  border: 1px solid ${semanticColor.line};
-  border-radius: ${radius(2)};
-  padding: ${spacing(6)};
-
-  & > * + * {
-    margin-top: ${spacing(3)};
-  }
-`;
-
-const AdditionHead = styled.div`
-  align-items: baseline;
-  display: flex;
-  gap: ${spacing(3)};
-`;
-
-const AdditionCount = styled.span`
-  color: ${color('neutral')};
-  font-family: ${fontFamily('serif')};
-  font-size: ${fontSize(10)};
-  font-variant-numeric: tabular-nums;
-  font-weight: ${FONT_WEIGHT.light};
-  letter-spacing: -0.02em;
-  line-height: 1;
-`;
-
-const AdditionKind = styled(MonoLabel)`
-  color: ${semanticColor.inkMuted};
-`;
-
-const AdditionItems = styled.ul`
-  color: ${semanticColor.inkMuted};
   font-family: ${fontFamily('sans')};
   font-size: ${fontSize(3.5)};
-  line-height: 22px;
+  font-weight: ${FONT_WEIGHT.medium};
+  gap: ${spacing(2)};
+  line-height: 20px;
+
+  &::before {
+    background-color: var(--apps-stage-section-color);
+    border-radius: ${radius(0.5)};
+    content: '';
+    flex-shrink: 0;
+    height: 6px;
+    width: 6px;
+  }
+`;
+
+const AddsList = styled.ul`
+  color: ${semanticColor.inkMuted};
+  font-family: ${fontFamily('sans')};
+  font-size: ${fontSize(3.25)};
+  line-height: 20px;
   list-style: none;
-  padding: 0;
+  padding: 0 0 0 ${spacing(3.5)};
 
   & > li {
     overflow: hidden;
@@ -308,56 +295,202 @@ const AdditionItems = styled.ul`
   }
 `;
 
-const More = styled.li`
-  color: ${semanticColor.inkSubtle};
-`;
+const Side = styled.aside`
+  animation: apps-stage-app-rise ${DURATION.xl} ${EASING.standard} 180ms
+    backwards;
 
-const Overview = styled.div`
-  display: grid;
-  gap: ${spacing(10)};
+  & > * + * {
+    border-top: 1px solid ${semanticColor.line};
+    margin-top: ${spacing(6)};
+    padding-top: ${spacing(6)};
+  }
 
   ${mediaUp('md')} {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    position: sticky;
+    top: ${MENU_HEIGHT_PX + 32}px;
+  }
+
+  ${REDUCED_MOTION} {
+    animation: none;
   }
 `;
 
-const Gallery = styled.div`
+const SideGroup = styled.div`
   & > * + * {
-    margin-top: ${spacing(3)};
+    margin-top: ${spacing(4)};
   }
 `;
 
-const Screenshot = styled.img`
-  border: 1px solid ${semanticColor.line};
-  border-radius: ${radius(2)};
-  display: block;
-  height: auto;
-  width: 100%;
+const SideLabel = styled.p`
+  color: ${semanticColor.inkSubtle};
+  font-family: ${fontFamily('mono')};
+  font-size: ${fontSize(2.75)};
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 `;
 
-const ReadmeColumn = styled.div`
+const Fact = styled.div`
+  & > * + * {
+    margin-top: ${spacing(1.5)};
+  }
+`;
+
+const FactValue = styled.p`
+  color: ${semanticColor.ink};
+  font-family: ${fontFamily('sans')};
+  font-size: ${fontSize(3.5)};
+  line-height: 20px;
+`;
+
+const PackageName = styled.p`
+  color: ${semanticColor.inkMuted};
+  font-family: ${fontFamily('mono')};
+  font-size: ${fontSize(3)};
+  line-height: 20px;
+  overflow-wrap: anywhere;
+`;
+
+// Quiet links: muted text and the brand's thin arrow at its own 8px; they
+// come up to full ink on hover.
+const SideLink = styled(ExternalLink)`
+  align-items: center;
+  align-self: flex-start;
+  color: ${semanticColor.inkMuted};
+  display: inline-flex;
+  font-family: ${fontFamily('sans')};
+  font-size: ${fontSize(3.5)};
+  gap: ${spacing(1.5)};
+  line-height: 20px;
+  text-decoration: none;
+  transition: color ${DURATION.xxs} ${EASING.gentle};
+
+  & > svg {
+    color: ${semanticColor.inkSubtle};
+    transition:
+      color ${DURATION.xxs} ${EASING.gentle},
+      transform ${DURATION.xs} ${EASING.standard};
+  }
+
+  &:hover {
+    color: ${semanticColor.ink};
+  }
+
+  &:hover > svg {
+    color: ${semanticColor.ink};
+    transform: translate(2px, -2px);
+  }
+
+  &:focus-visible {
+    outline: 1px solid ${color('blue')};
+    outline-offset: 2px;
+  }
+
+  ${REDUCED_MOTION} {
+    transition: none;
+
+    & > svg {
+      transition: none;
+    }
+  }
+`;
+
+const SideLinks = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing(2)};
+`;
+
+const RelatedList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing(1)};
+  margin-inline: calc(${spacing(2)} * -1);
+`;
+
+// The site's hover, as on the catalogue cells: a fill slides in from the left.
+const RelatedItem = styled(LocalizedLink)`
+  align-items: center;
+  border-radius: ${radius(2)};
+  color: inherit;
+  display: grid;
+  gap: ${spacing(3)};
+  grid-template-columns: auto minmax(0, 1fr);
+  isolation: isolate;
+  overflow: hidden;
+  padding: ${spacing(2)};
+  position: relative;
+  text-decoration: none;
+
+  &::before {
+    background-color: ${color('white-5')};
+    content: '';
+    inset: 0;
+    position: absolute;
+    transform: translateX(-101%);
+    transition: transform ${DURATION.md} ${EASING.standard};
+    z-index: -1;
+  }
+
+  &:is(:hover, :focus-visible)::before {
+    transform: translateX(0);
+  }
+
+  &:focus-visible {
+    outline: 1px solid ${color('blue')};
+    outline-offset: -1px;
+  }
+
+  ${REDUCED_MOTION} {
+    &::before {
+      transition: none;
+    }
+  }
+`;
+
+const RelatedText = styled.span`
   min-width: 0;
 `;
 
-const ADDITION_KIND_LABELS: Record<
-  MarketplaceAppAdditionKind,
-  ReturnType<typeof msg>
-> = {
-  objects: msg`Objects`,
-  fields: msg`Fields`,
-  agents: msg`AI agents`,
-  skills: msg`Skills`,
-  workflows: msg`Workflows`,
-  views: msg`Views`,
-  logicFunctions: msg`Functions`,
-  frontComponents: msg`Interface`,
-};
+const RelatedName = styled.span`
+  color: ${semanticColor.ink};
+  display: block;
+  font-family: ${fontFamily('sans')};
+  font-size: ${fontSize(3.5)};
+  font-weight: ${FONT_WEIGHT.medium};
+  line-height: 18px;
+`;
 
-const SHOWN_LABELS = 3;
-const RELATED_COUNT = 2;
+const RelatedTagline = styled.span`
+  color: ${semanticColor.inkMuted};
+  display: block;
+  font-family: ${fontFamily('sans')};
+  font-size: ${fontSize(3)};
+  line-height: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const SHOWN_NAMES = 3;
+// Developer names (slack-home-opened) are counted, never shown.
+const isReadableLabel = (label: string) => !/^[a-z0-9_-]+$/.test(label);
+
+// The product's section colours, taken from the brief's pastel set.
+const SECTION_COLORS = {
+  data: 'oklch(78.4% 0.09 232.9)',
+  interface: 'oklch(77.4% 0.115 293.7)',
+  automation: 'oklch(79% 0.146 322.8)',
+  access: 'oklch(77.8% 0.121 2.5)',
+} as const;
+
+const RELATED_COUNT = 3;
+
+const counted = (count: number, one: string, many: string) =>
+  count === 0 ? [] : [count === 1 ? one : many];
 
 type AppsStageAppDetailProps = {
   additions: MarketplaceAppAdditions;
+  content: AppsStageAppContent;
   app: MarketplaceAppDetail;
   apps: readonly MarketplaceApp[];
   locale: string;
@@ -365,6 +498,7 @@ type AppsStageAppDetailProps = {
 
 export function AppsStageAppDetail({
   additions,
+  content,
   app,
   apps,
   locale,
@@ -387,179 +521,267 @@ export function AppsStageAppDetail({
       ? undefined
       : new Intl.NumberFormat(locale).format(additions.installCount);
 
+  const overview = (
+    <>
+      {app.aboutDescription !== undefined ? (
+        <AppsStageAppStory markdown={app.aboutDescription} pastel={pastel} />
+      ) : (
+        <Tagline>{app.tagline}</Tagline>
+      )}
+    </>
+  );
+
+  const names = (labels: readonly string[] = []) =>
+    labels.filter(isReadableLabel);
+  const fieldCount = content.fields?.length ?? 0;
+  const functionCount = content.logicFunctions?.length ?? 0;
+  const addsSections = [
+    {
+      id: 'data',
+      title: i18n._(msg`Data`),
+      lines: [
+        ...names(content.objects),
+        ...counted(
+          fieldCount,
+          i18n._(msg`1 field`),
+          i18n._(msg`${fieldCount} fields`),
+        ),
+      ],
+    },
+    {
+      id: 'interface',
+      title: i18n._(msg`Interface`),
+      lines: [
+        ...new Set(
+          names([...(content.views ?? []), ...(content.frontComponents ?? [])]),
+        ),
+      ],
+    },
+    {
+      id: 'automation',
+      title: i18n._(msg`Automation and AI`),
+      lines: [
+        ...names(content.agents),
+        ...names(content.skills),
+        ...names(content.workflows),
+        ...counted(
+          functionCount,
+          i18n._(msg`1 function`),
+          i18n._(msg`${functionCount} functions`),
+        ),
+      ],
+    },
+    {
+      id: 'access',
+      title: i18n._(msg`Access`),
+      lines: [
+        ...(content.connectionProviders ?? []).map((provider) =>
+          i18n._(msg`Connects to ${provider}`),
+        ),
+        ...(content.roles ?? []),
+      ],
+    },
+  ].filter((section) => section.lines.length > 0);
+
   return (
     <>
       <SectionShell flushInline rhythm="flush" scheme="dark">
-        <Frame data-divided="">
-          <Head>
+        <Frame>
+          <Rise>
             <BackLink href="/apps?direction=e">
               <ArrowLeft />
               {i18n._(msg`All apps`)}
             </BackLink>
-            <TitleRow>
-              <Heading as="h1" size="lg" weight="light">
-                {app.name}
-              </Heading>
-              {isBeta && <BetaLabel>{i18n._(msg`Beta`)}</BetaLabel>}
-            </TitleRow>
-            <Lede>{app.tagline}</Lede>
-          </Head>
-          <Card>
-            <AppsStageAppStage app={app} pastel={pastel} />
-            <Facts>
-              <FactList>
-                <Fact>
-                  <FactLabel>{i18n._(msg`Developer`)}</FactLabel>
-                  <FactValue>{app.author}</FactValue>
-                </Fact>
-                {app.category.length > 0 && (
-                  <Fact>
-                    <FactLabel>{i18n._(msg`Category`)}</FactLabel>
-                    <FactValue>
+          </Rise>
+
+          <Rise style={{ ['--apps-stage-delay' as string]: '30ms' }}>
+            <Cover>
+              <AppsStageAppStage app={app} pastel={pastel} variant="cover" />
+            </Cover>
+          </Rise>
+
+          <Rise style={{ ['--apps-stage-delay' as string]: '60ms' }}>
+            <Header>
+              <AppsStageAppIcon app={app} sizePx={72} />
+              <HeaderText>
+                <Heading as="h1" size="md" weight="light">
+                  {app.name}
+                </Heading>
+                <Tagline>{app.tagline}</Tagline>
+                <Meta>
+                  <span>{app.author}</span>
+                  {installs !== undefined && (
+                    <span>{i18n._(msg`${installs} installs`)}</span>
+                  )}
+                  {app.category.length > 0 && (
+                    <span>
                       <CategoryLabel
                         style={{ ['--apps-stage-pastel' as string]: pastel }}
                       >
                         {app.category}
                       </CategoryLabel>
-                    </FactValue>
+                    </span>
+                  )}
+                  {isBeta && (
+                    <span>
+                      <BetaLabel>{i18n._(msg`Beta`)}</BetaLabel>
+                    </span>
+                  )}
+                </Meta>
+              </HeaderText>
+              <HeaderAction>
+                <Button
+                  href={buildAppInstallUrl(app.universalIdentifier)}
+                  label={i18n._(msg`Install app`)}
+                  variant="filled"
+                />
+              </HeaderAction>
+            </Header>
+          </Rise>
+
+          <Body>
+            <Main>
+              <Rise style={{ ['--apps-stage-delay' as string]: '140ms' }}>
+                <Media>
+                  {app.screenshots.slice(0, 1).map((screenshot) => (
+                    <MediaTile key={screenshot}>
+                      <Screenshot
+                        alt={i18n._(msg`${app.name} screenshot`)}
+                        src={screenshot}
+                      />
+                    </MediaTile>
+                  ))}
+                </Media>
+              </Rise>
+              <Rise style={{ ['--apps-stage-delay' as string]: '220ms' }}>
+                {overview}
+              </Rise>
+            </Main>
+
+            <Side>
+              <SideGroup>
+                <Fact>
+                  <SideLabel>{i18n._(msg`Developer`)}</SideLabel>
+                  <FactValue>{app.author}</FactValue>
+                </Fact>
+                {app.latestAvailableVersion !== undefined && (
+                  <Fact>
+                    <SideLabel>{i18n._(msg`Version`)}</SideLabel>
+                    <FactValue>{app.latestAvailableVersion}</FactValue>
                   </Fact>
                 )}
                 {installs !== undefined && (
                   <Fact>
-                    <FactLabel>{i18n._(msg`Installed by`)}</FactLabel>
+                    <SideLabel>{i18n._(msg`Installed by`)}</SideLabel>
                     <FactValue>{i18n._(msg`${installs} workspaces`)}</FactValue>
                   </Fact>
                 )}
-                {app.latestAvailableVersion !== undefined && (
+                {app.sourcePackage !== undefined && (
                   <Fact>
-                    <FactLabel>{i18n._(msg`Version`)}</FactLabel>
-                    <FactValue>{app.latestAvailableVersion}</FactValue>
+                    <SideLabel>{i18n._(msg`Package`)}</SideLabel>
+                    <PackageName>{app.sourcePackage}</PackageName>
                   </Fact>
                 )}
-                {app.websiteUrl !== undefined && (
-                  <Fact>
-                    <FactLabel>{i18n._(msg`Source`)}</FactLabel>
-                    <FactValue>
-                      <FactLink href={app.websiteUrl}>
-                        GitHub
+                <SideAction>
+                  <Button
+                    href={buildAppInstallUrl(app.universalIdentifier)}
+                    label={i18n._(msg`Install app`)}
+                    variant="filled"
+                  />
+                </SideAction>
+              </SideGroup>
+
+              {addsSections.length > 0 && (
+                <SideGroup>
+                  <SideLabel>{i18n._(msg`What ${app.name} adds`)}</SideLabel>
+                  <AddsSections>
+                    {addsSections.map((section) => (
+                      <AddsSection
+                        key={section.id}
+                        style={{
+                          ['--apps-stage-section-color' as string]:
+                            SECTION_COLORS[
+                              section.id as keyof typeof SECTION_COLORS
+                            ],
+                        }}
+                      >
+                        <AddsTitle>{section.title}</AddsTitle>
+                        <AddsList>
+                          {section.lines.slice(0, SHOWN_NAMES).map((line) => (
+                            <li key={line}>{line}</li>
+                          ))}
+                          {section.lines.length > SHOWN_NAMES && (
+                            <li>
+                              {i18n._(
+                                msg`+${section.lines.length - SHOWN_NAMES} more`,
+                              )}
+                            </li>
+                          )}
+                        </AddsList>
+                      </AddsSection>
+                    ))}
+                  </AddsSections>
+                </SideGroup>
+              )}
+
+              {(app.websiteUrl !== undefined ||
+                additions.termsUrl !== undefined ||
+                additions.issueReportUrl !== undefined ||
+                additions.emailSupport !== undefined) && (
+                <SideGroup>
+                  <SideLabel>{i18n._(msg`Resources`)}</SideLabel>
+                  <SideLinks>
+                    {app.websiteUrl !== undefined && (
+                      <SideLink href={app.websiteUrl}>
+                        {i18n._(msg`Website`)}
                         <ArrowUpRight />
-                      </FactLink>
-                    </FactValue>
-                  </Fact>
-                )}
-              </FactList>
-              <div>
-                <Button
-                  href={buildAppInstallUrl(app.universalIdentifier)}
-                  label={i18n._(msg`Install`)}
-                  variant="filled"
-                />
-              </div>
-            </Facts>
-          </Card>
+                      </SideLink>
+                    )}
+                    {additions.termsUrl !== undefined && (
+                      <SideLink href={additions.termsUrl}>
+                        {i18n._(msg`Terms`)}
+                        <ArrowUpRight />
+                      </SideLink>
+                    )}
+                    {additions.issueReportUrl !== undefined && (
+                      <SideLink href={additions.issueReportUrl}>
+                        {i18n._(msg`Report an issue`)}
+                        <ArrowUpRight />
+                      </SideLink>
+                    )}
+                    {additions.emailSupport !== undefined && (
+                      <SideLink href={`mailto:${additions.emailSupport}`}>
+                        {i18n._(msg`Email support`)}
+                        <ArrowUpRight />
+                      </SideLink>
+                    )}
+                  </SideLinks>
+                </SideGroup>
+              )}
+
+              {related.length > 0 && (
+                <SideGroup>
+                  <SideLabel>{i18n._(msg`People also like`)}</SideLabel>
+                  <RelatedList>
+                    {related.map((relatedApp) => (
+                      <RelatedItem
+                        href={`/apps/${relatedApp.slug}?direction=e`}
+                        key={relatedApp.slug}
+                      >
+                        <AppsStageAppIcon app={relatedApp} sizePx={36} />
+                        <RelatedText>
+                          <RelatedName>{relatedApp.name}</RelatedName>
+                          <RelatedTagline>{relatedApp.tagline}</RelatedTagline>
+                        </RelatedText>
+                      </RelatedItem>
+                    ))}
+                  </RelatedList>
+                </SideGroup>
+              )}
+            </Side>
+          </Body>
         </Frame>
       </SectionShell>
-
-      {additions.additions.length > 0 && (
-        <SectionShell flushInline rhythm="flush" scheme="dark">
-          <Frame data-divided="">
-            <Reveal>
-              <SectionHead>
-                <div>
-                  <Heading as="h2" size="sm" weight="light">
-                    {i18n._(msg`What it adds to Twenty`)}
-                  </Heading>
-                  <Body muted size="sm">
-                    {i18n._(
-                      msg`Everything below lands in your workspace when you install ${app.name}.`,
-                    )}
-                  </Body>
-                </div>
-              </SectionHead>
-            </Reveal>
-            <Additions>
-              {additions.additions.map((addition) => (
-                <Reveal key={addition.kind}>
-                  <Addition>
-                    <AdditionHead>
-                      <AdditionCount>{addition.count}</AdditionCount>
-                      <AdditionKind>
-                        {i18n._(ADDITION_KIND_LABELS[addition.kind])}
-                      </AdditionKind>
-                    </AdditionHead>
-                    <AdditionItems>
-                      {addition.labels.slice(0, SHOWN_LABELS).map((label) => (
-                        <li key={label}>{label}</li>
-                      ))}
-                      {addition.labels.length > SHOWN_LABELS && (
-                        <More>
-                          {i18n._(
-                            msg`+${addition.labels.length - SHOWN_LABELS} more`,
-                          )}
-                        </More>
-                      )}
-                    </AdditionItems>
-                  </Addition>
-                </Reveal>
-              ))}
-            </Additions>
-          </Frame>
-        </SectionShell>
-      )}
-
-      {(app.screenshots.length > 0 || app.aboutDescription !== undefined) && (
-        <SectionShell flushInline rhythm="flush" scheme="dark">
-          <Frame data-divided="">
-            <Reveal>
-              <Overview>
-                <Heading as="h2" size="sm" weight="light">
-                  {i18n._(msg`Overview`)}
-                </Heading>
-                <ReadmeColumn>
-                  {app.screenshots.length > 0 && (
-                    <Gallery>
-                      {app.screenshots.map((screenshot) => (
-                        <Screenshot
-                          alt={i18n._(msg`${app.name} screenshot`)}
-                          key={screenshot}
-                          loading="lazy"
-                          src={screenshot}
-                        />
-                      ))}
-                    </Gallery>
-                  )}
-                  {app.aboutDescription !== undefined && (
-                    <AppReadme markdown={app.aboutDescription} />
-                  )}
-                </ReadmeColumn>
-              </Overview>
-            </Reveal>
-          </Frame>
-        </SectionShell>
-      )}
-
-      {related.length > 0 && (
-        <SectionShell flushInline rhythm="flush" scheme="dark">
-          <Frame>
-            <Reveal>
-              <SectionHead>
-                <Heading as="h2" size="sm" weight="light">
-                  {i18n._(msg`You might also like`)}
-                </Heading>
-                <BackLink href="/apps?direction=e">
-                  {i18n._(msg`All apps`)}
-                </BackLink>
-              </SectionHead>
-            </Reveal>
-            <Reveal>
-              <AppsStageAppRelated
-                apps={related}
-                sortedCategories={sortedCategories}
-              />
-            </Reveal>
-          </Frame>
-        </SectionShell>
-      )}
 
       <AppsStageCraftClosing
         actions={

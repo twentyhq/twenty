@@ -3,11 +3,10 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { ArrowUpRight } from '@/icons';
 import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
-import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 import {
   color,
   DURATION,
@@ -24,7 +23,7 @@ import {
 import { Body, Heading, SectionShell } from '@/ui';
 
 import { APPS_STAGE_CRAFT_COLUMN } from './apps-stage-craft-column';
-import { APPS_STAGE_FEATURED_HALFTONE } from './apps-stage-featured-halftone';
+import { AppsStageLogoHalftone } from './AppsStageLogoHalftone';
 import { type MarketplaceApp } from './marketplace-app';
 
 // PROTOTYPE (?direction=e): a featured block after Profound's "Featured
@@ -112,12 +111,69 @@ const Panel = styled.div`
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(2)};
   overflow: hidden;
+`;
+
+// The whole panel is the link to the app's page. On hover it answers like
+// the site's buttons: a fill slides in from the left, the logo springs up and
+// an arrow comes in.
+const PanelLink = styled(LocalizedLink)`
+  color: inherit;
   display: grid;
+  isolation: isolate;
   min-height: 340px;
   position: relative;
+  text-decoration: none;
+
+  &::before {
+    background-color: ${color('white-5')};
+    content: '';
+    inset: 0;
+    position: absolute;
+    transform: translateX(-101%);
+    transition: transform ${DURATION.md} ${EASING.standard};
+    z-index: -1;
+  }
+
+  &:is(:hover, :focus-visible)::before {
+    transform: translateX(0);
+  }
+
+  &:focus-visible {
+    outline: 1px solid ${color('blue')};
+    outline-offset: -2px;
+  }
 
   ${mediaUp('md')} {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  ${REDUCED_MOTION} {
+    &::before {
+      transition: none;
+    }
+  }
+`;
+
+const HoverArrow = styled.span`
+  color: ${semanticColor.ink};
+  display: flex;
+  opacity: 0;
+  position: absolute;
+  right: ${spacing(6)};
+  top: ${spacing(6)};
+  transform: translate(-6px, 6px);
+  transition:
+    opacity ${DURATION.xs} ${EASING.gentle},
+    transform ${DURATION.md} ${EASING.spring};
+  z-index: 1;
+
+  ${PanelLink}:is(:hover, :focus-visible) & {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+
+  ${REDUCED_MOTION} {
+    transition: none;
   }
 `;
 
@@ -157,6 +213,20 @@ const LogoTile = styled.div`
   justify-content: center;
   overflow: hidden;
   width: 56px;
+
+  transition: transform ${DURATION.md} ${EASING.spring};
+
+  ${PanelLink}:is(:hover, :focus-visible) & {
+    transform: scale(1.06);
+  }
+
+  ${PanelLink}:active & {
+    transform: scale(0.97);
+  }
+
+  ${REDUCED_MOTION} {
+    transition: none;
+  }
 `;
 
 const Logo = styled.img`
@@ -194,142 +264,14 @@ const Tagline = styled.p`
   max-width: 440px;
 `;
 
-const AppLink = styled(LocalizedLink)`
-  align-items: center;
-  color: ${semanticColor.ink};
-  display: inline-flex;
-  font-family: ${fontFamily('mono')};
-  font-size: ${fontSize(3)};
-  gap: ${spacing(1.5)};
-  letter-spacing: 0.08em;
-  text-decoration: none;
-  text-transform: uppercase;
-
-  & > svg {
-    transition: transform ${DURATION.xs} ${EASING.standard};
-  }
-
-  &:hover > svg {
-    transform: translate(2px, -2px);
-  }
-
-  &:focus-visible {
-    outline: 1px solid ${color('blue')};
-    outline-offset: 4px;
-  }
-
-  ${REDUCED_MOTION} {
-    & > svg {
-      transition: none;
-    }
-  }
-`;
-
-// The logo prints in from the left once the rig has drawn its first frame:
-// on page load and again on every tab change (the visual remounts per app).
+// The halftone logo's box: a fixed height on mobile, the panel's half above.
 const Visual = styled.div`
   height: 260px;
-  mask-image: linear-gradient(90deg, ${color('black')} 40%, transparent 60%);
-  mask-position: 100% 0;
-  mask-repeat: no-repeat;
-  mask-size: 250% 100%;
-  position: relative;
-
-  &[data-drawn] {
-    animation: apps-stage-featured-print ${DURATION.xl} ${EASING.smooth}
-      forwards;
-  }
-
-  @keyframes apps-stage-featured-print {
-    to {
-      mask-position: 0% 0;
-    }
-  }
 
   ${mediaUp('md')} {
     height: auto;
   }
-
-  ${REDUCED_MOTION} {
-    mask-image: none;
-
-    &[data-drawn] {
-      animation: none;
-    }
-  }
 `;
-
-type FeaturedVisualProps = {
-  imageUrl: string;
-};
-
-function FeaturedVisual({ imageUrl }: FeaturedVisualProps) {
-  const [isDrawn, setIsDrawn] = useState(false);
-
-  return (
-    <Visual
-      aria-hidden
-      data-drawn={isDrawn ? '' : undefined}
-      data-illustration="apps-featured"
-    >
-      <HalftoneImageBackdrop
-        imageUrl={imageUrl}
-        onFirstFrame={() => setIsDrawn(true)}
-        settings={APPS_STAGE_FEATURED_HALFTONE}
-      />
-    </Visual>
-  );
-}
-
-// The halftone rig loads images without crossOrigin, so a remote logo would
-// taint its WebGL texture. A same-origin blob copy avoids it; copies are kept
-// for the page's life so switching back to a tab starts drawing at once.
-const sameOriginImages = new Map<string, Promise<string | undefined>>();
-
-const loadSameOriginImage = (imageUrl: string) => {
-  const cached = sameOriginImages.get(imageUrl);
-
-  if (cached !== undefined) {
-    return cached;
-  }
-
-  const pending = fetch(imageUrl)
-    .then((response) => (response.ok ? response.blob() : undefined))
-    .then((blob) =>
-      blob === undefined ? undefined : URL.createObjectURL(blob),
-    )
-    .catch(() => undefined);
-
-  sameOriginImages.set(imageUrl, pending);
-
-  return pending;
-};
-
-const useSameOriginImage = (imageUrl: string | undefined) => {
-  const [loaded, setLoaded] = useState<{ source: string; url: string }>();
-
-  useEffect(() => {
-    if (imageUrl === undefined) {
-      return;
-    }
-
-    let isCurrent = true;
-
-    void loadSameOriginImage(imageUrl).then((url) => {
-      if (isCurrent && url !== undefined) {
-        setLoaded({ source: imageUrl, url });
-      }
-    });
-
-    return () => {
-      isCurrent = false;
-    };
-  }, [imageUrl]);
-
-  return loaded !== undefined && loaded.source === imageUrl
-    ? loaded.url
-    : undefined;
-};
 
 type AppsStageFeaturedProps = {
   apps: readonly MarketplaceApp[];
@@ -348,7 +290,6 @@ export function AppsStageFeatured({ apps }: AppsStageFeaturedProps) {
     featured[0]?.slug,
   );
   const active = featured.find((app) => app.slug === activeSlug) ?? featured[0];
-  const visualUrl = useSameOriginImage(active?.logoUrl);
 
   if (active === undefined) {
     return null;
@@ -385,27 +326,27 @@ export function AppsStageFeatured({ apps }: AppsStageFeaturedProps) {
           ))}
         </Tabs>
         <Panel id={panelId} role="tabpanel">
-          <PanelText key={`text-${active.slug}`}>
-            <LogoTile>
-              {active.logoUrl !== undefined && (
-                <Logo alt="" src={active.logoUrl} />
-              )}
-            </LogoTile>
-            <Text>
-              <AppName>{active.name}</AppName>
-              <Tagline>{active.tagline}</Tagline>
-              <AppLink href={`/apps/${active.slug}?direction=e`}>
-                {i18n._(msg`View app`)}
-                <ArrowUpRight />
-              </AppLink>
-            </Text>
-          </PanelText>
-          {visualUrl !== undefined && (
-            <FeaturedVisual
-              imageUrl={visualUrl}
-              key={`visual-${active.slug}`}
-            />
-          )}
+          <PanelLink href={`/apps/${active.slug}?direction=e`}>
+            <HoverArrow aria-hidden>
+              <ArrowUpRight />
+            </HoverArrow>
+            <PanelText key={`text-${active.slug}`}>
+              <LogoTile>
+                {active.logoUrl !== undefined && (
+                  <Logo alt="" src={active.logoUrl} />
+                )}
+              </LogoTile>
+              <Text>
+                <AppName>{active.name}</AppName>
+                <Tagline>{active.tagline}</Tagline>
+              </Text>
+            </PanelText>
+            {active.logoUrl !== undefined && (
+              <Visual key={`visual-${active.slug}`}>
+                <AppsStageLogoHalftone logoUrl={active.logoUrl} />
+              </Visual>
+            )}
+          </PanelLink>
         </Panel>
       </Frame>
     </SectionShell>

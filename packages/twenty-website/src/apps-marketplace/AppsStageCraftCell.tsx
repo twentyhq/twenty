@@ -39,18 +39,29 @@ const Cell = styled.article`
   min-height: 188px;
   padding: ${spacing(6)};
   position: relative;
-  transition:
-    background-color ${DURATION.xxs} ${EASING.gentle},
-    opacity ${DURATION.xs} ${EASING.gentle};
+  transition: opacity ${DURATION.xs} ${EASING.gentle};
 
   ${mediaUp('md')} {
     min-height: 220px;
     padding: ${spacing(7)};
   }
 
-  &:hover,
-  &:focus-within {
+  /* The site's hover: a fill slides in from the left, as on its buttons. */
+  isolation: isolate;
+  overflow: hidden;
+
+  &::before {
     background-color: ${color('white-5')};
+    content: '';
+    inset: 0;
+    position: absolute;
+    transform: translateX(-101%);
+    transition: transform ${DURATION.md} ${EASING.standard};
+    z-index: -1;
+  }
+
+  &:is(:hover, :focus-within)::before {
+    transform: translateX(0);
   }
 
   @keyframes apps-stage-craft-cell-in {
@@ -63,6 +74,10 @@ const Cell = styled.article`
   ${REDUCED_MOTION} {
     animation: none;
     transition: none;
+
+    &::before {
+      transition: none;
+    }
   }
 `;
 

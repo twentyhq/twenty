@@ -23,6 +23,7 @@ import { AppDetailDirectionB } from '@/apps-marketplace/AppDetailDirectionB';
 import { fetchMarketplaceAppAdditions } from '@/apps-marketplace/fetch-marketplace-app-additions';
 // PROTOTYPE direction E, the "craft" app page (?direction=e).
 import { AppsStageAppDetail } from '@/apps-marketplace/AppsStageAppDetail';
+import { fetchAppsStageAppContent } from '@/apps-marketplace/apps-stage-app-content';
 
 type AppParams = { locale: string; slug: string };
 
@@ -130,6 +131,7 @@ export default async function AppDetailPage({
             additions={await fetchMarketplaceAppAdditions(
               app.universalIdentifier,
             )}
+            content={await fetchAppsStageAppContent(app.universalIdentifier)}
             app={app}
             apps={apps}
             locale={locale}
