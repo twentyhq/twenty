@@ -1,4 +1,3 @@
-import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
 import { AiChatInstanceDecorator } from '~/testing/decorators/AiChatInstanceDecorator';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
@@ -66,13 +65,11 @@ const RECORD_DELETIONS = [FIRST_PERSON, SECOND_PERSON].map(
 );
 
 const seedPendingProposals = (proposals: ProposedToolCall[]) => {
-  const previousThread = jotaiStore.get(aiChatTestInstanceThreadIdState.atom);
   const messagesAtom = aiChatMessagesFamilyState.atomFamily({
     threadId: THREAD_ID,
   });
   const previousMessages = jotaiStore.get(messagesAtom);
 
-  jotaiStore.set(aiChatTestInstanceThreadIdState.atom, THREAD_ID);
   jotaiStore.set(messagesAtom, [
     {
       id: 'pending-record-approvals',
@@ -88,7 +85,6 @@ const seedPendingProposals = (proposals: ProposedToolCall[]) => {
   ]);
 
   return () => {
-    jotaiStore.set(aiChatTestInstanceThreadIdState.atom, previousThread);
     jotaiStore.set(messagesAtom, previousMessages);
   };
 };
@@ -145,7 +141,11 @@ const meta: Meta<typeof AiChatPendingAskGate> = {
     MemoryRouterDecorator,
     ComponentDecorator,
   ],
-  parameters: { container: { width: 600 }, msw: graphqlMocks },
+  parameters: {
+    aiChatThreadId: THREAD_ID,
+    container: { width: 600 },
+    msw: graphqlMocks,
+  },
   args: { children: 'No pending requests' },
   beforeEach: () => seedPendingProposals(RECORD_CREATIONS),
 };

@@ -487,7 +487,7 @@ msgstr "Une compétence portant ce nom existe déjà."
 #. js-lingui-id: ESdD/i
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "A sort can only use a related record field on a many-to-one relation field"
-msgstr ""
+msgstr "Un tri ne peut utiliser un champ d'enregistrement associé que sur un champ de relation plusieurs-à-un"
 
 #. js-lingui-id: IAfaPi
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-create-side-effect-handler.service.ts
@@ -1582,7 +1582,7 @@ msgstr "Les applications ne peuvent pas mettre à jour ces champs : {fieldsList}
 #: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
 #: src/engine/core-modules/application/application-manifest/utils/validate-application-source-inventory-or-throw.util.ts
 msgid "Apply or publish the application again to restore its application sources."
-msgstr ""
+msgstr "Appliquez ou publiez à nouveau l’application pour restaurer ses sources d’application."
 
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -1628,7 +1628,7 @@ msgid "Apps preferences"
 msgstr "Préférences des applications"
 
 #. js-lingui-id: naCW6Z
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "April"
 msgstr "Avril"
 
@@ -1868,7 +1868,7 @@ msgid "Audit logs require ClickHouse to be configured."
 msgstr "Les journaux d'audit nécessitent que ClickHouse soit configuré."
 
 #. js-lingui-id: DBHTm/
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "August"
 msgstr "Août"
 
@@ -4268,7 +4268,7 @@ msgid "Deals created this month"
 msgstr "Opportunités créées ce mois-ci"
 
 #. js-lingui-id: r6zgGo
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "December"
 msgstr "Décembre"
 
@@ -5542,7 +5542,7 @@ msgid "Feature configuration not found."
 msgstr "Configuration de fonctionnalité introuvable."
 
 #. js-lingui-id: 4lgLew
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "February"
 msgstr "Février"
 
@@ -6122,7 +6122,7 @@ msgid "forwardedRequestHeaders must be an array of strings"
 msgstr "forwardedRequestHeaders doit être un tableau de chaînes de caractères"
 
 #. js-lingui-id: 39y5bn
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Friday"
 msgstr "Vendredi"
 
@@ -6299,7 +6299,7 @@ msgstr "Le fournisseur de fonctions est occupé. Réessayez dans quelques minute
 #. js-lingui-id: xSrz+r
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Functions cannot run while the workspace is suspended."
-msgstr ""
+msgstr "Les fonctions ne peuvent pas s’exécuter lorsque l’espace de travail est suspendu."
 
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -7152,7 +7152,7 @@ msgstr "Filtre invalide : l'opérateur \"{operator}\" requiert un tableau"
 
 #. js-lingui-id: xxcw3g
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Invalid filter: \"{relationFieldName}\" can only reference the record the relation filter starts from"
 msgstr "Filtre invalide : \"{relationFieldName}\" ne peut faire référence qu'à l'enregistrement à partir duquel le filtre de relation commence"
 
@@ -7187,7 +7187,7 @@ msgid "Invalid filter: filtering by relation field \"{key}\" is not supported"
 msgstr "Filtre invalide : le filtrage par le champ de relation \"{key}\" n'est pas pris en charge."
 
 #. js-lingui-id: wi8qrB
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Invalid filter: the field to compare with was not found"
 msgstr "Filtre invalide : le champ avec lequel effectuer la comparaison est introuvable"
 
@@ -7886,7 +7886,7 @@ msgid "IS_CONFIG_VARIABLES_IN_DB_ENABLED is false on your server. Please add ENT
 msgstr "IS_CONFIG_VARIABLES_IN_DB_ENABLED est défini sur false sur votre serveur. Veuillez ajouter ENTERPRISE_KEY à votre fichier .env manuellement."
 
 #. js-lingui-id: rjyWPb
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "January"
 msgstr "Janvier"
 
@@ -7931,7 +7931,7 @@ msgid "JSON value for event details"
 msgstr "Valeur JSON pour les détails de l'événement"
 
 #. js-lingui-id: u4ex5r
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "July"
 msgstr "Juillet"
 
@@ -7966,7 +7966,7 @@ msgid "Junction target field not found"
 msgstr "Champ cible de la jonction introuvable"
 
 #. js-lingui-id: zeEQd/
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "June"
 msgstr "Juin"
 
@@ -8479,7 +8479,7 @@ msgid "Many validation errors"
 msgstr "De nombreuses erreurs de validation"
 
 #. js-lingui-id: hg6l4j
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "March"
 msgstr "Mars"
 
@@ -8555,7 +8555,7 @@ msgid "maxNumberOfValues must be defined in settings and be a number greater tha
 msgstr "maxNumberOfValues doit être défini dans les paramètres et être un nombre supérieur à 0 et inférieur ou égal à {FILES_FIELD_MAX_NUMBER_OF_VALUES}"
 
 #. js-lingui-id: 3JzsDb
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "May"
 msgstr "Mai"
 
@@ -9201,7 +9201,7 @@ msgid "Model ID cannot be empty"
 msgstr "L'identifiant du modèle ne peut pas être vide"
 
 #. js-lingui-id: hty0d5
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Monday"
 msgstr "Lundi"
 
@@ -9737,7 +9737,7 @@ msgid "NoteTarget target"
 msgstr "Cible de NoteTarget"
 
 #. js-lingui-id: t9QlBd
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "November"
 msgstr "Novembre"
 
@@ -9999,7 +9999,7 @@ msgid "Objects, fields and views adapt to the way your team works."
 msgstr "Les objets, champs et vues s'adaptent à la façon dont votre équipe travaille."
 
 #. js-lingui-id: dzQfDY
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "October"
 msgstr "Octobre"
 
@@ -10047,7 +10047,7 @@ msgstr "Seule une campagne à l'état de brouillon ou planifiée peut être envo
 #. js-lingui-id: 82FEG0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "Only a field linking to one record can be sorted by a field of that record"
-msgstr ""
+msgstr "Seul un champ lié à un enregistrement peut être trié selon un champ de cet enregistrement"
 
 #. js-lingui-id: v581MX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
@@ -11504,12 +11504,12 @@ msgstr "Résumé de l'enregistrement"
 #. js-lingui-id: vyBbUK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "Records cannot be sorted by a deactivated field"
-msgstr ""
+msgstr "Les enregistrements ne peuvent pas être triés selon un champ désactivé"
 
 #. js-lingui-id: PbYQoA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "Records cannot be sorted by a relation of the related record"
-msgstr ""
+msgstr "Les enregistrements ne peuvent pas être triés selon une relation de l'enregistrement associé"
 
 #. js-lingui-id: BlbWk5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -11678,20 +11678,20 @@ msgid "Relation field target metadata not found"
 msgstr "Métadonnées cibles de champ relationnel non trouvées"
 
 #. js-lingui-id: HmNKeM
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Relation filter is misconfigured"
 msgstr "Le filtre de relation est mal configuré"
 
 #. js-lingui-id: 1RF4/e
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Relation filter is not supported here"
 msgstr "Le filtre de relation n’est pas pris en charge ici"
 
 #. js-lingui-id: L8AY9P
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Relation filters can only traverse one relation deep"
 msgstr "Les filtres de relation ne peuvent parcourir qu’un seul niveau de relation"
 
@@ -12325,7 +12325,7 @@ msgid "Sample records must only contain selected fields and id."
 msgstr "Les enregistrements d'exemple ne doivent contenir que les champs sélectionnés et id."
 
 #. js-lingui-id: +5kO8P
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Saturday"
 msgstr "Samedi"
 
@@ -12678,7 +12678,7 @@ msgid "Sent with errors"
 msgstr "Envoyé avec des erreurs"
 
 #. js-lingui-id: hgvbYY
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "September"
 msgstr "Septembre"
 
@@ -13407,7 +13407,7 @@ msgid "Summary"
 msgstr "Résumé"
 
 #. js-lingui-id: DBC3t5
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Sunday"
 msgstr "Dimanche"
 
@@ -15269,11 +15269,9 @@ msgid "This record cannot be deleted because it is still referenced by other rec
 msgstr "Cet enregistrement ne peut pas être supprimé car il est encore référencé par d'autres enregistrements."
 
 #. js-lingui-id: 0arbc4
-#: src/engine/api/common/common-query-runners/common-delete-one-query-runner.service.ts
-#: src/engine/api/common/common-query-runners/common-destroy-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-filtered-mutation-one-query-runner.service.ts
 #: src/engine/api/common/common-query-runners/common-find-one-query-runner.service.ts
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
-#: src/engine/api/common/common-query-runners/common-restore-one-query-runner.service.ts
 #: src/engine/api/common/common-query-runners/common-update-one-query-runner.service.ts
 msgid "This record does not exist or has been deleted."
 msgstr "Cet enregistrement n'existe pas ou a été supprimé."
@@ -15605,7 +15603,7 @@ msgid "Thread this state belongs to"
 msgstr "Fil de discussion auquel cet état appartient"
 
 #. js-lingui-id: kkDQ8m
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Thursday"
 msgstr "Jeudi"
 
@@ -16036,7 +16034,7 @@ msgid "TS_VECTOR field metadata not found"
 msgstr "Métadonnées de champ TS_VECTOR introuvables"
 
 #. js-lingui-id: G3myU+
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Tuesday"
 msgstr "Mardi"
 
@@ -17262,7 +17260,7 @@ msgid "Webhook not found."
 msgstr "Webhook introuvable."
 
 #. js-lingui-id: VAcXNz
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Wednesday"
 msgstr "Mercredi"
 

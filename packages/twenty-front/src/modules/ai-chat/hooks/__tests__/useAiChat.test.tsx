@@ -4,7 +4,7 @@ import { useApolloClient } from '@apollo/client/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
-import { type ReactNode } from 'react';
+import { createContext, type ReactNode, useContext, useState } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import {
   AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
@@ -29,7 +29,6 @@ import { aiChatIsAssistantReplyPendingFamilySelector } from '@/ai-chat/messages/
 import { type AiChatNewThreadRecipients } from '@/ai-chat/types/AiChatNewThreadRecipients';
 import { aiChatSelectedFilesFamilyState } from '@/ai-chat/composer/states/aiChatSelectedFilesFamilyState';
 import { aiChatUploadedFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadedFilesFamilyState';
-import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -135,6 +134,35 @@ const OPEN_DIRECT_MESSAGE_MOCK: MockedResponse = {
 const readPersistedDrafts = () =>
   JSON.parse(localStorage.getItem(DRAFTS_STORAGE_KEY) ?? '{}');
 
+const SelectedAiChatTestThreadContext = createContext<{
+  currentAiChatThread: string | null;
+  selectThread: (threadId: string) => void;
+}>({ currentAiChatThread: null, selectThread: () => {} });
+
+const SelectableAiChatTestInstance = ({
+  initialThreadId,
+  children,
+}: {
+  initialThreadId: string | null;
+  children: ReactNode;
+}) => {
+  const [currentAiChatThread, setCurrentAiChatThread] =
+    useState(initialThreadId);
+
+  return (
+    <SelectedAiChatTestThreadContext.Provider
+      value={{ currentAiChatThread, selectThread: setCurrentAiChatThread }}
+    >
+      <AiChatTestInstance
+        threadId={currentAiChatThread ?? undefined}
+        onThreadChange={setCurrentAiChatThread}
+      >
+        {children}
+      </AiChatTestInstance>
+    </SelectedAiChatTestThreadContext.Provider>
+  );
+};
+
 const renderAiChat = ({
   persistedDrafts,
   sendChatMessageOutcomes,
@@ -174,7 +202,6 @@ const renderAiChat = ({
         ...mockedUserData.currentUserWorkspace,
         permissionFlags: [PermissionFlagType.AI],
       });
-      store.set(aiChatTestInstanceThreadIdState.atom, currentThreadId);
       store.set(
         aiChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
         newThreadRecipients,
@@ -184,10 +211,6 @@ const renderAiChat = ({
         { ...mockedWorkspaceMemberData, id: RECIPIENT_ID },
       ]);
       if (isDirectMessage) {
-        store.set(
-          aiChatTestInstanceThreadIdState.atom,
-          DIRECT_MESSAGE_THREAD_ID,
-        );
         store.set(recordStoreFamilyState.atomFamily(DIRECT_MESSAGE_THREAD_ID), {
           id: DIRECT_MESSAGE_THREAD_ID,
           __typename: 'AgentChatThread',
@@ -216,7 +239,13 @@ const renderAiChat = ({
     <MetadataAndApolloMocksWrapper>
       <I18nProvider i18n={i18n}>
         <MemoryRouter>
-          <AiChatTestInstance>{children}</AiChatTestInstance>
+          <SelectableAiChatTestInstance
+            initialThreadId={
+              isDirectMessage ? DIRECT_MESSAGE_THREAD_ID : currentThreadId
+            }
+          >
+            {children}
+          </SelectableAiChatTestInstance>
         </MemoryRouter>
       </I18nProvider>
     </MetadataAndApolloMocksWrapper>
@@ -229,7 +258,7 @@ const renderAiChat = ({
       return {
         ...useAiChat(),
         apolloClient: useApolloClient(),
-        currentAiChatThread: useAtomStateValue(aiChatTestInstanceThreadIdState),
+        ...useContext(SelectedAiChatTestThreadContext),
         newAiChatThreadId: useAtomStateValue(newAiChatThreadIdState),
       };
     },
@@ -758,7 +787,7 @@ describe('useAiChat', () => {
     });
 
     act(() => {
-      jotaiStore.set(aiChatTestInstanceThreadIdState.atom, EXISTING_THREAD_ID);
+      result.current.selectThread(EXISTING_THREAD_ID);
     });
     releaseOpenDirectMessage();
 

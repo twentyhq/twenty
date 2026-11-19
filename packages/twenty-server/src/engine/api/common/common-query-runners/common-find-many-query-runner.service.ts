@@ -35,11 +35,11 @@ import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-s
 import { buildCursorPage } from 'src/engine/api/utils/build-cursor-page.util';
 import { getNonToOneJoinAliases } from 'src/engine/api/common/utils/get-non-to-one-join-aliases.util';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
-import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
+import { ProcessAggregateHelper } from 'src/engine/api/common/utils/process-aggregate.helper';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
-import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
-import { buildOrderByColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-order-by-columns-to-select';
-import { getCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import { buildColumnsToSelect } from 'src/engine/api/common/utils/build-columns-to-select';
+import { buildOrderByColumnsToSelect } from 'src/engine/api/common/utils/build-order-by-columns-to-select';
+import { getCursor } from 'src/engine/api/common/utils/cursors.util';
 import { buildOrderByValuesByRecordId } from 'src/engine/api/utils/build-order-by-values-by-record-id.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.util';
 import {

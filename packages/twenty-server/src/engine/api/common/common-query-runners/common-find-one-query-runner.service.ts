@@ -20,7 +20,7 @@ import {
   CommonQueryNames,
   FindOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
+import { buildColumnsToSelect } from 'src/engine/api/common/utils/build-columns-to-select';
 
 @Injectable()
 export class CommonFindOneQueryRunnerService extends CommonRecordQueryRunnerService<

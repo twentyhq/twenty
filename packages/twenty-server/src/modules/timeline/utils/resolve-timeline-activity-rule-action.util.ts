@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { type DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import { type TimelineActivityRuleAction } from 'src/modules/timeline/types/timeline-activity-rule-action.type';
 import { type TimelineActivityRuleTargetShape } from 'src/modules/timeline/types/timeline-activity-rule-target-shape.type';
 
