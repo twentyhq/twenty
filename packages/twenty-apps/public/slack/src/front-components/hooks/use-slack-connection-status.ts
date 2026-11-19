@@ -5,6 +5,7 @@ import { SLACK_USER_LINKS_CONNECTION_STATUS_ROUTE_PATH } from 'src/constants/sla
 import { type ParsedSlackConnectionStatus } from 'src/front-components/types/parsed-slack-connection-status.type';
 import {
   DISCONNECTED_SLACK_CONNECTION_STATUS,
+  FAILED_SLACK_CONNECTION_STATUS,
   parseSlackConnectionStatus,
 } from 'src/front-components/utils/parse-slack-connection-status.util';
 
@@ -27,10 +28,7 @@ const fetchSlackConnectionStatus =
 
       return parseSlackConnectionStatus(result);
     } catch {
-      return {
-        ...DISCONNECTED_SLACK_CONNECTION_STATUS,
-        hasConnectionStatusFailed: true,
-      };
+      return FAILED_SLACK_CONNECTION_STATUS;
     }
   };
 

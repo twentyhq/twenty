@@ -22,8 +22,7 @@ export const slackHealthCheckHandler =
 
       return {
         status: 'WARNING',
-        title: SLACK_NOT_CONNECTED_BANNER.title,
-        description: SLACK_NOT_CONNECTED_BANNER.description,
+        ...SLACK_NOT_CONNECTED_BANNER,
         action: SLACK_CONNECTION_BANNER_ACTION,
       };
     }

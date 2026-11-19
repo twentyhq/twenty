@@ -17,6 +17,11 @@ export const DISCONNECTED_SLACK_CONNECTION_STATUS: ParsedSlackConnectionStatus =
     hasConnectionStatusFailed: false,
   };
 
+export const FAILED_SLACK_CONNECTION_STATUS: ParsedSlackConnectionStatus = {
+  ...DISCONNECTED_SLACK_CONNECTION_STATUS,
+  hasConnectionStatusFailed: true,
+};
+
 const KNOWN_HEALTH_VALUES: string[] = Object.values(SLACK_CONNECTION_HEALTH);
 
 const isSlackConnectionHealth = (
@@ -30,10 +35,7 @@ export const parseSlackConnectionStatus = (
   const record = asRecord(value);
 
   if (!isDefined(record) || record.success === false) {
-    return {
-      ...DISCONNECTED_SLACK_CONNECTION_STATUS,
-      hasConnectionStatusFailed: true,
-    };
+    return FAILED_SLACK_CONNECTION_STATUS;
   }
 
   if (record.isConnected !== true) {

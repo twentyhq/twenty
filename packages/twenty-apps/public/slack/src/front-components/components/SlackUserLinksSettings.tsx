@@ -198,7 +198,6 @@ const SlackUserLinksSettingsContent = () => {
     );
   }
 
-  // The app health banner, visible on every tab, reports a broken connection.
   if (isConnectionBroken) {
     return null;
   }
