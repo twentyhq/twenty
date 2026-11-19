@@ -4043,9 +4043,9 @@ export type Mutation = {
   upsertFieldsWidget: View;
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertPermissionFlags: Array<RolePermissionFlag>;
-  upsertPushSubscription: Scalars['Boolean']['output'];
   upsertRowLevelPermissionRules: UpsertRowLevelPermissionRulesResult;
   upsertViewWidget: View;
+  upsertWebPushSubscription: Scalars['Boolean']['output'];
   validateApprovedAccessDomain: ApprovedAccessDomain;
   verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken;
   verifyEmailAndGetWorkspaceAgnosticToken: AvailableWorkspacesAndAccessTokens;
@@ -5578,11 +5578,6 @@ export type MutationUpsertPermissionFlagsArgs = {
 };
 
 
-export type MutationUpsertPushSubscriptionArgs = {
-  input: UpsertPushSubscriptionInput;
-};
-
-
 export type MutationUpsertRowLevelPermissionRulesArgs = {
   input: UpsertRowLevelPermissionRulesInput;
 };
@@ -5590,6 +5585,11 @@ export type MutationUpsertRowLevelPermissionRulesArgs = {
 
 export type MutationUpsertViewWidgetArgs = {
   input: UpsertViewWidgetInput;
+};
+
+
+export type MutationUpsertWebPushSubscriptionArgs = {
+  input: UpsertWebPushSubscriptionInput;
 };
 
 
@@ -8404,13 +8404,6 @@ export type UpsertPermissionFlagsInput = {
   roleId: Scalars['UUID']['input'];
 };
 
-export type UpsertPushSubscriptionInput = {
-  applicationServerKey: Scalars['String']['input'];
-  authSecret: Scalars['String']['input'];
-  endpoint: Scalars['String']['input'];
-  p256dhKey: Scalars['String']['input'];
-};
-
 export type UpsertRowLevelPermissionRulesInput = {
   objectMetadataId: Scalars['UUID']['input'];
   roleId: Scalars['UUID']['input'];
@@ -8487,6 +8480,13 @@ export type UpsertViewWidgetViewSortInput = {
   direction?: InputMaybe<ViewSortDirection>;
   fieldMetadataId: Scalars['UUID']['input'];
   id?: InputMaybe<Scalars['UUID']['input']>;
+};
+
+export type UpsertWebPushSubscriptionInput = {
+  applicationServerKey: Scalars['String']['input'];
+  authSecret: Scalars['String']['input'];
+  endpoint: Scalars['String']['input'];
+  p256dhKey: Scalars['String']['input'];
 };
 
 export type UsageAnalytics = {
