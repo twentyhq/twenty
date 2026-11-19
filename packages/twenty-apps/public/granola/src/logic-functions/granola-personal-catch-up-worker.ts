@@ -9,7 +9,7 @@ import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
 import { type GranolaPersonalCatchUpPayload } from 'src/logic-functions/types/granola-personal-catch-up-payload.type';
 import { buildGranolaPersonalCatchUpJob } from 'src/logic-functions/utils/build-granola-personal-catch-up-job.util';
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
-import { enqueueGranolaJobOrThrow } from 'src/logic-functions/utils/enqueue-granola-job-or-throw.util';
+import { enqueueGranolaJobsOrThrow } from 'src/logic-functions/utils/enqueue-granola-jobs-or-throw.util';
 import { excludeDeletedGranolaNotesOrThrow } from 'src/logic-functions/utils/exclude-deleted-granola-notes-or-throw.util';
 import { getGranolaNextPage } from 'src/logic-functions/utils/get-granola-next-page.util';
 import { getGranolaNoteImportSchedule } from 'src/logic-functions/utils/get-granola-note-import-schedule.util';
@@ -25,10 +25,10 @@ const enqueueCatchUpOrThrow = async ({
   payload: GranolaPersonalCatchUpPayload;
   delayMs: number;
 }) =>
-  enqueueGranolaJobOrThrow({
-    ...buildGranolaPersonalCatchUpJob(payload),
+  enqueueGranolaJobsOrThrow({
     logicFunctionUniversalIdentifier:
       GRANOLA_PERSONAL_CATCH_UP_WORKER_UNIVERSAL_IDENTIFIER,
+    jobs: [buildGranolaPersonalCatchUpJob(payload)],
     delayMs,
   });
 
