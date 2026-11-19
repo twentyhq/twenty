@@ -21,14 +21,12 @@ export const applyObjectNavigationCommandMenuItemRepairs = async ({
       CommandMenuItemEntity,
     );
 
-    await Promise.all(
-      repairs.map(({ id, update }) =>
-        transactionalCommandMenuItemRepository.update(
-          { id, workspaceId },
-          update,
-        ),
-      ),
-    );
+    for (const { id, update } of repairs) {
+      await transactionalCommandMenuItemRepository.update(
+        { id, workspaceId },
+        update,
+      );
+    }
   });
 
   await invalidateCommandMenuItemReownCache({

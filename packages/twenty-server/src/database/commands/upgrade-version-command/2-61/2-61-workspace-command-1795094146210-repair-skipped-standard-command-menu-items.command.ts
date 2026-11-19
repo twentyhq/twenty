@@ -2,6 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { typedObjectEntries } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -19,14 +20,9 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
-const isStandardCommandMenuItemName = (
-  name: string,
-): name is keyof typeof STANDARD_COMMAND_MENU_ITEMS =>
-  name in STANDARD_COMMAND_MENU_ITEMS;
-
-const STANDARD_COMMAND_MENU_ITEM_NAMES = Object.keys(
+const STANDARD_COMMAND_MENU_ITEM_NAMES = typedObjectEntries(
   STANDARD_COMMAND_MENU_ITEMS,
-).filter(isStandardCommandMenuItemName);
+).map(([name]) => name);
 
 @RegisteredWorkspaceCommand('2.61.0', 1795094146210)
 @Command({
