@@ -1,6 +1,5 @@
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { type ConditionalAvailabilityNode } from 'twenty-shared/types';
-import { parseConditionalAvailabilityExpression } from 'twenty-shared/utils';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
@@ -64,19 +63,6 @@ const PLANTED_RULES: Record<string, WidgetRule> = {
     conditionalAvailabilityExpression: 'numberOfSelectedRecords - 1 == 0',
     conditionalDisplay: null,
   },
-};
-
-const getTreeOfTextRule = (expression: string) => {
-  const parseResult = parseConditionalAvailabilityExpression({
-    expression,
-    metadataName: 'pageLayoutWidget',
-  });
-
-  if (!parseResult.isValid) {
-    throw new Error(`Invalid test expression ${expression}`);
-  }
-
-  return parseResult.node;
 };
 
 const readPlantedWidgets = async (): Promise<Record<string, WidgetRuleRow>> => {
@@ -176,14 +162,25 @@ describe('2-61 workspace command - convert page layout widget rules to condition
     const widgets = await readPlantedWidgets();
 
     expect(widgets[TEXT_RULE_WIDGET_UNIVERSAL_IDENTIFIER]).toMatchObject({
-      conditionalAvailability: getTreeOfTextRule('device == "MOBILE"'),
+      conditionalAvailability: {
+        type: 'COMPARISON',
+        operator: 'EQUAL',
+        left: { type: 'PATH', path: 'device' },
+        right: { type: 'LITERAL', value: 'MOBILE' },
+      },
       conditionalAvailabilityExpression: null,
       conditionalDisplay: null,
     });
     expect(widgets[JSON_LOGIC_RULE_WIDGET_UNIVERSAL_IDENTIFIER]).toMatchObject({
-      conditionalAvailability: getTreeOfTextRule(
-        'includesSome(selectedRecords, "tags", "VIP")',
-      ),
+      conditionalAvailability: {
+        type: 'CALL',
+        functionName: 'includesSome',
+        arguments: [
+          { type: 'PATH', path: 'selectedRecords' },
+          { type: 'LITERAL', value: 'tags' },
+          { type: 'LITERAL', value: 'VIP' },
+        ],
+      },
       conditionalAvailabilityExpression: null,
       conditionalDisplay: null,
     });
