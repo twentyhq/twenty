@@ -1,6 +1,6 @@
 import { isUndefined } from '@sniptt/guards';
 
-import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bot.util';
+import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
 import { getClaimedWorkspaceId } from 'src/logic-functions/recall-api/get-claimed-workspace-id.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { listScheduledRecallBotsBeforeRequestCutoff } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
@@ -59,23 +59,18 @@ export const cancelWorkspaceRecallBots = async ({
         attemptedCancellationExternalBotIds.add(externalBotId),
       );
 
-      const recallBotCancellationResults = await Promise.all(
+      const recallBotRemovalResults = await Promise.all(
         externalBotIdBatch.map(async (externalBotId) => ({
           externalBotId,
-          result: await cancelRecallBot({ externalBotId }),
+          isRemoved: await cancelOrEjectRecallBot(externalBotId),
         })),
       );
 
-      for (const recallBotCancellationResult of recallBotCancellationResults) {
-        if (recallBotCancellationResult.result.ok) {
-          canceledExternalBotIds.push(
-            recallBotCancellationResult.externalBotId,
-          );
+      for (const { externalBotId, isRemoved } of recallBotRemovalResults) {
+        if (isRemoved) {
+          canceledExternalBotIds.push(externalBotId);
         } else {
-          console.warn(
-            `[call-recorder] uninstall bot cleanup incomplete: failed to cancel Recall bot ${recallBotCancellationResult.externalBotId}: ${recallBotCancellationResult.result.errorMessage}`,
-          );
-          failedExternalBotIds.push(recallBotCancellationResult.externalBotId);
+          failedExternalBotIds.push(externalBotId);
         }
       }
     }
