@@ -1005,7 +1005,7 @@ msgstr "{numberOfSelectedItems} عضو فضای کاری"
 #. js-lingui-id: DQ+6r7
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 msgid "{objectLabelPlural} permissions"
-msgstr ""
+msgstr "مجوزهای {objectLabelPlural}"
 
 #. js-lingui-id: luWGLQ
 #: src/modules/workflow/workflow-variables/utils/generate/generateWaitForEventOutputSchema.ts
@@ -2573,7 +2573,7 @@ msgstr "افزودن گروه قانون"
 #. js-lingui-id: RxFV0G
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "Add section"
-msgstr ""
+msgstr "افزودن بخش"
 
 #. js-lingui-id: TdZwYb
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
@@ -2593,7 +2593,7 @@ msgstr "افزودن ارائه‌دهنده هویت SSO"
 #: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
 msgid "Add tab"
-msgstr ""
+msgstr "افزودن زبانه"
 
 #. js-lingui-id: O6B1gJ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -3620,7 +3620,7 @@ msgstr "به کاربران اجازه دهید با ایمیل و گذرواژ�
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect.tsx
 msgid "Allowed actions"
-msgstr ""
+msgstr "اقدامات مجاز"
 
 #. js-lingui-id: vj+OHl
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
@@ -3630,7 +3630,7 @@ msgstr "URIهای تغییرمسیر مجاز برای جریان‌های OAuth
 #. js-lingui-id: L36XXB
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Allows"
-msgstr ""
+msgstr "اجازه می‌دهد"
 
 #. js-lingui-id: Yn0ZH1
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -4127,7 +4127,7 @@ msgstr "اعمال می‌شود به"
 #. js-lingui-id: 9xcLbN
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAllObjectsCard.tsx
 msgid "Applies to all objects before overrides"
-msgstr ""
+msgstr "پیش از استثناها برای همه اشیا اعمال می‌شود"
 
 #. js-lingui-id: DB8zMK
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
@@ -7536,8 +7536,10 @@ msgid "Connect via IMAP/SMTP"
 msgstr "اتصال از طریق IMAP/SMTP"
 
 #. js-lingui-id: LqKH42
+#. placeholder {0}: connectionProvider.displayName
 #. placeholder {0}: provider.displayName
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
 msgid "Connect with {0}"
 msgstr "اتصال با {0}"
 
@@ -7568,6 +7570,12 @@ msgstr "ایمیل و تقویم خود را متصل کنید تا فوراً �
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
 msgid "Connect your own {0} account for this app to use on your behalf."
 msgstr "حساب {0} خود را برای این برنامه متصل کنید تا از طرف شما استفاده شود."
+
+#. js-lingui-id: Y1cA8P
+#. placeholder {0}: connectionProvider.displayName
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
+msgid "Connect your own {0} account for this server to use on your behalf."
+msgstr "برای استفاده از طرف شما، حساب {0} خود را برای این سرور متصل کنید."
 
 #. js-lingui-id: QHcLEN
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
@@ -9249,6 +9257,12 @@ msgstr "چیدمان صفحه‌ها و ساختار رابط کاربری را 
 msgid "Customize record page"
 msgstr "سفارشی‌سازی صفحه رکورد"
 
+#. js-lingui-id: hxjpaE
+#: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
+msgid "Customize sidebar"
+msgstr "شخصی‌سازی نوار کناری"
+
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Customize the workspace record page"
@@ -10069,7 +10083,7 @@ msgstr "حذف مهارت"
 #. js-lingui-id: drg4t8
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
 msgid "Delete tab"
-msgstr ""
+msgstr "حذف زبانه"
 
 #. js-lingui-id: +RYIn9
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
@@ -12524,7 +12538,7 @@ msgstr "هر دوشنبه"
 #. js-lingui-id: QU6LCC
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Every object follows the all objects access."
-msgstr ""
+msgstr "هر شیء از دسترسی همه اشیا پیروی می‌کند."
 
 #. js-lingui-id: JsIvOW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
@@ -13772,7 +13786,7 @@ msgstr "فیلدها (اختیاری)"
 #. js-lingui-id: fiU2kl
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Fields and rule"
-msgstr ""
+msgstr "فیلدها و قانون"
 
 #. js-lingui-id: Tnz22x
 #: src/modules/object-record/record-merge/components/MergePrioritySettings.tsx
@@ -19851,7 +19865,7 @@ msgstr "قانون جدید"
 #. js-lingui-id: SagCAA
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "New section"
-msgstr ""
+msgstr "بخش جدید"
 
 #. js-lingui-id: MdpSC1
 #: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
@@ -20646,7 +20660,7 @@ msgstr "بدون یادداشت"
 #. js-lingui-id: arel2K
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
 msgid "No objects found"
-msgstr ""
+msgstr "شیئی یافت نشد"
 
 #. js-lingui-id: fq3TKy
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
@@ -22445,7 +22459,7 @@ msgstr "بازنویسی پیش‌نویس"
 #. js-lingui-id: sJNF3W
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Overrides"
-msgstr ""
+msgstr "استثناها"
 
 #. js-lingui-id: 6/dCYd
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -24365,7 +24379,7 @@ msgstr "رکوردها بر اساس تاریخ"
 #. js-lingui-id: b/xmDA
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Records matching the rule"
-msgstr ""
+msgstr "رکوردهای منطبق با قانون"
 
 #. js-lingui-id: CjlKOu
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -24809,7 +24823,7 @@ msgstr "حذف فیلد خروجی"
 #. js-lingui-id: c8Kx/b
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Remove override"
-msgstr ""
+msgstr "حذف استثنا"
 
 #. js-lingui-id: cp/fZQ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsFlagRow.tsx
@@ -24861,7 +24875,7 @@ msgstr "حذف فیلد قابل جستجو"
 #. js-lingui-id: uXfxoE
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
 msgid "Remove section"
-msgstr ""
+msgstr "حذف بخش"
 
 #. js-lingui-id: jCt40X
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -26478,12 +26492,12 @@ msgstr "بخش"
 #. js-lingui-id: 8gtQoG
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
 msgid "Section actions"
-msgstr ""
+msgstr "اقدامات بخش"
 
 #. js-lingui-id: vKc3fL
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
 msgid "Section name"
-msgstr ""
+msgstr "نام بخش"
 
 #. js-lingui-id: R4OWFD
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
@@ -29171,12 +29185,12 @@ msgstr "زبانه {tabNumber}: {0}"
 #. js-lingui-id: OqZEsq
 #: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
 msgid "Tab actions"
-msgstr ""
+msgstr "اقدامات زبانه"
 
 #. js-lingui-id: FFaDQL
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
 msgid "Tab name"
-msgstr ""
+msgstr "نام زبانه"
 
 #. js-lingui-id: zr20ox
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -34442,6 +34456,8 @@ msgstr "کارت شما ذخیره شد، اما پرداخت همچنان نی�
 #. js-lingui-id: OD3Fzl
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerSignInSection.tsx
 msgid "Your connections could not be loaded. Check your connection and try again."
 msgstr "اتصال‌های شما بارگیری نشدند. اتصال خود را بررسی کنید و دوباره تلاش کنید."
 
