@@ -4,9 +4,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 import groupBy from 'lodash.groupby';
 import { FOCUSED_TAB_HEARTBEAT_INTERVAL_MS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Not } from 'typeorm';
+import { In, IsNull, MoreThan, Not } from 'typeorm';
 import { generateRequestDetails } from 'web-push';
 
+import { UPDATE_OWNED_KEY_LEASE_SCRIPT } from 'src/engine/core-modules/cache-storage/constants/update-owned-key-lease-script.constant';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -127,12 +128,11 @@ export class WebPushService {
       return;
     }
 
-    const focusedTabId =
-      await this.cacheStorageService.get<string>(focusedTabKey);
-
-    if (focusedTabId === tabId) {
-      await this.cacheStorageService.del(focusedTabKey);
-    }
+    await this.cacheStorageService.runScript<number>({
+      script: UPDATE_OWNED_KEY_LEASE_SCRIPT,
+      keys: [focusedTabKey],
+      args: [JSON.stringify(tabId), '0'],
+    });
   }
 
   async findWorkspaceMemberIdsWithFocusedTab({
@@ -176,7 +176,8 @@ export class WebPushService {
             twentyConfigService: this.twentyConfigService,
           }).publicKey,
           userSession: {
-            ...this.userSessionService.buildActiveSessionWhere(),
+            revokedAt: IsNull(),
+            expiresAt: MoreThan(new Date()),
             userId: In(userIds),
             workspaceId,
           },

@@ -1,6 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type AgentChatInboxState } from 'twenty-shared/ai';
+import {
+  type AgentChatInboxState,
+  isAgentChatMentionUnresolved,
+} from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In } from 'typeorm';
@@ -26,6 +29,7 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 import { toIsoStringOrNull } from 'src/utils/date/toIsoStringOrNull';
 
 const RENOTIFY_COOLDOWN_MS = 15_000;
+const ALERTED_MENTION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 @Injectable()
 export class AgentChatWebPushNotificationService {
@@ -76,6 +80,12 @@ export class AgentChatWebPushNotificationService {
       workspaceId,
       threadId: thread.id,
     });
+    const workspaceMemberIdsWithUnalertedMention =
+      await this.claimUnalertedMentions({
+        workspaceId,
+        threadId: thread.id,
+        participants,
+      });
     const candidateWorkspaceMemberIds = [
       ...new Set(
         [
@@ -121,6 +131,8 @@ export class AgentChatWebPushNotificationService {
           participant: participants.get(workspaceMemberId),
           workspaceMemberId,
           inboxNotificationLevel: workspaceMember.inboxNotificationLevel,
+          hasUnalertedMention:
+            workspaceMemberIdsWithUnalertedMention.has(workspaceMemberId),
         });
 
         return isDefined(reason) ? [{ workspaceMember, reason }] : [];
@@ -222,6 +234,34 @@ export class AgentChatWebPushNotificationService {
         renotify: isRenotifyForced || isOutsideRenotifyCooldown,
       },
     });
+  }
+
+  private async claimUnalertedMentions({
+    workspaceId,
+    threadId,
+    participants,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    participants: Map<string, AgentChatInboxState>;
+  }): Promise<Set<string>> {
+    const claimedWorkspaceMemberIds = await Promise.all(
+      [...participants].map(async ([workspaceMemberId, participant]) => {
+        if (!isAgentChatMentionUnresolved(participant)) {
+          return null;
+        }
+
+        const isFirstClaim = await this.cacheStorageService.setIfAbsent(
+          `agent-chat-alerted-mention:${workspaceId}:${threadId}:${workspaceMemberId}:${participant.lastMentionedAt}`,
+          true,
+          ALERTED_MENTION_TTL_MS,
+        );
+
+        return isFirstClaim ? workspaceMemberId : null;
+      }),
+    );
+
+    return new Set(claimedWorkspaceMemberIds.filter(isDefined));
   }
 
   private async findParticipants({
