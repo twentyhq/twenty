@@ -7,9 +7,11 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
-import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
+import { findFlatViewAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-available-to-user.util';
+import { findManyFlatViewChildrenAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-available-to-user.util';
+import { sortViewGroupsByPosition } from 'src/engine/metadata-modules/flat-view/utils/sort-view-groups-by-position.util';
 import { fromCreateViewGroupInputToFlatViewGroupToCreate } from 'src/engine/metadata-modules/flat-view-group/utils/from-create-view-group-input-to-flat-view-group-to-create.util';
 import { fromDestroyViewGroupInputToFlatViewGroupOrThrow } from 'src/engine/metadata-modules/flat-view-group/utils/from-destroy-view-group-input-to-flat-view-group-or-throw.util';
 import { fromUpdateViewGroupInputToFlatViewGroupToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-group/utils/from-update-view-group-input-to-flat-view-group-to-update-or-throw.util';
@@ -26,7 +28,6 @@ import {
   generateViewGroupUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { fromFlatViewGroupToViewGroupDto } from 'src/engine/metadata-modules/view-group/utils/from-flat-view-group-to-view-group-dto.util';
-import { isViewAvailableToUser } from 'src/engine/metadata-modules/view/utils/is-view-available-to-user.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -369,31 +370,16 @@ export class ViewGroupService {
           flatMapsKeys: ['flatViewGroupMaps', 'flatViewMaps'],
         },
       );
-    const flatViews = isDefined(viewId)
-      ? [
-          findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: viewId,
-            flatEntityMaps: flatViewMaps,
-          }),
-        ]
-      : Object.values(flatViewMaps.byUniversalIdentifier);
 
-    return flatViews
-      .filter(isDefined)
-      .filter((flatView) =>
-        isViewAvailableToUser({ flatView, userWorkspaceId }),
-      )
-      .flatMap((flatView) =>
-        findManyFlatEntityByIdInFlatEntityMaps({
-          flatEntityIds: flatView.viewGroupIds,
-          flatEntityMaps: flatViewGroupMaps,
-        }),
-      )
-      .filter((flatViewGroup) => flatViewGroup.deletedAt === null)
-      .sort(
-        (first, second) =>
-          first.position - second.position || first.id.localeCompare(second.id),
-      );
+    return sortViewGroupsByPosition(
+      findManyFlatViewChildrenAvailableToUser({
+        flatViewMaps,
+        flatViewChildMaps: flatViewGroupMaps,
+        flatViewChildIdsKey: 'viewGroupIds',
+        viewId,
+        userWorkspaceId,
+      }),
+    );
   }
 
   async findByIdOrThrow({
@@ -416,18 +402,17 @@ export class ViewGroupService {
       flatEntityId: id,
       flatEntityMaps: flatViewGroupMaps,
     });
-    const flatView = isDefined(flatViewGroup)
-      ? findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: flatViewGroup.viewId,
-          flatEntityMaps: flatViewMaps,
-        })
-      : undefined;
 
     if (
       !isDefined(flatViewGroup) ||
       flatViewGroup.deletedAt !== null ||
-      !isDefined(flatView) ||
-      !isViewAvailableToUser({ flatView, userWorkspaceId })
+      !isDefined(
+        findFlatViewAvailableToUser({
+          viewId: flatViewGroup.viewId,
+          flatViewMaps,
+          userWorkspaceId,
+        }),
+      )
     ) {
       throw new ViewGroupException(
         generateViewGroupExceptionMessage(

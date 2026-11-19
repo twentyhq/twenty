@@ -7,8 +7,10 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
-import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
+import { findFlatViewAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-available-to-user.util';
+import { findManyFlatViewChildrenAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-available-to-user.util';
+import { sortByPositionInViewFilterGroup } from 'src/engine/metadata-modules/flat-view/utils/sort-by-position-in-view-filter-group.util';
 import { fromCreateViewFilterInputToFlatViewFilterToCreate } from 'src/engine/metadata-modules/flat-view-filter/utils/from-create-view-filter-input-to-flat-view-filter-to-create.util';
 import { fromDestroyViewFilterInputToFlatViewFilterOrThrow } from 'src/engine/metadata-modules/flat-view-filter/utils/from-destroy-view-filter-input-to-flat-view-filter-or-throw.util';
 import { fromUpdateViewFilterInputToFlatViewFilterToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-filter/utils/from-update-view-filter-input-to-flat-view-filter-to-update-or-throw.util';
@@ -28,7 +30,6 @@ import { DestroyViewFilterInput } from 'src/engine/metadata-modules/view-filter/
 import { UpdateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/update-view-filter.input';
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
 import { fromFlatViewFilterToViewFilterDto } from 'src/engine/metadata-modules/view-filter/utils/from-flat-view-filter-to-view-filter-dto.util';
-import { isViewAvailableToUser } from 'src/engine/metadata-modules/view/utils/is-view-available-to-user.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -346,33 +347,16 @@ export class ViewFilterService {
           flatMapsKeys: ['flatViewFilterMaps', 'flatViewMaps'],
         },
       );
-    const flatViews = isDefined(viewId)
-      ? [
-          findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: viewId,
-            flatEntityMaps: flatViewMaps,
-          }),
-        ]
-      : Object.values(flatViewMaps.byUniversalIdentifier);
 
-    return flatViews
-      .filter(isDefined)
-      .filter((flatView) =>
-        isViewAvailableToUser({ flatView, userWorkspaceId }),
-      )
-      .flatMap((flatView) =>
-        findManyFlatEntityByIdInFlatEntityMaps({
-          flatEntityIds: flatView.viewFilterIds,
-          flatEntityMaps: flatViewFilterMaps,
-        }),
-      )
-      .filter((flatViewFilter) => flatViewFilter.deletedAt === null)
-      .sort(
-        (first, second) =>
-          (first.positionInViewFilterGroup ?? Number.POSITIVE_INFINITY) -
-            (second.positionInViewFilterGroup ?? Number.POSITIVE_INFINITY) ||
-          first.id.localeCompare(second.id),
-      );
+    return sortByPositionInViewFilterGroup(
+      findManyFlatViewChildrenAvailableToUser({
+        flatViewMaps,
+        flatViewChildMaps: flatViewFilterMaps,
+        flatViewChildIdsKey: 'viewFilterIds',
+        viewId,
+        userWorkspaceId,
+      }),
+    );
   }
 
   async findByIdOrThrow({
@@ -395,18 +379,17 @@ export class ViewFilterService {
       flatEntityId: id,
       flatEntityMaps: flatViewFilterMaps,
     });
-    const flatView = isDefined(flatViewFilter)
-      ? findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: flatViewFilter.viewId,
-          flatEntityMaps: flatViewMaps,
-        })
-      : undefined;
 
     if (
       !isDefined(flatViewFilter) ||
       flatViewFilter.deletedAt !== null ||
-      !isDefined(flatView) ||
-      !isViewAvailableToUser({ flatView, userWorkspaceId })
+      !isDefined(
+        findFlatViewAvailableToUser({
+          viewId: flatViewFilter.viewId,
+          flatViewMaps,
+          userWorkspaceId,
+        }),
+      )
     ) {
       throw new ViewFilterException(
         generateViewFilterExceptionMessage(

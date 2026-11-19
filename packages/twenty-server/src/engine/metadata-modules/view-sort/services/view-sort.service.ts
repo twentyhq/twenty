@@ -7,8 +7,9 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
-import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
+import { findFlatViewAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-available-to-user.util';
+import { findManyFlatViewChildrenAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-available-to-user.util';
+import { sortViewSortsByCreation } from 'src/engine/metadata-modules/flat-view/utils/sort-view-sorts-by-creation.util';
 import { fromCreateViewSortInputToFlatViewSortToCreate } from 'src/engine/metadata-modules/flat-view-sort/utils/from-create-view-sort-input-to-flat-view-sort-to-create.util';
 import { fromDestroyViewSortInputToFlatViewSortOrThrow } from 'src/engine/metadata-modules/flat-view-sort/utils/from-destroy-view-sort-input-to-flat-view-sort-or-throw.util';
 import { fromUpdateViewSortInputToFlatViewSortToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-sort/utils/from-update-view-sort-input-to-flat-view-sort-to-update-or-throw.util';
@@ -25,7 +26,6 @@ import { DestroyViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos
 import { UpdateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/update-view-sort.input';
 import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
 import { fromFlatViewSortToViewSortDto } from 'src/engine/metadata-modules/view-sort/utils/from-flat-view-sort-to-view-sort-dto.util';
-import { isViewAvailableToUser } from 'src/engine/metadata-modules/view/utils/is-view-available-to-user.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -259,12 +259,7 @@ export class ViewSortService {
     workspaceId: string;
     userWorkspaceId: string | undefined;
   }): Promise<ViewSortDTO[]> {
-    const flatViewSorts = await this.findManyFlatViewSortsVisibleToUser({
-      workspaceId,
-      userWorkspaceId,
-    });
-
-    return flatViewSorts.map(fromFlatViewSortToViewSortDto);
+    return this.findManyVisibleToUser({ workspaceId, userWorkspaceId });
   }
 
   async findByViewId({
@@ -276,16 +271,10 @@ export class ViewSortService {
     viewId: string;
     userWorkspaceId: string | undefined;
   }): Promise<ViewSortDTO[]> {
-    const flatViewSorts = await this.findManyFlatViewSortsVisibleToUser({
-      workspaceId,
-      viewId,
-      userWorkspaceId,
-    });
-
-    return flatViewSorts.map(fromFlatViewSortToViewSortDto);
+    return this.findManyVisibleToUser({ workspaceId, viewId, userWorkspaceId });
   }
 
-  private async findManyFlatViewSortsVisibleToUser({
+  private async findManyVisibleToUser({
     workspaceId,
     viewId,
     userWorkspaceId,
@@ -293,7 +282,7 @@ export class ViewSortService {
     workspaceId: string;
     viewId?: string;
     userWorkspaceId: string | undefined;
-  }): Promise<FlatViewSort[]> {
+  }): Promise<ViewSortDTO[]> {
     const { flatViewSortMaps, flatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -301,32 +290,16 @@ export class ViewSortService {
           flatMapsKeys: ['flatViewSortMaps', 'flatViewMaps'],
         },
       );
-    const flatViews = isDefined(viewId)
-      ? [
-          findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: viewId,
-            flatEntityMaps: flatViewMaps,
-          }),
-        ]
-      : Object.values(flatViewMaps.byUniversalIdentifier);
 
-    return flatViews
-      .filter(isDefined)
-      .filter((flatView) =>
-        isViewAvailableToUser({ flatView, userWorkspaceId }),
-      )
-      .flatMap((flatView) =>
-        findManyFlatEntityByIdInFlatEntityMaps({
-          flatEntityIds: flatView.viewSortIds,
-          flatEntityMaps: flatViewSortMaps,
-        }),
-      )
-      .filter((flatViewSort) => flatViewSort.deletedAt === null)
-      .sort(
-        (first, second) =>
-          first.createdAt.localeCompare(second.createdAt) ||
-          first.id.localeCompare(second.id),
-      );
+    return sortViewSortsByCreation(
+      findManyFlatViewChildrenAvailableToUser({
+        flatViewMaps,
+        flatViewChildMaps: flatViewSortMaps,
+        flatViewChildIdsKey: 'viewSortIds',
+        viewId,
+        userWorkspaceId,
+      }).map(fromFlatViewSortToViewSortDto),
+    );
   }
 
   async findByIdOrThrow({
@@ -349,18 +322,17 @@ export class ViewSortService {
       flatEntityId: id,
       flatEntityMaps: flatViewSortMaps,
     });
-    const flatView = isDefined(flatViewSort)
-      ? findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: flatViewSort.viewId,
-          flatEntityMaps: flatViewMaps,
-        })
-      : undefined;
 
     if (
       !isDefined(flatViewSort) ||
       flatViewSort.deletedAt !== null ||
-      !isDefined(flatView) ||
-      !isViewAvailableToUser({ flatView, userWorkspaceId })
+      !isDefined(
+        findFlatViewAvailableToUser({
+          viewId: flatViewSort.viewId,
+          flatViewMaps,
+          userWorkspaceId,
+        }),
+      )
     ) {
       throw new ViewSortException(
         generateViewSortExceptionMessage(

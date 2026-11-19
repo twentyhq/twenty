@@ -7,6 +7,7 @@ import { findViewGroups } from 'test/integration/metadata/suites/view-group/util
 import { createViewWithChildren } from 'test/integration/metadata/suites/view/utils/create-view-with-children.util';
 import { deleteOneView } from 'test/integration/metadata/suites/view/utils/delete-one-view.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
+import { setViewRowDeletedAt } from 'test/integration/metadata/suites/view/utils/set-view-row-deleted-at.util';
 import { findAllMetadataRestListPages } from 'test/integration/rest/utils/find-all-metadata-rest-list-pages.util';
 import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { maskUuids } from 'test/integration/utils/mask-uuids.util';
@@ -30,24 +31,34 @@ type TestContext = {
 const arrangeViewGroup = async ({
   visibility = ViewVisibility.WORKSPACE,
   token,
+  prepare = async () => ({}),
 }: {
   visibility?: ViewVisibility;
   token?: string;
+  prepare?: (
+    arrangedViewGroup: ArrangedViewGroup,
+  ) => Promise<Partial<ArrangedViewGroup>>;
 } = {}): Promise<ArrangedViewGroup> => {
   const { viewId, childIdByChildName } = await createViewWithChildren({
     name: `View Group read ${randomUUID().slice(0, 8)}`,
     visibility,
     token,
   });
-
-  return {
+  const arrangedViewGroup = {
     viewGroupId: childIdByChildName['view group'],
     viewId,
-    // Does nothing once the case itself deleted the view
     cleanup: async () => {
-      await destroyOneView({ viewId });
+      await destroyOneView({ viewId, expectToFail: false });
     },
   };
+
+  try {
+    return { ...arrangedViewGroup, ...(await prepare(arrangedViewGroup)) };
+  } catch (error) {
+    await arrangedViewGroup.cleanup();
+
+    throw error;
+  }
 };
 
 const failingViewGroupReadTestCases: EachTestingContext<TestContext>[] = [
@@ -62,46 +73,96 @@ const failingViewGroupReadTestCases: EachTestingContext<TestContext>[] = [
     },
   },
   {
+    title: 'when the view group is deleted',
+    context: {
+      arrange: () =>
+        arrangeViewGroup({
+          prepare: async (arrangedViewGroup) => {
+            await deleteOneViewGroup({
+              input: { id: arrangedViewGroup.viewGroupId },
+              expectToFail: false,
+            });
+
+            return {};
+          },
+        }),
+    },
+  },
+  {
     title: 'when the view group is soft-deleted',
     context: {
-      arrange: async () => {
-        const arrangedViewGroup = await arrangeViewGroup();
+      arrange: () =>
+        arrangeViewGroup({
+          prepare: async ({ viewGroupId, cleanup }) => {
+            await setViewRowDeletedAt({
+              tableName: 'viewGroup',
+              id: viewGroupId,
+              deletedAt: new Date(),
+            });
 
-        await deleteOneViewGroup({
-          input: { id: arrangedViewGroup.viewGroupId },
-          expectToFail: false,
-        });
-
-        return arrangedViewGroup;
-      },
+            return {
+              cleanup: async () => {
+                await setViewRowDeletedAt({
+                  tableName: 'viewGroup',
+                  id: viewGroupId,
+                  deletedAt: null,
+                });
+                await cleanup();
+              },
+            };
+          },
+        }),
     },
   },
   {
     title: 'when the view of the view group is deleted',
     context: {
-      arrange: async () => {
-        const arrangedViewGroup = await arrangeViewGroup();
+      arrange: () =>
+        arrangeViewGroup({
+          prepare: async ({ viewId }) => {
+            await deleteOneView({ viewId, expectToFail: false });
 
-        await deleteOneView({
-          viewId: arrangedViewGroup.viewId,
-          expectToFail: false,
-        });
+            return { cleanup: async () => {} };
+          },
+        }),
+    },
+  },
+  {
+    title: 'when the view of the view group is soft-deleted',
+    context: {
+      arrange: () =>
+        arrangeViewGroup({
+          prepare: async ({ viewId, cleanup }) => {
+            await setViewRowDeletedAt({
+              tableName: 'view',
+              id: viewId,
+              deletedAt: new Date(),
+            });
 
-        return arrangedViewGroup;
-      },
+            return {
+              cleanup: async () => {
+                await setViewRowDeletedAt({
+                  tableName: 'view',
+                  id: viewId,
+                  deletedAt: null,
+                });
+                await cleanup();
+              },
+            };
+          },
+        }),
     },
   },
   {
     title:
       'when the view of the view group is unlisted and belongs to another user',
     context: {
-      arrange: async () => ({
-        ...(await arrangeViewGroup({
+      arrange: () =>
+        arrangeViewGroup({
           visibility: ViewVisibility.UNLISTED,
           token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
-        })),
-        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      }),
+          prepare: async () => ({ token: APPLE_JONY_MEMBER_ACCESS_TOKEN }),
+        }),
     },
   },
 ];

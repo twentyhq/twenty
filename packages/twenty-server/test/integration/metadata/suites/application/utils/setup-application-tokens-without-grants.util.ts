@@ -11,8 +11,7 @@ import { generateApplicationTokenPair } from 'test/integration/utils/generate-ap
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
-// One token without user binding, as handed to logic functions, and one bound
-// to a user, as handed to front components
+// An unbound token (logic functions) and a user-bound one (front components)
 export const setupApplicationTokensWithoutGrants = async (): Promise<{
   tokens: string[];
   cleanup: () => Promise<void>;

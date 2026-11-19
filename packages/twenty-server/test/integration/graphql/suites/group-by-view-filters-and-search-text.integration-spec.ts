@@ -5,95 +5,60 @@ import { destroyManyOperationFactory } from 'test/integration/graphql/utils/dest
 import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/create-one-view-filter-group.util';
+import { destroyOneViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/destroy-one-view-filter-group.util';
 import { createOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-view-filter.util';
+import { destroyOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/destroy-one-view-filter.util';
 import { createOneViewOnObject } from 'test/integration/metadata/suites/view/utils/create-one-view-on-object.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
+import { updateOneView } from 'test/integration/metadata/suites/view/utils/update-one-view.util';
 import { findFieldMetadataIdByName } from 'test/integration/utils/find-field-metadata-id-by-name.util';
 import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
-describe('group by with a view holding filters and a search text (integration)', () => {
-  it('should apply both the view filters and the view search text', async () => {
-    const token = randomUUID().slice(0, 8);
-    const filterValue = `filtered-${token}`;
-    const searchText = `searched-${token}`;
-    const keptJobTitle = `${filterValue} ${searchText}`;
-    const personIds = [randomUUID(), randomUUID(), randomUUID()];
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
-    const createdPeople = await makeGraphqlApiRequest(
-      createManyOperationFactory({
-        objectMetadataSingularName: 'person',
-        objectMetadataPluralName: 'people',
-        gqlFields: 'id',
-        data: [
-          { id: personIds[0], jobTitle: keptJobTitle },
-          { id: personIds[1], jobTitle: filterValue },
-          { id: personIds[2], jobTitle: searchText },
-        ],
-      }),
-    );
+type ViewOverridesRow = {
+  anyFieldFilterValue: string | null;
+  overrides: Record<string, unknown> | null;
+};
 
-    expect(createdPeople.body.errors).toBeUndefined();
+// One person matches both the filter and the search text, one only the
+// filter, one only the search text
+const arrangePeople = async () => {
+  const suffix = randomUUID().slice(0, 8);
+  const filterValue = `filtered-${suffix}`;
+  const searchText = `searched-${suffix}`;
+  const keptJobTitle = `${filterValue} ${searchText}`;
+  const personIds = [randomUUID(), randomUUID(), randomUUID()];
 
-    const viewId = await createOneViewOnObject({
-      objectNameSingular: 'person',
-      input: {
-        name: `Filters and search text ${token}`,
-        anyFieldFilterValue: searchText,
-      },
-    });
+  const response = await makeGraphqlApiRequest(
+    createManyOperationFactory({
+      objectMetadataSingularName: 'person',
+      objectMetadataPluralName: 'people',
+      gqlFields: 'id',
+      data: [
+        { id: personIds[0], jobTitle: keptJobTitle },
+        { id: personIds[1], jobTitle: filterValue },
+        { id: personIds[2], jobTitle: searchText },
+      ],
+    }),
+  );
 
-    try {
-      const { data: viewFilterGroupData } = await createOneViewFilterGroup({
-        expectToFail: false,
-        gqlFields: 'id',
-        input: {
-          viewId,
-          logicalOperator: ViewFilterGroupLogicalOperator.AND,
-          positionInViewFilterGroup: 0,
-        },
-      });
-      const { errors } = await createOneViewFilter({
-        expectToFail: false,
-        gqlFields: 'id',
-        input: {
-          viewId,
-          viewFilterGroupId: viewFilterGroupData.createViewFilterGroup.id,
-          fieldMetadataId: await findFieldMetadataIdByName({
-            objectMetadataId: await findObjectMetadataIdByName('person'),
-            fieldName: 'jobTitle',
-          }),
-          operand: ViewFilterOperand.CONTAINS,
-          value: filterValue,
-          positionInViewFilterGroup: 0,
-        },
-      });
+  expect(response.body.errors).toBeUndefined();
 
-      expect(errors).toBeUndefined();
-
-      const response = await makeGraphqlApiRequest(
-        groupByOperationFactory({
-          objectMetadataSingularName: 'person',
-          objectMetadataPluralName: 'people',
-          groupBy: [{ jobTitle: true }],
-          filter: { id: { in: personIds } },
-          viewId,
-        }),
-      );
-
-      expect(response.body.errors).toBeUndefined();
-      expect(
-        response.body.data.peopleGroupBy.map(
-          ({ groupByDimensionValues }: { groupByDimensionValues: string[] }) =>
-            groupByDimensionValues[0],
-        ),
-      ).toEqual([keptJobTitle]);
-    } finally {
-      await destroyOneView({ viewId, expectToFail: false });
-      await makeGraphqlApiRequest(
+  return {
+    filterValue,
+    searchText,
+    keptJobTitle,
+    personIds,
+    destroyPeople: async () => {
+      const destroyResponse = await makeGraphqlApiRequest(
         destroyManyOperationFactory({
           objectMetadataSingularName: 'person',
           objectMetadataPluralName: 'people',
@@ -101,6 +66,187 @@ describe('group by with a view holding filters and a search text (integration)',
           filter: { id: { in: personIds } },
         }),
       );
+
+      expect(destroyResponse.body.errors).toBeUndefined();
+    },
+  };
+};
+
+const createJobTitleViewFilter = async ({
+  viewId,
+  value,
+}: {
+  viewId: string;
+  value: string;
+}): Promise<{ viewFilterGroupId: string; viewFilterId: string }> => {
+  const { data: viewFilterGroupData, errors: viewFilterGroupErrors } =
+    await createOneViewFilterGroup({
+      expectToFail: false,
+      gqlFields: 'id',
+      input: {
+        viewId,
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
+        positionInViewFilterGroup: 0,
+      },
+    });
+
+  expect(viewFilterGroupErrors).toBeUndefined();
+
+  const viewFilterGroupId = viewFilterGroupData.createViewFilterGroup.id;
+  const { data: viewFilterData, errors: viewFilterErrors } =
+    await createOneViewFilter({
+      expectToFail: false,
+      gqlFields: 'id',
+      input: {
+        viewId,
+        viewFilterGroupId,
+        fieldMetadataId: await findFieldMetadataIdByName({
+          objectMetadataId: await findObjectMetadataIdByName('person'),
+          fieldName: 'jobTitle',
+        }),
+        operand: ViewFilterOperand.CONTAINS,
+        value,
+        positionInViewFilterGroup: 0,
+      },
+    });
+
+  expect(viewFilterErrors).toBeUndefined();
+
+  return {
+    viewFilterGroupId,
+    viewFilterId: viewFilterData.createViewFilter.id,
+  };
+};
+
+const findGroupedJobTitles = async ({
+  viewId,
+  personIds,
+}: {
+  viewId: string;
+  personIds: string[];
+}): Promise<string[]> => {
+  const response = await makeGraphqlApiRequest(
+    groupByOperationFactory({
+      objectMetadataSingularName: 'person',
+      objectMetadataPluralName: 'people',
+      groupBy: [{ jobTitle: true }],
+      filter: { id: { in: personIds } },
+      viewId,
+    }),
+  );
+
+  expect(response.body.errors).toBeUndefined();
+
+  return response.body.data.peopleGroupBy.map(
+    ({ groupByDimensionValues }: { groupByDimensionValues: string[] }) =>
+      groupByDimensionValues[0],
+  );
+};
+
+const findViewOverridesRow = async (
+  viewId: string,
+): Promise<ViewOverridesRow> => {
+  const [viewOverridesRow] = await globalThis.testDataSource.query(
+    `SELECT "anyFieldFilterValue", overrides FROM core."view" WHERE id = $1`,
+    [viewId],
+  );
+
+  return viewOverridesRow;
+};
+
+describe('group by with a view holding filters and a search text (integration)', () => {
+  it('should apply both the view filters and the view search text', async () => {
+    const people = await arrangePeople();
+    let viewId: string | undefined;
+
+    try {
+      viewId = await createOneViewOnObject({
+        objectNameSingular: 'person',
+        input: {
+          name: `Filters and search text ${randomUUID().slice(0, 8)}`,
+          anyFieldFilterValue: people.searchText,
+        },
+      });
+      await createJobTitleViewFilter({ viewId, value: people.filterValue });
+
+      expect(
+        await findGroupedJobTitles({ viewId, personIds: people.personIds }),
+      ).toEqual([people.keptJobTitle]);
+    } finally {
+      if (isDefined(viewId)) {
+        await destroyOneView({ viewId, expectToFail: false });
+      }
+
+      await people.destroyPeople();
+    }
+  });
+
+  it('should apply a search text stored as an override on a view owned by another application', async () => {
+    const [{ id: standardViewId }] = await globalThis.testDataSource.query(
+      `SELECT id FROM core."view"
+        WHERE "workspaceId" = $1 AND "objectMetadataId" = $2
+          AND key = 'INDEX' AND "deletedAt" IS NULL`,
+      [SEED_APPLE_WORKSPACE_ID, await findObjectMetadataIdByName('person')],
+    );
+    const initialViewOverridesRow = await findViewOverridesRow(standardViewId);
+    const people = await arrangePeople();
+    let createdViewFilter:
+      | { viewFilterGroupId: string; viewFilterId: string }
+      | undefined;
+
+    try {
+      const { errors } = await updateOneView({
+        viewId: standardViewId,
+        input: {
+          id: standardViewId,
+          anyFieldFilterValue: people.searchText,
+        },
+        gqlFields: 'id',
+        expectToFail: false,
+      });
+
+      expect(errors).toBeUndefined();
+
+      const viewOverridesRow = await findViewOverridesRow(standardViewId);
+
+      expect(viewOverridesRow.anyFieldFilterValue).toBe(
+        initialViewOverridesRow.anyFieldFilterValue,
+      );
+      expect(JSON.stringify(viewOverridesRow.overrides)).toContain(
+        people.searchText,
+      );
+
+      createdViewFilter = await createJobTitleViewFilter({
+        viewId: standardViewId,
+        value: people.filterValue,
+      });
+
+      expect(
+        await findGroupedJobTitles({
+          viewId: standardViewId,
+          personIds: people.personIds,
+        }),
+      ).toEqual([people.keptJobTitle]);
+    } finally {
+      if (isDefined(createdViewFilter)) {
+        await destroyOneViewFilter({
+          input: { id: createdViewFilter.viewFilterId },
+          expectToFail: false,
+        });
+        await destroyOneViewFilterGroup({
+          id: createdViewFilter.viewFilterGroupId,
+          expectToFail: false,
+        });
+      }
+
+      await globalThis.testDataSource.query(
+        `UPDATE core."view" SET overrides = $2 WHERE id = $1`,
+        [standardViewId, initialViewOverridesRow.overrides],
+      );
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatViewMaps']);
+      await people.destroyPeople();
     }
   });
 });

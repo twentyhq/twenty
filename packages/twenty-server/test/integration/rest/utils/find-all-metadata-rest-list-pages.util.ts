@@ -1,4 +1,5 @@
 import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { isDefined } from 'twenty-shared/utils';
 
 type MetadataRestListPage = {
   data: Record<string, unknown>[];
@@ -20,10 +21,9 @@ export const findAllMetadataRestListPages = async ({
     const separator = path.includes('?') ? '&' : '?';
     const response = await makeRestApiRequest({
       method: 'get',
-      path:
-        startingAfter === null
-          ? path
-          : `${path}${separator}starting_after=${startingAfter}`,
+      path: isDefined(startingAfter)
+        ? `${path}${separator}starting_after=${startingAfter}`
+        : path,
       bearer,
     });
 
@@ -37,7 +37,7 @@ export const findAllMetadataRestListPages = async ({
     startingAfter = response.body.pageInfo.hasNextPage
       ? response.body.pageInfo.endCursor
       : null;
-  } while (startingAfter !== null);
+  } while (isDefined(startingAfter));
 
   return pages;
 };

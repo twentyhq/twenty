@@ -7,6 +7,7 @@ import { findViewSorts } from 'test/integration/metadata/suites/view-sort/utils/
 import { createViewWithChildren } from 'test/integration/metadata/suites/view/utils/create-view-with-children.util';
 import { deleteOneView } from 'test/integration/metadata/suites/view/utils/delete-one-view.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
+import { setViewRowDeletedAt } from 'test/integration/metadata/suites/view/utils/set-view-row-deleted-at.util';
 import { findAllMetadataRestListPages } from 'test/integration/rest/utils/find-all-metadata-rest-list-pages.util';
 import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { maskUuids } from 'test/integration/utils/mask-uuids.util';
@@ -30,24 +31,34 @@ type TestContext = {
 const arrangeViewSort = async ({
   visibility = ViewVisibility.WORKSPACE,
   token,
+  prepare = async () => ({}),
 }: {
   visibility?: ViewVisibility;
   token?: string;
+  prepare?: (
+    arrangedViewSort: ArrangedViewSort,
+  ) => Promise<Partial<ArrangedViewSort>>;
 } = {}): Promise<ArrangedViewSort> => {
   const { viewId, childIdByChildName } = await createViewWithChildren({
     name: `View Sort read ${randomUUID().slice(0, 8)}`,
     visibility,
     token,
   });
-
-  return {
+  const arrangedViewSort = {
     viewSortId: childIdByChildName['view sort'],
     viewId,
-    // Does nothing once the case itself deleted the view
     cleanup: async () => {
-      await destroyOneView({ viewId });
+      await destroyOneView({ viewId, expectToFail: false });
     },
   };
+
+  try {
+    return { ...arrangedViewSort, ...(await prepare(arrangedViewSort)) };
+  } catch (error) {
+    await arrangedViewSort.cleanup();
+
+    throw error;
+  }
 };
 
 const failingViewSortReadTestCases: EachTestingContext<TestContext>[] = [
@@ -62,46 +73,96 @@ const failingViewSortReadTestCases: EachTestingContext<TestContext>[] = [
     },
   },
   {
+    title: 'when the view sort is deleted',
+    context: {
+      arrange: () =>
+        arrangeViewSort({
+          prepare: async (arrangedViewSort) => {
+            await deleteOneViewSort({
+              input: { id: arrangedViewSort.viewSortId },
+              expectToFail: false,
+            });
+
+            return {};
+          },
+        }),
+    },
+  },
+  {
     title: 'when the view sort is soft-deleted',
     context: {
-      arrange: async () => {
-        const arrangedViewSort = await arrangeViewSort();
+      arrange: () =>
+        arrangeViewSort({
+          prepare: async ({ viewSortId, cleanup }) => {
+            await setViewRowDeletedAt({
+              tableName: 'viewSort',
+              id: viewSortId,
+              deletedAt: new Date(),
+            });
 
-        await deleteOneViewSort({
-          input: { id: arrangedViewSort.viewSortId },
-          expectToFail: false,
-        });
-
-        return arrangedViewSort;
-      },
+            return {
+              cleanup: async () => {
+                await setViewRowDeletedAt({
+                  tableName: 'viewSort',
+                  id: viewSortId,
+                  deletedAt: null,
+                });
+                await cleanup();
+              },
+            };
+          },
+        }),
     },
   },
   {
     title: 'when the view of the view sort is deleted',
     context: {
-      arrange: async () => {
-        const arrangedViewSort = await arrangeViewSort();
+      arrange: () =>
+        arrangeViewSort({
+          prepare: async ({ viewId }) => {
+            await deleteOneView({ viewId, expectToFail: false });
 
-        await deleteOneView({
-          viewId: arrangedViewSort.viewId,
-          expectToFail: false,
-        });
+            return { cleanup: async () => {} };
+          },
+        }),
+    },
+  },
+  {
+    title: 'when the view of the view sort is soft-deleted',
+    context: {
+      arrange: () =>
+        arrangeViewSort({
+          prepare: async ({ viewId, cleanup }) => {
+            await setViewRowDeletedAt({
+              tableName: 'view',
+              id: viewId,
+              deletedAt: new Date(),
+            });
 
-        return arrangedViewSort;
-      },
+            return {
+              cleanup: async () => {
+                await setViewRowDeletedAt({
+                  tableName: 'view',
+                  id: viewId,
+                  deletedAt: null,
+                });
+                await cleanup();
+              },
+            };
+          },
+        }),
     },
   },
   {
     title:
       'when the view of the view sort is unlisted and belongs to another user',
     context: {
-      arrange: async () => ({
-        ...(await arrangeViewSort({
+      arrange: () =>
+        arrangeViewSort({
           visibility: ViewVisibility.UNLISTED,
           token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
-        })),
-        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      }),
+          prepare: async () => ({ token: APPLE_JONY_MEMBER_ACCESS_TOKEN }),
+        }),
     },
   },
 ];
