@@ -1,7 +1,12 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { NavigationMenuItemType, NATIVE_PAGE_KEYS } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  NavigationMenuItemType,
+  NATIVE_PAGE_KEYS,
+} from 'twenty-shared/types';
 import { z } from 'zod';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
@@ -24,7 +29,9 @@ const commonOptionalFields = {
   parentId: z
     .uuid()
     .optional()
-    .describe('Parent folder id, if the item should live inside a folder.'),
+    .describe(
+      'Parent id: a folder, a section or a tab the item should live inside. A tab takes no parent, a section only a tab, and a folder a tab or a section.',
+    ),
 };
 
 const requiredNameField = z
@@ -43,6 +50,18 @@ const derivedNameField = z
   );
 
 const createNavigationMenuItemInputSchema = z.discriminatedUnion('type', [
+  z.object({
+    type: z.literal(NavigationMenuItemType.TAB),
+    scope: navigationMenuItemScopeSchema,
+    name: requiredNameField,
+    ...commonOptionalFields,
+  }),
+  z.object({
+    type: z.literal(NavigationMenuItemType.SECTION),
+    scope: navigationMenuItemScopeSchema,
+    name: requiredNameField,
+    ...commonOptionalFields,
+  }),
   z.object({
     type: z.literal(NavigationMenuItemType.FOLDER),
     scope: navigationMenuItemScopeSchema,
@@ -122,6 +141,8 @@ const toServiceInput = (
   };
 
   switch (params.type) {
+    case NavigationMenuItemType.TAB:
+    case NavigationMenuItemType.SECTION:
     case NavigationMenuItemType.FOLDER:
       return { ...base, name: params.name };
     case NavigationMenuItemType.LINK:
@@ -163,6 +184,8 @@ const toServiceInput = (
   description: `Create a navigation menu item. With scope='user' it becomes a personal favorite for the current user; with scope='workspace' it is shared with everyone (requires LAYOUTS permission).
 
 Type chooses the variant:
+- TAB: a sidebar tab next to Home, holding sections and items (name required, workspace scope, no parent). Only available when the customizable sidebar is enabled for the workspace.
+- SECTION: a titled group inside a tab or on Home (name required, workspace scope). Only available when the customizable sidebar is enabled.
 - FOLDER: a group to nest other items into (name required).
 - LINK: an external URL pinned in the sidebar (name + link required).
 - OBJECT: pins an object's standard view (label auto-derived from the object's plural name; only pass 'name' if the user wants a custom label).
@@ -180,6 +203,7 @@ export class CreateNavigationMenuItemTool extends BaseTool<
 
   constructor(
     private readonly navigationMenuItemService: NavigationMenuItemService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super();
   }
@@ -191,6 +215,35 @@ export class CreateNavigationMenuItemTool extends BaseTool<
     typeof createNavigationMenuItemInputSchema
   >): Promise<ToolOutput> {
     try {
+      if (
+        input.type === NavigationMenuItemType.TAB ||
+        input.type === NavigationMenuItemType.SECTION
+      ) {
+        const isCustomizableSidebarEnabled =
+          await this.featureFlagService.isFeatureEnabled(
+            FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+            workspaceId,
+          );
+
+        if (!isCustomizableSidebarEnabled) {
+          return {
+            success: false,
+            message:
+              'Tabs and sections need the customizable sidebar to be enabled for this workspace.',
+            error: 'customizable_sidebar_disabled',
+          };
+        }
+
+        if (input.scope !== 'workspace') {
+          return {
+            success: false,
+            message:
+              "Tabs and sections are shared with the workspace: use scope='workspace'.",
+            error: 'tab_or_section_requires_workspace_scope',
+          };
+        }
+      }
+
       if (input.scope === 'user' && !userWorkspaceId) {
         return {
           success: false,

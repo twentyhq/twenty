@@ -102,14 +102,18 @@ export class CommonApiContextBuilderService {
         objectMetadataId: flatObjectMetadata.id,
       });
 
-    const selectedFields = buildFieldSelection({
-      unreadableFieldMetadataIds,
-      flatObjectMetadata,
-      flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityIds: flatObjectMetadata.fieldIds,
-        flatEntityMaps: flatFieldMetadataMaps,
+    const selectedFields: CommonSelectedFields = {
+      fields: buildFieldSelection({
+        unreadableFieldMetadataIds,
+        flatObjectMetadata,
+        flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityIds: flatObjectMetadata.fieldIds,
+          flatEntityMaps: flatFieldMetadataMaps,
+        }),
       }),
-    });
+      aggregates: [],
+      relations: {},
+    };
 
     return {
       queryRunnerContext: {
