@@ -44,7 +44,7 @@ export const useNavigationMenuItemSectionItems = ({
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
 
-  // TODO: remove once IS_CUSTOMIZABLE_SIDEBAR_ENABLED is on for every workspace
+  // TODO(@thomtrp): remove once IS_CUSTOMIZABLE_SIDEBAR_ENABLED is on for every workspace
   const isFlatteningTopLevelSections =
     shouldFlattenTopLevelSections ?? !isCustomizableSidebarEnabled;
 
