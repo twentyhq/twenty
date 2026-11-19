@@ -1,4 +1,4 @@
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 
 export const checkStringIsDatabaseEventAction = (
   value: string,
