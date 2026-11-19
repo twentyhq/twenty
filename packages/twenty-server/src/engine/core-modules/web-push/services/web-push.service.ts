@@ -210,11 +210,11 @@ export class WebPushService {
       { workspaceId, source: 'web-push', userId },
     );
 
+    const webPushSubscriptionIdsToDelete: string[] = [];
+
     for (const webPushSubscription of webPushSubscriptions) {
       if (!isWebPushEndpointAllowed(webPushSubscription.endpoint)) {
-        await this.webPushSubscriptionRepository.delete(workspaceId, {
-          id: webPushSubscription.id,
-        });
+        webPushSubscriptionIdsToDelete.push(webPushSubscription.id);
 
         continue;
       }
@@ -244,9 +244,7 @@ export class WebPushService {
         if (
           EXPIRED_WEB_PUSH_SUBSCRIPTION_STATUS_CODES.includes(response.status)
         ) {
-          await this.webPushSubscriptionRepository.delete(workspaceId, {
-            id: webPushSubscription.id,
-          });
+          webPushSubscriptionIdsToDelete.push(webPushSubscription.id);
         } else if (response.status >= 300) {
           this.logger.warn(
             `Push service answered ${response.status} for web push subscription ${webPushSubscription.id} in workspace ${workspaceId}`,
@@ -259,6 +257,12 @@ export class WebPushService {
           }`,
         );
       }
+    }
+
+    if (webPushSubscriptionIdsToDelete.length > 0) {
+      await this.webPushSubscriptionRepository.delete(workspaceId, {
+        id: In(webPushSubscriptionIdsToDelete),
+      });
     }
   }
 }

@@ -15,6 +15,8 @@ const MENTIONED_OBJECT_NAMES = [
 
 const RECORD_REFERENCE_PREFIX_PATTERN = /^record:/;
 
+const TRUNCATED_TRAILING_CHAT_REFERENCE_PATTERN = /\[\[[^\]]*$/;
+
 const getChatReferencePreviewText = (referenceBody: string): string => {
   const [objectName, , ...labelSegments] = referenceBody
     .replace(RECORD_REFERENCE_PREFIX_PATTERN, '')
@@ -29,5 +31,6 @@ export const getAgentChatPreviewPlainText = (text: string): string =>
     .replace(CHAT_REFERENCE_PATTERN, (_, referenceBody: string) =>
       getChatReferencePreviewText(referenceBody),
     )
+    .replace(TRUNCATED_TRAILING_CHAT_REFERENCE_PATTERN, '')
     .replace(/\s+/g, ' ')
     .trim();

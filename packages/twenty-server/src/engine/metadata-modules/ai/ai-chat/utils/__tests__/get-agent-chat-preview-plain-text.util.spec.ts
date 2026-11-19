@@ -8,4 +8,12 @@ describe('getAgentChatPreviewPlainText', () => {
       ),
     ).toBe('Hey @Jane Austen, see Acme: Inc and Summarize');
   });
+
+  it('should drop a reference cut short at the end of the text', () => {
+    expect(
+      getAgentChatPreviewPlainText(
+        'Ask [[record:workspaceMember:20202020-0000-4000-8000-000000000001:Jane Austen]] about [[record:company:20202020-0000-4000-8000-0000',
+      ),
+    ).toBe('Ask @Jane Austen about');
+  });
 });

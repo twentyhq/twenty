@@ -5,7 +5,8 @@ import {
   AgentChatThreadConversationType,
   getAgentChatWebPushNotificationTag,
 } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { type WebPushNotification } from 'src/engine/core-modules/web-push/types/web-push-notification.type';
 import { getAgentChatPreviewPlainText } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-preview-plain-text.util';
@@ -36,7 +37,7 @@ export const buildAgentChatWebPushNotification = ({
   >;
   isPreviewEnabled: boolean;
 }): Omit<WebPushNotification, 'renotify'> => {
-  const url = `/inbox/${thread.id}`;
+  const url = getAppPath(AppPath.AiChatInbox, { threadId: thread.id });
   const tag = getAgentChatWebPushNotificationTag(thread.id);
   const newMessageLabel = i18n._(msg`New message`);
 
