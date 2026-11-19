@@ -1,11 +1,10 @@
 import { useMutation } from '@apollo/client/react';
 import { useEffect, useState } from 'react';
+import { FOCUSED_TAB_HEARTBEAT_INTERVAL_MS } from 'twenty-shared/constants';
 import { v4 as uuidv4 } from 'uuid';
 
 import { UPDATE_FOCUSED_TAB } from '@/web-push/graphql/mutations/updateFocusedTab';
 import { logError } from '~/utils/logError';
-
-const FOCUSED_TAB_HEARTBEAT_INTERVAL_MS = 20_000;
 
 const isDocumentFocused = () =>
   document.visibilityState === 'visible' && document.hasFocus();
