@@ -4,7 +4,8 @@ import { getRestoredNavigationMenuItems } from '@/navigation-menu-item/edit/util
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 const buildNavigationMenuItem = (
-  properties: Pick<NavigationMenuItem, 'id'> & Partial<NavigationMenuItem>,
+  properties: Pick<NavigationMenuItem, 'id'> &
+    Partial<Pick<NavigationMenuItem, 'type' | 'parentId' | 'isActive'>>,
 ): NavigationMenuItem => ({
   type: NavigationMenuItemType.FOLDER,
   position: 0,

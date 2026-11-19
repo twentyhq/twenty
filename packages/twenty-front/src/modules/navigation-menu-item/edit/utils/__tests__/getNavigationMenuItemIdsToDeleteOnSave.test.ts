@@ -4,7 +4,8 @@ import { getNavigationMenuItemIdsToDeleteOnSave } from '@/navigation-menu-item/e
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 const buildNavigationMenuItem = (
-  properties: Pick<NavigationMenuItem, 'id'> & Partial<NavigationMenuItem>,
+  properties: Pick<NavigationMenuItem, 'id'> &
+    Partial<Pick<NavigationMenuItem, 'type' | 'parentId' | 'isActive'>>,
 ): NavigationMenuItem => ({
   type: NavigationMenuItemType.FOLDER,
   position: 0,
