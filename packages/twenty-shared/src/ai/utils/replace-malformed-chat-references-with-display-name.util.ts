@@ -1,4 +1,4 @@
-import { CHAT_REFERENCE_MALFORMED_REGEX } from '@/ai-chat/message-content/constants/ChatReferenceMalformedRegex';
+import { CHAT_REFERENCE_MALFORMED_REGEX } from '@/ai/constants/chat-reference-malformed-regex.const';
 
 export const replaceMalformedChatReferencesWithDisplayName = (
   text: string,
