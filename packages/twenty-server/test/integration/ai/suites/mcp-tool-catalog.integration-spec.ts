@@ -363,6 +363,9 @@ describe('MCP tool catalog (integration)', () => {
         delete_object_metadata: true,
         create_complete_workflow: false,
         delete_workflow: true,
+        create_draft_from_workflow_version: true,
+        save_campaign: true,
+        send_email: false,
         get_views: false,
       });
     });
