@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto';
 
+import { generatePlaygroundToken } from 'test/integration/graphql/suites/user-session/utils/generate-playground-token.util';
 import { buildAppleWorkspaceOrigin } from 'test/integration/graphql/utils/build-apple-workspace-origin.util';
 import { checkWorkspaceSubdomainAvailabilityQueryFactory } from 'test/integration/graphql/utils/check-workspace-subdomain-availability-query-factory.util';
 import { forgeLegacyHs256Token } from 'test/integration/graphql/utils/forge-legacy-hs256-token.util';
@@ -38,6 +39,30 @@ const countWorkspaces = () =>
 const countUserSessions = () =>
   getCoreRepository<UserSessionEntity>(UserSessionEntity).count();
 
+const getImpersonationAccessToken = async ({
+  userId,
+  workspaceId,
+}: {
+  userId: string;
+  workspaceId: string;
+}): Promise<string> => {
+  const { data: impersonateData } = await impersonate({
+    userId,
+    workspaceId,
+    accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    expectToFail: false,
+  });
+
+  const { data: tokensData } = await getAuthTokensFromLoginToken({
+    loginToken: impersonateData.impersonate.loginToken.token,
+    origin: impersonateData.impersonate.workspace.workspaceUrls.subdomainUrl,
+    expectToFail: false,
+  });
+
+  return tokensData.getAuthTokensFromLoginToken.tokens
+    .accessOrWorkspaceAgnosticToken.token;
+};
+
 describe('Impersonation - workspace creation denial (integration)', () => {
   describe.each([
     {
@@ -54,23 +79,10 @@ describe('Impersonation - workspace creation denial (integration)', () => {
     let impersonationAccessToken: string;
 
     beforeAll(async () => {
-      const { data: impersonateData } = await impersonate({
+      impersonationAccessToken = await getImpersonationAccessToken({
         userId,
         workspaceId,
-        accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-        expectToFail: false,
       });
-
-      const { data: tokensData } = await getAuthTokensFromLoginToken({
-        loginToken: impersonateData.impersonate.loginToken.token,
-        origin:
-          impersonateData.impersonate.workspace.workspaceUrls.subdomainUrl,
-        expectToFail: false,
-      });
-
-      impersonationAccessToken =
-        tokensData.getAuthTokensFromLoginToken.tokens
-          .accessOrWorkspaceAgnosticToken.token;
     });
 
     it('should refuse to create a workspace as the impersonated user', async () => {
@@ -95,6 +107,28 @@ describe('Impersonation - workspace creation denial (integration)', () => {
 
       expectImpersonationDenied(response.body.errors);
     });
+  });
+
+  it('should refuse to create a workspace with a playground token minted while impersonating', async () => {
+    const impersonationAccessToken = await getImpersonationAccessToken({
+      userId: USER_DATA_SEED_IDS.TIM,
+      workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+    });
+
+    const { data: playgroundData } = await generatePlaygroundToken({
+      token: impersonationAccessToken,
+      expectToFail: false,
+    });
+
+    const workspaceCountBefore = await countWorkspaces();
+
+    const { errors } = await signUpInNewWorkspace({
+      accessToken: playgroundData.generatePlaygroundToken.token,
+      expectToFail: true,
+    });
+
+    expectImpersonationDenied(errors);
+    expect(await countWorkspaces()).toBe(workspaceCountBefore);
   });
 
   it('should refuse to exchange an impersonation login token that names no impersonator', async () => {

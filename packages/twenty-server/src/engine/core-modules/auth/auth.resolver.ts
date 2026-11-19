@@ -136,7 +136,7 @@ const WORKSPACE_CREATION_ACCESS_POLICY: AccessPolicy = {
     userSession: {
       standard: true,
       impersonated: false,
-      playground: true,
+      playground: false,
       workspaceAgnostic: true,
     },
     apiKey: false,
@@ -151,7 +151,7 @@ const NEW_WORKSPACE_SIGN_UP_ACCESS_POLICY: AccessPolicy = {
     userSession: {
       standard: true,
       impersonated: false,
-      playground: true,
+      playground: false,
       workspaceAgnostic: true,
     },
     apiKey: false,
