@@ -3,6 +3,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { LIVE_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/live-call-recording-statuses';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { type CallRecorderPolicyResultForMeeting } from 'src/logic-functions/types/call-recorder-policy-result-for-meeting.type';
@@ -725,8 +726,9 @@ const findLiveCallRecordingBlockingImmediateJoin = ({
   return meetingCallRecordings.find(
     (callRecording) =>
       !isUndefined(callRecording.externalBotId) &&
-      (callRecording.status === CallRecordingStatus.JOINING ||
-        callRecording.status === CallRecordingStatus.RECORDING),
+      LIVE_CALL_RECORDING_STATUSES.some(
+        (status) => status === callRecording.status,
+      ),
   );
 };
 
