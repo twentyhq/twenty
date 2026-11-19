@@ -1,4 +1,5 @@
 import { type AdditionalOperation, type RulesLogic } from 'json-logic-js';
+import { type ConditionalAvailabilityNode } from 'twenty-shared/types';
 
 import { evaluateWidgetVisibility } from '@/page-layout/utils/evaluateWidgetVisibility';
 
@@ -263,6 +264,54 @@ describe('evaluateWidgetVisibility', () => {
           selectedRecords: [],
           featureFlags: {},
         },
+      });
+
+      expect(result).toBe(true);
+    });
+  });
+
+  describe('conditionalAvailability', () => {
+    const deviceIsMobile: ConditionalAvailabilityNode = {
+      type: 'COMPARISON',
+      operator: 'EQUAL',
+      left: { type: 'PATH', path: 'device' },
+      right: { type: 'LITERAL', value: 'MOBILE' },
+    };
+
+    it.each([
+      ['MOBILE', true],
+      ['DESKTOP', false],
+    ] as const)(
+      'should evaluate the tree when no old rule is stored on %s',
+      (device, expected) => {
+        const result = evaluateWidgetVisibility({
+          conditionalAvailabilityExpression: null,
+          conditionalDisplay: undefined,
+          conditionalAvailability: deviceIsMobile,
+          context: { device, selectedRecords: [], featureFlags: {} },
+        });
+
+        expect(result).toBe(expected);
+      },
+    );
+
+    it('should let a stored expression win over the tree', () => {
+      const result = evaluateWidgetVisibility({
+        conditionalAvailabilityExpression: 'device == "DESKTOP"',
+        conditionalDisplay: undefined,
+        conditionalAvailability: deviceIsMobile,
+        context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
+      });
+
+      expect(result).toBe(true);
+    });
+
+    it('should let a stored conditionalDisplay win over the tree', () => {
+      const result = evaluateWidgetVisibility({
+        conditionalAvailabilityExpression: null,
+        conditionalDisplay: { '===': [{ var: 'device' }, 'DESKTOP'] },
+        conditionalAvailability: deviceIsMobile,
+        context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
       });
 
       expect(result).toBe(true);

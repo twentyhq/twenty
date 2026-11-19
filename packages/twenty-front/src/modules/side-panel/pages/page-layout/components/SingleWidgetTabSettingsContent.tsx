@@ -8,6 +8,7 @@ import { SingleWidgetTabVisibilityDropdownContent } from '@/side-panel/pages/pag
 import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
 import { useTranslatedVisibilityLabel } from '@/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel';
 import { getTabSettingsPlacementItems } from '@/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems';
+import { getWidgetVisibilityOptionId } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityOptionId';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
@@ -61,9 +62,7 @@ export const SingleWidgetTabSettingsContent = ({
   const { openDialog } = useDialog();
   const { openDropdown } = useOpenDropdown();
 
-  const visibilityLabel = useTranslatedVisibilityLabel(
-    singleWidget.conditionalAvailabilityExpression,
-  );
+  const visibilityLabel = useTranslatedVisibilityLabel(singleWidget);
 
   const handleResetToDefault = () => {
     if (isResetToDefaultDisabled) {
@@ -124,9 +123,7 @@ export const SingleWidgetTabSettingsContent = ({
               >
                 <SingleWidgetTabVisibilityDropdownContent
                   widgetId={singleWidget.id}
-                  currentExpression={
-                    singleWidget.conditionalAvailabilityExpression
-                  }
+                  currentOptionId={getWidgetVisibilityOptionId(singleWidget)}
                   pageLayoutId={pageLayoutId}
                 />
               </DropdownContent>

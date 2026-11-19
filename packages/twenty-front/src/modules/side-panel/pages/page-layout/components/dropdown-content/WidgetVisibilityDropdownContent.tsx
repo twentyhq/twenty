@@ -2,8 +2,8 @@ import { WidgetVisibilityOptionsList } from '@/side-panel/pages/page-layout/comp
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
-import { expressionToOptionId } from '@/side-panel/pages/page-layout/utils/expressionToOptionId';
-import { optionIdToExpression } from '@/side-panel/pages/page-layout/utils/optionIdToExpression';
+import { getWidgetVisibilityOptionId } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityOptionId';
+import { getWidgetVisibilityUpdate } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityUpdate';
 
 export const WidgetVisibilityDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
@@ -14,16 +14,12 @@ export const WidgetVisibilityDropdownContent = () => {
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
   const handleSelectVisibility = (optionId: string) => {
-    updateCurrentWidgetConfig({
-      conditionalAvailabilityExpression: optionIdToExpression(optionId),
-    });
+    updateCurrentWidgetConfig(getWidgetVisibilityUpdate(optionId));
   };
 
   return (
     <WidgetVisibilityOptionsList
-      currentOptionId={expressionToOptionId(
-        widgetInEditMode?.conditionalAvailabilityExpression,
-      )}
+      currentOptionId={getWidgetVisibilityOptionId(widgetInEditMode)}
       onSelectVisibility={handleSelectVisibility}
     />
   );

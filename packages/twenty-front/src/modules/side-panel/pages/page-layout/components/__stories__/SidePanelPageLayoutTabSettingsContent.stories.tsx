@@ -16,7 +16,7 @@ import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
 import { SidePanelPageLayoutTabSettingsContent } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent';
-import { EXPRESSION_DEVICE_MOBILE } from '@/side-panel/pages/page-layout/constants/ExpressionDeviceMobile';
+import { CONDITIONAL_AVAILABILITY_DEVICE_MOBILE } from '@/side-panel/pages/page-layout/constants/ConditionalAvailabilityDeviceMobile';
 import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -274,8 +274,8 @@ export const SingleWidgetVisibility: Story = {
         pageLayoutDraftComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_ID,
         }),
-      ).tabs[0].widgets[0].conditionalAvailabilityExpression,
-    ).toBe(EXPRESSION_DEVICE_MOBILE);
+      ).tabs[0].widgets[0].conditionalAvailability,
+    ).toEqual(CONDITIONAL_AVAILABILITY_DEVICE_MOBILE);
     await userEvent.click(trigger);
     expect(await body.findByRole('option', { name: 'Mobile' })).toHaveAttribute(
       'aria-selected',

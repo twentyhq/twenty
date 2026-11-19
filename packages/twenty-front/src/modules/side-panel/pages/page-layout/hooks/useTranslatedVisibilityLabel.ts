@@ -1,14 +1,11 @@
-import { getVisibilityLabel } from '@/side-panel/pages/page-layout/utils/getVisibilityLabel';
-import { useLingui } from '@lingui/react/macro';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { useVisibilityLabels } from '@/side-panel/pages/page-layout/hooks/useVisibilityLabels';
+import { getWidgetVisibilityOptionId } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityOptionId';
 
 export const useTranslatedVisibilityLabel = (
-  expression: string | null | undefined,
+  widget: PageLayoutWidget | undefined,
 ): string => {
-  const { t } = useLingui();
+  const visibilityLabels = useVisibilityLabels();
 
-  return getVisibilityLabel(expression, {
-    anyDevice: t`Any device`,
-    mobile: t`Mobile`,
-    desktop: t`Desktop`,
-  });
+  return visibilityLabels[getWidgetVisibilityOptionId(widget)];
 };

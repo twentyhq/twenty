@@ -2,8 +2,10 @@ import jsonLogic, {
   type AdditionalOperation,
   type RulesLogic,
 } from 'json-logic-js';
+import { type ConditionalAvailabilityNode } from 'twenty-shared/types';
 import {
   evaluateConditionalAvailabilityExpression,
+  evaluateConditionalAvailabilityNode,
   isDefined,
 } from 'twenty-shared/utils';
 
@@ -12,12 +14,14 @@ import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibili
 type EvaluateWidgetVisibilityParams = {
   conditionalAvailabilityExpression: string | null | undefined;
   conditionalDisplay: RulesLogic<AdditionalOperation> | undefined;
+  conditionalAvailability?: ConditionalAvailabilityNode | null;
   context: WidgetVisibilityContext;
 };
 
 export const evaluateWidgetVisibility = ({
   conditionalAvailabilityExpression,
   conditionalDisplay,
+  conditionalAvailability,
   context,
 }: EvaluateWidgetVisibilityParams): boolean => {
   if (isDefined(conditionalAvailabilityExpression)) {
@@ -28,7 +32,10 @@ export const evaluateWidgetVisibility = ({
   }
 
   if (!isDefined(conditionalDisplay)) {
-    return true;
+    return evaluateConditionalAvailabilityNode({
+      node: conditionalAvailability,
+      context,
+    });
   }
 
   const isVisible = jsonLogic.apply(conditionalDisplay, context) === true;
