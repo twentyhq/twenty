@@ -157,11 +157,11 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       }
     });
 
-    commonQueryParser.applyGroupByOrderToBuilder(
+    commonQueryParser.applyGroupByOrderToBuilder({
       queryBuilder,
-      args.orderBy ?? [],
+      orderBy: args.orderBy ?? [],
       groupByFields,
-    );
+    });
 
     const shouldIncludeRecords = args.includeRecords ?? false;
 
@@ -309,17 +309,11 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       flatFieldMetadataMaps,
     });
 
-    const viewFromFilter = viewFilters[0]?.view;
-    let viewAnyFieldFilterValue = viewFromFilter?.anyFieldFilterValue;
-
-    if (!isDefined(viewFromFilter)) {
-      const view = await this.viewService.findById(args.viewId, workspaceId);
-
-      viewAnyFieldFilterValue =
-        isDefined(view) && isViewVisibleToUser(view, userWorkspaceId)
-          ? (view.anyFieldFilterValue ?? null)
-          : null;
-    }
+    const view = await this.viewService.findById(args.viewId, workspaceId);
+    const viewAnyFieldFilterValue =
+      isDefined(view) && isViewVisibleToUser(view, userWorkspaceId)
+        ? (view.anyFieldFilterValue ?? null)
+        : null;
 
     const { recordGqlOperationFilter: anyFieldFilter } =
       turnAnyFieldFilterIntoRecordGqlFilter({
@@ -381,13 +375,16 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       });
     }
 
-    commonQueryParser.applyFilterToBuilder(
+    commonQueryParser.applyFilterToBuilder({
       queryBuilder,
-      objectAlias,
-      appliedFilters,
-    );
+      objectNameSingular: objectAlias,
+      recordFilter: appliedFilters,
+    });
 
-    commonQueryParser.applyDeletedAtToBuilder(queryBuilder, appliedFilters);
+    commonQueryParser.applyDeletedAtToBuilder({
+      queryBuilder,
+      recordFilter: appliedFilters,
+    });
   }
 
   private async resolveWithoutRecords({

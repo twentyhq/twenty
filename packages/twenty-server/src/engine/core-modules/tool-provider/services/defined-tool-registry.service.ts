@@ -82,7 +82,7 @@ export class DefinedToolRegistryService implements OnModuleInit {
       .filter((_, index) => isAvailableByTool[index])
       .map(
         ({
-          options: { name, description, category, icon },
+          options: { name, description, category, icon, isDestructive },
           inputJsonSchema,
         }) => {
           const entry: ToolIndexEntry = {
@@ -92,6 +92,7 @@ export class DefinedToolRegistryService implements OnModuleInit {
             category,
             executionRef: { kind: 'static', toolId: name },
             ...(isDefined(icon) && { icon }),
+            ...(isDestructive && { isDestructive }),
           };
 
           return includeSchemas

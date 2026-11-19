@@ -979,15 +979,6 @@ export interface BillingLicensedProduct {
     __typename: 'BillingLicensedProduct'
 }
 
-export interface BillingMeteredProduct {
-    description: Scalars['String']
-    images?: Scalars['String'][]
-    metadata: BillingProductMetadata
-    name: Scalars['String']
-    prices?: BillingPriceMetered[]
-    __typename: 'BillingMeteredProduct'
-}
-
 export interface BillingPartnerCode {
     isEditable: Scalars['Boolean']
     partnerCode?: Scalars['String']
@@ -1005,7 +996,6 @@ export interface BillingPlan {
     downgradePlanKeys: BillingPlanKey[]
     isCheckoutDefault: Scalars['Boolean']
     isSellable: Scalars['Boolean']
-    meteredProducts: BillingMeteredProduct[]
     planKey: BillingPlanKey
     resourceCreditProducts: BillingLicensedProduct[]
     upgradePlanKeys: BillingPlanKey[]
@@ -1019,26 +1009,10 @@ export type BillingPlanKey = 'ENTERPRISE' | 'ORGANIZATION_V2' | 'PRO' | 'PRO_V2'
 export interface BillingPriceLicensed {
     creditAmount?: Scalars['Float']
     isSellable: Scalars['Boolean']
-    priceUsageType: BillingUsageType
     recurringInterval: SubscriptionInterval
     stripePriceId: Scalars['String']
     unitAmount: Scalars['Float']
     __typename: 'BillingPriceLicensed'
-}
-
-export interface BillingPriceMetered {
-    priceUsageType: BillingUsageType
-    recurringInterval: SubscriptionInterval
-    stripePriceId: Scalars['String']
-    tiers: BillingPriceTier[]
-    __typename: 'BillingPriceMetered'
-}
-
-export interface BillingPriceTier {
-    flatAmount?: Scalars['Float']
-    unitAmount?: Scalars['Float']
-    upTo?: Scalars['Float']
-    __typename: 'BillingPriceTier'
 }
 
 export interface BillingProduct {
@@ -1049,8 +1023,6 @@ export interface BillingProduct {
     __typename: 'BillingProduct'
 }
 
-export type BillingProductDTO = (BillingLicensedProduct | BillingMeteredProduct) & { __isUnion?: true }
-
 
 /** The different billing products available */
 export type BillingProductKey = 'APPLICATION' | 'BASE_PRODUCT' | 'RESOURCE_CREDIT'
@@ -1058,7 +1030,6 @@ export type BillingProductKey = 'APPLICATION' | 'BASE_PRODUCT' | 'RESOURCE_CREDI
 export interface BillingProductMetadata {
     isLegacy?: Scalars['String']
     planKey?: BillingPlanKey
-    priceUsageBased: BillingUsageType
     productKey: BillingProductKey
     __typename: 'BillingProductMetadata'
 }
@@ -1100,7 +1071,7 @@ export interface BillingSubscription {
 export type BillingSubscriptionCollectionMethod = 'CHARGE_AUTOMATICALLY' | 'SEND_INVOICE'
 
 export interface BillingSubscriptionItem {
-    billingProduct: BillingProductDTO
+    billingProduct: BillingProduct
     creditAmount?: Scalars['Float']
     hasReachedCurrentPeriodCap: Scalars['Boolean']
     id: Scalars['UUID']
@@ -1136,8 +1107,6 @@ export interface BillingUpdate {
     currentBillingSubscription: BillingSubscription
     __typename: 'BillingUpdate'
 }
-
-export type BillingUsageType = 'LICENSED' | 'METERED'
 
 export interface CalendarChannel {
     connectedAccount?: ConnectedAccountPublicDTO
@@ -2791,6 +2760,7 @@ export interface NavigationMenuItem {
     agentChatChannelId?: Scalars['UUID']
     agentId?: Scalars['UUID']
     applicationId?: Scalars['UUID']
+    builtInSectionKey?: Scalars['String']
     color?: Scalars['String']
     createdAt: Scalars['DateTime']
     /** @deprecated Use parentId instead. */
@@ -3173,6 +3143,15 @@ export interface PublicApplicationRegistration {
     __typename: 'PublicApplicationRegistration'
 }
 
+export interface PublicCalendarChannel {
+    connectedAccount?: ConnectedAccountPublicDTO
+    connectedAccountId: Scalars['UUID']
+    handle: Scalars['String']
+    id: Scalars['UUID']
+    visibility: CalendarChannelVisibility
+    __typename: 'PublicCalendarChannel'
+}
+
 export interface PublicConnectionParametersOutput {
     connectionSecurity?: EmailConnectionSecurity
     host: Scalars['String']
@@ -3256,6 +3235,7 @@ export interface Query {
     billingPartnerCode: BillingPartnerCode
     billingPlans: BillingPlan[]
     billingPortalSession: BillingSession
+    calendarChannels: PublicCalendarChannel[]
     callRecordingIdForCalendarEvent?: Scalars['UUID']
     chatMessages: AgentMessage[]
     chatStreamCatchupChunks: ChatStreamCatchupChunks
@@ -5604,16 +5584,6 @@ export interface BillingLicensedProductGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface BillingMeteredProductGenqlSelection{
-    description?: boolean | number
-    images?: boolean | number
-    metadata?: BillingProductMetadataGenqlSelection
-    name?: boolean | number
-    prices?: BillingPriceMeteredGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface BillingPartnerCodeGenqlSelection{
     isEditable?: boolean | number
     partnerCode?: boolean | number
@@ -5633,7 +5603,6 @@ export interface BillingPlanGenqlSelection{
     downgradePlanKeys?: boolean | number
     isCheckoutDefault?: boolean | number
     isSellable?: boolean | number
-    meteredProducts?: BillingMeteredProductGenqlSelection
     planKey?: boolean | number
     resourceCreditProducts?: BillingLicensedProductGenqlSelection
     upgradePlanKeys?: boolean | number
@@ -5644,27 +5613,9 @@ export interface BillingPlanGenqlSelection{
 export interface BillingPriceLicensedGenqlSelection{
     creditAmount?: boolean | number
     isSellable?: boolean | number
-    priceUsageType?: boolean | number
     recurringInterval?: boolean | number
     stripePriceId?: boolean | number
     unitAmount?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingPriceMeteredGenqlSelection{
-    priceUsageType?: boolean | number
-    recurringInterval?: boolean | number
-    stripePriceId?: boolean | number
-    tiers?: BillingPriceTierGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingPriceTierGenqlSelection{
-    flatAmount?: boolean | number
-    unitAmount?: boolean | number
-    upTo?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5678,21 +5629,9 @@ export interface BillingProductGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface BillingProductDTOGenqlSelection{
-    description?: boolean | number
-    images?: boolean | number
-    metadata?: BillingProductMetadataGenqlSelection
-    name?: boolean | number
-    on_BillingLicensedProduct?: BillingLicensedProductGenqlSelection
-    on_BillingMeteredProduct?: BillingMeteredProductGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface BillingProductMetadataGenqlSelection{
     isLegacy?: boolean | number
     planKey?: boolean | number
-    priceUsageBased?: boolean | number
     productKey?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5736,7 +5675,7 @@ export interface BillingSubscriptionGenqlSelection{
 }
 
 export interface BillingSubscriptionItemGenqlSelection{
-    billingProduct?: BillingProductDTOGenqlSelection
+    billingProduct?: BillingProductGenqlSelection
     creditAmount?: boolean | number
     hasReachedCurrentPeriodCap?: boolean | number
     id?: boolean | number
@@ -6160,7 +6099,7 @@ export interface CreateMcpServerInput {connectionProviderId?: (Scalars['UUID'] |
 
 export interface CreateMessageSuppressionInput {emailAddress: Scalars['String'],unsubscribeTopicId?: (Scalars['UUID'] | null)}
 
-export interface CreateNavigationMenuItemInput {agentChatChannelId?: (Scalars['UUID'] | null),agentId?: (Scalars['UUID'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),nativePageKey?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),parentId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,userWorkspaceId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null),workflowId?: (Scalars['UUID'] | null)}
+export interface CreateNavigationMenuItemInput {agentChatChannelId?: (Scalars['UUID'] | null),agentId?: (Scalars['UUID'] | null),builtInSectionKey?: (Scalars['String'] | null),color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),nativePageKey?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),parentId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),targetObjectMetadataId?: (Scalars['UUID'] | null),targetRecordId?: (Scalars['UUID'] | null),type: NavigationMenuItemType,userWorkspaceId?: (Scalars['UUID'] | null),viewId?: (Scalars['UUID'] | null),workflowId?: (Scalars['UUID'] | null)}
 
 export interface CreateObjectInput {color?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isRemote?: (Scalars['Boolean'] | null),labelPlural: Scalars['String'],labelSingular: Scalars['String'],namePlural: Scalars['String'],nameSingular: Scalars['String'],primaryKeyColumnType?: (Scalars['String'] | null),primaryKeyFieldMetadataSettings?: (Scalars['JSON'] | null),shortcut?: (Scalars['String'] | null),skipNameField?: (Scalars['Boolean'] | null)}
 
@@ -7684,6 +7623,7 @@ export interface NavigationMenuItemGenqlSelection{
     agentChatChannelId?: boolean | number
     agentId?: boolean | number
     applicationId?: boolean | number
+    builtInSectionKey?: boolean | number
     color?: boolean | number
     createdAt?: boolean | number
     /** @deprecated Use parentId instead. */
@@ -8098,6 +8038,16 @@ export interface PublicApplicationRegistrationGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface PublicCalendarChannelGenqlSelection{
+    connectedAccount?: ConnectedAccountPublicDTOGenqlSelection
+    connectedAccountId?: boolean | number
+    handle?: boolean | number
+    id?: boolean | number
+    visibility?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface PublicConnectionParametersOutputGenqlSelection{
     connectionSecurity?: boolean | number
     host?: boolean | number
@@ -8190,6 +8140,7 @@ export interface QueryGenqlSelection{
     billingPartnerCode?: BillingPartnerCodeGenqlSelection
     billingPlans?: BillingPlanGenqlSelection
     billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {forPaymentMethodUpdate?: (Scalars['Boolean'] | null), returnUrlPath?: (Scalars['String'] | null)} })
+    calendarChannels?: PublicCalendarChannelGenqlSelection
     callRecordingIdForCalendarEvent?: { __args: {calendarEventId: Scalars['UUID']} }
     chatMessages?: (AgentMessageGenqlSelection & { __args?: {agentUniversalIdentifier?: (Scalars['UUID'] | null), threadId?: (Scalars['UUID'] | null), threadKey?: (Scalars['String'] | null)} })
     chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args?: {agentUniversalIdentifier?: (Scalars['UUID'] | null), threadId?: (Scalars['UUID'] | null), threadKey?: (Scalars['String'] | null)} })
@@ -10548,14 +10499,6 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
-    const BillingMeteredProduct_possibleTypes: string[] = ['BillingMeteredProduct']
-    export const isBillingMeteredProduct = (obj?: { __typename?: any } | null): obj is BillingMeteredProduct => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingMeteredProduct"')
-      return BillingMeteredProduct_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const BillingPartnerCode_possibleTypes: string[] = ['BillingPartnerCode']
     export const isBillingPartnerCode = (obj?: { __typename?: any } | null): obj is BillingPartnerCode => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPartnerCode"')
@@ -10588,34 +10531,10 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
-    const BillingPriceMetered_possibleTypes: string[] = ['BillingPriceMetered']
-    export const isBillingPriceMetered = (obj?: { __typename?: any } | null): obj is BillingPriceMetered => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPriceMetered"')
-      return BillingPriceMetered_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingPriceTier_possibleTypes: string[] = ['BillingPriceTier']
-    export const isBillingPriceTier = (obj?: { __typename?: any } | null): obj is BillingPriceTier => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingPriceTier"')
-      return BillingPriceTier_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const BillingProduct_possibleTypes: string[] = ['BillingProduct']
     export const isBillingProduct = (obj?: { __typename?: any } | null): obj is BillingProduct => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingProduct"')
       return BillingProduct_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingProductDTO_possibleTypes: string[] = ['BillingLicensedProduct','BillingMeteredProduct']
-    export const isBillingProductDTO = (obj?: { __typename?: any } | null): obj is BillingProductDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingProductDTO"')
-      return BillingProductDTO_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -11948,6 +11867,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const PublicCalendarChannel_possibleTypes: string[] = ['PublicCalendarChannel']
+    export const isPublicCalendarChannel = (obj?: { __typename?: any } | null): obj is PublicCalendarChannel => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPublicCalendarChannel"')
+      return PublicCalendarChannel_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const PublicConnectionParametersOutput_possibleTypes: string[] = ['PublicConnectionParametersOutput']
     export const isPublicConnectionParametersOutput = (obj?: { __typename?: any } | null): obj is PublicConnectionParametersOutput => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicConnectionParametersOutput"')
@@ -13087,11 +13014,6 @@ export const enumBillingProductKey = {
 export const enumBillingSubscriptionCollectionMethod = {
    CHARGE_AUTOMATICALLY: 'CHARGE_AUTOMATICALLY' as const,
    SEND_INVOICE: 'SEND_INVOICE' as const
-}
-
-export const enumBillingUsageType = {
-   LICENSED: 'LICENSED' as const,
-   METERED: 'METERED' as const
 }
 
 export const enumCalendarChannelContactAutoCreationPolicy = {
