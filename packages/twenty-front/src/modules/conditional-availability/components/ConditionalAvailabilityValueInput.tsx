@@ -1,4 +1,5 @@
 import { ConditionalAvailabilityDeviceSelect } from '@/conditional-availability/components/ConditionalAvailabilityDeviceSelect';
+import { ConditionalAvailabilityRecordFieldValueInput } from '@/conditional-availability/components/ConditionalAvailabilityRecordFieldValueInput';
 import { ConditionalAvailabilityRoleSelect } from '@/conditional-availability/components/ConditionalAvailabilityRoleSelect';
 import { ConditionalAvailabilityWorkspaceMemberSelect } from '@/conditional-availability/components/ConditionalAvailabilityWorkspaceMemberSelect';
 import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/hooks/useConditionalAvailabilityEditorContext';
@@ -17,11 +18,16 @@ export const ConditionalAvailabilityValueInput = ({
     useConditionalAvailabilityEditorContext();
 
   const dropdownId = `conditional-availability-value-${itemKey}-${row.id}`;
-  const isMultiple = getConditionalAvailabilityValueArity({ row }) === 'list';
+  const valueArity = getConditionalAvailabilityValueArity({ row });
+  const isMultiple = valueArity === 'list';
 
   const handleChange = (values: string[]) => {
     changeRowValues(row.id, values);
   };
+
+  if (valueArity === 'none') {
+    return null;
+  }
 
   switch (row.subject) {
     case 'role':
@@ -38,6 +44,7 @@ export const ConditionalAvailabilityValueInput = ({
           dropdownId={dropdownId}
           values={row.values}
           isMultiple={isMultiple}
+          withMe={false}
           onChange={handleChange}
         />
       );
@@ -50,7 +57,14 @@ export const ConditionalAvailabilityValueInput = ({
         />
       );
     case 'recordField':
-      return null;
+      return (
+        <ConditionalAvailabilityRecordFieldValueInput
+          row={row}
+          dropdownId={dropdownId}
+          isMultiple={isMultiple}
+          onChange={handleChange}
+        />
+      );
     default:
       return assertUnreachable(row);
   }

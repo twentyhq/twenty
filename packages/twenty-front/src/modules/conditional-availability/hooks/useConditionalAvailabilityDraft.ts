@@ -14,6 +14,7 @@ import { removeConditionalAvailabilityRowTreeNode } from '@/conditional-availabi
 import { setConditionalAvailabilityRowTreeLogicalOperator } from '@/conditional-availability/utils/setConditionalAvailabilityRowTreeLogicalOperator';
 import { updateConditionalAvailabilityRow } from '@/conditional-availability/utils/updateConditionalAvailabilityRow';
 import { validateConditionalAvailabilityEditorState } from '@/conditional-availability/utils/validateConditionalAvailabilityEditorState';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useMemo } from 'react';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -30,6 +31,7 @@ type UseConditionalAvailabilityDraftProps = {
   metadataName: ConditionalAvailabilityMetadataName;
   itemKey: string;
   node: ConditionalAvailabilityNode | null;
+  fields: FieldMetadataItem[];
   hasRolesPermission: boolean;
   onNodeChange: (node: ConditionalAvailabilityNode | null) => void;
 };
@@ -38,6 +40,7 @@ export const useConditionalAvailabilityDraft = ({
   metadataName,
   itemKey,
   node,
+  fields,
   hasRolesPermission,
   onNodeChange,
 }: UseConditionalAvailabilityDraftProps) => {
@@ -51,9 +54,9 @@ export const useConditionalAvailabilityDraft = ({
       getConditionalAvailabilityEditorStateFromNode({
         node,
         metadataName,
-        fields: [],
+        fields,
       }),
-    [node, metadataName],
+    [node, metadataName, fields],
   );
 
   const editorEntry = conditionalAvailabilityEditorStates[itemKey];

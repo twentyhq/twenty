@@ -24,12 +24,15 @@ export const ConditionalAvailabilityRowFields = ({
 }: ConditionalAvailabilityRowFieldsProps) => {
   const { t } = useLingui();
 
+  const subjectKey =
+    row.subject === 'recordField' ? row.propertyPath : row.subject;
+
   return (
     <Field.Root render={<StyledFields />}>
       <ConditionalAvailabilitySubjectSelect row={row} />
       <ConditionalAvailabilityOperatorSelect row={row} />
       <ConditionalAvailabilityValueInput
-        key={`${row.subject}-${row.operator}`}
+        key={`${subjectKey}-${row.operator}`}
         row={row}
       />
       {!isConditionalAvailabilityRowComplete({ row }) && (
