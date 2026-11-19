@@ -7,9 +7,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
+import { useNavigationMenuTabIdsWithUnreadChats } from '@/navigation-menu-item/display/hooks/useNavigationMenuTabIdsWithUnreadChats';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { NAVIGATION_MENU_TAB_MAX_COUNT } from '@/navigation-menu-item/common/constants/NavigationMenuTabMaxCount';
-import { useNavigationMenuTabIdsWithUnreadChats } from '@/navigation-menu-item/display/hooks/useNavigationMenuTabIdsWithUnreadChats';
 import { MainNavigationDrawerAddTabButton } from '@/navigation/components/MainNavigationDrawerAddTabButton';
 import { MainNavigationDrawerSidebarTab } from '@/navigation/components/MainNavigationDrawerSidebarTab';
 import { MainNavigationDrawerTab } from '@/navigation/components/MainNavigationDrawerTab';
@@ -96,19 +96,6 @@ export const MainNavigationDrawerTabSwitcher = () => {
   }
 
   const shouldShowTooltips = !isExpanded && !isMobile;
-  const unreadBadge = (
-    <Badge
-      render={<StyledUnreadBadge />}
-      aria-hidden="true"
-      size="xs"
-      color="red"
-      shape={unreadOpenThreadCount < 10 ? 'circle' : 'pill'}
-    >
-      {unreadOpenThreadCount > MAX_DISPLAYED_UNREAD_COUNT
-        ? `${MAX_DISPLAYED_UNREAD_COUNT}+`
-        : unreadOpenThreadCount}
-    </Badge>
-  );
 
   return (
     <StyledSwitcher
@@ -149,7 +136,21 @@ export const MainNavigationDrawerTabSwitcher = () => {
               isUnread ? t`${label}, ${unreadOpenThreadCount} unread` : label
             }
             onClick={() => switchNavigationDrawerTab(drawerTab)}
-            iconAccessory={isUnread && unreadBadge}
+            iconAccessory={
+              isUnread && (
+                <Badge
+                  render={<StyledUnreadBadge />}
+                  aria-hidden="true"
+                  size="xs"
+                  color="red"
+                  shape={unreadOpenThreadCount < 10 ? 'circle' : 'pill'}
+                >
+                  {unreadOpenThreadCount > MAX_DISPLAYED_UNREAD_COUNT
+                    ? `${MAX_DISPLAYED_UNREAD_COUNT}+`
+                    : unreadOpenThreadCount}
+                </Badge>
+              )
+            }
           />
         );
 
@@ -166,11 +167,9 @@ export const MainNavigationDrawerTabSwitcher = () => {
               isActive={activeNavigationMenuTab?.id === tab.id}
               isExpanded={isExpanded}
               shouldShowTooltip={shouldShowTooltips}
-              unreadCount={
+              isUnread={
                 activeNavigationMenuTab?.id !== tab.id &&
                 tabIdsWithUnreadChats.has(tab.id)
-                  ? unreadOpenThreadCount
-                  : 0
               }
             />
           )),
