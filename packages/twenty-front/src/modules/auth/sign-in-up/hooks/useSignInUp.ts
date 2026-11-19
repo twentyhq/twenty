@@ -2,6 +2,8 @@ import { useCallback, useState } from 'react';
 import { type SubmitHandler, type UseFormReturn } from 'react-hook-form';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
+
 import { useAuth } from '@/auth/hooks/useAuth';
 import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
@@ -93,8 +95,12 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           : SignInUpMode.SignUp,
       );
       setSignInUpStep(SignInUpStep.Password);
-    } catch {
-      enqueueToast({ status: 'error', children: errorMsgUserAlreadyExist });
+    } catch (error) {
+      enqueueToast(
+        CombinedGraphQLErrors.is(error)
+          ? getToastOptionsFromError({ error })
+          : { status: 'error', children: errorMsgUserAlreadyExist },
+      );
     }
   }, [
     getCaptchaToken,

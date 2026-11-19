@@ -2,6 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { type UseFormReturn } from 'react-hook-form';
 import { MemoryRouter } from 'react-router-dom';
 
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { Provider as JotaiProvider } from 'jotai';
@@ -46,11 +47,12 @@ jest.mock(
 
 const signUpWithCredentialsMock = jest.fn();
 const signUpWithCredentialsInWorkspaceMock = jest.fn();
+const checkUserExistsQueryMock = jest.fn();
 
 (useAuth as jest.Mock).mockReturnValue({
   signUpWithCredentialsInWorkspace: signUpWithCredentialsInWorkspaceMock,
   signUpWithCredentials: signUpWithCredentialsMock,
-  checkUserExists: { checkUserExistsQuery: jest.fn() },
+  checkUserExists: { checkUserExistsQuery: checkUserExistsQueryMock },
 });
 
 const credentials: Form = {
@@ -60,11 +62,15 @@ const credentials: Form = {
   captchaToken: '',
 };
 
+const form = {
+  getValues: () => 'someone@example.com',
+} as unknown as UseFormReturn<Form>;
+
 const renderUseSignInUp = (workspacePublicData: PublicWorkspaceData | null) => {
   jotaiStore.set(workspacePublicDataState.atom, workspacePublicData);
   jotaiStore.set(signInUpModeState.atom, SignInUpMode.SignUp);
 
-  return renderHook(() => useSignInUp({} as UseFormReturn<Form>), {
+  return renderHook(() => useSignInUp(form), {
     wrapper: ({ children }) => (
       <JotaiProvider store={jotaiStore}>
         <I18nProvider i18n={i18n}>
@@ -111,5 +117,53 @@ describe('useSignInUp > submitCredentials > sign-up routing', () => {
     );
     expect(signUpWithCredentialsMock).toHaveBeenCalledTimes(1);
     expect(signUpWithCredentialsInWorkspaceMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('useSignInUp > continueWithCredentials > errors', () => {
+  beforeEach(() => {
+    resetJotaiStore();
+    jest.clearAllMocks();
+  });
+
+  it('shows the message the server sent when the check is rejected', async () => {
+    checkUserExistsQueryMock.mockRejectedValue(
+      new CombinedGraphQLErrors({
+        errors: [
+          {
+            message: 'Invalid Captcha: timeout-or-duplicate',
+            extensions: {
+              userFriendlyMessage: 'Invalid captcha. Please try again.',
+            },
+          },
+        ],
+      }),
+    );
+
+    const { result } = renderUseSignInUp(null);
+
+    await act(() => result.current.continueWithCredentials());
+
+    expect(mockEnqueueToast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: 'error',
+        children: 'Invalid captcha. Please try again.',
+      }),
+    );
+  });
+
+  it('shows a generic message when the request itself fails', async () => {
+    checkUserExistsQueryMock.mockRejectedValue(
+      new TypeError('Failed to fetch'),
+    );
+
+    const { result } = renderUseSignInUp(null);
+
+    await act(() => result.current.continueWithCredentials());
+
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
+      status: 'error',
+      children: 'An error occurred while checking user existence',
+    });
   });
 });
