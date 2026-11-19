@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import groupBy from 'lodash.groupby';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Not } from 'typeorm';
 import { generateRequestDetails } from 'web-push';
@@ -27,8 +28,8 @@ const FOCUSED_TAB_TTL_MS = 45_000;
 const PUSH_SERVICE_MESSAGE_TTL_SECONDS = 3600;
 const EXPIRED_PUSH_SUBSCRIPTION_STATUS_CODES = [404, 410];
 
-const getFocusedTabKey = (workspaceId: string, userId: string) =>
-  `focused-tab:${workspaceId}:${userId}`;
+const getFocusedTabKey = (workspaceId: string, workspaceMemberId: string) =>
+  `focused-tab:${workspaceId}:${workspaceMemberId}`;
 
 @Injectable()
 export class WebPushService {
@@ -101,16 +102,16 @@ export class WebPushService {
 
   async updateFocusedTab({
     workspaceId,
-    userId,
+    workspaceMemberId,
     tabId,
     isFocused,
   }: {
     workspaceId: string;
-    userId: string;
+    workspaceMemberId: string;
     tabId: string;
     isFocused: boolean;
   }): Promise<void> {
-    const focusedTabKey = getFocusedTabKey(workspaceId, userId);
+    const focusedTabKey = getFocusedTabKey(workspaceId, workspaceMemberId);
 
     if (isFocused) {
       await this.cacheStorageService.set(
@@ -130,56 +131,76 @@ export class WebPushService {
     }
   }
 
-  async hasFocusedTab({
+  async findWorkspaceMemberIdsWithFocusedTab({
     workspaceId,
-    userId,
+    workspaceMemberIds,
   }: {
     workspaceId: string;
-    userId: string;
-  }): Promise<boolean> {
-    return isDefined(
-      await this.cacheStorageService.get<string>(
-        getFocusedTabKey(workspaceId, userId),
+    workspaceMemberIds: string[];
+  }): Promise<Set<string>> {
+    if (workspaceMemberIds.length === 0) {
+      return new Set();
+    }
+
+    const focusedTabIds = await this.cacheStorageService.mget<string>(
+      workspaceMemberIds.map((workspaceMemberId) =>
+        getFocusedTabKey(workspaceId, workspaceMemberId),
       ),
+    );
+
+    return new Set(
+      workspaceMemberIds.filter((_, index) => isDefined(focusedTabIds[index])),
     );
   }
 
-  async sendNotificationToUser({
+  async findPushSubscriptionsByUserId({
     workspaceId,
-    userId,
-    notification,
+    userIds,
   }: {
     workspaceId: string;
-    userId: string;
-    notification: WebPushNotification;
-  }): Promise<void> {
-    const activeUserSessions =
-      await this.userSessionService.findActiveSessionsForUserWorkspace({
-        userId,
-        workspaceId,
-      });
-
-    if (activeUserSessions.length === 0) {
-      return;
+    userIds: string[];
+  }): Promise<Partial<Record<string, PushSubscriptionEntity[]>>> {
+    if (userIds.length === 0) {
+      return {};
     }
 
-    const vapidKeyPair = deriveWebPushVapidKeyPair({
-      twentyConfigService: this.twentyConfigService,
-    });
     const pushSubscriptions = await this.pushSubscriptionRepository.find(
       workspaceId,
       {
         where: {
-          userSessionId: In(activeUserSessions.map(({ id }) => id)),
-          applicationServerKey: vapidKeyPair.publicKey,
+          applicationServerKey: deriveWebPushVapidKeyPair({
+            twentyConfigService: this.twentyConfigService,
+          }).publicKey,
+          userSession: {
+            ...this.userSessionService.buildActiveSessionWhere(),
+            userId: In(userIds),
+            workspaceId,
+          },
         },
+        relations: { userSession: true },
       },
     );
 
-    if (pushSubscriptions.length === 0) {
-      return;
-    }
+    return groupBy(
+      pushSubscriptions,
+      (pushSubscription) => pushSubscription.userSession.userId,
+    );
+  }
 
+  async sendNotification({
+    workspaceId,
+    userId,
+    pushSubscriptions,
+    notification,
+  }: {
+    workspaceId: string;
+    userId: string;
+    pushSubscriptions: PushSubscriptionEntity[];
+    notification: WebPushNotification;
+  }): Promise<void> {
+    const vapidKeyPair = deriveWebPushVapidKeyPair({
+      twentyConfigService: this.twentyConfigService,
+    });
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
     const subject = serverUrl.startsWith('https:')
       ? serverUrl
