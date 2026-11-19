@@ -56,19 +56,25 @@ describe('validateNavigationMenuItemHierarchy', () => {
     ).toBe(false);
   });
 
-  it('should only allow a built-in section inside a tab', () => {
+  it('should refuse any item inside a built-in section', () => {
     expect(
-      isAllowed({
-        type: NavigationMenuItemType.FAVORITES,
-        parentType: NavigationMenuItemType.TAB,
-      }),
-    ).toBe(true);
-    expect(
-      isAllowed({
-        type: NavigationMenuItemType.AI_CHAT_INBOX,
+      validateNavigationMenuItemHierarchy({
+        type: NavigationMenuItemType.LINK,
         parentType: NavigationMenuItemType.SECTION,
+        parentBuiltInSectionKey: 'favorites',
       }),
-    ).toBe(false);
+    ).toHaveLength(1);
+  });
+
+  it('should refuse a built-in section that holds children', () => {
+    expect(
+      validateNavigationMenuItemHierarchy({
+        type: NavigationMenuItemType.SECTION,
+        builtInSectionKey: 'aiChatRecents',
+        parentType: NavigationMenuItemType.TAB,
+        childTypes: [NavigationMenuItemType.LINK],
+      }),
+    ).toHaveLength(1);
   });
 
   it('should allow a folder inside a tab or a section but not a folder', () => {
