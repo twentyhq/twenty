@@ -68,14 +68,6 @@ export const WorkspaceSection = () => {
     }
   };
 
-  if (
-    isCustomizableSidebarEnabled &&
-    !isLayoutCustomizationModeEnabled &&
-    items.length === 0
-  ) {
-    return null;
-  }
-
   return (
     <WorkspaceSectionContainer
       sectionTitle={t`Workspace`}
