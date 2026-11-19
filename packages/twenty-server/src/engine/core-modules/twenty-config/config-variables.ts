@@ -1698,12 +1698,12 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Maximum size in bytes of a single job (serialized data and options) when Redis memory fairness is enabled',
+      'Maximum size in bytes of a single job (serialized data and options)',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   @IsOptional()
-  JOB_QUEUE_MAX_JOB_SIZE_BYTES = 5_242_880;
+  JOB_QUEUE_MAX_JOB_SIZE_BYTES = 20_971_520;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -1714,7 +1714,7 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @Max(1)
-  JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID = 0.3;
+  JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID = 0.4;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -1725,7 +1725,7 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @Max(1)
-  JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER = 0.4;
+  JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER = 0.6;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
