@@ -4,7 +4,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
-import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import {
   buildOrderByFromLeaves,
   checkIfLeafCanCarryCursorValue,
@@ -268,7 +268,7 @@ describe('resolveOrderByLeaves', () => {
 
     expect(() =>
       resolve([{ unknownField: OrderByDirection.AscNullsLast }], true),
-    ).toThrow(GraphqlQueryRunnerException);
+    ).toThrow(CommonQueryRunnerException);
   });
 
   it('should reject malformed entries in strict mode', () => {

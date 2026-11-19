@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { DEFAULT_NUMBER_OF_GROUPS_LIMIT } from 'twenty-shared/constants';
 
+import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { GroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/group-by-arg-processor.service';
 import { CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-group-by-query-runner.service';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
@@ -93,7 +94,7 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
       });
 
     this.groupByArgProcessor.validateAggregateFieldKeysOrThrow({
-      aggregateFieldKeys: Object.keys(aggregateFields),
+      aggregateFieldKeys: aggregateFields,
       availableAggregations,
     });
 
@@ -101,19 +102,19 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
       request,
       DEFAULT_NUMBER_OF_GROUPS_LIMIT,
     );
-    let selectedFields = { ...aggregateFields, groupByDimensionValues: true };
-
-    if (includeRecords) {
-      const selectableFields = await this.computeSelectedFields({
-        depth: 0,
-        flatObjectMetadata,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        authContext,
-      });
-
-      selectedFields = { ...selectedFields, ...selectableFields };
-    }
+    const recordSelectedFields = includeRecords
+      ? await this.computeSelectedFields({
+          depth: 0,
+          flatObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          authContext,
+        })
+      : { fields: {}, relations: {} };
+    const selectedFields: CommonSelectedFields = {
+      ...recordSelectedFields,
+      aggregates: aggregateFields,
+    };
 
     return {
       authContext,
