@@ -6,6 +6,6 @@ import {
 
 export type ConditionalAvailabilityEditorEntry = {
   metadataName: ConditionalAvailabilityMetadataName;
-  node: ConditionalAvailabilityNode | null;
+  storedNode: ConditionalAvailabilityNode | null;
   editorState: ConditionalAvailabilityEditorState;
 };

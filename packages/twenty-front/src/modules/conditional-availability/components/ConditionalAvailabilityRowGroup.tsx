@@ -1,6 +1,6 @@
 import { ConditionalAvailabilityLogicalOperatorCell } from '@/conditional-availability/components/ConditionalAvailabilityLogicalOperatorCell';
 import { ConditionalAvailabilityRow } from '@/conditional-availability/components/ConditionalAvailabilityRow';
-import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/hooks/useConditionalAvailabilityEditorContext';
+import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/contexts/ConditionalAvailabilityEditorContext';
 import { type ConditionalAvailabilityRowGroup as ConditionalAvailabilityRowGroupType } from '@/conditional-availability/types/ConditionalAvailabilityRowGroup';
 import { ConditionBuilderAddRuleMenu } from '@/ui/layout/condition-builder/components/ConditionBuilderAddRuleMenu';
 import { ConditionBuilderGroupFrame } from '@/ui/layout/condition-builder/components/ConditionBuilderGroupFrame';
@@ -39,13 +39,12 @@ export const ConditionalAvailabilityRowGroup = ({
             dropdownId={`conditional-availability-group-menu-${itemKey}-${group.id}`}
             ariaLabel={t`Rule group options`}
             deleteLabel={t`Delete group`}
-            align="end"
             onDelete={() => removeNode(group.id)}
           />
         )
       }
     >
-      <ConditionBuilderGroupFrame isNested>
+      <ConditionBuilderGroupFrame>
         {group.rows.map((row, rowIndex) => (
           <ConditionalAvailabilityRow
             key={row.id}
@@ -57,7 +56,6 @@ export const ConditionalAvailabilityRowGroup = ({
         ))}
         {!isReadOnly && (
           <ConditionBuilderAddRuleMenu
-            dropdownId={`conditional-availability-add-group-rule-${itemKey}-${group.id}`}
             canAddGroup={false}
             onAddRule={() => addRow(group.id)}
           />

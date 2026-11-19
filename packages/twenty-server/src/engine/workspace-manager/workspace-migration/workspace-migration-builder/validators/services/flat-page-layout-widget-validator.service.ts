@@ -26,7 +26,7 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { type FlatEntityCreationValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-creation-validation-args.type';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
-import { validateConditionalAvailability } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-conditional-availability.util';
+import { validatePageLayoutWidgetConditionalAvailability } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util';
 
 type EffectivePageLayoutWidget = Omit<
   UniversalFlatPageLayoutWidget,
@@ -158,10 +158,8 @@ export class FlatPageLayoutWidgetValidatorService {
       )
     ) {
       validationResult.errors.push(
-        ...validateConditionalAvailability({
+        ...validatePageLayoutWidgetConditionalAvailability({
           conditionalAvailability: effectiveWidget.conditionalAvailability,
-          metadataName: 'pageLayoutWidget',
-          code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
         }),
       );
     }
@@ -296,10 +294,8 @@ export class FlatPageLayoutWidgetValidatorService {
 
     validationResult.errors.push(...typeSpecificityErrors);
     validationResult.errors.push(
-      ...validateConditionalAvailability({
+      ...validatePageLayoutWidgetConditionalAvailability({
         conditionalAvailability: effectiveWidget.conditionalAvailability,
-        metadataName: 'pageLayoutWidget',
-        code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
       }),
     );
 

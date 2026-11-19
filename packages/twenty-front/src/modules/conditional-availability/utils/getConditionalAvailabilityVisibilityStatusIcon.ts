@@ -2,7 +2,7 @@ import { type ConditionalAvailabilityVisibilityStatus } from '@/conditional-avai
 import { assertUnreachable } from 'twenty-shared/utils';
 import { IconEye, IconEyeX, type IconComponent } from 'twenty-ui/icon';
 
-export const getConditionalAvailabilityValueIcon = ({
+export const getConditionalAvailabilityVisibilityStatusIcon = ({
   visibilityStatus,
 }: {
   visibilityStatus: ConditionalAvailabilityVisibilityStatus;

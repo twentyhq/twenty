@@ -1,6 +1,7 @@
 import { ConditionalAvailabilityValueControl } from '@/conditional-availability/components/ConditionalAvailabilityValueControl';
+import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/contexts/ConditionalAvailabilityEditorContext';
 import { type ConditionalAvailabilityValueOption } from '@/conditional-availability/types/ConditionalAvailabilityValueOption';
-import { CONDITION_BUILDER_DROPDOWN_SIDE_OFFSET } from '@/ui/layout/condition-builder/constants/ConditionBuilderDropdownSideOffset';
+import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -14,12 +15,11 @@ type ConditionalAvailabilityOptionsSelectProps = {
   dropdownId: string;
   options: ConditionalAvailabilityValueOption[];
   values: string[];
-  getValueLabel: (value: string) => string;
+  getUnknownValueLabel: (value: string) => string;
   isMultiple: boolean;
   searchPlaceholder: string | null;
   placeholder: string;
-  isDisabled: boolean;
-  isLoading: boolean;
+  isLoading?: boolean;
   onChange: (values: string[]) => void;
 };
 
@@ -27,26 +27,30 @@ export const ConditionalAvailabilityOptionsSelect = ({
   dropdownId,
   options,
   values,
-  getValueLabel,
+  getUnknownValueLabel,
   isMultiple,
   searchPlaceholder,
   placeholder,
-  isDisabled,
-  isLoading,
+  isLoading = false,
   onChange,
 }: ConditionalAvailabilityOptionsSelectProps) => {
   const { t } = useLingui();
+  const { isReadOnly } = useConditionalAvailabilityEditorContext();
   const [searchValue, setSearchValue] = useState('');
+
+  const getValueLabel = (value: string) =>
+    options.find((option) => option.value === value)?.label ??
+    getUnknownValueLabel(value);
 
   const control = (
     <ConditionalAvailabilityValueControl
       labels={values.map(getValueLabel)}
       placeholder={placeholder}
-      isDisabled={isDisabled}
+      isDisabled={isReadOnly}
     />
   );
 
-  if (isDisabled) {
+  if (isReadOnly) {
     return control;
   }
 
@@ -102,7 +106,7 @@ export const ConditionalAvailabilityOptionsSelect = ({
       <DropdownContent
         width={GenericDropdownContentWidth.Large}
         align="start"
-        sideOffset={CONDITION_BUILDER_DROPDOWN_SIDE_OFFSET}
+        sideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}
       >
         {isDefined(searchPlaceholder) && (
           <Dropdown.Search

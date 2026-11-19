@@ -1,6 +1,5 @@
 import { CONDITIONAL_AVAILABILITY_CURRENT_WORKSPACE_MEMBER_OPTION_VALUE } from '@/conditional-availability/constants/ConditionalAvailabilityCurrentWorkspaceMemberOptionValue';
 import { CONDITIONAL_AVAILABILITY_DEVICES } from '@/conditional-availability/constants/ConditionalAvailabilityDevices';
-import { CONDITIONAL_AVAILABILITY_VALUE_COUNT_RANGE_BY_ARITY } from '@/conditional-availability/constants/ConditionalAvailabilityValueCountRangeByArity';
 import { type ConditionalAvailabilityRow } from '@/conditional-availability/types/ConditionalAvailabilityRow';
 import { getConditionalAvailabilityValueArity } from '@/conditional-availability/utils/getConditionalAvailabilityValueArity';
 import { isConditionalAvailabilityDayValue } from '@/conditional-availability/utils/isConditionalAvailabilityDayValue';
@@ -40,19 +39,28 @@ const isValueValid = ({
   }
 };
 
+const hasExpectedValueCount = ({
+  row,
+}: {
+  row: ConditionalAvailabilityRow;
+}): boolean => {
+  switch (getConditionalAvailabilityValueArity({ row })) {
+    case 'none':
+      return row.values.length === 0;
+    case 'single':
+      return row.values.length === 1;
+    case 'list':
+      return row.values.length >= 1;
+  }
+};
+
 export const isConditionalAvailabilityRowComplete = ({
   row,
 }: {
   row: ConditionalAvailabilityRow;
 }): boolean => {
-  const { min, max } =
-    CONDITIONAL_AVAILABILITY_VALUE_COUNT_RANGE_BY_ARITY[
-      getConditionalAvailabilityValueArity({ row })
-    ];
-
   return (
-    row.values.length >= min &&
-    row.values.length <= max &&
+    hasExpectedValueCount({ row }) &&
     new Set(row.values).size === row.values.length &&
     row.values.every((value) => isValueValid({ row, value }))
   );

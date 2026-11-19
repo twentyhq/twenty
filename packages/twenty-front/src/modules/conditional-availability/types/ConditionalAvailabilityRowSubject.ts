@@ -1,6 +1,6 @@
+import { type ConditionalAvailabilityPathSubject } from '@/conditional-availability/types/ConditionalAvailabilityPathSubject';
 import { type ConditionalAvailabilityRecordFieldSubject } from '@/conditional-availability/types/ConditionalAvailabilityRecordFieldSubject';
-import { type ConditionalAvailabilitySubject } from '@/conditional-availability/types/ConditionalAvailabilitySubject';
 
 export type ConditionalAvailabilityRowSubject =
-  | { subject: ConditionalAvailabilitySubject }
+  | { subject: ConditionalAvailabilityPathSubject }
   | ({ subject: 'recordField' } & ConditionalAvailabilityRecordFieldSubject);

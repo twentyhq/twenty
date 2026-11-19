@@ -84,8 +84,7 @@ export const SingleWidgetTabSettingsContent = ({
         <TabSettingsPlacementSection items={placementItems} />
         <SidePanelGroup heading={t`Manage`}>
           <PageLayoutSettingsVisibilityItem
-            widgetId={singleWidget.id}
-            node={singleWidget.conditionalAvailability ?? null}
+            widget={singleWidget}
             selectableItemId={
               TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION
             }

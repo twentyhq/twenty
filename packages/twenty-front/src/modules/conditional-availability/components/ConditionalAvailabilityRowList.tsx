@@ -1,7 +1,7 @@
 import { ConditionalAvailabilityRow } from '@/conditional-availability/components/ConditionalAvailabilityRow';
 import { ConditionalAvailabilityRowGroup } from '@/conditional-availability/components/ConditionalAvailabilityRowGroup';
 import { ConditionalAvailabilityRulesError } from '@/conditional-availability/components/ConditionalAvailabilityRulesError';
-import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/hooks/useConditionalAvailabilityEditorContext';
+import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/contexts/ConditionalAvailabilityEditorContext';
 import { type ConditionalAvailabilityRowTree } from '@/conditional-availability/types/ConditionalAvailabilityRowTree';
 import { validateConditionalAvailabilityRules } from '@/conditional-availability/utils/validateConditionalAvailabilityRules';
 import { ConditionBuilderAddRuleMenu } from '@/ui/layout/condition-builder/components/ConditionBuilderAddRuleMenu';

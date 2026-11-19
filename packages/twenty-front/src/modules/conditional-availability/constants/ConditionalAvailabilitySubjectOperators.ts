@@ -1,8 +1,8 @@
 import { type ConditionalAvailabilityOperator } from '@/conditional-availability/types/ConditionalAvailabilityOperator';
-import { type ConditionalAvailabilitySubject } from '@/conditional-availability/types/ConditionalAvailabilitySubject';
+import { type ConditionalAvailabilityPathSubject } from '@/conditional-availability/types/ConditionalAvailabilityPathSubject';
 
 export const CONDITIONAL_AVAILABILITY_SUBJECT_OPERATORS: Record<
-  ConditionalAvailabilitySubject,
+  ConditionalAvailabilityPathSubject,
   ConditionalAvailabilityOperator[]
 > = {
   role: ['isAnyOf', 'isNoneOf'],

@@ -1,13 +1,7 @@
+import { AdvancedFilterSidePanelColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelColumn';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-  width: 100%;
-`;
 
 const StyledHeader = styled.div`
   display: flex;
@@ -27,11 +21,11 @@ export const ConditionBuilderRowFrame = ({
   menu,
   children,
 }: ConditionBuilderRowFrameProps) => (
-  <StyledColumn>
+  <AdvancedFilterSidePanelColumn>
     <StyledHeader>
       {header}
       {menu}
     </StyledHeader>
     {children}
-  </StyledColumn>
+  </AdvancedFilterSidePanelColumn>
 );

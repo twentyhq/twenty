@@ -1,4 +1,4 @@
-import { conditionalAvailabilityEditorStatesState } from '@/conditional-availability/states/conditionalAvailabilityEditorStatesState';
+import { conditionalAvailabilityEditorEntriesState } from '@/conditional-availability/states/conditionalAvailabilityEditorEntriesState';
 import { type ConditionalAvailabilityEditorEntry } from '@/conditional-availability/types/ConditionalAvailabilityEditorEntry';
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -107,11 +107,11 @@ describe('useDeletePageLayoutWidget', () => {
     const wrapper = getWrapper(store);
     const everyoneEntry: ConditionalAvailabilityEditorEntry = {
       metadataName: 'pageLayoutWidget',
-      node: null,
+      storedNode: null,
       editorState: { mode: 'everyone' },
     };
 
-    store.set(conditionalAvailabilityEditorStatesState.atom, {
+    store.set(conditionalAvailabilityEditorEntriesState.atom, {
       'pageLayoutWidget:widget-1': everyoneEntry,
       'pageLayoutWidget:widget-2': everyoneEntry,
     });
@@ -127,7 +127,7 @@ describe('useDeletePageLayoutWidget', () => {
       result.current.deletePageLayoutWidget('widget-1');
     });
 
-    expect(store.get(conditionalAvailabilityEditorStatesState.atom)).toEqual({
+    expect(store.get(conditionalAvailabilityEditorEntriesState.atom)).toEqual({
       'pageLayoutWidget:widget-2': everyoneEntry,
     });
   });

@@ -1,9 +1,8 @@
-import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/hooks/useConditionalAvailabilityEditorContext';
+import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/contexts/ConditionalAvailabilityEditorContext';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { Button, Field, Textarea } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -34,16 +33,14 @@ export const ConditionalAvailabilityUnsupportedRule = ({
   return (
     <>
       <Field.Root render={<StyledField />}>
-        {isNonEmptyString(expression) && (
-          <Textarea
-            aria-label={t`Rule`}
-            value={expression}
-            readOnly
-            autoResize
-            rows={3}
-            spellCheck={false}
-          />
-        )}
+        <Textarea
+          aria-label={t`Rule`}
+          value={expression}
+          readOnly
+          autoResize
+          rows={3}
+          spellCheck={false}
+        />
         <Field.Description>
           {t`This rule cannot be shown as rows. It keeps working as it is.`}
         </Field.Description>

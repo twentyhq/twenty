@@ -1,4 +1,4 @@
-import { conditionalAvailabilityEditorStatesState } from '@/conditional-availability/states/conditionalAvailabilityEditorStatesState';
+import { conditionalAvailabilityEditorEntriesState } from '@/conditional-availability/states/conditionalAvailabilityEditorEntriesState';
 import { type ConditionalAvailabilityEditorState } from '@/conditional-availability/types/ConditionalAvailabilityEditorState';
 import { type ConditionalAvailabilityOperator } from '@/conditional-availability/types/ConditionalAvailabilityOperator';
 import { type ConditionalAvailabilityRow } from '@/conditional-availability/types/ConditionalAvailabilityRow';
@@ -42,9 +42,9 @@ export const useConditionalAvailabilityDraft = ({
   onNodeChange,
 }: UseConditionalAvailabilityDraftProps) => {
   const [
-    conditionalAvailabilityEditorStates,
-    setConditionalAvailabilityEditorStates,
-  ] = useAtomState(conditionalAvailabilityEditorStatesState);
+    conditionalAvailabilityEditorEntries,
+    setConditionalAvailabilityEditorEntries,
+  ] = useAtomState(conditionalAvailabilityEditorEntriesState);
 
   const storedEditorState = useMemo(
     () =>
@@ -56,10 +56,10 @@ export const useConditionalAvailabilityDraft = ({
     [node, metadataName],
   );
 
-  const editorEntry = conditionalAvailabilityEditorStates[itemKey];
+  const editorEntry = conditionalAvailabilityEditorEntries[itemKey];
 
   const editorState: ConditionalAvailabilityEditorState =
-    isDefined(editorEntry) && isDeeplyEqual(editorEntry.node, node)
+    isDefined(editorEntry) && isDeeplyEqual(editorEntry.storedNode, node)
       ? editorEntry.editorState
       : storedEditorState;
 
@@ -78,11 +78,11 @@ export const useConditionalAvailabilityDraft = ({
 
     const nextNode = validation.status === 'valid' ? validation.node : node;
 
-    setConditionalAvailabilityEditorStates((previousEditorStates) => ({
-      ...previousEditorStates,
+    setConditionalAvailabilityEditorEntries((previousEditorEntries) => ({
+      ...previousEditorEntries,
       [itemKey]: {
         metadataName,
-        node: nextNode,
+        storedNode: nextNode,
         editorState: nextEditorState,
       },
     }));

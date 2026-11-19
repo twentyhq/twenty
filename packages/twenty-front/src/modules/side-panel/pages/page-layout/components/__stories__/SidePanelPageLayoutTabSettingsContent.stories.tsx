@@ -17,7 +17,6 @@ import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { SidePanelSubPageRouter } from '@/side-panel/components/SidePanelSubPageRouter';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { SidePanelPageLayoutTabSettingsContent } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent';
-import { CONDITIONAL_AVAILABILITY_DEVICE_MOBILE } from '@/side-panel/pages/page-layout/constants/ConditionalAvailabilityDeviceMobile';
 import { PageLayoutSidePanelTargetContext } from '@/side-panel/pages/page-layout/contexts/PageLayoutSidePanelTargetContext';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
@@ -290,7 +289,12 @@ export const SingleWidgetUnpinThenCancel: Story = {
 export const SingleWidgetVisibility: Story = {
   parameters: {
     singleWidget: true,
-    widgetConditionalAvailability: CONDITIONAL_AVAILABILITY_DEVICE_MOBILE,
+    widgetConditionalAvailability: {
+      type: 'COMPARISON',
+      operator: 'EQUAL',
+      left: { type: 'PATH', path: 'device' },
+      right: { type: 'LITERAL', value: 'MOBILE' },
+    },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

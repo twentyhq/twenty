@@ -1,7 +1,7 @@
 import { CONDITIONAL_AVAILABILITY_NEGATED_OPERATORS } from '@/conditional-availability/constants/ConditionalAvailabilityNegatedOperators';
 import { CONDITIONAL_AVAILABILITY_SUBJECT_OPERATORS } from '@/conditional-availability/constants/ConditionalAvailabilitySubjectOperators';
 import { type ConditionalAvailabilityRow } from '@/conditional-availability/types/ConditionalAvailabilityRow';
-import { type ConditionalAvailabilitySubject } from '@/conditional-availability/types/ConditionalAvailabilitySubject';
+import { type ConditionalAvailabilityPathSubject } from '@/conditional-availability/types/ConditionalAvailabilityPathSubject';
 import { pickConditionalAvailabilityRow } from '@/conditional-availability/utils/pickConditionalAvailabilityRow';
 
 export const buildConditionalAvailabilitySubjectRow = ({
@@ -9,7 +9,7 @@ export const buildConditionalAvailabilitySubjectRow = ({
   isNegated,
   values,
 }: {
-  subject: ConditionalAvailabilitySubject;
+  subject: ConditionalAvailabilityPathSubject;
   isNegated: boolean;
   values: string[];
 }): ConditionalAvailabilityRow | null =>

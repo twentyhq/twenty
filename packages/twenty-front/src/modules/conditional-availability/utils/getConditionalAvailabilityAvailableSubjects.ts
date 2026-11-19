@@ -1,4 +1,4 @@
-import { type ConditionalAvailabilitySubject } from '@/conditional-availability/types/ConditionalAvailabilitySubject';
+import { type ConditionalAvailabilityPathSubject } from '@/conditional-availability/types/ConditionalAvailabilityPathSubject';
 import { getConditionalAvailabilityOfferedSubjects } from '@/conditional-availability/utils/getConditionalAvailabilityOfferedSubjects';
 import { type ConditionalAvailabilityMetadataName } from 'twenty-shared/types';
 
@@ -8,11 +8,11 @@ export const getConditionalAvailabilityAvailableSubjects = ({
 }: {
   metadataName: ConditionalAvailabilityMetadataName;
   hasRolesPermission: boolean;
-}): ConditionalAvailabilitySubject[] => {
+}): ConditionalAvailabilityPathSubject[] => {
   const offeredSubjects = getConditionalAvailabilityOfferedSubjects({
     metadataName,
   });
-  const availableSubjects: ConditionalAvailabilitySubject[] = [];
+  const availableSubjects: ConditionalAvailabilityPathSubject[] = [];
 
   if (offeredSubjects.role && hasRolesPermission) {
     availableSubjects.push('role');

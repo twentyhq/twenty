@@ -1,6 +1,6 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
-import { useClearConditionalAvailabilityEditorStates } from '@/conditional-availability/hooks/useClearConditionalAvailabilityEditorStates';
+import { conditionalAvailabilityEditorEntriesState } from '@/conditional-availability/states/conditionalAvailabilityEditorEntriesState';
 import { useSavePageLayout } from '@/page-layout/hooks/useSavePageLayout';
 import { useSavePageLayoutWidgetsData } from '@/page-layout/hooks/useSavePageLayoutWidgetsData';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
@@ -36,8 +36,6 @@ export const SaveDashboardSingleRecordCommand = () => {
 
   const store = useStore();
   const { enqueueToast } = useToast();
-  const { clearConditionalAvailabilityEditorStates } =
-    useClearConditionalAvailabilityEditorStates();
 
   const handleExecute = async () => {
     if (
@@ -58,7 +56,7 @@ export const SaveDashboardSingleRecordCommand = () => {
 
     if (result.status === 'successful') {
       await savePageLayoutWidgetsData(pageLayoutId);
-      clearConditionalAvailabilityEditorStates();
+      store.set(conditionalAvailabilityEditorEntriesState.atom, {});
       closeSidePanelMenu();
       setIsPageLayoutInEditMode(false);
     }

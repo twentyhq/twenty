@@ -1,5 +1,5 @@
 import { ConditionalAvailabilityOptionsSelect } from '@/conditional-availability/components/ConditionalAvailabilityOptionsSelect';
-import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/hooks/useConditionalAvailabilityEditorContext';
+import { useConditionalAvailabilityEditorContext } from '@/conditional-availability/contexts/ConditionalAvailabilityEditorContext';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -15,7 +15,7 @@ export const ConditionalAvailabilityRoleSelect = ({
   onChange,
 }: ConditionalAvailabilityRoleSelectProps) => {
   const { t } = useLingui();
-  const { roles, isLoadingRoles, hasRolesPermission, isReadOnly } =
+  const { roles, isLoadingRoles, hasRolesPermission } =
     useConditionalAvailabilityEditorContext();
 
   const options = roles
@@ -28,7 +28,7 @@ export const ConditionalAvailabilityRoleSelect = ({
       firstOption.label.localeCompare(secondOption.label),
     );
 
-  const getValueLabel = (value: string) => {
+  const getUnknownValueLabel = (value: string) => {
     if (!hasRolesPermission) {
       return t`Role`;
     }
@@ -45,11 +45,10 @@ export const ConditionalAvailabilityRoleSelect = ({
       dropdownId={dropdownId}
       options={options}
       values={values}
-      getValueLabel={getValueLabel}
+      getUnknownValueLabel={getUnknownValueLabel}
       isMultiple
       searchPlaceholder={t`Search roles`}
       placeholder={t`Select roles`}
-      isDisabled={isReadOnly}
       isLoading={isLoadingRoles}
       onChange={onChange}
     />

@@ -7,6 +7,7 @@ import { ResetPageLayoutWidgetToDefaultDocument } from '~/generated-metadata/gra
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useRefreshPageLayoutAfterReset } from '@/page-layout/hooks/useRefreshPageLayoutAfterReset';
+import { useRemovePageLayoutWidgetConditionalAvailabilityEditorEntry } from '@/page-layout/hooks/useRemovePageLayoutWidgetConditionalAvailabilityEditorEntry';
 import { useToast } from 'twenty-ui/components/feedback';
 
 export const useResetPageLayoutWidgetToDefault = (
@@ -18,9 +19,13 @@ export const useResetPageLayoutWidgetToDefault = (
   const { refreshPageLayoutAfterReset } = useRefreshPageLayoutAfterReset(
     pageLayoutIdFromProps,
   );
+  const { removePageLayoutWidgetConditionalAvailabilityEditorEntry } =
+    useRemovePageLayoutWidgetConditionalAvailabilityEditorEntry();
 
   const resetPageLayoutWidgetToDefault = useCallback(
     async (widgetId: string) => {
+      removePageLayoutWidgetConditionalAvailabilityEditorEntry(widgetId);
+
       try {
         await resetMutation({ variables: { id: widgetId } });
         await refreshPageLayoutAfterReset();
@@ -36,6 +41,7 @@ export const useResetPageLayoutWidgetToDefault = (
       }
     },
     [
+      removePageLayoutWidgetConditionalAvailabilityEditorEntry,
       resetMutation,
       refreshPageLayoutAfterReset,
       handleMetadataError,
