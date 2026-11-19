@@ -11,7 +11,7 @@ import {
   ObjectRecordRestoreEvent,
 } from 'twenty-shared/database-events';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import type { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type CustomEventName } from 'src/engine/workspace-event-emitter/types/custom-event-name.type';
 import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';

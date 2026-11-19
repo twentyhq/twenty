@@ -2,6 +2,7 @@ import { RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
 
 import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
 import { GranolaInvalidResponseError } from 'src/logic-functions/types/granola-invalid-response-error';
+import { GranolaWebhookConfigurationError } from 'src/logic-functions/types/granola-webhook-configuration-error';
 import { buildRetryableGranolaError } from 'src/logic-functions/utils/build-retryable-granola-error.util';
 
 export const rethrowKnownOrWrapGranolaError = ({
@@ -14,6 +15,7 @@ export const rethrowKnownOrWrapGranolaError = ({
   if (
     error instanceof RetryableLogicFunctionError ||
     error instanceof GranolaApiError ||
+    error instanceof GranolaWebhookConfigurationError ||
     error instanceof GranolaInvalidResponseError
   ) {
     throw error;

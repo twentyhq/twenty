@@ -8,9 +8,9 @@ import {
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { buildCursorLeafWhereCondition } from 'src/engine/api/utils/build-cursor-leaf-where-condition.util';
 import {
   checkIfLeafCanCarryCursorValue,
@@ -51,9 +51,9 @@ export const computeCursorArgFilter = ({
     const cursorValue = getCursorValueForLeaf(cursor, leaf);
 
     if (cursorValue === undefined) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Cursor is missing the value for orderBy field "${leaf.path.join('.')}": it was encoded for a different orderBy. Restart pagination without a cursor.`,
-        GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
+        CommonQueryRunnerExceptionCode.INVALID_CURSOR,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }

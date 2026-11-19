@@ -6,7 +6,6 @@ import { type ReactNode } from 'react';
 import { AiChatEmptyState } from '@/ai-chat/composer/components/AiChatEmptyState';
 import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai-chat/states/aiChatIsAwaitingFirstChunkFamilyState';
 import { aiChatIsStreamingFamilyState } from '@/ai-chat/states/aiChatIsStreamingFamilyState';
-import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import {
   jotaiStore,
@@ -24,7 +23,7 @@ const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
-    <AiChatTestInstance>{children}</AiChatTestInstance>
+    <AiChatTestInstance threadId={THREAD_ID}>{children}</AiChatTestInstance>
   </JotaiProvider>
 );
 
@@ -33,7 +32,6 @@ describe('AiChatEmptyState', () => {
     jest.clearAllMocks();
     resetJotaiStore();
     jotaiStore.set(newAiChatThreadIdState.atom, THREAD_ID);
-    jotaiStore.set(aiChatTestInstanceThreadIdState.atom, THREAD_ID);
   });
 
   it('should render the suggested prompts when there is no message, no error and nothing loading', () => {
