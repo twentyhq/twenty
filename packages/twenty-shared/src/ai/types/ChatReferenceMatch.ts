@@ -1,4 +1,4 @@
-import { type ChatReferenceIdentity } from '@/ai-chat/message-content/types/ChatReferenceIdentity';
+import { type ChatReferenceIdentity } from '@/ai/types/ChatReferenceIdentity';
 
 export type ChatReferenceMatch = ChatReferenceIdentity & {
   fullMatch: string;

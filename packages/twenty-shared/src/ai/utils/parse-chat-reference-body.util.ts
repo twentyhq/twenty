@@ -1,17 +1,24 @@
-import { CHAT_REFERENCE_IDENTITY_SHAPE_BY_KIND } from '@/ai-chat/message-content/constants/ChatReferenceIdentityShapeByKind';
-import { type ChatReferenceIdentity } from '@/ai-chat/message-content/types/ChatReferenceIdentity';
-import { type ChatReferenceKind } from '@/ai-chat/message-content/types/ChatReferenceKind';
-import { parseAgentChatAssistantReferenceBody } from 'twenty-shared/ai';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { CHAT_REFERENCE_IDENTITY_SHAPE_BY_KIND } from '@/ai/constants/chat-reference-identity-shape-by-kind.const';
+import { type ChatReferenceIdentity } from '@/ai/types/ChatReferenceIdentity';
+import { type ChatReferenceKind } from '@/ai/types/ChatReferenceKind';
+import { parseAgentChatAssistantReferenceBody } from '@/ai/utils/parse-agent-chat-assistant-reference-body.util';
+import { assertUnreachable } from '@/utils/assertUnreachable';
+import { isDefined } from '@/utils/validation/isDefined';
 
 type ParsedChatReferenceBody = ChatReferenceIdentity & { displayName: string };
 
-const isChatReferenceKind = (segment: string): segment is ChatReferenceKind =>
-  Object.hasOwn(CHAT_REFERENCE_IDENTITY_SHAPE_BY_KIND, segment);
+const CHAT_REFERENCE_KINDS: string[] = Object.keys(
+  CHAT_REFERENCE_IDENTITY_SHAPE_BY_KIND,
+);
+
+const isChatReferenceKind = (
+  segment: string | undefined,
+): segment is ChatReferenceKind =>
+  isDefined(segment) && CHAT_REFERENCE_KINDS.includes(segment);
 
 const getChatReferenceIdentity = ({
   kind,
-  segments: [firstSegment, secondSegment],
+  segments: [firstSegment = '', secondSegment = ''],
 }: {
   kind: ChatReferenceKind;
   segments: string[];
@@ -59,7 +66,7 @@ const parseSegments = ({
 
   if (
     !hasLabel ||
-    !shape.every((regex, index) => regex.test(identitySegments[index]))
+    !shape.every((regex, index) => regex.test(identitySegments[index] ?? ''))
   ) {
     return undefined;
   }

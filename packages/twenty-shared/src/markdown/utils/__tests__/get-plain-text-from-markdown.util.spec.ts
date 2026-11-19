@@ -1,4 +1,4 @@
-import { getPlainTextFromMarkdown } from '~/utils/string/getPlainTextFromMarkdown';
+import { getPlainTextFromMarkdown } from '@/markdown/utils/get-plain-text-from-markdown.util';
 
 describe('getPlainTextFromMarkdown', () => {
   it('removes markdown syntax', () => {

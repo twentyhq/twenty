@@ -1,8 +1,6 @@
-import { parseChatReferences } from '@/ai-chat/message-content/utils/parseChatReferences';
-import {
-  AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
-  formatRecordReference,
-} from 'twenty-shared/ai';
+import { parseChatReferences } from '@/ai/utils/parse-chat-references.util';
+import { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from '@/ai/constants/agent-chat-assistant-mention-object-name-singular.const';
+import { formatRecordReference } from '@/ai/utils/format-record-reference.util';
 
 describe('parseChatReferences', () => {
   it('should leave plain text without matches', () => {

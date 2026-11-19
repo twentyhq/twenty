@@ -3,13 +3,13 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   AgentChatThreadConversationType,
+  getAgentChatPreviewPlainText,
   getAgentChatWebPushNotificationTag,
 } from 'twenty-shared/ai';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { type WebPushNotification } from 'src/engine/core-modules/web-push/types/web-push-notification.type';
-import { getAgentChatPreviewPlainText } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-preview-plain-text.util';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -19,6 +19,7 @@ export const buildAgentChatWebPushNotification = ({
   recipientWorkspaceMemberId,
   workspaceMemberById,
   isPreviewEnabled,
+  assistantDisplayName,
 }: {
   i18n: I18n;
   thread: Pick<
@@ -36,6 +37,7 @@ export const buildAgentChatWebPushNotification = ({
     Record<string, Pick<WorkspaceMemberWorkspaceEntity, 'name' | 'userEmail'>>
   >;
   isPreviewEnabled: boolean;
+  assistantDisplayName: string;
 }): Omit<WebPushNotification, 'renotify'> => {
   const url = getAppPath(AppPath.AiChatInbox, { threadId: thread.id });
   const tag = getAgentChatWebPushNotificationTag(thread.id);
@@ -80,9 +82,10 @@ export const buildAgentChatWebPushNotification = ({
   const senderName = isDefined(senderWorkspaceMemberId)
     ? getWorkspaceMemberName(senderWorkspaceMemberId)
     : null;
-  const previewText = getAgentChatPreviewPlainText(
-    thread.lastMessageText ?? '',
-  );
+  const previewText = getAgentChatPreviewPlainText({
+    markdown: thread.lastMessageText ?? '',
+    assistantDisplayName,
+  });
 
   return {
     title:

@@ -1,6 +1,6 @@
-import { type ChatReferenceMatch } from '@/ai-chat/message-content/types/ChatReferenceMatch';
-import { parseChatReferences } from '@/ai-chat/message-content/utils/parseChatReferences';
-import { replaceMalformedChatReferencesWithDisplayName } from '@/ai-chat/message-content/utils/replaceMalformedChatReferencesWithDisplayName';
+import { type ChatReferenceMatch } from '@/ai/types/ChatReferenceMatch';
+import { parseChatReferences } from '@/ai/utils/parse-chat-references.util';
+import { replaceMalformedChatReferencesWithDisplayName } from '@/ai/utils/replace-malformed-chat-references-with-display-name.util';
 
 export const getChatReferenceSegments = (
   text: string,
