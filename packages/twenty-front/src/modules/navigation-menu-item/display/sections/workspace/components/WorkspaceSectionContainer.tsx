@@ -129,6 +129,10 @@ export const WorkspaceSectionContainer = ({
   );
 
   if (!isDefined(sectionTitle)) {
+    if (workspaceOrphanItemsForSection.length === 0) {
+      return null;
+    }
+
     return <NavigationDrawerSection>{list}</NavigationDrawerSection>;
   }
 
