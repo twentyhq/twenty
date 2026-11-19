@@ -16,6 +16,7 @@ import { type GranolaStoredFolderSelection } from 'src/front-components/types/gr
 import { computeGranolaFolderSelection } from 'src/front-components/utils/compute-granola-folder-selection.util';
 import { dropInaccessibleGranolaFolders } from 'src/front-components/utils/drop-inaccessible-granola-folders.util';
 import { fetchGranolaFoldersOrThrow } from 'src/front-components/utils/fetch-granola-folders-or-throw.util';
+import { saveGranolaFolderSelectionOrThrow } from 'src/front-components/utils/save-granola-folder-selection-or-throw.util';
 
 const getSelectionHint = (selectedFolderCount: number) => {
   if (selectedFolderCount === 0) {
@@ -97,6 +98,7 @@ export const GranolaFolderPicker = ({
   };
 
   const { save } = useAutosaveGranolaFolderSelection({
+    saveFolderSelection: saveGranolaFolderSelectionOrThrow,
     onSaveSuccess: (folderIds) =>
       setSelection((current) => ({
         ...current,

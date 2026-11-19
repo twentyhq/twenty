@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import { type NavigationMenuItemType } from 'twenty-shared/types';
 
 import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';

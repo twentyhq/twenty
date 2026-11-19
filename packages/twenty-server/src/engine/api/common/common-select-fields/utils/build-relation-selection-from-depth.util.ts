@@ -53,12 +53,12 @@ export const buildRelationSelectionFromDepth = ({
   onlyUseLabelIdentifierFieldsInRelations?: boolean;
   currentDepthLevelIsAJunctionTable?: boolean;
   recurseIntoJunctionTableRelations?: boolean;
-}): CommonSelectedFields => {
+}): CommonSelectedFields['relations'] => {
   if (!isDefined(depth) || depth === 0) {
     return {};
   }
 
-  const relationsSelectFields: CommonSelectedFields = {};
+  const relationsSelectFields: CommonSelectedFields['relations'] = {};
 
   for (const flatField of flatFields) {
     if (
@@ -128,26 +128,26 @@ export const buildRelationSelectionFromDepth = ({
 
     const nextLevelIsAJunctionTable = flatFieldIsJoinColumn;
 
-    if (shouldRecurseIntoRelation) {
-      const nestedRelationFieldSelectFields = buildRelationSelectionFromDepth({
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        flatFields: relationFlatFields,
-        unreadableFieldMetadataIds,
-        readableObjectMetadataIds,
-        depth: 1,
-        onlyUseLabelIdentifierFieldsInRelations,
-        currentDepthLevelIsAJunctionTable: nextLevelIsAJunctionTable,
-        recurseIntoJunctionTableRelations,
-      });
+    const nestedRelations = buildRelationSelectionFromDepth({
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatFields: relationFlatFields,
+      unreadableFieldMetadataIds,
+      readableObjectMetadataIds,
+      depth: shouldRecurseIntoRelation ? 1 : 0,
+      onlyUseLabelIdentifierFieldsInRelations,
+      currentDepthLevelIsAJunctionTable: nextLevelIsAJunctionTable,
+      recurseIntoJunctionTableRelations,
+    });
 
-      relationsSelectFields[flatField.name] = {
-        ...relationFieldSelectFields,
-        ...nestedRelationFieldSelectFields,
-      };
-    } else {
-      relationsSelectFields[flatField.name] = relationFieldSelectFields;
-    }
+    relationsSelectFields[flatField.name] = {
+      fieldName: flatField.name,
+      selectedFields: {
+        fields: relationFieldSelectFields,
+        aggregates: [],
+        relations: nestedRelations,
+      },
+    };
   }
 
   return relationsSelectFields;

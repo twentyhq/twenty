@@ -2789,6 +2789,9 @@ export default {
             ]
         },
         "CalendarChannel": {
+            "connectedAccount": [
+                175
+            ],
             "connectedAccountId": [
                 565
             ],

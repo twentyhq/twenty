@@ -1,14 +1,15 @@
 import { useState } from 'react';
 
 import { createSaveQueue } from 'src/front-components/utils/create-save-queue.util';
-import { saveGranolaFolderSelectionOrThrow } from 'src/front-components/utils/save-granola-folder-selection-or-throw.util';
 
 type UseAutosaveGranolaFolderSelectionParams = {
+  saveFolderSelection: (folderIds: string[]) => Promise<string[]>;
   onSaveSuccess: (folderIds: string[]) => void;
   onSaveError: () => void;
 };
 
 export const useAutosaveGranolaFolderSelection = ({
+  saveFolderSelection,
   onSaveSuccess,
   onSaveError,
 }: UseAutosaveGranolaFolderSelectionParams) => {
@@ -16,8 +17,7 @@ export const useAutosaveGranolaFolderSelection = ({
     createSaveQueue<string[]>({
       saveValue: async (folderIds, isSupersededValue) => {
         try {
-          const savedFolderIds =
-            await saveGranolaFolderSelectionOrThrow(folderIds);
+          const savedFolderIds = await saveFolderSelection(folderIds);
 
           if (!isSupersededValue()) {
             onSaveSuccess(savedFolderIds);
