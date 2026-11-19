@@ -1,6 +1,6 @@
-import { CAPTCHA_TOKEN_MAX_AGE_IN_MS } from '@/captcha/constants/CaptchaTokenMaxAgeInMs';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { captchaTokenState } from '@/captcha/states/captchaTokenState';
+import { isCaptchaTokenFresh } from '@/captcha/utils/isCaptchaTokenFresh';
 import { captchaState } from '@/client-config/states/captchaState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -17,8 +17,11 @@ export const useGetCaptchaToken = () => {
     const isPrewarmedCaptchaTokenUsable =
       isDefined(prewarmedCaptchaToken) &&
       isDefined(provider) &&
-      Date.now() - prewarmedCaptchaToken.issuedAt <
-        CAPTCHA_TOKEN_MAX_AGE_IN_MS[provider];
+      isCaptchaTokenFresh({
+        captchaToken: prewarmedCaptchaToken,
+        provider,
+        now: Date.now(),
+      });
 
     const captchaToken = isPrewarmedCaptchaTokenUsable
       ? prewarmedCaptchaToken
