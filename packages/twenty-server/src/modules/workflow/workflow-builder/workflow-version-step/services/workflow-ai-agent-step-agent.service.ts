@@ -21,12 +21,14 @@ export class WorkflowAiAgentStepAgentService {
   async findAgentRunnableByNewStepOrThrow({
     agentId,
     workspaceId,
+    userWorkspaceId,
   }: {
     agentId: string;
     workspaceId: string;
+    userWorkspaceId: string | undefined;
   }): Promise<FlatAgentWithRoleId> {
     const agent = await this.agentService
-      .findOneAgentById({ id: agentId, workspaceId })
+      .findOneAgentById({ id: agentId, workspaceId, userWorkspaceId })
       .catch((error) => {
         if (
           error instanceof AiException &&
