@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { type MouseEvent, useId, useState } from 'react';
+import { type MouseEvent, useId } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,6 +16,7 @@ import { useAiChatThreadSubtitleContent } from '@/ai-chat/threads/hooks/useAiCha
 import { useAiChatThreadDisplayLabel } from '@/ai-chat/threads/hooks/useAiChatThreadDisplayLabel';
 import { useAiChatThreadRename } from '@/ai-chat/threads/hooks/useAiChatThreadRename';
 import { useInboxThreadTriage } from '@/inbox/hooks/useInboxThreadTriage';
+import { useIsInboxThreadIconPickerOpen } from '@/inbox/hooks/useIsInboxThreadIconPickerOpen';
 import { aiChatIsStreamingFamilyState } from '@/ai-chat/states/aiChatIsStreamingFamilyState';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { type AiChatThreadRowVariant } from '@/ai-chat/threads/types/AiChatThreadRowVariant';
@@ -83,7 +84,7 @@ export const InboxThreadListItem = ({
     itemMenuDropdownId,
   );
   const iconPickerDropdownId = `inbox-thread-icon-picker-${actionsInstanceId}`;
-  const [isIconPickerOpen, setIsIconPickerOpen] = useState(false);
+  const isIconPickerOpen = useIsInboxThreadIconPickerOpen(iconPickerDropdownId);
   const { status: triageStatus } = useInboxThreadTriage({
     threadId: thread.id,
   });
@@ -176,7 +177,6 @@ export const InboxThreadListItem = ({
           thread={thread}
           instanceId={actionsInstanceId}
           iconPickerDropdownId={iconPickerDropdownId}
-          onIconPickerOpenChange={setIsIconPickerOpen}
           onRenameRequested={startRename}
           onDetach={onDetach}
           shouldShowTriageActions={!isCompact}

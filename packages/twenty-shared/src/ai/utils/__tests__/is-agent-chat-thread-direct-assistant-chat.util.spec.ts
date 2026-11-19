@@ -1,6 +1,6 @@
-import { AgentChatThreadConversationType } from 'twenty-shared/ai';
+import { AgentChatThreadConversationType } from '@/ai/types/AgentChatThreadConversationType';
 
-import { isAgentChatThreadDirectAssistantChat } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-thread-direct-assistant-chat.util';
+import { isAgentChatThreadDirectAssistantChat } from '@/ai/utils/is-agent-chat-thread-direct-assistant-chat.util';
 
 const OWNER_ID = '20202020-0687-4c41-b707-ed1bfca972a7';
 const OTHER_MEMBER_ID = '20202020-77d5-4cb6-b60a-f4a835a85d61';

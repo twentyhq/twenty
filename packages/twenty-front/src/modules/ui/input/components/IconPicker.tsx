@@ -15,14 +15,9 @@ import {
   SegmentedControl,
 } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import {
-  IconApps,
-  type IconComponent,
-  IconTrash,
-  IconUpload,
-} from 'twenty-ui/icon';
+import { IconApps, type IconComponent } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
-import { Avatar, ColorSample } from 'twenty-ui/primitives/data-display';
+import { ColorSample } from 'twenty-ui/primitives/data-display';
 import {
   type ButtonSize,
   type ButtonVariant,
@@ -30,6 +25,7 @@ import {
 import { type ThemeColor, themeCssVariables } from 'twenty-ui/theme';
 
 import { type IconPickerImageUpload } from '@/ui/input/types/IconPickerImageUpload';
+import { IconPickerImagePanel } from '@/ui/input/components/IconPickerImagePanel';
 import { ThemeColorPickerMenu } from '@/ui/input/components/ThemeColorPickerMenu';
 import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
 import { ICON_PICKER_DEFAULT_VISIBLE_COUNT } from '@/ui/input/components/constants/IconPickerDefaultVisibleCount';
@@ -90,12 +86,6 @@ const StyledPopupContent = styled.div`
 
 const StyledSwitcherRow = styled.div`
   padding: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledImagePreview = styled.div`
-  display: flex;
-  justify-content: center;
-  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFileInput = styled.input`
@@ -349,39 +339,11 @@ export const IconPicker = ({
                 {activeTab === 'icon' ? (
                   iconPanel
                 ) : (
-                  <>
-                    {isNonEmptyString(imageUrl) && (
-                      <>
-                        <StyledImagePreview>
-                          <Avatar
-                            src={imageUrl}
-                            imageProps={{ alt: t`Current image` }}
-                            size="xxl"
-                            shape="circle"
-                          />
-                        </StyledImagePreview>
-                        <Dropdown.Separator />
-                      </>
-                    )}
-                    <Dropdown.Section>
-                      <Dropdown.ActionItem
-                        startIcon={<IconUpload />}
-                        onClick={handleUploadClick}
-                      >
-                        {isNonEmptyString(imageUrl)
-                          ? t`Replace image`
-                          : t`Upload image`}
-                      </Dropdown.ActionItem>
-                      {isNonEmptyString(imageUrl) && (
-                        <Dropdown.ActionItem
-                          startIcon={<IconTrash />}
-                          onClick={imageUpload.onRemove}
-                        >
-                          {t`Remove image`}
-                        </Dropdown.ActionItem>
-                      )}
-                    </Dropdown.Section>
-                  </>
+                  <IconPickerImagePanel
+                    imageUrl={imageUrl}
+                    onUploadClick={handleUploadClick}
+                    onRemove={imageUpload.onRemove}
+                  />
                 )}
               </>
             ) : (

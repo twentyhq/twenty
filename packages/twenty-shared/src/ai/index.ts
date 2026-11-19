@@ -9,6 +9,7 @@
 
 export { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from './constants/agent-chat-assistant-mention-object-name-singular.const';
 export { AGENT_CHAT_ASSISTANT_NAME } from './constants/agent-chat-assistant-name.const';
+export { AGENT_CHAT_THREAD_DEFAULT_ICON_NAME } from './constants/agent-chat-thread-default-icon-name.const';
 export type { AgentChatThreadPresetFilter } from './constants/agent-chat-thread-preset-filter.const';
 export { AGENT_CHAT_THREAD_PRESET_FILTER } from './constants/agent-chat-thread-preset-filter.const';
 export { AGENT_MESSAGE_REACTION_EMOJI_MAX_LENGTH } from './constants/agent-message-reaction-emoji-max-length.const';
@@ -146,6 +147,7 @@ export { hasAiRunScopeRepeatedEntries } from './utils/has-ai-run-scope-repeated-
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
 export { isAgentChatAssistantReference } from './utils/is-agent-chat-assistant-reference.util';
 export { isAgentChatMentionUnresolved } from './utils/is-agent-chat-mention-unresolved.util';
+export { isAgentChatThreadDirectAssistantChat } from './utils/is-agent-chat-thread-direct-assistant-chat.util';
 export { isAgentChatThreadInPresetFilter } from './utils/is-agent-chat-thread-in-preset-filter.util';
 export { isAgentChatTurnEndEvent } from './utils/is-agent-chat-turn-end-event.util';
 export { isAiContentRecordingAllowed } from './utils/is-ai-content-recording-allowed.util';

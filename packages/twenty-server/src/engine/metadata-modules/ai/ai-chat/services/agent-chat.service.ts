@@ -7,8 +7,10 @@ import { Injectable } from '@nestjs/common';
 import { type ActorMetadata } from 'twenty-shared/types';
 
 import {
+  AGENT_CHAT_THREAD_DEFAULT_ICON_NAME,
   AgentChatThreadConversationType,
   ExtendedUIMessage,
+  isAgentChatThreadDirectAssistantChat,
 } from 'twenty-shared/ai';
 import {
   isDefined,
@@ -31,8 +33,6 @@ import { resolveMessageSenderApplicationId } from 'src/engine/metadata-modules/a
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AGENT_CHAT_THREAD_ICON_COLORS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-icon-colors.constant';
-import { AGENT_CHAT_THREAD_DEFAULT_ICON_NAME } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-icon-names.constant';
-import { isAgentChatThreadDirectAssistantChat } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-thread-direct-assistant-chat.util';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
 import { isAgentTurnOpenedByOtherMember } from 'src/engine/metadata-modules/ai/ai-history/utils/is-agent-turn-opened-by-other-member.util';
@@ -417,7 +417,7 @@ export class AgentChatService {
     }
 
     const shouldPickIcon = isAgentChatThreadDirectAssistantChat(thread);
-    const { title, icon } =
+    const { title, icon, iconColor } =
       await this.titleGenerationService.generateThreadTitle({
         messageContent,
         workspaceId,
@@ -433,6 +433,7 @@ export class AgentChatService {
             title,
             icon: icon ?? AGENT_CHAT_THREAD_DEFAULT_ICON_NAME,
             iconColor:
+              iconColor ??
               AGENT_CHAT_THREAD_ICON_COLORS[
                 Math.floor(Math.random() * AGENT_CHAT_THREAD_ICON_COLORS.length)
               ],

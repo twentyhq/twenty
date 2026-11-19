@@ -1,4 +1,4 @@
-export const AGENT_CHAT_THREAD_DEFAULT_ICON_NAME = 'IconMessageCircle';
+import { AGENT_CHAT_THREAD_DEFAULT_ICON_NAME } from 'twenty-shared/ai';
 
 export const AGENT_CHAT_THREAD_ICON_NAMES = [
   AGENT_CHAT_THREAD_DEFAULT_ICON_NAME,

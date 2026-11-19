@@ -59,7 +59,6 @@ type InboxThreadActionsDropdownProps = {
   };
   instanceId: string;
   iconPickerDropdownId?: string;
-  onIconPickerOpenChange?: (isOpen: boolean) => void;
   onRenameRequested?: () => void;
   onDetach?: () => void;
   shouldShowTriageActions?: boolean;
@@ -70,7 +69,6 @@ export const InboxThreadActionsDropdown = ({
   thread,
   instanceId,
   iconPickerDropdownId,
-  onIconPickerOpenChange,
   onRenameRequested,
   onDetach,
   shouldShowTriageActions = false,
@@ -213,8 +211,6 @@ export const InboxThreadActionsDropdown = ({
           <StyledIconPicker
             dropdownId={iconPickerDropdownId}
             selectedIconKey={thread.icon ?? undefined}
-            onOpen={() => onIconPickerOpenChange?.(true)}
-            onClose={() => onIconPickerOpenChange?.(false)}
             onChange={({ iconKey }) => void setIcon(iconKey)}
             iconColorPicker={{
               selectedColor: parseThemeColor(thread.iconColor),

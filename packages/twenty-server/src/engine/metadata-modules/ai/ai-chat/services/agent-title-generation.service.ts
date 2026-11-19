@@ -4,6 +4,7 @@ import { type LanguageModelUsage, Output, generateText } from 'ai';
 import { z } from 'zod';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { AGENT_CHAT_THREAD_ICON_COLORS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-icon-colors.constant';
 import { AGENT_CHAT_THREAD_ICON_NAMES } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-icon-names.constant';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
@@ -14,11 +15,13 @@ import { buildReasoningProviderOptions } from 'src/engine/metadata-modules/ai/ai
 const TITLE_AND_ICON_SCHEMA = z.object({
   title: z.string(),
   icon: z.enum(AGENT_CHAT_THREAD_ICON_NAMES),
+  iconColor: z.enum(AGENT_CHAT_THREAD_ICON_COLORS),
 });
 
 type GeneratedThreadTitle = {
   title: string;
-  icon: (typeof AGENT_CHAT_THREAD_ICON_NAMES)[number] | null;
+  icon: z.infer<typeof TITLE_AND_ICON_SCHEMA>['icon'] | null;
+  iconColor: z.infer<typeof TITLE_AND_ICON_SCHEMA>['iconColor'] | null;
 };
 
 @Injectable()
@@ -66,7 +69,11 @@ export class AgentTitleGenerationService {
     if (!defaultModel) {
       this.logger.warn('No default AI model available for title generation');
 
-      return { title: this.generateFallbackTitle(messageContent), icon: null };
+      return {
+        title: this.generateFallbackTitle(messageContent),
+        icon: null,
+        iconColor: null,
+      };
     }
 
     let usage: LanguageModelUsage | undefined;
@@ -88,7 +95,7 @@ export class AgentTitleGenerationService {
         const result = await generateText({
           ...generationArgs,
           output: Output.object({ schema: TITLE_AND_ICON_SCHEMA }),
-          prompt: `${titleInstruction} Also pick the icon that best represents the topic. Message: "${messageContent}"`,
+          prompt: `${titleInstruction} Also pick the icon that best represents the topic, and the colour that best fits it. Message: "${messageContent}"`,
         });
 
         usage = result.usage;
@@ -96,6 +103,7 @@ export class AgentTitleGenerationService {
         return {
           title: this.cleanTitle(result.output.title),
           icon: result.output.icon,
+          iconColor: result.output.iconColor,
         };
       }
 
@@ -106,11 +114,19 @@ export class AgentTitleGenerationService {
 
       usage = result.usage;
 
-      return { title: this.cleanTitle(result.text), icon: null };
+      return {
+        title: this.cleanTitle(result.text),
+        icon: null,
+        iconColor: null,
+      };
     } catch (error) {
       this.logger.error('Failed to generate title with AI:', error);
 
-      return { title: this.generateFallbackTitle(messageContent), icon: null };
+      return {
+        title: this.generateFallbackTitle(messageContent),
+        icon: null,
+        iconColor: null,
+      };
     } finally {
       if (usage) {
         void this.aiBillingService.calculateAndBillUsage({

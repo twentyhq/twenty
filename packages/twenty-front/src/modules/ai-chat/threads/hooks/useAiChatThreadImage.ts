@@ -1,10 +1,11 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { AGENT_CHAT_THREAD_DEFAULT_ICON_NAME } from 'twenty-shared/ai';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { type ThemeColor } from 'twenty-ui/theme';
 
 import { AI_CHAT_THREAD_DEFAULT_ICON_COLOR } from '@/ai-chat/threads/constants/AiChatThreadDefaultIconColor';
-import { AI_CHAT_THREAD_DEFAULT_ICON_NAME } from '@/ai-chat/threads/constants/AiChatThreadDefaultIconName';
 import { useApplyAiChatThreadUpdate } from '@/ai-chat/threads/hooks/useApplyAiChatThreadUpdate';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -57,13 +58,17 @@ export const useAiChatThreadImage = (
   const setIcon = (icon: string) =>
     updateThreadImage({
       icon,
-      iconColor: thread.iconColor ?? AI_CHAT_THREAD_DEFAULT_ICON_COLOR,
+      iconColor: isNonEmptyString(thread.iconColor)
+        ? thread.iconColor
+        : AI_CHAT_THREAD_DEFAULT_ICON_COLOR,
       imageFile: null,
     });
 
   const setIconColor = (iconColor: ThemeColor) =>
     updateThreadImage({
-      icon: thread.icon ?? AI_CHAT_THREAD_DEFAULT_ICON_NAME,
+      icon: isNonEmptyString(thread.icon)
+        ? thread.icon
+        : AGENT_CHAT_THREAD_DEFAULT_ICON_NAME,
       iconColor,
       imageFile: null,
     });
@@ -82,7 +87,6 @@ export const useAiChatThreadImage = (
       await updateThreadImage({
         imageFile: [{ fileId: uploadedFile.id, label: file.name }],
       });
-      // the signed url only comes back from a read
       await findOneRecord({
         objectRecordId: thread.id,
         onCompleted: ({ id, imageFile }) =>
