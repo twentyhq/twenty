@@ -61,10 +61,7 @@ export class WorkflowRunWorkspaceService {
     trigger: WorkflowTrigger;
     steps: WorkflowAction[];
     createdBy: ActorMetadata;
-    status:
-      | WorkflowRunStatus.NOT_STARTED
-      | WorkflowRunStatus.ENQUEUED
-      | WorkflowRunStatus.FAILED;
+    status: WorkflowRunStatus.ENQUEUED | WorkflowRunStatus.FAILED;
     triggerPayload: object;
     workflowRunId?: string;
     error?: string;
@@ -123,12 +120,9 @@ export class WorkflowRunWorkspaceService {
       workspaceId,
     });
 
-    if (
-      workflowRunToUpdate.status !== WorkflowRunStatus.ENQUEUED &&
-      workflowRunToUpdate.status !== WorkflowRunStatus.NOT_STARTED
-    ) {
+    if (workflowRunToUpdate.status !== WorkflowRunStatus.ENQUEUED) {
       throw new WorkflowRunException(
-        'Workflow run is not enqueued or not started',
+        'Workflow run is not enqueued',
         WorkflowRunExceptionCode.INVALID_OPERATION,
       );
     }
