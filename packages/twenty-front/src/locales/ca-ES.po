@@ -23960,7 +23960,7 @@ msgstr "Llegeix les indicacions del sistema"
 #. js-lingui-id: /nZe2L
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Read the address, owner and account status of members' private channels"
-msgstr ""
+msgstr "Llegiu l'adreça, el propietari i l'estat del compte dels canals privats dels membres"
 
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
