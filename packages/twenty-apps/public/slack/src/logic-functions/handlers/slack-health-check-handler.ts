@@ -16,7 +16,6 @@ export const slackHealthCheckHandler =
     });
 
     if (!slackClientResult.success) {
-      // A failed lookup is not proof that the connection is missing.
       if (!slackClientResult.isConnectionMissing) {
         return { status: 'OK' };
       }

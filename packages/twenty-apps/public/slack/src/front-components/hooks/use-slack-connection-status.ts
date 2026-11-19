@@ -7,18 +7,32 @@ import {
   DISCONNECTED_SLACK_CONNECTION_STATUS,
   parseSlackConnectionStatus,
 } from 'src/front-components/utils/parse-slack-connection-status.util';
-import { asRecord } from 'src/logic-functions/utils/as-record.util';
 
 type SlackConnectionStatusState = ParsedSlackConnectionStatus & {
   isConnectionStatusLoading: boolean;
-  hasConnectionStatusFailed: boolean;
 };
 
 const LOADING_STATE: SlackConnectionStatusState = {
   ...DISCONNECTED_SLACK_CONNECTION_STATUS,
   isConnectionStatusLoading: true,
-  hasConnectionStatusFailed: false,
 };
+
+const fetchSlackConnectionStatus =
+  async (): Promise<ParsedSlackConnectionStatus> => {
+    try {
+      const result = await new RestApiClient().post(
+        `/s${SLACK_USER_LINKS_CONNECTION_STATUS_ROUTE_PATH}`,
+        {},
+      );
+
+      return parseSlackConnectionStatus(result);
+    } catch {
+      return {
+        ...DISCONNECTED_SLACK_CONNECTION_STATUS,
+        hasConnectionStatusFailed: true,
+      };
+    }
+  };
 
 export const useSlackConnectionStatus = (): SlackConnectionStatusState => {
   const [state, setState] = useState<SlackConnectionStatusState>(LOADING_STATE);
@@ -27,28 +41,10 @@ export const useSlackConnectionStatus = (): SlackConnectionStatusState => {
     let cancelled = false;
 
     const fetchConnectionStatus = async () => {
-      let connectionStatus: ParsedSlackConnectionStatus;
-      let hasConnectionStatusFailed = false;
-
-      try {
-        const result = await new RestApiClient().post(
-          `/s${SLACK_USER_LINKS_CONNECTION_STATUS_ROUTE_PATH}`,
-          {},
-        );
-
-        connectionStatus = parseSlackConnectionStatus(result);
-        hasConnectionStatusFailed = asRecord(result)?.success === false;
-      } catch {
-        connectionStatus = DISCONNECTED_SLACK_CONNECTION_STATUS;
-        hasConnectionStatusFailed = true;
-      }
+      const connectionStatus = await fetchSlackConnectionStatus();
 
       if (!cancelled) {
-        setState({
-          ...connectionStatus,
-          isConnectionStatusLoading: false,
-          hasConnectionStatusFailed,
-        });
+        setState({ ...connectionStatus, isConnectionStatusLoading: false });
       }
     };
 
