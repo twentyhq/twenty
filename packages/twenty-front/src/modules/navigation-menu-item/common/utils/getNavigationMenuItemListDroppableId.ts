@@ -10,10 +10,8 @@ export const getNavigationMenuItemListDroppableId = ({
   parentId: string | null | undefined;
   navigationMenuItemSection: NavigationMenuItemSection;
 }): string => {
-  const { orphanDroppableId, tabOrSectionListPrefix } =
+  const { orphanDroppableId, listPrefix } =
     NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG[navigationMenuItemSection];
 
-  return isDefined(parentId) && isDefined(tabOrSectionListPrefix)
-    ? `${tabOrSectionListPrefix}${parentId}`
-    : orphanDroppableId;
+  return isDefined(parentId) ? `${listPrefix}${parentId}` : orphanDroppableId;
 };

@@ -38,10 +38,11 @@ export const getDestinationFromSortableTarget = (
   const { folderHeaderPrefix } =
     NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG[navigationMenuItemSection];
 
-  const destinationKind = resolveNavigationMenuItemDroppableId(
-    destDroppableId,
+  const destinationKind = resolveNavigationMenuItemDroppableId({
+    droppableId: destDroppableId,
     navigationMenuItemSection,
-  )?.kind;
+    getNavigationMenuItemById: getNavItemById,
+  })?.kind;
   const isRootOrTabOrSectionList =
     destinationKind === 'root' || destinationKind === 'tabOrSectionList';
 

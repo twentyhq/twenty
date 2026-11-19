@@ -1,46 +1,66 @@
+import { NavigationMenuItemType } from 'twenty-shared/types';
+
 import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import { resolveNavigationMenuItemDroppableId } from '@/navigation-menu-item/common/utils/resolveNavigationMenuItemDroppableId';
+
+const ITEMS_BY_ID: Record<string, { type: NavigationMenuItemType }> = {
+  'section-1': { type: NavigationMenuItemType.SECTION },
+  'tab-1': { type: NavigationMenuItemType.TAB },
+  'folder-1': { type: NavigationMenuItemType.FOLDER },
+};
+
+const resolve = (droppableId: string) =>
+  resolveNavigationMenuItemDroppableId({
+    droppableId,
+    navigationMenuItemSection: 'workspace',
+    getNavigationMenuItemById: (id) => ITEMS_BY_ID[id],
+  });
 
 describe('resolveNavigationMenuItemDroppableId', () => {
   it('should resolve the top-level list to the root', () => {
     expect(
-      resolveNavigationMenuItemDroppableId(
+      resolve(
         NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS,
-        'workspace',
       ),
     ).toEqual({ kind: 'root', parentId: null });
   });
 
-  it('should resolve a tab or section list to its parent', () => {
+  it('should resolve a tab or section list from its parent type', () => {
     expect(
-      resolveNavigationMenuItemDroppableId(
-        `${NavigationMenuItemDroppableIds.WORKSPACE_TAB_OR_SECTION_LIST_PREFIX}section-1`,
-        'workspace',
+      resolve(
+        `${NavigationMenuItemDroppableIds.WORKSPACE_LIST_PREFIX}section-1`,
       ),
     ).toEqual({ kind: 'tabOrSectionList', parentId: 'section-1' });
+    expect(
+      resolve(`${NavigationMenuItemDroppableIds.WORKSPACE_LIST_PREFIX}tab-1`),
+    ).toEqual({ kind: 'tabOrSectionList', parentId: 'tab-1' });
   });
 
-  it('should tell a folder header apart from folder content', () => {
+  it('should resolve a folder list from its parent type', () => {
     expect(
-      resolveNavigationMenuItemDroppableId(
-        `${NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_HEADER_PREFIX}folder-1`,
-        'workspace',
-      ),
-    ).toEqual({ kind: 'folderHeader', parentId: 'folder-1' });
-    expect(
-      resolveNavigationMenuItemDroppableId(
-        `${NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_PREFIX}folder-1`,
-        'workspace',
+      resolve(
+        `${NavigationMenuItemDroppableIds.WORKSPACE_LIST_PREFIX}folder-1`,
       ),
     ).toEqual({ kind: 'folder', parentId: 'folder-1' });
   });
 
-  it('should not resolve tab or section lists in favorites', () => {
+  it('should treat a list with an unknown parent as a folder', () => {
     expect(
-      resolveNavigationMenuItemDroppableId(
-        `${NavigationMenuItemDroppableIds.WORKSPACE_TAB_OR_SECTION_LIST_PREFIX}section-1`,
-        'favorite',
+      resolve(`${NavigationMenuItemDroppableIds.WORKSPACE_LIST_PREFIX}missing`),
+    ).toEqual({ kind: 'folder', parentId: 'missing' });
+  });
+
+  it('should resolve a folder header', () => {
+    expect(
+      resolve(
+        `${NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_HEADER_PREFIX}folder-1`,
       ),
+    ).toEqual({ kind: 'folderHeader', parentId: 'folder-1' });
+  });
+
+  it('should not resolve an id from another section', () => {
+    expect(
+      resolve(`${NavigationMenuItemDroppableIds.FAVORITE_LIST_PREFIX}folder-1`),
     ).toBeNull();
   });
 });

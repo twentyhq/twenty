@@ -97,17 +97,18 @@ export const useNavigationMenuItemDndKit = (
         return resolved.effectiveDropTargetId;
       }
 
-      const destinationKind = resolveNavigationMenuItemDroppableId(
-        resolved.destination.droppableId,
-        sectionType,
-      )?.kind;
+      const destinationKind = resolveNavigationMenuItemDroppableId({
+        droppableId: resolved.destination.droppableId,
+        navigationMenuItemSection: sectionType,
+        getNavigationMenuItemById: getNavItemById,
+      })?.kind;
       if (destinationKind === 'folder' || destinationKind === 'folderHeader') {
         return resolved.dropTargetId;
       }
 
       return null;
     },
-    [sectionType, isSourceFolderDrag],
+    [sectionType, isSourceFolderDrag, getNavItemById],
   );
 
   const applyWorkspaceReorder = useCallback(

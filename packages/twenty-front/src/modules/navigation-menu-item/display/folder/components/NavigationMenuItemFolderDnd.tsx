@@ -171,7 +171,10 @@ export const NavigationMenuItemFolderDnd = ({
 
   const config = NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG[section];
   const folderHeaderDroppableId = `${config.folderHeaderPrefix}${folderId}`;
-  const folderContentDroppableId = `${config.folderPrefix}${folderId}`;
+  const folderContentDroppableId = getNavigationMenuItemListDroppableId({
+    parentId: folderId,
+    navigationMenuItemSection: section,
+  });
   const folderHeaderSlotId = getDndKitDropTargetId(folderHeaderDroppableId, 0);
 
   const isForbiddenDropTarget =

@@ -143,14 +143,20 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       return;
     }
 
-    const destinationTarget = resolveNavigationMenuItemDroppableId(
-      destination.droppableId,
-      section,
-    );
+    const getNavigationMenuItemById = (id: string) =>
+      allItems.find((item) => item.id === id);
+    const destinationTarget = resolveNavigationMenuItemDroppableId({
+      droppableId: destination.droppableId,
+      navigationMenuItemSection: section,
+      getNavigationMenuItemById,
+    });
     const destinationParentId = destinationTarget?.parentId ?? null;
     const sourceParentId =
-      resolveNavigationMenuItemDroppableId(source.droppableId, section)
-        ?.parentId ?? null;
+      resolveNavigationMenuItemDroppableId({
+        droppableId: source.droppableId,
+        navigationMenuItemSection: section,
+        getNavigationMenuItemById,
+      })?.parentId ?? null;
 
     const isDestinationFolder =
       destinationTarget?.kind === 'folder' ||
