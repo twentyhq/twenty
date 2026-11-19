@@ -105,6 +105,7 @@ export const useNavigationMenuItemEditController = (
       builtInSectionKey: input.builtInSectionKey ?? undefined,
       color: input.color ?? undefined,
       applicationId: undefined,
+      isActive: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

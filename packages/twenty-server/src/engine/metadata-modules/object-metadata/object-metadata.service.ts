@@ -708,6 +708,8 @@ export class ObjectMetadataService {
       applicationId: workspaceCustomApplicationId,
       applicationUniversalIdentifier:
         workspaceCustomApplicationUniversalIdentifier,
+      isActive: true,
+      overrides: null,
       createdAt: now,
       updatedAt: now,
     };

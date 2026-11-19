@@ -137,6 +137,8 @@ const NAVIGATION_MENU_ITEM: FlatNavigationMenuItem = {
   agentId: null,
   agentUniversalIdentifier: null,
   position: 0,
+  isActive: true,
+  overrides: null,
 };
 
 const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =

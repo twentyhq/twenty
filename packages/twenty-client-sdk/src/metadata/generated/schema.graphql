@@ -3872,6 +3872,7 @@ type NavigationMenuItem {
   folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
   id: UUID!
+  isActive: Boolean!
   link: String
   name: String
   nativePageKey: String
@@ -5606,6 +5607,7 @@ input UpdateNavigationMenuItemInput {
   color: String
   folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
+  isActive: Boolean
   link: String
   name: String
   pageLayoutId: UUID

@@ -47,6 +47,7 @@ const buildObjectNavigationMenuItem = (
     getMockObjectMetadataItemOrThrow(objectNameSingular).id,
   position,
   parentId,
+  isActive: true,
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
 });
@@ -60,6 +61,7 @@ const buildFolderNavigationMenuItem = (
   type: NavigationMenuItemType.FOLDER,
   name: 'Folder',
   position,
+  isActive: true,
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
 });
@@ -73,6 +75,7 @@ const buildPageLayoutNavigationMenuItem = (
   type: NavigationMenuItemType.PAGE_LAYOUT,
   pageLayoutId,
   position,
+  isActive: true,
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
 });
@@ -83,6 +86,7 @@ const buildLinkNavigationMenuItem = (position: number): NavigationMenuItem => ({
   type: NavigationMenuItemType.LINK,
   link: 'https://example.com',
   position,
+  isActive: true,
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
 });
@@ -96,6 +100,7 @@ const buildViewNavigationMenuItem = (
   type: NavigationMenuItemType.VIEW,
   viewId,
   position,
+  isActive: true,
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
 });
