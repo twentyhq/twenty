@@ -260,6 +260,7 @@ export { isFieldValueRestricted } from './isFieldValueRestricted';
 export { fastDeepEqual } from './json/fast-deep-equal';
 export { getAppPath } from './navigation/getAppPath';
 export { getSettingsPath } from './navigation/getSettingsPath';
+export { isBuiltInSectionKey } from './navigation/isBuiltInSectionKey';
 export { isNativePageKey } from './navigation/isNativePageKey';
 export { getPageLayoutWidgetHeightBehavior } from './pageLayout/getPageLayoutWidgetHeightBehavior';
 export { isFrontComponentAvailableInWidgetPicker } from './pageLayout/isFrontComponentAvailableInWidgetPicker';
