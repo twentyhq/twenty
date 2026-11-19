@@ -1681,10 +1681,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       });
     }
 
+    const writtenRecordIds = mutationResult.generatedMaps
+      .map((record) => record.id)
+      .filter(isNonEmptyString);
+
     await this.recomputeRecordAccessGroupIdsAfterWrite({
-      writtenRecordIds: mutationResult.generatedMaps
-        .map((record) => record.id)
-        .filter(isNonEmptyString),
+      writtenRecordIds,
       isRecomputingWrittenRecords: kind === 'update',
       recordsBefore,
       updatedColumnNames: isDefined(setColumns)
@@ -1704,11 +1706,20 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
             noFormatting: true,
           });
 
+    const writtenRecordIdSet = new Set(writtenRecordIds);
+    const eventRecordsBefore =
+      kind === 'update'
+        ? recordsBefore.filter(({ id }) => writtenRecordIdSet.has(id))
+        : recordsBefore;
+
     const recordsAfter =
       kind === 'update' && isDefined(setColumns)
         ? mergeReturnedUpdateTimestamps(
             mergeRecordsWithUpdateValues(
-              getUpdateEventRecords(recordsBefore, recordsAfterWrite ?? []),
+              getUpdateEventRecords(
+                eventRecordsBefore,
+                recordsAfterWrite ?? [],
+              ),
               setColumns,
             ),
             mutationResult.generatedMaps,
@@ -1717,7 +1728,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     this.emitMutationEvent({
       kind,
-      recordsBefore,
+      recordsBefore: eventRecordsBefore,
       recordsAfter,
     });
 
