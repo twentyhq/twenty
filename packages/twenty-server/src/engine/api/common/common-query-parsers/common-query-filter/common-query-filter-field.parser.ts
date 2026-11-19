@@ -16,9 +16,9 @@ import {
 import { MAX_RELATION_FILTER_DEPTH } from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/max-relation-filter-depth.constant';
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/common/common-query-parsers/utils/add-relation-join-alias.util';
 import { assertFieldIsReadableOrThrow } from 'src/engine/api/common/common-query-parsers/utils/assert-field-is-readable-or-throw.util';
 import { resolveFilterKeyFieldMetadata } from 'src/engine/record-filter/utils/resolve-filter-key-field-metadata.util';
@@ -193,9 +193,9 @@ export class CommonQueryFilterFieldParser {
     isToManyRelation: boolean;
   }): void {
     if (this.depth >= MAX_RELATION_FILTER_DEPTH) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Relation filter nesting deeper than ${MAX_RELATION_FILTER_DEPTH} hop is not supported`,
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         {
           userFriendlyMessage: msg`Relation filters can only traverse one relation deep`,
         },
@@ -203,17 +203,17 @@ export class CommonQueryFilterFieldParser {
     }
 
     if (!isDefined(this.flatObjectMetadataMaps)) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Relation filter on "${fieldMetadata.name}" requires object metadata maps`,
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         { userFriendlyMessage: msg`Relation filter is not supported here` },
       );
     }
 
     if (!isDefined(fieldMetadata.relationTargetObjectMetadataId)) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Relation filter on "${fieldMetadata.name}" is missing a target object`,
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         { userFriendlyMessage: msg`Relation filter is misconfigured` },
       );
     }
@@ -225,9 +225,9 @@ export class CommonQueryFilterFieldParser {
       });
 
     if (!isDefined(targetObjectMetadata)) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Target object not found for relation "${fieldMetadata.name}"`,
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         { userFriendlyMessage: msg`Relation filter is misconfigured` },
       );
     }
@@ -248,9 +248,9 @@ export class CommonQueryFilterFieldParser {
     if (isToManyRelation) {
       // The EXISTS is correlated with the root alias, so through a joined to-one it would match the wrong rows
       if (parentAlias !== outerQueryBuilder.alias) {
-        throw new GraphqlQueryRunnerException(
+        throw new CommonQueryRunnerException(
           `To-many relation filter on "${fieldMetadata.name}" must apply to the root object`,
-          GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+          CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
           {
             userFriendlyMessage: msg`Relation filters can only traverse one relation deep`,
           },
@@ -343,9 +343,9 @@ export class CommonQueryFilterFieldParser {
       : undefined;
 
     if (!isDefined(referencedFieldMetadata)) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Field "${String(fieldReferenceValue)}" to compare "${key}" with was not found`,
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         {
           userFriendlyMessage: msg`Invalid filter: the field to compare with was not found`,
         },
@@ -390,9 +390,9 @@ export class CommonQueryFilterFieldParser {
       relationFieldMetadata?.relationTargetFieldMetadataId !==
         this.parentFilterScope.relationFieldMetadataId
     ) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Operator "${operator}" can only reference "${relationFieldName}" when it leads back to the record the relation filter starts from`,
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         {
           userFriendlyMessage: msg`Invalid filter: "${relationFieldName}" can only reference the record the relation filter starts from`,
         },
