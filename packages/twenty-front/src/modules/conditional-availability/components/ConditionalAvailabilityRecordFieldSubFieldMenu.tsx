@@ -26,6 +26,16 @@ export const ConditionalAvailabilityRecordFieldSubFieldMenu = ({
   const { field, subjects } = recordFieldOption;
   const fieldLabel = field.label;
 
+  const getSubFieldIconName = (
+    subFieldName: ConditionalAvailabilityRecordFieldSubject['subFieldName'],
+  ) => {
+    if (!isDefined(subFieldName) || !isValidSubFieldName(subFieldName)) {
+      return field.icon;
+    }
+
+    return ICON_NAME_BY_SUB_FIELD[subFieldName] ?? field.icon;
+  };
+
   return (
     <>
       <Dropdown.Back aria-label={t`${fieldLabel}, back to fields`}>
@@ -34,11 +44,7 @@ export const ConditionalAvailabilityRecordFieldSubFieldMenu = ({
       <Dropdown.Section>
         {subjects.map((subject) => {
           const { subFieldName } = subject;
-          const SubFieldIcon = getIcon(
-            isDefined(subFieldName) && isValidSubFieldName(subFieldName)
-              ? (ICON_NAME_BY_SUB_FIELD[subFieldName] ?? field.icon)
-              : field.icon,
-          );
+          const SubFieldIcon = getIcon(getSubFieldIconName(subFieldName));
 
           return (
             <Dropdown.OptionItem
