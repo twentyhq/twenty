@@ -16,9 +16,8 @@ export const slackHealthCheckHandler =
     });
 
     if (!slackClientResult.success) {
-      // A failed lookup stays silent, so a transient error never tells an
-      // admin that a working integration is not connected.
-      if (slackClientResult.isConnectionMissing !== true) {
+      // A failed lookup is not proof that the connection is missing.
+      if (!slackClientResult.isConnectionMissing) {
         return { status: 'OK' };
       }
 

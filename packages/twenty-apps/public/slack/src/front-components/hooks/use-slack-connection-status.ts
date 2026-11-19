@@ -7,6 +7,7 @@ import {
   DISCONNECTED_SLACK_CONNECTION_STATUS,
   parseSlackConnectionStatus,
 } from 'src/front-components/utils/parse-slack-connection-status.util';
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
 
 type SlackConnectionStatusState = ParsedSlackConnectionStatus & {
   isConnectionStatusLoading: boolean;
@@ -36,6 +37,7 @@ export const useSlackConnectionStatus = (): SlackConnectionStatusState => {
         );
 
         connectionStatus = parseSlackConnectionStatus(result);
+        hasConnectionStatusFailed = asRecord(result)?.success === false;
       } catch {
         connectionStatus = DISCONNECTED_SLACK_CONNECTION_STATUS;
         hasConnectionStatusFailed = true;
