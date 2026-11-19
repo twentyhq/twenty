@@ -12,7 +12,7 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { JSONB_BUILD_OBJECT_MAX_PAIRS } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.constants';
+import { JSONB_BUILD_OBJECT_MAX_PAIRS } from 'src/engine/api/common/common-query-runners/group-by/services/group-by-with-records.constants';
 
 const OBJECT_NAME_SINGULAR = 'groupByManyFields';
 const OBJECT_NAME_PLURAL = 'groupByManyFieldsRecords';

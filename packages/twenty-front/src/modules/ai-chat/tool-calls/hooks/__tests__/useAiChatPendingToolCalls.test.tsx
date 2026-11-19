@@ -1,4 +1,3 @@
-import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
 import { AiChatTestInstance } from '@/ai-chat/testing/AiChatTestInstance';
 import { renderHook } from '@testing-library/react';
 import { Provider } from 'jotai';
@@ -30,14 +29,13 @@ const questionsCall = (
 
 const wrapper = ({ children }: { children: ReactNode }) => (
   <Provider store={jotaiStore}>
-    <AiChatTestInstance>{children}</AiChatTestInstance>
+    <AiChatTestInstance threadId="thread-id">{children}</AiChatTestInstance>
   </Provider>
 );
 
 describe('useAiChatPendingToolCalls', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(aiChatTestInstanceThreadIdState.atom, 'thread-id');
     jotaiStore.set(aiChatMessagesFamilyState.atomFamily(key), [
       {
         id: 'assistant-1',

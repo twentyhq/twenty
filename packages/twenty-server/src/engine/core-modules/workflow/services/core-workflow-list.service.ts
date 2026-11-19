@@ -8,7 +8,7 @@ import { DataSource, In } from 'typeorm';
 import {
   decodeCursor,
   encodeCursorData,
-} from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+} from 'src/engine/api/common/utils/cursors.util';
 import { getReachableApplications } from 'src/engine/core-modules/application/utils/get-reachable-applications.util';
 import { type CoreWorkflowConnectionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-connection.dto';
 import { type CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';

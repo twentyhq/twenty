@@ -8,7 +8,6 @@ import { AiChatTypingParticipants } from '@/ai-chat/messages/components/AiChatTy
 import { AiChatTestInstance } from '@/ai-chat/testing/AiChatTestInstance';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { aiChatTypingWorkspaceMemberIdsFamilyState } from '@/ai-chat/messages/states/aiChatTypingWorkspaceMemberIdsFamilyState';
-import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import {
@@ -45,7 +44,7 @@ const renderTypingParticipants = (typingWorkspaceMemberIds: string[]) => {
   return render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
-        <AiChatTestInstance>
+        <AiChatTestInstance threadId={THREAD_ID}>
           <AiChatTypingParticipants />
         </AiChatTestInstance>
       </I18nProvider>
@@ -57,7 +56,6 @@ describe('AiChatTypingParticipants', () => {
   beforeEach(() => {
     resetJotaiStore();
 
-    jotaiStore.set(aiChatTestInstanceThreadIdState.atom, THREAD_ID);
     jotaiStore.set(
       aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
       [
