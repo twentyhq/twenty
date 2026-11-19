@@ -107,10 +107,7 @@ export class RunWorkflowJob {
         workspaceId,
       });
 
-    if (
-      workflowRun.status !== WorkflowRunStatus.ENQUEUED &&
-      workflowRun.status !== WorkflowRunStatus.NOT_STARTED
-    ) {
+    if (workflowRun.status !== WorkflowRunStatus.ENQUEUED) {
       return;
     }
 
