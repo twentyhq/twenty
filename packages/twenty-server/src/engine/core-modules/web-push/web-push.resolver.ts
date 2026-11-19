@@ -1,4 +1,4 @@
-import { UseGuards, UsePipes } from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Context, Mutation } from '@nestjs/graphql';
 
 import { type Request } from 'express';
@@ -9,6 +9,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { UpdateFocusedTabInput } from 'src/engine/core-modules/web-push/dtos/update-focused-tab.input';
 import { UpsertWebPushSubscriptionInput } from 'src/engine/core-modules/web-push/dtos/upsert-web-push-subscription.input';
+import { WebPushGraphqlApiExceptionFilter } from 'src/engine/core-modules/web-push/filters/web-push-graphql-api-exception.filter';
 import { WebPushService } from 'src/engine/core-modules/web-push/services/web-push.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -17,6 +18,7 @@ import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UsePipes(ResolverValidationPipe)
+@UseFilters(WebPushGraphqlApiExceptionFilter)
 @UseGuards(
   AccessPolicyGuard({
     authPrincipals: {
