@@ -145,17 +145,24 @@ export class AddPeopleToMessageListService {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     });
-    const queryParser = new CommonQueryParser(
+    const queryParser = new CommonQueryParser({
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-    );
+    });
     const queryBuilder = this.workspaceOrmManager
       .getRepository<PersonWorkspaceEntity>('person')
       .createQueryBuilder('person');
 
-    queryParser.applyFilterToBuilder(queryBuilder, 'person', filter);
-    queryParser.applyDeletedAtToBuilder(queryBuilder, filter);
+    queryParser.applyFilterToBuilder({
+      queryBuilder,
+      objectNameSingular: 'person',
+      recordFilter: filter,
+    });
+    queryParser.applyDeletedAtToBuilder({
+      queryBuilder,
+      recordFilter: filter,
+    });
 
     return queryBuilder;
   }
