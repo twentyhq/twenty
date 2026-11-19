@@ -11,6 +11,7 @@ import { VIEW_FIELD_ACCESS_POLICY } from 'src/engine/metadata-modules/view-field
 
 @DefineTool({
   name: 'update_view_field',
+  isDestructive: true,
   category: ToolCategory.VIEW,
   accessPolicy: VIEW_FIELD_ACCESS_POLICY,
   description:

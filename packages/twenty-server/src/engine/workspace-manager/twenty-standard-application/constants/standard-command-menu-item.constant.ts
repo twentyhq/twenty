@@ -732,7 +732,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isSelectAll or someEquals(selectedRecords, "status", "NOT_STARTED") or someEquals(selectedRecords, "status", "ENQUEUED") or someEquals(selectedRecords, "status", "RUNNING")',
+      'isSelectAll or someEquals(selectedRecords, "status", "ENQUEUED") or someEquals(selectedRecords, "status", "RUNNING")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflowRun.universalIdentifier,
     frontComponentUniversalIdentifier: null,

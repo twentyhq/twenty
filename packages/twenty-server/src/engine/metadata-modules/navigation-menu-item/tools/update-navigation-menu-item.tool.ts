@@ -1,6 +1,9 @@
 import { ToolCategory } from 'twenty-shared/ai';
+import { FeatureFlagKey, NavigationMenuItemType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
@@ -27,7 +30,7 @@ const updateNavigationMenuItemInputSchema = z.object({
     .nullable()
     .optional()
     .describe(
-      'Move into a different folder. Pass null to move to the top level.',
+      'Move into a different folder, section or tab. Pass null to move to the top level (Home).',
     ),
   link: z
     .string()
@@ -42,9 +45,10 @@ const updateNavigationMenuItemInputSchema = z.object({
 
 @DefineTool({
   name: 'update_navigation_menu_item',
+  isDestructive: true,
   category: ToolCategory.NAVIGATION_MENU_ITEM,
   accessPolicy: NAVIGATION_MENU_ITEM_WRITE_ACCESS_POLICY,
-  description: `Update a navigation menu item (rename, recolor, move between folders, reorder). Type and target ids are immutable — delete and recreate to convert one variant into another.`,
+  description: `Update a navigation menu item (rename, recolor, move between folders, sections and tabs, reorder). Type and target ids are immutable — delete and recreate to convert one variant into another.`,
 })
 export class UpdateNavigationMenuItemTool extends BaseTool<
   typeof updateNavigationMenuItemInputSchema
@@ -53,6 +57,7 @@ export class UpdateNavigationMenuItemTool extends BaseTool<
 
   constructor(
     private readonly navigationMenuItemService: NavigationMenuItemService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super();
   }
@@ -79,6 +84,31 @@ export class UpdateNavigationMenuItemTool extends BaseTool<
         update.position = input.position;
       }
       if (input.parentId !== undefined) {
+        if (isDefined(input.parentId)) {
+          const parent = await this.navigationMenuItemService.findById({
+            id: input.parentId,
+            workspaceId,
+          });
+          const isParentTabOrSection =
+            parent?.type === NavigationMenuItemType.TAB ||
+            parent?.type === NavigationMenuItemType.SECTION;
+
+          if (
+            isParentTabOrSection &&
+            !(await this.featureFlagService.isFeatureEnabled(
+              FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+              workspaceId,
+            ))
+          ) {
+            return {
+              success: false,
+              message:
+                'Moving an item into a tab or a section needs the customizable sidebar to be enabled.',
+              error: 'customizable_sidebar_disabled',
+            };
+          }
+        }
+
         update.parentId = input.parentId;
       }
       if (input.link !== undefined) {

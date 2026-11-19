@@ -1,12 +1,51 @@
 import { randomBytes } from 'crypto';
 import { promises as fs } from 'fs';
-import { dirname, resolve } from 'path';
+import { dirname, join, resolve } from 'path';
 
 import { build } from 'esbuild';
+
+const TEMPORARY_DIR = '/tmp';
 
 const BANNER = {
   js: "import { createRequire as __createRequire } from 'module';\nconst require = __createRequire(import.meta.url);",
 };
+
+const emptyTemporaryDir = async () => {
+  const entries = await fs.readdir(TEMPORARY_DIR);
+
+  await Promise.all(
+    entries.map((entry) =>
+      fs.rm(join(TEMPORARY_DIR, entry), { recursive: true, force: true }),
+    ),
+  );
+};
+
+const refuseFilesOtherThan = (entryFilePath) => ({
+  name: 'single-source-file',
+  setup: ({ onLoad }) => {
+    let hasRefusedFile = false;
+
+    onLoad({ filter: /.*/, namespace: 'file' }, ({ path }) => {
+      if (path === entryFilePath) {
+        return undefined;
+      }
+
+      if (hasRefusedFile) {
+        return { contents: '' };
+      }
+
+      hasRefusedFile = true;
+
+      return {
+        errors: [
+          {
+            text: 'Cannot import a file: a function is built from a single source file',
+          },
+        ],
+      };
+    });
+  },
+});
 
 const assertPathInsideDir = (filePath, dir) => {
   const resolved = resolve(dir, filePath);
@@ -36,8 +75,10 @@ export const handler = async (event) => {
     );
   }
 
+  await emptyTemporaryDir();
+
   const randomId = randomBytes(16).toString('hex');
-  const workDir = `/tmp/${randomId}`;
+  const workDir = join(TEMPORARY_DIR, randomId);
 
   await fs.mkdir(workDir, { recursive: true });
 
@@ -56,9 +97,11 @@ export const handler = async (event) => {
       format: 'esm',
       target: 'esnext',
       bundle: true,
-      sourcemap: true,
+      sourcemap: false,
+      tsconfigRaw: '{}',
       packages: 'external',
       banner: BANNER,
+      plugins: [refuseFilesOtherThan(entryFilePath)],
     });
 
     const builtCode = await fs.readFile(outFilePath, 'utf-8');

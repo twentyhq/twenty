@@ -165,6 +165,7 @@ const upsertCompleteViewInputSchema = z.object({
 
 @DefineTool({
   name: 'upsert_complete_view',
+  isDestructive: true,
   category: ToolCategory.VIEW,
   accessPolicy: VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY,
   description: `Create or update a complete view — the view plus its fields (columns), filters, and sorts — in a single call.
