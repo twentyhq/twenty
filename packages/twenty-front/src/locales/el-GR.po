@@ -23957,6 +23957,11 @@ msgstr "Ανάγνωση email"
 msgid "Read system prompts"
 msgstr "Διαβάστε τις προτροπές του συστήματος"
 
+#. js-lingui-id: /nZe2L
+#: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
+msgid "Read the address, owner and account status of members' private channels"
+msgstr "Διαβάστε τη διεύθυνση, τον κάτοχο και την κατάσταση λογαριασμού των ιδιωτικών καναλιών των μελών"
+
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Read the internal import setting from its new workspace column. Turned on by the 2.59 upgrade."

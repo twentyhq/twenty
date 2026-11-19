@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
 
 import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
+import { GranolaWebhookConfigurationError } from 'src/logic-functions/types/granola-webhook-configuration-error';
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { createGranolaWebhookEndpointOrThrow } from 'src/logic-functions/utils/create-granola-webhook-endpoint-or-throw.util';
 
@@ -92,6 +93,41 @@ describe('createGranolaWebhookEndpointOrThrow', () => {
     expect(String(mockedFetch.mock.calls[1][1]?.body)).toContain(
       'fol_2mKr8fQxLp7Ta3',
     );
+  });
+
+  it('uses personal scopes only for a member connection', async () => {
+    const mockedFetch = stubGranolaAcceptingScopes('workspace');
+
+    await expect(
+      createGranolaWebhookEndpointOrThrow({
+        client: createGranolaClientOrThrow({ apiKey: 'grn_test' }),
+        url: 'https://example.com/hook',
+        preferredScopes: undefined,
+        folderIds: ['fol_2mKr8fQxLp7Ta3'],
+        isPersonalConnection: true,
+      }),
+    ).rejects.toMatchObject({ status: 400 });
+
+    expect(requestedScopes(mockedFetch)).toEqual([
+      ['personal', 'public'],
+      ['personal'],
+      ['public'],
+    ]);
+  });
+
+  it('rejects an empty personal folder selection before contacting Granola', async () => {
+    const mockedFetch = stubGranolaAcceptingScopes('personal,public');
+
+    await expect(
+      createGranolaWebhookEndpointOrThrow({
+        client: createGranolaClientOrThrow({ apiKey: 'grn_test' }),
+        url: 'https://example.com/hook',
+        preferredScopes: undefined,
+        folderIds: [],
+        isPersonalConnection: true,
+      }),
+    ).rejects.toBeInstanceOf(GranolaWebhookConfigurationError);
+    expect(mockedFetch).not.toHaveBeenCalled();
   });
 
   it('tries the previously registered scopes first', async () => {
