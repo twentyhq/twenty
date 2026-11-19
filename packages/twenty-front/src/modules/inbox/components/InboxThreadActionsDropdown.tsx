@@ -35,7 +35,7 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 
-const StyledIconPicker = styled(IconPicker)`
+const StyledIconPickerContainer = styled.div`
   position: absolute;
   right: 0;
 `;
@@ -208,21 +208,23 @@ export const InboxThreadActionsDropdown = ({
           </DropdownRoot>
         )}
         {canChangeImage && (
-          <StyledIconPicker
-            dropdownId={iconPickerDropdownId}
-            selectedIconKey={thread.icon ?? undefined}
-            onChange={({ iconKey }) => void setIcon(iconKey)}
-            iconColorPicker={{
-              selectedColor: parseThemeColor(thread.iconColor),
-              onColorChange: (color) => void setIconColor(color),
-            }}
-            clickableComponent={<StyledIconPickerAnchor aria-hidden />}
-            imageUpload={{
-              imageUrl: thread.imageFile?.[0]?.url,
-              onUpload: (file) => void uploadImage(file),
-              onRemove: () => void removeImage(),
-            }}
-          />
+          <StyledIconPickerContainer>
+            <IconPicker
+              dropdownId={iconPickerDropdownId}
+              selectedIconKey={thread.icon ?? undefined}
+              onChange={({ iconKey }) => void setIcon(iconKey)}
+              iconColorPicker={{
+                selectedColor: parseThemeColor(thread.iconColor),
+                onColorChange: (color) => void setIconColor(color),
+              }}
+              clickableComponent={<StyledIconPickerAnchor aria-hidden />}
+              imageUpload={{
+                imageUrl: thread.imageFile?.[0]?.url,
+                onUpload: (file) => void uploadImage(file),
+                onRemove: () => void removeImage(),
+              }}
+            />
+          </StyledIconPickerContainer>
         )}
       </CommandMenuComponentInstanceContext.Provider>
     </ContextStoreComponentInstanceContext.Provider>

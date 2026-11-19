@@ -1,10 +1,11 @@
-import { isString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { useApplyAiChatThreadUpdate } from '@/ai-chat/threads/hooks/useApplyAiChatThreadUpdate';
+import { useRefreshAiChatThreadImageFile } from '@/ai-chat/threads/hooks/useRefreshAiChatThreadImageFile';
 import { useAddInboxThread } from '@/inbox/hooks/useAddInboxThread';
 import { useLeaveRemovedInboxThread } from '@/inbox/hooks/useLeaveRemovedInboxThread';
 import { useRefreshInboxOpenThreadsSummary } from '@/inbox/hooks/useRefreshInboxOpenThreadsSummary';
@@ -41,6 +42,12 @@ const toThreadUpdate = ({
   };
 };
 
+const isMissingImageFileUrl = (
+  imageFile: AiChatThreadRecord['imageFile'] | undefined,
+) =>
+  isNonEmptyArray(imageFile) &&
+  imageFile.some(({ url }) => !isNonEmptyString(url));
+
 export const InboxThreadRecordOperationsEffect = () => {
   const chatObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
@@ -50,6 +57,7 @@ export const InboxThreadRecordOperationsEffect = () => {
     },
   );
   const { applyAiChatThreadUpdate } = useApplyAiChatThreadUpdate();
+  const { refreshAiChatThreadImageFile } = useRefreshAiChatThreadImageFile();
   const { addInboxThread } = useAddInboxThread();
   const { loadInboxThreadList } = useLoadInboxThreadList();
   const refreshAiChatThreads = useCallback(
@@ -93,7 +101,15 @@ export const InboxThreadRecordOperationsEffect = () => {
         updates: (Partial<AiChatThreadRecord> & { id: string })[],
       ) => {
         for (const update of updates) {
-          applyAiChatThreadUpdate(update);
+          if (!isMissingImageFileUrl(update.imageFile)) {
+            applyAiChatThreadUpdate(update);
+            continue;
+          }
+
+          const { imageFile: _imageFile, ...updateWithoutImageFile } = update;
+
+          applyAiChatThreadUpdate(updateWithoutImageFile);
+          void refreshAiChatThreadImageFile(update.id);
         }
       };
 
@@ -161,6 +177,7 @@ export const InboxThreadRecordOperationsEffect = () => {
     [
       addInboxThread,
       applyAiChatThreadUpdate,
+      refreshAiChatThreadImageFile,
       refreshInboxOpenThreadsSummary,
       refreshAiChatThreads,
       reloadAiChatThreads,

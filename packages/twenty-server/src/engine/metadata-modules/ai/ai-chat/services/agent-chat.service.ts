@@ -428,23 +428,30 @@ export class AgentChatService {
     await this.threadRepository.update(
       workspaceId,
       { id: threadId },
-      shouldPickIcon && !isNonEmptyString(thread.icon)
-        ? {
-            title,
+      { title },
+    );
+
+    try {
+      if (shouldPickIcon && !isNonEmptyString(thread.icon)) {
+        await this.threadRepository.update(
+          workspaceId,
+          { id: threadId },
+          {
             icon: icon ?? AGENT_CHAT_THREAD_DEFAULT_ICON_NAME,
             iconColor:
               iconColor ??
               AGENT_CHAT_THREAD_ICON_COLORS[
                 Math.floor(Math.random() * AGENT_CHAT_THREAD_ICON_COLORS.length)
               ],
-          }
-        : { title },
-    );
-
-    await this.threadRecordEventService.emitThreadUpdated({
-      workspaceId,
-      threadBefore: thread,
-    });
+          },
+        );
+      }
+    } finally {
+      await this.threadRecordEventService.emitThreadUpdated({
+        workspaceId,
+        threadBefore: thread,
+      });
+    }
 
     return title;
   }

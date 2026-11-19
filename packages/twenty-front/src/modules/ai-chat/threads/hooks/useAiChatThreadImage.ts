@@ -6,12 +6,11 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { type ThemeColor } from 'twenty-ui/theme';
 
 import { AI_CHAT_THREAD_DEFAULT_ICON_COLOR } from '@/ai-chat/threads/constants/AiChatThreadDefaultIconColor';
-import { useApplyAiChatThreadUpdate } from '@/ai-chat/threads/hooks/useApplyAiChatThreadUpdate';
+import { useRefreshAiChatThreadImageFile } from '@/ai-chat/threads/hooks/useRefreshAiChatThreadImageFile';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
-import { useLazyFindOneRecord } from '@/object-record/hooks/useLazyFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { FileFolder } from '~/generated-metadata/graphql';
@@ -22,12 +21,7 @@ export const useAiChatThreadImage = (
   const { updateOneRecord } = useUpdateOneRecord();
   const { uploadFile } = useDirectFileUpload();
   const { enqueueToast } = useToast();
-  const { applyAiChatThreadUpdate } = useApplyAiChatThreadUpdate();
-  const { findOneRecord } = useLazyFindOneRecord<AiChatThreadRecord>({
-    objectNameSingular: StandardObjectNameSingular.AgentChatThread,
-    recordGqlFields: { id: true, imageFile: true },
-    fetchPolicy: 'network-only',
-  });
+  const { refreshAiChatThreadImageFile } = useRefreshAiChatThreadImageFile();
   const objectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
@@ -87,11 +81,7 @@ export const useAiChatThreadImage = (
       await updateThreadImage({
         imageFile: [{ fileId: uploadedFile.id, label: file.name }],
       });
-      await findOneRecord({
-        objectRecordId: thread.id,
-        onCompleted: ({ id, imageFile }) =>
-          applyAiChatThreadUpdate({ id, imageFile }),
-      });
+      await refreshAiChatThreadImageFile(thread.id);
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
     }

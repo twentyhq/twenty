@@ -320,7 +320,7 @@ export const IconPicker = ({
           sideOffset={dropdownSideOffset}
         >
           <StyledPopupContent data-click-outside-id={dropdownId}>
-            {isDefined(imageUpload) ? (
+            {isDefined(imageUpload) && (
               <>
                 <StyledSwitcherRow>
                   <SegmentedControl
@@ -336,16 +336,14 @@ export const IconPicker = ({
                   />
                 </StyledSwitcherRow>
                 <Dropdown.Separator />
-                {activeTab === 'icon' ? (
-                  iconPanel
-                ) : (
-                  <IconPickerImagePanel
-                    imageUrl={imageUrl}
-                    onUploadClick={handleUploadClick}
-                    onRemove={imageUpload.onRemove}
-                  />
-                )}
               </>
+            )}
+            {isDefined(imageUpload) && activeTab === 'image' ? (
+              <IconPickerImagePanel
+                imageUrl={imageUrl}
+                onUploadClick={handleUploadClick}
+                onRemove={imageUpload.onRemove}
+              />
             ) : (
               iconPanel
             )}
