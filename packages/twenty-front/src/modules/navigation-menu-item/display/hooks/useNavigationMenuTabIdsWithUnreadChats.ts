@@ -1,5 +1,5 @@
-import { type NavigationMenuItemType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { type BuiltInSectionKey } from 'twenty-shared/types';
+import { isBuiltInSectionKey, isDefined } from 'twenty-shared/utils';
 
 import { useInboxOpenThreadsSummary } from '@/inbox/hooks/useInboxOpenThreadsSummary';
 import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
@@ -7,9 +7,9 @@ import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-const AI_CHAT_SECTION_TYPES: NavigationMenuItemType[] =
+const AI_CHAT_BUILT_IN_SECTION_KEYS: BuiltInSectionKey[] =
   NAVIGATION_MENU_BUILT_IN_SECTIONS.filter(({ isAi }) => isAi).map(
-    ({ type }) => type,
+    ({ key }) => key,
   );
 
 export const useNavigationMenuTabIdsWithUnreadChats = () => {
@@ -26,7 +26,11 @@ export const useNavigationMenuTabIdsWithUnreadChats = () => {
   }
 
   for (const item of workspaceNavigationMenuItems) {
-    if (isDefined(item.parentId) && AI_CHAT_SECTION_TYPES.includes(item.type)) {
+    if (
+      isDefined(item.parentId) &&
+      isBuiltInSectionKey(item.builtInSectionKey) &&
+      AI_CHAT_BUILT_IN_SECTION_KEYS.includes(item.builtInSectionKey)
+    ) {
       tabIdsWithUnreadChats.add(item.parentId);
     }
   }

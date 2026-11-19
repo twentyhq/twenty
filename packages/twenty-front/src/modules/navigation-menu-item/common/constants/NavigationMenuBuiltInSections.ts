@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
   IconHash,
   IconHeart,
@@ -10,35 +9,35 @@ import {
 
 export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
   {
-    type: NavigationMenuItemType.FAVORITES,
+    key: 'favorites',
     label: msg`Favorites`,
     Icon: IconHeart,
     color: 'red',
     isAi: false,
   },
   {
-    type: NavigationMenuItemType.AI_CHAT_INBOX,
+    key: 'aiChatInbox',
     label: msg`Triage`,
     Icon: IconInbox,
     color: 'blue',
     isAi: true,
   },
   {
-    type: NavigationMenuItemType.AI_CHAT_FAVORITES,
+    key: 'aiChatFavorites',
     label: msg`Favorite chats`,
     Icon: IconMessage,
     color: 'pink',
     isAi: true,
   },
   {
-    type: NavigationMenuItemType.AI_CHAT_CHANNELS,
+    key: 'aiChatChannels',
     label: msg`Channels`,
     Icon: IconHash,
     color: 'green',
     isAi: true,
   },
   {
-    type: NavigationMenuItemType.AI_CHAT_RECENTS,
+    key: 'aiChatRecents',
     label: msg`Recent chats`,
     Icon: IconHistory,
     color: 'orange',
