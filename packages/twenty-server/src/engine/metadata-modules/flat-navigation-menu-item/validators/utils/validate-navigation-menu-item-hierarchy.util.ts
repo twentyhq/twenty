@@ -11,12 +11,6 @@ const ALLOWED_PARENT_TYPES_BY_TYPE: Partial<
 > = {
   [NavigationMenuItemType.TAB]: [],
   [NavigationMenuItemType.SECTION]: [NavigationMenuItemType.TAB],
-  [NavigationMenuItemType.FAVORITES]: [NavigationMenuItemType.TAB],
-  [NavigationMenuItemType.AI_CHAT_INBOX]: [NavigationMenuItemType.TAB],
-  [NavigationMenuItemType.AI_CHAT_FAVORITES]: [NavigationMenuItemType.TAB],
-  [NavigationMenuItemType.AI_CHAT_CHANNELS]: [NavigationMenuItemType.TAB],
-  [NavigationMenuItemType.AI_CHAT_RECENTS]: [NavigationMenuItemType.TAB],
-  [NavigationMenuItemType.AI_AGENTS]: [NavigationMenuItemType.TAB],
   [NavigationMenuItemType.FOLDER]: [
     NavigationMenuItemType.TAB,
     NavigationMenuItemType.SECTION,
@@ -26,12 +20,24 @@ const ALLOWED_PARENT_TYPES_BY_TYPE: Partial<
 const getParentTypeErrors = ({
   type,
   parentType,
+  isParentBuiltInSection,
 }: {
   type: NavigationMenuItemType | undefined;
   parentType: NavigationMenuItemType | undefined;
+  isParentBuiltInSection: boolean;
 }): FlatEntityValidationError<NavigationMenuItemExceptionCode>[] => {
   if (!isDefined(type) || !isDefined(parentType)) {
     return [];
+  }
+
+  if (isParentBuiltInSection) {
+    return [
+      {
+        code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+        message: t`A ${type} navigation menu item cannot be placed inside a built-in section`,
+        userFriendlyMessage: msg`A ${type} navigation menu item cannot be placed inside a built-in section`,
+      },
+    ];
   }
 
   const allowedParentTypes =
@@ -52,18 +58,27 @@ const getParentTypeErrors = ({
 
 export const validateNavigationMenuItemHierarchy = ({
   type,
+  builtInSectionKey,
   parentType,
+  parentBuiltInSectionKey,
   childTypes = [],
 }: {
   type: NavigationMenuItemType | undefined;
+  builtInSectionKey?: string | null;
   parentType: NavigationMenuItemType | undefined;
+  parentBuiltInSectionKey?: string | null;
   childTypes?: NavigationMenuItemType[];
 }): FlatEntityValidationError<NavigationMenuItemExceptionCode>[] => [
-  ...getParentTypeErrors({ type, parentType }),
+  ...getParentTypeErrors({
+    type,
+    parentType,
+    isParentBuiltInSection: isDefined(parentBuiltInSectionKey),
+  }),
   ...childTypes.flatMap((childType) =>
     getParentTypeErrors({
       type: childType,
       parentType: type,
+      isParentBuiltInSection: isDefined(builtInSectionKey),
     }),
   ),
 ];
