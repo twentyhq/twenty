@@ -46,10 +46,12 @@ describe('cancelWorkspaceRecallBots', () => {
   const stubRecallApi = ({
     bots,
     cancelStatusByBotId = {},
+    ejectStatusByBotId = {},
     listStatus = 200,
   }: {
     bots: unknown[];
     cancelStatusByBotId?: Record<string, number>;
+    ejectStatusByBotId?: Record<string, number>;
     listStatus?: number;
   }) => {
     fetchMock.mockImplementation(
@@ -59,6 +61,12 @@ describe('cancelWorkspaceRecallBots', () => {
           const botId = pathSegments[pathSegments.length - 2] ?? '';
 
           return buildJsonResponse(cancelStatusByBotId[botId] ?? 204);
+        }
+
+        if (requestInitialization.method === 'POST') {
+          const [botId = ''] = new URL(url).pathname.split('/').slice(-3);
+
+          return buildJsonResponse(ejectStatusByBotId[botId] ?? 200);
         }
 
         if (listStatus >= 400) {
@@ -244,25 +252,44 @@ describe('cancelWorkspaceRecallBots', () => {
     expect(getCallsByMethod('DELETE')).toHaveLength(0);
   });
 
-  it('exposes the three retry attempts made for a joined bot returning 409', async () => {
-    vi.useFakeTimers();
-    stubRecallApi({ bots: [], cancelStatusByBotId: { 'joined-bot': 409 } });
+  it('ejects a known bot that Recall refuses to delete because it already joined', async () => {
+    stubRecallApi({ bots: [], cancelStatusByBotId: { 'joined-bot': 405 } });
 
-    const workspaceRecallBotCleanupPromise = cancelWorkspaceRecallBots({
+    const workspaceRecallBotCleanupResult = await cancelWorkspaceRecallBots({
       knownExternalBotIds: ['joined-bot'],
       joinAtAfter: JOIN_AT_AFTER,
       cancellationCutoffEpochMs: CANCELLATION_CUTOFF_EPOCH_MS,
     });
 
-    await vi.runAllTimersAsync();
-    const workspaceRecallBotCleanupResult =
-      await workspaceRecallBotCleanupPromise;
+    expect(workspaceRecallBotCleanupResult.canceledExternalBotIds).toEqual([
+      'joined-bot',
+    ]);
+    expect(workspaceRecallBotCleanupResult.failedExternalBotIds).toEqual([]);
+    const ejectRequests = getCallsByMethod('POST');
+    expect(ejectRequests).toHaveLength(1);
+    expect(new URL(ejectRequests[0][0]).pathname).toBe(
+      '/api/v1/bot/joined-bot/leave_call/',
+    );
+  });
+
+  it('reports a bot as failed when both the delete and the eject fail', async () => {
+    stubRecallApi({
+      bots: [],
+      cancelStatusByBotId: { 'joined-bot': 405 },
+      ejectStatusByBotId: { 'joined-bot': 400 },
+    });
+
+    const workspaceRecallBotCleanupResult = await cancelWorkspaceRecallBots({
+      knownExternalBotIds: ['joined-bot'],
+      joinAtAfter: JOIN_AT_AFTER,
+      cancellationCutoffEpochMs: CANCELLATION_CUTOFF_EPOCH_MS,
+    });
 
     expect(workspaceRecallBotCleanupResult.failedExternalBotIds).toEqual([
       'joined-bot',
     ]);
-    expect(getCallsByMethod('DELETE')).toHaveLength(3);
-    expect(getCallsByMethod('POST')).toHaveLength(0);
+    expect(getCallsByMethod('DELETE')).toHaveLength(1);
+    expect(getCallsByMethod('POST')).toHaveLength(1);
   });
 
   it('does not re-attempt a failed known bot returned by the safety list', async () => {
@@ -274,6 +301,7 @@ describe('cancelWorkspaceRecallBots', () => {
         }),
       ],
       cancelStatusByBotId: { 'failing-bot': 400 },
+      ejectStatusByBotId: { 'failing-bot': 400 },
     });
 
     const workspaceRecallBotCleanupResult = await cancelWorkspaceRecallBots({

@@ -2,9 +2,10 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineUninstallLogicFunction } from 'twenty-sdk/define';
 
 import { CANCEL_RECALL_BOTS_ON_UNINSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { RECALL_API_MAX_IN_PROCESS_RETRY_WAIT_MS } from 'src/logic-functions/constants/recall-api-max-in-process-retry-wait-ms';
 import { cancelOpenScheduledCallRecordingRequests } from 'src/logic-functions/data/cancel-open-scheduled-call-recording-requests.util';
-import { findOpenScheduledCallRecordings } from 'src/logic-functions/data/find-open-scheduled-call-recordings.util';
+import { findOpenOrLiveCallRecordings } from 'src/logic-functions/data/find-open-or-live-call-recordings.util';
 import {
   cancelWorkspaceRecallBots,
   type CancelWorkspaceRecallBotsResult,
@@ -34,13 +35,19 @@ export const cancelRecallBotsOnUninstallHandler =
       Date.now() < recordCleanupRequestStartCutoffEpochMs;
 
     try {
-      const openCallRecordings = await findOpenScheduledCallRecordings(
-        coreApiClient,
-        shouldStartRecordCleanupRequest,
+      const openOrLiveCallRecordings = await findOpenOrLiveCallRecordings({
+        client: coreApiClient,
+        shouldStartPageRequest: shouldStartRecordCleanupRequest,
+      });
+      const openCallRecordings = openOrLiveCallRecordings.filter(
+        (callRecording) =>
+          callRecording.status === CallRecordingStatus.SCHEDULED,
       );
 
       knownExternalBotIds = getUniqueSortedIds(
-        openCallRecordings.map((callRecording) => callRecording.externalBotId),
+        openOrLiveCallRecordings.map(
+          (callRecording) => callRecording.externalBotId,
+        ),
       );
 
       if (openCallRecordings.length > 0 && !shouldStartRecordCleanupRequest()) {
@@ -106,7 +113,7 @@ export default defineUninstallLogicFunction({
     CANCEL_RECALL_BOTS_ON_UNINSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'cancel-recall-bots-on-uninstall',
   description:
-    'Cancels open call recording requests and the workspace Recall bots discoverable within the uninstall request budget.',
+    'Cancels open call recording requests and removes the workspace Recall bots discoverable within the uninstall request budget, ejecting the ones already in a call.',
   timeoutSeconds: UNINSTALL_TIMEOUT_SECONDS,
   handler: cancelRecallBotsOnUninstallHandler,
 });
