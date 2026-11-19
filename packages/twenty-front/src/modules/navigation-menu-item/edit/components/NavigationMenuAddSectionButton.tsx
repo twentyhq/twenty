@@ -3,15 +3,22 @@ import {
   type BuiltInSectionKey,
   NavigationMenuItemType,
 } from 'twenty-shared/types';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconPlus } from 'twenty-ui/icon';
 
 import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
+import { navigationMenuItemsWithHiddenSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsWithHiddenSelector';
+import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterWorkspaceNavigationMenuItems';
+import { getHiddenNavigationMenuItemsInTab } from '@/navigation-menu-item/common/utils/getHiddenNavigationMenuItemsInTab';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
+import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
+import { useRestoreHiddenNavigationMenuItem } from '@/navigation-menu-item/edit/hooks/useRestoreHiddenNavigationMenuItem';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -19,7 +26,9 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   FeatureFlagKey,
@@ -42,7 +51,14 @@ export const NavigationMenuAddSectionButton = ({
   );
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
+  const navigationMenuItemsWithHidden = useAtomStateValue(
+    navigationMenuItemsWithHiddenSelector,
+  );
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const views = useAtomStateValue(viewsSelector);
   const { createItem } = useNavigationMenuItemEditController('workspace');
+  const { restoreHiddenNavigationMenuItem } =
+    useRestoreHiddenNavigationMenuItem();
   const setNavigationMenuItemIdToRename = useSetAtomState(
     navigationMenuItemIdToRenameState,
   );
@@ -63,6 +79,40 @@ export const NavigationMenuAddSectionButton = ({
           (item.parentId ?? null) === containerId,
       ),
   );
+
+  const hiddenNavigationMenuItems = getHiddenNavigationMenuItemsInTab({
+    navigationMenuItems: filterWorkspaceNavigationMenuItems(
+      navigationMenuItemsWithHidden,
+    ),
+    excludedIds: new Set(workspaceNavigationMenuItems.map(({ id }) => id)),
+    tabId: containerId,
+  });
+
+  const getHiddenNavigationMenuItemLabel = (
+    hiddenNavigationMenuItem: (typeof hiddenNavigationMenuItems)[number],
+  ) => {
+    const builtInSection = NAVIGATION_MENU_BUILT_IN_SECTIONS.find(
+      ({ key }) => key === hiddenNavigationMenuItem.builtInSectionKey,
+    );
+
+    return isDefined(builtInSection)
+      ? t(builtInSection.label)
+      : getNavigationMenuItemLabel(
+          hiddenNavigationMenuItem,
+          objectMetadataItems,
+          views,
+        );
+  };
+
+  const handleHiddenNavigationMenuItemClick = (
+    navigationMenuItemId: string,
+  ) => {
+    restoreHiddenNavigationMenuItem({
+      navigationMenuItemId,
+      fallbackParentId: containerId,
+    });
+    closeDropdown(dropdownId);
+  };
 
   const handleCustomSectionClick = () => {
     const sectionId = createItem(
@@ -124,6 +174,28 @@ export const NavigationMenuAddSectionButton = ({
                 />
               ))}
             </Dropdown.Section>
+            {isNonEmptyArray(hiddenNavigationMenuItems) && (
+              <>
+                <Dropdown.Separator />
+                <Dropdown.Section label={t`Hidden`}>
+                  {hiddenNavigationMenuItems.map((hiddenNavigationMenuItem) => (
+                    <NavigationMenuItemSelectableItem
+                      key={hiddenNavigationMenuItem.id}
+                      item={{
+                        id: hiddenNavigationMenuItem.id,
+                        label: getHiddenNavigationMenuItemLabel(
+                          hiddenNavigationMenuItem,
+                        ),
+                        onClick: () =>
+                          handleHiddenNavigationMenuItemClick(
+                            hiddenNavigationMenuItem.id,
+                          ),
+                      }}
+                    />
+                  ))}
+                </Dropdown.Section>
+              </>
+            )}
           </DropdownContent>
         </DropdownRoot>
       </NavigationMenuItemEntrance>
