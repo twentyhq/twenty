@@ -1,19 +1,20 @@
+import { InjectDataSource } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import {
-  ENQUEUED_WORKFLOW_RUN_STATUS_DEFAULT_VALUE,
   NOT_STARTED_WORKFLOW_RUN_STATUS,
   STOP_WORKFLOW_RUN_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
-  STOP_WORKFLOW_RUN_LEGACY_AVAILABILITY_EXPRESSION,
-  STOP_WORKFLOW_RUN_AVAILABILITY_EXPRESSION,
 } from 'src/database/commands/upgrade-version-command/2-61/constants/drop-not-started-workflow-run-status.constant';
+import { buildStopWorkflowRunCommandMenuItemUpdate } from 'src/database/commands/upgrade-version-command/2-61/utils/build-stop-workflow-run-command-menu-item-update.util';
+import { buildWorkflowRunStatusFieldUpdate } from 'src/database/commands/upgrade-version-command/2-61/utils/build-workflow-run-status-field-update.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { computeFieldMetadataOptionOperationsForFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/compute-field-metadata-option-operations-for-field-metadatas.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
@@ -35,6 +36,7 @@ export class DropNotStartedWorkflowRunStatusCommand extends ProvisionedWorkspace
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    @InjectDataSource() private readonly dataSource: DataSource,
   ) {
     super(workspaceIteratorService);
   }
@@ -42,7 +44,6 @@ export class DropNotStartedWorkflowRunStatusCommand extends ProvisionedWorkspace
   override async runOnWorkspace({
     workspaceId,
     options,
-    dataSource,
   }: RunOnWorkspaceArgs): Promise<void> {
     const {
       flatObjectMetadataMaps,
@@ -66,7 +67,6 @@ export class DropNotStartedWorkflowRunStatusCommand extends ProvisionedWorkspace
       ];
 
     if (
-      !isDefined(dataSource) ||
       !isDefined(workflowRunObject) ||
       !isDefined(statusField) ||
       !isFlatFieldMetadataOfType(statusField, FieldMetadataType.SELECT)
@@ -78,36 +78,19 @@ export class DropNotStartedWorkflowRunStatusCommand extends ProvisionedWorkspace
       return;
     }
 
-    const statusOptions = statusField.options ?? [];
-    const statusFieldToUpdate =
-      statusOptions.some(
-        ({ value }) => value === NOT_STARTED_WORKFLOW_RUN_STATUS,
-      ) ||
-      statusField.defaultValue !== ENQUEUED_WORKFLOW_RUN_STATUS_DEFAULT_VALUE
-        ? {
-            ...statusField,
-            options: statusOptions.filter(
-              ({ value }) => value !== NOT_STARTED_WORKFLOW_RUN_STATUS,
-            ),
-            defaultValue: ENQUEUED_WORKFLOW_RUN_STATUS_DEFAULT_VALUE,
-            updatedAt: new Date().toISOString(),
-          }
-        : undefined;
-
-    const stopCommandMenuItem =
-      flatCommandMenuItemMaps.byUniversalIdentifier[
-        STOP_WORKFLOW_RUN_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER
-      ];
+    const now = new Date().toISOString();
+    const statusFieldToUpdate = buildWorkflowRunStatusFieldUpdate({
+      statusField,
+      now,
+    });
     const stopCommandMenuItemToUpdate =
-      stopCommandMenuItem?.conditionalAvailabilityExpression ===
-      STOP_WORKFLOW_RUN_LEGACY_AVAILABILITY_EXPRESSION
-        ? {
-            ...stopCommandMenuItem,
-            conditionalAvailabilityExpression:
-              STOP_WORKFLOW_RUN_AVAILABILITY_EXPRESSION,
-            updatedAt: new Date().toISOString(),
-          }
-        : undefined;
+      buildStopWorkflowRunCommandMenuItemUpdate({
+        stopCommandMenuItem:
+          flatCommandMenuItemMaps.byUniversalIdentifier[
+            STOP_WORKFLOW_RUN_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER
+          ],
+        now,
+      });
 
     if (
       !isDefined(statusFieldToUpdate) &&
@@ -127,10 +110,11 @@ export class DropNotStartedWorkflowRunStatusCommand extends ProvisionedWorkspace
     const workflowRunTable = `${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(computeObjectTargetTable(workflowRunObject))}`;
 
     // Rows must leave the value before the enum rebuild drops it; a failed migration leaves them ENQUEUED, which the sweep handles
-    const [, convertedRunCount]: [unknown[], number] = await dataSource.query(
-      `UPDATE ${workflowRunTable} SET status = 'ENQUEUED' WHERE status::text = $1`,
-      [NOT_STARTED_WORKFLOW_RUN_STATUS],
-    );
+    const [, convertedRunCount]: [unknown[], number] =
+      await this.dataSource.query(
+        `UPDATE ${workflowRunTable} SET status = 'ENQUEUED', "enqueuedAt" = NULL WHERE status::text = $1`,
+        [NOT_STARTED_WORKFLOW_RUN_STATUS],
+      );
 
     if (convertedRunCount > 0) {
       this.logger.log(
