@@ -1,5 +1,4 @@
 import { useApolloClient } from '@apollo/client/react';
-import { setAiChatDraft } from '@/ai-chat/utils/setAiChatDraft';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -80,9 +79,10 @@ export const useOpenNewAiChatAsDirectMessage = () => {
           store.get(aiChatDraftsByThreadIdState.atom)[newChatThreadId] ===
           serializedDraft
         ) {
-          store.set(aiChatDraftsByThreadIdState.atom, (drafts) =>
-            setAiChatDraft({ drafts, threadId: newChatThreadId, draft: '' }),
-          );
+          store.set(aiChatDraftsByThreadIdState.atom, (drafts) => ({
+            ...drafts,
+            [newChatThreadId]: '',
+          }));
           store.set(
             aiChatNewThreadRecipientsFamilyState.atomFamily(newChatThreadId),
             AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,

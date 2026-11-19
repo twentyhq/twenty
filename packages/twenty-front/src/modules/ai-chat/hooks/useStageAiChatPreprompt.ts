@@ -1,5 +1,4 @@
 import { useStore } from 'jotai';
-import { setAiChatDraft } from '@/ai-chat/utils/setAiChatDraft';
 
 import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/constants/AiChatNewThreadDefaultRecipients';
 import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
@@ -33,9 +32,10 @@ export const useStageAiChatPreprompt = () => {
       threadId === store.get(newAiChatThreadIdState.atom) &&
       !store.get(aiChatIsSendingMessageFamilyState.atomFamily({ threadId }));
 
-    setAiChatDraftsByThreadId((drafts) =>
-      setAiChatDraft({ drafts, threadId, draft: serializedDocument }),
-    );
+    setAiChatDraftsByThreadId((previousDrafts) => ({
+      ...previousDrafts,
+      [threadId]: serializedDocument,
+    }));
 
     if (isIdleNewChat) {
       store.set(

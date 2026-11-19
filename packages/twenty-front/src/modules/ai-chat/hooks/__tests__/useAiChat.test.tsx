@@ -310,7 +310,7 @@ describe('useAiChat', () => {
       threadId: THREAD_ID,
       ...COMPANY_TARGET,
     });
-    expect(readPersistedDrafts()).toEqual({});
+    expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: '' });
   });
 
   it('keeps the new chat and its first message id until that message is sent', async () => {
@@ -364,7 +364,7 @@ describe('useAiChat', () => {
     await send(result);
 
     expect(query).toHaveBeenCalledTimes(1);
-    expect(readPersistedDrafts()).toEqual({});
+    expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: '' });
     expect(result.current.newAiChatThreadId).not.toBe(THREAD_ID);
     expect(
       jotaiStore.get(
@@ -534,7 +534,7 @@ describe('useAiChat', () => {
 
     expect(sentShouldAssistantReply).toHaveBeenCalledTimes(1);
     expect(sentShouldAssistantReply).toHaveBeenCalledWith(false);
-    expect(readPersistedDrafts()).toEqual({});
+    expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: '' });
   });
 
   it('requests an assistant reply for an Ada mention in a direct message', async () => {
@@ -694,6 +694,7 @@ describe('useAiChat', () => {
     );
     expect(result.current.currentAiChatThread).toBe(DIRECT_MESSAGE_THREAD_ID);
     expect(readPersistedDrafts()).toEqual({
+      [THREAD_ID]: '',
       [DIRECT_MESSAGE_THREAD_ID]: directMessageDraft,
     });
     expect(
@@ -1177,7 +1178,7 @@ describe('useAiChat', () => {
     expect(sentChannelId).toHaveBeenCalledTimes(1);
     expect(sentChannelId).toHaveBeenCalledWith(CHANNEL_ID);
     expect(jotaiStore.get(aiChatNewThreadChannelIdState.atom)).toBeNull();
-    expect(readPersistedDrafts()).toEqual({});
+    expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: '' });
   });
 
   it.each([

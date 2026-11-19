@@ -1,5 +1,4 @@
 import { useApolloClient } from '@apollo/client/react';
-import { isAiChatThreadRecordComplete } from '@/ai-chat/threads/utils/isAiChatThreadRecordComplete';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { computeAgentChatThreadPresetFilterGqlFilter } from 'twenty-shared/ai';
@@ -214,9 +213,9 @@ export const useLoadInboxThreadList = () => {
               store
                 .get(inboxFavoriteThreadsSelector.atom)
                 .filter(
-                  (thread) =>
-                    !isAiChatThreadRecordComplete(thread) &&
-                    !page.threadIds.includes(thread.id),
+                  ({ id, conversationType }) =>
+                    !isDefined(conversationType) &&
+                    !page.threadIds.includes(id),
                 )
                 .map(({ id }) => id),
             )

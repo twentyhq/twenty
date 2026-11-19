@@ -5,8 +5,7 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { getAgentChatThreadInboxStatus } from 'twenty-shared/ai';
 
 import { useUpdateAiChatThreadStatus } from '@/ai-chat/threads/hooks/useUpdateAiChatThreadStatus';
-import { aiChatThreadParticipantFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadParticipantFamilySelector';
-import { areAiChatThreadParticipantsLoadedSelector } from '@/ai-chat/threads/states/selectors/areAiChatThreadParticipantsLoadedSelector';
+import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
 import {
   type AiChatThreadVisit,
   aiChatThreadVisitFamilyState,
@@ -26,12 +25,8 @@ export const AiChatThreadMarkAsReadEffect = () => {
     aiChatThreadRecordFamilySelector,
     threadId ?? '',
   )?.lastActivityAt;
-  const areAiChatThreadParticipantsLoaded = useAtomStateValue(
-    areAiChatThreadParticipantsLoadedSelector,
-  );
-  const participant = useAtomFamilySelectorValue(
-    aiChatThreadParticipantFamilySelector,
-    threadId ?? '',
+  const aiChatThreadParticipants = useAtomStateValue(
+    aiChatThreadParticipantsState,
   );
   const [isVisible, setIsVisible] = useState(isDocumentVisible);
   const { updateAgentChatThreadInboxState } = useUpdateAiChatThreadStatus();
@@ -49,12 +44,13 @@ export const AiChatThreadMarkAsReadEffect = () => {
     if (
       !isDefined(threadId) ||
       !isVisible ||
-      !areAiChatThreadParticipantsLoaded ||
+      !isDefined(aiChatThreadParticipants) ||
       !isDefined(lastActivityAt)
     ) {
       return;
     }
 
+    const participant = aiChatThreadParticipants[threadId];
     const { isUnread } = getAgentChatThreadInboxStatus({
       lastActivityAt,
       participant,
@@ -103,8 +99,7 @@ export const AiChatThreadMarkAsReadEffect = () => {
   }, [
     isVisible,
     lastActivityAt,
-    areAiChatThreadParticipantsLoaded,
-    participant,
+    aiChatThreadParticipants,
     updateAgentChatThreadInboxState,
     store,
     threadId,

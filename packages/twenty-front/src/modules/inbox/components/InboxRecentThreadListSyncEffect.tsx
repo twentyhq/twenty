@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { isAiChatThreadRecordComplete } from '@/ai-chat/threads/utils/isAiChatThreadRecordComplete';
+import { isDefined } from 'twenty-shared/utils';
 
 import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
@@ -26,7 +26,7 @@ export const InboxRecentThreadListSyncEffect = ({
   });
   const { prependInboxThreadToRecentList } = useAddInboxThread();
   const { loadInboxThreadList } = useLoadInboxThreadList();
-  const isThreadFetched = isAiChatThreadRecordComplete(aiChatThreadRecord);
+  const isThreadFetched = isDefined(aiChatThreadRecord?.conversationType);
   const isThreadNotFound = isGraphqlErrorOfType(aiChatError, 'NOT_FOUND');
 
   useEffect(() => {

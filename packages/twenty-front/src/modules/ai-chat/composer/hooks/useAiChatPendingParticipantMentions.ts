@@ -1,7 +1,7 @@
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { useMemo } from 'react';
 
-import { aiChatDraftFamilySelector } from '@/ai-chat/states/selectors/aiChatDraftFamilySelector';
+import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { filterNewParticipantMentions } from '@/ai-chat/composer/utils/filterNewParticipantMentions';
 import { getParticipantMentionsFromSerializedDocument } from '@/ai-chat/composer/utils/getParticipantMentionsFromSerializedDocument';
@@ -11,10 +11,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 export const useAiChatPendingParticipantMentions = () => {
   const { threadId } = useAiChatInstanceOrThrow();
-  const serializedDraft = useAtomFamilySelectorValue(
-    aiChatDraftFamilySelector,
-    threadId,
-  );
+  const serializedDraft =
+    useAtomStateValue(aiChatDraftsByThreadIdState)[threadId] ?? '';
   const thread = useAtomFamilySelectorValue(
     aiChatThreadRecordFamilySelector,
     threadId,

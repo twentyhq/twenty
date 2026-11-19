@@ -1,5 +1,4 @@
 import { dispatchAiChatRefetchMessagesEvent } from '@/ai-chat/utils/dispatchAiChatRefetchMessagesEvent';
-import { setAiChatDraft } from '@/ai-chat/utils/setAiChatDraft';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -339,9 +338,10 @@ export const useAiChat = () => {
           });
         }
 
-        setAiChatDraftsByThreadId((drafts) =>
-          setAiChatDraft({ drafts, threadId, draft: serializedContentToSend }),
-        );
+        setAiChatDraftsByThreadId((prev) => ({
+          ...prev,
+          [threadId]: serializedContentToSend,
+        }));
         store.set(uploadedFilesAtom, (currentUploadedFiles) => [
           ...aiChatUploadedFiles,
           ...currentUploadedFiles,
@@ -557,9 +557,10 @@ export const useAiChat = () => {
       onThreadChange(threadId);
     }
 
-    setAiChatDraftsByThreadId((drafts) =>
-      setAiChatDraft({ drafts, threadId, draft: '' }),
-    );
+    setAiChatDraftsByThreadId((prev) => ({
+      ...prev,
+      [threadId]: '',
+    }));
     store.set(quotedMessageIdAtom, null);
 
     dispatchBrowserEvent<AiChatRestoreEditorContentEventDetail>(
