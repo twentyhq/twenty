@@ -33,7 +33,10 @@ export class FlatNavigationMenuItemValidatorService {
   }: {
     toFlatNavigationMenuItem: Pick<
       UniversalFlatNavigationMenuItem,
-      'type' | 'universalIdentifier' | 'parentUniversalIdentifier'
+      | 'type'
+      | 'builtInSectionKey'
+      | 'universalIdentifier'
+      | 'parentUniversalIdentifier'
     >;
     isParentUpdated: boolean;
     flatNavigationMenuItemMaps: MetadataUniversalFlatEntityMaps<'navigationMenuItem'>;
@@ -61,7 +64,9 @@ export class FlatNavigationMenuItemValidatorService {
 
     return validateNavigationMenuItemHierarchy({
       type: toFlatNavigationMenuItem.type,
+      builtInSectionKey: toFlatNavigationMenuItem.builtInSectionKey,
       parentType: parentNavigationMenuItem?.type,
+      parentBuiltInSectionKey: parentNavigationMenuItem?.builtInSectionKey,
       childTypes,
     });
   }
@@ -245,12 +250,14 @@ export class FlatNavigationMenuItemValidatorService {
         });
       }
 
+      const referencedParent =
+        referencedParentInOptimistic ?? referencedParentInRemaining;
+
       validationResult.errors.push(
         ...validateNavigationMenuItemHierarchy({
           type: flatNavigationMenuItem.type,
-          parentType: (
-            referencedParentInOptimistic ?? referencedParentInRemaining
-          )?.type,
+          parentType: referencedParent?.type,
+          parentBuiltInSectionKey: referencedParent?.builtInSectionKey,
         }),
       );
     }
@@ -400,6 +407,8 @@ export class FlatNavigationMenuItemValidatorService {
       ...validateNavigationMenuItemHierarchy({
         type: toFlatNavigationMenuItem.type,
         parentType: referencedParentNavigationMenuItem?.type,
+        parentBuiltInSectionKey:
+          referencedParentNavigationMenuItem?.builtInSectionKey,
       }),
     );
 

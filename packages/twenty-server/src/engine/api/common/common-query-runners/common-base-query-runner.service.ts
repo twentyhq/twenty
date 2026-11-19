@@ -147,11 +147,11 @@ export abstract class CommonBaseQueryRunnerService<
 
     await this.validate(args, queryRunnerContext);
 
-    const commonQueryParser = new CommonQueryParser(
+    const commonQueryParser = new CommonQueryParser({
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-    );
+    });
 
     const selectedFieldsResult = commonQueryParser.parseSelectedFields(
       args.selectedFields,
@@ -567,6 +567,8 @@ export abstract class CommonBaseQueryRunnerService<
     records,
     selection,
     queryRunnerContext,
+    limit = QUERY_MAX_RECORDS_FROM_RELATION,
+    repository,
   }: {
     records: ObjectRecord[];
     selection: CommonSelection;
@@ -577,6 +579,8 @@ export abstract class CommonBaseQueryRunnerService<
       | 'flatObjectMetadata'
       | 'authContext'
     >;
+    limit?: number;
+    repository?: WorkspaceRepository;
   }): Promise<CommonRelationsAggregatedValues> {
     return this.processNestedRelationsHelper.processNestedRelations({
       flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
@@ -584,8 +588,9 @@ export abstract class CommonBaseQueryRunnerService<
       parentObjectMetadataItem: queryRunnerContext.flatObjectMetadata,
       parentObjectRecords: records,
       selection,
-      limit: QUERY_MAX_RECORDS_FROM_RELATION,
+      limit,
       authContext: queryRunnerContext.authContext,
+      repository,
       ...this.getNestedRelationsReadPathOptions(),
     });
   }

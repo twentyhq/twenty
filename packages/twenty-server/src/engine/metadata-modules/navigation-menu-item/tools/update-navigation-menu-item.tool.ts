@@ -45,6 +45,7 @@ const updateNavigationMenuItemInputSchema = z.object({
 
 @DefineTool({
   name: 'update_navigation_menu_item',
+  isDestructive: true,
   category: ToolCategory.NAVIGATION_MENU_ITEM,
   accessPolicy: NAVIGATION_MENU_ITEM_WRITE_ACCESS_POLICY,
   description: `Update a navigation menu item (rename, recolor, move between folders, sections and tabs, reorder). Type and target ids are immutable — delete and recreate to convert one variant into another.`,
