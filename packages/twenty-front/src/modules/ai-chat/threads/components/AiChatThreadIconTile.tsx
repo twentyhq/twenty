@@ -17,8 +17,8 @@ const StyledTile = styled.div<{
   align-items: center;
   background: ${({ $backgroundColor }) => $backgroundColor};
   border-radius: ${themeCssVariables.border.radius.rounded};
-  corner-shape: round;
   color: ${({ $color }) => $color};
+  corner-shape: round;
   display: flex;
   flex-shrink: 0;
   height: ${({ $size }) => $size};

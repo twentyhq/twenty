@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent } from 'react';
@@ -114,6 +115,8 @@ export const InboxThreadActionsDropdown = ({
     !isDeleted &&
     thread.conversationType !== AgentChatThreadConversationType.DIRECT_MESSAGE;
 
+  const imageUrl = thread.imageFile?.[0]?.url;
+
   const handleChangeIcon = (event: MouseEvent) => {
     event.stopPropagation();
     openDropdown({
@@ -211,18 +214,20 @@ export const InboxThreadActionsDropdown = ({
           <StyledIconPickerContainer>
             <IconPicker
               dropdownId={iconPickerDropdownId}
-              selectedIconKey={thread.icon ?? undefined}
+              selectedIconKey={
+                isNonEmptyString(imageUrl)
+                  ? undefined
+                  : (thread.icon ?? undefined)
+              }
               onChange={({ iconKey }) => void setIcon(iconKey)}
               iconColorPicker={{
                 selectedColor: parseThemeColor(thread.iconColor),
                 onColorChange: (color) => void setIconColor(color),
               }}
               clickableComponent={<StyledIconPickerAnchor aria-hidden />}
-              imageUpload={{
-                imageUrl: thread.imageFile?.[0]?.url,
-                onUpload: (file) => void uploadImage(file),
-                onRemove: () => void removeImage(),
-              }}
+              imageUrl={imageUrl}
+              onImageUpload={(file) => void uploadImage(file)}
+              onImageRemove={() => void removeImage()}
             />
           </StyledIconPickerContainer>
         )}

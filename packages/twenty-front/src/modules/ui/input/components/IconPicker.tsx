@@ -24,7 +24,6 @@ import {
 } from 'twenty-ui/primitives/input';
 import { type ThemeColor, themeCssVariables } from 'twenty-ui/theme';
 
-import { type IconPickerImageUpload } from '@/ui/input/types/IconPickerImageUpload';
 import { IconPickerImagePanel } from '@/ui/input/components/IconPickerImagePanel';
 import { ThemeColorPickerMenu } from '@/ui/input/components/ThemeColorPickerMenu';
 import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
@@ -57,7 +56,9 @@ type IconPickerProps = {
     selectedColor: ThemeColor;
     onColorChange: (color: ThemeColor) => void;
   };
-  imageUpload?: IconPickerImageUpload;
+  imageUrl?: string | null;
+  onImageUpload?: (file: File) => void;
+  onImageRemove?: () => void;
 };
 
 type IconPickerTab = 'icon' | 'image';
@@ -108,13 +109,15 @@ export const IconPicker = ({
   maxIconsVisible = ICON_PICKER_DEFAULT_VISIBLE_COUNT,
   iconColorPicker,
   iconColor,
-  imageUpload,
+  imageUrl,
+  onImageUpload,
+  onImageRemove,
 }: IconPickerProps) => {
   const { t } = useLingui();
   const [searchString, setSearchString] = useState('');
   const [activeTab, setActiveTab] = useState<IconPickerTab>('icon');
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const imageUrl = imageUpload?.imageUrl;
+  const canUploadImage = isDefined(onImageUpload);
   const [visibleCount, setVisibleCount] = useAtomFamilyState(
     iconPickerVisibleCountState,
     dropdownId,
@@ -178,7 +181,7 @@ export const IconPicker = ({
     const file = event.target.files?.[0];
 
     if (isDefined(file)) {
-      imageUpload?.onUpload(file);
+      onImageUpload?.(file);
     }
 
     event.target.value = '';
@@ -320,7 +323,7 @@ export const IconPicker = ({
           sideOffset={dropdownSideOffset}
         >
           <StyledPopupContent data-click-outside-id={dropdownId}>
-            {isDefined(imageUpload) && (
+            {canUploadImage && (
               <>
                 <StyledSwitcherRow>
                   <SegmentedControl
@@ -338,11 +341,11 @@ export const IconPicker = ({
                 <Dropdown.Separator />
               </>
             )}
-            {isDefined(imageUpload) && activeTab === 'image' ? (
+            {canUploadImage && activeTab === 'image' ? (
               <IconPickerImagePanel
                 imageUrl={imageUrl}
                 onUploadClick={handleUploadClick}
-                onRemove={imageUpload.onRemove}
+                onRemove={() => onImageRemove?.()}
               />
             ) : (
               iconPanel
@@ -350,7 +353,7 @@ export const IconPicker = ({
           </StyledPopupContent>
         </DropdownContent>
       </DropdownRoot>
-      {isDefined(imageUpload) && (
+      {canUploadImage && (
         <StyledFileInput
           ref={fileInputRef}
           type="file"

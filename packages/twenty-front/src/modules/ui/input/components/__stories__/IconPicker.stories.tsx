@@ -321,7 +321,7 @@ export const CompositeTriggerKeyboard: Story = {
 };
 
 export const WithImageUpload: Story = {
-  args: { imageUpload: { onUpload: fn(), onRemove: fn() } },
+  args: { onImageUpload: fn(), onImageRemove: fn() },
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
 
