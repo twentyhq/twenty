@@ -49,8 +49,10 @@ export const useNavigationMenuItemSectionItems = ({
     shouldFlattenTopLevelSections ?? !isCustomizableSidebarEnabled;
 
   const workspaceSidebarRootSectionId = useWorkspaceSidebarRootSectionId();
+  const isRootContainer =
+    containerId === null || containerId === workspaceSidebarRootSectionId;
   const rootSectionId =
-    isFlatteningTopLevelSections && containerId === null
+    isFlatteningTopLevelSections && isRootContainer
       ? workspaceSidebarRootSectionId
       : null;
 
