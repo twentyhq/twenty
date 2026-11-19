@@ -5,7 +5,6 @@ export default defineConfig({
   plugins: [
     tsconfigPaths({
       projects: ['tsconfig.spec.json'],
-      ignoreConfigErrors: true,
     }),
   ],
   test: {
