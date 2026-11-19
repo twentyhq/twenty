@@ -1,6 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import {
   FOLDER_HEADER_SLOT_COLLISION_PRIORITY,
   NavigationMenuItemDroppableSlot,
@@ -14,6 +13,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';
+import { getNavigationMenuItemListDroppableId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemListDroppableId';
 import { NavigationMenuItemDisplay } from '@/navigation-menu-item/display/components/NavigationMenuItemDisplay';
 import { NavigationMenuItemOrphanDropTarget } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemOrphanDropTarget';
 import type { NavigationMenuItemSectionListDndKitProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionListDndKitProps';
@@ -54,9 +54,10 @@ export const WorkspaceSectionListDndKit = ({
   const isAddMenuItemButtonVisible = isLayoutCustomizationModeEnabled;
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const orphanAppendDndIndex = filteredItems.length;
-  const listDroppableId = isDefined(containerId)
-    ? `${NavigationMenuItemDroppableIds.WORKSPACE_CONTAINER_PREFIX}${containerId}`
-    : NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS;
+  const listDroppableId = getNavigationMenuItemListDroppableId({
+    parentId: containerId,
+    navigationMenuItemSection: 'workspace',
+  });
   return (
     <StyledList>
       {filteredItems.map((item, index) => (
@@ -84,7 +85,6 @@ export const WorkspaceSectionListDndKit = ({
               onNavigationMenuItemClick={onNavigationMenuItemClick}
               onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
               orphanIndex={index}
-              listDroppableId={listDroppableId}
             />
           </NavigationMenuItemSortableItem>
         </StyledListItemRow>
