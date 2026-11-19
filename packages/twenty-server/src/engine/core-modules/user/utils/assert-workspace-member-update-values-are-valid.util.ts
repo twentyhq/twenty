@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { AGENT_CHAT_INBOX_NOTIFICATION_LEVEL } from 'twenty-shared/ai';
 import { UI_SCALE_VALUES } from 'twenty-shared/constants';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -10,9 +9,6 @@ const WORKSPACE_MEMBER_FIELD_ALLOWED_VALUES: Record<
   ReadonlySet<string>
 > = {
   uiScale: new Set(UI_SCALE_VALUES),
-  inboxNotificationLevel: new Set(
-    Object.values(AGENT_CHAT_INBOX_NOTIFICATION_LEVEL),
-  ),
 };
 
 export const assertWorkspaceMemberUpdateValuesAreValid = ({

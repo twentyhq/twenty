@@ -3763,6 +3763,7 @@ type Mutation {
   updateFocusedTab(input: UpdateFocusedTabInput!): Boolean!
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
   updateGettingStarted(input: UpdateGettingStartedInput!): GettingStartedProgress!
+  updateInboxNotificationSettings(input: UpdateInboxNotificationSettingsInput!): UserWorkspace!
   updateLabPublicFeatureFlag(input: UpdateLabPublicFeatureFlagInput!): FeatureFlag!
   updateManyNavigationMenuItems(inputs: [UpdateOneNavigationMenuItemInput!]!): [NavigationMenuItem!]!
   updateManyObjects(inputs: [UpdateOneObjectInput!]!): [Object!]!
@@ -5504,6 +5505,11 @@ input UpdateGettingStartedInput {
   snoozedUntil: String
 }
 
+input UpdateInboxNotificationSettingsInput {
+  inboxNotificationLevel: String!
+  isInboxNotificationPreviewEnabled: Boolean!
+}
+
 input UpdateLabPublicFeatureFlagInput {
   publicFeatureFlag: String!
   value: Boolean!
@@ -6306,7 +6312,9 @@ type UserWorkspace {
   createdAt: DateTime!
   deletedAt: DateTime
   id: UUID!
+  inboxNotificationLevel: String
   isImpersonating: Boolean
+  isInboxNotificationPreviewEnabled: Boolean
   locale: String!
   objectRecordsPermissions: [ObjectRecordsPermissions!]
   permissionFlags: [PermissionFlagType!]
@@ -6795,8 +6803,6 @@ type WorkspaceMember {
   colorScheme: String!
   dateFormat: WorkspaceMemberDateFormatEnum
   id: UUID!
-  inboxNotificationLevel: String!
-  isInboxNotificationPreviewEnabled: Boolean!
   locale: String
   name: FullName!
   numberFormat: WorkspaceMemberNumberFormatEnum

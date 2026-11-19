@@ -1,7 +1,6 @@
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { registerEnumType } from '@nestjs/graphql';
 
-import { type AgentChatInboxNotificationLevel } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { type FullNameMetadata } from 'twenty-shared/types';
 import { type Relation } from 'typeorm';
@@ -61,8 +60,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   name: FullNameMetadata;
   colorScheme: string;
   uiScale: string;
-  inboxNotificationLevel: AgentChatInboxNotificationLevel;
-  isInboxNotificationPreviewEnabled: boolean;
   openRecordIn: string;
   locale: keyof typeof APP_LOCALES;
   avatarUrl: string | null;

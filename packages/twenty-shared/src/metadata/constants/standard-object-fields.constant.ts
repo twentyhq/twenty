@@ -1540,12 +1540,6 @@ export const STANDARD_OBJECT_FIELDS = {
     uiScale: {
       universalIdentifier: '20202020-1581-4bfb-b87d-58fa9cd5b817',
     },
-    inboxNotificationLevel: {
-      universalIdentifier: '20202020-d717-4676-9268-0143bd2e1f98',
-    },
-    isInboxNotificationPreviewEnabled: {
-      universalIdentifier: '20202020-af34-4979-8727-dea5997ea9d2',
-    },
     openRecordIn: {
       universalIdentifier: '20202020-1b16-419d-9323-6f3ea850e5d9',
     },

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { AGENT_CHAT_INBOX_NOTIFICATION_LEVEL } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -18,11 +17,6 @@ import {
   type WorkspaceMemberWorkspaceEntity,
 } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { FileFolder, OpenRecordIn } from 'twenty-shared/types';
-
-const INBOX_NOTIFICATION_LEVEL_BEFORE_2_61_UPGRADE =
-  AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.ALL_FOLLOWED;
-
-const IS_INBOX_NOTIFICATION_PREVIEW_ENABLED_BEFORE_2_61_UPGRADE = false;
 
 export type ToWorkspaceMemberDtoArgs = {
   workspaceMemberEntity: WorkspaceMemberWorkspaceEntity;
@@ -76,8 +70,6 @@ export class WorkspaceMemberTranspiler {
       userEmail,
       colorScheme,
       uiScale,
-      inboxNotificationLevel,
-      isInboxNotificationPreviewEnabled,
       openRecordIn,
       locale,
       timeFormat,
@@ -112,11 +104,6 @@ export class WorkspaceMemberTranspiler {
       colorScheme,
       openRecordIn: openRecordIn as OpenRecordIn,
       uiScale,
-      inboxNotificationLevel:
-        inboxNotificationLevel ?? INBOX_NOTIFICATION_LEVEL_BEFORE_2_61_UPGRADE,
-      isInboxNotificationPreviewEnabled:
-        isInboxNotificationPreviewEnabled ??
-        IS_INBOX_NOTIFICATION_PREVIEW_ENABLED_BEFORE_2_61_UPGRADE,
       dateFormat: dateFormat as WorkspaceMemberDateFormatEnum,
       locale,
       timeFormat: timeFormat as WorkspaceMemberTimeFormatEnum,

@@ -231,64 +231,6 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  inboxNotificationLevel: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'inboxNotificationLevel',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(
-        msg({
-          message: `Inbox notifications`,
-          context: 'fieldMetadata.label',
-        }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Which new inbox messages send a notification`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconBell',
-      isSystem: true,
-      isNullable: false,
-      isUIEditable: false,
-      defaultValue: "'ALL_FOLLOWED'",
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  isInboxNotificationPreviewEnabled: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'isInboxNotificationPreviewEnabled',
-      type: FieldMetadataType.BOOLEAN,
-      label: i18nLabel(
-        msg({
-          message: `Inbox notification preview`,
-          context: 'fieldMetadata.label',
-        }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `Whether inbox notifications show the sender, the chat and the message text`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconEye',
-      isSystem: true,
-      isNullable: false,
-      isUIEditable: false,
-      defaultValue: false,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   openRecordIn: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
