@@ -13,17 +13,17 @@ export const useSubscribeToWebPushNotifications = () => {
   const [upsertWebPushSubscription] = useMutation(UPSERT_WEB_PUSH_SUBSCRIPTION);
 
   const subscribeToWebPushNotifications = useCallback(async () => {
-    const applicationServerKey = store.get(webPushVapidPublicKeyState.atom);
+    const vapidPublicKey = store.get(webPushVapidPublicKeyState.atom);
 
     if (
-      !isDefined(applicationServerKey) ||
+      !isDefined(vapidPublicKey) ||
       getBrowserNotificationPermission() !== 'granted'
     ) {
       return;
     }
 
     const { endpoint, keys } = (
-      await getOrCreateBrowserWebPushSubscription(applicationServerKey)
+      await getOrCreateBrowserWebPushSubscription(vapidPublicKey)
     ).toJSON();
 
     if (!isDefined(endpoint) || !isDefined(keys)) {
@@ -34,9 +34,9 @@ export const useSubscribeToWebPushNotifications = () => {
       variables: {
         input: {
           endpoint,
-          p256dhKey: keys.p256dh,
-          authSecret: keys.auth,
-          applicationServerKey,
+          browserPublicKey: keys.p256dh,
+          browserAuthSecret: keys.auth,
+          vapidPublicKey,
         },
       },
     });

@@ -2,7 +2,7 @@ import { Buffer } from 'buffer';
 import { base64UrlEncode, isDefined } from 'twenty-shared/utils';
 
 export const getOrCreateBrowserWebPushSubscription = async (
-  applicationServerKey: string,
+  vapidPublicKey: string,
 ): Promise<PushSubscription> => {
   const registration =
     await navigator.serviceWorker.register('/service-worker.js');
@@ -13,7 +13,7 @@ export const getOrCreateBrowserWebPushSubscription = async (
 
     if (
       isDefined(existingKey) &&
-      base64UrlEncode(Buffer.from(existingKey)) === applicationServerKey
+      base64UrlEncode(Buffer.from(existingKey)) === vapidPublicKey
     ) {
       return existingSubscription;
     }
@@ -23,6 +23,6 @@ export const getOrCreateBrowserWebPushSubscription = async (
 
   return registration.pushManager.subscribe({
     userVisibleOnly: true,
-    applicationServerKey,
+    applicationServerKey: vapidPublicKey,
   });
 };
