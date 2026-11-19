@@ -75,80 +75,95 @@ const toGroupChild = ({
     : null;
 };
 
-export const toConditionalAvailabilityRowTree = ({
+const readChild = ({
+  node,
+  offeredSubjects,
+  depth,
+}: {
+  node: ConditionalAvailabilityNode;
+  offeredSubjects: ConditionalAvailabilityOfferedSubjects;
+  depth: number;
+}): ConditionalAvailabilityRowTreeChild | null => {
+  if (node.type !== 'GROUP') {
+    const row = readConditionalAvailabilitySubjectComparison({
+      node,
+      offeredSubjects,
+    });
+
+    return isDefined(row) ? { type: 'row', row } : null;
+  }
+
+  if (depth >= MAX_GROUP_DEPTH) {
+    return null;
+  }
+
+  const groupChildren = readChildren({
+    nodes: node.children,
+    logicalOperator: node.logicalOperator,
+    offeredSubjects,
+    depth: depth + 1,
+  });
+
+  if (!isDefined(groupChildren)) {
+    return null;
+  }
+
+  return toGroupChild({
+    rows: groupChildren.flatMap((groupChild) =>
+      groupChild.type === 'row' ? [groupChild.row] : [],
+    ),
+    logicalOperator: node.logicalOperator,
+    canBeGroup: depth === 0,
+  });
+};
+
+const readChildren = ({
+  nodes,
+  logicalOperator,
+  offeredSubjects,
+  depth,
+}: {
+  nodes: ConditionalAvailabilityNode[];
+  logicalOperator: ConditionalAvailabilityLogicalOperator;
+  offeredSubjects: ConditionalAvailabilityOfferedSubjects;
+  depth: number;
+}): ConditionalAvailabilityRowTreeChild[] | null => {
+  const children: ConditionalAvailabilityRowTreeChild[] = [];
+
+  for (const node of nodes) {
+    const child = readChild({ node, offeredSubjects, depth });
+
+    if (!isDefined(child)) {
+      return null;
+    }
+
+    const previousChild = children.at(-1);
+    const mergedRow =
+      previousChild?.type === 'row' && child.type === 'row'
+        ? mergeRows({
+            previousRow: previousChild.row,
+            row: child.row,
+            logicalOperator,
+          })
+        : null;
+
+    if (isDefined(mergedRow)) {
+      children[children.length - 1] = { type: 'row', row: mergedRow };
+    } else {
+      children.push(child);
+    }
+  }
+
+  return children;
+};
+
+export const readConditionalAvailabilityRowTree = ({
   node,
   offeredSubjects,
 }: {
   node: ConditionalAvailabilityNode;
   offeredSubjects: ConditionalAvailabilityOfferedSubjects;
 }): ConditionalAvailabilityRowTree | null => {
-  const readChildren = ({
-    nodes,
-    logicalOperator,
-    depth,
-  }: {
-    nodes: ConditionalAvailabilityNode[];
-    logicalOperator: ConditionalAvailabilityLogicalOperator;
-    depth: number;
-  }): ConditionalAvailabilityRowTreeChild[] | null => {
-    const readChild = (
-      childNode: ConditionalAvailabilityNode,
-    ): ConditionalAvailabilityRowTreeChild | null => {
-      if (childNode.type !== 'GROUP') {
-        const row = readConditionalAvailabilitySubjectComparison({
-          node: childNode,
-          offeredSubjects,
-        });
-
-        return isDefined(row) ? { type: 'row', row } : null;
-      }
-
-      const groupChildren =
-        depth < MAX_GROUP_DEPTH
-          ? readChildren({
-              nodes: childNode.children,
-              logicalOperator: childNode.logicalOperator,
-              depth: depth + 1,
-            })
-          : null;
-
-      return isDefined(groupChildren)
-        ? toGroupChild({
-            rows: groupChildren.flatMap((groupChild) =>
-              groupChild.type === 'row' ? [groupChild.row] : [],
-            ),
-            logicalOperator: childNode.logicalOperator,
-            canBeGroup: depth === 0,
-          })
-        : null;
-    };
-
-    return nodes.reduce<ConditionalAvailabilityRowTreeChild[] | null>(
-      (children, childNode) => {
-        const child = isDefined(children) ? readChild(childNode) : null;
-
-        if (!isDefined(children) || !isDefined(child)) {
-          return null;
-        }
-
-        const previousChild = children.at(-1);
-        const mergedRow =
-          previousChild?.type === 'row' && child.type === 'row'
-            ? mergeRows({
-                previousRow: previousChild.row,
-                row: child.row,
-                logicalOperator,
-              })
-            : null;
-
-        return isDefined(mergedRow)
-          ? [...children.slice(0, -1), { type: 'row', row: mergedRow }]
-          : [...children, child];
-      },
-      [],
-    );
-  };
-
   const defaultLogicalOperator: ConditionalAvailabilityLogicalOperator =
     doNotTranslate('AND');
   const logicalOperator =
@@ -157,6 +172,7 @@ export const toConditionalAvailabilityRowTree = ({
   const children = readChildren({
     nodes: node.type === 'GROUP' ? node.children : [node],
     logicalOperator,
+    offeredSubjects,
     depth: 0,
   });
 

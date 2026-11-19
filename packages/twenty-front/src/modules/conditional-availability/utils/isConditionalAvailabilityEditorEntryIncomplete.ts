@@ -12,7 +12,7 @@ export const isConditionalAvailabilityEditorEntryIncomplete = ({
   node: ConditionalAvailabilityNode | null;
 }) =>
   isDefined(editorEntry) &&
-  isDeeplyEqual(editorEntry.node, node) &&
+  isDeeplyEqual(editorEntry.storedNode, node) &&
   validateConditionalAvailabilityEditorState({
     editorState: editorEntry.editorState,
     metadataName: editorEntry.metadataName,

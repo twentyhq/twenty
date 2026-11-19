@@ -1,7 +1,23 @@
-import { CONDITIONAL_AVAILABILITY_VARIABLE_ROOTS } from '@/conditional-availability/constants/ConditionalAvailabilityVariableRoots';
 import { type ConditionalAvailabilityReadOnlyReason } from '@/conditional-availability/types/ConditionalAvailabilityReadOnlyReason';
-import { getConditionalAvailabilityNodeVariableRoots } from '@/conditional-availability/utils/getConditionalAvailabilityNodeVariableRoots';
 import { type ConditionalAvailabilityNode } from 'twenty-shared/types';
+import {
+  isDefined,
+  listConditionalAvailabilityNodes,
+} from 'twenty-shared/utils';
+
+const getVariableRoots = ({
+  node,
+}: {
+  node: ConditionalAvailabilityNode | null;
+}): string[] => {
+  if (!isDefined(node)) {
+    return [];
+  }
+
+  return listConditionalAvailabilityNodes({ node }).flatMap((childNode) =>
+    childNode.type === 'PATH' ? [childNode.path.split('.')[0]] : [],
+  );
+};
 
 export const getConditionalAvailabilityReadOnlyReason = ({
   node,
@@ -9,21 +25,16 @@ export const getConditionalAvailabilityReadOnlyReason = ({
 }: {
   node: ConditionalAvailabilityNode | null;
   hasRolesPermission: boolean;
-}): ConditionalAvailabilityReadOnlyReason => {
-  const variableRoots = getConditionalAvailabilityNodeVariableRoots({ node });
+}): ConditionalAvailabilityReadOnlyReason | null => {
+  const variableRoots = getVariableRoots({ node });
 
-  if (
-    variableRoots.includes(CONDITIONAL_AVAILABILITY_VARIABLE_ROOTS.featureFlags)
-  ) {
-    return { status: 'readOnly', reason: 'featureFlags' };
+  if (variableRoots.includes('featureFlags')) {
+    return 'featureFlags';
   }
 
-  if (
-    !hasRolesPermission &&
-    variableRoots.includes(CONDITIONAL_AVAILABILITY_VARIABLE_ROOTS.role)
-  ) {
-    return { status: 'readOnly', reason: 'roles' };
+  if (!hasRolesPermission && variableRoots.includes('currentRole')) {
+    return 'roles';
   }
 
-  return { status: 'editable' };
+  return null;
 };

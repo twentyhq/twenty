@@ -1,4 +1,3 @@
-import { CONDITIONAL_AVAILABILITY_VALUE_COUNT_RANGE_BY_ARITY } from '@/conditional-availability/constants/ConditionalAvailabilityValueCountRangeByArity';
 import { type ConditionalAvailabilityOperator } from '@/conditional-availability/types/ConditionalAvailabilityOperator';
 import { type ConditionalAvailabilityRow } from '@/conditional-availability/types/ConditionalAvailabilityRow';
 import { getConditionalAvailabilityValueArity } from '@/conditional-availability/utils/getConditionalAvailabilityValueArity';
@@ -11,10 +10,9 @@ export const changeConditionalAvailabilityRowOperator = ({
   operator: ConditionalAvailabilityOperator;
 }): ConditionalAvailabilityRow => {
   const nextRow = { ...row, operator };
-  const { max } =
-    CONDITIONAL_AVAILABILITY_VALUE_COUNT_RANGE_BY_ARITY[
-      getConditionalAvailabilityValueArity({ row: nextRow })
-    ];
+  const keepsValues =
+    getConditionalAvailabilityValueArity({ row: nextRow }) === 'list' ||
+    row.values.length <= 1;
 
-  return { ...nextRow, values: row.values.length <= max ? row.values : [] };
+  return { ...nextRow, values: keepsValues ? row.values : [] };
 };

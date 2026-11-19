@@ -1,5 +1,5 @@
-import { type ConditionalAvailabilitySubject } from '@/conditional-availability/types/ConditionalAvailabilitySubject';
+import { type ConditionalAvailabilityPathSubject } from '@/conditional-availability/types/ConditionalAvailabilityPathSubject';
 
 export type ConditionalAvailabilityRowSubject = {
-  subject: ConditionalAvailabilitySubject;
+  subject: ConditionalAvailabilityPathSubject;
 };

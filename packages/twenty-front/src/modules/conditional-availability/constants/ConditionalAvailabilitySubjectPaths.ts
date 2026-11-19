@@ -1,7 +1,7 @@
-import { type ConditionalAvailabilitySubject } from '@/conditional-availability/types/ConditionalAvailabilitySubject';
+import { type ConditionalAvailabilityPathSubject } from '@/conditional-availability/types/ConditionalAvailabilityPathSubject';
 
 export const CONDITIONAL_AVAILABILITY_SUBJECT_PATHS: Record<
-  ConditionalAvailabilitySubject,
+  ConditionalAvailabilityPathSubject,
   string
 > = {
   role: 'currentRole.universalIdentifier',

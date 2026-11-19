@@ -3,12 +3,20 @@ import { isString } from '@sniptt/guards';
 import { CONDITIONAL_AVAILABILITY_COMPARISON_OPERATOR_SYMBOLS } from '@/constants/ConditionalAvailabilityComparisonOperatorSymbols';
 import { type ConditionalAvailabilityLogicalOperator } from '@/types/ConditionalAvailabilityLogicalOperator';
 import { type ConditionalAvailabilityNode } from '@/types/ConditionalAvailabilityNode';
-import { printConditionalAvailabilityText } from '@/utils/conditional-availability/printConditionalAvailabilityText';
+
+const BACKSLASH_BEFORE_CLOSING_QUOTE_PATTERN = /\\\\"$/;
+const UNICODE_ESCAPED_BACKSLASH_AND_CLOSING_QUOTE = '\\u005c"';
+
+const printConditionalAvailabilityText = ({ text }: { text: string }): string =>
+  JSON.stringify(text).replace(
+    BACKSLASH_BEFORE_CLOSING_QUOTE_PATTERN,
+    UNICODE_ESCAPED_BACKSLASH_AND_CLOSING_QUOTE,
+  );
 
 const printInParentheses = (node: ConditionalAvailabilityNode): string =>
   `(${printConditionalAvailabilityNode({ node })})`;
 
-const printComparisonOperand = (node: ConditionalAvailabilityNode): string =>
+const printOperand = (node: ConditionalAvailabilityNode): string =>
   node.type === 'COMPARISON' || node.type === 'GROUP'
     ? printInParentheses(node)
     : printConditionalAvailabilityNode({ node });
@@ -40,9 +48,9 @@ export const printConditionalAvailabilityNode = ({
       return node.path;
     case 'COMPARISON':
       return [
-        printComparisonOperand(node.left),
+        printOperand(node.left),
         CONDITIONAL_AVAILABILITY_COMPARISON_OPERATOR_SYMBOLS[node.operator],
-        printComparisonOperand(node.right),
+        printOperand(node.right),
       ].join(' ');
     case 'GROUP':
       return node.children
@@ -54,9 +62,7 @@ export const printConditionalAvailabilityNode = ({
         )
         .join(node.logicalOperator === 'AND' ? ' and ' : ' or ');
     case 'NOT':
-      return node.child.type === 'COMPARISON' || node.child.type === 'GROUP'
-        ? `not ${printInParentheses(node.child)}`
-        : `not ${printConditionalAvailabilityNode({ node: node.child })}`;
+      return `not ${printOperand(node.child)}`;
     case 'CALL':
       return `${node.functionName}(${node.arguments
         .map((argumentNode) =>
