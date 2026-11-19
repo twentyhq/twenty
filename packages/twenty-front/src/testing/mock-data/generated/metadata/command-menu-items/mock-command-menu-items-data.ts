@@ -678,7 +678,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "isPinned": true,
     "payload": null,
     "hotKeys": null,
-    "conditionalAvailabilityExpression": "isSelectAll or someEquals(selectedRecords, \"status\", \"NOT_STARTED\") or someEquals(selectedRecords, \"status\", \"ENQUEUED\") or someEquals(selectedRecords, \"status\", \"RUNNING\")",
+    "conditionalAvailabilityExpression": "isSelectAll or someEquals(selectedRecords, \"status\", \"ENQUEUED\") or someEquals(selectedRecords, \"status\", \"RUNNING\")",
     "availabilityType": "RECORD_SELECTION",
     "availabilityObjectMetadataId": "dccf06e5-31d9-43fc-9612-30517caadf5f",
     "pageLayoutId": null,
