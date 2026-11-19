@@ -1,6 +1,6 @@
 import { useAddInboxThread } from '@/inbox/hooks/useAddInboxThread';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
-import { useRefreshAiChatThreadPermissions } from '@/ai-chat/hooks/useRefreshAiChatThreadPermissions';
+import { useRefreshAiChatThreadPermissions } from '@/ai-chat/threads/hooks/useRefreshAiChatThreadPermissions';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useEffect, useState } from 'react';

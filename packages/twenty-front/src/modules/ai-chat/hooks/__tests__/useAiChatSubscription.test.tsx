@@ -6,10 +6,10 @@ import { type AgentMessageReactionSummary } from 'twenty-shared/ai';
 
 import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai-chat/constants/AiChatRefetchMessagesEventName';
 import { useAiChatSubscription } from '@/ai-chat/hooks/useAiChatSubscription';
-import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/aiChatMessageReactionsFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { aiChatFetchedMessagesFamilyState } from '@/ai-chat/states/aiChatFetchedMessagesFamilyState';
-import { aiChatQueuedMessagesFamilyState } from '@/ai-chat/states/aiChatQueuedMessagesFamilyState';
+import { aiChatQueuedMessagesFamilyState } from '@/ai-chat/composer/states/aiChatQueuedMessagesFamilyState';
 import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
 import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai-chat/states/aiChatIsAwaitingFirstChunkFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -20,7 +20,7 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const mockRefreshPermissions = jest.fn();
-jest.mock('@/ai-chat/hooks/useRefreshAiChatThreadPermissions', () => ({
+jest.mock('@/ai-chat/threads/hooks/useRefreshAiChatThreadPermissions', () => ({
   useRefreshAiChatThreadPermissions: () => ({
     refreshAiChatThreadPermissions: mockRefreshPermissions,
   }),

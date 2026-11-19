@@ -20,6 +20,7 @@ const deleteViewFieldInputSchema = z.object({
 
 @DefineTool({
   name: 'delete_view_field',
+  isDestructive: true,
   category: ToolCategory.VIEW,
   accessPolicy: VIEW_FIELD_ACCESS_POLICY,
   description:

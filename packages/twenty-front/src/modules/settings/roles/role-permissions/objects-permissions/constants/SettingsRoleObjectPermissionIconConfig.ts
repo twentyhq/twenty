@@ -1,3 +1,5 @@
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import {
   type IconComponent,
   IconEye,
@@ -13,6 +15,7 @@ import {
 type SettingsRoleObjectPermissionIconConfig = {
   Icon: IconComponent;
   IconForbidden: IconComponent;
+  label: MessageDescriptor;
 };
 
 export type SettingsRoleObjectPermissionKey =
@@ -28,17 +31,21 @@ export const SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG: Record<
   canReadObjectRecords: {
     Icon: IconEye,
     IconForbidden: IconEyeOff,
+    label: msg`See`,
   },
   canUpdateObjectRecords: {
     Icon: IconPencil,
     IconForbidden: IconPencilOff,
+    label: msg`Edit`,
   },
   canSoftDeleteObjectRecords: {
     Icon: IconTrash,
     IconForbidden: IconTrashOff,
+    label: msg`Delete`,
   },
   canDestroyObjectRecords: {
     Icon: IconTrashX,
     IconForbidden: IconTrashXOff,
+    label: msg`Destroy`,
   },
 };

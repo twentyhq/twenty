@@ -60,6 +60,7 @@ export class ApplicationExportResolver {
       shouldIncludeDependencies,
       shouldIncludeSourceFiles,
       shouldIncludeSourceDependencies,
+      shouldIncludeLogicFunctionSources,
       shouldIncludePublicAssets,
     }: ExportApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -70,6 +71,7 @@ export class ApplicationExportResolver {
       shouldIncludeDependencies,
       shouldIncludeSourceFiles,
       shouldIncludeSourceDependencies,
+      shouldIncludeLogicFunctionSources,
       shouldIncludePublicAssets,
     });
   }

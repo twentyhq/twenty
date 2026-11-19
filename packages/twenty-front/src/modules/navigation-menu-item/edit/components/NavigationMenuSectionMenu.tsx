@@ -5,6 +5,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
+import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
 import { NavigationMenuItemContainerNameEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemContainerNameEditor';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { NavigationMenuItemDropdownOpenEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemDropdownOpenEffect';
@@ -18,7 +19,10 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type NavigationMenuSectionMenuProps = {
-  section: Pick<NavigationMenuItem, 'id' | 'name' | 'icon' | 'parentId'>;
+  section: Pick<
+    NavigationMenuItem,
+    'id' | 'name' | 'icon' | 'parentId' | 'type' | 'builtInSectionKey'
+  >;
 };
 
 export const NavigationMenuSectionMenu = ({
@@ -61,12 +65,16 @@ export const NavigationMenuSectionMenu = ({
         align="start"
         width={GenericDropdownContentWidth.Large}
       >
-        <NavigationMenuItemContainerNameEditor
-          item={section}
-          placeholder={t`Section name`}
-          onSubmit={() => closeDropdown(dropdownId)}
-        />
-        <Dropdown.Separator />
+        {!isNavigationMenuItemBuiltInSection(section) && (
+          <>
+            <NavigationMenuItemContainerNameEditor
+              item={section}
+              placeholder={t`Section name`}
+              onSubmit={() => closeDropdown(dropdownId)}
+            />
+            <Dropdown.Separator />
+          </>
+        )}
         <Dropdown.Section>
           {reorderOptions.map((option) => (
             <NavigationMenuItemSelectableItem key={option.id} item={option} />

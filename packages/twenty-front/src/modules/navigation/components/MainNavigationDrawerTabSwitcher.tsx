@@ -9,6 +9,7 @@ import { useInboxOpenThreadsSummary } from '@/inbox/hooks/useInboxOpenThreadsSum
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
+import { NAVIGATION_MENU_TAB_MAX_COUNT } from '@/navigation-menu-item/common/constants/NavigationMenuTabMaxCount';
 import { MainNavigationDrawerAddTabButton } from '@/navigation/components/MainNavigationDrawerAddTabButton';
 import { MainNavigationDrawerSidebarTab } from '@/navigation/components/MainNavigationDrawerSidebarTab';
 import { MainNavigationDrawerTab } from '@/navigation/components/MainNavigationDrawerTab';
@@ -41,7 +42,11 @@ const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
       : themeCssVariables.betweenSiblingsGap};
   height: ${({ isExpanded }) =>
     isExpanded ? themeCssVariables.spacing[10] : 'auto'};
+  margin: ${({ isExpanded }) =>
+    isExpanded ? `0 calc(-1 * ${themeCssVariables.spacing[2]})` : '0'};
   min-width: 0;
+  padding: ${({ isExpanded }) =>
+    isExpanded ? `0 ${themeCssVariables.spacing[2]}` : '0'};
 `;
 
 const StyledUnreadBadge = styled.span`
@@ -162,7 +167,8 @@ export const MainNavigationDrawerTabSwitcher = () => {
               shouldShowTooltip={shouldShowTooltips}
             />
           )),
-          ...(isLayoutCustomizationModeEnabled
+          ...(isLayoutCustomizationModeEnabled &&
+          navigationMenuTabs.length < NAVIGATION_MENU_TAB_MAX_COUNT
             ? [
                 <MainNavigationDrawerAddTabButton
                   key="add-tab"

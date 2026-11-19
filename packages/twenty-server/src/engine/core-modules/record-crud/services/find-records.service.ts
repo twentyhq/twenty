@@ -104,7 +104,10 @@ export class FindRecordsService {
           orderBy: orderByWithIdCondition,
           first: limit ? Math.min(limit, QUERY_MAX_RECORDS) : QUERY_MAX_RECORDS,
           offset,
-          selectedFields: { ...effectiveSelectedFields, totalCount: true },
+          selectedFields: {
+            ...effectiveSelectedFields,
+            aggregates: ['totalCount'],
+          },
         },
         queryRunnerContext,
       );
@@ -153,7 +156,9 @@ export class FindRecordsService {
     CommonApiContext,
     'flatObjectMetadata' | 'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
   > &
-    Pick<FindRecordsParams, 'authContext'>): Promise<CommonSelectedFields> {
+    Pick<FindRecordsParams, 'authContext'>): Promise<
+    CommonSelectedFields['relations']
+  > {
     const { readableObjectMetadataIds, unreadableFieldMetadataIds } =
       await this.commonSelectFieldsBuilder.findObjectSelectionMetadataIdsOrThrow(
         {

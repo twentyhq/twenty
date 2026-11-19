@@ -22,27 +22,35 @@ export const fromCreateViewSortInputToFlatViewSortToCreate = ({
 >): UniversalFlatViewSort & {
   id: string;
 } => {
-  const { viewId, fieldMetadataId, ...createViewSortInput } =
-    trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
-      rawCreateViewSortInput,
-      ['fieldMetadataId', 'id', 'viewId'],
-    );
+  const {
+    viewId,
+    fieldMetadataId,
+    relationTargetFieldMetadataId,
+    ...createViewSortInput
+  } = trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
+    rawCreateViewSortInput,
+    ['fieldMetadataId', 'id', 'viewId', 'relationTargetFieldMetadataId'],
+  );
 
   const createdAt = new Date().toISOString();
   const viewSortId = createViewSortInput.id ?? v4();
 
-  const { fieldMetadataUniversalIdentifier, viewUniversalIdentifier } =
-    resolveEntityRelationUniversalIdentifiers({
-      metadataName: 'viewSort',
-      foreignKeyValues: {
-        fieldMetadataId,
-        viewId,
-      },
-      flatEntityMaps: {
-        flatFieldMetadataMaps,
-        flatViewMaps,
-      },
-    });
+  const {
+    fieldMetadataUniversalIdentifier,
+    viewUniversalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier,
+  } = resolveEntityRelationUniversalIdentifiers({
+    metadataName: 'viewSort',
+    foreignKeyValues: {
+      fieldMetadataId,
+      viewId,
+      relationTargetFieldMetadataId,
+    },
+    flatEntityMaps: {
+      flatFieldMetadataMaps,
+      flatViewMaps,
+    },
+  });
 
   return {
     id: viewSortId,
@@ -54,6 +62,7 @@ export const fromCreateViewSortInputToFlatViewSortToCreate = ({
     universalIdentifier: createViewSortInput.universalIdentifier ?? v4(),
     direction: createViewSortInput.direction ?? ViewSortDirection.ASC,
     subFieldName: createViewSortInput.subFieldName ?? null,
+    relationTargetFieldMetadataUniversalIdentifier,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
   };
 };

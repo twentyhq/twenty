@@ -1,3 +1,4 @@
+import { mergePersistedRoleIntoDraftRole } from '@/settings/roles/role/utils/mergePersistedRoleIntoDraftRole';
 import { settingsInitialDraftRoleFamilyState } from '@/settings/roles/states/settingsInitialDraftRoleFamilyState';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
@@ -41,20 +42,11 @@ export const SettingsRoleDraftSyncEffect = ({
     const currentDraftRole = store.get(draftRoleAtom);
     const initialDraftRole = store.get(initialDraftRoleAtom);
 
-    const isUninitialized = currentDraftRole.id !== settingsPersistedRole.id;
-    const hasNoUnsavedChanges =
-      isDefined(initialDraftRole) &&
-      isDeeplyEqual(currentDraftRole, initialDraftRole);
-
-    const nextDraftRole =
-      isUninitialized || hasNoUnsavedChanges
-        ? settingsPersistedRole
-        : {
-            ...currentDraftRole,
-            workspaceMembers: settingsPersistedRole.workspaceMembers,
-            agents: settingsPersistedRole.agents,
-            apiKeys: settingsPersistedRole.apiKeys,
-          };
+    const nextDraftRole = mergePersistedRoleIntoDraftRole({
+      draftRole: currentDraftRole,
+      initialDraftRole,
+      persistedRole: settingsPersistedRole,
+    });
 
     if (!isDeeplyEqual(currentDraftRole, nextDraftRole)) {
       store.set(draftRoleAtom, nextDraftRole);

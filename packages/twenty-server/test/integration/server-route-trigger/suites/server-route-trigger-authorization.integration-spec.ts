@@ -16,7 +16,11 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { SERVER_ROUTE_APPLICATION_NOT_INSTALLED_REASON } from 'src/engine/core-modules/server-route-trigger/constants/server-route-application-not-installed-reason.constant';
+import {
+  SEED_APPLE_WORKSPACE_ID,
+  SEED_YCOMBINATOR_WORKSPACE_ID,
+} from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const OWNER_WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
 
@@ -42,6 +46,12 @@ const ROUTES_URL_ECHO_RESOLVER_UNIVERSAL_IDENTIFIER =
 
 const OTHER_APPLICATION_REGISTRATION_ID =
   '9c9f983f-5c1a-4c60-a3c8-7d0e2a4a99c9';
+const NOT_INSTALLED_WORKSPACE_RESOLVER_UNIVERSAL_IDENTIFIER =
+  'a1af983f-5c1a-4c60-a3c8-7d0e2a4aa1a1';
+const UNKNOWN_TARGET_RESOLVER_UNIVERSAL_IDENTIFIER =
+  'b2bf983f-5c1a-4c60-a3c8-7d0e2a4ab2b2';
+const UNKNOWN_TARGET_FUNCTION_UNIVERSAL_IDENTIFIER =
+  'c3cf983f-5c1a-4c60-a3c8-7d0e2a4ac3c3';
 
 const findApplicationRegistrationId = async (): Promise<string> => {
   const [{ id }]: { id: string }[] = await globalThis.testDataSource.query(
@@ -59,6 +69,18 @@ const TARGET_FUNCTION_RESPONSE = { greeting: 'hello from target function' };
 const RESOLVER_BUILT_HANDLER_CODE = `export const main = async () => ({
   workspaceId: '${OWNER_WORKSPACE_ID}',
   targetLogicFunctionUniversalIdentifier: '${TARGET_FUNCTION_UNIVERSAL_IDENTIFIER}',
+});
+`;
+
+const NOT_INSTALLED_WORKSPACE_RESOLVER_BUILT_HANDLER_CODE = `export const main = async () => ({
+  workspaceId: '${SEED_YCOMBINATOR_WORKSPACE_ID}',
+  targetLogicFunctionUniversalIdentifier: '${TARGET_FUNCTION_UNIVERSAL_IDENTIFIER}',
+});
+`;
+
+const UNKNOWN_TARGET_RESOLVER_BUILT_HANDLER_CODE = `export const main = async () => ({
+  workspaceId: '${OWNER_WORKSPACE_ID}',
+  targetLogicFunctionUniversalIdentifier: '${UNKNOWN_TARGET_FUNCTION_UNIVERSAL_IDENTIFIER}',
 });
 `;
 
@@ -201,6 +223,16 @@ describe('ServerRouteTrigger authorization (integration)', () => {
       builtHandlerCode: TARGET_BUILT_HANDLER_CODE,
     });
 
+    await uploadBuiltHandlerFile({
+      builtHandlerPath: 'dist/not-installed-workspace-resolver.mjs',
+      builtHandlerCode: NOT_INSTALLED_WORKSPACE_RESOLVER_BUILT_HANDLER_CODE,
+    });
+
+    await uploadBuiltHandlerFile({
+      builtHandlerPath: 'dist/unknown-target-resolver.mjs',
+      builtHandlerCode: UNKNOWN_TARGET_RESOLVER_BUILT_HANDLER_CODE,
+    });
+
     await syncApplication({
       manifest: buildBaseManifest({
         appId: APP_UNIVERSAL_IDENTIFIER,
@@ -259,6 +291,19 @@ describe('ServerRouteTrigger authorization (integration)', () => {
               serverRouteExposed: false,
               authRequired: false,
             }),
+            buildLogicFunctionManifest({
+              universalIdentifier:
+                NOT_INSTALLED_WORKSPACE_RESOLVER_UNIVERSAL_IDENTIFIER,
+              name: 'not-installed-workspace-resolver',
+              serverRouteExposed: true,
+              authRequired: false,
+            }),
+            buildLogicFunctionManifest({
+              universalIdentifier: UNKNOWN_TARGET_RESOLVER_UNIVERSAL_IDENTIFIER,
+              name: 'unknown-target-resolver',
+              serverRouteExposed: true,
+              authRequired: false,
+            }),
           ],
         },
       }),
@@ -292,6 +337,30 @@ describe('ServerRouteTrigger authorization (integration)', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual({ queued: true });
+    }, 60000);
+
+    it('acks without queuing when the resolver routes to a workspace that does not have the app', async () => {
+      const response = await request(baseUrl)
+        .post(
+          `/webhooks/server/${NOT_INSTALLED_WORKSPACE_RESOLVER_UNIVERSAL_IDENTIFIER}`,
+        )
+        .send({ any: 'payload' });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        queued: false,
+        reason: SERVER_ROUTE_APPLICATION_NOT_INSTALLED_REASON,
+      });
+    }, 60000);
+
+    it('still answers 404 when the resolver routes to a function its installed app does not have', async () => {
+      const response = await request(baseUrl)
+        .post(
+          `/webhooks/server/${UNKNOWN_TARGET_RESOLVER_UNIVERSAL_IDENTIFIER}`,
+        )
+        .send({ any: 'payload' });
+
+      expect(response.status).toBe(404);
     }, 60000);
 
     it('answers the caller with the response returned by the resolver', async () => {

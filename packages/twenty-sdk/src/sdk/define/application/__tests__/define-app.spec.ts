@@ -1,4 +1,7 @@
-import { MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT } from 'twenty-shared/application';
+import {
+  MAX_APPLICATION_BILLING_PRICE_AMOUNT_CENTS,
+  MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT,
+} from 'twenty-shared/application';
 import { MAX_ALLOWED_IFRAME_ORIGINS } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -356,6 +359,9 @@ describe('defineApplication', () => {
 
     expect(result.success).toBe(true);
     expect(result.errors).toEqual([]);
+    expect(result.warnings).toEqual([
+      '`billing.recurring` is deprecated in favor of `billing.prices`. Prices are not billed yet: keep your recurring charges until they are.',
+    ]);
   });
 
   it('should return error when a recurring charge has an unknown period', () => {
@@ -441,6 +447,129 @@ describe('defineApplication', () => {
     });
 
     expect(result.success).toBe(true);
+  });
+
+  it('should accept a flat and a per member price', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      billing: {
+        prices: [
+          {
+            universalIdentifier: '3f0c9a52-6b1e-4d7a-9c35-8e2f1a4b7d60',
+            label: 'Platform',
+            type: 'RECURRING',
+            billingPeriod: 'MONTHLY',
+            amountCents: MAX_APPLICATION_BILLING_PRICE_AMOUNT_CENTS,
+          },
+          {
+            universalIdentifier: 'b7e41d08-2a93-4f5c-8d16-0c9e3b5a7f21',
+            label: 'Per member',
+            description: 'Monthly price per workspace member',
+            type: 'RECURRING',
+            billingPeriod: 'MONTHLY',
+            amountCents: 1000,
+            currency: 'USD',
+            per: 'WORKSPACE_MEMBER',
+          },
+        ],
+      },
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+    expect(result.warnings).toEqual([]);
+  });
+
+  it('should return error when a price amount is not a positive integer or exceeds the maximum', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      billing: {
+        prices: [
+          {
+            universalIdentifier: '5d2a8c7e-91b4-4e36-a07f-6c1d9e3b2a84',
+            label: 'Free',
+            type: 'RECURRING',
+            billingPeriod: 'MONTHLY',
+            amountCents: 0,
+          },
+          {
+            universalIdentifier: 'e94b6f13-7c20-4a8d-b5e9-2f7a0d1c6b35',
+            label: 'Fractional',
+            type: 'RECURRING',
+            billingPeriod: 'MONTHLY',
+            amountCents: 9.99,
+          },
+          {
+            universalIdentifier: '0a6d3e9b-4f85-4c12-9e7a-b3c8d5f2e170',
+            label: 'Excessive',
+            type: 'RECURRING',
+            billingPeriod: 'MONTHLY',
+            amountCents: MAX_APPLICATION_BILLING_PRICE_AMOUNT_CENTS + 1,
+          },
+        ],
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual([
+      `billing.prices[0] must have a positive integer amountCents of at most ${MAX_APPLICATION_BILLING_PRICE_AMOUNT_CENTS}`,
+      `billing.prices[1] must have a positive integer amountCents of at most ${MAX_APPLICATION_BILLING_PRICE_AMOUNT_CENTS}`,
+      `billing.prices[2] must have a positive integer amountCents of at most ${MAX_APPLICATION_BILLING_PRICE_AMOUNT_CENTS}`,
+    ]);
+  });
+
+  it('should return error when a price has an empty label or description', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      billing: {
+        prices: [
+          {
+            universalIdentifier: 'c18f7b24-d6a9-4035-8b4e-7a2e9c0d5f63',
+            label: '',
+            description: '',
+            type: 'RECURRING',
+            billingPeriod: 'MONTHLY',
+            amountCents: 1000,
+          },
+        ],
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual([
+      'billing.prices[0] must have a non empty label',
+      'billing.prices[0] must have a non empty description when set',
+    ]);
+  });
+
+  it('should return error when a price has no universalIdentifier', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      billing: {
+        prices: [
+          {
+            universalIdentifier: '',
+            label: 'Platform',
+            type: 'RECURRING',
+            billingPeriod: 'MONTHLY',
+            amountCents: 2000,
+          },
+        ],
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual([
+      'billing.prices[0] must have a universalIdentifier',
+    ]);
   });
 
   it('should return error when a name is both a recurring charge and a billable operation', () => {

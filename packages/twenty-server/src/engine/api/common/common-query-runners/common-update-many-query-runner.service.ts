@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
 
-import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { CommonRecordQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-record-query-runner.service';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
   CommonExtendedInput,
@@ -17,12 +17,11 @@ import {
   CommonQueryNames,
   UpdateManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 
 @Injectable()
-export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerService<
+export class CommonUpdateManyQueryRunnerService extends CommonRecordQueryRunnerService<
   UpdateManyQueryArgs,
   ObjectRecord[]
 > {
@@ -31,41 +30,14 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   async run(
     args: CommonExtendedInput<UpdateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<ObjectRecord[]> {
-    const {
-      authContext,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatObjectMetadata,
-    } = queryRunnerContext;
-
-    const columnsToReturn = buildColumnsToReturn({
-      selection: args.selectedFieldsResult,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    });
-
-    const updatedRecords = await this.runFilteredMutation({
+  ): Promise<CommonQueryRunResult<ObjectRecord[]>> {
+    return this.runFilteredMutation({
       queryRunnerContext,
       filter: args.filter,
-      columnsToReturn,
+      selection: args.selectedFieldsResult,
       kind: 'update',
       data: args.data,
     });
-
-    await this.processNestedRelationsHelper.processNestedRelations({
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      parentObjectMetadataItem: flatObjectMetadata,
-      parentObjectRecords: updatedRecords,
-      selection: args.selectedFieldsResult,
-      limit: QUERY_MAX_RECORDS_FROM_RELATION,
-      authContext,
-      ...this.getNestedRelationsReadPathOptions(),
-    });
-
-    return updatedRecords;
   }
 
   async computeArgs(

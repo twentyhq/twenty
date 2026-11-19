@@ -123,17 +123,21 @@ export class ViewSortService {
         },
       );
 
-    const { flatViewSortMaps: existingFlatViewSortMaps } =
+    const {
+      flatViewSortMaps: existingFlatViewSortMaps,
+      flatFieldMetadataMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewSortMaps'],
+          flatMapsKeys: ['flatViewSortMaps', 'flatFieldMetadataMaps'],
         },
       );
 
     const optimisticallyUpdatedFlatViewSort =
       fromUpdateViewSortInputToFlatViewSortToUpdateOrThrow({
         flatViewSortMaps: existingFlatViewSortMaps,
+        flatFieldMetadataMaps,
         updateViewSortInput,
       });
 

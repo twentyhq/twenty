@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconEdit } from 'twenty-ui/icon';
 
-import { aiChatNewThreadChannelIdState } from '@/ai-chat/states/aiChatNewThreadChannelIdState';
+import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
 import { shouldFocusChatEditorState } from '@/ai-chat/states/shouldFocusChatEditorState';
 import { askAiSidePanelThreadIdComponentState } from '@/side-panel/pages/ask-ai/states/askAiSidePanelThreadIdComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';

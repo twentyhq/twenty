@@ -2,7 +2,7 @@ import { useStore } from 'jotai';
 
 import { useNavigateToAiChatPage } from '@/ai-chat/hooks/useNavigateToAiChatPage';
 import { useSelectAiChatThread } from '@/ai-chat/hooks/useSelectAiChatThread';
-import { aiChatNewThreadChannelIdState } from '@/ai-chat/states/aiChatNewThreadChannelIdState';
+import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { shouldFocusChatEditorState } from '@/ai-chat/states/shouldFocusChatEditorState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';

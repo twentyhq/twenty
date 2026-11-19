@@ -106,19 +106,24 @@ Una volta connesso, il server MCP elenca gli stessi strumenti in ogni area di la
 * Gli **strumenti per i record** accettano l'oggetto come argomento: `find_records`, `group_records`, `create_records`, `update_record`, `update_records`, `upsert_records`, `delete_records` e `merge_records`. Ad esempio, `find_records({ objectName: "company", select: ["name"] })`.
 * Gli **strumenti di individuazione** indicano all'assistente cosa contiene la tua area di lavoro: `list_object_metadata_names` per gli oggetti e `get_field_metadata` per i campi di un oggetto.
 * **Strumenti per i metadati** per leggere e modificare il modello di dati, come `get_object_metadata` o `create_field_metadata`.
-* I **meta-strumenti** consentono di accedere a tutto il resto, inclusi workflow, viste, dashboard, email e le funzioni delle app installate: `get_tool_catalog` per esplorare una categoria, `learn_tools` per gli schemi di input e `execute_tool` per eseguire uno strumento.
+* **Tutti gli altri strumenti integrati**, ciascuno elencato con il proprio schema di input: workflow, dashboard, viste, navigazione, webhook, ruoli, agenti, componenti front-end e strumenti per email, calendario e file.
+* **Competenze e assistenza**: `list_skills`, `load_skills` e `search_help_center`.
 
-Poiché l'elenco non dipende dai tuoi oggetti, rimane valido per i client che lo archiviano, come le app pubblicate in una directory.
+Poiché l'elenco non dipende dai tuoi oggetti, rimane valido per i client che lo archiviano, come le app pubblicate in una directory. Gli strumenti che vedi dipendono comunque dal tuo ruolo.
+
+Le funzioni delle app installate e gli strumenti dei server MCP che hai connesso a Twenty variano in base allo spazio di lavoro, quindi questo elenco non li include. Usa la modalità diretta per raggiungerli.
+
+L'elenco contiene circa un centinaio di definizioni di strumenti. I client che caricano gli strumenti su richiesta, come fanno per impostazione predefinita Claude, Claude Code, Codex e ChatGPT, lo gestiscono bene. Un client che carica anticipatamente tutte le definizioni degli strumenti può utilizzare gran parte del proprio contesto: collegalo invece alla modalità meta.
 
 ### Modalità diretta
 
-Connettiti a `/mcp?mode=direct` per elencare invece uno strumento per oggetto e operazione, ciascuno con lo schema di input esatto di quell'oggetto: `find_many_companies`, `create_one_person` e diverse centinaia di altri. Gli strumenti per gli oggetti creati mentre sei connesso vengono visualizzati dopo la riconnessione.
+Connettiti a `/mcp?mode=direct` per elencare invece uno strumento per oggetto e operazione, ciascuno con lo schema di input esatto di quell'oggetto: `find_many_companies`, `create_one_person` e diverse centinaia di altri. La modalità diretta elenca anche gli altri strumenti integrati, le funzioni delle app installate e gli strumenti dei server MCP connessi. Gli strumenti per gli oggetti creati mentre sei connesso vengono visualizzati dopo la riconnessione.
 
 Ciò richiede un client che carichi gli strumenti su richiesta, come fanno per impostazione predefinita Claude, Claude Code, Codex e OpenCode. Un client che carica in anticipo ogni definizione di strumento, incluso Claude Code con la ricerca degli strumenti disattivata, può esaurire il contesto.
 
 ### Modalità meta
 
-Connettiti a `/mcp?mode=meta` per elencare solo alcuni meta-strumenti:
+Connettiti a `/mcp?mode=meta` per elencare solo alcuni meta-strumenti, che raggiungono ogni strumento, incluse le funzioni delle app e i server MCP connessi:
 
 1. **`learn_tools`** — ottenere lo schema di input per strumenti specifici
 2. **`execute_tool`** — eseguire uno strumento

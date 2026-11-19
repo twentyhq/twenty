@@ -1,8 +1,8 @@
 import { useLingui } from '@lingui/react/macro';
 import { IconMessage } from 'twenty-ui/icon';
 
-import { useAiChatThreadDisplayLabel } from '@/ai-chat/hooks/useAiChatThreadDisplayLabel';
-import { type AiChatThreadDisplayIdentity } from '@/ai-chat/types/AiChatThreadDisplayIdentity';
+import { useAiChatThreadDisplayLabel } from '@/ai-chat/threads/hooks/useAiChatThreadDisplayLabel';
+import { type AiChatThreadDisplayIdentity } from '@/ai-chat/threads/types/AiChatThreadDisplayIdentity';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
