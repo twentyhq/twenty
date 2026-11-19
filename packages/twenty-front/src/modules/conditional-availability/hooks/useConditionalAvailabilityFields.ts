@@ -14,9 +14,8 @@ export const useConditionalAvailabilityFields = ({
 }) => {
   const fields = useMemo(
     () =>
-      objectMetadataItem?.readableFields.filter(
-        (field) => field.isActive === true,
-      ) ?? [],
+      objectMetadataItem?.readableFields.filter((field) => field.isActive) ??
+      [],
     [objectMetadataItem],
   );
 
