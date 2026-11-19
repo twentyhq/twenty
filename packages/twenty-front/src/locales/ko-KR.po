@@ -571,6 +571,12 @@ msgstr "워크스페이스 구성원 {0}명"
 msgid "{0}, back to fields"
 msgstr "{0}, 필드로 돌아가기"
 
+#. js-lingui-id: VxMSt6
+#. placeholder {0}: tab.name
+#: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
+msgid "{0}, unread"
+msgstr ""
+
 #. js-lingui-id: kofqAN
 #. placeholder {0}: selectedResolvedTier.label
 #. placeholder {1}: selectedResolvedTier.model.label
