@@ -74,7 +74,7 @@ export const WorkspaceSection = () => {
 
   return (
     <WorkspaceSectionContainer
-      sectionTitle={t`Workspace`}
+      sectionTitle={isCustomizableSidebarEnabled ? undefined : t`Workspace`}
       items={items}
       rightIcon={
         // Customising the menu is desktop-only.
