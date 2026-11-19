@@ -1192,13 +1192,14 @@ interface BillingProductDTO {
 
 """The different billing products available"""
 enum BillingProductKey {
+  APPLICATION
   BASE_PRODUCT
   RESOURCE_CREDIT
 }
 
 type BillingProductMetadata {
   isLegacy: String
-  planKey: BillingPlanKey!
+  planKey: BillingPlanKey
   priceUsageBased: BillingUsageType!
   productKey: BillingProductKey!
 }
@@ -2037,6 +2038,7 @@ input CreateViewSortInput {
   direction: ViewSortDirection = ASC
   fieldMetadataId: UUID!
   id: UUID
+  relationTargetFieldMetadataId: UUID
   subFieldName: String
   viewId: UUID!
 }
@@ -4438,7 +4440,7 @@ type Query {
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
   eventLogs(input: EventLogQueryInput!): EventLogQueryResult!
-  exportApplication(shouldIncludeDependencies: Boolean = false, shouldIncludePublicAssets: Boolean = false, shouldIncludeSourceDependencies: Boolean = false, shouldIncludeSourceFiles: Boolean = false, universalIdentifier: UUID!): ApplicationExport!
+  exportApplication(shouldIncludeDependencies: Boolean = false, shouldIncludeLogicFunctionSources: Boolean = false, shouldIncludePublicAssets: Boolean = false, shouldIncludeSourceDependencies: Boolean = false, shouldIncludeSourceFiles: Boolean = false, universalIdentifier: UUID!): ApplicationExport!
   field(
     """The id of the record to find."""
     id: UUID!
@@ -5869,6 +5871,7 @@ input UpdateViewSortInput {
 
 input UpdateViewSortInputUpdates {
   direction: ViewSortDirection
+  relationTargetFieldMetadataId: UUID
   subFieldName: String
 }
 
@@ -6534,6 +6537,7 @@ type ViewSort {
   direction: ViewSortDirection!
   fieldMetadataId: UUID!
   id: UUID!
+  relationTargetFieldMetadataId: UUID
   subFieldName: String
   updatedAt: DateTime!
   viewId: UUID!

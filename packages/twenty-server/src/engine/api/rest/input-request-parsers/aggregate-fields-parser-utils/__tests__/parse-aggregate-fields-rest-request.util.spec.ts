@@ -10,9 +10,9 @@ describe('parseAggregateFieldsRestRequest', () => {
       query: { aggregate: '["countNotEmptyId"]' },
     };
 
-    expect(parseAggregateFieldsRestRequest(request)).toEqual({
-      countNotEmptyId: true,
-    });
+    expect(parseAggregateFieldsRestRequest(request)).toEqual([
+      'countNotEmptyId',
+    ]);
   });
 
   it('should parse multiple aggregate fields', () => {
@@ -22,10 +22,10 @@ describe('parseAggregateFieldsRestRequest', () => {
       },
     };
 
-    expect(parseAggregateFieldsRestRequest(request)).toEqual({
-      countNotEmptyId: true,
-      countEmptyId: true,
-    });
+    expect(parseAggregateFieldsRestRequest(request)).toEqual([
+      'countNotEmptyId',
+      'countEmptyId',
+    ]);
   });
 
   it('should parse empty array', () => {
@@ -33,7 +33,7 @@ describe('parseAggregateFieldsRestRequest', () => {
       query: { aggregate: '[]' },
     };
 
-    expect(parseAggregateFieldsRestRequest(request)).toEqual({});
+    expect(parseAggregateFieldsRestRequest(request)).toEqual([]);
   });
 
   it('should throw if aggregate parameter is not a string', () => {
@@ -62,11 +62,24 @@ describe('parseAggregateFieldsRestRequest', () => {
     );
   });
 
+  it('should throw if an aggregate entry is not a string', () => {
+    const request: any = {
+      query: { aggregate: '["countNotEmptyId", 3]' },
+    };
+
+    expect(() => parseAggregateFieldsRestRequest(request)).toThrow(
+      new RestInputRequestParserException(
+        'Invalid aggregate query parameter - should be a valid array of string - ex: ["countNotEmptyId", "countEmptyField"]',
+        RestInputRequestParserExceptionCode.INVALID_AGGREGATE_FIELDS_QUERY_PARAM,
+      ),
+    );
+  });
+
   it('should early return if aggregate parameter is undefined', () => {
     const request: any = {
       query: {},
     };
 
-    expect(parseAggregateFieldsRestRequest(request)).toEqual({});
+    expect(parseAggregateFieldsRestRequest(request)).toEqual([]);
   });
 });

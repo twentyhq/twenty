@@ -4,11 +4,11 @@ import { type ReactNode } from 'react';
 
 import { useLeaveRemovedInboxThread } from '@/inbox/hooks/useLeaveRemovedInboxThread';
 import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
-import { aiChatThreadParticipantsState } from '@/ai-chat/states/aiChatThreadParticipantsState';
-import { aiChatInputIsEmptyFamilySelector } from '@/ai-chat/states/selectors/aiChatInputIsEmptyFamilySelector';
+import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
+import { aiChatInputIsEmptyFamilySelector } from '@/ai-chat/composer/states/selectors/aiChatInputIsEmptyFamilySelector';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
-import { type AiChatThreadRecord } from '@/ai-chat/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import {
   jotaiStore,
   resetJotaiStore,

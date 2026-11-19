@@ -4,9 +4,8 @@ import { createStore, Provider as JotaiProvider } from 'jotai';
 
 import { AiChatMessagesFetchEffect } from '@/ai-chat/components/AiChatMessagesFetchEffect';
 import { aiChatFetchedMessagesFamilyState } from '@/ai-chat/states/aiChatFetchedMessagesFamilyState';
-import { aiChatLiveReactionRevisionsFamilyState } from '@/ai-chat/states/aiChatLiveReactionRevisionsFamilyState';
-import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/aiChatMessageReactionsFamilyState';
-import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
+import { aiChatLiveReactionRevisionsFamilyState } from '@/ai-chat/messages/states/aiChatLiveReactionRevisionsFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
 import { GetChatMessagesDocument } from '~/generated-metadata/graphql';
 
 const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
@@ -69,7 +68,6 @@ describe('AiChatMessagesFetchEffect', () => {
       },
     ];
 
-    store.set(aiChatTestInstanceThreadIdState.atom, THREAD_ID);
     store.set(
       aiChatLiveReactionRevisionsFamilyState.atomFamily({
         threadId: THREAD_ID,

@@ -2,7 +2,7 @@ import { type FeatureFlagKey, type ObjectRecord } from 'twenty-shared/types';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
-import { type GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { type CommonQueryParser } from 'src/engine/api/common/common-query-parsers/common-query.parser';
 import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
@@ -14,7 +14,7 @@ export type CommonExtendedQueryRunnerContext = Omit<
 > & {
   authContext: WorkspaceAuthContext;
   repository: WorkspaceRepository<ObjectRecord>;
-  commonQueryParser: GraphqlQueryParser;
+  commonQueryParser: CommonQueryParser;
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
   flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   permissionsPrincipals: PermissionsPrincipalsWithRolesContext | undefined;

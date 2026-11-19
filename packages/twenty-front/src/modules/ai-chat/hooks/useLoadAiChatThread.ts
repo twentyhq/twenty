@@ -2,12 +2,12 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useAddAiChatThreadParticipants } from '@/ai-chat/hooks/useAddAiChatThreadParticipants';
-import { useFetchAiChatThreadsPage } from '@/ai-chat/hooks/useFetchAiChatThreadsPage';
-import { useRefreshAiChatThreadPermissions } from '@/ai-chat/hooks/useRefreshAiChatThreadPermissions';
+import { useAddAiChatThreadParticipants } from '@/ai-chat/threads/hooks/useAddAiChatThreadParticipants';
+import { useFetchAiChatThreadsPage } from '@/ai-chat/threads/hooks/useFetchAiChatThreadsPage';
+import { useRefreshAiChatThreadPermissions } from '@/ai-chat/threads/hooks/useRefreshAiChatThreadPermissions';
 import { aiChatUsageFamilyState } from '@/ai-chat/usage/states/aiChatUsageFamilyState';
-import { aiChatThreadRecordFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadRecordFamilySelector';
-import { mergeLoadedAiChatThread } from '@/ai-chat/utils/mergeLoadedAiChatThread';
+import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
+import { mergeLoadedAiChatThread } from '@/ai-chat/threads/utils/mergeLoadedAiChatThread';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { getAiChatUsageFromThread } from '@/ai-chat/usage/utils/getAiChatUsageFromThread';
 

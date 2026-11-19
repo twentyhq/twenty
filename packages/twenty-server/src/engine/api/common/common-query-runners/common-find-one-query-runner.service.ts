@@ -1,21 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { CommonRecordQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-record-query-runner.service';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
   CommonExtendedInput,
@@ -23,13 +20,10 @@ import {
   CommonQueryNames,
   FindOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
-import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { buildColumnsToSelect } from 'src/engine/api/common/utils/build-columns-to-select';
 
 @Injectable()
-export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService<
+export class CommonFindOneQueryRunnerService extends CommonRecordQueryRunnerService<
   FindOneQueryArgs,
   ObjectRecord
 > {
@@ -38,9 +32,8 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
   async run(
     args: CommonExtendedInput<FindOneQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<ObjectRecord> {
+  ): Promise<CommonQueryRunResult<ObjectRecord>> {
     const {
-      authContext,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatObjectMetadata,
@@ -65,8 +58,7 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
     );
 
     const columnsToSelect = buildColumnsToSelect({
-      select: args.selectedFieldsResult.select,
-      relations: args.selectedFieldsResult.relations,
+      selection: args.selectedFieldsResult,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -90,26 +82,13 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
 
     const objectRecords = [objectRecord] as ObjectRecord[];
 
-    if (isDefined(args.selectedFieldsResult.relations)) {
-      await this.processNestedRelationsHelper.processNestedRelations({
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        parentObjectMetadataItem: flatObjectMetadata,
-        parentObjectRecords: objectRecords,
-        relations: args.selectedFieldsResult.relations as Record<
-          string,
-          FindOptionsRelations<ObjectLiteral>
-        >,
-        limit: QUERY_MAX_RECORDS_FROM_RELATION,
-        authContext,
-        selectedFields: args.selectedFieldsResult.select,
-        nestedRelationQueryArgsByFieldName:
-          args.selectedFieldsResult.nestedRelationQueryArgsByFieldName,
-        ...this.getNestedRelationsReadPathOptions(),
-      });
-    }
+    const relationAggregatedValues = await this.processNestedRelations({
+      records: objectRecords,
+      selection: args.selectedFieldsResult,
+      queryRunnerContext,
+    });
 
-    return objectRecords[0];
+    return { result: objectRecords[0], relationAggregatedValues };
   }
 
   async computeArgs(
@@ -131,22 +110,6 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
         flatFieldMetadataMaps,
       }),
     };
-  }
-
-  async processQueryResult(
-    queryResult: ObjectRecord,
-    flatObjectMetadata: FlatObjectMetadata,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    authContext: WorkspaceAuthContext,
-  ): Promise<ObjectRecord> {
-    return this.commonResultGettersService.processRecord(
-      queryResult,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      authContext.workspace.id,
-    );
   }
 
   async validate(
