@@ -38,7 +38,7 @@ describe('Granola deployed functions', () => {
     expect(execution.data).toEqual({ isConnected: false, isApiKeySet: false });
   });
 
-  it('runs the daily personal schedule with the release default enabled', async () => {
+  it('runs the daily personal schedule in a workspace with no connections', async () => {
     const execution = await executeDeployedFunctionOrThrow({
       functionName: 'granola-personal-daily-catch-up',
       payload: {},

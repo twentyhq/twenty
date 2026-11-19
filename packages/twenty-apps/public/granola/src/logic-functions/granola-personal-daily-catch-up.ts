@@ -24,7 +24,6 @@ import { buildGranolaPersonalCatchUpJob } from 'src/logic-functions/utils/build-
 import { buildRetryableGranolaError } from 'src/logic-functions/utils/build-retryable-granola-error.util';
 import { getGranolaApiKeyFingerprint } from 'src/logic-functions/utils/get-granola-api-key-fingerprint.util';
 import { getGranolaJobId } from 'src/logic-functions/utils/get-granola-job-id.util';
-import { isGranolaPersonalSyncEnabled } from 'src/logic-functions/utils/is-granola-personal-sync-enabled.util';
 
 const MAX_GRANOLA_JOBS_PER_ENQUEUE = 200;
 type GranolaMaintenanceJobs = NonNullable<EnqueueJobsInput['jobs']>;
@@ -61,10 +60,6 @@ const enqueueMaintenanceJobsOrThrow = async ({
 };
 
 export const granolaPersonalDailyCatchUpHandler = async () => {
-  if (!isGranolaPersonalSyncEnabled()) {
-    return { success: true, skipped: true };
-  }
-
   const today = Math.floor(Date.now() / GRANOLA_MILLISECONDS_PER_DAY);
   const updatedAfter = new Date(
     (today - GRANOLA_CATCH_UP_WINDOW_DAYS) * GRANOLA_MILLISECONDS_PER_DAY,
