@@ -1,5 +1,8 @@
 import { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from 'twenty-shared/constants';
-import { isDefined, tokenizeExpression } from 'twenty-shared/utils';
+import {
+  isDefined,
+  tokenizeValidationRuleExpression,
+} from 'twenty-shared/utils';
 
 import { VALIDATION_RULE_KEYWORDS } from '@/validation-rules/constants/ValidationRuleKeywords';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
@@ -53,7 +56,7 @@ export const computeValidationRuleHelperContext = ({
   fields: ValidationRuleEditorField[];
 }): ValidationRuleHelperContext => {
   const cursorOffset = textBeforeCursor.length;
-  const lastToken = tokenizeExpression(textBeforeCursor).at(-1);
+  const lastToken = tokenizeValidationRuleExpression(textBeforeCursor).at(-1);
 
   if (lastToken?.type === 'unclosedString') {
     return { replaceFromOffset: cursorOffset, items: [] };

@@ -4,8 +4,7 @@ import { CONDITIONAL_AVAILABILITY_FUNCTIONS } from '@/constants/ConditionalAvail
 
 export const conditionalAvailabilityParser = new Parser();
 
-for (const [name, { evaluate }] of Object.entries(
+Object.assign(
+  conditionalAvailabilityParser.functions,
   CONDITIONAL_AVAILABILITY_FUNCTIONS,
-)) {
-  conditionalAvailabilityParser.functions[name] = evaluate;
-}
+);

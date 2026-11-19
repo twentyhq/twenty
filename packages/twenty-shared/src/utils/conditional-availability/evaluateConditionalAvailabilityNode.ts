@@ -1,6 +1,6 @@
 import { isFunction, isObject, isString } from '@sniptt/guards';
 
-import { CONDITIONAL_AVAILABILITY_FORBIDDEN_PATH_SEGMENT_PATTERN } from '@/constants/ConditionalAvailabilityForbiddenPathSegmentPattern';
+import { CONDITIONAL_AVAILABILITY_FORBIDDEN_PROPERTY_NAMES } from '@/constants/ConditionalAvailabilityForbiddenPropertyNames';
 import { CONDITIONAL_AVAILABILITY_FUNCTIONS } from '@/constants/ConditionalAvailabilityFunctions';
 import { type ConditionalAvailabilityComparisonOperator } from '@/types/ConditionalAvailabilityComparisonOperator';
 import { type ConditionalAvailabilityNode } from '@/types/ConditionalAvailabilityNode';
@@ -9,7 +9,7 @@ import { isDefined } from '@/utils/validation/isDefined';
 type EvaluationContext = Record<string, unknown>;
 
 const isForbiddenPathSegment = (segment: string) =>
-  CONDITIONAL_AVAILABILITY_FORBIDDEN_PATH_SEGMENT_PATTERN.test(segment);
+  CONDITIONAL_AVAILABILITY_FORBIDDEN_PROPERTY_NAMES.has(segment);
 
 const readPathSegment = (value: unknown, segment: string): unknown => {
   if (!isDefined(value) || isForbiddenPathSegment(segment)) {
@@ -59,31 +59,30 @@ const compareValues = ({
   left: unknown;
   right: unknown;
 }): boolean => {
+  if (operator === 'EQUAL') {
+    return left === right;
+  }
+
+  if (operator === 'NOT_EQUAL') {
+    return left !== right;
+  }
+
   const leftOperand = toOrderedOperand(left);
   const rightOperand = toOrderedOperand(right);
-  const areBothText = isString(leftOperand) && isString(rightOperand);
+  const [leftOrdered, rightOrdered] =
+    isString(leftOperand) && isString(rightOperand)
+      ? [leftOperand, rightOperand]
+      : [Number(leftOperand), Number(rightOperand)];
 
   switch (operator) {
-    case 'EQUAL':
-      return left === right;
-    case 'NOT_EQUAL':
-      return left !== right;
     case 'LESS_THAN':
-      return areBothText
-        ? leftOperand < rightOperand
-        : Number(leftOperand) < Number(rightOperand);
+      return leftOrdered < rightOrdered;
     case 'LESS_THAN_OR_EQUAL':
-      return areBothText
-        ? leftOperand <= rightOperand
-        : Number(leftOperand) <= Number(rightOperand);
+      return leftOrdered <= rightOrdered;
     case 'GREATER_THAN':
-      return areBothText
-        ? leftOperand > rightOperand
-        : Number(leftOperand) > Number(rightOperand);
+      return leftOrdered > rightOrdered;
     case 'GREATER_THAN_OR_EQUAL':
-      return areBothText
-        ? leftOperand >= rightOperand
-        : Number(leftOperand) >= Number(rightOperand);
+      return leftOrdered >= rightOrdered;
   }
 };
 
@@ -119,21 +118,19 @@ const computeNodeValue = ({
     case 'NOT':
       return !computeChildValue(node.child);
     case 'CALL': {
-      const functionDeclaration = Object.entries(
+      const conditionalAvailabilityFunction = Object.entries(
         CONDITIONAL_AVAILABILITY_FUNCTIONS,
       ).find(([functionName]) => functionName === node.functionName)?.[1];
 
-      if (!isDefined(functionDeclaration)) {
+      if (!isDefined(conditionalAvailabilityFunction)) {
         throw new Error(`Unknown function "${node.functionName}"`);
       }
 
-      const callResult: unknown = Reflect.apply(
-        functionDeclaration.evaluate,
+      return Reflect.apply(
+        conditionalAvailabilityFunction,
         undefined,
         node.arguments.map(computeChildValue),
       );
-
-      return callResult;
     }
   }
 };

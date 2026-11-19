@@ -20,7 +20,7 @@ const CANONICAL_EXPRESSIONS = [
   'device == "a \\"quoted\\" text"',
 ];
 
-const parseOrThrow = (expression: string) => {
+const parseWidgetRuleOrThrow = (expression: string) => {
   const result = parseConditionalAvailabilityExpression({
     expression,
     metadataName: 'pageLayoutWidget',
@@ -38,19 +38,10 @@ describe('printConditionalAvailabilityNode', () => {
     'should print %p exactly as it was written',
     (expression) => {
       expect(
-        printConditionalAvailabilityNode({ node: parseOrThrow(expression) }),
+        printConditionalAvailabilityNode({
+          node: parseWidgetRuleOrThrow(expression),
+        }),
       ).toBe(expression);
-    },
-  );
-
-  it.each(CANONICAL_EXPRESSIONS)(
-    'should print %p as a text that reads back as the same tree',
-    (expression) => {
-      const node = parseOrThrow(expression);
-
-      expect(parseOrThrow(printConditionalAvailabilityNode({ node }))).toEqual(
-        node,
-      );
     },
   );
 
@@ -70,7 +61,9 @@ describe('printConditionalAvailabilityNode', () => {
     ],
   ])('should print %p in the canonical form %p', (expression, canonical) => {
     expect(
-      printConditionalAvailabilityNode({ node: parseOrThrow(expression) }),
+      printConditionalAvailabilityNode({
+        node: parseWidgetRuleOrThrow(expression),
+      }),
     ).toBe(canonical);
   });
 
@@ -93,9 +86,9 @@ describe('printConditionalAvailabilityNode', () => {
         right: { type: 'LITERAL' as const, value: text },
       };
 
-      expect(parseOrThrow(printConditionalAvailabilityNode({ node }))).toEqual(
-        node,
-      );
+      expect(
+        parseWidgetRuleOrThrow(printConditionalAvailabilityNode({ node })),
+      ).toEqual(node);
     },
   );
 });
