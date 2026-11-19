@@ -1698,24 +1698,6 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Refuse jobs that would take more than their fair share of the job queue Redis memory',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  IS_REDIS_MEMORY_FAIRNESS_ENABLED = false;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
-      'Delay the jobs of a job group (workflow runs) at enqueue when their queue has a group limiter: one job every durationMs / max with no initial burst, per workspace and job group. Execution starts are not rechecked, so a late worker can run overdue jobs together. Off: jobs are never delayed by a group limiter.',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  IS_WORKER_GROUP_LIMITER_ENABLED = false;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
       'Maximum size in bytes of a single job (serialized data and options) when Redis memory fairness is enabled',
     type: ConfigVariableType.NUMBER,
   })

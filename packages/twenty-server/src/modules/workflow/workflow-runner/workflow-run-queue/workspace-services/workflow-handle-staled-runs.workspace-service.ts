@@ -13,7 +13,6 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -46,7 +45,6 @@ export class WorkflowHandleStaledRunsWorkspaceService {
     private readonly metricsService: MetricsService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
     private readonly cacheStorageService: CacheStorageService,
-    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async handleStaledRunsForWorkspace(workspaceId: string) {
@@ -68,11 +66,7 @@ export class WorkflowHandleStaledRunsWorkspaceService {
         );
 
       // limiter pacing can hold a run past the threshold, so only runs without a job are lost.
-      const lostRunIds = this.twentyConfigService.get(
-        'IS_WORKER_GROUP_LIMITER_ENABLED',
-      )
-        ? await this.filterRunsWithoutInFlightJob(staledRunIds)
-        : staledRunIds;
+      const lostRunIds = await this.filterRunsWithoutInFlightJob(staledRunIds);
 
       for (
         let offset = 0;
