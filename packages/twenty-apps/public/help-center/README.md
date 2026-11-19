@@ -8,8 +8,9 @@ The app declares the public Twenty documentation MCP server (`https://docs.twent
 
 - `mcp__help_center__search_twenty_documentation` searches the documentation and returns matching sections with links.
 - `mcp__help_center__query_docs_filesystem_twenty_documentation` reads full documentation pages.
+- `mcp__help_center__submit_feedback` reports a problem with a documentation page to the Twenty docs team.
 
-Both tools are read-only. They send the agent's query to docs.twenty.com and never read or write workspace data.
+The first two tools are read-only. `submit_feedback` sends the page path and the feedback the agent wrote, and runs without asking for approval. The tools send only what the agent passes them to docs.twenty.com and never read or write workspace data.
 
 ## Setup
 

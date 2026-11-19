@@ -470,6 +470,7 @@ __metadata:
     "@types/node": "npm:^24.7.2"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
     oxlint: "npm:^0.16.0"
+    twenty-client-sdk: "npm:2.59.0"
     twenty-sdk: "npm:2.59.0"
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^4.2.1"
