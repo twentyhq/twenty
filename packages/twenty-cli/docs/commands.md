@@ -831,8 +831,24 @@ apply.
 
 The CLI watches the app folder and the external local files read by definition
 loading, bundling and typechecking, including linked packages and extended
-TypeScript configs. Relative imports of missing external files watch the nearest
-existing parent, so creating the file can recover a failed build.
+TypeScript configs. Existing external paths use native filesystem events.
+Watchers reattach after atomic saves. Missing or deleted paths use exact-path
+recovery checks once per second, stopped as soon as native watching resumes.
+Recovery does not expand into parent directories.
+Relative imports of missing external files observe the nearest allowed directory
+to recover when the file is created.
+
+Home and temporary directory roots, their ancestors and filesystem roots are
+excluded from automatic directory observation, including symlink aliases.
+Known files in those locations remain watched. If an unresolved import needs an
+excluded directory, dev prints `WATCH_SCOPE_LIMITED`; after fixing the import,
+edit an app file or restart dev.
+
+Use `twenty app dev --verbose` to list the app folder, external files, shallow
+external directories and excluded directories. The list appears after the first
+build attempt and whenever those paths change, including after a failed build.
+With `--format ndjson`, `watch-scope` progress events include `appPath`,
+`filePaths`, `directoryPaths` and `excludedDirectoryPaths`.
 
 The last successful input graph stays watched after a failure. `.git`,
 `.twenty`, `node_modules`, root `dist`, editor temporary files and `.DS_Store`
