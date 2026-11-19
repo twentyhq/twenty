@@ -1,0 +1,157 @@
+import { defaultMergeFieldValue } from 'src/engine/api/common/common-query-runners/utils/default-merge-field-value.util';
+
+describe('defaultMergeFieldValue', () => {
+  it('should return priority record value when available', () => {
+    const recordsWithValues = [
+      {
+        recordId: '1',
+        value: 'priority value',
+      },
+      {
+        recordId: '2',
+        value: 'other value',
+      },
+    ];
+
+    const result = defaultMergeFieldValue(recordsWithValues, '1');
+
+    expect(result).toBe('priority value');
+  });
+
+  it('should keep a date held only by a non-priority record', () => {
+    const date = new Date('2026-01-15T10:00:00.000Z');
+
+    const result = defaultMergeFieldValue(
+      [
+        { recordId: '1', value: null },
+        { recordId: '2', value: date },
+      ],
+      '1',
+    );
+
+    expect(result).toBe(date);
+  });
+
+  it('should fall back to first record with value when priority record not found', () => {
+    const recordsWithValues = [
+      {
+        recordId: '2',
+        value: 'first value',
+      },
+      {
+        recordId: '3',
+        value: 'second value',
+      },
+    ];
+
+    const result = defaultMergeFieldValue(recordsWithValues, '1');
+
+    expect(result).toBe('first value');
+  });
+
+  it('should fall back to other record when priority record has null value', () => {
+    const recordsWithValues = [
+      {
+        recordId: '1',
+        value: null,
+      },
+      {
+        recordId: '2',
+        value: 'fallback value',
+      },
+    ];
+
+    const result = defaultMergeFieldValue(recordsWithValues, '1');
+
+    expect(result).toBe('fallback value');
+  });
+
+  it('should fall back to other record when priority record has empty string', () => {
+    const recordsWithValues = [
+      {
+        recordId: '1',
+        value: '',
+      },
+      {
+        recordId: '2',
+        value: 'fallback value',
+      },
+    ];
+
+    const result = defaultMergeFieldValue(recordsWithValues, '1');
+
+    expect(result).toBe('fallback value');
+  });
+
+  it('should fall back to other record when priority record has undefined value', () => {
+    const recordsWithValues = [
+      {
+        recordId: '1',
+        value: undefined,
+      },
+      {
+        recordId: '2',
+        value: 'fallback value',
+      },
+    ];
+
+    const result = defaultMergeFieldValue(recordsWithValues, '1');
+
+    expect(result).toBe('fallback value');
+  });
+
+  it('should return null when no records exist', () => {
+    const result = defaultMergeFieldValue([], '1');
+
+    expect(result).toBeNull();
+  });
+
+  it('should return null when no record has a value', () => {
+    const recordsWithValues = [
+      {
+        recordId: '1',
+        value: null,
+      },
+      {
+        recordId: '2',
+        value: '',
+      },
+    ];
+
+    const result = defaultMergeFieldValue(recordsWithValues, '1');
+
+    expect(result).toBeNull();
+  });
+
+  it('should handle complex object values', () => {
+    const recordsWithValues = [
+      {
+        recordId: '1',
+        value: { name: 'priority object', id: 1 },
+      },
+      {
+        recordId: '2',
+        value: { name: 'fallback object', id: 2 },
+      },
+    ];
+
+    const result = defaultMergeFieldValue(recordsWithValues, '1');
+
+    expect(result).toEqual({ name: 'priority object', id: 1 });
+  });
+
+  it('should use the given emptiness check and keep the priority value when nothing qualifies', () => {
+    const recordsWithValues = [
+      { recordId: '1', value: { amount: null, code: 'USD' } },
+      { recordId: '2', value: { amount: null, code: 'EUR' } },
+    ];
+
+    const result = defaultMergeFieldValue(
+      recordsWithValues,
+      '1',
+      (value) => value.amount !== null,
+    );
+
+    expect(result).toEqual({ amount: null, code: 'USD' });
+  });
+});

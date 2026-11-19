@@ -1,20 +1,16 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { lazy, Suspense } from 'react';
 
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
-import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
-import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
-import { NavigationMenuItemDisplay } from '@/navigation-menu-item/display/components/NavigationMenuItemDisplay';
-import { WorkspaceSectionAddMenuItemButton } from '@/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { WorkspaceSectionListReadOnly } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly';
+import { useEditModeNavigationMenuItemClick } from '@/navigation-menu-item/edit/hooks/useEditModeNavigationMenuItemClick';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-const StyledList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.betweenSiblingsGap};
-  padding-top: ${themeCssVariables.betweenSiblingsGap};
-`;
+const LazyWorkspaceSectionListDndKit = lazy(() =>
+  import('@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListDndKit').then(
+    (module) => ({ default: module.WorkspaceSectionListDndKit }),
+  ),
+);
 
 type NavigationMenuContainerEditableItemsProps = {
   containerId: string;
@@ -27,41 +23,31 @@ export const NavigationMenuContainerEditableItems = ({
   topLevelItems,
   folderChildrenById,
 }: NavigationMenuContainerEditableItemsProps) => {
-  const [
-    selectedNavigationMenuItemIdInEditMode,
-    setSelectedNavigationMenuItemIdInEditMode,
-  ] = useAtomState(selectedNavigationMenuItemIdInEditModeState);
-  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
-  const folderCount = topLevelItems.filter(isNavigationMenuItemFolder).length;
+  const selectedNavigationMenuItemIdInEditMode = useAtomStateValue(
+    selectedNavigationMenuItemIdInEditModeState,
+  );
+  const handleNavigationMenuItemClick = useEditModeNavigationMenuItemClick();
 
   return (
-    <StyledList>
-      {topLevelItems.map((item) => (
-        <NavigationMenuItemDisplay
-          key={item.id}
-          item={item}
-          isDragging={false}
+    <Suspense
+      fallback={
+        <WorkspaceSectionListReadOnly
+          filteredItems={topLevelItems}
           folderChildrenById={folderChildrenById}
-          folderCount={folderCount}
-          editModeProps={{
-            isSelectedInEditMode:
-              selectedNavigationMenuItemIdInEditMode === item.id,
-            onEditModeClick: () =>
-              setSelectedNavigationMenuItemIdInEditMode(item.id),
-          }}
-          onNavigationMenuItemClick={({ item: clickedItem }) =>
-            setSelectedNavigationMenuItemIdInEditMode(clickedItem.id)
-          }
         />
-      ))}
-      <WorkspaceSectionAddMenuItemButton
-        container={{
-          id: containerId,
-          itemCount: workspaceNavigationMenuItems.filter(
-            (item) => item.parentId === containerId,
-          ).length,
-        }}
+      }
+    >
+      <LazyWorkspaceSectionListDndKit
+        containerId={containerId}
+        filteredItems={topLevelItems}
+        folderChildrenById={folderChildrenById}
+        getEditModeProps={(item) => ({
+          isSelectedInEditMode:
+            selectedNavigationMenuItemIdInEditMode === item.id,
+          onEditModeClick: () => handleNavigationMenuItemClick({ item }),
+        })}
+        onNavigationMenuItemClick={handleNavigationMenuItemClick}
       />
-    </StyledList>
+    </Suspense>
   );
 };

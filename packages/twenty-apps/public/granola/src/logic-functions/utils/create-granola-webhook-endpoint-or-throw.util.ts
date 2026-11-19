@@ -2,6 +2,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type GranolaWebhookScope } from 'src/logic-functions/types/granola-api.type';
+import { GranolaWebhookConfigurationError } from 'src/logic-functions/types/granola-webhook-configuration-error';
 import { type createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { isGranolaScopeValidationError } from 'src/logic-functions/utils/is-granola-scope-validation-error.util';
 
@@ -17,6 +18,7 @@ export const createGranolaWebhookEndpointOrThrow = async ({
   url,
   preferredScopes,
   folderIds,
+  isPersonalConnection,
 }: {
   client: Pick<
     ReturnType<typeof createGranolaClientOrThrow>,
@@ -25,12 +27,28 @@ export const createGranolaWebhookEndpointOrThrow = async ({
   url: string;
   preferredScopes: GranolaWebhookScope[] | undefined;
   folderIds: string[];
+  isPersonalConnection?: boolean;
 }) => {
-  const scopeCandidates = [
+  if (isPersonalConnection && !isNonEmptyArray(folderIds)) {
+    throw new GranolaWebhookConfigurationError({
+      message: 'A personal Granola webhook requires selected folders.',
+    });
+  }
+
+  const workspaceScopeCandidates = [
     preferredScopes,
     GRANOLA_WORKSPACE_KEY_SCOPES,
     GRANOLA_PERSONAL_KEY_SCOPES,
-  ]
+  ];
+  const personalScopeCandidates: GranolaWebhookScope[][] = [
+    GRANOLA_PERSONAL_KEY_SCOPES,
+    ['personal'],
+    ['public'],
+  ];
+  const scopesForKey = isPersonalConnection
+    ? personalScopeCandidates
+    : workspaceScopeCandidates;
+  const scopeCandidates = scopesForKey
     .filter(isDefined)
     .filter(
       (scopes, index, candidates) =>

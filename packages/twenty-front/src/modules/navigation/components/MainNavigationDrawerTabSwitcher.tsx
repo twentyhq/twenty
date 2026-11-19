@@ -5,10 +5,11 @@ import { Badge } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useInboxOpenThreadsSummary } from '@/inbox/hooks/useInboxOpenThreadsSummary';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
+import { useNavigationMenuTabIdsWithUnreadChats } from '@/navigation-menu-item/display/hooks/useNavigationMenuTabIdsWithUnreadChats';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
+import { NAVIGATION_MENU_TAB_MAX_COUNT } from '@/navigation-menu-item/common/constants/NavigationMenuTabMaxCount';
 import { MainNavigationDrawerAddTabButton } from '@/navigation/components/MainNavigationDrawerAddTabButton';
 import { MainNavigationDrawerSidebarTab } from '@/navigation/components/MainNavigationDrawerSidebarTab';
 import { MainNavigationDrawerTab } from '@/navigation/components/MainNavigationDrawerTab';
@@ -41,7 +42,11 @@ const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
       : themeCssVariables.betweenSiblingsGap};
   height: ${({ isExpanded }) =>
     isExpanded ? themeCssVariables.spacing[10] : 'auto'};
+  margin: ${({ isExpanded }) =>
+    isExpanded ? `0 calc(-1 * ${themeCssVariables.spacing[2]})` : '0'};
   min-width: 0;
+  padding: ${({ isExpanded }) =>
+    isExpanded ? `0 ${themeCssVariables.spacing[2]}` : '0'};
 `;
 
 const StyledUnreadBadge = styled.span`
@@ -66,8 +71,10 @@ export const MainNavigationDrawerTabSwitcher = () => {
     type: NavigationMenuItemType.TAB,
     containerId: null,
   });
+  const tabCountIncludingHome = navigationMenuTabs.length + 1;
   const activeNavigationMenuTab = useActiveNavigationMenuTab();
-  const { unreadOpenThreadCount } = useInboxOpenThreadsSummary();
+  const { tabIdsWithUnreadChats, unreadOpenThreadCount } =
+    useNavigationMenuTabIdsWithUnreadChats();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
@@ -160,9 +167,14 @@ export const MainNavigationDrawerTabSwitcher = () => {
               isActive={activeNavigationMenuTab?.id === tab.id}
               isExpanded={isExpanded}
               shouldShowTooltip={shouldShowTooltips}
+              isUnread={
+                activeNavigationMenuTab?.id !== tab.id &&
+                tabIdsWithUnreadChats.has(tab.id)
+              }
             />
           )),
-          ...(isLayoutCustomizationModeEnabled
+          ...(isLayoutCustomizationModeEnabled &&
+          tabCountIncludingHome < NAVIGATION_MENU_TAB_MAX_COUNT
             ? [
                 <MainNavigationDrawerAddTabButton
                   key="add-tab"

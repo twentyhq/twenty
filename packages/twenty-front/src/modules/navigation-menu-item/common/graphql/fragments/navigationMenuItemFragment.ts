@@ -12,6 +12,7 @@ export const NAVIGATION_MENU_ITEM_FRAGMENT = gql`
     name
     link
     nativePageKey
+    builtInSectionKey
     icon
     color
     pageLayoutId

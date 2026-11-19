@@ -251,7 +251,6 @@ export const buildPayload = (sizeBytes: number) => 'x'.repeat(sizeBytes);
 const flushReleases = () => new Promise((resolve) => setImmediate(resolve));
 
 export type MemoryHarnessOptions = {
-  isEnabled?: boolean;
   maxMemoryBytes?: number;
   otherDataBytes?: number;
   workspaceShare?: number;
@@ -262,7 +261,6 @@ export type MemoryHarnessOptions = {
 
 // used_memory follows the charged bytes, as jobs are what fills Redis in these scenarios
 export const createMemoryHarness = async ({
-  isEnabled = true,
   maxMemoryBytes = 100_000,
   otherDataBytes = 0,
   workspaceShare = 0.1,
@@ -338,7 +336,6 @@ export const createMemoryHarness = async ({
   mockBullMQ.reset({ redis, client });
 
   const configValues: Record<string, unknown> = {
-    IS_REDIS_MEMORY_FAIRNESS_ENABLED: isEnabled,
     JOB_QUEUE_MAX_JOB_SIZE_BYTES: maxJobSizeBytes,
     JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID: workspaceShare,
     JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER:
@@ -536,6 +533,9 @@ export const createMemoryHarness = async ({
     },
     setOtherDataBytes: (bytes: number) => {
       state.otherDataBytes = bytes;
+    },
+    setMaxJobSizeBytes: (bytes: number) => {
+      configValues.JOB_QUEUE_MAX_JOB_SIZE_BYTES = bytes;
     },
   };
 };
