@@ -3,7 +3,7 @@ import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/displa
 import { useReadableNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useReadableNavigationMenuItems';
 
 export const useNavigationMenuContainerItems = (containerId: string) => {
-  const items = useNavigationMenuItemSectionItems(containerId);
+  const items = useNavigationMenuItemSectionItems({ containerId });
 
   const { displayTopLevelItems, displayFolderChildrenById } =
     useReadableNavigationMenuItems(
