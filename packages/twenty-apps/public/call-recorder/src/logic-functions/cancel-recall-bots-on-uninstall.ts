@@ -12,7 +12,6 @@ import {
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 
 const UNINSTALL_TIMEOUT_SECONDS = 30;
-const RECALL_BOT_JOIN_AT_LOOKBACK_HOURS = 25;
 const RECORD_CLEANUP_REQUEST_START_BUDGET_MS = 5_000;
 const UNINSTALL_RESPONSE_HEADROOM_MS = 5_000;
 const RECALL_CANCELLATION_START_HEADROOM_MS =
@@ -80,10 +79,7 @@ export const cancelRecallBotsOnUninstallHandler =
     const workspaceRecallBotCancellationResult =
       await cancelWorkspaceRecallBots({
         knownExternalBotIds,
-        joinAtAfter: new Date(
-          uninstallStartedAt.getTime() -
-            RECALL_BOT_JOIN_AT_LOOKBACK_HOURS * 60 * 60 * 1000,
-        ).toISOString(),
+        joinAtAfter: uninstallStartedAt.toISOString(),
         cancellationCutoffEpochMs:
           uninstallStartedAt.getTime() +
           UNINSTALL_TIMEOUT_SECONDS * 1_000 -

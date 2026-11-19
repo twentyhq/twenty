@@ -133,7 +133,6 @@ export const cancelWorkspaceRecallBots = async ({
     await listScheduledRecallBotsBeforeRequestCutoff({
       joinAtAfter,
       metadata: { twentyWorkspaceId: currentWorkspaceId },
-      statuses: ['ready'],
       requestStartCutoffEpochMs: cancellationCutoffEpochMs,
     });
 

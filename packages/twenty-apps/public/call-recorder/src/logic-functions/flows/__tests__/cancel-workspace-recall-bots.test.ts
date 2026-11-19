@@ -137,7 +137,30 @@ describe('cancelWorkspaceRecallBots', () => {
     expect(listRequestParameters.get('metadata__twentyWorkspaceId')).toBe(
       CURRENT_WORKSPACE_ID,
     );
-    expect(listRequestParameters.getAll('status')).toEqual(['ready']);
+    expect(listRequestParameters.getAll('status')).toEqual([]);
+  });
+
+  it('cancels upcoming bots that have no status yet', async () => {
+    stubRecallApi({
+      bots: [
+        buildBot({
+          id: 'not-ready-bot',
+          twentyWorkspaceId: CURRENT_WORKSPACE_ID,
+        }),
+      ],
+    });
+
+    const workspaceRecallBotCleanupResult = await cancelWorkspaceRecallBots({
+      knownExternalBotIds: [],
+      joinAtAfter: JOIN_AT_AFTER,
+      cancellationCutoffEpochMs: CANCELLATION_CUTOFF_EPOCH_MS,
+    });
+
+    const [listRequestUrl] = getCallsByMethod('GET')[0];
+    expect(new URL(listRequestUrl).searchParams.has('status')).toBe(false);
+    expect(workspaceRecallBotCleanupResult.canceledExternalBotIds).toEqual([
+      'not-ready-bot',
+    ]);
   });
 
   it('cancels known bots five at a time', async () => {
