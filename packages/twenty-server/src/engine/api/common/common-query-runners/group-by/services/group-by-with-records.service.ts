@@ -258,15 +258,17 @@ export class GroupByWithRecordsService {
       return `ROW_NUMBER() OVER (PARTITION BY ${partitionBy})`;
     }
 
-    const commonQueryParser = new CommonQueryParser(
+    const commonQueryParser = new CommonQueryParser({
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-    );
+    });
 
     const { orderByRawSQL, relationJoins } = commonQueryParser.getOrderByRawSQL(
-      orderByForRecords,
-      flatObjectMetadata.nameSingular,
+      {
+        orderBy: orderByForRecords,
+        objectNameSingular: flatObjectMetadata.nameSingular,
+      },
     );
 
     if (!isNonEmptyString(orderByRawSQL)) {

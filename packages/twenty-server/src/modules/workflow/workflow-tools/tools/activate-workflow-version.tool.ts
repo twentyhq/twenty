@@ -21,6 +21,7 @@ export const createActivateWorkflowVersionTool = (
   context: WorkflowToolContext,
 ) => ({
   name: 'activate_workflow_version' as const,
+  isDestructive: true,
   description:
     'Activate a workflow version. This makes the workflow version active and available for execution.',
   inputSchema: activateWorkflowVersionSchema,

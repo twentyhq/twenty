@@ -8,10 +8,9 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 
 const MAX_JOB_SIZE_BYTES = 100;
 
-const buildLimiter = (isEnabled: boolean) => {
+const buildLimiter = () => {
   const metricsService = { incrementCounterForEvent: jest.fn() };
   const configValues: Record<string, unknown> = {
-    IS_REDIS_MEMORY_FAIRNESS_ENABLED: isEnabled,
     JOB_QUEUE_MAX_JOB_SIZE_BYTES: MAX_JOB_SIZE_BYTES,
   };
   const limiter = new JobSizeLimiter(
@@ -29,21 +28,8 @@ const JOBS = [
 ];
 
 describe('JobSizeLimiter', () => {
-  it('ignores sizes when disabled', () => {
-    const { limiter, metricsService } = buildLimiter(false);
-
-    expect(() =>
-      limiter.checkJobSizesOrThrow({
-        queueName: MessageQueue.workspaceQueue,
-        jobName: 'job',
-        jobs: JOBS,
-      }),
-    ).not.toThrow();
-    expect(metricsService.incrementCounterForEvent).not.toHaveBeenCalled();
-  });
-
   it('refuses the batch on the first oversized job and counts it once', () => {
-    const { limiter, metricsService } = buildLimiter(true);
+    const { limiter, metricsService } = buildLimiter();
 
     let thrownError: unknown;
 
@@ -76,7 +62,7 @@ describe('JobSizeLimiter', () => {
   });
 
   it('admits jobs at the limit', () => {
-    const { limiter } = buildLimiter(true);
+    const { limiter } = buildLimiter();
 
     expect(() =>
       limiter.checkJobSizesOrThrow({

@@ -14,6 +14,7 @@ const deleteObjectMetadataInputSchema = z.object({
 
 @DefineTool({
   name: 'delete_object_metadata',
+  isDestructive: true,
   category: ToolCategory.METADATA,
   accessPolicy: OBJECT_METADATA_WRITE_ACCESS_POLICY,
   icon: 'IconSettings',

@@ -106,7 +106,10 @@ describe('CommonQuerySelectedFieldsParser relation fields', () => {
 
   it('should ignore a relation selected as a boolean', () => {
     // Boolean selections carry no sub-fields; only the object form hydrates
-    const parser = new CommonQuerySelectedFieldsParser(objectMaps, fieldMaps);
+    const parser = new CommonQuerySelectedFieldsParser({
+      flatObjectMetadataMaps: objectMaps,
+      flatFieldMetadataMaps: fieldMaps,
+    });
 
     const result = parser.parse({
       selectedFields: {
@@ -123,7 +126,10 @@ describe('CommonQuerySelectedFieldsParser relation fields', () => {
   });
 
   it('should hydrate a relation selected as a nested object', () => {
-    const parser = new CommonQuerySelectedFieldsParser(objectMaps, fieldMaps);
+    const parser = new CommonQuerySelectedFieldsParser({
+      flatObjectMetadataMaps: objectMaps,
+      flatFieldMetadataMaps: fieldMaps,
+    });
 
     const result = parser.parse({
       selectedFields: {
@@ -156,7 +162,10 @@ describe('CommonQuerySelectedFieldsParser relation fields', () => {
   });
 
   it('should build one relation selection per selection key', () => {
-    const parser = new CommonQuerySelectedFieldsParser(objectMaps, fieldMaps);
+    const parser = new CommonQuerySelectedFieldsParser({
+      flatObjectMetadataMaps: objectMaps,
+      flatFieldMetadataMaps: fieldMaps,
+    });
     const firstFundKey = computeSelectionKey({
       fieldName: 'fund',
       arguments: { first: 2 },
