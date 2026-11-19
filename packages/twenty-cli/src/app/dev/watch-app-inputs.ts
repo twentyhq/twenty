@@ -3,6 +3,7 @@ import { realpath } from 'node:fs/promises';
 import { relative, sep } from 'node:path';
 
 import { watch, type FSWatcher } from 'chokidar';
+import { isDefined } from 'twenty-shared/utils';
 
 import { isBroadWatchDirectory } from '@/app/dev/is-broad-watch-directory';
 import { isIgnoredWatchPath } from '@/app/dev/is-ignored-watch-path';
@@ -162,7 +163,7 @@ export const watchAppInputs = async ({
       }
       for (const stop of previousWatchers) stop();
 
-      if (onScopeChange) {
+      if (isDefined(onScopeChange)) {
         const scope: WatchScope = {
           filePaths: [...uniqueInputs.values()]
             .filter((input) => input.kind === 'file')
