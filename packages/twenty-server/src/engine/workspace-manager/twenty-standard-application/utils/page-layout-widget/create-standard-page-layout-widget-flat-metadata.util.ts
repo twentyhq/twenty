@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
+import { fromLegacyPageLayoutWidgetRuleToConditionalAvailability } from 'src/engine/metadata-modules/page-layout-widget/utils/from-legacy-page-layout-widget-rule-to-conditional-availability.util';
 import { STANDARD_PAGE_LAYOUTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { type StandardObjectMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util';
@@ -85,6 +86,18 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     );
   }
 
+  const ruleConversion =
+    fromLegacyPageLayoutWidgetRuleToConditionalAvailability({
+      conditionalAvailabilityExpression,
+      conditionalDisplay,
+    });
+
+  if (!ruleConversion.isConvertible) {
+    throw new Error(
+      `Invalid conditional availability rule ${layoutName} ${tabTitle} ${widgetName}: ${ruleConversion.message}`,
+    );
+  }
+
   const tabIds = layoutIds.tabs[tabTitle];
   const widgetIds = tabIds.widgets[widgetName];
 
@@ -109,10 +122,9 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     createdAt: now,
     updatedAt: now,
     deletedAt: null,
-    conditionalDisplay: conditionalDisplay ?? null,
-    conditionalAvailabilityExpression:
-      conditionalAvailabilityExpression ?? null,
-    conditionalAvailability: null,
+    conditionalDisplay: null,
+    conditionalAvailabilityExpression: null,
+    conditionalAvailability: ruleConversion.conditionalAvailability,
     overrides: null,
     universalOverrides: null,
   };

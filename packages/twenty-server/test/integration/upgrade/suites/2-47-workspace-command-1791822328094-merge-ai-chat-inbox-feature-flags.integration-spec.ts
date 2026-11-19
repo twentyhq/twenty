@@ -65,7 +65,7 @@ describe('2-47 workspace command - merge AI chat inbox feature flags (integratio
 
   const setWidgetExpression = async (
     universalIdentifier: string,
-    expression: string,
+    expression: string | null,
   ) => {
     await global.testDataSource.query(
       `UPDATE core."pageLayoutWidget" SET "conditionalAvailabilityExpression" = $3
@@ -90,8 +90,12 @@ describe('2-47 workspace command - merge AI chat inbox feature flags (integratio
   afterAll(async () => {
     await setFlag('IS_AI_CHAT_INBOX_ENABLED', true);
     await setWidgetExpression(
+      COMPANY_CONVERSATIONS_WIDGET_UNIVERSAL_IDENTIFIER,
+      null,
+    );
+    await setWidgetExpression(
       PERSON_CONVERSATIONS_WIDGET_UNIVERSAL_IDENTIFIER,
-      'featureFlags.IS_AI_CHAT_INBOX_ENABLED',
+      null,
     );
   });
 
@@ -116,6 +120,10 @@ describe('2-47 workspace command - merge AI chat inbox feature flags (integratio
 
   it('moves the Conversations widgets and brings the merged flags back with the inbox value on down', async () => {
     await setFlag('IS_AI_CHAT_INBOX_ENABLED', true);
+    await setWidgetExpression(
+      COMPANY_CONVERSATIONS_WIDGET_UNIVERSAL_IDENTIFIER,
+      'featureFlags.IS_AI_CHAT_INBOX_ENABLED',
+    );
 
     await command.down(RUN_ON_WORKSPACE_ARGS);
 
