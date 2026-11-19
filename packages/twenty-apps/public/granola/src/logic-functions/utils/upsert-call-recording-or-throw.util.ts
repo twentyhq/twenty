@@ -12,24 +12,32 @@ export const upsertCallRecordingOrThrow = async ({
   coreApiClient,
   callRecordingId,
   fields,
+  canWriteCallRecording,
 }: {
   coreApiClient: Pick<CoreApiClient, 'query' | 'mutation'>;
   callRecordingId: string;
   fields: CallRecordingSyncFields;
+  canWriteCallRecording?: () => Promise<boolean>;
 }): Promise<{
   callRecordingId: string;
   created: boolean;
   skipped?: boolean;
 }> => {
+  const skipped = { callRecordingId, created: false, skipped: true };
+
   if (
     await isCallRecordingSoftDeletedOrThrow({ coreApiClient, callRecordingId })
   ) {
-    return { callRecordingId, created: false, skipped: true };
+    return skipped;
   }
 
   const personalNoteUpdatedAt = fields.granolaPersonalNoteUpdatedAt;
 
   const updateExistingRecordingOrThrow = async () => {
+    if (isDefined(canWriteCallRecording) && !(await canWriteCallRecording())) {
+      return skipped;
+    }
+
     if (isDefined(personalNoteUpdatedAt)) {
       // A null revision marks a recording owned by workspace sync.
       const result = await coreApiClient.mutation({
@@ -47,7 +55,7 @@ export const upsertCallRecordingOrThrow = async ({
 
       return isNonEmptyArray(result.updateCallRecordings)
         ? { callRecordingId, created: false }
-        : { callRecordingId, created: false, skipped: true };
+        : skipped;
     }
 
     await updateCallRecordingOrThrow({
@@ -61,6 +69,10 @@ export const upsertCallRecordingOrThrow = async ({
 
   if (await doesCallRecordingExistOrThrow({ coreApiClient, callRecordingId })) {
     return updateExistingRecordingOrThrow();
+  }
+
+  if (isDefined(canWriteCallRecording) && !(await canWriteCallRecording())) {
+    return skipped;
   }
 
   try {
