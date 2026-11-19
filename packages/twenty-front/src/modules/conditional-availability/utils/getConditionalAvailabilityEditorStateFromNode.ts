@@ -1,10 +1,13 @@
 import { type ConditionalAvailabilityEditorState } from '@/conditional-availability/types/ConditionalAvailabilityEditorState';
-import { readConditionalAvailabilityNode } from '@/conditional-availability/utils/readConditionalAvailabilityNode';
+import { getConditionalAvailabilityOfferedSubjects } from '@/conditional-availability/utils/getConditionalAvailabilityOfferedSubjects';
+import { readConditionalAvailabilityRowTree } from '@/conditional-availability/utils/readConditionalAvailabilityRowTree';
+import { validateConditionalAvailabilityRules } from '@/conditional-availability/utils/validateConditionalAvailabilityRules';
 import {
   type ConditionalAvailabilityMetadataName,
   type ConditionalAvailabilityNode,
 } from 'twenty-shared/types';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const getConditionalAvailabilityEditorStateFromNode = ({
   node,
@@ -13,16 +16,28 @@ export const getConditionalAvailabilityEditorStateFromNode = ({
   node: ConditionalAvailabilityNode | null;
   metadataName: ConditionalAvailabilityMetadataName;
 }): ConditionalAvailabilityEditorState => {
-  const readResult = readConditionalAvailabilityNode({ node, metadataName });
-
-  switch (readResult.status) {
-    case 'empty':
-      return { mode: 'everyone' };
-    case 'unsupported':
-      return { mode: 'unsupportedRule' };
-    case 'rows':
-      return { mode: 'customRule', tree: readResult.tree };
-    default:
-      return assertUnreachable(readResult);
+  if (!isDefined(node)) {
+    return { mode: 'everyone' };
   }
+
+  const tree = readConditionalAvailabilityRowTree({
+    node,
+    offeredSubjects: getConditionalAvailabilityOfferedSubjects({
+      metadataName,
+    }),
+  });
+
+  if (!isDefined(tree)) {
+    return { mode: 'unsupportedRule' };
+  }
+
+  const rulesValidation = validateConditionalAvailabilityRules({
+    tree,
+    metadataName,
+  });
+
+  return rulesValidation.status === 'valid' &&
+    isDeeplyEqual(rulesValidation.node, node)
+    ? { mode: 'customRule', tree }
+    : { mode: 'unsupportedRule' };
 };
