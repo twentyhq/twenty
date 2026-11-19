@@ -16,7 +16,6 @@ import { WorkspaceSectionContainer } from '@/navigation-menu-item/display/sectio
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -36,9 +35,6 @@ const StyledRightIconsContainer = styled.div`
 export const WorkspaceSection = () => {
   const isMobile = useIsMobile();
   const items = useNavigationMenuItemSectionItems();
-  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
-  );
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
