@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { FOCUSED_TAB_HEARTBEAT_INTERVAL_MS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Not } from 'typeorm';
 
@@ -20,7 +21,7 @@ import { isWebPushEndpointAllowed } from 'src/engine/core-modules/web-push/utils
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-const FOCUSED_TAB_TTL_MS = 45_000;
+const FOCUSED_TAB_TTL_MS = FOCUSED_TAB_HEARTBEAT_INTERVAL_MS * 2;
 
 const getFocusedTabKey = (workspaceId: string, workspaceMemberId: string) =>
   `focused-tab:${workspaceId}:${workspaceMemberId}`;
