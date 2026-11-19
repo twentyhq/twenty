@@ -2,7 +2,7 @@ import { isNonEmptyString, isString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { useApplyAiChatThreadUpdate } from '@/ai-chat/threads/hooks/useApplyAiChatThreadUpdate';
 import { useRefreshAiChatThreadImageFile } from '@/ai-chat/threads/hooks/useRefreshAiChatThreadImageFile';
@@ -16,10 +16,8 @@ import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSou
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { type ObjectRecordOperationUpdateInput } from '@/object-record/types/ObjectRecordOperationUpdateInput';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 const AI_CHAT_THREADS_OPERATION_SIGNATURE = {
   objectNameSingular: StandardObjectNameSingular.AgentChatThread,
@@ -48,14 +46,13 @@ const isMissingImageFileUrl = (
   isNonEmptyArray(imageFile) &&
   imageFile.some(({ url }) => !isNonEmptyString(url));
 
-export const InboxThreadRecordOperationsEffect = () => {
-  const chatObjectMetadataItem = useAtomFamilySelectorValue(
-    objectMetadataItemFamilySelector,
-    {
-      objectName: StandardObjectNameSingular.AgentChatThread,
-      objectNameType: 'singular',
-    },
-  );
+type InboxThreadRecordOperationsEffectProps = {
+  chatObjectMetadataItemId: string;
+};
+
+export const InboxThreadRecordOperationsEffect = ({
+  chatObjectMetadataItemId,
+}: InboxThreadRecordOperationsEffectProps) => {
   const { applyAiChatThreadUpdate } = useApplyAiChatThreadUpdate();
   const { refreshAiChatThreadImageFile } = useRefreshAiChatThreadImageFile();
   const { addInboxThread } = useAddInboxThread();
@@ -72,7 +69,6 @@ export const InboxThreadRecordOperationsEffect = () => {
   const store = useStore();
   const { refreshInboxOpenThreadsSummary } =
     useRefreshInboxOpenThreadsSummary();
-  const isEnabled = isDefined(chatObjectMetadataItem);
 
   // The removal check looks the chat up itself, so it runs even if the reload fails.
   const reloadAiChatThreads = useCallback(async () => {
@@ -88,7 +84,6 @@ export const InboxThreadRecordOperationsEffect = () => {
   useListenToEventsForQuery({
     queryId: 'agent-chat-thread-record-operations',
     operationSignature: AI_CHAT_THREADS_OPERATION_SIGNATURE,
-    skip: !isEnabled,
     onSseReconnected: reloadAiChatThreads,
   });
 
@@ -187,8 +182,7 @@ export const InboxThreadRecordOperationsEffect = () => {
 
   useListenToObjectRecordOperationBrowserEvent({
     onObjectRecordOperationBrowserEvent: handleRecordOperation,
-    objectMetadataItemId: chatObjectMetadataItem?.id,
-    enabled: isEnabled,
+    objectMetadataItemId: chatObjectMetadataItemId,
   });
 
   return null;
