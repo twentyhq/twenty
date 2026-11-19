@@ -81,9 +81,9 @@ export const InboxNotificationPreferences = () => {
         <SettingsOptionCardContentSwitch
           Icon={IconEye}
           title={t`Show message preview`}
-          description={t`Show the message text in notifications. Turn it off when you share your screen`}
+          description={t`Show the sender, the chat and the message text in notifications. Leave it off on shared screens and devices`}
           checked={
-            currentWorkspaceMember.isInboxNotificationPreviewEnabled ?? true
+            currentWorkspaceMember.isInboxNotificationPreviewEnabled ?? false
           }
           disabled={
             inboxNotificationLevel === AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.NONE

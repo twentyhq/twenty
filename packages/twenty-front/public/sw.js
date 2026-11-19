@@ -38,21 +38,27 @@ self.addEventListener('push', (event) => {
   );
 });
 
+const getInboxPath = (url) =>
+  typeof url === 'string' && url.startsWith('/inbox/') ? url : undefined;
+
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
-  const url = event.notification.data?.url;
+  const inboxPath = getInboxPath(event.notification.data?.url);
 
   event.waitUntil(
     self.clients
       .matchAll({ type: 'window', includeUncontrolled: true })
       .then(([windowClient]) => {
         if (windowClient === undefined) {
-          return self.clients.openWindow(url ?? '/');
+          return self.clients.openWindow(inboxPath ?? '/');
         }
 
-        if (url !== undefined) {
-          windowClient.postMessage({ type: 'push-notification-click', url });
+        if (inboxPath !== undefined) {
+          windowClient.postMessage({
+            type: 'push-notification-click',
+            url: inboxPath,
+          });
         }
 
         return windowClient.focus();
