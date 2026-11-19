@@ -20,6 +20,7 @@ import { findGranolaPersonalConnection } from 'src/logic-functions/utils/find-gr
 import { isGranolaPersonalSyncEnabled } from 'src/logic-functions/utils/is-granola-personal-sync-enabled.util';
 import { loadGranolaPersonalSync } from 'src/logic-functions/utils/load-granola-personal-sync.util';
 import { reconcileGranolaPersonalWebhookOrThrow } from 'src/logic-functions/utils/reconcile-granola-personal-webhook-or-throw.util';
+import { removeAbandonedGranolaPersonalWebhooksOrThrow } from 'src/logic-functions/utils/remove-abandoned-granola-personal-webhooks-or-throw.util';
 import { removeGranolaPersonalWebhook } from 'src/logic-functions/utils/remove-granola-personal-webhook.util';
 import { rethrowKnownOrWrapGranolaError } from 'src/logic-functions/utils/rethrow-known-or-wrap-granola-error.util';
 
@@ -40,9 +41,11 @@ const readConnectionOwnerOrThrow = async (connectionId: string) => {
 export const granolaPersonalReconcileHandler = async ({
   connectedAccountId: connectionId,
   userWorkspaceId,
+  scheduledApiKeyFingerprint,
 }: {
   connectedAccountId: string;
   userWorkspaceId?: string;
+  scheduledApiKeyFingerprint?: string;
 }) => {
   if (!isGranolaPersonalSyncEnabled()) {
     return { success: true, skipped: true };
@@ -73,25 +76,43 @@ export const granolaPersonalReconcileHandler = async ({
   }
 
   const client = createGranolaClientOrThrow({ apiKey: connection.accessToken });
+  const scope = { connectionId, userWorkspaceId: connection.userWorkspaceId };
+  const apiKeyFingerprint = getGranolaApiKeyFingerprint(connection.accessToken);
 
-  if (!isNonEmptyArray(selection)) {
-    const currentSelection = await kv.get<GranolaPersonalFolderSelection[]>(
-      getGranolaPersonalFolderSelectionKey(connectionId),
-    );
-
-    if (isDefined(currentSelection) && !isNonEmptyArray(currentSelection)) {
-      await removeGranolaPersonalWebhook({ connectionId, client });
-    }
-
+  if (
+    isDefined(scheduledApiKeyFingerprint) &&
+    scheduledApiKeyFingerprint !== apiKeyFingerprint
+  ) {
     return { success: true, skipped: true };
   }
 
-  const scope = { connectionId, userWorkspaceId: connection.userWorkspaceId };
-  const apiKeyFingerprint = getGranolaApiKeyFingerprint(connection.accessToken);
   const loadCurrentSync = () =>
     loadGranolaPersonalSync({ ...scope, apiKeyFingerprint });
+  const cleanUpAbandonedWebhooksOrThrow = async () => {
+    if (isDefined(scheduledApiKeyFingerprint)) {
+      await removeAbandonedGranolaPersonalWebhooksOrThrow({
+        connectionId,
+        client,
+      });
+    }
+  };
 
   try {
+    if (!isNonEmptyArray(selection)) {
+      const currentSelection = await kv.get<GranolaPersonalFolderSelection[]>(
+        getGranolaPersonalFolderSelectionKey(connectionId),
+      );
+
+      if (!isDefined(currentSelection) || isNonEmptyArray(currentSelection)) {
+        return { success: true, skipped: true };
+      }
+
+      await removeGranolaPersonalWebhook({ connectionId, client });
+      await cleanUpAbandonedWebhooksOrThrow();
+
+      return { success: true, skipped: true };
+    }
+
     const folders = await listAllGranolaFoldersOrThrow({ client });
     const current = await loadCurrentSync();
 
@@ -113,6 +134,8 @@ export const granolaPersonalReconcileHandler = async ({
       folderIds: selectedFolderIds,
       selection: current.selection,
     });
+
+    await cleanUpAbandonedWebhooksOrThrow();
 
     return { success: true, ...result };
   } catch (error) {
