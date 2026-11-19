@@ -6580,6 +6580,9 @@ export default {
             "logoUrl": [
                 4
             ],
+            "mcpServerUrl": [
+                4
+            ],
             "name": [
                 4
             ],
@@ -6641,6 +6644,9 @@ export default {
             ],
             "manifest": [
                 339
+            ],
+            "mcpServerUrl": [
+                4
             ],
             "name": [
                 4
@@ -6816,6 +6822,9 @@ export default {
             ],
             "toolsSyncedAt": [
                 223
+            ],
+            "universalIdentifier": [
+                561
             ],
             "updatedAt": [
                 223
@@ -7209,6 +7218,15 @@ export default {
                     "messageId": [
                         561,
                         "UUID!"
+                    ]
+                }
+            ],
+            "addMarketplaceMcpServer": [
+                367,
+                {
+                    "universalIdentifier": [
+                        4,
+                        "String!"
                     ]
                 }
             ],

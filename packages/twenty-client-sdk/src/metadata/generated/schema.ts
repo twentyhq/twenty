@@ -2164,6 +2164,7 @@ export interface MarketplaceApp {
     id: Scalars['String']
     isListed: Scalars['Boolean']
     logoUrl?: Scalars['String']
+    mcpServerUrl?: Scalars['String']
     name: Scalars['String']
     sourcePackage?: Scalars['String']
     __typename: 'MarketplaceApp'
@@ -2188,6 +2189,7 @@ export interface MarketplaceAppDetail {
     logoUrl?: Scalars['String']
     /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
     manifest?: Scalars['JSON']
+    mcpServerUrl?: Scalars['String']
     name: Scalars['String']
     objects?: MarketplaceAppObject[]
     pricingDescription?: Scalars['String']
@@ -2259,6 +2261,7 @@ export interface McpServer {
     tools: McpServerTool[]
     toolsSyncError?: Scalars['String']
     toolsSyncedAt?: Scalars['DateTime']
+    universalIdentifier: Scalars['UUID']
     updatedAt: Scalars['DateTime']
     url: Scalars['String']
     __typename: 'McpServer'
@@ -2434,6 +2437,7 @@ export interface Mutation {
     activateSkill: Skill
     activateWorkspace: Workspace
     addAgentChatMessageReaction: AgentMessageReactionSummary[]
+    addMarketplaceMcpServer: McpServer
     addQueryToEventStream: Scalars['Boolean']
     approveApplicationIframeMediaPermissions: Application
     archiveInboxThread: Scalars['Boolean']
@@ -7033,6 +7037,7 @@ export interface MarketplaceAppGenqlSelection{
     id?: boolean | number
     isListed?: boolean | number
     logoUrl?: boolean | number
+    mcpServerUrl?: boolean | number
     name?: boolean | number
     sourcePackage?: boolean | number
     __typename?: boolean | number
@@ -7058,6 +7063,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     logoUrl?: boolean | number
     /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
     manifest?: boolean | number
+    mcpServerUrl?: boolean | number
     name?: boolean | number
     objects?: MarketplaceAppObjectGenqlSelection
     pricingDescription?: boolean | number
@@ -7134,6 +7140,7 @@ export interface McpServerGenqlSelection{
     tools?: McpServerToolGenqlSelection
     toolsSyncError?: boolean | number
     toolsSyncedAt?: boolean | number
+    universalIdentifier?: boolean | number
     updatedAt?: boolean | number
     url?: boolean | number
     __typename?: boolean | number
@@ -7295,6 +7302,7 @@ export interface MutationGenqlSelection{
     activateSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     activateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: ActivateWorkspaceInput} })
     addAgentChatMessageReaction?: (AgentMessageReactionSummaryGenqlSelection & { __args: {emoji: Scalars['String'], messageId: Scalars['UUID']} })
+    addMarketplaceMcpServer?: (McpServerGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
     addQueryToEventStream?: { __args: {input: AddQuerySubscriptionInput} }
     approveApplicationIframeMediaPermissions?: (ApplicationGenqlSelection & { __args: {applicationId: Scalars['UUID'], approvedIframeMediaPermissions: IframeMediaPermissionInput[]} })
     archiveInboxThread?: { __args: {input: ArchiveInboxThreadInput} }

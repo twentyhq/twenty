@@ -3189,6 +3189,7 @@ type MarketplaceApp {
   id: String!
   isListed: Boolean!
   logoUrl: String
+  mcpServerUrl: String
   name: String!
   sourcePackage: String
 }
@@ -3211,6 +3212,7 @@ type MarketplaceAppDetail {
   latestAvailableVersion: String
   logoUrl: String
   manifest: JSON @deprecated(reason: "Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead")
+  mcpServerUrl: String
   name: String!
   objects: [MarketplaceAppObject!]
   pricingDescription: String
@@ -3276,6 +3278,7 @@ type McpServer {
   tools: [McpServerTool!]!
   toolsSyncError: String
   toolsSyncedAt: DateTime
+  universalIdentifier: UUID!
   updatedAt: DateTime!
   url: String!
 }
@@ -3516,6 +3519,7 @@ type Mutation {
   activateSkill(id: UUID!): Skill!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
   addAgentChatMessageReaction(emoji: String!, messageId: UUID!): [AgentMessageReactionSummary!]!
+  addMarketplaceMcpServer(universalIdentifier: String!): McpServer!
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   approveApplicationIframeMediaPermissions(applicationId: UUID!, approvedIframeMediaPermissions: [IframeMediaPermissionInput!]!): Application!
   archiveInboxThread(input: ArchiveInboxThreadInput!): Boolean!
