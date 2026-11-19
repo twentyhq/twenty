@@ -78,11 +78,15 @@ const fixture = async () => {
     onWarning,
   });
   cleanups.push(watcher.close);
+  await new Promise((resolve) => setTimeout(resolve, 400));
+  onChange.mockClear();
 
   return { root, appPath, watcher, onChange, onError, onWarning };
 };
-const waitForChange = (onChange: () => void) =>
-  vi.waitFor(() => expect(onChange).toHaveBeenCalled(), { timeout: 3000 });
+const waitForChange = (onChange: () => void, message?: string) =>
+  vi.waitFor(() => expect(onChange, message).toHaveBeenCalled(), {
+    timeout: 3000,
+  });
 
 const collect = async (file: string) =>
   (
@@ -124,17 +128,17 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
     await writeFile(external, 'initial');
     await watcher.update(await collect(external), true);
     await writeFile(external, 'syntax error');
-    await waitForChange(onChange);
+    await waitForChange(onChange, 'initial external edit');
     await watcher.update([], false);
     onChange.mockClear();
     await writeFile(external, 'fixed');
-    await waitForChange(onChange);
+    await waitForChange(onChange, 'external edit after a failed build');
     const missing = join(root, 'linked', 'new-folder', 'missing.ts');
     await watcher.update(await collect(missing), false);
     onChange.mockClear();
     await mkdir(join(root, 'linked', 'new-folder'));
     await writeFile(missing, 'created');
-    await waitForChange(onChange);
+    await waitForChange(onChange, 'missing sibling creation');
     await watcher.update([], true);
     onChange.mockClear();
     await writeFile(external, 'unrelated now');
@@ -246,53 +250,6 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
     await writeFile(external, 'after');
     await watcher.update(inputs, true);
     expect(onChange).toHaveBeenCalled();
-  });
-
-  it('reports a large polling scope once, counting unique paths and excluding ignored directories', async () => {
-    const { root, watcher, onWarning } = await fixture();
-    const home = join(root, 'home');
-    await mkdir(home);
-    watcherOptions.homeDirectory = await realpath(home);
-    const files = Array.from({ length: 500 }, (_, index) => ({
-      path: join(home, `helper-${index}.ts`),
-      kind: 'file' as const,
-      stamp: null,
-    }));
-    const inputs = [
-      ...files,
-      ...files,
-      { path: home, kind: 'directory' as const, stamp: null },
-      {
-        path: join(home, 'node_modules'),
-        kind: 'directory' as const,
-        stamp: null,
-      },
-    ];
-
-    await watcher.update(inputs, true);
-    await watcher.update(inputs, false);
-
-    expect(
-      onWarning.mock.calls.filter(
-        ([warning]) => warning.code === 'WATCH_SCOPE_LARGE',
-      ),
-    ).toEqual([
-      [
-        {
-          code: 'WATCH_SCOPE_LARGE',
-          message:
-            'Polling 500 external paths every 1000 ms. Large linked source packages can increase CPU usage.',
-        },
-      ],
-    ]);
-
-    await watcher.update([], true);
-    await watcher.update(inputs, true);
-    expect(
-      onWarning.mock.calls.filter(
-        ([warning]) => warning.code === 'WATCH_SCOPE_LARGE',
-      ),
-    ).toHaveLength(2);
   });
 
   it('never lists broad directories or their symlink aliases while collecting or attaching inputs', async () => {

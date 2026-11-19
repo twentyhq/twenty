@@ -1,4 +1,3 @@
-import { unwatchFile, watchFile } from 'node:fs';
 import { realpath } from 'node:fs/promises';
 import { relative, sep } from 'node:path';
 
@@ -8,11 +7,9 @@ import { isBroadWatchDirectory } from '@/app/dev/is-broad-watch-directory';
 import { isIgnoredWatchPath } from '@/app/dev/is-ignored-watch-path';
 import { readWatchInputStamp } from '@/app/dev/read-watch-input-stamp';
 import { type WatchInputs } from '@/app/dev/types/watch-inputs.type';
+import { watchExternalInput } from '@/app/dev/watch-external-input';
 import { type Output } from '@/output/types/output.type';
 import { isInsideDirectory } from '@/utils/is-inside-directory';
-
-const EXTERNAL_WATCH_INTERVAL_MS = 1000;
-const LARGE_EXTERNAL_WATCH_PATH_COUNT = 500;
 
 const waitUntilReady = (watcher: FSWatcher, signal: AbortSignal) =>
   new Promise<void>((resolve, reject) => {
@@ -70,7 +67,6 @@ export const watchAppInputs = async ({
   let stopExternalWatchers: (() => void)[] = [];
   let excludedDirectories = new Set<string>();
   let successfulInputs: WatchInputs = [];
-  let previousPollingPathCount = 0;
 
   const close = async () => {
     for (const stop of stopExternalWatchers) stop();
@@ -125,36 +121,11 @@ export const watchAppInputs = async ({
         (input) =>
           input.kind !== 'directory' || !excludedDirectories.has(input.path),
       );
-      const pollingPathCount = new Set(watchedInputs.map((input) => input.path))
-        .size;
-      if (
-        pollingPathCount >= LARGE_EXTERNAL_WATCH_PATH_COUNT &&
-        pollingPathCount !== previousPollingPathCount
-      ) {
-        onWarning?.({
-          code: 'WATCH_SCOPE_LARGE',
-          message: `Polling ${pollingPathCount} external paths every ${EXTERNAL_WATCH_INTERVAL_MS} ms. Large linked source packages can increase CPU usage.`,
-        });
-      }
-      previousPollingPathCount = pollingPathCount;
 
       for (const input of watchedInputs) {
-        let stamp = readWatchInputStamp(input);
-        const changed = () => {
-          const nextStamp = readWatchInputStamp(input);
-          if (nextStamp !== stamp) {
-            stamp = nextStamp;
-            onChange();
-          }
-        };
-
-        // Exact-path polling never widens to parents when an input disappears.
-        watchFile(
-          input.path,
-          { interval: EXTERNAL_WATCH_INTERVAL_MS, persistent: false },
-          changed,
+        stopExternalWatchers.push(
+          watchExternalInput({ input, onChange, onError }),
         );
-        stopExternalWatchers.push(() => unwatchFile(input.path, changed));
       }
       for (const stop of previousWatchers) stop();
 

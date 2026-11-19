@@ -15,7 +15,11 @@ export const readWatchInputStamp = ({
         return null;
       }
 
-      return JSON.stringify(
+      const stat = statSync(path, { bigint: true });
+
+      return JSON.stringify([
+        stat.dev.toString(),
+        stat.ino.toString(),
         readdirSync(path, { withFileTypes: true })
           .filter((entry) => !isIgnoredWatchPath(entry.name))
           .map((entry) => [
@@ -27,7 +31,7 @@ export const readWatchInputStamp = ({
           .sort(([first], [second]) =>
             String(first).localeCompare(String(second)),
           ),
-      );
+      ]);
     }
 
     const stat = statSync(path, { bigint: true });

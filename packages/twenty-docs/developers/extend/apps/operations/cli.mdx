@@ -125,7 +125,7 @@ npx twenty@latest app dev
 - `app apply --create` builds the app, registers it in the workspace, installs it and syncs its metadata.
 - `app dev` watches your source and syncs every successful build.
 
-External local files remain watched through deletion and recreation. Home and temporary directory roots and their ancestors are excluded from automatic external directory observation. If `WATCH_SCOPE_LIMITED` appears for a missing import, fix the import, then edit an app file or restart `app dev`.
+Existing external local files use native filesystem events. Missing or deleted paths use recovery checks once per second until native watching can resume. Home and temporary directory roots and their ancestors are excluded from automatic external directory observation. If `WATCH_SCOPE_LIMITED` appears for a missing import, fix the import, then edit an app file or restart `app dev`.
 
 Other app commands:
 
