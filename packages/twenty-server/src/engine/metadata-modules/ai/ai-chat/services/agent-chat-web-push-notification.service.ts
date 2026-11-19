@@ -174,7 +174,10 @@ export class AgentChatWebPushNotificationService {
   }: {
     workspaceId: string;
     thread: AgentChatThreadWorkspaceEntity;
-    recipient: WorkspaceMemberWorkspaceEntity;
+    recipient: Pick<
+      WorkspaceMemberWorkspaceEntity,
+      'id' | 'userId' | 'locale' | 'isInboxNotificationPreviewEnabled'
+    >;
     isRenotifyForced: boolean;
     webPushSubscriptions: WebPushSubscriptionEntity[];
     workspaceMemberById: Partial<
