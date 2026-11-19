@@ -23960,7 +23960,7 @@ msgstr "閱讀系統提示詞"
 #. js-lingui-id: /nZe2L
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Read the address, owner and account status of members' private channels"
-msgstr ""
+msgstr "讀取成員私人頻道的地址、擁有者和帳戶狀態"
 
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
