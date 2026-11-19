@@ -157,11 +157,11 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       }
     });
 
-    commonQueryParser.applyGroupByOrderToBuilder(
+    commonQueryParser.applyGroupByOrderToBuilder({
       queryBuilder,
-      args.orderBy ?? [],
+      orderBy: args.orderBy ?? [],
       groupByFields,
-    );
+    });
 
     const shouldIncludeRecords = args.includeRecords ?? false;
 
@@ -381,13 +381,16 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       });
     }
 
-    commonQueryParser.applyFilterToBuilder(
+    commonQueryParser.applyFilterToBuilder({
       queryBuilder,
-      objectAlias,
-      appliedFilters,
-    );
+      objectNameSingular: objectAlias,
+      recordFilter: appliedFilters,
+    });
 
-    commonQueryParser.applyDeletedAtToBuilder(queryBuilder, appliedFilters);
+    commonQueryParser.applyDeletedAtToBuilder({
+      queryBuilder,
+      recordFilter: appliedFilters,
+    });
   }
 
   private async resolveWithoutRecords({

@@ -598,6 +598,16 @@ msgstr "{agentLabel} 에이전트 역할"
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{fieldLabel}의 {aggregateLabel}"
 
+#. js-lingui-id: zEkduP
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "{allowedFieldCount} of {fieldCount}"
+msgstr ""
+
+#. js-lingui-id: LoDOIo
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "{allowedFieldCount} of {fieldCount} fields"
+msgstr ""
+
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{apiKeyCount, plural, one {{apiKeyCount} API key} other {{apiKeyCount} API keys}}"
@@ -1750,11 +1760,6 @@ msgstr "사용자가 상호작용할 수 있는 레코드를 필터링하는 기
 msgid "Ability to filter the records a user can interact with."
 msgstr "사용자가 상호작용할 수 있는 레코드를 필터링하는 기능."
 
-#. js-lingui-id: wTKqOI
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
-msgid "Ability to interact with this object's fields."
-msgstr "이 객체의 필드와 상호작용할 수 있는 능력."
-
 #. js-lingui-id: ssjjFt
 #: src/modules/settings/components/SettingsImageInput.tsx
 msgid "Abort"
@@ -1935,7 +1940,6 @@ msgstr "승인할 작업"
 
 #. js-lingui-id: 7L01XJ
 #: src/modules/command-menu-item/components/CommandMenuDropdownAtCursor.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/side-panel/pages/create-related-record/components/SidePanelCreateRelatedRecordPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -1948,11 +1952,6 @@ msgstr "작업"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Actions in the command menu"
 msgstr "명령 메뉴의 작업"
-
-#. js-lingui-id: N4ZcCd
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Actions users can perform on this object"
-msgstr "사용자가 이 객체에서 수행할 수 있는 작업"
 
 #. js-lingui-id: FQBaXG
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -3311,7 +3310,6 @@ msgstr "정렬"
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow.tsx
 #: src/modules/views/view-picker/components/ViewPickerDropdown.tsx
 msgid "All"
 msgstr "전체"
@@ -3386,6 +3384,8 @@ msgid "All failed jobs have been retried"
 msgstr "모든 실패한 작업이 다시 시도되었습니다"
 
 #. js-lingui-id: 3xugyj
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "All fields"
 msgstr "모든 필드"
@@ -3652,6 +3652,12 @@ msgstr "이미 사이드바에 있음"
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Alt text"
 msgstr "대체 텍스트"
+
+#. js-lingui-id: Lz58MZ
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Always visible"
+msgstr ""
 
 #. js-lingui-id: Tco16H
 #: src/modules/localization/utils/formatZonedDateTimeTimePart.ts
@@ -5725,6 +5731,16 @@ msgstr "캠페인이 {sendTime}(으)로 예약되었습니다"
 msgid "Campaign unscheduled and back in your drafts"
 msgstr "캠페인 예약이 취소되어 초안으로 돌아갔습니다"
 
+#. js-lingui-id: AnhtKd
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Can't be edited"
+msgstr ""
+
+#. js-lingui-id: XccYlu
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Can't be seen"
+msgstr ""
+
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Can't scan? Copy the"
@@ -6132,6 +6148,7 @@ msgstr "채널 역할"
 
 #. js-lingui-id: lfFsZ4
 #: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
 msgid "Channels"
@@ -9157,6 +9174,11 @@ msgstr "사용자 지정 공급자는 최대 {0}석까지 무료로 제공됩니
 msgid "Custom roles"
 msgstr "사용자 정의 역할"
 
+#. js-lingui-id: 2jzCZZ
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "Custom section"
+msgstr ""
+
 #. js-lingui-id: BjGDEB
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Custom View"
@@ -9448,7 +9470,6 @@ msgstr "데이터 레지던시"
 #. js-lingui-id: r+cVRP
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "Data type"
 msgstr "데이터 유형"
 
@@ -9763,7 +9784,6 @@ msgstr "지연됨"
 
 #. js-lingui-id: HNlEFZ
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "delete"
 msgstr "삭제"
 
@@ -9855,11 +9875,6 @@ msgstr "{objectLabel} 삭제"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Delete {objectLabel} object?"
 msgstr "{objectLabel} 객체를 삭제하시겠습니까?"
-
-#. js-lingui-id: 65N6Yr
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Delete {objectLabelPlural}"
-msgstr "{objectLabelPlural} 삭제"
 
 #. js-lingui-id: CF0F8U
 #: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
@@ -10325,7 +10340,6 @@ msgstr "데스크톱"
 
 #. js-lingui-id: +ow7t4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "destroy"
 msgstr "파기"
 
@@ -10339,11 +10353,6 @@ msgstr "파기"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
 msgid "Destroy {objectLabel}"
 msgstr "{objectLabel} 파기"
-
-#. js-lingui-id: YI3c7h
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Destroy {objectLabelPlural}"
-msgstr "{objectLabelPlural} 파기"
 
 #. js-lingui-id: ud791S
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
@@ -11084,7 +11093,6 @@ msgstr "eddy@gmail.com, @apple.com"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/profile/components/EmailField.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Edit"
@@ -11099,11 +11107,6 @@ msgstr "{label}, {description} 편집"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
 msgid "Edit {objectLabel}"
 msgstr "{objectLabel} 편집"
-
-#. js-lingui-id: zQXUkv
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Edit {objectLabelPlural}"
-msgstr "{objectLabelPlural} 편집"
 
 #. js-lingui-id: GsbKaa
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
@@ -13619,8 +13622,14 @@ msgstr "거짓"
 msgid "Fast"
 msgstr "빠름"
 
+#. js-lingui-id: x77Ptp
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+msgid "Favorite chats"
+msgstr ""
+
 #. js-lingui-id: X9kySA
 #: src/modules/inbox/components/NavigationDrawerInboxFavoritesSection.tsx
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 msgid "Favorites"
 msgstr "즐겨찾기"
@@ -13764,6 +13773,7 @@ msgstr "필드 수준 권한"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectIndexTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetFieldDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -13782,11 +13792,6 @@ msgstr "필드"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
 msgid "Fields (Optional)"
 msgstr "필드(선택 사항)"
-
-#. js-lingui-id: fiU2kl
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
-msgid "Fields and rule"
-msgstr "필드 및 규칙"
 
 #. js-lingui-id: Tnz22x
 #: src/modules/object-record/record-merge/components/MergePrioritySettings.tsx
@@ -13808,11 +13813,6 @@ msgstr "필드 그룹"
 msgid "Fields members with the Edit Profile permission can change"
 msgstr "프로필 편집 권한이 있는 구성원이 변경할 수 있는 필드"
 
-#. js-lingui-id: 5UU7Q6
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
-msgid "Fields Permissions"
-msgstr "필드 권한"
-
 #. js-lingui-id: n7J1Rh
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Fields Settings"
@@ -13822,6 +13822,16 @@ msgstr "필드 설정"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Fields shown in each view, and their order"
 msgstr "각 보기에 표시되는 필드와 그 순서"
+
+#. js-lingui-id: RWZvyt
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Fields to edit"
+msgstr ""
+
+#. js-lingui-id: YsJAML
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Fields to see"
+msgstr ""
 
 #. js-lingui-id: HrM5BL
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
@@ -14899,11 +14909,6 @@ msgstr "이 워크스페이스에 {parsedAmount} 크레딧을 부여했습니다
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "Granted credits"
 msgstr "부여된 크레딧"
-
-#. js-lingui-id: WUgtid
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
-msgid "Granted for this object"
-msgstr "이 객체에 부여됨"
 
 #. js-lingui-id: MkDC2z
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -19466,8 +19471,6 @@ msgstr "해당 없음"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -20461,6 +20464,11 @@ msgstr "실패한 실행이 없습니다"
 msgid "No field configured"
 msgstr "설정된 필드가 없습니다"
 
+#. js-lingui-id: gRHpoy
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "No fields"
+msgstr ""
+
 #. js-lingui-id: /hvarH
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionTargetObjectFieldsView.tsx
@@ -20470,6 +20478,7 @@ msgstr ""
 
 #. js-lingui-id: VEYHd4
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
@@ -21564,11 +21573,6 @@ msgstr "객체 유형"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
 msgid "Object unique fields"
 msgstr "고유 필드 개체"
-
-#. js-lingui-id: YJgmMZ
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Object-Level"
-msgstr "객체 레벨"
 
 #. js-lingui-id: B3toQF
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -24066,6 +24070,12 @@ msgstr "비밀번호 업데이트 링크가 포함된 이메일 받기"
 msgid "Recent"
 msgstr "최근"
 
+#. js-lingui-id: 3qyrqD
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
+msgid "Recent chats"
+msgstr ""
+
 #. js-lingui-id: ZVr1+K
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "Recent Events (oldest → newest)"
@@ -25415,11 +25425,6 @@ msgstr "서명 키 취소"
 msgid "Revoked"
 msgstr "취소됨"
 
-#. js-lingui-id: GG37FL
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
-msgid "Revoked for this object"
-msgstr "이 객체에서 취소됨"
-
 #. js-lingui-id: lrTLOv
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal.tsx
 msgid "Revoking this key will invalidate every JWT signed with it. Users with active tokens signed by this key will be logged out."
@@ -25595,6 +25600,11 @@ msgstr "고무 오리: 켜짐"
 #: src/modules/ui/input/hooks/useColorLabels.ts
 msgid "Ruby"
 msgstr "루비"
+
+#. js-lingui-id: oAN4H/
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Rule"
+msgstr ""
 
 #. js-lingui-id: tijGcA
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -26027,7 +26037,6 @@ msgstr "필드 1개 검색"
 #. js-lingui-id: l1/uy2
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "Search a field..."
 msgstr "필드 검색..."
 
@@ -26219,6 +26228,8 @@ msgstr "검색 필드 메타데이터"
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
@@ -26519,14 +26530,8 @@ msgstr "섹션"
 msgid "Security"
 msgstr "보안"
 
-#. js-lingui-id: i0zibG
-#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
-msgid "see"
-msgstr "보기"
-
 #. js-lingui-id: h+8V38
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
 msgid "See"
 msgstr "보기"
@@ -26535,11 +26540,6 @@ msgstr "보기"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
 msgid "See {objectLabel}"
 msgstr "{objectLabel} 보기"
-
-#. js-lingui-id: aOvXdk
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "See {objectLabelPlural}"
-msgstr "{objectLabelPlural} 보기"
 
 #. js-lingui-id: R+sqCn
 #: src/modules/page-layout/widgets/components/WidgetActionFieldSeeAll.tsx
@@ -30342,11 +30342,6 @@ msgstr "이 레코드가 더 이상 존재하지 않거나 볼 수 없습니다.
 msgid "This record will be deleted:"
 msgstr "이 레코드가 삭제됩니다:"
 
-#. js-lingui-id: vbLBMd
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
-msgid "This role can {humanReadableAction} all records"
-msgstr "이 역할은 {humanReadableAction} 모든 기록을 할 수 있습니다"
-
 #. js-lingui-id: BifDEA
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "This role is assigned to these {roleTargetDisplayName}."
@@ -30968,6 +30963,7 @@ msgstr "번역"
 
 #. js-lingui-id: R3UKip
 #: src/modules/inbox/components/NavigationDrawerInboxTriageSection.tsx
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 msgid "Triage"
 msgstr "분류"
 
@@ -31961,7 +31957,6 @@ msgstr ""
 
 #. js-lingui-id: Y8zko3
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "update"
 msgstr "업데이트"
 

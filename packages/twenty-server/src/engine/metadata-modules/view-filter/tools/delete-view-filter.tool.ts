@@ -15,6 +15,7 @@ const deleteViewFilterInputSchema = z.object({
 
 @DefineTool({
   name: 'delete_view_filter',
+  isDestructive: true,
   category: ToolCategory.VIEW,
   accessPolicy: VIEW_FILTER_ACCESS_POLICY,
   description:

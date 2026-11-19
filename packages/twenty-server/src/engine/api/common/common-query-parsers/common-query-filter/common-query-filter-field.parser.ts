@@ -59,13 +59,19 @@ export class CommonQueryFilterFieldParser {
   private depth: number;
   private parentFilterScope?: ParentFilterScope;
 
-  constructor(
-    flatObjectMetadata: FlatObjectMetadata,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>,
+  constructor({
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
     depth = 0,
-    parentFilterScope?: ParentFilterScope,
-  ) {
+    parentFilterScope,
+  }: {
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
+    depth?: number;
+    parentFilterScope?: ParentFilterScope;
+  }) {
     this.flatObjectMetadata = flatObjectMetadata;
     this.flatFieldMetadataMaps = flatFieldMetadataMaps;
     this.flatObjectMetadataMaps = flatObjectMetadataMaps;
@@ -81,15 +87,23 @@ export class CommonQueryFilterFieldParser {
     this.fieldIdByJoinColumnName = fieldMaps.fieldIdByJoinColumnName;
   }
 
-  public parse(
-    queryBuilder: WhereExpressionBuilder,
-    outerQueryBuilder: WorkspaceSelectQueryBuilder,
-    objectNameSingular: string,
-    key: string,
-    filterValue: Partial<ObjectRecordFilter>,
+  public parse({
+    queryBuilder,
+    outerQueryBuilder,
+    objectNameSingular,
+    key,
+    filterValue,
     isFirst = false,
     useDirectTableReference = false,
-  ): void {
+  }: {
+    queryBuilder: WhereExpressionBuilder;
+    outerQueryBuilder: WorkspaceSelectQueryBuilder;
+    objectNameSingular: string;
+    key: string;
+    filterValue: Partial<ObjectRecordFilter>;
+    isFirst?: boolean;
+    useDirectTableReference?: boolean;
+  }): void {
     const { fieldMetadata, isReferencedByFieldName } =
       resolveFilterKeyFieldMetadata({
         filterKey: key,
@@ -127,14 +141,14 @@ export class CommonQueryFilterFieldParser {
     }
 
     if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-      return this.parseCompositeFieldForFilter(
+      return this.parseCompositeFieldForFilter({
         queryBuilder,
         fieldMetadata,
         objectNameSingular,
-        filterValue,
+        fieldValue: filterValue,
         isFirst,
         useDirectTableReference,
-      );
+      });
     }
     const [[operator, value]] = Object.entries(filterValue);
 
@@ -232,17 +246,17 @@ export class CommonQueryFilterFieldParser {
       );
     }
 
-    const childConditionParser = new CommonQueryFilterConditionParser(
-      targetObjectMetadata,
-      this.flatFieldMetadataMaps,
-      this.flatObjectMetadataMaps,
-      this.depth + 1,
-      {
+    const childConditionParser = new CommonQueryFilterConditionParser({
+      flatObjectMetadata: targetObjectMetadata,
+      flatFieldMetadataMaps: this.flatFieldMetadataMaps,
+      flatObjectMetadataMaps: this.flatObjectMetadataMaps,
+      depth: this.depth + 1,
+      parentFilterScope: {
         flatObjectMetadata: this.flatObjectMetadata,
         alias: parentAlias,
         relationFieldMetadataId: fieldMetadata.id,
       },
-    );
+    });
 
     // A to-many join would duplicate root rows, which the find-many runner rejects, so match through a correlated EXISTS
     if (isToManyRelation) {
@@ -262,12 +276,12 @@ export class CommonQueryFilterFieldParser {
         applyWhere: (nestedQueryBuilder) => {
           nestedQueryBuilder.where(
             new Brackets((subQb) => {
-              childConditionParser.applyFilterEntriesToWhereBrackets(
-                subQb,
-                nestedQueryBuilder,
-                nestedQueryBuilder.alias,
-                filterValue,
-              );
+              childConditionParser.applyFilterEntriesToWhereBrackets({
+                innerQueryBuilder: subQb,
+                outerQueryBuilder: nestedQueryBuilder,
+                objectNameSingular: nestedQueryBuilder.alias,
+                filter: filterValue,
+              });
             }),
           );
         },
@@ -291,12 +305,12 @@ export class CommonQueryFilterFieldParser {
     });
 
     const subBrackets = new Brackets((subQb) => {
-      childConditionParser.applyFilterEntriesToWhereBrackets(
-        subQb,
+      childConditionParser.applyFilterEntriesToWhereBrackets({
+        innerQueryBuilder: subQb,
         outerQueryBuilder,
-        joinAlias,
-        filterValue,
-      );
+        objectNameSingular: joinAlias,
+        filter: filterValue,
+      });
     });
 
     if (isFirst) {
@@ -402,14 +416,21 @@ export class CommonQueryFilterFieldParser {
     return this.parentFilterScope;
   }
 
-  private parseCompositeFieldForFilter(
-    queryBuilder: WhereExpressionBuilder,
-    fieldMetadata: OrmFlatFieldMetadata,
-    objectNameSingular: string,
-    fieldValue: Partial<ObjectRecordFilter>,
+  private parseCompositeFieldForFilter({
+    queryBuilder,
+    fieldMetadata,
+    objectNameSingular,
+    fieldValue,
     isFirst = false,
     useDirectTableReference = false,
-  ): void {
+  }: {
+    queryBuilder: WhereExpressionBuilder;
+    fieldMetadata: OrmFlatFieldMetadata;
+    objectNameSingular: string;
+    fieldValue: Partial<ObjectRecordFilter>;
+    isFirst?: boolean;
+    useDirectTableReference?: boolean;
+  }): void {
     const compositeType = compositeTypeDefinitions.get(
       fieldMetadata.type as CompositeFieldMetadataType,
     );
