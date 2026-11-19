@@ -271,19 +271,19 @@ export class SearchService {
 
     const { flatObjectMetadataMaps } = entityManager.internalContext;
 
-    const queryParser = new CommonQueryParser(
+    const queryParser = new CommonQueryParser({
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-    );
+    });
 
-    queryParser.applyFilterToBuilder(
+    queryParser.applyFilterToBuilder({
       queryBuilder,
-      flatObjectMetadata.nameSingular,
-      filter,
-    );
+      objectNameSingular: flatObjectMetadata.nameSingular,
+      recordFilter: filter,
+    });
 
-    queryParser.applyDeletedAtToBuilder(queryBuilder, filter);
+    queryParser.applyDeletedAtToBuilder({ queryBuilder, recordFilter: filter });
 
     const imageIdentifierColumns = this.getImageIdentifierColumns(
       flatObjectMetadata,
@@ -399,19 +399,22 @@ export class SearchService {
 
           const { flatObjectMetadataMaps } = repository.internalContext;
 
-          const queryParser = new CommonQueryParser(
+          const queryParser = new CommonQueryParser({
             flatObjectMetadata,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
-          );
+          });
 
-          queryParser.applyFilterToBuilder(
+          queryParser.applyFilterToBuilder({
             queryBuilder,
-            flatObjectMetadata.nameSingular,
-            filter,
-          );
+            objectNameSingular: flatObjectMetadata.nameSingular,
+            recordFilter: filter,
+          });
 
-          queryParser.applyDeletedAtToBuilder(queryBuilder, filter);
+          queryParser.applyDeletedAtToBuilder({
+            queryBuilder,
+            recordFilter: filter,
+          });
 
           const imageIdentifierColumns = this.getImageIdentifierColumns(
             flatObjectMetadata,

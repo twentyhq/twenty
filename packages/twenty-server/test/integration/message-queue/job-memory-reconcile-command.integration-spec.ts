@@ -57,7 +57,6 @@ describe('Job memory reconcile command (integration)', () => {
       readMemoryValue('maxmemory') * 0.9 - readMemoryValue('used_memory');
     // a workspace share that fits one job of this test but not two
     const configValues: Record<string, unknown> = {
-      IS_REDIS_MEMORY_FAIRNESS_ENABLED: true,
       JOB_QUEUE_MAX_JOB_SIZE_BYTES: 5_242_880,
       JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID: SHARE_HEADROOM_BYTES / freeBytes,
       JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER: 0.4,

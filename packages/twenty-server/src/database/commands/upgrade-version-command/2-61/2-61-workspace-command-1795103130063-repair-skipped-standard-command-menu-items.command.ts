@@ -24,7 +24,7 @@ const STANDARD_COMMAND_MENU_ITEM_NAMES = typedObjectEntries(
   STANDARD_COMMAND_MENU_ITEMS,
 ).map(([name]) => name);
 
-@RegisteredWorkspaceCommand('2.61.0', 1795094146210)
+@RegisteredWorkspaceCommand('2.61.0', 1795103130063)
 @Command({
   name: 'upgrade:2-61:repair-skipped-standard-command-menu-items',
   description:
