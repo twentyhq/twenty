@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, MoreThan, Not } from 'typeorm';
 import { generateRequestDetails } from 'web-push';
 
+import { UPDATE_OWNED_KEY_LEASE_SCRIPT } from 'src/engine/core-modules/cache-storage/constants/update-owned-key-lease-script.constant';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -127,12 +128,11 @@ export class WebPushService {
       return;
     }
 
-    const focusedTabId =
-      await this.cacheStorageService.get<string>(focusedTabKey);
-
-    if (focusedTabId === tabId) {
-      await this.cacheStorageService.del(focusedTabKey);
-    }
+    await this.cacheStorageService.runScript<number>({
+      script: UPDATE_OWNED_KEY_LEASE_SCRIPT,
+      keys: [focusedTabKey],
+      args: [JSON.stringify(tabId), '0'],
+    });
   }
 
   async findWorkspaceMemberIdsWithFocusedTab({
