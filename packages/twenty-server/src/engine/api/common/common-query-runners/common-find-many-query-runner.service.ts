@@ -76,16 +76,16 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     let appliedFilters = args.filter ?? ({} as ObjectRecordFilter);
 
-    commonQueryParser.applyFilterToBuilder(
-      aggregateQueryBuilder,
-      flatObjectMetadata.nameSingular,
-      appliedFilters,
-    );
+    commonQueryParser.applyFilterToBuilder({
+      queryBuilder: aggregateQueryBuilder,
+      objectNameSingular: flatObjectMetadata.nameSingular,
+      recordFilter: appliedFilters,
+    });
 
-    commonQueryParser.applyDeletedAtToBuilder(
-      aggregateQueryBuilder,
-      appliedFilters,
-    );
+    commonQueryParser.applyDeletedAtToBuilder({
+      queryBuilder: aggregateQueryBuilder,
+      recordFilter: appliedFilters,
+    });
 
     // Deduplicated leaves let a caller id ordering override the tie-breaker and keep scan order and keyset conditions in sync
     const orderByLeaves = resolveOrderByLeaves({
@@ -124,20 +124,23 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       }
     }
 
-    commonQueryParser.applyFilterToBuilder(
+    commonQueryParser.applyFilterToBuilder({
       queryBuilder,
-      flatObjectMetadata.nameSingular,
-      appliedFilters,
-    );
+      objectNameSingular: flatObjectMetadata.nameSingular,
+      recordFilter: appliedFilters,
+    });
 
-    const parsedOrderBy = commonQueryParser.applyOrderToBuilder(
+    const parsedOrderBy = commonQueryParser.applyOrderToBuilder({
       queryBuilder,
-      orderByWithIdCondition,
-      flatObjectMetadata.nameSingular,
+      orderBy: orderByWithIdCondition,
+      objectNameSingular: flatObjectMetadata.nameSingular,
       isForwardPagination,
-    );
+    });
 
-    commonQueryParser.applyDeletedAtToBuilder(queryBuilder, appliedFilters);
+    commonQueryParser.applyDeletedAtToBuilder({
+      queryBuilder,
+      recordFilter: appliedFilters,
+    });
 
     ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
       selectedAggregatedFields: args.selectedFieldsResult.aggregates,
@@ -183,12 +186,12 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     queryBuilder.limit(limit + 1);
 
     // setFindOptions clears addSelect, so this must come after it
-    commonQueryParser.addRelationOrderColumnsToBuilder(
+    commonQueryParser.addRelationOrderColumnsToBuilder({
       queryBuilder,
       parsedOrderBy,
-      flatObjectMetadata.nameSingular,
+      objectNameSingular: flatObjectMetadata.nameSingular,
       columnsToSelect,
-    );
+    });
 
     // Raw rows carry the ordered join columns, so cursors get relation values whatever the client selected
     const { entities: fetchedObjectRecords, raw: fetchedRawRows } =

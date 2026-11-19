@@ -22,6 +22,7 @@ export const createDeleteWorkflowVersionStepTool = (
   context: WorkflowToolContext,
 ) => ({
   name: 'delete_workflow_version_step' as const,
+  isDestructive: true,
   description:
     'Delete a step from a workflow version. This removes the step and updates the workflow structure.',
   inputSchema: deleteWorkflowVersionStepSchema,
