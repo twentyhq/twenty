@@ -29,6 +29,7 @@
     "test:unit": "vitest run --config vitest.unit.config.ts"
   },
   "devDependencies": {
+    "@sniptt/guards": "^0.2.0",
     "@types/node": "^24.7.2",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "oxlint": "^0.16.0",
