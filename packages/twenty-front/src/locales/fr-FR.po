@@ -9257,6 +9257,12 @@ msgstr "Personnaliser la disposition des pages et la structure de l'interface ut
 msgid "Customize record page"
 msgstr "Personnaliser la page d'enregistrement"
 
+#. js-lingui-id: hxjpaE
+#: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
+msgid "Customize sidebar"
+msgstr ""
+
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Customize the workspace record page"
