@@ -252,7 +252,7 @@ describe('View field filtering, sorting and limiting its related records', () =>
       `,
     });
 
-    const findField = ({
+    const findFieldOrThrow = ({
       objectMetadataId,
       name,
     }: {
@@ -271,7 +271,7 @@ describe('View field filtering, sorting and limiting its related records', () =>
       return field.id;
     };
 
-    testContext.companyDealsFieldId = findField({
+    testContext.companyDealsFieldId = findFieldOrThrow({
       objectMetadataId: testContext.companyObjectId,
       name: 'deals',
     });
