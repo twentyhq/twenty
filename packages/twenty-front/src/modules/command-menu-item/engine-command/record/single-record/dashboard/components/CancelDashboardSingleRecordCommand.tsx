@@ -1,5 +1,6 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
+import { useClearConditionalAvailabilityEditorStates } from '@/conditional-availability/hooks/useClearConditionalAvailabilityEditorStates';
 import { useResetDraftPageLayoutToPersistedPageLayout } from '@/page-layout/hooks/useResetDraftPageLayoutToPersistedPageLayout';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
@@ -40,10 +41,14 @@ export const CancelDashboardSingleRecordCommand = () => {
       tabListInstanceId,
     });
 
+  const { clearConditionalAvailabilityEditorStates } =
+    useClearConditionalAvailabilityEditorStates();
+
   const handleExecute = () => {
     closeSidePanelMenu();
 
     resetDraftPageLayoutToPersistedPageLayout();
+    clearConditionalAvailabilityEditorStates();
     setIsPageLayoutInEditMode(false);
   };
 

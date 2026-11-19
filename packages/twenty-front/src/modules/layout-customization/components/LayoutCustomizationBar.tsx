@@ -11,6 +11,7 @@ import { LayoutCustomizationBarResetConfirmationModal } from '@/layout-customiza
 import { useCancelLayoutCustomization } from '@/layout-customization/hooks/useCancelLayoutCustomization';
 import { useIsLayoutCustomizationDirty } from '@/layout-customization/hooks/useIsLayoutCustomizationDirty';
 import { useSaveLayoutCustomization } from '@/layout-customization/hooks/useSaveLayoutCustomization';
+import { hasIncompleteLayoutCustomizationConditionalAvailabilityDraftSelector } from '@/layout-customization/states/hasIncompleteLayoutCustomizationConditionalAvailabilityDraftSelector';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
@@ -55,7 +56,12 @@ const StyledRightSection = styled.div`
   align-items: center;
   display: flex;
   flex: 1;
+  gap: ${themeCssVariables.spacing[3]};
   justify-content: flex-end;
+`;
+
+const StyledSaveBlockedReason = styled.span`
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 const LayoutCustomizationBarContent = () => {
@@ -65,6 +71,10 @@ const LayoutCustomizationBarContent = () => {
   const { save, isSaving } = useSaveLayoutCustomization();
   const { cancel } = useCancelLayoutCustomization();
   const { isDirty } = useIsLayoutCustomizationDirty();
+  const hasIncompleteLayoutCustomizationConditionalAvailabilityDraft =
+    useAtomStateValue(
+      hasIncompleteLayoutCustomizationConditionalAvailabilityDraftSelector,
+    );
 
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
   const persistedPageLayout = useAtomValue(
@@ -107,10 +117,19 @@ const LayoutCustomizationBarContent = () => {
           {title}
         </StyledTitle>
         <StyledRightSection>
+          {hasIncompleteLayoutCustomizationConditionalAvailabilityDraft && (
+            <StyledSaveBlockedReason>
+              {t`Finish or clear the visibility rule to save`}
+            </StyledSaveBlockedReason>
+          )}
           <SaveAndCancelButtons
             onSave={save}
             onCancel={cancel}
-            isSaveDisabled={!isDirty || isSaving}
+            isSaveDisabled={
+              !isDirty ||
+              isSaving ||
+              hasIncompleteLayoutCustomizationConditionalAvailabilityDraft
+            }
             isCancelDisabled={isSaving}
             isLoading={isSaving}
             color="inherit"

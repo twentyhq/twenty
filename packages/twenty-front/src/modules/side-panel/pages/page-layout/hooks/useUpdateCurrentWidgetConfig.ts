@@ -5,7 +5,6 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { type ConditionalAvailabilityNode } from 'twenty-shared/types';
 
 export const useUpdateCurrentWidgetConfig = (pageLayoutIdFromProps: string) => {
   const pageLayoutDraft = useAtomComponentStateCallbackState(
@@ -24,11 +23,9 @@ export const useUpdateCurrentWidgetConfig = (pageLayoutIdFromProps: string) => {
     ({
       objectMetadataId,
       configToUpdate,
-      conditionalAvailability,
     }: {
       objectMetadataId?: string | null;
       configToUpdate?: Partial<PageLayoutWidget['configuration']>;
-      conditionalAvailability?: ConditionalAvailabilityNode | null;
     }) => {
       const prev = store.get(pageLayoutDraft);
       store.set(pageLayoutDraft, {
@@ -44,9 +41,6 @@ export const useUpdateCurrentWidgetConfig = (pageLayoutIdFromProps: string) => {
                     ...(widget.configuration ?? {}),
                     ...configToUpdate,
                   } as PageLayoutWidget['configuration'],
-                  ...(conditionalAvailability !== undefined
-                    ? { conditionalAvailability }
-                    : {}),
                 }
               : widget,
           ),

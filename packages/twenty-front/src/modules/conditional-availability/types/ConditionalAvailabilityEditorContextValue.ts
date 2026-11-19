@@ -27,4 +27,5 @@ export type ConditionalAvailabilityEditorContextValue = {
     operator: ConditionalAvailabilityOperator,
   ) => void;
   changeRowValues: (rowId: string, values: string[]) => void;
+  replaceWithRules: () => void;
 };

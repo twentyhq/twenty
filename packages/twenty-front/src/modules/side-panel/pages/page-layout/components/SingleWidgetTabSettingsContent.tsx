@@ -1,23 +1,17 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuItemDropdownTrigger } from '@/command-menu/components/CommandMenuItemDropdownTrigger';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { PageLayoutSettingsVisibilityItem } from '@/side-panel/pages/page-layout/components/PageLayoutSettingsVisibilityItem';
 import { TabSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/TabSettingsPlacementSection';
-import { SingleWidgetTabVisibilityDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/SingleWidgetTabVisibilityDropdownContent';
 import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
-import { useTranslatedVisibilityLabel } from '@/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel';
-import { conditionalAvailabilityToOptionId } from '@/side-panel/pages/page-layout/utils/conditionalAvailabilityToOptionId';
 import { getTabSettingsPlacementItems } from '@/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useLingui } from '@lingui/react/macro';
-import { IconEyeX, IconRefreshDot, IconTrash } from 'twenty-ui/icon';
+import { IconRefreshDot, IconTrash } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 const RESET_TAB_TO_DEFAULT_MODAL_ID =
@@ -26,7 +20,6 @@ const RESET_TAB_TO_DEFAULT_MENU_ITEM_ID =
   'reset-single-widget-tab-to-default-menu-item';
 
 type SingleWidgetTabSettingsContentProps = {
-  pageLayoutId: string;
   singleWidget: PageLayoutWidget;
   canSetAsPinned: boolean;
   canUnpin: boolean;
@@ -43,7 +36,6 @@ type SingleWidgetTabSettingsContentProps = {
 };
 
 export const SingleWidgetTabSettingsContent = ({
-  pageLayoutId,
   singleWidget,
   canSetAsPinned,
   canUnpin,
@@ -60,9 +52,6 @@ export const SingleWidgetTabSettingsContent = ({
 }: SingleWidgetTabSettingsContentProps) => {
   const { t } = useLingui();
   const { openDialog } = useDialog();
-  const { openDropdown } = useOpenDropdown();
-
-  const visibilityLabel = useTranslatedVisibilityLabel(singleWidget);
 
   const handleResetToDefault = () => {
     if (isResetToDefaultDisabled) {
@@ -94,43 +83,13 @@ export const SingleWidgetTabSettingsContent = ({
       <SidePanelList selectableItemIds={selectableItemIds}>
         <TabSettingsPlacementSection items={placementItems} />
         <SidePanelGroup heading={t`Manage`}>
-          <SelectableListItem
-            itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
-            onEnter={() =>
-              openDropdown({
-                dropdownComponentInstanceIdFromProps:
-                  TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
-              })
+          <PageLayoutSettingsVisibilityItem
+            widgetId={singleWidget.id}
+            node={singleWidget.conditionalAvailability ?? null}
+            selectableItemId={
+              TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION
             }
-          >
-            <DropdownRoot
-              dropdownId={
-                TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION
-              }
-              type="picker"
-            >
-              <CommandMenuItemDropdownTrigger
-                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
-                label={t`Visibility restriction`}
-                Icon={IconEyeX}
-                description={visibilityLabel}
-                contextualTextPosition="right"
-              />
-              <DropdownContent
-                side="bottom"
-                align="end"
-                collisionPadding={{ left: 0, right: 0 }}
-              >
-                <SingleWidgetTabVisibilityDropdownContent
-                  widgetId={singleWidget.id}
-                  currentOptionId={conditionalAvailabilityToOptionId(
-                    singleWidget.conditionalAvailability,
-                  )}
-                  pageLayoutId={pageLayoutId}
-                />
-              </DropdownContent>
-            </DropdownRoot>
-          </SelectableListItem>
+          />
           <Tooltip
             delay={TooltipDelay.mediumDelay}
             content={t`No default configuration available for this tab`}

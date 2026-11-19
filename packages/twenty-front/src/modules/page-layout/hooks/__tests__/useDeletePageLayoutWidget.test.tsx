@@ -1,3 +1,5 @@
+import { conditionalAvailabilityEditorStatesState } from '@/conditional-availability/states/conditionalAvailabilityEditorStatesState';
+import { type ConditionalAvailabilityEditorEntry } from '@/conditional-availability/types/ConditionalAvailabilityEditorEntry';
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { act, renderHook } from '@testing-library/react';
@@ -98,6 +100,36 @@ describe('useDeletePageLayoutWidget', () => {
         }),
       ),
     ).toBe('edited-widget-id');
+  });
+
+  it('should drop the visibility rule draft of the deleted widget only', () => {
+    const store = createStore();
+    const wrapper = getWrapper(store);
+    const everyoneEntry: ConditionalAvailabilityEditorEntry = {
+      metadataName: 'pageLayoutWidget',
+      node: null,
+      editorState: { mode: 'everyone' },
+    };
+
+    store.set(conditionalAvailabilityEditorStatesState.atom, {
+      'pageLayoutWidget:widget-1': everyoneEntry,
+      'pageLayoutWidget:widget-2': everyoneEntry,
+    });
+
+    const { result } = renderHook(
+      () => useDeletePageLayoutWidget(PAGE_LAYOUT_TEST_INSTANCE_ID),
+      {
+        wrapper,
+      },
+    );
+
+    act(() => {
+      result.current.deletePageLayoutWidget('widget-1');
+    });
+
+    expect(store.get(conditionalAvailabilityEditorStatesState.atom)).toEqual({
+      'pageLayoutWidget:widget-2': everyoneEntry,
+    });
   });
 
   it('should handle empty layouts', () => {

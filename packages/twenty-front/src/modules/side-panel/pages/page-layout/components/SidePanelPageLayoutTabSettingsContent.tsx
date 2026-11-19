@@ -130,7 +130,6 @@ export const SidePanelPageLayoutTabSettingsContent = ({
   if (isSingleWidgetTab) {
     return (
       <SingleWidgetTabSettingsContent
-        pageLayoutId={pageLayoutId}
         singleWidget={activeWidgets.at(0)!}
         canSetAsPinned={canSetAsPinned}
         canUnpin={canUnpin}

@@ -6,6 +6,7 @@ import {
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { SidePanelSubPageRouter } from '@/side-panel/components/SidePanelSubPageRouter';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
 import { PageLayoutSidePanelTargetProvider } from '@/side-panel/pages/page-layout/components/PageLayoutSidePanelTargetProvider';
@@ -13,8 +14,8 @@ import { RegularTabSettingsContent } from '@/side-panel/pages/page-layout/compon
 import { SingleWidgetTabSettingsContent } from '@/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent';
 import { WidgetSettingsManageSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsManageSection';
 import { WidgetSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection';
-import { CONDITIONAL_AVAILABILITY_DEVICE_DESKTOP } from '@/side-panel/pages/page-layout/constants/ConditionalAvailabilityDeviceDesktop';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
+import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -33,7 +34,18 @@ const WIDGET_SETTINGS_STORY_DESTINATION_TAB_ID = 'destination-tab';
 const meta: Meta<typeof RegularTabSettingsContent> = {
   title: 'Modules/SidePanel/PageLayout/TabSettingsPlacementSection',
   component: RegularTabSettingsContent,
-  decorators: [ComponentDecorator, MemoryRouterDecorator, ToastDecorator],
+  decorators: [
+    (Story) => (
+      <SidePanelPageComponentInstanceContext.Provider
+        value={{ instanceId: WIDGET_SETTINGS_STORY_LAYOUT_ID }}
+      >
+        <Story />
+      </SidePanelPageComponentInstanceContext.Provider>
+    ),
+    ComponentDecorator,
+    MemoryRouterDecorator,
+    ToastDecorator,
+  ],
   args: {
     canSetAsPinned: true,
     canUnpin: false,
@@ -137,7 +149,6 @@ export const SingleWidget: Story = {
   render: (args) => (
     <SingleWidgetTabSettingsContent
       {...args}
-      pageLayoutId="tab-settings-story"
       singleWidget={makeWidget('widget-id', 0)}
     />
   ),
@@ -245,45 +256,52 @@ export const WidgetVisibility: Story = {
         targetObjectNameSingular: 'company',
       }}
     >
-      <SidePanelList
-        selectableItemIds={[
-          WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
-          WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT,
-          WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.REPLACE_WIDGET,
-          WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.DELETE_WIDGET,
-        ]}
-      >
-        <WidgetSettingsManageSection
-          pageLayoutId={WIDGET_SETTINGS_STORY_LAYOUT_ID}
-        />
-      </SidePanelList>
+      <SidePanelSubPageRouter>
+        <SidePanelList
+          selectableItemIds={[
+            WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
+            WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT,
+            WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.REPLACE_WIDGET,
+            WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.DELETE_WIDGET,
+          ]}
+        >
+          <WidgetSettingsManageSection
+            pageLayoutId={WIDGET_SETTINGS_STORY_LAYOUT_ID}
+          />
+        </SidePanelList>
+      </SidePanelSubPageRouter>
     </PageLayoutSidePanelTargetProvider>
   ),
   play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
-    const trigger = await body.findByRole('button', {
-      name: /^Visibility Restriction/,
-    });
-    await userEvent.click(trigger);
+
     expect(
-      await body.findByRole('option', { name: 'Any device' }),
-    ).toHaveAttribute('aria-selected', 'true');
-    await userEvent.click(body.getByRole('option', { name: 'Desktop' }));
-    await waitFor(() => {
-      expect(trigger).toHaveAttribute('aria-expanded', 'false');
-      expect(trigger).toHaveFocus();
-    });
+      await canvas.findByRole('button', { name: /^Visibility/ }),
+    ).toHaveTextContent('Everyone');
+
+    await userEvent.click(canvas.getByRole('button', { name: /^Visibility/ }));
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Everyone' }),
+    );
+    await userEvent.click(
+      await body.findByRole('option', { name: 'Custom rule' }),
+    );
+
+    expect(await canvas.findByText('Select a value')).toBeVisible();
+    expect(
+      canvas.getByText(/Visibility hides this item on the page/),
+    ).toBeVisible();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Go back' }));
+
+    expect(await canvas.findByText('Incomplete rule')).toBeVisible();
     expect(
       jotaiStore.get(
         pageLayoutDraftComponentState.atomFamily({
           instanceId: WIDGET_SETTINGS_STORY_LAYOUT_ID,
         }),
       ).tabs[0].widgets[0].conditionalAvailability,
-    ).toEqual(CONDITIONAL_AVAILABILITY_DEVICE_DESKTOP);
-    await userEvent.click(trigger);
-    expect(
-      await body.findByRole('option', { name: 'Desktop' }),
-    ).toHaveAttribute('aria-selected', 'true');
-    await userEvent.keyboard('{Escape}');
+    ).toBeUndefined();
   },
 };

@@ -5,6 +5,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useInsertCreatedWidgetAtContext } from '@/page-layout/hooks/useInsertCreatedWidgetAtContext';
 import { useCreateRecordPageNoteWidget } from '@/page-layout/hooks/useCreateRecordPageNoteWidget';
 import { useCreateRecordPageRelatedRecordsWidget } from '@/page-layout/hooks/useCreateRecordPageRelatedRecordsWidget';
+import { useRemovePageLayoutWidgetConditionalAvailabilityEditorEntries } from '@/page-layout/hooks/useRemovePageLayoutWidgetConditionalAvailabilityEditorEntries';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { widgetCreationTargetTabIdComponentState } from '@/page-layout/states/widgetCreationTargetTabIdComponentState';
@@ -100,6 +101,9 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
 
   const store = useStore();
 
+  const { removePageLayoutWidgetConditionalAvailabilityEditorEntries } =
+    useRemovePageLayoutWidgetConditionalAvailabilityEditorEntries();
+
   const { insertCreatedWidgetAtContext } =
     useInsertCreatedWidgetAtContext(pageLayoutId);
 
@@ -147,10 +151,15 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       ...prev,
       tabs: removeWidgetFromTab(prev.tabs, tabId, pageLayoutEditingWidgetId),
     }));
+
+    removePageLayoutWidgetConditionalAvailabilityEditorEntries(
+      pageLayoutEditingWidgetId,
+    );
   }, [
     isReplaceMode,
     pageLayoutDraftState,
     pageLayoutEditingWidgetId,
+    removePageLayoutWidgetConditionalAvailabilityEditorEntries,
     store,
     tabId,
   ]);
