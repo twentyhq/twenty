@@ -12,6 +12,7 @@ export type WorkspaceBroadcastEvent = {
   };
   // Set for user-scoped entities so other users in the workspace don't receive them
   recipientUserWorkspaceIds?: string[];
+  excludedUserWorkspaceIds?: string[];
   // Set when an entity's existence is itself gated (workflows) so the channel cannot leak it
   requiredPermissionFlag?: PermissionFlagType;
 };
