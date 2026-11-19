@@ -1,6 +1,7 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { filterActiveNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterActiveNavigationMenuItems';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type HiddenNavigationMenuItemCandidate = Pick<
@@ -21,50 +22,32 @@ export const getHiddenNavigationMenuItemsInTab = <
   excludedIds: Set<string>;
   tabId: string | null;
 }): TNavigationMenuItem[] => {
-  const navigationMenuItemById = new Map(
-    navigationMenuItems.map((navigationMenuItem) => [
-      navigationMenuItem.id,
-      navigationMenuItem,
-    ]),
+  const activeNavigationMenuItemById = new Map(
+    filterActiveNavigationMenuItems(navigationMenuItems).map(
+      (navigationMenuItem) => [navigationMenuItem.id, navigationMenuItem],
+    ),
   );
 
-  const getAncestors = (navigationMenuItem: TNavigationMenuItem) => {
-    const ancestors: TNavigationMenuItem[] = [];
-    const visitedIds = new Set([navigationMenuItem.id]);
+  const getTabId = (navigationMenuItem: TNavigationMenuItem) => {
     let parent = isDefined(navigationMenuItem.parentId)
-      ? navigationMenuItemById.get(navigationMenuItem.parentId)
+      ? activeNavigationMenuItemById.get(navigationMenuItem.parentId)
       : undefined;
 
-    while (isDefined(parent) && !visitedIds.has(parent.id)) {
-      ancestors.push(parent);
-      visitedIds.add(parent.id);
+    while (isDefined(parent) && parent.type !== NavigationMenuItemType.TAB) {
       parent = isDefined(parent.parentId)
-        ? navigationMenuItemById.get(parent.parentId)
+        ? activeNavigationMenuItemById.get(parent.parentId)
         : undefined;
     }
 
-    return ancestors;
+    return parent?.id ?? null;
   };
 
-  return navigationMenuItems.filter((navigationMenuItem) => {
-    if (
-      navigationMenuItem.isActive !== false ||
-      navigationMenuItem.type === NavigationMenuItemType.TAB ||
-      excludedIds.has(navigationMenuItem.id)
-    ) {
-      return false;
-    }
-
-    const ancestors = getAncestors(navigationMenuItem);
-
-    if (ancestors.some((ancestor) => ancestor.isActive === false)) {
-      return false;
-    }
-
-    const tabAncestor = ancestors.find(
-      (ancestor) => ancestor.type === NavigationMenuItemType.TAB,
-    );
-
-    return (tabAncestor?.id ?? null) === tabId;
-  });
+  return navigationMenuItems.filter(
+    (navigationMenuItem) =>
+      navigationMenuItem.isActive === false &&
+      !excludedIds.has(navigationMenuItem.id) &&
+      (!isDefined(navigationMenuItem.parentId) ||
+        activeNavigationMenuItemById.has(navigationMenuItem.parentId)) &&
+      getTabId(navigationMenuItem) === tabId,
+  );
 };

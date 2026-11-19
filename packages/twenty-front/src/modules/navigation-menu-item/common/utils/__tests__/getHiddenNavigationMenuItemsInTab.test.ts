@@ -5,6 +5,12 @@ import { getHiddenNavigationMenuItemsInTab } from '@/navigation-menu-item/common
 const NAVIGATION_MENU_ITEMS = [
   { id: 'sales-tab', parentId: null, type: NavigationMenuItemType.TAB },
   {
+    id: 'hidden-app-tab',
+    parentId: null,
+    type: NavigationMenuItemType.TAB,
+    isActive: false,
+  },
+  {
     id: 'hidden-home-section',
     parentId: null,
     type: NavigationMenuItemType.SECTION,
@@ -31,14 +37,14 @@ const NAVIGATION_MENU_ITEMS = [
 ];
 
 describe('getHiddenNavigationMenuItemsInTab', () => {
-  it('should list the hidden items of Home, without the ones inside another hidden item', () => {
+  it('should list the hidden tabs and hidden items of Home, without the ones inside another hidden item', () => {
     expect(
       getHiddenNavigationMenuItemsInTab({
         navigationMenuItems: NAVIGATION_MENU_ITEMS,
         excludedIds: new Set(),
         tabId: null,
       }).map(({ id }) => id),
-    ).toEqual(['hidden-home-section']);
+    ).toEqual(['hidden-app-tab', 'hidden-home-section']);
   });
 
   it('should list the hidden items of a tab', () => {
