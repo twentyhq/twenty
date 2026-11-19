@@ -20,6 +20,7 @@ const updateManyViewFieldsInputSchema = z.object({
 
 @DefineTool({
   name: 'update_many_view_fields',
+  isDestructive: true,
   category: ToolCategory.VIEW,
   accessPolicy: VIEW_FIELD_ACCESS_POLICY,
   description:

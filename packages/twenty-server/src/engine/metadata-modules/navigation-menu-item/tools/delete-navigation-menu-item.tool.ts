@@ -14,6 +14,7 @@ const deleteNavigationMenuItemInputSchema = z.object({
 
 @DefineTool({
   name: 'delete_navigation_menu_item',
+  isDestructive: true,
   category: ToolCategory.NAVIGATION_MENU_ITEM,
   accessPolicy: NAVIGATION_MENU_ITEM_WRITE_ACCESS_POLICY,
   description: `Delete a navigation menu item. Deleting a tab, a section or a folder also deletes everything inside it.`,

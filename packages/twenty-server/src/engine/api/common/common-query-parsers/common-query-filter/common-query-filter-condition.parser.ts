@@ -16,51 +16,66 @@ import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-bu
 export class CommonQueryFilterConditionParser {
   private queryFilterFieldParser: CommonQueryFilterFieldParser;
 
-  constructor(
-    flatObjectMetadata: FlatObjectMetadata,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>,
+  constructor({
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
     depth = 0,
-    parentFilterScope?: ParentFilterScope,
-  ) {
-    this.queryFilterFieldParser = new CommonQueryFilterFieldParser(
+    parentFilterScope,
+  }: {
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
+    depth?: number;
+    parentFilterScope?: ParentFilterScope;
+  }) {
+    this.queryFilterFieldParser = new CommonQueryFilterFieldParser({
       flatObjectMetadata,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
       depth,
       parentFilterScope,
-    );
+    });
   }
 
-  public parse(
-    queryBuilder: WorkspaceSelectQueryBuilder,
-    objectNameSingular: string,
-    filter: Partial<ObjectRecordFilter>,
-  ): WorkspaceSelectQueryBuilder {
+  public parse({
+    queryBuilder,
+    objectNameSingular,
+    filter,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    objectNameSingular: string;
+    filter: Partial<ObjectRecordFilter>;
+  }): WorkspaceSelectQueryBuilder {
     if (!filter || Object.keys(filter).length === 0) {
       return queryBuilder;
     }
 
     queryBuilder.where(
       new Brackets((qb) => {
-        this.applyFilterEntriesToWhereBrackets(
-          qb,
-          queryBuilder,
+        this.applyFilterEntriesToWhereBrackets({
+          innerQueryBuilder: qb,
+          outerQueryBuilder: queryBuilder,
           objectNameSingular,
           filter,
-        );
+        });
       }),
     );
 
     return queryBuilder;
   }
 
-  public applyFilterEntriesToWhereBrackets(
-    innerQueryBuilder: WhereExpressionBuilder,
-    outerQueryBuilder: WorkspaceSelectQueryBuilder,
-    objectNameSingular: string,
-    filter: Partial<ObjectRecordFilter>,
-  ): void {
+  public applyFilterEntriesToWhereBrackets({
+    innerQueryBuilder,
+    outerQueryBuilder,
+    objectNameSingular,
+    filter,
+  }: {
+    innerQueryBuilder: WhereExpressionBuilder;
+    outerQueryBuilder: WorkspaceSelectQueryBuilder;
+    objectNameSingular: string;
+    filter: Partial<ObjectRecordFilter>;
+  }): void {
     applyFilterEntriesToWhereExpression({
       whereExpression: innerQueryBuilder,
       outerQueryBuilder,
