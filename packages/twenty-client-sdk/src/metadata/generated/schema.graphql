@@ -1109,20 +1109,12 @@ enum BillingEntitlementKey {
   VALIDATION_RULES
 }
 
-type BillingLicensedProduct implements BillingProductDTO {
+type BillingLicensedProduct {
   description: String!
   images: [String!]
   metadata: BillingProductMetadata!
   name: String!
   prices: [BillingPriceLicensed!]
-}
-
-type BillingMeteredProduct implements BillingProductDTO {
-  description: String!
-  images: [String!]
-  metadata: BillingProductMetadata!
-  name: String!
-  prices: [BillingPriceMetered!]
 }
 
 type BillingPartnerCode {
@@ -1140,7 +1132,6 @@ type BillingPlan {
   downgradePlanKeys: [BillingPlanKey!]!
   isCheckoutDefault: Boolean!
   isSellable: Boolean!
-  meteredProducts: [BillingMeteredProduct!]!
   planKey: BillingPlanKey!
   resourceCreditProducts: [BillingLicensedProduct!]!
   upgradePlanKeys: [BillingPlanKey!]!
@@ -1157,33 +1148,12 @@ enum BillingPlanKey {
 type BillingPriceLicensed {
   creditAmount: Float
   isSellable: Boolean!
-  priceUsageType: BillingUsageType!
   recurringInterval: SubscriptionInterval!
   stripePriceId: String!
   unitAmount: Float!
 }
 
-type BillingPriceMetered {
-  priceUsageType: BillingUsageType!
-  recurringInterval: SubscriptionInterval!
-  stripePriceId: String!
-  tiers: [BillingPriceTier!]!
-}
-
-type BillingPriceTier {
-  flatAmount: Float
-  unitAmount: Float
-  upTo: Float
-}
-
 type BillingProduct {
-  description: String!
-  images: [String!]
-  metadata: BillingProductMetadata!
-  name: String!
-}
-
-interface BillingProductDTO {
   description: String!
   images: [String!]
   metadata: BillingProductMetadata!
@@ -1200,7 +1170,6 @@ enum BillingProductKey {
 type BillingProductMetadata {
   isLegacy: String
   planKey: BillingPlanKey
-  priceUsageBased: BillingUsageType!
   productKey: BillingProductKey!
 }
 
@@ -1241,7 +1210,7 @@ enum BillingSubscriptionCollectionMethod {
 }
 
 type BillingSubscriptionItem {
-  billingProduct: BillingProductDTO!
+  billingProduct: BillingProduct!
   creditAmount: Float
   hasReachedCurrentPeriodCap: Boolean!
   id: UUID!
@@ -1272,11 +1241,6 @@ type BillingUpdate {
 
   """Current billing subscription"""
   currentBillingSubscription: BillingSubscription!
-}
-
-enum BillingUsageType {
-  LICENSED
-  METERED
 }
 
 input BooleanFieldComparison {
