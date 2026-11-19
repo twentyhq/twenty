@@ -129,7 +129,7 @@ export const WorkspaceSectionContainer = ({
   );
 
   if (!isDefined(sectionTitle)) {
-    if (workspaceOrphanItemsForSection.length === 0) {
+    if (!isLayoutCustomizationModeEnabled && filteredItems.length === 0) {
       return null;
     }
 
