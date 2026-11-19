@@ -21,6 +21,7 @@ import {
 } from 'vitest';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { generateMessageId } from 'twenty-shared/i18n';
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 
 import { buildAndValidateManifest } from '@/app/manifest/build-and-validate-manifest';
 import { buildManifest } from '@/app/manifest/manifest-build';
@@ -56,6 +57,18 @@ const WORKFLOW_STEP_IDENTIFIER = 'aeaeaeae-aeae-4aea-8aea-aeaeaeaeaeae';
 const AGENT_IDENTIFIER = 'afafafaf-afaf-4afa-8afa-afafafafafaf';
 const AGENT_TRIGGER_IDENTIFIER = 'bcbcbcbc-bcbc-4bcb-8bcb-bcbcbcbcbcbc';
 const SKILL_IDENTIFIER = 'bdbdbdbd-bdbd-4bdb-8bdb-bdbdbdbdbdbd';
+const OTHER_APPLICATION_FIELD_IDENTIFIER =
+  'c1c1c1c1-c1c1-4c1c-8c1c-c1c1c1c1c1c1';
+const OTHER_APPLICATION_VIEW_IDENTIFIER =
+  'c2c2c2c2-c2c2-4c2c-8c2c-c2c2c2c2c2c2';
+const CROSS_APPLICATION_VIEW_IDENTIFIER =
+  'c3c3c3c3-c3c3-4c3c-8c3c-c3c3c3c3c3c3';
+const CROSS_APPLICATION_VIEW_FIELD_IDENTIFIER =
+  'c4c4c4c4-c4c4-4c4c-8c4c-c4c4c4c4c4c4';
+const CROSS_APPLICATION_VIEW_SORT_IDENTIFIER =
+  'c5c5c5c5-c5c5-4c5c-8c5c-c5c5c5c5c5c5';
+const CROSS_APPLICATION_STANDALONE_VIEW_FIELD_IDENTIFIER =
+  'c6c6c6c6-c6c6-4c6c-8c6c-c6c6c6c6c6c6';
 const TARGET: AppPullTarget = {
   apiUrl: 'https://example.test',
   workspaceId: WORKSPACE_IDENTIFIER,
@@ -1044,6 +1057,110 @@ export default defineLogicFunction({ universalIdentifier: '${entry.universalIden
       },
     ]);
     await expect(read(STANDALONE_FIELD_PATH)).rejects.toThrow();
+  });
+  it('writes view fields and sorts on another application field as identifier literals that rebuild unchanged', async () => {
+    const exported = createExport({ includeObject: false });
+    const crossApplicationView = {
+      universalIdentifier: CROSS_APPLICATION_VIEW_IDENTIFIER,
+      name: 'Recently contacted people',
+      objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+      type: 'TABLE',
+      icon: 'IconClock',
+      fields: [
+        {
+          universalIdentifier: CROSS_APPLICATION_VIEW_FIELD_IDENTIFIER,
+          fieldMetadataUniversalIdentifier: OTHER_APPLICATION_FIELD_IDENTIFIER,
+          position: 0,
+          isVisible: true,
+          size: 180,
+        },
+      ],
+      sorts: [
+        {
+          universalIdentifier: CROSS_APPLICATION_VIEW_SORT_IDENTIFIER,
+          fieldMetadataUniversalIdentifier: OTHER_APPLICATION_FIELD_IDENTIFIER,
+          direction: 'DESC',
+        },
+      ],
+    };
+    const crossApplicationStandaloneViewField = {
+      universalIdentifier: CROSS_APPLICATION_STANDALONE_VIEW_FIELD_IDENTIFIER,
+      viewUniversalIdentifier: OTHER_APPLICATION_VIEW_IDENTIFIER,
+      fieldMetadataUniversalIdentifier: OTHER_APPLICATION_FIELD_IDENTIFIER,
+      position: 3,
+      isVisible: true,
+      size: 150,
+    };
+    const crossApplicationExport = {
+      ...exported,
+      manifest: {
+        ...exported.manifest,
+        views: [crossApplicationView],
+        viewFields: [crossApplicationStandaloneViewField],
+      },
+    };
+
+    const data = requireSuccess(await pull(crossApplicationExport));
+    const relativePathOf = (universalIdentifier: string) =>
+      data.writes.find(
+        (write) => write.universalIdentifier === universalIdentifier,
+      )?.relativePath;
+
+    expect(data.skipped).toEqual([]);
+    expect(relativePathOf(CROSS_APPLICATION_VIEW_IDENTIFIER)).toBe(
+      'src/views/recently-contacted-people.view.ts',
+    );
+    expect(
+      relativePathOf(CROSS_APPLICATION_STANDALONE_VIEW_FIELD_IDENTIFIER),
+    ).toBe('src/view-fields/c6c6c6c6.view-field.ts');
+    expect(await read('src/views/recently-contacted-people.view.ts'))
+      .toBe(`import { defineView, ViewSortDirection, ViewType } from 'twenty-sdk/define';
+
+export default defineView({
+  universalIdentifier: '${CROSS_APPLICATION_VIEW_IDENTIFIER}',
+  name: 'Recently contacted people',
+  objectUniversalIdentifier: '${STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person}',
+  type: ViewType.TABLE,
+  icon: 'IconClock',
+  fields: [
+    {
+      universalIdentifier: '${CROSS_APPLICATION_VIEW_FIELD_IDENTIFIER}',
+      fieldMetadataUniversalIdentifier: '${OTHER_APPLICATION_FIELD_IDENTIFIER}',
+      position: 0,
+      isVisible: true,
+      size: 180,
+    },
+  ],
+  sorts: [
+    {
+      universalIdentifier: '${CROSS_APPLICATION_VIEW_SORT_IDENTIFIER}',
+      fieldMetadataUniversalIdentifier: '${OTHER_APPLICATION_FIELD_IDENTIFIER}',
+      direction: ViewSortDirection.DESC,
+    },
+  ],
+});
+`);
+    expect(await read('src/view-fields/c6c6c6c6.view-field.ts'))
+      .toBe(`import { defineViewField } from 'twenty-sdk/define';
+
+export default defineViewField({
+  universalIdentifier: '${CROSS_APPLICATION_STANDALONE_VIEW_FIELD_IDENTIFIER}',
+  viewUniversalIdentifier: '${OTHER_APPLICATION_VIEW_IDENTIFIER}',
+  fieldMetadataUniversalIdentifier: '${OTHER_APPLICATION_FIELD_IDENTIFIER}',
+  position: 3,
+  isVisible: true,
+  size: 150,
+});
+`);
+
+    await writeFile(join(appPath, 'yarn.lock'), EMPTY_YARN_LOCK_CONTENT);
+    const rebuilt = await buildAndValidateManifest(appPath);
+
+    assert(rebuilt.success, JSON.stringify(rebuilt));
+    expect(rebuilt.manifest.views).toEqual([crossApplicationView]);
+    expect(rebuilt.manifest.viewFields).toEqual([
+      crossApplicationStandaloneViewField,
+    ]);
   });
   it('reads identity while unrelated definitions cannot build', async () => {
     requireSuccess(await pull());
