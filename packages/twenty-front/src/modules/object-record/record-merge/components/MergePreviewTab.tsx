@@ -34,6 +34,7 @@ export const MergePreviewTab = ({
   return (
     <LayoutRenderingProvider
       value={{
+        isTargetRecordLoading: false,
         targetRecordIdentifier: {
           id: recordId,
           targetObjectNameSingular: objectNameSingular,

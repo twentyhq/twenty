@@ -88,6 +88,9 @@ export type { ConditionalAvailabilityLogicalOperator } from './ConditionalAvaila
 export type { ConditionalAvailabilityMetadataName } from './ConditionalAvailabilityMetadataName';
 export type { ConditionalAvailabilityNode } from './ConditionalAvailabilityNode';
 export type { ConditionalAvailabilityParseResult } from './ConditionalAvailabilityParseResult';
+export type { ConditionalAvailabilityRecordFilter } from './ConditionalAvailabilityRecordFilter';
+export type { ConditionalAvailabilityRecordFilterMatcher } from './ConditionalAvailabilityRecordFilterMatcher';
+export type { ConditionalAvailabilityRecordQuantifier } from './ConditionalAvailabilityRecordQuantifier';
 export type { ConditionalAvailabilityVariableDeclaration } from './ConditionalAvailabilityVariableDeclaration';
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export type { ConfirmationModalCaller } from './ConfirmationModalCaller';

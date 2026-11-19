@@ -2,6 +2,7 @@ import { CONDITIONAL_AVAILABILITY_NEGATED_OPERATORS } from '@/conditional-availa
 import { CONDITIONAL_AVAILABILITY_SUBJECT_PATHS } from '@/conditional-availability/constants/ConditionalAvailabilitySubjectPaths';
 import { type ConditionalAvailabilityRow } from '@/conditional-availability/types/ConditionalAvailabilityRow';
 import { type ConditionalAvailabilityRowTree } from '@/conditional-availability/types/ConditionalAvailabilityRowTree';
+import { toConditionalAvailabilityRecordFilter } from '@/conditional-availability/utils/toConditionalAvailabilityRecordFilter';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   type ConditionalAvailabilityLogicalOperator,
@@ -36,6 +37,14 @@ const joinNodes = ({
 const buildRowNode = (
   row: ConditionalAvailabilityRow,
 ): ConditionalAvailabilityNode => {
+  if (row.subject === 'recordField') {
+    return {
+      type: 'SELECTED_RECORDS',
+      quantifier: 'EVERY',
+      recordFilter: toConditionalAvailabilityRecordFilter({ row }),
+    };
+  }
+
   const isNegated = CONDITIONAL_AVAILABILITY_NEGATED_OPERATORS.includes(
     row.operator,
   );

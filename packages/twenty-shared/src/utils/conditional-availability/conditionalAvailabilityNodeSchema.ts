@@ -1,7 +1,9 @@
 import { z } from 'zod';
 
+import { COMPOSITE_FIELD_SUB_FIELD_NAMES } from '@/constants/CompositeFieldSubFieldNames';
 import { CONDITIONAL_AVAILABILITY_PATH_PATTERN } from '@/constants/ConditionalAvailabilityPathPattern';
 import { type ConditionalAvailabilityNode } from '@/types/ConditionalAvailabilityNode';
+import { RecordFilterOperand } from '@/types/RecordFilterOperand';
 
 export const conditionalAvailabilityNodeSchema: z.ZodType<ConditionalAvailabilityNode> =
   z.lazy(() =>
@@ -40,6 +42,16 @@ export const conditionalAvailabilityNodeSchema: z.ZodType<ConditionalAvailabilit
         type: z.literal('CALL'),
         functionName: z.string().regex(CONDITIONAL_AVAILABILITY_PATH_PATTERN),
         arguments: z.array(conditionalAvailabilityNodeSchema),
+      }),
+      z.strictObject({
+        type: z.literal('SELECTED_RECORDS'),
+        quantifier: z.enum(['EVERY', 'SOME', 'NONE']),
+        recordFilter: z.strictObject({
+          fieldMetadataUniversalIdentifier: z.guid(),
+          subFieldName: z.enum(COMPOSITE_FIELD_SUB_FIELD_NAMES).nullable(),
+          operand: z.enum(RecordFilterOperand),
+          value: z.string(),
+        }),
       }),
     ]),
   );

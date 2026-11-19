@@ -1,5 +1,7 @@
 import { type ConditionalAvailabilityComparisonOperator } from './ConditionalAvailabilityComparisonOperator';
 import { type ConditionalAvailabilityLogicalOperator } from './ConditionalAvailabilityLogicalOperator';
+import { type ConditionalAvailabilityRecordFilter } from './ConditionalAvailabilityRecordFilter';
+import { type ConditionalAvailabilityRecordQuantifier } from './ConditionalAvailabilityRecordQuantifier';
 
 export type ConditionalAvailabilityNode =
   | { type: 'LITERAL'; value: string | number | boolean }
@@ -20,4 +22,9 @@ export type ConditionalAvailabilityNode =
       type: 'CALL';
       functionName: string;
       arguments: ConditionalAvailabilityNode[];
+    }
+  | {
+      type: 'SELECTED_RECORDS';
+      quantifier: ConditionalAvailabilityRecordQuantifier;
+      recordFilter: ConditionalAvailabilityRecordFilter;
     };

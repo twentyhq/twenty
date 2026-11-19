@@ -2,6 +2,7 @@ import { type ConditionalAvailabilityReadResult } from '@/conditional-availabili
 import { getConditionalAvailabilityOfferedSubjects } from '@/conditional-availability/utils/getConditionalAvailabilityOfferedSubjects';
 import { toConditionalAvailabilityRowTree } from '@/conditional-availability/utils/toConditionalAvailabilityRowTree';
 import { validateConditionalAvailabilityRules } from '@/conditional-availability/utils/validateConditionalAvailabilityRules';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
   type ConditionalAvailabilityMetadataName,
   type ConditionalAvailabilityNode,
@@ -12,9 +13,11 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 export const readConditionalAvailabilityNode = ({
   node,
   metadataName,
+  fields,
 }: {
   node: ConditionalAvailabilityNode | null | undefined;
   metadataName: ConditionalAvailabilityMetadataName;
+  fields: FieldMetadataItem[];
 }): ConditionalAvailabilityReadResult => {
   if (!isDefined(node)) {
     return { status: 'empty' };
@@ -25,6 +28,7 @@ export const readConditionalAvailabilityNode = ({
     offeredSubjects: getConditionalAvailabilityOfferedSubjects({
       metadataName,
     }),
+    fields,
   });
 
   if (!isDefined(tree)) {

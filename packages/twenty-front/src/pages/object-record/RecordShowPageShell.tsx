@@ -12,12 +12,15 @@ import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/compon
 import { RecordShowPageResourceEffect } from '@/object-record/record-show/components/RecordShowPageResourceEffect';
 import { RecordShowPageSSESubscribeEffect } from '@/object-record/record-show/components/RecordShowPageSSESubscribeEffect';
 import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
+import { isRecordStoreMissingLoadedFields } from '@/object-record/record-show/utils/isRecordStoreMissingLoadedFields';
 import { type RecordShowPageHeaderTitleMode } from '@/object-record/record-show/types/RecordShowPageHeaderTitleMode';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
 import { RecordShowPageTitle } from '~/pages/object-record/RecordShowPageTitle';
@@ -52,6 +55,10 @@ export const RecordShowPageShell = ({
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
+  );
+  const recordStore = useAtomFamilyStateValue(
+    recordStoreFamilyState,
+    objectRecordId,
   );
 
   const recordShowComponentInstanceId =
@@ -120,6 +127,13 @@ export const RecordShowPageShell = ({
                 id: objectRecordId,
                 targetObjectNameSingular: objectNameSingular,
               }}
+              isTargetRecordLoading={
+                loading ||
+                isRecordStoreMissingLoadedFields({
+                  loadedRecord: record,
+                  storedRecord: recordStore,
+                })
+              }
               isRecordIdentifierBarHidden={isRecordIdentifierBarHidden}
             />
             <RecordShowPageSSESubscribeEffect

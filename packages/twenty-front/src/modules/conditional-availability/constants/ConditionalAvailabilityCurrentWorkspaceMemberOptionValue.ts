@@ -1,0 +1,2 @@
+export const CONDITIONAL_AVAILABILITY_CURRENT_WORKSPACE_MEMBER_OPTION_VALUE =
+  'currentWorkspaceMember';

@@ -5,6 +5,8 @@ import { type TargetRecordIdentifier } from './TargetRecordIdentifier';
 export type LayoutRenderingContextType = {
   targetRecordIdentifier: TargetRecordIdentifier | undefined;
 
+  isTargetRecordLoading: boolean;
+
   layoutType: PageLayoutType;
 
   // A page that already shows the record's title can drop the identifier bar

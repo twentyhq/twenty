@@ -25,6 +25,10 @@ export const ConditionalAvailabilitySubjectSelect = ({
   const { itemKey, availableSubjects, isReadOnly, changeRowSubject } =
     useConditionalAvailabilityEditorContext();
 
+  if (row.subject === 'recordField') {
+    return null;
+  }
+
   const selectedDefinition =
     CONDITIONAL_AVAILABILITY_SUBJECT_DEFINITIONS[row.subject];
 

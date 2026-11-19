@@ -25,6 +25,7 @@ const meta: Meta<typeof CalendarEventsCard> = {
     (Story) => (
       <LayoutRenderingProvider
         value={{
+          isTargetRecordLoading: false,
           targetRecordIdentifier: {
             id: '1',
             targetObjectNameSingular: StandardObjectNameSingular.Company,

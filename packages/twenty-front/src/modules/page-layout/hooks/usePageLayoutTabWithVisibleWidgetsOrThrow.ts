@@ -1,3 +1,4 @@
+import { useConditionalAvailabilityRecordFilterMatcher } from '@/conditional-availability/hooks/useConditionalAvailabilityRecordFilterMatcher';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { useWidgetVisibilityContext } from '@/page-layout/hooks/useWidgetVisibilityContext';
@@ -15,6 +16,8 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const widgetVisibilityContext = useWidgetVisibilityContext();
+  const isRecordMatchingRecordFilter =
+    useConditionalAvailabilityRecordFilterMatcher();
 
   const tab = currentPageLayout.tabs.find((tab) => tab.id === tabId);
 
@@ -30,6 +33,7 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
       : filterVisibleWidgets({
           widgets: activeWidgets,
           context: widgetVisibilityContext,
+          isRecordMatchingRecordFilter,
         });
 
     return {
@@ -39,7 +43,12 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
           ? sortWidgetsByVerticalListPosition(widgets)
           : widgets,
     };
-  }, [isPageLayoutInEditMode, tab, widgetVisibilityContext]);
+  }, [
+    isPageLayoutInEditMode,
+    tab,
+    widgetVisibilityContext,
+    isRecordMatchingRecordFilter,
+  ]);
 
   if (!isDefined(tabWithVisibleWidgets)) {
     throw new Error(doNotTranslate('Tab not found'));

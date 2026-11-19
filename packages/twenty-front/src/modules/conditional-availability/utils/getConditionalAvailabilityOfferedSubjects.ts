@@ -13,5 +13,6 @@ export const getConditionalAvailabilityOfferedSubjects = ({
     role: 'currentRole' in variables,
     workspaceMember: 'currentWorkspaceMember' in variables,
     device: 'device' in variables,
+    recordField: 'selectedRecords' in variables,
   };
 };

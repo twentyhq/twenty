@@ -2,9 +2,11 @@ import { isBoolean, isNumber, isString } from '@sniptt/guards';
 import { type Instruction } from 'expr-eval-fork';
 
 import { CONDITIONAL_AVAILABILITY_COMPARISON_OPERATOR_SYMBOLS } from '@/constants/ConditionalAvailabilityComparisonOperatorSymbols';
+import { CONDITIONAL_AVAILABILITY_RECORD_QUANTIFIER_FUNCTION_NAMES } from '@/constants/ConditionalAvailabilityRecordQuantifierFunctionNames';
 import { type ConditionalAvailabilityComparisonOperator } from '@/types/ConditionalAvailabilityComparisonOperator';
 import { type ConditionalAvailabilityLogicalOperator } from '@/types/ConditionalAvailabilityLogicalOperator';
 import { type ConditionalAvailabilityNode } from '@/types/ConditionalAvailabilityNode';
+import { toConditionalAvailabilitySelectedRecordsNode } from '@/utils/conditional-availability/toConditionalAvailabilitySelectedRecordsNode';
 import { typedObjectEntries } from '@/utils/typed-object-entries';
 import { isDefined } from '@/utils/validation/isDefined';
 
@@ -193,15 +195,25 @@ const pushInstruction = (
         return { unexpectedToken: '(' };
       }
 
-      return replaceTopNodes({
-        nodes,
-        count: argumentCount + 1,
-        node: {
-          type: 'CALL',
-          functionName: callee.path,
-          arguments: nodes.slice(nodes.length - argumentCount),
-        },
-      });
+      const callArguments = nodes.slice(nodes.length - argumentCount);
+      const quantifier = typedObjectEntries(
+        CONDITIONAL_AVAILABILITY_RECORD_QUANTIFIER_FUNCTION_NAMES,
+      ).find(([, functionName]) => functionName === callee.path)?.[0];
+
+      const callNode = isDefined(quantifier)
+        ? toConditionalAvailabilitySelectedRecordsNode({
+            quantifier,
+            callArguments,
+          })
+        : {
+            type: 'CALL' as const,
+            functionName: callee.path,
+            arguments: callArguments,
+          };
+
+      return isDefined(callNode)
+        ? replaceTopNodes({ nodes, count: argumentCount + 1, node: callNode })
+        : { unexpectedToken: callee.path };
     }
     case 'IENDSTATEMENT':
       return { unexpectedToken: ';' };

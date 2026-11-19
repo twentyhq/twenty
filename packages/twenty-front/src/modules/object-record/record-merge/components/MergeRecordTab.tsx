@@ -22,6 +22,7 @@ export const MergeRecordTab = ({
   return (
     <LayoutRenderingProvider
       value={{
+        isTargetRecordLoading: false,
         targetRecordIdentifier: {
           id: recordId,
           targetObjectNameSingular: objectNameSingular,

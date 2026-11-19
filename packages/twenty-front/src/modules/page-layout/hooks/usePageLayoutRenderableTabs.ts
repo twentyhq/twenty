@@ -1,3 +1,4 @@
+import { useConditionalAvailabilityRecordFilterMatcher } from '@/conditional-availability/hooks/useConditionalAvailabilityRecordFilterMatcher';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
@@ -19,6 +20,8 @@ export const usePageLayoutRenderableTabs = () => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const { objectMetadataItems } = useObjectMetadataItems();
   const widgetVisibilityContext = useWidgetVisibilityContext();
+  const isRecordMatchingRecordFilter =
+    useConditionalAvailabilityRecordFilterMatcher();
 
   const targetObjectMetadataItem = isDefined(targetRecordIdentifier)
     ? objectMetadataItems.find(
@@ -31,6 +34,7 @@ export const usePageLayoutRenderableTabs = () => {
     tabs: currentPageLayout.tabs,
     isEditMode: isPageLayoutInEditMode,
     context: widgetVisibilityContext,
+    isRecordMatchingRecordFilter,
   });
 
   // Edit mode keeps every tab visible so unsupported widgets can still be removed.

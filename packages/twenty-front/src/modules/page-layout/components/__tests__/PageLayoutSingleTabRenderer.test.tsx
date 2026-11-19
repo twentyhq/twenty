@@ -109,6 +109,7 @@ describe('PageLayoutSingleTabRenderer', () => {
       <JotaiProvider store={store}>
         <LayoutRenderingProvider
           value={{
+            isTargetRecordLoading: false,
             targetRecordIdentifier: {
               id: recordId,
               targetObjectNameSingular: 'company',

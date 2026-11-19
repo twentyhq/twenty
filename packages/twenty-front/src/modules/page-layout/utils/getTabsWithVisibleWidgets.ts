@@ -1,17 +1,20 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
+import { type ConditionalAvailabilityRecordFilterMatcher } from 'twenty-shared/types';
 
 type GetTabsWithVisibleWidgetsParams = {
   tabs: PageLayoutTab[];
   isEditMode: boolean;
   context: WidgetVisibilityContext;
+  isRecordMatchingRecordFilter?: ConditionalAvailabilityRecordFilterMatcher;
 };
 
 export const getTabsWithVisibleWidgets = ({
   tabs,
   isEditMode,
   context,
+  isRecordMatchingRecordFilter,
 }: GetTabsWithVisibleWidgetsParams): PageLayoutTab[] => {
   const activeTabs = tabs.filter((tab) => tab.isActive);
 
@@ -21,7 +24,11 @@ export const getTabsWithVisibleWidgets = ({
 
   const tabsWithFilteredWidgets = activeTabs.map((tab) => ({
     ...tab,
-    widgets: filterVisibleWidgets({ widgets: tab.widgets, context }),
+    widgets: filterVisibleWidgets({
+      widgets: tab.widgets,
+      context,
+      isRecordMatchingRecordFilter,
+    }),
   }));
 
   const tabsWithVisibleWidgets = tabsWithFilteredWidgets.filter(

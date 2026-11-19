@@ -4,7 +4,9 @@ import { type ConditionalAvailabilityRow } from '@/conditional-availability/type
 import { type ConditionalAvailabilityRowTree } from '@/conditional-availability/types/ConditionalAvailabilityRowTree';
 import { type ConditionalAvailabilityRowTreeChild } from '@/conditional-availability/types/ConditionalAvailabilityRowTreeChild';
 import { buildConditionalAvailabilitySubjectRow } from '@/conditional-availability/utils/buildConditionalAvailabilitySubjectRow';
+import { readConditionalAvailabilityRecordFilter } from '@/conditional-availability/utils/readConditionalAvailabilityRecordFilter';
 import { readConditionalAvailabilitySubjectComparison } from '@/conditional-availability/utils/readConditionalAvailabilitySubjectComparison';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   type ConditionalAvailabilityLogicalOperator,
@@ -24,7 +26,10 @@ const mergeRows = ({
   row: ConditionalAvailabilityRow;
   logicalOperator: ConditionalAvailabilityLogicalOperator;
 }): ConditionalAvailabilityRow | null => {
-  if (previousRow.subject !== row.subject || row.subject === 'device') {
+  if (
+    previousRow.subject !== row.subject ||
+    (row.subject !== 'role' && row.subject !== 'workspaceMember')
+  ) {
     return null;
   }
 
@@ -78,9 +83,11 @@ const toGroupChild = ({
 export const toConditionalAvailabilityRowTree = ({
   node,
   offeredSubjects,
+  fields,
 }: {
   node: ConditionalAvailabilityNode;
   offeredSubjects: ConditionalAvailabilityOfferedSubjects;
+  fields: FieldMetadataItem[];
 }): ConditionalAvailabilityRowTree | null => {
   const readChildren = ({
     nodes,
@@ -95,10 +102,16 @@ export const toConditionalAvailabilityRowTree = ({
       childNode: ConditionalAvailabilityNode,
     ): ConditionalAvailabilityRowTreeChild | null => {
       if (childNode.type !== 'GROUP') {
-        const row = readConditionalAvailabilitySubjectComparison({
-          node: childNode,
-          offeredSubjects,
-        });
+        const row =
+          readConditionalAvailabilitySubjectComparison({
+            node: childNode,
+            offeredSubjects,
+          }) ??
+          readConditionalAvailabilityRecordFilter({
+            node: childNode,
+            offeredSubjects,
+            fields,
+          });
 
         return isDefined(row) ? { type: 'row', row } : null;
       }

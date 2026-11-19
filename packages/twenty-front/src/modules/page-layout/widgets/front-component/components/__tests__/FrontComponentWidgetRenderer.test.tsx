@@ -57,7 +57,13 @@ const renderFrontComponentWidget = ({
           presentation: 'stack',
         }}
       >
-        <LayoutRenderingProvider value={{ targetRecordIdentifier, layoutType }}>
+        <LayoutRenderingProvider
+          value={{
+            targetRecordIdentifier,
+            isTargetRecordLoading: false,
+            layoutType,
+          }}
+        >
           <FrontComponentWidgetRenderer widget={FRONT_COMPONENT_WIDGET} />
         </LayoutRenderingProvider>
       </PageLayoutContentProvider>

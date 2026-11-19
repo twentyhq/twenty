@@ -1,1 +1,1 @@
-export type ConditionalAvailabilityValueArity = 'single' | 'list';
+export type ConditionalAvailabilityValueArity = 'none' | 'single' | 'list';

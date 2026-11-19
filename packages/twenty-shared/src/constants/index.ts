@@ -16,6 +16,7 @@ export { CalendarStartDay } from './CalendarStartDay';
 export { CLIENT_CONFIG_BOOTSTRAP_ELEMENT_ID } from './ClientConfigBootstrapElementId';
 export { COMMAND_MENU_CONFIRMATION_MODAL_RESULT_BROWSER_EVENT_NAME } from './CommandMenuConfirmationModalResultBrowserEventName';
 export { COMPOSITE_FIELD_SUB_FIELD_LABELS } from './CompositeFieldSubFieldLabels';
+export { COMPOSITE_FIELD_SUB_FIELD_NAMES } from './CompositeFieldSubFieldNames';
 export { COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES } from './CompositeFieldTypeSubFieldsNames';
 export { CONDITIONAL_AVAILABILITY_COMPARISON_OPERATOR_SYMBOLS } from './ConditionalAvailabilityComparisonOperatorSymbols';
 export { CONDITIONAL_AVAILABILITY_EXPRESSION_MAX_LENGTH } from './ConditionalAvailabilityExpressionMaxLength';
@@ -24,6 +25,8 @@ export { CONDITIONAL_AVAILABILITY_FUNCTIONS } from './ConditionalAvailabilityFun
 export { CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT } from './ConditionalAvailabilityMaxNodeCount';
 export { CONDITIONAL_AVAILABILITY_OPERATORS } from './ConditionalAvailabilityOperators';
 export { CONDITIONAL_AVAILABILITY_PATH_PATTERN } from './ConditionalAvailabilityPathPattern';
+export { CONDITIONAL_AVAILABILITY_RECORD_QUANTIFIER_FUNCTION_NAMES } from './ConditionalAvailabilityRecordQuantifierFunctionNames';
+export { CONDITIONAL_AVAILABILITY_SELECTED_RECORDS_VARIABLE_NAME } from './ConditionalAvailabilitySelectedRecordsVariableName';
 export { CONDITIONAL_AVAILABILITY_VARIABLES } from './ConditionalAvailabilityVariables';
 export { CORE_PICTURE_MIME_TYPES } from './CorePictureMimeTypes';
 export { CSV_DANGEROUS_CHARACTERS } from './CsvDangerousCharacters';

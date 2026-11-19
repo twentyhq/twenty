@@ -44,12 +44,14 @@ export { createArrayPropCheck } from './conditional-availability/createArrayProp
 export { createArrayPropValueCheck } from './conditional-availability/createArrayPropValueCheck';
 export { evaluateConditionalAvailabilityExpression } from './conditional-availability/evaluateConditionalAvailabilityExpression';
 export { evaluateConditionalAvailabilityNode } from './conditional-availability/evaluateConditionalAvailabilityNode';
+export { listConditionalAvailabilityFieldMetadataUniversalIdentifiers } from './conditional-availability/listConditionalAvailabilityFieldMetadataUniversalIdentifiers';
 export { listConditionalAvailabilityNodes } from './conditional-availability/listConditionalAvailabilityNodes';
 export { parseConditionalAvailabilityExpression } from './conditional-availability/parseConditionalAvailabilityExpression';
 export { printConditionalAvailabilityNode } from './conditional-availability/printConditionalAvailabilityNode';
 export { printConditionalAvailabilityText } from './conditional-availability/printConditionalAvailabilityText';
 export { safeGetNestedProperty } from './conditional-availability/safeGetNestedProperty';
 export { toConditionalAvailabilityNode } from './conditional-availability/toConditionalAvailabilityNode';
+export { toConditionalAvailabilitySelectedRecordsNode } from './conditional-availability/toConditionalAvailabilitySelectedRecordsNode';
 export { buildRecordExportColumns } from './csv/buildRecordExportColumns';
 export { expandRecordExportMorphFields } from './csv/expandRecordExportMorphFields';
 export { formatRecordExportHeader } from './csv/formatRecordExportHeader';

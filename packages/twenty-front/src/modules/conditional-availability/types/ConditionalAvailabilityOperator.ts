@@ -2,4 +2,14 @@ export type ConditionalAvailabilityOperator =
   | 'is'
   | 'isNot'
   | 'isAnyOf'
-  | 'isNoneOf';
+  | 'isNoneOf'
+  | 'contains'
+  | 'doesNotContain'
+  | 'atLeast'
+  | 'atMost'
+  | 'before'
+  | 'after'
+  | 'isInPast'
+  | 'isInFuture'
+  | 'isEmpty'
+  | 'isNotEmpty';

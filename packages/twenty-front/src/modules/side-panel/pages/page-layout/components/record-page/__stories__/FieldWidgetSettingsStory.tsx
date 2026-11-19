@@ -28,6 +28,7 @@ export const FieldWidgetSettingsStory = () => {
     >
       <LayoutRenderingProvider
         value={{
+          isTargetRecordLoading: false,
           layoutType: PageLayoutType.RECORD_PAGE,
           targetRecordIdentifier,
         }}

@@ -202,6 +202,7 @@ const meta: Meta<typeof RecordPageNoteWidgetStory> = {
         <PageLayoutTestWrapper store={jotaiStore} layoutType={args.layoutType}>
           <LayoutRenderingProvider
             value={{
+              isTargetRecordLoading: false,
               layoutType: args.layoutType,
               targetRecordIdentifier: TARGET_RECORD_IDENTIFIER,
             }}

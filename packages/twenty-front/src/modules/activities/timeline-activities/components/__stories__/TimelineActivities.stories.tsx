@@ -24,6 +24,7 @@ const meta: Meta<typeof TimelineCard> = {
       return (
         <LayoutRenderingProvider
           value={{
+            isTargetRecordLoading: false,
             targetRecordIdentifier: {
               id: '1',
               targetObjectNameSingular: StandardObjectNameSingular.Company,

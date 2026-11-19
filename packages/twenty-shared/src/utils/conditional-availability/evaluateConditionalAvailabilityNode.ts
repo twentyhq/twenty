@@ -1,9 +1,16 @@
-import { isFunction, isObject, isString } from '@sniptt/guards';
+import {
+  isFunction,
+  isNonEmptyArray,
+  isObject,
+  isString,
+} from '@sniptt/guards';
 
 import { CONDITIONAL_AVAILABILITY_FORBIDDEN_PATH_SEGMENT_PATTERN } from '@/constants/ConditionalAvailabilityForbiddenPathSegmentPattern';
 import { CONDITIONAL_AVAILABILITY_FUNCTIONS } from '@/constants/ConditionalAvailabilityFunctions';
+import { CONDITIONAL_AVAILABILITY_SELECTED_RECORDS_VARIABLE_NAME } from '@/constants/ConditionalAvailabilitySelectedRecordsVariableName';
 import { type ConditionalAvailabilityComparisonOperator } from '@/types/ConditionalAvailabilityComparisonOperator';
 import { type ConditionalAvailabilityNode } from '@/types/ConditionalAvailabilityNode';
+import { type ConditionalAvailabilityRecordFilterMatcher } from '@/types/ConditionalAvailabilityRecordFilterMatcher';
 import { isDefined } from '@/utils/validation/isDefined';
 
 type EvaluationContext = Record<string, unknown>;
@@ -90,12 +97,20 @@ const compareValues = ({
 const computeNodeValue = ({
   node,
   context,
+  isRecordMatchingRecordFilter,
 }: {
   node: ConditionalAvailabilityNode;
   context: EvaluationContext;
+  isRecordMatchingRecordFilter:
+    | ConditionalAvailabilityRecordFilterMatcher
+    | undefined;
 }): unknown => {
   const computeChildValue = (childNode: ConditionalAvailabilityNode) =>
-    computeNodeValue({ node: childNode, context });
+    computeNodeValue({
+      node: childNode,
+      context,
+      isRecordMatchingRecordFilter,
+    });
 
   switch (node.type) {
     case 'LITERAL':
@@ -118,6 +133,33 @@ const computeNodeValue = ({
           );
     case 'NOT':
       return !computeChildValue(node.child);
+    case 'SELECTED_RECORDS': {
+      if (!isDefined(isRecordMatchingRecordFilter)) {
+        throw new Error('Record filters cannot be evaluated here');
+      }
+
+      const selectedRecords: unknown =
+        context[CONDITIONAL_AVAILABILITY_SELECTED_RECORDS_VARIABLE_NAME];
+
+      if (!isNonEmptyArray(selectedRecords)) {
+        return false;
+      }
+
+      const isRecordMatching = (record: unknown) =>
+        isRecordMatchingRecordFilter({
+          record,
+          recordFilter: node.recordFilter,
+        });
+
+      switch (node.quantifier) {
+        case 'EVERY':
+          return selectedRecords.every(isRecordMatching);
+        case 'SOME':
+          return selectedRecords.some(isRecordMatching);
+        case 'NONE':
+          return !selectedRecords.some(isRecordMatching);
+      }
+    }
     case 'CALL': {
       const functionDeclaration = Object.entries(
         CONDITIONAL_AVAILABILITY_FUNCTIONS,
@@ -141,16 +183,20 @@ const computeNodeValue = ({
 export const evaluateConditionalAvailabilityNode = ({
   node,
   context,
+  isRecordMatchingRecordFilter,
 }: {
   node: ConditionalAvailabilityNode | null | undefined;
   context: EvaluationContext;
+  isRecordMatchingRecordFilter?: ConditionalAvailabilityRecordFilterMatcher;
 }): boolean => {
   if (!isDefined(node)) {
     return true;
   }
 
   try {
-    return computeNodeValue({ node, context }) === true;
+    return (
+      computeNodeValue({ node, context, isRecordMatchingRecordFilter }) === true
+    );
   } catch {
     return false;
   }

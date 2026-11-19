@@ -42,9 +42,11 @@ const StyledContentContainer = styled.div`
 
 export const PageLayoutRecordPageRenderer = ({
   targetRecordIdentifier,
+  isTargetRecordLoading,
   isRecordIdentifierBarHidden = false,
 }: {
   targetRecordIdentifier: TargetRecordIdentifier;
+  isTargetRecordLoading: boolean;
   isRecordIdentifierBarHidden?: boolean;
 }) => {
   const displaySidePanelFooter = useDisplaySidePanelFooter(
@@ -87,6 +89,7 @@ export const PageLayoutRecordPageRenderer = ({
                 targetObjectNameSingular:
                   targetRecordIdentifier.targetObjectNameSingular,
               },
+              isTargetRecordLoading,
               layoutType:
                 targetRecordIdentifier.targetObjectNameSingular ===
                 StandardObjectNameSingular.Dashboard

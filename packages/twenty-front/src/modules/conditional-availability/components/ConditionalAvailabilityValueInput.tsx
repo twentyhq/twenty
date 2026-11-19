@@ -49,7 +49,9 @@ export const ConditionalAvailabilityValueInput = ({
           onChange={handleChange}
         />
       );
+    case 'recordField':
+      return null;
     default:
-      return assertUnreachable(row.subject);
+      return assertUnreachable(row);
   }
 };

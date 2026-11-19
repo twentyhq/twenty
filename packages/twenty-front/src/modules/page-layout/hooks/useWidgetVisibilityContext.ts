@@ -11,7 +11,8 @@ import { useIsMobile } from 'twenty-ui/utilities';
 
 export const useWidgetVisibilityContext = (): WidgetVisibilityContext => {
   const isMobile = useIsMobile();
-  const { targetRecordIdentifier } = useLayoutRenderingContext();
+  const { targetRecordIdentifier, isTargetRecordLoading } =
+    useLayoutRenderingContext();
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
   const globalContext = useConditionalAvailabilityGlobalContext();
 
@@ -26,8 +27,17 @@ export const useWidgetVisibilityContext = (): WidgetVisibilityContext => {
         globalContext,
         isMobile,
         isInSidePanel,
-        targetRecord: isDefined(recordStore) ? recordStore : undefined,
+        targetRecord:
+          !isTargetRecordLoading && isDefined(recordStore)
+            ? recordStore
+            : undefined,
       }),
-    [globalContext, isMobile, isInSidePanel, recordStore],
+    [
+      globalContext,
+      isMobile,
+      isInSidePanel,
+      isTargetRecordLoading,
+      recordStore,
+    ],
   );
 };

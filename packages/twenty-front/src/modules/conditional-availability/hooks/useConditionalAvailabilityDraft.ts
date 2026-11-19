@@ -51,6 +51,7 @@ export const useConditionalAvailabilityDraft = ({
       getConditionalAvailabilityEditorStateFromNode({
         node,
         metadataName,
+        fields: [],
       }),
     [node, metadataName],
   );

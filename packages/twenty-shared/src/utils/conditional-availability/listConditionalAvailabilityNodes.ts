@@ -6,6 +6,7 @@ const getChildNodes = (
   switch (node.type) {
     case 'LITERAL':
     case 'PATH':
+    case 'SELECTED_RECORDS':
       return [];
     case 'COMPARISON':
       return [node.left, node.right];

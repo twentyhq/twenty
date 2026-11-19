@@ -1,0 +1,2 @@
+export const CONDITIONAL_AVAILABILITY_SELECTED_RECORDS_VARIABLE_NAME =
+  'selectedRecords';

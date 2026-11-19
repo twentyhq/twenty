@@ -1,6 +1,8 @@
-import { isString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 
 import { CONDITIONAL_AVAILABILITY_COMPARISON_OPERATOR_SYMBOLS } from '@/constants/ConditionalAvailabilityComparisonOperatorSymbols';
+import { CONDITIONAL_AVAILABILITY_RECORD_QUANTIFIER_FUNCTION_NAMES } from '@/constants/ConditionalAvailabilityRecordQuantifierFunctionNames';
+import { CONDITIONAL_AVAILABILITY_SELECTED_RECORDS_VARIABLE_NAME } from '@/constants/ConditionalAvailabilitySelectedRecordsVariableName';
 import { type ConditionalAvailabilityLogicalOperator } from '@/types/ConditionalAvailabilityLogicalOperator';
 import { type ConditionalAvailabilityNode } from '@/types/ConditionalAvailabilityNode';
 import { printConditionalAvailabilityText } from '@/utils/conditional-availability/printConditionalAvailabilityText';
@@ -63,5 +65,26 @@ export const printConditionalAvailabilityNode = ({
           printConditionalAvailabilityNode({ node: argumentNode }),
         )
         .join(', ')})`;
+    case 'SELECTED_RECORDS': {
+      const { fieldMetadataUniversalIdentifier, subFieldName, operand, value } =
+        node.recordFilter;
+      const fieldReference = isNonEmptyString(subFieldName)
+        ? `${fieldMetadataUniversalIdentifier}.${subFieldName}`
+        : fieldMetadataUniversalIdentifier;
+      const textArguments = isNonEmptyString(value)
+        ? [fieldReference, operand, value]
+        : [fieldReference, operand];
+
+      return `${
+        CONDITIONAL_AVAILABILITY_RECORD_QUANTIFIER_FUNCTION_NAMES[
+          node.quantifier
+        ]
+      }(${[
+        CONDITIONAL_AVAILABILITY_SELECTED_RECORDS_VARIABLE_NAME,
+        ...textArguments.map((text) =>
+          printConditionalAvailabilityText({ text }),
+        ),
+      ].join(', ')})`;
+    }
   }
 };

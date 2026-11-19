@@ -1,6 +1,7 @@
 import { CONDITIONAL_AVAILABILITY_FORBIDDEN_PATH_SEGMENT_PATTERN } from '@/constants/ConditionalAvailabilityForbiddenPathSegmentPattern';
 import { CONDITIONAL_AVAILABILITY_FUNCTIONS } from '@/constants/ConditionalAvailabilityFunctions';
 import { CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT } from '@/constants/ConditionalAvailabilityMaxNodeCount';
+import { CONDITIONAL_AVAILABILITY_SELECTED_RECORDS_VARIABLE_NAME } from '@/constants/ConditionalAvailabilitySelectedRecordsVariableName';
 import { CONDITIONAL_AVAILABILITY_VARIABLES } from '@/constants/ConditionalAvailabilityVariables';
 import { type ConditionalAvailabilityCheckResult } from '@/types/ConditionalAvailabilityCheckResult';
 import { type ConditionalAvailabilityMetadataName } from '@/types/ConditionalAvailabilityMetadataName';
@@ -49,6 +50,13 @@ const getUnknownName = ({
       )
         ? undefined
         : node.functionName;
+    case 'SELECTED_RECORDS':
+      return Object.prototype.hasOwnProperty.call(
+        CONDITIONAL_AVAILABILITY_VARIABLES[metadataName],
+        CONDITIONAL_AVAILABILITY_SELECTED_RECORDS_VARIABLE_NAME,
+      )
+        ? undefined
+        : CONDITIONAL_AVAILABILITY_SELECTED_RECORDS_VARIABLE_NAME;
     case 'LITERAL':
     case 'COMPARISON':
     case 'GROUP':

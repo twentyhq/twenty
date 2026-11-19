@@ -25,6 +25,7 @@ const meta: Meta<typeof EmailsCardContent> = {
     (Story) => (
       <LayoutRenderingProvider
         value={{
+          isTargetRecordLoading: false,
           layoutType: PageLayoutType.RECORD_PAGE,
           targetRecordIdentifier: {
             id: TARGET_RECORD_ID,
