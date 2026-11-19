@@ -1,10 +1,10 @@
 import { kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { GRANOLA_PERSONAL_REGISTRATION_PREFIX } from 'src/constants/granola-personal-connection.constant';
 import { type GranolaPersonalWebhookRegistration } from 'src/logic-functions/types/granola-personal-webhook-registration.type';
 import { type createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { deleteStaleGranolaWebhookEndpointOrThrow } from 'src/logic-functions/utils/delete-stale-granola-webhook-endpoint-or-throw.util';
+import { getGranolaPersonalRegistrationId } from 'src/logic-functions/utils/get-granola-personal-registration-id.util';
 import { getGranolaPersonalWebhookKey } from 'src/logic-functions/utils/get-granola-personal-webhook-key.util';
 import { getGranolaRegistrationClaimKey } from 'src/logic-functions/utils/get-granola-registration-claim-key.util';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
@@ -24,7 +24,7 @@ export const removeGranolaPersonalWebhook = async ({
 
   await kv.delete(
     getGranolaRegistrationClaimKey(
-      GRANOLA_PERSONAL_REGISTRATION_PREFIX + connectionId,
+      getGranolaPersonalRegistrationId(connectionId),
     ),
     { scope: 'SERVER' },
   );
