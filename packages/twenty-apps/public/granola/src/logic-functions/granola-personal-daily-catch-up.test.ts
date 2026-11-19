@@ -1,5 +1,5 @@
 import { enqueueJobs, listConnections } from 'twenty-sdk/logic-function';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   OTHER_CONNECTION,
@@ -17,6 +17,16 @@ vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   enqueueJobs: vi.fn(),
   listConnections: vi.fn(),
 }));
+
+beforeEach(() => {
+  vi.mocked(enqueueJobs).mockImplementation(async (request) => ({
+    enqueued: true,
+    logicFunctionUniversalIdentifier: request.logicFunctionUniversalIdentifier,
+    enqueuedJobsCount: request.jobs?.length ?? 0,
+    jobIds: [],
+    jobs: [],
+  }));
+});
 
 afterEach(() => {
   vi.resetAllMocks();
@@ -41,15 +51,6 @@ describe('granolaPersonalDailyCatchUpHandler', () => {
       OWN_CONNECTION,
       { ...OTHER_CONNECTION, workspaceMemberId: null },
     ]);
-    vi.mocked(enqueueJobs).mockResolvedValue({
-      enqueued: true,
-      logicFunctionUniversalIdentifier:
-        GRANOLA_PERSONAL_CATCH_UP_WORKER_UNIVERSAL_IDENTIFIER,
-      enqueuedJobsCount: 1,
-      jobIds: [],
-      jobs: [],
-    });
-
     await expect(granolaPersonalDailyCatchUpHandler()).resolves.toMatchObject({
       enqueuedConnectionCount: 1,
     });
@@ -96,5 +97,36 @@ describe('granolaPersonalDailyCatchUpHandler', () => {
       ],
     });
     expect(requests.slice(2)).toEqual(requests.slice(0, 2));
+  });
+
+  it('splits each target into batches at Twenty’s 200-job limit', async () => {
+    vi.mocked(listConnections).mockResolvedValue(
+      Array.from({ length: 201 }, (_, index) => ({
+        ...OWN_CONNECTION,
+        id: `connection-${index}`,
+      })),
+    );
+
+    await expect(granolaPersonalDailyCatchUpHandler()).resolves.toMatchObject({
+      enqueuedConnectionCount: 201,
+    });
+
+    const requests = vi
+      .mocked(enqueueJobs)
+      .mock.calls.map(([request]) => request);
+    for (const target of [
+      GRANOLA_PERSONAL_CATCH_UP_WORKER_UNIVERSAL_IDENTIFIER,
+      GRANOLA_PERSONAL_RECONCILE_UNIVERSAL_IDENTIFIER,
+    ]) {
+      const batches = requests.filter(
+        ({ logicFunctionUniversalIdentifier }) =>
+          logicFunctionUniversalIdentifier === target,
+      );
+      expect(batches.map(({ jobs }) => jobs?.length)).toEqual([200, 1]);
+      expect(
+        new Set(batches.flatMap(({ jobs }) => jobs?.map(({ jobId }) => jobId)))
+          .size,
+      ).toBe(201);
+    }
   });
 });
