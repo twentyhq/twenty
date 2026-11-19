@@ -1,6 +1,8 @@
 import { type FSWatcher, watch } from 'node:fs';
 import { clearInterval, setInterval } from 'node:timers';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { isBroadWatchDirectory } from '@/app/dev/is-broad-watch-directory';
 import { readWatchInputStamp } from '@/app/dev/read-watch-input-stamp';
 import { type WatchInput } from '@/app/dev/types/watch-inputs.type';
@@ -47,13 +49,13 @@ export const watchExternalInput = ({
     nativeWatcher = undefined;
     clearTimeout(pendingCheck);
 
-    if (input.kind === 'directory' && isBroadWatchDirectory(input.path)) {
-      close();
-      onChange();
-      return;
-    }
-
     try {
+      if (input.kind === 'directory' && isBroadWatchDirectory(input.path)) {
+        close();
+        onChange();
+        return;
+      }
+
       const attachmentStamp = readWatchInputStamp(input);
       const watcher = watch(input.path, { persistent: false }, () => {
         if (isClosed || nativeWatcher !== watcher) {
@@ -90,7 +92,7 @@ export const watchExternalInput = ({
       pendingCheck.unref();
     } catch (error) {
       if (hasErrorCode(error, 'ENOENT') || hasErrorCode(error, 'ENOTDIR')) {
-        if (!recoveryTimer) {
+        if (!isDefined(recoveryTimer)) {
           recoveryTimer = setInterval(refresh, RECOVERY_INTERVAL_MS);
           recoveryTimer.unref();
         }
