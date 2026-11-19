@@ -11,6 +11,9 @@ export class McpServerDTO {
   @Field(() => UUIDScalarType)
   id: string;
 
+  @Field(() => UUIDScalarType)
+  universalIdentifier: string;
+
   @Field()
   name: string;
 

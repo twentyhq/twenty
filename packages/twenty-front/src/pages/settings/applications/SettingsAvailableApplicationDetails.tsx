@@ -13,6 +13,7 @@ import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/
 import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
 import { useMarketplaceApplicationContentLink } from '@/settings/applications/hooks/useMarketplaceApplicationContentLink';
 import { SettingsApplicationActionButton } from '@/settings/applications/components/SettingsApplicationActionButton';
+import { SettingsMarketplaceMcpServerActionButton } from '@/settings/applications/components/SettingsMarketplaceMcpServerActionButton';
 import { SettingsMarketplaceAppConnectButton } from '@/settings/applications/components/SettingsMarketplaceAppConnectButton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
@@ -231,6 +232,14 @@ export const SettingsAvailableApplicationDetails = () => {
     if (isNonEmptyString(detail.connectUrl)) {
       return (
         <SettingsMarketplaceAppConnectButton connectUrl={detail.connectUrl} />
+      );
+    }
+
+    if (isNonEmptyString(detail.mcpServerUrl)) {
+      return (
+        <SettingsMarketplaceMcpServerActionButton
+          universalIdentifier={detail.universalIdentifier}
+        />
       );
     }
 

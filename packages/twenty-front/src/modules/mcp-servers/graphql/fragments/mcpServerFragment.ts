@@ -3,6 +3,7 @@ import gql from 'graphql-tag';
 export const MCP_SERVER_FRAGMENT = gql`
   fragment McpServerFragment on McpServer {
     id
+    universalIdentifier
     name
     label
     url

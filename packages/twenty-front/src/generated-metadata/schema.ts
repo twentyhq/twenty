@@ -3389,6 +3389,7 @@ export type MarketplaceApp = {
   id: Scalars['String']['output'];
   isListed: Scalars['Boolean']['output'];
   logoUrl?: Maybe<Scalars['String']['output']>;
+  mcpServerUrl?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   sourcePackage?: Maybe<Scalars['String']['output']>;
 };
@@ -3413,6 +3414,7 @@ export type MarketplaceAppDetail = {
   logoUrl?: Maybe<Scalars['String']['output']>;
   /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
   manifest?: Maybe<Scalars['JSON']['output']>;
+  mcpServerUrl?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   objects?: Maybe<Array<MarketplaceAppObject>>;
   pricingDescription?: Maybe<Scalars['String']['output']>;
@@ -3484,6 +3486,7 @@ export type McpServer = {
   tools: Array<McpServerTool>;
   toolsSyncError?: Maybe<Scalars['String']['output']>;
   toolsSyncedAt?: Maybe<Scalars['DateTime']['output']>;
+  universalIdentifier: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];
   url: Scalars['String']['output'];
 };
@@ -3736,6 +3739,7 @@ export type Mutation = {
   activateSkill: Skill;
   activateWorkspace: Workspace;
   addAgentChatMessageReaction: Array<AgentMessageReactionSummary>;
+  addMarketplaceMcpServer: McpServer;
   addQueryToEventStream: Scalars['Boolean']['output'];
   approveApplicationIframeMediaPermissions: Application;
   archiveInboxThread: Scalars['Boolean']['output'];
@@ -4065,6 +4069,11 @@ export type MutationActivateWorkspaceArgs = {
 export type MutationAddAgentChatMessageReactionArgs = {
   emoji: Scalars['String']['input'];
   messageId: Scalars['UUID']['input'];
+};
+
+
+export type MutationAddMarketplaceMcpServerArgs = {
+  universalIdentifier: Scalars['String']['input'];
 };
 
 

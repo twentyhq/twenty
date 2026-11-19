@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { MarketplaceMcpServerCatalogModule } from 'src/engine/core-modules/application/application-marketplace/marketplace-mcp-server-catalog/marketplace-mcp-server-catalog.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -21,6 +22,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     PermissionsModule,
     FeatureFlagModule,
     McpServerClientModule,
+    MarketplaceMcpServerCatalogModule,
     TypeOrmModule.forFeature([McpServerEntity]),
   ],
   providers: [

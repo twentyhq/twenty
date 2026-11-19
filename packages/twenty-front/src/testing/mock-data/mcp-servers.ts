@@ -7,6 +7,7 @@ import {
 export const mockedMcpServer: McpServerFragmentFragment = {
   __typename: 'McpServer',
   id: '20202020-6d63-4070-8000-000000000001',
+  universalIdentifier: '20202020-6d63-4070-8000-000000000001',
   name: 'linear',
   label: 'Linear',
   url: 'https://mcp.linear.app/mcp',

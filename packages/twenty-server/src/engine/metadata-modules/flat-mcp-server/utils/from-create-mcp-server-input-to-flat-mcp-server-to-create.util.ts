@@ -10,6 +10,7 @@ export const fromCreateMcpServerInputToFlatMcpServerToCreate = ({
   workspaceId,
   flatApplication,
   connectionProviderUniversalIdentifier,
+  universalIdentifier,
 }: {
   createMcpServerInput: Pick<
     CreateMcpServerInput,
@@ -18,6 +19,7 @@ export const fromCreateMcpServerInputToFlatMcpServerToCreate = ({
   workspaceId: string;
   flatApplication: Pick<FlatApplication, 'id' | 'universalIdentifier'>;
   connectionProviderUniversalIdentifier: string | null;
+  universalIdentifier?: string;
 }): FlatMcpServer => {
   const now = new Date().toISOString();
 
@@ -43,7 +45,7 @@ export const fromCreateMcpServerInputToFlatMcpServerToCreate = ({
     workspaceId,
     createdAt: now,
     updatedAt: now,
-    universalIdentifier: id,
+    universalIdentifier: universalIdentifier ?? id,
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
   };

@@ -48,6 +48,11 @@ export class MarketplaceAppDTO {
   @Field({ nullable: true })
   connectUrl?: string;
 
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  mcpServerUrl?: string;
+
   @IsBoolean()
   @Field(() => Boolean)
   isListed: boolean;

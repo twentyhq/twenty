@@ -126,6 +126,7 @@ const MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarketplaceAppD
     logoUrl: null,
     websiteUrl: null,
     connectUrl: null,
+    mcpServerUrl: null,
     aboutDescription: null,
     pricingDescription: null,
     termsUrl: null,

@@ -15,6 +15,7 @@ export const MARKETPLACE_APP_DETAIL_FRAGMENT = gql`
     logoUrl
     websiteUrl
     connectUrl
+    mcpServerUrl
     aboutDescription
     pricingDescription
     termsUrl

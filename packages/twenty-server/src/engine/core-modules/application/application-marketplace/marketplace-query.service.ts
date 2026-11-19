@@ -14,6 +14,9 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { buildApplicationContentFromManifest } from 'src/engine/core-modules/application/application-content/utils/build-application-content-from-manifest.util';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
+import { MarketplaceMcpServerCatalogService } from 'src/engine/core-modules/application/application-marketplace/marketplace-mcp-server-catalog/marketplace-mcp-server-catalog.service';
+import { toMarketplaceMcpServerAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/marketplace-mcp-server-catalog/utils/to-marketplace-mcp-server-app-detail-dto.util';
+import { toMarketplaceMcpServerAppDTO } from 'src/engine/core-modules/application/application-marketplace/marketplace-mcp-server-catalog/utils/to-marketplace-mcp-server-app-dto.util';
 import { MARKETPLACE_BUILT_IN_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-built-in-applications.constant';
 import { findMarketplaceBuiltInApplication } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-built-in-application.util';
 import { toMarketplaceBuiltInAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/utils/to-marketplace-built-in-app-detail-dto.util';
@@ -43,16 +46,19 @@ export class MarketplaceQueryService {
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly applicationService: ApplicationService,
     private readonly domainServerConfigService: DomainServerConfigService,
+    private readonly marketplaceMcpServerCatalogService: MarketplaceMcpServerCatalogService,
   ) {}
 
   async findManyMarketplaceApps({
     universalIdentifiers,
     isListed,
     shouldIncludeBuiltInApplications = false,
+    shouldIncludeMcpServers = false,
   }: {
     universalIdentifiers?: string[];
     isListed?: boolean;
     shouldIncludeBuiltInApplications?: boolean;
+    shouldIncludeMcpServers?: boolean;
   } = {}): Promise<MarketplaceAppDTO[]> {
     const appsByUniversalIdentifier =
       (await this.coreEntityCacheService.get(
@@ -69,9 +75,15 @@ export class MarketplaceQueryService {
           .filter(isDefined)
       : Object.values(appsByUniversalIdentifier);
 
-    const apps = shouldIncludeBuiltInApplications
-      ? [...this.findBuiltInApps(universalIdentifiers), ...catalogApps]
-      : catalogApps;
+    const apps = [
+      ...(shouldIncludeBuiltInApplications
+        ? this.findBuiltInApps(universalIdentifiers)
+        : []),
+      ...catalogApps,
+      ...(shouldIncludeMcpServers
+        ? await this.findMcpServerApps(universalIdentifiers)
+        : []),
+    ];
 
     if (!isDefined(isListed)) {
       return apps;
@@ -95,12 +107,29 @@ export class MarketplaceQueryService {
     );
   }
 
+  private async findMcpServerApps(
+    universalIdentifiers?: string[],
+  ): Promise<MarketplaceAppDTO[]> {
+    const marketplaceMcpServers =
+      await this.marketplaceMcpServerCatalogService.findMany();
+
+    return marketplaceMcpServers
+      .filter(
+        ({ universalIdentifier }) =>
+          !isNonEmptyArray(universalIdentifiers) ||
+          universalIdentifiers.includes(universalIdentifier),
+      )
+      .map(toMarketplaceMcpServerAppDTO);
+  }
+
   async findMarketplaceAppDetail({
     universalIdentifier,
     shouldIncludeBuiltInApplications = false,
+    shouldIncludeMcpServers = false,
   }: {
     universalIdentifier: string;
     shouldIncludeBuiltInApplications?: boolean;
+    shouldIncludeMcpServers?: boolean;
   }): Promise<MarketplaceAppDetailDTO> {
     const builtInApplication = shouldIncludeBuiltInApplications
       ? findMarketplaceBuiltInApplication(universalIdentifier)
@@ -111,6 +140,16 @@ export class MarketplaceQueryService {
         builtInApplication,
         frontBaseUrl: this.domainServerConfigService.getBaseUrl(),
       });
+    }
+
+    const marketplaceMcpServer = shouldIncludeMcpServers
+      ? await this.marketplaceMcpServerCatalogService.findOne(
+          universalIdentifier,
+        )
+      : undefined;
+
+    if (isDefined(marketplaceMcpServer)) {
+      return toMarketplaceMcpServerAppDetailDTO(marketplaceMcpServer);
     }
 
     const registration =

@@ -9,6 +9,7 @@ export const MARKETPLACE_APP_FRAGMENT = gql`
     category
     logoUrl
     connectUrl
+    mcpServerUrl
     sourcePackage
     isListed
   }

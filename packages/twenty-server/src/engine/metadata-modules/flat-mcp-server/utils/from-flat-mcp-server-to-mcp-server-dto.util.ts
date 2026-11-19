@@ -7,6 +7,7 @@ export const fromFlatMcpServerToMcpServerDto = (
   flatMcpServer: FlatMcpServer,
 ): Omit<McpServerDTO, 'signInScope'> => ({
   id: flatMcpServer.id,
+  universalIdentifier: flatMcpServer.universalIdentifier,
   name: flatMcpServer.name,
   label: flatMcpServer.label,
   url: flatMcpServer.url,

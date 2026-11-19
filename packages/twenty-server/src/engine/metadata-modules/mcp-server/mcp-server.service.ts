@@ -7,6 +7,7 @@ import {
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
+import { MarketplaceMcpServerCatalogService } from 'src/engine/core-modules/application/application-marketplace/marketplace-mcp-server-catalog/marketplace-mcp-server-catalog.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatConnectionProvider } from 'src/engine/metadata-modules/flat-connection-provider/types/flat-connection-provider.type';
@@ -21,6 +22,10 @@ import { fromUpdateMcpServerInputToFlatMcpServerToUpdateOrThrow } from 'src/engi
 import { type CreateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/create-mcp-server.input';
 import { type McpServerDTO } from 'src/engine/metadata-modules/mcp-server/dtos/mcp-server.dto';
 import { type UpdateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/update-mcp-server.input';
+import {
+  McpServerException,
+  McpServerExceptionCode,
+} from 'src/engine/metadata-modules/mcp-server/mcp-server.exception';
 import { McpServerMigrationService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-migration.service';
 import { McpServerSignInService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-sign-in.service';
 import { McpServerToolSyncService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-tool-sync.service';
@@ -34,6 +39,7 @@ export class McpServerService {
     private readonly mcpServerMigrationService: McpServerMigrationService,
     private readonly mcpServerSignInService: McpServerSignInService,
     private readonly mcpServerToolSyncService: McpServerToolSyncService,
+    private readonly marketplaceMcpServerCatalogService: MarketplaceMcpServerCatalogService,
   ) {}
 
   async findAll(workspaceId: string): Promise<McpServerDTO[]> {
@@ -67,10 +73,58 @@ export class McpServerService {
       : null;
   }
 
+  async addFromMarketplace({
+    universalIdentifier,
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    universalIdentifier: string;
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }): Promise<McpServerDTO> {
+    const marketplaceMcpServer =
+      await this.marketplaceMcpServerCatalogService.findOne(
+        universalIdentifier,
+      );
+
+    if (!isDefined(marketplaceMcpServer)) {
+      throw new McpServerException(
+        `No marketplace MCP server found for identifier "${universalIdentifier}"`,
+        McpServerExceptionCode.MCP_SERVER_NOT_FOUND,
+      );
+    }
+
+    const { flatMcpServerMaps, flatConnectionProviderMaps } =
+      await this.mcpServerMigrationService.getFlatMaps(workspaceId);
+    const existingFlatMcpServer =
+      flatMcpServerMaps.byUniversalIdentifier[
+        marketplaceMcpServer.universalIdentifier
+      ];
+
+    if (isDefined(existingFlatMcpServer)) {
+      return this.toMcpServerDto({
+        flatMcpServer: existingFlatMcpServer,
+        flatConnectionProviderMaps,
+      });
+    }
+
+    return this.create(
+      {
+        name: marketplaceMcpServer.name,
+        label: marketplaceMcpServer.label,
+        url: marketplaceMcpServer.url,
+      },
+      workspaceId,
+      userWorkspaceId,
+      marketplaceMcpServer.universalIdentifier,
+    );
+  }
+
   async create(
     input: CreateMcpServerInput,
     workspaceId: string,
     userWorkspaceId?: string,
+    universalIdentifier?: string,
   ): Promise<McpServerDTO> {
     validateMcpServerSignInInputOrThrow(input);
 
@@ -98,6 +152,7 @@ export class McpServerService {
         },
         workspaceId,
         flatApplication: workspaceCustomFlatApplication,
+        universalIdentifier,
         connectionProviderUniversalIdentifier:
           signInFlatConnectionProvider?.universalIdentifier ??
           (await this.mcpServerMigrationService.resolveConnectionProviderUniversalIdentifier(
