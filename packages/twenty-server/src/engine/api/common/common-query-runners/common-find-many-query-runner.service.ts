@@ -61,7 +61,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<CommonQueryRunResult<CommonFindManyOutput>> {
     const {
-      authContext,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -224,17 +223,11 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       ? undefined
       : await aggregateQueryBuilder.getRawOne<CommonAggregatedValues>();
 
-    const relationAggregatedValues =
-      await this.processNestedRelationsHelper.processNestedRelations({
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        parentObjectMetadataItem: flatObjectMetadata,
-        parentObjectRecords: objectRecords,
-        selection: args.selectedFieldsResult,
-        limit: QUERY_MAX_RECORDS_FROM_RELATION,
-        authContext,
-        ...this.getNestedRelationsReadPathOptions(),
-      });
+    const relationAggregatedValues = await this.processNestedRelations({
+      records: objectRecords,
+      selection: args.selectedFieldsResult,
+      queryRunnerContext,
+    });
 
     return {
       result: {
