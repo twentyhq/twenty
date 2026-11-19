@@ -3,7 +3,6 @@ import { type ConditionalAvailabilityRecordFilterMatcher } from '@/types/Conditi
 import { RecordFilterOperand } from '@/types/RecordFilterOperand';
 import { checkConditionalAvailabilityNode } from '@/utils/conditional-availability/checkConditionalAvailabilityNode';
 import { evaluateConditionalAvailabilityNode } from '@/utils/conditional-availability/evaluateConditionalAvailabilityNode';
-import { listConditionalAvailabilityFieldMetadataUniversalIdentifiers } from '@/utils/conditional-availability/listConditionalAvailabilityFieldMetadataUniversalIdentifiers';
 import { parseConditionalAvailabilityExpression } from '@/utils/conditional-availability/parseConditionalAvailabilityExpression';
 import { printConditionalAvailabilityNode } from '@/utils/conditional-availability/printConditionalAvailabilityNode';
 
@@ -106,22 +105,6 @@ describe('a rule on the selected records', () => {
         metadataName: 'pageLayoutWidget',
       }),
     ).toMatchObject({ isValid: false, errorCode: 'INVALID_NODE' });
-  });
-
-  it('should list each referenced field once', () => {
-    expect(
-      listConditionalAvailabilityFieldMetadataUniversalIdentifiers({
-        node: {
-          type: 'GROUP',
-          logicalOperator: 'OR',
-          children: [
-            STAGE_IS_WON_NODE,
-            { type: 'NOT', child: STAGE_IS_WON_NODE },
-            { type: 'PATH', path: 'device' },
-          ],
-        },
-      }),
-    ).toEqual([STAGE_FIELD_UNIVERSAL_IDENTIFIER]);
   });
 
   it.each([

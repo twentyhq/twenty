@@ -42,7 +42,6 @@ export { conditionalAvailabilityParser } from './conditional-availability/condit
 export { conditionalAvailabilityStrictParser } from './conditional-availability/conditionalAvailabilityStrictParser';
 export { evaluateConditionalAvailabilityExpression } from './conditional-availability/evaluateConditionalAvailabilityExpression';
 export { evaluateConditionalAvailabilityNode } from './conditional-availability/evaluateConditionalAvailabilityNode';
-export { listConditionalAvailabilityFieldMetadataUniversalIdentifiers } from './conditional-availability/listConditionalAvailabilityFieldMetadataUniversalIdentifiers';
 export { listConditionalAvailabilityNodes } from './conditional-availability/listConditionalAvailabilityNodes';
 export { parseConditionalAvailabilityExpression } from './conditional-availability/parseConditionalAvailabilityExpression';
 export { printConditionalAvailabilityNode } from './conditional-availability/printConditionalAvailabilityNode';
