@@ -86,6 +86,7 @@ export class UpdateAgentTool extends BaseTool<typeof updateAgentInputSchema> {
         ...(isDefined(triggers) && { triggers: toAgentTriggers(triggers) }),
       },
       workspaceId: context.workspaceId,
+      userWorkspaceId: context.userWorkspaceId,
     });
 
     return {

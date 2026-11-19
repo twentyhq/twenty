@@ -16,7 +16,7 @@ import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
-@RegisteredWorkspaceCommand('2.61.0', 1795103218645)
+@RegisteredWorkspaceCommand('2.61.0', 1795121785907)
 @Command({
   name: 'upgrade:2-61:reown-application-view-fields-on-foreign-views',
   description:
