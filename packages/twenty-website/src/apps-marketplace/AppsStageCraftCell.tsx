@@ -218,7 +218,7 @@ export function AppsStageCraftCell({
       </Top>
       <Text>
         <AppName id={headingId}>
-          <NameLink href={`/apps/${app.slug}`}>{app.name}</NameLink>
+          <NameLink href={`/apps/${app.slug}?direction=e`}>{app.name}</NameLink>
         </AppName>
         <Tagline>{app.tagline}</Tagline>
       </Text>

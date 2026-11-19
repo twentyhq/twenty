@@ -394,7 +394,7 @@ export function AppsStageFeatured({ apps }: AppsStageFeaturedProps) {
             <Text>
               <AppName>{active.name}</AppName>
               <Tagline>{active.tagline}</Tagline>
-              <AppLink href={`/apps/${active.slug}`}>
+              <AppLink href={`/apps/${active.slug}?direction=e`}>
                 {i18n._(msg`View app`)}
                 <ArrowUpRight />
               </AppLink>
