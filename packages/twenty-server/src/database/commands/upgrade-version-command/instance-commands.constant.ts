@@ -318,6 +318,7 @@ import { BackfillApplicationRequestedRoleIdSlowInstanceCommand } from 'src/datab
 import { AddViewSortRelationTargetFieldMetadataIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795006012069-add-view-sort-relation-target-field-metadata-id';
 import { AddNavigationMenuItemBuiltInSectionKeyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795087899814-add-navigation-menu-item-built-in-section-key';
 import { CreateWebPushSubscriptionCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795095601662-create-web-push-subscription-core-table';
+import { AddUserWorkspaceInboxNotificationSettingsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795109039761-add-user-workspace-inbox-notification-settings';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -638,4 +639,5 @@ export const INSTANCE_COMMANDS = [
   AddViewSortRelationTargetFieldMetadataIdFastInstanceCommand,
   AddNavigationMenuItemBuiltInSectionKeyFastInstanceCommand,
   CreateWebPushSubscriptionCoreTableFastInstanceCommand,
+  AddUserWorkspaceInboxNotificationSettingsFastInstanceCommand,
 ];

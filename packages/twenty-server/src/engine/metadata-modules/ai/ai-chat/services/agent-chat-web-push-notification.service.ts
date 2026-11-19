@@ -118,11 +118,27 @@ export class AgentChatWebPushNotificationService {
         thread.directMessageSecondWorkspaceMemberId,
       ].filter(isDefined),
     });
+    const inboxNotificationSettingsByUserId =
+      await this.webPushService.findInboxNotificationSettingsByUserId({
+        workspaceId,
+        userIds: unfocusedWorkspaceMemberIds
+          .map(
+            (workspaceMemberId) =>
+              workspaceMemberById[workspaceMemberId]?.userId,
+          )
+          .filter(isDefined),
+      });
     const recipients = unfocusedWorkspaceMemberIds.flatMap(
       (workspaceMemberId) => {
         const workspaceMember = workspaceMemberById[workspaceMemberId];
+        const inboxNotificationSettings = isDefined(workspaceMember)
+          ? inboxNotificationSettingsByUserId[workspaceMember.userId]
+          : undefined;
 
-        if (!isDefined(workspaceMember)) {
+        if (
+          !isDefined(workspaceMember) ||
+          !isDefined(inboxNotificationSettings)
+        ) {
           return [];
         }
 
@@ -130,12 +146,22 @@ export class AgentChatWebPushNotificationService {
           thread,
           participant: participants.get(workspaceMemberId),
           workspaceMemberId,
-          inboxNotificationLevel: workspaceMember.inboxNotificationLevel,
+          inboxNotificationLevel:
+            inboxNotificationSettings.inboxNotificationLevel,
           hasUnalertedMention:
             workspaceMemberIdsWithUnalertedMention.has(workspaceMemberId),
         });
 
-        return isDefined(reason) ? [{ workspaceMember, reason }] : [];
+        return isDefined(reason)
+          ? [
+              {
+                workspaceMember,
+                reason,
+                isPreviewEnabled:
+                  inboxNotificationSettings.isInboxNotificationPreviewEnabled,
+              },
+            ]
+          : [];
       },
     );
 
@@ -151,7 +177,7 @@ export class AgentChatWebPushNotificationService {
         ),
       });
 
-    for (const { workspaceMember, reason } of recipients) {
+    for (const { workspaceMember, reason, isPreviewEnabled } of recipients) {
       const webPushSubscriptions =
         webPushSubscriptionsByUserId[workspaceMember.userId];
 
@@ -164,6 +190,7 @@ export class AgentChatWebPushNotificationService {
           workspaceId,
           thread,
           recipient: workspaceMember,
+          isPreviewEnabled,
           isRenotifyForced: reason === 'DIRECT_MESSAGE' || reason === 'MENTION',
           webPushSubscriptions,
           workspaceMemberById,
@@ -183,6 +210,7 @@ export class AgentChatWebPushNotificationService {
     workspaceId,
     thread,
     recipient,
+    isPreviewEnabled,
     isRenotifyForced,
     webPushSubscriptions,
     workspaceMemberById,
@@ -190,10 +218,8 @@ export class AgentChatWebPushNotificationService {
   }: {
     workspaceId: string;
     thread: AgentChatThreadWorkspaceEntity;
-    recipient: Pick<
-      WorkspaceMemberWorkspaceEntity,
-      'id' | 'userId' | 'locale' | 'isInboxNotificationPreviewEnabled'
-    >;
+    recipient: Pick<WorkspaceMemberWorkspaceEntity, 'id' | 'userId' | 'locale'>;
+    isPreviewEnabled: boolean;
     isRenotifyForced: boolean;
     webPushSubscriptions: WebPushSubscriptionEntity[];
     workspaceMemberById: Partial<
@@ -228,7 +254,7 @@ export class AgentChatWebPushNotificationService {
           thread,
           recipientWorkspaceMemberId: recipient.id,
           workspaceMemberById,
-          isPreviewEnabled: recipient.isInboxNotificationPreviewEnabled,
+          isPreviewEnabled,
           assistantDisplayName,
         }),
         renotify: isRenotifyForced || isOutsideRenotifyCooldown,
