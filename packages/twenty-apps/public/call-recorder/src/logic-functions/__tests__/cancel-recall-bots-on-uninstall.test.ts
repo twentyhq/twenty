@@ -73,7 +73,7 @@ describe('cancel-recall-bots-on-uninstall', () => {
     );
   });
 
-  it('cancels open records by id then passes their bot ids to one 25-hour safety scan', async () => {
+  it('cancels open records by id then passes their bot ids to one scan of upcoming bots', async () => {
     const uninstallCleanupResult = await cancelRecallBotsOnUninstallHandler();
 
     expect(mocks.cancelOpenScheduledCallRecordingRequests).toHaveBeenCalledWith(
@@ -83,7 +83,7 @@ describe('cancel-recall-bots-on-uninstall', () => {
     );
     expect(mocks.cancelWorkspaceRecallBots).toHaveBeenCalledWith({
       knownExternalBotIds: ['known-bot'],
-      joinAtAfter: '2025-12-31T07:00:00.000Z',
+      joinAtAfter: '2026-01-01T08:00:00.000Z',
       cancellationCutoffEpochMs: new Date('2026-01-01T08:00:15.000Z').getTime(),
     });
     expect(uninstallCleanupResult).toEqual({
@@ -117,7 +117,7 @@ describe('cancel-recall-bots-on-uninstall', () => {
     ).not.toHaveBeenCalled();
     expect(mocks.cancelWorkspaceRecallBots).toHaveBeenCalledWith({
       knownExternalBotIds: ['known-bot'],
-      joinAtAfter: '2025-12-31T07:00:00.000Z',
+      joinAtAfter: '2026-01-01T08:00:00.000Z',
       cancellationCutoffEpochMs: new Date('2026-01-01T08:00:15.000Z').getTime(),
     });
   });
@@ -132,7 +132,7 @@ describe('cancel-recall-bots-on-uninstall', () => {
     );
     expect(mocks.cancelWorkspaceRecallBots).toHaveBeenCalledWith({
       knownExternalBotIds: ['known-bot'],
-      joinAtAfter: '2025-12-31T07:00:00.000Z',
+      joinAtAfter: '2026-01-01T08:00:00.000Z',
       cancellationCutoffEpochMs: new Date('2026-01-01T08:00:15.000Z').getTime(),
     });
   });
@@ -150,7 +150,7 @@ describe('cancel-recall-bots-on-uninstall', () => {
     ).not.toHaveBeenCalled();
     expect(mocks.cancelWorkspaceRecallBots).toHaveBeenCalledWith({
       knownExternalBotIds: [],
-      joinAtAfter: '2025-12-31T07:00:00.000Z',
+      joinAtAfter: '2026-01-01T08:00:00.000Z',
       cancellationCutoffEpochMs: new Date('2026-01-01T08:00:15.000Z').getTime(),
     });
   });
