@@ -7,8 +7,8 @@ import { TabSettingsPlacementSection } from '@/side-panel/pages/page-layout/comp
 import { SingleWidgetTabVisibilityDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/SingleWidgetTabVisibilityDropdownContent';
 import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
 import { useTranslatedVisibilityLabel } from '@/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel';
+import { conditionalAvailabilityToOptionId } from '@/side-panel/pages/page-layout/utils/conditionalAvailabilityToOptionId';
 import { getTabSettingsPlacementItems } from '@/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems';
-import { getWidgetVisibilityOptionId } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityOptionId';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
@@ -123,7 +123,9 @@ export const SingleWidgetTabSettingsContent = ({
               >
                 <SingleWidgetTabVisibilityDropdownContent
                   widgetId={singleWidget.id}
-                  currentOptionId={getWidgetVisibilityOptionId(singleWidget)}
+                  currentOptionId={conditionalAvailabilityToOptionId(
+                    singleWidget.conditionalAvailability,
+                  )}
                   pageLayoutId={pageLayoutId}
                 />
               </DropdownContent>

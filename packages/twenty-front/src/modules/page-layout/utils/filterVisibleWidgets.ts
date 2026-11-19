@@ -1,6 +1,7 @@
+import { evaluateConditionalAvailabilityNode } from 'twenty-shared/utils';
+
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
-import { evaluateWidgetVisibility } from '@/page-layout/utils/evaluateWidgetVisibility';
 
 type FilterVisibleWidgetsParams = {
   widgets: PageLayoutTab['widgets'];
@@ -12,11 +13,8 @@ export const filterVisibleWidgets = ({
   context,
 }: FilterVisibleWidgetsParams): PageLayoutTab['widgets'] => {
   return widgets.filter((widget) =>
-    evaluateWidgetVisibility({
-      conditionalAvailabilityExpression:
-        widget.conditionalAvailabilityExpression,
-      conditionalDisplay: widget.conditionalDisplay,
-      conditionalAvailability: widget.conditionalAvailability,
+    evaluateConditionalAvailabilityNode({
+      node: widget.conditionalAvailability,
       context,
     }),
   );

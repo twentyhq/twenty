@@ -11,10 +11,13 @@ import {
 
 export type PageLayoutWidget = Omit<
   PageLayoutWidgetGenerated,
-  'objectMetadataId' | 'configuration' | 'conditionalAvailability'
+  | 'objectMetadataId'
+  | 'configuration'
+  | 'conditionalAvailability'
+  | 'conditionalAvailabilityExpression'
+  | 'conditionalDisplay'
 > & {
   objectMetadataId?: Nullable<string>;
   configuration: WidgetConfiguration | FieldsConfiguration | FieldConfiguration;
-  conditionalAvailabilityExpression?: Nullable<string>;
   conditionalAvailability?: ConditionalAvailabilityNode | null;
 };

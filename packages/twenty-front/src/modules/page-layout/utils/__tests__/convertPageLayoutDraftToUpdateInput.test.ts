@@ -73,15 +73,14 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     expect(result.tabs[0].widgets[0].id).toBe('w1');
   });
 
-  it('should send the visibility rules the draft holds', () => {
-    const conditionalDisplay = { '===': [{ var: 'device' }, 'MOBILE'] };
+  it('should send the visibility rule the draft holds', () => {
     const conditionalAvailability: ConditionalAvailabilityNode = {
       type: 'PATH',
       path: 'featureFlags.A',
     };
     const draft = makeDraft([
       makeTab('tab-1', [
-        makeWidget({ id: 'w1', conditionalDisplay }),
+        makeWidget({ id: 'w1' }),
         makeWidget({ id: 'w2', conditionalAvailability }),
       ]),
     ]);
@@ -89,14 +88,10 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     const [firstWidget, secondWidget] =
       convertPageLayoutDraftToUpdateInput(draft).tabs[0].widgets;
 
-    expect(firstWidget).toMatchObject({
-      conditionalDisplay,
-      conditionalAvailability: null,
-    });
-    expect(secondWidget).toMatchObject({
-      conditionalDisplay: null,
+    expect(firstWidget.conditionalAvailability).toBeNull();
+    expect(secondWidget.conditionalAvailability).toEqual(
       conditionalAvailability,
-    });
+    );
   });
 
   it('should handle multiple widget types', () => {

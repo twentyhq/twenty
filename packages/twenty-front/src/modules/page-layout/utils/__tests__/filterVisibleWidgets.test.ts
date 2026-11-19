@@ -1,5 +1,9 @@
+import { type ConditionalAvailabilityNode } from 'twenty-shared/types';
+
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
+import { CONDITIONAL_AVAILABILITY_DEVICE_DESKTOP } from '@/side-panel/pages/page-layout/constants/ConditionalAvailabilityDeviceDesktop';
+import { CONDITIONAL_AVAILABILITY_DEVICE_MOBILE } from '@/side-panel/pages/page-layout/constants/ConditionalAvailabilityDeviceMobile';
 import {
   PageLayoutTabLayoutMode,
   WidgetConfigurationType,
@@ -9,7 +13,7 @@ import {
 describe('filterVisibleWidgets', () => {
   const createMockWidget = (
     id: string,
-    conditionalDisplay?: any,
+    conditionalAvailability?: ConditionalAvailabilityNode,
   ): PageLayoutTab['widgets'][0] => ({
     isSystemSideEffect: false,
     universalIdentifier: 'universal-identifier-mock',
@@ -37,10 +41,10 @@ describe('filterVisibleWidgets', () => {
     createdAt: '2024-01-01T00:00:00.000Z',
     updatedAt: '2024-01-01T00:00:00.000Z',
     deletedAt: null,
-    conditionalDisplay,
+    conditionalAvailability,
   });
 
-  it('should return all widgets when no conditionalDisplay is set', () => {
+  it('should return all widgets when no rule is set', () => {
     const widgets = [
       createMockWidget('widget-1'),
       createMockWidget('widget-2'),
@@ -59,12 +63,8 @@ describe('filterVisibleWidgets', () => {
   it('should filter out widgets that should be hidden on MOBILE', () => {
     const widgets = [
       createMockWidget('widget-1'),
-      createMockWidget('widget-2', {
-        and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-      }),
-      createMockWidget('widget-3', {
-        and: [{ '===': [{ var: 'device' }, 'DESKTOP'] }],
-      }),
+      createMockWidget('widget-2', CONDITIONAL_AVAILABILITY_DEVICE_MOBILE),
+      createMockWidget('widget-3', CONDITIONAL_AVAILABILITY_DEVICE_DESKTOP),
     ];
 
     const result = filterVisibleWidgets({
@@ -79,12 +79,8 @@ describe('filterVisibleWidgets', () => {
   it('should filter out widgets that should be hidden on DESKTOP', () => {
     const widgets = [
       createMockWidget('widget-1'),
-      createMockWidget('widget-2', {
-        and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-      }),
-      createMockWidget('widget-3', {
-        and: [{ '===': [{ var: 'device' }, 'DESKTOP'] }],
-      }),
+      createMockWidget('widget-2', CONDITIONAL_AVAILABILITY_DEVICE_MOBILE),
+      createMockWidget('widget-3', CONDITIONAL_AVAILABILITY_DEVICE_DESKTOP),
     ];
 
     const result = filterVisibleWidgets({
@@ -109,9 +105,7 @@ describe('filterVisibleWidgets', () => {
   it('should not mutate the original widgets array', () => {
     const widgets = [
       createMockWidget('widget-1'),
-      createMockWidget('widget-2', {
-        and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-      }),
+      createMockWidget('widget-2', CONDITIONAL_AVAILABILITY_DEVICE_MOBILE),
     ];
     const originalLength = widgets.length;
 

@@ -24,14 +24,10 @@ export const useUpdateCurrentWidgetConfig = (pageLayoutIdFromProps: string) => {
     ({
       objectMetadataId,
       configToUpdate,
-      conditionalAvailabilityExpression,
-      conditionalDisplay,
       conditionalAvailability,
     }: {
       objectMetadataId?: string | null;
       configToUpdate?: Partial<PageLayoutWidget['configuration']>;
-      conditionalAvailabilityExpression?: string | null;
-      conditionalDisplay?: PageLayoutWidget['conditionalDisplay'];
       conditionalAvailability?: ConditionalAvailabilityNode | null;
     }) => {
       const prev = store.get(pageLayoutDraft);
@@ -48,12 +44,6 @@ export const useUpdateCurrentWidgetConfig = (pageLayoutIdFromProps: string) => {
                     ...(widget.configuration ?? {}),
                     ...configToUpdate,
                   } as PageLayoutWidget['configuration'],
-                  ...(conditionalAvailabilityExpression !== undefined
-                    ? { conditionalAvailabilityExpression }
-                    : {}),
-                  ...(conditionalDisplay !== undefined
-                    ? { conditionalDisplay }
-                    : {}),
                   ...(conditionalAvailability !== undefined
                     ? { conditionalAvailability }
                     : {}),

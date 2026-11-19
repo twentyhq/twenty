@@ -1,6 +1,10 @@
+import { type ConditionalAvailabilityNode } from 'twenty-shared/types';
+
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
+import { CONDITIONAL_AVAILABILITY_DEVICE_DESKTOP } from '@/side-panel/pages/page-layout/constants/ConditionalAvailabilityDeviceDesktop';
+import { CONDITIONAL_AVAILABILITY_DEVICE_MOBILE } from '@/side-panel/pages/page-layout/constants/ConditionalAvailabilityDeviceMobile';
 import {
   PageLayoutTabLayoutMode,
   WidgetConfigurationType,
@@ -10,7 +14,7 @@ import {
 describe('getTabsWithVisibleWidgets', () => {
   const createMockWidget = (
     id: string,
-    conditionalDisplay?: any,
+    conditionalAvailability?: ConditionalAvailabilityNode,
   ): PageLayoutTab['widgets'][0] => ({
     isSystemSideEffect: false,
     universalIdentifier: 'universal-identifier-mock',
@@ -38,7 +42,7 @@ describe('getTabsWithVisibleWidgets', () => {
     createdAt: '2024-01-01T00:00:00.000Z',
     updatedAt: '2024-01-01T00:00:00.000Z',
     deletedAt: null,
-    conditionalDisplay,
+    conditionalAvailability,
   });
 
   const createMockTab = (
@@ -65,9 +69,7 @@ describe('getTabsWithVisibleWidgets', () => {
       const tabs = [
         createMockTab('tab-1', [createMockWidget('widget-1')]),
         createMockTab('tab-2', [
-          createMockWidget('widget-2', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-2', CONDITIONAL_AVAILABILITY_DEVICE_MOBILE),
         ]),
         createMockTab('tab-3', [createMockWidget('widget-3')]),
       ];
@@ -92,9 +94,7 @@ describe('getTabsWithVisibleWidgets', () => {
       const tabs = [
         createMockTab('tab-1', [
           createMockWidget('widget-1'),
-          createMockWidget('widget-2', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-2', CONDITIONAL_AVAILABILITY_DEVICE_MOBILE),
         ]),
       ];
 
@@ -115,14 +115,10 @@ describe('getTabsWithVisibleWidgets', () => {
     it('should return first tab when all tabs have no visible widgets', () => {
       const tabs = [
         createMockTab('tab-1', [
-          createMockWidget('widget-1', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-1', CONDITIONAL_AVAILABILITY_DEVICE_MOBILE),
         ]),
         createMockTab('tab-2', [
-          createMockWidget('widget-2', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-2', CONDITIONAL_AVAILABILITY_DEVICE_MOBILE),
         ]),
       ];
 
@@ -183,9 +179,7 @@ describe('getTabsWithVisibleWidgets', () => {
       const tabs = [
         createMockTab('tab-1', [createMockWidget('widget-1')]),
         createMockTab('tab-2', [
-          createMockWidget('widget-2', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-2', CONDITIONAL_AVAILABILITY_DEVICE_MOBILE),
         ]),
         createMockTab('tab-3', [createMockWidget('widget-3')]),
       ];
@@ -207,9 +201,7 @@ describe('getTabsWithVisibleWidgets', () => {
       const tabs = [
         createMockTab('tab-1', [
           createMockWidget('widget-1'),
-          createMockWidget('widget-2', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-2', CONDITIONAL_AVAILABILITY_DEVICE_MOBILE),
         ]),
       ];
 
@@ -246,14 +238,10 @@ describe('getTabsWithVisibleWidgets', () => {
     it('should keep all widgets even when they would be hidden in read mode', () => {
       const tabs = [
         createMockTab('tab-1', [
-          createMockWidget('widget-1', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-1', CONDITIONAL_AVAILABILITY_DEVICE_MOBILE),
         ]),
         createMockTab('tab-2', [
-          createMockWidget('widget-2', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-2', CONDITIONAL_AVAILABILITY_DEVICE_MOBILE),
         ]),
       ];
 
@@ -289,9 +277,7 @@ describe('getTabsWithVisibleWidgets', () => {
     it('should not mutate the original tabs array', () => {
       const tabs = [
         createMockTab('tab-1', [
-          createMockWidget('widget-1', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-1', CONDITIONAL_AVAILABILITY_DEVICE_MOBILE),
         ]),
       ];
       const originalLength = tabs.length;
@@ -315,23 +301,15 @@ describe('getTabsWithVisibleWidgets', () => {
         createMockTab('tab-1', [
           createMockWidget('widget-1'),
           createMockWidget('widget-2'),
-          createMockWidget('widget-3', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-3', CONDITIONAL_AVAILABILITY_DEVICE_MOBILE),
         ]),
         createMockTab('tab-2', [
-          createMockWidget('widget-4', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
-          createMockWidget('widget-5', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
+          createMockWidget('widget-4', CONDITIONAL_AVAILABILITY_DEVICE_MOBILE),
+          createMockWidget('widget-5', CONDITIONAL_AVAILABILITY_DEVICE_MOBILE),
         ]),
         createMockTab('tab-3', [
           createMockWidget('widget-6'),
-          createMockWidget('widget-7', {
-            and: [{ '===': [{ var: 'device' }, 'DESKTOP'] }],
-          }),
+          createMockWidget('widget-7', CONDITIONAL_AVAILABILITY_DEVICE_DESKTOP),
         ]),
       ];
 
@@ -353,21 +331,22 @@ describe('getTabsWithVisibleWidgets', () => {
   });
 
   describe('with record-gated widgets', () => {
-    const createRecordGatedWidget = (
-      id: string,
-      conditionalAvailabilityExpression: string,
-    ): PageLayoutTab['widgets'][0] => ({
-      ...createMockWidget(id),
-      conditionalAvailabilityExpression,
+    const buildDraftStatusRule = (
+      functionName: string,
+    ): ConditionalAvailabilityNode => ({
+      type: 'CALL',
+      functionName,
+      arguments: [
+        { type: 'PATH', path: 'selectedRecords' },
+        { type: 'LITERAL', value: 'status' },
+        { type: 'LITERAL', value: 'DRAFT' },
+      ],
     });
 
     // `noneEquals`, not `not everyEquals`: they differ on the empty selection held until the record loads.
     const sentOnlyTab = () =>
       createMockTab('sent-only', [
-        createRecordGatedWidget(
-          'widget-1',
-          'noneEquals(selectedRecords, "status", "DRAFT")',
-        ),
+        createMockWidget('widget-1', buildDraftStatusRule('noneEquals')),
       ]);
 
     it('should drop a tab whose widgets are all gated out by the selected record', () => {
@@ -419,10 +398,7 @@ describe('getTabsWithVisibleWidgets', () => {
       const result = getTabsWithVisibleWidgets({
         tabs: [
           createMockTab('draft-only', [
-            createRecordGatedWidget(
-              'widget-1',
-              'everyEquals(selectedRecords, "status", "DRAFT")',
-            ),
+            createMockWidget('widget-1', buildDraftStatusRule('everyEquals')),
           ]),
           createMockTab('always', [createMockWidget('w')]),
         ],

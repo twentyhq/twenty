@@ -1,11 +1,13 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useVisibilityLabels } from '@/side-panel/pages/page-layout/hooks/useVisibilityLabels';
-import { getWidgetVisibilityOptionId } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityOptionId';
+import { conditionalAvailabilityToOptionId } from '@/side-panel/pages/page-layout/utils/conditionalAvailabilityToOptionId';
 
 export const useTranslatedVisibilityLabel = (
   widget: PageLayoutWidget | undefined,
 ): string => {
   const visibilityLabels = useVisibilityLabels();
 
-  return visibilityLabels[getWidgetVisibilityOptionId(widget)];
+  return visibilityLabels[
+    conditionalAvailabilityToOptionId(widget?.conditionalAvailability)
+  ];
 };
