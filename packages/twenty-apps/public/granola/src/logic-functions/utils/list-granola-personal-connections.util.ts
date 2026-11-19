@@ -1,10 +1,9 @@
 import { listConnections } from 'twenty-sdk/logic-function';
-import { isDefined } from 'twenty-sdk/utils';
 
 import { GRANOLA_PERSONAL_CONNECTION_PROVIDER_NAME } from 'src/constants/granola-personal-connection.constant';
 
 export const listGranolaPersonalConnections = async (
-  userWorkspaceId?: string,
+  userWorkspaceId: string,
 ) => {
   const connections = await listConnections({
     providerName: GRANOLA_PERSONAL_CONNECTION_PROVIDER_NAME,
@@ -16,7 +15,6 @@ export const listGranolaPersonalConnections = async (
     (connection) =>
       connection.providerName === GRANOLA_PERSONAL_CONNECTION_PROVIDER_NAME &&
       connection.scope === 'USER' &&
-      (!isDefined(userWorkspaceId) ||
-        connection.userWorkspaceId === userWorkspaceId),
+      connection.userWorkspaceId === userWorkspaceId,
   );
 };
