@@ -3,10 +3,12 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   AgentChatThreadConversationType,
+  getAgentChatThreadDisplayLabel,
   getAgentChatWebPushNotificationTag,
 } from 'twenty-shared/ai';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 
 import { type WebPushNotification } from 'src/engine/core-modules/web-push/types/web-push-notification.type';
 import { getAgentChatPreviewPlainText } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-preview-plain-text.util';
@@ -33,7 +35,10 @@ export const buildAgentChatWebPushNotification = ({
   >;
   recipientWorkspaceMemberId: string;
   workspaceMemberById: Partial<
-    Record<string, Pick<WorkspaceMemberWorkspaceEntity, 'name' | 'userEmail'>>
+    Record<
+      string,
+      Pick<WorkspaceMemberWorkspaceEntity, 'id' | 'name' | 'userEmail'>
+    >
   >;
   isPreviewEnabled: boolean;
 }): Omit<WebPushNotification, 'renotify'> => {
@@ -46,49 +51,32 @@ export const buildAgentChatWebPushNotification = ({
   }
 
   const formerMemberName = i18n._(msg`Former member`);
-
-  const getWorkspaceMemberName = (workspaceMemberId: string | null): string => {
-    const workspaceMember = isDefined(workspaceMemberId)
-      ? workspaceMemberById[workspaceMemberId]
-      : undefined;
-
-    if (!isDefined(workspaceMember)) {
-      return formerMemberName;
-    }
-
-    const fullName =
-      `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`.trim();
-
-    return isNonEmptyString(fullName)
-      ? fullName
-      : (workspaceMember.userEmail ?? formerMemberName);
-  };
-
   const isDirectMessage =
     thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE;
-  const directMessagePeerWorkspaceMemberId =
-    thread.directMessageFirstWorkspaceMemberId === recipientWorkspaceMemberId
-      ? thread.directMessageSecondWorkspaceMemberId
-      : thread.directMessageFirstWorkspaceMemberId;
-  const chatLabel = isNonEmptyString(thread.title)
-    ? thread.title
-    : i18n._(msg`New chat`);
-  const threadLabel = isDirectMessage
-    ? getWorkspaceMemberName(directMessagePeerWorkspaceMemberId)
-    : chatLabel;
+  const threadLabel = getAgentChatThreadDisplayLabel({
+    thread,
+    currentWorkspaceMemberId: recipientWorkspaceMemberId,
+    workspaceMembers: Object.values(workspaceMemberById).filter(isDefined),
+    fallbackLabel: i18n._(msg`New chat`),
+    formerMemberLabel: formerMemberName,
+  });
   const senderWorkspaceMemberId = thread.lastMessageSenderWorkspaceMemberId;
-  const senderName = isDefined(senderWorkspaceMemberId)
-    ? getWorkspaceMemberName(senderWorkspaceMemberId)
-    : null;
+  const senderWorkspaceMember = isDefined(senderWorkspaceMemberId)
+    ? workspaceMemberById[senderWorkspaceMemberId]
+    : undefined;
+  const senderName =
+    (isDefined(senderWorkspaceMember)
+      ? getWorkspaceMemberNameOrEmail(senderWorkspaceMember)
+      : null) ?? formerMemberName;
   const previewText = getAgentChatPreviewPlainText(
     thread.lastMessageText ?? '',
   );
 
   return {
     title:
-      isDefined(senderName) && !isDirectMessage
-        ? i18n._(msg`${senderName} in ${threadLabel}`)
-        : threadLabel,
+      isDirectMessage || !isDefined(senderWorkspaceMemberId)
+        ? threadLabel
+        : i18n._(msg`${senderName} in ${threadLabel}`),
     body: isNonEmptyString(previewText) ? previewText : newMessageLabel,
     url,
     tag,
