@@ -5,13 +5,18 @@ import { findOneApplication } from 'test/integration/metadata/suites/application
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
+import { createOneViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-view-field.util';
 import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
 import { findViews } from 'test/integration/metadata/suites/view/utils/find-views.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import type { FieldManifest } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType, ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
+
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const APP_A_ID = uuidv4();
 const APP_A_ROLE_ID = uuidv4();
@@ -35,6 +40,61 @@ const appBPersonField: FieldManifest = {
   description: 'Custom field App B owns on the standard Person object',
   icon: 'IconStar',
   objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
+};
+
+const appBManifest = buildBaseManifest({
+  appId: APP_B_ID,
+  roleId: APP_B_ROLE_ID,
+  overrides: {
+    roles: [
+      {
+        universalIdentifier: APP_B_ROLE_ID,
+        label: 'App B Role',
+        description: 'Role owned by App B',
+      },
+    ],
+    fields: [appBPersonField],
+    viewFields: [
+      {
+        universalIdentifier: APP_B_VIEW_FIELD_ID,
+        viewUniversalIdentifier: APP_A_VIEW_ID,
+        fieldMetadataUniversalIdentifier: APP_B_FIELD_ID,
+        position: 0,
+        isVisible: true,
+        size: 150,
+      },
+    ],
+  },
+});
+
+const findAppAViewIdAndAppBFieldId = async () => {
+  const objects = await findManyObjectMetadataWithIndexes({
+    expectToFail: false,
+  });
+
+  const personObject = objects.find(
+    (objectMetadata) =>
+      objectMetadata.universalIdentifier === PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
+  );
+
+  const { data: viewsData } = await findViews({
+    objectMetadataId: personObject?.id,
+    expectToFail: false,
+  });
+
+  const appAViewId = viewsData?.getViews.find(
+    (view) => view.name === APP_A_VIEW_NAME,
+  )?.id;
+
+  const appBFieldId = personObject?.fieldsList.find(
+    (field) => field.universalIdentifier === APP_B_FIELD_ID,
+  )?.id;
+
+  if (!isDefined(appAViewId) || !isDefined(appBFieldId)) {
+    throw new Error('App A view or App B field not found');
+  }
+
+  return { appAViewId, appBFieldId };
 };
 
 describe('Sync application should suggest, not create, a view field on another app view', () => {
@@ -93,30 +153,7 @@ describe('Sync application should suggest, not create, a view field on another a
 
   it('suggests a standalone view field from App B targeting an App A view without creating it', async () => {
     const { errors } = await syncApplication({
-      manifest: buildBaseManifest({
-        appId: APP_B_ID,
-        roleId: APP_B_ROLE_ID,
-        overrides: {
-          roles: [
-            {
-              universalIdentifier: APP_B_ROLE_ID,
-              label: 'App B Role',
-              description: 'Role owned by App B',
-            },
-          ],
-          fields: [appBPersonField],
-          viewFields: [
-            {
-              universalIdentifier: APP_B_VIEW_FIELD_ID,
-              viewUniversalIdentifier: APP_A_VIEW_ID,
-              fieldMetadataUniversalIdentifier: APP_B_FIELD_ID,
-              position: 0,
-              isVisible: true,
-              size: 150,
-            },
-          ],
-        },
-      }),
+      manifest: appBManifest,
       expectToFail: false,
     });
 
@@ -178,5 +215,60 @@ describe('Sync application should suggest, not create, a view field on another a
         fieldMetadataId: appBField?.id,
       }),
     ]);
+  }, 60000);
+
+  it('keeps a view field App B already owns on an App A view when App B syncs again', async () => {
+    const { appAViewId, appBFieldId } = await findAppAViewIdAndAppBFieldId();
+
+    const { data: createdViewFieldData } = await createOneViewField({
+      input: { viewId: appAViewId, fieldMetadataId: appBFieldId },
+      expectToFail: false,
+    });
+
+    const legacyViewFieldId = createdViewFieldData.createViewField.id;
+
+    await globalThis.testDataSource.query(
+      `UPDATE core."viewField"
+       SET "universalIdentifier" = $1,
+         "size" = 150,
+         "overrides" = '{"size": 321}'::jsonb,
+         "applicationId" = (
+           SELECT id FROM core."application"
+           WHERE "universalIdentifier" = $2 AND "workspaceId" = $3
+         )
+       WHERE id = $4`,
+      [
+        APP_B_VIEW_FIELD_ID,
+        APP_B_ID,
+        SEED_APPLE_WORKSPACE_ID,
+        legacyViewFieldId,
+      ],
+    );
+
+    await getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
+      'flatViewFieldMaps',
+      'flatViewMaps',
+      'flatFieldMetadataMaps',
+    ]);
+
+    const { errors } = await syncApplication({
+      manifest: appBManifest,
+      expectToFail: false,
+    });
+
+    expect(isDefined(errors)).toBe(false);
+
+    const { data: viewFieldsData } = await findViewFields({
+      viewId: appAViewId,
+      expectToFail: false,
+    });
+
+    expect(viewFieldsData?.getViewFields).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: legacyViewFieldId, size: 321 }),
+      ]),
+    );
   }, 60000);
 });

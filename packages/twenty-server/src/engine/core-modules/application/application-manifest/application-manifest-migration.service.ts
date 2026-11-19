@@ -32,7 +32,7 @@ import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type ApplicationManifestSyncResult } from 'src/engine/core-modules/application/application-manifest/types/application-manifest-sync-result.type';
-import { partitionStandaloneViewFieldManifests } from 'src/engine/core-modules/application/application-manifest/utils/partition-standalone-view-field-manifests.util';
+import { selectSyncedStandaloneViewFieldManifests } from 'src/engine/core-modules/application/application-manifest/utils/select-synced-standalone-view-field-manifests.util';
 
 @Injectable()
 export class ApplicationManifestMigrationService {
@@ -226,16 +226,16 @@ export class ApplicationManifestMigrationService {
       workspaceCustomFlatApplication.id,
     ].includes(ownerFlatApplication.id);
 
-    // A third-party app only suggests view fields on views it does not own: users add them through the AI chat.
     const manifestToCompute = isEngineOwnedApplication
       ? manifest
       : {
           ...manifest,
-          viewFields: partitionStandaloneViewFieldManifests({
+          viewFields: selectSyncedStandaloneViewFieldManifests({
             manifest,
             applicationUniversalIdentifier:
               ownerFlatApplication.universalIdentifier,
-          }).ownViewFieldManifests,
+            fromFlatViewFieldMaps: fromAllFlatEntityMaps.flatViewFieldMaps,
+          }),
         };
 
     const toAllUniversalFlatEntityMaps =

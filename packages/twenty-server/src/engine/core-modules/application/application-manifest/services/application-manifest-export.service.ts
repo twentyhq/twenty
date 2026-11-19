@@ -300,14 +300,20 @@ export class ApplicationManifestExportService {
       views,
       viewFields: [
         ...viewFields,
-        // Suggestions are never synced as view fields, so only the registration manifest holds them.
+        // Suggestions that were not synced as view fields only live in the registration manifest.
         ...(flatApplication.id === workspaceCustomFlatApplication.id
           ? []
           : partitionStandaloneViewFieldManifests({
               manifest: applicationRegistration.manifest ?? {},
               applicationUniversalIdentifier:
                 flatApplication.universalIdentifier,
-            }).suggestedViewFieldManifests),
+            }).suggestedViewFieldManifests.filter(
+              ({ universalIdentifier }) =>
+                !viewFields.some(
+                  (viewField) =>
+                    viewField.universalIdentifier === universalIdentifier,
+                ),
+            )),
       ],
       navigationMenuItems,
       pageLayouts,
