@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 export const setAiChatDraft = ({
   drafts,
   threadId,
@@ -7,7 +9,7 @@ export const setAiChatDraft = ({
   threadId: string;
   draft: string;
 }): Record<string, string> => {
-  if (draft !== '') {
+  if (isNonEmptyString(draft)) {
     return { ...drafts, [threadId]: draft };
   }
 

@@ -1,9 +1,13 @@
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
+
 import { isAiChatThreadRecordComplete } from '@/ai-chat/threads/utils/isAiChatThreadRecordComplete';
 
 describe('isAiChatThreadRecordComplete', () => {
   it('returns true once the thread carries its conversation type', () => {
     expect(
-      isAiChatThreadRecordComplete({ conversationType: 'DIRECT_MESSAGE' }),
+      isAiChatThreadRecordComplete({
+        conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
+      }),
     ).toBe(true);
   });
 
