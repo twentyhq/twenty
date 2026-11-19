@@ -55,6 +55,10 @@ export const reconstructAgentsManifest = ({
     flatAgent: FlatAgent;
     flatRoleTargets: FlatRoleTarget[];
   }): { manifest: AgentManifest } | { reason: string } => {
+    if (flatAgent.isPrivate) {
+      return { reason: 'private agent' };
+    }
+
     if (flatRoleTargets.length > 1) {
       return { reason: 'agent with more than one role' };
     }

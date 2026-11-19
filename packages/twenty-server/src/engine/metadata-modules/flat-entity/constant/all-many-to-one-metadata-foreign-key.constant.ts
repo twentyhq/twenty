@@ -38,6 +38,7 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
   agent: {
     workspace: null,
     application: null,
+    createdBy: null,
   },
   skill: {
     workspace: null,

@@ -5,6 +5,14 @@ import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-m
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 export const STANDARD_NAVIGATION_MENU_ITEMS = {
+  workspaceSection: {
+    universalIdentifier: '20202020-b00e-4b0e-8b0e-c0aba11c000e',
+    type: NavigationMenuItemType.SECTION,
+    name: i18nLabel(
+      msg({ message: `Workspace`, context: 'navigationMenuItem.name' }),
+    ),
+    position: 0,
+  },
   allCompanies: {
     universalIdentifier: '20202020-b001-4b01-8b01-c0aba11c0001',
     type: NavigationMenuItemType.OBJECT,
