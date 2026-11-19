@@ -1,4 +1,12 @@
-import { mkdirSync, renameSync, rmSync, watch, writeFileSync } from 'node:fs';
+import {
+  mkdirSync,
+  readdirSync,
+  realpathSync,
+  renameSync,
+  rmSync,
+  watch,
+  writeFileSync,
+} from 'node:fs';
 import type * as nodeFileSystem from 'node:fs';
 import {
   mkdir,
@@ -22,6 +30,8 @@ vi.mock('node:fs', async (importOriginal) => {
   return {
     ...actual,
     watch: vi.fn(actual.watch),
+    realpathSync: vi.fn(actual.realpathSync),
+    readdirSync: vi.fn(actual.readdirSync),
   };
 });
 
@@ -38,7 +48,7 @@ const cleanups: (() => void | Promise<void>)[] = [];
 let root: string;
 
 beforeEach(async () => {
-  vi.clearAllMocks();
+  vi.resetAllMocks();
   root = await realpath(await mkdtemp(join(tmpdir(), 'twenty-native-watch-')));
   cleanups.push(() => rm(root, { recursive: true, force: true }));
 });
@@ -49,7 +59,13 @@ afterEach(async () => {
   }
 });
 
-const observe = (path: string, kind: 'file' | 'directory' = 'file') => {
+const observe = ({
+  path,
+  kind = 'file',
+}: {
+  path: string;
+  kind?: 'file' | 'directory';
+}) => {
   const onChange = vi.fn();
   const onError = vi.fn();
   const close = watchExternalInput({
@@ -67,7 +83,7 @@ const waitForChange = (onChange: () => void) =>
 it('detects replacement before native event registration settles', async () => {
   const file = join(root, 'helper.ts');
   writeFileSync(file, 'initial');
-  const { onChange, onError } = observe(file);
+  const { onChange, onError } = observe({ path: file });
   writeFileSync(`${file}.tmp`, 'replacement');
   renameSync(`${file}.tmp`, file);
 
@@ -79,16 +95,17 @@ it('detects replacement before native event registration settles', async () => {
   expect(onError).not.toHaveBeenCalled();
 });
 
-it('reattaches when an empty directory is replaced before native registration settles', async () => {
+it('keeps watching file creation when a directory is replaced before native registration settles', async () => {
   const directory = join(root, 'linked');
   mkdirSync(directory);
-  const { onChange, onError } = observe(directory, 'directory');
+  const { onChange, onError } = observe({ path: directory, kind: 'directory' });
   rmSync(directory, { recursive: true });
   mkdirSync(directory);
+  writeFileSync(join(directory, 'new.ts'), 'created');
 
   await waitForChange(onChange);
   onChange.mockClear();
-  await writeFile(join(directory, 'new.ts'), 'created');
+  await writeFile(join(directory, 'second.ts'), 'created later');
   await waitForChange(onChange);
   expect(setInterval).not.toHaveBeenCalled();
   expect(onError).not.toHaveBeenCalled();
@@ -97,7 +114,7 @@ it('reattaches when an empty directory is replaced before native registration se
 it('uses native events without polling and keeps observing after repeated atomic saves', async () => {
   const file = join(root, 'helper.ts');
   await writeFile(file, 'initial');
-  const { close, onChange, onError } = observe(file);
+  const { close, onChange, onError } = observe({ path: file });
 
   for (let revision = 0; revision < 3; revision++) {
     onChange.mockClear();
@@ -121,7 +138,7 @@ it('uses native events without polling and keeps observing after repeated atomic
 it('polls a deleted file only until it can attach native events again', async () => {
   const file = join(root, 'helper.ts');
   await writeFile(file, 'initial');
-  const { onChange, onError } = observe(file);
+  const { onChange, onError } = observe({ path: file });
   expect(setInterval).not.toHaveBeenCalled();
 
   await rm(file);
@@ -153,7 +170,7 @@ it.each(['missing', 'file'])(
     if (parentState === 'file') {
       await writeFile(parent, 'not a directory yet');
     }
-    const { onChange, onError } = observe(file);
+    const { onChange, onError } = observe({ path: file });
     expect(setInterval).toHaveBeenCalledOnce();
 
     await rm(parent, { force: true });
@@ -173,7 +190,7 @@ it.each(['missing', 'file'])(
 it('recovers from the native EPERM event for a deleted directory', async () => {
   const directory = join(root, 'linked');
   mkdirSync(directory);
-  const { onChange, onError } = observe(directory, 'directory');
+  const { onChange, onError } = observe({ path: directory, kind: 'directory' });
   const nativeWatcher = vi.mocked(watch).mock.results[0].value;
 
   rmSync(directory, { recursive: true });
@@ -198,7 +215,7 @@ it('reports native watcher resource failures instead of silently enabling pollin
     throw Object.assign(new Error('watch limit reached'), { code: 'ENOSPC' });
   });
 
-  const { onError } = observe(file);
+  const { onError } = observe({ path: file });
   expect(onError).toHaveBeenCalledWith(
     expect.objectContaining({ message: 'watch limit reached' }),
   );
@@ -207,7 +224,7 @@ it('reports native watcher resource failures instead of silently enabling pollin
 
 it('stops recovery checks when closed before the missing file appears', async () => {
   const file = join(root, 'missing.ts');
-  const { close, onChange } = observe(file);
+  const { close, onChange } = observe({ path: file });
   expect(setInterval).toHaveBeenCalledOnce();
   close();
   expect(clearInterval).toHaveBeenCalledWith(
@@ -219,4 +236,52 @@ it('stops recovery checks when closed before the missing file appears', async ()
   await new Promise((resolve) => setTimeout(resolve, 1200));
   expect(onChange).not.toHaveBeenCalled();
   expect(watch).not.toHaveBeenCalled();
+});
+
+it.each(['EACCES', 'ELOOP'])(
+  'reports %s resolving a directory without enumerating or watching it',
+  async (code) => {
+    const directory = join(root, 'linked');
+    await mkdir(directory);
+    const error = Object.assign(new Error('cannot resolve directory'), {
+      code,
+    });
+    vi.mocked(realpathSync).mockImplementation(() => {
+      throw error;
+    });
+
+    const { onError } = observe({ path: directory, kind: 'directory' });
+
+    expect(onError).toHaveBeenCalledWith(
+      expect.objectContaining({ message: 'cannot resolve directory' }),
+    );
+    expect(watch).not.toHaveBeenCalled();
+    expect(readdirSync).not.toHaveBeenCalled();
+    expect(setInterval).not.toHaveBeenCalled();
+  },
+);
+
+it('reports a canonical path error during native refresh and closes observation', async () => {
+  const directory = join(root, 'linked');
+  await mkdir(directory);
+  const { onError } = observe({ path: directory, kind: 'directory' });
+  const nativeWatcher = vi.mocked(watch).mock.results[0].value;
+  const close = vi.spyOn(nativeWatcher, 'close');
+  vi.mocked(realpathSync).mockImplementation(() => {
+    throw Object.assign(new Error('cannot resolve directory'), {
+      code: 'EACCES',
+    });
+  });
+  vi.mocked(watch).mockClear();
+  vi.mocked(readdirSync).mockClear();
+
+  nativeWatcher.emit('change', 'rename', 'linked');
+
+  expect(onError).toHaveBeenCalledWith(
+    expect.objectContaining({ message: 'cannot resolve directory' }),
+  );
+  expect(close).toHaveBeenCalled();
+  expect(watch).not.toHaveBeenCalled();
+  expect(readdirSync).not.toHaveBeenCalled();
+  expect(setInterval).not.toHaveBeenCalled();
 });

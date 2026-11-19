@@ -2,13 +2,18 @@ import { realpathSync } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
 import { parse, resolve } from 'node:path';
 
+import { hasErrorCode } from '@/utils/has-error-code';
 import { isInsideDirectory } from '@/utils/is-inside-directory';
 
 const canonicalPath = (path: string) => {
   try {
     return realpathSync(path);
-  } catch {
-    return resolve(path);
+  } catch (error) {
+    if (hasErrorCode(error, 'ENOENT') || hasErrorCode(error, 'ENOTDIR')) {
+      return resolve(path);
+    }
+
+    throw error;
   }
 };
 

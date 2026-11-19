@@ -83,7 +83,13 @@ const fixture = async () => {
 
   return { root, appPath, watcher, onChange, onError, onWarning };
 };
-const waitForChange = (onChange: () => void, message?: string) =>
+const waitForChange = ({
+  onChange,
+  message,
+}: {
+  onChange: () => void;
+  message?: string;
+}) =>
   vi.waitFor(() => expect(onChange, message).toHaveBeenCalled(), {
     timeout: 3000,
   });
@@ -105,11 +111,11 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
     const { appPath, onChange, onError } = await fixture();
     const source = join(appPath, 'source.ts');
     await writeFile(source, 'first');
-    await waitForChange(onChange);
+    await waitForChange({ onChange });
     onChange.mockClear();
     await writeFile(join(appPath, 'source.tmp'), 'second');
     await rename(join(appPath, 'source.tmp'), source);
-    await waitForChange(onChange);
+    await waitForChange({ onChange });
     onChange.mockClear();
     for (const ignored of ['.twenty', '.git', 'node_modules']) {
       await mkdir(join(appPath, ignored));
@@ -128,17 +134,20 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
     await writeFile(external, 'initial');
     await watcher.update(await collect(external), true);
     await writeFile(external, 'syntax error');
-    await waitForChange(onChange, 'initial external edit');
+    await waitForChange({ onChange, message: 'initial external edit' });
     await watcher.update([], false);
     onChange.mockClear();
     await writeFile(external, 'fixed');
-    await waitForChange(onChange, 'external edit after a failed build');
+    await waitForChange({
+      onChange,
+      message: 'external edit after a failed build',
+    });
     const missing = join(root, 'linked', 'new-folder', 'missing.ts');
     await watcher.update(await collect(missing), false);
     onChange.mockClear();
     await mkdir(join(root, 'linked', 'new-folder'));
     await writeFile(missing, 'created');
-    await waitForChange(onChange, 'missing sibling creation');
+    await waitForChange({ onChange, message: 'missing sibling creation' });
     await watcher.update([], true);
     onChange.mockClear();
     await writeFile(external, 'unrelated now');
@@ -161,7 +170,7 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
     await mkdir(directory);
     await writeFile(external, 'restored');
 
-    await waitForChange(onChange);
+    await waitForChange({ onChange });
   });
 
   it('keeps a shallow watch when the tracked directory and its parent disappear', async () => {
@@ -194,7 +203,7 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
     expect(onChange).not.toHaveBeenCalled();
     await mkdir(parent);
     await mkdir(directory);
-    await waitForChange(onChange);
+    await waitForChange({ onChange });
     expect(onError).not.toHaveBeenCalled();
   });
 
@@ -226,7 +235,7 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
     await new Promise((resolve) => setTimeout(resolve, 1200));
     expect(onChange).not.toHaveBeenCalled();
     await rm(directory, { recursive: true });
-    await waitForChange(onChange);
+    await waitForChange({ onChange });
   });
 
   it('detects a file replaced by a directory before watcher registration', async () => {
@@ -306,20 +315,20 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
 
     await writeFile(join(home, 'helper.tmp'), 'replacement');
     await rename(join(home, 'helper.tmp'), external);
-    await waitForChange(onChange);
+    await waitForChange({ onChange });
     onChange.mockClear();
     await rm(external);
-    await waitForChange(onChange);
+    await waitForChange({ onChange });
     onChange.mockClear();
     await writeFile(external, 'recreated');
-    await waitForChange(onChange);
+    await waitForChange({ onChange });
 
     const missing = join(home, 'missing', 'new.ts');
     await watcher.update(await collect(missing), false);
     onChange.mockClear();
     await mkdir(dirname(missing));
     await writeFile(missing, 'created');
-    await waitForChange(onChange);
+    await waitForChange({ onChange });
     expect(readdirSync).not.toHaveBeenCalled();
 
     await watcher.close();
