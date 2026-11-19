@@ -3,7 +3,7 @@ title: CLI
 description: Autentifică-te într-un spațiu de lucru, explorează datele acestuia și creează aplicații din terminal folosind CLI-ul Twenty.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
+import { PageBanner } from '/snippets/page-banner.mdx';
 
 ## Rularea CLI-ului
 
@@ -124,6 +124,10 @@ npx twenty@latest app dev
 * `app init` scrie un proiect nou din șablon. Nu instalează dependențe și nu contactează un spațiu de lucru.
 * `app apply --create` compilează aplicația, o înregistrează în spațiul de lucru, o instalează și îi sincronizează metadatele.
 * `app dev` monitorizează sursa și sincronizează fiecare compilare reușită.
+
+Fișierele locale externe existente utilizează evenimente native ale sistemului de fișiere. Căile lipsă sau șterse utilizează verificări de recuperare o dată pe secundă până când monitorizarea nativă poate fi reluată. Rădăcinile directoarelor home și temporare, precum și directoarele lor părinte, sunt excluse din observarea automată a directoarelor externe. Dacă `WATCH_SCOPE_LIMITED` apare pentru un import lipsă, corectează importul, apoi editează un fișier al aplicației sau repornește `app dev`.
+
+Rulați `twenty app dev --verbose` pentru a vedea căile monitorizate și excluse după prima încercare de compilare și ori de câte ori acestea se modifică. Adăugați `--format ndjson` pentru evenimente de progres structurate `watch-scope`.
 
 Alte comenzi pentru aplicații:
 

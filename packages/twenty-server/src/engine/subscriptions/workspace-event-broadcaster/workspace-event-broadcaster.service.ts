@@ -69,6 +69,13 @@ export class WorkspaceEventBroadcaster {
           // Events without recipientUserWorkspaceIds are workspace-wide; delivered
           // to every stream. Events with the field are user-scoped; only delivered
           // to streams whose authContext.userWorkspaceId is in the list.
+          if (
+            isDefined(streamUserWorkspaceId) &&
+            event.excludedUserWorkspaceIds?.includes(streamUserWorkspaceId)
+          ) {
+            return false;
+          }
+
           if (!isDefined(event.recipientUserWorkspaceIds)) {
             return true;
           }
