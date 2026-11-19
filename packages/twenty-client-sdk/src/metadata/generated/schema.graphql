@@ -2349,6 +2349,7 @@ input EnqueueJobInput {
 }
 
 input EnqueueJobItemInput {
+  jobConfigKey: String
   jobId: String
   payload: JSON
 }

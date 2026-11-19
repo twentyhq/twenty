@@ -69,6 +69,16 @@ Extract and test:
 - summary count aggregation;
 - error message normalization.
 
+## Job Configs
+
+Pace queued runs that hit a rate-limited API with a job config instead of staggering `delayMs` by hand.
+
+- Declare one per file in `src/job-configs/<key>.job-config.ts`: `defineJobConfig({ universalIdentifier, key, limiter: { max, durationMs } })`.
+- Bind it to a logic function with `jobConfigKeys: ['<key>']`. Every queued run of that function is paced, whatever enqueued it (`enqueueJobs`, cron, database event).
+- Add one to a single job with `enqueueJobs({ jobs: [{ payload, jobConfigKey: '<key>' }] })`, on top of the function's own keys.
+- A key's budget is shared per workspace by every function of the app that uses it. An undeclared key fails the build and `enqueueJobs`.
+- Pacing sets when a run becomes eligible, not exactly when it starts, and retries are not paced again: still handle `429` with `RetryableLogicFunctionError`.
+
 ## Skills And Agents
 
 Skills and agents should describe when they apply, what context they need, and what output is expected.

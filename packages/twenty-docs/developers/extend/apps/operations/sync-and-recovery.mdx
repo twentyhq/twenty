@@ -143,6 +143,7 @@ If dependency installation fails for a new project, the scaffold is kept. Run `y
 - workflows, as `defineWorkflow()` files, with each Code step's source in its own `<workflow-file-name>/<step-name>.code.ts` file beside the workflow. These files contain workspace-authored code, read as text during pull and build rather than executed as app definitions. Workflows are pulled when their stored version is the one the last sync wrote. For the workspace Custom application, it is the active version, whether a sync or the workflow builder published it, and apply publishes a changed definition as a new version, as described in [Workflows](/developers/extend/apps/logic/workflows#workflows-of-the-workspace-custom-application);
 - skills, as `defineSkill()` files;
 - agents, as `defineAgent()` files, with their triggers and the role your app binds them to;
+- job configs, as `defineJobConfig()` files;
 - validation rules, as `defineValidationRule()` files with their expression as a string;
 - published translations, as `locales/<locale>.json` for the strings pull can read back from the pulled metadata and source, and `locales/compiled/<locale>.json` for the rest.
 
