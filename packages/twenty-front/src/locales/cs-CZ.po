@@ -9257,6 +9257,12 @@ msgstr "Přizpůsobte rozložení stránek a strukturu UI"
 msgid "Customize record page"
 msgstr "Přizpůsobit stránku záznamu"
 
+#. js-lingui-id: hxjpaE
+#: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
+msgid "Customize sidebar"
+msgstr ""
+
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Customize the workspace record page"
