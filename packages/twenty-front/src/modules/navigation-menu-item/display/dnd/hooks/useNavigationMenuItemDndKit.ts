@@ -1,4 +1,3 @@
-import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import { isSortable } from '@dnd-kit/react/sortable';
 import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -10,8 +9,8 @@ import type { NavigationMenuItemDropResult } from '@/navigation-menu-item/common
 import type { SortableTargetDestination } from '@/navigation-menu-item/common/types/NavigationMenuItemDndKitSortableTargetDestination';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
-import { extractFolderIdFromDroppableId } from '@/navigation-menu-item/common/utils/extractFolderIdFromDroppableId';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
+import { resolveNavigationMenuItemDroppableId } from '@/navigation-menu-item/common/utils/resolveNavigationMenuItemDroppableId';
 import { useHandleNavigationMenuItemDragAndDrop } from '@/navigation-menu-item/display/dnd/hooks/useHandleNavigationMenuItemDragAndDrop';
 import { resolveDropTarget } from '@/navigation-menu-item/display/dnd/utils/navigationMenuItemDndKitResolveDropTarget';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
@@ -98,22 +97,18 @@ export const useNavigationMenuItemDndKit = (
         return resolved.effectiveDropTargetId;
       }
 
-      const destFolderId = extractFolderIdFromDroppableId(
-        resolved.destination.droppableId,
-        sectionType,
-      );
-      if (
-        isDefined(destFolderId) &&
-        !resolved.destination.droppableId.startsWith(
-          NavigationMenuItemDroppableIds.WORKSPACE_CONTAINER_PREFIX,
-        )
-      ) {
+      const destinationKind = resolveNavigationMenuItemDroppableId({
+        droppableId: resolved.destination.droppableId,
+        navigationMenuItemSection: sectionType,
+        getNavigationMenuItemById: getNavItemById,
+      })?.kind;
+      if (destinationKind === 'folder' || destinationKind === 'folderHeader') {
         return resolved.dropTargetId;
       }
 
       return null;
     },
-    [sectionType, isSourceFolderDrag],
+    [sectionType, isSourceFolderDrag, getNavItemById],
   );
 
   const applyWorkspaceReorder = useCallback(

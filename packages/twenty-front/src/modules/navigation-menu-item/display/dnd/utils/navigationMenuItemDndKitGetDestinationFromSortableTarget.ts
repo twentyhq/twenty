@@ -1,4 +1,3 @@
-import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import { isDefined } from 'twenty-shared/utils';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -8,6 +7,7 @@ import type { DropDestination } from '@/navigation-menu-item/common/types/Naviga
 import type { SortableTargetDestination } from '@/navigation-menu-item/common/types/NavigationMenuItemDndKitSortableTargetDestination';
 import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
+import { resolveNavigationMenuItemDroppableId } from '@/navigation-menu-item/common/utils/resolveNavigationMenuItemDroppableId';
 
 type GetNavItemById = (
   id: string | undefined,
@@ -35,21 +35,23 @@ export const getDestinationFromSortableTarget = (
     isDefined(targetItem) && isNavigationMenuItemFolder(targetItem);
   const dropTargetId = getDndKitDropTargetId(destDroppableId, index);
 
-  const { folderHeaderPrefix, orphanDroppableId } =
+  const { folderHeaderPrefix } =
     NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG[navigationMenuItemSection];
 
-  const isTopLevelOrphanGroup =
-    destDroppableId === orphanDroppableId ||
-    destDroppableId.startsWith(
-      NavigationMenuItemDroppableIds.WORKSPACE_CONTAINER_PREFIX,
-    );
+  const destinationKind = resolveNavigationMenuItemDroppableId({
+    droppableId: destDroppableId,
+    navigationMenuItemSection,
+    getNavigationMenuItemById: getNavItemById,
+  })?.kind;
+  const isRootOrTabOrSectionList =
+    destinationKind === 'root' || destinationKind === 'tabOrSectionList';
 
   const effectiveDropTargetId = isTargetFolder
     ? getDndKitDropTargetId(`${folderHeaderPrefix}${target.id}`, 0)
     : dropTargetId;
 
   const destination: DropDestination =
-    isTargetFolder && isTopLevelOrphanGroup
+    isTargetFolder && isRootOrTabOrSectionList
       ? { droppableId: destDroppableId, index }
       : isTargetFolder
         ? {
