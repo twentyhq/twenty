@@ -309,17 +309,11 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       flatFieldMetadataMaps,
     });
 
-    const viewFromFilter = viewFilters[0]?.view;
-    let viewAnyFieldFilterValue = viewFromFilter?.anyFieldFilterValue;
-
-    if (!isDefined(viewFromFilter)) {
-      const view = await this.viewService.findById(args.viewId, workspaceId);
-
-      viewAnyFieldFilterValue =
-        isDefined(view) && isViewVisibleToUser(view, userWorkspaceId)
-          ? (view.anyFieldFilterValue ?? null)
-          : null;
-    }
+    const view = await this.viewService.findById(args.viewId, workspaceId);
+    const viewAnyFieldFilterValue =
+      isDefined(view) && isViewVisibleToUser(view, userWorkspaceId)
+        ? (view.anyFieldFilterValue ?? null)
+        : null;
 
     const { recordGqlOperationFilter: anyFieldFilter } =
       turnAnyFieldFilterIntoRecordGqlFilter({

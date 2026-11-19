@@ -4,25 +4,27 @@ import { type CommonResponseBody } from 'test/integration/metadata/types/common-
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { type ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
+import { type ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
 
 export const findViewGroups = async ({
   viewId,
   gqlFields,
   expectToFail,
+  token,
 }: {
-  viewId: string;
+  viewId?: string;
   gqlFields?: string;
   expectToFail?: boolean;
+  token?: string;
 }): CommonResponseBody<{
-  getViewGroups: ViewGroupEntity[];
+  getViewGroups: ViewGroupDTO[];
 }> => {
   const graphqlOperation = findViewGroupsQueryFactory({
     viewId,
     gqlFields,
   });
 
-  const response = await makeMetadataApiRequest(graphqlOperation);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
