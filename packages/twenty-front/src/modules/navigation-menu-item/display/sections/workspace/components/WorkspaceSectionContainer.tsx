@@ -53,7 +53,6 @@ export const WorkspaceSectionContainer = ({
   const views = useAtomStateValue(viewsSelector);
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-  // TODO(@thomtrp): remove once IS_CUSTOMIZABLE_SIDEBAR_ENABLED is on for every workspace
   const workspaceSidebarRootContainerId = useWorkspaceSidebarRootContainerId();
   const { topLevelItems: flatItems, folderChildrenById } =
     groupNavigationMenuItemsByContainer({

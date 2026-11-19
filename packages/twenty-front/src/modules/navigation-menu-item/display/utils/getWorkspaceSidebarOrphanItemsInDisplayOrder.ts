@@ -37,7 +37,6 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
   containerId = null,
   shouldIncludeTopLevelItems = false,
 }: GetWorkspaceSidebarOrphanItemsInDisplayOrderArgs): NavigationMenuItem[] => {
-  // TODO(@thomtrp): remove once IS_CUSTOMIZABLE_SIDEBAR_ENABLED is on for every workspace
   const isIncludedTopLevelItem = (item: NavigationMenuItem) =>
     shouldIncludeTopLevelItems && !isDefined(item.parentId);
 

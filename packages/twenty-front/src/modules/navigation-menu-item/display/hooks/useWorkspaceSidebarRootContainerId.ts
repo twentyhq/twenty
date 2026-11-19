@@ -2,7 +2,6 @@ import { useWorkspaceSidebarRootSectionId } from '@/navigation-menu-item/display
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-// TODO(@thomtrp): remove once IS_CUSTOMIZABLE_SIDEBAR_ENABLED is on for every workspace
 export const useWorkspaceSidebarRootContainerId = (): string | null => {
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,

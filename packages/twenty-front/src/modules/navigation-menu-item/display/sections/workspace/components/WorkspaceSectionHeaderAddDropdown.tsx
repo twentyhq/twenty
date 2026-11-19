@@ -10,7 +10,6 @@ type WorkspaceSectionHeaderAddDropdownProps = {
   onOpen: () => void;
 };
 
-// TODO(@thomtrp): remove once IS_CUSTOMIZABLE_SIDEBAR_ENABLED is on for every workspace
 export const WorkspaceSectionHeaderAddDropdown = ({
   onOpen,
 }: WorkspaceSectionHeaderAddDropdownProps) => {
