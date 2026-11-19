@@ -60,15 +60,15 @@ const StandalonePageLayoutPage = lazy(() =>
   })),
 );
 
-const AiChatPage = lazy(() =>
-  import('~/pages/ai-chat/AiChatPage').then((module) => ({
-    default: module.AiChatPage,
+const LegacyAiChatPage = lazy(() =>
+  import('~/pages/legacy-ai-chat/LegacyAiChatPage').then((module) => ({
+    default: module.LegacyAiChatPage,
   })),
 );
 
-const AiChatInboxPage = lazy(() =>
-  import('~/pages/ai-chat/AiChatInboxPage').then((module) => ({
-    default: module.AiChatInboxPage,
+const InboxPage = lazy(() =>
+  import('~/pages/inbox/InboxPage').then((module) => ({
+    default: module.InboxPage,
   })),
 );
 
@@ -195,7 +195,7 @@ export const createWorkspaceRouteObjects = ({
       path: AppPath.AiChat,
       element: (
         <LazyRoute>
-          <AiChatPage />
+          <LegacyAiChatPage />
         </LazyRoute>
       ),
     },
@@ -203,7 +203,7 @@ export const createWorkspaceRouteObjects = ({
       path: AppPath.AiChatInbox,
       element: (
         <LazyRoute>
-          <AiChatInboxPage />
+          <InboxPage />
         </LazyRoute>
       ),
     },

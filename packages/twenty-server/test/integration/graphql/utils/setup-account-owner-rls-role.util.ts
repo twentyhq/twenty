@@ -1,6 +1,6 @@
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
@@ -111,23 +111,26 @@ export const upsertAccountOwnerRlsPredicate = async ({
   value: RowLevelPermissionPredicateValue;
   expectToFail?: boolean;
 }) =>
-  upsertRowLevelPermissionPredicates({
+  upsertRowLevelPermissionRules({
     expectToFail,
     input: {
       roleId: setup.customRoleId,
       objectMetadataId: setup.companyObjectMetadataId,
-      predicates: [
+      rules: [
         {
-          id: predicateId,
-          fieldMetadataId: setup.accountOwnerFieldMetadataId,
-          operand: RowLevelPermissionPredicateOperand.IS,
-          value,
+          canCreateRecords: true,
+          canReadRecords: true,
+          canUpdateRecords: true,
+          predicates: [
+            {
+              id: predicateId,
+              fieldMetadataId: setup.accountOwnerFieldMetadataId,
+              operand: RowLevelPermissionPredicateOperand.IS,
+              value,
+            },
+          ],
         },
       ],
-      predicateGroups: [],
-      canCreateRecords: true,
-      canReadRecords: true,
-      canUpdateRecords: true,
     },
   });
 

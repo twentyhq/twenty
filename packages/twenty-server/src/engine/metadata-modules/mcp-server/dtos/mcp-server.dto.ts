@@ -1,5 +1,8 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
+import { type ConnectionProviderScope } from 'twenty-shared/application';
+
+import { ConnectionProviderScopeEnum } from 'src/engine/core-modules/application/connection-provider/dtos/connection-provider-scope.enum';
 import { McpServerToolDTO } from 'src/engine/metadata-modules/mcp-server/dtos/mcp-server-tool.dto';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -19,6 +22,9 @@ export class McpServerDTO {
 
   @Field(() => UUIDScalarType, { nullable: true })
   connectionProviderId: string | null;
+
+  @Field(() => ConnectionProviderScopeEnum, { nullable: true })
+  signInScope: ConnectionProviderScope | null;
 
   @Field()
   isActive: boolean;

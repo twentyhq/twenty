@@ -12,7 +12,7 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsNewAccount,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/accounts/new',
+    routePath: '/settings/app-preferences/accounts/new',
   },
   parameters: {
     layout: 'fullscreen',

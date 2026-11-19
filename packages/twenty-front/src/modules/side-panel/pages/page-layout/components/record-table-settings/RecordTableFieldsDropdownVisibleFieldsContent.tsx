@@ -8,6 +8,7 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { useReorderVisibleRecordFields } from '@/object-record/record-field/hooks/useReorderVisibleRecordFields';
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
@@ -62,11 +63,7 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
   );
 
   const draggableRecordFields = visibleRecordFields
-    .filter(
-      (recordField) =>
-        nonDraggableRecordField?.fieldMetadataItemId !==
-        recordField.fieldMetadataItemId,
-    )
+    .filter((recordField) => nonDraggableRecordField?.id !== recordField.id)
     .toSorted(sortByProperty('position'));
 
   const handleDragEnd = (result: DraggableListDropResult) => {
@@ -82,8 +79,8 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
     onFieldUpdated?.(updatedField.id, { position: updatedField.position });
   };
 
-  const handleHideField = (fieldMetadataId: string) => {
-    const updatedField = updateRecordField(fieldMetadataId, {
+  const handleHideField = (recordFieldId: string) => {
+    const updatedField = updateRecordField(recordFieldId, {
       isVisible: false,
     });
 
@@ -122,8 +119,8 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
 
                   return (
                     <DraggableItem
-                      key={recordField.fieldMetadataItemId}
-                      draggableId={recordField.fieldMetadataItemId}
+                      key={recordField.id}
+                      draggableId={recordField.id}
                       index={index}
                       itemComponent={
                         <DraggableListRow
@@ -133,15 +130,16 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
                               applicationId={fieldMetadataItem.applicationId}
                             />
                           }
+                          // A hidden extra column couldn't be shown again: the hidden list only resolves canonical ones
                           actions={
-                            <LightIconButton
-                              aria-label={t`Hide ${fieldMetadataItem.label}`}
-                              onClick={() =>
-                                handleHideField(recordField.fieldMetadataItemId)
-                              }
-                            >
-                              <IconEyeOff />
-                            </LightIconButton>
+                            isCanonicalRecordField(recordField) ? (
+                              <LightIconButton
+                                aria-label={t`Hide ${fieldMetadataItem.label}`}
+                                onClick={() => handleHideField(recordField.id)}
+                              >
+                                <IconEyeOff />
+                              </LightIconButton>
+                            ) : undefined
                           }
                           dragHandleVisibility="always"
                         >

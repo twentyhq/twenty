@@ -6,7 +6,7 @@ import { type AgentConversationViewer } from 'src/engine/metadata-modules/ai/ai-
 // How a run acts, which its caller derives on each segment instead of the engine storing it
 export type AgentRunExecutionContext = {
   authContext: WorkspaceAuthContext;
-  actorContext?: ActorMetadata;
+  actorMetadata?: ActorMetadata;
   // who the run's turns are recorded as sent by
   turnCreatedBy: ActorMetadata;
   userWorkspaceId: string | null;

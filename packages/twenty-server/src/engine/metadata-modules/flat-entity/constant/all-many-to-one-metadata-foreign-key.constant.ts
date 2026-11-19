@@ -66,8 +66,8 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     targetObjectMetadata: {
       foreignKey: 'targetObjectMetadataId',
     },
-    folder: {
-      foreignKey: 'folderId',
+    parent: {
+      foreignKey: 'parentId',
     },
     view: {
       foreignKey: 'viewId',
@@ -131,6 +131,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     },
     viewFieldGroup: {
       foreignKey: 'viewFieldGroupId',
+    },
+    relationTargetFieldMetadata: {
+      foreignKey: 'relationTargetFieldMetadataId',
     },
     workspace: null,
     application: null,
@@ -351,6 +354,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     fieldMetadata: {
       foreignKey: 'fieldMetadataId',
     },
+    relationTargetFieldMetadata: {
+      foreignKey: 'relationTargetFieldMetadataId',
+    },
     view: {
       foreignKey: 'viewId',
     },
@@ -428,6 +434,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
   workflowVersion: {
     workspace: null,
     application: null,
+    coreWorkflow: {
+      foreignKey: 'coreWorkflowId',
+    },
   },
   agentChatChannel: {
     workspace: null,

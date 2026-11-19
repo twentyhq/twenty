@@ -1,7 +1,11 @@
-import { getApplicationGrantRoleUniversalIdentifier } from 'twenty-shared/application';
+import {
+  getApplicationGrantRoleUniversalIdentifier,
+  getObjectPermissionUniversalIdentifier,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { v4, v5 } from 'uuid';
 
+import { addLegacyRowLevelPermissionRuleGrantsToGrantRoleObjectPermissions } from 'src/engine/core-modules/application/application-grant-role/utils/add-legacy-row-level-permission-rule-grants-to-grant-role-object-permissions.util';
 import { computeApplicationGrantRoleLabel } from 'src/engine/core-modules/application/application-grant-role/utils/compute-application-grant-role-label.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -64,6 +68,8 @@ type BuildApplicationGrantRoleFromToFlatEntityMapsArgs = {
     | undefined;
   workspaceCustomApplicationUniversalIdentifier: string;
   flatEntityMaps: ApplicationGrantRoleFlatEntityMaps;
+  // Optional for the 2.57 backfill command, which ran before rules existed
+  flatRowLevelPermissionRuleMaps?: AllFlatEntityMaps['flatRowLevelPermissionRuleMaps'];
   now: string;
 };
 
@@ -188,6 +194,7 @@ const buildDesiredGrantRoleUniversalFlatEntityMaps = ({
   existingGrantRole,
   workspaceCustomApplicationUniversalIdentifier,
   flatEntityMaps,
+  flatRowLevelPermissionRuleMaps,
   now,
 }: BuildApplicationGrantRoleFromToFlatEntityMapsArgs): ApplicationGrantRoleUniversalFlatEntityMaps => {
   const grantRoleIdentity = isDefined(existingGrantRole)
@@ -231,54 +238,8 @@ const buildDesiredGrantRoleUniversalFlatEntityMaps = ({
     updatedAt: now,
   };
 
-  return {
-    flatRoleMaps: toUniversalFlatEntityMaps([
-      {
-        ...grantRoleIdentity,
-        applicationUniversalIdentifier:
-          workspaceCustomApplicationUniversalIdentifier,
-        description: requestedFlatRole.description,
-        icon: requestedFlatRole.icon,
-        canUpdateAllSettings: requestedFlatRole.canUpdateAllSettings,
-        canAccessAllTools: requestedFlatRole.canAccessAllTools,
-        canAccessAllAgentChatChannels:
-          requestedFlatRole.canAccessAllAgentChatChannels,
-        canReadAllObjectRecords: requestedFlatRole.canReadAllObjectRecords,
-        canCreateAllObjectRecords: requestedFlatRole.canCreateAllObjectRecords,
-        canUpdateAllObjectRecords: requestedFlatRole.canUpdateAllObjectRecords,
-        canSoftDeleteAllObjectRecords:
-          requestedFlatRole.canSoftDeleteAllObjectRecords,
-        canDestroyAllObjectRecords:
-          requestedFlatRole.canDestroyAllObjectRecords,
-        isEditable: false,
-        canBeAssignedToUsers: false,
-        canBeAssignedToAgents: false,
-        canBeAssignedToApiKeys: false,
-        canBeAssignedToApplications: true,
-        roleTargetUniversalIdentifiers: [],
-        objectPermissionUniversalIdentifiers: [],
-        fieldPermissionUniversalIdentifiers: [],
-        rowLevelPermissionRuleUniversalIdentifiers: [],
-        rolePermissionFlagUniversalIdentifiers: [],
-        rowLevelPermissionPredicateUniversalIdentifiers: [],
-        rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
-        agentChatChannelRoleUniversalIdentifiers: [],
-        updatedAt: now,
-      },
-    ]),
-    flatRoleTargetMaps: toUniversalFlatEntityMaps([
-      {
-        ...owner,
-        ...grantRoleTargetIdentity,
-        userWorkspaceId: null,
-        agentUniversalIdentifier: null,
-        apiKeyId: null,
-        webhookUniversalIdentifier: null,
-        targetApplicationUniversalIdentifier:
-          targetFlatApplication.universalIdentifier,
-      },
-    ]),
-    ...findRolePermissionUniversalFlatEntityMaps({
+  const rolePermissionUniversalFlatEntityMaps =
+    findRolePermissionUniversalFlatEntityMaps({
       flatRole: requestedFlatRole,
       flatEntityMaps,
       mappers: {
@@ -324,7 +285,91 @@ const buildDesiredGrantRoleUniversalFlatEntityMaps = ({
         rowLevelPermissionPredicateGroup: () => undefined,
         rowLevelPermissionPredicate: () => undefined,
       },
-    }),
+    });
+
+  return {
+    flatRoleMaps: toUniversalFlatEntityMaps([
+      {
+        ...grantRoleIdentity,
+        applicationUniversalIdentifier:
+          workspaceCustomApplicationUniversalIdentifier,
+        description: requestedFlatRole.description,
+        icon: requestedFlatRole.icon,
+        canUpdateAllSettings: requestedFlatRole.canUpdateAllSettings,
+        canAccessAllTools: requestedFlatRole.canAccessAllTools,
+        canAccessAllAgentChatChannels:
+          requestedFlatRole.canAccessAllAgentChatChannels,
+        canReadAllObjectRecords: requestedFlatRole.canReadAllObjectRecords,
+        canCreateAllObjectRecords: requestedFlatRole.canCreateAllObjectRecords,
+        canUpdateAllObjectRecords: requestedFlatRole.canUpdateAllObjectRecords,
+        canSoftDeleteAllObjectRecords:
+          requestedFlatRole.canSoftDeleteAllObjectRecords,
+        canDestroyAllObjectRecords:
+          requestedFlatRole.canDestroyAllObjectRecords,
+        isEditable: false,
+        isSystemSideEffect: false,
+        canBeAssignedToUsers: false,
+        canBeAssignedToAgents: false,
+        canBeAssignedToApiKeys: false,
+        canBeAssignedToApplications: true,
+        roleTargetUniversalIdentifiers: [],
+        objectPermissionUniversalIdentifiers: [],
+        fieldPermissionUniversalIdentifiers: [],
+        rowLevelPermissionRuleUniversalIdentifiers: [],
+        rolePermissionFlagUniversalIdentifiers: [],
+        rowLevelPermissionPredicateUniversalIdentifiers: [],
+        rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
+        agentChatChannelRoleUniversalIdentifiers: [],
+        updatedAt: now,
+      },
+    ]),
+    flatRoleTargetMaps: toUniversalFlatEntityMaps([
+      {
+        ...owner,
+        ...grantRoleTargetIdentity,
+        isSystemSideEffect: false,
+        userWorkspaceId: null,
+        agentUniversalIdentifier: null,
+        apiKeyId: null,
+        webhookUniversalIdentifier: null,
+        targetApplicationUniversalIdentifier:
+          targetFlatApplication.universalIdentifier,
+      },
+    ]),
+    ...rolePermissionUniversalFlatEntityMaps,
+    flatObjectPermissionMaps: toUniversalFlatEntityMaps(
+      addLegacyRowLevelPermissionRuleGrantsToGrantRoleObjectPermissions({
+        grantRoleFlatObjectPermissions: Object.values(
+          rolePermissionUniversalFlatEntityMaps.flatObjectPermissionMaps
+            .byUniversalIdentifier,
+        ).filter(isDefined),
+        requestedRoleFlatRowLevelPermissionRules:
+          requestedFlatRole.rowLevelPermissionRuleUniversalIdentifiers
+            .map(
+              (ruleUniversalIdentifier) =>
+                flatRowLevelPermissionRuleMaps?.byUniversalIdentifier[
+                  ruleUniversalIdentifier
+                ],
+            )
+            .filter(isDefined),
+        buildGrantRoleFlatObjectPermission: ({
+          objectMetadataUniversalIdentifier,
+          grants,
+        }) => ({
+          ...owner,
+          universalIdentifier: toCopyUniversalIdentifier(
+            getObjectPermissionUniversalIdentifier({
+              applicationUniversalIdentifier:
+                requestedFlatRole.applicationUniversalIdentifier,
+              roleUniversalIdentifier: requestedFlatRole.universalIdentifier,
+              objectUniversalIdentifier: objectMetadataUniversalIdentifier,
+            }),
+          ),
+          objectMetadataUniversalIdentifier,
+          ...grants,
+        }),
+      }),
+    ),
   };
 };
 

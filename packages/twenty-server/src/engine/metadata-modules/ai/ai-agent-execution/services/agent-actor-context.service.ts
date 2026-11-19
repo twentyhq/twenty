@@ -39,8 +39,8 @@ export type UserContext = {
 };
 
 export type AgentActorContext = {
-  actorContext: ActorMetadata;
-  roleId: string;
+  actorMetadata: ActorMetadata;
+  roleIds: string[];
   userId: string;
   userWorkspaceId: string;
   userContext: UserContext;
@@ -134,13 +134,13 @@ export class AgentActorContextService {
       );
     }
 
-    const roleId =
-      await this.rolePermissionsService.findUserWorkspaceRoleIdOrThrow({
+    const roleIds =
+      await this.rolePermissionsService.findUserWorkspaceRoleIdsOrThrow({
         userWorkspaceId,
         workspaceId,
       });
 
-    const actorContext = buildCreatedByFromFullNameMetadata({
+    const actorMetadata = buildCreatedByFromFullNameMetadata({
       fullNameMetadata: workspaceMember.name,
       workspaceMemberId: workspaceMember.id,
       source: FieldActorSource.AGENT,
@@ -155,8 +155,8 @@ export class AgentActorContextService {
     };
 
     return {
-      actorContext,
-      roleId,
+      actorMetadata,
+      roleIds,
       userId: userWorkspace.userId,
       userWorkspaceId,
       userContext,
@@ -196,14 +196,14 @@ export class AgentActorContextService {
       );
     }
 
-    const roleId = await this.resolveRoleIdOrThrow({
+    const roleIds = await this.resolveRoleIdsOrThrow({
       userWorkspaceId: userWorkspace.id,
       workspaceId,
       workspaceMemberId,
     });
 
     return {
-      actorContext: buildCreatedByFromFullNameMetadata({
+      actorMetadata: buildCreatedByFromFullNameMetadata({
         fullNameMetadata: workspaceMember.name,
         workspaceMemberId: workspaceMember.id,
         source: FieldActorSource.AGENT,
@@ -216,11 +216,11 @@ export class AgentActorContextService {
         workspaceMember,
         userSessionVariant: 'standard',
       }),
-      roleId,
+      roleIds,
     };
   }
 
-  private async resolveRoleIdOrThrow({
+  private async resolveRoleIdsOrThrow({
     userWorkspaceId,
     workspaceId,
     workspaceMemberId,
@@ -228,9 +228,9 @@ export class AgentActorContextService {
     userWorkspaceId: string;
     workspaceId: string;
     workspaceMemberId: string;
-  }): Promise<string> {
+  }): Promise<string[]> {
     try {
-      return await this.rolePermissionsService.findUserWorkspaceRoleIdOrThrow({
+      return await this.rolePermissionsService.findUserWorkspaceRoleIdsOrThrow({
         userWorkspaceId,
         workspaceId,
       });

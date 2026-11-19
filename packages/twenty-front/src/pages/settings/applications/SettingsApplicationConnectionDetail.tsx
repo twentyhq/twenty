@@ -5,7 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { Status, Tag } from 'twenty-ui/primitives/data-display';
 import { IconRefresh, IconTrash } from 'twenty-ui/icon';
@@ -36,7 +36,7 @@ import {
   useApplicationConnectedAccounts,
 } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
 import { SettingsSyncFailedStatus } from '@/settings/applications/components/SettingsSyncFailedStatus';
-import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
+import { useStartAppConnection } from '@/settings/applications/hooks/useStartAppConnection';
 import { type FrontendApplicationConnectionProvider } from '~/pages/settings/applications/types/FrontendApplicationConnectionProvider';
 
 const DETAIL_GRID_TEMPLATE = '220px 1fr';
@@ -86,7 +86,7 @@ export const SettingsApplicationConnectionDetail = () => {
 
   const navigate = useNavigateSettings();
   const { openDialog } = useDialog();
-  const { triggerAppOAuth } = useTriggerAppOAuth();
+  const { startAppConnection } = useStartAppConnection();
   const { connectionProviders, loading: providersLoading } =
     useFindApplicationConnectionProviders(applicationId);
   const { accounts: connectedAccounts, loading: accountsLoading } =
@@ -122,8 +122,7 @@ export const SettingsApplicationConnectionDetail = () => {
   const connection = connectedAccounts.find(
     (account) =>
       account.id === connectedAccountId &&
-      account.connectionProviderId !== null &&
-      account.connectionProviderId !== undefined &&
+      isDefined(account.connectionProviderId) &&
       providerIds.has(account.connectionProviderId),
   );
   const provider = connectionProviders.find(
@@ -155,9 +154,10 @@ export const SettingsApplicationConnectionDetail = () => {
       return;
     }
 
-    triggerAppOAuth({
+    startAppConnection({
       applicationId,
-      providerName: provider.name,
+      connectionProviderName: provider.name,
+      connectionProviderType: provider.type,
       reconnectingConnectedAccountId: connection.id,
       redirectLocation: detailPath,
     });

@@ -1,3 +1,4 @@
+import { ApplicationSourceService } from 'src/engine/core-modules/application/application-manifest/services/application-source.service';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { type Manifest } from 'twenty-shared/application';
@@ -50,6 +51,7 @@ export class ApplicationSyncService {
 
   constructor(
     private readonly applicationService: ApplicationService,
+    private readonly applicationSourceService: ApplicationSourceService,
     private readonly applicationLookupService: ApplicationLookupService,
     private readonly applicationManifestMigrationService: ApplicationManifestMigrationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
@@ -79,6 +81,7 @@ export class ApplicationSyncService {
     persistVersion?: boolean;
     shouldDeferActions?: boolean;
   }): Promise<ApplicationManifestSyncResult> {
+    this.applicationSourceService.validateOrThrow(manifest);
     // Checked upfront: server variables reach the registration only after the workspace changes
     const reservedVariableNames =
       findReservedVariableNamesInApplicationManifest(manifest.application);
@@ -119,6 +122,16 @@ export class ApplicationSyncService {
         );
     } catch (error) {
       throw enrichApplicationManifestSyncError({ error, manifest });
+    }
+
+    if (!dryRun) {
+      try {
+        await this.applicationSourceService.store({ workspaceId, manifest });
+      } catch (error) {
+        this.logger.warn(
+          `Application ${manifest.application.universalIdentifier} sync succeeded in workspace ${workspaceId} but its source inventory could not be stored: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
     }
 
     if (!dryRun && isDefined(ownerFlatApplication.applicationRegistrationId)) {
@@ -197,6 +210,7 @@ export class ApplicationSyncService {
       ),
       logicFunctionLayerId: null,
       defaultRoleId: null,
+      requestedRoleId: null,
       defaultRole: null,
       settingsCustomTabFrontComponentId: null,
       uninstallLogicFunctionId: null,

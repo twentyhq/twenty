@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-sdk/utils';
 import { GRANOLA_CONNECTION_STATUS_ROUTE_PATH } from 'src/constants/granola-connection-status-route-path';
 import { GRANOLA_CONNECTION_STATUS_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
-import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
+import { createWorkspaceGranolaClientOrThrow } from 'src/logic-functions/utils/create-workspace-granola-client-or-throw.util';
 import { findGranolaRegistrationForCurrentKey } from 'src/logic-functions/utils/find-granola-registration-for-current-key.util';
 import { isGranolaApiKeySet } from 'src/logic-functions/utils/is-granola-api-key-set.util';
 
@@ -13,7 +13,7 @@ export const granolaConnectionStatusHandler = async () => {
   if (!isGranolaApiKeySet()) {
     return { isConnected: false, isApiKeySet: false };
   }
-  const client = createGranolaClientOrThrow();
+  const client = createWorkspaceGranolaClientOrThrow();
   try {
     await client.listFolders({ page_size: 1 });
   } catch (error) {

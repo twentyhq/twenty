@@ -36,6 +36,8 @@ type HandleFlatFieldMetadataUpdateSideEffectArgs = FromTo<
     | 'flatViewGroupMaps'
     | 'flatViewMaps'
     | 'flatViewFieldMaps'
+    | 'flatViewSortMaps'
+    | 'flatFieldMetadataOptionMaps'
   >;
 
 export const FLAT_FIELD_METADATA_UPDATE_EMPTY_SIDE_EFFECTS: FlatFieldMetadataUpdateSideEffects =
@@ -50,6 +52,7 @@ export const FLAT_FIELD_METADATA_UPDATE_EMPTY_SIDE_EFFECTS: FlatFieldMetadataUpd
     flatViewGroupsToUpdate: [],
     flatViewsToDelete: [],
     flatViewFieldsToDelete: [],
+    flatViewSortsToDelete: [],
     flatViewsToUpdate: [],
   };
 
@@ -63,6 +66,8 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
   flatViewGroupMaps,
   flatViewMaps,
   flatViewFieldMaps,
+  flatViewSortMaps,
+  flatFieldMetadataOptionMaps,
 }: HandleFlatFieldMetadataUpdateSideEffectArgs): FieldInputTranspilationResult<FlatFieldMetadataUpdateSideEffects> => {
   const sideEffectResult = structuredClone(
     FLAT_FIELD_METADATA_UPDATE_EMPTY_SIDE_EFFECTS,
@@ -85,6 +90,7 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
       flatViewsToDelete,
       flatViewFieldsToDelete,
       flatViewFiltersToDelete,
+      flatViewSortsToDelete,
       flatViewsToUpdate,
     } = handleFieldMetadataDeactivationSideEffects({
       flatViewMaps,
@@ -93,12 +99,14 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
       flatViewFieldMaps,
       flatViewFilterMaps,
       flatViewGroupMaps,
+      flatViewSortMaps,
     });
 
     sideEffectResult.flatViewsToUpdate.push(...flatViewsToUpdate);
     sideEffectResult.flatViewsToDelete.push(...flatViewsToDelete);
     sideEffectResult.flatViewFieldsToDelete.push(...flatViewFieldsToDelete);
     sideEffectResult.flatViewFiltersToDelete.push(...flatViewFiltersToDelete);
+    sideEffectResult.flatViewSortsToDelete.push(...flatViewSortsToDelete);
   } else if (
     isEnumFlatFieldMetadata(toFlatFieldMetadata) &&
     isEnumFlatFieldMetadata(fromFlatFieldMetadata)
@@ -115,6 +123,7 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
       flatViewGroupMaps,
       fromFlatFieldMetadata,
       toFlatFieldMetadata,
+      flatFieldMetadataOptionMaps,
     });
 
     sideEffectResult.flatViewFiltersToUpdate.push(...flatViewFiltersToUpdate);

@@ -854,7 +854,7 @@ describe('buildPullEntities', () => {
         navigationMenuItems: [
           folderManifest,
           buildNavigationMenuItemManifest({
-            folderUniversalIdentifier: NAVIGATION_FOLDER_UID,
+            parentUniversalIdentifier: NAVIGATION_FOLDER_UID,
           }),
         ],
       }),
@@ -881,7 +881,7 @@ describe('buildPullEntities', () => {
         navigationMenuItems: [
           folderManifest,
           buildNavigationMenuItemManifest({
-            folderUniversalIdentifier: NAVIGATION_FOLDER_UID,
+            parentUniversalIdentifier: NAVIGATION_FOLDER_UID,
           }),
         ],
       }),
@@ -908,7 +908,7 @@ describe('buildPullEntities', () => {
         navigationMenuItems: [
           folderManifest,
           buildNavigationMenuItemManifest({
-            folderUniversalIdentifier: NAVIGATION_FOLDER_UID,
+            parentUniversalIdentifier: NAVIGATION_FOLDER_UID,
           }),
         ],
       }),
@@ -925,7 +925,7 @@ describe('buildPullEntities', () => {
       manifest: buildManifest({
         navigationMenuItems: [
           buildNavigationMenuItemManifest({
-            folderUniversalIdentifier: 'a-folder-of-another-application',
+            parentUniversalIdentifier: 'a-folder-of-another-application',
           }),
         ],
       }),

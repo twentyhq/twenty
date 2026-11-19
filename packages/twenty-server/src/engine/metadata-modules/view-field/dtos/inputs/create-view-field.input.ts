@@ -32,6 +32,11 @@ export class CreateViewFieldInput {
   isVisible?: boolean;
 
   @IsOptional()
+  @IsBoolean()
+  @Field({ nullable: true, defaultValue: true })
+  isCanonical?: boolean;
+
+  @IsOptional()
   @IsNumber()
   @Field({ nullable: true, defaultValue: 0 })
   size?: number;
@@ -50,6 +55,11 @@ export class CreateViewFieldInput {
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
   viewFieldGroupId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  relationTargetFieldMetadataId?: string;
 
   @HideField()
   universalIdentifier?: string;

@@ -15,7 +15,6 @@ import {
   type GranolaListNotesParameters,
   type GranolaUpdateWebhookEndpointParameters,
 } from 'src/logic-functions/types/granola-api.type';
-import { GRANOLA_API_KEY_ENV_VAR_NAME } from 'src/logic-functions/constants/granola-api-key-env-var-name';
 
 const GRANOLA_API_BASE_URL = 'https://public-api.granola.ai/v1';
 const GRANOLA_REQUEST_TIMEOUT_MILLISECONDS = 15_000;
@@ -25,8 +24,10 @@ const GRANOLA_PAGINATION_SCHEMA = z.object({
 });
 
 export const createGranolaClientOrThrow = ({
-  apiKey = process.env[GRANOLA_API_KEY_ENV_VAR_NAME],
-}: { apiKey?: string } = {}) => {
+  apiKey,
+}: {
+  apiKey: string | undefined;
+}) => {
   const trimmedApiKey = apiKey?.trim();
 
   if (!isNonEmptyString(trimmedApiKey)) {

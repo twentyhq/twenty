@@ -101,7 +101,7 @@ const SettingsMcpSetupCardAction = ({
 }: SettingsMcpSetupCardActionProps) => {
   const theme = useTheme();
 
-  if (card.isDisabled === true) {
+  if (card.isDisabled) {
     return (
       <Tooltip
         content={card.disabledTooltip}

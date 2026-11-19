@@ -23,7 +23,6 @@ import { triggerUninstallApplication } from 'test/integration/metadata/suites/ap
 import { triggerUpgradeApplication } from 'test/integration/metadata/suites/application/utils/trigger-upgrade-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { updateApplication } from 'test/integration/metadata/suites/application/utils/update-application.util';
-import { upgradeApplication } from 'test/integration/metadata/suites/application/utils/upgrade-application.util';
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import {
   type ApplicationWithResources,
@@ -488,20 +487,6 @@ const singleTargetEndpointTestCases: EachTestingContext<EndpointTestContext>[] =
         requestOtherApplication: ({ otherApplication, token }) =>
           updateApplication({
             input: { id: otherApplication.id, autoUpgrade: false },
-            token,
-            expectToFail: true,
-          }),
-      },
-    },
-    {
-      title: 'upgradeApplication',
-      context: {
-        requestOtherApplication: ({ otherApplication, token }) =>
-          upgradeApplication({
-            input: {
-              appRegistrationId: otherApplication.applicationRegistrationId,
-              targetVersion: '1.0.0',
-            },
             token,
             expectToFail: true,
           }),

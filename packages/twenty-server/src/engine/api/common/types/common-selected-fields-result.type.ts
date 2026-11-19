@@ -1,13 +1,19 @@
-import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
+import { type CommonSelection } from 'src/engine/api/common/types/common-selection.type';
 
-export interface CommonSelectedFields {
-  [key: string]: boolean | CommonSelectedFields;
-}
+export type CommonSelectedFields = {
+  // Scalars and join columns; a composite field lists its sub-fields
+  fields: Record<string, boolean | Record<string, boolean>>;
+  aggregates: string[];
+  relations: Record<string, CommonSelectedRelation>;
+};
 
-export type CommonSelectedFieldsResult = {
-  select: CommonSelectedFields;
-  relations: CommonSelectedFields;
-  aggregate: Record<string, AggregationField>;
-  relationFieldsCount?: number;
-  hasAtLeastTwoNestedOneToManyRelations?: boolean;
+export type CommonSelectedRelation = {
+  fieldName: string;
+  arguments?: Record<string, unknown>;
+  selectedFields: CommonSelectedFields;
+};
+
+export type CommonSelectedFieldsResult = CommonSelection & {
+  relationFieldsCount: number;
+  hasAtLeastTwoNestedOneToManyRelations: boolean;
 };

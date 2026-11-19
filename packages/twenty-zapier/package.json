@@ -16,7 +16,7 @@
     "@sniptt/guards": "^0.2.0",
     "dotenv": "^16.4.5",
     "libphonenumber-js": "^1.10.26",
-    "zapier-platform-core": "19.0.0",
+    "zapier-platform-core": "19.3.0",
     "zod": "^4.6.6"
   },
   "devDependencies": {
@@ -28,6 +28,6 @@
     "twenty-shared": "workspace:*",
     "vite": "^8.0.0",
     "vite-plugin-dts": "^4.5.4",
-    "zapier-platform-cli": "^19.0.0"
+    "zapier-platform-cli": "^19.3.0"
   }
 }

@@ -31,7 +31,7 @@ export const filterEmails = (
     isWorkEmail(primaryHandle) && !isInternalMessagesImportEnabled;
 
   const messagesWithoutInternals = shouldFilterOutInternals
-    ? filterOutInternals(primaryHandle, messagesWithoutBlocklisted)
+    ? filterOutInternals({ primaryHandle, items: messagesWithoutBlocklisted })
     : messagesWithoutBlocklisted;
 
   if (!excludeGroupEmails) {

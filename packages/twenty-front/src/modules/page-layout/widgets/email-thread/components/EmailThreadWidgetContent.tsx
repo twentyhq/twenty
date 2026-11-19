@@ -2,20 +2,24 @@ import { useCallback, useState } from 'react';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
+import { useComposerDraft } from '@/activities/emails/hooks/useComposerDraft';
 import { useReplyContext } from '@/activities/emails/hooks/useReplyContext';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
+import { emailComposerDraftFamilyState } from '@/activities/emails/states/emailComposerDraftFamilyState';
 import { getEmailDraftPrefillFromMessage } from '@/activities/emails/utils/getEmailDraftPrefillFromMessage';
 import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRelationsHeader';
 import { EmailThreadComposer } from '@/page-layout/widgets/email-thread/components/EmailThreadComposer';
 import { EmailThreadIntermediaryMessages } from '@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages';
 import { getAppReplyTarget } from '@/activities/emails/utils/getAppReplyTarget';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import {
   StyledWidgetContentContainer,
   StyledWidgetScrollContainer,
 } from '@/ui/layout/components/WidgetContentContainer';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 type EmailThreadWidgetContentProps = {
@@ -52,6 +56,17 @@ export const EmailThreadWidgetContent = ({
     setComposerIntent(null);
     setClickedDraftPrefill(null);
   }
+
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const emailComposerDraftKey = isDefined(currentWorkspaceMember)
+    ? `${currentWorkspaceMember.id}:${targetRecord.id}`
+    : undefined;
+
+  const [emailComposerDraft] = useComposerDraft({
+    draftFamilyState: emailComposerDraftFamilyState,
+    draftKey: emailComposerDraftKey,
+    defaultDraft: null,
+  });
 
   const handleComposerOpenChange = useCallback((open: boolean) => {
     setComposerIntent(open ? 'opened' : 'closed');
@@ -95,7 +110,8 @@ export const EmailThreadWidgetContent = ({
       : null);
   const isComposerOpen =
     composerIntent === 'opened' ||
-    (composerIntent === null && isDefined(trailingDraft));
+    (composerIntent === null &&
+      (isDefined(trailingDraft) || isDefined(emailComposerDraft)));
 
   return (
     <StyledWidgetContentContainer>
@@ -126,12 +142,13 @@ export const EmailThreadWidgetContent = ({
       </StyledWidgetScrollContainer>
       {canReply && (
         <EmailThreadComposer
-          key={draftPrefill?.messageId ?? 'reply'}
+          key={draftPrefill?.messageId ?? targetRecord.id}
           replyContext={replyContext}
           isInSidePanel={isInSidePanel}
           isComposerOpen={isComposerOpen}
           setIsComposerOpen={handleComposerOpenChange}
           draftPrefill={draftPrefill}
+          draftKey={isDefined(draftPrefill) ? undefined : emailComposerDraftKey}
           appReplyTarget={appReplyTarget}
         />
       )}

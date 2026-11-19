@@ -26,7 +26,7 @@ type CampaignStatusTransition = {
   campaignId: string;
   from: MessageCampaignStatus;
   to: MessageCampaignStatus;
-  roleId?: string;
+  roleIds?: string[];
   scheduledAt?: Date | null;
   fromScheduledAt?: Date;
 };
@@ -44,7 +44,7 @@ export class MessageCampaignLifecycleService {
     campaignId,
     from,
     to,
-    roleId,
+    roleIds,
     scheduledAt,
     fromScheduledAt,
   }: CampaignStatusTransition): Promise<boolean> {
@@ -73,7 +73,7 @@ export class MessageCampaignLifecycleService {
 
         return affected === 1;
       },
-      isDefined(roleId) ? undefined : buildSystemAuthContext(workspaceId),
+      isDefined(roleIds) ? undefined : buildSystemAuthContext(workspaceId),
     );
   }
 
@@ -133,8 +133,8 @@ export class MessageCampaignLifecycleService {
     userWorkspaceId: string;
     campaignId: string;
   }): Promise<{ campaignId: string; canceledMessageCount: number }> {
-    const roleId =
-      await this.rolePermissionsService.findUserWorkspaceRoleIdOrThrow({
+    const roleIds =
+      await this.rolePermissionsService.findUserWorkspaceRoleIdsOrThrow({
         workspaceId,
         userWorkspaceId,
       });
@@ -142,7 +142,7 @@ export class MessageCampaignLifecycleService {
     const unscheduled = await this.transitionCampaignStatus({
       workspaceId,
       campaignId,
-      roleId,
+      roleIds,
       from: MessageCampaignStatus.SCHEDULED,
       to: MessageCampaignStatus.DRAFT,
       scheduledAt: null,
@@ -155,7 +155,7 @@ export class MessageCampaignLifecycleService {
     const canceled = await this.transitionCampaignStatus({
       workspaceId,
       campaignId,
-      roleId,
+      roleIds,
       from: MessageCampaignStatus.SENDING,
       to: MessageCampaignStatus.CANCELED,
     });

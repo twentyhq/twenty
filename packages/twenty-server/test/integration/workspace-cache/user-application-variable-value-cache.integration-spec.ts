@@ -156,7 +156,7 @@ describe('User application variable value cache', () => {
     const [role]: { universalIdentifier: string }[] =
       await global.testDataSource.query(
         'SELECT "universalIdentifier" FROM core.role WHERE id = $1',
-        [application.defaultRoleId],
+        [application.requestedRoleId],
       );
 
     await syncApplication({

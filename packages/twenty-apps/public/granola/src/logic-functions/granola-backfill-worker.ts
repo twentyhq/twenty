@@ -9,7 +9,7 @@ import {
 import { type GranolaBackfillNotePayload } from 'src/logic-functions/types/granola-backfill-note-payload.type';
 import { type GranolaBackfillWorkerPayload } from 'src/logic-functions/types/granola-backfill-worker-payload.type';
 import { assertGranolaFolderSelectionReadyOrThrow } from 'src/logic-functions/utils/assert-granola-folder-selection-ready-or-throw.util';
-import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
+import { createWorkspaceGranolaClientOrThrow } from 'src/logic-functions/utils/create-workspace-granola-client-or-throw.util';
 import { enqueueGranolaJobOrThrow } from 'src/logic-functions/utils/enqueue-granola-job-or-throw.util';
 import { excludeDeletedGranolaNotesOrThrow } from 'src/logic-functions/utils/exclude-deleted-granola-notes-or-throw.util';
 import { findGranolaRegistrationForCurrentKey } from 'src/logic-functions/utils/find-granola-registration-for-current-key.util';
@@ -36,7 +36,7 @@ export const granolaBackfillWorkerHandler = async (
       return { success: true, skipped: true };
     }
 
-    const page = await createGranolaClientOrThrow().listNotes({
+    const page = await createWorkspaceGranolaClientOrThrow().listNotes({
       created_after: payload.createdAfter,
       updated_after: payload.updatedAfter,
       folder_id: payload.folderId,

@@ -1,21 +1,14 @@
 import { usePlans } from '@/settings/billing/hooks/usePlans';
-import {
-  type BillingPriceLicensed,
-  type BillingPriceMetered,
-} from '~/generated-metadata/graphql';
 
 export const useAllBillingPrices = () => {
   const { listPlans } = usePlans();
 
-  const allBillingPrices = listPlans()
-    .map(({ baseProducts, resourceCreditProducts, meteredProducts }) => {
-      return [
-        ...baseProducts,
-        ...resourceCreditProducts,
-        ...meteredProducts,
-      ].map(({ prices }) => prices);
-    })
-    .flat(2) as Array<BillingPriceLicensed | BillingPriceMetered>;
+  const allBillingPrices = listPlans().flatMap(
+    ({ baseProducts, resourceCreditProducts }) =>
+      [...baseProducts, ...resourceCreditProducts].flatMap(
+        ({ prices }) => prices ?? [],
+      ),
+  );
 
   return { allBillingPrices };
 };

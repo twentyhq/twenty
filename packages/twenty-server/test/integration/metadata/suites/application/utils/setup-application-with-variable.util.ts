@@ -5,7 +5,7 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import {
   type ApplicationVariableScope,
-  type ObjectPermissionManifest,
+  type LegacyObjectPermissionManifest,
 } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export type ApplicationWithVariable = {
   id: string;
-  defaultRoleId: string;
+  requestedRoleId: string;
   universalIdentifier: string;
   variableKey: string;
 };
@@ -40,7 +40,7 @@ export const setupApplicationWithVariable = async ({
   permissionFlagUniversalIdentifiers?: string[];
   // An application-owned role can only be granted object permissions through
   // its own manifest; upserting them afterwards is refused.
-  objectPermissions?: ObjectPermissionManifest[];
+  objectPermissions?: LegacyObjectPermissionManifest[];
 }): Promise<ApplicationWithVariable> => {
   const applicationUniversalIdentifier = uuidv4();
   const roleUniversalIdentifier = uuidv4();
@@ -92,20 +92,20 @@ export const setupApplicationWithVariable = async ({
     input: { universalIdentifier: applicationUniversalIdentifier },
     gqlFields: `
       id
-      defaultRoleId
+      requestedRoleId
     `,
     expectToFail: false,
   });
 
-  const { id, defaultRoleId } = data.findOneApplication;
+  const { id, requestedRoleId } = data.findOneApplication;
 
-  if (defaultRoleId === undefined) {
+  if (requestedRoleId === undefined) {
     throw new Error(`Application ${name} synced without its declared role`);
   }
 
   return {
     id,
-    defaultRoleId,
+    requestedRoleId,
     universalIdentifier: applicationUniversalIdentifier,
     variableKey,
   };

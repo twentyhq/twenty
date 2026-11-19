@@ -69,7 +69,7 @@ const salesMember: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
   mainPrincipal: {
     type: 'workspaceMember',
-    roleId: 'sales',
+    roleIds: ['sales'],
     workspaceMemberId: 'member-id',
   },
   applicationPrincipal: { type: 'customApplication' },
@@ -126,6 +126,7 @@ const buildPrincipalsAccessGroupObjectMetadataIds = ({
         },
         flatObjectMetadataMaps,
         flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       },
     },
     workspaceMembers: [],

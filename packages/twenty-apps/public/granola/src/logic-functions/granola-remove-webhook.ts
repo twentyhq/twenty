@@ -2,7 +2,7 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { GRANOLA_WEBHOOK_REMOVAL_ROUTE_PATH } from 'src/constants/granola-webhook-removal-route-path';
 import { GRANOLA_REMOVE_WEBHOOK_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
+import { createWorkspaceGranolaClientOrThrow } from 'src/logic-functions/utils/create-workspace-granola-client-or-throw.util';
 import { currentUserCanManageGranolaOrThrow } from 'src/logic-functions/utils/current-user-can-manage-granola-or-throw.util';
 import { removeGranolaWebhookRegistration } from 'src/logic-functions/utils/remove-granola-webhook-registration.util';
 
@@ -15,7 +15,7 @@ export const granolaRemoveWebhookHandler = async () => {
   }
 
   const { deletedWebhookCount } = await removeGranolaWebhookRegistration({
-    client: createGranolaClientOrThrow(),
+    client: createWorkspaceGranolaClientOrThrow(),
   });
 
   return { success: true, deletedWebhookCount };

@@ -72,8 +72,9 @@ export const validateViewFieldLabelIdentifierCrossEntity = ({
     }
 
     if (
+      !deletedViewField.isCanonical ||
       fieldMetadataUniversalIdentifier !==
-      labelIdentifierFieldMetadataUniversalIdentifier
+        labelIdentifierFieldMetadataUniversalIdentifier
     ) {
       continue;
     }
@@ -92,6 +93,7 @@ export const validateViewFieldLabelIdentifierCrossEntity = ({
 
         return (
           isDefined(viewField) &&
+          viewField.isCanonical &&
           viewField.fieldMetadataUniversalIdentifier ===
             labelIdentifierFieldMetadataUniversalIdentifier
         );
