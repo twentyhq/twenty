@@ -113,11 +113,11 @@ describe('CommonQueryOrderFieldParser', () => {
     universalIdentifiersByApplicationId: {},
   };
 
-  const parser = new CommonQueryOrderFieldParser(
+  const parser = new CommonQueryOrderFieldParser({
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-  );
+  });
 
   it('should compile scalar, composite and relation leaves to their columns', () => {
     const result = parser.parse({

@@ -123,11 +123,11 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
           const duplicateRecordsQueryBuilder =
             readRepository.createQueryBuilder(flatObjectMetadata.nameSingular);
 
-          commonQueryParser.applyFilterToBuilder(
-            duplicateRecordsQueryBuilder,
-            flatObjectMetadata.nameSingular,
-            duplicateConditions,
-          );
+          commonQueryParser.applyFilterToBuilder({
+            queryBuilder: duplicateRecordsQueryBuilder,
+            objectNameSingular: flatObjectMetadata.nameSingular,
+            recordFilter: duplicateConditions,
+          });
 
           const duplicates = (await duplicateRecordsQueryBuilder
             .setFindOptions({
