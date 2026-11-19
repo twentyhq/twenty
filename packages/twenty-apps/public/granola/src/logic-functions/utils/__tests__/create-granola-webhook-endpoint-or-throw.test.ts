@@ -94,6 +94,26 @@ describe('createGranolaWebhookEndpointOrThrow', () => {
     );
   });
 
+  it('uses personal scopes only for a member connection', async () => {
+    const mockedFetch = stubGranolaAcceptingScopes('workspace');
+
+    await expect(
+      createGranolaWebhookEndpointOrThrow({
+        client: createGranolaClientOrThrow({ apiKey: 'grn_test' }),
+        url: 'https://example.com/hook',
+        preferredScopes: undefined,
+        folderIds: ['fol_2mKr8fQxLp7Ta3'],
+        isPersonalConnection: true,
+      }),
+    ).rejects.toMatchObject({ status: 400 });
+
+    expect(requestedScopes(mockedFetch)).toEqual([
+      ['personal', 'public'],
+      ['personal'],
+      ['public'],
+    ]);
+  });
+
   it('tries the previously registered scopes first', async () => {
     const mockedFetch = stubGranolaAcceptingScopes('personal,public');
 

@@ -8,6 +8,7 @@ const { kvStore } = vi.hoisted(() => ({ kvStore: new Map<string, unknown>() }));
 
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   ...(await importOriginal<typeof import('twenty-sdk/logic-function')>()),
+  listConnections: vi.fn().mockResolvedValue([]),
   kv: {
     get: vi.fn(async (key: string) => kvStore.get(key)),
     delete: vi.fn(async (key: string) => {
