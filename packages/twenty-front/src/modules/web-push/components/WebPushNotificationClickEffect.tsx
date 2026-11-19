@@ -1,7 +1,8 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { isInboxWebPushNotificationPath } from '@/web-push/utils/isInboxWebPushNotificationPath';
+import { isInboxPath } from '~/utils/isInboxPath';
 
 export const WebPushNotificationClickEffect = () => {
   const navigate = useNavigate();
@@ -16,7 +17,8 @@ export const WebPushNotificationClickEffect = () => {
     ) => {
       if (
         event.data?.type === 'web-push-notification-click' &&
-        isInboxWebPushNotificationPath(event.data.url)
+        isNonEmptyString(event.data.url) &&
+        isInboxPath(event.data.url)
       ) {
         navigate(event.data.url);
       }
