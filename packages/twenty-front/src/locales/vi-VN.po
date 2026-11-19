@@ -23960,7 +23960,7 @@ msgstr "Đọc các lời nhắc hệ thống"
 #. js-lingui-id: /nZe2L
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Read the address, owner and account status of members' private channels"
-msgstr ""
+msgstr "Đọc địa chỉ, chủ sở hữu và trạng thái tài khoản của các kênh riêng tư của thành viên"
 
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
