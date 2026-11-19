@@ -7,6 +7,7 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconPlus } from 'twenty-ui/icon';
 
 import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
+import { canAddBuiltInSectionToContainer } from '@/navigation-menu-item/common/utils/canAddBuiltInSectionToContainer';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
@@ -56,12 +57,11 @@ export const NavigationMenuAddSectionButton = ({
   const builtInSectionsToOffer = NAVIGATION_MENU_BUILT_IN_SECTIONS.filter(
     (builtInSection) =>
       (!builtInSection.isAi || (hasAiPermission && isAiChatInboxEnabled)) &&
-      !(builtInSection.key === 'favorites' && containerId === null) &&
-      !workspaceNavigationMenuItems.some(
-        (item) =>
-          item.builtInSectionKey === builtInSection.key &&
-          (item.parentId ?? null) === containerId,
-      ),
+      canAddBuiltInSectionToContainer({
+        builtInSectionKey: builtInSection.key,
+        containerId,
+        items: workspaceNavigationMenuItems,
+      }),
   );
 
   const handleCustomSectionClick = () => {
