@@ -10,7 +10,7 @@ import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPa
 import { captchaState } from '@/client-config/states/captchaState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { type Captcha, CaptchaDriverType } from '~/generated-metadata/graphql';
+import { CaptchaDriverType } from '~/generated-metadata/graphql';
 
 jest.mock('@/captcha/utils/isCaptchaRequiredForPath');
 
@@ -31,12 +31,12 @@ describe('useGetCaptchaToken', () => {
     });
     window.grecaptcha = { execute: mockGrecaptchaExecute };
 
-    (isCaptchaRequiredForPath as jest.Mock).mockReturnValue(true);
+    jest.mocked(isCaptchaRequiredForPath).mockReturnValue(true);
 
     jotaiStore.set(captchaState.atom, {
       provider: CaptchaDriverType.GOOGLE_RECAPTCHA,
       siteKey: 'site-key',
-    } as Captcha);
+    });
     jotaiStore.set(captchaTokenState.atom, undefined);
     jotaiStore.set(isCaptchaScriptLoadedState.atom, true);
     jotaiStore.set(clientConfigApiStatusState.atom, {

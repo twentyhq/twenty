@@ -24,11 +24,11 @@ export const useRequestFreshCaptchaToken = () => {
     }
 
     const requestToken = async () => {
-      await waitForAtomValue(
+      await waitForAtomValue({
         store,
-        clientConfigApiStatusState.atom,
-        ({ isLoadedOnce }) => isLoadedOnce,
-      );
+        atom: clientConfigApiStatusState.atom,
+        isExpectedValue: ({ isLoadedOnce }) => isLoadedOnce,
+      });
 
       const { provider, siteKey } = store.get(captchaState.atom) ?? {};
 
@@ -36,11 +36,11 @@ export const useRequestFreshCaptchaToken = () => {
         return undefined;
       }
 
-      await waitForAtomValue(
+      await waitForAtomValue({
         store,
-        isCaptchaScriptLoadedState.atom,
-        (isCaptchaScriptLoaded) => isCaptchaScriptLoaded,
-      );
+        atom: isCaptchaScriptLoadedState.atom,
+        isExpectedValue: (isCaptchaScriptLoaded) => isCaptchaScriptLoaded,
+      });
 
       return requestCaptchaTokenFromProvider({ provider, siteKey });
     };
