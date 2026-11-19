@@ -13,9 +13,18 @@ describe('pickRestResponseFields', () => {
           company: { id: 'company-id', name: 'Company' },
         },
         selectedFields: {
-          jobTitle: true,
-          companyId: true,
-          company: { id: true, name: true },
+          fields: { jobTitle: true, companyId: true },
+          aggregates: [],
+          relations: {
+            company: {
+              fieldName: 'company',
+              selectedFields: {
+                fields: { id: true, name: true },
+                aggregates: [],
+                relations: {},
+              },
+            },
+          },
         },
       }),
     ).toEqual({

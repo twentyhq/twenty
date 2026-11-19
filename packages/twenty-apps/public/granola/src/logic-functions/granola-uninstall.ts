@@ -5,14 +5,14 @@ import { isDefined } from 'twenty-sdk/utils';
 import { GRANOLA_HISTORY_SCHEDULE_KEY } from 'src/constants/granola.constant';
 import { GRANOLA_UNINSTALL_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { cleanupPendingGranolaRegistrationOrThrow } from 'src/logic-functions/utils/cleanup-pending-granola-registration-or-throw.util';
-import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
+import { createWorkspaceGranolaClientOrThrow } from 'src/logic-functions/utils/create-workspace-granola-client-or-throw.util';
 import { isGranolaApiKeySet } from 'src/logic-functions/utils/is-granola-api-key-set.util';
 import { removeGranolaWebhookRegistration } from 'src/logic-functions/utils/remove-granola-webhook-registration.util';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 export const granolaUninstallHandler = async () => {
   const client = isGranolaApiKeySet()
-    ? createGranolaClientOrThrow()
+    ? createWorkspaceGranolaClientOrThrow()
     : undefined;
 
   if (isDefined(client)) {

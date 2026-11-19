@@ -11,6 +11,7 @@ import { GRANOLA_FOLDER_SELECTION_ROUTE_PATH } from 'src/constants/granola-folde
 import { GRANOLA_PENDING_FOLDER_SELECTION_KEY } from 'src/constants/granola.constant';
 import { GRANOLA_UPDATE_WEBHOOK_FOLDERS_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { GranolaApiError } from 'src/logic-functions/types/granola-api-error';
+import { createWorkspaceGranolaClientOrThrow } from 'src/logic-functions/utils/create-workspace-granola-client-or-throw.util';
 import { currentUserCanManageGranolaOrThrow } from 'src/logic-functions/utils/current-user-can-manage-granola-or-throw.util';
 import { findGranolaRegistrationForCurrentKey } from 'src/logic-functions/utils/find-granola-registration-for-current-key.util';
 import { getGranolaSelectedParentFolders } from 'src/logic-functions/utils/get-granola-selected-parent-folders.util';
@@ -53,7 +54,9 @@ export const granolaUpdateWebhookFoldersHandler = async (
 
   const folders =
     parsed.data.folderIds.length > 0
-      ? await listAllGranolaFoldersOrThrow()
+      ? await listAllGranolaFoldersOrThrow({
+          client: createWorkspaceGranolaClientOrThrow(),
+        })
       : [];
   const accessibleIds = new Set(folders.map((folder) => folder.id));
 
