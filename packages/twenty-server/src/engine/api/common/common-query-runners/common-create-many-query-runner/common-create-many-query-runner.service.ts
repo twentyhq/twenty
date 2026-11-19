@@ -165,52 +165,15 @@ export class CommonCreateManyQueryRunnerService extends CommonRecordQueryRunnerS
       selectedFieldsResult: args.selectedFieldsResult,
     });
 
-    const relationAggregatedValues =
-      await this.processUpsertedRecordsNestedRelations({
-        args,
-        records: upsertedRecords,
-        flatObjectMetadata,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        authContext,
-        repository,
-        nestedRelationsReadPathOptions:
-          this.getNestedRelationsReadPathOptions(),
-      });
+    const relationAggregatedValues = await this.processNestedRelations({
+      records: upsertedRecords,
+      selection: args.selectedFieldsResult,
+      queryRunnerContext,
+      limit: QUERY_MAX_RECORDS,
+      repository,
+    });
 
     return { result: upsertedRecords, relationAggregatedValues };
-  }
-
-  private async processUpsertedRecordsNestedRelations({
-    args,
-    records,
-    flatObjectMetadata,
-    flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
-    authContext,
-    repository,
-    nestedRelationsReadPathOptions,
-  }: {
-    args: CommonExtendedInput<CreateManyQueryArgs>;
-    records: ObjectRecord[];
-    flatObjectMetadata: FlatObjectMetadata;
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-    authContext: WorkspaceAuthContext;
-    repository: WorkspaceRepository<ObjectRecord>;
-    nestedRelationsReadPathOptions: NestedRelationsReadPathOptions;
-  }): Promise<CommonRelationsAggregatedValues> {
-    return await this.processNestedRelationsHelper.processNestedRelations({
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      parentObjectMetadataItem: flatObjectMetadata,
-      parentObjectRecords: records,
-      selection: args.selectedFieldsResult,
-      limit: QUERY_MAX_RECORDS,
-      authContext,
-      repository,
-      ...nestedRelationsReadPathOptions,
-    });
   }
 
   async computeArgs(
