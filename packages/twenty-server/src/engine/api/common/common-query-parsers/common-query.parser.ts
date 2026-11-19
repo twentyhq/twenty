@@ -35,52 +35,59 @@ export class CommonQueryParser {
   private orderFieldParser: CommonQueryOrderFieldParser;
   private orderGroupByParser: CommonQueryOrderGroupByParser;
 
-  constructor(
-    flatObjectMetadata: FlatObjectMetadata,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-  ) {
+  constructor({
+    flatObjectMetadata,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+  }: {
+    flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  }) {
     this.flatObjectMetadata = flatObjectMetadata;
     this.flatObjectMetadataMaps = flatObjectMetadataMaps;
     this.flatFieldMetadataMaps = flatFieldMetadataMaps;
 
-    this.filterConditionParser = new CommonQueryFilterConditionParser(
-      this.flatObjectMetadata,
-      this.flatFieldMetadataMaps,
-      this.flatObjectMetadataMaps,
-    );
-    this.orderFieldParser = new CommonQueryOrderFieldParser(
-      this.flatObjectMetadata,
-      this.flatObjectMetadataMaps,
-      this.flatFieldMetadataMaps,
-    );
-    this.orderGroupByParser = new CommonQueryOrderGroupByParser(
-      this.flatObjectMetadata,
-      this.flatObjectMetadataMaps,
-      this.flatFieldMetadataMaps,
-    );
+    this.filterConditionParser = new CommonQueryFilterConditionParser({
+      flatObjectMetadata: this.flatObjectMetadata,
+      flatFieldMetadataMaps: this.flatFieldMetadataMaps,
+      flatObjectMetadataMaps: this.flatObjectMetadataMaps,
+    });
+    this.orderFieldParser = new CommonQueryOrderFieldParser({
+      flatObjectMetadata: this.flatObjectMetadata,
+      flatObjectMetadataMaps: this.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: this.flatFieldMetadataMaps,
+    });
+    this.orderGroupByParser = new CommonQueryOrderGroupByParser({
+      flatObjectMetadata: this.flatObjectMetadata,
+      flatObjectMetadataMaps: this.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: this.flatFieldMetadataMaps,
+    });
   }
 
-  public applyFilterToBuilder(
-    // oxlint-disable-next-line typescript/no-explicit-any
-    queryBuilder: WorkspaceSelectQueryBuilder,
-    objectNameSingular: string,
-    recordFilter: Partial<ObjectRecordFilter>,
-    // oxlint-disable-next-line typescript/no-explicit-any
-  ): WorkspaceSelectQueryBuilder {
-    return this.filterConditionParser.parse(
+  public applyFilterToBuilder({
+    queryBuilder,
+    objectNameSingular,
+    recordFilter,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    objectNameSingular: string;
+    recordFilter: Partial<ObjectRecordFilter>;
+  }): WorkspaceSelectQueryBuilder {
+    return this.filterConditionParser.parse({
       queryBuilder,
       objectNameSingular,
-      recordFilter,
-    );
+      filter: recordFilter,
+    });
   }
 
-  public applyDeletedAtToBuilder(
-    // oxlint-disable-next-line typescript/no-explicit-any
-    queryBuilder: WorkspaceSelectQueryBuilder,
-    recordFilter: Partial<ObjectRecordFilter>,
-    // oxlint-disable-next-line typescript/no-explicit-any
-  ): WorkspaceSelectQueryBuilder {
+  public applyDeletedAtToBuilder({
+    queryBuilder,
+    recordFilter,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    recordFilter: Partial<ObjectRecordFilter>;
+  }): WorkspaceSelectQueryBuilder {
     if (this.checkForDeletedAtFilter(recordFilter)) {
       queryBuilder.withDeleted();
     }
@@ -116,13 +123,17 @@ export class CommonQueryParser {
     return false;
   };
 
-  public applyOrderToBuilder(
-    // oxlint-disable-next-line typescript/no-explicit-any
-    queryBuilder: WorkspaceSelectQueryBuilder,
-    orderBy: ObjectRecordOrderBy | OrderByWithGroupBy,
-    objectNameSingular: string,
+  public applyOrderToBuilder({
+    queryBuilder,
+    orderBy,
+    objectNameSingular,
     isForwardPagination = true,
-  ): Record<string, OrderByClause> {
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    orderBy: ObjectRecordOrderBy | OrderByWithGroupBy;
+    objectNameSingular: string;
+    isForwardPagination?: boolean;
+  }): Record<string, OrderByClause> {
     const parseResult = this.orderFieldParser.parse({
       orderBy: orderBy as ObjectRecordOrderBy,
       objectNameSingular,
@@ -143,13 +154,17 @@ export class CommonQueryParser {
     return parseResult.orderBy;
   }
 
-  public addRelationOrderColumnsToBuilder(
-    // oxlint-disable-next-line typescript/no-explicit-any
-    queryBuilder: WorkspaceSelectQueryBuilder,
-    parsedOrderBy: Record<string, OrderByClause>,
-    objectNameSingular: string,
-    columnsToSelect: Record<string, boolean>,
-  ): void {
+  public addRelationOrderColumnsToBuilder({
+    queryBuilder,
+    parsedOrderBy,
+    objectNameSingular,
+    columnsToSelect,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    parsedOrderBy: Record<string, OrderByClause>;
+    objectNameSingular: string;
+    columnsToSelect: Record<string, boolean>;
+  }): void {
     // Must run after setFindOptions, which clears addSelect; the underscore alias keeps DISTINCT working
     for (const orderByKey of Object.keys(parsedOrderBy)) {
       const parts = orderByKey.split('.');
@@ -171,11 +186,15 @@ export class CommonQueryParser {
     }
   }
 
-  public getOrderByRawSQL(
-    orderBy: ObjectRecordOrderBy,
-    objectNameSingular: string,
+  public getOrderByRawSQL({
+    orderBy,
+    objectNameSingular,
     isForwardPagination = true,
-  ): { orderByRawSQL: string; relationJoins: RelationJoinInfo[] } {
+  }: {
+    orderBy: ObjectRecordOrderBy;
+    objectNameSingular: string;
+    isForwardPagination?: boolean;
+  }): { orderByRawSQL: string; relationJoins: RelationJoinInfo[] } {
     const parseResult = this.orderFieldParser.parse({
       orderBy,
       objectNameSingular,
@@ -216,13 +235,15 @@ export class CommonQueryParser {
     return { orderByRawSQL, relationJoins: parseResult.relationJoins };
   }
 
-  public applyGroupByOrderToBuilder(
-    // oxlint-disable-next-line typescript/no-explicit-any
-    queryBuilder: WorkspaceSelectQueryBuilder,
-    orderBy: ObjectRecordOrderBy | OrderByWithGroupBy,
-    groupByFields: GroupByField[],
-    // oxlint-disable-next-line typescript/no-explicit-any
-  ): WorkspaceSelectQueryBuilder {
+  public applyGroupByOrderToBuilder({
+    queryBuilder,
+    orderBy,
+    groupByFields,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    orderBy: ObjectRecordOrderBy | OrderByWithGroupBy;
+    groupByFields: GroupByField[];
+  }): WorkspaceSelectQueryBuilder {
     const parsedOrderBys = this.orderGroupByParser.parse({
       orderBy,
       groupByFields,
@@ -244,10 +265,10 @@ export class CommonQueryParser {
   public parseSelectedFields(
     selectedFields: CommonSelectedFields,
   ): CommonSelectedFieldsResult {
-    const selectedFieldsParser = new CommonQuerySelectedFieldsParser(
-      this.flatObjectMetadataMaps,
-      this.flatFieldMetadataMaps,
-    );
+    const selectedFieldsParser = new CommonQuerySelectedFieldsParser({
+      flatObjectMetadataMaps: this.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: this.flatFieldMetadataMaps,
+    });
 
     return selectedFieldsParser.parse({
       selectedFields,
