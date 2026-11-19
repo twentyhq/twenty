@@ -13,8 +13,8 @@ import {
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
-import { type UpsertPushSubscriptionInput } from 'src/engine/core-modules/web-push/dtos/upsert-push-subscription.input';
-import { PushSubscriptionEntity } from 'src/engine/core-modules/web-push/push-subscription.entity';
+import { type UpsertWebPushSubscriptionInput } from 'src/engine/core-modules/web-push/dtos/upsert-web-push-subscription.input';
+import { WebPushSubscriptionEntity } from 'src/engine/core-modules/web-push/web-push-subscription.entity';
 import { deriveWebPushVapidKeyPair } from 'src/engine/core-modules/web-push/utils/derive-web-push-vapid-key-pair.util';
 import { isWebPushEndpointAllowed } from 'src/engine/core-modules/web-push/utils/is-web-push-endpoint-allowed.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -28,28 +28,28 @@ const getFocusedTabKey = (workspaceId: string, userId: string) =>
 @Injectable()
 export class WebPushService {
   constructor(
-    @InjectWorkspaceScopedRepository(PushSubscriptionEntity)
-    private readonly pushSubscriptionRepository: WorkspaceScopedRepository<PushSubscriptionEntity>,
+    @InjectWorkspaceScopedRepository(WebPushSubscriptionEntity)
+    private readonly webPushSubscriptionRepository: WorkspaceScopedRepository<WebPushSubscriptionEntity>,
     @InjectCacheStorage(CacheStorageNamespace.EngineWebPush)
     private readonly cacheStorageService: CacheStorageService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly userSessionService: UserSessionService,
   ) {}
 
-  async upsertPushSubscription({
+  async upsertWebPushSubscription({
     input,
     workspaceId,
     userWorkspaceId,
     sessionToken,
   }: {
-    input: UpsertPushSubscriptionInput;
+    input: UpsertWebPushSubscriptionInput;
     workspaceId: string;
     userWorkspaceId: string;
     sessionToken: string | undefined;
   }): Promise<void> {
     if (!isWebPushEndpointAllowed(input.endpoint)) {
       throw new UserInputError(
-        'Push subscription endpoint is not on an allowed push service',
+        'Web push subscription endpoint is not on an allowed push service',
       );
     }
 
@@ -59,7 +59,7 @@ export class WebPushService {
 
     if (input.applicationServerKey !== publicKey) {
       throw new UserInputError(
-        'Push subscription was created with an unknown application server key',
+        'Web push subscription was created with an unknown application server key',
       );
     }
 
@@ -69,16 +69,16 @@ export class WebPushService {
 
     if (!isDefined(session) || session.userWorkspaceId !== userWorkspaceId) {
       throw new ForbiddenError(
-        'Push subscription request has no session for this user workspace',
+        'Web push subscription request has no session for this user workspace',
       );
     }
 
-    await this.pushSubscriptionRepository.delete(workspaceId, {
+    await this.webPushSubscriptionRepository.delete(workspaceId, {
       userSessionId: session.id,
       endpoint: Not(input.endpoint),
     });
 
-    await this.pushSubscriptionRepository.upsert(
+    await this.webPushSubscriptionRepository.upsert(
       workspaceId,
       {
         endpoint: input.endpoint,
