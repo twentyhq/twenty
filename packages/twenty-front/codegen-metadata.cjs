@@ -33,6 +33,7 @@ module.exports = {
     './src/modules/related-record-paths/graphql/**/*.{ts,tsx}',
     './src/modules/navigation-menu-item/**/graphql/**/*.{ts,tsx}',
     './src/modules/command-menu-item/graphql/**/*.{ts,tsx}',
+    './src/modules/conditional-availability/graphql/**/*.{ts,tsx}',
     './src/modules/file/graphql/**/*.{ts,tsx}',
     './src/modules/onboarding/graphql/**/*.{ts,tsx}',
     './src/modules/getting-started/graphql/**/*.{ts,tsx}',
