@@ -1,23 +1,21 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { useConditionalAvailabilityVisibilityStatus } from '@/conditional-availability/hooks/useConditionalAvailabilityVisibilityStatus';
 import { getConditionalAvailabilityEditorItemKey } from '@/conditional-availability/utils/getConditionalAvailabilityEditorItemKey';
-import { getConditionalAvailabilityValueIcon } from '@/conditional-availability/utils/getConditionalAvailabilityValueIcon';
-import { getConditionalAvailabilityValueLabel } from '@/conditional-availability/utils/getConditionalAvailabilityValueLabel';
+import { getConditionalAvailabilityVisibilityStatusIcon } from '@/conditional-availability/utils/getConditionalAvailabilityVisibilityStatusIcon';
+import { getConditionalAvailabilityVisibilityStatusLabel } from '@/conditional-availability/utils/getConditionalAvailabilityVisibilityStatusLabel';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useLingui } from '@lingui/react/macro';
-import { type ConditionalAvailabilityNode } from 'twenty-shared/types';
 
 type PageLayoutSettingsVisibilityItemProps = {
-  widgetId: string;
-  node: ConditionalAvailabilityNode | null;
+  widget: PageLayoutWidget;
   selectableItemId: string;
 };
 
 export const PageLayoutSettingsVisibilityItem = ({
-  widgetId,
-  node,
+  widget,
   selectableItemId,
 }: PageLayoutSettingsVisibilityItemProps) => {
   const { t } = useLingui();
@@ -26,9 +24,9 @@ export const PageLayoutSettingsVisibilityItem = ({
   const visibilityStatus = useConditionalAvailabilityVisibilityStatus({
     itemKey: getConditionalAvailabilityEditorItemKey({
       metadataName: 'pageLayoutWidget',
-      itemId: widgetId,
+      itemId: widget.id,
     }),
-    node,
+    node: widget.conditionalAvailability ?? null,
   });
 
   const openVisibility = () =>
@@ -38,9 +36,13 @@ export const PageLayoutSettingsVisibilityItem = ({
     <SelectableListItem itemId={selectableItemId} onEnter={openVisibility}>
       <CommandMenuItem
         id={selectableItemId}
-        Icon={getConditionalAvailabilityValueIcon({ visibilityStatus })}
+        Icon={getConditionalAvailabilityVisibilityStatusIcon({
+          visibilityStatus,
+        })}
         label={t`Visibility`}
-        description={getConditionalAvailabilityValueLabel({ visibilityStatus })}
+        description={getConditionalAvailabilityVisibilityStatusLabel({
+          visibilityStatus,
+        })}
         contextualTextPosition="right"
         hasSubMenu
         onClick={openVisibility}

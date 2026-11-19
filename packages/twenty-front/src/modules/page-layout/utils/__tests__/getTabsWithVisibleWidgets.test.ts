@@ -4,13 +4,23 @@ import { EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT } from '@/page-layout/tes
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
-import { CONDITIONAL_AVAILABILITY_DEVICE_DESKTOP } from '@/side-panel/pages/page-layout/constants/ConditionalAvailabilityDeviceDesktop';
-import { CONDITIONAL_AVAILABILITY_DEVICE_MOBILE } from '@/side-panel/pages/page-layout/constants/ConditionalAvailabilityDeviceMobile';
 import {
   PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
+
+const CONDITIONAL_AVAILABILITY_DEVICE_MOBILE: ConditionalAvailabilityNode = {
+  type: 'COMPARISON',
+  operator: 'EQUAL',
+  left: { type: 'PATH', path: 'device' },
+  right: { type: 'LITERAL', value: 'MOBILE' },
+};
+
+const CONDITIONAL_AVAILABILITY_DEVICE_DESKTOP: ConditionalAvailabilityNode = {
+  ...CONDITIONAL_AVAILABILITY_DEVICE_MOBILE,
+  right: { type: 'LITERAL', value: 'DESKTOP' },
+};
 
 describe('getTabsWithVisibleWidgets', () => {
   const createMockWidget = (
