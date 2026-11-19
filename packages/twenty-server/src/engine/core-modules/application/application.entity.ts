@@ -3,6 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import {
   type ApplicationBilling,
   type ApplicationCapability,
+  type RequiredApplicationManifest,
 } from 'twenty-shared/application';
 import { type IframeMediaPermission } from 'twenty-shared/types';
 import {
@@ -29,6 +30,7 @@ import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public
 import { ADD_HEALTH_CHECK_TO_APPLICATION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-health-check-to-application-upgrade-command-name.constant';
 import { ENABLE_USER_HEALTH_CHECK_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-55/enable-user-health-check-upgrade-command-name.constant';
 import { ADD_REQUESTED_ROLE_ID_TO_APPLICATION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-60/add-requested-role-id-to-application-upgrade-command-name.constant';
+import { ADD_APPLICATION_REQUIRED_APPLICATIONS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-application-required-applications-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
@@ -145,6 +147,13 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
       '2.56.0_AddApplicationGrantedIframeMediaPermissionsFastInstanceCommand_1793700975254',
   })
   grantedIframeMediaPermissions: IframeMediaPermission[];
+
+  @Column({ type: 'jsonb', nullable: false, default: [] })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_APPLICATION_REQUIRED_APPLICATIONS_UPGRADE_COMMAND_NAME,
+  })
+  requiredApplications: RequiredApplicationManifest[];
 
   @Column({ nullable: true, type: 'uuid' })
   logicFunctionLayerId: string | null;

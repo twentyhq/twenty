@@ -27,6 +27,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import {
   isDefined,
   isNonEmptyArray,
+  isValidUuid,
   normalizeIframeOrigin,
 } from 'twenty-shared/utils';
 
@@ -278,6 +279,36 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     }
 
     requestedIframeMediaOrigins.add(permission.origin);
+  }
+
+  const requiredApplicationUniversalIdentifiers = new Set<string>();
+
+  for (const requiredApplication of config.requiredApplications ?? []) {
+    const { universalIdentifier, versionRange } = requiredApplication;
+
+    if (!isValidUuid(universalIdentifier)) {
+      errors.push(
+        `Required application "${universalIdentifier}" must be identified by a UUID`,
+      );
+    }
+
+    if (universalIdentifier === config.universalIdentifier) {
+      errors.push('Application cannot require itself');
+    }
+
+    if (requiredApplicationUniversalIdentifiers.has(universalIdentifier)) {
+      errors.push(
+        `Required application "${universalIdentifier}" is declared more than once`,
+      );
+    }
+
+    if (!isNonEmptyString(versionRange)) {
+      errors.push(
+        `Required application "${universalIdentifier}" must have a non empty versionRange`,
+      );
+    }
+
+    requiredApplicationUniversalIdentifiers.add(universalIdentifier);
   }
 
   if (config.defaultRoleUniversalIdentifier) {

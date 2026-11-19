@@ -3,7 +3,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { type Manifest } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
 import { v4 } from 'uuid';
 
@@ -36,6 +36,7 @@ import { ApplicationState } from 'src/engine/core-modules/application/enums/appl
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
+import { findUnsatisfiedRequiredApplicationReasons } from 'src/engine/core-modules/application/application-manifest/utils/find-unsatisfied-required-application-reasons.util';
 import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -97,6 +98,11 @@ export class ApplicationSyncService {
       manifest.application.requestedIframeMediaPermissions,
     );
 
+    await this.assertRequiredApplicationsAreSatisfiedOrThrow({
+      workspaceId,
+      manifest,
+    });
+
     const ownerFlatApplication: FlatApplication = dryRun
       ? await this.resolveDryRunOwnerFlatApplication({ workspaceId, manifest })
       : await this.syncApplication({
@@ -156,6 +162,68 @@ export class ApplicationSyncService {
     return syncResult;
   }
 
+  private async assertRequiredApplicationsAreSatisfiedOrThrow({
+    workspaceId,
+    manifest,
+  }: {
+    workspaceId: string;
+    manifest: Manifest;
+  }): Promise<void> {
+    if (!isNonEmptyArray(manifest.application.requiredApplications)) {
+      return;
+    }
+
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+
+    const unsatisfiedReasons = findUnsatisfiedRequiredApplicationReasons({
+      requiredApplications: manifest.application.requiredApplications,
+      flatApplicationMaps,
+    });
+
+    if (unsatisfiedReasons.length > 0) {
+      throw new ApplicationException(
+        `Application "${manifest.application.displayName}" cannot be synced: ${unsatisfiedReasons.join('; ')}`,
+        ApplicationExceptionCode.REQUIRED_APPLICATION_NOT_SATISFIED,
+      );
+    }
+  }
+
+  private async assertApplicationIsNotRequiredByOtherApplicationsOrThrow({
+    workspaceId,
+    application,
+  }: {
+    workspaceId: string;
+    application: ApplicationEntity;
+  }): Promise<void> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+
+    const dependentApplicationNames = Object.values(flatApplicationMaps.byId)
+      .filter(isDefined)
+      .filter(
+        (flatApplication) =>
+          !isDefined(flatApplication.deletedAt) &&
+          flatApplication.id !== application.id &&
+          flatApplication.requiredApplications.some(
+            ({ universalIdentifier }) =>
+              universalIdentifier === application.universalIdentifier,
+          ),
+      )
+      .map(({ name }) => `"${name}"`);
+
+    if (dependentApplicationNames.length > 0) {
+      throw new ApplicationException(
+        `Application "${application.name}" is required by ${dependentApplicationNames.join(', ')}`,
+        ApplicationExceptionCode.APPLICATION_REQUIRED_BY_OTHER_APPLICATIONS,
+      );
+    }
+  }
+
   private async resolveDryRunOwnerFlatApplication({
     workspaceId,
     manifest,
@@ -202,6 +270,7 @@ export class ApplicationSyncService {
       yarnLockFileId: null,
       availablePackages: {},
       billing: manifest.application.billing ?? {},
+      requiredApplications: manifest.application.requiredApplications ?? [],
       grantedCapabilities: toApplicationCapabilities(
         manifest.application.requestedCapabilities,
       ),
@@ -315,6 +384,7 @@ export class ApplicationSyncService {
         packageJsonChecksum: storedFilesChecksums.packageJsonChecksum,
         yarnLockChecksum: storedFilesChecksums.yarnLockChecksum,
         billing: manifest.application.billing ?? {},
+        requiredApplications: manifest.application.requiredApplications ?? [],
         grantedCapabilities: resolveSyncedApplicationCapabilities({
           sourceType: application.sourceType,
           grantedCapabilities: application.grantedCapabilities,
@@ -376,6 +446,11 @@ export class ApplicationSyncService {
         ApplicationExceptionCode.FORBIDDEN,
       );
     }
+
+    await this.assertApplicationIsNotRequiredByOtherApplicationsOrThrow({
+      workspaceId,
+      application,
+    });
 
     return await this.runUninstall({
       application,

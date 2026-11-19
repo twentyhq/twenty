@@ -9,6 +9,7 @@ import { type IframeMediaPermission } from '@/types/IframeMediaPermission';
 import { type ApplicationBilling } from './applicationBillingType';
 import { type ApplicationCategory } from './applicationCategoryType';
 import { type ApplicationVariables } from './applicationVariablesType';
+import { type RequiredApplicationManifest } from './requiredApplicationManifestType';
 import { type ServerVariables } from './server-variables.type';
 import { type SyncableEntityOptions } from './syncableEntityOptionsType';
 
@@ -21,6 +22,7 @@ export type ApplicationManifest = SyncableEntityOptions & {
   applicationVariables?: ApplicationVariables;
   billing?: ApplicationBilling;
   serverVariables?: ServerVariables;
+  requiredApplications?: RequiredApplicationManifest[];
   author?: string;
   category?: ApplicationCategory;
   /**

@@ -1,0 +1,2 @@
+export const ADD_APPLICATION_REQUIRED_APPLICATIONS_UPGRADE_COMMAND_NAME =
+  '2.61.0_AddApplicationRequiredApplicationsFastInstanceCommand_1795097251804';

@@ -36,6 +36,7 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   billing: {},
   grantedCapabilities: [],
   grantedIframeMediaPermissions: [],
+  requiredApplications: [],
   logicFunctionLayerId: null,
   defaultRoleId: null,
   requestedRoleId: null,

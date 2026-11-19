@@ -1,4 +1,7 @@
-import { type ApplicationManifest } from 'twenty-shared/application';
+import {
+  type ApplicationManifest,
+  type RequiredApplicationManifest,
+} from 'twenty-shared/application';
 import { isDefined, isEmptyObject, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -21,11 +24,13 @@ export const fromFlatApplicationToApplicationManifest = ({
   defaultRoleUniversalIdentifier,
   settingsFrontComponentUniversalIdentifier,
   uninstallLogicFunctionUniversalIdentifier,
+  requiredApplications,
 }: {
   flatApplication: FlatApplicationHeader;
   defaultRoleUniversalIdentifier: string;
   settingsFrontComponentUniversalIdentifier?: string;
   uninstallLogicFunctionUniversalIdentifier?: string;
+  requiredApplications?: RequiredApplicationManifest[];
 }): ApplicationManifest => ({
   universalIdentifier: flatApplication.universalIdentifier,
   displayName: flatApplication.name,
@@ -59,6 +64,7 @@ export const fromFlatApplicationToApplicationManifest = ({
         },
       }
     : {}),
+  ...(isNonEmptyArray(requiredApplications) ? { requiredApplications } : {}),
   packageJsonChecksum: flatApplication.packageJsonChecksum ?? '',
   yarnLockChecksum: flatApplication.yarnLockChecksum,
 });

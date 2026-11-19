@@ -12,6 +12,7 @@ import { ApplicationFrontComponentExportService } from 'src/engine/core-modules/
 import { type ApplicationExport } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 import { assertFlatApplicationIsExportable } from 'src/engine/core-modules/application/application-manifest/utils/assert-flat-application-is-exportable.util';
 import { classifyApplicationFlatEntities } from 'src/engine/core-modules/application/application-manifest/utils/classify-application-flat-entities.util';
+import { deriveRequiredApplicationsFromManifest } from 'src/engine/core-modules/application/application-manifest/utils/derive-required-applications-from-manifest.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import { reconstructAgentsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-agents-manifest.util';
 import { reconstructDataModelManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-data-model-manifest.util';
@@ -276,15 +277,7 @@ export class ApplicationManifestExportService {
         })
       : { publicAssets: [], files: [], coverage: [] };
 
-    const manifest: Manifest = {
-      application: fromFlatApplicationToApplicationManifest({
-        flatApplication,
-        defaultRoleUniversalIdentifier:
-          findUniversalIdentifierById({
-            flatEntityMaps: allFlatEntityMaps.flatRoleMaps,
-            id: flatApplication.requestedRoleId,
-          }) ?? PLACEHOLDER_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
-      }),
+    const exportedEntities: Omit<Manifest, 'application'> = {
       objects,
       fields,
       indexes,
@@ -308,6 +301,24 @@ export class ApplicationManifestExportService {
       workflows,
       validationRules,
       ...(isDefined(translations) ? { translations } : {}),
+    };
+
+    const manifest: Manifest = {
+      application: fromFlatApplicationToApplicationManifest({
+        flatApplication,
+        defaultRoleUniversalIdentifier:
+          findUniversalIdentifierById({
+            flatEntityMaps: allFlatEntityMaps.flatRoleMaps,
+            id: flatApplication.requestedRoleId,
+          }) ?? PLACEHOLDER_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+        requiredApplications: deriveRequiredApplicationsFromManifest({
+          manifest: exportedEntities,
+          flatApplication,
+          flatApplicationMaps,
+          allFlatEntityMaps,
+        }),
+      }),
+      ...exportedEntities,
     };
 
     return {

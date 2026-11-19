@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Application export - field references to another application fails to sync a manifest that references a field of an application that is not installed 1`] = `
+exports[`Application export - undeclared field references to another application fails with a generic error to sync an undeclared reference to a field of an application that is not installed 1`] = `
 {
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
@@ -53,5 +53,41 @@ exports[`Application export - field references to another application fails to s
   },
   "message": "Validation errors occurred while syncing application manifest metadata",
   "name": "GraphQLError",
+}
+`;
+
+exports[`Application sync - declared required applications refuses to sync when a required application is not installed 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "REQUIRED_APPLICATION_NOT_SATISFIED",
+    "userFriendlyMessage": "This application requires another application that is not installed in this workspace, or not at a compatible version.",
+  },
+  "message": "Application "Cross App Declaring Consumer" cannot be synced: application d3e4f5a6-0040-4b7c-8d9e-0f1a2b3c4d5e (*) is not installed",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Application sync - declared required applications refuses to sync when the installed version does not satisfy the declared range 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "REQUIRED_APPLICATION_NOT_SATISFIED",
+    "userFriendlyMessage": "This application requires another application that is not installed in this workspace, or not at a compatible version.",
+  },
+  "message": "Application "Cross App Declaring Consumer" cannot be synced: application "Cross App Declared Dependency" (d3e4f5a6-0020-4b7c-8d9e-0f1a2b3c4d5e) is installed at version 1.0.0, which does not satisfy ^2.0.0",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Application sync - declared required applications refuses to uninstall an application that another installed application requires 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "APPLICATION_REQUIRED_BY_OTHER_APPLICATIONS",
+    "userFriendlyMessage": "Other installed applications require this application. Uninstall them first.",
+  },
+  "message": "Application "Cross App Declared Dependency" is required by "Cross App Declaring Consumer"",
+  "name": "UserInputError",
 }
 `;

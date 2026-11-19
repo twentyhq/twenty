@@ -270,6 +270,7 @@ export type { PreInstallLogicFunctionApplicationManifest } from './preInstallLog
 export type { RecordEventTriggerManifestAction } from './recordEventTriggerManifestActionType';
 export type { RecordEventTriggerManifestSettings } from './recordEventTriggerManifestSettingsType';
 export type { RelatedRecordPathManifest } from './relatedRecordPathManifestType';
+export type { RequiredApplicationManifest } from './requiredApplicationManifestType';
 export type { RoleManifestGrant } from './roleManifestGrantType';
 export type {
   LegacyObjectPermissionManifest,

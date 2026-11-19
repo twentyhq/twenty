@@ -33,6 +33,8 @@ export enum ApplicationExceptionCode {
   KEY_VALUE_PERSISTENCE_FAILED = 'KEY_VALUE_PERSISTENCE_FAILED',
   APPLICATION_NOT_EXPORTABLE = 'APPLICATION_NOT_EXPORTABLE',
   STANDARD_APPLICATION_NOT_EXPORTABLE = 'STANDARD_APPLICATION_NOT_EXPORTABLE',
+  REQUIRED_APPLICATION_NOT_SATISFIED = 'REQUIRED_APPLICATION_NOT_SATISFIED',
+  APPLICATION_REQUIRED_BY_OTHER_APPLICATIONS = 'APPLICATION_REQUIRED_BY_OTHER_APPLICATIONS',
 }
 
 const getApplicationExceptionUserFriendlyMessage = (
@@ -93,6 +95,10 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`Only applications synced from local source can be exported.`;
     case ApplicationExceptionCode.STANDARD_APPLICATION_NOT_EXPORTABLE:
       return msg`The standard application cannot be exported.`;
+    case ApplicationExceptionCode.REQUIRED_APPLICATION_NOT_SATISFIED:
+      return msg`This application requires another application that is not installed in this workspace, or not at a compatible version.`;
+    case ApplicationExceptionCode.APPLICATION_REQUIRED_BY_OTHER_APPLICATIONS:
+      return msg`Other installed applications require this application. Uninstall them first.`;
     default:
       assertUnreachable(code);
   }
