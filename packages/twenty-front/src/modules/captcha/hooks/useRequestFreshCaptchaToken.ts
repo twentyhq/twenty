@@ -5,6 +5,7 @@ import { type CaptchaToken } from '@/captcha/types/CaptchaToken';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { requestCaptchaTokenFromProvider } from '@/captcha/utils/requestCaptchaTokenFromProvider';
 import { waitForAtomValue } from '@/captcha/utils/waitForAtomValue';
+import { withTimeout } from '@/captcha/utils/withTimeout';
 import { captchaState } from '@/client-config/states/captchaState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { useStore } from 'jotai';
@@ -45,21 +46,12 @@ export const useRequestFreshCaptchaToken = () => {
       return requestCaptchaTokenFromProvider({ provider, siteKey });
     };
 
-    let timeoutId: ReturnType<typeof setTimeout> | undefined;
-
     try {
-      const token = await Promise.race([
-        requestToken(),
-        new Promise<never>((_resolve, reject) => {
-          timeoutId = setTimeout(
-            () =>
-              reject(
-                new Error(doNotTranslate('Captcha token request timed out')),
-              ),
-            CAPTCHA_TOKEN_REQUEST_TIMEOUT_IN_MS,
-          );
-        }),
-      ]);
+      const token = await withTimeout({
+        promise: requestToken(),
+        timeoutInMs: CAPTCHA_TOKEN_REQUEST_TIMEOUT_IN_MS,
+        timeoutMessage: doNotTranslate('Captcha token request timed out'),
+      });
 
       if (!isDefined(token)) {
         return undefined;
@@ -75,8 +67,6 @@ export const useRequestFreshCaptchaToken = () => {
       logError(error);
 
       return undefined;
-    } finally {
-      clearTimeout(timeoutId);
     }
   }, [store]);
 

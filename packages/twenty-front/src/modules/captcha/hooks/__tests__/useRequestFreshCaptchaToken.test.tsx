@@ -114,12 +114,10 @@ describe('useRequestFreshCaptchaToken', () => {
       wrapper: Wrapper,
     });
 
-    let pendingCaptchaToken: ReturnType<
-      typeof result.current.requestFreshCaptchaToken
-    >;
+    const pendingCaptchaToken = result.current.requestFreshCaptchaToken();
 
     await act(async () => {
-      pendingCaptchaToken = result.current.requestFreshCaptchaToken();
+      await Promise.resolve();
     });
 
     expect(mockGrecaptchaExecute).not.toHaveBeenCalled();

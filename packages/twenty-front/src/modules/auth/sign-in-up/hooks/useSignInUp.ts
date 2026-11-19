@@ -70,7 +70,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     setSignInUpStep(SignInUpStep.Email);
   }, [setSignInUpStep]);
 
-  const errorMsgUserAlreadyExist = t`An error occurred while checking user existence`;
+  const userExistenceCheckErrorMessage = t`An error occurred while checking user existence`;
   const continueWithCredentials = useCallback(async () => {
     if (!form.getValues('email')) {
       return enqueueToast({ status: 'error', children: t`Email is required` });
@@ -99,7 +99,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       enqueueToast(
         CombinedGraphQLErrors.is(error)
           ? getToastOptionsFromError({ error })
-          : { status: 'error', children: errorMsgUserAlreadyExist },
+          : { status: 'error', children: userExistenceCheckErrorMessage },
       );
     }
   }, [
@@ -110,7 +110,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     checkUserExistsQuery,
     setSignInUpMode,
     setSignInUpStep,
-    errorMsgUserAlreadyExist,
+    userExistenceCheckErrorMessage,
   ]);
 
   const submitCredentials: SubmitHandler<Form> = useCallback(
