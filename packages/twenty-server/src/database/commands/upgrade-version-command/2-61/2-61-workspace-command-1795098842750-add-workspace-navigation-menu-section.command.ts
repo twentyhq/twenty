@@ -1,8 +1,6 @@
 import { Inject } from '@nestjs/common';
 
-import { msg } from '@lingui/core/macro';
 import { Command } from 'nest-commander';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -11,18 +9,17 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { buildWorkspaceNavigationMenuSectionOperations } from 'src/database/commands/upgrade-version-command/2-61/utils/build-workspace-navigation-menu-section-operations.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
+import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.61.0', 1795087915474)
+@RegisteredWorkspaceCommand('2.61.0', 1795098842750)
 @Command({
   name: 'upgrade:2-61:add-workspace-navigation-menu-section',
   description:
-    'For workspaces with the customizable sidebar on, add a Workspace section and move the shared top-level sidebar items into it',
+    'Add the standard Workspace section and move the shared top-level sidebar items into it',
 })
 export class AddWorkspaceNavigationMenuSectionCommand extends ProvisionedWorkspaceCommandRunner {
   @Inject(WorkspaceCacheService)
@@ -34,9 +31,6 @@ export class AddWorkspaceNavigationMenuSectionCommand extends ProvisionedWorkspa
   @Inject(ApplicationService)
   private readonly applicationService: ApplicationService;
 
-  @Inject(FeatureFlagService)
-  private readonly featureFlagService: FeatureFlagService;
-
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
   ) {
@@ -47,16 +41,6 @@ export class AddWorkspaceNavigationMenuSectionCommand extends ProvisionedWorkspa
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const isCustomizableSidebarEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
-        workspaceId,
-      );
-
-    if (!isCustomizableSidebarEnabled) {
-      return;
-    }
-
     const { flatNavigationMenuItemMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatNavigationMenuItemMaps',
@@ -73,14 +57,12 @@ export class AddWorkspaceNavigationMenuSectionCommand extends ProvisionedWorkspa
           flatNavigationMenuItemMaps.byUniversalIdentifier,
         ).filter(isDefined),
         sectionId: v4(),
-        sectionName: i18nLabel(
-          msg({ message: `Workspace`, context: 'navigationMenuItem.name' }),
-        ),
+        sectionName: STANDARD_NAVIGATION_MENU_ITEMS.workspaceSection.name,
         movableApplicationIds: new Set([
           twentyStandardFlatApplication.id,
           workspaceCustomFlatApplication.id,
         ]),
-        ownerApplication: workspaceCustomFlatApplication,
+        ownerApplication: twentyStandardFlatApplication,
         workspaceId,
         now: new Date().toISOString(),
       });
@@ -104,7 +86,7 @@ export class AddWorkspaceNavigationMenuSectionCommand extends ProvisionedWorkspa
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
+            twentyStandardFlatApplication.universalIdentifier,
           allFlatEntityOperationByMetadataName: {
             navigationMenuItem: {
               flatEntityToCreate,

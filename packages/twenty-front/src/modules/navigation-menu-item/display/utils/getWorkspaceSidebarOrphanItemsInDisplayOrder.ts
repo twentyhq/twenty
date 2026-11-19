@@ -24,6 +24,7 @@ type GetWorkspaceSidebarOrphanItemsInDisplayOrderArgs = {
   >[0];
   includeInaccessibleObjectBackedItems?: boolean;
   containerId?: string | null;
+  flattenedSectionIds?: Set<string>;
 };
 
 export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
@@ -34,11 +35,14 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
   objectPermissionsByObjectMetadataId,
   includeInaccessibleObjectBackedItems = false,
   containerId = null,
+  flattenedSectionIds = new Set(),
 }: GetWorkspaceSidebarOrphanItemsInDisplayOrderArgs): NavigationMenuItem[] => {
   const flatWorkspaceItems = workspaceNavigationMenuItems
     .filter(
       (item) =>
-        (item.parentId ?? null) === containerId &&
+        ((item.parentId ?? null) === containerId ||
+          (isDefined(item.parentId) &&
+            flattenedSectionIds.has(item.parentId))) &&
         !isNavigationMenuItemTabOrSection(item),
     )
     .sort((a, b) => a.position - b.position);

@@ -1,15 +1,16 @@
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AddWorkspaceNavigationMenuSectionCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795087915474-add-workspace-navigation-menu-section.command';
+import { type AddWorkspaceNavigationMenuSectionCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795098842750-add-workspace-navigation-menu-section.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { WORKSPACE_NAVIGATION_MENU_SECTION_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/flat-navigation-menu-item/constants/workspace-navigation-menu-section-universal-identifier.constant';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
+
+const WORKSPACE_SECTION_UNIVERSAL_IDENTIFIER =
+  STANDARD_NAVIGATION_MENU_ITEMS.workspaceSection.universalIdentifier;
 
 type NavigationMenuItemRow = {
   id: string;
@@ -32,21 +33,13 @@ const readNavigationMenuItems = async (): Promise<NavigationMenuItemRow[]> =>
     [SEED_APPLE_WORKSPACE_ID],
   );
 
-const setCustomizableSidebar = (value: boolean) =>
-  updateFeatureFlag({
-    featureFlag: FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
-    value,
-    expectToFail: false,
-  });
-
 const removeWorkspaceSection = async () => {
   const navigationMenuItemRepository =
     getCoreRepository<NavigationMenuItemEntity>(NavigationMenuItemEntity);
   const section = await navigationMenuItemRepository.findOne({
     where: {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
-      universalIdentifier:
-        WORKSPACE_NAVIGATION_MENU_SECTION_UNIVERSAL_IDENTIFIER,
+      universalIdentifier: WORKSPACE_SECTION_UNIVERSAL_IDENTIFIER,
     },
   });
 
@@ -82,35 +75,24 @@ describe('2-61 workspace command - add workspace navigation menu section (integr
       getAppProviderByClassName<AddWorkspaceNavigationMenuSectionCommand>(
         'AddWorkspaceNavigationMenuSectionCommand',
       );
-    await setCustomizableSidebar(false);
+    await removeWorkspaceSection();
     navigationMenuItemsBefore = await readNavigationMenuItems();
   });
 
-  afterAll(async () => {
-    await setCustomizableSidebar(false);
-    await removeWorkspaceSection();
-  });
-
-  it('leaves the sidebar untouched while the flag is off and on a dry run', async () => {
+  it('leaves the sidebar untouched on a dry run', async () => {
     expect(
       navigationMenuItemsBefore.some(
         ({ universalIdentifier }) =>
-          universalIdentifier ===
-          WORKSPACE_NAVIGATION_MENU_SECTION_UNIVERSAL_IDENTIFIER,
+          universalIdentifier === WORKSPACE_SECTION_UNIVERSAL_IDENTIFIER,
       ),
     ).toBe(false);
 
-    await runCommand();
-
-    expect(await readNavigationMenuItems()).toEqual(navigationMenuItemsBefore);
-
-    await setCustomizableSidebar(true);
     await runCommand({ dryRun: true });
 
     expect(await readNavigationMenuItems()).toEqual(navigationMenuItemsBefore);
   });
 
-  it('moves the shared top-level items into one custom-app section, once', async () => {
+  it('moves the shared top-level items into one standard section, once', async () => {
     const { twentyStandardFlatApplication, workspaceCustomFlatApplication } =
       await getAppProviderByClassName<ApplicationService>(
         'ApplicationService',
@@ -135,8 +117,7 @@ describe('2-61 workspace command - add workspace navigation menu section (integr
     const navigationMenuItemsAfter = await readNavigationMenuItems();
     const sections = navigationMenuItemsAfter.filter(
       ({ universalIdentifier }) =>
-        universalIdentifier ===
-        WORKSPACE_NAVIGATION_MENU_SECTION_UNIVERSAL_IDENTIFIER,
+        universalIdentifier === WORKSPACE_SECTION_UNIVERSAL_IDENTIFIER,
     );
     const [section] = sections;
 
@@ -146,7 +127,7 @@ describe('2-61 workspace command - add workspace navigation menu section (integr
       name: 'Workspace',
       parentId: null,
       userWorkspaceId: null,
-      applicationId: workspaceCustomFlatApplication.id,
+      applicationId: twentyStandardFlatApplication.id,
     });
     expect(movedItemIds.length).toBeGreaterThan(0);
     expect(

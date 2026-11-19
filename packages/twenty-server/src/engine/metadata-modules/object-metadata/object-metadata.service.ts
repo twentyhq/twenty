@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -16,7 +14,6 @@ import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metada
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { computeInitialObjectViewOperationsOnObjectCreation } from 'src/engine/metadata-modules/view/utils/compute-initial-object-view-operations-on-object-creation.util';
-import { WORKSPACE_NAVIGATION_MENU_SECTION_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/flat-navigation-menu-item/constants/workspace-navigation-menu-section-universal-identifier.constant';
 import { FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
@@ -40,6 +37,7 @@ import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/wo
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 
 const MAX_OBJECTS_PER_BATCH_UPDATE = 100;
 
@@ -58,7 +56,6 @@ export class ObjectMetadataService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   // One migration for the whole batch: one update per item would validate, build
@@ -672,18 +669,11 @@ export class ObjectMetadataService {
       (item): item is FlatNavigationMenuItem =>
         isDefined(item) && !isDefined(item.userWorkspaceId),
     );
-    const isCustomizableSidebarEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
-        workspaceId,
-      );
-    const workspaceSection = isCustomizableSidebarEnabled
-      ? workspaceLevelItems.find(
-          (item) =>
-            item.universalIdentifier ===
-            WORKSPACE_NAVIGATION_MENU_SECTION_UNIVERSAL_IDENTIFIER,
-        )
-      : undefined;
+    const workspaceSection = workspaceLevelItems.find(
+      (item) =>
+        item.universalIdentifier ===
+        STANDARD_NAVIGATION_MENU_ITEMS.workspaceSection.universalIdentifier,
+    );
     const siblingItems = isDefined(workspaceSection)
       ? workspaceLevelItems.filter(
           (item) => item.parentId === workspaceSection.id,

@@ -8,6 +8,10 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { NavigationMenuItemType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder';
 import { useNavigationMenuItemsData } from './useNavigationMenuItemsData';
@@ -31,6 +35,21 @@ export const useNavigationMenuItemSectionItems = (
   const views = useAtomStateValue(viewsSelector);
   const objectMetadataItems = useNavigationObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
+
+  const flattenedSectionIds = new Set(
+    !isCustomizableSidebarEnabled && containerId === null
+      ? workspaceNavigationMenuItems
+          .filter(
+            (item) =>
+              item.type === NavigationMenuItemType.SECTION &&
+              !isDefined(item.parentId),
+          )
+          .map((item) => item.id)
+      : [],
+  );
 
   const flatItems = getWorkspaceSidebarOrphanItemsInDisplayOrder({
     workspaceNavigationMenuItems,
@@ -40,6 +59,7 @@ export const useNavigationMenuItemSectionItems = (
     objectPermissionsByObjectMetadataId,
     includeInaccessibleObjectBackedItems: isLayoutCustomizationModeEnabled,
     containerId,
+    flattenedSectionIds,
   });
 
   return flattenNavigationMenuItemsWithFolderChildren(

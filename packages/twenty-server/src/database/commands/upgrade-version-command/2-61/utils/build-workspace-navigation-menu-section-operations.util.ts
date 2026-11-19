@@ -2,7 +2,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { validateNavigationMenuItemHierarchy } from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util';
-import { WORKSPACE_NAVIGATION_MENU_SECTION_UNIVERSAL_IDENTIFIER } from 'src/engine/metadata-modules/flat-navigation-menu-item/constants/workspace-navigation-menu-section-universal-identifier.constant';
+import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 
 export const buildWorkspaceNavigationMenuSectionOperations = ({
@@ -33,7 +33,7 @@ export const buildWorkspaceNavigationMenuSectionOperations = ({
     navigationMenuItems.some(
       (item) =>
         item.universalIdentifier ===
-        WORKSPACE_NAVIGATION_MENU_SECTION_UNIVERSAL_IDENTIFIER,
+        STANDARD_NAVIGATION_MENU_ITEMS.workspaceSection.universalIdentifier,
     )
   ) {
     return { flatEntityToCreate: [], flatEntityToUpdate: [] };
@@ -55,7 +55,7 @@ export const buildWorkspaceNavigationMenuSectionOperations = ({
 
   const section: FlatNavigationMenuItem = {
     id: sectionId,
-    universalIdentifier: WORKSPACE_NAVIGATION_MENU_SECTION_UNIVERSAL_IDENTIFIER,
+    universalIdentifier: STANDARD_NAVIGATION_MENU_ITEMS.workspaceSection.universalIdentifier,
     type: NavigationMenuItemType.SECTION,
     name: sectionName,
     icon: null,
@@ -92,7 +92,7 @@ export const buildWorkspaceNavigationMenuSectionOperations = ({
       ...item,
       parentId: sectionId,
       parentUniversalIdentifier:
-        WORKSPACE_NAVIGATION_MENU_SECTION_UNIVERSAL_IDENTIFIER,
+        STANDARD_NAVIGATION_MENU_ITEMS.workspaceSection.universalIdentifier,
       updatedAt: now,
     })),
   };

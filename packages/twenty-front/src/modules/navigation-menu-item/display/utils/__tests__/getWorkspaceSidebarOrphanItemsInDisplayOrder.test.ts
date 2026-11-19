@@ -111,4 +111,37 @@ describe('getWorkspaceSidebarOrphanItemsInDisplayOrder', () => {
     expect(sectionResult.map((item) => item.id)).toEqual(['folder-id']);
     expect(rootResult.map((item) => item.id)).toEqual(['item-id']);
   });
+
+  it('lists the items of a flattened section with the top-level items', () => {
+    const section = {
+      id: 'workspace-section',
+      type: NavigationMenuItemType.SECTION,
+      position: 0,
+    } as NavigationMenuItem;
+    const folderInSection = {
+      id: 'folder-in-section',
+      type: NavigationMenuItemType.FOLDER,
+      parentId: section.id,
+      position: 1,
+    } as NavigationMenuItem;
+    const topLevelFolder = {
+      id: 'top-level-folder',
+      type: NavigationMenuItemType.FOLDER,
+      position: 2,
+    } as NavigationMenuItem;
+
+    const result = getWorkspaceSidebarOrphanItemsInDisplayOrder({
+      workspaceNavigationMenuItems: [section, folderInSection, topLevelFolder],
+      workspaceNavigationMenuItemsSorted: [],
+      objectMetadataItems: [],
+      views: [],
+      objectPermissionsByObjectMetadataId: {},
+      flattenedSectionIds: new Set([section.id]),
+    });
+
+    expect(result.map(({ id }) => id)).toEqual([
+      'folder-in-section',
+      'top-level-folder',
+    ]);
+  });
 });
