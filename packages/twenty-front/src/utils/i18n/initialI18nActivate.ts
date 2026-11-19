@@ -2,10 +2,14 @@ import { fromNavigator, fromStorage, fromUrl } from '@lingui/detect-locale';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined, isValidLocale, normalizeLocale } from 'twenty-shared/utils';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import {
+  LOCALE_LOCAL_STORAGE_KEY,
+  persistLocale,
+} from '~/utils/i18n/persistLocale';
 
 export const initialI18nActivate = () => {
   const urlLocale = fromUrl('locale');
-  const storageLocale = fromStorage('locale');
+  const storageLocale = fromStorage(LOCALE_LOCAL_STORAGE_KEY);
   const navigatorLocale = fromNavigator();
 
   let locale: keyof typeof APP_LOCALES = APP_LOCALES.en;
@@ -22,12 +26,7 @@ export const initialI18nActivate = () => {
 
   if (isDefined(normalizedUrlLocale) && isValidLocale(normalizedUrlLocale)) {
     locale = normalizedUrlLocale;
-    try {
-      localStorage.setItem('locale', normalizedUrlLocale);
-    } catch (error) {
-      // oxlint-disable-next-line no-console
-      console.log('Failed to save locale to localStorage:', error);
-    }
+    persistLocale(normalizedUrlLocale);
   } else if (
     isDefined(normalizedStorageLocale) &&
     isValidLocale(normalizedStorageLocale)
