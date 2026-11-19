@@ -23,11 +23,9 @@ import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { toIsoStringOrNull } from 'src/utils/date/toIsoStringOrNull';
 
 const RENOTIFY_COOLDOWN_MS = 15_000;
-
-const toIsoStringOrNull = (date: Date | string | null) =>
-  isDefined(date) ? new Date(date).toISOString() : null;
 
 @Injectable()
 export class AgentChatWebPushNotificationService {
