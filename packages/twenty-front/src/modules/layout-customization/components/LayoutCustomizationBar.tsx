@@ -71,9 +71,10 @@ const LayoutCustomizationBarContent = () => {
   const { save, isSaving } = useSaveLayoutCustomization();
   const { cancel } = useCancelLayoutCustomization();
   const { isDirty } = useIsLayoutCustomizationDirty();
-  const isVisibilityRuleIncomplete = useAtomStateValue(
-    hasIncompleteLayoutCustomizationConditionalAvailabilityDraftSelector,
-  );
+  const hasIncompleteLayoutCustomizationConditionalAvailabilityDraft =
+    useAtomStateValue(
+      hasIncompleteLayoutCustomizationConditionalAvailabilityDraftSelector,
+    );
 
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
   const persistedPageLayout = useAtomValue(
@@ -116,7 +117,7 @@ const LayoutCustomizationBarContent = () => {
           {title}
         </StyledTitle>
         <StyledRightSection>
-          {isVisibilityRuleIncomplete && (
+          {hasIncompleteLayoutCustomizationConditionalAvailabilityDraft && (
             <StyledSaveBlockedReason>
               {t`Finish or clear the visibility rule to save`}
             </StyledSaveBlockedReason>
@@ -124,7 +125,11 @@ const LayoutCustomizationBarContent = () => {
           <SaveAndCancelButtons
             onSave={save}
             onCancel={cancel}
-            isSaveDisabled={!isDirty || isSaving || isVisibilityRuleIncomplete}
+            isSaveDisabled={
+              !isDirty ||
+              isSaving ||
+              hasIncompleteLayoutCustomizationConditionalAvailabilityDraft
+            }
             isCancelDisabled={isSaving}
             isLoading={isSaving}
             color="inherit"
