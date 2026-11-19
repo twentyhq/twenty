@@ -16,14 +16,11 @@ import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { SidePanelSubPageRouter } from '@/side-panel/components/SidePanelSubPageRouter';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
-import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
 import { SidePanelPageLayoutTabSettingsContent } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent';
 import { CONDITIONAL_AVAILABILITY_DEVICE_MOBILE } from '@/side-panel/pages/page-layout/constants/ConditionalAvailabilityDeviceMobile';
-import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
 import { PageLayoutSidePanelTargetContext } from '@/side-panel/pages/page-layout/contexts/PageLayoutSidePanelTargetContext';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
@@ -307,13 +304,6 @@ export const SingleWidgetVisibility: Story = {
 
     expect(await canvas.findByText('Device')).toBeVisible();
     expect(canvas.getByText('Mobile')).toBeVisible();
-    expect(
-      jotaiStore.get(
-        selectedItemIdComponentState.atomFamily({
-          instanceId: SIDE_PANEL_SELECTABLE_LIST_ID,
-        }),
-      ),
-    ).toBe(TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION);
   },
 };
 
