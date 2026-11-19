@@ -20,6 +20,7 @@ import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-ev
 type BroadcastEventRecord = {
   userWorkspaceId?: string | null;
   visibility?: WorkflowVisibility | ViewVisibility | null;
+  isPrivate?: boolean | null;
   createdByUserWorkspaceId?: string | null;
   coreWorkflowId?: string | null;
   viewId?: string | null;
@@ -44,6 +45,18 @@ const getWorkflowRecipientUserWorkspaceIds = (
 
   return isNonEmptyString(workflow.createdByUserWorkspaceId)
     ? [workflow.createdByUserWorkspaceId]
+    : [];
+};
+
+const getAgentRecipientUserWorkspaceIds = (
+  agent: Pick<BroadcastEventRecord, 'isPrivate' | 'createdByUserWorkspaceId'>,
+): string[] | undefined => {
+  if (!agent.isPrivate) {
+    return undefined;
+  }
+
+  return isNonEmptyString(agent.createdByUserWorkspaceId)
+    ? [agent.createdByUserWorkspaceId]
     : [];
 };
 
@@ -166,6 +179,10 @@ export class MetadataEventPublisher {
         case 'workflow':
           return isDefined(record)
             ? getWorkflowRecipientUserWorkspaceIds(record)
+            : undefined;
+        case 'agent':
+          return isDefined(record)
+            ? getAgentRecipientUserWorkspaceIds(record)
             : undefined;
         case 'workflowVersion': {
           const coreWorkflowId = record?.coreWorkflowId;
