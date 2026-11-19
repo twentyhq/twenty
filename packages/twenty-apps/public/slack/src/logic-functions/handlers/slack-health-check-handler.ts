@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-sdk/utils';
 import { SLACK_CONNECTION_BANNER_ACTION } from 'src/logic-functions/constants/slack-connection-banner-action';
 import { SLACK_CONNECTION_HEALTH_BANNERS } from 'src/logic-functions/constants/slack-connection-health-banners';
 import { SLACK_CONNECTION_STATUS_TIMEOUT_MS } from 'src/logic-functions/constants/slack-connection-status-timeout-ms';
+import { SLACK_NOT_CONNECTED_BANNER } from 'src/logic-functions/constants/slack-not-connected-banner';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { resolveSlackConnectionHealth } from 'src/logic-functions/utils/resolve-slack-connection-health';
 
@@ -14,10 +15,19 @@ export const slackHealthCheckHandler =
       retryConfig: { retries: 0 },
     });
 
-    // Nothing to repair while Slack is not connected: the connection itself
-    // already shows that, and the banner would only repeat it.
     if (!slackClientResult.success) {
-      return { status: 'OK' };
+      // A failed lookup stays silent, so a transient error never tells an
+      // admin that a working integration is not connected.
+      if (slackClientResult.isConnectionMissing !== true) {
+        return { status: 'OK' };
+      }
+
+      return {
+        status: 'WARNING',
+        title: SLACK_NOT_CONNECTED_BANNER.title,
+        description: SLACK_NOT_CONNECTED_BANNER.description,
+        action: SLACK_CONNECTION_BANNER_ACTION,
+      };
     }
 
     const { connectionHealth } = await resolveSlackConnectionHealth({

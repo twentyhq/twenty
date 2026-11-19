@@ -10,11 +10,13 @@ import {
 
 type SlackConnectionStatusState = ParsedSlackConnectionStatus & {
   isConnectionStatusLoading: boolean;
+  hasConnectionStatusFailed: boolean;
 };
 
 const LOADING_STATE: SlackConnectionStatusState = {
   ...DISCONNECTED_SLACK_CONNECTION_STATUS,
   isConnectionStatusLoading: true,
+  hasConnectionStatusFailed: false,
 };
 
 export const useSlackConnectionStatus = (): SlackConnectionStatusState => {
@@ -25,6 +27,7 @@ export const useSlackConnectionStatus = (): SlackConnectionStatusState => {
 
     const fetchConnectionStatus = async () => {
       let connectionStatus: ParsedSlackConnectionStatus;
+      let hasConnectionStatusFailed = false;
 
       try {
         const result = await new RestApiClient().post(
@@ -35,10 +38,15 @@ export const useSlackConnectionStatus = (): SlackConnectionStatusState => {
         connectionStatus = parseSlackConnectionStatus(result);
       } catch {
         connectionStatus = DISCONNECTED_SLACK_CONNECTION_STATUS;
+        hasConnectionStatusFailed = true;
       }
 
       if (!cancelled) {
-        setState({ ...connectionStatus, isConnectionStatusLoading: false });
+        setState({
+          ...connectionStatus,
+          isConnectionStatusLoading: false,
+          hasConnectionStatusFailed,
+        });
       }
     };
 
