@@ -7575,7 +7575,7 @@ msgstr "Verbinden Sie Ihr eigenes {0}-Konto für diese App, damit sie es in Ihre
 #. placeholder {0}: connectionProvider.displayName
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
 msgid "Connect your own {0} account for this server to use on your behalf."
-msgstr ""
+msgstr "Verbinde dein eigenes {0}-Konto für diesen Server, damit es in deinem Namen verwendet werden kann."
 
 #. js-lingui-id: QHcLEN
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
@@ -9261,7 +9261,7 @@ msgstr "Datensatzseite anpassen"
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
-msgstr ""
+msgstr "Seitenleiste anpassen"
 
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
@@ -23956,6 +23956,11 @@ msgstr "E-Mails lesen"
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read system prompts"
 msgstr "System-Prompts lesen"
+
+#. js-lingui-id: /nZe2L
+#: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
+msgid "Read the address, owner and account status of members' private channels"
+msgstr ""
 
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
