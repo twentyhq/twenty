@@ -12,7 +12,6 @@ import { CalendarChannelMetadataService } from 'src/engine/metadata-modules/cale
 import { PublicCalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/public-calendar-channel.dto';
 import { CalendarChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/calendar-channel/interceptors/calendar-channel-graphql-api-exception.interceptor';
 
-// Member-bound app tokens can be minted by any member, so only a server-side run may read other members' channels
 @UseGuards(
   AccessPolicyGuard({
     authPrincipals: {
