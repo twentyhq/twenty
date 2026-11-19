@@ -4,7 +4,7 @@ import { buildObjectRecordsPermissionSummary } from '@/marketplace/utils/buildOb
 import { buildPermissionFlagSummary } from '@/marketplace/utils/buildPermissionFlagSummary';
 import { getRecordAccessLabel } from '@/marketplace/utils/getRecordAccessLabel';
 import { t } from '@lingui/core/macro';
-import { type RoleManifest } from 'twenty-shared/application';
+import { type LegacyCompliantRoleManifest } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { IconAddressBook, IconSettings, IconTool } from 'twenty-ui/icon';
@@ -16,7 +16,9 @@ export type BuildPermissionSummaryOptions = {
   appObjectUniversalIdentifiers?: ReadonlySet<string>;
 };
 
-const getRoleAccess = (defaultRole: RoleManifest): RecordAccess => ({
+const getRoleAccess = (
+  defaultRole: LegacyCompliantRoleManifest,
+): RecordAccess => ({
   canRead: defaultRole.canReadAllObjectRecords ?? false,
   canWrite: defaultRole.canUpdateAllObjectRecords ?? false,
   canDelete:
@@ -25,7 +27,7 @@ const getRoleAccess = (defaultRole: RoleManifest): RecordAccess => ({
 });
 
 export const buildPermissionSummaryFromRoleManifest = (
-  defaultRole: RoleManifest,
+  defaultRole: LegacyCompliantRoleManifest,
   {
     objectLabelsByUniversalIdentifier = {},
     appObjectUniversalIdentifiers = new Set(),
@@ -33,7 +35,7 @@ export const buildPermissionSummaryFromRoleManifest = (
 ): PermissionSummaryItem[] => {
   const roleAccess = getRoleAccess(defaultRole);
 
-  const roleWithoutAppObjectPermissions: RoleManifest = {
+  const roleWithoutAppObjectPermissions: LegacyCompliantRoleManifest = {
     ...defaultRole,
     objectPermissions: (defaultRole.objectPermissions ?? []).filter(
       ({ objectUniversalIdentifier }) =>

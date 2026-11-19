@@ -1,3 +1,4 @@
+import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { FormAddressFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAddressFieldInput';
 import { FormArrayFieldInput } from '@/object-record/record-field/ui/form-types/components/FormArrayFieldInput';
@@ -27,6 +28,7 @@ import { type FormFieldInputSettings } from '@/object-record/record-field/ui/for
 import { type FormFieldInputSubFieldPlaceholders } from '@/object-record/record-field/ui/form-types/types/FormFieldInputSubFieldPlaceholders';
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
+import { filterSelectableFieldOptions } from '@/object-record/record-field/ui/utils/filterSelectableFieldOptions';
 import {
   type FieldAddressValue,
   type FieldArrayValue,
@@ -127,7 +129,10 @@ export const FormFieldInput = ({
       defaultValue={defaultValue as string | undefined}
       onChange={onChange}
       VariablePicker={VariablePicker}
-      options={field.metadata?.options}
+      options={filterSelectableFieldOptions({
+        options: field.metadata.options,
+        selectedValues: isString(defaultValue) ? [defaultValue] : [],
+      })}
       readonly={readonly}
       isNullable={field.metadata.isNullable}
     />
@@ -210,7 +215,12 @@ export const FormFieldInput = ({
       defaultValue={defaultValue as FieldMultiSelectValue | string | undefined}
       onChange={onChange}
       VariablePicker={VariablePicker}
-      options={field.metadata?.options}
+      options={filterSelectableFieldOptions({
+        options: field.metadata.options,
+        selectedValues: Array.isArray(defaultValue)
+          ? defaultValue.filter(isString)
+          : [],
+      })}
       readonly={readonly}
       placeholder={placeholder}
     />

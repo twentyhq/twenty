@@ -14,10 +14,12 @@ import { usePerformViewSortApiPersist } from '@/views/hooks/internal/usePerformV
 import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { ViewType } from '@/views/types/ViewType';
+import { isRecordFieldSupportedByViewType } from '@/object-record/record-field/utils/isRecordFieldSupportedByViewType';
 import { duplicateViewFiltersAndViewFilterGroups } from '@/views/utils/duplicateViewFiltersAndViewFilterGroups';
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
 import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
 import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
+import { mapViewSortToCreateViewSortMutationVariables } from '@/views/utils/mapViewSortToCreateViewSortMutationVariables';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -169,17 +171,26 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       }
 
       const fieldResult = await performViewFieldApiCreate({
-        inputs: sourceView.viewFields.map((viewField) => ({
-          id: v4(),
-          fieldMetadataId: viewField.fieldMetadataId,
-          position: viewField.position,
-          isVisible: viewField.isVisible,
-          isCanonical: viewField.isCanonical,
-          size: viewField.size,
-          aggregateOperation: viewField.aggregateOperation,
-          viewFieldGroupId: viewField.viewFieldGroupId,
-          viewId: newViewId,
-        })),
+        inputs: sourceView.viewFields
+          .filter((viewField) =>
+            isRecordFieldSupportedByViewType({
+              recordField: viewField,
+              viewType,
+            }),
+          )
+          .map((viewField) => ({
+            id: v4(),
+            fieldMetadataId: viewField.fieldMetadataId,
+            position: viewField.position,
+            isVisible: viewField.isVisible,
+            isCanonical: viewField.isCanonical,
+            size: viewField.size,
+            aggregateOperation: viewField.aggregateOperation,
+            viewFieldGroupId: viewField.viewFieldGroupId,
+            relationTargetFieldMetadataId:
+              viewField.relationTargetFieldMetadataId,
+            viewId: newViewId,
+          })),
       });
 
       if (fieldResult.status === 'failed') {
@@ -250,14 +261,12 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           return undefined;
         }
 
-        const createViewSortInputs = viewSortsToCreate.map((viewSort) => ({
-          input: {
-            id: viewSort.id,
-            fieldMetadataId: viewSort.fieldMetadataId,
+        const createViewSortInputs = viewSortsToCreate.map((viewSort) =>
+          mapViewSortToCreateViewSortMutationVariables({
+            viewSort,
             viewId: newViewId,
-            direction: viewSort.direction,
-          },
-        }));
+          }),
+        );
 
         const sortResult = await performViewSortApiCreate(createViewSortInputs);
 

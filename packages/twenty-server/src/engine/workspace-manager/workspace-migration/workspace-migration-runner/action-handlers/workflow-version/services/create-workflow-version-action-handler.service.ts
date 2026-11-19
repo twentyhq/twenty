@@ -5,6 +5,7 @@ import { v4 } from 'uuid';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
+import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import {
   FlatCreateWorkflowVersionAction,
   UniversalCreateWorkflowVersionAction,
@@ -25,9 +26,16 @@ export class CreateWorkflowVersionActionHandlerService extends WorkspaceMigratio
 
   override async transpileUniversalActionToFlatAction({
     action,
+    allFlatEntityMaps,
     flatApplication,
     workspaceId,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateWorkflowVersionAction>): Promise<FlatCreateWorkflowVersionAction> {
+    const { coreWorkflowId } = resolveUniversalRelationIdentifiersToIds({
+      flatEntityMaps: allFlatEntityMaps,
+      metadataName: action.metadataName,
+      universalForeignKeyValues: action.flatEntity,
+    });
+
     const emptyUniversalForeignKeyAggregators =
       getUniversalFlatEntityEmptyForeignKeyAggregators({
         metadataName: 'workflowVersion',
@@ -38,6 +46,7 @@ export class CreateWorkflowVersionActionHandlerService extends WorkspaceMigratio
       flatEntity: {
         ...action.flatEntity,
         applicationId: flatApplication.id,
+        coreWorkflowId,
         id: action.id ?? v4(),
         workspaceId,
         ...emptyUniversalForeignKeyAggregators,

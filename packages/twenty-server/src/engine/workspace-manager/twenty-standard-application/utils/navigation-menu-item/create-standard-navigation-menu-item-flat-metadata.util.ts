@@ -71,8 +71,8 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
       : null,
     viewId: isObjectType ? null : flatView.id,
     viewUniversalIdentifier: isObjectType ? null : flatView.universalIdentifier,
-    folderId: null,
-    folderUniversalIdentifier: null,
+    parentId: null,
+    parentUniversalIdentifier: null,
     pageLayoutId: null,
     pageLayoutUniversalIdentifier: null,
     agentChatChannelId: null,
@@ -84,6 +84,7 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
     name: null,
     link: null,
     nativePageKey: null,
+    builtInSectionKey: null,
     icon: null,
     color:
       STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS[navigationMenuItemName] ??

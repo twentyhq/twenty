@@ -23,7 +23,7 @@ export const NavigationMenuItemOrphanDropTarget = ({
   highlightPosition = 'bottom',
 }: NavigationMenuItemOrphanDropTargetProps) => (
   <NavigationItemDropTarget
-    folderId={null}
+    parentId={null}
     index={index}
     sectionId={sectionId}
     compact={compact}

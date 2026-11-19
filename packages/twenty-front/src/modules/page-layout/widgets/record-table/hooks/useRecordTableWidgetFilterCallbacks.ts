@@ -1,6 +1,7 @@
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
+import { isCurrentRecordViewFilter } from '@/page-layout/widgets/record-table/utils/isCurrentRecordViewFilter';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
 import { useStore } from 'jotai';
@@ -51,19 +52,22 @@ export const useRecordTableWidgetFilterCallbacks = ({
         ...prev,
         [widgetId]: {
           ...widgetViewDraft,
-          viewFilters: currentRecordFilters.map((recordFilter) => ({
-            id: recordFilter.id,
-            fieldMetadataId: recordFilter.fieldMetadataId,
-            operand: recordFilter.operand,
-            value: recordFilter.value,
-            viewId,
-            viewFilterGroupId: recordFilter.recordFilterGroupId ?? null,
-            positionInViewFilterGroup:
-              recordFilter.positionInRecordFilterGroup ?? null,
-            subFieldName: recordFilter.subFieldName ?? null,
-            relationTargetFieldMetadataId:
-              recordFilter.relationTargetFieldMetadataId ?? null,
-          })),
+          viewFilters: [
+            ...widgetViewDraft.viewFilters.filter(isCurrentRecordViewFilter),
+            ...currentRecordFilters.map((recordFilter) => ({
+              id: recordFilter.id,
+              fieldMetadataId: recordFilter.fieldMetadataId,
+              operand: recordFilter.operand,
+              value: recordFilter.value,
+              viewId,
+              viewFilterGroupId: recordFilter.recordFilterGroupId ?? null,
+              positionInViewFilterGroup:
+                recordFilter.positionInRecordFilterGroup ?? null,
+              subFieldName: recordFilter.subFieldName ?? null,
+              relationTargetFieldMetadataId:
+                recordFilter.relationTargetFieldMetadataId ?? null,
+            })),
+          ],
           viewFilterGroups: currentRecordFilterGroups.map((recordFilterGroup) =>
             mapRecordFilterGroupToViewFilterGroup({
               recordFilterGroup,

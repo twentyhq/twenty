@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { DataSource, type QueryRunner } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+import { DataSource, In, type QueryRunner } from 'typeorm';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -27,8 +29,12 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/deferred-workspace-operation.exception';
 import { type RunDeferredWorkspaceOperationsJobData } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/jobs/run-deferred-workspace-operations.job';
 import { DeferredWorkspaceOperationHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/deferred-workspace-operation-handler-registry.service';
+import { type DeferredWorkspaceOperationStatus } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-operation-status.type';
+import { isDeferredWorkspaceOperationNamed } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/is-deferred-workspace-operation-named.util';
 import {
   type DeferredWorkspaceOperation,
+  type DeferredWorkspaceOperationName,
+  type DeferredWorkspaceOperationPayload,
   type PersistedDeferredWorkspaceOperation,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-operation.type';
 import { getMetadataNamesToLoadForWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-metadata-names-to-load-for-workspace-migration.util';
@@ -149,6 +155,64 @@ export class DeferredWorkspaceOperationRunnerService {
     } finally {
       await deferredOperationDataSource.destroy();
     }
+  }
+
+  async findOperationPayloads<TName extends DeferredWorkspaceOperationName>({
+    workspaceId,
+    name,
+    statuses,
+  }: {
+    workspaceId: string;
+    name: TName;
+    statuses: DeferredWorkspaceOperationStatus[];
+  }): Promise<DeferredWorkspaceOperationPayload<TName>[]> {
+    const deferredOperations =
+      await this.deferredWorkspaceOperationRepository.find(workspaceId, {
+        where: { name, status: In(statuses) },
+        order: { createdAt: 'ASC', position: 'ASC' },
+      });
+
+    return deferredOperations
+      .filter((deferredOperation) =>
+        isDeferredWorkspaceOperationNamed(deferredOperation, name),
+      )
+      .map(({ payload }) => payload);
+  }
+
+  async updateInProgressOperationPayload<
+    TName extends DeferredWorkspaceOperationName,
+  >({
+    workspaceId,
+    name,
+    updatePayload,
+  }: {
+    workspaceId: string;
+    name: TName;
+    updatePayload: (
+      payload: DeferredWorkspaceOperationPayload<TName>,
+    ) => DeferredWorkspaceOperationPayload<TName>;
+  }): Promise<void> {
+    const inProgressOperation =
+      await this.deferredWorkspaceOperationRepository.findOne(workspaceId, {
+        where: { name, status: 'IN_PROGRESS' },
+        order: { startedAt: 'DESC' },
+      });
+
+    if (
+      !isDefined(inProgressOperation) ||
+      !isDeferredWorkspaceOperationNamed(inProgressOperation, name)
+    ) {
+      return;
+    }
+
+    await this.deferredWorkspaceOperationRepository.update(
+      workspaceId,
+      { id: inProgressOperation.id, status: 'IN_PROGRESS' },
+      {
+        payload: updatePayload(inProgressOperation.payload),
+        startedAt: new Date(),
+      } as QueryDeepPartialEntity<DeferredWorkspaceOperationEntity>,
+    );
   }
 
   async enqueue(workspaceId: string): Promise<void> {

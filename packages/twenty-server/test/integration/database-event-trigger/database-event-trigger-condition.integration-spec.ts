@@ -70,7 +70,7 @@ describe('Database event trigger conditions on related records', () => {
         'flatObjectMetadataMaps',
       ]);
     const application = Object.values(flatApplicationMaps.byId).find(
-      (candidate) => isDefined(candidate?.defaultRoleId),
+      (candidate) => isDefined(candidate?.requestedRoleId),
     );
     const objectMetadata = Object.values(
       flatObjectMetadataMaps.byUniversalIdentifier,

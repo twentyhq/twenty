@@ -4,7 +4,7 @@ import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetad
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { useOptionsForSelect } from '@/object-record/object-filter-dropdown/hooks/useOptionsForSelect';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
-import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
+import { filterValueFieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/filterValueFieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -40,8 +40,8 @@ export const ObjectFilterDropdownOptionSelect = ({
   focusId: string;
 }) => {
   const { t } = useLingui();
-  const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
-    fieldMetadataItemUsedInDropdownComponentSelector,
+  const filterValueFieldMetadataItem = useAtomComponentSelectorValue(
+    filterValueFieldMetadataItemUsedInDropdownComponentSelector,
   );
 
   const objectFilterDropdownSearchInput = useAtomComponentStateValue(
@@ -86,7 +86,7 @@ export const ObjectFilterDropdownOptionSelect = ({
         '',
     });
 
-  const fieldMetaDataId = fieldMetadataItemUsedInDropdown?.id ?? '';
+  const fieldMetaDataId = filterValueFieldMetadataItem?.id ?? '';
 
   const { selectOptions: sourceFieldSelectOptions } =
     useOptionsForSelect(fieldMetaDataId);

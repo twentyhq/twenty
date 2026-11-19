@@ -72,7 +72,7 @@ describe('slackHealthCheckHandler', () => {
       status: 'ERROR',
       title: 'Slack connection is no longer valid',
       description: expect.stringContaining('Slack rejected the stored'),
-      action: { label: 'Manage connection', location: '#general' },
+      action: { label: 'Manage connection', location: '#general/connections' },
     });
   });
 

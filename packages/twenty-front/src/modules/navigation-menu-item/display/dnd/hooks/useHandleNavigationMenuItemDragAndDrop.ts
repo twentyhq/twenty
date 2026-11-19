@@ -20,9 +20,9 @@ import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hoo
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const matchesFolderId = (
-  item: { folderId?: string | null },
-  folderId: string | null,
-): boolean => (item.folderId ?? null) === folderId;
+  item: { parentId?: string | null },
+  parentId: string | null,
+): boolean => (item.parentId ?? null) === parentId;
 
 export const useHandleNavigationMenuItemDragAndDrop = (
   section: NavigationMenuItemSection,
@@ -48,7 +48,7 @@ export const useHandleNavigationMenuItemDragAndDrop = (
   const getSortedItems = (): Array<{
     id: string;
     position: number;
-    folderId?: string | null;
+    parentId?: string | null;
   }> =>
     isDraftMode
       ? (store.get(navigationMenuItemsDraftState.atom) ?? []).sort(
@@ -62,7 +62,7 @@ export const useHandleNavigationMenuItemDragAndDrop = (
     newFolderId?: string | null,
   ) => {
     const folderUpdate =
-      newFolderId !== undefined ? { folderId: newFolderId } : {};
+      newFolderId !== undefined ? { parentId: newFolderId } : {};
 
     if (isDraftMode) {
       const draft = store.get(navigationMenuItemsDraftState.atom);
@@ -156,7 +156,6 @@ export const useHandleNavigationMenuItemDragAndDrop = (
     );
 
     if (
-      isDraftMode &&
       isNavigationMenuItemFolder(draggedItem) &&
       isDefined(destinationFolderId)
     ) {

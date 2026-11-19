@@ -91,13 +91,13 @@ describe('NavigationMenuItem batch deletion should succeed', () => {
   });
 
   it('should delete a folder and cascade to its children', async () => {
-    const folderId = faker.string.uuid();
+    const parentId = faker.string.uuid();
 
     const { data: createData } = await createManyNavigationMenuItems({
       expectToFail: false,
       inputs: [
         {
-          id: folderId,
+          id: parentId,
           type: NavigationMenuItemType.FOLDER,
           name: 'Cascade Folder',
           position: 1,
@@ -106,7 +106,7 @@ describe('NavigationMenuItem batch deletion should succeed', () => {
           type: NavigationMenuItemType.RECORD,
           targetRecordId: faker.string.uuid(),
           targetObjectMetadataId: personObjectMetadataId,
-          folderId,
+          parentId,
           position: 1,
         },
       ],
@@ -119,7 +119,7 @@ describe('NavigationMenuItem batch deletion should succeed', () => {
     pendingCleanupIds = items.map((item) => item.id);
 
     const { data: deleteData } = await deleteManyNavigationMenuItems({
-      ids: [folderId],
+      ids: [parentId],
       expectToFail: false,
     });
 
@@ -134,7 +134,7 @@ describe('NavigationMenuItem batch deletion should succeed', () => {
     });
 
     expect(
-      findData.navigationMenuItems.find((item) => item.id === folderId),
+      findData.navigationMenuItems.find((item) => item.id === parentId),
     ).toBeUndefined();
 
     expect(

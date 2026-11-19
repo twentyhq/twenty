@@ -218,17 +218,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "isRemote": false
     },
     {
-      "id": "2f5f0567-c6f1-48f7-bd11-19f316d4395a",
-      "nameSingular": "workflowVersion",
-      "namePlural": "workflowVersions",
-      "labelSingular": "Workflow Version",
-      "labelPlural": "Workflow Versions",
-      "icon": "IconVersions",
-      "isActive": true,
-      "isSystem": true,
-      "isRemote": false
-    },
-    {
       "id": "2e0d7477-8143-4d8f-bc36-2b4f92cbd101",
       "nameSingular": "person",
       "namePlural": "people",
@@ -378,12 +367,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "type": "KANBAN",
       "key": null,
       "objectMetadataId": "34ac72b8-0aaa-4c01-b8a8-8390415fdf8a"
-    },
-    {
-      "id": "143fc3c5-ca1c-40fc-a1e2-286b114cae59",
-      "type": "TABLE",
-      "key": "INDEX",
-      "objectMetadataId": "2f5f0567-c6f1-48f7-bd11-19f316d4395a"
     },
     {
       "id": "88e1e49c-8cf7-4fc6-9e84-7577f217cdff",

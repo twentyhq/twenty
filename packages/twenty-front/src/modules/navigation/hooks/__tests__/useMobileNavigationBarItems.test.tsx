@@ -1,4 +1,4 @@
-import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
+import { useSwitchToNewAiChat } from '@/ai-chat/hooks/useSwitchToNewAiChat';
 import { useMobileNavigationBarItems } from '@/navigation/hooks/useMobileNavigationBarItems';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { i18n } from '@lingui/core';
@@ -8,7 +8,7 @@ import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
 
-jest.mock('@/ai/hooks/useSwitchToNewAiChat');
+jest.mock('@/ai-chat/hooks/useSwitchToNewAiChat');
 jest.mock('@/settings/roles/hooks/useHasPermissionFlag');
 
 jest.mock('@/object-metadata/hooks/useFilteredObjectMetadataItems', () => ({

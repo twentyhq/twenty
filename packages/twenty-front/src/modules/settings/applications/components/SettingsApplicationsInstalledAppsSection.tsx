@@ -1,14 +1,12 @@
 import { useInstalledApplications } from '@/applications/hooks/useInstalledApplications';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationsTable } from '@/settings/applications/components/SettingsApplicationsTable';
-import { useInstalledBuiltInAccountApps } from '@/settings/applications/hooks/useInstalledBuiltInAccountApps';
+import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/useEnabledBuiltInAccountApps';
 import { useWorkspaceApplicationStatusesById } from '@/settings/applications/hooks/useWorkspaceApplicationStatusesById';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledToolbar = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -17,10 +15,7 @@ const StyledToolbar = styled.div`
 export const SettingsApplicationsInstalledAppsSection = () => {
   const { t } = useLingui();
   const installedApplications = useInstalledApplications();
-  const installedBuiltInAccountApps = useInstalledBuiltInAccountApps();
-  const isAppPreferencesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
-  );
+  const { enabledBuiltInAccountApps } = useEnabledBuiltInAccountApps();
   const {
     statusesById,
     isLoading: isLoadingStatuses,
@@ -28,7 +23,6 @@ export const SettingsApplicationsInstalledAppsSection = () => {
     refetch: refetchStatuses,
   } = useWorkspaceApplicationStatusesById({
     applications: installedApplications,
-    shouldSkip: !isAppPreferencesEnabled,
   });
 
   if (installedApplications.length === 0) {
@@ -51,9 +45,9 @@ export const SettingsApplicationsInstalledAppsSection = () => {
         ) : undefined
       }
       applications={installedApplications}
-      builtInAccountApps={installedBuiltInAccountApps}
+      builtInAccountApps={enabledBuiltInAccountApps}
       linkTarget="applicationDetail"
-      middleColumn={isAppPreferencesEnabled ? 'typeOrStatus' : 'type'}
+      middleColumn="typeOrStatus"
       statusesById={statusesById}
       isLoadingStatuses={isLoadingStatuses}
     />

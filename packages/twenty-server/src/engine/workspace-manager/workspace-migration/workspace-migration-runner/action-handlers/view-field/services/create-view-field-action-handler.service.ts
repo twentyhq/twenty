@@ -32,12 +32,16 @@ export class CreateViewFieldActionHandlerService extends WorkspaceMigrationRunne
     flatApplication,
     workspaceId,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateViewFieldAction>): Promise<FlatCreateViewFieldAction> {
-    const { fieldMetadataId, viewId, viewFieldGroupId } =
-      resolveUniversalRelationIdentifiersToIds({
-        flatEntityMaps: allFlatEntityMaps,
-        metadataName: action.metadataName,
-        universalForeignKeyValues: action.flatEntity,
-      });
+    const {
+      fieldMetadataId,
+      viewId,
+      viewFieldGroupId,
+      relationTargetFieldMetadataId,
+    } = resolveUniversalRelationIdentifiersToIds({
+      flatEntityMaps: allFlatEntityMaps,
+      metadataName: action.metadataName,
+      universalForeignKeyValues: action.flatEntity,
+    });
 
     const overrides = isDefined(action.flatEntity.universalOverrides)
       ? fromUniversalOverridesToViewFieldOverrides({
@@ -58,6 +62,7 @@ export class CreateViewFieldActionHandlerService extends WorkspaceMigrationRunne
         fieldMetadataId,
         viewId,
         viewFieldGroupId,
+        relationTargetFieldMetadataId,
         overrides,
         id: action.id ?? v4(),
         applicationId: flatApplication.id,

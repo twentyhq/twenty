@@ -65,4 +65,50 @@ describe('getWorkspaceSidebarOrphanItemsInDisplayOrder', () => {
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('item-id');
   });
+
+  it('returns only the direct children of a container, without tabs or sections', () => {
+    const sectionId = 'section-id';
+    const folderInSection = {
+      id: 'folder-id',
+      type: NavigationMenuItemType.FOLDER,
+      parentId: sectionId,
+      position: 1,
+    } as NavigationMenuItem;
+    const section = {
+      id: sectionId,
+      type: NavigationMenuItemType.SECTION,
+      position: 0,
+    } as NavigationMenuItem;
+    const tab = {
+      id: 'tab-id',
+      type: NavigationMenuItemType.TAB,
+      position: 0,
+    } as NavigationMenuItem;
+    const workspaceNavigationMenuItems = [
+      section,
+      tab,
+      folderInSection,
+      objectBackedItem,
+    ];
+
+    const sectionResult = getWorkspaceSidebarOrphanItemsInDisplayOrder({
+      workspaceNavigationMenuItems,
+      workspaceNavigationMenuItemsSorted: [objectBackedItem],
+      objectMetadataItems: [objectMetadataItem],
+      views: [],
+      objectPermissionsByObjectMetadataId: {},
+      containerId: sectionId,
+    });
+
+    const rootResult = getWorkspaceSidebarOrphanItemsInDisplayOrder({
+      workspaceNavigationMenuItems,
+      workspaceNavigationMenuItemsSorted: [objectBackedItem],
+      objectMetadataItems: [objectMetadataItem],
+      views: [],
+      objectPermissionsByObjectMetadataId: {},
+    });
+
+    expect(sectionResult.map((item) => item.id)).toEqual(['folder-id']);
+    expect(rootResult.map((item) => item.id)).toEqual(['item-id']);
+  });
 });

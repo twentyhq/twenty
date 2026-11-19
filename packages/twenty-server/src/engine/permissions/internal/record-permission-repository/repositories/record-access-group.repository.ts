@@ -53,21 +53,22 @@ export class RecordAccessGroupRepository {
     return rows.map(({ id }) => id);
   }
 
-  async estimateRecordCount({
+  async estimateRecordCountByObjectMetadataId({
     workspaceId,
     flatObjectMetadatas,
   }: {
     workspaceId: string;
     flatObjectMetadatas: FlatObjectMetadata[];
-  }): Promise<number> {
-    const [row] = await this.recordPermissionQueryService.execute<{
+  }): Promise<Map<string, number>> {
+    const rows = await this.recordPermissionQueryService.execute<{
       count: string;
     }>({
       workspaceId,
       query: {
-        sql: `SELECT SUM(GREATEST("reltuples", pg_stat_get_live_tuples("oid")))::bigint AS "count"
-          FROM unnest(:tableExpressions::text[]) AS "tableExpression"
-          JOIN pg_class ON pg_class."oid" = to_regclass("tableExpression")`,
+        sql: `SELECT GREATEST(COALESCE("reltuples", 0), COALESCE(pg_stat_get_live_tuples(pg_class."oid"), 0), 0)::bigint AS "count"
+          FROM unnest(:tableExpressions::text[]) WITH ORDINALITY AS "table"("expression", "position")
+          LEFT JOIN pg_class ON pg_class."oid" = to_regclass("table"."expression")
+          ORDER BY "table"."position"`,
         parameters: {
           tableExpressions: flatObjectMetadatas.map((flatObjectMetadata) =>
             buildWorkspaceTableExpression({
@@ -79,7 +80,12 @@ export class RecordAccessGroupRepository {
       },
     });
 
-    return Math.max(0, Number(row?.count ?? 0));
+    return new Map(
+      flatObjectMetadatas.map(({ id }, index) => [
+        id,
+        Number(rows[index]?.count ?? 0),
+      ]),
+    );
   }
 
   async findRelatedRecordIds({

@@ -12,7 +12,7 @@ describe('buildCreateNavigationMenuItemInput', () => {
         name: 'Team overview',
         icon: 'IconPerspective',
         color: 'blue',
-        folderId: 'draft-folder',
+        parentId: 'draft-folder',
         position: 0,
         createdAt: '',
         updatedAt: '',
@@ -27,7 +27,7 @@ describe('buildCreateNavigationMenuItemInput', () => {
       name: 'Team overview',
       icon: 'IconPerspective',
       color: 'blue',
-      folderId: 'saved-folder',
+      parentId: 'saved-folder',
       position: 0,
     });
   });

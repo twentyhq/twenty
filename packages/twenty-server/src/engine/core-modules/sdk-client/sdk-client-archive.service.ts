@@ -7,7 +7,7 @@ import {
   encodeFrontComponentTypeReferencesOrThrow,
 } from 'twenty-shared/front-component-build';
 import { FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, readLruEntry, writeLruEntry } from 'twenty-shared/utils';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -22,7 +22,6 @@ import {
 } from 'src/engine/core-modules/sdk-client/exceptions/sdk-client.exception';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { readLruEntry, writeLruEntry } from 'src/utils/lru-map.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';

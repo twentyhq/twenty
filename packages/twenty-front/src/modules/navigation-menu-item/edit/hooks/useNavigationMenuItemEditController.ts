@@ -1,6 +1,7 @@
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { useLingui } from '@lingui/react/macro';
 import {
+  type BuiltInSectionKey,
   type NavigationMenuItemType,
   type NativePageKey,
 } from 'twenty-shared/types';
@@ -31,6 +32,7 @@ export type NewNavigationMenuItemInput = {
   name?: string | null;
   link?: string | null;
   nativePageKey?: NativePageKey | null;
+  builtInSectionKey?: BuiltInSectionKey | null;
   color?: string | null;
 };
 
@@ -70,14 +72,14 @@ export const useNavigationMenuItemEditController = (
     input: NewNavigationMenuItemInput,
     { targetFolderId, targetIndex }: CreateItemOptions = {},
   ): string => {
-    const folderId = targetFolderId ?? null;
+    const parentId = targetFolderId ?? null;
     const itemsInFolder = currentItems.filter(
-      (item) => (item.folderId ?? null) === folderId,
+      (item) => (item.parentId ?? null) === parentId,
     );
     const index = targetIndex ?? itemsInFolder.length;
     const { flatIndex, position } = computeInsertIndexAndPosition(
       currentItems,
-      folderId,
+      parentId,
       index,
     );
 
@@ -88,7 +90,7 @@ export const useNavigationMenuItemEditController = (
       type: input.type,
       position,
       userWorkspaceId: targetUserWorkspaceId,
-      folderId: folderId ?? undefined,
+      parentId: parentId ?? undefined,
       targetObjectMetadataId: input.targetObjectMetadataId ?? undefined,
       targetRecordId: input.targetRecordId ?? undefined,
       targetRecordIdentifier: input.targetRecordIdentifier,
@@ -100,6 +102,7 @@ export const useNavigationMenuItemEditController = (
       name: input.name ?? undefined,
       link: input.link ?? undefined,
       nativePageKey: input.nativePageKey ?? undefined,
+      builtInSectionKey: input.builtInSectionKey ?? undefined,
       color: input.color ?? undefined,
       applicationId: undefined,
       createdAt: new Date().toISOString(),

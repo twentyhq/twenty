@@ -12,6 +12,10 @@ import { formatSqlValue } from 'src/database/commands/workspace-export/utils/for
 import { generateWorkspaceSchemaDdl } from 'src/database/commands/workspace-export/utils/generate-workspace-schema-ddl.util';
 import { getCoreEntityMetadatasWithWorkspaceId } from 'src/database/commands/workspace-export/utils/get-core-entity-metadatas-with-workspace-id.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  type FieldMetadataOptionRowForOptions,
+  resolveFieldMetadataOptionsFromRows,
+} from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-field-metadata-options-from-rows.util';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PERMISSION_STORAGE_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/constants/permission-storage-object-universal-identifiers.constant';
@@ -93,7 +97,26 @@ export class WorkspaceExportService {
         !temporaryExcludePermissionStorageObject(objectMetadata),
     );
 
-    const fieldMetadatas = await this.fieldMetadataRepository.find(workspaceId);
+    const fieldMetadataOptionRows: (FieldMetadataOptionRowForOptions & {
+      fieldMetadataId: string;
+    })[] = await this.dataSource.query(
+      `SELECT "fieldMetadataId", "universalIdentifier", value, label, color, position
+        FROM core."fieldMetadataOption" WHERE "workspaceId" = $1`,
+      [workspaceId],
+    );
+
+    const fieldMetadatas = (
+      await this.fieldMetadataRepository.find(workspaceId)
+    ).map((fieldMetadata) =>
+      Object.assign(fieldMetadata, {
+        options: resolveFieldMetadataOptionsFromRows({
+          fieldMetadataEntity: fieldMetadata,
+          fieldMetadataOptionRows: fieldMetadataOptionRows.filter(
+            ({ fieldMetadataId }) => fieldMetadataId === fieldMetadata.id,
+          ),
+        }),
+      }),
+    );
 
     const fieldsByObjectId = new Map<string, FieldMetadataEntity[]>();
 

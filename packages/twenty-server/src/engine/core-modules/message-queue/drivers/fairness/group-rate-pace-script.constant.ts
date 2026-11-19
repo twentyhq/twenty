@@ -2,26 +2,24 @@ export const GROUP_RATE_PACE_SCRIPT = `
 local time = redis.call('TIME')
 local nowMs = tonumber(time[1]) * 1000.0 + math.floor(tonumber(time[2]) / 1000)
 local distinctKeyCount = tonumber(ARGV[1])
-local notBeforeMs = nowMs + tonumber(ARGV[2 * distinctKeyCount + 2])
+local notBeforeMs = nowMs + tonumber(ARGV[distinctKeyCount + 2])
 local slots = {}
 local intervals = {}
-local tolerances = {}
 
 for i = 1, distinctKeyCount do
-  intervals[i] = tonumber(ARGV[2 * i])
-  tolerances[i] = tonumber(ARGV[2 * i + 1])
+  intervals[i] = tonumber(ARGV[i + 1])
 
   local slot = tonumber(redis.call('GET', KEYS[i]) or '0') or 0
 
-  if slot < notBeforeMs then
-    slot = notBeforeMs
+  if slot < nowMs then
+    slot = nowMs
   end
 
   slots[i] = slot
 end
 
-local requestCount = tonumber(ARGV[2 * distinctKeyCount + 3])
-local position = 2 * distinctKeyCount + 4
+local requestCount = tonumber(ARGV[distinctKeyCount + 3])
+local position = distinctKeyCount + 4
 local earliestDueTimes = { string.format('%.0f', nowMs) }
 local earliestDueTimeCount = 1
 
@@ -33,7 +31,7 @@ for _ = 1, requestCount do
     local index = tonumber(ARGV[position + 1 + k])
 
     earliestDueTimeCount = earliestDueTimeCount + 1
-    earliestDueTimes[earliestDueTimeCount] = string.format('%.0f', math.floor(slots[index] - tolerances[index]))
+    earliestDueTimes[earliestDueTimeCount] = string.format('%.0f', math.floor(math.max(slots[index], notBeforeMs)))
     slots[index] = slots[index] + jobCount * intervals[index]
   end
 

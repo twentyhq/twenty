@@ -1,4 +1,5 @@
 import { EmailOperation } from 'twenty-shared/types';
+import { convertEmailBodyInputToEmailDocument } from 'twenty-shared/utils';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -34,7 +35,10 @@ export class SendEmailTool implements Tool {
   ): Promise<ToolOutput> {
     try {
       const result = await this.emailComposerService.composeEmail({
-        parameters,
+        parameters: {
+          ...parameters,
+          body: convertEmailBodyInputToEmailDocument(parameters.body),
+        },
         context,
         operation: EmailOperation.SEND,
       });

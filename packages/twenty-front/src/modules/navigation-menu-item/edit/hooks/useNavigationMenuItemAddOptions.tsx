@@ -50,7 +50,7 @@ type UseNavigationMenuItemAddOptionsParams = {
   step: NavigationMenuItemAddStep;
   search: string;
   objectId: string | null;
-  folderId?: string;
+  parentId?: string;
   currentItems: NavigationMenuItem[];
   isSearchingAllItems: boolean;
   addItem: (input: NewNavigationMenuItemInput) => void;
@@ -62,7 +62,7 @@ export const useNavigationMenuItemAddOptions = ({
   step,
   search,
   objectId,
-  folderId,
+  parentId,
   currentItems,
   isSearchingAllItems,
   addItem,
@@ -71,6 +71,9 @@ export const useNavigationMenuItemAddOptions = ({
 }: UseNavigationMenuItemAddOptionsParams) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const isParentFolder =
+    currentItems.find((item) => item.id === parentId)?.type ===
+    NavigationMenuItemType.FOLDER;
   const { getIcon } = useIcons();
 
   const {
@@ -170,11 +173,11 @@ export const useNavigationMenuItemAddOptions = ({
         {
           id: 'folder',
           label: t`Folder`,
-          contextualText: isDefined(folderId)
+          contextualText: isParentFolder
             ? t`Cannot nest folders into folders`
             : undefined,
-          Icon: isDefined(folderId) ? IconFolder : undefined,
-          icon: isDefined(folderId) ? undefined : (
+          Icon: isParentFolder ? IconFolder : undefined,
+          icon: isParentFolder ? undefined : (
             <ColoredIcon
               Icon={IconFolder}
               color={DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
@@ -187,7 +190,7 @@ export const useNavigationMenuItemAddOptions = ({
               color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER,
             });
           },
-          isDisabled: isDefined(folderId),
+          isDisabled: isParentFolder,
         },
         {
           id: 'link',

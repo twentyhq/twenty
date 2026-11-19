@@ -2,6 +2,9 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
 import { expect, userEvent, within } from 'storybook/test';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -13,6 +16,7 @@ import {
   GOOGLE_ACCOUNT_ID,
   seedAccountGroupsStory,
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
+import { mockedUserData } from '~/testing/mock-data/users';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Accounts/SettingsAccountsConfiguration',
@@ -29,6 +33,19 @@ const meta: Meta<PageDecoratorArgs> = {
     layout: 'fullscreen',
     msw: {
       handlers: [
+        graphql.query('GetCurrentUser', () =>
+          HttpResponse.json({
+            data: {
+              currentUser: {
+                ...mockedUserData,
+                currentWorkspace: jotaiStore.get(currentWorkspaceState.atom),
+                workspaceMember: jotaiStore.get(
+                  currentWorkspaceMemberState.atom,
+                ),
+              },
+            },
+          }),
+        ),
         graphql.mutation('StartChannelSync', () =>
           HttpResponse.json({
             data: {

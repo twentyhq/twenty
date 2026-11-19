@@ -74,18 +74,18 @@ export const findApplicationDefaultRoleId = async ({
 }): Promise<string> => {
   const { data } = await findOneApplication({
     input: { id: applicationId },
-    gqlFields: 'id defaultRoleId',
+    gqlFields: 'id requestedRoleId',
     expectToFail: false,
     token,
   });
 
-  const defaultRoleId = data?.findOneApplication?.defaultRoleId;
+  const requestedRoleId = data?.findOneApplication?.requestedRoleId;
 
-  if (!isDefined(defaultRoleId)) {
+  if (!isDefined(requestedRoleId)) {
     throw new Error(`Application ${applicationId} has no default role`);
   }
 
-  return defaultRoleId;
+  return requestedRoleId;
 };
 
 const sortByKey = <TRow extends Record<string, unknown>>(rows: TRow[]) =>

@@ -246,13 +246,6 @@ export const WIDGET_PROPS = {
     type: WidgetType.MESSAGE_CAMPAIGN_BODY,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
-  workflowVersion: {
-    title: i18nLabel(
-      msg({ message: `Flow`, context: 'pageLayoutWidget.title' }),
-    ),
-    type: WidgetType.WORKFLOW_VERSION,
-    position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
-  },
   workflowRun: {
     title: i18nLabel(
       msg({ message: `Flow`, context: 'pageLayoutWidget.title' }),

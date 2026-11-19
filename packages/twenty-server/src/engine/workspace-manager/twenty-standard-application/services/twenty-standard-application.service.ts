@@ -134,7 +134,7 @@ export class TwentyStandardApplicationService {
       );
     }
 
-    if (!isDefined(twentyStandardFlatApplication.defaultRoleId)) {
+    if (!isDefined(twentyStandardFlatApplication.requestedRoleId)) {
       await this.setStandardApplicationDefaultRoleOrThrow({
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
@@ -144,6 +144,7 @@ export class TwentyStandardApplicationService {
     await this.applicationGrantRoleService.upsertGrantRole({
       workspaceId,
       applicationId: twentyStandardFlatApplication.id,
+      isRequestedRoleDeclaredWithLegacyProperties: false,
     });
 
     await this.seedStandardObjectInitialViewsOrThrow({
@@ -182,6 +183,7 @@ export class TwentyStandardApplicationService {
     await this.applicationService.update(twentyStandardApplicationId, {
       workspaceId,
       defaultRoleId: adminFlatRole.id,
+      requestedRoleId: adminFlatRole.id,
     });
   }
 

@@ -74,7 +74,6 @@ describe('POST /api/affiliate-application', () => {
       audienceSize: '',
       country: '',
       promotionPlan: '',
-      isIntegrationPartner: false,
     });
   });
 

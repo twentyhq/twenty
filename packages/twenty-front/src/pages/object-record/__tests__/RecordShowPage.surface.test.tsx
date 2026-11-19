@@ -52,6 +52,12 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   }),
 }));
 
+let mockIsAiChatInboxEnabled = true;
+
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => mockIsAiChatInboxEnabled,
+}));
+
 jest.mock('@/ui/layout/page/components/WorkspaceRouteUnavailable', () => ({
   WorkspaceRouteUnavailable: () => <div data-testid="route-unavailable" />,
 }));
@@ -155,18 +161,25 @@ describe('RecordShowPage workspace surface composition', () => {
     expect(screen.queryByTestId('record-renderer')).not.toBeInTheDocument();
   });
 
-  it('sends a chat record to the chat page', () => {
-    mockObjectMetadataItems = [{ nameSingular: 'agentChatThread' }];
-    mockParameters = {
-      objectNameSingular: 'agentChatThread',
-      objectRecordId: 'chat-1',
-    };
+  it.each([
+    [true, '/inbox/chat-1'],
+    [false, '/chat/chat-1'],
+  ])(
+    'sends a chat record with the inbox on=%s to %s',
+    (isAiChatInboxEnabled, expectedPath) => {
+      mockIsAiChatInboxEnabled = isAiChatInboxEnabled;
+      mockObjectMetadataItems = [{ nameSingular: 'agentChatThread' }];
+      mockParameters = {
+        objectNameSingular: 'agentChatThread',
+        objectRecordId: 'chat-1',
+      };
 
-    render(<RecordShowPage />);
+      render(<RecordShowPage />);
 
-    expect(screen.getByTestId('navigate')).toHaveTextContent('/chat/chat-1');
-    expect(screen.queryByTestId('record-renderer')).not.toBeInTheDocument();
-  });
+      expect(screen.getByTestId('navigate')).toHaveTextContent(expectedPath);
+      expect(screen.queryByTestId('record-renderer')).not.toBeInTheDocument();
+    },
+  );
 
   it('keeps the existing main-page chrome and canonical renderer', () => {
     render(<RecordShowPage />);

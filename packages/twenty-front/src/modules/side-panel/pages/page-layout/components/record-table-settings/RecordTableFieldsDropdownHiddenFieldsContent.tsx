@@ -6,6 +6,7 @@ import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpda
 import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { findCanonicalRecordField } from '@/object-record/record-field/utils/findCanonicalRecordField';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -52,19 +53,25 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
     objectMetadataItem,
   });
 
-  const visibleFieldMetadataItemIds = currentRecordFields
-    .filter((recordField) => recordField.isVisible)
-    .map((recordField) => recordField.fieldMetadataItemId);
+  const visibleRecordFields = currentRecordFields.filter(
+    (recordField) => recordField.isVisible,
+  );
 
   const hiddenFieldMetadataItems = activeFieldMetadataItems.filter(
     (fieldMetadataItem) =>
-      !visibleFieldMetadataItemIds.includes(fieldMetadataItem.id),
+      !isDefined(
+        findCanonicalRecordField({
+          recordFields: visibleRecordFields,
+          fieldMetadataItemId: fieldMetadataItem.id,
+        }),
+      ),
   );
 
   const handleShowField = (fieldMetadataId: string) => {
-    const existingRecordField = currentRecordFields.find(
-      (recordField) => recordField.fieldMetadataItemId === fieldMetadataId,
-    );
+    const existingRecordField = findCanonicalRecordField({
+      recordFields: currentRecordFields,
+      fieldMetadataItemId: fieldMetadataId,
+    });
 
     if (isDefined(existingRecordField)) {
       updateRecordField(existingRecordField.id, { isVisible: true });

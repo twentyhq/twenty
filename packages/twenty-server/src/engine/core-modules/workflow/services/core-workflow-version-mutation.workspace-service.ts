@@ -602,7 +602,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       await this.coreWorkflowVersionWriteService.createDraftCoreWorkflowVersion(
         {
           workspaceId,
-          coreWorkflowId: coreWorkflow.id,
+          coreWorkflowUniversalIdentifier: coreWorkflow.universalIdentifier,
           workspaceWorkflowId: coreWorkflow.workspaceWorkflowId,
           trigger: triggerToCopy,
           steps: versionToCopy.steps,

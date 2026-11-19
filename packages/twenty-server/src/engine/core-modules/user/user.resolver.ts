@@ -23,6 +23,9 @@ import {
 import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.dto';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
+import { isServerAdminAccessAllowedFromWorkspace } from 'src/engine/core-modules/impersonation/utils/is-server-admin-access-allowed-from-workspace.util';
+import { userCanServerImpersonate } from 'src/engine/core-modules/impersonation/utils/user-can-server-impersonate.util';
+import { userIsFullAdmin } from 'src/engine/core-modules/impersonation/utils/user-is-full-admin.util';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import {
   OnboardingService,
@@ -388,6 +391,40 @@ export class UserResolver {
   })
   hasPassword(@Parent() user: UserEntity): boolean {
     return isDefined(user.passwordHash);
+  }
+
+  @ResolveField(() => Boolean)
+  canAccessFullAdminPanel(
+    @Parent() user: UserEntity,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): boolean {
+    return (
+      userIsFullAdmin(user) &&
+      isServerAdminAccessAllowedFromWorkspace({
+        workspaceId: workspace?.id,
+        serverAdminWorkspaceId: this.twentyConfigService.get(
+          'SERVER_ADMIN_WORKSPACE_ID',
+        ),
+      })
+    );
+  }
+
+  @ResolveField(() => Boolean)
+  canImpersonate(
+    @Parent() user: UserEntity,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): boolean {
+    return (
+      userCanServerImpersonate(user) &&
+      isServerAdminAccessAllowedFromWorkspace({
+        workspaceId: workspace?.id,
+        serverAdminWorkspaceId: this.twentyConfigService.get(
+          'SERVER_ADMIN_WORKSPACE_ID',
+        ),
+      })
+    );
   }
 
   @ResolveField(() => String, {

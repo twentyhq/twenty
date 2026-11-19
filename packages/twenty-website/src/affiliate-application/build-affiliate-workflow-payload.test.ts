@@ -20,17 +20,7 @@ describe('buildAffiliateWorkflowPayload', () => {
       audienceSize: '',
       country: '',
       promotionPlan: '',
-      isIntegrationPartner: false,
     });
-  });
-
-  it('flags an existing integration partner', () => {
-    const payload = buildAffiliateWorkflowPayload({
-      ...BASE_REQUEST,
-      isIntegrationPartner: true,
-    });
-
-    expect(payload.isIntegrationPartner).toBe(true);
   });
 
   it('carries the filled optional fields through', () => {

@@ -27,7 +27,7 @@ import { SendEmailInput } from 'src/modules/messaging/message-outbound-manager/d
 import { SendEmailService } from 'src/modules/messaging/message-outbound-manager/services/send-email.service';
 import { SentMessageRecordLinkService } from 'src/modules/messaging/message-outbound-manager/services/sent-message-record-link.service';
 import { CustomException } from 'src/utils/custom-exception';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, parseJson } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
@@ -84,7 +84,7 @@ export class SendEmailResolver {
             bcc: input.bcc ?? '',
           },
           subject: input.subject,
-          body: input.body,
+          body: parseJson<unknown>(input.body),
           connectedAccountId: input.connectedAccountId,
           fromHandle: input.fromHandle,
           files: input.files ?? [],

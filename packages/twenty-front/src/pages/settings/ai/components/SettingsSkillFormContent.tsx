@@ -25,7 +25,7 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsSkillDangerZone } from '~/pages/settings/ai/components/SettingsSkillDangerZone';
 import { useSettingsSkillSave } from '~/pages/settings/ai/hooks/useSettingsSkillSave';
 import { type SettingsSkillFormValues } from '~/pages/settings/ai/types/SettingsSkillFormValues';
-import { getSettingsAiBreadcrumbLinks } from '~/pages/settings/ai/utils/getSettingsAiBreadcrumbLinks';
+import { getSettingsAiBreadcrumbLinks } from '@/settings/ai/utils/getSettingsAiBreadcrumbLinks';
 import { getSettingsSkillInitialFormValues } from '~/pages/settings/ai/utils/getSettingsSkillInitialFormValues';
 import { computeMetadataNameFromLabel } from '@/object-metadata/utils/computeMetadataNameFromLabel';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
@@ -150,7 +150,7 @@ export const SettingsSkillFormContent = ({
           />
         ) : undefined
       }
-      links={getSettingsAiBreadcrumbLinks(breadcrumbText)}
+      links={getSettingsAiBreadcrumbLinks({ currentPageLabel: breadcrumbText })}
     >
       <SettingsPageContainer>
         <Section.Root>

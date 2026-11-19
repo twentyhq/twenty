@@ -10,7 +10,7 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceInternalImportService } from 'src/engine/core-modules/workspace/services/workspace-internal-import.service';
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -49,8 +49,7 @@ export class CalendarEventsImportService {
     private readonly emailAliasManagerService: EmailAliasManagerService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly workspaceInternalImportService: WorkspaceInternalImportService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
@@ -133,10 +132,10 @@ export class CalendarEventsImportService {
             );
           }
 
-          const workspace = await this.workspaceRepository.findOne({
-            where: { id: workspaceId },
-            select: ['id', 'isInternalMessagesImportEnabled'],
-          });
+          const isInternalImportEnabled =
+            await this.workspaceInternalImportService.isInternalImportEnabled({
+              workspaceId,
+            });
 
           const isInternalEventsFilterEnabled =
             await this.featureFlagService.isFeatureEnabled(
@@ -154,8 +153,7 @@ export class CalendarEventsImportService {
                 .filter(isDefined),
               excludePrivateEvents: calendarChannel.excludePrivateEvents,
               isInternalEventsFilterEnabled,
-              isInternalMessagesImportEnabled:
-                workspace?.isInternalMessagesImportEnabled ?? false,
+              isInternalMessagesImportEnabled: isInternalImportEnabled,
             });
 
           const eventExternalIdsToRemove = eventsToRemove.map(

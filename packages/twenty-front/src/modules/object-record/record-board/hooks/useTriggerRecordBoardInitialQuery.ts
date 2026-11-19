@@ -106,8 +106,8 @@ export const useTriggerRecordBoardInitialQuery = () => {
 
       for (const recordGroupDefinition of recordGroupDefinitions) {
         const foundGroupInResult = groups?.find(
-          (recordGroup: any) =>
-            (recordGroup.groupByDimensionValues[0] as string) ===
+          (recordGroup) =>
+            recordGroup.groupByDimensionValues[0] ===
             recordGroupDefinition.value,
         );
 

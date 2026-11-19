@@ -2,6 +2,8 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   BillingException,
   BillingExceptionCode,
@@ -10,8 +12,10 @@ import { BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS } from 'src/engine/core-modules
 import { SEAT_BILLING_ARRANGEMENT_TYPES } from 'src/engine/core-modules/billing/constants/seat-billing-arrangement-types.constant';
 import { type BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { BillingArrangementService } from 'src/engine/core-modules/billing/services/billing-arrangement.service';
+import { type SeatBillingArrangement } from 'src/engine/core-modules/billing/types/seat-billing-arrangement.type';
 import { buildBillingSeatLockKey } from 'src/engine/core-modules/billing/utils/build-billing-seat-lock-key.util';
 import { computeBilledSeats } from 'src/engine/core-modules/billing/utils/compute-billed-seats.util';
+import { getHardSeatCap } from 'src/engine/core-modules/billing/utils/get-hard-seat-cap.util';
 import { isBillingArrangementActive } from 'src/engine/core-modules/billing/utils/is-billing-arrangement-active.util';
 import { isSeatLimitReached } from 'src/engine/core-modules/billing/utils/is-seat-limit-reached.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -89,6 +93,32 @@ export class BillingSeatService {
     });
   }
 
+  async assertHardSeatCapCoversBilledMembersOrThrow({
+    workspaceId,
+    seatArrangements,
+  }: {
+    workspaceId: string;
+    seatArrangements: SeatBillingArrangement[];
+  }): Promise<void> {
+    const hardSeatCap = getHardSeatCap(seatArrangements);
+
+    if (!isDefined(hardSeatCap)) {
+      return;
+    }
+
+    const billedSeats = computeBilledSeats({
+      memberCount: await this.countWorkspaceMembers(workspaceId),
+      seatArrangements,
+    });
+
+    if (billedSeats > hardSeatCap) {
+      throw new BillingException(
+        `Hard cap of ${hardSeatCap} seats is below the ${billedSeats} billed members of workspace ${workspaceId}`,
+        BillingExceptionCode.BILLING_ARRANGEMENT_SEAT_CAP_BELOW_MEMBERS,
+      );
+    }
+  }
+
   async addMemberWithinSeatLimit<TResult>({
     workspaceId,
     addMember,
@@ -97,6 +127,14 @@ export class BillingSeatService {
     addMember: () => Promise<TResult>;
   }): Promise<TResult> {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+      return await addMember();
+    }
+
+    const hardSeatCap = getHardSeatCap(
+      await this.findActiveSeatArrangements(workspaceId),
+    );
+
+    if (!isDefined(hardSeatCap)) {
       return await addMember();
     }
 

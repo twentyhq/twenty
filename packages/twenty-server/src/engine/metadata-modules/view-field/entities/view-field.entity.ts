@@ -19,6 +19,7 @@ import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorato
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ADD_VIEW_FIELD_IS_CANONICAL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-view-field-is-canonical-upgrade-command-name.constant';
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
+import { ADD_VIEW_FIELD_RELATION_TARGET_FIELD_METADATA_ID_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-view-field-relation-target-field-metadata-id-upgrade-command-name.constant';
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
@@ -38,6 +39,11 @@ export type ViewFieldOverrides = {
 @Index('IDX_VIEW_FIELD_VIEW_ID', ['viewId'])
 @Index('IDX_VIEW_FIELD_FIELD_METADATA_ID', ['fieldMetadataId'])
 @Index('IDX_VIEW_FIELD_VIEW_FIELD_GROUP_ID', ['viewFieldGroupId'])
+@Index(
+  'IDX_VIEW_FIELD_RELATION_TARGET_FIELD_METADATA_ID',
+  ['relationTargetFieldMetadataId'],
+  { where: '"relationTargetFieldMetadataId" IS NOT NULL' },
+)
 @Index(
   'IDX_VIEW_FIELD_FIELD_METADATA_ID_VIEW_ID_UNIQUE',
   ['fieldMetadataId', 'viewId'],
@@ -97,6 +103,20 @@ export class ViewFieldEntity
   })
   @Column({ nullable: false, default: true, type: 'boolean' })
   isCanonical: boolean;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_VIEW_FIELD_RELATION_TARGET_FIELD_METADATA_ID_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid', default: null })
+  relationTargetFieldMetadataId: string | null;
+
+  @ManyToOne(() => FieldMetadataEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'relationTargetFieldMetadataId' })
+  relationTargetFieldMetadata: Relation<FieldMetadataEntity> | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

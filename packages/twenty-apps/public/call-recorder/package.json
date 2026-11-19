@@ -1,12 +1,12 @@
 {
   "name": "@twentyhq/call-recorder",
-  "version": "1.20.1",
+  "version": "1.21.0",
   "license": "MIT",
   "engines": {
     "node": "^26.5.1",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2",
-    "twenty": ">=2.49.0"
+    "twenty": ">=2.56.0"
   },
   "keywords": [
     "twenty-app"
@@ -37,7 +37,7 @@
     "react-dom": "^19.0.0",
     "twenty-client-sdk": "2.49.0",
     "twenty-sdk": "2.49.0",
-    "twenty-ui": "^2.51.3",
+    "twenty-ui": "^2.60.0",
     "typescript": "^5.9.3",
     "use-debounce": "^10.0.0",
     "vite-tsconfig-paths": "^4.2.1",

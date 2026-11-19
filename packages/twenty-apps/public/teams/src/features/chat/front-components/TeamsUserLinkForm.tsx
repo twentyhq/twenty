@@ -36,9 +36,8 @@ export const TeamsUserLinkForm = ({ onLinkSaved }: TeamsUserLinkFormProps) => {
   const { t } = useTranslate();
   const [selectedMember, setSelectedMember] =
     useState<WorkspaceMemberOption | null>(null);
-  const [selectedUser, setSelectedUser] = useState<TeamsUserSearchOption | null>(
-    null,
-  );
+  const [selectedUser, setSelectedUser] =
+    useState<TeamsUserSearchOption | null>(null);
   const [name, setName] = useState('');
   const [isPickerReopening, setIsPickerReopening] = useState(false);
 
@@ -106,7 +105,9 @@ export const TeamsUserLinkForm = ({ onLinkSaved }: TeamsUserLinkFormProps) => {
         <TeamsUserLinkFormField label={t('Teams user')}>
           {isDefined(selectedUser) ? (
             <PickedEntityButton
-              name={selectedUser.displayName ?? selectedUser.teamsUserAadObjectId}
+              name={
+                selectedUser.displayName ?? selectedUser.teamsUserAadObjectId
+              }
               meta={selectedUser.email}
               changeLabel={t('Change the Teams user')}
               onChangeRequest={() => {

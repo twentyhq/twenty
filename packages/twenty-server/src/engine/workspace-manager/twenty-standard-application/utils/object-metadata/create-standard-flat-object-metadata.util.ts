@@ -1645,53 +1645,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
-  workflowVersion: ({
-    now,
-    workspaceId,
-    standardObjectMetadataRelatedEntityIds,
-    twentyStandardApplicationId,
-    dependencyFlatEntityMaps,
-  }: Omit<
-    CreateStandardObjectArgs<'workflowVersion'>,
-    'context' | 'objectName'
-  >) =>
-    createStandardObjectFlatMetadata({
-      objectName: 'workflowVersion',
-      dependencyFlatEntityMaps,
-      context: {
-        universalIdentifier:
-          STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-        nameSingular: 'workflowVersion',
-        openRecordIn: ObjectOpenRecordIn.RECORD_PAGE,
-        namePlural: 'workflowVersions',
-        labelSingular: i18nLabel(
-          msg({
-            message: `Workflow Version`,
-            context: 'objectMetadata.labelSingular',
-          }),
-        ),
-        labelPlural: i18nLabel(
-          msg({
-            message: `Workflow Versions`,
-            context: 'objectMetadata.labelPlural',
-          }),
-        ),
-        description: i18nLabel(
-          msg({
-            message: `A workflow version`,
-            context: 'objectMetadata.description',
-          }),
-        ),
-        icon: 'IconVersions',
-        isSystem: true,
-        isUICreatable: false,
-        labelIdentifierFieldMetadataName: 'name',
-      },
-      workspaceId,
-      standardObjectMetadataRelatedEntityIds,
-      twentyStandardApplicationId,
-      now,
-    }),
   workspaceMember: ({
     now,
     workspaceId,

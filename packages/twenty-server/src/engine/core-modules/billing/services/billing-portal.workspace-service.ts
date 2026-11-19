@@ -207,10 +207,10 @@ export class BillingPortalWorkspaceService {
         idempotencyKey: `${customer?.billingSubscriptions.length ?? 0}`,
       });
 
-    await this.billingSubscriptionService.syncSubscriptionToDatabase(
-      workspace.id,
-      stripeSubscription.id,
-    );
+    await this.billingSubscriptionService.syncSubscriptionToDatabase({
+      workspaceId: workspace.id,
+      stripeSubscriptionId: stripeSubscription.id,
+    });
 
     return successUrl;
   }
@@ -256,10 +256,10 @@ export class BillingPortalWorkspaceService {
         },
       );
 
-    await this.billingSubscriptionService.syncSubscriptionToDatabase(
-      workspace.id,
-      stripeSubscription.id,
-    );
+    await this.billingSubscriptionService.syncSubscriptionToDatabase({
+      workspaceId: workspace.id,
+      stripeSubscriptionId: stripeSubscription.id,
+    });
 
     const paymentIntent =
       this.extractSubscriptionClientSecret(stripeSubscription);

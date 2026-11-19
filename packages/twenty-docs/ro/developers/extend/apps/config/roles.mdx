@@ -20,39 +20,43 @@ export default defineRole({
   universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
   label: 'My new role',
   description: 'A role that can be used in your workspace',
-  canReadAllObjectRecords: false,
-  canUpdateAllObjectRecords: false,
-  canSoftDeleteAllObjectRecords: false,
-  canDestroyAllObjectRecords: false,
   canUpdateAllSettings: false,
   canAccessAllAgentChatChannels: false,
   canBeAssignedToAgents: false,
   canBeAssignedToUsers: false,
   canBeAssignedToApiKeys: false,
-  objectPermissions: [
-    {
-      objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
-      canSoftDeleteObjectRecords: false,
-      canDestroyObjectRecords: false,
-    },
-  ],
-  fieldPermissions: [
-    {
-      objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-      fieldUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
-          .universalIdentifier,
-      canReadFieldValue: false,
-      canUpdateFieldValue: false,
-    },
-  ],
+  recordsPermissions: {
+    canReadAllRecords: false,
+    canUpdateAllRecords: false,
+    canSoftDeleteAllRecords: false,
+    canDestroyAllRecords: false,
+    objects: [
+      {
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+        canReadAllRecords: true,
+        canUpdateAllRecords: true,
+        canSoftDeleteAllRecords: false,
+        canDestroyAllRecords: false,
+        unreadableFields: [
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
+            .universalIdentifier,
+        ],
+      },
+    ],
+  },
   permissionFlagUniversalIdentifiers: [SystemPermissionFlag.WORKSPACE_APPS],
 });
 ```
+
+`recordsPermissions` conține tot ce poate face un rol cu înregistrările:
+
+* `canReadAllRecords`, `canCreateAllRecords`, `canUpdateAllRecords`, `canSoftDeleteAllRecords` și
+  `canDestroyAllRecords` de la nivelul său superior se aplică **fiecărui obiect**. `canCreateAllRecords` îl urmează pe
+  `canUpdateAllRecords` atunci când nu este definit.
+* `objects` listează ce diferă pentru un obiect: aceleași cinci permisiuni pentru toate înregistrările sale,
+  `unreadableFields` și `uneditableFields` (identificatori universali ai câmpurilor; un câmp care nu poate fi
+  citit nu poate fi nici editat), precum și [permisiunile pentru înregistrări la nivel de rând](#row-level-security).
 
 <Note>
   `SystemPermissionFlag.USER_APPS` și `SystemPermissionFlag.WORKSPACE_APPS`
@@ -74,10 +78,17 @@ Permisiunile pentru obiecte și câmpuri decid *ce obiecte și câmpuri* poate a
 permisiuni la nivel de rând** merg mai departe și decid *ce înregistrări* poate vedea și asupra cărora poate acționa un rol — de
 exemplu, un rol de tip autoservire în care fiecare utilizator extern își vede doar propriile înregistrări.
 
-Declară predicate cu `rowLevelPermissionPredicates` în rol. La fel ca restul manifestului,
-fiecare predicat are propriul `universalIdentifier` și face referire la un obiect și un câmp prin
-`universalIdentifier`, un `operand` și (opțional) un câmp workspaceMember a cărui valoare este injectată
-în momentul interogării — astfel încât poți exprima „relația de proprietar a înregistrării **este** membrul curent al spațiului de lucru”:
+Un obiect din `recordsPermissions.objects` poate restricționa anumite operațiuni la o parte dintre înregistrările sale cu
+`rowLevelRecordsPermissions`, o listă de reguli. O regulă acordă operațiuni (`canReadRecords`,
+`canCreateRecords`, `canUpdateRecords`, `canSoftDeleteRecords`, `canDestroyRecords`) asupra înregistrărilor
+care corespund predicatelor imbricate în ea; `canCreateRecords` urmează `canUpdateRecords` atunci când
+este omisă. O regulă poate avea și propriile `unreadableFields` și
+`uneditableFields`, care se aplică înregistrărilor cărora le corespunde; o astfel de regulă necesită cel puțin un grup de predicate.
+
+Un predicat face referire la un câmp prin `universalIdentifier`, un `operand` și (opțional) un
+câmp workspaceMember a cărui valoare este injectată în momentul interogării — astfel încât poți exprima „relația de proprietar
+a înregistrării **este** membrul curent al spațiului de lucru”. Acest rol poate crea orice companie, dar citește și
+actualizează doar companiile pe care le deține:
 
 ```ts src/roles/partner-role.ts
 import {
@@ -93,38 +104,55 @@ export default defineRole({
   label: 'Partner',
   description: 'External partner — sees only its own records',
   canBeAssignedToUsers: true,
-  objectPermissions: [
-    {
-      objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
-    },
-  ],
-  rowLevelPermissionPredicates: [
-    {
-      universalIdentifier: 'd0f0c1a2-3b4c-4d5e-8f60-111111111111',
-      objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-      fieldUniversalIdentifier: ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
-      operand: RowLevelPermissionPredicateOperand.IS,
-      workspaceMemberFieldUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
-          .universalIdentifier,
-    },
-  ],
+  recordsPermissions: {
+    objects: [
+      {
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+        canCreateAllRecords: true,
+        rowLevelRecordsPermissions: [
+          {
+            universalIdentifier: 'a9e8d7c6-5b4a-4c3d-9e2f-000000000000',
+            canReadRecords: true,
+            canUpdateRecords: true,
+            predicates: [
+              {
+                universalIdentifier: 'd0f0c1a2-3b4c-4d5e-8f60-111111111111',
+                fieldUniversalIdentifier: ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
+                operand: RowLevelPermissionPredicateOperand.IS,
+                workspaceMemberFieldUniversalIdentifier:
+                  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+                    .universalIdentifier,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 });
 ```
 
-Deoarece predicatele sunt livrate în manifest, ele sunt create, actualizate și eliminate împreună cu
+Deoarece aceste permisiuni sunt livrate în manifest, ele sunt create, actualizate și eliminate împreună cu
 rolul la fiecare instalare și actualizare — nu există un pas separat post-instalare pentru a le menține sincronizate.
+
+<Warning>
+  O operațiune acordată pentru **toate înregistrările** are prioritate față de reguli. Nu acorda cu `can…AllRecords`,
+  pe obiect sau pentru fiecare obiect, operațiunile pe care o regulă trebuie să le restricționeze: când rolul
+  acordă una pentru fiecare obiect, setează `can…AllRecords` al obiectului la `false`. `defineRole` avertizează
+  când o regulă este umbrită în acest mod.
+</Warning>
+
+Un obiect poate declara mai multe reguli. O înregistrare este accesibilă pentru o operațiune de îndată ce o regulă
+care acordă acea operațiune îi corespunde, astfel încât o regulă poate permite unui partener să citească conturile din regiunea sa
+în timp ce alta îi permite să actualizeze doar conturile pe care le deține.
 
 ### Combinarea predicatelor cu grupuri
 
-În mod implicit, predicatele unui rol sunt combinate cu `AND`. Pentru a combina unele dintre ele cu `OR` (sau pentru a
-imbrica logica), declară o intrare `rowLevelPermissionPredicateGroups` și asociază fiecare predicat la aceasta prin
-`predicateGroupUniversalIdentifier`. Acest rol permite unui partener să vadă o oportunitate pe care fie o **deține**,
-fie pentru care este **punctul de contact**:
+Predicatele unei reguli sunt combinate cu `AND`. Pentru a combina unele dintre ele cu `OR` (sau pentru a imbrica
+logica), adaugă `predicateGroups` la regulă: un grup are un `logicalOperator`, propriile `predicates`,
+și poate conține alte `predicateGroups`. Acest rol permite unui partener să vadă o oportunitate pe care fie o
+**deține**, fie pentru care este **punctul de contact**:
 
 ```ts src/roles/partner-opportunities-role.ts
 import {
@@ -143,51 +171,79 @@ export default defineRole({
   universalIdentifier: 'b2a1c0d9-8e7f-4a6b-9c5d-222222222222',
   label: 'Partner (opportunities)',
   canBeAssignedToUsers: true,
-  objectPermissions: [
-    {
-      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
-      canReadObjectRecords: true,
-    },
-  ],
-  rowLevelPermissionPredicateGroups: [
-    {
-      universalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
-      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
-      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
-    },
-  ],
-  rowLevelPermissionPredicates: [
-    {
-      universalIdentifier: 'd4c3b2a1-0e9f-4c8b-9e7d-444444444444',
-      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
-      fieldUniversalIdentifier: OPPORTUNITY.fields.owner.universalIdentifier,
-      operand: RowLevelPermissionPredicateOperand.IS,
-      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
-      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
-    },
-    {
-      universalIdentifier: 'e5d4c3b2-1f0e-4d9c-8f8e-555555555555',
-      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
-      fieldUniversalIdentifier:
-        OPPORTUNITY.fields.pointOfContact.universalIdentifier,
-      operand: RowLevelPermissionPredicateOperand.IS,
-      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
-      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
-    },
-  ],
+  recordsPermissions: {
+    objects: [
+      {
+        objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+        rowLevelRecordsPermissions: [
+          {
+            universalIdentifier: 'f6e5d4c3-2a1b-4e0d-8a9f-666666666666',
+            canReadRecords: true,
+            predicateGroups: [
+              {
+                universalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+                logicalOperator:
+                  RowLevelPermissionPredicateGroupLogicalOperator.OR,
+                predicates: [
+                  {
+                    universalIdentifier: 'd4c3b2a1-0e9f-4c8b-9e7d-444444444444',
+                    fieldUniversalIdentifier:
+                      OPPORTUNITY.fields.owner.universalIdentifier,
+                    operand: RowLevelPermissionPredicateOperand.IS,
+                    workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+                  },
+                  {
+                    universalIdentifier: 'e5d4c3b2-1f0e-4d9c-8f8e-555555555555',
+                    fieldUniversalIdentifier:
+                      OPPORTUNITY.fields.pointOfContact.universalIdentifier,
+                    operand: RowLevelPermissionPredicateOperand.IS,
+                    workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 });
 ```
 
+<Note>
+  Serverele mai vechi decât Twenty 2.59 nu citesc `recordsPermissions`: declară `engines.twenty` ca
+  `>=2.59.0` în `package.json` atunci când aplicația ta nu trebuie să se instaleze pe acestea.
+</Note>
+
+### Proprietăți învechite
+
+Înainte de `recordsPermissions`, un rol declara aceleași permisiuni cu proprietăți separate. Acestea
+încă funcționează, iar `defineRole` afișează un avertisment de depreciere care le numește pe cele pe care le utilizează un rol. Procesul de compilare
+le trimite așa cum sunt scrise, iar Twenty le convertește când sincronizează aplicația. Un rol nu poate combina
+`recordsPermissions` cu proprietățile de acordare învechite:
+
+| Învechit                                                                                                              | Scrie în schimb                                                                             |
+| --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `canReadAllObjectRecords`, `canUpdateAllObjectRecords`, `canSoftDeleteAllObjectRecords`, `canDestroyAllObjectRecords` | `recordsPermissions.canReadAllRecords` și celelalte `can…AllRecords`                        |
+| `objectPermissions` cu `canReadObjectRecords`, …                                                                      | o intrare din `recordsPermissions.objects` cu `canReadAllRecords`, …                        |
+| `fieldPermissions` cu `canReadFieldValue: false` / `canUpdateFieldValue: false`                                       | `unreadableFields` / `uneditableFields` pe obiect                                           |
+| `rowLevelPermissionPredicates`, `rowLevelPermissionPredicateGroups`                                                   | `rowLevelRecordsPermissions` pe obiect, cu predicatele și grupurile imbricate într-o regulă |
+
+Predicatele declarate pe rol nu aveau propriile acordări. Acestea sunt convertite într-o regulă pentru fiecare
+grup de predicate de nivel superior și într-una pentru predicatele negrupate ale fiecărui obiect. Regula preia
+operațiunile pe care rolul le avea asupra acelui obiect, iar `can…AllRecords` ale obiectului sunt setate la `false` astfel încât
+predicatele să continue să îl restricționeze.
+
 Notițe:
 
-* Oferă fiecărui predicat și fiecărui grup un `universalIdentifier` stabil (orice uuid) — acesta este cheia entității
-  de-a lungul actualizărilor, iar predicatele fac referire la grupuri prin el.
-* Predicatele pot face referire la obiecte și câmpuri deținute de aplicația ta sau de obiectele standard ale Twenty.
-* Securitatea la nivel de rând este aplicată pentru spațiile de lucru din **planul Organization sau unul superior**. În cazul altor
-  planuri, predicatele declarate într-un manifest de aplicație se sincronizează în continuare, însă pur și simplu nu sunt aplicate.
-* API-ul Metadata se comportă diferit față de manifest în acest caz: fără acest drept,
-  `upsertRowLevelPermissionPredicates` este respins cu
-  `ROW_LEVEL_PERMISSION_FEATURE_DISABLED` în loc să fie sincronizat. Prin urmare, un spațiu de lucru dintr-un plan care nu
+* Oferă fiecărei reguli, fiecărui predicat și fiecărui grup un `universalIdentifier` stabil (orice uuid) — acesta este cheia entității
+  de-a lungul actualizărilor.
+* Predicatele pot face referire la câmpuri deținute de aplicația ta sau de obiectele standard ale Twenty.
+* Securitatea la nivel de rând este aplicată pentru spațiile de lucru din **planul Organization sau unul superior**. În alte
+  planuri, regulile declarate într-un manifest de aplicație se sincronizează în continuare, dar pur și simplu nu sunt aplicate.
+* API-ul Metadata se comportă diferit față de manifest aici: fără drept,
+  `upsertRowLevelPermissionRules` este respins cu
+  `ROW_LEVEL_PERMISSION_FEATURE_DISABLED` în loc să se sincronizeze. Prin urmare, un spațiu de lucru dintr-un plan care nu
   include securitatea la nivel de rând nu poate crea predicate în afara unui manifest de aplicație, chiar
   dacă câmpul `rowLevelPermissionPredicates` este prezent în tipul `Role` atunci când inspectați
   schema.
@@ -206,16 +262,16 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
-  canReadAllObjectRecords: true,
-  canUpdateAllObjectRecords: false,
-  canSoftDeleteAllObjectRecords: false,
-  canDestroyAllObjectRecords: false,
   canUpdateAllSettings: false,
   canBeAssignedToAgents: false,
   canBeAssignedToUsers: false,
   canBeAssignedToApiKeys: false,
-  objectPermissions: [],
-  fieldPermissions: [],
+  recordsPermissions: {
+    canReadAllRecords: true,
+    canUpdateAllRecords: false,
+    canSoftDeleteAllRecords: false,
+    canDestroyAllRecords: false,
+  },
   permissionFlagUniversalIdentifiers: [],
 });
 ```
@@ -227,7 +283,6 @@ Notițe:
 * Exact **un** `defineApplicationRole(...)` este permis per aplicație — build-ul manifestului va eșua dacă găsește mai mult de unul.
 * Utilizați `defineRole()` (nu `defineApplicationRole()`) pentru orice roluri **suplimentare** cu care este livrată aplicația.
 * Setarea explicită a `defaultRoleUniversalIdentifier` în `defineApplication()` este în continuare acceptată pentru compatibilitate retroactivă, dar este considerată învechită în favoarea `defineApplicationRole()`. De asemenea, poate denumi un rol pe care aplicația dvs. nu îl definește, cum ar fi rolul implicit integrat al aplicației personalizate din spațiul de lucru, păstrat de `twenty app pull`; compilarea nu poate verifica acel rol, așadar acesta trebuie să existe în spațiul de lucru țintă.
-* Un rol căruia îi pot fi alocați membri ai spațiului de lucru sau chei API (`canBeAssignedToUsers` sau `canBeAssignedToApiKeys`, ambele `true` când sunt omise) este un rol personalizat și necesită **planul Organization sau unul superior**: pe alte planuri, instalarea este refuzată. Păstrează-le pe ambele ca `false` pentru rolurile pe care rulează doar aplicația ta și agenții acesteia.
 
 ### Roluri agent
 
@@ -236,7 +291,7 @@ Rolul aplicației este cel pe care un spațiu de lucru îl examinează atunci c�
 ## Cele mai bune practici
 
 * Porniți de la rolul generat de scaffolding, apoi restrângeți-l progresiv — rolul implicit acordă acces larg la citire, ceea ce rareori este de dorit în producție.
-* Înlocuiți `objectPermissions` și `fieldPermissions` cu obiectele și câmpurile de care au nevoie efectiv funcțiile dvs.
+* Listează în `recordsPermissions.objects` doar obiectele de care funcțiile tale au nevoie efectiv și folosește `unreadableFields` și `uneditableFields` pentru a ascunde sau bloca câmpurile de care acestea nu au nevoie.
 * `permissionFlagUniversalIdentifiers` controlează accesul la capabilități la nivelul platformei. Mențineți-le la minimum.
 * Un indicator de permisiune pe care aplicația dvs. îl declară cu `definePermissionFlag()` are un `permissionType`: `'tool'` (implicit) pentru o capabilitate care poate fi acordată unui agent sau unui utilizator și `'settings'` pentru un indicator care deblochează o zonă de setări.
 * Vedeți un exemplu funcțional: [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).

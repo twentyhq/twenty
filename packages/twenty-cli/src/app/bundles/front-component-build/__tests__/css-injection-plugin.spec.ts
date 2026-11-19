@@ -111,7 +111,7 @@ describe('front-component build CSS injection', () => {
             bundle: true,
             write: false,
             plugins: getFrontComponentBuildPlugins({
-              onSourceFiles: (paths) => sourcePaths.push(...paths),
+              onSourceFiles: ({ paths }) => sourcePaths.push(...paths),
             }),
           }),
         );

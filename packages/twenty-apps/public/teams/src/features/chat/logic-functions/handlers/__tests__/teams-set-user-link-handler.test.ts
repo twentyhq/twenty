@@ -45,13 +45,19 @@ vi.mock('src/features/chat/logic-functions/data/find-teams-user-link', () => ({
   findTeamsUserLink: findTeamsUserLinkMock,
 }));
 
-vi.mock('src/features/chat/logic-functions/data/create-teams-user-link', () => ({
-  createTeamsUserLink: createTeamsUserLinkMock,
-}));
+vi.mock(
+  'src/features/chat/logic-functions/data/create-teams-user-link',
+  () => ({
+    createTeamsUserLink: createTeamsUserLinkMock,
+  }),
+);
 
-vi.mock('src/features/chat/logic-functions/data/update-teams-user-link', () => ({
-  updateTeamsUserLink: updateTeamsUserLinkMock,
-}));
+vi.mock(
+  'src/features/chat/logic-functions/data/update-teams-user-link',
+  () => ({
+    updateTeamsUserLink: updateTeamsUserLinkMock,
+  }),
+);
 
 const VALID_INPUT = {
   body: {

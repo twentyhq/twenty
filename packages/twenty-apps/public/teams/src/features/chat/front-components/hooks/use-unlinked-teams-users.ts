@@ -14,6 +14,7 @@ const UNLINKED_USERS_ERROR_MESSAGE =
 type UnlinkedTeamsUsersState = {
   unlinkedTeamsUsers: TeamsUserSearchOption[];
   hasMoreUnlinkedTeamsUsers: boolean;
+  hasAutoMatchFailed: boolean;
   isUnlinkedTeamsUsersLoading: boolean;
   unlinkedErrorMessage: string | undefined;
   refetchUnlinkedTeamsUsers: () => Promise<void>;
@@ -29,6 +30,7 @@ export const useUnlinkedTeamsUsers = ({
   >([]);
   const [hasMoreUnlinkedTeamsUsers, setHasMoreUnlinkedTeamsUsers] =
     useState(false);
+  const [hasAutoMatchFailed, setHasAutoMatchFailed] = useState(false);
   const [isUnlinkedTeamsUsersLoading, setIsUnlinkedTeamsUsersLoading] =
     useState(true);
   const [unlinkedErrorMessage, setUnlinkedErrorMessage] = useState<
@@ -56,12 +58,14 @@ export const useUnlinkedTeamsUsers = ({
         setUnlinkedErrorMessage(result?.error ?? UNLINKED_USERS_ERROR_MESSAGE);
         setUnlinkedTeamsUsers([]);
         setHasMoreUnlinkedTeamsUsers(false);
+        setHasAutoMatchFailed(false);
 
         return;
       }
 
       setUnlinkedTeamsUsers(result.teamsUsers);
       setHasMoreUnlinkedTeamsUsers(result.hasMore);
+      setHasAutoMatchFailed(result.hasAutoMatchFailed);
     } catch {
       if (fetchId === fetchIdRef.current) {
         setUnlinkedErrorMessage(UNLINKED_USERS_ERROR_MESSAGE);
@@ -84,6 +88,7 @@ export const useUnlinkedTeamsUsers = ({
   return {
     unlinkedTeamsUsers,
     hasMoreUnlinkedTeamsUsers,
+    hasAutoMatchFailed,
     isUnlinkedTeamsUsersLoading,
     unlinkedErrorMessage,
     refetchUnlinkedTeamsUsers,

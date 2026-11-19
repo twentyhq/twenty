@@ -62,7 +62,7 @@ export class WorkspaceFlatNavigationMenuItemMapCacheService extends MetadataFlat
 
     const flatNavigationMenuItemMaps = {
       ...createEmptyFlatEntityMaps(),
-      byUserWorkspaceIdAndFolderId: {},
+      byUserWorkspaceIdAndParentId: {},
     };
 
     for (const navigationMenuItemEntity of navigationMenuItems) {

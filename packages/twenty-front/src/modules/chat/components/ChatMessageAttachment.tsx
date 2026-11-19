@@ -1,15 +1,14 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
 
 import { ChatMessageVoiceNote } from '@/chat/components/ChatMessageVoiceNote';
 import { CHAT_MESSAGE_BUBBLE_MAX_WIDTH } from '@/chat/constants/ChatMessageBubbleMaxWidth';
+import { useStableMediaUrl } from '@/chat/hooks/useStableMediaUrl';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getFieldFilesValueCategory } from '@/object-record/record-field/ui/utils/getFieldFilesValueCategory';
 import { FileChip } from '@/ui/field/display/components/FileChip';
 import { useOpenFilePreview } from '@/ui/field/display/hooks/useOpenFilePreview';
 import { FILE_CATEGORIES } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const CHAT_MESSAGE_MEDIA_MAX_HEIGHT = '240px';
@@ -50,14 +49,10 @@ type ChatMessageAttachmentProps = {
 
 export const ChatMessageAttachment = ({ file }: ChatMessageAttachmentProps) => {
   const { openFilePreview } = useOpenFilePreview();
-  const [failedMediaUrl, setFailedMediaUrl] = useState<string | undefined>();
+  const { mediaUrl, hasMediaFailedToLoad, handleMediaError } =
+    useStableMediaUrl(file.url);
 
-  const hasMediaFailedToLoad =
-    isDefined(failedMediaUrl) && failedMediaUrl === file.url;
-
-  const handleMediaError = () => setFailedMediaUrl(file.url);
-
-  if (!isNonEmptyString(file.url) || file.isDeleted || hasMediaFailedToLoad) {
+  if (!isNonEmptyString(mediaUrl) || file.isDeleted || hasMediaFailedToLoad) {
     return <FileChip file={file} onClick={openFilePreview} />;
   }
 
@@ -66,7 +61,7 @@ export const ChatMessageAttachment = ({ file }: ChatMessageAttachmentProps) => {
       return (
         <StyledImageButton type="button" onClick={() => openFilePreview(file)}>
           <StyledImage
-            src={file.url}
+            src={mediaUrl}
             alt={file.label}
             loading="lazy"
             onError={handleMediaError}
@@ -76,7 +71,7 @@ export const ChatMessageAttachment = ({ file }: ChatMessageAttachmentProps) => {
     case FILE_CATEGORIES.VIDEO:
       return (
         <StyledVideo
-          src={file.url}
+          src={mediaUrl}
           aria-label={file.label}
           controls
           preload="metadata"
@@ -86,7 +81,7 @@ export const ChatMessageAttachment = ({ file }: ChatMessageAttachmentProps) => {
     case FILE_CATEGORIES.AUDIO:
       return (
         <ChatMessageVoiceNote
-          src={file.url}
+          src={mediaUrl}
           label={file.label}
           onError={handleMediaError}
         />

@@ -7,11 +7,9 @@ import {
 } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
 import { FairTicketAllocator } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-ticket-allocator';
 import { GroupRatePacer } from 'src/engine/core-modules/message-queue/drivers/fairness/group-rate-pacer';
-import {
-  type QueueJobLimiter,
-  type QueueJobScope,
-} from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
+import { type QueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type MessageQueueLimiter } from 'src/engine/core-modules/message-queue/types/message-queue-limiter.type';
 import { buildPaceSlotKey } from 'src/engine/core-modules/message-queue/utils/build-pace-slot-key.util';
 import { buildQueueJobGroupKeys } from 'src/engine/core-modules/message-queue/utils/build-queue-job-group-keys.util';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -25,7 +23,6 @@ export type FairJobOptions = {
 
 type PacedJobsRequest = {
   slotKey: string;
-  limiter: QueueJobLimiter;
   jobIndexes: number[];
 };
 
@@ -34,7 +31,7 @@ type FairQueueSchedulerOptions = {
   getJobKey: (job: { queueName: MessageQueue; jobId: string }) => string;
   keyPrefix: string;
   metricsService: MetricsService;
-  isGroupLimiterEnabled: () => boolean;
+  getGroupLimiter: (queueName: MessageQueue) => MessageQueueLimiter | undefined;
 };
 
 export class FairQueueScheduler {
@@ -57,14 +54,14 @@ export class FairQueueScheduler {
   async computeJobOptions({
     queueName,
     scopes,
-    limiters,
+    limiterGroupKeys,
     additionalGroupKeys,
     delay,
     staticPriority,
   }: {
     queueName: MessageQueue;
     scopes: QueueJobScope[];
-    limiters?: (QueueJobLimiter | undefined)[];
+    limiterGroupKeys?: (string | undefined)[];
     additionalGroupKeys?: string[];
     delay: number | undefined;
     staticPriority: number | undefined;
@@ -83,7 +80,7 @@ export class FairQueueScheduler {
         : this.computePacedDelays({
             queueName,
             scopes,
-            limiters,
+            limiterGroupKeys,
             callerDelayMs,
           }),
     ]);
@@ -97,40 +94,41 @@ export class FairQueueScheduler {
     });
   }
 
-  isGroupLimiterEnabled(): boolean {
-    return this.options.isGroupLimiterEnabled();
+  hasGroupLimiter(queueName: MessageQueue): boolean {
+    return isDefined(this.options.getGroupLimiter(queueName));
   }
 
   private async computePacedDelays({
     queueName,
     scopes,
-    limiters,
+    limiterGroupKeys,
     callerDelayMs,
   }: {
     queueName: MessageQueue;
     scopes: QueueJobScope[];
-    limiters: (QueueJobLimiter | undefined)[] | undefined;
+    limiterGroupKeys: (string | undefined)[] | undefined;
     callerDelayMs: number;
   }): Promise<number[] | undefined> {
-    if (!isDefined(limiters) || !this.options.isGroupLimiterEnabled()) {
+    const groupLimiter = this.options.getGroupLimiter(queueName);
+
+    if (!isDefined(limiterGroupKeys) || !isDefined(groupLimiter)) {
       return undefined;
     }
 
     const requestBySlotKey = new Map<string, PacedJobsRequest>();
 
     scopes.forEach((scope, jobIndex) => {
-      const limiter = limiters[jobIndex];
-      const slotKey = isDefined(limiter)
-        ? buildPaceSlotKey({ scope, limiter })
-        : undefined;
+      const slotKey = buildPaceSlotKey({
+        scope,
+        groupKey: limiterGroupKeys[jobIndex],
+      });
 
-      if (!isDefined(limiter) || !isDefined(slotKey)) {
+      if (!isDefined(slotKey)) {
         return;
       }
 
       const request = requestBySlotKey.get(slotKey) ?? {
         slotKey,
-        limiter,
         jobIndexes: [],
       };
 
@@ -147,13 +145,8 @@ export class FairQueueScheduler {
     const delaysByRequest = await this.groupRatePacer.computeDelays({
       queueName,
       notBeforeDelayMs: callerDelayMs,
-      requests: requests.map(({ slotKey, limiter, jobIndexes }) => ({
-        limiters: [
-          {
-            groupKey: slotKey,
-            limiter: { max: limiter.max, durationMs: limiter.durationMs },
-          },
-        ],
+      requests: requests.map(({ slotKey, jobIndexes }) => ({
+        limiters: [{ groupKey: slotKey, limiter: groupLimiter }],
         jobCount: jobIndexes.length,
       })),
     });

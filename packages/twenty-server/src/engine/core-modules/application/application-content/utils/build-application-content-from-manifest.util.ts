@@ -1,4 +1,7 @@
-import { type Manifest } from 'twenty-shared/application';
+import {
+  normalizeNavigationMenuItemManifest,
+  type Manifest,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
@@ -208,38 +211,46 @@ export const buildApplicationContentFromManifest = (
       parentUniversalIdentifier: tab.pageLayoutUniversalIdentifier,
       count: widgetCountByTab.get(tab.universalIdentifier) ?? 0,
     })),
-    navigationMenuItems: navigationMenuItems.map((navigationMenuItem) => ({
-      universalIdentifier: navigationMenuItem.universalIdentifier,
-      label: getNavigationMenuItemContentLabel({
-        name: navigationMenuItem.name,
-        viewName: findByUniversalIdentifier({
-          valueByUniversalIdentifier: viewNameByUniversalIdentifier,
-          universalIdentifier: navigationMenuItem.viewUniversalIdentifier,
+    navigationMenuItems: navigationMenuItems.map((navigationMenuItem) => {
+      const parentUniversalIdentifier =
+        normalizeNavigationMenuItemManifest(
+          navigationMenuItem,
+        ).parentUniversalIdentifier;
+
+      return {
+        universalIdentifier: navigationMenuItem.universalIdentifier,
+        label: getNavigationMenuItemContentLabel({
+          name: navigationMenuItem.name,
+          viewName: findByUniversalIdentifier({
+            valueByUniversalIdentifier: viewNameByUniversalIdentifier,
+            universalIdentifier: navigationMenuItem.viewUniversalIdentifier,
+          }),
+          objectLabel: findByUniversalIdentifier({
+            valueByUniversalIdentifier: objectLabelByUniversalIdentifier,
+            universalIdentifier:
+              navigationMenuItem.targetObjectUniversalIdentifier,
+          }),
+          link: navigationMenuItem.link,
+          type: navigationMenuItem.type,
         }),
-        objectLabel: findByUniversalIdentifier({
-          valueByUniversalIdentifier: objectLabelByUniversalIdentifier,
-          universalIdentifier:
-            navigationMenuItem.targetObjectUniversalIdentifier,
+        icon: navigationMenuItem.icon,
+        color: navigationMenuItem.color,
+        objectUniversalIdentifier:
+          navigationMenuItem.targetObjectUniversalIdentifier ??
+          findByUniversalIdentifier({
+            valueByUniversalIdentifier: viewObjectByUniversalIdentifier,
+            universalIdentifier: navigationMenuItem.viewUniversalIdentifier,
+          }),
+        parentLabel: findByUniversalIdentifier({
+          valueByUniversalIdentifier:
+            navigationMenuItemNameByUniversalIdentifier,
+          universalIdentifier: parentUniversalIdentifier,
         }),
-        link: navigationMenuItem.link,
-        type: navigationMenuItem.type,
-      }),
-      icon: navigationMenuItem.icon,
-      color: navigationMenuItem.color,
-      objectUniversalIdentifier:
-        navigationMenuItem.targetObjectUniversalIdentifier ??
-        findByUniversalIdentifier({
-          valueByUniversalIdentifier: viewObjectByUniversalIdentifier,
-          universalIdentifier: navigationMenuItem.viewUniversalIdentifier,
-        }),
-      parentLabel: findByUniversalIdentifier({
-        valueByUniversalIdentifier: navigationMenuItemNameByUniversalIdentifier,
-        universalIdentifier: navigationMenuItem.folderUniversalIdentifier,
-      }),
-      parentUniversalIdentifier: navigationMenuItem.folderUniversalIdentifier,
-      tag: navigationMenuItem.type,
-      position: navigationMenuItem.position,
-    })),
+        parentUniversalIdentifier,
+        tag: navigationMenuItem.type,
+        position: navigationMenuItem.position,
+      };
+    }),
     commandMenuItems: commandMenuItems.map((commandMenuItem) => ({
       universalIdentifier: commandMenuItem.universalIdentifier,
       label: commandMenuItem.label,

@@ -45,6 +45,7 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
         signal: context.signal,
         onChange: invalidate,
         onError: fail,
+        onWarning: output.warn,
       });
       try {
         await emit(
@@ -235,6 +236,10 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
           appPath: project.path,
           universalIdentifier: applied.acknowledgedUniversalIdentifier,
           sourceFingerprints: snapshot.sourceFingerprints,
+          appliedManifest: {
+            frontComponents: snapshot.build.manifest.frontComponents,
+            logicFunctions: snapshot.build.manifest.logicFunctions,
+          },
           context: currentContext,
         });
 

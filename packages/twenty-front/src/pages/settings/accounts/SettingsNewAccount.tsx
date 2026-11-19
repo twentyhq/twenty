@@ -8,7 +8,7 @@ import { useLingui } from '@lingui/react/macro';
 
 export const SettingsNewAccount = () => {
   const { t } = useLingui();
-  const accountsBreadcrumbLink = useAccountsSettingsBreadcrumbLink(t`Accounts`);
+  const accountsBreadcrumbLink = useAccountsSettingsBreadcrumbLink();
 
   return (
     <SettingsPageLayout

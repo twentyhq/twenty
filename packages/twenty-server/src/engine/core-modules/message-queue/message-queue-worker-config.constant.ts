@@ -9,7 +9,9 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 // concurrency: max jobs processed in parallel per worker process
 // globalConcurrency: optional, max jobs processed in parallel across all
 //   worker processes
-// rateLimit: optional, max jobs started per durationMs across all workers
+// globalLimiter: optional, max jobs started per durationMs across all workers
+// groupLimiter: optional, max jobs per durationMs for each job group of a
+//   workspace, applied as a delay when the job is added
 // lockDuration: ms a job may run before BullMQ considers it stalled
 // maxStalledCount: times a stalled job is re-queued before failing permanently
 // boundedShutdownDrain: on shutdown, abort still-active jobs after
@@ -17,9 +19,15 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 
 export type MessageQueueWorkerConfig = {
   workerOptions: Required<
-    Omit<MessageQueueWorkerOptions, 'globalConcurrency' | 'rateLimit'>
+    Omit<
+      MessageQueueWorkerOptions,
+      'globalConcurrency' | 'globalLimiter' | 'groupLimiter'
+    >
   > &
-    Pick<MessageQueueWorkerOptions, 'globalConcurrency' | 'rateLimit'>;
+    Pick<
+      MessageQueueWorkerOptions,
+      'globalConcurrency' | 'globalLimiter' | 'groupLimiter'
+    >;
 };
 
 export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
@@ -176,6 +184,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   [MessageQueue.workflowQueue]: {
     workerOptions: {
       concurrency: 1,
+      groupLimiter: { max: 100, durationMs: 60_000 },
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -208,7 +217,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   [MessageQueue.lambdaManagementQueue]: {
     workerOptions: {
       concurrency: 2,
-      rateLimit: { max: 2, durationMs: 1_000 },
+      globalLimiter: { max: 2, durationMs: 1_000 },
       lockDuration: 60_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,

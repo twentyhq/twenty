@@ -9,6 +9,7 @@ describe('isImpersonating', () => {
     expect(
       isImpersonating({
         impersonatorUserWorkspaceId: 'impersonator-user-workspace-id',
+        level: 'workspace',
       }),
     ).toBe(false);
   });
@@ -18,6 +19,7 @@ describe('isImpersonating', () => {
       isImpersonating({
         impersonatorUserWorkspaceId: 'impersonator-user-workspace-id',
         impersonatedUserWorkspaceId: 'impersonated-user-workspace-id',
+        level: 'workspace',
       }),
     ).toBe(true);
   });

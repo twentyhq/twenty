@@ -40,6 +40,8 @@ import { RecordPermissionsReadService } from 'src/engine/permissions/record-perm
 import { RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
 import { RECORDS_TOOL_WIDGET_NAME, ToolCategory } from 'twenty-shared/ai';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
+import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -79,11 +81,19 @@ export class DatabaseToolProvider implements ToolProvider {
     const toolNames = options?.toolNames;
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId: context.workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+          flatMapsKeys: [
+            'flatObjectMetadataMaps',
+            'flatFieldMetadataMaps',
+            'flatFieldMetadataOptionMaps',
+          ],
         },
       );
 
@@ -126,6 +136,7 @@ export class DatabaseToolProvider implements ToolProvider {
       ? await this.buildFieldsResolver({
           context,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
           i18nInstance,
         })
       : () => [];
@@ -531,10 +542,12 @@ export class DatabaseToolProvider implements ToolProvider {
   private async buildFieldsResolver({
     context,
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps,
     i18nInstance,
   }: {
     context: ToolProviderContext;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
     i18nInstance: I18n;
   }): Promise<(flatObject: FlatObjectMetadata) => FlatFieldMetadata[]> {
     const { workspaceCustomApplicationUniversalIdentifier } =
@@ -551,6 +564,10 @@ export class DatabaseToolProvider implements ToolProvider {
         .sort((fieldA, fieldB) => fieldA.name.localeCompare(fieldB.name))
         .map((flatFieldMetadata) => ({
           ...flatFieldMetadata,
+          options: resolveFlatFieldMetadataOptions({
+            flatFieldMetadata,
+            flatFieldMetadataOptionMaps,
+          }),
           description: resolveEffectiveFieldDescription({
             flatFieldMetadata,
             locale: context.locale,

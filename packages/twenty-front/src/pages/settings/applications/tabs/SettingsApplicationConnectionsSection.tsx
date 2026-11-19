@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { SETTINGS_APPLICATION_CONNECTIONS_SECTION_ID } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
@@ -8,6 +9,7 @@ import { SettingsApplicationConnectionName } from '@/settings/applications/compo
 import { SettingsApplicationConnectionStatus } from '@/settings/applications/components/SettingsApplicationConnectionStatus';
 import { SettingsApplicationConnectionTableRows } from '@/settings/applications/components/SettingsApplicationConnectionTableRows';
 import { canStartConnectionProviderAuthorization } from '@/settings/applications/utils/canStartConnectionProviderAuthorization';
+import { SettingsSectionAnchor } from '@/settings/components/SettingsSectionAnchor';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -31,17 +33,19 @@ export const SettingsApplicationConnectionsSection = ({
   const { accounts: connectedAccounts, loading: accountsLoading } =
     useApplicationConnectedAccounts(applicationId);
 
-  if (loading || accountsLoading || connectionProviders.length === 0) {
+  const workspaceConnectionProviders = connectionProviders.filter(
+    (provider) => provider.scope === 'WORKSPACE',
+  );
+
+  if (loading || accountsLoading || workspaceConnectionProviders.length === 0) {
     return null;
   }
 
   return (
-    <>
-      {connectionProviders.map((provider) => {
-        if (provider.scope !== 'WORKSPACE') {
-          return null;
-        }
-
+    <SettingsSectionAnchor
+      sectionId={SETTINGS_APPLICATION_CONNECTIONS_SECTION_ID}
+    >
+      {workspaceConnectionProviders.map((provider) => {
         const canStartAuthorization =
           canStartConnectionProviderAuthorization(provider);
         const providerConnections = connectedAccounts.filter(
@@ -118,12 +122,13 @@ export const SettingsApplicationConnectionsSection = ({
             {canStartAuthorization && (
               <SettingsApplicationAddConnectionButton
                 applicationId={applicationId}
-                providerName={provider.name}
+                connectionProviderName={provider.name}
+                connectionProviderType={provider.type}
               />
             )}
           </SettingsApplicationConnectionProviderSection>
         );
       })}
-    </>
+    </SettingsSectionAnchor>
   );
 };

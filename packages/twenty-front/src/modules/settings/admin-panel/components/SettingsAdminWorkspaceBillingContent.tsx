@@ -23,6 +23,7 @@ import {
 import { type ThemeColor, themeCssVariables } from 'twenty-ui/theme';
 
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { SettingsAdminWorkspaceBillingArrangementsSection } from '@/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection';
 import { SettingsAdminWorkspaceCreditGrantModal } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal';
 import { SettingsAdminWorkspaceCreditGrantsTable } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable';
 import { SettingsAdminWorkspaceUsageLimitsSection } from '@/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection';
@@ -157,6 +158,9 @@ export const SettingsAdminWorkspaceBillingContent = ({
             description={t`No billing data is available for this workspace.`}
           />
         </Section.Root>
+        <SettingsAdminWorkspaceBillingArrangementsSection
+          workspaceId={workspaceId}
+        />
         <SettingsAdminWorkspaceUsageLimitsSection workspaceId={workspaceId} />
       </StyledContainer>
     );
@@ -391,6 +395,10 @@ export const SettingsAdminWorkspaceBillingContent = ({
           />
         )}
       </Section.Root>
+
+      <SettingsAdminWorkspaceBillingArrangementsSection
+        workspaceId={workspaceId}
+      />
 
       <SettingsAdminWorkspaceUsageLimitsSection workspaceId={workspaceId} />
 

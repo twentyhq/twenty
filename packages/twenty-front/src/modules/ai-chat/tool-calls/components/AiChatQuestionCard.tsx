@@ -1,0 +1,499 @@
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { type KeyboardEvent, useState } from 'react';
+import {
+  type AskQuestionAnswer,
+  type AskQuestionItem,
+  type AskQuestionToolResult,
+  type AskQuestionsToolResult,
+} from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
+import { IconButton, LightIconButton } from 'twenty-ui/components/input';
+import { CountPager } from 'twenty-ui/components/navigation';
+import {
+  IconArrowUp,
+  type IconComponent,
+  IconInfoCircle,
+  IconSquareNumber1,
+  IconSquareNumber2,
+  IconSquareNumber3,
+  IconSquareNumber4,
+  IconSquareNumber5,
+  IconSquareNumber6,
+  IconSquareNumber7,
+  IconSquareNumber8,
+  IconSquareNumber9,
+} from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+
+import { StyledAiChatAskCard } from '@/ai-chat/tool-calls/components/StyledAiChatAskCard';
+import { TextWithChatReferences } from '@/ai-chat/message-content/components/TextWithChatReferences';
+import { AiChatComposerActionsRow } from '@/ai-chat/components/AiChatComposerActionsRow';
+import { AiChatContextUsageButton } from '@/ai-chat/usage/components/AiChatContextUsageButton';
+import { AiChatQuestionOtherOption } from '@/ai-chat/tool-calls/components/AiChatQuestionOtherOption';
+import { useAnswerAiChatToolCall } from '@/ai-chat/tool-calls/hooks/useAnswerAiChatToolCall';
+import { type AiChatPendingQuestion } from '@/ai-chat/tool-calls/types/AiChatPendingQuestion';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
+
+const NUMBER_ICONS: IconComponent[] = [
+  IconSquareNumber1,
+  IconSquareNumber2,
+  IconSquareNumber3,
+  IconSquareNumber4,
+  IconSquareNumber5,
+  IconSquareNumber6,
+  IconSquareNumber7,
+  IconSquareNumber8,
+  IconSquareNumber9,
+];
+
+const getOptionNumberIcon = (optionIndex: number) =>
+  NUMBER_ICONS[Math.min(optionIndex, NUMBER_ICONS.length - 1)];
+
+const StyledQuestionSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
+  padding: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledQuestionHeaderRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: space-between;
+  min-height: 24px;
+  padding-left: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledQuestionText = styled.p`
+  color: ${themeCssVariables.font.color.primary};
+  flex: 1 0 0;
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  line-height: 1.4;
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+`;
+
+const StyledOptionsList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing['0.5']};
+`;
+
+const StyledOptionRow = styled.div<{ isHighlighted: boolean }>`
+  align-items: center;
+  background: ${({ isHighlighted }) =>
+    isHighlighted
+      ? themeCssVariables.background.transparent.light
+      : 'transparent'};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  height: 32px;
+  justify-content: space-between;
+  overflow: hidden;
+  padding: 0 ${themeCssVariables.spacing[1]};
+
+  &:hover {
+    background: ${themeCssVariables.background.transparent.light};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: -2px;
+  }
+`;
+
+const StyledOptionLeft = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1 0 0;
+  gap: ${themeCssVariables.spacing[2]};
+  min-width: 0;
+  overflow: hidden;
+`;
+
+const StyledOptionLabel = styled.span`
+  color: ${themeCssVariables.font.color.secondary};
+  flex-shrink: 0;
+  font-size: ${themeCssVariables.font.size.md};
+  line-height: 1.4;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const StyledRecommended = styled.span`
+  color: ${themeCssVariables.font.color.light};
+  flex-shrink: 0;
+  font-size: ${themeCssVariables.font.size.md};
+  line-height: 1.4;
+`;
+
+const StyledDivider = styled.div`
+  background: ${themeCssVariables.border.color.light};
+  height: 1px;
+  width: 100%;
+`;
+
+const StyledComposerSection = styled.div`
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: ${themeCssVariables.spacing[2]};
+`;
+
+const areAllQuestionsAnswered = (
+  questions: AskQuestionItem[],
+  selectedByQuestion: Record<number, number[]>,
+  freeTextByQuestion: Record<number, string>,
+  otherSelectedByQuestion: Record<number, boolean>,
+) =>
+  questions.every(
+    (_, index) =>
+      (selectedByQuestion[index]?.length ?? 0) > 0 ||
+      (otherSelectedByQuestion[index] &&
+        (freeTextByQuestion[index] ?? '').trim().length > 0),
+  );
+
+type AiChatQuestionCardProps = {
+  pendingQuestion: AiChatPendingQuestion;
+  onSkip?: () => void;
+};
+
+export const AiChatQuestionCard = ({
+  pendingQuestion,
+  onSkip,
+}: AiChatQuestionCardProps) => {
+  const { t } = useLingui();
+  const theme = useTheme();
+  const { toolCallId } = pendingQuestion;
+  const questions =
+    pendingQuestion.kind === 'question'
+      ? [pendingQuestion.question]
+      : pendingQuestion.questions;
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedByQuestion, setSelectedByQuestion] = useState<
+    Record<number, number[]>
+  >({});
+  const [freeTextByQuestion, setFreeTextByQuestion] = useState<
+    Record<number, string>
+  >({});
+  const [otherSelectedByQuestion, setOtherSelectedByQuestion] = useState<
+    Record<number, boolean>
+  >({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { answerAiChatToolCall } = useAnswerAiChatToolCall();
+
+  const currentQuestion = questions[currentIndex];
+  const hasMultipleQuestions = questions.length > 1;
+  const isLastQuestion = currentIndex === questions.length - 1;
+
+  const buildAnswers = (
+    selected: Record<number, number[]>,
+    otherSelected: Record<number, boolean>,
+  ): AskQuestionAnswer[] =>
+    questions.map((_, index) => {
+      const trimmedFreeText = (freeTextByQuestion[index] ?? '').trim();
+      const shouldIncludeFreeText =
+        (otherSelected[index] ?? false) && trimmedFreeText.length > 0;
+
+      return {
+        questionIndex: index,
+        selectedOptionIndices: selected[index] ?? [],
+        freeText: shouldIncludeFreeText ? trimmedFreeText : undefined,
+      };
+    });
+
+  const submit = async (answers: AskQuestionAnswer[]) => {
+    if (isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const [{ selectedOptionIndices, freeText }] = answers;
+    const isAnswered = await answerAiChatToolCall(
+      pendingQuestion.kind === 'question'
+        ? {
+            toolCallId,
+            response: { selectedOptionIndices, freeText },
+            optimisticToolOutput: {
+              success: true,
+              result: {
+                question: pendingQuestion.question,
+                status: 'answered',
+                answer: { selectedOptionIndices, freeText },
+              } satisfies AskQuestionToolResult,
+            },
+          }
+        : {
+            toolCallId,
+            response: { answers },
+            optimisticToolOutput: {
+              success: true,
+              result: {
+                questions,
+                status: 'answered',
+                answers,
+              } satisfies AskQuestionsToolResult,
+            },
+          },
+    );
+
+    // The card goes once its call is closed, so it stays disabled until then.
+    if (!isAnswered) {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSelectOption = (optionIndex: number) => {
+    if (currentQuestion.allowMultiSelect === true) {
+      setSelectedByQuestion((previous) => {
+        const current = previous[currentIndex] ?? [];
+        const next = current.includes(optionIndex)
+          ? current.filter((value) => value !== optionIndex)
+          : [...current, optionIndex];
+
+        return { ...previous, [currentIndex]: next };
+      });
+
+      return;
+    }
+
+    const nextSelected = {
+      ...selectedByQuestion,
+      [currentIndex]: [optionIndex],
+    };
+    const nextOtherSelected = {
+      ...otherSelectedByQuestion,
+      [currentIndex]: false,
+    };
+
+    setSelectedByQuestion(nextSelected);
+    setOtherSelectedByQuestion(nextOtherSelected);
+
+    if (!isLastQuestion) {
+      setCurrentIndex(currentIndex + 1);
+
+      return;
+    }
+
+    if (
+      areAllQuestionsAnswered(
+        questions,
+        nextSelected,
+        freeTextByQuestion,
+        nextOtherSelected,
+      )
+    ) {
+      void submit(buildAnswers(nextSelected, nextOtherSelected));
+    }
+  };
+
+  const selectOther = () => {
+    setOtherSelectedByQuestion((previous) => ({
+      ...previous,
+      [currentIndex]: true,
+    }));
+
+    if (currentQuestion.allowMultiSelect !== true) {
+      setSelectedByQuestion((previous) => ({
+        ...previous,
+        [currentIndex]: [],
+      }));
+    }
+  };
+
+  const handleToggleOther = () => {
+    if (
+      currentQuestion.allowMultiSelect === true &&
+      otherSelectedByQuestion[currentIndex]
+    ) {
+      setOtherSelectedByQuestion((previous) => ({
+        ...previous,
+        [currentIndex]: false,
+      }));
+
+      return;
+    }
+
+    selectOther();
+  };
+
+  const handleOtherTextChange = (value: string) => {
+    setFreeTextByQuestion((previous) => ({
+      ...previous,
+      [currentIndex]: value,
+    }));
+
+    if (value.trim().length > 0) {
+      selectOther();
+    }
+  };
+
+  const allQuestionsAnswered = areAllQuestionsAnswered(
+    questions,
+    selectedByQuestion,
+    freeTextByQuestion,
+    otherSelectedByQuestion,
+  );
+
+  const handleSend = () => {
+    if (!allQuestionsAnswered) {
+      return;
+    }
+
+    void submit(buildAnswers(selectedByQuestion, otherSelectedByQuestion));
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+
+      if (!isLastQuestion) {
+        setCurrentIndex(currentIndex + 1);
+
+        return;
+      }
+
+      handleSend();
+    }
+  };
+
+  return (
+    <StyledAiChatAskCard>
+      <StyledQuestionSection>
+        <StyledQuestionHeaderRow>
+          <StyledQuestionText>
+            <TextWithChatReferences text={currentQuestion.question} />
+          </StyledQuestionText>
+          {hasMultipleQuestions && (
+            <CountPager
+              aria-label={t`Questions`}
+              index={currentIndex}
+              count={questions.length}
+              onIndexChange={setCurrentIndex}
+              positionText={`${currentIndex + 1}/${questions.length}`}
+              previousLabel={t`Previous`}
+              nextLabel={t`Next question`}
+            />
+          )}
+        </StyledQuestionHeaderRow>
+
+        <StyledOptionsList>
+          {currentQuestion.options.map((option, optionIndex) => {
+            const NumberIcon = getOptionNumberIcon(optionIndex);
+            const isSelected = (
+              selectedByQuestion[currentIndex] ?? []
+            ).includes(optionIndex);
+            const hasSelection =
+              (selectedByQuestion[currentIndex] ?? []).length > 0 ||
+              (otherSelectedByQuestion[currentIndex] ?? false);
+            const isHighlighted =
+              isSelected || (!hasSelection && option.isRecommended === true);
+
+            return (
+              <StyledOptionRow
+                key={optionIndex}
+                isHighlighted={isHighlighted}
+                role="button"
+                tabIndex={0}
+                onClick={() => handleSelectOption(optionIndex)}
+                onKeyDown={(event) => {
+                  if (event.target !== event.currentTarget) {
+                    return;
+                  }
+
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    handleSelectOption(optionIndex);
+                  }
+                }}
+              >
+                <StyledOptionLeft>
+                  <NumberIcon
+                    size={theme.icon.size.sm}
+                    color={themeCssVariables.font.color.tertiary}
+                  />
+                  <StyledOptionLabel>
+                    <TextWithChatReferences text={option.label} />
+                  </StyledOptionLabel>
+                  {option.isRecommended === true && (
+                    <StyledRecommended>· {t`Recommended`}</StyledRecommended>
+                  )}
+                </StyledOptionLeft>
+                {isDefined(option.description) && (
+                  <Tooltip
+                    content={option.description}
+                    delay={TooltipDelay.shortDelay}
+                    side="left"
+                  >
+                    <span onClick={(event) => event.stopPropagation()}>
+                      <LightIconButton
+                        size="sm"
+                        emphasis="subtle"
+                        aria-label={t`Information`}
+                      >
+                        <IconInfoCircle />
+                      </LightIconButton>
+                    </span>
+                  </Tooltip>
+                )}
+              </StyledOptionRow>
+            );
+          })}
+          <AiChatQuestionOtherOption
+            NumberIcon={getOptionNumberIcon(currentQuestion.options.length)}
+            isHighlighted={otherSelectedByQuestion[currentIndex] ?? false}
+            value={freeTextByQuestion[currentIndex] ?? ''}
+            onChange={handleOtherTextChange}
+            onSelect={handleToggleOther}
+            onTextareaKeyDown={handleKeyDown}
+          />
+        </StyledOptionsList>
+      </StyledQuestionSection>
+
+      <StyledDivider />
+
+      <StyledComposerSection>
+        <AiChatComposerActionsRow
+          leftActions={
+            <>
+              {isDefined(onSkip) && (
+                <Button size="sm" disabled={isSubmitting} onClick={onSkip}>
+                  {t`Skip`}
+                </Button>
+              )}
+              <AiChatContextUsageButton />
+            </>
+          }
+          modelTierDropdownId={`ai-chat-question-model-tier-dropdown-${toolCallId}`}
+          sendButton={
+            <IconButton
+              variant="solid"
+              color="accent"
+              shape="round"
+              aria-label={t`Send message`}
+              size="sm"
+              onClick={handleSend}
+              disabled={!allQuestionsAnswered || isSubmitting}
+            >
+              <IconArrowUp />
+            </IconButton>
+          }
+        />
+      </StyledComposerSection>
+    </StyledAiChatAskCard>
+  );
+};

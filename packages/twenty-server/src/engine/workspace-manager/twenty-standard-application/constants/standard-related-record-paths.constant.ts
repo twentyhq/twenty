@@ -64,11 +64,6 @@ export const STANDARD_RELATED_RECORD_PATHS: StandardRelatedRecordPath[] = [
     isInherent: true,
   },
   {
-    objectName: 'workflowVersion',
-    fieldNames: ['timelineActivities'],
-    isInherent: true,
-  },
-  {
     objectName: 'company',
     fieldNames: ['noteTargets', 'note'],
     isInherent: false,

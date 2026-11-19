@@ -38,4 +38,7 @@ export class RowLevelPermissionPredicateGroupDTO {
 
   @Field(() => String)
   objectMetadataId: string;
+
+  @Field(() => String, { nullable: true })
+  rowLevelPermissionRuleId?: string | null;
 }

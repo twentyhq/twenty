@@ -4,7 +4,6 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import {
   inputSchemaToOutputSchema,
-  jsonSchemaToInputSchema,
   SEED_WORKFLOW_ACTION_TRIGGER_SETTINGS,
 } from 'twenty-shared/logic-function';
 import {
@@ -12,11 +11,17 @@ import {
   StepLogicalOperator,
   ViewFilterOperand,
 } from 'twenty-shared/types';
-import { isDefined, isPlainObject, isValidUuid } from 'twenty-shared/utils';
+import {
+  EMPTY_EMAIL_DOCUMENT,
+  isDefined,
+  isPlainObject,
+  isValidUuid,
+} from 'twenty-shared/utils';
 import {
   WORKFLOW_ACTION_FEATURE_FLAGS,
   WORKFLOW_AI_AGENT_GENERATE_STEP_DEFAULT_NAME,
   WorkflowActionType,
+  getDefaultMcpToolInputFromJsonSchema,
   getFunctionInputFromInputSchema,
   type StepIfElseBranch,
   workflowMcpToolActionSettingsSchema,
@@ -28,7 +33,7 @@ import { getLogicFunctionSeedSourceCodeOrThrow } from 'src/engine/core-modules/l
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position.input';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
@@ -76,7 +81,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
     private readonly findRecordsService: FindRecordsService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly workflowAiAgentStepAgentService: WorkflowAiAgentStepAgentService,
@@ -260,10 +265,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                 toolName,
                 toolInput:
                   toolInput ??
-                  getFunctionInputFromInputSchema(
-                    jsonSchemaToInputSchema(tool.inputSchema),
-                  )[0] ??
-                  {},
+                  getDefaultMcpToolInputFromJsonSchema(tool.inputSchema),
               },
             },
           },
@@ -285,7 +287,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                   bcc: '',
                 },
                 subject: '',
-                body: '',
+                body: JSON.stringify(EMPTY_EMAIL_DOCUMENT),
               },
             },
           },
@@ -349,7 +351,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                   bcc: '',
                 },
                 subject: '',
-                body: '',
+                body: JSON.stringify(EMPTY_EMAIL_DOCUMENT),
               },
             },
           },

@@ -138,9 +138,13 @@ const toAcceptedAuthPrincipals = (
   return {
     userSession: {
       standard: isAccepted({ kind: 'userSession', variant: 'standard' }),
-      impersonated: isAccepted({
+      serverImpersonated: isAccepted({
         kind: 'userSession',
-        variant: 'impersonated',
+        variant: 'serverImpersonated',
+      }),
+      workspaceImpersonated: isAccepted({
+        kind: 'userSession',
+        variant: 'workspaceImpersonated',
       }),
       playground: isAccepted({ kind: 'userSession', variant: 'playground' }),
       workspaceAgnostic: isAccepted({

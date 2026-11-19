@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
-import { AiChatFilePreview } from '@/ai/components/internal/AiChatFilePreview';
+import { AiChatFilePreview } from '@/ai-chat/composer/components/AiChatFilePreview';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
 import { ChatMessageReceipt } from '@/chat/components/ChatMessageReceipt';
 import { StyledChatMessageBubble } from '@/chat/components/StyledChatMessageBubble';

@@ -39,7 +39,6 @@ import { SaveDashboardSingleRecordCommand } from '@/command-menu-item/engine-com
 import { ReplyToEmailThreadCommand } from '@/command-menu-item/engine-command/record/single-record/message-thread/components/ReplyToEmailThreadCommand';
 import { InboxThreadInboxCommand } from '@/command-menu-item/engine-command/record/components/InboxThreadInboxCommand';
 import { ShareRecordCommand } from '@/command-menu-item/engine-command/record/components/ShareRecordCommand';
-import { SeeVersionWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/SeeVersionWorkflowRunSingleRecordCommand';
 import { SeeWorkflowWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/SeeWorkflowWorkflowRunSingleRecordCommand';
 import { RetryWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/RetryWorkflowRunSingleRecordCommand';
 import { StopWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/StopWorkflowRunSingleRecordCommand';
@@ -248,9 +247,6 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   ),
   [EngineComponentKey.ADD_NODE_WORKFLOW]: (
     <AddNodeWorkflowSingleRecordCommand />
-  ),
-  [EngineComponentKey.SEE_VERSION_WORKFLOW_RUN]: (
-    <SeeVersionWorkflowRunSingleRecordCommand />
   ),
   [EngineComponentKey.SEE_WORKFLOW_WORKFLOW_RUN]: (
     <SeeWorkflowWorkflowRunSingleRecordCommand />

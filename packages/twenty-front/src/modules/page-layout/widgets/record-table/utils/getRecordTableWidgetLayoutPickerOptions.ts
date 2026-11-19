@@ -13,6 +13,7 @@ export type RecordTableWidgetLayoutPickerOption = {
   viewType: RecordTableWidgetLayoutViewType;
   Icon: IconComponent;
   label: MessageDescriptor;
+  description: MessageDescriptor;
   isDisabled: boolean;
   unavailableReason?: MessageDescriptor;
 };

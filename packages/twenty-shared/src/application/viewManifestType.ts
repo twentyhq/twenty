@@ -26,6 +26,7 @@ export type ViewFieldManifest = SyncableEntityOptions & {
   aggregateOperation?: AggregateOperations;
   viewFieldGroupUniversalIdentifier?: string;
   isCanonical?: boolean;
+  relationTargetFieldMetadataUniversalIdentifier?: string;
 };
 
 export type StandaloneViewFieldManifest = ViewFieldManifest & {
@@ -64,6 +65,7 @@ export type ViewSortManifest = SyncableEntityOptions & {
   fieldMetadataUniversalIdentifier: string;
   direction: ViewSortDirection;
   subFieldName?: string;
+  relationTargetFieldMetadataUniversalIdentifier?: string;
 };
 
 export type ViewManifest = SyncableEntityOptions & {

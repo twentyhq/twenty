@@ -157,11 +157,19 @@ export class PageLayoutWidgetService {
     widgetTitle?: string | null;
     workspaceId: string;
   }): Promise<void> {
-    const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+    const {
+      flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
+      flatObjectMetadataMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+          flatMapsKeys: [
+            'flatFieldMetadataMaps',
+            'flatFieldMetadataOptionMaps',
+            'flatObjectMetadataMaps',
+          ],
         },
       );
 
@@ -170,6 +178,7 @@ export class PageLayoutWidgetService {
       widgetObjectMetadataId: objectMetadataId,
       widgetTitle,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
       flatObjectMetadataMaps,
     });
 

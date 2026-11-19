@@ -1,3 +1,4 @@
+import { type ModelInputFile } from 'src/engine/core-modules/tool/types/model-input-file.type';
 import { type RecordReference } from 'src/engine/core-modules/tool/types/record-reference.type';
 
 export type ToolOutput<T = object> = {
@@ -10,4 +11,5 @@ export type ToolOutput<T = object> = {
   statusText?: string;
   headers?: Record<string, string>;
   recordReferences?: RecordReference[];
+  modelInputFile?: ModelInputFile;
 };

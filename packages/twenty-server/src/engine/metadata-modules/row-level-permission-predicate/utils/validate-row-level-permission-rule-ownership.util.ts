@@ -6,15 +6,13 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import {
-  type RowLevelPermissionPredicateGroupInput,
-  type RowLevelPermissionPredicateInput,
-} from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-predicates.input';
-import {
   RowLevelPermissionPredicateException,
   RowLevelPermissionPredicateExceptionCode,
 } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
+import { type FlatRowLevelPermissionRule } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-rule.type';
+import { type FlattenedRowLevelPermissionRuleInputs } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flattened-row-level-permission-rule-inputs.type';
 
 const getRuleFieldObjectMetadataIdOrThrow = ({
   relationFieldMetadataId,
@@ -49,27 +47,42 @@ const getRuleFieldObjectMetadataIdOrThrow = ({
 export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
   roleId,
   objectMetadataId,
+  rules,
   predicates,
   predicateGroups,
+  flatRowLevelPermissionRuleMaps,
   flatRowLevelPermissionPredicateMaps,
   flatRowLevelPermissionPredicateGroupMaps,
   flatFieldMetadataMaps,
   workspaceMemberObjectMetadataId,
-}: {
+}: FlattenedRowLevelPermissionRuleInputs & {
   roleId: string;
   objectMetadataId: string;
-  predicates: RowLevelPermissionPredicateInput[];
-  predicateGroups: RowLevelPermissionPredicateGroupInput[];
+  flatRowLevelPermissionRuleMaps: FlatEntityMaps<FlatRowLevelPermissionRule>;
   flatRowLevelPermissionPredicateMaps: FlatEntityMaps<FlatRowLevelPermissionPredicate>;
   flatRowLevelPermissionPredicateGroupMaps: FlatEntityMaps<FlatRowLevelPermissionPredicateGroup>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   workspaceMemberObjectMetadataId?: string;
 }): void => {
-  for (const predicateGroup of predicateGroups) {
-    if (!isDefined(predicateGroup.id)) {
-      continue;
-    }
+  for (const rule of rules) {
+    const existingRule = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: rule.id,
+      flatEntityMaps: flatRowLevelPermissionRuleMaps,
+    });
 
+    if (
+      isDefined(existingRule) &&
+      (existingRule.roleId !== roleId ||
+        existingRule.objectMetadataId !== objectMetadataId)
+    ) {
+      throw new RowLevelPermissionPredicateException(
+        'Rule belongs to a different role or object and cannot be modified here. Omit the id to create a new rule.',
+        RowLevelPermissionPredicateExceptionCode.UNAUTHORIZED_OBJECT_MODIFICATION,
+      );
+    }
+  }
+
+  for (const predicateGroup of predicateGroups) {
     const existingGroup = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: predicateGroup.id,
       flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
@@ -88,51 +101,22 @@ export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
     }
   }
 
-  const groupIdsInPayload = new Set(
-    predicateGroups
-      .map((predicateGroup) => predicateGroup.id)
-      .filter(isDefined),
-  );
-
   for (const predicate of predicates) {
-    if (isDefined(predicate.id)) {
-      const existingPredicate = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: predicate.id,
-        flatEntityMaps: flatRowLevelPermissionPredicateMaps,
-      });
+    const existingPredicate = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: predicate.id,
+      flatEntityMaps: flatRowLevelPermissionPredicateMaps,
+    });
 
-      if (
-        isDefined(existingPredicate) &&
-        existingPredicate.deletedAt === null &&
-        (existingPredicate.roleId !== roleId ||
-          existingPredicate.objectMetadataId !== objectMetadataId)
-      ) {
-        throw new RowLevelPermissionPredicateException(
-          'Predicate belongs to a different role or object and cannot be modified here. Omit the id to create a new predicate.',
-          RowLevelPermissionPredicateExceptionCode.UNAUTHORIZED_ROLE_MODIFICATION,
-        );
-      }
-    }
-
-    const groupId = predicate.rowLevelPermissionPredicateGroupId;
-
-    if (isDefined(groupId) && !groupIdsInPayload.has(groupId)) {
-      const referencedGroup = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: groupId,
-        flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
-      });
-
-      if (
-        !isDefined(referencedGroup) ||
-        referencedGroup.deletedAt !== null ||
-        referencedGroup.roleId !== roleId ||
-        referencedGroup.objectMetadataId !== objectMetadataId
-      ) {
-        throw new RowLevelPermissionPredicateException(
-          'Referenced predicate group is not a group of this role and object. Reference a group declared in predicateGroups or an existing group of this role and object.',
-          RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
-        );
-      }
+    if (
+      isDefined(existingPredicate) &&
+      existingPredicate.deletedAt === null &&
+      (existingPredicate.roleId !== roleId ||
+        existingPredicate.objectMetadataId !== objectMetadataId)
+    ) {
+      throw new RowLevelPermissionPredicateException(
+        'Predicate belongs to a different role or object and cannot be modified here. Omit the id to create a new predicate.',
+        RowLevelPermissionPredicateExceptionCode.UNAUTHORIZED_ROLE_MODIFICATION,
+      );
     }
 
     const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({

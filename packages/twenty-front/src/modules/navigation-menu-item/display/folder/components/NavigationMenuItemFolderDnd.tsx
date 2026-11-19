@@ -126,7 +126,7 @@ export const NavigationMenuItemFolderDnd = ({
     : 'workspace';
   const insertionIndex =
     navigationMenuItemInsertionPreview?.section === section &&
-    navigationMenuItemInsertionPreview.folderId === folderId
+    navigationMenuItemInsertionPreview.parentId === folderId
       ? navigationMenuItemInsertionPreview.index
       : null;
   const hasInsertionPreview = isDefined(insertionIndex);
@@ -165,7 +165,7 @@ export const NavigationMenuItemFolderDnd = ({
   );
   const isFolderEditHighlighted = useIsNavigationMenuItemEditHighlighted({
     id: folderId,
-    folderId: null,
+    parentId: null,
   });
 
   const config = NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG[section];
@@ -343,7 +343,7 @@ export const NavigationMenuItemFolderDnd = ({
             {navigationMenuItems.map((navigationMenuItem, index) => (
               <Fragment key={navigationMenuItem.id}>
                 <NavigationItemDropTarget
-                  folderId={folderId}
+                  parentId={folderId}
                   index={index}
                   sectionId={sectionId}
                   compact={isCompact}
@@ -399,7 +399,7 @@ export const NavigationMenuItemFolderDnd = ({
               collisionPriority={FOLDER_HEADER_SLOT_COLLISION_PRIORITY}
             >
               <NavigationItemDropTarget
-                folderId={folderId}
+                parentId={folderId}
                 index={navigationMenuItems.length}
                 sectionId={sectionId}
                 compact={isCompact}
@@ -415,7 +415,7 @@ export const NavigationMenuItemFolderDnd = ({
                 <StyledAddMenuItem isHidden={isAddingFavoriteFolderItem}>
                   <NavigationMenuItemEntrance>
                     <NavigationMenuItemAddDropdown
-                      folderId={folderId}
+                      parentId={folderId}
                       section={section}
                       position={navigationMenuItems.length}
                     >

@@ -221,6 +221,26 @@ export const waitForAllJobsToFinish = async (): Promise<void> => {
   global.jobDrainState.lastStalledFingerprint = null;
 };
 
+export const countRunningJobs = async ({
+  queueName,
+}: {
+  queueName: MessageQueue;
+}): Promise<number> => {
+  const queue = getQueues().find(({ name }) => name === queueName);
+
+  if (!queue) {
+    return 0;
+  }
+
+  const jobCounts = await queue.getJobCounts(
+    'waiting',
+    'active',
+    'prioritized',
+  );
+
+  return Object.values(jobCounts).reduce((sum, count) => sum + count, 0);
+};
+
 export const removeDelayedJobs = async ({
   queueName,
   shouldRemove,

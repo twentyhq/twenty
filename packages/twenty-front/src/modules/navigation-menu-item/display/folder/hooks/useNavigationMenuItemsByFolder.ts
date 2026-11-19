@@ -55,12 +55,12 @@ export const useNavigationMenuItemsByFolder = () => {
           } else {
             acc.workspaceFolders.push(folderEntry);
           }
-        } else if (isDefined(item.folderId)) {
-          const existingItems = acc.itemsByFolderId.get(item.folderId);
+        } else if (isDefined(item.parentId)) {
+          const existingItems = acc.itemsByFolderId.get(item.parentId);
           if (isDefined(existingItems)) {
             existingItems.push(item);
           } else {
-            acc.itemsByFolderId.set(item.folderId, [item]);
+            acc.itemsByFolderId.set(item.parentId, [item]);
           }
         }
 

@@ -58,6 +58,7 @@ export const omitUnreadableFieldsFromEvent = <
       ...findUnreadableFieldMetadataIdsOnRecords({
         flatObjectMetadata: objectMetadata,
         flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps: metadataMaps.flatFieldMetadataOptionMaps,
         objectUnreadableFieldMetadataIds:
           recordsPermissions.objects[objectMetadata.id]?.unreadableFields ?? [],
         // A record leaving an RLS rule still shows unreadable values in its before state

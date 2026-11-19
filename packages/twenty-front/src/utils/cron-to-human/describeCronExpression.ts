@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { getDaysDescription } from './descriptors/getDaysDescription';
 import { getHoursDescription } from './descriptors/getHoursDescription';
 import { getMinutesDescription } from './descriptors/getMinutesDescription';
+import { getMinutesWithinHoursDescription } from './descriptors/getMinutesWithinHoursDescription';
 import { getMonthsDescription } from './descriptors/getMonthsDescription';
 import {
   type CronDescriptionOptions,
@@ -40,7 +41,15 @@ export const describeCronExpression = (
       mergedOptions,
     );
 
-    if (parts.minutes.includes('/') && parts.hours.includes('-')) {
+    const minutesWithinHoursDescription = getMinutesWithinHoursDescription({
+      minutes: parts.minutes,
+      hours: parts.hours,
+      options: mergedOptions,
+    });
+
+    if (isNonEmptyString(minutesWithinHoursDescription)) {
+      descriptions.push(minutesWithinHoursDescription);
+    } else if (parts.minutes.includes('/') && parts.hours.includes('-')) {
       // Special case: minute intervals with hour ranges (e.g., "*/15 9-17")
       if (isDefined(minutesDescription) && minutesDescription !== '') {
         descriptions.push(minutesDescription);

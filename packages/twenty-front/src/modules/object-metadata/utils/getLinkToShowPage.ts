@@ -26,7 +26,7 @@ export const getLinkToShowPage = (
     objectNameSingular === StandardObjectNameSingular.AgentChatThread &&
     record.id
   ) {
-    return getAppPath(AppPath.AiChat, { threadId: record.id });
+    return getAppPath(AppPath.AiChatInbox, { threadId: record.id });
   }
 
   if (objectNameSingular === StandardObjectNameSingular.TaskTarget) {

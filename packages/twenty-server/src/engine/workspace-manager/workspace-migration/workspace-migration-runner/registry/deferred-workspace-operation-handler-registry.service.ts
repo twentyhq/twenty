@@ -3,7 +3,6 @@ import { DiscoveryService } from '@nestjs/core';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workspace-schema-migration-runner-action-handlers.module';
 import { DEFERRED_WORKSPACE_OPERATION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-operation-handlers/constants/deferred-workspace-operation-handler-metadata-key.constant';
 import { type DeferredWorkspaceOperationHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-operation-handlers/interfaces/deferred-workspace-operation-handler.interface';
 import {
@@ -22,25 +21,21 @@ export class DeferredWorkspaceOperationHandlerRegistryService implements OnModul
   constructor(private readonly discoveryService: DiscoveryService) {}
 
   onModuleInit() {
-    this.discoveryService
-      .getProviders({
-        include: [WorkspaceSchemaMigrationRunnerActionHandlersModule],
-      })
-      .forEach(({ instance, metatype }) => {
-        if (!isDefined(instance) || !isDefined(metatype)) {
-          return;
-        }
+    this.discoveryService.getProviders().forEach(({ instance, metatype }) => {
+      if (!isDefined(instance) || !isDefined(metatype)) {
+        return;
+      }
 
-        const name: DeferredWorkspaceOperationName | undefined =
-          Reflect.getMetadata(
-            DEFERRED_WORKSPACE_OPERATION_HANDLER_METADATA_KEY,
-            metatype,
-          );
+      const name: DeferredWorkspaceOperationName | undefined =
+        Reflect.getMetadata(
+          DEFERRED_WORKSPACE_OPERATION_HANDLER_METADATA_KEY,
+          metatype,
+        );
 
-        if (isDefined(name)) {
-          this.handlerByName.set(name, instance);
-        }
-      });
+      if (isDefined(name)) {
+        this.handlerByName.set(name, instance);
+      }
+    });
   }
 
   getHandler(

@@ -2,6 +2,7 @@ import { useLocation } from 'react-router-dom';
 
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { parseTabRouteHash } from '@/ui/layout/tab-list/utils/parseTabRouteHash';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 type UseTabListActiveTabIdArgs<TTabId extends string> = {
@@ -30,7 +31,7 @@ export const useTabListActiveTabId = <TTabId extends string>({
 
   const routeTabId =
     behaveAsLinks && workspaceSurface.ownsRouteLocation
-      ? findVisibleTabId(location.hash.replace('#', ''))
+      ? findVisibleTabId(parseTabRouteHash(location.hash).tabId)
       : undefined;
 
   return (

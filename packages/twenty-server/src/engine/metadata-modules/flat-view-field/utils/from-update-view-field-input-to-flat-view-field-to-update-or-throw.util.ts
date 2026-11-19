@@ -25,6 +25,7 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
   updateViewFieldInput: rawUpdateViewFieldInput,
   flatViewFieldMaps,
   flatViewFieldGroupMaps,
+  flatFieldMetadataMaps,
   callerApplicationUniversalIdentifier,
   workspaceCustomApplicationUniversalIdentifier,
 }: {
@@ -34,7 +35,7 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
   workspaceCustomApplicationUniversalIdentifier: string;
 } & Pick<
   AllFlatEntityMaps,
-  'flatViewFieldGroupMaps'
+  'flatViewFieldGroupMaps' | 'flatFieldMetadataMaps'
 >): UniversalFlatViewField => {
   const { id: viewFieldToUpdateId } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -88,19 +89,22 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
     overrides,
   } as UniversalFlatViewField;
 
-  if (updatedEditableProperties.viewFieldGroupId !== undefined) {
-    const { viewFieldGroupUniversalIdentifier } =
-      resolveEntityRelationUniversalIdentifiers({
-        metadataName: 'viewField',
-        foreignKeyValues: {
-          viewFieldGroupId: mergedRecord.viewFieldGroupId,
-        },
-        flatEntityMaps: { flatViewFieldGroupMaps },
-      });
+  const {
+    viewFieldGroupUniversalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier,
+  } = resolveEntityRelationUniversalIdentifiers({
+    metadataName: 'viewField',
+    foreignKeyValues: {
+      viewFieldGroupId: mergedRecord.viewFieldGroupId,
+      relationTargetFieldMetadataId: mergedRecord.relationTargetFieldMetadataId,
+    },
+    flatEntityMaps: { flatViewFieldGroupMaps, flatFieldMetadataMaps },
+  });
 
-    flatViewFieldToUpdate.viewFieldGroupUniversalIdentifier =
-      viewFieldGroupUniversalIdentifier;
-  }
+  flatViewFieldToUpdate.viewFieldGroupUniversalIdentifier =
+    viewFieldGroupUniversalIdentifier;
+  flatViewFieldToUpdate.relationTargetFieldMetadataUniversalIdentifier =
+    relationTargetFieldMetadataUniversalIdentifier;
 
   if (isDefined(overrides)) {
     flatViewFieldToUpdate.universalOverrides =

@@ -1,5 +1,5 @@
 import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findAccessGroupPropagationProgress } from 'test/integration/metadata/suites/role/utils/find-access-group-propagation-progress.util';
@@ -11,10 +11,9 @@ import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
+import { setTimeout as sleep } from 'node:timers/promises';
 import { v4 } from 'uuid';
 
-import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { type AccessGroupReadService } from 'src/engine/permissions/internal/access-group/services/access-group-read.service';
 import { type AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
 import { type RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
@@ -23,6 +22,7 @@ import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
+const COMPUTE_START_TIMEOUT_MS = 30_000;
 const SCHEMA = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"`;
 const PERSON_TABLE = `${SCHEMA}."person"`;
 const ACCESS_GROUP_TABLE = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."accessGroup"`;
@@ -104,30 +104,34 @@ describe('access group sync (integration)', () => {
       },
     });
     const roleId = data.createOneRole.id;
+    const ruleId = v4();
     const predicateGroupId = v4();
     const predicateId = v4();
     const upsertRule = (value: string) =>
-      upsertRowLevelPermissionPredicates({
+      upsertRowLevelPermissionRules({
         expectToFail: false,
         input: {
           roleId,
           objectMetadataId,
-          canReadRecords: true,
-          predicateGroups: [
+          rules: [
             {
-              id: predicateGroupId,
-              objectMetadataId,
-              logicalOperator:
-                RowLevelPermissionPredicateGroupLogicalOperator.AND,
-            },
-          ],
-          predicates: [
-            {
-              id: predicateId,
-              fieldMetadataId,
-              operand: RowLevelPermissionPredicateOperand.CONTAINS,
-              value,
-              rowLevelPermissionPredicateGroupId: predicateGroupId,
+              id: ruleId,
+              canReadRecords: true,
+              predicateGroups: [
+                {
+                  id: predicateGroupId,
+                  logicalOperator:
+                    RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                  predicates: [
+                    {
+                      id: predicateId,
+                      fieldMetadataId,
+                      operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                      value,
+                    },
+                  ],
+                },
+              ],
             },
           ],
         },
@@ -175,7 +179,7 @@ describe('access group sync (integration)', () => {
 
     const principals = buildRolePermissionsPrincipals({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
-      roleId: await findAdminRoleId(),
+      roleIds: [await findAdminRoleId()],
     });
     const objectMetadataId = await findPersonObjectMetadataId();
     const compactIds = await accessGroupReadService.findPrincipalsCompactIds({
@@ -236,6 +240,7 @@ describe('access group propagation progress (integration)', () => {
 
     roleId = data.createOneRole.id;
     await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
+    // Other specs empty the person table, and a compute over no record never reaches a batch
     await global.testDataSource.query(
       `INSERT INTO ${PERSON_TABLE} ("id", "jobTitle") VALUES ($1, 'Paris office')`,
       [personId],
@@ -246,13 +251,6 @@ describe('access group propagation progress (integration)', () => {
       expectToFail: false,
     });
     await waitForAllJobsToFinish();
-    await global.app
-      .get<CacheStorageService>(CacheStorageNamespace.EnginePermissions)
-      .mdel(
-        ['plan', 'computed-record-count'].map(
-          (key) => `access-group-propagation:${SEED_APPLE_WORKSPACE_ID}:${key}`,
-        ),
-      );
     await global.testDataSource.query(`ANALYZE ${PERSON_TABLE}`);
   });
 
@@ -307,34 +305,58 @@ describe('access group propagation progress (integration)', () => {
 
     const predicateGroupId = v4();
 
-    await upsertRowLevelPermissionPredicates({
+    await upsertRowLevelPermissionRules({
       expectToFail: false,
       input: {
         roleId,
         objectMetadataId,
-        canReadRecords: true,
-        predicateGroups: [
+        rules: [
           {
-            id: predicateGroupId,
-            objectMetadataId,
-            logicalOperator:
-              RowLevelPermissionPredicateGroupLogicalOperator.AND,
-          },
-        ],
-        predicates: [
-          {
-            id: v4(),
-            fieldMetadataId: jobTitleFieldMetadataId,
-            operand: RowLevelPermissionPredicateOperand.CONTAINS,
-            value: 'Paris',
-            rowLevelPermissionPredicateGroupId: predicateGroupId,
+            canReadRecords: true,
+            predicateGroups: [
+              {
+                id: predicateGroupId,
+                logicalOperator:
+                  RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                predicates: [
+                  {
+                    id: v4(),
+                    fieldMetadataId: jobTitleFieldMetadataId,
+                    operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                    value: 'Paris',
+                  },
+                ],
+              },
+            ],
           },
         ],
       },
     });
 
+    const computeStartAbortController = new AbortController();
+    const describeStateWhenComputeDidNotStart = async (): Promise<never> => {
+      await sleep(COMPUTE_START_TIMEOUT_MS, undefined, {
+        signal: computeStartAbortController.signal,
+      });
+
+      const deferredOperations = await global.testDataSource.query(
+        `SELECT "name", "status", "attempts", "lastError", "payload" FROM core."deferredWorkspaceOperation" WHERE "workspaceId" = $1`,
+        [SEED_APPLE_WORKSPACE_ID],
+      );
+      const accessGroups = await global.testDataSource.query(
+        `SELECT "objectMetadataId", "roleId", "rowLevelPermissionPredicateGroupId" FROM ${ACCESS_GROUP_TABLE}`,
+      );
+
+      throw new Error(
+        `The person compute did not start: ${JSON.stringify({ personObjectMetadataId: objectMetadataId, roleId, personCount, deferredOperations, accessGroups })}`,
+      );
+    };
+
     try {
-      await firstBatchReached;
+      await Promise.race([
+        firstBatchReached,
+        describeStateWhenComputeDidNotStart(),
+      ]);
 
       const progress = await readProgress();
 
@@ -342,6 +364,7 @@ describe('access group propagation progress (integration)', () => {
       expect(progress.remainingRecordCount).toBe(progress.totalRecordCount);
       expect(progress.isInProgress).toBe(true);
     } finally {
+      computeStartAbortController.abort();
       resumeCompute();
     }
 

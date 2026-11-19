@@ -1,5 +1,5 @@
 import { GettingStartedSidebarCard } from '@/getting-started/components/GettingStartedSidebarCard';
-import { MobileHomeAiChatSection } from '@/ai/components/MobileHomeAiChatSection';
+import { MobileHomeInboxSection } from '@/inbox/components/MobileHomeInboxSection';
 import { MainNavigationDrawerNavigationContent } from '@/navigation/components/MainNavigationDrawerNavigationContent';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -49,7 +49,7 @@ export const MobileHomePage = () => {
         <StyledSections>
           <MainNavigationDrawerNavigationContent />
           <GettingStartedSidebarCard />
-          {hasAiPermission && <MobileHomeAiChatSection />}
+          {hasAiPermission && <MobileHomeInboxSection />}
         </StyledSections>
       </NavigationDrawerScrollableContent>
     </StyledContainer>

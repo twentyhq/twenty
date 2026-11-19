@@ -48,4 +48,7 @@ export class RowLevelPermissionPredicateDTO {
 
   @Field(() => GraphQLJSON, { nullable: true })
   value: RowLevelPermissionPredicateValue | null;
+
+  @Field(() => String, { nullable: true })
+  rowLevelPermissionRuleId?: string | null;
 }

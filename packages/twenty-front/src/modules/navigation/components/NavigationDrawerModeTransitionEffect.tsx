@@ -5,7 +5,7 @@ import { getLocaleTextDirection } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { NAVIGATION_DRAWER_MODE_TRANSITION } from '@/navigation/constants/NavigationDrawerModeTransition';
-import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
+import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
 import { type NavigationDrawerModeTransitionDirection } from '@/navigation/types/NavigationDrawerModeTransitionDirection';
 import { getNavigationDrawerModeTransitionDirection } from '@/navigation/utils/getNavigationDrawerModeTransitionDirection';
 
@@ -16,25 +16,25 @@ type NavigationDrawerModeTransitionEffectProps = {
 export const NavigationDrawerModeTransitionEffect = ({
   containerRef,
 }: NavigationDrawerModeTransitionEffectProps) => {
-  const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
+  const activeNavigationDrawerTab = useActiveNavigationDrawerTab();
   const { i18n } = useLingui();
   const shouldReduceMotion = useReducedMotion();
 
-  const [previousNavigationDrawerMode, setPreviousNavigationDrawerMode] =
-    useState(activeNavigationDrawerMode);
+  const [previousNavigationDrawerTab, setPreviousNavigationDrawerTab] =
+    useState(activeNavigationDrawerTab);
   const [modeTransition, setModeTransition] = useState<{
     direction: NavigationDrawerModeTransitionDirection;
   } | null>(null);
 
-  if (activeNavigationDrawerMode !== previousNavigationDrawerMode) {
-    setPreviousNavigationDrawerMode(activeNavigationDrawerMode);
+  if (activeNavigationDrawerTab !== previousNavigationDrawerTab) {
+    setPreviousNavigationDrawerTab(activeNavigationDrawerTab);
     setModeTransition(
       shouldReduceMotion
         ? null
         : {
             direction: getNavigationDrawerModeTransitionDirection({
-              previousNavigationDrawerMode,
-              nextNavigationDrawerMode: activeNavigationDrawerMode,
+              previousNavigationDrawerMode: previousNavigationDrawerTab,
+              nextNavigationDrawerMode: activeNavigationDrawerTab,
               textDirection: getLocaleTextDirection(i18n.locale),
             }),
           },

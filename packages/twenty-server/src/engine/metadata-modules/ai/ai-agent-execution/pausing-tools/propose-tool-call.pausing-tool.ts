@@ -12,6 +12,7 @@ import {
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { z } from 'zod';
 
+import { EmailToolInputZodSchema } from 'src/engine/core-modules/tool/tools/email-tool/email-tool.schema';
 import { definePausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/define-pausing-tool.util';
 import { readRecordFieldValues } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/read-record-field-values.util';
 
@@ -255,6 +256,24 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
       toolName: approvedToolName,
       arguments: buildApprovedArguments(proposal, output.arguments),
     };
+
+    // approved calls skip the tool's input validation, and an edit can drop the body
+    const parsedEmailArguments =
+      approvedProposal.template === 'email'
+        ? EmailToolInputZodSchema.safeParse(approvedProposal.arguments)
+        : null;
+
+    if (isDefined(parsedEmailArguments) && !parsedEmailArguments.success) {
+      return buildApprovalCompletion({
+        success: false,
+        message: `The user approved the email, but its arguments are invalid, so nothing was run: ${z.prettifyError(parsedEmailArguments.error)}. Propose it again if it is still needed.`,
+        result: {
+          status: 'failed',
+          proposal: approvedProposal,
+          error: 'The approved email is invalid, so nothing was run.',
+        },
+      });
+    }
 
     // the call was claimed as running before this, so it must end with an outcome rather than a throw
     try {

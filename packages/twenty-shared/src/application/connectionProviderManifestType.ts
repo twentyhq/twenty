@@ -22,4 +22,5 @@ export type ConnectionProviderManifest = ConnectionProviderManifestBase &
         oauthDiscovery: OAuthDiscoveryConnectionProviderConfig;
       }
     | { type: 'custom'; custom: CustomConnectionProviderConfig }
+    | { type: 'api-key' }
   );

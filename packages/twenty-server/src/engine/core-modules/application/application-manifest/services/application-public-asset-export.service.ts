@@ -1,3 +1,5 @@
+import { APPLICATION_EXPORT_FILE_BUDGET_BYTES } from 'src/engine/core-modules/application/application-manifest/constants/application-export-file-budget-bytes.constant';
+import { type ApplicationExportFileBudget } from 'src/engine/core-modules/application/application-manifest/types/application-export-file-budget.type';
 import { Injectable } from '@nestjs/common';
 
 import { createHash } from 'crypto';
@@ -20,8 +22,6 @@ import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/applica
 import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
-const MAX_PUBLIC_ASSET_EXPORT_BYTES = 8 * 1024 * 1024;
-
 @Injectable()
 export class ApplicationPublicAssetExportService {
   constructor(
@@ -34,10 +34,12 @@ export class ApplicationPublicAssetExportService {
     workspaceId,
     applicationId,
     applicationUniversalIdentifier,
+    fileBudget = { remainingBytes: APPLICATION_EXPORT_FILE_BUDGET_BYTES },
   }: {
     workspaceId: string;
     applicationId: string;
     applicationUniversalIdentifier: string;
+    fileBudget?: ApplicationExportFileBudget;
   }): Promise<{
     publicAssets: AssetManifest[];
     files: ApplicationExportFile[];
@@ -55,8 +57,6 @@ export class ApplicationPublicAssetExportService {
     const files: ApplicationExportFile[] = [];
     const coverage: ApplicationExportFileCoverageEntry[] = [];
 
-    let remainingBytes = MAX_PUBLIC_ASSET_EXPORT_BYTES;
-
     for (const storedFile of storedFiles) {
       const path = storedFile.path.slice(`${FileFolder.PublicAsset}/`.length);
       let content: Buffer;
@@ -68,8 +68,20 @@ export class ApplicationPublicAssetExportService {
             fileFolder: FileFolder.PublicAsset,
             resourcePath: path,
           }),
-          remainingBytes,
+          fileBudget.remainingBytes,
         );
+        const encodedBytes =
+          Buffer.byteLength(
+            JSON.stringify({
+              folder: FileFolder.PublicAsset,
+              path,
+              content: content.toString('base64'),
+            }),
+          ) + 1;
+        if (encodedBytes > fileBudget.remainingBytes) {
+          throw new StreamSizeExceededError(fileBudget.remainingBytes);
+        }
+        fileBudget.remainingBytes -= encodedBytes;
       } catch (error) {
         if (!(error instanceof StreamSizeExceededError)) {
           throw error;
@@ -78,11 +90,10 @@ export class ApplicationPublicAssetExportService {
           metadataName: 'file',
           universalIdentifier: storedFile.id,
           status: ApplicationExportCoverageStatus.UNSUPPORTED,
-          reason: `${path} exceeds the remaining public asset export budget (8 MiB total).`,
+          reason: `${path} exceeds the remaining shared file export budget (12 MiB encoded total).`,
         });
         continue;
       }
-      remainingBytes -= content.length;
 
       publicAssets.push({
         filePath: path,

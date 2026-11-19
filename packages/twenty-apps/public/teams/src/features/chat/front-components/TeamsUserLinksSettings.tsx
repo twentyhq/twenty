@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { useTranslate } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, useTranslate } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
 import { Callout, Section } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
@@ -10,6 +11,7 @@ import { TeamsUserLinkForm } from 'src/features/chat/front-components/TeamsUserL
 import { TeamsUserLinksList } from 'src/features/chat/front-components/TeamsUserLinksList';
 import { UnlinkedTeamsUsersList } from 'src/features/chat/front-components/UnlinkedTeamsUsersList';
 import { useCanManageTeamsUserLinks } from 'src/features/chat/front-components/hooks/use-can-manage-teams-user-links';
+import { useMatchTeamsUserLinks } from 'src/features/chat/front-components/hooks/use-match-teams-user-links';
 import { useUnlinkedTeamsUsers } from 'src/features/chat/front-components/hooks/use-unlinked-teams-users';
 
 const StyledContainer = styled.div`
@@ -18,6 +20,20 @@ const StyledContainer = styled.div`
   flex-direction: column;
   gap: ${() => themeCssVariables.spacing[8]};
   width: 100%;
+`;
+
+const StyledMatchAction = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${() => themeCssVariables.spacing[3]};
+  justify-content: flex-end;
+  padding-top: ${() => themeCssVariables.spacing[2]};
+`;
+
+const StyledMatchSummary = styled.span`
+  color: ${() => themeCssVariables.font.color.secondary};
+  font-family: ${() => themeCssVariables.font.family};
+  font-size: ${() => themeCssVariables.font.size.xs};
 `;
 
 const StyledDisclosure = styled.div`
@@ -38,12 +54,20 @@ export const TeamsUserLinksSettings = () => {
   const {
     unlinkedTeamsUsers,
     hasMoreUnlinkedTeamsUsers,
+    hasAutoMatchFailed,
     isUnlinkedTeamsUsersLoading,
     unlinkedErrorMessage,
     refetchUnlinkedTeamsUsers,
   } = useUnlinkedTeamsUsers({ isEnabled: canManage });
+  const { matchTeamsUserLinks, isMatching } = useMatchTeamsUserLinks();
   const [teamsUserLinksListKey, setTeamsUserLinksListKey] = useState(0);
   const [isManualFormOpen, setIsManualFormOpen] = useState(false);
+  const [matchSummary, setMatchSummary] = useState<string | undefined>(
+    undefined,
+  );
+  const [hasLastMatchRunFailed, setHasLastMatchRunFailed] = useState<
+    boolean | undefined
+  >(undefined);
 
   const handleLinkSaved = async () => {
     setTeamsUserLinksListKey((version) => version + 1);
@@ -52,6 +76,25 @@ export const TeamsUserLinksSettings = () => {
 
   const handleManualLinkSaved = async () => {
     setIsManualFormOpen(false);
+    await handleLinkSaved();
+  };
+
+  const handleMatchByEmail = async () => {
+    const result = await matchTeamsUserLinks();
+
+    if (!result.success) {
+      setMatchSummary(undefined);
+      setHasLastMatchRunFailed(true);
+      enqueueSnackbar({
+        message: isNonEmptyString(result.error) ? result.error : result.message,
+        variant: 'error',
+      });
+
+      return;
+    }
+
+    setMatchSummary(result.message);
+    setHasLastMatchRunFailed(result.failedCount > 0);
     await handleLinkSaved();
   };
 
@@ -96,6 +139,9 @@ export const TeamsUserLinksSettings = () => {
     );
   };
 
+  const shouldWarnAboutAutoMatch =
+    canManage && (hasLastMatchRunFailed ?? hasAutoMatchFailed);
+
   return (
     <StyledContainer>
       {!isPermissionLoading && !canManage && (
@@ -107,15 +153,38 @@ export const TeamsUserLinksSettings = () => {
           )}
         />
       )}
+      {shouldWarnAboutAutoMatch && (
+        <Callout
+          variant="warning"
+          title={t('Email auto-link did not finish')}
+          description={t(
+            'The last automatic email match failed before linking everyone. Press Auto-link by email below to run it again.',
+          )}
+        />
+      )}
       {canManage && (
         <Section.Root>
           <Section.Header
             title={t('Unlinked Teams users')}
             description={t(
-              'Only Teams users linked to a workspace member can use the assistant. Pick a workspace member on a row to link them in place.',
+              'Only Teams users linked to a workspace member can use the assistant. Pick a workspace member on a row to link them in place, or auto-link everyone whose directory email matches a workspace member.',
             )}
           />
           {renderUnlinkedTeamsUsers()}
+          <StyledMatchAction>
+            {isDefined(matchSummary) && (
+              <StyledMatchSummary>{matchSummary}</StyledMatchSummary>
+            )}
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              loading={isMatching}
+              onClick={handleMatchByEmail}
+            >
+              {t('Auto-link by email')}
+            </Button>
+          </StyledMatchAction>
         </Section.Root>
       )}
       <TeamsUserLinksList key={teamsUserLinksListKey} />

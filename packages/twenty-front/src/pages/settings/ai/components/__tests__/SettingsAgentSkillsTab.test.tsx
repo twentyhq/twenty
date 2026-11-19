@@ -23,6 +23,7 @@ const STANDARD_APPLICATION = {
   universalIdentifier: TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   logoUrl: null,
   createdAt: '2024-01-01T00:00:00.000Z',
+  runHealthCheckOnUserPreferences: false,
 };
 
 const WORKSPACE_CUSTOM_APPLICATION = {
@@ -31,6 +32,7 @@ const WORKSPACE_CUSTOM_APPLICATION = {
   universalIdentifier: '20202020-9e8d-4c7b-8a6f-5d4c3b2a1e09',
   logoUrl: null,
   createdAt: '2024-01-01T00:00:00.000Z',
+  runHealthCheckOnUserPreferences: false,
 };
 
 const ACME_APPLICATION = {
@@ -39,6 +41,7 @@ const ACME_APPLICATION = {
   universalIdentifier: '20202020-5f0e-4a2b-9c3d-1e2f3a4b5c6d',
   logoUrl: null,
   createdAt: '2024-01-01T00:00:00.000Z',
+  runHealthCheckOnUserPreferences: false,
 };
 
 const buildSkill = ({

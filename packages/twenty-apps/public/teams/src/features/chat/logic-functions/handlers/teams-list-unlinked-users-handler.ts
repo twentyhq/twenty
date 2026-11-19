@@ -5,6 +5,7 @@ import { type TeamsUnlinkedUsersResult } from 'src/features/chat/logic-functions
 import { collectGraphUsers } from 'src/features/chat/logic-functions/utils/collect-graph-users';
 import { currentUserHasRolesPermission } from 'src/features/chat/logic-functions/utils/current-user-has-roles-permission';
 import { getTeamsWorkspaceGraphAccess } from 'src/features/chat/logic-functions/utils/get-teams-workspace-graph-access';
+import { readTeamsDirectoryMatchRunOutcome } from 'src/features/chat/logic-functions/utils/read-teams-directory-match-run-outcome';
 import { toTeamsGraphUsersErrorMessage } from 'src/features/chat/logic-functions/utils/to-teams-graph-users-error-message';
 import { toTeamsUserSearchOption } from 'src/features/chat/logic-functions/utils/to-teams-user-search-option';
 
@@ -39,17 +40,21 @@ export const teamsListUnlinkedUsersHandler =
         teamsTenantId: graphAccess.tenantId,
       });
 
-      const { users, isTruncated } = await collectGraphUsers({
-        accessToken: graphAccess.accessToken,
-        url: UNLINKED_USERS_GRAPH_URL,
-        shouldCollectUser: (user) => !linkedAadObjectIds.has(user.id),
-        maxUsers: MAX_UNLINKED_RESULTS,
-      });
+      const [{ users, isTruncated }, lastMatchRunOutcome] = await Promise.all([
+        collectGraphUsers({
+          accessToken: graphAccess.accessToken,
+          url: UNLINKED_USERS_GRAPH_URL,
+          shouldCollectUser: (user) => !linkedAadObjectIds.has(user.id),
+          maxUsers: MAX_UNLINKED_RESULTS,
+        }),
+        readTeamsDirectoryMatchRunOutcome(),
+      ]);
 
       return {
         success: true,
         teamsUsers: users.map(toTeamsUserSearchOption),
         hasMore: isTruncated,
+        hasAutoMatchFailed: lastMatchRunOutcome?.isSuccessful === false,
       };
     } catch (error) {
       return {

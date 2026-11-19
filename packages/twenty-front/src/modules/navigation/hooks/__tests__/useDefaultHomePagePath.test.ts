@@ -38,7 +38,7 @@ const Wrapper = ({ children }: { children: ReactNode }) =>
 const buildObjectNavigationMenuItem = (
   objectNameSingular: string,
   position: number,
-  folderId?: string,
+  parentId?: string,
 ): NavigationMenuItem => ({
   __typename: 'NavigationMenuItem',
   id: `navigation-menu-item-${objectNameSingular}`,
@@ -46,7 +46,7 @@ const buildObjectNavigationMenuItem = (
   targetObjectMetadataId:
     getMockObjectMetadataItemOrThrow(objectNameSingular).id,
   position,
-  folderId,
+  parentId,
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
 });

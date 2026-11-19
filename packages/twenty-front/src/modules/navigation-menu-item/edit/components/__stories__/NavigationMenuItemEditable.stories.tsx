@@ -52,7 +52,7 @@ const EditableNavigation = () => {
         .map((item, index) => (
           <Fragment key={item.id}>
             <NavigationItemDropTarget
-              folderId={null}
+              parentId={null}
               index={index}
               sectionId={NavigationSections.WORKSPACE}
               compact
@@ -63,7 +63,7 @@ const EditableNavigation = () => {
           </Fragment>
         ))}
       <NavigationItemDropTarget
-        folderId={null}
+        parentId={null}
         index={items.length}
         sectionId={NavigationSections.WORKSPACE}
         compact

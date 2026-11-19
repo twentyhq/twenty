@@ -231,4 +231,23 @@ describe('defineConnectionProvider', () => {
       ).toBe(true);
     });
   });
+
+  describe('api-key type', () => {
+    const baseApiKeyConfig = {
+      universalIdentifier: '99fcd8e8-fbb1-4d2c-bc16-7c61ef3ecccc',
+      name: 'front',
+      displayName: 'Front',
+      type: 'api-key' as const,
+      identifyAccountLogicFunction: {
+        universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991063',
+      },
+    };
+
+    it('returns success for a valid config', () => {
+      const result = defineConnectionProvider(baseApiKeyConfig);
+
+      expect(result.success).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+  });
 });

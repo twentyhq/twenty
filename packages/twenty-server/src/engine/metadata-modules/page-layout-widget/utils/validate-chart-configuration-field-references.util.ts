@@ -8,6 +8,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
+import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getInvalidSelectFilterOptionValues } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-invalid-select-filter-option-values.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
@@ -57,20 +59,27 @@ const validateGroupByFieldAsChartFieldOrThrow = (
 const validateSelectFilterOptionsOrThrow = ({
   recordFilter,
   filterField,
+  flatFieldMetadataOptionMaps,
   widgetTitle,
 }: {
   recordFilter: ChartRecordFilter;
   filterField: FlatFieldMetadata<
     FieldMetadataType.SELECT | FieldMetadataType.MULTI_SELECT
   >;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   widgetTitle?: string | null;
 }): void => {
   if (!isDefined(recordFilter.value)) {
     return;
   }
 
+  const filterFieldOptions = resolveFlatFieldMetadataOptions({
+    flatFieldMetadata: filterField,
+    flatFieldMetadataOptionMaps,
+  });
+
   const invalidValues = getInvalidSelectFilterOptionValues({
-    fieldMetadata: filterField,
+    options: filterFieldOptions,
     operand: recordFilter.operand as ViewFilterOperand,
     value: recordFilter.value,
   });
@@ -82,7 +91,7 @@ const validateSelectFilterOptionsOrThrow = ({
   const invalidValuesText = invalidValues
     .map((value) => `"${value}"`)
     .join(', ');
-  const allowedValuesText = filterField.options
+  const allowedValuesText = filterFieldOptions
     ?.map((option) => option.value)
     .map((optionValue) => `"${optionValue}"`)
     .join(', ');
@@ -98,12 +107,14 @@ export const validateChartConfigurationFieldReferencesOrThrow = ({
   widgetObjectMetadataId,
   widgetTitle,
   flatFieldMetadataMaps,
+  flatFieldMetadataOptionMaps,
   flatObjectMetadataMaps,
 }: {
   widgetConfiguration?: AllPageLayoutWidgetConfiguration | null;
   widgetObjectMetadataId?: string | null;
   widgetTitle?: string | null;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 }): void => {
   if (!isDefined(widgetConfiguration)) {
@@ -264,6 +275,7 @@ export const validateChartConfigurationFieldReferencesOrThrow = ({
         validateSelectFilterOptionsOrThrow({
           recordFilter,
           filterField,
+          flatFieldMetadataOptionMaps,
           widgetTitle,
         });
       }

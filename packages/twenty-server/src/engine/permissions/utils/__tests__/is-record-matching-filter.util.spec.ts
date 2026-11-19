@@ -6,8 +6,10 @@ import {
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getFlatFieldMetadataOptionMock } from 'src/engine/metadata-modules/flat-field-metadata-option/__mocks__/get-flat-field-metadata-option.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
@@ -147,6 +149,7 @@ describe('isRecordMatchingFilter', () => {
     fieldMetadata.map((field) => field.id),
   );
   const flatFieldMetadataMaps = buildFlatFieldMetadataMaps(fieldMetadata);
+  const flatFieldMetadataOptionMaps = createEmptyFlatEntityMaps();
 
   const baseRecord: ObjectRecord = {
     jobTitle: 'Engineer',
@@ -181,6 +184,7 @@ describe('isRecordMatchingFilter', () => {
       filter: {},
       flatObjectMetadata,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
     });
 
     expect(result).toBe(true);
@@ -192,6 +196,7 @@ describe('isRecordMatchingFilter', () => {
       filter: UNSATISFIABLE_RECORD_FILTER,
       flatObjectMetadata,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
     });
 
     expect(result).toBe(false);
@@ -207,6 +212,7 @@ describe('isRecordMatchingFilter', () => {
       },
       flatObjectMetadata,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
     });
 
     expect(result).toBe(false);
@@ -227,6 +233,7 @@ describe('isRecordMatchingFilter', () => {
       },
       flatObjectMetadata,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
     });
 
     expect(result).toBe(true);
@@ -249,6 +256,7 @@ describe('isRecordMatchingFilter', () => {
       },
       flatObjectMetadata,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
     });
 
     const nonMatchingResult = isRecordMatchingFilter({
@@ -273,6 +281,7 @@ describe('isRecordMatchingFilter', () => {
       },
       flatObjectMetadata,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
     });
 
     expect(matchingResult).toBe(true);
@@ -291,6 +300,7 @@ describe('isRecordMatchingFilter', () => {
       },
       flatObjectMetadata,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
     });
 
     expect(result).toBe(false);
@@ -317,6 +327,7 @@ describe('isRecordMatchingFilter', () => {
           filter,
           flatObjectMetadata,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
         }),
       ).toBe(expected);
     },
@@ -339,6 +350,7 @@ describe('isRecordMatchingFilter', () => {
           },
           flatObjectMetadata,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
         }),
       ).toBe(expected);
     },
@@ -356,6 +368,7 @@ describe('isRecordMatchingFilter', () => {
         } as RecordGqlOperationFilter,
         flatObjectMetadata,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
       }),
     ).toBe(false);
   });
@@ -374,6 +387,7 @@ describe('isRecordMatchingFilter', () => {
           },
           flatObjectMetadata,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
         }),
       ).toBe(expected);
     },
@@ -388,6 +402,7 @@ describe('isRecordMatchingFilter', () => {
         } as RecordGqlOperationFilter,
         flatObjectMetadata,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
       }),
     ).toBe(true);
   });
@@ -402,6 +417,7 @@ describe('isRecordMatchingFilter', () => {
         filter: { emails: { additionalEmails: { like } } },
         flatObjectMetadata,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
       }),
     ).toBe(expected);
   });
@@ -416,6 +432,7 @@ describe('isRecordMatchingFilter', () => {
         filter: { emails: { additionalEmails: { like: '%null%' } } },
         flatObjectMetadata,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
       }),
     ).toBe(false);
   });
@@ -432,6 +449,7 @@ describe('isRecordMatchingFilter', () => {
         } as RecordGqlOperationFilter,
         flatObjectMetadata,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
       }),
     ).toBe(true);
   });
@@ -446,6 +464,7 @@ describe('isRecordMatchingFilter', () => {
         } as RecordGqlOperationFilter,
         flatObjectMetadata,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
       }),
     ).toBe(true);
   });
@@ -465,6 +484,7 @@ describe('isRecordMatchingFilter', () => {
           filter: { [fieldName]: subFieldFilter } as RecordGqlOperationFilter,
           flatObjectMetadata,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
         }),
       ).toBe(expected);
     },
@@ -480,6 +500,7 @@ describe('isRecordMatchingFilter', () => {
       },
       flatObjectMetadata,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
     });
 
     expect(result).toBe(true);
@@ -492,6 +513,7 @@ describe('isRecordMatchingFilter', () => {
         filter: { company: { is: 'NOT_NULL' } },
         flatObjectMetadata,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
       }),
     ).toBe(true);
 
@@ -501,6 +523,7 @@ describe('isRecordMatchingFilter', () => {
         filter: { company: { is: 'NOT_NULL' } },
         flatObjectMetadata,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
       }),
     ).toBe(false);
   });
@@ -512,6 +535,7 @@ describe('isRecordMatchingFilter', () => {
         filter: { company: { is: 'NULL' } },
         flatObjectMetadata,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
       }),
     ).toBe(true);
 
@@ -521,6 +545,7 @@ describe('isRecordMatchingFilter', () => {
         filter: { company: { is: 'NULL' } },
         flatObjectMetadata,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
       }),
     ).toBe(false);
   });
@@ -569,8 +594,59 @@ describe('isRecordMatchingFilter', () => {
           filter,
           flatObjectMetadata,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
         }),
       ).toBe(expected);
     },
   );
+
+  it('orders select values by the option rows rather than the stored options', () => {
+    const priorityField: FlatFieldMetadata = {
+      ...createMockFlatFieldMetadata(
+        'priority-id',
+        'priority',
+        FieldMetadataType.SELECT,
+      ),
+      options: [
+        { id: 'HIGH-option-id', value: 'HIGH', label: 'HIGH', position: 0 },
+        { id: 'LOW-option-id', value: 'LOW', label: 'LOW', position: 1 },
+      ],
+      fieldMetadataOptionUniversalIdentifiers: [
+        'LOW-option-id',
+        'HIGH-option-id',
+      ],
+    };
+    const evaluationArgs = {
+      record: { ...baseRecord, priority: 'HIGH' },
+      filter: { priority: { gt: 'LOW' } },
+      flatObjectMetadata: createMockFlatObjectMetadata([priorityField.id]),
+      flatFieldMetadataMaps: buildFlatFieldMetadataMaps([priorityField]),
+    };
+
+    expect(
+      isRecordMatchingFilter({
+        ...evaluationArgs,
+        flatFieldMetadataOptionMaps: {
+          byUniversalIdentifier: {
+            'LOW-option-id': getFlatFieldMetadataOptionMock({
+              universalIdentifier: 'LOW-option-id',
+              value: 'LOW',
+              position: 0,
+            }),
+            'HIGH-option-id': getFlatFieldMetadataOptionMock({
+              universalIdentifier: 'HIGH-option-id',
+              value: 'HIGH',
+              position: 1,
+            }),
+          },
+        },
+      }),
+    ).toBe(true);
+    expect(
+      isRecordMatchingFilter({
+        ...evaluationArgs,
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
+      }),
+    ).toBe(false);
+  });
 });

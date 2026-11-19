@@ -54,14 +54,17 @@ export const RecordTableContextProvider = ({
   const { updateOneRecord } = useUpdateOneRecord();
 
   const updateRecord = useCallback(
-    ({ variables }: RecordUpdateHookParams) => {
+    ({
+      variables,
+      objectNameSingular: objectNameSingularToUpdate,
+    }: RecordUpdateHookParams & { objectNameSingular: string }) => {
       updateOneRecord({
-        objectNameSingular,
+        objectNameSingular: objectNameSingularToUpdate,
         idToUpdate: variables.where.id as string,
         updateOneRecordInput: variables.updateOneRecordInput,
       });
     },
-    [objectNameSingular, updateOneRecord],
+    [updateOneRecord],
   );
 
   const openRecordIn = useResolveOpenRecordIn(objectNameSingular);

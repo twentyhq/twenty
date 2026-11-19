@@ -41,7 +41,7 @@ export const useComposeCalendarEventForTargetRecord = (
     }
 
     if (!isDefined(preferredAccount)) {
-      navigateSettings(SettingsPath.NewAccount);
+      navigateSettings(SettingsPath.AppPreferencesNewAccount);
 
       return;
     }

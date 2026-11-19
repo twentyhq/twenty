@@ -392,19 +392,40 @@ function handleEmptyCompositeFields(
     // oxlint-disable-next-line typescript/no-explicit-any
     const typedFieldValue = fieldValue as Record<string, any>;
 
-    const allRequiredPropertiesAreNull = requiredPropertyNames.every(
-      (propertyName) =>
-        !isDefined(typedFieldValue[propertyName]) ||
-        isNull(typedFieldValue[propertyName]),
+    // A subfield missing from the row was not selected, not stored empty.
+    const selectedRequiredPropertyNames = requiredPropertyNames.filter(
+      (propertyName) => propertyName in typedFieldValue,
     );
 
-    if (allRequiredPropertiesAreNull && requiredPropertyNames.length > 0) {
-      if (fieldMetadata.isNullable) {
+    const allSelectedRequiredPropertiesAreNull =
+      selectedRequiredPropertyNames.every(
+        (propertyName) => !isDefined(typedFieldValue[propertyName]),
+      );
+
+    if (selectedRequiredPropertyNames.length === 0) {
+      continue;
+    }
+
+    if (fieldMetadata.isNullable) {
+      if (allSelectedRequiredPropertiesAreNull) {
         data[fieldMetadata.name] = null;
-      } else {
-        data[fieldMetadata.name] = getDefaultCompositeFieldValue(
-          fieldMetadata.type,
-        );
+      }
+      continue;
+    }
+
+    const defaultFieldValue = getDefaultCompositeFieldValue(fieldMetadata.type);
+
+    if (allSelectedRequiredPropertiesAreNull) {
+      data[fieldMetadata.name] = defaultFieldValue;
+      continue;
+    }
+
+    for (const propertyName of selectedRequiredPropertyNames) {
+      if (
+        !isDefined(typedFieldValue[propertyName]) &&
+        isDefined(defaultFieldValue)
+      ) {
+        typedFieldValue[propertyName] = defaultFieldValue[propertyName];
       }
     }
   }

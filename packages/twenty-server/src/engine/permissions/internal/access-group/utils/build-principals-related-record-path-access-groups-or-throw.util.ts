@@ -23,7 +23,7 @@ export const buildPrincipalsRelatedRecordPathAccessGroupsOrThrow = ({
   visitedObjectMetadataIds?: string[];
 }): AccessGroupWithoutCompactId[] => {
   const { principals, metadataMaps, flatObjectMetadata } = request;
-  const { roleId } = principals.mainPrincipal;
+  const mainRoleIds = principals.mainPrincipal.roleIds;
   const nextVisitedObjectMetadataIds = [
     ...visitedObjectMetadataIds,
     flatObjectMetadata.id,
@@ -42,20 +42,22 @@ export const buildPrincipalsRelatedRecordPathAccessGroupsOrThrow = ({
 
       return [
         ...(areRecordIdsReadableByPrincipals(sourceRequest)
-          ? buildRoleAccessGroupsOrThrow({
-              roleId,
-              objectMetadataId: sourceFlatObjectMetadata.id,
-              objectRecordsPermissions:
-                metadataMaps.rolesPermissions[roleId]?.objects[
-                  sourceFlatObjectMetadata.id
-                ],
-              operationTypes: [request.operationType],
-              workspaceMembers,
-              flatFieldMetadataMaps,
-              isRelationHopEnabled: isRlsRelationHopEnabled(
-                metadataMaps.featureFlagsMap,
-              ),
-            })
+          ? mainRoleIds.flatMap((roleId) =>
+              buildRoleAccessGroupsOrThrow({
+                roleId,
+                objectMetadataId: sourceFlatObjectMetadata.id,
+                objectRecordsPermissions:
+                  metadataMaps.rolesPermissions[roleId]?.objects[
+                    sourceFlatObjectMetadata.id
+                  ],
+                operationTypes: [request.operationType],
+                workspaceMembers,
+                flatFieldMetadataMaps,
+                isRelationHopEnabled: isRlsRelationHopEnabled(
+                  metadataMaps.featureFlagsMap,
+                ),
+              }),
+            )
           : []),
         ...(isInherent &&
         !nextVisitedObjectMetadataIds.includes(sourceFlatObjectMetadata.id)

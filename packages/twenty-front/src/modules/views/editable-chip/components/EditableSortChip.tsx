@@ -1,5 +1,7 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useFieldMetadataItemByIdOrThrow';
+import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
+import { getRelationTargetFieldLabel } from '@/object-metadata/utils/getRelationTargetFieldLabel';
 import { useSortSubFieldChoicesForField } from '@/object-metadata/hooks/useSortSubFieldChoicesForField';
 import { useRemoveRecordSort } from '@/object-record/record-sort/hooks/useRemoveRecordSort';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
@@ -7,6 +9,7 @@ import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -26,8 +29,20 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
     recordSort.fieldMetadataId,
   );
 
+  const { foundFieldMetadataItem: relationTargetFieldMetadataItem } =
+    useAtomFamilySelectorValue(fieldMetadataItemByIdSelector, {
+      fieldMetadataItemId: recordSort.relationTargetFieldMetadataId ?? '',
+    });
+
+  const label = isDefined(relationTargetFieldMetadataItem)
+    ? getRelationTargetFieldLabel({
+        sourceFieldMetadataItem: fieldMetadataItem,
+        relationTargetFieldMetadataItem,
+      })
+    : fieldMetadataItem.label;
+
   const subFieldChoices = useSortSubFieldChoicesForField({
-    fieldMetadataItem,
+    fieldMetadataItem: relationTargetFieldMetadataItem ?? fieldMetadataItem,
     primaryCompositeSubField: recordSort.subFieldName,
   });
 
@@ -63,7 +78,7 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
       <SortOrFilterChip
         key={recordSort.fieldMetadataId}
         testId={recordSort.fieldMetadataId}
-        labelValue={fieldMetadataItem.label}
+        labelValue={label}
         Icon={Icon}
         onRemove={handleRemove}
         onClick={toggleDirection}
@@ -78,7 +93,7 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
         <SortOrFilterChip
           key={recordSort.fieldMetadataId}
           testId={recordSort.fieldMetadataId}
-          labelValue={fieldMetadataItem.label}
+          labelValue={label}
           labelSubField={subFieldChoices.selectedLabel}
           Icon={Icon}
           onRemove={handleRemove}

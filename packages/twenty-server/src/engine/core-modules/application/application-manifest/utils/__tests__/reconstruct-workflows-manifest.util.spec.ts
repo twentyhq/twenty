@@ -196,6 +196,7 @@ const syncWorkflow = ({
       ...flatUniversalWorkflowVersion,
       workspaceId: WORKSPACE_ID,
       applicationId: APP_ID,
+      coreWorkflowId: universalFlatWorkflow.id,
       ...versionOverrides,
     },
   };

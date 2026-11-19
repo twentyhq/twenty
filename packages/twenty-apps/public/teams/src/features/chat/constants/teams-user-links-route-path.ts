@@ -6,3 +6,5 @@ export const TEAMS_USER_LINKS_UNLINKED_ROUTE_PATH =
   '/teams-user-links/unlinked';
 
 export const TEAMS_USER_LINKS_SEARCH_ROUTE_PATH = '/teams-user-links/search';
+
+export const TEAMS_USER_LINKS_MATCH_ROUTE_PATH = '/teams-user-links/match';

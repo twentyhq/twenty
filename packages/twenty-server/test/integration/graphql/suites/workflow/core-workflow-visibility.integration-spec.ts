@@ -715,6 +715,54 @@ describe('core workflow visibility (e2e)', () => {
     });
   });
 
+  describe('an ownerless private workflow', () => {
+    let ownerlessPrivateCoreWorkflowId: string;
+
+    beforeAll(async () => {
+      ({ coreWorkflowId: ownerlessPrivateCoreWorkflowId } =
+        await createCoreWorkflow({ name: 'Ownerless Private Workflow' }));
+
+      await global.testDataSource.query(
+        `UPDATE core."workflow" SET "createdByUserWorkspaceId" = NULL, "visibility" = 'PRIVATE' WHERE id = $1`,
+        [ownerlessPrivateCoreWorkflowId],
+      );
+
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatWorkflowMaps']);
+    });
+
+    afterAll(async () => {
+      if (isDefined(ownerlessPrivateCoreWorkflowId)) {
+        await global.testDataSource.query(
+          `UPDATE core."workflow" SET "visibility" = 'WORKSPACE' WHERE id = $1`,
+          [ownerlessPrivateCoreWorkflowId],
+        );
+
+        await getAppProviderByClassName<WorkspaceCacheService>(
+          'WorkspaceCacheService',
+        ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatWorkflowMaps']);
+
+        await deleteCoreWorkflows({
+          coreWorkflowIds: [ownerlessPrivateCoreWorkflowId],
+        });
+      }
+    });
+
+    it('is hidden from every member', async () => {
+      for (const requester of [workflowGraphqlRequest, asOtherMember]) {
+        const response = await requester(CORE_WORKFLOW_BY_ID_QUERY, {
+          coreWorkflowId: ownerlessPrivateCoreWorkflowId,
+        });
+
+        expect(response.body.data?.coreWorkflowById ?? null).toBeNull();
+        expect(await listCoreWorkflowIds(requester)).not.toContain(
+          ownerlessPrivateCoreWorkflowId,
+        );
+      }
+    });
+  });
+
   describe('two members claiming an ownerless workflow at the same time', () => {
     let contestedCoreWorkflowId: string;
 

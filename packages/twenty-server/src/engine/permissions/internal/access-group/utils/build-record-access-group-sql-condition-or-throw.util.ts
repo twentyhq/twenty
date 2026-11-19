@@ -33,6 +33,7 @@ export const buildRecordAccessGroupSQLConditionOrThrow = ({
     ),
     memberFieldValues: accessGroup.memberFieldValues ?? {},
     flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps: metadataMaps.flatFieldMetadataOptionMaps,
     flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
     isRelationHopEnabled: isRlsRelationHopEnabled(metadataMaps.featureFlagsMap),
   });
