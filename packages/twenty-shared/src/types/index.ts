@@ -84,6 +84,7 @@ export type { ConditionalAvailabilityContextByMetadataName } from './Conditional
 export type { ConditionalAvailabilityLogicalOperator } from './ConditionalAvailabilityLogicalOperator';
 export type { ConditionalAvailabilityMetadataName } from './ConditionalAvailabilityMetadataName';
 export type { ConditionalAvailabilityNode } from './ConditionalAvailabilityNode';
+export type { ConditionalAvailabilityParseResult } from './ConditionalAvailabilityParseResult';
 export type { ConditionalAvailabilityVariableDeclaration } from './ConditionalAvailabilityVariableDeclaration';
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export type { ConfirmationModalCaller } from './ConfirmationModalCaller';
