@@ -65,7 +65,7 @@ describe('useHandleResetPassword', () => {
     jest.clearAllMocks();
 
     mockUseMutation.mockReturnValue([emailPasswordResetLinkMock]);
-    (useGetCaptchaToken as jest.Mock).mockReturnValue({
+    jest.mocked(useGetCaptchaToken).mockReturnValue({
       getCaptchaToken: async () => 'mock-captcha-token',
     });
   });

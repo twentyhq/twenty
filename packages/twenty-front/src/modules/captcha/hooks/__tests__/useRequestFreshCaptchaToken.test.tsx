@@ -10,7 +10,7 @@ import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPa
 import { captchaState } from '@/client-config/states/captchaState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { type Captcha, CaptchaDriverType } from '~/generated-metadata/graphql';
+import { CaptchaDriverType } from '~/generated-metadata/graphql';
 
 jest.mock('@/captcha/utils/isCaptchaRequiredForPath');
 jest.mock('~/utils/logError');
@@ -23,7 +23,7 @@ const setCaptchaProvider = (provider: CaptchaDriverType) =>
   jotaiStore.set(captchaState.atom, {
     provider,
     siteKey: 'site-key',
-  } as Captcha);
+  });
 
 describe('useRequestFreshCaptchaToken', () => {
   const mockGrecaptchaExecute = jest.fn();
@@ -39,7 +39,7 @@ describe('useRequestFreshCaptchaToken', () => {
       remove: mockTurnstileRemove,
     };
 
-    (isCaptchaRequiredForPath as jest.Mock).mockReturnValue(true);
+    jest.mocked(isCaptchaRequiredForPath).mockReturnValue(true);
     mockGrecaptchaExecute.mockResolvedValue('google-recaptcha-token');
     mockTurnstileRender.mockImplementation((_container, options) => {
       setTimeout(() => options.callback('turnstile-token'));
@@ -65,7 +65,7 @@ describe('useRequestFreshCaptchaToken', () => {
   };
 
   it('should not request a token if captcha is not required for the current path', async () => {
-    (isCaptchaRequiredForPath as jest.Mock).mockReturnValue(false);
+    jest.mocked(isCaptchaRequiredForPath).mockReturnValue(false);
     setCaptchaProvider(CaptchaDriverType.GOOGLE_RECAPTCHA);
 
     expect(await requestFreshCaptchaToken()).toBeUndefined();
