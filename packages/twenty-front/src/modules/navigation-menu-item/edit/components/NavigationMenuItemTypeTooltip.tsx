@@ -46,30 +46,6 @@ export const NavigationMenuItemTypeTooltip = ({
     FOLDER: { label: t`Folder`, icon: <IconFolder size={iconSize} /> },
     TAB: { label: t`Tab`, icon: <IconLayoutSidebar size={iconSize} /> },
     SECTION: { label: t`Section`, icon: <IconLayoutList size={iconSize} /> },
-    FAVORITES: {
-      label: t`Favorites`,
-      icon: <IconLayoutList size={iconSize} />,
-    },
-    AI_CHAT_INBOX: {
-      label: t`Triage`,
-      icon: <IconLayoutList size={iconSize} />,
-    },
-    AI_CHAT_FAVORITES: {
-      label: t`Favorite chats`,
-      icon: <IconLayoutList size={iconSize} />,
-    },
-    AI_CHAT_CHANNELS: {
-      label: t`Channels`,
-      icon: <IconLayoutList size={iconSize} />,
-    },
-    AI_CHAT_RECENTS: {
-      label: t`Recent chats`,
-      icon: <IconLayoutList size={iconSize} />,
-    },
-    AI_AGENTS: {
-      label: t`Agents`,
-      icon: <IconLayoutList size={iconSize} />,
-    },
     PAGE_LAYOUT: { label: t`Page`, icon: <IconPerspective size={iconSize} /> },
     AGENT_CHAT_CHANNEL: {
       label: t`Channel`,
