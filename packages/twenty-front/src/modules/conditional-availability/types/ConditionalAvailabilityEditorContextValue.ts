@@ -14,17 +14,17 @@ export type ConditionalAvailabilityEditorContextValue = {
   addRow: (groupId: string | null) => void;
   addGroup: () => void;
   removeNode: (nodeId: string) => void;
-  setLogicalOperator: (
-    groupId: string | null,
-    logicalOperator: ConditionalAvailabilityLogicalOperator,
-  ) => void;
-  changeRowSubject: (
-    rowId: string,
-    rowSubject: ConditionalAvailabilityRowSubject,
-  ) => void;
-  changeRowOperator: (
-    rowId: string,
-    operator: ConditionalAvailabilityOperator,
-  ) => void;
-  changeRowValues: (rowId: string, values: string[]) => void;
+  setLogicalOperator: (parameters: {
+    groupId: string | null;
+    logicalOperator: ConditionalAvailabilityLogicalOperator;
+  }) => void;
+  changeRowSubject: (parameters: {
+    rowId: string;
+    rowSubject: ConditionalAvailabilityRowSubject;
+  }) => void;
+  changeRowOperator: (parameters: {
+    rowId: string;
+    operator: ConditionalAvailabilityOperator;
+  }) => void;
+  changeRowValues: (parameters: { rowId: string; values: string[] }) => void;
 };
