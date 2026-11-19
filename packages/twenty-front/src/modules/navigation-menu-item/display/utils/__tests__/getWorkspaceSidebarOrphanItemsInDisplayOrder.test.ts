@@ -26,7 +26,7 @@ const hiddenObjectBackedItem = {
 
 const buildNavigationMenuItem = (
   properties: Pick<NavigationMenuItem, 'id' | 'type' | 'position'> &
-    Partial<NavigationMenuItem>,
+    Partial<Pick<NavigationMenuItem, 'parentId'>>,
 ): NavigationMenuItem => ({
   createdAt: '2026-11-19T00:00:00.000Z',
   updatedAt: '2026-11-19T00:00:00.000Z',

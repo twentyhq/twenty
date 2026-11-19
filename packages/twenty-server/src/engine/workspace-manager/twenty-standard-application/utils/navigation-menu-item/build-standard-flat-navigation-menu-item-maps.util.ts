@@ -13,8 +13,8 @@ import { createStandardNavigationMenuItemFlatMetadata } from 'src/engine/workspa
 import {
   createStandardNavigationMenuItemFolderFlatMetadata,
   createStandardNavigationMenuItemFolderItemFlatMetadata,
-  createStandardNavigationMenuItemSectionFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-folder-flat-metadata.util';
+import { createStandardNavigationMenuItemSectionFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-section-flat-metadata.util';
 
 const FLAT_NAVIGATION_MENU_ITEM_NAMES = [
   'allCompanies',

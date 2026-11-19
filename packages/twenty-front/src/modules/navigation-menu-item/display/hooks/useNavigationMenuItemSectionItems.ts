@@ -1,5 +1,3 @@
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
-
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useNavigationObjectMetadataItems } from '@/navigation-menu-item/common/hooks/useNavigationObjectMetadataItems';
 import { flattenNavigationMenuItemsWithFolderChildren } from '@/navigation-menu-item/common/utils/flattenNavigationMenuItemsWithFolderChildren';
@@ -9,7 +7,10 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  type NavigationMenuItem,
+} from '~/generated-metadata/graphql';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -35,10 +36,10 @@ const getTopLevelSectionIds = (navigationMenuItems: NavigationMenuItem[]) =>
 
 export const useNavigationMenuItemSectionItems = ({
   containerId = null,
-  flattenTopLevelSections,
+  shouldFlattenTopLevelSections,
 }: {
   containerId?: string | null;
-  flattenTopLevelSections?: boolean;
+  shouldFlattenTopLevelSections?: boolean;
 } = {}): NavigationMenuItem[] => {
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
@@ -54,11 +55,11 @@ export const useNavigationMenuItemSectionItems = ({
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
 
-  const shouldFlattenTopLevelSections =
-    flattenTopLevelSections ?? !isCustomizableSidebarEnabled;
+  const isFlatteningTopLevelSections =
+    shouldFlattenTopLevelSections ?? !isCustomizableSidebarEnabled;
 
   const flattenedSectionIds =
-    shouldFlattenTopLevelSections && containerId === null
+    isFlatteningTopLevelSections && containerId === null
       ? getTopLevelSectionIds(workspaceNavigationMenuItems)
       : new Set<string>();
 

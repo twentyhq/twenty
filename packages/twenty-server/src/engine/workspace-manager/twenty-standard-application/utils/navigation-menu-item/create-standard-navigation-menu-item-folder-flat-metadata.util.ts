@@ -65,19 +65,6 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
   updatedAt: now,
 });
 
-export const createStandardNavigationMenuItemSectionFlatMetadata = (
-  args: Omit<
-    Parameters<typeof createStandardNavigationMenuItemFolderFlatMetadata>[0],
-    'color'
-  >,
-): FlatNavigationMenuItem => ({
-  ...createStandardNavigationMenuItemFolderFlatMetadata({
-    ...args,
-    color: null,
-  }),
-  type: NavigationMenuItemType.SECTION,
-});
-
 export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
   universalIdentifier,
   viewUniversalIdentifier,
