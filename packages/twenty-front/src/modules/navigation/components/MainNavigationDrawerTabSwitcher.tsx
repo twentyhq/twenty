@@ -1,9 +1,12 @@
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import {
+  type BuiltInSectionKey,
+  NavigationMenuItemType,
+} from 'twenty-shared/types';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Badge } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { isDefined } from 'twenty-shared/utils';
+import { isBuiltInSectionKey, isDefined } from 'twenty-shared/utils';
 
 import { useInboxOpenThreadsSummary } from '@/inbox/hooks/useInboxOpenThreadsSummary';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -47,9 +50,9 @@ const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
   min-width: 0;
 `;
 
-const AI_CHAT_SECTION_TYPES: NavigationMenuItemType[] =
+const AI_CHAT_BUILT_IN_SECTION_KEYS: BuiltInSectionKey[] =
   NAVIGATION_MENU_BUILT_IN_SECTIONS.filter(({ isAi }) => isAi).map(
-    ({ type }) => type,
+    ({ key }) => key,
   );
 
 const StyledUnreadBadge = styled.span`
@@ -102,7 +105,9 @@ export const MainNavigationDrawerTabSwitcher = () => {
     workspaceNavigationMenuItems
       .filter(
         (item) =>
-          isDefined(item.parentId) && AI_CHAT_SECTION_TYPES.includes(item.type),
+          isDefined(item.parentId) &&
+          isBuiltInSectionKey(item.builtInSectionKey) &&
+          AI_CHAT_BUILT_IN_SECTION_KEYS.includes(item.builtInSectionKey),
       )
       .map((item) => item.parentId),
   );
