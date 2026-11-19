@@ -9,6 +9,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
 import { useCanSendAiChatMessage } from '@/ai-chat/composer/hooks/useCanSendAiChatMessage';
+import { useAiChatAssistantProfile } from '@/ai-chat/hooks/useAiChatAssistantProfile';
 import { useOpenAskAiPageWithPreprompt } from '@/ai-chat/hooks/useOpenAskAiPageWithPreprompt';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -44,6 +45,7 @@ export const SettingsApplicationSuggestedViewFieldsBanner = ({
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const canSendAiChatMessage = useCanSendAiChatMessage();
   const { openAskAiPageWithPreprompt } = useOpenAskAiPageWithPreprompt();
+  const { displayName: assistantName } = useAiChatAssistantProfile();
 
   const suggestedViewFields = data?.applicationSuggestedViewFields ?? [];
   const suggestedViewFieldGroups = computeSuggestedViewFieldGroups({
@@ -77,7 +79,7 @@ export const SettingsApplicationSuggestedViewFieldsBanner = ({
     });
   };
 
-  const handleReview = () => {
+  const handleSetWithAssistant = () => {
     setIsHidden(true);
 
     void openAskAiPageWithPreprompt({
@@ -87,7 +89,7 @@ export const SettingsApplicationSuggestedViewFieldsBanner = ({
           suggestedViewFieldGroups,
         }),
       ),
-      mode: 'SEND',
+      mode: 'PREFILL',
     });
   };
 
@@ -120,8 +122,8 @@ export const SettingsApplicationSuggestedViewFieldsBanner = ({
         canAskAi ? (
           <Callout.Action
             type="button"
-            onClick={handleReview}
-          >{t`Review`}</Callout.Action>
+            onClick={handleSetWithAssistant}
+          >{t`Set with ${assistantName}`}</Callout.Action>
         ) : undefined
       }
       closeLabel={t`Dismiss`}

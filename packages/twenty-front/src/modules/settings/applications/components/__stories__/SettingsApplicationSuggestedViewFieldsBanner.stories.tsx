@@ -125,16 +125,16 @@ type Story = StoryObj<typeof meta>;
 const BANNER_TITLE =
   'People Data Labs suggests 2 fields that are not in your views yet.';
 
-export const SendsSuggestionsToAiChat: Story = {
+export const PrefillsAiChatWithSuggestions: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText(BANNER_TITLE)).toBeVisible();
 
-    await userEvent.click(canvas.getByRole('button', { name: 'Review' }));
+    await userEvent.click(canvas.getByRole('button', { name: 'Set with Ada' }));
 
     await waitFor(() => {
-      expect(jotaiStore.get(aiChatPrepromptState.atom)?.mode).toBe('SEND');
+      expect(jotaiStore.get(aiChatPrepromptState.atom)?.mode).toBe('PREFILL');
     });
 
     expect(
@@ -168,7 +168,7 @@ export const ListsFieldsWithoutAiAccess: Story = {
       canvas.getByText('Add them from the Options menu of each view.'),
     ).toBeVisible();
     expect(
-      canvas.queryByRole('button', { name: 'Review' }),
+      canvas.queryByRole('button', { name: 'Set with Ada' }),
     ).not.toBeInTheDocument();
   },
 };
