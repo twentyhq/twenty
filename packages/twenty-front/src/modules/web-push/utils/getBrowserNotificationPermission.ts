@@ -1,8 +1,10 @@
 export const getBrowserNotificationPermission = ():
   | NotificationPermission
-  | 'unsupported' =>
-  typeof Notification === 'undefined' ||
-  !('serviceWorker' in navigator) ||
-  !('PushManager' in window)
-    ? 'unsupported'
-    : Notification.permission;
+  | 'unsupported' => {
+  const isWebPushSupported =
+    typeof Notification !== 'undefined' &&
+    'serviceWorker' in navigator &&
+    'PushManager' in window;
+
+  return isWebPushSupported ? Notification.permission : 'unsupported';
+};
