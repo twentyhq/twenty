@@ -313,11 +313,11 @@ export class ObjectRecordEventPublisher {
       recurseIntoJunctionTableRelations: true,
     });
 
-    const commonQueryParser = new CommonQueryParser(
-      objectMetadata,
+    const commonQueryParser = new CommonQueryParser({
+      flatObjectMetadata: objectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-    );
+    });
 
     const selection = commonQueryParser.parseSelectedFields(selectedFields);
 

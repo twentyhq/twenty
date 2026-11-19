@@ -50,9 +50,14 @@ const installedApplication = {
   sourceType: ApplicationRegistrationSourceType.NPM,
 };
 const apiKey = { id: 'api-key-id' };
-const impersonationContext = {
+const workspaceImpersonationContext = {
   impersonatorUserWorkspaceId: 'impersonator-user-workspace-id',
   impersonatedUserWorkspaceId: 'impersonated-user-workspace-id',
+  level: 'workspace',
+};
+const serverImpersonationContext = {
+  ...workspaceImpersonationContext,
+  level: 'server',
 };
 
 const REQUEST_BY_PRINCIPAL_VARIANT = {
@@ -61,11 +66,17 @@ const REQUEST_BY_PRINCIPAL_VARIANT = {
     workspace,
     tokenType: JwtTokenTypeEnum.ACCESS,
   },
-  'userSession.impersonated': {
+  'userSession.serverImpersonated': {
     user,
     workspace,
     tokenType: JwtTokenTypeEnum.ACCESS,
-    impersonationContext,
+    impersonationContext: serverImpersonationContext,
+  },
+  'userSession.workspaceImpersonated': {
+    user,
+    workspace,
+    tokenType: JwtTokenTypeEnum.ACCESS,
+    impersonationContext: workspaceImpersonationContext,
   },
   'userSession.playground': {
     user,
@@ -145,7 +156,8 @@ const PRINCIPAL_CASES: {
     authPrincipals: { ...REFUSE_EVERY_PRINCIPAL, userSession: true },
     acceptedPrincipalVariantNames: [
       'userSession.standard',
-      'userSession.impersonated',
+      'userSession.serverImpersonated',
+      'userSession.workspaceImpersonated',
       'userSession.playground',
       'userSession.workspaceAgnostic',
     ],
@@ -185,7 +197,36 @@ const PRINCIPAL_CASES: {
         workspaceAgnostic: false,
       },
     },
-    acceptedPrincipalVariantNames: ['userSession.impersonated'],
+    acceptedPrincipalVariantNames: [
+      'userSession.serverImpersonated',
+      'userSession.workspaceImpersonated',
+    ],
+  },
+  {
+    name: 'userSession server-level impersonation only',
+    authPrincipals: {
+      ...REFUSE_EVERY_PRINCIPAL,
+      userSession: {
+        standard: false,
+        impersonated: { server: true, workspace: false },
+        playground: false,
+        workspaceAgnostic: false,
+      },
+    },
+    acceptedPrincipalVariantNames: ['userSession.serverImpersonated'],
+  },
+  {
+    name: 'userSession workspace-level impersonation only',
+    authPrincipals: {
+      ...REFUSE_EVERY_PRINCIPAL,
+      userSession: {
+        standard: false,
+        impersonated: { server: false, workspace: true },
+        playground: false,
+        workspaceAgnostic: false,
+      },
+    },
+    acceptedPrincipalVariantNames: ['userSession.workspaceImpersonated'],
   },
   {
     name: 'userSession playground only',
@@ -297,7 +338,8 @@ const PRINCIPAL_CASES: {
     },
     acceptedPrincipalVariantNames: [
       'userSession.standard',
-      'userSession.impersonated',
+      'userSession.serverImpersonated',
+      'userSession.workspaceImpersonated',
       'userSession.playground',
       'userSession.workspaceAgnostic',
       'oauthClient.withUser',
@@ -553,7 +595,7 @@ describe('AccessPolicyGuard', () => {
           user,
           workspace,
           tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
-          impersonationContext,
+          impersonationContext: workspaceImpersonationContext,
         },
       },
       {
@@ -610,7 +652,7 @@ describe('AccessPolicyGuard', () => {
           user,
           workspace,
           tokenType: JwtTokenTypeEnum.PLAYGROUND,
-          impersonationContext,
+          impersonationContext: workspaceImpersonationContext,
         },
       },
       {
@@ -626,7 +668,7 @@ describe('AccessPolicyGuard', () => {
         request: {
           user,
           tokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
-          impersonationContext,
+          impersonationContext: workspaceImpersonationContext,
         },
       },
     ])('should refuse $name', async ({ request }) => {

@@ -1,5 +1,6 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useUpsertObjectPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useUpsertObjectPermissionInDraftRole';
+import { SettingsRolePermissionsObjectFieldsSelect } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect';
 import {
   SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG,
   type SettingsRoleObjectPermissionKey,
@@ -147,7 +148,17 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
                 {t(SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[key].label)}
               </StyledActionLabel>
             </TableCell>
-            <TableCell />
+            <TableCell onClick={(event) => event.stopPropagation()}>
+              {(key === 'canReadObjectRecords' ||
+                key === 'canUpdateObjectRecords') && (
+                <SettingsRolePermissionsObjectFieldsSelect
+                  roleId={roleId}
+                  objectMetadataItem={objectMetadataItem}
+                  mode={key === 'canReadObjectRecords' ? 'read' : 'update'}
+                  disabled={!isEditable || !operations.includes(key)}
+                />
+              )}
+            </TableCell>
             <TableCell align="right">
               <Checkbox
                 aria-label={t(
@@ -178,7 +189,7 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
             endIcon={<IconChevronRight />}
             onClick={openObjectPage}
           >
-            {t`Fields and rule`}
+            {t`Rule`}
           </Button>
         </StyledFooter>
       )}

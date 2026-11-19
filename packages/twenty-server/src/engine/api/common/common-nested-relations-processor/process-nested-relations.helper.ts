@@ -283,11 +283,11 @@ export class ProcessNestedRelationsHelper {
           parentRecordsCount: parentObjectRecords.length,
           targetObjectNameSingular,
           relationSelection,
-          relationQueryParser: new CommonQueryParser(
-            targetObjectMetadata,
+          relationQueryParser: new CommonQueryParser({
+            flatObjectMetadata: targetObjectMetadata,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
-          ),
+          }),
           perParentLimit: Math.min(relationSelection.first ?? limit, limit),
         }),
       );
@@ -495,18 +495,18 @@ export class ProcessNestedRelationsHelper {
 
     // The id query may have kept soft-deleted records the filter asked for
     if (isDefined(relationSelection.filter)) {
-      relationQueryParser.applyDeletedAtToBuilder(
-        hydrationQueryBuilder,
-        relationSelection.filter,
-      );
+      relationQueryParser.applyDeletedAtToBuilder({
+        queryBuilder: hydrationQueryBuilder,
+        recordFilter: relationSelection.filter,
+      });
     }
 
     if (isDefined(relationSelection.orderBy)) {
-      relationQueryParser.applyOrderToBuilder(
-        hydrationQueryBuilder,
-        relationSelection.orderBy,
-        targetObjectNameSingular,
-      );
+      relationQueryParser.applyOrderToBuilder({
+        queryBuilder: hydrationQueryBuilder,
+        orderBy: relationSelection.orderBy,
+        objectNameSingular: targetObjectNameSingular,
+      });
     }
 
     const result = await hydrationQueryBuilder.getMany();
@@ -553,11 +553,11 @@ export class ProcessNestedRelationsHelper {
     );
 
     if (isDefined(relationSelection.orderBy)) {
-      relationQueryParser.applyOrderToBuilder(
-        perParentRecordIdsQueryBuilder,
-        relationSelection.orderBy,
-        targetObjectNameSingular,
-      );
+      relationQueryParser.applyOrderToBuilder({
+        queryBuilder: perParentRecordIdsQueryBuilder,
+        orderBy: relationSelection.orderBy,
+        objectNameSingular: targetObjectNameSingular,
+      });
     }
 
     await perParentRecordIdsQueryBuilder.applyRowLevelPermissions();
@@ -595,15 +595,15 @@ export class ProcessNestedRelationsHelper {
       return;
     }
 
-    relationQueryParser.applyFilterToBuilder(
+    relationQueryParser.applyFilterToBuilder({
       queryBuilder,
-      targetObjectNameSingular,
-      relationSelection.filter,
-    );
-    relationQueryParser.applyDeletedAtToBuilder(
+      objectNameSingular: targetObjectNameSingular,
+      recordFilter: relationSelection.filter,
+    });
+    relationQueryParser.applyDeletedAtToBuilder({
       queryBuilder,
-      relationSelection.filter,
-    );
+      recordFilter: relationSelection.filter,
+    });
   }
 
   private assignRelationResults({
