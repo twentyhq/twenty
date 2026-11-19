@@ -1698,30 +1698,12 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Refuse jobs that would take more than their fair share of the job queue Redis memory',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  IS_REDIS_MEMORY_FAIRNESS_ENABLED = false;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
-      'Delay the jobs of a job group (workflow runs) at enqueue when their queue has a group limiter: one job every durationMs / max with no initial burst, per workspace and job group. Execution starts are not rechecked, so a late worker can run overdue jobs together. Off: jobs are never delayed by a group limiter.',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  IS_WORKER_GROUP_LIMITER_ENABLED = false;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
-      'Maximum size in bytes of a single job (serialized data and options) when Redis memory fairness is enabled',
+      'Maximum size in bytes of a single job (serialized data and options)',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   @IsOptional()
-  JOB_QUEUE_MAX_JOB_SIZE_BYTES = 5_242_880;
+  JOB_QUEUE_MAX_JOB_SIZE_BYTES = 20_971_520;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -1732,7 +1714,7 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @Max(1)
-  JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID = 0.3;
+  JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID = 0.4;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -1743,7 +1725,7 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @Max(1)
-  JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER = 0.4;
+  JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER = 0.6;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -2419,42 +2401,6 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @ValidateIf((env) => env.MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION > 0)
   MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION = 5;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RATE_LIMITING,
-    description:
-      'Throttle limit for workflow execution. Remaining will not be enqueued immediately.',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  WORKFLOW_EXEC_SOFT_THROTTLE_LIMIT = 100;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RATE_LIMITING,
-    description:
-      'Time-to-live for workflow execution throttle in milliseconds. Remaining will not be enqueued immediately.',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  WORKFLOW_EXEC_SOFT_THROTTLE_TTL = 60_000;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RATE_LIMITING,
-    description:
-      'Throttle limit for workflow execution. Remaining will be marked as failed.',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  WORKFLOW_EXEC_HARD_THROTTLE_LIMIT = 5000;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RATE_LIMITING,
-    description:
-      'Time-to-live for workflow execution throttle in milliseconds. Remaining will be marked as failed.',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  WORKFLOW_EXEC_HARD_THROTTLE_TTL = 3_600_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CAPTCHA_CONFIG,

@@ -598,6 +598,16 @@ msgstr "Agentrol {agentLabel}"
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} van {fieldLabel}"
 
+#. js-lingui-id: zEkduP
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "{allowedFieldCount} of {fieldCount}"
+msgstr ""
+
+#. js-lingui-id: LoDOIo
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "{allowedFieldCount} of {fieldCount} fields"
+msgstr ""
+
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{apiKeyCount, plural, one {{apiKeyCount} API key} other {{apiKeyCount} API keys}}"
@@ -1750,11 +1760,6 @@ msgstr "Mogelijkheid om de records te filteren waarmee een gebruiker kan werken"
 msgid "Ability to filter the records a user can interact with."
 msgstr "Mogelijkheid om de records te filteren waarmee een gebruiker kan werken."
 
-#. js-lingui-id: wTKqOI
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
-msgid "Ability to interact with this object's fields."
-msgstr "Mogelijkheid om met de velden van dit object te interageren."
-
 #. js-lingui-id: ssjjFt
 #: src/modules/settings/components/SettingsImageInput.tsx
 msgid "Abort"
@@ -1935,7 +1940,6 @@ msgstr "Goed te keuren actie"
 
 #. js-lingui-id: 7L01XJ
 #: src/modules/command-menu-item/components/CommandMenuDropdownAtCursor.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/side-panel/pages/create-related-record/components/SidePanelCreateRelatedRecordPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -1948,11 +1952,6 @@ msgstr "Acties"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Actions in the command menu"
 msgstr "Acties in het opdrachtmenu"
-
-#. js-lingui-id: N4ZcCd
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Actions users can perform on this object"
-msgstr "Acties die gebruikers op dit object kunnen uitvoeren"
 
 #. js-lingui-id: FQBaXG
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -3311,7 +3310,6 @@ msgstr "Uitlijning"
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow.tsx
 #: src/modules/views/view-picker/components/ViewPickerDropdown.tsx
 msgid "All"
 msgstr "Alle"
@@ -3386,6 +3384,8 @@ msgid "All failed jobs have been retried"
 msgstr "Alle mislukte taken zijn opnieuw geprobeerd"
 
 #. js-lingui-id: 3xugyj
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "All fields"
 msgstr "Alle velden"
@@ -3652,6 +3652,12 @@ msgstr "Al in de zijbalk"
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Alt text"
 msgstr "Alt-tekst"
+
+#. js-lingui-id: Lz58MZ
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Always visible"
+msgstr ""
 
 #. js-lingui-id: Tco16H
 #: src/modules/localization/utils/formatZonedDateTimeTimePart.ts
@@ -5725,6 +5731,16 @@ msgstr "Campagne gepland voor {sendTime}"
 msgid "Campaign unscheduled and back in your drafts"
 msgstr "Planning van campagne geannuleerd en terug in je concepten"
 
+#. js-lingui-id: AnhtKd
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Can't be edited"
+msgstr ""
+
+#. js-lingui-id: XccYlu
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Can't be seen"
+msgstr ""
+
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Can't scan? Copy the"
@@ -6132,6 +6148,7 @@ msgstr "kanaalrol"
 
 #. js-lingui-id: lfFsZ4
 #: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
 msgid "Channels"
@@ -7536,8 +7553,10 @@ msgid "Connect via IMAP/SMTP"
 msgstr "Verbind via IMAP/SMTP"
 
 #. js-lingui-id: LqKH42
+#. placeholder {0}: connectionProvider.displayName
 #. placeholder {0}: provider.displayName
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
 msgid "Connect with {0}"
 msgstr "Verbind met {0}"
 
@@ -7568,6 +7587,12 @@ msgstr "Verbind uw e-mail en agenda om in één oogopslag uw volledige netwerk t
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
 msgid "Connect your own {0} account for this app to use on your behalf."
 msgstr "Koppel je eigen {0}-account voor deze app om namens jou te gebruiken."
+
+#. js-lingui-id: Y1cA8P
+#. placeholder {0}: connectionProvider.displayName
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
+msgid "Connect your own {0} account for this server to use on your behalf."
+msgstr "Verbind je eigen {0}-account voor deze server om deze namens jou te gebruiken."
 
 #. js-lingui-id: QHcLEN
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
@@ -9149,6 +9174,11 @@ msgstr "Aangepaste providers zijn gratis tot {0} seats. Deze instantie heeft er 
 msgid "Custom roles"
 msgstr "Aangepaste rollen"
 
+#. js-lingui-id: 2jzCZZ
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "Custom section"
+msgstr ""
+
 #. js-lingui-id: BjGDEB
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Custom View"
@@ -9248,6 +9278,12 @@ msgstr "Pas paginalay-outs en UI-structuur aan"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Customize record page"
 msgstr "Recordpagina aanpassen"
+
+#. js-lingui-id: hxjpaE
+#: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
+msgid "Customize sidebar"
+msgstr "Zijbalk aanpassen"
 
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
@@ -9434,7 +9470,6 @@ msgstr "Gegevensresidentie"
 #. js-lingui-id: r+cVRP
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "Data type"
 msgstr "Gegevenstype"
 
@@ -9749,7 +9784,6 @@ msgstr "Uitgesteld"
 
 #. js-lingui-id: HNlEFZ
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "delete"
 msgstr "verwijderen"
 
@@ -9841,11 +9875,6 @@ msgstr "Verwijder {objectLabel}"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Delete {objectLabel} object?"
 msgstr "Object {objectLabel} verwijderen?"
-
-#. js-lingui-id: 65N6Yr
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Delete {objectLabelPlural}"
-msgstr "Verwijder {objectLabelPlural}"
 
 #. js-lingui-id: CF0F8U
 #: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
@@ -10311,7 +10340,6 @@ msgstr "Desktop"
 
 #. js-lingui-id: +ow7t4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "destroy"
 msgstr "vernietigen"
 
@@ -10325,11 +10353,6 @@ msgstr "Vernietigen"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
 msgid "Destroy {objectLabel}"
 msgstr "Vernietig {objectLabel}"
-
-#. js-lingui-id: YI3c7h
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Destroy {objectLabelPlural}"
-msgstr "Vernietig {objectLabelPlural}"
 
 #. js-lingui-id: ud791S
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
@@ -11070,7 +11093,6 @@ msgstr "eddy@gmail.com, @apple.com"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/profile/components/EmailField.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Edit"
@@ -11085,11 +11107,6 @@ msgstr "{label}, {description} bewerken"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
 msgid "Edit {objectLabel}"
 msgstr "Bewerk {objectLabel}"
-
-#. js-lingui-id: zQXUkv
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Edit {objectLabelPlural}"
-msgstr "Bewerk {objectLabelPlural}"
 
 #. js-lingui-id: GsbKaa
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
@@ -13605,8 +13622,14 @@ msgstr "Vals"
 msgid "Fast"
 msgstr "Snel"
 
+#. js-lingui-id: x77Ptp
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+msgid "Favorite chats"
+msgstr ""
+
 #. js-lingui-id: X9kySA
 #: src/modules/inbox/components/NavigationDrawerInboxFavoritesSection.tsx
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 msgid "Favorites"
 msgstr "Favorieten"
@@ -13750,6 +13773,7 @@ msgstr "Machtigingen op veldniveau"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectIndexTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetFieldDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -13768,11 +13792,6 @@ msgstr "Velden"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
 msgid "Fields (Optional)"
 msgstr "Velden (optioneel)"
-
-#. js-lingui-id: fiU2kl
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
-msgid "Fields and rule"
-msgstr "Velden en regel"
 
 #. js-lingui-id: Tnz22x
 #: src/modules/object-record/record-merge/components/MergePrioritySettings.tsx
@@ -13794,11 +13813,6 @@ msgstr "Veldengroep"
 msgid "Fields members with the Edit Profile permission can change"
 msgstr "Velden die leden met de toestemming Profiel bewerken kunnen wijzigen"
 
-#. js-lingui-id: 5UU7Q6
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
-msgid "Fields Permissions"
-msgstr "Velden Machtigingen"
-
 #. js-lingui-id: n7J1Rh
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Fields Settings"
@@ -13808,6 +13822,16 @@ msgstr "Veldinstellingen"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Fields shown in each view, and their order"
 msgstr "Velden die in elke weergave worden getoond en hun volgorde"
+
+#. js-lingui-id: RWZvyt
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Fields to edit"
+msgstr ""
+
+#. js-lingui-id: YsJAML
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Fields to see"
+msgstr ""
 
 #. js-lingui-id: HrM5BL
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
@@ -14885,11 +14909,6 @@ msgstr "{parsedAmount} credits toegekend aan deze workspace."
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "Granted credits"
 msgstr "Toegekende credits"
-
-#. js-lingui-id: WUgtid
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
-msgid "Granted for this object"
-msgstr "Toegekend voor dit object"
 
 #. js-lingui-id: MkDC2z
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -19452,8 +19471,6 @@ msgstr "n.v.t."
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -20447,6 +20464,11 @@ msgstr "Geen mislukte runs"
 msgid "No field configured"
 msgstr "Geen veld geconfigureerd"
 
+#. js-lingui-id: gRHpoy
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "No fields"
+msgstr ""
+
 #. js-lingui-id: /hvarH
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionTargetObjectFieldsView.tsx
@@ -20456,6 +20478,7 @@ msgstr ""
 
 #. js-lingui-id: VEYHd4
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
@@ -21550,11 +21573,6 @@ msgstr "Objecttype"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
 msgid "Object unique fields"
 msgstr "Object unieke velden"
-
-#. js-lingui-id: YJgmMZ
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Object-Level"
-msgstr "Objectniveau"
 
 #. js-lingui-id: B3toQF
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -23943,6 +23961,11 @@ msgstr "E-mails lezen"
 msgid "Read system prompts"
 msgstr "Lees de systeemprompts"
 
+#. js-lingui-id: /nZe2L
+#: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
+msgid "Read the address, owner and account status of members' private channels"
+msgstr "Lees het adres, de eigenaar en de accountstatus van de privékanalen van leden"
+
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Read the internal import setting from its new workspace column. Turned on by the 2.59 upgrade."
@@ -24046,6 +24069,12 @@ msgstr "Ontvang een e-mail met een link om het wachtwoord bij te werken"
 #: src/modules/legacy-ai-chat/components/LegacyAiChatNavigationDrawerContent.tsx
 msgid "Recent"
 msgstr "Recent"
+
+#. js-lingui-id: 3qyrqD
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
+msgid "Recent chats"
+msgstr ""
 
 #. js-lingui-id: ZVr1+K
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -25396,11 +25425,6 @@ msgstr "Ondertekeningssleutel intrekken"
 msgid "Revoked"
 msgstr "Ingetrokken"
 
-#. js-lingui-id: GG37FL
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
-msgid "Revoked for this object"
-msgstr "Ingetrokken voor dit object"
-
 #. js-lingui-id: lrTLOv
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal.tsx
 msgid "Revoking this key will invalidate every JWT signed with it. Users with active tokens signed by this key will be logged out."
@@ -25576,6 +25600,11 @@ msgstr "rubberen eend: aan"
 #: src/modules/ui/input/hooks/useColorLabels.ts
 msgid "Ruby"
 msgstr "Robijn"
+
+#. js-lingui-id: oAN4H/
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Rule"
+msgstr ""
 
 #. js-lingui-id: tijGcA
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -26008,7 +26037,6 @@ msgstr "Zoek 1 veld"
 #. js-lingui-id: l1/uy2
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "Search a field..."
 msgstr "Zoek een veld..."
 
@@ -26200,6 +26228,8 @@ msgstr "veldmetadata zoeken"
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
@@ -26500,14 +26530,8 @@ msgstr "Secties"
 msgid "Security"
 msgstr "Beveiliging"
 
-#. js-lingui-id: i0zibG
-#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
-msgid "see"
-msgstr "weergeven"
-
 #. js-lingui-id: h+8V38
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
 msgid "See"
 msgstr "Zie"
@@ -26516,11 +26540,6 @@ msgstr "Zie"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
 msgid "See {objectLabel}"
 msgstr "Bekijk {objectLabel}"
-
-#. js-lingui-id: aOvXdk
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "See {objectLabelPlural}"
-msgstr "Bekijk {objectLabelPlural}"
 
 #. js-lingui-id: R+sqCn
 #: src/modules/page-layout/widgets/components/WidgetActionFieldSeeAll.tsx
@@ -30325,11 +30344,6 @@ msgstr "Dit record bestaat niet meer of je kunt het niet zien."
 msgid "This record will be deleted:"
 msgstr "Dit record wordt verwijderd:"
 
-#. js-lingui-id: vbLBMd
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
-msgid "This role can {humanReadableAction} all records"
-msgstr "Deze rol kan {humanReadableAction} alle records"
-
 #. js-lingui-id: BifDEA
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "This role is assigned to these {roleTargetDisplayName}."
@@ -30951,6 +30965,7 @@ msgstr "Vertalingen"
 
 #. js-lingui-id: R3UKip
 #: src/modules/inbox/components/NavigationDrawerInboxTriageSection.tsx
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 msgid "Triage"
 msgstr "Triage"
 
@@ -31944,7 +31959,6 @@ msgstr ""
 
 #. js-lingui-id: Y8zko3
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "update"
 msgstr "bijwerken"
 
@@ -34444,6 +34458,8 @@ msgstr "Uw kaart is opgeslagen, maar de betaling vereist nog steeds aandacht."
 #. js-lingui-id: OD3Fzl
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerSignInSection.tsx
 msgid "Your connections could not be loaded. Check your connection and try again."
 msgstr "Je verbindingen konden niet worden geladen. Controleer je verbinding en probeer het opnieuw."
 

@@ -1,9 +1,9 @@
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { escapeForIlike, isNonEmptyArray } from 'twenty-shared/utils';
+import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
-import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const getAiChatThreadSearchFilter = ({

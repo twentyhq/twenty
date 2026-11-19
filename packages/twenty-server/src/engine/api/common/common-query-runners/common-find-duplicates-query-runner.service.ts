@@ -28,7 +28,7 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
-import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
+import { buildColumnsToSelect } from 'src/engine/api/common/utils/build-columns-to-select';
 import { buildDuplicateSourceColumnsToSelect } from 'src/engine/api/common/common-query-runners/utils/build-duplicate-source-columns-to-select.util';
 import { buildDuplicateConditions } from 'src/engine/api/utils/build-duplicate-conditions.util';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
@@ -123,11 +123,11 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
           const duplicateRecordsQueryBuilder =
             readRepository.createQueryBuilder(flatObjectMetadata.nameSingular);
 
-          commonQueryParser.applyFilterToBuilder(
-            duplicateRecordsQueryBuilder,
-            flatObjectMetadata.nameSingular,
-            duplicateConditions,
-          );
+          commonQueryParser.applyFilterToBuilder({
+            queryBuilder: duplicateRecordsQueryBuilder,
+            objectNameSingular: flatObjectMetadata.nameSingular,
+            recordFilter: duplicateConditions,
+          });
 
           const duplicates = (await duplicateRecordsQueryBuilder
             .setFindOptions({

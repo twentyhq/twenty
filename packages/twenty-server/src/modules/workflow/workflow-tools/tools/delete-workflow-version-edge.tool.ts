@@ -27,6 +27,7 @@ export const createDeleteWorkflowVersionEdgeTool = (
   context: WorkflowToolContext,
 ) => ({
   name: 'delete_workflow_version_edge' as const,
+  isDestructive: true,
   description: 'Delete a connection (edge) between workflow steps.',
   inputSchema: deleteWorkflowVersionEdgeSchema,
   execute: async (parameters: DeleteWorkflowVersionEdgeInput) => {

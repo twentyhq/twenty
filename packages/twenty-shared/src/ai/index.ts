@@ -149,8 +149,10 @@ export { escapeMarkdownForChatReference } from './utils/escape-markdown-for-chat
 export { extractRecordReferenceIds } from './utils/extract-record-reference-ids.util';
 export { formatRecordReference } from './utils/format-record-reference.util';
 export { formatSkillReference } from './utils/format-skill-reference.util';
+export { getAgentChatDirectMessagePeerWorkspaceMemberIds } from './utils/get-agent-chat-direct-message-peer-workspace-member-ids.util';
 export { getAgentChatMentionsResolvedAt } from './utils/get-agent-chat-mentions-resolved-at.util';
 export { getAgentChatPreviewPlainText } from './utils/get-agent-chat-preview-plain-text.util';
+export { getAgentChatThreadDisplayLabel } from './utils/get-agent-chat-thread-display-label.util';
 export { getAgentChatThreadInboxStatus } from './utils/get-agent-chat-thread-inbox-status.util';
 export { getAgentChatWebPushNotificationTag } from './utils/get-agent-chat-web-push-notification-tag.util';
 export { getAiModelTierFromModelId } from './utils/get-ai-model-tier-from-model-id.util';

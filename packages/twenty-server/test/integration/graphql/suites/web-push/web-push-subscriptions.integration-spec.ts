@@ -21,11 +21,11 @@ const ROTATED_ENDPOINT =
 
 const upsertWebPushSubscription = ({
   cookieHeader,
-  applicationServerKey,
+  vapidPublicKey,
   endpoint = ENDPOINT,
 }: {
   cookieHeader: string;
-  applicationServerKey: string;
+  vapidPublicKey: string;
   endpoint?: string;
 }) =>
   postMetadataOperationWithHeaders(
@@ -40,9 +40,9 @@ const upsertWebPushSubscription = ({
       variables: {
         input: {
           endpoint,
-          p256dhKey: 'p256dh-key',
-          authSecret: 'auth-secret',
-          applicationServerKey,
+          browserPublicKey: 'browser-public-key',
+          browserAuthSecret: 'browser-auth-secret',
+          vapidPublicKey,
         },
       },
     },
@@ -75,14 +75,14 @@ const findWebPushSubscription = (endpoint = ENDPOINT) =>
   });
 
 describe('web push subscriptions (integration)', () => {
-  let applicationServerKey: string;
+  let vapidPublicKey: string;
 
   beforeAll(async () => {
     const clientConfigResponse = await request(SERVER_URL)
       .get('/client-config')
       .expect(200);
 
-    applicationServerKey = clientConfigResponse.body.webPushVapidPublicKey;
+    vapidPublicKey = clientConfigResponse.body.webPushVapidPublicKey;
   });
 
   afterEach(async () => {
@@ -97,7 +97,7 @@ describe('web push subscriptions (integration)', () => {
 
     await upsertWebPushSubscription({
       cookieHeader: tim.cookieHeader,
-      applicationServerKey,
+      vapidPublicKey,
     });
 
     expect(await findWebPushSubscription()).toMatchObject({
@@ -106,7 +106,7 @@ describe('web push subscriptions (integration)', () => {
 
     await upsertWebPushSubscription({
       cookieHeader: jony.cookieHeader,
-      applicationServerKey,
+      vapidPublicKey,
     });
 
     expect(await findWebPushSubscription()).toMatchObject({
@@ -119,11 +119,11 @@ describe('web push subscriptions (integration)', () => {
 
     await upsertWebPushSubscription({
       cookieHeader: tim.cookieHeader,
-      applicationServerKey,
+      vapidPublicKey,
     });
     await upsertWebPushSubscription({
       cookieHeader: tim.cookieHeader,
-      applicationServerKey,
+      vapidPublicKey,
       endpoint: ROTATED_ENDPOINT,
     });
 
@@ -138,7 +138,7 @@ describe('web push subscriptions (integration)', () => {
 
     const response = await upsertWebPushSubscription({
       cookieHeader: tim.cookieHeader,
-      applicationServerKey: 'not-a-server-key',
+      vapidPublicKey: 'not-a-server-key',
     });
 
     expect(response.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');

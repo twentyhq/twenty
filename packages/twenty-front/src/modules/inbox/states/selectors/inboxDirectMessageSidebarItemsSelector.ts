@@ -1,15 +1,17 @@
-import { AgentChatThreadConversationType } from 'twenty-shared/ai';
+import {
+  AgentChatThreadConversationType,
+  getAgentChatDirectMessagePeerWorkspaceMemberIds,
+} from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
+import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 
 import { aiChatThreadMemberStateFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadMemberStateFamilySelector';
 import { inboxRecentThreadsSelector } from '@/inbox/states/selectors/inboxRecentThreadsSelector';
 import { type DirectMessageSidebarItem } from '@/inbox/types/DirectMessageSidebarItem';
-import { getAiChatDirectMessagePeerWorkspaceMemberIds } from '@/ai-chat/threads/utils/getAiChatDirectMessagePeerWorkspaceMemberIds';
 import { sortChatThreadsByLastActivityDesc } from '@/ai-chat/threads/utils/sortChatThreadsByLastActivityDesc';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
-import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const inboxDirectMessageSidebarItemsSelector = createAtomSelector<
@@ -29,7 +31,7 @@ export const inboxDirectMessageSidebarItemsSelector = createAtomSelector<
     return sortChatThreadsByLastActivityDesc(directMessageThreads).map(
       (thread) => {
         const [peerWorkspaceMemberId] =
-          getAiChatDirectMessagePeerWorkspaceMemberIds({
+          getAgentChatDirectMessagePeerWorkspaceMemberIds({
             thread,
             currentWorkspaceMemberId,
           });

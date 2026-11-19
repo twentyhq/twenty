@@ -134,6 +134,12 @@ msgstr "24 SAAT"
 msgid "A {type} navigation menu item cannot be placed inside a {parentType}"
 msgstr "Bir {type} gezinme menüsü öğesi, bir {parentType} içine yerleştirilemez"
 
+#. js-lingui-id: /y6iPL
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+msgid "A {type} navigation menu item cannot be placed inside a built-in section"
+msgstr ""
+
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "A backup code was used to sign in to your account"
@@ -143,6 +149,12 @@ msgstr "Hesabınızda oturum açmak için bir yedek kod kullanıldı"
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
 msgid "A built-in provider already uses this name. Choose another label."
 msgstr "Yerleşik bir sağlayıcı zaten bu adı kullanıyor. Başka bir etiket seçin."
+
+#. js-lingui-id: paqbMF
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A builtInSectionKey is only allowed on SECTION type"
+msgstr ""
 
 #. js-lingui-id: RsTRse
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -552,6 +564,12 @@ msgstr "AGENT_CHAT_CHANNEL türü için geçerli bir agentChatChannelUniversalId
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid agentUniversalIdentifier is required for AGENT type"
 msgstr "AGENT türü için geçerli bir agentUniversalIdentifier gereklidir"
+
+#. js-lingui-id: s59CSo
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid builtInSectionKey is required for a built-in SECTION"
+msgstr ""
 
 #. js-lingui-id: Dwa/Bm
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -1628,7 +1646,7 @@ msgid "Apps preferences"
 msgstr "Uygulama tercihleri"
 
 #. js-lingui-id: naCW6Z
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "April"
 msgstr "Nisan"
 
@@ -1868,7 +1886,7 @@ msgid "Audit logs require ClickHouse to be configured."
 msgstr "Denetim günlükleri için ClickHouse'un yapılandırılması gerekir."
 
 #. js-lingui-id: DBHTm/
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "August"
 msgstr "Ağustos"
 
@@ -4268,7 +4286,7 @@ msgid "Deals created this month"
 msgstr "Bu ay oluşturulan fırsatlar"
 
 #. js-lingui-id: r6zgGo
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "December"
 msgstr "Aralık"
 
@@ -5542,7 +5560,7 @@ msgid "Feature configuration not found."
 msgstr "Özellik yapılandırması bulunamadı."
 
 #. js-lingui-id: 4lgLew
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "February"
 msgstr "Şubat"
 
@@ -6122,7 +6140,7 @@ msgid "forwardedRequestHeaders must be an array of strings"
 msgstr "forwardedRequestHeaders bir dize dizisi olmalıdır"
 
 #. js-lingui-id: 39y5bn
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Friday"
 msgstr "Cuma"
 
@@ -7152,7 +7170,7 @@ msgstr "Geçersiz filtre: \"{operator}\" operatörü bir dizi gerektirir"
 
 #. js-lingui-id: xxcw3g
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Invalid filter: \"{relationFieldName}\" can only reference the record the relation filter starts from"
 msgstr "Geçersiz filtre: \"{relationFieldName}\" yalnızca ilişki filtresinin başladığı kayda başvurabilir"
 
@@ -7187,7 +7205,7 @@ msgid "Invalid filter: filtering by relation field \"{key}\" is not supported"
 msgstr "Geçersiz filtre: \"{key}\" ilişki alanına göre filtreleme desteklenmiyor"
 
 #. js-lingui-id: wi8qrB
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Invalid filter: the field to compare with was not found"
 msgstr "Geçersiz filtre: karşılaştırılacak alan bulunamadı"
 
@@ -7886,7 +7904,7 @@ msgid "IS_CONFIG_VARIABLES_IN_DB_ENABLED is false on your server. Please add ENT
 msgstr "Sunucunuzda IS_CONFIG_VARIABLES_IN_DB_ENABLED false olarak ayarlanmış. Lütfen ENTERPRISE_KEY değerini .env dosyanıza elle ekleyin."
 
 #. js-lingui-id: rjyWPb
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "January"
 msgstr "Ocak"
 
@@ -7931,7 +7949,7 @@ msgid "JSON value for event details"
 msgstr "Etkinlik ayrıntıları için JSON değeri"
 
 #. js-lingui-id: u4ex5r
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "July"
 msgstr "Temmuz"
 
@@ -7966,7 +7984,7 @@ msgid "Junction target field not found"
 msgstr "Junction hedef alanı bulunamadı"
 
 #. js-lingui-id: zeEQd/
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "June"
 msgstr "Haziran"
 
@@ -8479,7 +8497,7 @@ msgid "Many validation errors"
 msgstr "Birçok doğrulama hatası"
 
 #. js-lingui-id: hg6l4j
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "March"
 msgstr "Mart"
 
@@ -8555,7 +8573,7 @@ msgid "maxNumberOfValues must be defined in settings and be a number greater tha
 msgstr "maxNumberOfValues ayarlarda tanımlanmalı ve 0'dan büyük ve {FILES_FIELD_MAX_NUMBER_OF_VALUES} değerine eşit veya daha küçük bir sayı olmalıdır"
 
 #. js-lingui-id: 3JzsDb
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "May"
 msgstr "Mayıs"
 
@@ -9201,7 +9219,7 @@ msgid "Model ID cannot be empty"
 msgstr "Model kimliği boş olamaz"
 
 #. js-lingui-id: hty0d5
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Monday"
 msgstr "Pazartesi"
 
@@ -9737,7 +9755,7 @@ msgid "NoteTarget target"
 msgstr "NoteTarget hedefi"
 
 #. js-lingui-id: t9QlBd
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "November"
 msgstr "Kasım"
 
@@ -9999,7 +10017,7 @@ msgid "Objects, fields and views adapt to the way your team works."
 msgstr "Nesneler, alanlar ve görünümler ekibinizin çalışma biçimine uyum sağlar."
 
 #. js-lingui-id: dzQfDY
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "October"
 msgstr "Ekim"
 
@@ -11678,20 +11696,20 @@ msgid "Relation field target metadata not found"
 msgstr "İlişki alan hedef metadatası bulunamadı"
 
 #. js-lingui-id: HmNKeM
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Relation filter is misconfigured"
 msgstr "İlişki filtresi hatalı yapılandırılmış"
 
 #. js-lingui-id: 1RF4/e
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Relation filter is not supported here"
 msgstr "İlişki filtresi burada desteklenmiyor"
 
 #. js-lingui-id: L8AY9P
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Relation filters can only traverse one relation deep"
 msgstr "İlişki filtreleri yalnızca bir ilişki düzeyine kadar ilerleyebilir"
 
@@ -12325,7 +12343,7 @@ msgid "Sample records must only contain selected fields and id."
 msgstr "Örnek kayıtlar yalnızca seçili alanları ve id'yi içermelidir."
 
 #. js-lingui-id: +5kO8P
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Saturday"
 msgstr "Cumartesi"
 
@@ -12678,7 +12696,7 @@ msgid "Sent with errors"
 msgstr "Hatalarla gönderildi"
 
 #. js-lingui-id: hgvbYY
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "September"
 msgstr "Eylül"
 
@@ -13407,7 +13425,7 @@ msgid "Summary"
 msgstr "Özet"
 
 #. js-lingui-id: DBC3t5
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Sunday"
 msgstr "Pazar"
 
@@ -15603,7 +15621,7 @@ msgid "Thread this state belongs to"
 msgstr "Bu durumun ait olduğu dizi"
 
 #. js-lingui-id: kkDQ8m
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Thursday"
 msgstr "Perşembe"
 
@@ -16034,7 +16052,7 @@ msgid "TS_VECTOR field metadata not found"
 msgstr "TS_VECTOR alan meta verisi bulunamadı"
 
 #. js-lingui-id: G3myU+
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Tuesday"
 msgstr "Salı"
 
@@ -17260,7 +17278,7 @@ msgid "Webhook not found."
 msgstr "Webhook bulunamadı."
 
 #. js-lingui-id: VAcXNz
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Wednesday"
 msgstr "Çarşamba"
 

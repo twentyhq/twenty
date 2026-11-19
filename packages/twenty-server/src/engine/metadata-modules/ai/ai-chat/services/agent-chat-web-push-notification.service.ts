@@ -99,11 +99,13 @@ export class AgentChatWebPushNotificationService {
       return;
     }
 
-    const workspaceMemberById = await this.findWorkspaceMemberById({
+    const workspaceMemberById = await this.findWorkspaceMembersById({
       workspaceId,
       workspaceMemberIds: [
         ...unfocusedWorkspaceMemberIds,
         thread.lastMessageSenderWorkspaceMemberId,
+        thread.directMessageFirstWorkspaceMemberId,
+        thread.directMessageSecondWorkspaceMemberId,
       ].filter(isDefined),
     });
     const recipients = unfocusedWorkspaceMemberIds.flatMap(
@@ -267,7 +269,7 @@ export class AgentChatWebPushNotificationService {
     );
   }
 
-  private async findWorkspaceMemberById({
+  private async findWorkspaceMembersById({
     workspaceId,
     workspaceMemberIds,
   }: {

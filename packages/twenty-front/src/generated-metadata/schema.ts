@@ -1186,22 +1186,13 @@ export enum BillingEntitlementKey {
   VALIDATION_RULES = 'VALIDATION_RULES'
 }
 
-export type BillingLicensedProduct = BillingProductDto & {
+export type BillingLicensedProduct = {
   __typename?: 'BillingLicensedProduct';
   description: Scalars['String']['output'];
   images?: Maybe<Array<Scalars['String']['output']>>;
   metadata: BillingProductMetadata;
   name: Scalars['String']['output'];
   prices?: Maybe<Array<BillingPriceLicensed>>;
-};
-
-export type BillingMeteredProduct = BillingProductDto & {
-  __typename?: 'BillingMeteredProduct';
-  description: Scalars['String']['output'];
-  images?: Maybe<Array<Scalars['String']['output']>>;
-  metadata: BillingProductMetadata;
-  name: Scalars['String']['output'];
-  prices?: Maybe<Array<BillingPriceMetered>>;
 };
 
 export type BillingPartnerCode = {
@@ -1222,7 +1213,6 @@ export type BillingPlan = {
   downgradePlanKeys: Array<BillingPlanKey>;
   isCheckoutDefault: Scalars['Boolean']['output'];
   isSellable: Scalars['Boolean']['output'];
-  meteredProducts: Array<BillingMeteredProduct>;
   planKey: BillingPlanKey;
   resourceCreditProducts: Array<BillingLicensedProduct>;
   upgradePlanKeys: Array<BillingPlanKey>;
@@ -1240,36 +1230,13 @@ export type BillingPriceLicensed = {
   __typename?: 'BillingPriceLicensed';
   creditAmount?: Maybe<Scalars['Float']['output']>;
   isSellable: Scalars['Boolean']['output'];
-  priceUsageType: BillingUsageType;
   recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String']['output'];
   unitAmount: Scalars['Float']['output'];
 };
 
-export type BillingPriceMetered = {
-  __typename?: 'BillingPriceMetered';
-  priceUsageType: BillingUsageType;
-  recurringInterval: SubscriptionInterval;
-  stripePriceId: Scalars['String']['output'];
-  tiers: Array<BillingPriceTier>;
-};
-
-export type BillingPriceTier = {
-  __typename?: 'BillingPriceTier';
-  flatAmount?: Maybe<Scalars['Float']['output']>;
-  unitAmount?: Maybe<Scalars['Float']['output']>;
-  upTo?: Maybe<Scalars['Float']['output']>;
-};
-
 export type BillingProduct = {
   __typename?: 'BillingProduct';
-  description: Scalars['String']['output'];
-  images?: Maybe<Array<Scalars['String']['output']>>;
-  metadata: BillingProductMetadata;
-  name: Scalars['String']['output'];
-};
-
-export type BillingProductDto = {
   description: Scalars['String']['output'];
   images?: Maybe<Array<Scalars['String']['output']>>;
   metadata: BillingProductMetadata;
@@ -1287,7 +1254,6 @@ export type BillingProductMetadata = {
   __typename?: 'BillingProductMetadata';
   isLegacy?: Maybe<Scalars['String']['output']>;
   planKey?: Maybe<BillingPlanKey>;
-  priceUsageBased: BillingUsageType;
   productKey: BillingProductKey;
 };
 
@@ -1332,7 +1298,7 @@ export enum BillingSubscriptionCollectionMethod {
 
 export type BillingSubscriptionItem = {
   __typename?: 'BillingSubscriptionItem';
-  billingProduct: BillingProductDto;
+  billingProduct: BillingProduct;
   creditAmount?: Maybe<Scalars['Float']['output']>;
   hasReachedCurrentPeriodCap: Scalars['Boolean']['output'];
   id: Scalars['UUID']['output'];
@@ -1368,11 +1334,6 @@ export type BillingUpdate = {
   currentBillingSubscription: BillingSubscription;
 };
 
-export enum BillingUsageType {
-  LICENSED = 'LICENSED',
-  METERED = 'METERED'
-}
-
 export type BooleanFieldComparison = {
   is?: InputMaybe<Scalars['Boolean']['input']>;
   isNot?: InputMaybe<Scalars['Boolean']['input']>;
@@ -1380,6 +1341,7 @@ export type BooleanFieldComparison = {
 
 export type CalendarChannel = {
   __typename?: 'CalendarChannel';
+  connectedAccount?: Maybe<ConnectedAccountPublicDto>;
   connectedAccountId: Scalars['UUID']['output'];
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy;
   createdAt: Scalars['DateTime']['output'];
@@ -1936,6 +1898,7 @@ export type CreateMessageSuppressionInput = {
 export type CreateNavigationMenuItemInput = {
   agentChatChannelId?: InputMaybe<Scalars['UUID']['input']>;
   agentId?: InputMaybe<Scalars['UUID']['input']>;
+  builtInSectionKey?: InputMaybe<Scalars['String']['input']>;
   color?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['UUID']['input']>;
@@ -5633,6 +5596,7 @@ export type NavigationMenuItem = {
   agentChatChannelId?: Maybe<Scalars['UUID']['output']>;
   agentId?: Maybe<Scalars['UUID']['output']>;
   applicationId?: Maybe<Scalars['UUID']['output']>;
+  builtInSectionKey?: Maybe<Scalars['String']['output']>;
   color?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   /** @deprecated Use parentId instead. */
@@ -6048,6 +6012,7 @@ export enum PermissionFlagType {
   LAYOUTS = 'LAYOUTS',
   MARKETPLACE_APPS = 'MARKETPLACE_APPS',
   PROFILE_INFORMATION = 'PROFILE_INFORMATION',
+  READ_PRIVATE_CHANNELS = 'READ_PRIVATE_CHANNELS',
   ROLES = 'ROLES',
   SECURITY = 'SECURITY',
   SEND_EMAIL_TOOL = 'SEND_EMAIL_TOOL',
@@ -6140,6 +6105,15 @@ export type PublicApplicationRegistration = {
   websiteUrl?: Maybe<Scalars['String']['output']>;
 };
 
+export type PublicCalendarChannel = {
+  __typename?: 'PublicCalendarChannel';
+  connectedAccount?: Maybe<ConnectedAccountPublicDto>;
+  connectedAccountId: Scalars['UUID']['output'];
+  handle: Scalars['String']['output'];
+  id: Scalars['UUID']['output'];
+  visibility: CalendarChannelVisibility;
+};
+
 export type PublicConnectionParametersOutput = {
   __typename?: 'PublicConnectionParametersOutput';
   connectionSecurity?: Maybe<EmailConnectionSecurity>;
@@ -6224,6 +6198,7 @@ export type Query = {
   billingPartnerCode: BillingPartnerCode;
   billingPlans: Array<BillingPlan>;
   billingPortalSession: BillingSession;
+  calendarChannels: Array<PublicCalendarChannel>;
   callRecordingIdForCalendarEvent?: Maybe<Scalars['UUID']['output']>;
   chatMessages: Array<AgentMessage>;
   chatStreamCatchupChunks: ChatStreamCatchupChunks;
@@ -8483,10 +8458,10 @@ export type UpsertViewWidgetViewSortInput = {
 };
 
 export type UpsertWebPushSubscriptionInput = {
-  applicationServerKey: Scalars['String']['input'];
-  authSecret: Scalars['String']['input'];
+  browserAuthSecret: Scalars['String']['input'];
+  browserPublicKey: Scalars['String']['input'];
   endpoint: Scalars['String']['input'];
-  p256dhKey: Scalars['String']['input'];
+  vapidPublicKey: Scalars['String']['input'];
 };
 
 export type UsageAnalytics = {

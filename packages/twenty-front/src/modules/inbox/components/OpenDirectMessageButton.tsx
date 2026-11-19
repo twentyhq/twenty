@@ -1,6 +1,7 @@
 import { useApolloClient } from '@apollo/client/react';
 import { useState } from 'react';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { DirectMessageMemberPicker } from '@/inbox/components/DirectMessageMemberPicker';
@@ -10,7 +11,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { OpenDirectMessageDocument } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 

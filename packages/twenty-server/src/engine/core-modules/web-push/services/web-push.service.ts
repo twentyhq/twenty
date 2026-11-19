@@ -10,10 +10,6 @@ import { generateRequestDetails } from 'web-push';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import {
-  ForbiddenError,
-  UserInputError,
-} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
@@ -22,6 +18,10 @@ import { WebPushSubscriptionEntity } from 'src/engine/core-modules/web-push/web-
 import { type WebPushNotification } from 'src/engine/core-modules/web-push/types/web-push-notification.type';
 import { deriveWebPushVapidKeyPair } from 'src/engine/core-modules/web-push/utils/derive-web-push-vapid-key-pair.util';
 import { isWebPushEndpointAllowed } from 'src/engine/core-modules/web-push/utils/is-web-push-endpoint-allowed.util';
+import {
+  WebPushException,
+  WebPushExceptionCode,
+} from 'src/engine/core-modules/web-push/web-push.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -58,8 +58,9 @@ export class WebPushService {
     sessionToken: string | undefined;
   }): Promise<void> {
     if (!isWebPushEndpointAllowed(input.endpoint)) {
-      throw new UserInputError(
+      throw new WebPushException(
         'Web push subscription endpoint is not on an allowed push service',
+        WebPushExceptionCode.ENDPOINT_NOT_ALLOWED,
       );
     }
 
@@ -67,9 +68,10 @@ export class WebPushService {
       twentyConfigService: this.twentyConfigService,
     });
 
-    if (input.applicationServerKey !== publicKey) {
-      throw new UserInputError(
-        'Web push subscription was created with an unknown application server key',
+    if (input.vapidPublicKey !== publicKey) {
+      throw new WebPushException(
+        'Web push subscription was created with an unknown VAPID public key',
+        WebPushExceptionCode.UNKNOWN_VAPID_PUBLIC_KEY,
       );
     }
 
@@ -78,8 +80,9 @@ export class WebPushService {
       : null;
 
     if (!isDefined(session) || session.userWorkspaceId !== userWorkspaceId) {
-      throw new ForbiddenError(
-        'Web push subscription request has no session for this user workspace',
+      throw new WebPushException(
+        'Web push subscription request has no active session for this user workspace',
+        WebPushExceptionCode.ACTIVE_SESSION_NOT_FOUND,
       );
     }
 
@@ -92,9 +95,9 @@ export class WebPushService {
       workspaceId,
       {
         endpoint: input.endpoint,
-        p256dhKey: input.p256dhKey,
-        authSecret: input.authSecret,
-        applicationServerKey: input.applicationServerKey,
+        browserPublicKey: input.browserPublicKey,
+        browserAuthSecret: input.browserAuthSecret,
+        vapidPublicKey: input.vapidPublicKey,
         userSessionId: session.id,
       },
       ['workspaceId', 'endpoint'],
@@ -169,7 +172,7 @@ export class WebPushService {
       workspaceId,
       {
         where: {
-          applicationServerKey: deriveWebPushVapidKeyPair({
+          vapidPublicKey: deriveWebPushVapidKeyPair({
             twentyConfigService: this.twentyConfigService,
           }).publicKey,
           userSession: {
@@ -225,8 +228,8 @@ export class WebPushService {
           {
             endpoint: webPushSubscription.endpoint,
             keys: {
-              p256dh: webPushSubscription.p256dhKey,
-              auth: webPushSubscription.authSecret,
+              p256dh: webPushSubscription.browserPublicKey,
+              auth: webPushSubscription.browserAuthSecret,
             },
           },
           JSON.stringify(notification),

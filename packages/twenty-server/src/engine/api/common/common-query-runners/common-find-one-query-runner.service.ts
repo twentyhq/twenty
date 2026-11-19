@@ -20,7 +20,7 @@ import {
   CommonQueryNames,
   FindOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
+import { buildColumnsToSelect } from 'src/engine/api/common/utils/build-columns-to-select';
 
 @Injectable()
 export class CommonFindOneQueryRunnerService extends CommonRecordQueryRunnerService<
@@ -46,16 +46,16 @@ export class CommonFindOneQueryRunnerService extends CommonRecordQueryRunnerServ
       flatObjectMetadata.nameSingular,
     );
 
-    commonQueryParser.applyFilterToBuilder(
+    commonQueryParser.applyFilterToBuilder({
       queryBuilder,
-      flatObjectMetadata.nameSingular,
-      args.filter ?? ({} as ObjectRecordFilter),
-    );
+      objectNameSingular: flatObjectMetadata.nameSingular,
+      recordFilter: args.filter ?? {},
+    });
 
-    commonQueryParser.applyDeletedAtToBuilder(
+    commonQueryParser.applyDeletedAtToBuilder({
       queryBuilder,
-      args.filter ?? ({} as ObjectRecordFilter),
-    );
+      recordFilter: args.filter ?? {},
+    });
 
     const columnsToSelect = buildColumnsToSelect({
       selection: args.selectedFieldsResult,
