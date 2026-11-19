@@ -24,6 +24,8 @@ import {
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
+import { navigationMenuItemsWithHiddenSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsWithHiddenSelector';
+import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterWorkspaceNavigationMenuItems';
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { NATIVE_PAGE_NAVIGATION_MENU_ITEM_CONFIGS } from '@/navigation-menu-item/display/native-page/constants/NativePageNavigationMenuItemConfigs';
@@ -85,6 +87,18 @@ export const useNavigationMenuItemAddOptions = ({
   });
 
   const navigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
+  const navigationMenuItemsWithHidden = useAtomStateValue(
+    navigationMenuItemsWithHiddenSelector,
+  );
+  const currentItemIds = new Set(currentItems.map(({ id }) => id));
+  const activeNavigationMenuItemIds = new Set(
+    navigationMenuItems.map(({ id }) => id),
+  );
+  const hiddenWorkspaceNavigationMenuItems = filterWorkspaceNavigationMenuItems(
+    navigationMenuItemsWithHidden,
+  ).filter(
+    ({ id }) => !activeNavigationMenuItemIds.has(id) && !currentItemIds.has(id),
+  );
   const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
   const { objectMetadataItems } = useObjectMetadataItems();
   const { activeNonSystemObjectMetadataItems } =
@@ -94,7 +108,10 @@ export const useNavigationMenuItemAddOptions = ({
     objectMetadataIdsWithIndexView,
     objectMetadataIdsAlreadyAdded,
     viewIdsAlreadyAdded,
-  } = useNavigationMenuObjectMetadataForSection(currentItems);
+  } = useNavigationMenuObjectMetadataForSection([
+    ...currentItems,
+    ...hiddenWorkspaceNavigationMenuItems,
+  ]);
   const {
     navigationMenuItemSearchRecords,
     recordSearchLoading,
