@@ -17,7 +17,9 @@ export const getRoleWithUpsertedFieldPermission = (
     const indexOfExistingFieldPermission = draftRole.fieldPermissions.findIndex(
       (fieldPermissionToFind) =>
         fieldPermissionToFind.fieldMetadataId ===
-        fieldPermissionToUpsert.fieldMetadataId,
+          fieldPermissionToUpsert.fieldMetadataId &&
+        (fieldPermissionToFind.rowLevelPermissionPredicateGroupId ?? null) ===
+          (fieldPermissionToUpsert.rowLevelPermissionPredicateGroupId ?? null),
     );
 
     if (indexOfExistingFieldPermission > -1) {

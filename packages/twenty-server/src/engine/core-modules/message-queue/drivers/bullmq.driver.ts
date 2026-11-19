@@ -123,9 +123,7 @@ export class BullMQDriver
       keyPrefix: options.prefix ?? 'bull',
       metricsService,
       getGroupLimiter: (queueName) =>
-        twentyConfigService.get('IS_WORKER_GROUP_LIMITER_ENABLED')
-          ? MESSAGE_QUEUE_WORKER_CONFIG[queueName].workerOptions.groupLimiter
-          : undefined,
+        MESSAGE_QUEUE_WORKER_CONFIG[queueName].workerOptions.groupLimiter,
     });
     this.jobSizeLimiter = new JobSizeLimiter(
       metricsService,
@@ -438,6 +436,7 @@ export class BullMQDriver
               id: job.id ?? '',
               name: job.name,
               retryLimit: Math.max(0, (job.opts.attempts ?? 1) - 1),
+              attemptsMade: job.attemptsMade,
               updateData: (data) => job.updateData(data),
               updateProgress: (progress) => job.updateProgress(progress),
               abortSignal,
@@ -712,7 +711,6 @@ export class BullMQDriver
     jobName,
     jobs,
     additionalGroupKeys,
-    shouldReportSizes = false,
   }: {
     queueName: MessageQueue;
     jobName: string;
@@ -723,20 +721,12 @@ export class BullMQDriver
       scope: QueueJobScope;
     }[];
     additionalGroupKeys?: string[];
-    shouldReportSizes?: boolean;
   }): Promise<{ preparedJobs: PreparedJob[]; availableBytes: number | null }> {
-    const isLimitingEnabled = this.jobMemoryLimiter.isEnabled();
     const sizedJobs = jobs.map(({ index, data, options, scope }) => ({
       index,
       groupKeys: buildQueueJobGroupKeys({ scope, additionalGroupKeys }),
-      sizeBytes:
-        isLimitingEnabled || shouldReportSizes
-          ? computeJobSizeBytes({ data, options })
-          : 0,
-      options: {
-        ...options,
-        jobId: options.jobId ?? (isLimitingEnabled ? v4() : undefined),
-      },
+      sizeBytes: computeJobSizeBytes({ data, options }),
+      options: { ...options, jobId: options.jobId ?? v4() },
     }));
 
     this.jobSizeLimiter.checkJobSizesOrThrow({
@@ -749,14 +739,12 @@ export class BullMQDriver
       })),
     });
 
-    const existingJobIds = isLimitingEnabled
-      ? await this.findExistingJobIds({
-          queueName,
-          jobIds: jobs.flatMap(({ options }) =>
-            isDefined(options.jobId) ? [options.jobId] : [],
-          ),
-        })
-      : new Set<string>();
+    const existingJobIds = await this.findExistingJobIds({
+      queueName,
+      jobIds: jobs.flatMap(({ options }) =>
+        isDefined(options.jobId) ? [options.jobId] : [],
+      ),
+    });
     const chargeableJobs = sizedJobs.filter(
       ({ options }) =>
         isDefined(options.jobId) && !existingJobIds.has(options.jobId),
@@ -1068,7 +1056,6 @@ export class BullMQDriver
         scope: job,
       })),
       additionalGroupKeys: options?.fairnessGroupKeys,
-      shouldReportSizes: true,
     });
 
     // BullMQ ignores a re-added job id, so it must not take a pacing slot.

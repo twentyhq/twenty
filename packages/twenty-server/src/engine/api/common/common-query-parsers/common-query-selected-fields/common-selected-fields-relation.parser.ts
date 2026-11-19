@@ -20,10 +20,13 @@ export class CommonQuerySelectedFieldsRelationParser {
   private flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   private readonly filterArgProcessor = new FilterArgProcessorService();
 
-  constructor(
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-  ) {
+  constructor({
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+  }: {
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  }) {
     this.flatObjectMetadataMaps = flatObjectMetadataMaps;
     this.flatFieldMetadataMaps = flatFieldMetadataMaps;
   }
@@ -61,10 +64,10 @@ export class CommonQuerySelectedFieldsRelationParser {
       flatEntityMaps: this.flatObjectMetadataMaps,
     });
 
-    const fieldParser = new CommonQuerySelectedFieldsParser(
-      this.flatObjectMetadataMaps,
-      this.flatFieldMetadataMaps,
-    );
+    const fieldParser = new CommonQuerySelectedFieldsParser({
+      flatObjectMetadataMaps: this.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: this.flatFieldMetadataMaps,
+    });
     const relationAccumulator = fieldParser.parse({
       selectedFields: selectedRelation.selectedFields,
       flatObjectMetadata: targetObjectMetadata,
