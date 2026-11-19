@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { Temporal } from 'temporal-polyfill';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
@@ -21,7 +22,7 @@ export const AiChatWorkspaceSetupCompletionEffect = () => {
     useProcessWorkspaceSetupCompletion();
 
   useEffect(() => {
-    if (aiChatUISessionStartTime === null) {
+    if (!isDefined(aiChatUISessionStartTime)) {
       return;
     }
 

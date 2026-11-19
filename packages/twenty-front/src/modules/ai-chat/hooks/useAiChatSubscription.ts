@@ -517,7 +517,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
           type: 'stream-chunk',
           chunk,
           seq: index + 1,
-        } as AgentChatSubscriptionEvent),
+        }),
       );
 
       if (isDefined(catchup.error) && !hasAppliedLiveChunk) {
@@ -525,7 +525,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
           type: 'stream-error',
           code: catchup.error.code,
           message: catchup.error.message,
-        } as AgentChatSubscriptionEvent);
+        });
       }
     },
     [liveStreamSlot],
