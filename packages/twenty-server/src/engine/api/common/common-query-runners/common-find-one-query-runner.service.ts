@@ -49,12 +49,12 @@ export class CommonFindOneQueryRunnerService extends CommonRecordQueryRunnerServ
     commonQueryParser.applyFilterToBuilder({
       queryBuilder,
       objectNameSingular: flatObjectMetadata.nameSingular,
-      recordFilter: args.filter ?? ({} as ObjectRecordFilter),
+      recordFilter: args.filter ?? {},
     });
 
     commonQueryParser.applyDeletedAtToBuilder({
       queryBuilder,
-      recordFilter: args.filter ?? ({} as ObjectRecordFilter),
+      recordFilter: args.filter ?? {},
     });
 
     const columnsToSelect = buildColumnsToSelect({
