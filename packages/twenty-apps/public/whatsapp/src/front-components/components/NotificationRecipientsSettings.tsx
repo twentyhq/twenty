@@ -1,0 +1,234 @@
+import 'twenty-ui/style.css';
+import 'twenty-ui/theme-dark.css';
+import 'twenty-ui/theme-light.css';
+
+import { isNonEmptyString } from '@sniptt/guards';
+import { useEffect, useState } from 'react';
+import { RestApiClient } from 'twenty-client-sdk/rest';
+import { enqueueSnackbar, useColorScheme } from 'twenty-sdk/front-component';
+import { Callout } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme';
+
+import {
+  NOTIFICATION_RECIPIENTS_GET_ROUTE_PATH,
+  NOTIFICATION_RECIPIENTS_SET_ROUTE_PATH,
+} from 'src/constants/notification-recipients.constant';
+import {
+  type GetNotificationRecipientsResult,
+  type SetNotificationRecipientsResult,
+} from 'src/logic-functions/types/notification-recipients.type';
+
+// REST API maximum page size.
+const WORKSPACE_MEMBERS_PAGE_SIZE = 200;
+
+type WorkspaceMember = {
+  id: string;
+  name: string;
+  userEmail: string | null;
+};
+
+type WorkspaceMembersResponse = {
+  data?: {
+    workspaceMembers?: Array<{
+      id: string;
+      name?: { firstName?: string | null; lastName?: string | null } | null;
+      userEmail?: string | null;
+    }> | null;
+  } | null;
+};
+
+const fetchWorkspaceMembers = async (): Promise<WorkspaceMember[]> => {
+  const response = await new RestApiClient().get<WorkspaceMembersResponse>(
+    '/rest/workspaceMembers',
+    { query: { limit: String(WORKSPACE_MEMBERS_PAGE_SIZE) } },
+  );
+
+  return (response.data?.workspaceMembers ?? []).map((record) => ({
+    id: record.id,
+    name: [record.name?.firstName, record.name?.lastName]
+      .filter(isNonEmptyString)
+      .join(' '),
+    userEmail: record.userEmail ?? null,
+  }));
+};
+
+const listStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: themeCssVariables.spacing[1],
+} as const;
+
+const rowStyle = {
+  alignItems: 'center',
+  cursor: 'pointer',
+  display: 'flex',
+  fontFamily: themeCssVariables.font.family,
+  fontSize: themeCssVariables.font.size.sm,
+  color: themeCssVariables.font.color.primary,
+  gap: themeCssVariables.spacing[2],
+  padding: themeCssVariables.spacing[1],
+} as const;
+
+const emailStyle = {
+  color: themeCssVariables.font.color.tertiary,
+} as const;
+
+const footerStyle = {
+  display: 'flex',
+  justifyContent: 'flex-end',
+  paddingTop: themeCssVariables.spacing[3],
+} as const;
+
+const NotificationRecipientsSettingsContent = () => {
+  const [workspaceMembers, setWorkspaceMembers] = useState<WorkspaceMember[]>(
+    [],
+  );
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [canEdit, setCanEdit] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [loadError, setLoadError] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const load = async () => {
+      try {
+        const [members, recipients] = await Promise.all([
+          fetchWorkspaceMembers(),
+          new RestApiClient().get<GetNotificationRecipientsResult>(
+            `/s${NOTIFICATION_RECIPIENTS_GET_ROUTE_PATH}`,
+          ),
+        ]);
+
+        if (cancelled) {
+          return;
+        }
+
+        setWorkspaceMembers(members);
+        setSelectedIds(new Set(recipients.workspaceMemberIds));
+        setCanEdit(recipients.canEdit);
+      } catch {
+        if (!cancelled) {
+          setLoadError('Could not load notification settings. Try again.');
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const handleToggle = (workspaceMemberId: string) => {
+    setSelectedIds((previous) => {
+      const next = new Set(previous);
+
+      if (next.has(workspaceMemberId)) {
+        next.delete(workspaceMemberId);
+      } else {
+        next.add(workspaceMemberId);
+      }
+
+      return next;
+    });
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+
+    try {
+      const result = await new RestApiClient().post<SetNotificationRecipientsResult>(
+        `/s${NOTIFICATION_RECIPIENTS_SET_ROUTE_PATH}`,
+        { workspaceMemberIds: [...selectedIds] },
+      );
+
+      enqueueSnackbar(
+        result.success
+          ? { message: 'Notification recipients saved.', variant: 'success' }
+          : { message: result.error, variant: 'error' },
+      );
+    } catch {
+      enqueueSnackbar({
+        message: 'Could not save notification recipients. Try again.',
+        variant: 'error',
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <Section.Root>
+      <Section.Header
+        title="Notification recipients"
+        description="Workspace members selected here receive WhatsApp alerts in their inbox."
+      />
+      {isLoading ? (
+        <span style={rowStyle}>Loading workspace members…</span>
+      ) : isNonEmptyString(loadError) ? (
+        <Callout status="error" title={loadError} />
+      ) : (
+        <>
+          {!canEdit && (
+            <Callout
+              status="warning"
+              title="Read only"
+              description="Only members who can manage applications can change who receives notifications."
+            />
+          )}
+          <div style={listStyle}>
+            {workspaceMembers.map((workspaceMember) => (
+              <label key={workspaceMember.id} style={rowStyle}>
+                <input
+                  type="checkbox"
+                  checked={selectedIds.has(workspaceMember.id)}
+                  disabled={!canEdit || isSaving}
+                  onChange={() => handleToggle(workspaceMember.id)}
+                />
+                <span>
+                  {isNonEmptyString(workspaceMember.name)
+                    ? workspaceMember.name
+                    : workspaceMember.id}
+                </span>
+                {isNonEmptyString(workspaceMember.userEmail) && (
+                  <span style={emailStyle}>{workspaceMember.userEmail}</span>
+                )}
+              </label>
+            ))}
+          </div>
+          {canEdit && (
+            <div style={footerStyle}>
+              <Button
+                type="button"
+                size="sm"
+                disabled={isSaving}
+                onClick={handleSave}
+              >
+                {isSaving ? 'Saving…' : 'Save'}
+              </Button>
+            </div>
+          )}
+        </>
+      )}
+    </Section.Root>
+  );
+};
+
+export const NotificationRecipientsSettings = () => {
+  const colorScheme = useColorScheme();
+
+  return (
+    <ThemeProvider colorScheme={colorScheme}>
+      <NotificationRecipientsSettingsContent />
+    </ThemeProvider>
+  );
+};

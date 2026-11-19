@@ -1,5 +1,6 @@
 import { defineLogicFunction, RoutePayload } from 'twenty-sdk/define';
 import { Response } from 'twenty-sdk/logic-function';
+import { WHATSAPP_LOGIC_FUNCTION_INITIAL_WEBHOOK_UNIVERSAL_IDENTIFIER } from "src/constants/universal-identifiers";
 
 const handler = async (params: RoutePayload) => {
   if (process.env.VERIFY_TOKEN === params.queryStringParameters["hub.verify_token"]) {
@@ -16,7 +17,7 @@ const handler = async (params: RoutePayload) => {
 };
 
 export default defineLogicFunction({
-  universalIdentifier: '9cdee7d8-34c7-4f98-aab1-5f509886b02f',
+  universalIdentifier: WHATSAPP_LOGIC_FUNCTION_INITIAL_WEBHOOK_UNIVERSAL_IDENTIFIER,
   name: 'initial-webhook-test',
   description: 'Endpoint used to validate webhooks by Meta',
   timeoutSeconds: 5,

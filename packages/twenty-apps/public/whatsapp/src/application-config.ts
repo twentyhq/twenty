@@ -14,18 +14,6 @@ export default defineApplication({
   description: APP_DESCRIPTION,
   logoUrl: 'public/logo.svg',
   author: 'Twenty',
-  serverVariables: {
-    WHATSAPP_CLIENT_ID: {
-      description: "OAuth client ID issued by the third-party provider. Filled in once by the server admin on the application registration.",
-      isSecret: false,
-      isRequired: true,
-    },
-    WHATSAPP_CLIENT_SECRET: {
-      description: "OAuth client secret issued by the third-party provider. Stored encrypted; never echoed in API responses.",
-      isSecret: true,
-      isRequired: true,
-    },
-  },
   applicationVariables: {
     VERIFY_TOKEN: {
       universalIdentifier: WHATSAPP_APPLICATION_VARIABLE_VERIFY_TOKEN,

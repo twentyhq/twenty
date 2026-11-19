@@ -418,6 +418,8 @@ export type WhatsAppApiPhoneNumber = {
   quality_rating: 'GREEN' | 'YELLOW' | 'RED' | 'NA' | 'UNKNOWN';
 };
 
+export type WhatsAppApiGetPhoneNumbersQuery = { limit?: number; after?: string };
+
 export type WhatsAppApiGetPhoneNumbersResponse = WhatsAppApiPagedResponse<WhatsAppApiPhoneNumber>;
 
 export type WhatsAppApiGetPhoneNumberQuery = { fields?: string };
@@ -633,7 +635,11 @@ export type WhatsAppApiEndpoints = {
   >;
 
   // phone numbers
-  'GET /{wabaId}/phone_numbers': WhatsAppApiEndpoint<undefined, WhatsAppApiGetPhoneNumbersResponse>;
+  'GET /{wabaId}/phone_numbers': WhatsAppApiEndpoint<
+    undefined,
+    WhatsAppApiGetPhoneNumbersResponse,
+    WhatsAppApiGetPhoneNumbersQuery
+  >;
   'GET /{phoneNumberId}': WhatsAppApiEndpoint<
     undefined,
     WhatsAppApiGetPhoneNumberResponse,

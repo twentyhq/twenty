@@ -12,7 +12,12 @@ import { WhatsappFile } from "src/logic-functions/types/whatsapp-file.type";
 import { updateMessage } from "src/logic-functions/data/update-message.util";
 import { findMessageById } from "src/logic-functions/data/find-message-by-id.util";
 import { updatePerson } from "src/logic-functions/data/update-person.util";
-import { type IngestMessageParticipant, ingestMessages, listMessageChannels } from "twenty-sdk/logic-function";
+import {
+  type IngestMessageParticipant,
+  ingestMessages,
+  uploadMessageAttachment
+} from "twenty-sdk/logic-function";
+import { findMessageChannelIdByDisplayPhoneNumber } from "src/logic-functions/data/find-message-channel-id-by-display-phone-number.util";
 import { findWhatsappMessageThread } from "src/logic-functions/data/find-whatsapp-message-thread.util";
 import { downloadWhatsAppFile } from "src/logic-functions/data/download-file.util";
 import { uploadFile } from "src/logic-functions/data/upload-file.util";
@@ -28,25 +33,29 @@ const handler = async (params: {
   const coreClient = new CoreApiClient();
   /*
   Questions:
-     fix downloading file
-     add upload file (how to get API key served by app?)
      is kv better than whatsapp message thread object?
   */
   if (messages.type === 'unsupported') {
+    console.warn();
     return; // not needed at time being to do anything with it, maybe when notifications will be done at some point it'll become useful
   }
-  let relatedConnectedAccount = await listMessageChannels();
-  if (!relatedConnectedAccount) {
+  const messageChannelId = await findMessageChannelIdByDisplayPhoneNumber(businessData.display_phone_number);
+  if (!messageChannelId) {
+    console.error()
     return;
   }
   // find a thread by whatsapp id, if group id is present, use that
-  let messageThread: string = messages.group_id ?? await findWhatsappMessageThread(coreClient) ?? "";
+  let messageThread: string = messages.group_id ?? await findWhatsappMessageThread(coreClient);
+  if (!messageThread) {
+    console.error();
+    return;
+  }
 
   const participants: IngestMessageParticipant[] = [];
   participants.push({
     role: "TO",
     handle: businessData.display_phone_number,
-    displayName: ''/* relatedConnectedAccount */,
+    displayName: '',
   })
   let whatsAppPerson = await findPersonByFilter(coreClient, contacts.wa_id);
   if (!whatsAppPerson.people?.totalCount || whatsAppPerson.people?.totalCount === 0) {
@@ -170,24 +179,23 @@ const handler = async (params: {
       return;
     }
   }
+  let messageAttachment = undefined;
   if (file) {
-    const { fileBuffer, mimeType } = await downloadWhatsAppFile(file.mediaId);
-    await uploadFile(coreClient, {
-      fileBuffer,
+    const { fileBuffer } = await downloadWhatsAppFile(file.mediaId);
+    messageAttachment = [await uploadMessageAttachment({
       filename: file.fileName,
-      mimeType,
-      target: { targetPersonId: whatsAppPerson.people.edges[0].node.id },
-    });
+      content: fileBuffer
+    })];
   }
-  // TODO: arbitrally create message channels or wait until connection provider accepts API
   await ingestMessages({
-    messageChannelId: '', // find
+    messageChannelId,
     messages: [{
       externalId: messages.id,
       threadExternalId: messageThread,
       text,
       participants: participants,
       receivedAt: new Date(messages.timestamp),
+      attachments: messageAttachment,
     }]
   })
 }
@@ -195,7 +203,7 @@ const handler = async (params: {
 export default defineLogicFunction({
   universalIdentifier: WHATSAPP_LOGIC_FUNCTION_PARSE_MESSAGE_UNIVERSAL_IDENTIFIER,
   name: 'parse-message',
-  description: 'Add a description for your logic function',
+  description: 'Parses webhook and adds message',
   timeoutSeconds: 900,
   handler,
 });

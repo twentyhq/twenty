@@ -1,32 +1,22 @@
 import { sendInboxMessage } from 'twenty-sdk/logic-function';
-import {
-  type WhatsAppWebhookMessageContacts,
-  type WhatsAppWebhookMessageContent,
-} from 'src/logic-functions/types/whatsapp-webhook-message.type';
+
+import { getNotificationRecipientIds } from 'src/logic-functions/data/get-notification-recipient-ids.util';
 
 type SendInboxNotificationParams = {
-  workspaceMemberId: string;
-  contact: WhatsAppWebhookMessageContacts;
-  message: WhatsAppWebhookMessageContent;
-  text: string;
-} | {
-  workspaceMemberId: string;
   threadKey: string;
   idempotencyKey: string;
   title: string;
   text: string;
 };
 
-export const sendInboxNotification = async ({
-  workspaceMemberId,
-  contact,
-  message,
-  text,
-}: SendInboxNotificationParams) =>
-  sendInboxMessage({
-    workspaceMemberId,
-    threadKey: message.group_id ?? message.from,
-    idempotencyKey: message.id,
-    title: contact.profile.name,
-    text,
-  });
+export const sendInboxNotification = async (
+  params: SendInboxNotificationParams,
+) => {
+  const workspaceMemberIds = await getNotificationRecipientIds();
+
+  if (workspaceMemberIds.length === 0) {
+    return;
+  }
+
+  await sendInboxMessage({ ...params, workspaceMemberIds });
+};

@@ -1,6 +1,6 @@
 // Reference: https://developers.facebook.com/documentation/business-messaging/whatsapp/business-phone-numbers/media#supported-media-types
 
-export const getFileExtension = (mimeType: string) => {
+export const getFileExtension = (mimeType: string): string => {
   const extensions: Record<string, string> = {
     'audio/aac': '.aac',
     'audio/amr': '.amr',
@@ -25,5 +25,5 @@ export const getFileExtension = (mimeType: string) => {
     'video/mp4': '.mp4',
   };
 
-  return extensions[mimeType];
+  return <string>extensions[mimeType];
 };

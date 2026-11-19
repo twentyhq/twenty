@@ -2,10 +2,14 @@ import { defineLogicFunction, RoutePayload } from 'twenty-sdk/define';
 import { WhatsAppWebhook } from 'src/logic-functions/types/whatsapp-webhook-message.type';
 import { validateWebhookPayload } from 'src/logic-functions/data/validate-webhook-payload.util';
 import { enqueueJobs } from "twenty-sdk/logic-function";
-import { WHATSAPP_LOGIC_FUNCTION_PARSE_MESSAGE_UNIVERSAL_IDENTIFIER } from "src/constants/universal-identifiers";
+import {
+  WHATSAPP_LOGIC_FUNCTION_PARSE_MESSAGE_UNIVERSAL_IDENTIFIER,
+  WHATSAPP_LOGIC_FUNCTION_WEBHOOK_SYNC_UNIVERSAL_IDENTIFIER
+} from "src/constants/universal-identifiers";
 import { updateTwentyMessageChannel } from "src/logic-functions/data/update-message-channel.util";
 import { upsertWhatsAppTemplate } from "src/logic-functions/data/upsert-whatsapp-template.util";
 import { buildHistoryParseJobs } from "src/logic-functions/data/build-history-parse-jobs.util";
+import { isNonEmptyString } from "@sniptt/guards";
 import { sendInboxNotification } from "src/logic-functions/data/send-inbox-notification.util";
 
 const handler = async (
@@ -45,15 +49,32 @@ const handler = async (
 
   for (const entry of body.entry) {
     for (const change of entry.changes) {
+      const notify = (title: string, text: string) =>
+        sendInboxNotification({
+          threadKey: `${change.field}:${entry.id}`,
+          idempotencyKey: JSON.stringify(change.value),
+          title,
+          text,
+        });
+
       switch (change.field) {
         case "account_alerts":
-          await sendInboxNotification();
+          await notify(
+            "WhatsApp account alerts",
+            `${change.value.alert_info.alert_severity}: ${change.value.alert_info.alert_description}`,
+          );
           break;
         case "account_review_update":
-          await sendInboxNotification();
+          await notify(
+            "WhatsApp account review",
+            `Account review decision: ${change.value.decision}`,
+          );
           break;
         case "account_update":
-          await sendInboxNotification();
+          await notify(
+            "WhatsApp account updates",
+            `Account update: ${change.value.event}`,
+          );
           break;
         case "automatic_events":
         case "business_capability_update":
@@ -112,12 +133,24 @@ const handler = async (
           }
           break;
         case "phone_number_quality_update":
-          await sendInboxNotification();
+          await notify(
+            "WhatsApp phone number quality",
+            `${change.value.display_phone_number}: ${change.value.event}, daily conversation limit ${change.value.max_daily_conversations_per_business}`,
+          );
           break;
         case "security":
+          await notify(
+            "WhatsApp security",
+            [
+              `${change.value.display_phone_number}: ${change.value.event}`,
+              change.value.requester,
+            ]
+              .filter(isNonEmptyString)
+              .join(", requested by "),
+          );
+          break;
         case "smb_app_state_sync":
         case "smb_message_echoes":
-          await sendInboxNotification();
           break;
         case "template_category_update":
           await upsertWhatsAppTemplate({
@@ -166,9 +199,9 @@ const handler = async (
 };
 
 export default defineLogicFunction({
-  universalIdentifier: '845183d7-da92-4810-afd3-4f35c3b941e3',
+  universalIdentifier: WHATSAPP_LOGIC_FUNCTION_WEBHOOK_SYNC_UNIVERSAL_IDENTIFIER,
   name: 'webhook-sync',
-  description: 'Add a description for your logic function',
+  description: 'Receives webhook and ',
   timeoutSeconds: 30,
   handler,
   httpRouteTriggerSettings: {

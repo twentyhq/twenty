@@ -9,7 +9,7 @@ export const updatePerson = async (client: CoreApiClient, personId: string, mess
     .trim()
     .split(' ');
   const formattedNewNumber = parseWhatsappPhoneNumber(
-    preparedString[preparedString.length - 1],
+    <string>preparedString[preparedString.length - 1],
   );
   await client.mutation({
     updatePerson: {
