@@ -1,3 +1,1 @@
-export type ConditionalAvailabilityReadOnlyReason =
-  | { status: 'editable' }
-  | { status: 'readOnly'; reason: 'roles' | 'featureFlags' };
+export type ConditionalAvailabilityReadOnlyReason = 'roles' | 'featureFlags';
