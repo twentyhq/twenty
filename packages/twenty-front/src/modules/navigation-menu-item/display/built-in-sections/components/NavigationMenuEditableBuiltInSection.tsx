@@ -9,7 +9,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 type NavigationMenuEditableBuiltInSectionProps = {
   section: Pick<
     NavigationMenuItem,
-    'id' | 'name' | 'icon' | 'parentId' | 'type'
+    'id' | 'name' | 'icon' | 'parentId' | 'type' | 'builtInSectionKey'
   >;
 };
 
@@ -18,7 +18,7 @@ export const NavigationMenuEditableBuiltInSection = ({
 }: NavigationMenuEditableBuiltInSectionProps) => {
   const { t } = useLingui();
   const builtInSection = NAVIGATION_MENU_BUILT_IN_SECTIONS.find(
-    ({ type }) => type === section.type,
+    ({ key }) => key === section.builtInSectionKey,
   );
 
   if (builtInSection === undefined) {
