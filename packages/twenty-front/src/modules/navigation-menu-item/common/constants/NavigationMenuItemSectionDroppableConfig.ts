@@ -5,6 +5,7 @@ type SectionDroppableConfig = {
   orphanDroppableId: string;
   folderHeaderPrefix: string;
   folderPrefix: string;
+  tabOrSectionListPrefix: string | null;
 };
 
 export const NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG: Record<
@@ -17,6 +18,7 @@ export const NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG: Record<
     folderHeaderPrefix:
       NavigationMenuItemDroppableIds.FAVORITE_FOLDER_HEADER_PREFIX,
     folderPrefix: NavigationMenuItemDroppableIds.FAVORITE_FOLDER_PREFIX,
+    tabOrSectionListPrefix: null,
   },
   workspace: {
     orphanDroppableId:
@@ -24,5 +26,7 @@ export const NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG: Record<
     folderHeaderPrefix:
       NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_HEADER_PREFIX,
     folderPrefix: NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_PREFIX,
+    tabOrSectionListPrefix:
+      NavigationMenuItemDroppableIds.WORKSPACE_TAB_OR_SECTION_LIST_PREFIX,
   },
 };

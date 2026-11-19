@@ -28,6 +28,7 @@ import { SortableDropTargetRefContext } from '@/navigation-menu-item/common/cont
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
+import { getNavigationMenuItemListDroppableId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemListDroppableId';
 import { NavigationItemDropTarget } from '@/navigation-menu-item/display/dnd/components/NavigationItemDropTarget';
 import {
   FOLDER_HEADER_SLOT_COLLISION_PRIORITY,
@@ -94,7 +95,6 @@ type NavigationMenuItemFolderDndProps = {
   isDragging: boolean;
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
   orphanIndex?: number;
-  listDroppableId?: string;
 };
 
 export const NavigationMenuItemFolderDnd = ({
@@ -110,7 +110,6 @@ export const NavigationMenuItemFolderDnd = ({
   isDragging: isDraggingProp,
   onNavigationMenuItemClick,
   orphanIndex,
-  listDroppableId,
 }: NavigationMenuItemFolderDndProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
@@ -248,7 +247,10 @@ export const NavigationMenuItemFolderDnd = ({
     >
       {showInsertBeforeZone && (
         <NavigationMenuItemInsertBeforeDroppableZone
-          orphanDroppableId={listDroppableId ?? config.orphanDroppableId}
+          orphanDroppableId={getNavigationMenuItemListDroppableId({
+            parentId: item.parentId,
+            navigationMenuItemSection: section,
+          })}
           orphanIndex={orphanIndex}
           itemId={folderId}
           disabled={dropDisabled}
