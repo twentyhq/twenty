@@ -1,7 +1,5 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { listConnections } from 'twenty-sdk/logic-function';
-import { isDefined } from 'twenty-sdk/utils';
 
 import {
   GRANOLA_CATCH_UP_WINDOW_DAYS,
@@ -17,6 +15,7 @@ import { buildGranolaPersonalCatchUpJob } from 'src/logic-functions/utils/build-
 import { buildGranolaPersonalReconcileJob } from 'src/logic-functions/utils/build-granola-personal-reconcile-job.util';
 import { enqueueGranolaJobsOrThrow } from 'src/logic-functions/utils/enqueue-granola-jobs-or-throw.util';
 import { getGranolaApiKeyFingerprint } from 'src/logic-functions/utils/get-granola-api-key-fingerprint.util';
+import { isActiveGranolaPersonalConnection } from 'src/logic-functions/utils/is-active-granola-personal-connection.util';
 
 export const granolaPersonalDailyCatchUpHandler = async () => {
   const today = Math.floor(Date.now() / GRANOLA_MILLISECONDS_PER_DAY);
@@ -32,11 +31,7 @@ export const granolaPersonalDailyCatchUpHandler = async () => {
     [];
 
   for (const connection of connections) {
-    if (
-      !isDefined(connection.workspaceMemberId) ||
-      isDefined(connection.authFailedAt) ||
-      !isNonEmptyString(connection.accessToken)
-    ) {
+    if (!isActiveGranolaPersonalConnection(connection)) {
       continue;
     }
 
