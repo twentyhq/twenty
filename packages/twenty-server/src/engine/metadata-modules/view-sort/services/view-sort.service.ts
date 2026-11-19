@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 import { fromCreateViewSortInputToFlatViewSortToCreate } from 'src/engine/metadata-modules/flat-view-sort/utils/from-create-view-sort-input-to-flat-view-sort-to-create.util';
 import { fromDestroyViewSortInputToFlatViewSortOrThrow } from 'src/engine/metadata-modules/flat-view-sort/utils/from-destroy-view-sort-input-to-flat-view-sort-or-throw.util';
 import { fromUpdateViewSortInputToFlatViewSortToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-sort/utils/from-update-view-sort-input-to-flat-view-sort-to-update-or-throw.util';
@@ -22,19 +24,14 @@ import { DeleteViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/
 import { DestroyViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/destroy-view-sort.input';
 import { UpdateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/update-view-sort.input';
 import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
-import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { fromFlatViewSortToViewSortDto } from 'src/engine/metadata-modules/view-sort/utils/from-flat-view-sort-to-view-sort-dto.util';
-import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { isViewAvailableToUser } from 'src/engine/metadata-modules/view/utils/is-view-available-to-user.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class ViewSortService {
   constructor(
-    @InjectWorkspaceScopedRepository(ViewSortEntity)
-    private readonly viewSortRepository: WorkspaceScopedRepository<ViewSortEntity>,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
@@ -261,8 +258,13 @@ export class ViewSortService {
   }: {
     workspaceId: string;
     userWorkspaceId: string | undefined;
-  }): Promise<ViewSortEntity[]> {
-    return this.findManyVisibleToUser({ workspaceId, userWorkspaceId });
+  }): Promise<ViewSortDTO[]> {
+    const flatViewSorts = await this.findManyFlatViewSortsVisibleToUser({
+      workspaceId,
+      userWorkspaceId,
+    });
+
+    return flatViewSorts.map(fromFlatViewSortToViewSortDto);
   }
 
   async findByViewId({
@@ -273,15 +275,17 @@ export class ViewSortService {
     workspaceId: string;
     viewId: string;
     userWorkspaceId: string | undefined;
-  }): Promise<ViewSortEntity[]> {
-    return this.findManyVisibleToUser({
+  }): Promise<ViewSortDTO[]> {
+    const flatViewSorts = await this.findManyFlatViewSortsVisibleToUser({
       workspaceId,
       viewId,
       userWorkspaceId,
     });
+
+    return flatViewSorts.map(fromFlatViewSortToViewSortDto);
   }
 
-  private async findManyVisibleToUser({
+  private async findManyFlatViewSortsVisibleToUser({
     workspaceId,
     viewId,
     userWorkspaceId,
@@ -289,21 +293,40 @@ export class ViewSortService {
     workspaceId: string;
     viewId?: string;
     userWorkspaceId: string | undefined;
-  }): Promise<ViewSortEntity[]> {
-    const viewSorts = await this.viewSortRepository.find(workspaceId, {
-      where: {
-        ...(isDefined(viewId) ? { viewId } : {}),
-        deletedAt: IsNull(),
-      },
-      order: { createdAt: 'ASC', id: 'ASC' },
-      relations: ['workspace', 'view'],
-    });
+  }): Promise<FlatViewSort[]> {
+    const { flatViewSortMaps, flatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewSortMaps', 'flatViewMaps'],
+        },
+      );
+    const flatViews = isDefined(viewId)
+      ? [
+          findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: viewId,
+            flatEntityMaps: flatViewMaps,
+          }),
+        ]
+      : Object.values(flatViewMaps.byUniversalIdentifier);
 
-    return viewSorts.filter(
-      (viewSort) =>
-        isDefined(viewSort.view) &&
-        isViewVisibleToUser(viewSort.view, userWorkspaceId),
-    );
+    return flatViews
+      .filter(isDefined)
+      .filter((flatView) =>
+        isViewAvailableToUser({ flatView, userWorkspaceId }),
+      )
+      .flatMap((flatView) =>
+        findManyFlatEntityByIdInFlatEntityMaps({
+          flatEntityIds: flatView.viewSortIds,
+          flatEntityMaps: flatViewSortMaps,
+        }),
+      )
+      .filter((flatViewSort) => flatViewSort.deletedAt === null)
+      .sort(
+        (first, second) =>
+          first.createdAt.localeCompare(second.createdAt) ||
+          first.id.localeCompare(second.id),
+      );
   }
 
   async findByIdOrThrow({
@@ -314,19 +337,30 @@ export class ViewSortService {
     id: string;
     workspaceId: string;
     userWorkspaceId: string | undefined;
-  }): Promise<ViewSortEntity> {
-    const viewSort = await this.viewSortRepository.findOne(workspaceId, {
-      where: {
-        id,
-        deletedAt: IsNull(),
-      },
-      relations: ['workspace', 'view'],
+  }): Promise<ViewSortDTO> {
+    const { flatViewSortMaps, flatViewMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewSortMaps', 'flatViewMaps'],
+        },
+      );
+    const flatViewSort = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatViewSortMaps,
     });
+    const flatView = isDefined(flatViewSort)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: flatViewSort.viewId,
+          flatEntityMaps: flatViewMaps,
+        })
+      : undefined;
 
     if (
-      !isDefined(viewSort) ||
-      !isDefined(viewSort.view) ||
-      !isViewVisibleToUser(viewSort.view, userWorkspaceId)
+      !isDefined(flatViewSort) ||
+      flatViewSort.deletedAt !== null ||
+      !isDefined(flatView) ||
+      !isViewAvailableToUser({ flatView, userWorkspaceId })
     ) {
       throw new ViewSortException(
         generateViewSortExceptionMessage(
@@ -342,6 +376,6 @@ export class ViewSortService {
       );
     }
 
-    return viewSort;
+    return fromFlatViewSortToViewSortDto(flatViewSort);
   }
 }

@@ -10,10 +10,12 @@ export const findViewGroups = async ({
   viewId,
   gqlFields,
   expectToFail,
+  token,
 }: {
-  viewId: string;
+  viewId?: string;
   gqlFields?: string;
   expectToFail?: boolean;
+  token?: string;
 }): CommonResponseBody<{
   getViewGroups: ViewGroupEntity[];
 }> => {
@@ -22,7 +24,7 @@ export const findViewGroups = async ({
     gqlFields,
   });
 
-  const response = await makeMetadataApiRequest(graphqlOperation);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
