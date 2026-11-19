@@ -23,6 +23,7 @@ import {
   ViewSortDirection,
   ViewType,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
@@ -208,7 +209,7 @@ describe('Application export - undeclared field references to another applicatio
   }, 120000);
 
   afterAll(async () => {
-    if (customApplicationViewId !== undefined) {
+    if (isDefined(customApplicationViewId)) {
       await destroyOneView({
         expectToFail: false,
         viewId: customApplicationViewId,
