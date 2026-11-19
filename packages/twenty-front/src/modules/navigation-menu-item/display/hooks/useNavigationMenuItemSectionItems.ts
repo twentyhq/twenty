@@ -1,5 +1,6 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useNavigationObjectMetadataItems } from '@/navigation-menu-item/common/hooks/useNavigationObjectMetadataItems';
+import { getWorkspaceSidebarRootSectionId } from '@/navigation-menu-item/common/utils/getWorkspaceSidebarRootSectionId';
 import { flattenNavigationMenuItemsWithFolderChildren } from '@/navigation-menu-item/common/utils/flattenNavigationMenuItemsWithFolderChildren';
 import { getWorkspaceSidebarOrphanItemsInDisplayOrder } from '@/navigation-menu-item/display/utils/getWorkspaceSidebarOrphanItemsInDisplayOrder';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -11,7 +12,6 @@ import {
   FeatureFlagKey,
   type NavigationMenuItem,
 } from '~/generated-metadata/graphql';
-import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder';
@@ -22,17 +22,6 @@ export type NavigationMenuItemClickParams = {
   item: NavigationMenuItem;
   objectMetadataItem?: EnrichedObjectMetadataItem | null;
 };
-
-const getTopLevelSectionIds = (navigationMenuItems: NavigationMenuItem[]) =>
-  new Set(
-    navigationMenuItems
-      .filter(
-        (item) =>
-          item.type === NavigationMenuItemType.SECTION &&
-          !isDefined(item.parentId),
-      )
-      .map((item) => item.id),
-  );
 
 export const useNavigationMenuItemSectionItems = ({
   containerId = null,
@@ -58,10 +47,10 @@ export const useNavigationMenuItemSectionItems = ({
   const isFlatteningTopLevelSections =
     shouldFlattenTopLevelSections ?? !isCustomizableSidebarEnabled;
 
-  const flattenedSectionIds =
+  const rootSectionId =
     isFlatteningTopLevelSections && containerId === null
-      ? getTopLevelSectionIds(workspaceNavigationMenuItems)
-      : new Set<string>();
+      ? getWorkspaceSidebarRootSectionId(workspaceNavigationMenuItems)
+      : null;
 
   const flatItems = getWorkspaceSidebarOrphanItemsInDisplayOrder({
     workspaceNavigationMenuItems,
@@ -70,8 +59,8 @@ export const useNavigationMenuItemSectionItems = ({
     views,
     objectPermissionsByObjectMetadataId,
     includeInaccessibleObjectBackedItems: isLayoutCustomizationModeEnabled,
-    containerId,
-    flattenedSectionIds,
+    containerId: rootSectionId ?? containerId,
+    includeTopLevelItems: isDefined(rootSectionId),
   });
 
   return flattenNavigationMenuItemsWithFolderChildren(

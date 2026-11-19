@@ -17,6 +17,8 @@ import { NavigationMenuItemDisplay } from '@/navigation-menu-item/display/compon
 import { NavigationMenuItemOrphanDropTarget } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemOrphanDropTarget';
 import type { NavigationMenuItemSectionListDndKitProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionListDndKitProps';
 import { WorkspaceSectionAddMenuItemButton } from '@/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton';
+import { useWorkspaceSidebarRootContainerId } from '@/navigation-menu-item/display/hooks/useWorkspaceSidebarRootContainerId';
+import { isDefined } from 'twenty-shared/utils';
 
 type WorkspaceSectionListDndKitProps = NavigationMenuItemSectionListDndKitProps;
 
@@ -50,6 +52,7 @@ export const WorkspaceSectionListDndKit = ({
   ).length;
   const isAddMenuItemButtonVisible = isLayoutCustomizationModeEnabled;
   const orphanAppendDndIndex = filteredItems.length;
+  const workspaceSidebarRootContainerId = useWorkspaceSidebarRootContainerId();
   return (
     <StyledList>
       {filteredItems.map((item, index) => (
@@ -91,7 +94,18 @@ export const WorkspaceSectionListDndKit = ({
           compact
           highlightPosition="top"
         />
-        {isAddMenuItemButtonVisible && <WorkspaceSectionAddMenuItemButton />}
+        {isAddMenuItemButtonVisible && (
+          <WorkspaceSectionAddMenuItemButton
+            container={
+              isDefined(workspaceSidebarRootContainerId)
+                ? {
+                    id: workspaceSidebarRootContainerId,
+                    itemCount: filteredItems.length,
+                  }
+                : undefined
+            }
+          />
+        )}
       </NavigationMenuItemDroppableSlot>
     </StyledList>
   );

@@ -18,6 +18,7 @@ import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useWorkspaceSidebarRootContainerId } from '@/navigation-menu-item/display/hooks/useWorkspaceSidebarRootContainerId';
 
 const matchesFolderId = (
   item: { parentId?: string | null },
@@ -40,6 +41,8 @@ export const useHandleNavigationMenuItemDragAndDrop = (
   );
 
   const isDraftMode = section === 'workspace';
+  const workspaceSidebarRootContainerId = useWorkspaceSidebarRootContainerId();
+  const rootContainerId = isDraftMode ? workspaceSidebarRootContainerId : null;
   const config = NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG[section];
   const allItems = isDraftMode
     ? workspaceNavigationMenuItems
@@ -146,21 +149,26 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       return;
     }
 
-    const destinationFolderId = extractFolderIdFromDroppableId(
+    const destinationDroppableFolderId = extractFolderIdFromDroppableId(
       destination.droppableId,
       section,
     );
-    const sourceFolderId = extractFolderIdFromDroppableId(
+    const sourceDroppableFolderId = extractFolderIdFromDroppableId(
       source.droppableId,
       section,
     );
 
     if (
       isNavigationMenuItemFolder(draggedItem) &&
-      isDefined(destinationFolderId)
+      isDefined(destinationDroppableFolderId)
     ) {
       return;
     }
+
+    const destinationFolderId = destinationDroppableFolderId ?? rootContainerId;
+    const sourceFolderId =
+      sourceDroppableFolderId ??
+      (isDefined(rootContainerId) ? (draggedItem.parentId ?? null) : null);
 
     if (destination.droppableId.startsWith(config.folderHeaderPrefix)) {
       if (destinationFolderId === null) {

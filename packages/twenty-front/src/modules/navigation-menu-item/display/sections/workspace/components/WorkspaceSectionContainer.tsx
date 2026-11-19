@@ -17,6 +17,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { useWorkspaceSidebarRootContainerId } from '@/navigation-menu-item/display/hooks/useWorkspaceSidebarRootContainerId';
 
 const LazyWorkspaceSectionListDndKit = lazy(() =>
   import('@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListDndKit').then(
@@ -52,8 +53,12 @@ export const WorkspaceSectionContainer = ({
   const views = useAtomStateValue(viewsSelector);
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const workspaceSidebarRootContainerId = useWorkspaceSidebarRootContainerId();
   const { topLevelItems: flatItems, folderChildrenById } =
-    groupNavigationMenuItemsByContainer({ items, containerId: null });
+    groupNavigationMenuItemsByContainer({
+      items,
+      containerId: workspaceSidebarRootContainerId,
+    });
 
   const { filteredTopLevelItems, filteredFolderChildrenById } =
     useReadableNavigationMenuItems({

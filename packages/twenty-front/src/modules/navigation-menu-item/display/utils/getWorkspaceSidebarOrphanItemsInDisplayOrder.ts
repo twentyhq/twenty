@@ -24,7 +24,7 @@ type GetWorkspaceSidebarOrphanItemsInDisplayOrderArgs = {
   >[0];
   includeInaccessibleObjectBackedItems?: boolean;
   containerId?: string | null;
-  flattenedSectionIds?: Set<string>;
+  includeTopLevelItems?: boolean;
 };
 
 export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
@@ -35,22 +35,22 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
   objectPermissionsByObjectMetadataId,
   includeInaccessibleObjectBackedItems = false,
   containerId = null,
-  flattenedSectionIds = new Set(),
+  includeTopLevelItems = false,
 }: GetWorkspaceSidebarOrphanItemsInDisplayOrderArgs): NavigationMenuItem[] => {
-  const isInFlattenedSection = (item: NavigationMenuItem) =>
-    isDefined(item.parentId) && flattenedSectionIds.has(item.parentId);
+  const isIncludedTopLevelItem = (item: NavigationMenuItem) =>
+    includeTopLevelItems && !isDefined(item.parentId);
 
   const flatWorkspaceItems = workspaceNavigationMenuItems
     .filter(
       (item) =>
         ((item.parentId ?? null) === containerId ||
-          isInFlattenedSection(item)) &&
+          isIncludedTopLevelItem(item)) &&
         !isNavigationMenuItemTabOrSection(item),
     )
     .sort((a, b) => a.position - b.position);
 
-  const toTopLevelItem = (item: NavigationMenuItem): NavigationMenuItem =>
-    isInFlattenedSection(item) ? { ...item, parentId: null } : item;
+  const toContainerItem = (item: NavigationMenuItem): NavigationMenuItem =>
+    isIncludedTopLevelItem(item) ? { ...item, parentId: containerId } : item;
 
   const processedItemsById = new Map(
     workspaceNavigationMenuItemsSorted.map((item) => [item.id, item]),
@@ -59,7 +59,7 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
   return flatWorkspaceItems.reduce<NavigationMenuItem[]>((acc, item) => {
     if (isNavigationMenuItemFolder(item)) {
       acc.push(
-        toTopLevelItem({
+        toContainerItem({
           ...item,
           icon: item.icon ?? FOLDER_ICON_DEFAULT,
         }),
@@ -77,7 +77,7 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
         rowSource.type === NavigationMenuItemType.NATIVE_PAGE ||
         isAutomationNavigationMenuItemType(rowSource.type)
       ) {
-        acc.push(toTopLevelItem(rowSource));
+        acc.push(toContainerItem(rowSource));
         return acc;
       }
 
@@ -92,7 +92,7 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
       }
 
       if (includeInaccessibleObjectBackedItems) {
-        acc.push(toTopLevelItem(rowSource));
+        acc.push(toContainerItem(rowSource));
         return acc;
       }
 
@@ -105,7 +105,7 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
           operationType: 'read',
         })
       ) {
-        acc.push(toTopLevelItem(rowSource));
+        acc.push(toContainerItem(rowSource));
       }
     }
     return acc;

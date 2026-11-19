@@ -121,7 +121,7 @@ describe('getWorkspaceSidebarOrphanItemsInDisplayOrder', () => {
     expect(rootResult.map((item) => item.id)).toEqual(['item-id']);
   });
 
-  it('lists the items of a flattened section with the top-level items', () => {
+  it('lists the top-level items with the items of the root section', () => {
     const section = buildNavigationMenuItem({
       id: 'workspace-section',
       type: NavigationMenuItemType.SECTION,
@@ -145,12 +145,13 @@ describe('getWorkspaceSidebarOrphanItemsInDisplayOrder', () => {
       objectMetadataItems: [],
       views: [],
       objectPermissionsByObjectMetadataId: {},
-      flattenedSectionIds: new Set([section.id]),
+      containerId: section.id,
+      includeTopLevelItems: true,
     });
 
     expect(result.map(({ id, parentId }) => ({ id, parentId }))).toEqual([
-      { id: 'folder-in-section', parentId: null },
-      { id: 'top-level-folder', parentId: undefined },
+      { id: 'folder-in-section', parentId: section.id },
+      { id: 'top-level-folder', parentId: section.id },
     ]);
   });
 });
