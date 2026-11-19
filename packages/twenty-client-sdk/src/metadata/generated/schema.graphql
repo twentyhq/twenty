@@ -885,6 +885,14 @@ type ApplicationRegistrationVariable {
   value: String
 }
 
+type ApplicationSuggestedViewField {
+  fieldMetadataId: UUID!
+  objectMetadataId: UUID!
+  position: Float!
+  universalIdentifier: UUID!
+  viewId: UUID!
+}
+
 type ApplicationTokenPair {
   applicationAccessToken: AuthToken!
   applicationRefreshToken: AuthToken!
@@ -2148,6 +2156,11 @@ input DestroyViewSortInput {
 type DevelopmentApplication {
   id: String!
   universalIdentifier: String!
+}
+
+input DismissApplicationSuggestedViewFieldsInput {
+  applicationId: UUID!
+  universalIdentifiers: [UUID!]!
 }
 
 type DomainRecord {
@@ -3644,6 +3657,7 @@ type Mutation {
   destroyViewSort(input: DestroyViewSortInput!): Boolean!
   detachRecordFromInboxThread(input: InboxThreadRecordInput!): Boolean!
   disconnectConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
+  dismissApplicationSuggestedViewFields(input: DismissApplicationSuggestedViewFieldsInput!): Boolean!
   duplicateDashboard(id: UUID!): DuplicatedDashboard!
   duplicateMessageList(id: UUID!): DuplicatedMessageList!
   editSSOIdentityProvider(input: EditSsoInput!): EditSso!
@@ -4395,6 +4409,7 @@ type Query {
   applicationCoreGraphqlSchema(applicationUniversalIdentifier: String!): String!
   applicationRegistrationTarballUrl(id: String!): String
   applicationSdkClientChecksums(applicationId: UUID!): SdkClientChecksums
+  applicationSuggestedViewFields(applicationId: UUID!): [ApplicationSuggestedViewField!]!
   barChartData(input: BarChartDataInput!): BarChartData!
   billingPartnerCode: BillingPartnerCode!
   billingPlans: [BillingPlan!]!

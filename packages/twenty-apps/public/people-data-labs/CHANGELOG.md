@@ -6,9 +6,9 @@ All notable changes to this application are documented in this file.
 
 - Suggest showing Seniority, Job Role, Industry, Enrichment Status and Last
   Enriched At on All People, and Industry, Employees, Total Funding Raised,
-  Latest Funding Stage and Enrichment Status on All Companies. The app does not
-  add these columns itself: the app's page in Settings offers them, and Review
-  asks the AI to add them to your views. Requires Twenty 2.61 or later.
+  Latest Funding Stage and Enrichment Status on All Companies. On Twenty 2.61 or
+  later, the app's page in Settings offers these columns and Review asks the AI
+  to add them to your views.
 
 ## 1.4.0
 

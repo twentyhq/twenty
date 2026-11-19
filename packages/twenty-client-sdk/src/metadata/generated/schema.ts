@@ -767,6 +767,15 @@ export interface ApplicationRegistrationVariable {
     __typename: 'ApplicationRegistrationVariable'
 }
 
+export interface ApplicationSuggestedViewField {
+    fieldMetadataId: Scalars['UUID']
+    objectMetadataId: Scalars['UUID']
+    position: Scalars['Float']
+    universalIdentifier: Scalars['UUID']
+    viewId: Scalars['UUID']
+    __typename: 'ApplicationSuggestedViewField'
+}
+
 export interface ApplicationTokenPair {
     applicationAccessToken: AuthToken
     applicationRefreshToken: AuthToken
@@ -2562,6 +2571,7 @@ export interface Mutation {
     destroyViewSort: Scalars['Boolean']
     detachRecordFromInboxThread: Scalars['Boolean']
     disconnectConnectedAccount: ConnectedAccountPublicDTO
+    dismissApplicationSuggestedViewFields: Scalars['Boolean']
     duplicateDashboard: DuplicatedDashboard
     duplicateMessageList: DuplicatedMessageList
     editSSOIdentityProvider: EditSso
@@ -3231,6 +3241,7 @@ export interface Query {
     applicationCoreGraphqlSchema: Scalars['String']
     applicationRegistrationTarballUrl?: Scalars['String']
     applicationSdkClientChecksums?: SdkClientChecksums
+    applicationSuggestedViewFields: ApplicationSuggestedViewField[]
     barChartData: BarChartData
     billingPartnerCode: BillingPartnerCode
     billingPlans: BillingPlan[]
@@ -5363,6 +5374,16 @@ export interface ApplicationRegistrationVariableGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApplicationSuggestedViewFieldGenqlSelection{
+    fieldMetadataId?: boolean | number
+    objectMetadataId?: boolean | number
+    position?: boolean | number
+    universalIdentifier?: boolean | number
+    viewId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ApplicationTokenPairGenqlSelection{
     applicationAccessToken?: AuthTokenGenqlSelection
     applicationRefreshToken?: AuthTokenGenqlSelection
@@ -6258,6 +6279,8 @@ export interface DevelopmentApplicationGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface DismissApplicationSuggestedViewFieldsInput {applicationId: Scalars['UUID'],universalIdentifiers: Scalars['UUID'][]}
 
 export interface DomainRecordGenqlSelection{
     key?: boolean | number
@@ -7423,6 +7446,7 @@ export interface MutationGenqlSelection{
     destroyViewSort?: { __args: {input: DestroyViewSortInput} }
     detachRecordFromInboxThread?: { __args: {input: InboxThreadRecordInput} }
     disconnectConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
+    dismissApplicationSuggestedViewFields?: { __args: {input: DismissApplicationSuggestedViewFieldsInput} }
     duplicateDashboard?: (DuplicatedDashboardGenqlSelection & { __args: {id: Scalars['UUID']} })
     duplicateMessageList?: (DuplicatedMessageListGenqlSelection & { __args: {id: Scalars['UUID']} })
     editSSOIdentityProvider?: (EditSsoGenqlSelection & { __args: {input: EditSsoInput} })
@@ -8136,6 +8160,7 @@ export interface QueryGenqlSelection{
     applicationCoreGraphqlSchema?: { __args: {applicationUniversalIdentifier: Scalars['String']} }
     applicationRegistrationTarballUrl?: { __args: {id: Scalars['String']} }
     applicationSdkClientChecksums?: (SdkClientChecksumsGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
+    applicationSuggestedViewFields?: (ApplicationSuggestedViewFieldGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     barChartData?: (BarChartDataGenqlSelection & { __args: {input: BarChartDataInput} })
     billingPartnerCode?: BillingPartnerCodeGenqlSelection
     billingPlans?: BillingPlanGenqlSelection
@@ -10327,6 +10352,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isApplicationRegistrationVariable = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationVariable => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationVariable"')
       return ApplicationRegistrationVariable_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationSuggestedViewField_possibleTypes: string[] = ['ApplicationSuggestedViewField']
+    export const isApplicationSuggestedViewField = (obj?: { __typename?: any } | null): obj is ApplicationSuggestedViewField => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationSuggestedViewField"')
+      return ApplicationSuggestedViewField_possibleTypes.includes(obj.__typename)
     }
     
 
