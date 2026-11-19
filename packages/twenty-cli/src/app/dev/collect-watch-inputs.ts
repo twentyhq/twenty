@@ -78,7 +78,9 @@ const recordParent = (inputs: Map<string, WatchInput>, path: string) => {
     } catch {}
 
     const ancestor = dirname(parent);
-    if (ancestor === parent) return;
+    if (ancestor === parent) {
+      return;
+    }
     parent = ancestor;
   }
 };

@@ -11,7 +11,9 @@ export const readWatchInputStamp = ({
 }: Pick<WatchInput, 'path' | 'kind'>): string | null => {
   try {
     if (kind === 'directory') {
-      if (isBroadWatchDirectory(path)) return null;
+      if (isBroadWatchDirectory(path)) {
+        return null;
+      }
 
       return JSON.stringify(
         readdirSync(path, { withFileTypes: true })

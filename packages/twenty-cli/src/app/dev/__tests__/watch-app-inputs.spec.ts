@@ -87,6 +87,9 @@ const fixture = async () => {
     onScopeChange,
   };
 };
+const waitForChange = (onChange: () => void) =>
+  vi.waitFor(() => expect(onChange).toHaveBeenCalled(), { timeout: 3000 });
+
 const collect = async (file: string) =>
   (
     await collectWatchInputs(async () => {
@@ -104,11 +107,11 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
     const { appPath, onChange, onError } = await fixture();
     const source = join(appPath, 'source.ts');
     await writeFile(source, 'first');
-    await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
+    await waitForChange(onChange);
     onChange.mockClear();
     await writeFile(join(appPath, 'source.tmp'), 'second');
     await rename(join(appPath, 'source.tmp'), source);
-    await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
+    await waitForChange(onChange);
     onChange.mockClear();
     for (const ignored of ['.twenty', '.git', 'node_modules']) {
       await mkdir(join(appPath, ignored));
@@ -127,21 +130,21 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
     await writeFile(external, 'initial');
     await watcher.update(await collect(external), true);
     await writeFile(external, 'syntax error');
-    await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
+    await waitForChange(onChange);
     await watcher.update([], false);
     onChange.mockClear();
     await writeFile(external, 'fixed');
-    await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
+    await waitForChange(onChange);
     const missing = join(root, 'linked', 'new-folder', 'missing.ts');
     await watcher.update(await collect(missing), false);
     onChange.mockClear();
     await mkdir(join(root, 'linked', 'new-folder'));
     await writeFile(missing, 'created');
-    await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
+    await waitForChange(onChange);
     await watcher.update([], true);
     onChange.mockClear();
     await writeFile(external, 'unrelated now');
-    await new Promise((resolve) => setTimeout(resolve, 150));
+    await new Promise((resolve) => setTimeout(resolve, 1200));
     expect(onChange).not.toHaveBeenCalled();
   });
 
@@ -160,7 +163,7 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
     await mkdir(directory);
     await writeFile(external, 'restored');
 
-    await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
+    await waitForChange(onChange);
   });
 
   it('keeps a shallow watch when the tracked directory and its parent disappear', async () => {
@@ -189,11 +192,11 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
     );
     await mkdir(join(root, 'unrelated'));
     await writeFile(join(root, 'unrelated', 'ignored.ts'), 'ignored');
-    await new Promise((resolve) => setTimeout(resolve, 200));
+    await new Promise((resolve) => setTimeout(resolve, 1200));
     expect(onChange).not.toHaveBeenCalled();
     await mkdir(parent);
     await mkdir(directory);
-    await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
+    await waitForChange(onChange);
     expect(onError).not.toHaveBeenCalled();
   });
 
@@ -222,10 +225,10 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
     );
     onChange.mockClear();
     await writeFile(join(root, 'unrelated.ts'), 'outside the tracked inputs');
-    await new Promise((resolve) => setTimeout(resolve, 150));
+    await new Promise((resolve) => setTimeout(resolve, 1200));
     expect(onChange).not.toHaveBeenCalled();
     await rm(directory, { recursive: true });
-    await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
+    await waitForChange(onChange);
   });
 
   it('detects a file replaced by a directory before watcher registration', async () => {
@@ -284,6 +287,53 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
     });
   });
 
+  it('reports a large polling scope once, counting unique paths and excluding ignored directories', async () => {
+    const { root, watcher, onWarning } = await fixture();
+    const home = join(root, 'home');
+    await mkdir(home);
+    watcherOptions.homeDirectory = await realpath(home);
+    const files = Array.from({ length: 500 }, (_, index) => ({
+      path: join(home, `helper-${index}.ts`),
+      kind: 'file' as const,
+      stamp: null,
+    }));
+    const inputs = [
+      ...files,
+      ...files,
+      { path: home, kind: 'directory' as const, stamp: null },
+      {
+        path: join(home, 'node_modules'),
+        kind: 'directory' as const,
+        stamp: null,
+      },
+    ];
+
+    await watcher.update(inputs, true);
+    await watcher.update(inputs, false);
+
+    expect(
+      onWarning.mock.calls.filter(
+        ([warning]) => warning.code === 'WATCH_SCOPE_LARGE',
+      ),
+    ).toEqual([
+      [
+        {
+          code: 'WATCH_SCOPE_LARGE',
+          message:
+            'Polling 500 external paths every 1000 ms. Large linked source packages can increase CPU usage.',
+        },
+      ],
+    ]);
+
+    await watcher.update([], true);
+    await watcher.update(inputs, true);
+    expect(
+      onWarning.mock.calls.filter(
+        ([warning]) => warning.code === 'WATCH_SCOPE_LARGE',
+      ),
+    ).toHaveLength(2);
+  });
+
   it('never lists broad directories or their symlink aliases while collecting or attaching inputs', async () => {
     const { root, watcher, onWarning } = await fixture();
     const home = join(root, 'home');
@@ -333,31 +383,31 @@ describe.each(['platform', 'node'])('app input watch (%s)', (backend) => {
     onChange.mockClear();
 
     await writeFile(join(home, 'unrelated.ts'), 'unrelated');
-    await new Promise((resolve) => setTimeout(resolve, 400));
+    await new Promise((resolve) => setTimeout(resolve, 1200));
     expect(onChange).not.toHaveBeenCalled();
 
     await writeFile(join(home, 'helper.tmp'), 'replacement');
     await rename(join(home, 'helper.tmp'), external);
-    await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
+    await waitForChange(onChange);
     onChange.mockClear();
     await rm(external);
-    await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
+    await waitForChange(onChange);
     onChange.mockClear();
     await writeFile(external, 'recreated');
-    await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
+    await waitForChange(onChange);
 
     const missing = join(home, 'missing', 'new.ts');
     await watcher.update(await collect(missing), false);
     onChange.mockClear();
     await mkdir(dirname(missing));
     await writeFile(missing, 'created');
-    await vi.waitFor(() => expect(onChange).toHaveBeenCalled());
+    await waitForChange(onChange);
     expect(readdirSync).not.toHaveBeenCalled();
 
     await watcher.close();
     onChange.mockClear();
     await writeFile(external, 'after close');
-    await new Promise((resolve) => setTimeout(resolve, 400));
+    await new Promise((resolve) => setTimeout(resolve, 1200));
     expect(onChange).not.toHaveBeenCalled();
-  });
+  }, 15000);
 });

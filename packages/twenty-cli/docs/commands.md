@@ -831,10 +831,14 @@ apply.
 
 The CLI watches the app folder and the external local files read by definition
 loading, bundling and typechecking, including linked packages and extended
-TypeScript configs. External files use exact-path polling, so atomic saves and
-deletion/recreation remain visible without expanding into parent directories.
+TypeScript configs. External files use exact-path polling once per second, so
+atomic saves and deletion/recreation remain visible without expanding into parent
+directories.
 Relative imports of missing external files observe the nearest allowed directory
 to recover when the file is created.
+
+At 500 or more external paths, `WATCH_SCOPE_LARGE` reports the polling count and
+interval. Large linked source packages can increase CPU usage.
 
 Home and temporary directory roots, their ancestors and filesystem roots are
 excluded from automatic directory observation, including symlink aliases.
