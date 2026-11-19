@@ -8,7 +8,13 @@ const VALID_UUID = '20202020-b001-4b01-8b01-c0aba11c0001';
 const OTHER_VALID_UUID = '20202020-b002-4b02-8b02-c0aba11c0002';
 
 const buildFlatNavigationMenuItem = (
-  overrides: Partial<UniversalFlatNavigationMenuItem>,
+  overrides: Omit<
+    Partial<UniversalFlatNavigationMenuItem>,
+    'nativePageKey' | 'builtInSectionKey'
+  > & {
+    nativePageKey?: string | null;
+    builtInSectionKey?: string | null;
+  },
 ): UniversalFlatNavigationMenuItem =>
   ({
     universalIdentifier: VALID_UUID,
@@ -184,8 +190,7 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
     const errors = validateNavigationMenuItemTypeRequiredProperties({
       flatNavigationMenuItem: buildFlatNavigationMenuItem({
         type: NavigationMenuItemType.NATIVE_PAGE,
-        nativePageKey:
-          'settings' as UniversalFlatNavigationMenuItem['nativePageKey'],
+        nativePageKey: 'settings',
       }),
     });
 
@@ -209,8 +214,7 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
     const errors = validateNavigationMenuItemTypeRequiredProperties({
       flatNavigationMenuItem: buildFlatNavigationMenuItem({
         type: NavigationMenuItemType.SECTION,
-        builtInSectionKey:
-          'unknown' as UniversalFlatNavigationMenuItem['builtInSectionKey'],
+        builtInSectionKey: 'unknown',
       }),
     });
 
