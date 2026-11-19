@@ -10084,7 +10084,7 @@ msgstr "ワークフローを閲覧できるユーザーを変更できるのは
 #. js-lingui-id: yT1QOm
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
 msgid "Only a workspace member can create a private agent."
-msgstr ""
+msgstr "ワークスペースメンバーのみがプライベートエージェントを作成できます。"
 
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -10141,7 +10141,7 @@ msgstr "このエージェントを所有するアプリケーションのみが
 #: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Only the member who owns an agent can change who sees it."
-msgstr ""
+msgstr "エージェントを所有するメンバーのみが、その閲覧者を変更できます。"
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
@@ -17769,7 +17769,7 @@ msgstr "ワークスペース"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
 msgctxt "navigationMenuItem.name"
 msgid "Workspace"
-msgstr ""
+msgstr "ワークスペース"
 
 #. js-lingui-id: bK8AyJ
 #: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts

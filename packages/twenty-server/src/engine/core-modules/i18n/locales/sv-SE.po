@@ -10086,7 +10086,7 @@ msgstr "Endast en arbetsytemedlem kan ändra vem som ser ett arbetsflöde"
 #. js-lingui-id: yT1QOm
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
 msgid "Only a workspace member can create a private agent."
-msgstr ""
+msgstr "Endast en arbetsytemedlem kan skapa en privat agent."
 
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -10143,7 +10143,7 @@ msgstr "Endast applikationen som äger denna agent kan ändra dess utlösare"
 #: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Only the member who owns an agent can change who sees it."
-msgstr ""
+msgstr "Endast medlemmen som äger en agent kan ändra vem som kan se den."
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
@@ -17775,7 +17775,7 @@ msgstr "Arbetsyta"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
 msgctxt "navigationMenuItem.name"
 msgid "Workspace"
-msgstr ""
+msgstr "Arbetsyta"
 
 #. js-lingui-id: bK8AyJ
 #: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts

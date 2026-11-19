@@ -10084,7 +10084,7 @@ msgstr "Somente um membro do espaço de trabalho pode alterar quem vê um workfl
 #. js-lingui-id: yT1QOm
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
 msgid "Only a workspace member can create a private agent."
-msgstr ""
+msgstr "Somente um membro do espaço de trabalho pode criar um agente privado."
 
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -10141,7 +10141,7 @@ msgstr "Somente o aplicativo proprietário deste agente pode alterar seus gatilh
 #: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Only the member who owns an agent can change who sees it."
-msgstr ""
+msgstr "Somente o membro proprietário de um agente pode alterar quem pode vê-lo."
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
@@ -17769,7 +17769,7 @@ msgstr "Workspace"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
 msgctxt "navigationMenuItem.name"
 msgid "Workspace"
-msgstr ""
+msgstr "Workspace"
 
 #. js-lingui-id: bK8AyJ
 #: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts

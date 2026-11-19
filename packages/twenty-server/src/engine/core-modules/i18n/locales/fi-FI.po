@@ -10084,7 +10084,7 @@ msgstr "Vain työtilan jäsen voi muuttaa sitä, kuka näkee työnkulun"
 #. js-lingui-id: yT1QOm
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
 msgid "Only a workspace member can create a private agent."
-msgstr ""
+msgstr "Vain työtilan jäsen voi luoda yksityisen agentin."
 
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -10141,7 +10141,7 @@ msgstr "Vain tämän agentin omistava sovellus voi muuttaa sen laukaisimia"
 #: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Only the member who owns an agent can change who sees it."
-msgstr ""
+msgstr "Vain agentin omistava jäsen voi muuttaa sitä, kuka näkee sen."
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
@@ -17769,7 +17769,7 @@ msgstr "Työtila"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
 msgctxt "navigationMenuItem.name"
 msgid "Workspace"
-msgstr ""
+msgstr "Työtila"
 
 #. js-lingui-id: bK8AyJ
 #: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
