@@ -41,19 +41,18 @@ export const MainNavigationDrawerEditButton = () => {
   }
 
   return (
-    <div onMouseEnter={preloadNavigationMenuItemDndKit}>
-      <LightIconButton
-        emphasis="standard"
-        size="sm"
-        onClick={() => enterLayoutCustomizationMode()}
-        aria-label={t`Customize sidebar`}
-        tooltip={t`Customize sidebar`}
-        tooltipDelay={TooltipDelay.longDelay}
-        tooltipPlace="bottom"
-        tooltipOffset={5}
-      >
-        <IconTool />
-      </LightIconButton>
-    </div>
+    <LightIconButton
+      emphasis="standard"
+      size="sm"
+      onClick={() => enterLayoutCustomizationMode()}
+      onMouseEnter={preloadNavigationMenuItemDndKit}
+      aria-label={t`Customize sidebar`}
+      tooltip={t`Customize sidebar`}
+      tooltipDelay={TooltipDelay.longDelay}
+      tooltipPlace="bottom"
+      tooltipOffset={5}
+    >
+      <IconTool />
+    </LightIconButton>
   );
 };
