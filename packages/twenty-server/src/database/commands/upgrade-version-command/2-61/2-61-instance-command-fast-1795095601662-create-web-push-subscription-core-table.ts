@@ -7,7 +7,7 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 export class CreateWebPushSubscriptionCoreTableFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'CREATE TABLE "core"."webPushSubscription" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "workspaceId" uuid NOT NULL, "endpoint" character varying NOT NULL, "p256dhKey" character varying NOT NULL, "authSecret" character varying NOT NULL, "applicationServerKey" character varying NOT NULL, "userSessionId" uuid NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_56665eaf0faa83047c4c8300285" PRIMARY KEY ("id"))',
+      'CREATE TABLE "core"."webPushSubscription" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "workspaceId" uuid NOT NULL, "endpoint" character varying NOT NULL, "browserPublicKey" character varying NOT NULL, "browserAuthSecret" character varying NOT NULL, "vapidPublicKey" character varying NOT NULL, "userSessionId" uuid NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_56665eaf0faa83047c4c8300285" PRIMARY KEY ("id"))',
     );
     await queryRunner.query(
       'CREATE INDEX "IDX_WEB_PUSH_SUBSCRIPTION_USER_SESSION_ID" ON "core"."webPushSubscription" ("userSessionId") ',

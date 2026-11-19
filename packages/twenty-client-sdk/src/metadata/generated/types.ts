@@ -16033,16 +16033,16 @@ export default {
             ]
         },
         "UpsertWebPushSubscriptionInput": {
-            "applicationServerKey": [
+            "browserAuthSecret": [
                 4
             ],
-            "authSecret": [
+            "browserPublicKey": [
                 4
             ],
             "endpoint": [
                 4
             ],
-            "p256dhKey": [
+            "vapidPublicKey": [
                 4
             ],
             "__typename": [

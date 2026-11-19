@@ -58,9 +58,9 @@ export class WebPushService {
       twentyConfigService: this.twentyConfigService,
     });
 
-    if (input.applicationServerKey !== publicKey) {
+    if (input.vapidPublicKey !== publicKey) {
       throw new UserInputError(
-        'Web push subscription was created with an unknown application server key',
+        'Web push subscription was created with an unknown VAPID public key',
       );
     }
 
@@ -83,9 +83,9 @@ export class WebPushService {
       workspaceId,
       {
         endpoint: input.endpoint,
-        p256dhKey: input.p256dhKey,
-        authSecret: input.authSecret,
-        applicationServerKey: input.applicationServerKey,
+        browserPublicKey: input.browserPublicKey,
+        browserAuthSecret: input.browserAuthSecret,
+        vapidPublicKey: input.vapidPublicKey,
         userSessionId: session.id,
       },
       ['workspaceId', 'endpoint'],

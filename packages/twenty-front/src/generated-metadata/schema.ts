@@ -8497,10 +8497,10 @@ export type UpsertViewWidgetViewSortInput = {
 };
 
 export type UpsertWebPushSubscriptionInput = {
-  applicationServerKey: Scalars['String']['input'];
-  authSecret: Scalars['String']['input'];
+  browserAuthSecret: Scalars['String']['input'];
+  browserPublicKey: Scalars['String']['input'];
   endpoint: Scalars['String']['input'];
-  p256dhKey: Scalars['String']['input'];
+  vapidPublicKey: Scalars['String']['input'];
 };
 
 export type UsageAnalytics = {
