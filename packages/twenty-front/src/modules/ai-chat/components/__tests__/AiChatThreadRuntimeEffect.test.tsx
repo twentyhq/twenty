@@ -2,7 +2,7 @@ import { MockedProvider } from '@apollo/client/testing/react';
 import { render, waitFor } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 
-import { AiChatMessagesFetchEffect } from '@/ai-chat/components/AiChatMessagesFetchEffect';
+import { AiChatThreadRuntimeEffect } from '@/ai-chat/components/AiChatThreadRuntimeEffect';
 import { aiChatFetchedMessagesFamilyState } from '@/ai-chat/states/aiChatFetchedMessagesFamilyState';
 import { aiChatLiveReactionRevisionsFamilyState } from '@/ai-chat/messages/states/aiChatLiveReactionRevisionsFamilyState';
 import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
@@ -50,7 +50,7 @@ const CHAT_MESSAGES_MOCK = {
   },
 };
 
-describe('AiChatMessagesFetchEffect', () => {
+describe('AiChatThreadRuntimeEffect', () => {
   it('keeps reactions received live over the ones a fetch read', async () => {
     const store = createStore();
     const liveReactions = [
@@ -84,7 +84,7 @@ describe('AiChatMessagesFetchEffect', () => {
     render(
       <JotaiProvider store={store}>
         <MockedProvider mocks={[CHAT_MESSAGES_MOCK]}>
-          <AiChatMessagesFetchEffect threadId={THREAD_ID} />
+          <AiChatThreadRuntimeEffect threadId={THREAD_ID} />
         </MockedProvider>
       </JotaiProvider>,
     );
