@@ -18,7 +18,7 @@ import {
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -93,29 +93,55 @@ const createJobTitleViewFilter = async ({
   expect(viewFilterGroupErrors).toBeUndefined();
 
   const viewFilterGroupId = viewFilterGroupData.createViewFilterGroup.id;
-  const { data: viewFilterData, errors: viewFilterErrors } =
-    await createOneViewFilter({
+
+  try {
+    const { data: viewFilterData, errors: viewFilterErrors } =
+      await createOneViewFilter({
+        expectToFail: false,
+        gqlFields: 'id',
+        input: {
+          viewId,
+          viewFilterGroupId,
+          fieldMetadataId: await findFieldMetadataIdByName({
+            objectMetadataId: await findObjectMetadataIdByName('person'),
+            fieldName: 'jobTitle',
+          }),
+          operand: ViewFilterOperand.CONTAINS,
+          value,
+          positionInViewFilterGroup: 0,
+        },
+      });
+
+    expect(viewFilterErrors).toBeUndefined();
+
+    return {
+      viewFilterGroupId,
+      viewFilterId: viewFilterData.createViewFilter.id,
+    };
+  } catch (error) {
+    await destroyOneViewFilterGroup({
+      id: viewFilterGroupId,
       expectToFail: false,
-      gqlFields: 'id',
-      input: {
-        viewId,
-        viewFilterGroupId,
-        fieldMetadataId: await findFieldMetadataIdByName({
-          objectMetadataId: await findObjectMetadataIdByName('person'),
-          fieldName: 'jobTitle',
-        }),
-        operand: ViewFilterOperand.CONTAINS,
-        value,
-        positionInViewFilterGroup: 0,
-      },
     });
+    throw error;
+  }
+};
 
-  expect(viewFilterErrors).toBeUndefined();
+// One failed step must not skip the restore of the seeded view
+const runCleanupSteps = async (cleanupSteps: (() => Promise<unknown>)[]) => {
+  const errors: unknown[] = [];
 
-  return {
-    viewFilterGroupId,
-    viewFilterId: viewFilterData.createViewFilter.id,
-  };
+  for (const cleanupStep of cleanupSteps) {
+    try {
+      await cleanupStep();
+    } catch (error) {
+      errors.push(error);
+    }
+  }
+
+  if (isNonEmptyArray(errors)) {
+    throw errors[0];
+  }
 };
 
 const findGroupedJobTitles = async ({
@@ -173,11 +199,14 @@ describe('group by with a view holding filters and a search text (integration)',
         await findGroupedJobTitles({ viewId, personIds: people.personIds }),
       ).toEqual([people.keptJobTitle]);
     } finally {
-      if (isDefined(viewId)) {
-        await destroyOneView({ viewId, expectToFail: false });
-      }
-
-      await people.destroyPeople();
+      await runCleanupSteps([
+        async () => {
+          if (isDefined(viewId)) {
+            await destroyOneView({ viewId, expectToFail: false });
+          }
+        },
+        people.destroyPeople,
+      ]);
     }
   });
 
@@ -228,25 +257,34 @@ describe('group by with a view holding filters and a search text (integration)',
         }),
       ).toEqual([people.keptJobTitle]);
     } finally {
-      if (isDefined(createdViewFilter)) {
-        await destroyOneViewFilter({
-          input: { id: createdViewFilter.viewFilterId },
-          expectToFail: false,
-        });
-        await destroyOneViewFilterGroup({
-          id: createdViewFilter.viewFilterGroupId,
-          expectToFail: false,
-        });
-      }
-
-      await globalThis.testDataSource.query(
-        `UPDATE core."view" SET overrides = $2 WHERE id = $1`,
-        [standardViewId, initialViewOverridesRow.overrides],
-      );
-      await getAppProviderByClassName<WorkspaceCacheService>(
-        'WorkspaceCacheService',
-      ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatViewMaps']);
-      await people.destroyPeople();
+      await runCleanupSteps([
+        async () => {
+          await globalThis.testDataSource.query(
+            `UPDATE core."view" SET overrides = $2 WHERE id = $1`,
+            [standardViewId, initialViewOverridesRow.overrides],
+          );
+          await getAppProviderByClassName<WorkspaceCacheService>(
+            'WorkspaceCacheService',
+          ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatViewMaps']);
+        },
+        async () => {
+          if (isDefined(createdViewFilter)) {
+            await destroyOneViewFilter({
+              input: { id: createdViewFilter.viewFilterId },
+              expectToFail: false,
+            });
+          }
+        },
+        async () => {
+          if (isDefined(createdViewFilter)) {
+            await destroyOneViewFilterGroup({
+              id: createdViewFilter.viewFilterGroupId,
+              expectToFail: false,
+            });
+          }
+        },
+        people.destroyPeople,
+      ]);
     }
   });
 });
