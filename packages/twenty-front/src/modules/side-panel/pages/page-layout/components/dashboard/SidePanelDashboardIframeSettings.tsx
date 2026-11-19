@@ -4,6 +4,8 @@ import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelGroupFormContainer } from '@/side-panel/components/SidePanelGroupFormContainer';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
+import { DashboardWidgetSettingsManageSection } from '@/side-panel/pages/page-layout/components/dashboard/DashboardWidgetSettingsManageSection';
+import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { styled } from '@linaria/react';
@@ -88,7 +90,11 @@ export const SidePanelDashboardIframeSettings = () => {
   return (
     <StyledContainer>
       <StyledSidePanelContainer>
-        <SidePanelList selectableItemIds={[]}>
+        <SidePanelList
+          selectableItemIds={[
+            WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
+          ]}
+        >
           <SidePanelGroup heading={t`URL to Embed`}>
             <SidePanelGroupFormContainer>
               <FormTextFieldInput
@@ -99,6 +105,7 @@ export const SidePanelDashboardIframeSettings = () => {
               />
             </SidePanelGroupFormContainer>
           </SidePanelGroup>
+          <DashboardWidgetSettingsManageSection pageLayoutId={pageLayoutId} />
         </SidePanelList>
       </StyledSidePanelContainer>
       <WidgetSettingsFooter pageLayoutId={pageLayoutId} />
