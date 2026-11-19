@@ -10,7 +10,7 @@ import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules
 
 const MAX_DELAY_BETWEEN_MENTION_AND_ACTIVITY_WRITES_MS = 2_000;
 
-export const getAgentChatPushNotificationReason = ({
+export const getAgentChatWebPushNotificationReason = ({
   thread,
   participant,
   workspaceMemberId,

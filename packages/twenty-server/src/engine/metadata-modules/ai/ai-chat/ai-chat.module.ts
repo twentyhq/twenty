@@ -61,9 +61,9 @@ import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-ch
 import { AgentInboxThreadResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver';
 import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox-access.service';
 import { WebPushModule } from 'src/engine/core-modules/web-push/web-push.module';
-import { AgentChatPushNotificationListener } from 'src/engine/metadata-modules/ai/ai-chat/listeners/agent-chat-push-notification.listener';
-import { SendAgentChatPushNotificationsJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/send-agent-chat-push-notifications.job';
-import { AgentChatPushNotificationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-push-notification.service';
+import { AgentChatWebPushNotificationListener } from 'src/engine/metadata-modules/ai/ai-chat/listeners/agent-chat-web-push-notification.listener';
+import { SendAgentChatWebPushNotificationsJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/send-agent-chat-web-push-notifications.job';
+import { AgentChatWebPushNotificationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-web-push-notification.service';
 
 @Module({
   imports: [
@@ -93,9 +93,9 @@ import { AgentChatPushNotificationService } from 'src/engine/metadata-modules/ai
     WebPushModule,
   ],
   providers: [
-    AgentChatPushNotificationService,
-    AgentChatPushNotificationListener,
-    SendAgentChatPushNotificationsJob,
+    AgentChatWebPushNotificationService,
+    AgentChatWebPushNotificationListener,
+    SendAgentChatWebPushNotificationsJob,
     AgentChatActorService,
     AiChatUsageService,
     AiChatUsageResolver,

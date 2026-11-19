@@ -9,14 +9,14 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { type PushSubscriptionEntity } from 'src/engine/core-modules/web-push/push-subscription.entity';
+import { type WebPushSubscriptionEntity } from 'src/engine/core-modules/web-push/web-push-subscription.entity';
 import { WebPushService } from 'src/engine/core-modules/web-push/services/web-push.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
-import { type SendAgentChatPushNotificationsJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/send-agent-chat-push-notifications.job';
+import { type SendAgentChatWebPushNotificationsJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/send-agent-chat-web-push-notifications-job.types';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
-import { buildAgentChatPushNotification } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-push-notification.util';
-import { getAgentChatPushNotificationReason } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-push-notification-reason.util';
+import { buildAgentChatWebPushNotification } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util';
+import { getAgentChatWebPushNotificationReason } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-web-push-notification-reason.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -30,8 +30,10 @@ const toIsoStringOrNull = (date: Date | string | null) =>
   isDefined(date) ? new Date(date).toISOString() : null;
 
 @Injectable()
-export class AgentChatPushNotificationService {
-  private readonly logger = new Logger(AgentChatPushNotificationService.name);
+export class AgentChatWebPushNotificationService {
+  private readonly logger = new Logger(
+    AgentChatWebPushNotificationService.name,
+  );
 
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
@@ -45,11 +47,11 @@ export class AgentChatPushNotificationService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
-  async sendPushNotifications({
+  async sendWebPushNotifications({
     workspaceId,
     threadId,
     lastActivityAt,
-  }: SendAgentChatPushNotificationsJobData): Promise<void> {
+  }: SendAgentChatWebPushNotificationsJobData): Promise<void> {
     const workspace = await this.coreEntityCacheService.get(
       'workspaceEntity',
       workspaceId,
@@ -114,7 +116,7 @@ export class AgentChatPushNotificationService {
           return [];
         }
 
-        const reason = getAgentChatPushNotificationReason({
+        const reason = getAgentChatWebPushNotificationReason({
           thread,
           participant: participants.get(workspaceMemberId),
           workspaceMemberId,
@@ -129,8 +131,8 @@ export class AgentChatPushNotificationService {
       return;
     }
 
-    const pushSubscriptionsByUserId =
-      await this.webPushService.findPushSubscriptionsByUserId({
+    const webPushSubscriptionsByUserId =
+      await this.webPushService.findWebPushSubscriptionsByUserId({
         workspaceId,
         userIds: recipients.map(
           ({ workspaceMember }) => workspaceMember.userId,
@@ -138,20 +140,20 @@ export class AgentChatPushNotificationService {
       });
 
     for (const { workspaceMember, reason } of recipients) {
-      const pushSubscriptions =
-        pushSubscriptionsByUserId[workspaceMember.userId];
+      const webPushSubscriptions =
+        webPushSubscriptionsByUserId[workspaceMember.userId];
 
-      if (!isNonEmptyArray(pushSubscriptions)) {
+      if (!isNonEmptyArray(webPushSubscriptions)) {
         continue;
       }
 
       try {
-        await this.sendPushNotificationToRecipient({
+        await this.sendWebPushNotificationToRecipient({
           workspaceId,
           thread,
           recipient: workspaceMember,
           isRenotifyForced: reason === 'DIRECT_MESSAGE' || reason === 'MENTION',
-          pushSubscriptions,
+          webPushSubscriptions,
           workspaceMemberById,
         });
       } catch (error) {
@@ -164,19 +166,19 @@ export class AgentChatPushNotificationService {
     }
   }
 
-  private async sendPushNotificationToRecipient({
+  private async sendWebPushNotificationToRecipient({
     workspaceId,
     thread,
     recipient,
     isRenotifyForced,
-    pushSubscriptions,
+    webPushSubscriptions,
     workspaceMemberById,
   }: {
     workspaceId: string;
     thread: AgentChatThreadWorkspaceEntity;
     recipient: WorkspaceMemberWorkspaceEntity;
     isRenotifyForced: boolean;
-    pushSubscriptions: PushSubscriptionEntity[];
+    webPushSubscriptions: WebPushSubscriptionEntity[];
     workspaceMemberById: Partial<
       Record<string, WorkspaceMemberWorkspaceEntity>
     >;
@@ -193,7 +195,7 @@ export class AgentChatPushNotificationService {
 
     const isOutsideRenotifyCooldown =
       await this.cacheStorageService.setIfAbsent(
-        `renotify-cooldown:${recipient.id}:${thread.id}`,
+        `agent-chat-renotify-cooldown:${workspaceId}:${thread.id}:${recipient.id}`,
         true,
         RENOTIFY_COOLDOWN_MS,
       );
@@ -201,9 +203,9 @@ export class AgentChatPushNotificationService {
     await this.webPushService.sendNotification({
       workspaceId,
       userId: recipient.userId,
-      pushSubscriptions,
+      webPushSubscriptions,
       notification: {
-        ...buildAgentChatPushNotification({
+        ...buildAgentChatWebPushNotification({
           i18n: this.i18nService.getI18nInstance(recipient.locale),
           thread,
           recipientWorkspaceMemberId: recipient.id,

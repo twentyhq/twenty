@@ -24,7 +24,7 @@ const getChatReferencePreviewText = (referenceBody: string): string => {
   return MENTIONED_OBJECT_NAMES.includes(objectName) ? `@${label}` : label;
 };
 
-export const getAgentChatPushNotificationPreviewText = (text: string): string =>
+export const getAgentChatPreviewPlainText = (text: string): string =>
   text
     .replace(CHAT_REFERENCE_PATTERN, (_, referenceBody: string) =>
       getChatReferencePreviewText(referenceBody),
