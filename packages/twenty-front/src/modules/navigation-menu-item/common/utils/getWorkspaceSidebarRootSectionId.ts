@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
+// TODO: remove once IS_CUSTOMIZABLE_SIDEBAR_ENABLED is on for every workspace
 export const getWorkspaceSidebarRootSectionId = ({
   navigationMenuItems,
   standardApplicationId,
