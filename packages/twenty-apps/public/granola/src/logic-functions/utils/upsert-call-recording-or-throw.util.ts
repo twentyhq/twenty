@@ -1,4 +1,6 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isNonEmptyArray } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { type CallRecordingSyncFields } from 'src/logic-functions/types/call-recording-sync-fields.type';
 import { doesCallRecordingExistOrThrow } from 'src/logic-functions/utils/does-call-recording-exist-or-throw.util';
@@ -25,7 +27,29 @@ export const upsertCallRecordingOrThrow = async ({
     return { callRecordingId, created: false, skipped: true };
   }
 
-  if (await doesCallRecordingExistOrThrow({ coreApiClient, callRecordingId })) {
+  const personalNoteUpdatedAt = fields.granolaPersonalNoteUpdatedAt;
+
+  const updateExistingRecordingOrThrow = async () => {
+    if (isDefined(personalNoteUpdatedAt)) {
+      // A null revision marks a recording owned by workspace sync.
+      const result = await coreApiClient.mutation({
+        updateCallRecordings: {
+          __args: {
+            filter: {
+              id: { eq: callRecordingId },
+              granolaPersonalNoteUpdatedAt: { lt: personalNoteUpdatedAt },
+            },
+            data: toCallRecordingMutationFields(fields),
+          },
+          id: true,
+        },
+      });
+
+      return isNonEmptyArray(result.updateCallRecordings)
+        ? { callRecordingId, created: false }
+        : { callRecordingId, created: false, skipped: true };
+    }
+
     await updateCallRecordingOrThrow({
       coreApiClient,
       callRecordingId,
@@ -33,6 +57,10 @@ export const upsertCallRecordingOrThrow = async ({
     });
 
     return { callRecordingId, created: false };
+  };
+
+  if (await doesCallRecordingExistOrThrow({ coreApiClient, callRecordingId })) {
+    return updateExistingRecordingOrThrow();
   }
 
   try {
@@ -56,12 +84,6 @@ export const upsertCallRecordingOrThrow = async ({
       throw error;
     }
 
-    await updateCallRecordingOrThrow({
-      coreApiClient,
-      callRecordingId,
-      fields,
-    });
-
-    return { callRecordingId, created: false };
+    return updateExistingRecordingOrThrow();
   }
 };

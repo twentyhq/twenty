@@ -5,6 +5,7 @@ export type CallRecordingSyncFields = {
   status?: 'PROCESSING' | 'COMPLETED';
   recordingRequestStatus?: 'REQUESTED';
   externalRecordingId?: string;
+  granolaPersonalNoteUpdatedAt?: string | null;
   startedAt?: string;
   endedAt?: string;
   transcript?: TranscriptEntry[];
