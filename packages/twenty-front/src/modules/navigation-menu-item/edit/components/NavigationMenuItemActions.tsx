@@ -2,7 +2,6 @@ import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
   IconChevronUp,
@@ -20,9 +19,11 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { type NavigationMenuItemAddTarget } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddTarget';
+import { getNavigationMenuContainersInDisplayOrder } from '@/navigation-menu-item/common/utils/getNavigationMenuContainersInDisplayOrder';
 import { getNavigationMenuItemContainerId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemContainerId';
 import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
+import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 
@@ -52,21 +53,33 @@ export const NavigationMenuItemActions = ({
     useNavigationMenuItemMoveRemove(section, containerId);
   const { goToPage } = useDropdownPage();
   const siblings = getSortedSiblings(item.id) ?? [];
+  const homeSections = useWorkspaceNavigationMenuContainers({
+    type: NavigationMenuItemType.SECTION,
+    containerId: null,
+  });
+  const tabs = useWorkspaceNavigationMenuContainers({
+    type: NavigationMenuItemType.TAB,
+    containerId: null,
+  });
   const sections =
     section === 'workspace'
-      ? workspaceNavigationMenuItems.filter(
+      ? [
+          ...homeSections,
+          ...tabs.flatMap((tab) =>
+            getNavigationMenuContainersInDisplayOrder({
+              navigationMenuItems: workspaceNavigationMenuItems,
+              type: NavigationMenuItemType.SECTION,
+              containerId: tab.id,
+            }),
+          ),
+        ].filter(
           (candidate) =>
-            candidate.type === NavigationMenuItemType.SECTION &&
             !isNavigationMenuItemBuiltInSection(candidate) &&
             candidate.id !== containerId,
         )
       : [];
   const getTabName = (tabId: string | null | undefined) =>
-    isDefined(tabId)
-      ? (workspaceNavigationMenuItems.find(
-          (candidate) => candidate.id === tabId,
-        )?.name ?? '')
-      : t`Home`;
+    tabs.find((tab) => tab.id === tabId)?.name ?? t`Home`;
   const moveToLabel = sections.length > 0 ? t`Move to` : t`Move to folder`;
   const index = siblings.findIndex((sibling) => sibling.id === item.id);
   const run = (action: () => Promise<void>) => {
