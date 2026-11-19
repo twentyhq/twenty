@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 
 import { type Manifest } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { fromFlatApplicationToApplicationManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-application-to-application-manifest.util';
 import { ApplicationFrontComponentExportService } from 'src/engine/core-modules/application/application-manifest/services/application-front-component-export.service';
@@ -289,6 +289,9 @@ export class ApplicationManifestExportService {
       fields,
       indexes,
       logicFunctions,
+      ...(isNonEmptyArray(flatApplication.jobConfigs)
+        ? { jobConfigs: flatApplication.jobConfigs }
+        : {}),
       frontComponents,
       permissionFlags,
       roles,

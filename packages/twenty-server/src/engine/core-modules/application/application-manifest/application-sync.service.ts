@@ -1,7 +1,10 @@
 import { ApplicationSourceService } from 'src/engine/core-modules/application/application-manifest/services/application-source.service';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
-import { type Manifest } from 'twenty-shared/application';
+import {
+  getJobConfigsManifestErrors,
+  type Manifest,
+} from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
@@ -96,6 +99,18 @@ export class ApplicationSyncService {
     toRequestedIframeMediaPermissionsOrThrow(
       manifest.application.requestedIframeMediaPermissions,
     );
+
+    const jobConfigsErrors = getJobConfigsManifestErrors({
+      jobConfigs: manifest.jobConfigs ?? [],
+      logicFunctions: manifest.logicFunctions,
+    });
+
+    if (jobConfigsErrors.length > 0) {
+      throw new ApplicationException(
+        jobConfigsErrors.join('; '),
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
 
     const ownerFlatApplication: FlatApplication = dryRun
       ? await this.resolveDryRunOwnerFlatApplication({ workspaceId, manifest })
@@ -202,6 +217,7 @@ export class ApplicationSyncService {
       yarnLockFileId: null,
       availablePackages: {},
       billing: manifest.application.billing ?? {},
+      jobConfigs: manifest.jobConfigs ?? [],
       grantedCapabilities: toApplicationCapabilities(
         manifest.application.requestedCapabilities,
       ),
@@ -315,6 +331,7 @@ export class ApplicationSyncService {
         packageJsonChecksum: storedFilesChecksums.packageJsonChecksum,
         yarnLockChecksum: storedFilesChecksums.yarnLockChecksum,
         billing: manifest.application.billing ?? {},
+        jobConfigs: manifest.jobConfigs ?? [],
         grantedCapabilities: resolveSyncedApplicationCapabilities({
           sourceType: application.sourceType,
           grantedCapabilities: application.grantedCapabilities,

@@ -104,6 +104,7 @@ export { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from './constant
 export { FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES } from './constants/FrontComponentWidgetPageLayoutTypes';
 export { GENERATED_DIR } from './constants/GeneratedDirectory';
 export { GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS } from './constants/GettingStartedAppUniversalIdentifiers';
+export { JOB_CONFIG_KEY_PATTERN } from './constants/JobConfigKeyPattern';
 export { MARKETPLACE_APP_MCP_SERVER_URL_PLACEHOLDER } from './constants/MarketplaceAppMcpServerUrlPlaceholder';
 export { MAX_APPLICATION_BILLING_PRICE_AMOUNT_CENTS } from './constants/MaxApplicationBillingPriceAmountCents';
 export { MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE } from './constants/MaxAppMessageAttachmentsPerMessage';
@@ -224,6 +225,10 @@ export { isApplicationBillingPricePeriod } from './isApplicationBillingPricePeri
 export { isApplicationBillingPriceType } from './isApplicationBillingPriceType';
 export { isApplicationBillingPriceUnit } from './isApplicationBillingPriceUnit';
 export { isRecordEventTriggerManifestSettings } from './isRecordEventTriggerManifestSettings';
+export type {
+  JobConfigLimiter,
+  JobConfigManifest,
+} from './jobConfigManifestType';
 export type {
   LogicFunctionManifest,
   CronTriggerSettings,
@@ -369,6 +374,8 @@ export {
   ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
   getEffectiveObjectPermissionsFromRoleManifest,
 } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
+export { getJobConfigManifestErrors } from './utils/getJobConfigManifestErrors';
+export { getJobConfigsManifestErrors } from './utils/getJobConfigsManifestErrors';
 export { getReachableObjectPermissionsFromRoleManifest } from './utils/getReachableObjectPermissionsFromRoleManifest';
 export { getRecordsPermissionsFromRoleManifest } from './utils/getRecordsPermissionsFromRoleManifest';
 export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrantsNotCoveredBy';

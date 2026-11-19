@@ -419,4 +419,16 @@ describe('defineLogicFunction', () => {
 
     expect(result.success).toBe(true);
   });
+
+  it('should reject jobConfigKeys that are not valid job config keys', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Backfill batch',
+      handler: mockHandler,
+      jobConfigKeys: ['fireflies-api', 'not valid'],
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors[0]).toContain('"not valid"');
+  });
 });

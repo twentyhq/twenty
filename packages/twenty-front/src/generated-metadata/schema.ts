@@ -2468,6 +2468,7 @@ export type EnqueueJobInput = {
 };
 
 export type EnqueueJobItemInput = {
+  jobConfigKey?: InputMaybe<Scalars['String']['input']>;
   jobId?: InputMaybe<Scalars['String']['input']>;
   payload?: InputMaybe<Scalars['JSON']['input']>;
 };

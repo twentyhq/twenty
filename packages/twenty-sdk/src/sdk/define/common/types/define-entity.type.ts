@@ -3,6 +3,7 @@ import { type CommandMenuItemConfig } from '@/sdk/define/command-menu-items/comm
 import { type LooseEnumValues } from '@/sdk/define/common/types/loose-enum-values.type';
 import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
 import { type IndexConfig } from '@/sdk/define/indexes/index-config';
+import { type JobConfigConfig } from '@/sdk/define/job-configs/job-config-config';
 import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
 import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
@@ -41,6 +42,7 @@ export type DefinableEntity =
   | FieldManifest
   | FrontComponentConfig
   | IndexConfig
+  | JobConfigConfig
   | LogicFunctionConfig
   | PostInstallLogicFunctionConfig
   | PreInstallLogicFunctionConfig

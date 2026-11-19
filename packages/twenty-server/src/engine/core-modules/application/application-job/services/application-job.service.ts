@@ -25,6 +25,7 @@ import {
   LogicFunctionTriggerJob,
   type LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { buildJobConfigGroupLimiters } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-job-config-group-limiters.util';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -122,6 +123,21 @@ export class ApplicationJobService {
       );
     }
 
+    const unknownJobConfigKeys = jobItems
+      .map(({ jobConfigKey }) => jobConfigKey)
+      .filter(
+        (jobConfigKey) =>
+          isDefined(jobConfigKey) &&
+          !application.jobConfigs.some(({ key }) => key === jobConfigKey),
+      );
+
+    if (unknownJobConfigKeys.length > 0) {
+      throw new ApplicationException(
+        `Unknown job config keys: ${[...new Set(unknownJobConfigKeys)].join(', ')}`,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const jobIds = jobItems.map((jobItem) => jobItem.jobId ?? v4());
 
     const { jobs, availableBytes } =
@@ -136,6 +152,14 @@ export class ApplicationJobService {
             ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
           },
           jobId: buildQueueJobId({ workspaceId, jobId: jobIds[index] }),
+          groupLimiters: buildJobConfigGroupLimiters({
+            applicationUniversalIdentifier: application.universalIdentifier,
+            jobConfigs: application.jobConfigs,
+            jobConfigKeys: [
+              ...flatLogicFunction.jobConfigKeys,
+              jobItem.jobConfigKey,
+            ],
+          }),
           workspaceId,
           applicationUniversalIdentifier: application.universalIdentifier,
         })),

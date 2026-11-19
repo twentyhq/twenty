@@ -15,6 +15,7 @@ export default defineLogicFunction({
   name: 'enrich-post-cards',
   description: 'Enrich post cards of a company',
   timeoutSeconds: 5,
+  jobConfigKeys: ['post-card-api'],
   handler,
   workflowActionTriggerSettings: {
     label: 'Enrich Post Cards',

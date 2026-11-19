@@ -12,6 +12,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "fields": [],
     "frontComponents": [],
     "indexes": [],
+    "jobConfigs": [],
     "logicFunctions": [
       "src/logic-functions/add-numbers.function.ts",
     ],
@@ -65,6 +66,7 @@ The scripts invoke that local build directly, so the SDK binary cannot shadow it
     "fields": [],
     "frontComponents": [],
     "indexes": [],
+    "jobConfigs": [],
     "logicFunctions": [
       {
         "builtHandlerChecksum": "[default-checksum]",
@@ -149,6 +151,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
       "my.front-component.tsx",
     ],
     "indexes": [],
+    "jobConfigs": [],
     "logicFunctions": [
       "my.function.ts",
     ],
@@ -203,6 +206,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
       },
     ],
     "indexes": [],
+    "jobConfigs": [],
     "logicFunctions": [
       {
         "builtHandlerChecksum": "[default-checksum]",
@@ -320,6 +324,9 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     ],
     "indexes": [
       "src/indexes/post-card-status.index.ts",
+    ],
+    "jobConfigs": [
+      "src/job-configs/post-card-api.job-config.ts",
     ],
     "logicFunctions": [
       "src/logic-functions/enrich-post-cards.function.ts",
@@ -767,6 +774,15 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
         "universalIdentifier": "b6e9d2a1-5a4c-46ca-9d52-42c8f02d1ff0",
       },
     ],
+    "jobConfigs": [
+      {
+        "key": "post-card-api",
+        "limiter": {
+          "durationMs": 60000,
+          "max": 10,
+        },
+      },
+    ],
     "logicFunctions": [
       {
         "builtHandlerChecksum": "[default-checksum]",
@@ -810,6 +826,9 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
         "builtHandlerPath": "src/logic-functions/enrich-post-cards.function.mjs",
         "description": "Enrich post cards of a company",
         "handlerName": "default.config.handler",
+        "jobConfigKeys": [
+          "post-card-api",
+        ],
         "name": "enrich-post-cards",
         "sourceHandlerPath": "src/logic-functions/enrich-post-cards.function.ts",
         "timeoutSeconds": 5,
@@ -1432,6 +1451,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
       "src/counter.front-component.tsx",
     ],
     "indexes": [],
+    "jobConfigs": [],
     "logicFunctions": [],
     "mcpServers": [],
     "messagingProviders": [],
@@ -1491,6 +1511,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
       },
     ],
     "indexes": [],
+    "jobConfigs": [],
     "logicFunctions": [],
     "mcpServers": [],
     "messagingProviders": [],

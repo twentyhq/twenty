@@ -16,6 +16,7 @@ import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/m
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
+import { buildJobConfigGroupLimiters } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-job-config-group-limiters.util';
 import { buildApplicationJobMemoryLimitLogEntry } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-application-job-memory-limit-log-entry.util';
 import { buildApplicationJobThrottledLogEntry } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-application-job-throttled-log-entry.util';
 import { buildLogicFunctionTriggerJobIds } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/build-logic-function-trigger-job-ids';
@@ -152,6 +153,9 @@ export class CallDatabaseEventTriggerJobsJob {
         throw error;
       }
 
+      const jobConfigKeysByLogicFunctionId = new Map(
+        logicFunctions.map(({ id, jobConfigKeys }) => [id, jobConfigKeys]),
+      );
       const logicFunctionTriggerJobIds = buildLogicFunctionTriggerJobIds({
         triggerJobId: jobId,
         logicFunctionPayloads,
@@ -166,6 +170,14 @@ export class CallDatabaseEventTriggerJobsJob {
               applicationUniversalIdentifier: application.universalIdentifier,
             },
             jobId: logicFunctionTriggerJobIds[index],
+            groupLimiters: buildJobConfigGroupLimiters({
+              applicationUniversalIdentifier: application.universalIdentifier,
+              jobConfigs: application.jobConfigs,
+              jobConfigKeys:
+                jobConfigKeysByLogicFunctionId.get(
+                  logicFunctionPayload.logicFunctionId,
+                ) ?? [],
+            }),
             workspaceId: workspaceEventBatch.workspaceId,
             applicationUniversalIdentifier: application.universalIdentifier,
           })),

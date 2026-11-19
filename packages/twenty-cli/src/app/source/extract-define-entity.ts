@@ -7,6 +7,7 @@ export const DEFINE_ENTITY_KEYS = {
   defineApplicationRole: 'roles',
   defineField: 'fields',
   defineIndex: 'indexes',
+  defineJobConfig: 'jobConfigs',
   defineLogicFunction: 'logicFunctions',
   definePostInstallLogicFunction: 'logicFunctions',
   definePreInstallLogicFunction: 'logicFunctions',

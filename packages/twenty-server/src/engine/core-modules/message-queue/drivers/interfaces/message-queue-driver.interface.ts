@@ -13,6 +13,7 @@ import {
 } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
+import { type GroupLimiter } from 'src/engine/core-modules/message-queue/drivers/fairness/group-rate-pacer';
 import { type JobMemoryReconciliation } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-limiter';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
@@ -74,6 +75,7 @@ export type QueueJobToAdd<T extends MessageQueueJobData> = {
   data: T;
   jobId?: string;
   groupKey?: string;
+  groupLimiters?: GroupLimiter[];
 } & QueueJobScope;
 
 export type BulkAddResult = {

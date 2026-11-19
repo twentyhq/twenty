@@ -1,3 +1,4 @@
+import { JOB_CONFIG_KEY_PATTERN } from 'twenty-shared/application';
 import { HTTPMethod } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -76,6 +77,16 @@ export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
         subject: 'Database event trigger',
         replacement: "eventTriggerSettings with on: 'recordEvent'",
       }),
+    );
+  }
+
+  const invalidJobConfigKeys = (config.jobConfigKeys ?? []).filter(
+    (jobConfigKey) => !JOB_CONFIG_KEY_PATTERN.test(jobConfigKey),
+  );
+
+  if (invalidJobConfigKeys.length > 0) {
+    errors.push(
+      `Logic function jobConfigKeys must match ${JOB_CONFIG_KEY_PATTERN} (got ${invalidJobConfigKeys.map((jobConfigKey) => `"${jobConfigKey}"`).join(', ')})`,
     );
   }
 

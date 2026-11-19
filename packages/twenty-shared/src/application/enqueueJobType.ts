@@ -18,6 +18,7 @@ export type EnqueueJobResult = {
 export type EnqueueJobItem = {
   payload?: Record<string, unknown>;
   jobId?: string;
+  jobConfigKey?: string;
 };
 
 export type EnqueueJobsInput = EnqueueJobOptions & {

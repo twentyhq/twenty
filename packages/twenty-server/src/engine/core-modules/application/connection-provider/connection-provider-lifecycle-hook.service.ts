@@ -12,6 +12,7 @@ import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/applica
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
+import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { type CustomConnectionProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-custom-provider.util';
 import { parseAuthorizeConnectionResult } from 'src/engine/core-modules/application/connection-provider/utils/parse-authorize-connection-result.util';
 import {
@@ -23,6 +24,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
+import { buildJobConfigGroupLimiters } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-job-config-group-limiters.util';
 import {
   LogicFunctionTriggerJob,
   type LogicFunctionTriggerJobData,
@@ -128,6 +130,15 @@ export class ConnectionProviderLifecycleHookService {
         return;
       }
 
+      const { flatApplicationMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatApplicationMaps',
+        ]);
+      const application = findActiveFlatApplicationById(
+        flatApplicationMaps,
+        provider.applicationId,
+      );
+
       await this.messageQueueService.add<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
         {
@@ -141,6 +152,12 @@ export class ConnectionProviderLifecycleHookService {
             logicFunction.applicationUniversalIdentifier,
           retryLimit: 3,
           backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+          groupLimiters: buildJobConfigGroupLimiters({
+            applicationUniversalIdentifier:
+              logicFunction.applicationUniversalIdentifier,
+            jobConfigs: application?.jobConfigs ?? [],
+            jobConfigKeys: logicFunction.jobConfigKeys,
+          }),
         },
       );
     });

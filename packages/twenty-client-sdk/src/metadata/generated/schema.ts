@@ -6352,7 +6352,7 @@ export interface EmailsConfigurationGenqlSelection{
 
 export interface EnqueueJobInput {delayMs?: (Scalars['Int'] | null),jobId?: (Scalars['String'] | null),logicFunctionUniversalIdentifier: Scalars['String'],payload?: (Scalars['JSON'] | null),retryLimit?: (Scalars['Int'] | null)}
 
-export interface EnqueueJobItemInput {jobId?: (Scalars['String'] | null),payload?: (Scalars['JSON'] | null)}
+export interface EnqueueJobItemInput {jobConfigKey?: (Scalars['String'] | null),jobId?: (Scalars['String'] | null),payload?: (Scalars['JSON'] | null)}
 
 export interface EnqueueJobResultGenqlSelection{
     enqueued?: boolean | number

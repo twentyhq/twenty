@@ -4964,6 +4964,9 @@ export default {
             ]
         },
         "EnqueueJobItemInput": {
+            "jobConfigKey": [
+                4
+            ],
             "jobId": [
                 4
             ],

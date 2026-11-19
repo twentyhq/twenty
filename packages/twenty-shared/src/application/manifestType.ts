@@ -12,6 +12,7 @@ import {
   type FrontComponentManifest,
 } from './frontComponentManifestType';
 import { type IndexManifest } from './indexManifestType';
+import { type JobConfigManifest } from './jobConfigManifestType';
 import { type LogicFunctionManifest } from './logicFunctionManifestType';
 import { type McpServerManifest } from './mcpServerManifestType';
 import { type MessagingProviderManifest } from './messagingProviderManifestType';
@@ -45,6 +46,7 @@ export type Manifest = {
   fields: FieldManifest[];
   indexes?: IndexManifest[];
   logicFunctions: LogicFunctionManifest[];
+  jobConfigs?: JobConfigManifest[];
   frontComponents: FrontComponentManifest[];
   permissionFlags: PermissionFlagManifest[];
   roles: LegacyCompliantRoleManifest[];

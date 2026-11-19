@@ -3,6 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import {
   type ApplicationBilling,
   type ApplicationCapability,
+  type JobConfigManifest,
 } from 'twenty-shared/application';
 import { type IframeMediaPermission } from 'twenty-shared/types';
 import {
@@ -29,6 +30,7 @@ import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public
 import { ADD_HEALTH_CHECK_TO_APPLICATION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-health-check-to-application-upgrade-command-name.constant';
 import { ENABLE_USER_HEALTH_CHECK_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-55/enable-user-health-check-upgrade-command-name.constant';
 import { ADD_REQUESTED_ROLE_ID_TO_APPLICATION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-60/add-requested-role-id-to-application-upgrade-command-name.constant';
+import { ADD_JOB_CONFIGS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-job-configs-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
@@ -138,6 +140,12 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
       '2.42.0_AddApplicationGrantedCapabilitiesFastInstanceCommand_1790088525621',
   })
   grantedCapabilities: ApplicationCapability[];
+
+  @Column({ type: 'jsonb', nullable: false, default: [] })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_JOB_CONFIGS_UPGRADE_COMMAND_NAME,
+  })
+  jobConfigs: JobConfigManifest[];
 
   @Column({ type: 'jsonb', nullable: false, default: [] })
   @WasIntroducedInUpgrade({

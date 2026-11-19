@@ -34,6 +34,7 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   yarnLockFileId: null,
   availablePackages: {},
   billing: {},
+  jobConfigs: [],
   grantedCapabilities: [],
   grantedIframeMediaPermissions: [],
   logicFunctionLayerId: null,

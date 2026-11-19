@@ -18,6 +18,7 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
   serverRouteTriggerSettings?: ServerRouteTriggerSettings;
   toolTriggerSettings?: ToolTriggerSettings;
   workflowActionTriggerSettings?: WorkflowActionTriggerSettings;
+  jobConfigKeys?: string[];
   sourceHandlerPath: string;
   sourceFiles?: SourceFileManifest[];
   builtHandlerPath: string;
