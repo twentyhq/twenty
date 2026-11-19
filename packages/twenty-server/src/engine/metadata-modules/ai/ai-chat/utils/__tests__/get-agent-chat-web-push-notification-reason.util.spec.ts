@@ -81,7 +81,7 @@ describe('getAgentChatWebPushNotificationReason', () => {
 
   it('should notify for a mention in this message only', () => {
     const inboxNotificationLevel =
-      AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.DIRECT_AND_MENTIONS;
+      AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.DIRECT_MENTIONS_AND_ASSIGNED;
 
     expect(
       getReason({
@@ -106,7 +106,7 @@ describe('getAgentChatWebPushNotificationReason', () => {
 
   it('should keep followed chats out of the direct messages and mentions level', () => {
     const inboxNotificationLevel =
-      AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.DIRECT_AND_MENTIONS;
+      AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.DIRECT_MENTIONS_AND_ASSIGNED;
 
     expect(getReason({ inboxNotificationLevel })).toBeNull();
     expect(
