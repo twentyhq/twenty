@@ -21,6 +21,7 @@ export const createDeactivateWorkflowVersionTool = (
   context: WorkflowToolContext,
 ) => ({
   name: 'deactivate_workflow_version' as const,
+  isDestructive: true,
   description:
     'Deactivate a workflow version. This makes the workflow version inactive and unavailable for execution.',
   inputSchema: deactivateWorkflowVersionSchema,

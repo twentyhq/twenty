@@ -14,6 +14,7 @@ const deleteWebhookInputSchema = z.object({
 
 @DefineTool({
   name: 'delete_webhook',
+  isDestructive: true,
   category: ToolCategory.WEBHOOK,
   accessPolicy: WEBHOOK_DELETE_ACCESS_POLICY,
   description: `Delete a webhook by id. Use list_webhooks first if you don't know the id.`,

@@ -341,6 +341,29 @@ describe('MCP tool catalog (integration)', () => {
       }
     });
 
+    it('should flag the tools that overwrite or delete as destructive', async () => {
+      const destructiveHintByToolName = Object.fromEntries(
+        (await listMcpTools(adminApiKeyToken, GENERIC_MODE_PATH)).map(
+          (tool) => [tool.name, tool.annotations?.destructiveHint],
+        ),
+      );
+
+      expect(destructiveHintByToolName).toMatchObject({
+        create_records: false,
+        update_record: true,
+        update_records: true,
+        upsert_records: true,
+        delete_records: true,
+        merge_records: true,
+        create_object_metadata: false,
+        update_object_metadata: true,
+        delete_object_metadata: true,
+        create_complete_workflow: false,
+        delete_workflow: true,
+        get_views: false,
+      });
+    });
+
     it('should list the same record tools to a restricted API key', async () => {
       const toolNames = (
         await listMcpTools(restrictedApiKeyToken, GENERIC_MODE_PATH)
@@ -501,7 +524,7 @@ describe('MCP tool catalog (integration)', () => {
       expect(isDispatchFailure(result)).toBe(true);
     });
 
-    it('should mark database read tools read-only and keep execute hints on writes', async () => {
+    it('should mark database read tools read-only, creates non-destructive and other writes destructive', async () => {
       const annotationsByToolName = Object.fromEntries(
         (await listMcpTools(adminApiKeyToken, DIRECT_MODE_PATH)).map((tool) => [
           tool.name,
@@ -518,6 +541,11 @@ describe('MCP tool catalog (integration)', () => {
         readOnlyHint: false,
         openWorldHint: true,
         destructiveHint: false,
+      });
+      expect(annotationsByToolName.update_one_person).toEqual({
+        readOnlyHint: false,
+        openWorldHint: true,
+        destructiveHint: true,
       });
     });
 
