@@ -6,6 +6,8 @@ import { DEFAULT_AI_CHAT_ASSISTANT_PROFILE } from 'twenty-shared/ai';
 import {
   AiChatAssistantMode,
   AiModelTier,
+  BillingPlanKey,
+  BillingProductKey,
   OnboardingStatus,
   PermissionFlagType,
   SubscriptionInterval,
@@ -51,10 +53,6 @@ export const workspaceLogoUrl =
 const PRO_PLAN = mockBillingPlans.listPlans.find((p) => p.planKey === 'PRO')!;
 const PRO_BASE_LICENSED_PRODUCT = PRO_PLAN?.baseProducts?.[0]!;
 const PRO_BASE_MONTHLY_PRICE = PRO_BASE_LICENSED_PRODUCT?.prices?.find(
-  (pr) => pr.recurringInterval === 'Month',
-)!;
-const PRO_METERED_PRODUCT = PRO_PLAN?.meteredProducts?.[0]!;
-const PRO_METERED_MONTHLY_PRICE = PRO_METERED_PRODUCT?.prices?.find(
   (pr) => pr.recurringInterval === 'Month',
 )!;
 
@@ -136,14 +134,19 @@ export const mockCurrentWorkspace = {
         id: '11111111-1111-4111-8111-111111111112',
         hasReachedCurrentPeriodCap: false,
         quantity: null,
-        stripePriceId: PRO_METERED_MONTHLY_PRICE.stripePriceId,
+        stripePriceId: 'price_1S5245Qh1LFc4XrXPCSjYIq0',
         unitAmount: null,
         creditAmount: null,
         billingProduct: {
-          name: PRO_METERED_PRODUCT.name,
-          description: PRO_METERED_PRODUCT.description,
-          images: PRO_METERED_PRODUCT.images,
-          metadata: PRO_METERED_PRODUCT.metadata,
+          name: 'Resource Usage - Pro',
+          description: '',
+          images: [],
+          metadata: {
+            __typename: 'BillingProductMetadata',
+            isLegacy: null,
+            productKey: BillingProductKey.RESOURCE_CREDIT,
+            planKey: BillingPlanKey.PRO,
+          },
         },
       },
     ],

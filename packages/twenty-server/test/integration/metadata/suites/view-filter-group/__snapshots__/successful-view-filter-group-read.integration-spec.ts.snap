@@ -1,0 +1,124 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`View Filter Group read should succeed should find a view filter group among all view filter groups 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": Any<String>,
+  "logicalOperator": "AND",
+  "parentViewFilterGroupId": null,
+  "positionInViewFilterGroup": 0,
+  "updatedAt": Any<String>,
+  "viewId": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;
+
+exports[`View Filter Group read should succeed should find a view filter group among the view filter groups of its view 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": Any<String>,
+  "logicalOperator": "AND",
+  "parentViewFilterGroupId": null,
+  "positionInViewFilterGroup": 0,
+  "updatedAt": Any<String>,
+  "viewId": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;
+
+exports[`View Filter Group read should succeed should find a view filter group by id 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": Any<String>,
+  "logicalOperator": "AND",
+  "parentViewFilterGroupId": null,
+  "positionInViewFilterGroup": 0,
+  "updatedAt": Any<String>,
+  "viewId": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;
+
+exports[`View Filter Group read should succeed should return a view filter group on GET /metadata/viewFilterGroups 1`] = `
+{
+  "applicationId": Any<String>,
+  "applicationUniversalIdentifier": Any<String>,
+  "childViewFilterGroupIds": [],
+  "childViewFilterGroupUniversalIdentifiers": [],
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": Any<String>,
+  "logicalOperator": "AND",
+  "parentViewFilterGroupId": null,
+  "parentViewFilterGroupUniversalIdentifier": null,
+  "positionInViewFilterGroup": 0,
+  "universalIdentifier": Any<String>,
+  "updatedAt": Any<String>,
+  "viewFilterIds": [
+    Any<String>,
+  ],
+  "viewFilterUniversalIdentifiers": [
+    Any<String>,
+  ],
+  "viewId": Any<String>,
+  "viewUniversalIdentifier": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;
+
+exports[`View Filter Group read should succeed should return a view filter group on GET /metadata/viewFilterGroups/:id 1`] = `
+{
+  "applicationId": Any<String>,
+  "applicationUniversalIdentifier": Any<String>,
+  "childViewFilterGroupIds": [],
+  "childViewFilterGroupUniversalIdentifiers": [],
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": Any<String>,
+  "logicalOperator": "AND",
+  "parentViewFilterGroupId": null,
+  "parentViewFilterGroupUniversalIdentifier": null,
+  "positionInViewFilterGroup": 0,
+  "universalIdentifier": Any<String>,
+  "updatedAt": Any<String>,
+  "viewFilterIds": [
+    Any<String>,
+  ],
+  "viewFilterUniversalIdentifiers": [
+    Any<String>,
+  ],
+  "viewId": Any<String>,
+  "viewUniversalIdentifier": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;
+
+exports[`View Filter Group read should succeed should return a view filter group on GET /metadata/viewFilterGroups?viewId= 1`] = `
+{
+  "applicationId": Any<String>,
+  "applicationUniversalIdentifier": Any<String>,
+  "childViewFilterGroupIds": [],
+  "childViewFilterGroupUniversalIdentifiers": [],
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "id": Any<String>,
+  "logicalOperator": "AND",
+  "parentViewFilterGroupId": null,
+  "parentViewFilterGroupUniversalIdentifier": null,
+  "positionInViewFilterGroup": 0,
+  "universalIdentifier": Any<String>,
+  "updatedAt": Any<String>,
+  "viewFilterIds": [
+    Any<String>,
+  ],
+  "viewFilterUniversalIdentifiers": [
+    Any<String>,
+  ],
+  "viewId": Any<String>,
+  "viewUniversalIdentifier": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;

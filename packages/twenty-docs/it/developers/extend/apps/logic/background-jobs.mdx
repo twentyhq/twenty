@@ -117,7 +117,7 @@ L'esecuzione in coda eredita l'utente attivo della funzione che l'ha messa in co
 
 ## Memoria della coda
 
-I job in coda risiedono in memoria finché non terminano, pertanto ogni spazio di lavoro e ogni applicazione può detenere solo una quota della memoria della coda che gli altri lasciano libera. Un singolo job è inoltre limitato a 5 MB di payload serializzato. Questi limiti si applicano solo ai server che li abilitano (`IS_REDIS_MEMORY_FAIRNESS_ENABLED`).
+I job in coda risiedono in memoria finché non terminano, pertanto ogni spazio di lavoro e ogni applicazione può detenere solo una quota della memoria della coda che gli altri lasciano libera. Anche un singolo job è limitato a 20 MB di payload serializzato.
 
 `enqueueJobs` riporta ciò che ogni chiamata ha utilizzato. Questi campi richiedono Twenty 2.57.0 o versioni successive, che è anche la versione minima del server dell'SDK:
 
