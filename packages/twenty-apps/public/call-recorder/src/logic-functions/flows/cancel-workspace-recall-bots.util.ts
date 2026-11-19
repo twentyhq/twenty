@@ -1,13 +1,9 @@
 import { isUndefined } from '@sniptt/guards';
 
-import { RECALL_BOT_ALREADY_JOINED_STATUS } from 'src/logic-functions/constants/recall-bot-already-joined-status';
-import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bot.util';
-import { ejectRecallBot } from 'src/logic-functions/recall-api/eject-recall-bot.util';
+import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
 import { getClaimedWorkspaceId } from 'src/logic-functions/recall-api/get-claimed-workspace-id.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
-import { hasRecallBotEnded } from 'src/logic-functions/recall-api/has-recall-bot-ended.util';
 import { listScheduledRecallBotsBeforeRequestCutoff } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
-import { type RecallBotRemovalResult } from 'src/logic-functions/types/recall-bot-operation-result.type';
 
 const RECALL_BOT_CANCELLATION_CONCURRENCY = 5;
 const RECALL_BOT_LIST_CANCELLATION_RESERVE_MS = 5_000;
@@ -15,22 +11,6 @@ const RECALL_BOT_LIST_CANCELLATION_RESERVE_MS = 5_000;
 export type CancelWorkspaceRecallBotsResult = {
   scannedBotCount: number;
   canceledExternalBotIds: string[];
-};
-
-// Unlike cancelOrEjectRecallBot, ejects only after a 405 so a bot never spends two retry windows of the uninstall headroom.
-const cancelOrEjectJoinedRecallBot = async (
-  externalBotId: string,
-): Promise<RecallBotRemovalResult> => {
-  const cancelResult = await cancelRecallBot({ externalBotId });
-
-  if (
-    cancelResult.ok ||
-    cancelResult.status !== RECALL_BOT_ALREADY_JOINED_STATUS
-  ) {
-    return cancelResult;
-  }
-
-  return ejectRecallBot({ externalBotId });
 };
 
 export const cancelWorkspaceRecallBotsOrThrow = async ({
@@ -81,23 +61,18 @@ export const cancelWorkspaceRecallBotsOrThrow = async ({
         attemptedCancellationExternalBotIds.add(externalBotId),
       );
 
-      const recallBotCancellationResults = await Promise.all(
+      const recallBotRemovalResults = await Promise.all(
         externalBotIdBatch.map(async (externalBotId) => ({
           externalBotId,
-          result: await cancelOrEjectJoinedRecallBot(externalBotId),
+          isRemoved: await cancelOrEjectRecallBot(externalBotId),
         })),
       );
 
-      for (const recallBotCancellationResult of recallBotCancellationResults) {
-        if (recallBotCancellationResult.result.ok) {
-          canceledExternalBotIds.push(
-            recallBotCancellationResult.externalBotId,
-          );
+      for (const { externalBotId, isRemoved } of recallBotRemovalResults) {
+        if (isRemoved) {
+          canceledExternalBotIds.push(externalBotId);
         } else {
-          console.warn(
-            `[call-recorder] uninstall bot cleanup incomplete: failed to cancel Recall bot ${recallBotCancellationResult.externalBotId}: ${recallBotCancellationResult.result.errorMessage}`,
-          );
-          failedExternalBotIds.push(recallBotCancellationResult.externalBotId);
+          failedExternalBotIds.push(externalBotId);
         }
       }
     }
@@ -133,16 +108,14 @@ export const cancelWorkspaceRecallBotsOrThrow = async ({
     );
   }
 
-  const isCutoffReached = await cancelBotsUntilCutoff(
-    scheduledRecallBotsResult.bots.flatMap((scheduledRecallBot) =>
-      getClaimedWorkspaceId(scheduledRecallBot) === currentWorkspaceId &&
-      !hasRecallBotEnded(scheduledRecallBot)
+  const upcomingExternalBotIds = scheduledRecallBotsResult.bots.flatMap(
+    (scheduledRecallBot) =>
+      getClaimedWorkspaceId(scheduledRecallBot) === currentWorkspaceId
         ? [scheduledRecallBot.id]
         : [],
-    ),
   );
 
-  if (isCutoffReached) {
+  if (await cancelBotsUntilCutoff(upcomingExternalBotIds)) {
     throw buildIncompleteCleanupError('cancellation cutoff reached');
   }
 
@@ -150,8 +123,14 @@ export const cancelWorkspaceRecallBotsOrThrow = async ({
     throw buildIncompleteCleanupError('Recall safety scan was truncated');
   }
 
-  if (failedExternalBotIds.length > 0) {
-    throw buildIncompleteCleanupError('some Recall bots could not be removed');
+  const failedExternalBotIdSet = new Set(failedExternalBotIds);
+
+  if (
+    upcomingExternalBotIds.some((externalBotId) =>
+      failedExternalBotIdSet.has(externalBotId),
+    )
+  ) {
+    throw buildIncompleteCleanupError('upcoming Recall bots are left');
   }
 
   return {
