@@ -30,6 +30,9 @@ import { filterPartsOfTurnActedByOthers } from 'src/engine/metadata-modules/ai/a
 import { resolveMessageSenderApplicationId } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-message-sender-application-id.util';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
+import { AGENT_CHAT_THREAD_ICON_COLORS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-icon-colors.constant';
+import { AGENT_CHAT_THREAD_DEFAULT_ICON_NAME } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-icon-names.constant';
+import { isAgentChatThreadDirectAssistantChat } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-thread-direct-assistant-chat.util';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
 import { isAgentTurnOpenedByOtherMember } from 'src/engine/metadata-modules/ai/ai-history/utils/is-agent-turn-opened-by-other-member.util';
@@ -413,16 +416,28 @@ export class AgentChatService {
       return null;
     }
 
-    const title = await this.titleGenerationService.generateThreadTitle(
-      messageContent,
-      workspaceId,
-      userWorkspaceId,
-    );
+    const shouldPickIcon = isAgentChatThreadDirectAssistantChat(thread);
+    const { title, icon } =
+      await this.titleGenerationService.generateThreadTitle({
+        messageContent,
+        workspaceId,
+        userWorkspaceId,
+        shouldPickIcon,
+      });
 
     await this.threadRepository.update(
       workspaceId,
       { id: threadId },
-      { title },
+      shouldPickIcon && !isNonEmptyString(thread.icon)
+        ? {
+            title,
+            icon: icon ?? AGENT_CHAT_THREAD_DEFAULT_ICON_NAME,
+            iconColor:
+              AGENT_CHAT_THREAD_ICON_COLORS[
+                Math.floor(Math.random() * AGENT_CHAT_THREAD_ICON_COLORS.length)
+              ],
+          }
+        : { title },
     );
 
     await this.threadRecordEventService.emitThreadUpdated({

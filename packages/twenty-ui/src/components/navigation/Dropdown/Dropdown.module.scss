@@ -69,6 +69,11 @@
     [data-dropdown-option-item][data-selected] {
       background: var(--t-background-transparent-medium);
     }
+
+    > [data-dropdown-item]:focus-visible {
+      outline: 2px solid var(--t-color-blue);
+      outline-offset: -2px;
+    }
   }
 
   &[data-scrollable] {

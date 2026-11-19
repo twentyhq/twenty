@@ -1,5 +1,6 @@
 import { type AgentChatThreadConversationType } from 'twenty-shared/ai';
 
+import { type FileOutput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
@@ -26,6 +27,9 @@ export class AgentChatThreadWorkspaceEntity extends BaseWorkspaceEntity {
   channelArchivedAt: string | null;
   channelSnoozedUntil: string | null;
   title: string | null;
+  icon: string | null;
+  iconColor: string | null;
+  imageFile: FileOutput[] | null;
   conversationType: AgentChatThreadConversationType;
   directMessageFirstWorkspaceMemberId: string | null;
   directMessageSecondWorkspaceMemberId: string | null;

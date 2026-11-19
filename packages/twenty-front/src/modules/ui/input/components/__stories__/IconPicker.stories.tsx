@@ -319,3 +319,34 @@ export const CompositeTriggerKeyboard: Story = {
     await waitFor(() => expect(trigger).toHaveFocus());
   },
 };
+
+export const WithImageUpload: Story = {
+  args: { imageUpload: { onUpload: fn(), onRemove: fn() } },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      body.getByRole('button', {
+        name: 'Click to select icon (no icon selected)',
+      }),
+    );
+    const dialog = await body.findByRole('dialog', { name: 'Choose icon' });
+    const iconOption = within(dialog).getByRole('radio', { name: 'Icon' });
+
+    expect(iconOption).toBeChecked();
+    await waitFor(() =>
+      expect(within(dialog).getByRole('searchbox')).toHaveFocus(),
+    );
+    await userEvent.keyboard('{Shift>}{Tab}{/Shift}');
+    expect(iconOption).toHaveFocus();
+    await userEvent.keyboard('{ArrowRight}');
+    expect(within(dialog).getByRole('radio', { name: 'Image' })).toBeChecked();
+
+    expect(
+      await within(dialog).findByRole('button', { name: 'Upload image' }),
+    ).toBeVisible();
+    expect(
+      within(dialog).queryByRole('button', { name: 'Remove image' }),
+    ).not.toBeInTheDocument();
+  },
+};

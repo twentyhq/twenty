@@ -1,19 +1,35 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ReactElement, useMemo, useRef, useState } from 'react';
+import {
+  type ChangeEvent,
+  type ReactElement,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { getIconTileColorShades } from 'twenty-ui/components/data-display';
-import { IconButton, LightIconButton } from 'twenty-ui/components/input';
+import {
+  IconButton,
+  LightIconButton,
+  SegmentedControl,
+} from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconApps, type IconComponent } from 'twenty-ui/icon';
+import {
+  IconApps,
+  type IconComponent,
+  IconTrash,
+  IconUpload,
+} from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
-import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { Avatar, ColorSample } from 'twenty-ui/primitives/data-display';
 import {
   type ButtonSize,
   type ButtonVariant,
 } from 'twenty-ui/primitives/input';
 import { type ThemeColor, themeCssVariables } from 'twenty-ui/theme';
 
+import { type IconPickerImageUpload } from '@/ui/input/types/IconPickerImageUpload';
 import { ThemeColorPickerMenu } from '@/ui/input/components/ThemeColorPickerMenu';
 import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
 import { ICON_PICKER_DEFAULT_VISIBLE_COUNT } from '@/ui/input/components/constants/IconPickerDefaultVisibleCount';
@@ -45,7 +61,10 @@ type IconPickerProps = {
     selectedColor: ThemeColor;
     onColorChange: (color: ThemeColor) => void;
   };
+  imageUpload?: IconPickerImageUpload;
 };
+
+type IconPickerTab = 'icon' | 'image';
 
 const ICON_CELL_WIDTH = 32;
 const ICON_GRID_GAP = 2;
@@ -69,6 +88,20 @@ const StyledPopupContent = styled.div`
   display: contents;
 `;
 
+const StyledSwitcherRow = styled.div`
+  padding: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledImagePreview = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[2]};
+`;
+
+const StyledFileInput = styled.input`
+  display: none;
+`;
+
 export const IconPicker = ({
   disabled,
   dropdownId = 'icon-picker',
@@ -85,9 +118,13 @@ export const IconPicker = ({
   maxIconsVisible = ICON_PICKER_DEFAULT_VISIBLE_COUNT,
   iconColorPicker,
   iconColor,
+  imageUpload,
 }: IconPickerProps) => {
   const { t } = useLingui();
   const [searchString, setSearchString] = useState('');
+  const [activeTab, setActiveTab] = useState<IconPickerTab>('icon');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageUrl = imageUpload?.imageUrl;
   const [visibleCount, setVisibleCount] = useAtomFamilyState(
     iconPickerVisibleCountState,
     dropdownId,
@@ -143,6 +180,117 @@ export const IconPicker = ({
     : t`(no icon selected)`;
   const colorDropdownId = `${dropdownId}-icon-color-picker`;
 
+  const handleUploadClick = () => {
+    setTimeout(() => fileInputRef.current?.click());
+  };
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (isDefined(file)) {
+      imageUpload?.onUpload(file);
+    }
+
+    event.target.value = '';
+  };
+
+  const iconPanel = (
+    <>
+      <StyledSearchRow>
+        <StyledSearchContainer>
+          <Dropdown.Search
+            aria-label={t`Search icon`}
+            placeholder={t`Search icon`}
+            value={searchString}
+            onValueChange={setSearchString}
+          />
+        </StyledSearchContainer>
+        {isDefined(iconColorPicker) && (
+          <DropdownRoot dropdownId={colorDropdownId} type="picker">
+            <Dropdown.Trigger
+              render={
+                <LightIconButton aria-label={t`Choose icon color`}>
+                  <ColorSample
+                    colorName={iconColorPicker.selectedColor}
+                    variant="circle"
+                  />
+                </LightIconButton>
+              }
+            />
+            <DropdownContent
+              side="right"
+              align="start"
+              sideOffset={-24}
+              alignOffset={24}
+              width={dropdownWidth}
+            >
+              <StyledPopupContent data-click-outside-id={colorDropdownId}>
+                <ThemeColorPickerMenu
+                  selectedColor={iconColorPicker.selectedColor}
+                  onSelectColor={iconColorPicker.onColorChange}
+                />
+              </StyledPopupContent>
+            </DropdownContent>
+          </DropdownRoot>
+        )}
+      </StyledSearchRow>
+      <Dropdown.Separator />
+      <Dropdown.SelectionGroup
+        aria-label={t`Icons`}
+        value={selectedIconKey ?? null}
+        onValueChange={(iconKey) => {
+          if (!isDefined(iconKey)) {
+            return;
+          }
+
+          onChange({ iconKey, Icon: getIcon(iconKey) });
+        }}
+      >
+        <Dropdown.Section
+          scrollable
+          ref={scrollContainerRef}
+          aria-label={t`Icons`}
+        >
+          <Dropdown.Section columns={columns}>
+            {visibleIconKeys.map((iconKey) => {
+              const Icon = getIcon(iconKey);
+
+              return (
+                <Dropdown.OptionItem
+                  key={iconKey}
+                  aria-label={getIconPickerLabel(iconKey)}
+                  title={iconKey}
+                  value={iconKey}
+                  indicator="none"
+                  nativeButton
+                  render={
+                    <LightIconButton
+                      size="md"
+                      aria-label={getIconPickerLabel(iconKey)}
+                    >
+                      <Icon color={displayColor} />
+                    </LightIconButton>
+                  }
+                />
+              );
+            })}
+          </Dropdown.Section>
+          <div ref={sentinelRef}>
+            {isLoadingMore && (
+              <Dropdown.Loading>{t`Loading more...`}</Dropdown.Loading>
+            )}
+          </div>
+          <IconPickerScrollEffect
+            dropdownId={dropdownId}
+            sentinelRef={sentinelRef}
+            scrollContainerRef={scrollContainerRef}
+            enabled={isLoadingMore}
+          />
+        </Dropdown.Section>
+      </Dropdown.SelectionGroup>
+    </>
+  );
+
   return (
     <div className={className}>
       <DropdownRoot
@@ -156,6 +304,7 @@ export const IconPicker = ({
 
           setSearchString('');
           setVisibleCount(maxIconsVisible);
+          setActiveTab(isNonEmptyString(imageUrl) ? 'image' : 'icon');
           onOpen?.();
         }}
       >
@@ -181,101 +330,75 @@ export const IconPicker = ({
           sideOffset={dropdownSideOffset}
         >
           <StyledPopupContent data-click-outside-id={dropdownId}>
-            <StyledSearchRow>
-              <StyledSearchContainer>
-                <Dropdown.Search
-                  aria-label={t`Search icon`}
-                  placeholder={t`Search icon`}
-                  value={searchString}
-                  onValueChange={setSearchString}
-                />
-              </StyledSearchContainer>
-              {isDefined(iconColorPicker) && (
-                <DropdownRoot dropdownId={colorDropdownId} type="picker">
-                  <Dropdown.Trigger
-                    render={
-                      <LightIconButton aria-label={t`Choose icon color`}>
-                        <ColorSample
-                          colorName={iconColorPicker.selectedColor}
-                          variant="circle"
-                        />
-                      </LightIconButton>
-                    }
+            {isDefined(imageUpload) ? (
+              <>
+                <StyledSwitcherRow>
+                  <SegmentedControl
+                    size="sm"
+                    fullWidth
+                    aria-label={t`Image type`}
+                    value={activeTab}
+                    onValueChange={setActiveTab}
+                    options={[
+                      { value: 'icon', label: t`Icon` },
+                      { value: 'image', label: t`Image` },
+                    ]}
                   />
-                  <DropdownContent
-                    side="right"
-                    align="start"
-                    sideOffset={-24}
-                    alignOffset={24}
-                    width={dropdownWidth}
-                  >
-                    <StyledPopupContent data-click-outside-id={colorDropdownId}>
-                      <ThemeColorPickerMenu
-                        selectedColor={iconColorPicker.selectedColor}
-                        onSelectColor={iconColorPicker.onColorChange}
-                      />
-                    </StyledPopupContent>
-                  </DropdownContent>
-                </DropdownRoot>
-              )}
-            </StyledSearchRow>
-            <Dropdown.Separator />
-            <Dropdown.SelectionGroup
-              aria-label={t`Icons`}
-              value={selectedIconKey ?? null}
-              onValueChange={(iconKey) => {
-                if (!isDefined(iconKey)) {
-                  return;
-                }
-
-                onChange({ iconKey, Icon: getIcon(iconKey) });
-              }}
-            >
-              <Dropdown.Section
-                scrollable
-                ref={scrollContainerRef}
-                aria-label={t`Icons`}
-              >
-                <Dropdown.Section columns={columns}>
-                  {visibleIconKeys.map((iconKey) => {
-                    const Icon = getIcon(iconKey);
-
-                    return (
-                      <Dropdown.OptionItem
-                        key={iconKey}
-                        aria-label={getIconPickerLabel(iconKey)}
-                        title={iconKey}
-                        value={iconKey}
-                        indicator="none"
-                        nativeButton
-                        render={
-                          <LightIconButton
-                            size="md"
-                            aria-label={getIconPickerLabel(iconKey)}
-                          >
-                            <Icon color={displayColor} />
-                          </LightIconButton>
-                        }
-                      />
-                    );
-                  })}
-                </Dropdown.Section>
-                <div ref={sentinelRef}>
-                  {isLoadingMore && (
-                    <Dropdown.Loading>{t`Loading more...`}</Dropdown.Loading>
-                  )}
-                </div>
-                <IconPickerScrollEffect
-                  dropdownId={dropdownId}
-                  sentinelRef={sentinelRef}
-                  scrollContainerRef={scrollContainerRef}
-                  enabled={isLoadingMore}
-                />
-              </Dropdown.Section>
-            </Dropdown.SelectionGroup>
+                </StyledSwitcherRow>
+                <Dropdown.Separator />
+                {activeTab === 'icon' ? (
+                  iconPanel
+                ) : (
+                  <>
+                    {isNonEmptyString(imageUrl) && (
+                      <>
+                        <StyledImagePreview>
+                          <Avatar
+                            src={imageUrl}
+                            imageProps={{ alt: t`Current image` }}
+                            size="xxl"
+                            shape="circle"
+                          />
+                        </StyledImagePreview>
+                        <Dropdown.Separator />
+                      </>
+                    )}
+                    <Dropdown.Section>
+                      <Dropdown.ActionItem
+                        startIcon={<IconUpload />}
+                        onClick={handleUploadClick}
+                      >
+                        {isNonEmptyString(imageUrl)
+                          ? t`Replace image`
+                          : t`Upload image`}
+                      </Dropdown.ActionItem>
+                      {isNonEmptyString(imageUrl) && (
+                        <Dropdown.ActionItem
+                          startIcon={<IconTrash />}
+                          onClick={imageUpload.onRemove}
+                        >
+                          {t`Remove image`}
+                        </Dropdown.ActionItem>
+                      )}
+                    </Dropdown.Section>
+                  </>
+                )}
+              </>
+            ) : (
+              iconPanel
+            )}
           </StyledPopupContent>
         </DropdownContent>
       </DropdownRoot>
+      {isDefined(imageUpload) && (
+        <StyledFileInput
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          aria-label={t`Upload image`}
+          onChange={handleFileChange}
+        />
+      )}
     </div>
   );
 };

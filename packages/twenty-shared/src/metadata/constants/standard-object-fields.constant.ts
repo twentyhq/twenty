@@ -17,6 +17,9 @@ export const STANDARD_OBJECT_FIELDS = {
       universalIdentifier: '6f3ed3b5-0642-4a2a-9558-98376adb60f4',
     },
     title: { universalIdentifier: '9283c05e-127c-46ec-82e9-6424a7c0a2f1' },
+    icon: { universalIdentifier: '36f4c02e-7b22-4a43-b696-79d5b99d224b' },
+    iconColor: { universalIdentifier: '385c9e7c-3f46-40bc-9bdf-d4734828252a' },
+    imageFile: { universalIdentifier: 'ecbe39a4-733e-48cd-88e9-f6a199b20e6f' },
     conversationType: {
       universalIdentifier: '66f93c2f-ae10-4c1a-8510-355a521f7899',
     },

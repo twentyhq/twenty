@@ -1,9 +1,14 @@
+import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type AgentChatThreadConversationType } from 'twenty-shared/ai';
 
 export type AiChatThreadRecord = ObjectRecord & {
   title: string | null;
+  icon?: string | null;
+  iconColor?: string | null;
+  imageFile?: FieldFilesValue[] | null;
   conversationType?: AgentChatThreadConversationType;
+  isAssistantParticipant?: boolean;
   directMessageFirstWorkspaceMemberId?: string | null;
   directMessageSecondWorkspaceMemberId?: string | null;
   deletedAt: string | null;

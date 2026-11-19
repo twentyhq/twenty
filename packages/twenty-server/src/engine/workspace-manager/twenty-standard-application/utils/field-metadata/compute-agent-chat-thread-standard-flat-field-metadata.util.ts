@@ -68,6 +68,78 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
     }),
     isAuditLogged: false,
   },
+  icon: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'icon',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({ message: 'Icon', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Icon shown as the image of the conversation',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconIcons',
+        isSystem: true,
+        isUIEditable: true,
+        isNullable: true,
+      },
+    }),
+    isAuditLogged: false,
+  },
+  iconColor: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'iconColor',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({ message: 'Icon color', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Color of the conversation icon',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconColorSwatch',
+        isSystem: true,
+        isUIEditable: true,
+        isNullable: true,
+      },
+    }),
+    isAuditLogged: false,
+  },
+  imageFile: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'imageFile',
+        type: FieldMetadataType.FILES,
+        label: i18nLabel(
+          msg({ message: 'Image', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Custom image of the conversation',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconPhoto',
+        isSystem: true,
+        isUIEditable: true,
+        isNullable: true,
+        settings: {
+          maxNumberOfValues: 1,
+        },
+      },
+    }),
+    isAuditLogged: false,
+  },
   conversationType: {
     ...createStandardFieldFlatMetadata({
       ...args,

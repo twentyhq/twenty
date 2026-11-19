@@ -3,7 +3,11 @@ import { type RecordGqlFields } from 'twenty-shared/types';
 export const AI_CHAT_THREAD_RECORD_GQL_FIELDS = {
   id: true,
   title: true,
+  icon: true,
+  iconColor: true,
+  imageFile: true,
   conversationType: true,
+  isAssistantParticipant: true,
   directMessageFirstWorkspaceMemberId: true,
   directMessageSecondWorkspaceMemberId: true,
   deletedAt: true,

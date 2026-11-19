@@ -1,13 +1,25 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type LanguageModelUsage, generateText } from 'ai';
+import { type LanguageModelUsage, Output, generateText } from 'ai';
+import { z } from 'zod';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { AGENT_CHAT_THREAD_ICON_NAMES } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-icon-names.constant';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 import { buildReasoningProviderOptions } from 'src/engine/metadata-modules/ai/ai-models/utils/build-reasoning-provider-options.util';
+
+const TITLE_AND_ICON_SCHEMA = z.object({
+  title: z.string(),
+  icon: z.enum(AGENT_CHAT_THREAD_ICON_NAMES),
+});
+
+type GeneratedThreadTitle = {
+  title: string;
+  icon: (typeof AGENT_CHAT_THREAD_ICON_NAMES)[number] | null;
+};
 
 @Injectable()
 export class AgentTitleGenerationService {
@@ -19,11 +31,17 @@ export class AgentTitleGenerationService {
     private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
   ) {}
 
-  async generateThreadTitle(
-    messageContent: string,
-    workspaceId: string,
-    userWorkspaceId: string | null,
-  ): Promise<string> {
+  async generateThreadTitle({
+    messageContent,
+    workspaceId,
+    userWorkspaceId,
+    shouldPickIcon,
+  }: {
+    messageContent: string;
+    workspaceId: string;
+    userWorkspaceId: string | null;
+    shouldPickIcon: boolean;
+  }): Promise<GeneratedThreadTitle> {
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId,
       operationType: UsageOperationType.AI_CHAT_TOKEN,
@@ -48,31 +66,51 @@ export class AgentTitleGenerationService {
     if (!defaultModel) {
       this.logger.warn('No default AI model available for title generation');
 
-      return this.generateFallbackTitle(messageContent);
+      return { title: this.generateFallbackTitle(messageContent), icon: null };
     }
 
     let usage: LanguageModelUsage | undefined;
 
+    const titleInstruction = `Generate a concise, descriptive title (maximum 60 characters) for a chat thread based on the following message. The title should capture the main topic or purpose of the conversation.`;
+    const generationArgs = {
+      model: defaultModel.model,
+      providerOptions: buildReasoningProviderOptions(defaultModel),
+      ...buildAiTelemetry({
+        functionId: 'agent-title-generation',
+        isContentRecordingAllowed,
+        workspaceId,
+        userWorkspaceId,
+      }),
+    };
+
     try {
+      if (shouldPickIcon) {
+        const result = await generateText({
+          ...generationArgs,
+          output: Output.object({ schema: TITLE_AND_ICON_SCHEMA }),
+          prompt: `${titleInstruction} Also pick the icon that best represents the topic. Message: "${messageContent}"`,
+        });
+
+        usage = result.usage;
+
+        return {
+          title: this.cleanTitle(result.output.title),
+          icon: result.output.icon,
+        };
+      }
+
       const result = await generateText({
-        model: defaultModel.model,
-        providerOptions: buildReasoningProviderOptions(defaultModel),
-        prompt: `Generate a concise, descriptive title (maximum 60 characters) for a chat thread based on the following message. The title should capture the main topic or purpose of the conversation. Return only the title, nothing else. Message: "${messageContent}"`,
-        ...buildAiTelemetry({
-          functionId: 'agent-title-generation',
-          isContentRecordingAllowed,
-          workspaceId,
-          userWorkspaceId,
-        }),
+        ...generationArgs,
+        prompt: `${titleInstruction} Return only the title, nothing else. Message: "${messageContent}"`,
       });
 
       usage = result.usage;
 
-      return this.cleanTitle(result.text);
+      return { title: this.cleanTitle(result.text), icon: null };
     } catch (error) {
       this.logger.error('Failed to generate title with AI:', error);
 
-      return this.generateFallbackTitle(messageContent);
+      return { title: this.generateFallbackTitle(messageContent), icon: null };
     } finally {
       if (usage) {
         void this.aiBillingService.calculateAndBillUsage({

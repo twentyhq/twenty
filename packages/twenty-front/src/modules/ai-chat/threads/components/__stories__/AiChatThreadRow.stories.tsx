@@ -8,10 +8,12 @@ import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { AiChatThreadIconTile } from '@/ai-chat/threads/components/AiChatThreadIconTile';
 import { AiChatThreadReasonBadge } from '@/ai-chat/threads/components/AiChatThreadReasonBadge';
 import { AiChatThreadRequestActions } from '@/ai-chat/threads/components/AiChatThreadRequestActions';
 import { AiChatThreadRow } from '@/ai-chat/threads/components/AiChatThreadRow';
 import { InboxThreadTriageButtons } from '@/inbox/components/InboxThreadTriageButtons';
+import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 
 const StyledSubtitle = styled.div`
   align-items: center;
@@ -205,6 +207,13 @@ export const UnreadRequest: Story = {
 
 export const Selected: Story = { args: { isSelected: true } };
 export const Checked: Story = { args: { isChecked: true } };
+
+export const WithIcon: Story = {
+  decorators: [IconsProviderDecorator],
+  args: {
+    avatar: <AiChatThreadIconTile icon="IconFlame" color="red" size="lg" />,
+  },
+};
 
 export const NarrowDraft: Story = {
   parameters: { container: { width: 320 } },

@@ -97,6 +97,7 @@ const StyledActions = styled.div<{
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[8]};
+  position: relative;
 
   @media (hover: hover) and (not (any-pointer: coarse)) {
     display: ${({ $isCompact, $isActionMenuOpen }) =>
