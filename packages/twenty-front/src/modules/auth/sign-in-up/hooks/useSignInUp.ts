@@ -13,8 +13,7 @@ import {
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod';
 import { SignInUpMode } from '@/auth/types/SignInUpMode';
-import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import { useCaptcha } from '@/client-config/hooks/useCaptcha';
+import { useGetCaptchaToken } from '@/captcha/hooks/useGetCaptchaToken';
 import { useBuildSearchParamsFromUrlSyncedStates } from '@/domain-manager/hooks/useBuildSearchParamsFromUrlSyncedStates';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -37,7 +36,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const [signInUpMode, setSignInUpMode] = useAtomState(signInUpModeState);
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
-  const { isCaptchaReady } = useCaptcha();
   const setLastAuthenticatedMethod = useSetAtomState(
     lastAuthenticatedMethodState,
   );
@@ -61,7 +59,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     checkUserExists: { checkUserExistsQuery },
   } = useAuth();
 
-  const { readCaptchaToken } = useReadCaptchaToken();
+  const { getCaptchaToken } = useGetCaptchaToken();
 
   const { buildSearchParamsFromUrlSyncedStates } =
     useBuildSearchParamsFromUrlSyncedStates();
@@ -75,14 +73,8 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     if (!form.getValues('email')) {
       return enqueueToast({ status: 'error', children: t`Email is required` });
     }
-    if (!isCaptchaReady) {
-      return enqueueToast({
-        status: 'error',
-        children: t`Captcha (anti-bot check) is still loading, try again`,
-      });
-    }
     try {
-      const token = readCaptchaToken();
+      const token = await getCaptchaToken();
 
       const { data, error } = await checkUserExistsQuery({
         variables: {
@@ -105,9 +97,8 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       enqueueToast({ status: 'error', children: errorMsgUserAlreadyExist });
     }
   }, [
-    readCaptchaToken,
+    getCaptchaToken,
     form,
-    isCaptchaReady,
     enqueueToast,
     t,
     checkUserExistsQuery,
@@ -122,15 +113,9 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         throw new Error(t`Email and password are required`);
       }
 
-      if (!isCaptchaReady) {
-        return enqueueToast({
-          status: 'error',
-          children: t`Captcha (anti-bot check) is still loading, try again`,
-        });
-      }
-
-      const token = readCaptchaToken();
       try {
+        const token = await getCaptchaToken();
+
         setLastAuthenticatedMethod(AuthenticatedMethod.EMAIL);
 
         if (
@@ -187,8 +172,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       }
     },
     [
-      isCaptchaReady,
-      readCaptchaToken,
+      getCaptchaToken,
       signInUpMode,
       isInviteMode,
       signInWithCredentialsInWorkspace,

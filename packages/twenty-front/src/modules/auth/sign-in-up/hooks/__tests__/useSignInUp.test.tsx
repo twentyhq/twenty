@@ -31,12 +31,8 @@ jest.mock('twenty-ui/components/feedback', () => ({
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
-jest.mock('@/client-config/hooks/useCaptcha', () => ({
-  useCaptcha: () => ({ isCaptchaReady: true }),
-}));
-
-jest.mock('@/captcha/hooks/useReadCaptchaToken', () => ({
-  useReadCaptchaToken: () => ({ readCaptchaToken: () => 'captcha-token' }),
+jest.mock('@/captcha/hooks/useGetCaptchaToken', () => ({
+  useGetCaptchaToken: () => ({ getCaptchaToken: async () => 'captcha-token' }),
 }));
 
 jest.mock(
