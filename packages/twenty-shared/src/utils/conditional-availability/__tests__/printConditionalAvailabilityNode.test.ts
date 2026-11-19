@@ -1,5 +1,6 @@
 import { parseConditionalAvailabilityExpression } from '@/utils/conditional-availability/parseConditionalAvailabilityExpression';
 import { printConditionalAvailabilityNode } from '@/utils/conditional-availability/printConditionalAvailabilityNode';
+import { isDefined } from '@/utils/validation/isDefined';
 
 const CANONICAL_EXPRESSIONS = [
   'featureFlags.A',
@@ -26,7 +27,7 @@ const parseWidgetRuleOrThrow = (expression: string) => {
     metadataName: 'pageLayoutWidget',
   });
 
-  if (!result.isValid || result.node === null) {
+  if (!result.isValid || !isDefined(result.node)) {
     throw new Error(`"${expression}" did not parse`);
   }
 
