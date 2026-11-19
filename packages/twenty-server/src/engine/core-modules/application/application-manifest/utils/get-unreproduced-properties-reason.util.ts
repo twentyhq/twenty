@@ -4,28 +4,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { compareByCodePoint } from 'src/engine/core-modules/application/application-manifest/utils/compare-by-code-point.util';
 import { MANIFEST_ENTITY_REGISTRY } from 'src/engine/core-modules/application/application-manifest/utils/find-manifest-entity-descriptor-by-universal-identifier.util';
 import { preserveApplicationLocalMetadataState } from 'src/engine/core-modules/application/application-manifest/utils/preserve-application-local-metadata-state.util';
-import { WORKSPACE_OWNED_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/workspace-owned-properties-by-metadata-name.constant';
+import { pickWorkspaceOwnedProperties } from 'src/engine/metadata-modules/flat-entity/utils/pick-workspace-owned-properties.util';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { compareTwoFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/compare-two-universal-flat-entity.util';
-
-const pickWorkspaceOwnedProperties = ({
-  metadataName,
-  flatEntity,
-}: {
-  metadataName: AllMetadataName;
-  flatEntity: object;
-}): Record<string, unknown> => {
-  const workspaceOwnedProperties: ReadonlySet<string> = new Set(
-    WORKSPACE_OWNED_PROPERTIES_BY_METADATA_NAME[metadataName] ?? [],
-  );
-
-  return Object.fromEntries(
-    Object.entries(flatEntity).filter(
-      ([property, value]) =>
-        workspaceOwnedProperties.has(property) && isDefined(value),
-    ),
-  );
-};
 
 // Compares as the sync does, so an exported definition can never produce an update on apply
 export const getUnreproducedPropertiesReason = <
