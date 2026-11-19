@@ -26,7 +26,11 @@ export const buildGranolaPersonalReconcileJob = ({
     jobId: isDefined(schedule)
       ? getGranolaJobId({
           prefix: 'granola-discovery',
-          identity: { ...payload, updatedAfter: schedule.updatedAfter },
+          identity: {
+            connectedAccountId: connectionId,
+            userWorkspaceId,
+            updatedAfter: schedule.updatedAfter,
+          },
         })
       : randomUUID(),
   };

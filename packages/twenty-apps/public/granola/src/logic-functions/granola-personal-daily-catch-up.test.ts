@@ -44,7 +44,7 @@ describe('granolaPersonalDailyCatchUpHandler', () => {
     expect(enqueueJobs).not.toHaveBeenCalled();
   });
 
-  it('schedules only active personal accounts with stable job IDs', async () => {
+  it('schedules only active personal accounts with job IDs independent of credentials', async () => {
     vi.useFakeTimers();
     vi.setSystemTime('2026-11-19T04:30:00.000Z');
     vi.mocked(listConnections).mockResolvedValue([
@@ -54,6 +54,11 @@ describe('granolaPersonalDailyCatchUpHandler', () => {
     await expect(granolaPersonalDailyCatchUpHandler()).resolves.toMatchObject({
       enqueuedConnectionCount: 1,
     });
+    const rotatedAccessToken = 'grn_rotated_test_key';
+    const rotatedFingerprint = getGranolaApiKeyFingerprint(rotatedAccessToken);
+    vi.mocked(listConnections).mockResolvedValue([
+      { ...OWN_CONNECTION, accessToken: rotatedAccessToken },
+    ]);
     await granolaPersonalDailyCatchUpHandler();
 
     const requests = vi
@@ -96,7 +101,14 @@ describe('granolaPersonalDailyCatchUpHandler', () => {
         },
       ],
     });
-    expect(requests.slice(2)).toEqual(requests.slice(0, 2));
+    expect(requests[2]?.jobs?.[0]).toMatchObject({
+      jobId: requests[0]?.jobs?.[0]?.jobId,
+      payload: { apiKeyFingerprint: rotatedFingerprint },
+    });
+    expect(requests[3]?.jobs?.[0]).toMatchObject({
+      jobId: requests[1]?.jobs?.[0]?.jobId,
+      payload: { scheduledApiKeyFingerprint: rotatedFingerprint },
+    });
   });
 
   it('splits each target into batches at Twenty’s 200-job limit', async () => {
