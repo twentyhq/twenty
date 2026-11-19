@@ -159,6 +159,8 @@ const AGENT: FlatAgent = {
   triggers: [],
   isSystem: true,
   isActive: true,
+  isPrivate: false,
+  createdByUserWorkspaceId: null,
   overrides: null,
   navigationMenuItemIds: [],
   navigationMenuItemUniversalIdentifiers: [],

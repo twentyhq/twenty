@@ -119,6 +119,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService code steps', () => {
     const { builtStep } = await service.runStepCreationSideEffectsAndBuildStep({
       type: WorkflowActionType.CODE,
       workspaceId: WORKSPACE_ID,
+      userWorkspaceId: undefined,
     });
 
     expect(builtStep.type).toBe(WorkflowActionType.CODE);
@@ -134,6 +135,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService code steps', () => {
     const { builtStep } = await service.runStepCreationSideEffectsAndBuildStep({
       type: WorkflowActionType.CODE,
       workspaceId: WORKSPACE_ID,
+      userWorkspaceId: undefined,
       defaultSettings: {
         input: {
           code: 'export const main = async () => ({});',
@@ -197,6 +199,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService MCP tool steps', () => {
     const { builtStep } = await service.runStepCreationSideEffectsAndBuildStep({
       type: WorkflowActionType.MCP_TOOL,
       workspaceId: WORKSPACE_ID,
+      userWorkspaceId: undefined,
       defaultSettings: {
         input: { mcpServerId: MCP_SERVER_ID, toolName: 'search_docs' },
       },
