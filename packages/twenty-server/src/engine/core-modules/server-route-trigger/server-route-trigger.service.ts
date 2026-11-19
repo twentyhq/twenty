@@ -34,6 +34,7 @@ import {
   ServerRouteTriggerExceptionCode,
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import { ServerRouteAuthorizationHeaderService } from 'src/engine/core-modules/server-route-trigger/server-route-authorization-header.service';
+import { type ServerRouteLogResolver } from 'src/engine/core-modules/server-route-trigger/types/server-route-log-resolver.type';
 import { buildServerRouteFailureLogEntry } from 'src/engine/core-modules/server-route-trigger/utils/build-server-route-failure-log-entry.util';
 import { buildServerRouteSkippedDispatchLogEntry } from 'src/engine/core-modules/server-route-trigger/utils/build-server-route-skipped-dispatch-log-entry.util';
 import { isAppFacingServerRouteError } from 'src/engine/core-modules/server-route-trigger/utils/is-app-facing-server-route-error.util';
@@ -348,7 +349,7 @@ export class ServerRouteTriggerService {
     payload,
     applicationRegistrationId,
   }: {
-    resolver: LogicFunctionEntity;
+    resolver: ServerRouteLogResolver;
     logicFunctionUniversalIdentifier: string;
     workspaceId: string;
     payload: object;
@@ -396,7 +397,7 @@ export class ServerRouteTriggerService {
     workspaceId,
     applicationRegistrationId,
   }: {
-    resolver: LogicFunctionEntity;
+    resolver: ServerRouteLogResolver;
     logicFunctionUniversalIdentifier: string;
     workspaceId: string;
     applicationRegistrationId: string;
