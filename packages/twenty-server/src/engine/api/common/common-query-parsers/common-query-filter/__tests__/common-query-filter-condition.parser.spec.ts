@@ -126,20 +126,19 @@ const recordFilterEntries = (
   queryBuilder: WorkspaceSelectQueryBuilder = outerQueryBuilder,
 ) => {
   const recorder = createWhereExpressionRecorder();
-  const parser = new CommonQueryFilterConditionParser(
-    companyObjectMetadata,
+  const parser = new CommonQueryFilterConditionParser({
+    flatObjectMetadata: companyObjectMetadata,
     flatFieldMetadataMaps,
-    undefined,
-    isDefined(parentFilterScope) ? 1 : 0,
+    depth: isDefined(parentFilterScope) ? 1 : 0,
     parentFilterScope,
-  );
+  });
 
-  parser.applyFilterEntriesToWhereBrackets(
-    recorder.whereExpression,
-    queryBuilder,
-    'company',
+  parser.applyFilterEntriesToWhereBrackets({
+    innerQueryBuilder: recorder.whereExpression,
+    outerQueryBuilder: queryBuilder,
+    objectNameSingular: 'company',
     filter,
-  );
+  });
 
   return recorder.calls;
 };

@@ -6,10 +6,10 @@ export const findViewGroupsQueryFactory = ({
   viewId,
 }: {
   gqlFields?: string;
-  viewId: string;
+  viewId?: string;
 }) => ({
   query: gql`
-    query GetViewGroups($viewId: String!) {
+    query GetViewGroups($viewId: String) {
       getViewGroups(viewId: $viewId) {
         ${gqlFields}
       }
