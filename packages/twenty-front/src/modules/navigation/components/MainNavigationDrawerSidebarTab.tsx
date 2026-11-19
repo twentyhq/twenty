@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode } from 'react';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon/provider';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
@@ -15,8 +15,13 @@ import { useSwitchNavigationDrawerTab } from '@/navigation/hooks/useSwitchNaviga
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-drawer/components/StyledNavigationDrawerUnreadDot';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+
+const StyledUnreadDot = styled(StyledNavigationDrawerUnreadDot)`
+  background: ${themeCssVariables.color.red};
+`;
 
 const StyledAnchor = styled.span`
   display: flex;
@@ -28,8 +33,7 @@ type MainNavigationDrawerSidebarTabProps = {
   isActive: boolean;
   isExpanded: boolean;
   shouldShowTooltip: boolean;
-  unreadCount: number;
-  unreadBadge: ReactNode;
+  isUnread: boolean;
 };
 
 export const MainNavigationDrawerSidebarTab = ({
@@ -37,8 +41,7 @@ export const MainNavigationDrawerSidebarTab = ({
   isActive,
   isExpanded,
   shouldShowTooltip,
-  unreadCount,
-  unreadBadge,
+  isUnread,
 }: MainNavigationDrawerSidebarTabProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
@@ -68,10 +71,8 @@ export const MainNavigationDrawerSidebarTab = ({
       tooltip={tab.name}
       shouldShowTooltip={shouldShowTooltip}
       onClick={handleClick}
-      ariaLabel={
-        unreadCount > 0 ? t`${tab.name}, ${unreadCount} unread` : tab.name
-      }
-      iconAccessory={unreadCount > 0 && unreadBadge}
+      ariaLabel={isUnread ? t`${tab.name}, unread` : tab.name}
+      iconAccessory={isUnread && <StyledUnreadDot aria-hidden="true" />}
     />
   );
 
