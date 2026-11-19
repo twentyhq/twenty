@@ -390,7 +390,6 @@ export class ServerRouteTriggerService {
     return { statusCode: 200, headers: {}, body: { queued: true } };
   }
 
-  // No retry can reach a workspace without the app, so the sender is acked instead of being told to retry.
   private async skipDispatchToWorkspaceWithoutApplicationOrThrow({
     resolver,
     logicFunctionUniversalIdentifier,
