@@ -313,6 +313,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     return {
       impersonatorUserWorkspaceId: payload.impersonatorUserWorkspaceId,
       impersonatedUserWorkspaceId: payload.impersonatedUserWorkspaceId,
+      level: authorizationResult.level,
     };
   }
 

@@ -23960,7 +23960,7 @@ msgstr "Lees de systeemprompts"
 #. js-lingui-id: /nZe2L
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Read the address, owner and account status of members' private channels"
-msgstr ""
+msgstr "Lees het adres, de eigenaar en de accountstatus van de privékanalen van leden"
 
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
