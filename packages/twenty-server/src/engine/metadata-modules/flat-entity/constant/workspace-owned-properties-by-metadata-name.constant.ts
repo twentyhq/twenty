@@ -8,6 +8,7 @@ import { type MetadataEntityPropertyName } from 'src/engine/metadata-modules/fla
 export const WORKSPACE_OWNED_PROPERTIES_BY_METADATA_NAME: Partial<{
   [P in AllMetadataName]: MetadataEntityPropertyName<P>[];
 }> = {
+  agent: ['createdByUserWorkspaceId', 'isPrivate'],
   agentChatChannel: ['name', 'icon', 'color', 'position'],
   mcpServer: ['isActive'],
   pageLayout: ['isFirstTabPinned'],

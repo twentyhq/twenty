@@ -16,6 +16,7 @@ describe('parseSlackConnectionStatus', () => {
       installedSlackTeamId: 'T0INSTALLED',
       connectionHealth: 'ok',
       hasRosterMatchFailed: false,
+      hasConnectionStatusFailed: false,
     });
   });
 
@@ -27,6 +28,7 @@ describe('parseSlackConnectionStatus', () => {
       installedSlackTeamId: undefined,
       connectionHealth: undefined,
       hasRosterMatchFailed: false,
+      hasConnectionStatusFailed: false,
     });
   });
 
@@ -43,6 +45,7 @@ describe('parseSlackConnectionStatus', () => {
         installedSlackTeamId: undefined,
         connectionHealth: undefined,
         hasRosterMatchFailed: false,
+        hasConnectionStatusFailed: false,
       });
     }
   });
@@ -59,6 +62,7 @@ describe('parseSlackConnectionStatus', () => {
       installedSlackTeamId: undefined,
       connectionHealth: 'team_claimed_by_another_workspace',
       hasRosterMatchFailed: false,
+      hasConnectionStatusFailed: false,
     });
   });
 
@@ -73,6 +77,7 @@ describe('parseSlackConnectionStatus', () => {
       installedSlackTeamId: undefined,
       connectionHealth: undefined,
       hasRosterMatchFailed: false,
+      hasConnectionStatusFailed: false,
     });
   });
 
@@ -88,6 +93,7 @@ describe('parseSlackConnectionStatus', () => {
       installedSlackTeamId: undefined,
       connectionHealth: 'ok',
       hasRosterMatchFailed: true,
+      hasConnectionStatusFailed: false,
     });
   });
 
@@ -103,16 +109,24 @@ describe('parseSlackConnectionStatus', () => {
       installedSlackTeamId: undefined,
       connectionHealth: undefined,
       hasRosterMatchFailed: false,
+      hasConnectionStatusFailed: false,
     });
   });
 
-  it('should fall back on a malformed payload', () => {
-    for (const value of [undefined, null, 'connected', []]) {
+  it('should report a failed check instead of a disconnected status', () => {
+    for (const value of [
+      { success: false, error: 'network down' },
+      undefined,
+      null,
+      'connected',
+      [],
+    ]) {
       expect(parseSlackConnectionStatus(value)).toEqual({
         isSlackConnected: false,
         installedSlackTeamId: undefined,
         connectionHealth: undefined,
         hasRosterMatchFailed: false,
+        hasConnectionStatusFailed: true,
       });
     }
   });
