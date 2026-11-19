@@ -3,6 +3,12 @@ import { type JSONContent } from '@tiptap/core';
 
 import { type SuggestedViewFieldGroup } from '@/settings/applications/utils/computeSuggestedViewFieldGroups';
 
+const buildParagraph = (text: string): JSONContent => ({
+  type: 'paragraph',
+  content: [{ type: 'text', text }],
+});
+
+// The chat composer only supports paragraphs and text, so each line is its own paragraph.
 export const buildSuggestedViewFieldsAiPrompt = ({
   applicationName,
   suggestedViewFieldGroups,
@@ -12,34 +18,16 @@ export const buildSuggestedViewFieldsAiPrompt = ({
 }): JSONContent => ({
   type: 'doc',
   content: [
-    {
-      type: 'paragraph',
-      content: [
-        {
-          type: 'text',
-          text: t`Add these ${applicationName} columns at the end of my views:`,
-        },
-      ],
-    },
-    {
-      type: 'bulletList',
-      content: suggestedViewFieldGroups.map(({ viewId, viewName, fields }) => ({
-        type: 'listItem',
-        content: [
-          {
-            type: 'paragraph',
-            content: [
-              { type: 'text', text: viewName, marks: [{ type: 'bold' }] },
-              {
-                type: 'text',
-                text: `: ${fields.map(({ label }) => label).join(', ')} `,
-              },
-              // The hidden INDEX view shares the initial view's name, so the id disambiguates.
-              { type: 'text', text: viewId, marks: [{ type: 'code' }] },
-            ],
-          },
-        ],
-      })),
-    },
+    buildParagraph(
+      t`Add these ${applicationName} columns at the end of my views:`,
+    ),
+    ...suggestedViewFieldGroups.map(({ viewId, viewName, fields }) => {
+      const fieldLabels = fields.map(({ label }) => label).join(', ');
+
+      // The hidden INDEX view shares the initial view's name, so the id disambiguates.
+      return buildParagraph(
+        `• ${t`${viewName}: ${fieldLabels} (view ${viewId})`}`,
+      );
+    }),
   ],
 });

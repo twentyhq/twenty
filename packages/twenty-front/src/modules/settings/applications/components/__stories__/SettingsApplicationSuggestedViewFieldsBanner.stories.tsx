@@ -142,7 +142,7 @@ export const PrefillsAiChatWithSuggestions: Story = {
         jotaiStore.get(aiChatPrepromptState.atom)?.serializedDocument ?? '',
       ),
     ).toContain(
-      `- **All People**: ${jobTitleField.label}, ${cityField.label} \`${allPeopleView?.id}\``,
+      `• All People: ${jobTitleField.label}, ${cityField.label} (view ${allPeopleView?.id})`,
     );
     expect(canvas.queryByText(BANNER_TITLE)).not.toBeInTheDocument();
   },
