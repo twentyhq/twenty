@@ -47,16 +47,23 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
     )
     .sort((a, b) => a.position - b.position);
 
+  const toTopLevelItem = (item: NavigationMenuItem): NavigationMenuItem =>
+    isDefined(item.parentId) && flattenedSectionIds.has(item.parentId)
+      ? { ...item, parentId: null }
+      : item;
+
   const processedItemsById = new Map(
     workspaceNavigationMenuItemsSorted.map((item) => [item.id, item]),
   );
 
   return flatWorkspaceItems.reduce<NavigationMenuItem[]>((acc, item) => {
     if (isNavigationMenuItemFolder(item)) {
-      acc.push({
-        ...item,
-        icon: item.icon ?? FOLDER_ICON_DEFAULT,
-      });
+      acc.push(
+        toTopLevelItem({
+          ...item,
+          icon: item.icon ?? FOLDER_ICON_DEFAULT,
+        }),
+      );
     } else {
       const validItem = processedItemsById.get(item.id);
       if (!isDefined(validItem) && !includeInaccessibleObjectBackedItems) {
@@ -70,7 +77,7 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
         rowSource.type === NavigationMenuItemType.NATIVE_PAGE ||
         isAutomationNavigationMenuItemType(rowSource.type)
       ) {
-        acc.push(rowSource);
+        acc.push(toTopLevelItem(rowSource));
         return acc;
       }
 
@@ -85,7 +92,7 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
       }
 
       if (includeInaccessibleObjectBackedItems) {
-        acc.push(rowSource);
+        acc.push(toTopLevelItem(rowSource));
         return acc;
       }
 
@@ -98,7 +105,7 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
           operationType: 'read',
         })
       ) {
-        acc.push(rowSource);
+        acc.push(toTopLevelItem(rowSource));
       }
     }
     return acc;

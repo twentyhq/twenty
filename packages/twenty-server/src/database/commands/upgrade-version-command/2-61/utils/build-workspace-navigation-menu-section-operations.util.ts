@@ -1,9 +1,13 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { validateNavigationMenuItemHierarchy } from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util';
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
+
+const CONTAINER_TYPES_KEPT_AT_TOP_LEVEL: NavigationMenuItemType[] = [
+  NavigationMenuItemType.TAB,
+  NavigationMenuItemType.SECTION,
+];
 
 export const buildWorkspaceNavigationMenuSectionOperations = ({
   navigationMenuItems,
@@ -41,10 +45,7 @@ export const buildWorkspaceNavigationMenuSectionOperations = ({
 
   const itemsToMove = workspaceRootItems.filter(
     (item) =>
-      validateNavigationMenuItemHierarchy({
-        type: item.type,
-        parentType: NavigationMenuItemType.SECTION,
-      }).length === 0 &&
+      !CONTAINER_TYPES_KEPT_AT_TOP_LEVEL.includes(item.type) &&
       movableApplicationIds.has(item.applicationId),
   );
 
@@ -62,6 +63,7 @@ export const buildWorkspaceNavigationMenuSectionOperations = ({
     color: null,
     link: null,
     nativePageKey: null,
+    builtInSectionKey: null,
     userWorkspaceId: null,
     parentId: null,
     parentUniversalIdentifier: null,

@@ -13,6 +13,7 @@ import { createStandardNavigationMenuItemFlatMetadata } from 'src/engine/workspa
 import {
   createStandardNavigationMenuItemFolderFlatMetadata,
   createStandardNavigationMenuItemFolderItemFlatMetadata,
+  createStandardNavigationMenuItemSectionFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-folder-flat-metadata.util';
 
 const FLAT_NAVIGATION_MENU_ITEM_NAMES = [
@@ -58,11 +59,9 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
 
   const workspaceSectionDefinition =
     STANDARD_NAVIGATION_MENU_ITEMS.workspaceSection;
-  const workspaceSection = createStandardNavigationMenuItemFolderFlatMetadata({
-    type: workspaceSectionDefinition.type,
+  const workspaceSection = createStandardNavigationMenuItemSectionFlatMetadata({
     universalIdentifier: workspaceSectionDefinition.universalIdentifier,
     name: workspaceSectionDefinition.name,
-    color: null,
     position: workspaceSectionDefinition.position,
     navigationMenuItemId: v4(),
     workspaceId,

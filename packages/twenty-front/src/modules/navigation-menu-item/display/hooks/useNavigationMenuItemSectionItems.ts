@@ -24,6 +24,7 @@ export type NavigationMenuItemClickParams = {
 
 export const useNavigationMenuItemSectionItems = (
   containerId: string | null = null,
+  { flattenTopLevelSections }: { flattenTopLevelSections?: boolean } = {},
 ): NavigationMenuItem[] => {
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
@@ -39,8 +40,11 @@ export const useNavigationMenuItemSectionItems = (
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
 
+  const shouldFlattenTopLevelSections =
+    flattenTopLevelSections ?? !isCustomizableSidebarEnabled;
+
   const flattenedSectionIds = new Set(
-    !isCustomizableSidebarEnabled && containerId === null
+    shouldFlattenTopLevelSections && containerId === null
       ? workspaceNavigationMenuItems
           .filter(
             (item) =>

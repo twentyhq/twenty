@@ -139,9 +139,9 @@ describe('getWorkspaceSidebarOrphanItemsInDisplayOrder', () => {
       flattenedSectionIds: new Set([section.id]),
     });
 
-    expect(result.map(({ id }) => id)).toEqual([
-      'folder-in-section',
-      'top-level-folder',
+    expect(result.map(({ id, parentId }) => ({ id, parentId }))).toEqual([
+      { id: 'folder-in-section', parentId: null },
+      { id: 'top-level-folder', parentId: undefined },
     ]);
   });
 });
