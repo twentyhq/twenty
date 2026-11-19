@@ -4,7 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import groupBy from 'lodash.groupby';
 import { FOCUSED_TAB_HEARTBEAT_INTERVAL_MS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Not } from 'typeorm';
+import { In, IsNull, MoreThan, Not } from 'typeorm';
 import { generateRequestDetails } from 'web-push';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -176,7 +176,8 @@ export class WebPushService {
             twentyConfigService: this.twentyConfigService,
           }).publicKey,
           userSession: {
-            ...this.userSessionService.buildActiveSessionWhere(),
+            revokedAt: IsNull(),
+            expiresAt: MoreThan(new Date()),
             userId: In(userIds),
             workspaceId,
           },

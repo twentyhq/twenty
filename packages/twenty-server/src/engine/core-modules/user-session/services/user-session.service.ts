@@ -6,7 +6,7 @@ import { addMilliseconds } from 'date-fns';
 import { type Request } from 'express';
 import ms from 'ms';
 import { isDefined } from 'twenty-shared/utils';
-import { type FindOptionsWhere, IsNull, MoreThan, Repository } from 'typeorm';
+import { IsNull, MoreThan, Repository } from 'typeorm';
 
 import {
   AppTokenEntity,
@@ -451,20 +451,19 @@ export class UserSessionService {
     userId: string;
     workspaceId: string;
   }): Promise<UserSessionEntity[]> {
+    const now = new Date();
+    const idleTimeoutMs = this.getIdleTimeoutMs();
+
     return this.userSessionRepository.find({
-      where: { ...this.buildActiveSessionWhere(), userId, workspaceId },
+      where: {
+        userId,
+        workspaceId,
+        revokedAt: IsNull(),
+        expiresAt: MoreThan(now),
+        lastActiveAt: MoreThan(addMilliseconds(now, -idleTimeoutMs)),
+      },
       order: { lastActiveAt: 'DESC' },
     });
-  }
-
-  buildActiveSessionWhere(): FindOptionsWhere<UserSessionEntity> {
-    const now = new Date();
-
-    return {
-      revokedAt: IsNull(),
-      expiresAt: MoreThan(now),
-      lastActiveAt: MoreThan(addMilliseconds(now, -this.getIdleTimeoutMs())),
-    };
   }
 
   async revokeSessionByToken(
