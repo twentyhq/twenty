@@ -43,8 +43,8 @@ describe('buildSuggestedViewFieldsAiPrompt', () => {
     expect(text).toBe(
       [
         'Add these Last contact columns at the end of my views:',
-        '• All People: Last contact, Last contact by (view all-people-view-id)',
-        '• All Companies: Last contact (view all-companies-view-id)',
+        '• All People: Last contact, Last contact by',
+        '• All Companies: Last contact',
       ].join('\n'),
     );
   });

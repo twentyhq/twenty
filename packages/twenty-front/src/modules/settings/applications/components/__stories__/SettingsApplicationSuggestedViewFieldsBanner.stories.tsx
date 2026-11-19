@@ -141,9 +141,7 @@ export const PrefillsAiChatWithSuggestions: Story = {
       tipTapDocumentToMarkdown(
         jotaiStore.get(aiChatPrepromptState.atom)?.serializedDocument ?? '',
       ),
-    ).toContain(
-      `• All People: ${jobTitleField.label}, ${cityField.label} (view ${allPeopleView?.id})`,
-    );
+    ).toContain(`• All People: ${jobTitleField.label}, ${cityField.label}`);
     expect(canvas.queryByText(BANNER_TITLE)).not.toBeInTheDocument();
   },
 };

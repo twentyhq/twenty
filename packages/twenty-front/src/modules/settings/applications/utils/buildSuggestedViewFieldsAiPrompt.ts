@@ -21,13 +21,10 @@ export const buildSuggestedViewFieldsAiPrompt = ({
     buildParagraph(
       t`Add these ${applicationName} columns at the end of my views:`,
     ),
-    ...suggestedViewFieldGroups.map(({ viewId, viewName, fields }) => {
-      const fieldLabels = fields.map(({ label }) => label).join(', ');
-
-      // The hidden INDEX view shares the initial view's name, so the id disambiguates.
-      return buildParagraph(
-        `• ${t`${viewName}: ${fieldLabels} (view ${viewId})`}`,
-      );
-    }),
+    ...suggestedViewFieldGroups.map(({ viewName, fields }) =>
+      buildParagraph(
+        `• ${viewName}: ${fields.map(({ label }) => label).join(', ')}`,
+      ),
+    ),
   ],
 });
