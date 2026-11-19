@@ -1,6 +1,5 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useNavigationObjectMetadataItems } from '@/navigation-menu-item/common/hooks/useNavigationObjectMetadataItems';
-import { getWorkspaceSidebarRootSectionId } from '@/navigation-menu-item/common/utils/getWorkspaceSidebarRootSectionId';
 import { flattenNavigationMenuItemsWithFolderChildren } from '@/navigation-menu-item/common/utils/flattenNavigationMenuItemsWithFolderChildren';
 import { getWorkspaceSidebarOrphanItemsInDisplayOrder } from '@/navigation-menu-item/display/utils/getWorkspaceSidebarOrphanItemsInDisplayOrder';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -16,6 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder';
 import { useNavigationMenuItemsData } from './useNavigationMenuItemsData';
+import { useWorkspaceSidebarRootSectionId } from '@/navigation-menu-item/display/hooks/useWorkspaceSidebarRootSectionId';
 import { useSortedNavigationMenuItems } from './useSortedNavigationMenuItems';
 
 export type NavigationMenuItemClickParams = {
@@ -47,9 +47,10 @@ export const useNavigationMenuItemSectionItems = ({
   const isFlatteningTopLevelSections =
     shouldFlattenTopLevelSections ?? !isCustomizableSidebarEnabled;
 
+  const workspaceSidebarRootSectionId = useWorkspaceSidebarRootSectionId();
   const rootSectionId =
     isFlatteningTopLevelSections && containerId === null
-      ? getWorkspaceSidebarRootSectionId(workspaceNavigationMenuItems)
+      ? workspaceSidebarRootSectionId
       : null;
 
   const flatItems = getWorkspaceSidebarOrphanItemsInDisplayOrder({
@@ -60,7 +61,7 @@ export const useNavigationMenuItemSectionItems = ({
     objectPermissionsByObjectMetadataId,
     includeInaccessibleObjectBackedItems: isLayoutCustomizationModeEnabled,
     containerId: rootSectionId ?? containerId,
-    includeTopLevelItems: isDefined(rootSectionId),
+    shouldIncludeTopLevelItems: isDefined(rootSectionId),
   });
 
   return flattenNavigationMenuItemsWithFolderChildren(

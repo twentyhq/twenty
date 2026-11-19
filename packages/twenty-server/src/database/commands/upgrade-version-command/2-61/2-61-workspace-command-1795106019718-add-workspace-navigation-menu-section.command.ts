@@ -15,7 +15,7 @@ import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twe
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.61.0', 1795098842750)
+@RegisteredWorkspaceCommand('2.61.0', 1795106019718)
 @Command({
   name: 'upgrade:2-61:add-workspace-navigation-menu-section',
   description:

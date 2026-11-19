@@ -122,6 +122,7 @@ export const WorkspaceSectionContainer = ({
           }
         >
           <LazyWorkspaceSectionListDndKit
+            containerId={workspaceSidebarRootContainerId ?? undefined}
             filteredItems={workspaceOrphanItemsForSection}
             getEditModeProps={getEditModeProps}
             folderChildrenById={folderChildrenById}

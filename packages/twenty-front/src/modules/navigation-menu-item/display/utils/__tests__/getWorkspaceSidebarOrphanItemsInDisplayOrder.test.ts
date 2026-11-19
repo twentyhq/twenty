@@ -146,7 +146,7 @@ describe('getWorkspaceSidebarOrphanItemsInDisplayOrder', () => {
       views: [],
       objectPermissionsByObjectMetadataId: {},
       containerId: section.id,
-      includeTopLevelItems: true,
+      shouldIncludeTopLevelItems: true,
     });
 
     expect(result.map(({ id, parentId }) => ({ id, parentId }))).toEqual([

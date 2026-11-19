@@ -2,36 +2,41 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { getWorkspaceSidebarRootSectionId } from '@/navigation-menu-item/common/utils/getWorkspaceSidebarRootSectionId';
 
+const STANDARD_APPLICATION_ID = 'standard-application';
+
 describe('getWorkspaceSidebarRootSectionId', () => {
-  it('should return the first top-level section', () => {
+  it('should return the top-level section of the standard application', () => {
     expect(
-      getWorkspaceSidebarRootSectionId([
-        { id: 'tab', type: NavigationMenuItemType.TAB, position: 0 },
-        {
-          id: 'section-in-tab',
-          type: NavigationMenuItemType.SECTION,
-          parentId: 'tab',
-          position: 0,
-        },
-        {
-          id: 'second-section',
-          type: NavigationMenuItemType.SECTION,
-          position: 2,
-        },
-        {
-          id: 'workspace-section',
-          type: NavigationMenuItemType.SECTION,
-          position: 1,
-        },
-      ]),
+      getWorkspaceSidebarRootSectionId({
+        navigationMenuItems: [
+          {
+            id: 'custom-section',
+            type: NavigationMenuItemType.SECTION,
+            applicationId: 'custom-application',
+          },
+          {
+            id: 'workspace-section',
+            type: NavigationMenuItemType.SECTION,
+            applicationId: STANDARD_APPLICATION_ID,
+          },
+        ],
+        standardApplicationId: STANDARD_APPLICATION_ID,
+      }),
     ).toBe('workspace-section');
   });
 
-  it('should return null without a top-level section', () => {
+  it('should return null without a standard top-level section', () => {
     expect(
-      getWorkspaceSidebarRootSectionId([
-        { id: 'object', type: NavigationMenuItemType.OBJECT, position: 0 },
-      ]),
+      getWorkspaceSidebarRootSectionId({
+        navigationMenuItems: [
+          {
+            id: 'custom-section',
+            type: NavigationMenuItemType.SECTION,
+            applicationId: 'custom-application',
+          },
+        ],
+        standardApplicationId: STANDARD_APPLICATION_ID,
+      }),
     ).toBeNull();
   });
 });

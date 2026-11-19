@@ -24,7 +24,7 @@ type GetWorkspaceSidebarOrphanItemsInDisplayOrderArgs = {
   >[0];
   includeInaccessibleObjectBackedItems?: boolean;
   containerId?: string | null;
-  includeTopLevelItems?: boolean;
+  shouldIncludeTopLevelItems?: boolean;
 };
 
 export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
@@ -35,10 +35,10 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
   objectPermissionsByObjectMetadataId,
   includeInaccessibleObjectBackedItems = false,
   containerId = null,
-  includeTopLevelItems = false,
+  shouldIncludeTopLevelItems = false,
 }: GetWorkspaceSidebarOrphanItemsInDisplayOrderArgs): NavigationMenuItem[] => {
   const isIncludedTopLevelItem = (item: NavigationMenuItem) =>
-    includeTopLevelItems && !isDefined(item.parentId);
+    shouldIncludeTopLevelItems && !isDefined(item.parentId);
 
   const flatWorkspaceItems = workspaceNavigationMenuItems
     .filter(
