@@ -1,4 +1,3 @@
-import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
 import { AiChatTestInstance } from '@/ai-chat/testing/AiChatTestInstance';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { act, renderHook } from '@testing-library/react';
@@ -43,7 +42,7 @@ const readToolOutput = () => {
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
-    <AiChatTestInstance>{children}</AiChatTestInstance>
+    <AiChatTestInstance threadId="thread-id">{children}</AiChatTestInstance>
   </JotaiProvider>
 );
 
@@ -70,7 +69,6 @@ describe('useAnswerAiChatToolCall', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
-    jotaiStore.set(aiChatTestInstanceThreadIdState.atom, 'thread-id');
     jotaiStore.set(messagesAtom, [
       {
         id: 'assistant-1',

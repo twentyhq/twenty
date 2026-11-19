@@ -12,7 +12,6 @@ import { type GraphQLResolveInfo } from 'graphql';
 import { type ApplicationCapability } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { type IframeMediaPermission } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -44,7 +43,7 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
 import { FRONT_COMPONENT_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/front-component/constants/front-component-read-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
-import { getResolverSelectedFields } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-resolver-selected-fields.util';
+import { getGraphqlFieldSelections } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-graphql-field-selections.util';
 
 const FRONT_COMPONENT_USER_SESSION_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
@@ -195,10 +194,12 @@ export class FrontComponentResolver {
       return null;
     }
 
-    const selectedFields = getResolverSelectedFields(info);
+    const selectedFieldNames = getGraphqlFieldSelections(info).map(
+      ({ fieldName }) => fieldName,
+    );
 
     const [applicationTokenPair, applicationVariables] = await Promise.all([
-      isDefined(selectedFields.applicationTokenPair)
+      selectedFieldNames.includes('applicationTokenPair')
         ? this.applicationTokenService.generateApplicationTokenPair({
             applicationId: dto.applicationId,
             workspaceId: workspace.id,
@@ -206,7 +207,7 @@ export class FrontComponentResolver {
             userId: user.id,
           })
         : undefined,
-      isDefined(selectedFields.applicationVariables)
+      selectedFieldNames.includes('applicationVariables')
         ? this.getPublicApplicationVariables({
             workspaceId: workspace.id,
             applicationId: dto.applicationId,
