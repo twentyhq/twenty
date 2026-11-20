@@ -9,6 +9,7 @@ import { GRANOLA_PERSONAL_CONNECTIONS_ROUTE_PATH } from 'src/constants/granola-p
 import { GRANOLA_PERSONAL_CONNECTIONS_ROUTE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { listGranolaPersonalConnections } from 'src/logic-functions/utils/list-granola-personal-connections.util';
 import { loadGranolaPersonalFolders } from 'src/logic-functions/utils/load-granola-personal-folders.util';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 export const granolaPersonalConnectionsHandler = async (
   _payload: RoutePayload<unknown>,
@@ -24,7 +25,13 @@ export const granolaPersonalConnectionsHandler = async (
     ? await loadGranolaPersonalFolders({
         connectionId: firstConnection.id,
         userWorkspaceId,
-      }).catch(() => undefined)
+      }).catch((error: unknown) => {
+        console.error(
+          `[granola] Could not list the folders of connection ${firstConnection.id}; the Folders tab loads them on its own. ${toErrorMessage(error)}`,
+        );
+
+        return undefined;
+      })
     : undefined;
 
   return {
