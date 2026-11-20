@@ -1664,7 +1664,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
               columnsToReturn,
               this.options.tableShape,
             )
-          : columnsToReturn,
+          : [...new Set([...columnsToReturn, 'id'])],
       setColumns,
     });
 
@@ -1707,24 +1707,28 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           });
 
     const writtenRecordIdSet = new Set(writtenRecordIds);
+    const isWrittenRecord = ({ id }: ObjectRecord) =>
+      writtenRecordIdSet.has(id);
+    const writtenRecordsBefore = recordsBefore.filter(isWrittenRecord);
+    const writtenRecordsAfter = recordsAfterWrite?.filter(isWrittenRecord);
 
     const recordsAfter =
       kind === 'update' && isDefined(setColumns)
         ? mergeReturnedUpdateTimestamps(
             mergeRecordsWithUpdateValues(
               getUpdateEventRecords(
-                recordsBefore.filter(({ id }) => writtenRecordIdSet.has(id)),
-                recordsAfterWrite ?? [],
+                writtenRecordsBefore,
+                writtenRecordsAfter ?? [],
               ),
               setColumns,
             ),
             mutationResult.generatedMaps,
           )
-        : recordsAfterWrite;
+        : writtenRecordsAfter;
 
     this.emitMutationEvent({
       kind,
-      recordsBefore,
+      recordsBefore: writtenRecordsBefore,
       recordsAfter,
     });
 
