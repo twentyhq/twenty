@@ -18,8 +18,8 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { isSnoozeInboxForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeInboxForChannelComponentState';
-import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
+import { isSnoozeInboxForChannelComponentState } from '@/side-panel/states/isSnoozeInboxForChannelComponentState';
+import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/states/snoozeAiChatThreadIdsComponentState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {

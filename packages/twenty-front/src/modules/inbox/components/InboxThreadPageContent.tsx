@@ -1,35 +1,30 @@
 import { type ReactNode } from 'react';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
 
+import { AiChatThreadPageContent } from '@/ai-chat/instance/components/AiChatThreadPageContent';
+import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { InboxDirectMessageTitle } from '@/inbox/components/InboxDirectMessageTitle';
 import { InboxThreadDetailsDropdown } from '@/inbox/components/InboxThreadDetailsDropdown';
-import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { RecordShowPageContent } from '~/pages/object-record/RecordShowPageContent';
 
-type AiChatThreadPageContentProps = {
+type InboxThreadPageContentProps = {
   threadId: string;
   headerActions?: ReactNode;
   headerTitlePrefix?: ReactNode;
 };
 
-// A chat is its record page, full page, in the inbox or in the side panel
-export const AiChatThreadPageContent = ({
+export const InboxThreadPageContent = ({
   threadId,
   headerActions,
   headerTitlePrefix,
-}: AiChatThreadPageContentProps) => {
+}: InboxThreadPageContentProps) => {
   const isDirectMessage = useAtomFamilySelectorValue(
     aiChatThreadIsDirectMessageFamilySelector,
     threadId,
   );
 
   return (
-    <RecordShowPageContent
-      parameters={{
-        objectNameSingular: StandardObjectNameSingular.AgentChatThread,
-        objectRecordId: threadId,
-      }}
+    <AiChatThreadPageContent
+      threadId={threadId}
       headerActions={headerActions}
       headerTitle={
         isDirectMessage ? (
@@ -38,8 +33,6 @@ export const AiChatThreadPageContent = ({
       }
       headerTitlePrefix={headerTitlePrefix}
       headerTitleAccessory={<InboxThreadDetailsDropdown threadId={threadId} />}
-      headerTitleMode="record-title"
-      isRecordIdentifierBarHidden
     />
   );
 };

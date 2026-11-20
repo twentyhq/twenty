@@ -1,12 +1,9 @@
-import { InboxNewThreadListToggle } from '@/inbox/components/InboxNewThreadListToggle';
 import { styled } from '@linaria/react';
 import { type ReactNode, useId } from 'react';
 
-import { AiChatInstance } from '@/ai-chat/instance/components/AiChatInstance';
 import { AiChatPageHeader } from '@/ai-chat/components/AiChatPageHeader';
-import { AiChatTab } from '@/ai-chat/instance/components/AiChatTab';
+import { AiChatSurfaceView } from '@/ai-chat/instance/components/AiChatSurfaceView';
 import { AI_CHAT_SURFACE } from '@/ai-chat/constants/AiChatSurface';
-import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
 import { useSelectAiChatThreadFromNewChat } from '@/ai-chat/hooks/useSelectAiChatThreadFromNewChat';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
@@ -23,11 +20,13 @@ const StyledChatContainer = styled.div`
 `;
 
 type AiChatNewThreadPageContentProps = {
+  headerIcon?: ReactNode;
   headerActions?: ReactNode;
   showInformationBanner?: boolean;
 };
 
 export const AiChatNewThreadPageContent = ({
+  headerIcon,
   headerActions,
   showInformationBanner = true,
 }: AiChatNewThreadPageContentProps) => {
@@ -38,23 +37,17 @@ export const AiChatNewThreadPageContent = ({
   return (
     <PageCardLayout
       header={
-        <AiChatPageHeader
-          icon={<InboxNewThreadListToggle />}
-          actionButton={headerActions}
-        />
+        <AiChatPageHeader icon={headerIcon} actionButton={headerActions} />
       }
       showInformationBanner={showInformationBanner}
     >
       <StyledChatContainer>
-        <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.PAGE}>
-          <AiChatInstance
-            instanceId={instanceId}
-            threadId={newAiChatThreadId}
-            onThreadChange={selectAiChatThreadFromNewChat}
-          >
-            <AiChatTab />
-          </AiChatInstance>
-        </AiChatSurfaceContext.Provider>
+        <AiChatSurfaceView
+          surface={AI_CHAT_SURFACE.PAGE}
+          instanceId={instanceId}
+          threadId={newAiChatThreadId}
+          onThreadChange={selectAiChatThreadFromNewChat}
+        />
       </StyledChatContainer>
     </PageCardLayout>
   );

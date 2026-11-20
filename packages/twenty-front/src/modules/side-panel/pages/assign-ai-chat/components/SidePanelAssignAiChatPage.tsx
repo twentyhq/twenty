@@ -14,7 +14,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { assignAiChatThreadIdsComponentState } from '@/side-panel/pages/assign-ai-chat/states/assignAiChatThreadIdsComponentState';
+import { assignAiChatThreadIdsComponentState } from '@/side-panel/states/assignAiChatThreadIdsComponentState';
 import { getAssignAiChatMemberOptions } from '@/side-panel/pages/assign-ai-chat/utils/getAssignAiChatMemberOptions';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
