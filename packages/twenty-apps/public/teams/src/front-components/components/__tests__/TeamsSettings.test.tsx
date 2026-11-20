@@ -9,21 +9,28 @@ import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constan
 import { TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/transcripts/constants/transcript-summary-enabled-application-variable-key';
 import { TeamsSettings } from 'src/front-components/components/TeamsSettings';
 
-const { releaseFlags, variables, queryMock, mutationMock, restGetMock } =
-  vi.hoisted(() => {
-    const variables: Record<string, string | undefined> = {};
+const {
+  releaseFlags,
+  variables,
+  queryMock,
+  mutationMock,
+  restGetMock,
+  restPostMock,
+} = vi.hoisted(() => {
+  const variables: Record<string, string | undefined> = {};
 
-    return {
-      releaseFlags: {
-        IS_CHAT_ASSISTANT_RELEASED: false,
-        IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED: false,
-      },
-      variables,
-      queryMock: vi.fn(),
-      mutationMock: vi.fn(),
-      restGetMock: vi.fn(),
-    };
-  });
+  return {
+    releaseFlags: {
+      IS_CHAT_ASSISTANT_RELEASED: false,
+      IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED: false,
+    },
+    variables,
+    queryMock: vi.fn(),
+    mutationMock: vi.fn(),
+    restGetMock: vi.fn(),
+    restPostMock: vi.fn(),
+  };
+});
 
 const APPLICATION_QUERY = {
   findOneApplication: {
@@ -37,6 +44,7 @@ vi.mock('src/constants/release-flags', () => ({
 }));
 
 vi.mock('twenty-sdk/front-component', () => ({
+  enqueueSnackbar: vi.fn(),
   getApplicationVariable: (key: string) => variables[key],
   useTranslate: () => ({ t: (message: string) => message }),
 }));
@@ -56,6 +64,7 @@ vi.mock('twenty-client-sdk/metadata', () => ({
 vi.mock('twenty-client-sdk/rest', () => ({
   RestApiClient: class {
     get = restGetMock;
+    post = restPostMock;
   },
 }));
 
@@ -76,6 +85,11 @@ describe('TeamsSettings', () => {
     });
     mutationMock.mockResolvedValue({ updateOneApplicationVariable: true });
     restGetMock.mockResolvedValue({ data: { teamsUserLinks: [] } });
+    restPostMock.mockResolvedValue({
+      success: true,
+      isChatEnabled: true,
+      connections: [],
+    });
   });
 
   afterEach(cleanup);
