@@ -9,8 +9,13 @@ vi.mock(
   () => ({ findGranolaRegistrationForCurrentKey: vi.fn() }),
 );
 
-const jsonResponse = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), { status });
+const jsonResponse = ({
+  body,
+  status = 200,
+}: {
+  body: unknown;
+  status?: number;
+}) => new Response(JSON.stringify(body), { status });
 
 const ENDPOINT = {
   id: 'whe_workspace',
@@ -34,18 +39,20 @@ const stubGranola = ({
 }) => {
   const mockedFetch = vi.fn<typeof fetch>(async (input) =>
     String(input).includes('/webhook-endpoints')
-      ? jsonResponse(
-          endpointsStatus === 200
-            ? { webhook_endpoints: [ENDPOINT], hasMore: false, cursor: null }
-            : { code: 'FORBIDDEN' },
-          endpointsStatus,
-        )
-      : jsonResponse(
-          foldersStatus === 200
-            ? { folders: [], hasMore: false, cursor: null }
-            : { code: 'UNAUTHORIZED' },
-          foldersStatus,
-        ),
+      ? jsonResponse({
+          body:
+            endpointsStatus === 200
+              ? { webhook_endpoints: [ENDPOINT], hasMore: false, cursor: null }
+              : { code: 'FORBIDDEN' },
+          status: endpointsStatus,
+        })
+      : jsonResponse({
+          body:
+            foldersStatus === 200
+              ? { folders: [], hasMore: false, cursor: null }
+              : { code: 'UNAUTHORIZED' },
+          status: foldersStatus,
+        }),
   );
 
   vi.stubGlobal('fetch', mockedFetch);
@@ -65,26 +72,30 @@ afterEach(() => {
 
 describe('granolaConnectionStatusHandler', () => {
   it('asks Granola for the key check and the webhook list at the same time', async () => {
-    const endpointsRequest = { markRequested: () => undefined as void };
+    const markEndpointsRequested: (() => void)[] = [];
     const endpointsRequested = new Promise<void>((resolve) => {
-      endpointsRequest.markRequested = resolve;
+      markEndpointsRequested.push(resolve);
     });
     vi.stubGlobal(
       'fetch',
       vi.fn<typeof fetch>(async (input) => {
         if (String(input).includes('/webhook-endpoints')) {
-          endpointsRequest.markRequested();
+          markEndpointsRequested.forEach((markRequested) => markRequested());
 
           return jsonResponse({
-            webhook_endpoints: [ENDPOINT],
-            hasMore: false,
-            cursor: null,
+            body: {
+              webhook_endpoints: [ENDPOINT],
+              hasMore: false,
+              cursor: null,
+            },
           });
         }
 
         await endpointsRequested;
 
-        return jsonResponse({ folders: [], hasMore: false, cursor: null });
+        return jsonResponse({
+          body: { folders: [], hasMore: false, cursor: null },
+        });
       }),
     );
     vi.mocked(findGranolaRegistrationForCurrentKey).mockResolvedValue({

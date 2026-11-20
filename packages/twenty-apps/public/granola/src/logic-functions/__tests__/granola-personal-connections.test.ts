@@ -76,6 +76,7 @@ describe('granolaPersonalConnectionsHandler', () => {
 
   it('still returns the connections when Granola folders cannot be listed', async () => {
     vi.mocked(listConnections).mockResolvedValue([OWN_CONNECTION]);
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
     vi.mocked(loadGranolaPersonalFolders).mockRejectedValue(
       new Error('Granola is temporarily unavailable'),
     );
