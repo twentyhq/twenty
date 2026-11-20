@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { useApplyAiChatThreadUpdate } from '@/ai-chat/threads/hooks/useApplyAiChatThreadUpdate';
+import { useApplyOptimisticAiChatThreadUpdate } from '@/ai-chat/threads/hooks/useApplyOptimisticAiChatThreadUpdate';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -19,7 +19,8 @@ export const useUpdateAiChatThreadChannelCopy = () => {
   const client = useApolloClient();
   const store = useStore();
   const { enqueueToast } = useToast();
-  const { applyAiChatThreadUpdate } = useApplyAiChatThreadUpdate();
+  const { applyOptimisticAiChatThreadUpdate } =
+    useApplyOptimisticAiChatThreadUpdate();
 
   const updateAiChatThreadChannelCopy = useCallback(
     async <TVariables extends { threadId: string }>({
@@ -32,39 +33,27 @@ export const useUpdateAiChatThreadChannelCopy = () => {
       optimisticChannelCopy: InboxThreadChannelCopy;
     }) => {
       const { threadId } = variables;
-      const getThread = () =>
-        store.get(aiChatThreadRecordFamilySelector.selectorFamily(threadId));
-      const previousThread = getThread();
-
-      if (!isDefined(previousThread)) {
+      if (
+        !isDefined(
+          store.get(aiChatThreadRecordFamilySelector.selectorFamily(threadId)),
+        )
+      ) {
         return;
       }
 
-      applyAiChatThreadUpdate({ id: threadId, ...optimisticChannelCopy });
+      const { rollback } = applyOptimisticAiChatThreadUpdate({
+        id: threadId,
+        ...optimisticChannelCopy,
+      });
 
       try {
         await client.mutate({ mutation, variables });
       } catch (error) {
         enqueueToast(getToastOptionsFromError({ error }));
-
-        // A newer copy may have arrived since, and is kept
-        const currentThread = getThread();
-
-        if (
-          currentThread?.channelArchivedAt ===
-            optimisticChannelCopy.channelArchivedAt &&
-          currentThread?.channelSnoozedUntil ===
-            optimisticChannelCopy.channelSnoozedUntil
-        ) {
-          applyAiChatThreadUpdate({
-            id: threadId,
-            channelArchivedAt: previousThread.channelArchivedAt ?? null,
-            channelSnoozedUntil: previousThread.channelSnoozedUntil ?? null,
-          });
-        }
+        rollback();
       }
     },
-    [applyAiChatThreadUpdate, client, enqueueToast, store],
+    [applyOptimisticAiChatThreadUpdate, client, enqueueToast, store],
   );
 
   return { updateAiChatThreadChannelCopy };

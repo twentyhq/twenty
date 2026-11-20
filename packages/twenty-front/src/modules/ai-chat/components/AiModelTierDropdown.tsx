@@ -7,7 +7,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { AiModelTierBars } from '@/ai-chat/components/AiModelTierBars';
 import { AiModelTierSlider } from '@/ai-chat/components/AiModelTierSlider';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
-import { useIsWorkspaceSetupChat } from '@/ai-chat/workspace-setup/hooks/useIsWorkspaceSetupChat';
+import { useIsWorkspaceSetupChat } from '@/ai-chat/hooks/useIsWorkspaceSetupChat';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { aiChatUserSelectedModelTierState } from '@/ai-chat/states/aiChatUserSelectedModelTierState';
 import { Dropdown } from 'twenty-ui/components/navigation';

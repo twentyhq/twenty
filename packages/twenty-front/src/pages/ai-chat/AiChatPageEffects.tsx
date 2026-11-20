@@ -1,5 +1,5 @@
 import { AiChatPageContinueInSidePanelEffect } from '@/ai-chat/components/AiChatPageContinueInSidePanelEffect';
-import { AiChatPageThreadLoadEffect } from '@/ai-chat/components/AiChatPageThreadLoadEffect';
+import { AiChatPageThreadLoadEffect } from '@/ai-chat/instance/components/AiChatPageThreadLoadEffect';
 import { AiChatThreadOpenViewEffect } from '@/ai-chat/threads/components/AiChatThreadOpenViewEffect';
 
 type AiChatPageEffectsProps = {

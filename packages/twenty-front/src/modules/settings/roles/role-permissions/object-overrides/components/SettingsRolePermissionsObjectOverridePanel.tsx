@@ -8,6 +8,7 @@ import {
 import { OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/object-overrides/constants/ObjectOverrideTableGridTemplateColumns';
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionKeys';
 import { useRowLevelPermissionRulesInDraftRole } from '@/settings/roles/role-permissions/object-overrides/hooks/useRowLevelPermissionRulesInDraftRole';
+import { useObjectDisabledOperations } from '@/settings/roles/role-permissions/object-overrides/hooks/useObjectDisabledOperations';
 import { useRowLevelPermissionRuleLabel } from '@/settings/roles/role-permissions/object-overrides/hooks/useRowLevelPermissionRuleLabel';
 import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/object-overrides/hooks/useSettingsRoleObjectOverrides';
 import { getObjectOperations } from '@/settings/roles/role-permissions/object-overrides/utils/getObjectOperations';
@@ -24,7 +25,8 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
+import { IconChevronRight, IconPlus, IconTrash } from 'twenty-ui/icon';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { Button, Checkbox } from 'twenty-ui/primitives/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
@@ -83,6 +85,12 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
 
   const { getRuleLabel } = useRowLevelPermissionRuleLabel(objectMetadataItem);
 
+  const {
+    disabledOperations,
+    disabledOperationReasons,
+    getDisabledOperationReason,
+  } = useObjectDisabledOperations(objectMetadataItem);
+
   const rules = getObjectRowLevelPermissionRules({
     role: settingsDraftRole,
     objectMetadataId: objectMetadataItem.id,
@@ -91,13 +99,14 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
   const operations = getObjectOperations({
     role: settingsDraftRole,
     objectMetadataId: objectMetadataItem.id,
+    disabledOperations,
   });
 
   const objectLabelPlural = objectMetadataItem.labelPlural.toLocaleLowerCase();
 
   const getRuleOnlyHint = (operation: SettingsRoleObjectPermissionKey) => {
     const ruleCount = rules.filter(({ rule }) =>
-      getRecordsGrantOperations(rule).includes(operation),
+      getRecordsGrantOperations({ recordsGrant: rule }).includes(operation),
     ).length;
 
     if (operations.includes(operation) || ruleCount === 0) {
@@ -129,6 +138,7 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
       operations: getObjectOperationsWithReadDependency({
         previousOperations: operations,
         nextOperations,
+        disabledOperations,
       }),
     });
   };
@@ -146,27 +156,43 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
       <StyledHeaderRow>
         <TableHeader>{t`All records`}</TableHeader>
         <TableHeader>{t`Allows`}</TableHeader>
-        <TableHeader />
+        <TableHeader align="right">
+          {isEditable && (
+            <LightIconButton
+              emphasis="subtle"
+              aria-label={t`Remove override`}
+              onClick={() => removeObjectOverride(objectMetadataItem.id)}
+            >
+              <IconTrash />
+            </LightIconButton>
+          )}
+        </TableHeader>
       </StyledHeaderRow>
       {SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.map((key) => {
         const { Icon } = SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[key];
-        const ruleOnlyHint = getRuleOnlyHint(key);
+        const disabledReason = getDisabledOperationReason(key);
+        const isOperationEnabled = !isDefined(disabledReason);
+        const hint = disabledReason ?? getRuleOnlyHint(key);
 
         return (
           <TableRow
             key={key}
             gridTemplateColumns={OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS}
-            onClick={isEditable ? () => toggleOperation(key) : undefined}
+            onClick={
+              isEditable && isOperationEnabled
+                ? () => toggleOperation(key)
+                : undefined
+            }
           >
             <TableCell gap={themeCssVariables.spacing[2]} overflow="hidden">
               <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
               <StyledActionLabel>
                 {t(SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[key].label)}
               </StyledActionLabel>
-              {isDefined(ruleOnlyHint) && (
+              {isDefined(hint) && (
                 <OverflowingTextWithTooltip
                   color="tertiary"
-                  text={`· ${ruleOnlyHint}`}
+                  text={`· ${hint}`}
                 />
               )}
             </TableCell>
@@ -187,7 +213,7 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
                   SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[key].label,
                 )}
                 checked={operations.includes(key)}
-                disabled={!isEditable}
+                disabled={!isEditable || !isOperationEnabled}
                 hoverable={false}
                 onClick={(event) => event.stopPropagation()}
                 onCheckedChange={() => toggleOperation(key)}
@@ -227,7 +253,10 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
             <TableCell onClick={(event) => event.stopPropagation()}>
               <SettingsRolePermissionsObjectOperationsSelect
                 dropdownId={`settings-role-rule-actions-${rule.id}`}
-                selectedOperations={getRecordsGrantOperations(rule)}
+                selectedOperations={getRecordsGrantOperations({
+                  recordsGrant: rule,
+                  disabledOperations,
+                })}
                 onChange={(operations) =>
                   setRuleOperations({
                     rowLevelPermissionRuleId: rule.id,
@@ -235,6 +264,7 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
                   })
                 }
                 disabled={!isEditable}
+                disabledOperationReasons={disabledOperationReasons}
               />
             </TableCell>
             <TableCell
@@ -248,13 +278,6 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
       })}
       {isEditable && (
         <StyledFooter>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => removeObjectOverride(objectMetadataItem.id)}
-          >
-            {t`Remove override`}
-          </Button>
           <Button
             size="sm"
             variant="outline"

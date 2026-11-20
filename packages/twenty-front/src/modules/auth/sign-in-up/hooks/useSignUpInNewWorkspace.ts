@@ -1,8 +1,7 @@
 import { useAuth } from '@/auth/hooks/useAuth';
 import { affiliatePartnerNameState } from '@/auth/states/affiliatePartnerNameState';
 import { useUploadNewWorkspaceLogo } from '@/auth/sign-in-up/hooks/useUploadNewWorkspaceLogo';
-import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import { useCaptcha } from '@/client-config/hooks/useCaptcha';
+import { useGetCaptchaToken } from '@/captcha/hooks/useGetCaptchaToken';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -34,8 +33,7 @@ export const useSignUpInNewWorkspace = () => {
     affiliatePartnerNameState,
   )?.partner;
   const setAffiliatePartnerName = useSetAtomState(affiliatePartnerNameState);
-  const { isCaptchaReady } = useCaptcha();
-  const { readCaptchaToken } = useReadCaptchaToken();
+  const { getCaptchaToken } = useGetCaptchaToken();
 
   const createWorkspace = async ({
     displayName,
@@ -46,17 +44,8 @@ export const useSignUpInNewWorkspace = () => {
     subdomain?: string;
     logo?: File;
   } = {}): Promise<boolean> => {
-    if (!isCaptchaReady) {
-      enqueueToast({
-        status: 'error',
-        children: t`Captcha (anti-bot check) is still loading, try again`,
-      });
-
-      return false;
-    }
-
     try {
-      const captchaToken = readCaptchaToken();
+      const captchaToken = await getCaptchaToken();
 
       const { data } = await signUpInNewWorkspaceMutation({
         variables: {

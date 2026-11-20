@@ -55,7 +55,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { useNavigateToInboxThread } from '@/inbox/hooks/useNavigateToInboxThread';
 import { AiChatNewThreadPageContent } from '~/pages/ai-chat/AiChatNewThreadPageContent';
 import { AiChatPageEffects } from '~/pages/ai-chat/AiChatPageEffects';
 import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
@@ -115,7 +115,6 @@ const InboxPageContent = () => {
   const sidePanelNavigationStack = useAtomStateValue(
     sidePanelNavigationStackState,
   );
-  const navigate = useNavigateApp();
   const { threadId } = useParams();
   const isNewThreadRoute = threadId === AI_CHAT_NEW_THREAD_PATH_SEGMENT;
   const selectedThreadId =
@@ -148,9 +147,9 @@ const InboxPageContent = () => {
   const { resetRecordSelection } = useResetRecordSelection();
 
   // Rows hold a menu and a rename input, which a link cannot contain
+  const { navigateToInboxThread } = useNavigateToInboxThread();
   const selectThread = (nextThreadId: string | null) =>
-    // oxlint-disable-next-line twenty/no-navigate-prefer-link
-    navigate(AppPath.AiChatInbox, { threadId: nextThreadId });
+    navigateToInboxThread({ threadId: nextThreadId });
 
   const handleThreadClick = (
     { id }: AiChatThreadRecord,

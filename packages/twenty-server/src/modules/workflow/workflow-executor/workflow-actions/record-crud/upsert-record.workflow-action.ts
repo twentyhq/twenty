@@ -5,7 +5,7 @@ import { isDefined, resolveInput } from 'twenty-shared/utils';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { UpsertRecordService } from 'src/engine/core-modules/record-crud/services/upsert-record.service';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -26,7 +26,7 @@ export class UpsertRecordWorkflowAction implements WorkflowAction {
   constructor(
     private readonly upsertRecordService: UpsertRecordService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly workflowMetadataReadService: WorkflowMetadataReadService,
   ) {}
 
   async execute({
@@ -52,7 +52,7 @@ export class UpsertRecordWorkflowAction implements WorkflowAction {
     const rawInput = step.settings.input as WorkflowUpsertRecordActionInput;
 
     const objectMetadataInfo =
-      await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+      await this.workflowMetadataReadService.getObjectMetadataInfo(
         rawInput.objectName,
         workspaceId,
       );

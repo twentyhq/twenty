@@ -9,8 +9,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { AGENT_MESSAGE_ROLE } from '@/ai-chat/messages/constants/AgentMessageRole';
-import { shouldFocusChatEditorState } from '@/ai-chat/states/shouldFocusChatEditorState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { shouldFocusChatEditorFamilyState } from '@/ai-chat/states/shouldFocusChatEditorFamilyState';
 import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/states/aiChatQuotedMessageIdFamilyState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { AI_CHAT_USER_MESSAGE_MAX_WIDTH } from '@/ai-chat/messages/constants/AiChatUserMessageMaxWidth';
@@ -21,7 +20,7 @@ import { AiChatMessageReplyQuote } from '@/ai-chat/messages/components/AiChatMes
 import { AiChatAssistantMessageRenderer } from '@/ai-chat/messages/components/AiChatAssistantMessageRenderer';
 import { AiChatMessageReactionPicker } from '@/ai-chat/messages/components/AiChatMessageReactionPicker';
 import { AiChatMessageReactions } from '@/ai-chat/messages/components/AiChatMessageReactions';
-import { AiChatErrorRenderer } from '@/ai-chat/components/AiChatErrorRenderer';
+import { AiChatErrorRenderer } from '@/ai-chat/messages/components/AiChatErrorRenderer';
 import { AiChatMessageReceipt } from '@/ai-chat/messages/components/AiChatMessageReceipt';
 import { aiChatThreadReadPositionsFamilyState } from '@/ai-chat/threads/states/aiChatThreadReadPositionsFamilyState';
 import { ChatMessageAttachments } from '@/chat/components/ChatMessageAttachments';
@@ -174,7 +173,10 @@ export const AiChatMessage = ({
     { threadId },
   );
 
-  const setShouldFocusChatEditor = useSetAtomState(shouldFocusChatEditorState);
+  const setShouldFocusChatEditor = useSetAtomFamilyState(
+    shouldFocusChatEditorFamilyState,
+    { threadId },
+  );
 
   if (
     !isDefined(agentChatMessage) ||
