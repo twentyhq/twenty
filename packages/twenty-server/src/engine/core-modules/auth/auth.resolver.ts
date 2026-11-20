@@ -12,7 +12,11 @@ import {
   FileFolder,
   TwoFactorAuthenticationStrategy,
 } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isNonEmptyString,
+} from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
@@ -129,10 +133,30 @@ import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
 const WORKSPACE_CREATION_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
-    userSession: true,
+    userSession: {
+      standard: true,
+      impersonated: false,
+      playground: false,
+      workspaceAgnostic: true,
+    },
     apiKey: false,
     oauthClient: { withUser: true, withoutUser: false },
     application: { withUser: true, withoutUser: false },
+  },
+  requiredPermissionFlags: [],
+};
+
+const NEW_WORKSPACE_SIGN_UP_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: false,
+      playground: false,
+      workspaceAgnostic: true,
+    },
+    apiKey: false,
+    oauthClient: false,
+    application: false,
   },
   requiredPermissionFlags: [],
 };
@@ -702,7 +726,7 @@ export class AuthResolver {
 
   @Mutation(() => SignUpDTO)
   @UseGuards(
-    AccessPolicyGuard(AUTH_WRITE_ACCESS_POLICY),
+    AccessPolicyGuard(NEW_WORKSPACE_SIGN_UP_ACCESS_POLICY),
     WorkspaceCreationCaptchaGuard,
   )
   @AllowSuspendedWorkspace()
@@ -1025,6 +1049,13 @@ export class AuthResolver {
   ) {
     const { impersonatorUserWorkspaceId } = tokenPayload;
 
+    if (!isNonEmptyString(impersonatorUserWorkspaceId)) {
+      throw new AuthException(
+        'Impersonation login token does not name an impersonator',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
     const impersonatorUserWorkspace =
       await this.userWorkspaceRepository.findOne({
         where: { id: impersonatorUserWorkspaceId },
@@ -1116,7 +1147,22 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthorizeAppDTO)
-  @UseGuards(AccessPolicyGuard(AUTH_WRITE_ACCESS_POLICY))
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: false,
+          playground: true,
+          workspaceAgnostic: true,
+        },
+        apiKey: false,
+        oauthClient: false,
+        application: false,
+      },
+      requiredPermissionFlags: [],
+    }),
+  )
   async authorizeApp(
     @Args() authorizeAppInput: AuthorizeAppInput,
     @AuthUser() user: AuthContextUser,
@@ -1185,7 +1231,7 @@ export class AuthResolver {
       authPrincipals: {
         userSession: {
           standard: true,
-          impersonated: true,
+          impersonated: false,
           playground: false,
           workspaceAgnostic: false,
         },
@@ -1216,7 +1262,7 @@ export class AuthResolver {
       authPrincipals: {
         userSession: {
           standard: true,
-          impersonated: true,
+          impersonated: false,
           playground: false,
           workspaceAgnostic: false,
         },

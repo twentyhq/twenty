@@ -4,15 +4,20 @@ import {
   type RowLevelPermissionPredicateGroup,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
+  type RowLevelPermissionRule,
 } from '~/generated-metadata/graphql';
 
-const RULE_OPERATIONS = {
+const buildRule = (
+  rule: Pick<RowLevelPermissionRule, 'id'> & Partial<RowLevelPermissionRule>,
+): RowLevelPermissionRule => ({
+  objectMetadataId: 'object-id',
   canReadRecords: true,
   canCreateRecords: false,
   canUpdateRecords: false,
   canSoftDeleteRecords: false,
   canDestroyRecords: false,
-};
+  ...rule,
+});
 
 const buildPredicateGroup = (
   predicateGroup: Pick<
@@ -49,8 +54,16 @@ const buildPredicate = (
 });
 
 describe('buildRowLevelPermissionRulesInput', () => {
-  it('nests each group under the rule of its group without a parent', () => {
+  it('sends each rule with its own grants and its nested conditions', () => {
     const rules = buildRowLevelPermissionRulesInput({
+      rules: [
+        buildRule({ id: 'owner-rule' }),
+        buildRule({
+          id: 'team-rule',
+          canUpdateRecords: true,
+          canCreateRecords: true,
+        }),
+      ],
       predicateGroups: [
         buildPredicateGroup({
           id: 'owner-group',
@@ -61,112 +74,77 @@ describe('buildRowLevelPermissionRulesInput', () => {
           id: 'nested-group',
           parentRowLevelPermissionPredicateGroupId: 'owner-group',
           logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
-        }),
-        buildPredicateGroup({
-          id: 'team-group',
-          parentRowLevelPermissionPredicateGroupId: null,
+          rowLevelPermissionRuleId: 'owner-rule',
         }),
       ],
       predicates: [
         buildPredicate({
           id: 'owner-predicate',
           rowLevelPermissionPredicateGroupId: 'owner-group',
+          rowLevelPermissionRuleId: 'owner-rule',
         }),
         buildPredicate({
           id: 'nested-predicate',
           rowLevelPermissionPredicateGroupId: 'nested-group',
-        }),
-        buildPredicate({
-          id: 'team-predicate',
-          rowLevelPermissionPredicateGroupId: 'team-group',
-        }),
-      ],
-      ruleOperations: RULE_OPERATIONS,
-    });
-
-    expect(rules).toHaveLength(2);
-    expect(rules[0]).toMatchObject({
-      id: 'owner-rule',
-      ...RULE_OPERATIONS,
-      predicateGroups: [
-        {
-          id: 'owner-group',
-          predicates: [{ id: 'owner-predicate' }],
-          predicateGroups: [
-            {
-              id: 'nested-group',
-              logicalOperator:
-                RowLevelPermissionPredicateGroupLogicalOperator.OR,
-              predicates: [{ id: 'nested-predicate' }],
-              predicateGroups: [],
-            },
-          ],
-        },
-      ],
-    });
-    expect(rules[1]).toMatchObject({
-      id: undefined,
-      predicateGroups: [
-        { id: 'team-group', predicates: [{ id: 'team-predicate' }] },
-      ],
-    });
-  });
-
-  it('keeps a rule with several groups as one rule', () => {
-    const rules = buildRowLevelPermissionRulesInput({
-      predicateGroups: [
-        buildPredicateGroup({
-          id: 'first-group',
-          parentRowLevelPermissionPredicateGroupId: null,
-          rowLevelPermissionRuleId: 'shared-rule',
-        }),
-        buildPredicateGroup({
-          id: 'second-group',
-          parentRowLevelPermissionPredicateGroupId: null,
-          rowLevelPermissionRuleId: 'shared-rule',
-        }),
-      ],
-      predicates: [],
-      ruleOperations: RULE_OPERATIONS,
-    });
-
-    expect(rules).toHaveLength(1);
-    expect(rules[0]).toMatchObject({
-      id: 'shared-rule',
-      predicateGroups: [{ id: 'first-group' }, { id: 'second-group' }],
-    });
-  });
-
-  it('keeps predicates in no group in their own rules', () => {
-    const rules = buildRowLevelPermissionRulesInput({
-      predicateGroups: [],
-      predicates: [
-        buildPredicate({
-          id: 'owner-predicate',
-          rowLevelPermissionPredicateGroupId: null,
           rowLevelPermissionRuleId: 'owner-rule',
-          positionInRowLevelPermissionPredicateGroup: 2,
         }),
         buildPredicate({
           id: 'team-predicate',
           rowLevelPermissionPredicateGroupId: null,
           rowLevelPermissionRuleId: 'team-rule',
+          positionInRowLevelPermissionPredicateGroup: 2,
         }),
       ],
-      ruleOperations: RULE_OPERATIONS,
     });
 
     expect(rules).toEqual([
       expect.objectContaining({
         id: 'owner-rule',
-        predicates: [
-          expect.objectContaining({ id: 'owner-predicate', position: 2 }),
+        canReadRecords: true,
+        canUpdateRecords: false,
+        predicates: [],
+        predicateGroups: [
+          expect.objectContaining({
+            id: 'owner-group',
+            predicates: [expect.objectContaining({ id: 'owner-predicate' })],
+            predicateGroups: [
+              expect.objectContaining({
+                id: 'nested-group',
+                logicalOperator:
+                  RowLevelPermissionPredicateGroupLogicalOperator.OR,
+                predicates: [
+                  expect.objectContaining({ id: 'nested-predicate' }),
+                ],
+              }),
+            ],
+          }),
         ],
       }),
       expect.objectContaining({
         id: 'team-rule',
-        predicates: [expect.objectContaining({ id: 'team-predicate' })],
+        canUpdateRecords: true,
+        canCreateRecords: true,
+        predicates: [
+          expect.objectContaining({ id: 'team-predicate', position: 2 }),
+        ],
+        predicateGroups: [],
       }),
     ]);
+  });
+
+  it('leaves out a rule without any condition', () => {
+    const rules = buildRowLevelPermissionRulesInput({
+      rules: [buildRule({ id: 'empty-rule' })],
+      predicateGroups: [
+        buildPredicateGroup({
+          id: 'empty-group',
+          parentRowLevelPermissionPredicateGroupId: null,
+          rowLevelPermissionRuleId: 'empty-rule',
+        }),
+      ],
+      predicates: [],
+    });
+
+    expect(rules).toEqual([]);
   });
 });

@@ -46,6 +46,7 @@ export type Agent = {
   isActive: Scalars['Boolean']['output'];
   /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
   isCustom: Scalars['Boolean']['output'];
+  isPrivate: Scalars['Boolean']['output'];
   isSystem: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
   modelConfiguration?: Maybe<Scalars['JSON']['output']>;
@@ -1581,6 +1582,7 @@ export type ClientConfig = {
   serverUrl: Scalars['String']['output'];
   signInPrefilled: Scalars['Boolean']['output'];
   support: Support;
+  webPushVapidPublicKey: Scalars['String']['output'];
 };
 
 export type ClientConfigMaintenanceMode = {
@@ -1710,6 +1712,7 @@ export type CreateAgentInput = {
   avatarShape?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
+  isPrivate?: InputMaybe<Scalars['Boolean']['input']>;
   label: Scalars['String']['input'];
   modelConfiguration?: InputMaybe<Scalars['JSON']['input']>;
   modelId: Scalars['String']['input'];
@@ -3945,6 +3948,7 @@ export type Mutation = {
   updateCalendarChannel: CalendarChannel;
   updateCommandMenuItem: CommandMenuItem;
   updateEmailGroupChannel: MessageChannel;
+  updateFocusedTab: Scalars['Boolean']['output'];
   updateFrontComponent: FrontComponent;
   updateGettingStarted: GettingStartedProgress;
   updateLabPublicFeatureFlag: FeatureFlag;
@@ -4006,6 +4010,7 @@ export type Mutation = {
   upsertPermissionFlags: Array<RolePermissionFlag>;
   upsertRowLevelPermissionRules: UpsertRowLevelPermissionRulesResult;
   upsertViewWidget: View;
+  upsertWebPushSubscription: Scalars['Boolean']['output'];
   validateApprovedAccessDomain: ApprovedAccessDomain;
   verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken;
   verifyEmailAndGetWorkspaceAgnosticToken: AvailableWorkspacesAndAccessTokens;
@@ -5250,6 +5255,11 @@ export type MutationUpdateEmailGroupChannelArgs = {
 };
 
 
+export type MutationUpdateFocusedTabArgs = {
+  input: UpdateFocusedTabInput;
+};
+
+
 export type MutationUpdateFrontComponentArgs = {
   input: UpdateFrontComponentInput;
 };
@@ -5540,6 +5550,11 @@ export type MutationUpsertRowLevelPermissionRulesArgs = {
 
 export type MutationUpsertViewWidgetArgs = {
   input: UpsertViewWidgetInput;
+};
+
+
+export type MutationUpsertWebPushSubscriptionArgs = {
+  input: UpsertWebPushSubscriptionInput;
 };
 
 
@@ -7783,6 +7798,7 @@ export type UpdateAgentInput = {
   icon?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['UUID']['input'];
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  isPrivate?: InputMaybe<Scalars['Boolean']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
   modelConfiguration?: InputMaybe<Scalars['JSON']['input']>;
   modelId?: InputMaybe<Scalars['String']['input']>;
@@ -7888,6 +7904,11 @@ export type UpdateFieldInput = {
   settings?: InputMaybe<Scalars['JSON']['input']>;
   translations?: InputMaybe<Array<MetadataTranslationOverrideInput>>;
   universalIdentifier?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateFocusedTabInput = {
+  isFocused: Scalars['Boolean']['input'];
+  tabId: Scalars['String']['input'];
 };
 
 export type UpdateFrontComponentInput = {
@@ -8437,6 +8458,13 @@ export type UpsertViewWidgetViewSortInput = {
   direction?: InputMaybe<ViewSortDirection>;
   fieldMetadataId: Scalars['UUID']['input'];
   id?: InputMaybe<Scalars['UUID']['input']>;
+};
+
+export type UpsertWebPushSubscriptionInput = {
+  browserAuthSecret: Scalars['String']['input'];
+  browserPublicKey: Scalars['String']['input'];
+  endpoint: Scalars['String']['input'];
+  vapidPublicKey: Scalars['String']['input'];
 };
 
 export type UsageAnalytics = {
