@@ -4,10 +4,13 @@ import { getScopedRelationColumnQueryFingerprint } from '@/object-record/record-
 import { getScopedRelationRecordGqlFields } from '@/object-record/record-column-scope/utils/getScopedRelationRecordGqlFields';
 import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
 
-export const useRecordIndexTableColumnQuery = (
-  objectMetadataItem: EnrichedObjectMetadataItem,
-  additionalFieldMetadataIds?: (string | undefined)[],
-) => {
+export const useRecordIndexTableColumnQuery = ({
+  objectMetadataItem,
+  additionalFieldMetadataIds,
+}: {
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  additionalFieldMetadataIds?: (string | undefined)[];
+}) => {
   const relevantRecordGqlFields = useRelevantRecordsGqlFields({
     objectMetadataItem,
     additionalFieldMetadataIds,

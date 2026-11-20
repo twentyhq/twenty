@@ -11,7 +11,7 @@ export const useRecordIndexTableLazyQuery = (objectNameSingular: string) => {
   });
 
   const { recordGqlFields, columnQueryFingerprint } =
-    useRecordIndexTableColumnQuery(objectMetadataItem);
+    useRecordIndexTableColumnQuery({ objectMetadataItem });
 
   const { fetchMoreRecordsLazy, queryIdentifier, findManyRecordsLazy } =
     useLazyFindManyRecords({

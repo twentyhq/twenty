@@ -18,7 +18,6 @@ const getWrittenRecord = (
   return undefined;
 };
 
-// Only a written record that carries its join column can be narrowed; any other operation is assumed relevant
 export const isScopedRelationRecordOperationRelevant = ({
   operation,
   operationObjectMetadataItemId,
