@@ -21,6 +21,8 @@ import { ConnectedAccountProvider, FeatureFlagKey } from 'twenty-shared/types';
 
 import { type ConnectionProviderConnectedAccountService } from 'src/engine/core-modules/application/connection-provider/connection-provider-connected-account.service';
 import { type AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
+import { UPDATE_SUBSCRIPTION_QUANTITY_JOB_DELAY_MS } from 'src/engine/core-modules/billing/constants/update-subscription-quantity-job-delay-ms.constant';
+import { SyncSubscriptionApplicationsJob } from 'src/engine/core-modules/billing/jobs/sync-subscription-applications.job';
 import { type BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
 import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { type BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
@@ -29,6 +31,9 @@ import { type StripeSubscriptionService } from 'src/engine/core-modules/billing/
 import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
 import { buildApplicationStripeProductId } from 'src/engine/core-modules/billing/utils/build-application-stripe-product-id.util';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type StripeItem = { id: string; price: { id: string }; quantity: number };
@@ -84,10 +89,26 @@ describe('Application price per connected account (integration)', () => {
   let applicationMonthPriceId: string;
   let stripeItems: StripeItem[];
   let updateSubscriptionSpy: jest.SpyInstance;
+  let billingQueueAddSpy: jest.SpyInstance;
   let spies: jest.SpyInstance[];
 
   const findApplicationItem = () =>
     stripeItems.find(({ price }) => price.id === applicationMonthPriceId);
+
+  const runDelayedApplicationsSync = async () => {
+    expect(billingQueueAddSpy).toHaveBeenCalledWith(
+      SyncSubscriptionApplicationsJob.name,
+      { workspaceId },
+      expect.objectContaining({
+        delay: UPDATE_SUBSCRIPTION_QUANTITY_JOB_DELAY_MS,
+      }),
+    );
+    billingQueueAddSpy.mockClear();
+
+    await getAppProviderByClassName<BillingSubscriptionUpdateService>(
+      'BillingSubscriptionUpdateService',
+    ).syncApplications({ workspaceId });
+  };
 
   const findUserWorkspace = async () => {
     const [userWorkspace] = await query<{ id: string; userId: string }>(
@@ -133,26 +154,31 @@ describe('Application price per connected account (integration)', () => {
   const insertConnectedAccount = async ({
     applicationId,
     archivedAt = null,
+    provider = ConnectedAccountProvider.APP,
   }: {
-    applicationId: string;
+    applicationId: string | null;
     archivedAt?: Date | null;
-  }): Promise<void> => {
+    provider?: ConnectedAccountProvider;
+  }): Promise<string> => {
     const userWorkspace = await findUserWorkspace();
+    const id = randomUUID();
 
     await query(
       `INSERT INTO core."connectedAccount"
          (id, handle, provider, scope, "workspaceId", "userWorkspaceId", "applicationId", "archivedAt")
        VALUES ($1, $2, $3, 'WORKSPACE', $4, $5, $6, $7)`,
       [
-        randomUUID(),
+        id,
         `not-billed-${randomUUID()}@apple.dev`,
-        ConnectedAccountProvider.APP,
+        provider,
         workspaceId,
         userWorkspace.id,
         applicationId,
         archivedAt,
       ],
     );
+
+    return id;
   };
 
   beforeEach(async () => {
@@ -326,8 +352,18 @@ describe('Application price per connected account (integration)', () => {
         return buildStripeSubscription();
       });
 
+    billingQueueAddSpy = jest
+      .spyOn(
+        global.app.get<MessageQueueService>(
+          getQueueToken(MessageQueue.billingQueue),
+        ),
+        'add',
+      )
+      .mockResolvedValue(undefined);
+
     spies = [
       updateSubscriptionSpy,
+      billingQueueAddSpy,
       jest
         .spyOn(
           getAppProviderByClassName<StripeSubscriptionScheduleService>(
@@ -397,12 +433,14 @@ describe('Application price per connected account (integration)', () => {
     const firstConnectedAccountId = await connectAccount({
       handle: 'first-linkedin@apple.dev',
     });
+    await runDelayedApplicationsSync();
 
     expect(findApplicationItem()?.quantity).toBe(1);
 
     const secondConnectedAccountId = await connectAccount({
       handle: 'second-linkedin@apple.dev',
     });
+    await runDelayedApplicationsSync();
 
     expect(findApplicationItem()?.quantity).toBe(2);
 
@@ -412,6 +450,7 @@ describe('Application price per connected account (integration)', () => {
       handle: 'first-linkedin@apple.dev',
       reconnectingConnectedAccountId: firstConnectedAccountId,
     });
+    await runDelayedApplicationsSync();
 
     expect(findApplicationItem()?.quantity).toBe(2);
     expect(updateSubscriptionSpy).toHaveBeenCalledTimes(updateCallCount);
@@ -439,11 +478,23 @@ describe('Application price per connected account (integration)', () => {
 
     await disconnectConnectedAccount(firstConnectedAccountId);
     await waitForAllJobsToFinish();
+    await runDelayedApplicationsSync();
 
     expect(findApplicationItem()?.quantity).toBe(1);
 
+    const nativeConnectedAccountId = await insertConnectedAccount({
+      applicationId: null,
+      provider: ConnectedAccountProvider.GOOGLE,
+    });
+
+    await deleteConnectedAccount(nativeConnectedAccountId);
+    await waitForAllJobsToFinish();
+
+    expect(billingQueueAddSpy).not.toHaveBeenCalled();
+
     await deleteConnectedAccount(secondConnectedAccountId);
     await waitForAllJobsToFinish();
+    await runDelayedApplicationsSync();
 
     expect(findApplicationItem()).toBeUndefined();
     expect(updateSubscriptionSpy).toHaveBeenLastCalledWith(

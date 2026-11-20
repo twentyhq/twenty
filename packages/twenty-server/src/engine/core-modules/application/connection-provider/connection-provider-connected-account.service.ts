@@ -212,10 +212,18 @@ export class ConnectionProviderConnectedAccountService {
   private emitConnectionChanged({
     id,
     workspaceId,
-  }: Pick<ConnectedAccountEntity, 'id' | 'workspaceId'>): void {
+    applicationId,
+  }: Pick<
+    ConnectedAccountEntity,
+    'id' | 'workspaceId' | 'applicationId'
+  >): void {
+    if (!isDefined(applicationId)) {
+      return;
+    }
+
     this.workspaceEventEmitter.emitCustomBatchEvent<ConnectedAccountConnectionChangedEvent>(
       CONNECTED_ACCOUNT_CONNECTION_CHANGED_EVENT,
-      [{ connectedAccountId: id }],
+      [{ connectedAccountId: id, applicationId }],
       workspaceId,
     );
   }
