@@ -18,26 +18,32 @@ export const getRelationScopeRecordFiltersAndSorts = ({
   recordFilterGroups: RecordFilterGroup[];
   recordSorts: RecordSort[];
 } => ({
+  // A scope stores no position: filters keep their rank, and filter groups come after them
   recordFilters: mapViewFiltersToFilters(
-    relationScope.filters.map((filter) => ({
+    relationScope.filters.map((filter, filterIndex) => ({
       id: filter.id,
       fieldMetadataId: filter.fieldMetadataId,
       operand: filter.operand,
       value: convertViewFilterValueToString(filter.value),
       viewFilterGroupId: filter.filterGroupId,
+      positionInViewFilterGroup: filterIndex,
       subFieldName: filter.subFieldName,
       relationTargetFieldMetadataId: filter.relationTargetFieldMetadataId,
     })),
     fieldMetadataItems,
   ),
-  recordFilterGroups: relationScope.filterGroups.map((filterGroup) => ({
-    id: filterGroup.id,
-    parentRecordFilterGroupId: filterGroup.parentFilterGroupId,
-    logicalOperator:
-      mapViewFilterGroupLogicalOperatorToRecordFilterGroupLogicalOperator({
-        viewFilterGroupLogicalOperator: filterGroup.logicalOperator,
-      }),
-  })),
+  recordFilterGroups: relationScope.filterGroups.map(
+    (filterGroup, filterGroupIndex) => ({
+      id: filterGroup.id,
+      parentRecordFilterGroupId: filterGroup.parentFilterGroupId,
+      logicalOperator:
+        mapViewFilterGroupLogicalOperatorToRecordFilterGroupLogicalOperator({
+          viewFilterGroupLogicalOperator: filterGroup.logicalOperator,
+        }),
+      positionInRecordFilterGroup:
+        relationScope.filters.length + filterGroupIndex,
+    }),
+  ),
   // Scope sorts carry no id: their rank in the scope identifies them
   recordSorts: relationScope.sorts.map((sort, sortIndex) => ({
     id: String(sortIndex),
