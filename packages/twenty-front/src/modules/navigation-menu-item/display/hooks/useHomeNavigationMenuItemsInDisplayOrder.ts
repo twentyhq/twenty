@@ -3,7 +3,6 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { useNavigationObjectMetadataItems } from '@/navigation-menu-item/common/hooks/useNavigationObjectMetadataItems';
 import { flattenNavigationMenuItemsWithFolderChildren } from '@/navigation-menu-item/common/utils/flattenNavigationMenuItemsWithFolderChildren';
 import { getNavigationMenuContainersInDisplayOrder } from '@/navigation-menu-item/common/utils/getNavigationMenuContainersInDisplayOrder';
-import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder';
 import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
@@ -43,9 +42,7 @@ export const useHomeNavigationMenuItemsInDisplayOrder =
       navigationMenuItems: workspaceNavigationMenuItems,
       type: NavigationMenuItemType.SECTION,
       containerId: null,
-    })
-      .filter((section) => !isNavigationMenuItemBuiltInSection(section))
-      .map((section) => section.id);
+    }).map((section) => section.id);
 
     return [null, ...homeSectionIds].flatMap((containerId) =>
       flattenNavigationMenuItemsWithFolderChildren(
