@@ -22,7 +22,6 @@ import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { truncateFullName } from 'src/engine/core-modules/user/utils/truncate-full-name.util';
-import { truncateWorkspaceDisplayName } from 'src/engine/core-modules/workspace/utils/truncate-workspace-display-name.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 type TwoFactorAuthenticationEmailRecipient = {
@@ -156,9 +155,7 @@ export class TwoFactorAuthenticationEmailService {
       const locale = userWorkspace.locale ?? SOURCE_LOCALE;
       const emailTemplate = await buildEmailTemplate({
         locale,
-        workspaceDisplayName:
-          truncateWorkspaceDisplayName(userWorkspace.workspace.displayName) ??
-          '',
+        workspaceDisplayName: userWorkspace.workspace.displayName ?? '',
       });
       const html = await renderEmail(emailTemplate, { pretty: true });
       const text = await renderEmail(emailTemplate, { plainText: true });

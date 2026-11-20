@@ -29,7 +29,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
-import { truncateWorkspaceDisplayName } from 'src/engine/core-modules/workspace/utils/truncate-workspace-display-name.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -129,7 +128,7 @@ export class CleanerWorkspaceService {
       daysSinceInactive,
       inactiveDaysBeforeDelete: this.inactiveDaysBeforeSoftDelete,
       userName: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
-      workspaceDisplayName: `${truncateWorkspaceDisplayName(workspaceDisplayName)}`,
+      workspaceDisplayName: `${workspaceDisplayName}`,
       link: billingSettingsUrl,
       locale: workspaceMember.locale,
     };
@@ -206,7 +205,7 @@ export class CleanerWorkspaceService {
     const emailData = {
       daysSinceInactive: daysSinceInactive,
       userName: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
-      workspaceDisplayName: truncateWorkspaceDisplayName(workspaceDisplayName),
+      workspaceDisplayName,
       locale: workspaceMember.locale,
     };
     const emailTemplate = CleanSuspendedWorkspaceEmail(emailData);
