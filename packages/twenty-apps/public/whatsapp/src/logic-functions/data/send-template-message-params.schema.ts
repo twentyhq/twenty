@@ -7,7 +7,7 @@ export const templateParameterSchema = z.object({
 
 export const sendTemplateMessageParamsSchema = z.object({
   templateId: z.string().min(1),
-  phoneNumberId: z.string().min(1),
+  phoneNumberId: z.string().min(1).optional(),
   to: z.string().min(1),
   parameters: z.array(templateParameterSchema).default([]),
 });

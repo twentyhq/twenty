@@ -7,7 +7,9 @@ import {
   WHATSAPP_LOGIC_FUNCTION_WEBHOOK_SYNC_UNIVERSAL_IDENTIFIER
 } from "src/constants/universal-identifiers";
 import { updateTwentyMessageChannel } from "src/logic-functions/data/update-message-channel.util";
-import { upsertWhatsAppTemplate } from "src/logic-functions/data/upsert-whatsapp-template.util";
+import { upsertWhatsAppTemplates } from "src/logic-functions/data/upsert-whatsapp-templates.util";
+import { syncWhatsappTemplate } from "src/logic-functions/data/sync-whatsapp-template.util";
+import { getWhatsappAccessTokenOrThrow } from "src/logic-functions/data/get-whatsapp-access-token-or-throw.util";
 import { buildHistoryParseJobs } from "src/logic-functions/data/build-history-parse-jobs.util";
 import { isNonEmptyString } from "@sniptt/guards";
 import { sendInboxNotification } from "src/logic-functions/data/send-inbox-notification.util";
@@ -33,6 +35,9 @@ const handler = async (
   if (body === null || body?.entry === undefined || body.object !== 'whatsapp_business_account') {
     return new Response('', { status: 400 });
   }
+
+  let accessToken: string | undefined;
+  const getAccessToken = async () => (accessToken ??= await getWhatsappAccessTokenOrThrow());
 
   for (const entry of body.entry) {
     for (const change of entry.changes) {
@@ -84,32 +89,28 @@ const handler = async (
           break;
         }
         case "message_template_components_update":
-          await upsertWhatsAppTemplate({
-            metaTemplateId: change.value.message_template_id,
-            name: change.value.message_template_name,
-            language: change.value.message_template_language,
-          });
-          break;
         case "message_template_quality_update":
-          await upsertWhatsAppTemplate({
-            metaTemplateId: change.value.message_template_id,
-            name: change.value.message_template_name,
-            language: change.value.message_template_language,
-            quality: change.value.new_quality_score,
+          await syncWhatsappTemplate({
+            accessToken: await getAccessToken(),
+            metaTemplateId: String(change.value.message_template_id),
           });
           break;
         case "message_template_status_update":
-          await upsertWhatsAppTemplate({
-            metaTemplateId: change.value.message_template_id,
-            name: change.value.message_template_name,
-            language: change.value.message_template_language,
-            category: change.value.message_template_category,
-            status: change.value.event,
-            rejectedReason:
-              change.value.rejection_info?.reason ??
-              (change.value.reason === null || change.value.reason === 'NONE'
-                ? null
-                : change.value.reason),
+          // a deleted template can no longer be fetched from Meta
+          if (change.value.event === 'DELETED') {
+            await upsertWhatsAppTemplates([
+              {
+                metaTemplateId: String(change.value.message_template_id),
+                name: change.value.message_template_name,
+                language: change.value.message_template_language,
+                status: change.value.event,
+              },
+            ]);
+            break;
+          }
+          await syncWhatsappTemplate({
+            accessToken: await getAccessToken(),
+            metaTemplateId: String(change.value.message_template_id),
           });
           break;
         case "partner_solutions":
@@ -140,11 +141,9 @@ const handler = async (
         case "smb_message_echoes":
           break;
         case "template_category_update":
-          await upsertWhatsAppTemplate({
-            metaTemplateId: change.value.message_template_id,
-            name: change.value.message_template_name,
-            language: change.value.message_template_language,
-            category: change.value.new_category,
+          await syncWhatsappTemplate({
+            accessToken: await getAccessToken(),
+            metaTemplateId: String(change.value.message_template_id),
           });
           break;
         case "user_preferences":

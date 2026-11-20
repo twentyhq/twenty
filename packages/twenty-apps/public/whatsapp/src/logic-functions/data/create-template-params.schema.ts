@@ -4,7 +4,7 @@ const templateTextSchema = z.string().min(1);
 
 export const createTemplateParamsSchema = z
   .object({
-    wabaId: z.string().min(1),
+    wabaId: z.string().min(1).optional(),
     name: z
       .string()
       .min(1)

@@ -1,7 +1,10 @@
 import axios from 'axios';
 import { isDefined } from 'twenty-sdk/utils';
 import { preparedWhatsappAPIAddress } from 'src/logic-functions/data/prepared-whatsapp-api-address.util';
-import { type WhatsAppApiEndpoints } from 'src/logic-functions/types/whatsapp-api.type';
+import {
+  type WhatsAppApiEndpoints,
+  type WhatsAppApiErrorResponse,
+} from 'src/logic-functions/types/whatsapp-api.type';
 
 type WhatsappApiRequestParams<TEndpoint extends keyof WhatsAppApiEndpoints> = {
   accessToken: string;
@@ -33,13 +36,27 @@ export const whatsappApiRequest = async <TEndpoint extends keyof WhatsAppApiEndp
       return encodeURIComponent(value);
     });
 
-  const response = await axios.request({
-    url: preparedWhatsappAPIAddress(path),
-    method,
-    params: query,
-    data,
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
+  try {
+    const response = await axios.request({
+      url: preparedWhatsappAPIAddress(path),
+      method,
+      params: query,
+      data,
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
 
-  return response.data;
+    return response.data;
+  } catch (error) {
+    const metaError = axios.isAxiosError<WhatsAppApiErrorResponse>(error)
+      ? error.response?.data?.error
+      : undefined;
+
+    if (!isDefined(metaError)) {
+      throw error;
+    }
+
+    throw new Error(
+      `WhatsApp API error ${metaError.code} on ${endpoint}: ${metaError.error_user_msg ?? metaError.message}`,
+    );
+  }
 };

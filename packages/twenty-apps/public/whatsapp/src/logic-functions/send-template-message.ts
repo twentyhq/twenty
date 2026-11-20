@@ -5,6 +5,7 @@ import { type InputJsonSchema } from 'twenty-sdk/logic-function';
 import { WHATSAPP_LOGIC_FUNCTION_SEND_TEMPLATE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { buildTemplateComponents } from 'src/logic-functions/data/build-template-components.util';
 import { getWhatsappAccessTokenOrThrow } from 'src/logic-functions/data/get-whatsapp-access-token-or-throw.util';
+import { getDefaultWhatsappPhoneNumberIdOrThrow } from 'src/logic-functions/data/get-default-whatsapp-phone-number-id-or-throw.util';
 import { sendTemplateMessageParamsSchema } from 'src/logic-functions/data/send-template-message-params.schema';
 import { whatsappApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
 
@@ -19,7 +20,7 @@ const SEND_TEMPLATE_MESSAGE_INPUT_SCHEMA: InputJsonSchema = {
     phoneNumberId: {
       type: 'string',
       label: 'Phone number ID',
-      description: 'Meta ID of the business phone number to send from.',
+      description: 'Meta ID of the business phone number to send from. Optional when only one number is connected.',
     },
     to: {
       type: 'string',
@@ -41,7 +42,7 @@ const SEND_TEMPLATE_MESSAGE_INPUT_SCHEMA: InputJsonSchema = {
       },
     },
   },
-  required: ['templateId', 'phoneNumberId', 'to'],
+  required: ['templateId', 'to'],
   additionalProperties: false,
 };
 
@@ -80,7 +81,9 @@ const handler = async (rawParams: unknown) => {
   const response = await whatsappApiRequest({
     accessToken,
     endpoint: 'POST /{phoneNumberId}/messages',
-    pathParams: { phoneNumberId },
+    pathParams: {
+      phoneNumberId: phoneNumberId ?? (await getDefaultWhatsappPhoneNumberIdOrThrow({ accessToken })),
+    },
     data: {
       messaging_product: 'whatsapp',
       to,

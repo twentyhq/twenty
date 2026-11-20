@@ -22,6 +22,19 @@ type WhatsAppApiError = {
   message: string;
 };
 
+// reference: https://developers.facebook.com/docs/graph-api/guides/error-handling
+export type WhatsAppApiErrorResponse = {
+  error: {
+    message: string;
+    type?: string;
+    code: number;
+    error_subcode?: number;
+    error_user_title?: string;
+    error_user_msg?: string;
+    fbtrace_id?: string;
+  };
+};
+
 // Messages
 // reference: https://developers.facebook.com/documentation/business-messaging/whatsapp/messages/send-messages
 
@@ -512,23 +525,28 @@ export type WhatsAppApiCreateTemplateResponse = {
 export type WhatsAppApiGetTemplatesQuery = {
   fields?: string;
   limit?: number;
+  after?: string;
   status?: 'approved' | 'rejected';
 };
 
+// reference: https://developers.facebook.com/docs/graph-api/reference/whats-app-business-hsm/
 export type WhatsAppApiTemplate = {
   id: string;
   name: string;
-  status: 'APPROVED' | 'REJECTED' | 'PENDING';
-  category: WhatsAppApiTemplateCategory;
+  status: string; // APPROVED, PENDING, REJECTED, PAUSED, DISABLED, ...
+  category: string;
   language: string;
   components?: WhatsAppApiTemplateDefinitionComponent[];
+  parameter_format?: 'POSITIONAL' | 'NAMED';
+  quality_score?: { score: string; date?: number };
+  rejected_reason?: string;
 };
 
 export type WhatsAppApiGetTemplatesResponse = WhatsAppApiPagedResponse<WhatsAppApiTemplate>;
 
 export type WhatsAppApiGetTemplateQuery = { fields?: string };
 
-export type WhatsAppApiGetTemplateResponse = Partial<WhatsAppApiTemplate> & { id: string };
+export type WhatsAppApiGetTemplateResponse = WhatsAppApiTemplate;
 
 export type WhatsAppApiEditTemplateRequest = {
   category?: WhatsAppApiTemplateCategory;
