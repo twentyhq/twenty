@@ -3,6 +3,7 @@ import { RecordPageSidePanelPinnedCommandMenuItems } from '@/command-menu-item/c
 import { RecordPageSidePanelWidgetCommandMenuItems } from '@/command-menu-item/components/RecordPageSidePanelWidgetCommandMenuItems';
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
 import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
+import { RecordShowPagePermissionsEffect } from '@/object-record/record-show/components/RecordShowPagePermissionsEffect';
 import { useDisplaySidePanelFooter } from '@/object-record/record-show/hooks/useDisplaySidePanelFooter';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
@@ -67,6 +68,10 @@ export const PageLayoutRecordPageRenderer = ({
     <PageLayoutIdContext.Provider value={pageLayoutId}>
       <RecordShowContainerContextStoreTargetedRecordsEffect
         recordId={targetRecordIdentifier.id}
+      />
+      <RecordShowPagePermissionsEffect
+        recordId={targetRecordIdentifier.id}
+        objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
       />
 
       {recordDeletedAt && (
