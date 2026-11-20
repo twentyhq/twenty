@@ -463,4 +463,36 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
       twentyStandardApplicationId,
       now,
     }),
+    accountOwner: createStandardRelationFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        type: FieldMetadataType.RELATION,
+        morphId: null,
+        fieldName: 'accountOwner',
+        label: i18nLabel(
+          msg({ message: `Account Owner`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Workspace member whose mailbox this message was synced from`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconUserCircle',
+        isNullable: true,
+        isUIEditable: false,
+        targetObjectName: 'workspaceMember',
+        targetFieldName: 'accountOwnerForMessageChannelMessageAssociations',
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.SET_NULL,
+          joinColumnName: 'accountOwnerId',
+        },
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
   });

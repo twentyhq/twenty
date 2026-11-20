@@ -70,12 +70,14 @@ const buildPlan = ({
   existingCalendarEvents,
   calendarEventIdToLinkByEventExternalId = new Map(),
   otherCalendarChannels = [],
+  accountOwner = {},
 }: {
   fetchedCalendarEvents: FetchedCalendarEvent[];
   existingAssociations: CalendarChannelEventAssociationWorkspaceEntity[];
   existingCalendarEvents: ComparableCalendarEvent[];
   calendarEventIdToLinkByEventExternalId?: Map<string, string>;
   otherCalendarChannels?: CalendarEventSharingChannel[];
+  accountOwner?: { accountOwnerId?: string | null };
 }) =>
   buildCalendarEventSaveOperations({
     fetchedCalendarEvents,
@@ -88,6 +90,7 @@ const buildPlan = ({
       [CALENDAR_EVENT_ID, otherCalendarChannels.map(({ id }) => id)],
     ]),
     otherCalendarChannels,
+    accountOwner,
   });
 
 describe('buildCalendarEventSaveOperations', () => {
@@ -269,6 +272,39 @@ describe('buildCalendarEventSaveOperations', () => {
     ]);
     expect(plan.existingCalendarEventIds).toEqual([]);
     expect(plan.participantsOfNewEvents).toHaveLength(1);
+  });
+
+  it('records the account owner on inserted and linked associations', () => {
+    const plan = buildPlan({
+      fetchedCalendarEvents: [
+        buildFetchedCalendarEvent(),
+        buildFetchedCalendarEvent({ id: 'linked-event-id' }),
+      ],
+      existingAssociations: [],
+      existingCalendarEvents: [buildExistingCalendarEvent()],
+      calendarEventIdToLinkByEventExternalId: new Map([
+        ['linked-event-id', CALENDAR_EVENT_ID],
+      ]),
+      accountOwner: { accountOwnerId: 'workspace-member-id' },
+    });
+
+    expect(
+      plan.saveOperations.associationsToInsert.map(
+        ({ eventExternalId, accountOwnerId }) => ({
+          eventExternalId,
+          accountOwnerId,
+        }),
+      ),
+    ).toEqual([
+      {
+        eventExternalId: 'external-event-id',
+        accountOwnerId: 'workspace-member-id',
+      },
+      {
+        eventExternalId: 'linked-event-id',
+        accountOwnerId: 'workspace-member-id',
+      },
+    ]);
   });
 
   it('links an event stored by another channel instead of inserting a second one', () => {
