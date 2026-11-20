@@ -1,6 +1,7 @@
-import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
+import { type z } from 'zod';
 
-export type ConditionalAvailabilityLogicalOperator = Extract<
-  ConditionalAvailabilityNode,
-  { type: 'GROUP' }
->['logicalOperator'];
+import { type conditionalAvailabilityLogicalOperatorSchema } from '@/conditional-availability/utils/conditionalAvailabilityLogicalOperatorSchema';
+
+export type ConditionalAvailabilityLogicalOperator = z.infer<
+  typeof conditionalAvailabilityLogicalOperatorSchema
+>;
