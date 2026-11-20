@@ -37,6 +37,16 @@ export const NavigationMenuItemContainerNameEditor = ({
   const [initialName] = useState(item.name ?? '');
   const [name, setName] = useState(initialName);
 
+  const getNameToSave = (value: string) => {
+    const trimmedValue = value.trim();
+
+    if (isNonEmptyString(trimmedValue)) {
+      return trimmedValue;
+    }
+
+    return isNameOptional ? null : initialName;
+  };
+
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (
       event.key !== Key.Enter ||
@@ -73,13 +83,7 @@ export const NavigationMenuItemContainerNameEditor = ({
           fullWidth
           onChange={(value) => {
             setName(value);
-            void updateItem(item.id, {
-              name: isNonEmptyString(value.trim())
-                ? value.trim()
-                : isNameOptional
-                  ? null
-                  : initialName,
-            });
+            void updateItem(item.id, { name: getNameToSave(value) });
           }}
           onKeyDown={handleKeyDown}
         />
