@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CORE_AGENT_RECORD_ACCESS_LEVELS } from '@/object-core/agents/constants/CoreAgentRecordAccessLevels';
 import { type CoreAgentRecordAccessLevel } from '@/object-core/agents/types/CoreAgentRecordAccessLevel';
+import { getObjectOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperations';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 
 export const getCoreAgentRecordAccessLevels = ({
@@ -11,14 +12,13 @@ export const getCoreAgentRecordAccessLevels = ({
   role: RoleWithPartialMembers | undefined;
   objectMetadataId?: string;
 }): CoreAgentRecordAccessLevel[] => {
-  const objectPermission = isDefined(objectMetadataId)
-    ? role?.objectPermissions?.find(
-        (permission) => permission.objectMetadataId === objectMetadataId,
-      )
-    : undefined;
+  if (!isDefined(role)) {
+    return [];
+  }
 
-  return CORE_AGENT_RECORD_ACCESS_LEVELS.filter(
-    ({ allRecordsKey, objectKey }) =>
-      objectPermission?.[objectKey] ?? role?.[allRecordsKey] ?? false,
+  const operations = getObjectOperations({ role, objectMetadataId });
+
+  return CORE_AGENT_RECORD_ACCESS_LEVELS.filter(({ objectKey }) =>
+    operations.includes(objectKey),
   ).map(({ level }) => level);
 };

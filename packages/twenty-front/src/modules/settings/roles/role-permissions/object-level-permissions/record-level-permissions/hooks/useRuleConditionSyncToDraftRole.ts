@@ -9,11 +9,11 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import {
   convertRecordFilterGroupToPredicateGroup,
   convertRecordFilterToPredicate,
-} from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/recordLevelPermissionPredicateConversion';
+} from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/rowLevelPermissionPredicateConversion';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
-type UseRecordLevelPermissionSyncToDraftRoleProps = {
+type UseRuleConditionSyncToDraftRoleProps = {
   roleId: string;
   rowLevelPermissionRuleId: string;
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -22,14 +22,14 @@ type UseRecordLevelPermissionSyncToDraftRoleProps = {
   hasInitialized: boolean;
 };
 
-export const useRecordLevelPermissionSyncToDraftRole = ({
+export const useRuleConditionSyncToDraftRole = ({
   roleId,
   rowLevelPermissionRuleId,
   objectMetadataItem,
   currentRecordFilters,
   currentRecordFilterGroups,
   hasInitialized,
-}: UseRecordLevelPermissionSyncToDraftRoleProps) => {
+}: UseRuleConditionSyncToDraftRoleProps) => {
   const setSettingsDraftRole = useSetAtomFamilyState(
     settingsDraftRoleFamilyState,
     roleId,

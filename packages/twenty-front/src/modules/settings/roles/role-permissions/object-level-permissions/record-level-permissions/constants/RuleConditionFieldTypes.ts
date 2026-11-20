@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-export const RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES = [
+export const RULE_CONDITION_FIELD_TYPES = [
   FieldMetadataType.BOOLEAN,
   FieldMetadataType.NUMBER,
   FieldMetadataType.NUMERIC,

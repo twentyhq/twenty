@@ -8,7 +8,7 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow';
+import { SettingsRoleRuleConditionFilterRow } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRoleRuleConditionFilterRow';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useAtomValue, useStore } from 'jotai';
@@ -115,7 +115,7 @@ const PermissionFilterStory = () => {
               }
             }}
           >
-            <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow
+            <SettingsRoleRuleConditionFilterRow
               recordFilter={filter}
               recordFilterGroup={FILTER_GROUP}
               index={0}

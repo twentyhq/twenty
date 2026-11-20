@@ -9,10 +9,10 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import {
   convertPredicateGroupToRecordFilterGroup,
   convertPredicateToRecordFilter,
-} from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/recordLevelPermissionPredicateConversion';
+} from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/rowLevelPermissionPredicateConversion';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 
-type UseRecordLevelPermissionFilterInitializationProps = {
+type UseRuleConditionFilterInitializationProps = {
   roleId: string;
   rowLevelPermissionRuleId: string;
   settingsDraftRole: RoleWithPartialMembers;
@@ -24,7 +24,7 @@ type UseRecordLevelPermissionFilterInitializationProps = {
   ) => void;
 };
 
-export const useRecordLevelPermissionFilterInitialization = ({
+export const useRuleConditionFilterInitialization = ({
   roleId,
   rowLevelPermissionRuleId,
   settingsDraftRole,
@@ -32,7 +32,7 @@ export const useRecordLevelPermissionFilterInitialization = ({
   setCurrentRecordFilters,
   setCurrentRecordFilterGroups,
   setRecordFilterUsedInAdvancedFilterDropdownRow,
-}: UseRecordLevelPermissionFilterInitializationProps) => {
+}: UseRuleConditionFilterInitializationProps) => {
   const [hasInitialized, setHasInitialized] = useState(false);
   const [lastInitializedRoleId, setLastInitializedRoleId] =
     useState<string>('');

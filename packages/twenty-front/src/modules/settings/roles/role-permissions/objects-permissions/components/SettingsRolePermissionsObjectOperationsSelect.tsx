@@ -13,19 +13,19 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useLingui } from '@lingui/react/macro';
 import { Dropdown } from 'twenty-ui/components/navigation';
 
-type SettingsRolePermissionsObjectActionsSelectProps = {
+type SettingsRolePermissionsObjectOperationsSelectProps = {
   dropdownId: string;
   selectedOperations: SettingsRoleObjectPermissionKey[];
   onChange: (selectedOperations: SettingsRoleObjectPermissionKey[]) => void;
   disabled?: boolean;
 };
 
-export const SettingsRolePermissionsObjectActionsSelect = ({
+export const SettingsRolePermissionsObjectOperationsSelect = ({
   dropdownId,
   selectedOperations,
   onChange,
   disabled = false,
-}: SettingsRolePermissionsObjectActionsSelectProps) => {
+}: SettingsRolePermissionsObjectOperationsSelectProps) => {
   const { t } = useLingui();
 
   const { label, Icon } = getObjectOperationsSummary({

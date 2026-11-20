@@ -5,7 +5,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useRowLevelPermissionRulesInDraftRole } from '@/settings/roles/role-permissions/objects-permissions/hooks/useRowLevelPermissionRulesInDraftRole';
-import { SettingsRolePermissionsObjectLevelRecordLevelSection } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection';
+import { SettingsRoleRuleConditionsSection } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRoleRuleConditionsSection';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsWizardStepBar } from '@/settings/components/layout/SettingsWizardStepBar';
@@ -36,15 +36,15 @@ const StyledTrailingActions = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-type SettingsRolePermissionsObjectLevelObjectFormProps = {
+type SettingsRoleRuleFormProps = {
   roleId: string;
   objectMetadataId: string;
 };
 
-export const SettingsRolePermissionsObjectLevelObjectForm = ({
+export const SettingsRoleRuleForm = ({
   roleId,
   objectMetadataId,
-}: SettingsRolePermissionsObjectLevelObjectFormProps) => {
+}: SettingsRoleRuleFormProps) => {
   const { t } = useLingui();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -190,7 +190,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
       }
     >
       <SettingsPageContainer>
-        <SettingsRolePermissionsObjectLevelRecordLevelSection
+        <SettingsRoleRuleConditionsSection
           objectMetadataItem={objectMetadataItem}
           roleId={roleId}
           rowLevelPermissionRuleId={rule.id}

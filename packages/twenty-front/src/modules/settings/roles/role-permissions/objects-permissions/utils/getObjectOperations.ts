@@ -1,8 +1,8 @@
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { getRecordsGrantOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getRecordsGrantOperations';
-import { resolveSettingsRoleObjectRecordsGrant } from '@/settings/roles/role/utils/resolveSettingsRoleObjectRecordsGrant';
+import { getObjectRecordsGrant } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRecordsGrant';
 
 export const getObjectOperations = (
-  parameters: Parameters<typeof resolveSettingsRoleObjectRecordsGrant>[0],
+  parameters: Parameters<typeof getObjectRecordsGrant>[0],
 ): SettingsRoleObjectPermissionKey[] =>
-  getRecordsGrantOperations(resolveSettingsRoleObjectRecordsGrant(parameters));
+  getRecordsGrantOperations(getObjectRecordsGrant(parameters));
