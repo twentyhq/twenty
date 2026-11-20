@@ -165,22 +165,23 @@ describe('fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThrow',
   });
 
   describe('conditionalAvailability', () => {
-    const buildWorkspaceOwnedWidget = (
-      overrides: Partial<FlatPageLayoutWidget>,
-    ) =>
+    const buildWorkspaceOwnedWidget = ({
+      conditionalAvailability,
+    }: Pick<FlatPageLayoutWidget, 'conditionalAvailability'>) =>
       buildFormFieldWidget({
         applicationUniversalIdentifier:
           WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
         isSystemSideEffect: false,
         conditionalDisplay: null,
         conditionalAvailabilityExpression: null,
-        conditionalAvailability: null,
-        ...overrides,
+        conditionalAvailability,
       });
 
     it('stores the tree sent with the update', () => {
       const updatedWidget = updateWidget({
-        existingWidget: buildWorkspaceOwnedWidget({}),
+        existingWidget: buildWorkspaceOwnedWidget({
+          conditionalAvailability: null,
+        }),
         update: { conditionalAvailability: DEVICE_IS_MOBILE },
       });
 
@@ -200,7 +201,9 @@ describe('fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThrow',
 
     it('stores the expression and the tree when both are sent', () => {
       const updatedWidget = updateWidget({
-        existingWidget: buildWorkspaceOwnedWidget({}),
+        existingWidget: buildWorkspaceOwnedWidget({
+          conditionalAvailability: null,
+        }),
         update: {
           conditionalAvailabilityExpression: 'device == "MOBILE"',
           conditionalAvailability: DEVICE_IS_MOBILE,
