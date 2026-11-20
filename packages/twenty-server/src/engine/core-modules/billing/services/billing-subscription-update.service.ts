@@ -354,16 +354,20 @@ export class BillingSubscriptionUpdateService {
       stripeSubscription.items.data,
     );
 
-    const seats =
-      subscriptionUpdate.type === SubscriptionUpdateType.QUANTITIES
-        ? subscriptionUpdate.newSeats
-        : ((await this.billingSeatService.computeCurrentBilledSeats(
-            workspaceId,
-          )) ?? currentPrices.seats);
+    const seats = await this.computeTargetSeats({
+      workspaceId,
+      subscriptionUpdate,
+      currentSeats: currentPrices.seats,
+    });
 
     const targetApplicationProducts =
       await this.billingApplicationProductService.findTargetApplicationProducts(
-        workspaceId,
+        {
+          workspaceId,
+          subscribedStripeProductIds: currentPrices.applicationItems.map(
+            ({ stripeProductId }) => stripeProductId,
+          ),
+        },
       );
 
     const toUpdateCurrentPrices = await this.computeTargetSubscriptionPrices({
@@ -806,6 +810,29 @@ export class BillingSubscriptionUpdateService {
           'Should never occur, add validator for new subscription update type',
         );
       }
+    }
+  }
+
+  private async computeTargetSeats({
+    workspaceId,
+    subscriptionUpdate,
+    currentSeats,
+  }: {
+    workspaceId: string;
+    subscriptionUpdate: SubscriptionUpdate;
+    currentSeats: number;
+  }): Promise<number> {
+    switch (subscriptionUpdate.type) {
+      case SubscriptionUpdateType.QUANTITIES:
+        return subscriptionUpdate.newSeats;
+      case SubscriptionUpdateType.APPLICATIONS:
+        return currentSeats;
+      default:
+        return (
+          (await this.billingSeatService.computeCurrentBilledSeats(
+            workspaceId,
+          )) ?? currentSeats
+        );
     }
   }
 

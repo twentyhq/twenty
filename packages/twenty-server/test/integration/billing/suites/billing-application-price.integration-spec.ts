@@ -12,6 +12,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
+import { type BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { type StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { type StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
@@ -299,7 +300,7 @@ describe('Application price billing (integration)', () => {
     ).invalidateAndRecompute(workspaceId, ['featureFlagsMap']);
   }, 120000);
 
-  it('bills seats and the price per member in one subscription update when the install completes', async () => {
+  it('bills the price per member when the install completes and leaves seats untouched', async () => {
     await notifyInstallationChanged();
 
     expect(updateSubscriptionSpy).toHaveBeenCalledTimes(1);
@@ -311,7 +312,7 @@ describe('Application price billing (integration)', () => {
           {
             id: BASE_SUBSCRIPTION_ITEM_ID,
             price: BASE_MONTH_PRICE_ID,
-            quantity: billedSeats,
+            quantity: billedSeats - 1,
           },
           { price: applicationMonthPriceId, quantity: workspaceMemberCount },
         ]),
@@ -343,6 +344,24 @@ describe('Application price billing (integration)', () => {
           expect.objectContaining({ deleted: true }),
         ]),
       }),
+    );
+  }, 120000);
+
+  it('fails instead of removing a subscribed application item whose catalog entry is incomplete', async () => {
+    await notifyInstallationChanged();
+    await query(`DELETE FROM core."billingPrice" WHERE "stripePriceId" = $1`, [
+      `${applicationMonthPriceId}_year`,
+    ]);
+
+    await expect(
+      getAppProviderByClassName<BillingSubscriptionUpdateService>(
+        'BillingSubscriptionUpdateService',
+      ).syncApplications({ workspaceId }),
+    ).rejects.toThrow('catalog entry is incomplete');
+
+    expect(updateSubscriptionSpy).toHaveBeenCalledTimes(1);
+    expect(findStripeItem(applicationMonthPriceId)?.quantity).toBe(
+      workspaceMemberCount,
     );
   }, 120000);
 });
