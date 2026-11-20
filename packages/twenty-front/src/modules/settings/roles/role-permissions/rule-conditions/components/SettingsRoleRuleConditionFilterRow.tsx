@@ -22,7 +22,7 @@ const StyledFilterRow = styled.div`
 
 const StyledOperandSelectContainer = styled.div`
   text-transform: lowercase;
-  width: ${themeCssVariables.spacing[12]};
+  width: ${themeCssVariables.spacing[13]};
 `;
 
 type SettingsRoleRuleConditionFilterRowProps = {
