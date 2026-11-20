@@ -138,7 +138,10 @@ export const useMobileNavigationBarItems = (): {
 
         return {
           name: `tab-${tab.id}`,
-          label: getNavigationMenuTabAttentionLabel(tab.name, attention),
+          label: getNavigationMenuTabAttentionLabel({
+            tabName: tab.name,
+            attention,
+          }),
           Icon: getIcon(tab.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT),
           onClick: () => openHomePageOnTab(tab.id),
           attention,

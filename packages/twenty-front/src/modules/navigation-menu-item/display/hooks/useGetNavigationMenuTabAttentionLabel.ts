@@ -5,7 +5,13 @@ import { type NavigationMenuChatAttention } from '@/navigation-menu-item/common/
 export const useGetNavigationMenuTabAttentionLabel = () => {
   const { t } = useLingui();
 
-  return (tabName: string, attention: NavigationMenuChatAttention | null) => {
+  return ({
+    tabName,
+    attention,
+  }: {
+    tabName: string;
+    attention: NavigationMenuChatAttention | null;
+  }) => {
     switch (attention) {
       case 'needs-input':
         return t`${tabName}, needs your input`;

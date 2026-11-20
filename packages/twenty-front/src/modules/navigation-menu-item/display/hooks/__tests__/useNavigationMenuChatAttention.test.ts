@@ -14,11 +14,15 @@ jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
   useIsFeatureEnabled: () => mockIsAiChatInboxEnabled,
 }));
 
-const buildSection = (
-  id: string,
-  parentId: string,
-  builtInSectionKey: string | null,
-): NavigationMenuItem => ({
+const buildSection = ({
+  id,
+  parentId,
+  builtInSectionKey,
+}: {
+  id: string;
+  parentId: string;
+  builtInSectionKey: string | null;
+}): NavigationMenuItem => ({
   id,
   type: NavigationMenuItemType.SECTION,
   parentId,
@@ -52,8 +56,16 @@ describe('useNavigationMenuChatAttention', () => {
     jest.mocked(useNavigationMenuItemsData).mockReturnValue({
       navigationMenuItems: [],
       workspaceNavigationMenuItems: [
-        buildSection('channels-section', 'chats-tab', 'aiChatChannels'),
-        buildSection('sales-section', 'sales-tab', null),
+        buildSection({
+          id: 'channels-section',
+          parentId: 'chats-tab',
+          builtInSectionKey: 'aiChatChannels',
+        }),
+        buildSection({
+          id: 'sales-section',
+          parentId: 'sales-tab',
+          builtInSectionKey: null,
+        }),
       ],
       currentWorkspaceMemberId: undefined,
       currentUserWorkspaceId: undefined,

@@ -71,7 +71,10 @@ export const MainNavigationDrawerSidebarTab = ({
       tooltip={tab.name}
       shouldShowTooltip={shouldShowTooltip}
       onClick={handleClick}
-      ariaLabel={getNavigationMenuTabAttentionLabel(tab.name, attention)}
+      ariaLabel={getNavigationMenuTabAttentionLabel({
+        tabName: tab.name,
+        attention,
+      })}
       iconAccessory={
         isDefined(attention) && (
           <StyledNavigationDrawerAttentionDot
