@@ -11,7 +11,14 @@ export const buildFavoritesNavigationMenuSectionToCreate = ({
   workspaceId,
   now,
 }: {
-  navigationMenuItems: FlatNavigationMenuItem[];
+  navigationMenuItems: Pick<
+    FlatNavigationMenuItem,
+    | 'universalIdentifier'
+    | 'userWorkspaceId'
+    | 'parentId'
+    | 'builtInSectionKey'
+    | 'position'
+  >[];
   sectionId: string;
   twentyStandardApplicationId: string;
   workspaceId: string;
