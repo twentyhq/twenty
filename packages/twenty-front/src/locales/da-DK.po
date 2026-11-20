@@ -641,6 +641,16 @@ msgstr "{appDisplayName} vil gerne:"
 msgid "{appLabel} installed"
 msgstr "{appLabel} installeret"
 
+#. js-lingui-id: jUUqOu
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMemberActionsCell.tsx
+msgid "{applicationName} can no longer access the account of {memberName}"
+msgstr ""
+
+#. js-lingui-id: 1NAf56
+#: src/modules/settings/profile/connected-apps/components/SettingsConnectedAppRowDropdownMenu.tsx
+msgid "{applicationName} can no longer access your account"
+msgstr ""
+
 #. js-lingui-id: TVseJQ
 #: src/modules/settings/app-preferences/hooks/useAccountGroupApplicationSettingsTabs.ts
 msgid "{applicationName}: {settingsMenuItemTitle}"
@@ -703,6 +713,11 @@ msgstr "{cardCount, plural, one {Godkend # handling?} other {Godkend # handlinge
 #: src/modules/activities/emails/components/ChatThreadDisconnectedBanner.tsx
 msgid "{channelName} is disconnected."
 msgstr "{channelName} er afbrudt."
+
+#. js-lingui-id: Y1n+1u
+#: src/modules/settings/applications/utils/getApplicationsWithConnectedMembersDescription.ts
+msgid "{connectedMemberCount, plural, =0 {No members connected} one {Connected by # member} other {Connected by # members}}"
+msgstr ""
 
 #. js-lingui-id: 3gdGx+
 #: src/modules/settings/applications/hooks/useConnectApplicationWithApiKey.ts
@@ -4142,6 +4157,11 @@ msgstr "Applikationen blev installeret med succes."
 msgid "Application Logs"
 msgstr "Applikationslogfiler"
 
+#. js-lingui-id: UiH6l9
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Application price billing"
+msgstr ""
+
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -4286,6 +4306,11 @@ msgstr "Appindstillinger"
 #: src/utils/title-utils.ts
 msgid "Apps preferences - Settings"
 msgstr "Appindstillinger - Indstillinger"
+
+#. js-lingui-id: Eve12g
+#: src/modules/settings/profile/connected-apps/components/SettingsProfileConnectedAppsSection.tsx
+msgid "Apps that can access this workspace on your behalf"
+msgstr ""
 
 #. js-lingui-id: EzsAEI
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
@@ -5195,6 +5220,11 @@ msgstr "mellem den {startOrdinal} og {endOrdinal} i måneden"
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill credits to your workspace"
 msgstr "Fakturer kreditter til dit arbejdsområde"
+
+#. js-lingui-id: jKtUV8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
+msgstr ""
 
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -7664,6 +7694,16 @@ msgstr "Forbind din egen {0}-konto til denne server, så den kan bruges på dine
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Connected"
 msgstr "Forbundet"
+
+#. js-lingui-id: YGP/lN
+#: src/modules/settings/profile/connected-apps/components/SettingsProfileConnectedAppsSection.tsx
+msgid "Connected apps"
+msgstr ""
+
+#. js-lingui-id: OVjUoE
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMembersSection.tsx
+msgid "Connected members"
+msgstr ""
 
 #. js-lingui-id: exyUec
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTable.tsx
@@ -13496,6 +13536,16 @@ msgstr "Kunne ikke nulstille tidslinjeaktivitetstypen."
 msgid "Failed to retry jobs. Please try again later."
 msgstr "Kunne ikke forsøge jobs igen. Prøv venligst igen senere."
 
+#. js-lingui-id: YTYTep
+#: src/modules/settings/profile/connected-apps/components/SettingsConnectedAppRowDropdownMenu.tsx
+msgid "Failed to revoke access for {applicationName}"
+msgstr ""
+
+#. js-lingui-id: nNwzE+
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMemberActionsCell.tsx
+msgid "Failed to revoke access for {memberName}"
+msgstr ""
+
 #. js-lingui-id: 70UyPr
 #: src/modules/settings/admin-panel/signing-keys/hooks/useRevokeSigningKey.ts
 msgid "Failed to revoke signing key. Please try again later."
@@ -14814,15 +14864,20 @@ msgstr "Tysk"
 msgid "Germany"
 msgstr "Tyskland"
 
+#. js-lingui-id: AWtGgd
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Get help"
+msgstr ""
+
 #. js-lingui-id: Et23WT
 #: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Get more credits"
 msgstr "Få flere kreditter"
 
-#. js-lingui-id: WB4gz7
+#. js-lingui-id: LBG67E
 #: src/modules/settings/experience/components/SettingsExperienceNotificationsSection.tsx
-msgid "Get notified of new inbox messages on this device, even when Twenty is closed. Your choices below apply to every device"
+msgid "Get notified of new inbox messages on this device when you are not looking at Twenty. Your choices below apply to every device"
 msgstr ""
 
 #. js-lingui-id: AvbPI1
@@ -15359,6 +15414,11 @@ msgstr "Hebraisk"
 #: src/modules/navigation/constants/LogsSwitchPhrases.ts
 msgid "hello, world"
 msgstr "hej, verden"
+
+#. js-lingui-id: c3XJ18
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Help"
+msgstr ""
 
 #. js-lingui-id: CRzGla
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -17409,6 +17469,16 @@ msgstr "Sidst opdateret"
 msgid "Last Updated: {0}"
 msgstr "Senest opdateret: {0}"
 
+#. js-lingui-id: JGvwnU
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMembersSection.tsx
+msgid "Last used"
+msgstr ""
+
+#. js-lingui-id: 484c8n
+#: src/modules/settings/profile/connected-apps/components/SettingsProfileConnectedAppsSection.tsx
+msgid "Last used {lastUsed}"
+msgstr ""
+
 #. js-lingui-id: p9uaTd
 #: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Later today"
@@ -18881,6 +18951,11 @@ msgstr "Medlemmer - Indstillinger"
 msgid "Members & invitees"
 msgstr "Medlemmer og inviterede"
 
+#. js-lingui-id: tajf6H
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMembersSection.tsx
+msgid "Members who let this app access the workspace on their behalf"
+msgstr ""
+
 #. js-lingui-id: pbIEgB
 #: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 msgid "Mentioned you"
@@ -19375,6 +19450,7 @@ msgstr "Flere avancerede felter til avancerede projekter"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionRowDropdownMenu.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+#: src/modules/settings/components/SettingsRevokeAccessDropdownMenu.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
@@ -19610,6 +19686,7 @@ msgstr "N/A"
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMembersSection.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentItemsTable.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentTypeTable.tsx
 #: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
@@ -19960,9 +20037,9 @@ msgstr "Ny gruppe"
 msgid "New Group"
 msgstr "Ny gruppe"
 
-#. js-lingui-id: l7iZgc
+#. js-lingui-id: TC11mZ
 #: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
-msgid "New inbox messages show as notifications on this device, even when Twenty is closed"
+msgid "New inbox messages notify you while your browser is running"
 msgstr ""
 
 #. js-lingui-id: ynuJvo
@@ -25596,6 +25673,7 @@ msgstr "Tilbagekald"
 
 #. js-lingui-id: cg+Poy
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
+#: src/modules/settings/components/SettingsRevokeAccessDropdownMenu.tsx
 msgid "Revoke access"
 msgstr "Fjern adgang"
 
@@ -31925,6 +32003,7 @@ msgstr "Ukendt emne"
 
 #. js-lingui-id: 63niL6
 #: src/modules/log-console/hooks/useLogConsoleMember.ts
+#: src/modules/settings/applications/utils/getApplicationConnectedMemberName.ts
 msgid "Unknown user"
 msgstr "Ukendt bruger"
 
