@@ -98,7 +98,11 @@ export default async function AppDetailPage({
     notFound();
   }
 
-  const prototype = await searchParams;
+  const searchPrototype = await searchParams;
+  const prototype = {
+    ...searchPrototype,
+    direction: searchPrototype.direction ?? 'e',
+  };
   const relatedApps = apps.filter(
     (candidate) =>
       candidate.category === app.category && candidate.slug !== app.slug,

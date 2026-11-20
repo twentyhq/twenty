@@ -25,11 +25,6 @@ import { type MarketplaceApp } from './marketplace-app';
 // PROTOTYPE (?direction=e): the hero of the "craft" direction. Copy centred in
 // the page column, the logo ring lying on the floor beneath it.
 const Backdrop = styled.div`
-  background-image: radial-gradient(
-    ellipse 60% 55% at 50% 100%,
-    ${color('white-5')},
-    transparent
-  );
   border-bottom: 1px solid ${semanticColor.line};
   inset: 0;
   position: absolute;
@@ -40,7 +35,7 @@ const Column = styled.div`
   display: flex;
   flex-direction: column;
   height: 560px;
-  padding: ${spacing(16)} ${spacing(4)} 0;
+  padding-top: ${spacing(16)};
   ${APPS_STAGE_CRAFT_COLUMN}
 
   ${mediaUp('sm')} {
@@ -133,7 +128,7 @@ export function AppsStageCraftHero({ apps }: AppsStageCraftHeroProps) {
       scheme="dark"
     >
       <Column>
-        <Copy>
+        <Copy data-apps-stage-copy="">
           <Label>{i18n._(msg`Marketplace`)}</Label>
           <Title>
             <Heading as="h1" size="xl" weight="light">

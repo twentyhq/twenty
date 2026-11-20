@@ -258,7 +258,16 @@ export function AppsStageAppStory({
 
   return (
     <Story style={{ ['--apps-stage-pastel' as string]: pastel }}>
-      {lede !== undefined && <p>{lede}</p>}
+      {/* The opening line is markdown too (bold, links): rendered, not printed. */}
+      {lede !== undefined && (
+        <Markdown
+          components={COMPONENTS}
+          disallowedElements={['img']}
+          remarkPlugins={[remarkGfm]}
+        >
+          {lede}
+        </Markdown>
+      )}
       <Markdown
         components={COMPONENTS}
         disallowedElements={['img']}

@@ -19,7 +19,7 @@ import { msg } from '@lingui/core/macro';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { SITE_URLS } from '@/platform/site-urls';
 import { Menu } from '@/sections/menu';
-import { Button, EngagementBand } from '@/ui';
+import { Button, EngagementBand, Signoff } from '@/ui';
 // PROTOTYPE direction B, dark header (?direction=b).
 import { AppsMarketplaceHeaderDark } from '@/apps-marketplace/AppsDarkStage';
 import { AppsMarketplaceClientDirectionB } from '@/apps-marketplace/AppsMarketplaceClientDirectionB';
@@ -30,7 +30,6 @@ import { AppsStageClosing } from '@/apps-marketplace/AppsStageClosing';
 import { AppsStageHero } from '@/apps-marketplace/AppsStageHero';
 // PROTOTYPE direction E, the "craft" direction approved in Paper (?direction=e).
 import { AppsStageCraftCatalogue } from '@/apps-marketplace/AppsStageCraftCatalogue';
-import { AppsStageCraftClosing } from '@/apps-marketplace/AppsStageCraftClosing';
 import { AppsStageCraftHero } from '@/apps-marketplace/AppsStageCraftHero';
 import { AppsStageFeatured } from '@/apps-marketplace/AppsStageFeatured';
 
@@ -49,7 +48,11 @@ export default async function AppsMarketplacePage({
     view?: string;
   }>;
 }) {
-  const prototype = await searchParams;
+  const searchPrototype = await searchParams;
+  const prototype = {
+    ...searchPrototype,
+    direction: searchPrototype.direction ?? 'e',
+  };
   const isDirectionB = prototype.direction === 'b';
   const isDirectionD = prototype.direction === 'd';
   const isDirectionE = prototype.direction === 'e';
@@ -93,19 +96,19 @@ export default async function AppsMarketplacePage({
             isUnavailable={apps === null}
             view={prototype.view === 'list' ? 'list' : 'grid'}
           />
-          <AppsStageCraftClosing
+          <Signoff
             heading={i18n._(msg`Build your own *app*`)}
+            scheme="dark"
             body={i18n._(
               msg`Add objects, logic and interface to Twenty, then publish it for every workspace.`,
             )}
-            actions={
-              <Button
-                href={SITE_URLS.docsDevelopers}
-                label={i18n._(msg`Read the docs`)}
-                variant="filled"
-              />
-            }
-          />
+          >
+            <Button
+              href={SITE_URLS.docsDevelopers}
+              label={i18n._(msg`Read the docs`)}
+              variant="filled"
+            />
+          </Signoff>
         </main>
       ) : (
         <main>

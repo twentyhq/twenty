@@ -21,19 +21,16 @@ import {
 } from '@/tokens';
 import { Body, Heading, SectionShell, TextField } from '@/ui';
 
-import { AppsStageCraftCell } from './AppsStageCraftCell';
+import { AppsStageAppCards } from './AppsStageAppCards';
 import { AppsStageCraftRow } from './AppsStageCraftRow';
 import { APPS_STAGE_BETA_APP_NAMES } from './apps-stage-beta-apps';
 import { APPS_STAGE_CRAFT_COLUMN } from './apps-stage-craft-column';
-import { getAppsStagePastel } from './apps-stage-pastels';
 import { type MarketplaceApp } from './marketplace-app';
-import { useAppsStageLogoInks } from './use-apps-stage-logo-inks';
 
 // PROTOTYPE (?direction=e): the catalogue framed in the page column, after
 // Profound's integrations page: every category is its own block on the page,
 // the index on the left stays put, follows the scroll and jumps on click.
 const Frame = styled.div`
-  border-inline: 1px solid ${semanticColor.line};
   display: flex;
   flex-direction: column;
   ${APPS_STAGE_CRAFT_COLUMN}
@@ -43,15 +40,13 @@ const Frame = styled.div`
   }
 `;
 
+// The index and the grid read as two halves by their spacing alone.
 const Sidebar = styled.div`
-  border-bottom: 1px solid ${semanticColor.line};
-  padding: ${spacing(8)} ${spacing(4)} ${spacing(6)};
+  padding-block: ${spacing(8)} ${spacing(6)};
 
   ${mediaUp('md')} {
-    border-bottom: none;
-    border-right: 1px solid ${semanticColor.line};
     flex-shrink: 0;
-    padding: ${spacing(14)} ${spacing(6)};
+    padding-block: ${spacing(14)};
     width: 256px;
   }
 `;
@@ -126,14 +121,6 @@ const IndexName = styled.span`
   gap: ${spacing(2)};
 `;
 
-const PastelDot = styled.span`
-  background-color: var(--apps-stage-pastel);
-  border-radius: ${radius(0.5)};
-  flex-shrink: 0;
-  height: 6px;
-  width: 6px;
-`;
-
 const IndexCount = styled.span`
   color: ${semanticColor.inkSubtle};
   font-family: ${fontFamily('mono')};
@@ -149,14 +136,14 @@ const IndexCount = styled.span`
 const Main = styled.div`
   flex: 1 1 0%;
   min-width: 0;
-  padding: ${spacing(8)} ${spacing(4)} ${spacing(12)};
+  padding-block: ${spacing(8)} ${spacing(12)};
 
   & > * + * {
     margin-top: ${spacing(8)};
   }
 
   ${mediaUp('md')} {
-    padding: ${spacing(14)} ${spacing(12)} ${spacing(20)};
+    padding: ${spacing(14)} 0 ${spacing(20)} ${spacing(12)};
   }
 `;
 
@@ -179,51 +166,6 @@ const RowList = styled.ul`
   list-style: none;
   margin-inline: calc(${spacing(3)} * -1);
   padding: 0;
-`;
-
-// The grid is one rounded box: cells draw the inner lines (right and bottom)
-// and drop them on the box's own edges.
-const Grid = styled.div`
-  border: 1px solid ${semanticColor.line};
-  border-radius: ${radius(2)};
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  overflow: hidden;
-
-  & > [data-apps-stage-cell] {
-    border-right: none;
-  }
-
-  & > [data-apps-stage-cell]:last-child {
-    border-bottom: none;
-  }
-
-  ${mediaUp('sm')} {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-
-    & > [data-apps-stage-cell]:nth-child(odd) {
-      border-right: 1px solid ${semanticColor.line};
-    }
-
-    /* An odd count would leave an empty slot: the last app takes the row. */
-    & > [data-apps-stage-cell]:nth-child(odd):last-child {
-      border-right: none;
-      grid-column: 1 / -1;
-    }
-
-    & > [data-apps-stage-cell]:nth-child(odd):nth-last-child(-n + 2),
-    & > [data-apps-stage-cell]:nth-child(odd):nth-last-child(-n + 2) + * {
-      border-bottom: none;
-    }
-  }
-
-  /* Hovering one cell isolates it: the others step back. Mouse only, so a
-     tap on touch never leaves the grid dimmed. */
-  @media (hover: hover) and (pointer: fine) {
-    &:has([data-apps-stage-cell]:hover) [data-apps-stage-cell]:not(:hover) {
-      opacity: 0.45;
-    }
-  }
 `;
 
 const Categories = styled.div`
@@ -294,7 +236,6 @@ export function AppsStageCraftCatalogue({
   view = 'grid',
 }: AppsStageCraftCatalogueProps) {
   const { i18n } = useLingui();
-  const inks = useAppsStageLogoInks(apps);
   const categoriesRef = useRef<HTMLDivElement>(null);
 
   const categories = useMemo(() => {
@@ -431,17 +372,8 @@ export function AppsStageCraftCatalogue({
                   href={`#${toCategoryId(category)}`}
                   key={category}
                   onClick={(event) => jumpTo(event, category)}
-                  style={{
-                    ['--apps-stage-pastel' as string]: getAppsStagePastel(
-                      category,
-                      categoryNames,
-                    ),
-                  }}
                 >
-                  <IndexName>
-                    <PastelDot aria-hidden />
-                    {category}
-                  </IndexName>
+                  <IndexName>{category}</IndexName>
                   <IndexCount>{categoryApps.length}</IndexCount>
                 </IndexItem>
               ))}
@@ -522,23 +454,7 @@ export function AppsStageCraftCatalogue({
                       ))}
                     </RowList>
                   ) : (
-                    <Grid>
-                      {categoryApps.map((app, index) => (
-                        <AppsStageCraftCell
-                          app={app}
-                          index={index}
-                          ink={inks[app.slug]}
-                          isBeta={APPS_STAGE_BETA_APP_NAMES.includes(
-                            app.name.trim().toLowerCase(),
-                          )}
-                          key={app.slug}
-                          pastel={getAppsStagePastel(
-                            app.category,
-                            categoryNames,
-                          )}
-                        />
-                      ))}
-                    </Grid>
+                    <AppsStageAppCards apps={categoryApps} />
                   )}
                 </Category>
               ))}

@@ -1,11 +1,17 @@
-import { mediaUp, spacing } from '@/tokens';
+import { GUTTER, MAX_CONTENT_WIDTH_PX, mediaUp, spacing } from '@/tokens';
 
-// PROTOTYPE (?direction=e): the 1152px page column every section is framed
-// in, with the site gutter as its minimum margin.
+// PROTOTYPE (?direction=e): the column every section is framed in, the same
+// width and gutter as the site's Container.
 export const APPS_STAGE_CRAFT_COLUMN = `
-  margin-inline: max(${spacing(4)}, calc((100% - 1152px) / 2));
+  margin-inline: max(
+    ${spacing(GUTTER.base)},
+    calc((100% - ${MAX_CONTENT_WIDTH_PX}px) / 2 + ${spacing(GUTTER.base)})
+  );
 
   ${mediaUp('md')} {
-    margin-inline: max(${spacing(10)}, calc((100% - 1152px) / 2));
+    margin-inline: max(
+      ${spacing(GUTTER.md)},
+      calc((100% - ${MAX_CONTENT_WIDTH_PX}px) / 2 + ${spacing(GUTTER.md)})
+    );
   }
 `;

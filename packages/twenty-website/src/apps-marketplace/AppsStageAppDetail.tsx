@@ -19,12 +19,12 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
-import { Button, ExternalLink, Heading, SectionShell } from '@/ui';
+import { Button, ExternalLink, Heading, SectionShell, Signoff } from '@/ui';
 
+import { AppsStageAppCards } from './AppsStageAppCards';
 import { AppsStageAppIcon } from './AppsStageAppIcon';
 import { AppsStageApplyDock } from './AppsStageApplyDock';
 import { AppsStageAppStory } from './AppsStageAppStory';
-import { AppsStageCraftClosing } from './AppsStageCraftClosing';
 import { type AppsStageAppContent } from './apps-stage-app-content';
 import { APPS_STAGE_BETA_APP_NAMES } from './apps-stage-beta-apps';
 import { APPS_STAGE_CRAFT_COLUMN } from './apps-stage-craft-column';
@@ -40,16 +40,22 @@ import {
 // extension pages (compact header, tabs, a side column of facts), with
 // Profound's scene of Twenty and the app joined as the first media tile.
 const Frame = styled.div`
-  border-inline: 1px solid ${semanticColor.line};
-  padding: ${spacing(10)} ${spacing(4)} ${spacing(16)};
+  padding-block: ${spacing(10)} ${spacing(16)};
   ${APPS_STAGE_CRAFT_COLUMN}
 
   & > * + * {
     margin-top: ${spacing(10)};
   }
 
+  /* A detail page reads narrow: everything holds to 1064px (680 text + 64
+     gap + 320 side), centred in the site column. */
+  & > * {
+    margin-inline: auto;
+    max-width: 1064px;
+  }
+
   ${mediaUp('md')} {
-    padding: ${spacing(14)} ${spacing(12)} ${spacing(24)};
+    padding-block: ${spacing(14)} ${spacing(24)};
   }
 `;
 
@@ -116,10 +122,18 @@ const Cover = styled.div`
 `;
 
 // The screenshot whole, at its own ratio: gallery images are made as covers.
+// At its own ratio on small screens; a 320px band from md so the app's name
+// and line stay above the fold.
 const CoverImage = styled.img`
   display: block;
   height: auto;
   width: 100%;
+
+  ${mediaUp('md')} {
+    height: 320px;
+    object-fit: cover;
+    object-position: center;
+  }
 `;
 
 const Header = styled.div`
@@ -214,7 +228,7 @@ const Body = styled.div`
   ${mediaUp('md')} {
     align-items: start;
     gap: ${spacing(16)};
-    grid-template-columns: minmax(0, 1fr) 260px;
+    grid-template-columns: minmax(0, 680px) 320px;
   }
 `;
 
@@ -229,36 +243,26 @@ const Main = styled.div`
 // What the app adds, in the side column, grouped by the product's own sections
 // (Data, Interface, Automation and AI, Access) so the site says what the app
 // page will show after install. Names when they read; counts otherwise.
+// Sections stand apart (20px); a title holds its list close (4px); lines
+// keep a 2px breath. The group's own label sits 16px above, like Facts.
 const AddsSections = styled.div`
   & > * + * {
-    margin-top: ${spacing(4)};
+    margin-top: ${spacing(5)};
   }
 `;
 
 const AddsSection = styled.div`
   & > * + * {
-    margin-top: ${spacing(1.5)};
+    margin-top: ${spacing(1)};
   }
 `;
 
 const AddsTitle = styled.p`
-  align-items: center;
   color: ${semanticColor.ink};
-  display: flex;
   font-family: ${fontFamily('sans')};
   font-size: ${fontSize(3.5)};
   font-weight: ${FONT_WEIGHT.medium};
-  gap: ${spacing(2)};
   line-height: 20px;
-
-  &::before {
-    background-color: var(--apps-stage-section-color);
-    border-radius: ${radius(0.5)};
-    content: '';
-    flex-shrink: 0;
-    height: 6px;
-    width: 6px;
-  }
 `;
 
 const AddsList = styled.ul`
@@ -267,12 +271,16 @@ const AddsList = styled.ul`
   font-size: ${fontSize(3.25)};
   line-height: 20px;
   list-style: none;
-  padding: 0 0 0 ${spacing(3.5)};
+  padding: 0;
 
   & > li {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  & > li + li {
+    margin-top: ${spacing(0.5)};
   }
 `;
 
@@ -381,90 +389,20 @@ const SideLinks = styled.div`
   gap: ${spacing(2)};
 `;
 
-const RelatedList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${spacing(1)};
-  margin-inline: calc(${spacing(2)} * -1);
-`;
-
-// The site's hover, as on the catalogue cells: a fill slides in from the left.
-const RelatedItem = styled(LocalizedLink)`
-  align-items: center;
-  border-radius: ${radius(2)};
-  color: inherit;
-  display: grid;
-  gap: ${spacing(3)};
-  grid-template-columns: auto minmax(0, 1fr);
-  isolation: isolate;
-  overflow: hidden;
-  padding: ${spacing(2)};
-  position: relative;
-  text-decoration: none;
-
-  &::before {
-    background-color: ${color('white-5')};
-    content: '';
-    inset: 0;
-    position: absolute;
-    transform: translateX(-101%);
-    transition: transform ${DURATION.md} ${EASING.standard};
-    z-index: -1;
-  }
-
-  &:is(:hover, :focus-visible)::before {
-    transform: translateX(0);
-  }
-
-  &:focus-visible {
-    outline: 1px solid ${color('blue')};
-    outline-offset: -1px;
-  }
-
-  ${REDUCED_MOTION} {
-    &::before {
-      transition: none;
-    }
-  }
-`;
-
-const RelatedText = styled.span`
-  min-width: 0;
-`;
-
-const RelatedName = styled.span`
-  color: ${semanticColor.ink};
-  display: block;
-  font-family: ${fontFamily('sans')};
-  font-size: ${fontSize(3.5)};
-  font-weight: ${FONT_WEIGHT.medium};
-  line-height: 18px;
-`;
-
-const RelatedTagline = styled.span`
-  color: ${semanticColor.inkMuted};
-  display: block;
-  font-family: ${fontFamily('sans')};
-  font-size: ${fontSize(3)};
-  line-height: 16px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
 const SHOWN_NAMES = 3;
 // Developer names (slack-home-opened) are counted, never shown.
 const isReadableLabel = (label: string) => !/^[a-z0-9_-]+$/.test(label);
 
-// The product's section colours, taken from the brief's pastel set.
-const SECTION_COLORS = {
-  data: 'oklch(78.4% 0.09 232.9)',
-  interface: 'oklch(77.4% 0.115 293.7)',
-  automation: 'oklch(79% 0.146 322.8)',
-  access: 'oklch(77.8% 0.121 2.5)',
-} as const;
-
 const RELATED_COUNT = 3;
+
+// Related apps close the page as the same card row as /apps' featured apps.
+const Related = styled.div`
+  padding-top: ${spacing(8)};
+
+  & > * + * {
+    margin-top: ${spacing(8)};
+  }
+`;
 
 const counted = (count: number, one: string, many: string) =>
   count === 0 ? [] : [count === 1 ? one : many];
@@ -674,15 +612,7 @@ export function AppsStageAppDetail({
                   <SideLabel>{i18n._(msg`What ${app.name} adds`)}</SideLabel>
                   <AddsSections>
                     {addsSections.map((section) => (
-                      <AddsSection
-                        key={section.id}
-                        style={{
-                          ['--apps-stage-section-color' as string]:
-                            SECTION_COLORS[
-                              section.id as keyof typeof SECTION_COLORS
-                            ],
-                        }}
-                      >
+                      <AddsSection key={section.id}>
                         <AddsTitle>{section.title}</AddsTitle>
                         <AddsList>
                           {section.lines.slice(0, SHOWN_NAMES).map((line) => (
@@ -736,28 +666,17 @@ export function AppsStageAppDetail({
                   </SideLinks>
                 </SideGroup>
               )}
-
-              {related.length > 0 && (
-                <SideGroup>
-                  <SideLabel>{i18n._(msg`People also like`)}</SideLabel>
-                  <RelatedList>
-                    {related.map((relatedApp) => (
-                      <RelatedItem
-                        href={`/apps/${relatedApp.slug}?direction=e`}
-                        key={relatedApp.slug}
-                      >
-                        <AppsStageAppIcon app={relatedApp} sizePx={36} />
-                        <RelatedText>
-                          <RelatedName>{relatedApp.name}</RelatedName>
-                          <RelatedTagline>{relatedApp.tagline}</RelatedTagline>
-                        </RelatedText>
-                      </RelatedItem>
-                    ))}
-                  </RelatedList>
-                </SideGroup>
-              )}
             </Side>
           </Body>
+
+          {related.length > 0 && (
+            <Related>
+              <Heading as="h2" size="sm" weight="light">
+                {i18n._(msg`You might also like`)}
+              </Heading>
+              <AppsStageAppCards apps={related} />
+            </Related>
+          )}
         </Frame>
       </SectionShell>
 
@@ -769,19 +688,19 @@ export function AppsStageAppDetail({
         label={app.name}
       />
 
-      <AppsStageCraftClosing
-        actions={
-          <Button
-            href={SITE_URLS.docsDevelopers}
-            label={i18n._(msg`Read the docs`)}
-            variant="filled"
-          />
-        }
+      <Signoff
         body={i18n._(
           msg`Add objects, logic and interface to Twenty, then publish it for every workspace.`,
         )}
         heading={i18n._(msg`Build your own *app*`)}
-      />
+        scheme="dark"
+      >
+        <Button
+          href={SITE_URLS.docsDevelopers}
+          label={i18n._(msg`Read the docs`)}
+          variant="filled"
+        />
+      </Signoff>
     </>
   );
 }
