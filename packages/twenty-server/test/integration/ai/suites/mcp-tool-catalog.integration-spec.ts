@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { gql } from 'graphql-tag';
 import request from 'supertest';
 import { generateApiKeyToken } from 'test/integration/graphql/utils/generate-api-key-token.util';
@@ -89,8 +90,10 @@ const listMcpTools = async (
 ): Promise<
   {
     name: string;
+    title?: string;
     inputSchema: { type?: string };
     annotations?: {
+      title?: string;
       readOnlyHint: boolean;
       openWorldHint: boolean;
       destructiveHint: boolean;
@@ -364,6 +367,43 @@ describe('MCP tool catalog (integration)', () => {
       });
     });
 
+    it('should mark the tools that change nothing as read-only', async () => {
+      const readOnlyHintByToolName = Object.fromEntries(
+        (await listMcpTools(adminApiKeyToken, GENERIC_MODE_PATH)).map(
+          (tool) => [tool.name, tool.annotations?.readOnlyHint],
+        ),
+      );
+
+      expect(readOnlyHintByToolName).toMatchObject({
+        find_records: true,
+        create_records: false,
+        get_object_metadata: true,
+        get_field_metadata: true,
+        get_views: true,
+        list_workflows: true,
+        search_help_center: true,
+        create_object_metadata: false,
+        update_object_metadata: false,
+        run_workflow_version: false,
+      });
+    });
+
+    it('should give every tool a title', async () => {
+      const tools = await listMcpTools(adminApiKeyToken, GENERIC_MODE_PATH);
+
+      expect(tools.filter((tool) => !isNonEmptyString(tool.title))).toEqual([]);
+      expect(
+        tools.filter((tool) => tool.annotations?.title !== tool.title),
+      ).toEqual([]);
+      expect(
+        Object.fromEntries(tools.map((tool) => [tool.name, tool.title])),
+      ).toMatchObject({
+        find_records: 'Find Records',
+        get_object_metadata: 'Get Object Metadata',
+        search_help_center: 'Search Help Center',
+      });
+    });
+
     it('should list the same record tools to a restricted API key', async () => {
       const toolNames = (
         await listMcpTools(restrictedApiKeyToken, GENERIC_MODE_PATH)
@@ -532,17 +572,17 @@ describe('MCP tool catalog (integration)', () => {
         ]),
       );
 
-      expect(annotationsByToolName.find_many_people).toEqual({
+      expect(annotationsByToolName.find_many_people).toMatchObject({
         readOnlyHint: true,
         openWorldHint: false,
         destructiveHint: false,
       });
-      expect(annotationsByToolName.create_one_person).toEqual({
+      expect(annotationsByToolName.create_one_person).toMatchObject({
         readOnlyHint: false,
         openWorldHint: true,
         destructiveHint: false,
       });
-      expect(annotationsByToolName.update_one_person).toEqual({
+      expect(annotationsByToolName.update_one_person).toMatchObject({
         readOnlyHint: false,
         openWorldHint: true,
         destructiveHint: true,
