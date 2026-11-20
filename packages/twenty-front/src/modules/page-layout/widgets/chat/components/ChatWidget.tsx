@@ -1,11 +1,11 @@
 import { styled } from '@linaria/react';
 import { useId } from 'react';
 
-import { AiChatInstance } from '@/ai-chat/components/AiChatInstance';
-import { AiChatTab } from '@/ai-chat/components/AiChatTab';
+import { AiChatInstance } from '@/ai-chat/instance/components/AiChatInstance';
+import { AiChatTab } from '@/ai-chat/instance/components/AiChatTab';
 import { AI_CHAT_SURFACE } from '@/ai-chat/constants/AiChatSurface';
 import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
-import { useAiChatThreadClick } from '@/ai-chat/hooks/useAiChatThreadClick';
+import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadClick';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 

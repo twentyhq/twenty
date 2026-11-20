@@ -14,6 +14,7 @@ export const createListLogicFunctionToolsTool = (
   context: WorkflowToolContext,
 ) => ({
   name: 'list_logic_function_tools' as const,
+  isReadOnly: true,
   description:
     'List all logic functions exposed as workflow actions, which can be added as LOGIC_FUNCTION steps in workflows. Returns their IDs, names, and descriptions.',
   inputSchema: listLogicFunctionToolsSchema,

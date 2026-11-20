@@ -1,4 +1,5 @@
 /* @license Enterprise */
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { styled } from '@linaria/react';
 import { useContext, useMemo } from 'react';
@@ -110,6 +111,54 @@ const StyledRelativeDateContainer = styled.div`
   min-width: 0;
 `;
 
+const getConditionValueAsString = (value: JsonValue) => {
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  if (Array.isArray(value) || (typeof value === 'object' && value !== null)) {
+    return JSON.stringify(value);
+  }
+
+  return String(value);
+};
+
+const getMultiSelectConditionValue = (value: string) => {
+  if (!isNonEmptyString(value)) {
+    return value;
+  }
+
+  try {
+    return Array.isArray(JSON.parse(value)) ? value : JSON.stringify([value]);
+  } catch {
+    return JSON.stringify([value]);
+  }
+};
+
+// "Is" on a date and time field compares a whole day, so its value is a plain date
+const getConditionFieldType = ({
+  fieldType,
+  subFieldName,
+  operand,
+}: {
+  fieldType: FieldMetadataType;
+  subFieldName?: string | null;
+  operand: RecordFilterOperand;
+}) => {
+  if (
+    fieldType === FieldMetadataType.DATE_TIME &&
+    operand === RecordFilterOperand.IS
+  ) {
+    return FieldMetadataType.DATE;
+  }
+
+  if (isCompositeFieldType(fieldType) && isDefined(subFieldName)) {
+    return getFieldOrSubFieldType({ fieldType, subFieldName });
+  }
+
+  return fieldType;
+};
+
 type SettingsRoleRuleConditionValueInputProps = {
   recordFilterId: string;
 };
@@ -152,7 +201,7 @@ export const SettingsRoleRuleConditionValueInput = ({
     !configurableViewFilterOperands.has(recordFilter.operand);
 
   const workspaceMemberFieldLabel = useMemo(() => {
-    if (!dynamicValue) {
+    if (!isDefined(dynamicValue)) {
       return null;
     }
 
@@ -193,7 +242,7 @@ export const SettingsRoleRuleConditionValueInput = ({
     workspaceMemberFieldMetadataId,
     workspaceMemberSubFieldName,
   }: RLSDynamicValue) => {
-    if (!recordFilter) {
+    if (!isDefined(recordFilter)) {
       return;
     }
 
@@ -210,7 +259,7 @@ export const SettingsRoleRuleConditionValueInput = ({
   };
 
   const handleResetToStaticValue = () => {
-    if (!recordFilter) {
+    if (!isDefined(recordFilter)) {
       return;
     }
 
@@ -262,14 +311,7 @@ export const SettingsRoleRuleConditionValueInput = ({
   }
 
   const handleChange = (value: JsonValue) => {
-    const valueToUpsert =
-      typeof value === 'string'
-        ? value
-        : Array.isArray(value) || (typeof value === 'object' && value !== null)
-          ? JSON.stringify(value)
-          : String(value);
-
-    applyObjectFilterDropdownFilterValue(valueToUpsert);
+    applyObjectFilterDropdownFilterValue(getConditionValueAsString(value));
   };
 
   const isDateFilter =
@@ -295,71 +337,44 @@ export const SettingsRoleRuleConditionValueInput = ({
     );
   }
 
-  let fieldDefinition = formatFieldMetadataItemAsFieldDefinition({
-    field: {
-      ...fieldMetadataItem,
-      label: undefined as unknown as string,
-    },
+  const fieldDefinition = formatFieldMetadataItemAsFieldDefinition({
+    field: { ...fieldMetadataItem, label: '' },
     objectMetadataItem: objectMetadataItem,
   });
 
-  const isComposite = isCompositeFieldType(recordFilter.type);
-
-  if (isComposite && isDefined(recordFilter.subFieldName)) {
-    fieldDefinition = {
-      ...fieldDefinition,
-      type: getFieldOrSubFieldType({
-        fieldType: fieldMetadataItem.type,
-        subFieldName: recordFilter.subFieldName,
-      }),
-    };
-  }
-
-  // "Is" on a date and time field compares a whole day, so its value is a plain date
-  if (
-    recordFilter.type === FieldMetadataType.DATE_TIME &&
-    recordFilter.operand === RecordFilterOperand.IS
-  ) {
-    fieldDefinition = { ...fieldDefinition, type: FieldMetadataType.DATE };
-  }
+  const conditionFieldType = getConditionFieldType({
+    fieldType: fieldMetadataItem.type,
+    subFieldName: recordFilter.subFieldName,
+    operand: recordFilter.operand,
+  });
 
   const isFilterableByMultiSelectValue =
-    fieldDefinition.type === FieldMetadataType.MULTI_SELECT ||
-    fieldDefinition.type === FieldMetadataType.SELECT;
+    conditionFieldType === FieldMetadataType.MULTI_SELECT ||
+    conditionFieldType === FieldMetadataType.SELECT;
 
-  if (isFilterableByMultiSelectValue) {
-    let formattedValue = recordFilter.value;
-
-    if (isDefined(formattedValue) && formattedValue !== '') {
-      try {
-        const parsed = JSON.parse(formattedValue);
-        if (!Array.isArray(parsed)) {
-          formattedValue = JSON.stringify([formattedValue]);
-        }
-      } catch {
-        formattedValue = JSON.stringify([formattedValue]);
-      }
+  const getConditionInput = () => {
+    if (isFilterableByMultiSelectValue) {
+      return (
+        <FormMultiSelectFieldInput
+          label=""
+          defaultValue={getMultiSelectConditionValue(recordFilter.value)}
+          onChange={handleChange}
+          options={fieldMetadataItem?.options ?? []}
+          VariablePicker={SettingsRoleRuleConditionVariablePicker}
+          dropdownWidth={200}
+        />
+      );
     }
 
     return (
-      <StyledContainer>
-        <RuleConditionVariablePickerContext.Provider
-          value={{ recordFilterId, onSelect: handleSelectDynamicValue }}
-        >
-          <StyledFormFieldInputWrapper>
-            <FormMultiSelectFieldInput
-              label=""
-              defaultValue={formattedValue}
-              onChange={handleChange}
-              options={fieldMetadataItem?.options ?? []}
-              VariablePicker={SettingsRoleRuleConditionVariablePicker}
-              dropdownWidth={200}
-            />
-          </StyledFormFieldInputWrapper>
-        </RuleConditionVariablePickerContext.Provider>
-      </StyledContainer>
+      <FormFieldInput
+        field={{ ...fieldDefinition, type: conditionFieldType }}
+        defaultValue={recordFilter.value}
+        onChange={handleChange}
+        VariablePicker={SettingsRoleRuleConditionVariablePicker}
+      />
     );
-  }
+  };
 
   return (
     <StyledContainer>
@@ -367,12 +382,7 @@ export const SettingsRoleRuleConditionValueInput = ({
         value={{ recordFilterId, onSelect: handleSelectDynamicValue }}
       >
         <StyledFormFieldInputWrapper>
-          <FormFieldInput
-            field={fieldDefinition}
-            defaultValue={recordFilter.value}
-            onChange={handleChange}
-            VariablePicker={SettingsRoleRuleConditionVariablePicker}
-          />
+          {getConditionInput()}
         </StyledFormFieldInputWrapper>
       </RuleConditionVariablePickerContext.Provider>
     </StyledContainer>

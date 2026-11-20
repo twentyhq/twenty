@@ -2,8 +2,9 @@ import { type Editor } from '@tiptap/react';
 import { useLayoutEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { shouldFocusChatEditorState } from '@/ai-chat/states/shouldFocusChatEditorState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { shouldFocusChatEditorFamilyState } from '@/ai-chat/states/shouldFocusChatEditorFamilyState';
+import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
+import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 
 type AiChatEditorFocusEffectProps = {
   editor: Editor | null;
@@ -12,8 +13,10 @@ type AiChatEditorFocusEffectProps = {
 export const AiChatEditorFocusEffect = ({
   editor,
 }: AiChatEditorFocusEffectProps) => {
-  const [shouldFocusChatEditor, setShouldFocusChatEditor] = useAtomState(
-    shouldFocusChatEditorState,
+  const { threadId } = useAiChatInstanceOrThrow();
+  const [shouldFocusChatEditor, setShouldFocusChatEditor] = useAtomFamilyState(
+    shouldFocusChatEditorFamilyState,
+    { threadId },
   );
 
   useLayoutEffect(() => {

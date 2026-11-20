@@ -30,6 +30,7 @@ export const createComputeStepOutputSchemaTool = (
   context: WorkflowToolContext,
 ) => ({
   name: 'compute_step_output_schema' as const,
+  isReadOnly: true,
   description:
     'Compute the output schema for a workflow step. This determines what data the step produces. The step parameter must be a valid WorkflowTrigger or WorkflowAction with the correct settings structure for its type.',
   inputSchema: computeStepOutputSchemaSchema,

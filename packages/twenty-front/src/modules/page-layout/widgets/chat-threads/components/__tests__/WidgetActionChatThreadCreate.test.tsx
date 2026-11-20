@@ -16,7 +16,7 @@ const NEW_CHAT_ID = '20202020-0000-4000-8000-0000000000dd';
 const switchToNewChat = jest.fn(() => NEW_CHAT_ID);
 const mockHasPermissionFlag = jest.fn(() => true);
 
-jest.mock('@/ai-chat/hooks/useSwitchToNewAiChat', () => ({
+jest.mock('@/ai-chat/composer/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({ switchToNewChat }),
 }));
 

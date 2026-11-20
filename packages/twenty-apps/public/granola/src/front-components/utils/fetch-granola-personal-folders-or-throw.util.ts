@@ -2,12 +2,10 @@ import { RestApiClient } from 'twenty-client-sdk/rest';
 import { z } from 'zod';
 
 import { GRANOLA_PERSONAL_FOLDERS_ROUTE_PATH } from 'src/constants/granola-personal-connection.constant';
-import { GRANOLA_SETTINGS_FOLDER_SCHEMA } from 'src/front-components/types/granola-settings-folder.type';
+import { GRANOLA_PERSONAL_FOLDERS_SCHEMA } from 'src/front-components/types/granola-personal-folders.type';
 
-const FOLDERS_RESPONSE_SCHEMA = z.object({
+const FOLDERS_RESPONSE_SCHEMA = GRANOLA_PERSONAL_FOLDERS_SCHEMA.extend({
   success: z.literal(true),
-  folders: z.array(GRANOLA_SETTINGS_FOLDER_SCHEMA),
-  folderIds: z.array(z.string()),
 });
 
 export const fetchGranolaPersonalFoldersOrThrow = async (

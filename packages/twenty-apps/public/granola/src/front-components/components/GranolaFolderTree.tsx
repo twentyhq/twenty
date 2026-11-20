@@ -2,13 +2,11 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
+import { Checkbox, Input } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { Text } from 'twenty-ui/primitives/typography';
 
-import { Checkbox } from 'src/front-components/components/Checkbox';
 import { GranolaFolderTreeItem } from 'src/front-components/components/GranolaFolderTreeItem';
-import { StyledSettingsHint } from 'src/front-components/components/StyledSettingsHint';
-import { StyledSettingsTextInput } from 'src/front-components/components/StyledSettingsTextInput';
 import { type GranolaSettingsFolder } from 'src/front-components/types/granola-settings-folder.type';
 import { computeGranolaFolderAncestorIds } from 'src/front-components/utils/compute-granola-folder-ancestor-ids.util';
 import { computeGranolaFolderTree } from 'src/front-components/utils/compute-granola-folder-tree.util';
@@ -102,11 +100,10 @@ export const GranolaFolderTree = ({
   return (
     <StyledContainer>
       <StyledSearchInputContainer>
-        <StyledSettingsTextInput
-          type="text"
+        <Input
           placeholder={t('Search folders...')}
           value={search}
-          onChange={(event) => setSearch(event.target.value)}
+          onValueChange={setSearch}
         />
       </StyledSearchInputContainer>
       <StyledLabelContainer>
@@ -126,13 +123,13 @@ export const GranolaFolderTree = ({
           indeterminate={!isEveryFolderSelected && selectedFolderIds.length > 0}
           disabled={!canSelectEveryFolder}
           aria-label={t('Toggle all folders')}
-          onChange={handleToggleAllFolders}
+          onCheckedChange={handleToggleAllFolders}
         />
       </StyledSectionHeader>
       {tree.length === 0 && (
-        <StyledSettingsHint>
+        <Text size="sm" color="tertiary">
           {t('No folder matches your search.')}
-        </StyledSettingsHint>
+        </Text>
       )}
       <StyledTreeList>
         {tree.map((node, index) => (
@@ -147,7 +144,11 @@ export const GranolaFolderTree = ({
           />
         ))}
       </StyledTreeList>
-      {isDefined(hint) && <StyledSettingsHint>{hint}</StyledSettingsHint>}
+      {isDefined(hint) && (
+        <Text size="sm" color="tertiary">
+          {hint}
+        </Text>
+      )}
     </StyledContainer>
   );
 };

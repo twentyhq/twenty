@@ -321,7 +321,8 @@ import { AddNavigationMenuItemBuiltInSectionKeyFastInstanceCommand } from 'src/d
 import { CreateWebPushSubscriptionCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795163526357-create-web-push-subscription-core-table';
 import { AddUserWorkspaceInboxNotificationSettingsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795163561823-add-user-workspace-inbox-notification-settings';
 import { AddNavigationMenuItemOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795167647639-add-navigation-menu-item-overridable-entity';
-import { AddJobGroupsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795173474247-add-job-groups';
+import { DropConnectedAccountVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795178831970-drop-connected-account-visibility';
+import { AddJobGroupsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795183208143-add-job-groups';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -645,5 +646,6 @@ export const INSTANCE_COMMANDS = [
   CreateWebPushSubscriptionCoreTableFastInstanceCommand,
   AddUserWorkspaceInboxNotificationSettingsFastInstanceCommand,
   AddNavigationMenuItemOverridableEntityFastInstanceCommand,
+  DropConnectedAccountVisibilityFastInstanceCommand,
   AddJobGroupsFastInstanceCommand,
 ];

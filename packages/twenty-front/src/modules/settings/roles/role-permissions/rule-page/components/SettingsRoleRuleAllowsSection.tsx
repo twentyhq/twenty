@@ -5,6 +5,7 @@ import {
   type SettingsRoleObjectPermissionKey,
 } from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig';
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionKeys';
+import { useObjectDisabledOperations } from '@/settings/roles/role-permissions/object-overrides/hooks/useObjectDisabledOperations';
 import { useRowLevelPermissionRulesInDraftRole } from '@/settings/roles/role-permissions/object-overrides/hooks/useRowLevelPermissionRulesInDraftRole';
 import { getObjectOperations } from '@/settings/roles/role-permissions/object-overrides/utils/getObjectOperations';
 import { getObjectOperationsWithReadDependency } from '@/settings/roles/role-permissions/object-overrides/utils/getObjectOperationsWithReadDependency';
@@ -12,6 +13,7 @@ import { getRecordsGrantOperations } from '@/settings/roles/role-permissions/obj
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { type RowLevelPermissionRule } from '~/generated-metadata/graphql';
@@ -36,6 +38,12 @@ export const SettingsRoleRuleAllowsSection = ({
 
   const { setRuleOperations } = useRowLevelPermissionRulesInDraftRole(roleId);
 
+  const { disabledOperations, getDisabledOperationReason } =
+    useObjectDisabledOperations(objectMetadataItem);
+
+  const isOperationEnabled = (operation: SettingsRoleObjectPermissionKey) =>
+    !disabledOperations.includes(operation);
+
   const roleLabel = settingsDraftRole.label;
   const objectLabelSingular =
     objectMetadataItem.labelSingular.toLocaleLowerCase();
@@ -44,10 +52,20 @@ export const SettingsRoleRuleAllowsSection = ({
   const allRecordsOperations = getObjectOperations({
     role: settingsDraftRole,
     objectMetadataId: objectMetadataItem.id,
+    disabledOperations,
   });
-  const ruleOperations = getRecordsGrantOperations(rule);
+  const ruleOperations = getRecordsGrantOperations({
+    recordsGrant: rule,
+    disabledOperations,
+  });
 
   const getDescription = (operation: SettingsRoleObjectPermissionKey) => {
+    const disabledReason = getDisabledOperationReason(operation);
+
+    if (isDefined(disabledReason)) {
+      return disabledReason;
+    }
+
     const isAllowedOnAllRecords = allRecordsOperations.includes(operation);
 
     switch (operation) {
@@ -74,6 +92,7 @@ export const SettingsRoleRuleAllowsSection = ({
     setRuleOperations({
       rowLevelPermissionRuleId: rule.id,
       operations: getObjectOperationsWithReadDependency({
+        disabledOperations,
         previousOperations: ruleOperations,
         nextOperations: ruleOperations.includes(operation)
           ? ruleOperations.filter(
@@ -107,7 +126,11 @@ export const SettingsRoleRuleAllowsSection = ({
               checked={
                 isAllowedOnAllRecords || ruleOperations.includes(operation)
               }
-              disabled={!settingsDraftRole.isEditable || isAllowedOnAllRecords}
+              disabled={
+                !settingsDraftRole.isEditable ||
+                isAllowedOnAllRecords ||
+                !isOperationEnabled(operation)
+              }
               onChange={() => toggleOperation(operation)}
             />
           );

@@ -1,3 +1,5 @@
+import { WORKSPACE_MEMBER_NAME_MAX_LENGTH } from 'twenty-shared/constants';
+
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { assertWorkspaceMemberUpdateValuesAreValid } from 'src/engine/core-modules/user/utils/assert-workspace-member-update-values-are-valid.util';
 
@@ -27,4 +29,17 @@ describe('assertWorkspaceMemberUpdateValuesAreValid', () => {
       ).toThrow(UserInputError);
     },
   );
+
+  it('should reject a first name over the length limit', () => {
+    expect(() =>
+      assertWorkspaceMemberUpdateValuesAreValid({
+        update: {
+          name: {
+            firstName: 'a'.repeat(WORKSPACE_MEMBER_NAME_MAX_LENGTH + 1),
+            lastName: 'Doe',
+          },
+        },
+      }),
+    ).toThrow(UserInputError);
+  });
 });

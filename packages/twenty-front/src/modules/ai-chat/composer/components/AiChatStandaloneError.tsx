@@ -2,7 +2,7 @@ import { StyledAiChatContentContainer } from '@/ai-chat/components/StyledAiChatC
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatErrorRenderer } from '@/ai-chat/components/AiChatErrorRenderer';
+import { AiChatErrorRenderer } from '@/ai-chat/messages/components/AiChatErrorRenderer';
 import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
 import { aiChatHasMessageFamilySelector } from '@/ai-chat/states/selectors/aiChatHasMessageFamilySelector';
 import { aiChatMessagesLoadingFamilyState } from '@/ai-chat/states/aiChatMessagesLoadingFamilyState';

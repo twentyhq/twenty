@@ -51,6 +51,7 @@ const getFieldMetadataInputSchema = z.object({
 
 @DefineTool({
   name: 'get_field_metadata',
+  isReadOnly: true,
   category: ToolCategory.METADATA,
   accessPolicy: FIELD_METADATA_READ_ACCESS_POLICY,
   icon: 'IconSettings',

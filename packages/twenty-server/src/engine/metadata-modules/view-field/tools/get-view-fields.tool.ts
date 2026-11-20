@@ -21,6 +21,7 @@ const getViewFieldsInputSchema = z.object({
 
 @DefineTool({
   name: 'get_view_fields',
+  isReadOnly: true,
   category: ToolCategory.VIEW,
   accessPolicy: VIEW_FIELD_ACCESS_POLICY,
   description:

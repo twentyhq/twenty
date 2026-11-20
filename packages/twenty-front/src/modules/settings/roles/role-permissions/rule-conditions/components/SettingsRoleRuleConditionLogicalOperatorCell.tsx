@@ -51,28 +51,42 @@ export const SettingsRoleRuleConditionLogicalOperatorCell = ({
     (option) => option.value === recordFilterGroup.logicalOperator,
   )?.label;
 
+  if (index === 0) {
+    return (
+      <StyledContainer>
+        <StyledText>{t`When`}</StyledText>
+      </StyledContainer>
+    );
+  }
+
+  if (index > 1) {
+    return (
+      <StyledContainer>
+        <StyledText>{logicalOperatorLabel}</StyledText>
+      </StyledContainer>
+    );
+  }
+
+  if (readonly) {
+    return (
+      <StyledContainer>
+        <Select
+          dropdownWidth={GenericDropdownContentWidth.Narrow}
+          dropdownId={`advanced-filter-logical-operator-${recordFilterGroup.id}`}
+          value={recordFilterGroup.logicalOperator}
+          options={logicalOperatorOptions}
+          dropdownSideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}
+          disabled
+        />
+      </StyledContainer>
+    );
+  }
+
   return (
     <StyledContainer>
-      {index === 0 ? (
-        <StyledText>{t`Where`}</StyledText>
-      ) : index === 1 ? (
-        readonly ? (
-          <Select
-            dropdownWidth={GenericDropdownContentWidth.Narrow}
-            dropdownId={`advanced-filter-logical-operator-${recordFilterGroup.id}`}
-            value={recordFilterGroup.logicalOperator}
-            options={logicalOperatorOptions}
-            dropdownSideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}
-            disabled
-          />
-        ) : (
-          <AdvancedFilterLogicalOperatorDropdown
-            recordFilterGroup={recordFilterGroup}
-          />
-        )
-      ) : (
-        <StyledText>{logicalOperatorLabel}</StyledText>
-      )}
+      <AdvancedFilterLogicalOperatorDropdown
+        recordFilterGroup={recordFilterGroup}
+      />
     </StyledContainer>
   );
 };
