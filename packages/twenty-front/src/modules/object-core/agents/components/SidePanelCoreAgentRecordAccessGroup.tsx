@@ -10,7 +10,10 @@ import { type CoreAgentRecordAccessLevel } from '@/object-core/agents/types/Core
 import { getCoreAgentRecordAccessItemId } from '@/object-core/agents/utils/getCoreAgentRecordAccessItemId';
 import { getCoreAgentRecordAccessLevels } from '@/object-core/agents/utils/getCoreAgentRecordAccessLevels';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
-import { SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG } from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig';
+import {
+  SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG,
+  type SettingsRoleObjectPermissionKey,
+} from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
 type SidePanelCoreAgentRecordAccessGroupProps = {
@@ -19,6 +22,10 @@ type SidePanelCoreAgentRecordAccessGroupProps = {
   objectIcon?: ReactNode;
   role: RoleWithPartialMembers | undefined;
   objectMetadataId?: string;
+  disabledOperations?: SettingsRoleObjectPermissionKey[];
+  disabledOperationReasons?: Partial<
+    Record<SettingsRoleObjectPermissionKey, string>
+  >;
   isReadOnly: boolean;
   onLevelChange: ({
     level,
@@ -35,6 +42,8 @@ export const SidePanelCoreAgentRecordAccessGroup = ({
   objectIcon,
   role,
   objectMetadataId,
+  disabledOperations,
+  disabledOperationReasons,
   isReadOnly,
   onLevelChange,
 }: SidePanelCoreAgentRecordAccessGroupProps) => {
@@ -43,6 +52,7 @@ export const SidePanelCoreAgentRecordAccessGroup = ({
   const enabledLevels = getCoreAgentRecordAccessLevels({
     role,
     objectMetadataId,
+    disabledOperations,
   });
 
   return (
@@ -58,13 +68,15 @@ export const SidePanelCoreAgentRecordAccessGroup = ({
             level,
           });
           const isEnabled = enabledLevels.includes(level);
+          const disabledReason = disabledOperationReasons?.[objectKey];
+          const isDisabled = isReadOnly || isDefined(disabledReason);
 
           return (
             <SelectableListItem
               key={itemId}
               itemId={itemId}
               onEnter={() => {
-                if (!isReadOnly) {
+                if (!isDisabled) {
                   onLevelChange({ level, isEnabled: !isEnabled });
                 }
               }}
@@ -75,11 +87,12 @@ export const SidePanelCoreAgentRecordAccessGroup = ({
                   SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[objectKey].Icon
                 }
                 text={t(isDefined(objectMetadataId) ? label : allRecordsLabel)}
+                description={disabledReason}
                 checked={isEnabled}
                 onCheckedChange={(isChecked) =>
                   onLevelChange({ level, isEnabled: isChecked })
                 }
-                disabled={isReadOnly}
+                disabled={isDisabled}
               />
             </SelectableListItem>
           );
