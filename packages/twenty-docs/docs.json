@@ -257,7 +257,8 @@
                   {
                     "group": "How-Tos",
                     "pages": [
-                      "user-guide/ai/how-tos/ai-faq"
+                      "user-guide/ai/how-tos/ai-faq",
+                      "user-guide/ai/how-tos/inbox-notifications"
                     ]
                   }
                 ]
