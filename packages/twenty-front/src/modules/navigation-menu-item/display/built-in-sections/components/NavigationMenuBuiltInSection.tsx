@@ -5,7 +5,7 @@ import { NavigationDrawerInboxTriageSection } from '@/inbox/components/Navigatio
 import { NavigationMenuAiChatFavoritesSection } from '@/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatFavoritesSection';
 import { NavigationMenuAiChatRecentsSection } from '@/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection';
 import { FavoritesSectionDispatcher } from '@/navigation-menu-item/display/sections/favorites/components/FavoritesSectionDispatcher';
-import { useAreAiChatSectionsAvailable } from '@/navigation-menu-item/display/hooks/useAreAiChatSectionsAvailable';
+import { useIsNavigationMenuBuiltInSectionAvailable } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuBuiltInSectionAvailable';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type NavigationMenuBuiltInSectionProps = {
@@ -17,13 +17,14 @@ export const NavigationMenuBuiltInSection = ({
   section,
   headerAction,
 }: NavigationMenuBuiltInSectionProps) => {
-  const areAiChatSectionsAvailable = useAreAiChatSectionsAvailable();
+  const isBuiltInSectionAvailable =
+    useIsNavigationMenuBuiltInSectionAvailable();
 
   if (section.builtInSectionKey === 'favorites') {
     return <FavoritesSectionDispatcher />;
   }
 
-  if (!areAiChatSectionsAvailable) {
+  if (!isBuiltInSectionAvailable(section.builtInSectionKey)) {
     return null;
   }
 
