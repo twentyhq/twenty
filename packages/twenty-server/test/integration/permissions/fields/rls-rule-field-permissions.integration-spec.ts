@@ -1,4 +1,6 @@
+import { findOneOperation } from 'test/integration/graphql/utils/find-one-operation.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
+import { updateOneOperation } from 'test/integration/graphql/utils/update-one-operation.util';
 import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
@@ -268,10 +270,11 @@ describe('field permissions on an RLS rule (integration)', () => {
       return response.body.data.people;
     };
 
-    await global.testDataSource.query(
-      `UPDATE ${PERSON_TABLE} SET "jobTitle" = 'Paris office' WHERE "id" = $1`,
-      [originalPeople[1].id],
-    );
+    await updateOneOperation({
+      objectMetadataSingularName: 'person',
+      recordId: originalPeople[1].id,
+      input: { jobTitle: 'Paris office' },
+    });
 
     try {
       const firstPage = await listPersonPageAsMember();
@@ -285,10 +288,11 @@ describe('field permissions on an RLS rule (integration)', () => {
           .sort(),
       ).toEqual(originalPeople.map(({ id }) => id).sort());
     } finally {
-      await global.testDataSource.query(
-        `UPDATE ${PERSON_TABLE} SET "jobTitle" = 'London office' WHERE "id" = $1`,
-        [originalPeople[1].id],
-      );
+      await updateOneOperation({
+        objectMetadataSingularName: 'person',
+        recordId: originalPeople[1].id,
+        input: { jobTitle: 'London office' },
+      });
     }
   });
 
@@ -309,15 +313,21 @@ describe('field permissions on an RLS rule (integration)', () => {
           ],
         },
       });
-    const [{ intro: originalIntro }] = await global.testDataSource.query(
-      `SELECT "intro" FROM ${PERSON_TABLE} WHERE "id" = $1`,
-      [originalPeople[0].id],
-    );
+    const {
+      data: {
+        findResponse: { intro: originalIntro },
+      },
+    } = await findOneOperation({
+      objectMetadataSingularName: 'person',
+      gqlFields: 'id intro',
+      filter: { id: { eq: originalPeople[0].id } },
+    });
 
-    await global.testDataSource.query(
-      `UPDATE ${PERSON_TABLE} SET "intro" = 'Secret intro' WHERE "id" = $1`,
-      [originalPeople[0].id],
-    );
+    await updateOneOperation({
+      objectMetadataSingularName: 'person',
+      recordId: originalPeople[0].id,
+      input: { intro: 'Secret intro' },
+    });
     await setIntroReadability(false);
 
     try {
@@ -335,10 +345,11 @@ describe('field permissions on an RLS rule (integration)', () => {
       expect(response.body.data.peopleGroupBy).toEqual([]);
     } finally {
       await setIntroReadability(null);
-      await global.testDataSource.query(
-        `UPDATE ${PERSON_TABLE} SET "intro" = $1 WHERE "id" = $2`,
-        [originalIntro, originalPeople[0].id],
-      );
+      await updateOneOperation({
+        objectMetadataSingularName: 'person',
+        recordId: originalPeople[0].id,
+        input: { intro: originalIntro },
+      });
     }
   });
 
