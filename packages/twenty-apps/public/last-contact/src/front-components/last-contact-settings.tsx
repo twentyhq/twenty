@@ -36,7 +36,13 @@ const handleAddColumns = () =>
     preprompt: { text: ADD_COLUMNS_PROMPT, mode: 'PREFILL' },
   });
 
-const shouldSuggestColumns = async (): Promise<boolean> => {
+type ColumnsSuggestionState = 'none' | 'suggested' | 'dismissed';
+
+const getColumnsSuggestionState = async (): Promise<ColumnsSuggestionState> => {
+  if ((await findAllViewsMissingFields()).length === 0) {
+    return 'none';
+  }
+
   const { appKeyValue } = await new MetadataApiClient().query({
     appKeyValue: {
       __args: { key: VIEW_FIELDS_SUGGESTION_DISMISSED_KEY },
@@ -44,46 +50,42 @@ const shouldSuggestColumns = async (): Promise<boolean> => {
     },
   });
 
-  if (appKeyValue?.value?.isDismissed === true) {
-    return false;
-  }
-
-  return (await findAllViewsMissingFields()).length > 0;
+  return appKeyValue?.value?.isDismissed === true ? 'dismissed' : 'suggested';
 };
+
+const setColumnsSuggestionDismissed = (isDismissed: boolean) =>
+  new MetadataApiClient().mutation({
+    setAppKeyValue: {
+      __args: {
+        input: {
+          key: VIEW_FIELDS_SUGGESTION_DISMISSED_KEY,
+          value: { isDismissed },
+        },
+      },
+      key: true,
+    },
+  });
 
 const LastContactSettings = () => {
   const [isStarting, setIsStarting] = useState(false);
-  const [isSuggestingColumns, setIsSuggestingColumns] = useState(false);
+  const [columnsSuggestionState, setColumnsSuggestionState] =
+    useState<ColumnsSuggestionState>('none');
 
   useEffect(() => {
-    shouldSuggestColumns()
-      .then(setIsSuggestingColumns)
+    getColumnsSuggestionState()
+      .then(setColumnsSuggestionState)
       .catch((error) =>
         console.error('Could not read the last contact columns', error),
       );
   }, []);
 
-  const handleHideSuggestion = async () => {
+  const handleToggleSuggestion = async (isDismissed: boolean) => {
     try {
-      await new MetadataApiClient().mutation({
-        setAppKeyValue: {
-          __args: {
-            input: {
-              key: VIEW_FIELDS_SUGGESTION_DISMISSED_KEY,
-              value: { isDismissed: true },
-            },
-          },
-          key: true,
-        },
-      });
-      setIsSuggestingColumns(false);
-      enqueueSnackbar({
-        message: t('The columns suggestion is hidden.'),
-        variant: 'success',
-      });
+      await setColumnsSuggestionDismissed(isDismissed);
+      setColumnsSuggestionState(isDismissed ? 'dismissed' : 'suggested');
     } catch {
       enqueueSnackbar({
-        message: t('Could not hide the suggestion. Try again.'),
+        message: t('Could not update the suggestion. Try again.'),
         variant: 'error',
       });
     }
@@ -121,7 +123,7 @@ const LastContactSettings = () => {
 
   return (
     <>
-      {isSuggestingColumns && (
+      {columnsSuggestionState === 'suggested' && (
         <Section.Root>
           <Section.Header
             title={t('Show last contact columns')}
@@ -133,10 +135,29 @@ const LastContactSettings = () => {
             <MainButton onClick={handleAddColumns}>
               {t('Add columns')}
             </MainButton>
-            <MainButton variant="outline" onClick={handleHideSuggestion}>
+            <MainButton
+              variant="outline"
+              onClick={() => handleToggleSuggestion(true)}
+            >
               {t('Hide suggestion')}
             </MainButton>
           </div>
+        </Section.Root>
+      )}
+      {columnsSuggestionState === 'dismissed' && (
+        <Section.Root>
+          <Section.Header
+            title={t('Last contact columns suggestion hidden')}
+            description={t(
+              'Some last contact columns are still missing from the All People, All Companies, or All Opportunities views.',
+            )}
+          />
+          <MainButton
+            variant="outline"
+            onClick={() => handleToggleSuggestion(false)}
+          >
+            {t('Show suggestion')}
+          </MainButton>
         </Section.Root>
       )}
       <Section.Root>
