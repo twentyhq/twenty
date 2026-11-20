@@ -9,6 +9,7 @@ import { IconPlus } from 'twenty-ui/icon';
 import { CoreAgentIcon } from '@/object-core/agents/components/CoreAgentIcon';
 import { useCreateCoreAgent } from '@/object-core/agents/hooks/useCreateCoreAgent';
 import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
+import { getSortedNonSystemAgents } from '@/object-core/agents/utils/getSortedNonSystemAgents';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -37,11 +38,7 @@ export const NavigationMenuAiAgentsSection = ({
   const { createCoreAgent, canCreateCoreAgent, isCreatingCoreAgent } =
     useCreateCoreAgent();
 
-  const agents = (data?.findManyAgents ?? [])
-    .filter((agent) => !agent.isSystem)
-    .sort((firstAgent, secondAgent) =>
-      firstAgent.label.localeCompare(secondAgent.label),
-    );
+  const agents = getSortedNonSystemAgents(data?.findManyAgents ?? []);
 
   if (
     !isDefined(headerAction) &&
