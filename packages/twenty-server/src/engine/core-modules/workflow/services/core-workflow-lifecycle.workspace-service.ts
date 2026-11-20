@@ -21,6 +21,7 @@ import {
 import { type WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
+import { buildCronTriggerCacheEntry } from 'src/engine/core-modules/workflow/utils/build-cron-trigger-cache-entry.util';
 import { getCoreWorkflowVersionEditLockKey } from 'src/engine/core-modules/workflow/utils/get-core-workflow-version-edit-lock-key.util';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -28,7 +29,6 @@ import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-comma
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { type CachedCronTrigger } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/types/cached-cron-trigger.type';
 import {
   WorkflowQueryValidationException,
   WorkflowQueryValidationExceptionCode,
@@ -44,7 +44,6 @@ import {
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { assertPickRecordLoadBalanceConfigIsValid } from 'src/modules/workflow/workflow-trigger/utils/assert-pick-record-load-balance-config-is-valid.util';
 import { assertVersionCanBeActivated } from 'src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util';
-import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
 import { getWorkflowCommandMenuItemLabel } from 'src/modules/workflow/workflow-trigger/utils/get-workflow-command-menu-item-label.util';
 
 type ResolvedCoreVersion = {
@@ -58,26 +57,6 @@ type CommandMenuItemOperations = {
   flatEntityToCreate: FlatCommandMenuItem[];
   flatEntityToDelete: FlatCommandMenuItem[];
   flatEntityToUpdate: FlatCommandMenuItem[];
-};
-
-const buildCronTriggerCacheEntry = ({
-  trigger,
-  coreWorkflow,
-  coreWorkflowVersion,
-}: ResolvedCoreVersion): CachedCronTrigger | null => {
-  if (!isDefined(trigger) || trigger.type !== WorkflowTriggerType.CRON) {
-    return null;
-  }
-
-  return {
-    workspaceId: coreWorkflowVersion.workspaceId,
-    workflowId: coreWorkflow.id,
-    ...(isDefined(coreWorkflow.workspaceWorkflowId)
-      ? { legacyWorkflowId: coreWorkflow.workspaceWorkflowId }
-      : {}),
-    pattern: computeCronPatternFromSchedule(trigger),
-    coreWorkflowVersionId: coreWorkflowVersion.id,
-  };
 };
 
 @Injectable()
@@ -575,8 +554,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
       if (isDefined(existingCommandMenuItem)) {
         const { flatCommandMenuItemToDelete, flatCommandMenuItemToDeactivate } =
           await this.commandMenuItemService.computeFlatCommandMenuItemDeletion(
-            existingCommandMenuItem.id,
-            workspaceId,
+            { id: existingCommandMenuItem.id, workspaceId },
           );
 
         if (isDefined(flatCommandMenuItemToDeactivate)) {
@@ -617,31 +595,33 @@ export class CoreWorkflowLifecycleWorkspaceService {
 
     if (!isDefined(existingCommandMenuItem)) {
       operations.flatEntityToCreate.push(
-        await this.commandMenuItemService.computeFlatCommandMenuItemToCreate(
-          {
+        await this.commandMenuItemService.computeFlatCommandMenuItemToCreate({
+          input: {
             ...commandMenuItemProperties,
             coreWorkflowVersionId: published.coreWorkflowVersion.id,
             engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
           },
           workspaceId,
-        ),
+        }),
       );
 
       return operations;
     }
 
     const updatedFlatCommandMenuItem =
-      await this.commandMenuItemService.computeFlatCommandMenuItemToUpdate(
-        { ...commandMenuItemProperties, id: existingCommandMenuItem.id },
+      await this.commandMenuItemService.computeFlatCommandMenuItemToUpdate({
+        input: { ...commandMenuItemProperties, id: existingCommandMenuItem.id },
         workspaceId,
-      );
+      });
 
     operations.flatEntityToUpdate.push(
       existingCommandMenuItem.isActive
         ? updatedFlatCommandMenuItem
         : await this.commandMenuItemService.computeActivatedFlatCommandMenuItem(
-            updatedFlatCommandMenuItem,
-            workspaceId,
+            {
+              flatCommandMenuItem: updatedFlatCommandMenuItem,
+              workspaceId,
+            },
           ),
     );
 

@@ -103,7 +103,7 @@ export class CommandMenuItemService {
     workspaceId: string,
   ): Promise<CommandMenuItemDTO> {
     const flatCommandMenuItemToCreate =
-      await this.computeFlatCommandMenuItemToCreate(input, workspaceId);
+      await this.computeFlatCommandMenuItemToCreate({ input, workspaceId });
 
     await this.runCommandMenuItemMigration({
       workspaceId,
@@ -128,10 +128,13 @@ export class CommandMenuItemService {
     );
   }
 
-  async computeFlatCommandMenuItemToCreate(
-    input: CreateCommandMenuItemInput,
-    workspaceId: string,
-  ): Promise<FlatCommandMenuItem> {
+  async computeFlatCommandMenuItemToCreate({
+    input,
+    workspaceId,
+  }: {
+    input: CreateCommandMenuItemInput;
+    workspaceId: string;
+  }): Promise<FlatCommandMenuItem> {
     const {
       flatObjectMetadataMaps,
       flatFrontComponentMaps,
@@ -168,7 +171,7 @@ export class CommandMenuItemService {
     workspaceId: string,
   ): Promise<CommandMenuItemDTO> {
     const flatCommandMenuItemToUpdate =
-      await this.computeFlatCommandMenuItemToUpdate(input, workspaceId);
+      await this.computeFlatCommandMenuItemToUpdate({ input, workspaceId });
 
     await this.runCommandMenuItemMigration({
       workspaceId,
@@ -193,10 +196,13 @@ export class CommandMenuItemService {
     );
   }
 
-  async computeFlatCommandMenuItemToUpdate(
-    input: UpdateCommandMenuItemInput,
-    workspaceId: string,
-  ): Promise<FlatCommandMenuItem> {
+  async computeFlatCommandMenuItemToUpdate({
+    input,
+    workspaceId,
+  }: {
+    input: UpdateCommandMenuItemInput;
+    workspaceId: string;
+  }): Promise<FlatCommandMenuItem> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -328,13 +334,13 @@ export class CommandMenuItemService {
       );
 
     const activatedFlatCommandMenuItem =
-      await this.computeActivatedFlatCommandMenuItem(
-        findFlatEntityByIdInFlatEntityMapsOrThrow({
+      await this.computeActivatedFlatCommandMenuItem({
+        flatCommandMenuItem: findFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityId: id,
           flatEntityMaps: existingFlatCommandMenuItemMaps,
         }),
         workspaceId,
-      );
+      });
 
     await this.runCommandMenuItemMigration({
       workspaceId,
@@ -348,10 +354,13 @@ export class CommandMenuItemService {
     );
   }
 
-  async computeActivatedFlatCommandMenuItem(
-    flatCommandMenuItem: FlatCommandMenuItem,
-    workspaceId: string,
-  ): Promise<FlatCommandMenuItem> {
+  async computeActivatedFlatCommandMenuItem({
+    flatCommandMenuItem,
+    workspaceId,
+  }: {
+    flatCommandMenuItem: FlatCommandMenuItem;
+    workspaceId: string;
+  }): Promise<FlatCommandMenuItem> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -373,7 +382,7 @@ export class CommandMenuItemService {
 
   async delete(id: string, workspaceId: string): Promise<CommandMenuItemDTO> {
     const { flatCommandMenuItemToDelete, flatCommandMenuItemToDeactivate } =
-      await this.computeFlatCommandMenuItemDeletion(id, workspaceId);
+      await this.computeFlatCommandMenuItemDeletion({ id, workspaceId });
 
     await this.runCommandMenuItemMigration({
       workspaceId,
@@ -389,10 +398,13 @@ export class CommandMenuItemService {
     );
   }
 
-  async computeFlatCommandMenuItemDeletion(
-    id: string,
-    workspaceId: string,
-  ): Promise<{
+  async computeFlatCommandMenuItemDeletion({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<{
     flatCommandMenuItemToDelete: FlatCommandMenuItem;
     flatCommandMenuItemToDeactivate: FlatCommandMenuItem | undefined;
   }> {

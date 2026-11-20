@@ -21,7 +21,7 @@ Workflow definitions live in core: `core.workflow` and `core.workflowVersion`. R
 | `core.workflowVersion.coreWorkflowId` | Version parent, scoped to the same workspace. |
 | `core.workflow.workspaceWorkflowId` | Alias kept for existing webhook URLs, historical billing spender ids and the cron lock key. Keep it for the lifetime of those URLs. |
 | `core.workflowVersion.workflowId` | Legacy parent alias, equal to the workflow's `workspaceWorkflowId`. Writers still set it; nothing reads it at runtime. It can be dropped by an instance command once a release that no longer reads it has shipped. |
-| `core.workflowVersion.workspaceWorkflowVersionId`, `core.workflow.lastPublishedVersionId` | Legacy version aliases. Nothing reads them at runtime; the 2.62 instance command drops them. |
+| `core.workflowVersion.workspaceWorkflowVersionId`, `core.workflow.lastPublishedVersionId` | Legacy version aliases. No runtime path resolves through them; application sync only carries `lastPublishedVersionId` forward. A pending 2.62 instance command (#30747) drops both. |
 | `workflowRun.coreWorkflowId`, `workflowRun.coreWorkflowVersionId` | Run identities recorded at creation. |
 | `workflowRun.workflowId`, `workflowRun.workflowVersionId` | Nullable legacy relations, only set on runs created before core execution. |
 | `workflowRun.state.flow` | Captured trigger and steps. Startup, retry, delay and form continuation use this snapshot, not the current definition. |
@@ -68,6 +68,6 @@ The cutover from workspace definitions to core happened in these steps. They onl
 2. **2.60.** Dropped the workspace `workflow`, `workflowVersion` and `workflowAutomatedTrigger` standard definitions; existing rows stay as data. Rolling back to a release that reads workspace definitions breaks workflows created afterwards, which have no workspace rows.
 3. **2.61.** A workspace command backfilled core ids onto legacy-only command menu items and workflows.
 4. **2.61 runtime.** Runtime reads of `workspaceWorkflowVersionId` and `lastPublishedVersionId` stopped. `WorkflowTriggerJob` became core-only.
-5. **2.62.** An instance command drops those two columns.
+5. **2.62 (pending, #30747).** An instance command drops those two columns.
 
 Do not drop legacy payload decoding or the `workspaceWorkflowId` alias just because a rollback window has ended. Delayed jobs, webhooks and integrations can outlive it.

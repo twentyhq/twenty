@@ -12,11 +12,14 @@ import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-t
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export class CoreWorkflowPostCommitError extends Error {
-  constructor(readonly cause: unknown) {
+  readonly cause: unknown;
+
+  constructor({ cause }: { cause: unknown }) {
     super(
       'Workflow changes were committed, but the trigger cache could not be refreshed',
     );
     this.name = 'CoreWorkflowPostCommitError';
+    this.cause = cause;
   }
 }
 
@@ -60,7 +63,7 @@ export class CoreWorkflowTriggerService {
     try {
       await this.invalidateAutomatedTriggerMaps(workspaceId);
     } catch (error) {
-      throw new CoreWorkflowPostCommitError(error);
+      throw new CoreWorkflowPostCommitError({ cause: error });
     }
   }
 
