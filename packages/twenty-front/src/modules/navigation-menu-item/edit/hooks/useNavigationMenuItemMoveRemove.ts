@@ -3,7 +3,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getNavigationMenuItemDescendantIds } from '@/navigation-menu-item/common/utils/getNavigationMenuItemDescendantIds';
 import { getNavigationMenuItemMovedPosition } from '@/navigation-menu-item/common/utils/getNavigationMenuItemMovedPosition';
-import { getNavigationMenuItemSortedSiblings } from '@/navigation-menu-item/common/utils/getNavigationMenuItemSortedSiblings';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { useWorkspaceSidebarRootContainerId } from '@/navigation-menu-item/display/hooks/useWorkspaceSidebarRootContainerId';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
@@ -21,13 +20,22 @@ export const useNavigationMenuItemMoveRemove = (
   const rootContainerId =
     section === 'workspace' ? workspaceSidebarRootContainerId : null;
 
-  const getSortedSiblings = (navigationMenuItemId: string) =>
-    getNavigationMenuItemSortedSiblings({
-      items: currentItems,
-      navigationMenuItemId,
-      visibleItemIds,
-      rootContainerId,
-    });
+  const getSortedSiblings = (navigationMenuItemId: string) => {
+    const currentItem = currentItems.find(
+      (item) => item.id === navigationMenuItemId,
+    );
+    if (!isDefined(currentItem)) {
+      return null;
+    }
+    const parentId = currentItem.parentId ?? rootContainerId;
+    return currentItems
+      .filter(
+        (item) =>
+          (item.parentId ?? rootContainerId) === parentId &&
+          visibleItemIds.has(item.id),
+      )
+      .sort((a, b) => a.position - b.position);
+  };
 
   const move = async (navigationMenuItemId: string, offset: -1 | 1) => {
     const siblings = getSortedSiblings(navigationMenuItemId);
