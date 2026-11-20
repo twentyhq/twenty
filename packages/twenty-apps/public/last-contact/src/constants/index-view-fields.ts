@@ -9,7 +9,6 @@ import lastMeetingField from 'src/fields/last-meeting.field';
 import lastOutboundAtField from 'src/fields/last-outbound-at.field';
 import opportunityLastContactAtField from 'src/fields/opportunity-last-contact-at.field';
 
-// Columns the app suggests for each object's "All" view (key INDEX).
 export const INDEX_VIEW_FIELDS = [
   {
     objectUniversalIdentifier:

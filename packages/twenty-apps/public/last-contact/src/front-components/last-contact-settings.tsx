@@ -16,21 +16,26 @@ import {
   SETTINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
-const ADD_COLUMNS_PROMPT = [
-  'Add these columns to the views below and make them visible. Skip a view if it does not exist, and leave columns already shown as they are.',
-  ...INDEX_VIEW_FIELDS.map(
-    ({ objectLabelPlural, fields }) =>
-      `- "All ${objectLabelPlural}" view: ${fields
-        .map(({ label, name }) => `${label} (${name})`)
-        .join(', ')}`,
-  ),
-].join('\n');
-
 const handleAddColumns = () =>
   openSidePanelPage({
     page: SidePanelPages.AskAI,
     pageTitle: t('Ask AI'),
-    preprompt: { text: ADD_COLUMNS_PROMPT, mode: 'PREFILL' },
+    preprompt: {
+      text: [
+        t(
+          'Add these columns to the views below and make them visible. Skip a view if it does not exist, and leave columns already shown as they are.',
+        ),
+        ...INDEX_VIEW_FIELDS.map(({ objectLabelPlural, fields }) =>
+          t('- "All {objectLabelPlural}" view: {columns}', {
+            objectLabelPlural,
+            columns: fields
+              .map(({ label, name }) => `${label} (${name})`)
+              .join(', '),
+          }),
+        ),
+      ].join('\n'),
+      mode: 'PREFILL',
+    },
   });
 
 const LastContactSettings = () => {

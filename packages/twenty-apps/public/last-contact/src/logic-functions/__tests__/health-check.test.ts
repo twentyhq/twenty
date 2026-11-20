@@ -21,7 +21,6 @@ import { INDEX_VIEW_FIELDS } from 'src/constants/index-view-fields';
 
 import healthCheck from '../health-check';
 
-// Every suggested column is visible on every "All" view, unless overridden.
 const mockIndexViews = ({
   hiddenFieldUniversalIdentifier,
   viewKey = 'INDEX',
