@@ -11,7 +11,7 @@ import { MainButton, Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme';
 import 'twenty-ui/style.css';
 
-import { INDEX_VIEW_FIELDS } from 'src/constants/index-view-fields';
+import { ALL_VIEW_FIELDS } from 'src/constants/all-view-fields';
 import {
   BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   SETTINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
@@ -20,7 +20,7 @@ import { VIEW_FIELDS_SUGGESTION_DISMISSED_KEY } from 'src/constants/view-fields-
 
 const ADD_COLUMNS_PROMPT = [
   'Add these columns to the views below and make them visible. Skip a view if it does not exist, and leave columns already shown as they are.',
-  ...INDEX_VIEW_FIELDS.map(
+  ...ALL_VIEW_FIELDS.map(
     ({ objectLabelPlural, fields }) =>
       `- "All ${objectLabelPlural}" view: ${fields
         .map(({ label, name }) => `${label} (${name})`)

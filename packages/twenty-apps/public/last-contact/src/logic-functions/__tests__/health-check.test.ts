@@ -22,20 +22,25 @@ vi.mock('twenty-client-sdk/metadata', () => ({
   }),
 }));
 
-import { INDEX_VIEW_FIELDS } from 'src/constants/index-view-fields';
+import { ALL_VIEW_FIELDS } from 'src/constants/all-view-fields';
 
 import healthCheck from '../health-check';
 
-const mockIndexViews = ({
+const mockAllViews = ({
   hiddenFieldUniversalIdentifier,
-  viewKey = 'INDEX',
+  inactiveFieldUniversalIdentifier,
+  customApplicationId = 'custom-application',
+  customViewName,
 }: {
   hiddenFieldUniversalIdentifier?: string;
-  viewKey?: string | null;
+  inactiveFieldUniversalIdentifier?: string;
+  customApplicationId?: string;
+  customViewName?: string;
 } = {}) =>
   metadataQueryMock.mockResolvedValue({
+    currentWorkspace: { workspaceCustomApplicationId: 'custom-application' },
     objects: {
-      edges: INDEX_VIEW_FIELDS.map(({ objectUniversalIdentifier, fields }) => ({
+      edges: ALL_VIEW_FIELDS.map(({ objectUniversalIdentifier, fields }) => ({
         node: {
           id: `object-${objectUniversalIdentifier}`,
           universalIdentifier: objectUniversalIdentifier,
@@ -46,15 +51,31 @@ const mockIndexViews = ({
         },
       })),
     },
-    getViews: INDEX_VIEW_FIELDS.map(
-      ({ objectUniversalIdentifier, fields }) => ({
-        key: viewKey,
-        objectMetadataId: `object-${objectUniversalIdentifier}`,
-        viewFields: fields.map(({ universalIdentifier }) => ({
-          fieldMetadataId: `field-${universalIdentifier}`,
-          isVisible: universalIdentifier !== hiddenFieldUniversalIdentifier,
-        })),
-      }),
+    getViews: ALL_VIEW_FIELDS.flatMap(
+      ({ objectUniversalIdentifier, objectLabelPlural, fields }) => [
+        {
+          name: `All ${objectLabelPlural}`,
+          isActive: true,
+          applicationId: 'standard-application',
+          objectMetadataId: `object-${objectUniversalIdentifier}`,
+          viewFields: fields.map(({ universalIdentifier }) => ({
+            fieldMetadataId: `field-${universalIdentifier}`,
+            isVisible: true,
+            isActive: true,
+          })),
+        },
+        {
+          name: customViewName ?? `All ${objectLabelPlural}`,
+          isActive: true,
+          applicationId: customApplicationId,
+          objectMetadataId: `object-${objectUniversalIdentifier}`,
+          viewFields: fields.map(({ universalIdentifier }) => ({
+            fieldMetadataId: `field-${universalIdentifier}`,
+            isVisible: universalIdentifier !== hiddenFieldUniversalIdentifier,
+            isActive: universalIdentifier !== inactiveFieldUniversalIdentifier,
+          })),
+        },
+      ],
     ),
   });
 
@@ -79,7 +100,7 @@ beforeEach(() => {
   metadataQueryMock.mockReset();
   kvGetMock.mockReset();
   kvGetMock.mockResolvedValue(null);
-  mockIndexViews();
+  mockAllViews();
 });
 
 describe('health-check', () => {
@@ -138,20 +159,38 @@ describe('health-check', () => {
     });
   });
 
-  it('should point to the settings tab when an All view hides a column', async () => {
+  it('should point to the settings tab when a custom All view hides a column', async () => {
     mockParticipants({
       messageParticipantIds: ['message-participant-1'],
       calendarEventParticipantIds: [],
     });
-    mockIndexViews({
+    mockAllViews({
       hiddenFieldUniversalIdentifier:
-        INDEX_VIEW_FIELDS[1].fields[0].universalIdentifier,
+        ALL_VIEW_FIELDS[1].fields[0].universalIdentifier,
     });
 
     await expect(healthCheck.config.handler()).resolves.toEqual({
       status: 'WARNING',
       title: 'Last contact columns are not shown',
       description: expect.stringContaining('All Companies views'),
+      action: { label: 'Open settings', location: '#settings' },
+    });
+  });
+
+  it('should count an inactive view field as not shown', async () => {
+    mockParticipants({
+      messageParticipantIds: ['message-participant-1'],
+      calendarEventParticipantIds: [],
+    });
+    mockAllViews({
+      inactiveFieldUniversalIdentifier:
+        ALL_VIEW_FIELDS[2].fields[0].universalIdentifier,
+    });
+
+    await expect(healthCheck.config.handler()).resolves.toEqual({
+      status: 'WARNING',
+      title: 'Last contact columns are not shown',
+      description: expect.stringContaining('All Opportunities views'),
       action: { label: 'Open settings', location: '#settings' },
     });
   });
@@ -170,15 +209,48 @@ describe('health-check', () => {
     expect(metadataQueryMock).not.toHaveBeenCalled();
   });
 
-  it('should ignore objects without an All view', async () => {
+  it('should match All views stored with the label template', async () => {
     mockParticipants({
       messageParticipantIds: ['message-participant-1'],
       calendarEventParticipantIds: [],
     });
-    mockIndexViews({
+    mockAllViews({
       hiddenFieldUniversalIdentifier:
-        INDEX_VIEW_FIELDS[0].fields[0].universalIdentifier,
-      viewKey: null,
+        ALL_VIEW_FIELDS[0].fields[0].universalIdentifier,
+      customViewName: 'All {objectLabelPlural}',
+    });
+
+    await expect(healthCheck.config.handler()).resolves.toMatchObject({
+      status: 'WARNING',
+      description: expect.stringContaining('All People views'),
+    });
+  });
+
+  it('should ignore other views of the custom application', async () => {
+    mockParticipants({
+      messageParticipantIds: ['message-participant-1'],
+      calendarEventParticipantIds: [],
+    });
+    mockAllViews({
+      hiddenFieldUniversalIdentifier:
+        ALL_VIEW_FIELDS[0].fields[0].universalIdentifier,
+      customViewName: 'My people',
+    });
+
+    await expect(healthCheck.config.handler()).resolves.toEqual({
+      status: 'OK',
+    });
+  });
+
+  it('should ignore All views that do not belong to the custom application', async () => {
+    mockParticipants({
+      messageParticipantIds: ['message-participant-1'],
+      calendarEventParticipantIds: [],
+    });
+    mockAllViews({
+      hiddenFieldUniversalIdentifier:
+        ALL_VIEW_FIELDS[0].fields[0].universalIdentifier,
+      customApplicationId: 'other-application',
     });
 
     await expect(healthCheck.config.handler()).resolves.toEqual({

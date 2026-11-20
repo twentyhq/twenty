@@ -1,12 +1,12 @@
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 import { describe, expect, it } from 'vitest';
 
-import { INDEX_VIEW_FIELDS } from 'src/constants/index-view-fields';
+import { ALL_VIEW_FIELDS } from 'src/constants/all-view-fields';
 
-describe('INDEX_VIEW_FIELDS', () => {
+describe('ALL_VIEW_FIELDS', () => {
   it('should target the standard person, company and opportunity objects', () => {
     expect(
-      INDEX_VIEW_FIELDS.map(
+      ALL_VIEW_FIELDS.map(
         ({ objectUniversalIdentifier }) => objectUniversalIdentifier,
       ),
     ).toEqual([
