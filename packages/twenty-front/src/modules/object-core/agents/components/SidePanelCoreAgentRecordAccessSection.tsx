@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 
@@ -9,23 +8,18 @@ import { CORE_AGENT_RECORD_ACCESS_LEVELS } from '@/object-core/agents/constants/
 import { type CoreAgentRecordAccessLevel } from '@/object-core/agents/types/CoreAgentRecordAccessLevel';
 import { getCoreAgentRecordAccessItemId } from '@/object-core/agents/utils/getCoreAgentRecordAccessItemId';
 import { getCoreAgentRecordAccessLevels } from '@/object-core/agents/utils/getCoreAgentRecordAccessLevels';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { useObjectDisabledOperations } from '@/settings/roles/role-permissions/object-overrides/hooks/useObjectDisabledOperations';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
-import {
-  SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG,
-  type SettingsRoleObjectPermissionKey,
-} from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig';
+import { SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG } from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
-type SidePanelCoreAgentRecordAccessGroupProps = {
+type SidePanelCoreAgentRecordAccessSectionProps = {
   heading: string;
   Icon?: IconComponent;
-  objectIcon?: ReactNode;
+  objectMetadataItem?: EnrichedObjectMetadataItem;
   role: RoleWithPartialMembers | undefined;
-  objectMetadataId?: string;
-  disabledOperations?: SettingsRoleObjectPermissionKey[];
-  disabledOperationReasons?: Partial<
-    Record<SettingsRoleObjectPermissionKey, string>
-  >;
   isReadOnly: boolean;
   onLevelChange: ({
     level,
@@ -36,18 +30,19 @@ type SidePanelCoreAgentRecordAccessGroupProps = {
   }) => void;
 };
 
-export const SidePanelCoreAgentRecordAccessGroup = ({
+export const SidePanelCoreAgentRecordAccessSection = ({
   heading,
   Icon,
-  objectIcon,
+  objectMetadataItem,
   role,
-  objectMetadataId,
-  disabledOperations,
-  disabledOperationReasons,
   isReadOnly,
   onLevelChange,
-}: SidePanelCoreAgentRecordAccessGroupProps) => {
+}: SidePanelCoreAgentRecordAccessSectionProps) => {
   const { t } = useLingui();
+  const { disabledOperations, disabledOperationReasons } =
+    useObjectDisabledOperations(objectMetadataItem);
+
+  const objectMetadataId = objectMetadataItem?.id;
 
   const enabledLevels = getCoreAgentRecordAccessLevels({
     role,
@@ -59,7 +54,15 @@ export const SidePanelCoreAgentRecordAccessGroup = ({
     <CommandMenuItemSectionGroup
       heading={heading}
       Icon={Icon}
-      context={isDefined(objectIcon) ? { icon: objectIcon } : undefined}
+      context={
+        isDefined(objectMetadataItem)
+          ? {
+              icon: (
+                <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+              ),
+            }
+          : undefined
+      }
     >
       {CORE_AGENT_RECORD_ACCESS_LEVELS.map(
         ({ level, label, allRecordsLabel, objectKey }) => {
@@ -68,7 +71,7 @@ export const SidePanelCoreAgentRecordAccessGroup = ({
             level,
           });
           const isEnabled = enabledLevels.includes(level);
-          const disabledReason = disabledOperationReasons?.[objectKey];
+          const disabledReason = disabledOperationReasons[objectKey];
           const isDisabled = isReadOnly || isDefined(disabledReason);
 
           return (

@@ -7,8 +7,7 @@ import { IconLock } from 'twenty-ui/icon';
 import { SidePanelCoreAgentReadOnlyBanner } from '@/object-core/agents/components/SidePanelCoreAgentReadOnlyBanner';
 import { SidePanelCoreAgentRoleLayout } from '@/object-core/agents/components/SidePanelCoreAgentRoleLayout';
 import { SidePanelCoreAgentSearchInput } from '@/object-core/agents/components/SidePanelCoreAgentSearchInput';
-import { SidePanelCoreAgentObjectRecordAccessGroup } from '@/object-core/agents/components/SidePanelCoreAgentObjectRecordAccessGroup';
-import { SidePanelCoreAgentRecordAccessGroup } from '@/object-core/agents/components/SidePanelCoreAgentRecordAccessGroup';
+import { SidePanelCoreAgentRecordAccessSection } from '@/object-core/agents/components/SidePanelCoreAgentRecordAccessSection';
 import { CORE_AGENT_RECORD_ACCESS_LEVELS } from '@/object-core/agents/constants/CoreAgentRecordAccessLevels';
 import { useCoreAgentSidePanelRole } from '@/object-core/agents/hooks/useCoreAgentSidePanelRole';
 import { type CoreAgentRecordAccessLevel } from '@/object-core/agents/types/CoreAgentRecordAccessLevel';
@@ -83,7 +82,7 @@ export const SidePanelCoreAgentDataAccessPage = () => {
           <SidePanelCoreAgentReadOnlyBanner message={readOnlyMessage} />
         )}
         {isGeneralShown && (
-          <SidePanelCoreAgentRecordAccessGroup
+          <SidePanelCoreAgentRecordAccessSection
             heading={t`General`}
             Icon={IconLock}
             role={role}
@@ -94,8 +93,9 @@ export const SidePanelCoreAgentDataAccessPage = () => {
           />
         )}
         {matchingObjectMetadataItems.map((objectMetadataItem) => (
-          <SidePanelCoreAgentObjectRecordAccessGroup
+          <SidePanelCoreAgentRecordAccessSection
             key={objectMetadataItem.id}
+            heading={objectMetadataItem.labelPlural}
             objectMetadataItem={objectMetadataItem}
             role={role}
             isReadOnly={isReadOnly}
