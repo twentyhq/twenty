@@ -1,5 +1,6 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFieldLookupTarget } from '@/object-record/record-column-lookup/types/RecordFieldLookupTarget';
+import { type ScopedRelationJunction } from '@/object-record/record-column-scope/types/ScopedRelationJunction';
 import {
   type RecordGqlOperationFilter,
   type RecordGqlOperationOrderBy,
@@ -15,4 +16,5 @@ export type ScopedRelationAlias = {
   orderBy?: RecordGqlOperationOrderBy;
   first?: number;
   lookupTarget?: RecordFieldLookupTarget;
+  scopedRelationJunction?: ScopedRelationJunction;
 };

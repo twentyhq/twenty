@@ -4,6 +4,7 @@ import { type ScopedRelationAlias } from '@/object-record/record-column-scope/ty
 import { getRelationScopeRecordFiltersAndSorts } from '@/object-record/record-column-scope/utils/getRelationScopeRecordFiltersAndSorts';
 import { getScopedRelationLookupTarget } from '@/object-record/record-column-scope/utils/getScopedRelationLookupTarget';
 import { isScopedRelationColumn } from '@/object-record/record-column-scope/utils/isScopedRelationColumn';
+import { resolveScopedRelationJunction } from '@/object-record/record-column-scope/utils/resolveScopedRelationJunction';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/utils/findRelationTargetObjectMetadataItem';
 import { getQueryVariablesFromFiltersAndSorts } from '@/views/utils/getQueryVariablesFromFiltersAndSorts';
@@ -105,6 +106,10 @@ export const getScopedRelationAliases = ({
           objectMetadataItems,
           isLookupColumnsEnabled,
         }),
+        scopedRelationJunction: resolveScopedRelationJunction({
+          fieldMetadataItem,
+          objectMetadataItems,
+        }).scopedRelationJunction,
       },
     ];
   });
