@@ -9,10 +9,13 @@ import { validateFlatViewFieldRelationScopeNotOverridden } from 'src/engine/work
 const WORKSPACE_CUSTOM_APPLICATION = 'workspace-custom-application';
 const OTHER_APPLICATION = 'other-application';
 
-const buildRelationScope = (
-  limit: number,
+const buildRelationScope = ({
+  limit,
   stageFilterValue = 'OPEN',
-): UniversalViewFieldRelationScope => ({
+}: {
+  limit: number;
+  stageFilterValue?: string;
+}): UniversalViewFieldRelationScope => ({
   filters: [
     {
       id: 'stage-filter',
@@ -44,7 +47,7 @@ const validate = ({
     existingFlatViewField: {
       applicationUniversalIdentifier: ownerApplication,
       isSystemSideEffect: false,
-      universalRelationScope: buildRelationScope(1),
+      universalRelationScope: buildRelationScope({ limit: 1 }),
     },
     updatedFlatViewField: { universalRelationScope },
     buildOptions: {
@@ -56,7 +59,10 @@ const validate = ({
 
 describe('validateFlatViewFieldRelationScopeNotOverridden', () => {
   it.each([
-    { title: 'changing', universalRelationScope: buildRelationScope(5) },
+    {
+      title: 'changing',
+      universalRelationScope: buildRelationScope({ limit: 5 }),
+    },
     { title: 'clearing', universalRelationScope: null },
   ])(
     'rejects a workspace $title the scope of an application-owned column',
@@ -76,26 +82,29 @@ describe('validateFlatViewFieldRelationScopeNotOverridden', () => {
       title: 'the owning application changes the scope',
       ownerApplication: OTHER_APPLICATION,
       callerApplication: OTHER_APPLICATION,
-      universalRelationScope: buildRelationScope(5),
+      universalRelationScope: buildRelationScope({ limit: 5 }),
     },
     {
       title: 'the workspace changes the scope of its own column',
       ownerApplication: WORKSPACE_CUSTOM_APPLICATION,
       callerApplication: WORKSPACE_CUSTOM_APPLICATION,
-      universalRelationScope: buildRelationScope(5),
+      universalRelationScope: buildRelationScope({ limit: 5 }),
     },
     {
       title:
         'only a filter value of an application-owned column changes, as when a select option is renamed',
       ownerApplication: OTHER_APPLICATION,
       callerApplication: WORKSPACE_CUSTOM_APPLICATION,
-      universalRelationScope: buildRelationScope(1, 'IN_PROGRESS'),
+      universalRelationScope: buildRelationScope({
+        limit: 1,
+        stageFilterValue: 'IN_PROGRESS',
+      }),
     },
     {
       title: 'the scope of an application-owned column is unchanged',
       ownerApplication: OTHER_APPLICATION,
       callerApplication: WORKSPACE_CUSTOM_APPLICATION,
-      universalRelationScope: buildRelationScope(1),
+      universalRelationScope: buildRelationScope({ limit: 1 }),
     },
   ])('accepts an update when $title', (args) => {
     expect(validate(args)).toEqual([]);
