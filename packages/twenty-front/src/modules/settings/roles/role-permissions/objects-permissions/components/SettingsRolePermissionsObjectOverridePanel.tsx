@@ -1,7 +1,6 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { useUpsertObjectPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useUpsertObjectPermissionInDraftRole';
 import { SettingsRolePermissionsObjectActionsSelect } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect';
 import { SettingsRolePermissionsObjectFieldsSelect } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect';
 import {
@@ -77,10 +76,8 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
     roleId,
   );
 
-  const { upsertObjectPermissionInDraftRole } =
-    useUpsertObjectPermissionInDraftRole(roleId);
-
-  const { removeObjectOverride } = useSettingsRoleObjectOverrides(roleId);
+  const { removeObjectOverride, setObjectOperations } =
+    useSettingsRoleObjectOverrides(roleId);
 
   const { createRule, setRuleOperations } =
     useRowLevelPermissionRulesInDraftRole(roleId);
@@ -110,37 +107,18 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
-  const setOperations = (nextOperations: SettingsRoleObjectPermissionKey[]) => {
-    const existingObjectPermission = settingsDraftRole.objectPermissions?.find(
-      (objectPermission) =>
-        objectPermission.objectMetadataId === objectMetadataItem.id,
-    );
-
-    upsertObjectPermissionInDraftRole({
-      ...existingObjectPermission,
-      objectMetadataId: objectMetadataItem.id,
-      canReadObjectRecords: nextOperations.includes('canReadObjectRecords'),
-      canUpdateObjectRecords: nextOperations.includes('canUpdateObjectRecords'),
-      canSoftDeleteObjectRecords: nextOperations.includes(
-        'canSoftDeleteObjectRecords',
-      ),
-      canDestroyObjectRecords: nextOperations.includes(
-        'canDestroyObjectRecords',
-      ),
-    });
-  };
-
   const toggleOperation = (key: SettingsRoleObjectPermissionKey) => {
     const nextOperations = operations.includes(key)
       ? operations.filter((operation) => operation !== key)
       : [...operations, key];
 
-    setOperations(
-      getObjectOperationsWithReadDependency({
+    setObjectOperations({
+      objectMetadataId: objectMetadataItem.id,
+      operations: getObjectOperationsWithReadDependency({
         previousOperations: operations,
         nextOperations,
       }),
-    );
+    });
   };
 
   const openRulePage = (rowLevelPermissionRuleId: string) => {

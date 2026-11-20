@@ -1,6 +1,6 @@
 import { type Role } from '~/generated-metadata/graphql';
 
-export const resolveSettingsRoleObjectRecordsGrant = ({
+export const getObjectRecordsGrant = ({
   role,
   objectMetadataId,
 }: {
