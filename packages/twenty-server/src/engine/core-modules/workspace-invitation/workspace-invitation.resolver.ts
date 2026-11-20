@@ -125,17 +125,14 @@ export class WorkspaceInvitationResolver {
     @Args('appTokenId') appTokenId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    const { link, roleId } =
-      await this.workspaceInvitationService.getWorkspaceInvitationLink({
-        appTokenId,
-        workspace,
-      });
-
-    if (isDefined(roleId)) {
-      await this.assertCanAssignRolesOrThrow();
+    if (!(await this.hasRolesPermission())) {
+      this.throwPermissionDenied();
     }
 
-    return link;
+    return this.workspaceInvitationService.getWorkspaceInvitationLink({
+      appTokenId,
+      workspace,
+    });
   }
 
   @Query(() => [WorkspaceInvitation])
@@ -167,8 +164,10 @@ export class WorkspaceInvitationResolver {
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendInvitationsDTO> {
-    if (isDefined(sendInviteLinkInput.roleId)) {
-      await this.assertCanAssignRolesOrThrow();
+    const hasRolesPermission = await this.hasRolesPermission();
+
+    if (isDefined(sendInviteLinkInput.roleId) && !hasRolesPermission) {
+      this.throwPermissionDenied();
     }
 
     const authContext = buildSystemAuthContext(workspace.id);
@@ -192,24 +191,24 @@ export class WorkspaceInvitationResolver {
       workspace,
       sender: workspaceMember,
       roleId: sendInviteLinkInput.roleId ?? undefined,
+      canShareInviteLinks: hasRolesPermission,
     });
   }
 
-  private async assertCanAssignRolesOrThrow() {
-    const canAssignRoles =
-      await this.settingPermissionsService.hasPermissionFlag({
-        authContext: workspaceAuthContextStorage.getStore(),
-        permissionFlag: PermissionFlagType.ROLES,
-      });
+  private hasRolesPermission() {
+    return this.settingPermissionsService.hasPermissionFlag({
+      authContext: workspaceAuthContextStorage.getStore(),
+      permissionFlag: PermissionFlagType.ROLES,
+    });
+  }
 
-    if (!canAssignRoles) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-        {
-          userFriendlyMessage: msg`You do not have permission to access this feature. Please contact your workspace administrator for access.`,
-        },
-      );
-    }
+  private throwPermissionDenied(): never {
+    throw new PermissionsException(
+      PermissionsExceptionMessage.PERMISSION_DENIED,
+      PermissionsExceptionCode.PERMISSION_DENIED,
+      {
+        userFriendlyMessage: msg`You do not have permission to access this feature. Please contact your workspace administrator for access.`,
+      },
+    );
   }
 }

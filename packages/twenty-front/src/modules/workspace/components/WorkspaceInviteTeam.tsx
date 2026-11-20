@@ -5,6 +5,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { isEmailDeliveryConfiguredState } from '@/client-config/states/isEmailDeliveryConfiguredState';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -17,7 +18,7 @@ import { msg, t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { useToast } from 'twenty-ui/components/feedback';
+import { InlineBanner, useToast } from 'twenty-ui/components/feedback';
 import {
   IconLink,
   IconLock,
@@ -28,6 +29,7 @@ import {
 import { useIcons } from 'twenty-ui/icon/provider';
 import { Button } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -57,6 +59,10 @@ const StyledRoleContainer = styled.div`
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     flex: 1 1 100%;
   }
+`;
+
+const StyledBannerContainer = styled.div`
+  padding-bottom: ${themeCssVariables.spacing[3]};
 `;
 
 const emailsEmptyErrorMessage = msg`Emails should not be empty`;
@@ -117,7 +123,10 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
   const isEmailDeliveryConfigured = useAtomStateValue(
     isEmailDeliveryConfiguredState,
   );
+  const hasRolesPermission = useHasPermissionFlag(PermissionFlagType.ROLES);
   const [inviteLinks, setInviteLinks] = useState<InviteLink[]>([]);
+  const [isAskAdminForLinksVisible, setIsAskAdminForLinksVisible] =
+    useState(false);
 
   const roleOptions: Array<{
     label: string;
@@ -149,6 +158,18 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
   );
   const isEmailsEmpty = !watch('emails');
 
+  const getSuccessMessage = (invitationCount: number) => {
+    if (isEmailDeliveryConfigured) {
+      return t`${invitationCount} invitations sent`;
+    }
+
+    if (hasRolesPermission) {
+      return t`${invitationCount} invitation links generated`;
+    }
+
+    return t`${invitationCount} invitations created`;
+  };
+
   const submit = handleSubmit(async ({ emails, roleId }) => {
     const emailsList = sanitizeEmailList(emails.split(','));
     const { data } = await sendInvitation({
@@ -164,13 +185,12 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
 
       if (!isEmailDeliveryConfigured) {
         setInviteLinks(data.sendInvitations.inviteLinks);
+        setIsAskAdminForLinksVisible(!hasRolesPermission);
       }
 
       enqueueToast({
         status: 'success',
-        children: isEmailDeliveryConfigured
-          ? t`${invitationCount} invitations sent`
-          : t`${invitationCount} invitation links generated`,
+        children: getSuccessMessage(invitationCount),
         duration: 2000,
       });
 
@@ -252,6 +272,13 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
           key={inviteLinks[0].link}
           inviteLinks={inviteLinks}
         />
+      )}
+      {!isEmailDeliveryConfigured && isAskAdminForLinksVisible && (
+        <StyledBannerContainer>
+          <InlineBanner layout="compact" status="info" fullWidth>
+            {t`Only admins can access invitation links. Contact a workspace admin to get them.`}
+          </InlineBanner>
+        </StyledBannerContainer>
       )}
     </form>
   );

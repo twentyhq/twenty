@@ -127,11 +127,8 @@ export const SettingsWorkspaceMembersInviteTab = () => {
 
   const canCopyInvitationLink = ({
     expiresAt,
-    roleId,
-  }: Pick<WorkspaceInvitation, 'expiresAt' | 'roleId'>) =>
-    !isEmailDeliveryConfigured &&
-    !isExpired(expiresAt) &&
-    (hasRolesPermission || !isDefined(roleId));
+  }: Pick<WorkspaceInvitation, 'expiresAt'>) =>
+    hasRolesPermission && !isEmailDeliveryConfigured && !isExpired(expiresAt);
 
   const canResendInvitation = ({
     expiresAt,

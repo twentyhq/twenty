@@ -284,7 +284,7 @@ export class WorkspaceInvitationService {
       );
     }
 
-    const result = await this.sendInvitations({
+    return this.sendInvitations({
       emails: [appToken.context.email],
       workspace,
       sender,
@@ -293,8 +293,6 @@ export class WorkspaceInvitationService {
         appToken.type === AppTokenType.OnboardingInvitationToken,
       appTokenIdToInvalidate: appToken.id,
     });
-
-    return { ...result, inviteLinks: [] };
   }
 
   async getWorkspaceInvitationLink({
@@ -342,15 +340,12 @@ export class WorkspaceInvitationService {
       );
     }
 
-    return {
-      link: this.buildInvitationLink({
-        workspace,
-        workspaceInviteHash: inviteHash,
-        inviteToken: appToken.value,
-        email: appToken.context.email,
-      }),
-      roleId: appToken.context.roleId,
-    };
+    return this.buildInvitationLink({
+      workspace,
+      workspaceInviteHash: inviteHash,
+      inviteToken: appToken.value,
+      email: appToken.context.email,
+    });
   }
 
   async sendInvitations({
@@ -360,6 +355,7 @@ export class WorkspaceInvitationService {
     roleId,
     isOnboardingInviteRewardOverride,
     appTokenIdToInvalidate,
+    canShareInviteLinks = false,
   }: {
     emails: string[];
     workspace: WorkspaceEntity;
@@ -367,6 +363,7 @@ export class WorkspaceInvitationService {
     roleId?: string;
     isOnboardingInviteRewardOverride?: boolean;
     appTokenIdToInvalidate?: string;
+    canShareInviteLinks?: boolean;
   }): Promise<SendInvitationsDTO> {
     if (!workspace?.inviteHash) {
       return {
@@ -420,9 +417,10 @@ export class WorkspaceInvitationService {
 
     const senderName = truncateFullName(sender.name);
     const workspaceName = truncateWorkspaceDisplayName(workspace.displayName);
-    const shouldReturnInviteLinks = !isEmailDeliveryConfigured(
-      this.twentyConfigService.get('EMAIL_DRIVER'),
-    );
+
+    const shouldReturnInviteLinks =
+      canShareInviteLinks &&
+      !isEmailDeliveryConfigured(this.twentyConfigService.get('EMAIL_DRIVER'));
     const inviteLinks: WorkspaceInvitationLinkDTO[] = [];
 
     for (const invitation of invitationResults) {

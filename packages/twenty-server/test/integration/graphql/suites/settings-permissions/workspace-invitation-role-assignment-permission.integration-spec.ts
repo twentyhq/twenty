@@ -218,20 +218,44 @@ describe('Workspace invitation role assignment permission', () => {
     expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
   });
 
-  it('returns the link of an invitation without a role when the caller only has WORKSPACE_MEMBERS permission', async () => {
-    const { appTokenId, inviteToken } = await seedPendingInvitation({});
+  it('denies the link of an invitation without a role when the caller lacks ROLES permission', async () => {
+    const { appTokenId } = await seedPendingInvitation({});
 
     const response = await getWorkspaceInvitationLinkAs({
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
       appTokenId,
     });
 
+    expect(response.body.data?.getWorkspaceInvitationLink ?? null).toBeNull();
+    expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+  });
+
+  it('returns no invitation links when the caller lacks ROLES permission', async () => {
+    const email = `invitation-link-role-${randomUUID()}@example.com`;
+
+    invitedEmails.push(email);
+
+    const response = await makeMetadataApiRequest(
+      {
+        query: gql`
+          mutation SendInvitations($emails: [String!]!) {
+            sendInvitations(emails: $emails) {
+              success
+              inviteLinks {
+                link
+              }
+            }
+          }
+        `,
+        variables: { emails: [email] },
+      },
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
     expect(response.body.errors).toBeUndefined();
-    expect(
-      new URL(response.body.data.getWorkspaceInvitationLink).searchParams.get(
-        'inviteToken',
-      ),
-    ).toBe(inviteToken);
+    expect(response.body.data.sendInvitations.success).toBe(true);
+    expect(response.body.data.sendInvitations.inviteLinks).toEqual([]);
+    expect(await findWorkspaceInvitationsByEmail({ email })).toHaveLength(1);
   });
 
   it('returns the link of an invitation with the Admin role when the caller has ROLES permission', async () => {
