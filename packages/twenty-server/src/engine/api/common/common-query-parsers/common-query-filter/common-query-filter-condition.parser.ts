@@ -74,7 +74,7 @@ export class CommonQueryFilterConditionParser {
     objectNameSingular: string;
     cursorFilter: Partial<ObjectRecordFilter>;
   }): WorkspaceSelectQueryBuilder {
-    return queryBuilder.andWhereComparingUnreadableColumnsAsNull(
+    return queryBuilder.andWhereReadingUnreadableColumnsAsNull(
       new Brackets((qb) => {
         this.applyFilterEntriesToWhereBrackets({
           innerQueryBuilder: qb,
