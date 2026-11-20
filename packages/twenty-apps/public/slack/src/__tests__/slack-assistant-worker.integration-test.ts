@@ -505,7 +505,7 @@ describe('Slack assistant worker', () => {
     );
 
     expect(result).toEqual({
-      isFailed: true,
+      failed: true,
       reason: 'Agent is not available',
     });
     expect(botMessagesIn(CHANNEL_ID)).toEqual([
@@ -557,7 +557,7 @@ describe('Slack assistant worker', () => {
     );
 
     expect(result).toEqual({
-      isFailed: true,
+      failed: true,
       reason: SLACK_ASSISTANT_DEADLINE_ERROR,
     });
     expect(botMessagesIn(CHANNEL_ID)).toEqual([
@@ -608,7 +608,7 @@ describe('Slack assistant worker', () => {
     );
 
     expect(result).toEqual({
-      isFailed: true,
+      failed: true,
       reason: SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR,
     });
     expect(botMessagesIn(CHANNEL_ID)).toEqual([
@@ -654,7 +654,7 @@ describe('Slack assistant worker', () => {
     );
 
     expect(result).toEqual({
-      isFailed: true,
+      failed: true,
       reason: expect.stringContaining('Could not deliver Slack answer'),
     });
     await expect(readRequest(request.id)).resolves.toEqual(
