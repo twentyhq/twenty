@@ -47,21 +47,25 @@ export class WorkflowTriggerJob {
       return;
     }
 
-    const coreWorkflow = isDefined(coreWorkflowVersion.coreWorkflowId)
-      ? await this.coreWorkflowTriggerService.findCoreWorkflowById(
-          workspaceId,
-          coreWorkflowVersion.coreWorkflowId,
-        )
-      : null;
+    const droppedDispatchMessage = `Core workflow version ${coreWorkflowVersionId} does not belong to workflow ${workflowId} in workspace ${workspaceId}`;
+
+    if (!isDefined(coreWorkflowVersion.coreWorkflowId)) {
+      this.captureDroppedDispatch(droppedDispatchMessage);
+      return;
+    }
+
+    const coreWorkflow =
+      await this.coreWorkflowTriggerService.findCoreWorkflowById(
+        workspaceId,
+        coreWorkflowVersion.coreWorkflowId,
+      );
 
     if (
       !isDefined(coreWorkflow) ||
       (workflowId !== coreWorkflow.id &&
         workflowId !== coreWorkflow.workspaceWorkflowId)
     ) {
-      this.captureDroppedDispatch(
-        `Core workflow version ${coreWorkflowVersionId} does not belong to workflow ${workflowId} in workspace ${workspaceId}`,
-      );
+      this.captureDroppedDispatch(droppedDispatchMessage);
       return;
     }
 
