@@ -17,10 +17,12 @@ export const useSaveScopedRelationColumn = (recordTableId: string) => {
       fieldMetadataItemId,
       recordFieldId,
       relationScope,
+      relationTargetFieldMetadataId,
     }: {
       fieldMetadataItemId: string;
       recordFieldId?: string;
       relationScope: ViewFieldRelationScope;
+      relationTargetFieldMetadataId: string | null;
     }): Promise<boolean> => {
       const currentRecordFieldsAtom =
         currentRecordFieldsComponentState.atomFamily({
@@ -50,7 +52,11 @@ export const useSaveScopedRelationColumn = (recordTableId: string) => {
         return false;
       }
 
-      const savedRecordField = { ...recordFieldToSave, relationScope };
+      const savedRecordField = {
+        ...recordFieldToSave,
+        relationScope,
+        relationTargetFieldMetadataId,
+      };
 
       const isSaved = await saveViewFields([
         mapRecordFieldToViewField(savedRecordField),
@@ -65,7 +71,11 @@ export const useSaveScopedRelationColumn = (recordTableId: string) => {
         latestRecordFields.some(({ id }) => id === savedRecordField.id)
           ? latestRecordFields.map((recordField) =>
               recordField.id === savedRecordField.id
-                ? { ...recordField, relationScope }
+                ? {
+                    ...recordField,
+                    relationScope,
+                    relationTargetFieldMetadataId,
+                  }
                 : recordField,
             )
           : [...latestRecordFields, savedRecordField],
