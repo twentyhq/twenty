@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 
@@ -62,5 +62,19 @@ describe('NavigationMenuAddSectionButton', () => {
 
     expect(menuItemLabels[0]).toBe('Favorites');
     expect(menuItemLabels.at(-1)).toBe('Custom section');
+  });
+
+  it('toggles the menu from the label', async () => {
+    const user = userEvent.setup();
+
+    renderAddSectionButton();
+
+    await user.click(screen.getByText('Add section'));
+    expect(await screen.findByRole('menu')).toBeInTheDocument();
+
+    await user.click(screen.getByText('Add section'));
+    await waitFor(() =>
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
+    );
   });
 });

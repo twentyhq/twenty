@@ -24,7 +24,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
+import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -64,7 +64,7 @@ export const NavigationMenuAddSectionButton = ({
     navigationMenuItemIdToRenameState,
   );
   const { closeDropdown } = useCloseDropdown();
-  const { openDropdown } = useOpenDropdown();
+  const { toggleDropdown } = useToggleDropdown();
   const dropdownId = `navigation-menu-add-section-${containerId ?? 'home'}`;
 
   if (!isCustomizableSidebarEnabled) {
@@ -109,7 +109,7 @@ export const NavigationMenuAddSectionButton = ({
                 <NavigationDrawerSectionTitle
                   label={t`Add section`}
                   onClick={() =>
-                    openDropdown({
+                    toggleDropdown({
                       dropdownComponentInstanceIdFromProps: dropdownId,
                     })
                   }
