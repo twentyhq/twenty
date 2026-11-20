@@ -25,15 +25,22 @@ export const useObjectDisabledOperations = (
     ? getApplicationDisplayName({ application, currentWorkspace })
     : t`its app`;
 
+  const disabledOperationReasons: Partial<
+    Record<SettingsRoleObjectPermissionKey, string>
+  > = Object.fromEntries(
+    disabledOperations.map((operation) => [
+      operation,
+      getObjectDisabledOperationReason({ operation, applicationName }),
+    ]),
+  );
+
   const getDisabledOperationReason = (
     operation: SettingsRoleObjectPermissionKey,
-  ) => {
-    if (!disabledOperations.includes(operation)) {
-      return undefined;
-    }
+  ) => disabledOperationReasons[operation];
 
-    return getObjectDisabledOperationReason({ operation, applicationName });
+  return {
+    disabledOperations,
+    disabledOperationReasons,
+    getDisabledOperationReason,
   };
-
-  return { disabledOperations, getDisabledOperationReason };
 };

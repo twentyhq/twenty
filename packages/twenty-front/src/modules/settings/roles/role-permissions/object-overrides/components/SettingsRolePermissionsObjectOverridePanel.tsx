@@ -84,8 +84,11 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
 
   const { getRuleLabel } = useRowLevelPermissionRuleLabel(objectMetadataItem);
 
-  const { disabledOperations, getDisabledOperationReason } =
-    useObjectDisabledOperations(objectMetadataItem);
+  const {
+    disabledOperations,
+    disabledOperationReasons,
+    getDisabledOperationReason,
+  } = useObjectDisabledOperations(objectMetadataItem);
 
   const rules = getObjectRowLevelPermissionRules({
     role: settingsDraftRole,
@@ -250,7 +253,7 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
                   })
                 }
                 disabled={!isEditable}
-                getDisabledOperationReason={getDisabledOperationReason}
+                disabledOperationReasons={disabledOperationReasons}
               />
             </TableCell>
             <TableCell

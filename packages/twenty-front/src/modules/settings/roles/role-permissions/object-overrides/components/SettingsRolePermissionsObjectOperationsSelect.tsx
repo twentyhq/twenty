@@ -19,9 +19,9 @@ type SettingsRolePermissionsObjectOperationsSelectProps = {
   selectedOperations: SettingsRoleObjectPermissionKey[];
   onChange: (selectedOperations: SettingsRoleObjectPermissionKey[]) => void;
   disabled?: boolean;
-  getDisabledOperationReason?: (
-    operation: SettingsRoleObjectPermissionKey,
-  ) => string | undefined;
+  disabledOperationReasons?: Partial<
+    Record<SettingsRoleObjectPermissionKey, string>
+  >;
 };
 
 export const SettingsRolePermissionsObjectOperationsSelect = ({
@@ -29,15 +29,13 @@ export const SettingsRolePermissionsObjectOperationsSelect = ({
   selectedOperations,
   onChange,
   disabled = false,
-  getDisabledOperationReason,
+  disabledOperationReasons = {},
 }: SettingsRolePermissionsObjectOperationsSelectProps) => {
   const { t } = useLingui();
 
-  const isOperationDisabled = (operation: SettingsRoleObjectPermissionKey) =>
-    isDefined(getDisabledOperationReason?.(operation));
-
-  const disabledOperations =
-    SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.filter(isOperationDisabled);
+  const disabledOperations = SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.filter(
+    (operation) => isDefined(disabledOperationReasons[operation]),
+  );
 
   const enabledSelectedOperations = selectedOperations.filter(
     (operation) => !disabledOperations.includes(operation),
@@ -93,8 +91,8 @@ export const SettingsRolePermissionsObjectOperationsSelect = ({
               <Dropdown.OptionItem
                 key={key}
                 value={key}
-                disabled={isOperationDisabled(key)}
-                description={getDisabledOperationReason?.(key)}
+                disabled={disabledOperations.includes(key)}
+                description={disabledOperationReasons[key]}
                 startIcon={
                   <SelectOptionIcon
                     Icon={SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[key].Icon}
