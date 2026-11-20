@@ -55,13 +55,19 @@ export class MessagingMessageService {
 
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
-  public async saveMessagesWithinTransaction(
-    messages: MessageWithParticipants[],
-    messageChannelId: string,
-    transactionScope: WorkspaceTransactionScope,
-    workspaceId: string,
-    accountOwner: { accountOwnerId?: string | null },
-  ): Promise<{
+  public async saveMessagesWithinTransaction({
+    messages,
+    messageChannelId,
+    transactionScope,
+    workspaceId,
+    accountOwner,
+  }: {
+    messages: MessageWithParticipants[];
+    messageChannelId: string;
+    transactionScope: WorkspaceTransactionScope;
+    workspaceId: string;
+    accountOwner: { accountOwnerId?: string | null };
+  }): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
     refetchedMessageChannelMessageAssociationIds: string[];
     sentDraftMessageIds: string[];

@@ -98,13 +98,13 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
             messageExternalIdToMessageThreadIdMap,
             refetchedMessageChannelMessageAssociationIds,
             sentDraftMessageIds,
-          } = await this.messageService.saveMessagesWithinTransaction(
-            messagesToSave,
-            messageChannel.id,
+          } = await this.messageService.saveMessagesWithinTransaction({
+            messages: messagesToSave,
+            messageChannelId: messageChannel.id,
             transactionScope,
             workspaceId,
             accountOwner,
-          );
+          });
 
           const folderAssociations: MessageChannelMessageAssociationFolderAssociation[] =
             messagesToSave.flatMap((message) => {

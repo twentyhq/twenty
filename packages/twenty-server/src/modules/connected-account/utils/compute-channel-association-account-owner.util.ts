@@ -1,8 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 export const computeChannelAssociationAccountOwner = ({
   accountOwnerFieldUniversalIdentifier,
@@ -11,11 +9,14 @@ export const computeChannelAssociationAccountOwner = ({
   userWorkspaceId,
 }: {
   accountOwnerFieldUniversalIdentifier: string;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
+  flatFieldMetadataMaps: {
+    byUniversalIdentifier: Partial<Record<string, unknown>>;
+  };
+  flatWorkspaceMemberMaps: Pick<FlatWorkspaceMemberMaps, 'idByUserWorkspaceId'>;
   userWorkspaceId: string;
 }): { accountOwnerId?: string | null } => {
-  // accountOwnerId only exists once the 2.61 upgrade has added it to the workspace
+  // accountOwnerId only exists once the 2.61 upgrade has added it to the workspace;
+  // drop this check, and make accountOwnerId required, once 2.61 leaves the upgrade window
   if (
     !isDefined(
       flatFieldMetadataMaps.byUniversalIdentifier[
