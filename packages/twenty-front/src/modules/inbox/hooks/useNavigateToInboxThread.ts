@@ -9,10 +9,13 @@ export const useNavigateToInboxThread = () => {
   const navigate = useNavigateApp();
 
   const navigateToInboxThread = useCallback(
-    (
-      threadId: string | null,
-      { replace = false }: { replace?: boolean } = {},
-    ) =>
+    ({
+      threadId,
+      replace = false,
+    }: {
+      threadId: string | null;
+      replace?: boolean;
+    }) =>
       // oxlint-disable-next-line twenty/no-navigate-prefer-link
       navigate(AppPath.AiChatInbox, { threadId }, undefined, {
         replace,

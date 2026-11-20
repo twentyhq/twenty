@@ -149,7 +149,7 @@ const InboxPageContent = () => {
   // Rows hold a menu and a rename input, which a link cannot contain
   const { navigateToInboxThread } = useNavigateToInboxThread();
   const selectThread = (nextThreadId: string | null) =>
-    navigateToInboxThread(nextThreadId);
+    navigateToInboxThread({ threadId: nextThreadId });
 
   const handleThreadClick = (
     { id }: AiChatThreadRecord,

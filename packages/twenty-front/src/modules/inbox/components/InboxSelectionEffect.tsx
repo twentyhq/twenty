@@ -69,7 +69,10 @@ export const InboxSelectionEffect = ({
     const nextThread =
       threads[Math.min(lastListedSelection.index, threads.length - 1)];
 
-    navigateToInboxThread(nextThread?.id ?? null, { replace: true });
+    navigateToInboxThread({
+      threadId: nextThread?.id ?? null,
+      replace: true,
+    });
   }, [
     isSelectedThreadInInbox,
     lastListedSelection,

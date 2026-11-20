@@ -3,7 +3,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai-chat/constants/AiChatRefetchMessagesEventName';
 import { AiChatInstanceContext } from '@/ai-chat/contexts/AiChatInstanceContext';
-import { type AiChatThreadEventDetail } from '@/ai-chat/types/AiChatThreadEventDetail';
 import { type useAiChatFrontComponentPreview } from '@/ai-chat/tool-calls/hooks/useAiChatFrontComponentPreview';
 
 type AiChatFrontComponentPreviewEffectProps = Pick<
@@ -33,8 +32,8 @@ export const AiChatFrontComponentPreviewEffect = ({
     };
 
     const handleRefetchMessages = (event: Event) => {
-      const eventThreadId = (event as CustomEvent<AiChatThreadEventDetail>)
-        .detail?.threadId;
+      const eventThreadId: unknown =
+        event instanceof CustomEvent ? event.detail?.threadId : undefined;
 
       if (
         isDefined(threadId) &&

@@ -1,16 +1,17 @@
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { getAiChatThreadRollbackUpdate } from '@/ai-chat/threads/utils/getAiChatThreadRollbackUpdate';
 
-const buildThread = (fields: Partial<AiChatThreadRecord>): AiChatThreadRecord =>
-  ({
-    __typename: 'AgentChatThread',
-    id: 'thread',
-    title: null,
-    deletedAt: null,
-    createdAt: '2026-11-01T00:00:00.000Z',
-    updatedAt: '2026-11-01T00:00:00.000Z',
-    ...fields,
-  }) as AiChatThreadRecord;
+const buildThread = (
+  fields: Partial<AiChatThreadRecord>,
+): AiChatThreadRecord => ({
+  __typename: 'AgentChatThread',
+  id: 'thread',
+  title: null,
+  deletedAt: null,
+  createdAt: '2026-11-01T00:00:00.000Z',
+  updatedAt: '2026-11-01T00:00:00.000Z',
+  ...fields,
+});
 
 describe('getAiChatThreadRollbackUpdate', () => {
   it('restores every field that still holds the optimistic value', () => {

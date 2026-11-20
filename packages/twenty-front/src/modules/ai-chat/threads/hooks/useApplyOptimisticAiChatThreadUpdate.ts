@@ -1,5 +1,6 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useApplyAiChatThreadUpdate } from '@/ai-chat/threads/hooks/useApplyAiChatThreadUpdate';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
@@ -25,7 +26,7 @@ export const useApplyOptimisticAiChatThreadUpdate = () => {
           currentThread: getThread(),
         });
 
-        if (rollbackUpdate !== null) {
+        if (isDefined(rollbackUpdate)) {
           applyAiChatThreadUpdate(rollbackUpdate);
         }
       };
