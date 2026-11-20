@@ -113,7 +113,7 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   const inboxStatusThreadIds =
     objectMetadataItem?.nameSingular ===
       StandardObjectNameSingular.AgentChatThread &&
-    isDefined(aiChatThreadParticipants)
+    aiChatThreadParticipants.isLoaded
       ? (recordIds ?? [])
       : [];
   const inboxSelectedChannelView = useAtomStateValue(

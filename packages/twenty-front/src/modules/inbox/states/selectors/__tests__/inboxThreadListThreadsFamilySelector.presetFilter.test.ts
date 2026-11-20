@@ -181,14 +181,14 @@ const getVisibleThreadIds = (presetFilter: AgentChatThreadPresetFilter) => {
       }),
     ),
   );
-  store.set(
-    aiChatThreadParticipantsState.atom,
-    Object.fromEntries(
+  store.set(aiChatThreadParticipantsState.atom, {
+    isLoaded: true,
+    rowsByThreadId: Object.fromEntries(
       THREADS.filter(({ participant }) => participant !== undefined).map(
         ({ id, participant }) => [id, { id, threadId: id, ...participant! }],
       ),
     ),
-  );
+  });
   return store
     .get(
       inboxThreadListThreadsFamilySelector.selectorFamily({

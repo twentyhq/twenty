@@ -4,7 +4,6 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
-import { aiChatThreadStreamedParticipantsState } from '@/ai-chat/threads/states/aiChatThreadStreamedParticipantsState';
 import { getAiChatThreadParticipantFromRecord } from '@/ai-chat/threads/utils/getAiChatThreadParticipantFromRecord';
 import { mergeAiChatThreadParticipants } from '@/ai-chat/threads/utils/mergeAiChatThreadParticipants';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -54,19 +53,18 @@ export const AiChatThreadParticipantOperationsEffect = () => {
 
   const handleRecordOperation = useCallback(
     ({ operation }: ObjectRecordOperationBrowserEventDetail) => {
-      // Also kept aside, for when the member's rows have not loaded yet
       const applyParticipants = (
         participants: AgentChatThreadParticipantFieldsFragment[],
       ) => {
         store.set(
-          aiChatThreadStreamedParticipantsState.atom,
-          (streamedParticipants) =>
-            mergeAiChatThreadParticipants(streamedParticipants, participants),
-        );
-        store.set(aiChatThreadParticipantsState.atom, (loadedParticipants) =>
-          isDefined(loadedParticipants)
-            ? mergeAiChatThreadParticipants(loadedParticipants, participants)
-            : loadedParticipants,
+          aiChatThreadParticipantsState.atom,
+          (currentParticipants) => ({
+            ...currentParticipants,
+            rowsByThreadId: mergeAiChatThreadParticipants(
+              currentParticipants.rowsByThreadId,
+              participants,
+            ),
+          }),
         );
       };
 

@@ -46,7 +46,10 @@ const renderUpdateInboxState = () => {
     id: THREAD_ID,
     lastActivityAt: LAST_ACTIVITY_AT,
   } as never);
-  store.set(aiChatThreadParticipantsState.atom, {});
+  store.set(aiChatThreadParticipantsState.atom, {
+    isLoaded: true,
+    rowsByThreadId: {},
+  });
 
   const { result } = renderHook(() => useUpdateAiChatThreadStatus(), {
     wrapper: ({ children }: { children: ReactNode }) => (
@@ -73,7 +76,9 @@ describe('useUpdateAiChatThreadStatus', () => {
       });
     });
 
-    expect(store.get(aiChatThreadParticipantsState.atom)?.[THREAD_ID]).toEqual({
+    expect(
+      store.get(aiChatThreadParticipantsState.atom).rowsByThreadId[THREAD_ID],
+    ).toEqual({
       threadId: THREAD_ID,
       lastReadAt: LAST_ACTIVITY_AT,
       archivedAt: null,
@@ -95,13 +100,15 @@ describe('useUpdateAiChatThreadStatus', () => {
       });
     });
 
-    const participants = store.get(aiChatThreadParticipantsState.atom);
+    const participants = store.get(
+      aiChatThreadParticipantsState.atom,
+    ).rowsByThreadId;
 
-    expect(participants?.[THREAD_ID]).toMatchObject({
+    expect(participants[THREAD_ID]).toMatchObject({
       archivedAt: expect.any(String),
       isSubscribed: true,
     });
-    expect(participants?.[OTHER_THREAD_ID]?.archivedAt).toEqual(
+    expect(participants[OTHER_THREAD_ID]?.archivedAt).toEqual(
       expect.any(String),
     );
     expect(mutate).toHaveBeenCalledTimes(1);
@@ -129,7 +136,10 @@ describe('useUpdateAiChatThreadStatus', () => {
     const { result, store } = renderUpdateInboxState();
 
     store.set(aiChatThreadParticipantsState.atom, {
-      [THREAD_ID]: READ_PARTICIPANT,
+      isLoaded: true,
+      rowsByThreadId: {
+        [THREAD_ID]: READ_PARTICIPANT,
+      },
     });
 
     await act(async () => {
@@ -140,9 +150,9 @@ describe('useUpdateAiChatThreadStatus', () => {
       });
     });
 
-    expect(store.get(aiChatThreadParticipantsState.atom)?.[THREAD_ID]).toEqual(
-      READ_PARTICIPANT,
-    );
+    expect(
+      store.get(aiChatThreadParticipantsState.atom).rowsByThreadId[THREAD_ID],
+    ).toEqual(READ_PARTICIPANT);
     expect(enqueueToast).toHaveBeenCalled();
   });
 
@@ -155,11 +165,17 @@ describe('useUpdateAiChatThreadStatus', () => {
     };
 
     store.set(aiChatThreadParticipantsState.atom, {
-      [THREAD_ID]: READ_PARTICIPANT,
+      isLoaded: true,
+      rowsByThreadId: {
+        [THREAD_ID]: READ_PARTICIPANT,
+      },
     });
     mutate.mockImplementation(async () => {
       store.set(aiChatThreadParticipantsState.atom, {
-        [THREAD_ID]: archivedParticipant,
+        isLoaded: true,
+        rowsByThreadId: {
+          [THREAD_ID]: archivedParticipant,
+        },
       });
 
       throw new Error('Network error');
@@ -172,9 +188,9 @@ describe('useUpdateAiChatThreadStatus', () => {
       });
     });
 
-    expect(store.get(aiChatThreadParticipantsState.atom)?.[THREAD_ID]).toEqual(
-      archivedParticipant,
-    );
+    expect(
+      store.get(aiChatThreadParticipantsState.atom).rowsByThreadId[THREAD_ID],
+    ).toEqual(archivedParticipant);
   });
 
   it('removes the change of a refused update on a thread without a row', async () => {
@@ -188,7 +204,9 @@ describe('useUpdateAiChatThreadStatus', () => {
       });
     });
 
-    expect(store.get(aiChatThreadParticipantsState.atom)).toEqual({});
+    expect(
+      store.get(aiChatThreadParticipantsState.atom).rowsByThreadId,
+    ).toEqual({});
   });
 
   it('keeps the thread on screen unread when the member marks it unread', async () => {

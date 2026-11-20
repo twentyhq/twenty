@@ -78,15 +78,15 @@ describe('useLeaveRemovedAiChatThread', () => {
       buildChat(OLDER_CHAT_ID, '2026-09-01T00:00:00.000Z'),
       buildChat(RECENT_CHAT_ID, '2026-09-20T00:00:00.000Z'),
     ]);
-    jotaiStore.set(
-      aiChatThreadParticipantsState.atom,
-      Object.fromEntries(
+    jotaiStore.set(aiChatThreadParticipantsState.atom, {
+      isLoaded: true,
+      rowsByThreadId: Object.fromEntries(
         [OLDER_CHAT_ID, RECENT_CHAT_ID].map((threadId) => [
           threadId,
           buildFollowedParticipant(threadId),
         ]),
       ),
-    );
+    });
     jotaiStore.set(aiChatDraftsByThreadIdState.atom, {
       [RECENT_CHAT_ID]: 'Pending question',
     });

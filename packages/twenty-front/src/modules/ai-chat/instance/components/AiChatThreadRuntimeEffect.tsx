@@ -5,13 +5,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useQueryWithCallbacks } from '@/apollo/hooks/useQueryWithCallbacks';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
-import { aiChatQueuedMessagesFamilyState } from '@/ai-chat/composer/states/aiChatQueuedMessagesFamilyState';
 import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai-chat/constants/AiChatRefetchMessagesEventName';
 import { useAiChatSubscription } from '@/ai-chat/instance/hooks/useAiChatSubscription';
 import { aiChatLiveReactionRevisionsFamilyState } from '@/ai-chat/messages/states/aiChatLiveReactionRevisionsFamilyState';
 import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
 import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
-import { aiChatFetchedMessagesFamilyState } from '@/ai-chat/states/aiChatFetchedMessagesFamilyState';
+import { aiChatPersistedMessagesFamilyState } from '@/ai-chat/states/aiChatPersistedMessagesFamilyState';
 import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { aiChatMessagesLoadingFamilyState } from '@/ai-chat/states/aiChatMessagesLoadingFamilyState';
@@ -52,13 +51,8 @@ export const AiChatThreadRuntimeEffect = ({
     { threadId },
   );
 
-  const setAiChatFetchedMessages = useSetAtomFamilyState(
-    aiChatFetchedMessagesFamilyState,
-    { threadId },
-  );
-
-  const setAiChatQueuedMessages = useSetAtomFamilyState(
-    aiChatQueuedMessagesFamilyState,
+  const setAiChatPersistedMessages = useSetAtomFamilyState(
+    aiChatPersistedMessagesFamilyState,
     { threadId },
   );
 
@@ -88,12 +82,12 @@ export const AiChatThreadRuntimeEffect = ({
           message.reactions,
         );
       }
-      setAiChatFetchedMessages(
-        uiMessages.filter((message) => message.status !== 'queued'),
-      );
-      setAiChatQueuedMessages(
-        uiMessages.filter((message) => message.status === 'queued'),
-      );
+      setAiChatPersistedMessages({
+        messages: uiMessages.filter((message) => message.status !== 'queued'),
+        queuedMessages: uiMessages.filter(
+          (message) => message.status === 'queued',
+        ),
+      });
       const catchup = data.chatStreamCatchupChunks;
 
       if (!isDefined(catchup)) {
@@ -102,13 +96,7 @@ export const AiChatThreadRuntimeEffect = ({
 
       applyStreamCatchup(catchup);
     },
-    [
-      threadId,
-      applyStreamCatchup,
-      setAiChatFetchedMessages,
-      setAiChatQueuedMessages,
-      store,
-    ],
+    [threadId, applyStreamCatchup, setAiChatPersistedMessages, store],
   );
 
   const handleLoadingChange = useCallback(
@@ -164,8 +152,8 @@ export const AiChatThreadRuntimeEffect = ({
     onBrowserEvent: handleSseClientReconnected,
   });
 
-  const aiChatFetchedMessages = useAtomFamilyStateValue(
-    aiChatFetchedMessagesFamilyState,
+  const aiChatPersistedMessages = useAtomFamilyStateValue(
+    aiChatPersistedMessagesFamilyState,
     { threadId },
   );
 
@@ -201,9 +189,9 @@ export const AiChatThreadRuntimeEffect = ({
       return;
     }
 
-    setAiChatMessages(aiChatFetchedMessages);
+    setAiChatMessages(aiChatPersistedMessages.messages);
   }, [
-    aiChatFetchedMessages,
+    aiChatPersistedMessages,
     aiChatReplyStatus,
     aiChatMessagesLoading,
     setAiChatMessages,

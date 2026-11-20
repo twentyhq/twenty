@@ -87,7 +87,10 @@ describe('AiChatThreadMarkAsReadEffect', () => {
     ]);
     jotaiStore.set(currentWorkspaceMemberState.atom, CURRENT_WORKSPACE_MEMBER);
     jotaiStore.set(aiChatThreadParticipantsState.atom, {
-      [THREAD_ID]: PARTICIPANT,
+      isLoaded: true,
+      rowsByThreadId: {
+        [THREAD_ID]: PARTICIPANT,
+      },
     });
   });
 
@@ -113,7 +116,10 @@ describe('AiChatThreadMarkAsReadEffect', () => {
   });
 
   it('starts tracking a thread the member opens without participating in it', () => {
-    jotaiStore.set(aiChatThreadParticipantsState.atom, {});
+    jotaiStore.set(aiChatThreadParticipantsState.atom, {
+      isLoaded: true,
+      rowsByThreadId: {},
+    });
 
     renderChatView();
 
@@ -159,7 +165,10 @@ describe('AiChatThreadMarkAsReadEffect', () => {
   describe('on leaving the chat', () => {
     const setReadUpTo = (lastReadAt: string) =>
       jotaiStore.set(aiChatThreadParticipantsState.atom, {
-        [THREAD_ID]: { ...PARTICIPANT, lastReadAt },
+        isLoaded: true,
+        rowsByThreadId: {
+          [THREAD_ID]: { ...PARTICIPANT, lastReadAt },
+        },
       });
 
     it('files a chat the member read up to the agent reply', async () => {

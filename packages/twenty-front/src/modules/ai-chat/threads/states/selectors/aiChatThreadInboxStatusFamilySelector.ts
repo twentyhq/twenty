@@ -25,7 +25,7 @@ export const aiChatThreadInboxStatusFamilySelector = createAtomFamilySelector<
       const currentWorkspaceMemberId = get(currentWorkspaceMemberState)?.id;
       const status = getAgentChatThreadInboxStatus({
         lastActivityAt: thread?.lastActivityAt,
-        participant: participants?.[threadId],
+        participant: participants.rowsByThreadId[threadId],
       });
 
       // Before the rows load every thread would read as unread. The thread
@@ -35,7 +35,7 @@ export const aiChatThreadInboxStatusFamilySelector = createAtomFamilySelector<
 
       return {
         ...status,
-        isUnread: isDefined(participants) && !isOnScreen && status.isUnread,
+        isUnread: participants.isLoaded && !isOnScreen && status.isUnread,
         isAssignedToMe:
           isDefined(currentWorkspaceMemberId) &&
           thread?.assigneeId === currentWorkspaceMemberId,

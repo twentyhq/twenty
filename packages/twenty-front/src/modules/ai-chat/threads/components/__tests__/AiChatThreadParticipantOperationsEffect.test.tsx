@@ -5,7 +5,6 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { AiChatThreadParticipantOperationsEffect } from '@/ai-chat/threads/components/AiChatThreadParticipantOperationsEffect';
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
-import { aiChatThreadStreamedParticipantsState } from '@/ai-chat/threads/states/aiChatThreadStreamedParticipantsState';
 import { mergeAiChatThreadParticipants } from '@/ai-chat/threads/utils/mergeAiChatThreadParticipants';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
@@ -52,7 +51,10 @@ const renderEffect = (
 ) => {
   const store = createStore();
 
-  store.set(aiChatThreadParticipantsState.atom, participants);
+  store.set(aiChatThreadParticipantsState.atom, {
+    isLoaded: participants !== null,
+    rowsByThreadId: participants ?? {},
+  });
   store.set(currentWorkspaceMemberState.atom, {
     id: 'workspace-member-id',
   } as never);
@@ -113,7 +115,9 @@ describe('AiChatThreadParticipantOperationsEffect', () => {
 
     receiveCreatedParticipant(READ_PARTICIPANT);
 
-    expect(store.get(aiChatThreadParticipantsState.atom)).toEqual({
+    expect(
+      store.get(aiChatThreadParticipantsState.atom).rowsByThreadId,
+    ).toEqual({
       [THREAD_ID]: READ_PARTICIPANT,
     });
   });
@@ -128,7 +132,9 @@ describe('AiChatThreadParticipantOperationsEffect', () => {
 
     receiveParticipantUpdate({ ...READ_PARTICIPANT, ...change });
 
-    expect(store.get(aiChatThreadParticipantsState.atom)).toEqual({
+    expect(
+      store.get(aiChatThreadParticipantsState.atom).rowsByThreadId,
+    ).toEqual({
       [THREAD_ID]: { ...READ_PARTICIPANT, ...change },
     });
   });
@@ -150,7 +156,9 @@ describe('AiChatThreadParticipantOperationsEffect', () => {
 
     receiveParticipantUpdate({ ...snoozedParticipant, ...change });
 
-    expect(store.get(aiChatThreadParticipantsState.atom)?.[THREAD_ID]).toEqual({
+    expect(
+      store.get(aiChatThreadParticipantsState.atom).rowsByThreadId[THREAD_ID],
+    ).toEqual({
       ...snoozedParticipant,
       ...change,
     });
@@ -180,7 +188,9 @@ describe('AiChatThreadParticipantOperationsEffect', () => {
     expect(
       mergeAiChatThreadParticipants(
         { [THREAD_ID]: loadedArchivedParticipant },
-        Object.values(store.get(aiChatThreadStreamedParticipantsState.atom)),
+        Object.values(
+          store.get(aiChatThreadParticipantsState.atom).rowsByThreadId,
+        ),
       )[THREAD_ID],
     ).toEqual({
       ...READ_PARTICIPANT,
@@ -198,7 +208,9 @@ describe('AiChatThreadParticipantOperationsEffect', () => {
       updatedAt: '2026-10-01T09:59:00.000Z',
     });
 
-    expect(store.get(aiChatThreadParticipantsState.atom)).toEqual({
+    expect(
+      store.get(aiChatThreadParticipantsState.atom).rowsByThreadId,
+    ).toEqual({
       [THREAD_ID]: READ_PARTICIPANT,
     });
   });
@@ -208,7 +220,9 @@ describe('AiChatThreadParticipantOperationsEffect', () => {
 
     receiveParticipantUpdate(READ_PARTICIPANT);
 
-    expect(store.get(aiChatThreadParticipantsState.atom)).toEqual({
+    expect(
+      store.get(aiChatThreadParticipantsState.atom).rowsByThreadId,
+    ).toEqual({
       [THREAD_ID]: READ_PARTICIPANT,
     });
   });
@@ -223,11 +237,14 @@ describe('AiChatThreadParticipantOperationsEffect', () => {
       updatedAt: '2026-10-01T10:05:00.000Z',
     });
 
-    expect(store.get(aiChatThreadStreamedParticipantsState.atom)).toEqual({
-      [THREAD_ID]: {
-        ...READ_PARTICIPANT,
-        lastReadAt: null,
-        updatedAt: '2026-10-01T10:05:00.000Z',
+    expect(store.get(aiChatThreadParticipantsState.atom)).toEqual({
+      isLoaded: false,
+      rowsByThreadId: {
+        [THREAD_ID]: {
+          ...READ_PARTICIPANT,
+          lastReadAt: null,
+          updatedAt: '2026-10-01T10:05:00.000Z',
+        },
       },
     });
   });
@@ -241,7 +258,9 @@ describe('AiChatThreadParticipantOperationsEffect', () => {
       updatedAt: '2026-10-01T09:59:00.000Z',
     });
 
-    expect(store.get(aiChatThreadParticipantsState.atom)).toEqual({
+    expect(
+      store.get(aiChatThreadParticipantsState.atom).rowsByThreadId,
+    ).toEqual({
       [THREAD_ID]: READ_PARTICIPANT,
     });
   });
@@ -251,9 +270,9 @@ describe('AiChatThreadParticipantOperationsEffect', () => {
 
     receiveCreatedParticipant(READ_PARTICIPANT);
 
-    expect(store.get(aiChatThreadParticipantsState.atom)).toBeNull();
-    expect(store.get(aiChatThreadStreamedParticipantsState.atom)).toEqual({
-      [THREAD_ID]: READ_PARTICIPANT,
+    expect(store.get(aiChatThreadParticipantsState.atom)).toEqual({
+      isLoaded: false,
+      rowsByThreadId: { [THREAD_ID]: READ_PARTICIPANT },
     });
   });
 });

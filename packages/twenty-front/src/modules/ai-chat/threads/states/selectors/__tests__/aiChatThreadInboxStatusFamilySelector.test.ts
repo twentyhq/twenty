@@ -49,7 +49,10 @@ describe('aiChatThreadInboxStatusFamilySelector', () => {
   it('reads a stored thread against the member state', () => {
     const store = buildStore();
 
-    store.set(aiChatThreadParticipantsState.atom, UNREAD_PARTICIPANT);
+    store.set(aiChatThreadParticipantsState.atom, {
+      isLoaded: true,
+      rowsByThreadId: UNREAD_PARTICIPANT,
+    });
 
     expect(isUnread(store)).toBe(true);
   });
@@ -57,7 +60,10 @@ describe('aiChatThreadInboxStatusFamilySelector', () => {
   it('never reads as unread for a member who does not participate', () => {
     const store = buildStore();
 
-    store.set(aiChatThreadParticipantsState.atom, {});
+    store.set(aiChatThreadParticipantsState.atom, {
+      isLoaded: true,
+      rowsByThreadId: {},
+    });
 
     expect(isUnread(store)).toBe(false);
   });
@@ -69,7 +75,10 @@ describe('aiChatThreadInboxStatusFamilySelector', () => {
   it('never reads the thread on screen as unread, unless the member kept it unread', () => {
     const store = buildStore();
 
-    store.set(aiChatThreadParticipantsState.atom, UNREAD_PARTICIPANT);
+    store.set(aiChatThreadParticipantsState.atom, {
+      isLoaded: true,
+      rowsByThreadId: UNREAD_PARTICIPANT,
+    });
     store.set(
       aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
       {

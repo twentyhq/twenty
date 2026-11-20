@@ -235,10 +235,12 @@ const seedStatusScenario = (scenario: StatusScenario) => {
       ? null
       : [{ ...CHANNEL, isAccessible: !scenario.isChannelInaccessible }],
   );
-  jotaiStore.set(
-    aiChatThreadParticipantsState.atom,
-    getScenarioParticipants(scenario),
-  );
+  const scenarioParticipants = getScenarioParticipants(scenario);
+
+  jotaiStore.set(aiChatThreadParticipantsState.atom, {
+    isLoaded: scenarioParticipants !== null,
+    rowsByThreadId: scenarioParticipants ?? {},
+  });
   setInboxSelectedChannelView(
     jotaiStore,
     scenario.isChannelView
@@ -293,9 +295,8 @@ const meta = {
           return HttpResponse.json({
             data: {
               updateAgentChatThreadInboxState: [
-                jotaiStore.get(aiChatThreadParticipantsState.atom)?.[
-                  THREAD_ID
-                ] ?? PARTICIPANT,
+                jotaiStore.get(aiChatThreadParticipantsState.atom)
+                  .rowsByThreadId[THREAD_ID] ?? PARTICIPANT,
               ],
             },
           });
