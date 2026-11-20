@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
@@ -7,7 +6,7 @@ import { inboxThreadListThreadsFamilySelector } from '@/inbox/states/selectors/i
 import { aiChatThreadMemberStateFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadMemberStateFamilySelector';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { useNavigateToInboxThread } from '@/inbox/hooks/useNavigateToInboxThread';
 
 type InboxSelectionEffectProps = {
   selectedThreadId: string | undefined;
@@ -22,7 +21,7 @@ export const InboxSelectionEffect = ({
   selectedThreadId,
   threads,
 }: InboxSelectionEffectProps) => {
-  const navigate = useNavigateApp();
+  const { navigateToInboxThread } = useNavigateToInboxThread();
   const inboxThreadListThreads = useAtomFamilySelectorValue(
     inboxThreadListThreadsFamilySelector,
     INBOX_RECENT_THREAD_LIST_SOURCE,
@@ -70,17 +69,14 @@ export const InboxSelectionEffect = ({
     const nextThread =
       threads[Math.min(lastListedSelection.index, threads.length - 1)];
 
-    // oxlint-disable-next-line twenty/no-navigate-prefer-link
-    navigate(
-      AppPath.AiChatInbox,
-      { threadId: nextThread?.id ?? null },
-      undefined,
-      { replace: true },
-    );
+    navigateToInboxThread({
+      threadId: nextThread?.id ?? null,
+      replace: true,
+    });
   }, [
     isSelectedThreadInInbox,
     lastListedSelection,
-    navigate,
+    navigateToInboxThread,
     selectedThreadId,
     threads,
   ]);
