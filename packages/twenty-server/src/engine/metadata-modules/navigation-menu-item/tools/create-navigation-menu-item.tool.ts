@@ -5,6 +5,7 @@ import {
   NavigationMenuItemType,
   NATIVE_PAGE_KEYS,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -260,6 +261,33 @@ export class CreateNavigationMenuItemTool extends BaseTool<
         }
       }
 
+      if (
+        input.type === NavigationMenuItemType.SECTION &&
+        isDefined(input.builtInSectionKey)
+      ) {
+        const containerId = input.parentId ?? null;
+        const workspaceSections = await this.navigationMenuItemService.findAll({
+          workspaceId,
+          scope: 'workspace',
+          type: NavigationMenuItemType.SECTION,
+        });
+        const isAlreadyInContainer =
+          (input.builtInSectionKey === 'favorites' && containerId === null) ||
+          workspaceSections.some(
+            (section) =>
+              section.builtInSectionKey === input.builtInSectionKey &&
+              (section.parentId ?? null) === containerId,
+          );
+
+        if (isAlreadyInContainer) {
+          return {
+            success: false,
+            message: `The ${input.builtInSectionKey} built-in section is already in this container (possibly hidden).`,
+            error: 'built_in_section_already_in_container',
+          };
+        }
+      }
+
       if (input.scope === 'user' && !userWorkspaceId) {
         return {
           success: false,
@@ -282,6 +310,7 @@ export class CreateNavigationMenuItemTool extends BaseTool<
           id: created.id,
           type: created.type,
           name: created.name,
+          builtInSectionKey: created.builtInSectionKey,
           scope: created.userWorkspaceId ? 'user' : 'workspace',
           parentId: created.parentId,
           position: created.position,
