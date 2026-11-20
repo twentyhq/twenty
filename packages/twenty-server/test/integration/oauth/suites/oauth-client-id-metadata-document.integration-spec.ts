@@ -8,8 +8,8 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
-import { MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-built-in-application-universal-identifiers.constant';
-import { findMarketplaceBuiltInApplication } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-built-in-application.util';
+import { MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-connect-listing-universal-identifiers.constant';
+import { findMarketplaceConnectListing } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-connect-listing.util';
 import { CLIENT_ID_METADATA_DOCUMENT_FETCH_RATE_LIMIT_MAX } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/constants/client-id-metadata-document-fetch-rate-limit.constant';
 import { type ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/client-id-metadata-document.service';
 import { type ClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/client-id-metadata-document.type';
@@ -57,8 +57,8 @@ const DOCUMENTS = [
   CLAUDE_CODE_DOCUMENT,
 ];
 const VERIFIED_CLIENT_UNIVERSAL_IDENTIFIERS = [
-  MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CLAUDE,
-  MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CHATGPT,
+  MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CLAUDE,
+  MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CHATGPT,
 ];
 const DOCUMENT_CLIENT_IDS = DOCUMENTS.map(({ clientId }) => clientId);
 const WEB_CLIENT_CALLBACK = WEB_CLIENT_DOCUMENT.redirectUris[0];
@@ -375,20 +375,20 @@ describe('OAuth client ID metadata documents (integration)', () => {
       const claudeApplications = (await findApplications()).filter(
         ({ universalIdentifier }: { universalIdentifier: string }) =>
           universalIdentifier ===
-          MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CLAUDE,
+          MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CLAUDE,
       );
 
       expect(claudeApplications).toEqual([
         {
           name: 'Claude',
-          description: findMarketplaceBuiltInApplication(
-            MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CLAUDE,
+          description: findMarketplaceConnectListing(
+            MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CLAUDE,
           )?.description,
           logoUrl: expect.stringMatching(
             /\/images\/oauth-clients\/claude\.webp$/,
           ),
           universalIdentifier:
-            MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CLAUDE,
+            MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CLAUDE,
           applicationRegistration: { id: expect.any(String) },
         },
       ]);
@@ -428,7 +428,7 @@ describe('OAuth client ID metadata documents (integration)', () => {
 
       const [{ count }] = await dataSource.query(
         `SELECT COUNT(*)::int AS count FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
-        [MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CHATGPT],
+        [MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CHATGPT],
       );
 
       expect(count).toBe(0);

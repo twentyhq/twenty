@@ -46,7 +46,7 @@ msgid "—"
 msgstr "—"
 
 #. js-lingui-id: /c8CZ4
-#: src/modules/ai-chat/components/AiChatThreadTitle.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadTitle.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
 msgid ", unread"
 msgstr ", lukematon"
@@ -240,7 +240,7 @@ msgstr "{0, plural, one {# keskustelu} other {# keskustelua}}"
 
 #. js-lingui-id: jitezQ
 #. placeholder {0}: emails.length
-#: src/modules/ai-chat/components/AiChatApprovalEmailConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailConfirmation.tsx
 msgid "{0, plural, one {# email selected · 0 emails skipped} other {# emails selected · 0 emails skipped}}"
 msgstr "{0, plural, one {# sähköposti valittu · 0 sähköpostia ohitettu} other {# sähköpostia valittu · 0 sähköpostia ohitettu}}"
 
@@ -300,7 +300,7 @@ msgstr "{0, plural, one {# työtila epäonnistui tai on jäljessä} other {# ty�
 
 #. js-lingui-id: fkfOKg
 #. placeholder {0}: agentIds.length
-#: src/modules/ai-chat/components/AiChatMessageReactions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactions.tsx
 msgid "{0, plural, one {an agent} other {# agents}}"
 msgstr "{0, plural, one {agentti} other {# agenttia}}"
 
@@ -471,6 +471,12 @@ msgstr "{0} on kieltäytynyt tästä aiheesta"
 msgid "{0} retries"
 msgstr "{0} uudelleenyritystä"
 
+#. js-lingui-id: nrONSU
+#. placeholder {0}: rules.length
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverrideRow.tsx
+msgid "{0} rules"
+msgstr ""
+
 #. js-lingui-id: fvImQM
 #. placeholder {0}: formatNumber(numberOfSelectedRecords)
 #. placeholder {0}: formatNumber(selectedThreadCount)
@@ -486,8 +492,8 @@ msgstr "{0} valittuna"
 #. placeholder {0}: card.selectedCount
 #. placeholder {1}: activeCard.skippedCount
 #. placeholder {1}: card.skippedCount
-#: src/modules/ai-chat/components/AiChatApprovalConfirmation.tsx
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "{0} selected · {1} skipped"
 msgstr "{0} valittu · {1} ohitettu"
 
@@ -558,6 +564,12 @@ msgstr "{0} ilman sähköpostiosoitetta"
 msgid "{0} workspace members"
 msgstr "{0} työtilan jäsentä"
 
+#. js-lingui-id: elMxkj
+#. placeholder {0}: tab.name
+#: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
+msgid "{0}, {unreadOpenThreadCount} unread"
+msgstr "{0}, {unreadOpenThreadCount} lukematta"
+
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
 #. placeholder {0}: relationFieldMetadataItem.label
@@ -565,11 +577,17 @@ msgstr "{0} työtilan jäsentä"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterCompositeSubFieldSelectMenu.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRelationTargetFieldSelectMenu.tsx
 #: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelectSubFieldMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
 msgid "{0}, back to fields"
 msgstr "{0}, takaisin kenttiin"
+
+#. js-lingui-id: VxMSt6
+#. placeholder {0}: tab.name
+#: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
+msgid "{0}, unread"
+msgstr "{0}, lukematta"
 
 #. js-lingui-id: kofqAN
 #. placeholder {0}: selectedResolvedTier.label
@@ -597,6 +615,16 @@ msgstr "Agenttirooli: {agentLabel}"
 #: src/modules/object-record/record-aggregate/utils/getAggregateLabelWithFieldName.ts
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} {fieldLabel} määrä"
+
+#. js-lingui-id: zEkduP
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "{allowedFieldCount} of {fieldCount}"
+msgstr "{fieldCount}-kohteen {allowedFieldCount}"
+
+#. js-lingui-id: LoDOIo
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "{allowedFieldCount} of {fieldCount} fields"
+msgstr "{allowedFieldCount} / {fieldCount} kenttää"
 
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -667,7 +695,7 @@ msgid "{callRecordingHours, plural, one {{formattedCallRecordingHours} hour} oth
 msgstr "{callRecordingHours, plural, one {{formattedCallRecordingHours} tunti} other {{formattedCallRecordingHours} tuntia}}"
 
 #. js-lingui-id: g0wkzt
-#: src/modules/ai-chat/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
 msgid "{cardCount, plural, one {Approve # action?} other {Approve # actions?}}"
 msgstr "{cardCount, plural, one {Hyväksytäänkö # toiminto?} other {Hyväksytäänkö # toimintoa?}}"
 
@@ -789,7 +817,7 @@ msgid "{earnedCredits, plural, one {{formattedEarnedCredits} credit} other {{for
 msgstr "{earnedCredits, plural, one {{formattedEarnedCredits} krediitti} other {{formattedEarnedCredits} krediittiä}}"
 
 #. js-lingui-id: +dlsP9
-#: src/modules/ai-chat/components/AiChatMessageReactions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactions.tsx
 msgid "{emoji} by {reactorNames}"
 msgstr "{emoji}, tekijä {reactorNames}"
 
@@ -819,6 +847,11 @@ msgstr "{fileName}-tiedoston lähetys hylättiin"
 msgid "{filterRulesCount, plural, one {{filterRulesCount} rule} other {{filterRulesCount} rules}}"
 msgstr "{filterRulesCount, plural, one {{filterRulesCount} sääntö} other {{filterRulesCount} sääntöä}}"
 
+#. js-lingui-id: 11/gul
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
+msgid "{firstPredicateLabel} +{otherPredicateCount}"
+msgstr ""
+
 #. js-lingui-id: WS/avX
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
@@ -838,11 +871,6 @@ msgstr "{formattedPercentage}% käytetty, {formattedConversationSize}/{formatted
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
 msgid "{goalCredits, plural, one {free credit} other {free credits}}"
 msgstr "{goalCredits, plural, one {ilmainen krediitti} other {ilmaiset krediitit}}"
-
-#. js-lingui-id: YF/a2j
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
-msgid "{grantedBy, plural, one {Granted for {grantedBy} object} other {Granted for {grantedBy} objects}}"
-msgstr "{grantedBy, plural, one {Myönnetty {grantedBy} kohteelle} other {Myönnetty {grantedBy} kohteille}}"
 
 #. js-lingui-id: Ae2fyu
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -993,7 +1021,7 @@ msgid "{newlyEarnedCredits, plural, one {You earned {formattedNewlyEarnedCredits
 msgstr "{newlyEarnedCredits, plural, one {Ansaitsit {formattedNewlyEarnedCredits} ilmaisen krediitin} other {Ansaitsit {formattedNewlyEarnedCredits} ilmaista krediittiä}}"
 
 #. js-lingui-id: hKZAJk
-#: src/modules/ai-chat/hooks/useWarnAboutParticipantMentionsNotAdded.ts
+#: src/modules/ai-chat/composer/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "{notAddedLabels} could not be added to this chat because they can't reply in it."
 msgstr "Käyttäjiä {notAddedLabels} ei voitu lisätä tähän keskusteluun, koska he eivät voi vastata siihen."
 
@@ -1018,22 +1046,22 @@ msgid "{p95DurationInMs} ms"
 msgstr "{p95DurationInMs} ms"
 
 #. js-lingui-id: dKtfA2
-#: src/modules/ai-chat/components/AiChatParticipantMentionBar.tsx
+#: src/modules/ai-chat/composer/components/AiChatParticipantMentionBar.tsx
 msgid "{participantLabels} will be added as a participant and get access to this chat"
 msgstr "{participantLabels} lisätään osallistujaksi, ja hän saa käyttöoikeuden tähän keskusteluun"
 
 #. js-lingui-id: MDJKup
-#: src/modules/ai-chat/components/AiChatParticipantMentionBar.tsx
+#: src/modules/ai-chat/composer/components/AiChatParticipantMentionBar.tsx
 msgid "{participantLabels} will be added as participants and get access to this chat"
 msgstr "{participantLabels} lisätään osallistujiksi, ja he saavat käyttöoikeuden tähän keskusteluun"
 
 #. js-lingui-id: jCjuhm
-#: src/modules/ai-chat/components/AiChatTypingIndicator.tsx
+#: src/modules/ai-chat/messages/components/AiChatTypingIndicator.tsx
 msgid "{participantNames} are typing…"
 msgstr "{participantNames} kirjoittavat…"
 
 #. js-lingui-id: E0CZYQ
-#: src/modules/ai-chat/components/AiChatTypingIndicator.tsx
+#: src/modules/ai-chat/messages/components/AiChatTypingIndicator.tsx
 msgid "{participantNames} is typing…"
 msgstr "{participantNames} kirjoittaa…"
 
@@ -1053,12 +1081,12 @@ msgid "{positionLabel} record holds priority"
 msgstr "Tietue {positionLabel} on etusijalla"
 
 #. js-lingui-id: i2Rv/S
-#: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 msgid "{positionLabel}: {name}"
 msgstr "{positionLabel}: {name}"
 
 #. js-lingui-id: tSROzD
-#: src/modules/ai-chat/components/AiChatFormCardContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormCardContent.tsx
 msgid "{prefilledCount} of {fieldCount} fields prefilled"
 msgstr "{prefilledCount}/{fieldCount} kentästä esitäytetty"
 
@@ -1084,18 +1112,23 @@ msgstr "{queuedMessage}, ohitetaan {skipReasons}"
 msgid "{readOnlyFieldCount, plural, one {Can't edit # field} other {Can't edit # fields}}"
 msgstr "{readOnlyFieldCount, plural, one {# kenttää ei voi muokata} other {# kenttää ei voi muokata}}"
 
+#. js-lingui-id: HFkZ/O
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
+msgid "{recordCount} records"
+msgstr ""
+
 #. js-lingui-id: ociapy
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "{remainingBackupCodeCount, plural, one {# backup code left} other {# backup codes left}}"
 msgstr "{remainingBackupCodeCount, plural, one {# varakoodi jäljellä} other {# varakoodia jäljellä}}"
 
 #. js-lingui-id: N7gP92
-#: src/modules/ai-chat/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 msgid "{remainingCount} more"
 msgstr "{remainingCount} lisää"
 
 #. js-lingui-id: uVxzex
-#: src/modules/ai-chat/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "{remainingDraftCount, plural, =0 {No more drafts after this one} one {# more draft after this one} other {# more drafts after this one}}"
 msgstr "{remainingDraftCount, plural, =0 {Ei enää luonnoksia tämän jälkeen} one {# luonnos lisää tämän jälkeen} other {# luonnosta lisää tämän jälkeen}}"
 
@@ -1115,25 +1148,35 @@ msgstr "{retentionInHours, plural, one {# tunti} other {# tuntia}}"
 msgid "{retriedCount, plural, one {Successfully retried {retriedCount} job} other {Successfully retried {retriedCount} jobs}}"
 msgstr "{retriedCount, plural, one {Onnistuneesti yritetty {retriedCount} työ uudelleen} other {Onnistuneesti yritetty {retriedCount} työt uudelleen}}"
 
-#. js-lingui-id: hcRYEH
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
-msgid "{revokedBy, plural, one {Revoked for {revokedBy} object} other {Revoked for {revokedBy} objects}}"
-msgstr "{revokedBy, plural, one {Peruttu {revokedBy} kohteelle} other {Peruttu {revokedBy} kohteilta}}"
+#. js-lingui-id: ssmJCL
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "{roleLabel} already deletes every {objectLabelSingular}"
+msgstr ""
 
-#. js-lingui-id: OeIgEg
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
-msgid "{roleLabel} can {humanReadableAction} {objectLabel} records"
-msgstr "{roleLabel} voi {humanReadableAction} {objectLabel} tietoja"
+#. js-lingui-id: 09pjSA
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "{roleLabel} already destroys every {objectLabelSingular}"
+msgstr ""
 
-#. js-lingui-id: D0C09b
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
-msgid "{roleLabel} can't {humanReadableAction} {objectLabel} records"
-msgstr "{roleLabel} ei voi {humanReadableAction} {objectLabel} tietoja"
+#. js-lingui-id: dPD2BG
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "{roleLabel} already edits every {objectLabelSingular}"
+msgstr ""
+
+#. js-lingui-id: Qs0rBC
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "{roleLabel} already sees every {objectLabelSingular}"
+msgstr ""
 
 #. js-lingui-id: uHZWwU
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
 msgid "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
 msgstr "{roleTargetName} liitetään \"{newRoleName}\" -rooliin."
+
+#. js-lingui-id: uqrFkj
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverrideRow.tsx
+msgid "{ruleOperationsLabel} when {ruleLabel}"
+msgstr ""
 
 #. js-lingui-id: Tsqb9x
 #: src/modules/object-core/agents/components/CoreAgentRunConversation.tsx
@@ -1191,7 +1234,7 @@ msgid "{selectedCount, plural, one {Retry {selectedCount} Job} other {Retry {sel
 msgstr "{selectedCount, plural, one {Yritä {selectedCount} työtä uudelleen} other {Yritä {selectedCount} työt uudelleen}}"
 
 #. js-lingui-id: 1MJWid
-#: src/modules/ai-chat/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
 msgid "{selectedCount} records selected · {skippedCount} records skipped"
 msgstr "{selectedCount} tietuetta valittu · {skippedCount} tietuetta ohitettu"
 
@@ -1206,7 +1249,7 @@ msgid "{selectedOptionCount} options"
 msgstr "{selectedOptionCount} vaihtoehtoa"
 
 #. js-lingui-id: tz1jJj
-#: src/modules/ai-chat/utils/getAiChatThreadPreviewText.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadPreviewText.ts
 msgid "{senderLabel}: {text}"
 msgstr "{senderLabel}: {text}"
 
@@ -1510,6 +1553,11 @@ msgstr "1 objekti"
 msgid "1 of 2 done"
 msgstr "1/2 tehty"
 
+#. js-lingui-id: qarnor
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
+msgid "1 record"
+msgstr ""
+
 #. js-lingui-id: lKmQeh
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "1 retry"
@@ -1535,11 +1583,6 @@ msgstr "1. Sähköposti"
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 msgid "1. Select a field type"
 msgstr "1. Valitse kenttätyyppi"
-
-#. js-lingui-id: XSdCGq
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-msgid "1. Select an object"
-msgstr "1. Valitse objekti"
 
 #. js-lingui-id: 6WQdu8
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -1577,11 +1620,6 @@ msgstr "2 vuotta"
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "2. Configure field"
 msgstr "2. Määritä kenttä"
-
-#. js-lingui-id: 0Tx9MD
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
-msgid "2. Set {objectLabelPlural} permissions"
-msgstr "2. Aseta {objectLabelPlural} käyttöoikeudet"
 
 #. js-lingui-id: 23g1gf
 #: src/modules/navigation/constants/LogsSwitchPhrases.ts
@@ -1696,7 +1734,7 @@ msgid "A new one each time the step runs"
 msgstr "Uusi joka kerta, kun vaihe suoritetaan"
 
 #. js-lingui-id: 3pDKsj
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "A newer revision exists. Open the latest preview to save."
 msgstr "Uudempi versio on saatavilla. Tallenna avaamalla uusin esikatselu."
 
@@ -1765,21 +1803,6 @@ msgstr "Kyky lisätä useampi kuin yksi puhelinnumero"
 msgid "Ability to add more than one URL"
 msgstr "Kyky lisätä useampi kuin yksi URL-osoite"
 
-#. js-lingui-id: MjUIIf
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-msgid "Ability to filter the records a user can interact with"
-msgstr "Mahdollisuus suodattaa tietueita, joiden kanssa käyttäjä voi olla vuorovaikutuksessa"
-
-#. js-lingui-id: 7J3Y++
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-msgid "Ability to filter the records a user can interact with."
-msgstr "Mahdollisuus suodattaa tietueita, joiden kanssa käyttäjä voi olla vuorovaikutuksessa."
-
-#. js-lingui-id: wTKqOI
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
-msgid "Ability to interact with this object's fields."
-msgstr "Mahdollisuus vuorovaikuttaa tämän kohteen kenttien kanssa."
-
 #. js-lingui-id: ssjjFt
 #: src/modules/settings/components/SettingsImageInput.tsx
 msgid "Abort"
@@ -1830,6 +1853,7 @@ msgstr "Tälle työtilalle hyväksytyt ja allekirjoitetut DPA-sopimukset sekä n
 
 #. js-lingui-id: LuXP9q
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionsTable.tsx
 msgid "Access"
 msgstr "Pääsy"
@@ -1948,7 +1972,7 @@ msgid "Action on click"
 msgstr "Toiminto napsautettaessa"
 
 #. js-lingui-id: pTIviA
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 msgid "Action progress"
 msgstr "Toiminnon eteneminen"
 
@@ -1959,8 +1983,6 @@ msgstr "Hyväksyttävä toiminto"
 
 #. js-lingui-id: 7L01XJ
 #: src/modules/command-menu-item/components/CommandMenuDropdownAtCursor.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/side-panel/pages/create-related-record/components/SidePanelCreateRelatedRecordPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -1973,11 +1995,6 @@ msgstr "Toiminnot"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Actions in the command menu"
 msgstr "Toiminnot komentovalikossa"
-
-#. js-lingui-id: N4ZcCd
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Actions users can perform on this object"
-msgstr "Toiminnot, joita käyttäjät voivat suorittaa tällä kohteella"
 
 #. js-lingui-id: FQBaXG
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -2069,7 +2086,7 @@ msgstr "Toimija"
 
 #. js-lingui-id: m16xKo
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
-#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionHeaderAddDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 msgid "Add"
@@ -2139,7 +2156,7 @@ msgid "Add a person with an email to this company first"
 msgstr "Lisää ensin tähän yritykseen henkilö, jolla on sähköpostiosoite."
 
 #. js-lingui-id: +mN79K
-#: src/modules/ai-chat/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "Add a recipient before sending"
 msgstr "Lisää vastaanottaja ennen lähettämistä"
 
@@ -2289,6 +2306,13 @@ msgstr "Lisää sarake vasemmalle"
 msgid "Add column right"
 msgstr "Lisää sarake oikealle"
 
+#. js-lingui-id: ADCve+
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFilterBuilderContent.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFilterBuilderContent.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFilterBuilderContent.tsx
+msgid "Add condition"
+msgstr ""
+
 #. js-lingui-id: 3iIvQg
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Add conferencing"
@@ -2349,7 +2373,7 @@ msgid "Add embedded website"
 msgstr "Lisää upotettu verkkosivusto"
 
 #. js-lingui-id: 6kC3KJ
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalCardLayout.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCardLayout.tsx
 msgid "Add feedback"
 msgstr "Lisää palaute"
 
@@ -2371,16 +2395,14 @@ msgid "Add file"
 msgstr "Lisää tiedosto"
 
 #. js-lingui-id: yCsT+y
-#: src/modules/ai-chat/components/AiChatAddMenu.tsx
-#: src/modules/ai-chat/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
 msgid "Add files, records or skills"
 msgstr "Lisää tiedostoja, tietueita tai taitoja"
 
 #. js-lingui-id: vCSBPD
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelCreateRootFilterButton.tsx
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelCreateRootFilterButton.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
 #: src/modules/views/components/ViewBarDetailsAddFilterButton.tsx
 msgid "Add filter"
 msgstr "Lisää suodatin"
@@ -2482,16 +2504,12 @@ msgid "Add node"
 msgstr "Lisää solmu"
 
 #. js-lingui-id: dEO3Zx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
 msgstr "Lisää objekti"
-
-#. js-lingui-id: mFtRj8
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-msgid "Add object permission"
-msgstr "Lisää objektin käyttöoikeus"
 
 #. js-lingui-id: Dl5lVI
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -2519,8 +2537,8 @@ msgid "Add payment method"
 msgstr "Lisää maksutapa"
 
 #. js-lingui-id: bL/gCs
-#: src/modules/ai-chat/components/AiChatNewThreadRecipientField.tsx
-#: src/modules/ai-chat/components/AiChatNewThreadRecipientField.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientField.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientField.tsx
 msgid "Add people or a channel"
 msgstr "Lisää henkilöitä tai kanava"
 
@@ -2547,8 +2565,8 @@ msgid "Add question"
 msgstr "Lisää kysymys"
 
 #. js-lingui-id: 9OEgyT
-#: src/modules/ai-chat/components/AiChatMessageReactionPicker.tsx
-#: src/modules/ai-chat/components/AiChatMessageReactionPicker.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPicker.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPicker.tsx
 msgid "Add reaction"
 msgstr "Lisää reaktio"
 
@@ -2585,9 +2603,6 @@ msgstr "Lisää rivi alapuolelle"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
@@ -2603,7 +2618,7 @@ msgstr "Lisää sääntöryhmä"
 #. js-lingui-id: RxFV0G
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "Add section"
-msgstr ""
+msgstr "Lisää osio"
 
 #. js-lingui-id: TdZwYb
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
@@ -2623,7 +2638,7 @@ msgstr "Lisää SSO-identiteetintarjoaja"
 #: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
 msgid "Add tab"
-msgstr ""
+msgstr "Lisää välilehti"
 
 #. js-lingui-id: O6B1gJ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -2936,6 +2951,7 @@ msgstr "Ylläpitäjät"
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverrideRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Advanced"
 msgstr "Edistynyt"
@@ -3001,7 +3017,7 @@ msgid "agent"
 msgstr "agentti"
 
 #. js-lingui-id: iEQQyu
-#: src/modules/ai-chat/utils/getAiChatAgentAuthor.ts
+#: src/modules/ai-chat/messages/utils/getAiChatAgentAuthor.ts
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
@@ -3159,7 +3175,7 @@ msgstr "AI-krediitit"
 
 #. js-lingui-id: leS03Y
 #. placeholder {0}: userCreditsUsage.daysUntilReset
-#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedMessage.tsx
+#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "AI-krediitit uusiutuvat {0, plural, one {# päivän kuluttua} other {# päivän kuluttua}}."
 
@@ -3340,9 +3356,6 @@ msgstr "Tasaus"
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow.tsx
 #: src/modules/views/view-picker/components/ViewPickerDropdown.tsx
 msgid "All"
 msgstr "Kaikki"
@@ -3388,6 +3401,11 @@ msgstr "Kaikki sovellukset"
 msgid "All channels"
 msgstr "Kaikki kanavat"
 
+#. js-lingui-id: 7cbQyX
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "All chats you follow"
+msgstr ""
+
 #. js-lingui-id: tZLcDK
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 msgid "All Companies"
@@ -3417,6 +3435,8 @@ msgid "All failed jobs have been retried"
 msgstr "Kaikki epäonnistuneet työt on yritetty uudelleen"
 
 #. js-lingui-id: 3xugyj
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "All fields"
 msgstr "Kaikki kentät"
@@ -3472,6 +3492,7 @@ msgid "all objects"
 msgstr "kaikki objektit"
 
 #. js-lingui-id: zIk4M6
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAllObjectsCard.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 msgid "All objects"
 msgstr "Kaikki objektit"
@@ -3479,7 +3500,6 @@ msgstr "Kaikki objektit"
 #. js-lingui-id: aFE/OW
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "All Objects"
 msgstr "Kaikki objektit"
 
@@ -3501,6 +3521,7 @@ msgstr "kaikki tietueet"
 
 #. js-lingui-id: rAUKN+
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "All records"
 msgstr "Kaikki tietueet"
 
@@ -3540,11 +3561,6 @@ msgstr "Kaikki aloittamiseen tarvitsemasi peruskenttätyypit"
 msgid "All the layout items declared on your workspace"
 msgstr "Kaikki työtilaasi määritetyt asetteluelementit"
 
-#. js-lingui-id: XuuWVF
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "All the standard objects"
-msgstr "Kaikki vakiokohteet"
-
 #. js-lingui-id: 35148H
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
 msgid "All tools"
@@ -3580,10 +3596,10 @@ msgstr "Kaikilla työtilan jäsenillä on jo tämä rooli"
 msgid "All workspaces"
 msgstr "Kaikki työtilat"
 
-#. js-lingui-id: pPTmfc
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "All your custom objects"
-msgstr "Kaikki omat objektisi"
+#. js-lingui-id: h7peZQ
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Allow"
+msgstr ""
 
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -3646,6 +3662,11 @@ msgstr "Salli tukitiimin käyttöoikeus"
 msgid "Allow the invitation of new users by sharing an invite link."
 msgstr "Salli uusien käyttäjien kutsuminen jakamalla kutsulinkki."
 
+#. js-lingui-id: lIfNCI
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Allow this browser to show new inbox messages as notifications"
+msgstr ""
+
 #. js-lingui-id: JBjv4v
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow uploading files and attachments"
@@ -3656,10 +3677,23 @@ msgstr "Salli tiedostojen ja liitteiden lataaminen"
 msgid "Allow users to sign in with an email and password."
 msgstr "Salli käyttäjien kirjautua sisään sähköpostilla ja salasanalla."
 
+#. js-lingui-id: Vwi3xW
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOperationsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOperationsSelect.tsx
+msgid "Allowed actions"
+msgstr "Sallitut toiminnot"
+
 #. js-lingui-id: vj+OHl
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Allowed redirect URIs for OAuth flows"
 msgstr "Sallitut uudelleenohjaus-URI:t OAuth-virtoihin"
+
+#. js-lingui-id: L36XXB
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "Allows"
+msgstr "Sallii"
 
 #. js-lingui-id: Yn0ZH1
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -3681,6 +3715,12 @@ msgstr "Jo sivupalkissa"
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Alt text"
 msgstr "Alt-teksti"
+
+#. js-lingui-id: Lz58MZ
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Always visible"
+msgstr "Aina näkyvissä"
 
 #. js-lingui-id: Tco16H
 #: src/modules/localization/utils/formatZonedDateTimeTimePart.ts
@@ -3825,7 +3865,7 @@ msgid "And"
 msgstr "Ja"
 
 #. js-lingui-id: U/Q98U
-#: src/modules/ai-chat/components/ToolRecordsWidget.tsx
+#: src/modules/ai-chat/thinking-steps/components/ToolRecordsWidget.tsx
 msgid "and {hiddenCount} more"
 msgstr "ja {hiddenCount} muuta"
 
@@ -3851,7 +3891,7 @@ msgid "Answered"
 msgstr "Vastatut"
 
 #. js-lingui-id: +qygei
-#: src/modules/ai-chat/components/AiChatQuestionStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema.ts
 msgid "Answers"
 msgstr "Vastaukset"
@@ -4153,6 +4193,11 @@ msgstr "Twenty ei ole tarkastanut alla olevia sovelluksia. Käytä omalla vastuu
 msgid "Applies to"
 msgstr "Koskee"
 
+#. js-lingui-id: 9xcLbN
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAllObjectsCard.tsx
+msgid "Applies to all objects before overrides"
+msgstr "Koskee kaikkia objekteja ennen ohituksia"
+
 #. js-lingui-id: DB8zMK
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
@@ -4170,18 +4215,18 @@ msgid "Apply{progressText}"
 msgstr "Käytä{progressText}"
 
 #. js-lingui-id: YLFgbC
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Approval review"
 msgstr "Hyväksynnän tarkistus"
 
 #. js-lingui-id: Z7ZXbT
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Approve"
 msgstr "Hyväksy"
 
 #. js-lingui-id: IkcmiN
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Approve all {pendingCardCount}"
 msgstr "Hyväksy kaikki {pendingCardCount}"
 
@@ -4191,7 +4236,7 @@ msgid "Approve media access for {applicationName}?"
 msgstr "Hyväksytäänkö mediasisällön käyttöoikeus sovellukselle {applicationName}?"
 
 #. js-lingui-id: 7kb4LU
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Approved"
 msgstr "Hyväksytty"
 
@@ -4201,7 +4246,7 @@ msgid "Approved access domain validated"
 msgstr "Hyväksytyt pääsyoikeudet valittu"
 
 #. js-lingui-id: nfUdWT
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Approved but it failed"
 msgstr "Hyväksytty, mutta epäonnistui"
 
@@ -4339,13 +4384,13 @@ msgid "Are you sure? Your current information will not be saved."
 msgstr "Oletko varma? Tietojasi ei tallenneta."
 
 #. js-lingui-id: OgB1k4
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalArgumentsEditor.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsEditor.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 msgid "Arguments"
 msgstr "Argumentit"
 
 #. js-lingui-id: qUFEtj
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalArgumentsEditor.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsEditor.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Arguments must be a valid JSON object."
 msgstr "Argumenttien on oltava kelvollinen JSON-objekti."
@@ -4461,7 +4506,7 @@ msgid "Ask AI"
 msgstr "Kysy AI:lta"
 
 #. js-lingui-id: IRCQfx
-#: src/modules/ai-chat/components/AiChatQuotaLimitExhaustedMessage.tsx
+#: src/modules/ai-chat/usage/components/AiChatQuotaLimitExhaustedMessage.tsx
 msgid "Ask an admin to raise the limit."
 msgstr "Pyydä ylläpitäjää nostamaan rajoitusta."
 
@@ -4476,12 +4521,12 @@ msgid "Ask for human input"
 msgstr "Pyydä ihmisen syötettä"
 
 #. js-lingui-id: mc9nK2
-#: src/modules/ai-chat/hooks/useAiChatEditor.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatEditor.ts
 msgid "Ask, search or make anything..."
 msgstr "Kysy, hae tai tee mitä vain..."
 
 #. js-lingui-id: QVL/hg
-#: src/modules/ai-chat/components/AiChatQuestionStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 msgid "Asking questions..."
 msgstr "Esitetään kysymyksiä..."
 
@@ -4551,7 +4596,7 @@ msgid "Assigned to me"
 msgstr "Määrätty minulle"
 
 #. js-lingui-id: 7RNUhk
-#: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 msgid "Assigned to you"
 msgstr "Määrätty sinulle"
 
@@ -4566,8 +4611,8 @@ msgid "Assignment"
 msgstr "Tehtävänanto"
 
 #. js-lingui-id: d/bvvp
-#: src/modules/ai-chat/hooks/useAiChatEditor.ts
-#: src/modules/ai-chat/utils/getAiChatMessageAuthor.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatEditor.ts
+#: src/modules/ai-chat/messages/utils/getAiChatMessageAuthor.ts
 msgid "Assistant"
 msgstr "Avustaja"
 
@@ -4677,7 +4722,7 @@ msgstr "Liitä tiedosto"
 #. js-lingui-id: N7m8E+
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/ai-chat/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Attach files"
@@ -4927,17 +4972,17 @@ msgid "Availability"
 msgstr "Saatavuus"
 
 #. js-lingui-id: C2F7IU
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Availability calendars"
 msgstr "Saatavuuskalenterit"
 
 #. js-lingui-id: caqRwP
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 msgid "Availability was not checked for {uncheckedAttendeeList}. You can still send an invite."
 msgstr "Osallistujien {uncheckedAttendeeList} saatavuutta ei tarkistettu. Voit silti lähettää kutsun."
 
 #. js-lingui-id: bUNt5P
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Available times"
 msgstr "Vapaat ajat"
 
@@ -5234,10 +5279,15 @@ msgid "Block style"
 msgstr "Lohkon tyyli"
 
 #. js-lingui-id: 32TndD
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Blocked"
 msgstr "Estetty"
+
+#. js-lingui-id: z3pfdo
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Blocked in this browser. Allow notifications for this site in the browser settings"
+msgstr ""
 
 #. js-lingui-id: K1172m
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
@@ -5266,8 +5316,8 @@ msgid "Blue"
 msgstr "Sininen"
 
 #. js-lingui-id: bGQplw
-#: src/modules/ai-chat/components/AiChatApprovalEmailReview.tsx
-#: src/modules/ai-chat/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
 #: src/modules/side-panel/pages/email-block-settings/components/EmailPageStyleSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -5601,7 +5651,7 @@ msgid "Calendar access needs approval"
 msgstr "Kalenterin käyttöoikeus vaatii hyväksynnän"
 
 #. js-lingui-id: DZrVwO
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Calendar availability could not be checked."
 msgstr "Kalenterin saatavuutta ei voitu tarkistaa."
 
@@ -5749,6 +5799,16 @@ msgstr "Kampanja ajastettu ajankohtaan {sendTime}"
 msgid "Campaign unscheduled and back in your drafts"
 msgstr "Kampanjan ajastus poistettu, ja se on jälleen luonnoksissasi"
 
+#. js-lingui-id: AnhtKd
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Can't be edited"
+msgstr "Ei voi muokata"
+
+#. js-lingui-id: XccYlu
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Can't be seen"
+msgstr "Ei voi nähdä"
+
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Can't scan? Copy the"
@@ -5765,7 +5825,7 @@ msgid "Canada"
 msgstr "Kanada"
 
 #. js-lingui-id: dEgA5A
-#: src/modules/ai-chat/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
 #: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -5884,7 +5944,7 @@ msgid "Canceled at"
 msgstr "Peruttu"
 
 #. js-lingui-id: vv7kpg
-#: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 msgid "Cancelled"
 msgstr "Peruttu"
@@ -6085,7 +6145,7 @@ msgid "Change Password"
 msgstr "Vaihda salasana"
 
 #. js-lingui-id: 98W3AT
-#: src/modules/ai-chat/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 msgid "Change status in {scopeLabel}"
 msgstr "Muuta tilaa kohteessa {scopeLabel}"
 
@@ -6132,7 +6192,7 @@ msgid "channel"
 msgstr "kanava"
 
 #. js-lingui-id: HdE1If
-#: src/modules/ai-chat/components/AiChatNewThreadRecipientPicker.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientPicker.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 msgid "Channel"
@@ -6156,6 +6216,7 @@ msgstr "kanavarooli"
 
 #. js-lingui-id: lfFsZ4
 #: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
 msgid "Channels"
@@ -6258,7 +6319,7 @@ msgid "Check the event dates"
 msgstr "Tarkista tapahtuman päivämäärät"
 
 #. js-lingui-id: EXMtgb
-#: src/modules/ai-chat/components/__stories__/AiChatApprovalMergeReviewExample.tsx
+#: src/modules/ai-chat/tool-calls/components/__stories__/AiChatApprovalMergeReviewExample.tsx
 msgid "Check the merge result before trying again"
 msgstr "Tarkista yhdistämisen tulos ennen kuin yrität uudelleen"
 
@@ -6293,7 +6354,7 @@ msgid "Checked only when the record this rule belongs to is saved. Editing the r
 msgstr "Tarkistetaan vain, kun tietue, johon tämä sääntö kuuluu, tallennetaan. Liittyvän tietueen muokkaaminen ei tarkista sitä uudelleen."
 
 #. js-lingui-id: DMUK+4
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Checking calendar availability…"
 msgstr "Tarkistetaan kalenterin saatavuutta…"
 
@@ -6329,15 +6390,15 @@ msgid "Choose {intervalAdjective} credits"
 msgstr "Valitse {intervalAdjective} krediitit"
 
 #. js-lingui-id: HC7flO
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 #: src/modules/ui/input/components/internal/date/components/DatePickerCalendar.tsx
 msgid "Choose a date"
 msgstr "Valitse päivämäärä"
 
 #. js-lingui-id: mXw+D5
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Choose a date to see available times."
 msgstr "Valitse päivämäärä nähdäksesi vapaat ajat."
 
@@ -6348,7 +6409,7 @@ msgid "Choose a model mode"
 msgstr "Valitse mallitila"
 
 #. js-lingui-id: Vgi70q
-#: src/modules/ai-chat/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "Choose a source record to keep"
 msgstr "Valitse säilytettävä lähdetietue"
 
@@ -6358,12 +6419,12 @@ msgid "Choose a spender"
 msgstr "Valitse kuluttaja"
 
 #. js-lingui-id: ZLmzD4
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose a time zone"
 msgstr "Valitse aikavyöhyke"
 
 #. js-lingui-id: 2cQMP+
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose a time zone."
 msgstr "Valitse aikavyöhyke."
 
@@ -6393,12 +6454,12 @@ msgid "Choose an access level available to all selected recipients."
 msgstr "Valitse käyttöoikeustaso, joka on käytettävissä kaikille valituille vastaanottajille."
 
 #. js-lingui-id: bTsJ+r
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose an available calendar that can send invitations."
 msgstr "Valitse käytettävissä oleva kalenteri, joka voi lähettää kutsuja."
 
 #. js-lingui-id: 4yF6C2
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose an organizer calendar"
 msgstr "Valitse järjestäjän kalenteri"
 
@@ -6505,7 +6566,7 @@ msgid "Choose when {assistantName} participates in conversations across your wor
 msgstr "Valitse, milloin {assistantName} osallistuu keskusteluihin työtilassasi"
 
 #. js-lingui-id: GF9DB4
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose when you are available and which calendar sends invitations."
 msgstr "Valitse, milloin olet käytettävissä ja mikä kalenteri lähettää kutsut."
 
@@ -6773,7 +6834,7 @@ msgstr "Leikepöytä edellyttää suojattua yhteyttä (HTTPS). Avaa tämä sovel
 #: src/modules/onboarding/components/OnboardingSkipDialog.tsx
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
 #: src/modules/workflow/workflow-steps/components/WorkflowDropdownStepOutputItems.tsx
@@ -7213,7 +7274,7 @@ msgid "Complexity"
 msgstr "Monimutkaisuus"
 
 #. js-lingui-id: ST17km
-#: src/modules/ai-chat/hooks/useAiChatFrontComponentPreview.ts
+#: src/modules/ai-chat/tool-calls/hooks/useAiChatFrontComponentPreview.ts
 msgid "Component failed to render."
 msgstr "Komponentin renderöinti epäonnistui."
 
@@ -7223,7 +7284,7 @@ msgid "Component name"
 msgstr "Komponentin nimi"
 
 #. js-lingui-id: WcUICq
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Component preview with sample data"
 msgstr "Komponentin esikatselu esimerkkitiedoilla"
 
@@ -7243,6 +7304,8 @@ msgid "Computed at"
 msgstr "Laskettu"
 
 #. js-lingui-id: wpT1VN
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 #: src/modules/validation-rules/components/ValidationRuleExpressionEditor.tsx
 msgid "Condition"
@@ -7439,7 +7502,7 @@ msgid "Confirm"
 msgstr "Vahvista"
 
 #. js-lingui-id: MrMPwB
-#: src/modules/ai-chat/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
 msgid "Confirm approval"
 msgstr "Vahvista hyväksyntä"
 
@@ -7560,8 +7623,10 @@ msgid "Connect via IMAP/SMTP"
 msgstr "Yhdistä IMAP/SMTP:n kautta"
 
 #. js-lingui-id: LqKH42
+#. placeholder {0}: connectionProvider.displayName
 #. placeholder {0}: provider.displayName
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
 msgid "Connect with {0}"
 msgstr "Yhdistä palveluun {0}"
 
@@ -7592,6 +7657,12 @@ msgstr "Yhdistä sähköpostisi ja kalenterisi nähdäksesi koko verkostosi heti
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
 msgid "Connect your own {0} account for this app to use on your behalf."
 msgstr "Yhdistä oma {0}-tilisi tähän sovellukseen, jotta sitä voidaan käyttää puolestasi."
+
+#. js-lingui-id: Y1cA8P
+#. placeholder {0}: connectionProvider.displayName
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
+msgid "Connect your own {0} account for this server to use on your behalf."
+msgstr "Yhdistä oma {0} -tilisi tähän palvelimeen, jotta sitä voidaan käyttää puolestasi."
 
 #. js-lingui-id: QHcLEN
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
@@ -8071,7 +8142,7 @@ msgid "Could not attach this conversation to the {objectLabel}"
 msgstr "Tätä keskustelua ei voitu liittää kohteeseen {objectLabel}"
 
 #. js-lingui-id: E/YqmF
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Could not be proposed"
 msgstr "Ei voitu ehdottaa"
 
@@ -8112,8 +8183,8 @@ msgid "Could not load Getting started."
 msgstr "Aloittamista ei voitu ladata."
 
 #. js-lingui-id: Y5qCpF
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
-#: src/modules/ai-chat/hooks/useAiChatFrontComponentPreview.ts
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFrontComponentCard.tsx
+#: src/modules/ai-chat/tool-calls/hooks/useAiChatFrontComponentPreview.ts
 msgid "Could not load preview."
 msgstr "Esikatselua ei voitu ladata."
 
@@ -8173,7 +8244,7 @@ msgid "Could not react with {emoji}"
 msgstr "Reaktiota emojilla {emoji} ei voitu lisätä"
 
 #. js-lingui-id: 6GjSMn
-#: src/modules/ai-chat/hooks/useRefreshFrontComponents.ts
+#: src/modules/ai-chat/tool-calls/hooks/useRefreshFrontComponents.ts
 msgid "Could not refresh components. Reload to see saved changes."
 msgstr "Komponenttien päivittäminen epäonnistui. Lataa uudelleen nähdäksesi tallennetut muutokset."
 
@@ -8381,12 +8452,12 @@ msgid "Create {objectLabelSingular}"
 msgstr "Luo {objectLabelSingular}"
 
 #. js-lingui-id: RRkWki
-#: src/modules/ai-chat/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Create {recordCount} {objectLabel}"
 msgstr "Luo {recordCount} {objectLabel}"
 
 #. js-lingui-id: TryTER
-#: src/modules/ai-chat/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Create {selectedCount}"
 msgstr "Luo {selectedCount}"
 
@@ -9026,7 +9097,7 @@ msgid "Current workspace member not found."
 msgstr "Nykyistä työtilan jäsentä ei löytynyt."
 
 #. js-lingui-id: dUDTUc
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalCurrentValue.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCurrentValue.tsx
 msgid "Currently:"
 msgstr "Nykyinen:"
 
@@ -9045,7 +9116,6 @@ msgstr "mukautettu"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 #: src/modules/settings/data-model/utils/getSettingsObjectFieldType.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Custom"
 msgstr "Mukautettu"
@@ -9174,6 +9244,11 @@ msgstr "Mukautetut palveluntarjoajat ovat maksuttomia enintään {0} käyttäjä
 msgid "Custom roles"
 msgstr "Mukautetut roolit"
 
+#. js-lingui-id: 2jzCZZ
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "Custom section"
+msgstr "Mukautettu osio"
+
 #. js-lingui-id: BjGDEB
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Custom View"
@@ -9274,6 +9349,12 @@ msgstr "Mukauta sivun asetteluja ja käyttöliittymän rakennetta"
 msgid "Customize record page"
 msgstr "Mukauta tietuesivua"
 
+#. js-lingui-id: hxjpaE
+#: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
+msgid "Customize sidebar"
+msgstr "Mukauta sivupalkkia"
+
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Customize the workspace record page"
@@ -9361,7 +9442,7 @@ msgid "Dashboard duplicated successfully"
 msgstr "Hallintapaneeli monistettiin onnistuneesti"
 
 #. js-lingui-id: xLSe09
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Dashboard widget"
 msgstr "Koontinäytön pienoisohjelma"
 
@@ -9459,7 +9540,6 @@ msgstr "Tietojen sijainti"
 #. js-lingui-id: r+cVRP
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "Data type"
 msgstr "Tietotyyppi"
 
@@ -9774,7 +9854,6 @@ msgstr "Viivästetty"
 
 #. js-lingui-id: HNlEFZ
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "delete"
 msgstr "poista"
 
@@ -9802,6 +9881,7 @@ msgstr "poista"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig.ts
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage.tsx
@@ -9866,13 +9946,8 @@ msgstr "Poista {objectLabel}"
 msgid "Delete {objectLabel} object?"
 msgstr "Poistetaanko {objectLabel}-objekti?"
 
-#. js-lingui-id: 65N6Yr
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Delete {objectLabelPlural}"
-msgstr "Poista {objectLabelPlural}"
-
 #. js-lingui-id: CF0F8U
-#: src/modules/ai-chat/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Delete {recordCount} {objectLabel}"
 msgstr "Poista {recordCount} {objectLabel}"
 
@@ -9882,7 +9957,7 @@ msgid "Delete {relationObjectLabelSingular}"
 msgstr "Poista {relationObjectLabelSingular}"
 
 #. js-lingui-id: ++479H
-#: src/modules/ai-chat/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Delete {selectedCount}"
 msgstr "Poista {selectedCount}"
 
@@ -10029,14 +10104,19 @@ msgstr "Poista taso"
 msgid "Delete limit"
 msgstr "Poista rajoitus"
 
+#. js-lingui-id: Fh7KV2
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "Delete matching {objectLabelPlural}"
+msgstr ""
+
 #. js-lingui-id: u+Hoy8
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 msgid "Delete MCP server"
 msgstr "Poista MCP-palvelin"
 
 #. js-lingui-id: KDfTdX
-#: src/modules/ai-chat/components/AiChatMessage.tsx
-#: src/modules/ai-chat/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
 msgid "Delete message"
 msgstr "Poista viesti"
 
@@ -10059,11 +10139,6 @@ msgstr "Poista tai siirrä tämän sovelluksen rekisteröinti"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/DeleteRecordAction.ts
 msgid "Delete Record"
 msgstr "Poista tietue"
-
-#. js-lingui-id: mcXHCJ
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Delete Records on All Objects"
-msgstr "Poista tietueet kaikista objekteista"
 
 #. js-lingui-id: Ptdfm4
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
@@ -10090,15 +10165,25 @@ msgstr "Poista rooli pysyvästi"
 msgid "Delete row"
 msgstr "Poista rivi"
 
+#. js-lingui-id: 39Aq/E
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
+msgid "Delete rule"
+msgstr ""
+
 #. js-lingui-id: rvJGTw
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 msgid "Delete Skill"
 msgstr "Poista taito"
 
+#. js-lingui-id: 6XdrVG
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Delete some {objectLabelPlural} · {throughRules}"
+msgstr ""
+
 #. js-lingui-id: drg4t8
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
 msgid "Delete tab"
-msgstr ""
+msgstr "Poista välilehti"
 
 #. js-lingui-id: +RYIn9
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
@@ -10255,7 +10340,7 @@ msgid "Delivery"
 msgstr "Toimitus"
 
 #. js-lingui-id: cFCKYZ
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Deny"
 msgstr "Hylkää"
 
@@ -10340,12 +10425,12 @@ msgstr "Työpöytä"
 
 #. js-lingui-id: +ow7t4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "destroy"
 msgstr "tuhota"
 
 #. js-lingui-id: 2xxBws
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig.ts
 msgid "Destroy"
 msgstr "Tuhota"
 
@@ -10354,20 +10439,20 @@ msgstr "Tuhota"
 msgid "Destroy {objectLabel}"
 msgstr "Tuhoa {objectLabel}"
 
-#. js-lingui-id: YI3c7h
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Destroy {objectLabelPlural}"
-msgstr "Tuhoa {objectLabelPlural}"
-
 #. js-lingui-id: ud791S
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Destroy all records"
 msgstr "Tuhoa kaikki tietueet"
 
-#. js-lingui-id: L68qSB
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Destroy Records on All Objects"
-msgstr "Tuhota tietueet kaikista objekteista"
+#. js-lingui-id: LhvVfx
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "Destroy matching {objectLabelPlural}"
+msgstr ""
+
+#. js-lingui-id: rEJ7+y
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Destroy some {objectLabelPlural} · {throughRules}"
+msgstr ""
 
 #. js-lingui-id: FOcBn3
 #: src/modules/inbox/components/InboxThreadActionsDropdown.tsx
@@ -10488,10 +10573,20 @@ msgstr "Suoraviestiparin identiteetti"
 msgid "Direct messages"
 msgstr "Suorat viestit"
 
+#. js-lingui-id: yBEIpe
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Direct messages and mentions"
+msgstr ""
+
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Suorat viestit eivät tue liitteitä."
+
+#. js-lingui-id: +ILAOG
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Direct messages, mentions and chats assigned to you"
+msgstr ""
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -10532,7 +10627,7 @@ msgid "Disabled"
 msgstr "Pois käytöstä"
 
 #. js-lingui-id: bzSI52
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Discard"
@@ -10753,7 +10848,7 @@ msgid "Don't import events marked as private"
 msgstr "Älä tuo yksityisiksi merkittyjä tapahtumia"
 
 #. js-lingui-id: DPfwMq
-#: src/modules/ai-chat/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 #: src/modules/inbox/components/InboxBulkActions.tsx
 #: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 #: src/modules/inbox/constants/InboxChannelNavigationItems.ts
@@ -10764,7 +10859,7 @@ msgid "Done"
 msgstr "Valmis"
 
 #. js-lingui-id: y+f/uY
-#: src/modules/ai-chat/components/AiChatThreadActivityTime.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadActivityTime.tsx
 msgid "Done {doneTime}"
 msgstr "Valmis {doneTime}"
 
@@ -10845,7 +10940,7 @@ msgstr "Lataa esimerkkitiedosto"
 
 #. js-lingui-id: eneWvv
 #: src/modules/activities/emails/components/EmailThreadPreview.tsx
-#: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 #: src/modules/object-core/workflows/constants/CoreWorkflowStatusFilterOptions.ts
 #: src/modules/object-core/workflows/versions/constants/CoreWorkflowVersionStatusLabels.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -10864,7 +10959,7 @@ msgid "Draft an email to this company about "
 msgstr "Laadi sähköposti tälle yritykselle aiheesta "
 
 #. js-lingui-id: DbAw4C
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Draft email"
 msgstr "Sähköpostiluonnos"
@@ -11103,8 +11198,7 @@ msgstr "eddy@gmail.com, @apple.com"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/profile/components/EmailField.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig.ts
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Edit"
 msgstr "Muokkaa"
@@ -11118,11 +11212,6 @@ msgstr "Muokkaa {label}, {description}"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
 msgid "Edit {objectLabel}"
 msgstr "Muokkaa {objectLabel}"
-
-#. js-lingui-id: zQXUkv
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Edit {objectLabelPlural}"
-msgstr "Muokkaa {objectLabelPlural}"
 
 #. js-lingui-id: GsbKaa
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
@@ -11182,7 +11271,6 @@ msgstr "Muokkaa kentän arvoja"
 
 #. js-lingui-id: oKQ7ls
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
 msgid "Edit Fields"
 msgstr "Muokkaa kenttiä"
@@ -11226,9 +11314,14 @@ msgstr ""
 msgid "Edit linked records"
 msgstr "Muokkaa linkitettyjä tietueita"
 
+#. js-lingui-id: pFCxAz
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "Edit matching {objectLabelPlural}"
+msgstr ""
+
 #. js-lingui-id: QjH+ZX
-#: src/modules/ai-chat/components/AiChatMessage.tsx
-#: src/modules/ai-chat/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
 msgid "Edit message"
 msgstr "Muokkaa viestiä"
 
@@ -11270,11 +11363,6 @@ msgstr "Muokkaa profiilitietoja"
 msgid "Edit Record Table"
 msgstr "Muokkaa tietuetaulukkoa"
 
-#. js-lingui-id: 6n2zpV
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Edit Records on All Objects"
-msgstr "Muokkaa tietueita kaikista objekteista"
-
 #. js-lingui-id: 4QhQge
 #: src/modules/page-layout/widgets/field/components/FieldWidgetRelationEditAction.tsx
 msgid "Edit relation"
@@ -11286,10 +11374,15 @@ msgid "Edit rule"
 msgstr "Muokkaa sääntöä"
 
 #. js-lingui-id: i5BTxr
-#: src/modules/ai-chat/components/AiChatThreadLabelsField.tsx
-#: src/modules/ai-chat/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "Edit shared labels"
 msgstr "Muokkaa jaettuja tunnisteita"
+
+#. js-lingui-id: yYBXaf
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Edit some {objectLabelPlural} · {throughRules}"
+msgstr ""
 
 #. js-lingui-id: xE9ptR
 #: src/modules/page-layout/components/PageLayoutTabMenuItemSelectAvatar.tsx
@@ -11630,8 +11723,8 @@ msgstr "Työntekijät"
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
-#: src/modules/ai-chat/components/AiChatRecordApprovalReview.tsx
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalCurrentValue.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCurrentValue.tsx
 #: src/modules/log-console/components/LogConsoleRecordChangeDetail.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx
@@ -11762,7 +11855,7 @@ msgid "End date must be after start date."
 msgstr "Päättymispäivän on oltava aloituspäivän jälkeen."
 
 #. js-lingui-id: xus58/
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "End time must be after start time."
 msgstr "Päättymisajan on oltava aloitusajan jälkeen."
 
@@ -11899,7 +11992,7 @@ msgid "Enter a number"
 msgstr "Anna numero"
 
 #. js-lingui-id: LsUGyx
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Enter a start and end time."
 msgstr "Anna aloitus- ja päättymisaika."
 
@@ -12560,6 +12653,16 @@ msgstr "joka minuutti"
 msgid "Every Monday"
 msgstr "Joka maanantai"
 
+#. js-lingui-id: WZ4tRP
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Every new message in a chat you take part in or follow"
+msgstr ""
+
+#. js-lingui-id: QU6LCC
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
+msgid "Every object follows the all objects access."
+msgstr "Jokainen objekti noudattaa kaikkien objektien käyttöoikeuksia."
+
 #. js-lingui-id: JsIvOW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Every object of this workspace as CSV files in one zip, kept for 1 day. Works for suspended workspaces."
@@ -12997,9 +13100,9 @@ msgstr "Kasvot"
 
 #. js-lingui-id: 7Bj3x9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai-chat/constants/AiChatThreadReasons.ts
 #: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
@@ -13277,7 +13380,7 @@ msgid "Failed to link the related records to this event"
 msgstr "Liittyvien tietueiden linkittäminen tähän tapahtumaan epäonnistui"
 
 #. js-lingui-id: XC1d54
-#: src/modules/ai-chat/components/AiChatAgentAuthorResolver.tsx
+#: src/modules/ai-chat/messages/components/AiChatAgentAuthorResolver.tsx
 msgid "Failed to load agent details."
 msgstr "Agentin tietojen lataaminen epäonnistui."
 
@@ -13584,7 +13687,7 @@ msgid "Failed to upload file \"{fileNameForError}\": {errorMessage}"
 msgstr "Tiedoston \"{fileNameForError}\" lähetys epäonnistui: {errorMessage}"
 
 #. js-lingui-id: cQPyHI
-#: src/modules/ai-chat/hooks/useAiChatFileUpload.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatFileUpload.ts
 msgid "Failed to upload file: {fileName}"
 msgstr "Tiedostoa ei voitu ladata: {fileName}"
 
@@ -13639,8 +13742,14 @@ msgstr "Väärä"
 msgid "Fast"
 msgstr "Nopea"
 
+#. js-lingui-id: x77Ptp
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+msgid "Favorite chats"
+msgstr "Suosikkikeskustelut"
+
 #. js-lingui-id: X9kySA
 #: src/modules/inbox/components/NavigationDrawerInboxFavoritesSection.tsx
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 msgid "Favorites"
 msgstr "Suosikit"
@@ -13662,7 +13771,7 @@ msgid "Features active until"
 msgstr "Ominaisuudet aktiivisia asti"
 
 #. js-lingui-id: YirHq7
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 msgid "Feedback"
 msgstr "Palaute"
@@ -13783,7 +13892,8 @@ msgstr "Kenttätason käyttöoikeudet"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/data-model/object-details/components/SettingsObjectIndexTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelectFieldMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetFieldDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -13823,11 +13933,6 @@ msgstr "Kenttäryhmä"
 msgid "Fields members with the Edit Profile permission can change"
 msgstr "Kentät, joita jäsenet, joilla on Muokkaa profiilia -käyttöoikeus, voivat muuttaa"
 
-#. js-lingui-id: 5UU7Q6
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
-msgid "Fields Permissions"
-msgstr "Kenttien käyttöoikeudet"
-
 #. js-lingui-id: n7J1Rh
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Fields Settings"
@@ -13837,6 +13942,16 @@ msgstr "Kenttäasetukset"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Fields shown in each view, and their order"
 msgstr "Kussakin näkymässä näytettävät kentät ja niiden järjestys"
+
+#. js-lingui-id: RWZvyt
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Fields to edit"
+msgstr "Muokattavat kentät"
+
+#. js-lingui-id: YsJAML
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Fields to see"
+msgstr "Näytettävät kentät"
 
 #. js-lingui-id: HrM5BL
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
@@ -14063,7 +14178,7 @@ msgid "Finding connected accounts"
 msgstr "Etsitään yhdistettyjä tilejä"
 
 #. js-lingui-id: JmZ/+d
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
 msgid "Finish"
 msgstr "Lopeta"
 
@@ -14103,7 +14218,7 @@ msgid "Finish your setup"
 msgstr "Viimeistele määritys"
 
 #. js-lingui-id: 4dQFvz
-#: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 msgid "Finished"
 msgstr "Valmis"
 
@@ -14223,7 +14338,7 @@ msgid "Folders"
 msgstr "Kansiot"
 
 #. js-lingui-id: 2z3uoE
-#: src/modules/ai-chat/components/AiChatThreadFollowersField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
 msgid "Follow for me"
 msgstr "Seuraa puolestani"
 
@@ -14233,7 +14348,7 @@ msgid "Follow us on X"
 msgstr "Seuraa meitä X:ssä"
 
 #. js-lingui-id: y6sq5j
-#: src/modules/ai-chat/components/AiChatThreadFollowersField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
 msgid "Following"
 msgstr "Seurataan"
 
@@ -14274,7 +14389,7 @@ msgid "Forgot your password?"
 msgstr "Unohtuiko salasana?"
 
 #. js-lingui-id: QRAWTO
-#: src/modules/ai-chat/components/AiChatFormCardContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormCardContent.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/FormAction.ts
 msgid "Form"
@@ -14286,12 +14401,12 @@ msgid "Form Data"
 msgstr "Lomakedata"
 
 #. js-lingui-id: oiy48l
-#: src/modules/ai-chat/components/AiChatFormStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Form skipped"
 msgstr "Lomake ohitettu"
 
 #. js-lingui-id: 6vS9Zq
-#: src/modules/ai-chat/components/AiChatFormStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Form submitted"
 msgstr "Lomake lähetetty"
 
@@ -14318,7 +14433,7 @@ msgid "Formats"
 msgstr "Muodot"
 
 #. js-lingui-id: CjVkbV
-#: src/modules/ai-chat/hooks/useAiChatThreadDisplayLabel.ts
+#: src/modules/ai-chat/threads/hooks/useAiChatThreadDisplayLabel.ts
 #: src/modules/ai-chat/utils/getAiChatSenderLabel.ts
 #: src/modules/inbox/components/InboxDirectMessageTitle.tsx
 #: src/modules/inbox/components/NavigationDrawerDirectMessageItem.tsx
@@ -14397,7 +14512,7 @@ msgid "French"
 msgstr "Ranska"
 
 #. js-lingui-id: 39y5bn
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Friday"
 msgstr "Perjantai"
 
@@ -14705,6 +14820,11 @@ msgstr "Saksa"
 msgid "Get more credits"
 msgstr "Hanki lisää krediittejä"
 
+#. js-lingui-id: WB4gz7
+#: src/modules/settings/experience/components/SettingsExperienceNotificationsSection.tsx
+msgid "Get notified of new inbox messages on this device, even when Twenty is closed. Your choices below apply to every device"
+msgstr ""
+
 #. js-lingui-id: AvbPI1
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
@@ -14914,11 +15034,6 @@ msgstr "Myönnettiin tälle työtilalle {parsedAmount} krediittiä."
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "Granted credits"
 msgstr "Myönnetyt krediitit"
-
-#. js-lingui-id: WUgtid
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
-msgid "Granted for this object"
-msgstr "Myönnetty tälle kohteelle"
 
 #. js-lingui-id: MkDC2z
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -15261,6 +15376,7 @@ msgid "Hexagon"
 msgstr "Kuusikulmio"
 
 #. js-lingui-id: D+zLDD
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionHiddenItems.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
@@ -15391,6 +15507,8 @@ msgstr "Palkkaa kumppani auttamaan Twentyn käyttöönotossa ja räätälöinnis
 
 #. js-lingui-id: i0qMbr
 #: src/modules/ai-chat/components/AiChatNewThreadPageActions.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 msgid "Home"
@@ -16091,7 +16209,7 @@ msgid "Info"
 msgstr "Info"
 
 #. js-lingui-id: nSkB8g
-#: src/modules/ai-chat/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 msgid "Information"
 msgstr "Tiedot"
 
@@ -16998,7 +17116,7 @@ msgid "Label must contain at least one alphanumeric character"
 msgstr "Tunnisteen on sisällettävä vähintään yksi kirjain tai numero"
 
 #. js-lingui-id: h8DugX
-#: src/modules/ai-chat/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "Labels"
 msgstr "Labelit"
 
@@ -17287,7 +17405,7 @@ msgid "Last Updated: {0}"
 msgstr "Viimeksi päivitetty: {0}"
 
 #. js-lingui-id: p9uaTd
-#: src/modules/ai-chat/utils/getAiChatThreadSnoozeOptions.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Later today"
 msgstr "Myöhemmin tänään"
 
@@ -17910,7 +18028,7 @@ msgid "Loading chats..."
 msgstr "Ladataan keskusteluja..."
 
 #. js-lingui-id: w81Nov
-#: src/modules/ai-chat/components/AiChatEditorSection.tsx
+#: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
 msgid "Loading conversation…"
 msgstr "Ladataan keskustelua…"
 
@@ -17937,7 +18055,7 @@ msgid "Loading emails"
 msgstr "Ladataan sähköposteja"
 
 #. js-lingui-id: lwb3JB
-#: src/modules/ai-chat/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
 msgid "Loading emojis"
 msgstr "Ladataan emoji-kuvia"
 
@@ -17975,12 +18093,12 @@ msgid "Loading more..."
 msgstr "Ladataan lisää..."
 
 #. js-lingui-id: nSgEqx
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Loading preview…"
 msgstr "Ladataan esikatselua…"
 
 #. js-lingui-id: WepeNQ
-#: src/modules/ai-chat/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
 msgid "Loading records"
 msgstr "Ladataan tietueita"
 
@@ -18000,7 +18118,7 @@ msgid "Loading sharing settings"
 msgstr "Ladataan jakamisasetuksia"
 
 #. js-lingui-id: VeVIIk
-#: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 msgid "Loading skills"
 msgstr "Ladataan taitoja"
 
@@ -18494,7 +18612,7 @@ msgid "Markdown"
 msgstr "Markdown"
 
 #. js-lingui-id: OybNQG
-#: src/modules/ai-chat/components/AiChatThreadStatusNotice.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "Merkitty valmiiksi {eventTime}"
 
@@ -18641,25 +18759,30 @@ msgstr "MCP-palvelimet eivät ole käytettävissä"
 msgid "MCP tool step"
 msgstr "MCP-työkaluvaihe"
 
+#. js-lingui-id: 37Lzw8
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
+msgid "me"
+msgstr ""
+
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionValueInput.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionValueInput.tsx
 #: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "Me"
 msgstr "Minä"
 
 #. js-lingui-id: pfWzog
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "Me (User ID)"
 msgstr "Minä (käyttäjän tunnus)"
 
 #. js-lingui-id: BDc6e1
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionValueInput.tsx
 msgid "Me / {workspaceMemberFieldLabel}"
 msgstr "Minä / {workspaceMemberFieldLabel}"
 
@@ -18699,7 +18822,7 @@ msgid "Medium section heading"
 msgstr ""
 
 #. js-lingui-id: OvoEq7
-#: src/modules/ai-chat/components/AiChatThreadAvatar.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadAvatar.tsx
 #: src/modules/log-console/constants/LogConsolePageViewColumns.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -18731,11 +18854,9 @@ msgstr ""
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
@@ -18754,7 +18875,7 @@ msgid "Members & invitees"
 msgstr "Jäsenet ja kutsutut"
 
 #. js-lingui-id: pbIEgB
-#: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 msgid "Mentioned you"
 msgstr "Mainitsi sinut"
 
@@ -18771,18 +18892,18 @@ msgid "Menu item actions"
 msgstr "Valikkokohteen toiminnot"
 
 #. js-lingui-id: UODtG8
-#: src/modules/ai-chat/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 msgid "Merge"
 msgstr "Yhdistä"
 
 #. js-lingui-id: yDKct3
-#: src/modules/ai-chat/components/__stories__/AiChatApprovalMergeReviewExample.tsx
+#: src/modules/ai-chat/tool-calls/components/__stories__/AiChatApprovalMergeReviewExample.tsx
 msgid "Merge {firstSourceName} and {secondSourceName}"
 msgstr "Yhdistä {firstSourceName} ja {secondSourceName}"
 
 #. js-lingui-id: TTHfsp
-#: src/modules/ai-chat/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "Merge all {pendingPairCount}"
 msgstr "Yhdistä kaikki {pendingPairCount}"
 
@@ -18792,7 +18913,7 @@ msgid "Merge cells"
 msgstr "Yhdistä solut"
 
 #. js-lingui-id: d2c8f+
-#: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 msgid "Merge preview"
 msgstr "Esikatselu yhdistä"
@@ -18804,7 +18925,7 @@ msgid "Merge records"
 msgstr "Yhdistä tietueet"
 
 #. js-lingui-id: PXTjHO
-#: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 msgid "Merge review tabs"
 msgstr "Yhdistämisen tarkistusvälilehdet"
 
@@ -19121,7 +19242,7 @@ msgid "Models for this provider. Toggle to enable or disable."
 msgstr "Tämän tarjoajan mallit. Ota käyttöön tai poista käytöstä kytkimellä."
 
 #. js-lingui-id: hty0d5
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Monday"
@@ -19162,7 +19283,7 @@ msgid "month"
 msgstr "kuukausi"
 
 #. js-lingui-id: HajiZl
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -19259,8 +19380,8 @@ msgid "More options"
 msgstr "Lisää valintoja"
 
 #. js-lingui-id: G3/0PS
-#: src/modules/ai-chat/components/AiChatMessageReactionPickerContent.tsx
-#: src/modules/ai-chat/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
 msgid "More reactions"
 msgstr "Lisää reaktioita"
 
@@ -19326,6 +19447,11 @@ msgstr "Siirrä oikealle"
 msgid "Move through list items"
 msgstr "Siirry luettelon kohteiden välillä"
 
+#. js-lingui-id: mcfB2A
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+msgid "Move to"
+msgstr "Siirrä kohteeseen"
+
 #. js-lingui-id: TH+XKl
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
 msgid "Move to another tab"
@@ -19340,9 +19466,14 @@ msgstr "Siirrä kanavaan"
 
 #. js-lingui-id: JCPOml
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
-#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Move to folder"
 msgstr ""
+
+#. js-lingui-id: 2SnSKo
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
+msgid "Move to tab"
+msgstr "Siirrä välilehteen"
 
 #. js-lingui-id: HV6Nkp
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
@@ -19422,10 +19553,20 @@ msgstr "täytyy olla kelvollisia sähköposteja sisältävä taulukko"
 msgid "Must be true to save. A write that makes it false is rejected."
 msgstr "Tallentaminen edellyttää, että ehto on tosi. Kirjoitus, joka tekee siitä epätoden, hylätään."
 
+#. js-lingui-id: lPmo1u
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
+msgid "my {workspaceMemberFieldLabel}"
+msgstr ""
+
 #. js-lingui-id: OJCJh9
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
 msgid "My apps"
 msgstr "Omat sovellukset"
+
+#. js-lingui-id: oAOi31
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
+msgid "my unknown field"
+msgstr ""
 
 #. js-lingui-id: XTGSZU
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
@@ -19482,8 +19623,6 @@ msgstr "N/A"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -19634,7 +19773,7 @@ msgid "Needs a Select field"
 msgstr "Tarvitsee valintakentän"
 
 #. js-lingui-id: k3/EHQ
-#: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Needs input"
 msgstr "Tarvitsee syötettä"
@@ -19679,7 +19818,7 @@ msgid "Never, by Twenty or providers"
 msgstr "Ei koskaan, Twenty eikä palveluntarjoajat"
 
 #. js-lingui-id: isRobC
-#: src/modules/ai-chat/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerNewForm.tsx
@@ -19814,6 +19953,16 @@ msgstr "Uusi ryhmä"
 msgid "New Group"
 msgstr "Uusi ryhmä"
 
+#. js-lingui-id: l7iZgc
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "New inbox messages show as notifications on this device, even when Twenty is closed"
+msgstr ""
+
+#. js-lingui-id: ynuJvo
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "New inbox messages will show up like this"
+msgstr ""
+
 #. js-lingui-id: //H2Cs
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
@@ -19875,16 +20024,18 @@ msgstr "Uusi siirtoraja"
 
 #. js-lingui-id: yBF5J5
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
 msgid "New rule"
 msgstr "Uusi sääntö"
 
 #. js-lingui-id: SagCAA
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "New section"
-msgstr ""
+msgstr "Uusi osio"
 
 #. js-lingui-id: MdpSC1
-#: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 msgid "New skill"
 msgstr "Uusi taito"
 
@@ -19974,7 +20125,7 @@ msgid "Next"
 msgstr "Seuraava"
 
 #. js-lingui-id: IbfvuD
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Next approval"
 msgstr "Seuraava hyväksyntä"
 
@@ -20009,13 +20160,13 @@ msgid "Next iteration"
 msgstr "Seuraava iteraatio"
 
 #. js-lingui-id: g8JmSC
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 msgid "Next month"
 msgstr "Seuraava kuukausi"
 
 #. js-lingui-id: DnlugB
-#: src/modules/ai-chat/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "Next pair"
 msgstr "Seuraava pari"
 
@@ -20025,7 +20176,7 @@ msgid "Next period"
 msgstr "Seuraava ajanjakso"
 
 #. js-lingui-id: jdU2p1
-#: src/modules/ai-chat/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 msgid "Next question"
 msgstr "Seuraava kysymys"
 
@@ -20035,7 +20186,7 @@ msgid "Next record"
 msgstr "Seuraava tietue"
 
 #. js-lingui-id: +VXdSO
-#: src/modules/ai-chat/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
 msgid "Next request"
 msgstr "Seuraava pyyntö"
 
@@ -20056,12 +20207,12 @@ msgid "Next Step"
 msgstr "Seuraava vaihe"
 
 #. js-lingui-id: IT903p
-#: src/modules/ai-chat/utils/getAiChatThreadSnoozeOptions.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Next week"
 msgstr "Ensi viikolla"
 
 #. js-lingui-id: 97rmcs
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Next: {nextTitles}"
 msgstr "Seuraava: {nextTitles}"
 
@@ -20073,8 +20224,6 @@ msgstr "Yhdeksäs"
 #. js-lingui-id: 1UzENP
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -20106,11 +20255,12 @@ msgstr "Yhtään {objectLabelSingular} ei löytynyt"
 
 #. js-lingui-id: oPoLg+
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectOperationsSummary.ts
 msgid "No access"
 msgstr "Ei pääsyä"
 
 #. js-lingui-id: IeiB4r
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "No actions to review"
 msgstr "Ei tarkistettavia toimintoja"
 
@@ -20170,7 +20320,7 @@ msgid "No AI model on this workspace meets these settings."
 msgstr "Yksikään tämän työtilan tekoälymalli ei täytä näitä asetuksia."
 
 #. js-lingui-id: iH1iv+
-#: src/modules/ai-chat/components/AiChatEditorSection.tsx
+#: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
 #: src/modules/ai-chat/hooks/useAiChat.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
@@ -20233,7 +20383,7 @@ msgid "No available tabs"
 msgstr "Ei käytettävissä olevia välilehtiä"
 
 #. js-lingui-id: vmUMKh
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "No available times. Choose another date."
 msgstr "Ei vapaita aikoja. Valitse toinen päivämäärä."
 
@@ -20249,12 +20399,12 @@ msgid "No body"
 msgstr "Ei viestirunkoa"
 
 #. js-lingui-id: 15bIDe
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "No calendars available."
 msgstr "Kalentereita ei ole saatavilla."
 
 #. js-lingui-id: +Rmf7F
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "No calendars match your search."
 msgstr "Yksikään kalenteri ei vastaa hakua."
 
@@ -20299,10 +20449,15 @@ msgid "No chats yet"
 msgstr "Ei vielä keskusteluja"
 
 #. js-lingui-id: qTxPPY
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelectFieldMenu.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "No compatible fields"
 msgstr "Ei yhteensopivia kenttiä"
+
+#. js-lingui-id: RY3VxI
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "No condition"
+msgstr ""
 
 #. js-lingui-id: YFLMyY
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
@@ -20432,7 +20587,7 @@ msgid "No email threads found"
 msgstr "Sähköpostiketjuja ei löytynyt"
 
 #. js-lingui-id: quWMra
-#: src/modules/ai-chat/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
 msgid "No emoji found"
 msgstr "Emoji-kuvaa ei löytynyt"
 
@@ -20478,6 +20633,11 @@ msgstr "Ei epäonnistuneita suorituksia"
 msgid "No field configured"
 msgstr "Kenttää ei ole määritetty"
 
+#. js-lingui-id: gRHpoy
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "No fields"
+msgstr "Ei kenttiä"
+
 #. js-lingui-id: /hvarH
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionTargetObjectFieldsView.tsx
@@ -20487,6 +20647,7 @@ msgstr ""
 
 #. js-lingui-id: VEYHd4
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
@@ -20558,7 +20719,7 @@ msgid "No jobs were retried{errorDetails}"
 msgstr "Töitä ei yritetty uudelleen{errorDetails}"
 
 #. js-lingui-id: VkcRtM
-#: src/modules/ai-chat/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "No labels available"
 msgstr "Labeleita ei ole saatavilla"
 
@@ -20674,6 +20835,16 @@ msgstr "Tälle tilalle ei ole saatavilla mallia."
 msgid "No notes"
 msgstr "Ei muistiinpanoja"
 
+#. js-lingui-id: 9F6fiv
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "No notification for new messages"
+msgstr ""
+
+#. js-lingui-id: arel2K
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
+msgid "No objects found"
+msgstr "Objekteja ei löytynyt"
+
 #. js-lingui-id: fq3TKy
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
 msgid "No objects match your search"
@@ -20724,11 +20895,6 @@ msgstr "Ei parametreja"
 msgid "No payment method found. Please update your billing details."
 msgstr "Maksutapaa ei löytynyt. Päivitä laskutustietosi."
 
-#. js-lingui-id: kSCxfd
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "No permissions have been set for individual objects."
-msgstr "Yksittäisille kohteille ei ole asetettu käyttöoikeuksia."
-
 #. js-lingui-id: pRxlf6
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "No provenance attestation was found for this package. Publish it from GitHub Actions with npm trusted publishing, then try claiming again."
@@ -20740,7 +20906,7 @@ msgid "No rate limit hit in this period"
 msgstr "Tällä ajanjaksolla ei saavutettu nopeusrajaa"
 
 #. js-lingui-id: UW90md
-#: src/modules/ai-chat/components/AiChatNewThreadRecipientPicker.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientPicker.tsx
 msgid "No recipients found"
 msgstr "Vastaanottajia ei löytynyt"
 
@@ -20773,7 +20939,7 @@ msgid "No record selected"
 msgstr "Tietuetta ei valittu"
 
 #. js-lingui-id: EqGTpW
-#: src/modules/ai-chat/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
 #: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItems.tsx
@@ -20787,7 +20953,7 @@ msgid "No records matching the filter criteria were found."
 msgstr "Suodatuskriteerejä vastaavia tietueita ei löytynyt."
 
 #. js-lingui-id: To7xRG
-#: src/modules/ai-chat/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "No records to review"
 msgstr "Ei tarkistettavia tietueita"
 
@@ -20921,7 +21087,7 @@ msgid "No SingleSignOnService with HTTP-Redirect or HTTP-POST binding was found"
 msgstr "SingleSignOnService-palvelua, jolla on HTTP-Redirect- tai HTTP-POST-sidos, ei löytynyt"
 
 #. js-lingui-id: b5hW1u
-#: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 msgid "No skills found"
 msgstr "Taitoja ei löytynyt"
 
@@ -20957,7 +21123,7 @@ msgid "No test result yet"
 msgstr "Testitulosta ei vielä ole saatavilla"
 
 #. js-lingui-id: hn2q8h
-#: src/modules/ai-chat/components/AiChatQuotedMessagePreview.tsx
+#: src/modules/ai-chat/messages/components/AiChatQuotedMessagePreview.tsx
 msgid "No text content"
 msgstr "Ei tekstisisältöä"
 
@@ -21159,8 +21325,8 @@ msgid "Node settings"
 msgstr "Solmun asetukset"
 
 #. js-lingui-id: EdQY6l
-#: src/modules/ai-chat/components/AiChatThreadFollowersField.tsx
-#: src/modules/ai-chat/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
@@ -21305,7 +21471,7 @@ msgid "Not Recorded"
 msgstr "Ei tallennettu"
 
 #. js-lingui-id: gnnpkq
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Not run: the record changed since it was proposed"
 msgstr "Ei suoritettu: tietue muuttui ehdotuksen jälkeen"
 
@@ -21342,18 +21508,13 @@ msgstr "Ei jaettu käyttäjän {notSharedByFullName} toimesta"
 msgid "Not shared with"
 msgstr "Ei jaettu henkilön kanssa"
 
-#. js-lingui-id: mu1gVr
-#: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
-msgid "Not started"
-msgstr "Ei aloitettu"
-
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"
 msgstr "Ei synkronoitu"
 
 #. js-lingui-id: 5xvHen
-#: src/modules/ai-chat/components/AiChatMessageReceipt.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReceipt.tsx
 msgid "Not yet"
 msgstr "Ei vielä"
 
@@ -21386,10 +21547,17 @@ msgid "Nothing to suggest here."
 msgstr "Täällä ei ole mitään ehdotettavaa."
 
 #. js-lingui-id: iDNBZe
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/components/SettingsExperienceNotificationsSection.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/components/AppToaster.tsx
 msgid "Notifications"
 msgstr "Ilmoitukset"
+
+#. js-lingui-id: A09awi
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Notifications are on"
+msgstr ""
 
 #. js-lingui-id: 6RihN0
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -21567,11 +21735,6 @@ msgstr "Objektia ei jaettu"
 msgid "object permission"
 msgstr "objektin käyttöoikeus"
 
-#. js-lingui-id: ecLxgy
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
-msgid "Object permission options"
-msgstr "Objektin käyttöoikeusvaihtoehdot"
-
 #. js-lingui-id: HN7O/H
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "Object settings"
@@ -21587,17 +21750,11 @@ msgstr "Objektin tyyppi"
 msgid "Object unique fields"
 msgstr "Objektin yksilölliset kentät"
 
-#. js-lingui-id: YJgmMZ
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Object-Level"
-msgstr "Objektikohtaisesti"
-
 #. js-lingui-id: B3toQF
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
@@ -21615,7 +21772,7 @@ msgid "Objects"
 msgstr "Objektit"
 
 #. js-lingui-id: /8Yh6y
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Objects and fields permissions settings"
 msgstr "Objektien ja kenttien käyttöoikeusasetukset"
 
@@ -21629,6 +21786,11 @@ msgstr "Objektit, kentät ja indeksit, jotka määrittävät tietueidesi rakente
 msgid "of"
 msgstr "of"
 
+#. js-lingui-id: az8lvo
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Off"
+msgstr ""
+
 #. js-lingui-id: KNz3EF
 #: src/pages/not-found/NotFound.tsx
 msgid "Off the beaten path"
@@ -21640,7 +21802,7 @@ msgid "Official app"
 msgstr "Virallinen sovellus"
 
 #. js-lingui-id: 6Aih4U
-#: src/modules/ai-chat/components/AiChatMemberPresence.tsx
+#: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Offline"
 msgstr "Ei yhteydessä"
 
@@ -21782,7 +21944,7 @@ msgid "One-to-one conversations between people"
 msgstr "Kahdenkeskiset keskustelut ihmisten välillä"
 
 #. js-lingui-id: oXOSPE
-#: src/modules/ai-chat/components/AiChatMemberPresence.tsx
+#: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Online"
 msgstr "Yhteydessä"
 
@@ -21894,7 +22056,7 @@ msgid "Only you will be able to see your emails and events"
 msgstr "Vain sinä näet sähköpostisi ja tapahtumasi"
 
 #. js-lingui-id: 1TNIig
-#: src/modules/ai-chat/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 #: src/modules/inbox/constants/InboxChannelNavigationItems.ts
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
@@ -22316,17 +22478,17 @@ msgid "Organization license activated successfully"
 msgstr "Organisaatio-lisenssi aktivoitiin onnistuneesti"
 
 #. js-lingui-id: G5RhpL
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Organizer"
 msgstr "Järjestäjä"
 
 #. js-lingui-id: vryTU3
-#: src/modules/ai-chat/components/AiChatQuotedMessagePreview.tsx
+#: src/modules/ai-chat/messages/components/AiChatQuotedMessagePreview.tsx
 msgid "Original message unavailable"
 msgstr "Alkuperäinen viesti ei ole saatavilla"
 
 #. js-lingui-id: /IX/7x
-#: src/modules/ai-chat/components/internal/AiChatQuestionOtherOption.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionOtherOption.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
@@ -22422,7 +22584,7 @@ msgid "Outcome"
 msgstr "Tulos"
 
 #. js-lingui-id: nCQvd7
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 msgid "Outcome unknown"
 msgstr "Tuntematon lopputulos"
 
@@ -22478,6 +22640,11 @@ msgstr "Ohitus"
 #: src/modules/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton.tsx
 msgid "Override Draft"
 msgstr "Ohita luonnos"
+
+#. js-lingui-id: sJNF3W
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
+msgid "Overrides"
+msgstr "Ohitukset"
 
 #. js-lingui-id: 6/dCYd
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -22796,7 +22963,7 @@ msgid "PDF"
 msgstr "PDF"
 
 #. js-lingui-id: UbRKMZ
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 #: src/modules/settings/domains/components/SettingsPublicDomainsListCard.tsx
 #: src/modules/settings/emailing-domains/utils/getEmailingDomainStatusDisplay.ts
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -22804,7 +22971,7 @@ msgid "Pending"
 msgstr "Odottaa"
 
 #. js-lingui-id: 2B0V9T
-#: src/modules/ai-chat/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
 msgid "Pending requests"
 msgstr "Odottavat pyynnöt"
 
@@ -22940,12 +23107,6 @@ msgstr "Käyttöoikeustaulut"
 msgid "Permissions"
 msgstr "Oikeudet"
 
-#. js-lingui-id: KiuPPj
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
-msgid "Permissions · {objectLabelSingular}"
-msgstr "Oikeudet · {objectLabelSingular}"
-
 #. js-lingui-id: JFI3iH
 #: src/modules/localization/hooks/useLocaleOptions.ts
 msgid "Persian"
@@ -23011,7 +23172,7 @@ msgid "Pick a color"
 msgstr "Valitse väri"
 
 #. js-lingui-id: B8mlc2
-#: src/modules/ai-chat/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 msgid "Pick a date"
 msgstr "Valitse päivämäärä"
 
@@ -23352,7 +23513,7 @@ msgid "Prefix of the tool names agents see. Cannot be changed later."
 msgstr "Työkalujen nimien etuliite, jonka agentit näkevät. Ei voi muuttaa myöhemmin."
 
 #. js-lingui-id: IHoyJS
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Preparing an action to approve..."
 msgstr "Valmistellaan hyväksyttävää toimintoa..."
 
@@ -23398,7 +23559,7 @@ msgid "Preview of the page recipients see when they unsubscribe"
 msgstr "Esikatselu sivusta, jonka vastaanottajat näkevät peruuttaessaan tilauksen"
 
 #. js-lingui-id: DHhJ7s
-#: src/modules/ai-chat/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 #: src/modules/page-layout/widgets/graph/components/GraphWidgetLegend.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/settings/components/layout/SettingsWizardStepBar.tsx
@@ -23417,7 +23578,7 @@ msgid "Previous 7 days"
 msgstr "Edelliset 7 päivää"
 
 #. js-lingui-id: ap92qV
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Previous approval"
 msgstr "Edellinen hyväksyntä"
 
@@ -23437,13 +23598,13 @@ msgid "Previous iteration"
 msgstr "Edellinen iteraatio"
 
 #. js-lingui-id: 1xwZj/
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 msgid "Previous month"
 msgstr "Edellinen kuukausi"
 
 #. js-lingui-id: 7BDoFf
-#: src/modules/ai-chat/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "Previous pair"
 msgstr "Edellinen pari"
 
@@ -23458,7 +23619,7 @@ msgid "Previous record"
 msgstr "Edellinen tietue"
 
 #. js-lingui-id: ToM1t/
-#: src/modules/ai-chat/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
 msgid "Previous request"
 msgstr "Edellinen pyyntö"
 
@@ -23473,7 +23634,7 @@ msgid "Previous step"
 msgstr "Edellinen vaihe"
 
 #. js-lingui-id: rLvhNs
-#: src/modules/ai-chat/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Previous value:"
 msgstr "Edellinen arvo:"
 
@@ -23666,7 +23827,7 @@ msgid "Property value"
 msgstr "Ominaisuuden arvo"
 
 #. js-lingui-id: nHD0EI
-#: src/modules/ai-chat/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Proposed value:"
 msgstr "Ehdotettu arvo:"
 
@@ -23782,18 +23943,18 @@ msgid "Question"
 msgstr "Kysymys"
 
 #. js-lingui-id: pA8K5M
-#: src/modules/ai-chat/components/AiChatQuestionStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 msgid "Question skipped"
 msgstr "Kysymys ohitettu"
 
 #. js-lingui-id: enzGAL
-#: src/modules/ai-chat/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
 msgid "Questions"
 msgstr "Kysymykset"
 
 #. js-lingui-id: Wzbxi7
-#: src/modules/ai-chat/components/AiChatQuestionStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 msgid "Questions skipped"
 msgstr "Kysymykset ohitettu"
 
@@ -23813,12 +23974,12 @@ msgid "Queue: {queueName}"
 msgstr "Jono: {queueName}"
 
 #. js-lingui-id: 8wu9lr
-#: src/modules/ai-chat/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 msgid "Queued"
 msgstr "Jonossa"
 
 #. js-lingui-id: Eldtfl
-#: src/modules/ai-chat/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 msgid "Queued messages"
 msgstr "Jonossa olevat viestit"
 
@@ -23942,12 +24103,12 @@ msgid "Read and write data model configuration"
 msgstr "Lue ja kirjoita tietomallin määrityksiä"
 
 #. js-lingui-id: RXivwU
-#: src/modules/ai-chat/components/AiChatMessageReceipt.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReceipt.tsx
 msgid "Read by {readerCount} of {recipientCount}"
 msgstr "Lukenut {readerCount} / {recipientCount}"
 
 #. js-lingui-id: bgP1Ip
-#: src/modules/ai-chat/components/AiChatMessageReceipt.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReceipt.tsx
 msgid "Read by {readerNames}"
 msgstr "Lukeneet: {readerNames}"
 
@@ -23974,6 +24135,11 @@ msgstr "Lue sähköposteja"
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read system prompts"
 msgstr "Lue järjestelmäkehotteet"
+
+#. js-lingui-id: /nZe2L
+#: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
+msgid "Read the address, owner and account status of members' private channels"
+msgstr "Lue jäsenten yksityisten kanavien osoite, omistaja ja tilin tila"
 
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -24013,7 +24179,7 @@ msgid "Read-only {entityTypeLabel} definition shipped by this app"
 msgstr "Tämän sovelluksen toimittama {entityTypeLabel}-määritelmä (vain luku)"
 
 #. js-lingui-id: EqZQdT
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Read-only calendar"
 msgstr "Vain luku -kalenteri"
 
@@ -24079,6 +24245,12 @@ msgstr "Vastaanota sähköposti salasanan päivityslinkillä"
 msgid "Recent"
 msgstr "Viimeisin"
 
+#. js-lingui-id: 3qyrqD
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
+msgid "Recent chats"
+msgstr "Viimeisimmät keskustelut"
+
 #. js-lingui-id: ZVr1+K
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "Recent Events (oldest → newest)"
@@ -24114,7 +24286,7 @@ msgid "Recipient count unavailable"
 msgstr "Vastaanottajien määrä ei ole saatavilla"
 
 #. js-lingui-id: ar7XM1
-#: src/modules/ai-chat/hooks/useWarnAboutParticipantMentionsNotAdded.ts
+#: src/modules/ai-chat/composer/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "Recipient delivery could not be verified. Check the chat participants."
 msgstr "Vastaanottajan toimitusta ei voitu vahvistaa. Tarkista chatin osallistujat."
 
@@ -24125,7 +24297,7 @@ msgstr "recipient@example.com"
 
 #. js-lingui-id: yPrbsy
 #: src/modules/activities/emails/components/ChatThreadNewMessage.tsx
-#: src/modules/ai-chat/components/AiChatNewThreadRecipientField.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientField.tsx
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Recipients"
@@ -24137,8 +24309,8 @@ msgid "Recipients are recounted at send time. You can cancel until then."
 msgstr "Vastaanottajat lasketaan uudelleen lähetyshetkellä. Voit peruuttaa siihen asti."
 
 #. js-lingui-id: WEYdDv
-#: src/modules/ai-chat/components/AiChatQuestionCard.tsx
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
 msgid "Recommended"
 msgstr "Suositeltu"
@@ -24294,7 +24466,7 @@ msgid "Record page"
 msgstr "Tietuesivu"
 
 #. js-lingui-id: J5b8Hz
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Record page widget"
 msgstr "Tietuesivun pienoisohjelma"
 
@@ -24330,19 +24502,13 @@ msgstr "Tietueen teksti"
 msgid "Record Type"
 msgstr "Tietuetyyppi"
 
-#. js-lingui-id: uMOyEH
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-msgid "Record-level"
-msgstr "Tietuetaso"
-
 #. js-lingui-id: VQ4KjL
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Record-level filter"
 msgstr "Tietuetason suodatin"
 
 #. js-lingui-id: jdetKb
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "Record:"
 msgstr "Tietue:"
 
@@ -24374,15 +24540,14 @@ msgid "records"
 msgstr "tietueet"
 
 #. js-lingui-id: PWlTvh
-#: src/modules/ai-chat/components/AiChatAddMenu.tsx
-#: src/modules/ai-chat/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItems.tsx
 #: src/modules/settings/applications/hooks/useApplicationContentItemDisplay.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 #: src/modules/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema.ts
@@ -24454,7 +24619,7 @@ msgid "Redirection URI"
 msgstr "Uudelleenohjaus-URI"
 
 #. js-lingui-id: lCF0wC
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 #: src/modules/log-console/components/LogConsoleResults.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -24462,7 +24627,7 @@ msgid "Refresh"
 msgstr "Päivitä"
 
 #. js-lingui-id: IevXlZ
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Refresh availability for this date."
 msgstr "Päivitä tämän päivämäärän saatavuus."
 
@@ -24531,13 +24696,13 @@ msgid "Registered with Twenty as the official {appName}"
 msgstr "Rekisteröity Twentyyn virallisena sovelluksena {appName}"
 
 #. js-lingui-id: 1t/NnN
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Reject"
 msgstr "Hylkää"
 
 #. js-lingui-id: ekCRTP
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Rejected"
 msgstr "Hylätty"
 
@@ -24689,7 +24854,7 @@ msgid "Remove {0} navigation menu items?"
 msgstr "Poistetaanko {0} navigointivalikon valikkokohtaa?"
 
 #. js-lingui-id: boQErO
-#: src/modules/ai-chat/components/internal/AiChatFilePreview.tsx
+#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "Poista {displayName}"
 
@@ -24834,6 +24999,11 @@ msgstr "Poista vaihtoehto"
 msgid "Remove output field"
 msgstr "Poista tulostekenttä"
 
+#. js-lingui-id: c8Kx/b
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Remove override"
+msgstr "Poista ohitus"
+
 #. js-lingui-id: cp/fZQ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsFlagRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsPermissionRow.tsx
@@ -24852,12 +25022,12 @@ msgid "Remove provider \"{0}\""
 msgstr "Poista tarjoaja \"{0}\""
 
 #. js-lingui-id: +WeuHF
-#: src/modules/ai-chat/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 msgid "Remove queued message"
 msgstr "Poista jonossa oleva viesti"
 
 #. js-lingui-id: 6nFc2C
-#: src/modules/ai-chat/components/AiChatComposerQuotePreview.tsx
+#: src/modules/ai-chat/composer/components/AiChatComposerQuotePreview.tsx
 msgid "Remove quote"
 msgstr "Poista lainaus"
 
@@ -24868,7 +25038,6 @@ msgstr "Poista uudelleenohjaus-URI"
 
 #. js-lingui-id: SjxzXf
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
 msgid "Remove rule"
 msgstr "Poista sääntö"
 
@@ -24883,9 +25052,9 @@ msgid "Remove searchable field"
 msgstr "Poista haettava kenttä"
 
 #. js-lingui-id: uXfxoE
-#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 msgid "Remove section"
-msgstr ""
+msgstr "Poista osio"
 
 #. js-lingui-id: jCt40X
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -24908,7 +25077,7 @@ msgid "Remove this provider and disconnect all its models"
 msgstr "Poista tämä tarjoaja ja irrota kaikki sen mallit"
 
 #. js-lingui-id: XrlYG5
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Remove unavailable calendars"
 msgstr "Poista kalenterit, jotka eivät ole saatavilla"
 
@@ -24948,7 +25117,7 @@ msgid "Rename group"
 msgstr "Nimeä ryhmä uudelleen"
 
 #. js-lingui-id: cwObXL
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Rendering preview…"
 msgstr "Hahmonnetaan esikatselua…"
 
@@ -25004,8 +25173,8 @@ msgid "Replit install links require an HTTPS MCP URL."
 msgstr "Replit-asennuslinkit edellyttävät HTTPS MCP -URL-osoitetta."
 
 #. js-lingui-id: ImOQa9
-#: src/modules/ai-chat/components/AiChatMessage.tsx
-#: src/modules/ai-chat/components/AiChatThreadRequestActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadRequestActions.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
@@ -25013,7 +25182,7 @@ msgid "Reply"
 msgstr "Vastaa"
 
 #. js-lingui-id: VKsaTi
-#: src/modules/ai-chat/components/AiChatComposerQuotePreview.tsx
+#: src/modules/ai-chat/composer/components/AiChatComposerQuotePreview.tsx
 msgid "Replying to"
 msgstr "Vastataan henkilölle"
 
@@ -25033,7 +25202,7 @@ msgid "Request"
 msgstr "Pyyntö"
 
 #. js-lingui-id: tZ7Xci
-#: src/modules/ai-chat/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
 msgid "Request {requestNumber} of {requestCount}"
 msgstr "Pyyntö {requestNumber} / {requestCount}"
 
@@ -25153,7 +25322,7 @@ msgid "Reset to default"
 msgstr "Palauta oletukseksi"
 
 #. js-lingui-id: 14xBUx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionValueInput.tsx
 msgid "Reset to static value"
 msgstr "Palauta staattiseen arvoon"
 
@@ -25218,7 +25387,7 @@ msgid "Resources"
 msgstr "Resurssit"
 
 #. js-lingui-id: qrqIfV
-#: src/modules/ai-chat/components/AiChatThreadRequestActions.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadRequestActions.tsx
 msgid "Respond to request"
 msgstr "Vastaa pyyntöön"
 
@@ -25420,11 +25589,6 @@ msgstr "Kumoa allekirjoitusavain"
 msgid "Revoked"
 msgstr "Kumottu"
 
-#. js-lingui-id: GG37FL
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
-msgid "Revoked for this object"
-msgstr "Peruutettu tälle kohteelle"
-
 #. js-lingui-id: lrTLOv
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal.tsx
 msgid "Revoking this key will invalidate every JWT signed with it. Users with active tokens signed by this key will be logged out."
@@ -25506,10 +25670,9 @@ msgstr "Rooli päivitetty onnistuneesti"
 #: src/modules/object-record/record-sharing/utils/getRecordSharingRecipientGroups.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Roles"
 msgstr "Roolit"
@@ -25572,6 +25735,11 @@ msgstr "rivitason käyttöoikeusehtoryhmä"
 msgid "row level permission rule"
 msgstr "rivitason käyttöoikeussääntö"
 
+#. js-lingui-id: m9LWSX
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
+msgid "Row-level permission"
+msgstr ""
+
 #. js-lingui-id: Wdh41P
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Row-level permissions"
@@ -25601,6 +25769,11 @@ msgstr "kuminen ankka: käytössä"
 #: src/modules/ui/input/hooks/useColorLabels.ts
 msgid "Ruby"
 msgstr "Rubiini"
+
+#. js-lingui-id: oAN4H/
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
+msgid "Rule"
+msgstr ""
 
 #. js-lingui-id: tijGcA
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -25668,7 +25841,7 @@ msgid "Run tool"
 msgstr "Suorita työkalu"
 
 #. js-lingui-id: RiQMUh
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
 msgid "Running"
@@ -25695,8 +25868,8 @@ msgid "Running the tool..."
 msgstr "Työkalua suoritetaan..."
 
 #. js-lingui-id: LTC198
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Running..."
 msgstr "Suoritetaan..."
 
@@ -25785,7 +25958,7 @@ msgid "SAML/OIDC"
 msgstr "SAML-/OIDC"
 
 #. js-lingui-id: b/zjTD
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Sample data"
 msgstr "Esimerkkitiedot"
 
@@ -25800,7 +25973,7 @@ msgid "Satisfied"
 msgstr "Täyttynyt"
 
 #. js-lingui-id: +5kO8P
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Saturday"
@@ -25831,7 +26004,7 @@ msgid "Save Agent"
 msgstr "Tallenna agentti"
 
 #. js-lingui-id: 8tM8+a
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 msgid "Save as draft"
 msgstr "Tallenna luonnoksena"
 
@@ -25872,7 +26045,7 @@ msgid "Saved tables, boards and calendars"
 msgstr "Tallennetut taulukot, taulut ja kalenterit"
 
 #. js-lingui-id: A0/0NU
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Saved to Workspace app"
 msgstr "Tallennettu Workspace-sovellukseen"
 
@@ -25925,7 +26098,7 @@ msgid "Scheduled maintenance: {startFormatted} — {endFormatted}"
 msgstr "Suunniteltu huolto: {startFormatted} — {endFormatted}"
 
 #. js-lingui-id: SxCO0O
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Scheduling preferences"
 msgstr "Aikataulutusasetukset"
 
@@ -25958,12 +26131,12 @@ msgid "Score"
 msgstr "Pisteet"
 
 #. js-lingui-id: oOi11l
-#: src/modules/ai-chat/components/AiChatScrollToBottomButton.tsx
+#: src/modules/ai-chat/messages/components/AiChatScrollToBottomButton.tsx
 msgid "Scroll to bottom"
 msgstr "Vieritä alas"
 
 #. js-lingui-id: SIucTL
-#: src/modules/ai-chat/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Scrollable record review"
 msgstr "Vieritettävä tietueiden tarkistus"
 
@@ -26021,19 +26194,18 @@ msgid "Search {lowerCaseTypeLabel}..."
 msgstr "Etsi {lowerCaseTypeLabel}..."
 
 #. js-lingui-id: g2dQp/
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "Search 1 {fieldTypeLabelLowercase} field"
 msgstr "Etsi 1 {fieldTypeLabelLowercase}-kenttä"
 
 #. js-lingui-id: 4XD2Lr
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "Search 1 field"
 msgstr "Etsi 1 kenttä"
 
 #. js-lingui-id: l1/uy2
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "Search a field..."
 msgstr "Etsi kenttää..."
 
@@ -26114,11 +26286,6 @@ msgstr "Etsi osoitettu {roleTargetDisplayName}..."
 msgid "Search an index..."
 msgstr "Etsi indeksi..."
 
-#. js-lingui-id: pFe0YS
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "Search an object"
-msgstr "Etsi objekti"
-
 #. js-lingui-id: S+MGem
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownAnyFieldSearchInput.tsx
 #: src/modules/views/components/AnyFieldSearchDropdownContentMenuHeader.tsx
@@ -26134,7 +26301,7 @@ msgid "Search API keys"
 msgstr "Etsi API-avaimia"
 
 #. js-lingui-id: fLbp9m
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Search availability calendars"
 msgstr "Hae saatavuuskalentereita"
 
@@ -26159,7 +26326,7 @@ msgid "Search by workspace name, subdomain, or ID..."
 msgstr "Hae työtilan nimellä, aliverkkotunnuksella tai ID:llä..."
 
 #. js-lingui-id: R/iIxI
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Search calendars"
 msgstr "Hae kalentereita"
 
@@ -26201,7 +26368,7 @@ msgid "Search email threads"
 msgstr "Hae sähköpostiketjuja"
 
 #. js-lingui-id: Sb71rQ
-#: src/modules/ai-chat/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
 msgid "Search emojis"
 msgstr "Etsi emoji-kuvia"
 
@@ -26228,8 +26395,10 @@ msgstr "hae kentän metatietoja"
 #: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelectFieldMenu.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelectFieldMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
@@ -26285,6 +26454,8 @@ msgstr "Hae jäseniä"
 
 #. js-lingui-id: two5rl
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableDataSourceDropdownContent.tsx
@@ -26305,8 +26476,8 @@ msgid "Search options"
 msgstr "Hakuvaihtoehdot"
 
 #. js-lingui-id: IMeaSJ
-#: src/modules/ai-chat/components/AiChatAddMenuRecordsPage.tsx
-#: src/modules/ai-chat/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerSearchInput.tsx
 msgid "Search records"
 msgstr "Hae tietueita"
@@ -26333,8 +26504,8 @@ msgid "Search relations"
 msgstr "Hae suhteita"
 
 #. js-lingui-id: BlLxpG
-#: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
-#: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 msgid "Search skills"
 msgstr "Hae taitoja"
 
@@ -26499,6 +26670,7 @@ msgstr "osio"
 #. js-lingui-id: BhZ5PL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 msgid "Section"
 msgstr "Osio"
@@ -26506,12 +26678,12 @@ msgstr "Osio"
 #. js-lingui-id: 8gtQoG
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
 msgid "Section actions"
-msgstr ""
+msgstr "Osion toiminnot"
 
 #. js-lingui-id: vKc3fL
-#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 msgid "Section name"
-msgstr ""
+msgstr "Osion nimi"
 
 #. js-lingui-id: R4OWFD
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
@@ -26528,14 +26700,9 @@ msgstr "Osiot"
 msgid "Security"
 msgstr "Turvallisuus"
 
-#. js-lingui-id: i0zibG
-#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
-msgid "see"
-msgstr "nähdä"
-
 #. js-lingui-id: h+8V38
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig.ts
 msgid "See"
 msgstr "Nähdä"
 
@@ -26543,11 +26710,6 @@ msgstr "Nähdä"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
 msgid "See {objectLabel}"
 msgstr "Näytä {objectLabel}"
-
-#. js-lingui-id: aOvXdk
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "See {objectLabelPlural}"
-msgstr "Näytä {objectLabelPlural}"
 
 #. js-lingui-id: R+sqCn
 #: src/modules/page-layout/widgets/components/WidgetActionFieldSeeAll.tsx
@@ -26575,11 +26737,6 @@ msgstr "Näytä sovellussivu"
 msgid "See data model settings"
 msgstr "Näytä tietomallin asetukset"
 
-#. js-lingui-id: oGROXc
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
-msgid "See Fields"
-msgstr "Nähdä kentät"
-
 #. js-lingui-id: RpeN29
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
 msgid "See function"
@@ -26591,11 +26748,18 @@ msgid "See installed applications"
 msgstr "Näytä asennetut sovellukset"
 
 #. js-lingui-id: uPo3PQ
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
 #: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
 msgid "See less"
 msgstr "Näytä vähemmän"
 
+#. js-lingui-id: KaSkAp
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "See matching {objectLabelPlural}"
+msgstr ""
+
 #. js-lingui-id: V1fa9u
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
 #: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "See more"
@@ -26612,10 +26776,10 @@ msgstr "Näytä markkinapaikassa"
 msgid "See records"
 msgstr "Näytä tietueet"
 
-#. js-lingui-id: irbH/8
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "See Records on All Objects"
-msgstr "Näytä tietueet kaikista objekteista"
+#. js-lingui-id: 6+1BUt
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "See some {objectLabelPlural} · {throughRules}"
+msgstr ""
 
 #. js-lingui-id: SXaufV
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
@@ -26666,7 +26830,7 @@ msgstr "Valinta"
 
 #. js-lingui-id: 02ePaq
 #. placeholder {0}: record.label
-#: src/modules/ai-chat/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Select {0}"
 msgstr "Valitse {0}"
 
@@ -26681,12 +26845,12 @@ msgid "Select {targetObjectNameSingular}"
 msgstr "Valitse {targetObjectNameSingular}"
 
 #. js-lingui-id: 9NFSzl
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "Select 1 {fieldTypeLabelLowercase} field"
 msgstr "Valitse 1 {fieldTypeLabelLowercase}-kenttä"
 
 #. js-lingui-id: VjMMyZ
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "Select 1 field"
 msgstr "Valitse 1 kenttä"
 
@@ -26716,7 +26880,7 @@ msgid "Select a currency"
 msgstr "Valitse valuutta"
 
 #. js-lingui-id: PWGE2B
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionVariablePicker.tsx
 msgid "Select a current user field"
 msgstr "Valitse nykyisen käyttäjän kenttä"
 
@@ -26749,7 +26913,7 @@ msgid "Select a field to display in this widget"
 msgstr "Valitse kenttä, joka näytetään tässä widgetissä"
 
 #. js-lingui-id: 0DL3XU
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelect.tsx
 msgid "Select a filter field"
 msgstr "Valitse suodatinkenttä"
 
@@ -26828,7 +26992,7 @@ msgid "Select all loaded rows"
 msgstr "Valitse kaikki ladatut rivit"
 
 #. js-lingui-id: rRpCVj
-#: src/modules/ai-chat/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Select all records"
 msgstr "Valitse kaikki tietueet"
 
@@ -26853,17 +27017,17 @@ msgid "Select an option"
 msgstr "Valitse vaihtoehto"
 
 #. js-lingui-id: Wh3uKH
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Select at least one available calendar to check for conflicts."
 msgstr "Valitse vähintään yksi saatavilla oleva kalenteri ristiriitojen tarkistamiseksi."
 
 #. js-lingui-id: AXQ2Fr
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Select at least one working day."
 msgstr "Valitse vähintään yksi työpäivä."
 
 #. js-lingui-id: 0yxhOL
-#: src/modules/ai-chat/components/AiChatThreadRow.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadRow.tsx
 msgid "Select chat"
 msgstr "Valitse keskustelu"
 
@@ -26945,7 +27109,7 @@ msgid "Select options"
 msgstr "Valitse vaihtoehdot"
 
 #. js-lingui-id: TC9hnQ
-#: src/modules/ai-chat/components/AiChatNewThreadRecipientPicker.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientPicker.tsx
 msgid "Select recipients"
 msgstr "Valitse vastaanottajat"
 
@@ -27045,15 +27209,15 @@ msgstr "Valinta"
 
 #. js-lingui-id: JlFcis
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
-#: src/modules/ai-chat/components/AiChatApprovalEmailReviewDeck.tsx
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Send"
 msgstr "Lähetä"
 
 #. js-lingui-id: h3fYlJ
-#: src/modules/ai-chat/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "Send all {pendingEmailCount}"
 msgstr "Lähetä kaikki {pendingEmailCount}"
 
@@ -27076,8 +27240,8 @@ msgid "Send Campaign"
 msgstr "Lähetä kampanja"
 
 #. js-lingui-id: 65dxv8
-#: src/modules/ai-chat/components/AiChatApprovalEmailReviewDeck.tsx
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Send email"
 msgstr "Lähetä sähköposti"
@@ -27122,7 +27286,7 @@ msgid "Send invitations"
 msgstr "Lähetä kutsut"
 
 #. js-lingui-id: Hvnq/n
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 msgid "Send invite"
 msgstr "Lähetä kutsu"
 
@@ -27132,8 +27296,8 @@ msgid "Send later"
 msgstr "Lähetä myöhemmin"
 
 #. js-lingui-id: pi1oME
-#: src/modules/ai-chat/components/AiChatQuestionCard.tsx
-#: src/modules/ai-chat/components/internal/SendMessageButton.tsx
+#: src/modules/ai-chat/composer/components/SendMessageButton.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 msgid "Send message"
 msgstr "Lähetä viesti"
 
@@ -27146,6 +27310,11 @@ msgstr "Lähetä nyt"
 #: src/modules/activities/emails/utils/buildCampaignSendButtonTitle.ts
 msgid "Send Now"
 msgstr "Lähetä nyt"
+
+#. js-lingui-id: eus61c
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Send test"
+msgstr ""
 
 #. js-lingui-id: doZzL7
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -27412,7 +27581,7 @@ msgid "Setting up your <0>database</0>..."
 msgstr "Asetetaan <0>tietokantaasi</0>..."
 
 #. js-lingui-id: Tz0i8g
-#: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
@@ -27491,8 +27660,8 @@ msgid "Shape, color, face"
 msgstr "Muoto, väri, kasvot"
 
 #. js-lingui-id: Z8lGw6
-#: src/modules/ai-chat/components/AiChatThreadShareButton.tsx
-#: src/modules/ai-chat/components/AiChatThreadShareButton.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadShareButton.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadShareButton.tsx
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 #: src/modules/side-panel/hooks/useOpenShareRecordInSidePanel.ts
 msgid "Share"
@@ -27534,8 +27703,8 @@ msgid "Shared by key, across runs"
 msgstr "Jaettu avaimen perusteella suoritusten välillä"
 
 #. js-lingui-id: 11KprE
-#: src/modules/ai-chat/components/AiChatThreadLabelsField.tsx
-#: src/modules/ai-chat/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "Shared conversation labels"
 msgstr "Jaetut keskustelulabelit"
 
@@ -27683,8 +27852,8 @@ msgid "Show inbox"
 msgstr "Näytä saapuneet"
 
 #. js-lingui-id: 6lGV3K
-#: src/modules/ai-chat/components/AiChatQueuedMessageList.tsx
-#: src/modules/ai-chat/components/AiChatUserMessageCollapsibleContent.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/messages/components/AiChatUserMessageCollapsibleContent.tsx
 #: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
 msgid "Show less"
 msgstr "Näytä vähemmän"
@@ -27694,8 +27863,13 @@ msgstr "Näytä vähemmän"
 msgid "Show logs"
 msgstr "Näytä lokit"
 
+#. js-lingui-id: /l2KYB
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Show message preview"
+msgstr ""
+
 #. js-lingui-id: fMPkxb
-#: src/modules/ai-chat/components/AiChatUserMessageCollapsibleContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatUserMessageCollapsibleContent.tsx
 #: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
@@ -27727,6 +27901,11 @@ msgstr "Näytä Aloittaminen-sivu ja sivupalkkikortti ja avaa se aloitussivulla 
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes."
 msgstr "Näytä Tietosuoja-välilehti ja ota käyttöön sen tekoälytietokäytäntö ja tietojen jakamisasetukset. Tämän poistaminen käytöstä poistaa kaikki tallennetut käytännöt. Ota käyttöön, kun instanssin päivitys on valmis."
+
+#. js-lingui-id: soWlp2
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Show the sender, the chat and the message text in notifications. Leave it off on shared screens and devices"
+msgstr ""
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -27928,8 +28107,8 @@ msgid "Skill not found"
 msgstr "Taitoa ei löytynyt"
 
 #. js-lingui-id: PCSkw2
-#: src/modules/ai-chat/components/AiChatAddMenu.tsx
-#: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
@@ -27937,11 +28116,11 @@ msgid "Skills"
 msgstr "Taidot"
 
 #. js-lingui-id: 6Uau97
-#: src/modules/ai-chat/components/AiChatApprovalEmailReviewDeck.tsx
-#: src/modules/ai-chat/components/AiChatApprovalMergeReview.tsx
-#: src/modules/ai-chat/components/AiChatFormCardContent.tsx
-#: src/modules/ai-chat/components/AiChatQuestionCard.tsx
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormCardContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/onboarding/components/OnboardingSkipButton.tsx
 msgid "Skip"
 msgstr "Ohita"
@@ -27972,8 +28151,8 @@ msgid "Skip the junction object (similar to many-to-many relations)"
 msgstr "Ohita liitosobjekti (kuten monesta moneen -suhteissa)"
 
 #. js-lingui-id: 9NyAH9
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
 msgid "Skipped"
 msgstr "Ohitetut"
@@ -28055,7 +28234,7 @@ msgid "snippet"
 msgstr "katkelma"
 
 #. js-lingui-id: 7+i6oV
-#: src/modules/ai-chat/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/inbox/components/InboxBulkActions.tsx
 #: src/modules/inbox/components/InboxThreadTriageButtons.tsx
@@ -28064,17 +28243,17 @@ msgid "Snooze"
 msgstr "Torkuta"
 
 #. js-lingui-id: aqkwib
-#: src/modules/ai-chat/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 msgid "Snooze chat"
 msgstr "Torkuta keskustelu"
 
 #. js-lingui-id: xKw3A1
-#: src/modules/ai-chat/components/AiChatThreadActivityTime.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadActivityTime.tsx
 msgid "Snooze ended"
 msgstr "Torkutus päättyi"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/ai-chat/components/AiChatThreadStatusNotice.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "Torkutus päättyi {eventTime}"
 
@@ -28090,14 +28269,14 @@ msgid "Snooze until {snoozedUntilLabel}"
 msgstr "Torkuta asti {snoozedUntilLabel}"
 
 #. js-lingui-id: rz6s8e
-#: src/modules/ai-chat/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 #: src/modules/inbox/constants/InboxChannelNavigationItems.ts
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Snoozed"
 msgstr "Torkutettu"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/ai-chat/components/AiChatThreadStatusNotice.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "Torkutettu asti {eventTime}"
 
@@ -28110,12 +28289,6 @@ msgstr "SOC 2"
 #: src/modules/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels.ts
 msgid "Soft cap"
 msgstr "Pehmeä enimmäisraja"
-
-#. js-lingui-id: zfjcH5
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
-msgid "Some"
-msgstr "Jotkut"
 
 #. js-lingui-id: RwCYVZ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
@@ -28134,13 +28307,18 @@ msgstr "Joitakin asettelumuutoksia ei voitu tallentaa"
 msgid "Some log data was dropped to fit the size limit ({0} entries, {1} bytes)."
 msgstr "Osa lokitiedoista jätettiin pois kokorajoituksen vuoksi ({0} merkintää, {1} tavua)."
 
+#. js-lingui-id: XG7UMq
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Some records"
+msgstr ""
+
 #. js-lingui-id: b5Z5wY
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Some selected calendars are no longer available."
 msgstr "Jotkin valitut kalenterit eivät ole enää saatavilla."
 
 #. js-lingui-id: 2c+W2z
-#: src/modules/ai-chat/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 msgid "Someone replies"
 msgstr "Joku vastaa"
 
@@ -28275,7 +28453,7 @@ msgid "Source Email Address"
 msgstr "Lähdesähköpostiosoite"
 
 #. js-lingui-id: Jvqt/3
-#: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 msgid "Source records"
 msgstr "Lähdetietueet"
 
@@ -28397,7 +28575,6 @@ msgstr "Itsenäinen"
 #. js-lingui-id: TJBHlP
 #: src/modules/applications/utils/getApplicationDisplayName.ts
 #: src/modules/settings/data-model/utils/getSettingsObjectFieldType.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Standard"
 msgstr "Standardi"
@@ -28498,8 +28675,8 @@ msgid "Statistics"
 msgstr "Tilastot"
 
 #. js-lingui-id: uAQUqI
-#: src/modules/ai-chat/components/AiChatApprovalRecordReview.tsx
-#: src/modules/ai-chat/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleWebhookStatusColumn.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
@@ -28589,7 +28766,7 @@ msgid "Stop impersonating"
 msgstr "Lopeta käyttäjän teeskentely"
 
 #. js-lingui-id: lQeGNv
-#: src/modules/ai-chat/components/internal/SendMessageButton.tsx
+#: src/modules/ai-chat/composer/components/SendMessageButton.tsx
 msgid "Stop response"
 msgstr "Lopeta vastaus"
 
@@ -28756,9 +28933,9 @@ msgstr ""
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/ai-chat/components/AiChatApprovalEmailReview.tsx
-#: src/modules/ai-chat/components/AiChatApprovalEmailReview.tsx
-#: src/modules/ai-chat/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Subject"
 msgstr "Aihe"
@@ -28784,7 +28961,7 @@ msgid "Subject, body and attachments will be shared with your team."
 msgstr "Aihe, runko ja liitteet jaetaan tiimisi kanssa."
 
 #. js-lingui-id: hQRttt
-#: src/modules/ai-chat/components/AiChatFormCardContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormCardContent.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormStepSubmitButton.tsx
@@ -28875,7 +29052,7 @@ msgid "subtitle"
 msgstr ""
 
 #. js-lingui-id: KAbcm2
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 msgid "Succeeded"
 msgstr "Onnistui"
 
@@ -28948,7 +29125,7 @@ msgid "Summary Not Available"
 msgstr "Yhteenveto ei ole saatavilla"
 
 #. js-lingui-id: DBC3t5
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Sunday"
@@ -28990,7 +29167,7 @@ msgid "Surprised"
 msgstr "Yllättynyt"
 
 #. js-lingui-id: LbFYgh
-#: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 msgid "Survives"
 msgstr "Säilyy"
 
@@ -29215,12 +29392,12 @@ msgstr "Välilehti {tabNumber}: {0}"
 #. js-lingui-id: OqZEsq
 #: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
 msgid "Tab actions"
-msgstr ""
+msgstr "Välilehden toiminnot"
 
 #. js-lingui-id: FFaDQL
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
 msgid "Tab name"
-msgstr ""
+msgstr "Välilehden nimi"
 
 #. js-lingui-id: zr20ox
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -29335,7 +29512,7 @@ msgid "Teammate's email {0}"
 msgstr "Tiimikaverin sähköposti {0}"
 
 #. js-lingui-id: g4mm2M
-#: src/modules/ai-chat/hooks/useAiChatEditor.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatEditor.ts
 #: src/modules/mention/hooks/useWorkspaceMemberMentionSearch.ts
 msgid "Teammates"
 msgstr "Tiimikaverit"
@@ -29346,7 +29523,7 @@ msgid "Teammates see who you talk to, not what you write."
 msgstr "Tiimikaverit näkevät, kenen kanssa keskustelet, eivät sitä, mitä kirjoitat."
 
 #. js-lingui-id: XpPpz7
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
 msgid "Tell the agent what to change"
 msgstr "Kerro agentille, mitä muutetaan"
 
@@ -29460,7 +29637,7 @@ msgid "Text Editor"
 msgstr "Tekstieditori"
 
 #. js-lingui-id: kv9l5H
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "That time is no longer available. Choose another time."
 msgstr "Tämä aika ei ole enää saatavilla. Valitse toinen aika."
 
@@ -29540,7 +29717,7 @@ msgid "The code of the Twenty partner who referred you"
 msgstr "Sinua suositelleen Twenty-kumppanin koodi"
 
 #. js-lingui-id: aXzQ65
-#: src/modules/ai-chat/components/AiChatCompactionIndicator.tsx
+#: src/modules/ai-chat/messages/components/AiChatCompactionIndicator.tsx
 msgid "The conversation has been compacted"
 msgstr "Keskustelu on tiivistetty"
 
@@ -29722,7 +29899,7 @@ msgid "The PDF is pre-signed by Twenty and executed with your legal entity and a
 msgstr "PDF on Twentyn esiallekirjoittama ja se viimeistellään oikeushenkilösi ja valtuutetun allekirjoittajan tiedoilla."
 
 #. js-lingui-id: iz994T
-#: src/modules/ai-chat/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "The priority record keeps its identity"
 msgstr "Ensisijainen tietue säilyttää identiteettinsä"
 
@@ -30108,6 +30285,16 @@ msgstr "Työtilasi on ottanut tämän sovelluksen rekisteröinnin omistukseensa"
 msgid "This billing period"
 msgstr "Tämä laskutusjakso"
 
+#. js-lingui-id: YDcfdL
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "This browser cannot show notifications"
+msgstr ""
+
+#. js-lingui-id: 47wc2N
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "This browser could not turn on notifications"
+msgstr ""
+
 #. js-lingui-id: XkzBBX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "This call is being recorded…"
@@ -30151,7 +30338,7 @@ msgid "This connection does not exist or is not available for this application."
 msgstr "Tätä yhteyttä ei ole olemassa tai se ei ole käytettävissä tälle sovellukselle."
 
 #. js-lingui-id: HWM4G8
-#: src/modules/ai-chat/components/AiChatEditorSection.tsx
+#: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
 #: src/modules/ai-chat/hooks/useAiChatSubscription.ts
 msgid "This conversation is no longer available."
 msgstr "Tämä keskustelu ei ole enää käytettävissä."
@@ -30172,12 +30359,12 @@ msgid "This device"
 msgstr "Tämä laite"
 
 #. js-lingui-id: GyVWfy
-#: src/modules/ai-chat/utils/getAiChatThreadSnoozeOptions.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 msgid "This evening"
 msgstr "Tänä iltana"
 
 #. js-lingui-id: i6mVT3
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
 msgid "This feature is part of the Organization plan"
 msgstr "Tämä ominaisuus kuuluu Organization-tilaukseen"
 
@@ -30348,7 +30535,7 @@ msgid "This record"
 msgstr "Tämä tietue"
 
 #. js-lingui-id: Wf1hgt
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalRecord.tsx
 msgid "This record could not be loaded."
 msgstr "Tätä tietuetta ei voitu ladata."
 
@@ -30358,19 +30545,14 @@ msgid "This record has been deleted"
 msgstr "Tämä tietue on poistettu"
 
 #. js-lingui-id: CS0+Ao
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalRecord.tsx
 msgid "This record no longer exists or you cannot see it."
 msgstr "Tätä tietuetta ei enää ole tai et voi nähdä sitä."
 
 #. js-lingui-id: TG0qsx
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "This record will be deleted:"
 msgstr "Tämä tietue poistetaan:"
-
-#. js-lingui-id: vbLBMd
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
-msgid "This role can {humanReadableAction} all records"
-msgstr "Tämä rooli voi {humanReadableAction} kaikki tietueet"
 
 #. js-lingui-id: BifDEA
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -30536,8 +30718,18 @@ msgstr "kolme"
 msgid "Three columns side by side"
 msgstr "Kolme saraketta vierekkäin"
 
+#. js-lingui-id: JayY0v
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "through {ruleCount} rules"
+msgstr ""
+
+#. js-lingui-id: AbJpHn
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "through 1 rule"
+msgstr ""
+
 #. js-lingui-id: kkDQ8m
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Thursday"
 msgstr "Torstai"
 
@@ -30567,7 +30759,7 @@ msgstr "Aikaformaatti"
 
 #. js-lingui-id: Mz2JN2
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsTimeZoneSelect.tsx
@@ -30652,7 +30844,7 @@ msgid "Title"
 msgstr "Otsikko"
 
 #. js-lingui-id: dMtLDE
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "to"
 msgstr "vastaanottaja"
 
@@ -30679,7 +30871,7 @@ msgid "Today"
 msgstr "Tänään"
 
 #. js-lingui-id: TNXmKt
-#: src/modules/ai-chat/hooks/useFormatAiChatThreadDate.ts
+#: src/modules/ai-chat/threads/hooks/useFormatAiChatThreadDate.ts
 msgid "Today, {time}"
 msgstr "Tänään klo {time}"
 
@@ -30709,11 +30901,6 @@ msgstr "Vaihda {0}-ryhmän näkyvyyttä"
 #: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
 msgid "Toggle all folders"
 msgstr "Vaihda kaikkien kansioiden tila"
-
-#. js-lingui-id: XArpJK
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
-msgid "Toggle all object permissions"
-msgstr "Vaihda kaikkien objektien oikeudet"
 
 #. js-lingui-id: MxmNZq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -30773,7 +30960,7 @@ msgid "Tomato"
 msgstr "Tomaatti"
 
 #. js-lingui-id: BRMXj0
-#: src/modules/ai-chat/utils/getAiChatThreadSnoozeOptions.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "Huomenna"
@@ -30998,6 +31185,7 @@ msgstr "Käännökset"
 
 #. js-lingui-id: R3UKip
 #: src/modules/inbox/components/NavigationDrawerInboxTriageSection.tsx
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 msgid "Triage"
 msgstr "Luokittelu"
 
@@ -31179,7 +31367,7 @@ msgstr "Tosi/epätosi"
 
 #. js-lingui-id: KDw4GX
 #: src/modules/activities/emails/components/EmailsCardErrorState.tsx
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
@@ -31216,7 +31404,7 @@ msgid "TTL"
 msgstr "TTL"
 
 #. js-lingui-id: G3myU+
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Tuesday"
 msgstr "Tiistai"
 
@@ -31394,7 +31582,7 @@ msgid "Type anything..."
 msgstr "Kirjoita jotain..."
 
 #. js-lingui-id: SILT51
-#: src/modules/ai-chat/components/internal/AiChatQuestionOtherOption.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionOtherOption.tsx
 msgid "Type your own answer here"
 msgstr "Kirjoita oma vastauksesi tähän"
 
@@ -31462,8 +31650,8 @@ msgstr "Määrittämätön"
 #. js-lingui-id: jqzUyM
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Unavailable"
@@ -31515,7 +31703,7 @@ msgid "Undisplayed data: max {maxItems} slices per chart."
 msgstr ""
 
 #. js-lingui-id: 9uI/rE
-#: src/modules/ai-chat/components/AiChatParticipantMentionBar.tsx
+#: src/modules/ai-chat/composer/components/AiChatParticipantMentionBar.tsx
 msgid "Undo"
 msgstr "Kumoa"
 
@@ -31530,7 +31718,7 @@ msgid "Unexpected error in cron expression parsing"
 msgstr "Odottamaton virhe cron-lausekkeen jäsentämisessä"
 
 #. js-lingui-id: 6Y7jUZ
-#: src/modules/ai-chat/components/AiChatThreadFollowersField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
 msgid "Unfollow for me"
 msgstr "Lopeta seuraaminen omalta osaltani"
 
@@ -31654,6 +31842,7 @@ msgstr "Tuntematon virhe"
 
 #. js-lingui-id: IU3aCs
 #: src/modules/ai-chat/hooks/useGetBrowsingContext.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
 msgid "Unknown field"
 msgstr "Tuntematon kenttä"
 
@@ -31668,7 +31857,7 @@ msgid "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
 msgstr "Tuntematon kenttä \"{fieldName}\" kentässä \"{relationFieldName}\""
 
 #. js-lingui-id: +K1Lj4
-#: src/modules/ai-chat/components/internal/AiChatFilePreview.tsx
+#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "Tuntematon tiedosto"
 
@@ -31685,7 +31874,7 @@ msgstr "Tuntematon jäsennysvirhe"
 
 #. js-lingui-id: lZSo+Q
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
-#: src/modules/ai-chat/utils/getAiChatMessageAuthor.ts
+#: src/modules/ai-chat/messages/utils/getAiChatMessageAuthor.ts
 msgid "Unknown sender"
 msgstr "Tuntematon lähettäjä"
 
@@ -31863,12 +32052,12 @@ msgid "Unsubscribed"
 msgstr "Tilaus peruttu"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/ai-chat/components/AiChatThreadStatusNotice.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "Tilauksen peruutus {eventTime}. Uudet viestit eivät tule postilaatikkoosi, ellet saa mainintaa."
 
 #. js-lingui-id: 7fkcOT
-#: src/modules/ai-chat/components/AiChatThreadActivityTime.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadActivityTime.tsx
 msgid "Unsubscribed {unsubscribedTime}"
 msgstr "Tilauksen peruutus {unsubscribedTime}"
 
@@ -31883,12 +32072,12 @@ msgid "Unsupported image format"
 msgstr "Tukematon kuvatiedostomuoto"
 
 #. js-lingui-id: I9zMVO
-#: src/modules/ai-chat/components/AiChatThreadActivityTime.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadActivityTime.tsx
 msgid "Until {snoozedUntilDay}"
 msgstr "Asti {snoozedUntilDay}"
 
 #. js-lingui-id: wja8aL
-#: src/modules/ai-chat/components/AiChatThreadTitle.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadTitle.tsx
 #: src/modules/inbox/components/InboxThreadListItem.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/components/LogConsoleRecordCell.tsx
@@ -31991,7 +32180,6 @@ msgstr ""
 
 #. js-lingui-id: Y8zko3
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "update"
 msgstr "päivitä"
 
@@ -32016,12 +32204,12 @@ msgid "Update {contextStoreNumberOfSelectedRecords} records"
 msgstr "Päivitä {contextStoreNumberOfSelectedRecords} tietuetta"
 
 #. js-lingui-id: AHNNTF
-#: src/modules/ai-chat/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Update {recordCount} {objectLabel}"
 msgstr "Päivitä {recordCount} {objectLabel}"
 
 #. js-lingui-id: ECfdor
-#: src/modules/ai-chat/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Update {selectedCount}"
 msgstr "Päivitä {selectedCount}"
 
@@ -32138,7 +32326,7 @@ msgstr "Päivitetään..."
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
 msgid "Upgrade"
 msgstr "Päivitys"
 
@@ -32196,7 +32384,7 @@ msgid "Upgrade to {planLabel}?"
 msgstr "Päivitä versioon {planLabel}?"
 
 #. js-lingui-id: ggd+Ee
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
 msgid "Upgrade to access"
 msgstr "Päivitä saadaksesi käyttöoikeuden"
 
@@ -33014,12 +33202,12 @@ msgid "View not shared"
 msgstr "Näkymää ei ole jaettu"
 
 #. js-lingui-id: K946OL
-#: src/modules/ai-chat/components/AiChatEditorSection.tsx
+#: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
 msgid "View only — You can read this conversation."
 msgstr "Vain katselu — Voit lukea tämän keskustelun."
 
 #. js-lingui-id: lD7M9Z
-#: src/modules/ai-chat/components/AiChatMessageReplyQuote.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReplyQuote.tsx
 msgid "View original message"
 msgstr "Näytä alkuperäinen viesti"
 
@@ -33167,7 +33355,7 @@ msgid "Waiting Children"
 msgstr "Odotettavat lapset"
 
 #. js-lingui-id: 7YxIQV
-#: src/modules/ai-chat/components/AiChatFormStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Waiting for a form to be filled in"
 msgstr "Odotetaan lomakkeen täyttämistä"
 
@@ -33182,7 +33370,7 @@ msgid "Waiting for permission"
 msgstr "Odotetaan käyttöoikeutta"
 
 #. js-lingui-id: /gO/m8
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Waiting for your approval"
 msgstr "Odotetaan hyväksyntääsi"
 
@@ -33465,7 +33653,7 @@ msgid "Websites whose iframe widgets can ask members for their microphone or cam
 msgstr "Verkkosivustot, joiden iframe-pienoisohjelmat voivat pyytää jäseniltä käyttöoikeutta mikrofoniin tai kameraan. Muutokset tulevat voimaan sivun uudelleenlatauksen jälkeen."
 
 #. js-lingui-id: VAcXNz
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Wednesday"
 msgstr "Keskiviikko"
 
@@ -33528,6 +33716,11 @@ msgstr "Tervetuloa, {workspaceName}."
 msgid "What {applicationName} adds to your workspace"
 msgstr "Mitä {applicationName} lisää työtilaasi"
 
+#. js-lingui-id: 256yw5
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "What {roleLabel} can do on {objectLabelPlural} matching this rule."
+msgstr ""
+
 #. js-lingui-id: 1rpyKy
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "What AI model should your agent run on"
@@ -33589,8 +33782,13 @@ msgstr "Mitä työkaluja tämä agentti voi käyttää tehtävässään"
 msgid "Whatsapp"
 msgstr "WhatsApp"
 
+#. js-lingui-id: 1ZF9KQ
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionLogicalOperatorCell.tsx
+msgid "When"
+msgstr ""
+
 #. js-lingui-id: 8ssTdk
-#: src/modules/ai-chat/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 msgid "When {assistantName} finishes"
 msgstr "Kun {assistantName} valmistuu"
 
@@ -33657,7 +33855,6 @@ msgstr "Kun kokeilujaksosi päättyy, sinulta veloitetaan {priceLabel}."
 #. js-lingui-id: YvwwqC
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell.tsx
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelLogicalOperatorCell.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOperatorCell.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell.tsx
 msgid "Where"
 msgstr "Missä"
@@ -33681,6 +33878,12 @@ msgstr "Missä palvelin sijaitsee"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Whether this model supports chain-of-thought reasoning"
 msgstr "Tukeeko tämä malli ajatusketju-päättelyä"
+
+#. js-lingui-id: 5WnHkc
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
+msgid "Which {objectLabelPlural} this rule applies to. Me is the person viewing."
+msgstr ""
 
 #. js-lingui-id: UbN9B0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -33889,22 +34092,22 @@ msgid "Workflows, functions and agents that act for your team."
 msgstr "Työnkulut, funktiot ja agentit, jotka toimivat tiimisi puolesta."
 
 #. js-lingui-id: OskBrZ
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Working days"
 msgstr "Työpäivät"
 
 #. js-lingui-id: zBOlTP
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Working hours"
 msgstr "Työajat"
 
 #. js-lingui-id: Gfrltr
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Working hours end"
 msgstr "Työajan päättyminen"
 
 #. js-lingui-id: LYfzu/
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Working hours start"
 msgstr "Työajan alkaminen"
 
@@ -33933,7 +34136,6 @@ msgstr "Työajan alkaminen"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
@@ -33991,7 +34193,6 @@ msgstr "Työajan alkaminen"
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -34183,7 +34384,7 @@ msgid "Write a message"
 msgstr "Kirjoita viesti"
 
 #. js-lingui-id: PxYBOj
-#: src/modules/ai-chat/hooks/useAiChatEditor.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatEditor.ts
 msgid "Write a message..."
 msgstr "Kirjoita viesti..."
 
@@ -34198,7 +34399,7 @@ msgid "Write some instructions"
 msgstr "Kirjoita ohjeita"
 
 #. js-lingui-id: P28Nzv
-#: src/modules/ai-chat/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
 msgid "Write the email"
 msgstr "Kirjoita sähköposti"
 
@@ -34248,7 +34449,7 @@ msgid "year"
 msgstr "vuosi"
 
 #. js-lingui-id: 3PAU4M
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 #: src/modules/ui/input/components/internal/date/components/DatePickerCalendar.tsx
@@ -34309,8 +34510,8 @@ msgstr "Eilen"
 
 #. js-lingui-id: kWJmRL
 #: src/modules/activities/timeline-activities/utils/getTimelineActivityAuthorFullName.ts
-#: src/modules/ai-chat/components/AiChatComposerQuote.tsx
-#: src/modules/ai-chat/components/AiChatMessageReplyQuote.tsx
+#: src/modules/ai-chat/composer/components/AiChatComposerQuote.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReplyQuote.tsx
 #: src/modules/ai-chat/utils/getAiChatSenderLabel.ts
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
@@ -34492,6 +34693,8 @@ msgstr "Korttisi tallennettiin, mutta maksu vaatii edelleen huomiota."
 #. js-lingui-id: OD3Fzl
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerSignInSection.tsx
 msgid "Your connections could not be loaded. Check your connection and try again."
 msgstr "Yhteyksiäsi ei voitu ladata. Tarkista yhteytesi ja yritä uudelleen."
 
@@ -34531,7 +34734,7 @@ msgid "Your handler receives this object. The body is empty because GET requests
 msgstr "Käsittelijäsi saa tämän objektin. body on tyhjä, koska GET-pyynnöt eivät sisällä tietosisältöä."
 
 #. js-lingui-id: HCqgJ0
-#: src/modules/ai-chat/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 msgid "Your inbox"
 msgstr "Saapuneet"
 

@@ -13,10 +13,12 @@ import {
 } from '@/ai-chat/threads/states/aiChatThreadVisitFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { closeAiChatThreadWebPushNotifications } from '@/ai-chat/threads/utils/closeAiChatThreadWebPushNotifications';
 import {
   AgentChatInboxAction,
   UpdateAgentChatThreadInboxStateDocument,
 } from '~/generated-metadata/graphql';
+import { logError } from '~/utils/logError';
 
 // On the thread on screen, a chat marked unread stays unread until the member
 // leaves it, and its unread line moves to the first message from someone else
@@ -72,6 +74,13 @@ export const useUpdateAiChatThreadStatus = () => {
       const getThreadLastActivityAt = (threadId: string) =>
         store.get(aiChatThreadRecordFamilySelector.selectorFamily(threadId))
           ?.lastActivityAt ?? null;
+
+      if (
+        action === AgentChatInboxAction.READ ||
+        action === AgentChatInboxAction.ARCHIVE
+      ) {
+        closeAiChatThreadWebPushNotifications(threadIds).catch(logError);
+      }
 
       if (action === AgentChatInboxAction.MOVE_TO_INBOX) {
         store.set(

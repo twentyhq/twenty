@@ -27,6 +27,7 @@ export const fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem =
         navigationMenuItemManifest.viewUniversalIdentifier ?? null,
       link: navigationMenuItemManifest.link ?? null,
       nativePageKey: navigationMenuItemManifest.nativePageKey ?? null,
+      builtInSectionKey: navigationMenuItemManifest.builtInSectionKey ?? null,
       parentUniversalIdentifier:
         normalizeNavigationMenuItemManifest(navigationMenuItemManifest)
           .parentUniversalIdentifier ?? null,
@@ -39,6 +40,8 @@ export const fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem =
       agentUniversalIdentifier: null,
       targetRecordId: null,
       userWorkspaceId: null,
+      isActive: true,
+      overrides: null,
       createdAt: now,
       updatedAt: now,
     };

@@ -37,6 +37,7 @@ import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/wo
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 
 const MAX_OBJECTS_PER_BATCH_UPDATE = 100;
 
@@ -668,9 +669,19 @@ export class ObjectMetadataService {
       (item): item is FlatNavigationMenuItem =>
         isDefined(item) && !isDefined(item.userWorkspaceId),
     );
+    const workspaceSection = workspaceLevelItems.find(
+      (item) =>
+        item.universalIdentifier ===
+        STANDARD_NAVIGATION_MENU_ITEMS.workspaceSection.universalIdentifier,
+    );
+    const siblingItems = isDefined(workspaceSection)
+      ? workspaceLevelItems.filter(
+          (item) => item.parentId === workspaceSection.id,
+        )
+      : workspaceLevelItems;
     const nextPosition =
-      workspaceLevelItems.length > 0
-        ? Math.max(...workspaceLevelItems.map((item) => item.position)) + 1
+      siblingItems.length > 0
+        ? Math.max(...siblingItems.map((item) => item.position)) + 1
         : 0;
 
     const newId = v4();
@@ -687,8 +698,8 @@ export class ObjectMetadataService {
         objectMetadata.universalIdentifier,
       viewId: null,
       viewUniversalIdentifier: null,
-      parentId: null,
-      parentUniversalIdentifier: null,
+      parentId: workspaceSection?.id ?? null,
+      parentUniversalIdentifier: workspaceSection?.universalIdentifier ?? null,
       pageLayoutId: null,
       pageLayoutUniversalIdentifier: null,
       agentChatChannelId: null,
@@ -700,6 +711,7 @@ export class ObjectMetadataService {
       name: null,
       link: null,
       nativePageKey: null,
+      builtInSectionKey: null,
       icon: null,
       color: null,
       position: nextPosition,
@@ -707,6 +719,8 @@ export class ObjectMetadataService {
       applicationId: workspaceCustomApplicationId,
       applicationUniversalIdentifier:
         workspaceCustomApplicationUniversalIdentifier,
+      isActive: true,
+      overrides: null,
       createdAt: now,
       updatedAt: now,
     };

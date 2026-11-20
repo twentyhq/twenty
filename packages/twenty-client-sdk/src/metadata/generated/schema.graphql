@@ -27,6 +27,7 @@ type Agent {
   id: UUID!
   isActive: Boolean!
   isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
+  isPrivate: Boolean!
   isSystem: Boolean!
   label: String!
   modelConfiguration: JSON
@@ -1109,20 +1110,12 @@ enum BillingEntitlementKey {
   VALIDATION_RULES
 }
 
-type BillingLicensedProduct implements BillingProductDTO {
+type BillingLicensedProduct {
   description: String!
   images: [String!]
   metadata: BillingProductMetadata!
   name: String!
   prices: [BillingPriceLicensed!]
-}
-
-type BillingMeteredProduct implements BillingProductDTO {
-  description: String!
-  images: [String!]
-  metadata: BillingProductMetadata!
-  name: String!
-  prices: [BillingPriceMetered!]
 }
 
 type BillingPartnerCode {
@@ -1140,7 +1133,6 @@ type BillingPlan {
   downgradePlanKeys: [BillingPlanKey!]!
   isCheckoutDefault: Boolean!
   isSellable: Boolean!
-  meteredProducts: [BillingMeteredProduct!]!
   planKey: BillingPlanKey!
   resourceCreditProducts: [BillingLicensedProduct!]!
   upgradePlanKeys: [BillingPlanKey!]!
@@ -1157,23 +1149,9 @@ enum BillingPlanKey {
 type BillingPriceLicensed {
   creditAmount: Float
   isSellable: Boolean!
-  priceUsageType: BillingUsageType!
   recurringInterval: SubscriptionInterval!
   stripePriceId: String!
   unitAmount: Float!
-}
-
-type BillingPriceMetered {
-  priceUsageType: BillingUsageType!
-  recurringInterval: SubscriptionInterval!
-  stripePriceId: String!
-  tiers: [BillingPriceTier!]!
-}
-
-type BillingPriceTier {
-  flatAmount: Float
-  unitAmount: Float
-  upTo: Float
 }
 
 type BillingProduct {
@@ -1183,23 +1161,16 @@ type BillingProduct {
   name: String!
 }
 
-interface BillingProductDTO {
-  description: String!
-  images: [String!]
-  metadata: BillingProductMetadata!
-  name: String!
-}
-
 """The different billing products available"""
 enum BillingProductKey {
+  APPLICATION
   BASE_PRODUCT
   RESOURCE_CREDIT
 }
 
 type BillingProductMetadata {
   isLegacy: String
-  planKey: BillingPlanKey!
-  priceUsageBased: BillingUsageType!
+  planKey: BillingPlanKey
   productKey: BillingProductKey!
 }
 
@@ -1240,7 +1211,7 @@ enum BillingSubscriptionCollectionMethod {
 }
 
 type BillingSubscriptionItem {
-  billingProduct: BillingProductDTO!
+  billingProduct: BillingProduct!
   creditAmount: Float
   hasReachedCurrentPeriodCap: Boolean!
   id: UUID!
@@ -1273,17 +1244,13 @@ type BillingUpdate {
   currentBillingSubscription: BillingSubscription!
 }
 
-enum BillingUsageType {
-  LICENSED
-  METERED
-}
-
 input BooleanFieldComparison {
   is: Boolean
   isNot: Boolean
 }
 
 type CalendarChannel {
+  connectedAccount: ConnectedAccountPublicDTO
   connectedAccountId: UUID!
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy!
   createdAt: DateTime!
@@ -1506,6 +1473,7 @@ type ClientConfig {
   serverUrl: String!
   signInPrefilled: Boolean!
   support: Support!
+  webPushVapidPublicKey: String!
 }
 
 type ClientConfigMaintenanceMode {
@@ -1631,6 +1599,7 @@ input CreateAgentInput {
   avatarShape: String
   description: String
   icon: String
+  isPrivate: Boolean
   label: String!
   modelConfiguration: JSON
   modelId: String!
@@ -1814,6 +1783,7 @@ input CreateMessageSuppressionInput {
 input CreateNavigationMenuItemInput {
   agentChatChannelId: UUID
   agentId: UUID
+  builtInSectionKey: String
   color: String
   folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
@@ -3792,8 +3762,10 @@ type Mutation {
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   updateCommandMenuItem(input: UpdateCommandMenuItemInput!): CommandMenuItem!
   updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
+  updateFocusedTab(input: UpdateFocusedTabInput!): Boolean!
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
   updateGettingStarted(input: UpdateGettingStartedInput!): GettingStartedProgress!
+  updateInboxNotificationSettings(input: UpdateInboxNotificationSettingsInput!): UserWorkspace!
   updateLabPublicFeatureFlag(input: UpdateLabPublicFeatureFlagInput!): FeatureFlag!
   updateManyNavigationMenuItems(inputs: [UpdateOneNavigationMenuItemInput!]!): [NavigationMenuItem!]!
   updateManyObjects(inputs: [UpdateOneObjectInput!]!): [Object!]!
@@ -3847,6 +3819,7 @@ type Mutation {
   upsertPermissionFlags(upsertPermissionFlagsInput: UpsertPermissionFlagsInput!): [RolePermissionFlag!]!
   upsertRowLevelPermissionRules(input: UpsertRowLevelPermissionRulesInput!): UpsertRowLevelPermissionRulesResult!
   upsertViewWidget(input: UpsertViewWidgetInput!): View!
+  upsertWebPushSubscription(input: UpsertWebPushSubscriptionInput!): Boolean!
   validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
   verifyEmailAndGetLoginToken(captchaToken: String, email: String!, emailVerificationToken: String!, origin: String!): VerifyEmailAndGetLoginToken!
   verifyEmailAndGetWorkspaceAgnosticToken(captchaToken: String, email: String!, emailVerificationToken: String!): AvailableWorkspacesAndAccessTokens!
@@ -3863,11 +3836,13 @@ type NavigationMenuItem {
   agentChatChannelId: UUID
   agentId: UUID
   applicationId: UUID
+  builtInSectionKey: String
   color: String
   createdAt: DateTime!
   folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
   id: UUID!
+  isActive: Boolean!
   link: String
   name: String
   nativePageKey: String
@@ -4255,6 +4230,7 @@ enum PermissionFlagType {
   LAYOUTS
   MARKETPLACE_APPS
   PROFILE_INFORMATION
+  READ_PRIVATE_CHANNELS
   ROLES
   SECURITY
   SEND_EMAIL_TOOL
@@ -4341,6 +4317,14 @@ type PublicApplicationRegistration {
   websiteUrl: String
 }
 
+type PublicCalendarChannel {
+  connectedAccount: ConnectedAccountPublicDTO
+  connectedAccountId: UUID!
+  handle: String!
+  id: UUID!
+  visibility: CalendarChannelVisibility!
+}
+
 type PublicConnectionParametersOutput {
   connectionSecurity: EmailConnectionSecurity
   host: String!
@@ -4422,6 +4406,7 @@ type Query {
   billingPartnerCode: BillingPartnerCode!
   billingPlans: [BillingPlan!]!
   billingPortalSession(forPaymentMethodUpdate: Boolean, returnUrlPath: String): BillingSession!
+  calendarChannels: [PublicCalendarChannel!]!
   callRecordingIdForCalendarEvent(calendarEventId: UUID!): UUID
   chatMessages(agentUniversalIdentifier: UUID, threadId: UUID, threadKey: String): [AgentMessage!]!
   chatStreamCatchupChunks(agentUniversalIdentifier: UUID, threadId: UUID, threadKey: String): ChatStreamCatchupChunks!
@@ -5390,6 +5375,7 @@ input UpdateAgentInput {
   icon: String
   id: UUID!
   isActive: Boolean
+  isPrivate: Boolean
   label: String
   modelConfiguration: JSON
   modelId: String
@@ -5497,6 +5483,11 @@ input UpdateFieldInput {
   universalIdentifier: String
 }
 
+input UpdateFocusedTabInput {
+  isFocused: Boolean!
+  tabId: String!
+}
+
 input UpdateFrontComponentInput {
   """The id of the front component to update"""
   id: UUID!
@@ -5516,6 +5507,11 @@ input UpdateGettingStartedInput {
   isHidden: Boolean
   selectedStepActionKey: GettingStartedStepActionKey
   snoozedUntil: String
+}
+
+input UpdateInboxNotificationSettingsInput {
+  inboxNotificationLevel: String!
+  isInboxNotificationPreviewEnabled: Boolean!
 }
 
 input UpdateLabPublicFeatureFlagInput {
@@ -5592,6 +5588,7 @@ input UpdateNavigationMenuItemInput {
   color: String
   folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
+  isActive: Boolean
   link: String
   name: String
   pageLayoutId: UUID
@@ -6089,6 +6086,13 @@ input UpsertViewWidgetViewSortInput {
   id: UUID
 }
 
+input UpsertWebPushSubscriptionInput {
+  browserAuthSecret: String!
+  browserPublicKey: String!
+  endpoint: String!
+  vapidPublicKey: String!
+}
+
 type UsageAnalytics {
   periodEnd: DateTime!
   periodStart: DateTime!
@@ -6313,7 +6317,9 @@ type UserWorkspace {
   createdAt: DateTime!
   deletedAt: DateTime
   id: UUID!
+  inboxNotificationLevel: String
   isImpersonating: Boolean
+  isInboxNotificationPreviewEnabled: Boolean
   locale: String!
   objectRecordsPermissions: [ObjectRecordsPermissions!]
   permissionFlags: [PermissionFlagType!]

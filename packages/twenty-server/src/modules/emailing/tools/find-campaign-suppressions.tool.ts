@@ -31,6 +31,7 @@ const findCampaignSuppressionsInputSchema = z.object({
 
 @DefineTool({
   name: 'find_campaign_suppressions',
+  isReadOnly: true,
   category: ToolCategory.ACTION,
   accessPolicy: MESSAGE_CAMPAIGN_READ_ACCESS_POLICY,
   description:

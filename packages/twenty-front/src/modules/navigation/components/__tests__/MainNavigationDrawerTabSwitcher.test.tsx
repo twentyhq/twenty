@@ -62,6 +62,7 @@ const salesTab: NamedNavigationMenuItem = {
   name: 'Sales',
   icon: 'IconBriefcase',
   position: 0,
+  isActive: true,
   createdAt: '2026-01-01',
   updatedAt: '2026-01-01',
 };

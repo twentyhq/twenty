@@ -327,7 +327,7 @@ export class ApplicationRegistrationService {
         ),
       );
 
-    if (isPreInstalledOnly === true) {
+    if (isPreInstalledOnly) {
       queryBuilder.andWhere('registration."isPreInstalled" = true');
     }
 

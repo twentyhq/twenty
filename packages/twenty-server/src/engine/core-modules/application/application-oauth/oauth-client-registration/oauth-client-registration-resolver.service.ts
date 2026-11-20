@@ -16,7 +16,7 @@ import { type ResolvedOAuthClient } from 'src/engine/core-modules/application/ap
 import { toClientIdMetadataDocumentRegistrationFields } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/to-client-id-metadata-document-registration-fields.util';
 import { PUBLIC_OAUTH_CLIENT_REGISTRATION_VALUES } from 'src/engine/core-modules/application/application-oauth/constants/public-oauth-client-registration-values.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
-import { findMarketplaceBuiltInApplication } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-built-in-application.util';
+import { findMarketplaceConnectListing } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-connect-listing.util';
 import { type VerifiedOAuthClient } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/types/verified-oauth-client.type';
 import { findVerifiedOAuthClientForClientIdMetadataDocumentUrl } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/find-verified-oauth-client-for-client-id-metadata-document-url.util';
 import { isVerifiedOAuthClientRegistration } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/is-verified-oauth-client-registration.util';
@@ -191,10 +191,10 @@ export class OAuthClientRegistrationResolverService {
   private async findOrCreateVerifiedClientRegistrationOrThrow({
     universalIdentifier,
   }: Pick<VerifiedOAuthClient, 'universalIdentifier'>): Promise<void> {
-    const marketplaceBuiltInApplication =
-      findMarketplaceBuiltInApplication(universalIdentifier);
+    const marketplaceConnectListing =
+      findMarketplaceConnectListing(universalIdentifier);
 
-    if (!isDefined(marketplaceBuiltInApplication)) {
+    if (!isDefined(marketplaceConnectListing)) {
       throw new ApplicationException(
         `Verified OAuth client ${universalIdentifier} has no store card`,
         ApplicationExceptionCode.APPLICATION_NOT_FOUND,
@@ -205,7 +205,7 @@ export class OAuthClientRegistrationResolverService {
       await this.applicationRegistrationService.findOrCreateBuiltInRegistration(
         {
           universalIdentifier,
-          name: marketplaceBuiltInApplication.name,
+          name: marketplaceConnectListing.name,
           oAuthScopes: [...ALL_OAUTH_SCOPES],
         },
       );

@@ -8,7 +8,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
 import { ApplicationContentService } from 'src/engine/core-modules/application/application-content/application-content.service';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
-import { findMarketplaceBuiltInApplication } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-built-in-application.util';
+import { findMarketplaceConnectListing } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-connect-listing.util';
 import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
@@ -38,6 +38,8 @@ import { SettingsMenuItemDTO } from 'src/engine/metadata-modules/settings-menu-i
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { isAgentVisibleToUser } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-agent-visible-to-user.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
@@ -135,13 +137,13 @@ export class ApplicationResolver {
       return bundledLogoUrl;
     }
 
-    const marketplaceBuiltInApplication = findMarketplaceBuiltInApplication(
+    const marketplaceConnectListing = findMarketplaceConnectListing(
       application.universalIdentifier,
     );
 
-    return isDefined(marketplaceBuiltInApplication)
+    return isDefined(marketplaceConnectListing)
       ? new URL(
-          marketplaceBuiltInApplication.logoPath,
+          marketplaceConnectListing.logoPath,
           this.domainServerConfigService.getBaseUrl(),
         ).toString()
       : null;
@@ -153,7 +155,7 @@ export class ApplicationResolver {
     application: Pick<ApplicationDTO, 'description' | 'universalIdentifier'>,
   ): string | null {
     return (
-      findMarketplaceBuiltInApplication(application.universalIdentifier)
+      findMarketplaceConnectListing(application.universalIdentifier)
         ?.description ??
       application.description ??
       null
@@ -224,13 +226,15 @@ export class ApplicationResolver {
   }
 
   @ResolveField(() => [AgentDTO])
-  agents(
+  async agents(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
     @AuthWorkspace()
     { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ) {
     if (
       !canCallerReachApplication({
@@ -243,10 +247,14 @@ export class ApplicationResolver {
       return [];
     }
 
-    return context.loaders.agentsByApplicationIdLoader.load({
+    const agents = await context.loaders.agentsByApplicationIdLoader.load({
       workspaceId,
       applicationId: application.id,
     });
+
+    return agents.filter((agent) =>
+      isAgentVisibleToUser({ agent, userWorkspaceId }),
+    );
   }
 
   @ResolveField(() => [FrontComponentDTO])

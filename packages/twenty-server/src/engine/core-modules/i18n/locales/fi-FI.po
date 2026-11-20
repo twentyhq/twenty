@@ -116,6 +116,11 @@ msgstr "{hostnameCount} isäntänimeä löytyi toimialueelle \"{domainName}\". O
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{aggregateFieldLabel}-kohteen {operationLabel}"
 
+#. js-lingui-id: nzKj4z
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "{senderName} in {threadLabel}"
+msgstr ""
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -134,6 +139,12 @@ msgstr "24 h"
 msgid "A {type} navigation menu item cannot be placed inside a {parentType}"
 msgstr "{type}-tyyppistä navigointivalikon kohdetta ei voi sijoittaa kohteen {parentType} sisään"
 
+#. js-lingui-id: /y6iPL
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+msgid "A {type} navigation menu item cannot be placed inside a built-in section"
+msgstr "{type}-tyyppistä navigointivalikon kohdetta ei voi sijoittaa sisäänrakennetun osion sisään"
+
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "A backup code was used to sign in to your account"
@@ -143,6 +154,12 @@ msgstr "Varakoodia käytettiin tilillesi kirjautumiseen"
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
 msgid "A built-in provider already uses this name. Choose another label."
 msgstr "Sisäänrakennettu palveluntarjoaja käyttää jo tätä nimeä. Valitse toinen nimi."
+
+#. js-lingui-id: paqbMF
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A builtInSectionKey is only allowed on SECTION type"
+msgstr "builtInSectionKey on sallittu vain SECTION-tyypille"
 
 #. js-lingui-id: RsTRse
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -487,7 +504,7 @@ msgstr "Tämän niminen taito on jo olemassa."
 #. js-lingui-id: ESdD/i
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "A sort can only use a related record field on a many-to-one relation field"
-msgstr ""
+msgstr "Lajittelu voi käyttää liittyvän tietueen kenttää vain monta-yhteen-suhdekentässä"
 
 #. js-lingui-id: IAfaPi
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-create-side-effect-handler.service.ts
@@ -552,6 +569,12 @@ msgstr "AGENT_CHAT_CHANNEL-tyypille vaaditaan kelvollinen agentChatChannelUniver
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid agentUniversalIdentifier is required for AGENT type"
 msgstr "AGENT-tyypille vaaditaan kelvollinen agentUniversalIdentifier-tunniste"
+
+#. js-lingui-id: s59CSo
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid builtInSectionKey is required for a built-in SECTION"
+msgstr "Sisäänrakennettu SECTION edellyttää kelvollista builtInSectionKey-arvoa"
 
 #. js-lingui-id: Dwa/Bm
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -1576,13 +1599,13 @@ msgstr "Sovellusmuuttujan laajuutta ei voi muuttaa luomisen jälkeen"
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr "Sovellukset eivät voi päivittää näitä kenttiä: {fieldsList}."
 
-#. js-lingui-id: irwO8L
-#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
-#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
-#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
-#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
-msgid "Apply or publish the application again to restore its frontend component sources."
-msgstr "Ota sovellus uudelleen käyttöön tai julkaise se uudelleen palauttaaksesi sen käyttöliittymäkomponenttien lähteet."
+#. js-lingui-id: Hvp/vc
+#: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
+#: src/engine/core-modules/application/application-manifest/utils/validate-application-source-inventory-or-throw.util.ts
+msgid "Apply or publish the application again to restore its application sources."
+msgstr "Ota sovellus käyttöön tai julkaise se uudelleen palauttaaksesi sen sovelluslähteet."
 
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -1628,7 +1651,7 @@ msgid "Apps preferences"
 msgstr "Sovellusten asetukset"
 
 #. js-lingui-id: naCW6Z
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "April"
 msgstr "huhtikuu"
 
@@ -1868,7 +1891,7 @@ msgid "Audit logs require ClickHouse to be configured."
 msgstr "Tarkastuslokit edellyttävät, että ClickHouse on määritetty."
 
 #. js-lingui-id: DBHTm/
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "August"
 msgstr "elokuu"
 
@@ -2107,6 +2130,11 @@ msgstr "Tuo yrityksesi, yhteyshenkilösi ja kauppasi mistä tahansa CRM-viennist
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Bring your team into Twenty."
 msgstr "Tuo tiimisi Twentyyn."
+
+#. js-lingui-id: pYD4lD
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "Browser notifications were set up with an outdated key. Reload the page to set them up again."
+msgstr ""
 
 #. js-lingui-id: 8pSVh1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -4268,7 +4296,7 @@ msgid "Deals created this month"
 msgstr "Tässä kuussa luodut kaupat"
 
 #. js-lingui-id: r6zgGo
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "December"
 msgstr "joulukuu"
 
@@ -5542,7 +5570,7 @@ msgid "Feature configuration not found."
 msgstr "Ominaisuuden määritystä ei löytynyt."
 
 #. js-lingui-id: 4lgLew
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "February"
 msgstr "helmikuu"
 
@@ -6106,6 +6134,11 @@ msgstr "Lomakkeen toimintokentillä on oltava ainutlaatuiset nimet"
 msgid "Form action must have at least one field"
 msgstr "Lomakkeen toiminnolla on oltava vähintään yksi kenttä"
 
+#. js-lingui-id: CjVkbV
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "Former member"
+msgstr ""
+
 #. js-lingui-id: JRr+QW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
 msgid "Forwarded request headers must be a list of header names"
@@ -6122,7 +6155,7 @@ msgid "forwardedRequestHeaders must be an array of strings"
 msgstr "forwardedRequestHeadersin on oltava merkkijonotaulukko"
 
 #. js-lingui-id: 39y5bn
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Friday"
 msgstr "Perjantai"
 
@@ -6295,6 +6328,11 @@ msgstr "Funktiota ei löytynyt."
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function provider is busy. Try again in a few minutes."
 msgstr "Funktiopalveluntarjoaja on varattu. Yritä uudelleen muutaman minuutin kuluttua."
+
+#. js-lingui-id: xSrz+r
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Functions cannot run while the workspace is suspended."
+msgstr "Funktiot eivät voi suorittaa, kun työtila on keskeytetty."
 
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -7147,7 +7185,7 @@ msgstr ""
 
 #. js-lingui-id: xxcw3g
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Invalid filter: \"{relationFieldName}\" can only reference the record the relation filter starts from"
 msgstr "Virheellinen suodatin: \"{relationFieldName}\" voi viitata vain tietueeseen, josta relaation suodatus alkaa"
 
@@ -7182,7 +7220,7 @@ msgid "Invalid filter: filtering by relation field \"{key}\" is not supported"
 msgstr "Virheellinen suodatin: relaatiokentän \"{key}\" mukaan suodattamista ei tueta"
 
 #. js-lingui-id: wi8qrB
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Invalid filter: the field to compare with was not found"
 msgstr "Virheellinen suodatin: verrattavaa kenttää ei löytynyt"
 
@@ -7881,7 +7919,7 @@ msgid "IS_CONFIG_VARIABLES_IN_DB_ENABLED is false on your server. Please add ENT
 msgstr "IS_CONFIG_VARIABLES_IN_DB_ENABLED on palvelimellasi asetettu arvoon false. Lisää ENTERPRISE_KEY manuaalisesti tiedostoon .env."
 
 #. js-lingui-id: rjyWPb
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "January"
 msgstr "Tammikuu"
 
@@ -7926,7 +7964,7 @@ msgid "JSON value for event details"
 msgstr "JSON-arvo tapahtuman yksityiskohtia varten"
 
 #. js-lingui-id: u4ex5r
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "July"
 msgstr "Heinäkuu"
 
@@ -7961,7 +7999,7 @@ msgid "Junction target field not found"
 msgstr "Liitoksen kohdekenttää ei löytynyt"
 
 #. js-lingui-id: zeEQd/
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "June"
 msgstr "Kesäkuu"
 
@@ -8474,7 +8512,7 @@ msgid "Many validation errors"
 msgstr "Useita validointivirheitä"
 
 #. js-lingui-id: hg6l4j
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "March"
 msgstr "Maaliskuu"
 
@@ -8550,7 +8588,7 @@ msgid "maxNumberOfValues must be defined in settings and be a number greater tha
 msgstr "maxNumberOfValues on määriteltävä asetuksissa ja sen on oltava luku, joka on suurempi kuin 0 ja pienempi tai yhtä suuri kuin {FILES_FIELD_MAX_NUMBER_OF_VALUES}"
 
 #. js-lingui-id: 3JzsDb
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "May"
 msgstr "Toukokuu"
 
@@ -9196,7 +9234,7 @@ msgid "Model ID cannot be empty"
 msgstr "Mallin tunnus ei voi olla tyhjä"
 
 #. js-lingui-id: hty0d5
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Monday"
 msgstr "Maanantai"
 
@@ -9388,6 +9426,11 @@ msgstr "Uusi"
 msgid "New backup codes were generated for your account"
 msgstr "Tilillesi luotiin uudet varakoodit"
 
+#. js-lingui-id: hIQkLb
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "New chat"
+msgstr ""
+
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -9403,6 +9446,11 @@ msgstr "Uusi keskustelu"
 #. js-lingui-id: TYhxR+
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "New email must be different from current email"
+msgstr ""
+
+#. js-lingui-id: mTBAsF
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "New message"
 msgstr ""
 
 #. js-lingui-id: nXXBKB
@@ -9592,12 +9640,6 @@ msgstr "Ei tallennettu"
 msgid "Not Set"
 msgstr "Ei asetettu"
 
-#. js-lingui-id: H1P40W
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Not started"
-msgstr "Ei aloitettu"
-
 #. js-lingui-id: O2bgDc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -9732,7 +9774,7 @@ msgid "NoteTarget target"
 msgstr "NoteTargetin kohde"
 
 #. js-lingui-id: t9QlBd
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "November"
 msgstr "Marraskuu"
 
@@ -9994,7 +10036,7 @@ msgid "Objects, fields and views adapt to the way your team works."
 msgstr "Objektit, kentät ja näkymät mukautuvat tiimisi työskentelytapaan."
 
 #. js-lingui-id: dzQfDY
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "October"
 msgstr "Lokakuu"
 
@@ -10042,7 +10084,7 @@ msgstr "Vain luonnos- tai ajoitettu kampanja voidaan lähettää."
 #. js-lingui-id: 82FEG0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "Only a field linking to one record can be sorted by a field of that record"
-msgstr ""
+msgstr "Vain yhteen tietueeseen linkittyvä kenttä voidaan lajitella kyseisen tietueen kentän mukaan"
 
 #. js-lingui-id: v581MX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
@@ -10063,6 +10105,11 @@ msgstr "Vain palvelinylläpitäjä voi hallita tämän jäsenen palautuskoodeja.
 #: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only a workspace member can change who sees a workflow"
 msgstr "Vain työtilan jäsen voi muuttaa sitä, kuka näkee työnkulun"
+
+#. js-lingui-id: yT1QOm
+#: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
+msgid "Only a workspace member can create a private agent."
+msgstr "Vain työtilan jäsen voi luoda yksityisen agentin."
 
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -10114,6 +10161,12 @@ msgstr "Välilehdellä sallitaan vain yksi täyskorkea pienoisohjelma"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers-caller-application.util.ts
 msgid "Only the application that owns this agent can change its triggers"
 msgstr "Vain tämän agentin omistava sovellus voi muuttaa sen laukaisimia"
+
+#. js-lingui-id: 2ztmK7
+#: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Only the member who owns an agent can change who sees it."
+msgstr "Vain agentin omistava jäsen voi muuttaa sitä, kuka näkee sen."
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
@@ -11499,12 +11552,12 @@ msgstr "Tallenteen yhteenveto"
 #. js-lingui-id: vyBbUK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "Records cannot be sorted by a deactivated field"
-msgstr ""
+msgstr "Tietueita ei voi lajitella poistetun käytöstä kentän mukaan"
 
 #. js-lingui-id: PbYQoA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "Records cannot be sorted by a relation of the related record"
-msgstr ""
+msgstr "Tietueita ei voi lajitella liittyvän tietueen suhteen mukaan"
 
 #. js-lingui-id: BlbWk5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -11673,20 +11726,20 @@ msgid "Relation field target metadata not found"
 msgstr "Suhteen kenttään kohdistettuja metatietoja ei löytynyt"
 
 #. js-lingui-id: HmNKeM
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Relation filter is misconfigured"
 msgstr "Suhdesuodatin on määritetty virheellisesti"
 
 #. js-lingui-id: 1RF4/e
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Relation filter is not supported here"
 msgstr "Suhdesuodatinta ei tueta tässä"
 
 #. js-lingui-id: L8AY9P
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Relation filters can only traverse one relation deep"
 msgstr "Suhdesuodattimet voivat edetä vain yhden suhdetason verran"
 
@@ -12320,7 +12373,7 @@ msgid "Sample records must only contain selected fields and id."
 msgstr "Esimerkkitietueet saavat sisältää vain valitut kentät ja tunnisteen."
 
 #. js-lingui-id: +5kO8P
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Saturday"
 msgstr "Lauantai"
 
@@ -12673,7 +12726,7 @@ msgid "Sent with errors"
 msgstr "Lähetetty virheiden kanssa"
 
 #. js-lingui-id: hgvbYY
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "September"
 msgstr "Syyskuu"
 
@@ -13402,7 +13455,7 @@ msgid "Summary"
 msgstr "Yhteenveto"
 
 #. js-lingui-id: DBC3t5
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Sunday"
 msgstr "Sunnuntai"
 
@@ -14759,6 +14812,11 @@ msgstr "Tätä sovellusmuuttujan laajuutta ei tueta."
 msgid "This billing arrangement has invalid settings."
 msgstr "Tämän laskutusjärjestelyn asetukset ovat virheelliset."
 
+#. js-lingui-id: NsbtYx
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "This browser's push service is not supported."
+msgstr ""
+
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign cannot be sent while the workspace subscription is inactive."
@@ -15264,11 +15322,9 @@ msgid "This record cannot be deleted because it is still referenced by other rec
 msgstr "Tätä tietuetta ei voi poistaa, koska muut tietueet viittaavat siihen edelleen."
 
 #. js-lingui-id: 0arbc4
-#: src/engine/api/common/common-query-runners/common-delete-one-query-runner.service.ts
-#: src/engine/api/common/common-query-runners/common-destroy-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-filtered-mutation-one-query-runner.service.ts
 #: src/engine/api/common/common-query-runners/common-find-one-query-runner.service.ts
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
-#: src/engine/api/common/common-query-runners/common-restore-one-query-runner.service.ts
 #: src/engine/api/common/common-query-runners/common-update-one-query-runner.service.ts
 msgid "This record does not exist or has been deleted."
 msgstr "Tätä tietuetta ei ole olemassa tai se on poistettu."
@@ -15600,7 +15656,7 @@ msgid "Thread this state belongs to"
 msgstr "Ketju, johon tämä tila kuuluu"
 
 #. js-lingui-id: kkDQ8m
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Thursday"
 msgstr "Torstai"
 
@@ -16031,7 +16087,7 @@ msgid "TS_VECTOR field metadata not found"
 msgstr "TS_VECTOR-kenttämetatietoja ei löytynyt"
 
 #. js-lingui-id: G3myU+
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Tuesday"
 msgstr "Tiistai"
 
@@ -17257,7 +17313,7 @@ msgid "Webhook not found."
 msgstr "Webhookia ei löytynyt."
 
 #. js-lingui-id: VAcXNz
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Wednesday"
 msgstr "Keskiviikko"
 
@@ -17736,6 +17792,12 @@ msgstr "workflowVersionId ei saa olla määritetty, kun engineComponentKey on FR
 #. js-lingui-id: kRP73e
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
+msgid "Workspace"
+msgstr "Työtila"
+
+#. js-lingui-id: 3JWXMp
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
 msgid "Workspace"
 msgstr "Työtila"
 
@@ -18388,6 +18450,11 @@ msgstr "Roolisi ei voi poistaa joitakin näistä tietueista, joten niitä ei voi
 #: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Rooliasi tässä työtilassa ei löytynyt. Ota yhteyttä työtilan ylläpitäjään."
+
+#. js-lingui-id: iug+lj
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "Your session has expired. Sign in again to turn on browser notifications."
+msgstr ""
 
 #. js-lingui-id: 9T+AIN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

@@ -1,4 +1,4 @@
-import { MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-built-in-application-universal-identifiers.constant';
+import { MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-connect-listing-universal-identifiers.constant';
 import { type VerifiedOAuthClient } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/types/verified-oauth-client.type';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
@@ -13,21 +13,21 @@ export const VERIFIED_OAUTH_CLIENTS: VerifiedOAuthClient[] = [
   {
     name: 'Claude',
     universalIdentifier:
-      MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CLAUDE,
+      MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CLAUDE,
     clientIdMetadataDocumentUrl:
       'https://claude.ai/oauth/mcp-oauth-client-metadata',
   },
   {
     name: 'Claude Code',
     universalIdentifier:
-      MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CLAUDE,
+      MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CLAUDE,
     clientIdMetadataDocumentUrl:
       'https://claude.ai/oauth/claude-code-client-metadata',
   },
   {
     name: 'ChatGPT',
     universalIdentifier:
-      MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CHATGPT,
+      MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CHATGPT,
     clientIdMetadataDocumentUrl: 'https://chatgpt.com/oauth/client.json',
   },
 ];

@@ -123,6 +123,7 @@ const NAVIGATION_MENU_ITEM: FlatNavigationMenuItem = {
   name: 'App link',
   link: 'https://example.com',
   nativePageKey: null,
+  builtInSectionKey: null,
   icon: null,
   color: null,
   parentId: null,
@@ -136,6 +137,8 @@ const NAVIGATION_MENU_ITEM: FlatNavigationMenuItem = {
   agentId: null,
   agentUniversalIdentifier: null,
   position: 0,
+  isActive: true,
+  overrides: null,
 };
 
 const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
@@ -158,6 +161,8 @@ const AGENT: FlatAgent = {
   triggers: [],
   isSystem: true,
   isActive: true,
+  isPrivate: false,
+  createdByUserWorkspaceId: null,
   overrides: null,
   navigationMenuItemIds: [],
   navigationMenuItemUniversalIdentifiers: [],

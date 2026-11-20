@@ -116,6 +116,11 @@ msgstr "S'han trobat {hostnameCount} noms d'amfitrió per al domini \"{domainNam
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{operationLabel} de {aggregateFieldLabel}"
 
+#. js-lingui-id: nzKj4z
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "{senderName} in {threadLabel}"
+msgstr ""
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -134,6 +139,12 @@ msgstr "24H"
 msgid "A {type} navigation menu item cannot be placed inside a {parentType}"
 msgstr "No es pot col·locar un element de menú de navegació de tipus {type} dins d'un {parentType}"
 
+#. js-lingui-id: /y6iPL
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+msgid "A {type} navigation menu item cannot be placed inside a built-in section"
+msgstr "No es pot col·locar un element de menú de navegació de tipus {type} dins d'una secció integrada"
+
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "A backup code was used to sign in to your account"
@@ -143,6 +154,12 @@ msgstr "S'ha utilitzat un codi de còpia de seguretat per iniciar sessió al teu
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
 msgid "A built-in provider already uses this name. Choose another label."
 msgstr "Un proveïdor integrat ja utilitza aquest nom. Trieu una altra etiqueta."
+
+#. js-lingui-id: paqbMF
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A builtInSectionKey is only allowed on SECTION type"
+msgstr "Un builtInSectionKey només es permet en el tipus SECTION"
 
 #. js-lingui-id: RsTRse
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -487,7 +504,7 @@ msgstr "Ja existeix una habilitat amb aquest nom."
 #. js-lingui-id: ESdD/i
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "A sort can only use a related record field on a many-to-one relation field"
-msgstr ""
+msgstr "Una ordenació només pot utilitzar un camp de registre relacionat en un camp de relació de molts a un"
 
 #. js-lingui-id: IAfaPi
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-create-side-effect-handler.service.ts
@@ -552,6 +569,12 @@ msgstr "Cal un agentChatChannelUniversalIdentifier vàlid per al tipus AGENT_CHA
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid agentUniversalIdentifier is required for AGENT type"
 msgstr "Cal un agentUniversalIdentifier vàlid per al tipus AGENT"
+
+#. js-lingui-id: s59CSo
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid builtInSectionKey is required for a built-in SECTION"
+msgstr "Cal un builtInSectionKey vàlid per a una SECTION integrada"
 
 #. js-lingui-id: Dwa/Bm
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -1576,13 +1599,13 @@ msgstr "No es pot canviar l'àmbit de la variable d'aplicació després de crear
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr "Les aplicacions no poden actualitzar aquests camps: {fieldsList}."
 
-#. js-lingui-id: irwO8L
-#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
-#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
-#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
-#: src/engine/core-modules/application/application-manifest/services/application-front-component-source.service.ts
-msgid "Apply or publish the application again to restore its frontend component sources."
-msgstr "Torneu a aplicar o publicar l'aplicació per restaurar les fonts dels seus components de frontend."
+#. js-lingui-id: Hvp/vc
+#: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
+#: src/engine/core-modules/application/application-manifest/utils/validate-application-source-inventory-or-throw.util.ts
+msgid "Apply or publish the application again to restore its application sources."
+msgstr "Torneu a aplicar o publicar l'aplicació per restaurar-ne les fonts de l'aplicació."
 
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -1628,7 +1651,7 @@ msgid "Apps preferences"
 msgstr "Preferències de les aplicacions"
 
 #. js-lingui-id: naCW6Z
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "April"
 msgstr "Abril"
 
@@ -1868,7 +1891,7 @@ msgid "Audit logs require ClickHouse to be configured."
 msgstr "Els registres d'auditoria requereixen que ClickHouse estigui configurat."
 
 #. js-lingui-id: DBHTm/
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "August"
 msgstr "Agost"
 
@@ -2107,6 +2130,11 @@ msgstr "Importa les teves empreses, contactes i negocis des de qualsevol exporta
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Bring your team into Twenty."
 msgstr "Incorpora el teu equip a Twenty."
+
+#. js-lingui-id: pYD4lD
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "Browser notifications were set up with an outdated key. Reload the page to set them up again."
+msgstr ""
 
 #. js-lingui-id: 8pSVh1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -4268,7 +4296,7 @@ msgid "Deals created this month"
 msgstr "Oportunitats creades aquest mes"
 
 #. js-lingui-id: r6zgGo
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "December"
 msgstr "Desembre"
 
@@ -5542,7 +5570,7 @@ msgid "Feature configuration not found."
 msgstr "Configuració de la funcionalitat no trobada."
 
 #. js-lingui-id: 4lgLew
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "February"
 msgstr "Febrer"
 
@@ -6106,6 +6134,11 @@ msgstr "Els camps d'acció de formulari han de tenir noms únics"
 msgid "Form action must have at least one field"
 msgstr "L'acció de formulari ha de tenir almenys un camp"
 
+#. js-lingui-id: CjVkbV
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "Former member"
+msgstr ""
+
 #. js-lingui-id: JRr+QW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
 msgid "Forwarded request headers must be a list of header names"
@@ -6122,7 +6155,7 @@ msgid "forwardedRequestHeaders must be an array of strings"
 msgstr "forwardedRequestHeaders ha de ser una matriu de cadenes"
 
 #. js-lingui-id: 39y5bn
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Friday"
 msgstr "Divendres"
 
@@ -6295,6 +6328,11 @@ msgstr "Funció no trobada."
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function provider is busy. Try again in a few minutes."
 msgstr "El proveïdor de funcions està ocupat. Torna-ho a provar d'aquí a uns minuts."
+
+#. js-lingui-id: xSrz+r
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Functions cannot run while the workspace is suspended."
+msgstr "Les funcions no es poden executar mentre l'espai de treball està suspès."
 
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -7147,7 +7185,7 @@ msgstr "Filtre no vàlid: l'operador \"{operator}\" requereix una matriu"
 
 #. js-lingui-id: xxcw3g
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Invalid filter: \"{relationFieldName}\" can only reference the record the relation filter starts from"
 msgstr "Filtre no vàlid: \"{relationFieldName}\" només pot fer referència al registre des del qual comença el filtre de relació"
 
@@ -7182,7 +7220,7 @@ msgid "Invalid filter: filtering by relation field \"{key}\" is not supported"
 msgstr "Filtre no vàlid: no s'admet filtrar pel camp de relació \"{key}\""
 
 #. js-lingui-id: wi8qrB
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Invalid filter: the field to compare with was not found"
 msgstr "Filtre no vàlid: no s'ha trobat el camp amb el qual comparar"
 
@@ -7881,7 +7919,7 @@ msgid "IS_CONFIG_VARIABLES_IN_DB_ENABLED is false on your server. Please add ENT
 msgstr "IS_CONFIG_VARIABLES_IN_DB_ENABLED té el valor false al vostre servidor. Afegiu ENTERPRISE_KEY al vostre fitxer .env manualment."
 
 #. js-lingui-id: rjyWPb
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "January"
 msgstr "Gener"
 
@@ -7926,7 +7964,7 @@ msgid "JSON value for event details"
 msgstr "Valor JSON per als detalls de l'esdeveniment"
 
 #. js-lingui-id: u4ex5r
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "July"
 msgstr "Juliol"
 
@@ -7961,7 +7999,7 @@ msgid "Junction target field not found"
 msgstr "Camp de destinació de l'enllaç no trobat"
 
 #. js-lingui-id: zeEQd/
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "June"
 msgstr "Juny"
 
@@ -8474,7 +8512,7 @@ msgid "Many validation errors"
 msgstr "Molts errors de validació"
 
 #. js-lingui-id: hg6l4j
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "March"
 msgstr ""
 
@@ -8550,7 +8588,7 @@ msgid "maxNumberOfValues must be defined in settings and be a number greater tha
 msgstr "maxNumberOfValues s'ha de definir a la configuració i ha de ser un nombre més gran que 0 i menor o igual a {FILES_FIELD_MAX_NUMBER_OF_VALUES}"
 
 #. js-lingui-id: 3JzsDb
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "May"
 msgstr "Maig"
 
@@ -9196,7 +9234,7 @@ msgid "Model ID cannot be empty"
 msgstr "L'ID del model no pot estar buit"
 
 #. js-lingui-id: hty0d5
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Monday"
 msgstr "Dilluns"
 
@@ -9388,6 +9426,11 @@ msgstr "Nou"
 msgid "New backup codes were generated for your account"
 msgstr "S'han generat codis de còpia de seguretat nous per al teu compte"
 
+#. js-lingui-id: hIQkLb
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "New chat"
+msgstr ""
+
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -9403,6 +9446,11 @@ msgstr "Nou xat"
 #. js-lingui-id: TYhxR+
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "New email must be different from current email"
+msgstr ""
+
+#. js-lingui-id: mTBAsF
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "New message"
 msgstr ""
 
 #. js-lingui-id: nXXBKB
@@ -9592,12 +9640,6 @@ msgstr "Sense gravació"
 msgid "Not Set"
 msgstr "No establert"
 
-#. js-lingui-id: H1P40W
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Not started"
-msgstr "No iniciat"
-
 #. js-lingui-id: O2bgDc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -9732,7 +9774,7 @@ msgid "NoteTarget target"
 msgstr "Destí de NoteTarget"
 
 #. js-lingui-id: t9QlBd
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "November"
 msgstr "Novembre"
 
@@ -9994,7 +10036,7 @@ msgid "Objects, fields and views adapt to the way your team works."
 msgstr "Els objectes, els camps i les vistes s'adapten a la manera com treballa el teu equip."
 
 #. js-lingui-id: dzQfDY
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "October"
 msgstr "Octubre"
 
@@ -10042,7 +10084,7 @@ msgstr "Només es pot enviar una campanya en esborrany o programada."
 #. js-lingui-id: 82FEG0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "Only a field linking to one record can be sorted by a field of that record"
-msgstr ""
+msgstr "Només es pot ordenar segons un camp d'un registre un camp que enllaça amb un sol registre"
 
 #. js-lingui-id: v581MX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
@@ -10063,6 +10105,11 @@ msgstr "Només un administrador del servidor pot gestionar els codis de recupera
 #: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only a workspace member can change who sees a workflow"
 msgstr "Només un membre de l'espai de treball pot canviar qui veu un flux de treball"
+
+#. js-lingui-id: yT1QOm
+#: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
+msgid "Only a workspace member can create a private agent."
+msgstr "Només un membre de l'espai de treball pot crear un agent privat."
 
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -10114,6 +10161,12 @@ msgstr "Només es permet un giny d'alçada completa per pestanya"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers-caller-application.util.ts
 msgid "Only the application that owns this agent can change its triggers"
 msgstr "Només l'aplicació propietària d'aquest agent en pot canviar els activadors"
+
+#. js-lingui-id: 2ztmK7
+#: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Only the member who owns an agent can change who sees it."
+msgstr "Només el membre propietari d'un agent pot canviar qui el pot veure."
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
@@ -11499,12 +11552,12 @@ msgstr "Resum de la gravació"
 #. js-lingui-id: vyBbUK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "Records cannot be sorted by a deactivated field"
-msgstr ""
+msgstr "No es poden ordenar els registres segons un camp desactivat"
 
 #. js-lingui-id: PbYQoA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "Records cannot be sorted by a relation of the related record"
-msgstr ""
+msgstr "No es poden ordenar els registres segons una relació del registre relacionat"
 
 #. js-lingui-id: BlbWk5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -11673,20 +11726,20 @@ msgid "Relation field target metadata not found"
 msgstr "Metadades de destinació del camp de relació no trobades."
 
 #. js-lingui-id: HmNKeM
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Relation filter is misconfigured"
 msgstr "El filtre de relació està configurat incorrectament"
 
 #. js-lingui-id: 1RF4/e
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Relation filter is not supported here"
 msgstr "Aquí no s'admet el filtre de relació"
 
 #. js-lingui-id: L8AY9P
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Relation filters can only traverse one relation deep"
 msgstr "Els filtres de relació només poden recórrer un sol nivell de relació"
 
@@ -12320,7 +12373,7 @@ msgid "Sample records must only contain selected fields and id."
 msgstr "Els registres de mostra només han de contenir els camps seleccionats i l'identificador."
 
 #. js-lingui-id: +5kO8P
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Saturday"
 msgstr "Dissabte"
 
@@ -12673,7 +12726,7 @@ msgid "Sent with errors"
 msgstr "Enviat amb errors"
 
 #. js-lingui-id: hgvbYY
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "September"
 msgstr "Setembre"
 
@@ -13402,7 +13455,7 @@ msgid "Summary"
 msgstr "Resum"
 
 #. js-lingui-id: DBC3t5
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Sunday"
 msgstr "Diumenge"
 
@@ -14759,6 +14812,11 @@ msgstr "Aquest àmbit de variable d'aplicació no és compatible."
 msgid "This billing arrangement has invalid settings."
 msgstr "Aquesta configuració de facturació té paràmetres no vàlids."
 
+#. js-lingui-id: NsbtYx
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "This browser's push service is not supported."
+msgstr ""
+
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign cannot be sent while the workspace subscription is inactive."
@@ -15264,11 +15322,9 @@ msgid "This record cannot be deleted because it is still referenced by other rec
 msgstr "Aquest registre no es pot suprimir perquè encara hi fan referència altres registres."
 
 #. js-lingui-id: 0arbc4
-#: src/engine/api/common/common-query-runners/common-delete-one-query-runner.service.ts
-#: src/engine/api/common/common-query-runners/common-destroy-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-filtered-mutation-one-query-runner.service.ts
 #: src/engine/api/common/common-query-runners/common-find-one-query-runner.service.ts
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
-#: src/engine/api/common/common-query-runners/common-restore-one-query-runner.service.ts
 #: src/engine/api/common/common-query-runners/common-update-one-query-runner.service.ts
 msgid "This record does not exist or has been deleted."
 msgstr "Aquest registre no existeix o s'ha eliminat."
@@ -15600,7 +15656,7 @@ msgid "Thread this state belongs to"
 msgstr "Fil al qual pertany aquest estat"
 
 #. js-lingui-id: kkDQ8m
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Thursday"
 msgstr "Dijous"
 
@@ -16031,7 +16087,7 @@ msgid "TS_VECTOR field metadata not found"
 msgstr "Metadades del camp TS_VECTOR no trobades"
 
 #. js-lingui-id: G3myU+
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Tuesday"
 msgstr "Dimarts"
 
@@ -17257,7 +17313,7 @@ msgid "Webhook not found."
 msgstr "Webhook no trobat."
 
 #. js-lingui-id: VAcXNz
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Wednesday"
 msgstr "Dimecres"
 
@@ -17736,6 +17792,12 @@ msgstr "workflowVersionId no s'ha d'establir quan engineComponentKey és FRONT_C
 #. js-lingui-id: kRP73e
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
+msgid "Workspace"
+msgstr "Espai de treball"
+
+#. js-lingui-id: 3JWXMp
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
 msgid "Workspace"
 msgstr "Espai de treball"
 
@@ -18388,6 +18450,11 @@ msgstr "El vostre rol no pot suprimir alguns d'aquests registres, per la qual co
 #: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "No es pot trobar el teu rol en aquest espai de treball. Si us plau, contacta amb l'administrador del teu espai de treball."
+
+#. js-lingui-id: iug+lj
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "Your session has expired. Sign in again to turn on browser notifications."
+msgstr ""
 
 #. js-lingui-id: 9T+AIN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

@@ -34,6 +34,7 @@ export const createGetWorkflowCurrentVersionTool = (
   context: WorkflowToolContext,
 ) => ({
   name: 'get_workflow_current_version' as const,
+  isReadOnly: true,
   description:
     'Get the current version of a workflow. Returns the draft version if one exists, otherwise the last published version. Returns a core workflow version ID (coreWorkflowVersionId), which the editing tools expect.',
   inputSchema: getWorkflowCurrentVersionSchema,

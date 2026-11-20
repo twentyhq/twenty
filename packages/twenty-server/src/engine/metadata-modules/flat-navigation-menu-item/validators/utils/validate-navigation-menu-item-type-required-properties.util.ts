@@ -6,6 +6,7 @@ import {
   NavigationMenuItemType,
 } from 'twenty-shared/types';
 import {
+  isBuiltInSectionKey,
   isDefined,
   isSafeInternalPath,
   isNativePageKey,
@@ -70,6 +71,7 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
     pageLayoutUniversalIdentifier,
     agentChatChannelUniversalIdentifier,
     nativePageKey,
+    builtInSectionKey,
     workflowUniversalIdentifier,
     agentUniversalIdentifier,
   } = flatNavigationMenuItem;
@@ -79,6 +81,15 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
       buildInvalidInputError(
         t`Navigation menu item type is required`,
         msg`Navigation menu item type is required`,
+      ),
+    ];
+  }
+
+  if (isDefined(builtInSectionKey) && type !== NavigationMenuItemType.SECTION) {
+    return [
+      buildInvalidInputError(
+        t`A builtInSectionKey is only allowed on SECTION type`,
+        msg`A builtInSectionKey is only allowed on SECTION type`,
       ),
     ];
   }
@@ -99,6 +110,17 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
       });
     }
     case NavigationMenuItemType.SECTION: {
+      if (isDefined(builtInSectionKey)) {
+        return isBuiltInSectionKey(builtInSectionKey)
+          ? []
+          : [
+              buildInvalidInputError(
+                t`A valid builtInSectionKey is required for a built-in SECTION`,
+                msg`A valid builtInSectionKey is required for a built-in SECTION`,
+              ),
+            ];
+      }
+
       return validateRequiredName({
         name,
         message: t`A name is required for SECTION type`,

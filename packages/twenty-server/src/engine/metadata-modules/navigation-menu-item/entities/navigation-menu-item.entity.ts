@@ -11,12 +11,17 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { type NativePageKey } from 'twenty-shared/types';
+import {
+  type BuiltInSectionKey,
+  type NativePageKey,
+} from 'twenty-shared/types';
 
 import { ADD_AGENT_CHAT_CHANNEL_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-51/add-agent-chat-channel-navigation-menu-item-upgrade-command-name.constant';
 import { ADD_NATIVE_PAGE_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-56/add-native-page-navigation-menu-item-upgrade-command-name.constant';
 import { ADD_WORKFLOW_AND_AGENT_NAVIGATION_MENU_ITEMS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-workflow-and-agent-navigation-menu-items-upgrade-command-name.constant';
 import { RENAME_NAVIGATION_MENU_ITEM_FOLDER_ID_TO_PARENT_ID_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-60/rename-navigation-menu-item-folder-id-to-parent-id-upgrade-command-name.constant';
+import { ADD_NAVIGATION_MENU_ITEM_BUILT_IN_SECTION_KEY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-navigation-menu-item-built-in-section-key-upgrade-command-name.constant';
+import { ADD_NAVIGATION_MENU_ITEM_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-navigation-menu-item-overridable-entity-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -27,7 +32,11 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
+
+export type NavigationMenuItemOverrides = {
+  isActive?: boolean;
+};
 
 @Entity({ name: 'navigationMenuItem', schema: 'core' })
 @Index('IDX_NAVIGATION_MENU_ITEM_APPLICATION_ID', ['applicationId'])
@@ -85,7 +94,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   OR ("type" = 'SECTION')`,
 )
 export class NavigationMenuItemEntity
-  extends SyncableEntity
+  extends OverridableEntity<NavigationMenuItemOverrides>
   implements Required<NavigationMenuItemEntity>
 {
   @PrimaryGeneratedColumn('uuid')
@@ -191,6 +200,13 @@ export class NavigationMenuItemEntity
   @Column({ nullable: true, type: 'text' })
   nativePageKey: NativePageKey | null;
 
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_NAVIGATION_MENU_ITEM_BUILT_IN_SECTION_KEY_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'text' })
+  builtInSectionKey: BuiltInSectionKey | null;
+
   @ManyToOne(() => WorkflowEntity, {
     onDelete: 'CASCADE',
     nullable: true,
@@ -228,3 +244,12 @@ export class NavigationMenuItemEntity
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 }
+
+WasIntroducedInUpgrade({
+  upgradeCommandName:
+    ADD_NAVIGATION_MENU_ITEM_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
+})(NavigationMenuItemEntity.prototype, 'overrides');
+WasIntroducedInUpgrade({
+  upgradeCommandName:
+    ADD_NAVIGATION_MENU_ITEM_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
+})(NavigationMenuItemEntity.prototype, 'isActive');

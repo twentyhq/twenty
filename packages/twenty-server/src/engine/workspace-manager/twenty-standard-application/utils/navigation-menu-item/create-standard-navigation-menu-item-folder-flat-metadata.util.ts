@@ -9,6 +9,7 @@ import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 export const createStandardNavigationMenuItemFolderFlatMetadata = ({
+  parent,
   universalIdentifier,
   name,
   icon,
@@ -19,6 +20,7 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
   twentyStandardApplicationId,
   now,
 }: {
+  parent?: Pick<FlatNavigationMenuItem, 'id' | 'universalIdentifier'>;
   universalIdentifier: string;
   name: string;
   icon?: string | null;
@@ -42,8 +44,8 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
   targetObjectMetadataUniversalIdentifier: null,
   viewId: null,
   viewUniversalIdentifier: null,
-  parentId: null,
-  parentUniversalIdentifier: null,
+  parentId: parent?.id ?? null,
+  parentUniversalIdentifier: parent?.universalIdentifier ?? null,
   pageLayoutId: null,
   pageLayoutUniversalIdentifier: null,
   agentChatChannelId: null,
@@ -55,9 +57,12 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
   name,
   link: null,
   nativePageKey: null,
+  builtInSectionKey: null,
   icon: icon ?? null,
   color,
   position,
+  isActive: true,
+  overrides: null,
   createdAt: now,
   updatedAt: now,
 });
@@ -132,9 +137,12 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
     name: null,
     link: null,
     nativePageKey: nativePageKey ?? null,
+    builtInSectionKey: null,
     icon: null,
     color: isDefined(nativePageKey) ? null : 'gray',
     position,
+    isActive: true,
+    overrides: null,
     createdAt: now,
     updatedAt: now,
   };

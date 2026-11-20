@@ -894,6 +894,133 @@ describe('Nested one-to-many relation query arguments (e2e)', () => {
     ]);
   });
 
+  it('keeps root aggregates apart from the counts of relations under a to-one relation', async () => {
+    const response = await makeGraphqlApiRequest({
+      query: gql`
+        query People($filter: PersonFilterInput) {
+          people(filter: $filter) {
+            totalCount
+            edges {
+              node {
+                id
+                company {
+                  people(first: 1) {
+                    totalCount
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        filter: { id: { in: [buildPersonId(1), buildPersonId(4)] } },
+      },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+
+    const { totalCount, edges } = response.body.data.people;
+
+    expect(totalCount).toBe(2);
+    expect(
+      Object.fromEntries(
+        edges.map(
+          ({
+            node,
+          }: {
+            node: {
+              id: string;
+              company: { people: { totalCount: number } };
+            };
+          }) => [node.id, node.company.people.totalCount],
+        ),
+      ),
+    ).toEqual({ [buildPersonId(1)]: 3, [buildPersonId(4)]: 2 });
+  });
+
+  it('counts every related record of a single record when first limits the loaded ones', async () => {
+    const response = await makeGraphqlApiRequest(
+      findOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: `
+          people(first: 1) {
+            totalCount
+            edges { node { id } }
+          }
+        `,
+        filter: { id: { eq: FIRST_COMPANY_ID } },
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.company.people.totalCount).toBe(3);
+    expect(response.body.data.company.people.edges).toHaveLength(1);
+  });
+
+  it('counts every related record in the records of a group by query', async () => {
+    const response = await makeGraphqlApiRequest({
+      query: gql`
+        query CompaniesGroupByWithNestedCount(
+          $groupBy: [CompanyGroupByInput!]!
+          $filter: CompanyFilterInput
+        ) {
+          companiesGroupBy(groupBy: $groupBy, filter: $filter) {
+            edges {
+              node {
+                id
+                people(first: 1) {
+                  totalCount
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        groupBy: [{ name: true }],
+        filter: { id: { in: COMPANY_IDS } },
+      },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+
+    const countsByCompanyId = Object.fromEntries(
+      response.body.data.companiesGroupBy.flatMap(
+        (group: {
+          edges: {
+            node: { id: string; people: { totalCount: number } };
+          }[];
+        }) => group.edges.map(({ node }) => [node.id, node.people.totalCount]),
+      ),
+    );
+
+    expect(countsByCompanyId).toEqual({
+      [FIRST_COMPANY_ID]: 3,
+      [SECOND_COMPANY_ID]: 2,
+    });
+  });
+
+  it('counts every related record in a mutation result when first limits the loaded ones', async () => {
+    const response = await makeGraphqlApiRequest(
+      updateOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: `
+          people(first: 1) {
+            totalCount
+            edges { node { id } }
+          }
+        `,
+        data: { name: 'Nested arguments company two' },
+        recordId: SECOND_COMPANY_ID,
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.updateCompany.people.totalCount).toBe(2);
+    expect(response.body.data.updateCompany.people.edges).toHaveLength(1);
+  });
+
   it('rejects malformed nested arguments instead of ignoring them', async () => {
     const response = await findCompaniesWithPeople('people(first: -1)');
 

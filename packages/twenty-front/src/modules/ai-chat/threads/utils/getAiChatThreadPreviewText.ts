@@ -1,9 +1,9 @@
+import { getAgentChatPreviewPlainText } from 'twenty-shared/ai';
 import { t } from '@lingui/core/macro';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
-import { getAiChatPreviewPlainText } from '@/ai-chat/threads/utils/getAiChatPreviewPlainText';
-import { getAiChatSenderLabel } from '@/ai-chat/messages/utils/getAiChatSenderLabel';
+import { getAiChatSenderLabel } from '@/ai-chat/utils/getAiChatSenderLabel';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
 // Members' messages carry who wrote them; agent replies read as plain text,
@@ -22,7 +22,7 @@ export const getAiChatThreadPreviewText = ({
   currentWorkspaceMemberId: string | undefined;
   assistantDisplayName: string;
 }): string | null => {
-  const text = getAiChatPreviewPlainText({
+  const text = getAgentChatPreviewPlainText({
     markdown: thread.lastMessageText ?? '',
     assistantDisplayName,
   });

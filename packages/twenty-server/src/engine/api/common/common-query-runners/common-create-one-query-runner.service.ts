@@ -7,6 +7,7 @@ import { CommonRecordQueryRunnerService } from 'src/engine/api/common/common-que
 import { CommonCreateManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service';
 import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
   CommonExtendedInput,
@@ -35,16 +36,17 @@ export class CommonCreateOneQueryRunnerService extends CommonRecordQueryRunnerSe
   async run(
     args: CommonExtendedInput<CreateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<ObjectRecord> {
-    const result = await this.commonCreateManyQueryRunnerService.run(
-      {
-        ...args,
-        data: [args.data],
-      },
-      queryRunnerContext,
-    );
+  ): Promise<CommonQueryRunResult<ObjectRecord>> {
+    const { result, relationAggregatedValues } =
+      await this.commonCreateManyQueryRunnerService.run(
+        {
+          ...args,
+          data: [args.data],
+        },
+        queryRunnerContext,
+      );
 
-    return result[0];
+    return { result: result[0], relationAggregatedValues };
   }
 
   async computeArgs(

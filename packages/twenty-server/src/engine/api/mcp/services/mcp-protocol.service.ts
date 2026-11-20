@@ -467,9 +467,8 @@ export class McpProtocolService {
             descriptor.name,
             {
               ...registryTools[descriptor.name],
-              annotations: getMcpRegistryToolAnnotations(
-                descriptor.executionRef,
-              ),
+              title: descriptor.label,
+              annotations: getMcpRegistryToolAnnotations(descriptor),
             },
           ]),
         );

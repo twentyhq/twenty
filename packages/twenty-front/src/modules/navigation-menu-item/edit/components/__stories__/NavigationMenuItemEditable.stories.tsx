@@ -38,6 +38,7 @@ const ITEMS: NavigationMenuItem[] = ['Docs', 'Status'].map(
     name,
     link: 'https://example.com',
     position,
+    isActive: true,
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z',
   }),

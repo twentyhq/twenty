@@ -5,7 +5,7 @@ import { isAiChatMessageOwn } from '@/ai-chat/messages/utils/isAiChatMessageOwn'
 import { isAiChatQueuedMessageRemovable } from '@/ai-chat/composer/utils/isAiChatQueuedMessageRemovable';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-import { getAiChatSenderLabel } from '@/ai-chat/messages/utils/getAiChatSenderLabel';
+import { getAiChatSenderLabel } from '@/ai-chat/utils/getAiChatSenderLabel';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { AiChatQueuedMessageList } from '@/ai-chat/composer/components/AiChatQueuedMessageList';
 import { StyledAiChatContentContainer } from '@/ai-chat/components/StyledAiChatContentContainer';

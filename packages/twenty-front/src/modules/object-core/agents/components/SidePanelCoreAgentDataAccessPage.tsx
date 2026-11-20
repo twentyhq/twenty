@@ -14,7 +14,7 @@ import { type CoreAgentRecordAccessLevel } from '@/object-core/agents/types/Core
 import { getCoreAgentRecordAccessItemId } from '@/object-core/agents/utils/getCoreAgentRecordAccessItemId';
 import { getRoleWithCoreAgentRecordAccessLevel } from '@/object-core/agents/utils/getRoleWithCoreAgentRecordAccessLevel';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
-import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
+import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-overrides/hooks/useObjectMetadataItemsThatCanHavePermission';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 
 export const SidePanelCoreAgentDataAccessPage = () => {

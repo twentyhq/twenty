@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Autocomplete } from 'twenty-ui/primitives/input';
 
@@ -10,7 +11,7 @@ import { AiChatAssistantAvatar } from '@/ai-chat/components/AiChatAssistantAvata
 import { AI_CHAT_ASSISTANT_RECIPIENT_SUGGESTION_ID } from '@/ai-chat/composer/constants/AiChatAssistantRecipientSuggestionId';
 import { useAiChatAssistantProfile } from '@/ai-chat/hooks/useAiChatAssistantProfile';
 import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
-import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/aiChatNewThreadRecipientsFamilyState';
+import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { type AiChatChannel } from '@/ai-chat/threads/types/AiChatChannel';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
@@ -19,7 +20,6 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const RECIPIENT_PICKER_SIDE_OFFSET_PX = 6;

@@ -1,13 +1,12 @@
 import { Kind, parse } from 'graphql';
-import {
-  FieldMetadataType,
-  type ObjectRecord,
-  RelationType,
-} from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { graphQLFormatResultFromSelectedFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-format-result-from-selected-fields.util';
-import { type IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
-import { type ResolverOutput } from 'src/engine/api/graphql/workspace-query-runner/interfaces/resolver-output';
+import { decodeCursor } from 'src/engine/api/common/utils/cursors.util';
+import {
+  type GraphqlConnectionResult,
+  type GraphqlResolverResult,
+} from 'src/engine/api/graphql/direct-execution/types/graphql-resolver-result.type';
 import { computeSelectionKey } from 'src/engine/api/graphql/workspace-resolver-builder/utils/compute-selection-key.util';
 import { getGraphqlFieldSelections } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-graphql-field-selections.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -20,6 +19,20 @@ const COMPANY_ID = 'company-object-id';
 const PERSON_ID = 'person-object-id';
 
 const FIELDS = [
+  getFlatFieldMetadataMock({
+    id: 'company-id-field-id',
+    universalIdentifier: 'company-id-field-id',
+    objectMetadataId: COMPANY_ID,
+    name: 'id',
+    type: FieldMetadataType.UUID,
+  }),
+  getFlatFieldMetadataMock({
+    id: 'person-id-field-id',
+    universalIdentifier: 'person-id-field-id',
+    objectMetadataId: PERSON_ID,
+    name: 'id',
+    type: FieldMetadataType.UUID,
+  }),
   getFlatFieldMetadataMock({
     id: 'company-name-field-id',
     universalIdentifier: 'company-name-field-id',
@@ -64,13 +77,21 @@ const OBJECTS = [
     id: COMPANY_ID,
     universalIdentifier: COMPANY_ID,
     nameSingular: 'company',
-    fieldIds: ['company-name-field-id', 'company-people-field-id'],
+    fieldIds: [
+      'company-id-field-id',
+      'company-name-field-id',
+      'company-people-field-id',
+    ],
   }),
   getFlatObjectMetadataMock({
     id: PERSON_ID,
     universalIdentifier: PERSON_ID,
     nameSingular: 'person',
-    fieldIds: ['person-phones-field-id', 'person-company-field-id'],
+    fieldIds: [
+      'person-id-field-id',
+      'person-phones-field-id',
+      'person-company-field-id',
+    ],
   }),
 ];
 
@@ -92,14 +113,16 @@ const flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata> = {
   universalIdentifiersByApplicationId: {},
 };
 
+const [COMPANY, PERSON] = OBJECTS;
+
 const format = ({
   result,
   query,
-  objectNameSingular,
+  flatObjectMetadata,
 }: {
-  result: ResolverOutput;
+  result: GraphqlResolverResult;
   query: string;
-  objectNameSingular: string;
+  flatObjectMetadata: FlatObjectMetadata;
 }) => {
   const [operation] = parse(query).definitions;
 
@@ -120,19 +143,22 @@ const format = ({
       fragments: {},
       variableValues: {},
     }),
-    objectNameSingular,
+    flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-    objectIdByNameSingular: { company: COMPANY_ID, person: PERSON_ID },
   });
 };
 
-const buildConnection = (
-  records: ObjectRecord[],
-): IConnection<ObjectRecord> => ({
-  edges: records.map((node) => ({ node, cursor: `cursor-${node.id}` })),
-  pageInfo: { hasNextPage: false, hasPreviousPage: false },
-  totalCount: records.length,
+const buildConnection = ({
+  records,
+  ...connection
+}: Pick<GraphqlConnectionResult, 'records'> &
+  Partial<GraphqlConnectionResult>): GraphqlConnectionResult => ({
+  records,
+  connectionValues: { totalCount: records.length },
+  hasNextPage: false,
+  hasPreviousPage: false,
+  ...connection,
 });
 
 describe('graphQLFormatResultFromSelectedFields', () => {
@@ -140,10 +166,13 @@ describe('graphQLFormatResultFromSelectedFields', () => {
     expect(
       format({
         result: {
-          id: 'person-id',
-          phones: {
-            primaryPhoneNumber: '123456789',
-            additionalPhones: [{ number: '987654321', callingCode: '+33' }],
+          kind: 'record',
+          record: {
+            id: 'person-id',
+            phones: {
+              primaryPhoneNumber: '123456789',
+              additionalPhones: [{ number: '987654321', callingCode: '+33' }],
+            },
           },
         },
         query: `query {
@@ -154,7 +183,7 @@ describe('graphQLFormatResultFromSelectedFields', () => {
             }
           }
         }`,
-        objectNameSingular: 'person',
+        flatObjectMetadata: PERSON,
       }),
     ).toStrictEqual({
       phones: {
@@ -174,11 +203,14 @@ describe('graphQLFormatResultFromSelectedFields', () => {
     expect(
       format({
         result: {
-          id: 'person-id',
-          phones: { additionalPhones: '[{"number":"987654321"}]' },
+          kind: 'record',
+          record: {
+            id: 'person-id',
+            phones: { additionalPhones: '[{"number":"987654321"}]' },
+          },
         },
         query: `query { person { phones { additionalPhones { number } } } }`,
-        objectNameSingular: 'person',
+        flatObjectMetadata: PERSON,
       }),
     ).toStrictEqual({
       phones: { additionalPhones: '[{"number":"987654321"}]' },
@@ -193,14 +225,19 @@ describe('graphQLFormatResultFromSelectedFields', () => {
 
     expect(
       format({
-        result: buildConnection([
-          {
-            id: 'company-id',
-            name: 'Acme',
-            people: buildConnection([{ id: 'person-1' }, { id: 'person-2' }]),
-            [firstPersonKey]: buildConnection([{ id: 'person-1' }]),
-          },
-        ]),
+        result: {
+          kind: 'connection',
+          connection: buildConnection({
+            records: [
+              {
+                id: 'company-id',
+                name: 'Acme',
+                people: [{ id: 'person-1' }, { id: 'person-2' }],
+                [firstPersonKey]: [{ id: 'person-1' }],
+              },
+            ],
+          }),
+        },
         query: `query {
           companies {
             count: totalCount
@@ -215,7 +252,7 @@ describe('graphQLFormatResultFromSelectedFields', () => {
             }
           }
         }`,
-        objectNameSingular: 'company',
+        flatObjectMetadata: COMPANY,
       }),
     ).toStrictEqual({
       count: 1,
@@ -243,23 +280,25 @@ describe('graphQLFormatResultFromSelectedFields', () => {
 
     expect(
       format({
-        result: buildConnection([
-          {
-            id: 'company-id',
-            [firstKey]: buildConnection([{ id: 'person-1' }]),
-            [secondKey]: buildConnection([
-              { id: 'person-1' },
-              { id: 'person-2' },
-            ]),
-          },
-        ]),
+        result: {
+          kind: 'connection',
+          connection: buildConnection({
+            records: [
+              {
+                id: 'company-id',
+                [firstKey]: [{ id: 'person-1' }],
+                [secondKey]: [{ id: 'person-1' }, { id: 'person-2' }],
+              },
+            ],
+          }),
+        },
         query: `query {
           companies {
             first: edges { node { people(first: 1) { totalCount } } }
             second: edges { node { people(first: 2) { totalCount } } }
           }
         }`,
-        objectNameSingular: 'company',
+        flatObjectMetadata: COMPANY,
       }),
     ).toStrictEqual({
       first: [{ node: { people: { totalCount: 1 } } }],
@@ -270,20 +309,163 @@ describe('graphQLFormatResultFromSelectedFields', () => {
   it('computes typenames and nulls for to-one relations and missing values', () => {
     expect(
       format({
-        result: { id: 'person-id', company: { id: 'company-id' } },
+        result: {
+          kind: 'record',
+          record: {
+            id: 'person-id',
+            companyId: 'company-id',
+            company: { id: 'company-id' },
+          },
+        },
         query: `query {
           person {
             kind: __typename
+            companyId
             employer: company { __typename id name }
             phones { primaryPhoneNumber }
+            notAField
           }
         }`,
-        objectNameSingular: 'person',
+        flatObjectMetadata: PERSON,
       }),
     ).toStrictEqual({
       kind: 'Person',
+      companyId: 'company-id',
       employer: { __typename: 'Company', id: 'company-id', name: null },
       phones: null,
+      notAField: null,
     });
+  });
+
+  it('builds edges, cursors and page info from the records of a connection', () => {
+    const formatted = format({
+      result: {
+        kind: 'connection',
+        connection: buildConnection({
+          records: [{ id: 'company-1' }, { id: 'company-2' }],
+          connectionValues: { totalCount: 5, countEmptyName: '3' },
+          hasNextPage: true,
+        }),
+      },
+      query: `query {
+        companies {
+          __typename
+          totalCount
+          countEmptyName
+          edges { __typename cursor node { id } }
+          pageInfo { __typename hasNextPage hasPreviousPage startCursor endCursor }
+        }
+      }`,
+      flatObjectMetadata: COMPANY,
+    }) as {
+      edges: { cursor: string }[];
+      pageInfo: { startCursor: string; endCursor: string };
+    };
+
+    expect(formatted).toMatchObject({
+      __typename: 'CompanyConnection',
+      totalCount: 5,
+      countEmptyName: 3,
+      edges: [
+        { __typename: 'CompanyEdge', node: { id: 'company-1' } },
+        { __typename: 'CompanyEdge', node: { id: 'company-2' } },
+      ],
+      pageInfo: {
+        __typename: 'PageInfo',
+        hasNextPage: true,
+        hasPreviousPage: false,
+      },
+    });
+    expect(decodeCursor(formatted.edges[0].cursor)).toEqual({
+      id: 'company-1',
+    });
+    expect(formatted.pageInfo.startCursor).toBe(formatted.edges[0].cursor);
+    expect(formatted.pageInfo.endCursor).toBe(formatted.edges[1].cursor);
+  });
+
+  it('returns null cursors for an empty connection', () => {
+    expect(
+      format({
+        result: {
+          kind: 'connection',
+          connection: buildConnection({ records: [] }),
+        },
+        query: `query { companies { edges { cursor } pageInfo { startCursor endCursor } } }`,
+        flatObjectMetadata: COMPANY,
+      }),
+    ).toStrictEqual({
+      edges: [],
+      pageInfo: { startCursor: null, endCursor: null },
+    });
+  });
+
+  it('reads the aggregates of a nested relation for each parent record', () => {
+    expect(
+      format({
+        result: {
+          kind: 'connection',
+          connection: buildConnection({
+            records: [
+              { id: 'company-1', people: [{ id: 'person-1' }] },
+              { id: 'company-2' },
+            ],
+            relationAggregatedValues: {
+              people: {
+                valuesByParentRecordId: { 'company-1': { totalCount: 12 } },
+                relations: {},
+              },
+            },
+          }),
+        },
+        query: `query {
+          companies { edges { node { people { totalCount edges { node { id } } } } } }
+        }`,
+        flatObjectMetadata: COMPANY,
+      }),
+    ).toStrictEqual({
+      edges: [
+        {
+          node: {
+            people: { totalCount: 12, edges: [{ node: { id: 'person-1' } }] },
+          },
+        },
+        { node: { people: { totalCount: 0, edges: [] } } },
+      ],
+    });
+  });
+
+  it('formats each group of a group-by result as a group-by connection', () => {
+    expect(
+      format({
+        result: {
+          kind: 'groupByConnections',
+          connections: [
+            buildConnection({
+              records: [{ id: 'company-1', name: 'Acme' }],
+              connectionValues: {
+                totalCount: 1,
+                groupByDimensionValues: ['Acme'],
+              },
+            }),
+          ],
+        },
+        query: `query {
+          companiesGroupBy {
+            __typename
+            groupByDimensionValues
+            totalCount
+            edges { node { name } }
+          }
+        }`,
+        flatObjectMetadata: COMPANY,
+      }),
+    ).toStrictEqual([
+      {
+        __typename: 'CompanyGroupByConnection',
+        groupByDimensionValues: ['Acme'],
+        totalCount: 1,
+        edges: [{ node: { name: 'Acme' } }],
+      },
+    ]);
   });
 });

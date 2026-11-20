@@ -1,7 +1,6 @@
 import { dispatchAiChatRefetchMessagesEvent } from '@/ai-chat/utils/dispatchAiChatRefetchMessagesEvent';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloClient } from '@apollo/client/react';
 import { isUndefined } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
@@ -16,7 +15,7 @@ import {
 import { useToast } from 'twenty-ui/components/feedback';
 import { v4 } from 'uuid';
 
-import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/composer/constants/AiChatNewThreadDefaultRecipients';
+import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/constants/AiChatNewThreadDefaultRecipients';
 import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai-chat/composer/constants/AiChatRestoreEditorContentEventName';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { useAiChatModelId } from '@/ai-chat/hooks/useAiChatModelId';
@@ -28,7 +27,7 @@ import { useOptimisticallyRestoreOnSend } from '@/ai-chat/composer/hooks/useOpti
 import { useRefreshAiChatThreadPermissions } from '@/ai-chat/threads/hooks/useRefreshAiChatThreadPermissions';
 import { useWarnAboutParticipantMentionsNotAdded } from '@/ai-chat/composer/hooks/useWarnAboutParticipantMentionsNotAdded';
 import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
-import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/composer/states/aiChatQuotedMessageIdFamilyState';
+import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/states/aiChatQuotedMessageIdFamilyState';
 import { aiChatMessageAuthorLookupSelector } from '@/ai-chat/messages/states/selectors/aiChatMessageAuthorLookupSelector';
 import { aiChatThreadMessageFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadMessageFamilySelector';
 import { getAiChatMessageAuthor } from '@/ai-chat/messages/utils/getAiChatMessageAuthor';
@@ -36,7 +35,7 @@ import { getAiChatMessageQuoteSource } from '@/ai-chat/composer/utils/getAiChatM
 import { prependAiChatQuoteToText } from '@/ai-chat/composer/utils/prependAiChatQuoteToText';
 import { aiChatLastSentBrowsingContextFamilyState } from '@/ai-chat/states/aiChatLastSentBrowsingContextFamilyState';
 import { aiChatSelectedFilesFamilyState } from '@/ai-chat/composer/states/aiChatSelectedFilesFamilyState';
-import { aiChatSentMessageHandOffState } from '@/ai-chat/composer/states/aiChatSentMessageHandOffState';
+import { aiChatSentMessageHandOffState } from '@/ai-chat/states/aiChatSentMessageHandOffState';
 import { aiChatUploadedFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadedFilesFamilyState';
 import { aiChatUnconfirmedFirstMessageFamilyState } from '@/ai-chat/composer/states/aiChatUnconfirmedFirstMessageFamilyState';
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
@@ -47,9 +46,9 @@ import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSend
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { aiChatOpenThreadIdByInstanceIdState } from '@/ai-chat/states/aiChatOpenThreadIdByInstanceIdState';
 import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
-import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/aiChatNewThreadRecipientsFamilyState';
+import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { type AiChatNewThreadRecipients } from '@/ai-chat/composer/types/AiChatNewThreadRecipients';
+import { type AiChatNewThreadRecipients } from '@/ai-chat/types/AiChatNewThreadRecipients';
 import { type AiChatParticipantMention } from '@/ai-chat/composer/types/AiChatParticipantMention';
 import { type AiChatRestoreEditorContentEventDetail } from '@/ai-chat/composer/types/AiChatRestoreEditorContentEventDetail';
 import { getConversationTargetsFromSerializedDocument } from '@/ai-chat/composer/utils/getConversationTargetsFromSerializedDocument';
@@ -73,7 +72,6 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import {
   FindChatMessageAgentDocument,
   SendChatMessageDocument,
-  StopAgentChatStreamDocument,
   FeatureFlagKey,
 } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
@@ -152,8 +150,9 @@ export const useAiChat = () => {
       const lastSentBrowsingContext = store.get(lastSentBrowsingContextAtom);
       const isBrowsingContextChanged = isUndefined(lastSentBrowsingContext)
         ? isDefined(browsingContext)
-        : JSON.stringify(browsingContext) !==
-          JSON.stringify(lastSentBrowsingContext);
+        : !isDeeplyEqual(browsingContext, lastSentBrowsingContext, {
+            strict: true,
+          });
       const browsingContextToSend = isBrowsingContextChanged
         ? browsingContext
         : null;
@@ -595,26 +594,7 @@ export const useAiChat = () => {
     sendToThread,
   ]);
 
-  const handleStop = useCallback(async () => {
-    const threadId = aiChatThreadId;
-
-    store.set(
-      aiChatIsAwaitingFirstChunkFamilyState.atomFamily({ threadId }),
-      false,
-    );
-
-    try {
-      await apolloClient.mutate({
-        mutation: StopAgentChatStreamDocument,
-        variables: { threadId },
-      });
-    } catch (error) {
-      enqueueToast(getToastOptionsFromError({ error }));
-    }
-  }, [store, apolloClient, enqueueToast, aiChatThreadId]);
-
   return {
     handleSendMessage,
-    handleStop,
   };
 };

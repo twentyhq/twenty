@@ -57,7 +57,7 @@ export class MarketplaceResolver {
   ): Promise<MarketplaceAppDTO[]> {
     return this.marketplaceQueryService.findManyMarketplaceApps({
       universalIdentifiers,
-      shouldIncludeBuiltInApplications: true,
+      shouldIncludeConnectListings: true,
     });
   }
 
@@ -68,7 +68,7 @@ export class MarketplaceResolver {
   ): Promise<MarketplaceAppDetailDTO> {
     return this.marketplaceQueryService.findMarketplaceAppDetail({
       universalIdentifier,
-      shouldIncludeBuiltInApplications: true,
+      shouldIncludeConnectListings: true,
     });
   }
 

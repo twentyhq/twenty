@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 
 import { AiChatThreadFollowersField } from '@/ai-chat/threads/components/AiChatThreadFollowersField';
 import { useExecuteAiChatThreadStatusAction } from '@/ai-chat/threads/hooks/useExecuteAiChatThreadStatusAction';
@@ -7,7 +8,6 @@ import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selec
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
 type AiChatThreadDetailsFollowingProps = {

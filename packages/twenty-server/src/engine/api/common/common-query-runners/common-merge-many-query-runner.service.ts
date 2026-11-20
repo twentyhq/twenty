@@ -6,7 +6,6 @@ import chunk from 'lodash.chunk';
 import {
   MUTATION_MAX_MERGE_RECORDS,
   QUERY_MAX_RECORDS,
-  QUERY_MAX_RECORDS_FROM_RELATION,
 } from 'twenty-shared/constants';
 import {
   FieldMetadataSettingsMapping,
@@ -28,6 +27,7 @@ import { computeDuplicateKeyColumnGroupsForJoinColumn } from 'src/engine/api/com
 import { findRecordKeysChangedByMerge } from 'src/engine/api/common/common-query-runners/utils/find-record-keys-changed-by-merge.util';
 import { splitRelatedRecordIdsToMigrateAndSoftDelete } from 'src/engine/api/common/common-query-runners/utils/split-related-record-ids-to-migrate-and-soft-delete.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
   CommonExtendedInput,
@@ -36,9 +36,9 @@ import {
   MergeManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.util';
-import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
-import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
-import { mergeFieldValues } from 'src/engine/api/graphql/graphql-query-runner/utils/merge-field-values.util';
+import { buildColumnsToReturn } from 'src/engine/api/common/utils/build-columns-to-return';
+import { hasRecordFieldValue } from 'src/engine/api/common/utils/has-record-field-value.util';
+import { mergeFieldValues } from 'src/engine/api/common/common-query-runners/utils/merge-field-values.util';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -64,7 +64,7 @@ export class CommonMergeManyQueryRunnerService extends CommonRecordQueryRunnerSe
   async run(
     args: CommonExtendedInput<MergeManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<ObjectRecord> {
+  ): Promise<CommonQueryRunResult<ObjectRecord>> {
     const { flatFieldMetadataMaps, flatObjectMetadata } = queryRunnerContext;
 
     const recordsToMerge = await this.fetchRecordsToMerge(
@@ -92,8 +92,12 @@ export class CommonMergeManyQueryRunnerService extends CommonRecordQueryRunnerSe
       args.dryRun ?? false,
     );
 
+    // The preview merges every record's relations, so per-record counts would not match it
     if (args.dryRun) {
-      return this.createDryRunResponse(priorityRecord, mergedData);
+      return {
+        result: this.createDryRunResponse(priorityRecord, mergedData),
+        relationAggregatedValues: {},
+      };
     }
 
     const idsToDelete = args.ids.filter((id) => id !== priorityRecord.id);
@@ -106,13 +110,13 @@ export class CommonMergeManyQueryRunnerService extends CommonRecordQueryRunnerSe
       mergedData,
     });
 
-    await this.processNestedRelations({
-      args,
+    const relationAggregatedValues = await this.processNestedRelations({
+      records: [updatedRecord],
+      selection: args.selectedFieldsResult,
       queryRunnerContext,
-      updatedRecords: [updatedRecord],
     });
 
-    return updatedRecord;
+    return { result: updatedRecord, relationAggregatedValues };
   }
 
   private async fetchRecordsToMerge(
@@ -155,15 +159,10 @@ export class CommonMergeManyQueryRunnerService extends CommonRecordQueryRunnerSe
     const recordsToMerge = fetchedRecords;
 
     if (args.dryRun) {
-      await this.processNestedRelationsHelper.processNestedRelations({
-        flatObjectMetadataMaps: context.flatObjectMetadataMaps,
-        flatFieldMetadataMaps: context.flatFieldMetadataMaps,
-        parentObjectMetadataItem: context.flatObjectMetadata,
-        parentObjectRecords: recordsToMerge,
+      await this.processNestedRelations({
+        records: recordsToMerge,
         selection: args.selectedFieldsResult,
-        limit: QUERY_MAX_RECORDS_FROM_RELATION,
-        authContext: context.authContext,
-        ...this.getNestedRelationsReadPathOptions(),
+        queryRunnerContext: context,
       });
     }
 
@@ -645,34 +644,6 @@ export class CommonMergeManyQueryRunnerService extends CommonRecordQueryRunnerSe
         return updatedRecords[0];
       },
     );
-  }
-
-  private async processNestedRelations({
-    args,
-    queryRunnerContext,
-    updatedRecords,
-  }: {
-    args: CommonExtendedInput<MergeManyQueryArgs>;
-    queryRunnerContext: CommonExtendedQueryRunnerContext;
-    updatedRecords: ObjectRecord[];
-  }): Promise<void> {
-    const {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatObjectMetadata,
-      authContext,
-    } = queryRunnerContext;
-
-    await this.processNestedRelationsHelper.processNestedRelations({
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      parentObjectMetadataItem: flatObjectMetadata,
-      parentObjectRecords: updatedRecords,
-      selection: args.selectedFieldsResult,
-      limit: QUERY_MAX_RECORDS_FROM_RELATION,
-      authContext,
-      ...this.getNestedRelationsReadPathOptions(),
-    });
   }
 
   async computeArgs(
