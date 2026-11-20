@@ -1302,12 +1302,12 @@ export interface ClientConfig {
     isCompanyEnrichmentEnabled: Scalars['Boolean']
     isConfigVariablesInDbEnabled: Scalars['Boolean']
     isCookieSessionEnabled: Scalars['Boolean']
-    isEmailDeliveryConfigured: Scalars['Boolean']
     isEmailVerificationRequired: Scalars['Boolean']
     isEmailingDomainInDemoMode: Scalars['Boolean']
     isGoogleCalendarEnabled: Scalars['Boolean']
     isGoogleMessagingEnabled: Scalars['Boolean']
     isImapSmtpCaldavEnabled: Scalars['Boolean']
+    isInvitationLinkSharingEnabled: Scalars['Boolean']
     isMicrosoftCalendarEnabled: Scalars['Boolean']
     isMicrosoftMessagingEnabled: Scalars['Boolean']
     isMultiWorkspaceEnabled: Scalars['Boolean']
@@ -3686,7 +3686,7 @@ export interface SendInboxMessageResult {
 
 export interface SendInvitations {
     errors: Scalars['String'][]
-    /** Links to share with the invitees, only returned when no email provider is configured */
+    /** Links to share with the invitees, only returned to callers with the roles permission when invitation link sharing is enabled */
     inviteLinks: WorkspaceInvitationLink[]
     result: WorkspaceInvitation[]
     /** Boolean that confirms query was dispatched */
@@ -5938,12 +5938,12 @@ export interface ClientConfigGenqlSelection{
     isCompanyEnrichmentEnabled?: boolean | number
     isConfigVariablesInDbEnabled?: boolean | number
     isCookieSessionEnabled?: boolean | number
-    isEmailDeliveryConfigured?: boolean | number
     isEmailVerificationRequired?: boolean | number
     isEmailingDomainInDemoMode?: boolean | number
     isGoogleCalendarEnabled?: boolean | number
     isGoogleMessagingEnabled?: boolean | number
     isImapSmtpCaldavEnabled?: boolean | number
+    isInvitationLinkSharingEnabled?: boolean | number
     isMicrosoftCalendarEnabled?: boolean | number
     isMicrosoftMessagingEnabled?: boolean | number
     isMultiWorkspaceEnabled?: boolean | number
@@ -8674,7 +8674,7 @@ export interface SendInboxMessageResultGenqlSelection{
 
 export interface SendInvitationsGenqlSelection{
     errors?: boolean | number
-    /** Links to share with the invitees, only returned when no email provider is configured */
+    /** Links to share with the invitees, only returned to callers with the roles permission when invitation link sharing is enabled */
     inviteLinks?: WorkspaceInvitationLinkGenqlSelection
     result?: WorkspaceInvitationGenqlSelection
     /** Boolean that confirms query was dispatched */

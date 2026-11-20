@@ -32,7 +32,6 @@ import {
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { type WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { isEmailDeliveryConfigured } from 'src/engine/core-modules/email/utils/is-email-delivery-configured.util';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { GettingStartedStepActionKey } from 'src/engine/core-modules/getting-started/enums/getting-started-step-action-key.enum';
@@ -47,6 +46,7 @@ import { type SendInvitationsDTO } from 'src/engine/core-modules/workspace-invit
 import { type WorkspaceInvitationLinkDTO } from 'src/engine/core-modules/workspace-invitation/dtos/workspace-invitation-link.dto';
 import { buildInvitationSendingThrottleKey } from 'src/engine/core-modules/workspace-invitation/utils/build-invitation-sending-throttle-key.util';
 import { castAppTokenToWorkspaceInvitationUtil } from 'src/engine/core-modules/workspace-invitation/utils/cast-app-token-to-workspace-invitation.util';
+import { isInvitationLinkSharingEnabled } from 'src/engine/core-modules/workspace-invitation/utils/is-invitation-link-sharing-enabled.util';
 import { isSameWorkDomainInvitation } from 'src/engine/core-modules/workspace-invitation/utils/is-same-work-domain-invitation.util';
 import {
   WorkspaceInvitationException,
@@ -295,7 +295,7 @@ export class WorkspaceInvitationService {
     });
   }
 
-  async getWorkspaceInvitationLink({
+  async getWorkspaceInvitationLinkOrThrow({
     appTokenId,
     workspace,
   }: {
@@ -303,13 +303,18 @@ export class WorkspaceInvitationService {
     workspace: WorkspaceEntity;
   }) {
     if (
-      isEmailDeliveryConfigured(this.twentyConfigService.get('EMAIL_DRIVER'))
+      !isInvitationLinkSharingEnabled({
+        emailDriver: this.twentyConfigService.get('EMAIL_DRIVER'),
+        isEmailVerificationRequired: this.twentyConfigService.get(
+          'IS_EMAIL_VERIFICATION_REQUIRED',
+        ),
+      })
     ) {
       throw new AuthException(
-        'Invitation links are only available when no email provider is configured',
+        'Invitation link sharing is disabled on this instance',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
         {
-          userFriendlyMessage: msg`Invitation links are only available when no email provider is configured.`,
+          userFriendlyMessage: msg`Invitation links are not available on this instance.`,
         },
       );
     }
@@ -420,7 +425,12 @@ export class WorkspaceInvitationService {
 
     const shouldReturnInviteLinks =
       canShareInviteLinks &&
-      !isEmailDeliveryConfigured(this.twentyConfigService.get('EMAIL_DRIVER'));
+      isInvitationLinkSharingEnabled({
+        emailDriver: this.twentyConfigService.get('EMAIL_DRIVER'),
+        isEmailVerificationRequired: this.twentyConfigService.get(
+          'IS_EMAIL_VERIFICATION_REQUIRED',
+        ),
+      });
     const inviteLinks: WorkspaceInvitationLinkDTO[] = [];
 
     for (const invitation of invitationResults) {

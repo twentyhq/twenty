@@ -1458,12 +1458,12 @@ type ClientConfig {
   isCompanyEnrichmentEnabled: Boolean!
   isConfigVariablesInDbEnabled: Boolean!
   isCookieSessionEnabled: Boolean!
-  isEmailDeliveryConfigured: Boolean!
   isEmailVerificationRequired: Boolean!
   isEmailingDomainInDemoMode: Boolean!
   isGoogleCalendarEnabled: Boolean!
   isGoogleMessagingEnabled: Boolean!
   isImapSmtpCaldavEnabled: Boolean!
+  isInvitationLinkSharingEnabled: Boolean!
   isMicrosoftCalendarEnabled: Boolean!
   isMicrosoftMessagingEnabled: Boolean!
   isMultiWorkspaceEnabled: Boolean!
@@ -5022,7 +5022,7 @@ type SendInvitations {
   errors: [String!]!
 
   """
-  Links to share with the invitees, only returned when no email provider is configured
+  Links to share with the invitees, only returned to callers with the roles permission when invitation link sharing is enabled
   """
   inviteLinks: [WorkspaceInvitationLink!]!
   result: [WorkspaceInvitation!]!

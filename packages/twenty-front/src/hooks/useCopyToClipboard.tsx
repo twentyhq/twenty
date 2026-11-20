@@ -1,24 +1,25 @@
 import { useLingui } from '@lingui/react/macro';
+import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { IconCopy, IconExclamationCircle } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
+
 type ClipboardValue = string | Promise<string>;
 
 const writeValueToClipboard = async (value: ClipboardValue) => {
-  if (typeof value === 'string') {
+  if (isString(value)) {
     await navigator.clipboard.writeText(value);
 
     return;
   }
 
-  if (typeof ClipboardItem === 'undefined') {
+  if (!isDefined(globalThis.ClipboardItem)) {
     await navigator.clipboard.writeText(await value);
 
     return;
   }
 
-  // Safari drops clipboard writes made after an await, so the pending value is handed over within the click
   await navigator.clipboard.write([
     new ClipboardItem({
       'text/plain': value.then(
@@ -33,10 +34,13 @@ export const useCopyToClipboard = () => {
   const { enqueueToast } = useToast();
   const { t } = useLingui();
 
-  const writeToClipboard = async (
-    value: ClipboardValue,
-    successMessage: string | null,
-  ) => {
+  const writeToClipboard = async ({
+    value,
+    successMessage,
+  }: {
+    value: ClipboardValue;
+    successMessage: string | null;
+  }) => {
     if (!window.isSecureContext) {
       enqueueToast({
         status: 'error',
@@ -72,10 +76,13 @@ export const useCopyToClipboard = () => {
   };
 
   const copyToClipboard = async (value: ClipboardValue, message?: string) =>
-    await writeToClipboard(value, message || t`Copied to clipboard`);
+    await writeToClipboard({
+      value,
+      successMessage: message || t`Copied to clipboard`,
+    });
 
   const copyToClipboardWithoutSuccessToast = async (value: ClipboardValue) =>
-    await writeToClipboard(value, null);
+    await writeToClipboard({ value, successMessage: null });
 
   return { copyToClipboard, copyToClipboardWithoutSuccessToast };
 };

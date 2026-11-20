@@ -1567,12 +1567,12 @@ export type ClientConfig = {
   isCompanyEnrichmentEnabled: Scalars['Boolean']['output'];
   isConfigVariablesInDbEnabled: Scalars['Boolean']['output'];
   isCookieSessionEnabled: Scalars['Boolean']['output'];
-  isEmailDeliveryConfigured: Scalars['Boolean']['output'];
   isEmailVerificationRequired: Scalars['Boolean']['output'];
   isEmailingDomainInDemoMode: Scalars['Boolean']['output'];
   isGoogleCalendarEnabled: Scalars['Boolean']['output'];
   isGoogleMessagingEnabled: Scalars['Boolean']['output'];
   isImapSmtpCaldavEnabled: Scalars['Boolean']['output'];
+  isInvitationLinkSharingEnabled: Scalars['Boolean']['output'];
   isMicrosoftCalendarEnabled: Scalars['Boolean']['output'];
   isMicrosoftMessagingEnabled: Scalars['Boolean']['output'];
   isMultiWorkspaceEnabled: Scalars['Boolean']['output'];
@@ -7395,7 +7395,7 @@ export type SendInboxMessageResult = {
 export type SendInvitations = {
   __typename?: 'SendInvitations';
   errors: Array<Scalars['String']['output']>;
-  /** Links to share with the invitees, only returned when no email provider is configured */
+  /** Links to share with the invitees, only returned to callers with the roles permission when invitation link sharing is enabled */
   inviteLinks: Array<WorkspaceInvitationLink>;
   result: Array<WorkspaceInvitation>;
   /** Boolean that confirms query was dispatched */

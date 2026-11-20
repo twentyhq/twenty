@@ -1,6 +1,6 @@
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isEmailDeliveryConfiguredState } from '@/client-config/states/isEmailDeliveryConfiguredState';
+import { isInvitationLinkSharingEnabledState } from '@/client-config/states/isInvitationLinkSharingEnabledState';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
@@ -89,8 +89,8 @@ export const SettingsWorkspaceMembersInviteTab = () => {
   const { deleteWorkspaceInvitation } = useDeleteWorkspaceInvitation();
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const isEmailDeliveryConfigured = useAtomStateValue(
-    isEmailDeliveryConfiguredState,
+  const isInvitationLinkSharingEnabled = useAtomStateValue(
+    isInvitationLinkSharingEnabledState,
   );
   const hasRolesPermission = useHasPermissionFlag(PermissionFlagType.ROLES);
 
@@ -128,12 +128,14 @@ export const SettingsWorkspaceMembersInviteTab = () => {
   const canCopyInvitationLink = ({
     expiresAt,
   }: Pick<WorkspaceInvitation, 'expiresAt'>) =>
-    hasRolesPermission && !isEmailDeliveryConfigured && !isExpired(expiresAt);
+    hasRolesPermission &&
+    isInvitationLinkSharingEnabled &&
+    !isExpired(expiresAt);
 
   const canResendInvitation = ({
     expiresAt,
   }: Pick<WorkspaceInvitation, 'expiresAt'>) =>
-    isEmailDeliveryConfigured || isExpired(expiresAt);
+    !isInvitationLinkSharingEnabled || isExpired(expiresAt);
 
   const getExpiresAtText = (expiresAt: string) => {
     if (isExpired(expiresAt)) {
@@ -163,9 +165,9 @@ export const SettingsWorkspaceMembersInviteTab = () => {
         <Section.Header
           title={t`Invite by email`}
           description={
-            isEmailDeliveryConfigured
-              ? t`Send an invite email to your team`
-              : t`Generate personal invite links to share with your team`
+            isInvitationLinkSharingEnabled
+              ? t`Generate personal invite links to share with your team`
+              : t`Send an invite email to your team`
           }
         />
         <WorkspaceInviteTeam roles={roles} />

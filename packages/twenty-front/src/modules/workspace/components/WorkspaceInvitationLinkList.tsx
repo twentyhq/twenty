@@ -7,6 +7,7 @@ import { IconButton } from 'twenty-ui/components/input';
 import { IconCopy, IconMail } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { type WorkspaceInvitationLink } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const ROW_ENTER_OFFSET_PX = 6;
@@ -63,7 +64,7 @@ const StyledLink = styled.span`
 `;
 
 type WorkspaceInvitationLinkListProps = {
-  inviteLinks: Array<{ email: string; link: string }>;
+  inviteLinks: WorkspaceInvitationLink[];
 };
 
 export const WorkspaceInvitationLinkList = ({

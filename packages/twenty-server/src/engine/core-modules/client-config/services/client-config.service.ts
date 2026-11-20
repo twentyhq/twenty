@@ -15,11 +15,11 @@ import {
   type ClientConfig,
 } from 'src/engine/core-modules/client-config/client-config.entity';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
-import { isEmailDeliveryConfigured } from 'src/engine/core-modules/email/utils/is-email-delivery-configured.util';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
+import { isInvitationLinkSharingEnabled } from 'src/engine/core-modules/workspace-invitation/utils/is-invitation-link-sharing-enabled.util';
 import { deriveWebPushVapidKeyPair } from 'src/engine/core-modules/web-push/utils/derive-web-push-vapid-key-pair.util';
 import { AI_MODEL_TIERS, parseAiModelVariantId } from 'twenty-shared/ai';
 import { ENTERPRISE_INSTANCE_TYPE } from 'twenty-shared/constants';
@@ -224,9 +224,12 @@ export class ClientConfigService {
       isEmailVerificationRequired: this.twentyConfigService.get(
         'IS_EMAIL_VERIFICATION_REQUIRED',
       ),
-      isEmailDeliveryConfigured: isEmailDeliveryConfigured(
-        this.twentyConfigService.get('EMAIL_DRIVER'),
-      ),
+      isInvitationLinkSharingEnabled: isInvitationLinkSharingEnabled({
+        emailDriver: this.twentyConfigService.get('EMAIL_DRIVER'),
+        isEmailVerificationRequired: this.twentyConfigService.get(
+          'IS_EMAIL_VERIFICATION_REQUIRED',
+        ),
+      }),
       defaultSubdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
       frontDomain: this.domainServerConfigService.getFrontUrl().hostname,
       serverUrl: this.twentyConfigService.get('SERVER_URL'),

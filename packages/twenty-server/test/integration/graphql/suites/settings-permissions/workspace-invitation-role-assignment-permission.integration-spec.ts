@@ -204,20 +204,6 @@ describe('Workspace invitation role assignment permission', () => {
     expect(await findWorkspaceInvitationsByEmail({ email })).toHaveLength(1);
   });
 
-  it('denies the link of an invitation with the Admin role when the caller lacks ROLES permission', async () => {
-    const { appTokenId } = await seedPendingInvitation({
-      roleId: adminRoleId,
-    });
-
-    const response = await getWorkspaceInvitationLinkAs({
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      appTokenId,
-    });
-
-    expect(response.body.data?.getWorkspaceInvitationLink ?? null).toBeNull();
-    expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
-  });
-
   it('denies the link of an invitation without a role when the caller lacks ROLES permission', async () => {
     const { appTokenId } = await seedPendingInvitation({});
 

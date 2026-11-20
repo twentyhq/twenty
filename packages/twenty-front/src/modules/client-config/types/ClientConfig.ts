@@ -34,7 +34,6 @@ export type ClientConfig = {
   publicFunctionDomain?: string | null;
   isAttachmentPreviewEnabled: boolean;
   isConfigVariablesInDbEnabled: boolean;
-  isEmailDeliveryConfigured: boolean;
   isEmailVerificationRequired: boolean;
   isGoogleCalendarEnabled: boolean;
   isGoogleMessagingEnabled: boolean;
@@ -42,6 +41,7 @@ export type ClientConfig = {
   isMicrosoftMessagingEnabled: boolean;
   isMultiWorkspaceEnabled: boolean;
   isImapSmtpCaldavEnabled: boolean;
+  isInvitationLinkSharingEnabled: boolean;
   isEmailingDomainInDemoMode: boolean;
   isCloudflareIntegrationEnabled: boolean;
   isClickHouseConfigured: boolean;

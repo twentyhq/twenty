@@ -98,7 +98,7 @@ describe('signUp with a pending personal invitation (integration)', () => {
       ]);
     });
 
-    it('still joins the workspace through the invitation link while unverified', async () => {
+    it('joins the workspace through the invitation link and verifies the email', async () => {
       const response = await makeMetadataApiRequest(
         signUpInWorkspaceOperationFactory({
           email,
@@ -114,6 +114,7 @@ describe('signUp with a pending personal invitation (integration)', () => {
         SEED_APPLE_WORKSPACE_ID,
       );
       expect(await findWorkspaceInvitationsByEmail({ email })).toHaveLength(0);
+      expect(await signInAvailableWorkspacesForSignUp(email)).toEqual([]);
     });
   });
 

@@ -69,7 +69,7 @@ describe('ClientConfigController', () => {
         signInPrefilled: false,
         isMultiWorkspaceEnabled: true,
         isEmailVerificationRequired: false,
-        isEmailDeliveryConfigured: true,
+        isInvitationLinkSharingEnabled: false,
         defaultSubdomain: 'app',
         frontDomain: 'localhost',
         serverUrl: 'http://localhost:3000',

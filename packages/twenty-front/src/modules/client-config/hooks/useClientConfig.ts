@@ -20,11 +20,11 @@ import { isCloudflareIntegrationEnabledState } from '@/client-config/states/isCl
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { enterpriseInstanceTypeState } from '@/client-config/states/enterpriseInstanceTypeState';
 import { isEmailingDomainInDemoModeState } from '@/client-config/states/isEmailingDomainInDemoModeState';
-import { isEmailDeliveryConfiguredState } from '@/client-config/states/isEmailDeliveryConfiguredState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpCaldavEnabledState';
+import { isInvitationLinkSharingEnabledState } from '@/client-config/states/isInvitationLinkSharingEnabledState';
 import { maintenanceModeState } from '@/client-config/states/maintenanceModeState';
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
@@ -71,8 +71,8 @@ export const useClientConfig = (): UseClientConfigResult => {
   const setIsEmailVerificationRequired = useSetAtomState(
     isEmailVerificationRequiredState,
   );
-  const setIsEmailDeliveryConfigured = useSetAtomState(
-    isEmailDeliveryConfiguredState,
+  const setIsInvitationLinkSharingEnabled = useSetAtomState(
+    isInvitationLinkSharingEnabledState,
   );
 
   const setBilling = useSetAtomState(billingState);
@@ -201,7 +201,9 @@ export const useClientConfig = (): UseClientConfigResult => {
         setIsEmailVerificationRequired(
           clientConfig.isEmailVerificationRequired,
         );
-        setIsEmailDeliveryConfigured(clientConfig.isEmailDeliveryConfigured);
+        setIsInvitationLinkSharingEnabled(
+          clientConfig.isInvitationLinkSharingEnabled,
+        );
         setBilling(clientConfig.billing);
         setSupportChat(clientConfig.support);
 
@@ -307,7 +309,7 @@ export const useClientConfig = (): UseClientConfigResult => {
       setIsConfigVariablesInDbEnabled,
       setIsDeveloperDefaultSignInPrefilled,
       setIsEmailVerificationRequired,
-      setIsEmailDeliveryConfigured,
+      setIsInvitationLinkSharingEnabled,
       setIsImapSmtpCaldavEnabled,
       setIsMultiWorkspaceEnabled,
       setIsEmailingDomainInDemoMode,

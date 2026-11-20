@@ -26,7 +26,13 @@ const readBlobAsText = (blob: Blob) =>
     reader.readAsText(blob);
   });
 
-const setClipboardItem = (clipboardItem: unknown) => {
+type ClipboardItemConstructor = new (
+  items: Record<string, Promise<Blob>>,
+) => MockClipboardItem;
+
+const setClipboardItem = (
+  clipboardItem: ClipboardItemConstructor | undefined,
+) => {
   Object.defineProperty(globalThis, 'ClipboardItem', {
     configurable: true,
     writable: true,
@@ -51,7 +57,6 @@ describe('useCopyToClipboard', () => {
     jest.clearAllMocks();
     mockWriteText.mockResolvedValue(undefined);
     mockWrite.mockResolvedValue(undefined);
-    // jsdom ships no clipboard implementation
     Object.defineProperty(navigator, 'clipboard', {
       configurable: true,
       value: { writeText: mockWriteText, write: mockWrite },

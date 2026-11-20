@@ -18,7 +18,7 @@ export class SendInvitationsDTO {
 
   @Field(() => [WorkspaceInvitationLinkDTO], {
     description:
-      'Links to share with the invitees, only returned when no email provider is configured',
+      'Links to share with the invitees, only returned to callers with the roles permission when invitation link sharing is enabled',
   })
   inviteLinks: Array<WorkspaceInvitationLinkDTO>;
 }

@@ -48,6 +48,24 @@ const WORKSPACE_INVITATION_WRITE_ACCESS_POLICY: AccessPolicy = {
   requiredPermissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
 };
 
+const WORKSPACE_INVITATION_LINK_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: { withUser: true, withoutUser: false },
+    application: false,
+  },
+  requiredPermissionFlags: [
+    PermissionFlagType.WORKSPACE_MEMBERS,
+    PermissionFlagType.ROLES,
+  ],
+};
+
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
   PermissionsGraphqlApiExceptionFilter,
@@ -120,16 +138,12 @@ export class WorkspaceInvitationResolver {
   }
 
   @Query(() => String)
-  @UseGuards(AccessPolicyGuard(WORKSPACE_INVITATION_WRITE_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(WORKSPACE_INVITATION_LINK_ACCESS_POLICY))
   async getWorkspaceInvitationLink(
     @Args('appTokenId') appTokenId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    if (!(await this.hasRolesPermission())) {
-      this.throwPermissionDenied();
-    }
-
-    return this.workspaceInvitationService.getWorkspaceInvitationLink({
+    return this.workspaceInvitationService.getWorkspaceInvitationLinkOrThrow({
       appTokenId,
       workspace,
     });
@@ -164,10 +178,20 @@ export class WorkspaceInvitationResolver {
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendInvitationsDTO> {
-    const hasRolesPermission = await this.hasRolesPermission();
+    const hasRolesPermission =
+      await this.settingPermissionsService.hasPermissionFlag({
+        authContext: workspaceAuthContextStorage.getStore(),
+        permissionFlag: PermissionFlagType.ROLES,
+      });
 
     if (isDefined(sendInviteLinkInput.roleId) && !hasRolesPermission) {
-      this.throwPermissionDenied();
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+        {
+          userFriendlyMessage: msg`You do not have permission to access this feature. Please contact your workspace administrator for access.`,
+        },
+      );
     }
 
     const authContext = buildSystemAuthContext(workspace.id);
@@ -193,22 +217,5 @@ export class WorkspaceInvitationResolver {
       roleId: sendInviteLinkInput.roleId ?? undefined,
       canShareInviteLinks: hasRolesPermission,
     });
-  }
-
-  private hasRolesPermission() {
-    return this.settingPermissionsService.hasPermissionFlag({
-      authContext: workspaceAuthContextStorage.getStore(),
-      permissionFlag: PermissionFlagType.ROLES,
-    });
-  }
-
-  private throwPermissionDenied(): never {
-    throw new PermissionsException(
-      PermissionsExceptionMessage.PERMISSION_DENIED,
-      PermissionsExceptionCode.PERMISSION_DENIED,
-      {
-        userFriendlyMessage: msg`You do not have permission to access this feature. Please contact your workspace administrator for access.`,
-      },
-    );
   }
 }

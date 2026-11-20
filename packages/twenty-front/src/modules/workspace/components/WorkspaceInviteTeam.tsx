@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { isEmailDeliveryConfiguredState } from '@/client-config/states/isEmailDeliveryConfiguredState';
+import { isInvitationLinkSharingEnabledState } from '@/client-config/states/isInvitationLinkSharingEnabledState';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { Select } from '@/ui/input/components/Select';
@@ -29,7 +29,10 @@ import {
 import { useIcons } from 'twenty-ui/icon/provider';
 import { Button } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  PermissionFlagType,
+  type WorkspaceInvitationLink,
+} from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -109,24 +112,19 @@ type WorkspaceInviteTeamProps = {
   roles: RoleWithPartialMembers[];
 };
 
-type InviteLink = {
-  email: string;
-  link: string;
-};
-
 export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
 
   const { enqueueToast } = useToast();
   const { sendInvitation } = useCreateWorkspaceInvitation();
-  const isEmailDeliveryConfigured = useAtomStateValue(
-    isEmailDeliveryConfiguredState,
+  const isInvitationLinkSharingEnabled = useAtomStateValue(
+    isInvitationLinkSharingEnabledState,
   );
   const hasRolesPermission = useHasPermissionFlag(PermissionFlagType.ROLES);
-  const [inviteLinks, setInviteLinks] = useState<InviteLink[]>([]);
-  const [isAskAdminForLinksVisible, setIsAskAdminForLinksVisible] =
-    useState(false);
+  const [generatedInviteLinks, setGeneratedInviteLinks] = useState<
+    WorkspaceInvitationLink[] | null
+  >(null);
 
   const roleOptions: Array<{
     label: string;
@@ -159,7 +157,7 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
   const isEmailsEmpty = !watch('emails');
 
   const getSuccessMessage = (invitationCount: number) => {
-    if (isEmailDeliveryConfigured) {
+    if (!isInvitationLinkSharingEnabled) {
       return t`${invitationCount} invitations sent`;
     }
 
@@ -183,9 +181,8 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
     if (data.sendInvitations.result.length > 0) {
       const invitationCount = data.sendInvitations.result.length;
 
-      if (!isEmailDeliveryConfigured) {
-        setInviteLinks(data.sendInvitations.inviteLinks);
-        setIsAskAdminForLinksVisible(!hasRolesPermission);
+      if (isInvitationLinkSharingEnabled) {
+        setGeneratedInviteLinks(data.sendInvitations.inviteLinks);
       }
 
       enqueueToast({
@@ -258,22 +255,24 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
           />
         </StyledRoleContainer>
         <Button
-          startIcon={isEmailDeliveryConfigured ? <IconSend /> : <IconLink />}
+          startIcon={
+            isInvitationLinkSharingEnabled ? <IconLink /> : <IconSend />
+          }
           type="submit"
           disabled={isEmailsEmpty || !!errors.emails}
           variant="solid"
           color="accent"
         >
-          {isEmailDeliveryConfigured ? t`Invite` : t`Generate links`}
+          {isInvitationLinkSharingEnabled ? t`Generate links` : t`Invite`}
         </Button>
       </StyledContainer>
-      {!isEmailDeliveryConfigured && isNonEmptyArray(inviteLinks) && (
+      {isNonEmptyArray(generatedInviteLinks) && (
         <WorkspaceInvitationLinkList
-          key={inviteLinks[0].link}
-          inviteLinks={inviteLinks}
+          key={generatedInviteLinks[0].link}
+          inviteLinks={generatedInviteLinks}
         />
       )}
-      {!isEmailDeliveryConfigured && isAskAdminForLinksVisible && (
+      {isDefined(generatedInviteLinks) && !hasRolesPermission && (
         <StyledBannerContainer>
           <InlineBanner layout="compact" status="info" fullWidth>
             {t`Only admins can access invitation links. Contact a workspace admin to get them.`}
