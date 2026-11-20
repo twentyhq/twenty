@@ -1,23 +1,20 @@
-import { useApolloClient, useMutation } from '@apollo/client/react';
-import { isDefined } from 'twenty-shared/utils';
-import {
-  DeleteManyNavigationMenuItemsDocument,
-  FindManyNavigationMenuItemsDocument,
-} from '~/generated-metadata/graphql';
+import { useMutation } from '@apollo/client/react';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+import { DeleteManyNavigationMenuItemsDocument } from '~/generated-metadata/graphql';
 
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { navigationMenuItemsWithHiddenSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsWithHiddenSelector';
+import { getNavigationMenuItemsKeptAfterRemoval } from '@/navigation-menu-item/common/utils/getNavigationMenuItemsKeptAfterRemoval';
 import { useStore } from 'jotai';
 
 export const useDeleteManyNavigationMenuItems = () => {
-  const { removeFromDraft, replaceDraft, applyChanges } =
+  const { addToDraft, removeFromDraft, replaceDraft, applyChanges } =
     useUpdateMetadataStoreDraft();
 
   const [deleteManyNavigationMenuItemsMutation] = useMutation(
     DeleteManyNavigationMenuItemsDocument,
   );
 
-  const apolloClient = useApolloClient();
   const store = useStore();
 
   const deleteManyNavigationMenuItems = async (ids: string[]) => {
@@ -31,21 +28,27 @@ export const useDeleteManyNavigationMenuItems = () => {
     applyChanges();
 
     try {
-      await deleteManyNavigationMenuItemsMutation({ variables: { ids } });
+      const result = await deleteManyNavigationMenuItemsMutation({
+        variables: { ids },
+      });
+
+      const keptNavigationMenuItems = getNavigationMenuItemsKeptAfterRemoval({
+        navigationMenuItemsBeforeRemoval: previousItems,
+        removedNavigationMenuItems:
+          result.data?.deleteManyNavigationMenuItems ?? [],
+      });
+
+      if (isNonEmptyArray(keptNavigationMenuItems)) {
+        addToDraft({
+          key: 'navigationMenuItems',
+          items: keptNavigationMenuItems,
+        });
+        applyChanges();
+      }
     } catch (error) {
       replaceDraft('navigationMenuItems', previousItems);
       applyChanges();
       throw error;
-    }
-
-    const { data } = await apolloClient.query({
-      query: FindManyNavigationMenuItemsDocument,
-      fetchPolicy: 'network-only',
-    });
-
-    if (isDefined(data?.navigationMenuItems)) {
-      replaceDraft('navigationMenuItems', data.navigationMenuItems);
-      applyChanges();
     }
   };
 
