@@ -50,7 +50,6 @@ const enqueuedPayloads = () =>
     );
 
 beforeEach(() => {
-  vi.stubEnv('GRANOLA_PERSONAL_SYNC_ENABLED', 'true');
   vi.useFakeTimers();
   vi.setSystemTime('2026-11-19T04:30:00.000Z');
   vi.mocked(listConnections).mockResolvedValue([OWN_CONNECTION]);
@@ -70,18 +69,19 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.resetAllMocks();
-  vi.unstubAllEnvs();
   vi.unstubAllGlobals();
   vi.useRealTimers();
 });
 
 describe('granolaPersonalCatchUpWorkerHandler', () => {
-  it('skips all work before activation', async () => {
-    vi.stubEnv('GRANOLA_PERSONAL_SYNC_ENABLED', undefined);
+  it('skips a connection without any selected folders', async () => {
+    vi.mocked(kv.get).mockResolvedValue([]);
+    const fetchProvider = vi.fn<typeof fetch>();
+    vi.stubGlobal('fetch', fetchProvider);
 
     await granolaPersonalCatchUpWorkerHandler(initialScan);
 
-    expect(listConnections).not.toHaveBeenCalled();
+    expect(fetchProvider).not.toHaveBeenCalled();
     expect(enqueueJobs).not.toHaveBeenCalled();
   });
 
