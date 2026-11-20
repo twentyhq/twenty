@@ -11,12 +11,17 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 const NETWORK_ERROR = new Error('Failed to fetch');
 
 const handleThreadClick = jest.fn();
-const useAiChatThreadClick = jest.fn((_options: unknown) => ({
-  handleThreadClick,
-}));
+type UseAiChatThreadClickOptions = { resetNavigationStack?: boolean };
+
+const useAiChatThreadClick = jest.fn(
+  (_options: UseAiChatThreadClickOptions) => ({
+    handleThreadClick,
+  }),
+);
 
 jest.mock('@/ai-chat/threads/hooks/useAiChatThreadClick', () => ({
-  useAiChatThreadClick: (options: unknown) => useAiChatThreadClick(options),
+  useAiChatThreadClick: (options: UseAiChatThreadClickOptions) =>
+    useAiChatThreadClick(options),
 }));
 
 jest.mock('@/inbox/components/InboxThreadActionsDropdown', () => ({
