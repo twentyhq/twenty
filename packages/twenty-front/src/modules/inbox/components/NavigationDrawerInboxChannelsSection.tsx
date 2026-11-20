@@ -14,8 +14,6 @@ import { aiChatAccessibleChannelsSelector } from '@/ai-chat/threads/states/selec
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -43,8 +41,6 @@ export const NavigationDrawerInboxChannelsSection = ({
     PermissionFlagType.AI_SETTINGS,
   );
   const { openInboxChannel } = useOpenInboxChannel();
-  const isNavigationDrawerContentExpanded =
-    useIsNavigationDrawerContentExpanded();
   const [newChannelName, setNewChannelName] = useState<string | null>(null);
 
   if (!isDefined(aiChatChannels) && !isDefined(headerAction)) {
@@ -117,7 +113,7 @@ export const NavigationDrawerInboxChannelsSection = ({
           canManage={canManageChannels}
         />
       ))}
-      {isDefined(newChannelName) ? (
+      {isDefined(newChannelName) && (
         <NavigationDrawerInput
           Icon={IconHash}
           value={newChannelName}
@@ -127,17 +123,6 @@ export const NavigationDrawerInboxChannelsSection = ({
           onClickOutside={(_event, name) => void commitCreate(name)}
           placeholder={t`Channel name`}
         />
-      ) : (
-        canManageChannels &&
-        isNavigationDrawerContentExpanded && (
-          <NavigationDrawerItem
-            label={t`Add channel`}
-            Icon={IconPlus}
-            variant="tertiary"
-            onClick={startCreate}
-            triggerEvent="CLICK"
-          />
-        )
       )}
     </CollapsibleNavigationDrawerSection>
   );
