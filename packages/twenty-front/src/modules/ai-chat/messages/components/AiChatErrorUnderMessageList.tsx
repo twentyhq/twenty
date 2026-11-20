@@ -1,11 +1,9 @@
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { AiChatErrorRenderer } from '@/ai-chat/messages/components/AiChatErrorRenderer';
-import { AGENT_MESSAGE_ROLE } from '@/ai-chat/messages/constants/AgentMessageRole';
 import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
 import { aiChatIsStreamingFamilyState } from '@/ai-chat/states/aiChatIsStreamingFamilyState';
-import { aiChatThreadMessageFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadMessageFamilySelector';
-import { aiChatMessageIdsFamilySelector } from '@/ai-chat/states/selectors/aiChatMessageIdsFamilySelector';
+import { aiChatIsLastMessageFromUserFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatIsLastMessageFromUserFamilySelector';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -24,21 +22,13 @@ export const AiChatErrorUnderMessageList = () => {
     { threadId },
   );
 
-  const aiChatMessageIds = useAtomFamilySelectorValue(
-    aiChatMessageIdsFamilySelector,
+  const aiChatIsLastMessageFromUser = useAtomFamilySelectorValue(
+    aiChatIsLastMessageFromUserFamilySelector,
     threadId,
   );
 
-  const lastMessageId = aiChatMessageIds.at(-1);
-  const agentChatMessage = useAtomFamilySelectorValue(
-    aiChatThreadMessageFamilySelector,
-    { threadId, messageId: lastMessageId },
-  );
-
   const showError =
-    aiChatError &&
-    !aiChatIsStreaming &&
-    agentChatMessage?.role === AGENT_MESSAGE_ROLE.USER;
+    aiChatError && !aiChatIsStreaming && aiChatIsLastMessageFromUser;
 
   if (!showError) {
     return null;

@@ -2,11 +2,11 @@ import { AGENT_MESSAGE_ROLE } from '@/ai-chat/messages/constants/AgentMessageRol
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
-export const aiChatLastMessageIdFamilySelector = createAtomFamilySelector<
+export const aiChatLastReplyMessageIdFamilySelector = createAtomFamilySelector<
   string | null,
   string
 >({
-  key: 'aiChatLastMessageIdFamilySelector',
+  key: 'aiChatLastReplyMessageIdFamilySelector',
   get:
     (threadId) =>
     ({ get }) => {

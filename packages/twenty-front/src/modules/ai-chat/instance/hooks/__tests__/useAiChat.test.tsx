@@ -27,7 +27,7 @@ import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSend
 import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai-chat/states/aiChatIsAwaitingFirstChunkFamilyState';
 import { aiChatIsAssistantReplyPendingFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatIsAssistantReplyPendingFamilySelector';
 import { type AiChatNewThreadRecipients } from '@/ai-chat/types/AiChatNewThreadRecipients';
-import { aiChatSelectedFilesFamilyState } from '@/ai-chat/composer/states/aiChatSelectedFilesFamilyState';
+import { aiChatUploadingFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadingFilesFamilyState';
 import { aiChatUploadedFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadedFilesFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -482,7 +482,7 @@ describe('useAiChat', () => {
       restoreEditorContent,
     );
     jotaiStore.set(
-      aiChatSelectedFilesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      aiChatUploadingFilesFamilyState.atomFamily({ threadId: THREAD_ID }),
       [new File(['brief'], 'brief.pdf')],
     );
 
@@ -491,7 +491,7 @@ describe('useAiChat', () => {
     expect(restoreEditorContent).not.toHaveBeenCalled();
 
     jotaiStore.set(
-      aiChatSelectedFilesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      aiChatUploadingFilesFamilyState.atomFamily({ threadId: THREAD_ID }),
       [],
     );
 

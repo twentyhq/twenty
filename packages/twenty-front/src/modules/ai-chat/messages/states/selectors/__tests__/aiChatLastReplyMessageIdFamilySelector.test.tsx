@@ -4,7 +4,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
-import { aiChatLastMessageIdFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatLastMessageIdFamilySelector';
+import { aiChatLastReplyMessageIdFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatLastReplyMessageIdFamilySelector';
 import { aiChatNonLastMessageIdsFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatNonLastMessageIdsFamilySelector';
 import {
   jotaiStore,
@@ -24,7 +24,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
-describe('aiChatLastMessageIdFamilySelector', () => {
+describe('aiChatLastReplyMessageIdFamilySelector', () => {
   beforeEach(() => {
     resetJotaiStore();
   });
@@ -58,7 +58,7 @@ describe('aiChatLastMessageIdFamilySelector', () => {
             THREAD_ID,
           ),
           lastMessageId: useAtomFamilySelectorValue(
-            aiChatLastMessageIdFamilySelector,
+            aiChatLastReplyMessageIdFamilySelector,
             THREAD_ID,
           ),
         }),

@@ -8,7 +8,7 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { useAssignAiChatThreads } from '@/ai-chat/threads/hooks/useAssignAiChatThreads';
-import { aiChatThreadsSharedAssigneeIdFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadsSharedAssigneeIdFamilySelector';
+import { aiChatThreadsAssigneeSummaryFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadsAssigneeSummaryFamilySelector';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
@@ -41,7 +41,7 @@ export const SidePanelAssignAiChatPage = () => {
   );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { sharedAssigneeId, hasAssignee } = useAtomFamilySelectorValue(
-    aiChatThreadsSharedAssigneeIdFamilySelector,
+    aiChatThreadsAssigneeSummaryFamilySelector,
     { threadIds: assignAiChatThreadIds },
   );
   const { assignAiChatThreads } = useAssignAiChatThreads();

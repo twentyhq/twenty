@@ -4,18 +4,18 @@ import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selec
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-type AiChatThreadsSharedAssignee = {
+type AiChatThreadsAssigneeSummary = {
   // Set only when every chat has the same assignee
   sharedAssigneeId: string | null;
   hasAssignee: boolean;
 };
 
-export const aiChatThreadsSharedAssigneeIdFamilySelector =
+export const aiChatThreadsAssigneeSummaryFamilySelector =
   createAtomFamilySelector<
-    AiChatThreadsSharedAssignee,
+    AiChatThreadsAssigneeSummary,
     { threadIds: string[] }
   >({
-    key: 'aiChatThreadsSharedAssigneeIdFamilySelector',
+    key: 'aiChatThreadsAssigneeSummaryFamilySelector',
     get:
       ({ threadIds }) =>
       ({ get }) => {

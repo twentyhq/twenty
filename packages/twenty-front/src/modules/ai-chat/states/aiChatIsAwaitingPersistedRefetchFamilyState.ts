@@ -2,6 +2,6 @@ import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAt
 
 export const aiChatIsAwaitingPersistedRefetchFamilyState =
   createAtomFamilyState<boolean, { threadId: string | null }>({
-    key: 'agentChatIsAwaitingPersistedRefetchFamilyState',
+    key: 'aiChatIsAwaitingPersistedRefetchFamilyState',
     defaultValue: false,
   });

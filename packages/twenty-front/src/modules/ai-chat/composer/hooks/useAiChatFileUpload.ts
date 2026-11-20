@@ -1,4 +1,4 @@
-import { aiChatSelectedFilesFamilyState } from '@/ai-chat/composer/states/aiChatSelectedFilesFamilyState';
+import { aiChatUploadingFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadingFilesFamilyState';
 import { aiChatUploadedFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadedFilesFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
@@ -24,12 +24,12 @@ export const useAiChatFileUpload = () => {
     file: File;
     threadId: string;
   }): Promise<AiChatFileUIPart | null> => {
-    const selectedFilesAtom = aiChatSelectedFilesFamilyState.atomFamily({
+    const uploadingFilesAtom = aiChatUploadingFilesFamilyState.atomFamily({
       threadId,
     });
     const abortController = new AbortController();
-    const unsubscribeFromSelectedFiles = store.sub(selectedFilesAtom, () => {
-      if (!store.get(selectedFilesAtom).includes(file)) {
+    const unsubscribeFromUploadingFiles = store.sub(uploadingFilesAtom, () => {
+      if (!store.get(uploadingFilesAtom).includes(file)) {
         abortController.abort();
       }
     });
@@ -40,7 +40,7 @@ export const useAiChatFileUpload = () => {
         signal: abortController.signal,
       });
 
-      if (!store.get(selectedFilesAtom).includes(file)) {
+      if (!store.get(uploadingFilesAtom).includes(file)) {
         return null;
       }
 
@@ -63,9 +63,9 @@ export const useAiChatFileUpload = () => {
 
       return null;
     } finally {
-      unsubscribeFromSelectedFiles();
-      store.set(selectedFilesAtom, (previousSelectedFiles) =>
-        previousSelectedFiles.filter((selectedFile) => selectedFile !== file),
+      unsubscribeFromUploadingFiles();
+      store.set(uploadingFilesAtom, (previousUploadingFiles) =>
+        previousUploadingFiles.filter((selectedFile) => selectedFile !== file),
       );
     }
   };
@@ -89,8 +89,8 @@ export const useAiChatFileUpload = () => {
     }
 
     store.set(
-      aiChatSelectedFilesFamilyState.atomFamily({ threadId }),
-      (previousSelectedFiles) => [...previousSelectedFiles, ...files],
+      aiChatUploadingFilesFamilyState.atomFamily({ threadId }),
+      (previousUploadingFiles) => [...previousUploadingFiles, ...files],
     );
 
     const successfulUploads = (

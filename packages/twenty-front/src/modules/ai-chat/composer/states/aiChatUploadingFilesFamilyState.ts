@@ -1,9 +1,9 @@
 import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const aiChatSelectedFilesFamilyState = createAtomFamilyState<
+export const aiChatUploadingFilesFamilyState = createAtomFamilyState<
   File[],
   { threadId: string }
 >({
-  key: 'ai/aiChatSelectedFilesFamilyState',
+  key: 'ai/aiChatUploadingFilesFamilyState',
   defaultValue: [],
 });

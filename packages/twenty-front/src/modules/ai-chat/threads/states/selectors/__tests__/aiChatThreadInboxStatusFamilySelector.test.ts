@@ -2,7 +2,7 @@ import { createStore } from 'jotai';
 
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
 import { aiChatThreadVisitFamilyState } from '@/ai-chat/threads/states/aiChatThreadVisitFamilyState';
-import { aiChatThreadMemberStateFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadMemberStateFamilySelector';
+import { aiChatThreadInboxStatusFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadInboxStatusFamilySelector';
 import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
 
 const THREAD_ID = 'unread';
@@ -42,10 +42,10 @@ const UNREAD_PARTICIPANT = {
 };
 
 const isUnread = (store: ReturnType<typeof createStore>) =>
-  store.get(aiChatThreadMemberStateFamilySelector.selectorFamily(THREAD_ID))
+  store.get(aiChatThreadInboxStatusFamilySelector.selectorFamily(THREAD_ID))
     .isUnread;
 
-describe('aiChatThreadMemberStateFamilySelector', () => {
+describe('aiChatThreadInboxStatusFamilySelector', () => {
   it('reads a stored thread against the member state', () => {
     const store = buildStore();
 

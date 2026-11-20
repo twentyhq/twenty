@@ -11,11 +11,11 @@ import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selec
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-export const aiChatThreadMemberStateFamilySelector = createAtomFamilySelector<
+export const aiChatThreadInboxStatusFamilySelector = createAtomFamilySelector<
   AgentChatThreadInboxStatus,
   string
 >({
-  key: 'aiChatThreadMemberStateFamilySelector',
+  key: 'aiChatThreadInboxStatusFamilySelector',
   get:
     (threadId) =>
     ({ get }) => {
