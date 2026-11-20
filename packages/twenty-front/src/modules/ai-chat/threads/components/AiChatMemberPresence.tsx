@@ -16,14 +16,14 @@ const StyledDot = styled.span<{ isOnline: boolean }>`
   background: ${({ isOnline }) =>
     isOnline
       ? themeCssVariables.color.green
-      : themeCssVariables.font.color.light};
-  border: 1px solid ${themeCssVariables.background.primary};
+      : themeCssVariables.grayScale.gray9};
   border-radius: ${themeCssVariables.border.radius.rounded};
-  bottom: calc(-1 * ${themeCssVariables.spacing['0.5']});
-  box-sizing: border-box;
+  bottom: -1px;
+  box-shadow: 0 0 0 ${themeCssVariables.spacing['0.5']}
+    color-mix(in srgb, ${themeCssVariables.background.primary} 80%, transparent);
   height: ${themeCssVariables.spacing['1.5']};
   position: absolute;
-  right: calc(-1 * ${themeCssVariables.spacing['0.5']});
+  right: -1px;
   width: ${themeCssVariables.spacing['1.5']};
 `;
 
