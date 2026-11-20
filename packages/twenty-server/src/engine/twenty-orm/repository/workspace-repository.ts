@@ -2158,7 +2158,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return recordIds;
     }
 
-    const shownRecords = await this.createQueryBuilder(alias)
+    const readableRelationRecords = await this.createQueryBuilder(alias)
       .setFindOptions({ select: { id: true } })
       .where(`${escapeIdentifier(alias)}."id" IN (:...recordIds)`, {
         recordIds,
@@ -2170,9 +2170,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           ...unreadableSQLConditions.map(({ parameters }) => parameters),
         ),
       )
-      .getMany();
+      .getMany<{ id: string }>();
 
-    return shownRecords.map(({ id }) => id as string);
+    return readableRelationRecords.map(({ id }) => id);
   }
 
   async isReadDisabled(): Promise<boolean> {

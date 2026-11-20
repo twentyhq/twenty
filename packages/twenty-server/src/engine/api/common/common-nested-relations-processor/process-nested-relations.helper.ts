@@ -257,27 +257,15 @@ export class ProcessNestedRelationsHelper {
       name: sourceFieldName,
     });
 
-    const uniqueRelationIds = getUniqueRelationIds({
-      records: parentObjectRecords,
-      idField:
-        relationType === RelationType.ONE_TO_MANY ? 'id' : joinColumnName,
+    const relationIds = await this.findRelationIds({
+      parentObjectMetadataItem,
+      parentObjectRecords,
+      relationType,
+      joinColumnName,
+      sourceFieldName,
+      repository,
+      useReplica,
     });
-    const relationIds =
-      relationType === RelationType.ONE_TO_MANY
-        ? await (
-            repository
-              ? repository.getRepositoryForObjectMetadataId(
-                  parentObjectMetadataItem.id,
-                )
-              : this.workspaceOrmManager.getRepository(
-                  parentObjectMetadataItem.nameSingular,
-                  { useReplica },
-                )
-          ).filterRecordIdsWithReadableRelation({
-            recordIds: uniqueRelationIds,
-            relationFieldName: sourceFieldName,
-          })
-        : uniqueRelationIds;
 
     if (
       relationType === RelationType.ONE_TO_MANY &&
@@ -366,6 +354,46 @@ export class ProcessNestedRelationsHelper {
       parentRecordJoinColumnName: joinColumnName,
       relationType,
       selectedFields,
+    });
+  }
+
+  private async findRelationIds({
+    parentObjectMetadataItem,
+    parentObjectRecords,
+    relationType,
+    joinColumnName,
+    sourceFieldName,
+    repository,
+    useReplica,
+  }: {
+    parentObjectMetadataItem: FlatObjectMetadata;
+    parentObjectRecords: ObjectRecord[];
+    relationType: RelationType;
+    joinColumnName: string;
+    sourceFieldName: string;
+    repository?: WorkspaceRepository;
+    useReplica: boolean;
+  }): Promise<string[]> {
+    if (relationType !== RelationType.ONE_TO_MANY) {
+      return getUniqueRelationIds({
+        records: parentObjectRecords,
+        idField: joinColumnName,
+      });
+    }
+
+    const parentObjectRepository = isDefined(repository)
+      ? repository.getRepositoryForObjectMetadataId(parentObjectMetadataItem.id)
+      : this.workspaceOrmManager.getRepository(
+          parentObjectMetadataItem.nameSingular,
+          { useReplica },
+        );
+
+    return parentObjectRepository.filterRecordIdsWithReadableRelation({
+      recordIds: getUniqueRelationIds({
+        records: parentObjectRecords,
+        idField: 'id',
+      }),
+      relationFieldName: sourceFieldName,
     });
   }
 

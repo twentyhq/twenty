@@ -298,7 +298,7 @@ describe('field permissions on an RLS rule (integration)', () => {
           node: {
             companyId: string | null;
             company: { id: string } | null;
-            taskTargets: { edges: unknown[] };
+            taskTargets: { edges: { node: { id: string } }[] };
           };
         }) => ({
           companyId: node.companyId,

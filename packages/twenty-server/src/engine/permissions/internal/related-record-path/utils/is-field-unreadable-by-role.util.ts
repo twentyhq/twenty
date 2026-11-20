@@ -7,7 +7,7 @@ export const isFieldUnreadableByRole = ({
   objectMetadataId,
   fieldMetadataId,
 }: {
-  roleRecordsPermissions: RoleRecordsPermissions;
+  roleRecordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
   objectMetadataId: string;
   fieldMetadataId: string;
 }): boolean =>
