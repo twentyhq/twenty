@@ -14,8 +14,6 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { type UpdateInboxNotificationSettingsInput } from 'src/engine/core-modules/web-push/dtos/update-inbox-notification-settings.input';
 import { type UpsertWebPushSubscriptionInput } from 'src/engine/core-modules/web-push/dtos/upsert-web-push-subscription.input';
 import { WebPushSubscriptionEntity } from 'src/engine/core-modules/web-push/web-push-subscription.entity';
 import { type WebPushNotification } from 'src/engine/core-modules/web-push/types/web-push-notification.type';
@@ -42,8 +40,6 @@ export class WebPushService {
   constructor(
     @InjectWorkspaceScopedRepository(WebPushSubscriptionEntity)
     private readonly webPushSubscriptionRepository: WorkspaceScopedRepository<WebPushSubscriptionEntity>,
-    @InjectWorkspaceScopedRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: WorkspaceScopedRepository<UserWorkspaceEntity>,
     @InjectCacheStorage(CacheStorageNamespace.EngineWebPush)
     private readonly cacheStorageService: CacheStorageService,
     private readonly secureHttpClientService: SecureHttpClientService,
@@ -158,67 +154,6 @@ export class WebPushService {
 
     return new Set(
       workspaceMemberIds.filter((_, index) => isDefined(focusedTabIds[index])),
-    );
-  }
-
-  async updateInboxNotificationSettings({
-    workspaceId,
-    userWorkspaceId,
-    input: { inboxNotificationLevel, isInboxNotificationPreviewEnabled },
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string;
-    input: UpdateInboxNotificationSettingsInput;
-  }): Promise<UserWorkspaceEntity> {
-    await this.userWorkspaceRepository.update(
-      workspaceId,
-      { id: userWorkspaceId },
-      { inboxNotificationLevel, isInboxNotificationPreviewEnabled },
-    );
-
-    return this.userWorkspaceRepository.findOneOrFail(workspaceId, {
-      where: { id: userWorkspaceId },
-    });
-  }
-
-  async findInboxNotificationSettingsByUserId({
-    workspaceId,
-    userIds,
-  }: {
-    workspaceId: string;
-    userIds: string[];
-  }): Promise<
-    Partial<
-      Record<
-        string,
-        Pick<
-          UserWorkspaceEntity,
-          'inboxNotificationLevel' | 'isInboxNotificationPreviewEnabled'
-        >
-      >
-    >
-  > {
-    if (userIds.length === 0) {
-      return {};
-    }
-
-    const userWorkspaces = await this.userWorkspaceRepository.find(
-      workspaceId,
-      {
-        select: {
-          userId: true,
-          inboxNotificationLevel: true,
-          isInboxNotificationPreviewEnabled: true,
-        },
-        where: { userId: In(userIds) },
-      },
-    );
-
-    return Object.fromEntries(
-      userWorkspaces.map((userWorkspace) => [
-        userWorkspace.userId,
-        userWorkspace,
-      ]),
     );
   }
 
