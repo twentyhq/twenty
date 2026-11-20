@@ -4,9 +4,11 @@ import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-perm
 export const getObjectOperationsWithReadDependency = ({
   previousOperations,
   nextOperations,
+  disabledOperations = [],
 }: {
   previousOperations: SettingsRoleObjectPermissionKey[];
   nextOperations: SettingsRoleObjectPermissionKey[];
+  disabledOperations?: SettingsRoleObjectPermissionKey[];
 }): SettingsRoleObjectPermissionKey[] => {
   const hasPreviousReadOperation = previousOperations.includes(
     'canReadObjectRecords',
@@ -23,7 +25,8 @@ export const getObjectOperationsWithReadDependency = ({
 
   return SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.filter(
     (key) =>
-      nextOperations.includes(key) ||
-      (key === 'canReadObjectRecords' && hasChange),
+      !disabledOperations.includes(key) &&
+      (nextOperations.includes(key) ||
+        (key === 'canReadObjectRecords' && hasChange)),
   );
 };

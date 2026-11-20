@@ -54,7 +54,10 @@ export const SettingsRoleRuleAllowsSection = ({
     objectMetadataId: objectMetadataItem.id,
     disabledOperations,
   });
-  const ruleOperations = getRecordsGrantOperations(rule, disabledOperations);
+  const ruleOperations = getRecordsGrantOperations({
+    recordsGrant: rule,
+    disabledOperations,
+  });
 
   const getDescription = (operation: SettingsRoleObjectPermissionKey) => {
     const disabledReason = getDisabledOperationReason(operation);
@@ -89,6 +92,7 @@ export const SettingsRoleRuleAllowsSection = ({
     setRuleOperations({
       rowLevelPermissionRuleId: rule.id,
       operations: getObjectOperationsWithReadDependency({
+        disabledOperations,
         previousOperations: ruleOperations,
         nextOperations: ruleOperations.includes(operation)
           ? ruleOperations.filter(

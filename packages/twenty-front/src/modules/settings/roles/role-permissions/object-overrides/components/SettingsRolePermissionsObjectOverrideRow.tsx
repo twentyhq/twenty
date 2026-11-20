@@ -100,10 +100,10 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
     }
 
     const ruleOperationsLabel = getObjectOperationsSummary({
-      operations: getRecordsGrantOperations(
-        singleRule.rule,
+      operations: getRecordsGrantOperations({
+        recordsGrant: singleRule.rule,
         disabledOperations,
-      ),
+      }),
       isAdvanced: false,
     }).label;
     const ruleLabel = getRuleLabel(singleRule.predicates);

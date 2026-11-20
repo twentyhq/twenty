@@ -36,8 +36,11 @@ export const SettingsRolePermissionsObjectOperationsSelect = ({
   const isOperationDisabled = (operation: SettingsRoleObjectPermissionKey) =>
     isDefined(getDisabledOperationReason?.(operation));
 
+  const disabledOperations =
+    SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.filter(isOperationDisabled);
+
   const enabledSelectedOperations = selectedOperations.filter(
-    (operation) => !isOperationDisabled(operation),
+    (operation) => !disabledOperations.includes(operation),
   );
 
   const { label, Icon } = getObjectOperationsSummary({
@@ -77,6 +80,7 @@ export const SettingsRolePermissionsObjectOperationsSelect = ({
             onChange(
               getObjectOperationsWithReadDependency({
                 previousOperations: enabledSelectedOperations,
+                disabledOperations,
                 nextOperations: SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.filter(
                   (key) => nextSelectedValues.includes(key),
                 ),

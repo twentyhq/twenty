@@ -102,7 +102,7 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
 
   const getRuleOnlyHint = (operation: SettingsRoleObjectPermissionKey) => {
     const ruleCount = rules.filter(({ rule }) =>
-      getRecordsGrantOperations(rule).includes(operation),
+      getRecordsGrantOperations({ recordsGrant: rule }).includes(operation),
     ).length;
 
     if (operations.includes(operation) || ruleCount === 0) {
@@ -134,6 +134,7 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
       operations: getObjectOperationsWithReadDependency({
         previousOperations: operations,
         nextOperations,
+        disabledOperations,
       }),
     });
   };
@@ -238,7 +239,10 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
             <TableCell onClick={(event) => event.stopPropagation()}>
               <SettingsRolePermissionsObjectOperationsSelect
                 dropdownId={`settings-role-rule-actions-${rule.id}`}
-                selectedOperations={getRecordsGrantOperations(rule)}
+                selectedOperations={getRecordsGrantOperations({
+                  recordsGrant: rule,
+                  disabledOperations,
+                })}
                 onChange={(operations) =>
                   setRuleOperations({
                     rowLevelPermissionRuleId: rule.id,

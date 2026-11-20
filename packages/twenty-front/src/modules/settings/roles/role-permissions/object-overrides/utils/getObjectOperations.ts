@@ -8,7 +8,7 @@ export const getObjectOperations = ({
 }: Parameters<typeof getObjectRecordsGrant>[0] & {
   disabledOperations?: SettingsRoleObjectPermissionKey[];
 }): SettingsRoleObjectPermissionKey[] =>
-  getRecordsGrantOperations(
-    getObjectRecordsGrant(recordsGrantParameters),
+  getRecordsGrantOperations({
+    recordsGrant: getObjectRecordsGrant(recordsGrantParameters),
     disabledOperations,
-  );
+  });
