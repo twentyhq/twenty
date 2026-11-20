@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Autocomplete } from 'twenty-ui/primitives/input';
 
@@ -19,7 +20,6 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const RECIPIENT_PICKER_SIDE_OFFSET_PX = 6;

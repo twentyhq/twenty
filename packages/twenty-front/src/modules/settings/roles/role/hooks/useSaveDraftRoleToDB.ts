@@ -4,8 +4,7 @@ import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { useUpdateAgentRole } from '@/settings/roles/hooks/useUpdateAgentRole';
 import { useUpdateApiKeyRole } from '@/settings/roles/hooks/useUpdateApiKeyRole';
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
-import { newFieldPermissionsFilter } from '@/settings/roles/role/utils/newFieldPermissionsFilter';
-import { withRowLevelPermissionRuleGrants } from '@/settings/roles/role/utils/withRowLevelPermissionRuleGrants';
+import { getFieldPermissionsToUpsert } from '@/settings/roles/role/utils/getFieldPermissionsToUpsert';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
@@ -24,7 +23,6 @@ import {
 } from '~/generated-metadata/graphql';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { getRoleDirtyFields } from '@/settings/roles/role/utils/getRoleDirtyFields';
-import { resolveSettingsRoleObjectRecordsGrant } from '@/settings/roles/role/utils/resolveSettingsRoleObjectRecordsGrant';
 
 const ROLE_BASIC_KEYS: Array<keyof Role> = [
   'label',
@@ -40,13 +38,6 @@ const ROLE_BASIC_KEYS: Array<keyof Role> = [
   'canBeAssignedToUsers',
   'canBeAssignedToAgents',
   'canBeAssignedToApiKeys',
-];
-
-const ALL_OBJECT_RECORDS_GRANT_KEYS: Array<keyof Role> = [
-  'canReadAllObjectRecords',
-  'canUpdateAllObjectRecords',
-  'canSoftDeleteAllObjectRecords',
-  'canDestroyAllObjectRecords',
 ];
 
 export const useSaveDraftRoleToDB = ({
@@ -95,48 +86,17 @@ export const useSaveDraftRoleToDB = ({
       throw new Error(doNotTranslate('Saved role not found'));
     }
 
-    const savedRole = withRowLevelPermissionRuleGrants(fetchedRole);
+    setSettingsPersistedRole(fetchedRole);
 
-    setSettingsPersistedRole(savedRole);
-
-    return savedRole;
+    return fetchedRole;
   };
 
   const dirtyFields = getRoleDirtyFields(draftRole, settingsPersistedRole);
 
-  const fieldPermissionsThatShouldntBeCreatedBecauseTheyAreUseless =
-    draftRole.fieldPermissions?.filter((fieldPermissionToFilter) => {
-      const fieldPermissionDoesntExistYetInPersistedFieldPermissions =
-        !settingsPersistedRole?.fieldPermissions?.some(
-          (persistedFieldPermissionToFilter) =>
-            persistedFieldPermissionToFilter.fieldMetadataId ===
-            fieldPermissionToFilter.fieldMetadataId,
-        );
-
-      return (
-        fieldPermissionToFilter.canReadFieldValue !== false &&
-        fieldPermissionToFilter.canUpdateFieldValue !== false &&
-        fieldPermissionDoesntExistYetInPersistedFieldPermissions
-      );
-    });
-
-  const onlyMeaningfulFieldPermissions =
-    dirtyFields.fieldPermissions?.filter(
-      (dirtyFieldPermissionToFilter) =>
-        !fieldPermissionsThatShouldntBeCreatedBecauseTheyAreUseless?.some(
-          (fieldPermissionThatShouldntBeCreatedToFilter) =>
-            dirtyFieldPermissionToFilter.fieldMetadataId ===
-            fieldPermissionThatShouldntBeCreatedToFilter.fieldMetadataId,
-        ),
-    ) ?? [];
-
-  const fieldPermissionsToUpsert = onlyMeaningfulFieldPermissions.filter(
-    (dirtyFieldPermission) =>
-      newFieldPermissionsFilter(
-        dirtyFieldPermission,
-        settingsPersistedRole?.fieldPermissions,
-      ),
-  );
+  const fieldPermissionsToUpsert = getFieldPermissionsToUpsert({
+    dirtyFieldPermissions: dirtyFields.fieldPermissions ?? [],
+    persistedFieldPermissions: settingsPersistedRole?.fieldPermissions ?? [],
+  });
 
   const createNewRole = async () => {
     const { data } = await createRole({
@@ -175,81 +135,30 @@ export const useSaveDraftRoleToDB = ({
     return createdRoleId;
   };
 
-  const rowLevelPermissionObjectMetadataIds = new Set(
-    (draftRole.rowLevelPermissionPredicates ?? []).map(
-      ({ objectMetadataId }) => objectMetadataId,
-    ),
-  );
-  const persistedRowLevelPermissionObjectMetadataIds = new Set(
-    (settingsPersistedRole?.rowLevelPermissionPredicates ?? []).map(
-      ({ objectMetadataId }) => objectMetadataId,
-    ),
+  const shouldUpsertObjectPermissions = isDefined(
+    dirtyFields.objectPermissions,
   );
 
-  // Rules carry the grant of a filtered object, so a change to either side rewrites both
-  const shouldSyncObjectRecordsGrants =
-    isDefined(dirtyFields.objectPermissions) ||
+  const shouldUpsertRowLevelPermissionRules =
+    isDefined(dirtyFields.rowLevelPermissionRules) ||
     isDefined(dirtyFields.rowLevelPermissionPredicates) ||
-    isDefined(dirtyFields.rowLevelPermissionPredicateGroups) ||
-    (rowLevelPermissionObjectMetadataIds.size > 0 &&
-      ALL_OBJECT_RECORDS_GRANT_KEYS.some((key) => key in dirtyFields));
+    isDefined(dirtyFields.rowLevelPermissionPredicateGroups);
 
   const upsertObjectPermissionsForRole = async (targetRoleId: string) => {
-    const objectMetadataIdsToResolve = [
-      ...new Set([
-        ...rowLevelPermissionObjectMetadataIds,
-        ...persistedRowLevelPermissionObjectMetadataIds,
-      ]),
-    ];
-
     await upsertObjectPermissions({
       variables: {
         upsertObjectPermissionsInput: {
           roleId: targetRoleId,
-          objectPermissions: [
-            ...(draftRole.objectPermissions ?? [])
-              .filter(
-                ({ objectMetadataId }) =>
-                  !objectMetadataIdsToResolve.includes(objectMetadataId),
-              )
-              .map((objectPermission) => ({
-                objectMetadataId: objectPermission.objectMetadataId,
-                canReadObjectRecords: objectPermission.canReadObjectRecords,
-                canUpdateObjectRecords: objectPermission.canUpdateObjectRecords,
-                canSoftDeleteObjectRecords:
-                  objectPermission.canSoftDeleteObjectRecords,
-                canDestroyObjectRecords:
-                  objectPermission.canDestroyObjectRecords,
-              })),
-            ...objectMetadataIdsToResolve.map((objectMetadataId) => {
-              if (rowLevelPermissionObjectMetadataIds.has(objectMetadataId)) {
-                return {
-                  objectMetadataId,
-                  canReadObjectRecords: false,
-                  canUpdateObjectRecords: false,
-                  canSoftDeleteObjectRecords: false,
-                  canDestroyObjectRecords: false,
-                };
-              }
-
-              const objectPermission = draftRole.objectPermissions?.find(
-                (draftObjectPermission) =>
-                  draftObjectPermission.objectMetadataId === objectMetadataId,
-              );
-
-              return {
-                objectMetadataId,
-                canReadObjectRecords:
-                  objectPermission?.canReadObjectRecords ?? null,
-                canUpdateObjectRecords:
-                  objectPermission?.canUpdateObjectRecords ?? null,
-                canSoftDeleteObjectRecords:
-                  objectPermission?.canSoftDeleteObjectRecords ?? null,
-                canDestroyObjectRecords:
-                  objectPermission?.canDestroyObjectRecords ?? null,
-              };
+          objectPermissions: (draftRole.objectPermissions ?? []).map(
+            (objectPermission) => ({
+              objectMetadataId: objectPermission.objectMetadataId,
+              canReadObjectRecords: objectPermission.canReadObjectRecords,
+              canUpdateObjectRecords: objectPermission.canUpdateObjectRecords,
+              canSoftDeleteObjectRecords:
+                objectPermission.canSoftDeleteObjectRecords,
+              canDestroyObjectRecords: objectPermission.canDestroyObjectRecords,
             }),
-          ],
+          ),
         },
       },
       refetchQueries: [getOperationName(GET_ROLES) ?? ''],
@@ -300,7 +209,7 @@ export const useSaveDraftRoleToDB = ({
       });
     }
 
-    if (shouldSyncObjectRecordsGrants) {
+    if (shouldUpsertObjectPermissions) {
       await upsertObjectPermissionsForRole(roleId);
     }
 
@@ -322,7 +231,7 @@ export const useSaveDraftRoleToDB = ({
       });
     }
 
-    if (shouldSyncObjectRecordsGrants) {
+    if (shouldUpsertRowLevelPermissionRules) {
       await upsertRowLevelPermissionRulesForRole(roleId);
     }
 
@@ -330,76 +239,20 @@ export const useSaveDraftRoleToDB = ({
   };
 
   const upsertRowLevelPermissionRulesForRole = async (targetRoleId: string) => {
+    const rules = draftRole.rowLevelPermissionRules ?? [];
     const predicates = draftRole.rowLevelPermissionPredicates ?? [];
     const predicateGroups = draftRole.rowLevelPermissionPredicateGroups ?? [];
 
-    const predicatesByObject = predicates.reduce(
-      (acc, predicate) => {
-        const objectMetadataId = predicate.objectMetadataId;
-
-        if (!isDefined(acc[objectMetadataId])) {
-          acc[objectMetadataId] = [];
-        }
-        acc[objectMetadataId].push(predicate);
-
-        return acc;
-      },
-      {} as Record<string, typeof predicates>,
+    const objectMetadataIds = new Set(
+      [...rules, ...(settingsPersistedRole?.rowLevelPermissionRules ?? [])].map(
+        ({ objectMetadataId }) => objectMetadataId,
+      ),
     );
 
-    const persistedPredicates =
-      settingsPersistedRole?.rowLevelPermissionPredicates ?? [];
-    const persistedObjectIds = new Set(
-      persistedPredicates.map((predicate) => predicate.objectMetadataId),
-    );
-
-    for (const objectMetadataId of persistedObjectIds) {
-      if (!isDefined(predicatesByObject[objectMetadataId])) {
-        predicatesByObject[objectMetadataId] = [];
-      }
-    }
-
-    for (const [objectMetadataId, objectPredicates] of Object.entries(
-      predicatesByObject,
-    )) {
-      const objectUsedGroupIds = new Set(
-        objectPredicates
-          .map((p) => p.rowLevelPermissionPredicateGroupId)
-          .filter(isDefined),
-      );
-
-      const includeParentGroupsForObject = (groupId: string) => {
-        const group = predicateGroups.find((g) => g.id === groupId);
-        if (
-          isDefined(group?.parentRowLevelPermissionPredicateGroupId) &&
-          !objectUsedGroupIds.has(
-            group.parentRowLevelPermissionPredicateGroupId,
-          )
-        ) {
-          objectUsedGroupIds.add(
-            group.parentRowLevelPermissionPredicateGroupId,
-          );
-          includeParentGroupsForObject(
-            group.parentRowLevelPermissionPredicateGroupId,
-          );
-        }
-      };
-
-      for (const groupId of objectUsedGroupIds) {
-        includeParentGroupsForObject(groupId);
-      }
-
-      const objectPredicateGroups = predicateGroups.filter((group) =>
-        objectUsedGroupIds.has(group.id),
-      );
-
-      const objectRecordsGrant = resolveSettingsRoleObjectRecordsGrant({
-        role: draftRole,
-        objectMetadataId,
-      });
-      const persistedRule = (
-        settingsPersistedRole?.rowLevelPermissionRules ?? []
-      ).find((rule) => rule.objectMetadataId === objectMetadataId);
+    for (const objectMetadataId of objectMetadataIds) {
+      const isOfObject = (rowLevelPermissionItem: {
+        objectMetadataId: string;
+      }) => rowLevelPermissionItem.objectMetadataId === objectMetadataId;
 
       await upsertRowLevelPermissionRules({
         variables: {
@@ -407,14 +260,9 @@ export const useSaveDraftRoleToDB = ({
             roleId: targetRoleId,
             objectMetadataId,
             rules: buildRowLevelPermissionRulesInput({
-              predicates: objectPredicates,
-              predicateGroups: objectPredicateGroups,
-              ruleOperations: {
-                ...objectRecordsGrant,
-                canCreateRecords:
-                  persistedRule?.canCreateRecords ??
-                  objectRecordsGrant.canUpdateRecords,
-              },
+              rules: rules.filter(isOfObject),
+              predicates: predicates.filter(isOfObject),
+              predicateGroups: predicateGroups.filter(isOfObject),
             }),
           },
         },
@@ -440,7 +288,7 @@ export const useSaveDraftRoleToDB = ({
       });
     }
 
-    if (shouldSyncObjectRecordsGrants) {
+    if (shouldUpsertObjectPermissions) {
       await upsertObjectPermissionsForRole(targetRoleId);
     }
 
@@ -462,7 +310,7 @@ export const useSaveDraftRoleToDB = ({
       });
     }
 
-    if (shouldSyncObjectRecordsGrants) {
+    if (shouldUpsertRowLevelPermissionRules) {
       await upsertRowLevelPermissionRulesForRole(targetRoleId);
     }
   };

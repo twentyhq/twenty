@@ -1,6 +1,6 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { isActiveGranolaPersonalConnection } from 'src/logic-functions/utils/is-active-granola-personal-connection.util';
 import { listGranolaPersonalConnections } from 'src/logic-functions/utils/list-granola-personal-connections.util';
 
 export const findGranolaPersonalConnection = async ({
@@ -15,12 +15,10 @@ export const findGranolaPersonalConnection = async ({
 
   if (
     !isDefined(connection) ||
-    !isDefined(connection.workspaceMemberId) ||
-    isDefined(connection.authFailedAt) ||
-    !isNonEmptyString(connection.accessToken)
+    !isActiveGranolaPersonalConnection(connection)
   ) {
     return undefined;
   }
 
-  return { ...connection, accessToken: connection.accessToken };
+  return connection;
 };

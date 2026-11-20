@@ -120,6 +120,11 @@ export const UserMetadataProviderInitialEffect = () => {
         isImpersonating:
           userQueryData.currentUser.currentUserWorkspace.isImpersonating ??
           false,
+        inboxNotificationLevel:
+          userQueryData.currentUser.currentUserWorkspace.inboxNotificationLevel,
+        isInboxNotificationPreviewEnabled:
+          userQueryData.currentUser.currentUserWorkspace
+            .isInboxNotificationPreviewEnabled,
       });
     }
 
