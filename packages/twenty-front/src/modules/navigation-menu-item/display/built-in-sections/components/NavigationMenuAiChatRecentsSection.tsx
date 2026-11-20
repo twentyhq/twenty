@@ -17,13 +17,13 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
+const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
+
 type NavigationMenuAiChatRecentsSectionProps = {
-  sectionId: string;
   headerAction?: ReactNode;
 };
 
 export const NavigationMenuAiChatRecentsSection = ({
-  sectionId,
   headerAction,
 }: NavigationMenuAiChatRecentsSectionProps) => {
   const { t } = useLingui();
@@ -65,7 +65,7 @@ export const NavigationMenuAiChatRecentsSection = ({
 
   return (
     <NavigationDrawerInboxThreadSection
-      sectionId={`navigation-menu-section-${sectionId}`}
+      sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
       title={t`Recent chats`}
       threads={displayedThreads}
       currentThreadId={currentThreadId}
