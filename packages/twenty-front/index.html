@@ -82,7 +82,49 @@
           background-color: var(--theme-light-background-secondary);
         }
       }
+
+      /* ThemeProvider keeps these classes in sync with the theme chosen in the app. */
+      html.dark,
+      html.dark body {
+        background-color: var(--theme-dark-background-secondary);
+      }
+
+      html.light,
+      html.light body {
+        background-color: var(--theme-light-background-secondary);
+      }
     </style>
+    <!-- Classic script on purpose: it must run before the first paint. -->
+    <script>
+      let bootColorScheme = window.matchMedia('(prefers-color-scheme: dark)')
+        .matches
+        ? 'dark'
+        : 'light';
+
+      try {
+        const persistedColorScheme = JSON.parse(
+          window.localStorage.getItem('persistedColorSchemeState'),
+        );
+
+        if (
+          persistedColorScheme === 'Dark' ||
+          persistedColorScheme === 'Light'
+        ) {
+          bootColorScheme = persistedColorScheme.toLowerCase();
+        }
+      } catch {
+        // Storage is unavailable: the system preference applies.
+      }
+
+      document.documentElement.classList.toggle(
+        'dark',
+        bootColorScheme === 'dark',
+      );
+      document.documentElement.classList.toggle(
+        'light',
+        bootColorScheme === 'light',
+      );
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
