@@ -52,7 +52,7 @@ export const GranolaFolderPicker = ({
   pendingFolderIds,
   folderListRequest,
 }: GranolaFolderPickerProps) => {
-  const unusedFolderListRequest = useRef<
+  const prefetchedFolderListRequest = useRef<
     Promise<GranolaFoldersResult | undefined> | undefined
   >(folderListRequest);
   const [selection, setSelection] = useState(() =>
@@ -75,8 +75,8 @@ export const GranolaFolderPicker = ({
 
     const prefetchedFoldersResult = isSelectionStale
       ? undefined
-      : await unusedFolderListRequest.current;
-    unusedFolderListRequest.current = undefined;
+      : await prefetchedFolderListRequest.current;
+    prefetchedFolderListRequest.current = undefined;
 
     const foldersResult =
       prefetchedFoldersResult ??

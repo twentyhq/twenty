@@ -7,6 +7,7 @@ import { Text } from 'twenty-ui/primitives/typography';
 import { GRANOLA_FOLDER_SELECTION_LIMIT } from 'src/constants/granola-api.constant';
 import { GranolaFolderEmptyState } from 'src/front-components/components/GranolaFolderEmptyState';
 import { GranolaFolderTree } from 'src/front-components/components/GranolaFolderTree';
+import { GranolaFolderTreeSkeleton } from 'src/front-components/components/GranolaFolderTreeSkeleton';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { useAutosaveGranolaFolderSelection } from 'src/front-components/hooks/use-autosave-granola-folder-selection';
 import { type GranolaPersonalFolders } from 'src/front-components/types/granola-personal-folders.type';
@@ -70,7 +71,7 @@ export const GranolaPersonalFolderSelection = ({
 
   const renderFolders = () => {
     if (state.status === 'loading') {
-      return null;
+      return <GranolaFolderTreeSkeleton />;
     }
 
     if (state.status === 'failed') {
