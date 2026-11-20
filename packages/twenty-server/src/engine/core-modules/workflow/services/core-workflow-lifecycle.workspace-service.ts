@@ -608,16 +608,19 @@ export class CoreWorkflowLifecycleWorkspaceService {
         workspaceId,
       });
 
-    operations.flatEntityToUpdate.push(
-      existingCommandMenuItem.isActive
-        ? updatedFlatCommandMenuItem
-        : await this.commandMenuItemService.computeActivatedFlatCommandMenuItem(
-            {
-              flatCommandMenuItem: updatedFlatCommandMenuItem,
-              workspaceId,
-            },
-          ),
-    );
+    if (existingCommandMenuItem.isActive) {
+      operations.flatEntityToUpdate.push(updatedFlatCommandMenuItem);
+
+      return operations;
+    }
+
+    const activatedFlatCommandMenuItem =
+      await this.commandMenuItemService.computeActivatedFlatCommandMenuItem({
+        flatCommandMenuItem: updatedFlatCommandMenuItem,
+        workspaceId,
+      });
+
+    operations.flatEntityToUpdate.push(activatedFlatCommandMenuItem);
 
     return operations;
   }

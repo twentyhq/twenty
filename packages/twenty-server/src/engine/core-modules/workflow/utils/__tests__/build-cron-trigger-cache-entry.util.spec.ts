@@ -1,14 +1,21 @@
 import { buildCronTriggerCacheEntry } from 'src/engine/core-modules/workflow/utils/build-cron-trigger-cache-entry.util';
 import {
-  type WorkflowTrigger,
+  type WorkflowCronTrigger,
+  type WorkflowManualTrigger,
   WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
-const CRON_TRIGGER = {
+const CRON_TRIGGER: WorkflowCronTrigger = {
   name: 'Every minute',
   type: WorkflowTriggerType.CRON,
   settings: { type: 'CUSTOM', pattern: '* * * * *', outputSchema: {} },
-} as WorkflowTrigger;
+};
+
+const MANUAL_TRIGGER: WorkflowManualTrigger = {
+  name: 'Manual',
+  type: WorkflowTriggerType.MANUAL,
+  settings: { outputSchema: {} },
+};
 
 const coreWorkflowVersion = {
   id: 'core-version-1',
@@ -48,11 +55,7 @@ describe('buildCronTriggerCacheEntry', () => {
   it('should return null for a non-cron trigger', () => {
     expect(
       buildCronTriggerCacheEntry({
-        trigger: {
-          name: 'Manual',
-          type: WorkflowTriggerType.MANUAL,
-          settings: { outputSchema: {} },
-        } as WorkflowTrigger,
+        trigger: MANUAL_TRIGGER,
         coreWorkflow: { id: 'core-workflow-1', workspaceWorkflowId: null },
         coreWorkflowVersion,
       }),
