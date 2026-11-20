@@ -23,13 +23,11 @@ import {
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { type WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
-import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
 import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
+import { buildCoreWorkflowNotFoundException } from 'src/engine/core-modules/workflow/utils/build-core-workflow-not-found-exception.util';
 import { getCoreWorkflowVersionEditLockKey } from 'src/engine/core-modules/workflow/utils/get-core-workflow-version-edit-lock-key.util';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -67,9 +65,6 @@ export class CoreWorkflowLifecycleWorkspaceService {
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
-    @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
-    private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
-    private readonly coreWorkflowIdResolutionService: CoreWorkflowIdResolutionService,
     private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
     private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
@@ -91,18 +86,11 @@ export class CoreWorkflowLifecycleWorkspaceService {
     userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<boolean> {
-    // Reads the version from the repository, not the id resolver, so the rule is applied by hand.
-    await this.coreWorkflowAccessService.assertCoreWorkflowVersionsAreAccessibleOrThrow(
-      {
+    const coreWorkflowVersion =
+      await this.coreWorkflowAccessService.findReadableCoreWorkflowVersion({
         workspaceId,
         userWorkspaceId,
-        coreWorkflowVersionIds: [coreWorkflowVersionId],
-      },
-    );
-
-    const coreWorkflowVersion =
-      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
-        where: { id: coreWorkflowVersionId },
+        coreWorkflowVersionId,
       });
 
     if (!isDefined(coreWorkflowVersion)) {
@@ -362,8 +350,8 @@ export class CoreWorkflowLifecycleWorkspaceService {
     userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<ResolvedCoreVersion> {
-    const coreWorkflowVersion =
-      await this.coreWorkflowIdResolutionService.resolveCoreWorkflowVersionOrThrow(
+    const { coreWorkflowVersion, coreWorkflow } =
+      await this.coreWorkflowAccessService.findEditableCoreWorkflowVersionOrThrow(
         { workspaceId, userWorkspaceId, coreWorkflowVersionId },
       );
 
@@ -377,12 +365,11 @@ export class CoreWorkflowLifecycleWorkspaceService {
       );
     }
 
-    const coreWorkflow =
-      await this.coreWorkflowIdResolutionService.resolveCoreWorkflowOrThrow({
-        workspaceId,
-        userWorkspaceId,
-        coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
-      });
+    if (!isDefined(coreWorkflow)) {
+      throw buildCoreWorkflowNotFoundException(
+        coreWorkflowVersion.coreWorkflowId,
+      );
+    }
 
     return {
       coreWorkflowVersion,
