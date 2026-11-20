@@ -12,6 +12,7 @@ import { type GranolaFoldersResult } from 'src/front-components/types/granola-fo
 import { type GranolaStoredFolderSelection } from 'src/front-components/types/granola-stored-folder-selection.type';
 import { fetchGranolaFolderSelectionOrThrow } from 'src/front-components/utils/fetch-granola-folder-selection-or-throw.util';
 import { fetchGranolaFoldersOrThrow } from 'src/front-components/utils/fetch-granola-folders-or-throw.util';
+import { getGranolaWorkspaceFolderPolicyOptions } from 'src/front-components/utils/get-granola-workspace-folder-policy-options.util';
 
 type GranolaStoredSelectionState =
   | { step: 'LOADING' }
@@ -54,7 +55,10 @@ export const GranolaFolderSection = () => {
       />
       <StyledSettingsSectionStack>
         {storedSelectionState.step === 'LOADING' && (
-          <GranolaFolderPolicyRadioCard policy={undefined} />
+          <GranolaFolderPolicyRadioCard
+            options={getGranolaWorkspaceFolderPolicyOptions()}
+            policy={undefined}
+          />
         )}
         {storedSelectionState.step === 'LOADED' && (
           <GranolaFolderPicker
