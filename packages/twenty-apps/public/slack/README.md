@@ -29,7 +29,7 @@ It only answers people whose Slack account is linked to a Twenty user, and it ac
 ## Getting started
 
 1. **Install the app**: click **Install** to add the Slack app to your Twenty workspace.
-2. **Connect Slack**: in the app's **Connections** tab, click **Add connection** and approve the install in Slack.
+2. **Connect Slack**: in the app's **General** tab, click **Add connection** and approve the install in Slack.
 3. **Link your accounts**: Slack accounts with the same email as a Twenty user are linked automatically. An admin can link the rest from the app's **Settings** tab, and the person approves it in a DM from the bot.
 4. **Start asking**: type `/invite @Twenty` in a channel and mention it with your question, or send it a DM.
 

@@ -7,6 +7,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UpdateFocusedTabInput } from 'src/engine/core-modules/web-push/dtos/update-focused-tab.input';
 import { UpdateInboxNotificationSettingsInput } from 'src/engine/core-modules/web-push/dtos/update-inbox-notification-settings.input';
@@ -43,6 +44,7 @@ export class WebPushResolver {
   constructor(
     private readonly webPushService: WebPushService,
     private readonly userSessionCookieService: UserSessionCookieService,
+    private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
 
   @Mutation(() => Boolean)
@@ -83,14 +85,19 @@ export class WebPushResolver {
 
   @Mutation(() => UserWorkspaceEntity)
   async updateInboxNotificationSettings(
-    @Args('input') input: UpdateInboxNotificationSettingsInput,
+    @Args('input')
+    {
+      inboxNotificationLevel,
+      isInboxNotificationPreviewEnabled,
+    }: UpdateInboxNotificationSettingsInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<UserWorkspaceEntity> {
-    return this.webPushService.updateInboxNotificationSettings({
+    return this.userWorkspaceService.updateInboxNotificationSettings({
       workspaceId: workspace.id,
       userWorkspaceId,
-      input,
+      inboxNotificationLevel,
+      isInboxNotificationPreviewEnabled,
     });
   }
 }

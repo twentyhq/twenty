@@ -12,6 +12,7 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { type WebPushSubscriptionEntity } from 'src/engine/core-modules/web-push/web-push-subscription.entity';
 import { WebPushService } from 'src/engine/core-modules/web-push/services/web-push.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -45,6 +46,7 @@ export class AgentChatWebPushNotificationService {
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly i18nService: I18nService,
     private readonly sharingService: AgentChatSharingService,
+    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly webPushService: WebPushService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
@@ -119,7 +121,7 @@ export class AgentChatWebPushNotificationService {
       ].filter(isDefined),
     });
     const inboxNotificationSettingsByUserId =
-      await this.webPushService.findInboxNotificationSettingsByUserId({
+      await this.userWorkspaceService.findInboxNotificationSettingsByUserId({
         workspaceId,
         userIds: unfocusedWorkspaceMemberIds
           .map(
