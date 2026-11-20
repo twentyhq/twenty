@@ -21,12 +21,12 @@ import { VIEW_FIELDS_SUGGESTION_DISMISSED_KEY } from 'src/constants/view-fields-
 import { findAllViewsMissingFields } from 'src/utils/find-all-views-missing-fields';
 
 const ADD_COLUMNS_PROMPT = [
-  'Add these columns to the views below and make them visible. Skip a view if it does not exist, and leave columns already shown as they are.',
+  'Add these columns to the views below and make them visible. Skip a view if it does not exist, and leave columns already shown as they are.\n',
   ...ALL_VIEW_FIELDS.map(
     ({ objectLabelPlural, fields }) =>
-      `- "All ${objectLabelPlural}" view: ${fields
-        .map(({ label, name }) => `${label} (${name})`)
-        .join(', ')}`,
+      `"All ${objectLabelPlural}" view:\n${fields
+        .map(({ label, name }) => `- ${label} (${name})`)
+        .join('\n')}\n`,
   ),
 ].join('\n');
 
