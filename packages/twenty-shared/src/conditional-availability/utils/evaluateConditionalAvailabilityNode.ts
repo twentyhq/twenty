@@ -1,15 +1,15 @@
 import { isFunction, isObject, isString } from '@sniptt/guards';
 
-import { CONDITIONAL_AVAILABILITY_FORBIDDEN_PROPERTY_NAMES } from '@/conditional-availability/constants/ConditionalAvailabilityForbiddenPropertyNames';
 import { CONDITIONAL_AVAILABILITY_FUNCTIONS } from '@/conditional-availability/constants/ConditionalAvailabilityFunctions';
 import { type ConditionalAvailabilityComparisonOperator } from '@/conditional-availability/types/ConditionalAvailabilityComparisonOperator';
 import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
+import { FORBIDDEN_PROPERTY_NAMES } from '@/constants/ForbiddenPropertyNames';
 import { isDefined } from '@/utils/validation/isDefined';
 
 type EvaluationContext = Record<string, unknown>;
 
 const isForbiddenPathSegment = (segment: string) =>
-  CONDITIONAL_AVAILABILITY_FORBIDDEN_PROPERTY_NAMES.has(segment);
+  FORBIDDEN_PROPERTY_NAMES.has(segment);
 
 const readPathSegment = (value: unknown, segment: string): unknown => {
   if (!isDefined(value) || isForbiddenPathSegment(segment)) {
