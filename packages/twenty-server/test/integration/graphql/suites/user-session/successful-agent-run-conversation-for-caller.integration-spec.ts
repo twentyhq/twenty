@@ -13,6 +13,9 @@ import {
   mockScriptedAiModel,
 } from 'test/integration/ai/utils/mock-scripted-ai-model.util';
 import { runAgentQueryFactory } from 'test/integration/graphql/suites/user-session/utils/run-agent-query-factory.util';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import {
@@ -35,8 +38,6 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
-import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
-import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
@@ -209,6 +210,7 @@ describe('Agent run conversation should be recorded for the caller', () => {
   let application: ApplicationWithResources;
   let globalTestContext: GlobalTestContext;
   const threadIds: string[] = [];
+  const createdRecords: { objectNameSingular: string; recordId: string }[] = [];
 
   const runAgent = async ({
     token,
@@ -275,6 +277,22 @@ describe('Agent run conversation should be recorded for the caller', () => {
     return systemPrompts.join('\n');
   };
 
+  const createRecord = async (objectNameSingular: string) => {
+    const record = { objectNameSingular, recordId: randomUUID() };
+    const response = await makeGraphqlApiRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: objectNameSingular,
+        gqlFields: 'id',
+        data: { id: record.recordId },
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    createdRecords.push(record);
+
+    return record;
+  };
+
   beforeAll(async () => {
     application = await setupApplicationWithResources({
       name: 'Agent Run Conversation Probe',
@@ -332,6 +350,16 @@ describe('Agent run conversation should be recorded for the caller', () => {
       `DELETE FROM "${WORKSPACE_SCHEMA}"."agentChatThread" WHERE id = ANY($1)`,
       [threadIds],
     );
+
+    for (const { objectNameSingular, recordId } of createdRecords) {
+      await makeGraphqlApiRequest(
+        destroyOneOperationFactory({
+          objectMetadataSingularName: objectNameSingular,
+          gqlFields: 'id',
+          recordId,
+        }),
+      );
+    }
 
     if (!isDefined(application)) {
       return;
@@ -484,20 +512,14 @@ describe('Agent run conversation should be recorded for the caller', () => {
     await expect(
       attachThroughRegistry({
         execution,
-        record: {
-          objectNameSingular: 'person',
-          recordId: PERSON_DATA_SEED_IDS.ID_1,
-        },
+        record: await createRecord('person'),
       }),
     ).resolves.toMatchObject({ success: false });
 
     await expect(
       attachThroughRegistry({
         execution,
-        record: {
-          objectNameSingular: 'company',
-          recordId: COMPANY_DATA_SEED_IDS.ID_1,
-        },
+        record: await createRecord('company'),
       }),
     ).resolves.toMatchObject({ success: true });
   });
