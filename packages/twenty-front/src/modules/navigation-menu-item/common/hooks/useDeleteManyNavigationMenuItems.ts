@@ -4,7 +4,7 @@ import { DeleteManyNavigationMenuItemsDocument } from '~/generated-metadata/grap
 
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { navigationMenuItemsWithHiddenSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsWithHiddenSelector';
-import { getNavigationMenuItemsKeptAfterRemoval } from '@/navigation-menu-item/common/utils/getNavigationMenuItemsKeptAfterRemoval';
+import { getNavigationMenuItemDescendantIds } from '@/navigation-menu-item/common/utils/getNavigationMenuItemDescendantIds';
 import { useStore } from 'jotai';
 
 export const useDeleteManyNavigationMenuItems = () => {
@@ -32,16 +32,26 @@ export const useDeleteManyNavigationMenuItems = () => {
         variables: { ids },
       });
 
-      const keptNavigationMenuItems = getNavigationMenuItemsKeptAfterRemoval({
-        navigationMenuItemsBeforeRemoval: previousItems,
-        removedNavigationMenuItems:
-          result.data?.deleteManyNavigationMenuItems ?? [],
-      });
+      const hiddenItems = (
+        result.data?.deleteManyNavigationMenuItems ?? []
+      ).filter((item) => item.isActive === false);
 
-      if (isNonEmptyArray(keptNavigationMenuItems)) {
+      if (isNonEmptyArray(hiddenItems)) {
+        const hiddenDescendantIds = new Set(
+          hiddenItems.flatMap(({ id }) =>
+            getNavigationMenuItemDescendantIds({
+              items: previousItems,
+              ancestorId: id,
+            }),
+          ),
+        );
+
         addToDraft({
           key: 'navigationMenuItems',
-          items: keptNavigationMenuItems,
+          items: [
+            ...previousItems.filter(({ id }) => hiddenDescendantIds.has(id)),
+            ...hiddenItems,
+          ],
         });
         applyChanges();
       }
