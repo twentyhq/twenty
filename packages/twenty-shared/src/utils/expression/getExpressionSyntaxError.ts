@@ -1,26 +1,19 @@
-import { type ValidationRuleErrorCode } from '@/types/ValidationRuleErrorCode';
-import { type ValidationRuleErrorParams } from '@/types/ValidationRuleErrorParams';
-import { tokenizeValidationRuleExpression } from '@/utils/validation-rule/tokenizeValidationRuleExpression';
+import { type ExpressionSyntaxError } from '@/types/ExpressionSyntaxError';
 import { isDefined } from '@/utils/validation/isDefined';
+import { tokenizeValidationRuleExpression } from '@/utils/validation-rule/tokenizeValidationRuleExpression';
 
 const UNKNOWN_CHARACTER_PATTERN = /Unknown character "(.+)"/;
 const UNEXPECTED_TOKEN_PATTERN = /^unexpected T[A-Z]+: (.+)$/;
 const MISSING_CLOSING_PARENTHESIS_MESSAGE = 'Expected )';
 const END_OF_EXPRESSION_TOKEN_TYPE = 'TEOF';
 
-type ValidationRuleSyntaxError = {
-  errorMessage: string;
-  errorCode: ValidationRuleErrorCode;
-  errorParams?: ValidationRuleErrorParams;
-};
-
-export const getValidationRuleSyntaxError = ({
+export const getExpressionSyntaxError = ({
   expression,
   error,
 }: {
   expression: string;
   error: unknown;
-}): ValidationRuleSyntaxError => {
+}): ExpressionSyntaxError => {
   const parserMessage = error instanceof Error ? error.message : String(error);
 
   const hasUnclosedText = tokenizeValidationRuleExpression(expression).some(
