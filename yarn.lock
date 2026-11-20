@@ -9850,7 +9850,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lingui/conf@npm:5.9.5":
+"@lingui/conf@npm:5.9.5, @lingui/conf@npm:^5.9.5":
   version: 5.9.5
   resolution: "@lingui/conf@npm:5.9.5"
   dependencies:
@@ -9900,7 +9900,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lingui/format-po@npm:5.9.5":
+"@lingui/format-po@npm:5.9.5, @lingui/format-po@npm:^5.9.5":
   version: 5.9.5
   resolution: "@lingui/format-po@npm:5.9.5"
   dependencies:
@@ -11237,7 +11237,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nivo/arcs@npm:0.99.0":
+"@nivo/arcs@npm:0.99.0, @nivo/arcs@npm:^0.99.0":
   version: 0.99.0
   resolution: "@nivo/arcs@npm:0.99.0"
   dependencies:
@@ -15074,7 +15074,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-spring/web@npm:9.4.5 || ^9.7.2 || ^10.0":
+"@react-spring/web@npm:10.0.1, @react-spring/web@npm:9.4.5 || ^9.7.2 || ^10.0":
   version: 10.0.1
   resolution: "@react-spring/web@npm:10.0.1"
   dependencies:
@@ -46043,6 +46043,9 @@ __metadata:
     "@calcom/embed-react": "npm:^1.5.3"
     "@cyntler/react-doc-viewer": "npm:^1.17.0"
     "@dagrejs/dagre": "npm:^1.1.8"
+    "@dnd-kit/abstract": "npm:^0.3.2"
+    "@dnd-kit/collision": "npm:^0.3.2"
+    "@dnd-kit/dom": "npm:^0.3.2"
     "@dnd-kit/react": "npm:^0.3.2"
     "@dr.pogodin/react-helmet": "npm:^3.2.2"
     "@eloqnt/cli": "npm:^0.6.29"
@@ -46051,24 +46054,31 @@ __metadata:
     "@fontsource/inter": "npm:^5.2.8"
     "@graphiql/plugin-explorer": "npm:^5.1.2"
     "@graphiql/react": "npm:^0.37.6"
+    "@graphiql/toolkit": "npm:^0.12.1"
     "@graphql-codegen/add": "npm:^7.1.1"
     "@graphql-codegen/cli": "npm:^7.4.6"
     "@graphql-codegen/typed-document-node": "npm:^7.2.0"
     "@graphql-codegen/typescript": "npm:^6.1.2"
     "@graphql-codegen/typescript-operations": "npm:^6.2.0"
+    "@graphql-typed-document-node/core": "npm:^3.2.0"
     "@hookform/resolvers": "npm:^5.2.2"
+    "@jest/globals": "npm:^29.7.0"
     "@linaria/core": "npm:^7.0.0"
     "@linaria/react": "npm:^7.0.1"
     "@lingui/cli": "npm:^5.9.5"
+    "@lingui/conf": "npm:^5.9.5"
     "@lingui/core": "npm:^5.9.5"
     "@lingui/detect-locale": "npm:^5.9.5"
+    "@lingui/format-po": "npm:^5.9.5"
     "@lingui/react": "npm:^5.9.5"
     "@lingui/swc-plugin": "npm:^5.11.0"
     "@lingui/vite-plugin": "npm:^5.9.5"
     "@monaco-editor/react": "npm:^4.7.0"
+    "@nivo/arcs": "npm:^0.99.0"
     "@nivo/core": "npm:^0.99.0"
     "@nivo/line": "npm:^0.99.0"
     "@nivo/pie": "npm:^0.99.0"
+    "@react-spring/web": "npm:10.0.1"
     "@scalar/api-reference-react": "npm:^0.9.83"
     "@sentry/react": "npm:^10.51.0"
     "@sniptt/guards": "npm:^0.2.0"
@@ -46076,6 +46086,7 @@ __metadata:
     "@storybook/addon-coverage": "npm:^3.0.0"
     "@storybook/addon-docs": "npm:^10.6.3"
     "@storybook/addon-links": "npm:^10.6.3"
+    "@storybook/addon-vitest": "npm:^10.6.3"
     "@storybook/react-vite": "npm:^10.6.3"
     "@stripe/react-stripe-js": "npm:^6.6.0"
     "@stripe/stripe-js": "npm:^9.8.0"
@@ -46084,6 +46095,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.3.0"
+    "@testing-library/user-event": "npm:^14.6.1"
     "@tiptap/core": "npm:3.30.5"
     "@tiptap/extension-bold": "npm:3.30.5"
     "@tiptap/extension-code": "npm:3.30.5"
@@ -46119,6 +46131,7 @@ __metadata:
     "@types/json-logic-js": "npm:^2"
     "@types/uuid": "npm:^9.0.2"
     "@vitejs/plugin-react-swc": "npm:^4.3.1"
+    "@vitest/browser-playwright": "npm:^4.1.0"
     "@vitest/coverage-istanbul": "npm:^4.1.0"
     "@wyw-in-js/vite": "npm:^1.1.0"
     "@xyflow/react": "npm:^12.4.2"
@@ -46126,6 +46139,7 @@ __metadata:
     apollo-link-rest: "npm:^0.10.0-rc.2"
     apollo-upload-client: "npm:^19.0.0"
     buffer: "npm:^6.0.3"
+    clsx: "npm:^2.1.1"
     country-flag-icons: "npm:^1.5.11"
     cron-parser: "npm:5.1.1"
     d3-shape: "npm:^3.2.0"
@@ -46187,6 +46201,7 @@ __metadata:
     react-markdown: "npm:^10.1.0"
     react-phone-number-input: "patch:react-phone-number-input@npm%3A3.4.5#../../.yarn/patches/react-phone-number-input-npm-3.4.5-dc2895c306.patch"
     react-qr-code: "npm:^2.0.18"
+    react-resizable: "npm:^3.1.3"
     react-router-dom: "npm:^7.18.4"
     react-textarea-autosize: "npm:^8.4.1"
     remark-gfm: "npm:^4.0.1"
@@ -46205,6 +46220,7 @@ __metadata:
     type-fest: "npm:4.10.1"
     use-debounce: "npm:^10.0.0"
     uuid: "npm:^11.1.1"
+    vite: "npm:^8.0.0"
     vite-plugin-svgr: "npm:^4.3.0"
     xlsx-ugnis: "npm:^0.19.3"
     y-protocols: "npm:^1.0.6"
