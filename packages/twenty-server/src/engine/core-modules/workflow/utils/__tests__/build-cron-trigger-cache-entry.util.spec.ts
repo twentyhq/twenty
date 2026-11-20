@@ -10,14 +10,20 @@ const CRON_TRIGGER = {
   settings: { type: 'CUSTOM', pattern: '* * * * *', outputSchema: {} },
 } as WorkflowTrigger;
 
-const coreWorkflowVersion = { id: 'core-version-1', workspaceId: 'workspace-1' };
+const coreWorkflowVersion = {
+  id: 'core-version-1',
+  workspaceId: 'workspace-1',
+};
 
 describe('buildCronTriggerCacheEntry', () => {
   it('should keep the legacy workflow id so the cron lock key does not change', () => {
     expect(
       buildCronTriggerCacheEntry({
         trigger: CRON_TRIGGER,
-        coreWorkflow: { id: 'core-workflow-1', workspaceWorkflowId: 'legacy-1' },
+        coreWorkflow: {
+          id: 'core-workflow-1',
+          workspaceWorkflowId: 'legacy-1',
+        },
         coreWorkflowVersion,
       }),
     ).toEqual({
