@@ -45,7 +45,13 @@ const buildJobStatusMock = (
 });
 
 const buildWrapper =
-  (mocks: MockedResponse[], cache = new InMemoryCache()) =>
+  ({
+    mocks,
+    cache = new InMemoryCache(),
+  }: {
+    mocks: MockedResponse[];
+    cache?: InMemoryCache;
+  }) =>
   ({ children }: { children: ReactNode }) => (
     <MockedProvider mocks={mocks} cache={cache}>
       {children}
@@ -80,10 +86,10 @@ describe('useUninstallApplication', () => {
           onCompleted,
         }),
       {
-        wrapper: buildWrapper(
-          [buildJobStatusMock(null), triggerUninstallMock],
+        wrapper: buildWrapper({
+          mocks: [buildJobStatusMock(null), triggerUninstallMock],
           cache,
-        ),
+        }),
       },
     );
 
@@ -120,7 +126,9 @@ describe('useUninstallApplication', () => {
           universalIdentifier: UNIVERSAL_IDENTIFIER,
         }),
       {
-        wrapper: buildWrapper([buildJobStatusMock(null), triggerUninstallMock]),
+        wrapper: buildWrapper({
+          mocks: [buildJobStatusMock(null), triggerUninstallMock],
+        }),
       },
     );
 
@@ -152,15 +160,17 @@ describe('useUninstallApplication', () => {
           universalIdentifier: UNIVERSAL_IDENTIFIER,
         }),
       {
-        wrapper: buildWrapper([
-          buildJobStatusMock({
-            __typename: 'JobStatus',
-            jobId: JOB_ID,
-            state: JobState.ACTIVE,
-            failedReason: null,
-            progress: 20,
-          }),
-        ]),
+        wrapper: buildWrapper({
+          mocks: [
+            buildJobStatusMock({
+              __typename: 'JobStatus',
+              jobId: JOB_ID,
+              state: JobState.ACTIVE,
+              failedReason: null,
+              progress: 20,
+            }),
+          ],
+        }),
       },
     );
 
