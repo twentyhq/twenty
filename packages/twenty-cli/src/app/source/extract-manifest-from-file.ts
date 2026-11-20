@@ -60,6 +60,18 @@ const MANIFEST_MOCK_MODULES = [
   'twenty-client-sdk/metadata',
 ];
 
+// esbuild turns named imports into reads of a copy that inherits from the module's prototype,
+// so the mock is its own prototype and answers any name, at any depth, called or constructed
+const MANIFEST_MOCK_MODULE_SOURCE = `
+const mock = new Proxy(function () {}, {
+  get: (_target, key) => (key === Symbol.toPrimitive ? () => '' : mock),
+  apply: () => mock,
+  construct: () => mock,
+  getPrototypeOf: () => mock,
+});
+module.exports = mock;
+`;
+
 const escapeRegExp = (value: string): string =>
   value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -81,7 +93,7 @@ const manifestMockPlugin: esbuild.Plugin = {
     });
 
     build.onLoad({ filter: /.*/, namespace: 'manifest-mock' }, () => ({
-      contents: 'module.exports = new Proxy({}, { get: () => () => {} });',
+      contents: MANIFEST_MOCK_MODULE_SOURCE,
       loader: 'js',
     }));
   },
