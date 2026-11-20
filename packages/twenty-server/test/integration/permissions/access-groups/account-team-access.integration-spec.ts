@@ -20,6 +20,7 @@ import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
@@ -278,7 +279,7 @@ describe('Account team access (integration)', () => {
       login.token,
     );
 
-    return response.body.errors === undefined;
+    return !isDefined(response.body.errors);
   };
 
   const findAccess = async ({

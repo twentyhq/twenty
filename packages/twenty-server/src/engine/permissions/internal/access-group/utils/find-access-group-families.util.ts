@@ -36,8 +36,14 @@ const isAtRootConjunction = ({
   predicate,
   predicateGroups,
 }: {
-  predicate: RowLevelPermissionPredicate;
-  predicateGroups: RowLevelPermissionPredicateGroup[];
+  predicate: Pick<
+    RowLevelPermissionPredicate,
+    'rowLevelPermissionPredicateGroupId'
+  >;
+  predicateGroups: Pick<
+    RowLevelPermissionPredicateGroup,
+    'id' | 'logicalOperator' | 'parentRowLevelPermissionPredicateGroupId'
+  >[];
 }): boolean => {
   let groupId = predicate.rowLevelPermissionPredicateGroupId ?? null;
 
@@ -62,7 +68,7 @@ const findProbeValue = ({
   predicate,
   metadataMaps,
 }: {
-  predicate: RowLevelPermissionPredicate;
+  predicate: Pick<RowLevelPermissionPredicate, 'fieldMetadataId'>;
   metadataMaps: RecordAccessGroupSQLConditionMetadataMaps;
 }): string | null => {
   const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({

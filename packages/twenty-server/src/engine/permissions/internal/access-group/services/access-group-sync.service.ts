@@ -169,7 +169,6 @@ export class AccessGroupSyncService {
       return;
     }
 
-    // A deleted group grants nobody, so its id can be dropped wherever it was stored or inherited
     if (isNonEmptyArray(staleCompactIds)) {
       for (const plannedObjectMetadataId of new Set(
         planRecordAccessGroupComputes({
@@ -219,7 +218,6 @@ export class AccessGroupSyncService {
       }
     }
 
-    // Removal on a related record needs its other sources checked, so its whole set is recomputed
     for (const followingRecords of await this.recordAccessGroupPropagationService.findRecordsFollowingRelatedRecordPaths(
       {
         workspaceId,

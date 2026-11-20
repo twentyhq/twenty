@@ -9,7 +9,6 @@ type ChangedAccessGroup = Pick<
   'objectMetadataId' | 'rowLevelPermissionPredicateGroupId'
 >;
 
-// Family groups are added to or removed from their own records, any other change recomputes the whole object
 export const planAccessGroupSyncRecomputes = ({
   changedAccessGroups,
   familyRuleIdsByObjectMetadataId,
