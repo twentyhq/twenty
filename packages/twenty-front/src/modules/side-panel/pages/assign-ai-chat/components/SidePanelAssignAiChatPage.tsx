@@ -1,7 +1,9 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useStore } from 'jotai';
 import { useState } from 'react';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconUserOff } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
@@ -13,7 +15,9 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { assignAiChatThreadIdsComponentState } from '@/side-panel/pages/assign-ai-chat/states/assignAiChatThreadIdsComponentState';
 import { getAssignAiChatMemberOptions } from '@/side-panel/pages/assign-ai-chat/utils/getAssignAiChatMemberOptions';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -46,6 +50,8 @@ export const SidePanelAssignAiChatPage = () => {
   );
   const { assignAiChatThreads } = useAssignAiChatThreads();
   const { closeSidePanelMenu } = useSidePanelMenu();
+  const { goBackFromSidePanel } = useSidePanelHistory();
+  const store = useStore();
   const [search, setSearch] = useState('');
 
   if (assignAiChatThreadIds.length === 0) {
@@ -61,7 +67,15 @@ export const SidePanelAssignAiChatPage = () => {
   const isUnassignShown = hasAssignee && !isNonEmptyString(search.trim());
 
   const handleAssign = (assigneeWorkspaceMemberId: string | null) => {
-    void closeSidePanelMenu();
+    const isOpenedFromParticipants =
+      store.get(sidePanelNavigationStackState.atom).at(-2)?.page ===
+      SidePanelPages.AiChatParticipants;
+
+    if (isOpenedFromParticipants) {
+      goBackFromSidePanel();
+    } else {
+      void closeSidePanelMenu();
+    }
     void assignAiChatThreads({
       threadIds: assignAiChatThreadIds,
       assigneeWorkspaceMemberId,
