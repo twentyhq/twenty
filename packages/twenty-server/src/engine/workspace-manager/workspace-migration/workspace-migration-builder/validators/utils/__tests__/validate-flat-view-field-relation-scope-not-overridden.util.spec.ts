@@ -4,6 +4,7 @@ import {
   ViewFilterOperand,
   ViewSortDirection,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { validateFlatViewFieldRelationScopeNotOverridden } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-not-overridden.util';
@@ -36,17 +37,16 @@ const buildRelationScope = ({
   limit?: number;
   stageFilterValues?: string[] | null;
 } = {}): UniversalViewFieldRelationScope => ({
-  filters:
-    stageFilterValues === null
-      ? []
-      : [
-          {
-            id: STAGE_FILTER_ID,
-            fieldMetadataUniversalIdentifier: stageField.universalIdentifier,
-            operand: ViewFilterOperand.IS,
-            value: stageFilterValues,
-          },
-        ],
+  filters: !isDefined(stageFilterValues)
+    ? []
+    : [
+        {
+          id: STAGE_FILTER_ID,
+          fieldMetadataUniversalIdentifier: stageField.universalIdentifier,
+          operand: ViewFilterOperand.IS,
+          value: stageFilterValues,
+        },
+      ],
   filterGroups: [],
   sorts: [
     {
