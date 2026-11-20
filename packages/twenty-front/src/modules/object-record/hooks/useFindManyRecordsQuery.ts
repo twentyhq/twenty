@@ -4,6 +4,8 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { getReadableRelationsWithArguments } from '@/object-record/graphql/utils/getReadableRelationsWithArguments';
+import { getRelationsWithArgumentsVariables } from '@/object-record/graphql/utils/getRelationsWithArgumentsVariables';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import {
   type QueryCursorDirection,
@@ -49,7 +51,26 @@ export const useFindManyRecordsQuery = ({
     ],
   );
 
+  const relationsWithArgumentsVariables = useMemo(
+    () =>
+      getRelationsWithArgumentsVariables(
+        getReadableRelationsWithArguments({
+          objectMetadataItem,
+          objectMetadataItems,
+          recordGqlFields,
+          objectPermissionsByObjectMetadataId,
+        }),
+      ),
+    [
+      objectMetadataItem,
+      objectMetadataItems,
+      recordGqlFields,
+      objectPermissionsByObjectMetadataId,
+    ],
+  );
+
   return {
     findManyRecordsQuery,
+    relationsWithArgumentsVariables,
   };
 };

@@ -1,5 +1,6 @@
 import { type ApolloCache, type StoreObject } from '@apollo/client';
 
+import { triggerUpdateRelationsWithArgumentsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsWithArgumentsOptimisticEffect';
 import { triggerUpdateRootQueriesOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRootQueriesOptimisticEffect';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
@@ -44,8 +45,13 @@ export const triggerDetachRelationOptimisticEffect = ({
     fields: {
       [fieldNameOnTargetRecord]: (
         targetRecordFieldValue,
-        { isReference, readField },
+        { isReference, readField, storeFieldName },
       ) => {
+        // Copies with arguments are filtered or limited: triggerUpdateRelationsWithArgumentsOptimisticEffect owns them
+        if (storeFieldName !== fieldNameOnTargetRecord) {
+          return targetRecordFieldValue;
+        }
+
         const isRecordConnection = isObjectRecordConnectionWithRefs(
           sourceObjectNameSingular,
           targetRecordFieldValue,
@@ -72,6 +78,25 @@ export const triggerDetachRelationOptimisticEffect = ({
       },
     },
   });
+
+  const sourceObjectMetadataItem = objectMetadataItems.find(
+    ({ nameSingular }) => nameSingular === sourceObjectNameSingular,
+  );
+
+  if (isDefined(sourceObjectMetadataItem)) {
+    triggerUpdateRelationsWithArgumentsOptimisticEffect({
+      cache,
+      sourceObjectMetadataItem,
+      sourceRecordId,
+      attachedSourceRecord: null,
+      targetObjectMetadataItem,
+      fieldNameOnTargetRecord,
+      targetRecordId,
+      objectMetadataItems,
+      objectPermissionsByObjectMetadataId,
+      upsertRecordsInStore,
+    });
+  }
 
   const newCachedRecord = getRecordFromCache({
     cache,

@@ -242,6 +242,7 @@ export { formatToShortNumber } from './format/formatToShortNumber';
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { fromArrayToValuesByKeyRecord } from './fromArrayToValuesByKeyRecord.util';
 export { getUrlSafely } from './getUrlSafely';
+export { computeRelationWithArgumentsResponseKey } from './graphql/computeRelationWithArgumentsResponseKey';
 export {
   getNodeTypename,
   getConnectionTypename,
@@ -373,6 +374,7 @@ export { typedObjectEntries } from './typed-object-entries';
 export { isMetadataGqlOperationSignature } from './typeguard/isMetadataGqlOperationSignature';
 export { isNonEmptyString } from './typeguard/isNonEmptyString';
 export { isPlainObject } from './typeguard/isPlainObject';
+export { isRecordGqlFieldsRelationWithArguments } from './typeguard/isRecordGqlFieldsRelationWithArguments';
 export { isRecordGqlOperationSignature } from './typeguard/isRecordGqlOperationSignature';
 export { throwIfNotDefined } from './typeguard/throwIfNotDefined';
 export { formatUpgradeCommandName } from './upgrade/formatUpgradeCommandName';
