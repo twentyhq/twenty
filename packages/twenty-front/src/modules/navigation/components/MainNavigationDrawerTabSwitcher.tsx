@@ -151,13 +151,14 @@ export const MainNavigationDrawerTabSwitcher = () => {
             }
             onClick={() => switchNavigationDrawerTab(drawerTab)}
             iconAccessory={
-              isDefined(homeChatAttention) ? (
-                <StyledNavigationDrawerAttentionDot
-                  data-attention={homeChatAttention}
-                  aria-hidden="true"
-                />
-              ) : (
-                isUnread && (
+              <>
+                {isDefined(homeChatAttention) && (
+                  <StyledNavigationDrawerAttentionDot
+                    data-attention={homeChatAttention}
+                    aria-hidden="true"
+                  />
+                )}
+                {isUnread && (
                   <Badge
                     render={<StyledUnreadBadge />}
                     aria-hidden="true"
@@ -169,8 +170,8 @@ export const MainNavigationDrawerTabSwitcher = () => {
                       ? `${MAX_DISPLAYED_UNREAD_COUNT}+`
                       : unreadOpenThreadCount}
                   </Badge>
-                )
-              )
+                )}
+              </>
             }
           />
         );

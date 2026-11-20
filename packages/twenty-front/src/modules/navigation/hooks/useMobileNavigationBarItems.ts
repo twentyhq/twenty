@@ -114,6 +114,8 @@ export const useMobileNavigationBarItems = (): {
     navigate(AppPath.Home, { replace: isSettingsDrawer });
   };
 
+  const homeChatAttention = getTabChatAttention(null);
+
   const getActiveItemName = (): MobileNavigationBarItemName | '' => {
     if (pathname !== AppPath.Home) {
       return '';
@@ -131,11 +133,11 @@ export const useMobileNavigationBarItems = (): {
         name: 'home',
         label: getNavigationMenuTabAttentionLabel({
           tabName: t`Home`,
-          attention: getTabChatAttention(null),
+          attention: homeChatAttention,
         }),
         Icon: IconHome,
         onClick: () => openHomePageOnTab(null),
-        attention: getTabChatAttention(null),
+        attention: homeChatAttention,
       },
       ...navigationMenuTabs.map((tab, index): MobileNavigationBarItem => {
         const attention = getTabChatAttention(tab.id);
