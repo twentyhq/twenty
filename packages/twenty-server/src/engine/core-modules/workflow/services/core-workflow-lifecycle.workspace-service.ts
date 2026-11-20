@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
@@ -14,9 +14,6 @@ import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import {
   WorkflowVersionEntity,
   WorkflowVersionStatus as CoreWorkflowVersionStatus,
@@ -27,12 +24,11 @@ import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/ser
 import { getCoreWorkflowVersionEditLockKey } from 'src/engine/core-modules/workflow/utils/get-core-workflow-version-edit-lock-key.util';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
+import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
 import { type CachedCronTrigger } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/types/cached-cron-trigger.type';
-import { publishCronTriggerCacheEntry } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/utils/publish-cron-trigger-cache-entry.util';
 import {
   WorkflowQueryValidationException,
   WorkflowQueryValidationExceptionCode,
@@ -58,12 +54,34 @@ type ResolvedCoreVersion = {
   steps: WorkflowAction[] | null;
 };
 
+type CommandMenuItemOperations = {
+  flatEntityToCreate: FlatCommandMenuItem[];
+  flatEntityToDelete: FlatCommandMenuItem[];
+  flatEntityToUpdate: FlatCommandMenuItem[];
+};
+
+const buildCronTriggerCacheEntry = ({
+  trigger,
+  coreWorkflow,
+  coreWorkflowVersion,
+}: ResolvedCoreVersion): CachedCronTrigger | null => {
+  if (!isDefined(trigger) || trigger.type !== WorkflowTriggerType.CRON) {
+    return null;
+  }
+
+  return {
+    workspaceId: coreWorkflowVersion.workspaceId,
+    workflowId: coreWorkflow.id,
+    ...(isDefined(coreWorkflow.workspaceWorkflowId)
+      ? { legacyWorkflowId: coreWorkflow.workspaceWorkflowId }
+      : {}),
+    pattern: computeCronPatternFromSchedule(trigger),
+    coreWorkflowVersionId: coreWorkflowVersion.id,
+  };
+};
+
 @Injectable()
 export class CoreWorkflowLifecycleWorkspaceService {
-  private readonly logger = new Logger(
-    CoreWorkflowLifecycleWorkspaceService.name,
-  );
-
   constructor(
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
@@ -73,8 +91,6 @@ export class CoreWorkflowLifecycleWorkspaceService {
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workflowVersionValidationWorkspaceService: WorkflowVersionValidationWorkspaceService,
     private readonly commandMenuItemService: CommandMenuItemService,
-    @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
-    private readonly cacheStorageService: CacheStorageService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
@@ -255,32 +271,29 @@ export class CoreWorkflowLifecycleWorkspaceService {
             coreWorkflowId: coreWorkflow.id,
             lastPublishedCoreWorkflowVersionId: coreWorkflowVersion.id,
           },
-        });
-
-        if (isDefined(previous)) {
-          if (
-            previous.coreWorkflowVersion.status ===
-            CoreWorkflowVersionStatus.ACTIVE
-          ) {
-            await this.deleteCronTriggerCacheEntry(previous);
-          }
-
-          await this.deleteCommandMenuItem({
+          commandMenuItemOperations: await this.buildCommandMenuItemOperations({
             workspaceId,
-            resolved: previous,
-          });
-        }
-
-        await this.writeCronTriggerCacheEntry(resolved);
-
-        await this.createOrUpdateCommandMenuItem({
-          workspaceId,
-          resolved,
+            unpublished: previous,
+            published: resolved,
+          }),
         });
 
-        await this.coreWorkflowTriggerService.invalidateAutomatedTriggerMaps(
+        const cronTriggerToPublish = buildCronTriggerCacheEntry(resolved);
+        const isPreviousCronUnscheduled =
+          !isDefined(cronTriggerToPublish) &&
+          previous?.coreWorkflowVersion.status ===
+            CoreWorkflowVersionStatus.ACTIVE &&
+          previous.trigger?.type === WorkflowTriggerType.CRON;
+
+        await this.coreWorkflowTriggerService.refreshTriggerCachesAfterCommit({
           workspaceId,
-        );
+          cronTriggersToPublish: isDefined(cronTriggerToPublish)
+            ? [cronTriggerToPublish]
+            : [],
+          coreWorkflowIdsToUnschedule: isPreviousCronUnscheduled
+            ? [coreWorkflow.id]
+            : [],
+        });
       },
     });
 
@@ -329,15 +342,19 @@ export class CoreWorkflowLifecycleWorkspaceService {
               CoreWorkflowVersionStatus.DEACTIVATED,
             ],
           ]),
+          commandMenuItemOperations: await this.buildCommandMenuItemOperations({
+            workspaceId,
+            unpublished: resolved,
+          }),
         });
 
-        await this.deleteCronTriggerCacheEntry(resolved);
-
-        await this.deleteCommandMenuItem({ workspaceId, resolved });
-
-        await this.coreWorkflowTriggerService.invalidateAutomatedTriggerMaps(
+        await this.coreWorkflowTriggerService.refreshTriggerCachesAfterCommit({
           workspaceId,
-        );
+          coreWorkflowIdsToUnschedule:
+            resolved.trigger?.type === WorkflowTriggerType.CRON
+              ? [resolved.coreWorkflow.id]
+              : [],
+        });
       },
     });
 
@@ -431,6 +448,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     workspaceId,
     statusByCoreWorkflowVersionId,
     coreWorkflowUpdate,
+    commandMenuItemOperations,
   }: {
     workspaceId: string;
     statusByCoreWorkflowVersionId: Map<string, CoreWorkflowVersionStatus>;
@@ -438,6 +456,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
       coreWorkflowId: string;
       lastPublishedCoreWorkflowVersionId: string | null;
     };
+    commandMenuItemOperations: CommandMenuItemOperations;
   }): Promise<void> {
     const { flatWorkflowVersionMaps, flatWorkflowMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -489,6 +508,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
               },
             }
           : {}),
+        commandMenuItem: commandMenuItemOperations,
       },
     });
   }
@@ -530,134 +550,102 @@ export class CoreWorkflowLifecycleWorkspaceService {
     }
   }
 
-  private async writeCronTriggerCacheEntry(
-    resolved: ResolvedCoreVersion,
-  ): Promise<void> {
-    const { trigger, coreWorkflow, coreWorkflowVersion } = resolved;
-
-    if (!isDefined(trigger) || trigger.type !== WorkflowTriggerType.CRON) {
-      return;
-    }
-
-    const cachedTrigger: CachedCronTrigger = {
-      workspaceId: coreWorkflowVersion.workspaceId,
-      workflowId: coreWorkflow.id,
-      ...(isDefined(coreWorkflow.workspaceWorkflowId)
-        ? { legacyWorkflowId: coreWorkflow.workspaceWorkflowId }
-        : {}),
-      pattern: computeCronPatternFromSchedule(trigger),
-      coreWorkflowVersionId: coreWorkflowVersion.id,
-    };
-
-    await publishCronTriggerCacheEntry({
-      cacheStorageService: this.cacheStorageService,
-      cachedTrigger,
-      logger: this.logger,
-    });
-  }
-
-  private async deleteCronTriggerCacheEntry(
-    resolved: ResolvedCoreVersion,
-  ): Promise<void> {
-    if (resolved.trigger?.type !== WorkflowTriggerType.CRON) {
-      return;
-    }
-
-    await this.cacheStorageService.hashDelete({
-      key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-      field: resolved.coreWorkflow.id,
-    });
-  }
-
-  private async createOrUpdateCommandMenuItem({
+  private async buildCommandMenuItemOperations({
     workspaceId,
-    resolved,
+    unpublished,
+    published,
   }: {
     workspaceId: string;
-    resolved: ResolvedCoreVersion;
-  }): Promise<void> {
-    const { trigger } = resolved;
+    unpublished?: ResolvedCoreVersion;
+    published?: ResolvedCoreVersion;
+  }): Promise<CommandMenuItemOperations> {
+    const operations: CommandMenuItemOperations = {
+      flatEntityToCreate: [],
+      flatEntityToDelete: [],
+      flatEntityToUpdate: [],
+    };
 
-    if (!isDefined(trigger) || trigger.type !== WorkflowTriggerType.MANUAL) {
-      return;
+    if (unpublished?.trigger?.type === WorkflowTriggerType.MANUAL) {
+      const existingCommandMenuItem =
+        await this.commandMenuItemService.findByCoreWorkflowVersionId(
+          unpublished.coreWorkflowVersion.id,
+          workspaceId,
+        );
+
+      if (isDefined(existingCommandMenuItem)) {
+        const { flatCommandMenuItemToDelete, flatCommandMenuItemToDeactivate } =
+          await this.commandMenuItemService.computeFlatCommandMenuItemDeletion(
+            existingCommandMenuItem.id,
+            workspaceId,
+          );
+
+        if (isDefined(flatCommandMenuItemToDeactivate)) {
+          operations.flatEntityToUpdate.push(flatCommandMenuItemToDeactivate);
+        } else {
+          operations.flatEntityToDelete.push(flatCommandMenuItemToDelete);
+        }
+      }
+    }
+
+    const trigger = published?.trigger;
+
+    if (!isDefined(published) || trigger?.type !== WorkflowTriggerType.MANUAL) {
+      return operations;
     }
 
     const { availabilityType, availabilityObjectMetadataId } =
       await this.resolveManualTriggerAvailability({ trigger, workspaceId });
 
     const label = getWorkflowCommandMenuItemLabel({
-      name: resolved.coreWorkflow.name,
+      name: published.coreWorkflow.name,
     });
 
+    const commandMenuItemProperties = {
+      label,
+      shortLabel: label,
+      icon: trigger.settings.icon,
+      isPinned: trigger.settings.isPinned,
+      availabilityType,
+      availabilityObjectMetadataId,
+    };
+
     const existingCommandMenuItem =
       await this.commandMenuItemService.findByCoreWorkflowVersionId(
-        resolved.coreWorkflowVersion.id,
+        published.coreWorkflowVersion.id,
         workspaceId,
       );
 
-    if (isDefined(existingCommandMenuItem)) {
-      await this.commandMenuItemService.update(
-        {
-          id: existingCommandMenuItem.id,
-          label,
-          shortLabel: label,
-          icon: trigger.settings.icon,
-          isPinned: trigger.settings.isPinned,
-          availabilityType,
-          availabilityObjectMetadataId,
-        },
-        workspaceId,
-      );
-
-      // Deactivation hides an engine-managed command behind an override instead of deleting it
-      if (!existingCommandMenuItem.isActive) {
-        await this.commandMenuItemService.activate(
-          existingCommandMenuItem.id,
+    if (!isDefined(existingCommandMenuItem)) {
+      operations.flatEntityToCreate.push(
+        await this.commandMenuItemService.computeFlatCommandMenuItemToCreate(
+          {
+            ...commandMenuItemProperties,
+            coreWorkflowVersionId: published.coreWorkflowVersion.id,
+            engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
+          },
           workspaceId,
-        );
-      }
-    } else {
-      await this.commandMenuItemService.create(
-        {
-          coreWorkflowVersionId: resolved.coreWorkflowVersion.id,
-          engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
-          label,
-          shortLabel: label,
-          icon: trigger.settings.icon,
-          isPinned: trigger.settings.isPinned,
-          availabilityType,
-          availabilityObjectMetadataId,
-        },
-        workspaceId,
+        ),
       );
-    }
-  }
 
-  private async deleteCommandMenuItem({
-    workspaceId,
-    resolved,
-  }: {
-    workspaceId: string;
-    resolved: ResolvedCoreVersion;
-  }): Promise<void> {
-    const { trigger } = resolved;
-
-    if (!isDefined(trigger) || trigger.type !== WorkflowTriggerType.MANUAL) {
-      return;
+      return operations;
     }
 
-    const existingCommandMenuItem =
-      await this.commandMenuItemService.findByCoreWorkflowVersionId(
-        resolved.coreWorkflowVersion.id,
+    const updatedFlatCommandMenuItem =
+      await this.commandMenuItemService.computeFlatCommandMenuItemToUpdate(
+        { ...commandMenuItemProperties, id: existingCommandMenuItem.id },
         workspaceId,
       );
 
-    if (isDefined(existingCommandMenuItem)) {
-      await this.commandMenuItemService.delete(
-        existingCommandMenuItem.id,
-        workspaceId,
-      );
-    }
+    operations.flatEntityToUpdate.push(
+      existingCommandMenuItem.isActive
+        ? updatedFlatCommandMenuItem
+        : await this.commandMenuItemService.computeActivatedFlatCommandMenuItem(
+            updatedFlatCommandMenuItem,
+            workspaceId,
+          ),
+    );
+
+    return operations;
   }
 
   private async resolveManualTriggerAvailability({

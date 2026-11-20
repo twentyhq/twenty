@@ -731,9 +731,9 @@ export class CoreWorkflowMutationWorkspaceService {
       },
     });
 
-    await this.coreWorkflowTriggerService.invalidateAutomatedTriggerMaps(
+    await this.coreWorkflowTriggerService.refreshTriggerCachesAfterCommit({
       workspaceId,
-    );
+    });
 
     return coreVersion.coreWorkflowId;
   }
