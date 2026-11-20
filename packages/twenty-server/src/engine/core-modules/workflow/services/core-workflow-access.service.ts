@@ -361,11 +361,14 @@ export class CoreWorkflowAccessService {
       return null;
     }
 
-    const coreWorkflow = isDefined(coreWorkflowVersion.coreWorkflowId)
-      ? await this.coreWorkflowRepository.findOne(workspaceId, {
-          where: { id: coreWorkflowVersion.coreWorkflowId },
-        })
-      : null;
+    if (!isDefined(coreWorkflowVersion.coreWorkflowId)) {
+      return { coreWorkflowVersion, coreWorkflow: null };
+    }
+
+    const coreWorkflow = await this.coreWorkflowRepository.findOne(
+      workspaceId,
+      { where: { id: coreWorkflowVersion.coreWorkflowId } },
+    );
 
     return { coreWorkflowVersion, coreWorkflow };
   }
