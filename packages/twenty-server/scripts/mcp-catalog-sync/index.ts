@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as prettier from 'prettier';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type MarketplaceMcpServer } from 'src/engine/core-modules/application/application-marketplace/marketplace-mcp-server-catalog/types/marketplace-mcp-server.type';
 
@@ -39,8 +39,12 @@ const readArguments = (flag: string): string[] =>
       : [],
   );
 
-const fetchJson = async <TValue>(url: string): Promise<TValue> => {
+const fetchJson = async <TValue>(url: string): Promise<TValue | undefined> => {
   const response = await fetch(url, { signal: AbortSignal.timeout(30000) });
+
+  if (response.status === 404) {
+    return undefined;
+  }
 
   if (!response.ok) {
     throw new Error(`${url} returned ${response.status}`);
@@ -65,8 +69,10 @@ const fetchConnectorDirectory = async (): Promise<
         : MCP_CONNECTOR_DIRECTORY_API_URL,
     );
 
-    entries.push(...page.servers);
-    cursor = page.servers.length > 0 ? page.metadata?.nextCursor : undefined;
+    entries.push(...(page?.servers ?? []));
+    cursor = isNonEmptyArray(page?.servers)
+      ? page.metadata?.nextCursor
+      : undefined;
   } while (isDefined(cursor));
 
   return entries;
@@ -99,21 +105,30 @@ const main = async () => {
         return committedMcpServer;
       }
 
-      const { server: registryServer } = await fetchJson<{
-        server: McpRegistryServer;
-      }>(
+      const registryResponse = await fetchJson<{ server: McpRegistryServer }>(
         `${MCP_REGISTRY_API_URL}/${encodeURIComponent(registryName)}/versions/latest`,
       );
+      const directoryEntry = connectorDirectory?.find(
+        ({ server }) =>
+          server.name === registryName ||
+          server.remotes?.some(({ url }) =>
+            registryResponse?.server.remotes?.some(
+              (remote) => remote.url === url,
+            ),
+          ),
+      );
+      // Some vendors publish to the connector directory only
+      const registryServer = registryResponse?.server ?? directoryEntry?.server;
+
+      if (!isDefined(registryServer)) {
+        throw new Error(
+          `${registryName} is in neither the MCP registry nor the connector directory`,
+        );
+      }
 
       const mcpServer = buildMarketplaceMcpServer({
         registryServer,
-        directoryEntry: connectorDirectory?.find(
-          ({ server }) =>
-            server.name === registryName ||
-            server.remotes?.some(({ url }) =>
-              registryServer.remotes?.some((remote) => remote.url === url),
-            ),
-        ),
+        directoryEntry,
       });
 
       if (!isDefined(mcpServer)) {

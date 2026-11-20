@@ -37,15 +37,25 @@ export const buildMarketplaceMcpServer = ({
   registryServer: McpRegistryServer;
   directoryEntry: McpConnectorDirectoryEntry | undefined;
 }): MarketplaceMcpServer | undefined => {
-  const remote = registryServer.remotes?.find(
+  // The registry can declare an API-key header on a server that also signs in with OAuth
+  const remote = [
+    ...(registryServer.remotes ?? []),
+    ...(directoryEntry?.server.remotes ?? []),
+  ].find(
     ({ type, url, headers }) =>
       type === 'streamable-http' &&
       !isNonEmptyArray(headers) &&
       !url.includes('{'),
   );
 
-  // Registry names are reverse-DNS: "app.linear/linear" is owned by linear.app
-  const [topLevelDomain, vendor] = registryServer.name.split('/')[0].split('.');
+  // Registry names are reverse-DNS: "app.linear/linear" is owned by linear.app,
+  // "io.github.PostHog/mcp" by the PostHog GitHub organization
+  const [topLevelDomain, secondLevelDomain, githubOwner] = registryServer.name
+    .split('/')[0]
+    .split('.');
+  const isGithubNamespace =
+    topLevelDomain === 'io' && secondLevelDomain === 'github';
+  const vendor = isGithubNamespace ? githubOwner : secondLevelDomain;
 
   if (!isDefined(remote) || !isNonEmptyString(vendor)) {
     return undefined;
@@ -53,10 +63,13 @@ export const buildMarketplaceMcpServer = ({
 
   const directory = directoryEntry?._meta['com.anthropic.api/mcp-registry'];
   const author = capitalize(vendor);
+  // The registry website is often a documentation page, the directory one is the vendor homepage
   const websiteUrl =
-    registryServer.websiteUrl ??
     directory?.author?.url ??
-    `https://${vendor}.${topLevelDomain}`;
+    registryServer.websiteUrl ??
+    (isGithubNamespace
+      ? `https://github.com/${vendor}`
+      : `https://${vendor}.${topLevelDomain}`);
   const iconUrl = (
     registryServer.icons?.find(({ mimeType }) => mimeType === 'image/png') ??
     registryServer.icons?.[0]
@@ -75,7 +88,7 @@ export const buildMarketplaceMcpServer = ({
     name: vendor
       .toLowerCase()
       .replace(MCP_SERVER_NAME_FORBIDDEN_CHARACTERS, '_'),
-    label: registryServer.title ?? directory?.displayName ?? author,
+    label: directory?.displayName ?? registryServer.title ?? author,
     author,
     description: description.slice(0, DESCRIPTION_MAX_LENGTH),
     aboutDescription:

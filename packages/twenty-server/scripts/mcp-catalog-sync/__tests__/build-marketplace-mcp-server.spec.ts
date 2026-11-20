@@ -118,6 +118,43 @@ describe('buildMarketplaceMcpServer', () => {
     );
   });
 
+  it('should name a GitHub-namespaced server after its owner and fall back to the directory remote', () => {
+    const result = buildMarketplaceMcpServer({
+      registryServer: {
+        name: 'io.github.PostHog/mcp',
+        remotes: [
+          {
+            type: 'streamable-http',
+            url: 'https://mcp.posthog.com/mcp',
+            headers: [{ name: 'Authorization' }],
+          },
+        ],
+      },
+      directoryEntry: {
+        server: {
+          name: 'io.github.PostHog/mcp',
+          remotes: [
+            { type: 'streamable-http', url: 'https://mcp.posthog.com/mcp' },
+          ],
+        },
+        _meta: {
+          'com.anthropic.api/mcp-registry': {
+            displayName: 'PostHog',
+            author: { url: 'https://posthog.com' },
+          },
+        },
+      },
+    });
+
+    expect(result).toMatchObject({
+      name: 'posthog',
+      label: 'PostHog',
+      author: 'PostHog',
+      websiteUrl: 'https://posthog.com',
+      url: 'https://mcp.posthog.com/mcp',
+    });
+  });
+
   it('should skip a server that cannot be added in one click', () => {
     expect(
       buildMarketplaceMcpServer({
