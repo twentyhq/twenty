@@ -1,4 +1,4 @@
-export type MarketplaceBuiltInApplication = {
+export type MarketplaceConnectListing = {
   universalIdentifier: string;
   name: string;
   description: string;

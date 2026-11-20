@@ -14,10 +14,10 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { buildApplicationContentFromManifest } from 'src/engine/core-modules/application/application-content/utils/build-application-content-from-manifest.util';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
-import { MARKETPLACE_BUILT_IN_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-built-in-applications.constant';
-import { findMarketplaceBuiltInApplication } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-built-in-application.util';
-import { toMarketplaceBuiltInAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/utils/to-marketplace-built-in-app-detail-dto.util';
-import { toMarketplaceBuiltInAppDTO } from 'src/engine/core-modules/application/application-marketplace/utils/to-marketplace-built-in-app-dto.util';
+import { MARKETPLACE_CONNECT_LISTINGS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-connect-listings.constant';
+import { findMarketplaceConnectListing } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-connect-listing.util';
+import { toMarketplaceConnectListingAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/utils/to-marketplace-connect-listing-app-detail-dto.util';
+import { toMarketplaceConnectListingAppDTO } from 'src/engine/core-modules/application/application-marketplace/utils/to-marketplace-connect-listing-app-dto.util';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
@@ -48,11 +48,11 @@ export class MarketplaceQueryService {
   async findManyMarketplaceApps({
     universalIdentifiers,
     isListed,
-    shouldIncludeBuiltInApplications = false,
+    shouldIncludeConnectListings = false,
   }: {
     universalIdentifiers?: string[];
     isListed?: boolean;
-    shouldIncludeBuiltInApplications?: boolean;
+    shouldIncludeConnectListings?: boolean;
   } = {}): Promise<MarketplaceAppDTO[]> {
     const appsByUniversalIdentifier =
       (await this.coreEntityCacheService.get(
@@ -69,8 +69,8 @@ export class MarketplaceQueryService {
           .filter(isDefined)
       : Object.values(appsByUniversalIdentifier);
 
-    const apps = shouldIncludeBuiltInApplications
-      ? [...this.findBuiltInApps(universalIdentifiers), ...catalogApps]
+    const apps = shouldIncludeConnectListings
+      ? [...this.findConnectListingApps(universalIdentifiers), ...catalogApps]
       : catalogApps;
 
     if (!isDefined(isListed)) {
@@ -80,35 +80,35 @@ export class MarketplaceQueryService {
     return apps.filter((app) => app.isListed === isListed);
   }
 
-  private findBuiltInApps(
+  private findConnectListingApps(
     universalIdentifiers?: string[],
   ): MarketplaceAppDTO[] {
     const frontBaseUrl = this.domainServerConfigService.getBaseUrl();
-    const builtInApplications = isNonEmptyArray(universalIdentifiers)
+    const connectListings = isNonEmptyArray(universalIdentifiers)
       ? universalIdentifiers
-          .map(findMarketplaceBuiltInApplication)
+          .map(findMarketplaceConnectListing)
           .filter(isDefined)
-      : MARKETPLACE_BUILT_IN_APPLICATIONS;
+      : MARKETPLACE_CONNECT_LISTINGS;
 
-    return builtInApplications.map((builtInApplication) =>
-      toMarketplaceBuiltInAppDTO({ builtInApplication, frontBaseUrl }),
+    return connectListings.map((connectListing) =>
+      toMarketplaceConnectListingAppDTO({ connectListing, frontBaseUrl }),
     );
   }
 
   async findMarketplaceAppDetail({
     universalIdentifier,
-    shouldIncludeBuiltInApplications = false,
+    shouldIncludeConnectListings = false,
   }: {
     universalIdentifier: string;
-    shouldIncludeBuiltInApplications?: boolean;
+    shouldIncludeConnectListings?: boolean;
   }): Promise<MarketplaceAppDetailDTO> {
-    const builtInApplication = shouldIncludeBuiltInApplications
-      ? findMarketplaceBuiltInApplication(universalIdentifier)
+    const connectListing = shouldIncludeConnectListings
+      ? findMarketplaceConnectListing(universalIdentifier)
       : undefined;
 
-    if (isDefined(builtInApplication)) {
-      return toMarketplaceBuiltInAppDetailDTO({
-        builtInApplication,
+    if (isDefined(connectListing)) {
+      return toMarketplaceConnectListingAppDetailDTO({
+        connectListing,
         frontBaseUrl: this.domainServerConfigService.getBaseUrl(),
       });
     }
