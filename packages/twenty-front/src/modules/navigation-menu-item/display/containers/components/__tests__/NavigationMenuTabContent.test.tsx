@@ -10,10 +10,8 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { NavigationMenuTabContent } from '@/navigation-menu-item/display/containers/components/NavigationMenuTabContent';
 import { useNavigationMenuContainerItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuContainerItems';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
-import {
-  type NavigationMenuItem,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { mockedUserData } from '~/testing/mock-data/users';
 
 const mockEnterLayoutCustomizationMode = jest.fn();
@@ -47,7 +45,7 @@ jest.mock('twenty-ui/utilities', () => ({
   useIsMobile: () => false,
 }));
 
-const SALES_SECTION: NavigationMenuItem = {
+const SALES_SECTION: NamedNavigationMenuItem = {
   id: 'sales-section-id',
   type: NavigationMenuItemType.SECTION,
   name: 'Sales',
