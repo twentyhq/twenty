@@ -13,10 +13,13 @@ export const getNavigationMenuItemMoveDestinations = ({
   items: NavigationMenuItem[];
   tabIds: string[];
 }): NavigationMenuItemMoveDestination[] => {
-  const getFolderDestinations = (
-    parentId: string | null,
-    tabId: string | null,
-  ): NavigationMenuItemMoveDestination[] =>
+  const getFolderDestinations = ({
+    parentId,
+    tabId,
+  }: {
+    parentId: string | null;
+    tabId: string | null;
+  }): NavigationMenuItemMoveDestination[] =>
     items
       .filter(
         (item) =>
@@ -33,7 +36,7 @@ export const getNavigationMenuItemMoveDestinations = ({
   return [null, ...tabIds].flatMap(
     (tabId): NavigationMenuItemMoveDestination[] => [
       { kind: 'root', tabId },
-      ...getFolderDestinations(tabId, tabId),
+      ...getFolderDestinations({ parentId: tabId, tabId }),
       ...getNavigationMenuContainersInDisplayOrder({
         navigationMenuItems: items,
         type: NavigationMenuItemType.SECTION,
@@ -42,7 +45,7 @@ export const getNavigationMenuItemMoveDestinations = ({
         .filter((section) => !isNavigationMenuItemBuiltInSection(section))
         .flatMap((section): NavigationMenuItemMoveDestination[] => [
           { kind: 'section', tabId, item: section },
-          ...getFolderDestinations(section.id, tabId),
+          ...getFolderDestinations({ parentId: section.id, tabId }),
         ]),
     ],
   );
