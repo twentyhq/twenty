@@ -1505,7 +1505,44 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return new Set(rows.map((row) => String(row.id)));
   }
 
-  async runMutation(args: {
+  async runMutation({
+    shouldWriteAtLeastOneRecord = false,
+    ...args
+  }: {
+    selectQueryBuilder: WorkspaceSelectQueryBuilder;
+    rowLevelPermissionsApplied: boolean;
+    kind: MutationKind;
+    columnsToReturn: string[];
+    data?: Partial<ObjectRecord>;
+    shouldWriteAtLeastOneRecord?: boolean;
+  }): Promise<ObjectRecord[]> {
+    if (!shouldWriteAtLeastOneRecord) {
+      return this.runMutationOnFilter(args);
+    }
+
+    const readQueryBuilder = args.selectQueryBuilder.clone();
+    const writtenRecords = await this.runMutationOnFilter(args);
+
+    if (writtenRecords.length > 0) {
+      return writtenRecords;
+    }
+
+    const alias = readQueryBuilder.alias;
+    const readableRecord = await readQueryBuilder
+      .select(`${alias}.id`, 'id')
+      .getRawOne();
+
+    if (isDefined(readableRecord)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.RECORD_NOT_EDITABLE,
+        PermissionsExceptionCode.RECORD_NOT_EDITABLE,
+      );
+    }
+
+    return writtenRecords;
+  }
+
+  private async runMutationOnFilter(args: {
     selectQueryBuilder: WorkspaceSelectQueryBuilder;
     rowLevelPermissionsApplied: boolean;
     kind: MutationKind;
