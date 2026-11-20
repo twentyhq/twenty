@@ -243,6 +243,7 @@ const NAVIGATION_MENU_ITEM_MANIFEST: Required<
   viewUniversalIdentifier: VIEW_UID,
   targetObjectUniversalIdentifier: OBJECT_UID,
   pageLayoutUniversalIdentifier: '99999999-9999-4999-8999-999999999999',
+  commandMenuItemUniversalIdentifier: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
 };
 
 const PAGE_LAYOUT_KIND_GAPS = {
