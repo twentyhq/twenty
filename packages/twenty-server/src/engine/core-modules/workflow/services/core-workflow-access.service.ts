@@ -306,7 +306,7 @@ export class CoreWorkflowAccessService {
       where: { id: In(coreWorkflowIds) },
       select: {
         id: true,
-        visibility: true,
+        isPrivate: true,
         createdByUserWorkspaceId: true,
       },
     });

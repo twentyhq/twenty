@@ -27,7 +27,7 @@ export const ToggleWorkflowVisibilitySingleRecordCommand = () => {
       variables: {
         input: {
           coreWorkflowId: selectedRecord.id,
-          isPrivate: selectedRecord.isPrivate !== true,
+          isPrivate: !selectedRecord.isPrivate,
         },
       },
     });

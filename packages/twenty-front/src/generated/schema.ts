@@ -245,8 +245,6 @@ export type CoreWorkflowsWithCurrentVersionsInput = {
 export type CreateCoreWorkflowInput = {
   isPrivate?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
-  /** @deprecated Use isPrivate instead */
-  visibility?: InputMaybe<WorkflowVisibility>;
 };
 
 export type CreateCoreWorkflowVersionEdgeInput = {
@@ -1066,8 +1064,6 @@ export type UpdateCoreWorkflowInput = {
   coreWorkflowId: Scalars['UUID']['input'];
   isPrivate?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
-  /** @deprecated Use isPrivate instead */
-  visibility?: InputMaybe<WorkflowVisibility>;
 };
 
 export type UpdateCoreWorkflowVersionPositionsInput = {
