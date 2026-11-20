@@ -37,10 +37,6 @@ const StyledAddSectionIcon = styled.span`
   display: flex;
   justify-content: center;
   width: ${themeCssVariables.spacing[6]};
-
-  .section-title-container:hover & {
-    color: ${themeCssVariables.font.color.secondary};
-  }
 `;
 
 type NavigationMenuAddSectionButtonProps = {
