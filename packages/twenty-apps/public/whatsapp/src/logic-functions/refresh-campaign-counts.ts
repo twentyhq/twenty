@@ -2,7 +2,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { isDefined } from 'twenty-sdk/utils';
 import { WHATSAPP_LOGIC_FUNCTION_REFRESH_CAMPAIGN_COUNTS_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { countWhatsAppCampaignReplies } from 'src/logic-functions/data/count-whatsapp-campaign-replies.util';
+import { findWhatsAppCampaignRecipients } from 'src/logic-functions/data/find-whatsapp-campaign-recipients.util';
 
 // statuses only move forward, so delivered includes read and sent includes both
 const STATUSES_BY_COUNT = {
@@ -43,11 +43,9 @@ const handler = async ({ campaignId }: { campaignId: string }) => {
         id: campaignId,
         data: {
           ...statusCounts,
-          repliedCount: await countWhatsAppCampaignReplies({
-            client,
-            campaignId,
-            campaignCreatedAt: whatsAppCampaign.createdAt,
-          }),
+          repliedCount: (
+            await findWhatsAppCampaignRecipients({ client, campaignId, campaignCreatedAt: whatsAppCampaign.createdAt })
+          ).filter(({ hasReplied }) => hasReplied).length,
         },
       },
       id: true,

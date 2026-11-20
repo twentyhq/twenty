@@ -10,6 +10,7 @@ import {
 const VIEW_FIELD_ORDER = [
   'name',
   'template',
+  'scheduledAt',
   'queuedCount',
   'sentCount',
   'deliveredCount',

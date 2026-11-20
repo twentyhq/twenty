@@ -38,6 +38,17 @@ export default defineObject({
         onDelete: OnDeleteAction.SET_NULL,
         joinColumnName: 'templateId',
       },
+      isUIEditable: false,
+    },
+    {
+      universalIdentifier: WHATSAPP_CAMPAIGN_FIELD_UNIVERSAL_IDENTIFIERS.scheduledAt,
+      type: FieldType.DATE_TIME,
+      name: 'scheduledAt',
+      label: 'Scheduled for',
+      description: 'When the messages are sent, for a campaign scheduled for later',
+      icon: 'IconCalendarClock',
+      isNullable: true,
+      isUIEditable: false,
     },
     {
       universalIdentifier: WHATSAPP_CAMPAIGN_FIELD_UNIVERSAL_IDENTIFIERS.messages,

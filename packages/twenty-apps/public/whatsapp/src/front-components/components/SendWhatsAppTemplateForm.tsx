@@ -22,6 +22,7 @@ import { WhatsAppTemplateFormField } from 'src/front-components/components/Whats
 import { buildPersonalizableTemplateParameters } from 'src/logic-functions/data/build-personalizable-template-parameters.util';
 import { getWhatsAppTemplateFormFields } from 'src/logic-functions/data/get-whatsapp-template-form-fields.util';
 import { renderWhatsAppTemplateText } from 'src/logic-functions/data/render-whatsapp-template-text.util';
+import { type SendTemplateToPeopleResult } from 'src/logic-functions/types/send-template-to-people-result.type';
 import { type WhatsAppTemplatePersonField } from 'src/logic-functions/types/personalizable-template-parameter.type';
 import { type WhatsAppTemplateComponent } from 'src/logic-functions/types/whatsapp-template-component.type';
 
@@ -40,10 +41,6 @@ type WhatsAppTemplatesResponse = {
   };
 };
 
-type SendTemplateToPeopleResult =
-  | { success: true; queuedCount: number; skippedCount: number }
-  | { success: false; error: string };
-
 const columnStyle = { display: 'flex', flexDirection: 'column', gap: themeCssVariables.spacing[3] } as const;
 
 const selectStyle = {
@@ -55,6 +52,15 @@ const selectStyle = {
   fontSize: themeCssVariables.font.size.md,
   height: '32px',
   padding: `0 ${themeCssVariables.spacing[2]}`,
+} as const;
+
+const sendAtLabelStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: themeCssVariables.spacing[1],
+  fontFamily: themeCssVariables.font.family,
+  fontSize: themeCssVariables.font.size.sm,
+  color: themeCssVariables.font.color.secondary,
 } as const;
 
 const previewStyle = {
@@ -95,6 +101,7 @@ export const SendWhatsAppTemplateForm = () => {
   const [values, setValues] = useState<Record<string, string>>({});
   const [personFields, setPersonFields] = useState<Record<string, WhatsAppTemplatePersonField | undefined>>({});
   const [isSending, setIsSending] = useState(false);
+  const [sendAtLocal, setSendAtLocal] = useState('');
 
   // front components have no data hook, so templates load once when the panel opens
   useEffect(() => {
@@ -183,8 +190,10 @@ export const SendWhatsAppTemplateForm = () => {
 
     setIsSending(true);
 
+    const sendAt = isNonEmptyString(sendAtLocal) ? new Date(sendAtLocal).toISOString() : undefined;
     const request = {
       requestId: crypto.randomUUID(),
+      ...(isDefined(sendAt) ? { sendAt } : {}),
       recipients,
       templateId: template.id,
       headerParameters,
@@ -223,14 +232,19 @@ export const SendWhatsAppTemplateForm = () => {
       }
 
       const choice = await openCommandConfirmationModal({
-        title: t('Send to {count} people?', { count: dryRun.queuedCount }),
+        title: isDefined(sendAt)
+          ? t('Schedule for {count} people on {sendAt}?', {
+              count: dryRun.queuedCount,
+              sendAt: new Date(sendAt).toLocaleString(),
+            })
+          : t('Send to {count} people?', { count: dryRun.queuedCount }),
         subtitle:
           dryRun.skippedCount > 0
             ? t('{skippedCount} selected people are skipped: no WhatsApp number, opted out of marketing, or a missing personalized value.', {
                 skippedCount: dryRun.skippedCount,
               })
             : t('Each message is queued and shows up in its conversation once sent.'),
-        confirmButtonText: t('Send'),
+        confirmButtonText: isDefined(sendAt) ? t('Schedule') : t('Send'),
       });
 
       if (choice !== 'confirm') {
@@ -246,9 +260,13 @@ export const SendWhatsAppTemplateForm = () => {
       }
 
       await enqueueSnackbar({
-        message: t('{queuedCount} WhatsApp messages queued. Follow them in WhatsApp campaigns.', {
-          queuedCount: result.queuedCount,
-        }),
+        message: isDefined(sendAt)
+          ? t('{queuedCount} WhatsApp messages scheduled. Follow them in WhatsApp campaigns.', {
+              queuedCount: result.queuedCount,
+            })
+          : t('{queuedCount} WhatsApp messages queued. Follow them in WhatsApp campaigns.', {
+              queuedCount: result.queuedCount,
+            }),
         variant: 'success',
       });
       await closeSidePanel();
@@ -334,6 +352,16 @@ export const SendWhatsAppTemplateForm = () => {
                 />
               ))}
               <div style={previewStyle}>{preview}</div>
+              <label style={sendAtLabelStyle}>
+                {t('Send later (optional, up to 30 days ahead)')}
+                <input
+                  type="datetime-local"
+                  style={selectStyle}
+                  value={sendAtLocal}
+                  disabled={isSending}
+                  onChange={(event) => setSendAtLocal(event.target.value)}
+                />
+              </label>
               <Button type="button" variant="solid" color="accent" disabled={!canSend} onClick={handleSend}>
                 {isSending ? t('Sending…') : t('Review and send')}
               </Button>

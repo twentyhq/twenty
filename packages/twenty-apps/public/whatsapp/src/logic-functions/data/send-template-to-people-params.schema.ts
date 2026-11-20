@@ -25,6 +25,7 @@ export const sendTemplateToPeopleParamsSchema = sendTemplateContentSchema
     headerParameters: z.array(personalizableParameterSchema).default([]),
     // counts the recipients without sending, so the form can confirm a large send
     isDryRun: z.boolean().default(false),
+    sendAt: z.iso.datetime({ offset: true }).optional(),
   })
   .refine(hasSingleTemplateHeaderKind, {
     message: 'A header takes either text parameters or media, not both',

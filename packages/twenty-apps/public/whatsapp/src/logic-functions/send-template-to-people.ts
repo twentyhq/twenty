@@ -1,32 +1,56 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { z } from 'zod';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 import { SEND_TEMPLATE_TO_PEOPLE_ROUTE_PATH } from 'src/constants/send-template-to-people-route-path.constant';
 import {
   WHATSAPP_LOGIC_FUNCTION_SEND_TEMPLATE_TO_PEOPLE_UNIVERSAL_IDENTIFIER,
   WHATSAPP_LOGIC_FUNCTION_SEND_TEMPLATE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { WHATSAPP_CAMPAIGN_MAX_SCHEDULE_DELAY_MS } from 'src/constants/whatsapp-campaign-max-schedule-delay-ms.constant';
+import { WHATSAPP_KV_KEY_PREFIXES } from 'src/constants/whatsapp-kv-key-prefixes.constant';
 import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
 import { findWhatsAppTemplateRecipientPeopleOrThrow } from 'src/logic-functions/data/find-whatsapp-template-recipient-people-or-throw.util';
 import { getPersonWhatsAppRecipient } from 'src/logic-functions/data/get-person-whatsapp-recipient.util';
 import { resolvePersonTemplateParameters } from 'src/logic-functions/data/resolve-person-template-parameters.util';
 import { sendTemplateToPeopleParamsSchema } from 'src/logic-functions/data/send-template-to-people-params.schema';
+import { type SendTemplateToPeopleResult } from 'src/logic-functions/types/send-template-to-people-result.type';
 import { type TemplateParameterInput } from 'src/logic-functions/types/send-template-message-params.type';
+import { type WhatsAppTemplateRecipientPerson } from 'src/logic-functions/types/whatsapp-template-recipient-person.type';
 
-type SkipReason = 'NO_WHATSAPP_NUMBER' | 'MARKETING_OPT_OUT' | 'MISSING_PERSONALIZED_VALUE';
+type SkippedCountByReason = Extract<SendTemplateToPeopleResult, { success: true }>['skippedCountByReason'];
 
-const handler = async (params: RoutePayload<unknown>) => {
+const handler = async (params: RoutePayload<unknown>): Promise<SendTemplateToPeopleResult> => {
   const parsedParams = sendTemplateToPeopleParamsSchema.safeParse(params.body);
 
   if (!parsedParams.success) {
     return { success: false, error: z.prettifyError(parsedParams.error) };
   }
 
-  const { requestId, recipients, isDryRun, parameters, headerParameters, ...templateContent } = parsedParams.data;
-  const client = new CoreApiClient();
+  const { requestId, recipients, isDryRun, sendAt, parameters, headerParameters, ...templateContent } =
+    parsedParams.data;
+  const requestKey = `${WHATSAPP_KV_KEY_PREFIXES.campaignRequest}${requestId}`;
 
-  const { whatsAppTemplate } = await client.query({
+  // a retried request returns the campaign it already created instead of creating another one
+  if (!isDryRun) {
+    const previousResult = await kv.get<SendTemplateToPeopleResult>(requestKey);
+
+    if (previousResult !== null) {
+      return previousResult;
+    }
+  }
+
+  const delayMs = isDefined(sendAt) ? new Date(sendAt).getTime() - Date.now() : 0;
+
+  if (delayMs > WHATSAPP_CAMPAIGN_MAX_SCHEDULE_DELAY_MS) {
+    return { success: false, error: 'A campaign can be scheduled at most 30 days ahead' };
+  }
+
+  // the selection and the template are read as the member, so nobody reaches people their role hides
+  const userClient = new CoreApiClient({ runAs: 'user' });
+
+  const { whatsAppTemplate } = await userClient.query({
     whatsAppTemplate: {
       __args: { filter: { id: { eq: templateContent.templateId } } },
       name: true,
@@ -39,15 +63,15 @@ const handler = async (params: RoutePayload<unknown>) => {
     return { success: false, error: 'Only APPROVED WhatsApp templates can be sent' };
   }
 
-  let people;
+  let people: WhatsAppTemplateRecipientPerson[];
 
   try {
-    people = await findWhatsAppTemplateRecipientPeopleOrThrow(recipients);
+    people = await findWhatsAppTemplateRecipientPeopleOrThrow({ client: userClient, recipients });
   } catch (error) {
     return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 
-  const skippedCountByReason: Record<SkipReason, number> = {
+  const skippedCountByReason: SkippedCountByReason = {
     NO_WHATSAPP_NUMBER: 0,
     MARKETING_OPT_OUT: 0,
     MISSING_PERSONALIZED_VALUE: 0,
@@ -76,14 +100,15 @@ const handler = async (params: RoutePayload<unknown>) => {
     return { success: true, queuedCount: isDryRun ? sends.length : 0, skippedCount, skippedCountByReason };
   }
 
-  const { createWhatsAppCampaign } = await client.mutation({
+  const { createWhatsAppCampaign } = await new CoreApiClient().mutation({
     createWhatsAppCampaign: {
       __args: {
         data: {
-          name: `${whatsAppTemplate.name} · ${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC`,
+          name: `${whatsAppTemplate.name} · ${new Date(sendAt ?? Date.now()).toISOString().slice(0, 16).replace('T', ' ')} UTC`,
           templateId: templateContent.templateId,
           queuedCount: sends.length,
           skippedCount,
+          ...(isDefined(sendAt) ? { scheduledAt: sendAt } : {}),
         },
       },
       id: true,
@@ -95,22 +120,27 @@ const handler = async (params: RoutePayload<unknown>) => {
     logicFunctionUniversalIdentifier: WHATSAPP_LOGIC_FUNCTION_SEND_TEMPLATE_UNIVERSAL_IDENTIFIER,
     payloads: sends.map((send) => ({ ...templateContent, ...send, campaignId: createWhatsAppCampaign.id })),
     getJobKey: ({ to }) => `${requestId}:${to}`,
+    ...(delayMs > 0 ? { delayMs } : {}),
   });
 
-  return {
+  const result: SendTemplateToPeopleResult = {
     success: true,
     queuedCount: sends.length,
     skippedCount,
     skippedCountByReason,
     campaignId: createWhatsAppCampaign.id,
   };
+
+  await kv.set(requestKey, result);
+
+  return result;
 };
 
 export default defineLogicFunction({
   universalIdentifier: WHATSAPP_LOGIC_FUNCTION_SEND_TEMPLATE_TO_PEOPLE_UNIVERSAL_IDENTIFIER,
   name: 'send-template-to-people',
   description:
-    'Sends an approved WhatsApp template to the selected people as a campaign, one queued message per person, with personalized values; a dry run only counts the recipients',
+    'Sends an approved WhatsApp template to the selected people as a campaign, now or at a scheduled time, with personalized values; a dry run only counts the recipients',
   timeoutSeconds: 60,
   handler,
   httpRouteTriggerSettings: {

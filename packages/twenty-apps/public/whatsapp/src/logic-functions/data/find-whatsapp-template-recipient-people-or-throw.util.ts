@@ -1,4 +1,4 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { SEND_TEMPLATE_TO_PEOPLE_MAX_RECIPIENTS } from 'src/constants/send-template-to-people-max-recipients.constant';
 import { type WhatsAppTemplateRecipientPerson } from 'src/logic-functions/types/whatsapp-template-recipient-person.type';
 
@@ -17,10 +17,13 @@ const PERSON_SELECTION = {
 };
 
 // a "select all" selection arrives as the view filter, so it is read page by page up to the cap
-export const findWhatsAppTemplateRecipientPeopleOrThrow = async (
-  recipients: { personIds: string[] } | { filter: Record<string, unknown> },
-): Promise<WhatsAppTemplateRecipientPerson[]> => {
-  const client = new CoreApiClient();
+export const findWhatsAppTemplateRecipientPeopleOrThrow = async ({
+  client,
+  recipients,
+}: {
+  client: CoreApiClient;
+  recipients: { personIds: string[] } | { filter: Record<string, unknown> };
+}): Promise<WhatsAppTemplateRecipientPerson[]> => {
   const filter = 'personIds' in recipients ? { id: { in: recipients.personIds } } : recipients.filter;
   const people: WhatsAppTemplateRecipientPerson[] = [];
   let after: string | undefined;
