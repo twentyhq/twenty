@@ -1,4 +1,4 @@
-import { type ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
+import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
 import { PageLayoutTabLayoutMode, WidgetType } from 'twenty-shared/types';
 
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
@@ -41,12 +41,7 @@ const buildFormFieldWidget = (
     ...overrides,
   }) as FlatPageLayoutWidget;
 
-const DEVICE_IS_MOBILE: ConditionalAvailabilityNode = {
-  type: 'COMPARISON',
-  operator: 'EQUAL',
-  left: { type: 'VARIABLE', path: 'device' },
-  right: { type: 'LITERAL', value: 'MOBILE' },
-};
+const DEVICE_IS_MOBILE = buildDeviceConditionalAvailability('MOBILE');
 
 const updateWidget = ({
   existingWidget,

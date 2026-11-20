@@ -20,6 +20,7 @@ export type { ConditionalAvailabilityMetadataName } from './types/ConditionalAva
 export type { ConditionalAvailabilityNode } from './types/ConditionalAvailabilityNode';
 export type { ConditionalAvailabilityParseResult } from './types/ConditionalAvailabilityParseResult';
 export type { ConditionalAvailabilityValidationResult } from './types/ConditionalAvailabilityValidationResult';
+export { buildDeviceConditionalAvailability } from './utils/buildDeviceConditionalAvailability';
 export { conditionalAvailabilityComparisonOperatorSchema } from './utils/conditionalAvailabilityComparisonOperatorSchema';
 export { conditionalAvailabilityLogicalOperatorSchema } from './utils/conditionalAvailabilityLogicalOperatorSchema';
 export { conditionalAvailabilityNodeSchema } from './utils/conditionalAvailabilityNodeSchema';

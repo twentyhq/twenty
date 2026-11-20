@@ -1,4 +1,5 @@
-import { DEVICE_IS_DESKTOP_CONDITIONAL_AVAILABILITY } from '@/side-panel/pages/page-layout/constants/DeviceIsDesktopConditionalAvailability';
+import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
+
 import { VISIBILITY_ANY_DEVICE } from '@/side-panel/pages/page-layout/constants/VisibilityAnyDevice';
 import { VISIBILITY_DESKTOP } from '@/side-panel/pages/page-layout/constants/VisibilityDesktop';
 import { VISIBILITY_MOBILE } from '@/side-panel/pages/page-layout/constants/VisibilityMobile';
@@ -30,7 +31,7 @@ describe('getWidgetVisibilityOptionId', () => {
     expect(
       getWidgetVisibilityOptionId({
         conditionalAvailabilityExpression: 'device == "MOBILE"',
-        conditionalAvailability: DEVICE_IS_DESKTOP_CONDITIONAL_AVAILABILITY,
+        conditionalAvailability: buildDeviceConditionalAvailability('DESKTOP'),
       }),
     ).toBe(VISIBILITY_MOBILE);
   });

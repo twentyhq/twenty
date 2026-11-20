@@ -1,7 +1,7 @@
 import { type AdditionalOperation, type RulesLogic } from 'json-logic-js';
 
 import { evaluateWidgetVisibility } from '@/page-layout/utils/evaluateWidgetVisibility';
-import { DEVICE_IS_MOBILE_CONDITIONAL_AVAILABILITY } from '@/side-panel/pages/page-layout/constants/DeviceIsMobileConditionalAvailability';
+import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
 
 describe('evaluateWidgetVisibility', () => {
   it('should return true (visible) when no conditionalDisplay is provided', () => {
@@ -280,7 +280,7 @@ describe('evaluateWidgetVisibility', () => {
         const result = evaluateWidgetVisibility({
           conditionalAvailabilityExpression: null,
           conditionalDisplay: undefined,
-          conditionalAvailability: DEVICE_IS_MOBILE_CONDITIONAL_AVAILABILITY,
+          conditionalAvailability: buildDeviceConditionalAvailability('MOBILE'),
           context: { device, selectedRecords: [], featureFlags: {} },
         });
 
@@ -292,7 +292,7 @@ describe('evaluateWidgetVisibility', () => {
       const result = evaluateWidgetVisibility({
         conditionalAvailabilityExpression: 'device == "DESKTOP"',
         conditionalDisplay: undefined,
-        conditionalAvailability: DEVICE_IS_MOBILE_CONDITIONAL_AVAILABILITY,
+        conditionalAvailability: buildDeviceConditionalAvailability('MOBILE'),
         context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
       });
 
@@ -303,7 +303,7 @@ describe('evaluateWidgetVisibility', () => {
       const result = evaluateWidgetVisibility({
         conditionalAvailabilityExpression: null,
         conditionalDisplay: { '===': [{ var: 'device' }, 'DESKTOP'] },
-        conditionalAvailability: DEVICE_IS_MOBILE_CONDITIONAL_AVAILABILITY,
+        conditionalAvailability: buildDeviceConditionalAvailability('MOBILE'),
         context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
       });
 

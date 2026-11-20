@@ -4,6 +4,7 @@ import {
   type PageLayoutWidgetManifest,
   TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
 } from 'twenty-shared/application';
+import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
 import {
   AggregateOperations,
   FieldMetadataType,
@@ -947,12 +948,8 @@ describe('reconstructPageLayoutsManifest', () => {
               'conditional-tree-widget',
             ),
             pageLayoutTabUniversalIdentifier: OVERVIEW_TAB_UID,
-            conditionalAvailability: {
-              type: 'COMPARISON',
-              operator: 'EQUAL',
-              left: { type: 'VARIABLE', path: 'device' },
-              right: { type: 'LITERAL', value: 'MOBILE' },
-            },
+            conditionalAvailability:
+              buildDeviceConditionalAvailability('MOBILE'),
           }),
           buildFlatPageLayoutWidget({
             pageLayoutWidgetManifest: {
