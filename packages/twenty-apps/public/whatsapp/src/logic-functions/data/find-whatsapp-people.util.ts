@@ -1,15 +1,15 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { type WhatsappIdentity } from 'src/logic-functions/types/whatsapp-identity.type';
-import { type WhatsappPerson } from 'src/logic-functions/types/whatsapp-person.type';
+import { type WhatsAppIdentity } from 'src/logic-functions/types/whatsapp-identity.type';
+import { type WhatsAppPerson } from 'src/logic-functions/types/whatsapp-person.type';
 
-export const findWhatsappPeople = async ({
+export const findWhatsAppPeople = async ({
   client,
   identities,
 }: {
   client: CoreApiClient;
-  identities: WhatsappIdentity[];
-}): Promise<WhatsappPerson[]> => {
+  identities: WhatsAppIdentity[];
+}): Promise<WhatsAppPerson[]> => {
   const whatsAppIds = identities.map(({ whatsAppId }) => whatsAppId).filter(isNonEmptyString);
   const whatsAppUserIds = identities
     .map(({ whatsAppUserId }) => whatsAppUserId)
@@ -31,5 +31,5 @@ export const findWhatsappPeople = async ({
     },
   });
 
-  return (people?.edges ?? []).map(({ node }: { node: WhatsappPerson }) => node);
+  return (people?.edges ?? []).map(({ node }: { node: WhatsAppPerson }) => node);
 };

@@ -1,30 +1,30 @@
 import { WHATSAPP_TEMPLATE_FIELDS } from 'src/constants/whatsapp-template-fields.constant';
-import { mapWhatsappTemplateToRecordInput } from 'src/logic-functions/data/map-whatsapp-template-to-record-input.util';
+import { mapWhatsAppTemplateToRecordInput } from 'src/logic-functions/data/map-whatsapp-template-to-record-input.util';
 import { upsertWhatsAppTemplates } from 'src/logic-functions/data/upsert-whatsapp-templates.util';
-import { whatsappApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
+import { whatsAppApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
 
 const TEMPLATES_PAGE_SIZE = 50;
 
-export const importWhatsappTemplates = async ({
+export const importWhatsAppTemplates = async ({
   accessToken,
-  whatsappBusinessAccountId,
+  whatsAppBusinessAccountId,
 }: {
   accessToken: string;
-  whatsappBusinessAccountId: string;
+  whatsAppBusinessAccountId: string;
 }) => {
   let after: string | undefined;
 
   do {
-    const response = await whatsappApiRequest({
+    const response = await whatsAppApiRequest({
       accessToken,
       endpoint: 'GET /{wabaId}/message_templates',
-      pathParams: { wabaId: whatsappBusinessAccountId },
+      pathParams: { wabaId: whatsAppBusinessAccountId },
       query: { fields: WHATSAPP_TEMPLATE_FIELDS, limit: TEMPLATES_PAGE_SIZE, after },
     });
 
     await upsertWhatsAppTemplates(
       response.data.map((template) =>
-        mapWhatsappTemplateToRecordInput({ template, whatsappBusinessAccountId }),
+        mapWhatsAppTemplateToRecordInput({ template, whatsAppBusinessAccountId }),
       ),
     );
     after = response.paging?.next ? response.paging.cursors.after : undefined;

@@ -1,9 +1,9 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { unlinkConnectionFromWhatsappBusinessAccounts } from 'src/logic-functions/data/unlink-connection-from-whatsapp-business-accounts.util';
+import { unlinkConnectionFromWhatsAppBusinessAccounts } from 'src/logic-functions/data/unlink-connection-from-whatsapp-business-accounts.util';
 import { WHATSAPP_LOGIC_FUNCTION_ON_DISCONNECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 const handler = async ({ connectedAccountId }: { connectedAccountId: string }) => {
-  await unlinkConnectionFromWhatsappBusinessAccounts(connectedAccountId);
+  await unlinkConnectionFromWhatsAppBusinessAccounts(connectedAccountId);
 };
 
 export default defineLogicFunction({

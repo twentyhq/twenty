@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { whatsappApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
+import { whatsAppApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
 
 export const downloadWhatsAppFile = async ({
   accessToken,
@@ -8,7 +8,7 @@ export const downloadWhatsAppFile = async ({
   accessToken: string;
   mediaId: string;
 }) => {
-  const { url, mime_type } = await whatsappApiRequest({
+  const { url, mime_type } = await whatsAppApiRequest({
     accessToken,
     endpoint: 'GET /{mediaId}',
     pathParams: { mediaId },

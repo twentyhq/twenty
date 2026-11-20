@@ -1,17 +1,5 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
-
-export type WhatsAppTemplateRecordInput = {
-  metaTemplateId: string;
-  whatsappBusinessAccountId?: string;
-  name: string;
-  language: string;
-  category?: string;
-  status?: string;
-  quality?: string | null;
-  rejectedReason?: string | null;
-  parameterFormat?: string;
-  components?: object;
-};
+import { type WhatsAppTemplateRecordInput } from 'src/logic-functions/types/whatsapp-template-record-input.type';
 
 // matches existing records on the unique metaTemplateId, so concurrent webhooks can't create duplicates
 export const upsertWhatsAppTemplates = async (templates: WhatsAppTemplateRecordInput[]) => {

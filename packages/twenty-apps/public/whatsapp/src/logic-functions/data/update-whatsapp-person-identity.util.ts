@@ -1,26 +1,26 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
-import { findPersonForWhatsappIdentity } from 'src/logic-functions/data/find-person-for-whatsapp-identity.util';
-import { findWhatsappPeople } from 'src/logic-functions/data/find-whatsapp-people.util';
-import { parseWhatsappPhoneNumber } from 'src/logic-functions/data/parse-whatsapp-phone-number.util';
-import { type WhatsappIdentity } from 'src/logic-functions/types/whatsapp-identity.type';
+import { findPersonForWhatsAppIdentity } from 'src/logic-functions/data/find-person-for-whatsapp-identity.util';
+import { findWhatsAppPeople } from 'src/logic-functions/data/find-whatsapp-people.util';
+import { parseWhatsAppPhoneNumber } from 'src/logic-functions/data/parse-whatsapp-phone-number.util';
+import { type WhatsAppIdentity } from 'src/logic-functions/types/whatsapp-identity.type';
 
-export const updateWhatsappPersonIdentity = async ({
+export const updateWhatsAppPersonIdentity = async ({
   client,
   previousIdentity,
   identity,
 }: {
   client: CoreApiClient;
-  previousIdentity: WhatsappIdentity;
-  identity: WhatsappIdentity;
+  previousIdentity: WhatsAppIdentity;
+  identity: WhatsAppIdentity;
 }) => {
   if (!isNonEmptyString(identity.whatsAppId) && !isNonEmptyString(identity.whatsAppUserId)) {
     return;
   }
 
-  const people = await findWhatsappPeople({ client, identities: [previousIdentity, identity] });
-  const person = findPersonForWhatsappIdentity({ people, identity: previousIdentity });
+  const people = await findWhatsAppPeople({ client, identities: [previousIdentity, identity] });
+  const person = findPersonForWhatsAppIdentity({ people, identity: previousIdentity });
 
   if (!isDefined(person)) {
     return;
@@ -52,7 +52,7 @@ export const updateWhatsappPersonIdentity = async ({
     });
   }
 
-  const phones = isNonEmptyString(whatsAppId) ? parseWhatsappPhoneNumber(whatsAppId) : undefined;
+  const phones = isNonEmptyString(whatsAppId) ? parseWhatsAppPhoneNumber(whatsAppId) : undefined;
 
   await client.mutation({
     updatePerson: {

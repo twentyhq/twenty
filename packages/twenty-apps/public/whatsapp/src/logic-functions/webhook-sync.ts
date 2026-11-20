@@ -1,17 +1,15 @@
 import { defineLogicFunction, RoutePayload } from 'twenty-sdk/define';
 import { WhatsAppWebhook } from 'src/logic-functions/types/whatsapp-webhook-message.type';
 import { validateWebhookPayload } from 'src/logic-functions/data/validate-webhook-payload.util';
-import { enqueueJobs, Response } from "twenty-sdk/logic-function";
-import {
-  WHATSAPP_LOGIC_FUNCTION_PARSE_MESSAGE_UNIVERSAL_IDENTIFIER,
-  WHATSAPP_LOGIC_FUNCTION_WEBHOOK_SYNC_UNIVERSAL_IDENTIFIER
-} from "src/constants/universal-identifiers";
+import { Response } from "twenty-sdk/logic-function";
+import { WHATSAPP_LOGIC_FUNCTION_WEBHOOK_SYNC_UNIVERSAL_IDENTIFIER } from "src/constants/universal-identifiers";
+import { enqueueParseMessageJobs } from "src/logic-functions/data/enqueue-parse-message-jobs.util";
 import { upsertWhatsAppTemplates } from "src/logic-functions/data/upsert-whatsapp-templates.util";
-import { syncWhatsappTemplate } from "src/logic-functions/data/sync-whatsapp-template.util";
-import { getWhatsappAccessTokenOrThrow } from "src/logic-functions/data/get-whatsapp-access-token-or-throw.util";
-import { findConnectedAccountIdByWhatsappBusinessAccountId } from "src/logic-functions/data/find-connected-account-id-by-whatsapp-business-account-id.util";
+import { syncWhatsAppTemplate } from "src/logic-functions/data/sync-whatsapp-template.util";
+import { getWhatsAppAccessTokenOrThrow } from "src/logic-functions/data/get-whatsapp-access-token-or-throw.util";
+import { findConnectedAccountIdByWhatsAppBusinessAccountId } from "src/logic-functions/data/find-connected-account-id-by-whatsapp-business-account-id.util";
 import { isDefined } from "twenty-sdk/utils";
-import { buildHistoryParseJobs } from "src/logic-functions/data/build-history-parse-jobs.util";
+import { buildHistoryParseMessagePayloads } from "src/logic-functions/data/build-history-parse-message-payloads.util";
 import { isNonEmptyString } from "@sniptt/guards";
 import { sendInboxNotification } from "src/logic-functions/data/send-inbox-notification.util";
 
@@ -42,16 +40,16 @@ const handler = async (
   }
 
   for (const entry of body.entry) {
-    if (!isDefined(await findConnectedAccountIdByWhatsappBusinessAccountId(entry.id))) {
+    if (!isDefined(await findConnectedAccountIdByWhatsAppBusinessAccountId(entry.id))) {
       console.warn(`Ignoring webhook for WhatsApp Business Account ${entry.id}, it is not connected`);
       continue;
     }
 
     const syncTemplate = async (metaTemplateId: number) =>
-      syncWhatsappTemplate({
-        accessToken: await getWhatsappAccessTokenOrThrow({ whatsappBusinessAccountId: entry.id }),
+      syncWhatsAppTemplate({
+        accessToken: await getWhatsAppAccessTokenOrThrow({ whatsAppBusinessAccountId: entry.id }),
         metaTemplateId: String(metaTemplateId),
-        whatsappBusinessAccountId: entry.id,
+        whatsAppBusinessAccountId: entry.id,
       });
 
     for (const change of entry.changes) {
@@ -91,15 +89,13 @@ const handler = async (
               console.error('WhatsApp history sync failed', chunk.errors);
             }
           }
-          const jobs = buildHistoryParseJobs(change.value.metadata, change.value.history);
-          if (jobs.length > 0) {
-            await enqueueJobs({
-              logicFunctionUniversalIdentifier: WHATSAPP_LOGIC_FUNCTION_PARSE_MESSAGE_UNIVERSAL_IDENTIFIER,
-              retryLimit: 3,
-              delayMs: 500,
-              jobs,
-            });
-          }
+          await enqueueParseMessageJobs(
+            buildHistoryParseMessagePayloads({
+              whatsAppBusinessAccountId: entry.id,
+              businessData: change.value.metadata,
+              chunks: change.value.history,
+            }),
+          );
           break;
         }
         case "message_template_components_update":
@@ -112,7 +108,7 @@ const handler = async (
             await upsertWhatsAppTemplates([
               {
                 metaTemplateId: String(change.value.message_template_id),
-                whatsappBusinessAccountId: entry.id,
+                whatsAppBusinessAccountId: entry.id,
                 name: change.value.message_template_name,
                 language: change.value.message_template_language,
                 status: change.value.event,
@@ -160,23 +156,19 @@ const handler = async (
           }
           if ('messages' in change.value) {
             const { metadata, contacts, messages } = change.value;
-            await enqueueJobs({
-              logicFunctionUniversalIdentifier: WHATSAPP_LOGIC_FUNCTION_PARSE_MESSAGE_UNIVERSAL_IDENTIFIER,
-              retryLimit: 3,
-              delayMs: 500,
-              jobs: messages.map((message) => ({
-                payload: {
-                  businessData: metadata,
-                  contacts:
-                    contacts?.find(
-                      (contact) =>
-                        (isDefined(message.from_user_id) && contact.user_id === message.from_user_id) ||
-                        (isDefined(message.from) && contact.wa_id === message.from),
-                    ) ?? contacts?.[0],
-                  messages: message,
-                },
+            await enqueueParseMessageJobs(
+              messages.map((message) => ({
+                whatsAppBusinessAccountId: entry.id,
+                businessData: metadata,
+                contacts:
+                  contacts?.find(
+                    (contact) =>
+                      (isDefined(message.from_user_id) && contact.user_id === message.from_user_id) ||
+                      (isDefined(message.from) && contact.wa_id === message.from),
+                  ) ?? contacts?.[0],
+                messages: message,
               })),
-            })
+            );
           }
         }
       }
@@ -190,7 +182,7 @@ const handler = async (
 export default defineLogicFunction({
   universalIdentifier: WHATSAPP_LOGIC_FUNCTION_WEBHOOK_SYNC_UNIVERSAL_IDENTIFIER,
   name: 'webhook-sync',
-  description: 'Receives webhook and ',
+  description: 'Receives WhatsApp webhooks, imports messages and templates, and forwards account alerts to the inbox',
   timeoutSeconds: 30,
   handler,
   httpRouteTriggerSettings: {

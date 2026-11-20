@@ -1,39 +1,39 @@
 import { kv } from 'twenty-sdk/logic-function';
 import { WHATSAPP_CONNECTION_KV_KEY_PREFIXES } from 'src/constants/whatsapp-connection-kv-key-prefixes.constant';
-import { findConnectedAccountIdByWhatsappBusinessAccountId } from 'src/logic-functions/data/find-connected-account-id-by-whatsapp-business-account-id.util';
+import { findConnectedAccountIdByWhatsAppBusinessAccountId } from 'src/logic-functions/data/find-connected-account-id-by-whatsapp-business-account-id.util';
 
-const buildBusinessAccountKey = (whatsappBusinessAccountId: string) =>
-  `${WHATSAPP_CONNECTION_KV_KEY_PREFIXES.connectedAccountIdByBusinessAccountId}${whatsappBusinessAccountId}`;
+const buildBusinessAccountKey = (whatsAppBusinessAccountId: string) =>
+  `${WHATSAPP_CONNECTION_KV_KEY_PREFIXES.connectedAccountIdByBusinessAccountId}${whatsAppBusinessAccountId}`;
 
-export const linkWhatsappBusinessAccountsToConnection = async ({
+export const linkWhatsAppBusinessAccountsToConnection = async ({
   connectedAccountId,
-  whatsappBusinessAccountIds,
+  whatsAppBusinessAccountIds,
 }: {
   connectedAccountId: string;
-  whatsappBusinessAccountIds: string[];
+  whatsAppBusinessAccountIds: string[];
 }) => {
   const connectionKey = `${WHATSAPP_CONNECTION_KV_KEY_PREFIXES.businessAccountIdsByConnectedAccountId}${connectedAccountId}`;
-  const previousWhatsappBusinessAccountIds = (await kv.get<string[]>(connectionKey)) ?? [];
+  const previousWhatsAppBusinessAccountIds = (await kv.get<string[]>(connectionKey)) ?? [];
 
   await Promise.all(
-    whatsappBusinessAccountIds.map((whatsappBusinessAccountId) =>
-      kv.set(buildBusinessAccountKey(whatsappBusinessAccountId), connectedAccountId),
+    whatsAppBusinessAccountIds.map((whatsAppBusinessAccountId) =>
+      kv.set(buildBusinessAccountKey(whatsAppBusinessAccountId), connectedAccountId),
     ),
   );
 
   // on reconnect, the token may have lost access to some accounts
   await Promise.all(
-    previousWhatsappBusinessAccountIds
-      .filter((whatsappBusinessAccountId) => !whatsappBusinessAccountIds.includes(whatsappBusinessAccountId))
-      .map(async (whatsappBusinessAccountId) => {
+    previousWhatsAppBusinessAccountIds
+      .filter((whatsAppBusinessAccountId) => !whatsAppBusinessAccountIds.includes(whatsAppBusinessAccountId))
+      .map(async (whatsAppBusinessAccountId) => {
         if (
-          (await findConnectedAccountIdByWhatsappBusinessAccountId(whatsappBusinessAccountId)) ===
+          (await findConnectedAccountIdByWhatsAppBusinessAccountId(whatsAppBusinessAccountId)) ===
           connectedAccountId
         ) {
-          await kv.delete(buildBusinessAccountKey(whatsappBusinessAccountId));
+          await kv.delete(buildBusinessAccountKey(whatsAppBusinessAccountId));
         }
       }),
   );
 
-  await kv.set(connectionKey, whatsappBusinessAccountIds);
+  await kv.set(connectionKey, whatsAppBusinessAccountIds);
 };

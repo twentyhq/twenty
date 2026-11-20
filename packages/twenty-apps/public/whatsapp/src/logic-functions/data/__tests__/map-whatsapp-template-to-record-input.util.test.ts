@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { mapWhatsappTemplateToRecordInput } from 'src/logic-functions/data/map-whatsapp-template-to-record-input.util';
+import { mapWhatsAppTemplateToRecordInput } from 'src/logic-functions/data/map-whatsapp-template-to-record-input.util';
 
 const TEMPLATE = {
   id: '1234567890',
@@ -9,10 +9,10 @@ const TEMPLATE = {
   language: 'en_US',
 };
 
-describe('mapWhatsappTemplateToRecordInput', () => {
+describe('mapWhatsAppTemplateToRecordInput', () => {
   it('should keep the parameter format, quality and components from Meta', () => {
     expect(
-      mapWhatsappTemplateToRecordInput({
+      mapWhatsAppTemplateToRecordInput({
         template: {
           ...TEMPLATE,
           parameter_format: 'NAMED',
@@ -20,11 +20,11 @@ describe('mapWhatsappTemplateToRecordInput', () => {
           rejected_reason: 'NONE',
           components: [{ type: 'BODY', text: 'Hi {{first_name}}' }],
         },
-        whatsappBusinessAccountId: 'waba-id',
+        whatsAppBusinessAccountId: 'waba-id',
       }),
     ).toEqual({
       metaTemplateId: '1234567890',
-      whatsappBusinessAccountId: 'waba-id',
+      whatsAppBusinessAccountId: 'waba-id',
       name: 'order_update',
       language: 'en_US',
       category: 'UTILITY',
@@ -38,7 +38,7 @@ describe('mapWhatsappTemplateToRecordInput', () => {
 
   it('should default to positional parameters when Meta omits the format', () => {
     expect(
-      mapWhatsappTemplateToRecordInput({ template: TEMPLATE, whatsappBusinessAccountId: 'waba-id' })
+      mapWhatsAppTemplateToRecordInput({ template: TEMPLATE, whatsAppBusinessAccountId: 'waba-id' })
         .parameterFormat,
     ).toBe('POSITIONAL');
   });

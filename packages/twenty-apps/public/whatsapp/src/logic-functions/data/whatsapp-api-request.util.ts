@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { isDefined } from 'twenty-sdk/utils';
-import { preparedWhatsappAPIAddress } from 'src/logic-functions/data/prepared-whatsapp-api-address.util';
+import { buildWhatsAppApiUrl } from 'src/logic-functions/data/build-whatsapp-api-url.util';
 import {
   type WhatsAppApiEndpoints,
   type WhatsAppApiErrorResponse,
 } from 'src/logic-functions/types/whatsapp-api.type';
 
-type WhatsappApiRequestParams<TEndpoint extends keyof WhatsAppApiEndpoints> = {
+type WhatsAppApiRequestParams<TEndpoint extends keyof WhatsAppApiEndpoints> = {
   accessToken: string;
   endpoint: TEndpoint;
   pathParams?: Record<string, string>;
@@ -14,13 +14,13 @@ type WhatsappApiRequestParams<TEndpoint extends keyof WhatsAppApiEndpoints> = {
   data?: WhatsAppApiEndpoints[TEndpoint]['request'];
 };
 
-export const whatsappApiRequest = async <TEndpoint extends keyof WhatsAppApiEndpoints>({
+export const whatsAppApiRequest = async <TEndpoint extends keyof WhatsAppApiEndpoints>({
   accessToken,
   endpoint,
   pathParams = {},
   query,
   data,
-}: WhatsappApiRequestParams<TEndpoint>): Promise<WhatsAppApiEndpoints[TEndpoint]['response']> => {
+}: WhatsAppApiRequestParams<TEndpoint>): Promise<WhatsAppApiEndpoints[TEndpoint]['response']> => {
   const separatorIndex = endpoint.indexOf(' ');
   const method = endpoint.slice(0, separatorIndex);
 
@@ -38,7 +38,7 @@ export const whatsappApiRequest = async <TEndpoint extends keyof WhatsAppApiEndp
 
   try {
     const response = await axios.request({
-      url: preparedWhatsappAPIAddress(path),
+      url: buildWhatsAppApiUrl(path),
       method,
       params: query,
       data,

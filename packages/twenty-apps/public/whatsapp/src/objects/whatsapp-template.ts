@@ -106,7 +106,7 @@ export default defineObject({
     {
       universalIdentifier: WHATSAPP_TEMPLATE_WHATSAPP_BUSINESS_ACCOUNT_ID_FIELD_UNIVERSAL_IDENTIFIER,
       type: FieldType.TEXT,
-      name: 'whatsappBusinessAccountId',
+      name: 'whatsAppBusinessAccountId',
       label: 'WhatsApp Business Account ID',
       description: 'Meta ID of the account that owns the template',
       icon: 'IconBuilding',

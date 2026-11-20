@@ -1,15 +1,15 @@
-import { type WhatsAppTemplateRecordInput } from 'src/logic-functions/data/upsert-whatsapp-templates.util';
+import { type WhatsAppTemplateRecordInput } from 'src/logic-functions/types/whatsapp-template-record-input.type';
 import { type WhatsAppApiTemplate } from 'src/logic-functions/types/whatsapp-api.type';
 
-export const mapWhatsappTemplateToRecordInput = ({
+export const mapWhatsAppTemplateToRecordInput = ({
   template,
-  whatsappBusinessAccountId,
+  whatsAppBusinessAccountId,
 }: {
   template: WhatsAppApiTemplate;
-  whatsappBusinessAccountId: string;
+  whatsAppBusinessAccountId: string;
 }): WhatsAppTemplateRecordInput => ({
   metaTemplateId: template.id,
-  whatsappBusinessAccountId,
+  whatsAppBusinessAccountId,
   name: template.name,
   language: template.language,
   category: template.category,

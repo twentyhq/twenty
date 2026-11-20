@@ -1,7 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
-import { parseWhatsappPhoneNumber } from 'src/logic-functions/data/parse-whatsapp-phone-number.util';
-import { type WhatsappPerson } from 'src/logic-functions/types/whatsapp-person.type';
+import { parseWhatsAppPhoneNumber } from 'src/logic-functions/data/parse-whatsapp-phone-number.util';
+import { type WhatsAppPerson } from 'src/logic-functions/types/whatsapp-person.type';
 
 // only people not yet linked to WhatsApp, so a recycled number never steals someone else's record
 export const findPersonByPhoneNumber = async ({
@@ -10,8 +10,8 @@ export const findPersonByPhoneNumber = async ({
 }: {
   client: CoreApiClient;
   phoneNumber: string;
-}): Promise<WhatsappPerson | undefined> => {
-  const phones = parseWhatsappPhoneNumber(phoneNumber);
+}): Promise<WhatsAppPerson | undefined> => {
+  const phones = parseWhatsAppPhoneNumber(phoneNumber);
 
   if (!isDefined(phones)) {
     return undefined;

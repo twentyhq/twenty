@@ -1,23 +1,23 @@
 import { WHATSAPP_TEMPLATE_FIELDS } from 'src/constants/whatsapp-template-fields.constant';
-import { mapWhatsappTemplateToRecordInput } from 'src/logic-functions/data/map-whatsapp-template-to-record-input.util';
+import { mapWhatsAppTemplateToRecordInput } from 'src/logic-functions/data/map-whatsapp-template-to-record-input.util';
 import { upsertWhatsAppTemplates } from 'src/logic-functions/data/upsert-whatsapp-templates.util';
-import { whatsappApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
+import { whatsAppApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
 
-export const syncWhatsappTemplate = async ({
+export const syncWhatsAppTemplate = async ({
   accessToken,
   metaTemplateId,
-  whatsappBusinessAccountId,
+  whatsAppBusinessAccountId,
 }: {
   accessToken: string;
   metaTemplateId: string;
-  whatsappBusinessAccountId: string;
+  whatsAppBusinessAccountId: string;
 }) => {
-  const template = await whatsappApiRequest({
+  const template = await whatsAppApiRequest({
     accessToken,
     endpoint: 'GET /{templateId}',
     pathParams: { templateId: metaTemplateId },
     query: { fields: WHATSAPP_TEMPLATE_FIELDS },
   });
 
-  await upsertWhatsAppTemplates([mapWhatsappTemplateToRecordInput({ template, whatsappBusinessAccountId })]);
+  await upsertWhatsAppTemplates([mapWhatsAppTemplateToRecordInput({ template, whatsAppBusinessAccountId })]);
 };

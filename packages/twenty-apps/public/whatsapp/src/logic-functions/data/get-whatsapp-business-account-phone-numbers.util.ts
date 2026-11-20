@@ -1,21 +1,21 @@
-import { whatsappApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
+import { whatsAppApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
 import { type WhatsAppApiPhoneNumber } from 'src/logic-functions/types/whatsapp-api.type';
 
-export const getWhatsappBusinessAccountPhoneNumbers = async ({
+export const getWhatsAppBusinessAccountPhoneNumbers = async ({
   accessToken,
-  whatsappBusinessAccountId,
+  whatsAppBusinessAccountId,
 }: {
   accessToken: string;
-  whatsappBusinessAccountId: string;
+  whatsAppBusinessAccountId: string;
 }): Promise<WhatsAppApiPhoneNumber[]> => {
   const phoneNumbers: WhatsAppApiPhoneNumber[] = [];
   let after: string | undefined;
 
   do {
-    const response = await whatsappApiRequest({
+    const response = await whatsAppApiRequest({
       accessToken,
       endpoint: 'GET /{wabaId}/phone_numbers',
-      pathParams: { wabaId: whatsappBusinessAccountId },
+      pathParams: { wabaId: whatsAppBusinessAccountId },
       query: { after },
     });
 

@@ -1,30 +1,30 @@
 import { createMessageChannel, listMessageChannels } from 'twenty-sdk/logic-function';
-import { getWhatsappBusinessAccountPhoneNumbers } from 'src/logic-functions/data/get-whatsapp-business-account-phone-numbers.util';
-import { normalizeWhatsappPhoneNumber } from 'src/logic-functions/data/normalize-whatsapp-phone-number.util';
+import { getWhatsAppBusinessAccountPhoneNumbers } from 'src/logic-functions/data/get-whatsapp-business-account-phone-numbers.util';
+import { normalizeWhatsAppPhoneNumber } from 'src/logic-functions/data/normalize-whatsapp-phone-number.util';
 
-export const createWhatsappMessageChannels = async ({
+export const createWhatsAppMessageChannels = async ({
   accessToken,
   connectedAccountId,
-  whatsappBusinessAccountIds,
+  whatsAppBusinessAccountIds,
 }: {
   accessToken: string;
   connectedAccountId: string;
-  whatsappBusinessAccountIds: string[];
+  whatsAppBusinessAccountIds: string[];
 }) => {
   const existingHandles = new Set(
     (await listMessageChannels({ connectedAccountId })).map((messageChannel) =>
-      normalizeWhatsappPhoneNumber(messageChannel.handle),
+      normalizeWhatsAppPhoneNumber(messageChannel.handle),
     ),
   );
 
-  for (const whatsappBusinessAccountId of whatsappBusinessAccountIds) {
-    const phoneNumbers = await getWhatsappBusinessAccountPhoneNumbers({
+  for (const whatsAppBusinessAccountId of whatsAppBusinessAccountIds) {
+    const phoneNumbers = await getWhatsAppBusinessAccountPhoneNumbers({
       accessToken,
-      whatsappBusinessAccountId,
+      whatsAppBusinessAccountId,
     });
 
     for (const phoneNumber of phoneNumbers) {
-      const handle = normalizeWhatsappPhoneNumber(phoneNumber.display_phone_number);
+      const handle = normalizeWhatsAppPhoneNumber(phoneNumber.display_phone_number);
 
       if (existingHandles.has(handle)) {
         continue;

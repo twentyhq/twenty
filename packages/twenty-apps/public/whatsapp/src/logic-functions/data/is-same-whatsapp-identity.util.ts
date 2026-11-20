@@ -1,9 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type WhatsappIdentity } from 'src/logic-functions/types/whatsapp-identity.type';
+import { type WhatsAppIdentity } from 'src/logic-functions/types/whatsapp-identity.type';
 
-export const isSameWhatsappIdentity = (
-  identity: WhatsappIdentity,
-  otherIdentity: WhatsappIdentity,
+export const isSameWhatsAppIdentity = (
+  identity: WhatsAppIdentity,
+  otherIdentity: WhatsAppIdentity,
 ): boolean =>
   (isNonEmptyString(identity.whatsAppUserId) &&
     identity.whatsAppUserId === otherIdentity.whatsAppUserId) ||

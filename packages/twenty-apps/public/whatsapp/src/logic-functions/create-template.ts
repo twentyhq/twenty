@@ -3,11 +3,11 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import { type InputJsonSchema } from 'twenty-sdk/logic-function';
 import { WHATSAPP_LOGIC_FUNCTION_CREATE_TEMPLATE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { buildTemplateDefinitionComponents } from 'src/logic-functions/data/build-template-definition-components.util';
-import { getWhatsappAccessTokenOrThrow } from 'src/logic-functions/data/get-whatsapp-access-token-or-throw.util';
+import { getWhatsAppAccessTokenOrThrow } from 'src/logic-functions/data/get-whatsapp-access-token-or-throw.util';
 import { createTemplateParamsSchema } from 'src/logic-functions/data/create-template-params.schema';
 import { upsertWhatsAppTemplates } from 'src/logic-functions/data/upsert-whatsapp-templates.util';
-import { getDefaultWhatsappBusinessAccountIdOrThrow } from 'src/logic-functions/data/get-default-whatsapp-business-account-id-or-throw.util';
-import { whatsappApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
+import { getDefaultWhatsAppBusinessAccountIdOrThrow } from 'src/logic-functions/data/get-default-whatsapp-business-account-id-or-throw.util';
+import { whatsAppApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
 
 const CREATE_TEMPLATE_INPUT_SCHEMA: InputJsonSchema = {
   type: 'object',
@@ -63,15 +63,15 @@ const handler = async (rawParams: unknown) => {
   const parsedParams = createTemplateParamsSchema.safeParse(rawParams);
 
   if (!parsedParams.success) {
-    return { success: false, error: z.prettifyError(parsedParams.error) };
+    throw new Error(z.prettifyError(parsedParams.error));
   }
 
   const params = parsedParams.data;
   const components = buildTemplateDefinitionComponents(params);
-  const wabaId = params.wabaId ?? (await getDefaultWhatsappBusinessAccountIdOrThrow());
-  const accessToken = await getWhatsappAccessTokenOrThrow({ whatsappBusinessAccountId: wabaId });
+  const wabaId = params.wabaId ?? (await getDefaultWhatsAppBusinessAccountIdOrThrow());
+  const accessToken = await getWhatsAppAccessTokenOrThrow({ whatsAppBusinessAccountId: wabaId });
 
-  const response = await whatsappApiRequest({
+  const response = await whatsAppApiRequest({
     accessToken,
     endpoint: 'POST /{wabaId}/message_templates',
     pathParams: { wabaId },
@@ -87,7 +87,7 @@ const handler = async (rawParams: unknown) => {
   await upsertWhatsAppTemplates([
     {
       metaTemplateId: response.id,
-      whatsappBusinessAccountId: wabaId,
+      whatsAppBusinessAccountId: wabaId,
       name: params.name,
       language: params.language,
       category: response.category ?? params.category,

@@ -566,6 +566,13 @@ export type WhatsAppApiDeleteTemplatesQuery =
   | { name: string; hsm_id?: string }
   | { hsm_ids: string[] };
 
+// Business accounts
+// reference: https://developers.facebook.com/docs/graph-api/reference/whats-app-business-account/
+
+export type WhatsAppApiGetBusinessAccountQuery = { fields?: string };
+
+export type WhatsAppApiGetBusinessAccountResponse = { id: string; name?: string };
+
 // Access tokens
 // reference: https://developers.facebook.com/docs/graph-api/reference/debug_token
 
@@ -682,6 +689,15 @@ export type WhatsAppApiEndpoints = {
     WhatsAppApiGetCallPermissionsResponse,
     WhatsAppApiGetCallPermissionsQuery
   >;
+
+  // business accounts
+  'GET /{wabaId}': WhatsAppApiEndpoint<
+    undefined,
+    WhatsAppApiGetBusinessAccountResponse,
+    WhatsAppApiGetBusinessAccountQuery
+  >;
+  // webhooks for an account are only delivered to apps subscribed to it
+  'POST /{wabaId}/subscribed_apps': WhatsAppApiEndpoint<undefined, WhatsAppApiSuccessResponse>;
 
   // phone numbers
   'GET /{wabaId}/phone_numbers': WhatsAppApiEndpoint<

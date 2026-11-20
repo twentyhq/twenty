@@ -1,15 +1,15 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type WhatsappIdentity } from 'src/logic-functions/types/whatsapp-identity.type';
-import { type WhatsappPerson } from 'src/logic-functions/types/whatsapp-person.type';
+import { type WhatsAppIdentity } from 'src/logic-functions/types/whatsapp-identity.type';
+import { type WhatsAppPerson } from 'src/logic-functions/types/whatsapp-person.type';
 
 // the BSUID wins because it stays stable when a user hides or changes their number
-export const findPersonForWhatsappIdentity = ({
+export const findPersonForWhatsAppIdentity = ({
   people,
   identity,
 }: {
-  people: WhatsappPerson[];
-  identity: WhatsappIdentity;
-}): WhatsappPerson | undefined =>
+  people: WhatsAppPerson[];
+  identity: WhatsAppIdentity;
+}): WhatsAppPerson | undefined =>
   (isNonEmptyString(identity.whatsAppUserId)
     ? people.find(({ whatsAppUserId }) => whatsAppUserId === identity.whatsAppUserId)
     : undefined) ??

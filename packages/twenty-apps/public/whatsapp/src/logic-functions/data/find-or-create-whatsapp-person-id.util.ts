@@ -3,22 +3,22 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 import { createPerson } from 'src/logic-functions/data/create-person.util';
 import { findPersonByPhoneNumber } from 'src/logic-functions/data/find-person-by-phone-number.util';
-import { findPersonForWhatsappIdentity } from 'src/logic-functions/data/find-person-for-whatsapp-identity.util';
-import { findWhatsappPeople } from 'src/logic-functions/data/find-whatsapp-people.util';
-import { type WhatsappIdentity } from 'src/logic-functions/types/whatsapp-identity.type';
+import { findPersonForWhatsAppIdentity } from 'src/logic-functions/data/find-person-for-whatsapp-identity.util';
+import { findWhatsAppPeople } from 'src/logic-functions/data/find-whatsapp-people.util';
+import { type WhatsAppIdentity } from 'src/logic-functions/types/whatsapp-identity.type';
 
-export const findOrCreateWhatsappPersonId = async ({
+export const findOrCreateWhatsAppPersonId = async ({
   client,
   identity,
   name,
 }: {
   client: CoreApiClient;
-  identity: WhatsappIdentity;
+  identity: WhatsAppIdentity;
   name?: string;
 }): Promise<string> => {
-  const people = await findWhatsappPeople({ client, identities: [identity] });
+  const people = await findWhatsAppPeople({ client, identities: [identity] });
   const person =
-    findPersonForWhatsappIdentity({ people, identity }) ??
+    findPersonForWhatsAppIdentity({ people, identity }) ??
     (isNonEmptyString(identity.whatsAppId)
       ? await findPersonByPhoneNumber({ client, phoneNumber: identity.whatsAppId })
       : undefined);

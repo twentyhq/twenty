@@ -10,16 +10,16 @@ export type WhatsAppWebhookMessage = {
 };
 
 type WhatsAppWebhookMessagesValue = WhatsAppWebhookMessagingValue &
-  (WhatsappWebhookMessageErrors | WhatsappWebhookMessageStatuses | WhatsappWebhookMessageMessages);
+  (WhatsAppWebhookMessageErrors | WhatsAppWebhookMessageStatuses | WhatsAppWebhookMessageMessages);
 
 type WhatsAppWebhookMessagesChange = WhatsAppWebhookChangeOf<'messages', WhatsAppWebhookMessagesValue>;
 
-export type WhatsappWebhookMessageBusinessData = {
+export type WhatsAppWebhookMessageBusinessData = {
   display_phone_number: string; // business phone number
   phone_number_id: string; // business phone number ID
 }
 
-type WhatsappWebhookMessageErrors = {
+type WhatsAppWebhookMessageErrors = {
   // only 1 element https://stackoverflow.com/a/79564754
   errors: Array<{
     // reference: https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/reference/messages/errors
@@ -33,7 +33,7 @@ type WhatsappWebhookMessageErrors = {
   }>;
 }
 
-type WhatsappWebhookMessageStatuses = {
+type WhatsAppWebhookMessageStatuses = {
   // only 1 element
   statuses: Array<{
     id: string;
@@ -54,7 +54,7 @@ export type WhatsAppWebhookMessageContacts = {
   identity_key_hash?: string; // audio/button/document message
 };
 
-type WhatsappWebhookMessageMessages = {
+type WhatsAppWebhookMessageMessages = {
   // only 1 element, absent for system messages
   contacts?: WhatsAppWebhookMessageContacts[];
   // only 1 element
@@ -273,6 +273,11 @@ type UnsupportedMessage = WhatsAppWebhookMessageBase & {
   type: 'unsupported';
 }
 
+// history only: the media itself follows in a later webhook, for the last two weeks only
+type MediaPlaceholderMessage = WhatsAppWebhookMessageBase & {
+  type: 'media_placeholder';
+}
+
 type VideoMessage = WhatsAppWebhookMessageBase & WhatsAppWebhookMessageReferral & {
   type: 'video';
   video: ImagePayload;
@@ -294,6 +299,7 @@ export type WhatsAppWebhookMessageContent =
   | SystemMessage
   | TextMessage
   | UnsupportedMessage
+  | MediaPlaceholderMessage
   | VideoMessage;
 
 type WhatsAppWebhookChangeOf<TField extends string, TValue> = {
@@ -303,7 +309,7 @@ type WhatsAppWebhookChangeOf<TField extends string, TValue> = {
 
 type WhatsAppWebhookMessagingValue = {
   messaging_product: 'whatsapp';
-  metadata: WhatsappWebhookMessageBusinessData;
+  metadata: WhatsAppWebhookMessageBusinessData;
 };
 
 type WhatsAppTemplateIdentity = {

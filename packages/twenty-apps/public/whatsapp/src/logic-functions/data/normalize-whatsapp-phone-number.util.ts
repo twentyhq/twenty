@@ -1,4 +1,2 @@
-import { formatWhatsappPhoneNumberUtil } from 'src/logic-functions/data/format-whatsapp-phone-number.util';
-
-export const normalizeWhatsappPhoneNumber = (phoneNumber: string) =>
-  formatWhatsappPhoneNumberUtil(phoneNumber).replace(/^\+/, '');
+// WhatsApp identifies numbers by their digits only, without +, spaces or punctuation
+export const normalizeWhatsAppPhoneNumber = (phoneNumber: string) => phoneNumber.replace(/\D/g, '');

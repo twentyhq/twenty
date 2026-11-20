@@ -1,20 +1,20 @@
-import { getWhatsappBusinessAccountPhoneNumbers } from 'src/logic-functions/data/get-whatsapp-business-account-phone-numbers.util';
+import { getWhatsAppBusinessAccountPhoneNumbers } from 'src/logic-functions/data/get-whatsapp-business-account-phone-numbers.util';
 
-export const getDefaultWhatsappPhoneNumberIdOrThrow = async ({
+export const getDefaultWhatsAppPhoneNumberIdOrThrow = async ({
   accessToken,
-  whatsappBusinessAccountId,
+  whatsAppBusinessAccountId,
 }: {
   accessToken: string;
-  whatsappBusinessAccountId: string;
+  whatsAppBusinessAccountId: string;
 }): Promise<string> => {
-  const phoneNumbers = await getWhatsappBusinessAccountPhoneNumbers({
+  const phoneNumbers = await getWhatsAppBusinessAccountPhoneNumbers({
     accessToken,
-    whatsappBusinessAccountId,
+    whatsAppBusinessAccountId,
   });
   const [phoneNumber, ...otherPhoneNumbers] = phoneNumbers;
 
   if (phoneNumber === undefined) {
-    throw new Error(`WhatsApp Business Account ${whatsappBusinessAccountId} has no phone number`);
+    throw new Error(`WhatsApp Business Account ${whatsAppBusinessAccountId} has no phone number`);
   }
 
   if (otherPhoneNumbers.length > 0) {

@@ -1,25 +1,25 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { getConnection } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
-import { findConnectedAccountIdByWhatsappBusinessAccountId } from 'src/logic-functions/data/find-connected-account-id-by-whatsapp-business-account-id.util';
+import { findConnectedAccountIdByWhatsAppBusinessAccountId } from 'src/logic-functions/data/find-connected-account-id-by-whatsapp-business-account-id.util';
 
-const getConnectedAccountIdOrThrow = async (whatsappBusinessAccountId: string) => {
-  const connectedAccountId = await findConnectedAccountIdByWhatsappBusinessAccountId(whatsappBusinessAccountId);
+const getConnectedAccountIdOrThrow = async (whatsAppBusinessAccountId: string) => {
+  const connectedAccountId = await findConnectedAccountIdByWhatsAppBusinessAccountId(whatsAppBusinessAccountId);
 
   if (!isDefined(connectedAccountId)) {
-    throw new Error(`WhatsApp Business Account ${whatsappBusinessAccountId} is not connected`);
+    throw new Error(`WhatsApp Business Account ${whatsAppBusinessAccountId} is not connected`);
   }
 
   return connectedAccountId;
 };
 
-export const getWhatsappAccessTokenOrThrow = async (
-  params: { connectedAccountId: string } | { whatsappBusinessAccountId: string },
+export const getWhatsAppAccessTokenOrThrow = async (
+  params: { connectedAccountId: string } | { whatsAppBusinessAccountId: string },
 ): Promise<string> => {
   const connectedAccountId =
     'connectedAccountId' in params
       ? params.connectedAccountId
-      : await getConnectedAccountIdOrThrow(params.whatsappBusinessAccountId);
+      : await getConnectedAccountIdOrThrow(params.whatsAppBusinessAccountId);
 
   const { accessToken } = await getConnection(connectedAccountId);
 

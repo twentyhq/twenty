@@ -1,18 +1,18 @@
-import { getConnectedWhatsappBusinessAccountIds } from 'src/logic-functions/data/get-connected-whatsapp-business-account-ids.util';
+import { getConnectedWhatsAppBusinessAccountIds } from 'src/logic-functions/data/get-connected-whatsapp-business-account-ids.util';
 
-export const getDefaultWhatsappBusinessAccountIdOrThrow = async (): Promise<string> => {
-  const whatsappBusinessAccountIds = await getConnectedWhatsappBusinessAccountIds();
-  const [whatsappBusinessAccountId, ...otherWhatsappBusinessAccountIds] = whatsappBusinessAccountIds;
+export const getDefaultWhatsAppBusinessAccountIdOrThrow = async (): Promise<string> => {
+  const whatsAppBusinessAccountIds = await getConnectedWhatsAppBusinessAccountIds();
+  const [whatsAppBusinessAccountId, ...otherWhatsAppBusinessAccountIds] = whatsAppBusinessAccountIds;
 
-  if (whatsappBusinessAccountId === undefined) {
+  if (whatsAppBusinessAccountId === undefined) {
     throw new Error('No WhatsApp Business Account is connected');
   }
 
-  if (otherWhatsappBusinessAccountIds.length > 0) {
+  if (otherWhatsAppBusinessAccountIds.length > 0) {
     throw new Error(
-      `Several WhatsApp Business Accounts are connected, pass one of: ${whatsappBusinessAccountIds.join(', ')}`,
+      `Several WhatsApp Business Accounts are connected, pass one of: ${whatsAppBusinessAccountIds.join(', ')}`,
     );
   }
 
-  return whatsappBusinessAccountId;
+  return whatsAppBusinessAccountId;
 };

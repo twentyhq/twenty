@@ -3,7 +3,7 @@ import {
   type TemplateButtonParameterInput,
   type TemplateHeaderMediaInput,
   type TemplateParameterInput,
-} from 'src/logic-functions/data/send-template-message-params.schema';
+} from 'src/logic-functions/types/send-template-message-params.type';
 import {
   type WhatsAppApiSendMessageRequest,
   type WhatsAppApiTemplateParameter,

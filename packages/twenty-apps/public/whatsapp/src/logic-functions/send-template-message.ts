@@ -1,15 +1,16 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 import { z } from 'zod';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { type InputJsonSchema } from 'twenty-sdk/logic-function';
 import { WHATSAPP_LOGIC_FUNCTION_SEND_TEMPLATE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { buildWhatsappRecipient } from 'src/logic-functions/data/build-whatsapp-recipient.util';
+import { buildWhatsAppRecipient } from 'src/logic-functions/data/build-whatsapp-recipient.util';
 import { buildTemplateComponents } from 'src/logic-functions/data/build-template-components.util';
-import { getWhatsappAccessTokenOrThrow } from 'src/logic-functions/data/get-whatsapp-access-token-or-throw.util';
-import { getDefaultWhatsappPhoneNumberIdOrThrow } from 'src/logic-functions/data/get-default-whatsapp-phone-number-id-or-throw.util';
+import { getWhatsAppAccessTokenOrThrow } from 'src/logic-functions/data/get-whatsapp-access-token-or-throw.util';
+import { getDefaultWhatsAppPhoneNumberIdOrThrow } from 'src/logic-functions/data/get-default-whatsapp-phone-number-id-or-throw.util';
 import { sendTemplateMessageParamsSchema } from 'src/logic-functions/data/send-template-message-params.schema';
-import { whatsappApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
+import { whatsAppApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
 
 const SEND_TEMPLATE_MESSAGE_INPUT_SCHEMA: InputJsonSchema = {
   type: 'object',
@@ -94,7 +95,7 @@ const handler = async (rawParams: unknown) => {
   const parsedParams = sendTemplateMessageParamsSchema.safeParse(rawParams);
 
   if (!parsedParams.success) {
-    return { success: false, error: z.prettifyError(parsedParams.error) };
+    throw new Error(z.prettifyError(parsedParams.error));
   }
 
   const { templateId, phoneNumberId, to, parameters, headerParameters, headerMedia, buttonParameters } =
@@ -107,40 +108,39 @@ const handler = async (rawParams: unknown) => {
       language: true,
       status: true,
       parameterFormat: true,
-      whatsappBusinessAccountId: true,
+      whatsAppBusinessAccountId: true,
     },
   });
 
-  if (!whatsAppTemplate) {
-    return { success: false, error: 'Template not found' };
+  if (!isDefined(whatsAppTemplate)) {
+    throw new Error(`WhatsApp template ${templateId} not found`);
   }
 
   if (whatsAppTemplate.status !== 'APPROVED') {
-    return {
-      success: false,
-      error: `Template is ${whatsAppTemplate.status ?? 'not synced'}, only APPROVED templates can be sent`,
-    };
+    throw new Error(
+      `Template is ${whatsAppTemplate.status ?? 'not synced'}, only APPROVED templates can be sent`,
+    );
   }
 
-  const { whatsappBusinessAccountId } = whatsAppTemplate;
+  const { whatsAppBusinessAccountId } = whatsAppTemplate;
 
-  if (!isNonEmptyString(whatsappBusinessAccountId)) {
-    return { success: false, error: 'Template is not linked to a WhatsApp Business Account, reconnect WhatsApp to resync it' };
+  if (!isNonEmptyString(whatsAppBusinessAccountId)) {
+    throw new Error('Template is not linked to a WhatsApp Business Account, reconnect WhatsApp to resync it');
   }
 
-  const accessToken = await getWhatsappAccessTokenOrThrow({ whatsappBusinessAccountId });
+  const accessToken = await getWhatsAppAccessTokenOrThrow({ whatsAppBusinessAccountId });
 
-  const response = await whatsappApiRequest({
+  const response = await whatsAppApiRequest({
     accessToken,
     endpoint: 'POST /{phoneNumberId}/messages',
     pathParams: {
       phoneNumberId:
         phoneNumberId ??
-        (await getDefaultWhatsappPhoneNumberIdOrThrow({ accessToken, whatsappBusinessAccountId })),
+        (await getDefaultWhatsAppPhoneNumberIdOrThrow({ accessToken, whatsAppBusinessAccountId })),
     },
     data: {
       messaging_product: 'whatsapp',
-      ...buildWhatsappRecipient(to),
+      ...buildWhatsAppRecipient(to),
       type: 'template',
       template: {
         name: whatsAppTemplate.name,
