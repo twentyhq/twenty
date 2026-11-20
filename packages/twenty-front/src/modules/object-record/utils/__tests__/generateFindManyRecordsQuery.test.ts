@@ -31,6 +31,7 @@ describe('generateFindManyRecordsQuery with relations with arguments', () => {
     withRelation = true,
     shouldIncludeTotalCount = false,
     canReadPeople = true,
+    relationRecordGqlFields = peopleInParis.recordGqlFields,
   } = {}) =>
     print(
       generateFindManyRecordsQuery({
@@ -39,7 +40,11 @@ describe('generateFindManyRecordsQuery with relations with arguments', () => {
         recordGqlFields: {
           id: true,
           ...(withRelation && {
-            [responseKey]: { ...peopleInParis, shouldIncludeTotalCount },
+            [responseKey]: {
+              ...peopleInParis,
+              shouldIncludeTotalCount,
+              recordGqlFields: relationRecordGqlFields,
+            },
           }),
         },
         objectPermissionsByObjectMetadataId: buildPermissions(canReadPeople),
@@ -61,6 +66,12 @@ describe('generateFindManyRecordsQuery with relations with arguments', () => {
     expect(generateQuery({ shouldIncludeTotalCount: true })).toMatch(
       /totalCount\s+edges/,
     );
+  });
+
+  it('selects a composite field of the related records with its sub-fields', () => {
+    expect(
+      generateQuery({ relationRecordGqlFields: { id: true, emails: true } }),
+    ).toMatch(/emails \{\s+primaryEmail\s+additionalEmails\s+\}/);
   });
 
   it('selects and declares nothing for an unreadable target', () => {

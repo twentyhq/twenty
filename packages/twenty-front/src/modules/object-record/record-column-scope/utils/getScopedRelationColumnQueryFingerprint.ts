@@ -1,6 +1,18 @@
 import { type RecordGqlFields } from 'twenty-shared/types';
+import { isRecordGqlFieldsRelationWithArguments } from 'twenty-shared/utils';
 
-// Response keys are derived from each scope's arguments, so the fingerprint changes whenever a scope does
+// A response key is derived from the scope arguments alone, so the selected fields carry a change of looked-up field
 export const getScopedRelationColumnQueryFingerprint = (
   scopedRelationRecordGqlFields: RecordGqlFields,
-): string => Object.keys(scopedRelationRecordGqlFields).toSorted().join();
+): string =>
+  Object.entries(scopedRelationRecordGqlFields)
+    .map(([responseKey, scopedRelation]) =>
+      [
+        responseKey,
+        ...(isRecordGqlFieldsRelationWithArguments(scopedRelation)
+          ? Object.keys(scopedRelation.recordGqlFields).toSorted()
+          : []),
+      ].join(':'),
+    )
+    .toSorted()
+    .join();
