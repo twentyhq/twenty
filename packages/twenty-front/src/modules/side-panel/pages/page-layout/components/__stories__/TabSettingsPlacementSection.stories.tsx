@@ -13,7 +13,7 @@ import { RegularTabSettingsContent } from '@/side-panel/pages/page-layout/compon
 import { SingleWidgetTabSettingsContent } from '@/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent';
 import { WidgetSettingsManageSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsManageSection';
 import { WidgetSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection';
-import { CONDITIONAL_AVAILABILITY_DEVICE_DESKTOP } from '@/side-panel/pages/page-layout/constants/ConditionalAvailabilityDeviceDesktop';
+import { DEVICE_IS_DESKTOP_CONDITIONAL_AVAILABILITY } from '@/side-panel/pages/page-layout/constants/DeviceIsDesktopConditionalAvailability';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
@@ -279,7 +279,7 @@ export const WidgetVisibility: Story = {
           instanceId: WIDGET_SETTINGS_STORY_LAYOUT_ID,
         }),
       ).tabs[0].widgets[0].conditionalAvailability,
-    ).toEqual(CONDITIONAL_AVAILABILITY_DEVICE_DESKTOP);
+    ).toEqual(DEVICE_IS_DESKTOP_CONDITIONAL_AVAILABILITY);
     await userEvent.click(trigger);
     expect(
       await body.findByRole('option', { name: 'Desktop' }),

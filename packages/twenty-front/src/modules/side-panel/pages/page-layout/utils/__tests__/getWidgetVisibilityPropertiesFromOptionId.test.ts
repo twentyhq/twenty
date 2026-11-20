@@ -5,7 +5,7 @@ import { VISIBILITY_MOBILE } from '@/side-panel/pages/page-layout/constants/Visi
 import { getWidgetVisibilityPropertiesFromOptionId } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityPropertiesFromOptionId';
 
 describe('getWidgetVisibilityPropertiesFromOptionId', () => {
-  const widgetWithOldRules = {
+  const widgetWithLegacyVisibilityRules = {
     conditionalAvailabilityExpression: 'device == "MOBILE"',
     conditionalDisplay: { '===': [{ var: 'device' }, 'MOBILE'] },
     conditionalAvailability: null,
@@ -16,11 +16,11 @@ describe('getWidgetVisibilityPropertiesFromOptionId', () => {
     [VISIBILITY_MOBILE, false],
     [VISIBILITY_DESKTOP, true],
   ])(
-    'should let a %s pick win over the old rules it clears',
-    (optionId, isVisibleOnDesktop) => {
+    'should let a %s pick win over the legacy rules it clears',
+    (visibilityOptionId, isVisibleOnDesktop) => {
       const widget = {
-        ...widgetWithOldRules,
-        ...getWidgetVisibilityPropertiesFromOptionId(optionId),
+        ...widgetWithLegacyVisibilityRules,
+        ...getWidgetVisibilityPropertiesFromOptionId(visibilityOptionId),
       };
 
       expect(widget.conditionalAvailabilityExpression).toBeNull();

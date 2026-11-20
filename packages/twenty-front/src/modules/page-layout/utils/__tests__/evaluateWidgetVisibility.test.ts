@@ -1,7 +1,7 @@
 import { type AdditionalOperation, type RulesLogic } from 'json-logic-js';
 
 import { evaluateWidgetVisibility } from '@/page-layout/utils/evaluateWidgetVisibility';
-import { type ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
+import { DEVICE_IS_MOBILE_CONDITIONAL_AVAILABILITY } from '@/side-panel/pages/page-layout/constants/DeviceIsMobileConditionalAvailability';
 
 describe('evaluateWidgetVisibility', () => {
   it('should return true (visible) when no conditionalDisplay is provided', () => {
@@ -271,13 +271,6 @@ describe('evaluateWidgetVisibility', () => {
   });
 
   describe('conditionalAvailability', () => {
-    const deviceIsMobile: ConditionalAvailabilityNode = {
-      type: 'COMPARISON',
-      operator: 'EQUAL',
-      left: { type: 'VARIABLE', path: 'device' },
-      right: { type: 'LITERAL', value: 'MOBILE' },
-    };
-
     it.each([
       ['MOBILE', true],
       ['DESKTOP', false],
@@ -287,7 +280,7 @@ describe('evaluateWidgetVisibility', () => {
         const result = evaluateWidgetVisibility({
           conditionalAvailabilityExpression: null,
           conditionalDisplay: undefined,
-          conditionalAvailability: deviceIsMobile,
+          conditionalAvailability: DEVICE_IS_MOBILE_CONDITIONAL_AVAILABILITY,
           context: { device, selectedRecords: [], featureFlags: {} },
         });
 
@@ -299,7 +292,7 @@ describe('evaluateWidgetVisibility', () => {
       const result = evaluateWidgetVisibility({
         conditionalAvailabilityExpression: 'device == "DESKTOP"',
         conditionalDisplay: undefined,
-        conditionalAvailability: deviceIsMobile,
+        conditionalAvailability: DEVICE_IS_MOBILE_CONDITIONAL_AVAILABILITY,
         context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
       });
 
@@ -310,7 +303,7 @@ describe('evaluateWidgetVisibility', () => {
       const result = evaluateWidgetVisibility({
         conditionalAvailabilityExpression: null,
         conditionalDisplay: { '===': [{ var: 'device' }, 'DESKTOP'] },
-        conditionalAvailability: deviceIsMobile,
+        conditionalAvailability: DEVICE_IS_MOBILE_CONDITIONAL_AVAILABILITY,
         context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
       });
 

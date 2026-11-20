@@ -10,21 +10,24 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
-const getUserFriendlyMessage = (
-  failure: Extract<ConditionalAvailabilityValidationResult, { isValid: false }>,
+const getConditionalAvailabilityUserFriendlyMessage = (
+  failedValidationResult: Extract<
+    ConditionalAvailabilityValidationResult,
+    { isValid: false }
+  >,
 ): MessageDescriptor => {
-  switch (failure.errorCode) {
+  switch (failedValidationResult.errorCode) {
     case 'RULE_TOO_LARGE':
       return msg`Visibility restriction has too many conditions`;
     case 'UNKNOWN_NAME': {
-      const { name } = failure.errorParams;
+      const { name } = failedValidationResult.errorParams;
 
       return msg`"${name}" cannot be used in this visibility restriction`;
     }
     case 'INVALID_NODE':
       return msg`Visibility restriction cannot be read`;
     default:
-      return assertUnreachable(failure);
+      return assertUnreachable(failedValidationResult);
   }
 };
 
@@ -42,13 +45,16 @@ export const validatePageLayoutWidgetConditionalAvailability = ({
     return [];
   }
 
-  const diagnostic = doNotTranslate(validationResult.errorMessage);
+  const untranslatedErrorMessage = doNotTranslate(
+    validationResult.errorMessage,
+  );
 
   return [
     {
       code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      message: t`Invalid visibility restriction: ${diagnostic}`,
-      userFriendlyMessage: getUserFriendlyMessage(validationResult),
+      message: t`Invalid visibility restriction: ${untranslatedErrorMessage}`,
+      userFriendlyMessage:
+        getConditionalAvailabilityUserFriendlyMessage(validationResult),
       value: validationResult,
     },
   ];

@@ -2,16 +2,18 @@ import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-
 import { validatePageLayoutWidgetConditionalAvailability } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util';
 import { CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT } from 'twenty-shared/conditional-availability';
 
-const validate = (conditionalAvailability: unknown) =>
+const validateConditionalAvailability = (conditionalAvailability: unknown) =>
   validatePageLayoutWidgetConditionalAvailability({ conditionalAvailability });
 
 describe('validatePageLayoutWidgetConditionalAvailability', () => {
   it('should accept a widget without a rule', () => {
-    expect(validate(null)).toEqual([]);
+    expect(validateConditionalAvailability(null)).toEqual([]);
   });
 
   it('should refuse a value that is not a tree', () => {
-    expect(validate({ type: 'UNKNOWN_KIND' })).toMatchObject([
+    expect(
+      validateConditionalAvailability({ type: 'UNKNOWN_KIND' }),
+    ).toMatchObject([
       {
         code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
         message: expect.stringContaining('Invalid visibility restriction'),
@@ -21,7 +23,9 @@ describe('validatePageLayoutWidgetConditionalAvailability', () => {
   });
 
   it('should refuse an unknown variable', () => {
-    expect(validate({ type: 'VARIABLE', path: 'devise' })).toMatchObject([
+    expect(
+      validateConditionalAvailability({ type: 'VARIABLE', path: 'devise' }),
+    ).toMatchObject([
       {
         code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
         message: expect.stringContaining('"devise"'),
@@ -32,7 +36,7 @@ describe('validatePageLayoutWidgetConditionalAvailability', () => {
 
   it('should refuse a tree with too many parts', () => {
     expect(
-      validate({
+      validateConditionalAvailability({
         type: 'GROUP',
         logicalOperator: 'OR',
         children: Array.from(

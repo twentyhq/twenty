@@ -1,18 +1,18 @@
-import { CONDITIONAL_AVAILABILITY_DEVICE_DESKTOP } from '@/side-panel/pages/page-layout/constants/ConditionalAvailabilityDeviceDesktop';
-import { CONDITIONAL_AVAILABILITY_DEVICE_MOBILE } from '@/side-panel/pages/page-layout/constants/ConditionalAvailabilityDeviceMobile';
+import { DEVICE_IS_DESKTOP_CONDITIONAL_AVAILABILITY } from '@/side-panel/pages/page-layout/constants/DeviceIsDesktopConditionalAvailability';
+import { DEVICE_IS_MOBILE_CONDITIONAL_AVAILABILITY } from '@/side-panel/pages/page-layout/constants/DeviceIsMobileConditionalAvailability';
 import { VISIBILITY_ANY_DEVICE } from '@/side-panel/pages/page-layout/constants/VisibilityAnyDevice';
 import { VISIBILITY_DESKTOP } from '@/side-panel/pages/page-layout/constants/VisibilityDesktop';
 import { VISIBILITY_MOBILE } from '@/side-panel/pages/page-layout/constants/VisibilityMobile';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { type ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
 
-export const conditionalAvailabilityToOptionId = (
+export const getVisibilityOptionIdFromConditionalAvailability = (
   conditionalAvailability: ConditionalAvailabilityNode | null | undefined,
 ): string => {
   if (
     isDeeplyEqual(
       conditionalAvailability,
-      CONDITIONAL_AVAILABILITY_DEVICE_MOBILE,
+      DEVICE_IS_MOBILE_CONDITIONAL_AVAILABILITY,
       { strict: true },
     )
   ) {
@@ -22,7 +22,7 @@ export const conditionalAvailabilityToOptionId = (
   if (
     isDeeplyEqual(
       conditionalAvailability,
-      CONDITIONAL_AVAILABILITY_DEVICE_DESKTOP,
+      DEVICE_IS_DESKTOP_CONDITIONAL_AVAILABILITY,
       { strict: true },
     )
   ) {

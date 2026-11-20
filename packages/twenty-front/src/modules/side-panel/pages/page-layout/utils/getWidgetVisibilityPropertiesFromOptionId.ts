@@ -1,8 +1,8 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { optionIdToConditionalAvailability } from '@/side-panel/pages/page-layout/utils/optionIdToConditionalAvailability';
+import { getConditionalAvailabilityFromVisibilityOptionId } from '@/side-panel/pages/page-layout/utils/getConditionalAvailabilityFromVisibilityOptionId';
 
 export const getWidgetVisibilityPropertiesFromOptionId = (
-  optionId: string,
+  visibilityOptionId: string,
 ): Required<
   Pick<
     PageLayoutWidget,
@@ -13,5 +13,6 @@ export const getWidgetVisibilityPropertiesFromOptionId = (
 > => ({
   conditionalAvailabilityExpression: null,
   conditionalDisplay: null,
-  conditionalAvailability: optionIdToConditionalAvailability(optionId),
+  conditionalAvailability:
+    getConditionalAvailabilityFromVisibilityOptionId(visibilityOptionId),
 });

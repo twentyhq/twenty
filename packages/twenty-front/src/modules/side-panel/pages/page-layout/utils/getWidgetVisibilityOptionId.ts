@@ -2,7 +2,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { conditionalAvailabilityToOptionId } from '@/side-panel/pages/page-layout/utils/conditionalAvailabilityToOptionId';
+import { getVisibilityOptionIdFromConditionalAvailability } from '@/side-panel/pages/page-layout/utils/getVisibilityOptionIdFromConditionalAvailability';
 import { expressionToOptionId } from '@/side-panel/pages/page-layout/utils/expressionToOptionId';
 
 export const getWidgetVisibilityOptionId = (
@@ -17,5 +17,7 @@ export const getWidgetVisibilityOptionId = (
     return expressionToOptionId(widget.conditionalAvailabilityExpression);
   }
 
-  return conditionalAvailabilityToOptionId(widget?.conditionalAvailability);
+  return getVisibilityOptionIdFromConditionalAvailability(
+    widget?.conditionalAvailability,
+  );
 };

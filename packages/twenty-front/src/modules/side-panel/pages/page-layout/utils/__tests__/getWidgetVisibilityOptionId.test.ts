@@ -2,7 +2,7 @@ import { VISIBILITY_ANY_DEVICE } from '@/side-panel/pages/page-layout/constants/
 import { VISIBILITY_DESKTOP } from '@/side-panel/pages/page-layout/constants/VisibilityDesktop';
 import { VISIBILITY_MOBILE } from '@/side-panel/pages/page-layout/constants/VisibilityMobile';
 import { getWidgetVisibilityOptionId } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityOptionId';
-import { optionIdToConditionalAvailability } from '@/side-panel/pages/page-layout/utils/optionIdToConditionalAvailability';
+import { getConditionalAvailabilityFromVisibilityOptionId } from '@/side-panel/pages/page-layout/utils/getConditionalAvailabilityFromVisibilityOptionId';
 
 describe('getWidgetVisibilityOptionId', () => {
   it.each([VISIBILITY_ANY_DEVICE, VISIBILITY_MOBILE, VISIBILITY_DESKTOP])(
@@ -11,7 +11,8 @@ describe('getWidgetVisibilityOptionId', () => {
       expect(
         getWidgetVisibilityOptionId({
           conditionalAvailabilityExpression: null,
-          conditionalAvailability: optionIdToConditionalAvailability(optionId),
+          conditionalAvailability:
+            getConditionalAvailabilityFromVisibilityOptionId(optionId),
         }),
       ).toBe(optionId);
     },
@@ -31,7 +32,7 @@ describe('getWidgetVisibilityOptionId', () => {
       getWidgetVisibilityOptionId({
         conditionalAvailabilityExpression: 'device == "MOBILE"',
         conditionalAvailability:
-          optionIdToConditionalAvailability(VISIBILITY_DESKTOP),
+          getConditionalAvailabilityFromVisibilityOptionId(VISIBILITY_DESKTOP),
       }),
     ).toBe(VISIBILITY_MOBILE);
   });
