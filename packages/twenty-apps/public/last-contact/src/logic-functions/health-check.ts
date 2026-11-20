@@ -1,11 +1,68 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import {
   type ApplicationHealthCheckResult,
   defineHealthCheck,
 } from 'twenty-sdk/define';
+import { isDefined } from 'twenty-sdk/utils';
 
+import { INDEX_VIEW_FIELDS } from 'src/constants/index-view-fields';
 import { HEALTH_CHECK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { findMissingIndexViewFields } from 'src/utils/find-missing-index-view-fields';
+
+const findIndexViewsMissingFields = async (): Promise<string[]> => {
+  const { objects, getViews } = await new MetadataApiClient().query({
+    objects: {
+      __args: {
+        filter: {
+          universalIdentifier: {
+            in: INDEX_VIEW_FIELDS.map(
+              ({ objectUniversalIdentifier }) => objectUniversalIdentifier,
+            ),
+          },
+        },
+        paging: { first: INDEX_VIEW_FIELDS.length },
+      },
+      edges: {
+        node: {
+          id: true,
+          universalIdentifier: true,
+          fieldsList: { id: true, universalIdentifier: true },
+        },
+      },
+    },
+    getViews: {
+      __args: { viewTypes: ['TABLE'] },
+      key: true,
+      objectMetadataId: true,
+      viewFields: { fieldMetadataId: true, isVisible: true },
+    },
+  });
+
+  return INDEX_VIEW_FIELDS.filter(({ objectUniversalIdentifier, fields }) => {
+    const object = objects.edges.find(
+      ({ node }) => node.universalIdentifier === objectUniversalIdentifier,
+    )?.node;
+
+    const indexView = getViews.find(
+      (view) => view.objectMetadataId === object?.id && view.key === 'INDEX',
+    );
+
+    if (!isDefined(object) || !isDefined(indexView)) {
+      return false;
+    }
+
+    const visibleFieldMetadataIds = indexView.viewFields
+      .filter(({ isVisible }) => isVisible)
+      .map(({ fieldMetadataId }) => fieldMetadataId);
+
+    return object.fieldsList.some(
+      ({ id, universalIdentifier }) =>
+        fields.some(
+          (field) => field.universalIdentifier === universalIdentifier,
+        ) && !visibleFieldMetadataIds.includes(id),
+    );
+  }).map(({ objectLabelPlural }) => objectLabelPlural);
+};
 
 const handler = async (): Promise<ApplicationHealthCheckResult> => {
   console.log('health-check started');
@@ -35,25 +92,18 @@ const handler = async (): Promise<ApplicationHealthCheckResult> => {
     };
   }
 
-  const missingFieldCount = (await findMissingIndexViewFields()).reduce(
-    (count, { fields }) => count + fields.length,
-    0,
-  );
+  const objectLabelsMissingColumns = await findIndexViewsMissingFields();
 
-  console.log(`health-check found ${missingFieldCount} missing view fields`);
-
-  if (missingFieldCount === 0) {
+  if (objectLabelsMissingColumns.length === 0) {
     return { status: 'OK' };
   }
 
   // No location: the banner falls back to the app's settings tab.
   return {
-    status: 'INFO',
-    title:
-      missingFieldCount === 1
-        ? 'Last contact suggests 1 field that is not in your views yet.'
-        : `Last contact suggests ${missingFieldCount} fields that are not in your views yet.`,
-    action: { label: 'Set with Ada' },
+    status: 'WARNING',
+    title: 'Last contact columns are not shown',
+    description: `Some last contact columns are missing from the All ${objectLabelsMissingColumns.join(', ')} views. Use the settings tab to add them.`,
+    action: { label: 'Open settings' },
   };
 };
 
@@ -61,7 +111,7 @@ export default defineHealthCheck({
   universalIdentifier: HEALTH_CHECK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'health-check',
   description:
-    'Warns on the app settings page when the workspace has no synced emails or meetings, and suggests the last-contact fields missing from the All People, Companies or Opportunities views.',
+    'Warns on the app settings page when the workspace has no synced emails or meetings, or when the All People, Companies or Opportunities views lack the last-contact columns.',
   timeoutSeconds: 30,
   handler,
 });

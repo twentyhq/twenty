@@ -2,8 +2,8 @@
 
 ## 1.12.0
 
-- Suggest the last-contact fields missing from the All People, All Companies and All Opportunities views. The app settings show an info bar with the count, and "Set with Ada" opens Ask AI with a prefilled prompt listing each view and its missing fields, skipping views that do not exist. People get Last contact, Last outbound, Last inbound, Last contact by, Last email and Last meeting; Companies and Opportunities get Last contact and Last contact item.
-- Show the same suggestion on the app's General tab through the health check, with a button to the settings tab. The warning about missing synced emails and meetings still takes priority.
+- Add an "Add columns" button to the app settings. It opens Ask AI with a prefilled prompt to show the last-contact columns on the All People, All Companies and All Opportunities views, skipping any of those views that do not exist.
+- Warn on the app settings page when one of those views hides a last-contact column, with a button to the settings tab. The warning about missing synced emails and meetings still takes priority.
 
 ## 1.11.0
 
