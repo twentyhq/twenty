@@ -12,7 +12,7 @@ import { PartnerAttributionEffect } from '@/partner-attribution';
 import { I18nProvider } from '@/platform/i18n/I18nProvider';
 import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
 import { WEBSITE_LOCALE_LIST } from '@/platform/i18n/website-locale-list';
-import { color, fontFamily, tokenCssVariables } from '@/tokens';
+import { color, fontFamily, tokenCssVariables, MENU_HEIGHT_PX } from '@/tokens';
 
 const hostGrotesk = localFont({
   src: '../../fonts/host-grotesk-latin-variable.woff2',
@@ -87,6 +87,15 @@ const globalStyles = css`
     padding: 0;
   }
 
+  :global(html) {
+    scroll-padding-top: ${MENU_HEIGHT_PX}px;
+    scroll-behavior: smooth;
+
+    @media (prefers-reduced-motion: reduce) {
+      scroll-behavior: auto;
+    }
+  }
+
   :global(body) {
     background-color: ${color('white')};
     color: ${color('black')};
@@ -113,7 +122,7 @@ const LocaleLayout = async ({
   const locale = resolveLocaleParam((await params).locale);
 
   return (
-    <html lang={locale}>
+    <html data-scroll-behavior="smooth" lang={locale}>
       <body
         className={`${tokenCssVariables} ${globalStyles} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable} ${vt323.variable} ${inter.variable}`}
       >

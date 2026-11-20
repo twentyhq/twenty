@@ -7,7 +7,7 @@ import { color, type PaletteToken } from '@/tokens';
 
 import { WORLD_LAND_GRID } from './world-land-grid.data';
 
-// PROTOTYPE (?direction=e): a card cover in the globe's dashes, the map laid
+// A card cover in the globe's dashes, the map laid
 // flat around the partner's base, the base itself a glowing dot. The
 // /customers covers, drawn from data instead of a photo, on a 2D canvas.
 // Transparent: the card's own surface (and its hover fill) shows through.

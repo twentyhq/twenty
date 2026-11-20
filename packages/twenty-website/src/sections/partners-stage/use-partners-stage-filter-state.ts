@@ -26,8 +26,6 @@ export type PartnersStageFilterState = {
   clearFacet: (facet: keyof FilterCriteria) => void;
   clearAll: () => void;
 };
-
-// PROTOTYPE
 // Same contract as useMarketplaceFilterState (the URL is the source of truth),
 // but it keeps the other query params, which the original drops: the prototype
 // switch lives in one.

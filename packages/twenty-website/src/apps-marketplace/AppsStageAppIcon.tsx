@@ -8,7 +8,7 @@ import { color, radius, semanticColor } from '@/tokens';
 import { type MarketplaceApp } from './marketplace-app';
 import { useAppsStageLogoInks } from './use-apps-stage-logo-inks';
 
-// PROTOTYPE (?direction=e): an app's icon at any size, notched like the site's
+// An app's icon at any size, notched like the site's
 // cards. A logo that ships its own square fills the tile; any other sits on a
 // light tile, so no logo ends up as a tile inside a tile.
 const Tile = styled.div`

@@ -49,8 +49,6 @@ type PartnersStageMarkProps = {
   sizePx: number;
   tone?: 'light' | 'dark';
 };
-
-// PROTOTYPE
 export function PartnersStageMark({
   markUrl,
   name,

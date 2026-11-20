@@ -16,7 +16,7 @@ import { ExternalLink } from '@/ui';
 
 import { stripLeadingMarkdownTitle } from './strip-leading-markdown-title';
 
-// PROTOTYPE (?direction=e): an app's README set like Linear's integration
+// An app's README set like Linear's integration
 // pages: one calm column, sans headings with generous space above, body at
 // 15/24 in a light grey, plain lists. The README is the source; only its
 // setting changes.

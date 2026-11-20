@@ -1,4 +1,4 @@
-// PROTOTYPE
+//
 // [longitude, latitude]. Cities are matched inside the partner's free-text
 // city; when the city is unknown, the country's capital (CRM enum) stands in.
 export const PARTNER_PLACE_COORDINATES: {

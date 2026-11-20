@@ -8,10 +8,10 @@ import { mediaUp, spacing } from '@/tokens';
 import { Body, Heading, SectionShell } from '@/ui';
 
 import { AppsStageAppCards } from './AppsStageAppCards';
-import { APPS_STAGE_CRAFT_COLUMN } from './apps-stage-craft-column';
+import { CONTAINER_COLUMN } from '@/ui/container-column';
 import { type MarketplaceApp } from './marketplace-app';
 
-// PROTOTYPE (?direction=e): the featured apps side by side, all visible at
+// The featured apps side by side, all visible at
 // once (no tabs to click), each card with its logo in Twenty's halftone as
 // decoration. Hand-picked (Jocelyn, 2026-11-19), matched on the name.
 const FEATURED_APP_NAMES: readonly string[] = [
@@ -22,7 +22,7 @@ const FEATURED_APP_NAMES: readonly string[] = [
 
 const Frame = styled.div`
   padding-block: ${spacing(12)};
-  ${APPS_STAGE_CRAFT_COLUMN}
+  ${CONTAINER_COLUMN}
 
   & > * + * {
     margin-top: ${spacing(8)};

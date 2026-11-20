@@ -1,4 +1,4 @@
-// PROTOTYPE
+//
 // The public directory and profiles as served on twenty.com on 2026-11-19,
 // for local runs where the partners API is not configured. Descriptions are
 // the profile pages' full text, set back as markdown; case-study images are

@@ -1,6 +1,6 @@
 import { type ServedGeo } from '@/partners-marketplace/served-geos';
 
-// PROTOTYPE (?direction=e): [longitude, latitude] a card cover centres on
+// [longitude, latitude] a card cover centres on
 // when the partner's base is not on the map.
 export const PARTNERS_STAGE_REGION_CENTER: Record<
   ServedGeo,

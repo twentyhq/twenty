@@ -20,12 +20,12 @@ import {
 } from '@/tokens';
 import { Heading, SectionShell, GuideCrosshair } from '@/ui';
 
-import { PARTNERS_STAGE_CRAFT_COLUMN } from './partners-stage-craft-column';
+import { CONTAINER_COLUMN } from '@/ui/container-column';
 import { PartnersStageGlobe } from './PartnersStageGlobe';
 import { resolvePartnerCoordinates } from './resolve-partner-coordinates';
 import { usePartnersStageFilterState } from './use-partners-stage-filter-state';
 
-// PROTOTYPE (?direction=e): the cover is our world map turned into a globe,
+// The cover is our world map turned into a globe,
 // under the /apps centred copy. It answers the directory's filters (same URL
 // state): the regions served light up, the partners' cities glow.
 
@@ -34,7 +34,7 @@ const SHARED_CITY_SPREAD_DEGREES = 1.6;
 
 const Column = styled.div`
   padding: ${spacing(16)} 0 ${spacing(10)};
-  ${PARTNERS_STAGE_CRAFT_COLUMN}
+  ${CONTAINER_COLUMN}
 
   & > * + * {
     margin-top: ${spacing(12)};
@@ -164,7 +164,7 @@ export function PartnersStageCraftMapHero({
         city.coordinates[0] + SHARED_CITY_SPREAD_DEGREES * Math.cos(angle),
         city.coordinates[1] + SHARED_CITY_SPREAD_DEGREES * Math.sin(angle),
       ];
-      return { ...city, coordinates };
+      return { slug: city.slug, isLit: city.isLit, coordinates };
     });
   }, [partners, selected]);
 

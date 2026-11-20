@@ -22,7 +22,7 @@ import { AppsStageAppIcon } from './AppsStageAppIcon';
 import { AppsStageLogoHalftone } from './AppsStageLogoHalftone';
 import { type MarketplaceApp } from './marketplace-app';
 
-// PROTOTYPE (?direction=e): a row of app cards side by side (stacked on small
+// (): a row of app cards side by side (stacked on small
 // screens), each with its logo in Twenty's halftone as decoration. Shared by
 // the featured apps on /apps and the related apps on an app's page.
 const Cards = styled.ul`
@@ -158,7 +158,7 @@ export function AppsStageAppCards({ apps }: AppsStageAppCardsProps) {
           <li key={app.slug}>
             <Card
               data-apps-stage-cell=""
-              href={`/apps/${app.slug}?direction=e`}
+              href={`/apps/${app.slug}`}
               style={style}
             >
               {app.logoUrl !== undefined && (

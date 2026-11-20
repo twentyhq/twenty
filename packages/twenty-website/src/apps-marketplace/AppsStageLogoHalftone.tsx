@@ -8,7 +8,7 @@ import { color, DURATION, EASING, REDUCED_MOTION } from '@/tokens';
 
 import { APPS_STAGE_FEATURED_HALFTONE } from './apps-stage-featured-halftone';
 
-// PROTOTYPE (?direction=e): an app's logo redrawn in Twenty's halftone. It
+// An app's logo redrawn in Twenty's halftone. It
 // prints in from the left once the rig has drawn its first frame. Until the
 // rig has a WebGL slot (the site allows six at once), the plain logo stands
 // in, greyed, at the same size.

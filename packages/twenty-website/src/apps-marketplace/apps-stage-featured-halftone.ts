@@ -1,7 +1,7 @@
 import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 import { paletteColorNumber } from '@/tokens';
 
-// PROTOTYPE (?direction=e): the featured app's own logo redrawn in Twenty's
+// The featured app's own logo redrawn in Twenty's
 // halftone, iron dashes on the page black. The hover light warms nearby
 // dashes, as on the case-study promo.
 export const APPS_STAGE_FEATURED_HALFTONE: HalftoneImageBackdropProps['settings'] =

@@ -9,7 +9,7 @@ import { color } from '@/tokens';
 import { WORLD_LAND_GRID } from './world-land-grid.data';
 import { worldRegionOfCell } from './world-region-of-cell';
 
-// PROTOTYPE (?direction=e): the world map's dashes laid on a turning globe,
+// The world map's dashes laid on a turning globe,
 // drawn on a 2D canvas (three stays in the visuals zones). Regions served by
 // the filter light up; one selected region turns to face the viewer. It
 // can be dragged round (and tipped a little) and thrown.

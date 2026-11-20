@@ -1,4 +1,4 @@
-// PROTOTYPE (?direction=d): reads a logo once to learn how to seat it.
+// Reads a logo once to learn how to seat it.
 // A "plate" logo ships its own opaque square (Call Recorder, Granola): it
 // becomes the tile. A "glyph" has a transparent ground and sits on glass.
 export type AppsStageLogoInk = {

@@ -14,7 +14,6 @@ import {
   FONT_WEIGHT,
   fontFamily,
   fontSize,
-  MENU_HEIGHT_PX,
   mediaUp,
   radius,
   REDUCED_MOTION,
@@ -29,7 +28,7 @@ import { PartnersStageMark } from './PartnersStageMark';
 import { PartnersStageRegionCover } from './PartnersStageRegionCover';
 import { resolvePartnerCoordinates } from './resolve-partner-coordinates';
 
-// PROTOTYPE (?direction=e): a partner card on the /apps card
+// A partner card on the /apps card
 // (apps-marketplace/AppsStageAppCards): a decorative band on top (here the
 // dotted map around the partner's base, in the region's accent), then the
 // logo, the name, the pitch, and the price and languages to compare. On
@@ -46,7 +45,6 @@ const Card = styled.article`
   isolation: isolate;
   overflow: hidden;
   position: relative;
-  scroll-margin-top: ${MENU_HEIGHT_PX + 96}px;
 
   &::before {
     background-color: ${color('white-5')};

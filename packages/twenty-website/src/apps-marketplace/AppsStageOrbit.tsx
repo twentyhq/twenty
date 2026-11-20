@@ -18,7 +18,7 @@ import {
 import { type MarketplaceApp } from './marketplace-app';
 import { useAppsStageLogoInks } from './use-apps-stage-logo-inks';
 
-// PROTOTYPE (?direction=e&hero=orbit): after V7's context graph, the apps
+// After V7's context graph, the apps
 // as small radial labels on a wide circle around the copy, read from the
 // rim inward, turning slowly; only the upper arc shows.
 const SLOT_COUNT = 44;

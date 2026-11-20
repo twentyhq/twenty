@@ -2,7 +2,6 @@ import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
-import { AppsStageApplyDock } from '@/apps-marketplace/AppsStageApplyDock';
 import { AppsStageAppStory } from '@/apps-marketplace/AppsStageAppStory';
 import { ArrowLeft, ArrowUpRight } from '@/icons';
 import { collectPartnerLinks } from '@/partners-marketplace/collect-partner-links';
@@ -30,9 +29,16 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
-import { Button, ExternalLink, Heading, SectionShell, Signoff } from '@/ui';
+import {
+  Button,
+  ExternalLink,
+  FloatingDock,
+  Heading,
+  SectionShell,
+  Signoff,
+} from '@/ui';
 
-import { PARTNERS_STAGE_CRAFT_COLUMN } from './partners-stage-craft-column';
+import { CONTAINER_COLUMN } from '@/ui/container-column';
 import { PartnersStageCraftCell } from './PartnersStageCraftCell';
 import { PARTNERS_STAGE_REGION_ACCENT } from './partners-stage-region-accent';
 import { PARTNERS_STAGE_REGION_CENTER } from './partners-stage-region-center.data';
@@ -42,13 +48,13 @@ import { PartnersStageReturnToDirectory } from './PartnersStageReturnToDirectory
 import { resolvePartnerCoordinates } from './resolve-partner-coordinates';
 import { worldRegionOfCell } from './world-region-of-cell';
 
-// PROTOTYPE (?direction=e): a partner's own page, built like an app's page
+// A partner's own page, built like an app's page
 // (apps-marketplace/AppsStageAppDetail): back link, compact header with the
 // one primary action, the story on the left, the facts on the right, then
 // the site's Signoff. Content is the profile's, as the CRM gives it.
 const Frame = styled.div`
   padding-block: ${spacing(10)} ${spacing(16)};
-  ${PARTNERS_STAGE_CRAFT_COLUMN}
+  ${CONTAINER_COLUMN}
 
   & > * + * {
     margin-top: ${spacing(10)};
@@ -492,7 +498,7 @@ export function PartnersStagePartnerDetail({
                 </Heading>
                 {place.length > 0 && <Meta>{place}</Meta>}
               </HeaderText>
-              <HeaderAction data-apps-stage-primary="">{primary}</HeaderAction>
+              <HeaderAction data-dock-anchor="">{primary}</HeaderAction>
             </Header>
           </Rise>
           <Body>
@@ -577,7 +583,7 @@ export function PartnersStagePartnerDetail({
                     <FactValue>{languages}</FactValue>
                   </Fact>
                 )}
-                <SideAction data-apps-stage-primary="">{primary}</SideAction>
+                <SideAction data-dock-anchor="">{primary}</SideAction>
               </SideGroup>
               {(hourly !== null || (minimum !== null && minimum !== '$0')) && (
                 <SideGroup>
@@ -632,11 +638,14 @@ export function PartnersStagePartnerDetail({
         </Frame>
       </SectionShell>
       {hasCall && (
-        <AppsStageApplyDock
-          action={{
-            href: partner.calendarLink,
-            label: i18n._(msg`Book intro call`),
-          }}
+        <FloatingDock
+          action={
+            <Button
+              href={partner.calendarLink}
+              label={i18n._(msg`Book intro call`)}
+              variant="filled"
+            />
+          }
           label={partner.name}
         />
       )}

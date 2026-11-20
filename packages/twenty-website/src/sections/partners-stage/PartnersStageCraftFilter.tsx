@@ -20,7 +20,7 @@ import {
   Z_INDEX,
 } from '@/tokens';
 
-// PROTOTYPE (?direction=e): the site's filter button
+// The site's filter button
 // (partners-marketplace/FilterDropdown) on the dark page, with a count per
 // option and a Clear in the menu.
 const Trigger = styled(Popover.Trigger)`

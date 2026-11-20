@@ -1,6 +1,6 @@
 import { marketplaceGraphqlRequest } from './marketplace-api-fetch';
 
-// PROTOTYPE (direction B, not for a PR as is): what the public API already
+// (direction B, not for a PR as is): what the public API already
 // exposes about an app and the site never asks for.
 const CONTENT_ITEM_FIELDS = `{ label parentLabel }`;
 
@@ -80,7 +80,7 @@ const summarizeFieldsByObject = (items: ApiContentItem[]): string[] => {
 
   return [...countByParent.entries()]
     .filter(([parent]) => parent.length > 0)
-    .sort((left, right) => right[1] - left[1])
+    .toSorted((left, right) => right[1] - left[1])
     .map(([parent, count]) => `${count} on ${parent}`);
 };
 

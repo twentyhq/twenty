@@ -1,4 +1,4 @@
-// PROTOTYPE (?direction=e): the pastel set Jocelyn picked for categorical
+// The pastel set Jocelyn picked for categorical
 // data (#B9A7F8 lavender, #E799F1 orchid, #4FD8BF teal, #7CC3E9 sky,
 // #F795B0 rose), written in oklch until they move into src/tokens.
 const APPS_STAGE_PASTELS: readonly string[] = [

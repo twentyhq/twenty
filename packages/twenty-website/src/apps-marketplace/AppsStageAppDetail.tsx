@@ -19,15 +19,21 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
-import { Button, ExternalLink, Heading, SectionShell, Signoff } from '@/ui';
+import {
+  Button,
+  ExternalLink,
+  FloatingDock,
+  Heading,
+  SectionShell,
+  Signoff,
+} from '@/ui';
 
 import { AppsStageAppCards } from './AppsStageAppCards';
 import { AppsStageAppIcon } from './AppsStageAppIcon';
-import { AppsStageApplyDock } from './AppsStageApplyDock';
 import { AppsStageAppStory } from './AppsStageAppStory';
 import { type AppsStageAppContent } from './apps-stage-app-content';
 import { APPS_STAGE_BETA_APP_NAMES } from './apps-stage-beta-apps';
-import { APPS_STAGE_CRAFT_COLUMN } from './apps-stage-craft-column';
+import { CONTAINER_COLUMN } from '@/ui/container-column';
 import { getAppsStagePastel } from './apps-stage-pastels';
 import { buildAppInstallUrl } from './build-app-install-url';
 import { type MarketplaceAppAdditions } from './fetch-marketplace-app-additions';
@@ -36,12 +42,12 @@ import {
   type MarketplaceAppDetail,
 } from './marketplace-app';
 
-// PROTOTYPE (?direction=e): an app's own page. Laid out like Raycast's
+// (): an app's own page. Laid out like Raycast's
 // extension pages (compact header, tabs, a side column of facts), with
 // Profound's scene of Twenty and the app joined as the first media tile.
 const Frame = styled.div`
   padding-block: ${spacing(10)} ${spacing(16)};
-  ${APPS_STAGE_CRAFT_COLUMN}
+  ${CONTAINER_COLUMN}
 
   & > * + * {
     margin-top: ${spacing(10)};
@@ -508,7 +514,7 @@ export function AppsStageAppDetail({
       <SectionShell flushInline rhythm="flush" scheme="dark">
         <Frame>
           <Rise>
-            <BackLink href="/apps?direction=e">
+            <BackLink href="/apps">
               <ArrowLeft />
               {i18n._(msg`All apps`)}
             </BackLink>
@@ -554,7 +560,7 @@ export function AppsStageAppDetail({
                   )}
                 </Meta>
               </HeaderText>
-              <HeaderAction data-apps-stage-primary="">
+              <HeaderAction data-dock-anchor="">
                 <Button
                   href={buildAppInstallUrl(app.universalIdentifier)}
                   label={i18n._(msg`Install app`)}
@@ -598,7 +604,7 @@ export function AppsStageAppDetail({
                     <PackageName>{app.sourcePackage}</PackageName>
                   </Fact>
                 )}
-                <SideAction data-apps-stage-primary="">
+                <SideAction data-dock-anchor="">
                   <Button
                     href={buildAppInstallUrl(app.universalIdentifier)}
                     label={i18n._(msg`Install app`)}
@@ -611,23 +617,27 @@ export function AppsStageAppDetail({
                 <SideGroup>
                   <SideLabel>{i18n._(msg`What ${app.name} adds`)}</SideLabel>
                   <AddsSections>
-                    {addsSections.map((section) => (
-                      <AddsSection key={section.id}>
-                        <AddsTitle>{section.title}</AddsTitle>
-                        <AddsList>
-                          {section.lines.slice(0, SHOWN_NAMES).map((line) => (
-                            <li key={line}>{line}</li>
-                          ))}
-                          {section.lines.length > SHOWN_NAMES && (
-                            <li>
-                              {i18n._(
-                                msg`+${section.lines.length - SHOWN_NAMES} more`,
-                              )}
-                            </li>
-                          )}
-                        </AddsList>
-                      </AddsSection>
-                    ))}
+                    {addsSections.map((section) => {
+                      const lines = [...new Set(section.lines)];
+
+                      return (
+                        <AddsSection key={section.id}>
+                          <AddsTitle>{section.title}</AddsTitle>
+                          <AddsList>
+                            {lines.slice(0, SHOWN_NAMES).map((line) => (
+                              <li key={line}>{line}</li>
+                            ))}
+                            {lines.length > SHOWN_NAMES && (
+                              <li>
+                                {i18n._(
+                                  msg`+${lines.length - SHOWN_NAMES} more`,
+                                )}
+                              </li>
+                            )}
+                          </AddsList>
+                        </AddsSection>
+                      );
+                    })}
                   </AddsSections>
                 </SideGroup>
               )}
@@ -680,11 +690,14 @@ export function AppsStageAppDetail({
         </Frame>
       </SectionShell>
 
-      <AppsStageApplyDock
-        action={{
-          href: buildAppInstallUrl(app.universalIdentifier),
-          label: i18n._(msg`Install app`),
-        }}
+      <FloatingDock
+        action={
+          <Button
+            href={buildAppInstallUrl(app.universalIdentifier)}
+            label={i18n._(msg`Install app`)}
+            variant="filled"
+          />
+        }
         label={app.name}
       />
 

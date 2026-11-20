@@ -13,7 +13,7 @@ const readSession = (key: string): string | null => {
   }
 };
 
-// PROTOTYPE (?direction=e): wraps the partner page's "All partners" link.
+// Wraps the partner page's "All partners" link.
 // Coming from the directory, it goes back in history (same scroll, filters
 // and view); otherwise it opens the directory as last seen. The mark is
 // left in place: the directory spends it when it shows again.

@@ -18,6 +18,7 @@ export { ExternalLink } from './ExternalLink';
 export { CornerMarkers } from './CornerMarkers';
 export { EngagementBand } from './EngagementBand';
 export { Eyebrow, type EyebrowProps } from './Eyebrow';
+export { FloatingDock, type FloatingDockProps } from './FloatingDock';
 export { IconButton, type IconButtonProps } from './IconButton';
 export {
   Heading,
@@ -49,3 +50,5 @@ export {
   StepperSwipeDeck,
   type StepperSwipeDeckProps,
 } from './StepperSwipeDeck';
+export { ModelCardGrid, type ModelCard } from './ModelCardGrid';
+export { Reveal } from './Reveal';

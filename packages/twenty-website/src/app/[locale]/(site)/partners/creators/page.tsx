@@ -1,9 +1,6 @@
 import { msg } from '@lingui/core/macro';
 
-import {
-  AffiliateApplicationModalRoot,
-  AffiliateApplyButton,
-} from '@/affiliate-application';
+import { AffiliateApplicationModalRoot } from '@/affiliate-application';
 import { getCommunityStats } from '@/platform/community';
 import {
   getRouteI18n,
@@ -16,29 +13,18 @@ import {
   buildRouteMetadata,
   JsonLd,
 } from '@/platform/seo';
-import { AffiliateAudiences } from '@/sections/affiliate-program';
-// PROTOTYPE direction D, the creator stage (?direction=d).
-import {
-  CreatorApplyDock,
-  CreatorAudiences,
-  CreatorClosing,
-  CreatorEstimatorCard,
-  CreatorFaq,
-  CreatorHero,
-  CreatorSteps,
-} from '@/sections/creator-stage';
 import { AffiliateProgramFaq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
 import {
-  CREATOR_HERO_STATS,
-  CREATORS_HERO_IMAGE_URL,
-  PartnerHero,
-} from '@/sections/partner-hero';
-import {
   CREATOR_STEPS,
-  ProgramExplainer,
-  ProgramStrip,
-  ProgramStripSection,
+  CREATOR_DOCK_MODEL,
+  CreatorApplyButton,
+  CreatorAudiences,
+  CreatorTermsCard,
+  ProgramApplyDock,
+  ProgramHero,
+  ProgramHeroBackdrop,
+  ProgramPath,
 } from '@/sections/partner-programs';
 import { Button } from '@/ui';
 
@@ -48,12 +34,9 @@ const HOW_IT_WORKS_ANCHOR_ID = 'how-it-works';
 
 export default async function CreatorProgramPage({
   params,
-  searchParams,
 }: {
   params: Promise<LocaleRouteParams>;
-  searchParams: Promise<{ direction?: string }>;
 }) {
-  const isDirectionD = ((await searchParams).direction ?? 'd') === 'd';
   const [, communityStats] = await Promise.all([
     getRouteI18n(params),
     getCommunityStats(),
@@ -73,75 +56,44 @@ export default async function CreatorProgramPage({
           locale,
         )}
       />
-      <Menu
-        communityStats={communityStats}
-        scheme={isDirectionD ? 'dark' : 'light'}
-      />
-      {isDirectionD ? (
-        <main>
-          <CreatorHero howItWorksAnchorId={HOW_IT_WORKS_ANCHOR_ID} />
-          <CreatorEstimatorCard />
-          <CreatorAudiences />
-          <CreatorSteps anchorId={HOW_IT_WORKS_ANCHOR_ID} />
-          <CreatorClosing />
-          <CreatorFaq />
-          <CreatorApplyDock />
-        </main>
-      ) : (
-        <main>
-          <PartnerHero
-            visualImageUrl={CREATORS_HERO_IMAGE_URL}
-            badge={msg`Beta`}
-            heading={msg`Become a\n*Twenty creator*`}
-            body={msg`Create content or run a community. Earn 20% on every team you bring to Twenty, every month for a year.`}
-            stats={CREATOR_HERO_STATS}
-            statsNote={msg`Commission on Cloud Organization and Enterprise plans`}
-            actions={
-              <>
-                <AffiliateApplyButton label={msg`Apply as a creator`} />
-                <Button
-                  href={`#${HOW_IT_WORKS_ANCHOR_ID}`}
-                  label={i18n._(msg`How it works`)}
-                  variant="outlined"
-                />
-              </>
-            }
-          />
-          <AffiliateAudiences />
-          <ProgramExplainer
-            anchorId={HOW_IT_WORKS_ANCHOR_ID}
-            eyebrow={msg`How it works`}
-            heading={msg`From link *to payout*`}
-            body={msg`Share your link, we credit the signups it brings, and you get paid every month the customer stays, for up to 12 months.`}
-            steps={CREATOR_STEPS}
-            footer={[
-              {
-                id: 'apply',
-                node: (
-                  <ProgramStrip
-                    heading={msg`Ready to *apply?*`}
-                    body={msg`We review every application within 5 business days and send your link once you're approved.`}
-                    action={
-                      <AffiliateApplyButton label={msg`Apply as a creator`} />
-                    }
-                  />
-                ),
-              },
-            ]}
-          />
-          <ProgramStripSection
-            heading={msg`You implement Twenty *for your clients?*`}
-            action={
+      <Menu communityStats={communityStats} scheme="dark" />
+      <main>
+        <ProgramHero
+          actions={
+            <>
+              <CreatorApplyButton />
               <Button
-                href="/partners/integrators"
-                label={i18n._(msg`See the integrator program`)}
+                href={`#${HOW_IT_WORKS_ANCHOR_ID}`}
+                label={i18n._(msg`How it works`)}
                 variant="outlined"
               />
-            }
-          />
-          <AffiliateProgramFaq />
-        </main>
-      )}
+            </>
+          }
+          backdrop={
+            <ProgramHeroBackdrop
+              imageUrl="/images/partners/hero/creators-hero.webp"
+              isFaint
+            />
+          }
+          body={msg`Create content or run a community. Earn 20% on every team you bring to Twenty, every month for a year.`}
+          eyebrow={msg`Partners`}
+          heading={msg`Become a\n*Twenty creator*`}
+        />
+        <CreatorTermsCard />
+        <CreatorAudiences />
+        <ProgramPath
+          anchorId={HOW_IT_WORKS_ANCHOR_ID}
+          body={msg`Share your link, we credit the signups it brings, and you get paid every month the customer stays, for up to 12 months.`}
+          eyebrow={msg`How it works`}
+          heading={msg`From link *to payout*`}
+          steps={CREATOR_STEPS}
+        />
+        <AffiliateProgramFaq />
+      </main>
+      <ProgramApplyDock
+        action={<CreatorApplyButton isDocked />}
+        model={CREATOR_DOCK_MODEL}
+      />
     </AffiliateApplicationModalRoot>
   );
 }

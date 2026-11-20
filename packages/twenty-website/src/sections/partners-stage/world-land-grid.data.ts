@@ -1,4 +1,4 @@
-// PROTOTYPE
+//
 // Land mask on a 2-degree equirectangular grid (Natural Earth 110m, public
 // domain), one string per row from 70N to 46S, '1' = land.
 export const WORLD_LAND_GRID: {

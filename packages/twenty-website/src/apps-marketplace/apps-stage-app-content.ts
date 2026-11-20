@@ -1,6 +1,6 @@
 import { marketplaceGraphqlRequest } from './marketplace-api-fetch';
 
-// PROTOTYPE (?direction=e): what an app adds, grouped like the product's own
+// What an app adds, grouped like the product's own
 // app page (twenty-front ApplicationContentSections: Data, Interface,
 // Automation and AI, Access), read from the public API before install.
 export type AppsStageAppContentKind =

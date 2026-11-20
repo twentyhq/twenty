@@ -7,7 +7,7 @@ import { SERVED_GEO_LABELS } from '@/partners-marketplace/served-geo-labels';
 import { SPOKEN_LANGUAGE_LABELS } from '@/partners-marketplace/spoken-language-labels';
 import { titleCaseFallback } from '@/partners-marketplace/title-case-fallback';
 
-// PROTOTYPE (?direction=e): what a card and a row both print about a partner.
+// What a card and a row both print about a partner.
 export const describePartnersStagePartner = (
   partner: MarketplacePartner,
   i18n: I18n,

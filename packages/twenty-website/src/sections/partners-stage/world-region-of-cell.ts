@@ -1,6 +1,6 @@
 import { type ServedGeo } from '@/partners-marketplace/served-geos';
 
-// PROTOTYPE: which served region a land cell belongs to, in the CRM's own
+// Which served region a land cell belongs to, in the CRM's own
 // vocabulary (US stands for North America). Coarse boxes, enough for a map;
 // null for land no region names (Russia east of Europe, Greenland).
 export const worldRegionOfCell = (

@@ -48,7 +48,7 @@ import {
 } from '@/tokens';
 import { Body, Button, Heading, SectionShell } from '@/ui';
 
-import { PARTNERS_STAGE_CRAFT_COLUMN } from './partners-stage-craft-column';
+import { CONTAINER_COLUMN } from '@/ui/container-column';
 import { PartnersStageCraftCell } from './PartnersStageCraftCell';
 import { PartnersStageCraftRow } from './PartnersStageCraftRow';
 import {
@@ -61,18 +61,17 @@ import { usePartnersStageView } from './use-partners-stage-view';
 import { PARTNERS_STAGE_RETURN } from './partners-stage-return';
 import { worldRegionOfCell } from './world-region-of-cell';
 
-// PROTOTYPE (?direction=e): the directory. The site's filters and a Cards /
+// The directory. The site's filters and a Cards /
 // List switch in a bar that sticks under the menu, then the partners grouped
 // by base region, as cards or as rows.
 const Frame = styled.div`
-  ${PARTNERS_STAGE_CRAFT_COLUMN}
+  ${CONTAINER_COLUMN}
 `;
 
 // scroll-margin clears the fixed menu on the hero's anchor jump.
 const Header = styled.div`
   max-width: 640px;
   padding: ${spacing(12)} 0 ${spacing(8)};
-  scroll-margin-top: ${MENU_HEIGHT_PX}px;
 
   & > * + * {
     margin-top: ${spacing(3)};
@@ -157,8 +156,6 @@ const Regions = styled.div`
 `;
 
 const Region = styled.div`
-  scroll-margin-top: ${MENU_HEIGHT_PX + 72}px;
-
   & > * + * {
     margin-top: ${spacing(6)};
   }

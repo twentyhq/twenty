@@ -17,15 +17,10 @@ import {
 } from '@/tokens';
 import { Heading, SectionShell } from '@/ui';
 
-import { AppsStageHalftone } from './AppsStageHalftone';
-import { AppsStageMarquee } from './AppsStageMarquee';
 import { AppsStageOrbit } from './AppsStageOrbit';
-import { AppsStageRing } from './AppsStageRing';
-import { APPS_STAGE_CRAFT_COLUMN } from './apps-stage-craft-column';
+import { CONTAINER_COLUMN } from '@/ui/container-column';
 import { type MarketplaceApp } from './marketplace-app';
 
-// PROTOTYPE (?direction=e): the hero of the "craft" direction. Copy centred in
-// the page column, the logo ring lying on the floor beneath it.
 const Backdrop = styled.div`
   border-bottom: 1px solid ${semanticColor.line};
   inset: 0;
@@ -38,7 +33,7 @@ const Column = styled.div`
   flex-direction: column;
   height: 560px;
   padding-top: ${spacing(16)};
-  ${APPS_STAGE_CRAFT_COLUMN}
+  ${CONTAINER_COLUMN}
 
   ${mediaUp('sm')} {
     height: 680px;
@@ -110,14 +105,9 @@ const Lede = styled.p`
 
 type AppsStageCraftHeroProps = {
   apps: readonly MarketplaceApp[];
-  // PROTOTYPE switch (?hero=marquee|orbit): Dovetail rows or V7 labels.
-  motion?: 'ring' | 'marquee' | 'orbit';
 };
 
-export function AppsStageCraftHero({
-  apps,
-  motion = 'ring',
-}: AppsStageCraftHeroProps) {
+export function AppsStageCraftHero({ apps }: AppsStageCraftHeroProps) {
   const { i18n } = useLingui();
 
   return (
@@ -125,11 +115,7 @@ export function AppsStageCraftHero({
       background={
         <>
           <Backdrop />
-          {/* The orbit's labels would cross the keycap. */}
-          {motion !== 'orbit' && <AppsStageHalftone />}
-          {motion === 'marquee' && <AppsStageMarquee apps={apps} />}
-          {motion === 'orbit' && <AppsStageOrbit apps={apps} />}
-          {motion === 'ring' && <AppsStageRing apps={apps} />}
+          <AppsStageOrbit apps={apps} />
         </>
       }
       flushInline
