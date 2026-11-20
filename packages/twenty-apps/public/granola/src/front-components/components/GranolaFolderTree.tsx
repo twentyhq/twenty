@@ -112,9 +112,6 @@ export const GranolaFolderTree = ({
         <Text size="xs" weight="semibold" color="light">
           {t('Folders')}
         </Text>
-        <Text size="xs" weight="semibold" color="light">
-          {selectedFolderIds.length}/{selectionLimit}
-        </Text>
       </StyledLabelContainer>
       {tree.length === 0 ? (
         <GranolaFolderEmptyState
