@@ -5186,6 +5186,12 @@ input SyncAppMessageFoldersInput {
   messageChannelId: UUID!
 }
 
+enum TabPresenceStatus {
+  CLOSED
+  FOCUSED
+  OPEN
+}
+
 type TasksConfiguration {
   configurationType: WidgetConfigurationType!
 }
@@ -5717,7 +5723,7 @@ input UpdateSkillInput {
 }
 
 input UpdateTabPresenceInput {
-  status: String!
+  status: TabPresenceStatus!
   tabId: String!
 }
 

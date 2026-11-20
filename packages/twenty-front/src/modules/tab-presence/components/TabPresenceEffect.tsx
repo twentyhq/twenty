@@ -1,19 +1,18 @@
 import { useMutation } from '@apollo/client/react';
 import { useEffect, useState } from 'react';
-import {
-  TAB_PRESENCE_HEARTBEAT_INTERVAL_MS,
-  TAB_PRESENCE_STATUS,
-  type TabPresenceStatus,
-} from 'twenty-shared/constants';
+import { TAB_PRESENCE_HEARTBEAT_INTERVAL_MS } from 'twenty-shared/constants';
 import { v4 as uuidv4 } from 'uuid';
 
-import { UpdateTabPresenceDocument } from '~/generated-metadata/graphql';
+import {
+  TabPresenceStatus,
+  UpdateTabPresenceDocument,
+} from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
 const getCurrentTabPresenceStatus = (): TabPresenceStatus =>
   document.visibilityState === 'visible' && document.hasFocus()
-    ? TAB_PRESENCE_STATUS.FOCUSED
-    : TAB_PRESENCE_STATUS.OPEN;
+    ? TabPresenceStatus.FOCUSED
+    : TabPresenceStatus.OPEN;
 
 export const TabPresenceEffect = () => {
   const [tabId] = useState(() => uuidv4());
@@ -35,11 +34,11 @@ export const TabPresenceEffect = () => {
 
     const reportCurrentStatus = () =>
       reportTabPresence(getCurrentTabPresenceStatus());
-    const reportFocused = () => reportTabPresence(TAB_PRESENCE_STATUS.FOCUSED);
-    const reportOpen = () => reportTabPresence(TAB_PRESENCE_STATUS.OPEN);
+    const reportFocused = () => reportTabPresence(TabPresenceStatus.FOCUSED);
+    const reportOpen = () => reportTabPresence(TabPresenceStatus.OPEN);
 
     const reportPageHidden = () => {
-      reportTabPresence(TAB_PRESENCE_STATUS.CLOSED);
+      reportTabPresence(TabPresenceStatus.CLOSED);
       isPageHidden = true;
     };
 

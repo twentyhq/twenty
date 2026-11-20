@@ -1,10 +1,8 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsIn, IsUUID } from 'class-validator';
-import {
-  TAB_PRESENCE_STATUS,
-  type TabPresenceStatus,
-} from 'twenty-shared/constants';
+import { IsEnum, IsUUID } from 'class-validator';
+
+import { TabPresenceStatus } from 'src/engine/core-modules/tab-presence/enums/tab-presence-status.enum';
 
 @InputType()
 export class UpdateTabPresenceInput {
@@ -12,7 +10,7 @@ export class UpdateTabPresenceInput {
   @IsUUID()
   tabId: string;
 
-  @Field(() => String)
-  @IsIn(Object.values(TAB_PRESENCE_STATUS))
+  @Field(() => TabPresenceStatus)
+  @IsEnum(TabPresenceStatus)
   status: TabPresenceStatus;
 }

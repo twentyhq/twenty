@@ -92,8 +92,6 @@ export { STANDARD_OBJECT_RECORDS_UNDER_OBJECT_RECORDS_PERMISSIONS } from './Stan
 export { SUBDOMAIN_PATTERN } from './SubdomainPattern';
 export { SystemPermissionFlag } from './SystemPermissionFlag';
 export { TAB_PRESENCE_HEARTBEAT_INTERVAL_MS } from './TabPresenceHeartbeatIntervalMs';
-export type { TabPresenceStatus } from './TabPresenceStatus';
-export { TAB_PRESENCE_STATUS } from './TabPresenceStatus';
 export { TAG_COLORS } from './TagColors';
 export { TOOL_PERMISSION_FLAGS } from './ToolPermissionFlags';
 export { TWENTY_COMPANIES_BASE_URL } from './TwentyCompaniesBaseUrl';

@@ -7597,6 +7597,12 @@ export type SyncAppMessageFoldersInput = {
   messageChannelId: Scalars['UUID']['input'];
 };
 
+export enum TabPresenceStatus {
+  CLOSED = 'CLOSED',
+  FOCUSED = 'FOCUSED',
+  OPEN = 'OPEN'
+}
+
 export type TasksConfiguration = {
   __typename?: 'TasksConfiguration';
   configurationType: WidgetConfigurationType;
@@ -8142,7 +8148,7 @@ export type UpdateSkillInput = {
 };
 
 export type UpdateTabPresenceInput = {
-  status: Scalars['String']['input'];
+  status: TabPresenceStatus;
   tabId: Scalars['String']['input'];
 };
 

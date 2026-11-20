@@ -3798,6 +3798,8 @@ export interface Support {
 
 export type SupportDriver = 'FRONT' | 'NONE'
 
+export type TabPresenceStatus = 'CLOSED' | 'FOCUSED' | 'OPEN'
+
 export interface TasksConfiguration {
     configurationType: WidgetConfigurationType
     __typename: 'TasksConfiguration'
@@ -9072,7 +9074,7 @@ export interface UpdateRolePayload {canAccessAllAgentChatChannels?: (Scalars['Bo
 
 export interface UpdateSkillInput {content?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),id: Scalars['UUID'],isActive?: (Scalars['Boolean'] | null),label?: (Scalars['String'] | null),name?: (Scalars['String'] | null)}
 
-export interface UpdateTabPresenceInput {status: Scalars['String'],tabId: Scalars['String']}
+export interface UpdateTabPresenceInput {status: TabPresenceStatus,tabId: Scalars['String']}
 
 export interface UpdateTimelineActivityTypeInput {icon?: (Scalars['String'] | null),id: Scalars['UUID'],isActive?: (Scalars['Boolean'] | null),label?: (Scalars['String'] | null),translations?: (MetadataTranslationOverrideInput[] | null)}
 
@@ -13642,6 +13644,12 @@ export const enumSubscriptionStatus = {
 export const enumSupportDriver = {
    FRONT: 'FRONT' as const,
    NONE: 'NONE' as const
+}
+
+export const enumTabPresenceStatus = {
+   CLOSED: 'CLOSED' as const,
+   FOCUSED: 'FOCUSED' as const,
+   OPEN: 'OPEN' as const
 }
 
 export const enumUnsubscribeHostnameStatus = {

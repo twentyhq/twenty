@@ -2,11 +2,8 @@ import { randomUUID } from 'node:crypto';
 
 import gql from 'graphql-tag';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import {
-  TAB_PRESENCE_STATUS,
-  type TabPresenceStatus,
-} from 'twenty-shared/constants';
 
+import { TabPresenceStatus } from 'src/engine/core-modules/tab-presence/enums/tab-presence-status.enum';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const updateJonyTabPresence = ({
@@ -47,11 +44,11 @@ describe('tab presence (integration)', () => {
 
     await updateJonyTabPresence({
       tabId: firstTabId,
-      status: TAB_PRESENCE_STATUS.OPEN,
+      status: TabPresenceStatus.OPEN,
     });
     await updateJonyTabPresence({
       tabId: secondTabId,
-      status: TAB_PRESENCE_STATUS.FOCUSED,
+      status: TabPresenceStatus.FOCUSED,
     });
 
     expect(await findOnlineWorkspaceMemberIds()).toContain(
@@ -60,7 +57,7 @@ describe('tab presence (integration)', () => {
 
     await updateJonyTabPresence({
       tabId: firstTabId,
-      status: TAB_PRESENCE_STATUS.CLOSED,
+      status: TabPresenceStatus.CLOSED,
     });
 
     expect(await findOnlineWorkspaceMemberIds()).toContain(
@@ -69,7 +66,7 @@ describe('tab presence (integration)', () => {
 
     await updateJonyTabPresence({
       tabId: secondTabId,
-      status: TAB_PRESENCE_STATUS.CLOSED,
+      status: TabPresenceStatus.CLOSED,
     });
 
     expect(await findOnlineWorkspaceMemberIds()).not.toContain(
