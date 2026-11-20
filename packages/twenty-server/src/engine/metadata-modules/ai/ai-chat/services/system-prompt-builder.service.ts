@@ -69,7 +69,9 @@ export class SystemPromptBuilderService {
         : undefined,
       toolCatalog,
       skillCatalog,
-      preloadedTools: AI_CHAT_TOOL_NAMES_TO_PRELOAD,
+      preloadedTools: AI_CHAT_TOOL_NAMES_TO_PRELOAD.filter((toolName) =>
+        toolCatalog.some(({ name }) => name === toolName),
+      ),
       workspaceInstructions,
       userContext,
       userWorkspaceId,
