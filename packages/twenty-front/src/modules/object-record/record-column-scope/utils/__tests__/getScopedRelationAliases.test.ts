@@ -1,6 +1,4 @@
-import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
 import { getScopedRelationAliases } from '@/object-record/record-column-scope/utils/getScopedRelationAliases';
-import { getScopedRelationRecordGqlFields } from '@/object-record/record-column-scope/utils/getScopedRelationRecordGqlFields';
 import {
   type ViewFieldRelationScope,
   ViewFilterOperand,
@@ -25,10 +23,6 @@ const createdAtField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: personObjectMetadataItem,
   fieldName: 'createdAt',
 });
-
-const personIdentifierGqlFields = buildIdentifierGqlFields(
-  personObjectMetadataItem,
-);
 
 const PEOPLE_COLUMN_ID = '20202020-0000-4000-8000-0000000000c1';
 const OTHER_PEOPLE_COLUMN_ID = '20202020-0000-4000-8000-0000000000c2';
@@ -164,40 +158,5 @@ describe('getScopedRelationAliases', () => {
         isLookupColumnsEnabled: false,
       }),
     ).toEqual([]);
-  });
-});
-
-describe('getScopedRelationRecordGqlFields', () => {
-  it('selects each scoped relation under its response key with the identifier of its records', () => {
-    const [ctoAlias, allPeopleAlias] = getAliases({
-      recordFields: [
-        getPeopleColumn({ relationScope: CTO_RELATION_SCOPE }),
-        getPeopleColumn({
-          relationScope: EMPTY_RELATION_SCOPE,
-          id: OTHER_PEOPLE_COLUMN_ID,
-        }),
-      ],
-    });
-
-    expect(
-      getScopedRelationRecordGqlFields([ctoAlias, allPeopleAlias]),
-    ).toEqual({
-      [ctoAlias.responseKey]: {
-        relationFieldName: 'people',
-        filter: ctoAlias.filter,
-        orderBy: ctoAlias.orderBy,
-        first: 2,
-        shouldIncludeTotalCount: true,
-        recordGqlFields: personIdentifierGqlFields,
-      },
-      [allPeopleAlias.responseKey]: {
-        relationFieldName: 'people',
-        filter: allPeopleAlias.filter,
-        orderBy: allPeopleAlias.orderBy,
-        first: undefined,
-        shouldIncludeTotalCount: false,
-        recordGqlFields: personIdentifierGqlFields,
-      },
-    });
   });
 });

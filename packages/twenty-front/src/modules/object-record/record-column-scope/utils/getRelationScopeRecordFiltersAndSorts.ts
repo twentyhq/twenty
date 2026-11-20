@@ -11,7 +11,10 @@ export const getRelationScopeRecordFiltersAndSorts = ({
   relationScope,
   fieldMetadataItems,
 }: {
-  relationScope: ViewFieldRelationScope;
+  relationScope: Pick<
+    ViewFieldRelationScope,
+    'filters' | 'filterGroups' | 'sorts'
+  >;
   fieldMetadataItems: FieldMetadataItem[];
 }): {
   recordFilters: RecordFilter[];

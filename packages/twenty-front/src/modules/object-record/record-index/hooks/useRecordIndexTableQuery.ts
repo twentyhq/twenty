@@ -16,10 +16,10 @@ export const useRecordIndexTableQuery = (objectNameSingular: string) => {
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const { recordGqlFields } = useRecordIndexTableColumnQuery(
+  const { recordGqlFields } = useRecordIndexTableColumnQuery({
     objectMetadataItem,
-    [recordIndexGroupFieldMetadataItem?.id],
-  );
+    additionalFieldMetadataIds: [recordIndexGroupFieldMetadataItem?.id],
+  });
 
   const {
     records,
