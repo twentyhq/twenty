@@ -11,6 +11,7 @@ import {
 } from 'src/engine/twenty-orm/sql/utils/build-column-masks.util';
 import { buildUnreadableRowExclusionCondition } from 'src/engine/twenty-orm/sql/utils/build-unreadable-row-exclusion-condition.util';
 import { maskNullifiedColumnReferences } from 'src/engine/twenty-orm/sql/utils/mask-nullified-column-references.util';
+import { renderReadableCondition } from 'src/engine/twenty-orm/sql/utils/render-readable-condition.util';
 import { renderNullifiedColumn } from 'src/engine/twenty-orm/sql/utils/render-nullified-column.util';
 import {
   TwentyOrmException,
@@ -72,7 +73,11 @@ export type OrderByClause = {
   nulls?: 'NULLS FIRST' | 'NULLS LAST';
 };
 
-export type ColumnNullifyConditions = Record<string, Record<string, string[]>>;
+type SQLConditionsByAliasAndName = Record<string, Record<string, string[]>>;
+
+export type ColumnNullifyConditions = SQLConditionsByAliasAndName;
+
+export type UnreadableRelationConditions = SQLConditionsByAliasAndName;
 
 export type SelectStatementState = {
   alias: string;
@@ -82,6 +87,7 @@ export type SelectStatementState = {
   extraSelectClauses: SelectClause[];
   columnSelections: ColumnSelection[];
   columnNullifyConditions: ColumnNullifyConditions;
+  unreadableRelationConditions: UnreadableRelationConditions;
   joinClauses: JoinClause[];
   whereClauses: WhereClause[];
   rowAccessConditions: string[];
@@ -393,11 +399,14 @@ const renderExistsFilter = ({
   existsFilterClause,
   includeDeleted,
   columnNullifyConditions,
+  unreadableRelationConditions,
   columnMasks,
 }: {
   existsFilterClause: Pick<
     ExistsFilterClause,
     | 'alias'
+    | 'parentAlias'
+    | 'relationFieldName'
     | 'targetTableShape'
     | 'correlationCondition'
     | 'additionalOnConditions'
@@ -405,12 +414,18 @@ const renderExistsFilter = ({
   >;
   includeDeleted: boolean;
   columnNullifyConditions: ColumnNullifyConditions;
+  unreadableRelationConditions: UnreadableRelationConditions;
   columnMasks: ColumnMasks | undefined;
 }): string => {
   const conditions = [
     existsFilterClause.correlationCondition,
     ...existsFilterClause.additionalOnConditions,
-  ];
+    renderReadableCondition(
+      unreadableRelationConditions[existsFilterClause.parentAlias]?.[
+        existsFilterClause.relationFieldName
+      ] ?? [],
+    ),
+  ].filter(isDefined);
 
   if (existsFilterClause.conditionSql.length > 0) {
     conditions.push(
@@ -454,11 +469,13 @@ export const substituteExistsFilterTokens = ({
   existsFilterClauses,
   includeDeleted,
   columnNullifyConditions = {},
+  unreadableRelationConditions = {},
 }: {
   expression: string;
   existsFilterClauses: ExistsFilterClause[];
   includeDeleted: boolean;
   columnNullifyConditions?: ColumnNullifyConditions;
+  unreadableRelationConditions?: UnreadableRelationConditions;
 }): string => {
   const columnMasks = buildColumnMasks(columnNullifyConditions);
 
@@ -469,6 +486,7 @@ export const substituteExistsFilterTokens = ({
           existsFilterClause,
           includeDeleted,
           columnNullifyConditions,
+          unreadableRelationConditions,
           columnMasks,
         }),
       ),
@@ -513,6 +531,16 @@ export const buildWhereExpression = (
           columnNullifyConditions: state.columnNullifyConditions,
           aliases,
         }),
+        renderReadableCondition(
+          state.existsFilterClauses.flatMap(
+            ({ parentAlias, relationFieldName }) =>
+              aliases.includes(parentAlias)
+                ? (state.unreadableRelationConditions[parentAlias]?.[
+                    relationFieldName
+                  ] ?? [])
+                : [],
+          ),
+        ),
       ].filter(isDefined),
     }),
     aliases,
@@ -524,6 +552,7 @@ export const buildWhereExpression = (
         existsFilterClauses: state.existsFilterClauses,
         includeDeleted: state.includeDeleted,
         columnNullifyConditions: state.columnNullifyConditions,
+        unreadableRelationConditions: state.unreadableRelationConditions,
       })
     : renderedWhereExpression;
 
@@ -604,7 +633,15 @@ export const buildJoinClause = (state: SelectStatementState): string =>
           ? joinClause.toManyForeignKeyColumnName
           : undefined;
 
-      const onConditions = [condition, ...joinClause.additionalOnConditions];
+      const onConditions = [
+        condition,
+        ...joinClause.additionalOnConditions,
+        renderReadableCondition(
+          state.unreadableRelationConditions[joinClause.parentAlias]?.[
+            joinClause.relationFieldName
+          ] ?? [],
+        ),
+      ].filter(isDefined);
 
       if (
         softDeletePredicateApplies &&
