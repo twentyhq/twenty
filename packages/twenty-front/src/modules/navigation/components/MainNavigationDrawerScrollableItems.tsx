@@ -9,6 +9,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
+
 const FavoritesSectionDispatcher = lazy(() =>
   import('@/navigation-menu-item/display/sections/favorites/components/FavoritesSectionDispatcher').then(
     (module) => ({
@@ -49,6 +52,9 @@ const StyledScrollableItemsContainer = styled.div`
 
 export const MainNavigationDrawerScrollableItems = () => {
   const activeNavigationMenuTab = useActiveNavigationMenuTab();
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
 
   if (isDefined(activeNavigationMenuTab)) {
     return (
@@ -70,7 +76,7 @@ export const MainNavigationDrawerScrollableItems = () => {
       <NavigationDrawerOpenedSection />
       <GettingStartedOpenedSection />
       <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
-        <FavoritesSectionDispatcher />
+        {!isCustomizableSidebarEnabled && <FavoritesSectionDispatcher />}
         <WorkspaceSectionDispatcher />
         <NavigationMenuSectionList containerId={null} />
       </Suspense>
