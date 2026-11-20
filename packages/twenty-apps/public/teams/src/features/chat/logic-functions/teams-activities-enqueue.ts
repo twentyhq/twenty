@@ -9,6 +9,7 @@ import { type TeamsActivitiesEnqueueResult } from 'src/features/chat/logic-funct
 import { type TeamsAssistantAnswerResult } from 'src/features/chat/logic-functions/types/teams-assistant-answer-result.type';
 import { answerTeamsAssistantRequest } from 'src/features/chat/logic-functions/utils/answer-teams-assistant-request';
 import { enqueueTeamsAssistantRequest } from 'src/features/chat/logic-functions/utils/enqueue-teams-assistant-request';
+import { enqueueTeamsAssistantRequestWatchdog } from 'src/features/chat/logic-functions/utils/enqueue-teams-assistant-request-watchdog';
 
 export const teamsActivitiesEnqueueHandler = async (
   payload: TeamsActivitiesDispatchPayload,
@@ -21,6 +22,15 @@ export const teamsActivitiesEnqueueHandler = async (
   if (!isDefined(enqueueResult.request)) {
     return enqueueResult;
   }
+
+  await enqueueTeamsAssistantRequestWatchdog({
+    teamsAssistantRequestId: enqueueResult.request.id,
+  }).catch((error: unknown) => {
+    console.warn(
+      `[teams] could not schedule the watchdog for request ${enqueueResult.request?.id}`,
+      error,
+    );
+  });
 
   return await answerTeamsAssistantRequest({
     request: enqueueResult.request,
