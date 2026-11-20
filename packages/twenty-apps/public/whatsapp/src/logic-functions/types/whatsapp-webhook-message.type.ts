@@ -667,10 +667,13 @@ export type WhatsAppSmbAppStateSyncValue = WhatsAppWebhookMessagingValue & {
   }>;
 };
 
+// messages the business sent from the WhatsApp Business app
+// reference: https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/reference/smb_message_echoes
 export type WhatsAppSmbMessageEchoesValue = WhatsAppWebhookMessagingValue & {
   message_echoes: Array<
     WhatsAppWebhookMessageContent & {
-      to: string;
+      to?: string; // customer phone number, omitted when a username hides it
+      to_user_id?: string; // customer business-scoped user ID (BSUID)
     }
   >;
 };

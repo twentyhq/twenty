@@ -12,6 +12,7 @@ import { isDefined } from "twenty-sdk/utils";
 import { buildHistoryParseMessagePayloads } from "src/logic-functions/data/build-history-parse-message-payloads.util";
 import { isNonEmptyString } from "@sniptt/guards";
 import { sendInboxNotification } from "src/logic-functions/data/send-inbox-notification.util";
+import { updateWhatsAppMessageStatus } from "src/logic-functions/data/update-whatsapp-message-status.util";
 import { updateWhatsAppMarketingPreference } from "src/logic-functions/data/update-whatsapp-marketing-preference.util";
 import { parseWhatsAppTimestamp } from "src/logic-functions/data/parse-whatsapp-timestamp.util";
 import { isSameWhatsAppIdentity } from "src/logic-functions/data/is-same-whatsapp-identity.util";
@@ -144,8 +145,19 @@ const handler = async (
           );
           break;
         case "smb_app_state_sync":
-        case "smb_message_echoes":
           break;
+        case "smb_message_echoes": {
+          const { metadata, message_echoes } = change.value;
+          await enqueueParseMessageJobs(
+            message_echoes.map((echo) => ({
+              whatsAppBusinessAccountId: entry.id,
+              businessData: metadata,
+              contacts: { wa_id: echo.to, user_id: echo.to_user_id, profile: { name: '' } },
+              messages: echo,
+            })),
+          );
+          break;
+        }
         case "template_category_update":
           await syncTemplate(change.value.message_template_id);
           break;
@@ -168,8 +180,15 @@ const handler = async (
             break;
           }
           if ('statuses' in change.value) {
-            // covers users who stopped marketing messages before the app was connected
             for (const status of change.value.statuses) {
+              await updateWhatsAppMessageStatus({
+                displayPhoneNumber: change.value.metadata.display_phone_number,
+                messageExternalId: status.id,
+                reportedStatus: status.status,
+                errors: status.errors,
+              });
+
+              // covers users who stopped marketing messages before the app was connected
               if (
                 status.status === 'failed' &&
                 status.errors?.some(({ code }) => code === WHATSAPP_MARKETING_OPT_OUT_ERROR_CODE)

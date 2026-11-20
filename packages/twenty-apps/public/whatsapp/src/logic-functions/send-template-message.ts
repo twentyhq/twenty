@@ -7,6 +7,8 @@ import { type InputJsonSchema } from 'twenty-sdk/logic-function';
 import { WHATSAPP_LOGIC_FUNCTION_SEND_TEMPLATE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { isWhatsAppMarketingOptedOut } from 'src/logic-functions/data/is-whatsapp-marketing-opted-out.util';
 import { getRecipientWhatsAppIdentity } from 'src/logic-functions/data/get-recipient-whatsapp-identity.util';
+import { recordSentWhatsAppTemplateMessage } from 'src/logic-functions/data/record-sent-whatsapp-template-message.util';
+import { renderWhatsAppTemplateText } from 'src/logic-functions/data/render-whatsapp-template-text.util';
 import { buildWhatsAppRecipient } from 'src/logic-functions/data/build-whatsapp-recipient.util';
 import { buildTemplateComponents } from 'src/logic-functions/data/build-template-components.util';
 import { getWhatsAppAccessTokenOrThrow } from 'src/logic-functions/data/get-whatsapp-access-token-or-throw.util';
@@ -111,6 +113,7 @@ const handler = async (rawParams: unknown) => {
       status: true,
       category: true,
       parameterFormat: true,
+      components: true,
       whatsAppBusinessAccountId: true,
     },
   });
@@ -139,15 +142,13 @@ const handler = async (rawParams: unknown) => {
   }
 
   const accessToken = await getWhatsAppAccessTokenOrThrow({ whatsAppBusinessAccountId });
+  const senderPhoneNumberId =
+    phoneNumberId ?? (await getDefaultWhatsAppPhoneNumberIdOrThrow({ accessToken, whatsAppBusinessAccountId }));
 
   const response = await whatsAppApiRequest({
     accessToken,
     endpoint: 'POST /{phoneNumberId}/messages',
-    pathParams: {
-      phoneNumberId:
-        phoneNumberId ??
-        (await getDefaultWhatsAppPhoneNumberIdOrThrow({ accessToken, whatsAppBusinessAccountId })),
-    },
+    pathParams: { phoneNumberId: senderPhoneNumberId },
     data: {
       messaging_product: 'whatsapp',
       ...buildWhatsAppRecipient(to),
@@ -166,10 +167,42 @@ const handler = async (rawParams: unknown) => {
     },
   });
 
-  return {
-    success: true,
-    messageId: 'messages' in response ? response.messages[0]?.id : undefined,
-  };
+  const messageId = 'messages' in response ? response.messages[0]?.id : undefined;
+
+  if (!isNonEmptyString(messageId)) {
+    return { success: true, messageId };
+  }
+
+  const recipientContact = 'contacts' in response ? response.contacts[0] : undefined;
+  const recipientIdentityFromInput = getRecipientWhatsAppIdentity(to);
+
+  const renderedText = renderWhatsAppTemplateText({
+    components: Array.isArray(whatsAppTemplate.components) ? whatsAppTemplate.components : [],
+    headerParameters,
+    bodyParameters: parameters,
+    parameterFormat: whatsAppTemplate.parameterFormat,
+  });
+
+  // the template is already sent, so failing here would only tempt the caller to send it twice
+  try {
+    await recordSentWhatsAppTemplateMessage({
+      accessToken,
+      whatsAppBusinessAccountId,
+      phoneNumberId: senderPhoneNumberId,
+      messageId,
+      recipientIdentity: {
+        whatsAppId: recipientContact?.wa_id ?? recipientIdentityFromInput.whatsAppId,
+        whatsAppUserId: recipientContact?.user_id ?? recipientIdentityFromInput.whatsAppUserId,
+      },
+      text: isNonEmptyString(renderedText) ? renderedText : whatsAppTemplate.name,
+    });
+  } catch (error) {
+    console.error(`WhatsApp template message ${messageId} was sent but could not be added to its conversation`, error);
+
+    return { success: true, messageId, isAddedToConversation: false };
+  }
+
+  return { success: true, messageId, isAddedToConversation: true };
 };
 
 export default defineLogicFunction({

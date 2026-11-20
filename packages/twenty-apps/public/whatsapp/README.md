@@ -2,9 +2,11 @@
 
 Brings WhatsApp Business conversations into Twenty and lets agents and workflows send WhatsApp template messages.
 
-- Incoming messages, media, edits and deletions are imported as conversations, one channel per business phone number.
+- Incoming messages, media, edits and deletions are imported as conversations, one channel per business phone number. Messages the business sends from the WhatsApp Business app are imported too.
+- Conversations can be answered from Twenty, with attachments. Opening a conversation marks it as read on WhatsApp.
+- Messages sent by the business show their WhatsApp delivery status (sent, delivered, read or failed, with the reason).
 - Senders are matched to existing people by WhatsApp ID or phone number, or created. Users who hide their number behind a username are matched by their business-scoped user ID.
-- Message templates are imported and kept in sync, and can be created and sent through the `create-template` and `send-template-message` tools.
+- Message templates are imported and kept in sync, and can be created and sent through the `create-template` and `send-template-message` tools. Sent templates appear in the recipient's conversation.
 - When someone stops or resumes WhatsApp marketing messages, the **WhatsApp marketing opt-out** field on their person record is updated, and marketing templates are no longer sent to them. A marketing send that Meta rejects because of an earlier opt-out also sets it.
 - Account alerts, reviews and phone number quality changes are sent to the inboxes of the workspace members you pick in the app settings.
 
@@ -30,18 +32,18 @@ Install the app, then set its variables:
 In the Meta App Dashboard, open **WhatsApp > Configuration**:
 
 1. Set the callback URL to the live URL of the app's `webhook-sync` function, shown in its HTTP trigger settings in Twenty (it ends with `/whatsapp`), and the verify token to `VERIFY_TOKEN`.
-2. Subscribe to `messages`, `history`, `message_template_status_update`, `message_template_quality_update`, `message_template_components_update`, `template_category_update`, `account_alerts`, `account_review_update`, `account_update`, `phone_number_quality_update` and `security`.
+2. Subscribe to `messages`, `history`, `smb_message_echoes`, `user_preferences`, `message_template_status_update`, `message_template_quality_update`, `message_template_components_update`, `template_category_update`, `account_alerts`, `account_review_update`, `account_update`, `phone_number_quality_update` and `security`.
 
 ### 4. Connect
 
 Connect WhatsApp in Twenty with the system user token. For every WhatsApp Business Account the token can manage, the app subscribes to its webhooks, creates a message channel per phone number and imports its templates. Phone numbers added later get their channel with their first message.
 
-Reconnect after the token changes or loses access to an account.
+Reconnect after the token changes or loses access to an account, and once after updating the app so existing channels can send replies.
 
 ## Limitations
 
-- Conversations can't be answered from Twenty yet; only templates can be sent.
-- Delivery statuses and messages sent from the WhatsApp Business app (`smb_message_echoes`) are not imported.
+- WhatsApp only delivers free-form replies within 24 hours of the customer's last message. Later replies are marked Failed; send a template instead.
+- A reply with several attachments is sent as one WhatsApp message per part, and only the first carries the delivery status.
 - Media older than two weeks in an imported history is shown as unavailable, because Meta no longer sends it.
 
 ## Development

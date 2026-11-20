@@ -20,6 +20,7 @@ import { type IngestMessageParticipant, ingestMessages, kv } from "twenty-sdk/lo
 import { isDefined } from "twenty-sdk/utils";
 import { findOrCreateWhatsAppMessageChannelOrThrow } from "src/logic-functions/data/find-or-create-whatsapp-message-channel-or-throw.util";
 import { parseWhatsAppTimestamp } from "src/logic-functions/data/parse-whatsapp-timestamp.util";
+import { buildWhatsAppThreadExternalId } from "src/logic-functions/data/build-whatsapp-thread-external-id.util";
 import { buildRevokedMessageText } from "src/logic-functions/data/build-revoked-message-text.util";
 import { uploadWhatsAppMediaAttachmentOnce } from "src/logic-functions/data/upload-whatsapp-media-attachment-once.util";
 import { WHATSAPP_KV_KEY_PREFIXES } from "src/constants/whatsapp-kv-key-prefixes.constant";
@@ -116,8 +117,8 @@ const handler = async ({
   if (!isNonEmptyString(customerHandle)) {
     throw new Error(`WhatsApp message ${messages.id} has no sender phone number or user ID`);
   }
-  // the user ID stays stable when a user hides or changes their phone number
-  const threadExternalId = messages.group_id ?? contacts.user_id ?? customerHandle;
+  const threadExternalId =
+    buildWhatsAppThreadExternalId({ groupId: messages.group_id, customerIdentity }) ?? customerHandle;
   // history imports include messages the business sent, with the business number as sender
   const isSentByBusiness =
     isNonEmptyString(messages.from) &&
@@ -130,7 +131,8 @@ const handler = async ({
     name: contacts.profile.name,
   });
 
-  const businessParticipant = { handle: businessData.display_phone_number };
+  // Twenty marks a message outgoing only when its sender handle is exactly the channel handle
+  const businessParticipant = { handle: messageChannel.handle };
   const customerParticipant = {
     handle: customerHandle,
     displayName: [contacts.profile.name, contacts.username].find(isNonEmptyString),

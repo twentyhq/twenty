@@ -214,7 +214,7 @@ export type WhatsAppApiSendMessageRequest = WhatsAppApiSendMessageBase &
   );
 
 export type WhatsAppApiSendMessageResponse = WhatsAppApiMessagingProduct & {
-  contacts: Array<{ input: string; wa_id: string }>;
+  contacts: Array<{ input: string; wa_id?: string; user_id?: string }>;
   messages: Array<{
     id: string; // appears in status webhooks
     group_id?: string; // group messages only
@@ -231,11 +231,8 @@ export type WhatsAppApiMarkAsReadRequest = WhatsAppApiMessagingProduct & {
 // Media
 // reference: https://developers.facebook.com/documentation/business-messaging/whatsapp/business-phone-numbers/media
 
-// multipart/form-data
-export type WhatsAppApiUploadMediaRequest = WhatsAppApiMessagingProduct & {
-  file: string;
-  type: string; // mime type
-};
+// multipart/form-data with messaging_product, type (the MIME type) and file
+export type WhatsAppApiUploadMediaRequest = FormData;
 
 export type WhatsAppApiUploadMediaResponse = { id: string };
 
@@ -503,7 +500,7 @@ export type WhatsAppApiUpdateBusinessProfileRequest = WhatsAppApiMessagingProduc
 
 type WhatsAppApiTemplateCategory = 'UTILITY' | 'MARKETING' | 'AUTHENTICATION';
 
-type WhatsAppApiTemplateDefinitionComponent = {
+export type WhatsAppApiTemplateDefinitionComponent = {
   type: string;
   format?: string;
   text?: string;
