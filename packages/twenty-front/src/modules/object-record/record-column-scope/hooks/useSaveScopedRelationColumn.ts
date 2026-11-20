@@ -1,12 +1,12 @@
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
-import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { upsertSavedScopedRecordField } from '@/object-record/record-column-scope/utils/upsertSavedScopedRecordField';
+import { buildAddedRecordField } from '@/object-record/record-field/utils/buildAddedRecordField';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { type ViewFieldRelationScope } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 export const useSaveScopedRelationColumn = (recordTableId: string) => {
   const store = useStore();
@@ -31,22 +31,9 @@ export const useSaveScopedRelationColumn = (recordTableId: string) => {
 
       const currentRecordFields = store.get(currentRecordFieldsAtom);
 
-      const recordFieldToSave: RecordField | undefined = isDefined(
-        recordFieldId,
-      )
+      const recordFieldToSave = isDefined(recordFieldId)
         ? currentRecordFields.find(({ id }) => id === recordFieldId)
-        : {
-            id: v4(),
-            fieldMetadataItemId,
-            size: 100,
-            isVisible: true,
-            isCanonical: false,
-            position:
-              Math.max(
-                0,
-                ...currentRecordFields.map(({ position }) => position),
-              ) + 1,
-          };
+        : buildAddedRecordField({ currentRecordFields, fieldMetadataItemId });
 
       if (!isDefined(recordFieldToSave)) {
         return false;
@@ -62,23 +49,15 @@ export const useSaveScopedRelationColumn = (recordTableId: string) => {
         mapRecordFieldToViewField(savedRecordField),
       ]);
 
-      // The table only gets the column once it is saved, so a failed save leaves nothing to roll back
       if (!isSaved) {
         return false;
       }
 
       store.set(currentRecordFieldsAtom, (latestRecordFields) =>
-        latestRecordFields.some(({ id }) => id === savedRecordField.id)
-          ? latestRecordFields.map((recordField) =>
-              recordField.id === savedRecordField.id
-                ? {
-                    ...recordField,
-                    relationScope,
-                    relationTargetFieldMetadataId,
-                  }
-                : recordField,
-            )
-          : [...latestRecordFields, savedRecordField],
+        upsertSavedScopedRecordField({
+          recordFields: latestRecordFields,
+          savedRecordField,
+        }),
       );
 
       return true;

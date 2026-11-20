@@ -2,6 +2,7 @@ import { type ScopedRelationAlias } from '@/object-record/record-column-scope/ty
 import { type ObjectRecordOperation } from '@/object-record/types/ObjectRecordOperation';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectRecord } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 const getWrittenRecord = (
   operation: ObjectRecordOperation,
@@ -17,7 +18,6 @@ const getWrittenRecord = (
   return undefined;
 };
 
-// Only a written record that carries its join column can be narrowed; any other operation is assumed relevant
 export const isScopedRelationRecordOperationRelevant = ({
   operation,
   operationObjectMetadataItemId,
@@ -26,10 +26,15 @@ export const isScopedRelationRecordOperationRelevant = ({
 }: {
   operation: ObjectRecordOperation;
   operationObjectMetadataItemId: string;
-  scopedRelationAliases: Pick<
+  scopedRelationAliases: (Pick<
     ScopedRelationAlias,
-    'relationObjectMetadataItem' | 'relationJoinColumnName'
-  >[];
+    'relationJoinColumnName'
+  > & {
+    relationObjectMetadataItem: Pick<
+      ScopedRelationAlias['relationObjectMetadataItem'],
+      'id'
+    >;
+  })[];
   isRecordLoaded: (recordId: string) => boolean;
 }): boolean => {
   const writtenRecord = getWrittenRecord(operation);
@@ -41,7 +46,7 @@ export const isScopedRelationRecordOperationRelevant = ({
       }
 
       if (
-        writtenRecord === undefined ||
+        !isDefined(writtenRecord) ||
         !(relationJoinColumnName in writtenRecord)
       ) {
         return true;

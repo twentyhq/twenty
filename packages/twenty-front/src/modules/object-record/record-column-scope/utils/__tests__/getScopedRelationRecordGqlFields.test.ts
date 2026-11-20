@@ -41,6 +41,37 @@ const buildPeopleAlias = (
 });
 
 describe('getScopedRelationRecordGqlFields', () => {
+  it('selects each scoped relation under its response key with the identifier of its records', () => {
+    const limitedAlias = buildPeopleAlias({
+      responseKey: 'people_limited',
+      filter: { jobTitle: { ilike: '%cto%' } },
+      orderBy: [{ createdAt: 'AscNullsLast' }],
+      first: 2,
+    });
+    const unlimitedAlias = buildPeopleAlias({ responseKey: 'people_all' });
+
+    expect(
+      getScopedRelationRecordGqlFields([limitedAlias, unlimitedAlias]),
+    ).toEqual({
+      people_limited: {
+        relationFieldName: 'people',
+        filter: limitedAlias.filter,
+        orderBy: limitedAlias.orderBy,
+        first: 2,
+        shouldIncludeTotalCount: true,
+        recordGqlFields: personIdentifierGqlFields,
+      },
+      people_all: {
+        relationFieldName: 'people',
+        filter: undefined,
+        orderBy: undefined,
+        first: undefined,
+        shouldIncludeTotalCount: false,
+        recordGqlFields: personIdentifierGqlFields,
+      },
+    });
+  });
+
   it('selects the field a column shows next to the identifier of its records', () => {
     expect(
       getScopedRelationRecordGqlFields([

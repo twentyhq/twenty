@@ -136,7 +136,6 @@ export const useSaveCurrentViewFields = () => {
                       isVisible: createViewFieldInput.isVisible,
                       position: createViewFieldInput.position,
                       size: createViewFieldInput.size,
-                      // An unchanged scope stays out, so moving or resizing a column never has it validated again
                       ...(hasRelationScopeChanged && {
                         relationScope: createViewFieldInput.relationScope,
                       }),
