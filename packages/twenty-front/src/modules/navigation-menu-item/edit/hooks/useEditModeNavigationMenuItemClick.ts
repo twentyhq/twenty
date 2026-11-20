@@ -9,7 +9,7 @@ import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/displa
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { viewSummariesSelector } from '@/views/states/selectors/viewSummariesSelector';
 
 export const useEditModeNavigationMenuItemClick = () => {
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ export const useEditModeNavigationMenuItemClick = () => {
     const link = getNavigationMenuItemComputedLink({
       item,
       objectMetadataItems: store.get(objectMetadataItemsSelector.atom),
-      views: store.get(viewsSelector.atom),
+      views: store.get(viewSummariesSelector.atom),
       lastVisitedViewPerObjectMetadataItem: store.get(
         lastVisitedViewPerObjectMetadataItemState.atom,
       ),

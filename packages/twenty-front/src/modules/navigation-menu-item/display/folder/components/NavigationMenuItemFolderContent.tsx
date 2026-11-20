@@ -16,7 +16,7 @@ import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/l
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { viewSummariesSelector } from '@/views/states/selectors/viewSummariesSelector';
 import { useLingui } from '@lingui/react/macro';
 
 type NavigationMenuItemFolderContentProps = {
@@ -32,7 +32,7 @@ export const NavigationMenuItemFolderContent = ({
 }: NavigationMenuItemFolderContentProps) => {
   const { t } = useLingui();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-  const views = useAtomStateValue(viewsSelector);
+  const viewSummaries = useAtomStateValue(viewSummariesSelector);
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
     lastVisitedViewPerObjectMetadataItemState,
   );
@@ -50,18 +50,18 @@ export const NavigationMenuItemFolderContent = ({
         const label = getNavigationMenuItemLabel(
           navigationMenuItem,
           objectMetadataItems,
-          views,
+          viewSummaries,
         );
         const computedLink = getNavigationMenuItemComputedLink({
           item: navigationMenuItem,
           objectMetadataItems,
-          views,
+          views: viewSummaries,
           lastVisitedViewPerObjectMetadataItem,
         });
         const objectNameSingular = getNavigationMenuItemObjectNameSingular(
           navigationMenuItem,
           objectMetadataItems,
-          views,
+          viewSummaries,
         );
 
         return (

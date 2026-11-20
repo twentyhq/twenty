@@ -3,7 +3,7 @@ import { NavigationDrawerItemForObjectMetadataItem } from '@/navigation-menu-ite
 import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { viewSummariesSelector } from '@/views/states/selectors/viewSummariesSelector';
 
 type NavigationMenuItemObjectDisplayProps =
   NavigationMenuItemSectionContentProps;
@@ -16,11 +16,11 @@ export const NavigationMenuItemObjectDisplay = ({
   onActiveObjectMetadataItemClick,
 }: NavigationMenuItemObjectDisplayProps) => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-  const views = useAtomStateValue(viewsSelector);
+  const viewSummaries = useAtomStateValue(viewSummariesSelector);
   const objectMetadataItem = getObjectMetadataForNavigationMenuItem(
     item,
     objectMetadataItems,
-    views,
+    viewSummaries,
   );
   if (!objectMetadataItem) {
     return null;

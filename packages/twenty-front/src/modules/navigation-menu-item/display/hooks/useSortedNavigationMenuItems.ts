@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { filterAndSortNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterAndSortNavigationMenuItems';
 import { useNavigationObjectMetadataItems } from '@/navigation-menu-item/common/hooks/useNavigationObjectMetadataItems';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { viewSummariesSelector } from '@/views/states/selectors/viewSummariesSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { useNavigationMenuItemsData } from './useNavigationMenuItemsData';
@@ -10,24 +10,24 @@ import { useNavigationMenuItemsData } from './useNavigationMenuItemsData';
 export const useSortedNavigationMenuItems = () => {
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     useNavigationMenuItemsData();
-  const views = useAtomStateValue(viewsSelector);
+  const viewSummaries = useAtomStateValue(viewSummariesSelector);
   const objectMetadataItems = useNavigationObjectMetadataItems();
 
   const navigationMenuItemsSorted = useMemo(() => {
     return filterAndSortNavigationMenuItems(
       navigationMenuItems,
-      views,
+      viewSummaries,
       objectMetadataItems,
     );
-  }, [navigationMenuItems, views, objectMetadataItems]);
+  }, [navigationMenuItems, viewSummaries, objectMetadataItems]);
 
   const workspaceNavigationMenuItemsSorted = useMemo(() => {
     return filterAndSortNavigationMenuItems(
       workspaceNavigationMenuItems,
-      views,
+      viewSummaries,
       objectMetadataItems,
     );
-  }, [workspaceNavigationMenuItems, views, objectMetadataItems]);
+  }, [workspaceNavigationMenuItems, viewSummaries, objectMetadataItems]);
 
   return {
     navigationMenuItemsSorted,

@@ -36,6 +36,7 @@ const changeMetadataEntityAsUpToDate = (
   const entry = store.get(metadataStoreState.atomFamily(metadataEntityKey));
 
   store.set(metadataStoreState.atomFamily(metadataEntityKey), {
+    ...entry,
     current: entry.draft,
     draft: [],
     status: 'up-to-date',

@@ -55,7 +55,6 @@ describe('useCachedMetadata', () => {
       cacheSetter,
       operationsToCache: {
         FindAllViews: {
-          scope: 'userWorkspace',
           dependencies: ['flatViewMaps'],
         },
       },
@@ -171,20 +170,12 @@ describe('useCachedMetadata', () => {
     const cacheKey = cacheGetter.mock.calls[0][0];
 
     expect(cacheKey).toContain('dependency-hash');
-    expect(cacheKey).toContain('user-workspace-id');
     expect(cacheSetter).toHaveBeenCalledWith(cacheKey, responseBody);
   });
 
-  it('shares cache entries across users for workspace-scoped operations', async () => {
+  it('shares cache entries across users of a workspace', async () => {
     const cacheGetter = jest.fn().mockResolvedValue(undefined);
-    const plugin = useCachedMetadata({
-      cacheGetter,
-      cacheSetter: jest.fn(),
-      operationsToCache: {
-        FindAllViews: { scope: 'workspace', dependencies: ['flatViewMaps'] },
-      },
-      dependencyHashGetter: jest.fn().mockResolvedValue('dependency-hash'),
-    });
+    const plugin = createPlugin({ cacheGetter });
     const request = createRequest();
     const serverContext = { req: request };
 

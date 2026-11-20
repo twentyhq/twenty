@@ -13,7 +13,7 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { viewSummariesSelector } from '@/views/states/selectors/viewSummariesSelector';
 import isEmpty from 'lodash.isempty';
 import { useCallback, useMemo } from 'react';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
@@ -37,7 +37,7 @@ export const useDefaultHomePagePath = () => {
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-  const views = useAtomStateValue(viewsSelector);
+  const viewSummaries = useAtomStateValue(viewSummariesSelector);
   const navigationMenuItemsInDisplayOrder = useNavigationMenuItemSectionItems({
     shouldFlattenTopLevelSections: true,
   });
@@ -57,14 +57,14 @@ export const useDefaultHomePagePath = () => {
     (objectMetadataItemId: string | undefined | null) => {
       const { firstSelectableViewId, indexViewId } = computeObjectViewTargetIds(
         {
-          views,
+          views: viewSummaries,
           objectMetadataId: objectMetadataItemId ?? undefined,
         },
       );
 
       return firstSelectableViewId ?? indexViewId;
     },
-    [views],
+    [viewSummaries],
   );
 
   const firstNavigationMenuItemLink = useMemo(
@@ -72,13 +72,13 @@ export const useDefaultHomePagePath = () => {
       getFirstNavigationMenuItemLink({
         navigationMenuItemsInDisplayOrder,
         objectMetadataItems,
-        views,
+        views: viewSummaries,
         objectPermissionsByObjectMetadataId,
       }),
     [
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
-      views,
+      viewSummaries,
       navigationMenuItemsInDisplayOrder,
     ],
   );

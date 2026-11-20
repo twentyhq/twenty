@@ -18,7 +18,7 @@ import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/compo
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { viewSummariesSelector } from '@/views/states/selectors/viewSummariesSelector';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 
 export const NavigationMenuItemFolderSubItem = ({
@@ -35,7 +35,7 @@ export const NavigationMenuItemFolderSubItem = ({
   const isEditHighlightedInNavigationMenu =
     useIsNavigationMenuItemEditHighlighted(navigationMenuItem);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-  const views = useAtomStateValue(viewsSelector);
+  const viewSummaries = useAtomStateValue(viewSummariesSelector);
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
     lastVisitedViewPerObjectMetadataItemState,
   );
@@ -52,17 +52,21 @@ export const NavigationMenuItemFolderSubItem = ({
 
   const label =
     labelOverride ??
-    getNavigationMenuItemLabel(navigationMenuItem, objectMetadataItems, views);
+    getNavigationMenuItemLabel(
+      navigationMenuItem,
+      objectMetadataItems,
+      viewSummaries,
+    );
   const computedLink = getNavigationMenuItemComputedLink({
     item: navigationMenuItem,
     objectMetadataItems,
-    views,
+    views: viewSummaries,
     lastVisitedViewPerObjectMetadataItem,
   });
   const objectNameSingular = getNavigationMenuItemObjectNameSingular(
     navigationMenuItem,
     objectMetadataItems,
-    views,
+    viewSummaries,
   );
 
   const objectMetadataItem =
@@ -72,7 +76,7 @@ export const NavigationMenuItemFolderSubItem = ({
       ? getObjectMetadataForNavigationMenuItem(
           navigationMenuItem,
           objectMetadataItems,
-          views,
+          viewSummaries,
         )
       : null;
 
