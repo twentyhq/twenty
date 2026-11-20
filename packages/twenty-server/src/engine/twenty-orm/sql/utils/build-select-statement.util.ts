@@ -13,8 +13,8 @@ import { findUnreadableColumnConditions } from 'src/engine/twenty-orm/sql/utils/
 import { renderReadableCondition } from 'src/engine/twenty-orm/sql/utils/render-readable-condition.util';
 import { renderUnreadableAwareCondition } from 'src/engine/twenty-orm/sql/utils/render-unreadable-aware-condition.util';
 import { escapeRegularExpression } from 'src/engine/twenty-orm/sql/utils/escape-regular-expression.util';
-import { maskNullifiedColumnReferences } from 'src/engine/twenty-orm/sql/utils/mask-nullified-column-references.util';
-import { renderNullifiedColumn } from 'src/engine/twenty-orm/sql/utils/render-nullified-column.util';
+import { maskUnreadableColumnReferences } from 'src/engine/twenty-orm/sql/utils/mask-unreadable-column-references.util';
+import { renderUnreadableColumn } from 'src/engine/twenty-orm/sql/utils/render-unreadable-column.util';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
@@ -90,7 +90,10 @@ export type OrderByClause = {
   nulls?: 'NULLS FIRST' | 'NULLS LAST';
 };
 
-export type ColumnNullifyConditions = Record<string, Record<string, string[]>>;
+export type UnreadableColumnConditions = Record<
+  string,
+  Record<string, string[]>
+>;
 
 export type SelectStatementState = {
   alias: string;
@@ -99,7 +102,7 @@ export type SelectStatementState = {
   explicitSelection?: string[];
   extraSelectClauses: SelectClause[];
   columnSelections: ColumnSelection[];
-  columnNullifyConditions: ColumnNullifyConditions;
+  unreadableColumnConditions: UnreadableColumnConditions;
   joinClauses: JoinClause[];
   whereClauses: WhereClause[];
   rowAccessConditions: string[];
@@ -126,23 +129,24 @@ const renderProjectedColumn = ({
 }: {
   state: Pick<
     SelectStatementState,
-    'columnNullifyConditions' | 'groupByExpressions'
+    'unreadableColumnConditions' | 'groupByExpressions'
   >;
   alias: string;
   columnName: string;
 }): string => {
   const quotedColumn = quoteColumn(alias, columnName);
-  const nullifyConditions = state.columnNullifyConditions[alias]?.[columnName];
+  const unreadableConditions =
+    state.unreadableColumnConditions[alias]?.[columnName];
 
-  if (!isDefined(nullifyConditions)) {
+  if (!isDefined(unreadableConditions)) {
     return quotedColumn;
   }
 
   if (state.groupByExpressions.length > 0) {
-    return `(${renderNullifiedColumn({ quotedColumn, nullifyConditions })})`;
+    return `(${renderUnreadableColumn({ quotedColumn, unreadableConditions })})`;
   }
 
-  return renderNullifiedColumn({ quotedColumn, nullifyConditions });
+  return renderUnreadableColumn({ quotedColumn, unreadableConditions });
 };
 
 export const normaliseColumnExpression = (
@@ -202,7 +206,7 @@ const renderMaskedExpression = ({
   aliases: string[];
   columnMasks: ColumnMasks | undefined;
 }): string =>
-  maskNullifiedColumnReferences({
+  maskUnreadableColumnReferences({
     expression: quoteQualifiedAliasReferences(expression, aliases),
     columnMasks,
   });
@@ -352,7 +356,7 @@ export const buildProjection = (
   }
 
   const aliases = collectStatementAliases(state);
-  const columnMasks = buildColumnMasks(state.columnNullifyConditions);
+  const columnMasks = buildColumnMasks(state.unreadableColumnConditions);
 
   for (const extraSelect of state.extraSelectClauses) {
     const plainColumn = extraSelect.expression.match(PLAIN_COLUMN_EXPRESSION);
@@ -436,16 +440,16 @@ const renderReadableWhereCondition = ({
   readsUnreadableColumnsAsNull,
   aliases,
   columnMasks,
-  columnNullifyConditions,
+  unreadableColumnConditions,
 }: {
   condition: string;
   readsUnreadableColumnsAsNull: boolean;
   aliases: string[];
   columnMasks: ColumnMasks | undefined;
-  columnNullifyConditions: ColumnNullifyConditions;
+  unreadableColumnConditions: UnreadableColumnConditions;
 }): string => {
   const quotedCondition = quoteQualifiedAliasReferences(condition, aliases);
-  const maskedCondition = maskNullifiedColumnReferences({
+  const maskedCondition = maskUnreadableColumnReferences({
     expression: quotedCondition,
     columnMasks,
   });
@@ -458,7 +462,7 @@ const renderReadableWhereCondition = ({
     condition: maskedCondition,
     unreadableConditions: findUnreadableColumnConditions({
       expressions: [quotedCondition],
-      columnNullifyConditions,
+      unreadableColumnConditions,
       aliases,
     }),
   });
@@ -496,7 +500,7 @@ export const renderWhereExpressionWithRowAccess = ({
 const renderExistsFilter = ({
   existsFilterClause,
   includeDeleted,
-  columnNullifyConditions,
+  unreadableColumnConditions,
   columnMasks,
 }: {
   existsFilterClause: Pick<
@@ -508,7 +512,7 @@ const renderExistsFilter = ({
     | 'conditionClauses'
   >;
   includeDeleted: boolean;
-  columnNullifyConditions: ColumnNullifyConditions;
+  unreadableColumnConditions: UnreadableColumnConditions;
   columnMasks: ColumnMasks | undefined;
 }): string => {
   const conditions = [
@@ -524,7 +528,7 @@ const renderExistsFilter = ({
         readsUnreadableColumnsAsNull,
         aliases: [existsFilterClause.alias],
         columnMasks,
-        columnNullifyConditions,
+        unreadableColumnConditions,
       }),
   });
 
@@ -558,14 +562,14 @@ export const substituteExistsFilterTokens = ({
   expression,
   existsFilterClauses,
   includeDeleted,
-  columnNullifyConditions = {},
+  unreadableColumnConditions = {},
 }: {
   expression: string;
   existsFilterClauses: ExistsFilterClause[];
   includeDeleted: boolean;
-  columnNullifyConditions?: ColumnNullifyConditions;
+  unreadableColumnConditions?: UnreadableColumnConditions;
 }): string => {
-  const columnMasks = buildColumnMasks(columnNullifyConditions);
+  const columnMasks = buildColumnMasks(unreadableColumnConditions);
 
   return existsFilterClauses.reduce(
     (substituted, existsFilterClause) =>
@@ -573,7 +577,7 @@ export const substituteExistsFilterTokens = ({
         renderExistsFilter({
           existsFilterClause,
           includeDeleted,
-          columnNullifyConditions,
+          unreadableColumnConditions,
           columnMasks,
         }),
       ),
@@ -592,7 +596,7 @@ export const buildWhereExpression = (
   } = {},
 ): string => {
   const aliases = collectStatementAliases(state);
-  const columnMasks = buildColumnMasks(state.columnNullifyConditions);
+  const columnMasks = buildColumnMasks(state.unreadableColumnConditions);
   const renderedWhereExpression = quoteQualifiedAliasReferences(
     renderWhereExpressionWithRowAccess({
       whereClauses: state.whereClauses,
@@ -602,7 +606,7 @@ export const buildWhereExpression = (
           readsUnreadableColumnsAsNull,
           aliases,
           columnMasks,
-          columnNullifyConditions: state.columnNullifyConditions,
+          unreadableColumnConditions: state.unreadableColumnConditions,
         }),
       rowAccessConditions: [
         ...state.rowAccessConditions,
@@ -611,7 +615,7 @@ export const buildWhereExpression = (
             expressions: state.groupByExpressions.map((expression) =>
               quoteQualifiedAliasReferences(expression, aliases),
             ),
-            columnNullifyConditions: state.columnNullifyConditions,
+            unreadableColumnConditions: state.unreadableColumnConditions,
             aliases,
           }),
         ),
@@ -625,7 +629,7 @@ export const buildWhereExpression = (
         expression: renderedWhereExpression,
         existsFilterClauses: state.existsFilterClauses,
         includeDeleted: state.includeDeleted,
-        columnNullifyConditions: state.columnNullifyConditions,
+        unreadableColumnConditions: state.unreadableColumnConditions,
       })
     : renderedWhereExpression;
 
@@ -744,7 +748,7 @@ const renderMaskedStatementExpressions = ({
   expressions: string[];
 }): string[] => {
   const aliases = collectStatementAliases(state);
-  const columnMasks = buildColumnMasks(state.columnNullifyConditions);
+  const columnMasks = buildColumnMasks(state.unreadableColumnConditions);
 
   return expressions.map((expression) =>
     renderMaskedExpression({ expression, aliases, columnMasks }),

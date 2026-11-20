@@ -1930,10 +1930,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   ): Promise<void> {
     await this.applyRowLevelPermissionPredicates(queryBuilder);
     await this.validateQueryIsPermitted(queryBuilder);
-    await this.nullifyRlsRuleUnreadableFields(queryBuilder);
+    await this.makeRlsRuleFieldsUnreadable(queryBuilder);
   }
 
-  private async nullifyRlsRuleUnreadableFields(
+  private async makeRlsRuleFieldsUnreadable(
     queryBuilder: WorkspaceSelectQueryBuilder,
   ): Promise<void> {
     if (this.options.shouldBypassPermissionChecks) {
@@ -1951,7 +1951,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     for (const { alias, tableShape } of aliases) {
       if (
         !isDefined(tableShape) ||
-        !queryBuilder.markColumnNullifyApplied(alias)
+        !queryBuilder.markUnreadableColumnsApplied(alias)
       ) {
         continue;
       }
@@ -1982,7 +1982,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         fieldMetadataIds,
         sqlCondition,
       } of unreadableFieldsSQLConditions) {
-        queryBuilder.nullifyColumnsWhen({
+        queryBuilder.makeColumnsUnreadableWhen({
           alias,
           columnNames: columnEntries
             .filter(([, fieldMetadataId]) =>

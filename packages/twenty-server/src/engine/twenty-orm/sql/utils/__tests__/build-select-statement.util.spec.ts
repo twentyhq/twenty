@@ -38,7 +38,7 @@ const buildState = (
   findOptions: { select: { id: true } },
   extraSelectClauses: [],
   columnSelections: [],
-  columnNullifyConditions: {},
+  unreadableColumnConditions: {},
   joinClauses: [],
   whereClauses: [],
   rowAccessConditions: [],
@@ -59,10 +59,10 @@ const OR_CHAIN_WHERE_CLAUSES: SelectStatementState['whereClauses'] = [
 const ROW_ACCESS_CONDITION = '"person"."ownerId" = :ownerId';
 
 describe('buildSelectStatement', () => {
-  it('should project a column as null when its nullify condition holds', () => {
+  it('should project a column as null when its unreadable condition holds', () => {
     const sql = buildSelectStatement(
       buildState({
-        columnNullifyConditions: {
+        unreadableColumnConditions: {
           person: {
             id: ['"person"."ownerId" = :ownerId', '"person"."x" = :x'],
           },
@@ -75,10 +75,10 @@ describe('buildSelectStatement', () => {
     );
   });
 
-  it('should nullify a column selected under its own alias', () => {
+  it('should read a column selected under its own alias as null', () => {
     const sql = buildSelectStatement(
       buildState({
-        columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
+        unreadableColumnConditions: { person: { id: ['"person"."x" = :x'] } },
         extraSelectClauses: [{ expression: '"person"."id"', alias: 'imageId' }],
       }),
     );
@@ -88,26 +88,26 @@ describe('buildSelectStatement', () => {
     );
   });
 
-  it('should group a nullified column by its nullified value and leave out the rows it is unreadable on', () => {
+  it('should group an unreadable column by its null value and leave out the rows it is unreadable on', () => {
     const sql = buildSelectStatement(
       buildState({
-        columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
+        unreadableColumnConditions: { person: { id: ['"person"."x" = :x'] } },
         extraSelectClauses: [{ expression: '"person"."id"', alias: 'groupId' }],
         groupByExpressions: ['"person"."id"'],
       }),
     );
-    const nullifiedColumn =
+    const unreadableColumn =
       '(CASE WHEN ("person"."x" = :x) THEN NULL ELSE "person"."id" END)';
 
-    expect(sql).toContain(`${nullifiedColumn} AS "groupId"`);
-    expect(sql).toContain(`GROUP BY ${nullifiedColumn}`);
+    expect(sql).toContain(`${unreadableColumn} AS "groupId"`);
+    expect(sql).toContain(`GROUP BY ${unreadableColumn}`);
     expect(sql).toContain('NOT COALESCE(("person"."x" = :x), FALSE)');
   });
 
-  it('should make a condition on an unreadable column unknown on the rows it is unreadable on, order on the nullified value, and leave row access conditions and string literals alone', () => {
+  it('should make a condition on an unreadable column unknown on the rows it is unreadable on, order on the null value, and leave row access conditions and string literals alone', () => {
     const sql = buildSelectStatement(
       buildState({
-        columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
+        unreadableColumnConditions: { person: { id: ['"person"."x" = :x'] } },
         whereClauses: [
           {
             operator: 'and',
@@ -119,19 +119,19 @@ describe('buildSelectStatement', () => {
         includeDeleted: true,
       }),
     );
-    const nullifiedColumn =
+    const unreadableColumn =
       '(CASE WHEN ("person"."x" = :x) THEN NULL ELSE "person"."id" END)';
 
     expect(sql).toContain(
-      `WHERE ((CASE WHEN COALESCE(("person"."x" = :x), FALSE) THEN NULL ELSE ${nullifiedColumn} = :a AND "person"."name" = '"person"."id"' END)) AND ("person"."id" = :ownerId)`,
+      `WHERE ((CASE WHEN COALESCE(("person"."x" = :x), FALSE) THEN NULL ELSE ${unreadableColumn} = :a AND "person"."name" = '"person"."id"' END)) AND ("person"."id" = :ownerId)`,
     );
-    expect(sql).toContain(`ORDER BY ${nullifiedColumn} ASC`);
+    expect(sql).toContain(`ORDER BY ${unreadableColumn} ASC`);
   });
 
   it('should keep matching through another condition of an OR when one condition reads an unreadable column', () => {
     const sql = buildSelectStatement(
       buildState({
-        columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
+        unreadableColumnConditions: { person: { id: ['"person"."x" = :x'] } },
         whereClauses: [
           {
             operator: 'and',
@@ -155,7 +155,7 @@ describe('buildSelectStatement', () => {
   it('should keep a negated condition on an unreadable column unknown on the rows it is unreadable on', () => {
     const sql = buildSelectStatement(
       buildState({
-        columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
+        unreadableColumnConditions: { person: { id: ['"person"."x" = :x'] } },
         whereClauses: [
           {
             operator: 'and',
@@ -175,7 +175,7 @@ describe('buildSelectStatement', () => {
   it('should compare an unreadable column as null in a condition that orders pages', () => {
     const sql = buildSelectStatement(
       buildState({
-        columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
+        unreadableColumnConditions: { person: { id: ['"person"."x" = :x'] } },
         whereClauses: [
           {
             operator: 'and',
@@ -196,7 +196,7 @@ describe('buildSelectStatement', () => {
   it('should make a relation filter condition unknown on the related rows its column is unreadable on', () => {
     const sql = buildSelectStatement(
       buildState({
-        columnNullifyConditions: {
+        unreadableColumnConditions: {
           task: { title: ['"task"."x" = :x'] },
         },
         whereClauses: [{ operator: 'and', sql: '__exists_task__' }],
@@ -228,7 +228,7 @@ describe('buildSelectStatement', () => {
   it('should keep every row when only a sort reads an unreadable column', () => {
     const sql = buildSelectStatement(
       buildState({
-        columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
+        unreadableColumnConditions: { person: { id: ['"person"."x" = :x'] } },
         orderByClauses: [{ expression: '"person"."id"', direction: 'ASC' }],
         includeDeleted: true,
       }),

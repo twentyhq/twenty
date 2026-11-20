@@ -1,9 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { SQL_STRING_LITERALS } from 'src/engine/twenty-orm/sql/constants/sql-string-literals.constant';
+import { SQL_STRING_LITERAL_PATTERN } from 'src/engine/twenty-orm/sql/constants/sql-string-literal-pattern.constant';
 import { type ColumnMasks } from 'src/engine/twenty-orm/sql/utils/build-column-masks.util';
 
-export const maskNullifiedColumnReferences = ({
+export const maskUnreadableColumnReferences = ({
   expression,
   columnMasks,
 }: {
@@ -15,7 +15,7 @@ export const maskNullifiedColumnReferences = ({
   }
 
   return expression
-    .split(SQL_STRING_LITERALS)
+    .split(SQL_STRING_LITERAL_PATTERN)
     .map((segment, segmentIndex) =>
       segmentIndex % 2 === 1
         ? segment
