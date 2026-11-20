@@ -89,6 +89,7 @@ export class WorkflowEntity extends SyncableEntity {
   @Column({
     type: 'varchar',
     nullable: false,
+    default: WorkflowVisibility.WORKSPACE,
     select: false,
     insert: false,
     update: false,

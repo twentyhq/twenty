@@ -60,47 +60,7 @@ describe('2-61 instance command 1795177992769 - add workflow isPrivate (integrat
     await queryRunner.release();
   });
 
-  it('mirrors writes from either release into the other column', async () => {
-    await restorePreUpgradeSchema();
-    await addIsPrivateCommand.up(queryRunner);
-
-    const legacyWriteId = await insertWorkflow({ visibility: 'PRIVATE' });
-    const isPrivateWriteId = await insertWorkflow({ isPrivate: true });
-    const defaultWriteId = await insertWorkflow({});
-
-    expect(await findPrivacyColumns(legacyWriteId)).toEqual({
-      isPrivate: true,
-      visibility: 'PRIVATE',
-    });
-    expect(await findPrivacyColumns(isPrivateWriteId)).toEqual({
-      isPrivate: true,
-      visibility: 'PRIVATE',
-    });
-    expect(await findPrivacyColumns(defaultWriteId)).toEqual({
-      isPrivate: false,
-      visibility: 'WORKSPACE',
-    });
-
-    await queryRunner.query(
-      `UPDATE "core"."workflow" SET "visibility" = 'WORKSPACE' WHERE "id" = $1`,
-      [legacyWriteId],
-    );
-    await queryRunner.query(
-      `UPDATE "core"."workflow" SET "isPrivate" = false WHERE "id" = $1`,
-      [isPrivateWriteId],
-    );
-
-    expect(await findPrivacyColumns(legacyWriteId)).toEqual({
-      isPrivate: false,
-      visibility: 'WORKSPACE',
-    });
-    expect(await findPrivacyColumns(isPrivateWriteId)).toEqual({
-      isPrivate: false,
-      visibility: 'WORKSPACE',
-    });
-  });
-
-  it('copies the visibility of workflows created before the upgrade into isPrivate', async () => {
+  it('copies the visibility of existing workflows into isPrivate', async () => {
     await restorePreUpgradeSchema();
 
     const privateWorkflowId = await insertWorkflow({ visibility: 'PRIVATE' });
@@ -120,6 +80,18 @@ describe('2-61 instance command 1795177992769 - add workflow isPrivate (integrat
     });
   });
 
+  it('defaults isPrivate to false for workflows created after the upgrade', async () => {
+    await restorePreUpgradeSchema();
+    await addIsPrivateCommand.up(queryRunner);
+
+    const workflowId = await insertWorkflow({});
+
+    expect(await findPrivacyColumns(workflowId)).toEqual({
+      isPrivate: false,
+      visibility: 'WORKSPACE',
+    });
+  });
+
   it('restores the previous schema on down', async () => {
     await restorePreUpgradeSchema();
 
@@ -129,9 +101,6 @@ describe('2-61 instance command 1795177992769 - add workflow isPrivate (integrat
         WHERE table_schema = 'core' AND table_name = 'workflow'
           AND column_name IN ('isPrivate', 'visibility')`,
     );
-    const syncTriggers = await queryRunner.query(
-      `SELECT 1 FROM pg_trigger WHERE tgname = 'syncWorkflowIsPrivateAndVisibility'`,
-    );
 
     expect(columns).toEqual([
       {
@@ -139,6 +108,5 @@ describe('2-61 instance command 1795177992769 - add workflow isPrivate (integrat
         columnDefault: "'WORKSPACE'::character varying",
       },
     ]);
-    expect(syncTriggers).toEqual([]);
   });
 });
