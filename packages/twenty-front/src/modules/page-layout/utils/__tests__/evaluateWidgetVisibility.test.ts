@@ -1,7 +1,7 @@
 import { type AdditionalOperation, type RulesLogic } from 'json-logic-js';
-import { type ConditionalAvailabilityNode } from 'twenty-shared/types';
 
 import { evaluateWidgetVisibility } from '@/page-layout/utils/evaluateWidgetVisibility';
+import { type ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
 
 describe('evaluateWidgetVisibility', () => {
   it('should return true (visible) when no conditionalDisplay is provided', () => {
@@ -274,7 +274,7 @@ describe('evaluateWidgetVisibility', () => {
     const deviceIsMobile: ConditionalAvailabilityNode = {
       type: 'COMPARISON',
       operator: 'EQUAL',
-      left: { type: 'PATH', path: 'device' },
+      left: { type: 'VARIABLE', path: 'device' },
       right: { type: 'LITERAL', value: 'MOBILE' },
     };
 

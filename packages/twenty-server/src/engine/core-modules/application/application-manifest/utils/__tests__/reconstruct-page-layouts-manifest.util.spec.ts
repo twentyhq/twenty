@@ -950,7 +950,7 @@ describe('reconstructPageLayoutsManifest', () => {
             conditionalAvailability: {
               type: 'COMPARISON',
               operator: 'EQUAL',
-              left: { type: 'PATH', path: 'device' },
+              left: { type: 'VARIABLE', path: 'device' },
               right: { type: 'LITERAL', value: 'MOBILE' },
             },
           }),

@@ -4,11 +4,8 @@ import { findPageLayoutTabs } from 'test/integration/metadata/suites/page-layout
 import { findPageLayoutWidgets } from 'test/integration/metadata/suites/page-layout-widget/utils/find-page-layout-widgets.util';
 import { updateOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/update-one-page-layout-widget.util';
 import { findPageLayouts } from 'test/integration/metadata/suites/page-layout/utils/find-page-layouts.util';
-import {
-  type ConditionalAvailabilityNode,
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-} from 'twenty-shared/types';
+import { type ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
+import { PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-shared/types';
 
 const WIDGET_OVERRIDE_GQL_FIELDS = `
   id
@@ -263,7 +260,7 @@ describe('Page layout widget override behavior', () => {
     const overriddenConditionalAvailability: ConditionalAvailabilityNode = {
       type: 'COMPARISON',
       operator: 'EQUAL',
-      left: { type: 'PATH', path: 'device' },
+      left: { type: 'VARIABLE', path: 'device' },
       right: { type: 'LITERAL', value: 'MOBILE' },
     };
 
@@ -316,7 +313,7 @@ describe('Page layout widget override behavior', () => {
         conditionalAvailability: {
           type: 'COMPARISON',
           operator: 'EQUAL',
-          left: { type: 'PATH', path: 'devise' },
+          left: { type: 'VARIABLE', path: 'devise' },
           right: { type: 'LITERAL', value: 'MOBILE' },
         },
       },

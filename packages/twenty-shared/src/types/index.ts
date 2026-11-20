@@ -76,15 +76,6 @@ export {
   richTextValueSchema,
 } from './composite-types/rich-text.composite-type';
 export type { CompositeFieldSubFieldName } from './CompositeFieldSubFieldNameType';
-export type { ConditionalAvailabilityCheckError } from './ConditionalAvailabilityCheckError';
-export type { ConditionalAvailabilityCheckResult } from './ConditionalAvailabilityCheckResult';
-export type { ConditionalAvailabilityComparisonOperator } from './ConditionalAvailabilityComparisonOperator';
-export type { ConditionalAvailabilityContextByMetadataName } from './ConditionalAvailabilityContextByMetadataName';
-export type { ConditionalAvailabilityLogicalOperator } from './ConditionalAvailabilityLogicalOperator';
-export type { ConditionalAvailabilityMetadataName } from './ConditionalAvailabilityMetadataName';
-export type { ConditionalAvailabilityNode } from './ConditionalAvailabilityNode';
-export type { ConditionalAvailabilityParseResult } from './ConditionalAvailabilityParseResult';
-export type { ConditionalAvailabilityVariableDeclaration } from './ConditionalAvailabilityVariableDeclaration';
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export type { ConfirmationModalCaller } from './ConfirmationModalCaller';
 export type { ConnectedAccountEmailFields } from './ConnectedAccountEmailFields';

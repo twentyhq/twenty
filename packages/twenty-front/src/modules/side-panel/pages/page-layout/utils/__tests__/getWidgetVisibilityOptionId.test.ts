@@ -21,7 +21,7 @@ describe('getWidgetVisibilityOptionId', () => {
     expect(
       getWidgetVisibilityOptionId({
         conditionalAvailabilityExpression: null,
-        conditionalAvailability: { type: 'PATH', path: 'featureFlags.A' },
+        conditionalAvailability: { type: 'VARIABLE', path: 'featureFlags.A' },
       }),
     ).toBe(VISIBILITY_ANY_DEVICE);
   });

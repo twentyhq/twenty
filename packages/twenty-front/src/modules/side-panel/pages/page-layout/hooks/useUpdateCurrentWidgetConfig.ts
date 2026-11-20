@@ -5,7 +5,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { type ConditionalAvailabilityNode } from 'twenty-shared/types';
+import { type ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
 
 export const useUpdateCurrentWidgetConfig = (pageLayoutIdFromProps: string) => {
   const pageLayoutDraft = useAtomComponentStateCallbackState(

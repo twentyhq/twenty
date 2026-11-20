@@ -5,8 +5,8 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 import GraphQLJSON from 'graphql-type-json';
+import { ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
 import {
-  ConditionalAvailabilityNode,
   PageLayoutWidgetConditionalDisplay,
   PageLayoutWidgetPosition,
   WidgetType,

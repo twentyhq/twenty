@@ -1,7 +1,7 @@
 import { ObjectType } from '@nestjs/graphql';
 
+import { type ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
 import {
-  type ConditionalAvailabilityNode,
   type GridPosition,
   PageLayoutWidgetConditionalDisplay,
   PageLayoutWidgetPosition,

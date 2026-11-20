@@ -1,9 +1,8 @@
-import { type ConditionalAvailabilityNode } from 'twenty-shared/types';
-
 import { CONDITIONAL_AVAILABILITY_DEVICE_DESKTOP } from '@/side-panel/pages/page-layout/constants/ConditionalAvailabilityDeviceDesktop';
 import { CONDITIONAL_AVAILABILITY_DEVICE_MOBILE } from '@/side-panel/pages/page-layout/constants/ConditionalAvailabilityDeviceMobile';
 import { VISIBILITY_DESKTOP } from '@/side-panel/pages/page-layout/constants/VisibilityDesktop';
 import { VISIBILITY_MOBILE } from '@/side-panel/pages/page-layout/constants/VisibilityMobile';
+import { type ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
 
 export const optionIdToConditionalAvailability = (
   optionId: string,

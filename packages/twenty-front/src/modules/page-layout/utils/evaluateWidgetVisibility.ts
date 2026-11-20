@@ -2,12 +2,12 @@ import jsonLogic, {
   type AdditionalOperation,
   type RulesLogic,
 } from 'json-logic-js';
-import { type ConditionalAvailabilityNode } from 'twenty-shared/types';
 import {
+  type ConditionalAvailabilityNode,
   evaluateConditionalAvailabilityExpression,
   evaluateConditionalAvailabilityNode,
-  isDefined,
-} from 'twenty-shared/utils';
+} from 'twenty-shared/conditional-availability';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
 

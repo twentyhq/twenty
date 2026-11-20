@@ -1,8 +1,6 @@
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
-import {
-  type ConditionalAvailabilityNode,
-  type Nullable,
-} from 'twenty-shared/types';
+import { type ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
+import { type Nullable } from 'twenty-shared/types';
 import {
   type FieldsConfiguration,
   type PageLayoutWidget as PageLayoutWidgetGenerated,
