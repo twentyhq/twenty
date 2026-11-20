@@ -22,10 +22,12 @@ import { INDEX_VIEW_FIELDS } from 'src/constants/index-view-fields';
 import healthCheck from '../health-check';
 
 const mockIndexViews = ({
-  hiddenFieldUniversalIdentifier,
+  hiddenFieldUniversalIdentifiers = [],
+  absentFieldUniversalIdentifiers = [],
   viewKey = 'INDEX',
 }: {
-  hiddenFieldUniversalIdentifier?: string;
+  hiddenFieldUniversalIdentifiers?: string[];
+  absentFieldUniversalIdentifiers?: string[];
   viewKey?: string | null;
 } = {}) =>
   metadataQueryMock.mockResolvedValue({
@@ -45,10 +47,16 @@ const mockIndexViews = ({
       ({ objectUniversalIdentifier, fields }) => ({
         key: viewKey,
         objectMetadataId: `object-${objectUniversalIdentifier}`,
-        viewFields: fields.map(({ universalIdentifier }) => ({
-          fieldMetadataId: `field-${universalIdentifier}`,
-          isVisible: universalIdentifier !== hiddenFieldUniversalIdentifier,
-        })),
+        viewFields: fields
+          .filter(
+            ({ universalIdentifier }) =>
+              !absentFieldUniversalIdentifiers.includes(universalIdentifier),
+          )
+          .map(({ universalIdentifier }) => ({
+            fieldMetadataId: `field-${universalIdentifier}`,
+            isVisible:
+              !hiddenFieldUniversalIdentifiers.includes(universalIdentifier),
+          })),
       }),
     ),
   });
@@ -131,21 +139,43 @@ describe('health-check', () => {
     });
   });
 
-  it('should point to the settings tab when an All view hides a column', async () => {
+  it('should suggest a single hidden field', async () => {
     mockParticipants({
       messageParticipantIds: ['message-participant-1'],
       calendarEventParticipantIds: [],
     });
     mockIndexViews({
-      hiddenFieldUniversalIdentifier:
-        INDEX_VIEW_FIELDS[1].fields[0].universalIdentifier,
+      hiddenFieldUniversalIdentifiers: [
+        INDEX_VIEW_FIELDS[1].fields[1].universalIdentifier,
+      ],
     });
 
     await expect(healthCheck.config.handler()).resolves.toEqual({
-      status: 'WARNING',
-      title: 'Last contact columns are not shown',
-      description: expect.stringContaining('All Companies views'),
-      action: { label: 'Open settings' },
+      status: 'INFO',
+      title: 'Last contact suggests 1 field that is not in your views yet.',
+      action: { label: 'Set with Ada' },
+    });
+  });
+
+  it('should count hidden and absent fields across All views', async () => {
+    mockParticipants({
+      messageParticipantIds: ['message-participant-1'],
+      calendarEventParticipantIds: [],
+    });
+    mockIndexViews({
+      hiddenFieldUniversalIdentifiers: [
+        INDEX_VIEW_FIELDS[0].fields[0].universalIdentifier,
+      ],
+      absentFieldUniversalIdentifiers: [
+        INDEX_VIEW_FIELDS[2].fields[0].universalIdentifier,
+        INDEX_VIEW_FIELDS[2].fields[1].universalIdentifier,
+      ],
+    });
+
+    await expect(healthCheck.config.handler()).resolves.toEqual({
+      status: 'INFO',
+      title: 'Last contact suggests 3 fields that are not in your views yet.',
+      action: { label: 'Set with Ada' },
     });
   });
 
@@ -155,8 +185,9 @@ describe('health-check', () => {
       calendarEventParticipantIds: [],
     });
     mockIndexViews({
-      hiddenFieldUniversalIdentifier:
+      hiddenFieldUniversalIdentifiers: [
         INDEX_VIEW_FIELDS[0].fields[0].universalIdentifier,
+      ],
       viewKey: null,
     });
 
