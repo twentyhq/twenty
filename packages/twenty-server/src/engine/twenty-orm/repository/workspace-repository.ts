@@ -1506,7 +1506,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   async runMutation({
-    targetedRecordIds,
+    isTargetingOneRecord = false,
     ...args
   }: {
     selectQueryBuilder: WorkspaceSelectQueryBuilder;
@@ -1514,74 +1514,33 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     kind: MutationKind;
     columnsToReturn: string[];
     data?: Partial<ObjectRecord>;
-    targetedRecordIds?: string[];
+    isTargetingOneRecord?: boolean;
   }): Promise<ObjectRecord[]> {
-    if (!isDefined(targetedRecordIds)) {
+    if (!isTargetingOneRecord) {
       return this.runMutationOnFilter(args);
     }
 
-    const writeThenCheckTargetedRecords = async (
-      repository: WorkspaceRepository<TEntity>,
-    ) => {
-      const selectQueryBuilder =
-        repository === this
-          ? args.selectQueryBuilder
-          : args.selectQueryBuilder.clone(repository.options.executor);
-      const readQueryBuilder = selectQueryBuilder.clone();
+    const readQueryBuilder = args.selectQueryBuilder.clone();
+    const writtenRecords = await this.runMutationOnFilter(args);
 
-      const writtenRecords = await repository.runMutationOnFilter({
-        ...args,
-        selectQueryBuilder,
-      });
-
-      await repository.assertUnwrittenRecordsAreUnreadableOrThrow({
-        readQueryBuilder,
-        targetedRecordIds,
-        writtenRecords,
-      });
-
+    if (writtenRecords.length > 0) {
       return writtenRecords;
-    };
-
-    // Rows written before an unwritten target is found must roll back
-    return targetedRecordIds.length === 1
-      ? writeThenCheckTargetedRecords(this)
-      : this.runAtomically(writeThenCheckTargetedRecords);
-  }
-
-  // Write rules drop rows silently, which hides denials on records the caller named and can see
-  private async assertUnwrittenRecordsAreUnreadableOrThrow({
-    readQueryBuilder,
-    targetedRecordIds,
-    writtenRecords,
-  }: {
-    readQueryBuilder: WorkspaceSelectQueryBuilder;
-    targetedRecordIds: string[];
-    writtenRecords: ObjectRecord[];
-  }): Promise<void> {
-    const writtenRecordIds = new Set(writtenRecords.map(({ id }) => id));
-    const unwrittenRecordIds = targetedRecordIds.filter(
-      (recordId) => !writtenRecordIds.has(recordId),
-    );
-
-    if (unwrittenRecordIds.length === 0) {
-      return;
     }
 
+    // Write rules drop rows silently, which hides denials on a record the caller can see
     const alias = readQueryBuilder.alias;
-    const readableUnwrittenRecord = await readQueryBuilder
+    const readableRecord = await readQueryBuilder
       .select(`${alias}.id`, 'id')
-      .andWhere(`"${alias}"."id" IN (:...unwrittenRecordIds)`, {
-        unwrittenRecordIds,
-      })
       .getRawOne();
 
-    if (isDefined(readableUnwrittenRecord)) {
+    if (isDefined(readableRecord)) {
       throw new PermissionsException(
         PermissionsExceptionMessage.RECORD_NOT_EDITABLE,
         PermissionsExceptionCode.RECORD_NOT_EDITABLE,
       );
     }
+
+    return writtenRecords;
   }
 
   private async runMutationOnFilter(args: {

@@ -47,6 +47,7 @@ export abstract class CommonFilteredMutationOneQueryRunnerService extends Common
           filter: { id: { eq: args.id } },
         },
         queryRunnerContext,
+        { isTargetingOneRecord: true },
       );
 
     if (!isDefined(result) || result.length === 0) {

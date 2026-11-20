@@ -25,7 +25,6 @@ import { buildApplicationApiRateLimitedLogEntry } from 'src/engine/api/common/co
 import { buildApplicationApiRateLimitedLogLine } from 'src/engine/api/common/common-query-runners/utils/build-application-api-rate-limited-log-line.util';
 import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
 import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
-import { getRecordIdsTargetedByFilter } from 'src/engine/api/common/common-query-runners/utils/get-record-ids-targeted-by-filter.util';
 import { isRecordFilterEmpty } from 'src/engine/api/common/common-query-runners/utils/is-record-filter-empty.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
@@ -432,12 +431,14 @@ export abstract class CommonBaseQueryRunnerService<
     selection,
     kind,
     data,
+    isTargetingOneRecord,
   }: {
     queryRunnerContext: CommonExtendedQueryRunnerContext;
     filter: Partial<ObjectRecordFilter>;
     selection: CommonSelection;
     kind: MutationKind;
     data?: Partial<ObjectRecord>;
+    isTargetingOneRecord?: boolean;
   }): Promise<CommonQueryRunResult<ObjectRecord[]>> {
     const {
       flatObjectMetadata,
@@ -490,7 +491,7 @@ export abstract class CommonBaseQueryRunnerService<
       kind,
       columnsToReturn,
       data: resolvedData,
-      targetedRecordIds: getRecordIdsTargetedByFilter(filter),
+      isTargetingOneRecord,
     });
 
     const relationAggregatedValues = await this.processNestedRelations({

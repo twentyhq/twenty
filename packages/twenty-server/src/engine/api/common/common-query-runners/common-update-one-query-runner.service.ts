@@ -44,6 +44,7 @@ export class CommonUpdateOneQueryRunnerService extends CommonRecordQueryRunnerSe
           filter: { id: { eq: args.id } },
         },
         queryRunnerContext,
+        { isTargetingOneRecord: true },
       );
 
     if (!result || result.length === 0) {

@@ -35,12 +35,14 @@ export abstract class CommonFilteredMutationManyQueryRunnerService extends Commo
   async run(
     args: CommonExtendedInput<FilteredMutationManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
+    { isTargetingOneRecord = false }: { isTargetingOneRecord?: boolean } = {},
   ): Promise<CommonQueryRunResult<ObjectRecord[]>> {
     return this.runFilteredMutation({
       queryRunnerContext,
       filter: args.filter,
       selection: args.selectedFieldsResult,
       kind: this.mutationKind,
+      isTargetingOneRecord,
     });
   }
 
