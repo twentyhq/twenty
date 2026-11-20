@@ -197,11 +197,13 @@ export const SettingsRoleRuleForm = ({
           rowLevelPermissionRuleId={rule.id}
           hasOrganizationPlan={isRLSBillingEntitlementEnabled}
         />
-        <SettingsRoleRuleAllowsSection
-          roleId={roleId}
-          objectMetadataItem={objectMetadataItem}
-          rule={rule}
-        />
+        {isRLSBillingEntitlementEnabled && (
+          <SettingsRoleRuleAllowsSection
+            roleId={roleId}
+            objectMetadataItem={objectMetadataItem}
+            rule={rule}
+          />
+        )}
       </SettingsPageContainer>
     </SettingsPageLayout>
   );
