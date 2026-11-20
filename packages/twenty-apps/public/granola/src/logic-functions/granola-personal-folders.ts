@@ -8,7 +8,7 @@ import { z } from 'zod';
 
 import { GRANOLA_PERSONAL_FOLDERS_ROUTE_PATH } from 'src/constants/granola-personal-connection.constant';
 import { GRANOLA_PERSONAL_FOLDERS_ROUTE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { loadGranolaPersonalFolderSettings } from 'src/logic-functions/utils/load-granola-personal-folder-settings.util';
+import { loadGranolaPersonalFolders } from 'src/logic-functions/utils/load-granola-personal-folders.util';
 
 export const granolaPersonalFoldersHandler = async (
   payload: Pick<RoutePayload<unknown>, 'queryStringParameters'>,
@@ -26,25 +26,16 @@ export const granolaPersonalFoldersHandler = async (
     return new Response({ error: 'INVALID_CONNECTION_ID' }, { status: 400 });
   }
 
-  const settings = await loadGranolaPersonalFolderSettings({
+  const personalFolders = await loadGranolaPersonalFolders({
     connectionId: connectionId.data,
     userWorkspaceId,
   });
 
-  if (!isDefined(settings)) {
+  if (!isDefined(personalFolders)) {
     return new Response({ error: 'CONNECTION_UNAVAILABLE' }, { status: 404 });
   }
 
-  const { folders, selection } = settings;
-  const availableFolders = new Set(folders.map(({ id }) => id));
-
-  return {
-    success: true,
-    folders,
-    folderIds: selection
-      .map(({ folderId }) => folderId)
-      .filter((folderId) => availableFolders.has(folderId)),
-  };
+  return { success: true, ...personalFolders };
 };
 
 export default defineLogicFunction({

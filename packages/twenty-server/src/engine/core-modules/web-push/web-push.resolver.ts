@@ -7,7 +7,10 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UpdateFocusedTabInput } from 'src/engine/core-modules/web-push/dtos/update-focused-tab.input';
+import { UpdateInboxNotificationSettingsInput } from 'src/engine/core-modules/web-push/dtos/update-inbox-notification-settings.input';
 import { UpsertWebPushSubscriptionInput } from 'src/engine/core-modules/web-push/dtos/upsert-web-push-subscription.input';
 import { WebPushGraphqlApiExceptionFilter } from 'src/engine/core-modules/web-push/filters/web-push-graphql-api-exception.filter';
 import { WebPushService } from 'src/engine/core-modules/web-push/services/web-push.service';
@@ -41,6 +44,7 @@ export class WebPushResolver {
   constructor(
     private readonly webPushService: WebPushService,
     private readonly userSessionCookieService: UserSessionCookieService,
+    private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
 
   @Mutation(() => Boolean)
@@ -77,5 +81,23 @@ export class WebPushResolver {
     });
 
     return true;
+  }
+
+  @Mutation(() => UserWorkspaceEntity)
+  async updateInboxNotificationSettings(
+    @Args('input')
+    {
+      inboxNotificationLevel,
+      isInboxNotificationPreviewEnabled,
+    }: UpdateInboxNotificationSettingsInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<UserWorkspaceEntity> {
+    return this.userWorkspaceService.updateInboxNotificationSettings({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      inboxNotificationLevel,
+      isInboxNotificationPreviewEnabled,
+    });
   }
 }

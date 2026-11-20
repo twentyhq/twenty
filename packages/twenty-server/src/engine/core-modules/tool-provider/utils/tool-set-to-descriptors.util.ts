@@ -12,9 +12,12 @@ export type ToolSetToDescriptorsOptions = {
   icon?: string;
 };
 
-// Tool factories may mark themselves destructive; ToolSet types do not carry the flag
+// Tool factories may mark themselves destructive or read-only; ToolSet types do not carry the flags
 const isDestructiveTool = (tool: object): boolean =>
   'isDestructive' in tool && tool.isDestructive === true;
+
+const isReadOnlyTool = (tool: object): boolean =>
+  'isReadOnly' in tool && tool.isReadOnly === true;
 
 export const humanizeToolName = (name: string): string =>
   name
@@ -40,6 +43,7 @@ export const toolSetToDescriptors = (
       executionRef: { kind: 'static' as const, toolId: name },
       ...(options?.icon && { icon: options.icon }),
       ...(isDestructiveTool(tool) && { isDestructive: true }),
+      ...(isReadOnlyTool(tool) && { isReadOnly: true }),
     };
 
     if (!includeSchemas) {

@@ -19,6 +19,7 @@ const getViewFiltersInputSchema = z.object({
 
 @DefineTool({
   name: 'get_view_filters',
+  isReadOnly: true,
   category: ToolCategory.VIEW,
   accessPolicy: VIEW_FILTER_ACCESS_POLICY,
   description:

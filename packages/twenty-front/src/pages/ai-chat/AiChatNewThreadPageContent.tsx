@@ -2,9 +2,9 @@ import { InboxNewThreadListToggle } from '@/inbox/components/InboxNewThreadListT
 import { styled } from '@linaria/react';
 import { type ReactNode, useId } from 'react';
 
-import { AiChatInstance } from '@/ai-chat/components/AiChatInstance';
+import { AiChatInstance } from '@/ai-chat/instance/components/AiChatInstance';
 import { AiChatPageHeader } from '@/ai-chat/components/AiChatPageHeader';
-import { AiChatTab } from '@/ai-chat/components/AiChatTab';
+import { AiChatTab } from '@/ai-chat/instance/components/AiChatTab';
 import { AI_CHAT_SURFACE } from '@/ai-chat/constants/AiChatSurface';
 import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
 import { useSelectAiChatThreadFromNewChat } from '@/ai-chat/hooks/useSelectAiChatThreadFromNewChat';

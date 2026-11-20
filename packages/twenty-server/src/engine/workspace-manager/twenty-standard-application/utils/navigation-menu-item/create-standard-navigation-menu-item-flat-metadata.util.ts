@@ -92,6 +92,8 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
       STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS[navigationMenuItemName] ??
       null,
     position,
+    isActive: true,
+    overrides: null,
     createdAt: now,
     updatedAt: now,
   };
