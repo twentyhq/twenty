@@ -7,9 +7,9 @@ import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState'
 import { NavigatePreservingSearchAndHash } from '@/app/routing/components/NavigatePreservingSearchAndHash';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLegacyAiChatInboxRedirectPath } from '@/legacy-ai-chat/hooks/useLegacyAiChatInboxRedirectPath';
-import { AiChatNewThreadPageContent } from '~/pages/ai-chat/AiChatNewThreadPageContent';
-import { AiChatPageEffects } from '~/pages/ai-chat/AiChatPageEffects';
-import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
+import { AiChatNewThreadPageContent } from '@/inbox/components/AiChatNewThreadPageContent';
+import { AiChatPageEffects } from '@/ai-chat/instance/components/AiChatPageEffects';
+import { AiChatThreadPageContent } from '@/inbox/components/AiChatThreadPageContent';
 
 export const LegacyAiChatPage = () => {
   const { threadId } = useParams();

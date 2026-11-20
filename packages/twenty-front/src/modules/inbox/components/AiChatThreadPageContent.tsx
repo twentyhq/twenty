@@ -5,7 +5,7 @@ import { InboxDirectMessageTitle } from '@/inbox/components/InboxDirectMessageTi
 import { InboxThreadDetailsDropdown } from '@/inbox/components/InboxThreadDetailsDropdown';
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { RecordShowPageContent } from '~/pages/object-record/RecordShowPageContent';
+import { RecordShowPageContent } from '@/object-record/record-show/components/RecordShowPageContent';
 
 type AiChatThreadPageContentProps = {
   threadId: string;

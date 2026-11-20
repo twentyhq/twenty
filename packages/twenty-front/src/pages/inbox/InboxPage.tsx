@@ -56,9 +56,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateToInboxThread } from '@/inbox/hooks/useNavigateToInboxThread';
-import { AiChatNewThreadPageContent } from '~/pages/ai-chat/AiChatNewThreadPageContent';
-import { AiChatPageEffects } from '~/pages/ai-chat/AiChatPageEffects';
-import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
+import { AiChatNewThreadPageContent } from '@/inbox/components/AiChatNewThreadPageContent';
+import { AiChatPageEffects } from '@/ai-chat/instance/components/AiChatPageEffects';
+import { AiChatThreadPageContent } from '@/inbox/components/AiChatThreadPageContent';
 
 const StyledInbox = styled.div`
   --inbox-list-pane-width: ${INBOX_LIST_PANE_WIDTH}px;

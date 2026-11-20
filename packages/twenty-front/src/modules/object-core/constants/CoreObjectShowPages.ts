@@ -21,4 +21,14 @@ export const CORE_OBJECT_SHOW_PAGES: ReadonlyMap<
       ),
     ),
   ],
+  [
+    StandardObjectNameSingular.AgentChatThread,
+    lazy(() =>
+      import('~/pages/object-core/AgentChatThreadCoreObjectShowPage').then(
+        (module) => ({
+          default: module.AgentChatThreadCoreObjectShowPage,
+        }),
+      ),
+    ),
+  ],
 ]);

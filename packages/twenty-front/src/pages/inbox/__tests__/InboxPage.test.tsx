@@ -154,7 +154,7 @@ jest.mock('@/ai-chat/composer/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({ switchToNewChat: jest.fn() }),
 }));
 
-jest.mock('~/pages/ai-chat/AiChatPageEffects', () => ({
+jest.mock('@/ai-chat/instance/components/AiChatPageEffects', () => ({
   AiChatPageEffects: () => null,
 }));
 
@@ -172,7 +172,7 @@ jest.mock('@/ai-chat/components/AiChatPageHeader', () => ({
 }));
 
 // Sending stands in for the composer with what a send applies right away
-jest.mock('~/pages/ai-chat/AiChatThreadPageContent', () => ({
+jest.mock('@/inbox/components/AiChatThreadPageContent', () => ({
   AiChatThreadPageContent: ({
     threadId,
     headerTitlePrefix,
