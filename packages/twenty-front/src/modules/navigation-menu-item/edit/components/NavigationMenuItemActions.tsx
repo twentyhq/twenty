@@ -158,34 +158,36 @@ export const NavigationMenuItemActions = ({
       onClick: () => run(() => remove(item.id)),
     },
   ];
-  const folders: NavigationMenuItemOption[] = isMovingAcrossTabs
-    ? getNavigationMenuItemMoveDestinations({
-        items: workspaceNavigationMenuItems,
-        tabIds: tabs.map((tab) => tab.id),
-      })
-        .filter((destination) => !isFolder || destination.kind !== 'folder')
-        .map(toMoveOption)
-    : [
-        {
-          id: 'root',
-          label: t`Root level`,
-          Icon: IconHierarchy2,
-          isDisabled: (item.parentId ?? null) === containerId,
-          onClick: () => run(() => moveToFolder(item.id, containerId)),
-        },
-        ...items
-          .filter(
-            (folder) =>
-              folder.type === NavigationMenuItemType.FOLDER && !isFolder,
-          )
-          .map((folder) => ({
-            id: folder.id,
-            label: folder.name ?? t`Folder`,
-            icon: getFolderIcon(folder),
-            isDisabled: folder.id === item.parentId,
-            onClick: () => run(() => moveToFolder(item.id, folder.id)),
-          })),
-      ];
+  const getCrossTabMoveOptions = (): NavigationMenuItemOption[] =>
+    getNavigationMenuItemMoveDestinations({
+      items: workspaceNavigationMenuItems,
+      tabIds: tabs.map((tab) => tab.id),
+    })
+      .filter((destination) => !isFolder || destination.kind !== 'folder')
+      .map(toMoveOption);
+  const getContainerMoveOptions = (): NavigationMenuItemOption[] => [
+    {
+      id: 'root',
+      label: t`Root level`,
+      Icon: IconHierarchy2,
+      isDisabled: (item.parentId ?? null) === containerId,
+      onClick: () => run(() => moveToFolder(item.id, containerId)),
+    },
+    ...items
+      .filter(
+        (folder) => folder.type === NavigationMenuItemType.FOLDER && !isFolder,
+      )
+      .map((folder) => ({
+        id: folder.id,
+        label: folder.name ?? t`Folder`,
+        icon: getFolderIcon(folder),
+        isDisabled: folder.id === item.parentId,
+        onClick: () => run(() => moveToFolder(item.id, folder.id)),
+      })),
+  ];
+  const folders = isMovingAcrossTabs
+    ? getCrossTabMoveOptions()
+    : getContainerMoveOptions();
   return (
     <>
       <Dropdown.Page id="root">
