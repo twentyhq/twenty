@@ -42,7 +42,6 @@ export type GenericFieldContextType = {
   triggerEvent?: TriggerEventType;
   isForbidden?: boolean;
   anchorId?: string;
-  // Set when the record holds the value under another key than the field name
   fieldValueKey?: string;
 };
 

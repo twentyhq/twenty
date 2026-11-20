@@ -23,7 +23,7 @@ export const getScopedRelationRecordGqlFields = (
           orderBy,
           first,
           // Only a limit can leave matching records out of the loaded ones
-          withTotalCount: isDefined(first),
+          shouldIncludeTotalCount: isDefined(first),
           recordGqlFields: buildIdentifierGqlFields(relationObjectMetadataItem),
         },
       ],

@@ -19,7 +19,6 @@ export const getRecordFieldColumnHeader = ({
     | undefined;
   isScopedRelationColumn: boolean;
 }): ColumnHeaderFieldMetadataItem => {
-  // Tells a scoped column apart from the plain column of the same relation
   if (isScopedRelationColumn) {
     return {
       ...fieldMetadataItem,

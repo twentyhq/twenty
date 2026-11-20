@@ -167,7 +167,8 @@ export const mapObjectMetadataToGraphQLQuery = ({
             fieldMetadata: relationFieldMetadataItem,
             relationRecordGqlFields: relationWithArguments.recordGqlFields,
             relationWithArgumentsResponseKey: responseKey,
-            withRelationTotalCount: relationWithArguments.withTotalCount,
+            shouldIncludeRelationTotalCount:
+              relationWithArguments.shouldIncludeTotalCount,
             computeReferences,
             objectPermissionsByObjectMetadataId,
           }),

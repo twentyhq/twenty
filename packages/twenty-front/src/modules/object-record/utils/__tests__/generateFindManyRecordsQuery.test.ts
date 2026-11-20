@@ -29,7 +29,7 @@ const buildPermissions = (canReadPeople: boolean) => ({
 describe('generateFindManyRecordsQuery with relations with arguments', () => {
   const generateQuery = ({
     withRelation = true,
-    withTotalCount = false,
+    shouldIncludeTotalCount = false,
     canReadPeople = true,
   } = {}) =>
     print(
@@ -39,7 +39,7 @@ describe('generateFindManyRecordsQuery with relations with arguments', () => {
         recordGqlFields: {
           id: true,
           ...(withRelation && {
-            [responseKey]: { ...peopleInParis, withTotalCount },
+            [responseKey]: { ...peopleInParis, shouldIncludeTotalCount },
           }),
         },
         objectPermissionsByObjectMetadataId: buildPermissions(canReadPeople),
@@ -58,7 +58,7 @@ describe('generateFindManyRecordsQuery with relations with arguments', () => {
 
   it('selects the total count of the relation only when asked', () => {
     expect(generateQuery()).not.toMatch(/totalCount\s+edges/);
-    expect(generateQuery({ withTotalCount: true })).toMatch(
+    expect(generateQuery({ shouldIncludeTotalCount: true })).toMatch(
       /totalCount\s+edges/,
     );
   });
