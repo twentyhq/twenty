@@ -14,7 +14,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconHeart,
     color: 'red',
     isAi: false,
-    requiresAiChatInbox: false,
+    isAiChatInboxRequired: false,
   },
   {
     key: 'aiChatInbox',
@@ -22,7 +22,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconInbox,
     color: 'blue',
     isAi: true,
-    requiresAiChatInbox: true,
+    isAiChatInboxRequired: true,
   },
   {
     key: 'aiChatFavorites',
@@ -30,7 +30,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconMessage,
     color: 'pink',
     isAi: true,
-    requiresAiChatInbox: false,
+    isAiChatInboxRequired: false,
   },
   {
     key: 'aiChatChannels',
@@ -38,7 +38,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconHash,
     color: 'green',
     isAi: true,
-    requiresAiChatInbox: true,
+    isAiChatInboxRequired: true,
   },
   {
     key: 'aiChatRecents',
@@ -46,6 +46,6 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconHistory,
     color: 'orange',
     isAi: true,
-    requiresAiChatInbox: false,
+    isAiChatInboxRequired: false,
   },
 ] as const;
