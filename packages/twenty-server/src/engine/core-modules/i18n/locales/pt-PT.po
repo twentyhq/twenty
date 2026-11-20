@@ -18270,6 +18270,11 @@ msgstr "Você não tem permissão para acessar este recurso. Por favor, entre em
 msgid "You do not have permission to access this workflow."
 msgstr "Você não tem permissão para acessar este fluxo de trabalho."
 
+#. js-lingui-id: /qkY9j
+#: src/engine/permissions/permissions.exception.ts
+msgid "You do not have permission to change this record."
+msgstr ""
+
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."

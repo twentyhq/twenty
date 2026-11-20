@@ -18270,6 +18270,11 @@ msgstr "Nu aveți permisiunea de a accesa această funcție. Vă rugăm să cont
 msgid "You do not have permission to access this workflow."
 msgstr "Nu aveți permisiunea de a accesa acest workflow."
 
+#. js-lingui-id: /qkY9j
+#: src/engine/permissions/permissions.exception.ts
+msgid "You do not have permission to change this record."
+msgstr ""
+
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."

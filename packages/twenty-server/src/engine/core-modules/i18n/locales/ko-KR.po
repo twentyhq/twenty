@@ -18270,6 +18270,11 @@ msgstr "이 기능에 접근할 권한이 없습니다. 작업 공간 관리자�
 msgid "You do not have permission to access this workflow."
 msgstr "이 워크플로우에 액세스할 권한이 없습니다."
 
+#. js-lingui-id: /qkY9j
+#: src/engine/permissions/permissions.exception.ts
+msgid "You do not have permission to change this record."
+msgstr ""
+
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
