@@ -40,7 +40,10 @@ export const useStageAiChatPreprompt = () => {
     if (isIdleNewChat) {
       store.set(
         aiChatNewThreadRecipientsFamilyState.atomFamily(threadId),
-        AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
+        ({ channelId }) => ({
+          ...AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
+          channelId,
+        }),
       );
     }
 
