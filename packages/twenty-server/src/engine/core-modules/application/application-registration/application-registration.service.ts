@@ -88,7 +88,6 @@ import { type CreditUsedItemDTO } from 'src/engine/core-modules/usage/dtos/credi
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
-import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
 const BCRYPT_SALT_ROUNDS = 10;
 
@@ -893,6 +892,14 @@ export class ApplicationRegistrationService {
         params.universalIdentifier,
       );
 
+    if (isVerifiedOAuthClientUniversalIdentifier(params.universalIdentifier)) {
+      this.logger.warn(
+        `Skipping catalog entry from package ${params.sourcePackage}: universal identifier ${params.universalIdentifier} is reserved for a verified OAuth client`,
+      );
+
+      return null;
+    }
+
     if (
       isDefined(existing) &&
       existing.sourceType !== ApplicationRegistrationSourceType.NPM
@@ -1065,10 +1072,17 @@ export class ApplicationRegistrationService {
     return registration;
   }
 
-  async findOrCreateCliRegistration(): Promise<ApplicationRegistrationEntity> {
+  async findOrCreateBuiltInRegistrationOrThrow({
+    universalIdentifier,
+    name,
+    oAuthScopes,
+  }: Pick<
+    ApplicationRegistrationEntity,
+    'universalIdentifier' | 'name' | 'oAuthScopes'
+  >): Promise<ApplicationRegistrationEntity> {
     const existing =
       await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
-        TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
+        universalIdentifier,
       );
 
     if (isDefined(existing)) {
@@ -1080,13 +1094,12 @@ export class ApplicationRegistrationService {
       .insert()
       .into(ApplicationRegistrationEntity)
       .values({
-        universalIdentifier:
-          TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
-        name: TWENTY_CLI_APPLICATION_REGISTRATION.name,
+        universalIdentifier,
+        name,
         oAuthClientId: v4(),
         oAuthClientSecretHash: null,
         oAuthRedirectUris: [],
-        oAuthScopes: TWENTY_CLI_APPLICATION_REGISTRATION.oAuthScopes,
+        oAuthScopes,
         ownerWorkspaceId: null,
         sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
         createdByUserId: null,
@@ -1101,12 +1114,12 @@ export class ApplicationRegistrationService {
 
     const registration =
       await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
-        TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
+        universalIdentifier,
       );
 
     if (!isDefined(registration)) {
       throw new ApplicationException(
-        'Failed to create the Twenty CLI application registration',
+        `Failed to create the built-in application registration ${universalIdentifier}`,
         ApplicationExceptionCode.APPLICATION_NOT_FOUND,
       );
     }
