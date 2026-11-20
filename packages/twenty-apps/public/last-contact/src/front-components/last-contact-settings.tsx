@@ -9,6 +9,7 @@ import {
 } from 'twenty-sdk/front-component';
 import { MainButton, Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme';
+import styled from '@emotion/styled';
 import 'twenty-ui/style.css';
 
 import { ALL_VIEW_FIELDS } from 'src/constants/all-view-fields';
@@ -28,6 +29,14 @@ const ADD_COLUMNS_PROMPT = [
         .join(', ')}`,
   ),
 ].join('\n');
+
+const StyledContainer = styled.div`
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: ${() => themeCssVariables.spacing[8]};
+  width: 100%;
+`;
 
 const handleAddColumns = () =>
   openSidePanelPage({
@@ -52,7 +61,6 @@ const getColumnsSuggestionState = async (): Promise<ColumnsSuggestionState> => {
 
   return appKeyValue?.value?.isDismissed === true ? 'dismissed' : 'suggested';
 };
-
 
 const LastContactSettings = () => {
   const [isStarting, setIsStarting] = useState(false);
@@ -106,7 +114,9 @@ const LastContactSettings = () => {
         },
       });
       enqueueSnackbar({
-        message: t('Backfill requested. Records will update in the background.'),
+        message: t(
+          'Backfill requested. Records will update in the background.',
+        ),
         variant: 'success',
       });
     } catch {
@@ -120,7 +130,7 @@ const LastContactSettings = () => {
   };
 
   return (
-    <>
+    <StyledContainer>
       {columnsSuggestionState !== 'none' && (
         <Section.Root>
           <Section.Header
@@ -129,7 +139,12 @@ const LastContactSettings = () => {
               'Ask AI to add the last contact columns to the All People, All Companies, and All Opportunities views.',
             )}
           />
-          <div style={{ display: 'flex', gap: themeCssVariables.spacing[2] }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: themeCssVariables.spacing[2],
+            }}
+          >
             <MainButton onClick={handleAddColumns}>
               {t('Add columns')}
             </MainButton>
@@ -156,7 +171,7 @@ const LastContactSettings = () => {
           {t('Trigger backfill')}
         </MainButton>
       </Section.Root>
-    </>
+    </StyledContainer>
   );
 };
 
