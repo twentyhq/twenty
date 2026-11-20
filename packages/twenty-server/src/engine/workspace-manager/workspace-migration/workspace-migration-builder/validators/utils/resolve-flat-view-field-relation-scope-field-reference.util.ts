@@ -47,7 +47,7 @@ const getRelationTargetError = (
   failureReason: RelationTargetFlatFieldMetadataFailureReason,
 ): FlatEntityValidationError => {
   switch (failureReason) {
-    case 'NOT_A_MANY_TO_ONE_RELATION':
+    case 'UNEXPECTED_RELATION_TYPE':
       return getInvalidFlatViewFieldRelationScopeError({
         message: t`A relation scope related record field can only be used on a many-to-one relation field`,
         userFriendlyMessage: msg`Only a field linking to one record can use a field of that record`,
