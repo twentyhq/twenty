@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client/react';
+import { useLazyQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
@@ -16,23 +16,28 @@ export const WorkspaceInvitationCopyLinkButton = ({
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
 
-  const { data } = useQuery(GetWorkspaceInvitationLinkDocument, {
-    variables: { appTokenId },
-  });
+  const [getWorkspaceInvitationLink] = useLazyQuery(
+    GetWorkspaceInvitationLinkDocument,
+  );
 
-  const invitationLink = data?.getWorkspaceInvitationLink;
+  const handleClick = () => {
+    const invitationLink = getWorkspaceInvitationLink({
+      variables: { appTokenId },
+    }).then(({ data }) => {
+      if (!isDefined(data)) {
+        throw new Error('Invitation link not found');
+      }
+
+      return data.getWorkspaceInvitationLink;
+    });
+
+    copyToClipboard(invitationLink, t`Link copied to clipboard`);
+  };
 
   return (
     <IconButton
       aria-label={t`Copy invitation link`}
-      onClick={() => {
-        if (!isDefined(invitationLink)) {
-          return;
-        }
-
-        copyToClipboard(invitationLink, t`Link copied to clipboard`);
-      }}
-      disabled={!isDefined(invitationLink)}
+      onClick={handleClick}
       variant="ghost"
       size="md"
     >
