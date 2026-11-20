@@ -27,7 +27,10 @@ export const buildInheritedAccessGroupIdsExpression = ({
   workspaceId: string;
   targetTableAlias: string;
   pathIndex: number;
-  resolvedPath: ResolvedRelatedRecordPath;
+  resolvedPath: Pick<
+    ResolvedRelatedRecordPath,
+    'hops' | 'isInherent' | 'sourceFlatObjectMetadata'
+  >;
   accessGroups: AccessGroup[];
   metadataMaps: Pick<
     RecordAccessGroupComputationMetadataMaps,

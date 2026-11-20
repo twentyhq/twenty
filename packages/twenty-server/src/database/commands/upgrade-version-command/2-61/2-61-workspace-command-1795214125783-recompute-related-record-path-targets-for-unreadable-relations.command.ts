@@ -1,13 +1,15 @@
 import { Command } from 'nest-commander';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { RecordAccessGroupPropagationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-propagation.service';
+import { findRoleIdsUnableToReadField } from 'src/engine/permissions/internal/access-group/utils/find-role-ids-unable-to-read-field.util';
 import { isAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/is-access-groups-enabled.util';
 import { isRelatedRecordPathsEnabled } from 'src/engine/permissions/internal/related-record-path/utils/is-related-record-paths-enabled.util';
+import { resolveRelatedRecordPaths } from 'src/engine/permissions/internal/related-record-path/utils/resolve-related-record-paths.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @RegisteredWorkspaceCommand('2.61.0', 1795214125783)
@@ -29,12 +31,19 @@ export class RecomputeRelatedRecordPathTargetsForUnreadableRelationsCommand exte
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const { featureFlagsMap, rolesPermissions, flatRelatedRecordPathMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'featureFlagsMap',
-        'rolesPermissions',
-        'flatRelatedRecordPathMaps',
-      ]);
+    const {
+      featureFlagsMap,
+      rolesPermissions,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatRelatedRecordPathMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'featureFlagsMap',
+      'rolesPermissions',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+      'flatRelatedRecordPathMaps',
+    ]);
 
     if (
       !isAccessGroupsEnabled({ featureFlagsMap }) ||
@@ -43,18 +52,17 @@ export class RecomputeRelatedRecordPathTargetsForUnreadableRelationsCommand exte
       return;
     }
 
-    const pathFirstFieldMetadataIds = new Set(
-      Object.values(flatRelatedRecordPathMaps.byUniversalIdentifier)
-        .filter(isDefined)
-        .map(({ firstFieldMetadataId }) => firstFieldMetadataId),
-    );
-    const isPathRelationUnreadableByAnyRole = Object.values(
-      rolesPermissions,
-    ).some(({ objects }) =>
-      Object.values(objects).some((objectRecordsPermissions) =>
-        (objectRecordsPermissions?.unreadableFields ?? []).some(
-          (fieldMetadataId) => pathFirstFieldMetadataIds.has(fieldMetadataId),
-        ),
+    const isPathRelationUnreadableByAnyRole = resolveRelatedRecordPaths({
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatRelatedRecordPathMaps,
+    }).some(({ hops, sourceFlatObjectMetadata }) =>
+      isNonEmptyArray(
+        findRoleIdsUnableToReadField({
+          rolesPermissions,
+          objectMetadataId: sourceFlatObjectMetadata.id,
+          fieldMetadataId: hops[0].relationFieldMetadataId,
+        }),
       ),
     );
 
