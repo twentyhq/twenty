@@ -8,10 +8,7 @@ import {
 import { MUTATION_MAX_MERGE_RECORDS } from 'twenty-shared/constants';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
-import {
-  canObjectBeManagedByAutomation,
-  isObjectSyncedFromConnectedAccounts,
-} from 'twenty-shared/workflow';
+import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
@@ -232,12 +229,8 @@ export class DatabaseToolProvider implements ToolProvider {
           flatFieldMetadataMaps,
         });
       const canUpdateThroughAutomation =
-        canBeManagedByAutomation ||
-        (isObjectSyncedFromConnectedAccounts({
-          nameSingular: objectMetadata.nameSingular,
-        }) &&
-          fieldMetadataIdsNotUpdatableByAutomation.length <
-            flatObject.fieldIds.length);
+        fieldMetadataIdsNotUpdatableByAutomation.length <
+        flatObject.fieldIds.length;
       const nonUpdatableByAutomationFieldMetadataIds = new Set([
         ...nonUpdatableFieldMetadataIds,
         ...fieldMetadataIdsNotUpdatableByAutomation,

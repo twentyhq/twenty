@@ -48,6 +48,18 @@ describe('getFieldMetadataIdsNotUpdatableByAutomation', () => {
     ).toEqual([calendarEventTitle.id]);
   });
 
+  it('should list every field of an object blocked from automation', () => {
+    expect(
+      getFieldMetadataIdsNotUpdatableByAutomation({
+        flatObjectMetadata: {
+          nameSingular: 'workflowRun',
+          fieldIds: [calendarEventTitle.id, calendarEventBrief.id],
+        },
+        flatFieldMetadataMaps,
+      }),
+    ).toEqual([calendarEventTitle.id, calendarEventBrief.id]);
+  });
+
   it('should list no field on other objects', () => {
     expect(
       getFieldMetadataIdsNotUpdatableByAutomation({
