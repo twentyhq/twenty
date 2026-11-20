@@ -289,8 +289,10 @@ describe('Record access through related record paths', () => {
     isProjectRuleRoleDeleted = true;
   };
 
-  const setProjectTasksReadability = async (canReadFieldValue: false | null) =>
-    upsertFieldPermissions({
+  const setProjectTasksReadability = async (
+    canReadFieldValue: false | null,
+  ) => {
+    await upsertFieldPermissions({
       expectToFail: false,
       input: {
         roleId: (await findOneRoleByLabel({ label: 'Member' })).id,
@@ -303,6 +305,8 @@ describe('Record access through related record paths', () => {
         ],
       },
     });
+    await waitForAllJobsToFinish();
+  };
 
   const runAndWaitForJobs = async (operation: {
     query: DocumentNode;
@@ -676,15 +680,32 @@ describe('Record access through related record paths', () => {
   });
 
   it('should not follow the path from a relation the reader cannot read', async () => {
+    const memberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
+    const memberProjectCompactIds: number[] = (
+      await global.testDataSource.query(
+        `SELECT "compactId" FROM ${SCHEMA}."accessGroup" WHERE "roleId" = $1 AND "objectMetadataId" = $2`,
+        [memberRoleId, projectObjectMetadataId],
+      )
+    ).map(({ compactId }: { compactId: number }) => compactId);
+
+    expect(memberProjectCompactIds).not.toEqual([]);
+
     await setProjectTasksReadability(false);
 
     try {
       expect(await canJonyReadTask(taskOfProjectId)).toBe(false);
+      expect(await findTaskIdsListedByJony()).toEqual([]);
+      expect(
+        (await findTaskAccessGroupIds(taskOfProjectId)).filter((compactId) =>
+          memberProjectCompactIds.includes(compactId),
+        ),
+      ).toEqual([]);
     } finally {
       await setProjectTasksReadability(null);
     }
 
     expect(await canJonyReadTask(taskOfProjectId)).toBe(true);
+    expect(await findTaskIdsListedByJony()).toEqual([taskOfProjectId]);
   });
 
   it('should still grant through another path from the same source object when one is hidden', async () => {

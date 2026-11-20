@@ -56,6 +56,7 @@ describe('buildRecomputeRecordAccessGroupIdsQuery', () => {
       {
         hops: COMPANY_TO_NOTE_HOPS,
         sourceObjectCompactIds: [12, 13],
+        roleIdsUnableToReadRelation: [],
         isSourcePrivacyApplicable: true,
       },
     ]);
@@ -74,6 +75,7 @@ describe('buildRecomputeRecordAccessGroupIdsQuery', () => {
       {
         hops: COMPANY_TO_NOTE_HOPS,
         sourceObjectCompactIds: null,
+        roleIdsUnableToReadRelation: [],
         isSourcePrivacyApplicable: false,
       },
     ]);
@@ -81,5 +83,24 @@ describe('buildRecomputeRecordAccessGroupIdsQuery', () => {
     expect(sql).not.toContain('relatedRecordPathSourceCompactIds');
     expect(sql).not.toContain('_isPrivate');
     expect(parameters).toEqual({ recordIds: ['note-id'] });
+  });
+
+  it('should not pass on the groups of roles unable to read the first relation', () => {
+    const { sql, parameters } = buildNoteQuery([
+      {
+        hops: COMPANY_TO_NOTE_HOPS,
+        sourceObjectCompactIds: null,
+        roleIdsUnableToReadRelation: ['role-id'],
+        isSourcePrivacyApplicable: false,
+      },
+    ]);
+
+    expect(sql).toContain(
+      `NOT EXISTS (SELECT 1 FROM "${SCHEMA}"."accessGroup" AS "inheritedAccessGroup" WHERE "inheritedAccessGroup"."compactId" = "inherited"."accessGroupId" AND "inheritedAccessGroup"."roleId" = ANY(CAST(:relatedRecordPathRoleIdsUnableToReadRelation_0 AS uuid[])))`,
+    );
+    expect(parameters).toEqual({
+      recordIds: ['note-id'],
+      relatedRecordPathRoleIdsUnableToReadRelation_0: ['role-id'],
+    });
   });
 });

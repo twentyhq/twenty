@@ -31,6 +31,7 @@ import { isPrivateRecordsEnabled } from 'src/engine/permissions/internal/private
 import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
 import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
+import { findRoleIdsUnableToReadField } from 'src/engine/permissions/internal/access-group/utils/find-role-ids-unable-to-read-field.util';
 
 const RECOMPUTE_BATCH_SIZE = 1_000;
 
@@ -150,6 +151,11 @@ export class RecordAccessGroupComputationService {
                     sourceFlatObjectMetadata.id,
                 )
                 .map(({ compactId }) => compactId),
+          roleIdsUnableToReadRelation: findRoleIdsUnableToReadField({
+            rolesPermissions: metadataMaps.rolesPermissions,
+            objectMetadataId: sourceFlatObjectMetadata.id,
+            fieldMetadataId: hops[0].relationFieldMetadataId,
+          }),
           isSourcePrivacyApplicable: isPrivateRecordsEnabled({
             flatObjectMetadata: sourceFlatObjectMetadata,
             featureFlagsMap: metadataMaps.featureFlagsMap,

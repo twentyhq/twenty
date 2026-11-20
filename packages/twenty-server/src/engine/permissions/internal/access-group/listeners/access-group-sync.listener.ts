@@ -49,7 +49,8 @@ export class AccessGroupSyncListener {
   }
 
   @OnEvent('metadata.relatedRecordPath.*')
-  async handleRelatedRecordPathEvent({
+  @OnEvent('metadata.fieldPermission.*')
+  async handleRelatedRecordPathTargetsEvent({
     workspaceId,
   }: Pick<MetadataEventBatch, 'workspaceId'>): Promise<void> {
     await this.accessGroupSyncSchedulerService.scheduleRelatedRecordPathTargetsRecomputeIfEnabled(

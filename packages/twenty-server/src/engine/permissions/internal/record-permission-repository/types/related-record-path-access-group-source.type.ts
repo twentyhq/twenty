@@ -5,5 +5,6 @@ import { type RelatedRecordPathHop } from 'src/engine/permissions/internal/relat
 export type RelatedRecordPathAccessGroupSource = {
   hops: RelatedRecordPathHop[];
   sourceObjectCompactIds: number[] | null;
+  roleIdsUnableToReadRelation: string[];
   isSourcePrivacyApplicable: boolean;
 };

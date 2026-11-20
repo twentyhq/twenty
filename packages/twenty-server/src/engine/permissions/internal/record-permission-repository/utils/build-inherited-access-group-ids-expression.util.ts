@@ -1,8 +1,9 @@
 /* @license Enterprise */
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { buildPrivateRecordStateSQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-private-record-state-sql-condition.util';
+import { buildAccessGroupTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-access-group-table-expression.util';
 import { ACCESS_GROUP_IDS_COLUMN_NAME } from 'src/engine/permissions/internal/record-permission-repository/constants/access-group-column-names.constant';
 import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
 import { buildRelatedRecordPathHopsJoin } from 'src/engine/permissions/internal/record-permission-repository/utils/build-related-record-path-hops-join.util';
@@ -18,6 +19,7 @@ export const buildInheritedAccessGroupIdsExpression = ({
   relatedRecordPathAccessGroupSource: {
     hops,
     sourceObjectCompactIds,
+    roleIdsUnableToReadRelation,
     isSourcePrivacyApplicable,
   },
 }: {
@@ -41,6 +43,7 @@ export const buildInheritedAccessGroupIdsExpression = ({
     `unnest(${escapeIdentifier(sourceTableAlias)}.${escapeIdentifier(ACCESS_GROUP_IDS_COLUMN_NAME)}) AS "inherited"("accessGroupId")`,
   ];
   const sourceCompactIdsParameterName = `relatedRecordPathSourceCompactIds_${pathIndex}`;
+  const roleIdsUnableToReadRelationParameterName = `relatedRecordPathRoleIdsUnableToReadRelation_${pathIndex}`;
   const whereConditions = [
     ...hopTableAliases.flatMap((hopTableAlias, hopIndex) => [
       hopsJoin.joinConditions[hopIndex],
@@ -59,12 +62,25 @@ export const buildInheritedAccessGroupIdsExpression = ({
           `${INHERITED_ACCESS_GROUP_ID} = ANY(CAST(:${sourceCompactIdsParameterName} AS integer[]))`,
         ]
       : []),
+    ...(isNonEmptyArray(roleIdsUnableToReadRelation)
+      ? [
+          `NOT EXISTS (SELECT 1 FROM ${buildAccessGroupTableExpression(workspaceId)} AS "inheritedAccessGroup" WHERE "inheritedAccessGroup"."compactId" = ${INHERITED_ACCESS_GROUP_ID} AND "inheritedAccessGroup"."roleId" = ANY(CAST(:${roleIdsUnableToReadRelationParameterName} AS uuid[])))`,
+        ]
+      : []),
   ];
 
   return {
     sql: `ARRAY(SELECT ${INHERITED_ACCESS_GROUP_ID} FROM ${fromExpressions.join(', ')} WHERE ${whereConditions.join(' AND ')})`,
-    parameters: isDefined(sourceObjectCompactIds)
-      ? { [sourceCompactIdsParameterName]: sourceObjectCompactIds }
-      : {},
+    parameters: {
+      ...(isDefined(sourceObjectCompactIds)
+        ? { [sourceCompactIdsParameterName]: sourceObjectCompactIds }
+        : {}),
+      ...(isNonEmptyArray(roleIdsUnableToReadRelation)
+        ? {
+            [roleIdsUnableToReadRelationParameterName]:
+              roleIdsUnableToReadRelation,
+          }
+        : {}),
+    },
   };
 };

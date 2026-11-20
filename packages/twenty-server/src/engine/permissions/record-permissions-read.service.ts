@@ -54,7 +54,6 @@ import { canRelatedRecordPathExtendAccess } from 'src/engine/permissions/interna
 import { buildRecordShareOrPrivateRecordAccessSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-record-share-or-private-record-access-sql-condition.util';
 import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
 import { findFieldMetadataIdsUnreadableByPrincipals } from 'src/engine/permissions/internal/related-record-path/utils/find-field-metadata-ids-unreadable-by-principals.util';
-import { findSourceObjectMetadataIdsWithHiddenPath } from 'src/engine/permissions/internal/related-record-path/utils/find-source-object-metadata-ids-with-hidden-path.util';
 import {
   type BuildEntrySQLCondition,
   buildRelatedRecordPathJoinSQLCondition,
@@ -371,29 +370,17 @@ export class RecordPermissionsReadService {
       return sqlCondition;
     }
 
-    const unreadableFieldMetadataIds =
-      findFieldMetadataIdsUnreadableByPrincipals(objectAccessRequest);
-    const sourceObjectMetadataIdsWithHiddenPath =
-      findSourceObjectMetadataIdsWithHiddenPath({
-        request: objectAccessRequest,
-        unreadableFieldMetadataIds,
-      });
-
     return combineSQLConditionOutcomesWithOr([
       sqlCondition,
       this.buildRelatedRecordPathJoinSQLCondition({
         ...objectAccessRequest,
         tableAlias,
         isUncorrelated: true,
-        unreadableFieldMetadataIds,
         buildEntrySQLCondition: (entry) =>
           entry.tableAlias !== tableAlias &&
-          this.buildUncorrelatedPathEntrySQLCondition({
+          this.buildRecordShareOrCreatorEntrySQLCondition({
             ...objectAccessRequest,
             ...entry,
-            hasHiddenPath: sourceObjectMetadataIdsWithHiddenPath.has(
-              entry.flatObjectMetadata.id,
-            ),
           }),
       }),
     ]);
@@ -756,15 +743,10 @@ export class RecordPermissionsReadService {
     tableAlias,
     buildEntrySQLCondition,
     isUncorrelated,
-    unreadableFieldMetadataIds = findFieldMetadataIdsUnreadableByPrincipals({
-      principals,
-      metadataMaps,
-    }),
   }: PermissionsObjectAccessRequest & {
     tableAlias: string;
     buildEntrySQLCondition: BuildEntrySQLCondition;
     isUncorrelated?: boolean;
-    unreadableFieldMetadataIds?: Set<string>;
   }): SQLCondition | boolean {
     return buildRelatedRecordPathJoinSQLCondition({
       workspaceId: principals.workspaceId,
@@ -773,7 +755,10 @@ export class RecordPermissionsReadService {
       metadataMaps,
       buildEntrySQLCondition,
       isUncorrelated,
-      unreadableFieldMetadataIds,
+      unreadableFieldMetadataIds: findFieldMetadataIdsUnreadableByPrincipals({
+        principals,
+        metadataMaps,
+      }),
       canRelatedRecordPathExtendAccessToObject: (reachedFlatObjectMetadata) =>
         canRelatedRecordPathExtendAccessToObject({
           principals,
@@ -788,18 +773,6 @@ export class RecordPermissionsReadService {
           operationType,
         }),
     });
-  }
-
-  private buildUncorrelatedPathEntrySQLCondition({
-    hasHiddenPath,
-    ...request
-  }: PermissionsObjectAccessRequest & {
-    tableAlias: string;
-    hasHiddenPath: boolean;
-  }): SQLCondition | boolean {
-    return hasHiddenPath
-      ? this.buildEntrySQLCondition(request)
-      : this.buildRecordShareOrCreatorEntrySQLCondition(request);
   }
 
   private buildRecordShareOrCreatorEntrySQLCondition({
