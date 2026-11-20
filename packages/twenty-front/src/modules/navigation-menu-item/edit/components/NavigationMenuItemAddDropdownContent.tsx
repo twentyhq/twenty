@@ -41,6 +41,7 @@ const STEP_BY_PAGE: Partial<Record<string, Step>> = {
 type NavigationMenuItemAddDropdownContentProps = {
   dropdownId: string;
   section: NavigationMenuItemSection;
+  // TODO(@thomtrp): remove once IS_CUSTOMIZABLE_SIDEBAR_ENABLED is on for every workspace
   shouldShowHiddenItems?: boolean;
   parentId?: string;
   position?: number;
