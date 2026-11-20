@@ -1,10 +1,10 @@
+import { findManyMarketplaceAppsQueryFactory } from 'test/integration/metadata/suites/application/utils/find-many-marketplace-apps-query-factory.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { installApplication } from 'test/integration/metadata/suites/application/utils/install-application.util';
 import { upsertApplicationRegistrationFromCatalog } from 'test/integration/metadata/suites/application/utils/upsert-application-registration-from-catalog.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import gql from 'graphql-tag';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { BUNDLED_APPLICATIONS } from 'src/engine/core-modules/application/application-bundled/constants/bundled-applications.constant';
@@ -17,15 +17,9 @@ const UNIVERSAL_IDENTIFIER =
 const [BUNDLED_MCP_SERVER] = BUNDLED_APPLICATION.manifest.mcpServers ?? [];
 
 const findMarketplaceAppIds = async (): Promise<string[]> => {
-  const response = await makeMetadataApiRequest({
-    query: gql`
-      query {
-        findManyMarketplaceApps {
-          id
-        }
-      }
-    `,
-  });
+  const response = await makeMetadataApiRequest(
+    findManyMarketplaceAppsQueryFactory(),
+  );
 
   return response.body.data.findManyMarketplaceApps.map(
     ({ id }: { id: string }) => id,
@@ -77,6 +71,17 @@ describe('Bundled applications (integration)', () => {
     });
 
     expect(registration).toBeNull();
+  });
+
+  it('should refuse a version this server does not ship', async () => {
+    const { errors } = await installApplication({
+      input: { universalIdentifier: UNIVERSAL_IDENTIFIER, version: '9.9.9' },
+      expectToFail: true,
+    });
+
+    expect(errors?.[0]?.message).toContain(
+      `this server ships ${BUNDLED_APPLICATION.version}`,
+    );
   });
 
   it('should install the MCP server and its sign-in from the embedded manifest', async () => {

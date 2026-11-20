@@ -3,17 +3,19 @@ import * as path from 'path';
 import isEqual from 'lodash.isequal';
 import * as prettier from 'prettier';
 import semver from 'semver';
+import { z } from 'zod';
 
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { type BundledMcpServer } from 'src/engine/core-modules/application/application-bundled/mcp-servers/types/bundled-mcp-server.type';
+import { BUNDLED_MCP_SERVERS } from 'src/engine/core-modules/application/application-bundled/mcp-servers/constants/bundled-mcp-servers.constant';
 
 import {
   MCP_CONNECTOR_DIRECTORY_API_URL,
   MCP_REGISTRY_API_URL,
 } from './constants/mcp-catalog-sources.constant';
+import { mcpConnectorDirectoryEntrySchema } from './types/mcp-connector-directory-entry.schema';
 import { type McpConnectorDirectoryEntry } from './types/mcp-connector-directory-entry.type';
-import { type McpRegistryServer } from './types/mcp-registry-server.type';
+import { mcpRegistryServerSchema } from './types/mcp-registry-server.schema';
 import { buildBundledMcpServer } from './utils/build-bundled-mcp-server.util';
 
 const CATALOG_PATH = path.resolve(
@@ -31,6 +33,13 @@ const CATALOG_PATH = path.resolve(
 
 const INITIAL_VERSION = '1.0.0';
 
+const registryResponseSchema = z.object({ server: mcpRegistryServerSchema });
+
+const connectorDirectoryPageSchema = z.object({
+  servers: z.array(mcpConnectorDirectoryEntrySchema),
+  metadata: z.object({ nextCursor: z.string().nullish() }).nullish(),
+});
+
 // oxlint-disable no-console
 const log = console.log;
 const warn = console.warn;
@@ -43,7 +52,13 @@ const readArguments = (flag: string): string[] =>
       : [],
   );
 
-const fetchJson = async <TValue>(url: string): Promise<TValue | undefined> => {
+const fetchJson = async <TSchema extends z.ZodTypeAny>({
+  url,
+  schema,
+}: {
+  url: string;
+  schema: TSchema;
+}): Promise<z.infer<TSchema> | undefined> => {
   const response = await fetch(url, { signal: AbortSignal.timeout(30000) });
 
   if (response.status === 404) {
@@ -54,7 +69,7 @@ const fetchJson = async <TValue>(url: string): Promise<TValue | undefined> => {
     throw new Error(`${url} returned ${response.status}`);
   }
 
-  return response.json() as Promise<TValue>;
+  return schema.parse(await response.json());
 };
 
 const fetchConnectorDirectory = async (): Promise<
@@ -64,18 +79,16 @@ const fetchConnectorDirectory = async (): Promise<
   let cursor: string | undefined;
 
   do {
-    const page = await fetchJson<{
-      servers: McpConnectorDirectoryEntry[];
-      metadata?: { nextCursor?: string };
-    }>(
-      isDefined(cursor)
+    const page = await fetchJson({
+      url: isDefined(cursor)
         ? `${MCP_CONNECTOR_DIRECTORY_API_URL}&cursor=${encodeURIComponent(cursor)}`
         : MCP_CONNECTOR_DIRECTORY_API_URL,
-    );
+      schema: connectorDirectoryPageSchema,
+    });
 
     entries.push(...(page?.servers ?? []));
     cursor = isNonEmptyArray(page?.servers)
-      ? page.metadata?.nextCursor
+      ? (page.metadata?.nextCursor ?? undefined)
       : undefined;
   } while (isDefined(cursor));
 
@@ -83,9 +96,7 @@ const fetchConnectorDirectory = async (): Promise<
 };
 
 const main = async () => {
-  const committedMcpServers = JSON.parse(
-    fs.readFileSync(CATALOG_PATH, 'utf-8'),
-  ) as BundledMcpServer[];
+  const committedMcpServers = BUNDLED_MCP_SERVERS;
   const registryNames = [
     ...new Set([
       ...committedMcpServers.map(({ registryName }) => registryName),
@@ -109,9 +120,10 @@ const main = async () => {
         return committedMcpServer;
       }
 
-      const registryResponse = await fetchJson<{ server: McpRegistryServer }>(
-        `${MCP_REGISTRY_API_URL}/${encodeURIComponent(registryName)}/versions/latest`,
-      );
+      const registryResponse = await fetchJson({
+        url: `${MCP_REGISTRY_API_URL}/${encodeURIComponent(registryName)}/versions/latest`,
+        schema: registryResponseSchema,
+      });
       const directoryEntry = connectorDirectory?.find(
         ({ server }) =>
           server.name === registryName ||

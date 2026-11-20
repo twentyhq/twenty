@@ -1,12 +1,7 @@
-import { type McpRegistryServer } from './mcp-registry-server.type';
+import { type z } from 'zod';
 
-export type McpConnectorDirectoryEntry = {
-  server: McpRegistryServer;
-  _meta: {
-    'com.anthropic.api/mcp-registry'?: {
-      displayName?: string;
-      oneLiner?: string;
-      author?: { url?: string };
-    };
-  };
-};
+import { type mcpConnectorDirectoryEntrySchema } from './mcp-connector-directory-entry.schema';
+
+export type McpConnectorDirectoryEntry = z.infer<
+  typeof mcpConnectorDirectoryEntrySchema
+>;

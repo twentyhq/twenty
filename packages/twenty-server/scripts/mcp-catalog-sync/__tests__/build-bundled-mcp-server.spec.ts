@@ -10,14 +10,17 @@ const notionRegistryServer = {
   ],
 };
 
-const buildDirectoryEntry = (
-  meta: NonNullable<
+const buildDirectoryEntry = ({
+  directory,
+  description,
+}: {
+  directory: NonNullable<
     McpConnectorDirectoryEntry['_meta']['com.anthropic.api/mcp-registry']
-  >,
-  description?: string,
-): McpConnectorDirectoryEntry => ({
+  >;
+  description?: string;
+}): McpConnectorDirectoryEntry => ({
   server: { name: 'com.notion/mcp', description },
-  _meta: { 'com.anthropic.api/mcp-registry': meta },
+  _meta: { 'com.anthropic.api/mcp-registry': directory },
 });
 
 describe('buildBundledMcpServer', () => {
@@ -73,7 +76,7 @@ describe('buildBundledMcpServer', () => {
     const result = buildBundledMcpServer({
       registryServer: notionRegistryServer,
       directoryEntry: buildDirectoryEntry({
-        oneLiner: 'Search and update your Notion workspace',
+        directory: { oneLiner: 'Search and update your Notion workspace' },
       }),
     });
 
@@ -85,10 +88,10 @@ describe('buildBundledMcpServer', () => {
   it('should drop directory copy written for another product', () => {
     const result = buildBundledMcpServer({
       registryServer: notionRegistryServer,
-      directoryEntry: buildDirectoryEntry(
-        { oneLiner: 'Use Notion from Claude' },
-        'Organize content directly from Claude.',
-      ),
+      directoryEntry: buildDirectoryEntry({
+        directory: { oneLiner: 'Use Notion from Claude' },
+        description: 'Organize content directly from Claude.',
+      }),
     });
 
     expect(result).toMatchObject({

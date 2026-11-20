@@ -127,7 +127,10 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
       case ApplicationRegistrationSourceType.TARBALL:
         return this.resolveFromTarball(appRegistration);
       case ApplicationRegistrationSourceType.BUNDLED:
-        return this.resolveFromBundled(appRegistration);
+        return this.resolveFromBundled({
+          appRegistration,
+          targetVersion: options?.targetVersion,
+        });
       case ApplicationRegistrationSourceType.LOCAL:
       case ApplicationRegistrationSourceType.OAUTH_ONLY:
         return null;
@@ -326,9 +329,13 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
   }
 
   // Install reads package files from a directory, so the embedded manifest is written to one
-  private async resolveFromBundled(
-    appRegistration: ApplicationRegistrationEntity,
-  ): Promise<ResolvedPackage> {
+  private async resolveFromBundled({
+    appRegistration,
+    targetVersion,
+  }: {
+    appRegistration: ApplicationRegistrationEntity;
+    targetVersion?: string;
+  }): Promise<ResolvedPackage> {
     const bundledApplication = findBundledApplication(
       appRegistration.universalIdentifier,
     );
@@ -336,6 +343,17 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     if (!isDefined(bundledApplication)) {
       throw new ApplicationException(
         `App registration ${appRegistration.id} has sourceType=bundled but this server ships no such application`,
+        ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+      );
+    }
+
+    // During a rollout an older worker still ships the previous version
+    if (
+      isDefined(targetVersion) &&
+      targetVersion !== bundledApplication.version
+    ) {
+      throw new ApplicationException(
+        `Bundled application ${appRegistration.universalIdentifier}@${targetVersion} was requested but this server ships ${bundledApplication.version}`,
         ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
       );
     }

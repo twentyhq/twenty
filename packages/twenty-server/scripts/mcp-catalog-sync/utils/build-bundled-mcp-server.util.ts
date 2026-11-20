@@ -17,7 +17,9 @@ const MCP_SERVER_NAME_FORBIDDEN_CHARACTERS = /[^a-z0-9_]/g;
 const DESCRIPTION_MAX_LENGTH = 160;
 const OTHER_PRODUCT_MENTION = /claude|anthropic|chatgpt|openai/i;
 
-const keepNeutralText = (text: string | undefined): string | undefined =>
+const keepNeutralText = (
+  text: string | null | undefined,
+): string | undefined =>
   isNonEmptyString(text) && !OTHER_PRODUCT_MENTION.test(text)
     ? text.trim()
     : undefined;
@@ -40,8 +42,7 @@ export const buildBundledMcpServer = ({
       !url.includes('{'),
   );
 
-  // Registry names are reverse-DNS: "app.linear/linear" is owned by linear.app,
-  // "io.github.PostHog/mcp" by the PostHog GitHub organization
+  // Reverse-DNS names: "app.linear/linear" is linear.app, "io.github.PostHog/mcp" the PostHog GitHub org
   const [topLevelDomain, secondLevelDomain, githubOwner] = registryServer.name
     .split('/')[0]
     .split('.');

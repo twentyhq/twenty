@@ -947,7 +947,10 @@ export class ApplicationRegistrationService {
   async upsertBundled({
     version,
     manifest,
-  }: BundledApplication): Promise<ApplicationRegistrationEntity | null> {
+  }: Pick<
+    BundledApplication,
+    'version' | 'manifest'
+  >): Promise<ApplicationRegistrationEntity | null> {
     const params: UpsertApplicationRegistrationFromCatalogParams = {
       universalIdentifier: manifest.application.universalIdentifier,
       name: manifest.application.displayName,
