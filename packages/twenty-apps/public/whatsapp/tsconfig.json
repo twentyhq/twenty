@@ -34,10 +34,5 @@
     "**/*.test.ts",
     "**/*.spec.ts",
     "**/*.integration-test.ts"
-  ],
-  "references": [
-    {
-      "path": "./tsconfig.spec.json"
-    }
   ]
 }

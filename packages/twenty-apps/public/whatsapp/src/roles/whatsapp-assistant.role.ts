@@ -1,4 +1,4 @@
-import { defineApplicationRole, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+import { defineRole, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
 import {
   WHATSAPP_AD_REFERRAL_UNIVERSAL_IDENTIFIER,
@@ -24,7 +24,7 @@ const READ_ONLY_OBJECT_UNIVERSAL_IDENTIFIERS = [
   WHATSAPP_AD_REFERRAL_UNIVERSAL_IDENTIFIER,
 ];
 
-export default defineApplicationRole({
+export default defineRole({
   universalIdentifier: WHATSAPP_ASSISTANT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'WhatsApp assistant',
   description:
