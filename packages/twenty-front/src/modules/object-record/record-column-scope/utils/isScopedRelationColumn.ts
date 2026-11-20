@@ -13,7 +13,6 @@ export const isScopedRelationColumn = ({
   recordField: Pick<RecordField, 'isCanonical' | 'relationScope'>;
   isLookupColumnsEnabled: boolean;
 }): boolean =>
-  // With the flag off a scoped column renders and loads as its plain relation
   isLookupColumnsEnabled &&
   !isCanonicalRecordField(recordField) &&
   isDefined(recordField.relationScope) &&
