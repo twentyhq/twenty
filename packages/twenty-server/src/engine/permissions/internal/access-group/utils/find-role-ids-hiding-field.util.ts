@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+import { isFieldHiddenFromRole } from 'src/engine/permissions/internal/related-record-path/utils/is-field-hidden-from-role.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 export const findRoleIdsHidingField = ({
@@ -13,8 +14,10 @@ export const findRoleIdsHidingField = ({
 }): string[] =>
   Object.entries(rolesPermissions)
     .filter(([, roleRecordsPermissions]) =>
-      (
-        roleRecordsPermissions.objects[objectMetadataId]?.unreadableFields ?? []
-      ).includes(fieldMetadataId),
+      isFieldHiddenFromRole({
+        roleRecordsPermissions,
+        objectMetadataId,
+        fieldMetadataId,
+      }),
     )
     .map(([roleId]) => roleId);

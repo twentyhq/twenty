@@ -2,6 +2,7 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { isFieldHiddenFromRole } from 'src/engine/permissions/internal/related-record-path/utils/is-field-hidden-from-role.util';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 
 export const omitRolesHidingField = <
@@ -24,9 +25,11 @@ export const omitRolesHidingField = <
 
         if (
           !isDefined(objectRecordsPermissions) ||
-          !(objectRecordsPermissions.unreadableFields ?? []).includes(
+          !isFieldHiddenFromRole({
+            roleRecordsPermissions,
+            objectMetadataId,
             fieldMetadataId,
-          )
+          })
         ) {
           return [roleId, roleRecordsPermissions];
         }
