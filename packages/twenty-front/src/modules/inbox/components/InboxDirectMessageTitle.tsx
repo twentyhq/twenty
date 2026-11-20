@@ -1,17 +1,17 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { getAgentChatDirectMessagePeerWorkspaceMemberIds } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
+import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
-import { getAiChatDirectMessagePeerWorkspaceMemberIds } from '@/ai-chat/threads/utils/getAiChatDirectMessagePeerWorkspaceMemberIds';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 
 const StyledTitle = styled.div`
   align-items: center;
@@ -38,7 +38,7 @@ export const InboxDirectMessageTitle = ({
   );
 
   const [peerWorkspaceMemberId] = isDefined(thread)
-    ? getAiChatDirectMessagePeerWorkspaceMemberIds({
+    ? getAgentChatDirectMessagePeerWorkspaceMemberIds({
         thread,
         currentWorkspaceMemberId: currentWorkspaceMember?.id,
       })

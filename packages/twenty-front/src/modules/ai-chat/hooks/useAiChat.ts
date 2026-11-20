@@ -152,8 +152,9 @@ export const useAiChat = () => {
       const lastSentBrowsingContext = store.get(lastSentBrowsingContextAtom);
       const isBrowsingContextChanged = isUndefined(lastSentBrowsingContext)
         ? isDefined(browsingContext)
-        : JSON.stringify(browsingContext) !==
-          JSON.stringify(lastSentBrowsingContext);
+        : !isDeeplyEqual(browsingContext, lastSentBrowsingContext, {
+            strict: true,
+          });
       const browsingContextToSend = isBrowsingContextChanged
         ? browsingContext
         : null;
