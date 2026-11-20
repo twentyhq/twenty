@@ -19,6 +19,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { type NavigationMenuItemAddTarget } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddTarget';
+import { canPlaceNavigationMenuItemInContainer } from '@/navigation-menu-item/common/utils/canPlaceNavigationMenuItemInContainer';
 import { getNavigationMenuContainersInDisplayOrder } from '@/navigation-menu-item/common/utils/getNavigationMenuContainersInDisplayOrder';
 import { getNavigationMenuItemContainerId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemContainerId';
 import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
@@ -41,7 +42,8 @@ export const NavigationMenuItemActions = ({
 }: NavigationMenuItemActionsProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
+  const { navigationMenuItems, workspaceNavigationMenuItems } =
+    useNavigationMenuItemsData();
   const containerId =
     section === 'workspace'
       ? getNavigationMenuItemContainerId({
@@ -82,6 +84,15 @@ export const NavigationMenuItemActions = ({
     tabs.find((tab) => tab.id === tabId)?.name ?? t`Home`;
   const moveToLabel = sections.length > 0 ? t`Move to` : t`Move to folder`;
   const index = siblings.findIndex((sibling) => sibling.id === item.id);
+  const canPlaceIn = (targetContainerId: string | null) =>
+    canPlaceNavigationMenuItemInContainer({
+      itemId: item.id,
+      containerId: targetContainerId,
+      items:
+        section === 'workspace'
+          ? workspaceNavigationMenuItems
+          : navigationMenuItems,
+    });
   const run = (action: () => Promise<void>) => {
     void action();
     onClose();
@@ -139,7 +150,8 @@ export const NavigationMenuItemActions = ({
       id: 'root',
       label: t`Root level`,
       Icon: IconHierarchy2,
-      isDisabled: (item.parentId ?? null) === containerId,
+      isDisabled:
+        (item.parentId ?? null) === containerId || !canPlaceIn(containerId),
       onClick: () => run(() => moveToFolder(item.id, containerId)),
     },
     ...items
@@ -157,7 +169,7 @@ export const NavigationMenuItemActions = ({
             color={folder.color ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
           />
         ),
-        isDisabled: folder.id === item.parentId,
+        isDisabled: folder.id === item.parentId || !canPlaceIn(folder.id),
         onClick: () => run(() => moveToFolder(item.id, folder.id)),
       })),
     ...sections.map((targetSection) => ({
@@ -165,6 +177,7 @@ export const NavigationMenuItemActions = ({
       label: targetSection.name ?? t`Section`,
       contextualText: getTabName(targetSection.parentId),
       Icon: IconLayoutList,
+      isDisabled: !canPlaceIn(targetSection.id),
       onClick: () => run(() => moveToFolder(item.id, targetSection.id)),
     })),
   ];
