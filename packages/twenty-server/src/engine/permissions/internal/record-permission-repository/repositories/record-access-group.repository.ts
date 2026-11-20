@@ -178,7 +178,6 @@ export class RecordAccessGroupRepository {
     return updatedRows.map(({ id }) => id);
   }
 
-  // A new group only reaches the records matching its condition, so they gain its id without a full recompute
   async addAccessGroupIdToMatchingRecords({
     workspaceId,
     flatObjectMetadata,

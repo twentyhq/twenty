@@ -114,7 +114,7 @@ export class AccessGroupRepository {
 
     return families.map((_, familyIndex) =>
       rows
-        .filter((row) => Number(row.familyIndex) === familyIndex)
+        .filter((row) => row.familyIndex === familyIndex)
         .map(({ residualMemberFieldValues }) => residualMemberFieldValues),
     );
   }

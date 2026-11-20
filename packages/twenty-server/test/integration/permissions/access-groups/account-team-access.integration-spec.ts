@@ -582,7 +582,6 @@ describe('Account team access (integration)', () => {
       [roleId],
     );
 
-    // Name only: every other opportunity field is unreadable through the client head rule
     await query(
       `INSERT INTO core."fieldPermission" ("roleId", "objectMetadataId", "fieldMetadataId", "canReadFieldValue", "canUpdateFieldValue", "workspaceId", "universalIdentifier", "applicationId", "rowLevelPermissionRuleId")
         SELECT $1, "fieldMetadata"."objectMetadataId", "fieldMetadata"."id", FALSE, FALSE, $2, uuid_generate_v4(), "role"."applicationId", $3

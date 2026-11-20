@@ -142,29 +142,27 @@ export class FlatRowLevelPermissionPredicateValidatorService {
             ],
         },
       );
-      const workspaceMemberFieldError = isDefined(workspaceMemberRelationError)
-        ? workspaceMemberRelationError
-        : this.getWorkspaceMemberFieldError({
-            fieldMetadata,
-            operand: flatPredicateToValidate.operand,
-            subFieldName: flatPredicateToValidate.subFieldName,
-            workspaceMemberSubFieldName:
-              flatPredicateToValidate.workspaceMemberSubFieldName,
-            workspaceMemberFieldMetadata: this.findWorkspaceMemberFieldMetadata(
-              {
-                workspaceMemberFieldMetadataUniversalIdentifier:
-                  flatPredicateToValidate.workspaceMemberFieldMetadataUniversalIdentifier,
-                flatFieldMetadataMaps,
-              },
-            ),
+      const workspaceMemberFieldError =
+        workspaceMemberRelationError ??
+        this.getWorkspaceMemberFieldError({
+          fieldMetadata,
+          operand: flatPredicateToValidate.operand,
+          subFieldName: flatPredicateToValidate.subFieldName,
+          workspaceMemberSubFieldName:
+            flatPredicateToValidate.workspaceMemberSubFieldName,
+          workspaceMemberFieldMetadata: this.findWorkspaceMemberFieldMetadata({
             workspaceMemberFieldMetadataUniversalIdentifier:
               flatPredicateToValidate.workspaceMemberFieldMetadataUniversalIdentifier,
-            workspaceMemberFieldObjectUniversalIdentifier:
-              this.findWorkspaceMemberFieldObjectUniversalIdentifier({
-                predicate: flatPredicateToValidate,
-                flatFieldMetadataMaps,
-              }),
-          });
+            flatFieldMetadataMaps,
+          }),
+          workspaceMemberFieldMetadataUniversalIdentifier:
+            flatPredicateToValidate.workspaceMemberFieldMetadataUniversalIdentifier,
+          workspaceMemberFieldObjectUniversalIdentifier:
+            this.findWorkspaceMemberFieldObjectUniversalIdentifier({
+              predicate: flatPredicateToValidate,
+              flatFieldMetadataMaps,
+            }),
+        });
 
       if (isDefined(workspaceMemberFieldError)) {
         validationResult.errors.push(workspaceMemberFieldError);
@@ -723,16 +721,24 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       workspaceMemberRelationFilterValue,
     } = predicate;
 
-    if (!isDefined(workspaceMemberRelationFieldMetadataUniversalIdentifier)) {
-      return isDefined(
+    const hasWorkspaceMemberRelationFilter =
+      isDefined(
         workspaceMemberRelationFilterFieldMetadataUniversalIdentifier,
-      ) || isDefined(workspaceMemberRelationFilterValue)
-        ? {
-            code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
-            message: t`A workspace member relation filter needs a workspace member relation`,
-            userFriendlyMessage: msg`This filter needs a workspace member relation`,
-          }
-        : undefined;
+      ) || isDefined(workspaceMemberRelationFilterValue);
+
+    if (
+      !isDefined(workspaceMemberRelationFieldMetadataUniversalIdentifier) &&
+      hasWorkspaceMemberRelationFilter
+    ) {
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        message: t`A workspace member relation filter needs a workspace member relation`,
+        userFriendlyMessage: msg`This filter needs a workspace member relation`,
+      };
+    }
+
+    if (!isDefined(workspaceMemberRelationFieldMetadataUniversalIdentifier)) {
+      return undefined;
     }
 
     if (isRelationHopEnabled !== true) {

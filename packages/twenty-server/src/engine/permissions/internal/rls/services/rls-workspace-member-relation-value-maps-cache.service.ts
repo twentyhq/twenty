@@ -41,12 +41,14 @@ const findScalarColumnName = (
     return flatFieldMetadata.name;
   }
 
-  return flatFieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE
-    ? (flatFieldMetadata.settings.joinColumnName ??
-        computeMorphOrRelationFieldJoinColumnName({
-          name: flatFieldMetadata.name,
-        }))
-    : null;
+  if (flatFieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE) {
+    return null;
+  }
+
+  return (
+    flatFieldMetadata.settings.joinColumnName ??
+    computeMorphOrRelationFieldJoinColumnName({ name: flatFieldMetadata.name })
+  );
 };
 
 const toFilterValues = (

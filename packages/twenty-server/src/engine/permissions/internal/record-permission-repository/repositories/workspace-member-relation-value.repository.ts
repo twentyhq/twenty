@@ -39,7 +39,7 @@ export class WorkspaceMemberRelationValueRepository {
       return [];
     }
 
-    const rows = await this.recordPermissionQueryService.execute<{
+    return this.recordPermissionQueryService.execute<{
       lookupIndex: number;
       workspaceMemberId: string;
       values: string[];
@@ -83,10 +83,5 @@ export class WorkspaceMemberRelationValueRepository {
         ),
       },
     });
-
-    return rows.map((row) => ({
-      ...row,
-      lookupIndex: Number(row.lookupIndex),
-    }));
   }
 }
