@@ -696,7 +696,7 @@ export class OAuthService {
     refreshToken: Pick<ApplicationRefreshTokenJwtPayload, 'iat'>;
   }): Promise<
     | { error: OAuthErrorResponse; applicationAuthorizationId?: never }
-    | { error?: never; applicationAuthorizationId: string | undefined }
+    | { error?: never; applicationAuthorizationId: string }
   > {
     const authorization =
       await this.applicationAuthorizationService.findByUserAndApplication({
@@ -736,22 +736,17 @@ export class OAuthService {
     }
 
     if (!isDefined(authorization)) {
-      await this.applicationAuthorizationService.backfillAuthorizationFromRefreshToken(
-        {
-          userId,
-          workspaceId,
-          userWorkspaceId: userWorkspace.id,
-          applicationId,
-        },
-      );
-
-      const backfilledAuthorization =
-        await this.applicationAuthorizationService.findByUserAndApplication({
-          userId,
-          applicationId,
-        });
-
-      return { applicationAuthorizationId: backfilledAuthorization?.id };
+      return {
+        applicationAuthorizationId:
+          await this.applicationAuthorizationService.backfillAuthorizationFromRefreshToken(
+            {
+              userId,
+              workspaceId,
+              userWorkspaceId: userWorkspace.id,
+              applicationId,
+            },
+          ),
+      };
     }
 
     await this.applicationAuthorizationService.touchLastUsedAt(

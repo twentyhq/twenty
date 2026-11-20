@@ -87,7 +87,7 @@ export class ApplicationAuthorizationService {
     workspaceId: string;
     userWorkspaceId: string;
     applicationId: string;
-  }): Promise<void> {
+  }): Promise<string> {
     await this.applicationAuthorizationRepository
       .createQueryBuilder()
       .insert()
@@ -103,6 +103,11 @@ export class ApplicationAuthorizationService {
       })
       .orIgnore()
       .execute();
+
+    return await this.findIdByUserAndApplicationOrThrow({
+      userId,
+      applicationId,
+    });
   }
 
   // Includes revoked rows: callers must tell "never authorized" from "revoked"

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { CoreEntityCache } from 'src/engine/core-entity-cache/decorators/core-entity-cache.decorator';
@@ -26,7 +27,7 @@ export class ApplicationAuthorizationEntityCacheProviderService extends CoreEnti
       select: { id: true, lastAuthorizedAt: true, revokedAt: true },
     });
 
-    if (entity === null) {
+    if (!isDefined(entity)) {
       return null;
     }
 

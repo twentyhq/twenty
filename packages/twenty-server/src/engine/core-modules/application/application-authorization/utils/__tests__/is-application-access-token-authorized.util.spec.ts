@@ -10,7 +10,6 @@ describe('isApplicationAccessTokenAuthorized', () => {
     expect(
       isApplicationAccessTokenAuthorized({
         flatApplicationAuthorization: {
-          id: 'authorization-id',
           lastAuthorizedAt: AUTHORIZED_AT,
           revokedAt: null,
         },
@@ -23,7 +22,6 @@ describe('isApplicationAccessTokenAuthorized', () => {
     expect(
       isApplicationAccessTokenAuthorized({
         flatApplicationAuthorization: {
-          id: 'authorization-id',
           lastAuthorizedAt: AUTHORIZED_AT,
           revokedAt: '2026-01-01T00:05:00.000Z',
         },
@@ -36,7 +34,6 @@ describe('isApplicationAccessTokenAuthorized', () => {
     expect(
       isApplicationAccessTokenAuthorized({
         flatApplicationAuthorization: {
-          id: 'authorization-id',
           lastAuthorizedAt: AUTHORIZED_AT,
           revokedAt: null,
         },
