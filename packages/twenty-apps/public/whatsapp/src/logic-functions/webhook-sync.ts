@@ -12,6 +12,10 @@ import { isDefined } from "twenty-sdk/utils";
 import { buildHistoryParseMessagePayloads } from "src/logic-functions/data/build-history-parse-message-payloads.util";
 import { isNonEmptyString } from "@sniptt/guards";
 import { sendInboxNotification } from "src/logic-functions/data/send-inbox-notification.util";
+import { updateWhatsAppMarketingPreference } from "src/logic-functions/data/update-whatsapp-marketing-preference.util";
+import { parseWhatsAppTimestamp } from "src/logic-functions/data/parse-whatsapp-timestamp.util";
+import { isSameWhatsAppIdentity } from "src/logic-functions/data/is-same-whatsapp-identity.util";
+import { WHATSAPP_MARKETING_OPT_OUT_ERROR_CODE } from "src/constants/whatsapp-marketing-opt-out-error-code.constant";
 
 const handler = async (
   params: RoutePayload<WhatsAppWebhook>,
@@ -146,12 +150,37 @@ const handler = async (
           await syncTemplate(change.value.message_template_id);
           break;
         case "user_preferences":
+          for (const preference of change.value.user_preferences) {
+            const identity = { whatsAppId: preference.wa_id, whatsAppUserId: preference.user_id };
+
+            await updateWhatsAppMarketingPreference({
+              identity,
+              name: change.value.contacts?.find((contact) =>
+                isSameWhatsAppIdentity({ whatsAppId: contact.wa_id, whatsAppUserId: contact.user_id }, identity),
+              )?.profile?.name,
+              isOptedOut: preference.value === 'stop',
+              updatedAt: parseWhatsAppTimestamp(preference.timestamp),
+            });
+          }
           break;
         case "messages": {
           if ('errors' in change.value) {
             break;
           }
           if ('statuses' in change.value) {
+            // covers users who stopped marketing messages before the app was connected
+            for (const status of change.value.statuses) {
+              if (
+                status.status === 'failed' &&
+                status.errors?.some(({ code }) => code === WHATSAPP_MARKETING_OPT_OUT_ERROR_CODE)
+              ) {
+                await updateWhatsAppMarketingPreference({
+                  identity: { whatsAppId: status.recipient_id, whatsAppUserId: status.recipient_user_id },
+                  isOptedOut: true,
+                  updatedAt: parseWhatsAppTimestamp(status.timestamp),
+                });
+              }
+            }
             break;
           }
           if ('messages' in change.value) {

@@ -5,6 +5,8 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { type InputJsonSchema } from 'twenty-sdk/logic-function';
 import { WHATSAPP_LOGIC_FUNCTION_SEND_TEMPLATE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { isWhatsAppMarketingOptedOut } from 'src/logic-functions/data/is-whatsapp-marketing-opted-out.util';
+import { getRecipientWhatsAppIdentity } from 'src/logic-functions/data/get-recipient-whatsapp-identity.util';
 import { buildWhatsAppRecipient } from 'src/logic-functions/data/build-whatsapp-recipient.util';
 import { buildTemplateComponents } from 'src/logic-functions/data/build-template-components.util';
 import { getWhatsAppAccessTokenOrThrow } from 'src/logic-functions/data/get-whatsapp-access-token-or-throw.util';
@@ -107,6 +109,7 @@ const handler = async (rawParams: unknown) => {
       name: true,
       language: true,
       status: true,
+      category: true,
       parameterFormat: true,
       whatsAppBusinessAccountId: true,
     },
@@ -120,6 +123,13 @@ const handler = async (rawParams: unknown) => {
     throw new Error(
       `Template is ${whatsAppTemplate.status ?? 'not synced'}, only APPROVED templates can be sent`,
     );
+  }
+
+  if (
+    whatsAppTemplate.category === 'MARKETING' &&
+    (await isWhatsAppMarketingOptedOut(getRecipientWhatsAppIdentity(to)))
+  ) {
+    throw new Error('The recipient stopped WhatsApp marketing messages from this business');
   }
 
   const { whatsAppBusinessAccountId } = whatsAppTemplate;
@@ -166,7 +176,7 @@ export default defineLogicFunction({
   universalIdentifier: WHATSAPP_LOGIC_FUNCTION_SEND_TEMPLATE_UNIVERSAL_IDENTIFIER,
   name: 'send-template-message',
   description:
-    'Send an approved WhatsApp template message. Templates are the only message type that can start a conversation outside the 24 hour customer service window.',
+    'Send an approved WhatsApp template message. Templates are the only message type that can start a conversation outside the 24 hour customer service window. Marketing templates are refused for people who stopped WhatsApp marketing messages.',
   timeoutSeconds: 30,
   handler,
   toolTriggerSettings: { inputSchema: SEND_TEMPLATE_MESSAGE_INPUT_SCHEMA },

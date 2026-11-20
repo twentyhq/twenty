@@ -19,18 +19,20 @@ export type WhatsAppWebhookMessageBusinessData = {
   phone_number_id: string; // business phone number ID
 }
 
+// reference: https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/reference/messages/errors
+type WhatsAppWebhookError = {
+  code: number;
+  title: string;
+  message: string;
+  error_data: {
+    details: string;
+  };
+  href: string;
+};
+
 type WhatsAppWebhookMessageErrors = {
   // only 1 element https://stackoverflow.com/a/79564754
-  errors: Array<{
-    // reference: https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/reference/messages/errors
-    code: number;
-    title: string;
-    message: string;
-    error_data: {
-      details: string;
-    };
-    href: string;
-  }>;
+  errors: WhatsAppWebhookError[];
 }
 
 type WhatsAppWebhookMessageStatuses = {
@@ -39,7 +41,9 @@ type WhatsAppWebhookMessageStatuses = {
     id: string;
     status: 'sent' | 'delivered' | 'read' | 'failed';
     timestamp: string;
-    recipient_id: string;
+    recipient_id?: string; // phone number, omitted when a username hides it
+    recipient_user_id?: string; // business-scoped user ID (BSUID)
+    errors?: WhatsAppWebhookError[]; // failed status only
   }>;
 }
 
@@ -681,13 +685,16 @@ export type WhatsAppTemplateCategoryUpdateValue = WhatsAppTemplateIdentity & {
     | { previous_category: string }
   );
 
+// reference: https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/reference/user_preferences
 export type WhatsAppUserPreferencesValue = WhatsAppWebhookMessagingValue & {
-  contacts: Array<{
+  contacts?: Array<{
     profile?: { name: string };
-    wa_id: string;
+    wa_id?: string;
+    user_id?: string;
   }>;
   user_preferences: Array<{
-    wa_id: string;
+    wa_id?: string;
+    user_id?: string;
     detail: string;
     category: 'marketing_messages';
     value: 'stop' | 'resume';

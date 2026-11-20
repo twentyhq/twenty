@@ -5,6 +5,7 @@ Brings WhatsApp Business conversations into Twenty and lets agents and workflows
 - Incoming messages, media, edits and deletions are imported as conversations, one channel per business phone number.
 - Senders are matched to existing people by WhatsApp ID or phone number, or created. Users who hide their number behind a username are matched by their business-scoped user ID.
 - Message templates are imported and kept in sync, and can be created and sent through the `create-template` and `send-template-message` tools.
+- When someone stops or resumes WhatsApp marketing messages, the **WhatsApp marketing opt-out** field on their person record is updated, and marketing templates are no longer sent to them. A marketing send that Meta rejects because of an earlier opt-out also sets it.
 - Account alerts, reviews and phone number quality changes are sent to the inboxes of the workspace members you pick in the app settings.
 
 ## Setup

@@ -19,6 +19,7 @@ import { formatLocationText } from "src/logic-functions/data/format-location-tex
 import { type IngestMessageParticipant, ingestMessages, kv } from "twenty-sdk/logic-function";
 import { isDefined } from "twenty-sdk/utils";
 import { findOrCreateWhatsAppMessageChannelOrThrow } from "src/logic-functions/data/find-or-create-whatsapp-message-channel-or-throw.util";
+import { parseWhatsAppTimestamp } from "src/logic-functions/data/parse-whatsapp-timestamp.util";
 import { buildRevokedMessageText } from "src/logic-functions/data/build-revoked-message-text.util";
 import { uploadWhatsAppMediaAttachmentOnce } from "src/logic-functions/data/upload-whatsapp-media-attachment-once.util";
 import { WHATSAPP_KV_KEY_PREFIXES } from "src/constants/whatsapp-kv-key-prefixes.constant";
@@ -62,7 +63,7 @@ const handler = async ({
     whatsAppBusinessAccountId,
     displayPhoneNumber: businessData.display_phone_number,
   });
-  const sentAt = new Date(parseInt(messages.timestamp, 10) * 1000);
+  const sentAt = parseWhatsAppTimestamp(messages.timestamp);
 
   if (messages.type === 'edit' || messages.type === 'revoke') {
     const originalExternalId =
