@@ -14,6 +14,7 @@ import { OpenDirectMessageButton } from '@/inbox/components/OpenDirectMessageBut
 import { INBOX_RECENT_THREADS_MAX_COUNT } from '@/inbox/constants/InboxRecentThreadsMaxCount';
 import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadClick';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
+import { INBOX_RECENT_THREADS_NAVIGATION_SECTION_ID } from '@/inbox/constants/InboxRecentThreadsNavigationSectionId';
 import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
 import { inboxDirectMessageSidebarItemsSelector } from '@/inbox/states/selectors/inboxDirectMessageSidebarItemsSelector';
 import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
@@ -43,8 +44,6 @@ const StyledSectionsContainer = styled.div`
   flex-direction: column;
   gap: ${themeCssVariables.spacing[3]};
 `;
-
-const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
 
 export const NavigationDrawerInboxContent = () => {
   const { t } = useLingui();
@@ -115,7 +114,7 @@ export const NavigationDrawerInboxContent = () => {
           )}
           {recentThreads.length > 0 && (
             <NavigationDrawerInboxThreadSection
-              sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
+              sectionId={INBOX_RECENT_THREADS_NAVIGATION_SECTION_ID}
               title={t`Recent`}
               threads={recentThreads}
               currentThreadId={aiChatPageThreadId}
