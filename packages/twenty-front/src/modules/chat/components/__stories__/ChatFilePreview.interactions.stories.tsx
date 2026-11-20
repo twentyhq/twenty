@@ -3,16 +3,16 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { AiChatFilePreview } from '@/ai-chat/composer/components/AiChatFilePreview';
+import { ChatFilePreview } from '@/chat/components/ChatFilePreview';
 import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 
 const FILE_NAME = 'Quarterly-account-archive-and-final-contract.pdf';
 
-const meta: Meta<typeof AiChatFilePreview> = {
+const meta: Meta<typeof ChatFilePreview> = {
   title: 'Modules/AI/AgentChatFilePreview/Interactions',
-  component: AiChatFilePreview,
+  component: ChatFilePreview,
   decorators: [ComponentDecorator, ObjectMetadataItemsDecorator],
   args: {
     file: {
@@ -27,7 +27,7 @@ const meta: Meta<typeof AiChatFilePreview> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof AiChatFilePreview>;
+type Story = StoryObj<typeof ChatFilePreview>;
 
 const PreviewStateProbe = () => {
   const filePreview = useAtomStateValue(filePreviewState);
@@ -44,7 +44,7 @@ export const TruncatedPreviewWithRemoval: Story = {
     <>
       <Button>Before preview</Button>
       <div style={{ width: 160 }}>
-        <AiChatFilePreview {...args} />
+        <ChatFilePreview {...args} />
       </div>
       <PreviewStateProbe />
     </>

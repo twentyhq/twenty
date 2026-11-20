@@ -10,7 +10,7 @@ import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelected
 import { inboxThreadListThreadsFamilySelector } from '@/inbox/states/selectors/inboxThreadListThreadsFamilySelector';
 import { getCurrentAiChatPageThreadId } from '@/ai-chat/utils/getCurrentAiChatPageThreadId';
 import { sortChatThreadsByLastActivityDesc } from '@/ai-chat/threads/utils/sortChatThreadsByLastActivityDesc';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
 
 export const useLeaveRemovedInboxThread = () => {
   const store = useStore();

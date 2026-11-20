@@ -23,7 +23,7 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
 import { initializeNewAiChatStory } from '@/inbox/testing/initializeNewAiChatStory';
 import { hasRequestedWorkspaceSetupChatState } from '@/onboarding/states/hasRequestedWorkspaceSetupChatState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { AiChatNewThreadPageContent } from '~/pages/ai-chat/AiChatNewThreadPageContent';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';

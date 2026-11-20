@@ -2,7 +2,7 @@ import { AUTO_SELECT_MODEL_ID_BY_TIER } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { aiChatUserSelectedModelTierState } from '@/ai-chat/states/aiChatUserSelectedModelTierState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 // undefined lets the server fall back to the workspace chat tier.

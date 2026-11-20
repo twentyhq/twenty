@@ -6,7 +6,7 @@ import { type ReactNode } from 'react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
+import { WorkspaceSetupChatPreamble } from '@/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble';
 import {
   jotaiStore,
   resetJotaiStore,

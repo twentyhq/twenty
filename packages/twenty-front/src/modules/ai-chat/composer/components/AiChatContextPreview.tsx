@@ -1,4 +1,4 @@
-import { AiChatFilePreview } from '@/ai-chat/composer/components/AiChatFilePreview';
+import { ChatFilePreview } from '@/chat/components/ChatFilePreview';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { aiChatSelectedFilesFamilyState } from '@/ai-chat/composer/states/aiChatSelectedFilesFamilyState';
 import { aiChatUploadedFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadedFilesFamilyState';
@@ -40,7 +40,7 @@ export const AiChatContextPreview = () => {
   return (
     <StyledPreviewsContainer>
       {aiChatSelectedFiles.map((file, index) => (
-        <AiChatFilePreview
+        <ChatFilePreview
           file={file}
           key={`${index}-${file.name}`}
           onRemove={() => {
@@ -54,7 +54,7 @@ export const AiChatContextPreview = () => {
         />
       ))}
       {aiChatUploadedFiles.map((file, index) => (
-        <AiChatFilePreview
+        <ChatFilePreview
           file={file}
           key={index}
           onRemove={() => handleRemoveUploadedFile(index)}

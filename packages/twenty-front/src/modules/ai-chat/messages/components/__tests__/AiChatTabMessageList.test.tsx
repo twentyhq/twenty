@@ -12,9 +12,12 @@ jest.mock('@/ai-chat/hooks/useIsWorkspaceSetupChat', () => ({
   useIsWorkspaceSetupChat: () => mockUseIsWorkspaceSetupChat(),
 }));
 
-jest.mock('@/onboarding/components/WorkspaceSetupChatPreamble', () => ({
-  WorkspaceSetupChatPreamble: () => <div data-testid="preamble" />,
-}));
+jest.mock(
+  '@/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble',
+  () => ({
+    WorkspaceSetupChatPreamble: () => <div data-testid="preamble" />,
+  }),
+);
 
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
   useAtomStateValue: () => mockUseAtomStateValue(),

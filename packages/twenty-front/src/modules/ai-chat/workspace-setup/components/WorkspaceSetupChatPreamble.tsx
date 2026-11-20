@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { WelcomePersonChip } from '@/onboarding/components/WelcomePersonChip';
+import { WelcomePersonChip } from '@/ai-chat/workspace-setup/components/WelcomePersonChip';
 
 const StyledPreamble = styled.div`
   color: ${themeCssVariables.font.color.primary};
