@@ -27,11 +27,6 @@ const StyledObjectName = styled.div`
   flex-shrink: 0;
 `;
 
-const StyledRulesHint = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  min-width: 0;
-`;
-
 type SettingsRolePermissionsObjectOverrideRowProps = {
   roleId: string;
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -140,9 +135,10 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
           />
           <StyledObjectName>{objectMetadataItem.labelPlural}</StyledObjectName>
           {isDefined(rulesHint) && (
-            <StyledRulesHint>
-              <OverflowingTextWithTooltip text={`· ${rulesHint}`} />
-            </StyledRulesHint>
+            <OverflowingTextWithTooltip
+              color="tertiary"
+              text={`· ${rulesHint}`}
+            />
           )}
         </TableCell>
         <TableCell gap={themeCssVariables.spacing[1]}>

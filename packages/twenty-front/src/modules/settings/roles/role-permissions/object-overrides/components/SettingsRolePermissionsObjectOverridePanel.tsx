@@ -48,11 +48,6 @@ const StyledActionLabel = styled.span`
   flex-shrink: 0;
 `;
 
-const StyledRuleOnlyHint = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  min-width: 0;
-`;
-
 const StyledFooter = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
@@ -169,9 +164,10 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
                 {t(SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[key].label)}
               </StyledActionLabel>
               {isDefined(ruleOnlyHint) && (
-                <StyledRuleOnlyHint>
-                  <OverflowingTextWithTooltip text={`· ${ruleOnlyHint}`} />
-                </StyledRuleOnlyHint>
+                <OverflowingTextWithTooltip
+                  color="tertiary"
+                  text={`· ${ruleOnlyHint}`}
+                />
               )}
             </TableCell>
             <TableCell onClick={(event) => event.stopPropagation()}>
