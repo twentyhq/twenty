@@ -48,8 +48,11 @@ export abstract class CommonFilteredMutationManyQueryRunnerService extends Commo
   }
 
   async runOnOneRecord(
-    args: CommonExtendedInput<
-      DeleteOneQueryArgs | DestroyOneQueryArgs | RestoreOneQueryArgs
+    args: Pick<
+      CommonExtendedInput<
+        DeleteOneQueryArgs | DestroyOneQueryArgs | RestoreOneQueryArgs
+      >,
+      'id' | 'selectedFieldsResult'
     >,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<CommonQueryRunResult<ObjectRecord[]>> {

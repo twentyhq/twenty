@@ -39,7 +39,7 @@ describe('mutations on a record the role can see but its rules do not let it cha
       [originalPeople.map(({ id }) => id)],
     );
 
-  const updatePersonCityAsMember = (recordId: string) =>
+  const updatePersonAvatarUrlAsMember = (recordId: string) =>
     makeGraphqlApiRequest(
       updateOneOperationFactory({
         objectMetadataSingularName: 'person',
@@ -146,7 +146,7 @@ describe('mutations on a record the role can see but its rules do not let it cha
   it('should reject updating a record outside the rule with RECORD_NOT_EDITABLE', async () => {
     const storedPeopleBefore = await findStoredPeople();
 
-    const response = await updatePersonCityAsMember(londonPersonId);
+    const response = await updatePersonAvatarUrlAsMember(londonPersonId);
 
     expect(response.body.errors[0].extensions).toMatchObject({
       code: 'FORBIDDEN',
@@ -178,7 +178,7 @@ describe('mutations on a record the role can see but its rules do not let it cha
   });
 
   it('should update a record the rule lets the role change', async () => {
-    const response = await updatePersonCityAsMember(parisPersonId);
+    const response = await updatePersonAvatarUrlAsMember(parisPersonId);
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.updatePerson).toEqual({
@@ -188,7 +188,7 @@ describe('mutations on a record the role can see but its rules do not let it cha
   });
 
   it('should keep RECORD_NOT_FOUND for a record that does not exist', async () => {
-    const response = await updatePersonCityAsMember(v4());
+    const response = await updatePersonAvatarUrlAsMember(v4());
 
     expect(response.body.errors[0].extensions).toMatchObject({
       code: 'NOT_FOUND',

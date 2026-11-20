@@ -42,7 +42,10 @@ export class CommonUpdateManyQueryRunnerService extends CommonRecordQueryRunnerS
   }
 
   async runOnOneRecord(
-    args: CommonExtendedInput<UpdateOneQueryArgs>,
+    args: Pick<
+      CommonExtendedInput<UpdateOneQueryArgs>,
+      'id' | 'data' | 'selectedFieldsResult'
+    >,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<CommonQueryRunResult<ObjectRecord[]>> {
     return this.runFilteredMutation({
