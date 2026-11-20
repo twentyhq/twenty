@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { enqueueSnackbar, t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
-import { Text } from 'twenty-ui/primitives/typography';
 
 import { GRANOLA_FOLDER_SELECTION_LIMIT } from 'src/constants/granola-api.constant';
 import { GranolaFolderEmptyState } from 'src/front-components/components/GranolaFolderEmptyState';
@@ -167,22 +166,12 @@ export const GranolaPersonalFolderSelection = ({
   return (
     <>
       {!isDefined(initialFolders) && <OnMountEffect onMount={loadFolders} />}
-      <InlineBanner layout="compact" status="info">
-        {t(
-          'People who can read Call Recordings in this workspace can see the shared summaries and transcripts.',
-        )}
-      </InlineBanner>
       <GranolaFolderPolicyRadioCard
         options={getGranolaMemberFolderPolicyOptions()}
         policy={state.status === 'loaded' ? state.policy : undefined}
         expandedContentByPolicy={{ SELECTED_FOLDERS: renderSelectedFolders() }}
         onChange={handlePolicyChange}
       />
-      <Text size="sm" color="secondary">
-        {t(
-          'Only notes created after you select a folder sync, including notes in its subfolders. Older notes stay in Granola, even if you move them into a selected folder.',
-        )}
-      </Text>
     </>
   );
 };
