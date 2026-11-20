@@ -53,10 +53,10 @@ export const NavigationMenuAiChatRecentsSection = ({
 
   const fetchMoreEffect = (
     <NavigationMenuAiChatRecentsFetchMoreEffect
+      key={inboxThreadList?.endCursor ?? ''}
       shouldFetchMore={
         recentThreads.length === 0 && (inboxThreadList?.hasNextPage ?? false)
       }
-      endCursor={inboxThreadList?.endCursor}
     />
   );
 

@@ -5,12 +5,10 @@ import { useLoadInboxThreadList } from '@/inbox/hooks/useLoadInboxThreadList';
 
 type NavigationMenuAiChatRecentsFetchMoreEffectProps = {
   shouldFetchMore: boolean;
-  endCursor: string | null | undefined;
 };
 
 export const NavigationMenuAiChatRecentsFetchMoreEffect = ({
   shouldFetchMore,
-  endCursor,
 }: NavigationMenuAiChatRecentsFetchMoreEffectProps) => {
   const { loadInboxThreadList } = useLoadInboxThreadList();
 
@@ -21,7 +19,7 @@ export const NavigationMenuAiChatRecentsFetchMoreEffect = ({
         mode: 'fetch-more',
       });
     }
-  }, [shouldFetchMore, endCursor, loadInboxThreadList]);
+  }, [shouldFetchMore, loadInboxThreadList]);
 
   return null;
 };
