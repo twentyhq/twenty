@@ -23,7 +23,12 @@ export const buildMemberFieldValuesOrThrow = ({
   workspaceMember: RlsWorkspaceMember | undefined;
   predicates: Pick<
     RowLevelPermissionPredicate,
-    'id' | 'workspaceMemberFieldMetadataId' | 'workspaceMemberSubFieldName'
+    | 'id'
+    | 'workspaceMemberFieldMetadataId'
+    | 'workspaceMemberSubFieldName'
+    | 'workspaceMemberRelationFieldMetadataId'
+    | 'workspaceMemberRelationFilterFieldMetadataId'
+    | 'workspaceMemberRelationFilterValue'
   >[];
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): RlsMemberFieldValues => {
@@ -40,6 +45,16 @@ export const buildMemberFieldValuesOrThrow = ({
       continue;
     }
 
+    const memberFieldKey = buildMemberFieldKey(predicate);
+
+    if (isDefined(predicate.workspaceMemberRelationFieldMetadataId)) {
+      memberFieldValues[memberFieldKey] =
+        workspaceMember.rlsRelationValuesByMemberFieldKey?.[memberFieldKey] ??
+        [];
+
+      continue;
+    }
+
     const workspaceMemberFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: workspaceMemberFieldMetadataId,
       flatEntityMaps: flatFieldMetadataMaps,
@@ -52,12 +67,11 @@ export const buildMemberFieldValuesOrThrow = ({
       );
     }
 
-    memberFieldValues[buildMemberFieldKey(predicate)] =
-      resolveWorkspaceMemberPredicateValue({
-        workspaceMember,
-        workspaceMemberFieldMetadata,
-        workspaceMemberSubFieldName: predicate.workspaceMemberSubFieldName,
-      });
+    memberFieldValues[memberFieldKey] = resolveWorkspaceMemberPredicateValue({
+      workspaceMember,
+      workspaceMemberFieldMetadata,
+      workspaceMemberSubFieldName: predicate.workspaceMemberSubFieldName,
+    });
   }
 
   return memberFieldValues;

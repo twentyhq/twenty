@@ -17,6 +17,7 @@ import { AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { findWorkspaceMemberRelationFieldNamesOfObject } from 'src/engine/permissions/internal/access-group/utils/find-workspace-member-relation-field-names-of-object.util';
 import { isWorkspaceMemberUpdateAffectingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-workspace-member-update-affecting-access-groups.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
@@ -43,6 +44,9 @@ export class AccessGroupSyncListener {
   async handleMetadataEvent({
     workspaceId,
   }: Pick<MetadataEventBatch, 'workspaceId'>): Promise<void> {
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'rlsWorkspaceMemberRelationValueMaps',
+    ]);
     await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(
       workspaceId,
     );
@@ -140,6 +144,58 @@ export class AccessGroupSyncListener {
     if (await this.accessGroupSyncSchedulerService.isEnabled(workspaceId)) {
       await this.refreshMembersAndScheduleSync(workspaceId);
     }
+  }
+
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.UPDATED)
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.DELETED)
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.DESTROYED)
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.RESTORED)
+  async handleRecordEventReachedByWorkspaceMemberRelation({
+    workspaceId,
+    objectMetadata,
+    events,
+  }: Pick<
+    WorkspaceEventBatch<Partial<ObjectRecordUpdateEvent>>,
+    'workspaceId' | 'objectMetadata' | 'events'
+  >): Promise<void> {
+    if (!(await this.accessGroupSyncSchedulerService.isEnabled(workspaceId))) {
+      return;
+    }
+
+    const { rolesPermissions, flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'rolesPermissions',
+        'flatFieldMetadataMaps',
+      ]);
+    const fieldNames = findWorkspaceMemberRelationFieldNamesOfObject({
+      rolesPermissions,
+      flatFieldMetadataMaps,
+      objectMetadataId: objectMetadata.id,
+    });
+    const updatedFields = events.flatMap(
+      ({ properties }) => properties?.updatedFields ?? [],
+    );
+    const isUpdateEvent = events.some(({ properties }) =>
+      isDefined(properties?.updatedFields),
+    );
+
+    if (
+      fieldNames.length === 0 ||
+      (isUpdateEvent &&
+        !updatedFields.some((updatedField) =>
+          fieldNames.includes(updatedField),
+        ))
+    ) {
+      return;
+    }
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'rlsWorkspaceMemberRelationValueMaps',
+    ]);
+    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(
+      workspaceId,
+    );
   }
 
   private async refreshMembersAndScheduleSync(

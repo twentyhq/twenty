@@ -1043,6 +1043,9 @@ export const STANDARD_OBJECTS = {
       objectMetadataIdIndex: {
         universalIdentifier: '60e48c2a-a3db-4f11-b25b-49c7e8a385bc',
       },
+      ruleIdMemberFieldValuesIndex: {
+        universalIdentifier: '61c4b34d-7211-44c3-9089-c6b79b9963dd',
+      },
     },
     views: {},
   },

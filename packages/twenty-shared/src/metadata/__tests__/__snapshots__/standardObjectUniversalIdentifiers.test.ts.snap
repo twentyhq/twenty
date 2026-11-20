@@ -54,6 +54,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "roleIdIndex": {
         "universalIdentifier": "933f2eee-0856-46fd-b144-ffd4bad7e9c8",
       },
+      "ruleIdMemberFieldValuesIndex": {
+        "universalIdentifier": "61c4b34d-7211-44c3-9089-c6b79b9963dd",
+      },
     },
     "universalIdentifier": "47f4ed44-4312-467f-b6f5-787f91037a1d",
     "views": {},

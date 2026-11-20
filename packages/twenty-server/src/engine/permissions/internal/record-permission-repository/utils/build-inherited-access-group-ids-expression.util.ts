@@ -3,6 +3,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildPrivateRecordStateSQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-private-record-state-sql-condition.util';
+import { buildAccessGroupTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-access-group-table-expression.util';
 import { ACCESS_GROUP_IDS_COLUMN_NAME } from 'src/engine/permissions/internal/record-permission-repository/constants/access-group-column-names.constant';
 import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
 import { buildRelatedRecordPathHopsJoin } from 'src/engine/permissions/internal/record-permission-repository/utils/build-related-record-path-hops-join.util';
@@ -17,7 +18,7 @@ export const buildInheritedAccessGroupIdsExpression = ({
   pathIndex,
   relatedRecordPathAccessGroupSource: {
     hops,
-    sourceObjectCompactIds,
+    sourceObjectMetadataId,
     isSourcePrivacyApplicable,
   },
 }: {
@@ -40,7 +41,7 @@ export const buildInheritedAccessGroupIdsExpression = ({
     ...hopsJoin.fromExpressions,
     `unnest(${escapeIdentifier(sourceTableAlias)}.${escapeIdentifier(ACCESS_GROUP_IDS_COLUMN_NAME)}) AS "inherited"("accessGroupId")`,
   ];
-  const sourceCompactIdsParameterName = `relatedRecordPathSourceCompactIds_${pathIndex}`;
+  const sourceObjectMetadataIdParameterName = `relatedRecordPathSourceObjectMetadataId_${pathIndex}`;
   const whereConditions = [
     ...hopTableAliases.flatMap((hopTableAlias, hopIndex) => [
       hopsJoin.joinConditions[hopIndex],
@@ -54,17 +55,18 @@ export const buildInheritedAccessGroupIdsExpression = ({
           }).sql,
         ]
       : []),
-    ...(isDefined(sourceObjectCompactIds)
+    ...(isDefined(sourceObjectMetadataId)
       ? [
-          `${INHERITED_ACCESS_GROUP_ID} = ANY(CAST(:${sourceCompactIdsParameterName} AS integer[]))`,
+          // ARRAY() keeps it an init plan computed once, an IN subquery lets the planner turn it into a join per record
+          `${INHERITED_ACCESS_GROUP_ID} = ANY(ARRAY(SELECT "compactId" FROM ${buildAccessGroupTableExpression(workspaceId)} WHERE "objectMetadataId" = :${sourceObjectMetadataIdParameterName}))`,
         ]
       : []),
   ];
 
   return {
     sql: `ARRAY(SELECT ${INHERITED_ACCESS_GROUP_ID} FROM ${fromExpressions.join(', ')} WHERE ${whereConditions.join(' AND ')})`,
-    parameters: isDefined(sourceObjectCompactIds)
-      ? { [sourceCompactIdsParameterName]: sourceObjectCompactIds }
+    parameters: isDefined(sourceObjectMetadataId)
+      ? { [sourceObjectMetadataIdParameterName]: sourceObjectMetadataId }
       : {},
   };
 };

@@ -4,6 +4,7 @@ import { type RelatedRecordPathHop } from 'src/engine/permissions/internal/relat
 
 export type RelatedRecordPathAccessGroupSource = {
   hops: RelatedRecordPathHop[];
-  sourceObjectCompactIds: number[] | null;
+  // null when the path is inherent and passes on every group of the source
+  sourceObjectMetadataId: string | null;
   isSourcePrivacyApplicable: boolean;
 };

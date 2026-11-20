@@ -84,5 +84,6 @@ export const buildCreatePermissionTablesStatements = ({
     `CREATE UNIQUE INDEX "IDX_ACCESS_GROUP_COMPACT_ID_UNIQUE" ON ${accessGroup} ("compactId")`,
     `CREATE INDEX "IDX_829def5e56d157ce80680dd3d5f" ON ${accessGroup} ("roleId")`,
     `CREATE INDEX "IDX_3794d47209882e7c43f4f786f33" ON ${accessGroup} ("objectMetadataId")`,
+    `CREATE INDEX "IDX_95af763d00c158a3cdd0cdf13a4" ON ${accessGroup} ("rowLevelPermissionPredicateGroupId", "memberFieldValues")`,
   ];
 };

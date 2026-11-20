@@ -25,6 +25,7 @@ const buildNoteQuery = (
     workspaceId: WORKSPACE_ID,
     flatObjectMetadata: note,
     recordAccessGroupSQLConditions: [{ compactId: 7, sqlCondition: null }],
+    accessGroupFamilyIdsExpressions: [],
     relatedRecordPathAccessGroupSources,
     recordIds: ['note-id'],
   });
@@ -53,17 +54,17 @@ describe('buildRecomputeRecordAccessGroupIdsQuery', () => {
     const { sql, parameters } = buildNoteQuery([
       {
         hops: COMPANY_TO_NOTE_HOPS,
-        sourceObjectCompactIds: [12, 13],
+        sourceObjectMetadataId: company.id,
         isSourcePrivacyApplicable: true,
       },
     ]);
 
     expect(sql).toContain(
-      `ARRAY(SELECT DISTINCT "accessGroupId" FROM unnest(ARRAY_REMOVE(CAST(ARRAY[7] AS integer[]), NULL) || ARRAY(SELECT "inherited"."accessGroupId" FROM "${SCHEMA}"."_company" AS "related_record_path_0_0", "${SCHEMA}"."_noteTarget" AS "related_record_path_0_1", unnest("related_record_path_0_0"."_accessGroupIds") AS "inherited"("accessGroupId") WHERE "related_record_path_0_1"."companyId" = "related_record_path_0_0"."id" AND "related_record_path_0_0"."deletedAt" IS NULL AND "record"."id" = "related_record_path_0_1"."noteId" AND "related_record_path_0_1"."deletedAt" IS NULL AND "related_record_path_0_0"."_isPrivate" = FALSE AND "inherited"."accessGroupId" = ANY(CAST(:relatedRecordPathSourceCompactIds_0 AS integer[])))) AS "accessGroupId" ORDER BY "accessGroupId")`,
+      `ARRAY(SELECT DISTINCT "accessGroupId" FROM unnest(ARRAY_REMOVE(CAST(ARRAY[7] AS integer[]), NULL) || ARRAY(SELECT "inherited"."accessGroupId" FROM "${SCHEMA}"."_company" AS "related_record_path_0_0", "${SCHEMA}"."_noteTarget" AS "related_record_path_0_1", unnest("related_record_path_0_0"."_accessGroupIds") AS "inherited"("accessGroupId") WHERE "related_record_path_0_1"."companyId" = "related_record_path_0_0"."id" AND "related_record_path_0_0"."deletedAt" IS NULL AND "record"."id" = "related_record_path_0_1"."noteId" AND "related_record_path_0_1"."deletedAt" IS NULL AND "related_record_path_0_0"."_isPrivate" = FALSE AND "inherited"."accessGroupId" = ANY(ARRAY(SELECT "compactId" FROM "${SCHEMA}"."accessGroup" WHERE "objectMetadataId" = :relatedRecordPathSourceObjectMetadataId_0)))) AS "accessGroupId" ORDER BY "accessGroupId")`,
     );
     expect(parameters).toEqual({
       recordIds: ['note-id'],
-      relatedRecordPathSourceCompactIds_0: [12, 13],
+      relatedRecordPathSourceObjectMetadataId_0: company.id,
     });
   });
 
@@ -71,12 +72,12 @@ describe('buildRecomputeRecordAccessGroupIdsQuery', () => {
     const { sql, parameters } = buildNoteQuery([
       {
         hops: COMPANY_TO_NOTE_HOPS,
-        sourceObjectCompactIds: null,
+        sourceObjectMetadataId: null,
         isSourcePrivacyApplicable: false,
       },
     ]);
 
-    expect(sql).not.toContain('relatedRecordPathSourceCompactIds');
+    expect(sql).not.toContain('relatedRecordPathSourceObjectMetadataId');
     expect(sql).not.toContain('_isPrivate');
     expect(parameters).toEqual({ recordIds: ['note-id'] });
   });

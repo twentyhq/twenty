@@ -8,6 +8,8 @@ import {
   type AccessGroup,
   type AccessGroupWithoutCompactId,
 } from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import { type AccessGroupFamily } from 'src/engine/permissions/internal/access-group/types/access-group-family.type';
+import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { buildAccessGroupTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-access-group-table-expression.util';
@@ -22,25 +24,33 @@ export class AccessGroupRepository {
 
   async findAccessGroups(
     workspaceId: string,
-  ): Promise<Pick<AccessGroup, 'groupHash' | 'objectMetadataId'>[]> {
-    return this.recordPermissionQueryService.execute<
-      Pick<AccessGroup, 'groupHash' | 'objectMetadataId'>
-    >({
+  ): Promise<
+    Pick<
+      AccessGroup,
+      | 'compactId'
+      | 'groupHash'
+      | 'objectMetadataId'
+      | 'rowLevelPermissionPredicateGroupId'
+    >[]
+  > {
+    return this.recordPermissionQueryService.execute({
       workspaceId,
       query: {
-        sql: `SELECT "groupHash", "objectMetadataId" FROM ${buildAccessGroupTableExpression(workspaceId)}`,
+        sql: `SELECT "compactId", "groupHash", "objectMetadataId", "rowLevelPermissionPredicateGroupId" FROM ${buildAccessGroupTableExpression(workspaceId)}`,
         parameters: {},
       },
     });
   }
 
-  async findAccessGroupsOfObjects({
+  async findAccessGroupsOfObjectOutsideFamilies({
     workspaceId,
-    objectMetadataIds,
+    objectMetadataId,
+    familyRuleIds,
     transactionScope,
   }: {
     workspaceId: string;
-    objectMetadataIds: string[];
+    objectMetadataId: string;
+    familyRuleIds: string[];
     transactionScope?: RecordPermissionTransactionScope;
   }): Promise<AccessGroup[]> {
     return this.recordPermissionQueryService.execute<AccessGroup>({
@@ -49,11 +59,65 @@ export class AccessGroupRepository {
       query: {
         sql: `SELECT "compactId", "groupHash", "roleId", "objectMetadataId", "rowLevelPermissionPredicateGroupId", "memberFieldValues"
           FROM ${buildAccessGroupTableExpression(workspaceId)}
-          WHERE "objectMetadataId" = ANY(:objectMetadataIds)
+          WHERE "objectMetadataId" = :objectMetadataId
+            AND ("rowLevelPermissionPredicateGroupId" IS NULL OR NOT ("rowLevelPermissionPredicateGroupId" = ANY(CAST(:familyRuleIds AS uuid[]))))
           ORDER BY "compactId"`,
-        parameters: { objectMetadataIds },
+        parameters: { objectMetadataId, familyRuleIds },
       },
     });
+  }
+
+  // Groups of a family differ by their key values, so only the distinct remaining values need their own condition
+  async findAccessGroupFamilyResidualMemberFieldValues({
+    workspaceId,
+    families,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    families: AccessGroupFamily[];
+    transactionScope?: RecordPermissionTransactionScope;
+  }): Promise<RlsMemberFieldValues[][]> {
+    if (families.length === 0) {
+      return [];
+    }
+
+    const rows = await this.recordPermissionQueryService.execute<{
+      familyIndex: number;
+      residualMemberFieldValues: RlsMemberFieldValues;
+    }>({
+      workspaceId,
+      transactionScope,
+      query: {
+        sql: families
+          .map(
+            (_, familyIndex) =>
+              `SELECT DISTINCT ${familyIndex} AS "familyIndex", "memberFieldValues" - CAST(:keys_${familyIndex} AS text[]) AS "residualMemberFieldValues"
+              FROM ${buildAccessGroupTableExpression(workspaceId)}
+              WHERE "rowLevelPermissionPredicateGroupId" = :ruleId_${familyIndex}
+                AND "roleId" = :roleId_${familyIndex}
+                AND "objectMetadataId" = :objectMetadataId_${familyIndex}
+                AND "memberFieldValues" IS NOT NULL`,
+          )
+          .join(' UNION ALL '),
+        parameters: Object.fromEntries(
+          families.flatMap((family, familyIndex) => [
+            [
+              `keys_${familyIndex}`,
+              family.keys.map(({ memberFieldKey }) => memberFieldKey),
+            ],
+            [`ruleId_${familyIndex}`, family.ruleId],
+            [`roleId_${familyIndex}`, family.roleId],
+            [`objectMetadataId_${familyIndex}`, family.objectMetadataId],
+          ]),
+        ),
+      },
+    });
+
+    return families.map((_, familyIndex) =>
+      rows
+        .filter((row) => Number(row.familyIndex) === familyIndex)
+        .map(({ residualMemberFieldValues }) => residualMemberFieldValues),
+    );
   }
 
   async insertAccessGroups({
@@ -62,7 +126,9 @@ export class AccessGroupRepository {
   }: {
     workspaceId: string;
     newAccessGroups: AccessGroupWithoutCompactId[];
-  }): Promise<void> {
+  }): Promise<AccessGroup[]> {
+    const insertedAccessGroups: AccessGroup[] = [];
+
     for (
       let start = 0;
       start < newAccessGroups.length;
@@ -70,7 +136,10 @@ export class AccessGroupRepository {
     ) {
       const batch = newAccessGroups.slice(start, start + INSERT_BATCH_SIZE);
 
-      await this.recordPermissionQueryService.execute({
+      const insertedRows = await this.recordPermissionQueryService.execute<{
+        compactId: number;
+        groupHash: string;
+      }>({
         workspaceId,
         query: {
           sql: `INSERT INTO ${buildAccessGroupTableExpression(workspaceId)}
@@ -81,7 +150,8 @@ export class AccessGroupRepository {
                   `(:roleId${index}, :objectMetadataId${index}, :ruleId${index}, CAST(:memberFieldValues${index} AS jsonb), :groupHash${index})`,
               )
               .join(', ')}
-            ON CONFLICT DO NOTHING`,
+            ON CONFLICT DO NOTHING
+            RETURNING "compactId", "groupHash"`,
           parameters: Object.fromEntries(
             batch.flatMap((newAccessGroup, index) => [
               [`roleId${index}`, newAccessGroup.roleId],
@@ -101,7 +171,20 @@ export class AccessGroupRepository {
           ),
         },
       });
+      const compactIdByGroupHash = new Map(
+        insertedRows.map(({ compactId, groupHash }) => [groupHash, compactId]),
+      );
+
+      insertedAccessGroups.push(
+        ...batch.flatMap((newAccessGroup) => {
+          const compactId = compactIdByGroupHash.get(newAccessGroup.groupHash);
+
+          return isDefined(compactId) ? [{ ...newAccessGroup, compactId }] : [];
+        }),
+      );
     }
+
+    return insertedAccessGroups;
   }
 
   async deleteAccessGroups({

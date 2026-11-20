@@ -42,6 +42,13 @@ const buildPredicateGroupContent = ({
         predicate.value,
         predicate.workspaceMemberFieldMetadataId,
         predicate.workspaceMemberSubFieldName,
+        ...(isDefined(predicate.workspaceMemberRelationFieldMetadataId)
+          ? [
+              predicate.workspaceMemberRelationFieldMetadataId,
+              predicate.workspaceMemberRelationFilterFieldMetadataId ?? null,
+              predicate.workspaceMemberRelationFilterValue ?? null,
+            ]
+          : []),
       ]),
   ),
   predicateGroups: sortByContent(

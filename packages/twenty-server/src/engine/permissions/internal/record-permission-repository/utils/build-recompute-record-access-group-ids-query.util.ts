@@ -16,12 +16,14 @@ export const buildRecomputeRecordAccessGroupIdsQuery = ({
   workspaceId,
   flatObjectMetadata,
   recordAccessGroupSQLConditions,
+  accessGroupFamilyIdsExpressions,
   relatedRecordPathAccessGroupSources,
   recordIds,
 }: {
   workspaceId: string;
   flatObjectMetadata: FlatObjectMetadata;
   recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[];
+  accessGroupFamilyIdsExpressions: SQLCondition[];
   relatedRecordPathAccessGroupSources: RelatedRecordPathAccessGroupSource[];
   recordIds: string[];
 }): SQLCondition => {
@@ -48,6 +50,9 @@ export const buildRecomputeRecordAccessGroupIdsQuery = ({
       FROM (
         SELECT ${alias}."id", ${buildRecordAccessGroupIdsExpression({
           recordAccessGroupSQLConditions,
+          accessGroupFamilyIdsExpressions: accessGroupFamilyIdsExpressions.map(
+            ({ sql }) => sql,
+          ),
           inheritedAccessGroupIdsExpressions:
             inheritedAccessGroupIdsExpressions.map(({ sql }) => sql),
         })} AS "accessGroupIds"
@@ -62,6 +67,7 @@ export const buildRecomputeRecordAccessGroupIdsQuery = ({
       ...recordAccessGroupSQLConditions.map(
         ({ sqlCondition }) => sqlCondition?.parameters ?? {},
       ),
+      ...accessGroupFamilyIdsExpressions.map(({ parameters }) => parameters),
       ...inheritedAccessGroupIdsExpressions.map(({ parameters }) => parameters),
     ),
   };

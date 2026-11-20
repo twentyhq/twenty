@@ -26,6 +26,7 @@ type TestSetup = {
   companyNameFieldMetadataId: string;
   personCompanyFieldMetadataId: string;
   workspaceMemberCalendarStartDayFieldMetadataId: string;
+  workspaceMemberBlocklistFieldMetadataId: string;
 };
 
 type TestContext = {
@@ -34,6 +35,78 @@ type TestContext = {
 
 const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<TestContext>[] =
   [
+    {
+      title:
+        'when a workspace member relation filter has no workspace member relation',
+      context: {
+        input: (testSetup) => ({
+          roleId: testSetup.createdRoleId,
+          objectMetadataId: testSetup.companyObjectMetadataId,
+          rules: [
+            {
+              predicates: [
+                {
+                  fieldMetadataId: testSetup.companyNameFieldMetadataId,
+                  operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                  value: 'Apple',
+                  workspaceMemberRelationFilterFieldMetadataId:
+                    testSetup.companyNameFieldMetadataId,
+                  workspaceMemberRelationFilterValue: ['Apple'],
+                },
+              ],
+            },
+          ],
+        }),
+      },
+    },
+    {
+      title:
+        'when the workspace member relation is not a relation of the workspace member',
+      context: {
+        input: (testSetup) => ({
+          roleId: testSetup.createdRoleId,
+          objectMetadataId: testSetup.companyObjectMetadataId,
+          rules: [
+            {
+              predicates: [
+                {
+                  fieldMetadataId: testSetup.companyNameFieldMetadataId,
+                  operand: RowLevelPermissionPredicateOperand.IS,
+                  workspaceMemberRelationFieldMetadataId:
+                    testSetup.personCompanyFieldMetadataId,
+                  workspaceMemberFieldMetadataId:
+                    testSetup.companyNameFieldMetadataId,
+                },
+              ],
+            },
+          ],
+        }),
+      },
+    },
+    {
+      title:
+        'when the workspace member field is not a field of the object the workspace member relation reaches',
+      context: {
+        input: (testSetup) => ({
+          roleId: testSetup.createdRoleId,
+          objectMetadataId: testSetup.companyObjectMetadataId,
+          rules: [
+            {
+              predicates: [
+                {
+                  fieldMetadataId: testSetup.companyNameFieldMetadataId,
+                  operand: RowLevelPermissionPredicateOperand.IS,
+                  workspaceMemberRelationFieldMetadataId:
+                    testSetup.workspaceMemberBlocklistFieldMetadataId,
+                  workspaceMemberFieldMetadataId:
+                    testSetup.companyNameFieldMetadataId,
+                },
+              ],
+            },
+          ],
+        }),
+      },
+    },
     {
       title: 'when roleId is not a valid UUID',
       context: {
@@ -248,6 +321,7 @@ describe('Row Level Permission Predicate upsert should fail', () => {
   let personObjectMetadataId: string;
   let personCompanyFieldMetadataId: string;
   let workspaceMemberCalendarStartDayFieldMetadataId: string;
+  let workspaceMemberBlocklistFieldMetadataId: string;
 
   beforeAll(async () => {
     const { objects } = await findManyObjectMetadata({
@@ -309,6 +383,18 @@ describe('Row Level Permission Predicate upsert should fail', () => {
 
     jestExpectToBeDefined(calendarStartDayField);
     workspaceMemberCalendarStartDayFieldMetadataId = calendarStartDayField.id;
+
+    const blocklistField = objects
+      .find(
+        (object: { nameSingular: string }) =>
+          object.nameSingular === 'workspaceMember',
+      )
+      ?.fieldsList?.find(
+        (field: { name: string }) => field.name === 'blocklist',
+      );
+
+    jestExpectToBeDefined(blocklistField);
+    workspaceMemberBlocklistFieldMetadataId = blocklistField.id;
 
     const { data: roleData } = await createOneRole({
       expectToFail: false,
@@ -384,6 +470,7 @@ describe('Row Level Permission Predicate upsert should fail', () => {
         companyNameFieldMetadataId,
         personCompanyFieldMetadataId,
         workspaceMemberCalendarStartDayFieldMetadataId,
+        workspaceMemberBlocklistFieldMetadataId,
       }),
     });
 
