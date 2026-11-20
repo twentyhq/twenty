@@ -3,7 +3,7 @@ import { type ConditionalAvailabilityNode } from 'twenty-shared/types';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type ConvertPageLayoutWidgetRulesToConditionalAvailabilityCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795111495560-convert-page-layout-widget-rules-to-conditional-availability.command';
+import { type ConvertPageLayoutWidgetRulesToConditionalAvailabilityCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795170114689-convert-page-layout-widget-rules-to-conditional-availability.command';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 

@@ -8,7 +8,7 @@ import { ConvertNotStartedWorkflowRunsCommand } from 'src/database/commands/upgr
 import { DropNotStartedWorkflowRunStatusCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795095338141-drop-not-started-workflow-run-status.command';
 import { RepairSkippedStandardCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795103130063-repair-skipped-standard-command-menu-items.command';
 import { AddWorkspaceNavigationMenuSectionCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795106019718-add-workspace-navigation-menu-section.command';
-import { ConvertPageLayoutWidgetRulesToConditionalAvailabilityCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795111495560-convert-page-layout-widget-rules-to-conditional-availability.command';
+import { ConvertPageLayoutWidgetRulesToConditionalAvailabilityCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795170114689-convert-page-layout-widget-rules-to-conditional-availability.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
