@@ -155,6 +155,25 @@ describe('buildMarketplaceMcpServer', () => {
     });
   });
 
+  it('should name the server after its label when the domain only contains it', () => {
+    const result = buildMarketplaceMcpServer({
+      registryServer: {
+        name: 'com.usepylon/mcp',
+        title: 'Pylon',
+        remotes: [
+          { type: 'streamable-http', url: 'https://mcp.usepylon.com/' },
+        ],
+      },
+      directoryEntry: undefined,
+    });
+
+    expect(result).toMatchObject({
+      name: 'pylon',
+      label: 'Pylon',
+      author: 'Pylon',
+    });
+  });
+
   it('should skip a server that cannot be added in one click', () => {
     expect(
       buildMarketplaceMcpServer({

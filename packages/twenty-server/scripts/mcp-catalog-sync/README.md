@@ -19,7 +19,7 @@ with `--add`:
 
 Only list a server Twenty can sign in to without a pre-registered OAuth app:
 its authorization server must offer dynamic client registration or client ID
-metadata documents. Asana, Docusign and GitHub do not.
+metadata documents. Asana, Docusign, GitHub and HubSpot do not.
 
 Listing a server is a reviewed pull request: run the script with its registry
 name, read the generated entry, commit.

@@ -62,7 +62,14 @@ export const buildMarketplaceMcpServer = ({
   }
 
   const directory = directoryEntry?._meta['com.anthropic.api/mcp-registry'];
-  const author = capitalize(vendor);
+  const label =
+    directory?.displayName ?? registryServer.title ?? capitalize(vendor);
+  const labelAsName = label
+    .toLowerCase()
+    .replace(MCP_SERVER_NAME_FORBIDDEN_CHARACTERS, '_');
+  // "Pylon" on usepylon.com: the label is the brand, the domain is not
+  const isLabelTheVendorBrand = vendor.toLowerCase().includes(labelAsName);
+  const author = isLabelTheVendorBrand ? label : capitalize(vendor);
   // The registry website is often a documentation page, the directory one is the vendor homepage
   const websiteUrl =
     directory?.author?.url ??
@@ -85,10 +92,10 @@ export const buildMarketplaceMcpServer = ({
       registryServer.name,
       MARKETPLACE_MCP_SERVER_UNIVERSAL_IDENTIFIER_NAMESPACE,
     ),
-    name: vendor
-      .toLowerCase()
-      .replace(MCP_SERVER_NAME_FORBIDDEN_CHARACTERS, '_'),
-    label: directory?.displayName ?? registryServer.title ?? author,
+    name: isLabelTheVendorBrand
+      ? labelAsName
+      : vendor.toLowerCase().replace(MCP_SERVER_NAME_FORBIDDEN_CHARACTERS, '_'),
+    label,
     author,
     description: description.slice(0, DESCRIPTION_MAX_LENGTH),
     aboutDescription:
