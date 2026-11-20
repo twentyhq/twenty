@@ -527,8 +527,7 @@ export class AgentChatThreadParticipantService {
   }
 
   // Over the chats the member can open and follows, the way the inbox lists
-  // them. Direct messages stay out of the triage counts but still count as
-  // unread, which lights the Inbox tab
+  // them
   async findOpenThreadsSummary({
     workspaceId,
     workspaceMemberId,

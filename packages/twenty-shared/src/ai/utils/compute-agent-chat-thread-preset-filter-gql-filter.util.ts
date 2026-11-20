@@ -97,9 +97,7 @@ const computeMemberInboxStateFilter = ({
   }
 };
 
-// Direct messages are listed in their own sidebar section, never in triage.
-// Keep in sync with getAgentChatThreadInboxStatus and
-// isAgentChatThreadInPresetFilter, which place loaded chats on the client
+// Keep in sync with getAgentChatThreadInboxStatus, which places loaded chats on the client
 export const computeAgentChatThreadPresetFilterGqlFilter = (
   args: PresetFilterArgs,
 ): RecordGqlOperationFilter => ({
