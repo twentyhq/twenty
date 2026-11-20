@@ -37,12 +37,17 @@ const handler = async ({ campaignId }: { campaignId: string }) => {
     ),
   );
 
+  const { whatsAppCampaignSkips } = await client.query({
+    whatsAppCampaignSkips: { __args: { filter: { campaignId: { eq: campaignId } } }, totalCount: true },
+  });
+
   await client.mutation({
     updateWhatsAppCampaign: {
       __args: {
         id: campaignId,
         data: {
           ...statusCounts,
+          skippedCount: whatsAppCampaignSkips?.totalCount ?? 0,
           repliedCount: (
             await findWhatsAppCampaignRecipients({ client, campaignId, campaignCreatedAt: whatsAppCampaign.createdAt })
           ).filter(({ hasReplied }) => hasReplied).length,
@@ -56,7 +61,7 @@ const handler = async ({ campaignId }: { campaignId: string }) => {
 export default defineLogicFunction({
   universalIdentifier: WHATSAPP_LOGIC_FUNCTION_REFRESH_CAMPAIGN_COUNTS_UNIVERSAL_IDENTIFIER,
   name: 'refresh-campaign-counts',
-  description: 'Recounts the sent, delivered, read, failed and replied messages of a WhatsApp campaign',
+  description: 'Recounts the sent, delivered, read, failed, replied and skipped recipients of a WhatsApp campaign',
   timeoutSeconds: 60,
   handler,
 });

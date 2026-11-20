@@ -9,7 +9,6 @@ export default defineCommandMenuItem({
   universalIdentifier: WHATSAPP_SEND_TEMPLATE_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
   label: 'Send WhatsApp template',
   shortLabel: 'WhatsApp template',
-  icon: 'IconBrandWhatsapp',
   isPinned: false,
   availabilityType: 'RECORD_SELECTION',
   availabilityObjectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,

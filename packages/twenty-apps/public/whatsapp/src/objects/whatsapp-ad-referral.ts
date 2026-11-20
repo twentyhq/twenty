@@ -1,5 +1,6 @@
 import { defineObject, FieldType, OnDeleteAction, RelationType, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 import {
+  OPPORTUNITY_WHATSAPP_AD_REFERRALS_FIELD_UNIVERSAL_IDENTIFIER,
   PERSON_WHATSAPP_AD_REFERRALS_FIELD_UNIVERSAL_IDENTIFIER,
   WHATSAPP_AD_REFERRAL_FIELD_UNIVERSAL_IDENTIFIERS,
   WHATSAPP_AD_REFERRAL_UNIVERSAL_IDENTIFIER,
@@ -103,6 +104,21 @@ export default defineObject({
         joinColumnName: 'personId',
       },
       isUIEditable: false,
+    },
+    {
+      universalIdentifier: WHATSAPP_AD_REFERRAL_FIELD_UNIVERSAL_IDENTIFIERS.opportunity,
+      type: FieldType.RELATION,
+      name: 'opportunity',
+      label: 'Opportunity',
+      icon: 'IconTargetArrow',
+      isNullable: true,
+      relationTargetObjectMetadataUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+      relationTargetFieldMetadataUniversalIdentifier: OPPORTUNITY_WHATSAPP_AD_REFERRALS_FIELD_UNIVERSAL_IDENTIFIER,
+      universalSettings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: OnDeleteAction.SET_NULL,
+        joinColumnName: 'opportunityId',
+      },
     },
   ],
 });

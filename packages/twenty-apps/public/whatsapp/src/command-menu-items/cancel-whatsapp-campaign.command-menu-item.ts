@@ -10,7 +10,6 @@ export default defineCommandMenuItem({
   universalIdentifier: WHATSAPP_CANCEL_CAMPAIGN_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
   label: 'Cancel WhatsApp campaign',
   shortLabel: 'Cancel',
-  icon: 'IconCalendarOff',
   isPinned: false,
   availabilityType: 'RECORD_SELECTION',
   availabilityObjectUniversalIdentifier: WHATSAPP_CAMPAIGN_UNIVERSAL_IDENTIFIER,

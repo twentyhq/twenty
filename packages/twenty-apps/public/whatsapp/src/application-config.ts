@@ -12,7 +12,7 @@ export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   displayName: APP_DISPLAY_NAME,
   description: APP_DESCRIPTION,
-  logoUrl: 'public/logo.svg',
+  logo: 'public/logo.svg',
   author: 'Twenty',
   applicationVariables: {
     VERIFY_TOKEN: {
@@ -26,6 +26,6 @@ export default defineApplication({
       description: 'Secret required to validate webhooks from WhatsApp',
     },
   },
-  category: 'Messaging',
+  category: 'Communication',
   emailSupport: 'contact@twenty.com'
 });

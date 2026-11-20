@@ -10,7 +10,6 @@ export default defineCommandMenuItem({
   universalIdentifier: WHATSAPP_DELETE_TEMPLATE_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
   label: 'Delete in WhatsApp',
   shortLabel: 'Delete',
-  icon: 'IconTrash',
   isPinned: false,
   availabilityType: 'RECORD_SELECTION',
   availabilityObjectUniversalIdentifier: WHATSAPP_TEMPLATE_UNIVERSAL_IDENTIFIER,

@@ -2,6 +2,7 @@ import {
   definePageLayoutTab,
   getSystemRecordPageLayoutUniversalIdentifier,
   PageLayoutTabLayoutMode,
+  PageLayoutWidgetVerticalListHeightBehavior,
 } from 'twenty-sdk/define';
 
 import {
@@ -21,13 +22,13 @@ export default definePageLayoutTab({
   title: 'Recipients',
   icon: 'IconUsers',
   position: 1,
-  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   widgets: [
     {
       universalIdentifier: WHATSAPP_CAMPAIGN_RECIPIENTS_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
       title: 'Recipients',
       type: 'FRONT_COMPONENT',
-      position: { layoutMode: PageLayoutTabLayoutMode.CANVAS },
+      heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
       configuration: {
         configurationType: 'FRONT_COMPONENT',
         frontComponentUniversalIdentifier: WHATSAPP_CAMPAIGN_RECIPIENTS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,

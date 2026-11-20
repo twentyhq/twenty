@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-sdk/utils';
 import { WHATSAPP_LOGIC_FUNCTION_SEND_CAMPAIGN_MESSAGE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { WHATSAPP_CAMPAIGN_MAX_SCHEDULE_DELAY_MS } from 'src/constants/whatsapp-campaign-max-schedule-delay-ms.constant';
 import { WHATSAPP_KV_KEY_PREFIXES } from 'src/constants/whatsapp-kv-key-prefixes.constant';
+import { createWhatsAppCampaignSkips } from 'src/logic-functions/data/create-whatsapp-campaign-skips.util';
 import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
 import { findWhatsAppTemplateRecipientPeopleOrThrow } from 'src/logic-functions/data/find-whatsapp-template-recipient-people-or-throw.util';
 import { resolveWhatsAppCampaignRecipient } from 'src/logic-functions/data/resolve-whatsapp-campaign-recipient.util';
@@ -75,12 +76,14 @@ export const launchWhatsAppCampaign = async ({
     MISSING_PERSONALIZED_VALUE: 0,
   };
   const recipientPersonIds: string[] = [];
+  const skips: { person: WhatsAppTemplateRecipientPerson; reason: WhatsAppCampaignSkipReason }[] = [];
 
   for (const person of people) {
     const recipient = resolveWhatsAppCampaignRecipient({ person, templateCategory: whatsAppTemplate.category, content });
 
     if ('skipReason' in recipient) {
       skippedCountByReason[recipient.skipReason] += 1;
+      skips.push({ person, reason: recipient.skipReason });
     } else {
       recipientPersonIds.push(person.id);
     }
@@ -112,6 +115,8 @@ export const launchWhatsAppCampaign = async ({
       id: true,
     },
   });
+
+  await createWhatsAppCampaignSkips({ campaignId: createWhatsAppCampaign.id, skips });
 
   await enqueueLogicFunctionJobs<SendCampaignMessagePayload>({
     logicFunctionUniversalIdentifier: WHATSAPP_LOGIC_FUNCTION_SEND_CAMPAIGN_MESSAGE_UNIVERSAL_IDENTIFIER,

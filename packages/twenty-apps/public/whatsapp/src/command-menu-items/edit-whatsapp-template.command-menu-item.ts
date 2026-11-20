@@ -10,7 +10,6 @@ export default defineCommandMenuItem({
   universalIdentifier: WHATSAPP_EDIT_TEMPLATE_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
   label: 'Edit in WhatsApp',
   shortLabel: 'Edit',
-  icon: 'IconPencil',
   isPinned: false,
   availabilityType: 'RECORD_SELECTION',
   availabilityObjectUniversalIdentifier: WHATSAPP_TEMPLATE_UNIVERSAL_IDENTIFIER,
