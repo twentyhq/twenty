@@ -17,6 +17,7 @@ import { type GranolaStoredFolderSelection } from 'src/front-components/types/gr
 import { computeGranolaFolderSelection } from 'src/front-components/utils/compute-granola-folder-selection.util';
 import { dropInaccessibleGranolaFolders } from 'src/front-components/utils/drop-inaccessible-granola-folders.util';
 import { fetchGranolaFoldersOrThrow } from 'src/front-components/utils/fetch-granola-folders-or-throw.util';
+import { getGranolaWorkspaceFolderPolicyOptions } from 'src/front-components/utils/get-granola-workspace-folder-policy-options.util';
 import { saveGranolaFolderSelectionOrThrow } from 'src/front-components/utils/save-granola-folder-selection-or-throw.util';
 
 const getSelectionHint = (selectedFolderCount: number) => {
@@ -199,6 +200,7 @@ export const GranolaFolderPicker = ({
     <>
       <OnMountEffect onMount={loadFolderListIfSelected} />
       <GranolaFolderPolicyRadioCard
+        options={getGranolaWorkspaceFolderPolicyOptions()}
         policy={isLocked ? undefined : selection.policy}
         selectedFoldersContent={getSelectedFoldersContent()}
         onChange={handlePolicyChange}

@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from '@sniptt/guards';
 import { useState } from 'react';
 import { enqueueSnackbar, t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
@@ -6,19 +7,46 @@ import { Text } from 'twenty-ui/primitives/typography';
 
 import { GRANOLA_FOLDER_SELECTION_LIMIT } from 'src/constants/granola-api.constant';
 import { GranolaFolderEmptyState } from 'src/front-components/components/GranolaFolderEmptyState';
+import { GranolaFolderPolicyRadioCard } from 'src/front-components/components/GranolaFolderPolicyRadioCard';
 import { GranolaFolderTree } from 'src/front-components/components/GranolaFolderTree';
-import { GranolaFolderTreeSkeleton } from 'src/front-components/components/GranolaFolderTreeSkeleton';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { useAutosaveGranolaFolderSelection } from 'src/front-components/hooks/use-autosave-granola-folder-selection';
+import { type GranolaFolderPolicy } from 'src/front-components/types/granola-folder-policy.type';
 import { type GranolaPersonalFolders } from 'src/front-components/types/granola-personal-folders.type';
 import { type GranolaSettingsFolder } from 'src/front-components/types/granola-settings-folder.type';
 import { fetchGranolaPersonalFoldersOrThrow } from 'src/front-components/utils/fetch-granola-personal-folders-or-throw.util';
+import { getGranolaMemberFolderPolicyOptions } from 'src/front-components/utils/get-granola-member-folder-policy-options.util';
 import { saveGranolaPersonalFolderSelectionOrThrow } from 'src/front-components/utils/save-granola-personal-folder-selection-or-throw.util';
+
+const getSelectionHint = (selectedFolderCount: number) => {
+  if (selectedFolderCount === 0) {
+    return t('Nothing is picked yet, so nothing is shared.');
+  }
+
+  if (selectedFolderCount === 1) {
+    return t('Switch to Off to stop sharing.');
+  }
+
+  if (selectedFolderCount >= GRANOLA_FOLDER_SELECTION_LIMIT) {
+    return t('You can pick up to {limit} folders.', {
+      limit: GRANOLA_FOLDER_SELECTION_LIMIT,
+    });
+  }
+
+  return undefined;
+};
+
+const getPolicyForSelection = (folderIds: string[]): GranolaFolderPolicy =>
+  isNonEmptyArray(folderIds) ? 'SELECTED_FOLDERS' : 'NO_FOLDERS';
 
 type PersonalFolderState =
   | { status: 'loading' }
   | { status: 'failed' }
-  | { status: 'loaded'; folders: GranolaSettingsFolder[] };
+  | {
+      status: 'loaded';
+      folders: GranolaSettingsFolder[];
+      policy: GranolaFolderPolicy;
+    };
 
 type GranolaPersonalFolderSelectionProps = {
   connectionId: string;
@@ -31,7 +59,11 @@ export const GranolaPersonalFolderSelection = ({
 }: GranolaPersonalFolderSelectionProps) => {
   const [state, setState] = useState<PersonalFolderState>(
     isDefined(initialFolders)
-      ? { status: 'loaded', folders: initialFolders.folders }
+      ? {
+          status: 'loaded',
+          folders: initialFolders.folders,
+          policy: getPolicyForSelection(initialFolders.folderIds),
+        }
       : { status: 'loading' },
   );
   const [selectedFolderIds, setSelectedFolderIds] = useState<string[]>(
@@ -45,7 +77,11 @@ export const GranolaPersonalFolderSelection = ({
       const { folders, folderIds } =
         await fetchGranolaPersonalFoldersOrThrow(connectionId);
       setSelectedFolderIds(folderIds);
-      setState({ status: 'loaded', folders });
+      setState({
+        status: 'loaded',
+        folders,
+        policy: getPolicyForSelection(folderIds),
+      });
     } catch {
       setState({ status: 'failed' });
     }
@@ -69,27 +105,39 @@ export const GranolaPersonalFolderSelection = ({
     save(folderIds);
   };
 
-  const renderFolders = () => {
-    if (state.status === 'loading') {
-      return <GranolaFolderTreeSkeleton />;
-    }
+  const handlePolicyChange = (nextPolicy: GranolaFolderPolicy) => {
+    setState((current) =>
+      current.status === 'loaded'
+        ? { ...current, policy: nextPolicy }
+        : current,
+    );
 
-    if (state.status === 'failed') {
-      return (
-        <InlineBanner
-          layout="compact"
-          status="error"
-          action={
-            <InlineBanner.Action onClick={loadFolders}>
-              {t('Retry')}
-            </InlineBanner.Action>
-          }
-        >
-          {t(
-            'Could not load your Granola folders. Check your API key in General.',
-          )}
-        </InlineBanner>
-      );
+    if (nextPolicy === 'NO_FOLDERS' && isNonEmptyArray(selectedFolderIds)) {
+      replaceSelection([]);
+    }
+  };
+
+  if (state.status === 'failed') {
+    return (
+      <InlineBanner
+        layout="compact"
+        status="error"
+        action={
+          <InlineBanner.Action onClick={loadFolders}>
+            {t('Retry')}
+          </InlineBanner.Action>
+        }
+      >
+        {t(
+          'Could not load your Granola folders. Check your API key in General.',
+        )}
+      </InlineBanner>
+    );
+  }
+
+  const renderSelectedFolders = () => {
+    if (state.status !== 'loaded') {
+      return undefined;
     }
 
     if (state.folders.length === 0) {
@@ -97,39 +145,42 @@ export const GranolaPersonalFolderSelection = ({
     }
 
     return (
-      <>
-        <InlineBanner layout="compact" status="info">
-          {t(
-            'People who can read Call Recordings in this workspace can see the shared summaries and transcripts.',
-          )}
-        </InlineBanner>
-        <GranolaFolderTree
-          folders={state.folders}
-          selectedFolderIds={selectedFolderIds}
-          selectionLimit={GRANOLA_FOLDER_SELECTION_LIMIT}
-          hint={undefined}
-          onToggleFolder={(folderId, checked) =>
-            replaceSelection(
-              checked
-                ? [...selectedFolderIds, folderId]
-                : selectedFolderIds.filter((id) => id !== folderId),
-            )
-          }
-          onReplaceSelection={replaceSelection}
-        />
-        <Text size="sm" color="secondary">
-          {t(
-            'Future notes from your selected folders and their subfolders will sync. Clear the selection to turn off personal sync.',
-          )}
-        </Text>
-      </>
+      <GranolaFolderTree
+        folders={state.folders}
+        selectedFolderIds={selectedFolderIds}
+        selectionLimit={GRANOLA_FOLDER_SELECTION_LIMIT}
+        hint={getSelectionHint(selectedFolderIds.length)}
+        onToggleFolder={(folderId, checked) =>
+          replaceSelection(
+            checked
+              ? [...selectedFolderIds, folderId]
+              : selectedFolderIds.filter((id) => id !== folderId),
+          )
+        }
+        onReplaceSelection={replaceSelection}
+      />
     );
   };
 
   return (
     <>
       {!isDefined(initialFolders) && <OnMountEffect onMount={loadFolders} />}
-      {renderFolders()}
+      <InlineBanner layout="compact" status="info">
+        {t(
+          'People who can read Call Recordings in this workspace can see the shared summaries and transcripts.',
+        )}
+      </InlineBanner>
+      <GranolaFolderPolicyRadioCard
+        options={getGranolaMemberFolderPolicyOptions()}
+        policy={state.status === 'loaded' ? state.policy : undefined}
+        selectedFoldersContent={renderSelectedFolders()}
+        onChange={handlePolicyChange}
+      />
+      <Text size="sm" color="secondary">
+        {t(
+          'Only notes created after you select a folder sync, including notes in its subfolders. Older notes stay in Granola, even if you move them into a selected folder.',
+        )}
+      </Text>
     </>
   );
 };

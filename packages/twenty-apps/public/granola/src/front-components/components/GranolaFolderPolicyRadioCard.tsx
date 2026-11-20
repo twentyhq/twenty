@@ -11,6 +11,7 @@ import { GranolaFolderPolicyIcon } from 'src/front-components/components/Granola
 import { SettingsCardSeparator } from 'src/front-components/components/SettingsCardSeparator';
 import { StyledSettingsCardTextContainer } from 'src/front-components/components/SettingsCardContentBase';
 import { type GranolaFolderPolicy } from 'src/front-components/types/granola-folder-policy.type';
+import { type GranolaFolderPolicyOption } from 'src/front-components/types/granola-folder-policy-option.type';
 
 const StyledOptionRow = styled.div`
   align-items: center;
@@ -42,41 +43,21 @@ const StyledExpandedContent = styled.div`
   }
 `;
 
-type GranolaFolderPolicyOption = {
-  policy: GranolaFolderPolicy;
-  title: string;
-  description: string;
-  expandedContent?: ReactNode;
-};
-
 type GranolaFolderPolicyRadioCardProps = {
+  options: GranolaFolderPolicyOption[];
   policy: GranolaFolderPolicy | undefined;
   selectedFoldersContent?: ReactNode;
   onChange?: (policy: GranolaFolderPolicy) => void;
 };
 
 export const GranolaFolderPolicyRadioCard = ({
+  options,
   policy,
   selectedFoldersContent,
   onChange = () => undefined,
 }: GranolaFolderPolicyRadioCardProps) => {
   const groupId = useId();
   const isPolicyKnown = isDefined(policy);
-  const options: GranolaFolderPolicyOption[] = [
-    {
-      policy: 'ALL_FOLDERS',
-      title: t('Everything'),
-      description: t('Sync notes from every folder you can access'),
-    },
-    {
-      policy: 'SELECTED_FOLDERS',
-      title: t('Some folders'),
-      description: t(
-        'Sync only the folders you pick, including their subfolders',
-      ),
-      expandedContent: selectedFoldersContent,
-    },
-  ];
 
   return (
     <RadioGroup
@@ -134,10 +115,11 @@ export const GranolaFolderPolicyRadioCard = ({
                   </Card.Control>
                 </StyledOptionRow>
               </Card.Content>
-              {option.policy === policy &&
-                isDefined(option.expandedContent) && (
+              {option.policy === 'SELECTED_FOLDERS' &&
+                policy === 'SELECTED_FOLDERS' &&
+                isDefined(selectedFoldersContent) && (
                   <Card.Content render={<StyledExpandedContent />}>
-                    {option.expandedContent}
+                    {selectedFoldersContent}
                   </Card.Content>
                 )}
               {index < options.length - 1 && <SettingsCardSeparator />}
