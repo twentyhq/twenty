@@ -347,23 +347,6 @@ export class CacheStorageService {
     return count as number;
   }
 
-  async sortedSetRangeByScore(
-    key: string,
-    minScore: number,
-    maxScore: number,
-  ): Promise<string[]> {
-    const redisClient = this.getRedisClient();
-
-    if (!isDefined(redisClient)) {
-      throw new CacheStorageException(
-        'sortedSetRangeByScore is only supported with Redis cache',
-        CacheStorageExceptionCode.REDIS_CACHE_REQUIRED,
-      );
-    }
-
-    return redisClient.zRangeByScore(this.getKey(key), minScore, maxScore);
-  }
-
   async acquireLock({
     key,
     ttl = 1000,

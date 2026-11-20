@@ -38,38 +38,39 @@ const findOnlineWorkspaceMemberIds = async (): Promise<string[]> => {
 };
 
 describe('tab presence (integration)', () => {
-  it('should keep a member online until their last open tab closes', async () => {
-    const firstTabId = randomUUID();
-    const secondTabId = randomUUID();
+  it('should show only members with a reporting tab as online', async () => {
+    await updateJonyTabPresence({
+      tabId: randomUUID(),
+      status: TabPresenceStatus.OPEN,
+    });
+
+    const onlineWorkspaceMemberIds = await findOnlineWorkspaceMemberIds();
+
+    expect(onlineWorkspaceMemberIds).toContain(
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    );
+    expect(onlineWorkspaceMemberIds).not.toContain(
+      WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
+    );
+  });
+
+  it('should keep a member online when one of their tabs closes', async () => {
+    const closingTabId = randomUUID();
 
     await updateJonyTabPresence({
-      tabId: firstTabId,
+      tabId: closingTabId,
       status: TabPresenceStatus.OPEN,
     });
     await updateJonyTabPresence({
-      tabId: secondTabId,
+      tabId: randomUUID(),
       status: TabPresenceStatus.FOCUSED,
     });
-
-    expect(await findOnlineWorkspaceMemberIds()).toContain(
-      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-    );
-
     await updateJonyTabPresence({
-      tabId: firstTabId,
+      tabId: closingTabId,
       status: TabPresenceStatus.CLOSED,
     });
 
     expect(await findOnlineWorkspaceMemberIds()).toContain(
-      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-    );
-
-    await updateJonyTabPresence({
-      tabId: secondTabId,
-      status: TabPresenceStatus.CLOSED,
-    });
-
-    expect(await findOnlineWorkspaceMemberIds()).not.toContain(
       WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     );
   });
