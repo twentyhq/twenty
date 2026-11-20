@@ -34,10 +34,13 @@ const buildFieldPermission = ({
   rowLevelPermissionPredicateGroupId: groupId,
 });
 
-const buildRule = (
-  id: string,
-  objectMetadataId: string,
-): RowLevelPermissionRule => ({
+const buildRule = ({
+  id,
+  objectMetadataId,
+}: {
+  id: string;
+  objectMetadataId: string;
+}): RowLevelPermissionRule => ({
   id,
   objectMetadataId,
   canReadRecords: true,
@@ -47,11 +50,15 @@ const buildRule = (
   canDestroyRecords: false,
 });
 
-const buildPredicateGroup = (
-  id: string,
-  ruleId: string,
-  objectMetadataId: string,
-): RowLevelPermissionPredicateGroup => ({
+const buildPredicateGroup = ({
+  id,
+  ruleId,
+  objectMetadataId,
+}: {
+  id: string;
+  ruleId: string;
+  objectMetadataId: string;
+}): RowLevelPermissionPredicateGroup => ({
   id,
   roleId: 'role-id',
   objectMetadataId,
@@ -84,12 +91,20 @@ describe('getRoleWithoutObjectOverride', () => {
           buildFieldPermission({ id: 'person', objectMetadataId: 'person' }),
         ],
         rowLevelPermissionRules: [
-          buildRule('company-rule', 'company'),
-          buildRule('person-rule', 'person'),
+          buildRule({ id: 'company-rule', objectMetadataId: 'company' }),
+          buildRule({ id: 'person-rule', objectMetadataId: 'person' }),
         ],
         rowLevelPermissionPredicateGroups: [
-          buildPredicateGroup('company-group', 'company-rule', 'company'),
-          buildPredicateGroup('person-group', 'person-rule', 'person'),
+          buildPredicateGroup({
+            id: 'company-group',
+            ruleId: 'company-rule',
+            objectMetadataId: 'company',
+          }),
+          buildPredicateGroup({
+            id: 'person-group',
+            ruleId: 'person-rule',
+            objectMetadataId: 'person',
+          }),
         ],
       },
       objectMetadataId: 'company',
