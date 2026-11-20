@@ -74,7 +74,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     const aggregateQueryBuilder = queryBuilder.clone();
 
-    const appliedFilters = args.filter ?? ({} as ObjectRecordFilter);
+    const appliedFilters: Partial<ObjectRecordFilter> = args.filter ?? {};
 
     commonQueryParser.applyFilterToBuilder({
       queryBuilder: aggregateQueryBuilder,
