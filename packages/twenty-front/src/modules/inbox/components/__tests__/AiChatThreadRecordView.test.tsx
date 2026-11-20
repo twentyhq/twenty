@@ -18,7 +18,13 @@ jest.mock('@/ui/layout/hooks/useWorkspaceSurface', () => ({
   useWorkspaceSurface: () => ({ type: mockWorkspaceSurfaceType }),
 }));
 
-jest.mock('@/inbox/components/AiChatThreadPageContent', () => ({
+jest.mock('@/inbox/components/InboxThreadPageContent', () => ({
+  InboxThreadPageContent: ({ threadId }: { threadId: string }) => (
+    <div data-testid="inbox-thread">{threadId}</div>
+  ),
+}));
+
+jest.mock('@/ai-chat/instance/components/AiChatThreadPageContent', () => ({
   AiChatThreadPageContent: ({ threadId }: { threadId: string }) => (
     <div data-testid="chat-thread">{threadId}</div>
   ),
@@ -43,12 +49,19 @@ describe('AiChatThreadRecordView', () => {
     },
   );
 
-  it('shows the chat in place in the side panel', () => {
-    mockWorkspaceSurfaceType = 'side-panel';
+  it.each([
+    [true, 'inbox-thread'],
+    [false, 'chat-thread'],
+  ])(
+    'shows the chat in place in the side panel with the inbox on=%s',
+    (isAiChatInboxEnabled, expectedTestId) => {
+      mockIsAiChatInboxEnabled = isAiChatInboxEnabled;
+      mockWorkspaceSurfaceType = 'side-panel';
 
-    render(<AiChatThreadRecordView objectRecordId="chat-1" />);
+      render(<AiChatThreadRecordView objectRecordId="chat-1" />);
 
-    expect(screen.getByTestId('chat-thread')).toHaveTextContent('chat-1');
-    expect(screen.queryByTestId('navigate')).not.toBeInTheDocument();
-  });
+      expect(screen.getByTestId(expectedTestId)).toHaveTextContent('chat-1');
+      expect(screen.queryByTestId('navigate')).not.toBeInTheDocument();
+    },
+  );
 });

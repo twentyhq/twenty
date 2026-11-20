@@ -24,7 +24,7 @@ import { initializeNewAiChatStory } from '@/inbox/testing/initializeNewAiChatSto
 import { hasRequestedWorkspaceSetupChatState } from '@/onboarding/states/hasRequestedWorkspaceSetupChatState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { AiChatNewThreadPageContent } from '@/inbox/components/AiChatNewThreadPageContent';
+import { AiChatNewThreadPageContent } from '@/ai-chat/instance/components/AiChatNewThreadPageContent';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';

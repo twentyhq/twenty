@@ -1,4 +1,3 @@
-import { InboxNewThreadListToggle } from '@/inbox/components/InboxNewThreadListToggle';
 import { styled } from '@linaria/react';
 import { type ReactNode, useId } from 'react';
 
@@ -23,11 +22,13 @@ const StyledChatContainer = styled.div`
 `;
 
 type AiChatNewThreadPageContentProps = {
+  headerIcon?: ReactNode;
   headerActions?: ReactNode;
   showInformationBanner?: boolean;
 };
 
 export const AiChatNewThreadPageContent = ({
+  headerIcon,
   headerActions,
   showInformationBanner = true,
 }: AiChatNewThreadPageContentProps) => {
@@ -38,10 +39,7 @@ export const AiChatNewThreadPageContent = ({
   return (
     <PageCardLayout
       header={
-        <AiChatPageHeader
-          icon={<InboxNewThreadListToggle />}
-          actionButton={headerActions}
-        />
+        <AiChatPageHeader icon={headerIcon} actionButton={headerActions} />
       }
       showInformationBanner={showInformationBanner}
     >

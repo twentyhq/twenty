@@ -2,7 +2,8 @@ import { Navigate } from 'react-router-dom';
 import { getAppPath } from 'twenty-shared/utils';
 
 import { getAiChatPageRoute } from '@/ai-chat/utils/getAiChatPageRoute';
-import { AiChatThreadPageContent } from '@/inbox/components/AiChatThreadPageContent';
+import { AiChatThreadPageContent } from '@/ai-chat/instance/components/AiChatThreadPageContent';
+import { InboxThreadPageContent } from '@/inbox/components/InboxThreadPageContent';
 import { type CoreObjectShowPageProps } from '@/object-core/types/CoreObjectShowPageProps';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -19,7 +20,11 @@ export const AiChatThreadRecordView = ({
   );
 
   if (isInSidePanel) {
-    return <AiChatThreadPageContent threadId={objectRecordId} />;
+    return isAiChatInboxEnabled ? (
+      <InboxThreadPageContent threadId={objectRecordId} />
+    ) : (
+      <AiChatThreadPageContent threadId={objectRecordId} />
+    );
   }
 
   const aiChatPageRoute = getAiChatPageRoute({

@@ -172,8 +172,8 @@ jest.mock('@/ai-chat/components/AiChatPageHeader', () => ({
 }));
 
 // Sending stands in for the composer with what a send applies right away
-jest.mock('@/inbox/components/AiChatThreadPageContent', () => ({
-  AiChatThreadPageContent: ({
+jest.mock('@/inbox/components/InboxThreadPageContent', () => ({
+  InboxThreadPageContent: ({
     threadId,
     headerTitlePrefix,
     headerActions,
