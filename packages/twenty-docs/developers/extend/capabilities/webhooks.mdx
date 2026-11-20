@@ -42,24 +42,35 @@ Each webhook sends an HTTP POST with a JSON body:
 
 ```json
 {
-  "event": "person.created",
-  "data": {
-    "id": "abc12345",
-    "firstName": "Alice",
-    "lastName": "Doe",
-    "email": "alice@example.com",
-    "createdAt": "2025-02-10T15:30:45Z",
-    "createdBy": "user_123"
+  "targetUrl": "https://example.com/webhooks/twenty",
+  "eventId": "6f1c2b7e-9a4d-4f3b-8c1e-2d5a7b9c0e1f",
+  "eventName": "person.updated",
+  "objectMetadata": {
+    "id": "0d9a1c3e-5b7f-4a2c-9e8d-1f3b5c7a9e0d",
+    "nameSingular": "person"
   },
-  "timestamp": "2025-02-10T15:30:50Z"
+  "workspaceId": "3b8e1f2a-7c4d-4e9b-a6f1-5d2c8e0b4a7f",
+  "webhookId": "9e4a2d1c-3b5f-4c7e-8a9d-0f1e2b3c4d5e",
+  "eventDate": "2025-02-10T15:30:50.000Z",
+  "workspaceMemberId": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+  "record": {
+    "id": "abc12345",
+    "name": { "firstName": "Alice", "lastName": "Doe" },
+    "jobTitle": "CTO"
+  },
+  "updatedFields": ["jobTitle"]
 }
 ```
 
 | Field | Description |
 |-------|-------------|
-| `event` | What happened (e.g., `person.created`) |
-| `data` | The full record that was created/updated/deleted |
-| `timestamp` | When the event occurred (UTC) |
+| `eventId` | Unique ID of the event. It stays the same if the same event is delivered again, so use it to ignore duplicates |
+| `eventName` | What happened (e.g., `person.updated`) |
+| `objectMetadata` | The ID and singular name of the record's object |
+| `record` | The record after the change (before it, for a destroyed record) |
+| `updatedFields` | The fields that changed, on update events |
+| `eventDate` | When the delivery was prepared (UTC) |
+| `userId`, `workspaceMemberId` | Who made the change, when known |
 
 <Note>
 Respond with a **2xx HTTP status** (200-299) to acknowledge receipt. Non-2xx responses are logged as delivery failures.
