@@ -316,12 +316,12 @@ import { DropJobConfigFastInstanceCommand } from 'src/database/commands/upgrade-
 import { AddAgentPrivacyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795109265317-add-agent-privacy';
 import { AddRequestedRoleIdToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-fast-1794992742917-add-requested-role-id-to-application';
 import { BackfillApplicationRequestedRoleIdSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-slow-1794992743917-backfill-application-requested-role-id';
-import { AddViewFieldRelationScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795002531572-add-view-field-relation-scope';
 import { AddViewSortRelationTargetFieldMetadataIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795006012069-add-view-sort-relation-target-field-metadata-id';
 import { AddNavigationMenuItemBuiltInSectionKeyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795087899814-add-navigation-menu-item-built-in-section-key';
 import { CreateWebPushSubscriptionCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795163526357-create-web-push-subscription-core-table';
 import { AddUserWorkspaceInboxNotificationSettingsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795163561823-add-user-workspace-inbox-notification-settings';
 import { AddNavigationMenuItemOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795167647639-add-navigation-menu-item-overridable-entity';
+import { AddViewFieldRelationScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795177973919-add-view-field-relation-scope';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -639,11 +639,11 @@ export const INSTANCE_COMMANDS = [
   DropJobConfigFastInstanceCommand,
   AddRequestedRoleIdToApplicationFastInstanceCommand,
   BackfillApplicationRequestedRoleIdSlowInstanceCommand,
-  AddViewFieldRelationScopeFastInstanceCommand,
   AddViewSortRelationTargetFieldMetadataIdFastInstanceCommand,
   AddNavigationMenuItemBuiltInSectionKeyFastInstanceCommand,
   AddAgentPrivacyFastInstanceCommand,
   CreateWebPushSubscriptionCoreTableFastInstanceCommand,
   AddUserWorkspaceInboxNotificationSettingsFastInstanceCommand,
   AddNavigationMenuItemOverridableEntityFastInstanceCommand,
+  AddViewFieldRelationScopeFastInstanceCommand,
 ];
