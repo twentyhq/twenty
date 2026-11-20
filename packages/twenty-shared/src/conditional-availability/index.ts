@@ -8,7 +8,6 @@
  */
 
 export { CONDITIONAL_AVAILABILITY_EXPRESSION_MAX_LENGTH } from './constants/ConditionalAvailabilityExpressionMaxLength';
-export { CONDITIONAL_AVAILABILITY_FORBIDDEN_PROPERTY_NAMES } from './constants/ConditionalAvailabilityForbiddenPropertyNames';
 export { CONDITIONAL_AVAILABILITY_FUNCTIONS } from './constants/ConditionalAvailabilityFunctions';
 export { CONDITIONAL_AVAILABILITY_IDENTIFIER_PATTERN } from './constants/ConditionalAvailabilityIdentifierPattern';
 export { CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT } from './constants/ConditionalAvailabilityMaxNodeCount';

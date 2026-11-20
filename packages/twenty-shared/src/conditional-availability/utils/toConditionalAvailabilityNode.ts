@@ -1,4 +1,4 @@
-// TODO: remove once no rule is written as text anymore (stored widget rules are converted in 2.61; built-in rules and app manifests still send text)
+// TODO(@neo773): remove once no rule is written as text anymore (stored widget rules are converted in 2.61; built-in rules and app manifests still send text)
 import { isBoolean, isNumber, isString } from '@sniptt/guards';
 import { type Instruction } from 'expr-eval-fork';
 
@@ -9,12 +9,14 @@ import { type ConditionalAvailabilityNode } from '@/conditional-availability/typ
 import { typedObjectEntries } from '@/utils/typed-object-entries';
 import { isDefined } from '@/utils/validation/isDefined';
 
-const toComparisonOperator = (
-  symbol: string,
-): ConditionalAvailabilityComparisonOperator | null =>
+const COMPARISON_OPERATOR_BY_SYMBOL = new Map<
+  string,
+  ConditionalAvailabilityComparisonOperator
+>(
   typedObjectEntries(
     CONDITIONAL_AVAILABILITY_SYMBOL_BY_COMPARISON_OPERATOR,
-  ).find(([, operatorSymbol]) => operatorSymbol === symbol)?.[0] ?? null;
+  ).map(([comparisonOperator, symbol]) => [symbol, comparisonOperator]),
+);
 
 const toLogicalOperator = (
   symbol: string,
@@ -49,7 +51,7 @@ const toBinaryNode = ({
   left: ConditionalAvailabilityNode;
   right: ConditionalAvailabilityNode;
 }): ConditionalAvailabilityNode | null => {
-  const comparisonOperator = toComparisonOperator(symbol);
+  const comparisonOperator = COMPARISON_OPERATOR_BY_SYMBOL.get(symbol);
 
   if (isDefined(comparisonOperator)) {
     return { type: 'COMPARISON', operator: comparisonOperator, left, right };
@@ -135,13 +137,15 @@ const popAndBuildNode = ({
       const argumentNodes = stack.splice(stack.length - value, value);
       const callee = stack.pop();
 
-      return callee?.type === 'VARIABLE' && !callee.path.includes('.')
-        ? {
-            type: 'FUNCTION_CALL',
-            functionName: callee.path,
-            arguments: argumentNodes,
-          }
-        : null;
+      if (callee?.type !== 'VARIABLE' || callee.path.includes('.')) {
+        return null;
+      }
+
+      return {
+        type: 'FUNCTION_CALL',
+        functionName: callee.path,
+        arguments: argumentNodes,
+      };
     }
     default:
       return null;

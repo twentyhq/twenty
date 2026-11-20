@@ -26,13 +26,16 @@ const getUnknownName = ({
     case 'VARIABLE': {
       const [variableName] = node.path.split('.');
 
-      return isDefined(variableName) &&
-        !Object.prototype.hasOwnProperty.call(
-          CONDITIONAL_AVAILABILITY_VARIABLES[metadataName],
-          variableName,
-        )
-        ? variableName
-        : undefined;
+      if (!isDefined(variableName)) {
+        return undefined;
+      }
+
+      return Object.prototype.hasOwnProperty.call(
+        CONDITIONAL_AVAILABILITY_VARIABLES[metadataName],
+        variableName,
+      )
+        ? undefined
+        : variableName;
     }
     case 'FUNCTION_CALL':
       return Object.prototype.hasOwnProperty.call(
@@ -76,14 +79,17 @@ export const validateConditionalAvailabilityNode = ({
 
   if (!schemaResult.success) {
     const [firstIssue] = schemaResult.error.issues;
-    const path = firstIssue?.path.join('.') ?? '';
+
+    if (!isDefined(firstIssue)) {
+      return INVALID_NODE_AT_ROOT;
+    }
+
+    const path = firstIssue.path.join('.');
 
     return {
       isValid: false,
       errorCode: 'INVALID_NODE',
-      errorMessage: isDefined(firstIssue)
-        ? `Invalid rule at "${path}": ${firstIssue.message}`
-        : INVALID_NODE_AT_ROOT.errorMessage,
+      errorMessage: `Invalid rule at "${path}": ${firstIssue.message}`,
       errorParams: { path },
     };
   }

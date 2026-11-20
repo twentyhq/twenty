@@ -1,14 +1,14 @@
 import { z } from 'zod';
 
-import { CONDITIONAL_AVAILABILITY_FORBIDDEN_PROPERTY_NAMES } from '@/conditional-availability/constants/ConditionalAvailabilityForbiddenPropertyNames';
 import { CONDITIONAL_AVAILABILITY_IDENTIFIER_PATTERN } from '@/conditional-availability/constants/ConditionalAvailabilityIdentifierPattern';
 import { CONDITIONAL_AVAILABILITY_VARIABLE_PATH_PATTERN } from '@/conditional-availability/constants/ConditionalAvailabilityVariablePathPattern';
 import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
 import { conditionalAvailabilityComparisonOperatorSchema } from '@/conditional-availability/utils/conditionalAvailabilityComparisonOperatorSchema';
 import { conditionalAvailabilityLogicalOperatorSchema } from '@/conditional-availability/utils/conditionalAvailabilityLogicalOperatorSchema';
+import { FORBIDDEN_PROPERTY_NAMES } from '@/constants/ForbiddenPropertyNames';
 
 export const conditionalAvailabilityNodeSchema: z.ZodType<ConditionalAvailabilityNode> =
-  z.lazy(() =>
+  z.toZod<ConditionalAvailabilityNode>()(
     z.discriminatedUnion('type', [
       z.strictObject({
         type: z.literal('LITERAL'),
@@ -23,35 +23,41 @@ export const conditionalAvailabilityNodeSchema: z.ZodType<ConditionalAvailabilit
             (path) =>
               !path
                 .split('.')
-                .some((segment) =>
-                  CONDITIONAL_AVAILABILITY_FORBIDDEN_PROPERTY_NAMES.has(
-                    segment,
-                  ),
-                ),
+                .some((segment) => FORBIDDEN_PROPERTY_NAMES.has(segment)),
             { error: 'This property cannot be read' },
           ),
       }),
       z.strictObject({
         type: z.literal('COMPARISON'),
         operator: conditionalAvailabilityComparisonOperatorSchema,
-        left: conditionalAvailabilityNodeSchema,
-        right: conditionalAvailabilityNodeSchema,
+        get left() {
+          return conditionalAvailabilityNodeSchema;
+        },
+        get right() {
+          return conditionalAvailabilityNodeSchema;
+        },
       }),
       z.strictObject({
         type: z.literal('GROUP'),
         logicalOperator: conditionalAvailabilityLogicalOperatorSchema,
-        children: z.array(conditionalAvailabilityNodeSchema).min(1),
+        get children() {
+          return z.array(conditionalAvailabilityNodeSchema).min(1);
+        },
       }),
       z.strictObject({
         type: z.literal('NOT'),
-        child: conditionalAvailabilityNodeSchema,
+        get child() {
+          return conditionalAvailabilityNodeSchema;
+        },
       }),
       z.strictObject({
         type: z.literal('FUNCTION_CALL'),
         functionName: z
           .string()
           .regex(CONDITIONAL_AVAILABILITY_IDENTIFIER_PATTERN),
-        arguments: z.array(conditionalAvailabilityNodeSchema),
+        get arguments() {
+          return z.array(conditionalAvailabilityNodeSchema);
+        },
       }),
     ]),
   );
