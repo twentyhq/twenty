@@ -4,7 +4,7 @@ import {
 } from 'twenty-shared/types';
 
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
-import { omitPermissionsHidingField } from 'src/engine/permissions/internal/related-record-path/utils/omit-permissions-hiding-field.util';
+import { omitPermissionsUnableToReadField } from 'src/engine/permissions/internal/related-record-path/utils/omit-permissions-unable-to-read-field.util';
 
 const buildRule = ({
   ruleId,
@@ -54,11 +54,11 @@ const findSalesCompanyPermissions = (
   metadataMaps: ReturnType<typeof buildCompanyPermissions>,
 ) => metadataMaps.rolesPermissions.sales.objects.company;
 
-describe('omitPermissionsHidingField', () => {
-  it('should take every record of the object away from a role hiding the field on all of them', () => {
+describe('omitPermissionsUnableToReadField', () => {
+  it('should take every record of the object away from a role that cannot read the field on any of them', () => {
     expect(
       findSalesCompanyPermissions(
-        omitPermissionsHidingField({
+        omitPermissionsUnableToReadField({
           metadataMaps: buildCompanyPermissions({
             unreadableFields: ['companyOpportunities'],
             rowLevelRecordsPermissions: [
@@ -79,10 +79,10 @@ describe('omitPermissionsHidingField', () => {
     });
   });
 
-  it('should keep only the rules that do not hide the field', () => {
+  it('should keep only the rules that can read the field', () => {
     expect(
       findSalesCompanyPermissions(
-        omitPermissionsHidingField({
+        omitPermissionsUnableToReadField({
           metadataMaps: buildCompanyPermissions({
             canReadAllRecords: false,
             rowLevelRecordsPermissions: [
@@ -100,14 +100,14 @@ describe('omitPermissionsHidingField', () => {
     ).toEqual(['london']);
   });
 
-  it('should keep every rule when nothing hides the field', () => {
+  it('should keep every rule when every role and rule can read the field', () => {
     const metadataMaps = buildCompanyPermissions({
       unreadableFields: ['companyName'],
     });
 
     expect(
       findSalesCompanyPermissions(
-        omitPermissionsHidingField({
+        omitPermissionsUnableToReadField({
           metadataMaps,
           objectMetadataId: 'company',
           fieldMetadataId: 'companyOpportunities',

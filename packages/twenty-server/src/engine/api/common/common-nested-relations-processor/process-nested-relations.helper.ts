@@ -273,7 +273,7 @@ export class ProcessNestedRelationsHelper {
                   parentObjectMetadataItem.nameSingular,
                   { useReplica },
                 )
-          ).filterRecordIdsShowingRelation({
+          ).filterRecordIdsWithReadableRelation({
             recordIds: uniqueRelationIds,
             relationFieldName: sourceFieldName,
           })

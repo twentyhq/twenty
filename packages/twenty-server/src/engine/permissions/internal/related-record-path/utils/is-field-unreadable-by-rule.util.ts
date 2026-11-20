@@ -2,7 +2,7 @@
 
 import { type RowLevelRecordsPermissions } from 'twenty-shared/types';
 
-export const isFieldHiddenFromRule = ({
+export const isFieldUnreadableByRule = ({
   rowLevelRecordsPermissions,
   fieldMetadataId,
 }: {

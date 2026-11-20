@@ -708,7 +708,7 @@ describe('Record access through related record paths', () => {
     expect(await findTaskIdsListedByJony()).toEqual([taskOfProjectId]);
   });
 
-  it('should not follow the path from a relation a rule of the reader hides', async () => {
+  it('should not follow the path from a relation a rule of the reader cannot read', async () => {
     const memberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
     const memberObjectPermissions = await global.testDataSource.query(
       `SELECT "objectMetadataId", "canReadObjectRecords", "canUpdateObjectRecords",
@@ -799,7 +799,7 @@ describe('Record access through related record paths', () => {
     expect(await findTaskIdsListedByJony()).toEqual([taskOfProjectId]);
   });
 
-  it('should still grant through another path from the same source object when one is hidden', async () => {
+  it('should still grant through another path from the same source object when one is unreadable', async () => {
     const projectReviewTasksField = await createRelationBetweenObjects({
       objectMetadataId: projectObjectMetadataId,
       targetObjectMetadataId: taskObjectMetadataId,

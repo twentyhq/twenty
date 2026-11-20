@@ -9,9 +9,9 @@ import {
   buildColumnMasks,
   type ColumnMasks,
 } from 'src/engine/twenty-orm/sql/utils/build-column-masks.util';
-import { buildHiddenRowExclusionCondition } from 'src/engine/twenty-orm/sql/utils/build-hidden-row-exclusion-condition.util';
+import { buildUnreadableRowExclusionCondition } from 'src/engine/twenty-orm/sql/utils/build-unreadable-row-exclusion-condition.util';
 import { maskNullifiedColumnReferences } from 'src/engine/twenty-orm/sql/utils/mask-nullified-column-references.util';
-import { renderNotHiddenCondition } from 'src/engine/twenty-orm/sql/utils/render-not-hidden-condition.util';
+import { renderReadableCondition } from 'src/engine/twenty-orm/sql/utils/render-readable-condition.util';
 import { renderNullifiedColumn } from 'src/engine/twenty-orm/sql/utils/render-nullified-column.util';
 import {
   TwentyOrmException,
@@ -75,7 +75,10 @@ export type OrderByClause = {
 
 export type ColumnNullifyConditions = Record<string, Record<string, string[]>>;
 
-export type HiddenRelationConditions = Record<string, Record<string, string[]>>;
+export type UnreadableRelationConditions = Record<
+  string,
+  Record<string, string[]>
+>;
 
 export type SelectStatementState = {
   alias: string;
@@ -85,7 +88,7 @@ export type SelectStatementState = {
   extraSelectClauses: SelectClause[];
   columnSelections: ColumnSelection[];
   columnNullifyConditions: ColumnNullifyConditions;
-  hiddenRelationConditions: HiddenRelationConditions;
+  unreadableRelationConditions: UnreadableRelationConditions;
   joinClauses: JoinClause[];
   whereClauses: WhereClause[];
   rowAccessConditions: string[];
@@ -397,7 +400,7 @@ const renderExistsFilter = ({
   existsFilterClause,
   includeDeleted,
   columnNullifyConditions,
-  hiddenRelationConditions,
+  unreadableRelationConditions,
   columnMasks,
 }: {
   existsFilterClause: Pick<
@@ -412,14 +415,14 @@ const renderExistsFilter = ({
   >;
   includeDeleted: boolean;
   columnNullifyConditions: ColumnNullifyConditions;
-  hiddenRelationConditions: HiddenRelationConditions;
+  unreadableRelationConditions: UnreadableRelationConditions;
   columnMasks: ColumnMasks | undefined;
 }): string => {
   const conditions = [
     existsFilterClause.correlationCondition,
     ...existsFilterClause.additionalOnConditions,
-    renderNotHiddenCondition(
-      hiddenRelationConditions[existsFilterClause.parentAlias]?.[
+    renderReadableCondition(
+      unreadableRelationConditions[existsFilterClause.parentAlias]?.[
         existsFilterClause.relationFieldName
       ] ?? [],
     ),
@@ -433,7 +436,7 @@ const renderExistsFilter = ({
       }),
     );
 
-    const subqueryExclusionCondition = buildHiddenRowExclusionCondition({
+    const subqueryExclusionCondition = buildUnreadableRowExclusionCondition({
       expressions: [existsFilterClause.conditionSql],
       columnNullifyConditions,
       aliases: [existsFilterClause.alias],
@@ -467,13 +470,13 @@ export const substituteExistsFilterTokens = ({
   existsFilterClauses,
   includeDeleted,
   columnNullifyConditions = {},
-  hiddenRelationConditions = {},
+  unreadableRelationConditions = {},
 }: {
   expression: string;
   existsFilterClauses: ExistsFilterClause[];
   includeDeleted: boolean;
   columnNullifyConditions?: ColumnNullifyConditions;
-  hiddenRelationConditions?: HiddenRelationConditions;
+  unreadableRelationConditions?: UnreadableRelationConditions;
 }): string => {
   const columnMasks = buildColumnMasks(columnNullifyConditions);
 
@@ -484,7 +487,7 @@ export const substituteExistsFilterTokens = ({
           existsFilterClause,
           includeDeleted,
           columnNullifyConditions,
-          hiddenRelationConditions,
+          unreadableRelationConditions,
           columnMasks,
         }),
       ),
@@ -516,7 +519,7 @@ export const buildWhereExpression = (
       })),
       rowAccessConditions: [
         ...state.rowAccessConditions,
-        buildHiddenRowExclusionCondition({
+        buildUnreadableRowExclusionCondition({
           expressions: [
             ...state.whereClauses.map(({ sql }) => sql),
             ...state.existsFilterClauses.map(
@@ -529,11 +532,11 @@ export const buildWhereExpression = (
           columnNullifyConditions: state.columnNullifyConditions,
           aliases,
         }),
-        renderNotHiddenCondition(
+        renderReadableCondition(
           state.existsFilterClauses.flatMap(
             ({ parentAlias, relationFieldName }) =>
               aliases.includes(parentAlias)
-                ? (state.hiddenRelationConditions[parentAlias]?.[
+                ? (state.unreadableRelationConditions[parentAlias]?.[
                     relationFieldName
                   ] ?? [])
                 : [],
@@ -550,7 +553,7 @@ export const buildWhereExpression = (
         existsFilterClauses: state.existsFilterClauses,
         includeDeleted: state.includeDeleted,
         columnNullifyConditions: state.columnNullifyConditions,
-        hiddenRelationConditions: state.hiddenRelationConditions,
+        unreadableRelationConditions: state.unreadableRelationConditions,
       })
     : renderedWhereExpression;
 
@@ -634,8 +637,8 @@ export const buildJoinClause = (state: SelectStatementState): string =>
       const onConditions = [
         condition,
         ...joinClause.additionalOnConditions,
-        renderNotHiddenCondition(
-          state.hiddenRelationConditions[joinClause.parentAlias]?.[
+        renderReadableCondition(
+          state.unreadableRelationConditions[joinClause.parentAlias]?.[
             joinClause.relationFieldName
           ] ?? [],
         ),

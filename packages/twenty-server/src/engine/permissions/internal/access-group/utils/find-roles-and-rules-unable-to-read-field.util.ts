@@ -1,10 +1,10 @@
 /* @license Enterprise */
 
-import { isFieldHiddenFromRole } from 'src/engine/permissions/internal/related-record-path/utils/is-field-hidden-from-role.util';
-import { isFieldHiddenFromRule } from 'src/engine/permissions/internal/related-record-path/utils/is-field-hidden-from-rule.util';
+import { isFieldUnreadableByRole } from 'src/engine/permissions/internal/related-record-path/utils/is-field-unreadable-by-role.util';
+import { isFieldUnreadableByRule } from 'src/engine/permissions/internal/related-record-path/utils/is-field-unreadable-by-rule.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
-export const findRolesAndRulesHidingField = ({
+export const findRolesAndRulesUnableToReadField = ({
   rolesPermissions,
   objectMetadataId,
   fieldMetadataId,
@@ -18,7 +18,7 @@ export const findRolesAndRulesHidingField = ({
   return {
     roleIds: rolesPermissionsEntries
       .filter(([, roleRecordsPermissions]) =>
-        isFieldHiddenFromRole({
+        isFieldUnreadableByRole({
           roleRecordsPermissions,
           objectMetadataId,
           fieldMetadataId,
@@ -31,7 +31,7 @@ export const findRolesAndRulesHidingField = ({
           ?.rowLevelRecordsPermissions ?? []
       )
         .filter((rowLevelRecordsPermissions) =>
-          isFieldHiddenFromRule({
+          isFieldUnreadableByRule({
             rowLevelRecordsPermissions,
             fieldMetadataId,
           }),

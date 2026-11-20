@@ -4,7 +4,7 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-computation-metadata-maps.type';
-import { findRolesAndRulesHidingField } from 'src/engine/permissions/internal/access-group/utils/find-roles-and-rules-hiding-field.util';
+import { findRolesAndRulesUnableToReadField } from 'src/engine/permissions/internal/access-group/utils/find-roles-and-rules-unable-to-read-field.util';
 import { buildPrivateRecordStateSQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-private-record-state-sql-condition.util';
 import { isPrivateRecordsEnabled } from 'src/engine/permissions/internal/private-record/utils/is-private-records-enabled.util';
 import { ACCESS_GROUP_IDS_COLUMN_NAME } from 'src/engine/permissions/internal/record-permission-repository/constants/access-group-column-names.constant';
@@ -45,22 +45,25 @@ export const buildInheritedAccessGroupIdsExpression = ({
     targetTableAlias,
   });
   const sourceCompactIdsParameterName = `relatedRecordPathSourceCompactIds_${pathIndex}`;
-  const hidingRoleIdsParameterName = `relatedRecordPathHidingRoleIds_${pathIndex}`;
-  const hidingRuleIdsParameterName = `relatedRecordPathHidingRuleIds_${pathIndex}`;
+  const roleIdsUnableToReadRelationParameterName = `relatedRecordPathRoleIdsUnableToReadRelation_${pathIndex}`;
+  const ruleIdsUnableToReadRelationParameterName = `relatedRecordPathRuleIdsUnableToReadRelation_${pathIndex}`;
   const sourceCompactIds = accessGroups
     .filter(
       ({ objectMetadataId }) =>
         objectMetadataId === sourceFlatObjectMetadata.id,
     )
     .map(({ compactId }) => compactId);
-  const { roleIds: hidingRoleIds, ruleIds: hidingRuleIds } =
-    findRolesAndRulesHidingField({
-      rolesPermissions: metadataMaps.rolesPermissions,
-      objectMetadataId: sourceFlatObjectMetadata.id,
-      fieldMetadataId: hops[0].relationFieldMetadataId,
-    });
-  const isRelationHidden =
-    isNonEmptyArray(hidingRoleIds) || isNonEmptyArray(hidingRuleIds);
+  const {
+    roleIds: roleIdsUnableToReadRelation,
+    ruleIds: ruleIdsUnableToReadRelation,
+  } = findRolesAndRulesUnableToReadField({
+    rolesPermissions: metadataMaps.rolesPermissions,
+    objectMetadataId: sourceFlatObjectMetadata.id,
+    fieldMetadataId: hops[0].relationFieldMetadataId,
+  });
+  const isRelationUnreadable =
+    isNonEmptyArray(roleIdsUnableToReadRelation) ||
+    isNonEmptyArray(ruleIdsUnableToReadRelation);
 
   const whereConditions = [
     ...hopTableAliases.flatMap((hopTableAlias, hopIndex) => [
@@ -83,9 +86,9 @@ export const buildInheritedAccessGroupIdsExpression = ({
       : [
           `${INHERITED_ACCESS_GROUP_ID} = ANY(CAST(:${sourceCompactIdsParameterName} AS integer[]))`,
         ]),
-    ...(isRelationHidden
+    ...(isRelationUnreadable
       ? [
-          `NOT EXISTS (SELECT 1 FROM ${buildAccessGroupTableExpression(workspaceId)} AS "inheritedAccessGroup" WHERE "inheritedAccessGroup"."compactId" = ${INHERITED_ACCESS_GROUP_ID} AND ("inheritedAccessGroup"."roleId" = ANY(CAST(:${hidingRoleIdsParameterName} AS uuid[])) OR "inheritedAccessGroup"."rowLevelPermissionPredicateGroupId" = ANY(CAST(:${hidingRuleIdsParameterName} AS uuid[]))))`,
+          `NOT EXISTS (SELECT 1 FROM ${buildAccessGroupTableExpression(workspaceId)} AS "inheritedAccessGroup" WHERE "inheritedAccessGroup"."compactId" = ${INHERITED_ACCESS_GROUP_ID} AND ("inheritedAccessGroup"."roleId" = ANY(CAST(:${roleIdsUnableToReadRelationParameterName} AS uuid[])) OR "inheritedAccessGroup"."rowLevelPermissionPredicateGroupId" = ANY(CAST(:${ruleIdsUnableToReadRelationParameterName} AS uuid[]))))`,
         ]
       : []),
   ];
@@ -99,10 +102,12 @@ export const buildInheritedAccessGroupIdsExpression = ({
       ...(isInherent
         ? {}
         : { [sourceCompactIdsParameterName]: sourceCompactIds }),
-      ...(isRelationHidden
+      ...(isRelationUnreadable
         ? {
-            [hidingRoleIdsParameterName]: hidingRoleIds,
-            [hidingRuleIdsParameterName]: hidingRuleIds,
+            [roleIdsUnableToReadRelationParameterName]:
+              roleIdsUnableToReadRelation,
+            [ruleIdsUnableToReadRelationParameterName]:
+              ruleIdsUnableToReadRelation,
           }
         : {}),
     },

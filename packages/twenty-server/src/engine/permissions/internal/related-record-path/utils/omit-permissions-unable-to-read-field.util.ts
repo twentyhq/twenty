@@ -2,11 +2,11 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { isFieldHiddenFromRole } from 'src/engine/permissions/internal/related-record-path/utils/is-field-hidden-from-role.util';
-import { isFieldHiddenFromRule } from 'src/engine/permissions/internal/related-record-path/utils/is-field-hidden-from-rule.util';
+import { isFieldUnreadableByRole } from 'src/engine/permissions/internal/related-record-path/utils/is-field-unreadable-by-role.util';
+import { isFieldUnreadableByRule } from 'src/engine/permissions/internal/related-record-path/utils/is-field-unreadable-by-rule.util';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 
-export const omitPermissionsHidingField = <
+export const omitPermissionsUnableToReadField = <
   TMetadataMaps extends Pick<PermissionsMetadataMaps, 'rolesPermissions'>,
 >({
   metadataMaps,
@@ -34,7 +34,7 @@ export const omitPermissionsHidingField = <
             ...roleRecordsPermissions,
             objects: {
               ...roleRecordsPermissions.objects,
-              [objectMetadataId]: isFieldHiddenFromRole({
+              [objectMetadataId]: isFieldUnreadableByRole({
                 roleRecordsPermissions,
                 objectMetadataId,
                 fieldMetadataId,
@@ -53,7 +53,7 @@ export const omitPermissionsHidingField = <
                       objectRecordsPermissions.rowLevelRecordsPermissions ?? []
                     ).filter(
                       (rowLevelRecordsPermissions) =>
-                        !isFieldHiddenFromRule({
+                        !isFieldUnreadableByRule({
                           rowLevelRecordsPermissions,
                           fieldMetadataId,
                         }),

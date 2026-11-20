@@ -175,10 +175,10 @@ describe('field permissions on an RLS rule (integration)', () => {
   });
 
   it.each([
-    ['the hidden value', { eq: 'Secret avatar' }],
+    ['the unreadable value', { eq: 'Secret avatar' }],
     ['an empty value', { is: 'NULL' }],
   ])(
-    'should not match %s in a filter on the hidden field',
+    'should not match %s in a filter on the unreadable field',
     async (_, avatarUrlFilter) => {
       const response = await makeGraphqlApiRequest(
         findManyOperationFactory({
@@ -198,7 +198,7 @@ describe('field permissions on an RLS rule (integration)', () => {
     },
   );
 
-  it('should leave the rows a field is hidden on out of a group on it', async () => {
+  it('should leave the rows a field is unreadable on out of a group on it', async () => {
     const introFieldMetadataId = await findFieldMetadataId('intro');
     const setIntroReadability = (canReadFieldValue: false | null) =>
       upsertFieldPermissions({
@@ -248,7 +248,7 @@ describe('field permissions on an RLS rule (integration)', () => {
     }
   });
 
-  it('should hide a relation on the records the RLS rule matches', async () => {
+  it('should make a relation unreadable on the records the RLS rule matches', async () => {
     const parisPersonId = originalPeople[0].id;
     const [{ companyId: originalCompanyId }] =
       await global.testDataSource.query(

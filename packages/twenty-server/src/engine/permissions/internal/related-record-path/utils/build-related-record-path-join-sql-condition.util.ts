@@ -9,7 +9,7 @@ import { buildRelatedRecordPathHopsJoin } from 'src/engine/permissions/internal/
 import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
 import { combineSQLConditions } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-conditions.util';
 import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
-import { omitPermissionsHidingField } from 'src/engine/permissions/internal/related-record-path/utils/omit-permissions-hiding-field.util';
+import { omitPermissionsUnableToReadField } from 'src/engine/permissions/internal/related-record-path/utils/omit-permissions-unable-to-read-field.util';
 import { resolveRelatedRecordPaths } from 'src/engine/permissions/internal/related-record-path/utils/resolve-related-record-paths.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -61,7 +61,7 @@ export const buildRelatedRecordPathJoinSQLCondition = ({
     targetTableAlias: string;
     visitedObjectMetadataIds: Set<string>;
   }): SQLCondition | boolean => {
-    const sourceMetadataMaps = omitPermissionsHidingField({
+    const sourceMetadataMaps = omitPermissionsUnableToReadField({
       metadataMaps,
       objectMetadataId: resolvedPath.sourceFlatObjectMetadata.id,
       fieldMetadataId: resolvedPath.hops[0].relationFieldMetadataId,

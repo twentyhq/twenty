@@ -89,7 +89,7 @@ import {
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-twenty-orm-statement.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
-import { renderNotHiddenCondition } from 'src/engine/twenty-orm/sql/utils/render-not-hidden-condition.util';
+import { renderReadableCondition } from 'src/engine/twenty-orm/sql/utils/render-readable-condition.util';
 import { serializeJsonbWriteValue } from 'src/engine/twenty-orm/sql/utils/serialize-jsonb-write-value.util';
 import {
   type WorkspaceRelationShape,
@@ -1947,7 +1947,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
             .map(([columnName]) => columnName),
           condition: sqlCondition,
         });
-        queryBuilder.hideRelationsWhen({
+        queryBuilder.makeRelationsUnreadableWhen({
           alias,
           relationFieldNames: relationShapes
             .filter(({ fieldMetadataId }) =>
@@ -2117,7 +2117,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
   }
 
-  async filterRecordIdsShowingRelation({
+  async filterRecordIdsWithReadableRelation({
     recordIds,
     relationFieldName,
   }: {
@@ -2137,7 +2137,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     const alias = this.options.tableShape.nameSingular;
-    const hidingSQLConditions = (
+    const unreadableSQLConditions = (
       await this.options.internalContext.recordFieldPermissions.buildUnreadableFieldsSQLConditions(
         {
           principals: this.resolvePermissionsPrincipalsOrThrow(),
@@ -2150,11 +2150,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         fieldMetadataIds.includes(relationFieldMetadataId),
       )
       .map(({ sqlCondition }) => sqlCondition);
-    const notHiddenCondition = renderNotHiddenCondition(
-      hidingSQLConditions.map(({ sql }) => sql),
+    const readableCondition = renderReadableCondition(
+      unreadableSQLConditions.map(({ sql }) => sql),
     );
 
-    if (!isDefined(notHiddenCondition)) {
+    if (!isDefined(readableCondition)) {
       return recordIds;
     }
 
@@ -2164,10 +2164,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         recordIds,
       })
       .andWhere(
-        notHiddenCondition,
+        readableCondition,
         Object.assign(
           {},
-          ...hidingSQLConditions.map(({ parameters }) => parameters),
+          ...unreadableSQLConditions.map(({ parameters }) => parameters),
         ),
       )
       .getMany();

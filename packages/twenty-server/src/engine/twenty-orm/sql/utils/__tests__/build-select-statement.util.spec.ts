@@ -41,7 +41,7 @@ const buildState = (
   extraSelectClauses: [],
   columnSelections: [],
   columnNullifyConditions: {},
-  hiddenRelationConditions: {},
+  unreadableRelationConditions: {},
   joinClauses: [],
   whereClauses: [],
   rowAccessConditions: [],
@@ -91,7 +91,7 @@ describe('buildSelectStatement', () => {
     );
   });
 
-  it('should group a nullified column by its nullified value and leave out the rows it is hidden on', () => {
+  it('should group a nullified column by its nullified value and leave out the rows it is unreadable on', () => {
     const sql = buildSelectStatement(
       buildState({
         columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
@@ -107,7 +107,7 @@ describe('buildSelectStatement', () => {
     expect(sql).toContain('NOT COALESCE(("person"."x" = :x), FALSE)');
   });
 
-  it('should leave out of a filter the rows its column is hidden on, order on the nullified value, and leave row access conditions and string literals alone', () => {
+  it('should leave out of a filter the rows its column is unreadable on, order on the nullified value, and leave row access conditions and string literals alone', () => {
     const sql = buildSelectStatement(
       buildState({
         columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
@@ -131,7 +131,7 @@ describe('buildSelectStatement', () => {
     expect(sql).toContain(`ORDER BY ${nullifiedColumn} ASC`);
   });
 
-  it('should leave hidden rows out inside the relation filter whose alias they belong to', () => {
+  it('should leave unreadable rows out inside the relation filter whose alias they belong to', () => {
     const sql = buildSelectStatement(
       buildState({
         columnNullifyConditions: {
@@ -159,10 +159,10 @@ describe('buildSelectStatement', () => {
     expect(sql.slice(0, sql.indexOf('EXISTS'))).not.toContain('NOT COALESCE');
   });
 
-  it('should leave out of a relation filter the rows the relation is hidden on, and break the link inside it', () => {
+  it('should leave out of a relation filter the rows the relation is unreadable on, and break the link inside it', () => {
     const sql = buildSelectStatement(
       buildState({
-        hiddenRelationConditions: {
+        unreadableRelationConditions: {
           person: { tasks: ['"person"."x" = :x'] },
         },
         whereClauses: [{ operator: 'and', sql: '__exists_task__' }],
@@ -186,10 +186,10 @@ describe('buildSelectStatement', () => {
     ).toBe(2);
   });
 
-  it('should join nothing from the rows a relation is hidden on', () => {
+  it('should join nothing from the rows a relation is unreadable on', () => {
     const sql = buildSelectStatement(
       buildState({
-        hiddenRelationConditions: {
+        unreadableRelationConditions: {
           person: { company: ['"person"."x" = :x'] },
         },
         joinClauses: [
@@ -213,7 +213,7 @@ describe('buildSelectStatement', () => {
     );
   });
 
-  it('should keep every row when only a sort reads a hidden column', () => {
+  it('should keep every row when only a sort reads an unreadable column', () => {
     const sql = buildSelectStatement(
       buildState({
         columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
