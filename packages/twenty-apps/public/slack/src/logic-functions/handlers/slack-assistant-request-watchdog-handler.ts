@@ -3,6 +3,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_ASSISTANT_INTERRUPTED_ERROR } from 'src/logic-functions/constants/slack-assistant-interrupted-error';
+import { SLACK_ASSISTANT_INTERRUPTED_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-interrupted-failure-text';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_REQUEST_WATCHDOG_MAX_ATTEMPTS } from 'src/logic-functions/constants/slack-assistant-request-watchdog-max-attempts';
 import { failStaleSlackAssistantRequest } from 'src/logic-functions/data/fail-stale-slack-assistant-request';
@@ -12,7 +13,6 @@ import { type SlackAssistantRequestWatchdogResult } from 'src/logic-functions/ty
 import { type SlackPostMessageInput } from 'src/logic-functions/types/slack-post-message-input.type';
 import { enqueueSlackAssistantRequestWatchdog } from 'src/logic-functions/utils/enqueue-slack-assistant-request-watchdog';
 import { enqueueSlackMessageDelivery } from 'src/logic-functions/utils/enqueue-slack-message-delivery';
-import { getSlackAssistantFailureText } from 'src/logic-functions/utils/get-slack-assistant-failure-text';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { isSlackAssistantRequestStale } from 'src/logic-functions/utils/is-slack-assistant-request-stale';
 import { resolveBestEffortSlackClient } from 'src/logic-functions/utils/resolve-best-effort-slack-client';
@@ -112,9 +112,7 @@ export const slackAssistantRequestWatchdogHandler = async ({
 
   const interruptedMessage: SlackPostMessageInput = {
     slackChannelId,
-    messageText: getSlackAssistantFailureText(
-      SLACK_ASSISTANT_INTERRUPTED_ERROR,
-    ),
+    messageText: SLACK_ASSISTANT_INTERRUPTED_FAILURE_TEXT,
     parentMessageTimestamp,
   };
 

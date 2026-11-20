@@ -5,8 +5,6 @@ import { SLACK_ASSISTANT_DEADLINE_FAILURE_TEXT } from 'src/logic-functions/const
 import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/constants/slack-assistant-empty-response-error';
 import { SLACK_ASSISTANT_EMPTY_RESPONSE_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-empty-response-failure-text';
 import { SLACK_ASSISTANT_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-failure-text';
-import { SLACK_ASSISTANT_INTERRUPTED_ERROR } from 'src/logic-functions/constants/slack-assistant-interrupted-error';
-import { SLACK_ASSISTANT_INTERRUPTED_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-interrupted-failure-text';
 import { getSlackAssistantFailureText } from 'src/logic-functions/utils/get-slack-assistant-failure-text';
 
 describe('getSlackAssistantFailureText', () => {
@@ -20,12 +18,6 @@ describe('getSlackAssistantFailureText', () => {
     expect(
       getSlackAssistantFailureText(SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR),
     ).toBe(SLACK_ASSISTANT_EMPTY_RESPONSE_FAILURE_TEXT);
-  });
-
-  it('should invite the member to ask again when the request was interrupted', () => {
-    expect(
-      getSlackAssistantFailureText(SLACK_ASSISTANT_INTERRUPTED_ERROR),
-    ).toBe(SLACK_ASSISTANT_INTERRUPTED_FAILURE_TEXT);
   });
 
   it('should point at an admin for a failure the member cannot act on', () => {

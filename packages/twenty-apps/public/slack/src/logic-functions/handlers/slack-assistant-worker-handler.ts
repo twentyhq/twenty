@@ -33,6 +33,7 @@ import { sendSlackMessage } from 'src/logic-functions/utils/send-slack-message';
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
 import { startSlackAssistantStatusUpdates } from 'src/logic-functions/utils/start-slack-assistant-status-updates';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 export const slackAssistantWorkerHandler = async (
   record: SlackAssistantRequestRecord,
@@ -287,7 +288,11 @@ export const slackAssistantWorkerHandler = async (
         id: record.id,
         responseText,
         agentChatThreadId: agentResult.threadId,
-      }).catch(() => undefined);
+      }).catch((error) =>
+        console.warn(
+          `[slack] could not renew the lease of request ${record.id} before deferring its answer: ${toErrorMessage(error)}`,
+        ),
+      );
 
       await enqueueSlackMessageDelivery({
         payload: {
