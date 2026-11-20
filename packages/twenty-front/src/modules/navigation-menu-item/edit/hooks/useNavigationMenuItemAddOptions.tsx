@@ -24,8 +24,6 @@ import {
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
-import { navigationMenuItemsWithHiddenSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsWithHiddenSelector';
-import { getHiddenWorkspaceNavigationMenuItems } from '@/navigation-menu-item/common/utils/getHiddenWorkspaceNavigationMenuItems';
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { NATIVE_PAGE_NAVIGATION_MENU_ITEM_CONFIGS } from '@/navigation-menu-item/display/native-page/constants/NativePageNavigationMenuItemConfigs';
@@ -54,6 +52,7 @@ type UseNavigationMenuItemAddOptionsParams = {
   objectId: string | null;
   parentId?: string;
   currentItems: NavigationMenuItem[];
+  hiddenItems: NavigationMenuItem[];
   isSearchingAllItems: boolean;
   addItem: (input: NewNavigationMenuItemInput) => void;
   navigateToStep: (step: NavigationMenuItemAddStep) => void;
@@ -66,6 +65,7 @@ export const useNavigationMenuItemAddOptions = ({
   objectId,
   parentId,
   currentItems,
+  hiddenItems,
   isSearchingAllItems,
   addItem,
   navigateToStep,
@@ -87,14 +87,6 @@ export const useNavigationMenuItemAddOptions = ({
   });
 
   const navigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
-  const navigationMenuItemsWithHidden = useAtomStateValue(
-    navigationMenuItemsWithHiddenSelector,
-  );
-  const hiddenWorkspaceNavigationMenuItems =
-    getHiddenWorkspaceNavigationMenuItems({
-      navigationMenuItems: navigationMenuItemsWithHidden,
-      excludedIds: new Set(currentItems.map(({ id }) => id)),
-    });
   const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
   const { objectMetadataItems } = useObjectMetadataItems();
   const { activeNonSystemObjectMetadataItems } =
@@ -106,7 +98,7 @@ export const useNavigationMenuItemAddOptions = ({
     viewIdsAlreadyAdded,
   } = useNavigationMenuObjectMetadataForSection([
     ...currentItems,
-    ...hiddenWorkspaceNavigationMenuItems,
+    ...hiddenItems,
   ]);
   const {
     navigationMenuItemSearchRecords,

@@ -1,13 +1,21 @@
 import { useLingui } from '@lingui/react/macro';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
+import { IconLayoutList } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 
+import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
+import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
+import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
+import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { useHiddenNavigationMenuItemsInTab } from '@/navigation-menu-item/edit/hooks/useHiddenNavigationMenuItemsInTab';
 import { useRestoreHiddenNavigationMenuItem } from '@/navigation-menu-item/edit/hooks/useRestoreHiddenNavigationMenuItem';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
@@ -23,6 +31,7 @@ export const NavigationMenuAddSectionHiddenItems = ({
   dropdownId,
 }: NavigationMenuAddSectionHiddenItemsProps) => {
   const { t } = useLingui();
+  const { getIcon } = useIcons();
   const hiddenNavigationMenuItems =
     useHiddenNavigationMenuItemsInTab(containerId);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
@@ -49,6 +58,50 @@ export const NavigationMenuAddSectionHiddenItems = ({
         );
   };
 
+  const getStartIcon = (navigationMenuItem: NavigationMenuItem) => {
+    const builtInSection = NAVIGATION_MENU_BUILT_IN_SECTIONS.find(
+      ({ key }) => key === navigationMenuItem.builtInSectionKey,
+    );
+
+    if (isDefined(builtInSection)) {
+      return (
+        <ColoredIcon Icon={builtInSection.Icon} color={builtInSection.color} />
+      );
+    }
+
+    switch (navigationMenuItem.type) {
+      case NavigationMenuItemType.FOLDER:
+        return (
+          <ColoredIcon
+            Icon={getIcon(navigationMenuItem.icon ?? FOLDER_ICON_DEFAULT)}
+            color={getNavigationMenuItemColor(navigationMenuItem)}
+          />
+        );
+      case NavigationMenuItemType.TAB:
+        return (
+          <ColoredIcon
+            Icon={getIcon(
+              navigationMenuItem.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT,
+            )}
+          />
+        );
+      case NavigationMenuItemType.SECTION:
+        return (
+          <ColoredIcon
+            Icon={
+              isDefined(navigationMenuItem.icon)
+                ? getIcon(navigationMenuItem.icon)
+                : IconLayoutList
+            }
+          />
+        );
+      default:
+        return (
+          <NavigationMenuItemIcon navigationMenuItem={navigationMenuItem} />
+        );
+    }
+  };
+
   const handleClick = (navigationMenuItemId: string) => {
     restoreHiddenNavigationMenuItem({
       navigationMenuItemId,
@@ -67,6 +120,7 @@ export const NavigationMenuAddSectionHiddenItems = ({
             item={{
               id: hiddenNavigationMenuItem.id,
               label: getLabel(hiddenNavigationMenuItem),
+              icon: getStartIcon(hiddenNavigationMenuItem),
               onClick: () => handleClick(hiddenNavigationMenuItem.id),
             }}
           />

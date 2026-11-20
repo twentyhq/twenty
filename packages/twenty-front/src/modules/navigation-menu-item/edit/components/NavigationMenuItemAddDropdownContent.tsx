@@ -1,6 +1,7 @@
 import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { NavigationMenuItemInsertionPreviewEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemInsertionPreviewEffect';
+import { useHiddenNavigationMenuItemsInTab } from '@/navigation-menu-item/edit/hooks/useHiddenNavigationMenuItemsInTab';
 import { useNavigationMenuItemAddOptions } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions';
 import { type NavigationMenuItemAddStep } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddStep';
 import { getNavigationMenuItemTabId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemTabId';
@@ -81,6 +82,8 @@ export const NavigationMenuItemAddDropdownContent = ({
         items: currentItems,
       }) === targetTabId,
   );
+  const hiddenNavigationMenuItemsInTab =
+    useHiddenNavigationMenuItemsInTab(targetTabId);
 
   const navigate = (next: Step) => {
     goToPage(next);
@@ -112,6 +115,7 @@ export const NavigationMenuItemAddDropdownContent = ({
     objectId,
     parentId,
     currentItems: currentTabItems,
+    hiddenItems: section === 'workspace' ? hiddenNavigationMenuItemsInTab : [],
     isSearchingAllItems,
     addItem,
     navigateToStep: navigate,
