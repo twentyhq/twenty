@@ -49,16 +49,18 @@ export const teamsAssistantRequestWatchdogHandler = async ({
     };
   }
 
-  if (!isTeamsAssistantRequestStale(record)) {
-    if (attempt >= TEAMS_ASSISTANT_REQUEST_WATCHDOG_MAX_ATTEMPTS) {
-      return {
-        failed: false,
-        attempt,
-        rescheduled: false,
-        reason: 'Request is still being processed',
-      };
-    }
+  const isStale = isTeamsAssistantRequestStale(record);
 
+  if (!isStale && attempt >= TEAMS_ASSISTANT_REQUEST_WATCHDOG_MAX_ATTEMPTS) {
+    return {
+      failed: false,
+      attempt,
+      rescheduled: false,
+      reason: 'Request is still being processed',
+    };
+  }
+
+  if (!isStale) {
     await enqueueTeamsAssistantRequestWatchdog({
       teamsAssistantRequestId,
       attempt,
