@@ -8,7 +8,9 @@ import { ConvertNotStartedWorkflowRunsCommand } from 'src/database/commands/upgr
 import { DropNotStartedWorkflowRunStatusCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795095338141-drop-not-started-workflow-run-status.command';
 import { RepairSkippedStandardCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795103130063-repair-skipped-standard-command-menu-items.command';
 import { AddWorkspaceNavigationMenuSectionCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795106019718-add-workspace-navigation-menu-section.command';
+import { RecomputeRelatedRecordPathTargetsForUnreadableRelationsCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795214125783-recompute-related-record-path-targets-for-unreadable-relations.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { AccessGroupComputationModule } from 'src/engine/permissions/internal/access-group/access-group-computation.module';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
@@ -16,6 +18,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 
 @Module({
   imports: [
+    AccessGroupComputationModule,
     ApplicationModule,
     TypeOrmModule.forFeature([CommandMenuItemEntity]),
     WorkspaceCacheModule,
@@ -30,6 +33,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     DropNotStartedWorkflowRunStatusCommand,
     RepairSkippedStandardCommandMenuItemsCommand,
     AddWorkspaceNavigationMenuSectionCommand,
+    RecomputeRelatedRecordPathTargetsForUnreadableRelationsCommand,
   ],
 })
 export class V2_61_UpgradeVersionCommandModule {}
