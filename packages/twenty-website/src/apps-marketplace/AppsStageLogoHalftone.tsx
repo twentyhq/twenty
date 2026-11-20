@@ -41,24 +41,27 @@ const Print = styled.div`
   }
 `;
 
+// Same frame as the rig, so nothing jumps when the halftone takes over: the
+// logo centred, its height 4 / previewDistance of the box (contain fit at
+// the rig's reference distance of 4), its width from its own ratio.
 const Poster = styled.div`
-  display: grid;
   inset: 0;
-  place-items: center;
   position: absolute;
 
   & > img {
     filter: grayscale(1);
     height: var(--apps-stage-poster-size);
-    object-fit: contain;
+    left: 50%;
+    max-width: 100%;
     opacity: 0.16;
-    width: var(--apps-stage-poster-size);
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
   }
 `;
 
-// A little under the rig's own footprint (about 4 / previewDistance of the
-// box height), so the stand-in never reads larger than the halftone.
-const POSTER_SCALE = 3.4;
+const RIG_REFERENCE_DISTANCE = 4;
 
 // The halftone rig loads images without crossOrigin, so a remote logo would
 // taint its WebGL texture. A same-origin blob copy avoids it; copies are kept
@@ -128,7 +131,7 @@ export function AppsStageLogoHalftone({
     <Poster
       style={{
         ['--apps-stage-poster-size' as string]: `${Math.round(
-          (POSTER_SCALE / previewDistance) * 100,
+          (RIG_REFERENCE_DISTANCE / previewDistance) * 100,
         )}%`,
       }}
     >
