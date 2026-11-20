@@ -25,8 +25,8 @@ Only list a server Twenty can sign in to without a pre-registered OAuth app:
 its authorization server must offer dynamic client registration or client ID
 metadata documents. Asana, Docusign, GitHub and HubSpot do not.
 
-Skip a vendor that already has an app in `packages/twenty-apps` (Linear): add
-the MCP server to that app instead.
+Skip a vendor that already has an app in `packages/twenty-apps`: add the MCP
+server to that app instead.
 
 Listing a server is a reviewed pull request: run the script with its registry
 name, read the generated entry, commit.

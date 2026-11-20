@@ -26,6 +26,19 @@
     "version": "1.0.0"
   },
   {
+    "registryName": "app.linear/linear",
+    "universalIdentifier": "b0bb3fd5-177e-58c7-9e72-ffcc7b804a45",
+    "name": "linear",
+    "label": "Linear",
+    "author": "Linear",
+    "description": "Manage issues, projects & team workflows in Linear",
+    "aboutDescription": "Manage issues, projects, and team workflows in Linear with natural language. Create and update issues, track progress, plan cycles, and coordinate development tasks using Linear’s streamlined project management interface for faster, more efficient workflows.",
+    "websiteUrl": "https://linear.app",
+    "logoUrl": "https://static.linear.app/integrations/mcp/icon-256.png",
+    "url": "https://mcp.linear.app/mcp",
+    "version": "1.0.0"
+  },
+  {
     "registryName": "com.notion/mcp",
     "universalIdentifier": "70f9b83b-95e1-5a00-9c50-772e6d26848f",
     "name": "notion",
