@@ -1,14 +1,14 @@
 import { isDefined } from 'twenty-shared/utils';
 import { type AgentChatThreadInboxStatus } from 'twenty-shared/ai';
 
-import { aiChatThreadMemberStateFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadMemberStateFamilySelector';
+import { aiChatThreadInboxStatusFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadInboxStatusFamilySelector';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { getInboxThreadChannelStatus } from '@/inbox/utils/getInboxThreadChannelStatus';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { AgentChatChannelThreadStatus } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-type InboxThreadMemberStateByThreadIdFamilyKey = {
+type InboxThreadInboxStatusByThreadIdFamilyKey = {
   threadIds: string[];
   // Chats of the channel on screen are filed for the whole channel
   channelId?: string | null;
@@ -23,19 +23,19 @@ const CHANNEL_STATUS_SCOPES: Record<
   [AgentChatChannelThreadStatus.DONE]: 'ARCHIVED',
 };
 
-export const inboxThreadMemberStateByThreadIdFamilySelector =
+export const inboxThreadInboxStatusByThreadIdFamilySelector =
   createAtomFamilySelector<
     Record<string, AgentChatThreadInboxStatus>,
-    InboxThreadMemberStateByThreadIdFamilyKey
+    InboxThreadInboxStatusByThreadIdFamilyKey
   >({
-    key: 'inboxThreadMemberStateByThreadIdFamilySelector',
+    key: 'inboxThreadInboxStatusByThreadIdFamilySelector',
     get:
-      ({ threadIds, channelId }: InboxThreadMemberStateByThreadIdFamilyKey) =>
+      ({ threadIds, channelId }: InboxThreadInboxStatusByThreadIdFamilyKey) =>
       ({ get }) =>
         Object.fromEntries(
           threadIds.map((threadId) => {
             const inboxStatus = get(
-              aiChatThreadMemberStateFamilySelector,
+              aiChatThreadInboxStatusFamilySelector,
               threadId,
             );
             const thread = get(aiChatThreadRecordFamilySelector, threadId);

@@ -3,7 +3,7 @@ import { useStore } from 'jotai';
 import { useOpenAiChatThread } from '@/ai-chat/hooks/useOpenAiChatThread';
 import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { shouldFocusChatEditorFamilyState } from '@/ai-chat/states/shouldFocusChatEditorFamilyState';
+import { aiChatShouldFocusEditorFamilyState } from '@/ai-chat/states/aiChatShouldFocusEditorFamilyState';
 import { isInboxPath } from '~/utils/isInboxPath';
 
 type UseSwitchToNewAiChatParams = {
@@ -26,7 +26,7 @@ export const useSwitchToNewAiChat = ({
     openAiChatThread({ threadId: newAiChatThreadId, shouldOpenInFullPage });
 
     store.set(
-      shouldFocusChatEditorFamilyState.atomFamily({
+      aiChatShouldFocusEditorFamilyState.atomFamily({
         threadId: newAiChatThreadId,
       }),
       true,

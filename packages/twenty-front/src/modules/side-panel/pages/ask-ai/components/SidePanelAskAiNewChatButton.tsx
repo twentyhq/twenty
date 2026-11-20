@@ -3,7 +3,7 @@ import { IconButton } from 'twenty-ui/components/input';
 import { IconEdit } from 'twenty-ui/icon';
 
 import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
-import { shouldFocusChatEditorFamilyState } from '@/ai-chat/states/shouldFocusChatEditorFamilyState';
+import { aiChatShouldFocusEditorFamilyState } from '@/ai-chat/states/aiChatShouldFocusEditorFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { useStore } from 'jotai';
 import { askAiSidePanelThreadIdComponentState } from '@/side-panel/states/askAiSidePanelThreadIdComponentState';
@@ -28,7 +28,7 @@ export const SidePanelAskAiNewChatButton = () => {
 
     setAskAiSidePanelThreadId(null);
     store.set(
-      shouldFocusChatEditorFamilyState.atomFamily({
+      aiChatShouldFocusEditorFamilyState.atomFamily({
         threadId: store.get(newAiChatThreadIdState.atom),
       }),
       true,

@@ -10,7 +10,7 @@ import { useLoadAiChatThread } from '@/ai-chat/instance/hooks/useLoadAiChatThrea
 import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
 import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
-import { aiChatSelectedFilesFamilyState } from '@/ai-chat/composer/states/aiChatSelectedFilesFamilyState';
+import { aiChatUploadingFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadingFilesFamilyState';
 import { aiChatUploadedFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadedFilesFamilyState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { OpenDirectMessageDocument } from '~/generated-metadata/graphql';
@@ -34,7 +34,7 @@ export const useOpenNewAiChatAsDirectMessage = () => {
       if (
         isNonEmptyArray(
           store.get(
-            aiChatSelectedFilesFamilyState.atomFamily({
+            aiChatUploadingFilesFamilyState.atomFamily({
               threadId: newChatThreadId,
             }),
           ),

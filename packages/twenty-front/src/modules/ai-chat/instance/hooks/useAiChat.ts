@@ -34,7 +34,7 @@ import { getAiChatMessageAuthor } from '@/ai-chat/messages/utils/getAiChatMessag
 import { getAiChatMessageQuoteSource } from '@/ai-chat/composer/utils/getAiChatMessageQuoteSource';
 import { prependAiChatQuoteToText } from '@/ai-chat/composer/utils/prependAiChatQuoteToText';
 import { aiChatLastSentBrowsingContextFamilyState } from '@/ai-chat/states/aiChatLastSentBrowsingContextFamilyState';
-import { aiChatSelectedFilesFamilyState } from '@/ai-chat/composer/states/aiChatSelectedFilesFamilyState';
+import { aiChatUploadingFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadingFilesFamilyState';
 import { aiChatSentMessageHandOffState } from '@/ai-chat/states/aiChatSentMessageHandOffState';
 import { aiChatUploadedFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadedFilesFamilyState';
 import { aiChatUnconfirmedFirstMessageFamilyState } from '@/ai-chat/composer/states/aiChatUnconfirmedFirstMessageFamilyState';
@@ -538,11 +538,11 @@ export const useAiChat = () => {
       return;
     }
 
-    const aiChatSelectedFiles = store.get(
-      aiChatSelectedFilesFamilyState.atomFamily({ threadId }),
+    const aiChatUploadingFiles = store.get(
+      aiChatUploadingFilesFamilyState.atomFamily({ threadId }),
     );
 
-    if (!isDirectMessage && aiChatSelectedFiles.length > 0) {
+    if (!isDirectMessage && aiChatUploadingFiles.length > 0) {
       enqueueToast({
         status: 'error',
         children: t`Wait for the attachments to finish uploading.`,

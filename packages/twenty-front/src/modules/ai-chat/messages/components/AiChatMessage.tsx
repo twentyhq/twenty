@@ -9,7 +9,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { AGENT_MESSAGE_ROLE } from '@/ai-chat/messages/constants/AgentMessageRole';
-import { shouldFocusChatEditorFamilyState } from '@/ai-chat/states/shouldFocusChatEditorFamilyState';
+import { aiChatShouldFocusEditorFamilyState } from '@/ai-chat/states/aiChatShouldFocusEditorFamilyState';
 import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/states/aiChatQuotedMessageIdFamilyState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { AI_CHAT_USER_MESSAGE_MAX_WIDTH } from '@/ai-chat/messages/constants/AiChatUserMessageMaxWidth';
@@ -145,8 +145,8 @@ export const AiChatMessage = ({
     { threadId },
   );
 
-  const setShouldFocusChatEditor = useSetAtomFamilyState(
-    shouldFocusChatEditorFamilyState,
+  const setAiChatShouldFocusEditor = useSetAtomFamilyState(
+    aiChatShouldFocusEditorFamilyState,
     { threadId },
   );
 
@@ -283,7 +283,7 @@ export const AiChatMessage = ({
                   aria-label={t`Reply`}
                   onClick={() => {
                     setAiChatQuotedMessageId(messageId);
-                    setShouldFocusChatEditor(true);
+                    setAiChatShouldFocusEditor(true);
                   }}
                 >
                   <IconArrowBackUp />
