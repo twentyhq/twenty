@@ -1,7 +1,6 @@
 import { dispatchAiChatRefetchMessagesEvent } from '@/ai-chat/utils/dispatchAiChatRefetchMessagesEvent';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloClient } from '@apollo/client/react';
 import { isUndefined } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
@@ -73,7 +72,6 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import {
   FindChatMessageAgentDocument,
   SendChatMessageDocument,
-  StopAgentChatStreamDocument,
   FeatureFlagKey,
 } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
@@ -596,26 +594,7 @@ export const useAiChat = () => {
     sendToThread,
   ]);
 
-  const handleStop = useCallback(async () => {
-    const threadId = aiChatThreadId;
-
-    store.set(
-      aiChatIsAwaitingFirstChunkFamilyState.atomFamily({ threadId }),
-      false,
-    );
-
-    try {
-      await apolloClient.mutate({
-        mutation: StopAgentChatStreamDocument,
-        variables: { threadId },
-      });
-    } catch (error) {
-      enqueueToast(getToastOptionsFromError({ error }));
-    }
-  }, [store, apolloClient, enqueueToast, aiChatThreadId]);
-
   return {
     handleSendMessage,
-    handleStop,
   };
 };

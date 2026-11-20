@@ -1,7 +1,7 @@
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { type AiChatInstanceEventDetail } from '@/ai-chat/types/AiChatInstanceEventDetail';
 import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai-chat/constants/AiChatSendMessageEventName';
-import { AI_CHAT_STOP_EVENT_NAME } from '@/ai-chat/constants/AiChatStopEventName';
+import { useStopAiChatStream } from '@/ai-chat/hooks/useStopAiChatStream';
 import { aiChatMessagesLoadingFamilyState } from '@/ai-chat/states/aiChatMessagesLoadingFamilyState';
 import { aiChatIsStreamingFamilyState } from '@/ai-chat/states/aiChatIsStreamingFamilyState';
 import { aiChatInputIsEmptyFamilySelector } from '@/ai-chat/composer/states/selectors/aiChatInputIsEmptyFamilySelector';
@@ -34,6 +34,7 @@ export const SendMessageButton = ({
     aiChatIsStreamingFamilyState,
     { threadId },
   );
+  const { stopAiChatStream } = useStopAiChatStream();
   const aiChatIsAssistantReplyPending = useAtomFamilySelectorValue(
     aiChatIsAssistantReplyPendingFamilySelector,
     threadId,
@@ -46,12 +47,6 @@ export const SendMessageButton = ({
     );
   };
 
-  const handleStopClick = () => {
-    dispatchBrowserEvent<AiChatInstanceEventDetail>(AI_CHAT_STOP_EVENT_NAME, {
-      instanceId,
-    });
-  };
-
   if (aiChatIsStreaming || aiChatIsAssistantReplyPending) {
     return (
       <IconButton
@@ -60,7 +55,7 @@ export const SendMessageButton = ({
         shape="round"
         aria-label={t`Stop response`}
         size="sm"
-        onClick={handleStopClick}
+        onClick={() => void stopAiChatStream()}
       >
         <IconPlayerStop />
       </IconButton>
