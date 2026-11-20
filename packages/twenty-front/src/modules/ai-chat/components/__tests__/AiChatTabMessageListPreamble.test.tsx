@@ -13,7 +13,7 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-jest.mock('@/ai-chat/workspace-setup/hooks/useIsWorkspaceSetupChat', () => ({
+jest.mock('@/ai-chat/hooks/useIsWorkspaceSetupChat', () => ({
   useIsWorkspaceSetupChat: () => true,
 }));
 

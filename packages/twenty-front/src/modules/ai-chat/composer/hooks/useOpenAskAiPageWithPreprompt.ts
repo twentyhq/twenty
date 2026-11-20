@@ -4,7 +4,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { useAiChatFileUpload } from '@/ai-chat/composer/hooks/useAiChatFileUpload';
 import { useStageAiChatPreprompt } from '@/ai-chat/hooks/useStageAiChatPreprompt';
-import { useSwitchToNewAiChat } from '@/ai-chat/hooks/useSwitchToNewAiChat';
+import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
 import { type AiChatPrepromptMode } from '@/ai-chat/states/aiChatPrepromptState';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { aiChatUploadedFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadedFilesFamilyState';

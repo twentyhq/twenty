@@ -1,6 +1,6 @@
 import { AiChatNewThreadRecipientField } from '@/ai-chat/composer/components/AiChatNewThreadRecipientField';
 import { useIsOnNewAiChatSlot } from '@/ai-chat/hooks/useIsOnNewAiChatSlot';
-import { useIsWorkspaceSetupChat } from '@/ai-chat/workspace-setup/hooks/useIsWorkspaceSetupChat';
+import { useIsWorkspaceSetupChat } from '@/ai-chat/hooks/useIsWorkspaceSetupChat';
 import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 
-import { AiChatInstance } from '@/ai-chat/components/AiChatInstance';
-import { AiChatTab } from '@/ai-chat/components/AiChatTab';
+import { AiChatInstance } from '@/ai-chat/instance/components/AiChatInstance';
+import { AiChatTab } from '@/ai-chat/instance/components/AiChatTab';
 import { AI_CHAT_SURFACE } from '@/ai-chat/constants/AiChatSurface';
 import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
 import { useAskAiSidePanelThreadId } from '@/side-panel/pages/ask-ai/hooks/useAskAiSidePanelThreadId';

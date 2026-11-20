@@ -37,7 +37,7 @@ jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
 
 let isWorkspaceSetupChat = true;
 
-jest.mock('@/ai-chat/workspace-setup/hooks/useIsWorkspaceSetupChat', () => ({
+jest.mock('@/ai-chat/hooks/useIsWorkspaceSetupChat', () => ({
   useIsWorkspaceSetupChat: () => isWorkspaceSetupChat,
 }));
 

@@ -150,7 +150,7 @@ jest.mock('@/inbox/hooks/useInboxOpenThreadsSummary', () => ({
   }),
 }));
 
-jest.mock('@/ai-chat/hooks/useSwitchToNewAiChat', () => ({
+jest.mock('@/ai-chat/composer/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({ switchToNewChat: jest.fn() }),
 }));
 
@@ -158,7 +158,7 @@ jest.mock('~/pages/ai-chat/AiChatPageEffects', () => ({
   AiChatPageEffects: () => null,
 }));
 
-jest.mock('@/ai-chat/components/AiChatTab', () => ({
+jest.mock('@/ai-chat/instance/components/AiChatTab', () => ({
   AiChatTab: () => <div>New conversation composer</div>,
 }));
 

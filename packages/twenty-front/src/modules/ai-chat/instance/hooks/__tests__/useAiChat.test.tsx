@@ -17,7 +17,7 @@ import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-tex
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/constants/AiChatNewThreadDefaultRecipients';
 import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai-chat/composer/constants/AiChatRestoreEditorContentEventName';
-import { useAiChat } from '@/ai-chat/hooks/useAiChat';
+import { useAiChat } from '@/ai-chat/instance/hooks/useAiChat';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/states/aiChatQuotedMessageIdFamilyState';
 import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
@@ -66,7 +66,7 @@ const loadAiChatThread = jest.fn(async (threadId: string) => ({
   id: threadId,
 }));
 
-jest.mock('@/ai-chat/hooks/useLoadAiChatThread', () => ({
+jest.mock('@/ai-chat/instance/hooks/useLoadAiChatThread', () => ({
   useLoadAiChatThread: () => ({ loadAiChatThread }),
 }));
 

@@ -10,7 +10,7 @@ import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ThemeProvider } from 'twenty-ui/theme';
 
-import { AiChatTab } from '@/ai-chat/components/AiChatTab';
+import { AiChatTab } from '@/ai-chat/instance/components/AiChatTab';
 import { AI_CHAT_NEW_THREAD_RECIPIENT_SUGGESTIONS_PAGE_SIZE } from '@/ai-chat/composer/constants/AiChatNewThreadRecipientSuggestionsPageSize';
 import { AI_CHAT_SURFACE } from '@/ai-chat/constants/AiChatSurface';
 import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';

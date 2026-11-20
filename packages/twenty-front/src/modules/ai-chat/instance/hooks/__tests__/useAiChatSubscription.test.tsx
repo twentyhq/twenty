@@ -5,7 +5,7 @@ import { type ReactNode } from 'react';
 import { type AgentMessageReactionSummary } from 'twenty-shared/ai';
 
 import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai-chat/constants/AiChatRefetchMessagesEventName';
-import { useAiChatSubscription } from '@/ai-chat/hooks/useAiChatSubscription';
+import { useAiChatSubscription } from '@/ai-chat/instance/hooks/useAiChatSubscription';
 import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { aiChatFetchedMessagesFamilyState } from '@/ai-chat/states/aiChatFetchedMessagesFamilyState';

@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
 import { AI_CHAT_SURFACE } from '@/ai-chat/constants/AiChatSurface';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
-import { useIsWorkspaceSetupChat } from '@/ai-chat/workspace-setup/hooks/useIsWorkspaceSetupChat';
+import { useIsWorkspaceSetupChat } from '@/ai-chat/hooks/useIsWorkspaceSetupChat';
 import { useReturnFromExpandedAiChat } from '@/ai-chat/hooks/useReturnFromExpandedAiChat';
 import { processedWorkspaceSetupCompletionIdsState } from '@/ai-chat/workspace-setup/states/processedWorkspaceSetupCompletionIdsState';
 import { extractCompletedWorkspaceSetupToolParts } from '@/ai-chat/workspace-setup/utils/extractCompletedWorkspaceSetupToolParts';

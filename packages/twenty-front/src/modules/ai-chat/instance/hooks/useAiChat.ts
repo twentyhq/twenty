@@ -22,7 +22,7 @@ import { useAiChatModelId } from '@/ai-chat/hooks/useAiChatModelId';
 import { useAttachChatThreadToRecord } from '@/ai-chat/threads/hooks/useAttachChatThreadToRecord';
 import { useCanSendAiChatMessage } from '@/ai-chat/composer/hooks/useCanSendAiChatMessage';
 import { useGetBrowsingContext } from '@/ai-chat/hooks/useGetBrowsingContext';
-import { useOpenNewAiChatAsDirectMessage } from '@/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage';
+import { useOpenNewAiChatAsDirectMessage } from '@/ai-chat/instance/hooks/useOpenNewAiChatAsDirectMessage';
 import { useOptimisticallyRestoreOnSend } from '@/ai-chat/composer/hooks/useOptimisticallyRestoreOnSend';
 import { useRefreshAiChatThreadPermissions } from '@/ai-chat/threads/hooks/useRefreshAiChatThreadPermissions';
 import { useWarnAboutParticipantMentionsNotAdded } from '@/ai-chat/composer/hooks/useWarnAboutParticipantMentionsNotAdded';

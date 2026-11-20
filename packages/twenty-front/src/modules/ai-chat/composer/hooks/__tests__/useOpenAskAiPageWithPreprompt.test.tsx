@@ -3,7 +3,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/constants/AiChatNewThreadDefaultRecipients';
-import { useOpenAskAiPageWithPreprompt } from '@/ai-chat/hooks/useOpenAskAiPageWithPreprompt';
+import { useOpenAskAiPageWithPreprompt } from '@/ai-chat/composer/hooks/useOpenAskAiPageWithPreprompt';
 import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
 import { aiChatOpenThreadIdByInstanceIdState } from '@/ai-chat/states/aiChatOpenThreadIdByInstanceIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
@@ -26,7 +26,7 @@ const uploadedFile: AiChatFileUIPart = {
 
 let finishUpload: () => void = () => {};
 
-jest.mock('@/ai-chat/hooks/useSwitchToNewAiChat', () => ({
+jest.mock('@/ai-chat/composer/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({
     switchToNewChat: () => {
       jotaiStore.set(aiChatOpenThreadIdByInstanceIdState.atom, {

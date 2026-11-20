@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai-chat/constants/AiChatSendMessageEventName';
-import { useAiChat } from '@/ai-chat/hooks/useAiChat';
+import { useAiChat } from '@/ai-chat/instance/hooks/useAiChat';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { type AiChatInstanceEventDetail } from '@/ai-chat/types/AiChatInstanceEventDetail';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';

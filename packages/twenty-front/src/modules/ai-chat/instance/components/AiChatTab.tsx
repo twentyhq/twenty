@@ -1,5 +1,5 @@
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
-import { useIsWorkspaceSetupChat } from '@/ai-chat/workspace-setup/hooks/useIsWorkspaceSetupChat';
+import { useIsWorkspaceSetupChat } from '@/ai-chat/hooks/useIsWorkspaceSetupChat';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
 import { styled } from '@linaria/react';
 import { type DragEvent, useState } from 'react';

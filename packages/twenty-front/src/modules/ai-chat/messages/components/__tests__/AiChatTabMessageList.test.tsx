@@ -8,7 +8,7 @@ import { type AiChatSurface } from '@/ai-chat/types/AiChatSurface';
 const mockUseAtomStateValue = jest.fn();
 const mockUseIsWorkspaceSetupChat = jest.fn(() => false);
 
-jest.mock('@/ai-chat/workspace-setup/hooks/useIsWorkspaceSetupChat', () => ({
+jest.mock('@/ai-chat/hooks/useIsWorkspaceSetupChat', () => ({
   useIsWorkspaceSetupChat: () => mockUseIsWorkspaceSetupChat(),
 }));
 

@@ -3,7 +3,7 @@ import { Provider } from 'jotai';
 import { type ReactNode } from 'react';
 import { AI_CHAT_SURFACE } from '@/ai-chat/constants/AiChatSurface';
 import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
-import { useIsWorkspaceSetupChat } from '@/ai-chat/workspace-setup/hooks/useIsWorkspaceSetupChat';
+import { useIsWorkspaceSetupChat } from '@/ai-chat/hooks/useIsWorkspaceSetupChat';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import {
   jotaiStore,
