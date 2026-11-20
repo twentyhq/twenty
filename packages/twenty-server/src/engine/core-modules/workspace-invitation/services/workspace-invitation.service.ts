@@ -37,6 +37,7 @@ import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { truncateFullName } from 'src/engine/core-modules/user/utils/truncate-full-name.util';
 import { type SendInvitationsDTO } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.dto';
 import { buildInvitationSendingThrottleKey } from 'src/engine/core-modules/workspace-invitation/utils/build-invitation-sending-throttle-key.util';
 import { castAppTokenToWorkspaceInvitationUtil } from 'src/engine/core-modules/workspace-invitation/utils/cast-app-token-to-workspace-invitation.util';
@@ -44,6 +45,7 @@ import {
   WorkspaceInvitationException,
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
+import { truncateWorkspaceDisplayName } from 'src/engine/core-modules/workspace/utils/truncate-workspace-display-name.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -349,6 +351,9 @@ export class WorkspaceInvitationService {
       }),
     );
 
+    const senderName = truncateFullName(sender.name);
+    const workspaceName = truncateWorkspaceDisplayName(workspace.displayName);
+
     for (const invitation of invitationResults) {
       if (invitation.status === 'fulfilled') {
         const link = this.workspaceDomainsService.buildWorkspaceURL({
@@ -380,13 +385,13 @@ export class WorkspaceInvitationService {
         const emailData = {
           link: link.toString(),
           workspace: {
-            name: workspace.displayName,
+            name: workspaceName,
             logo,
           },
           sender: {
             email: sender.userEmail,
-            firstName: sender.name.firstName,
-            lastName: sender.name.lastName,
+            firstName: senderName.firstName,
+            lastName: senderName.lastName,
           },
           serverUrl: this.twentyConfigService.get('SERVER_URL'),
           locale: sender.locale,
@@ -403,7 +408,7 @@ export class WorkspaceInvitationService {
         const subject = i18n._(joinTeamMsg);
 
         await this.emailService.send({
-          from: `${sender.name.firstName} ${sender.name.lastName} (via Twenty) <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
+          from: `${senderName.firstName} ${senderName.lastName} (via Twenty) <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
           to: invitation.value.email,
           subject,
           text,

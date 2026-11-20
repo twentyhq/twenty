@@ -21,6 +21,8 @@ import { TwoFactorAuthenticationBackupCodeService } from 'src/engine/core-module
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { truncateFullName } from 'src/engine/core-modules/user/utils/truncate-full-name.util';
+import { truncateWorkspaceDisplayName } from 'src/engine/core-modules/workspace/utils/truncate-workspace-display-name.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 type TwoFactorAuthenticationEmailRecipient = {
@@ -56,13 +58,16 @@ export class TwoFactorAuthenticationEmailService {
     actor: Pick<AuthContextUser, 'email' | 'firstName' | 'lastName'>;
     expiresAt: Date;
   }): Promise<void> {
+    const actorName = truncateFullName(actor);
+
     await this.sendSecurityEmail({
       ...recipient,
       subject: msg`A two-factor authentication recovery code was generated for you`,
       buildEmailTemplate: async ({ locale, workspaceDisplayName }) =>
         TwoFactorAuthenticationRecoveryCodeIssuedEmail({
           actorName:
-            `${actor.firstName} ${actor.lastName}`.trim() || actor.email,
+            `${actorName.firstName} ${actorName.lastName}`.trim() ||
+            actor.email,
           workspaceDisplayName,
           expiresAt,
           locale,
@@ -151,7 +156,9 @@ export class TwoFactorAuthenticationEmailService {
       const locale = userWorkspace.locale ?? SOURCE_LOCALE;
       const emailTemplate = await buildEmailTemplate({
         locale,
-        workspaceDisplayName: userWorkspace.workspace.displayName ?? '',
+        workspaceDisplayName:
+          truncateWorkspaceDisplayName(userWorkspace.workspace.displayName) ??
+          '',
       });
       const html = await renderEmail(emailTemplate, { pretty: true });
       const text = await renderEmail(emailTemplate, { plainText: true });
