@@ -113,7 +113,7 @@ export class DevSeederWorkspaceService {
       initialCursor,
     });
 
-    await this.applicationRegistrationService.findOrCreateBuiltInRegistration(
+    await this.applicationRegistrationService.findOrCreateBuiltInRegistrationOrThrow(
       TWENTY_CLI_APPLICATION_REGISTRATION,
     );
 

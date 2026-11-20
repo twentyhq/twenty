@@ -1033,7 +1033,7 @@ export class ApplicationRegistrationService {
     return registration;
   }
 
-  async findOrCreateBuiltInRegistration({
+  async findOrCreateBuiltInRegistrationOrThrow({
     universalIdentifier,
     name,
     oAuthScopes,

@@ -202,7 +202,7 @@ export class OAuthClientRegistrationResolverService {
     }
 
     const registration =
-      await this.applicationRegistrationService.findOrCreateBuiltInRegistration(
+      await this.applicationRegistrationService.findOrCreateBuiltInRegistrationOrThrow(
         {
           universalIdentifier,
           name: marketplaceConnectListing.name,

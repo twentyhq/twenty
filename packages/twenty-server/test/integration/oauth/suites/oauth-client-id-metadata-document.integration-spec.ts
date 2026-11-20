@@ -190,7 +190,7 @@ describe('OAuth client ID metadata documents (integration)', () => {
   const authorizeAndExchange = async ({
     clientId,
     redirectUris,
-  }: ClientIdMetadataDocument) => {
+  }: Pick<ClientIdMetadataDocument, 'clientId' | 'redirectUris'>) => {
     const authorization = await requestAuthorization({
       clientId,
       redirectUrl: redirectUris[0],

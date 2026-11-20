@@ -37,7 +37,7 @@ export class OAuthDiscoveryController {
         : `${authorizeBase}/authorize?iss=${encodeURIComponent(issuer)}`;
 
     const cliRegistration =
-      await this.applicationRegistrationService.findOrCreateBuiltInRegistration(
+      await this.applicationRegistrationService.findOrCreateBuiltInRegistrationOrThrow(
         TWENTY_CLI_APPLICATION_REGISTRATION,
       );
 
