@@ -74,10 +74,13 @@ const getAliases = ({
     isLookupColumnsEnabled,
   });
 
-const getPeopleColumn = (
-  relationScope: ViewFieldRelationScope,
+const getPeopleColumn = ({
+  relationScope,
   id = PEOPLE_COLUMN_ID,
-) => ({
+}: {
+  relationScope: ViewFieldRelationScope;
+  id?: string;
+}) => ({
   id,
   fieldMetadataItemId: peopleField.id,
   isCanonical: false,
@@ -87,7 +90,9 @@ const getPeopleColumn = (
 describe('getScopedRelationAliases', () => {
   it('turns the scope filters, sorts and limit into nested arguments', () => {
     expect(
-      getAliases({ recordFields: [getPeopleColumn(CTO_RELATION_SCOPE)] }),
+      getAliases({
+        recordFields: [getPeopleColumn({ relationScope: CTO_RELATION_SCOPE })],
+      }),
     ).toEqual([
       {
         recordFieldId: PEOPLE_COLUMN_ID,
@@ -104,6 +109,7 @@ describe('getScopedRelationAliases', () => {
         relationObjectMetadataItem: expect.objectContaining({
           id: personObjectMetadataItem.id,
         }),
+        relationJoinColumnName: 'companyId',
         filter: { jobTitle: { ilike: '%cto%' } },
         orderBy: [{ createdAt: 'AscNullsLast' }, { position: 'AscNullsFirst' }],
         first: 2,
@@ -113,7 +119,7 @@ describe('getScopedRelationAliases', () => {
 
   it('keeps the default order and no limit for an empty scope', () => {
     const [{ filter, orderBy, first }] = getAliases({
-      recordFields: [getPeopleColumn(EMPTY_RELATION_SCOPE)],
+      recordFields: [getPeopleColumn({ relationScope: EMPTY_RELATION_SCOPE })],
     });
 
     expect(filter).toEqual({});
@@ -124,8 +130,11 @@ describe('getScopedRelationAliases', () => {
   it('gives two columns of one relation their own response key', () => {
     const [ctoAlias, allPeopleAlias] = getAliases({
       recordFields: [
-        getPeopleColumn(CTO_RELATION_SCOPE),
-        getPeopleColumn(EMPTY_RELATION_SCOPE, OTHER_PEOPLE_COLUMN_ID),
+        getPeopleColumn({ relationScope: CTO_RELATION_SCOPE }),
+        getPeopleColumn({
+          relationScope: EMPTY_RELATION_SCOPE,
+          id: OTHER_PEOPLE_COLUMN_ID,
+        }),
       ],
     });
 
@@ -138,14 +147,20 @@ describe('getScopedRelationAliases', () => {
     expect(
       getAliases({
         recordFields: [
-          { ...getPeopleColumn(CTO_RELATION_SCOPE), isCanonical: true },
-          { ...getPeopleColumn(CTO_RELATION_SCOPE), relationScope: null },
+          {
+            ...getPeopleColumn({ relationScope: CTO_RELATION_SCOPE }),
+            isCanonical: true,
+          },
+          {
+            ...getPeopleColumn({ relationScope: CTO_RELATION_SCOPE }),
+            relationScope: null,
+          },
         ],
       }),
     ).toEqual([]);
     expect(
       getAliases({
-        recordFields: [getPeopleColumn(CTO_RELATION_SCOPE)],
+        recordFields: [getPeopleColumn({ relationScope: CTO_RELATION_SCOPE })],
         isLookupColumnsEnabled: false,
       }),
     ).toEqual([]);
@@ -156,8 +171,11 @@ describe('getScopedRelationRecordGqlFields', () => {
   it('selects each scoped relation under its response key with the identifier of its records', () => {
     const [ctoAlias, allPeopleAlias] = getAliases({
       recordFields: [
-        getPeopleColumn(CTO_RELATION_SCOPE),
-        getPeopleColumn(EMPTY_RELATION_SCOPE, OTHER_PEOPLE_COLUMN_ID),
+        getPeopleColumn({ relationScope: CTO_RELATION_SCOPE }),
+        getPeopleColumn({
+          relationScope: EMPTY_RELATION_SCOPE,
+          id: OTHER_PEOPLE_COLUMN_ID,
+        }),
       ],
     });
 
@@ -169,7 +187,7 @@ describe('getScopedRelationRecordGqlFields', () => {
         filter: ctoAlias.filter,
         orderBy: ctoAlias.orderBy,
         first: 2,
-        withTotalCount: true,
+        shouldIncludeTotalCount: true,
         recordGqlFields: personIdentifierGqlFields,
       },
       [allPeopleAlias.responseKey]: {
@@ -177,7 +195,7 @@ describe('getScopedRelationRecordGqlFields', () => {
         filter: allPeopleAlias.filter,
         orderBy: allPeopleAlias.orderBy,
         first: undefined,
-        withTotalCount: false,
+        shouldIncludeTotalCount: false,
         recordGqlFields: personIdentifierGqlFields,
       },
     });
