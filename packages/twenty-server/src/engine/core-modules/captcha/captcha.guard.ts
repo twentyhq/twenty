@@ -53,7 +53,6 @@ export class CaptchaGuard implements CanActivate {
       ...(result.error ? { attributes: { error: result.error } } : {}),
     });
 
-    // Only a low score is tied to the device; an expired or reused token just needs a retry
     if (result.error === CAPTCHA_SCORE_BELOW_THRESHOLD_ERROR) {
       throw new CaptchaException(
         'Invalid Captcha, please try another device',
