@@ -1,22 +1,22 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Transform } from 'class-transformer';
 
 import { MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
+import { toTrimmedStringArray } from 'src/engine/core-modules/twenty-config/utils/to-trimmed-string-array.util';
 
 export const CastToMeterDriverArray = () =>
-  Transform(({ value }: { value: string }) => toMeterDriverArray(value));
+  Transform(({ value }: { value: unknown }) => toMeterDriverArray(value));
 
-const toMeterDriverArray = (value: string | undefined) => {
-  if (isNonEmptyString(value)) {
-    const rawMeterDrivers = value.split(',').map((driver) => driver.trim());
-    const isInvalid = rawMeterDrivers.some(
-      (driver) => !Object.values(MeterDriver).includes(driver as MeterDriver),
-    );
+const toMeterDriverArray = (value: unknown) => {
+  const rawMeterDrivers = toTrimmedStringArray(value);
 
-    if (!isInvalid) {
-      return rawMeterDrivers;
-    }
+  if (!isNonEmptyArray(rawMeterDrivers)) {
+    return undefined;
   }
 
-  return undefined;
+  const isInvalid = rawMeterDrivers.some(
+    (driver) => !Object.values(MeterDriver).includes(driver as MeterDriver),
+  );
+
+  return isInvalid ? undefined : rawMeterDrivers;
 };

@@ -1,4 +1,7 @@
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Transform } from 'class-transformer';
+
+import { toTrimmedStringArray } from 'src/engine/core-modules/twenty-config/utils/to-trimmed-string-array.util';
 
 const VALID_LOG_LEVELS = [
   'log',
@@ -10,23 +13,24 @@ const VALID_LOG_LEVELS = [
 ];
 
 export const CastToLogLevelArray = () =>
-  Transform(({ value }: { value: string }) => toLogLevelArray(value));
+  Transform(({ value }: { value: unknown }) => toLogLevelArray(value));
 
 const toLogLevelArray = (value: unknown) => {
-  if (typeof value === 'string') {
-    const rawLogLevels = value.split(',').map((level) => level.trim());
-    const invalidLevels = rawLogLevels.filter(
-      (level) => !VALID_LOG_LEVELS.includes(level),
-    );
+  const rawLogLevels = toTrimmedStringArray(value);
 
-    if (invalidLevels.length > 0) {
-      throw new Error(
-        `Invalid log level(s): ${invalidLevels.join(', ')}. Valid levels are: ${VALID_LOG_LEVELS.join(', ')}`,
-      );
-    }
-
-    return rawLogLevels;
+  if (!isNonEmptyArray(rawLogLevels)) {
+    return undefined;
   }
 
-  return undefined;
+  const invalidLevels = rawLogLevels.filter(
+    (level) => !VALID_LOG_LEVELS.includes(level),
+  );
+
+  if (invalidLevels.length > 0) {
+    throw new Error(
+      `Invalid log level(s): ${invalidLevels.join(', ')}. Valid levels are: ${VALID_LOG_LEVELS.join(', ')}`,
+    );
+  }
+
+  return rawLogLevels;
 };

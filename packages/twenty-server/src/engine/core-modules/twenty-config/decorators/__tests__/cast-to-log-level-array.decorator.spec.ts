@@ -71,4 +71,18 @@ describe('CastToLogLevelArray Decorator', () => {
       'Invalid log level(s): toto. Valid levels are: log, error, warn, debug, verbose, performance',
     );
   });
+
+  it('should accept an already parsed array', () => {
+    const transformedClass = plainToClass(TestClass, {
+      logLevels: [' error', 'warn '],
+    });
+
+    expect(transformedClass.logLevels).toStrictEqual(['error', 'warn']);
+  });
+
+  it('should throw on invalid levels in an already parsed array', () => {
+    expect(() => plainToClass(TestClass, { logLevels: ['info'] })).toThrow(
+      'Invalid log level(s): info. Valid levels are: log, error, warn, debug, verbose, performance',
+    );
+  });
 });

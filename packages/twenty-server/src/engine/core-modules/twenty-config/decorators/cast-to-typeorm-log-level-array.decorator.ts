@@ -1,29 +1,31 @@
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Transform } from 'class-transformer';
-import { isNonEmptyString } from '@sniptt/guards';
+
+import { toTrimmedStringArray } from 'src/engine/core-modules/twenty-config/utils/to-trimmed-string-array.util';
+
+const VALID_TYPEORM_LOG_LEVELS = [
+  'query',
+  'schema',
+  'error',
+  'warn',
+  'info',
+  'log',
+  'migration',
+];
 
 export const CastToTypeORMLogLevelArray = () =>
-  Transform(({ value }: { value: string }) => toTypeORMLogLevelArray(value));
+  Transform(({ value }: { value: unknown }) => toTypeORMLogLevelArray(value));
 
 const toTypeORMLogLevelArray = (value: unknown) => {
-  if (isNonEmptyString(value)) {
-    const rawLogLevels = value.split(',').map((level) => level.trim());
-    const validLevels = [
-      'query',
-      'schema',
-      'error',
-      'warn',
-      'info',
-      'log',
-      'migration',
-    ];
-    const isInvalid = rawLogLevels.some(
-      (level) => !validLevels.includes(level),
-    );
+  const rawLogLevels = toTrimmedStringArray(value);
 
-    if (!isInvalid) {
-      return rawLogLevels;
-    }
+  if (!isNonEmptyArray(rawLogLevels)) {
+    return undefined;
   }
 
-  return undefined;
+  const isInvalid = rawLogLevels.some(
+    (level) => !VALID_TYPEORM_LOG_LEVELS.includes(level),
+  );
+
+  return isInvalid ? undefined : rawLogLevels;
 };
