@@ -25,7 +25,9 @@ export const SettingsApplicationConnectedMemberNameCell = ({
     <StyledContainer>
       <Avatar
         src={getAbsoluteImageUrl(connectedMember.workspaceMember?.avatarUrl)}
-        colorSeed={connectedMember.workspaceMember?.id ?? connectedMember.userId}
+        colorSeed={
+          connectedMember.workspaceMember?.id ?? connectedMember.userId
+        }
         name={name}
         shape="circle"
         size="md"

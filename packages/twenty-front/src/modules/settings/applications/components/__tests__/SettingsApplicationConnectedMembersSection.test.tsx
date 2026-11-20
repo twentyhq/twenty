@@ -18,11 +18,15 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 
 const APPLICATION_ID = 'application-acme';
 
-const buildWorkspaceMember = (
-  userId: string,
-  firstName: string,
-  lastName: string,
-): PartialWorkspaceMember => ({
+const buildWorkspaceMember = ({
+  userId,
+  firstName,
+  lastName,
+}: {
+  userId: string;
+  firstName: string;
+  lastName: string;
+}): PartialWorkspaceMember => ({
   __typename: 'WorkspaceMember',
   id: `member-${userId}`,
   userId,
@@ -67,8 +71,16 @@ const renderSection = (apolloMocks: MockedResponse[]) =>
         apolloMocks,
         onInitializeJotaiStore: (store) =>
           store.set(currentWorkspaceMembersState.atom, [
-            buildWorkspaceMember('user-jane', 'Jane', 'Doe'),
-            buildWorkspaceMember('user-john', 'John', 'Smith'),
+            buildWorkspaceMember({
+              userId: 'user-jane',
+              firstName: 'Jane',
+              lastName: 'Doe',
+            }),
+            buildWorkspaceMember({
+              userId: 'user-john',
+              firstName: 'John',
+              lastName: 'Smith',
+            }),
           ]),
       }),
     },

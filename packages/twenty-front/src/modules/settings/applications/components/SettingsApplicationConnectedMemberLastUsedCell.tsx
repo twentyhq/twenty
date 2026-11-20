@@ -4,14 +4,11 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 export const SettingsApplicationConnectedMemberLastUsedCell = ({
-  item: connectedMember,
+  item: { lastUsedAt },
 }: {
-  item: SettingsApplicationConnectedMember;
+  item: Pick<SettingsApplicationConnectedMember, 'lastUsedAt'>;
 }) => {
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
-  return beautifyPastDateRelativeToNow(
-    connectedMember.lastUsedAt,
-    localeCatalog,
-  );
+  return beautifyPastDateRelativeToNow(lastUsedAt, localeCatalog);
 };
