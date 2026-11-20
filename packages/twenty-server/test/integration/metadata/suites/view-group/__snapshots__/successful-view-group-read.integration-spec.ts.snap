@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`View Group read should succeed should find a view group among all view groups 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "fieldValue": "NEW",
+  "id": Any<String>,
+  "isVisible": true,
+  "position": 0,
+  "updatedAt": Any<String>,
+  "viewId": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;
+
+exports[`View Group read should succeed should find a view group among the view groups of its view 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "fieldValue": "NEW",
+  "id": Any<String>,
+  "isVisible": true,
+  "position": 0,
+  "updatedAt": Any<String>,
+  "viewId": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;
+
+exports[`View Group read should succeed should find a view group by id 1`] = `
+{
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "fieldValue": "NEW",
+  "id": Any<String>,
+  "isVisible": true,
+  "position": 0,
+  "updatedAt": Any<String>,
+  "viewId": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;
+
+exports[`View Group read should succeed should return a view group on GET /metadata/viewGroups 1`] = `
+{
+  "applicationId": Any<String>,
+  "applicationUniversalIdentifier": Any<String>,
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "fieldValue": "NEW",
+  "id": Any<String>,
+  "isVisible": true,
+  "position": 0,
+  "universalIdentifier": Any<String>,
+  "updatedAt": Any<String>,
+  "viewId": Any<String>,
+  "viewUniversalIdentifier": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;
+
+exports[`View Group read should succeed should return a view group on GET /metadata/viewGroups/:id 1`] = `
+{
+  "applicationId": Any<String>,
+  "applicationUniversalIdentifier": Any<String>,
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "fieldValue": "NEW",
+  "id": Any<String>,
+  "isVisible": true,
+  "position": 0,
+  "universalIdentifier": Any<String>,
+  "updatedAt": Any<String>,
+  "viewId": Any<String>,
+  "viewUniversalIdentifier": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;
+
+exports[`View Group read should succeed should return a view group on GET /metadata/viewGroups?viewId= 1`] = `
+{
+  "applicationId": Any<String>,
+  "applicationUniversalIdentifier": Any<String>,
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "fieldValue": "NEW",
+  "id": Any<String>,
+  "isVisible": true,
+  "position": 0,
+  "universalIdentifier": Any<String>,
+  "updatedAt": Any<String>,
+  "viewId": Any<String>,
+  "viewUniversalIdentifier": Any<String>,
+  "workspaceId": Any<String>,
+}
+`;

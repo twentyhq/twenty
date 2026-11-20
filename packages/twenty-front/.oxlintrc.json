@@ -140,14 +140,169 @@
       {
         "directions": [
           {
-            "sourcePath": "/src/modules/ai/",
-            "forbiddenImportPrefix": "@/inbox/",
+            "sourcePath": "/src/modules/ai-chat/",
+            "forbiddenImportPrefixes": ["@/inbox/"],
             "ignoredSourcePaths": [
               "/__tests__/",
               "/__stories__/",
-              "/src/modules/ai/testing/"
+              "/src/modules/ai-chat/testing/"
             ],
             "reason": "the AI chat must not depend on the inbox. Move the code to modules/inbox, or have the inbox react to what the AI chat exposes."
+          },
+          {
+            "sourcePath": "/src/modules/ai/",
+            "forbiddenImportPrefixes": ["@/ai-chat/"],
+            "ignoredSourcePaths": ["/__tests__/", "/__stories__/"],
+            "reason": "modules/ai holds the AI code used outside the chat, so it must not depend on the chat. Move the code to modules/ai-chat."
+          },
+          {
+            "sourcePath": "/src/modules/ai-chat/messages/",
+            "forbiddenImportPrefixes": ["@/ai-chat/composer/"],
+            "ignoredSourcePaths": [
+              "/__tests__/",
+              "/__stories__/",
+              "/__mocks__/"
+            ],
+            "reason": "AI chat features only import the features below them (composer, messages, tool-calls, thinking-steps and usage, threads, then the leaf features). Move the shared code down or into the ai-chat core."
+          },
+          {
+            "sourcePath": "/src/modules/ai-chat/tool-calls/",
+            "forbiddenImportPrefixes": [
+              "@/ai-chat/composer/",
+              "@/ai-chat/messages/"
+            ],
+            "ignoredSourcePaths": [
+              "/__tests__/",
+              "/__stories__/",
+              "/__mocks__/"
+            ],
+            "reason": "AI chat features only import the features below them (composer, messages, tool-calls, thinking-steps and usage, threads, then the leaf features). Move the shared code down or into the ai-chat core."
+          },
+          {
+            "sourcePath": "/src/modules/ai-chat/thinking-steps/",
+            "forbiddenImportPrefixes": [
+              "@/ai-chat/composer/",
+              "@/ai-chat/messages/",
+              "@/ai-chat/tool-calls/",
+              "@/ai-chat/usage/"
+            ],
+            "ignoredSourcePaths": [
+              "/__tests__/",
+              "/__stories__/",
+              "/__mocks__/"
+            ],
+            "reason": "AI chat features only import the features below them (composer, messages, tool-calls, thinking-steps and usage, threads, then the leaf features). Move the shared code down or into the ai-chat core."
+          },
+          {
+            "sourcePath": "/src/modules/ai-chat/usage/",
+            "forbiddenImportPrefixes": [
+              "@/ai-chat/composer/",
+              "@/ai-chat/messages/",
+              "@/ai-chat/tool-calls/",
+              "@/ai-chat/thinking-steps/"
+            ],
+            "ignoredSourcePaths": [
+              "/__tests__/",
+              "/__stories__/",
+              "/__mocks__/"
+            ],
+            "reason": "AI chat features only import the features below them (composer, messages, tool-calls, thinking-steps and usage, threads, then the leaf features). Move the shared code down or into the ai-chat core."
+          },
+          {
+            "sourcePath": "/src/modules/ai-chat/threads/",
+            "forbiddenImportPrefixes": [
+              "@/ai-chat/composer/",
+              "@/ai-chat/messages/",
+              "@/ai-chat/tool-calls/",
+              "@/ai-chat/thinking-steps/",
+              "@/ai-chat/usage/"
+            ],
+            "ignoredSourcePaths": [
+              "/__tests__/",
+              "/__stories__/",
+              "/__mocks__/"
+            ],
+            "reason": "AI chat features only import the features below them (composer, messages, tool-calls, thinking-steps and usage, threads, then the leaf features). Move the shared code down or into the ai-chat core."
+          },
+          {
+            "sourcePath": "/src/modules/ai-chat/message-content/",
+            "forbiddenImportPrefixes": [
+              "@/ai-chat/composer/",
+              "@/ai-chat/messages/",
+              "@/ai-chat/tool-calls/",
+              "@/ai-chat/thinking-steps/",
+              "@/ai-chat/usage/",
+              "@/ai-chat/threads/",
+              "@/ai-chat/workspace-setup/",
+              "@/ai-chat/suggested-prompts/",
+              "@/ai-chat/dictation/"
+            ],
+            "ignoredSourcePaths": [
+              "/__tests__/",
+              "/__stories__/",
+              "/__mocks__/"
+            ],
+            "reason": "AI chat features only import the features below them (composer, messages, tool-calls, thinking-steps and usage, threads, then the leaf features). Move the shared code down or into the ai-chat core."
+          },
+          {
+            "sourcePath": "/src/modules/ai-chat/workspace-setup/",
+            "forbiddenImportPrefixes": [
+              "@/ai-chat/composer/",
+              "@/ai-chat/messages/",
+              "@/ai-chat/tool-calls/",
+              "@/ai-chat/thinking-steps/",
+              "@/ai-chat/usage/",
+              "@/ai-chat/threads/",
+              "@/ai-chat/message-content/",
+              "@/ai-chat/suggested-prompts/",
+              "@/ai-chat/dictation/"
+            ],
+            "ignoredSourcePaths": [
+              "/__tests__/",
+              "/__stories__/",
+              "/__mocks__/"
+            ],
+            "reason": "AI chat features only import the features below them (composer, messages, tool-calls, thinking-steps and usage, threads, then the leaf features). Move the shared code down or into the ai-chat core."
+          },
+          {
+            "sourcePath": "/src/modules/ai-chat/suggested-prompts/",
+            "forbiddenImportPrefixes": [
+              "@/ai-chat/composer/",
+              "@/ai-chat/messages/",
+              "@/ai-chat/tool-calls/",
+              "@/ai-chat/thinking-steps/",
+              "@/ai-chat/usage/",
+              "@/ai-chat/threads/",
+              "@/ai-chat/message-content/",
+              "@/ai-chat/workspace-setup/",
+              "@/ai-chat/dictation/"
+            ],
+            "ignoredSourcePaths": [
+              "/__tests__/",
+              "/__stories__/",
+              "/__mocks__/"
+            ],
+            "reason": "AI chat features only import the features below them (composer, messages, tool-calls, thinking-steps and usage, threads, then the leaf features). Move the shared code down or into the ai-chat core."
+          },
+          {
+            "sourcePath": "/src/modules/ai-chat/dictation/",
+            "forbiddenImportPrefixes": [
+              "@/ai-chat/composer/",
+              "@/ai-chat/messages/",
+              "@/ai-chat/tool-calls/",
+              "@/ai-chat/thinking-steps/",
+              "@/ai-chat/usage/",
+              "@/ai-chat/threads/",
+              "@/ai-chat/message-content/",
+              "@/ai-chat/workspace-setup/",
+              "@/ai-chat/suggested-prompts/"
+            ],
+            "ignoredSourcePaths": [
+              "/__tests__/",
+              "/__stories__/",
+              "/__mocks__/"
+            ],
+            "reason": "AI chat features only import the features below them (composer, messages, tool-calls, thinking-steps and usage, threads, then the leaf features). Move the shared code down or into the ai-chat core."
           }
         ]
       }

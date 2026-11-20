@@ -41,6 +41,7 @@ export default defineView({
 * `fields` controlla quali colonne compaiono e in quale ordine. Ogni campo fa riferimento a un `fieldMetadataUniversalIdentifier`. Per fare riferimento a un campo di sistema creato automaticamente come `createdAt`, vedi [Targeting System Metadata](/it/developers/extend/apps/data/system-fields).
 * Imposta `isCanonical: false` su un campo per aggiungere una colonna aggiuntiva per un campo che la vista mostra già. Una vista ha al massimo una colonna canonica per campo, ma qualsiasi numero di colonne non canoniche. Non sono consentite nel campo identificatore dell'etichetta dell'oggetto né nelle viste widget e `isCanonical` viene impostato quando viene creata la colonna: modificarlo in seguito non ha alcun effetto.
 * Una colonna non canonica in un campo di relazione molti-a-uno può impostare `relationTargetFieldMetadataUniversalIdentifier` per mostrare un campo del record correlato anziché il record stesso. La destinazione deve essere un campo non di relazione dell'oggetto correlato.
+* Un ordinamento su un campo di relazione molti-a-uno può impostare `relationTargetFieldMetadataUniversalIdentifier` per ordinare i record in base a un campo del record correlato, ad esempio le persone in base ai dipendenti della loro azienda. La destinazione deve essere un campo non relazionale dell'oggetto correlato.
 * Puoi anche definire `filters`, `filterGroups`, `sorts`, `groups` e `fieldGroups` per configurazioni più avanzate.
 * `position` controlla l'ordinamento quando esistono più viste per lo stesso oggetto.
 

@@ -16,7 +16,7 @@ const updateAgentChatThreadInboxState = jest.fn();
 const snoozeInboxThreadsInChannel = jest.fn();
 const onSnoozed = jest.fn();
 
-jest.mock('@/ai/hooks/useUpdateAiChatThreadStatus', () => ({
+jest.mock('@/ai-chat/threads/hooks/useUpdateAiChatThreadStatus', () => ({
   useUpdateAiChatThreadStatus: () => ({
     updateAgentChatThreadInboxState,
   }),

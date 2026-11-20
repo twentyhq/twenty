@@ -27,6 +27,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceSuccessorTransferService } from 'src/engine/core-modules/user-workspace/services/user-workspace-successor-transfer.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import {
   UpdateWorkspaceMemberEmailJob,
@@ -43,8 +44,6 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
-import { ConnectedAccountOwnershipTransferService } from 'src/engine/metadata-modules/connected-account/services/connected-account-ownership-transfer.service';
 import { detachAgentChatChannelThreadsFromWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/detach-agent-chat-channel-threads-from-workspace-member.util';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -60,8 +59,7 @@ export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    private readonly connectedAccountOwnershipTransferService: ConnectedAccountOwnershipTransferService,
-    private readonly recordShareSystemWriteService: RecordShareSystemWriteService,
+    private readonly userWorkspaceSuccessorTransferService: UserWorkspaceSuccessorTransferService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly emailVerificationService: EmailVerificationService,
     private readonly workspaceService: WorkspaceService,
@@ -392,14 +390,7 @@ export class UserService {
 
     assert(workspaceMember, 'WorkspaceMember not found');
 
-    await this.connectedAccountOwnershipTransferService.transferConnectedAccountsOwnershipToSuccessor(
-      {
-        removedUserWorkspace: userWorkspace,
-        actingUserWorkspaceId,
-      },
-    );
-
-    await this.recordShareSystemWriteService.transferRecordSharesToSuccessor({
+    await this.userWorkspaceSuccessorTransferService.transferToSuccessor({
       removedUserWorkspace: userWorkspace,
       removedWorkspaceMemberId: workspaceMember.id,
       actingUserWorkspaceId,

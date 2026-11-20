@@ -3,12 +3,12 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useLeaveRemovedInboxThread } from '@/inbox/hooks/useLeaveRemovedInboxThread';
-import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
-import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
-import { aiChatInputIsEmptyFamilySelector } from '@/ai/states/selectors/aiChatInputIsEmptyFamilySelector';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
+import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
+import { aiChatInputIsEmptyFamilySelector } from '@/ai-chat/composer/states/selectors/aiChatInputIsEmptyFamilySelector';
+import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -17,11 +17,11 @@ import {
 const projectAiChatThreadToUrl = jest.fn();
 const loadAiChatThread = jest.fn();
 
-jest.mock('@/ai/hooks/useProjectAiChatThreadToUrl', () => ({
+jest.mock('@/ai-chat/hooks/useProjectAiChatThreadToUrl', () => ({
   useProjectAiChatThreadToUrl: () => ({ projectAiChatThreadToUrl }),
 }));
 
-jest.mock('@/ai/hooks/useLoadAiChatThread', () => ({
+jest.mock('@/ai-chat/hooks/useLoadAiChatThread', () => ({
   useLoadAiChatThread: () => ({ loadAiChatThread }),
 }));
 

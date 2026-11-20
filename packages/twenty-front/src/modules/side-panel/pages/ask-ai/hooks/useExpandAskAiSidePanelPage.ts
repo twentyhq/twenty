@@ -2,8 +2,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useNavigateToAiChatPage } from '@/ai/hooks/useNavigateToAiChatPage';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { useNavigateToAiChatPage } from '@/ai-chat/hooks/useNavigateToAiChatPage';
+import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { askAiSidePanelThreadIdComponentState } from '@/side-panel/pages/ask-ai/states/askAiSidePanelThreadIdComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';

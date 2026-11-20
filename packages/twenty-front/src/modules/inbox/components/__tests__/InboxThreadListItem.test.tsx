@@ -10,9 +10,9 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { InboxThreadListItem } from '@/inbox/components/InboxThreadListItem';
 import { setInboxSelectedChannelView } from '@/inbox/testing/setInboxSelectedChannelView';
-import { aiChatChannelsState } from '@/ai/states/aiChatChannelsState';
-import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { aiChatChannelsState } from '@/ai-chat/threads/states/aiChatChannelsState';
+import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -31,7 +31,7 @@ jest.mock('@/inbox/components/InboxThreadActionsDropdown', () => ({
   InboxThreadActionsDropdown: () => null,
 }));
 
-jest.mock('@/ai/hooks/useAiChatThreadRename', () => ({
+jest.mock('@/ai-chat/threads/hooks/useAiChatThreadRename', () => ({
   useAiChatThreadRename: () => ({
     isRenaming: false,
     draftTitle: '',

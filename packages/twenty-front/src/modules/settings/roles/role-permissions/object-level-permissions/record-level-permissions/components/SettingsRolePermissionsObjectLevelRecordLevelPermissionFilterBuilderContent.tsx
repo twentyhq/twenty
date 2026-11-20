@@ -49,12 +49,14 @@ const StyledActionButtonWrapper = styled.div`
 type SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContentProps =
   {
     roleId: string;
+    rowLevelPermissionRuleId: string;
     objectMetadataItem: EnrichedObjectMetadataItem;
   };
 
 export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent =
   ({
     roleId,
+    rowLevelPermissionRuleId,
     objectMetadataItem,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContentProps) => {
     const { t } = useLingui();
@@ -97,7 +99,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
 
     const { hasInitialized } = useRecordLevelPermissionFilterInitialization({
       roleId,
-      objectMetadataItem,
+      rowLevelPermissionRuleId,
       settingsDraftRole,
       filterableFieldMetadataItems,
       setCurrentRecordFilters,
@@ -107,6 +109,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
 
     useRecordLevelPermissionSyncToDraftRole({
       roleId,
+      rowLevelPermissionRuleId,
       objectMetadataItem,
       currentRecordFilters,
       currentRecordFilterGroups,

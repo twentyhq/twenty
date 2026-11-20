@@ -8,20 +8,12 @@ export const getActiveNavigationMenuTab = ({
   tabs,
   currentNavigationMenuTabId,
   activeNavigationDrawerTab,
-  isLayoutCustomizationModeEnabled,
-  isMobile,
 }: {
   tabs: NamedNavigationMenuItem[];
   currentNavigationMenuTabId: string | null;
   activeNavigationDrawerTab: NavigationDrawerActiveTab;
-  isLayoutCustomizationModeEnabled: boolean;
-  isMobile: boolean;
 }): NamedNavigationMenuItem | null => {
-  if (
-    activeNavigationDrawerTab !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU ||
-    isLayoutCustomizationModeEnabled ||
-    isMobile
-  ) {
+  if (activeNavigationDrawerTab !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU) {
     return null;
   }
 

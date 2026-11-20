@@ -98,6 +98,15 @@ describe('isUserFacingWorkflowExecutorError', () => {
     expect(isUserFacingWorkflowExecutorError(error)).toBe(true);
   });
 
+  it('returns true for a code step refused because the workspace is suspended', () => {
+    const error = new LogicFunctionException(
+      'Workspace is suspended',
+      LogicFunctionExceptionCode.LOGIC_FUNCTION_WORKSPACE_SUSPENDED,
+    );
+
+    expect(isUserFacingWorkflowExecutorError(error)).toBe(true);
+  });
+
   it('returns false for a logic function failure the user cannot resolve', () => {
     const error = new LogicFunctionException(
       'Not ready',

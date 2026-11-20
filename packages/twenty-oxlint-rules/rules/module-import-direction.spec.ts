@@ -9,13 +9,18 @@ const options = [
     directions: [
       {
         sourcePath: '/src/modules/ai/',
-        forbiddenImportPrefix: '@/inbox/',
+        forbiddenImportPrefixes: ['@/inbox/'],
         ignoredSourcePaths: [
           '/__tests__/',
           '/__stories__/',
           '/src/modules/ai/testing/',
         ],
         reason: 'the AI chat must not depend on the inbox.',
+      },
+      {
+        sourcePath: '/src/modules/ai-chat/threads/',
+        forbiddenImportPrefixes: ['@/ai-chat/composer/', '@/ai-chat/messages/'],
+        reason: 'threads sit below the composer and messages.',
       },
     ],
   },
@@ -46,8 +51,28 @@ ruleTester.run(RULE_NAME, rule, {
         '/repo/packages/twenty-front/src/modules/ai/components/__stories__/AiChatTab.stories.tsx',
       options,
     },
+    {
+      code: "import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';",
+      filename:
+        '/repo/packages/twenty-front/src/modules/ai-chat/messages/components/AiChatMessage.tsx',
+      options,
+    },
   ],
   invalid: [
+    {
+      code: "import { getAiChatSenderLabel } from '@/ai-chat/messages/utils/getAiChatSenderLabel';",
+      filename:
+        '/repo/packages/twenty-front/src/modules/ai-chat/threads/utils/getAiChatThreadPreviewText.ts',
+      options,
+      errors: [{ messageId: 'forbiddenImport' }],
+    },
+    {
+      code: "import { aiChatDraftsByThreadIdState } from '@/ai-chat/composer/states/aiChatDraftsByThreadIdState';",
+      filename:
+        '/repo/packages/twenty-front/src/modules/ai-chat/threads/hooks/useAiChatThreadSubtitleContent.ts',
+      options,
+      errors: [{ messageId: 'forbiddenImport' }],
+    },
     {
       code: "import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';",
       filename:

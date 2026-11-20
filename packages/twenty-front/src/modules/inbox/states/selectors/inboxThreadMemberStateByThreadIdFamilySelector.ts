@@ -1,8 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 import { type AgentChatThreadInboxStatus } from 'twenty-shared/ai';
 
-import { aiChatThreadMemberStateFamilySelector } from '@/ai/states/selectors/aiChatThreadMemberStateFamilySelector';
-import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
+import { aiChatThreadMemberStateFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadMemberStateFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { getInboxThreadChannelStatus } from '@/inbox/utils/getInboxThreadChannelStatus';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { AgentChatChannelThreadStatus } from '~/generated-metadata/graphql';

@@ -168,7 +168,7 @@ const buildApplicationHandlers = ({
           canBeUninstalled: true,
           isUninstallBlockedByOtherWorkspaceInstallations: false,
           autoUpgrade: false,
-          defaultRoleId: null,
+          requestedRoleId: null,
           settingsCustomTabFrontComponentId: null,
           healthCheckLogicFunctionId,
           availablePackages: {},

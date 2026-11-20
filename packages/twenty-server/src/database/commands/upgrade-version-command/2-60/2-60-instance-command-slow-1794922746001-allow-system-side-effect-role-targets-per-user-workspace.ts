@@ -31,7 +31,7 @@ export class AllowSystemSideEffectRoleTargetsPerUserWorkspaceSlowInstanceCommand
     }
 
     await queryRunner.query(
-      'ALTER TABLE "core"."roleTarget" DROP CONSTRAINT "IDX_ROLE_TARGET_UNIQUE_USER_WORKSPACE"',
+      'ALTER TABLE "core"."roleTarget" DROP CONSTRAINT IF EXISTS "IDX_ROLE_TARGET_UNIQUE_USER_WORKSPACE"',
     );
   }
 

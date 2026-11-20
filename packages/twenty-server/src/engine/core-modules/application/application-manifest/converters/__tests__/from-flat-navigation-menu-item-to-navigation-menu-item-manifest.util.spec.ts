@@ -24,6 +24,7 @@ const NAVIGATION_MENU_ITEM_MANIFEST: Required<
   position: 12.5,
   link: 'https://example.com/pets',
   nativePageKey: 'workflows',
+  builtInSectionKey: 'favorites',
   parentUniversalIdentifier: FOLDER_UID,
   viewUniversalIdentifier: VIEW_UID,
   targetObjectUniversalIdentifier: OBJECT_UID,

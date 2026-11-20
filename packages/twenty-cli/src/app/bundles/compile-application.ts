@@ -98,7 +98,11 @@ export const compileApplication = async ({
 
   signal?.throwIfAborted();
   onProgress?.('Building application files...');
-  const { builtFileInfos, frontComponentSourcePaths } = await buildApplication({
+  const {
+    builtFileInfos,
+    frontComponentSourcePaths,
+    logicFunctionSourcePaths,
+  } = await buildApplication({
     appPath,
     manifest,
     filePaths: manifestResult.filePaths,
@@ -122,6 +126,7 @@ export const compileApplication = async ({
       builtFileInfos,
       outputDir,
       frontComponentSourcePaths,
+      logicFunctionSourcePaths,
     }),
     translations,
   };

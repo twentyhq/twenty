@@ -252,7 +252,7 @@ describe('Settings permission resolution', () => {
     );
 
     await globalThis.testDataSource.query(
-      'UPDATE core."application" SET "defaultRoleId" = NULL WHERE id = $1',
+      'UPDATE core."application" SET "defaultRoleId" = NULL, "requestedRoleId" = NULL WHERE id = $1',
       [rolelessApplication.id],
     );
     await invalidateWorkspaceCache(['flatApplicationMaps']);

@@ -85,10 +85,10 @@ export const SettingsRolesList = () => {
     installedApplications
       .filter(
         (application) =>
-          isDefined(application.defaultRoleId) &&
-          application.defaultRoleId !== application.grantRoleId,
+          isDefined(application.requestedRoleId) &&
+          application.requestedRoleId !== application.grantRoleId,
       )
-      .map((application) => application.defaultRoleId),
+      .map((application) => application.requestedRoleId),
   );
 
   const isApplicationRole = (role: RoleWithPartialMembers) =>

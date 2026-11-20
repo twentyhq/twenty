@@ -3,8 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { InboxThreadListGroup } from '@/inbox/components/InboxThreadListGroup';
 import { InboxThreadListItem } from '@/inbox/components/InboxThreadListItem';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
-import { type AiChatThreadRowVariant } from '@/ai/types/AiChatThreadRowVariant';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
+import { type AiChatThreadRowVariant } from '@/ai-chat/threads/types/AiChatThreadRowVariant';
 import { groupThreadsByDate } from '@/inbox/utils/groupThreadsByDate';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 

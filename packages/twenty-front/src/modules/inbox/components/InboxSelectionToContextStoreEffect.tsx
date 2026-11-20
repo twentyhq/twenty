@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useTargetAiChatThreadsInContextStore } from '@/ai/hooks/useTargetAiChatThreadsInContextStore';
+import { useTargetAiChatThreadsInContextStore } from '@/ai-chat/threads/hooks/useTargetAiChatThreadsInContextStore';
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 

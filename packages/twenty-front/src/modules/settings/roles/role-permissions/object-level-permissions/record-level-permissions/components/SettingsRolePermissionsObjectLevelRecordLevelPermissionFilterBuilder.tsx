@@ -9,16 +9,18 @@ import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/
 type SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderProps =
   {
     roleId: string;
+    rowLevelPermissionRuleId: string;
     objectMetadataItem: EnrichedObjectMetadataItem;
   };
 
 export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder =
   ({
     roleId,
+    rowLevelPermissionRuleId,
     objectMetadataItem,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderProps) => {
     const instanceId = useWorkspaceSurfaceScopedComponentInstanceId(
-      `record-level-permission-filter-${roleId}-${objectMetadataItem.id}`,
+      `record-level-permission-filter-${roleId}-${rowLevelPermissionRuleId}`,
     );
 
     return (
@@ -28,6 +30,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
         <RecordFiltersComponentInstanceContext.Provider value={{ instanceId }}>
           <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent
             roleId={roleId}
+            rowLevelPermissionRuleId={rowLevelPermissionRuleId}
             objectMetadataItem={objectMetadataItem}
           />
         </RecordFiltersComponentInstanceContext.Provider>

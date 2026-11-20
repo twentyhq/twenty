@@ -17,7 +17,7 @@ import { useRemoveInboxChannelFromFavorites } from '@/inbox/hooks/useRemoveInbox
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { type AiChatChannel } from '@/ai/types/AiChatChannel';
+import { type AiChatChannel } from '@/ai-chat/threads/types/AiChatChannel';
 import { type UpdateAgentChatChannelInput } from '~/generated-metadata/graphql';
 
 type NavigationDrawerInboxChannelActionsDropdownProps = {

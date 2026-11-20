@@ -1,7 +1,7 @@
 import { useStore } from 'jotai';
 import { useLayoutEffect } from 'react';
 
-import { aiChatContinueInSidePanelThreadIdState } from '@/ai/states/aiChatContinueInSidePanelThreadIdState';
+import { aiChatContinueInSidePanelThreadIdState } from '@/ai-chat/states/aiChatContinueInSidePanelThreadIdState';
 
 type InboxConversationCloseEffectProps = {
   isPresent: boolean;

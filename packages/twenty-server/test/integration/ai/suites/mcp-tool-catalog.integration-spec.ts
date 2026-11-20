@@ -304,7 +304,7 @@ describe('MCP tool catalog (integration)', () => {
   });
 
   describe('generic mode (default)', () => {
-    it('should list record tools that take the object as an argument, without per-object tools', async () => {
+    it('should list record tools and every workspace-independent tool, without per-object tools or meta-tools', async () => {
       const toolNames = (
         await listMcpTools(adminApiKeyToken, GENERIC_MODE_PATH)
       ).map((tool) => tool.name);
@@ -321,19 +321,47 @@ describe('MCP tool catalog (integration)', () => {
           'merge_records',
           'get_field_metadata',
           'list_object_metadata_names',
-          'execute_tool',
-          'learn_tools',
+          'list_workflows',
+          'create_complete_workflow',
+          'create_complete_dashboard',
+          'get_views',
+          'list_webhooks',
         ]),
       );
 
       for (const unlistedToolName of [
         'find_many_companies',
         'create_one_person',
-        'create_complete_workflow',
         'http_request',
+        'get_tool_catalog',
+        'learn_tools',
+        'execute_tool',
       ]) {
         expect(toolNames).not.toContain(unlistedToolName);
       }
+    });
+
+    it('should flag the tools that overwrite or delete as destructive', async () => {
+      const destructiveHintByToolName = Object.fromEntries(
+        (await listMcpTools(adminApiKeyToken, GENERIC_MODE_PATH)).map(
+          (tool) => [tool.name, tool.annotations?.destructiveHint],
+        ),
+      );
+
+      expect(destructiveHintByToolName).toMatchObject({
+        create_records: false,
+        update_record: true,
+        update_records: true,
+        upsert_records: true,
+        delete_records: true,
+        merge_records: true,
+        create_object_metadata: false,
+        update_object_metadata: true,
+        delete_object_metadata: true,
+        create_complete_workflow: false,
+        delete_workflow: true,
+        get_views: false,
+      });
     });
 
     it('should list the same record tools to a restricted API key', async () => {
@@ -414,7 +442,7 @@ describe('MCP tool catalog (integration)', () => {
       expect(result.isError).toBe(false);
     });
 
-    it('should run an unlisted tool through execute_tool', async () => {
+    it('should keep execute_tool callable for clients that listed it earlier', async () => {
       const result = await callMcpTool(
         adminApiKeyToken,
         'execute_tool',
@@ -496,7 +524,7 @@ describe('MCP tool catalog (integration)', () => {
       expect(isDispatchFailure(result)).toBe(true);
     });
 
-    it('should mark database read tools read-only and keep execute hints on writes', async () => {
+    it('should mark database read tools read-only, creates non-destructive and other writes destructive', async () => {
       const annotationsByToolName = Object.fromEntries(
         (await listMcpTools(adminApiKeyToken, DIRECT_MODE_PATH)).map((tool) => [
           tool.name,
@@ -513,6 +541,11 @@ describe('MCP tool catalog (integration)', () => {
         readOnlyHint: false,
         openWorldHint: true,
         destructiveHint: false,
+      });
+      expect(annotationsByToolName.update_one_person).toEqual({
+        readOnlyHint: false,
+        openWorldHint: true,
+        destructiveHint: true,
       });
     });
 

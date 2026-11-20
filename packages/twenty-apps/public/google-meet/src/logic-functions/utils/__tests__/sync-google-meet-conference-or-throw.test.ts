@@ -199,7 +199,7 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
     expect(coreApiClient.mutation).not.toHaveBeenCalled();
   });
 
-  it('should keep a conference that only has a recording processing', async () => {
+  it('should complete a conference that only has a recording and import its first video', async () => {
     fetchMock.mockImplementation(async (url) =>
       url ===
       `${MEET_API_URL}/conferenceRecords/first/recordings?pageSize=100`
@@ -208,6 +208,10 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
               recordings: [
                 {
                   name: 'conferenceRecords/first/recordings/fourth',
+                  state: 'FILE_GENERATED',
+                },
+                {
+                  name: 'conferenceRecords/first/recordings/fifth',
                   state: 'FILE_GENERATED',
                 },
               ],
@@ -227,12 +231,16 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
           startTime: CONFERENCE_RECORD.startTime,
         },
       }),
-    ).resolves.toEqual({ outcome: 'CREATED', shouldGenerateAiSummary: false });
+    ).resolves.toEqual({
+      outcome: 'CREATED',
+      shouldGenerateAiSummary: false,
+      recordingNameToImport: 'conferenceRecords/first/recordings/fourth',
+    });
 
     const recordingData =
       coreApiClient.mutation.mock.calls[0][0].createCallRecording.__args.data;
 
-    expect(recordingData.status).toBe('PROCESSING');
+    expect(recordingData.status).toBe('COMPLETED');
     expect(recordingData).not.toHaveProperty('transcript');
     expect(recordingData).not.toHaveProperty('summary');
   });

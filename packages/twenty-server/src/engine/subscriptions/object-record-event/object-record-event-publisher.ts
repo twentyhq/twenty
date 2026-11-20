@@ -9,12 +9,11 @@ import {
   type RecordGqlOperationSignature,
 } from 'twenty-shared/types';
 import { isDefined, isRecordGqlOperationSignature } from 'twenty-shared/utils';
-import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
+import { CommonQueryParser } from 'src/engine/api/common/common-query-parsers/common-query.parser';
 import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/serializable-auth-context.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -314,14 +313,13 @@ export class ObjectRecordEventPublisher {
       recurseIntoJunctionTableRelations: true,
     });
 
-    const commonQueryParser = new GraphqlQueryParser(
-      objectMetadata,
+    const commonQueryParser = new CommonQueryParser({
+      flatObjectMetadata: objectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-    );
+    });
 
-    const selectedFieldsResult =
-      commonQueryParser.parseSelectedFields(selectedFields);
+    const selection = commonQueryParser.parseSelectedFields(selectedFields);
 
     // The ambient context is the writer's, so relations load as the subscriber
     const resolvedSubscriberAuthContext = await subscriberAuthContext;
@@ -335,11 +333,7 @@ export class ObjectRecordEventPublisher {
           parentObjectRecords: allRecords,
           authContext: resolvedSubscriberAuthContext,
           limit: QUERY_MAX_RECORDS_FROM_RELATION,
-          relations: selectedFieldsResult.relations as Record<
-            string,
-            FindOptionsRelations<ObjectLiteral>
-          >,
-          selectedFields: selectedFieldsResult.select,
+          selection,
         }),
       resolvedSubscriberAuthContext,
     );

@@ -253,7 +253,7 @@ describe('Applications acting with their grant role should succeed', () => {
   it.each(eachTestingContextFilter(grantRoleIdTestCases))(
     'should expose $title as the role it acts with',
     async ({ context }) => {
-      const { defaultRoleId, grantRoleId } = await findApplicationRoleIds({
+      const { requestedRoleId, grantRoleId } = await findApplicationRoleIds({
         input: { id: context.getApplicationId(applications) },
       });
 
@@ -264,12 +264,12 @@ describe('Applications acting with their grant role should succeed', () => {
       }
 
       if (context.expectedRole === 'own') {
-        expect(grantRoleId).toBe(defaultRoleId);
+        expect(grantRoleId).toBe(requestedRoleId);
 
         return;
       }
 
-      expect(grantRoleId).not.toBe(defaultRoleId);
+      expect(grantRoleId).not.toBe(requestedRoleId);
 
       const { data } = await findRoles({
         gqlFields: 'id applicationId isEditable',
@@ -307,11 +307,11 @@ describe('Applications acting with their grant role should succeed', () => {
     });
 
     it('should expose its requested role as the role it acts with', async () => {
-      const { defaultRoleId, grantRoleId } = await findApplicationRoleIds({
+      const { requestedRoleId, grantRoleId } = await findApplicationRoleIds({
         input: { id: applications.confinedApplicationId },
       });
 
-      expect(grantRoleId).toBe(defaultRoleId);
+      expect(grantRoleId).toBe(requestedRoleId);
     });
   });
 });

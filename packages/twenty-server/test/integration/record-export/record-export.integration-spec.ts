@@ -82,7 +82,7 @@ describe('record export lifecycle (integration)', () => {
     getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService');
   const setApplicationRole = async (applicationRoleId: string | null) => {
     await globalThis.testDataSource.query(
-      'UPDATE core.application SET "defaultRoleId" = $1, "deletedAt" = NULL WHERE id = $2',
+      'UPDATE core.application SET "defaultRoleId" = $1, "requestedRoleId" = $1, "deletedAt" = NULL WHERE id = $2',
       [applicationRoleId, cliApplicationId],
     );
     await applicationCache().invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
@@ -587,12 +587,14 @@ describe('record export lifecycle (integration)', () => {
       await applications.update(otherApplication.id, {
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         defaultRoleId: roleId,
+        requestedRoleId: roleId,
       });
       await download(ready).expect(200);
     } finally {
       await applications.update(otherApplication.id, {
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         defaultRoleId: otherApplication.defaultRoleId,
+        requestedRoleId: otherApplication.requestedRoleId,
       });
     }
   });

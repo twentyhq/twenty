@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { useAiChatPageThreadId } from '@/ai/hooks/useAiChatPageThreadId';
+import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
 import { InboxChannelsEffect } from '@/inbox/components/InboxChannelsEffect';
 import { InboxRecentThreadListSyncEffect } from '@/inbox/components/InboxRecentThreadListSyncEffect';
 import { InboxThreadInitializationEffect } from '@/inbox/components/InboxThreadInitializationEffect';

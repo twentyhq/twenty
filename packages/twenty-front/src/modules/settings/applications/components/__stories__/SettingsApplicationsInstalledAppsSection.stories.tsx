@@ -58,7 +58,7 @@ const buildApplication = ({
     latestAvailableVersion,
     sourceType: ApplicationRegistrationSourceType.NPM,
   },
-  defaultRoleId: null,
+  requestedRoleId: null,
 });
 
 const RECORDER_APPLICATION = buildApplication({

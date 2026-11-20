@@ -15,7 +15,7 @@ import { ChatThreadPendingMessage } from '@/activities/emails/components/ChatThr
 import { useComposerDraft } from '@/activities/emails/hooks/useComposerDraft';
 import { chatThreadComposerDraftFamilyState } from '@/activities/emails/states/chatThreadComposerDraftFamilyState';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
-import { AiChatFilePreview } from '@/ai/components/internal/AiChatFilePreview';
+import { AiChatFilePreview } from '@/ai-chat/composer/components/AiChatFilePreview';
 import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 

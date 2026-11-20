@@ -1,6 +1,6 @@
 import { getAppPath, isDefined, isValidUuid } from 'twenty-shared/utils';
 
-import { getAiChatPageRoute } from '@/ai/utils/getAiChatPageRoute';
+import { getAiChatPageRoute } from '@/ai-chat/utils/getAiChatPageRoute';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 

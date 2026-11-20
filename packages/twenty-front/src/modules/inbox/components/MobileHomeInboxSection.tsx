@@ -1,9 +1,9 @@
 import { InboxThreadListFetchMoreTrigger } from '@/inbox/components/InboxThreadListFetchMoreTrigger';
 import { NavigationDrawerInboxThreadSection } from '@/inbox/components/NavigationDrawerInboxThreadSection';
-import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
+import { useAiChatThreadClick } from '@/ai-chat/hooks/useAiChatThreadClick';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
-import { useAiChatPageThreadId } from '@/ai/hooks/useAiChatPageThreadId';
+import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
 import { useLingui } from '@lingui/react/macro';
 
 const MOBILE_HOME_AI_CHAT_SECTION_ID = 'MobileHomeAiChat';

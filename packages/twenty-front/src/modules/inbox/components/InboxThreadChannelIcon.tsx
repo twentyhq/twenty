@@ -4,10 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 import { useTheme } from 'twenty-ui/theme';
 
-import { AiChatChannelIcon } from '@/ai/components/AiChatChannelIcon';
-import { aiChatChannelsState } from '@/ai/states/aiChatChannelsState';
+import { AiChatChannelIcon } from '@/ai-chat/threads/components/AiChatChannelIcon';
+import { aiChatChannelsState } from '@/ai-chat/threads/states/aiChatChannelsState';
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledChannelIcon = styled.div`

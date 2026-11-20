@@ -4,7 +4,7 @@ import { resolveWorkflowRunApplicationOrThrow } from 'src/modules/workflow/workf
 
 type TestApplication = Pick<
   FlatApplication,
-  'id' | 'name' | 'deletedAt' | 'defaultRoleId' | 'sourceType'
+  'id' | 'name' | 'deletedAt' | 'requestedRoleId' | 'sourceType'
 >;
 
 const INSTALLED_APPLICATION_ID = 'installed-app-id';
@@ -12,7 +12,7 @@ const INSTALLED_APPLICATION_ID = 'installed-app-id';
 const INSTALLED_APPLICATION: TestApplication = {
   id: INSTALLED_APPLICATION_ID,
   name: 'Installed app',
-  defaultRoleId: 'installed-app-role-id',
+  requestedRoleId: 'installed-app-role-id',
   sourceType: ApplicationRegistrationSourceType.NPM,
   deletedAt: null,
 };
@@ -43,7 +43,7 @@ describe('resolveWorkflowRunApplicationOrThrow', () => {
 
   it('refuses a run whose application has no role rather than widening it', () => {
     expect(() =>
-      resolve({ ...INSTALLED_APPLICATION, defaultRoleId: null }),
+      resolve({ ...INSTALLED_APPLICATION, requestedRoleId: null }),
     ).toThrow('has no role');
   });
 });

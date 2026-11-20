@@ -25,7 +25,7 @@ i18n.activate(SOURCE_LOCALE);
 const assignAiChatThreads = jest.fn();
 const closeSidePanelMenu = jest.fn();
 
-jest.mock('@/ai/hooks/useAssignAiChatThreads', () => ({
+jest.mock('@/ai-chat/threads/hooks/useAssignAiChatThreads', () => ({
   useAssignAiChatThreads: () => ({ assignAiChatThreads }),
 }));
 

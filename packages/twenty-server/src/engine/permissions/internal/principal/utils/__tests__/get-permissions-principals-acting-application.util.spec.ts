@@ -132,7 +132,7 @@ describe('getPermissionsPrincipalsActingApplication', () => {
             byId: {
               [TWENTY_STANDARD_APPLICATION_ID]: {
                 id: TWENTY_STANDARD_APPLICATION_ID,
-                defaultRoleId: ADMIN_ROLE_ID,
+                requestedRoleId: ADMIN_ROLE_ID,
                 sourceType: ApplicationRegistrationSourceType.LOCAL,
                 deletedAt: null,
               },

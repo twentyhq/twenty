@@ -3,7 +3,7 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { InboxDirectMessageTitle } from '@/inbox/components/InboxDirectMessageTitle';
 import { InboxThreadDetailsDropdown } from '@/inbox/components/InboxThreadDetailsDropdown';
-import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
+import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { RecordShowPageContent } from '~/pages/object-record/RecordShowPageContent';
 

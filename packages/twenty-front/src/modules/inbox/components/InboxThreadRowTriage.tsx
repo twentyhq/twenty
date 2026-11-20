@@ -1,10 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { InboxThreadTriageButtons } from '@/inbox/components/InboxThreadTriageButtons';
-import { AI_CHAT_THREAD_STATUS_ACTION_BY_TRIAGE_STATUS } from '@/ai/constants/AiChatThreadStatusActionByTriageStatus';
+import { AI_CHAT_THREAD_STATUS_ACTION_BY_TRIAGE_STATUS } from '@/ai-chat/threads/constants/AiChatThreadStatusActionByTriageStatus';
 import { useInboxThreadTriage } from '@/inbox/hooks/useInboxThreadTriage';
-import { useExecuteAiChatThreadStatusAction } from '@/ai/hooks/useExecuteAiChatThreadStatusAction';
-import { type AiChatThreadTriageStatus } from '@/ai/types/AiChatThreadTriageStatus';
+import { useExecuteAiChatThreadStatusAction } from '@/ai-chat/threads/hooks/useExecuteAiChatThreadStatusAction';
+import { type AiChatThreadTriageStatus } from '@/ai-chat/threads/types/AiChatThreadTriageStatus';
 
 type InboxThreadRowTriageProps = {
   threadId: string;

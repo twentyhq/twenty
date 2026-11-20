@@ -18,7 +18,7 @@ const updateAgentChatThreadInboxState = jest.fn();
 const snoozeInboxThreadsInChannel = jest.fn();
 const closeSidePanelMenu = jest.fn();
 
-jest.mock('@/ai/hooks/useUpdateAiChatThreadStatus', () => ({
+jest.mock('@/ai-chat/threads/hooks/useUpdateAiChatThreadStatus', () => ({
   useUpdateAiChatThreadStatus: () => ({
     updateAgentChatThreadInboxState,
   }),

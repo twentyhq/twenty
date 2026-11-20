@@ -3,9 +3,9 @@ import { useLayoutEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
-import { aiChatContinueInSidePanelThreadIdState } from '@/ai/states/aiChatContinueInSidePanelThreadIdState';
-import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { aiChatContinueInSidePanelThreadIdState } from '@/ai-chat/states/aiChatContinueInSidePanelThreadIdState';
+import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
+import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { isInboxPath } from '~/utils/isInboxPath';
@@ -24,14 +24,7 @@ export const SidePanelAskAiHandoffEffect = ({
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
   useLayoutEffect(() => {
-    if (isAiChatPath(pathname)) {
-      return;
-    }
-
-    // The inbox shows its own chat, which keeps the handoff pending; only the
-    // onboarding chat ends there
-    if (isInboxPath(pathname)) {
-      store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+    if (isAiChatPath(pathname) || isInboxPath(pathname)) {
       return;
     }
 

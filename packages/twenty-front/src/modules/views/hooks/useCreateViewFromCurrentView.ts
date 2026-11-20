@@ -19,6 +19,7 @@ import { duplicateViewFiltersAndViewFilterGroups } from '@/views/utils/duplicate
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
 import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
 import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
+import { mapViewSortToCreateViewSortMutationVariables } from '@/views/utils/mapViewSortToCreateViewSortMutationVariables';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -260,14 +261,12 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           return undefined;
         }
 
-        const createViewSortInputs = viewSortsToCreate.map((viewSort) => ({
-          input: {
-            id: viewSort.id,
-            fieldMetadataId: viewSort.fieldMetadataId,
+        const createViewSortInputs = viewSortsToCreate.map((viewSort) =>
+          mapViewSortToCreateViewSortMutationVariables({
+            viewSort,
             viewId: newViewId,
-            direction: viewSort.direction,
-          },
-        }));
+          }),
+        );
 
         const sortResult = await performViewSortApiCreate(createViewSortInputs);
 

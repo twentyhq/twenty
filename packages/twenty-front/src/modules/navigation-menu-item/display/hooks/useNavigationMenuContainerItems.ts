@@ -3,15 +3,15 @@ import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/displa
 import { useReadableNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useReadableNavigationMenuItems';
 
 export const useNavigationMenuContainerItems = (containerId: string) => {
-  const items = useNavigationMenuItemSectionItems(containerId);
+  const items = useNavigationMenuItemSectionItems({ containerId });
 
-  const { filteredTopLevelItems, filteredFolderChildrenById } =
+  const { displayTopLevelItems, displayFolderChildrenById } =
     useReadableNavigationMenuItems(
       groupNavigationMenuItemsByContainer({ items, containerId }),
     );
 
   return {
-    topLevelItems: filteredTopLevelItems,
-    folderChildrenById: filteredFolderChildrenById,
+    topLevelItems: displayTopLevelItems,
+    folderChildrenById: displayFolderChildrenById,
   };
 };

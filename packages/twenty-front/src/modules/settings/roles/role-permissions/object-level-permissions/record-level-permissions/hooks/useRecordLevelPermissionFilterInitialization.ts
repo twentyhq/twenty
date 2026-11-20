@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import {
@@ -15,7 +14,7 @@ import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPart
 
 type UseRecordLevelPermissionFilterInitializationProps = {
   roleId: string;
-  objectMetadataItem: EnrichedObjectMetadataItem;
+  rowLevelPermissionRuleId: string;
   settingsDraftRole: RoleWithPartialMembers;
   filterableFieldMetadataItems: FieldMetadataItem[];
   setCurrentRecordFilters: (filters: RecordFilter[]) => void;
@@ -27,7 +26,7 @@ type UseRecordLevelPermissionFilterInitializationProps = {
 
 export const useRecordLevelPermissionFilterInitialization = ({
   roleId,
-  objectMetadataItem,
+  rowLevelPermissionRuleId,
   settingsDraftRole,
   filterableFieldMetadataItems,
   setCurrentRecordFilters,
@@ -37,18 +36,20 @@ export const useRecordLevelPermissionFilterInitialization = ({
   const [hasInitialized, setHasInitialized] = useState(false);
   const [lastInitializedRoleId, setLastInitializedRoleId] =
     useState<string>('');
-  const [lastInitializedObjectId, setLastInitializedObjectId] =
-    useState<string>('');
+  const [
+    lastInitializedRowLevelPermissionRuleId,
+    setLastInitializedRowLevelPermissionRuleId,
+  ] = useState<string>('');
 
   const initialFilters = useMemo(() => {
     const predicates = settingsDraftRole.rowLevelPermissionPredicates ?? [];
-    const objectPredicates = predicates.filter(
+    const rulePredicates = predicates.filter(
       (predicate) =>
-        predicate.objectMetadataId === objectMetadataItem.id &&
+        predicate.rowLevelPermissionRuleId === rowLevelPermissionRuleId &&
         !isDefined(predicate.relationFieldMetadataId),
     );
 
-    return objectPredicates
+    return rulePredicates
       .map((predicate) => {
         const fieldMetadataItem = filterableFieldMetadataItems.find(
           (fieldMetadataItemToFind) =>
@@ -59,60 +60,33 @@ export const useRecordLevelPermissionFilterInitialization = ({
       .filter(isDefined);
   }, [
     settingsDraftRole.rowLevelPermissionPredicates,
-    objectMetadataItem.id,
+    rowLevelPermissionRuleId,
     filterableFieldMetadataItems,
   ]);
 
-  const initialFilterGroups = useMemo(() => {
-    const predicateGroups =
-      settingsDraftRole.rowLevelPermissionPredicateGroups ?? [];
-
-    const objectPredicateGroupIds = new Set(
-      (settingsDraftRole.rowLevelPermissionPredicates ?? [])
+  const initialFilterGroups = useMemo(
+    () =>
+      (settingsDraftRole.rowLevelPermissionPredicateGroups ?? [])
         .filter(
-          (predicate) => predicate.objectMetadataId === objectMetadataItem.id,
+          (group) =>
+            group.rowLevelPermissionRuleId === rowLevelPermissionRuleId,
         )
-        .map((predicate) => predicate.rowLevelPermissionPredicateGroupId)
-        .filter(isDefined),
-    );
-
-    const relevantGroups = predicateGroups.filter(
-      (group) =>
-        objectPredicateGroupIds.has(group.id) ||
-        (isDefined(group.parentRowLevelPermissionPredicateGroupId) &&
-          objectPredicateGroupIds.has(
-            group.parentRowLevelPermissionPredicateGroupId,
-          )),
-    );
-
-    const rootGroups = predicateGroups.filter(
-      (group) =>
-        !group.parentRowLevelPermissionPredicateGroupId &&
-        relevantGroups.some(
-          (relevantGroup) =>
-            relevantGroup.id === group.id ||
-            relevantGroup.parentRowLevelPermissionPredicateGroupId === group.id,
-        ),
-    );
-
-    const allRelevantGroups = [...new Set([...rootGroups, ...relevantGroups])];
-
-    return allRelevantGroups.map(convertPredicateGroupToRecordFilterGroup);
-  }, [
-    settingsDraftRole.rowLevelPermissionPredicateGroups,
-    settingsDraftRole.rowLevelPermissionPredicates,
-    objectMetadataItem.id,
-  ]);
+        .map(convertPredicateGroupToRecordFilterGroup),
+    [
+      settingsDraftRole.rowLevelPermissionPredicateGroups,
+      rowLevelPermissionRuleId,
+    ],
+  );
 
   useEffect(() => {
-    const isRoleOrObjectChanged =
+    const isRoleOrRuleChanged =
       lastInitializedRoleId !== roleId ||
-      lastInitializedObjectId !== objectMetadataItem.id;
+      lastInitializedRowLevelPermissionRuleId !== rowLevelPermissionRuleId;
 
     const isDraftRolePopulated = settingsDraftRole.id === roleId;
 
     const shouldInitialize =
-      isDraftRolePopulated && (isRoleOrObjectChanged || !hasInitialized);
+      isDraftRolePopulated && (isRoleOrRuleChanged || !hasInitialized);
 
     if (shouldInitialize) {
       setCurrentRecordFilters(initialFilters);
@@ -124,17 +98,17 @@ export const useRecordLevelPermissionFilterInitialization = ({
 
       setHasInitialized(true);
       setLastInitializedRoleId(roleId);
-      setLastInitializedObjectId(objectMetadataItem.id);
+      setLastInitializedRowLevelPermissionRuleId(rowLevelPermissionRuleId);
     }
   }, [
     roleId,
-    objectMetadataItem.id,
+    rowLevelPermissionRuleId,
     settingsDraftRole.id,
     initialFilters,
     initialFilterGroups,
     hasInitialized,
     lastInitializedRoleId,
-    lastInitializedObjectId,
+    lastInitializedRowLevelPermissionRuleId,
     setCurrentRecordFilters,
     setCurrentRecordFilterGroups,
     setRecordFilterUsedInAdvancedFilterDropdownRow,

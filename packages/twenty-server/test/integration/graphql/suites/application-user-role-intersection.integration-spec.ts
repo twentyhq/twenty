@@ -81,12 +81,12 @@ const findApplicationId = async (): Promise<string> => {
 
 const findApplicationDefaultRoleId = async (): Promise<string | null> => {
   const rows = await globalThis.testDataSource.query(
-    `SELECT "defaultRoleId" FROM core."application"
+    `SELECT "requestedRoleId" FROM core."application"
      WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
     [TEST_APP_UNIVERSAL_IDENTIFIER, SEED_APPLE_WORKSPACE_ID],
   );
 
-  return rows[0]?.defaultRoleId ?? null;
+  return rows[0]?.requestedRoleId ?? null;
 };
 
 const createCompany = async (id: string, name: string) =>
