@@ -155,28 +155,29 @@ export class AccessGroupSyncService {
     metadataMaps: RecordAccessGroupComputationMetadataMaps;
     objectMetadataIds: string[];
   }): Map<string, Set<string>> {
-    return new Map(
-      objectMetadataIds.flatMap((objectMetadataId) => {
-        const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: objectMetadataId,
-          flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
-        });
+    const familyRuleIdsByObjectMetadataId = new Map<string, Set<string>>();
 
-        return isDefined(flatObjectMetadata)
-          ? [
-              [
-                objectMetadataId,
-                new Set(
-                  findAccessGroupFamilies({
-                    flatObjectMetadata,
-                    metadataMaps,
-                  }).map(({ ruleId }) => ruleId),
-                ),
-              ] as const,
-            ]
-          : [];
-      }),
-    );
+    for (const objectMetadataId of objectMetadataIds) {
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: objectMetadataId,
+        flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
+      });
+
+      if (!isDefined(flatObjectMetadata)) {
+        continue;
+      }
+
+      familyRuleIdsByObjectMetadataId.set(
+        objectMetadataId,
+        new Set(
+          findAccessGroupFamilies({ flatObjectMetadata, metadataMaps }).map(
+            ({ ruleId }) => ruleId,
+          ),
+        ),
+      );
+    }
+
+    return familyRuleIdsByObjectMetadataId;
   }
 
   private async applyIncrementalChanges({

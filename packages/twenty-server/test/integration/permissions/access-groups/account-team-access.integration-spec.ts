@@ -48,14 +48,20 @@ type Login = { workspaceMemberId: string; userId: string; token: string };
 describe('Account team access (integration)', () => {
   const metadataIds: Record<string, string> = {};
   const recordIds: Record<string, string> = {};
-  const logins: Record<
+  let logins: Record<
     'clientHead' | 'opportunityTeamMember' | 'partner' | 'accountTeamMember',
     Login
-  > = {} as never;
+  >;
   let roleId: string;
 
-  const query = <TRow>(sql: string, parameters: unknown[] = []) =>
-    global.testDataSource.query(sql, parameters) as Promise<TRow[]>;
+  const query = async <TRow>(
+    sql: string,
+    parameters: unknown[] = [],
+  ): Promise<TRow[]> => {
+    const rows: TRow[] = await global.testDataSource.query(sql, parameters);
+
+    return rows;
+  };
 
   const findObjectMetadataId = async (nameSingular: string) => {
     const [{ id }] = await query<{ id: string }>(
@@ -89,7 +95,7 @@ describe('Account team access (integration)', () => {
     return relationTargetFieldMetadataId;
   };
 
-  const createObject = async (nameSingular: string) => {
+  const createObject = async (nameSingular: string): Promise<string> => {
     const { data } = await createOneObjectMetadata({
       expectToFail: false,
       input: {
@@ -102,7 +108,7 @@ describe('Account team access (integration)', () => {
       },
     });
 
-    return data.createOneObject.id as string;
+    return data.createOneObject.id;
   };
 
   const createManyToOne = async ({
@@ -140,7 +146,7 @@ describe('Account team access (integration)', () => {
     name: string;
     values: string[];
     type?: FieldMetadataType.SELECT | FieldMetadataType.MULTI_SELECT;
-  }) => {
+  }): Promise<string> => {
     const { data } = await createOneFieldMetadata({
       expectToFail: false,
       input: {
@@ -159,7 +165,7 @@ describe('Account team access (integration)', () => {
       gqlFields: 'id',
     });
 
-    return data.createOneField.id as string;
+    return data.createOneField.id;
   };
 
   const createRecord = async (objectName: string, data: object) => {
@@ -344,23 +350,28 @@ describe('Account team access (integration)', () => {
       }) => Promise<{ token: string }>;
     }>('AccessTokenService');
 
-    for (const [index, loginName] of (
-      [
-        'clientHead',
-        'opportunityTeamMember',
-        'partner',
-        'accountTeamMember',
-      ] as const
-    ).entries()) {
-      const { id: workspaceMemberId, userId } = workspaceMembers[index];
+    const createLogin = async ({
+      id: workspaceMemberId,
+      userId,
+    }: {
+      id: string;
+      userId: string;
+    }): Promise<Login> => {
       const { token } = await accessTokenService.generateAccessToken({
         userId,
         workspaceId,
         authProvider: AuthProviderEnum.Password,
       });
 
-      logins[loginName] = { workspaceMemberId, userId, token };
-    }
+      return { workspaceMemberId, userId, token };
+    };
+
+    logins = {
+      clientHead: await createLogin(workspaceMembers[0]),
+      opportunityTeamMember: await createLogin(workspaceMembers[1]),
+      partner: await createLogin(workspaceMembers[2]),
+      accountTeamMember: await createLogin(workspaceMembers[3]),
+    };
   };
 
   beforeAll(async () => {

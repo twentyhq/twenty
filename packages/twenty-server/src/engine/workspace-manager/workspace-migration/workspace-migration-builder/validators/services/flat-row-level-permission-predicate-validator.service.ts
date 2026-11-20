@@ -136,6 +136,10 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         {
           predicate: flatPredicateToValidate,
           flatFieldMetadataMaps,
+          isRelationHopEnabled:
+            additionalCacheDataMaps.featureFlagsMap[
+              FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
+            ],
         },
       );
       const workspaceMemberFieldError = isDefined(workspaceMemberRelationError)
@@ -403,6 +407,10 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         this.getWorkspaceMemberRelationError({
           predicate: updatedPredicate,
           flatFieldMetadataMaps,
+          isRelationHopEnabled:
+            additionalCacheDataMaps.featureFlagsMap[
+              FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
+            ],
         }) ??
         this.getWorkspaceMemberFieldError({
           fieldMetadata,
@@ -691,10 +699,10 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     })?.relationTargetObjectMetadataUniversalIdentifier;
   }
 
-  // The member values are read on the rows a relation of the workspace member reaches, optionally narrowed by a filter
   private getWorkspaceMemberRelationError({
     predicate,
     flatFieldMetadataMaps,
+    isRelationHopEnabled,
   }: {
     predicate: Pick<
       UniversalFlatRowLevelPermissionPredicate,
@@ -706,6 +714,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     flatFieldMetadataMaps:
       | UniversalFlatEntityMaps<UniversalFlatFieldMetadata>
       | undefined;
+    isRelationHopEnabled: boolean | undefined;
   }) {
     const {
       workspaceMemberFieldMetadataUniversalIdentifier,
@@ -724,6 +733,14 @@ export class FlatRowLevelPermissionPredicateValidatorService {
             userFriendlyMessage: msg`This filter needs a workspace member relation`,
           }
         : undefined;
+    }
+
+    if (isRelationHopEnabled !== true) {
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED,
+        message: t`Predicates reading the current member through a relation are not enabled for this workspace`,
+        userFriendlyMessage: msg`Rules through a relation are not enabled for this workspace`,
+      };
     }
 
     const workspaceMemberRelationFieldMetadata =

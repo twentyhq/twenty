@@ -15,7 +15,6 @@ export type AccessGroupFamilyKey = {
   relationHop: AccessGroupFamilyKeyRelationHop | null;
 };
 
-// Groups of one rule that differ by their key member values: a record finds its groups by looking up its own values
 export type AccessGroupFamily = {
   roleId: string;
   objectMetadataId: string;

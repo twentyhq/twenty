@@ -10,7 +10,6 @@ import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.ty
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-// One indexed lookup on the group's member values replaces a condition per group of the family
 export const buildAccessGroupFamilyIdsExpression = ({
   workspaceId,
   tableAlias,

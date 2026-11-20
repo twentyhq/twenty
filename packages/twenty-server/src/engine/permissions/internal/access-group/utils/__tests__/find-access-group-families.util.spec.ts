@@ -16,7 +16,6 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { findAccessGroupFamilies } from 'src/engine/permissions/internal/access-group/utils/find-access-group-families.util';
-import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const OPPORTUNITY_ID = 'opportunity-object';
 const COMPANY_ID = 'company-object';
@@ -144,10 +143,11 @@ const flatFieldMetadataMaps = buildMaps([
   }),
 ]);
 
-const buildPredicate = (
-  id: string,
-  predicate: Partial<RowLevelPermissionPredicate>,
-): RowLevelPermissionPredicate => ({
+const buildPredicate = ({
+  id,
+  ...predicate
+}: Pick<RowLevelPermissionPredicate, 'id'> &
+  Partial<RowLevelPermissionPredicate>): RowLevelPermissionPredicate => ({
   id,
   roleId: ROLE_ID,
   objectMetadataId: OPPORTUNITY_ID,
@@ -200,8 +200,19 @@ const findFamilies = ({
       flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       rolesPermissions: {
         [ROLE_ID]: {
+          canReadAllRecords: false,
+          canUpdateAllRecords: false,
+          canSoftDeleteAllRecords: false,
+          canDestroyAllRecords: false,
           objects: {
             [OPPORTUNITY_ID]: {
+              canCreateAllRecords: false,
+              canReadAllRecords: false,
+              canUpdateAllRecords: false,
+              canSoftDeleteAllRecords: false,
+              canDestroyAllRecords: false,
+              unreadableFields: [],
+              uneditableFields: [],
               rowLevelRecordsPermissions: [
                 {
                   ruleId: RULE_ID,
@@ -218,7 +229,7 @@ const findFamilies = ({
               ],
             },
           },
-        } as unknown as RoleRecordsPermissions,
+        },
       },
     },
   });
@@ -226,7 +237,7 @@ const findFamilies = ({
 describe('findAccessGroupFamilies', () => {
   it('should look up the groups of a member bound relation by its join column', () => {
     expect(
-      findFamilies({ predicates: [buildPredicate('owner-is-me', {})] }),
+      findFamilies({ predicates: [buildPredicate({ id: 'owner-is-me' })] }),
     ).toEqual([
       {
         roleId: ROLE_ID,
@@ -247,7 +258,8 @@ describe('findAccessGroupFamilies', () => {
   it('should look up the groups through a relation hop', () => {
     const [family] = findFamilies({
       predicates: [
-        buildPredicate('account-owner-is-me', {
+        buildPredicate({
+          id: 'account-owner-is-me',
           relationFieldMetadataId: 'opportunity-company',
           fieldMetadataId: 'company-account-owner',
         }),
@@ -271,7 +283,8 @@ describe('findAccessGroupFamilies', () => {
     expect(
       findFamilies({
         predicates: [
-          buildPredicate('account-owner-is-me', {
+          buildPredicate({
+            id: 'account-owner-is-me',
             relationFieldMetadataId: 'opportunity-company',
             fieldMetadataId: 'company-account-owner',
           }),
@@ -282,13 +295,14 @@ describe('findAccessGroupFamilies', () => {
   });
 
   it('should keep the other predicates of the rule as its residual condition', () => {
-    const namePredicate = buildPredicate('name-is-member-locale', {
+    const namePredicate = buildPredicate({
+      id: 'name-is-member-locale',
       fieldMetadataId: 'opportunity-name',
       operand: RowLevelPermissionPredicateOperand.CONTAINS,
       workspaceMemberFieldMetadataId: 'workspace-member-locale',
     });
     const [family] = findFamilies({
-      predicates: [buildPredicate('owner-is-me', {}), namePredicate],
+      predicates: [buildPredicate({ id: 'owner-is-me' }), namePredicate],
     });
 
     expect(family.keys.map(({ columnName }) => columnName)).toEqual([
@@ -310,7 +324,8 @@ describe('findAccessGroupFamilies', () => {
     expect(
       findFamilies({
         predicates: [
-          buildPredicate('owner-is-me', {
+          buildPredicate({
+            id: 'owner-is-me',
             rowLevelPermissionPredicateGroupId: 'or-group',
           }),
         ],
@@ -320,7 +335,8 @@ describe('findAccessGroupFamilies', () => {
     expect(
       findFamilies({
         predicates: [
-          buildPredicate('owner-is-me', {
+          buildPredicate({
+            id: 'owner-is-me',
             rowLevelPermissionPredicateGroupId: 'and-group',
           }),
         ],
@@ -333,7 +349,8 @@ describe('findAccessGroupFamilies', () => {
     expect(
       findFamilies({
         predicates: [
-          buildPredicate('name-contains-member-locale', {
+          buildPredicate({
+            id: 'name-contains-member-locale',
             fieldMetadataId: 'opportunity-name',
             operand: RowLevelPermissionPredicateOperand.CONTAINS,
             workspaceMemberFieldMetadataId: 'workspace-member-locale',
@@ -347,8 +364,9 @@ describe('findAccessGroupFamilies', () => {
     expect(
       findFamilies({
         predicates: [
-          buildPredicate('owner-is-me', {}),
-          buildPredicate('account-owner-is-me', {
+          buildPredicate({ id: 'owner-is-me' }),
+          buildPredicate({
+            id: 'account-owner-is-me',
             relationFieldMetadataId: 'opportunity-company',
             fieldMetadataId: 'company-account-owner',
           }),

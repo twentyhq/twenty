@@ -44,12 +44,7 @@ export class AccessGroupSyncListener {
   async handleMetadataEvent({
     workspaceId,
   }: Pick<MetadataEventBatch, 'workspaceId'>): Promise<void> {
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'rlsWorkspaceMemberRelationValueMaps',
-    ]);
-    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(
-      workspaceId,
-    );
+    await this.refreshWorkspaceMemberRelationValuesAndScheduleSync(workspaceId);
   }
 
   @OnEvent('metadata.relatedRecordPath.*')
@@ -159,10 +154,6 @@ export class AccessGroupSyncListener {
     WorkspaceEventBatch<Partial<ObjectRecordUpdateEvent>>,
     'workspaceId' | 'objectMetadata' | 'events'
   >): Promise<void> {
-    if (!(await this.accessGroupSyncSchedulerService.isEnabled(workspaceId))) {
-      return;
-    }
-
     const { rolesPermissions, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'rolesPermissions',
@@ -190,7 +181,14 @@ export class AccessGroupSyncListener {
       return;
     }
 
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+    await this.refreshWorkspaceMemberRelationValuesAndScheduleSync(workspaceId);
+  }
+
+  // RLS reads these values whether or not access groups are enabled
+  private async refreshWorkspaceMemberRelationValuesAndScheduleSync(
+    workspaceId: string,
+  ): Promise<void> {
+    await this.workspaceCacheService.flush(workspaceId, [
       'rlsWorkspaceMemberRelationValueMaps',
     ]);
     await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(

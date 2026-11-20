@@ -13037,6 +13037,15 @@ export default {
             "workspaceMemberFieldMetadataId": [
                 4
             ],
+            "workspaceMemberRelationFieldMetadataId": [
+                4
+            ],
+            "workspaceMemberRelationFilterFieldMetadataId": [
+                4
+            ],
+            "workspaceMemberRelationFilterValue": [
+                339
+            ],
             "workspaceMemberSubFieldName": [
                 4
             ],
@@ -13183,6 +13192,15 @@ export default {
             ],
             "workspaceMemberFieldMetadataId": [
                 4
+            ],
+            "workspaceMemberRelationFieldMetadataId": [
+                561
+            ],
+            "workspaceMemberRelationFilterFieldMetadataId": [
+                561
+            ],
+            "workspaceMemberRelationFilterValue": [
+                339
             ],
             "workspaceMemberSubFieldName": [
                 4

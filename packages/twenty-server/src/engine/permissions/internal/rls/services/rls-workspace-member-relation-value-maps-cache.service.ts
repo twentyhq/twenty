@@ -14,7 +14,10 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { WorkspaceMemberRelationValueRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/workspace-member-relation-value.repository';
+import {
+  type WorkspaceMemberRelationValueLookup,
+  WorkspaceMemberRelationValueRepository,
+} from 'src/engine/permissions/internal/record-permission-repository/repositories/workspace-member-relation-value.repository';
 import { type RlsWorkspaceMemberRelationValueMaps } from 'src/engine/permissions/internal/rls/types/rls-workspace-member-relation-value-maps.type';
 import { buildMemberFieldKey } from 'src/engine/permissions/internal/rls/utils/build-member-field-key.util';
 import { findRelationJoinColumnsOrThrow } from 'src/engine/permissions/internal/rls/utils/find-relation-join-columns-or-throw.util';
@@ -78,44 +81,58 @@ export class RlsWorkspaceMemberRelationValueMapsCacheService extends WorkspaceCa
       'flatObjectMetadataMaps',
       'flatFieldMetadataMapsOrm',
     ]);
-    const byWorkspaceMemberId: RlsWorkspaceMemberRelationValueMaps['byWorkspaceMemberId'] =
-      {};
-
-    for (const predicate of findWorkspaceMemberRelationPredicates(
-      rolesPermissions,
-    )) {
-      const valuesByWorkspaceMemberId =
-        await this.findValuesByWorkspaceMemberId({
-          workspaceId,
+    const lookups = findWorkspaceMemberRelationPredicates(rolesPermissions)
+      .map((predicate) => ({
+        memberFieldKey: buildMemberFieldKey(predicate),
+        lookup: this.buildLookup({
           predicate,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
-        });
-      const memberFieldKey = buildMemberFieldKey(predicate);
+        }),
+      }))
+      .filter(
+        (
+          lookupWithKey,
+        ): lookupWithKey is {
+          memberFieldKey: string;
+          lookup: WorkspaceMemberRelationValueLookup;
+        } => isDefined(lookupWithKey.lookup),
+      );
+    const byWorkspaceMemberId: RlsWorkspaceMemberRelationValueMaps['byWorkspaceMemberId'] =
+      {};
 
-      for (const [workspaceMemberId, values] of valuesByWorkspaceMemberId) {
-        byWorkspaceMemberId[workspaceMemberId] = {
-          ...byWorkspaceMemberId[workspaceMemberId],
-          [memberFieldKey]: values,
-        };
-      }
+    for (const {
+      lookupIndex,
+      workspaceMemberId,
+      values,
+    } of await this.workspaceMemberRelationValueRepository.findValuesByWorkspaceMemberId(
+      { workspaceId, lookups: lookups.map(({ lookup }) => lookup) },
+    )) {
+      byWorkspaceMemberId[workspaceMemberId] = {
+        ...byWorkspaceMemberId[workspaceMemberId],
+        [lookups[lookupIndex].memberFieldKey]: values,
+      };
     }
 
     return { byWorkspaceMemberId };
   }
 
   // A predicate whose relation cannot be read resolves to no value, which matches nothing
-  private async findValuesByWorkspaceMemberId({
-    workspaceId,
+  private buildLookup({
     predicate,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   }: {
-    workspaceId: string;
-    predicate: RowLevelPermissionPredicate;
+    predicate: Pick<
+      RowLevelPermissionPredicate,
+      | 'workspaceMemberFieldMetadataId'
+      | 'workspaceMemberRelationFieldMetadataId'
+      | 'workspaceMemberRelationFilterFieldMetadataId'
+      | 'workspaceMemberRelationFilterValue'
+    >;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-  }): Promise<Map<string, string[]>> {
+  }): WorkspaceMemberRelationValueLookup | null {
     const findField = (fieldMetadataId: string | null | undefined) =>
       isDefined(fieldMetadataId)
         ? findFlatEntityByIdInFlatEntityMaps({
@@ -153,7 +170,7 @@ export class RlsWorkspaceMemberRelationValueMapsCacheService extends WorkspaceCa
       (isDefined(predicate.workspaceMemberRelationFilterFieldMetadataId) &&
         !isDefined(filterColumnName))
     ) {
-      return new Map();
+      return null;
     }
 
     const { sourceColumnName, targetColumnName } =
@@ -162,19 +179,16 @@ export class RlsWorkspaceMemberRelationValueMapsCacheService extends WorkspaceCa
         flatFieldMetadataMaps,
       });
 
-    return this.workspaceMemberRelationValueRepository.findValuesByWorkspaceMemberId(
-      {
-        workspaceId,
-        workspaceMemberFlatObjectMetadata,
-        relatedFlatObjectMetadata,
-        workspaceMemberColumnName: sourceColumnName,
-        relatedColumnName: targetColumnName,
-        valueColumnName,
-        filterColumnName,
-        filterValues: toFilterValues(
-          predicate.workspaceMemberRelationFilterValue,
-        ),
-      },
-    );
+    return {
+      workspaceMemberFlatObjectMetadata,
+      relatedFlatObjectMetadata,
+      workspaceMemberColumnName: sourceColumnName,
+      relatedColumnName: targetColumnName,
+      valueColumnName,
+      filterColumnName,
+      filterValues: toFilterValues(
+        predicate.workspaceMemberRelationFilterValue,
+      ),
+    };
   }
 }

@@ -44,7 +44,6 @@ const getRuleFieldObjectMetadataIdOrThrow = ({
 
 // Ids resolve workspace-wide downstream and migration validators only compare an update to its own row, so another
 // role's or object's ids would be silently rewritten and another object's field would build a never-matching filter
-// A member field read through a relation of the workspace member belongs to the object that relation reaches
 const findWorkspaceMemberFieldObjectMetadataId = ({
   workspaceMemberRelationFieldMetadataId,
   workspaceMemberObjectMetadataId,

@@ -156,7 +156,11 @@ const buildPredicateRecordFilter = ({
     );
   }
 
-  if (isDefined(predicate.relationFieldMetadataId) && !isRelationHopEnabled) {
+  if (
+    (isDefined(predicate.relationFieldMetadataId) ||
+      isDefined(predicate.workspaceMemberRelationFieldMetadataId)) &&
+    !isRelationHopEnabled
+  ) {
     return UNSATISFIABLE_RECORD_FILTER;
   }
 

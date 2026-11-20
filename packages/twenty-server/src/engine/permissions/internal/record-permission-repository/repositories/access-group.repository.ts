@@ -67,7 +67,6 @@ export class AccessGroupRepository {
     });
   }
 
-  // Groups of a family differ by their key values, so only the distinct remaining values need their own condition
   async findAccessGroupFamilyResidualMemberFieldValues({
     workspaceId,
     families,
