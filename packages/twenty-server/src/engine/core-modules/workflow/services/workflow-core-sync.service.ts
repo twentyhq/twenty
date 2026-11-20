@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { In } from 'typeorm';
 
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -17,7 +16,6 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -29,8 +27,6 @@ export class WorkflowCoreSyncService {
   constructor(
     @InjectWorkspaceScopedRepository(WorkflowEntity)
     private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
@@ -165,46 +161,5 @@ export class WorkflowCoreSyncService {
         },
       },
     });
-  }
-
-  async findCoreWorkflowById(
-    workspaceId: string,
-    coreWorkflowId: string,
-  ): Promise<WorkflowEntity | null> {
-    return this.coreWorkflowRepository.findOne(workspaceId, {
-      where: { id: coreWorkflowId },
-    });
-  }
-
-  async findCoreWorkflowByIdOrWorkspaceWorkflowId(
-    workspaceId: string,
-    workflowId: string,
-  ): Promise<WorkflowEntity | null> {
-    const workflows = await this.coreWorkflowRepository.find(workspaceId, {
-      where: [{ id: workflowId }, { workspaceWorkflowId: workflowId }],
-    });
-
-    if (workflows.length > 1) {
-      throw new Error(
-        `Ambiguous core workflow mapping for ${workflowId} in workspace ${workspaceId}`,
-      );
-    }
-
-    return workflows[0] ?? null;
-  }
-
-  async getCustomApplicationIdOrThrow(workspaceId: string): Promise<string> {
-    const workspace = await this.workspaceRepository.findOne({
-      where: { id: workspaceId },
-      select: ['id', 'workspaceCustomApplicationId'],
-    });
-
-    if (!isDefined(workspace?.workspaceCustomApplicationId)) {
-      throw new Error(
-        `Workspace custom application not found for workspace ${workspaceId}`,
-      );
-    }
-
-    return workspace.workspaceCustomApplicationId;
   }
 }
