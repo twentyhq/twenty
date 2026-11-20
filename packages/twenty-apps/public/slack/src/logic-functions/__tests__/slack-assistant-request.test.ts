@@ -60,7 +60,7 @@ describe('slackAssistantRequestHandler', () => {
       PENDING_REQUEST,
       { agentDeadlineAtMs: expect.any(Number) },
     );
-    expect(result).toEqual({ done: true });
+    expect(result).toEqual({ done: true, isWatchdogScheduled: true });
   });
 
   it('should schedule a watchdog for the request before the agent runs', async () => {
@@ -80,7 +80,7 @@ describe('slackAssistantRequestHandler', () => {
   });
 
   it('should still answer the request when the watchdog cannot be scheduled', async () => {
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     enqueueSlackAssistantRequestMock.mockResolvedValue({
       ok: true,
@@ -90,16 +90,16 @@ describe('slackAssistantRequestHandler', () => {
 
     const result = await slackAssistantRequestHandler(EVENT_BODY);
 
-    expect(result).toEqual({ done: true });
+    expect(result).toEqual({ done: true, isWatchdogScheduled: false });
     expect(slackAssistantWorkerHandlerMock).toHaveBeenCalledExactlyOnceWith(
       PENDING_REQUEST,
       { agentDeadlineAtMs: expect.any(Number) },
     );
-    expect(warnSpy).toHaveBeenCalledWith(
+    expect(errorSpy).toHaveBeenCalledWith(
       expect.stringContaining('queue unreachable'),
     );
 
-    warnSpy.mockRestore();
+    errorSpy.mockRestore();
   });
 
   it('should count the agent budget from the start of the execution', async () => {

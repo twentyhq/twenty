@@ -22,19 +22,26 @@ export const slackAssistantRequestHandler = async (
     return enqueueResult;
   }
 
-  try {
-    await enqueueSlackAssistantRequestWatchdog({
-      slackAssistantRequestId: enqueueResult.request.id,
-    });
-  } catch (error) {
-    console.warn(
-      `[slack] could not schedule the watchdog for request ${enqueueResult.request.id}: ${toErrorMessage(error)}`,
-    );
-  }
+  const { request } = enqueueResult;
 
-  return await slackAssistantWorkerHandler(enqueueResult.request, {
+  const isWatchdogScheduled = await enqueueSlackAssistantRequestWatchdog({
+    slackAssistantRequestId: request.id,
+  }).then(
+    () => true,
+    (error: unknown) => {
+      console.error(
+        `[slack] could not schedule the watchdog for request ${request.id}: ${toErrorMessage(error)}`,
+      );
+
+      return false;
+    },
+  );
+
+  const answerResult = await slackAssistantWorkerHandler(request, {
     agentDeadlineAtMs,
   });
+
+  return { ...answerResult, isWatchdogScheduled };
 };
 
 export default defineLogicFunction({
