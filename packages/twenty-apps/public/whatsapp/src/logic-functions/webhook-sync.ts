@@ -10,6 +10,8 @@ import { updateTwentyMessageChannel } from "src/logic-functions/data/update-mess
 import { upsertWhatsAppTemplates } from "src/logic-functions/data/upsert-whatsapp-templates.util";
 import { syncWhatsappTemplate } from "src/logic-functions/data/sync-whatsapp-template.util";
 import { getWhatsappAccessTokenOrThrow } from "src/logic-functions/data/get-whatsapp-access-token-or-throw.util";
+import { getWhatsappBusinessAccountConnections } from "src/logic-functions/data/get-whatsapp-business-account-connections.util";
+import { isDefined } from "twenty-sdk/utils";
 import { buildHistoryParseJobs } from "src/logic-functions/data/build-history-parse-jobs.util";
 import { isNonEmptyString } from "@sniptt/guards";
 import { sendInboxNotification } from "src/logic-functions/data/send-inbox-notification.util";
@@ -36,10 +38,21 @@ const handler = async (
     return new Response('', { status: 400 });
   }
 
-  let accessToken: string | undefined;
-  const getAccessToken = async () => (accessToken ??= await getWhatsappAccessTokenOrThrow());
+  const whatsappBusinessAccountConnections = await getWhatsappBusinessAccountConnections();
 
   for (const entry of body.entry) {
+    if (!isDefined(whatsappBusinessAccountConnections[entry.id])) {
+      console.warn(`Ignoring webhook for WhatsApp Business Account ${entry.id}, it is not connected`);
+      continue;
+    }
+
+    const syncTemplate = async (metaTemplateId: number) =>
+      syncWhatsappTemplate({
+        accessToken: await getWhatsappAccessTokenOrThrow({ whatsappBusinessAccountId: entry.id }),
+        metaTemplateId: String(metaTemplateId),
+        whatsappBusinessAccountId: entry.id,
+      });
+
     for (const change of entry.changes) {
       const notify = (title: string, text: string) =>
         sendInboxNotification({
@@ -90,10 +103,7 @@ const handler = async (
         }
         case "message_template_components_update":
         case "message_template_quality_update":
-          await syncWhatsappTemplate({
-            accessToken: await getAccessToken(),
-            metaTemplateId: String(change.value.message_template_id),
-          });
+          await syncTemplate(change.value.message_template_id);
           break;
         case "message_template_status_update":
           // a deleted template can no longer be fetched from Meta
@@ -101,6 +111,7 @@ const handler = async (
             await upsertWhatsAppTemplates([
               {
                 metaTemplateId: String(change.value.message_template_id),
+                whatsappBusinessAccountId: entry.id,
                 name: change.value.message_template_name,
                 language: change.value.message_template_language,
                 status: change.value.event,
@@ -108,10 +119,7 @@ const handler = async (
             ]);
             break;
           }
-          await syncWhatsappTemplate({
-            accessToken: await getAccessToken(),
-            metaTemplateId: String(change.value.message_template_id),
-          });
+          await syncTemplate(change.value.message_template_id);
           break;
         case "partner_solutions":
         case "payment_configuration_update":
@@ -141,10 +149,7 @@ const handler = async (
         case "smb_message_echoes":
           break;
         case "template_category_update":
-          await syncWhatsappTemplate({
-            accessToken: await getAccessToken(),
-            metaTemplateId: String(change.value.message_template_id),
-          });
+          await syncTemplate(change.value.message_template_id);
           break;
         case "user_preferences":
           break;

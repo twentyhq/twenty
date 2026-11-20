@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { z } from 'zod';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -41,6 +42,47 @@ const SEND_TEMPLATE_MESSAGE_INPUT_SCHEMA: InputJsonSchema = {
         required: ['value'],
       },
     },
+    headerParameters: {
+      type: 'array',
+      label: 'Header parameters',
+      description: 'Values for a text header with parameters, same format as the body parameters.',
+      items: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+          value: { type: 'string' },
+        },
+        required: ['value'],
+      },
+    },
+    headerMedia: {
+      type: 'object',
+      label: 'Header media',
+      description:
+        'Media for an image, video or document header, given as a public link or an uploaded media ID.',
+      properties: {
+        type: { type: 'string', enum: ['image', 'video', 'document'] },
+        link: { type: 'string' },
+        id: { type: 'string' },
+        filename: { type: 'string' },
+      },
+      required: ['type'],
+    },
+    buttonParameters: {
+      type: 'array',
+      label: 'Button parameters',
+      description:
+        'One entry per button that takes a value: the quick reply payload, the dynamic URL suffix or the code to copy.',
+      items: {
+        type: 'object',
+        properties: {
+          index: { type: 'number' },
+          subType: { type: 'string', enum: ['quick_reply', 'url', 'copy_code'] },
+          value: { type: 'string' },
+        },
+        required: ['index', 'subType', 'value'],
+      },
+    },
   },
   required: ['templateId', 'to'],
   additionalProperties: false,
@@ -53,7 +95,8 @@ const handler = async (rawParams: unknown) => {
     return { success: false, error: z.prettifyError(parsedParams.error) };
   }
 
-  const { templateId, phoneNumberId, to, parameters } = parsedParams.data;
+  const { templateId, phoneNumberId, to, parameters, headerParameters, headerMedia, buttonParameters } =
+    parsedParams.data;
 
   const { whatsAppTemplate } = await new CoreApiClient().query({
     whatsAppTemplate: {
@@ -62,6 +105,7 @@ const handler = async (rawParams: unknown) => {
       language: true,
       status: true,
       parameterFormat: true,
+      whatsappBusinessAccountId: true,
     },
   });
 
@@ -76,13 +120,21 @@ const handler = async (rawParams: unknown) => {
     };
   }
 
-  const accessToken = await getWhatsappAccessTokenOrThrow();
+  const { whatsappBusinessAccountId } = whatsAppTemplate;
+
+  if (!isNonEmptyString(whatsappBusinessAccountId)) {
+    return { success: false, error: 'Template is not linked to a WhatsApp Business Account, reconnect WhatsApp to resync it' };
+  }
+
+  const accessToken = await getWhatsappAccessTokenOrThrow({ whatsappBusinessAccountId });
 
   const response = await whatsappApiRequest({
     accessToken,
     endpoint: 'POST /{phoneNumberId}/messages',
     pathParams: {
-      phoneNumberId: phoneNumberId ?? (await getDefaultWhatsappPhoneNumberIdOrThrow({ accessToken })),
+      phoneNumberId:
+        phoneNumberId ??
+        (await getDefaultWhatsappPhoneNumberIdOrThrow({ accessToken, whatsappBusinessAccountId })),
     },
     data: {
       messaging_product: 'whatsapp',
@@ -91,7 +143,13 @@ const handler = async (rawParams: unknown) => {
       template: {
         name: whatsAppTemplate.name,
         language: { code: whatsAppTemplate.language },
-        components: buildTemplateComponents(parameters, whatsAppTemplate.parameterFormat),
+        components: buildTemplateComponents({
+          bodyParameters: parameters,
+          headerParameters,
+          headerMedia,
+          buttonParameters,
+          parameterFormat: whatsAppTemplate.parameterFormat,
+        }),
       },
     },
   });

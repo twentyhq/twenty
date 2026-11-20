@@ -10,6 +10,7 @@ import {
   WHATSAPP_TEMPLATE_REJECTED_REASON_FIELD_UNIVERSAL_IDENTIFIER,
   WHATSAPP_TEMPLATE_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
   WHATSAPP_TEMPLATE_UNIVERSAL_IDENTIFIER,
+  WHATSAPP_TEMPLATE_WHATSAPP_BUSINESS_ACCOUNT_ID_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
 export default defineObject({
@@ -100,6 +101,15 @@ export default defineObject({
       label: 'Rejected reason',
       description: 'Reason given by Meta when a template is rejected',
       icon: 'IconAlertTriangle',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: WHATSAPP_TEMPLATE_WHATSAPP_BUSINESS_ACCOUNT_ID_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT,
+      name: 'whatsappBusinessAccountId',
+      label: 'WhatsApp Business Account ID',
+      description: 'Meta ID of the account that owns the template',
+      icon: 'IconBuilding',
       isNullable: true,
     },
   ],

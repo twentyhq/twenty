@@ -1,23 +1,31 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { getConnection, listConnections } from 'twenty-sdk/logic-function';
+import { getConnection } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
-import { WHATSAPP_CONNECTION_PROVIDER_NAME } from 'src/constants/whatsapp-connection-provider-name.constant';
+import { getWhatsappBusinessAccountConnections } from 'src/logic-functions/data/get-whatsapp-business-account-connections.util';
 
-// Without a connected account id, the first WhatsApp connection of the workspace is used
-export const getWhatsappAccessTokenOrThrow = async ({
-  connectedAccountId,
-}: { connectedAccountId?: string } = {}): Promise<string> => {
-  const connection = isDefined(connectedAccountId)
-    ? await getConnection(connectedAccountId)
-    : (await listConnections({ providerName: WHATSAPP_CONNECTION_PROVIDER_NAME }))[0];
+const getConnectedAccountIdOrThrow = async (whatsappBusinessAccountId: string) => {
+  const connectedAccountId = (await getWhatsappBusinessAccountConnections())[whatsappBusinessAccountId];
 
-  if (!isDefined(connection) || !isNonEmptyString(connection.accessToken)) {
-    throw new Error(
-      isDefined(connectedAccountId)
-        ? `WhatsApp connection ${connectedAccountId} has no access token`
-        : 'No WhatsApp connection found, connect a WhatsApp account first',
-    );
+  if (!isDefined(connectedAccountId)) {
+    throw new Error(`WhatsApp Business Account ${whatsappBusinessAccountId} is not connected`);
   }
 
-  return connection.accessToken;
+  return connectedAccountId;
+};
+
+export const getWhatsappAccessTokenOrThrow = async (
+  params: { connectedAccountId: string } | { whatsappBusinessAccountId: string },
+): Promise<string> => {
+  const connectedAccountId =
+    'connectedAccountId' in params
+      ? params.connectedAccountId
+      : await getConnectedAccountIdOrThrow(params.whatsappBusinessAccountId);
+
+  const { accessToken } = await getConnection(connectedAccountId);
+
+  if (!isNonEmptyString(accessToken)) {
+    throw new Error(`WhatsApp connection ${connectedAccountId} has no access token`);
+  }
+
+  return accessToken;
 };

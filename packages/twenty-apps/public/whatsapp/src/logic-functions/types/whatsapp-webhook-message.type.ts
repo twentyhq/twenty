@@ -180,7 +180,7 @@ type InteractiveMessage = WhatsAppWebhookMessageBase & {
     list_reply: {
       id: string;
       title: string;
-      description: string;
+      description?: string;
     };
   }
     | {
@@ -190,16 +190,25 @@ type InteractiveMessage = WhatsAppWebhookMessageBase & {
       title: string;
     };
   }
+    | {
+    // flow and address message replies
+    type: 'nfm_reply';
+    nfm_reply: {
+      name?: string;
+      body?: string;
+      response_json: string;
+    };
+  }
 }
 
 type LocationMessage = WhatsAppWebhookMessageBase & WhatsAppWebhookMessageReferral & {
   type: 'location';
   location: {
-    address: string;
+    address?: string;
     latitude: number;
     longitude: number;
-    name: string;
-    url: string;
+    name?: string;
+    url?: string;
   };
 }
 

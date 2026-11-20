@@ -152,14 +152,20 @@ type WhatsAppApiInteractiveCarousel = WhatsAppApiInteractiveBody & {
   };
 };
 
-type WhatsAppApiTemplateParameter =
+// reference: https://developers.facebook.com/documentation/business-messaging/whatsapp/templates/template-messages
+export type WhatsAppApiTemplateParameter =
   | { type: 'text'; text: string; parameter_name?: string } // parameter_name for named format only
-  | { type: 'group_id'; group_id: string }; // group invite templates
+  | { type: 'group_id'; group_id: string } // group invite templates
+  | { type: 'image'; image: WhatsAppApiMediaSource }
+  | { type: 'video'; video: WhatsAppApiMediaSource }
+  | { type: 'document'; document: WhatsAppApiMediaSource & { filename?: string } }
+  | { type: 'payload'; payload: string } // quick reply buttons
+  | { type: 'coupon_code'; coupon_code: string }; // copy code buttons
 
 type WhatsAppApiTemplateComponent = {
-  type: string;
-  sub_type?: string;
-  index?: number;
+  type: 'header' | 'body' | 'button';
+  sub_type?: 'quick_reply' | 'url' | 'copy_code';
+  index?: string;
   parameters?: WhatsAppApiTemplateParameter[];
 };
 

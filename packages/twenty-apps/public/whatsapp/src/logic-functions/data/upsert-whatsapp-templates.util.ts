@@ -2,6 +2,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 
 export type WhatsAppTemplateRecordInput = {
   metaTemplateId: string;
+  whatsappBusinessAccountId?: string;
   name: string;
   language: string;
   category?: string;

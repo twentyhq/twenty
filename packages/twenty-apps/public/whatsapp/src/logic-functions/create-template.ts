@@ -68,8 +68,8 @@ const handler = async (rawParams: unknown) => {
 
   const params = parsedParams.data;
   const components = buildTemplateDefinitionComponents(params);
-  const accessToken = await getWhatsappAccessTokenOrThrow();
-  const wabaId = params.wabaId ?? (await getDefaultWhatsappBusinessAccountIdOrThrow({ accessToken }));
+  const wabaId = params.wabaId ?? (await getDefaultWhatsappBusinessAccountIdOrThrow());
+  const accessToken = await getWhatsappAccessTokenOrThrow({ whatsappBusinessAccountId: wabaId });
 
   const response = await whatsappApiRequest({
     accessToken,
@@ -87,6 +87,7 @@ const handler = async (rawParams: unknown) => {
   await upsertWhatsAppTemplates([
     {
       metaTemplateId: response.id,
+      whatsappBusinessAccountId: wabaId,
       name: params.name,
       language: params.language,
       category: response.category ?? params.category,

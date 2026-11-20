@@ -22,7 +22,11 @@ export const importWhatsappTemplates = async ({
       query: { fields: WHATSAPP_TEMPLATE_FIELDS, limit: TEMPLATES_PAGE_SIZE, after },
     });
 
-    await upsertWhatsAppTemplates(response.data.map(mapWhatsappTemplateToRecordInput));
+    await upsertWhatsAppTemplates(
+      response.data.map((template) =>
+        mapWhatsappTemplateToRecordInput({ template, whatsappBusinessAccountId }),
+      ),
+    );
     after = response.paging?.next ? response.paging.cursors.after : undefined;
   } while (after !== undefined);
 };

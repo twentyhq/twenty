@@ -13,14 +13,18 @@ describe('mapWhatsappTemplateToRecordInput', () => {
   it('should keep the parameter format, quality and components from Meta', () => {
     expect(
       mapWhatsappTemplateToRecordInput({
-        ...TEMPLATE,
-        parameter_format: 'NAMED',
-        quality_score: { score: 'GREEN' },
-        rejected_reason: 'NONE',
-        components: [{ type: 'BODY', text: 'Hi {{first_name}}' }],
+        template: {
+          ...TEMPLATE,
+          parameter_format: 'NAMED',
+          quality_score: { score: 'GREEN' },
+          rejected_reason: 'NONE',
+          components: [{ type: 'BODY', text: 'Hi {{first_name}}' }],
+        },
+        whatsappBusinessAccountId: 'waba-id',
       }),
     ).toEqual({
       metaTemplateId: '1234567890',
+      whatsappBusinessAccountId: 'waba-id',
       name: 'order_update',
       language: 'en_US',
       category: 'UTILITY',
@@ -33,6 +37,9 @@ describe('mapWhatsappTemplateToRecordInput', () => {
   });
 
   it('should default to positional parameters when Meta omits the format', () => {
-    expect(mapWhatsappTemplateToRecordInput(TEMPLATE).parameterFormat).toBe('POSITIONAL');
+    expect(
+      mapWhatsappTemplateToRecordInput({ template: TEMPLATE, whatsappBusinessAccountId: 'waba-id' })
+        .parameterFormat,
+    ).toBe('POSITIONAL');
   });
 });

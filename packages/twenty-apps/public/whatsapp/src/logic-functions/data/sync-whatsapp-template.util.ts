@@ -6,9 +6,11 @@ import { whatsappApiRequest } from 'src/logic-functions/data/whatsapp-api-reques
 export const syncWhatsappTemplate = async ({
   accessToken,
   metaTemplateId,
+  whatsappBusinessAccountId,
 }: {
   accessToken: string;
   metaTemplateId: string;
+  whatsappBusinessAccountId: string;
 }) => {
   const template = await whatsappApiRequest({
     accessToken,
@@ -17,5 +19,5 @@ export const syncWhatsappTemplate = async ({
     query: { fields: WHATSAPP_TEMPLATE_FIELDS },
   });
 
-  await upsertWhatsAppTemplates([mapWhatsappTemplateToRecordInput(template)]);
+  await upsertWhatsAppTemplates([mapWhatsappTemplateToRecordInput({ template, whatsappBusinessAccountId })]);
 };

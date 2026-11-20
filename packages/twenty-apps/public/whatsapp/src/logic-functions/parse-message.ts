@@ -15,6 +15,8 @@ import { findMessageByExternalId } from "src/logic-functions/data/find-message-b
 import { updatePersonWhatsappNumber } from "src/logic-functions/data/update-person-whatsapp-number.util";
 import { getEditedMessageText } from "src/logic-functions/data/get-edited-message-text.util";
 import { formatSharedContactsText } from "src/logic-functions/data/format-shared-contacts-text.util";
+import { getInteractiveMessageText } from "src/logic-functions/data/get-interactive-message-text.util";
+import { formatLocationText } from "src/logic-functions/data/format-location-text.util";
 import {
   type IngestMessageParticipant,
   ingestMessages,
@@ -176,12 +178,11 @@ const handler = async (params: {
       break;
     }
     case 'interactive': {
-      // TODO: check
-      text = messages.interactive.type === 'list_reply' ? `${messages.interactive?.list_reply?.title} - ${messages.interactive?.list_reply?.description}` : <string>messages.interactive?.button_reply?.title;
+      text = getInteractiveMessageText(messages.interactive);
       break;
     }
     case 'location': {
-      text = `Place: ${messages.location?.name}\nAddress: ${messages.location?.address}\nLat: ${messages.location?.latitude}\nLong: ${messages.location?.longitude}\nURL: <a href='${messages.location?.url}'>${messages.location?.url}</a>`;
+      text = formatLocationText(messages.location);
       break;
     }
     case 'order': {

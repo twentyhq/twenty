@@ -1,6 +1,7 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { createWhatsappMessageChannels } from 'src/logic-functions/data/create-message-channel.util';
 import { getWhatsappAccessTokenOrThrow } from 'src/logic-functions/data/get-whatsapp-access-token-or-throw.util';
+import { linkWhatsappBusinessAccountsToConnection } from 'src/logic-functions/data/link-whatsapp-business-accounts-to-connection.util';
 import { importWhatsappTemplates } from 'src/logic-functions/data/import-whatsapp-templates.util';
 import { getWhatsappBusinessAccountIdsOrThrow } from 'src/logic-functions/data/get-whatsapp-business-account-ids-or-throw.util';
 import { WHATSAPP_LOGIC_FUNCTION_ON_CONNECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -8,6 +9,8 @@ import { WHATSAPP_LOGIC_FUNCTION_ON_CONNECT_UNIVERSAL_IDENTIFIER } from 'src/con
 const handler = async ({ connectedAccountId }: { connectedAccountId: string }) => {
   const accessToken = await getWhatsappAccessTokenOrThrow({ connectedAccountId });
   const { whatsappBusinessAccountIds } = await getWhatsappBusinessAccountIdsOrThrow({ accessToken });
+
+  await linkWhatsappBusinessAccountsToConnection({ connectedAccountId, whatsappBusinessAccountIds });
 
   await createWhatsappMessageChannels({
     accessToken,
