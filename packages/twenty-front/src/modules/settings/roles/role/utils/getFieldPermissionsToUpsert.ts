@@ -1,4 +1,4 @@
-import { isFieldPermissionRestrictive } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/isFieldPermissionRestrictive';
+import { isFieldPermissionRestrictive } from '@/settings/roles/role-permissions/field-permissions/utils/isFieldPermissionRestrictive';
 import { isDefined } from 'twenty-shared/utils';
 import { type FieldPermission } from '~/generated-metadata/graphql';
 
