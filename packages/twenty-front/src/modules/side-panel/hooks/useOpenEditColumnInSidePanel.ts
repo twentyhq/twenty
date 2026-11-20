@@ -1,7 +1,10 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
+import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
 import { getRelationScopeRecordFiltersAndSorts } from '@/object-record/record-column-scope/utils/getRelationScopeRecordFiltersAndSorts';
+import { getRelationScopeToEdit } from '@/object-record/record-column-scope/utils/getRelationScopeToEdit';
+import { resolveScopedRelationJunction } from '@/object-record/record-column-scope/utils/resolveScopedRelationJunction';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { attachUngroupedRecordFiltersToRootRecordFilterGroup } from '@/object-record/record-filter-group/utils/attachUngroupedRecordFiltersToRootRecordFilterGroup';
@@ -17,7 +20,7 @@ import {
   SidePanelPages,
   type ViewFieldRelationScope,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { findById, isDefined } from 'twenty-shared/utils';
 import { IconEdit, IconPlus } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
@@ -49,7 +52,14 @@ export const useOpenEditColumnInSidePanel = (recordTableId: string) => {
         }),
       );
 
-      if (!isDefined(viewId)) {
+      const fieldMetadataItems = store.get(
+        flattenedFieldMetadataItemsSelector.atom,
+      );
+      const fieldMetadataItem = fieldMetadataItems.find(
+        findById(fieldMetadataItemId),
+      );
+
+      if (!isDefined(viewId) || !isDefined(fieldMetadataItem)) {
         return;
       }
 
@@ -61,12 +71,20 @@ export const useOpenEditColumnInSidePanel = (recordTableId: string) => {
         )
         .find(({ id }) => id === recordFieldId)?.relationScope;
 
+      const { scopedRelationJunction } = resolveScopedRelationJunction({
+        fieldMetadataItem,
+        objectMetadataItems: store.get(
+          objectMetadataItemsWithFieldsSelector.atom,
+        ),
+      });
+
       const { recordSorts, ...recordFiltersAndRecordFilterGroups } =
         getRelationScopeRecordFiltersAndSorts({
-          relationScope: relationScope ?? EMPTY_RELATION_SCOPE,
-          fieldMetadataItems: store.get(
-            flattenedFieldMetadataItemsSelector.atom,
-          ),
+          relationScope: getRelationScopeToEdit({
+            relationScope: relationScope ?? EMPTY_RELATION_SCOPE,
+            scopedRelationJunction,
+          }),
+          fieldMetadataItems,
         });
 
       // The filter editor only shows filters held by a root filter group
