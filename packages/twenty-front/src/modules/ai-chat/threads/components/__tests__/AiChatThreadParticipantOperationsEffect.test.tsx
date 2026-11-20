@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { MockedProvider } from '@apollo/client/testing/react';
 import { act, render } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
@@ -52,7 +53,7 @@ const renderEffect = (
   const store = createStore();
 
   store.set(aiChatThreadParticipantsState.atom, {
-    isLoaded: participants !== null,
+    isLoaded: isDefined(participants),
     rowsByThreadId: participants ?? {},
   });
   store.set(currentWorkspaceMemberState.atom, {
