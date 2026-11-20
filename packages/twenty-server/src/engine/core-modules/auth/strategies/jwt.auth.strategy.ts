@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { type SecretOrKeyProvider, Strategy } from 'passport-jwt';
+import { isApplicationAccessTokenAuthorized } from 'src/engine/core-modules/application/application-authorization/utils/is-application-access-token-authorized.util';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { isApiKeyExpired } from 'src/engine/core-modules/api-key/utils/is-api-key-expired.util';
 import {
@@ -355,6 +356,22 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       throw new AuthException(
         'Application not found',
         AuthExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    if (
+      isDefined(payload.applicationAuthorizationId) &&
+      !isApplicationAccessTokenAuthorized({
+        flatApplicationAuthorization: await this.coreEntityCacheService.get(
+          'applicationAuthorization',
+          payload.applicationAuthorizationId,
+        ),
+        token: payload,
+      })
+    ) {
+      throw new AuthException(
+        'Application authorization was revoked',
+        AuthExceptionCode.UNAUTHENTICATED,
       );
     }
 
