@@ -11,6 +11,7 @@ type PresetFilterArgs = {
   workspaceMemberId: string;
 };
 
+// Keep in sync with getAgentChatThreadInboxStatus, which places loaded chats on the client
 const computeMemberInboxStateFilter = ({
   presetFilter,
   workspaceMemberId,
@@ -97,7 +98,6 @@ const computeMemberInboxStateFilter = ({
   }
 };
 
-// Keep in sync with getAgentChatThreadInboxStatus, which places loaded chats on the client
 export const computeAgentChatThreadPresetFilterGqlFilter = (
   args: PresetFilterArgs,
 ): RecordGqlOperationFilter => ({
