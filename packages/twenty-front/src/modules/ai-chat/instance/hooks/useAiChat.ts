@@ -47,7 +47,6 @@ import { getAiChatReplyStatusUnlessStreaming } from '@/ai-chat/utils/getAiChatRe
 import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { aiChatOpenThreadIdByInstanceIdState } from '@/ai-chat/states/aiChatOpenThreadIdByInstanceIdState';
-import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { type AiChatNewThreadRecipients } from '@/ai-chat/types/AiChatNewThreadRecipients';
@@ -315,15 +314,11 @@ export const useAiChat = () => {
         if (isNewChat) {
           await refreshAiChatThreadPermissions([threadId]);
           store.set(newAiChatThreadIdState.atom, v4());
-          store.set(aiChatNewThreadChannelIdState.atom, null);
           store.set(unconfirmedFirstMessageAtom, null);
-
-          if (isDefined(newInboxChatRecipients)) {
-            store.set(
-              aiChatNewThreadRecipientsFamilyState.atomFamily(threadId),
-              AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
-            );
-          }
+          store.set(
+            aiChatNewThreadRecipientsFamilyState.atomFamily(threadId),
+            AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
+          );
 
           const isInstanceStillOnThread =
             store.get(aiChatOpenThreadIdByInstanceIdState.atom)[instanceId] ===
@@ -472,7 +467,8 @@ export const useAiChat = () => {
       serializedContentToSend,
     );
     const channelId = isNewChat
-      ? store.get(aiChatNewThreadChannelIdState.atom)
+      ? store.get(aiChatNewThreadRecipientsFamilyState.atomFamily(threadId))
+          .channelId
       : undefined;
     const initialRecipients = getAiChatInitialRecipients({
       recipientWorkspaceMemberIds:

@@ -21,7 +21,6 @@ import { useAiChat } from '@/ai-chat/instance/hooks/useAiChat';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/states/aiChatQuotedMessageIdFamilyState';
 import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
-import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
 import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
 import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
@@ -202,11 +201,10 @@ const renderAiChat = ({
         ...mockedUserData.currentUserWorkspace,
         permissionFlags: [PermissionFlagType.AI],
       });
-      store.set(
-        aiChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
-        newThreadRecipients,
-      );
-      store.set(aiChatNewThreadChannelIdState.atom, newThreadChannelId);
+      store.set(aiChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID), {
+        ...newThreadRecipients,
+        channelId: newThreadChannelId,
+      });
       store.set(currentWorkspaceMembersState.atom, [
         { ...mockedWorkspaceMemberData, id: RECIPIENT_ID },
       ]);
@@ -344,6 +342,7 @@ describe('useAiChat', () => {
       sendChatMessageOutcomes: ['sent'],
       isAiChatInboxEnabled: true,
       newThreadRecipients: {
+        channelId: null,
         isAssistantParticipant: false,
         recipientWorkspaceMemberIds: [RECIPIENT_ID],
       },
@@ -595,6 +594,7 @@ describe('useAiChat', () => {
     expect(sentMessageVariables).toHaveBeenCalledTimes(1);
     expect(sentMessageVariables).toHaveBeenCalledWith(
       expect.objectContaining({
+        channelId: null,
         isAssistantParticipant: true,
         isAssistantMentioned: false,
         recipientWorkspaceMemberIds: [],
@@ -610,6 +610,7 @@ describe('useAiChat', () => {
       sendChatMessageOutcomes: ['sent'],
       isAiChatInboxEnabled: true,
       newThreadRecipients: {
+        channelId: null,
         isAssistantParticipant: false,
         recipientWorkspaceMemberIds: [RECIPIENT_ID, FORMER_MEMBER_ID],
       },
@@ -620,6 +621,7 @@ describe('useAiChat', () => {
     expect(sentMessageVariables).toHaveBeenCalledTimes(1);
     expect(sentMessageVariables).toHaveBeenCalledWith(
       expect.objectContaining({
+        channelId: null,
         isAssistantParticipant: false,
         isAssistantMentioned: false,
         recipientWorkspaceMemberIds: [RECIPIENT_ID],
@@ -639,6 +641,7 @@ describe('useAiChat', () => {
   it('keeps the draft without sending when Ada is removed and no recipients remain', async () => {
     const draft = serializePlainTextAsAdvancedTextEditorDocument('Hello');
     const recipients = {
+      channelId: null,
       isAssistantParticipant: false,
       recipientWorkspaceMemberIds: [],
     };
@@ -674,6 +677,7 @@ describe('useAiChat', () => {
       isAiChatInboxEnabled: true,
       isDirectMessageIdentityEnabled: true,
       newThreadRecipients: {
+        channelId: null,
         isAssistantParticipant: false,
         recipientWorkspaceMemberIds: [RECIPIENT_ID],
       },
@@ -714,6 +718,7 @@ describe('useAiChat', () => {
       isAiChatInboxEnabled: true,
       isDirectMessageIdentityEnabled: true,
       newThreadRecipients: {
+        channelId: null,
         isAssistantParticipant: false,
         recipientWorkspaceMemberIds: [RECIPIENT_ID],
       },
@@ -752,6 +757,7 @@ describe('useAiChat', () => {
         aiChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
       ),
     ).toEqual({
+      channelId: null,
       isAssistantParticipant: false,
       recipientWorkspaceMemberIds: [RECIPIENT_ID],
     });
@@ -766,6 +772,7 @@ describe('useAiChat', () => {
       isAiChatInboxEnabled: true,
       isDirectMessageIdentityEnabled: true,
       newThreadRecipients: {
+        channelId: null,
         isAssistantParticipant: false,
         recipientWorkspaceMemberIds: [RECIPIENT_ID],
       },
@@ -820,6 +827,7 @@ describe('useAiChat', () => {
       isAiChatInboxEnabled: true,
       isDirectMessageIdentityEnabled: true,
       newThreadRecipients: {
+        channelId: null,
         isAssistantParticipant: false,
         recipientWorkspaceMemberIds: [RECIPIENT_ID],
       },
@@ -863,6 +871,7 @@ describe('useAiChat', () => {
       sendChatMessageOutcomes: ['sent'],
       isAiChatInboxEnabled: true,
       newThreadRecipients: {
+        channelId: null,
         isAssistantParticipant: false,
         recipientWorkspaceMemberIds: [],
       },
@@ -873,6 +882,7 @@ describe('useAiChat', () => {
     expect(sentMessageVariables).toHaveBeenCalledTimes(1);
     expect(sentMessageVariables).toHaveBeenCalledWith(
       expect.objectContaining({
+        channelId: null,
         isAssistantParticipant: false,
         isAssistantMentioned: true,
       }),
@@ -892,6 +902,7 @@ describe('useAiChat', () => {
       sendChatMessageOutcomes: ['sent'],
       isAiChatInboxEnabled: true,
       newThreadRecipients: {
+        channelId: null,
         isAssistantParticipant: false,
         recipientWorkspaceMemberIds: [],
       },
@@ -902,6 +913,7 @@ describe('useAiChat', () => {
     expect(sentMessageVariables).toHaveBeenCalledTimes(1);
     expect(sentMessageVariables).toHaveBeenCalledWith(
       expect.objectContaining({
+        channelId: null,
         isAssistantParticipant: false,
         isAssistantMentioned: false,
         mentionedWorkspaceMemberIds: [RECIPIENT_ID],
@@ -911,6 +923,7 @@ describe('useAiChat', () => {
 
   it('preserves recipients after failure and uses later edits on retry', async () => {
     const recipients = {
+      channelId: null,
       isAssistantParticipant: false,
       recipientWorkspaceMemberIds: [RECIPIENT_ID],
     };
@@ -934,6 +947,7 @@ describe('useAiChat', () => {
     expect(readPersistedDrafts()[THREAD_ID]).toContain('Hello');
 
     jotaiStore.set(aiChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID), {
+      channelId: null,
       isAssistantParticipant: true,
       recipientWorkspaceMemberIds: [],
     });
@@ -942,6 +956,7 @@ describe('useAiChat', () => {
 
     expect(sentMessageVariables).toHaveBeenLastCalledWith(
       expect.objectContaining({
+        channelId: null,
         isAssistantParticipant: true,
         recipientWorkspaceMemberIds: [],
       }),
@@ -1045,6 +1060,7 @@ describe('useAiChat', () => {
       sendChatMessageOutcomes: ['failed', 'sent'],
       isAiChatInboxEnabled: true,
       newThreadRecipients: {
+        channelId: null,
         isAssistantParticipant: false,
         recipientWorkspaceMemberIds: [RECIPIENT_ID],
       },
@@ -1083,6 +1099,7 @@ describe('useAiChat', () => {
     expect(jotaiStore.get(isSendingMessageAtom)).toBe(false);
     expect(sentMessageVariables).toHaveBeenLastCalledWith(
       expect.objectContaining({
+        channelId: null,
         isAssistantParticipant: false,
         recipientWorkspaceMemberIds: [RECIPIENT_ID],
       }),
@@ -1099,6 +1116,7 @@ describe('useAiChat', () => {
       isAiChatInboxEnabled: true,
       currentThreadId: EXISTING_THREAD_ID,
       newThreadRecipients: {
+        channelId: null,
         isAssistantParticipant: false,
         recipientWorkspaceMemberIds: [RECIPIENT_ID],
       },
@@ -1168,6 +1186,7 @@ describe('useAiChat', () => {
       isAiChatInboxEnabled: true,
       newThreadChannelId: CHANNEL_ID,
       newThreadRecipients: {
+        channelId: null,
         isAssistantParticipant: false,
         recipientWorkspaceMemberIds: [],
       },
@@ -1177,7 +1196,10 @@ describe('useAiChat', () => {
 
     expect(sentChannelId).toHaveBeenCalledTimes(1);
     expect(sentChannelId).toHaveBeenCalledWith(CHANNEL_ID);
-    expect(jotaiStore.get(aiChatNewThreadChannelIdState.atom)).toBeNull();
+    expect(
+      jotaiStore.get(aiChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID))
+        .channelId,
+    ).toBeNull();
     expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: '' });
   });
 
