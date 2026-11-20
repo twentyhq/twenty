@@ -92,7 +92,7 @@ export class UserWorkspaceEntity extends WorkspaceRelatedEntity {
     upgradeCommandName:
       ADD_USER_WORKSPACE_INBOX_NOTIFICATION_SETTINGS_UPGRADE_COMMAND_NAME,
   })
-  @Column({ nullable: false, default: false, type: 'boolean' })
+  @Column({ nullable: false, default: true, type: 'boolean' })
   isInboxNotificationPreviewEnabled: boolean;
 
   @Field()
