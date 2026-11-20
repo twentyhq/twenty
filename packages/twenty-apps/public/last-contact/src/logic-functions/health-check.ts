@@ -40,6 +40,8 @@ const handler = async (): Promise<ApplicationHealthCheckResult> => {
     0,
   );
 
+  console.log(`health-check found ${missingFieldCount} missing view fields`);
+
   if (missingFieldCount === 0) {
     return { status: 'OK' };
   }

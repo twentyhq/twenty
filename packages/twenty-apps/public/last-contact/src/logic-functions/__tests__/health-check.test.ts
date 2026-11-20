@@ -24,10 +24,12 @@ import healthCheck from '../health-check';
 const mockIndexViews = ({
   hiddenFieldUniversalIdentifiers = [],
   absentFieldUniversalIdentifiers = [],
+  inactiveFieldUniversalIdentifiers = [],
   viewKey = 'INDEX',
 }: {
   hiddenFieldUniversalIdentifiers?: string[];
   absentFieldUniversalIdentifiers?: string[];
+  inactiveFieldUniversalIdentifiers?: string[];
   viewKey?: string | null;
 } = {}) =>
   metadataQueryMock.mockResolvedValue({
@@ -46,6 +48,7 @@ const mockIndexViews = ({
     getViews: INDEX_VIEW_FIELDS.map(
       ({ objectUniversalIdentifier, fields }) => ({
         key: viewKey,
+        isActive: true,
         objectMetadataId: `object-${objectUniversalIdentifier}`,
         viewFields: fields
           .filter(
@@ -56,6 +59,8 @@ const mockIndexViews = ({
             fieldMetadataId: `field-${universalIdentifier}`,
             isVisible:
               !hiddenFieldUniversalIdentifiers.includes(universalIdentifier),
+            isActive:
+              !inactiveFieldUniversalIdentifiers.includes(universalIdentifier),
           })),
       }),
     ),
@@ -175,6 +180,79 @@ describe('health-check', () => {
     await expect(healthCheck.config.handler()).resolves.toEqual({
       status: 'INFO',
       title: 'Last contact suggests 3 fields that are not in your views yet.',
+      action: { label: 'Set with Ada' },
+    });
+  });
+
+  it('should count inactive view fields as missing', async () => {
+    mockParticipants({
+      messageParticipantIds: ['message-participant-1'],
+      calendarEventParticipantIds: [],
+    });
+    mockIndexViews({
+      inactiveFieldUniversalIdentifiers: [
+        INDEX_VIEW_FIELDS[1].fields[0].universalIdentifier,
+        INDEX_VIEW_FIELDS[1].fields[1].universalIdentifier,
+      ],
+    });
+
+    await expect(healthCheck.config.handler()).resolves.toEqual({
+      status: 'INFO',
+      title: 'Last contact suggests 2 fields that are not in your views yet.',
+      action: { label: 'Set with Ada' },
+    });
+  });
+
+  it('should read the active All view only', async () => {
+    mockParticipants({
+      messageParticipantIds: ['message-participant-1'],
+      calendarEventParticipantIds: [],
+    });
+    const companyIndexViewFields = INDEX_VIEW_FIELDS[1];
+
+    metadataQueryMock.mockResolvedValue({
+      objects: {
+        edges: [
+          {
+            node: {
+              id: 'company-object',
+              universalIdentifier:
+                companyIndexViewFields.objectUniversalIdentifier,
+              fieldsList: companyIndexViewFields.fields.map(
+                ({ universalIdentifier }) => ({
+                  id: `field-${universalIdentifier}`,
+                  universalIdentifier,
+                }),
+              ),
+            },
+          },
+        ],
+      },
+      getViews: [
+        {
+          key: 'INDEX',
+          isActive: false,
+          objectMetadataId: 'company-object',
+          viewFields: companyIndexViewFields.fields.map(
+            ({ universalIdentifier }) => ({
+              fieldMetadataId: `field-${universalIdentifier}`,
+              isVisible: true,
+              isActive: true,
+            }),
+          ),
+        },
+        {
+          key: 'INDEX',
+          isActive: true,
+          objectMetadataId: 'company-object',
+          viewFields: [],
+        },
+      ],
+    });
+
+    await expect(healthCheck.config.handler()).resolves.toEqual({
+      status: 'INFO',
+      title: 'Last contact suggests 2 fields that are not in your views yet.',
       action: { label: 'Set with Ada' },
     });
   });

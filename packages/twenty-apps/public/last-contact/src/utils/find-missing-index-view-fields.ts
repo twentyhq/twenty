@@ -32,8 +32,9 @@ export const findMissingIndexViewFields = async (): Promise<
     getViews: {
       __args: { viewTypes: ['TABLE'] },
       key: true,
+      isActive: true,
       objectMetadataId: true,
-      viewFields: { fieldMetadataId: true, isVisible: true },
+      viewFields: { fieldMetadataId: true, isVisible: true, isActive: true },
     },
   });
 
@@ -44,7 +45,10 @@ export const findMissingIndexViewFields = async (): Promise<
     )?.node;
 
     const indexView = getViews.find(
-      (view) => view.objectMetadataId === object?.id && view.key === 'INDEX',
+      (view) =>
+        view.objectMetadataId === object?.id &&
+        view.key === 'INDEX' &&
+        view.isActive,
     );
 
     if (!isDefined(object) || !isDefined(indexView)) {
@@ -52,7 +56,7 @@ export const findMissingIndexViewFields = async (): Promise<
     }
 
     const visibleFieldMetadataIds = indexView.viewFields
-      .filter(({ isVisible }) => isVisible)
+      .filter(({ isVisible, isActive }) => isVisible && isActive)
       .map(({ fieldMetadataId }) => fieldMetadataId);
 
     const missingFields = indexViewFields.fields.filter((field) => {

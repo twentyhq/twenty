@@ -30,7 +30,10 @@ const LastContactSettings = () => {
   useEffect(() => {
     findMissingIndexViewFields()
       .then(setMissingIndexViewFields)
-      .catch(() => setMissingIndexViewFields([]));
+      .catch((error) => {
+        console.error('Could not read the All views', error);
+        setMissingIndexViewFields([]);
+      });
   }, []);
 
   const missingFieldCount = missingIndexViewFields.reduce(
