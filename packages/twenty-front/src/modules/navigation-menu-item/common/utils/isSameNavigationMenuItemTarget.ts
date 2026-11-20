@@ -36,10 +36,13 @@ const getNavigationMenuItemTargetId = (item: NavigationMenuItemTarget) => {
   }
 };
 
-export const isSameNavigationMenuItemTarget = (
-  firstItem: NavigationMenuItemTarget,
-  secondItem: NavigationMenuItemTarget,
-) => {
+export const isSameNavigationMenuItemTarget = ({
+  firstItem,
+  secondItem,
+}: {
+  firstItem: NavigationMenuItemTarget;
+  secondItem: NavigationMenuItemTarget;
+}) => {
   const firstTargetId = getNavigationMenuItemTargetId(firstItem);
 
   return (

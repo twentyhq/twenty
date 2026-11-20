@@ -53,7 +53,10 @@ export const canPlaceNavigationMenuItemInContainer = ({
 
   return !movedItems.some((movedItem) =>
     itemsInTargetScope.some((candidate) =>
-      isSameNavigationMenuItemTarget(movedItem, candidate),
+      isSameNavigationMenuItemTarget({
+        firstItem: movedItem,
+        secondItem: candidate,
+      }),
     ),
   );
 };
