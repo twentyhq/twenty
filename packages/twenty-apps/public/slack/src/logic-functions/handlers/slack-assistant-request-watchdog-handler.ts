@@ -30,24 +30,16 @@ export const slackAssistantRequestWatchdogHandler = async ({
     slackAssistantRequestId,
   );
 
-  if (!isDefined(record)) {
-    return {
-      failed: false,
-      attempt,
-      rescheduled: false,
-      reason: 'Request not found',
-    };
-  }
-
   if (
-    record.status !== SLACK_ASSISTANT_REQUEST_STATUS.PENDING &&
-    record.status !== SLACK_ASSISTANT_REQUEST_STATUS.PROCESSING
+    !isDefined(record) ||
+    (record.status !== SLACK_ASSISTANT_REQUEST_STATUS.PENDING &&
+      record.status !== SLACK_ASSISTANT_REQUEST_STATUS.PROCESSING)
   ) {
     return {
       failed: false,
       attempt,
       rescheduled: false,
-      reason: 'Request already finished',
+      reason: 'Request is missing or already finished',
     };
   }
 

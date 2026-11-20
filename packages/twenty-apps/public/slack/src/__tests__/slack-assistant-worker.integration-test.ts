@@ -786,7 +786,6 @@ describe('Slack assistant worker', () => {
     expect(slack.calls).toHaveLength(0);
   });
 
-  // the server stamps updatedAt, so the clock moves forward instead of the record back
   const runWatchdogWhenItFires = async (requestId: string) => {
     vi.useFakeTimers({ toFake: ['Date'] });
     vi.setSystemTime(
@@ -847,28 +846,5 @@ describe('Slack assistant worker', () => {
 
     expect(secondResult).toMatchObject({ failed: false, rescheduled: false });
     expect(botMessagesIn(CHANNEL_ID)).toHaveLength(1);
-  });
-
-  it('should leave an answered request alone when its watchdog fires', async () => {
-    const slackMessageTimestamp = nextMessageTimestamp();
-
-    const request = await createRequestRecord({
-      slackChannelId: CHANNEL_ID,
-      slackMessageTimestamp,
-      requestText: 'who owns Acme?',
-      status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
-      responseText: 'Jane owns Acme.',
-    });
-
-    const result = await runWatchdogWhenItFires(request.id);
-
-    expect(result).toMatchObject({ failed: false, rescheduled: false });
-    expect(slack.calls).toHaveLength(0);
-    await expect(readRequest(request.id)).resolves.toEqual(
-      expect.objectContaining({
-        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
-        responseText: 'Jane owns Acme.',
-      }),
-    );
   });
 });

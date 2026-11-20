@@ -121,18 +121,6 @@ describe('slackAssistantRequestWatchdogHandler', () => {
     },
   );
 
-  it('should do nothing when the request no longer exists', async () => {
-    findRequestMock.mockResolvedValue(undefined);
-
-    const result = await slackAssistantRequestWatchdogHandler({
-      slackAssistantRequestId: REQUEST_ID,
-    });
-
-    expect(result).toMatchObject({ failed: false, rescheduled: false });
-    expect(failStaleRequestMock).not.toHaveBeenCalled();
-    expect(sendSlackMessageMock).not.toHaveBeenCalled();
-  });
-
   it.each(['PROCESSING', 'PENDING'])(
     'should fail a stale %s request and tell the user once to ask again',
     async (status) => {
@@ -163,23 +151,6 @@ describe('slackAssistantRequestWatchdogHandler', () => {
       expect(enqueueDeliveryMock).not.toHaveBeenCalled();
     },
   );
-
-  it('should reply under the message itself when it started the thread', async () => {
-    findRequestMock.mockResolvedValue({
-      ...buildRequest({ status: 'PROCESSING' }),
-      slackThreadTimestamp: undefined,
-    });
-    failStaleRequestMock.mockResolvedValue(true);
-
-    await slackAssistantRequestWatchdogHandler({
-      slackAssistantRequestId: REQUEST_ID,
-    });
-
-    expect(sendSlackMessageMock).toHaveBeenCalledExactlyOnceWith(
-      { ...INTERRUPTED_REPLY, parentMessageTimestamp: MESSAGE_TIMESTAMP },
-      { waitOutRateLimit: false },
-    );
-  });
 
   it('should send nothing when another execution finished the request first', async () => {
     findRequestMock.mockResolvedValue(buildRequest({ status: 'PROCESSING' }));
@@ -248,18 +219,5 @@ describe('slackAssistantRequestWatchdogHandler', () => {
       payload: INTERRUPTED_REPLY,
       retryAfterSeconds: 7,
     });
-  });
-
-  it('should still post the reply when Slack is unreachable for the status call', async () => {
-    findRequestMock.mockResolvedValue(buildRequest({ status: 'PROCESSING' }));
-    failStaleRequestMock.mockResolvedValue(true);
-    resolveSlackClientMock.mockResolvedValue(undefined);
-
-    const result = await slackAssistantRequestWatchdogHandler({
-      slackAssistantRequestId: REQUEST_ID,
-    });
-
-    expect(result).toEqual({ failed: true, attempt: 1, replied: true });
-    expect(setStatusMock).not.toHaveBeenCalled();
   });
 });

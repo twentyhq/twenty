@@ -12,7 +12,6 @@ export const enqueueSlackAssistantRequestWatchdog = async (
       SLACK_ASSISTANT_REQUEST_WATCHDOG_UNIVERSAL_IDENTIFIER,
     payloads: [{ ...payload, attempt: (payload.attempt ?? 0) + 1 }],
     delayMs: SLACK_ASSISTANT_REQUEST_WATCHDOG_DELAY_SECONDS * 1000,
-    // the check is idempotent, and a watchdog lost to a platform hiccup leaves the request stuck
     retryLimit: 3,
   });
 };
