@@ -18,6 +18,8 @@ import {
 import { Heading, SectionShell } from '@/ui';
 
 import { AppsStageHalftone } from './AppsStageHalftone';
+import { AppsStageMarquee } from './AppsStageMarquee';
+import { AppsStageOrbit } from './AppsStageOrbit';
 import { AppsStageRing } from './AppsStageRing';
 import { APPS_STAGE_CRAFT_COLUMN } from './apps-stage-craft-column';
 import { type MarketplaceApp } from './marketplace-app';
@@ -108,9 +110,14 @@ const Lede = styled.p`
 
 type AppsStageCraftHeroProps = {
   apps: readonly MarketplaceApp[];
+  // PROTOTYPE switch (?hero=marquee|orbit): Dovetail rows or V7 labels.
+  motion?: 'ring' | 'marquee' | 'orbit';
 };
 
-export function AppsStageCraftHero({ apps }: AppsStageCraftHeroProps) {
+export function AppsStageCraftHero({
+  apps,
+  motion = 'ring',
+}: AppsStageCraftHeroProps) {
   const { i18n } = useLingui();
 
   return (
@@ -118,8 +125,11 @@ export function AppsStageCraftHero({ apps }: AppsStageCraftHeroProps) {
       background={
         <>
           <Backdrop />
-          <AppsStageHalftone />
-          <AppsStageRing apps={apps} />
+          {/* The orbit's labels would cross the keycap. */}
+          {motion !== 'orbit' && <AppsStageHalftone />}
+          {motion === 'marquee' && <AppsStageMarquee apps={apps} />}
+          {motion === 'orbit' && <AppsStageOrbit apps={apps} />}
+          {motion === 'ring' && <AppsStageRing apps={apps} />}
         </>
       }
       flushInline

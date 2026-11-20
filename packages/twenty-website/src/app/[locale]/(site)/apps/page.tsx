@@ -44,6 +44,7 @@ export default async function AppsMarketplacePage({
   params: Promise<LocaleRouteParams>;
   searchParams: Promise<{
     direction?: string;
+    hero?: string;
     tone?: string;
     view?: string;
   }>;
@@ -89,7 +90,14 @@ export default async function AppsMarketplacePage({
       />
       {isDirectionE ? (
         <main>
-          <AppsStageCraftHero apps={apps ?? []} />
+          <AppsStageCraftHero
+            apps={apps ?? []}
+            motion={
+              prototype.hero === 'marquee' || prototype.hero === 'orbit'
+                ? prototype.hero
+                : 'ring'
+            }
+          />
           <AppsStageFeatured apps={apps ?? []} />
           <AppsStageCraftCatalogue
             apps={apps ?? []}
