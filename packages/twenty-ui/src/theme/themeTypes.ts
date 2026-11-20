@@ -177,7 +177,6 @@ export type ThemeType = {
       danger: string;
       blue: string;
       transparentStrong: string;
-      transparentPrimary: string;
     };
     radius: {
       xs: string;

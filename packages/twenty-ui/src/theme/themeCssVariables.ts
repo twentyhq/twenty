@@ -178,7 +178,6 @@ export const themeCssVariables = {
       danger: 'var(--t-border-color-danger)',
       blue: 'var(--t-border-color-blue)',
       transparentStrong: 'var(--t-border-color-transparent-strong)',
-      transparentPrimary: 'var(--t-border-color-transparent-primary)',
     },
     radius: {
       xs: 'var(--t-border-radius-xs)',

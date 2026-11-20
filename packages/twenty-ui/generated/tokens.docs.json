@@ -413,13 +413,6 @@
     "isNumber": false
   },
   {
-    "path": "border.color.transparentPrimary",
-    "cssVariable": "--t-border-color-transparent-primary",
-    "light": "color(display-p3 1 1 1 / 0.8)",
-    "dark": "color(display-p3 0.09 0.09 0.09 / 0.8)",
-    "isNumber": false
-  },
-  {
     "path": "border.color.transparentStrong",
     "cssVariable": "--t-border-color-transparent-strong",
     "light": "color(display-p3 0 0 0 / 0.071)",

@@ -145,7 +145,6 @@ export const THEME_LIGHT = {
       danger: 'color(display-p3 0.984 0.812 0.811)',
       blue: 'color(display-p3 0.685 0.74 0.957)',
       transparentStrong: 'color(display-p3 0 0 0 / 0.071)',
-      transparentPrimary: 'color(display-p3 1 1 1 / 0.8)',
     },
     radius: {
       xs: '2px',

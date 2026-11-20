@@ -20,7 +20,7 @@ const StyledDot = styled.span<{ isOnline: boolean }>`
   border-radius: ${themeCssVariables.border.radius.rounded};
   bottom: calc(-0.5 * ${themeCssVariables.spacing['0.5']});
   box-shadow: 0 0 0 ${themeCssVariables.spacing['0.5']}
-    ${themeCssVariables.border.color.transparentPrimary};
+    ${themeCssVariables.background.primary};
   corner-shape: round;
   height: ${themeCssVariables.spacing['1.5']};
   position: absolute;
