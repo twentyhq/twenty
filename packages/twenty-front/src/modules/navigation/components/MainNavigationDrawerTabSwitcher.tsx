@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
-import { useNavigationMenuTabIdsWithUnreadChats } from '@/navigation-menu-item/display/hooks/useNavigationMenuTabIdsWithUnreadChats';
+import { useNavigationMenuChatAttention } from '@/navigation-menu-item/display/hooks/useNavigationMenuChatAttention';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { NAVIGATION_MENU_TAB_MAX_COUNT } from '@/navigation-menu-item/common/constants/NavigationMenuTabMaxCount';
 import { MainNavigationDrawerAddTabButton } from '@/navigation/components/MainNavigationDrawerAddTabButton';
@@ -74,8 +74,8 @@ export const MainNavigationDrawerTabSwitcher = () => {
   });
   const tabCountIncludingHome = navigationMenuTabs.length + 1;
   const activeNavigationMenuTab = useActiveNavigationMenuTab();
-  const { tabIdsWithUnreadChats, unreadOpenThreadCount } =
-    useNavigationMenuTabIdsWithUnreadChats();
+  const { getTabChatAttention, unreadOpenThreadCount } =
+    useNavigationMenuChatAttention();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
@@ -170,10 +170,7 @@ export const MainNavigationDrawerTabSwitcher = () => {
                 isActive={activeNavigationMenuTab?.id === tab.id}
                 isExpanded={isExpanded}
                 shouldShowTooltip={shouldShowTooltips}
-                isUnread={
-                  activeNavigationMenuTab?.id !== tab.id &&
-                  tabIdsWithUnreadChats.has(tab.id)
-                }
+                attention={getTabChatAttention(tab.id)}
               />
             </MainNavigationDrawerTabDropTarget>
           )),
