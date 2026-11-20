@@ -91,8 +91,7 @@ export class WorkflowTriggerController {
     try {
       const workflow =
         await this.coreWorkflowTriggerService.findCoreWorkflowByIdOrWorkspaceWorkflowId(
-          workspaceId,
-          workflowId,
+          { workspaceId, workflowId },
         );
 
       if (!isDefined(workflow)) {

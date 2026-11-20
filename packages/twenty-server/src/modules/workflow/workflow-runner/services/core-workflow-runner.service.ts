@@ -165,8 +165,7 @@ export class CoreWorkflowRunnerService {
     }
 
     const workflow = await this.coreWorkflowTriggerService.findCoreWorkflowById(
-      workspaceId,
-      workflowVersion.coreWorkflowId,
+      { workspaceId, coreWorkflowId: workflowVersion.coreWorkflowId },
     );
 
     if (!isDefined(workflow)) {

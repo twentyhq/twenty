@@ -68,10 +68,10 @@ export class WorkflowTriggerDispatchWorkspaceService {
 
     try {
       const coreWorkflow =
-        await this.coreWorkflowTriggerService.findCoreWorkflowById(
+        await this.coreWorkflowTriggerService.findCoreWorkflowById({
           workspaceId,
-          workflowId,
-        );
+          coreWorkflowId: workflowId,
+        });
 
       if (!isDefined(coreWorkflow)) {
         throw new WorkflowTriggerException(

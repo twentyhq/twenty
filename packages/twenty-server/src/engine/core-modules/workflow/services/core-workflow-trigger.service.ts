@@ -74,19 +74,25 @@ export class CoreWorkflowTriggerService {
     });
   }
 
-  async findCoreWorkflowById(
-    workspaceId: string,
-    coreWorkflowId: string,
-  ): Promise<WorkflowEntity | null> {
+  async findCoreWorkflowById({
+    workspaceId,
+    coreWorkflowId,
+  }: {
+    workspaceId: string;
+    coreWorkflowId: string;
+  }): Promise<WorkflowEntity | null> {
     return this.coreWorkflowRepository.findOne(workspaceId, {
       where: { id: coreWorkflowId },
     });
   }
 
-  async findCoreWorkflowByIdOrWorkspaceWorkflowId(
-    workspaceId: string,
-    workflowId: string,
-  ): Promise<WorkflowEntity | null> {
+  async findCoreWorkflowByIdOrWorkspaceWorkflowId({
+    workspaceId,
+    workflowId,
+  }: {
+    workspaceId: string;
+    workflowId: string;
+  }): Promise<WorkflowEntity | null> {
     const workflows = await this.coreWorkflowRepository.find(workspaceId, {
       where: [{ id: workflowId }, { workspaceWorkflowId: workflowId }],
     });
