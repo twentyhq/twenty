@@ -67,7 +67,7 @@ export const SettingsRoleRuleConditionLogicalOperatorCell = ({
     );
   }
 
-  if (readonly === true) {
+  if (readonly) {
     return (
       <StyledContainer>
         <Select
