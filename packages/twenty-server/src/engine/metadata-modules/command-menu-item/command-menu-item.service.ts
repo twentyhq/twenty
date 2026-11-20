@@ -437,23 +437,27 @@ export class CommandMenuItemService {
       isSystemSideEffect: flatCommandMenuItemToDelete.isSystemSideEffect,
     });
 
-    return {
-      flatCommandMenuItemToDelete,
-      flatCommandMenuItemToDeactivate: shouldDeactivate
-        ? {
-            ...dispatchIsActiveUpdateToAuthoredOverride({
-              metadataName: 'commandMenuItem',
-              flatEntity: flatCommandMenuItemToDelete,
-              isActive: false,
-              authorUniversalIdentifier:
-                workspaceCustomFlatApplication.universalIdentifier,
-              workspaceCustomApplicationUniversalIdentifier:
-                workspaceCustomFlatApplication.universalIdentifier,
-            }),
-            updatedAt: new Date().toISOString(),
-          }
-        : undefined,
+    if (!shouldDeactivate) {
+      return {
+        flatCommandMenuItemToDelete,
+        flatCommandMenuItemToDeactivate: undefined,
+      };
+    }
+
+    const flatCommandMenuItemToDeactivate = {
+      ...dispatchIsActiveUpdateToAuthoredOverride({
+        metadataName: 'commandMenuItem',
+        flatEntity: flatCommandMenuItemToDelete,
+        isActive: false,
+        authorUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      }),
+      updatedAt: new Date().toISOString(),
     };
+
+    return { flatCommandMenuItemToDelete, flatCommandMenuItemToDeactivate };
   }
 
   private async runCommandMenuItemMigration({
