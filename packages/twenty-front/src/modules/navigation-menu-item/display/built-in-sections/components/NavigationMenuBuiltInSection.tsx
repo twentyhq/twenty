@@ -39,9 +39,7 @@ export const NavigationMenuBuiltInSection = ({
         <NavigationDrawerInboxChannelsSection headerAction={headerAction} />
       );
     case 'aiChatRecents':
-      return (
-        <NavigationMenuAiChatRecentsSection headerAction={headerAction} />
-      );
+      return <NavigationMenuAiChatRecentsSection headerAction={headerAction} />;
     default:
       return null;
   }
