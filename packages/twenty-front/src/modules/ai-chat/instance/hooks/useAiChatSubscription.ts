@@ -109,6 +109,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
     let hasReceivedInitialKeepalive = false;
     let firstLiveSeq: number | null = null;
     let isStreamOpen = false;
+    let isPersistedRefetchPending = false;
 
     const closeWriter = () => {
       if (isDefined(writer)) {
@@ -117,8 +118,30 @@ export const useAiChatSubscription = (threadId: string | null) => {
       }
     };
 
+    const startPersistedRefetch = () => {
+      isPersistedRefetchPending = false;
+      store.set(replyStatusAtom, 'awaiting-persisted-refetch');
+      dispatchAiChatRefetchMessagesEvent(threadId);
+    };
+
+    // The read loop still flushes to the messages after the stream ends, so the refetch waits for it
+    const requestPersistedRefetch = () => {
+      if (isStreamOpen) {
+        isPersistedRefetchPending = true;
+        return;
+      }
+
+      startPersistedRefetch();
+    };
+
     const endStream = () => {
       isStreamOpen = false;
+
+      if (isPersistedRefetchPending) {
+        startPersistedRefetch();
+        return;
+      }
+
       store.set(replyStatusAtom, endAiChatReplyStatus('streaming'));
     };
 
@@ -267,8 +290,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
         case 'stream-ended':
         case 'message-persisted': {
           resetStreamProcessing();
-          store.set(replyStatusAtom, 'awaiting-persisted-refetch');
-          dispatchAiChatRefetchMessagesEvent(threadId);
+          requestPersistedRefetch();
           break;
         }
 
@@ -341,8 +363,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
           );
 
           resetStreamProcessing();
-          store.set(replyStatusAtom, 'awaiting-persisted-refetch');
-          dispatchAiChatRefetchMessagesEvent(threadId);
+          requestPersistedRefetch();
           endStream();
           break;
         }
@@ -379,6 +400,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
       store.set(fetchedMessagesAtom, []);
       store.set(queuedMessagesAtom, []);
       isStreamOpen = false;
+      isPersistedRefetchPending = false;
       store.set(replyStatusAtom, 'idle');
       store.set(
         errorAtom,
