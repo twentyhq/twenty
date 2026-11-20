@@ -21,6 +21,7 @@ const StyledDot = styled.span<{ isOnline: boolean }>`
   bottom: -1px;
   box-shadow: 0 0 0 ${themeCssVariables.spacing['0.5']}
     color-mix(in srgb, ${themeCssVariables.background.primary} 80%, transparent);
+  corner-shape: round;
   height: ${themeCssVariables.spacing['1.5']};
   position: absolute;
   right: -1px;
