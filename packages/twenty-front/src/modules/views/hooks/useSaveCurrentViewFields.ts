@@ -7,6 +7,7 @@ import { usePerformViewFieldApiPersist } from '@/views/hooks/internal/usePerform
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetViewFromState } from '@/views/hooks/useGetViewFromState';
 import { type ViewField } from '@/views/types/ViewField';
+import { getViewFieldRelationScopeInput } from '@/views/utils/getViewFieldRelationScopeInput';
 import {
   type CreateViewFieldInput,
   type UpdateViewFieldMutationVariables,
@@ -64,6 +65,9 @@ export const useSaveCurrentViewFields = () => {
               isCanonical: viewFieldToCreateOrUpdate.isCanonical,
               relationTargetFieldMetadataId:
                 viewFieldToCreateOrUpdate.relationTargetFieldMetadataId,
+              relationScope: getViewFieldRelationScopeInput(
+                viewFieldToCreateOrUpdate.relationScope,
+              ),
               size: viewFieldToCreateOrUpdate.size,
               aggregateOperation: viewFieldToCreateOrUpdate.aggregateOperation,
               viewId: currentViewId,
