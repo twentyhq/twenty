@@ -71,11 +71,15 @@ const buildFolderNavigationMenuItem = (
   updatedAt: '2024-01-01T00:00:00.000Z',
 });
 
-const buildContainerNavigationMenuItem = (
-  type: NavigationMenuItemType.TAB | NavigationMenuItemType.SECTION,
-  id: string,
-  position: number,
-): NavigationMenuItem => ({
+const buildContainerNavigationMenuItem = ({
+  type,
+  id,
+  position,
+}: {
+  type: NavigationMenuItemType.TAB | NavigationMenuItemType.SECTION;
+  id: string;
+  position: number;
+}): NavigationMenuItem => ({
   __typename: 'NavigationMenuItem',
   id,
   type,
@@ -311,11 +315,11 @@ describe('useDefaultHomePagePath', () => {
       withCurrentUser: true,
       withExistingView: false,
       navigationMenuItems: [
-        buildContainerNavigationMenuItem(
-          NavigationMenuItemType.SECTION,
-          'sales-section',
-          0,
-        ),
+        buildContainerNavigationMenuItem({
+          type: NavigationMenuItemType.SECTION,
+          id: 'sales-section',
+          position: 0,
+        }),
         buildObjectNavigationMenuItem('person', 0, 'sales-section'),
       ],
     });
@@ -331,11 +335,11 @@ describe('useDefaultHomePagePath', () => {
       withCurrentUser: true,
       withExistingView: false,
       navigationMenuItems: [
-        buildContainerNavigationMenuItem(
-          NavigationMenuItemType.SECTION,
-          'sales-section',
-          0,
-        ),
+        buildContainerNavigationMenuItem({
+          type: NavigationMenuItemType.SECTION,
+          id: 'sales-section',
+          position: 0,
+        }),
         buildObjectNavigationMenuItem('company', 0, 'sales-section'),
         buildObjectNavigationMenuItem('person', 1),
       ],
@@ -352,23 +356,23 @@ describe('useDefaultHomePagePath', () => {
       withCurrentUser: true,
       withExistingView: false,
       navigationMenuItems: [
-        buildContainerNavigationMenuItem(
-          NavigationMenuItemType.TAB,
-          'other-tab',
-          0,
-        ),
+        buildContainerNavigationMenuItem({
+          type: NavigationMenuItemType.TAB,
+          id: 'other-tab',
+          position: 0,
+        }),
         buildObjectNavigationMenuItem('opportunity', 0, 'other-tab'),
-        buildContainerNavigationMenuItem(
-          NavigationMenuItemType.SECTION,
-          'second-section',
-          2,
-        ),
+        buildContainerNavigationMenuItem({
+          type: NavigationMenuItemType.SECTION,
+          id: 'second-section',
+          position: 2,
+        }),
         buildObjectNavigationMenuItem('company', 0, 'second-section'),
-        buildContainerNavigationMenuItem(
-          NavigationMenuItemType.SECTION,
-          'first-section',
-          1,
-        ),
+        buildContainerNavigationMenuItem({
+          type: NavigationMenuItemType.SECTION,
+          id: 'first-section',
+          position: 1,
+        }),
         buildObjectNavigationMenuItem('person', 0, 'first-section'),
       ],
     });
