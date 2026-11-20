@@ -17,6 +17,26 @@ import {
   WorkflowQueryValidationExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 
+const isLoadedCoreWorkflowVisible = (
+  coreWorkflow: Pick<WorkflowEntity, 'visibility' | 'createdByUserWorkspaceId'>,
+  userWorkspaceId: string | undefined,
+): boolean =>
+  isCoreWorkflowVisibleToUser({
+    visibility: coreWorkflow.visibility,
+    createdByUserWorkspaceId: coreWorkflow.createdByUserWorkspaceId,
+    userWorkspaceId,
+  });
+
+const buildPrivateCoreWorkflowException = (coreWorkflowId: string) =>
+  new WorkflowQueryValidationException(
+    `Core workflow '${coreWorkflowId}' is private to another member`,
+    WorkflowQueryValidationExceptionCode.FORBIDDEN,
+    {
+      // Same message as a missing workflow, so a private one does not announce that it exists.
+      userFriendlyMessage: msg`Workflow not found`,
+    },
+  );
+
 // Versions carry the whole definition, so they answer to the workflow's rule; both asserts live here so a private
 // workflow has one deny to audit.
 @Injectable()
@@ -230,23 +250,17 @@ export class CoreWorkflowAccessService {
     userWorkspaceId: string | undefined;
     coreWorkflowIds: string[];
   }): Promise<void> {
-    if (coreWorkflowIds.length === 0) {
-      return;
-    }
-
-    const coreWorkflows = await this.coreWorkflowRepository.find(workspaceId, {
-      where: { id: In(coreWorkflowIds) },
-      select: {
-        id: true,
-        visibility: true,
-        createdByUserWorkspaceId: true,
+    const [inaccessibleCoreWorkflow] = await this.findInaccessibleCoreWorkflows(
+      {
+        workspaceId,
+        userWorkspaceId,
+        coreWorkflowIds,
       },
-    });
+    );
 
-    this.assertLoadedCoreWorkflowsAreVisibleOrThrow({
-      userWorkspaceId,
-      coreWorkflows,
-    });
+    if (isDefined(inaccessibleCoreWorkflow)) {
+      throw buildPrivateCoreWorkflowException(inaccessibleCoreWorkflow.id);
+    }
   }
 
   async assertCoreWorkflowVersionsAreAccessibleOrThrow({
@@ -435,22 +449,11 @@ export class CoreWorkflowAccessService {
   }): void {
     const inaccessibleCoreWorkflow = coreWorkflows.find(
       (coreWorkflow) =>
-        !isCoreWorkflowVisibleToUser({
-          visibility: coreWorkflow.visibility,
-          createdByUserWorkspaceId: coreWorkflow.createdByUserWorkspaceId,
-          userWorkspaceId,
-        }),
+        !isLoadedCoreWorkflowVisible(coreWorkflow, userWorkspaceId),
     );
 
     if (isDefined(inaccessibleCoreWorkflow)) {
-      throw new WorkflowQueryValidationException(
-        `Core workflow '${inaccessibleCoreWorkflow.id}' is private to another member`,
-        WorkflowQueryValidationExceptionCode.FORBIDDEN,
-        {
-          // Same message as a missing workflow, so a private one does not announce that it exists.
-          userFriendlyMessage: msg`Workflow not found`,
-        },
-      );
+      throw buildPrivateCoreWorkflowException(inaccessibleCoreWorkflow.id);
     }
   }
 
@@ -479,11 +482,7 @@ export class CoreWorkflowAccessService {
     // Unknown or deleted ids stay a no-op rather than a refusal.
     return coreWorkflows.filter(
       (coreWorkflow) =>
-        !isCoreWorkflowVisibleToUser({
-          visibility: coreWorkflow.visibility,
-          createdByUserWorkspaceId: coreWorkflow.createdByUserWorkspaceId,
-          userWorkspaceId,
-        }),
+        !isLoadedCoreWorkflowVisible(coreWorkflow, userWorkspaceId),
     );
   }
 }
