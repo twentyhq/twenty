@@ -38,13 +38,12 @@ export class CommonUpdateOneQueryRunnerService extends CommonRecordQueryRunnerSe
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<CommonQueryRunResult<ObjectRecord>> {
     const { result, relationAggregatedValues } =
-      await this.commonUpdateManyQueryRunnerService.run(
+      await this.commonUpdateManyQueryRunnerService.runOnOneRecord(
         {
           ...args,
           filter: { id: { eq: args.id } },
         },
         queryRunnerContext,
-        { isTargetingOneRecord: true },
       );
 
     if (!result || result.length === 0) {

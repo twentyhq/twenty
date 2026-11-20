@@ -41,13 +41,12 @@ export abstract class CommonFilteredMutationOneQueryRunnerService extends Common
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<CommonQueryRunResult<ObjectRecord>> {
     const { result, relationAggregatedValues } =
-      await this.manyQueryRunnerService.run(
+      await this.manyQueryRunnerService.runOnOneRecord(
         {
           ...args,
           filter: { id: { eq: args.id } },
         },
         queryRunnerContext,
-        { isTargetingOneRecord: true },
       );
 
     if (!isDefined(result) || result.length === 0) {

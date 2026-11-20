@@ -30,7 +30,6 @@ export class CommonUpdateManyQueryRunnerService extends CommonRecordQueryRunnerS
   async run(
     args: CommonExtendedInput<UpdateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-    { isTargetingOneRecord = false }: { isTargetingOneRecord?: boolean } = {},
   ): Promise<CommonQueryRunResult<ObjectRecord[]>> {
     return this.runFilteredMutation({
       queryRunnerContext,
@@ -38,7 +37,20 @@ export class CommonUpdateManyQueryRunnerService extends CommonRecordQueryRunnerS
       selection: args.selectedFieldsResult,
       kind: 'update',
       data: args.data,
-      isTargetingOneRecord,
+    });
+  }
+
+  async runOnOneRecord(
+    args: CommonExtendedInput<UpdateManyQueryArgs>,
+    queryRunnerContext: CommonExtendedQueryRunnerContext,
+  ): Promise<CommonQueryRunResult<ObjectRecord[]>> {
+    return this.runFilteredMutation({
+      queryRunnerContext,
+      filter: args.filter,
+      selection: args.selectedFieldsResult,
+      kind: 'update',
+      data: args.data,
+      isTargetingOneRecord: true,
     });
   }
 
