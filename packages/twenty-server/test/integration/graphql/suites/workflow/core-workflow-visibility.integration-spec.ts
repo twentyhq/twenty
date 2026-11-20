@@ -139,6 +139,7 @@ const UPDATE_CORE_WORKFLOW_MUTATION = `
     updateCoreWorkflow(input: $input) {
       id
       name
+      isPrivate
       visibility
     }
   }
@@ -621,7 +622,7 @@ describe('core workflow visibility (e2e)', () => {
       });
 
       assertIsDefinedOrThrow(cachedFlatWorkflow);
-      expect(cachedFlatWorkflow.visibility).toBe(WorkflowVisibility.PRIVATE);
+      expect(cachedFlatWorkflow.isPrivate).toBe(true);
       expect(cachedFlatWorkflow.createdByUserWorkspaceId).not.toBeNull();
     });
 
@@ -652,7 +653,7 @@ describe('core workflow visibility (e2e)', () => {
               metadataName: 'workflow',
               recordId: updatedCoreWorkflowId,
               properties: expect.objectContaining({
-                updatedFields: ['visibility'],
+                updatedFields: ['isPrivate'],
               }),
             }),
           ]),
@@ -695,6 +696,38 @@ describe('core workflow visibility (e2e)', () => {
         name: RENAMED_NAME,
         visibility: 'WORKSPACE',
         canChangeVisibility: true,
+      });
+    });
+
+    it('makes it private through isPrivate and reports both fields', async () => {
+      const response = await workflowGraphqlRequest(
+        UPDATE_CORE_WORKFLOW_MUTATION,
+        { input: { coreWorkflowId: updatedCoreWorkflowId, isPrivate: true } },
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.updateCoreWorkflow).toMatchObject({
+        isPrivate: true,
+        visibility: 'PRIVATE',
+      });
+    });
+
+    it('lets isPrivate win over a deprecated visibility sent with it', async () => {
+      const response = await workflowGraphqlRequest(
+        UPDATE_CORE_WORKFLOW_MUTATION,
+        {
+          input: {
+            coreWorkflowId: updatedCoreWorkflowId,
+            isPrivate: false,
+            visibility: WorkflowVisibility.PRIVATE,
+          },
+        },
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.updateCoreWorkflow).toMatchObject({
+        isPrivate: false,
+        visibility: 'WORKSPACE',
       });
     });
 

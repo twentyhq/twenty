@@ -70,12 +70,14 @@ export type CoreWorkflowDto = {
   canChangeVisibility: Scalars['Boolean']['output'];
   createdAt: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
+  isPrivate: Scalars['Boolean']['output'];
   isSystem: Scalars['Boolean']['output'];
   lastPublishedCoreWorkflowVersionId?: Maybe<Scalars['UUID']['output']>;
   lastPublishedVersionId?: Maybe<Scalars['UUID']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   statuses: Array<CoreWorkflowStatus>;
   updatedAt: Scalars['String']['output'];
+  /** @deprecated Use isPrivate instead */
   visibility: WorkflowVisibility;
   workspaceWorkflowId?: Maybe<Scalars['UUID']['output']>;
 };
@@ -242,7 +244,9 @@ export type CoreWorkflowsWithCurrentVersionsInput = {
 };
 
 export type CreateCoreWorkflowInput = {
+  isPrivate?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  /** @deprecated Use isPrivate instead */
   visibility?: InputMaybe<WorkflowVisibility>;
 };
 
@@ -487,7 +491,7 @@ export type Mutation = {
   updateCoreWorkflowVersionPositions: Scalars['Boolean']['output'];
   updateCoreWorkflowVersionStep: WorkflowAction;
   updateCoreWorkflowVersionTrigger: WorkflowVersionTrigger;
-  /** @deprecated Use updateCoreWorkflow with a visibility instead */
+  /** @deprecated Use updateCoreWorkflow with isPrivate instead */
   updateCoreWorkflowVisibility?: Maybe<CoreWorkflowDto>;
   updateWorkflowRunStep: WorkflowAction;
 };
@@ -1061,7 +1065,9 @@ export type UuidFilter = {
 
 export type UpdateCoreWorkflowInput = {
   coreWorkflowId: Scalars['UUID']['input'];
+  isPrivate?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  /** @deprecated Use isPrivate instead */
   visibility?: InputMaybe<WorkflowVisibility>;
 };
 
