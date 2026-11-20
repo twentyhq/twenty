@@ -4,11 +4,11 @@ Brings WhatsApp Business conversations into Twenty and lets agents and workflows
 
 - Incoming messages, media, edits and deletions are imported as conversations, one channel per business phone number. Messages the business sends from the WhatsApp Business app are imported too.
 - Conversations can be answered from Twenty, with attachments. Opening a conversation marks it as read on WhatsApp.
-- Messages sent by the business show their WhatsApp delivery status (sent, delivered, read or failed, with the reason).
+- Messages sent by the business show their WhatsApp delivery status (sent, delivered, read or failed, with the reason). Messages that are not delivered are reported to the inboxes of the members chosen in the app settings.
 - Senders are matched to existing people by WhatsApp ID or phone number, or created. Users who hide their number behind a username are matched by their business-scoped user ID.
 - Message templates are imported and kept in sync, and can be created and sent through the `create-template` and `send-template-message` tools. Sent templates appear in the recipient's conversation.
 - When someone stops or resumes WhatsApp marketing messages, the **WhatsApp marketing opt-out** field on their person record is updated, and marketing templates are no longer sent to them. A marketing send that Meta rejects because of an earlier opt-out also sets it.
-- Account alerts, reviews and phone number quality changes are sent to the inboxes of the workspace members you pick in the app settings.
+- Account alerts, reviews and phone number quality changes are sent to the same inboxes.
 
 ## Setup
 
@@ -42,8 +42,9 @@ Reconnect after the token changes or loses access to an account, and once after 
 
 ## Limitations
 
-- WhatsApp only delivers free-form replies within 24 hours of the customer's last message. Later replies are marked Failed; send a template instead.
+- WhatsApp only delivers free-form replies within 24 hours of the customer's last message, so later replies are refused; send a template instead.
 - A reply with several attachments is sent as one WhatsApp message per part, and only the first carries the delivery status.
+- Conversations that were already split in two before this version stay split; new messages join the existing thread.
 - Media older than two weeks in an imported history is shown as unavailable, because Meta no longer sends it.
 
 ## Development

@@ -1,7 +1,7 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { ingestMessages } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
-import { buildWhatsAppThreadExternalId } from 'src/logic-functions/data/build-whatsapp-thread-external-id.util';
+import { resolveWhatsAppThreadExternalId } from 'src/logic-functions/data/resolve-whatsapp-thread-external-id.util';
 import { findOrCreateWhatsAppMessageChannelOrThrow } from 'src/logic-functions/data/find-or-create-whatsapp-message-channel-or-throw.util';
 import { findOrCreateWhatsAppPersonId } from 'src/logic-functions/data/find-or-create-whatsapp-person-id.util';
 import { whatsAppApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
@@ -46,13 +46,16 @@ export const recordSentWhatsAppTemplateMessage = async ({
   });
   const knownPerson: WhatsAppPerson | undefined = person ?? undefined;
 
-  // prefer what the person record knows, so the template joins the thread of their incoming messages
+  // the person record may know the user ID even when the template was sent to a phone number
   const customerIdentity: WhatsAppIdentity = {
     whatsAppId: knownPerson?.whatsAppId ?? recipientIdentity.whatsAppId,
     whatsAppUserId: knownPerson?.whatsAppUserId ?? recipientIdentity.whatsAppUserId,
   };
   const customerHandle = customerIdentity.whatsAppId ?? customerIdentity.whatsAppUserId;
-  const threadExternalId = buildWhatsAppThreadExternalId({ customerIdentity });
+  const threadExternalId = await resolveWhatsAppThreadExternalId({
+    messageChannelId: messageChannel.id,
+    customerIdentity,
+  });
 
   if (!isDefined(customerHandle) || !isDefined(threadExternalId)) {
     throw new Error(`WhatsApp template message ${messageId} has no recipient identifier`);

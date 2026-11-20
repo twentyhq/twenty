@@ -2,7 +2,7 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import { listMessageChannels, type MarkAppThreadAsReadPayload } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 import { WHATSAPP_LOGIC_FUNCTION_MARK_THREAD_AS_READ_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { findLatestIncomingWhatsAppMessageId } from 'src/logic-functions/data/find-latest-incoming-whatsapp-message-id.util';
+import { findLatestIncomingWhatsAppMessage } from 'src/logic-functions/data/find-latest-incoming-whatsapp-message.util';
 import { findWhatsAppPhoneNumberIdOrThrow } from 'src/logic-functions/data/find-whatsapp-phone-number-id-or-throw.util';
 import { getWhatsAppAccessTokenOrThrow } from 'src/logic-functions/data/get-whatsapp-access-token-or-throw.util';
 import { whatsAppApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
@@ -13,12 +13,12 @@ const handler = async ({
   messageChannelId,
   threadExternalId,
 }: MarkAppThreadAsReadPayload): Promise<void> => {
-  const latestIncomingMessageId = await findLatestIncomingWhatsAppMessageId({
+  const latestIncomingMessage = await findLatestIncomingWhatsAppMessage({
     messageChannelId,
     threadExternalId,
   });
 
-  if (!isDefined(latestIncomingMessageId)) {
+  if (!isDefined(latestIncomingMessage)) {
     return;
   }
 
@@ -42,7 +42,7 @@ const handler = async ({
         displayPhoneNumber: messageChannel.handle,
       }),
     },
-    data: { messaging_product: 'whatsapp', status: 'read', message_id: latestIncomingMessageId },
+    data: { messaging_product: 'whatsapp', status: 'read', message_id: latestIncomingMessage.externalId },
   });
 };
 

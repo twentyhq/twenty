@@ -37,15 +37,17 @@ type WhatsAppWebhookMessageErrors = {
 
 type WhatsAppWebhookMessageStatuses = {
   // only 1 element
-  statuses: Array<{
-    id: string;
-    status: 'sent' | 'delivered' | 'read' | 'failed';
-    timestamp: string;
-    recipient_id?: string; // phone number, omitted when a username hides it
-    recipient_user_id?: string; // business-scoped user ID (BSUID)
-    errors?: WhatsAppWebhookError[]; // failed status only
-  }>;
+  statuses: WhatsAppWebhookMessageStatus[];
 }
+
+export type WhatsAppWebhookMessageStatus = {
+  id: string;
+  status: 'sent' | 'delivered' | 'read' | 'failed';
+  timestamp: string;
+  recipient_id?: string; // phone number, omitted when a username hides it
+  recipient_user_id?: string; // business-scoped user ID (BSUID)
+  errors?: WhatsAppWebhookError[]; // failed status only
+};
 
 // https://developers.facebook.com/documentation/business-messaging/whatsapp/business-scoped-user-ids
 export type WhatsAppWebhookMessageContacts = {

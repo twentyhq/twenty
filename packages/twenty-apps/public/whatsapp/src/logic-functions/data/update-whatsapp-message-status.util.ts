@@ -4,6 +4,7 @@ import { WHATSAPP_MESSAGE_STATUSES } from 'src/constants/whatsapp-message-status
 import { findMessageChannelByDisplayPhoneNumber } from 'src/logic-functions/data/find-message-channel-by-display-phone-number.util';
 import { getNextWhatsAppMessageStatus } from 'src/logic-functions/data/get-next-whatsapp-message-status.util';
 
+// returns the message when its status changed
 export const updateWhatsAppMessageStatus = async ({
   displayPhoneNumber,
   messageExternalId,
@@ -14,11 +15,11 @@ export const updateWhatsAppMessageStatus = async ({
   messageExternalId: string;
   reportedStatus: (typeof WHATSAPP_MESSAGE_STATUSES)[number];
   errors?: Array<{ code: number; title: string; error_data?: { details?: string } }>;
-}) => {
+}): Promise<{ text: string | null; statusError: string | null } | undefined> => {
   const messageChannel = await findMessageChannelByDisplayPhoneNumber(displayPhoneNumber);
 
   if (!isDefined(messageChannel)) {
-    return;
+    return undefined;
   }
 
   const client = new CoreApiClient();
@@ -31,15 +32,15 @@ export const updateWhatsAppMessageStatus = async ({
         },
         first: 1,
       },
-      edges: { node: { message: { id: true, whatsAppStatus: true } } },
+      edges: { node: { message: { id: true, text: true, whatsAppStatus: true } } },
     },
   });
-  const message: { id: string; whatsAppStatus: string | null } | undefined =
+  const message: { id: string; text: string | null; whatsAppStatus: string | null } | undefined =
     messageChannelMessageAssociations?.edges[0]?.node.message ?? undefined;
 
   // statuses also arrive for messages Twenty never stored, such as the extra parts of a reply
   if (!isDefined(message)) {
-    return;
+    return undefined;
   }
 
   const nextStatus = getNextWhatsAppMessageStatus({
@@ -48,8 +49,13 @@ export const updateWhatsAppMessageStatus = async ({
   });
 
   if (!isDefined(nextStatus)) {
-    return;
+    return undefined;
   }
+
+  const statusError =
+    reportedStatus === 'failed'
+      ? errors.map(({ code, title, error_data }) => `${code}: ${error_data?.details ?? title}`).join('; ')
+      : null;
 
   await client.mutation({
     updateMessage: {
@@ -57,13 +63,12 @@ export const updateWhatsAppMessageStatus = async ({
         id: message.id,
         data: {
           whatsAppStatus: nextStatus,
-          whatsAppStatusError:
-            reportedStatus === 'failed'
-              ? errors.map(({ code, title, error_data }) => `${code}: ${error_data?.details ?? title}`).join('; ')
-              : null,
+          whatsAppStatusError: statusError,
         },
       },
       id: true,
     },
   });
+
+  return { text: message.text, statusError };
 };

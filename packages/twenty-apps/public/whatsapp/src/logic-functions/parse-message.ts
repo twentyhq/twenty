@@ -20,7 +20,7 @@ import { type IngestMessageParticipant, ingestMessages, kv } from "twenty-sdk/lo
 import { isDefined } from "twenty-sdk/utils";
 import { findOrCreateWhatsAppMessageChannelOrThrow } from "src/logic-functions/data/find-or-create-whatsapp-message-channel-or-throw.util";
 import { parseWhatsAppTimestamp } from "src/logic-functions/data/parse-whatsapp-timestamp.util";
-import { buildWhatsAppThreadExternalId } from "src/logic-functions/data/build-whatsapp-thread-external-id.util";
+import { resolveWhatsAppThreadExternalId } from "src/logic-functions/data/resolve-whatsapp-thread-external-id.util";
 import { buildRevokedMessageText } from "src/logic-functions/data/build-revoked-message-text.util";
 import { uploadWhatsAppMediaAttachmentOnce } from "src/logic-functions/data/upload-whatsapp-media-attachment-once.util";
 import { WHATSAPP_KV_KEY_PREFIXES } from "src/constants/whatsapp-kv-key-prefixes.constant";
@@ -118,7 +118,11 @@ const handler = async ({
     throw new Error(`WhatsApp message ${messages.id} has no sender phone number or user ID`);
   }
   const threadExternalId =
-    buildWhatsAppThreadExternalId({ groupId: messages.group_id, customerIdentity }) ?? customerHandle;
+    (await resolveWhatsAppThreadExternalId({
+      messageChannelId: messageChannel.id,
+      groupId: messages.group_id,
+      customerIdentity,
+    })) ?? customerHandle;
   // history imports include messages the business sent, with the business number as sender
   const isSentByBusiness =
     isNonEmptyString(messages.from) &&

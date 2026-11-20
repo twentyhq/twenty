@@ -10,6 +10,8 @@ import { WHATSAPP_LOGIC_FUNCTION_SEND_MESSAGE_UNIVERSAL_IDENTIFIER } from 'src/c
 import { buildWhatsAppMediaMessage } from 'src/logic-functions/data/build-whatsapp-media-message.util';
 import { buildWhatsAppMessageTarget } from 'src/logic-functions/data/build-whatsapp-message-target.util';
 import { findWhatsAppPhoneNumberIdOrThrow } from 'src/logic-functions/data/find-whatsapp-phone-number-id-or-throw.util';
+import { findLatestIncomingWhatsAppMessage } from 'src/logic-functions/data/find-latest-incoming-whatsapp-message.util';
+import { isWithinWhatsAppCustomerServiceWindow } from 'src/logic-functions/data/is-within-whatsapp-customer-service-window.util';
 import { getWhatsAppAccessTokenOrThrow } from 'src/logic-functions/data/get-whatsapp-access-token-or-throw.util';
 import { uploadWhatsAppMedia } from 'src/logic-functions/data/upload-whatsapp-media.util';
 import { whatsAppApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
@@ -30,13 +32,28 @@ const handler = async ({
     throw new Error(`WhatsApp message channel ${messageChannelId} not found`);
   }
 
+  const target = buildWhatsAppMessageTarget(threadExternalId);
+
+  // Meta accepts these sends and only reports them as failed later, so they are refused upfront
+  if (target.recipient_type === 'individual') {
+    const latestIncomingMessage = await findLatestIncomingWhatsAppMessage({
+      messageChannelId,
+      threadExternalId,
+    });
+
+    if (!isWithinWhatsAppCustomerServiceWindow({ lastCustomerMessageAt: latestIncomingMessage?.receivedAt })) {
+      throw new Error(
+        'WhatsApp only delivers replies within 24 hours of the customer\'s last message. Send a template to restart the conversation.',
+      );
+    }
+  }
+
   const accessToken = await getWhatsAppAccessTokenOrThrow({ connectedAccountId });
   const phoneNumberId = await findWhatsAppPhoneNumberIdOrThrow({
     accessToken,
     connectedAccountId,
     displayPhoneNumber: messageChannel.handle,
   });
-  const target = buildWhatsAppMessageTarget(threadExternalId);
 
   // WhatsApp has no message with both text and several files, so each part is its own message
   const send = async (content: WhatsAppReplyContent) => {
