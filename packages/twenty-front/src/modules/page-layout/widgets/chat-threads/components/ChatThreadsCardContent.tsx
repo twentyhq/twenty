@@ -10,7 +10,7 @@ import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRec
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadClick';
-import { useSidePanelAiChatThreadId } from '@/side-panel/pages/ask-ai/hooks/useSidePanelAiChatThreadId';
+import { useSidePanelAiChatThreadId } from '@/side-panel/hooks/useSidePanelAiChatThreadId';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { ErrorState } from '@/ui/feedback/empty-state/components/ErrorState';
 import { useLingui } from '@lingui/react/macro';
