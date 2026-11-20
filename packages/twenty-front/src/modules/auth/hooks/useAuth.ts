@@ -60,6 +60,7 @@ import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { isChooseWorkspaceActionRequested } from '@/auth/utils/isChooseWorkspaceActionRequested';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
+import { closeWebPushNotificationsAndUnsubscribe } from '@/web-push/utils/closeWebPushNotificationsAndUnsubscribe';
 import { i18n } from '@lingui/core';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -67,6 +68,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
+import { logError } from '~/utils/logError';
 import { useStore } from 'jotai';
 
 export const useAuth = () => {
@@ -464,6 +466,8 @@ export const useAuth = () => {
       await signOutMutation();
       store.set(isPendingServerSignOutState.atom, false);
     } catch {}
+
+    await closeWebPushNotificationsAndUnsubscribe().catch(logError);
 
     broadcastSignOutToOtherTabs();
     clearSession();

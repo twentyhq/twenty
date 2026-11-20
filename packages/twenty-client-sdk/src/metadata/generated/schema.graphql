@@ -1473,6 +1473,7 @@ type ClientConfig {
   serverUrl: String!
   signInPrefilled: Boolean!
   support: Support!
+  webPushVapidPublicKey: String!
 }
 
 type ClientConfigMaintenanceMode {
@@ -3762,8 +3763,10 @@ type Mutation {
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   updateCommandMenuItem(input: UpdateCommandMenuItemInput!): CommandMenuItem!
   updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
+  updateFocusedTab(input: UpdateFocusedTabInput!): Boolean!
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
   updateGettingStarted(input: UpdateGettingStartedInput!): GettingStartedProgress!
+  updateInboxNotificationSettings(input: UpdateInboxNotificationSettingsInput!): UserWorkspace!
   updateLabPublicFeatureFlag(input: UpdateLabPublicFeatureFlagInput!): FeatureFlag!
   updateManyNavigationMenuItems(inputs: [UpdateOneNavigationMenuItemInput!]!): [NavigationMenuItem!]!
   updateManyObjects(inputs: [UpdateOneObjectInput!]!): [Object!]!
@@ -3817,6 +3820,7 @@ type Mutation {
   upsertPermissionFlags(upsertPermissionFlagsInput: UpsertPermissionFlagsInput!): [RolePermissionFlag!]!
   upsertRowLevelPermissionRules(input: UpsertRowLevelPermissionRulesInput!): UpsertRowLevelPermissionRulesResult!
   upsertViewWidget(input: UpsertViewWidgetInput!): View!
+  upsertWebPushSubscription(input: UpsertWebPushSubscriptionInput!): Boolean!
   validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
   verifyEmailAndGetLoginToken(captchaToken: String, email: String!, emailVerificationToken: String!, origin: String!): VerifyEmailAndGetLoginToken!
   verifyEmailAndGetWorkspaceAgnosticToken(captchaToken: String, email: String!, emailVerificationToken: String!): AvailableWorkspacesAndAccessTokens!
@@ -5480,6 +5484,11 @@ input UpdateFieldInput {
   universalIdentifier: String
 }
 
+input UpdateFocusedTabInput {
+  isFocused: Boolean!
+  tabId: String!
+}
+
 input UpdateFrontComponentInput {
   """The id of the front component to update"""
   id: UUID!
@@ -5499,6 +5508,11 @@ input UpdateGettingStartedInput {
   isHidden: Boolean
   selectedStepActionKey: GettingStartedStepActionKey
   snoozedUntil: String
+}
+
+input UpdateInboxNotificationSettingsInput {
+  inboxNotificationLevel: String!
+  isInboxNotificationPreviewEnabled: Boolean!
 }
 
 input UpdateLabPublicFeatureFlagInput {
@@ -6074,6 +6088,13 @@ input UpsertViewWidgetViewSortInput {
   id: UUID
 }
 
+input UpsertWebPushSubscriptionInput {
+  browserAuthSecret: String!
+  browserPublicKey: String!
+  endpoint: String!
+  vapidPublicKey: String!
+}
+
 type UsageAnalytics {
   periodEnd: DateTime!
   periodStart: DateTime!
@@ -6298,7 +6319,9 @@ type UserWorkspace {
   createdAt: DateTime!
   deletedAt: DateTime
   id: UUID!
+  inboxNotificationLevel: String
   isImpersonating: Boolean
+  isInboxNotificationPreviewEnabled: Boolean
   locale: String!
   objectRecordsPermissions: [ObjectRecordsPermissions!]
   permissionFlags: [PermissionFlagType!]

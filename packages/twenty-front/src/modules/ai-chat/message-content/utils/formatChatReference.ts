@@ -1,6 +1,8 @@
-import { type ChatReferenceIdentity } from '@/ai-chat/message-content/types/ChatReferenceIdentity';
 import { getChatReferenceIdentitySegment } from '@/ai-chat/message-content/utils/getChatReferenceIdentitySegment';
-import { formatRecordReference } from 'twenty-shared/ai';
+import {
+  type ChatReferenceIdentity,
+  formatRecordReference,
+} from 'twenty-shared/ai';
 
 export const formatChatReference = (
   reference: ChatReferenceIdentity & { displayName: string },

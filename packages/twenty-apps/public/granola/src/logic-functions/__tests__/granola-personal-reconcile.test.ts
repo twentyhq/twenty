@@ -24,20 +24,18 @@ afterEach(() => {
 });
 
 describe('granolaPersonalReconcileHandler', () => {
-  it('skips connection hooks before activation', async () => {
-    vi.stubEnv('GRANOLA_PERSONAL_SYNC_ENABLED', undefined);
+  it('skips connection hooks until the member saves a folder selection', async () => {
+    vi.mocked(kv.get).mockResolvedValue(null);
 
     await expect(
       granolaPersonalReconcileHandler({
         connectedAccountId: OWN_CONNECTION.id,
       }),
     ).resolves.toEqual({ success: true, skipped: true });
-    expect(kv.get).not.toHaveBeenCalled();
     expect(getConnection).not.toHaveBeenCalled();
   });
 
   it('skips scheduled reconciliation after the connection key changes', async () => {
-    vi.stubEnv('GRANOLA_PERSONAL_SYNC_ENABLED', 'true');
     vi.mocked(listConnections).mockResolvedValue([OWN_CONNECTION]);
     vi.mocked(kv.get).mockResolvedValue([]);
     const fetchProvider = vi.fn<typeof fetch>();
@@ -56,7 +54,6 @@ describe('granolaPersonalReconcileHandler', () => {
   it('prunes only old unregistered endpoints for this connection', async () => {
     const apiUrl = 'https://twenty.example.com';
     vi.stubEnv('TWENTY_API_URL', apiUrl);
-    vi.stubEnv('GRANOLA_PERSONAL_SYNC_ENABLED', 'true');
     vi.useFakeTimers();
     vi.setSystemTime('2026-11-19T04:30:00.000Z');
     vi.mocked(listConnections).mockResolvedValue([OWN_CONNECTION]);

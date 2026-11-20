@@ -85,7 +85,9 @@ export const computeNavigationMenuItemDropPlacement = ({
       sortedList: destinationItems,
       draggableId: draggedItem.id,
       destinationIndex:
-        insertBeforeIndex >= 0 ? insertBeforeIndex : destinationIndex,
+        insertBeforeIndex >= 0
+          ? insertBeforeIndex
+          : Math.min(destinationIndex, destinationItems.length),
     }),
     parentId: isSameParent ? undefined : destinationParentId,
   };

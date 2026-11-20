@@ -1,7 +1,9 @@
+import {
+  escapeMarkdownForChatReference,
+  getChatReferenceSegments,
+} from 'twenty-shared/ai';
 import { PROTECTED_CHAT_REFERENCE_MARKER } from '@/ai-chat/message-content/constants/ProtectedChatReferenceMarker';
-import { escapeMarkdownForChatReference } from '@/ai-chat/message-content/utils/escapeMarkdownForChatReference';
 import { formatChatReference } from '@/ai-chat/message-content/utils/formatChatReference';
-import { getChatReferenceSegments } from '@/ai-chat/message-content/utils/getChatReferenceSegments';
 import { getMarkdownTextChatReferences } from 'twenty-shared/markdown';
 
 const escapeChatReferenceBrackets = (reference: string): string =>
