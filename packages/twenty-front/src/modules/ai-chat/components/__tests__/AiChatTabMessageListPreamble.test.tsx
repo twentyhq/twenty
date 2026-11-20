@@ -13,13 +13,16 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-jest.mock('@/ai-chat/workspace-setup/hooks/useIsWorkspaceSetupChat', () => ({
+jest.mock('@/ai-chat/hooks/useIsWorkspaceSetupChat', () => ({
   useIsWorkspaceSetupChat: () => true,
 }));
 
-jest.mock('@/onboarding/components/WorkspaceSetupChatPreamble', () => ({
-  WorkspaceSetupChatPreamble: () => <div data-testid="preamble" />,
-}));
+jest.mock(
+  '@/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble',
+  () => ({
+    WorkspaceSetupChatPreamble: () => <div data-testid="preamble" />,
+  }),
+);
 
 jest.mock(
   '@/ai-chat/messages/components/AiChatInitialLoadingIndicator',

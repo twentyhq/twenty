@@ -1,4 +1,10 @@
-import { useSwitchToNewAiChat } from '@/ai-chat/hooks/useSwitchToNewAiChat';
+import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
+import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
+import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
+import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
+import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
+import { useNavigationMenuTabIdsWithUnreadChats } from '@/navigation-menu-item/display/hooks/useNavigationMenuTabIdsWithUnreadChats';
+import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
@@ -9,11 +15,13 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
+import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type IconComponent,
@@ -21,15 +29,22 @@ import {
   IconMessageCirclePlus,
   IconSearch,
 } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-type MobileNavigationBarItemName = 'home' | 'search' | 'newAiChat';
+type MobileNavigationBarItemName =
+  | 'home'
+  | 'search'
+  | 'newAiChat'
+  | `tab-${string}`;
 
 type MobileNavigationBarItem = {
   name: MobileNavigationBarItemName;
   label: string;
   Icon: IconComponent;
   onClick: () => void;
+  isUnread?: boolean;
+  hasDividerAfter?: boolean;
 };
 
 export const useMobileNavigationBarItems = (): {
@@ -47,6 +62,23 @@ export const useMobileNavigationBarItems = (): {
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+  const { getIcon } = useIcons();
+  const navigationMenuTabs = useWorkspaceNavigationMenuContainers({
+    type: NavigationMenuItemType.TAB,
+    containerId: null,
+  });
+  const activeNavigationMenuTab = useActiveNavigationMenuTab();
+  const { tabIdsWithUnreadChats, unreadOpenThreadCount } =
+    useNavigationMenuTabIdsWithUnreadChats();
+  const setCurrentNavigationMenuTabId = useSetAtomState(
+    currentNavigationMenuTabIdState,
+  );
+  const setNavigationDrawerActiveTab = useSetAtomState(
+    navigationDrawerActiveTabState,
+  );
+  const setCurrentNavigationMenuItemFolderId = useSetAtomState(
+    currentNavigationMenuItemFolderIdState,
+  );
 
   const setContextStoreCurrentObjectMetadataItemId = useSetAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -69,20 +101,51 @@ export const useMobileNavigationBarItems = (): {
     setIsNavigationDrawerExpanded(false);
   };
 
+  // Replace like desktop so going back doesn't land in the settings just left.
+  const openHomePageOnTab = (tabId: string | null) => {
+    closeSidePanelMenu();
+    closeSettingsDrawer();
+    setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
+    setCurrentNavigationMenuTabId(tabId);
+    setCurrentNavigationMenuItemFolderId(null);
+    navigate(AppPath.Home, { replace: isSettingsDrawer });
+  };
+
+  const getActiveItemName = (): MobileNavigationBarItemName | '' => {
+    if (pathname !== AppPath.Home) {
+      return '';
+    }
+
+    return isDefined(activeNavigationMenuTab)
+      ? `tab-${activeNavigationMenuTab.id}`
+      : 'home';
+  };
+
   return {
-    activeItemName: pathname === AppPath.Home ? 'home' : '',
+    activeItemName: getActiveItemName(),
     items: [
       {
         name: 'home',
         label: t`Home`,
         Icon: IconHome,
-        onClick: () => {
-          closeSidePanelMenu();
-          closeSettingsDrawer();
-          // Replace like desktop so going back doesn't land in the settings just left.
-          navigate(AppPath.Home, { replace: isSettingsDrawer });
-        },
+        onClick: () => openHomePageOnTab(null),
       },
+      ...navigationMenuTabs.map((tab, index): MobileNavigationBarItem => {
+        const isOpenOnHomePage =
+          pathname === AppPath.Home && activeNavigationMenuTab?.id === tab.id;
+        const isUnread = !isOpenOnHomePage && tabIdsWithUnreadChats.has(tab.id);
+
+        return {
+          name: `tab-${tab.id}`,
+          label: isUnread
+            ? t`${tab.name}, ${unreadOpenThreadCount} unread`
+            : tab.name,
+          Icon: getIcon(tab.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT),
+          onClick: () => openHomePageOnTab(tab.id),
+          isUnread,
+          hasDividerAfter: index === navigationMenuTabs.length - 1,
+        };
+      }),
       {
         name: 'search',
         label: t`Search`,

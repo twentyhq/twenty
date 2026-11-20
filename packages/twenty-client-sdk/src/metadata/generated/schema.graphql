@@ -638,6 +638,7 @@ type ApplicationContent {
   frontComponents: [ApplicationContentItem!]!
   indexes: [ApplicationContentItem!]!
   logicFunctions: [ApplicationContentItem!]!
+  mcpServers: [ApplicationContentItem!]!
   navigationMenuItems: [ApplicationContentItem!]!
   objects: [ApplicationContentItem!]!
   pageLayoutTabs: [ApplicationContentItem!]!
@@ -848,6 +849,7 @@ type ApplicationRegistration {
 }
 
 enum ApplicationRegistrationSourceType {
+  BUNDLED
   LOCAL
   NPM
   OAUTH_ONLY
@@ -1473,6 +1475,7 @@ type ClientConfig {
   serverUrl: String!
   signInPrefilled: Boolean!
   support: Support!
+  webPushVapidPublicKey: String!
 }
 
 type ClientConfigMaintenanceMode {
@@ -2484,6 +2487,7 @@ enum FeatureFlagKey {
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED
   IS_AI_CHAT_INBOX_ENABLED
   IS_AI_DATA_POLICY_ENABLED
+  IS_APPLICATION_PRICE_BILLING_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED
   IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED
@@ -3188,6 +3192,7 @@ type MarketplaceApp {
   category: String!
   connectUrl: String
   description: String!
+  hasMcpServers: Boolean!
   id: String!
   isListed: Boolean!
   logoUrl: String
@@ -3761,8 +3766,10 @@ type Mutation {
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   updateCommandMenuItem(input: UpdateCommandMenuItemInput!): CommandMenuItem!
   updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
+  updateFocusedTab(input: UpdateFocusedTabInput!): Boolean!
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
   updateGettingStarted(input: UpdateGettingStartedInput!): GettingStartedProgress!
+  updateInboxNotificationSettings(input: UpdateInboxNotificationSettingsInput!): UserWorkspace!
   updateLabPublicFeatureFlag(input: UpdateLabPublicFeatureFlagInput!): FeatureFlag!
   updateManyNavigationMenuItems(inputs: [UpdateOneNavigationMenuItemInput!]!): [NavigationMenuItem!]!
   updateManyObjects(inputs: [UpdateOneObjectInput!]!): [Object!]!
@@ -3816,6 +3823,7 @@ type Mutation {
   upsertPermissionFlags(upsertPermissionFlagsInput: UpsertPermissionFlagsInput!): [RolePermissionFlag!]!
   upsertRowLevelPermissionRules(input: UpsertRowLevelPermissionRulesInput!): UpsertRowLevelPermissionRulesResult!
   upsertViewWidget(input: UpsertViewWidgetInput!): View!
+  upsertWebPushSubscription(input: UpsertWebPushSubscriptionInput!): Boolean!
   validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
   verifyEmailAndGetLoginToken(captchaToken: String, email: String!, emailVerificationToken: String!, origin: String!): VerifyEmailAndGetLoginToken!
   verifyEmailAndGetWorkspaceAgnosticToken(captchaToken: String, email: String!, emailVerificationToken: String!): AvailableWorkspacesAndAccessTokens!
@@ -3838,6 +3846,7 @@ type NavigationMenuItem {
   folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
   id: UUID!
+  isActive: Boolean!
   link: String
   name: String
   nativePageKey: String
@@ -5478,6 +5487,11 @@ input UpdateFieldInput {
   universalIdentifier: String
 }
 
+input UpdateFocusedTabInput {
+  isFocused: Boolean!
+  tabId: String!
+}
+
 input UpdateFrontComponentInput {
   """The id of the front component to update"""
   id: UUID!
@@ -5497,6 +5511,11 @@ input UpdateGettingStartedInput {
   isHidden: Boolean
   selectedStepActionKey: GettingStartedStepActionKey
   snoozedUntil: String
+}
+
+input UpdateInboxNotificationSettingsInput {
+  inboxNotificationLevel: String!
+  isInboxNotificationPreviewEnabled: Boolean!
 }
 
 input UpdateLabPublicFeatureFlagInput {
@@ -5573,6 +5592,7 @@ input UpdateNavigationMenuItemInput {
   color: String
   folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
+  isActive: Boolean
   link: String
   name: String
   pageLayoutId: UUID
@@ -6070,6 +6090,13 @@ input UpsertViewWidgetViewSortInput {
   id: UUID
 }
 
+input UpsertWebPushSubscriptionInput {
+  browserAuthSecret: String!
+  browserPublicKey: String!
+  endpoint: String!
+  vapidPublicKey: String!
+}
+
 type UsageAnalytics {
   periodEnd: DateTime!
   periodStart: DateTime!
@@ -6294,7 +6321,9 @@ type UserWorkspace {
   createdAt: DateTime!
   deletedAt: DateTime
   id: UUID!
+  inboxNotificationLevel: String
   isImpersonating: Boolean
+  isInboxNotificationPreviewEnabled: Boolean
   locale: String!
   objectRecordsPermissions: [ObjectRecordsPermissions!]
   permissionFlags: [PermissionFlagType!]

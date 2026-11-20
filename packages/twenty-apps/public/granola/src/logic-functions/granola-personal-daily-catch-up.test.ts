@@ -19,7 +19,6 @@ vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
 }));
 
 beforeEach(() => {
-  vi.stubEnv('GRANOLA_PERSONAL_SYNC_ENABLED', 'true');
   vi.mocked(enqueueJobs).mockImplementation(async (request) => ({
     enqueued: true,
     logicFunctionUniversalIdentifier: request.logicFunctionUniversalIdentifier,
@@ -31,22 +30,10 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.resetAllMocks();
-  vi.unstubAllEnvs();
   vi.useRealTimers();
 });
 
 describe('granolaPersonalDailyCatchUpHandler', () => {
-  it('leaves recovery dormant before activation', async () => {
-    vi.stubEnv('GRANOLA_PERSONAL_SYNC_ENABLED', undefined);
-
-    await expect(granolaPersonalDailyCatchUpHandler()).resolves.toEqual({
-      success: true,
-      skipped: true,
-    });
-    expect(listConnections).not.toHaveBeenCalled();
-    expect(enqueueJobs).not.toHaveBeenCalled();
-  });
-
   it('schedules nothing when there are no personal connections', async () => {
     vi.mocked(listConnections).mockResolvedValue([]);
 

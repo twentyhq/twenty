@@ -18,7 +18,7 @@ const expectSelected = (threadId: string | null) =>
     AppPath.AiChatInbox,
     { threadId },
     undefined,
-    { replace: true },
+    { replace: true, state: null },
   );
 
 describe('InboxSelectionEffect', () => {

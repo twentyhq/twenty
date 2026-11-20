@@ -4,7 +4,7 @@ import { type ReactNode } from 'react';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
-import { useLoadAiChatThread } from '@/ai-chat/hooks/useLoadAiChatThread';
+import { useLoadAiChatThread } from '@/ai-chat/instance/hooks/useLoadAiChatThread';
 import { useLoadInboxThreadList } from '@/inbox/hooks/useLoadInboxThreadList';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';

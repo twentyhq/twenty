@@ -8,6 +8,8 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
+import { MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-connect-listing-universal-identifiers.constant';
+import { findMarketplaceConnectListing } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-connect-listing.util';
 import { CLIENT_ID_METADATA_DOCUMENT_FETCH_RATE_LIMIT_MAX } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/constants/client-id-metadata-document-fetch-rate-limit.constant';
 import { type ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/client-id-metadata-document.service';
 import { type ClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/client-id-metadata-document.type';
@@ -35,10 +37,28 @@ const VERIFIED_CLIENT_DOCUMENT: ClientIdMetadataDocument = {
   logoUri: null,
   redirectUris: ['https://chatgpt.com/connector_platform_oauth_redirect'],
 };
+const CLAUDE_DOCUMENT: ClientIdMetadataDocument = {
+  clientId: 'https://claude.ai/oauth/mcp-oauth-client-metadata',
+  clientName: 'Claude',
+  logoUri: null,
+  redirectUris: ['https://claude.ai/api/mcp/auth_callback'],
+};
+const CLAUDE_CODE_DOCUMENT: ClientIdMetadataDocument = {
+  clientId: 'https://claude.ai/oauth/claude-code-client-metadata',
+  clientName: 'Claude Code',
+  logoUri: null,
+  redirectUris: ['http://127.0.0.1/callback'],
+};
 const DOCUMENTS = [
   WEB_CLIENT_DOCUMENT,
   NATIVE_CLIENT_DOCUMENT,
   VERIFIED_CLIENT_DOCUMENT,
+  CLAUDE_DOCUMENT,
+  CLAUDE_CODE_DOCUMENT,
+];
+const VERIFIED_CLIENT_UNIVERSAL_IDENTIFIERS = [
+  MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CLAUDE,
+  MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CHATGPT,
 ];
 const DOCUMENT_CLIENT_IDS = DOCUMENTS.map(({ clientId }) => clientId);
 const WEB_CLIENT_CALLBACK = WEB_CLIENT_DOCUMENT.redirectUris[0];
@@ -77,6 +97,20 @@ const findClientVerificationQuery = gql`
       name
       isVerified
       isClaimingVerifiedClientName
+    }
+  }
+`;
+
+const findManyApplicationsQuery = gql`
+  query FindManyApplications {
+    findManyApplications {
+      name
+      description
+      logoUrl
+      universalIdentifier
+      applicationRegistration {
+        id
+      }
     }
   }
 `;
@@ -153,6 +187,41 @@ describe('OAuth client ID metadata documents (integration)', () => {
     return count;
   };
 
+  const authorizeAndExchange = async ({
+    clientId,
+    redirectUris,
+  }: Pick<ClientIdMetadataDocument, 'clientId' | 'redirectUris'>) => {
+    const authorization = await requestAuthorization({
+      clientId,
+      redirectUrl: redirectUris[0],
+    });
+
+    expect(authorization.body.errors).toBeUndefined();
+
+    const exchangeResponse = await postToken({
+      grant_type: 'authorization_code',
+      code: findAuthorizationCode(authorization),
+      client_id: clientId,
+      code_verifier: CODE_VERIFIER,
+      redirect_uri: redirectUris[0],
+    });
+
+    expect(exchangeResponse.status).toBe(200);
+
+    return exchangeResponse.body;
+  };
+
+  const findApplications = async () => {
+    const response = await makeMetadataApiRequest(
+      { query: findManyApplicationsQuery },
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    return response.body.data.findManyApplications;
+  };
+
   const stubDocuments = () => {
     findDocumentSpy = jest
       .spyOn(clientIdMetadataDocumentService, 'findDocument')
@@ -192,8 +261,15 @@ describe('OAuth client ID metadata documents (integration)', () => {
       [DOCUMENT_CLIENT_IDS],
     );
     await dataSource.query(
-      `DELETE FROM core."applicationRegistration" WHERE "oAuthClientId" = ANY($1)`,
-      [DOCUMENT_CLIENT_IDS],
+      `DELETE FROM core."application" application
+       USING core."applicationRegistration" registration
+       WHERE registration.id = application."applicationRegistrationId"
+         AND registration."universalIdentifier" = ANY($1)`,
+      [VERIFIED_CLIENT_UNIVERSAL_IDENTIFIERS],
+    );
+    await dataSource.query(
+      `DELETE FROM core."applicationRegistration" WHERE "oAuthClientId" = ANY($1) OR "universalIdentifier" = ANY($2)`,
+      [DOCUMENT_CLIENT_IDS, VERIFIED_CLIENT_UNIVERSAL_IDENTIFIERS],
     );
     await dataSource.query(
       `DELETE FROM core."appToken" WHERE context->>'clientId' = ANY($1)`,
@@ -280,6 +356,107 @@ describe('OAuth client ID metadata documents (integration)', () => {
       });
 
       expect(refreshResponse.status).toBe(200);
+    });
+
+    it('should give the documents of one store card a single registration and application with its identity', async () => {
+      for (const document of [CLAUDE_DOCUMENT, CLAUDE_CODE_DOCUMENT]) {
+        const tokens = await authorizeAndExchange(document);
+
+        const refreshResponse = await postToken({
+          grant_type: 'refresh_token',
+          refresh_token: tokens.refresh_token,
+          client_id: document.clientId,
+        });
+
+        expect(refreshResponse.status).toBe(200);
+        expect(await countRegistrations(document.clientId)).toBe(0);
+      }
+
+      const claudeApplications = (await findApplications()).filter(
+        ({ universalIdentifier }: { universalIdentifier: string }) =>
+          universalIdentifier ===
+          MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CLAUDE,
+      );
+
+      expect(claudeApplications).toEqual([
+        {
+          name: 'Claude',
+          description: findMarketplaceConnectListing(
+            MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CLAUDE,
+          )?.description,
+          logoUrl: expect.stringMatching(
+            /\/images\/oauth-clients\/claude\.webp$/,
+          ),
+          universalIdentifier:
+            MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CLAUDE,
+          applicationRegistration: { id: expect.any(String) },
+        },
+      ]);
+    });
+
+    it('should keep a verified document client on the registration it already had for its URL', async () => {
+      const [legacyRegistration] = await dataSource.query(
+        `INSERT INTO core."applicationRegistration"
+           ("universalIdentifier", name, "oAuthClientId", "oAuthRedirectUris", "oAuthScopes", "sourceType")
+         VALUES (gen_random_uuid(), 'ChatGPT', $1, $2, $3, 'oauth-only')
+         RETURNING id`,
+        [
+          VERIFIED_CLIENT_DOCUMENT.clientId,
+          VERIFIED_CLIENT_DOCUMENT.redirectUris,
+          ['api', 'profile'],
+        ],
+      );
+
+      const tokens = await authorizeAndExchange(VERIFIED_CLIENT_DOCUMENT);
+
+      const refreshResponse = await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: tokens.refresh_token,
+        client_id: VERIFIED_CLIENT_DOCUMENT.clientId,
+      });
+
+      expect(refreshResponse.status).toBe(200);
+      expect(
+        (await findApplications()).some(
+          ({
+            applicationRegistration,
+          }: {
+            applicationRegistration: { id: string } | null;
+          }) => applicationRegistration?.id === legacyRegistration.id,
+        ),
+      ).toBe(true);
+
+      const [{ count }] = await dataSource.query(
+        `SELECT COUNT(*)::int AS count FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
+        [MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CHATGPT],
+      );
+
+      expect(count).toBe(0);
+    });
+
+    it('should show an unverified document client as itself', async () => {
+      await authorizeAndExchange(WEB_CLIENT_DOCUMENT);
+
+      const [registration] = await dataSource.query(
+        `SELECT id, "universalIdentifier" FROM core."applicationRegistration" WHERE "oAuthClientId" = $1`,
+        [WEB_CLIENT_DOCUMENT.clientId],
+      );
+
+      expect(
+        (await findApplications()).find(
+          ({
+            applicationRegistration,
+          }: {
+            applicationRegistration: { id: string } | null;
+          }) => applicationRegistration?.id === registration.id,
+        ),
+      ).toEqual({
+        name: 'ChatGPT',
+        description: 'OAuth application registered as "ChatGPT"',
+        logoUrl: null,
+        universalIdentifier: registration.universalIdentifier,
+        applicationRegistration: { id: registration.id },
+      });
     });
 
     it('should reject a callback the document does not list, without registering the client', async () => {

@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
+import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { GettingStartedModule } from 'src/engine/core-modules/getting-started/getting-started.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
@@ -16,6 +17,7 @@ import { RoleAssignmentModule } from 'src/engine/permissions/role-assignment/rol
 @Module({
   imports: [
     WorkspaceDomainsModule,
+    EnterpriseModule,
     TypeOrmModule.forFeature([AppTokenEntity, UserWorkspaceEntity]),
     RoleAssignmentModule,
     FileModule,

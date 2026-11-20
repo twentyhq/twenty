@@ -20,7 +20,7 @@ import { type PendingWakeUpDatabaseEventListener } from 'src/engine/core-modules
 import { type PendingWakeUpResolverService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-resolver.service';
 import { type PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { type WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { type WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { type WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
 
@@ -38,8 +38,8 @@ const buildCompanyUpdatedBatch = async (companyId: string) => ({
   name: 'company.updated',
   workspaceId: SEED_APPLE_WORKSPACE_ID,
   objectMetadata: (
-    await getAppProviderByClassName<WorkflowCommonWorkspaceService>(
-      'WorkflowCommonWorkspaceService',
+    await getAppProviderByClassName<WorkflowMetadataReadService>(
+      'WorkflowMetadataReadService',
     ).getObjectMetadataInfo('company', SEED_APPLE_WORKSPACE_ID)
   ).flatObjectMetadata,
   events: [

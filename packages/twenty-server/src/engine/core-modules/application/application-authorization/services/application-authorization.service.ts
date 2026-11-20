@@ -2,15 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApplicationAuthorizationEntity } from 'src/engine/core-modules/application/application-authorization/application-authorization.entity';
+import { isApplicationAccessTokenAuthorized } from 'src/engine/core-modules/application/application-authorization/utils/is-application-access-token-authorized.util';
+import { type ApplicationAccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/application-access-token-jwt-payload.type';
 
 @Injectable()
 export class ApplicationAuthorizationService {
   constructor(
     @InjectRepository(ApplicationAuthorizationEntity)
     private readonly applicationAuthorizationRepository: Repository<ApplicationAuthorizationEntity>,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   async recordAuthorization({
@@ -25,7 +29,7 @@ export class ApplicationAuthorizationService {
     userWorkspaceId: string;
     applicationId: string;
     scopes: string[];
-  }): Promise<void> {
+  }): Promise<string> {
     const now = new Date();
 
     // Authorizing on top of an active authorization keeps its start, so the member's other sessions keep refreshing
@@ -35,7 +39,10 @@ export class ApplicationAuthorizationService {
     );
 
     if (isDefined(affected) && affected > 0) {
-      return;
+      return await this.findIdByUserAndApplicationOrThrow({
+        userId,
+        applicationId,
+      });
     }
 
     await this.applicationAuthorizationRepository.upsert(
@@ -54,6 +61,18 @@ export class ApplicationAuthorizationService {
         skipUpdateIfNoValuesChanged: false,
       },
     );
+
+    const authorizationId = await this.findIdByUserAndApplicationOrThrow({
+      userId,
+      applicationId,
+    });
+
+    await this.coreEntityCacheService.invalidate(
+      'applicationAuthorization',
+      authorizationId,
+    );
+
+    return authorizationId;
   }
 
   // Scopes and consent time stay null: pre-table refresh tokens carry neither, and today's declared scopes prove nothing.
@@ -68,7 +87,7 @@ export class ApplicationAuthorizationService {
     workspaceId: string;
     userWorkspaceId: string;
     applicationId: string;
-  }): Promise<void> {
+  }): Promise<string> {
     await this.applicationAuthorizationRepository
       .createQueryBuilder()
       .insert()
@@ -84,6 +103,11 @@ export class ApplicationAuthorizationService {
       })
       .orIgnore()
       .execute();
+
+    return await this.findIdByUserAndApplicationOrThrow({
+      userId,
+      applicationId,
+    });
   }
 
   // Includes revoked rows: callers must tell "never authorized" from "revoked"
@@ -144,6 +168,25 @@ export class ApplicationAuthorizationService {
       .getMany();
   }
 
+  async isAccessTokenAuthorized(
+    accessToken: Pick<
+      ApplicationAccessTokenJwtPayload,
+      'applicationAuthorizationId' | 'iat'
+    >,
+  ): Promise<boolean> {
+    if (!isDefined(accessToken.applicationAuthorizationId)) {
+      return true;
+    }
+
+    return isApplicationAccessTokenAuthorized({
+      flatApplicationAuthorization: await this.coreEntityCacheService.get(
+        'applicationAuthorization',
+        accessToken.applicationAuthorizationId,
+      ),
+      token: accessToken,
+    });
+  }
+
   async touchLastUsedAt(authorizationId: string): Promise<void> {
     await this.applicationAuthorizationRepository.update(
       { id: authorizationId },
@@ -195,11 +238,48 @@ export class ApplicationAuthorizationService {
       | { id: string; workspaceId: string }
       | { userId: string; applicationId: string },
   ): Promise<boolean> {
-    const { affected } = await this.applicationAuthorizationRepository.update(
-      { ...criteria, revokedAt: IsNull() },
+    const activeAuthorizations =
+      await this.applicationAuthorizationRepository.find({
+        where: { ...criteria, revokedAt: IsNull() },
+        select: { id: true },
+      });
+
+    if (activeAuthorizations.length === 0) {
+      return false;
+    }
+
+    const authorizationIds = activeAuthorizations.map(({ id }) => id);
+
+    await this.applicationAuthorizationRepository.update(
+      { id: In(authorizationIds), revokedAt: IsNull() },
       { revokedAt: new Date() },
     );
 
-    return isDefined(affected) && affected > 0;
+    // Access tokens are checked against the cached row, so they die here rather than at expiry
+    await Promise.all(
+      authorizationIds.map((authorizationId) =>
+        this.coreEntityCacheService.invalidate(
+          'applicationAuthorization',
+          authorizationId,
+        ),
+      ),
+    );
+
+    return true;
+  }
+
+  private async findIdByUserAndApplicationOrThrow({
+    userId,
+    applicationId,
+  }: {
+    userId: string;
+    applicationId: string;
+  }): Promise<string> {
+    const { id } = await this.applicationAuthorizationRepository.findOneOrFail({
+      where: { userId, applicationId },
+      select: { id: true },
+    });
+
+    return id;
   }
 }

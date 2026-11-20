@@ -8,13 +8,16 @@ import { type AiChatSurface } from '@/ai-chat/types/AiChatSurface';
 const mockUseAtomStateValue = jest.fn();
 const mockUseIsWorkspaceSetupChat = jest.fn(() => false);
 
-jest.mock('@/ai-chat/workspace-setup/hooks/useIsWorkspaceSetupChat', () => ({
+jest.mock('@/ai-chat/hooks/useIsWorkspaceSetupChat', () => ({
   useIsWorkspaceSetupChat: () => mockUseIsWorkspaceSetupChat(),
 }));
 
-jest.mock('@/onboarding/components/WorkspaceSetupChatPreamble', () => ({
-  WorkspaceSetupChatPreamble: () => <div data-testid="preamble" />,
-}));
+jest.mock(
+  '@/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble',
+  () => ({
+    WorkspaceSetupChatPreamble: () => <div data-testid="preamble" />,
+  }),
+);
 
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
   useAtomStateValue: () => mockUseAtomStateValue(),

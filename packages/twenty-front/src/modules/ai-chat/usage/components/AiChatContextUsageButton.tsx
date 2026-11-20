@@ -21,7 +21,7 @@ import { useAiChatUsage } from '@/ai-chat/usage/hooks/useAiChatUsage';
 import { useAiChatUserCreditsUsage } from '@/ai-chat/usage/hooks/useAiChatUserCreditsUsage';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
-import { useIsWorkspaceSetupChat } from '@/ai-chat/workspace-setup/hooks/useIsWorkspaceSetupChat';
+import { useIsWorkspaceSetupChat } from '@/ai-chat/hooks/useIsWorkspaceSetupChat';
 import { aiChatUsageFamilyState } from '@/ai-chat/usage/states/aiChatUsageFamilyState';
 import { aiChatUserSelectedModelTierState } from '@/ai-chat/states/aiChatUserSelectedModelTierState';
 import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRingColor';

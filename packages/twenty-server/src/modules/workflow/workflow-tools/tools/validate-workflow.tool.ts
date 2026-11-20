@@ -20,6 +20,7 @@ export const createValidateWorkflowTool = (
   context: WorkflowToolContext,
 ) => ({
   name: 'validate_workflow' as const,
+  isReadOnly: true,
   description:
     'Check whether a workflow version can be activated, without activating it. Runs the exact check activation runs: graph topology (connections, reachability, branches, loops), per-step configuration, references to other objects, and variable references between steps. Succeeds when the version is ready; otherwise fails with the list of issues to fix. Does not modify the workflow.',
   inputSchema: validateWorkflowSchema,
