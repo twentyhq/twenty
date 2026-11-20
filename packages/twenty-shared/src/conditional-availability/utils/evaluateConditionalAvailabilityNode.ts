@@ -8,10 +8,14 @@ import { isDefined } from '@/utils/validation/isDefined';
 
 type EvaluationContext = Record<string, unknown>;
 
+const CONDITIONAL_AVAILABILITY_FUNCTION_BY_NAME = new Map(
+  Object.entries(CONDITIONAL_AVAILABILITY_FUNCTIONS),
+);
+
 const isForbiddenPathSegment = (segment: string) =>
   FORBIDDEN_PROPERTY_NAMES.has(segment);
 
-const readPathSegment = (value: unknown, segment: string): unknown => {
+const readPathSegmentOrThrow = (value: unknown, segment: string): unknown => {
   if (!isDefined(value) || isForbiddenPathSegment(segment)) {
     throw new Error(`Cannot read "${segment}"`);
   }
@@ -25,7 +29,7 @@ const readPathSegment = (value: unknown, segment: string): unknown => {
   return segmentValue;
 };
 
-const readPath = ({
+const readPathOrThrow = ({
   path,
   context,
 }: {
@@ -44,7 +48,7 @@ const readPath = ({
     throw new Error(`Undefined variable "${rootName}"`);
   }
 
-  return segments.reduce<unknown>(readPathSegment, rootValue);
+  return segments.reduce<unknown>(readPathSegmentOrThrow, rootValue);
 };
 
 const toOrderedOperand = (value: unknown): unknown =>
@@ -100,7 +104,7 @@ const computeNodeValue = ({
     case 'LITERAL':
       return node.value;
     case 'VARIABLE':
-      return readPath({ path: node.path, context });
+      return readPathOrThrow({ path: node.path, context });
     case 'COMPARISON':
       return compareValues({
         operator: node.operator,
@@ -120,9 +124,8 @@ const computeNodeValue = ({
     case 'NOT':
       return !computeChildValue(node.child);
     case 'FUNCTION_CALL': {
-      const conditionalAvailabilityFunction = Object.entries(
-        CONDITIONAL_AVAILABILITY_FUNCTIONS,
-      ).find(([functionName]) => functionName === node.functionName)?.[1];
+      const conditionalAvailabilityFunction =
+        CONDITIONAL_AVAILABILITY_FUNCTION_BY_NAME.get(node.functionName);
 
       if (!isDefined(conditionalAvailabilityFunction)) {
         throw new Error(`Unknown function "${node.functionName}"`);
