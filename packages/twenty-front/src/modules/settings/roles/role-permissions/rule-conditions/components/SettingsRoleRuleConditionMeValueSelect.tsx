@@ -200,18 +200,24 @@ export const SettingsRoleRuleConditionMeValueSelect = ({
     (field) => field.name === 'id',
   );
 
-  const menuItems: MeValueMenuItem[] = [
-    ...(isDefined(idField) && isRelationToWorkspaceMember
-      ? [
-          {
-            id: 'me-id',
-            label: t`Me (User ID)`,
-            icon: null,
-            fieldMetadataId: idField.id,
-            subFieldName: null,
-          },
-        ]
-      : []),
+  const getMeIdMenuItems = (): MeValueMenuItem[] => {
+    if (!isDefined(idField) || !isRelationToWorkspaceMember) {
+      return [];
+    }
+
+    return [
+      {
+        id: 'me-id',
+        label: t`Me (User ID)`,
+        icon: null,
+        fieldMetadataId: idField.id,
+        subFieldName: null,
+      },
+    ];
+  };
+
+  const menuItems = [
+    ...getMeIdMenuItems(),
     ...compatibleWorkspaceMemberFields.flatMap(getFieldMenuItems),
   ];
 
