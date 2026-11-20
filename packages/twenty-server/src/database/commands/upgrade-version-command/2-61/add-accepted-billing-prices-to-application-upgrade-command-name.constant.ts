@@ -1,2 +1,2 @@
 export const ADD_ACCEPTED_BILLING_PRICES_TO_APPLICATION_UPGRADE_COMMAND_NAME =
-  '2.61.0_AddAcceptedBillingPricesToApplicationFastInstanceCommand_1795165744677';
+  '2.61.0_AddAcceptedBillingPricesToApplicationFastInstanceCommand_1795183195168';
