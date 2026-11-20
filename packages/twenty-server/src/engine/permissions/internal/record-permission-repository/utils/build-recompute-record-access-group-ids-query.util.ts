@@ -4,7 +4,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { ACCESS_GROUP_IDS_COLUMN_NAME } from 'src/engine/permissions/internal/record-permission-repository/constants/access-group-column-names.constant';
 import { RECORD_ACCESS_GROUP_TABLE_ALIAS } from 'src/engine/permissions/internal/record-permission-repository/constants/record-access-group-table-alias.constant';
 import { type RecordAccessGroupSQLCondition } from 'src/engine/permissions/internal/record-permission-repository/types/record-access-group-sql-condition.type';
-import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
+import { type RelatedRecordPathInheritance } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-inheritance.type';
 import { buildInheritedAccessGroupIdsExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-inherited-access-group-ids-expression.util';
 import { buildRecordAccessGroupIdsExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-record-access-group-ids-expression.util';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
@@ -16,25 +16,24 @@ export const buildRecomputeRecordAccessGroupIdsQuery = ({
   workspaceId,
   flatObjectMetadata,
   recordAccessGroupSQLConditions,
-  relatedRecordPathAccessGroupSources,
+  relatedRecordPathInheritances,
   recordIds,
 }: {
   workspaceId: string;
   flatObjectMetadata: FlatObjectMetadata;
   recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[];
-  relatedRecordPathAccessGroupSources: RelatedRecordPathAccessGroupSource[];
+  relatedRecordPathInheritances: RelatedRecordPathInheritance[];
   recordIds: string[];
 }): SQLCondition => {
-  const inheritedAccessGroupIdsExpressions =
-    relatedRecordPathAccessGroupSources.map(
-      (relatedRecordPathAccessGroupSource, pathIndex) =>
-        buildInheritedAccessGroupIdsExpression({
-          workspaceId,
-          targetTableAlias: RECORD_ACCESS_GROUP_TABLE_ALIAS,
-          pathIndex,
-          relatedRecordPathAccessGroupSource,
-        }),
-    );
+  const inheritedAccessGroupIdsExpressions = relatedRecordPathInheritances.map(
+    (relatedRecordPathInheritance, pathIndex) =>
+      buildInheritedAccessGroupIdsExpression({
+        workspaceId,
+        targetTableAlias: RECORD_ACCESS_GROUP_TABLE_ALIAS,
+        pathIndex,
+        relatedRecordPathInheritance,
+      }),
+  );
   const tableExpression = buildWorkspaceTableExpression({
     workspaceId,
     tableName: computeObjectTargetTable(flatObjectMetadata),

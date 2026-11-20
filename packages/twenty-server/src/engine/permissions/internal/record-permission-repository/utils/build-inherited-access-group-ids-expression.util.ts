@@ -5,7 +5,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { buildPrivateRecordStateSQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-private-record-state-sql-condition.util';
 import { buildAccessGroupTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-access-group-table-expression.util';
 import { ACCESS_GROUP_IDS_COLUMN_NAME } from 'src/engine/permissions/internal/record-permission-repository/constants/access-group-column-names.constant';
-import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
+import { type RelatedRecordPathInheritance } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-inheritance.type';
 import { buildRelatedRecordPathHopsJoin } from 'src/engine/permissions/internal/record-permission-repository/utils/build-related-record-path-hops-join.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -16,7 +16,7 @@ export const buildInheritedAccessGroupIdsExpression = ({
   workspaceId,
   targetTableAlias,
   pathIndex,
-  relatedRecordPathAccessGroupSource: {
+  relatedRecordPathInheritance: {
     hops,
     sourceObjectCompactIds,
     roleIdsUnableToReadRelation,
@@ -26,7 +26,7 @@ export const buildInheritedAccessGroupIdsExpression = ({
   workspaceId: string;
   targetTableAlias: string;
   pathIndex: number;
-  relatedRecordPathAccessGroupSource: RelatedRecordPathAccessGroupSource;
+  relatedRecordPathInheritance: RelatedRecordPathInheritance;
 }): SQLCondition => {
   const hopTableAliases = hops.map(
     (_, hopIndex) => `related_record_path_${pathIndex}_${hopIndex}`,

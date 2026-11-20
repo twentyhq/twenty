@@ -25,13 +25,11 @@ import { AccessGroupRepository } from 'src/engine/permissions/internal/record-pe
 import { findRlsRuleRelationPredicatesToObject } from 'src/engine/permissions/internal/access-group/utils/find-rls-rule-relation-predicates-to-object.util';
 import { findRelationJoinColumnsOrThrow } from 'src/engine/permissions/internal/rls/utils/find-relation-join-columns-or-throw.util';
 import { isRlsRuleRelationAffectedByUpdate } from 'src/engine/permissions/internal/access-group/utils/is-rls-rule-relation-affected-by-update.util';
+import { buildRelatedRecordPathInheritances } from 'src/engine/permissions/internal/access-group/utils/build-related-record-path-inheritances.util';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/find-related-record-paths-feeding-access-groups.util';
-import { isPrivateRecordsEnabled } from 'src/engine/permissions/internal/private-record/utils/is-private-records-enabled.util';
-import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
 import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
-import { findRoleIdsUnableToReadField } from 'src/engine/permissions/internal/access-group/utils/find-role-ids-unable-to-read-field.util';
 
 const RECOMPUTE_BATCH_SIZE = 1_000;
 
@@ -138,31 +136,6 @@ export class RecordAccessGroupComputationService {
       ],
       transactionScope,
     });
-    const relatedRecordPathAccessGroupSources: RelatedRecordPathAccessGroupSource[] =
-      feedingRelatedRecordPaths.map(
-        ({ hops, isInherent, sourceFlatObjectMetadata }) => ({
-          hops,
-          sourceObjectCompactIds: isInherent
-            ? null
-            : accessGroups
-                .filter(
-                  (accessGroup) =>
-                    accessGroup.objectMetadataId ===
-                    sourceFlatObjectMetadata.id,
-                )
-                .map(({ compactId }) => compactId),
-          roleIdsUnableToReadRelation: findRoleIdsUnableToReadField({
-            rolesPermissions: metadataMaps.rolesPermissions,
-            objectMetadataId: sourceFlatObjectMetadata.id,
-            fieldMetadataId: hops[0].relationFieldMetadataId,
-          }),
-          isSourcePrivacyApplicable: isPrivateRecordsEnabled({
-            flatObjectMetadata: sourceFlatObjectMetadata,
-            featureFlagsMap: metadataMaps.featureFlagsMap,
-          }),
-        }),
-      );
-
     return this.recordAccessGroupRepository.updateRecordAccessGroupIds({
       workspaceId,
       flatObjectMetadata,
@@ -173,7 +146,11 @@ export class RecordAccessGroupComputationService {
           (accessGroup) => accessGroup.objectMetadataId === objectMetadataId,
         ),
       }),
-      relatedRecordPathAccessGroupSources,
+      relatedRecordPathInheritances: buildRelatedRecordPathInheritances({
+        resolvedRelatedRecordPaths: feedingRelatedRecordPaths,
+        accessGroups,
+        metadataMaps,
+      }),
       recordIds,
       transactionScope,
     });

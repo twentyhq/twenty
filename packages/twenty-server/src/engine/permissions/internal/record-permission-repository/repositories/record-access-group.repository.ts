@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
 import { type RecordAccessGroupSQLCondition } from 'src/engine/permissions/internal/record-permission-repository/types/record-access-group-sql-condition.type';
-import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
+import { type RelatedRecordPathInheritance } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-inheritance.type';
 import { buildRelatedRecordPathHopsJoin } from 'src/engine/permissions/internal/record-permission-repository/utils/build-related-record-path-hops-join.util';
 import { buildRecomputeRecordAccessGroupIdsQuery } from 'src/engine/permissions/internal/record-permission-repository/utils/build-recompute-record-access-group-ids-query.util';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
@@ -144,14 +144,14 @@ export class RecordAccessGroupRepository {
     workspaceId,
     flatObjectMetadata,
     recordAccessGroupSQLConditions,
-    relatedRecordPathAccessGroupSources,
+    relatedRecordPathInheritances,
     recordIds,
     transactionScope,
   }: {
     workspaceId: string;
     flatObjectMetadata: FlatObjectMetadata;
     recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[];
-    relatedRecordPathAccessGroupSources: RelatedRecordPathAccessGroupSource[];
+    relatedRecordPathInheritances: RelatedRecordPathInheritance[];
     recordIds: string[];
     transactionScope?: RecordPermissionTransactionScope;
   }): Promise<string[]> {
@@ -164,7 +164,7 @@ export class RecordAccessGroupRepository {
         workspaceId,
         flatObjectMetadata,
         recordAccessGroupSQLConditions,
-        relatedRecordPathAccessGroupSources,
+        relatedRecordPathInheritances,
         recordIds,
       }),
     });

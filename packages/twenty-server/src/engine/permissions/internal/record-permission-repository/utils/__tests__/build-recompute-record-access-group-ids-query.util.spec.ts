@@ -17,15 +17,15 @@ const noteTarget = buildObject('noteTarget');
 const note = buildObject('note');
 
 const buildNoteQuery = (
-  relatedRecordPathAccessGroupSources: Parameters<
+  relatedRecordPathInheritances: Parameters<
     typeof buildRecomputeRecordAccessGroupIdsQuery
-  >[0]['relatedRecordPathAccessGroupSources'],
+  >[0]['relatedRecordPathInheritances'],
 ) =>
   buildRecomputeRecordAccessGroupIdsQuery({
     workspaceId: WORKSPACE_ID,
     flatObjectMetadata: note,
     recordAccessGroupSQLConditions: [{ compactId: 7, sqlCondition: null }],
-    relatedRecordPathAccessGroupSources,
+    relatedRecordPathInheritances,
     recordIds: ['note-id'],
   });
 
