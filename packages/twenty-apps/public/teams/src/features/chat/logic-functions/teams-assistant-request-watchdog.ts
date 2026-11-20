@@ -7,7 +7,6 @@ import { TEAMS_ASSISTANT_REQUEST_WATCHDOG_UNIVERSAL_IDENTIFIER } from 'src/featu
 import { TEAMS_ASSISTANT_INTERRUPTED_ERROR } from 'src/features/chat/logic-functions/constants/teams-assistant-interrupted-error';
 import { TEAMS_ASSISTANT_INTERRUPTED_FAILURE_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-interrupted-failure-text';
 import { TEAMS_ASSISTANT_REQUEST_STATUS } from 'src/features/chat/logic-functions/constants/teams-assistant-request-status';
-import { TEAMS_ASSISTANT_REQUEST_TIMEOUT_SECONDS } from 'src/features/chat/logic-functions/constants/teams-assistant-request-timeout-seconds';
 import { TEAMS_ASSISTANT_REQUEST_WATCHDOG_MAX_ATTEMPTS } from 'src/features/chat/logic-functions/constants/teams-assistant-request-watchdog-max-attempts';
 import { failStaleTeamsAssistantRequest } from 'src/features/chat/logic-functions/data/fail-stale-teams-assistant-request';
 import { findTeamsAssistantRequestById } from 'src/features/chat/logic-functions/data/find-teams-assistant-request-by-id';
@@ -15,6 +14,7 @@ import { type TeamsAssistantRequestWatchdogPayload } from 'src/features/chat/log
 import { type TeamsAssistantRequestWatchdogResult } from 'src/features/chat/logic-functions/types/teams-assistant-request-watchdog-result.type';
 import { enqueueTeamsAssistantRequestWatchdog } from 'src/features/chat/logic-functions/utils/enqueue-teams-assistant-request-watchdog';
 import { getTeamsConnectorAccessTokenOrThrow } from 'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw';
+import { isTeamsAssistantRequestStale } from 'src/features/chat/logic-functions/utils/is-teams-assistant-request-stale';
 import { sendTeamsActivity } from 'src/features/chat/logic-functions/utils/send-teams-activity';
 
 export const teamsAssistantRequestWatchdogHandler = async ({
@@ -49,12 +49,7 @@ export const teamsAssistantRequestWatchdogHandler = async ({
     };
   }
 
-  const isStale =
-    isNonEmptyString(record.updatedAt) &&
-    new Date(record.updatedAt).getTime() <
-      Date.now() - TEAMS_ASSISTANT_REQUEST_TIMEOUT_SECONDS * 1000;
-
-  if (!isStale) {
+  if (!isTeamsAssistantRequestStale(record)) {
     if (attempt >= TEAMS_ASSISTANT_REQUEST_WATCHDOG_MAX_ATTEMPTS) {
       return {
         failed: false,

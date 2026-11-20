@@ -18,22 +18,23 @@ export const teamsActivitiesEnqueueHandler = async (
     Date.now() + TEAMS_ASSISTANT_AGENT_BUDGET_SECONDS * 1000;
 
   const enqueueResult = await enqueueTeamsAssistantRequest(payload);
+  const { request } = enqueueResult;
 
-  if (!isDefined(enqueueResult.request)) {
+  if (!isDefined(request)) {
     return enqueueResult;
   }
 
   await enqueueTeamsAssistantRequestWatchdog({
-    teamsAssistantRequestId: enqueueResult.request.id,
+    teamsAssistantRequestId: request.id,
   }).catch((error: unknown) => {
     console.warn(
-      `[teams] could not schedule the watchdog for request ${enqueueResult.request?.id}`,
+      `[teams] could not schedule the watchdog for request ${request.id}`,
       error,
     );
   });
 
   return await answerTeamsAssistantRequest({
-    request: enqueueResult.request,
+    request,
     agentDeadlineAtMs,
   });
 };
