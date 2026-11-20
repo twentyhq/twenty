@@ -1,9 +1,10 @@
 import { t } from 'twenty-sdk/front-component';
 
 import { type GranolaFolderPolicyOption } from 'src/front-components/types/granola-folder-policy-option.type';
+import { type GranolaWorkspaceFolderPolicy } from 'src/front-components/types/granola-workspace-folder-policy.type';
 
 export const getGranolaWorkspaceFolderPolicyOptions =
-  (): GranolaFolderPolicyOption[] => [
+  (): GranolaFolderPolicyOption<GranolaWorkspaceFolderPolicy>[] => [
     {
       policy: 'ALL_FOLDERS',
       title: t('Everything'),

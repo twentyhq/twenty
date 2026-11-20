@@ -1,9 +1,10 @@
 import { t } from 'twenty-sdk/front-component';
 
 import { type GranolaFolderPolicyOption } from 'src/front-components/types/granola-folder-policy-option.type';
+import { type GranolaMemberFolderPolicy } from 'src/front-components/types/granola-member-folder-policy.type';
 
 export const getGranolaMemberFolderPolicyOptions =
-  (): GranolaFolderPolicyOption[] => [
+  (): GranolaFolderPolicyOption<GranolaMemberFolderPolicy>[] => [
     {
       policy: 'NO_FOLDERS',
       title: t('Off'),
