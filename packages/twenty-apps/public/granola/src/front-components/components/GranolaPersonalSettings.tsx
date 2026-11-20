@@ -9,12 +9,13 @@ import { Select } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 import { THEME_DARK, THEME_LIGHT, ThemeProvider } from 'twenty-ui/theme';
 
-import { GranolaFolderTreeSkeleton } from 'src/front-components/components/GranolaFolderTreeSkeleton';
+import { GranolaFolderPolicyRadioCard } from 'src/front-components/components/GranolaFolderPolicyRadioCard';
 import { GranolaPersonalFolderSelection } from 'src/front-components/components/GranolaPersonalFolderSelection';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { StyledSettingsSectionStack } from 'src/front-components/components/StyledSettingsSectionStack';
 import { type GranolaPersonalFolders } from 'src/front-components/types/granola-personal-folders.type';
 import { fetchGranolaPersonalConnectionsOrThrow } from 'src/front-components/utils/fetch-granola-personal-connections-or-throw.util';
+import { getGranolaMemberFolderPolicyOptions } from 'src/front-components/utils/get-granola-member-folder-policy-options.util';
 
 type GranolaConnectionsState =
   | { status: 'loading' }
@@ -79,7 +80,12 @@ export const GranolaPersonalSettings = () => {
           )}
         />
         <StyledSettingsSectionStack>
-          {state.status === 'loading' && <GranolaFolderTreeSkeleton />}
+          {state.status === 'loading' && (
+            <GranolaFolderPolicyRadioCard
+              options={getGranolaMemberFolderPolicyOptions()}
+              policy={undefined}
+            />
+          )}
           {state.status === 'failed' && (
             <InlineBanner
               layout="compact"
