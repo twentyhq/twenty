@@ -12,6 +12,7 @@ import {
 } from 'twenty-ui/icon';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
+import { navigationMenuDropdownIdToOpenState } from '@/navigation-menu-item/common/states/navigationMenuDropdownIdToOpenState';
 import { NAVIGATION_SECTION_ID_BY_BUILT_IN_SECTION_KEY } from '@/navigation-menu-item/common/constants/NavigationSectionIdByBuiltInSectionKey';
 import { navigationMenuSectionIdAddingItemState } from '@/navigation-menu-item/common/states/navigationMenuSectionIdAddingItemState';
 import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
@@ -22,7 +23,6 @@ import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/co
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { getNavigationMenuAddSectionDropdownId } from '@/navigation-menu-item/edit/utils/getNavigationMenuAddSectionDropdownId';
 import { getNavigationMenuSectionMenuDropdownId } from '@/navigation-menu-item/edit/utils/getNavigationMenuSectionMenuDropdownId';
-import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 
 type MainNavigationDrawerContextMenuContentProps = {
@@ -43,7 +43,6 @@ export const MainNavigationDrawerContextMenuContent = ({
     containerId,
   });
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
-  const { openDropdown } = useOpenDropdown();
 
   const targetSection = sections.find(
     (section) =>
@@ -58,12 +57,18 @@ export const MainNavigationDrawerContextMenuContent = ({
     ...sections.map(getNavigationMenuSectionNavigationSectionId),
   ].filter(isDefined);
 
-  const customizeAndOpenDropdown = (dropdownId: string) => {
+  const customizeAndOpenDropdown = (
+    dropdownId: string,
+    onCustomizationModeEntered?: () => void,
+  ) => {
     onClose();
 
-    if (enterLayoutCustomizationMode()) {
-      openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
+    if (!enterLayoutCustomizationMode()) {
+      return;
     }
+
+    onCustomizationModeEntered?.();
+    store.set(navigationMenuDropdownIdToOpenState.atom, dropdownId);
   };
 
   const setAllSectionsOpen = (isOpen: boolean) => {
@@ -84,21 +89,24 @@ export const MainNavigationDrawerContextMenuContent = ({
             id: 'add-item',
             label: t`Add item to ${targetSection.name}`,
             Icon: IconPlus,
-            onClick: () => {
-              store.set(
-                navigationMenuSectionIdAddingItemState.atom,
-                targetSection.id,
-              );
-              store.set(
-                isNavigationSectionOpenFamilyState.atomFamily(
-                  getNavigationMenuSectionNavigationSectionId(targetSection),
-                ),
-                true,
-              );
+            onClick: () =>
               customizeAndOpenDropdown(
                 getNavigationMenuSectionMenuDropdownId(targetSection.id),
-              );
-            },
+                () => {
+                  store.set(
+                    navigationMenuSectionIdAddingItemState.atom,
+                    targetSection.id,
+                  );
+                  store.set(
+                    isNavigationSectionOpenFamilyState.atomFamily(
+                      getNavigationMenuSectionNavigationSectionId(
+                        targetSection,
+                      ),
+                    ),
+                    true,
+                  );
+                },
+              ),
           },
         ]
       : []),

@@ -3,6 +3,7 @@ import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconDotsVertical } from 'twenty-ui/icon';
 
+import { navigationMenuDropdownIdToOpenState } from '@/navigation-menu-item/common/states/navigationMenuDropdownIdToOpenState';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { navigationMenuSectionIdAddingItemState } from '@/navigation-menu-item/common/states/navigationMenuSectionIdAddingItemState';
 import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
@@ -40,6 +41,8 @@ export const NavigationMenuSectionMenu = ({
   const { openNavigationSection } = useNavigationSection(
     getNavigationMenuSectionNavigationSectionId(section),
   );
+  const [navigationMenuDropdownIdToOpen, setNavigationMenuDropdownIdToOpen] =
+    useAtomState(navigationMenuDropdownIdToOpenState);
   const dropdownId = getNavigationMenuSectionMenuDropdownId(section.id);
   const isAddingItem = navigationMenuSectionIdAddingItem === section.id;
 
@@ -64,6 +67,12 @@ export const NavigationMenuSectionMenu = ({
         <NavigationMenuItemDropdownOpenEffect
           dropdownId={dropdownId}
           onOpen={() => setNavigationMenuItemIdToRename(null)}
+        />
+      )}
+      {navigationMenuDropdownIdToOpen === dropdownId && (
+        <NavigationMenuItemDropdownOpenEffect
+          dropdownId={dropdownId}
+          onOpen={() => setNavigationMenuDropdownIdToOpen(null)}
         />
       )}
       <Dropdown.Trigger
