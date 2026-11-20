@@ -10,6 +10,7 @@ import {
   type ColumnMasks,
 } from 'src/engine/twenty-orm/sql/utils/build-column-masks.util';
 import { buildUnreadableRowExclusionCondition } from 'src/engine/twenty-orm/sql/utils/build-unreadable-row-exclusion-condition.util';
+import { escapeRegularExpression } from 'src/engine/twenty-orm/sql/utils/escape-regular-expression.util';
 import { maskNullifiedColumnReferences } from 'src/engine/twenty-orm/sql/utils/mask-nullified-column-references.util';
 import { renderNullifiedColumn } from 'src/engine/twenty-orm/sql/utils/render-nullified-column.util';
 import {
@@ -154,7 +155,7 @@ const quoteQualifiedAliasReferencesInSegment = (
     (quotedSegment, alias) =>
       quotedSegment.replace(
         new RegExp(
-          `(?<![\\w".:])${alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\.(\\w+)`,
+          `(?<![\\w".:])${escapeRegularExpression(alias)}\\.(\\w+)`,
           'g',
         ),
         (_, columnName) => quoteColumn(alias, columnName),
@@ -634,23 +635,30 @@ export const buildJoinClause = (state: SelectStatementState): string =>
     })
     .join(' ');
 
+const renderMaskedStatementExpressions = ({
+  state,
+  expressions,
+}: {
+  state: SelectStatementState;
+  expressions: string[];
+}): string[] => {
+  const aliases = collectStatementAliases(state);
+  const columnMasks = buildColumnMasks(state.columnNullifyConditions);
+
+  return expressions.map((expression) =>
+    renderMaskedExpression({ expression, aliases, columnMasks }),
+  );
+};
+
 export const buildGroupByClause = (state: SelectStatementState): string => {
   if (state.groupByExpressions.length === 0) {
     return '';
   }
 
-  const aliases = collectStatementAliases(state);
-  const columnMasks = buildColumnMasks(state.columnNullifyConditions);
-
-  return `GROUP BY ${state.groupByExpressions
-    .map((expression) =>
-      renderMaskedExpression({
-        expression: expression,
-        aliases,
-        columnMasks,
-      }),
-    )
-    .join(', ')}`;
+  return `GROUP BY ${renderMaskedStatementExpressions({
+    state,
+    expressions: state.groupByExpressions,
+  }).join(', ')}`;
 };
 
 export const buildOrderByClause = (state: SelectStatementState): string => {
@@ -658,17 +666,15 @@ export const buildOrderByClause = (state: SelectStatementState): string => {
     return '';
   }
 
-  const aliases = collectStatementAliases(state);
-  const columnMasks = buildColumnMasks(state.columnNullifyConditions);
+  const maskedExpressions = renderMaskedStatementExpressions({
+    state,
+    expressions: state.orderByClauses.map(({ expression }) => expression),
+  });
 
   return `ORDER BY ${state.orderByClauses
     .map(
-      (orderByClause) =>
-        `${renderMaskedExpression({
-          expression: orderByClause.expression,
-          aliases,
-          columnMasks,
-        })} ${orderByClause.direction}${isDefined(orderByClause.nulls) ? ` ${orderByClause.nulls}` : ''}`,
+      (orderByClause, index) =>
+        `${maskedExpressions[index]} ${orderByClause.direction}${isDefined(orderByClause.nulls) ? ` ${orderByClause.nulls}` : ''}`,
     )
     .join(', ')}`;
 };
@@ -697,18 +703,10 @@ const buildDistinctOnClause = (state: SelectStatementState): string => {
     return '';
   }
 
-  const aliases = collectStatementAliases(state);
-  const columnMasks = buildColumnMasks(state.columnNullifyConditions);
-
-  return `DISTINCT ON (${state.distinctOnExpressions
-    .map((expression) =>
-      renderMaskedExpression({
-        expression: expression,
-        aliases,
-        columnMasks,
-      }),
-    )
-    .join(', ')}) `;
+  return `DISTINCT ON (${renderMaskedStatementExpressions({
+    state,
+    expressions: state.distinctOnExpressions,
+  }).join(', ')}) `;
 };
 
 export const buildSelectStatement = (state: SelectStatementState): string => {

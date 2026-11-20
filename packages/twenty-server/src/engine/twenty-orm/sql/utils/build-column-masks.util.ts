@@ -1,4 +1,5 @@
 import { type ColumnNullifyConditions } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
+import { escapeRegularExpression } from 'src/engine/twenty-orm/sql/utils/escape-regular-expression.util';
 import { renderNullifiedColumn } from 'src/engine/twenty-orm/sql/utils/render-nullified-column.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
@@ -6,9 +7,6 @@ export type ColumnMasks = {
   maskedColumnByQuotedColumn: Map<string, string>;
   quotedColumnPattern: RegExp;
 };
-
-const escapeRegExp = (value: string): string =>
-  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 export const buildColumnMasks = (
   columnNullifyConditions: ColumnNullifyConditions,
@@ -35,7 +33,9 @@ export const buildColumnMasks = (
   return {
     maskedColumnByQuotedColumn,
     quotedColumnPattern: new RegExp(
-      [...maskedColumnByQuotedColumn.keys()].map(escapeRegExp).join('|'),
+      [...maskedColumnByQuotedColumn.keys()]
+        .map(escapeRegularExpression)
+        .join('|'),
       'g',
     ),
   };
