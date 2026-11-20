@@ -70,6 +70,7 @@ const buildFlatNavigationMenuItem = ({
   agentChatChannelId: null,
   workflowId: null,
   agentId: null,
+  commandMenuItemId: null,
   ...flatNavigationMenuItemProperties,
 });
 

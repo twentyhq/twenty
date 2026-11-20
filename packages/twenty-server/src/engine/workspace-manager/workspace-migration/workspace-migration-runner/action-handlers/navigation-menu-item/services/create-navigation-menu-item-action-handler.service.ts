@@ -38,6 +38,7 @@ export class CreateNavigationMenuItemActionHandlerService extends WorkspaceMigra
       agentChatChannelId,
       workflowId,
       agentId,
+      commandMenuItemId,
     } = resolveUniversalRelationIdentifiersToIds({
       flatEntityMaps: allFlatEntityMaps,
       metadataName: action.metadataName,
@@ -60,6 +61,7 @@ export class CreateNavigationMenuItemActionHandlerService extends WorkspaceMigra
         agentChatChannelId,
         workflowId,
         agentId,
+        commandMenuItemId,
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,

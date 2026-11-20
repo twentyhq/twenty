@@ -44,4 +44,13 @@ export const getUnsupportedNavigationMenuItemReason = ({
     allFlatEntityMaps,
     resolvableReferenceUniversalIdentifiers:
       resolvablePageLayoutUniversalIdentifiers,
+  }) ??
+  getUnresolvableReferenceReason({
+    metadataName: 'navigationMenuItem',
+    referenceMetadataName: 'commandMenuItem',
+    referenceUniversalIdentifier:
+      flatNavigationMenuItem.commandMenuItemUniversalIdentifier,
+    applicationAllFlatEntityMaps,
+    allFlatEntityMaps,
+    resolvableReferenceUniversalIdentifiers: new Set(),
   });

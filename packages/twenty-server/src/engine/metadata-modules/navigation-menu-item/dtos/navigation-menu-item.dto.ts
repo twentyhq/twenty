@@ -107,6 +107,11 @@ export class NavigationMenuItemDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   agentId?: string | null;
 
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  commandMenuItemId?: string | null;
+
   @IsNumber()
   @IsNotEmpty()
   @Field()

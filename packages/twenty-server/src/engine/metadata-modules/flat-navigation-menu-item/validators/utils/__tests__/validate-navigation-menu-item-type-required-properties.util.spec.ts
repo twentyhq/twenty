@@ -109,6 +109,12 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
         'A valid agentUniversalIdentifier is required for AGENT type',
       ],
     },
+    {
+      type: NavigationMenuItemType.COMMAND,
+      expectedMessages: [
+        'A valid commandMenuItemUniversalIdentifier is required for COMMAND type',
+      ],
+    },
   ])(
     'should report every missing property for $type type',
     ({ type, expectedMessages }) => {
@@ -171,6 +177,10 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
     {
       type: NavigationMenuItemType.AGENT,
       overrides: { agentUniversalIdentifier: VALID_UUID },
+    },
+    {
+      type: NavigationMenuItemType.COMMAND,
+      overrides: { commandMenuItemUniversalIdentifier: VALID_UUID },
     },
   ])(
     'should not report any error when $type type properties are valid',

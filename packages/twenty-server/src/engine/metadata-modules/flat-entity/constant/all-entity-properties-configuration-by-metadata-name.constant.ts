@@ -1544,6 +1544,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'agentUniversalIdentifier',
     },
+    commandMenuItemId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'commandMenuItemUniversalIdentifier',
+    },
     isActive: {
       isOverridable: true,
       toCompare: true,

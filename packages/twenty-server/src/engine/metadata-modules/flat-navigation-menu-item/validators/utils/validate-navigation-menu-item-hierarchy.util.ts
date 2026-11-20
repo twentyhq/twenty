@@ -15,6 +15,7 @@ const ALLOWED_PARENT_TYPES_BY_TYPE: Partial<
     NavigationMenuItemType.TAB,
     NavigationMenuItemType.SECTION,
   ],
+  [NavigationMenuItemType.COMMAND]: [],
 };
 
 const getParentTypeErrors = ({

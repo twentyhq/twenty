@@ -113,6 +113,11 @@ export class CreateNavigationMenuItemInput {
   @Field(() => UUIDScalarType, { nullable: true })
   agentId?: string | null;
 
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  commandMenuItemId?: string | null;
+
   @IsNumber()
   @IsOptional()
   @Field({ nullable: true })

@@ -34,6 +34,8 @@ export const fromFlatNavigationMenuItemToNavigationMenuItemDto = (
       effectiveFlatNavigationMenuItem.builtInSectionKey ?? undefined,
     workflowId: effectiveFlatNavigationMenuItem.workflowId ?? undefined,
     agentId: effectiveFlatNavigationMenuItem.agentId ?? undefined,
+    commandMenuItemId:
+      effectiveFlatNavigationMenuItem.commandMenuItemId ?? undefined,
     position: effectiveFlatNavigationMenuItem.position,
     workspaceId: effectiveFlatNavigationMenuItem.workspaceId,
     applicationId: effectiveFlatNavigationMenuItem.applicationId ?? undefined,

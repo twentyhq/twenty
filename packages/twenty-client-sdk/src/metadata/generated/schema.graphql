@@ -1787,6 +1787,7 @@ input CreateNavigationMenuItemInput {
   agentId: UUID
   builtInSectionKey: String
   color: String
+  commandMenuItemId: UUID
   folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
   id: UUID
@@ -2309,6 +2310,7 @@ enum EngineComponentKey {
   NAVIGATE_TO_PREVIOUS_RECORD
   NAVIGATION
   NEW_AI_CHAT
+  OPEN_COMMAND_MENU
   REMOVE_FROM_FAVORITES
   REOPEN_AI_CHAT
   REPLY_TO_EMAIL_THREAD
@@ -3842,6 +3844,7 @@ type NavigationMenuItem {
   applicationId: UUID
   builtInSectionKey: String
   color: String
+  commandMenuItemId: UUID
   createdAt: DateTime!
   folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
@@ -3866,6 +3869,7 @@ type NavigationMenuItem {
 enum NavigationMenuItemType {
   AGENT
   AGENT_CHAT_CHANNEL
+  COMMAND
   FOLDER
   LINK
   NATIVE_PAGE

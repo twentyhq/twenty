@@ -3952,6 +3952,9 @@ export default {
             "color": [
                 4
             ],
+            "commandMenuItemId": [
+                561
+            ],
             "folderId": [
                 561
             ],
@@ -10342,6 +10345,9 @@ export default {
             ],
             "color": [
                 4
+            ],
+            "commandMenuItemId": [
+                561
             ],
             "createdAt": [
                 223

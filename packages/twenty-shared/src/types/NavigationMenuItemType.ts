@@ -11,4 +11,5 @@ export enum NavigationMenuItemType {
   AGENT = 'AGENT',
   TAB = 'TAB',
   SECTION = 'SECTION',
+  COMMAND = 'COMMAND',
 }

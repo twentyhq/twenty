@@ -82,6 +82,8 @@ export const buildWorkspaceNavigationMenuSectionOperations = ({
     workflowUniversalIdentifier: null,
     agentId: null,
     agentUniversalIdentifier: null,
+    commandMenuItemId: null,
+    commandMenuItemUniversalIdentifier: null,
     position: lowestRootPosition - 1,
     workspaceId,
     applicationId: ownerApplication.id,

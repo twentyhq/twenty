@@ -708,6 +708,8 @@ export class ObjectMetadataService {
       workflowUniversalIdentifier: null,
       agentId: null,
       agentUniversalIdentifier: null,
+      commandMenuItemId: null,
+      commandMenuItemUniversalIdentifier: null,
       name: null,
       link: null,
       nativePageKey: null,
