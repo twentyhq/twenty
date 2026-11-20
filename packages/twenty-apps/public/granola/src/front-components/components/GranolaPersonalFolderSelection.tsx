@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { enqueueSnackbar, t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
+import { IconFolder } from 'twenty-ui/icon';
 
 import { GRANOLA_FOLDER_SELECTION_LIMIT } from 'src/constants/granola-api.constant';
 import { GranolaFolderEmptyState } from 'src/front-components/components/GranolaFolderEmptyState';
@@ -142,7 +143,12 @@ export const GranolaPersonalFolderSelection = ({
     }
 
     if (state.folders.length === 0) {
-      return <GranolaFolderEmptyState />;
+      return (
+        <GranolaFolderEmptyState
+          Icon={IconFolder}
+          message={t('No folders found for this key')}
+        />
+      );
     }
 
     return (
