@@ -873,6 +873,7 @@ exports[`Application export - data model exports the whole application as a stab
       "universalIdentifier": "<TICKET_TITLE_INDEX>",
     },
   ],
+  "jobGroups": [],
   "logicFunctions": [],
   "navigationMenuItems": [
     {
