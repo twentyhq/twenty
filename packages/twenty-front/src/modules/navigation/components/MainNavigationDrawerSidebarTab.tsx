@@ -81,16 +81,17 @@ export const MainNavigationDrawerSidebarTab = ({
     openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
 
   const handleClick = () => {
-    if (isActive && canOpenTabMenu) {
-      if (wasTabMenuOpenOnPointerDown) {
-        closeDropdown(dropdownId);
-      } else {
-        openTabMenu();
-      }
+    if (!isActive || !canOpenTabMenu) {
+      switchToNavigationMenuTab(tab.id);
       return;
     }
 
-    switchToNavigationMenuTab(tab.id);
+    if (wasTabMenuOpenOnPointerDown) {
+      closeDropdown(dropdownId);
+      return;
+    }
+
+    openTabMenu();
   };
 
   const handleContextMenu = (event: MouseEvent<HTMLButtonElement>) => {
