@@ -8,6 +8,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FIELD_EDIT_BUTTON_WIDTH } from '@/ui/field/display/constants/FieldEditButtonWidth';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
+import { getRelationTotalCountRecordKey } from '@/object-record/cache/utils/getRelationTotalCountRecordKey';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -16,7 +17,8 @@ import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guard
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 
 export const useRelationFromManyFieldDisplay = () => {
-  const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
+  const { recordId, fieldDefinition, maxWidth, fieldValueKey } =
+    useContext(FieldContext);
 
   const { chipGeneratorPerObjectPerField } = useContext(
     PreComputedChipGeneratorsContext,
@@ -38,9 +40,17 @@ export const useRelationFromManyFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
+  const relationRecordKey = fieldValueKey ?? fieldName;
+
   const fieldValue = useRecordFieldValue<ObjectRecord[] | undefined>(
     recordId,
-    fieldName,
+    relationRecordKey,
+    fieldDefinition,
+  );
+
+  const totalCount = useRecordFieldValue<number>(
+    recordId,
+    getRelationTotalCountRecordKey(relationRecordKey),
     fieldDefinition,
   );
 
@@ -74,6 +84,8 @@ export const useRelationFromManyFieldDisplay = () => {
   return {
     fieldDefinition,
     fieldValue,
+    // Only a value fetched under its own key can carry a total count; a field could be named like the sibling key
+    totalCount: isDefined(fieldValueKey) ? totalCount : undefined,
     maxWidth: maxWidthForField,
     recordId,
     generateRecordChipData,

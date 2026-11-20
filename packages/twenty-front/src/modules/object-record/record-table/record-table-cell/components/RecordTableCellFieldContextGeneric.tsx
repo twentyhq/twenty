@@ -33,6 +33,7 @@ export const RecordTableCellFieldContextGeneric = ({
     fieldDefinition,
     isRecordReadOnly,
     restrictedFieldNames,
+    fieldValueKey,
   },
   children,
 }: RecordTableCellFieldContextGenericProps) => {
@@ -136,6 +137,8 @@ export const RecordTableCellFieldContextGeneric = ({
           isRecordTableCellsNonEditable ||
           isInvalidJunctionRelation ||
           isFieldRestricted ||
+          // A scoped relation only lists part of the related records, which the relation picker cannot edit
+          isDefined(fieldValueKey) ||
           isRecordFieldReadOnly({
             isRecordReadOnly,
             objectMetadataId: objectMetadataItem.id,
@@ -144,6 +147,7 @@ export const RecordTableCellFieldContextGeneric = ({
             objectPermissionsByObjectMetadataId,
           }),
         isForbidden: !hasObjectReadPermissions || isFieldRestricted,
+        fieldValueKey,
       }}
     >
       {children}
