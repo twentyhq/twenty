@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FileFolder, OpenRecordIn } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
+import { In, IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
@@ -25,6 +25,7 @@ import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-p
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { type InboxNotificationSettings } from 'src/engine/core-modules/user-workspace/types/inbox-notification-settings.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
@@ -116,6 +117,53 @@ export class UserWorkspaceService {
     await this.coreEntityCacheService.invalidate(
       'userWorkspaceEntity',
       userWorkspaceId,
+    );
+  }
+
+  async updateInboxNotificationSettings({
+    workspaceId,
+    userWorkspaceId,
+    inboxNotificationLevel,
+    isInboxNotificationPreviewEnabled,
+  }: InboxNotificationSettings & {
+    workspaceId: string;
+    userWorkspaceId: string;
+  }): Promise<UserWorkspaceEntity> {
+    await this.userWorkspaceRepository.update(
+      { id: userWorkspaceId, workspaceId },
+      { inboxNotificationLevel, isInboxNotificationPreviewEnabled },
+    );
+
+    return this.userWorkspaceRepository.findOneOrFail({
+      where: { id: userWorkspaceId, workspaceId },
+    });
+  }
+
+  async findInboxNotificationSettingsByUserId({
+    workspaceId,
+    userIds,
+  }: {
+    workspaceId: string;
+    userIds: string[];
+  }): Promise<Partial<Record<string, InboxNotificationSettings>>> {
+    if (userIds.length === 0) {
+      return {};
+    }
+
+    const userWorkspaces = await this.userWorkspaceRepository.find({
+      select: {
+        userId: true,
+        inboxNotificationLevel: true,
+        isInboxNotificationPreviewEnabled: true,
+      },
+      where: { workspaceId, userId: In(userIds) },
+    });
+
+    return Object.fromEntries(
+      userWorkspaces.map((userWorkspace) => [
+        userWorkspace.userId,
+        userWorkspace,
+      ]),
     );
   }
 

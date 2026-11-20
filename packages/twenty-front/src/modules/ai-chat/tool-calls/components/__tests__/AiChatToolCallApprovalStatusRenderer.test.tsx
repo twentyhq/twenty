@@ -1,3 +1,4 @@
+import { type ChatReferenceMatch } from 'twenty-shared/ai';
 import { AiChatTestInstance } from '@/ai-chat/testing/AiChatTestInstance';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
@@ -5,7 +6,6 @@ import { render, screen } from '@testing-library/react';
 import { type ToolUIPart } from 'ai';
 
 import { AiChatToolCallApprovalStatusRenderer } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer';
-import { type ChatReferenceMatch } from '@/ai-chat/message-content/types/ChatReferenceMatch';
 
 jest.mock('@/ai-chat/message-content/components/ChatReferenceChip', () => ({
   ChatReferenceChip: ({ reference }: { reference: ChatReferenceMatch }) => (

@@ -3,10 +3,12 @@ import { MOBILE_NAVIGATION_BAR_PADDING } from '@/navigation/constants/MobileNavi
 import { useMobileNavigationBarItems } from '@/navigation/hooks/useMobileNavigationBarItems';
 import { isMobileNavigationBarVisibleState } from '@/navigation/states/isMobileNavigationBarVisibleState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-drawer/components/StyledNavigationDrawerUnreadDot';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
+import { Fragment } from 'react';
 import { useLocation } from 'react-router-dom';
 import { IconButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -64,6 +66,22 @@ const StyledNavigationBar = styled.nav`
   }
 `;
 
+const StyledDivider = styled.span`
+  align-self: stretch;
+  background: ${themeCssVariables.border.color.medium};
+  margin: ${themeCssVariables.spacing[2]} 0;
+  width: 1px;
+`;
+
+const StyledIconContainer = styled.span`
+  display: flex;
+  position: relative;
+`;
+
+const StyledUnreadDot = styled(StyledNavigationDrawerUnreadDot)`
+  background: ${themeCssVariables.color.red};
+`;
+
 const navigationButtonClassName = css`
   block-size: ${themeCssVariables.spacing[10]};
   color: ${themeCssVariables.grayScale.gray10};
@@ -102,20 +120,27 @@ export const MobileNavigationBar = () => {
           aria-hidden={isHidden}
           inert={isHidden || undefined}
         >
-          {items.map(({ Icon, name, label, onClick }) => (
-            <IconButton
-              key={name}
-              className={navigationButtonClassName}
-              variant="ghost"
-              shape="round"
-              aria-label={label}
-              aria-current={activeItemName === name ? 'page' : undefined}
-              onClick={onClick}
-              tabIndex={isHidden ? -1 : 0}
-            >
-              <Icon className={navigationIconClassName} aria-hidden />
-            </IconButton>
-          ))}
+          {items.map(
+            ({ Icon, name, label, onClick, isUnread, hasDividerAfter }) => (
+              <Fragment key={name}>
+                <IconButton
+                  className={navigationButtonClassName}
+                  variant="ghost"
+                  shape="round"
+                  aria-label={label}
+                  aria-current={activeItemName === name ? 'page' : undefined}
+                  onClick={onClick}
+                  tabIndex={isHidden ? -1 : 0}
+                >
+                  <StyledIconContainer>
+                    <Icon className={navigationIconClassName} aria-hidden />
+                    {isUnread && <StyledUnreadDot aria-hidden />}
+                  </StyledIconContainer>
+                </IconButton>
+                {hasDividerAfter && <StyledDivider aria-hidden />}
+              </Fragment>
+            ),
+          )}
         </StyledNavigationBar>
       </StyledFloatingContainer>
     </>
