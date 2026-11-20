@@ -2772,6 +2772,7 @@ export interface NavigationMenuItem {
     folderId?: Scalars['UUID']
     icon?: Scalars['String']
     id: Scalars['UUID']
+    isActive: Scalars['Boolean']
     link?: Scalars['String']
     name?: Scalars['String']
     nativePageKey?: Scalars['String']
@@ -7642,6 +7643,7 @@ export interface NavigationMenuItemGenqlSelection{
     folderId?: boolean | number
     icon?: boolean | number
     id?: boolean | number
+    isActive?: boolean | number
     link?: boolean | number
     name?: boolean | number
     nativePageKey?: boolean | number
@@ -9032,7 +9034,7 @@ export interface UpdateMessageFolderInputUpdates {isSynced: Scalars['Boolean']}
 
 export interface UpdateMessageFoldersInput {ids: Scalars['UUID'][],update: UpdateMessageFolderInputUpdates}
 
-export interface UpdateNavigationMenuItemInput {color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),parentId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null)}
+export interface UpdateNavigationMenuItemInput {color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),parentId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null)}
 
 export interface UpdateObjectPayload {color?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isActive?: (Scalars['Boolean'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),labelPlural?: (Scalars['String'] | null),labelSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),openRecordIn?: (ObjectOpenRecordIn | null),shortcut?: (Scalars['String'] | null),translations?: (MetadataTranslationOverrideInput[] | null)}
 

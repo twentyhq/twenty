@@ -10349,6 +10349,9 @@ export default {
             "id": [
                 561
             ],
+            "isActive": [
+                1
+            ],
             "link": [
                 4
             ],
@@ -14907,6 +14910,9 @@ export default {
             ],
             "icon": [
                 4
+            ],
+            "isActive": [
+                1
             ],
             "link": [
                 4

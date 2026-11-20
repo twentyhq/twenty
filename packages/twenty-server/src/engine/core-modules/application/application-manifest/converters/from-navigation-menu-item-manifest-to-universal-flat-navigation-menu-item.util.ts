@@ -40,6 +40,8 @@ export const fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem =
       agentUniversalIdentifier: null,
       targetRecordId: null,
       userWorkspaceId: null,
+      isActive: true,
+      overrides: null,
       createdAt: now,
       updatedAt: now,
     };

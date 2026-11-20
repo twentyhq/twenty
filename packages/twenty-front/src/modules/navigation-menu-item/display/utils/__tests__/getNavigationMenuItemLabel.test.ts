@@ -38,6 +38,7 @@ const baseItem: NavigationMenuItem = {
   id: 'nav-1',
   type: NavigationMenuItemType.OBJECT,
   position: 0,
+  isActive: true,
   createdAt: '',
   updatedAt: '',
 };
