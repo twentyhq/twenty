@@ -273,7 +273,12 @@ export class UserWorkspaceService {
       workspace.id,
     );
 
-    if (existingUserWorkspace) {
+    if (
+      isDefined(existingUserWorkspace) &&
+      (await this.roleTargetRepository.existsBy(workspace.id, {
+        userWorkspaceId: existingUserWorkspace.id,
+      }))
+    ) {
       return;
     }
 
@@ -282,22 +287,23 @@ export class UserWorkspaceService {
       workspace,
     );
 
-    const userWorkspace =
-      await this.billingSeatService.addMemberWithinSeatLimit({
-        workspaceId: workspace.id,
-        addMember: async () => {
-          const createdUserWorkspace = await this.create({
-            userId: user.id,
-            workspaceId: workspace.id,
-            isExistingUser: true,
-            locale: user.locale,
-          });
+    const userWorkspace = isDefined(existingUserWorkspace)
+      ? await this.resumeInterruptedMembership(existingUserWorkspace, user)
+      : await this.billingSeatService.addMemberWithinSeatLimit({
+          workspaceId: workspace.id,
+          addMember: async () => {
+            const createdUserWorkspace = await this.create({
+              userId: user.id,
+              workspaceId: workspace.id,
+              isExistingUser: true,
+              locale: user.locale,
+            });
 
-          await this.createWorkspaceMember(workspace.id, user);
+            await this.createWorkspaceMember(workspace.id, user);
 
-          return createdUserWorkspace;
-        },
-      });
+            return createdUserWorkspace;
+          },
+        });
 
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
       'flatWorkspaceMemberMaps',
@@ -319,6 +325,16 @@ export class UserWorkspaceService {
       workspaceId: workspace.id,
       value: true,
     });
+  }
+
+  // A membership without a role was interrupted mid-setup; it was already admitted within the seat limit
+  private async resumeInterruptedMembership(
+    userWorkspace: UserWorkspaceEntity,
+    user: UserEntity,
+  ): Promise<UserWorkspaceEntity> {
+    await this.createWorkspaceMember(userWorkspace.workspaceId, user);
+
+    return userWorkspace;
   }
 
   private async resolveRoleIdForNewMember(
