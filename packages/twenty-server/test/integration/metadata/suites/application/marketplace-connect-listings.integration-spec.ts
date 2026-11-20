@@ -6,7 +6,7 @@ import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/servic
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
-const BUILT_IN_NAMES = ['Claude', 'ChatGPT', 'Twenty CLI'];
+const CONNECT_LISTING_NAMES = ['Claude', 'ChatGPT', 'Twenty CLI'];
 
 const findManyMarketplaceAppsQuery = gql`
   query FindManyMarketplaceApps {
@@ -41,7 +41,7 @@ const publicMarketplaceAppsQuery = gql`
   }
 `;
 
-describe('Built-in marketplace applications', () => {
+describe('Marketplace connect listings', () => {
   afterAll(async () => {
     await getAppProviderByClassName<CoreEntityCacheService>(
       'CoreEntityCacheService',
@@ -55,16 +55,16 @@ describe('Built-in marketplace applications', () => {
 
     expect(response.body.errors).toBeUndefined();
 
-    const builtInApps = response.body.data.findManyMarketplaceApps.slice(
+    const connectListingApps = response.body.data.findManyMarketplaceApps.slice(
       0,
-      BUILT_IN_NAMES.length,
+      CONNECT_LISTING_NAMES.length,
     );
 
-    expect(builtInApps.map((app: { name: string }) => app.name)).toEqual(
-      BUILT_IN_NAMES,
+    expect(connectListingApps.map((app: { name: string }) => app.name)).toEqual(
+      CONNECT_LISTING_NAMES,
     );
 
-    for (const app of builtInApps) {
+    for (const app of connectListingApps) {
       expect(app.isListed).toBe(true);
       expect(app.connectUrl).toMatch(/^https:\/\//);
       expect(app.logoUrl).toMatch(/^https?:\/\/.+\/images\/oauth-clients\//);
@@ -108,8 +108,8 @@ describe('Built-in marketplace applications', () => {
       (app: { name: string }) => app.name,
     );
 
-    for (const builtInName of BUILT_IN_NAMES) {
-      expect(publicNames).not.toContain(builtInName);
+    for (const connectListingName of CONNECT_LISTING_NAMES) {
+      expect(publicNames).not.toContain(connectListingName);
     }
   });
 });

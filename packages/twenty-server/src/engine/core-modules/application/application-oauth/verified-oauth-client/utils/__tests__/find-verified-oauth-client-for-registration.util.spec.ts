@@ -1,4 +1,4 @@
-import { MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-built-in-application-universal-identifiers.constant';
+import { MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-connect-listing-universal-identifiers.constant';
 import { findVerifiedOAuthClientForRegistration } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/find-verified-oauth-client-for-registration.util';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
@@ -19,7 +19,7 @@ describe('findVerifiedOAuthClientForRegistration', () => {
           TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
         oAuthClientId: '9d57f169-1682-4169-b6f0-cd5f09ace06e',
       })?.marketplaceAppUniversalIdentifier,
-    ).toBe(MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.TWENTY_CLI);
+    ).toBe(MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.TWENTY_CLI);
   });
 
   it.each([
@@ -32,7 +32,7 @@ describe('findVerifiedOAuthClientForRegistration', () => {
         universalIdentifier: '2b1f0d5e-6f0f-4f0e-9a43-0f6b3c1f2a10',
         oAuthClientId,
       })?.marketplaceAppUniversalIdentifier,
-    ).toBe(MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CLAUDE);
+    ).toBe(MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CLAUDE);
   });
 
   it('should find nothing for a registration that only carries the CLI identifier', () => {
