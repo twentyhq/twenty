@@ -2,6 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import {
+  CoreWorkflowMetadataException,
+  CoreWorkflowMetadataExceptionCode,
+} from 'src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -64,8 +68,9 @@ export class CoreWorkflowTriggerService {
     });
 
     if (workflows.length > 1) {
-      throw new Error(
+      throw new CoreWorkflowMetadataException(
         `Ambiguous core workflow mapping for ${workflowId} in workspace ${workspaceId}`,
+        CoreWorkflowMetadataExceptionCode.AMBIGUOUS_WORKFLOW_IDENTIFIER,
       );
     }
 
