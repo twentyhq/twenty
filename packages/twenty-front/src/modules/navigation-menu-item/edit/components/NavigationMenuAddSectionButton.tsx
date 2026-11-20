@@ -16,6 +16,7 @@ import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/componen
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { useHiddenNavigationMenuItemsInTab } from '@/navigation-menu-item/edit/hooks/useHiddenNavigationMenuItemsInTab';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
+import { getNavigationMenuAddSectionDropdownId } from '@/navigation-menu-item/edit/utils/getNavigationMenuAddSectionDropdownId';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -47,7 +48,7 @@ export const NavigationMenuAddSectionButton = ({
     navigationMenuItemIdToRenameState,
   );
   const { closeDropdown } = useCloseDropdown();
-  const dropdownId = `navigation-menu-add-section-${containerId ?? 'home'}`;
+  const dropdownId = getNavigationMenuAddSectionDropdownId(containerId);
 
   if (!isCustomizableSidebarEnabled) {
     return null;

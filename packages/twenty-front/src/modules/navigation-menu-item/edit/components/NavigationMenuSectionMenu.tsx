@@ -14,6 +14,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { getNavigationMenuSectionNavigationSectionId } from '@/navigation-menu-item/display/utils/getNavigationMenuSectionNavigationSectionId';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -37,7 +38,7 @@ export const NavigationMenuSectionMenu = ({
     setNavigationMenuSectionIdAddingItem,
   ] = useAtomState(navigationMenuSectionIdAddingItemState);
   const { openNavigationSection } = useNavigationSection(
-    `navigation-menu-section-${section.id}`,
+    getNavigationMenuSectionNavigationSectionId(section),
   );
   const dropdownId = getNavigationMenuSectionMenuDropdownId(section.id);
   const isAddingItem = navigationMenuSectionIdAddingItem === section.id;
