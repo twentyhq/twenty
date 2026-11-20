@@ -2,6 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import {
+  CoreWorkflowMetadataException,
+  CoreWorkflowMetadataExceptionCode,
+} from 'src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -10,18 +14,6 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { type CachedCronTrigger } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/types/cached-cron-trigger.type';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-export class CoreWorkflowPostCommitError extends Error {
-  readonly cause: unknown;
-
-  constructor({ cause }: { cause: unknown }) {
-    super(
-      'Workflow changes were committed, but the trigger cache could not be refreshed',
-    );
-    this.name = 'CoreWorkflowPostCommitError';
-    this.cause = cause;
-  }
-}
 
 @Injectable()
 export class CoreWorkflowTriggerService {
@@ -63,7 +55,12 @@ export class CoreWorkflowTriggerService {
     try {
       await this.invalidateAutomatedTriggerMaps(workspaceId);
     } catch (error) {
-      throw new CoreWorkflowPostCommitError({ cause: error });
+      throw new CoreWorkflowMetadataException(
+        `Workflow changes were committed, but the automated trigger maps of workspace ${workspaceId} could not be refreshed: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+        CoreWorkflowMetadataExceptionCode.TRIGGER_CACHE_REFRESH_FAILED,
+      );
     }
   }
 

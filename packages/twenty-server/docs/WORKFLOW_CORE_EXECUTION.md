@@ -51,7 +51,7 @@ Compatibility boundaries that resolve historical identifiers:
 Two caches are derived from committed definitions: the workspace `workflowAutomatedTriggerMaps` and the `workflow-cron-triggers` hash. They are refreshed after the metadata migration commits, only through `refreshTriggerCachesAfterCommit`. The failure contract:
 
 - **Cron hash**: entries are published with `hashSetIfExists` and removed with `hashDelete`. If either fails, the whole hash is dropped and the next cron tick rebuilds it from the database. Stale entries are harmless, because the cron job normalizes each one against the published core version.
-- **Automated trigger maps**: invalidated and recomputed from the database. If that fails, `CoreWorkflowPostCommitError` is raised: the definition change is committed, but the maps may stay stale until the next successful refresh.
+- **Automated trigger maps**: invalidated and recomputed from the database. If that fails, a `CoreWorkflowMetadataException` with code `TRIGGER_CACHE_REFRESH_FAILED` is raised: the definition change is committed, but the maps may stay stale until the next successful refresh.
 
 The trigger-map computation returns empty maps while its guard column is still hidden by an in-flight upgrade. A cross-version upgrade from an old release would otherwise compute maps before `coreWorkflowId` is backfilled.
 
