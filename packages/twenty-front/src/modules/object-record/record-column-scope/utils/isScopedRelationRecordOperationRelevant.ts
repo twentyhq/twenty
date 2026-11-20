@@ -1,4 +1,5 @@
 import { type ScopedRelationAlias } from '@/object-record/record-column-scope/types/ScopedRelationAlias';
+import { type ScopedRelationJunction } from '@/object-record/record-column-scope/types/ScopedRelationJunction';
 import { type ObjectRecordOperation } from '@/object-record/types/ObjectRecordOperation';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectRecord } from 'twenty-shared/types';
@@ -34,13 +35,31 @@ export const isScopedRelationRecordOperationRelevant = ({
       ScopedRelationAlias['relationObjectMetadataItem'],
       'id'
     >;
+    scopedRelationJunction?: {
+      targetObjectMetadataItem: Pick<
+        ScopedRelationJunction['targetObjectMetadataItem'],
+        'id'
+      >;
+    };
   })[];
   isRecordLoaded: (recordId: string) => boolean;
 }): boolean => {
   const writtenRecord = getWrittenRecord(operation);
 
   return scopedRelationAliases.some(
-    ({ relationObjectMetadataItem, relationJoinColumnName }) => {
+    ({
+      relationObjectMetadataItem,
+      relationJoinColumnName,
+      scopedRelationJunction,
+    }) => {
+      // A target record carries no reference to the rows that list it through the join object
+      if (
+        scopedRelationJunction?.targetObjectMetadataItem.id ===
+        operationObjectMetadataItemId
+      ) {
+        return true;
+      }
+
       if (relationObjectMetadataItem.id !== operationObjectMetadataItemId) {
         return false;
       }

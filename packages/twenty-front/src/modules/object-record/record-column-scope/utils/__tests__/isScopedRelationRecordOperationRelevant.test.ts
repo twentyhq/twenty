@@ -72,4 +72,23 @@ describe('isScopedRelationRecordOperationRelevant', () => {
   ])('returns $expected for $title', ({ operation, expected }) => {
     expect(isRelevant({ operation })).toBe(expected);
   });
+
+  it('is relevant for an operation on the target object of a join object relation', () => {
+    expect(
+      isScopedRelationRecordOperationRelevant({
+        operation: { type: 'delete-one', deletedRecordId: 'task' },
+        operationObjectMetadataItemId: 'task-object',
+        scopedRelationAliases: [
+          {
+            relationObjectMetadataItem: { id: 'task-target-object' },
+            relationJoinColumnName: 'targetPersonId',
+            scopedRelationJunction: {
+              targetObjectMetadataItem: { id: 'task-object' },
+            },
+          },
+        ],
+        isRecordLoaded: () => false,
+      }),
+    ).toBe(true);
+  });
 });
