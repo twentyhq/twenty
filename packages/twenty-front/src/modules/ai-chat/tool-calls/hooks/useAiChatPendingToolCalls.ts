@@ -1,7 +1,8 @@
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { aiChatIsStreamingFamilyState } from '@/ai-chat/states/aiChatIsStreamingFamilyState';
+import { aiChatIsStreamingFamilySelector } from '@/ai-chat/states/selectors/aiChatIsStreamingFamilySelector';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { type AiChatPendingToolCall } from '@/ai-chat/tool-calls/types/AiChatPendingToolCall';
@@ -13,9 +14,9 @@ export const useAiChatPendingToolCalls = (): AiChatPendingToolCall[] => {
   const aiChatMessages = useAtomFamilyStateValue(aiChatMessagesFamilyState, {
     threadId,
   });
-  const aiChatIsStreaming = useAtomFamilyStateValue(
-    aiChatIsStreamingFamilyState,
-    { threadId },
+  const aiChatIsStreaming = useAtomFamilySelectorValue(
+    aiChatIsStreamingFamilySelector,
+    threadId,
   );
 
   return useMemo(

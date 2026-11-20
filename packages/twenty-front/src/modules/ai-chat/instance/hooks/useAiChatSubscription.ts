@@ -24,9 +24,8 @@ import { AI_CHAT_STREAM_LIVENESS_CHECK_INTERVAL_IN_MS } from '@/ai-chat/constant
 import { AI_CHAT_STREAM_LIVENESS_TIMEOUT_IN_MS } from '@/ai-chat/constants/AiChatStreamLivenessTimeoutInMs';
 import { useApplyAiChatThreadUpdate } from '@/ai-chat/threads/hooks/useApplyAiChatThreadUpdate';
 import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
-import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai-chat/states/aiChatIsAwaitingFirstChunkFamilyState';
-import { aiChatIsAwaitingPersistedRefetchFamilyState } from '@/ai-chat/states/aiChatIsAwaitingPersistedRefetchFamilyState';
-import { aiChatIsStreamingFamilyState } from '@/ai-chat/states/aiChatIsStreamingFamilyState';
+import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
+import { endAiChatReplyStatus } from '@/ai-chat/utils/endAiChatReplyStatus';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { aiChatStreamRecoveryAttemptsFamilyState } from '@/ai-chat/states/aiChatStreamRecoveryAttemptsFamilyState';
 import { aiChatUsageFamilyState } from '@/ai-chat/usage/states/aiChatUsageFamilyState';
@@ -84,11 +83,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
     const familyKey = { threadId };
 
     const errorAtom = aiChatErrorFamilyState.atomFamily(familyKey);
-    const isStreamingAtom = aiChatIsStreamingFamilyState.atomFamily(familyKey);
-    const isAwaitingFirstChunkAtom =
-      aiChatIsAwaitingFirstChunkFamilyState.atomFamily(familyKey);
-    const isAwaitingPersistedRefetchAtom =
-      aiChatIsAwaitingPersistedRefetchFamilyState.atomFamily(familyKey);
+    const replyStatusAtom = aiChatReplyStatusFamilyState.atomFamily(familyKey);
     const messagesAtom = aiChatMessagesFamilyState.atomFamily(familyKey);
     const fetchedMessagesAtom =
       aiChatFetchedMessagesFamilyState.atomFamily(familyKey);
@@ -113,6 +108,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
     let lastBroadcastAt = Date.now();
     let hasReceivedInitialKeepalive = false;
     let firstLiveSeq: number | null = null;
+    let isStreamOpen = false;
 
     const closeWriter = () => {
       if (isDefined(writer)) {
@@ -121,11 +117,16 @@ export const useAiChatSubscription = (threadId: string | null) => {
       }
     };
 
+    const endStream = () => {
+      isStreamOpen = false;
+      store.set(replyStatusAtom, endAiChatReplyStatus('streaming'));
+    };
+
     const cleanupStream = () => {
       closeWriter();
 
-      if (store.get(isStreamingAtom)) {
-        store.set(isStreamingAtom, false);
+      if (isStreamOpen) {
+        endStream();
       }
     };
 
@@ -204,13 +205,14 @@ export const useAiChatSubscription = (threadId: string | null) => {
       flushToAtom();
 
       if (!disposed) {
-        store.set(isStreamingAtom, false);
+        endStream();
       }
     };
 
     const applyChunk = (chunk: UIMessageChunk) => {
-      if (!store.get(isStreamingAtom)) {
-        store.set(isStreamingAtom, true);
+      if (!isStreamOpen) {
+        isStreamOpen = true;
+        store.set(replyStatusAtom, 'streaming');
         store.set(errorAtom, null);
 
         bridge = new TransformStream<UIMessageChunk>();
@@ -222,7 +224,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
 
         startReadLoop(adaptedReadable).catch(() => {
           if (!disposed) {
-            store.set(isStreamingAtom, false);
+            endStream();
           }
         });
       }
@@ -240,7 +242,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
     const resetStreamProcessing = () => {
       chunkSequencer.reset();
       closeWriter();
-      store.set(isAwaitingFirstChunkAtom, false);
+      store.set(replyStatusAtom, endAiChatReplyStatus('awaiting-first-chunk'));
     };
 
     const handleEvent = (event: AgentChatSubscriptionEvent) => {
@@ -253,9 +255,10 @@ export const useAiChatSubscription = (threadId: string | null) => {
             firstLiveSeq = event.seq;
           }
 
-          if (store.get(isAwaitingFirstChunkAtom)) {
-            store.set(isAwaitingFirstChunkAtom, false);
-          }
+          store.set(
+            replyStatusAtom,
+            endAiChatReplyStatus('awaiting-first-chunk'),
+          );
 
           chunkSequencer.push(event.chunk as UIMessageChunk, event.seq);
           break;
@@ -264,7 +267,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
         case 'stream-ended':
         case 'message-persisted': {
           resetStreamProcessing();
-          store.set(isAwaitingPersistedRefetchAtom, true);
+          store.set(replyStatusAtom, 'awaiting-persisted-refetch');
           dispatchAiChatRefetchMessagesEvent(threadId);
           break;
         }
@@ -321,7 +324,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
           );
 
           resetStreamProcessing();
-          store.set(isStreamingAtom, false);
+          endStream();
           break;
         }
 
@@ -338,9 +341,9 @@ export const useAiChatSubscription = (threadId: string | null) => {
           );
 
           resetStreamProcessing();
-          store.set(isAwaitingPersistedRefetchAtom, true);
+          store.set(replyStatusAtom, 'awaiting-persisted-refetch');
           dispatchAiChatRefetchMessagesEvent(threadId);
-          store.set(isStreamingAtom, false);
+          endStream();
           break;
         }
 
@@ -375,8 +378,8 @@ export const useAiChatSubscription = (threadId: string | null) => {
       store.set(messagesAtom, []);
       store.set(fetchedMessagesAtom, []);
       store.set(queuedMessagesAtom, []);
-      store.set(isStreamingAtom, false);
-      store.set(isAwaitingPersistedRefetchAtom, false);
+      isStreamOpen = false;
+      store.set(replyStatusAtom, 'idle');
       store.set(
         errorAtom,
         createAiChatCodedError(
@@ -446,7 +449,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
 
     const livenessInterval = setInterval(() => {
       const isPending =
-        store.get(isStreamingAtom) || store.get(isAwaitingFirstChunkAtom);
+        isStreamOpen || store.get(replyStatusAtom) === 'awaiting-first-chunk';
       const recoveryAttempts = store.get(recoveryAttemptsAtom);
 
       // Resubscribing clears the pending flags, so a started recovery runs until a broadcast arrives or it gives up
@@ -468,7 +471,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
           ),
         );
         resetStreamProcessing();
-        store.set(isStreamingAtom, false);
+        endStream();
         return;
       }
 
@@ -481,7 +484,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
       disposed = true;
       clearInterval(livenessInterval);
       chunkSequencer.reset();
-      store.set(isAwaitingFirstChunkAtom, false);
+      store.set(replyStatusAtom, endAiChatReplyStatus('awaiting-first-chunk'));
       liveStreamSlot.current = null;
       if (isDefined(throttleTimer)) {
         clearTimeout(throttleTimer);

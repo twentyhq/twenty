@@ -24,7 +24,7 @@ import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThre
 import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
 import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
-import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai-chat/states/aiChatIsAwaitingFirstChunkFamilyState';
+import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
 import { aiChatIsAssistantReplyPendingFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatIsAssistantReplyPendingFamilySelector';
 import { type AiChatNewThreadRecipients } from '@/ai-chat/types/AiChatNewThreadRecipients';
 import { aiChatUploadingFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadingFilesFamilyState';
@@ -1063,10 +1063,10 @@ describe('useAiChat', () => {
 
     expect(jotaiStore.get(isSendingMessageAtom)).toBe(true);
     jotaiStore.set(
-      aiChatIsAwaitingFirstChunkFamilyState.atomFamily({
+      aiChatReplyStatusFamilyState.atomFamily({
         threadId: THREAD_ID,
       }),
-      false,
+      'idle',
     );
     expect(jotaiStore.get(isSendingMessageAtom)).toBe(true);
     releaseMutation();

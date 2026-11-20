@@ -2,7 +2,7 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { AiChatMessage } from '@/ai-chat/messages/components/AiChatMessage';
 import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
-import { aiChatIsStreamingFamilyState } from '@/ai-chat/states/aiChatIsStreamingFamilyState';
+import { aiChatIsStreamingFamilySelector } from '@/ai-chat/states/selectors/aiChatIsStreamingFamilySelector';
 import { aiChatLastReplyMessageIdFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatLastReplyMessageIdFamilySelector';
 import { isDefined } from 'twenty-shared/utils';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -14,9 +14,9 @@ export const AiChatLastMessageWithStreamingState = () => {
     threadId,
   );
 
-  const aiChatIsStreaming = useAtomFamilyStateValue(
-    aiChatIsStreamingFamilyState,
-    { threadId },
+  const aiChatIsStreaming = useAtomFamilySelectorValue(
+    aiChatIsStreamingFamilySelector,
+    threadId,
   );
   const aiChatError = useAtomFamilyStateValue(aiChatErrorFamilyState, {
     threadId,

@@ -6,7 +6,9 @@ import { useCallback } from 'react';
 
 import { useAiChatModelId } from '@/ai-chat/hooks/useAiChatModelId';
 import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
-import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai-chat/states/aiChatIsAwaitingFirstChunkFamilyState';
+import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
+import { endAiChatReplyStatus } from '@/ai-chat/utils/endAiChatReplyStatus';
+import { getAiChatReplyStatusUnlessStreaming } from '@/ai-chat/utils/getAiChatReplyStatusUnlessStreaming';
 import { isAiChatCreditsExhaustedError } from '@/ai-chat/usage/utils/isAiChatCreditsExhaustedError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
@@ -23,12 +25,16 @@ export const useRetryChatMessage = () => {
 
   const retryChatMessage = useCallback(async () => {
     const errorAtom = aiChatErrorFamilyState.atomFamily({ threadId });
-    const isAwaitingFirstChunkAtom =
-      aiChatIsAwaitingFirstChunkFamilyState.atomFamily({ threadId });
+    const replyStatusAtom = aiChatReplyStatusFamilyState.atomFamily({
+      threadId,
+    });
     const previousError = store.get(errorAtom);
 
     store.set(errorAtom, null);
-    store.set(isAwaitingFirstChunkAtom, true);
+    store.set(
+      replyStatusAtom,
+      getAiChatReplyStatusUnlessStreaming('awaiting-first-chunk'),
+    );
 
     try {
       await apolloClient.mutate({
@@ -43,7 +49,7 @@ export const useRetryChatMessage = () => {
 
       dispatchAiChatRefetchMessagesEvent(threadId);
     } catch (retryError) {
-      store.set(isAwaitingFirstChunkAtom, false);
+      store.set(replyStatusAtom, endAiChatReplyStatus('awaiting-first-chunk'));
       store.set(
         errorAtom,
         retryError instanceof Error ? retryError : previousError,

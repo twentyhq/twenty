@@ -40,8 +40,9 @@ import { aiChatUploadedFilesFamilyState } from '@/ai-chat/composer/states/aiChat
 import { aiChatUnconfirmedFirstMessageFamilyState } from '@/ai-chat/composer/states/aiChatUnconfirmedFirstMessageFamilyState';
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
-import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai-chat/states/aiChatIsAwaitingFirstChunkFamilyState';
-import { aiChatIsAwaitingPersistedRefetchFamilyState } from '@/ai-chat/states/aiChatIsAwaitingPersistedRefetchFamilyState';
+import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
+import { endAiChatReplyStatus } from '@/ai-chat/utils/endAiChatReplyStatus';
+import { getAiChatReplyStatusUnlessStreaming } from '@/ai-chat/utils/getAiChatReplyStatusUnlessStreaming';
 import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { aiChatOpenThreadIdByInstanceIdState } from '@/ai-chat/states/aiChatOpenThreadIdByInstanceIdState';
@@ -192,13 +193,17 @@ export const useAiChat = () => {
         threadId,
       });
       const errorAtom = aiChatErrorFamilyState.atomFamily({ threadId });
-      const isAwaitingFirstChunkAtom =
-        aiChatIsAwaitingFirstChunkFamilyState.atomFamily({ threadId });
+      const replyStatusAtom = aiChatReplyStatusFamilyState.atomFamily({
+        threadId,
+      });
       const removeOptimisticUserMessage = () => {
         store.set(messagesAtom, (messages) =>
           messages.filter((message) => message.id !== messageId),
         );
-        store.set(isAwaitingFirstChunkAtom, false);
+        store.set(
+          replyStatusAtom,
+          endAiChatReplyStatus('awaiting-first-chunk'),
+        );
       };
 
       store.set(aiChatSentMessageHandOffState.atom, (sentMessageHandOff) =>
@@ -211,7 +216,10 @@ export const useAiChat = () => {
         optimisticUserMessage,
       ]);
       store.set(errorAtom, null);
-      store.set(isAwaitingFirstChunkAtom, true);
+      store.set(
+        replyStatusAtom,
+        getAiChatReplyStatusUnlessStreaming('awaiting-first-chunk'),
+      );
 
       const fileAttachments = aiChatUploadedFiles.map((file) => ({
         id: file.fileId,
@@ -271,12 +279,9 @@ export const useAiChat = () => {
           }
         } else {
           store.set(
-            aiChatIsAwaitingPersistedRefetchFamilyState.atomFamily({
-              threadId,
-            }),
-            true,
+            replyStatusAtom,
+            getAiChatReplyStatusUnlessStreaming('awaiting-persisted-refetch'),
           );
-          store.set(isAwaitingFirstChunkAtom, false);
         }
 
         if (!isDirectMessage) {

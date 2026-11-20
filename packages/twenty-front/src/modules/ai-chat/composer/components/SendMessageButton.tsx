@@ -3,7 +3,7 @@ import { type AiChatInstanceEventDetail } from '@/ai-chat/types/AiChatInstanceEv
 import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai-chat/constants/AiChatSendMessageEventName';
 import { useStopAiChatStream } from '@/ai-chat/hooks/useStopAiChatStream';
 import { aiChatMessagesLoadingFamilyState } from '@/ai-chat/states/aiChatMessagesLoadingFamilyState';
-import { aiChatIsStreamingFamilyState } from '@/ai-chat/states/aiChatIsStreamingFamilyState';
+import { aiChatIsStreamingFamilySelector } from '@/ai-chat/states/selectors/aiChatIsStreamingFamilySelector';
 import { aiChatInputIsEmptyFamilySelector } from '@/ai-chat/composer/states/selectors/aiChatInputIsEmptyFamilySelector';
 import { aiChatIsAssistantReplyPendingFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatIsAssistantReplyPendingFamilySelector';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
@@ -30,9 +30,9 @@ export const SendMessageButton = ({
     aiChatMessagesLoadingFamilyState,
     { threadId },
   );
-  const aiChatIsStreaming = useAtomFamilyStateValue(
-    aiChatIsStreamingFamilyState,
-    { threadId },
+  const aiChatIsStreaming = useAtomFamilySelectorValue(
+    aiChatIsStreamingFamilySelector,
+    threadId,
   );
   const { stopAiChatStream } = useStopAiChatStream();
   const aiChatIsAssistantReplyPending = useAtomFamilySelectorValue(
