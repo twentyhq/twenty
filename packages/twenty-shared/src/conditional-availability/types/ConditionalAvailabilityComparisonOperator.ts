@@ -1,6 +1,7 @@
-import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
+import { type z } from 'zod';
 
-export type ConditionalAvailabilityComparisonOperator = Extract<
-  ConditionalAvailabilityNode,
-  { type: 'COMPARISON' }
->['operator'];
+import { type conditionalAvailabilityComparisonOperatorSchema } from '@/conditional-availability/utils/conditionalAvailabilityComparisonOperatorSchema';
+
+export type ConditionalAvailabilityComparisonOperator = z.infer<
+  typeof conditionalAvailabilityComparisonOperatorSchema
+>;
