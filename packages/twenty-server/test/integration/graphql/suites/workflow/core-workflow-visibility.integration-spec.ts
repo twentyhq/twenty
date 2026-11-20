@@ -756,7 +756,7 @@ describe('core workflow visibility (e2e)', () => {
         await createCoreWorkflow({ name: 'Ownerless Private Workflow' }));
 
       await global.testDataSource.query(
-        `UPDATE core."workflow" SET "createdByUserWorkspaceId" = NULL, "visibility" = 'PRIVATE' WHERE id = $1`,
+        `UPDATE core."workflow" SET "createdByUserWorkspaceId" = NULL, "isPrivate" = true WHERE id = $1`,
         [ownerlessPrivateCoreWorkflowId],
       );
 
@@ -768,7 +768,7 @@ describe('core workflow visibility (e2e)', () => {
     afterAll(async () => {
       if (isDefined(ownerlessPrivateCoreWorkflowId)) {
         await global.testDataSource.query(
-          `UPDATE core."workflow" SET "visibility" = 'WORKSPACE' WHERE id = $1`,
+          `UPDATE core."workflow" SET "isPrivate" = false WHERE id = $1`,
           [ownerlessPrivateCoreWorkflowId],
         );
 
