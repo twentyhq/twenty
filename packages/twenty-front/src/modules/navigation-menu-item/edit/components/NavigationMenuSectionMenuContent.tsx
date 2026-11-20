@@ -5,6 +5,7 @@ import { IconFolderSymlink, IconHome, IconTrash } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { isDefined } from 'twenty-shared/utils';
 
+import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { canAddBuiltInSectionToContainer } from '@/navigation-menu-item/common/utils/canAddBuiltInSectionToContainer';
 import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
@@ -47,6 +48,10 @@ export const NavigationMenuSectionMenuContent = ({
   });
 
   const isBuiltInSection = isNavigationMenuItemBuiltInSection(section);
+  const builtInSection = NAVIGATION_MENU_BUILT_IN_SECTIONS.find(
+    ({ key }) => key === section.builtInSectionKey,
+  );
+  const isRenamable = !isBuiltInSection || builtInSection?.isRenamable === true;
 
   const canMoveTo = (containerId: string | null) =>
     containerId !== currentContainerId &&
@@ -82,11 +87,15 @@ export const NavigationMenuSectionMenuContent = ({
   return (
     <>
       <Dropdown.Page id="root">
-        {!isBuiltInSection && (
+        {isRenamable && (
           <>
             <NavigationMenuItemContainerNameEditor
               item={section}
-              placeholder={t`Section name`}
+              placeholder={
+                isDefined(builtInSection)
+                  ? t(builtInSection.label)
+                  : t`Section name`
+              }
               onSubmit={onClose}
             />
             <Dropdown.Separator />

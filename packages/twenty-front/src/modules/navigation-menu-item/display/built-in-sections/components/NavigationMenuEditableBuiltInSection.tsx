@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 
 import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
+import { getNavigationMenuBuiltInSectionLabel } from '@/navigation-menu-item/common/utils/getNavigationMenuBuiltInSectionLabel';
 import { NavigationMenuBuiltInSection } from '@/navigation-menu-item/display/built-in-sections/components/NavigationMenuBuiltInSection';
 import { useAreAiChatSectionsAvailable } from '@/navigation-menu-item/display/hooks/useAreAiChatSectionsAvailable';
 import { NavigationMenuSectionMenu } from '@/navigation-menu-item/edit/components/NavigationMenuSectionMenu';
@@ -44,7 +45,10 @@ export const NavigationMenuEditableBuiltInSection = ({
   return (
     <NavigationDrawerSection>
       <NavigationDrawerSectionTitle
-        label={t(builtInSection.label)}
+        label={getNavigationMenuBuiltInSectionLabel({
+          name: section.name,
+          defaultLabel: t(builtInSection.label),
+        })}
         rightIcon={sectionMenu}
         alwaysShowRightIcon
       />
