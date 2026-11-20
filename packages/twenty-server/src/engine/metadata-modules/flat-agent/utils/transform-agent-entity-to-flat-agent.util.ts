@@ -42,6 +42,8 @@ export const transformAgentEntityToFlatAgent = ({
     modelConfiguration: agentEntity.modelConfiguration,
     triggers: agentEntity.triggers,
     isActive: agentEntity.isActive,
+    isPrivate: agentEntity.isPrivate,
+    createdByUserWorkspaceId: agentEntity.createdByUserWorkspaceId,
     overrides: agentEntity.overrides,
     applicationUniversalIdentifier,
     navigationMenuItemIds: agentEntity.navigationMenuItems.map(({ id }) => id),

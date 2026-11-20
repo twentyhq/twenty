@@ -3,7 +3,7 @@ title: CLI
 description: Accedi a uno spazio di lavoro, esplora i suoi dati e crea app dal tuo terminale con la CLI di Twenty.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
+import { PageBanner } from '/snippets/page-banner.mdx';
 
 ## Esecuzione della CLI
 
@@ -124,6 +124,10 @@ npx twenty@latest app dev
 * `app init` scrive un nuovo progetto a partire dal modello. Non installa dipendenze né contatta uno spazio di lavoro.
 * `app apply --create` compila l'app, la registra nello spazio di lavoro, la installa e sincronizza i relativi metadati.
 * `app dev` monitora il codice sorgente e sincronizza ogni build riuscita.
+
+I file locali esterni esistenti usano gli eventi nativi del filesystem. I percorsi mancanti o eliminati usano controlli di ripristino una volta al secondo finché il monitoraggio nativo non può riprendere. Le directory principali home e temporanee e le relative directory ancestrali sono escluse dall'osservazione automatica delle directory esterne. Se `WATCH_SCOPE_LIMITED` viene visualizzato per un'importazione mancante, correggi l'importazione, quindi modifica un file dell'app o riavvia `app dev`.
+
+Esegui `twenty app dev --verbose` per visualizzare i percorsi monitorati ed esclusi dopo il primo tentativo di build e ogni volta che cambiano. Aggiungi `--format ndjson` per eventi di avanzamento strutturati di `watch-scope`.
 
 Altri comandi dell'app:
 

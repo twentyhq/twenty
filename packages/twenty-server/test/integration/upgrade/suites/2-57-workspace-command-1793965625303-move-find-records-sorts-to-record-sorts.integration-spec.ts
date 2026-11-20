@@ -250,7 +250,7 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
     const legacySteps = JSON.stringify([apiSortedWorkflow.step]);
 
     await global.testDataSource.query(
-      `UPDATE ${SCHEMA}."workflowRun" SET status = 'NOT_STARTED', state = jsonb_set(state, '{flow,steps}', $2::jsonb) WHERE id = $1`,
+      `UPDATE ${SCHEMA}."workflowRun" SET status = 'ENQUEUED', state = jsonb_set(state, '{flow,steps}', $2::jsonb) WHERE id = $1`,
       [pendingRunId, legacySteps],
     );
     await global.testDataSource.query(

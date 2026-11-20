@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon/provider';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
@@ -14,8 +15,13 @@ import { useSwitchNavigationDrawerTab } from '@/navigation/hooks/useSwitchNaviga
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-drawer/components/StyledNavigationDrawerUnreadDot';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+
+const StyledUnreadDot = styled(StyledNavigationDrawerUnreadDot)`
+  background: ${themeCssVariables.color.red};
+`;
 
 const StyledAnchor = styled.span`
   display: flex;
@@ -27,6 +33,7 @@ type MainNavigationDrawerSidebarTabProps = {
   isActive: boolean;
   isExpanded: boolean;
   shouldShowTooltip: boolean;
+  isUnread: boolean;
 };
 
 export const MainNavigationDrawerSidebarTab = ({
@@ -34,6 +41,7 @@ export const MainNavigationDrawerSidebarTab = ({
   isActive,
   isExpanded,
   shouldShowTooltip,
+  isUnread,
 }: MainNavigationDrawerSidebarTabProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
@@ -63,6 +71,8 @@ export const MainNavigationDrawerSidebarTab = ({
       tooltip={tab.name}
       shouldShowTooltip={shouldShowTooltip}
       onClick={handleClick}
+      ariaLabel={isUnread ? t`${tab.name}, unread` : tab.name}
+      iconAccessory={isUnread && <StyledUnreadDot aria-hidden="true" />}
     />
   );
 
