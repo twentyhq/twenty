@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { enqueueSnackbar, t } from 'twenty-sdk/front-component';
+import { isDefined } from 'twenty-sdk/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { Text } from 'twenty-ui/primitives/typography';
 
@@ -8,6 +9,7 @@ import { GranolaFolderEmptyState } from 'src/front-components/components/Granola
 import { GranolaFolderTree } from 'src/front-components/components/GranolaFolderTree';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { useAutosaveGranolaFolderSelection } from 'src/front-components/hooks/use-autosave-granola-folder-selection';
+import { type GranolaPersonalFolders } from 'src/front-components/types/granola-personal-folders.type';
 import { type GranolaSettingsFolder } from 'src/front-components/types/granola-settings-folder.type';
 import { fetchGranolaPersonalFoldersOrThrow } from 'src/front-components/utils/fetch-granola-personal-folders-or-throw.util';
 import { saveGranolaPersonalFolderSelectionOrThrow } from 'src/front-components/utils/save-granola-personal-folder-selection-or-throw.util';
@@ -17,15 +19,23 @@ type PersonalFolderState =
   | { status: 'failed' }
   | { status: 'loaded'; folders: GranolaSettingsFolder[] };
 
-type GranolaPersonalFolderSelectionProps = { connectionId: string };
+type GranolaPersonalFolderSelectionProps = {
+  connectionId: string;
+  initialFolders: GranolaPersonalFolders | undefined;
+};
 
 export const GranolaPersonalFolderSelection = ({
   connectionId,
+  initialFolders,
 }: GranolaPersonalFolderSelectionProps) => {
-  const [state, setState] = useState<PersonalFolderState>({
-    status: 'loading',
-  });
-  const [selectedFolderIds, setSelectedFolderIds] = useState<string[]>([]);
+  const [state, setState] = useState<PersonalFolderState>(
+    isDefined(initialFolders)
+      ? { status: 'loaded', folders: initialFolders.folders }
+      : { status: 'loading' },
+  );
+  const [selectedFolderIds, setSelectedFolderIds] = useState<string[]>(
+    initialFolders?.folderIds ?? [],
+  );
 
   const loadFolders = async () => {
     setState({ status: 'loading' });
@@ -117,7 +127,7 @@ export const GranolaPersonalFolderSelection = ({
 
   return (
     <>
-      <OnMountEffect onMount={loadFolders} />
+      {!isDefined(initialFolders) && <OnMountEffect onMount={loadFolders} />}
       {renderFolders()}
     </>
   );
