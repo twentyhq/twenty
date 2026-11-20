@@ -4,7 +4,8 @@ import { type McpToolAnnotations } from 'src/engine/api/mcp/types/mcp-tool-annot
 
 export type McpListedTool = {
   name: string;
+  title: string;
   description: string | undefined;
   inputSchema: JSONSchema7;
-  annotations: McpToolAnnotations;
+  annotations: McpToolAnnotations & { title: string };
 };
