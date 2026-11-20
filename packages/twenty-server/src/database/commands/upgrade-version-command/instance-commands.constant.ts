@@ -320,6 +320,7 @@ import { AddViewSortRelationTargetFieldMetadataIdFastInstanceCommand } from 'src
 import { AddNavigationMenuItemBuiltInSectionKeyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795087899814-add-navigation-menu-item-built-in-section-key';
 import { CreateWebPushSubscriptionCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795163526357-create-web-push-subscription-core-table';
 import { AddUserWorkspaceInboxNotificationSettingsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795163561823-add-user-workspace-inbox-notification-settings';
+import { AddNavigationMenuItemOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795167647639-add-navigation-menu-item-overridable-entity';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -642,4 +643,5 @@ export const INSTANCE_COMMANDS = [
   AddAgentPrivacyFastInstanceCommand,
   CreateWebPushSubscriptionCoreTableFastInstanceCommand,
   AddUserWorkspaceInboxNotificationSettingsFastInstanceCommand,
+  AddNavigationMenuItemOverridableEntityFastInstanceCommand,
 ];

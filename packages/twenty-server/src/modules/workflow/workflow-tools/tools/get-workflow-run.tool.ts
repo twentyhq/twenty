@@ -36,6 +36,7 @@ export const createGetWorkflowRunTool = (
   context: WorkflowToolContext,
 ) => ({
   name: 'get_workflow_run' as const,
+  isReadOnly: true,
   description:
     'Get the details of a single workflow run for troubleshooting. Returns the overall status, the run-level error, the status, output (a preview when large) and error of each step, and the execution logs of the steps that failed. Use this to diagnose why a workflow run failed or behaved unexpectedly.',
   inputSchema: getWorkflowRunSchema,
