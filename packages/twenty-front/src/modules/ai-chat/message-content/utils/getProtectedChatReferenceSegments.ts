@@ -1,6 +1,8 @@
+import {
+  type ChatReferenceMatch,
+  getChatReferenceSegments,
+} from 'twenty-shared/ai';
 import { PROTECTED_CHAT_REFERENCE_MARKER } from '@/ai-chat/message-content/constants/ProtectedChatReferenceMarker';
-import { type ChatReferenceMatch } from '@/ai-chat/message-content/types/ChatReferenceMatch';
-import { getChatReferenceSegments } from '@/ai-chat/message-content/utils/getChatReferenceSegments';
 import { isString } from '@sniptt/guards';
 
 export const getProtectedChatReferenceSegments = (

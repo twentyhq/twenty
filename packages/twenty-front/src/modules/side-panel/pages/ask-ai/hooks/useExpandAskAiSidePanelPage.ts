@@ -37,12 +37,7 @@ export const useExpandAskAiSidePanelPage = (): SidePanelExpandTarget => {
           )
         : null;
 
-      const isOnNewChat =
-        askAiSidePanelThreadId === store.get(newAiChatThreadIdState.atom);
-
-      navigateToAiChatPage({
-        threadId: isOnNewChat ? null : askAiSidePanelThreadId,
-      });
+      navigateToAiChatPage({ threadId: askAiSidePanelThreadId });
     },
   };
 };

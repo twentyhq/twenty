@@ -3951,6 +3951,7 @@ export type Mutation = {
   updateFocusedTab: Scalars['Boolean']['output'];
   updateFrontComponent: FrontComponent;
   updateGettingStarted: GettingStartedProgress;
+  updateInboxNotificationSettings: UserWorkspace;
   updateLabPublicFeatureFlag: FeatureFlag;
   updateManyNavigationMenuItems: Array<NavigationMenuItem>;
   updateManyObjects: Array<Object>;
@@ -5267,6 +5268,11 @@ export type MutationUpdateFrontComponentArgs = {
 
 export type MutationUpdateGettingStartedArgs = {
   input: UpdateGettingStartedInput;
+};
+
+
+export type MutationUpdateInboxNotificationSettingsArgs = {
+  input: UpdateInboxNotificationSettingsInput;
 };
 
 
@@ -7932,6 +7938,11 @@ export type UpdateGettingStartedInput = {
   snoozedUntil?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type UpdateInboxNotificationSettingsInput = {
+  inboxNotificationLevel: Scalars['String']['input'];
+  isInboxNotificationPreviewEnabled: Scalars['Boolean']['input'];
+};
+
 export type UpdateLabPublicFeatureFlagInput = {
   publicFeatureFlag: Scalars['String']['input'];
   value: Scalars['Boolean']['input'];
@@ -8708,7 +8719,9 @@ export type UserWorkspace = {
   createdAt: Scalars['DateTime']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
+  inboxNotificationLevel?: Maybe<Scalars['String']['output']>;
   isImpersonating?: Maybe<Scalars['Boolean']['output']>;
+  isInboxNotificationPreviewEnabled?: Maybe<Scalars['Boolean']['output']>;
   locale: Scalars['String']['output'];
   objectRecordsPermissions?: Maybe<Array<ObjectRecordsPermissions>>;
   permissionFlags?: Maybe<Array<PermissionFlagType>>;

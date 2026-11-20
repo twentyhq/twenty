@@ -1,9 +1,5 @@
-import { useSelectAiChatThread } from '@/ai-chat/hooks/useSelectAiChatThread';
-import { useNavigateToAiChatPage } from '@/ai-chat/hooks/useNavigateToAiChatPage';
-import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
+import { useOpenAiChatThread } from '@/ai-chat/hooks/useOpenAiChatThread';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
-import { isInboxPath } from '~/utils/isInboxPath';
-import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 type UseAiChatThreadClickOptions = {
   resetNavigationStack?: boolean;
@@ -15,26 +11,14 @@ export const useAiChatThreadClick = (
 ) => {
   const { resetNavigationStack = false, shouldOpenInFullPage = false } =
     options;
-  const { selectAiChatThread } = useSelectAiChatThread();
-  const { openAskAiPage } = useOpenAskAiPageInSidePanel();
-  const { navigateToAiChatPage } = useNavigateToAiChatPage();
+  const { openAiChatThread } = useOpenAiChatThread();
 
-  const handleThreadClick = (thread: Pick<AiChatThreadRecord, 'id'>) => {
-    const isOnChatPage =
-      isCurrentPathAiChatPage() || isInboxPath(window.location.pathname);
-
-    if (!isOnChatPage && !shouldOpenInFullPage) {
-      openAskAiPage({ threadId: thread.id, resetNavigationStack });
-
-      return;
-    }
-
-    selectAiChatThread(thread.id);
-
-    if (!isOnChatPage) {
-      navigateToAiChatPage({ threadId: thread.id });
-    }
-  };
+  const handleThreadClick = (thread: Pick<AiChatThreadRecord, 'id'>) =>
+    openAiChatThread({
+      threadId: thread.id,
+      shouldOpenInFullPage,
+      resetNavigationStack,
+    });
 
   return { handleThreadClick };
 };
