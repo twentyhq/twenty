@@ -196,11 +196,15 @@ describe('validateWorkflowStepParams', () => {
   describe('step filter operands', () => {
     const stepFilterGroups = [{ id: 'group-1', logicalOperator: 'AND' }];
 
-    const buildStepFilter = (
-      type: string,
-      operand: string,
-      compositeFieldSubFieldName?: string,
-    ) => ({
+    const buildStepFilter = ({
+      type,
+      operand,
+      compositeFieldSubFieldName,
+    }: {
+      type: string;
+      operand: string;
+      compositeFieldSubFieldName?: string;
+    }) => ({
       id: 'filter-1',
       type,
       stepOutputKey: '{{trigger.properties.after.companyId}}',
@@ -210,10 +214,13 @@ describe('validateWorkflowStepParams', () => {
       compositeFieldSubFieldName,
     });
 
-    const buildFilterStep = (
-      type: 'FILTER' | 'IF_ELSE',
-      stepFilters: ReturnType<typeof buildStepFilter>[],
-    ) => ({
+    const buildFilterStep = ({
+      type,
+      stepFilters,
+    }: {
+      type: 'FILTER' | 'IF_ELSE';
+      stepFilters: ReturnType<typeof buildStepFilter>[];
+    }) => ({
       id: '4f1c2d3e-6a7b-4c8d-9e0f-1a2b3c4d5e6f',
       name: 'Check company',
       type,
@@ -238,9 +245,12 @@ describe('validateWorkflowStepParams', () => {
           validateWorkflowStepParams({
             trigger: undefined,
             steps: [
-              buildFilterStep(type, [
-                buildStepFilter('RELATION', 'IS_NOT_NULL'),
-              ]),
+              buildFilterStep({
+                type,
+                stepFilters: [
+                  buildStepFilter({ type: 'RELATION', operand: 'IS_NOT_NULL' }),
+                ],
+              }),
             ],
           }),
         ).toEqual([
@@ -259,12 +269,19 @@ describe('validateWorkflowStepParams', () => {
         validateWorkflowStepParams({
           trigger: undefined,
           steps: [
-            buildFilterStep('FILTER', [
-              buildStepFilter('RELATION', 'isNotEmpty'),
-              buildStepFilter('ACTOR', 'IS_NOT', 'source'),
-              buildStepFilter('boolean', 'IS'),
-              buildStepFilter('unknown', 'CONTAINS'),
-            ]),
+            buildFilterStep({
+              type: 'FILTER',
+              stepFilters: [
+                buildStepFilter({ type: 'RELATION', operand: 'isNotEmpty' }),
+                buildStepFilter({
+                  type: 'ACTOR',
+                  operand: 'IS_NOT',
+                  compositeFieldSubFieldName: 'source',
+                }),
+                buildStepFilter({ type: 'boolean', operand: 'IS' }),
+                buildStepFilter({ type: 'unknown', operand: 'CONTAINS' }),
+              ],
+            }),
           ],
         }),
       ).toEqual([]);
@@ -278,7 +295,9 @@ describe('validateWorkflowStepParams', () => {
           outputSchema: {},
           filter: {
             stepFilterGroups,
-            stepFilters: [buildStepFilter('NUMBER', 'IS_NOT_NULL')],
+            stepFilters: [
+              buildStepFilter({ type: 'NUMBER', operand: 'IS_NOT_NULL' }),
+            ],
           },
         },
       };
