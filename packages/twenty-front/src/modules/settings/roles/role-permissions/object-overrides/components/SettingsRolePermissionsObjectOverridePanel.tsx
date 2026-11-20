@@ -25,7 +25,8 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
+import { IconChevronRight, IconPlus, IconTrash } from 'twenty-ui/icon';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { Button, Checkbox } from 'twenty-ui/primitives/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
@@ -155,7 +156,17 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
       <StyledHeaderRow>
         <TableHeader>{t`All records`}</TableHeader>
         <TableHeader>{t`Allows`}</TableHeader>
-        <TableHeader />
+        <TableHeader align="right">
+          {isEditable && (
+            <LightIconButton
+              emphasis="subtle"
+              aria-label={t`Remove override`}
+              onClick={() => removeObjectOverride(objectMetadataItem.id)}
+            >
+              <IconTrash />
+            </LightIconButton>
+          )}
+        </TableHeader>
       </StyledHeaderRow>
       {SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.map((key) => {
         const { Icon } = SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[key];
@@ -267,13 +278,6 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
       })}
       {isEditable && (
         <StyledFooter>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => removeObjectOverride(objectMetadataItem.id)}
-          >
-            {t`Remove override`}
-          </Button>
           <Button
             size="sm"
             variant="outline"

@@ -2161,7 +2161,7 @@ msgid "Add a recipient before sending"
 msgstr "Voeg een ontvanger toe voordat je verzendt"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "Voeg een ontvanger of een kanaal toe voordat je verzendt."
 
@@ -3175,7 +3175,7 @@ msgstr "AI-credits"
 
 #. js-lingui-id: leS03Y
 #. placeholder {0}: userCreditsUsage.daysUntilReset
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "AI-credits worden over {0, plural, one {# dag} other {# dagen}} vernieuwd."
 
@@ -4141,6 +4141,11 @@ msgstr "Applicatie succesvol geïnstalleerd."
 #: src/modules/settings/event-logs/components/EventLogTableSelector.tsx
 msgid "Application Logs"
 msgstr "Applicatielogboeken"
+
+#. js-lingui-id: UiH6l9
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Application price billing"
+msgstr ""
 
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
@@ -5196,6 +5201,11 @@ msgstr "tussen de {startOrdinal} en {endOrdinal} van de maand"
 msgid "Bill credits to your workspace"
 msgstr "Factureer tegoeden aan je werkruimte"
 
+#. js-lingui-id: jKtUV8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
+msgstr ""
+
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Billed monthly"
@@ -5514,6 +5524,12 @@ msgstr "Opsommingstekens"
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorTextInsertionItems.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Bullet List"
+msgstr ""
+
+#. js-lingui-id: gxG5Ip
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
+msgid "Bundled"
 msgstr ""
 
 #. js-lingui-id: 9emr42
@@ -6260,7 +6276,7 @@ msgid "Chat Sessions"
 msgstr "Chatsessies"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "Chat stopped: no more available credits."
 msgstr "Chat gestopt: geen credits meer beschikbaar."
 
@@ -7700,7 +7716,7 @@ msgid "Connection successfully updated"
 msgstr "Verbinding succesvol bijgewerkt"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "De verbinding met de assistent is verbroken. Laad opnieuw om het antwoord te zien."
 
@@ -10568,7 +10584,7 @@ msgid "Direct messages and mentions"
 msgstr ""
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/instance/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Directe berichten ondersteunen geen bijlagen."
 
@@ -13065,6 +13081,11 @@ msgstr "Expressie is niet geldig"
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 msgid "External Event ID"
 msgstr "Externe gebeurtenis-ID"
+
+#. js-lingui-id: ejIVcx
+#: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
+msgid "External tools agents and workflows can use"
+msgstr ""
 
 #. js-lingui-id: 07Wl2A
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -16857,6 +16878,11 @@ msgstr "Items om over te itereren"
 msgid "Iterator"
 msgstr "Iterator"
 
+#. js-lingui-id: 48n0Ly
+#: src/modules/settings/roles/role-permissions/object-overrides/hooks/useObjectDisabledOperations.ts
+msgid "its app"
+msgstr ""
+
 #. js-lingui-id: R9VnB9
 #: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Its chats move to {destinationChannelName}. This cannot be undone."
@@ -17629,7 +17655,7 @@ msgid "Let this member sign in again if they lost their authenticator app"
 msgstr "Sta dit lid toe opnieuw in te loggen als het de authenticator-app heeft verloren"
 
 #. js-lingui-id: RIWS8s
-#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+#: src/modules/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble.tsx
 msgid "Let's set it up around the way you work."
 msgstr "Laten we het instellen op basis van hoe je werkt."
 
@@ -18698,6 +18724,7 @@ msgstr "Maximaal aantal waarden"
 #. js-lingui-id: nA8kxD
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+#: src/pages/settings/applications/components/SettingsAvailableApplicationCard.tsx
 msgid "MCP"
 msgstr "MCP"
 
@@ -18734,6 +18761,7 @@ msgstr "MCP-server succesvol verwijderd"
 
 #. js-lingui-id: 8qgfac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+#: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
 msgid "MCP servers"
 msgstr "MCP-servers"
@@ -20310,7 +20338,7 @@ msgstr "Geen enkel AI-model in deze werkruimte voldoet aan deze instellingen."
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "Er is geen AI-provider geconfigureerd op deze instantie."
@@ -21653,6 +21681,11 @@ msgstr ""
 msgid "OAuth"
 msgstr "OAuth"
 
+#. js-lingui-id: TkatNO
+#: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
+msgid "OAuth (automatic)"
+msgstr ""
+
 #. js-lingui-id: C1b55F
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "OAuth credential metadata for this application connection"
@@ -21936,6 +21969,26 @@ msgstr "Een-op-eengesprekken tussen mensen"
 #: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Online"
 msgstr "Online"
+
+#. js-lingui-id: P/Sdzf
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
+msgid "Only {applicationName} can delete"
+msgstr ""
+
+#. js-lingui-id: 5K6L4C
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
+msgid "Only {applicationName} can destroy"
+msgstr ""
+
+#. js-lingui-id: BUPbj+
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
+msgid "Only {applicationName} can edit"
+msgstr ""
+
+#. js-lingui-id: Iysrni
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
+msgid "Only {applicationName} can see"
+msgstr ""
 
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -24843,7 +24896,7 @@ msgid "Remove {0} navigation menu items?"
 msgstr "{0} navigatiemenu-items verwijderen?"
 
 #. js-lingui-id: boQErO
-#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
+#: src/modules/chat/components/ChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "{displayName} verwijderen"
 
@@ -30330,7 +30383,7 @@ msgstr "Deze verbinding bestaat niet of is niet beschikbaar voor deze toepassing
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "This conversation is no longer available."
 msgstr "Dit gesprek is niet langer beschikbaar."
 
@@ -31848,7 +31901,7 @@ msgid "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
 msgstr "Onbekend veld \"{fieldName}\" op \"{relationFieldName}\""
 
 #. js-lingui-id: +K1Lj4
-#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
+#: src/modules/chat/components/ChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "Onbekend bestand"
 
@@ -32560,6 +32613,7 @@ msgstr "URI is vereist"
 #: src/modules/object-record/record-field/ui/meta-types/input/components/LinksFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormLinksFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 #: src/modules/settings/developers/components/SettingsWebhooksTable.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
@@ -33330,7 +33384,7 @@ msgid "Wait for Event"
 msgstr "Wachten op gebeurtenis"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Wacht tot het uploaden van de bijlagen is voltooid."
 
@@ -33692,7 +33746,7 @@ msgid "Welcome to Twenty"
 msgstr "Welkom bij Twenty"
 
 #. js-lingui-id: t8ZvkC
-#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+#: src/modules/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
 msgstr "Welkom in je werkruimte"
@@ -34077,10 +34131,10 @@ msgstr "Workflowversies"
 msgid "Workflows"
 msgstr "Workstrooms"
 
-#. js-lingui-id: HoWgut
+#. js-lingui-id: H2Xc6F
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
-msgid "Workflows, functions and agents that act for your team."
-msgstr "Workflows, functies en agents die voor je team handelen."
+msgid "Workflows, functions, agents and tools that act for your team."
+msgstr ""
 
 #. js-lingui-id: OskBrZ
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx

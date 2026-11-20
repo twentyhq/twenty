@@ -2161,7 +2161,7 @@ msgid "Add a recipient before sending"
 msgstr "Před odesláním přidejte příjemce"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "Před odesláním přidejte příjemce nebo kanál."
 
@@ -3175,7 +3175,7 @@ msgstr "AI kreditů"
 
 #. js-lingui-id: leS03Y
 #. placeholder {0}: userCreditsUsage.daysUntilReset
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "Kredity AI se obnoví za {0, plural, one {# den} few {# dny} many {# dní} other {# dní}}."
 
@@ -4141,6 +4141,11 @@ msgstr "Aplikace byla úspěšně nainstalována."
 #: src/modules/settings/event-logs/components/EventLogTableSelector.tsx
 msgid "Application Logs"
 msgstr "Protokoly aplikace"
+
+#. js-lingui-id: UiH6l9
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Application price billing"
+msgstr ""
 
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
@@ -5196,6 +5201,11 @@ msgstr "mezi {startOrdinal} a {endOrdinal} měsíce"
 msgid "Bill credits to your workspace"
 msgstr "Účtovat kredity vašemu pracovnímu prostoru"
 
+#. js-lingui-id: jKtUV8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
+msgstr ""
+
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Billed monthly"
@@ -5514,6 +5524,12 @@ msgstr "Odrážkový seznam"
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorTextInsertionItems.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Bullet List"
+msgstr ""
+
+#. js-lingui-id: gxG5Ip
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
+msgid "Bundled"
 msgstr ""
 
 #. js-lingui-id: 9emr42
@@ -6260,7 +6276,7 @@ msgid "Chat Sessions"
 msgstr "Relace chatu"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "Chat stopped: no more available credits."
 msgstr "Chat zastaven: nejsou k dispozici další kredity."
 
@@ -7700,7 +7716,7 @@ msgid "Connection successfully updated"
 msgstr "Připojení úspěšně aktualizováno"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "Připojení k asistentovi bylo ztraceno. Pro zobrazení odpovědi stránku znovu načtěte."
 
@@ -10568,7 +10584,7 @@ msgid "Direct messages and mentions"
 msgstr ""
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/instance/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Přímé zprávy nepodporují přílohy."
 
@@ -13065,6 +13081,11 @@ msgstr "Výraz není platný"
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 msgid "External Event ID"
 msgstr "Externí ID události"
+
+#. js-lingui-id: ejIVcx
+#: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
+msgid "External tools agents and workflows can use"
+msgstr ""
 
 #. js-lingui-id: 07Wl2A
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -16857,6 +16878,11 @@ msgstr "Položky k iterování"
 msgid "Iterator"
 msgstr "Iterátor"
 
+#. js-lingui-id: 48n0Ly
+#: src/modules/settings/roles/role-permissions/object-overrides/hooks/useObjectDisabledOperations.ts
+msgid "its app"
+msgstr ""
+
 #. js-lingui-id: R9VnB9
 #: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Its chats move to {destinationChannelName}. This cannot be undone."
@@ -17629,7 +17655,7 @@ msgid "Let this member sign in again if they lost their authenticator app"
 msgstr "Umožněte tomuto členovi znovu se přihlásit, pokud ztratil aplikaci pro ověřování"
 
 #. js-lingui-id: RIWS8s
-#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+#: src/modules/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble.tsx
 msgid "Let's set it up around the way you work."
 msgstr "Nastavme to podle způsobu, jakým pracujete."
 
@@ -18698,6 +18724,7 @@ msgstr "Maximální počet hodnot"
 #. js-lingui-id: nA8kxD
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+#: src/pages/settings/applications/components/SettingsAvailableApplicationCard.tsx
 msgid "MCP"
 msgstr "MCP"
 
@@ -18734,6 +18761,7 @@ msgstr "MCP server byl úspěšně odstraněn"
 
 #. js-lingui-id: 8qgfac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+#: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
 msgid "MCP servers"
 msgstr "MCP servery"
@@ -20310,7 +20338,7 @@ msgstr "Žádný model AI v tomto pracovním prostoru nesplňuje toto nastavení
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "V této instanci není nakonfigurován žádný poskytovatel AI."
@@ -21653,6 +21681,11 @@ msgstr ""
 msgid "OAuth"
 msgstr "OAuth"
 
+#. js-lingui-id: TkatNO
+#: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
+msgid "OAuth (automatic)"
+msgstr ""
+
 #. js-lingui-id: C1b55F
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "OAuth credential metadata for this application connection"
@@ -21936,6 +21969,26 @@ msgstr "Individuální konverzace mezi lidmi"
 #: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Online"
 msgstr "Online"
+
+#. js-lingui-id: P/Sdzf
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
+msgid "Only {applicationName} can delete"
+msgstr ""
+
+#. js-lingui-id: 5K6L4C
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
+msgid "Only {applicationName} can destroy"
+msgstr ""
+
+#. js-lingui-id: BUPbj+
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
+msgid "Only {applicationName} can edit"
+msgstr ""
+
+#. js-lingui-id: Iysrni
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
+msgid "Only {applicationName} can see"
+msgstr ""
 
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -24843,7 +24896,7 @@ msgid "Remove {0} navigation menu items?"
 msgstr "Odebrat {0} položek navigačního menu?"
 
 #. js-lingui-id: boQErO
-#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
+#: src/modules/chat/components/ChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "Odstranit {displayName}"
 
@@ -30328,7 +30381,7 @@ msgstr "Toto připojení neexistuje nebo není pro tuto aplikaci dostupné."
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "This conversation is no longer available."
 msgstr "Tato konverzace již není k dispozici."
 
@@ -31846,7 +31899,7 @@ msgid "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
 msgstr "Neznámé pole \"{fieldName}\" v \"{relationFieldName}\""
 
 #. js-lingui-id: +K1Lj4
-#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
+#: src/modules/chat/components/ChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "Neznámý soubor"
 
@@ -32558,6 +32611,7 @@ msgstr "URI je povinné"
 #: src/modules/object-record/record-field/ui/meta-types/input/components/LinksFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormLinksFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 #: src/modules/settings/developers/components/SettingsWebhooksTable.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
@@ -33328,7 +33382,7 @@ msgid "Wait for Event"
 msgstr "Čekat na událost"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Počkejte, než se přílohy dokončí nahrávat."
 
@@ -33690,7 +33744,7 @@ msgid "Welcome to Twenty"
 msgstr "Vítejte ve Twenty"
 
 #. js-lingui-id: t8ZvkC
-#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+#: src/modules/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
 msgstr "Vítejte ve vašem pracovním prostoru"
@@ -34075,10 +34129,10 @@ msgstr "Verze pracovního postupu"
 msgid "Workflows"
 msgstr "Pracovní postupy"
 
-#. js-lingui-id: HoWgut
+#. js-lingui-id: H2Xc6F
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
-msgid "Workflows, functions and agents that act for your team."
-msgstr "Pracovní postupy, funkce a agenti, kteří jednají za váš tým."
+msgid "Workflows, functions, agents and tools that act for your team."
+msgstr ""
 
 #. js-lingui-id: OskBrZ
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx

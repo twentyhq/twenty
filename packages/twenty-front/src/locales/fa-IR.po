@@ -2161,7 +2161,7 @@ msgid "Add a recipient before sending"
 msgstr "پیش از ارسال، یک گیرنده اضافه کنید"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "پیش از ارسال، یک گیرنده یا یک کانال اضافه کنید."
 
@@ -3175,7 +3175,7 @@ msgstr "اعتبارهای هوش مصنوعی"
 
 #. js-lingui-id: leS03Y
 #. placeholder {0}: userCreditsUsage.daysUntilReset
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "اعتبارهای هوش مصنوعی تا {0, plural, one {# روز} other {# روز}} دیگر تمدید می‌شوند."
 
@@ -4141,6 +4141,11 @@ msgstr "برنامه با موفقیت نصب شد."
 #: src/modules/settings/event-logs/components/EventLogTableSelector.tsx
 msgid "Application Logs"
 msgstr "گزارش‌های برنامه"
+
+#. js-lingui-id: UiH6l9
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Application price billing"
+msgstr ""
 
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
@@ -5196,6 +5201,11 @@ msgstr "بین {startOrdinal} و {endOrdinal} ماه"
 msgid "Bill credits to your workspace"
 msgstr "اعتبارها را به فضای کاری شما صورتحساب می‌کند"
 
+#. js-lingui-id: jKtUV8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
+msgstr ""
+
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Billed monthly"
@@ -5515,6 +5525,12 @@ msgstr "فهرست نشانه‌دار"
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Bullet List"
 msgstr "فهرست نشانه‌دار"
+
+#. js-lingui-id: gxG5Ip
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
+msgid "Bundled"
+msgstr ""
 
 #. js-lingui-id: 9emr42
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
@@ -6260,7 +6276,7 @@ msgid "Chat Sessions"
 msgstr "جلسه‌های چت"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "Chat stopped: no more available credits."
 msgstr "گفت‌وگو متوقف شد: اعتبار بیشتری در دسترس نیست."
 
@@ -7700,7 +7716,7 @@ msgid "Connection successfully updated"
 msgstr "اتصال با موفقیت به‌روزرسانی شد"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "اتصال به دستیار قطع شد. برای دیدن پاسخ، دوباره بارگیری کنید."
 
@@ -10568,7 +10584,7 @@ msgid "Direct messages and mentions"
 msgstr ""
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/instance/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "پیام‌های مستقیم از پیوست‌ها پشتیبانی نمی‌کنند."
 
@@ -13065,6 +13081,11 @@ msgstr "عبارت معتبر نیست"
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 msgid "External Event ID"
 msgstr "شناسه رویداد خارجی"
+
+#. js-lingui-id: ejIVcx
+#: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
+msgid "External tools agents and workflows can use"
+msgstr ""
 
 #. js-lingui-id: 07Wl2A
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -16857,6 +16878,11 @@ msgstr "موارد برای تکرار"
 msgid "Iterator"
 msgstr "تکرارکننده"
 
+#. js-lingui-id: 48n0Ly
+#: src/modules/settings/roles/role-permissions/object-overrides/hooks/useObjectDisabledOperations.ts
+msgid "its app"
+msgstr ""
+
 #. js-lingui-id: R9VnB9
 #: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Its chats move to {destinationChannelName}. This cannot be undone."
@@ -17629,7 +17655,7 @@ msgid "Let this member sign in again if they lost their authenticator app"
 msgstr "اگر این عضو برنامه احراز هویت خود را گم کرد، به او اجازه دهید دوباره وارد شود"
 
 #. js-lingui-id: RIWS8s
-#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+#: src/modules/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble.tsx
 msgid "Let's set it up around the way you work."
 msgstr "بیایید آن را متناسب با شیوه کار شما تنظیم کنیم."
 
@@ -18698,6 +18724,7 @@ msgstr "حداکثر مقادیر"
 #. js-lingui-id: nA8kxD
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+#: src/pages/settings/applications/components/SettingsAvailableApplicationCard.tsx
 msgid "MCP"
 msgstr "MCP"
 
@@ -18734,6 +18761,7 @@ msgstr "سرور MCP با موفقیت حذف شد"
 
 #. js-lingui-id: 8qgfac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+#: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
 msgid "MCP servers"
 msgstr "سرورهای MCP"
@@ -20310,7 +20338,7 @@ msgstr "هیچ مدل هوش مصنوعی در این فضای کاری با ا�
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "هیچ ارائه‌دهنده هوش مصنوعی در این نمونه پیکربندی نشده است."
@@ -21653,6 +21681,11 @@ msgstr "فهرست شماره‌دار"
 msgid "OAuth"
 msgstr "OAuth"
 
+#. js-lingui-id: TkatNO
+#: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
+msgid "OAuth (automatic)"
+msgstr ""
+
 #. js-lingui-id: C1b55F
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "OAuth credential metadata for this application connection"
@@ -21936,6 +21969,26 @@ msgstr "گفت‌وگوهای دونفره بین افراد"
 #: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Online"
 msgstr "آنلاین"
+
+#. js-lingui-id: P/Sdzf
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
+msgid "Only {applicationName} can delete"
+msgstr ""
+
+#. js-lingui-id: 5K6L4C
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
+msgid "Only {applicationName} can destroy"
+msgstr ""
+
+#. js-lingui-id: BUPbj+
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
+msgid "Only {applicationName} can edit"
+msgstr ""
+
+#. js-lingui-id: Iysrni
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
+msgid "Only {applicationName} can see"
+msgstr ""
 
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -24843,7 +24896,7 @@ msgid "Remove {0} navigation menu items?"
 msgstr "{0} مورد از آیتم‌های منوی ناوبری حذف شوند؟"
 
 #. js-lingui-id: boQErO
-#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
+#: src/modules/chat/components/ChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "حذف {displayName}"
 
@@ -30328,7 +30381,7 @@ msgstr "این اتصال وجود ندارد یا برای این برنامه 
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "This conversation is no longer available."
 msgstr "این گفت‌وگو دیگر در دسترس نیست."
 
@@ -31846,7 +31899,7 @@ msgid "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
 msgstr "فیلد ناشناخته \"{fieldName}\" در \"{relationFieldName}\""
 
 #. js-lingui-id: +K1Lj4
-#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
+#: src/modules/chat/components/ChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "فایل ناشناخته"
 
@@ -32558,6 +32611,7 @@ msgstr "URI الزامی است"
 #: src/modules/object-record/record-field/ui/meta-types/input/components/LinksFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormLinksFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 #: src/modules/settings/developers/components/SettingsWebhooksTable.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
@@ -33328,7 +33382,7 @@ msgid "Wait for Event"
 msgstr "انتظار برای رویداد"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "منتظر بمانید تا بارگذاری پیوست‌ها تمام شود."
 
@@ -33690,7 +33744,7 @@ msgid "Welcome to Twenty"
 msgstr "به Twenty خوش آمدید"
 
 #. js-lingui-id: t8ZvkC
-#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+#: src/modules/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
 msgstr "به فضای کاری خود خوش آمدید"
@@ -34075,10 +34129,10 @@ msgstr "نسخه‌های گردش کار"
 msgid "Workflows"
 msgstr "گردش‌های کار"
 
-#. js-lingui-id: HoWgut
+#. js-lingui-id: H2Xc6F
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
-msgid "Workflows, functions and agents that act for your team."
-msgstr "گردش‌کارها، توابع و عامل‌هایی که برای تیم شما عمل می‌کنند."
+msgid "Workflows, functions, agents and tools that act for your team."
+msgstr ""
 
 #. js-lingui-id: OskBrZ
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx

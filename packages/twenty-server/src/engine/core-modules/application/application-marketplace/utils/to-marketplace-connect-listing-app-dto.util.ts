@@ -25,4 +25,5 @@ export const toMarketplaceConnectListingAppDTO = ({
   logoUrl: new URL(connectListing.logoPath, frontBaseUrl).toString(),
   connectUrl: connectListing.connectUrl,
   isListed: true,
+  hasMcpServers: false,
 });

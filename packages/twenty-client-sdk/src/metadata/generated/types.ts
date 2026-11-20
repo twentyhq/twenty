@@ -1416,6 +1416,9 @@ export default {
             "logicFunctions": [
                 65
             ],
+            "mcpServers": [
+                65
+            ],
             "navigationMenuItems": [
                 65
             ],
@@ -6579,6 +6582,9 @@ export default {
             ],
             "description": [
                 4
+            ],
+            "hasMcpServers": [
+                1
             ],
             "id": [
                 4

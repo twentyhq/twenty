@@ -8,6 +8,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
 import { ApplicationContentService } from 'src/engine/core-modules/application/application-content/application-content.service';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
+import { findMarketplaceConnectListing } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-connect-listing.util';
 import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
@@ -21,6 +22,7 @@ import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/applica
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { SdkClientChecksumsDTO } from 'src/engine/core-modules/sdk-client/dtos/sdk-client-checksums.dto';
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
@@ -68,6 +70,7 @@ export class ApplicationResolver {
     private readonly applicationService: ApplicationService,
     private readonly applicationContentService: ApplicationContentService,
     private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
+    private readonly domainServerConfigService: DomainServerConfigService,
   ) {}
 
   @Query(() => SdkClientChecksumsDTO, { nullable: true })
@@ -119,15 +122,44 @@ export class ApplicationResolver {
   // application's public assets, so clients never build file urls themselves.
   @ResolveField(() => String, { nullable: true })
   logoUrl(
-    @Parent() application: Pick<ApplicationDTO, 'id' | 'logo'>,
+    @Parent()
+    application: Pick<ApplicationDTO, 'id' | 'logo' | 'universalIdentifier'>,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): string | null {
-    return buildPublicAssetLogoUrl({
+    const bundledLogoUrl = buildPublicAssetLogoUrl({
       logo: application.logo,
       serverUrl: this.twentyConfigService.get('SERVER_URL'),
       workspaceId: workspace.id,
       applicationId: application.id,
     });
+
+    if (isDefined(bundledLogoUrl)) {
+      return bundledLogoUrl;
+    }
+
+    const marketplaceConnectListing = findMarketplaceConnectListing(
+      application.universalIdentifier,
+    );
+
+    return isDefined(marketplaceConnectListing)
+      ? new URL(
+          marketplaceConnectListing.logoPath,
+          this.domainServerConfigService.getBaseUrl(),
+        ).toString()
+      : null;
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  description(
+    @Parent()
+    application: Pick<ApplicationDTO, 'description' | 'universalIdentifier'>,
+  ): string | null {
+    return (
+      findMarketplaceConnectListing(application.universalIdentifier)
+        ?.description ??
+      application.description ??
+      null
+    );
   }
 
   @ResolveField(() => UUIDScalarType, { nullable: true })

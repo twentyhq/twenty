@@ -18,8 +18,11 @@ import {
   ConnectedAccountEntity,
   type ConnectedAccountScope,
 } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { CONNECTED_ACCOUNT_CONNECTION_CHANGED_EVENT } from 'src/engine/metadata-modules/connected-account/constants/connected-account-connection-changed.constant';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { type ConnectedAccountConnectionChangedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-connection-changed.type';
 import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 type ConnectedAccountCredentials = {
   accessToken: PlaintextString | null;
@@ -37,6 +40,7 @@ export class ConnectionProviderConnectedAccountService {
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   async assertCallerCanConnectOrThrow({
@@ -174,6 +178,8 @@ export class ConnectionProviderConnectedAccountService {
         );
       }
 
+      this.emitConnectionChanged(connectedAccount);
+
       return connectedAccount;
     }
 
@@ -195,7 +201,31 @@ export class ConnectionProviderConnectedAccountService {
       userWorkspaceId,
     });
 
-    return this.connectedAccountRepository.save(created);
+    const connectedAccount =
+      await this.connectedAccountRepository.save(created);
+
+    this.emitConnectionChanged(connectedAccount);
+
+    return connectedAccount;
+  }
+
+  private emitConnectionChanged({
+    id,
+    workspaceId,
+    applicationId,
+  }: Pick<
+    ConnectedAccountEntity,
+    'id' | 'workspaceId' | 'applicationId'
+  >): void {
+    if (!isDefined(applicationId)) {
+      return;
+    }
+
+    this.workspaceEventEmitter.emitCustomBatchEvent<ConnectedAccountConnectionChangedEvent>(
+      CONNECTED_ACCOUNT_CONNECTION_CHANGED_EVENT,
+      [{ connectedAccountId: id, applicationId }],
+      workspaceId,
+    );
   }
 
   async findConnectedAccountForReport({

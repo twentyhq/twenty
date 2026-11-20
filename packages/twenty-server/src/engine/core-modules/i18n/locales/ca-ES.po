@@ -6084,6 +6084,11 @@ msgstr "ID del primer membre del missatge directe"
 msgid "First friendly message"
 msgstr "Primer missatge amigable"
 
+#. js-lingui-id: 0QhRwZ
+#: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
+msgid "First name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+msgstr ""
+
 #. js-lingui-id: BUBVGN
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
@@ -8148,6 +8153,11 @@ msgstr "Últim missatge"
 msgctxt "fieldMetadata.label"
 msgid "Last message sender"
 msgstr "Remitent de l'últim missatge"
+
+#. js-lingui-id: bMq9eP
+#: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
+msgid "Last name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+msgstr ""
 
 #. js-lingui-id: R2LOsP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -14766,6 +14776,11 @@ msgstr "Aquesta aplicació requereix una versió més recent del servidor Twenty
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This app requires a newer version than this workspace has finished upgrading to. Please try again once the workspace upgrade completes."
 msgstr "Aquesta aplicació requereix una versió més recent de la que aquest espai de treball ha acabat d'actualitzar. Torna-ho a provar un cop s'hagi completat l'actualització de l'espai de treball."
+
+#. js-lingui-id: MZz+Ud
+#: src/engine/core-modules/application/utils/to-application-billing-prices-or-throw.util.ts
+msgid "This application declares invalid prices"
+msgstr ""
 
 #. js-lingui-id: ecIX3O
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
