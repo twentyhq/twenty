@@ -6,7 +6,7 @@ import { render, screen } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { AiChatErrorRenderer } from '@/ai-chat/components/AiChatErrorRenderer';
+import { AiChatErrorRenderer } from '@/ai-chat/messages/components/AiChatErrorRenderer';
 import { type AiChatError } from '@/ai-chat/types/AiChatError';
 import { AiChatErrorCode } from '@/ai-chat/utils/aiChatErrorCode';
 import { createAiChatCodedError } from '@/ai-chat/utils/createAiChatCodedError';

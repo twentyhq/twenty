@@ -20,7 +20,7 @@ import { AiChatMessageReplyQuote } from '@/ai-chat/messages/components/AiChatMes
 import { AiChatAssistantMessageRenderer } from '@/ai-chat/messages/components/AiChatAssistantMessageRenderer';
 import { AiChatMessageReactionPicker } from '@/ai-chat/messages/components/AiChatMessageReactionPicker';
 import { AiChatMessageReactions } from '@/ai-chat/messages/components/AiChatMessageReactions';
-import { AiChatErrorRenderer } from '@/ai-chat/components/AiChatErrorRenderer';
+import { AiChatErrorRenderer } from '@/ai-chat/messages/components/AiChatErrorRenderer';
 import { AiChatMessageReceipt } from '@/ai-chat/messages/components/AiChatMessageReceipt';
 import { aiChatThreadReadPositionsFamilyState } from '@/ai-chat/threads/states/aiChatThreadReadPositionsFamilyState';
 import { ChatMessageAttachments } from '@/chat/components/ChatMessageAttachments';

@@ -3,14 +3,14 @@ import { Provider as JotaiProvider } from 'jotai';
 import { Temporal } from 'temporal-polyfill';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
-import { AiChatRuntimeEffects } from '@/ai-chat/components/AiChatRuntimeEffects';
+import { AiChatRuntimeEffects } from '@/ai-chat/instance/components/AiChatRuntimeEffects';
 import { aiChatOpenThreadIdByInstanceIdState } from '@/ai-chat/states/aiChatOpenThreadIdByInstanceIdState';
 import { aiChatUISessionStartTimeState } from '@/ai-chat/states/aiChatUISessionStartTimeState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
-jest.mock('@/ai-chat/components/AiChatThreadRuntimeEffect', () => ({
+jest.mock('@/ai-chat/instance/components/AiChatThreadRuntimeEffect', () => ({
   AiChatThreadRuntimeEffect: ({ threadId }: { threadId: string }) => (
     <div data-testid="thread-runtime">{threadId}</div>
   ),

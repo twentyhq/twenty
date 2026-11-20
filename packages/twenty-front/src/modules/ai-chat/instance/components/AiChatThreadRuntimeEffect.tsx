@@ -7,7 +7,7 @@ import { useQueryWithCallbacks } from '@/apollo/hooks/useQueryWithCallbacks';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { aiChatQueuedMessagesFamilyState } from '@/ai-chat/composer/states/aiChatQueuedMessagesFamilyState';
 import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai-chat/constants/AiChatRefetchMessagesEventName';
-import { useAiChatSubscription } from '@/ai-chat/hooks/useAiChatSubscription';
+import { useAiChatSubscription } from '@/ai-chat/instance/hooks/useAiChatSubscription';
 import { aiChatLiveReactionRevisionsFamilyState } from '@/ai-chat/messages/states/aiChatLiveReactionRevisionsFamilyState';
 import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
 import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';

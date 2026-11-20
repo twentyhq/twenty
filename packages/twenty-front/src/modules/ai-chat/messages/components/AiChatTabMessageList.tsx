@@ -15,9 +15,9 @@ import { aiChatHasMessageFamilySelector } from '@/ai-chat/states/selectors/aiCha
 import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
 import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai-chat/constants/AiChatPageContentInlinePadding';
 import { useHasAiChatPageContentInset } from '@/ai-chat/hooks/useHasAiChatPageContentInset';
-import { useIsWorkspaceSetupChat } from '@/ai-chat/workspace-setup/hooks/useIsWorkspaceSetupChat';
+import { useIsWorkspaceSetupChat } from '@/ai-chat/hooks/useIsWorkspaceSetupChat';
 import { getAiChatScrollWrapperInstanceId } from '@/ai-chat/messages/utils/getAiChatScrollWrapperInstanceId';
-import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
+import { WorkspaceSetupChatPreamble } from '@/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/states/contexts/ScrollWrapperComponentInstanceContext';
 import { styled } from '@linaria/react';

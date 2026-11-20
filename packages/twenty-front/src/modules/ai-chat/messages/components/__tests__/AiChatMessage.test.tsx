@@ -58,7 +58,7 @@ jest.mock('@/ai-chat/messages/components/AiChatMessageReactions', () => ({
   AiChatMessageReactions: () => null,
 }));
 
-jest.mock('@/ai-chat/components/AiChatErrorRenderer', () => ({
+jest.mock('@/ai-chat/messages/components/AiChatErrorRenderer', () => ({
   AiChatErrorRenderer: ({ error }: { error: Error }) => <>{error.message}</>,
 }));
 

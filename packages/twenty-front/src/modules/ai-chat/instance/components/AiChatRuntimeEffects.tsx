@@ -1,4 +1,4 @@
-import { AiChatThreadRuntimeEffect } from '@/ai-chat/components/AiChatThreadRuntimeEffect';
+import { AiChatThreadRuntimeEffect } from '@/ai-chat/instance/components/AiChatThreadRuntimeEffect';
 import { useIsAiChatRuntimeEnabled } from '@/ai-chat/hooks/useIsAiChatRuntimeEnabled';
 import { aiChatOpenThreadIdByInstanceIdState } from '@/ai-chat/states/aiChatOpenThreadIdByInstanceIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
