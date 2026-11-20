@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FileFolder, OpenRecordIn } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -274,41 +275,58 @@ export class UserWorkspaceService {
       workspace.id,
     );
 
-    if (
-      isDefined(existingUserWorkspace) &&
-      (await this.roleTargetRepository.existsBy(workspace.id, {
-        userWorkspaceId: existingUserWorkspace.id,
-      }))
-    ) {
+    if (isDefined(existingUserWorkspace)) {
+      await this.resumeInterruptedMembershipIfNeeded({
+        user,
+        workspace,
+        userWorkspace: existingUserWorkspace,
+        roleId,
+      });
+
       return;
     }
 
     const resolvedRoleId = await this.resolveRoleIdForNewMember(
-      roleId ??
-        (isDefined(existingUserWorkspace)
-          ? await this.findPendingInvitationRoleId(workspace.id, user.email)
-          : undefined),
+      roleId,
       workspace,
     );
 
-    const userWorkspace = isDefined(existingUserWorkspace)
-      ? await this.resumeInterruptedMembership(existingUserWorkspace, user)
-      : await this.billingSeatService.addMemberWithinSeatLimit({
-          workspaceId: workspace.id,
-          addMember: async () => {
-            const createdUserWorkspace = await this.create({
-              userId: user.id,
-              workspaceId: workspace.id,
-              isExistingUser: true,
-              locale: user.locale,
-            });
+    const userWorkspace =
+      await this.billingSeatService.addMemberWithinSeatLimit({
+        workspaceId: workspace.id,
+        addMember: async () => {
+          const createdUserWorkspace = await this.create({
+            userId: user.id,
+            workspaceId: workspace.id,
+            isExistingUser: true,
+            locale: user.locale,
+          });
 
-            await this.createWorkspaceMember(workspace.id, user);
+          await this.createWorkspaceMember(workspace.id, user);
 
-            return createdUserWorkspace;
-          },
-        });
+          return createdUserWorkspace;
+        },
+      });
 
+    await this.completeMembershipSetup({
+      user,
+      workspace,
+      userWorkspace,
+      roleId: resolvedRoleId,
+    });
+  }
+
+  private async completeMembershipSetup({
+    user,
+    workspace,
+    userWorkspace,
+    roleId,
+  }: {
+    user: UserEntity;
+    workspace: WorkspaceEntity;
+    userWorkspace: UserWorkspaceEntity;
+    roleId: string;
+  }) {
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
       'flatWorkspaceMemberMaps',
     ]);
@@ -316,7 +334,7 @@ export class UserWorkspaceService {
     await this.roleAssignmentWriteService.assignRoleToUserWorkspaces({
       workspaceId: workspace.id,
       userWorkspaceIds: [userWorkspace.id],
-      roleId: resolvedRoleId,
+      roleId,
     });
 
     await this.workspaceInvitationService.invalidateWorkspaceInvitation(
@@ -331,20 +349,54 @@ export class UserWorkspaceService {
     });
   }
 
-  // A membership without a role was interrupted mid-setup; it was already admitted within the seat limit
-  private async resumeInterruptedMembership(
-    userWorkspace: UserWorkspaceEntity,
-    user: UserEntity,
-  ): Promise<UserWorkspaceEntity> {
-    await this.createWorkspaceMember(userWorkspace.workspaceId, user);
+  private async resumeInterruptedMembershipIfNeeded({
+    user,
+    workspace,
+    userWorkspace,
+    roleId,
+  }: {
+    user: UserEntity;
+    workspace: WorkspaceEntity;
+    userWorkspace: UserWorkspaceEntity;
+    roleId?: string | null;
+  }) {
+    // A roleless member of an active workspace was interrupted mid-setup and already counted against the seat limit.
+    // A creator has no role until activation, so other workspaces are skipped.
+    if (
+      workspace.activationStatus !== WorkspaceActivationStatus.ACTIVE ||
+      (await this.roleTargetRepository.existsBy(workspace.id, {
+        userWorkspaceId: userWorkspace.id,
+      }))
+    ) {
+      return;
+    }
 
-    return userWorkspace;
+    const resolvedRoleId = await this.resolveRoleIdForNewMember(
+      roleId ??
+        (await this.findPendingInvitationRoleId({
+          workspaceId: workspace.id,
+          email: user.email,
+        })),
+      workspace,
+    );
+
+    await this.createWorkspaceMember(workspace.id, user);
+
+    await this.completeMembershipSetup({
+      user,
+      workspace,
+      userWorkspace,
+      roleId: resolvedRoleId,
+    });
   }
 
-  private async findPendingInvitationRoleId(
-    workspaceId: string,
-    email: string,
-  ): Promise<string | null | undefined> {
+  private async findPendingInvitationRoleId({
+    workspaceId,
+    email,
+  }: {
+    workspaceId: string;
+    email: string;
+  }): Promise<string | null | undefined> {
     const invitation =
       await this.workspaceInvitationService.getOneWorkspaceInvitation(
         workspaceId,

@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -21,6 +22,7 @@ const user = {
 const workspace = {
   id: WORKSPACE_ID,
   defaultRoleId: DEFAULT_ROLE_ID,
+  activationStatus: WorkspaceActivationStatus.ACTIVE,
 } as WorkspaceEntity;
 
 const userWorkspace = {
@@ -124,6 +126,19 @@ describe('UserWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace', () => {
       roleId: DEFAULT_ROLE_ID,
     });
     expect(setOnboardingCreateProfilePending).toHaveBeenCalled();
+  });
+
+  it('should leave the creator of a workspace pending creation untouched', async () => {
+    const { service, assignRoleToUserWorkspaces, createWorkspaceMember } =
+      buildService({ existingUserWorkspace: userWorkspace, hasRole: false });
+
+    await service.addUserToWorkspaceIfUserNotInWorkspace(user, {
+      ...workspace,
+      activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+    } as WorkspaceEntity);
+
+    expect(createWorkspaceMember).not.toHaveBeenCalled();
+    expect(assignRoleToUserWorkspaces).not.toHaveBeenCalled();
   });
 
   it('should give a member left without a role the role of their pending invitation', async () => {
