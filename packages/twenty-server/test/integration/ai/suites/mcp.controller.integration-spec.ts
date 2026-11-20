@@ -339,4 +339,154 @@ describe('MCP Controller (integration)', () => {
       });
     });
   });
+
+  describe('Protocol 2026-07-28', () => {
+    const STATELESS_VERSION = '2026-07-28';
+    const statelessMeta = {
+      'io.modelcontextprotocol/protocolVersion': STATELESS_VERSION,
+      'io.modelcontextprotocol/clientCapabilities': {},
+    };
+
+    const postStatelessMcp = (
+      body: { method: string; params?: Record<string, unknown> },
+      headers: Record<string, string> = {},
+    ) =>
+      request(baseUrl)
+        .post(endpoint)
+        .set('Authorization', `Bearer ${API_KEY_ACCESS_TOKEN}`)
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+        .set({
+          'MCP-Protocol-Version': STATELESS_VERSION,
+          'Mcp-Method': body.method,
+          ...headers,
+        })
+        .send(
+          JSON.stringify({
+            jsonrpc: '2.0',
+            id: 'stateless',
+            method: body.method,
+            params: { ...body.params, _meta: statelessMeta },
+          }),
+        );
+
+    it('should answer server/discover', async () => {
+      const res = await postStatelessMcp({ method: 'server/discover' }).expect(
+        200,
+      );
+
+      expect(res.body.result).toMatchObject({
+        supportedVersions: [STATELESS_VERSION],
+        capabilities: { tools: {}, resources: {}, prompts: {} },
+        resultType: 'complete',
+        ttlMs: expect.any(Number),
+        cacheScope: 'private',
+        _meta: {
+          'io.modelcontextprotocol/serverInfo': { name: 'Twenty MCP Server' },
+        },
+      });
+      expect(typeof res.body.result.instructions).toBe('string');
+    });
+
+    it('should mark tools/list as a complete private cacheable result', async () => {
+      const res = await postStatelessMcp({ method: 'tools/list' }).expect(200);
+
+      expect(Array.isArray(res.body.result.tools)).toBe(true);
+      expect(res.body.result).toMatchObject({
+        resultType: 'complete',
+        cacheScope: 'private',
+      });
+    });
+
+    it('should call a tool when Mcp-Name matches', async () => {
+      const res = await postStatelessMcp(
+        {
+          method: 'tools/call',
+          params: { name: 'get_tool_catalog', arguments: {} },
+        },
+        { 'Mcp-Name': 'get_tool_catalog' },
+      ).expect(200);
+
+      expect(res.body.result).toMatchObject({ resultType: 'complete' });
+      expect(res.body.result.ttlMs).toBeUndefined();
+    });
+
+    it('should reject an Mcp-Name header that differs from the tool name', async () => {
+      const res = await postStatelessMcp(
+        {
+          method: 'tools/call',
+          params: { name: 'get_tool_catalog', arguments: {} },
+        },
+        { 'Mcp-Name': 'learn_tools' },
+      ).expect(400);
+
+      expect(res.body.error.code).toBe(-32020);
+    });
+
+    it('should reject a protocol version header that differs from _meta', async () => {
+      const res = await postStatelessMcp(
+        { method: 'tools/list' },
+        { 'MCP-Protocol-Version': '2025-06-18' },
+      ).expect(400);
+
+      expect(res.body.error.code).toBe(-32020);
+    });
+
+    it('should reject an unsupported version with the supported list', async () => {
+      const res = await request(baseUrl)
+        .post(endpoint)
+        .set('Authorization', `Bearer ${API_KEY_ACCESS_TOKEN}`)
+        .set('Content-Type', 'application/json')
+        .set({
+          'MCP-Protocol-Version': '2099-01-01',
+          'Mcp-Method': 'tools/list',
+        })
+        .send(
+          JSON.stringify({
+            jsonrpc: '2.0',
+            id: 'future',
+            method: 'tools/list',
+            params: {
+              _meta: {
+                ...statelessMeta,
+                'io.modelcontextprotocol/protocolVersion': '2099-01-01',
+              },
+            },
+          }),
+        )
+        .expect(400);
+
+      expect(res.body.error).toMatchObject({
+        code: -32022,
+        data: { supported: [STATELESS_VERSION], requested: '2099-01-01' },
+      });
+    });
+
+    it('should require _meta on server/discover', async () => {
+      const res = await postMcp({
+        jsonrpc: '2.0',
+        id: 'discover-without-meta',
+        method: 'server/discover',
+      }).expect(400);
+
+      expect(res.body.error.code).toBe(-32602);
+    });
+
+    it('should answer 404 to ping, which the stateless protocol removed', async () => {
+      const res = await postStatelessMcp({ method: 'ping' }).expect(404);
+
+      expect(res.body.error.code).toBe(-32601);
+    });
+
+    it('should leave legacy responses without stateless fields', async () => {
+      const res = await postMcp({
+        jsonrpc: '2.0',
+        method: 'tools/list',
+        id: 'legacy',
+      }).expect(200);
+
+      expect(res.body.result.resultType).toBeUndefined();
+      expect(res.body.result.ttlMs).toBeUndefined();
+    });
+  });
 });

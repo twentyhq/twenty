@@ -11,7 +11,9 @@ import { MCP_EXCLUDED_TOOL_NAMES } from 'src/engine/api/mcp/constants/mcp-exclud
 import { MCP_GENERIC_MODE_LISTED_TOOL_CATEGORIES } from 'src/engine/api/mcp/constants/mcp-generic-mode-listed-tool-categories.constant';
 import { MCP_EXECUTE_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-execute-tool-annotations.const';
 import { MCP_OPEN_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-open-world-read-only-tool-annotations.constant';
+import { MCP_META_KEYS } from 'src/engine/api/mcp/constants/mcp-meta-keys.constant';
 import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
+import { MCP_STATELESS_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-stateless-protocol-version.constant';
 import { MCP_SERVER_INFO } from 'src/engine/api/mcp/constants/mcp-server-info.const';
 import { JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import {
@@ -31,6 +33,7 @@ import {
 } from 'src/engine/api/mcp/tools/list-skills.tool';
 import { type McpAnnotatedTool } from 'src/engine/api/mcp/types/mcp-annotated-tool.type';
 import { type McpCoreQueryContext } from 'src/engine/api/mcp/types/mcp-core-query-context.type';
+import { type McpDiscoverResult } from 'src/engine/api/mcp/types/mcp-discover-result.type';
 import { type McpInitializeResult } from 'src/engine/api/mcp/types/mcp-initialize-result.type';
 import { type McpMethod } from 'src/engine/api/mcp/types/mcp-method.type';
 import { type McpResult } from 'src/engine/api/mcp/types/mcp-result.type';
@@ -42,6 +45,7 @@ import { buildJsonRpcError } from 'src/engine/api/mcp/utils/build-json-rpc-error
 import { getMcpRegistryToolAnnotations } from 'src/engine/api/mcp/utils/get-mcp-registry-tool-annotations.util';
 import { isMcpMethod } from 'src/engine/api/mcp/utils/is-mcp-method.util';
 import { parseMcpToolCallParams } from 'src/engine/api/mcp/utils/parse-mcp-tool-call-params.util';
+import { toMcpStatelessResult } from 'src/engine/api/mcp/utils/to-mcp-stateless-result.util';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -124,6 +128,28 @@ export class McpProtocolService {
       },
       serverInfo: MCP_SERVER_INFO,
       instructions,
+    };
+  }
+
+  private async handleDiscover(
+    context: McpCoreQueryContext,
+  ): Promise<McpDiscoverResult> {
+    const instructions =
+      await this.mcpInstructionBuilderService.buildInstructions({
+        workspaceId: context.workspace.id,
+        authContext: context.authContext,
+        toolMode: context.toolMode,
+      });
+
+    return {
+      supportedVersions: [MCP_STATELESS_PROTOCOL_VERSION],
+      capabilities: {
+        tools: { listChanged: false },
+        resources: { listChanged: false },
+        prompts: { listChanged: false },
+      },
+      instructions,
+      _meta: { [MCP_META_KEYS.serverInfo]: MCP_SERVER_INFO },
     };
   }
 
@@ -291,7 +317,12 @@ export class McpProtocolService {
         sseWriter,
       });
 
-      return wrapJsonRpcResponse(id, { result });
+      return wrapJsonRpcResponse(id, {
+        result:
+          context.protocolEra === 'stateless'
+            ? toMcpStatelessResult(method, result)
+            : result,
+      });
     } catch (error) {
       const exception =
         error instanceof Error ? error : new Error(String(error));
@@ -321,6 +352,8 @@ export class McpProtocolService {
     switch (method) {
       case 'initialize':
         return this.handleInitialize(context);
+      case 'server/discover':
+        return this.handleDiscover(context);
       case 'ping':
         return {};
       case 'prompts/list':

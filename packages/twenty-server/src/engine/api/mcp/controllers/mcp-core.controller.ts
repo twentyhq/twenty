@@ -25,6 +25,8 @@ import { parseMcpToolMode } from 'src/engine/api/mcp/utils/parse-mcp-tool-mode.u
 import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
 import { type McpCoreQueryContext } from 'src/engine/api/mcp/types/mcp-core-query-context.type';
 import { getMcpRequestLogFields } from 'src/engine/api/mcp/utils/get-mcp-request-log-fields.util';
+import { resolveMcpRequestProtocol } from 'src/engine/api/mcp/utils/resolve-mcp-request-protocol.util';
+import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
 import { writeSseEvent } from 'src/engine/api/mcp/utils/write-sse-event.util';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
@@ -98,6 +100,26 @@ export class McpCoreController {
       ...(isDefined(mcpToolName) && { 'mcp.tool_name': mcpToolName }),
     });
 
+    const requestProtocol = isDefined(body.id)
+      ? resolveMcpRequestProtocol({
+          method: body.method,
+          params: body.params,
+          headers: {
+            protocolVersion: request.header('mcp-protocol-version'),
+            method: request.header('mcp-method'),
+            name: request.header('mcp-name'),
+          },
+        })
+      : ({ era: 'legacy' } as const);
+
+    if (requestProtocol.era === 'rejected') {
+      res.status(requestProtocol.httpStatus);
+
+      return wrapJsonRpcResponse(body.id ?? null, {
+        error: requestProtocol.error,
+      });
+    }
+
     // The guard authenticates after WorkspaceAuthContextMiddleware has run, so the context is built here
     const queryContext: McpCoreQueryContext = {
       authContext: buildWorkspaceAuthContextFromRequest(request),
@@ -108,6 +130,7 @@ export class McpCoreController {
       application,
       agentId: request.agentId,
       toolMode: parseMcpToolMode(mode),
+      protocolEra: requestProtocol.era,
     };
 
     // JSON-RPC notifications (no id) expect no response body regardless of Accept

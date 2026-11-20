@@ -1,4 +1,5 @@
 import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
+import { MCP_STATELESS_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-stateless-protocol-version.constant';
 import { buildMcpServerCard } from 'src/engine/core-modules/well-known/utils/build-mcp-server-card.util';
 
 describe('buildMcpServerCard', () => {
@@ -12,7 +13,10 @@ describe('buildMcpServerCard', () => {
     expect(card.remotes[0]).toMatchObject({
       type: 'streamable-http',
       url: 'https://mycompany.twenty.com/mcp',
-      supportedProtocolVersions: [MCP_PROTOCOL_VERSION],
+      supportedProtocolVersions: [
+        MCP_STATELESS_PROTOCOL_VERSION,
+        MCP_PROTOCOL_VERSION,
+      ],
     });
   });
 

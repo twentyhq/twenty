@@ -1,4 +1,5 @@
 import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
+import { MCP_STATELESS_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-stateless-protocol-version.constant';
 
 type BuildMcpServerCardArgs = {
   baseUrl: string;
@@ -25,7 +26,10 @@ export const buildMcpServerCard = ({
     {
       type: 'streamable-http',
       url: `${baseUrl}/mcp`,
-      supportedProtocolVersions: [MCP_PROTOCOL_VERSION],
+      supportedProtocolVersions: [
+        MCP_STATELESS_PROTOCOL_VERSION,
+        MCP_PROTOCOL_VERSION,
+      ],
       headers: [
         {
           name: 'Authorization',

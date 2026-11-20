@@ -1,3 +1,4 @@
+import { type McpProtocolEra } from 'src/engine/api/mcp/types/mcp-protocol-era.type';
 import { type McpToolMode } from 'src/engine/api/mcp/types/mcp-tool-mode.type';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -13,4 +14,5 @@ export type McpCoreQueryContext = {
   application?: FlatApplication;
   agentId: string | undefined;
   toolMode: McpToolMode;
+  protocolEra: McpProtocolEra;
 };
