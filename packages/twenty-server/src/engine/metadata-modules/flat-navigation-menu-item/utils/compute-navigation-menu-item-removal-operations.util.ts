@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { splitEntitiesByRemovalStrategy } from 'src/engine/metadata-modules/flat-entity/utils/split-entities-by-removal-strategy.util';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 
@@ -69,8 +71,40 @@ export const computeNavigationMenuItemRemovalOperations = ({
     deletedById.set(navigationMenuItem.id, navigationMenuItem);
   };
 
+  const parentIdByNavigationMenuItemId = new Map<string, string>();
+
+  for (const childrenByParentId of Object.values(
+    childrenByUserWorkspaceIdAndParentId,
+  )) {
+    for (const [parentId, children] of Object.entries(
+      childrenByParentId ?? {},
+    )) {
+      for (const child of children ?? []) {
+        parentIdByNavigationMenuItemId.set(child.id, parentId);
+      }
+    }
+  }
+
+  const rootIds = new Set(rootNavigationMenuItems.map(({ id }) => id));
+
+  const hasAncestorInRoots = (navigationMenuItemId: string) => {
+    const visitedIds = new Set<string>();
+    let parentId = parentIdByNavigationMenuItemId.get(navigationMenuItemId);
+
+    while (isDefined(parentId) && !visitedIds.has(parentId)) {
+      if (rootIds.has(parentId)) {
+        return true;
+      }
+
+      visitedIds.add(parentId);
+      parentId = parentIdByNavigationMenuItemId.get(parentId);
+    }
+
+    return false;
+  };
+
   const { toHardDelete, toDeactivate } = splitByRemovalStrategy(
-    rootNavigationMenuItems,
+    rootNavigationMenuItems.filter(({ id }) => !hasAncestorInRoots(id)),
   );
 
   for (const deactivatedRoot of toDeactivate) {
@@ -78,12 +112,10 @@ export const computeNavigationMenuItemRemovalOperations = ({
   }
 
   for (const ownedRoot of toHardDelete) {
-    if (!deletedById.has(ownedRoot.id)) {
-      deleteWithOwnedDescendants({
-        navigationMenuItem: ownedRoot,
-        survivingParent: ownedRoot,
-      });
-    }
+    deleteWithOwnedDescendants({
+      navigationMenuItem: ownedRoot,
+      survivingParent: ownedRoot,
+    });
   }
 
   return {
