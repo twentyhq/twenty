@@ -72,7 +72,6 @@ export class TabPresenceService {
     status,
   }: TabPresenceUpdate): Promise<void> {
     if (status === TabPresenceStatus.CLOSED) {
-      // Other tabs may still be open, so only the TTL ends online
       return;
     }
 
