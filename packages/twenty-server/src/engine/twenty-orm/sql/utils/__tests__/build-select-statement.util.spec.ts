@@ -88,15 +88,84 @@ describe('buildSelectStatement', () => {
     );
   });
 
-  it('should not nullify columns in a grouped query', () => {
+  it('should group a nullified column by its nullified value and leave out the rows it is unreadable on', () => {
     const sql = buildSelectStatement(
       buildState({
         columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
+        extraSelectClauses: [{ expression: '"person"."id"', alias: 'groupId' }],
         groupByExpressions: ['"person"."id"'],
       }),
     );
+    const nullifiedColumn =
+      '(CASE WHEN ("person"."x" = :x) THEN NULL ELSE "person"."id" END)';
 
-    expect(sql).not.toContain('CASE WHEN');
+    expect(sql).toContain(`${nullifiedColumn} AS "groupId"`);
+    expect(sql).toContain(`GROUP BY ${nullifiedColumn}`);
+    expect(sql).toContain('NOT COALESCE(("person"."x" = :x), FALSE)');
+  });
+
+  it('should leave out of a filter the rows its column is unreadable on, order on the nullified value, and leave row access conditions and string literals alone', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
+        whereClauses: [
+          {
+            operator: 'and',
+            sql: `"person"."id" = :a OR "person"."name" = '"person"."id"'`,
+          },
+        ],
+        rowAccessConditions: ['"person"."id" = :ownerId'],
+        orderByClauses: [{ expression: '"person"."id"', direction: 'ASC' }],
+        includeDeleted: true,
+      }),
+    );
+    const nullifiedColumn =
+      '(CASE WHEN ("person"."x" = :x) THEN NULL ELSE "person"."id" END)';
+
+    expect(sql).toContain(
+      `WHERE (${nullifiedColumn} = :a OR "person"."name" = '"person"."id"') AND ("person"."id" = :ownerId) AND (NOT COALESCE(("person"."x" = :x), FALSE))`,
+    );
+    expect(sql).toContain(`ORDER BY ${nullifiedColumn} ASC`);
+  });
+
+  it('should leave unreadable rows out inside the relation filter whose alias they belong to', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        columnNullifyConditions: {
+          task: { title: ['"task"."x" = :x'] },
+        },
+        whereClauses: [{ operator: 'and', sql: '__exists_task__' }],
+        existsFilterClauses: [
+          {
+            token: '__exists_task__',
+            alias: 'task',
+            parentAlias: 'person',
+            relationFieldName: 'tasks',
+            targetTableShape: { ...personTableShape, tableName: 'task' },
+            correlationCondition: '"task"."personId" = "person"."id"',
+            conditionSql: `"task"."title" = 'Secret'`,
+            additionalOnConditions: [],
+          },
+        ],
+        includeDeleted: true,
+      }),
+    );
+    const subquery = sql.slice(sql.indexOf('EXISTS'));
+
+    expect(subquery).toContain('NOT COALESCE(("task"."x" = :x), FALSE)');
+    expect(sql.slice(0, sql.indexOf('EXISTS'))).not.toContain('NOT COALESCE');
+  });
+
+  it('should keep every row when only a sort reads an unreadable column', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
+        orderByClauses: [{ expression: '"person"."id"', direction: 'ASC' }],
+        includeDeleted: true,
+      }),
+    );
+
+    expect(sql).not.toContain('NOT COALESCE');
   });
 
   it('should keep row access conditions outside a user OR chain', () => {

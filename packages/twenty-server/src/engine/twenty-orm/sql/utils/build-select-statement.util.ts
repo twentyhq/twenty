@@ -6,6 +6,13 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
 import {
+  buildColumnMasks,
+  type ColumnMasks,
+} from 'src/engine/twenty-orm/sql/utils/build-column-masks.util';
+import { buildUnreadableRowExclusionCondition } from 'src/engine/twenty-orm/sql/utils/build-unreadable-row-exclusion-condition.util';
+import { maskNullifiedColumnReferences } from 'src/engine/twenty-orm/sql/utils/mask-nullified-column-references.util';
+import { renderNullifiedColumn } from 'src/engine/twenty-orm/sql/utils/render-nullified-column.util';
+import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
@@ -109,14 +116,15 @@ const renderProjectedColumn = ({
   const quotedColumn = quoteColumn(alias, columnName);
   const nullifyConditions = state.columnNullifyConditions[alias]?.[columnName];
 
-  // A grouped query projects no plain column, and a CASE on one wouldn't be grouped
-  if (!isDefined(nullifyConditions) || state.groupByExpressions.length > 0) {
+  if (!isDefined(nullifyConditions)) {
     return quotedColumn;
   }
 
-  return `CASE WHEN ${nullifyConditions
-    .map((nullifyCondition) => `(${nullifyCondition})`)
-    .join(' OR ')} THEN NULL ELSE ${quotedColumn} END`;
+  if (state.groupByExpressions.length > 0) {
+    return `(${renderNullifiedColumn({ quotedColumn, nullifyConditions })})`;
+  }
+
+  return renderNullifiedColumn({ quotedColumn, nullifyConditions });
 };
 
 export const normaliseColumnExpression = (
@@ -166,6 +174,20 @@ export const quoteQualifiedAliasReferences = (
         : quoteQualifiedAliasReferencesInSegment(segment, aliases),
     )
     .join('');
+
+const renderMaskedExpression = ({
+  expression,
+  aliases,
+  columnMasks,
+}: {
+  expression: string;
+  aliases: string[];
+  columnMasks: ColumnMasks | undefined;
+}): string =>
+  maskNullifiedColumnReferences({
+    expression: quoteQualifiedAliasReferences(expression, aliases),
+    columnMasks,
+  });
 
 export const collectStatementAliases = (
   state: SelectStatementState,
@@ -312,6 +334,7 @@ export const buildProjection = (
   }
 
   const aliases = collectStatementAliases(state);
+  const columnMasks = buildColumnMasks(state.columnNullifyConditions);
 
   for (const extraSelect of state.extraSelectClauses) {
     const plainColumn = extraSelect.expression.match(PLAIN_COLUMN_EXPRESSION);
@@ -321,7 +344,11 @@ export const buildProjection = (
           alias: plainColumn[1],
           columnName: plainColumn[2],
         })
-      : quoteQualifiedAliasReferences(extraSelect.expression, aliases);
+      : renderMaskedExpression({
+          expression: extraSelect.expression,
+          aliases,
+          columnMasks,
+        });
 
     expressions.push(`${expression} AS ${escapeIdentifier(extraSelect.alias)}`);
   }
@@ -362,17 +389,46 @@ export const renderWhereExpressionWithRowAccess = ({
     : rowAccessExpression;
 };
 
-const renderExistsFilter = (
-  existsFilterClause: ExistsFilterClause,
-  includeDeleted: boolean,
-): string => {
+const renderExistsFilter = ({
+  existsFilterClause,
+  includeDeleted,
+  columnNullifyConditions,
+  columnMasks,
+}: {
+  existsFilterClause: Pick<
+    ExistsFilterClause,
+    | 'alias'
+    | 'targetTableShape'
+    | 'correlationCondition'
+    | 'additionalOnConditions'
+    | 'conditionSql'
+  >;
+  includeDeleted: boolean;
+  columnNullifyConditions: ColumnNullifyConditions;
+  columnMasks: ColumnMasks | undefined;
+}): string => {
   const conditions = [
     existsFilterClause.correlationCondition,
     ...existsFilterClause.additionalOnConditions,
   ];
 
   if (existsFilterClause.conditionSql.length > 0) {
-    conditions.push(existsFilterClause.conditionSql);
+    conditions.push(
+      maskNullifiedColumnReferences({
+        expression: existsFilterClause.conditionSql,
+        columnMasks,
+      }),
+    );
+
+    const subqueryExclusionCondition = buildUnreadableRowExclusionCondition({
+      expressions: [existsFilterClause.conditionSql],
+      columnNullifyConditions,
+      aliases: [existsFilterClause.alias],
+    });
+
+    if (isDefined(subqueryExclusionCondition)) {
+      conditions.push(subqueryExclusionCondition);
+    }
   }
 
   if (
@@ -397,18 +453,28 @@ export const substituteExistsFilterTokens = ({
   expression,
   existsFilterClauses,
   includeDeleted,
+  columnNullifyConditions = {},
 }: {
   expression: string;
   existsFilterClauses: ExistsFilterClause[];
   includeDeleted: boolean;
-}): string =>
-  existsFilterClauses.reduce(
+  columnNullifyConditions?: ColumnNullifyConditions;
+}): string => {
+  const columnMasks = buildColumnMasks(columnNullifyConditions);
+
+  return existsFilterClauses.reduce(
     (substituted, existsFilterClause) =>
-      substituted
-        .split(existsFilterClause.token)
-        .join(renderExistsFilter(existsFilterClause, includeDeleted)),
+      substituted.split(existsFilterClause.token).join(
+        renderExistsFilter({
+          existsFilterClause,
+          includeDeleted,
+          columnNullifyConditions,
+          columnMasks,
+        }),
+      ),
     expression,
   );
+};
 
 export const buildWhereExpression = (
   state: SelectStatementState,
@@ -420,12 +486,36 @@ export const buildWhereExpression = (
     substituteExistsFilters?: boolean;
   } = {},
 ): string => {
+  const aliases = collectStatementAliases(state);
+  const columnMasks = buildColumnMasks(state.columnNullifyConditions);
   const renderedWhereExpression = quoteQualifiedAliasReferences(
     renderWhereExpressionWithRowAccess({
-      whereClauses: state.whereClauses,
-      rowAccessConditions: state.rowAccessConditions,
+      whereClauses: state.whereClauses.map((whereClause) => ({
+        ...whereClause,
+        sql: renderMaskedExpression({
+          expression: whereClause.sql,
+          aliases,
+          columnMasks,
+        }),
+      })),
+      rowAccessConditions: [
+        ...state.rowAccessConditions,
+        buildUnreadableRowExclusionCondition({
+          expressions: [
+            ...state.whereClauses.map(({ sql }) => sql),
+            ...state.existsFilterClauses.map(
+              ({ conditionSql }) => conditionSql,
+            ),
+            ...state.groupByExpressions,
+          ].map((expression) =>
+            quoteQualifiedAliasReferences(expression, aliases),
+          ),
+          columnNullifyConditions: state.columnNullifyConditions,
+          aliases,
+        }),
+      ].filter(isDefined),
     }),
-    collectStatementAliases(state),
+    aliases,
   );
 
   const filterExpression = substituteExistsFilters
@@ -433,6 +523,7 @@ export const buildWhereExpression = (
         expression: renderedWhereExpression,
         existsFilterClauses: state.existsFilterClauses,
         includeDeleted: state.includeDeleted,
+        columnNullifyConditions: state.columnNullifyConditions,
       })
     : renderedWhereExpression;
 
@@ -548,7 +639,18 @@ export const buildGroupByClause = (state: SelectStatementState): string => {
     return '';
   }
 
-  return `GROUP BY ${state.groupByExpressions.join(', ')}`;
+  const aliases = collectStatementAliases(state);
+  const columnMasks = buildColumnMasks(state.columnNullifyConditions);
+
+  return `GROUP BY ${state.groupByExpressions
+    .map((expression) =>
+      renderMaskedExpression({
+        expression: expression,
+        aliases,
+        columnMasks,
+      }),
+    )
+    .join(', ')}`;
 };
 
 export const buildOrderByClause = (state: SelectStatementState): string => {
@@ -557,13 +659,16 @@ export const buildOrderByClause = (state: SelectStatementState): string => {
   }
 
   const aliases = collectStatementAliases(state);
+  const columnMasks = buildColumnMasks(state.columnNullifyConditions);
 
   return `ORDER BY ${state.orderByClauses
     .map(
       (orderByClause) =>
-        `${quoteQualifiedAliasReferences(orderByClause.expression, aliases)} ${
-          orderByClause.direction
-        }${isDefined(orderByClause.nulls) ? ` ${orderByClause.nulls}` : ''}`,
+        `${renderMaskedExpression({
+          expression: orderByClause.expression,
+          aliases,
+          columnMasks,
+        })} ${orderByClause.direction}${isDefined(orderByClause.nulls) ? ` ${orderByClause.nulls}` : ''}`,
     )
     .join(', ')}`;
 };
@@ -593,9 +698,16 @@ const buildDistinctOnClause = (state: SelectStatementState): string => {
   }
 
   const aliases = collectStatementAliases(state);
+  const columnMasks = buildColumnMasks(state.columnNullifyConditions);
 
   return `DISTINCT ON (${state.distinctOnExpressions
-    .map((expression) => quoteQualifiedAliasReferences(expression, aliases))
+    .map((expression) =>
+      renderMaskedExpression({
+        expression: expression,
+        aliases,
+        columnMasks,
+      }),
+    )
     .join(', ')}) `;
 };
 
