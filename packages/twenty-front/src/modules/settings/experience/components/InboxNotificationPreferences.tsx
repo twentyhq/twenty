@@ -83,16 +83,18 @@ export const InboxNotificationPreferences = () => {
       return;
     }
 
-    setCurrentUserWorkspace((previousUserWorkspace) =>
-      isDefined(previousUserWorkspace)
-        ? {
-            ...previousUserWorkspace,
-            inboxNotificationLevel: savedSettings.inboxNotificationLevel,
-            isInboxNotificationPreviewEnabled:
-              savedSettings.isInboxNotificationPreviewEnabled,
-          }
-        : previousUserWorkspace,
-    );
+    setCurrentUserWorkspace((previousUserWorkspace) => {
+      if (!isDefined(previousUserWorkspace)) {
+        return previousUserWorkspace;
+      }
+
+      return {
+        ...previousUserWorkspace,
+        inboxNotificationLevel: savedSettings.inboxNotificationLevel,
+        isInboxNotificationPreviewEnabled:
+          savedSettings.isInboxNotificationPreviewEnabled,
+      };
+    });
   };
 
   return (
