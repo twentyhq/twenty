@@ -27,14 +27,20 @@ const buildPermissions = (canReadPeople: boolean) => ({
 });
 
 describe('generateFindManyRecordsQuery with relations with arguments', () => {
-  const generateQuery = ({ withRelation = true, canReadPeople = true } = {}) =>
+  const generateQuery = ({
+    withRelation = true,
+    withTotalCount = false,
+    canReadPeople = true,
+  } = {}) =>
     print(
       generateFindManyRecordsQuery({
         objectMetadataItem: companyObjectMetadataItem,
         objectMetadataItems,
         recordGqlFields: {
           id: true,
-          ...(withRelation && { [responseKey]: peopleInParis }),
+          ...(withRelation && {
+            [responseKey]: { ...peopleInParis, withTotalCount },
+          }),
         },
         objectPermissionsByObjectMetadataId: buildPermissions(canReadPeople),
       }),
@@ -48,6 +54,13 @@ describe('generateFindManyRecordsQuery with relations with arguments', () => {
     expect(query).toContain(`filter: $${responseKey}Filter`);
     expect(query).toContain(`orderBy: $${responseKey}OrderBy`);
     expect(query).toContain(`first: $${responseKey}First`);
+  });
+
+  it('selects the total count of the relation only when asked', () => {
+    expect(generateQuery()).not.toMatch(/totalCount\s+edges/);
+    expect(generateQuery({ withTotalCount: true })).toMatch(
+      /totalCount\s+edges/,
+    );
   });
 
   it('selects and declares nothing for an unreadable target', () => {

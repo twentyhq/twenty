@@ -1,4 +1,5 @@
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
+import { getRelationTotalCountRecordKey } from '@/object-record/cache/utils/getRelationTotalCountRecordKey';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,21 +13,30 @@ export const getRecordFromRecordNode = <T extends ObjectRecord>({
 
   return {
     ...Object.fromEntries(
-      Object.entries(recordNode).map(([fieldName, value]) => {
+      Object.entries(recordNode).flatMap(([fieldName, value]) => {
         if (
           !isDefined(value) ||
           Array.isArray(value) ||
           typeof value !== 'object'
         ) {
-          return [fieldName, value];
+          return [[fieldName, value]];
         }
 
-        return isDefined(value.edges)
-          ? [
-              fieldName,
-              getRecordsFromRecordConnection({ recordConnection: value }),
-            ]
-          : [fieldName, getRecordFromRecordNode<T>({ recordNode: value })];
+        if (!isDefined(value.edges)) {
+          return [
+            [fieldName, getRecordFromRecordNode<T>({ recordNode: value })],
+          ];
+        }
+
+        return [
+          [
+            fieldName,
+            getRecordsFromRecordConnection({ recordConnection: value }),
+          ],
+          ...(isDefined(value.totalCount)
+            ? [[getRelationTotalCountRecordKey(fieldName), value.totalCount]]
+            : []),
+        ];
       }),
     ),
     // Only adds `id` and `__typename` if they exist.
