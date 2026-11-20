@@ -25,8 +25,6 @@ import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrap
 import { decodeJwtHeader } from 'src/engine/core-modules/jwt/utils/decode-jwt-header.util';
 import { isAsymmetricJwtHeader } from 'src/engine/core-modules/jwt/utils/is-asymmetric-jwt-header.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { truncateFullName } from 'src/engine/core-modules/user/utils/truncate-full-name.util';
-import { truncateWorkspaceDisplayName } from 'src/engine/core-modules/workspace/utils/truncate-workspace-display-name.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
@@ -104,19 +102,17 @@ export class ApprovedAccessDomainService {
         })
       : undefined;
 
-    const senderName = truncateFullName(sender.name);
-
     const emailTemplate = SendApprovedAccessDomainValidation({
       link: link.toString(),
       workspace: {
-        name: truncateWorkspaceDisplayName(workspace.displayName),
+        name: workspace.displayName,
         logo,
       },
       domain: approvedAccessDomain.domain,
       sender: {
         email: sender.userEmail,
-        firstName: senderName.firstName,
-        lastName: senderName.lastName,
+        firstName: sender.name.firstName,
+        lastName: sender.name.lastName,
       },
       serverUrl: this.twentyConfigService.get('SERVER_URL'),
       locale: sender.locale,
@@ -129,7 +125,7 @@ export class ApprovedAccessDomainService {
     const i18n = this.i18nService.getI18nInstance(sender.locale);
 
     await this.emailService.send({
-      from: `${senderName.firstName} ${senderName.lastName} (via Twenty) <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
+      from: `${sender.name.firstName} ${sender.name.lastName} (via Twenty) <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
       to,
       subject: i18n._(msg`Approve your access domain`),
       text,
