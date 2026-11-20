@@ -9,6 +9,7 @@ import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadCli
 import { InboxThreadListFetchMoreTrigger } from '@/inbox/components/InboxThreadListFetchMoreTrigger';
 import { NavigationDrawerInboxThreadSection } from '@/inbox/components/NavigationDrawerInboxThreadSection';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
+import { INBOX_RECENT_THREADS_NAVIGATION_SECTION_ID } from '@/inbox/constants/InboxRecentThreadsNavigationSectionId';
 import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
 import { NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT } from '@/navigation-menu-item/common/constants/NavigationMenuSectionVisibleItemLimit';
@@ -16,8 +17,6 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-
-const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
 
 type NavigationMenuAiChatRecentsSectionProps = {
   headerAction?: ReactNode;
@@ -65,7 +64,7 @@ export const NavigationMenuAiChatRecentsSection = ({
 
   return (
     <NavigationDrawerInboxThreadSection
-      sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
+      sectionId={INBOX_RECENT_THREADS_NAVIGATION_SECTION_ID}
       title={t`Recent chats`}
       threads={displayedThreads}
       currentThreadId={currentThreadId}
