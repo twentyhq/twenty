@@ -7,6 +7,8 @@ import { SLACK_ASSISTANT_REQUEST_TIMEOUT_SECONDS } from 'src/logic-functions/con
 import { slackAssistantWorkerHandler } from 'src/logic-functions/handlers/slack-assistant-worker-handler';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { enqueueSlackAssistantRequest } from 'src/logic-functions/utils/enqueue-slack-assistant-request';
+import { enqueueSlackAssistantRequestWatchdog } from 'src/logic-functions/utils/enqueue-slack-assistant-request-watchdog';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 export const slackAssistantRequestHandler = async (
   body: SlackEventsRequestBody,
@@ -18,6 +20,16 @@ export const slackAssistantRequestHandler = async (
 
   if (!isDefined(enqueueResult.request)) {
     return enqueueResult;
+  }
+
+  try {
+    await enqueueSlackAssistantRequestWatchdog({
+      slackAssistantRequestId: enqueueResult.request.id,
+    });
+  } catch (error) {
+    console.warn(
+      `[slack] could not schedule the watchdog for request ${enqueueResult.request.id}: ${toErrorMessage(error)}`,
+    );
   }
 
   return await slackAssistantWorkerHandler(enqueueResult.request, {

@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { createSlackMessageTimestampSequence } from 'src/__tests__/utils/create-slack-message-timestamp-sequence.util';
 import { requireDefinedOrThrow } from 'src/__tests__/utils/require-defined-or-throw.util';
@@ -11,11 +11,15 @@ import { SLACK_ASSISTANT_DEADLINE_FAILURE_TEXT } from 'src/logic-functions/const
 import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/constants/slack-assistant-empty-response-error';
 import { SLACK_ASSISTANT_EMPTY_RESPONSE_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-empty-response-failure-text';
 import { SLACK_ASSISTANT_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-failure-text';
+import { SLACK_ASSISTANT_INTERRUPTED_ERROR } from 'src/logic-functions/constants/slack-assistant-interrupted-error';
+import { SLACK_ASSISTANT_INTERRUPTED_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-interrupted-failure-text';
 import { SLACK_ASSISTANT_FEEDBACK_ACTION_ID } from 'src/logic-functions/constants/slack-assistant-feedback-action-id';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
+import { SLACK_ASSISTANT_REQUEST_WATCHDOG_DELAY_SECONDS } from 'src/logic-functions/constants/slack-assistant-request-watchdog-delay-seconds';
 import { SLACK_ASSISTANT_INITIAL_STATUS } from 'src/logic-functions/constants/slack-assistant-status-steps';
 import { SLACK_MARKDOWN_BLOCK_MAX_LENGTH } from 'src/logic-functions/constants/slack-markdown-block-max-length';
 import { type SlackAssistantRequestStatus } from 'src/logic-functions/types/slack-assistant-request-status.type';
+import { slackAssistantRequestWatchdogHandler } from 'src/logic-functions/handlers/slack-assistant-request-watchdog-handler';
 import { slackAssistantWorkerHandler } from 'src/logic-functions/handlers/slack-assistant-worker-handler';
 import { getSlackThreadKvKey } from 'src/logic-functions/utils/get-slack-thread-kv-key';
 
@@ -780,5 +784,92 @@ describe('Slack assistant worker', () => {
       reason: 'Request is not pending',
     });
     expect(slack.calls).toHaveLength(0);
+  });
+
+  // The server stamps updatedAt, so the watchdog's clock is moved forward
+  // instead of backdating the record.
+  const runWatchdogWhenItFires = async (requestId: string) => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(
+      Date.now() + SLACK_ASSISTANT_REQUEST_WATCHDOG_DELAY_SECONDS * 1000,
+    );
+
+    try {
+      return await slackAssistantRequestWatchdogHandler({
+        slackAssistantRequestId: requestId,
+      });
+    } finally {
+      vi.useRealTimers();
+    }
+  };
+
+  it('should fail a request left processing by a dead execution and tell the member to ask again', async () => {
+    slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
+    const slackMessageTimestamp = nextMessageTimestamp();
+
+    slack.addMessage({
+      channelId: CHANNEL_ID,
+      timestamp: slackMessageTimestamp,
+      userId: REQUESTER_USER_ID,
+      text: mentionBot('who owns Acme?'),
+    });
+
+    const request = await createRequestRecord({
+      slackChannelId: CHANNEL_ID,
+      slackMessageTimestamp,
+      requestText: 'who owns Acme?',
+      status: SLACK_ASSISTANT_REQUEST_STATUS.PROCESSING,
+    });
+
+    const result = await runWatchdogWhenItFires(request.id);
+
+    expect(result).toEqual({ failed: true, attempt: 1, replied: true });
+    expect(botMessagesIn(CHANNEL_ID)).toEqual([
+      expect.objectContaining({
+        text: SLACK_ASSISTANT_INTERRUPTED_FAILURE_TEXT,
+        threadTimestamp: slackMessageTimestamp,
+      }),
+    ]);
+    expect(slack.assistantStatuses).toEqual([
+      {
+        channelId: CHANNEL_ID,
+        threadTimestamp: slackMessageTimestamp,
+        status: '',
+      },
+    ]);
+    await expect(readRequest(request.id)).resolves.toEqual(
+      expect.objectContaining({
+        status: SLACK_ASSISTANT_REQUEST_STATUS.FAILED,
+        errorMessage: SLACK_ASSISTANT_INTERRUPTED_ERROR,
+      }),
+    );
+
+    const secondResult = await runWatchdogWhenItFires(request.id);
+
+    expect(secondResult).toMatchObject({ failed: false, rescheduled: false });
+    expect(botMessagesIn(CHANNEL_ID)).toHaveLength(1);
+  });
+
+  it('should leave an answered request alone when its watchdog fires', async () => {
+    const slackMessageTimestamp = nextMessageTimestamp();
+
+    const request = await createRequestRecord({
+      slackChannelId: CHANNEL_ID,
+      slackMessageTimestamp,
+      requestText: 'who owns Acme?',
+      status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+      responseText: 'Jane owns Acme.',
+    });
+
+    const result = await runWatchdogWhenItFires(request.id);
+
+    expect(result).toMatchObject({ failed: false, rescheduled: false });
+    expect(slack.calls).toHaveLength(0);
+    await expect(readRequest(request.id)).resolves.toEqual(
+      expect.objectContaining({
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        responseText: 'Jane owns Acme.',
+      }),
+    );
   });
 });

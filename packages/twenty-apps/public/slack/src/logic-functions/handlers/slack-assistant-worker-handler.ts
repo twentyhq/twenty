@@ -282,6 +282,13 @@ export const slackAssistantWorkerHandler = async (
     }
 
     if (isDefined(deferredRetryAfterSeconds)) {
+      // renews the lease: the watchdog must not fail a request whose answer is queued for delivery
+      await updateSlackAssistantRequest(client, {
+        id: record.id,
+        responseText,
+        agentChatThreadId: agentResult.threadId,
+      }).catch(() => undefined);
+
       await enqueueSlackMessageDelivery({
         payload: {
           ...answerMessage,
