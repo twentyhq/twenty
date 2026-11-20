@@ -8,6 +8,10 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 import { BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS } from 'src/engine/core-modules/billing/constants/billing-subscription-state-lock-options.constant';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
@@ -66,9 +70,13 @@ export class BillingApplicationProductService {
     private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
   ) {}
 
-  async findTargetApplicationProducts(
-    workspaceId: string,
-  ): Promise<TargetApplicationProduct[]> {
+  async findTargetApplicationProducts({
+    workspaceId,
+    subscribedStripeProductIds = [],
+  }: {
+    workspaceId: string;
+    subscribedStripeProductIds?: string[];
+  }): Promise<TargetApplicationProduct[]> {
     const declaredPrices = await this.findDeclaredPrices(workspaceId);
 
     if (!isNonEmptyArray(declaredPrices)) {
@@ -84,12 +92,19 @@ export class BillingApplicationProductService {
       : 0;
 
     return declaredPrices.flatMap((declaredPrice) => {
+      const stripeProductId = buildApplicationStripeProductId(declaredPrice);
       const billingProduct = billingProducts.find(
-        ({ stripeProductId }) =>
-          stripeProductId === buildApplicationStripeProductId(declaredPrice),
+        (product) => product.stripeProductId === stripeProductId,
       );
 
       if (!hasEveryIntervalPrice(billingProduct)) {
+        if (subscribedStripeProductIds.includes(stripeProductId)) {
+          throw new BillingException(
+            `Application product ${stripeProductId} of workspace ${workspaceId} is on the subscription but its catalog entry is incomplete`,
+            BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
+          );
+        }
+
         this.logger.warn(
           `Application price ${declaredPrice.price.universalIdentifier} of workspace ${workspaceId} has no catalog entry yet`,
         );

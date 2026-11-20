@@ -451,7 +451,7 @@ export class BillingPortalWorkspaceService {
       billingPricesPerPlan,
       targetApplicationProducts:
         await this.billingApplicationProductService.findTargetApplicationProducts(
-          workspace.id,
+          { workspaceId: workspace.id },
         ),
     });
 
