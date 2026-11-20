@@ -32,22 +32,26 @@ const getRelationValueLabel = ({
   return recordCount === 1 ? t`1 record` : t`${recordCount} records`;
 };
 
-type GetDateValueLabel = (predicate: RowLevelPermissionPredicate) => string;
-
 const getPredicateValueLabel = ({
   predicate,
   field,
   workspaceMemberObjectMetadataItem,
   recordLabelById,
-  getDateValueLabel,
+  dateValueLabel,
 }: {
-  predicate: RowLevelPermissionPredicate;
+  predicate: Pick<
+    RowLevelPermissionPredicate,
+    | 'workspaceMemberFieldMetadataId'
+    | 'workspaceMemberSubFieldName'
+    | 'value'
+    | 'operand'
+  >;
   field?: Pick<FieldMetadataItem, 'type'>;
   workspaceMemberObjectMetadataItem?: {
     fields: Pick<FieldMetadataItem, 'id' | 'name' | 'label'>[];
   };
   recordLabelById?: Map<string, string>;
-  getDateValueLabel?: GetDateValueLabel;
+  dateValueLabel?: string;
 }) => {
   if (isDefined(predicate.workspaceMemberFieldMetadataId)) {
     const workspaceMemberField = workspaceMemberObjectMetadataItem?.fields.find(
@@ -86,13 +90,8 @@ const getPredicateValueLabel = ({
     return getRelativeDateDisplayValue(relativeDateFilter).toLocaleLowerCase();
   }
 
-  if (
-    isDefined(getDateValueLabel) &&
-    isNonEmptyString(predicate.value) &&
-    (field?.type === FieldMetadataType.DATE ||
-      field?.type === FieldMetadataType.DATE_TIME)
-  ) {
-    return getDateValueLabel(predicate);
+  if (isDefined(dateValueLabel)) {
+    return dateValueLabel;
   }
 
   if (isNonEmptyString(predicate.value) || isNumber(predicate.value)) {
@@ -117,7 +116,7 @@ export const getRowLevelPermissionRuleLabel = ({
     fields: Pick<FieldMetadataItem, 'id' | 'name' | 'label'>[];
   };
   recordLabelById?: Map<string, string>;
-  getDateValueLabel?: GetDateValueLabel;
+  getDateValueLabel?: (predicate: RowLevelPermissionPredicate) => string;
 }) => {
   const [firstPredicate, ...otherPredicates] = predicates;
 
@@ -129,6 +128,11 @@ export const getRowLevelPermissionRuleLabel = ({
     (objectField) => objectField.id === firstPredicate.fieldMetadataId,
   );
   const fieldLabel = field?.label ?? t`Unknown field`;
+
+  const isDateValue =
+    isNonEmptyString(firstPredicate.value) &&
+    (field?.type === FieldMetadataType.DATE ||
+      field?.type === FieldMetadataType.DATE_TIME);
 
   const operandLabel = getOperandLabel(
     mapRLSOperandToRecordFilterOperand(firstPredicate.operand),
@@ -142,7 +146,9 @@ export const getRowLevelPermissionRuleLabel = ({
       field,
       workspaceMemberObjectMetadataItem,
       recordLabelById,
-      getDateValueLabel,
+      dateValueLabel: isDateValue
+        ? getDateValueLabel?.(firstPredicate)
+        : undefined,
     }),
   ]
     .filter(isNonEmptyString)
