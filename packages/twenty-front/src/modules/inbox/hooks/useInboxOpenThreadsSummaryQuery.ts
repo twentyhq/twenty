@@ -8,7 +8,6 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
-// Counted by the server over every chat, refetched on every inbox state change
 export const useInboxOpenThreadsSummaryQuery = () => {
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const isAiChatInboxEnabled = useIsFeatureEnabled(

@@ -1,9 +1,8 @@
+import { FAVICON_SIZE } from '@/app/constants/FaviconSize';
+import { UNREAD_DOT_GAP } from '@/app/constants/UnreadDotGap';
+import { UNREAD_DOT_RADIUS } from '@/app/constants/UnreadDotRadius';
 import { isDefined } from 'twenty-shared/utils';
 import { THEME_LIGHT } from 'twenty-ui/theme';
-
-const FAVICON_SIZE = 64;
-const UNREAD_DOT_RADIUS = 14;
-const UNREAD_DOT_GAP = 5;
 
 const loadCrossOriginImage = (url: string) =>
   new Promise<HTMLImageElement | null>((resolve) => {

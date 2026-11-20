@@ -17,10 +17,10 @@ export const PageFavicon = ({ hasUnreadDot = false }: PageFaviconProps) => {
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const faviconWithUnreadDot = useAtomStateValue(faviconWithUnreadDotState);
   const faviconUrl = isNonEmptyString(workspacePublicData?.logo)
-    ? (getImageAbsoluteURI({
+    ? getImageAbsoluteURI({
         imageUrl: workspacePublicData.logo,
         baseUrl: REACT_APP_SERVER_BASE_URL,
-      }) ?? DEFAULT_WORKSPACE_LOGO)
+      })
     : DEFAULT_WORKSPACE_LOGO;
   const faviconHref =
     hasUnreadDot && faviconWithUnreadDot?.faviconUrl === faviconUrl

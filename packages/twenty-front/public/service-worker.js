@@ -4,9 +4,18 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim());
 });
 
-const updateAppBadge = (badgeCount) => {
-  if (typeof badgeCount !== 'number' || !('setAppBadge' in self.navigator)) {
-    return Promise.resolve();
+const hasVisibleWindowClient = async () =>
+  (
+    await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
+  ).some((windowClient) => windowClient.visibilityState === 'visible');
+
+const updateAppBadge = async (badgeCount) => {
+  if (
+    typeof badgeCount !== 'number' ||
+    !('setAppBadge' in self.navigator) ||
+    (await hasVisibleWindowClient())
+  ) {
+    return;
   }
 
   return badgeCount > 0
@@ -17,7 +26,7 @@ const updateAppBadge = (badgeCount) => {
 self.addEventListener('push', (event) => {
   const { title, body, url, tag, renotify, badgeCount } = event.data.json();
 
-  event.waitUntil(updateAppBadge(badgeCount));
+  event.waitUntil(updateAppBadge(badgeCount).catch(() => undefined));
 
   event.waitUntil(
     self.registration
