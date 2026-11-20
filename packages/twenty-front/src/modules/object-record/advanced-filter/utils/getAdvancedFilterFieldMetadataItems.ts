@@ -10,7 +10,7 @@ export const getAdvancedFilterFieldMetadataItems = <
   filterableFieldMetadataItems: TFieldMetadataItem[];
   shouldHideRelationFields: boolean | undefined;
 }): TFieldMetadataItem[] => {
-  if (shouldHideRelationFields !== true) {
+  if (!shouldHideRelationFields) {
     return filterableFieldMetadataItems;
   }
 

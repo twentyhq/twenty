@@ -3,7 +3,6 @@ import { getJunctionTargetFieldReference } from '@/object-record/record-column-s
 import { type ViewFieldRelationScope } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-// The target records of a join object are edited by their own fields, which the scope stores one hop away
 export const getRelationScopeToEdit = ({
   relationScope,
   scopedRelationJunction,
