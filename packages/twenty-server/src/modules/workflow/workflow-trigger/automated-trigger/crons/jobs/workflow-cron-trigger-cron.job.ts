@@ -264,8 +264,7 @@ export class WorkflowCronTriggerCronJob {
   } | null> {
     const workflow =
       await this.coreWorkflowTriggerService.findCoreWorkflowByIdOrWorkspaceWorkflowId(
-        trigger.workspaceId,
-        trigger.workflowId,
+        { workspaceId: trigger.workspaceId, workflowId: trigger.workflowId },
       );
 
     if (!isDefined(workflow?.lastPublishedCoreWorkflowVersionId)) {

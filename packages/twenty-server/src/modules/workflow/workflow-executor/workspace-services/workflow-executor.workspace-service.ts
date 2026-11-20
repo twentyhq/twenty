@@ -144,10 +144,10 @@ export class WorkflowExecutorWorkspaceService {
     }
 
     const workflow = isDefined(workflowRun.coreWorkflowId)
-      ? await this.coreWorkflowTriggerService.findCoreWorkflowById(
+      ? await this.coreWorkflowTriggerService.findCoreWorkflowById({
           workspaceId,
-          workflowRun.coreWorkflowId,
-        )
+          coreWorkflowId: workflowRun.coreWorkflowId,
+        })
       : null;
 
     if (!isDefined(workflow)) {

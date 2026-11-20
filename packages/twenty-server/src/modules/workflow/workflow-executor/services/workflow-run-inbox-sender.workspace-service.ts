@@ -46,10 +46,10 @@ export class WorkflowRunInboxSenderWorkspaceService {
       );
 
     const workflow = isDefined(workflowRun?.coreWorkflowId)
-      ? await this.coreWorkflowTriggerService.findCoreWorkflowById(
+      ? await this.coreWorkflowTriggerService.findCoreWorkflowById({
           workspaceId,
-          workflowRun.coreWorkflowId,
-        )
+          coreWorkflowId: workflowRun.coreWorkflowId,
+        })
       : null;
 
     if (!isDefined(workflow)) {
@@ -77,10 +77,10 @@ export class WorkflowRunInboxSenderWorkspaceService {
     coreWorkflowId: string;
   }): Promise<string | null> {
     const coreWorkflow =
-      await this.coreWorkflowTriggerService.findCoreWorkflowById(
+      await this.coreWorkflowTriggerService.findCoreWorkflowById({
         workspaceId,
         coreWorkflowId,
-      );
+      });
 
     if (!isDefined(coreWorkflow?.createdByUserWorkspaceId)) {
       return null;
