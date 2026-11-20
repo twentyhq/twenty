@@ -17,7 +17,6 @@ import { getGranolaApiKeyFingerprint } from 'src/logic-functions/utils/get-grano
 import { getGranolaPersonalFolderSelectionKey } from 'src/logic-functions/utils/get-granola-personal-folder-selection-key.util';
 import { listAllGranolaFoldersOrThrow } from 'src/logic-functions/utils/list-all-granola-folders-or-throw.util';
 import { findGranolaPersonalConnection } from 'src/logic-functions/utils/find-granola-personal-connection.util';
-import { isGranolaPersonalSyncEnabled } from 'src/logic-functions/utils/is-granola-personal-sync-enabled.util';
 import { loadGranolaPersonalSync } from 'src/logic-functions/utils/load-granola-personal-sync.util';
 import { reconcileGranolaPersonalWebhookOrThrow } from 'src/logic-functions/utils/reconcile-granola-personal-webhook-or-throw.util';
 import { removeAbandonedGranolaPersonalWebhooksOrThrow } from 'src/logic-functions/utils/remove-abandoned-granola-personal-webhooks-or-throw.util';
@@ -47,10 +46,6 @@ export const granolaPersonalReconcileHandler = async ({
   userWorkspaceId?: string;
   scheduledApiKeyFingerprint?: string;
 }) => {
-  if (!isGranolaPersonalSyncEnabled()) {
-    return { success: true, skipped: true };
-  }
-
   const selection = await kv.get<GranolaPersonalFolderSelection[]>(
     getGranolaPersonalFolderSelectionKey(connectionId),
   );
