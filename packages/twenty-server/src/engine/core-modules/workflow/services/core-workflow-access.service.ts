@@ -17,15 +17,27 @@ import {
   WorkflowQueryValidationExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 
-const isLoadedCoreWorkflowVisible = (
-  coreWorkflow: Pick<WorkflowEntity, 'visibility' | 'createdByUserWorkspaceId'>,
-  userWorkspaceId: string | undefined,
-): boolean =>
+const isLoadedCoreWorkflowVisible = ({
+  coreWorkflow,
+  userWorkspaceId,
+}: {
+  coreWorkflow: Pick<WorkflowEntity, 'visibility' | 'createdByUserWorkspaceId'>;
+  userWorkspaceId: string | undefined;
+}): boolean =>
   isCoreWorkflowVisibleToUser({
     visibility: coreWorkflow.visibility,
     createdByUserWorkspaceId: coreWorkflow.createdByUserWorkspaceId,
     userWorkspaceId,
   });
+
+export const buildCoreWorkflowNotFoundException = (coreWorkflowId: string) =>
+  new WorkflowQueryValidationException(
+    `Core workflow '${coreWorkflowId}' not found`,
+    WorkflowQueryValidationExceptionCode.FORBIDDEN,
+    {
+      userFriendlyMessage: msg`Workflow not found`,
+    },
+  );
 
 const buildPrivateCoreWorkflowException = (coreWorkflowId: string) =>
   new WorkflowQueryValidationException(
@@ -94,13 +106,7 @@ export class CoreWorkflowAccessService {
     );
 
     if (!isDefined(coreWorkflow)) {
-      throw new WorkflowQueryValidationException(
-        `Core workflow '${coreWorkflowId}' not found`,
-        WorkflowQueryValidationExceptionCode.FORBIDDEN,
-        {
-          userFriendlyMessage: msg`Workflow not found`,
-        },
-      );
+      throw buildCoreWorkflowNotFoundException(coreWorkflowId);
     }
 
     await this.assertLoadedCoreWorkflowsAreEditableOrThrow({
@@ -449,7 +455,7 @@ export class CoreWorkflowAccessService {
   }): void {
     const inaccessibleCoreWorkflow = coreWorkflows.find(
       (coreWorkflow) =>
-        !isLoadedCoreWorkflowVisible(coreWorkflow, userWorkspaceId),
+        !isLoadedCoreWorkflowVisible({ coreWorkflow, userWorkspaceId }),
     );
 
     if (isDefined(inaccessibleCoreWorkflow)) {
@@ -482,7 +488,7 @@ export class CoreWorkflowAccessService {
     // Unknown or deleted ids stay a no-op rather than a refusal.
     return coreWorkflows.filter(
       (coreWorkflow) =>
-        !isLoadedCoreWorkflowVisible(coreWorkflow, userWorkspaceId),
+        !isLoadedCoreWorkflowVisible({ coreWorkflow, userWorkspaceId }),
     );
   }
 }

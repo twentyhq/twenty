@@ -19,7 +19,10 @@ import {
   WorkflowVersionStatus as CoreWorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { type WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
-import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
+import {
+  buildCoreWorkflowNotFoundException,
+  CoreWorkflowAccessService,
+} from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { buildCronTriggerCacheEntry } from 'src/engine/core-modules/workflow/utils/build-cron-trigger-cache-entry.util';
 import { getCoreWorkflowVersionEditLockKey } from 'src/engine/core-modules/workflow/utils/get-core-workflow-version-edit-lock-key.util';
@@ -29,10 +32,6 @@ import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-comma
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import {
-  WorkflowQueryValidationException,
-  WorkflowQueryValidationExceptionCode,
-} from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
@@ -365,12 +364,8 @@ export class CoreWorkflowLifecycleWorkspaceService {
     }
 
     if (!isDefined(coreWorkflow)) {
-      throw new WorkflowQueryValidationException(
-        `Core workflow '${coreWorkflowVersion.coreWorkflowId}' not found`,
-        WorkflowQueryValidationExceptionCode.FORBIDDEN,
-        {
-          userFriendlyMessage: msg`Workflow not found`,
-        },
+      throw buildCoreWorkflowNotFoundException(
+        coreWorkflowVersion.coreWorkflowId,
       );
     }
 
