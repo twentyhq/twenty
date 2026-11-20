@@ -16,13 +16,8 @@ import { buildGranolaPersonalReconcileJob } from 'src/logic-functions/utils/buil
 import { enqueueGranolaJobsOrThrow } from 'src/logic-functions/utils/enqueue-granola-jobs-or-throw.util';
 import { getGranolaApiKeyFingerprint } from 'src/logic-functions/utils/get-granola-api-key-fingerprint.util';
 import { isActiveGranolaPersonalConnection } from 'src/logic-functions/utils/is-active-granola-personal-connection.util';
-import { isGranolaPersonalSyncEnabled } from 'src/logic-functions/utils/is-granola-personal-sync-enabled.util';
 
 export const granolaPersonalDailyCatchUpHandler = async () => {
-  if (!isGranolaPersonalSyncEnabled()) {
-    return { success: true, skipped: true };
-  }
-
   const today = Math.floor(Date.now() / GRANOLA_MILLISECONDS_PER_DAY);
   const updatedAfter = new Date(
     (today - GRANOLA_CATCH_UP_WINDOW_DAYS) * GRANOLA_MILLISECONDS_PER_DAY,
