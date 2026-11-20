@@ -1,5 +1,8 @@
-import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
-
+import {
+  COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
+  OPPORTUNITY_OBJECT_UNIVERSAL_IDENTIFIER,
+  PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
 import companyLastContactAtField from 'src/fields/company-last-contact-at.field';
 import lastContactAtField from 'src/fields/last-contact-at.field';
 import lastContactByField from 'src/fields/last-contact-by.field';
@@ -11,8 +14,7 @@ import opportunityLastContactAtField from 'src/fields/opportunity-last-contact-a
 
 export const INDEX_VIEW_FIELDS = [
   {
-    objectUniversalIdentifier:
-      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+    objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
     objectLabelPlural: 'People',
     fields: [
       lastContactAtField,
@@ -24,14 +26,12 @@ export const INDEX_VIEW_FIELDS = [
     ].map(({ config }) => config),
   },
   {
-    objectUniversalIdentifier:
-      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+    objectUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
     objectLabelPlural: 'Companies',
     fields: [companyLastContactAtField.config],
   },
   {
-    objectUniversalIdentifier:
-      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+    objectUniversalIdentifier: OPPORTUNITY_OBJECT_UNIVERSAL_IDENTIFIER,
     objectLabelPlural: 'Opportunities',
     fields: [opportunityLastContactAtField.config],
   },

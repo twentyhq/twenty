@@ -101,7 +101,7 @@ const handler = async (): Promise<ApplicationHealthCheckResult> => {
     VIEW_FIELDS_SUGGESTION_DISMISSED_KEY,
   );
 
-  if (viewFieldsSuggestion?.isDismissed === true) {
+  if (viewFieldsSuggestion?.isDismissed) {
     return { status: 'OK' };
   }
 
