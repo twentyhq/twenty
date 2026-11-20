@@ -1,3 +1,4 @@
+// TODO(@neo773): drop the text and json-logic branches once stored widget rules are converted to trees
 import jsonLogic, {
   type AdditionalOperation,
   type RulesLogic,

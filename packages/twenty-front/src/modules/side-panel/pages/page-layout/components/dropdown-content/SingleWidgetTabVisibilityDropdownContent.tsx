@@ -1,6 +1,6 @@
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { WidgetVisibilityOptionsList } from '@/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityOptionsList';
-import { getWidgetVisibilityUpdate } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityUpdate';
+import { getWidgetVisibilityPropertiesFromOptionId } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityPropertiesFromOptionId';
 
 type SingleWidgetTabVisibilityDropdownContentProps = {
   widgetId: string;
@@ -16,7 +16,10 @@ export const SingleWidgetTabVisibilityDropdownContent = ({
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
 
   const handleSelectVisibility = (optionId: string) => {
-    updatePageLayoutWidget(widgetId, getWidgetVisibilityUpdate(optionId));
+    updatePageLayoutWidget(
+      widgetId,
+      getWidgetVisibilityPropertiesFromOptionId(optionId),
+    );
   };
 
   return (

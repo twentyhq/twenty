@@ -2,9 +2,9 @@ import { evaluateWidgetVisibility } from '@/page-layout/utils/evaluateWidgetVisi
 import { VISIBILITY_ANY_DEVICE } from '@/side-panel/pages/page-layout/constants/VisibilityAnyDevice';
 import { VISIBILITY_DESKTOP } from '@/side-panel/pages/page-layout/constants/VisibilityDesktop';
 import { VISIBILITY_MOBILE } from '@/side-panel/pages/page-layout/constants/VisibilityMobile';
-import { getWidgetVisibilityUpdate } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityUpdate';
+import { getWidgetVisibilityPropertiesFromOptionId } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityPropertiesFromOptionId';
 
-describe('getWidgetVisibilityUpdate', () => {
+describe('getWidgetVisibilityPropertiesFromOptionId', () => {
   const widgetWithOldRules = {
     conditionalAvailabilityExpression: 'device == "MOBILE"',
     conditionalDisplay: { '===': [{ var: 'device' }, 'MOBILE'] },
@@ -20,7 +20,7 @@ describe('getWidgetVisibilityUpdate', () => {
     (optionId, isVisibleOnDesktop) => {
       const widget = {
         ...widgetWithOldRules,
-        ...getWidgetVisibilityUpdate(optionId),
+        ...getWidgetVisibilityPropertiesFromOptionId(optionId),
       };
 
       expect(widget.conditionalAvailabilityExpression).toBeNull();

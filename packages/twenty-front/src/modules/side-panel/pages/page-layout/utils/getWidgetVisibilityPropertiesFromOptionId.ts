@@ -1,7 +1,7 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { optionIdToConditionalAvailability } from '@/side-panel/pages/page-layout/utils/optionIdToConditionalAvailability';
 
-export const getWidgetVisibilityUpdate = (
+export const getWidgetVisibilityPropertiesFromOptionId = (
   optionId: string,
 ): Required<
   Pick<

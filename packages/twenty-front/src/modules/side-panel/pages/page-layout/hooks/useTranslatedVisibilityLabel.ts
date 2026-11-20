@@ -3,7 +3,12 @@ import { useVisibilityLabels } from '@/side-panel/pages/page-layout/hooks/useVis
 import { getWidgetVisibilityOptionId } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityOptionId';
 
 export const useTranslatedVisibilityLabel = (
-  widget: PageLayoutWidget | undefined,
+  widget:
+    | Pick<
+        PageLayoutWidget,
+        'conditionalAvailabilityExpression' | 'conditionalAvailability'
+      >
+    | undefined,
 ): string => {
   const visibilityLabels = useVisibilityLabels();
 
