@@ -1505,7 +1505,87 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return new Set(rows.map((row) => String(row.id)));
   }
 
-  async runMutation(args: {
+  async runMutation({
+    targetedRecordIds,
+    ...args
+  }: {
+    selectQueryBuilder: WorkspaceSelectQueryBuilder;
+    rowLevelPermissionsApplied: boolean;
+    kind: MutationKind;
+    columnsToReturn: string[];
+    data?: Partial<ObjectRecord>;
+    targetedRecordIds?: string[];
+  }): Promise<ObjectRecord[]> {
+    if (!isDefined(targetedRecordIds)) {
+      return this.runMutationOnFilter(args);
+    }
+
+    const writeThenCheckTargetedRecords = async (
+      repository: WorkspaceRepository<TEntity>,
+    ) => {
+      const selectQueryBuilder =
+        repository === this
+          ? args.selectQueryBuilder
+          : args.selectQueryBuilder.clone(repository.options.executor);
+      const readQueryBuilder = selectQueryBuilder.clone();
+
+      const writtenRecords = await repository.runMutationOnFilter({
+        ...args,
+        selectQueryBuilder,
+      });
+
+      await repository.assertUnwrittenRecordsAreUnreadableOrThrow({
+        readQueryBuilder,
+        targetedRecordIds,
+        writtenRecords,
+      });
+
+      return writtenRecords;
+    };
+
+    // Rows written before an unwritten target is found must roll back
+    return targetedRecordIds.length === 1
+      ? writeThenCheckTargetedRecords(this)
+      : this.runAtomically(writeThenCheckTargetedRecords);
+  }
+
+  // Write rules filter rows out silently, which is right for a filter but
+  // not for records the caller named and can see
+  private async assertUnwrittenRecordsAreUnreadableOrThrow({
+    readQueryBuilder,
+    targetedRecordIds,
+    writtenRecords,
+  }: {
+    readQueryBuilder: WorkspaceSelectQueryBuilder;
+    targetedRecordIds: string[];
+    writtenRecords: ObjectRecord[];
+  }): Promise<void> {
+    const writtenRecordIds = new Set(writtenRecords.map(({ id }) => id));
+    const unwrittenRecordIds = targetedRecordIds.filter(
+      (recordId) => !writtenRecordIds.has(recordId),
+    );
+
+    if (unwrittenRecordIds.length === 0) {
+      return;
+    }
+
+    const alias = readQueryBuilder.alias;
+    const readableUnwrittenRecord = await readQueryBuilder
+      .select(`${alias}.id`, 'id')
+      .andWhere(`"${alias}"."id" IN (:...unwrittenRecordIds)`, {
+        unwrittenRecordIds,
+      })
+      .getRawOne();
+
+    if (isDefined(readableUnwrittenRecord)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.RECORD_NOT_EDITABLE,
+        PermissionsExceptionCode.RECORD_NOT_EDITABLE,
+      );
+    }
+  }
+
+  private async runMutationOnFilter(args: {
     selectQueryBuilder: WorkspaceSelectQueryBuilder;
     rowLevelPermissionsApplied: boolean;
     kind: MutationKind;
