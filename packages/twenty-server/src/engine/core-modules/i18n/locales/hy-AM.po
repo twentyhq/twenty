@@ -10081,6 +10081,11 @@ msgstr "Միայն սերվերի ադմինիստրատորը կարող է կ�
 msgid "Only a workspace member can change who sees a workflow"
 msgstr "Միայն աշխատանքային տարածքի անդամը կարող է փոխել, թե ով է տեսնում աշխատանքային հոսքը"
 
+#. js-lingui-id: yT1QOm
+#: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
+msgid "Only a workspace member can create a private agent."
+msgstr "Միայն աշխատանքային տարածքի անդամը կարող է ստեղծել մասնավոր գործակալ։"
+
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only added columns can show a field of the related record"
@@ -10131,6 +10136,12 @@ msgstr "Յուրաքանչյուր ներդիրում թույլատրվում �
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers-caller-application.util.ts
 msgid "Only the application that owns this agent can change its triggers"
 msgstr "Միայն այս գործակալին պատկանող հավելվածը կարող է փոխել դրա գործարկիչները"
+
+#. js-lingui-id: 2ztmK7
+#: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Only the member who owns an agent can change who sees it."
+msgstr "Միայն այն անդամը, որին պատկանում է գործակալը, կարող է փոխել, թե ով է այն տեսնում։"
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
@@ -17751,6 +17762,12 @@ msgstr "`workflowVersionId` չպետք է սահմանված լինի, երբ `e
 #. js-lingui-id: kRP73e
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
+msgid "Workspace"
+msgstr "Workspace"
+
+#. js-lingui-id: 3JWXMp
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
 msgid "Workspace"
 msgstr "Workspace"
 

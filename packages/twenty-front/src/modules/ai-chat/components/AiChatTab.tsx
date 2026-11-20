@@ -9,7 +9,7 @@ import { DropZone } from '@/activities/files/components/DropZone';
 import { AiChatHasBeenOpenedEffect } from '@/ai-chat/components/AiChatHasBeenOpenedEffect';
 import { AiChatThreadMarkAsReadEffect } from '@/ai-chat/threads/components/AiChatThreadMarkAsReadEffect';
 import { AiChatThreadOpenViewEffect } from '@/ai-chat/threads/components/AiChatThreadOpenViewEffect';
-import { AiChatStreamingPartsDiffSyncEffect } from '@/ai-chat/messages/components/AiChatStreamingPartsDiffSyncEffect';
+import { AiChatWorkspaceSetupCompletionEffect } from '@/ai-chat/workspace-setup/components/AiChatWorkspaceSetupCompletionEffect';
 import { AiChatEditorSection } from '@/ai-chat/composer/components/AiChatEditorSection';
 import { AiChatNewThreadRecipientBar } from '@/ai-chat/composer/components/AiChatNewThreadRecipientBar';
 import { useAiChatFileUpload } from '@/ai-chat/composer/hooks/useAiChatFileUpload';
@@ -69,7 +69,7 @@ export const AiChatTab = () => {
       <AiChatHasBeenOpenedEffect />
       <AiChatThreadOpenViewEffect threadId={threadId} />
       <AiChatThreadMarkAsReadEffect />
-      <AiChatStreamingPartsDiffSyncEffect />
+      <AiChatWorkspaceSetupCompletionEffect />
       {isDraggingFile && (
         <DropZone
           setIsDraggingFile={setIsDraggingFile}

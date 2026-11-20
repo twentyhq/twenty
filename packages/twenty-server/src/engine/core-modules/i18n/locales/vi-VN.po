@@ -10081,6 +10081,11 @@ msgstr "Chỉ quản trị viên máy chủ mới có thể quản lý mã khôi
 msgid "Only a workspace member can change who sees a workflow"
 msgstr "Chỉ thành viên không gian làm việc mới có thể thay đổi người xem một quy trình làm việc"
 
+#. js-lingui-id: yT1QOm
+#: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
+msgid "Only a workspace member can create a private agent."
+msgstr "Chỉ thành viên không gian làm việc mới có thể tạo tác tử riêng tư."
+
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only added columns can show a field of the related record"
@@ -10131,6 +10136,12 @@ msgstr "Chỉ cho phép một tiện ích có chiều cao đầy đủ trên m�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers-caller-application.util.ts
 msgid "Only the application that owns this agent can change its triggers"
 msgstr "Chỉ ứng dụng sở hữu tác nhân này mới có thể thay đổi các trình kích hoạt của tác nhân đó"
+
+#. js-lingui-id: 2ztmK7
+#: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Only the member who owns an agent can change who sees it."
+msgstr "Chỉ thành viên sở hữu một tác tử mới có thể thay đổi người có thể xem tác tử đó."
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
@@ -17751,6 +17762,12 @@ msgstr "Không được đặt workflowVersionId khi engineComponentKey là FRON
 #. js-lingui-id: kRP73e
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
+msgid "Workspace"
+msgstr "Workspace"
+
+#. js-lingui-id: 3JWXMp
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
 msgid "Workspace"
 msgstr "Workspace"
 

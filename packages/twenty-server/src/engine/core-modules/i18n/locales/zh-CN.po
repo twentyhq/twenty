@@ -10081,6 +10081,11 @@ msgstr "只有服务器管理员才能管理该成员的恢复代码。"
 msgid "Only a workspace member can change who sees a workflow"
 msgstr "只有工作区成员可以更改工作流的可见对象"
 
+#. js-lingui-id: yT1QOm
+#: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
+msgid "Only a workspace member can create a private agent."
+msgstr "只有工作区成员才能创建私有代理。"
+
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only added columns can show a field of the related record"
@@ -10131,6 +10136,12 @@ msgstr "每个标签页只允许一个全高小组件"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers-caller-application.util.ts
 msgid "Only the application that owns this agent can change its triggers"
 msgstr "只有拥有此智能体的应用程序才能更改其触发器"
+
+#. js-lingui-id: 2ztmK7
+#: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Only the member who owns an agent can change who sees it."
+msgstr "只有拥有代理的成员才能更改谁可以查看它。"
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
@@ -17751,6 +17762,12 @@ msgstr "当 engineComponentKey 为 FRONT_COMPONENT_RENDERER 时，不得设置 w
 #. js-lingui-id: kRP73e
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
+msgid "Workspace"
+msgstr "工作区"
+
+#. js-lingui-id: 3JWXMp
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
 msgid "Workspace"
 msgstr "工作区"
 

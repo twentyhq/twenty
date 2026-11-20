@@ -1473,6 +1473,7 @@ type ClientConfig {
   serverUrl: String!
   signInPrefilled: Boolean!
   support: Support!
+  webPushVapidPublicKey: String!
 }
 
 type ClientConfigMaintenanceMode {
@@ -3761,6 +3762,7 @@ type Mutation {
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   updateCommandMenuItem(input: UpdateCommandMenuItemInput!): CommandMenuItem!
   updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
+  updateFocusedTab(input: UpdateFocusedTabInput!): Boolean!
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
   updateGettingStarted(input: UpdateGettingStartedInput!): GettingStartedProgress!
   updateLabPublicFeatureFlag(input: UpdateLabPublicFeatureFlagInput!): FeatureFlag!
@@ -3816,6 +3818,7 @@ type Mutation {
   upsertPermissionFlags(upsertPermissionFlagsInput: UpsertPermissionFlagsInput!): [RolePermissionFlag!]!
   upsertRowLevelPermissionRules(input: UpsertRowLevelPermissionRulesInput!): UpsertRowLevelPermissionRulesResult!
   upsertViewWidget(input: UpsertViewWidgetInput!): View!
+  upsertWebPushSubscription(input: UpsertWebPushSubscriptionInput!): Boolean!
   validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
   verifyEmailAndGetLoginToken(captchaToken: String, email: String!, emailVerificationToken: String!, origin: String!): VerifyEmailAndGetLoginToken!
   verifyEmailAndGetWorkspaceAgnosticToken(captchaToken: String, email: String!, emailVerificationToken: String!): AvailableWorkspacesAndAccessTokens!
@@ -5479,6 +5482,11 @@ input UpdateFieldInput {
   universalIdentifier: String
 }
 
+input UpdateFocusedTabInput {
+  isFocused: Boolean!
+  tabId: String!
+}
+
 input UpdateFrontComponentInput {
   """The id of the front component to update"""
   id: UUID!
@@ -6070,6 +6078,13 @@ input UpsertViewWidgetViewSortInput {
   direction: ViewSortDirection = ASC
   fieldMetadataId: UUID!
   id: UUID
+}
+
+input UpsertWebPushSubscriptionInput {
+  browserAuthSecret: String!
+  browserPublicKey: String!
+  endpoint: String!
+  vapidPublicKey: String!
 }
 
 type UsageAnalytics {

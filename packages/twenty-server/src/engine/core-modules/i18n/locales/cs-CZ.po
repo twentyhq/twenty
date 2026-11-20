@@ -10081,6 +10081,11 @@ msgstr "Obnovovací kódy pro tohoto člena může spravovat pouze správce serv
 msgid "Only a workspace member can change who sees a workflow"
 msgstr "Pouze člen pracovního prostoru může změnit, kdo uvidí workflow"
 
+#. js-lingui-id: yT1QOm
+#: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
+msgid "Only a workspace member can create a private agent."
+msgstr "Soukromého agenta může vytvořit pouze člen pracovního prostoru."
+
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only added columns can show a field of the related record"
@@ -10131,6 +10136,12 @@ msgstr "Na každé kartě je povolen pouze jeden widget s plnou výškou"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers-caller-application.util.ts
 msgid "Only the application that owns this agent can change its triggers"
 msgstr "Jeho spouštěče může změnit pouze aplikace, která tohoto agenta vlastní"
+
+#. js-lingui-id: 2ztmK7
+#: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Only the member who owns an agent can change who sees it."
+msgstr "Pouze člen, který agenta vlastní, může změnit, kdo jej uvidí."
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
@@ -17751,6 +17762,12 @@ msgstr "workflowVersionId nesmí být nastaven, pokud je engineComponentKey FRON
 #. js-lingui-id: kRP73e
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
+msgid "Workspace"
+msgstr "Pracovní prostor"
+
+#. js-lingui-id: 3JWXMp
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
 msgid "Workspace"
 msgstr "Pracovní prostor"
 

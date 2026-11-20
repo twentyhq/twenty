@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
 import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
@@ -18,10 +19,12 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type NavigationMenuAiChatRecentsSectionProps = {
   sectionId: string;
+  headerAction?: ReactNode;
 };
 
 export const NavigationMenuAiChatRecentsSection = ({
   sectionId,
+  headerAction,
 }: NavigationMenuAiChatRecentsSectionProps) => {
   const { t } = useLingui();
   const [isShowingAllThreads, setIsShowingAllThreads] = useState(false);
@@ -47,7 +50,7 @@ export const NavigationMenuAiChatRecentsSection = ({
       ),
   );
 
-  if (recentThreads.length === 0) {
+  if (recentThreads.length === 0 && !isDefined(headerAction)) {
     return null;
   }
 
@@ -67,6 +70,7 @@ export const NavigationMenuAiChatRecentsSection = ({
       threads={displayedThreads}
       currentThreadId={currentThreadId}
       onThreadClick={handleThreadClick}
+      headerAction={headerAction}
       footer={
         hasHiddenThreads && (
           <>
