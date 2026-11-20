@@ -6,6 +6,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import {
   ACCESS_GROUP_SYNC_LOCK_OPTIONS,
   buildAccessGroupSyncLockKey,
@@ -160,14 +161,10 @@ export class AccessGroupSyncService {
     insertedAccessGroups: AccessGroup[];
     staleCompactIds: number[];
   }): Promise<void> {
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: objectMetadataId,
       flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
     });
-
-    if (!isDefined(flatObjectMetadata)) {
-      return;
-    }
 
     if (isNonEmptyArray(staleCompactIds)) {
       for (const plannedObjectMetadataId of new Set(
