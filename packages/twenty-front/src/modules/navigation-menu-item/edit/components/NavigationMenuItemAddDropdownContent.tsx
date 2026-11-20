@@ -142,7 +142,7 @@ export const NavigationMenuItemAddDropdownContent = ({
   });
 
   const titles: Record<Step, string> = {
-    main: t`Add menu item`,
+    main: t`Add item`,
     object: t`Object`,
     view: t`View`,
     record: t`Record`,
