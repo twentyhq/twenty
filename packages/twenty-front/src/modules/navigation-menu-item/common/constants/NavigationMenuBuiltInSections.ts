@@ -49,6 +49,6 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     label: msg`Agents`,
     Icon: IconLego,
     color: 'purple',
-    isAi: true,
+    isAi: false,
   },
 ] as const;

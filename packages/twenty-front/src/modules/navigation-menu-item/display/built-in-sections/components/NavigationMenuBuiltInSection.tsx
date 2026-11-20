@@ -24,6 +24,10 @@ export const NavigationMenuBuiltInSection = ({
     return <FavoritesSectionDispatcher />;
   }
 
+  if (section.builtInSectionKey === 'aiAgents') {
+    return <NavigationMenuAiAgentsSection headerAction={headerAction} />;
+  }
+
   if (!areAiChatSectionsAvailable) {
     return null;
   }
@@ -39,8 +43,6 @@ export const NavigationMenuBuiltInSection = ({
       return (
         <NavigationDrawerInboxChannelsSection headerAction={headerAction} />
       );
-    case 'aiAgents':
-      return <NavigationMenuAiAgentsSection headerAction={headerAction} />;
     case 'aiChatRecents':
       return (
         <NavigationMenuAiChatRecentsSection
