@@ -4,29 +4,37 @@ import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 import { IconUserOff } from 'twenty-ui/icon';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { useOpenAssignAiChatInSidePanel } from '@/side-panel/hooks/useOpenAssignAiChatInSidePanel';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { SidePanelAiChatParticipantsMemberAvatar } from '@/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsMemberAvatar';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
 type SidePanelAiChatParticipantsAssigneeItemProps = {
   itemId: string;
+  threadId: string;
   assignee: PartialWorkspaceMember | undefined;
   description: string | undefined;
   disabled: boolean;
-  onOpenAssign: () => void;
 };
 
 export const SidePanelAiChatParticipantsAssigneeItem = ({
   itemId,
+  threadId,
   assignee,
   description,
   disabled,
-  onOpenAssign,
 }: SidePanelAiChatParticipantsAssigneeItemProps) => {
   const { t } = useLingui();
+  const { openAssignAiChatInSidePanel } = useOpenAssignAiChatInSidePanel();
+
+  const handleOpenAssign = () => {
+    if (!disabled) {
+      openAssignAiChatInSidePanel([threadId]);
+    }
+  };
 
   return (
-    <SelectableListItem itemId={itemId} onEnter={onOpenAssign}>
+    <SelectableListItem itemId={itemId} onEnter={handleOpenAssign}>
       <CommandMenuItem
         id={itemId}
         label={
@@ -45,7 +53,7 @@ export const SidePanelAiChatParticipantsAssigneeItem = ({
         }
         hasSubMenu
         disabled={disabled}
-        onClick={onOpenAssign}
+        onClick={handleOpenAssign}
       />
     </SelectableListItem>
   );

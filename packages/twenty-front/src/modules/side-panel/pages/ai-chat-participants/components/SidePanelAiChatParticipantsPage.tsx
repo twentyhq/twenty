@@ -12,7 +12,6 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useOpenAiChatParticipantsInSidePanel } from '@/side-panel/hooks/useOpenAiChatParticipantsInSidePanel';
-import { useOpenAssignAiChatInSidePanel } from '@/side-panel/hooks/useOpenAssignAiChatInSidePanel';
 import { SidePanelAiChatParticipantsAssigneeItem } from '@/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsAssigneeItem';
 import { SidePanelAiChatParticipantsMemberAvatar } from '@/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsMemberAvatar';
 import { SidePanelAiChatParticipantsPageLayout } from '@/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPageLayout';
@@ -38,7 +37,6 @@ export const SidePanelAiChatParticipantsPage = () => {
   );
   const threadMembers = useAiChatThreadMembers(thread);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const { openAssignAiChatInSidePanel } = useOpenAssignAiChatInSidePanel();
   const { openAddAiChatParticipantsInSidePanel } =
     useOpenAiChatParticipantsInSidePanel();
 
@@ -53,12 +51,6 @@ export const SidePanelAiChatParticipantsPage = () => {
   );
   const getDescription = (workspaceMemberId: string) =>
     workspaceMemberId === currentWorkspaceMember?.id ? t`You` : undefined;
-
-  const handleOpenAssign = () => {
-    if (canEdit) {
-      openAssignAiChatInSidePanel([aiChatParticipantsThreadId]);
-    }
-  };
 
   return (
     <SidePanelAiChatParticipantsPageLayout
@@ -85,12 +77,12 @@ export const SidePanelAiChatParticipantsPage = () => {
         <SidePanelGroup heading={t`Assignee`}>
           <SidePanelAiChatParticipantsAssigneeItem
             itemId={ASSIGNEE_ITEM_ID}
+            threadId={aiChatParticipantsThreadId}
             assignee={assignee}
             description={
               isDefined(assignee) ? getDescription(assignee.id) : undefined
             }
             disabled={!canEdit}
-            onOpenAssign={handleOpenAssign}
           />
         </SidePanelGroup>
         <SidePanelGroup heading={t`Participants`}>
