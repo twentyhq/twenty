@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
+import { useListenToScopedRelationRecordOperation } from '@/object-record/record-column-scope/hooks/useListenToScopedRelationRecordOperation';
 import { useRecordIndexTableQuery } from '@/object-record/record-index/hooks/useRecordIndexTableQuery';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
@@ -25,6 +26,10 @@ export const RecordTableRecordGroupSSEReconnectEffect = () => {
   useListenToBrowserEvent({
     eventName: SSE_CLIENT_RECONNECTED_EVENT_NAME,
     onBrowserEvent: debouncedReloadRecordGroup,
+  });
+
+  useListenToScopedRelationRecordOperation({
+    onScopedRelationRecordOperation: debouncedReloadRecordGroup,
   });
 
   return null;

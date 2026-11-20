@@ -1,7 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
+import { useRecordIndexTableColumnQuery } from '@/object-record/record-index/hooks/useRecordIndexTableColumnQuery';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
@@ -16,10 +16,10 @@ export const useRecordIndexTableQuery = (objectNameSingular: string) => {
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const recordGqlFields = useRelevantRecordsGqlFields({
+  const { recordGqlFields } = useRecordIndexTableColumnQuery(
     objectMetadataItem,
-    additionalFieldMetadataIds: [recordIndexGroupFieldMetadataItem?.id],
-  });
+    [recordIndexGroupFieldMetadataItem?.id],
+  );
 
   const {
     records,
