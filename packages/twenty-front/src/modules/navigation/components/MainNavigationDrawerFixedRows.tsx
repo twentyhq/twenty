@@ -2,6 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { IconMessageCirclePlus, IconSearch } from 'twenty-ui/icon';
 
 import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
+import { NavigationMenuItemPinnedCommands } from '@/navigation-menu-item/display/command/components/NavigationMenuItemPinnedCommands';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -40,6 +41,7 @@ export const MainNavigationDrawerFixedRows = () => {
           triggerEvent="CLICK"
         />
       )}
+      <NavigationMenuItemPinnedCommands />
     </>
   );
 };

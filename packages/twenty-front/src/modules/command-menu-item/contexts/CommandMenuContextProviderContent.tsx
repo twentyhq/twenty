@@ -113,6 +113,7 @@ export const CommandMenuContextProviderContent = ({
     const contextCommandMenuItems = commandMenuItemsToDisplay
       .filter(
         (item) =>
+          containerType === CommandMenuItemContainerType.NavigationDrawer ||
           item.engineComponentKey !== EngineComponentKey.OPEN_COMMAND_MENU,
       )
       .filter(
