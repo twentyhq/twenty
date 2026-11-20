@@ -268,7 +268,7 @@ export const AiChatMessage = ({
       {isUser ? (
         <AiChatUserMessageText
           messageId={messageId}
-          isOtherMember={isAiChatInboxEnabled && !isOwnMessage}
+          isOtherMember={isOtherMemberMessage}
           meta={
             hasVisibleTimeInBubble ? (
               <>

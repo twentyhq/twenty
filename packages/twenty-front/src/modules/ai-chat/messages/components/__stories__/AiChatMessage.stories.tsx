@@ -1267,15 +1267,13 @@ const mockUserMessageWithManyImages: ExtendedUIMessage = {
   role: 'user',
   parts: [
     { type: 'text', text: 'All the photos from the offsite.' },
-    ...[1, 2, 3, 4, 5, 6].map(
-      (photoNumber): AiChatFileUIPart => ({
-        type: 'file',
-        fileId: `file-photo-${photoNumber}`,
-        filename: `photo-${photoNumber}.png`,
-        mediaType: 'image/png',
-        url: IMAGE_URL_MOCK,
-      }),
-    ),
+    ...[1, 2, 3, 4, 5, 6].map((photoNumber): AiChatFileUIPart => ({
+      type: 'file',
+      fileId: `file-photo-${photoNumber}`,
+      filename: `photo-${photoNumber}.png`,
+      mediaType: 'image/png',
+      url: IMAGE_URL_MOCK,
+    })),
   ],
   metadata: {
     createdAt: MOCKED_DATE,
@@ -1333,15 +1331,13 @@ const getUserMessageWithImagesMock = ({
   role: 'user',
   parts: [
     { type: 'text', text },
-    ...images.map(
-      ({ filename, width, height }): AiChatFileUIPart => ({
-        type: 'file',
-        fileId: `file-${filename}`,
-        filename,
-        mediaType: 'image/png',
-        url: getSizedImageUrlMock({ width, height }),
-      }),
-    ),
+    ...images.map(({ filename, width, height }): AiChatFileUIPart => ({
+      type: 'file',
+      fileId: `file-${filename}`,
+      filename,
+      mediaType: 'image/png',
+      url: getSizedImageUrlMock({ width, height }),
+    })),
   ],
   metadata: {
     createdAt: MOCKED_DATE,
