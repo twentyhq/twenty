@@ -1,5 +1,5 @@
+import { getChatReferenceSegments } from 'twenty-shared/ai';
 import { ChatReferenceSegments } from '@/ai-chat/message-content/components/ChatReferenceSegments';
-import { getChatReferenceSegments } from '@/ai-chat/message-content/utils/getChatReferenceSegments';
 
 type TextWithChatReferencesProps = {
   text: string;

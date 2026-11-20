@@ -10,12 +10,9 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
-jest.mock('@/ai-chat/components/AiChatMessagesFetchEffect', () => ({
-  AiChatMessagesFetchEffect: () => null,
-}));
-jest.mock('@/ai-chat/components/AiChatStreamSubscriptionEffect', () => ({
-  AiChatStreamSubscriptionEffect: ({ threadId }: { threadId: string }) => (
-    <div data-testid="stream-subscription">{threadId}</div>
+jest.mock('@/ai-chat/components/AiChatThreadRuntimeEffect', () => ({
+  AiChatThreadRuntimeEffect: ({ threadId }: { threadId: string }) => (
+    <div data-testid="thread-runtime">{threadId}</div>
   ),
 }));
 
@@ -42,7 +39,7 @@ describe('AiChatRuntimeEffects', () => {
 
     expect(
       screen
-        .queryAllByTestId('stream-subscription')
+        .queryAllByTestId('thread-runtime')
         .map((element) => element.textContent),
     ).toEqual(['thread-1', 'thread-2']);
   });
@@ -55,6 +52,6 @@ describe('AiChatRuntimeEffects', () => {
 
     renderRuntimeEffects();
 
-    expect(screen.queryByTestId('stream-subscription')).toBeNull();
+    expect(screen.queryByTestId('thread-runtime')).toBeNull();
   });
 });

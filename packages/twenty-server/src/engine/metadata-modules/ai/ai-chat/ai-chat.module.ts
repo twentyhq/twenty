@@ -60,6 +60,10 @@ import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/se
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import { AgentInboxThreadResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver';
 import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox-access.service';
+import { WebPushModule } from 'src/engine/core-modules/web-push/web-push.module';
+import { AgentChatWebPushNotificationListener } from 'src/engine/metadata-modules/ai/ai-chat/listeners/agent-chat-web-push-notification.listener';
+import { SendAgentChatWebPushNotificationsJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/send-agent-chat-web-push-notifications.job';
+import { AgentChatWebPushNotificationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-web-push-notification.service';
 
 @Module({
   imports: [
@@ -86,8 +90,12 @@ import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/
     ToolProviderModule,
     DashboardToolsModule,
     AiFrontComponentModule,
+    WebPushModule,
   ],
   providers: [
+    AgentChatWebPushNotificationService,
+    AgentChatWebPushNotificationListener,
+    SendAgentChatWebPushNotificationsJob,
     AgentChatActorService,
     AiChatUsageService,
     AiChatUsageResolver,

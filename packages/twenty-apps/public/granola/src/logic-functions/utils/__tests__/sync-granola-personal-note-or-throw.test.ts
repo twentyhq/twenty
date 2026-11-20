@@ -56,14 +56,12 @@ const PAYLOAD = {
 };
 
 beforeEach(() => {
-  vi.stubEnv('GRANOLA_PERSONAL_SYNC_ENABLED', 'true');
   queryRecordings.mockResolvedValue({ callRecordings: { edges: [] } });
 });
 
 afterEach(() => {
   vi.resetAllMocks();
   vi.unstubAllGlobals();
-  vi.unstubAllEnvs();
 });
 
 describe('syncGranolaPersonalNoteOrThrow', () => {
@@ -155,8 +153,9 @@ describe('syncGranolaPersonalNoteOrThrow', () => {
     expect(createOrUpdateRecording).not.toHaveBeenCalled();
   });
 
-  it('skips personal sync before activation without accessing Granola', async () => {
-    vi.stubEnv('GRANOLA_PERSONAL_SYNC_ENABLED', undefined);
+  it('skips a member with no selected folders without accessing Granola', async () => {
+    vi.mocked(listConnections).mockResolvedValue([OWN_CONNECTION]);
+    vi.mocked(kv.get).mockResolvedValue([]);
     const fetchProvider = vi.fn<typeof fetch>();
     vi.stubGlobal('fetch', fetchProvider);
 

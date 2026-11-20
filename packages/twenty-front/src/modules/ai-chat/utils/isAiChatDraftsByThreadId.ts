@@ -1,9 +1,12 @@
-import { parseCanonicalTipTapJsonDocument } from 'twenty-shared/utils';
+import {
+  isPlainObject,
+  parseCanonicalTipTapJsonDocument,
+} from 'twenty-shared/utils';
 
 export const isAiChatDraftsByThreadId = (
   value: unknown,
 ): value is Record<string, string> => {
-  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+  if (!isPlainObject(value)) {
     return false;
   }
 

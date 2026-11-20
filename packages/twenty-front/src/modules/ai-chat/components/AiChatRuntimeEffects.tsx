@@ -1,7 +1,4 @@
-import { Fragment } from 'react';
-
-import { AiChatMessagesFetchEffect } from '@/ai-chat/components/AiChatMessagesFetchEffect';
-import { AiChatStreamSubscriptionEffect } from '@/ai-chat/components/AiChatStreamSubscriptionEffect';
+import { AiChatThreadRuntimeEffect } from '@/ai-chat/components/AiChatThreadRuntimeEffect';
 import { useIsAiChatRuntimeEnabled } from '@/ai-chat/hooks/useIsAiChatRuntimeEnabled';
 import { aiChatOpenThreadIdByInstanceIdState } from '@/ai-chat/states/aiChatOpenThreadIdByInstanceIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -21,9 +18,6 @@ export const AiChatRuntimeEffects = () => {
   ];
 
   return openThreadIds.map((threadId) => (
-    <Fragment key={threadId}>
-      <AiChatMessagesFetchEffect threadId={threadId} />
-      <AiChatStreamSubscriptionEffect threadId={threadId} />
-    </Fragment>
+    <AiChatThreadRuntimeEffect key={threadId} threadId={threadId} />
   ));
 };
