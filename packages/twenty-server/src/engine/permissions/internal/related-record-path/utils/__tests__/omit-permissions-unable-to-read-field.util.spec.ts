@@ -79,7 +79,28 @@ describe('omitPermissionsUnableToReadField', () => {
     });
   });
 
-  it('should leave the permissions untouched when every role can read the field', () => {
+  it('should keep only the rules that can read the field', () => {
+    expect(
+      findSalesCompanyPermissions(
+        omitPermissionsUnableToReadField({
+          metadataMaps: buildCompanyPermissions({
+            canReadAllRecords: false,
+            rowLevelRecordsPermissions: [
+              buildRule({
+                ruleId: 'paris',
+                unreadableFields: ['companyOpportunities'],
+              }),
+              buildRule({ ruleId: 'london', unreadableFields: [] }),
+            ],
+          }),
+          objectMetadataId: 'company',
+          fieldMetadataId: 'companyOpportunities',
+        }),
+      )?.rowLevelRecordsPermissions?.map(({ ruleId }) => ruleId),
+    ).toEqual(['london']);
+  });
+
+  it('should keep every rule when every role and rule can read the field', () => {
     const metadataMaps = buildCompanyPermissions({
       unreadableFields: ['companyName'],
     });
@@ -92,6 +113,9 @@ describe('omitPermissionsUnableToReadField', () => {
           fieldMetadataId: 'companyOpportunities',
         }),
       ),
-    ).toBe(findSalesCompanyPermissions(metadataMaps));
+    ).toEqual({
+      ...findSalesCompanyPermissions(metadataMaps),
+      rowLevelRecordsPermissions: [],
+    });
   });
 });
