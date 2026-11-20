@@ -220,9 +220,7 @@ const EditableAiChatEditorSection = () => {
         isCentered={isComposerCentered}
         hasPageContentInset={hasPageContentInset}
       >
-        {isComposerCentered && !isDirectMessage && (
-          <AiChatEmptyState isCentered />
-        )}
+        {isComposerCentered && <AiChatEmptyState isCentered />}
         {!isDirectMessage && <AiChatContextPreview />}
         {hasNoEnabledModels && !isDirectMessage && (
           <AiChatInlineBanner>{t`No AI provider is configured on this instance.`}</AiChatInlineBanner>

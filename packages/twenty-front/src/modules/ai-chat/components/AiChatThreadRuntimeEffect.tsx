@@ -1,55 +1,57 @@
-import { type AiChatThreadEventDetail } from '@/ai-chat/types/AiChatThreadEventDetail';
-import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 import { useStore } from 'jotai';
-import { useCallback } from 'react';
-import {
-  type AgentChatSubscriptionEvent,
-  mapAgentMessagesToUIMessages,
-} from 'twenty-shared/ai';
+import { useCallback, useEffect } from 'react';
+import { mapAgentMessagesToUIMessages } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
+import { useQueryWithCallbacks } from '@/apollo/hooks/useQueryWithCallbacks';
+import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
+import { aiChatQueuedMessagesFamilyState } from '@/ai-chat/composer/states/aiChatQueuedMessagesFamilyState';
 import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai-chat/constants/AiChatRefetchMessagesEventName';
+import { useAiChatSubscription } from '@/ai-chat/hooks/useAiChatSubscription';
 import { aiChatLiveReactionRevisionsFamilyState } from '@/ai-chat/messages/states/aiChatLiveReactionRevisionsFamilyState';
 import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
 import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
 import { aiChatFetchedMessagesFamilyState } from '@/ai-chat/states/aiChatFetchedMessagesFamilyState';
-import { aiChatFirstLiveSeqFamilyState } from '@/ai-chat/states/aiChatFirstLiveSeqFamilyState';
-import { aiChatHandleEventCallbackFamilyState } from '@/ai-chat/states/aiChatHandleEventCallbackFamilyState';
+import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai-chat/states/aiChatIsAwaitingFirstChunkFamilyState';
 import { aiChatIsAwaitingPersistedRefetchFamilyState } from '@/ai-chat/states/aiChatIsAwaitingPersistedRefetchFamilyState';
+import { aiChatIsStreamingFamilyState } from '@/ai-chat/states/aiChatIsStreamingFamilyState';
+import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { aiChatMessagesLoadingFamilyState } from '@/ai-chat/states/aiChatMessagesLoadingFamilyState';
-import { aiChatQueuedMessagesFamilyState } from '@/ai-chat/composer/states/aiChatQueuedMessagesFamilyState';
-import { skipMessagesSkeletonUntilLoadedState } from '@/ai-chat/states/skipMessagesSkeletonUntilLoadedState';
+import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
+import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
+import { type AiChatThreadEventDetail } from '@/ai-chat/types/AiChatThreadEventDetail';
+import { aiChatUsageFamilyState } from '@/ai-chat/usage/states/aiChatUsageFamilyState';
+import { getAiChatUsageFromThread } from '@/ai-chat/usage/utils/getAiChatUsageFromThread';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
-import { useQueryWithCallbacks } from '@/apollo/hooks/useQueryWithCallbacks';
-import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import {
   GetChatMessagesDocument,
   type GetChatMessagesQuery,
 } from '~/generated-metadata/graphql';
-import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
-type AiChatMessagesFetchEffectProps = {
+type AiChatThreadRuntimeEffectProps = {
   threadId: string;
 };
 
-export const AiChatMessagesFetchEffect = ({
+export const AiChatThreadRuntimeEffect = ({
   threadId,
-}: AiChatMessagesFetchEffectProps) => {
+}: AiChatThreadRuntimeEffectProps) => {
   const store = useStore();
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
 
   const isNewThread = threadId === newAiChatThreadId;
 
+  const { applyStreamCatchup } = useAiChatSubscription(
+    isNewThread ? null : threadId,
+  );
+
   const setAiChatMessagesLoading = useSetAtomFamilyState(
     aiChatMessagesLoadingFamilyState,
     { threadId },
-  );
-
-  const setSkipMessagesSkeletonUntilLoaded = useSetAtomState(
-    skipMessagesSkeletonUntilLoadedState,
   );
 
   const setAiChatFetchedMessages = useSetAtomFamilyState(
@@ -65,13 +67,6 @@ export const AiChatMessagesFetchEffect = ({
   const setAiChatIsAwaitingPersistedRefetch = useSetAtomFamilyState(
     aiChatIsAwaitingPersistedRefetchFamilyState,
     { threadId },
-  );
-
-  const handleFirstLoad = useCallback(
-    (_data: GetChatMessagesQuery) => {
-      setSkipMessagesSkeletonUntilLoaded(false);
-    },
-    [setSkipMessagesSkeletonUntilLoaded],
   );
 
   const handleDataLoaded = useCallback(
@@ -114,38 +109,11 @@ export const AiChatMessagesFetchEffect = ({
         return;
       }
 
-      const familyKey = { threadId };
-
-      const handleEvent = store.get(
-        aiChatHandleEventCallbackFamilyState.atomFamily(familyKey),
-      );
-
-      if (!isDefined(handleEvent)) {
-        return;
-      }
-
-      const firstLiveSeq = store.get(
-        aiChatFirstLiveSeqFamilyState.atomFamily(familyKey),
-      );
-
-      for (let index = 0; index < catchup.chunks.length; index++) {
-        handleEvent({
-          type: 'stream-chunk',
-          chunk: catchup.chunks[index],
-          seq: index + 1,
-        } as AgentChatSubscriptionEvent);
-      }
-
-      if (isDefined(catchup.error) && firstLiveSeq === null) {
-        handleEvent({
-          type: 'stream-error',
-          code: catchup.error.code,
-          message: catchup.error.message,
-        } as AgentChatSubscriptionEvent);
-      }
+      applyStreamCatchup(catchup);
     },
     [
       threadId,
+      applyStreamCatchup,
       setAiChatFetchedMessages,
       setAiChatQueuedMessages,
       setAiChatIsAwaitingPersistedRefetch,
@@ -170,7 +138,6 @@ export const AiChatMessagesFetchEffect = ({
       variables: { threadId },
       fetchPolicy: 'network-only',
       skip: isNewThread,
-      onFirstLoad: handleFirstLoad,
       onDataLoaded: handleDataLoaded,
       onLoadingChange: handleLoadingChange,
     },
@@ -212,6 +179,61 @@ export const AiChatMessagesFetchEffect = ({
     eventName: SSE_CLIENT_RECONNECTED_EVENT_NAME,
     onBrowserEvent: handleSseClientReconnected,
   });
+
+  const aiChatFetchedMessages = useAtomFamilyStateValue(
+    aiChatFetchedMessagesFamilyState,
+    { threadId },
+  );
+
+  const setAiChatMessages = useSetAtomFamilyState(aiChatMessagesFamilyState, {
+    threadId,
+  });
+
+  const aiChatIsStreaming = useAtomFamilyStateValue(
+    aiChatIsStreamingFamilyState,
+    { threadId },
+  );
+
+  const aiChatIsAwaitingPersistedRefetch = useAtomFamilyStateValue(
+    aiChatIsAwaitingPersistedRefetchFamilyState,
+    { threadId },
+  );
+
+  const aiChatIsAwaitingFirstChunk = useAtomFamilyStateValue(
+    aiChatIsAwaitingFirstChunkFamilyState,
+    { threadId },
+  );
+
+  const aiChatThreadRecord = useAtomFamilySelectorValue(
+    aiChatThreadRecordFamilySelector,
+    threadId,
+  );
+
+  useEffect(() => {
+    const usageAtom = aiChatUsageFamilyState.atomFamily({ threadId });
+
+    if (isDefined(aiChatThreadRecord) && !isDefined(store.get(usageAtom))) {
+      store.set(usageAtom, getAiChatUsageFromThread(aiChatThreadRecord));
+    }
+  }, [store, threadId, aiChatThreadRecord]);
+
+  useEffect(() => {
+    if (
+      aiChatIsStreaming ||
+      aiChatIsAwaitingPersistedRefetch ||
+      aiChatIsAwaitingFirstChunk
+    ) {
+      return;
+    }
+
+    setAiChatMessages(aiChatFetchedMessages);
+  }, [
+    aiChatFetchedMessages,
+    aiChatIsStreaming,
+    aiChatIsAwaitingPersistedRefetch,
+    aiChatIsAwaitingFirstChunk,
+    setAiChatMessages,
+  ]);
 
   return null;
 };
