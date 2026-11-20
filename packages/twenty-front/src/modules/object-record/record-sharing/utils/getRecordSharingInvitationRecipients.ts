@@ -1,6 +1,7 @@
+import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
+
 import { type RecordSharingInvitationRecipient } from '@/object-record/record-sharing/types/RecordSharingInvitationRecipient';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
-import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import {
   RecordSharePrincipalType,
   type RecordSharingFieldsFragment,

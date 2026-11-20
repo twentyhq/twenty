@@ -1,5 +1,5 @@
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
-import { AiChatComposerActionsRow } from '@/ai-chat/composer/components/AiChatComposerActionsRow';
+import { AiChatComposerActionsRow } from '@/ai-chat/components/AiChatComposerActionsRow';
 import { useCanSendAiChatMessage } from '@/ai-chat/composer/hooks/useCanSendAiChatMessage';
 import { useOpenAskAiPageWithPreprompt } from '@/ai-chat/hooks/useOpenAskAiPageWithPreprompt';
 import { GETTING_STARTED_STEP_PREVIEWS } from '@/getting-started/constants/GettingStartedStepPreviews';

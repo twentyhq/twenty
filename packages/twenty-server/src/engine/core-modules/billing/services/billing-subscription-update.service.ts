@@ -8,6 +8,7 @@ import {
   assertUnreachable,
   findOrThrow,
   isDefined,
+  isNonEmptyArray,
 } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
@@ -36,6 +37,7 @@ import {
   type SubscriptionUpdate,
   SubscriptionUpdateType,
 } from 'src/engine/core-modules/billing/types/billing-subscription-update.type';
+import { computeApplicationPricesForIntervalOrThrow } from 'src/engine/core-modules/billing/utils/compute-application-prices-for-interval-or-throw.util';
 import { computeImmediateSubscriptionUpdate } from 'src/engine/core-modules/billing/utils/compute-immediate-subscription-update.util';
 import { computeSubscriptionUpdateOptions } from 'src/engine/core-modules/billing/utils/compute-subscription-update-options.util';
 import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/billing/utils/find-sellable-base-product-price-or-throw.util';
@@ -162,6 +164,8 @@ export class BillingSubscriptionUpdateService {
     const currentPlan =
       getBaseProductSubscriptionItemOrThrow(billingSubscription).billingProduct
         ?.metadata.planKey;
+
+    assertIsDefinedOrThrow(currentPlan);
 
     await this.updateSubscription(workspaceId, billingSubscription.id, {
       type: SubscriptionUpdateType.PLAN,
@@ -394,6 +398,7 @@ export class BillingSubscriptionUpdateService {
       const updatedStripeSubscription = isDefined(immediateSubscriptionUpdate)
         ? await this.applyImmediateSubscriptionUpdate({
             subscription,
+            stripeSubscriptionItems: stripeSubscription.items.data,
             subscriptionUpdate: immediateSubscriptionUpdate,
             currentPrices,
             toUpdateCurrentPrices,
@@ -568,16 +573,25 @@ export class BillingSubscriptionUpdateService {
       baseProductPriceId: basePlanPrice.stripePriceId,
       seats: basePlanPhaseItem.quantity,
       resourceCreditPriceId: resourceCreditPrice.stripePriceId,
+      applicationPriceIds: phaseItemPrices
+        .filter(
+          (price) =>
+            price.billingProduct?.metadata?.productKey ===
+            BillingProductKey.APPLICATION,
+        )
+        .map((price) => price.stripePriceId),
     };
   }
 
   private async applyImmediateSubscriptionUpdate({
     subscription,
+    stripeSubscriptionItems,
     subscriptionUpdate,
     currentPrices,
     toUpdateCurrentPrices,
   }: {
     subscription: BillingSubscriptionEntity;
+    stripeSubscriptionItems: Stripe.SubscriptionItem[];
     subscriptionUpdate: SubscriptionUpdate;
     currentPrices: SubscriptionStripePrices;
     toUpdateCurrentPrices: SubscriptionStripePrices;
@@ -606,6 +620,7 @@ export class BillingSubscriptionUpdateService {
       {
         items: buildSubscriptionItemsUpdate({
           billingSubscriptionItems: subscription.billingSubscriptionItems,
+          stripeSubscriptionItems,
           toUpdatePrices: toUpdateCurrentPrices,
         }),
         proration_behavior: proration,
@@ -937,10 +952,28 @@ export class BillingSubscriptionUpdateService {
         hasSamePlanKey: true,
       });
 
+    const applicationPrices = isNonEmptyArray(currentPrices.applicationPriceIds)
+      ? await this.billingPriceRepository.find({
+          where: { stripePriceId: In(currentPrices.applicationPriceIds) },
+          relations: ['billingProduct', 'billingProduct.billingPrices'],
+        })
+      : [];
+
+    const targetApplicationPriceIdByCurrentPriceId =
+      computeApplicationPricesForIntervalOrThrow({
+        applicationPriceIds: currentPrices.applicationPriceIds,
+        applicationPrices,
+        interval: newInterval,
+      });
+
     return {
       ...currentPrices,
       baseProductPriceId: targetBaseProductPrice.stripePriceId,
       resourceCreditPriceId: targetResourceCreditPrice.stripePriceId,
+      applicationPriceIds: [
+        ...targetApplicationPriceIdByCurrentPriceId.values(),
+      ],
+      targetApplicationPriceIdByCurrentPriceId,
     };
   }
 }

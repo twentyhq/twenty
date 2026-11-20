@@ -3,9 +3,13 @@ import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/ty
 import { NavigationMenuItemInsertionPreviewEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemInsertionPreviewEffect';
 import { useNavigationMenuItemAddOptions } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions';
 import { type NavigationMenuItemAddStep } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddStep';
+import { navigationMenuItemsWithHiddenSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsWithHiddenSelector';
+import { getHiddenWorkspaceNavigationMenuItems } from '@/navigation-menu-item/common/utils/getHiddenWorkspaceNavigationMenuItems';
+import { getNavigationMenuItemTabId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemTabId';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { Fragment, useState } from 'react';
@@ -69,6 +73,29 @@ export const NavigationMenuItemAddDropdownContent = ({
       (item) => (item.parentId ?? null) === (parentId ?? null),
     ).length;
 
+  const targetTabId = getNavigationMenuItemTabId({
+    parentId,
+    items: currentItems,
+  });
+  const currentTabItems = currentItems.filter(
+    (item) =>
+      getNavigationMenuItemTabId({
+        parentId: item.parentId,
+        items: currentItems,
+      }) === targetTabId,
+  );
+  const navigationMenuItemsWithHidden = useAtomStateValue(
+    navigationMenuItemsWithHiddenSelector,
+  );
+  const hiddenNavigationMenuItemsInTab =
+    section === 'workspace'
+      ? getHiddenWorkspaceNavigationMenuItems({
+          navigationMenuItems: navigationMenuItemsWithHidden,
+          excludedIds: new Set(currentTabItems.map(({ id }) => id)),
+          tabId: targetTabId,
+        })
+      : [];
+
   const navigate = (next: Step) => {
     goToPage(next);
     setSearch('');
@@ -98,7 +125,8 @@ export const NavigationMenuItemAddDropdownContent = ({
     search,
     objectId,
     parentId,
-    currentItems,
+    currentItems: currentTabItems,
+    hiddenItems: hiddenNavigationMenuItemsInTab,
     isSearchingAllItems,
     addItem,
     navigateToStep: navigate,

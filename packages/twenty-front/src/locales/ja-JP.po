@@ -46,7 +46,7 @@ msgid "—"
 msgstr "—"
 
 #. js-lingui-id: /c8CZ4
-#: src/modules/ai-chat/components/AiChatThreadTitle.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadTitle.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/NavigationDrawerItem.tsx
 msgid ", unread"
 msgstr ", 未読"
@@ -240,7 +240,7 @@ msgstr "{0, plural, other {# 件のチャット}}"
 
 #. js-lingui-id: jitezQ
 #. placeholder {0}: emails.length
-#: src/modules/ai-chat/components/AiChatApprovalEmailConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailConfirmation.tsx
 msgid "{0, plural, one {# email selected · 0 emails skipped} other {# emails selected · 0 emails skipped}}"
 msgstr "{0, plural, other {# 件のメールを選択 · 0 件のメールをスキップ}}"
 
@@ -300,7 +300,7 @@ msgstr "{0, plural, one {# 件のワークスペースが失敗または遅れ�
 
 #. js-lingui-id: fkfOKg
 #. placeholder {0}: agentIds.length
-#: src/modules/ai-chat/components/AiChatMessageReactions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactions.tsx
 msgid "{0, plural, one {an agent} other {# agents}}"
 msgstr "{0, plural, other {# エージェント}}"
 
@@ -471,6 +471,12 @@ msgstr "{0} 件がこのトピックの受信をオプトアウト済み"
 msgid "{0} retries"
 msgstr "{0} 回リトライ"
 
+#. js-lingui-id: nrONSU
+#. placeholder {0}: rules.length
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverrideRow.tsx
+msgid "{0} rules"
+msgstr ""
+
 #. js-lingui-id: fvImQM
 #. placeholder {0}: formatNumber(numberOfSelectedRecords)
 #. placeholder {0}: formatNumber(selectedThreadCount)
@@ -486,8 +492,8 @@ msgstr "{0} 件を選択"
 #. placeholder {0}: card.selectedCount
 #. placeholder {1}: activeCard.skippedCount
 #. placeholder {1}: card.skippedCount
-#: src/modules/ai-chat/components/AiChatApprovalConfirmation.tsx
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "{0} selected · {1} skipped"
 msgstr "{0} 件を選択 · {1} 件をスキップ"
 
@@ -558,6 +564,12 @@ msgstr "{0} 件にメールアドレスがありません"
 msgid "{0} workspace members"
 msgstr "{0}人のワークスペースメンバー"
 
+#. js-lingui-id: elMxkj
+#. placeholder {0}: tab.name
+#: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
+msgid "{0}, {unreadOpenThreadCount} unread"
+msgstr "{0}、未読 {unreadOpenThreadCount} 件"
+
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
 #. placeholder {0}: relationFieldMetadataItem.label
@@ -565,11 +577,17 @@ msgstr "{0}人のワークスペースメンバー"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterCompositeSubFieldSelectMenu.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRelationTargetFieldSelectMenu.tsx
 #: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelectSubFieldMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
 msgid "{0}, back to fields"
 msgstr "{0}、フィールドに戻る"
+
+#. js-lingui-id: VxMSt6
+#. placeholder {0}: tab.name
+#: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
+msgid "{0}, unread"
+msgstr "{0}、未読"
 
 #. js-lingui-id: kofqAN
 #. placeholder {0}: selectedResolvedTier.label
@@ -597,6 +615,16 @@ msgstr "{agentLabel} のエージェントの役割"
 #: src/modules/object-record/record-aggregate/utils/getAggregateLabelWithFieldName.ts
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{fieldLabel}の{aggregateLabel}"
+
+#. js-lingui-id: zEkduP
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "{allowedFieldCount} of {fieldCount}"
+msgstr "{fieldCount}の{allowedFieldCount}"
+
+#. js-lingui-id: LoDOIo
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "{allowedFieldCount} of {fieldCount} fields"
+msgstr "{allowedFieldCount} / {fieldCount} フィールド"
 
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -667,7 +695,7 @@ msgid "{callRecordingHours, plural, one {{formattedCallRecordingHours} hour} oth
 msgstr "{callRecordingHours, plural, other {{formattedCallRecordingHours}時間}}"
 
 #. js-lingui-id: g0wkzt
-#: src/modules/ai-chat/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
 msgid "{cardCount, plural, one {Approve # action?} other {Approve # actions?}}"
 msgstr "{cardCount, plural, other {# 件のアクションを承認しますか？}}"
 
@@ -789,7 +817,7 @@ msgid "{earnedCredits, plural, one {{formattedEarnedCredits} credit} other {{for
 msgstr "{earnedCredits, plural, other {{formattedEarnedCredits}クレジット}}"
 
 #. js-lingui-id: +dlsP9
-#: src/modules/ai-chat/components/AiChatMessageReactions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactions.tsx
 msgid "{emoji} by {reactorNames}"
 msgstr "{reactorNames} による {emoji}"
 
@@ -819,6 +847,11 @@ msgstr "{fileName} のアップロードは拒否されました"
 msgid "{filterRulesCount, plural, one {{filterRulesCount} rule} other {{filterRulesCount} rules}}"
 msgstr "{filterRulesCount, plural, one {{filterRulesCount} 件のルール} other {{filterRulesCount} 件のルール}}"
 
+#. js-lingui-id: 11/gul
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
+msgid "{firstPredicateLabel} +{otherPredicateCount}"
+msgstr ""
+
 #. js-lingui-id: WS/avX
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
@@ -838,11 +871,6 @@ msgstr "{formattedPercentage}%使用済み、{formattedContextWindow}トーク�
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
 msgid "{goalCredits, plural, one {free credit} other {free credits}}"
 msgstr "{goalCredits, plural, other {無料クレジット}}"
-
-#. js-lingui-id: YF/a2j
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
-msgid "{grantedBy, plural, one {Granted for {grantedBy} object} other {Granted for {grantedBy} objects}}"
-msgstr "{grantedBy, plural, other {'{grantedBy}' オブジェクト用に付与されました}}"
 
 #. js-lingui-id: Ae2fyu
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -993,7 +1021,7 @@ msgid "{newlyEarnedCredits, plural, one {You earned {formattedNewlyEarnedCredits
 msgstr "{newlyEarnedCredits, plural, other {{formattedNewlyEarnedCredits}の無料クレジットを獲得しました}}"
 
 #. js-lingui-id: hKZAJk
-#: src/modules/ai-chat/hooks/useWarnAboutParticipantMentionsNotAdded.ts
+#: src/modules/ai-chat/composer/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "{notAddedLabels} could not be added to this chat because they can't reply in it."
 msgstr "{notAddedLabels}はこのチャットで返信できないため、追加できませんでした。"
 
@@ -1018,22 +1046,22 @@ msgid "{p95DurationInMs} ms"
 msgstr "{p95DurationInMs} ミリ秒"
 
 #. js-lingui-id: dKtfA2
-#: src/modules/ai-chat/components/AiChatParticipantMentionBar.tsx
+#: src/modules/ai-chat/composer/components/AiChatParticipantMentionBar.tsx
 msgid "{participantLabels} will be added as a participant and get access to this chat"
 msgstr "{participantLabels}が参加者として追加され、このチャットにアクセスできるようになります"
 
 #. js-lingui-id: MDJKup
-#: src/modules/ai-chat/components/AiChatParticipantMentionBar.tsx
+#: src/modules/ai-chat/composer/components/AiChatParticipantMentionBar.tsx
 msgid "{participantLabels} will be added as participants and get access to this chat"
 msgstr "{participantLabels}が参加者として追加され、このチャットにアクセスできるようになります"
 
 #. js-lingui-id: jCjuhm
-#: src/modules/ai-chat/components/AiChatTypingIndicator.tsx
+#: src/modules/ai-chat/messages/components/AiChatTypingIndicator.tsx
 msgid "{participantNames} are typing…"
 msgstr "{participantNames} が入力中…"
 
 #. js-lingui-id: E0CZYQ
-#: src/modules/ai-chat/components/AiChatTypingIndicator.tsx
+#: src/modules/ai-chat/messages/components/AiChatTypingIndicator.tsx
 msgid "{participantNames} is typing…"
 msgstr "{participantNames} が入力中…"
 
@@ -1053,12 +1081,12 @@ msgid "{positionLabel} record holds priority"
 msgstr "{positionLabel} のレコードが優先されます"
 
 #. js-lingui-id: i2Rv/S
-#: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 msgid "{positionLabel}: {name}"
 msgstr "{positionLabel}：{name}"
 
 #. js-lingui-id: tSROzD
-#: src/modules/ai-chat/components/AiChatFormCardContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormCardContent.tsx
 msgid "{prefilledCount} of {fieldCount} fields prefilled"
 msgstr "{fieldCount} フィールド中 {prefilledCount} フィールドが事前入力済み"
 
@@ -1084,18 +1112,23 @@ msgstr "{queuedMessage}、{skipReasons} をスキップ"
 msgid "{readOnlyFieldCount, plural, one {Can't edit # field} other {Can't edit # fields}}"
 msgstr "{readOnlyFieldCount, plural, other {# 個のフィールドを編集できません}}"
 
+#. js-lingui-id: HFkZ/O
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
+msgid "{recordCount} records"
+msgstr ""
+
 #. js-lingui-id: ociapy
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "{remainingBackupCodeCount, plural, one {# backup code left} other {# backup codes left}}"
 msgstr "{remainingBackupCodeCount, plural, other {バックアップコードが#件残っています}}"
 
 #. js-lingui-id: N7gP92
-#: src/modules/ai-chat/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 msgid "{remainingCount} more"
 msgstr "あと {remainingCount} 件"
 
 #. js-lingui-id: uVxzex
-#: src/modules/ai-chat/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "{remainingDraftCount, plural, =0 {No more drafts after this one} one {# more draft after this one} other {# more drafts after this one}}"
 msgstr "{remainingDraftCount, plural, =0 {この下書きの後に下書きはありません} other {この下書きの後に # 件の下書きがあります}}"
 
@@ -1115,25 +1148,35 @@ msgstr "{retentionInHours, plural, other {# 時間}}"
 msgid "{retriedCount, plural, one {Successfully retried {retriedCount} job} other {Successfully retried {retriedCount} jobs}}"
 msgstr "{retriedCount, plural, other {正常に再試行されたジョブ数: {retriedCount} 件}}"
 
-#. js-lingui-id: hcRYEH
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
-msgid "{revokedBy, plural, one {Revoked for {revokedBy} object} other {Revoked for {revokedBy} objects}}"
-msgstr "{revokedBy, plural, other {'{revokedBy}' オブジェクトの権限が取り消されました}}"
+#. js-lingui-id: ssmJCL
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "{roleLabel} already deletes every {objectLabelSingular}"
+msgstr ""
 
-#. js-lingui-id: OeIgEg
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
-msgid "{roleLabel} can {humanReadableAction} {objectLabel} records"
-msgstr "{roleLabel} は {objectLabel} レコードを {humanReadableAction} できます"
+#. js-lingui-id: 09pjSA
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "{roleLabel} already destroys every {objectLabelSingular}"
+msgstr ""
 
-#. js-lingui-id: D0C09b
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
-msgid "{roleLabel} can't {humanReadableAction} {objectLabel} records"
-msgstr "{roleLabel} は {objectLabel} レコードを {humanReadableAction} できません"
+#. js-lingui-id: dPD2BG
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "{roleLabel} already edits every {objectLabelSingular}"
+msgstr ""
+
+#. js-lingui-id: Qs0rBC
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "{roleLabel} already sees every {objectLabelSingular}"
+msgstr ""
 
 #. js-lingui-id: uHZWwU
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
 msgid "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
 msgstr "{roleTargetName}が「{newRoleName}」役割に割り当てられます。"
+
+#. js-lingui-id: uqrFkj
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverrideRow.tsx
+msgid "{ruleOperationsLabel} when {ruleLabel}"
+msgstr ""
 
 #. js-lingui-id: Tsqb9x
 #: src/modules/object-core/agents/components/CoreAgentRunConversation.tsx
@@ -1191,7 +1234,7 @@ msgid "{selectedCount, plural, one {Retry {selectedCount} Job} other {Retry {sel
 msgstr "{selectedCount, plural, other {ジョブを再試行 ({selectedCount} 件)}}"
 
 #. js-lingui-id: 1MJWid
-#: src/modules/ai-chat/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
 msgid "{selectedCount} records selected · {skippedCount} records skipped"
 msgstr "{selectedCount} 件のレコードを選択 · {skippedCount} 件のレコードをスキップ"
 
@@ -1206,7 +1249,7 @@ msgid "{selectedOptionCount} options"
 msgstr "{selectedOptionCount} 件のオプション"
 
 #. js-lingui-id: tz1jJj
-#: src/modules/ai-chat/utils/getAiChatThreadPreviewText.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadPreviewText.ts
 msgid "{senderLabel}: {text}"
 msgstr "{senderLabel}：{text}"
 
@@ -1510,6 +1553,11 @@ msgstr "1 オブジェクト"
 msgid "1 of 2 done"
 msgstr "2 件中 1 件完了"
 
+#. js-lingui-id: qarnor
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
+msgid "1 record"
+msgstr ""
+
 #. js-lingui-id: lKmQeh
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "1 retry"
@@ -1535,11 +1583,6 @@ msgstr "1. メール"
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 msgid "1. Select a field type"
 msgstr "1. フィールドタイプを選択"
-
-#. js-lingui-id: XSdCGq
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-msgid "1. Select an object"
-msgstr "1. オブジェクトを選択する"
 
 #. js-lingui-id: 6WQdu8
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -1577,11 +1620,6 @@ msgstr "2年"
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "2. Configure field"
 msgstr "2. フィールドの設定"
-
-#. js-lingui-id: 0Tx9MD
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
-msgid "2. Set {objectLabelPlural} permissions"
-msgstr "2. {objectLabelPlural}の権限を設定する"
 
 #. js-lingui-id: 23g1gf
 #: src/modules/navigation/constants/LogsSwitchPhrases.ts
@@ -1696,7 +1734,7 @@ msgid "A new one each time the step runs"
 msgstr "ステップの実行ごとに新規作成"
 
 #. js-lingui-id: 3pDKsj
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "A newer revision exists. Open the latest preview to save."
 msgstr "新しいリビジョンがあります。保存するには最新のプレビューを開いてください。"
 
@@ -1765,21 +1803,6 @@ msgstr "複数の電話番号を追加する機能"
 msgid "Ability to add more than one URL"
 msgstr "複数のURLを追加する機能"
 
-#. js-lingui-id: MjUIIf
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-msgid "Ability to filter the records a user can interact with"
-msgstr "ユーザーが操作できるレコードをフィルターする機能。"
-
-#. js-lingui-id: 7J3Y++
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-msgid "Ability to filter the records a user can interact with."
-msgstr "ユーザーが操作できるレコードをフィルターする機能。"
-
-#. js-lingui-id: wTKqOI
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
-msgid "Ability to interact with this object's fields."
-msgstr "このオブジェクトのフィールドと対話する能力。"
-
 #. js-lingui-id: ssjjFt
 #: src/modules/settings/components/SettingsImageInput.tsx
 msgid "Abort"
@@ -1830,6 +1853,7 @@ msgstr "このワークスペースで受諾および署名済みの DPA と、�
 
 #. js-lingui-id: LuXP9q
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionsTable.tsx
 msgid "Access"
 msgstr "アクセス"
@@ -1948,7 +1972,7 @@ msgid "Action on click"
 msgstr "クリック時の動作"
 
 #. js-lingui-id: pTIviA
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 msgid "Action progress"
 msgstr "アクションの進行状況"
 
@@ -1959,8 +1983,6 @@ msgstr "承認するアクション"
 
 #. js-lingui-id: 7L01XJ
 #: src/modules/command-menu-item/components/CommandMenuDropdownAtCursor.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/side-panel/pages/create-related-record/components/SidePanelCreateRelatedRecordPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -1973,11 +1995,6 @@ msgstr "アクション"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Actions in the command menu"
 msgstr "コマンドメニュー内のアクション"
-
-#. js-lingui-id: N4ZcCd
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Actions users can perform on this object"
-msgstr "このオブジェクトにユーザーが行えるアクション"
 
 #. js-lingui-id: FQBaXG
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -2069,7 +2086,7 @@ msgstr "アクター"
 
 #. js-lingui-id: m16xKo
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
-#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionHeaderAddDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 msgid "Add"
@@ -2139,7 +2156,7 @@ msgid "Add a person with an email to this company first"
 msgstr "この会社にメールアドレスを持つ人物を先に追加してください。"
 
 #. js-lingui-id: +mN79K
-#: src/modules/ai-chat/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "Add a recipient before sending"
 msgstr "送信前に受信者を追加してください"
 
@@ -2289,6 +2306,13 @@ msgstr "左に列を追加"
 msgid "Add column right"
 msgstr "右に列を追加"
 
+#. js-lingui-id: ADCve+
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFilterBuilderContent.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFilterBuilderContent.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFilterBuilderContent.tsx
+msgid "Add condition"
+msgstr ""
+
 #. js-lingui-id: 3iIvQg
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Add conferencing"
@@ -2349,7 +2373,7 @@ msgid "Add embedded website"
 msgstr "埋め込みウェブサイトを追加"
 
 #. js-lingui-id: 6kC3KJ
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalCardLayout.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCardLayout.tsx
 msgid "Add feedback"
 msgstr "フィードバックを追加"
 
@@ -2371,16 +2395,14 @@ msgid "Add file"
 msgstr "ファイルを追加"
 
 #. js-lingui-id: yCsT+y
-#: src/modules/ai-chat/components/AiChatAddMenu.tsx
-#: src/modules/ai-chat/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
 msgid "Add files, records or skills"
 msgstr "ファイル、レコード、またはスキルを追加します。"
 
 #. js-lingui-id: vCSBPD
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelCreateRootFilterButton.tsx
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelCreateRootFilterButton.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
 #: src/modules/views/components/ViewBarDetailsAddFilterButton.tsx
 msgid "Add filter"
 msgstr "フィルターを追加"
@@ -2482,16 +2504,12 @@ msgid "Add node"
 msgstr "ノードを追加する"
 
 #. js-lingui-id: dEO3Zx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
 msgstr "オブジェクトを追加"
-
-#. js-lingui-id: mFtRj8
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
-msgid "Add object permission"
-msgstr "オブジェクト権限を追加する"
 
 #. js-lingui-id: Dl5lVI
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -2519,8 +2537,8 @@ msgid "Add payment method"
 msgstr "お支払い方法を追加"
 
 #. js-lingui-id: bL/gCs
-#: src/modules/ai-chat/components/AiChatNewThreadRecipientField.tsx
-#: src/modules/ai-chat/components/AiChatNewThreadRecipientField.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientField.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientField.tsx
 msgid "Add people or a channel"
 msgstr "ユーザーまたはチャンネルを追加"
 
@@ -2547,8 +2565,8 @@ msgid "Add question"
 msgstr "質問を追加"
 
 #. js-lingui-id: 9OEgyT
-#: src/modules/ai-chat/components/AiChatMessageReactionPicker.tsx
-#: src/modules/ai-chat/components/AiChatMessageReactionPicker.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPicker.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPicker.tsx
 msgid "Add reaction"
 msgstr "リアクションを追加"
 
@@ -2585,9 +2603,6 @@ msgstr "下に行を追加"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
@@ -2603,7 +2618,7 @@ msgstr "ルールグループを追加"
 #. js-lingui-id: RxFV0G
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "Add section"
-msgstr ""
+msgstr "セクションを追加"
 
 #. js-lingui-id: TdZwYb
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
@@ -2623,7 +2638,7 @@ msgstr "SSOアイデンティティプロバイダーを追加"
 #: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
 msgid "Add tab"
-msgstr ""
+msgstr "タブを追加"
 
 #. js-lingui-id: O6B1gJ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -2936,6 +2951,7 @@ msgstr "管理者"
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverrideRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Advanced"
 msgstr "上級"
@@ -3001,7 +3017,7 @@ msgid "agent"
 msgstr "エージェント"
 
 #. js-lingui-id: iEQQyu
-#: src/modules/ai-chat/utils/getAiChatAgentAuthor.ts
+#: src/modules/ai-chat/messages/utils/getAiChatAgentAuthor.ts
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
@@ -3159,7 +3175,7 @@ msgstr "AI クレジット"
 
 #. js-lingui-id: leS03Y
 #. placeholder {0}: userCreditsUsage.daysUntilReset
-#: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedMessage.tsx
+#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "AI クレジットは {0, plural, other {# 日後}} に更新されます。"
 
@@ -3340,9 +3356,6 @@ msgstr "配置"
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow.tsx
 #: src/modules/views/view-picker/components/ViewPickerDropdown.tsx
 msgid "All"
 msgstr "すべて"
@@ -3388,6 +3401,11 @@ msgstr "すべてのアプリケーション"
 msgid "All channels"
 msgstr "すべてのチャネル"
 
+#. js-lingui-id: 7cbQyX
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "All chats you follow"
+msgstr ""
+
 #. js-lingui-id: tZLcDK
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 msgid "All Companies"
@@ -3417,6 +3435,8 @@ msgid "All failed jobs have been retried"
 msgstr "すべての失敗したジョブが再試行されました"
 
 #. js-lingui-id: 3xugyj
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "All fields"
 msgstr "すべてのフィールド"
@@ -3472,6 +3492,7 @@ msgid "all objects"
 msgstr "すべてのオブジェクト"
 
 #. js-lingui-id: zIk4M6
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAllObjectsCard.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 msgid "All objects"
 msgstr "すべてのオブジェクト"
@@ -3479,7 +3500,6 @@ msgstr "すべてのオブジェクト"
 #. js-lingui-id: aFE/OW
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 msgid "All Objects"
 msgstr "すべてのオブジェクト"
 
@@ -3501,6 +3521,7 @@ msgstr "すべてのレコード"
 
 #. js-lingui-id: rAUKN+
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "All records"
 msgstr "すべてのレコード"
 
@@ -3540,11 +3561,6 @@ msgstr "開始に必要なすべての基本フィールドタイプ"
 msgid "All the layout items declared on your workspace"
 msgstr "ワークスペースで定義されているすべてのレイアウト項目"
 
-#. js-lingui-id: XuuWVF
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "All the standard objects"
-msgstr "すべての標準オブジェクト"
-
 #. js-lingui-id: 35148H
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions.ts
 msgid "All tools"
@@ -3580,10 +3596,10 @@ msgstr "すべてのワークスペースメンバーはすでにこの役割を
 msgid "All workspaces"
 msgstr "すべてのワークスペース"
 
-#. js-lingui-id: pPTmfc
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "All your custom objects"
-msgstr "カスタムオブジェクトをすべて"
+#. js-lingui-id: h7peZQ
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Allow"
+msgstr ""
 
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -3646,6 +3662,11 @@ msgstr "サポートチームへのアクセスを許可"
 msgid "Allow the invitation of new users by sharing an invite link."
 msgstr "招待リンクを共有して新規ユーザーを招待する。"
 
+#. js-lingui-id: lIfNCI
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Allow this browser to show new inbox messages as notifications"
+msgstr ""
+
 #. js-lingui-id: JBjv4v
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow uploading files and attachments"
@@ -3656,10 +3677,23 @@ msgstr "ファイルと添付ファイルのアップロードを許可する"
 msgid "Allow users to sign in with an email and password."
 msgstr "ユーザーがメールとパスワードでサインインできるようにする。"
 
+#. js-lingui-id: Vwi3xW
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOperationsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOperationsSelect.tsx
+msgid "Allowed actions"
+msgstr "許可されるアクション"
+
 #. js-lingui-id: vj+OHl
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Allowed redirect URIs for OAuth flows"
 msgstr "OAuth フローで許可されているリダイレクト URI"
+
+#. js-lingui-id: L36XXB
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "Allows"
+msgstr "許可する"
 
 #. js-lingui-id: Yn0ZH1
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -3681,6 +3715,12 @@ msgstr "すでにサイドバーにあります"
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Alt text"
 msgstr "代替テキスト"
+
+#. js-lingui-id: Lz58MZ
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Always visible"
+msgstr "常に表示"
 
 #. js-lingui-id: Tco16H
 #: src/modules/localization/utils/formatZonedDateTimeTimePart.ts
@@ -3825,7 +3865,7 @@ msgid "And"
 msgstr "および"
 
 #. js-lingui-id: U/Q98U
-#: src/modules/ai-chat/components/ToolRecordsWidget.tsx
+#: src/modules/ai-chat/thinking-steps/components/ToolRecordsWidget.tsx
 msgid "and {hiddenCount} more"
 msgstr "ほか {hiddenCount} 件"
 
@@ -3851,7 +3891,7 @@ msgid "Answered"
 msgstr "回答済み"
 
 #. js-lingui-id: +qygei
-#: src/modules/ai-chat/components/AiChatQuestionStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema.ts
 msgid "Answers"
 msgstr "回答"
@@ -4153,6 +4193,11 @@ msgstr "以下のアプリケーションはTwentyによる審査を受けてい
 msgid "Applies to"
 msgstr "適用先"
 
+#. js-lingui-id: 9xcLbN
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAllObjectsCard.tsx
+msgid "Applies to all objects before overrides"
+msgstr "オーバーライド前にすべてのオブジェクトに適用されます"
+
 #. js-lingui-id: DB8zMK
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
@@ -4170,18 +4215,18 @@ msgid "Apply{progressText}"
 msgstr "適用{progressText}"
 
 #. js-lingui-id: YLFgbC
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Approval review"
 msgstr "承認レビュー"
 
 #. js-lingui-id: Z7ZXbT
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Approve"
 msgstr "承認"
 
 #. js-lingui-id: IkcmiN
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Approve all {pendingCardCount}"
 msgstr "保留中の {pendingCardCount} 件をすべて承認"
 
@@ -4191,7 +4236,7 @@ msgid "Approve media access for {applicationName}?"
 msgstr "{applicationName} にメディアへのアクセスを許可しますか？"
 
 #. js-lingui-id: 7kb4LU
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Approved"
 msgstr "承認済み"
 
@@ -4201,7 +4246,7 @@ msgid "Approved access domain validated"
 msgstr "承認されたアクセスドメインが検証されました"
 
 #. js-lingui-id: nfUdWT
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Approved but it failed"
 msgstr "承認されましたが失敗しました"
 
@@ -4339,13 +4384,13 @@ msgid "Are you sure? Your current information will not be saved."
 msgstr "本当によろしいですか？現在の情報は保存されません。"
 
 #. js-lingui-id: OgB1k4
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalArgumentsEditor.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsEditor.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 msgid "Arguments"
 msgstr "引数"
 
 #. js-lingui-id: qUFEtj
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalArgumentsEditor.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsEditor.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Arguments must be a valid JSON object."
 msgstr "引数は有効な JSON オブジェクトである必要があります。"
@@ -4461,7 +4506,7 @@ msgid "Ask AI"
 msgstr "AIに尋ねる"
 
 #. js-lingui-id: IRCQfx
-#: src/modules/ai-chat/components/AiChatQuotaLimitExhaustedMessage.tsx
+#: src/modules/ai-chat/usage/components/AiChatQuotaLimitExhaustedMessage.tsx
 msgid "Ask an admin to raise the limit."
 msgstr "管理者に上限を引き上げるよう依頼してください。"
 
@@ -4476,12 +4521,12 @@ msgid "Ask for human input"
 msgstr "人による入力を求める"
 
 #. js-lingui-id: mc9nK2
-#: src/modules/ai-chat/hooks/useAiChatEditor.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatEditor.ts
 msgid "Ask, search or make anything..."
 msgstr "質問、検索、作成など、何でも..."
 
 #. js-lingui-id: QVL/hg
-#: src/modules/ai-chat/components/AiChatQuestionStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 msgid "Asking questions..."
 msgstr "質問しています..."
 
@@ -4551,7 +4596,7 @@ msgid "Assigned to me"
 msgstr "私に担当されている"
 
 #. js-lingui-id: 7RNUhk
-#: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 msgid "Assigned to you"
 msgstr "自分に割り当て済み"
 
@@ -4566,8 +4611,8 @@ msgid "Assignment"
 msgstr "割り当て"
 
 #. js-lingui-id: d/bvvp
-#: src/modules/ai-chat/hooks/useAiChatEditor.ts
-#: src/modules/ai-chat/utils/getAiChatMessageAuthor.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatEditor.ts
+#: src/modules/ai-chat/messages/utils/getAiChatMessageAuthor.ts
 msgid "Assistant"
 msgstr "アシスタント"
 
@@ -4677,7 +4722,7 @@ msgstr "ファイルを添付"
 #. js-lingui-id: N7m8E+
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/ai-chat/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Attach files"
@@ -4927,17 +4972,17 @@ msgid "Availability"
 msgstr "利用可能"
 
 #. js-lingui-id: C2F7IU
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Availability calendars"
 msgstr "空き時間カレンダー"
 
 #. js-lingui-id: caqRwP
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 msgid "Availability was not checked for {uncheckedAttendeeList}. You can still send an invite."
 msgstr "{uncheckedAttendeeList} の空き状況は確認されませんでした。招待は引き続き送信できます。"
 
 #. js-lingui-id: bUNt5P
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Available times"
 msgstr "利用可能な時間"
 
@@ -5234,10 +5279,15 @@ msgid "Block style"
 msgstr "ブロックスタイル"
 
 #. js-lingui-id: 32TndD
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Blocked"
 msgstr "ブロック済み"
+
+#. js-lingui-id: z3pfdo
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Blocked in this browser. Allow notifications for this site in the browser settings"
+msgstr ""
 
 #. js-lingui-id: K1172m
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
@@ -5266,8 +5316,8 @@ msgid "Blue"
 msgstr "青"
 
 #. js-lingui-id: bGQplw
-#: src/modules/ai-chat/components/AiChatApprovalEmailReview.tsx
-#: src/modules/ai-chat/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
 #: src/modules/side-panel/pages/email-block-settings/components/EmailPageStyleSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -5601,7 +5651,7 @@ msgid "Calendar access needs approval"
 msgstr "カレンダーへのアクセスには承認が必要です"
 
 #. js-lingui-id: DZrVwO
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Calendar availability could not be checked."
 msgstr "カレンダーの空き状況を確認できませんでした。"
 
@@ -5749,6 +5799,16 @@ msgstr "キャンペーンを{sendTime}に送信するようスケジュール�
 msgid "Campaign unscheduled and back in your drafts"
 msgstr "キャンペーンのスケジュールを解除し、下書きに戻しました"
 
+#. js-lingui-id: AnhtKd
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Can't be edited"
+msgstr "編集できません"
+
+#. js-lingui-id: XccYlu
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Can't be seen"
+msgstr "表示できません"
+
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Can't scan? Copy the"
@@ -5765,7 +5825,7 @@ msgid "Canada"
 msgstr "カナダ"
 
 #. js-lingui-id: dEgA5A
-#: src/modules/ai-chat/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
 #: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -5884,7 +5944,7 @@ msgid "Canceled at"
 msgstr "キャンセル日"
 
 #. js-lingui-id: vv7kpg
-#: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 msgid "Cancelled"
 msgstr "キャンセル済み"
@@ -6085,7 +6145,7 @@ msgid "Change Password"
 msgstr "パスワードを変更"
 
 #. js-lingui-id: 98W3AT
-#: src/modules/ai-chat/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 msgid "Change status in {scopeLabel}"
 msgstr "{scopeLabel} のステータスを変更"
 
@@ -6132,7 +6192,7 @@ msgid "channel"
 msgstr "チャネル"
 
 #. js-lingui-id: HdE1If
-#: src/modules/ai-chat/components/AiChatNewThreadRecipientPicker.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientPicker.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 msgid "Channel"
@@ -6156,6 +6216,7 @@ msgstr "チャネルロール"
 
 #. js-lingui-id: lfFsZ4
 #: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
 msgid "Channels"
@@ -6258,7 +6319,7 @@ msgid "Check the event dates"
 msgstr "イベントの日付を確認"
 
 #. js-lingui-id: EXMtgb
-#: src/modules/ai-chat/components/__stories__/AiChatApprovalMergeReviewExample.tsx
+#: src/modules/ai-chat/tool-calls/components/__stories__/AiChatApprovalMergeReviewExample.tsx
 msgid "Check the merge result before trying again"
 msgstr "再試行する前にマージ結果を確認してください"
 
@@ -6293,7 +6354,7 @@ msgid "Checked only when the record this rule belongs to is saved. Editing the r
 msgstr "このルールが属するレコードの保存時にのみチェックされます。関連レコードを編集しても再チェックされません。"
 
 #. js-lingui-id: DMUK+4
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Checking calendar availability…"
 msgstr "カレンダーの空き状況を確認中…"
 
@@ -6329,15 +6390,15 @@ msgid "Choose {intervalAdjective} credits"
 msgstr "{intervalAdjective} クレジットを選択"
 
 #. js-lingui-id: HC7flO
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 #: src/modules/ui/input/components/internal/date/components/DatePickerCalendar.tsx
 msgid "Choose a date"
 msgstr "日付を選択"
 
 #. js-lingui-id: mXw+D5
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Choose a date to see available times."
 msgstr "利用可能な時間を表示するには日付を選択してください。"
 
@@ -6348,7 +6409,7 @@ msgid "Choose a model mode"
 msgstr "モデルモードを選択"
 
 #. js-lingui-id: Vgi70q
-#: src/modules/ai-chat/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "Choose a source record to keep"
 msgstr "保持する元のレコードを選択"
 
@@ -6358,12 +6419,12 @@ msgid "Choose a spender"
 msgstr "利用者を選択"
 
 #. js-lingui-id: ZLmzD4
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose a time zone"
 msgstr "タイムゾーンを選択"
 
 #. js-lingui-id: 2cQMP+
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose a time zone."
 msgstr "タイムゾーンを選択してください。"
 
@@ -6393,12 +6454,12 @@ msgid "Choose an access level available to all selected recipients."
 msgstr "選択したすべての受信者が利用できるアクセスレベルを選択してください。"
 
 #. js-lingui-id: bTsJ+r
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose an available calendar that can send invitations."
 msgstr "招待を送信できる利用可能なカレンダーを選択してください。"
 
 #. js-lingui-id: 4yF6C2
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose an organizer calendar"
 msgstr "主催者のカレンダーを選択"
 
@@ -6505,7 +6566,7 @@ msgid "Choose when {assistantName} participates in conversations across your wor
 msgstr "{assistantName} がワークスペース全体の会話に参加するタイミングを選択してください"
 
 #. js-lingui-id: GF9DB4
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Choose when you are available and which calendar sends invitations."
 msgstr "空き時間と、招待を送信するカレンダーを選択してください。"
 
@@ -6773,7 +6834,7 @@ msgstr "クリップボードの使用にはセキュアな接続 (HTTPS) が必
 #: src/modules/onboarding/components/OnboardingSkipDialog.tsx
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
 #: src/modules/workflow/workflow-steps/components/WorkflowDropdownStepOutputItems.tsx
@@ -7213,7 +7274,7 @@ msgid "Complexity"
 msgstr "複雑さ"
 
 #. js-lingui-id: ST17km
-#: src/modules/ai-chat/hooks/useAiChatFrontComponentPreview.ts
+#: src/modules/ai-chat/tool-calls/hooks/useAiChatFrontComponentPreview.ts
 msgid "Component failed to render."
 msgstr "コンポーネントのレンダリングに失敗しました。"
 
@@ -7223,7 +7284,7 @@ msgid "Component name"
 msgstr "コンポーネント名"
 
 #. js-lingui-id: WcUICq
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Component preview with sample data"
 msgstr "サンプルデータを使用したコンポーネントのプレビュー"
 
@@ -7243,6 +7304,8 @@ msgid "Computed at"
 msgstr "算出日時"
 
 #. js-lingui-id: wpT1VN
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 #: src/modules/validation-rules/components/ValidationRuleExpressionEditor.tsx
 msgid "Condition"
@@ -7439,7 +7502,7 @@ msgid "Confirm"
 msgstr "確認"
 
 #. js-lingui-id: MrMPwB
-#: src/modules/ai-chat/components/AiChatApprovalConfirmation.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalConfirmation.tsx
 msgid "Confirm approval"
 msgstr "承認を確認"
 
@@ -7560,8 +7623,10 @@ msgid "Connect via IMAP/SMTP"
 msgstr "IMAP/SMTP で接続"
 
 #. js-lingui-id: LqKH42
+#. placeholder {0}: connectionProvider.displayName
 #. placeholder {0}: provider.displayName
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
 msgid "Connect with {0}"
 msgstr "{0}と接続"
 
@@ -7592,6 +7657,12 @@ msgstr "メールとカレンダーを接続して、ネットワーク全体を
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
 msgid "Connect your own {0} account for this app to use on your behalf."
 msgstr "このアプリがあなたに代わって使用できるように、ご自身の {0} アカウントを接続してください。"
+
+#. js-lingui-id: Y1cA8P
+#. placeholder {0}: connectionProvider.displayName
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
+msgid "Connect your own {0} account for this server to use on your behalf."
+msgstr "このサーバー用のご自身の{0}アカウントを接続して、代理で使用します。"
 
 #. js-lingui-id: QHcLEN
 #: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
@@ -8071,7 +8142,7 @@ msgid "Could not attach this conversation to the {objectLabel}"
 msgstr "この会話を{objectLabel}にリンクできませんでした"
 
 #. js-lingui-id: E/YqmF
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Could not be proposed"
 msgstr "提案できませんでした"
 
@@ -8112,8 +8183,8 @@ msgid "Could not load Getting started."
 msgstr "「はじめに」を読み込めませんでした。"
 
 #. js-lingui-id: Y5qCpF
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
-#: src/modules/ai-chat/hooks/useAiChatFrontComponentPreview.ts
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFrontComponentCard.tsx
+#: src/modules/ai-chat/tool-calls/hooks/useAiChatFrontComponentPreview.ts
 msgid "Could not load preview."
 msgstr "プレビューを読み込めませんでした。"
 
@@ -8173,7 +8244,7 @@ msgid "Could not react with {emoji}"
 msgstr "{emoji} でリアクションできませんでした"
 
 #. js-lingui-id: 6GjSMn
-#: src/modules/ai-chat/hooks/useRefreshFrontComponents.ts
+#: src/modules/ai-chat/tool-calls/hooks/useRefreshFrontComponents.ts
 msgid "Could not refresh components. Reload to see saved changes."
 msgstr "コンポーネントを更新できませんでした。保存された変更を確認するには、再読み込みしてください。"
 
@@ -8381,12 +8452,12 @@ msgid "Create {objectLabelSingular}"
 msgstr "{objectLabelSingular}を作成"
 
 #. js-lingui-id: RRkWki
-#: src/modules/ai-chat/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Create {recordCount} {objectLabel}"
 msgstr "{recordCount}件の{objectLabel}を作成する"
 
 #. js-lingui-id: TryTER
-#: src/modules/ai-chat/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Create {selectedCount}"
 msgstr "{selectedCount}件を作成する"
 
@@ -9026,7 +9097,7 @@ msgid "Current workspace member not found."
 msgstr "現在のワークスペースメンバーが見つかりませんでした。"
 
 #. js-lingui-id: dUDTUc
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalCurrentValue.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCurrentValue.tsx
 msgid "Currently:"
 msgstr "現在:"
 
@@ -9045,7 +9116,6 @@ msgstr "カスタム"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 #: src/modules/settings/data-model/utils/getSettingsObjectFieldType.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Custom"
 msgstr "カスタム"
@@ -9174,6 +9244,11 @@ msgstr "カスタムプロバイダーは{0}席まで無料で利用できます
 msgid "Custom roles"
 msgstr "カスタムロール"
 
+#. js-lingui-id: 2jzCZZ
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+msgid "Custom section"
+msgstr "カスタムセクション"
+
 #. js-lingui-id: BjGDEB
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Custom View"
@@ -9274,6 +9349,12 @@ msgstr "ページレイアウトとUI構造のカスタマイズ"
 msgid "Customize record page"
 msgstr "レコードページをカスタマイズ"
 
+#. js-lingui-id: hxjpaE
+#: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
+#: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
+msgid "Customize sidebar"
+msgstr "サイドバーをカスタマイズ"
+
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Customize the workspace record page"
@@ -9361,7 +9442,7 @@ msgid "Dashboard duplicated successfully"
 msgstr "ダッシュボードが正常に複製されました"
 
 #. js-lingui-id: xLSe09
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Dashboard widget"
 msgstr "ダッシュボードウィジェット"
 
@@ -9459,7 +9540,6 @@ msgstr "データレジデンシー"
 #. js-lingui-id: r+cVRP
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "Data type"
 msgstr "データ型"
 
@@ -9774,7 +9854,6 @@ msgstr "遅延"
 
 #. js-lingui-id: HNlEFZ
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "delete"
 msgstr "削除"
 
@@ -9802,6 +9881,7 @@ msgstr "削除"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig.ts
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage.tsx
@@ -9866,13 +9946,8 @@ msgstr "{objectLabel}を削除する"
 msgid "Delete {objectLabel} object?"
 msgstr "{objectLabel} オブジェクトを削除しますか？"
 
-#. js-lingui-id: 65N6Yr
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Delete {objectLabelPlural}"
-msgstr "{objectLabelPlural}を削除する"
-
 #. js-lingui-id: CF0F8U
-#: src/modules/ai-chat/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Delete {recordCount} {objectLabel}"
 msgstr "{recordCount}件の{objectLabel}を削除する"
 
@@ -9882,7 +9957,7 @@ msgid "Delete {relationObjectLabelSingular}"
 msgstr "{relationObjectLabelSingular}を削除する"
 
 #. js-lingui-id: ++479H
-#: src/modules/ai-chat/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Delete {selectedCount}"
 msgstr "{selectedCount}を削除する"
 
@@ -10029,14 +10104,19 @@ msgstr "レベルを削除"
 msgid "Delete limit"
 msgstr "上限を削除"
 
+#. js-lingui-id: Fh7KV2
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "Delete matching {objectLabelPlural}"
+msgstr ""
+
 #. js-lingui-id: u+Hoy8
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 msgid "Delete MCP server"
 msgstr "MCP サーバーを削除"
 
 #. js-lingui-id: KDfTdX
-#: src/modules/ai-chat/components/AiChatMessage.tsx
-#: src/modules/ai-chat/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
 msgid "Delete message"
 msgstr "メッセージを削除"
 
@@ -10059,11 +10139,6 @@ msgstr "このアプリ登録を削除または譲渡する"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/DeleteRecordAction.ts
 msgid "Delete Record"
 msgstr "レコードを削除"
-
-#. js-lingui-id: mcXHCJ
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Delete Records on All Objects"
-msgstr "全オブジェクトでレコードを削除する"
 
 #. js-lingui-id: Ptdfm4
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
@@ -10090,15 +10165,25 @@ msgstr "ロールを完全に削除"
 msgid "Delete row"
 msgstr "行を削除"
 
+#. js-lingui-id: 39Aq/E
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
+msgid "Delete rule"
+msgstr ""
+
 #. js-lingui-id: rvJGTw
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 msgid "Delete Skill"
 msgstr "スキルを削除"
 
+#. js-lingui-id: 6XdrVG
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Delete some {objectLabelPlural} · {throughRules}"
+msgstr ""
+
 #. js-lingui-id: drg4t8
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
 msgid "Delete tab"
-msgstr ""
+msgstr "タブを削除"
 
 #. js-lingui-id: +RYIn9
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
@@ -10255,7 +10340,7 @@ msgid "Delivery"
 msgstr "配信"
 
 #. js-lingui-id: cFCKYZ
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Deny"
 msgstr "拒否"
 
@@ -10340,12 +10425,12 @@ msgstr "デスクトップ"
 
 #. js-lingui-id: +ow7t4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "destroy"
 msgstr "破棄"
 
 #. js-lingui-id: 2xxBws
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig.ts
 msgid "Destroy"
 msgstr "破棄"
 
@@ -10354,20 +10439,20 @@ msgstr "破棄"
 msgid "Destroy {objectLabel}"
 msgstr "{objectLabel}を破壊する"
 
-#. js-lingui-id: YI3c7h
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Destroy {objectLabelPlural}"
-msgstr "{objectLabelPlural}を破壊する"
-
 #. js-lingui-id: ud791S
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Destroy all records"
 msgstr "すべてのレコードを完全に削除"
 
-#. js-lingui-id: L68qSB
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Destroy Records on All Objects"
-msgstr "全オブジェクトでレコードを破棄する"
+#. js-lingui-id: LhvVfx
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "Destroy matching {objectLabelPlural}"
+msgstr ""
+
+#. js-lingui-id: rEJ7+y
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Destroy some {objectLabelPlural} · {throughRules}"
+msgstr ""
 
 #. js-lingui-id: FOcBn3
 #: src/modules/inbox/components/InboxThreadActionsDropdown.tsx
@@ -10488,10 +10573,20 @@ msgstr "ダイレクトメッセージペアの識別子"
 msgid "Direct messages"
 msgstr "ダイレクトメッセージ"
 
+#. js-lingui-id: yBEIpe
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Direct messages and mentions"
+msgstr ""
+
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "ダイレクトメッセージでは添付ファイルはサポートされていません。"
+
+#. js-lingui-id: +ILAOG
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Direct messages, mentions and chats assigned to you"
+msgstr ""
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -10532,7 +10627,7 @@ msgid "Disabled"
 msgstr "無効"
 
 #. js-lingui-id: bzSI52
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Discard"
@@ -10753,7 +10848,7 @@ msgid "Don't import events marked as private"
 msgstr "非公開としてマークされたイベントをインポートしない"
 
 #. js-lingui-id: DPfwMq
-#: src/modules/ai-chat/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 #: src/modules/inbox/components/InboxBulkActions.tsx
 #: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 #: src/modules/inbox/constants/InboxChannelNavigationItems.ts
@@ -10764,7 +10859,7 @@ msgid "Done"
 msgstr "完了"
 
 #. js-lingui-id: y+f/uY
-#: src/modules/ai-chat/components/AiChatThreadActivityTime.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadActivityTime.tsx
 msgid "Done {doneTime}"
 msgstr "完了 {doneTime}"
 
@@ -10845,7 +10940,7 @@ msgstr "サンプルファイルをダウンロード"
 
 #. js-lingui-id: eneWvv
 #: src/modules/activities/emails/components/EmailThreadPreview.tsx
-#: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 #: src/modules/object-core/workflows/constants/CoreWorkflowStatusFilterOptions.ts
 #: src/modules/object-core/workflows/versions/constants/CoreWorkflowVersionStatusLabels.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -10864,7 +10959,7 @@ msgid "Draft an email to this company about "
 msgstr "この会社についてのメールを下書きする: "
 
 #. js-lingui-id: DbAw4C
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Draft email"
 msgstr "メールの下書き"
@@ -11103,8 +11198,7 @@ msgstr "eddy@gmail.com, @apple.com"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/profile/components/EmailField.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig.ts
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Edit"
 msgstr "編集"
@@ -11118,11 +11212,6 @@ msgstr "{label}、{description}を編集"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
 msgid "Edit {objectLabel}"
 msgstr "{objectLabel}を編集する"
-
-#. js-lingui-id: zQXUkv
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Edit {objectLabelPlural}"
-msgstr "{objectLabelPlural}を編集する"
 
 #. js-lingui-id: GsbKaa
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
@@ -11182,7 +11271,6 @@ msgstr "フィールド値を編集"
 
 #. js-lingui-id: oKQ7ls
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
 msgid "Edit Fields"
 msgstr "フィールドを編集"
@@ -11226,9 +11314,14 @@ msgstr "リンクを編集"
 msgid "Edit linked records"
 msgstr "リンクされたレコードを編集"
 
+#. js-lingui-id: pFCxAz
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "Edit matching {objectLabelPlural}"
+msgstr ""
+
 #. js-lingui-id: QjH+ZX
-#: src/modules/ai-chat/components/AiChatMessage.tsx
-#: src/modules/ai-chat/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
 msgid "Edit message"
 msgstr "メッセージを編集する"
 
@@ -11270,11 +11363,6 @@ msgstr "プロフィール情報を編集する"
 msgid "Edit Record Table"
 msgstr "レコードテーブルを編集"
 
-#. js-lingui-id: 6n2zpV
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Edit Records on All Objects"
-msgstr "全オブジェクトでレコードを編集する"
-
 #. js-lingui-id: 4QhQge
 #: src/modules/page-layout/widgets/field/components/FieldWidgetRelationEditAction.tsx
 msgid "Edit relation"
@@ -11286,10 +11374,15 @@ msgid "Edit rule"
 msgstr "ルールを編集"
 
 #. js-lingui-id: i5BTxr
-#: src/modules/ai-chat/components/AiChatThreadLabelsField.tsx
-#: src/modules/ai-chat/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "Edit shared labels"
 msgstr "共有ラベルを編集"
+
+#. js-lingui-id: yYBXaf
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Edit some {objectLabelPlural} · {throughRules}"
+msgstr ""
 
 #. js-lingui-id: xE9ptR
 #: src/modules/page-layout/components/PageLayoutTabMenuItemSelectAvatar.tsx
@@ -11630,8 +11723,8 @@ msgstr "従業員"
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
-#: src/modules/ai-chat/components/AiChatRecordApprovalReview.tsx
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalCurrentValue.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalCurrentValue.tsx
 #: src/modules/log-console/components/LogConsoleRecordChangeDetail.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx
@@ -11762,7 +11855,7 @@ msgid "End date must be after start date."
 msgstr "終了日は開始日より後である必要があります。"
 
 #. js-lingui-id: xus58/
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "End time must be after start time."
 msgstr "終了時刻は開始時刻より後である必要があります。"
 
@@ -11899,7 +11992,7 @@ msgid "Enter a number"
 msgstr "数値を入力"
 
 #. js-lingui-id: LsUGyx
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Enter a start and end time."
 msgstr "開始時刻と終了時刻を入力してください。"
 
@@ -12560,6 +12653,16 @@ msgstr "毎分"
 msgid "Every Monday"
 msgstr "毎週月曜日"
 
+#. js-lingui-id: WZ4tRP
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Every new message in a chat you take part in or follow"
+msgstr ""
+
+#. js-lingui-id: QU6LCC
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
+msgid "Every object follows the all objects access."
+msgstr "すべてのオブジェクトは、すべてのオブジェクトのアクセス設定に従います。"
+
 #. js-lingui-id: JsIvOW
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
 msgid "Every object of this workspace as CSV files in one zip, kept for 1 day. Works for suspended workspaces."
@@ -12997,9 +13100,9 @@ msgstr "顔"
 
 #. js-lingui-id: 7Bj3x9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai-chat/constants/AiChatThreadReasons.ts
 #: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
@@ -13277,7 +13380,7 @@ msgid "Failed to link the related records to this event"
 msgstr "関連レコードをこのイベントにリンクできませんでした"
 
 #. js-lingui-id: XC1d54
-#: src/modules/ai-chat/components/AiChatAgentAuthorResolver.tsx
+#: src/modules/ai-chat/messages/components/AiChatAgentAuthorResolver.tsx
 msgid "Failed to load agent details."
 msgstr "エージェントの詳細の読み込みに失敗しました。"
 
@@ -13584,7 +13687,7 @@ msgid "Failed to upload file \"{fileNameForError}\": {errorMessage}"
 msgstr "ファイル「{fileNameForError}」のアップロードに失敗しました: {errorMessage}"
 
 #. js-lingui-id: cQPyHI
-#: src/modules/ai-chat/hooks/useAiChatFileUpload.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatFileUpload.ts
 msgid "Failed to upload file: {fileName}"
 msgstr "ファイルのアップロードに失敗しました: {fileName}"
 
@@ -13639,8 +13742,14 @@ msgstr "偽"
 msgid "Fast"
 msgstr "高速"
 
+#. js-lingui-id: x77Ptp
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+msgid "Favorite chats"
+msgstr "お気に入りのチャット"
+
 #. js-lingui-id: X9kySA
 #: src/modules/inbox/components/NavigationDrawerInboxFavoritesSection.tsx
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 msgid "Favorites"
 msgstr "お気に入り"
@@ -13662,7 +13771,7 @@ msgid "Features active until"
 msgstr "機能の有効期限"
 
 #. js-lingui-id: YirHq7
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 msgid "Feedback"
 msgstr "フィードバック"
@@ -13783,7 +13892,8 @@ msgstr "フィールドレベルの権限"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/data-model/object-details/components/SettingsObjectIndexTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelectFieldMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetFieldDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -13823,11 +13933,6 @@ msgstr "フィールドグループ"
 msgid "Fields members with the Edit Profile permission can change"
 msgstr "プロフィール編集権限を持つメンバーが変更できるフィールド"
 
-#. js-lingui-id: 5UU7Q6
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
-msgid "Fields Permissions"
-msgstr "フィールドの権限"
-
 #. js-lingui-id: n7J1Rh
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Fields Settings"
@@ -13837,6 +13942,16 @@ msgstr "フィールド設定"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Fields shown in each view, and their order"
 msgstr "各ビューに表示されるフィールドとその順序"
+
+#. js-lingui-id: RWZvyt
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Fields to edit"
+msgstr "編集するフィールド"
+
+#. js-lingui-id: YsJAML
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "Fields to see"
+msgstr "表示するフィールド"
 
 #. js-lingui-id: HrM5BL
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
@@ -14063,7 +14178,7 @@ msgid "Finding connected accounts"
 msgstr "接続済みアカウントを検索中"
 
 #. js-lingui-id: JmZ/+d
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
 msgid "Finish"
 msgstr "完了"
 
@@ -14103,7 +14218,7 @@ msgid "Finish your setup"
 msgstr "セットアップを完了する"
 
 #. js-lingui-id: 4dQFvz
-#: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 msgid "Finished"
 msgstr "完了"
 
@@ -14223,7 +14338,7 @@ msgid "Folders"
 msgstr "フォルダー"
 
 #. js-lingui-id: 2z3uoE
-#: src/modules/ai-chat/components/AiChatThreadFollowersField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
 msgid "Follow for me"
 msgstr "自分用にフォロー"
 
@@ -14233,7 +14348,7 @@ msgid "Follow us on X"
 msgstr "X でフォローする"
 
 #. js-lingui-id: y6sq5j
-#: src/modules/ai-chat/components/AiChatThreadFollowersField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
 msgid "Following"
 msgstr "フォロー中"
 
@@ -14274,7 +14389,7 @@ msgid "Forgot your password?"
 msgstr "パスワードを忘れましたか？"
 
 #. js-lingui-id: QRAWTO
-#: src/modules/ai-chat/components/AiChatFormCardContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormCardContent.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/FormAction.ts
 msgid "Form"
@@ -14286,12 +14401,12 @@ msgid "Form Data"
 msgstr "フォームデータ"
 
 #. js-lingui-id: oiy48l
-#: src/modules/ai-chat/components/AiChatFormStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Form skipped"
 msgstr "フォームをスキップしました"
 
 #. js-lingui-id: 6vS9Zq
-#: src/modules/ai-chat/components/AiChatFormStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Form submitted"
 msgstr "フォームを送信しました"
 
@@ -14318,7 +14433,7 @@ msgid "Formats"
 msgstr "形式"
 
 #. js-lingui-id: CjVkbV
-#: src/modules/ai-chat/hooks/useAiChatThreadDisplayLabel.ts
+#: src/modules/ai-chat/threads/hooks/useAiChatThreadDisplayLabel.ts
 #: src/modules/ai-chat/utils/getAiChatSenderLabel.ts
 #: src/modules/inbox/components/InboxDirectMessageTitle.tsx
 #: src/modules/inbox/components/NavigationDrawerDirectMessageItem.tsx
@@ -14397,7 +14512,7 @@ msgid "French"
 msgstr "フランス語"
 
 #. js-lingui-id: 39y5bn
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Friday"
 msgstr "金曜日"
 
@@ -14705,6 +14820,11 @@ msgstr "ドイツ"
 msgid "Get more credits"
 msgstr "クレジットを追加購入"
 
+#. js-lingui-id: WB4gz7
+#: src/modules/settings/experience/components/SettingsExperienceNotificationsSection.tsx
+msgid "Get notified of new inbox messages on this device, even when Twenty is closed. Your choices below apply to every device"
+msgstr ""
+
 #. js-lingui-id: AvbPI1
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
@@ -14914,11 +15034,6 @@ msgstr "このワークスペースに {parsedAmount} クレジットを付与�
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "Granted credits"
 msgstr "付与クレジット"
-
-#. js-lingui-id: WUgtid
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
-msgid "Granted for this object"
-msgstr "このオブジェクトのために付与されました"
 
 #. js-lingui-id: MkDC2z
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -15261,6 +15376,7 @@ msgid "Hexagon"
 msgstr "六角形"
 
 #. js-lingui-id: D+zLDD
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionHiddenItems.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
@@ -15391,6 +15507,8 @@ msgstr "パートナーに依頼して、Twenty の導入とカスタマイズ�
 
 #. js-lingui-id: i0qMbr
 #: src/modules/ai-chat/components/AiChatNewThreadPageActions.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 msgid "Home"
@@ -16091,7 +16209,7 @@ msgid "Info"
 msgstr "情報"
 
 #. js-lingui-id: nSkB8g
-#: src/modules/ai-chat/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 msgid "Information"
 msgstr "情報"
 
@@ -16998,7 +17116,7 @@ msgid "Label must contain at least one alphanumeric character"
 msgstr "ラベルには少なくとも1つの英数字を含める必要があります"
 
 #. js-lingui-id: h8DugX
-#: src/modules/ai-chat/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "Labels"
 msgstr "ラベル"
 
@@ -17287,7 +17405,7 @@ msgid "Last Updated: {0}"
 msgstr "最終更新: {0}"
 
 #. js-lingui-id: p9uaTd
-#: src/modules/ai-chat/utils/getAiChatThreadSnoozeOptions.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Later today"
 msgstr "今日の後で"
 
@@ -17910,7 +18028,7 @@ msgid "Loading chats..."
 msgstr "チャットを読み込み中..."
 
 #. js-lingui-id: w81Nov
-#: src/modules/ai-chat/components/AiChatEditorSection.tsx
+#: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
 msgid "Loading conversation…"
 msgstr "会話を読み込み中…"
 
@@ -17937,7 +18055,7 @@ msgid "Loading emails"
 msgstr "メールを読み込み中"
 
 #. js-lingui-id: lwb3JB
-#: src/modules/ai-chat/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
 msgid "Loading emojis"
 msgstr "絵文字を読み込み中"
 
@@ -17975,12 +18093,12 @@ msgid "Loading more..."
 msgstr "さらに読み込み中…"
 
 #. js-lingui-id: nSgEqx
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Loading preview…"
 msgstr "プレビューを読み込み中…"
 
 #. js-lingui-id: WepeNQ
-#: src/modules/ai-chat/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
 msgid "Loading records"
 msgstr "レコードを読み込み中"
 
@@ -18000,7 +18118,7 @@ msgid "Loading sharing settings"
 msgstr "共有設定を読み込み中"
 
 #. js-lingui-id: VeVIIk
-#: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 msgid "Loading skills"
 msgstr "スキルを読み込み中"
 
@@ -18494,7 +18612,7 @@ msgid "Markdown"
 msgstr "マークダウン"
 
 #. js-lingui-id: OybNQG
-#: src/modules/ai-chat/components/AiChatThreadStatusNotice.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "完了としてマーク {eventTime}"
 
@@ -18641,25 +18759,30 @@ msgstr "MCPサーバーは利用できません"
 msgid "MCP tool step"
 msgstr "MCPツールステップ"
 
+#. js-lingui-id: 37Lzw8
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
+msgid "me"
+msgstr ""
+
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionValueInput.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionValueInput.tsx
 #: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "Me"
 msgstr "自分"
 
 #. js-lingui-id: pfWzog
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "Me (User ID)"
 msgstr "自分 (ユーザーID)"
 
 #. js-lingui-id: BDc6e1
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionValueInput.tsx
 msgid "Me / {workspaceMemberFieldLabel}"
 msgstr "自分 / {workspaceMemberFieldLabel}"
 
@@ -18699,7 +18822,7 @@ msgid "Medium section heading"
 msgstr "中見出し"
 
 #. js-lingui-id: OvoEq7
-#: src/modules/ai-chat/components/AiChatThreadAvatar.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadAvatar.tsx
 #: src/modules/log-console/constants/LogConsolePageViewColumns.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -18731,11 +18854,9 @@ msgstr "メンバーをワークスペースから削除しました"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
@@ -18754,7 +18875,7 @@ msgid "Members & invitees"
 msgstr "メンバーと招待済みユーザー"
 
 #. js-lingui-id: pbIEgB
-#: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 msgid "Mentioned you"
 msgstr "あなたにメンションしました"
 
@@ -18771,18 +18892,18 @@ msgid "Menu item actions"
 msgstr "メニュー項目のアクション"
 
 #. js-lingui-id: UODtG8
-#: src/modules/ai-chat/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 msgid "Merge"
 msgstr "マージ"
 
 #. js-lingui-id: yDKct3
-#: src/modules/ai-chat/components/__stories__/AiChatApprovalMergeReviewExample.tsx
+#: src/modules/ai-chat/tool-calls/components/__stories__/AiChatApprovalMergeReviewExample.tsx
 msgid "Merge {firstSourceName} and {secondSourceName}"
 msgstr "{firstSourceName} と {secondSourceName} をマージ"
 
 #. js-lingui-id: TTHfsp
-#: src/modules/ai-chat/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "Merge all {pendingPairCount}"
 msgstr "{pendingPairCount} 件すべてをマージ"
 
@@ -18792,7 +18913,7 @@ msgid "Merge cells"
 msgstr "セルをマージ"
 
 #. js-lingui-id: d2c8f+
-#: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 msgid "Merge preview"
 msgstr "マージプレビュー"
@@ -18804,7 +18925,7 @@ msgid "Merge records"
 msgstr "レコードをマージ"
 
 #. js-lingui-id: PXTjHO
-#: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 msgid "Merge review tabs"
 msgstr "マージ確認タブ"
 
@@ -19121,7 +19242,7 @@ msgid "Models for this provider. Toggle to enable or disable."
 msgstr "このプロバイダーのモデル。有効化/無効化をトグルで切り替えます。"
 
 #. js-lingui-id: hty0d5
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Monday"
@@ -19162,7 +19283,7 @@ msgid "month"
 msgstr "月"
 
 #. js-lingui-id: HajiZl
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -19259,8 +19380,8 @@ msgid "More options"
 msgstr "その他のオプション"
 
 #. js-lingui-id: G3/0PS
-#: src/modules/ai-chat/components/AiChatMessageReactionPickerContent.tsx
-#: src/modules/ai-chat/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
 msgid "More reactions"
 msgstr "その他のリアクション"
 
@@ -19326,6 +19447,11 @@ msgstr "右に移動"
 msgid "Move through list items"
 msgstr "リスト項目を移動"
 
+#. js-lingui-id: mcfB2A
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+msgid "Move to"
+msgstr "移動先"
+
 #. js-lingui-id: TH+XKl
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
 msgid "Move to another tab"
@@ -19340,9 +19466,14 @@ msgstr "チャンネルに移動"
 
 #. js-lingui-id: JCPOml
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
-#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Move to folder"
 msgstr "フォルダーに移動"
+
+#. js-lingui-id: 2SnSKo
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
+msgid "Move to tab"
+msgstr "タブに移動"
 
 #. js-lingui-id: HV6Nkp
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
@@ -19422,10 +19553,20 @@ msgstr "有効なメールアドレスの配列でなければなりません"
 msgid "Must be true to save. A write that makes it false is rejected."
 msgstr "保存するにはtrueである必要があります。falseになる書き込みは拒否されます。"
 
+#. js-lingui-id: lPmo1u
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
+msgid "my {workspaceMemberFieldLabel}"
+msgstr ""
+
 #. js-lingui-id: OJCJh9
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
 msgid "My apps"
 msgstr "マイアプリ"
+
+#. js-lingui-id: oAOi31
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
+msgid "my unknown field"
+msgstr ""
 
 #. js-lingui-id: XTGSZU
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
@@ -19482,8 +19623,6 @@ msgstr "該当なし"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -19634,7 +19773,7 @@ msgid "Needs a Select field"
 msgstr "選択フィールドが必要です"
 
 #. js-lingui-id: k3/EHQ
-#: src/modules/ai-chat/constants/AiChatThreadReasons.ts
+#: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Needs input"
 msgstr "入力が必要"
@@ -19679,7 +19818,7 @@ msgid "Never, by Twenty or providers"
 msgstr "Twenty またはプロバイダーによる使用はなし"
 
 #. js-lingui-id: isRobC
-#: src/modules/ai-chat/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerNewForm.tsx
@@ -19814,6 +19953,16 @@ msgstr "新規グループ"
 msgid "New Group"
 msgstr "新規グループ"
 
+#. js-lingui-id: l7iZgc
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "New inbox messages show as notifications on this device, even when Twenty is closed"
+msgstr ""
+
+#. js-lingui-id: ynuJvo
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "New inbox messages will show up like this"
+msgstr ""
+
 #. js-lingui-id: //H2Cs
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
@@ -19875,16 +20024,18 @@ msgstr "新しい繰り越し上限"
 
 #. js-lingui-id: yBF5J5
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
 msgid "New rule"
 msgstr "新しいルール"
 
 #. js-lingui-id: SagCAA
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "New section"
-msgstr ""
+msgstr "新しいセクション"
 
 #. js-lingui-id: MdpSC1
-#: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 msgid "New skill"
 msgstr "新規スキル"
 
@@ -19974,7 +20125,7 @@ msgid "Next"
 msgstr "次へ"
 
 #. js-lingui-id: IbfvuD
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Next approval"
 msgstr "次の承認"
 
@@ -20009,13 +20160,13 @@ msgid "Next iteration"
 msgstr "次の反復"
 
 #. js-lingui-id: g8JmSC
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 msgid "Next month"
 msgstr "翌月"
 
 #. js-lingui-id: DnlugB
-#: src/modules/ai-chat/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "Next pair"
 msgstr "次のペア"
 
@@ -20025,7 +20176,7 @@ msgid "Next period"
 msgstr "次の期間"
 
 #. js-lingui-id: jdU2p1
-#: src/modules/ai-chat/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 msgid "Next question"
 msgstr "次の質問"
 
@@ -20035,7 +20186,7 @@ msgid "Next record"
 msgstr "次のレコード"
 
 #. js-lingui-id: +VXdSO
-#: src/modules/ai-chat/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
 msgid "Next request"
 msgstr "次のリクエスト"
 
@@ -20056,12 +20207,12 @@ msgid "Next Step"
 msgstr "次のステップ"
 
 #. js-lingui-id: IT903p
-#: src/modules/ai-chat/utils/getAiChatThreadSnoozeOptions.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Next week"
 msgstr "来週"
 
 #. js-lingui-id: 97rmcs
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Next: {nextTitles}"
 msgstr "次: {nextTitles}"
 
@@ -20073,8 +20224,6 @@ msgstr "第九"
 #. js-lingui-id: 1UzENP
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -20106,11 +20255,12 @@ msgstr "{objectLabelSingular} が見つかりません"
 
 #. js-lingui-id: oPoLg+
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectOperationsSummary.ts
 msgid "No access"
 msgstr "アクセス不可"
 
 #. js-lingui-id: IeiB4r
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "No actions to review"
 msgstr "確認するアクションはありません"
 
@@ -20170,7 +20320,7 @@ msgid "No AI model on this workspace meets these settings."
 msgstr "このワークスペースには、これらの設定を満たすAIモデルはありません。"
 
 #. js-lingui-id: iH1iv+
-#: src/modules/ai-chat/components/AiChatEditorSection.tsx
+#: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
 #: src/modules/ai-chat/hooks/useAiChat.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
@@ -20233,7 +20383,7 @@ msgid "No available tabs"
 msgstr "利用可能なタブがありません"
 
 #. js-lingui-id: vmUMKh
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "No available times. Choose another date."
 msgstr "利用可能な時間がありません。別の日付を選択してください。"
 
@@ -20249,12 +20399,12 @@ msgid "No body"
 msgstr "本文なし"
 
 #. js-lingui-id: 15bIDe
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "No calendars available."
 msgstr "利用可能なカレンダーはありません。"
 
 #. js-lingui-id: +Rmf7F
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "No calendars match your search."
 msgstr "検索に一致するカレンダーがありません。"
 
@@ -20299,10 +20449,15 @@ msgid "No chats yet"
 msgstr "チャットはまだありません"
 
 #. js-lingui-id: qTxPPY
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelectFieldMenu.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "No compatible fields"
 msgstr "互換性のあるフィールドがありません"
+
+#. js-lingui-id: RY3VxI
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "No condition"
+msgstr ""
 
 #. js-lingui-id: YFLMyY
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
@@ -20432,7 +20587,7 @@ msgid "No email threads found"
 msgstr "メールスレッドが見つかりません"
 
 #. js-lingui-id: quWMra
-#: src/modules/ai-chat/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
 msgid "No emoji found"
 msgstr "絵文字が見つかりません"
 
@@ -20478,6 +20633,11 @@ msgstr "失敗した実行はありません"
 msgid "No field configured"
 msgstr "フィールドが設定されていません"
 
+#. js-lingui-id: gRHpoy
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+msgid "No fields"
+msgstr "フィールドなし"
+
 #. js-lingui-id: /hvarH
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionTargetObjectFieldsView.tsx
@@ -20487,6 +20647,7 @@ msgstr "利用できるフィールドがありません"
 
 #. js-lingui-id: VEYHd4
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
@@ -20558,7 +20719,7 @@ msgid "No jobs were retried{errorDetails}"
 msgstr "ジョブの再試行は行われませんでした{errorDetails}"
 
 #. js-lingui-id: VkcRtM
-#: src/modules/ai-chat/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "No labels available"
 msgstr "利用可能なラベルはありません"
 
@@ -20674,6 +20835,16 @@ msgstr "このモードで利用可能なモデルはありません。"
 msgid "No notes"
 msgstr "ノートなし"
 
+#. js-lingui-id: 9F6fiv
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "No notification for new messages"
+msgstr ""
+
+#. js-lingui-id: arel2K
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
+msgid "No objects found"
+msgstr "オブジェクトが見つかりません"
+
 #. js-lingui-id: fq3TKy
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
 msgid "No objects match your search"
@@ -20724,11 +20895,6 @@ msgstr "パラメーターなし"
 msgid "No payment method found. Please update your billing details."
 msgstr "お支払い方法が見つかりません。請求先の詳細を更新してください。"
 
-#. js-lingui-id: kSCxfd
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "No permissions have been set for individual objects."
-msgstr "個々のオブジェクトに対して権限が設定されていません。"
-
 #. js-lingui-id: pRxlf6
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "No provenance attestation was found for this package. Publish it from GitHub Actions with npm trusted publishing, then try claiming again."
@@ -20740,7 +20906,7 @@ msgid "No rate limit hit in this period"
 msgstr "この期間にレートリミットに達したことはありません"
 
 #. js-lingui-id: UW90md
-#: src/modules/ai-chat/components/AiChatNewThreadRecipientPicker.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientPicker.tsx
 msgid "No recipients found"
 msgstr "受信者が見つかりません"
 
@@ -20773,7 +20939,7 @@ msgid "No record selected"
 msgstr "レコードが選択されていません"
 
 #. js-lingui-id: EqGTpW
-#: src/modules/ai-chat/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
 #: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItems.tsx
@@ -20787,7 +20953,7 @@ msgid "No records matching the filter criteria were found."
 msgstr "フィルター条件に一致するレコードは見つかりませんでした。"
 
 #. js-lingui-id: To7xRG
-#: src/modules/ai-chat/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "No records to review"
 msgstr "確認するレコードはありません"
 
@@ -20921,7 +21087,7 @@ msgid "No SingleSignOnService with HTTP-Redirect or HTTP-POST binding was found"
 msgstr "HTTP-RedirectまたはHTTP-POSTバインディングを持つSingleSignOnServiceが見つかりませんでした"
 
 #. js-lingui-id: b5hW1u
-#: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 msgid "No skills found"
 msgstr "スキルが見つかりません"
 
@@ -20957,7 +21123,7 @@ msgid "No test result yet"
 msgstr "テスト結果はまだありません"
 
 #. js-lingui-id: hn2q8h
-#: src/modules/ai-chat/components/AiChatQuotedMessagePreview.tsx
+#: src/modules/ai-chat/messages/components/AiChatQuotedMessagePreview.tsx
 msgid "No text content"
 msgstr "テキストコンテンツがありません"
 
@@ -21159,8 +21325,8 @@ msgid "Node settings"
 msgstr "ノード設定"
 
 #. js-lingui-id: EdQY6l
-#: src/modules/ai-chat/components/AiChatThreadFollowersField.tsx
-#: src/modules/ai-chat/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
@@ -21305,7 +21471,7 @@ msgid "Not Recorded"
 msgstr "録音なし"
 
 #. js-lingui-id: gnnpkq
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Not run: the record changed since it was proposed"
 msgstr "未実行: 提案後にレコードが変更されました"
 
@@ -21342,18 +21508,13 @@ msgstr "{notSharedByFullName}によって共有されていません"
 msgid "Not shared with"
 msgstr "共有されていない相手"
 
-#. js-lingui-id: mu1gVr
-#: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
-msgid "Not started"
-msgstr "未開始"
-
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"
 msgstr "同期されていません"
 
 #. js-lingui-id: 5xvHen
-#: src/modules/ai-chat/components/AiChatMessageReceipt.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReceipt.tsx
 msgid "Not yet"
 msgstr "まだです"
 
@@ -21386,10 +21547,17 @@ msgid "Nothing to suggest here."
 msgstr "ここには提案できるものがありません。"
 
 #. js-lingui-id: iDNBZe
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/components/SettingsExperienceNotificationsSection.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/components/AppToaster.tsx
 msgid "Notifications"
 msgstr "通知"
+
+#. js-lingui-id: A09awi
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Notifications are on"
+msgstr ""
 
 #. js-lingui-id: 6RihN0
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -21567,11 +21735,6 @@ msgstr "オブジェクトは共有されていません"
 msgid "object permission"
 msgstr "オブジェクトの権限"
 
-#. js-lingui-id: ecLxgy
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
-msgid "Object permission options"
-msgstr "オブジェクト権限のオプション"
-
 #. js-lingui-id: HN7O/H
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "Object settings"
@@ -21587,17 +21750,11 @@ msgstr "オブジェクトの種類"
 msgid "Object unique fields"
 msgstr "オブジェクトの一意フィールド"
 
-#. js-lingui-id: YJgmMZ
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "Object-Level"
-msgstr "オブジェクトレベル"
-
 #. js-lingui-id: B3toQF
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
@@ -21615,7 +21772,7 @@ msgid "Objects"
 msgstr "オブジェクト"
 
 #. js-lingui-id: /8Yh6y
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Objects and fields permissions settings"
 msgstr "オブジェクトとフィールドの権限設定"
 
@@ -21629,6 +21786,11 @@ msgstr "レコードを構成するオブジェクト、フィールド、イン
 msgid "of"
 msgstr "の"
 
+#. js-lingui-id: az8lvo
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Off"
+msgstr ""
+
 #. js-lingui-id: KNz3EF
 #: src/pages/not-found/NotFound.tsx
 msgid "Off the beaten path"
@@ -21640,7 +21802,7 @@ msgid "Official app"
 msgstr "公式アプリ"
 
 #. js-lingui-id: 6Aih4U
-#: src/modules/ai-chat/components/AiChatMemberPresence.tsx
+#: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Offline"
 msgstr "オフライン"
 
@@ -21782,7 +21944,7 @@ msgid "One-to-one conversations between people"
 msgstr "人々の間の個別の会話"
 
 #. js-lingui-id: oXOSPE
-#: src/modules/ai-chat/components/AiChatMemberPresence.tsx
+#: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Online"
 msgstr "オンライン"
 
@@ -21894,7 +22056,7 @@ msgid "Only you will be able to see your emails and events"
 msgstr "あなた以外はメールやイベントを見ることができません"
 
 #. js-lingui-id: 1TNIig
-#: src/modules/ai-chat/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 #: src/modules/inbox/constants/InboxChannelNavigationItems.ts
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
@@ -22316,17 +22478,17 @@ msgid "Organization license activated successfully"
 msgstr "組織ライセンスを正常に有効化しました"
 
 #. js-lingui-id: G5RhpL
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Organizer"
 msgstr "主催者"
 
 #. js-lingui-id: vryTU3
-#: src/modules/ai-chat/components/AiChatQuotedMessagePreview.tsx
+#: src/modules/ai-chat/messages/components/AiChatQuotedMessagePreview.tsx
 msgid "Original message unavailable"
 msgstr "元のメッセージは利用できません"
 
 #. js-lingui-id: /IX/7x
-#: src/modules/ai-chat/components/internal/AiChatQuestionOtherOption.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionOtherOption.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
@@ -22422,7 +22584,7 @@ msgid "Outcome"
 msgstr "結果"
 
 #. js-lingui-id: nCQvd7
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 msgid "Outcome unknown"
 msgstr "結果不明"
 
@@ -22478,6 +22640,11 @@ msgstr "上書き"
 #: src/modules/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton.tsx
 msgid "Override Draft"
 msgstr "下書きを上書き"
+
+#. js-lingui-id: sJNF3W
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
+msgid "Overrides"
+msgstr "オーバーライド"
 
 #. js-lingui-id: 6/dCYd
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -22796,7 +22963,7 @@ msgid "PDF"
 msgstr "PDF"
 
 #. js-lingui-id: UbRKMZ
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 #: src/modules/settings/domains/components/SettingsPublicDomainsListCard.tsx
 #: src/modules/settings/emailing-domains/utils/getEmailingDomainStatusDisplay.ts
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -22804,7 +22971,7 @@ msgid "Pending"
 msgstr "保留中"
 
 #. js-lingui-id: 2B0V9T
-#: src/modules/ai-chat/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
 msgid "Pending requests"
 msgstr "保留中のリクエスト"
 
@@ -22940,12 +23107,6 @@ msgstr "権限テーブル"
 msgid "Permissions"
 msgstr "権限"
 
-#. js-lingui-id: KiuPPj
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
-msgid "Permissions · {objectLabelSingular}"
-msgstr "権限 · {objectLabelSingular}"
-
 #. js-lingui-id: JFI3iH
 #: src/modules/localization/hooks/useLocaleOptions.ts
 msgid "Persian"
@@ -23011,7 +23172,7 @@ msgid "Pick a color"
 msgstr "色を選択"
 
 #. js-lingui-id: B8mlc2
-#: src/modules/ai-chat/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 msgid "Pick a date"
 msgstr "日付を選択"
 
@@ -23352,7 +23513,7 @@ msgid "Prefix of the tool names agents see. Cannot be changed later."
 msgstr "エージェントに表示されるツール名の接頭辞です。後で変更することはできません。"
 
 #. js-lingui-id: IHoyJS
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Preparing an action to approve..."
 msgstr "承認するアクションを準備中です…"
 
@@ -23398,7 +23559,7 @@ msgid "Preview of the page recipients see when they unsubscribe"
 msgstr "受信者が配信を停止する際に表示されるページのプレビュー"
 
 #. js-lingui-id: DHhJ7s
-#: src/modules/ai-chat/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 #: src/modules/page-layout/widgets/graph/components/GraphWidgetLegend.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/settings/components/layout/SettingsWizardStepBar.tsx
@@ -23417,7 +23578,7 @@ msgid "Previous 7 days"
 msgstr "過去7日間"
 
 #. js-lingui-id: ap92qV
-#: src/modules/ai-chat/components/AiChatApprovalReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalReviewDeck.tsx
 msgid "Previous approval"
 msgstr "前の承認"
 
@@ -23437,13 +23598,13 @@ msgid "Previous iteration"
 msgstr "前の反復"
 
 #. js-lingui-id: 1xwZj/
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 msgid "Previous month"
 msgstr "前月"
 
 #. js-lingui-id: 7BDoFf
-#: src/modules/ai-chat/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "Previous pair"
 msgstr "前のペア"
 
@@ -23458,7 +23619,7 @@ msgid "Previous record"
 msgstr "前のレコード"
 
 #. js-lingui-id: ToM1t/
-#: src/modules/ai-chat/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
 msgid "Previous request"
 msgstr "前のリクエスト"
 
@@ -23473,7 +23634,7 @@ msgid "Previous step"
 msgstr "前のステップ"
 
 #. js-lingui-id: rLvhNs
-#: src/modules/ai-chat/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Previous value:"
 msgstr "以前の値:"
 
@@ -23666,7 +23827,7 @@ msgid "Property value"
 msgstr "プロパティ値"
 
 #. js-lingui-id: nHD0EI
-#: src/modules/ai-chat/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Proposed value:"
 msgstr "提案された値:"
 
@@ -23782,18 +23943,18 @@ msgid "Question"
 msgstr "質問"
 
 #. js-lingui-id: pA8K5M
-#: src/modules/ai-chat/components/AiChatQuestionStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 msgid "Question skipped"
 msgstr "質問をスキップしました"
 
 #. js-lingui-id: enzGAL
-#: src/modules/ai-chat/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
 msgid "Questions"
 msgstr "質問"
 
 #. js-lingui-id: Wzbxi7
-#: src/modules/ai-chat/components/AiChatQuestionStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer.tsx
 msgid "Questions skipped"
 msgstr "質問をスキップしました"
 
@@ -23813,12 +23974,12 @@ msgid "Queue: {queueName}"
 msgstr "キュー: {queueName}"
 
 #. js-lingui-id: 8wu9lr
-#: src/modules/ai-chat/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 msgid "Queued"
 msgstr "キュー済み"
 
 #. js-lingui-id: Eldtfl
-#: src/modules/ai-chat/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 msgid "Queued messages"
 msgstr "キューに入れられたメッセージ"
 
@@ -23942,12 +24103,12 @@ msgid "Read and write data model configuration"
 msgstr "データモデル設定を読み書きする"
 
 #. js-lingui-id: RXivwU
-#: src/modules/ai-chat/components/AiChatMessageReceipt.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReceipt.tsx
 msgid "Read by {readerCount} of {recipientCount}"
 msgstr "{recipientCount} 人中 {readerCount} 人が既読"
 
 #. js-lingui-id: bgP1Ip
-#: src/modules/ai-chat/components/AiChatMessageReceipt.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReceipt.tsx
 msgid "Read by {readerNames}"
 msgstr "{readerNames} が既読"
 
@@ -23974,6 +24135,11 @@ msgstr "メールを読む"
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read system prompts"
 msgstr "システムプロンプトを確認"
+
+#. js-lingui-id: /nZe2L
+#: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
+msgid "Read the address, owner and account status of members' private channels"
+msgstr "メンバーのプライベートチャンネルの住所、所有者、アカウントステータスを読み取る"
 
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -24013,7 +24179,7 @@ msgid "Read-only {entityTypeLabel} definition shipped by this app"
 msgstr "このアプリに同梱の読み取り専用の {entityTypeLabel} 定義"
 
 #. js-lingui-id: EqZQdT
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Read-only calendar"
 msgstr "読み取り専用カレンダー"
 
@@ -24079,6 +24245,12 @@ msgstr "パスワード更新リンクを含むメールを受け取る"
 msgid "Recent"
 msgstr "最近"
 
+#. js-lingui-id: 3qyrqD
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
+msgid "Recent chats"
+msgstr "最近のチャット"
+
 #. js-lingui-id: ZVr1+K
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "Recent Events (oldest → newest)"
@@ -24114,7 +24286,7 @@ msgid "Recipient count unavailable"
 msgstr "受信者数を取得できません"
 
 #. js-lingui-id: ar7XM1
-#: src/modules/ai-chat/hooks/useWarnAboutParticipantMentionsNotAdded.ts
+#: src/modules/ai-chat/composer/hooks/useWarnAboutParticipantMentionsNotAdded.ts
 msgid "Recipient delivery could not be verified. Check the chat participants."
 msgstr "受信者への配信を確認できませんでした。チャットの参加者を確認してください。"
 
@@ -24125,7 +24297,7 @@ msgstr "recipient@example.com"
 
 #. js-lingui-id: yPrbsy
 #: src/modules/activities/emails/components/ChatThreadNewMessage.tsx
-#: src/modules/ai-chat/components/AiChatNewThreadRecipientField.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientField.tsx
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Recipients"
@@ -24137,8 +24309,8 @@ msgid "Recipients are recounted at send time. You can cancel until then."
 msgstr "受信者数は送信時に再集計されます。それまでキャンセルできます。"
 
 #. js-lingui-id: WEYdDv
-#: src/modules/ai-chat/components/AiChatQuestionCard.tsx
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
 msgid "Recommended"
 msgstr "推奨"
@@ -24294,7 +24466,7 @@ msgid "Record page"
 msgstr "レコードページ"
 
 #. js-lingui-id: J5b8Hz
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Record page widget"
 msgstr "レコードページウィジェット"
 
@@ -24330,19 +24502,13 @@ msgstr "レコードのテキスト"
 msgid "Record Type"
 msgstr "レコードタイプ"
 
-#. js-lingui-id: uMOyEH
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-msgid "Record-level"
-msgstr "レコードレベル"
-
 #. js-lingui-id: VQ4KjL
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Record-level filter"
 msgstr "レコードレベルのフィルター"
 
 #. js-lingui-id: jdetKb
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "Record:"
 msgstr "レコード:"
 
@@ -24374,15 +24540,14 @@ msgid "records"
 msgstr "レコード"
 
 #. js-lingui-id: PWlTvh
-#: src/modules/ai-chat/components/AiChatAddMenu.tsx
-#: src/modules/ai-chat/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItems.tsx
 #: src/modules/settings/applications/hooks/useApplicationContentItemDisplay.ts
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 #: src/modules/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema.ts
@@ -24454,7 +24619,7 @@ msgid "Redirection URI"
 msgstr "リダイレクションURI"
 
 #. js-lingui-id: lCF0wC
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 #: src/modules/log-console/components/LogConsoleResults.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -24462,7 +24627,7 @@ msgid "Refresh"
 msgstr "更新"
 
 #. js-lingui-id: IevXlZ
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "Refresh availability for this date."
 msgstr "この日付の空き状況を更新します。"
 
@@ -24531,13 +24696,13 @@ msgid "Registered with Twenty as the official {appName}"
 msgstr "公式の {appName} として Twenty に登録済み"
 
 #. js-lingui-id: 1t/NnN
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Reject"
 msgstr "拒否"
 
 #. js-lingui-id: ekCRTP
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Rejected"
 msgstr "拒否されました"
 
@@ -24689,7 +24854,7 @@ msgid "Remove {0} navigation menu items?"
 msgstr "{0} 件のナビゲーションメニュー項目を削除しますか？"
 
 #. js-lingui-id: boQErO
-#: src/modules/ai-chat/components/internal/AiChatFilePreview.tsx
+#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "{displayName} を削除"
 
@@ -24834,6 +24999,11 @@ msgstr "オプションを削除"
 msgid "Remove output field"
 msgstr "出力フィールドを削除"
 
+#. js-lingui-id: c8Kx/b
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Remove override"
+msgstr "オーバーライドを削除"
+
 #. js-lingui-id: cp/fZQ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsFlagRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsPermissionRow.tsx
@@ -24852,12 +25022,12 @@ msgid "Remove provider \"{0}\""
 msgstr "プロバイダー \"{0}\" を削除"
 
 #. js-lingui-id: +WeuHF
-#: src/modules/ai-chat/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 msgid "Remove queued message"
 msgstr "キューに登録されたメッセージを削除"
 
 #. js-lingui-id: 6nFc2C
-#: src/modules/ai-chat/components/AiChatComposerQuotePreview.tsx
+#: src/modules/ai-chat/composer/components/AiChatComposerQuotePreview.tsx
 msgid "Remove quote"
 msgstr "引用を削除"
 
@@ -24868,7 +25038,6 @@ msgstr "リダイレクトURIを削除"
 
 #. js-lingui-id: SjxzXf
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
 msgid "Remove rule"
 msgstr "ルールを削除"
 
@@ -24883,9 +25052,9 @@ msgid "Remove searchable field"
 msgstr "検索可能なフィールドを削除"
 
 #. js-lingui-id: uXfxoE
-#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 msgid "Remove section"
-msgstr ""
+msgstr "セクションを削除"
 
 #. js-lingui-id: jCt40X
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -24908,7 +25077,7 @@ msgid "Remove this provider and disconnect all its models"
 msgstr "このプロバイダーを削除し、そのすべてのモデルとの接続を解除します"
 
 #. js-lingui-id: XrlYG5
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Remove unavailable calendars"
 msgstr "利用できないカレンダーを削除"
 
@@ -24948,7 +25117,7 @@ msgid "Rename group"
 msgstr "グループ名を変更"
 
 #. js-lingui-id: cwObXL
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Rendering preview…"
 msgstr "プレビューをレンダリング中…"
 
@@ -25004,8 +25173,8 @@ msgid "Replit install links require an HTTPS MCP URL."
 msgstr "Replit のインストールリンクには HTTPS の MCP URL が必要です。"
 
 #. js-lingui-id: ImOQa9
-#: src/modules/ai-chat/components/AiChatMessage.tsx
-#: src/modules/ai-chat/components/AiChatThreadRequestActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadRequestActions.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
@@ -25013,7 +25182,7 @@ msgid "Reply"
 msgstr "返信"
 
 #. js-lingui-id: VKsaTi
-#: src/modules/ai-chat/components/AiChatComposerQuotePreview.tsx
+#: src/modules/ai-chat/composer/components/AiChatComposerQuotePreview.tsx
 msgid "Replying to"
 msgstr "返信先"
 
@@ -25033,7 +25202,7 @@ msgid "Request"
 msgstr "リクエスト"
 
 #. js-lingui-id: tZ7Xci
-#: src/modules/ai-chat/components/AiChatPendingAskGate.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatPendingAskGate.tsx
 msgid "Request {requestNumber} of {requestCount}"
 msgstr "{requestCount}件中{requestNumber}件目のリクエスト"
 
@@ -25153,7 +25322,7 @@ msgid "Reset to default"
 msgstr "デフォルトにリセット"
 
 #. js-lingui-id: 14xBUx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionValueInput.tsx
 msgid "Reset to static value"
 msgstr "固定値にリセット"
 
@@ -25218,7 +25387,7 @@ msgid "Resources"
 msgstr "リソース"
 
 #. js-lingui-id: qrqIfV
-#: src/modules/ai-chat/components/AiChatThreadRequestActions.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadRequestActions.tsx
 msgid "Respond to request"
 msgstr "リクエストに応答"
 
@@ -25420,11 +25589,6 @@ msgstr "署名キーを失効させる"
 msgid "Revoked"
 msgstr "失効済み"
 
-#. js-lingui-id: GG37FL
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
-msgid "Revoked for this object"
-msgstr "このオブジェクトの取り消し"
-
 #. js-lingui-id: lrTLOv
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal.tsx
 msgid "Revoking this key will invalidate every JWT signed with it. Users with active tokens signed by this key will be logged out."
@@ -25506,10 +25670,9 @@ msgstr "ロールが正常に更新されました"
 #: src/modules/object-record/record-sharing/utils/getRecordSharingRecipientGroups.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Roles"
 msgstr "役割"
@@ -25572,6 +25735,11 @@ msgstr "行レベル権限の条件グループ"
 msgid "row level permission rule"
 msgstr "行レベル権限ルール"
 
+#. js-lingui-id: m9LWSX
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
+msgid "Row-level permission"
+msgstr ""
+
 #. js-lingui-id: Wdh41P
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Row-level permissions"
@@ -25601,6 +25769,11 @@ msgstr "ラバーダック: オン"
 #: src/modules/ui/input/hooks/useColorLabels.ts
 msgid "Ruby"
 msgstr "ルビー"
+
+#. js-lingui-id: oAN4H/
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
+msgid "Rule"
+msgstr ""
 
 #. js-lingui-id: tijGcA
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -25668,7 +25841,7 @@ msgid "Run tool"
 msgstr "ツールを実行"
 
 #. js-lingui-id: RiQMUh
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
 msgid "Running"
@@ -25695,8 +25868,8 @@ msgid "Running the tool..."
 msgstr "ツールを実行中…"
 
 #. js-lingui-id: LTC198
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Running..."
 msgstr "実行中..."
 
@@ -25785,7 +25958,7 @@ msgid "SAML/OIDC"
 msgstr "SAML/OIDC 認証"
 
 #. js-lingui-id: b/zjTD
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Sample data"
 msgstr "サンプルデータ"
 
@@ -25800,7 +25973,7 @@ msgid "Satisfied"
 msgstr "満たしている"
 
 #. js-lingui-id: +5kO8P
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Saturday"
@@ -25831,7 +26004,7 @@ msgid "Save Agent"
 msgstr "エージェントを保存"
 
 #. js-lingui-id: 8tM8+a
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 msgid "Save as draft"
 msgstr "下書きとして保存"
 
@@ -25872,7 +26045,7 @@ msgid "Saved tables, boards and calendars"
 msgstr "保存済みのテーブル、ボード、カレンダー"
 
 #. js-lingui-id: A0/0NU
-#: src/modules/ai-chat/components/AiChatFrontComponentPreviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Saved to Workspace app"
 msgstr "Workspaceアプリに保存しました"
 
@@ -25925,7 +26098,7 @@ msgid "Scheduled maintenance: {startFormatted} — {endFormatted}"
 msgstr "メンテナンス予定: {startFormatted} — {endFormatted}"
 
 #. js-lingui-id: SxCO0O
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Scheduling preferences"
 msgstr "スケジュール設定"
 
@@ -25958,12 +26131,12 @@ msgid "Score"
 msgstr "スコア"
 
 #. js-lingui-id: oOi11l
-#: src/modules/ai-chat/components/AiChatScrollToBottomButton.tsx
+#: src/modules/ai-chat/messages/components/AiChatScrollToBottomButton.tsx
 msgid "Scroll to bottom"
 msgstr "下部までスクロール"
 
 #. js-lingui-id: SIucTL
-#: src/modules/ai-chat/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Scrollable record review"
 msgstr "スクロール可能なレコード確認"
 
@@ -26021,19 +26194,18 @@ msgid "Search {lowerCaseTypeLabel}..."
 msgstr "{lowerCaseTypeLabel} を検索…"
 
 #. js-lingui-id: g2dQp/
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "Search 1 {fieldTypeLabelLowercase} field"
 msgstr "1 つの {fieldTypeLabelLowercase} フィールドを検索"
 
 #. js-lingui-id: 4XD2Lr
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "Search 1 field"
 msgstr "1 つのフィールドを検索"
 
 #. js-lingui-id: l1/uy2
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "Search a field..."
 msgstr "フィールドを検索..."
 
@@ -26114,11 +26286,6 @@ msgstr "割り当てられた{roleTargetDisplayName}を検索..."
 msgid "Search an index..."
 msgstr "インデックスを検索..."
 
-#. js-lingui-id: pFe0YS
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
-msgid "Search an object"
-msgstr "オブジェクトを検索"
-
 #. js-lingui-id: S+MGem
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownAnyFieldSearchInput.tsx
 #: src/modules/views/components/AnyFieldSearchDropdownContentMenuHeader.tsx
@@ -26134,7 +26301,7 @@ msgid "Search API keys"
 msgstr "APIキーを検索"
 
 #. js-lingui-id: fLbp9m
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Search availability calendars"
 msgstr "空き状況カレンダーを検索"
 
@@ -26159,7 +26326,7 @@ msgid "Search by workspace name, subdomain, or ID..."
 msgstr "ワークスペース名、サブドメイン、またはIDで検索..."
 
 #. js-lingui-id: R/iIxI
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Search calendars"
 msgstr "カレンダーを検索"
 
@@ -26201,7 +26368,7 @@ msgid "Search email threads"
 msgstr "メールスレッドを検索"
 
 #. js-lingui-id: Sb71rQ
-#: src/modules/ai-chat/components/AiChatMessageReactionPickerContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReactionPickerContent.tsx
 msgid "Search emojis"
 msgstr "絵文字を検索"
 
@@ -26228,8 +26395,10 @@ msgstr "検索フィールドのメタデータ"
 #: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelectFieldMenu.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelectFieldMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
@@ -26285,6 +26454,8 @@ msgstr "メンバーを検索"
 
 #. js-lingui-id: two5rl
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableDataSourceDropdownContent.tsx
@@ -26305,8 +26476,8 @@ msgid "Search options"
 msgstr "検索オプション"
 
 #. js-lingui-id: IMeaSJ
-#: src/modules/ai-chat/components/AiChatAddMenuRecordsPage.tsx
-#: src/modules/ai-chat/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerSearchInput.tsx
 msgid "Search records"
 msgstr "レコードを検索"
@@ -26333,8 +26504,8 @@ msgid "Search relations"
 msgstr "リレーションを検索"
 
 #. js-lingui-id: BlLxpG
-#: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
-#: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 msgid "Search skills"
 msgstr "スキルを検索"
 
@@ -26499,6 +26670,7 @@ msgstr "セクション"
 #. js-lingui-id: BhZ5PL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 msgid "Section"
 msgstr "セクション"
@@ -26506,12 +26678,12 @@ msgstr "セクション"
 #. js-lingui-id: 8gtQoG
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
 msgid "Section actions"
-msgstr ""
+msgstr "セクションの操作"
 
 #. js-lingui-id: vKc3fL
-#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 msgid "Section name"
-msgstr ""
+msgstr "セクション名"
 
 #. js-lingui-id: R4OWFD
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupDisplayContent.tsx
@@ -26528,14 +26700,9 @@ msgstr "セクション"
 msgid "Security"
 msgstr "セキュリティ"
 
-#. js-lingui-id: i0zibG
-#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
-msgid "see"
-msgstr "見る"
-
 #. js-lingui-id: h+8V38
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig.ts
 msgid "See"
 msgstr "見る"
 
@@ -26543,11 +26710,6 @@ msgstr "見る"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions.ts
 msgid "See {objectLabel}"
 msgstr "{objectLabel}を表示"
-
-#. js-lingui-id: aOvXdk
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
-msgid "See {objectLabelPlural}"
-msgstr "{objectLabelPlural}を表示"
 
 #. js-lingui-id: R+sqCn
 #: src/modules/page-layout/widgets/components/WidgetActionFieldSeeAll.tsx
@@ -26575,11 +26737,6 @@ msgstr "アプリのページを表示"
 msgid "See data model settings"
 msgstr "データモデルの設定を表示"
 
-#. js-lingui-id: oGROXc
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
-msgid "See Fields"
-msgstr "フィールドを見る"
-
 #. js-lingui-id: RpeN29
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
 msgid "See function"
@@ -26591,11 +26748,18 @@ msgid "See installed applications"
 msgstr "インストール済みのアプリケーションを表示"
 
 #. js-lingui-id: uPo3PQ
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
 #: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
 msgid "See less"
 msgstr "表示を減らす"
 
+#. js-lingui-id: KaSkAp
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "See matching {objectLabelPlural}"
+msgstr ""
+
 #. js-lingui-id: V1fa9u
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
 #: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "See more"
@@ -26612,10 +26776,10 @@ msgstr "マーケットプレイスで表示"
 msgid "See records"
 msgstr "レコードを表示"
 
-#. js-lingui-id: irbH/8
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "See Records on All Objects"
-msgstr "全オブジェクトでレコードを表示する"
+#. js-lingui-id: 6+1BUt
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "See some {objectLabelPlural} · {throughRules}"
+msgstr ""
 
 #. js-lingui-id: SXaufV
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
@@ -26666,7 +26830,7 @@ msgstr "選択"
 
 #. js-lingui-id: 02ePaq
 #. placeholder {0}: record.label
-#: src/modules/ai-chat/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Select {0}"
 msgstr "{0} を選択"
 
@@ -26681,12 +26845,12 @@ msgid "Select {targetObjectNameSingular}"
 msgstr "{targetObjectNameSingular} を選択"
 
 #. js-lingui-id: 9NFSzl
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "Select 1 {fieldTypeLabelLowercase} field"
 msgstr "1 つの {fieldTypeLabelLowercase} フィールドを選択"
 
 #. js-lingui-id: VjMMyZ
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "Select 1 field"
 msgstr "1 つのフィールドを選択"
 
@@ -26716,7 +26880,7 @@ msgid "Select a currency"
 msgstr "通貨を選択"
 
 #. js-lingui-id: PWGE2B
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionVariablePicker.tsx
 msgid "Select a current user field"
 msgstr "現在のユーザーフィールドを選択"
 
@@ -26749,7 +26913,7 @@ msgid "Select a field to display in this widget"
 msgstr "このウィジェットに表示するフィールドを選択してください"
 
 #. js-lingui-id: 0DL3XU
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelect.tsx
 msgid "Select a filter field"
 msgstr "フィルターフィールドを選択"
 
@@ -26828,7 +26992,7 @@ msgid "Select all loaded rows"
 msgstr "読み込まれたすべての行を選択"
 
 #. js-lingui-id: rRpCVj
-#: src/modules/ai-chat/components/AiChatApprovalRecordReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 msgid "Select all records"
 msgstr "すべてのレコードを選択"
 
@@ -26853,17 +27017,17 @@ msgid "Select an option"
 msgstr "オプションを選択"
 
 #. js-lingui-id: Wh3uKH
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Select at least one available calendar to check for conflicts."
 msgstr "利用可能なカレンダーを選択して、競合を確認してください。"
 
 #. js-lingui-id: AXQ2Fr
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Select at least one working day."
 msgstr "稼働日を選択してください。"
 
 #. js-lingui-id: 0yxhOL
-#: src/modules/ai-chat/components/AiChatThreadRow.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadRow.tsx
 msgid "Select chat"
 msgstr "チャットを選択"
 
@@ -26945,7 +27109,7 @@ msgid "Select options"
 msgstr "オプションを選択"
 
 #. js-lingui-id: TC9hnQ
-#: src/modules/ai-chat/components/AiChatNewThreadRecipientPicker.tsx
+#: src/modules/ai-chat/composer/components/AiChatNewThreadRecipientPicker.tsx
 msgid "Select recipients"
 msgstr "受信者を選択"
 
@@ -27045,15 +27209,15 @@ msgstr "選択範囲"
 
 #. js-lingui-id: JlFcis
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
-#: src/modules/ai-chat/components/AiChatApprovalEmailReviewDeck.tsx
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Send"
 msgstr "送信"
 
 #. js-lingui-id: h3fYlJ
-#: src/modules/ai-chat/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "Send all {pendingEmailCount}"
 msgstr "{pendingEmailCount} 件すべてを送信"
 
@@ -27076,8 +27240,8 @@ msgid "Send Campaign"
 msgstr "キャンペーンを送信"
 
 #. js-lingui-id: 65dxv8
-#: src/modules/ai-chat/components/AiChatApprovalEmailReviewDeck.tsx
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalEmailCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalEmailCard.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
 msgid "Send email"
 msgstr "メールを送信"
@@ -27122,7 +27286,7 @@ msgid "Send invitations"
 msgstr "招待状を送信"
 
 #. js-lingui-id: Hvnq/n
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 msgid "Send invite"
 msgstr "招待を送信"
 
@@ -27132,8 +27296,8 @@ msgid "Send later"
 msgstr "後で送信"
 
 #. js-lingui-id: pi1oME
-#: src/modules/ai-chat/components/AiChatQuestionCard.tsx
-#: src/modules/ai-chat/components/internal/SendMessageButton.tsx
+#: src/modules/ai-chat/composer/components/SendMessageButton.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 msgid "Send message"
 msgstr "メッセージを送信"
 
@@ -27146,6 +27310,11 @@ msgstr "今すぐ送信"
 #: src/modules/activities/emails/utils/buildCampaignSendButtonTitle.ts
 msgid "Send Now"
 msgstr "今すぐ送信"
+
+#. js-lingui-id: eus61c
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Send test"
+msgstr ""
 
 #. js-lingui-id: doZzL7
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -27412,7 +27581,7 @@ msgid "Setting up your <0>database</0>..."
 msgstr "<0>データベース</0>をセットアップしています..."
 
 #. js-lingui-id: Tz0i8g
-#: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
@@ -27491,8 +27660,8 @@ msgid "Shape, color, face"
 msgstr "形状、色、顔"
 
 #. js-lingui-id: Z8lGw6
-#: src/modules/ai-chat/components/AiChatThreadShareButton.tsx
-#: src/modules/ai-chat/components/AiChatThreadShareButton.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadShareButton.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadShareButton.tsx
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 #: src/modules/side-panel/hooks/useOpenShareRecordInSidePanel.ts
 msgid "Share"
@@ -27534,8 +27703,8 @@ msgid "Shared by key, across runs"
 msgstr "キーで共有、実行をまたいで共有"
 
 #. js-lingui-id: 11KprE
-#: src/modules/ai-chat/components/AiChatThreadLabelsField.tsx
-#: src/modules/ai-chat/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "Shared conversation labels"
 msgstr "共有会話ラベル"
 
@@ -27683,8 +27852,8 @@ msgid "Show inbox"
 msgstr "受信トレイを表示"
 
 #. js-lingui-id: 6lGV3K
-#: src/modules/ai-chat/components/AiChatQueuedMessageList.tsx
-#: src/modules/ai-chat/components/AiChatUserMessageCollapsibleContent.tsx
+#: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
+#: src/modules/ai-chat/messages/components/AiChatUserMessageCollapsibleContent.tsx
 #: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
 msgid "Show less"
 msgstr "表示を減らす"
@@ -27694,8 +27863,13 @@ msgstr "表示を減らす"
 msgid "Show logs"
 msgstr "ログを表示"
 
+#. js-lingui-id: /l2KYB
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Show message preview"
+msgstr ""
+
 #. js-lingui-id: fMPkxb
-#: src/modules/ai-chat/components/AiChatUserMessageCollapsibleContent.tsx
+#: src/modules/ai-chat/messages/components/AiChatUserMessageCollapsibleContent.tsx
 #: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
@@ -27727,6 +27901,11 @@ msgstr "「はじめに」ページとサイドバーカードを表示し、ト
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes."
 msgstr "プライバシータブを表示し、そのAIデータポリシーとデータ共有設定を適用します。これをオフにすると、保存されているポリシーはすべて解除されます。インスタンスのアップグレード完了後に有効にしてください。"
+
+#. js-lingui-id: soWlp2
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Show the sender, the chat and the message text in notifications. Leave it off on shared screens and devices"
+msgstr ""
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -27928,8 +28107,8 @@ msgid "Skill not found"
 msgstr "スキルが見つかりません"
 
 #. js-lingui-id: PCSkw2
-#: src/modules/ai-chat/components/AiChatAddMenu.tsx
-#: src/modules/ai-chat/components/AiChatAddMenuSkillsPage.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenu.tsx
+#: src/modules/ai-chat/composer/components/AiChatAddMenuSkillsPage.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
@@ -27937,11 +28116,11 @@ msgid "Skills"
 msgstr "スキル"
 
 #. js-lingui-id: 6Uau97
-#: src/modules/ai-chat/components/AiChatApprovalEmailReviewDeck.tsx
-#: src/modules/ai-chat/components/AiChatApprovalMergeReview.tsx
-#: src/modules/ai-chat/components/AiChatFormCardContent.tsx
-#: src/modules/ai-chat/components/AiChatQuestionCard.tsx
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReviewDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormCardContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/onboarding/components/OnboardingSkipButton.tsx
 msgid "Skip"
 msgstr "スキップ"
@@ -27972,8 +28151,8 @@ msgid "Skip the junction object (similar to many-to-many relations)"
 msgstr "ジャンクションオブジェクト（多対多リレーションに類似）をスキップ"
 
 #. js-lingui-id: 9NyAH9
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
 msgid "Skipped"
 msgstr "スキップ済み"
@@ -28055,7 +28234,7 @@ msgid "snippet"
 msgstr "スニペット"
 
 #. js-lingui-id: 7+i6oV
-#: src/modules/ai-chat/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/inbox/components/InboxBulkActions.tsx
 #: src/modules/inbox/components/InboxThreadTriageButtons.tsx
@@ -28064,17 +28243,17 @@ msgid "Snooze"
 msgstr "スヌーズ"
 
 #. js-lingui-id: aqkwib
-#: src/modules/ai-chat/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 msgid "Snooze chat"
 msgstr "チャットをスヌーズ"
 
 #. js-lingui-id: xKw3A1
-#: src/modules/ai-chat/components/AiChatThreadActivityTime.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadActivityTime.tsx
 msgid "Snooze ended"
 msgstr "スヌーズが終了しました"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/ai-chat/components/AiChatThreadStatusNotice.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "スヌーズが終了しました {eventTime}"
 
@@ -28090,14 +28269,14 @@ msgid "Snooze until {snoozedUntilLabel}"
 msgstr "{snoozedUntilLabel} までスヌーズ"
 
 #. js-lingui-id: rz6s8e
-#: src/modules/ai-chat/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 #: src/modules/inbox/constants/InboxChannelNavigationItems.ts
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Snoozed"
 msgstr "スヌーズ中"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/ai-chat/components/AiChatThreadStatusNotice.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "{eventTime} までスヌーズ中"
 
@@ -28110,12 +28289,6 @@ msgstr "SOC 2"
 #: src/modules/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels.ts
 msgid "Soft cap"
 msgstr "緩やかな上限"
-
-#. js-lingui-id: zfjcH5
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
-msgid "Some"
-msgstr "一部"
 
 #. js-lingui-id: RwCYVZ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
@@ -28134,13 +28307,18 @@ msgstr "一部のレイアウト変更は保存できませんでした"
 msgid "Some log data was dropped to fit the size limit ({0} entries, {1} bytes)."
 msgstr "サイズ上限に合わせるため、一部のログデータが削除されました（{0} エントリ、{1} バイト）。"
 
+#. js-lingui-id: XG7UMq
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Some records"
+msgstr ""
+
 #. js-lingui-id: b5Z5wY
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Some selected calendars are no longer available."
 msgstr "選択したカレンダーの一部は利用できなくなりました。"
 
 #. js-lingui-id: 2c+W2z
-#: src/modules/ai-chat/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 msgid "Someone replies"
 msgstr "誰かが返信したとき"
 
@@ -28275,7 +28453,7 @@ msgid "Source Email Address"
 msgstr "送信元メールアドレス"
 
 #. js-lingui-id: Jvqt/3
-#: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 msgid "Source records"
 msgstr "ソースレコード"
 
@@ -28397,7 +28575,6 @@ msgstr "スタンドアロン"
 #. js-lingui-id: TJBHlP
 #: src/modules/applications/utils/getApplicationDisplayName.ts
 #: src/modules/settings/data-model/utils/getSettingsObjectFieldType.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Standard"
 msgstr "標準"
@@ -28498,8 +28675,8 @@ msgid "Statistics"
 msgstr "統計"
 
 #. js-lingui-id: uAQUqI
-#: src/modules/ai-chat/components/AiChatApprovalRecordReview.tsx
-#: src/modules/ai-chat/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleWebhookStatusColumn.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
@@ -28589,7 +28766,7 @@ msgid "Stop impersonating"
 msgstr "ユーザー偽装を停止"
 
 #. js-lingui-id: lQeGNv
-#: src/modules/ai-chat/components/internal/SendMessageButton.tsx
+#: src/modules/ai-chat/composer/components/SendMessageButton.tsx
 msgid "Stop response"
 msgstr "応答を停止"
 
@@ -28756,9 +28933,9 @@ msgstr "subheading"
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
-#: src/modules/ai-chat/components/AiChatApprovalEmailReview.tsx
-#: src/modules/ai-chat/components/AiChatApprovalEmailReview.tsx
-#: src/modules/ai-chat/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Subject"
 msgstr "件名"
@@ -28784,7 +28961,7 @@ msgid "Subject, body and attachments will be shared with your team."
 msgstr "件名、本文、添付ファイルがチームと共有されます。"
 
 #. js-lingui-id: hQRttt
-#: src/modules/ai-chat/components/AiChatFormCardContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormCardContent.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormStepSubmitButton.tsx
@@ -28875,7 +29052,7 @@ msgid "subtitle"
 msgstr "subtitle"
 
 #. js-lingui-id: KAbcm2
-#: src/modules/ai-chat/components/AiChatApprovalOutcome.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalOutcome.tsx
 msgid "Succeeded"
 msgstr "成功"
 
@@ -28948,7 +29125,7 @@ msgid "Summary Not Available"
 msgstr "要約は利用できません"
 
 #. js-lingui-id: DBC3t5
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Sunday"
@@ -28990,7 +29167,7 @@ msgid "Surprised"
 msgstr "驚き"
 
 #. js-lingui-id: LbFYgh
-#: src/modules/ai-chat/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 msgid "Survives"
 msgstr "維持される"
 
@@ -29215,12 +29392,12 @@ msgstr "タブ {tabNumber}: {0}"
 #. js-lingui-id: OqZEsq
 #: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
 msgid "Tab actions"
-msgstr ""
+msgstr "タブの操作"
 
 #. js-lingui-id: FFaDQL
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
 msgid "Tab name"
-msgstr ""
+msgstr "タブ名"
 
 #. js-lingui-id: zr20ox
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -29335,7 +29512,7 @@ msgid "Teammate's email {0}"
 msgstr "チームメイトのメールアドレス {0}"
 
 #. js-lingui-id: g4mm2M
-#: src/modules/ai-chat/hooks/useAiChatEditor.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatEditor.ts
 #: src/modules/mention/hooks/useWorkspaceMemberMentionSearch.ts
 msgid "Teammates"
 msgstr "チームメイト"
@@ -29346,7 +29523,7 @@ msgid "Teammates see who you talk to, not what you write."
 msgstr "チームメイトには、誰と話しているかは表示されますが、書いた内容は表示されません。"
 
 #. js-lingui-id: XpPpz7
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalFeedbackInput.tsx
 msgid "Tell the agent what to change"
 msgstr "変更内容をエージェントに伝える"
 
@@ -29460,7 +29637,7 @@ msgid "Text Editor"
 msgstr "テキストエディタ"
 
 #. js-lingui-id: kv9l5H
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 msgid "That time is no longer available. Choose another time."
 msgstr "その時間は利用できなくなりました。別の時間を選択してください。"
 
@@ -29540,7 +29717,7 @@ msgid "The code of the Twenty partner who referred you"
 msgstr "紹介者である Twenty パートナーのコード"
 
 #. js-lingui-id: aXzQ65
-#: src/modules/ai-chat/components/AiChatCompactionIndicator.tsx
+#: src/modules/ai-chat/messages/components/AiChatCompactionIndicator.tsx
 msgid "The conversation has been compacted"
 msgstr "会話が圧縮されました"
 
@@ -29722,7 +29899,7 @@ msgid "The PDF is pre-signed by Twenty and executed with your legal entity and a
 msgstr "PDF は Twenty によって事前に署名され、お客様の法人および権限のある署名者との間で締結されます。"
 
 #. js-lingui-id: iz994T
-#: src/modules/ai-chat/components/AiChatApprovalMergeReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReview.tsx
 msgid "The priority record keeps its identity"
 msgstr "優先レコードはその識別情報を保持します"
 
@@ -30108,6 +30285,16 @@ msgstr "このアプリケーションの登録は、あなたのワークスペ
 msgid "This billing period"
 msgstr "この請求期間"
 
+#. js-lingui-id: YDcfdL
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "This browser cannot show notifications"
+msgstr ""
+
+#. js-lingui-id: 47wc2N
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "This browser could not turn on notifications"
+msgstr ""
+
 #. js-lingui-id: XkzBBX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "This call is being recorded…"
@@ -30151,7 +30338,7 @@ msgid "This connection does not exist or is not available for this application."
 msgstr "この接続は存在しないか、このアプリケーションでは利用できません。"
 
 #. js-lingui-id: HWM4G8
-#: src/modules/ai-chat/components/AiChatEditorSection.tsx
+#: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
 #: src/modules/ai-chat/hooks/useAiChatSubscription.ts
 msgid "This conversation is no longer available."
 msgstr "この会話はもう利用できません。"
@@ -30172,12 +30359,12 @@ msgid "This device"
 msgstr "このデバイス"
 
 #. js-lingui-id: GyVWfy
-#: src/modules/ai-chat/utils/getAiChatThreadSnoozeOptions.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 msgid "This evening"
 msgstr "今晩"
 
 #. js-lingui-id: i6mVT3
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
 msgid "This feature is part of the Organization plan"
 msgstr "この機能は Organization プランの一部です"
 
@@ -30348,7 +30535,7 @@ msgid "This record"
 msgstr "このレコード"
 
 #. js-lingui-id: Wf1hgt
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalRecord.tsx
 msgid "This record could not be loaded."
 msgstr "このレコードを読み込めませんでした。"
 
@@ -30358,19 +30545,14 @@ msgid "This record has been deleted"
 msgstr "このレコードは削除されました"
 
 #. js-lingui-id: CS0+Ao
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalRecord.tsx
 msgid "This record no longer exists or you cannot see it."
 msgstr "このレコードはすでに存在しないか、表示する権限がありません。"
 
 #. js-lingui-id: TG0qsx
-#: src/modules/ai-chat/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "This record will be deleted:"
 msgstr "このレコードは削除されます:"
-
-#. js-lingui-id: vbLBMd
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
-msgid "This role can {humanReadableAction} all records"
-msgstr "このロールはすべてのレコードに対して {humanReadableAction} できます"
 
 #. js-lingui-id: BifDEA
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -30536,8 +30718,18 @@ msgstr "three"
 msgid "Three columns side by side"
 msgstr "3 列を横に並べる"
 
+#. js-lingui-id: JayY0v
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "through {ruleCount} rules"
+msgstr ""
+
+#. js-lingui-id: AbJpHn
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "through 1 rule"
+msgstr ""
+
 #. js-lingui-id: kkDQ8m
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Thursday"
 msgstr "木曜日"
 
@@ -30567,7 +30759,7 @@ msgstr "時間形式"
 
 #. js-lingui-id: Mz2JN2
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 #: src/modules/settings/experience/components/DateTimeSettingsTimeZoneSelect.tsx
@@ -30652,7 +30844,7 @@ msgid "Title"
 msgstr "タイトル"
 
 #. js-lingui-id: dMtLDE
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "to"
 msgstr "宛先"
 
@@ -30679,7 +30871,7 @@ msgid "Today"
 msgstr "今日"
 
 #. js-lingui-id: TNXmKt
-#: src/modules/ai-chat/hooks/useFormatAiChatThreadDate.ts
+#: src/modules/ai-chat/threads/hooks/useFormatAiChatThreadDate.ts
 msgid "Today, {time}"
 msgstr "今日、{time}"
 
@@ -30709,11 +30901,6 @@ msgstr "{0} グループを切り替える"
 #: src/modules/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard.tsx
 msgid "Toggle all folders"
 msgstr "すべてのフォルダーを切り替え"
-
-#. js-lingui-id: XArpJK
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
-msgid "Toggle all object permissions"
-msgstr "全オブジェクトの権限を切り替える"
 
 #. js-lingui-id: MxmNZq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -30773,7 +30960,7 @@ msgid "Tomato"
 msgstr "トマト"
 
 #. js-lingui-id: BRMXj0
-#: src/modules/ai-chat/utils/getAiChatThreadSnoozeOptions.ts
+#: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "明日"
@@ -30998,6 +31185,7 @@ msgstr "翻訳"
 
 #. js-lingui-id: R3UKip
 #: src/modules/inbox/components/NavigationDrawerInboxTriageSection.tsx
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 msgid "Triage"
 msgstr "トリアージ"
 
@@ -31179,7 +31367,7 @@ msgstr "真/偽"
 
 #. js-lingui-id: KDw4GX
 #: src/modules/activities/emails/components/EmailsCardErrorState.tsx
-#: src/modules/ai-chat/components/AiChatSchedulingSlots.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingSlots.tsx
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
@@ -31216,7 +31404,7 @@ msgid "TTL"
 msgstr "TTL"
 
 #. js-lingui-id: G3myU+
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Tuesday"
 msgstr "火曜日"
 
@@ -31394,7 +31582,7 @@ msgid "Type anything..."
 msgstr "何でも入力..."
 
 #. js-lingui-id: SILT51
-#: src/modules/ai-chat/components/internal/AiChatQuestionOtherOption.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatQuestionOtherOption.tsx
 msgid "Type your own answer here"
 msgstr "ここに自分の回答を入力してください"
 
@@ -31462,8 +31650,8 @@ msgstr "未割り当て"
 #. js-lingui-id: jqzUyM
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
 #: src/modules/activities/emails/components/CampaignSentEnvelope.tsx
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Unavailable"
@@ -31515,7 +31703,7 @@ msgid "Undisplayed data: max {maxItems} slices per chart."
 msgstr "表示されていないデータ: チャートあたり最大 {maxItems} 個のスライス。"
 
 #. js-lingui-id: 9uI/rE
-#: src/modules/ai-chat/components/AiChatParticipantMentionBar.tsx
+#: src/modules/ai-chat/composer/components/AiChatParticipantMentionBar.tsx
 msgid "Undo"
 msgstr "元に戻す"
 
@@ -31530,7 +31718,7 @@ msgid "Unexpected error in cron expression parsing"
 msgstr "cron 式の解析中に予期しないエラーが発生しました"
 
 #. js-lingui-id: 6Y7jUZ
-#: src/modules/ai-chat/components/AiChatThreadFollowersField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
 msgid "Unfollow for me"
 msgstr "自分のフォローを解除"
 
@@ -31654,6 +31842,7 @@ msgstr "不明なエラー"
 
 #. js-lingui-id: IU3aCs
 #: src/modules/ai-chat/hooks/useGetBrowsingContext.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
 msgid "Unknown field"
 msgstr "不明なフィールド"
 
@@ -31668,7 +31857,7 @@ msgid "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
 msgstr "\"{relationFieldName}\"の不明なフィールド\"{fieldName}\""
 
 #. js-lingui-id: +K1Lj4
-#: src/modules/ai-chat/components/internal/AiChatFilePreview.tsx
+#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "不明なファイル"
 
@@ -31685,7 +31874,7 @@ msgstr "不明な解析エラー"
 
 #. js-lingui-id: lZSo+Q
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
-#: src/modules/ai-chat/utils/getAiChatMessageAuthor.ts
+#: src/modules/ai-chat/messages/utils/getAiChatMessageAuthor.ts
 msgid "Unknown sender"
 msgstr "不明な送信者"
 
@@ -31863,12 +32052,12 @@ msgid "Unsubscribed"
 msgstr "配信停止済み"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/ai-chat/components/AiChatThreadStatusNotice.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "{eventTime} に購読解除しました。メンションされない限り、新しいメッセージは受信トレイに表示されません。"
 
 #. js-lingui-id: 7fkcOT
-#: src/modules/ai-chat/components/AiChatThreadActivityTime.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadActivityTime.tsx
 msgid "Unsubscribed {unsubscribedTime}"
 msgstr "{unsubscribedTime} に購読解除"
 
@@ -31883,12 +32072,12 @@ msgid "Unsupported image format"
 msgstr "サポートされていない画像形式です"
 
 #. js-lingui-id: I9zMVO
-#: src/modules/ai-chat/components/AiChatThreadActivityTime.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadActivityTime.tsx
 msgid "Until {snoozedUntilDay}"
 msgstr "{snoozedUntilDay} まで"
 
 #. js-lingui-id: wja8aL
-#: src/modules/ai-chat/components/AiChatThreadTitle.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadTitle.tsx
 #: src/modules/inbox/components/InboxThreadListItem.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/components/LogConsoleRecordCell.tsx
@@ -31991,7 +32180,6 @@ msgstr "次回の実行時刻({timeZone})"
 
 #. js-lingui-id: Y8zko3
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "update"
 msgstr "更新"
 
@@ -32016,12 +32204,12 @@ msgid "Update {contextStoreNumberOfSelectedRecords} records"
 msgstr "{contextStoreNumberOfSelectedRecords} 件のレコードを更新"
 
 #. js-lingui-id: AHNNTF
-#: src/modules/ai-chat/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Update {recordCount} {objectLabel}"
 msgstr "{recordCount}件の{objectLabel}を更新する"
 
 #. js-lingui-id: ECfdor
-#: src/modules/ai-chat/components/AiChatRecordApprovalDeck.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatRecordApprovalDeck.tsx
 msgid "Update {selectedCount}"
 msgstr "{selectedCount}件を更新する"
 
@@ -32138,7 +32326,7 @@ msgstr "更新中..."
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
 msgid "Upgrade"
 msgstr "アップグレード"
 
@@ -32196,7 +32384,7 @@ msgid "Upgrade to {planLabel}?"
 msgstr "{planLabel} にアップグレード?"
 
 #. js-lingui-id: ggd+Ee
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
 msgid "Upgrade to access"
 msgstr "アクセスするにはアップグレードしてください"
 
@@ -33014,12 +33202,12 @@ msgid "View not shared"
 msgstr "ビューは共有されていません"
 
 #. js-lingui-id: K946OL
-#: src/modules/ai-chat/components/AiChatEditorSection.tsx
+#: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
 msgid "View only — You can read this conversation."
 msgstr "閲覧のみ — この会話を読むことができます。"
 
 #. js-lingui-id: lD7M9Z
-#: src/modules/ai-chat/components/AiChatMessageReplyQuote.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReplyQuote.tsx
 msgid "View original message"
 msgstr "元のメッセージを表示"
 
@@ -33167,7 +33355,7 @@ msgid "Waiting Children"
 msgstr "待機中の子供"
 
 #. js-lingui-id: 7YxIQV
-#: src/modules/ai-chat/components/AiChatFormStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatFormStatusRenderer.tsx
 msgid "Waiting for a form to be filled in"
 msgstr "フォームへの入力待ち"
 
@@ -33182,7 +33370,7 @@ msgid "Waiting for permission"
 msgstr "権限を待機中"
 
 #. js-lingui-id: /gO/m8
-#: src/modules/ai-chat/components/AiChatToolCallApprovalStatusRenderer.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer.tsx
 msgid "Waiting for your approval"
 msgstr "承認待ち"
 
@@ -33465,7 +33653,7 @@ msgid "Websites whose iframe widgets can ask members for their microphone or cam
 msgstr "iframe ウィジェットがメンバーにマイクまたはカメラへのアクセスを求めることができるウェブサイト。変更はページを再読み込みした後に適用されます。"
 
 #. js-lingui-id: VAcXNz
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Wednesday"
 msgstr "水曜日"
 
@@ -33528,6 +33716,11 @@ msgstr "ようこそ、{workspaceName}。"
 msgid "What {applicationName} adds to your workspace"
 msgstr "{applicationName} がワークスペースに追加するもの"
 
+#. js-lingui-id: 256yw5
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "What {roleLabel} can do on {objectLabelPlural} matching this rule."
+msgstr ""
+
 #. js-lingui-id: 1rpyKy
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "What AI model should your agent run on"
@@ -33589,8 +33782,13 @@ msgstr "このエージェントは任務のためにどのツールを使用で
 msgid "Whatsapp"
 msgstr "WhatsApp"
 
+#. js-lingui-id: 1ZF9KQ
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionLogicalOperatorCell.tsx
+msgid "When"
+msgstr ""
+
 #. js-lingui-id: 8ssTdk
-#: src/modules/ai-chat/components/AiChatSnoozeMenu.tsx
+#: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
 msgid "When {assistantName} finishes"
 msgstr "{assistantName} が完了したとき"
 
@@ -33657,7 +33855,6 @@ msgstr "トライアル終了後、{priceLabel} が請求されます。"
 #. js-lingui-id: YvwwqC
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell.tsx
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelLogicalOperatorCell.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOperatorCell.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell.tsx
 msgid "Where"
 msgstr "条件"
@@ -33681,6 +33878,12 @@ msgstr "サーバーの場所"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Whether this model supports chain-of-thought reasoning"
 msgstr "このモデルが Chain-of-Thought（思考の連鎖）による推論をサポートするかどうか"
+
+#. js-lingui-id: 5WnHkc
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
+msgid "Which {objectLabelPlural} this rule applies to. Me is the person viewing."
+msgstr ""
 
 #. js-lingui-id: UbN9B0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -33889,22 +34092,22 @@ msgid "Workflows, functions and agents that act for your team."
 msgstr "チームのために動作するワークフロー、関数、エージェント。"
 
 #. js-lingui-id: OskBrZ
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Working days"
 msgstr "稼働日"
 
 #. js-lingui-id: zBOlTP
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Working hours"
 msgstr "勤務時間"
 
 #. js-lingui-id: Gfrltr
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Working hours end"
 msgstr "勤務終了時刻"
 
 #. js-lingui-id: LYfzu/
-#: src/modules/ai-chat/components/AiChatSchedulingPreferences.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Working hours start"
 msgstr "勤務開始時刻"
 
@@ -33933,7 +34136,6 @@ msgstr "勤務開始時刻"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
@@ -33991,7 +34193,6 @@ msgstr "勤務開始時刻"
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
-#: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -34183,7 +34384,7 @@ msgid "Write a message"
 msgstr "メッセージを書く"
 
 #. js-lingui-id: PxYBOj
-#: src/modules/ai-chat/hooks/useAiChatEditor.ts
+#: src/modules/ai-chat/composer/hooks/useAiChatEditor.ts
 msgid "Write a message..."
 msgstr "メッセージを入力…"
 
@@ -34198,7 +34399,7 @@ msgid "Write some instructions"
 msgstr "指示を入力してください"
 
 #. js-lingui-id: P28Nzv
-#: src/modules/ai-chat/components/AiChatApprovalEmailReview.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatApprovalEmailReview.tsx
 msgid "Write the email"
 msgstr "メールを作成"
 
@@ -34248,7 +34449,7 @@ msgid "year"
 msgstr "年"
 
 #. js-lingui-id: 3PAU4M
-#: src/modules/ai-chat/components/AiChatTimePickerCard.tsx
+#: src/modules/ai-chat/tool-calls/components/AiChatTimePickerCard.tsx
 #: src/modules/getting-started/components/GettingStartedBookCallAction.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityLabel.ts
 #: src/modules/ui/input/components/internal/date/components/DatePickerCalendar.tsx
@@ -34309,8 +34510,8 @@ msgstr "昨日"
 
 #. js-lingui-id: kWJmRL
 #: src/modules/activities/timeline-activities/utils/getTimelineActivityAuthorFullName.ts
-#: src/modules/ai-chat/components/AiChatComposerQuote.tsx
-#: src/modules/ai-chat/components/AiChatMessageReplyQuote.tsx
+#: src/modules/ai-chat/composer/components/AiChatComposerQuote.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageReplyQuote.tsx
 #: src/modules/ai-chat/utils/getAiChatSenderLabel.ts
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
@@ -34492,6 +34693,8 @@ msgstr "カードは保存されましたが、支払いには引き続き対応
 #. js-lingui-id: OD3Fzl
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerConnectionsSection.tsx
+#: src/modules/settings/mcp-servers/components/SettingsMcpServerSignInSection.tsx
 msgid "Your connections could not be loaded. Check your connection and try again."
 msgstr "接続を読み込めませんでした。接続を確認して、もう一度お試しください。"
 
@@ -34531,7 +34734,7 @@ msgid "Your handler receives this object. The body is empty because GET requests
 msgstr "ハンドラーはこのオブジェクトを受け取ります。GET リクエストはペイロードを持たないため、body は空です。"
 
 #. js-lingui-id: HCqgJ0
-#: src/modules/ai-chat/components/AiChatThreadStatusField.tsx
+#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 msgid "Your inbox"
 msgstr "あなたの受信トレイ"
 

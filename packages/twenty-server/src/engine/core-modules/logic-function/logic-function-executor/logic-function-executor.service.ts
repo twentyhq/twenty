@@ -48,6 +48,7 @@ import { buildLogicFunctionErrorLogLine } from 'src/engine/core-modules/logic-fu
 import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
 import { buildLogicFunctionRunMetricEvent } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-run-metric-event.util';
 import { buildWorkflowCodeStepFlatLogicFunction } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-workflow-code-step-flat-logic-function.util';
+import { isLogicFunctionRetryScheduled } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/is-logic-function-retry-scheduled.util';
 import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
 import { SERVER_ROUTE_PATH } from 'src/engine/core-modules/server-route-trigger/constants/server-route-path.constant';
 import {
@@ -368,6 +369,7 @@ export class LogicFunctionExecutorService {
 
     await this.handleExecutionResult({
       result: resultLogicFunction,
+      retry,
       flatApplication,
       flatLogicFunction,
       workspaceId,
@@ -707,12 +709,14 @@ export class LogicFunctionExecutorService {
 
   private async handleExecutionResult({
     result,
+    retry,
     flatApplication,
     flatLogicFunction,
     workspaceId,
     spenders,
   }: {
     result: LogicFunctionExecuteResult;
+    retry: LogicFunctionRetryContext;
     workspaceId: string;
     flatLogicFunction: FlatLogicFunction;
     flatApplication: FlatApplication;
@@ -720,10 +724,20 @@ export class LogicFunctionExecutorService {
   }) {
     const executionId = v4();
 
+    const isRetryScheduled = isLogicFunctionRetryScheduled({
+      error: result.error,
+      retry,
+    });
+
     const logLines = [
       ...parseApplicationLogLines(result.logs),
       ...(isDefined(result.error)
-        ? [buildLogicFunctionErrorLogLine(result.error)]
+        ? [
+            buildLogicFunctionErrorLogLine({
+              error: result.error,
+              isRetryScheduled,
+            }),
+          ]
         : []),
     ];
 
@@ -745,6 +759,7 @@ export class LogicFunctionExecutorService {
     void this.eventLogEmitterService.recordApplicationMetricEvents([
       buildLogicFunctionRunMetricEvent({
         result,
+        isRetryScheduled,
         flatApplication,
         flatLogicFunction,
         workspaceId,

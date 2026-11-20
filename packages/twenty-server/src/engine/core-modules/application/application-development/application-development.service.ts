@@ -107,6 +107,7 @@ export class ApplicationDevelopmentService {
     shouldIncludeDependencies,
     shouldIncludeSourceFiles,
     shouldIncludeSourceDependencies,
+    shouldIncludeLogicFunctionSources,
     shouldIncludePublicAssets,
   }: {
     universalIdentifier: string;
@@ -114,6 +115,7 @@ export class ApplicationDevelopmentService {
     shouldIncludeDependencies?: boolean;
     shouldIncludeSourceFiles?: boolean;
     shouldIncludeSourceDependencies?: boolean;
+    shouldIncludeLogicFunctionSources?: boolean;
     shouldIncludePublicAssets?: boolean;
   }): Promise<ApplicationExport> {
     return this.applicationManifestExportService.exportApplication({
@@ -122,6 +124,7 @@ export class ApplicationDevelopmentService {
       shouldIncludeDependencies,
       shouldIncludeSourceFiles,
       shouldIncludeSourceDependencies,
+      shouldIncludeLogicFunctionSources,
       shouldIncludePublicAssets,
     });
   }
@@ -176,7 +179,7 @@ export class ApplicationDevelopmentService {
         workspaceCustomApplicationId,
       });
 
-    if (dryRun === true) {
+    if (dryRun) {
       const { workspaceMigration, cascadeDeletionParentByUniversalIdentifier } =
         await this.applicationSyncService.synchronizeFromManifest({
           workspaceId,

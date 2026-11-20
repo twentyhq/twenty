@@ -11,7 +11,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { AiChatSentMessageHandOffEffect } from '@/ai-chat/composer/components/AiChatSentMessageHandOffEffect';
-import { aiChatSentMessageHandOffState } from '@/ai-chat/composer/states/aiChatSentMessageHandOffState';
+import { aiChatSentMessageHandOffState } from '@/ai-chat/states/aiChatSentMessageHandOffState';
 import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai-chat/constants/AiChatSendMessageEventName';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import {

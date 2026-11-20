@@ -17,6 +17,7 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
   viewUniversalIdentifier,
   position,
   navigationMenuItemId,
+  parent,
   dependencyFlatEntityMaps: { flatViewMaps },
   twentyStandardApplicationId,
   now,
@@ -26,6 +27,7 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
   viewUniversalIdentifier: string;
   position: number;
   navigationMenuItemId: string;
+  parent?: Pick<FlatNavigationMenuItem, 'id' | 'universalIdentifier'>;
   dependencyFlatEntityMaps: {
     flatViewMaps: FlatEntityMaps<FlatView>;
   };
@@ -71,8 +73,8 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
       : null,
     viewId: isObjectType ? null : flatView.id,
     viewUniversalIdentifier: isObjectType ? null : flatView.universalIdentifier,
-    parentId: null,
-    parentUniversalIdentifier: null,
+    parentId: parent?.id ?? null,
+    parentUniversalIdentifier: parent?.universalIdentifier ?? null,
     pageLayoutId: null,
     pageLayoutUniversalIdentifier: null,
     agentChatChannelId: null,
@@ -84,11 +86,14 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
     name: null,
     link: null,
     nativePageKey: null,
+    builtInSectionKey: null,
     icon: null,
     color:
       STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS[navigationMenuItemName] ??
       null,
     position,
+    isActive: true,
+    overrides: null,
     createdAt: now,
     updatedAt: now,
   };

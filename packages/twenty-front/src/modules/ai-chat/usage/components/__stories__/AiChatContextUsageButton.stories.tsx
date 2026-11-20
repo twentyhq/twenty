@@ -11,7 +11,6 @@ import {
   aiChatUsageFamilyState,
   type AiChatUsageState,
 } from '@/ai-chat/usage/states/aiChatUsageFamilyState';
-import { aiChatTestInstanceThreadIdState } from '@/ai-chat/testing/aiChatTestInstanceThreadIdState';
 import { type AiChatUserCreditsUsage } from '@/ai-chat/usage/types/AiChatUserCreditsUsage';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
@@ -60,7 +59,6 @@ const UsageStory = ({
 }) => {
   const [store] = useState(() => {
     const storyStore = createStore();
-    storyStore.set(aiChatTestInstanceThreadIdState.atom, 'story-thread');
     storyStore.set(currentWorkspaceState.atom, {
       ...mockCurrentWorkspace,
       billingCustomer: { id: 'billing-customer', userCreditsFallback },
@@ -73,7 +71,7 @@ const UsageStory = ({
   });
   return (
     <Provider store={store}>
-      <AiChatTestInstance>
+      <AiChatTestInstance threadId="story-thread">
         <MockedProvider
           mocks={[
             {

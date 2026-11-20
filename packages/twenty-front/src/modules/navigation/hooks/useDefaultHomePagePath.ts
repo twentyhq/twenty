@@ -38,7 +38,9 @@ export const useDefaultHomePagePath = () => {
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
-  const navigationMenuItemsInDisplayOrder = useNavigationMenuItemSectionItems();
+  const navigationMenuItemsInDisplayOrder = useNavigationMenuItemSectionItems({
+    shouldFlattenTopLevelSections: true,
+  });
 
   const readableNonSystemObjectMetadataItems = useMemo(
     () =>

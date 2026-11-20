@@ -8,11 +8,11 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
 
 import { ThinkingStepRowLayout } from '@/ai-chat/thinking-steps/components/ThinkingStepRowLayout';
-import { ToolRecordsWidget } from '@/ai-chat/tool-calls/components/ToolRecordsWidget';
+import { ToolRecordsWidget } from '@/ai-chat/thinking-steps/components/ToolRecordsWidget';
 import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
 import { getThinkingStepLabel } from '@/ai-chat/thinking-steps/utils/getThinkingStepLabel';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
-import { getToolRecordOutput } from '@/ai-chat/tool-calls/utils/getToolRecordOutput';
+import { getToolRecordOutput } from '@/ai-chat/thinking-steps/utils/getToolRecordOutput';
 import { unwrapToolInput } from '@/ai/utils/tool-display/unwrapToolInput';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';

@@ -28,6 +28,7 @@ const getViewsInputSchema = z.object({
 
 @DefineTool({
   name: 'get_views',
+  isReadOnly: true,
   category: ToolCategory.VIEW,
   accessPolicy: VIEW_READ_ACCESS_POLICY,
   description:

@@ -10,7 +10,7 @@ import { AiChatAssistantAvatar } from '@/ai-chat/components/AiChatAssistantAvata
 import { getAiChatSuggestedPrompts } from '@/ai-chat/suggested-prompts/utils/getAiChatSuggestedPrompts';
 import { useAiChatSuggestedPromptsContext } from '@/ai-chat/suggested-prompts/hooks/useAiChatSuggestedPromptsContext';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
-import { useStageAiChatPreprompt } from '@/ai-chat/composer/hooks/useStageAiChatPreprompt';
+import { useStageAiChatPreprompt } from '@/ai-chat/hooks/useStageAiChatPreprompt';
 import { type SuggestedPrompt } from '@/ai-chat/suggested-prompts/types/SuggestedPrompt';
 
 const StyledContainer = styled.div<{ isCentered: boolean }>`

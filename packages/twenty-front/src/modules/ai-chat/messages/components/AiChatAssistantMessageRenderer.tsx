@@ -15,7 +15,7 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useFrontComponentIdByToolName } from '@/ai-chat/tool-calls/hooks/useFrontComponentIdByToolName';
 import { getEffectiveToolName } from '@/ai-chat/tool-calls/utils/getEffectiveToolName';
 import { shouldToolPartRenderStandalone } from '@/ai-chat/tool-calls/utils/shouldToolPartRenderStandalone';
-import { groupContiguousThinkingStepParts } from '@/ai-chat/thinking-steps/utils/groupContiguousThinkingStepParts';
+import { groupContiguousThinkingStepParts } from '@/ai-chat/messages/utils/groupContiguousThinkingStepParts';
 import { isEmptyReasoningPart } from '@/ai-chat/thinking-steps/utils/isEmptyReasoningPart';
 import { isHiddenCompleteWorkspaceSetupToolPart } from '@/ai-chat/workspace-setup/utils/isHiddenCompleteWorkspaceSetupToolPart';
 import { styled } from '@linaria/react';

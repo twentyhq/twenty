@@ -1,4 +1,4 @@
-import { type ChatReferenceKind } from '@/ai-chat/message-content/types/ChatReferenceKind';
+import { type ChatReferenceKind } from 'twenty-shared/ai';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const CHAT_REFERENCE_PERMISSION_FLAG_BY_KIND: Partial<

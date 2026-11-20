@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { validate as uuidValidate } from 'uuid';
 
-import { decodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import { decodeCursor } from 'src/engine/api/common/utils/cursors.util';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type CursorPagingInput } from 'src/engine/metadata-modules/pagination/dtos/cursor-paging.input';
 import { type MetadataCursorPagination } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-pagination.type';

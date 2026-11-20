@@ -12,6 +12,7 @@ import { updateObjectMetadataInputSchema } from 'src/engine/metadata-modules/obj
 
 @DefineTool({
   name: 'update_object_metadata',
+  isDestructive: true,
   category: ToolCategory.METADATA,
   accessPolicy: OBJECT_METADATA_WRITE_ACCESS_POLICY,
   icon: 'IconSettings',

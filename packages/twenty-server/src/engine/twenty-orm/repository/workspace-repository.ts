@@ -18,7 +18,7 @@ import {
   UpdateResult,
 } from 'typeorm';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isRecordStockTrackedObject } from 'src/engine/core-modules/usage-limit/utils/is-record-stock-tracked-object.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -1681,10 +1681,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       });
     }
 
+    const writtenRecordIds = mutationResult.generatedMaps
+      .map((record) => record.id)
+      .filter(isNonEmptyString);
+
     await this.recomputeRecordAccessGroupIdsAfterWrite({
-      writtenRecordIds: mutationResult.generatedMaps
-        .map((record) => record.id)
-        .filter(isNonEmptyString),
+      writtenRecordIds,
       isRecomputingWrittenRecords: kind === 'update',
       recordsBefore,
       updatedColumnNames: isDefined(setColumns)
@@ -1704,11 +1706,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
             noFormatting: true,
           });
 
+    const writtenRecordIdSet = new Set(writtenRecordIds);
+
     const recordsAfter =
       kind === 'update' && isDefined(setColumns)
         ? mergeReturnedUpdateTimestamps(
             mergeRecordsWithUpdateValues(
-              getUpdateEventRecords(recordsBefore, recordsAfterWrite ?? []),
+              getUpdateEventRecords(
+                recordsBefore.filter(({ id }) => writtenRecordIdSet.has(id)),
+                recordsAfterWrite ?? [],
+              ),
               setColumns,
             ),
             mutationResult.generatedMaps,

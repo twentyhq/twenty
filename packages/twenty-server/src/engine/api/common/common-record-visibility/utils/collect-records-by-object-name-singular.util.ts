@@ -5,7 +5,6 @@ import { type CommonSelection } from 'src/engine/api/common/types/common-selecti
 import { getRelationSelectionEntries } from 'src/engine/api/common/utils/get-relation-selection-entries.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -72,31 +71,27 @@ export const collectRecordsByObjectNameSingular = ({
 
       const fieldId = fieldIdByName[relationSelection.fieldName];
 
+      const relationTargetObjectMetadataId = isDefined(fieldId)
+        ? findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: fieldId,
+            flatEntityMaps: flatFieldMetadataMaps,
+          })?.relationTargetObjectMetadataId
+        : undefined;
+
+      const targetObjectMetadata = isDefined(relationTargetObjectMetadataId)
+        ? findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: relationTargetObjectMetadataId,
+            flatEntityMaps: flatObjectMetadataMaps,
+          })
+        : undefined;
+
       // Rows under a relation nobody can resolve would skip the visibility check
-      if (!isDefined(fieldId)) {
+      if (!isDefined(targetObjectMetadata)) {
         throw new CommonQueryRunnerException(
-          `Relation field ${relationSelection.fieldName} not found on ${objectMetadata.nameSingular}`,
+          `Target object of relation ${relationSelection.fieldName} on ${objectMetadata.nameSingular} not found`,
           CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,
           { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
         );
-      }
-
-      const relationField = findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: fieldId,
-        flatEntityMaps: flatFieldMetadataMaps,
-      });
-
-      if (!isDefined(relationField.relationTargetObjectMetadataId)) {
-        continue;
-      }
-
-      const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: relationField.relationTargetObjectMetadataId,
-        flatEntityMaps: flatObjectMetadataMaps,
-      });
-
-      if (!isDefined(targetObjectMetadata)) {
-        continue;
       }
 
       const relationRecords: ObjectRecord[] = Array.isArray(relationValue)

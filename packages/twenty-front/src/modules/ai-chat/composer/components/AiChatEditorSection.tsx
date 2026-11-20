@@ -23,7 +23,7 @@ import { AiChatAddMenu } from '@/ai-chat/composer/components/AiChatAddMenu';
 import { AiChatDictationButton } from '@/ai-chat/dictation/components/AiChatDictationButton';
 import { AiChatDictationEffect } from '@/ai-chat/dictation/components/AiChatDictationEffect';
 import { AiChatDictationHint } from '@/ai-chat/dictation/components/AiChatDictationHint';
-import { AiChatComposerActionsRow } from '@/ai-chat/composer/components/AiChatComposerActionsRow';
+import { AiChatComposerActionsRow } from '@/ai-chat/components/AiChatComposerActionsRow';
 import { AiChatContextUsageButton } from '@/ai-chat/usage/components/AiChatContextUsageButton';
 import { AiChatEditorFocusEffect } from '@/ai-chat/composer/components/AiChatEditorFocusEffect';
 import { AiChatEditorDraftSyncEffect } from '@/ai-chat/composer/components/AiChatEditorDraftSyncEffect';
@@ -220,9 +220,7 @@ const EditableAiChatEditorSection = () => {
         isCentered={isComposerCentered}
         hasPageContentInset={hasPageContentInset}
       >
-        {isComposerCentered && !isDirectMessage && (
-          <AiChatEmptyState isCentered />
-        )}
+        {isComposerCentered && <AiChatEmptyState isCentered />}
         {!isDirectMessage && <AiChatContextPreview />}
         {hasNoEnabledModels && !isDirectMessage && (
           <AiChatInlineBanner>{t`No AI provider is configured on this instance.`}</AiChatInlineBanner>

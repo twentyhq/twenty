@@ -113,12 +113,16 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       name: createNavigationMenuItemInput.name ?? null,
       link: createNavigationMenuItemInput.link ?? null,
       nativePageKey: createNavigationMenuItemInput.nativePageKey ?? null,
+      builtInSectionKey:
+        createNavigationMenuItemInput.builtInSectionKey ?? null,
       icon: createNavigationMenuItemInput.icon ?? null,
       color: createNavigationMenuItemInput.color ?? null,
       position,
       workspaceId,
       applicationId: flatApplication.id,
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
+      isActive: true,
+      overrides: null,
       createdAt: now,
       updatedAt: now,
     };

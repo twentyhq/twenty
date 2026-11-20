@@ -1,10 +1,9 @@
 import { useId, useState } from 'react';
 import { Section } from 'twenty-ui/components/layout';
+import { Field, Input } from 'twenty-ui/primitives/input';
 
 import { CameraTileStylePicker } from 'src/front-components/components/CameraTileStylePicker';
-import { LabelledSettingsField } from 'src/front-components/components/LabelledSettingsField';
 import { StyledSettingsSectionStack } from 'src/front-components/components/StyledSettingsSectionStack';
-import { StyledSettingsTextInput } from 'src/front-components/components/StyledSettingsTextInput';
 import {
   CALL_RECORDER_NAME_FIELD,
   CALL_RECORDER_STYLE_DESCRIPTIONS,
@@ -25,7 +24,6 @@ const getInitialStyle = (): CallRecorderStyle => {
 };
 
 export const RecorderSection = () => {
-  const nameInputId = useId();
   const styleLabelId = useId();
   const [nameValue, setNameValue] = useState(() =>
     getApplicationVariableValue(CALL_RECORDER_NAME_FIELD.variableKey),
@@ -61,32 +59,30 @@ export const RecorderSection = () => {
         description="How the recorder appears when it joins your meetings."
       />
       <StyledSettingsSectionStack>
-        <LabelledSettingsField
-          label={CALL_RECORDER_NAME_FIELD.label}
-          inputId={nameInputId}
-          hint={CALL_RECORDER_NAME_FIELD.hint}
-        >
-          <StyledSettingsTextInput
-            id={nameInputId}
-            type="text"
+        <Field.Root>
+          <Field.Label>{CALL_RECORDER_NAME_FIELD.label}</Field.Label>
+          <Input
             autoComplete="off"
             placeholder="Value"
             value={nameValue}
-            onChange={(event) => handleNameChange(event.target.value)}
+            onValueChange={handleNameChange}
             onBlur={() => saveNameDebounced.flush()}
           />
-        </LabelledSettingsField>
-        <LabelledSettingsField
-          label={CALL_RECORDER_STYLE_FIELD.label}
-          labelId={styleLabelId}
-          hint={`${CALL_RECORDER_STYLE_DESCRIPTIONS[style]} ${CALL_RECORDER_STYLE_FIELD.hint}`}
-        >
+          <Field.Description>{CALL_RECORDER_NAME_FIELD.hint}</Field.Description>
+        </Field.Root>
+        <Field.Root>
+          <Field.Label id={styleLabelId}>
+            {CALL_RECORDER_STYLE_FIELD.label}
+          </Field.Label>
           <CameraTileStylePicker
             labelId={styleLabelId}
             value={style}
             onChange={handleStyleChange}
           />
-        </LabelledSettingsField>
+          <Field.Description>
+            {`${CALL_RECORDER_STYLE_DESCRIPTIONS[style]} ${CALL_RECORDER_STYLE_FIELD.hint}`}
+          </Field.Description>
+        </Field.Root>
       </StyledSettingsSectionStack>
     </Section.Root>
   );
