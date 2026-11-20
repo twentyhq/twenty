@@ -9,12 +9,14 @@ import { type ConditionalAvailabilityNode } from '@/conditional-availability/typ
 import { typedObjectEntries } from '@/utils/typed-object-entries';
 import { isDefined } from '@/utils/validation/isDefined';
 
-const toComparisonOperator = (
-  symbol: string,
-): ConditionalAvailabilityComparisonOperator | null =>
+const COMPARISON_OPERATOR_BY_SYMBOL = new Map<
+  string,
+  ConditionalAvailabilityComparisonOperator
+>(
   typedObjectEntries(
     CONDITIONAL_AVAILABILITY_SYMBOL_BY_COMPARISON_OPERATOR,
-  ).find(([, operatorSymbol]) => operatorSymbol === symbol)?.[0] ?? null;
+  ).map(([comparisonOperator, symbol]) => [symbol, comparisonOperator]),
+);
 
 const toLogicalOperator = (
   symbol: string,
@@ -49,7 +51,7 @@ const toBinaryNode = ({
   left: ConditionalAvailabilityNode;
   right: ConditionalAvailabilityNode;
 }): ConditionalAvailabilityNode | null => {
-  const comparisonOperator = toComparisonOperator(symbol);
+  const comparisonOperator = COMPARISON_OPERATOR_BY_SYMBOL.get(symbol);
 
   if (isDefined(comparisonOperator)) {
     return { type: 'COMPARISON', operator: comparisonOperator, left, right };

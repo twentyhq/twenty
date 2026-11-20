@@ -27,12 +27,17 @@ const printGroupChild = ({
 }: {
   node: ConditionalAvailabilityNode;
   logicalOperator: ConditionalAvailabilityLogicalOperator;
-}): string =>
-  node.type === 'GROUP' &&
-  node.children.length > 1 &&
-  node.logicalOperator !== logicalOperator
-    ? printInParentheses(node)
-    : printConditionalAvailabilityNode({ node });
+}): string => {
+  if (
+    node.type === 'GROUP' &&
+    node.children.length > 1 &&
+    node.logicalOperator !== logicalOperator
+  ) {
+    return printInParentheses(node);
+  }
+
+  return printConditionalAvailabilityNode({ node });
+};
 
 export const printConditionalAvailabilityNode = ({
   node,
