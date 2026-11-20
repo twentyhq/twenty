@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { type EntityManager } from 'typeorm';
 
@@ -526,7 +527,8 @@ export class AgentChatThreadParticipantService {
   }
 
   // Over the chats the member can open and follows, the way the inbox lists
-  // them
+  // them. Direct messages stay out of the triage counts but still count as
+  // unread, which lights the Inbox tab
   async findOpenThreadsSummary({
     workspaceId,
     workspaceMemberId,
@@ -555,6 +557,7 @@ export class AgentChatThreadParticipantService {
             '"thread"."pendingQuestionMessageId"',
             'pendingQuestionMessageId',
           )
+          .addSelect('"thread"."conversationType"', 'conversationType')
           .applyRowLevelPermissions();
 
         return repository.executeRaw<
@@ -564,17 +567,21 @@ export class AgentChatThreadParticipantService {
           >
         >(
           `WITH open_thread AS (
-             SELECT thread."assigneeId", thread."pendingQuestionMessageId", ${AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE} AS "hasUnresolvedMention",
+             SELECT thread."assigneeId", thread."pendingQuestionMessageId", thread."conversationType", ${AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE} AS "hasUnresolvedMention",
                thread."lastActivityAt" IS NOT NULL
                  AND (participant."lastReadAt" IS NULL OR thread."lastActivityAt" > participant."lastReadAt") AS "isUnread"
              FROM (${readableThreads.getQuery()}) thread
              JOIN ${getAgentChatThreadParticipantTable(workspaceId)} participant
                ON participant."threadId" = thread.id AND participant."workspaceMemberId" = :summaryWorkspaceMemberId
              WHERE ${IS_IN_INBOX}
+           ),
+           triage_thread AS (
+             SELECT * FROM open_thread
+             WHERE "conversationType" <> '${AgentChatThreadConversationType.DIRECT_MESSAGE}'
            )
            SELECT
              COUNT(*)::int AS "openThreadCount",
-             COUNT(*) FILTER (WHERE "isUnread")::int AS "unreadOpenThreadCount",
+             (SELECT COUNT(*) FROM open_thread WHERE "isUnread")::int AS "unreadOpenThreadCount",
              COUNT("pendingQuestionMessageId")::int AS "needsInputThreadCount",
              COUNT(*) FILTER (WHERE "hasUnresolvedMention")::int AS "mentionThreadCount",
              COUNT(*) FILTER (WHERE "assigneeId" = :summaryWorkspaceMemberId)::int AS "assignedToMeThreadCount",
@@ -583,7 +590,7 @@ export class AgentChatThreadParticipantService {
              COALESCE(BOOL_OR("isUnread"), false) AS "hasUnreadOpenThread",
              COALESCE(BOOL_OR("isUnread" AND "hasUnresolvedMention"), false) AS "hasUnreadMentionThread",
              COALESCE(BOOL_OR("isUnread" AND "assigneeId" = :summaryWorkspaceMemberId), false) AS "hasUnreadAssignedThread"
-           FROM open_thread`,
+           FROM triage_thread`,
           {
             ...readableThreads.getParameters(),
             summaryWorkspaceMemberId: workspaceMemberId,

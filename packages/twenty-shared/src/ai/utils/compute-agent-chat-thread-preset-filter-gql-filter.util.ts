@@ -1,18 +1,20 @@
 import { type AgentChatThreadPresetFilter } from '@/ai/constants/agent-chat-thread-preset-filter.const';
+import { AgentChatThreadConversationType } from '@/ai/types/AgentChatThreadConversationType';
 import { type RecordGqlOperationFilter } from '@/types/RecordGqlOperationFilter';
 
 const throughParticipants = (
   participantFilter: RecordGqlOperationFilter,
 ): RecordGqlOperationFilter => ({ participants: participantFilter });
 
-// Keep in sync with getAgentChatThreadInboxStatus, which places loaded chats on the client
-export const computeAgentChatThreadPresetFilterGqlFilter = ({
-  presetFilter,
-  workspaceMemberId,
-}: {
+type PresetFilterArgs = {
   presetFilter: AgentChatThreadPresetFilter;
   workspaceMemberId: string;
-}): RecordGqlOperationFilter => {
+};
+
+const computeMemberInboxStateFilter = ({
+  presetFilter,
+  workspaceMemberId,
+}: PresetFilterArgs): RecordGqlOperationFilter => {
   const memberParticipant = { workspaceMemberId: { eq: workspaceMemberId } };
   const subscribedParticipant = {
     ...memberParticipant,
@@ -94,3 +96,13 @@ export const computeAgentChatThreadPresetFilterGqlFilter = ({
       };
   }
 };
+
+// Direct messages are listed in their own sidebar section, never in triage.
+// Keep in sync with getAgentChatThreadInboxStatus and
+// isAgentChatThreadInPresetFilter, which place loaded chats on the client
+export const computeAgentChatThreadPresetFilterGqlFilter = (
+  args: PresetFilterArgs,
+): RecordGqlOperationFilter => ({
+  conversationType: { neq: AgentChatThreadConversationType.DIRECT_MESSAGE },
+  ...computeMemberInboxStateFilter(args),
+});
