@@ -13,6 +13,8 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AgentChatOpenThreadsSummaryDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-open-threads-summary.dto';
 import { AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
 import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
+import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
+import { AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -47,6 +49,7 @@ export class AgentChatThreadParticipantResolver {
     private readonly participantService: AgentChatThreadParticipantService,
     private readonly threadService: AgentChatThreadService,
     private readonly triageService: AgentChatThreadTriageService,
+    private readonly inboxDeliveryService: AgentChatInboxDeliveryService,
   ) {}
 
   @Query(() => AgentChatOpenThreadsSummaryDTO)
@@ -109,5 +112,22 @@ export class AgentChatThreadParticipantResolver {
     });
 
     return true;
+  }
+
+  @Mutation(() => [UUIDScalarType])
+  async addAgentChatThreadParticipants(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+    @Args('workspaceMemberIds', { type: () => [UUIDScalarType] })
+    workspaceMemberIds: string[],
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<string[]> {
+    return this.inboxDeliveryService.deliverThreadToMemberInboxes({
+      threadId,
+      workspaceMemberIds,
+      workspaceMemberId,
+      workspaceId,
+      reason: AgentChatInboxDeliveryReason.RECIPIENT,
+    });
   }
 }
