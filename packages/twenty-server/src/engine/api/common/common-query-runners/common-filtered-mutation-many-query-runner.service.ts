@@ -53,7 +53,7 @@ export abstract class CommonFilteredMutationManyQueryRunnerService extends Commo
       filter: args.filter,
       selection: args.selectedFieldsResult,
       kind: this.mutationKind,
-      isTargetingOneRecord: true,
+      shouldWriteAtLeastOneRecord: true,
     });
   }
 

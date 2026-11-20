@@ -1506,7 +1506,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   async runMutation({
-    isTargetingOneRecord = false,
+    shouldWriteAtLeastOneRecord = false,
     ...args
   }: {
     selectQueryBuilder: WorkspaceSelectQueryBuilder;
@@ -1514,9 +1514,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     kind: MutationKind;
     columnsToReturn: string[];
     data?: Partial<ObjectRecord>;
-    isTargetingOneRecord?: boolean;
+    shouldWriteAtLeastOneRecord?: boolean;
   }): Promise<ObjectRecord[]> {
-    if (!isTargetingOneRecord) {
+    if (!shouldWriteAtLeastOneRecord) {
       return this.runMutationOnFilter(args);
     }
 
@@ -1527,7 +1527,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return writtenRecords;
     }
 
-    // Write rules drop rows silently, which hides denials on a record the caller can see
+    // Write rules drop rows silently, which hides denials on records the caller can see
     const alias = readQueryBuilder.alias;
     const readableRecord = await readQueryBuilder
       .select(`${alias}.id`, 'id')

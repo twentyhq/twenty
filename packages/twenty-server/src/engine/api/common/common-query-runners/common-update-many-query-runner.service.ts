@@ -50,7 +50,7 @@ export class CommonUpdateManyQueryRunnerService extends CommonRecordQueryRunnerS
       selection: args.selectedFieldsResult,
       kind: 'update',
       data: args.data,
-      isTargetingOneRecord: true,
+      shouldWriteAtLeastOneRecord: true,
     });
   }
 

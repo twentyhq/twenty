@@ -431,14 +431,14 @@ export abstract class CommonBaseQueryRunnerService<
     selection,
     kind,
     data,
-    isTargetingOneRecord,
+    shouldWriteAtLeastOneRecord,
   }: {
     queryRunnerContext: CommonExtendedQueryRunnerContext;
     filter: Partial<ObjectRecordFilter>;
     selection: CommonSelection;
     kind: MutationKind;
     data?: Partial<ObjectRecord>;
-    isTargetingOneRecord?: boolean;
+    shouldWriteAtLeastOneRecord?: boolean;
   }): Promise<CommonQueryRunResult<ObjectRecord[]>> {
     const {
       flatObjectMetadata,
@@ -491,7 +491,7 @@ export abstract class CommonBaseQueryRunnerService<
       kind,
       columnsToReturn,
       data: resolvedData,
-      isTargetingOneRecord,
+      shouldWriteAtLeastOneRecord,
     });
 
     const relationAggregatedValues = await this.processNestedRelations({
