@@ -1527,7 +1527,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return writtenRecords;
     }
 
-    // Write rules drop rows silently, which hides denials on records the caller can see
     const alias = readQueryBuilder.alias;
     const readableRecord = await readQueryBuilder
       .select(`${alias}.id`, 'id')
