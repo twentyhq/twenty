@@ -18,9 +18,7 @@ const isRelevant = ({
       {
         relationObjectMetadataItem: { id: PERSON_OBJECT_ID },
         relationJoinColumnName: 'companyId',
-      } as Parameters<
-        typeof isScopedRelationRecordOperationRelevant
-      >[0]['scopedRelationAliases'][number],
+      },
     ],
     isRecordLoaded: (recordId) => recordId === LOADED_COMPANY_ID,
   });
