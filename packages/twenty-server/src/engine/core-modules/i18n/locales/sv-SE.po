@@ -18276,6 +18276,11 @@ msgstr "Du har inte behörighet att komma åt den här funktionen. Vänligen kon
 msgid "You do not have permission to access this workflow."
 msgstr "Du har inte behörighet att komma åt detta arbetsflöde."
 
+#. js-lingui-id: /qkY9j
+#: src/engine/permissions/permissions.exception.ts
+msgid "You do not have permission to change this record."
+msgstr "Du har inte behörighet att ändra den här posten."
+
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."

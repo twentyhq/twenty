@@ -18270,6 +18270,11 @@ msgstr "Sizda ushbu funksiyaga kirish ruxsati yo‘q. Iltimos, ish maydoni admin
 msgid "You do not have permission to access this workflow."
 msgstr "Ushbu ish jarayoniga kirish uchun sizda ruxsat yo‘q."
 
+#. js-lingui-id: /qkY9j
+#: src/engine/permissions/permissions.exception.ts
+msgid "You do not have permission to change this record."
+msgstr "Ushbu yozuvni o‘zgartirish huquqiga ega emassiz."
+
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."

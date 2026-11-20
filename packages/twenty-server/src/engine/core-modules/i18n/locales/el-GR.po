@@ -18270,6 +18270,11 @@ msgstr "Δεν έχετε άδεια για πρόσβαση σε αυτή τη 
 msgid "You do not have permission to access this workflow."
 msgstr "Δεν έχετε δικαίωμα πρόσβασης σε αυτήν τη ροή εργασίας."
 
+#. js-lingui-id: /qkY9j
+#: src/engine/permissions/permissions.exception.ts
+msgid "You do not have permission to change this record."
+msgstr "Δεν έχετε άδεια να αλλάξετε αυτή την εγγραφή."
+
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."

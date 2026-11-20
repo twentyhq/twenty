@@ -18270,6 +18270,11 @@ msgstr "Ви не маєте дозволу на доступ до цієї фу
 msgid "You do not have permission to access this workflow."
 msgstr "У вас немає дозволу на доступ до цього робочого процесу."
 
+#. js-lingui-id: /qkY9j
+#: src/engine/permissions/permissions.exception.ts
+msgid "You do not have permission to change this record."
+msgstr "У вас немає дозволу змінювати цей запис."
+
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
