@@ -1,4 +1,5 @@
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
+import { upsertSavedScopedRecordField } from '@/object-record/record-column-scope/utils/upsertSavedScopedRecordField';
 import { buildAddedRecordField } from '@/object-record/record-field/utils/buildAddedRecordField';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
@@ -47,13 +48,10 @@ export const useSaveScopedRelationColumn = (recordTableId: string) => {
       }
 
       store.set(currentRecordFieldsAtom, (latestRecordFields) =>
-        latestRecordFields.some(({ id }) => id === savedRecordField.id)
-          ? latestRecordFields.map((recordField) =>
-              recordField.id === savedRecordField.id
-                ? { ...recordField, relationScope }
-                : recordField,
-            )
-          : [...latestRecordFields, savedRecordField],
+        upsertSavedScopedRecordField({
+          recordFields: latestRecordFields,
+          savedRecordField,
+        }),
       );
 
       return true;
