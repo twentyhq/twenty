@@ -6,6 +6,13 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
 import {
+  buildColumnMasks,
+  type ColumnMasks,
+} from 'src/engine/twenty-orm/sql/utils/build-column-masks.util';
+import { buildHiddenRowExclusionCondition } from 'src/engine/twenty-orm/sql/utils/build-hidden-row-exclusion-condition.util';
+import { maskNullifiedColumnReferences } from 'src/engine/twenty-orm/sql/utils/mask-nullified-column-references.util';
+import { renderNullifiedColumn } from 'src/engine/twenty-orm/sql/utils/render-nullified-column.util';
+import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
@@ -93,137 +100,6 @@ export const quoteColumn = (alias: string, columnName: string): string =>
   `${escapeIdentifier(alias)}.${escapeIdentifier(columnName)}`;
 
 const PLAIN_COLUMN_EXPRESSION = /^"?(\w+)"?\."?(\w+)"?$/;
-
-const SQL_STRING_LITERALS = /('(?:[^']|'')*')/;
-
-const escapeRegExp = (value: string): string =>
-  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-const renderNullifiedColumn = ({
-  quotedColumn,
-  nullifyConditions,
-}: {
-  quotedColumn: string;
-  nullifyConditions: string[];
-}): string =>
-  `CASE WHEN ${nullifyConditions
-    .map((nullifyCondition) => `(${nullifyCondition})`)
-    .join(' OR ')} THEN NULL ELSE ${quotedColumn} END`;
-
-type ColumnMasks = {
-  maskedColumnByQuotedColumn: Map<string, string>;
-  quotedColumnPattern: RegExp;
-};
-
-const buildColumnMasks = (
-  columnNullifyConditions: ColumnNullifyConditions,
-): ColumnMasks | undefined => {
-  const maskedColumnByQuotedColumn = new Map(
-    Object.entries(columnNullifyConditions).flatMap(([alias, conditions]) =>
-      Object.entries(conditions).map(
-        ([columnName, nullifyConditions]): [string, string] => {
-          const quotedColumn = quoteColumn(alias, columnName);
-
-          return [
-            quotedColumn,
-            `(${renderNullifiedColumn({ quotedColumn, nullifyConditions })})`,
-          ];
-        },
-      ),
-    ),
-  );
-
-  if (maskedColumnByQuotedColumn.size === 0) {
-    return undefined;
-  }
-
-  return {
-    maskedColumnByQuotedColumn,
-    quotedColumnPattern: new RegExp(
-      [...maskedColumnByQuotedColumn.keys()].map(escapeRegExp).join('|'),
-      'g',
-    ),
-  };
-};
-
-const maskNullifiedColumnReferences = ({
-  expression,
-  columnMasks,
-}: {
-  expression: string;
-  columnMasks: ColumnMasks | undefined;
-}): string => {
-  if (!isDefined(columnMasks)) {
-    return expression;
-  }
-
-  return expression
-    .split(SQL_STRING_LITERALS)
-    .map((segment, segmentIndex) =>
-      segmentIndex % 2 === 1
-        ? segment
-        : segment.replace(
-            columnMasks.quotedColumnPattern,
-            (quotedColumn) =>
-              columnMasks.maskedColumnByQuotedColumn.get(quotedColumn) ??
-              quotedColumn,
-          ),
-    )
-    .join('');
-};
-
-const findReferencedColumnNullifyConditions = ({
-  expression,
-  columnNullifyConditions,
-  aliases,
-}: {
-  expression: string;
-  columnNullifyConditions: ColumnNullifyConditions;
-  aliases: string[];
-}): string[] => {
-  const expressionOutsideLiterals = expression
-    .split(SQL_STRING_LITERALS)
-    .filter((_, segmentIndex) => segmentIndex % 2 === 0)
-    .join(' ');
-
-  return aliases.flatMap((alias) =>
-    Object.entries(columnNullifyConditions[alias] ?? {}).flatMap(
-      ([columnName, nullifyConditions]) =>
-        expressionOutsideLiterals.includes(quoteColumn(alias, columnName))
-          ? nullifyConditions
-          : [],
-    ),
-  );
-};
-
-const renderHiddenRowExclusionCondition = (
-  excludedConditions: string[],
-): string | undefined =>
-  excludedConditions.length > 0
-    ? `NOT COALESCE(${[...new Set(excludedConditions)]
-        .map((excludedCondition) => `(${excludedCondition})`)
-        .join(' OR ')}, FALSE)`
-    : undefined;
-
-const buildHiddenRowExclusionCondition = (
-  state: SelectStatementState,
-): string | undefined => {
-  const aliases = collectStatementAliases(state);
-
-  return renderHiddenRowExclusionCondition(
-    [
-      ...state.whereClauses.map(({ sql }) => sql),
-      ...state.existsFilterClauses.map(({ conditionSql }) => conditionSql),
-      ...state.groupByExpressions,
-    ].flatMap((expression) =>
-      findReferencedColumnNullifyConditions({
-        expression: quoteQualifiedAliasReferences(expression, aliases),
-        columnNullifyConditions: state.columnNullifyConditions,
-        aliases,
-      }),
-    ),
-  );
-};
 
 const renderProjectedColumn = ({
   state,
@@ -544,13 +420,11 @@ const renderExistsFilter = ({
       }),
     );
 
-    const subqueryExclusionCondition = renderHiddenRowExclusionCondition(
-      findReferencedColumnNullifyConditions({
-        expression: existsFilterClause.conditionSql,
-        columnNullifyConditions,
-        aliases: [existsFilterClause.alias],
-      }),
-    );
+    const subqueryExclusionCondition = buildHiddenRowExclusionCondition({
+      expressions: [existsFilterClause.conditionSql],
+      columnNullifyConditions,
+      aliases: [existsFilterClause.alias],
+    });
 
     if (isDefined(subqueryExclusionCondition)) {
       conditions.push(subqueryExclusionCondition);
@@ -626,7 +500,19 @@ export const buildWhereExpression = (
       })),
       rowAccessConditions: [
         ...state.rowAccessConditions,
-        buildHiddenRowExclusionCondition(state),
+        buildHiddenRowExclusionCondition({
+          expressions: [
+            ...state.whereClauses.map(({ sql }) => sql),
+            ...state.existsFilterClauses.map(
+              ({ conditionSql }) => conditionSql,
+            ),
+            ...state.groupByExpressions,
+          ].map((expression) =>
+            quoteQualifiedAliasReferences(expression, aliases),
+          ),
+          columnNullifyConditions: state.columnNullifyConditions,
+          aliases,
+        }),
       ].filter(isDefined),
     }),
     aliases,

@@ -4,15 +4,17 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 
-export const omitRolesHidingField = ({
+export const omitRolesHidingField = <
+  TMetadataMaps extends Pick<PermissionsMetadataMaps, 'rolesPermissions'>,
+>({
   metadataMaps,
   objectMetadataId,
   fieldMetadataId,
 }: {
-  metadataMaps: PermissionsMetadataMaps;
+  metadataMaps: TMetadataMaps;
   objectMetadataId: string;
   fieldMetadataId: string;
-}): PermissionsMetadataMaps => ({
+}): TMetadataMaps => ({
   ...metadataMaps,
   rolesPermissions: Object.fromEntries(
     Object.entries(metadataMaps.rolesPermissions).map(
