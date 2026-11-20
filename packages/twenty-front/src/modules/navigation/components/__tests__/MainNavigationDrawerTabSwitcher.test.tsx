@@ -2,8 +2,9 @@ import { MockedProvider } from '@apollo/client/testing/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 import { IconComment, IconHome, IconSettings } from 'twenty-ui/icon';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -122,7 +123,9 @@ const renderTabSwitcher = ({
         <MockedProvider
           mocks={[buildOpenThreadsSummaryMock(hasUnreadOpenThread)]}
         >
-          <MainNavigationDrawerTabSwitcher />
+          <MemoryRouter>
+            <MainNavigationDrawerTabSwitcher />
+          </MemoryRouter>
         </MockedProvider>
       </JotaiProvider>
     </I18nProvider>,
@@ -354,5 +357,22 @@ describe('MainNavigationDrawerTabSwitcher', () => {
 
     expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith('sales-tab-id');
     expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+  });
+
+  it('closes the tab menu when the active sidebar tab is clicked again', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
+
+    renderTabSwitcher({ permissionFlags: [PermissionFlagType.LAYOUTS] });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Sales' }));
+    expect(await screen.findByRole('menu')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Sales' }));
+    await waitFor(() =>
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
+    );
   });
 });

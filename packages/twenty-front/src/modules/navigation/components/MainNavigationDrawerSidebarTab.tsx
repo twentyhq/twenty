@@ -4,6 +4,7 @@ import { type MouseEvent, useRef } from 'react';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
@@ -56,12 +57,19 @@ export const MainNavigationDrawerSidebarTab = ({
     isLayoutCustomizationModeEnabledState,
   );
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
+  const isLayoutCustomizationAllowedOnCurrentPage =
+    useIsLayoutCustomizationAllowedOnCurrentPage();
+  const canOpenTabMenu =
+    hasLayoutsPermission &&
+    (isLayoutCustomizationModeEnabled ||
+      isLayoutCustomizationAllowedOnCurrentPage);
   const [navigationMenuItemIdToRename, setNavigationMenuItemIdToRename] =
     useAtomState(navigationMenuItemIdToRenameState);
   const { switchToNavigationMenuTab } = useSwitchNavigationDrawerTab();
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
   const anchorRef = useRef<HTMLSpanElement>(null);
+  const wasTabMenuOpenOnPointerDownRef = useRef(false);
   const dropdownId = `navigation-menu-tab-menu-${tab.id}`;
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
@@ -72,8 +80,12 @@ export const MainNavigationDrawerSidebarTab = ({
     openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
 
   const handleClick = () => {
-    if (isActive && hasLayoutsPermission) {
-      openTabMenu();
+    if (isActive && canOpenTabMenu) {
+      if (wasTabMenuOpenOnPointerDownRef.current) {
+        closeDropdown(dropdownId);
+      } else {
+        openTabMenu();
+      }
       return;
     }
 
@@ -100,14 +112,14 @@ export const MainNavigationDrawerSidebarTab = ({
       tooltip={tab.name}
       shouldShowTooltip={shouldShowTooltip}
       onClick={handleClick}
-      onContextMenu={hasLayoutsPermission ? handleContextMenu : undefined}
+      onContextMenu={canOpenTabMenu ? handleContextMenu : undefined}
       isSelectedInEditMode={isLayoutCustomizationModeEnabled && isDropdownOpen}
       ariaLabel={isUnread ? t`${tab.name}, unread` : tab.name}
       iconAccessory={isUnread && <StyledUnreadDot aria-hidden="true" />}
     />
   );
 
-  if (!hasLayoutsPermission) {
+  if (!canOpenTabMenu) {
     return <StyledAnchor>{tabButton}</StyledAnchor>;
   }
 
@@ -119,7 +131,14 @@ export const MainNavigationDrawerSidebarTab = ({
           onOpen={() => setNavigationMenuItemIdToRename(null)}
         />
       )}
-      <StyledAnchor ref={anchorRef}>{tabButton}</StyledAnchor>
+      <StyledAnchor
+        ref={anchorRef}
+        onPointerDown={() => {
+          wasTabMenuOpenOnPointerDownRef.current = isDropdownOpen;
+        }}
+      >
+        {tabButton}
+      </StyledAnchor>
       <DropdownContent
         anchor={anchorRef}
         side="bottom"

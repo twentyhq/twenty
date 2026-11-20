@@ -3,6 +3,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { IconPaint } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 
+import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NavigationMenuContainerEditableItems } from '@/navigation-menu-item/display/containers/components/NavigationMenuContainerEditableItems';
@@ -30,6 +31,8 @@ export const NavigationMenuTabContent = ({
   const isMobile = useIsMobile();
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
+  const isLayoutCustomizationAllowedOnCurrentPage =
+    useIsLayoutCustomizationAllowedOnCurrentPage();
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -70,6 +73,7 @@ export const NavigationMenuTabContent = ({
       {topLevelItems.length === 0 &&
         sections.length === 0 &&
         hasLayoutsPermission &&
+        isLayoutCustomizationAllowedOnCurrentPage &&
         !isMobile && (
           <NavigationDrawerSection>
             <NavigationDrawerItem
