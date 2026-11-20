@@ -29,6 +29,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
+import { WORKSPACE_MEMBER_NAME_MAX_LENGTH } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -254,6 +255,7 @@ export const CreateProfile = () => {
                     }}
                     placeholder={t`Tim`}
                     error={error?.message}
+                    maxLength={WORKSPACE_MEMBER_NAME_MAX_LENGTH}
                     fullWidth
                   />
                 )}
@@ -277,6 +279,7 @@ export const CreateProfile = () => {
                     }}
                     placeholder={t`Apple`}
                     error={error?.message}
+                    maxLength={WORKSPACE_MEMBER_NAME_MAX_LENGTH}
                     fullWidth
                   />
                 )}
