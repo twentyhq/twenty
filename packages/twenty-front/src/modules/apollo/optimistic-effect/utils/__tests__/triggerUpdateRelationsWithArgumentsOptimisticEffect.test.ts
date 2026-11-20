@@ -23,11 +23,15 @@ const PARIS_PERSON_ID = '20202020-2222-4000-8000-000000000001';
 const SECOND_PARIS_PERSON_ID = '20202020-2222-4000-8000-000000000002';
 const NEW_PERSON_ID = '20202020-2222-4000-8000-000000000003';
 
-const buildPerson = (
-  id: string,
-  city: string,
-  jobTitle: string,
-): ObjectRecord => ({
+const buildPerson = ({
+  id,
+  city,
+  jobTitle,
+}: {
+  id: string;
+  city: string;
+  jobTitle: string;
+}): ObjectRecord => ({
   __typename: 'Person',
   id,
   city,
@@ -99,9 +103,21 @@ const buildCache = (scopedPeopleIds: string[]) => {
       {
         objectMetadataItem: personObjectMetadataItem,
         records: [
-          buildPerson(PARIS_PERSON_ID, 'Paris', 'Designer'),
-          buildPerson(SECOND_PARIS_PERSON_ID, 'Paris', 'Engineer'),
-          buildPerson(NEW_PERSON_ID, 'Paris', 'Accountant'),
+          buildPerson({
+            id: PARIS_PERSON_ID,
+            city: 'Paris',
+            jobTitle: 'Designer',
+          }),
+          buildPerson({
+            id: SECOND_PARIS_PERSON_ID,
+            city: 'Paris',
+            jobTitle: 'Engineer',
+          }),
+          buildPerson({
+            id: NEW_PERSON_ID,
+            city: 'Paris',
+            jobTitle: 'Accountant',
+          }),
         ],
       },
     ],
@@ -165,7 +181,11 @@ describe('triggerUpdateRelationsWithArgumentsOptimisticEffect', () => {
       ...commonEffectArguments,
       cache,
       sourceObjectNameSingular: 'person',
-      sourceRecord: buildPerson(NEW_PERSON_ID, 'Paris', 'Accountant'),
+      sourceRecord: buildPerson({
+        id: NEW_PERSON_ID,
+        city: 'Paris',
+        jobTitle: 'Accountant',
+      }),
     });
 
     expect(readCachedPeopleIds(cache)).toEqual({
@@ -185,7 +205,11 @@ describe('triggerUpdateRelationsWithArgumentsOptimisticEffect', () => {
       ...commonEffectArguments,
       cache,
       sourceObjectNameSingular: 'person',
-      sourceRecord: buildPerson(NEW_PERSON_ID, 'London', 'Accountant'),
+      sourceRecord: buildPerson({
+        id: NEW_PERSON_ID,
+        city: 'London',
+        jobTitle: 'Accountant',
+      }),
     });
 
     expect(readCachedPeopleIds(cache)).toEqual({
@@ -220,7 +244,11 @@ describe('triggerUpdateRelationsWithArgumentsOptimisticEffect', () => {
       cache,
       sourceObjectMetadataItem: personObjectMetadataItem,
       sourceRecordId: PARIS_PERSON_ID,
-      attachedSourceRecord: buildPerson(PARIS_PERSON_ID, 'London', 'Designer'),
+      attachedSourceRecord: buildPerson({
+        id: PARIS_PERSON_ID,
+        city: 'London',
+        jobTitle: 'Designer',
+      }),
     });
 
     expect(readCachedPeopleIds(cache)).toEqual({

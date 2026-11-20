@@ -1,7 +1,7 @@
 import { type ApolloCache, type StoreObject } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { sortCachedObjectEdges } from '@/apollo/optimistic-effect/utils/sortCachedObjectEdges';
+import { buildSortedConnectionEdges } from '@/apollo/optimistic-effect/utils/buildSortedConnectionEdges';
 import { type CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
@@ -16,12 +16,10 @@ import {
   computeRelationWithArgumentsResponseKey,
   getEdgeTypename,
   isDefined,
-  isNonEmptyArray,
 } from 'twenty-shared/utils';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
-// Keeps the cached copies of a relation that carry arguments (filter, orderBy, first) in line with a source record,
-// the way root queries are. A copy that was full cannot be refilled after a removal: only a refetch knows what comes next.
+// A full copy cannot be refilled after a removal: only a refetch knows which record comes next
 export const triggerUpdateRelationsWithArgumentsOptimisticEffect = ({
   cache,
   sourceObjectMetadataItem,
@@ -112,28 +110,27 @@ export const triggerUpdateRelationsWithArgumentsOptimisticEffect = ({
           ({ node }) => readField('id', node) !== sourceRecordId,
         );
 
-        const reconciledEdges: RecordGqlRefEdge[] =
-          shouldSourceRecordBeInEdges && isDefined(sourceRecordReference)
-            ? [
-                ...edgesWithoutSourceRecord,
-                {
-                  __typename: getEdgeTypename(
-                    sourceObjectMetadataItem.nameSingular,
-                  ),
-                  node: sourceRecordReference,
-                  cursor: '',
-                },
-              ]
-            : edgesWithoutSourceRecord;
-
         // A record that stays in the list is sorted again too, since the update may have moved it
-        const sortedEdges = isNonEmptyArray(relationArguments.orderBy)
-          ? sortCachedObjectEdges({
-              edges: reconciledEdges,
-              orderBy: relationArguments.orderBy,
-              readCacheField: readField,
-            })
-          : reconciledEdges;
+        const sortedEdges = buildSortedConnectionEdges({
+          currentEdges: edgesWithoutSourceRecord,
+          newEntries:
+            shouldSourceRecordBeInEdges && isDefined(sourceRecordReference)
+              ? [
+                  {
+                    edge: {
+                      __typename: getEdgeTypename(
+                        sourceObjectMetadataItem.nameSingular,
+                      ),
+                      node: sourceRecordReference,
+                      cursor: '',
+                    },
+                    record: attachedSourceRecord,
+                  },
+                ]
+              : [],
+          orderBy: relationArguments.orderBy,
+          readField,
+        });
 
         const nextEdges = isDefined(relationArguments.first)
           ? sortedEdges.slice(0, relationArguments.first)
@@ -160,7 +157,6 @@ export const triggerUpdateRelationsWithArgumentsOptimisticEffect = ({
     return;
   }
 
-  // The record store holds each copy under its response key, which is derived from the same arguments as the cache entry
   upsertRecordsInStore({
     partialRecords: [
       {

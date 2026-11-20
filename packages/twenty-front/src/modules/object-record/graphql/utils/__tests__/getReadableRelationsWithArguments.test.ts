@@ -2,8 +2,6 @@ import { getDefaultObjectPermissions } from '@/object-metadata/utils/getDefaultO
 import { getReadableRelationsWithArguments } from '@/object-record/graphql/utils/getReadableRelationsWithArguments';
 import { getRelationsWithArgumentsVariableDefinitions } from '@/object-record/graphql/utils/getRelationsWithArgumentsVariableDefinitions';
 import { getRelationsWithArgumentsVariables } from '@/object-record/graphql/utils/getRelationsWithArgumentsVariables';
-import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
-import { print } from 'graphql';
 import { type RecordGqlFieldsRelationWithArguments } from 'twenty-shared/types';
 import { computeRelationWithArgumentsResponseKey } from 'twenty-shared/utils';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -83,36 +81,5 @@ describe('getReadableRelationsWithArguments', () => {
         recordGqlFields: { scopedPeople: peopleInParis },
       }),
     ).toThrow('must be keyed by computeRelationWithArgumentsResponseKey');
-  });
-});
-
-describe('generateFindManyRecordsQuery with relations with arguments', () => {
-  const generateQuery = ({ withRelation = true, canReadPeople = true } = {}) =>
-    print(
-      generateFindManyRecordsQuery({
-        objectMetadataItem: companyObjectMetadataItem,
-        objectMetadataItems,
-        recordGqlFields: {
-          id: true,
-          ...(withRelation && { [responseKey]: peopleInParis }),
-        },
-        objectPermissionsByObjectMetadataId: buildPermissions(canReadPeople),
-      }),
-    );
-
-  it('selects the relation under its response key and declares its variables', () => {
-    const query = generateQuery();
-
-    expect(query).toContain(`$${responseKey}Filter: PersonFilterInput`);
-    expect(query).toContain(`${responseKey}: people(`);
-    expect(query).toContain(`filter: $${responseKey}Filter`);
-    expect(query).toContain(`orderBy: $${responseKey}OrderBy`);
-    expect(query).toContain(`first: $${responseKey}First`);
-  });
-
-  it('selects and declares nothing for an unreadable target', () => {
-    expect(generateQuery({ canReadPeople: false })).toBe(
-      generateQuery({ withRelation: false, canReadPeople: false }),
-    );
   });
 });

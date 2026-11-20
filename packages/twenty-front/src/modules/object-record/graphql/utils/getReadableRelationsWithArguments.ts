@@ -11,12 +11,12 @@ import {
 import {
   canAccessThroughAllRecordsOrRlsPermission,
   computeRelationWithArgumentsResponseKey,
+  CustomError,
   isDefined,
   isRecordGqlFieldsRelationWithArguments,
 } from 'twenty-shared/utils';
 
-// The single rule for which relations with arguments a query selects: its selections, variable definitions and
-// variables are all built from this list, so they cannot disagree. Only the root of recordGqlFields is considered.
+// A query builds its selections, variable definitions and variables from this one list, so they cannot disagree
 export const getReadableRelationsWithArguments = ({
   objectMetadataItem,
   objectMetadataItems,
@@ -39,10 +39,11 @@ export const getReadableRelationsWithArguments = ({
         responseKey !==
         computeRelationWithArgumentsResponseKey(relationWithArguments)
       ) {
-        throw new Error(
+        throw new CustomError(
           doNotTranslate(
             `Relation with arguments "${relationWithArguments.relationFieldName}" must be keyed by computeRelationWithArgumentsResponseKey, got "${responseKey}"`,
           ),
+          'RELATION_WITH_ARGUMENTS_INVALID_RESPONSE_KEY',
         );
       }
 
