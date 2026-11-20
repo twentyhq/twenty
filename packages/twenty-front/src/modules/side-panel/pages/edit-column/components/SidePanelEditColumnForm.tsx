@@ -139,14 +139,15 @@ export const SidePanelEditColumnForm = ({
   const lookupTargetFieldMetadataItems = getLookupTargetFieldMetadataItems(
     relationObjectMetadataItem,
   );
-  const lookupTargetFieldMetadataItem = lookupTargetFieldMetadataItems.find(
-    ({ id }) => id === relationTargetFieldMetadataId,
-  );
+  const selectedLookupTargetFieldMetadataItem =
+    lookupTargetFieldMetadataItems.find(
+      ({ id }) => id === relationTargetFieldMetadataId,
+    );
 
   const columnHeader = getRecordFieldColumnHeader({
     fieldMetadataItem,
-    lookupTarget: isDefined(lookupTargetFieldMetadataItem)
-      ? { lookupTargetFieldMetadataItem }
+    lookupTarget: isDefined(selectedLookupTargetFieldMetadataItem)
+      ? { lookupTargetFieldMetadataItem: selectedLookupTargetFieldMetadataItem }
       : undefined,
     isScopedRelationColumn: true,
   });
