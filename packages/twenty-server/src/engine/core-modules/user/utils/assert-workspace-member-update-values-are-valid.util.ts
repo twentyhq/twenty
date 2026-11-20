@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { UI_SCALE_VALUES } from 'twenty-shared/constants';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { assertWorkspaceMemberNameIsWithinMaxLength } from 'src/engine/core-modules/user/utils/assert-workspace-member-name-is-within-max-length.util';
 
 // Enum-like TEXT fields would otherwise persist unchecked and then be cast to a client-side union.
 const WORKSPACE_MEMBER_FIELD_ALLOWED_VALUES: Record<
@@ -16,6 +17,8 @@ export const assertWorkspaceMemberUpdateValuesAreValid = ({
 }: {
   update: Record<string, unknown>;
 }): void => {
+  assertWorkspaceMemberNameIsWithinMaxLength({ name: update.name });
+
   for (const [fieldName, allowedValues] of Object.entries(
     WORKSPACE_MEMBER_FIELD_ALLOWED_VALUES,
   )) {

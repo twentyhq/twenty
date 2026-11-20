@@ -63,6 +63,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { truncateFullName } from 'src/engine/core-modules/user/utils/truncate-full-name.util';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -120,10 +121,15 @@ export class SignInUpService {
       );
     }
 
-    const partialNewUser: PartialUserWithPicture = {
-      email: newUserPayload.email,
+    const { firstName, lastName } = truncateFullName({
       firstName: newUserPayload.firstName ?? '',
       lastName: newUserPayload.lastName ?? '',
+    });
+
+    const partialNewUser: PartialUserWithPicture = {
+      email: newUserPayload.email,
+      firstName,
+      lastName,
       picture: newUserPayload.picture ?? '',
       locale: newUserPayload.locale ?? 'en',
       isEmailVerified: newUserPayload.isEmailAlreadyVerified,
