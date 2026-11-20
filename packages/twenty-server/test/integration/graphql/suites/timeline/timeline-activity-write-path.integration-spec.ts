@@ -432,7 +432,7 @@ describe('timeline activity write path (integration)', () => {
       });
     });
 
-    it('should merge every record of a multi record batch', async () => {
+    it('should keep each update in a multi record batch as a separate activity', async () => {
       for (const [index, id] of BATCH_COMPANY_IDS.entries()) {
         await createRecord({
           objectMetadataSingularName: 'company',
@@ -467,12 +467,27 @@ describe('timeline activity write path (integration)', () => {
           },
         });
 
-        expect(timelineActivities).toHaveLength(1);
-        expect(timelineActivities[0].properties).toEqual({
-          diff: {
-            name: { before: `Batch ${index}`, after: 'Batch renamed twice' },
-          },
-        });
+        expect(timelineActivities).toHaveLength(2);
+        expect(timelineActivities.map(({ properties }) => properties)).toEqual(
+          expect.arrayContaining([
+            {
+              diff: {
+                name: {
+                  before: `Batch ${index}`,
+                  after: 'Batch renamed once',
+                },
+              },
+            },
+            {
+              diff: {
+                name: {
+                  before: 'Batch renamed once',
+                  after: 'Batch renamed twice',
+                },
+              },
+            },
+          ]),
+        );
       }
     });
 
