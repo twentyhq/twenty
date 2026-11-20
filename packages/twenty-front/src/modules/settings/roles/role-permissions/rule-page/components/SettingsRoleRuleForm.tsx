@@ -5,6 +5,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useRowLevelPermissionRulesInDraftRole } from '@/settings/roles/role-permissions/object-overrides/hooks/useRowLevelPermissionRulesInDraftRole';
+import { SettingsRoleRuleAllowsSection } from '@/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection';
 import { SettingsRoleRuleConditionsSection } from '@/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -196,6 +197,13 @@ export const SettingsRoleRuleForm = ({
           rowLevelPermissionRuleId={rule.id}
           hasOrganizationPlan={isRLSBillingEntitlementEnabled}
         />
+        {isRLSBillingEntitlementEnabled && (
+          <SettingsRoleRuleAllowsSection
+            roleId={roleId}
+            objectMetadataItem={objectMetadataItem}
+            rule={rule}
+          />
+        )}
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

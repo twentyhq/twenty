@@ -43,13 +43,14 @@ export const SettingsRoleRuleConditionsSection = ({
   const navigateSettings = useNavigateSettings();
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
+  const objectLabelPlural = objectMetadataItem.labelPlural.toLocaleLowerCase();
 
   if (!hasOrganizationPlan) {
     return (
       <Section.Root>
         <Section.Header
-          title={t`Record-level`}
-          description={t`Ability to filter the records a user can interact with`}
+          title={t`Condition`}
+          description={t`Which ${objectLabelPlural} this rule applies to. Me is the person viewing.`}
           actions={<OrganizationAdornment />}
         />
         <StyledCardContainer>
@@ -83,8 +84,8 @@ export const SettingsRoleRuleConditionsSection = ({
   return (
     <Section.Root>
       <Section.Header
-        title={t`Record-level`}
-        description={t`Ability to filter the records a user can interact with.`}
+        title={t`Condition`}
+        description={t`Which ${objectLabelPlural} this rule applies to. Me is the person viewing.`}
       />
       <StyledContent>
         <SettingsRoleRuleConditionFilterBuilder
