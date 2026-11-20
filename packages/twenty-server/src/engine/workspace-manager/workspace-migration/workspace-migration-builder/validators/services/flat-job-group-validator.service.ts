@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type JobGroupLimiter } from 'twenty-shared/application';
+import {
+  isValidJobGroupLimiter,
+  type JobGroupLimiter,
+} from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { isValidMessageQueueLimiter } from 'src/engine/core-modules/message-queue/utils/is-valid-message-queue-limiter.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { JobGroupExceptionCode } from 'src/engine/metadata-modules/job-group/job-group.exception';
 import {
@@ -32,7 +34,7 @@ const getJobGroupNameErrors = (name: string): FlatEntityValidationError[] =>
 const getJobGroupLimiterErrors = (
   limiter: JobGroupLimiter,
 ): FlatEntityValidationError[] =>
-  isValidMessageQueueLimiter(limiter)
+  isValidJobGroupLimiter(limiter)
     ? []
     : [
         {

@@ -39,10 +39,10 @@ describe('defineJobGroup', () => {
   });
 
   it.each([
-    [{ max: 0, durationMs: 1_000 }, 'limiter max'],
-    [{ max: 1.5, durationMs: 1_000 }, 'limiter max'],
-    [{ max: 1, durationMs: 0 }, 'limiter durationMs'],
-  ])('should reject the limiter %j', (limiter, expectedError) => {
+    { max: 0, durationMs: 1_000 },
+    { max: 1.5, durationMs: 1_000 },
+    { max: 1, durationMs: 0 },
+  ])('should reject the limiter %j', (limiter) => {
     const result = defineJobGroup({
       universalIdentifier: UNIVERSAL_IDENTIFIER,
       name: 'api',
@@ -50,6 +50,6 @@ describe('defineJobGroup', () => {
     });
 
     expect(result.success).toBe(false);
-    expect(result.errors.join()).toContain(expectedError);
+    expect(result.errors.join()).toContain('limiter max must be');
   });
 });

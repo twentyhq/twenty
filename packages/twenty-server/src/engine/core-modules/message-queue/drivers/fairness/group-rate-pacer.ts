@@ -1,9 +1,9 @@
 import { Logger } from '@nestjs/common';
 
 import { type RedisClient } from 'bullmq';
+import { isValidJobGroupLimiter } from 'twenty-shared/application';
 
 import { GROUP_RATE_PACE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/fairness/group-rate-pace-script.constant';
-import { isValidMessageQueueLimiter } from 'src/engine/core-modules/message-queue/utils/is-valid-message-queue-limiter.util';
 import { runRedisScript } from 'src/engine/core-modules/message-queue/utils/run-redis-script.util';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueLimiter } from 'src/engine/core-modules/message-queue/types/message-queue-limiter.type';
@@ -47,7 +47,7 @@ export class GroupRatePacer {
   }): Promise<number[][] | undefined> {
     const pacedKeysByRequest = requests.map(({ limiters }) =>
       limiters.flatMap(({ groupKey, limiter }): PacedGroupKey[] => {
-        if (!isValidMessageQueueLimiter(limiter)) {
+        if (!isValidJobGroupLimiter(limiter)) {
           return [];
         }
 

@@ -1,12 +1,12 @@
-import { isValidMessageQueueLimiter } from 'src/engine/core-modules/message-queue/utils/is-valid-message-queue-limiter.util';
+import { isValidJobGroupLimiter } from '@/application/utils/isValidJobGroupLimiter';
 
-describe('isValidMessageQueueLimiter', () => {
+describe('isValidJobGroupLimiter', () => {
   it.each([
     { max: 1, durationMs: 1_000 },
     { max: 100, durationMs: 60_000 },
     { max: 3, durationMs: 0.5 },
   ])('accepts $max per $durationMs ms', (limiter) => {
-    expect(isValidMessageQueueLimiter(limiter)).toBe(true);
+    expect(isValidJobGroupLimiter(limiter)).toBe(true);
   });
 
   it.each([
@@ -20,6 +20,10 @@ describe('isValidMessageQueueLimiter', () => {
     { max: 1, durationMs: Number.NaN },
     { max: 1, durationMs: Number.POSITIVE_INFINITY },
   ])('refuses $max per $durationMs ms', (limiter) => {
-    expect(isValidMessageQueueLimiter(limiter)).toBe(false);
+    expect(isValidJobGroupLimiter(limiter)).toBe(false);
+  });
+
+  it('refuses a missing limiter', () => {
+    expect(isValidJobGroupLimiter(undefined)).toBe(false);
   });
 });

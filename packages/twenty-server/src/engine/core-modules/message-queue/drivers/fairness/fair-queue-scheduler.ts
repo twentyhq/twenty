@@ -118,7 +118,7 @@ export class FairQueueScheduler {
     callerDelayMs: number;
   }): Promise<number[] | undefined> {
     const queueGroupLimiter = this.options.getGroupLimiter(queueName);
-    const requestBySlotKeys = new Map<string, PacedJobsRequest>();
+    const requestBySlotKeysSignature = new Map<string, PacedJobsRequest>();
 
     scopes.forEach((scope, jobIndex) => {
       const queueGroupKey = limiterGroupKeys?.[jobIndex];
@@ -140,16 +140,16 @@ export class FairQueueScheduler {
       const signature = JSON.stringify(
         limiters.map(({ groupKey }) => groupKey),
       );
-      const request = requestBySlotKeys.get(signature) ?? {
+      const request = requestBySlotKeysSignature.get(signature) ?? {
         limiters,
         jobIndexes: [],
       };
 
       request.jobIndexes.push(jobIndex);
-      requestBySlotKeys.set(signature, request);
+      requestBySlotKeysSignature.set(signature, request);
     });
 
-    const requests = [...requestBySlotKeys.values()];
+    const requests = [...requestBySlotKeysSignature.values()];
 
     if (requests.length === 0) {
       return undefined;

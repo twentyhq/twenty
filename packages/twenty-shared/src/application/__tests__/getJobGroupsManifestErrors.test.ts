@@ -71,8 +71,7 @@ describe('getJobGroupsManifestErrors', () => {
         logicFunctions: [],
       }),
     ).toEqual([
-      'Job group "api" limiter max must be a positive integer',
-      'Job group "api" limiter durationMs must be a positive number',
+      'Job group "api" limiter max must be a positive integer and durationMs a positive number',
     ]);
   });
 });

@@ -388,6 +388,7 @@ export {
 export { isRestorableApplicationSourcePath } from './utils/isRestorableApplicationSourcePath';
 export { isRestorableFrontComponentSourcePath } from './utils/isRestorableFrontComponentSourcePath';
 export { isSourceFileManifestList } from './utils/isSourceFileManifestList';
+export { isValidJobGroupLimiter } from './utils/isValidJobGroupLimiter';
 export { isValidSettingsMenuItemSlug } from './utils/isValidSettingsMenuItemSlug';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
 export { nestRowLevelPermissionRuleManifests } from './utils/nestRowLevelPermissionRuleManifests';
