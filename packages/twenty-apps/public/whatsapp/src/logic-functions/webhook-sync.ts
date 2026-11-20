@@ -6,7 +6,6 @@ import {
   WHATSAPP_LOGIC_FUNCTION_PARSE_MESSAGE_UNIVERSAL_IDENTIFIER,
   WHATSAPP_LOGIC_FUNCTION_WEBHOOK_SYNC_UNIVERSAL_IDENTIFIER
 } from "src/constants/universal-identifiers";
-import { updateTwentyMessageChannel } from "src/logic-functions/data/update-message-channel.util";
 import { upsertWhatsAppTemplates } from "src/logic-functions/data/upsert-whatsapp-templates.util";
 import { syncWhatsappTemplate } from "src/logic-functions/data/sync-whatsapp-template.util";
 import { getWhatsappAccessTokenOrThrow } from "src/logic-functions/data/get-whatsapp-access-token-or-throw.util";
@@ -29,7 +28,11 @@ const handler = async (
   if (
     rawBody === undefined ||
     !isNonEmptyString(signature) ||
-    !validateWebhookPayload(signature, rawBody, process.env.WEBHOOK_VALIDATION_SECRET)
+    !validateWebhookPayload({
+      signature,
+      payload: rawBody,
+      appSecret: process.env.WEBHOOK_VALIDATION_SECRET,
+    })
   ) {
     return new Response('', { status: 401 });
   }
@@ -122,9 +125,6 @@ const handler = async (
         case "partner_solutions":
         case "payment_configuration_update":
         case "phone_number_name_update":
-          if ('a' in change.value) {
-            await updateTwentyMessageChannel();
-          }
           break;
         case "phone_number_quality_update":
           await notify(

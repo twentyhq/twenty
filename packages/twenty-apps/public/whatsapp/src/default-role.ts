@@ -3,16 +3,12 @@ import { defineApplicationRole, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS, SystemPer
 import {
   APP_DISPLAY_NAME,
   DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
-  WHATSAPP_MESSAGE_THREAD_UNIVERSAL_IDENTIFIER,
   WHATSAPP_TEMPLATE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
 const READ_AND_UPDATE_OBJECT_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.message.universalIdentifier,
-  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
-  WHATSAPP_MESSAGE_THREAD_UNIVERSAL_IDENTIFIER,
   WHATSAPP_TEMPLATE_UNIVERSAL_IDENTIFIER,
 ];
 
@@ -49,7 +45,8 @@ export default defineApplicationRole({
   canBeAssignedToApiKeys: false,
   canAccessAllTools: false,
   permissionFlagUniversalIdentifiers: [
-    SystemPermissionFlag.SEND_EMAIL_TOOL,
+    // sendInboxMessage requires the AI permission
+    SystemPermissionFlag.AI,
     SystemPermissionFlag.UPLOAD_FILE,
   ],
 });

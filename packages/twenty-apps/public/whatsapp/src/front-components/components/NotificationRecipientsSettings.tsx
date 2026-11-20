@@ -5,10 +5,10 @@ import 'twenty-ui/theme-light.css';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { RestApiClient } from 'twenty-client-sdk/rest';
-import { enqueueSnackbar, useColorScheme } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, useColorScheme, useTranslate } from 'twenty-sdk/front-component';
 import { Callout } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
-import { Button } from 'twenty-ui/primitives/input';
+import { Button, Checkbox } from 'twenty-ui/primitives/input';
 import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme';
 
 import {
@@ -37,21 +37,40 @@ type WorkspaceMembersResponse = {
       userEmail?: string | null;
     }> | null;
   } | null;
+  pageInfo?: { hasNextPage?: boolean; endCursor?: string | null } | null;
 };
 
 const fetchWorkspaceMembers = async (): Promise<WorkspaceMember[]> => {
-  const response = await new RestApiClient().get<WorkspaceMembersResponse>(
-    '/rest/workspaceMembers',
-    { query: { limit: String(WORKSPACE_MEMBERS_PAGE_SIZE) } },
-  );
+  const workspaceMembers: WorkspaceMember[] = [];
+  let startingAfter: string | undefined;
 
-  return (response.data?.workspaceMembers ?? []).map((record) => ({
-    id: record.id,
-    name: [record.name?.firstName, record.name?.lastName]
-      .filter(isNonEmptyString)
-      .join(' '),
-    userEmail: record.userEmail ?? null,
-  }));
+  do {
+    const response = await new RestApiClient().get<WorkspaceMembersResponse>(
+      '/rest/workspaceMembers',
+      {
+        query: {
+          limit: String(WORKSPACE_MEMBERS_PAGE_SIZE),
+          ...(isNonEmptyString(startingAfter) ? { starting_after: startingAfter } : {}),
+        },
+      },
+    );
+
+    workspaceMembers.push(
+      ...(response.data?.workspaceMembers ?? []).map((record) => ({
+        id: record.id,
+        name: [record.name?.firstName, record.name?.lastName]
+          .filter(isNonEmptyString)
+          .join(' '),
+        userEmail: record.userEmail ?? null,
+      })),
+    );
+
+    const endCursor = response.pageInfo?.endCursor;
+    startingAfter =
+      response.pageInfo?.hasNextPage === true && isNonEmptyString(endCursor) ? endCursor : undefined;
+  } while (isNonEmptyString(startingAfter));
+
+  return workspaceMembers;
 };
 
 const listStyle = {
@@ -82,6 +101,7 @@ const footerStyle = {
 } as const;
 
 const NotificationRecipientsSettingsContent = () => {
+  const { t } = useTranslate();
   const [workspaceMembers, setWorkspaceMembers] = useState<WorkspaceMember[]>(
     [],
   );
@@ -112,7 +132,7 @@ const NotificationRecipientsSettingsContent = () => {
         setCanEdit(recipients.canEdit);
       } catch {
         if (!cancelled) {
-          setLoadError('Could not load notification settings. Try again.');
+          setLoadError(t('Could not load notification settings. Try again.'));
         }
       } finally {
         if (!cancelled) {
@@ -153,12 +173,12 @@ const NotificationRecipientsSettingsContent = () => {
 
       enqueueSnackbar(
         result.success
-          ? { message: 'Notification recipients saved.', variant: 'success' }
+          ? { message: t('Notification recipients saved.'), variant: 'success' }
           : { message: result.error, variant: 'error' },
       );
     } catch {
       enqueueSnackbar({
-        message: 'Could not save notification recipients. Try again.',
+        message: t('Could not save notification recipients. Try again.'),
         variant: 'error',
       });
     } finally {
@@ -169,11 +189,11 @@ const NotificationRecipientsSettingsContent = () => {
   return (
     <Section.Root>
       <Section.Header
-        title="Notification recipients"
-        description="Workspace members selected here receive WhatsApp alerts in their inbox."
+        title={t('Notification recipients')}
+        description={t('Workspace members selected here receive WhatsApp alerts in their inbox.')}
       />
       {isLoading ? (
-        <span style={rowStyle}>Loading workspace members…</span>
+        <span style={rowStyle}>{t('Loading workspace members…')}</span>
       ) : isNonEmptyString(loadError) ? (
         <Callout status="error" title={loadError} />
       ) : (
@@ -181,18 +201,19 @@ const NotificationRecipientsSettingsContent = () => {
           {!canEdit && (
             <Callout
               status="warning"
-              title="Read only"
-              description="Only members who can manage applications can change who receives notifications."
+              title={t('Read only')}
+              description={t(
+                'Only members who can manage applications can change who receives notifications.',
+              )}
             />
           )}
           <div style={listStyle}>
             {workspaceMembers.map((workspaceMember) => (
               <label key={workspaceMember.id} style={rowStyle}>
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={selectedIds.has(workspaceMember.id)}
                   disabled={!canEdit || isSaving}
-                  onChange={() => handleToggle(workspaceMember.id)}
+                  onCheckedChange={() => handleToggle(workspaceMember.id)}
                 />
                 <span>
                   {isNonEmptyString(workspaceMember.name)
@@ -213,7 +234,7 @@ const NotificationRecipientsSettingsContent = () => {
                 disabled={isSaving}
                 onClick={handleSave}
               >
-                {isSaving ? 'Saving…' : 'Save'}
+                {isSaving ? t('Saving…') : t('Save')}
               </Button>
             </div>
           )}

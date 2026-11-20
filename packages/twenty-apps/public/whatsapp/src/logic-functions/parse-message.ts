@@ -40,13 +40,9 @@ const handler = async (params: {
 }) => {
   const { businessData, contacts, messages } = params;
   const coreClient = new CoreApiClient();
-  /*
-  Questions:
-     is kv better than whatsapp message thread object?
-  */
   if (messages.type === 'unsupported') {
-    console.warn();
-    return; // not needed at time being to do anything with it, maybe when notifications will be done at some point it'll become useful
+    console.warn(`Ignoring unsupported WhatsApp message ${messages.id}`);
+    return;
   }
   if (messages.type === 'reaction') {
     return;
@@ -89,7 +85,7 @@ const handler = async (params: {
       messages.type === 'edit'
         ? getEditedMessageText(messages.edit.message)
         : [originalMessage.text, `(Deleted on ${sentAt.toISOString()})`].filter(isNonEmptyString).join('\n\n');
-    await updateMessage(coreClient, originalMessage.id, updatedText);
+    await updateMessage({ client: coreClient, messageId: originalMessage.id, text: updatedText });
     return;
   }
 
@@ -202,7 +198,7 @@ const handler = async (params: {
       break;
     }
     case 'order': {
-      text = messages.order.text; // TODO ???
+      text = messages.order.text;
       break;
     }
     case 'sticker': {
