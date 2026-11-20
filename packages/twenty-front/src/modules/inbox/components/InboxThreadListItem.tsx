@@ -1,4 +1,4 @@
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
 import { type MouseEvent, useId } from 'react';
 import { useLingui } from '@lingui/react/macro';
@@ -17,7 +17,7 @@ import { useAiChatThreadSubtitleContent } from '@/ai-chat/threads/hooks/useAiCha
 import { useAiChatThreadDisplayLabel } from '@/ai-chat/threads/hooks/useAiChatThreadDisplayLabel';
 import { useAiChatThreadRename } from '@/ai-chat/threads/hooks/useAiChatThreadRename';
 import { useInboxThreadTriage } from '@/inbox/hooks/useInboxThreadTriage';
-import { aiChatIsStreamingFamilySelector } from '@/ai-chat/states/selectors/aiChatIsStreamingFamilySelector';
+import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { type AiChatThreadRowVariant } from '@/ai-chat/threads/types/AiChatThreadRowVariant';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
@@ -85,10 +85,11 @@ export const InboxThreadListItem = ({
   const { status: triageStatus } = useInboxThreadTriage({
     threadId: thread.id,
   });
-  const aiChatIsStreaming = useAtomFamilySelectorValue(
-    aiChatIsStreamingFamilySelector,
-    thread.id,
+  const aiChatReplyStatus = useAtomFamilyStateValue(
+    aiChatReplyStatusFamilyState,
+    { threadId: thread.id },
   );
+  const isAiChatStreaming = aiChatReplyStatus === 'streaming';
   const { hasContent: hasSubtitleContent } =
     useAiChatThreadSubtitleContent(thread);
   const isCompact = variant === 'compact';
@@ -107,7 +108,7 @@ export const InboxThreadListItem = ({
       isChecked={isChecked}
       isEditing={isRenaming}
       isActionMenuOpen={isDropdownOpen}
-      isStreaming={aiChatIsStreaming}
+      isStreaming={isAiChatStreaming}
       onClick={(event) => onClick(thread, event)}
       onCheckboxClick={
         isDefined(onCheckboxClick)
