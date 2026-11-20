@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { aiChatIsStreamingFamilyState } from '@/ai-chat/states/aiChatIsStreamingFamilyState';
+import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { type AiChatPendingToolCall } from '@/ai-chat/tool-calls/types/AiChatPendingToolCall';
@@ -13,20 +13,21 @@ export const useAiChatPendingToolCalls = (): AiChatPendingToolCall[] => {
   const aiChatMessages = useAtomFamilyStateValue(aiChatMessagesFamilyState, {
     threadId,
   });
-  const aiChatIsStreaming = useAtomFamilyStateValue(
-    aiChatIsStreamingFamilyState,
+  const aiChatReplyStatus = useAtomFamilyStateValue(
+    aiChatReplyStatusFamilyState,
     { threadId },
   );
+  const isAiChatStreaming = aiChatReplyStatus === 'streaming';
 
   return useMemo(
     () =>
-      aiChatIsStreaming
+      isAiChatStreaming
         ? []
         : aiChatMessages.flatMap((message) =>
             message.parts
               .map(parsePendingToolCall)
               .filter((pendingToolCall) => isDefined(pendingToolCall)),
           ),
-    [aiChatMessages, aiChatIsStreaming],
+    [aiChatMessages, isAiChatStreaming],
   );
 };

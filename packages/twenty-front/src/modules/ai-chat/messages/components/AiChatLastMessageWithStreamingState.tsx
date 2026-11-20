@@ -2,7 +2,7 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { AiChatMessage } from '@/ai-chat/messages/components/AiChatMessage';
 import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
-import { aiChatIsStreamingFamilyState } from '@/ai-chat/states/aiChatIsStreamingFamilyState';
+import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
 import { aiChatLastReplyMessageIdFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatLastReplyMessageIdFamilySelector';
 import { isDefined } from 'twenty-shared/utils';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -14,10 +14,11 @@ export const AiChatLastMessageWithStreamingState = () => {
     threadId,
   );
 
-  const aiChatIsStreaming = useAtomFamilyStateValue(
-    aiChatIsStreamingFamilyState,
+  const aiChatReplyStatus = useAtomFamilyStateValue(
+    aiChatReplyStatusFamilyState,
     { threadId },
   );
+  const isAiChatStreaming = aiChatReplyStatus === 'streaming';
   const aiChatError = useAtomFamilyStateValue(aiChatErrorFamilyState, {
     threadId,
   });
@@ -29,7 +30,7 @@ export const AiChatLastMessageWithStreamingState = () => {
   return (
     <AiChatMessage
       messageId={aiChatLastReplyMessageId}
-      isLastMessageStreaming={aiChatIsStreaming}
+      isLastMessageStreaming={isAiChatStreaming}
       error={aiChatError ?? undefined}
     />
   );

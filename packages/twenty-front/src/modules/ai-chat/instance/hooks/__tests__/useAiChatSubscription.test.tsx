@@ -11,7 +11,7 @@ import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamily
 import { aiChatFetchedMessagesFamilyState } from '@/ai-chat/states/aiChatFetchedMessagesFamilyState';
 import { aiChatQueuedMessagesFamilyState } from '@/ai-chat/composer/states/aiChatQueuedMessagesFamilyState';
 import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
-import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai-chat/states/aiChatIsAwaitingFirstChunkFamilyState';
+import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import {
@@ -253,7 +253,10 @@ describe('Stream liveness', () => {
     resetJotaiStore();
     subscribe.mockReturnValue(disconnect);
     jotaiStore.set(sseClientState.atom, { subscribe } as never);
-    jotaiStore.set(aiChatIsAwaitingFirstChunkFamilyState.atomFamily(key), true);
+    jotaiStore.set(
+      aiChatReplyStatusFamilyState.atomFamily(key),
+      'awaiting-first-chunk',
+    );
   });
 
   afterEach(() => {

@@ -3,7 +3,7 @@ import { type AiChatInstanceEventDetail } from '@/ai-chat/types/AiChatInstanceEv
 import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai-chat/constants/AiChatSendMessageEventName';
 import { useStopAiChatStream } from '@/ai-chat/hooks/useStopAiChatStream';
 import { aiChatMessagesLoadingFamilyState } from '@/ai-chat/states/aiChatMessagesLoadingFamilyState';
-import { aiChatIsStreamingFamilyState } from '@/ai-chat/states/aiChatIsStreamingFamilyState';
+import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
 import { aiChatInputIsEmptyFamilySelector } from '@/ai-chat/composer/states/selectors/aiChatInputIsEmptyFamilySelector';
 import { aiChatIsAssistantReplyPendingFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatIsAssistantReplyPendingFamilySelector';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
@@ -30,10 +30,11 @@ export const SendMessageButton = ({
     aiChatMessagesLoadingFamilyState,
     { threadId },
   );
-  const aiChatIsStreaming = useAtomFamilyStateValue(
-    aiChatIsStreamingFamilyState,
+  const aiChatReplyStatus = useAtomFamilyStateValue(
+    aiChatReplyStatusFamilyState,
     { threadId },
   );
+  const isAiChatStreaming = aiChatReplyStatus === 'streaming';
   const { stopAiChatStream } = useStopAiChatStream();
   const aiChatIsAssistantReplyPending = useAtomFamilySelectorValue(
     aiChatIsAssistantReplyPendingFamilySelector,
@@ -47,7 +48,7 @@ export const SendMessageButton = ({
     );
   };
 
-  if (aiChatIsStreaming || aiChatIsAssistantReplyPending) {
+  if (isAiChatStreaming || aiChatIsAssistantReplyPending) {
     return (
       <IconButton
         variant="solid"
