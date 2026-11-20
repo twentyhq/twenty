@@ -1,7 +1,6 @@
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsRolePermissionsObjectOverridePanel } from '@/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel';
-import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig';
 import { OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/object-overrides/constants/ObjectOverrideTableGridTemplateColumns';
 import { useRowLevelPermissionRuleLabel } from '@/settings/roles/role-permissions/object-overrides/hooks/useRowLevelPermissionRuleLabel';
 import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/object-overrides/hooks/useSettingsRoleObjectOverrides';
@@ -74,13 +73,11 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
 
   const disabledOperations = getObjectDisabledOperations(objectMetadataItem);
 
-  const isOperationEnabled = (operation: SettingsRoleObjectPermissionKey) =>
-    !disabledOperations.includes(operation);
-
   const operations = getObjectOperations({
     role: settingsDraftRole,
     objectMetadataId: objectMetadataItem.id,
-  }).filter(isOperationEnabled);
+    disabledOperations,
+  });
 
   const isAdvanced = hasRule || hasFieldRestriction;
 
@@ -103,8 +100,9 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
     }
 
     const ruleOperationsLabel = getObjectOperationsSummary({
-      operations: getRecordsGrantOperations(singleRule.rule).filter(
-        isOperationEnabled,
+      operations: getRecordsGrantOperations(
+        singleRule.rule,
+        disabledOperations,
       ),
       isAdvanced: false,
     }).label;

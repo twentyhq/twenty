@@ -10,6 +10,7 @@ export const getRecordsGrantOperations = (
     | 'canSoftDeleteRecords'
     | 'canDestroyRecords'
   >,
+  disabledOperations: SettingsRoleObjectPermissionKey[] = [],
 ): SettingsRoleObjectPermissionKey[] => {
   const isOperationAllowed: Record<SettingsRoleObjectPermissionKey, boolean> = {
     canReadObjectRecords: recordsGrant.canReadRecords,
@@ -19,6 +20,7 @@ export const getRecordsGrantOperations = (
   };
 
   return SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.filter(
-    (operation) => isOperationAllowed[operation],
+    (operation) =>
+      isOperationAllowed[operation] && !disabledOperations.includes(operation),
   );
 };

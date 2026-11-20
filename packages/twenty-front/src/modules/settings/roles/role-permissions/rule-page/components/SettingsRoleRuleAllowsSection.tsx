@@ -52,9 +52,9 @@ export const SettingsRoleRuleAllowsSection = ({
   const allRecordsOperations = getObjectOperations({
     role: settingsDraftRole,
     objectMetadataId: objectMetadataItem.id,
-  }).filter(isOperationEnabled);
-  const ruleOperations =
-    getRecordsGrantOperations(rule).filter(isOperationEnabled);
+    disabledOperations,
+  });
+  const ruleOperations = getRecordsGrantOperations(rule, disabledOperations);
 
   const getDescription = (operation: SettingsRoleObjectPermissionKey) => {
     const disabledReason = getDisabledOperationReason(operation);

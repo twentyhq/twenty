@@ -95,7 +95,8 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
   const operations = getObjectOperations({
     role: settingsDraftRole,
     objectMetadataId: objectMetadataItem.id,
-  }).filter((operation) => !disabledOperations.includes(operation));
+    disabledOperations,
+  });
 
   const objectLabelPlural = objectMetadataItem.labelPlural.toLocaleLowerCase();
 

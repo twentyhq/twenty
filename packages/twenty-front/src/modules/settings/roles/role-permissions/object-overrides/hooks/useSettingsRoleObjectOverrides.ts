@@ -25,8 +25,6 @@ export const useSettingsRoleObjectOverrides = (roleId: string) => {
     >,
   ) => {
     const objectMetadataId = objectMetadataItem.id;
-    const disabledOperations = getObjectDisabledOperations(objectMetadataItem);
-
     setSettingsDraftRole((currentSettingsDraftRole) =>
       getRoleWithObjectOperations({
         role: currentSettingsDraftRole,
@@ -34,7 +32,8 @@ export const useSettingsRoleObjectOverrides = (roleId: string) => {
         operations: getObjectOperations({
           role: currentSettingsDraftRole,
           objectMetadataId,
-        }).filter((operation) => !disabledOperations.includes(operation)),
+          disabledOperations: getObjectDisabledOperations(objectMetadataItem),
+        }),
       }),
     );
     setSettingsRoleExpandedObjectOverrideIds((currentIds) => [
