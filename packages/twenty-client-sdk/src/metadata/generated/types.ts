@@ -7228,14 +7228,14 @@ export default {
                 }
             ],
             "addAgentChatThreadParticipants": [
-                566,
+                561,
                 {
                     "threadId": [
-                        566,
+                        561,
                         "UUID!"
                     ],
                     "workspaceMemberIds": [
-                        566,
+                        561,
                         "[UUID!]!"
                     ]
                 }
