@@ -13,6 +13,7 @@ import { NAVIGATION_MENU_TAB_MAX_COUNT } from '@/navigation-menu-item/common/con
 import { MainNavigationDrawerAddTabButton } from '@/navigation/components/MainNavigationDrawerAddTabButton';
 import { MainNavigationDrawerSidebarTab } from '@/navigation/components/MainNavigationDrawerSidebarTab';
 import { MainNavigationDrawerTab } from '@/navigation/components/MainNavigationDrawerTab';
+import { MainNavigationDrawerTabDropTarget } from '@/navigation/components/MainNavigationDrawerTabDropTarget';
 import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationDrawerTabs } from '@/navigation/hooks/useNavigationDrawerTabs';
@@ -159,19 +160,22 @@ export const MainNavigationDrawerTabSwitcher = () => {
         }
 
         return [
-          drawerTabButton,
+          <MainNavigationDrawerTabDropTarget key={drawerTab} tabId={null}>
+            {drawerTabButton}
+          </MainNavigationDrawerTabDropTarget>,
           ...navigationMenuTabs.map((tab) => (
-            <MainNavigationDrawerSidebarTab
-              key={tab.id}
-              tab={tab}
-              isActive={activeNavigationMenuTab?.id === tab.id}
-              isExpanded={isExpanded}
-              shouldShowTooltip={shouldShowTooltips}
-              isUnread={
-                activeNavigationMenuTab?.id !== tab.id &&
-                tabIdsWithUnreadChats.has(tab.id)
-              }
-            />
+            <MainNavigationDrawerTabDropTarget key={tab.id} tabId={tab.id}>
+              <MainNavigationDrawerSidebarTab
+                tab={tab}
+                isActive={activeNavigationMenuTab?.id === tab.id}
+                isExpanded={isExpanded}
+                shouldShowTooltip={shouldShowTooltips}
+                isUnread={
+                  activeNavigationMenuTab?.id !== tab.id &&
+                  tabIdsWithUnreadChats.has(tab.id)
+                }
+              />
+            </MainNavigationDrawerTabDropTarget>
           )),
           ...(isLayoutCustomizationModeEnabled &&
           tabCountIncludingHome < NAVIGATION_MENU_TAB_MAX_COUNT

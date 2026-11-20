@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
-import { AiChatInstanceContext } from '@/ai-chat/states/contexts/AiChatInstanceContext';
+import { AiChatInstanceContext } from '@/ai-chat/contexts/AiChatInstanceContext';
 
 export const useAiChatInstanceOrThrow = () => {
   const aiChatInstance = useContext(AiChatInstanceContext);

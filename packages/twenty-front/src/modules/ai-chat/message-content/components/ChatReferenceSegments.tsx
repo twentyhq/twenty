@@ -2,10 +2,12 @@ import { AiChatAssistantMentionChip } from '@/ai-chat/components/AiChatAssistant
 import { ChatReferenceChip } from '@/ai-chat/message-content/components/ChatReferenceChip';
 import { StyledChatReferenceChipContainer } from '@/ai-chat/message-content/components/StyledChatReferenceChipContainer';
 import { ChatReferenceNavigationEnabledContext } from '@/ai-chat/message-content/contexts/ChatReferenceNavigationEnabledContext';
-import { type ChatReferenceMatch } from '@/ai-chat/message-content/types/ChatReferenceMatch';
 import { isString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { isAgentChatAssistantReference } from 'twenty-shared/ai';
+import {
+  type ChatReferenceMatch,
+  isAgentChatAssistantReference,
+} from 'twenty-shared/ai';
 
 type ChatReferenceSegmentsProps = {
   segments: Array<string | ChatReferenceMatch>;
