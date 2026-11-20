@@ -119,6 +119,7 @@ describe('ClientConfigController', () => {
         isWorkspaceSchemaDDLLocked: false,
         isOnboardingAiChatEnabled: false,
         enterpriseInstanceType: ENTERPRISE_INSTANCE_TYPE.PRODUCTION,
+        webPushVapidPublicKey: 'test-web-push-vapid-public-key',
       };
 
       jest
