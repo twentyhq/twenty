@@ -24,17 +24,27 @@ describe('getAiChatThreadRollbackUpdate', () => {
     ).toEqual({ id: 'thread', assigneeId: 'tom', channelId: 'sales' });
   });
 
-  it('keeps a field the server changed since', () => {
+  it('restores nothing when any field changed since', () => {
     expect(
       getAiChatThreadRollbackUpdate({
-        optimisticUpdate: { id: 'thread', assigneeId: 'jane', channelId: null },
-        previousThread: buildThread({ assigneeId: 'tom', channelId: 'sales' }),
-        currentThread: buildThread({ assigneeId: 'ana', channelId: null }),
+        optimisticUpdate: {
+          id: 'thread',
+          channelId: 'support',
+          channelArchivedAt: null,
+        },
+        previousThread: buildThread({
+          channelId: 'sales',
+          channelArchivedAt: '2026-11-02T00:00:00.000Z',
+        }),
+        currentThread: buildThread({
+          channelId: 'marketing',
+          channelArchivedAt: null,
+        }),
       }),
-    ).toEqual({ id: 'thread', channelId: 'sales' });
+    ).toBeNull();
   });
 
-  it('returns null when every field changed since', () => {
+  it('keeps an assignee set since by someone else', () => {
     expect(
       getAiChatThreadRollbackUpdate({
         optimisticUpdate: { id: 'thread', assigneeId: 'jane' },
