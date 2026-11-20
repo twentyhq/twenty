@@ -85,36 +85,39 @@ export const MainNavigationDrawerContextMenuContent = ({
     }
   };
 
+  const getAddItemOptions = (): NavigationMenuItemOption[] => {
+    if (!isDefined(targetSection)) {
+      return [];
+    }
+
+    const startAddingItem = () => {
+      store.set(navigationMenuSectionIdAddingItemState.atom, targetSection.id);
+      store.set(
+        isNavigationSectionOpenFamilyState.atomFamily(
+          getNavigationMenuSectionNavigationSectionId(targetSection),
+        ),
+        true,
+      );
+    };
+
+    return [
+      {
+        id: 'add-item',
+        label: t`Add item to ${targetSection.name}`,
+        Icon: IconPlus,
+        onClick: () =>
+          customizeAndOpenDropdown({
+            dropdownId: getNavigationMenuSectionMenuDropdownId(
+              targetSection.id,
+            ),
+            onCustomizationModeEntered: startAddingItem,
+          }),
+      },
+    ];
+  };
+
   const addOptions: NavigationMenuItemOption[] = [
-    ...(isDefined(targetSection)
-      ? [
-          {
-            id: 'add-item',
-            label: t`Add item to ${targetSection.name}`,
-            Icon: IconPlus,
-            onClick: () =>
-              customizeAndOpenDropdown({
-                dropdownId: getNavigationMenuSectionMenuDropdownId(
-                  targetSection.id,
-                ),
-                onCustomizationModeEntered: () => {
-                  store.set(
-                    navigationMenuSectionIdAddingItemState.atom,
-                    targetSection.id,
-                  );
-                  store.set(
-                    isNavigationSectionOpenFamilyState.atomFamily(
-                      getNavigationMenuSectionNavigationSectionId(
-                        targetSection,
-                      ),
-                    ),
-                    true,
-                  );
-                },
-              }),
-          },
-        ]
-      : []),
+    ...getAddItemOptions(),
     {
       id: 'add-section',
       label: t`Add section`,
