@@ -242,6 +242,30 @@ export default defineFrontComponent({ component: Component });`,
     expect(result.config.component).toBeTypeOf('function');
   });
 
+  it('evaluates module-level nested reads of mocked UI exports', async () => {
+    await writeFile(
+      join(appPath, 'command.ts'),
+      `
+      import { defineCommandMenuItem } from 'twenty-sdk/define';
+      import { themeCssVariables } from 'twenty-ui/theme';
+      const labelStyle = {
+        color: themeCssVariables.font.color.primary,
+        border: \`1px solid \${themeCssVariables.border.color.medium}\`,
+      };
+      export default defineCommandMenuItem({
+        universalIdentifier: '${SOURCE_TEST_APPLICATION_ID}',
+        component: () => labelStyle,
+      });
+    `,
+    );
+    const result = await extractManifestFromFile({
+      appPath,
+      filePath: join(appPath, 'command.ts'),
+    });
+
+    expect(result.config.component).toBeTypeOf('function');
+  });
+
   it('keeps an unreadable definition occupied and preserves config even when SDK validation fails', async () => {
     await writeFile(
       join(appPath, 'broken.ts'),
