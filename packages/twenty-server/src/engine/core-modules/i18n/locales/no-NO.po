@@ -18273,7 +18273,7 @@ msgstr "Du har ikke tillatelse til å få tilgang til denne arbeidsflyten."
 #. js-lingui-id: /qkY9j
 #: src/engine/permissions/permissions.exception.ts
 msgid "You do not have permission to change this record."
-msgstr ""
+msgstr "Du har ikke tillatelse til å endre denne oppføringen."
 
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts

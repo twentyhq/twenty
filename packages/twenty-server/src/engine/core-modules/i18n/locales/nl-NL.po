@@ -18273,7 +18273,7 @@ msgstr "Je hebt geen toestemming om toegang te krijgen tot deze workflow."
 #. js-lingui-id: /qkY9j
 #: src/engine/permissions/permissions.exception.ts
 msgid "You do not have permission to change this record."
-msgstr ""
+msgstr "Je hebt geen toestemming om dit record te wijzigen."
 
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts

@@ -18273,7 +18273,7 @@ msgstr "Դուք չունեք թույլտվություն մուտք գործե
 #. js-lingui-id: /qkY9j
 #: src/engine/permissions/permissions.exception.ts
 msgid "You do not have permission to change this record."
-msgstr ""
+msgstr "Դուք չունեք թույլտվություն այս գրառումը փոխելու համար։"
 
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts

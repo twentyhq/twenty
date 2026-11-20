@@ -18273,7 +18273,7 @@ msgstr "No tiene permiso para acceder a este flujo de trabajo."
 #. js-lingui-id: /qkY9j
 #: src/engine/permissions/permissions.exception.ts
 msgid "You do not have permission to change this record."
-msgstr ""
+msgstr "No tienes permiso para cambiar este registro."
 
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts

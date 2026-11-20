@@ -18273,7 +18273,7 @@ msgstr "No tens permís per accedir a aquest flux de treball."
 #. js-lingui-id: /qkY9j
 #: src/engine/permissions/permissions.exception.ts
 msgid "You do not have permission to change this record."
-msgstr ""
+msgstr "No tens permís per canviar aquest registre."
 
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
