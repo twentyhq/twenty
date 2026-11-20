@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type RecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
+import { type RecordFieldLookupTarget } from '@/object-record/record-column-lookup/types/RecordFieldLookupTarget';
 import { isDefined } from 'twenty-shared/utils';
 
 type ColumnHeaderFieldMetadataItem = Pick<
