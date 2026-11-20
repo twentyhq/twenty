@@ -74,19 +74,18 @@ export const WorkspaceSection = () => {
 
   return (
     <WorkspaceSectionContainer
-      sectionTitle={t`Workspace`}
+      sectionTitle={isCustomizableSidebarEnabled ? undefined : t`Workspace`}
       items={items}
       rightIcon={
         // Customising the menu is desktop-only.
-        isMobile ? undefined : (
+        isMobile || isCustomizableSidebarEnabled ? undefined : (
           <StyledRightIconsContainer>
             {isLayoutCustomizationModeEnabled ? (
               <WorkspaceSectionHeaderAddDropdown
                 onOpen={openNavigationSection}
               />
             ) : (
-              hasLayoutsPermission &&
-              !isCustomizableSidebarEnabled && (
+              hasLayoutsPermission && (
                 <div onMouseEnter={preloadNavigationMenuItemDndKit}>
                   <LightIconButton
                     emphasis="subtle"
