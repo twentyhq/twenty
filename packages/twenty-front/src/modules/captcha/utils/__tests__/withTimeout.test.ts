@@ -11,7 +11,7 @@ describe('withTimeout', () => {
 
   it('should resolve with the promise value when it settles in time', async () => {
     const result = withTimeout({
-      promise: Promise.resolve('value'),
+      run: async () => 'value',
       timeoutInMs: 1000,
       timeoutMessage: 'timed out',
     });
@@ -22,7 +22,9 @@ describe('withTimeout', () => {
 
   it('should reject with the promise error when it fails in time', async () => {
     const result = withTimeout({
-      promise: Promise.reject(new Error('failed')),
+      run: async () => {
+        throw new Error('failed');
+      },
       timeoutInMs: 1000,
       timeoutMessage: 'timed out',
     });
@@ -30,9 +32,15 @@ describe('withTimeout', () => {
     await expect(result).rejects.toThrow('failed');
   });
 
-  it('should reject with the timeout message when the promise never settles', async () => {
+  it('should reject and abort the run when it never settles', async () => {
+    const handleAbort = jest.fn();
+
     const result = withTimeout({
-      promise: new Promise<string>(() => {}),
+      run: (abortSignal) => {
+        abortSignal.addEventListener('abort', handleAbort);
+
+        return new Promise<string>(() => {});
+      },
       timeoutInMs: 1000,
       timeoutMessage: 'timed out',
     });
@@ -40,5 +48,24 @@ describe('withTimeout', () => {
     jest.advanceTimersByTime(1000);
 
     await expect(result).rejects.toThrow('timed out');
+    expect(handleAbort).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not abort a run that settled in time', async () => {
+    const handleAbort = jest.fn();
+
+    await withTimeout({
+      run: async (abortSignal) => {
+        abortSignal.addEventListener('abort', handleAbort);
+
+        return 'value';
+      },
+      timeoutInMs: 1000,
+      timeoutMessage: 'timed out',
+    });
+
+    jest.advanceTimersByTime(1000);
+
+    expect(handleAbort).not.toHaveBeenCalled();
   });
 });

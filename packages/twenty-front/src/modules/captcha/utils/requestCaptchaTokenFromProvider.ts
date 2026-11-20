@@ -7,9 +7,11 @@ const CAPTCHA_WIDGET_SELECTOR = '#captcha-widget';
 export const requestCaptchaTokenFromProvider = ({
   provider,
   siteKey,
+  abortSignal,
 }: {
   provider: CaptchaDriverType;
   siteKey: string;
+  abortSignal: AbortSignal;
 }): Promise<string> => {
   switch (provider) {
     case CaptchaDriverType.GOOGLE_RECAPTCHA:
@@ -35,11 +37,20 @@ export const requestCaptchaTokenFromProvider = ({
         let widgetId: string | undefined;
 
         const removeWidget = () => {
+          abortSignal.removeEventListener('abort', handleAbort);
+
           if (isDefined(widgetId)) {
             window.turnstile.remove(widgetId);
           }
           container.remove();
         };
+
+        const handleAbort = () => {
+          removeWidget();
+          reject(new Error(doNotTranslate('Turnstile challenge aborted')));
+        };
+
+        abortSignal.addEventListener('abort', handleAbort, { once: true });
 
         widgetId = window.turnstile.render(container, {
           sitekey: siteKey,

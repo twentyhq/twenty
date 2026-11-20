@@ -22,7 +22,8 @@ export const useRequestFreshCaptchaToken = () => {
 
     try {
       const token = await withTimeout({
-        promise: requestCaptchaTokenWhenReady({ store }),
+        run: (abortSignal) =>
+          requestCaptchaTokenWhenReady({ store, abortSignal }),
         timeoutInMs: CAPTCHA_TOKEN_REQUEST_TIMEOUT_IN_MS,
         timeoutMessage: doNotTranslate('Captcha token request timed out'),
       });

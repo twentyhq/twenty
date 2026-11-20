@@ -168,6 +168,34 @@ describe('useRequestFreshCaptchaToken', () => {
     });
 
     expect(await pendingCaptchaToken).toBeUndefined();
+
+    await act(async () => {
+      jotaiStore.set(isCaptchaScriptLoadedState.atom, true);
+      await jest.advanceTimersByTimeAsync(0);
+    });
+
+    expect(mockGrecaptchaExecute).not.toHaveBeenCalled();
+    jest.useRealTimers();
+  });
+
+  it('should remove a Turnstile widget that stalls past the timeout', async () => {
+    jest.useFakeTimers();
+    setCaptchaProvider(CaptchaDriverType.TURNSTILE);
+    mockTurnstileRender.mockReturnValue('turnstile-widget-id');
+
+    const { result } = renderHook(() => useRequestFreshCaptchaToken(), {
+      wrapper: Wrapper,
+    });
+
+    const pendingCaptchaToken = result.current.requestFreshCaptchaToken();
+
+    await act(async () => {
+      await jest.advanceTimersByTimeAsync(CAPTCHA_TOKEN_REQUEST_TIMEOUT_IN_MS);
+    });
+
+    expect(await pendingCaptchaToken).toBeUndefined();
+    expect(mockTurnstileRemove).toHaveBeenCalledWith('turnstile-widget-id');
+    expect(document.querySelector('#captcha-widget')?.children).toHaveLength(0);
     jest.useRealTimers();
   });
 });

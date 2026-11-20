@@ -8,13 +8,16 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const requestCaptchaTokenWhenReady = async ({
   store,
+  abortSignal,
 }: {
   store: ReturnType<typeof createStore>;
+  abortSignal: AbortSignal;
 }): Promise<string | undefined> => {
   await waitForAtomValue({
     store,
     atom: clientConfigApiStatusState.atom,
     isExpectedValue: ({ isLoadedOnce }) => isLoadedOnce,
+    abortSignal,
   });
 
   const { provider, siteKey } = store.get(captchaState.atom) ?? {};
@@ -27,7 +30,8 @@ export const requestCaptchaTokenWhenReady = async ({
     store,
     atom: isCaptchaScriptLoadedState.atom,
     isExpectedValue: (isCaptchaScriptLoaded) => isCaptchaScriptLoaded,
+    abortSignal,
   });
 
-  return requestCaptchaTokenFromProvider({ provider, siteKey });
+  return requestCaptchaTokenFromProvider({ provider, siteKey, abortSignal });
 };

@@ -1,17 +1,28 @@
 export const withTimeout = <TValue>({
-  promise,
+  run,
   timeoutInMs,
   timeoutMessage,
 }: {
-  promise: Promise<TValue>;
+  run: (abortSignal: AbortSignal) => Promise<TValue>;
   timeoutInMs: number;
   timeoutMessage: string;
 }): Promise<TValue> =>
   new Promise<TValue>((resolve, reject) => {
-    const timeoutId = setTimeout(
-      () => reject(new Error(timeoutMessage)),
-      timeoutInMs,
-    );
+    const abortController = new AbortController();
 
-    promise.then(resolve, reject).finally(() => clearTimeout(timeoutId));
+    const timeoutId = setTimeout(() => {
+      abortController.abort();
+      reject(new Error(timeoutMessage));
+    }, timeoutInMs);
+
+    run(abortController.signal).then(
+      (value) => {
+        clearTimeout(timeoutId);
+        resolve(value);
+      },
+      (error) => {
+        clearTimeout(timeoutId);
+        reject(error);
+      },
+    );
   });
