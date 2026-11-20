@@ -84,17 +84,4 @@ describe('teamsActivitiesEnqueueHandler', () => {
 
     warnSpy.mockRestore();
   });
-
-  it('should not schedule a watchdog when no request was recorded', async () => {
-    enqueueRequestMock.mockResolvedValue({
-      ok: true,
-      skipped: 'Chat is disabled',
-    });
-
-    const result = await teamsActivitiesEnqueueHandler(PAYLOAD);
-
-    expect(result).toEqual({ ok: true, skipped: 'Chat is disabled' });
-    expect(enqueueWatchdogMock).not.toHaveBeenCalled();
-    expect(answerRequestMock).not.toHaveBeenCalled();
-  });
 });

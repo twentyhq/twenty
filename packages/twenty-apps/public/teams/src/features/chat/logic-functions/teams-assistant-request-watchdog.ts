@@ -28,24 +28,16 @@ export const teamsAssistantRequestWatchdogHandler = async ({
     id: teamsAssistantRequestId,
   });
 
-  if (!isDefined(record)) {
-    return {
-      failed: false,
-      attempt,
-      rescheduled: false,
-      reason: 'Request not found',
-    };
-  }
-
   if (
-    record.status !== TEAMS_ASSISTANT_REQUEST_STATUS.PENDING &&
-    record.status !== TEAMS_ASSISTANT_REQUEST_STATUS.PROCESSING
+    !isDefined(record) ||
+    (record.status !== TEAMS_ASSISTANT_REQUEST_STATUS.PENDING &&
+      record.status !== TEAMS_ASSISTANT_REQUEST_STATUS.PROCESSING)
   ) {
     return {
       failed: false,
       attempt,
       rescheduled: false,
-      reason: 'Request already finished',
+      reason: 'Request is missing or already finished',
     };
   }
 

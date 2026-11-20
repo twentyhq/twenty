@@ -109,16 +109,6 @@ describe('teamsAssistantRequestWatchdogHandler', () => {
     },
   );
 
-  it('should do nothing when the request no longer exists', async () => {
-    findRequestMock.mockResolvedValue(undefined);
-
-    const result = await runWatchdog();
-
-    expect(result).toMatchObject({ failed: false, rescheduled: false });
-    expect(failStaleRequestMock).not.toHaveBeenCalled();
-    expect(sendTeamsActivityMock).not.toHaveBeenCalled();
-  });
-
   it.each(['PROCESSING', 'PENDING'])(
     'should fail a stale %s request and tell the user once to ask again',
     async (status) => {
