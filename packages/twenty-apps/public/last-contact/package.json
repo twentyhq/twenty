@@ -22,6 +22,8 @@
     "test:unit": "vitest run --config vitest.unit.config.ts"
   },
   "devDependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@types/node": "^24.7.2",
     "@types/react": "^19.0.0",
     "@types/semver": "^7",
