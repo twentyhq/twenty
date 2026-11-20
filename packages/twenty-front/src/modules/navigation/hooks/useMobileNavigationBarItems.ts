@@ -4,6 +4,7 @@ import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/c
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
 import { type NavigationMenuChatAttention } from '@/navigation-menu-item/common/types/NavigationMenuChatAttention';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
+import { useGetNavigationMenuTabAttentionLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel';
 import { useNavigationMenuChatAttention } from '@/navigation-menu-item/display/hooks/useNavigationMenuChatAttention';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -70,6 +71,8 @@ export const useMobileNavigationBarItems = (): {
   });
   const activeNavigationMenuTab = useActiveNavigationMenuTab();
   const { getTabChatAttention } = useNavigationMenuChatAttention();
+  const getNavigationMenuTabAttentionLabel =
+    useGetNavigationMenuTabAttentionLabel();
   const setCurrentNavigationMenuTabId = useSetAtomState(
     currentNavigationMenuTabIdState,
   );
@@ -132,20 +135,10 @@ export const useMobileNavigationBarItems = (): {
       },
       ...navigationMenuTabs.map((tab, index): MobileNavigationBarItem => {
         const attention = getTabChatAttention(tab.id);
-        const getLabel = () => {
-          switch (attention) {
-            case 'needs-input':
-              return t`${tab.name}, needs your input`;
-            case 'unread':
-              return t`${tab.name}, unread`;
-            default:
-              return tab.name;
-          }
-        };
 
         return {
           name: `tab-${tab.id}`,
-          label: getLabel(),
+          label: getNavigationMenuTabAttentionLabel(tab.name, attention),
           Icon: getIcon(tab.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT),
           onClick: () => openHomePageOnTab(tab.id),
           attention,

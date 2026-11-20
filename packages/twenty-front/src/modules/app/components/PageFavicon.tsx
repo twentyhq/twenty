@@ -40,15 +40,15 @@ export const PageFavicon = ({ attentionDotColor }: PageFaviconProps) => {
         />
       )}
       <Helmet>
-        <link
-          rel="icon"
-          type="image/x-icon"
-          href={
-            isFaviconWithAttentionDotCurrent
-              ? faviconWithAttentionDot.dataUrl
-              : faviconUrl
-          }
-        />
+        {isFaviconWithAttentionDotCurrent ? (
+          <link
+            rel="icon"
+            type="image/png"
+            href={faviconWithAttentionDot.dataUrl}
+          />
+        ) : (
+          <link rel="icon" type="image/x-icon" href={faviconUrl} />
+        )}
       </Helmet>
     </>
   );

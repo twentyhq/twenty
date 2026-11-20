@@ -9,6 +9,7 @@ import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
 import { type NavigationMenuChatAttention } from '@/navigation-menu-item/common/types/NavigationMenuChatAttention';
+import { useGetNavigationMenuTabAttentionLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel';
 import { NavigationMenuTabMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuTabMenuContent';
 import { NavigationMenuItemDropdownOpenEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemDropdownOpenEffect';
 import { MainNavigationDrawerTab } from '@/navigation/components/MainNavigationDrawerTab';
@@ -42,6 +43,8 @@ export const MainNavigationDrawerSidebarTab = ({
 }: MainNavigationDrawerSidebarTabProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
+  const getNavigationMenuTabAttentionLabel =
+    useGetNavigationMenuTabAttentionLabel();
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -49,17 +52,6 @@ export const MainNavigationDrawerSidebarTab = ({
     useAtomState(navigationMenuItemIdToRenameState);
   const { switchToNavigationMenuTab } = useSwitchNavigationDrawerTab();
   const dropdownId = `navigation-menu-tab-menu-${tab.id}`;
-
-  const getAriaLabel = () => {
-    switch (attention) {
-      case 'needs-input':
-        return t`${tab.name}, needs your input`;
-      case 'unread':
-        return t`${tab.name}, unread`;
-      default:
-        return tab.name;
-    }
-  };
 
   const handleClick = () => {
     if (isLayoutCustomizationModeEnabled && isActive) {
@@ -79,7 +71,7 @@ export const MainNavigationDrawerSidebarTab = ({
       tooltip={tab.name}
       shouldShowTooltip={shouldShowTooltip}
       onClick={handleClick}
-      ariaLabel={getAriaLabel()}
+      ariaLabel={getNavigationMenuTabAttentionLabel(tab.name, attention)}
       iconAccessory={
         isDefined(attention) && (
           <StyledNavigationDrawerAttentionDot
