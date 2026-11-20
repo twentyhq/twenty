@@ -2,7 +2,7 @@
 
 ## 1.12.0
 
-- Add an "Add columns" button to the app settings. It opens Ask AI with a prefilled prompt to show the last-contact columns on the All People, All Companies and All Opportunities views, skipping any of those views that do not exist.
+- Add an "Add columns" button to the app settings. It opens Ask AI with a prefilled prompt to show the last-contact columns on the All People, All Companies and All Opportunities views, skipping any of those views that do not exist. Companies and Opportunities get Last contact and Last contact item; People get Last contact, Last outbound, Last inbound, Last contact by, Last email and Last meeting.
 - Warn on the app settings page when one of those views, as owned by the workspace, hides a last-contact column, with a button to the settings tab. The warning about missing synced emails and meetings still takes priority.
 - Add a "Hide suggestion" button next to "Add columns" that stops this warning for the whole workspace.
 - Give the settings tab the `settings` slug so links can open it directly.
