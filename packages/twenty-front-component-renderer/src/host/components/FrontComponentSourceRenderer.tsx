@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { type FrontComponentSelectedObjectMetadata } from 'twenty-sdk/front-component';
 
 import { createMockSdkClientSources } from '@/host/component-source/utils/createMockSdkClientSources';
 
@@ -10,16 +11,22 @@ type FrontComponentSourceRendererProps = {
   componentSource: string;
   sharedDependenciesSource?: string;
   mockQueryResult: Record<string, unknown>;
+  selectedRecordIds?: string[];
+  selectedObjectMetadata?: FrontComponentSelectedObjectMetadata | null;
   colorScheme: 'light' | 'dark';
   onReady?: () => void;
   onError: (error?: Error) => void;
 };
+
+const EMPTY_SELECTED_RECORD_IDS: string[] = [];
 
 export const FrontComponentSourceRenderer = ({
   componentId,
   componentSource,
   sharedDependenciesSource,
   mockQueryResult,
+  selectedRecordIds = EMPTY_SELECTED_RECORD_IDS,
+  selectedObjectMetadata = null,
   colorScheme,
   onReady,
   onError,
@@ -32,12 +39,13 @@ export const FrontComponentSourceRenderer = ({
     () => ({
       frontComponentId: componentId,
       userId: null,
-      recordId: null,
-      selectedRecordIds: [],
+      recordId: selectedRecordIds.length === 1 ? selectedRecordIds[0] : null,
+      selectedRecordIds,
+      selectedObjectMetadata,
       timelineActivityId: null,
       colorScheme,
     }),
-    [componentId, colorScheme],
+    [componentId, colorScheme, selectedRecordIds, selectedObjectMetadata],
   );
 
   return (

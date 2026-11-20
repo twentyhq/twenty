@@ -16,7 +16,12 @@ const sharedDependencies: Parameters<
     [
       'react',
       {
-        namedExports: ['useEffect', 'useState', 'useSyncExternalStore'],
+        namedExports: [
+          'useEffect',
+          'useRef',
+          'useState',
+          'useSyncExternalStore',
+        ],
         hasDefaultExport: true,
       },
     ],
@@ -66,6 +71,31 @@ const INPUT = {
 };
 
 describe('buildFrontComponent', () => {
+  it('bundles the SDK record hooks without requiring them in the app dependencies', async () => {
+    const { compiledSource, source } = await buildFrontComponent({
+      ...INPUT,
+      pageLayoutType: PageLayoutType.RECORD_PAGE,
+      source: `import { useSelectedRecordIds, useSelectedObjectMetadata } from 'twenty-sdk/front-component';
+        export const Component = () => <div>{useSelectedObjectMetadata()?.nameSingular}: {useSelectedRecordIds()[0]}</div>;`,
+    });
+
+    expect(compiledSource).toContain('__twentySdkExecutionContext__');
+    expect(compiledSource).not.toContain('twenty-sdk/front-component');
+    expect(source).toContain("from 'twenty-sdk/front-component'");
+    await expect(
+      transform(compiledSource, { loader: 'js' }),
+    ).resolves.toHaveProperty('code');
+  });
+
+  it('does not expose unrelated SDK capabilities through the record context module', async () => {
+    await expect(
+      buildFrontComponent({
+        ...INPUT,
+        source: `import { navigate } from 'twenty-sdk/front-component';
+        export const Component = () => <button onClick={() => navigate('/settings')}>Open</button>;`,
+      }),
+    ).rejects.toThrow('No matching export');
+  });
   it.each([PageLayoutType.DASHBOARD, PageLayoutType.RECORD_PAGE] as const)(
     'builds one editable SDK file for the selected %s surface',
     async (pageLayoutType) => {

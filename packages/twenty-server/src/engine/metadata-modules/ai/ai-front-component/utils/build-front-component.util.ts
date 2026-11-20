@@ -14,6 +14,7 @@ import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-sha
 
 import { type FrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-shared-dependencies.type';
 import { FRONT_COMPONENT_ALLOWED_IMPORTS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-allowed-imports.constant';
+import FRONT_COMPONENT_CONTEXT_MODULE from 'src/engine/metadata-modules/ai/ai-front-component/constants/generated/front-component-context-module.json';
 import { FRONT_COMPONENT_WRAPPER_NAME } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-wrapper-name.constant';
 import { type FrontComponentBuildInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-build-input.type';
 import { buildFrontComponentEntrySource } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util';
@@ -57,6 +58,22 @@ export const buildFrontComponent = async ({
     ],
     plugins: [
       {
+        name: 'front-component-context',
+        setup(build) {
+          build.onResolve({ filter: /^twenty-sdk\/front-component$/ }, () => ({
+            path: 'context',
+            namespace: 'front-component-context',
+          }));
+          build.onLoad(
+            { filter: /.*/, namespace: 'front-component-context' },
+            () => ({
+              contents: FRONT_COMPONENT_CONTEXT_MODULE.source,
+              loader: 'js',
+            }),
+          );
+        },
+      },
+      {
         name: 'front-component-imports',
         setup(build) {
           build.onResolve({ filter: /.*/ }, ({ path, importer, kind }) => {
@@ -74,7 +91,7 @@ export const buildFrontComponent = async ({
             return {
               errors: [
                 {
-                  text: `Unsupported import: ${path}. Use React, ${FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER} and the supported twenty-ui imports.`,
+                  text: `Unsupported import: ${path}. Use React, ${FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER}, the record context hooks from twenty-sdk/front-component and the supported twenty-ui imports.`,
                 },
               ],
             };
