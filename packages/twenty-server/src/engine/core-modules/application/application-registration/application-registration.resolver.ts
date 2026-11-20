@@ -112,7 +112,7 @@ const APPLICATION_TARBALL_UPLOAD_ACCESS_POLICY: AccessPolicy = {
     oauthClient: true,
     application: false,
   },
-  requiredPermissionFlags: [PermissionFlagType.MARKETPLACE_APPS],
+  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
 };
 
 const APPLICATION_REGISTRATION_CLAIM_ACCESS_POLICY: AccessPolicy = {

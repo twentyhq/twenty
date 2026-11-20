@@ -12,9 +12,15 @@ import {
   createAppTarballUpload,
 } from 'test/integration/metadata/suites/application/utils/create-app-tarball-upload.util';
 import { putApplicationFileUploadTarget } from 'test/integration/metadata/suites/application/utils/put-application-file-upload-target.util';
+import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
+import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { type DataSource } from 'typeorm';
+
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const buildManifest = (universalIdentifier: string) =>
   JSON.stringify({
@@ -829,5 +835,116 @@ describe('Direct app tarball upload', () => {
       ),
     ).toBe(true);
     expect(errors?.[0].extensions.code).toBe('BAD_USER_INPUT');
+  });
+
+  describe('with a custom role', () => {
+    let customRoleId: string;
+    let originalMemberRoleId: string;
+
+    beforeAll(async () => {
+      originalMemberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
+
+      const createRoleResponse = await makeMetadataApiRequest({
+        query: gql`
+          mutation CreateOneRole {
+            createOneRole(
+              createRoleInput: {
+                label: "App Publisher"
+                canUpdateAllSettings: false
+                canReadAllObjectRecords: true
+                canUpdateAllObjectRecords: false
+                canSoftDeleteAllObjectRecords: false
+                canDestroyAllObjectRecords: false
+              }
+            ) {
+              id
+            }
+          }
+        `,
+      });
+
+      customRoleId = createRoleResponse.body.data.createOneRole.id;
+
+      await makeMetadataApiRequest({
+        query: gql`
+          mutation UpsertPermissionFlags($roleId: UUID!) {
+            upsertPermissionFlags(
+              upsertPermissionFlagsInput: {
+                roleId: $roleId
+                permissionFlagKeys: ["${PermissionFlagType.API_KEYS_AND_WEBHOOKS}"]
+              }
+            ) {
+              id
+            }
+          }
+        `,
+        variables: { roleId: customRoleId },
+      });
+    });
+
+    afterAll(async () => {
+      await updateWorkspaceMemberRole({
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          roleId: originalMemberRoleId,
+        },
+        expectToFail: false,
+      });
+
+      await makeMetadataApiRequest({
+        query: gql`
+          mutation DeleteOneRole($roleId: UUID!) {
+            deleteOneRole(roleId: $roleId)
+          }
+        `,
+        variables: { roleId: customRoleId },
+      });
+    });
+
+    it('refuses a role without the Developers permission', async () => {
+      const uploadTarget = await sendToStorage(
+        await buildValidTarball({
+          universalIdentifier: crypto.randomUUID(),
+          version: '1.0.0',
+        }),
+      );
+
+      const { errors } = await completeAppTarballUpload({
+        fileId: uploadTarget.fileId,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        expectToFail: true,
+      });
+
+      expect(errors?.[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+    });
+
+    it('lets a role with the Developers permission publish', async () => {
+      await updateWorkspaceMemberRole({
+        input: {
+          roleId: customRoleId,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        },
+        expectToFail: false,
+      });
+
+      const universalIdentifier = crypto.randomUUID();
+      const uploadTarget = await sendToStorage(
+        await buildValidTarball({ universalIdentifier, version: '1.0.0' }),
+      );
+
+      const { data, errors } = await completeAppTarballUpload({
+        fileId: uploadTarget.fileId,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+
+      if (data?.completeAppTarballUpload) {
+        createdRegistrationIds.push(data.completeAppTarballUpload.id);
+      }
+
+      expect(errors).toBeUndefined();
+      expect(data?.completeAppTarballUpload.universalIdentifier).toBe(
+        universalIdentifier,
+      );
+    });
   });
 });
