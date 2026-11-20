@@ -1,4 +1,4 @@
-// TODO: remove once no rule is written as text anymore (stored widget rules are converted in 2.61; built-in rules and app manifests still send text)
+// TODO(@neo773): remove once no rule is written as text anymore (stored widget rules are converted in 2.61; built-in rules and app manifests still send text)
 import { Parser } from 'expr-eval-fork';
 
 import { CONDITIONAL_AVAILABILITY_FUNCTIONS } from '@/conditional-availability/constants/ConditionalAvailabilityFunctions';

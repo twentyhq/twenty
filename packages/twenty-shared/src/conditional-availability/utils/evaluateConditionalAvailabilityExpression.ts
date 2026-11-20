@@ -1,4 +1,4 @@
-// TODO: remove once command menu items use the rule tree
+// TODO(@neo773): remove once command menu items use the rule tree
 import { isNonEmptyString } from '@sniptt/guards';
 import { type EvaluationContext } from 'expr-eval-fork';
 

@@ -1,4 +1,4 @@
-// TODO: remove once no rule is written as text anymore (stored widget rules are converted in 2.61; built-in rules and app manifests still send text)
+// TODO(@neo773): remove once no rule is written as text anymore (stored widget rules are converted in 2.61; built-in rules and app manifests still send text)
 import { isBoolean, isNumber, isString } from '@sniptt/guards';
 import { type Instruction } from 'expr-eval-fork';
 
@@ -135,13 +135,15 @@ const popAndBuildNode = ({
       const argumentNodes = stack.splice(stack.length - value, value);
       const callee = stack.pop();
 
-      return callee?.type === 'VARIABLE' && !callee.path.includes('.')
-        ? {
-            type: 'FUNCTION_CALL',
-            functionName: callee.path,
-            arguments: argumentNodes,
-          }
-        : null;
+      if (callee?.type !== 'VARIABLE' || callee.path.includes('.')) {
+        return null;
+      }
+
+      return {
+        type: 'FUNCTION_CALL',
+        functionName: callee.path,
+        arguments: argumentNodes,
+      };
     }
     default:
       return null;

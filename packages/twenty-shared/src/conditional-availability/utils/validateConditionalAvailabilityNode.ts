@@ -26,13 +26,16 @@ const getUnknownName = ({
     case 'VARIABLE': {
       const [variableName] = node.path.split('.');
 
-      return isDefined(variableName) &&
-        !Object.prototype.hasOwnProperty.call(
-          CONDITIONAL_AVAILABILITY_VARIABLES[metadataName],
-          variableName,
-        )
-        ? variableName
-        : undefined;
+      if (!isDefined(variableName)) {
+        return undefined;
+      }
+
+      return Object.prototype.hasOwnProperty.call(
+        CONDITIONAL_AVAILABILITY_VARIABLES[metadataName],
+        variableName,
+      )
+        ? undefined
+        : variableName;
     }
     case 'FUNCTION_CALL':
       return Object.prototype.hasOwnProperty.call(
