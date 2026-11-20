@@ -1,48 +1,65 @@
+import { Test } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { assertUserPasswordIsValidOrThrow } from 'src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util';
-import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 jest.mock(
   'src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util',
 );
 
-const user = {
+const user = Object.assign(new UserEntity(), {
   id: '20202020-0000-4000-8000-000000000001',
   email: 'tim@apple.dev',
   isEmailVerified: true,
-} as UserEntity;
+});
 
-const workspace = {
+const workspace = Object.assign(new WorkspaceEntity(), {
   id: '20202020-0000-4000-8000-000000000002',
   isPasswordAuthEnabled: true,
-} as WorkspaceEntity;
+});
 
-const buildService = () => {
+const buildService = async () => {
   const addUserToWorkspaceIfUserNotInWorkspace = jest.fn();
 
-  const userWorkspaceService = {
-    checkUserWorkspaceExists: async () => ({}) as UserWorkspaceEntity,
+  const module = await Test.createTestingModule({
+    providers: [
+      AuthService,
+      {
+        provide: UserWorkspaceService,
+        useValue: {
+          checkUserWorkspaceExists: async () => new UserWorkspaceEntity(),
+          addUserToWorkspaceIfUserNotInWorkspace,
+        },
+      },
+      {
+        provide: getRepositoryToken(UserEntity),
+        useValue: { findOne: async () => user },
+      },
+      {
+        provide: TwentyConfigService,
+        useValue: { get: () => false },
+      },
+    ],
+  })
+    .useMocker(() => ({}))
+    .compile();
+
+  return {
+    service: module.get(AuthService),
     addUserToWorkspaceIfUserNotInWorkspace,
   };
-
-  const constructorArguments: unknown[] = new Array(24).fill({});
-
-  constructorArguments[7] = userWorkspaceService;
-  constructorArguments[14] = { findOne: async () => user };
-  constructorArguments[15] = { get: () => false };
-
-  const service = new AuthService(
-    ...(constructorArguments as ConstructorParameters<typeof AuthService>),
-  );
-
-  return { service, addUserToWorkspaceIfUserNotInWorkspace };
 };
 
 describe('AuthService.validateLoginWithPasswordAndJoinWorkspaceIfInvited', () => {
   it('should let an existing member finish an interrupted membership setup', async () => {
-    const { service, addUserToWorkspaceIfUserNotInWorkspace } = buildService();
+    const { service, addUserToWorkspaceIfUserNotInWorkspace } =
+      await buildService();
 
     await expect(
       service.validateLoginWithPasswordAndJoinWorkspaceIfInvited(
@@ -62,7 +79,8 @@ describe('AuthService.validateLoginWithPasswordAndJoinWorkspaceIfInvited', () =>
       .mocked(assertUserPasswordIsValidOrThrow)
       .mockRejectedValueOnce(new Error('Wrong password'));
 
-    const { service, addUserToWorkspaceIfUserNotInWorkspace } = buildService();
+    const { service, addUserToWorkspaceIfUserNotInWorkspace } =
+      await buildService();
 
     await expect(
       service.validateLoginWithPasswordAndJoinWorkspaceIfInvited(
