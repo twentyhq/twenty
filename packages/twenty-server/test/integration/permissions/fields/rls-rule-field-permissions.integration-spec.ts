@@ -10,24 +10,23 @@ import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
+import { findRoles } from 'test/integration/metadata/suites/role/utils/find-roles.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { removeRecordShareOperationFactory } from 'test/integration/permissions/utils/remove-record-share-operation-factory.util';
+import { setRecordShareOperationFactory } from 'test/integration/permissions/utils/set-record-share-operation-factory.util';
+import { findFieldMetadataIdByName } from 'test/integration/utils/find-field-metadata-id-by-name.util';
+import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
 import {
   FeatureFlagKey,
+  RecordShareAccessLevel,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-
-const SCHEMA = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"`;
-const PERSON_TABLE = `${SCHEMA}."person"`;
-const RECORD_SHARE_TABLE = `${SCHEMA}."recordShare"`;
 
 describe('field permissions on an RLS rule (integration)', () => {
   let objectMetadataId: string;
@@ -36,14 +35,78 @@ describe('field permissions on an RLS rule (integration)', () => {
   let originalMemberRoleId: string;
   let roleId: string;
   let rlsRuleId: string;
+  let rlsPredicateId: string;
+  let jobTitleFieldMetadataId: string;
 
-  const findFieldMetadataId = async (name: string): Promise<string> => {
-    const [{ id }] = await global.testDataSource.query(
-      `SELECT "id" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = $2`,
-      [objectMetadataId, name],
-    );
+  const findFieldMetadataId = (fieldName: string): Promise<string> =>
+    findFieldMetadataIdByName({ objectMetadataId, fieldName });
 
-    return id;
+  const upsertParisRule = ({
+    canUpdateRecords,
+  }: {
+    canUpdateRecords: boolean;
+  }) =>
+    upsertRowLevelPermissionRules({
+      expectToFail: false,
+      input: {
+        roleId,
+        objectMetadataId,
+        rules: [
+          {
+            canReadRecords: true,
+            canUpdateRecords,
+            predicateGroups: [
+              {
+                id: rlsRuleId,
+                logicalOperator:
+                  RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                predicates: [
+                  {
+                    id: rlsPredicateId,
+                    fieldMetadataId: jobTitleFieldMetadataId,
+                    operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                    value: 'Paris',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+  const updatePerson = ({
+    recordId,
+    input,
+  }: {
+    recordId: string;
+    input: Record<string, unknown>;
+  }) =>
+    updateOneOperation({
+      objectMetadataSingularName: 'person',
+      recordId,
+      input,
+    });
+
+  const findAvatarFieldPermissionRuleIds = async (): Promise<
+    (string | null)[]
+  > => {
+    const { data } = await findRoles({
+      gqlFields:
+        'id fieldPermissions { fieldMetadataId rowLevelPermissionPredicateGroupId }',
+    });
+
+    return (
+      data.getRoles.find((role) => role.id === roleId)?.fieldPermissions ?? []
+    )
+      .filter(
+        (fieldPermission) =>
+          fieldPermission.fieldMetadataId === avatarUrlFieldMetadataId,
+      )
+      .map(
+        (fieldPermission) =>
+          fieldPermission.rowLevelPermissionPredicateGroupId ?? null,
+      );
   };
 
   const listPeopleAsMember = async (): Promise<
@@ -88,18 +151,36 @@ describe('field permissions on an RLS rule (integration)', () => {
   };
 
   beforeAll(async () => {
-    [{ id: objectMetadataId }] = await global.testDataSource.query(
-      `SELECT "id" FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = 'person'`,
-      [SEED_APPLE_WORKSPACE_ID],
-    );
-    avatarUrlFieldMetadataId = await findFieldMetadataId('avatarUrl');
+    objectMetadataId = await findObjectMetadataIdByName('person');
+    [avatarUrlFieldMetadataId, jobTitleFieldMetadataId] = await Promise.all([
+      findFieldMetadataId('avatarUrl'),
+      findFieldMetadataId('jobTitle'),
+    ]);
 
-    originalPeople = await global.testDataSource.query(
-      `SELECT "id", "jobTitle", "avatarUrl" FROM ${PERSON_TABLE} WHERE "deletedAt" IS NULL ORDER BY "id" LIMIT 2`,
+    const peopleResponse = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: 'id jobTitle avatarUrl',
+        orderBy: [{ id: 'AscNullsLast' }],
+        first: 2,
+      }),
     );
-    await global.testDataSource.query(
-      `UPDATE ${PERSON_TABLE} SET "avatarUrl" = 'Secret avatar', "jobTitle" = CASE "id" WHEN $1 THEN 'Paris office' ELSE 'London office' END WHERE "id" = ANY($2)`,
-      [originalPeople[0].id, originalPeople.map(({ id }) => id)],
+
+    originalPeople = peopleResponse.body.data.people.edges.map(
+      (edge: { node: { id: string; jobTitle: string; avatarUrl: string } }) =>
+        edge.node,
+    );
+    await Promise.all(
+      originalPeople.map(({ id }, index) =>
+        updatePerson({
+          recordId: id,
+          input: {
+            avatarUrl: 'Secret avatar',
+            jobTitle: index === 0 ? 'Paris office' : 'London office',
+          },
+        }),
+      ),
     );
 
     const { data } = await createOneRole({
@@ -116,35 +197,10 @@ describe('field permissions on an RLS rule (integration)', () => {
 
     roleId = data.createOneRole.id;
     rlsRuleId = v4();
+    rlsPredicateId = v4();
 
     await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
-    await upsertRowLevelPermissionRules({
-      expectToFail: false,
-      input: {
-        roleId,
-        objectMetadataId,
-        rules: [
-          {
-            canReadRecords: true,
-            predicateGroups: [
-              {
-                id: rlsRuleId,
-                logicalOperator:
-                  RowLevelPermissionPredicateGroupLogicalOperator.AND,
-                predicates: [
-                  {
-                    id: v4(),
-                    fieldMetadataId: await findFieldMetadataId('jobTitle'),
-                    operand: RowLevelPermissionPredicateOperand.CONTAINS,
-                    value: 'Paris',
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    });
+    await upsertParisRule({ canUpdateRecords: false });
 
     await upsertFieldPermissions({
       expectToFail: false,
@@ -182,12 +238,11 @@ describe('field permissions on an RLS rule (integration)', () => {
     });
     await deleteOneRole({ expectToFail: false, input: { idToDelete: roleId } });
 
-    for (const { id, jobTitle, avatarUrl } of originalPeople) {
-      await global.testDataSource.query(
-        `UPDATE ${PERSON_TABLE} SET "jobTitle" = $1, "avatarUrl" = $2 WHERE "id" = $3`,
-        [jobTitle, avatarUrl, id],
-      );
-    }
+    await Promise.all(
+      originalPeople.map(({ id, jobTitle, avatarUrl }) =>
+        updatePerson({ recordId: id, input: { jobTitle, avatarUrl } }),
+      ),
+    );
   });
 
   it('should read the unreadable field as empty on a record the RLS rule matches', async () => {
@@ -270,8 +325,7 @@ describe('field permissions on an RLS rule (integration)', () => {
       return response.body.data.people;
     };
 
-    await updateOneOperation({
-      objectMetadataSingularName: 'person',
+    await updatePerson({
       recordId: originalPeople[1].id,
       input: { jobTitle: 'Paris office' },
     });
@@ -288,8 +342,7 @@ describe('field permissions on an RLS rule (integration)', () => {
           .sort(),
       ).toEqual(originalPeople.map(({ id }) => id).sort());
     } finally {
-      await updateOneOperation({
-        objectMetadataSingularName: 'person',
+      await updatePerson({
         recordId: originalPeople[1].id,
         input: { jobTitle: 'London office' },
       });
@@ -323,8 +376,7 @@ describe('field permissions on an RLS rule (integration)', () => {
       filter: { id: { eq: originalPeople[0].id } },
     });
 
-    await updateOneOperation({
-      objectMetadataSingularName: 'person',
+    await updatePerson({
       recordId: originalPeople[0].id,
       input: { intro: 'Secret intro' },
     });
@@ -345,8 +397,7 @@ describe('field permissions on an RLS rule (integration)', () => {
       expect(response.body.data.peopleGroupBy).toEqual([]);
     } finally {
       await setIntroReadability(null);
-      await updateOneOperation({
-        objectMetadataSingularName: 'person',
+      await updatePerson({
         recordId: originalPeople[0].id,
         input: { intro: originalIntro },
       });
@@ -359,15 +410,19 @@ describe('field permissions on an RLS rule (integration)', () => {
       value: true,
       expectToFail: false,
     });
-    await global.testDataSource.query(
-      `INSERT INTO ${RECORD_SHARE_TABLE} ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
-       VALUES ($1, $2, $3, 'WORKSPACE_MEMBER', 'READ', 'MANUAL', $2)`,
-      [
-        objectMetadataId,
-        originalPeople[1].id,
-        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      ],
+    const share = {
+      objectMetadataId,
+      recordId: originalPeople[1].id,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    };
+    const setShareResponse = await makeMetadataApiRequest(
+      setRecordShareOperationFactory({
+        ...share,
+        accessLevel: RecordShareAccessLevel.READ,
+      }),
     );
+
+    expect(setShareResponse.body.errors).toBeUndefined();
 
     try {
       const people = await listPeopleAsMember();
@@ -380,10 +435,7 @@ describe('field permissions on an RLS rule (integration)', () => {
         people.find(({ id }) => id === originalPeople[1].id)?.avatarUrl,
       ).toBe('Secret avatar');
     } finally {
-      await global.testDataSource.query(
-        `DELETE FROM ${RECORD_SHARE_TABLE} WHERE "recordId" = $1`,
-        [originalPeople[1].id],
-      );
+      await makeMetadataApiRequest(removeRecordShareOperationFactory(share));
       await updateFeatureFlag({
         featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
         value: false,
@@ -393,12 +445,7 @@ describe('field permissions on an RLS rule (integration)', () => {
   });
 
   it('should keep rule rows out of the role object level field permissions', async () => {
-    const [{ count }] = await global.testDataSource.query(
-      `SELECT COUNT(*) AS count FROM core."fieldPermission" WHERE "roleId" = $1 AND "rowLevelPermissionPredicateGroupId" = $2`,
-      [roleId, rlsRuleId],
-    );
-
-    expect(Number(count)).toBe(1);
+    expect(await findAvatarFieldPermissionRuleIds()).toEqual([rlsRuleId]);
 
     const { errors } = await upsertFieldPermissions({
       expectToFail: false,
@@ -416,12 +463,9 @@ describe('field permissions on an RLS rule (integration)', () => {
 
     expect(errors).toBeUndefined();
 
-    const rows = await global.testDataSource.query(
-      `SELECT "rowLevelPermissionPredicateGroupId" AS "rlsRuleId" FROM core."fieldPermission" WHERE "roleId" = $1 AND "fieldMetadataId" = $2 ORDER BY "createdAt"`,
-      [roleId, avatarUrlFieldMetadataId],
+    expect((await findAvatarFieldPermissionRuleIds()).sort()).toEqual(
+      [rlsRuleId, null].sort(),
     );
-
-    expect(rows).toEqual([{ rlsRuleId }, { rlsRuleId: null }]);
 
     const { errors: updateErrors } = await upsertFieldPermissions({
       expectToFail: false,
@@ -604,13 +648,7 @@ describe('field permissions on an RLS rule (integration)', () => {
   });
 
   it('should reject an update of an RLS rule uneditable field on a record it matches', async () => {
-    await global.testDataSource.query(
-      `UPDATE core."rowLevelPermissionRule" SET "canUpdateRecords" = TRUE WHERE "roleId" = $1`,
-      [roleId],
-    );
-    await getAppProviderByClassName<WorkspaceCacheService>(
-      'WorkspaceCacheService',
-    ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['rolesPermissions']);
+    await upsertParisRule({ canUpdateRecords: true });
 
     try {
       const response = await makeGraphqlApiRequest(
@@ -625,20 +663,17 @@ describe('field permissions on an RLS rule (integration)', () => {
 
       expect(response.body.errors).toBeDefined();
 
-      const [{ avatarUrl }] = await global.testDataSource.query(
-        `SELECT "avatarUrl" FROM ${PERSON_TABLE} WHERE "id" = $1`,
-        [originalPeople[0].id],
-      );
+      const {
+        data: { findResponse },
+      } = await findOneOperation({
+        objectMetadataSingularName: 'person',
+        gqlFields: 'id avatarUrl',
+        filter: { id: { eq: originalPeople[0].id } },
+      });
 
-      expect(avatarUrl).toBe('Secret avatar');
+      expect(findResponse.avatarUrl).toBe('Secret avatar');
     } finally {
-      await global.testDataSource.query(
-        `UPDATE core."rowLevelPermissionRule" SET "canUpdateRecords" = FALSE WHERE "roleId" = $1`,
-        [roleId],
-      );
-      await getAppProviderByClassName<WorkspaceCacheService>(
-        'WorkspaceCacheService',
-      ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['rolesPermissions']);
+      await upsertParisRule({ canUpdateRecords: false });
     }
   });
 
