@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
@@ -35,6 +36,8 @@ export const commonQueryRunnerToRestApiExceptionHandler = (
       throw new BadRequestException(error.message);
     case CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND:
       throw new NotFoundException('Record not found');
+    case CommonQueryRunnerExceptionCode.RECORD_NOT_EDITABLE:
+      throw new ForbiddenException(error.message);
     case CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT:
       throw new UnauthorizedException(error.message);
     case CommonQueryRunnerExceptionCode.MISSING_FLAT_INDEX_MAPS:

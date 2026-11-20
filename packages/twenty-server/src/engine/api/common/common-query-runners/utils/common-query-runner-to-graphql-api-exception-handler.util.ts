@@ -6,6 +6,7 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import {
   AuthenticationError,
+  ForbiddenError,
   InternalServerError,
   NotFoundError,
   UserInputError,
@@ -17,6 +18,8 @@ export const commonQueryRunnerToGraphqlApiExceptionHandler = (
   switch (error.code) {
     case CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND:
       throw new NotFoundError(error);
+    case CommonQueryRunnerExceptionCode.RECORD_NOT_EDITABLE:
+      throw new ForbiddenError(error);
     case CommonQueryRunnerExceptionCode.ARGS_CONFLICT:
     case CommonQueryRunnerExceptionCode.INVALID_ARGS_FIRST:
     case CommonQueryRunnerExceptionCode.INVALID_ARGS_LAST:

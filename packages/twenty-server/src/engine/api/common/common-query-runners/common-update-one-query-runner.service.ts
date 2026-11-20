@@ -47,6 +47,20 @@ export class CommonUpdateOneQueryRunnerService extends CommonRecordQueryRunnerSe
       );
 
     if (!result || result.length === 0) {
+      const isRecordReadable = await queryRunnerContext.repository.existsBy({
+        id: args.id,
+      });
+
+      if (isRecordReadable) {
+        throw new CommonQueryRunnerException(
+          'Record is not editable',
+          CommonQueryRunnerExceptionCode.RECORD_NOT_EDITABLE,
+          {
+            userFriendlyMessage: msg`You do not have permission to edit this record.`,
+          },
+        );
+      }
+
       throw new CommonQueryRunnerException(
         'Record not found',
         CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
