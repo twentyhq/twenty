@@ -708,6 +708,97 @@ describe('Record access through related record paths', () => {
     expect(await findTaskIdsListedByJony()).toEqual([taskOfProjectId]);
   });
 
+  it('should not follow the path from a relation a rule of the reader cannot read', async () => {
+    const memberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
+    const memberObjectPermissions = await global.testDataSource.query(
+      `SELECT "objectMetadataId", "canReadObjectRecords", "canUpdateObjectRecords",
+        "canSoftDeleteObjectRecords", "canDestroyObjectRecords"
+        FROM core."objectPermission" WHERE "roleId" = $1`,
+      [memberRoleId],
+    );
+    const [{ id: nameFieldMetadataId }] = await global.testDataSource.query(
+      `SELECT "id" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = 'name'`,
+      [projectObjectMetadataId],
+    );
+    const ruleId = v4();
+
+    await revokeObjectRecordsPermissions({
+      roleId: memberRoleId,
+      objectMetadataId: projectObjectMetadataId,
+    });
+    await upsertRowLevelPermissionRules({
+      expectToFail: false,
+      input: {
+        roleId: memberRoleId,
+        objectMetadataId: projectObjectMetadataId,
+        rules: [
+          {
+            canReadRecords: true,
+            predicateGroups: [
+              {
+                id: ruleId,
+                logicalOperator:
+                  RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                predicates: [
+                  {
+                    id: v4(),
+                    fieldMetadataId: nameFieldMetadataId,
+                    operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                    value: 'Readable',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    });
+    await waitForAllJobsToFinish();
+
+    try {
+      expect(await findTaskIdsListedByJony()).toEqual([taskOfProjectId]);
+      expect(await canJonyReadTask(taskOfProjectId)).toBe(true);
+
+      await upsertFieldPermissions({
+        expectToFail: false,
+        input: {
+          roleId: memberRoleId,
+          fieldPermissions: [
+            {
+              objectMetadataId: projectObjectMetadataId,
+              fieldMetadataId: projectTasksFieldMetadataId,
+              rowLevelPermissionPredicateGroupId: ruleId,
+              canReadFieldValue: false,
+            },
+          ],
+        },
+      });
+      await waitForAllJobsToFinish();
+
+      expect(await findTaskIdsListedByJony()).toEqual([]);
+      expect(await canJonyReadTask(taskOfProjectId)).toBe(false);
+    } finally {
+      await upsertRowLevelPermissionRules({
+        expectToFail: false,
+        input: {
+          roleId: memberRoleId,
+          objectMetadataId: projectObjectMetadataId,
+          rules: [],
+        },
+      });
+      await upsertObjectPermissions({
+        expectToFail: false,
+        input: {
+          roleId: memberRoleId,
+          objectPermissions: memberObjectPermissions,
+        },
+      });
+      await waitForAllJobsToFinish();
+    }
+
+    expect(await findTaskIdsListedByJony()).toEqual([taskOfProjectId]);
+  });
+
   it('should still grant through another path from the same source object when one is unreadable', async () => {
     const projectReviewTasksField = await createRelationBetweenObjects({
       objectMetadataId: projectObjectMetadataId,
