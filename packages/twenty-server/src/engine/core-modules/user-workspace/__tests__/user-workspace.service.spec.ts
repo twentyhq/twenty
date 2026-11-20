@@ -1,3 +1,6 @@
+import { isDefined } from 'twenty-shared/utils';
+
+import { AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -7,6 +10,7 @@ const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
 const USER_ID = '20202020-0000-4000-8000-000000000002';
 const USER_WORKSPACE_ID = '20202020-0000-4000-8000-000000000003';
 const DEFAULT_ROLE_ID = '20202020-0000-4000-8000-000000000004';
+const INVITED_ROLE_ID = '20202020-0000-4000-8000-000000000005';
 
 const user = {
   id: USER_ID,
@@ -28,10 +32,20 @@ const userWorkspace = {
 const buildService = ({
   existingUserWorkspace,
   hasRole,
+  pendingInvitationRoleId,
 }: {
   existingUserWorkspace: UserWorkspaceEntity | null;
   hasRole: boolean;
+  pendingInvitationRoleId?: string;
 }) => {
+  const pendingInvitation = isDefined(pendingInvitationRoleId)
+    ? {
+        id: '20202020-0000-4000-8000-000000000006',
+        type: AppTokenType.InvitationToken,
+        context: { email: user.email, roleId: pendingInvitationRoleId },
+      }
+    : null;
+
   const assignRoleToUserWorkspaces = jest.fn();
   const addMemberWithinSeatLimit = jest.fn(
     async ({ addMember }: { addMember: () => Promise<unknown> }) => addMember(),
@@ -42,7 +56,10 @@ const buildService = ({
     { findOneBy: async () => existingUserWorkspace } as never,
     {} as never,
     { existsBy: async () => hasRole } as never,
-    { invalidateWorkspaceInvitation: jest.fn() } as never,
+    {
+      getOneWorkspaceInvitation: async () => pendingInvitation,
+      invalidateWorkspaceInvitation: jest.fn(),
+    } as never,
     {} as never,
     {} as never,
     {} as never,
@@ -109,6 +126,22 @@ describe('UserWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace', () => {
     expect(setOnboardingCreateProfilePending).toHaveBeenCalled();
   });
 
+  it('should give a member left without a role the role of their pending invitation', async () => {
+    const { service, assignRoleToUserWorkspaces } = buildService({
+      existingUserWorkspace: userWorkspace,
+      hasRole: false,
+      pendingInvitationRoleId: INVITED_ROLE_ID,
+    });
+
+    await service.addUserToWorkspaceIfUserNotInWorkspace(user, workspace);
+
+    expect(assignRoleToUserWorkspaces).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      userWorkspaceIds: [USER_WORKSPACE_ID],
+      roleId: INVITED_ROLE_ID,
+    });
+  });
+
   it('should add a new member within the seat limit and assign the role', async () => {
     const {
       service,
@@ -118,12 +151,10 @@ describe('UserWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace', () => {
       createWorkspaceMember,
     } = buildService({ existingUserWorkspace: null, hasRole: false });
 
-    const invitedRoleId = '20202020-0000-4000-8000-000000000005';
-
     await service.addUserToWorkspaceIfUserNotInWorkspace(
       user,
       workspace,
-      invitedRoleId,
+      INVITED_ROLE_ID,
     );
 
     expect(addMemberWithinSeatLimit).toHaveBeenCalled();
@@ -132,7 +163,7 @@ describe('UserWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace', () => {
     expect(assignRoleToUserWorkspaces).toHaveBeenCalledWith({
       workspaceId: WORKSPACE_ID,
       userWorkspaceIds: [USER_WORKSPACE_ID],
-      roleId: invitedRoleId,
+      roleId: INVITED_ROLE_ID,
     });
   });
 });

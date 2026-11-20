@@ -43,6 +43,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { castAppTokenToWorkspaceInvitationUtil } from 'src/engine/core-modules/workspace-invitation/utils/cast-app-token-to-workspace-invitation.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -283,7 +284,10 @@ export class UserWorkspaceService {
     }
 
     const resolvedRoleId = await this.resolveRoleIdForNewMember(
-      roleId,
+      roleId ??
+        (isDefined(existingUserWorkspace)
+          ? await this.findPendingInvitationRoleId(workspace.id, user.email)
+          : undefined),
       workspace,
     );
 
@@ -335,6 +339,21 @@ export class UserWorkspaceService {
     await this.createWorkspaceMember(userWorkspace.workspaceId, user);
 
     return userWorkspace;
+  }
+
+  private async findPendingInvitationRoleId(
+    workspaceId: string,
+    email: string,
+  ): Promise<string | null | undefined> {
+    const invitation =
+      await this.workspaceInvitationService.getOneWorkspaceInvitation(
+        workspaceId,
+        email,
+      );
+
+    return isDefined(invitation)
+      ? castAppTokenToWorkspaceInvitationUtil(invitation).roleId
+      : undefined;
   }
 
   private async resolveRoleIdForNewMember(
