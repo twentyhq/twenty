@@ -16,9 +16,9 @@ import {
 import { MAX_RELATION_FILTER_DEPTH } from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/max-relation-filter-depth.constant';
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/common/common-query-parsers/utils/add-relation-join-alias.util';
 import { assertFieldIsReadableOrThrow } from 'src/engine/api/common/common-query-parsers/utils/assert-field-is-readable-or-throw.util';
 import { resolveFilterKeyFieldMetadata } from 'src/engine/record-filter/utils/resolve-filter-key-field-metadata.util';
@@ -59,13 +59,19 @@ export class CommonQueryFilterFieldParser {
   private depth: number;
   private parentFilterScope?: ParentFilterScope;
 
-  constructor(
-    flatObjectMetadata: FlatObjectMetadata,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>,
+  constructor({
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
     depth = 0,
-    parentFilterScope?: ParentFilterScope,
-  ) {
+    parentFilterScope,
+  }: {
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
+    depth?: number;
+    parentFilterScope?: ParentFilterScope;
+  }) {
     this.flatObjectMetadata = flatObjectMetadata;
     this.flatFieldMetadataMaps = flatFieldMetadataMaps;
     this.flatObjectMetadataMaps = flatObjectMetadataMaps;
@@ -81,15 +87,23 @@ export class CommonQueryFilterFieldParser {
     this.fieldIdByJoinColumnName = fieldMaps.fieldIdByJoinColumnName;
   }
 
-  public parse(
-    queryBuilder: WhereExpressionBuilder,
-    outerQueryBuilder: WorkspaceSelectQueryBuilder,
-    objectNameSingular: string,
-    key: string,
-    filterValue: Partial<ObjectRecordFilter>,
+  public parse({
+    queryBuilder,
+    outerQueryBuilder,
+    objectNameSingular,
+    key,
+    filterValue,
     isFirst = false,
     useDirectTableReference = false,
-  ): void {
+  }: {
+    queryBuilder: WhereExpressionBuilder;
+    outerQueryBuilder: WorkspaceSelectQueryBuilder;
+    objectNameSingular: string;
+    key: string;
+    filterValue: Partial<ObjectRecordFilter>;
+    isFirst?: boolean;
+    useDirectTableReference?: boolean;
+  }): void {
     const { fieldMetadata, isReferencedByFieldName } =
       resolveFilterKeyFieldMetadata({
         filterKey: key,
@@ -127,14 +141,14 @@ export class CommonQueryFilterFieldParser {
     }
 
     if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-      return this.parseCompositeFieldForFilter(
+      return this.parseCompositeFieldForFilter({
         queryBuilder,
         fieldMetadata,
         objectNameSingular,
-        filterValue,
+        fieldValue: filterValue,
         isFirst,
         useDirectTableReference,
-      );
+      });
     }
     const [[operator, value]] = Object.entries(filterValue);
 
@@ -193,9 +207,9 @@ export class CommonQueryFilterFieldParser {
     isToManyRelation: boolean;
   }): void {
     if (this.depth >= MAX_RELATION_FILTER_DEPTH) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Relation filter nesting deeper than ${MAX_RELATION_FILTER_DEPTH} hop is not supported`,
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         {
           userFriendlyMessage: msg`Relation filters can only traverse one relation deep`,
         },
@@ -203,17 +217,17 @@ export class CommonQueryFilterFieldParser {
     }
 
     if (!isDefined(this.flatObjectMetadataMaps)) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Relation filter on "${fieldMetadata.name}" requires object metadata maps`,
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         { userFriendlyMessage: msg`Relation filter is not supported here` },
       );
     }
 
     if (!isDefined(fieldMetadata.relationTargetObjectMetadataId)) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Relation filter on "${fieldMetadata.name}" is missing a target object`,
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         { userFriendlyMessage: msg`Relation filter is misconfigured` },
       );
     }
@@ -225,32 +239,32 @@ export class CommonQueryFilterFieldParser {
       });
 
     if (!isDefined(targetObjectMetadata)) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Target object not found for relation "${fieldMetadata.name}"`,
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         { userFriendlyMessage: msg`Relation filter is misconfigured` },
       );
     }
 
-    const childConditionParser = new CommonQueryFilterConditionParser(
-      targetObjectMetadata,
-      this.flatFieldMetadataMaps,
-      this.flatObjectMetadataMaps,
-      this.depth + 1,
-      {
+    const childConditionParser = new CommonQueryFilterConditionParser({
+      flatObjectMetadata: targetObjectMetadata,
+      flatFieldMetadataMaps: this.flatFieldMetadataMaps,
+      flatObjectMetadataMaps: this.flatObjectMetadataMaps,
+      depth: this.depth + 1,
+      parentFilterScope: {
         flatObjectMetadata: this.flatObjectMetadata,
         alias: parentAlias,
         relationFieldMetadataId: fieldMetadata.id,
       },
-    );
+    });
 
     // A to-many join would duplicate root rows, which the find-many runner rejects, so match through a correlated EXISTS
     if (isToManyRelation) {
       // The EXISTS is correlated with the root alias, so through a joined to-one it would match the wrong rows
       if (parentAlias !== outerQueryBuilder.alias) {
-        throw new GraphqlQueryRunnerException(
+        throw new CommonQueryRunnerException(
           `To-many relation filter on "${fieldMetadata.name}" must apply to the root object`,
-          GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+          CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
           {
             userFriendlyMessage: msg`Relation filters can only traverse one relation deep`,
           },
@@ -262,12 +276,12 @@ export class CommonQueryFilterFieldParser {
         applyWhere: (nestedQueryBuilder) => {
           nestedQueryBuilder.where(
             new Brackets((subQb) => {
-              childConditionParser.applyFilterEntriesToWhereBrackets(
-                subQb,
-                nestedQueryBuilder,
-                nestedQueryBuilder.alias,
-                filterValue,
-              );
+              childConditionParser.applyFilterEntriesToWhereBrackets({
+                innerQueryBuilder: subQb,
+                outerQueryBuilder: nestedQueryBuilder,
+                objectNameSingular: nestedQueryBuilder.alias,
+                filter: filterValue,
+              });
             }),
           );
         },
@@ -291,12 +305,12 @@ export class CommonQueryFilterFieldParser {
     });
 
     const subBrackets = new Brackets((subQb) => {
-      childConditionParser.applyFilterEntriesToWhereBrackets(
-        subQb,
+      childConditionParser.applyFilterEntriesToWhereBrackets({
+        innerQueryBuilder: subQb,
         outerQueryBuilder,
-        joinAlias,
-        filterValue,
-      );
+        objectNameSingular: joinAlias,
+        filter: filterValue,
+      });
     });
 
     if (isFirst) {
@@ -343,9 +357,9 @@ export class CommonQueryFilterFieldParser {
       : undefined;
 
     if (!isDefined(referencedFieldMetadata)) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Field "${String(fieldReferenceValue)}" to compare "${key}" with was not found`,
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         {
           userFriendlyMessage: msg`Invalid filter: the field to compare with was not found`,
         },
@@ -390,9 +404,9 @@ export class CommonQueryFilterFieldParser {
       relationFieldMetadata?.relationTargetFieldMetadataId !==
         this.parentFilterScope.relationFieldMetadataId
     ) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Operator "${operator}" can only reference "${relationFieldName}" when it leads back to the record the relation filter starts from`,
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         {
           userFriendlyMessage: msg`Invalid filter: "${relationFieldName}" can only reference the record the relation filter starts from`,
         },
@@ -402,14 +416,21 @@ export class CommonQueryFilterFieldParser {
     return this.parentFilterScope;
   }
 
-  private parseCompositeFieldForFilter(
-    queryBuilder: WhereExpressionBuilder,
-    fieldMetadata: OrmFlatFieldMetadata,
-    objectNameSingular: string,
-    fieldValue: Partial<ObjectRecordFilter>,
+  private parseCompositeFieldForFilter({
+    queryBuilder,
+    fieldMetadata,
+    objectNameSingular,
+    fieldValue,
     isFirst = false,
     useDirectTableReference = false,
-  ): void {
+  }: {
+    queryBuilder: WhereExpressionBuilder;
+    fieldMetadata: OrmFlatFieldMetadata;
+    objectNameSingular: string;
+    fieldValue: Partial<ObjectRecordFilter>;
+    isFirst?: boolean;
+    useDirectTableReference?: boolean;
+  }): void {
     const compositeType = compositeTypeDefinitions.get(
       fieldMetadata.type as CompositeFieldMetadataType,
     );

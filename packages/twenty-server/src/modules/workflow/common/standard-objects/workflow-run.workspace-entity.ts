@@ -14,7 +14,6 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/work
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 export enum WorkflowRunStatus {
-  NOT_STARTED = 'NOT_STARTED',
   RUNNING = 'RUNNING',
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',

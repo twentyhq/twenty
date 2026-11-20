@@ -15,11 +15,11 @@ import {
 } from 'twenty-shared/utils';
 
 import { type CommonRelationsAggregatedValues } from 'src/engine/api/common/types/common-aggregated-values.type';
-import { CONNECTION_MAX_DEPTH } from 'src/engine/api/graphql/graphql-query-runner/constants/connection-max-depth.constant';
+import { CONNECTION_MAX_DEPTH } from 'src/engine/api/common/constants/connection-max-depth.constant';
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { encodeCursor } from 'src/engine/api/common/utils/cursors.util';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/common/utils/get-target-object-metadata.util';
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -107,9 +107,9 @@ const formatObjectRecord = ({
   ...formatArgs
 }: RecordFormatArgs & { record: ObjectRecord }): Record<string, unknown> => {
   if (formatArgs.depth >= CONNECTION_MAX_DEPTH) {
-    throw new GraphqlQueryRunnerException(
+    throw new CommonQueryRunnerException(
       `Maximum depth of ${CONNECTION_MAX_DEPTH} reached`,
-      GraphqlQueryRunnerExceptionCode.MAX_DEPTH_REACHED,
+      CommonQueryRunnerExceptionCode.MAX_DEPTH_REACHED,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
   }

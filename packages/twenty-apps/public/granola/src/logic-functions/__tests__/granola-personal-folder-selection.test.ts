@@ -1,9 +1,10 @@
 import {
+  enqueueJobs,
   kv,
   listConnections,
   reportConnectionAuthFailure,
 } from 'twenty-sdk/logic-function';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   OTHER_CONNECTION,
@@ -14,6 +15,7 @@ import { getGranolaPersonalFolderSelectionKey } from 'src/logic-functions/utils/
 
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   ...(await importOriginal<typeof import('twenty-sdk/logic-function')>()),
+  enqueueJobs: vi.fn(),
   listConnections: vi.fn(),
   reportConnectionAuthFailure: vi.fn(),
   kv: { get: vi.fn(), set: vi.fn() },
@@ -26,9 +28,14 @@ const OPTED_IN_AT = '2026-11-18T12:00:00.000Z';
 
 const context = { userWorkspaceId: OWN_CONNECTION.userWorkspaceId };
 
+beforeEach(() => {
+  vi.stubEnv('GRANOLA_PERSONAL_SYNC_ENABLED', 'true');
+});
+
 afterEach(() => {
   vi.resetAllMocks();
   vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
   vi.useRealTimers();
 });
 
@@ -44,6 +51,23 @@ describe('granolaPersonalFolderSelectionHandler', () => {
     await expect(
       granolaPersonalFolderSelectionHandler(
         { body: { connectionId: OTHER_CONNECTION.id, folderIds: [] } },
+        context,
+      ),
+    ).resolves.toMatchObject({ status: 404 });
+    expect(fetchProvider).not.toHaveBeenCalled();
+    expect(kv.set).not.toHaveBeenCalled();
+  });
+
+  it('rejects an account without an active Twenty workspace membership', async () => {
+    vi.mocked(listConnections).mockResolvedValue([
+      { ...OWN_CONNECTION, workspaceMemberId: null },
+    ]);
+    const fetchProvider = vi.fn<typeof fetch>();
+    vi.stubGlobal('fetch', fetchProvider);
+
+    await expect(
+      granolaPersonalFolderSelectionHandler(
+        { body: { connectionId: OWN_CONNECTION.id, folderIds: [] } },
         context,
       ),
     ).resolves.toMatchObject({ status: 404 });
@@ -72,7 +96,70 @@ describe('granolaPersonalFolderSelectionHandler', () => {
     expect(kv.set).not.toHaveBeenCalled();
   });
 
+  it('saves settings without scheduling webhook setup before activation', async () => {
+    vi.stubEnv('GRANOLA_PERSONAL_SYNC_ENABLED', undefined);
+    vi.mocked(listConnections).mockResolvedValue([OWN_CONNECTION]);
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn<typeof fetch>()
+        .mockResolvedValue(
+          Response.json({ folders: [], hasMore: false, cursor: null }),
+        ),
+    );
+
+    await expect(
+      granolaPersonalFolderSelectionHandler(
+        { body: { connectionId: OWN_CONNECTION.id, folderIds: [] } },
+        context,
+      ),
+    ).resolves.toEqual({ success: true, folderIds: [] });
+    expect(kv.set).toHaveBeenCalledWith(
+      getGranolaPersonalFolderSelectionKey(OWN_CONNECTION.id),
+      [],
+    );
+    expect(enqueueJobs).not.toHaveBeenCalled();
+  });
+
+  it('reports a setup failure when saved choices could not schedule reconciliation', async () => {
+    vi.mocked(listConnections).mockResolvedValue([OWN_CONNECTION]);
+    vi.mocked(enqueueJobs).mockRejectedValue(new Error('Queue unavailable'));
+    const log = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    vi.stubGlobal(
+      'fetch',
+      vi.fn<typeof fetch>().mockResolvedValue(
+        Response.json({
+          folders: [],
+          hasMore: false,
+          cursor: null,
+        }),
+      ),
+    );
+
+    try {
+      await expect(
+        granolaPersonalFolderSelectionHandler(
+          { body: { connectionId: OWN_CONNECTION.id, folderIds: [] } },
+          context,
+        ),
+      ).resolves.toMatchObject({ status: 503 });
+      expect(kv.set).toHaveBeenCalledWith(
+        getGranolaPersonalFolderSelectionKey(OWN_CONNECTION.id),
+        [],
+      );
+    } finally {
+      log.mockRestore();
+    }
+  });
+
   it('validates folders with the member key and timestamps new selections', async () => {
+    vi.mocked(enqueueJobs).mockResolvedValue({
+      enqueued: true,
+      logicFunctionUniversalIdentifier: 'reconcile',
+      enqueuedJobsCount: 1,
+      jobIds: ['reconcile-job'],
+      jobs: [],
+    });
     vi.useFakeTimers();
     vi.setSystemTime(new Date(OPTED_IN_AT));
     vi.mocked(listConnections).mockResolvedValue([OWN_CONNECTION]);
@@ -119,6 +206,18 @@ describe('granolaPersonalFolderSelectionHandler', () => {
       expect.any(URL),
       expect.objectContaining({
         headers: { Authorization: `Bearer ${OWN_CONNECTION.accessToken}` },
+      }),
+    );
+    expect(enqueueJobs).toHaveBeenCalledWith(
+      expect.objectContaining({
+        jobs: [
+          expect.objectContaining({
+            payload: {
+              connectedAccountId: OWN_CONNECTION.id,
+              userWorkspaceId: OWN_CONNECTION.userWorkspaceId,
+            },
+          }),
+        ],
       }),
     );
     expect(kv.set).toHaveBeenCalledWith(

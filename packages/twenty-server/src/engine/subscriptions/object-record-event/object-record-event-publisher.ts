@@ -12,7 +12,7 @@ import { isDefined, isRecordGqlOperationSignature } from 'twenty-shared/utils';
 
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import { CommonQueryParser } from 'src/engine/api/common/common-query-parsers/common-query.parser';
 import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/serializable-auth-context.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
@@ -313,11 +313,11 @@ export class ObjectRecordEventPublisher {
       recurseIntoJunctionTableRelations: true,
     });
 
-    const commonQueryParser = new CommonQueryParser(
-      objectMetadata,
+    const commonQueryParser = new CommonQueryParser({
+      flatObjectMetadata: objectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-    );
+    });
 
     const selection = commonQueryParser.parseSelectedFields(selectedFields);
 

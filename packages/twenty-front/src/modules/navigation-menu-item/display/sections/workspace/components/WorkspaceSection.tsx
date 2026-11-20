@@ -1,8 +1,7 @@
-import { NavigationMenuItemAddDropdown } from '@/navigation-menu-item/edit/components/NavigationMenuItemAddDropdown';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { IconPlus, IconTool } from 'twenty-ui/icon';
+import { IconTool } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -18,8 +17,13 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { WorkspaceSectionHeaderAddDropdown } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionHeaderAddDropdown';
 
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
 const StyledRightIconsContainer = styled.div`
@@ -33,6 +37,9 @@ export const WorkspaceSection = () => {
   const items = useNavigationMenuItemSectionItems();
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -61,6 +68,10 @@ export const WorkspaceSection = () => {
     }
   };
 
+  if (isCustomizableSidebarEnabled && items.length === 0) {
+    return null;
+  }
+
   return (
     <WorkspaceSectionContainer
       sectionTitle={t`Workspace`}
@@ -70,21 +81,12 @@ export const WorkspaceSection = () => {
         isMobile ? undefined : (
           <StyledRightIconsContainer>
             {isLayoutCustomizationModeEnabled ? (
-              <NavigationMenuItemAddDropdown
-                instanceId="workspace-header"
-                position={0}
+              <WorkspaceSectionHeaderAddDropdown
                 onOpen={openNavigationSection}
-              >
-                <LightIconButton
-                  emphasis="subtle"
-                  size="sm"
-                  aria-label={t`Add`}
-                >
-                  <IconPlus />
-                </LightIconButton>
-              </NavigationMenuItemAddDropdown>
+              />
             ) : (
-              hasLayoutsPermission && (
+              hasLayoutsPermission &&
+              !isCustomizableSidebarEnabled && (
                 <div onMouseEnter={preloadNavigationMenuItemDndKit}>
                   <LightIconButton
                     emphasis="subtle"

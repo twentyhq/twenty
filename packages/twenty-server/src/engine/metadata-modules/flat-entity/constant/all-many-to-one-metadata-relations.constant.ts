@@ -68,6 +68,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
   agent: {
     workspace: null,
     application: null,
+    createdBy: null,
   },
   skill: {
     workspace: null,

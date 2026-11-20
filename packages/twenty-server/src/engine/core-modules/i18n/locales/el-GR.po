@@ -134,6 +134,12 @@ msgstr "24 ώρες"
 msgid "A {type} navigation menu item cannot be placed inside a {parentType}"
 msgstr "Ένα στοιχείο μενού πλοήγησης {type} δεν μπορεί να τοποθετηθεί μέσα σε ένα {parentType}"
 
+#. js-lingui-id: /y6iPL
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+msgid "A {type} navigation menu item cannot be placed inside a built-in section"
+msgstr "Ένα στοιχείο μενού πλοήγησης {type} δεν μπορεί να τοποθετηθεί μέσα σε μια ενσωματωμένη ενότητα"
+
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "A backup code was used to sign in to your account"
@@ -143,6 +149,12 @@ msgstr "Χρησιμοποιήθηκε ένας εφεδρικός κωδικό�
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
 msgid "A built-in provider already uses this name. Choose another label."
 msgstr "Ένας ενσωματωμένος πάροχος χρησιμοποιεί ήδη αυτό το όνομα. Επιλέξτε άλλη ετικέτα."
+
+#. js-lingui-id: paqbMF
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A builtInSectionKey is only allowed on SECTION type"
+msgstr "Το builtInSectionKey επιτρέπεται μόνο στον τύπο SECTION"
 
 #. js-lingui-id: RsTRse
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -552,6 +564,12 @@ msgstr "Απαιτείται ένα έγκυρο agentChatChannelUniversalIdenti
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid agentUniversalIdentifier is required for AGENT type"
 msgstr "Απαιτείται ένα έγκυρο agentUniversalIdentifier για τον τύπο AGENT"
+
+#. js-lingui-id: s59CSo
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid builtInSectionKey is required for a built-in SECTION"
+msgstr "Απαιτείται έγκυρο builtInSectionKey για μια ενσωματωμένη SECTION"
 
 #. js-lingui-id: Dwa/Bm
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -9597,12 +9615,6 @@ msgstr "Δεν καταγράφηκε"
 msgid "Not Set"
 msgstr "Δεν έχει οριστεί"
 
-#. js-lingui-id: H1P40W
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Not started"
-msgstr "Δεν έχει ξεκινήσει"
-
 #. js-lingui-id: O2bgDc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -10069,6 +10081,11 @@ msgstr "Μόνο ένας διαχειριστής διακομιστή μπορ
 msgid "Only a workspace member can change who sees a workflow"
 msgstr "Μόνο ένα μέλος του χώρου εργασίας μπορεί να αλλάξει ποιος βλέπει μια ροή εργασίας"
 
+#. js-lingui-id: yT1QOm
+#: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
+msgid "Only a workspace member can create a private agent."
+msgstr "Μόνο ένα μέλος του χώρου εργασίας μπορεί να δημιουργήσει έναν ιδιωτικό πράκτορα."
+
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only added columns can show a field of the related record"
@@ -10119,6 +10136,12 @@ msgstr "Επιτρέπεται μόνο ένα widget πλήρους ύψους 
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers-caller-application.util.ts
 msgid "Only the application that owns this agent can change its triggers"
 msgstr "Μόνο η εφαρμογή που κατέχει αυτόν τον πράκτορα μπορεί να αλλάξει τις ενεργοποιήσεις του"
+
+#. js-lingui-id: 2ztmK7
+#: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Only the member who owns an agent can change who sees it."
+msgstr "Μόνο το μέλος που είναι κάτοχος ενός πράκτορα μπορεί να αλλάξει ποιος μπορεί να τον βλέπει."
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
@@ -17739,6 +17762,12 @@ msgstr "Το workflowVersionId δεν πρέπει να οριστεί όταν 
 #. js-lingui-id: kRP73e
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
+msgid "Workspace"
+msgstr "Περιοχή Εργασίας"
+
+#. js-lingui-id: 3JWXMp
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
 msgid "Workspace"
 msgstr "Περιοχή Εργασίας"
 
