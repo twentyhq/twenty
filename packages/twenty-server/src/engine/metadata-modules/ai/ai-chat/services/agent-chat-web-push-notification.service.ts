@@ -12,6 +12,7 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { TabPresenceService } from 'src/engine/core-modules/tab-presence/services/tab-presence.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { type WebPushSubscriptionEntity } from 'src/engine/core-modules/web-push/web-push-subscription.entity';
 import { WebPushService } from 'src/engine/core-modules/web-push/services/web-push.service';
@@ -48,6 +49,7 @@ export class AgentChatWebPushNotificationService {
     private readonly sharingService: AgentChatSharingService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly webPushService: WebPushService,
+    private readonly tabPresenceService: TabPresenceService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
@@ -99,7 +101,7 @@ export class AgentChatWebPushNotificationService {
       ),
     ];
     const focusedWorkspaceMemberIds =
-      await this.webPushService.findWorkspaceMemberIdsWithFocusedTab({
+      await this.tabPresenceService.findWorkspaceMemberIdsWithFocusedTab({
         workspaceId,
         workspaceMemberIds: candidateWorkspaceMemberIds,
       });

@@ -9648,20 +9648,11 @@ export default {
                     ]
                 }
             ],
-            "updateFocusedTab": [
-                1,
-                {
-                    "input": [
-                        580,
-                        "UpdateFocusedTabInput!"
-                    ]
-                }
-            ],
             "updateFrontComponent": [
                 299,
                 {
                     "input": [
-                        581,
+                        580,
                         "UpdateFrontComponentInput!"
                     ]
                 }
@@ -9670,7 +9661,7 @@ export default {
                 308,
                 {
                     "input": [
-                        583,
+                        582,
                         "UpdateGettingStartedInput!"
                     ]
                 }
@@ -9679,7 +9670,7 @@ export default {
                 668,
                 {
                     "input": [
-                        584,
+                        583,
                         "UpdateInboxNotificationSettingsInput!"
                     ]
                 }
@@ -9688,7 +9679,7 @@ export default {
                 277,
                 {
                     "input": [
-                        585,
+                        584,
                         "UpdateLabPublicFeatureFlagInput!"
                     ]
                 }
@@ -9697,7 +9688,7 @@ export default {
                 399,
                 {
                     "inputs": [
-                        598,
+                        597,
                         "[UpdateOneNavigationMenuItemInput!]!"
                     ]
                 }
@@ -9706,7 +9697,7 @@ export default {
                 402,
                 {
                     "inputs": [
-                        599,
+                        598,
                         "[UpdateOneObjectInput!]!"
                     ]
                 }
@@ -9724,7 +9715,7 @@ export default {
                 367,
                 {
                     "input": [
-                        588,
+                        587,
                         "UpdateMcpServerInput!"
                     ]
                 }
@@ -9733,7 +9724,7 @@ export default {
                 372,
                 {
                     "input": [
-                        590,
+                        589,
                         "UpdateMessageChannelInput!"
                     ]
                 }
@@ -9742,7 +9733,7 @@ export default {
                 379,
                 {
                     "input": [
-                        592,
+                        591,
                         "UpdateMessageFolderInput!"
                     ]
                 }
@@ -9751,7 +9742,7 @@ export default {
                 379,
                 {
                     "input": [
-                        594,
+                        593,
                         "UpdateMessageFoldersInput!"
                     ]
                 }
@@ -9777,7 +9768,7 @@ export default {
                 399,
                 {
                     "input": [
-                        598,
+                        597,
                         "UpdateOneNavigationMenuItemInput!"
                     ]
                 }
@@ -9811,7 +9802,7 @@ export default {
                 279,
                 {
                     "input": [
-                        597,
+                        596,
                         "UpdateOneFieldMetadataInput!"
                     ]
                 }
@@ -9820,7 +9811,7 @@ export default {
                 1,
                 {
                     "input": [
-                        586,
+                        585,
                         "UpdateLogicFunctionFromSourceInput!"
                     ]
                 }
@@ -9829,7 +9820,7 @@ export default {
                 402,
                 {
                     "input": [
-                        599,
+                        598,
                         "UpdateOneObjectInput!"
                     ]
                 }
@@ -9838,7 +9829,7 @@ export default {
                 476,
                 {
                     "updateRoleInput": [
-                        606,
+                        605,
                         "UpdateRoleInput!"
                     ]
                 }
@@ -9851,7 +9842,7 @@ export default {
                         "String!"
                     ],
                     "input": [
-                        600,
+                        599,
                         "UpdatePageLayoutInput!"
                     ]
                 }
@@ -9864,7 +9855,7 @@ export default {
                         "String!"
                     ],
                     "input": [
-                        601,
+                        600,
                         "UpdatePageLayoutTabInput!"
                     ]
                 }
@@ -9877,7 +9868,7 @@ export default {
                         "String!"
                     ],
                     "input": [
-                        603,
+                        602,
                         "UpdatePageLayoutWidgetInput!"
                     ]
                 }
@@ -9890,7 +9881,7 @@ export default {
                         "String!"
                     ],
                     "input": [
-                        605,
+                        604,
                         "UpdatePageLayoutWithTabsInput!"
                     ]
                 }
@@ -9912,8 +9903,17 @@ export default {
                 524,
                 {
                     "input": [
-                        608,
+                        607,
                         "UpdateSkillInput!"
+                    ]
+                }
+            ],
+            "updateTabPresence": [
+                1,
+                {
+                    "input": [
+                        608,
+                        "UpdateTabPresenceInput!"
                     ]
                 }
             ],
@@ -12449,6 +12449,9 @@ export default {
                     ]
                 }
             ],
+            "onlineWorkspaceMemberIds": [
+                561
+            ],
             "pieChartData": [
                 437,
                 {
@@ -14673,23 +14676,12 @@ export default {
                 4
             ]
         },
-        "UpdateFocusedTabInput": {
-            "isFocused": [
-                1
-            ],
-            "tabId": [
-                4
-            ],
-            "__typename": [
-                4
-            ]
-        },
         "UpdateFrontComponentInput": {
             "id": [
                 561
             ],
             "update": [
-                582
+                581
             ],
             "__typename": [
                 4
@@ -14753,7 +14745,7 @@ export default {
                 561
             ],
             "update": [
-                587
+                586
             ],
             "__typename": [
                 4
@@ -14802,7 +14794,7 @@ export default {
                 561
             ],
             "update": [
-                589
+                588
             ],
             "__typename": [
                 4
@@ -14836,7 +14828,7 @@ export default {
                 561
             ],
             "update": [
-                591
+                590
             ],
             "__typename": [
                 4
@@ -14873,7 +14865,7 @@ export default {
                 561
             ],
             "update": [
-                593
+                592
             ],
             "__typename": [
                 4
@@ -14892,7 +14884,7 @@ export default {
                 561
             ],
             "update": [
-                593
+                592
             ],
             "__typename": [
                 4
@@ -14993,7 +14985,7 @@ export default {
                 561
             ],
             "update": [
-                595
+                594
             ],
             "__typename": [
                 4
@@ -15004,7 +14996,7 @@ export default {
                 561
             ],
             "update": [
-                596
+                595
             ],
             "__typename": [
                 4
@@ -15058,7 +15050,7 @@ export default {
                 4
             ],
             "widgets": [
-                604
+                603
             ],
             "__typename": [
                 4
@@ -15139,7 +15131,7 @@ export default {
                 561
             ],
             "tabs": [
-                602
+                601
             ],
             "type": [
                 426
@@ -15153,7 +15145,7 @@ export default {
                 561
             ],
             "update": [
-                607
+                606
             ],
             "__typename": [
                 4
@@ -15223,6 +15215,17 @@ export default {
                 4
             ],
             "name": [
+                4
+            ],
+            "__typename": [
+                4
+            ]
+        },
+        "UpdateTabPresenceInput": {
+            "state": [
+                4
+            ],
+            "tabId": [
                 4
             ],
             "__typename": [

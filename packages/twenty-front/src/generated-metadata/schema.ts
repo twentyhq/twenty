@@ -3948,7 +3948,6 @@ export type Mutation = {
   updateCalendarChannel: CalendarChannel;
   updateCommandMenuItem: CommandMenuItem;
   updateEmailGroupChannel: MessageChannel;
-  updateFocusedTab: Scalars['Boolean']['output'];
   updateFrontComponent: FrontComponent;
   updateGettingStarted: GettingStartedProgress;
   updateInboxNotificationSettings: UserWorkspace;
@@ -3974,6 +3973,7 @@ export type Mutation = {
   updatePageLayoutWithTabsAndWidgets: PageLayout;
   updatePasswordViaResetToken: InvalidatePassword;
   updateSkill: Skill;
+  updateTabPresence: Scalars['Boolean']['output'];
   updateTimelineActivityType: TimelineActivityType;
   updateUnsubscribeTopic: UnsubscribeTopic;
   updateUsageLimit: UsageLimit;
@@ -5256,11 +5256,6 @@ export type MutationUpdateEmailGroupChannelArgs = {
 };
 
 
-export type MutationUpdateFocusedTabArgs = {
-  input: UpdateFocusedTabInput;
-};
-
-
 export type MutationUpdateFrontComponentArgs = {
   input: UpdateFrontComponentInput;
 };
@@ -5392,6 +5387,11 @@ export type MutationUpdatePasswordViaResetTokenArgs = {
 
 export type MutationUpdateSkillArgs = {
   input: UpdateSkillInput;
+};
+
+
+export type MutationUpdateTabPresenceArgs = {
+  input: UpdateTabPresenceInput;
 };
 
 
@@ -6318,6 +6318,7 @@ export type Query = {
   object: Object;
   objectRecordCounts: Array<ObjectRecordCount>;
   objects: ObjectConnection;
+  onlineWorkspaceMemberIds: Array<Scalars['UUID']['output']>;
   pieChartData: PieChartData;
   previewMessageCampaignAudience: CampaignAudiencePreviewDto;
   previewMessageCampaignSend: PreviewMessageCampaignSendOutputDto;
@@ -7912,11 +7913,6 @@ export type UpdateFieldInput = {
   universalIdentifier?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type UpdateFocusedTabInput = {
-  isFocused: Scalars['Boolean']['input'];
-  tabId: Scalars['String']['input'];
-};
-
 export type UpdateFrontComponentInput = {
   /** The id of the front component to update */
   id: Scalars['UUID']['input'];
@@ -8143,6 +8139,11 @@ export type UpdateSkillInput = {
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateTabPresenceInput = {
+  state: Scalars['String']['input'];
+  tabId: Scalars['String']['input'];
 };
 
 export type UpdateTimelineActivityTypeInput = {
