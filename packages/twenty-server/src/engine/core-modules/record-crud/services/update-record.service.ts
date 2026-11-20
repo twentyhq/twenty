@@ -70,8 +70,6 @@ export class UpdateRecordService {
           flatObjectMetadata,
           flatFieldMetadataMaps,
           fieldNames: Object.keys(filteredObjectRecord),
-          workspaceCustomApplicationId:
-            authContext.workspace.workspaceCustomApplicationId,
         })
       ) {
         throw new RecordCrudException(
