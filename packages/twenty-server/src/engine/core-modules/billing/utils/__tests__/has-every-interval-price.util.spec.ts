@@ -2,18 +2,21 @@ import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entitie
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { hasEveryIntervalPrice } from 'src/engine/core-modules/billing/utils/has-every-interval-price.util';
 
-const buildPrice = (
-  interval: SubscriptionInterval,
+const buildPrice = ({
+  interval,
   active = true,
-): Pick<BillingPriceEntity, 'interval' | 'active'> => ({ interval, active });
+}: {
+  interval: SubscriptionInterval;
+  active?: boolean;
+}): Pick<BillingPriceEntity, 'interval' | 'active'> => ({ interval, active });
 
 describe('hasEveryIntervalPrice', () => {
   it('is true when the product has an active price for every interval', () => {
     expect(
       hasEveryIntervalPrice({
         billingPrices: [
-          buildPrice(SubscriptionInterval.Month),
-          buildPrice(SubscriptionInterval.Year),
+          buildPrice({ interval: SubscriptionInterval.Month }),
+          buildPrice({ interval: SubscriptionInterval.Year }),
         ],
       }),
     ).toBe(true);
@@ -23,8 +26,8 @@ describe('hasEveryIntervalPrice', () => {
     expect(
       hasEveryIntervalPrice({
         billingPrices: [
-          buildPrice(SubscriptionInterval.Month),
-          buildPrice(SubscriptionInterval.Year, false),
+          buildPrice({ interval: SubscriptionInterval.Month }),
+          buildPrice({ interval: SubscriptionInterval.Year, active: false }),
         ],
       }),
     ).toBe(false);
