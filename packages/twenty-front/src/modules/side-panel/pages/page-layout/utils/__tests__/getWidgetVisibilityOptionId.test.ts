@@ -1,20 +1,19 @@
+import { DEVICE_IS_DESKTOP_CONDITIONAL_AVAILABILITY } from '@/side-panel/pages/page-layout/constants/DeviceIsDesktopConditionalAvailability';
 import { VISIBILITY_ANY_DEVICE } from '@/side-panel/pages/page-layout/constants/VisibilityAnyDevice';
 import { VISIBILITY_DESKTOP } from '@/side-panel/pages/page-layout/constants/VisibilityDesktop';
 import { VISIBILITY_MOBILE } from '@/side-panel/pages/page-layout/constants/VisibilityMobile';
 import { getWidgetVisibilityOptionId } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityOptionId';
-import { getConditionalAvailabilityFromVisibilityOptionId } from '@/side-panel/pages/page-layout/utils/getConditionalAvailabilityFromVisibilityOptionId';
+import { getWidgetVisibilityPropertiesFromOptionId } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityPropertiesFromOptionId';
 
 describe('getWidgetVisibilityOptionId', () => {
   it.each([VISIBILITY_ANY_DEVICE, VISIBILITY_MOBILE, VISIBILITY_DESKTOP])(
     'should read back the tree written for %s',
-    (optionId) => {
+    (visibilityOptionId) => {
       expect(
-        getWidgetVisibilityOptionId({
-          conditionalAvailabilityExpression: null,
-          conditionalAvailability:
-            getConditionalAvailabilityFromVisibilityOptionId(optionId),
-        }),
-      ).toBe(optionId);
+        getWidgetVisibilityOptionId(
+          getWidgetVisibilityPropertiesFromOptionId(visibilityOptionId),
+        ),
+      ).toBe(visibilityOptionId);
     },
   );
 
@@ -31,8 +30,7 @@ describe('getWidgetVisibilityOptionId', () => {
     expect(
       getWidgetVisibilityOptionId({
         conditionalAvailabilityExpression: 'device == "MOBILE"',
-        conditionalAvailability:
-          getConditionalAvailabilityFromVisibilityOptionId(VISIBILITY_DESKTOP),
+        conditionalAvailability: DEVICE_IS_DESKTOP_CONDITIONAL_AVAILABILITY,
       }),
     ).toBe(VISIBILITY_MOBILE);
   });
