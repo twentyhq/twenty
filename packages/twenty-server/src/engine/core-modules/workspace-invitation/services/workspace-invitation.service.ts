@@ -506,21 +506,6 @@ export class WorkspaceInvitationService {
     emails: string[],
     sender: WorkspaceMemberWorkspaceEntity,
   ) {
-    if (
-      this.enterprisePlanService.isValid() &&
-      !this.twentyConfigService.isBillingEnabled()
-    ) {
-      return;
-    }
-
-    const senderEmail = sender.userEmail;
-
-    const sameWorkDomainEmailsCount = isDefined(senderEmail)
-      ? emails.filter((inviteeEmail) =>
-          isSameWorkDomainInvitation({ senderEmail, inviteeEmail }),
-        ).length
-      : 0;
-
     try {
       await Promise.all(
         emails.map(async (email) => {
@@ -537,19 +522,7 @@ export class WorkspaceInvitationService {
         }),
       );
 
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        buildInvitationSendingThrottleKey(`${sender.userId}:same-work-domain`),
-        sameWorkDomainEmailsCount,
-        INVITATION_SENDING_BY_SENDER_THROTTLE.sameWorkDomainLimit,
-        INVITATION_SENDING_BY_SENDER_THROTTLE.ttlInMs,
-      );
-
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        buildInvitationSendingThrottleKey(sender.userId),
-        emails.length - sameWorkDomainEmailsCount,
-        INVITATION_SENDING_BY_SENDER_THROTTLE.limit,
-        INVITATION_SENDING_BY_SENDER_THROTTLE.ttlInMs,
-      );
+      await this.throttleInvitationSendingBySender(emails, sender);
 
       await this.throttlerService.tokenBucketThrottleOrThrow(
         buildInvitationSendingThrottleKey(workspaceId),
@@ -570,5 +543,40 @@ export class WorkspaceInvitationService {
         },
       );
     }
+  }
+
+  private async throttleInvitationSendingBySender(
+    emails: string[],
+    sender: WorkspaceMemberWorkspaceEntity,
+  ) {
+    const isSelfHostedEnterprise =
+      this.enterprisePlanService.isValid() &&
+      !this.twentyConfigService.isBillingEnabled();
+
+    if (isSelfHostedEnterprise) {
+      return;
+    }
+
+    const senderEmail = sender.userEmail;
+
+    const sameWorkDomainEmailsCount = isDefined(senderEmail)
+      ? emails.filter((inviteeEmail) =>
+          isSameWorkDomainInvitation({ senderEmail, inviteeEmail }),
+        ).length
+      : 0;
+
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      buildInvitationSendingThrottleKey(`${sender.userId}:same-work-domain`),
+      sameWorkDomainEmailsCount,
+      INVITATION_SENDING_BY_SENDER_THROTTLE.sameWorkDomainLimit,
+      INVITATION_SENDING_BY_SENDER_THROTTLE.ttlInMs,
+    );
+
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      buildInvitationSendingThrottleKey(sender.userId),
+      emails.length - sameWorkDomainEmailsCount,
+      INVITATION_SENDING_BY_SENDER_THROTTLE.limit,
+      INVITATION_SENDING_BY_SENDER_THROTTLE.ttlInMs,
+    );
   }
 }
