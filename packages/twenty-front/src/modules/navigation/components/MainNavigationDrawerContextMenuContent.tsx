@@ -57,10 +57,13 @@ export const MainNavigationDrawerContextMenuContent = ({
     ...sections.map(getNavigationMenuSectionNavigationSectionId),
   ].filter(isDefined);
 
-  const customizeAndOpenDropdown = (
-    dropdownId: string,
-    onCustomizationModeEntered?: () => void,
-  ) => {
+  const customizeAndOpenDropdown = ({
+    dropdownId,
+    onCustomizationModeEntered,
+  }: {
+    dropdownId: string;
+    onCustomizationModeEntered?: () => void;
+  }) => {
     onClose();
 
     if (!enterLayoutCustomizationMode()) {
@@ -90,9 +93,11 @@ export const MainNavigationDrawerContextMenuContent = ({
             label: t`Add item to ${targetSection.name}`,
             Icon: IconPlus,
             onClick: () =>
-              customizeAndOpenDropdown(
-                getNavigationMenuSectionMenuDropdownId(targetSection.id),
-                () => {
+              customizeAndOpenDropdown({
+                dropdownId: getNavigationMenuSectionMenuDropdownId(
+                  targetSection.id,
+                ),
+                onCustomizationModeEntered: () => {
                   store.set(
                     navigationMenuSectionIdAddingItemState.atom,
                     targetSection.id,
@@ -106,7 +111,7 @@ export const MainNavigationDrawerContextMenuContent = ({
                     true,
                   );
                 },
-              ),
+              }),
           },
         ]
       : []),
@@ -115,9 +120,9 @@ export const MainNavigationDrawerContextMenuContent = ({
       label: t`Add section`,
       Icon: IconNewSection,
       onClick: () =>
-        customizeAndOpenDropdown(
-          getNavigationMenuAddSectionDropdownId(containerId),
-        ),
+        customizeAndOpenDropdown({
+          dropdownId: getNavigationMenuAddSectionDropdownId(containerId),
+        }),
     },
   ];
 
