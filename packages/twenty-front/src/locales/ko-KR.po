@@ -6036,17 +6036,6 @@ msgstr "워크스페이스의 지출 한도를 설정하세요. 일반적인 한
 msgid "Caps on what your workspace can spend and who they apply to"
 msgstr "작업 공간에서 지출할 수 있는 금액과 적용 대상을 제한합니다"
 
-#. js-lingui-id: Po5MgW
-#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
-#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
-#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
-#: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
-#: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
-#: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts
-#: src/pages/auth/PasswordReset.tsx
-msgid "Captcha (anti-bot check) is still loading, try again"
-msgstr "Captcha (봇 방지 검사)가 여전히 로딩 중입니다. 다시 시도하세요"
-
 #. js-lingui-id: kryGs+
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
