@@ -1,9 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
+import { type SlackAssistantRequestRecordFields } from 'src/__tests__/types/slack-assistant-request-record-fields.type';
+import { createSlackAssistantRequestRecord } from 'src/__tests__/utils/create-slack-assistant-request-record.util';
 import { createSlackMessageTimestampSequence } from 'src/__tests__/utils/create-slack-message-timestamp-sequence.util';
-import { requireDefinedOrThrow } from 'src/__tests__/utils/require-defined-or-throw.util';
+import { readSlackAssistantRequestRecord } from 'src/__tests__/utils/read-slack-assistant-request-record.util';
 import { setupSlackIntegrationTest } from 'src/__tests__/utils/setup-slack-integration-test.util';
 import { SLACK_ACCESS_DENIED_TEXT } from 'src/logic-functions/constants/slack-access-denied-text';
 import { SLACK_ASSISTANT_DEADLINE_ERROR } from 'src/logic-functions/constants/slack-assistant-deadline-error';
@@ -11,15 +13,11 @@ import { SLACK_ASSISTANT_DEADLINE_FAILURE_TEXT } from 'src/logic-functions/const
 import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/constants/slack-assistant-empty-response-error';
 import { SLACK_ASSISTANT_EMPTY_RESPONSE_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-empty-response-failure-text';
 import { SLACK_ASSISTANT_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-failure-text';
-import { SLACK_ASSISTANT_INTERRUPTED_ERROR } from 'src/logic-functions/constants/slack-assistant-interrupted-error';
-import { SLACK_ASSISTANT_INTERRUPTED_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-interrupted-failure-text';
 import { SLACK_ASSISTANT_FEEDBACK_ACTION_ID } from 'src/logic-functions/constants/slack-assistant-feedback-action-id';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
-import { SLACK_ASSISTANT_REQUEST_WATCHDOG_DELAY_SECONDS } from 'src/logic-functions/constants/slack-assistant-request-watchdog-delay-seconds';
 import { SLACK_ASSISTANT_INITIAL_STATUS } from 'src/logic-functions/constants/slack-assistant-status-steps';
 import { SLACK_MARKDOWN_BLOCK_MAX_LENGTH } from 'src/logic-functions/constants/slack-markdown-block-max-length';
 import { type SlackAssistantRequestStatus } from 'src/logic-functions/types/slack-assistant-request-status.type';
-import { slackAssistantRequestWatchdogHandler } from 'src/logic-functions/handlers/slack-assistant-request-watchdog-handler';
 import { slackAssistantWorkerHandler } from 'src/logic-functions/handlers/slack-assistant-worker-handler';
 import { getSlackThreadKvKey } from 'src/logic-functions/utils/get-slack-thread-kv-key';
 
@@ -28,15 +26,6 @@ const DIRECT_MESSAGE_CHANNEL_ID = 'D0WORKERTEST';
 const REQUESTER_USER_ID = 'U0REQUESTER';
 const CONFIRMED_MEMBER_EMAIL = 'jane.austen@apple.dev';
 const AGENT_CHAT_THREAD_ID = '7e4b1d4a-2c3f-4a5b-9c8d-1e2f3a4b5c6d';
-
-type SlackAssistantRequestRecordFields = {
-  id?: string;
-  status?: string | null;
-  requestText?: string | null;
-  responseText?: string | null;
-  errorMessage?: string | null;
-  agentChatThreadId?: string | null;
-};
 
 type WorkerRecord = Parameters<typeof slackAssistantWorkerHandler>[0];
 
@@ -68,32 +57,10 @@ describe('Slack assistant worker', () => {
     status?: SlackAssistantRequestStatus;
     responseText?: string;
   }): Promise<{ id: string }> => {
-    const mutationResult = await coreClient.mutation({
-      createSlackAssistantRequest: {
-        __args: {
-          data: {
-            name: fields.requestText,
-            status: SLACK_ASSISTANT_REQUEST_STATUS.PENDING,
-            slackChannelType: 'channel',
-            slackThreadTimestamp: '',
-            slackUserId: REQUESTER_USER_ID,
-            slackEventId: `Ev${fields.slackMessageTimestamp}`,
-            createdBy: {
-              source: 'APPLICATION',
-              workspaceMemberId: null,
-              name: 'Slack',
-            },
-            ...fields,
-          },
-        },
-        id: true,
-      },
+    const createdRequest = await createSlackAssistantRequestRecord({
+      coreClient,
+      draft: { slackUserId: REQUESTER_USER_ID, ...fields },
     });
-
-    const createdRequest = requireDefinedOrThrow(
-      mutationResult.createSlackAssistantRequest,
-      'The created Slack Assistant Request was not returned by the Twenty API',
-    );
 
     createdRequestIds.push(createdRequest.id);
 
@@ -102,24 +69,8 @@ describe('Slack assistant worker', () => {
 
   const readRequest = async (
     requestId: string,
-  ): Promise<SlackAssistantRequestRecordFields> => {
-    const queryResult = await coreClient.query({
-      slackAssistantRequest: {
-        __args: { filter: { id: { eq: requestId } } },
-        id: true,
-        status: true,
-        requestText: true,
-        responseText: true,
-        errorMessage: true,
-        agentChatThreadId: true,
-      },
-    });
-
-    return requireDefinedOrThrow(
-      queryResult.slackAssistantRequest,
-      'The Slack Assistant Request was not returned by the Twenty API',
-    );
-  };
+  ): Promise<SlackAssistantRequestRecordFields> =>
+    await readSlackAssistantRequestRecord({ coreClient, id: requestId });
 
   const buildPendingRequest = (record: {
     id: string;
@@ -784,70 +735,5 @@ describe('Slack assistant worker', () => {
       reason: 'Request is not pending',
     });
     expect(slack.calls).toHaveLength(0);
-  });
-
-  const runWatchdogWhenItFires = async (requestId: string) => {
-    vi.useFakeTimers({ toFake: ['Date'] });
-    vi.setSystemTime(
-      Date.now() + SLACK_ASSISTANT_REQUEST_WATCHDOG_DELAY_SECONDS * 1000,
-    );
-
-    try {
-      return await slackAssistantRequestWatchdogHandler({
-        slackAssistantRequestId: requestId,
-      });
-    } finally {
-      vi.useRealTimers();
-    }
-  };
-
-  it('should fail a request left processing by a dead execution and tell the member to ask again', async () => {
-    slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
-    const slackMessageTimestamp = nextMessageTimestamp();
-
-    slack.addMessage({
-      channelId: CHANNEL_ID,
-      timestamp: slackMessageTimestamp,
-      userId: REQUESTER_USER_ID,
-      text: mentionBot('who owns Acme?'),
-    });
-
-    const request = await createRequestRecord({
-      slackChannelId: CHANNEL_ID,
-      slackMessageTimestamp,
-      requestText: 'who owns Acme?',
-      status: SLACK_ASSISTANT_REQUEST_STATUS.PROCESSING,
-    });
-
-    const result = await runWatchdogWhenItFires(request.id);
-
-    expect(result).toEqual({ isFailed: true, attempt: 1, hasReplied: true });
-    expect(botMessagesIn(CHANNEL_ID)).toEqual([
-      expect.objectContaining({
-        text: SLACK_ASSISTANT_INTERRUPTED_FAILURE_TEXT,
-        threadTimestamp: slackMessageTimestamp,
-      }),
-    ]);
-    expect(slack.assistantStatuses).toEqual([
-      {
-        channelId: CHANNEL_ID,
-        threadTimestamp: slackMessageTimestamp,
-        status: '',
-      },
-    ]);
-    await expect(readRequest(request.id)).resolves.toEqual(
-      expect.objectContaining({
-        status: SLACK_ASSISTANT_REQUEST_STATUS.FAILED,
-        errorMessage: SLACK_ASSISTANT_INTERRUPTED_ERROR,
-      }),
-    );
-
-    const secondResult = await runWatchdogWhenItFires(request.id);
-
-    expect(secondResult).toMatchObject({
-      isFailed: false,
-      isRescheduled: false,
-    });
-    expect(botMessagesIn(CHANNEL_ID)).toHaveLength(1);
   });
 });

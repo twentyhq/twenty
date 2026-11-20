@@ -25,10 +25,10 @@ export const slackAssistantRequestWatchdogHandler = async ({
 }: SlackAssistantRequestWatchdogPayload): Promise<SlackAssistantRequestWatchdogResult> => {
   const client = new CoreApiClient();
 
-  const record = await findSlackAssistantRequestById(
+  const record = await findSlackAssistantRequestById({
     client,
-    slackAssistantRequestId,
-  );
+    id: slackAssistantRequestId,
+  });
 
   if (
     !isDefined(record) ||
@@ -65,7 +65,8 @@ export const slackAssistantRequestWatchdogHandler = async ({
     return { isFailed: false, attempt, isRescheduled: true };
   }
 
-  const isFailed = await failStaleSlackAssistantRequest(client, {
+  const isFailed = await failStaleSlackAssistantRequest({
+    client,
     id: slackAssistantRequestId,
     errorMessage: SLACK_ASSISTANT_INTERRUPTED_ERROR,
   });

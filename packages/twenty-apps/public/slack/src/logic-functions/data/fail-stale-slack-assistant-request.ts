@@ -4,10 +4,15 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { getSlackAssistantRequestLeaseCutoff } from 'src/logic-functions/utils/get-slack-assistant-request-lease-cutoff';
 
-export const failStaleSlackAssistantRequest = async (
-  client: Pick<CoreApiClient, 'mutation'>,
-  { id, errorMessage }: { id: string; errorMessage: string },
-): Promise<boolean> => {
+export const failStaleSlackAssistantRequest = async ({
+  client,
+  id,
+  errorMessage,
+}: {
+  client: Pick<CoreApiClient, 'mutation'>;
+  id: string;
+  errorMessage: string;
+}): Promise<boolean> => {
   const mutationResult = await client.mutation({
     updateSlackAssistantRequests: {
       __args: {

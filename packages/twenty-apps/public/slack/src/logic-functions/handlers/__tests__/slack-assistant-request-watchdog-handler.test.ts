@@ -133,8 +133,10 @@ describe('slackAssistantRequestWatchdogHandler', () => {
 
       expect(result).toEqual({ isFailed: true, attempt: 1, hasReplied: true });
       expect(failStaleRequestMock).toHaveBeenCalledExactlyOnceWith(
-        expect.anything(),
-        { id: REQUEST_ID, errorMessage: SLACK_ASSISTANT_INTERRUPTED_ERROR },
+        expect.objectContaining({
+          id: REQUEST_ID,
+          errorMessage: SLACK_ASSISTANT_INTERRUPTED_ERROR,
+        }),
       );
       expect(setStatusMock).toHaveBeenCalledExactlyOnceWith(
         expect.objectContaining({
