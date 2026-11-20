@@ -5,6 +5,8 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 
+import { WorkflowStepExecutorException } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { isUserFacingWorkflowExecutorError } from 'src/modules/workflow/workflow-executor/utils/is-user-facing-workflow-executor-error.util';
 import { evaluateFilterConditions } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-filter-conditions.util';
 
 describe('evaluateFilterConditions', () => {
@@ -1538,6 +1540,29 @@ describe('evaluateFilterConditions', () => {
 
         expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow();
       });
+
+      it.each(['RELATION', 'NUMBER', 'UUID', 'STRING'])(
+        'should reject an unsupported operand on a %s filter as a user error',
+        (type) => {
+          const filter = createFilter(
+            ViewFilterOperand.IS_NOT_NULL,
+            'value',
+            '',
+            type,
+          );
+
+          let thrownError: unknown;
+
+          try {
+            evaluateFilterConditions({ filters: [filter] });
+          } catch (error) {
+            thrownError = error;
+          }
+
+          expect(thrownError).toBeInstanceOf(WorkflowStepExecutorException);
+          expect(isUserFacingWorkflowExecutorError(thrownError)).toBe(true);
+        },
+      );
 
       it('should handle unsupported filter type with default filter logic', () => {
         const filter = createFilter(
