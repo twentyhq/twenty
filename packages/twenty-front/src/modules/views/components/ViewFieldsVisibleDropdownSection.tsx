@@ -1,6 +1,7 @@
 import { DraggableListRow } from '@/ui/layout/draggable-list/components/DraggableListRow';
 import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useProcessOptionDropdownDragEnd } from '@/object-record/object-options-dropdown/hooks/useProcessOptionDropdownDragEnd';
@@ -8,6 +9,7 @@ import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dro
 import { getRecordFieldColumnHeader } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnHeader';
 import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
 import { isLookupColumnsEnabledSelector } from '@/object-record/record-column-lookup/states/isLookupColumnsEnabledSelector';
+import { getScopedRelationLookupTarget } from '@/object-record/record-column-scope/utils/getScopedRelationLookupTarget';
 import { isScopedRelationColumn } from '@/object-record/record-column-scope/utils/isScopedRelationColumn';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
@@ -48,6 +50,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
     useGetFieldMetadataItemByIdOrThrow();
 
   const getRecordFieldLookupTarget = useGetRecordFieldLookupTarget();
+  const { objectMetadataItems } = useObjectMetadataItems();
   const isLookupColumnsEnabled = useAtomStateValue(
     isLookupColumnsEnabledSelector,
   );
@@ -129,10 +132,17 @@ export const ViewFieldsVisibleDropdownSection = () => {
                   );
                   const columnHeader = getRecordFieldColumnHeader({
                     fieldMetadataItem,
-                    lookupTarget: getRecordFieldLookupTarget({
-                      recordField,
-                      fieldMetadataItem,
-                    }),
+                    lookupTarget:
+                      getRecordFieldLookupTarget({
+                        recordField,
+                        fieldMetadataItem,
+                      }) ??
+                      getScopedRelationLookupTarget({
+                        recordField,
+                        fieldMetadataItem,
+                        objectMetadataItems,
+                        isLookupColumnsEnabled,
+                      }),
                     isScopedRelationColumn: isScopedRelationColumn({
                       fieldMetadataItem,
                       recordField,

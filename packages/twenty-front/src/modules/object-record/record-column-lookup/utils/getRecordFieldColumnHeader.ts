@@ -19,22 +19,19 @@ export const getRecordFieldColumnHeader = ({
     | undefined;
   isScopedRelationColumn: boolean;
 }): ColumnHeaderFieldMetadataItem => {
-  if (isScopedRelationColumn) {
-    return {
-      ...fieldMetadataItem,
-      label: `${fieldMetadataItem.label} · ${t`Filtered`}`,
-    };
-  }
+  const label = isScopedRelationColumn
+    ? `${fieldMetadataItem.label} · ${t`Filtered`}`
+    : fieldMetadataItem.label;
 
   const lookupTargetFieldMetadataItem =
     lookupTarget?.lookupTargetFieldMetadataItem;
 
   if (!isDefined(lookupTargetFieldMetadataItem)) {
-    return fieldMetadataItem;
+    return { ...fieldMetadataItem, label };
   }
 
   return {
-    label: `${fieldMetadataItem.label} › ${lookupTargetFieldMetadataItem.label}`,
+    label: `${label} › ${lookupTargetFieldMetadataItem.label}`,
     icon: lookupTargetFieldMetadataItem.icon ?? fieldMetadataItem.icon,
     description:
       lookupTargetFieldMetadataItem.description ??

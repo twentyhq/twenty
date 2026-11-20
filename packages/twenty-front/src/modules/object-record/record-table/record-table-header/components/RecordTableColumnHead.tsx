@@ -5,11 +5,13 @@ import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMet
 import { useRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useRecordFieldLookupTarget';
 import { isLookupColumnsEnabledSelector } from '@/object-record/record-column-lookup/states/isLookupColumnsEnabledSelector';
 import { getRecordFieldColumnHeader } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnHeader';
+import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
 import { isScopedRelationColumn } from '@/object-record/record-column-scope/utils/isScopedRelationColumn';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RECORD_TABLE_CELL_CONTENT_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableCellContentClassName';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useContext } from 'react';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-shared/utils';
@@ -45,6 +47,9 @@ export const RecordTableColumnHead = ({
   );
 
   const lookupTarget = useRecordFieldLookupTarget(recordField);
+  const scopedRelationLookupTarget = useContext(
+    ScopedRelationAliasesContext,
+  ).find(({ recordFieldId }) => recordFieldId === recordField.id)?.lookupTarget;
   const isLookupColumnsEnabled = useAtomStateValue(
     isLookupColumnsEnabledSelector,
   );
@@ -53,7 +58,7 @@ export const RecordTableColumnHead = ({
   const fieldMetadataItem = isDefined(foundFieldMetadataItem)
     ? getRecordFieldColumnHeader({
         fieldMetadataItem: foundFieldMetadataItem,
-        lookupTarget,
+        lookupTarget: lookupTarget ?? scopedRelationLookupTarget,
         isScopedRelationColumn: isScopedRelationColumn({
           fieldMetadataItem: foundFieldMetadataItem,
           recordField,
