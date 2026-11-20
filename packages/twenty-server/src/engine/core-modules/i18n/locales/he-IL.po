@@ -6084,6 +6084,11 @@ msgstr "מזהה חבר ראשון בהודעה ישירה"
 msgid "First friendly message"
 msgstr "הודעה ידידותית ראשונה"
 
+#. js-lingui-id: 0QhRwZ
+#: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
+msgid "First name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+msgstr ""
+
 #. js-lingui-id: BUBVGN
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
@@ -8148,6 +8153,11 @@ msgstr "הודעה אחרונה"
 msgctxt "fieldMetadata.label"
 msgid "Last message sender"
 msgstr "שולח ההודעה האחרונה"
+
+#. js-lingui-id: bMq9eP
+#: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
+msgid "Last name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+msgstr ""
 
 #. js-lingui-id: R2LOsP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
