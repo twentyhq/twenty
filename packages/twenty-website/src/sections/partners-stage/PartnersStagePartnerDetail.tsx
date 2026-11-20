@@ -1,6 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AppsStageAppStory } from '@/apps-marketplace/AppsStageAppStory';
 import { ArrowLeft, ArrowUpRight } from '@/icons';
@@ -17,13 +18,14 @@ import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import {
   color,
+  containerColumnDeclarations,
   DURATION,
   EASING,
   FONT_WEIGHT,
   fontFamily,
   fontSize,
-  MENU_HEIGHT_PX,
   mediaUp,
+  MENU_HEIGHT_PX,
   radius,
   REDUCED_MOTION,
   semanticColor,
@@ -37,8 +39,8 @@ import {
   SectionShell,
   Signoff,
 } from '@/ui';
+import { cssVariableStyle } from '@/ui/css-variable-style';
 
-import { CONTAINER_COLUMN } from '@/ui/container-column';
 import { PartnersStageCraftCell } from './PartnersStageCraftCell';
 import { PARTNERS_STAGE_REGION_ACCENT } from './partners-stage-region-accent';
 import { PARTNERS_STAGE_REGION_CENTER } from './partners-stage-region-center.data';
@@ -48,20 +50,14 @@ import { PartnersStageReturnToDirectory } from './PartnersStageReturnToDirectory
 import { resolvePartnerCoordinates } from './resolve-partner-coordinates';
 import { worldRegionOfCell } from './world-region-of-cell';
 
-// A partner's own page, built like an app's page
-// (apps-marketplace/AppsStageAppDetail): back link, compact header with the
-// one primary action, the story on the left, the facts on the right, then
-// the site's Signoff. Content is the profile's, as the CRM gives it.
 const Frame = styled.div`
   padding-block: ${spacing(10)} ${spacing(16)};
-  ${CONTAINER_COLUMN}
+  ${containerColumnDeclarations()}
 
   & > * + * {
     margin-top: ${spacing(10)};
   }
 
-  /* A page to read, not a catalogue: the content keeps to a measure,
-     centred in the site column; narrower, it fills the column. */
   & > * {
     margin-inline: auto;
     max-width: 1064px;
@@ -156,8 +152,7 @@ const Meta = styled.p`
   line-height: 22px;
 `;
 
-// The primary action lives in the side column; below md that column comes
-// after the content, so the header keeps its own copy there.
+// Below md the side column comes after the content, so the header keeps the action.
 const HeaderAction = styled.div`
   grid-column: 1 / -1;
 
@@ -289,8 +284,7 @@ const RelatedGrid = styled.div`
   gap: ${spacing(3)};
   grid-template-columns: minmax(0, 1fr);
 
-  /* Fixed tracks: a region with one or two partners keeps its cards at the
-     row's width, left-aligned; nothing stretches to fill. */
+  /* Fixed tracks: a short row keeps its cards at the row's width. */
   ${mediaUp('sm')} {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -381,8 +375,6 @@ const SideLink = styled(ExternalLink)`
 `;
 
 type PartnersStagePartnerDetailProps = {
-  // Get matched, for when the partner has no call link of their own, and for
-  // the closing.
   matchCta: ReactNode;
   // The directory, for a row of partners based in the same region.
   partners: readonly MarketplacePartner[];
@@ -401,7 +393,7 @@ export function PartnersStagePartnerDetail({
     partner.region,
   );
   const baseRegion =
-    (base !== null ? worldRegionOfCell(base[0], base[1]) : null) ??
+    (isDefined(base) ? worldRegionOfCell(base[0], base[1]) : null) ??
     partner.region[0] ??
     'EUROPE';
   const accent = PARTNERS_STAGE_REGION_ACCENT[baseRegion];
@@ -441,7 +433,7 @@ export function PartnersStagePartnerDetail({
       candidate.region,
     );
     return (
-      (coordinates !== null
+      (isDefined(coordinates)
         ? worldRegionOfCell(coordinates[0], coordinates[1])
         : null) ??
       candidate.region[0] ??
@@ -484,7 +476,7 @@ export function PartnersStagePartnerDetail({
               </BackLink>
             </PartnersStageReturnToDirectory>
           </Rise>
-          <Rise style={{ ['--partners-stage-delay' as string]: '60ms' }}>
+          <Rise style={cssVariableStyle({ '--partners-stage-delay': '60ms' })}>
             <Header>
               <PartnersStageMark
                 markUrl={partner.profilePictureUrl}
@@ -503,7 +495,9 @@ export function PartnersStagePartnerDetail({
           </Rise>
           <Body>
             <Main>
-              <Rise style={{ ['--partners-stage-delay' as string]: '140ms' }}>
+              <Rise
+                style={cssVariableStyle({ '--partners-stage-delay': '140ms' })}
+              >
                 <AppsStageAppStory
                   markdown={partner.description}
                   pastel={color(accent)}
@@ -562,7 +556,7 @@ export function PartnersStagePartnerDetail({
                   <PartnersStageRegionCover
                     accent={accent}
                     center={base ?? PARTNERS_STAGE_REGION_CENTER[baseRegion]}
-                    hasBase={base !== null}
+                    hasBase={isDefined(base)}
                   />
                 </MapFrame>
                 {place.length > 0 && (
@@ -585,15 +579,16 @@ export function PartnersStagePartnerDetail({
                 )}
                 <SideAction data-dock-anchor="">{primary}</SideAction>
               </SideGroup>
-              {(hourly !== null || (minimum !== null && minimum !== '$0')) && (
+              {(isDefined(hourly) ||
+                (isDefined(minimum) && minimum !== '$0')) && (
                 <SideGroup>
-                  {hourly !== null && (
+                  {isDefined(hourly) && (
                     <Fact>
                       <SideLabel>{i18n._(msg`Hourly`)}</SideLabel>
                       <FactValue>{i18n._(msg`${hourly}/hr`)}</FactValue>
                     </Fact>
                   )}
-                  {minimum !== null && minimum !== '$0' && (
+                  {isDefined(minimum) && minimum !== '$0' && (
                     <Fact>
                       <SideLabel>{i18n._(msg`Project minimum`)}</SideLabel>
                       <FactValue>{minimum}</FactValue>

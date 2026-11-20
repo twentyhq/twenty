@@ -3,12 +3,7 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import {
-  type ChangeEvent,
-  type CSSProperties,
-  useEffect,
-  useState,
-} from 'react';
+import { type ChangeEvent, useEffect, useState } from 'react';
 
 import { useAnimatedNumber } from '@/platform/motion';
 import {
@@ -24,6 +19,7 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
+import { cssVariableStyle } from '@/ui/css-variable-style';
 
 import { INTEGRATOR_LEDGER } from './integrator-ledger-config';
 
@@ -412,28 +408,26 @@ export function IntegratorLedger({ footnote }: IntegratorLedgerProps) {
   return (
     <Stack>
       <Panel>
-        <HeaderRow style={{ '--row': 0 } as CSSProperties}>
+        <HeaderRow style={cssVariableStyle({ '--row': 0 })}>
           <MonoLabel data-strong="">
             <LabelWithMarker>{i18n._(msg`Your commission`)}</LabelWithMarker>
           </MonoLabel>
         </HeaderRow>
-        <Readout style={{ '--row': 1 } as CSSProperties}>
+        <Readout style={cssVariableStyle({ '--row': 1 })}>
           <ReadoutValue aria-live="polite" htmlFor="integrator-ledger-seats">
             {currency.format(shownCommission)}
           </ReadoutValue>
           <MonoLabel>{i18n._(msg`Estimate, over 12 months`)}</MonoLabel>
         </Readout>
-        <Chart aria-hidden style={{ '--row': 2 } as CSSProperties}>
+        <Chart aria-hidden style={cssVariableStyle({ '--row': 2 })}>
           <Columns>
             {MONTHS.map((month) => (
               <Column
                 key={month}
-                style={
-                  {
-                    '--fill': filledDashFraction(month, seats),
-                    '--month': month,
-                  } as CSSProperties
-                }
+                style={cssVariableStyle({
+                  '--fill': filledDashFraction(month, seats),
+                  '--month': month,
+                })}
               >
                 <ColumnEntrance>
                   <ColumnFill />
@@ -448,7 +442,7 @@ export function IntegratorLedger({ footnote }: IntegratorLedgerProps) {
             ))}
           </MonthTicks>
         </Chart>
-        <SliderBlock style={{ '--row': 3 } as CSSProperties}>
+        <SliderBlock style={cssVariableStyle({ '--row': 3 })}>
           <SliderHeader htmlFor="integrator-ledger-seats">
             <MonoLabel>{i18n._(msg`Seats you bring`)}</MonoLabel>
             <SeatValue>{seats}</SeatValue>
@@ -459,12 +453,12 @@ export function IntegratorLedger({ footnote }: IntegratorLedgerProps) {
             min={minSeats}
             onChange={handleSeatsChange}
             step={INTEGRATOR_LEDGER.seatStep}
-            style={{ '--progress': `${seatProgress * 100}%` } as CSSProperties}
+            style={cssVariableStyle({ '--progress': `${seatProgress * 100}%` })}
             type="range"
             value={seats}
           />
         </SliderBlock>
-        <Footer style={{ '--row': 4 } as CSSProperties}>
+        <Footer style={cssVariableStyle({ '--row': 4 })}>
           <Footnote>
             {i18n._(
               msg`Estimate on the Organization plan at $${seatPricePerMonth} per seat per month, billed yearly.`,

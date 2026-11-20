@@ -5,9 +5,7 @@ import { useCallback } from 'react';
 
 export type PartnersStageView = 'cards' | 'list';
 
-// The directory's view lives in the URL
-// (`?view=list`, cards by default) so a shared link keeps it. The other query
-// params, filters included, are kept.
+// In the URL so a shared link keeps the view.
 export const usePartnersStageView = () => {
   const params = useSearchParams();
   const router = useRouter();

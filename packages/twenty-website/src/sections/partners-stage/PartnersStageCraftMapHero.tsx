@@ -4,11 +4,13 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { type ReactNode, useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { filterPartners } from '@/partners-marketplace/filter-partners';
 import { type MarketplacePartner } from '@/partners-marketplace/marketplace-partner';
 import {
   color,
+  containerColumnDeclarations,
   DURATION,
   EASING,
   fontFamily,
@@ -19,22 +21,18 @@ import {
   spacing,
 } from '@/tokens';
 import { Heading, SectionShell, GuideCrosshair } from '@/ui';
+import { cssVariableStyle } from '@/ui/css-variable-style';
 
-import { CONTAINER_COLUMN } from '@/ui/container-column';
 import { PartnersStageGlobe } from './PartnersStageGlobe';
 import { resolvePartnerCoordinates } from './resolve-partner-coordinates';
 import { usePartnersStageFilterState } from './use-partners-stage-filter-state';
-
-// The cover is our world map turned into a globe,
-// under the /apps centred copy. It answers the directory's filters (same URL
-// state): the regions served light up, the partners' cities glow.
 
 // How far apart partners sharing a city sit on the globe.
 const SHARED_CITY_SPREAD_DEGREES = 1.6;
 
 const Column = styled.div`
   padding: ${spacing(16)} 0 ${spacing(10)};
-  ${CONTAINER_COLUMN}
+  ${containerColumnDeclarations()}
 
   & > * + * {
     margin-top: ${spacing(12)};
@@ -133,7 +131,7 @@ export function PartnersStageCraftMapHero({
         partner.country,
         partner.region,
       );
-      return coordinates === null
+      return !isDefined(coordinates)
         ? []
         : [
             {
@@ -143,8 +141,7 @@ export function PartnersStageCraftMapHero({
             },
           ];
     });
-    // Partners in the same city share a point: spread them on a small ring
-    // so every one of them shows.
+    // Partners in the same city share a point: a small ring shows them all.
     const sharing = new Map<string, number>();
     for (const city of placed) {
       const key = city.coordinates.join(',');
@@ -190,21 +187,21 @@ export function PartnersStageCraftMapHero({
           <Rise>
             <Label>{i18n._(msg`Certified partners`)}</Label>
           </Rise>
-          <Rise style={{ ['--partners-stage-rise-order' as string]: 1 }}>
+          <Rise style={cssVariableStyle({ '--partners-stage-rise-order': 1 })}>
             <Title>
               <Heading as="h1" size="xl" weight="light">
                 {i18n._(msg`Hire the people who *build on Twenty*`)}
               </Heading>
             </Title>
           </Rise>
-          <Rise style={{ ['--partners-stage-rise-order' as string]: 2 }}>
+          <Rise style={cssVariableStyle({ '--partners-stage-rise-order': 2 })}>
             <Lede>
               {i18n._(
                 msg`Certified partners who set up your CRM to match how your company works, from the migration to the custom apps.`,
               )}
             </Lede>
           </Rise>
-          <Rise style={{ ['--partners-stage-rise-order' as string]: 3 }}>
+          <Rise style={cssVariableStyle({ '--partners-stage-rise-order': 3 })}>
             <Actions>{actions}</Actions>
           </Rise>
         </Copy>

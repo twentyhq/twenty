@@ -2,7 +2,7 @@
 
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import { type CSSProperties, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import {
   ScrollProgressEffect,
@@ -23,6 +23,7 @@ import {
   spacing,
 } from '@/tokens';
 import { Body, Heading, StepperProgressRail, StepperSwipeDeck } from '@/ui';
+import { cssVariableStyle } from '@/ui/css-variable-style';
 
 import { PROGRAM_PATH_BACKDROP } from './program-path-backdrop-config';
 import { type ProgramStep } from './program-step.type';
@@ -198,7 +199,6 @@ const FrameBorder = styled.svg`
   z-index: 2;
 `;
 
-// Our three artefacts, one at a time, on a black card over the halftone.
 // The card keeps the dark scheme inside the muted section.
 const Card = styled.div`
   ${buildSchemeContext('dark')}
@@ -261,8 +261,7 @@ const computeStepStyle = (
 };
 
 type ProgramPathScrollerProps = {
-  // 'eager' has the backdrop drawn before the section is reached, at the cost
-  // of one of the page's six WebGL contexts from the start.
+  // 'eager' draws the backdrop early but holds a WebGL context from the start.
   backdropLoading?: 'lazy' | 'eager';
   steps: readonly ProgramStep[];
 };
@@ -322,12 +321,10 @@ export function ProgramPathScroller({
                   return (
                     <StepBlock
                       key={step.title.id}
-                      style={
-                        {
-                          '--step-opacity': opacity,
-                          '--step-transform': transform,
-                        } as CSSProperties
-                      }
+                      style={cssVariableStyle({
+                        '--step-opacity': opacity,
+                        '--step-transform': transform,
+                      })}
                     >
                       {renderStepContent(step)}
                     </StepBlock>

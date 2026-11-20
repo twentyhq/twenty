@@ -21,9 +21,7 @@ const withShape = (modelUrl: string, dashColor: number): LevelModel => ({
   },
 });
 
-// One shape and one accent per level, stand-ins for Thomas's 3D
-// (dark stage only): the keycap in green for Integrator, the diamond in pink
-// for Lead Integrator.
+// Stand-ins until the final 3D shapes land.
 export const INTEGRATOR_LEVEL_MODELS: readonly LevelModel[] = [
   withShape('/models/code-keycap.glb', paletteColorNumber('green')),
   withShape('/models/diamond.glb', paletteColorNumber('pink')),

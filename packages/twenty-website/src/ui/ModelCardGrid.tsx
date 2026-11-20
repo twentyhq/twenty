@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { type CSSProperties } from 'react';
 
 import { HalftoneModel } from '@/platform/visuals/rigs/HalftoneModel';
 import {
@@ -14,6 +13,7 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
+import { cssVariableStyle } from '@/ui/css-variable-style';
 
 import { Body } from './Body';
 import { MODEL_CARD_SETTINGS } from './model-card-settings';
@@ -110,7 +110,7 @@ export function ModelCardGrid({ cards }: ModelCardGridProps) {
         {cards.map((card, index) => (
           <Card
             key={card.model}
-            style={{ '--model-card-index': index } as CSSProperties}
+            style={cssVariableStyle({ '--model-card-index': index })}
           >
             <Visual aria-hidden data-illustration={card.model}>
               <ModelBox>

@@ -1,5 +1,6 @@
 import { type I18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 import { formatUsdRate } from '@/partners-marketplace/format-usd-rate';
 import { type MarketplacePartner } from '@/partners-marketplace/marketplace-partner';
@@ -35,11 +36,10 @@ export const describePartnersStagePartner = (
       languageNames.length > 3
         ? `${languageNames.slice(0, 3).join(', ')} +${languageNames.length - 3}`
         : languageNames.join(', '),
-    price:
-      hourly !== null
-        ? i18n._(msg`${hourly}/hr`)
-        : minimum !== null && minimum !== '$0'
-          ? i18n._(msg`From ${minimum}`)
-          : null,
+    price: isDefined(hourly)
+      ? i18n._(msg`${hourly}/hr`)
+      : isDefined(minimum) && minimum !== '$0'
+        ? i18n._(msg`From ${minimum}`)
+        : null,
   };
 };

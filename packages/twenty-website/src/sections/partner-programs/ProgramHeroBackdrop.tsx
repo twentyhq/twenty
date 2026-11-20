@@ -2,15 +2,14 @@
 
 import { styled } from '@linaria/react';
 import { useEffect, useRef, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 import { DURATION, REDUCED_MOTION } from '@/tokens';
 
 import { PROGRAM_HERO_BACKDROP_SETTINGS } from './program-hero-backdrop-settings';
 
-// giga.ai's home: the scene stays nearly pinned while the page scrolls over
-// it and goes dark through brightness, ending at 0.12 after 800px (measured
-// 2026-11-19). Keyframe stops copy their ease-in.
+// The scene stays nearly pinned and darkens through brightness over 800px.
 const HERO_EXIT_SCROLL_PX = 800;
 
 // The bottom edge fades out with a mask so the field ends softly.
@@ -87,11 +86,10 @@ export function ProgramHeroBackdrop({
   const [isReady, setIsReady] = useState(false);
   const [isOnScreen, setIsOnScreen] = useState(true);
 
-  // The rig keeps its WebGL context for seconds after leaving the viewport;
-  // the visuals right below the hero need it as soon as the hero is gone.
+  // The rig holds its WebGL context seconds after leaving; the visuals below need it now.
   useEffect(() => {
     const root = rootRef.current;
-    if (root === null) {
+    if (!isDefined(root)) {
       return;
     }
     const observer = new IntersectionObserver(([entry]) => {

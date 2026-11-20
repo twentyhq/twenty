@@ -20,9 +20,6 @@ import {
   Z_INDEX,
 } from '@/tokens';
 
-// The site's filter button
-// (partners-marketplace/FilterDropdown) on the dark page, with a count per
-// option and a Clear in the menu.
 const Trigger = styled(Popover.Trigger)`
   align-items: center;
   background-color: transparent;
@@ -61,8 +58,6 @@ const Trigger = styled(Popover.Trigger)`
   }
 `;
 
-// Active, the filter reads as one control in two parts, as in Notion and
-// Attio: "Languages: French, German" opens the menu, the cross clears it.
 const Control = styled.span`
   display: inline-flex;
 
@@ -152,8 +147,6 @@ const Popup = styled(Popover.Popup)`
   }
 `;
 
-// Tall enough for every option; on a short screen it scrolls with a thin
-// dark bar instead of the system's light one.
 const OptionList = styled.div`
   display: flex;
   flex-direction: column;
@@ -239,8 +232,7 @@ const OptionLabel = styled.span`
   flex: 1 1 auto;
 `;
 
-// The popup renders in a portal, outside the dark section: colours are
-// spelled out, not taken from the scheme.
+// The popup renders in a portal outside the dark section, so colours are explicit.
 const OptionCount = styled.span`
   color: ${color('white-40')};
   font-family: ${fontFamily('mono')};
@@ -272,27 +264,27 @@ const ClearButton = styled.button`
   }
 `;
 
-export type PartnersStageCraftFilterOption = {
-  value: string;
+export type PartnersStageCraftFilterOption<TValue extends string> = {
+  value: TValue;
   label: string;
   count: number;
 };
 
-type PartnersStageCraftFilterProps = {
+type PartnersStageCraftFilterProps<TValue extends string> = {
   label: string;
   onClear: () => void;
-  onToggle: (value: string) => void;
-  options: readonly PartnersStageCraftFilterOption[];
-  selected: ReadonlySet<string>;
+  onToggle: (value: TValue) => void;
+  options: readonly PartnersStageCraftFilterOption<TValue>[];
+  selected: ReadonlySet<TValue>;
 };
 
-export function PartnersStageCraftFilter({
+export function PartnersStageCraftFilter<TValue extends string>({
   label,
   onClear,
   onToggle,
   options,
   selected,
-}: PartnersStageCraftFilterProps) {
+}: PartnersStageCraftFilterProps<TValue>) {
   const { i18n } = useLingui();
   const chosen = options.filter((option) => selected.has(option.value));
   const values =

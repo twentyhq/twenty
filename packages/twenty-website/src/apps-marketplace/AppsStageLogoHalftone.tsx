@@ -1,24 +1,26 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  type CSSProperties,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 import { color, DURATION, EASING, REDUCED_MOTION } from '@/tokens';
 
 import { APPS_STAGE_FEATURED_HALFTONE } from './apps-stage-featured-halftone';
 
-// An app's logo redrawn in Twenty's halftone, printing in from the left once
-// drawn. The site allows six WebGL contexts at once and a catalogue shows
-// more logos than that, so a logo keeps its frame as a still image and hands
-// its context to the next one, unless it is live (pointer light).
+// The site allows six WebGL contexts; a non-live logo keeps its frame as a still and lets go.
 const Print = styled.div`
   height: 100%;
   position: relative;
   width: 100%;
 
-  /* The print mask only applies once the halftone draws, so the poster
-     before it shows whole. */
   &[data-drawn] {
     animation: apps-stage-logo-print ${DURATION.xl} ${EASING.smooth} forwards;
     mask-image: linear-gradient(90deg, ${color('black')} 40%, transparent 60%);
@@ -41,14 +43,11 @@ const Print = styled.div`
   }
 `;
 
-// Same frame as the rig, so nothing jumps when the halftone takes over: the
-// logo centred, its height 4 / previewDistance of the box (contain fit at
-// the rig's reference distance of 4), its width from its own ratio.
+// Sized like the rig's contain fit at its reference distance, so nothing jumps.
 const Poster = styled.div`
   inset: 0;
   position: absolute;
-  /* Only reduced motion keeps the plain logo: elsewhere the band waits
-     empty, then prints in, rather than showing one logo turn into another. */
+  /* Reduced motion keeps the plain logo; elsewhere the band waits empty. */
   visibility: hidden;
 
   ${REDUCED_MOTION} {
@@ -76,26 +75,24 @@ const Still = styled.img`
 
 const RIG_REFERENCE_DISTANCE = 4;
 
+type PosterStyle = CSSProperties & { '--apps-stage-poster-size': string };
+
 // Kept for the page's life, so a logo drawn once shows at once afterwards.
 const stills = new Map<string, string>();
 
-// The halftone rig loads images without crossOrigin, so a remote logo would
-// taint its WebGL texture. A same-origin blob copy avoids it; copies are kept
-// for the page's life so a logo seen once starts drawing at once.
+// The rig loads images without crossOrigin: a same-origin blob keeps the texture untainted.
 const sameOriginImages = new Map<string, Promise<string | undefined>>();
 
 const loadSameOriginImage = (imageUrl: string) => {
   const cached = sameOriginImages.get(imageUrl);
 
-  if (cached !== undefined) {
+  if (isDefined(cached)) {
     return cached;
   }
 
   const pending = fetch(imageUrl)
     .then((response) => (response.ok ? response.blob() : undefined))
-    .then((blob) =>
-      blob === undefined ? undefined : URL.createObjectURL(blob),
-    )
+    .then((blob) => (isDefined(blob) ? URL.createObjectURL(blob) : undefined))
     .catch(() => undefined);
 
   sameOriginImages.set(imageUrl, pending);
@@ -110,7 +107,7 @@ const useSameOriginImage = (imageUrl: string) => {
     let isCurrent = true;
 
     void loadSameOriginImage(imageUrl).then((url) => {
-      if (isCurrent && url !== undefined) {
+      if (isCurrent && isDefined(url)) {
         setLoaded({ source: imageUrl, url });
       }
     });
@@ -120,7 +117,7 @@ const useSameOriginImage = (imageUrl: string) => {
     };
   }, [imageUrl]);
 
-  return loaded !== undefined && loaded.source === imageUrl
+  return isDefined(loaded) && loaded.source === imageUrl
     ? loaded.url
     : undefined;
 };
@@ -144,10 +141,9 @@ export function AppsStageLogoHalftone({
   const [still, setStill] = useState(() =>
     isLive ? undefined : stills.get(stillKey),
   );
-  const [isDrawn, setIsDrawn] = useState(still !== undefined);
+  const [isDrawn, setIsDrawn] = useState(isDefined(still));
 
-  // The drawing buffer is only readable in the task that rendered it, which
-  // is the one this callback runs in.
+  // The drawing buffer is only readable in the task that rendered it.
   const handleFirstFrame = () => {
     setIsDrawn(true);
 
@@ -157,7 +153,7 @@ export function AppsStageLogoHalftone({
 
     const frame = printRef.current?.querySelector('canvas')?.toDataURL();
 
-    if (frame !== undefined) {
+    if (isDefined(frame)) {
       stills.set(stillKey, frame);
       setStill(frame);
     }
@@ -168,14 +164,14 @@ export function AppsStageLogoHalftone({
     [previewDistance],
   );
 
+  const posterStyle: PosterStyle = {
+    '--apps-stage-poster-size': `${Math.round(
+      (RIG_REFERENCE_DISTANCE / previewDistance) * 100,
+    )}%`,
+  };
+
   const poster = (
-    <Poster
-      style={{
-        ['--apps-stage-poster-size' as string]: `${Math.round(
-          (RIG_REFERENCE_DISTANCE / previewDistance) * 100,
-        )}%`,
-      }}
-    >
+    <Poster style={posterStyle}>
       <img alt="" src={logoUrl} />
     </Poster>
   );
@@ -187,17 +183,17 @@ export function AppsStageLogoHalftone({
       data-illustration="apps-logo-halftone"
       ref={printRef}
     >
-      {still !== undefined ? (
+      {isDefined(still) ? (
         <Still alt="" src={still} />
-      ) : imageUrl === undefined ? (
-        poster
-      ) : (
+      ) : isDefined(imageUrl) ? (
         <HalftoneImageBackdrop
           imageUrl={imageUrl}
           onFirstFrame={handleFirstFrame}
           poster={poster}
           settings={settings}
         />
+      ) : (
+        poster
       )}
     </Print>
   );

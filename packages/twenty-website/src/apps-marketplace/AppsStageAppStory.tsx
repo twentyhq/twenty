@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { type CSSProperties } from 'react';
 import Markdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,10 +17,6 @@ import { ExternalLink } from '@/ui';
 
 import { stripLeadingMarkdownTitle } from './strip-leading-markdown-title';
 
-// An app's README set like Linear's integration
-// pages: one calm column, sans headings with generous space above, body at
-// 15/24 in a light grey, plain lists. The README is the source; only its
-// setting changes.
 const Story = styled.div`
   color: ${color('white-80')};
   font-family: ${fontFamily('sans')};
@@ -141,7 +138,6 @@ const Story = styled.div`
   }
 `;
 
-// The list itself is a row of chips, each with the site's checkmark.
 const Chips = styled.ul`
   && {
     display: flex;
@@ -204,7 +200,7 @@ const isNameList = (node: HastNode | undefined): boolean => {
 const COMPONENTS: Components = {
   h1: ({ children }) => <h2>{children}</h2>,
   ul: ({ children, node }) =>
-    isNameList(node as HastNode | undefined) ? (
+    isNameList(node) ? (
       <Chips data-apps-stage-chips="">{children}</Chips>
     ) : (
       <ul>{children}</ul>
@@ -245,6 +241,24 @@ const splitLede = (markdown: string) => {
   return { lede, body: rest.join('\n\n') };
 };
 
+type StoryMarkdownProps = {
+  markdown: string;
+};
+
+function StoryMarkdown({ markdown }: StoryMarkdownProps) {
+  return (
+    <Markdown
+      components={COMPONENTS}
+      disallowedElements={['img']}
+      remarkPlugins={[remarkGfm]}
+    >
+      {markdown}
+    </Markdown>
+  );
+}
+
+type StoryStyle = CSSProperties & { '--apps-stage-pastel': string };
+
 type AppsStageAppStoryProps = {
   markdown: string;
   pastel: string;
@@ -255,26 +269,12 @@ export function AppsStageAppStory({
   pastel,
 }: AppsStageAppStoryProps) {
   const { lede, body } = splitLede(markdown);
+  const style: StoryStyle = { '--apps-stage-pastel': pastel };
 
   return (
-    <Story style={{ ['--apps-stage-pastel' as string]: pastel }}>
-      {/* The opening line is markdown too (bold, links): rendered, not printed. */}
-      {lede !== undefined && (
-        <Markdown
-          components={COMPONENTS}
-          disallowedElements={['img']}
-          remarkPlugins={[remarkGfm]}
-        >
-          {lede}
-        </Markdown>
-      )}
-      <Markdown
-        components={COMPONENTS}
-        disallowedElements={['img']}
-        remarkPlugins={[remarkGfm]}
-      >
-        {body}
-      </Markdown>
+    <Story style={style}>
+      {isDefined(lede) && <StoryMarkdown markdown={lede} />}
+      <StoryMarkdown markdown={body} />
     </Story>
   );
 }

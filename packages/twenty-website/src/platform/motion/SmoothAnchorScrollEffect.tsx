@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect } from 'react';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
 import { getReducedMotionSnapshot } from './reduced-motion-snapshot';
 
-// Smooth scrolling for same-page anchor links only. The CSS scroll-behavior
-// would also animate the browser's scroll restoration on back navigation.
+// CSS scroll-behavior would also animate scroll restoration on back navigation.
 export function SmoothAnchorScrollEffect() {
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
@@ -25,12 +25,11 @@ export function SmoothAnchorScrollEffect() {
         .closest('a[href^="#"]')
         ?.getAttribute('href')
         ?.slice(1);
-      const target =
-        hash === undefined || hash.length === 0
-          ? null
-          : document.getElementById(hash);
+      const target = !isNonEmptyString(hash)
+        ? null
+        : document.getElementById(hash);
 
-      if (target === null) {
+      if (!isDefined(target)) {
         return;
       }
 

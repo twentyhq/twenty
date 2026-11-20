@@ -2,6 +2,7 @@
 
 import { styled } from '@linaria/react';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 const RevealRoot = styled.div`
   min-width: 0;
@@ -11,15 +12,14 @@ type RevealProps = {
   children: ReactNode;
 };
 
-// Marks its subtree with data-revealed once it scrolls into view, so
-// descendants can key their entrance on it instead of playing off screen.
+// Lets descendants key their entrance on data-revealed instead of playing off screen.
 export function Reveal({ children }: RevealProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [isRevealed, setIsRevealed] = useState(false);
 
   useEffect(() => {
     const root = rootRef.current;
-    if (root === null) {
+    if (!isDefined(root)) {
       return;
     }
     const observer = new IntersectionObserver(

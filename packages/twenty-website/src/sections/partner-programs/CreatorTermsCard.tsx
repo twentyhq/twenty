@@ -20,8 +20,6 @@ import { Heading, SectionShell } from '@/ui';
 import { CREATOR_FACTS } from './creator-facts.data';
 import { CREATOR_TERMS_MODEL } from './creator-terms-model';
 
-// As IntegratorLevelCards (after Biograph's memberships), one card holding
-// its own title: the terms on the left, the money on the right. No rules.
 const Card = styled.article`
   animation: creator-terms-card-in ${DURATION.xl} ${EASING.standard} backwards;
   border: 1px solid ${semanticColor.line};
@@ -150,8 +148,6 @@ const ModelMount = styled.div`
   }
 `;
 
-// The program's terms as section 2, in the integrator
-// level card format.
 export function CreatorTermsCard() {
   const i18n = getServerI18n();
 

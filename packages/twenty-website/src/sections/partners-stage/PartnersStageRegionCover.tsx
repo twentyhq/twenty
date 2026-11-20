@@ -2,15 +2,14 @@
 
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { color, type PaletteToken } from '@/tokens';
+import { cssVariableStyle } from '@/ui/css-variable-style';
 
 import { WORLD_LAND_GRID } from './world-land-grid.data';
 
-// A card cover in the globe's dashes, the map laid
-// flat around the partner's base, the base itself a glowing dot. The
-// /customers covers, drawn from data instead of a photo, on a 2D canvas.
-// Transparent: the card's own surface (and its hover fill) shows through.
+// Transparent, so the card's own surface and hover fill show through.
 const Shell = styled.div`
   --partners-stage-cover-dot: ${color('white')};
   inset: 0;
@@ -45,15 +44,14 @@ export function PartnersStageRegionCover({
     const shell = shellRef.current;
     const canvas = canvasRef.current;
     const context = canvas?.getContext('2d');
-    if (shell === null || canvas === null || !context) {
+    if (!isDefined(shell) || !isDefined(canvas) || !context) {
       return;
     }
 
     const { columns, degreesPerCell, northLatitude, rows } = WORLD_LAND_GRID;
 
     const draw = () => {
-      // Read at each draw: on a first paint the stylesheet may not have
-      // landed and the custom properties come back empty.
+      // The custom properties can still be empty on a first paint.
       const styles = getComputedStyle(shell);
       const ink = styles.getPropertyValue('--partners-stage-cover-ink').trim();
       const dot = styles.getPropertyValue('--partners-stage-cover-dot').trim();
@@ -138,7 +136,7 @@ export function PartnersStageRegionCover({
     <Shell
       aria-hidden
       ref={shellRef}
-      style={{ ['--partners-stage-cover-ink' as string]: color(accent) }}
+      style={cssVariableStyle({ '--partners-stage-cover-ink': color(accent) })}
     >
       <Canvas ref={canvasRef} />
     </Shell>

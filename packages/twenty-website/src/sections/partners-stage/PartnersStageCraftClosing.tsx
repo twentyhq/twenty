@@ -8,6 +8,7 @@ import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import {
   color,
+  containerColumnDeclarations,
   DURATION,
   EASING,
   FONT_WEIGHT,
@@ -21,23 +22,15 @@ import {
 } from '@/tokens';
 import { SectionShell, Signoff } from '@/ui';
 
-import { CONTAINER_COLUMN } from '@/ui/container-column';
-
-// The site's Signoff for the clients' closing call
-// to action, over the footer's dashed logo as on /apps. Under it, one way out
-// for agencies and freelancers: a /customers wide card to the integrator
-// program, the whole card the link.
 const Column = styled.div`
   padding-bottom: ${spacing(20)};
-  ${CONTAINER_COLUMN}
+  ${containerColumnDeclarations()}
 
   ${mediaUp('md')} {
     padding-bottom: ${spacing(30)};
   }
 `;
 
-// The /customers wide card: text on one side, a halftone cover on the other
-// (the partners' hero photo, in the brand blue). The whole card is the link.
 const OfferCard = styled(LocalizedLink)`
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(2)};
@@ -154,8 +147,7 @@ const OfferCover = styled.div`
 
 type PartnersStageCraftClosingProps = {
   action: ReactNode;
-  // The footer's dashed logo, passed in by the page (sections don't import
-  // each other).
+  // Passed in by the page: sections cannot import each other.
   backdrop?: ReactNode;
 };
 

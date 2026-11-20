@@ -26,9 +26,7 @@ export type PartnersStageFilterState = {
   clearFacet: (facet: keyof FilterCriteria) => void;
   clearAll: () => void;
 };
-// Same contract as useMarketplaceFilterState (the URL is the source of truth),
-// but it keeps the other query params, which the original drops: the prototype
-// switch lives in one.
+// Unlike useMarketplaceFilterState, it keeps the other query params.
 export const usePartnersStageFilterState = (): PartnersStageFilterState => {
   const params = useSearchParams();
   const router = useRouter();
@@ -83,8 +81,7 @@ export const usePartnersStageFilterState = (): PartnersStageFilterState => {
     [criteria, writeCriteria],
   );
 
-  // One write per facet: toggling each value off in turn would race, every
-  // toggle starting from the same URL.
+  // One write per facet: toggling each value off would race on the same URL.
   const clearFacet = useCallback(
     (facet: keyof FilterCriteria) =>
       writeCriteria({ ...criteria, [facet]: new Set() }),

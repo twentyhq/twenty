@@ -2,8 +2,7 @@ import { paletteColorNumber } from '@/tokens';
 
 import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 
-// The home hero recipe (image dashes, pointer light across the window, copy
-// excluded), tone on tone so the centred copy stays readable.
+// Tone on tone, so the centred copy stays readable.
 export const PROGRAM_HERO_BACKDROP_SETTINGS: HalftoneImageBackdropProps['settings'] =
   {
     previewDistance: 3.2,

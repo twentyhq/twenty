@@ -8,11 +8,9 @@ import {
   type MarketplaceApp,
   type MarketplaceAppDetail,
 } from '@/apps-marketplace';
-import { fetchAppsStageAppContent } from '@/apps-marketplace/apps-stage-app-content';
 import { AppsStageAppDetail } from '@/apps-marketplace/AppsStageAppDetail';
 import { AppsStageCraftCatalogue } from '@/apps-marketplace/AppsStageCraftCatalogue';
 import { AppsStageCraftHero } from '@/apps-marketplace/AppsStageCraftHero';
-import { fetchMarketplaceAppAdditions } from '@/apps-marketplace/fetch-marketplace-app-additions';
 import { getCommunityStats } from '@/platform/community';
 import { getRouteI18n } from '@/platform/i18n/get-route-i18n';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
@@ -37,7 +35,9 @@ export async function generateMetadata({
 
   try {
     app = await fetchMarketplaceAppDetailBySlug(slug);
-  } catch {
+  } catch (error) {
+    console.error('[apps-marketplace] metadata fetch failed:', error);
+
     return { title: i18n._(getWebsiteRoute('apps').title) };
   }
 
@@ -88,11 +88,6 @@ export default async function AppDetailPage({
     notFound();
   }
 
-  const [additions, content] = await Promise.all([
-    fetchMarketplaceAppAdditions(app.universalIdentifier),
-    fetchAppsStageAppContent(app.universalIdentifier),
-  ]);
-
   return (
     <>
       <JsonLd
@@ -107,13 +102,7 @@ export default async function AppDetailPage({
       />
       <Menu communityStats={communityStats} scheme="dark" />
       <main>
-        <AppsStageAppDetail
-          additions={additions}
-          app={app}
-          apps={apps}
-          content={content}
-          locale={locale}
-        />
+        <AppsStageAppDetail app={app} apps={apps} locale={locale} />
       </main>
     </>
   );

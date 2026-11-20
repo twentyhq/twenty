@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 
 import { isSafeHttpUrl } from '@/partners-marketplace/is-safe-http-url';
 import { color, FONT_WEIGHT, fontFamily, radius } from '@/tokens';
+import { cssVariableStyle } from '@/ui/css-variable-style';
 
 const MarkFrame = styled.span`
   align-items: center;
@@ -61,10 +62,10 @@ export function PartnersStageMark({
     <MarkFrame
       aria-hidden
       data-tone={hasImage ? 'light' : tone}
-      style={{
-        ['--partners-stage-mark-size' as string]: `${sizePx}px`,
+      style={cssVariableStyle({
+        '--partners-stage-mark-size': `${sizePx}px`,
         fontSize: `${Math.round(sizePx * 0.4)}px`,
-      }}
+      })}
     >
       {hasImage ? (
         <MarkImage alt="" loading="lazy" src={markUrl} />

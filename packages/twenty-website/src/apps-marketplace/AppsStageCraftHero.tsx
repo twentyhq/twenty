@@ -6,6 +6,7 @@ import { styled } from '@linaria/react';
 
 import {
   color,
+  containerColumnDeclarations,
   DURATION,
   EASING,
   fontFamily,
@@ -18,7 +19,6 @@ import {
 import { Heading, SectionShell } from '@/ui';
 
 import { AppsStageOrbit } from './AppsStageOrbit';
-import { CONTAINER_COLUMN } from '@/ui/container-column';
 import { type MarketplaceApp } from './marketplace-app';
 
 const Backdrop = styled.div`
@@ -27,13 +27,12 @@ const Backdrop = styled.div`
   position: absolute;
 `;
 
-// The page column the copy is centred in.
 const Column = styled.div`
   display: flex;
   flex-direction: column;
   height: 560px;
   padding-top: ${spacing(16)};
-  ${CONTAINER_COLUMN}
+  ${containerColumnDeclarations()}
 
   ${mediaUp('sm')} {
     height: 680px;

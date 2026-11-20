@@ -1,5 +1,4 @@
-// The estimate uses the public Organization price (cloud, billed
-// yearly) and the program's two constants. To validate with content.
+// TODO(@jocelyncaron): confirm the estimate's price and constants with the content owner.
 export const INTEGRATOR_LEDGER: {
   commissionRate: number;
   months: number;

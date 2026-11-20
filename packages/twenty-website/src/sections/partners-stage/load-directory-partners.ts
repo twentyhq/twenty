@@ -3,8 +3,7 @@ import { getMarketplacePartners } from '@/partners-marketplace/marketplace-partn
 
 import { PROTOTYPE_SAMPLE_PARTNERS } from './prototype-sample-partners.data';
 
-// Local runs have no partners API key: the directory would be empty, so they
-// show the partners published on twenty.com instead. Never in production.
+// Local runs have no partners API key; never used in production.
 export const loadDirectoryPartners = async (): Promise<
   readonly MarketplacePartner[]
 > => {

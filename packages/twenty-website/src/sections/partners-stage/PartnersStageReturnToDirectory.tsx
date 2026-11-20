@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { type MouseEvent, type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { PARTNERS_STAGE_RETURN } from './partners-stage-return';
 
@@ -13,10 +14,7 @@ const readSession = (key: string): string | null => {
   }
 };
 
-// Wraps the partner page's "All partners" link.
-// Coming from the directory, it goes back in history (same scroll, filters
-// and view); otherwise it opens the directory as last seen. The mark is
-// left in place: the directory spends it when it shows again.
+// From the directory it goes back in history, keeping scroll, filters and view.
 export function PartnersStageReturnToDirectory({
   children,
 }: {
@@ -39,7 +37,7 @@ export function PartnersStageReturnToDirectory({
       return;
     }
     const lastUrl = readSession(PARTNERS_STAGE_RETURN.urlKey);
-    if (lastUrl !== null) {
+    if (isDefined(lastUrl)) {
       event.preventDefault();
       router.push(lastUrl);
     }

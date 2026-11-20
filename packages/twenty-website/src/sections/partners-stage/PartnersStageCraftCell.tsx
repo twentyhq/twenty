@@ -2,6 +2,7 @@
 
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type MarketplacePartner } from '@/partners-marketplace/marketplace-partner';
 import { richTextExcerpt } from '@/partners-marketplace/rich-text-excerpt';
@@ -20,6 +21,7 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
+import { cssVariableStyle } from '@/ui/css-variable-style';
 
 import { describePartnersStagePartner } from './describe-partners-stage-partner';
 import { PARTNERS_STAGE_REGION_ACCENT } from './partners-stage-region-accent';
@@ -28,11 +30,6 @@ import { PartnersStageMark } from './PartnersStageMark';
 import { PartnersStageRegionCover } from './PartnersStageRegionCover';
 import { resolvePartnerCoordinates } from './resolve-partner-coordinates';
 
-// A partner card on the /apps card
-// (apps-marketplace/AppsStageAppCards): a decorative band on top (here the
-// dotted map around the partner's base, in the region's accent), then the
-// logo, the name, the pitch, and the price and languages to compare. On
-// hover a fill slides in from the left and the logo springs up.
 const Card = styled.article`
   animation: partners-stage-craft-cell-in ${DURATION.xl} ${EASING.standard}
     backwards;
@@ -76,8 +73,7 @@ const Card = styled.article`
   }
 `;
 
-// Decoration, where there is room for it. The map fades out at the bottom
-// (a mask, not a painted gradient).
+// The map fades out with a mask, not a painted gradient.
 const Band = styled.div`
   border-bottom: 1px solid ${semanticColor.line};
   display: none;
@@ -173,8 +169,7 @@ const Pitch = styled.p`
   overflow-wrap: anywhere;
 `;
 
-// The two facts to compare, on a rule, pinned to the bottom so the rules
-// line up across a row: the price left, the languages right.
+// Pinned to the bottom so the rules line up across a row.
 const Facts = styled.div`
   align-items: baseline;
   border-top: 1px solid ${semanticColor.line};
@@ -230,15 +225,15 @@ export function PartnersStageCraftCell({
       aria-labelledby={headingId}
       data-partners-stage-cell=""
       id={`partner-${partner.slug}`}
-      style={{
-        ['--partners-stage-cell-index' as string]: Math.min(index, 12),
-      }}
+      style={cssVariableStyle({
+        '--partners-stage-cell-index': Math.min(index, 12),
+      })}
     >
       <Band>
         <PartnersStageRegionCover
           accent={PARTNERS_STAGE_REGION_ACCENT[coverRegion]}
           center={base ?? PARTNERS_STAGE_REGION_CENTER[coverRegion]}
-          hasBase={base !== null}
+          hasBase={isDefined(base)}
         />
       </Band>
       <Content>

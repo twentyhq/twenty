@@ -7,8 +7,7 @@ import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { fontSize, mediaUp, REDUCED_MOTION, spacing } from '@/tokens';
 import { Body, Eyebrow, Heading, SectionShell } from '@/ui';
 
-// After v7labs: the copy dissolves (fade, blur, slight lift) as it scrolls up
-// under the menu, over the first 420px.
+// The copy dissolves as it scrolls under the menu, over the first 420px.
 const Intro = styled.div`
   animation-duration: auto;
   animation-fill-mode: both;

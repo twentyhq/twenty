@@ -57,8 +57,6 @@ const Measure = styled.div`
   max-width: 1040px;
 `;
 
-// After Biograph's memberships: name on top, a large visual in the middle,
-// what the level includes below. The second level is the filled one.
 const Card = styled.article`
   animation: integrator-level-card-in ${DURATION.xl} ${EASING.standard}
     backwards;
@@ -194,8 +192,6 @@ type IntegratorLevelCardsProps = {
   ledgerFootnote: MessageDescriptor;
 };
 
-// The levels as section 2 (Thomas, 2026-11-18), then
-// the ledger that prices them.
 export function IntegratorLevelCards({
   levels,
   ledgerFootnote,

@@ -2,7 +2,6 @@
 
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import { type CSSProperties } from 'react';
 
 import { DiscordMark } from '@/icons';
 import {
@@ -14,6 +13,7 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
+import { cssVariableStyle } from '@/ui/css-variable-style';
 
 import { type ProgramStepVisual as ProgramStepVisualModel } from './program-step.type';
 
@@ -155,7 +155,7 @@ export function ProgramStepVisual({ visual }: ProgramStepVisualProps) {
         {FORM_INK_WIDTHS.map((inkWidth) => (
           <span
             key={inkWidth}
-            style={{ '--ink-width': inkWidth } as CSSProperties}
+            style={cssVariableStyle({ '--ink-width': inkWidth })}
           />
         ))}
         <span />
@@ -183,14 +183,12 @@ export function ProgramStepVisual({ visual }: ProgramStepVisualProps) {
           {MONTHS.map((month) => (
             <span
               key={month}
-              style={
-                {
-                  '--step':
-                    visual.trend === 'rising'
-                      ? month / MONTH_COUNT
-                      : LEVEL_HEIGHT,
-                } as CSSProperties
-              }
+              style={cssVariableStyle({
+                '--step':
+                  visual.trend === 'rising'
+                    ? month / MONTH_COUNT
+                    : LEVEL_HEIGHT,
+              })}
             />
           ))}
         </Stairs>

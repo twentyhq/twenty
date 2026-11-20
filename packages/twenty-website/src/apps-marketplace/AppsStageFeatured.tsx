@@ -3,17 +3,15 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 
-import { mediaUp, spacing } from '@/tokens';
+import { containerColumnDeclarations, mediaUp, spacing } from '@/tokens';
 import { Body, Heading, SectionShell } from '@/ui';
 
 import { AppsStageAppCards } from './AppsStageAppCards';
-import { CONTAINER_COLUMN } from '@/ui/container-column';
 import { type MarketplaceApp } from './marketplace-app';
 
-// The featured apps side by side, all visible at
-// once (no tabs to click), each card with its logo in Twenty's halftone as
-// decoration. Hand-picked (Jocelyn, 2026-11-19), matched on the name.
+// Hand-picked by the team, matched on the app name.
 const FEATURED_APP_NAMES: readonly string[] = [
   'slack',
   'granola',
@@ -22,7 +20,7 @@ const FEATURED_APP_NAMES: readonly string[] = [
 
 const Frame = styled.div`
   padding-block: ${spacing(12)};
-  ${CONTAINER_COLUMN}
+  ${containerColumnDeclarations()}
 
   & > * + * {
     margin-top: ${spacing(8)};
@@ -50,7 +48,7 @@ export function AppsStageFeatured({ apps }: AppsStageFeaturedProps) {
       (candidate) => candidate.name.trim().toLowerCase() === name,
     );
 
-    return app === undefined ? [] : [app];
+    return isDefined(app) ? [app] : [];
   });
 
   if (featured.length === 0) {

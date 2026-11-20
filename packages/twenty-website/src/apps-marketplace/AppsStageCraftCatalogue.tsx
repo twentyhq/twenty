@@ -4,9 +4,11 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { type MouseEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   color,
+  containerColumnDeclarations,
   DURATION,
   EASING,
   FONT_WEIGHT,
@@ -19,26 +21,22 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
+import { getReducedMotionSnapshot } from '@/platform/motion';
 import { Body, Heading, SectionShell } from '@/ui';
 
 import { AppsStageAppCards } from './AppsStageAppCards';
-import { CONTAINER_COLUMN } from '@/ui/container-column';
 import { type MarketplaceApp } from './marketplace-app';
 
-// The catalogue framed in the page column, after
-// Profound's integrations page: every category is its own block on the page,
-// the index on the left stays put, follows the scroll and jumps on click.
 const Frame = styled.div`
   display: flex;
   flex-direction: column;
-  ${CONTAINER_COLUMN}
+  ${containerColumnDeclarations()}
 
   ${mediaUp('md')} {
     flex-direction: row;
   }
 `;
 
-// The index and the grid read as two halves by their spacing alone.
 const Sidebar = styled.div`
   padding-block: ${spacing(8)} ${spacing(6)};
 
@@ -157,8 +155,7 @@ const Categories = styled.div`
   }
 `;
 
-// Cells wait while their category is below the fold, then cascade in as it
-// scrolls into view.
+// Cells cascade in when their category scrolls into view, not off screen.
 const Category = styled.div`
   scroll-margin-top: ${MENU_HEIGHT_PX + 32}px;
 
@@ -242,18 +239,15 @@ export function AppsStageCraftCatalogue({
   );
   const [revealed, setRevealed] = useState<ReadonlySet<string>>(new Set());
 
-  // Scrolling drives the index; an observer reveals each category once, as
-  // it enters the viewport.
   useEffect(() => {
     const root = categoriesRef.current;
 
-    if (root === null) {
+    if (!isDefined(root)) {
       return;
     }
 
     const sections = [...root.querySelectorAll<HTMLElement>('[data-category]')];
-    // The current category is the last one whose top has passed the line
-    // under the menu; before the first, the first.
+    // Current category: the last whose top passed the line under the menu.
     const readingLine = MENU_HEIGHT_PX + 80;
     let frame = 0;
 
@@ -277,7 +271,11 @@ export function AppsStageCraftCatalogue({
       (entries) => {
         const entered = entries
           .filter((entry) => entry.isIntersecting)
-          .map((entry) => (entry.target as HTMLElement).dataset.category ?? '');
+          .map((entry) =>
+            entry.target instanceof HTMLElement
+              ? (entry.target.dataset.category ?? '')
+              : '',
+          );
 
         if (entered.length > 0) {
           setRevealed((previous) => new Set([...previous, ...entered]));
@@ -303,16 +301,14 @@ export function AppsStageCraftCatalogue({
   const jumpTo = (event: MouseEvent<HTMLAnchorElement>, category: string) => {
     const target = document.getElementById(toCategoryId(category));
 
-    if (target === null) {
+    if (!isDefined(target)) {
       return;
     }
 
     event.preventDefault();
     setActiveCategory(category);
     target.scrollIntoView({
-      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        ? 'auto'
-        : 'smooth',
+      behavior: getReducedMotionSnapshot() ? 'auto' : 'smooth',
       block: 'start',
     });
   };

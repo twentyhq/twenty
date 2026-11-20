@@ -1,8 +1,7 @@
 import { type HalftoneModelProps } from '@/platform/visuals/rigs/HalftoneModel';
 import { paletteColorNumber } from '@/tokens';
 
-// The money in pink, as the integrator level shapes: glass coin,
-// scale 9 at ~240px, a slow steady turn without drag.
+// Scale 9 keeps detail at ~240px.
 export const CREATOR_TERMS_MODEL = {
   modelUrl: '/models/money.glb',
   settings: {

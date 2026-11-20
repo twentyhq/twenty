@@ -1,16 +1,15 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import { useMemo } from 'react';
+import { type CSSProperties, useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { color, radius, semanticColor } from '@/tokens';
 
 import { type MarketplaceApp } from './marketplace-app';
 import { useAppsStageLogoInks } from './use-apps-stage-logo-inks';
 
-// An app's icon at any size, notched like the site's
-// cards. A logo that ships its own square fills the tile; any other sits on a
-// light tile, so no logo ends up as a tile inside a tile.
+// A logo that ships its own square fills the tile, so no tile sits in a tile.
 const Tile = styled.div`
   align-items: center;
   background-color: ${color('charcoal')};
@@ -45,6 +44,8 @@ const Logo = styled.img`
   }
 `;
 
+type TileStyle = CSSProperties & { '--apps-stage-icon-size': string };
+
 type AppsStageAppIconProps = {
   app: MarketplaceApp;
   sizePx: number;
@@ -54,14 +55,15 @@ export function AppsStageAppIcon({ app, sizePx }: AppsStageAppIconProps) {
   // A stable list: a fresh array each render would re-run the read forever.
   const apps = useMemo(() => [app], [app]);
   const inks = useAppsStageLogoInks(apps);
+  const style: TileStyle = { '--apps-stage-icon-size': `${sizePx}px` };
 
   return (
     <Tile
       aria-hidden
       data-kind={inks[app.slug]?.kind ?? 'unknown'}
-      style={{ ['--apps-stage-icon-size' as string]: `${sizePx}px` }}
+      style={style}
     >
-      {app.logoUrl !== undefined && <Logo alt="" src={app.logoUrl} />}
+      {isDefined(app.logoUrl) && <Logo alt="" src={app.logoUrl} />}
     </Tile>
   );
 }

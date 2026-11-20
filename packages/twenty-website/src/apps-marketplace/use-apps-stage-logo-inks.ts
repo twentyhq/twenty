@@ -8,8 +8,7 @@ import {
 } from './apps-stage-logo-ink';
 import { type MarketplaceApp } from './marketplace-app';
 
-// . Keyed by slug; empty until every logo is read, so
-// the logos reveal together rather than one by one.
+// Empty until every logo is read, so the logos reveal together.
 export const useAppsStageLogoInks = (
   apps: readonly MarketplaceApp[],
 ): Record<string, AppsStageLogoInk> => {

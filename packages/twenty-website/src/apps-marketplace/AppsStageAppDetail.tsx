@@ -1,5 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { type CSSProperties } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ArrowLeft, ArrowUpRight } from '@/icons';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
@@ -7,13 +9,14 @@ import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import { SITE_URLS } from '@/platform/site-urls';
 import {
   color,
+  containerColumnDeclarations,
   DURATION,
   EASING,
   FONT_WEIGHT,
   fontFamily,
   fontSize,
-  MENU_HEIGHT_PX,
   mediaUp,
+  MENU_HEIGHT_PX,
   radius,
   REDUCED_MOTION,
   semanticColor,
@@ -31,30 +34,22 @@ import {
 import { AppsStageAppCards } from './AppsStageAppCards';
 import { AppsStageAppIcon } from './AppsStageAppIcon';
 import { AppsStageAppStory } from './AppsStageAppStory';
-import { type AppsStageAppContent } from './apps-stage-app-content';
 import { APPS_STAGE_BETA_APP_NAMES } from './apps-stage-beta-apps';
-import { CONTAINER_COLUMN } from '@/ui/container-column';
 import { getAppsStagePastel } from './apps-stage-pastels';
 import { buildAppInstallUrl } from './build-app-install-url';
-import { type MarketplaceAppAdditions } from './fetch-marketplace-app-additions';
 import {
   type MarketplaceApp,
   type MarketplaceAppDetail,
 } from './marketplace-app';
 
-// (): an app's own page. Laid out like Raycast's
-// extension pages (compact header, tabs, a side column of facts), with
-// Profound's scene of Twenty and the app joined as the first media tile.
 const Frame = styled.div`
   padding-block: ${spacing(10)} ${spacing(16)};
-  ${CONTAINER_COLUMN}
+  ${containerColumnDeclarations()}
 
   & > * + * {
     margin-top: ${spacing(10)};
   }
 
-  /* A detail page reads narrow: everything holds to 1064px (680 text + 64
-     gap + 320 side), centred in the site column. */
   & > * {
     margin-inline: auto;
     max-width: 1064px;
@@ -127,9 +122,7 @@ const Cover = styled.div`
   overflow: hidden;
 `;
 
-// The screenshot whole, at its own ratio: gallery images are made as covers.
-// At its own ratio on small screens; a 320px band from md so the app's name
-// and line stay above the fold.
+// From md, a 320px band keeps the app's name above the fold.
 const CoverImage = styled.img`
   display: block;
   height: auto;
@@ -208,8 +201,7 @@ const CategoryLabel = styled(MonoLabel)`
   padding: 4px ${spacing(1.5)};
 `;
 
-// Install lives in the side column; below md that column comes after the
-// content, so the header keeps its own copy there.
+// Below md the side column comes after the content, so the header keeps Install.
 const HeaderAction = styled.div`
   grid-column: 1 / -1;
 
@@ -246,11 +238,7 @@ const Main = styled.div`
   }
 `;
 
-// What the app adds, in the side column, grouped by the product's own sections
-// (Data, Interface, Automation and AI, Access) so the site says what the app
-// page will show after install. Names when they read; counts otherwise.
-// Sections stand apart (20px); a title holds its list close (4px); lines
-// keep a 2px breath. The group's own label sits 16px above, like Facts.
+// Grouped like the product's app page, so the site shows what install adds.
 const AddsSections = styled.div`
   & > * + * {
     margin-top: ${spacing(5)};
@@ -345,8 +333,6 @@ const PackageName = styled.p`
   overflow-wrap: anywhere;
 `;
 
-// Quiet links: muted text and the brand's thin arrow at its own 8px; they
-// come up to full ink on hover.
 const SideLink = styled(ExternalLink)`
   align-items: center;
   align-self: flex-start;
@@ -395,13 +381,19 @@ const SideLinks = styled.div`
   gap: ${spacing(2)};
 `;
 
+type RiseStyle = CSSProperties & { '--apps-stage-delay': string };
+type PastelStyle = CSSProperties & { '--apps-stage-pastel': string };
+
+const riseDelay = (delayMs: number): RiseStyle => ({
+  '--apps-stage-delay': `${delayMs}ms`,
+});
+
 const SHOWN_NAMES = 3;
 // Developer names (slack-home-opened) are counted, never shown.
 const isReadableLabel = (label: string) => !/^[a-z0-9_-]+$/.test(label);
 
 const RELATED_COUNT = 3;
 
-// Related apps close the page as the same card row as /apps' featured apps.
 const Related = styled.div`
   padding-top: ${spacing(8)};
 
@@ -414,25 +406,23 @@ const counted = (count: number, one: string, many: string) =>
   count === 0 ? [] : [count === 1 ? one : many];
 
 type AppsStageAppDetailProps = {
-  additions: MarketplaceAppAdditions;
-  content: AppsStageAppContent;
   app: MarketplaceAppDetail;
   apps: readonly MarketplaceApp[];
   locale: string;
 };
 
 export function AppsStageAppDetail({
-  additions,
-  content,
   app,
   apps,
   locale,
 }: AppsStageAppDetailProps) {
   const i18n = getServerI18n();
+  const { content } = app;
   const sortedCategories = [
     ...new Set(apps.map((candidate) => candidate.category)),
   ].toSorted((left, right) => left.localeCompare(right));
   const pastel = getAppsStagePastel(app.category, sortedCategories);
+  const pastelStyle: PastelStyle = { '--apps-stage-pastel': pastel };
   const isBeta = APPS_STAGE_BETA_APP_NAMES.includes(
     app.name.trim().toLowerCase(),
   );
@@ -441,14 +431,13 @@ export function AppsStageAppDetail({
     ...others.filter((candidate) => candidate.category === app.category),
     ...others.filter((candidate) => candidate.category !== app.category),
   ].slice(0, RELATED_COUNT);
-  const installs =
-    additions.installCount === undefined
-      ? undefined
-      : new Intl.NumberFormat(locale).format(additions.installCount);
+  const installs = isDefined(app.installCount)
+    ? new Intl.NumberFormat(locale).format(app.installCount)
+    : undefined;
 
   const overview = (
     <>
-      {app.aboutDescription !== undefined ? (
+      {isDefined(app.aboutDescription) ? (
         <AppsStageAppStory markdown={app.aboutDescription} pastel={pastel} />
       ) : (
         <Tagline>{app.tagline}</Tagline>
@@ -520,8 +509,8 @@ export function AppsStageAppDetail({
             </BackLink>
           </Rise>
 
-          {cover !== undefined && (
-            <Rise style={{ ['--apps-stage-delay' as string]: '30ms' }}>
+          {isDefined(cover) && (
+            <Rise style={riseDelay(30)}>
               <Cover>
                 <CoverImage
                   alt={i18n._(msg`${app.name} screenshot`)}
@@ -531,7 +520,7 @@ export function AppsStageAppDetail({
             </Rise>
           )}
 
-          <Rise style={{ ['--apps-stage-delay' as string]: '60ms' }}>
+          <Rise style={riseDelay(60)}>
             <Header>
               <AppsStageAppIcon app={app} sizePx={72} />
               <HeaderText>
@@ -541,14 +530,12 @@ export function AppsStageAppDetail({
                 <Tagline>{app.tagline}</Tagline>
                 <Meta>
                   <span>{app.author}</span>
-                  {installs !== undefined && (
+                  {isDefined(installs) && (
                     <span>{i18n._(msg`${installs} installs`)}</span>
                   )}
                   {app.category.length > 0 && (
                     <span>
-                      <CategoryLabel
-                        style={{ ['--apps-stage-pastel' as string]: pastel }}
-                      >
+                      <CategoryLabel style={pastelStyle}>
                         {app.category}
                       </CategoryLabel>
                     </span>
@@ -572,12 +559,7 @@ export function AppsStageAppDetail({
 
           <Body>
             <Main>
-              <Rise
-                style={{ ['--apps-stage-delay' as string]: '140ms' }}
-              ></Rise>
-              <Rise style={{ ['--apps-stage-delay' as string]: '220ms' }}>
-                {overview}
-              </Rise>
+              <Rise style={riseDelay(220)}>{overview}</Rise>
             </Main>
 
             <Side>
@@ -586,19 +568,19 @@ export function AppsStageAppDetail({
                   <SideLabel>{i18n._(msg`Developer`)}</SideLabel>
                   <FactValue>{app.author}</FactValue>
                 </Fact>
-                {app.latestAvailableVersion !== undefined && (
+                {isDefined(app.latestAvailableVersion) && (
                   <Fact>
                     <SideLabel>{i18n._(msg`Version`)}</SideLabel>
                     <FactValue>{app.latestAvailableVersion}</FactValue>
                   </Fact>
                 )}
-                {installs !== undefined && (
+                {isDefined(installs) && (
                   <Fact>
                     <SideLabel>{i18n._(msg`Installed by`)}</SideLabel>
                     <FactValue>{i18n._(msg`${installs} workspaces`)}</FactValue>
                   </Fact>
                 )}
-                {app.sourcePackage !== undefined && (
+                {isDefined(app.sourcePackage) && (
                   <Fact>
                     <SideLabel>{i18n._(msg`Package`)}</SideLabel>
                     <PackageName>{app.sourcePackage}</PackageName>
@@ -642,33 +624,35 @@ export function AppsStageAppDetail({
                 </SideGroup>
               )}
 
-              {(app.websiteUrl !== undefined ||
-                additions.termsUrl !== undefined ||
-                additions.issueReportUrl !== undefined ||
-                additions.emailSupport !== undefined) && (
+              {[
+                app.websiteUrl,
+                app.termsUrl,
+                app.issueReportUrl,
+                app.emailSupport,
+              ].some(isDefined) && (
                 <SideGroup>
                   <SideLabel>{i18n._(msg`Resources`)}</SideLabel>
                   <SideLinks>
-                    {app.websiteUrl !== undefined && (
+                    {isDefined(app.websiteUrl) && (
                       <SideLink href={app.websiteUrl}>
                         {i18n._(msg`Website`)}
                         <ArrowUpRight />
                       </SideLink>
                     )}
-                    {additions.termsUrl !== undefined && (
-                      <SideLink href={additions.termsUrl}>
+                    {isDefined(app.termsUrl) && (
+                      <SideLink href={app.termsUrl}>
                         {i18n._(msg`Terms`)}
                         <ArrowUpRight />
                       </SideLink>
                     )}
-                    {additions.issueReportUrl !== undefined && (
-                      <SideLink href={additions.issueReportUrl}>
+                    {isDefined(app.issueReportUrl) && (
+                      <SideLink href={app.issueReportUrl}>
                         {i18n._(msg`Report an issue`)}
                         <ArrowUpRight />
                       </SideLink>
                     )}
-                    {additions.emailSupport !== undefined && (
-                      <SideLink href={`mailto:${additions.emailSupport}`}>
+                    {isDefined(app.emailSupport) && (
+                      <SideLink href={`mailto:${app.emailSupport}`}>
                         {i18n._(msg`Email support`)}
                         <ArrowUpRight />
                       </SideLink>

@@ -1,6 +1,4 @@
-// Reads a logo once to learn how to seat it.
-// A "plate" logo ships its own opaque square (Call Recorder, Granola): it
-// becomes the tile. A "glyph" has a transparent ground and sits on glass.
+// A "plate" logo ships its own opaque square; a "glyph" has a transparent ground.
 export type AppsStageLogoInk = {
   kind: 'plate' | 'glyph';
   // hex colour of the logo's light, empty when the logo cannot be read
@@ -23,7 +21,7 @@ const toHex = (channels: readonly number[]): string =>
     .join('')}`;
 
 const analyse = (pixels: Uint8ClampedArray): AppsStageLogoInk => {
-  const at = (x: number, y: number) => {
+  const at = ({ x, y }: { x: number; y: number }) => {
     const offset = (y * SAMPLE_SIZE_PX + x) * 4;
 
     return {
@@ -38,7 +36,12 @@ const analyse = (pixels: Uint8ClampedArray): AppsStageLogoInk => {
   const last = SAMPLE_SIZE_PX - 1;
 
   for (let step = EDGE_INSET; step < SAMPLE_SIZE_PX - EDGE_INSET; step++) {
-    edge.push(at(step, 0), at(step, last), at(0, step), at(last, step));
+    edge.push(
+      at({ x: step, y: 0 }),
+      at({ x: step, y: last }),
+      at({ x: 0, y: step }),
+      at({ x: last, y: step }),
+    );
   }
 
   const opaqueEdge = edge.filter((pixel) => pixel.alpha >= OPAQUE_ALPHA);
@@ -63,7 +66,7 @@ const analyse = (pixels: Uint8ClampedArray): AppsStageLogoInk => {
 
   for (let y = 0; y < SAMPLE_SIZE_PX; y++) {
     for (let x = 0; x < SAMPLE_SIZE_PX; x++) {
-      const pixel = at(x, y);
+      const pixel = at({ x, y });
 
       if (pixel.alpha < 128) {
         continue;

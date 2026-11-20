@@ -2,8 +2,7 @@ import { paletteColorNumber } from '@/tokens';
 
 import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 
-// Copy of the home stepper backdrop (sections cannot import each
-// other), on the same muted section as the home.
+// Same as the home stepper backdrop, which sections cannot import.
 export const PROGRAM_PATH_BACKDROP: Pick<
   HalftoneImageBackdropProps,
   'imageUrl' | 'settings'

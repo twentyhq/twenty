@@ -2,6 +2,7 @@
 
 import { styled } from '@linaria/react';
 import { type CSSProperties } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import {
@@ -22,9 +23,6 @@ import { AppsStageAppIcon } from './AppsStageAppIcon';
 import { AppsStageLogoHalftone } from './AppsStageLogoHalftone';
 import { type MarketplaceApp } from './marketplace-app';
 
-// (): a row of app cards side by side (stacked on small
-// screens), each with its logo in Twenty's halftone as decoration. Shared by
-// the featured apps on /apps and the related apps on an app's page.
 const Cards = styled.ul`
   display: grid;
   gap: ${spacing(3)};
@@ -41,8 +39,6 @@ const Cards = styled.ul`
   }
 `;
 
-// The whole card is the link. On hover it answers like the site's buttons:
-// a fill slides in from the left.
 const Card = styled(LocalizedLink)`
   animation: apps-stage-featured-in ${DURATION.xl} ${EASING.standard} backwards;
   animation-delay: calc(var(--apps-stage-card-index) * 80ms);
@@ -92,7 +88,6 @@ const Card = styled(LocalizedLink)`
   }
 `;
 
-// Decoration: the logo in halftone, only where there is room for it.
 const Visual = styled.div`
   border-bottom: 1px solid ${semanticColor.line};
   display: none;
@@ -166,7 +161,7 @@ export function AppsStageAppCards({
               href={`/apps/${app.slug}`}
               style={style}
             >
-              {app.logoUrl !== undefined && (
+              {isDefined(app.logoUrl) && (
                 <Visual aria-hidden>
                   <AppsStageLogoHalftone
                     isLive={hasLiveLogos}

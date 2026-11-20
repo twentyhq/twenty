@@ -2,6 +2,7 @@
 
 import { styled } from '@linaria/react';
 import { type ReactNode, useEffect, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   buildSchemeContext,
@@ -95,8 +96,7 @@ export type FloatingDockProps = {
   media?: ReactNode;
 };
 
-// Keeps the page's primary action within reach: shows whenever none of the
-// elements marked data-dock-anchor is on screen, so it never shows twice.
+// Shows when no element marked data-dock-anchor is on screen, so it never shows twice.
 export function FloatingDock({ action, label, media }: FloatingDockProps) {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -128,7 +128,7 @@ export function FloatingDock({ action, label, media }: FloatingDockProps) {
       data-visible={isVisible ? '' : undefined}
     >
       <DockArgument>
-        {media !== undefined && <DockMedia aria-hidden>{media}</DockMedia>}
+        {isDefined(media) && <DockMedia aria-hidden>{media}</DockMedia>}
         <DockLabel>{label}</DockLabel>
       </DockArgument>
       {action}

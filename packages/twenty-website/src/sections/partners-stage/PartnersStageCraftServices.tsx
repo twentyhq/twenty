@@ -6,9 +6,6 @@ import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { mediaUp, spacing } from '@/tokens';
 import { Body, Heading, ModelCardGrid, SectionIntro, SectionShell } from '@/ui';
 
-// The four kinds of work as the creators' "People
-// that teams trust to pick their tools": /apps cards, each with a shape in
-// Twenty's blue halftone, rising in one after the other.
 const Block = styled.div`
   & > * + * {
     margin-top: ${spacing(10)};

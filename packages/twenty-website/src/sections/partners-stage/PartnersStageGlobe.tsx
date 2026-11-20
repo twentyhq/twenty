@@ -2,6 +2,7 @@
 
 import { styled } from '@linaria/react';
 import { useEffect, useMemo, useRef } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type ServedGeo } from '@/partners-marketplace/served-geos';
 import { color } from '@/tokens';
@@ -9,10 +10,7 @@ import { color } from '@/tokens';
 import { WORLD_LAND_GRID } from './world-land-grid.data';
 import { worldRegionOfCell } from './world-region-of-cell';
 
-// The world map's dashes laid on a turning globe,
-// drawn on a 2D canvas (three stays in the visuals zones). Regions served by
-// the filter light up; one selected region turns to face the viewer. It
-// can be dragged round (and tipped a little) and thrown.
+// Drawn on a 2D canvas: three.js stays in the visuals zones.
 const Shell = styled.div`
   --partners-stage-globe-land: ${color('white-40')};
   --partners-stage-globe-lit: ${color('green')};
@@ -41,14 +39,10 @@ const DEGREES = Math.PI / 180;
 const START_TILT_DEGREES = 18;
 const TILT_RANGE_DEGREES: readonly [number, number] = [-10, 45];
 const INERTIA_DECAY_PER_SECOND = 3;
-// The city glows step back while the globe is handled: out fast, back slowly
-// once it turns at its own pace again.
 const GLOW_FADE_OUT_SECONDS = 0.18;
 const GLOW_FADE_IN_SECONDS = 0.7;
 const SPIN_DEGREES_PER_SECOND = 7;
-// The home hero's hover light (home-hero/hero-backdrop-config), redrawn on
-// the globe's dashes: brighter and a little thicker under the pointer, which
-// it follows with a slight lag. Mouse only, off under reduced motion.
+// The home hero's hover light, redrawn on the dashes. Mouse only.
 const LIGHT = {
   follow: 0.38,
   intensity: 0.8,
@@ -75,8 +69,7 @@ type LandCell = {
   region: ServedGeo | null;
 };
 
-// Meridians close in towards the poles: keeping every column there packs the
-// dashes into solid bright rings. One column in `step` keeps the weave even.
+// Meridians close in at the poles: keeping every column would pack the dashes solid.
 const LAND_CELLS: readonly LandCell[] = (() => {
   const { degreesPerCell, northLatitude, rows } = WORLD_LAND_GRID;
   const cells: LandCell[] = [];
@@ -132,16 +125,15 @@ export function PartnersStageGlobe({
   useEffect(() => {
     const shell = shellRef.current;
     const canvas = canvasRef.current;
-    if (shell === null || canvas === null) {
+    if (!isDefined(shell) || !isDefined(canvas)) {
       return;
     }
     const context = canvas.getContext('2d');
-    if (context === null) {
+    if (!isDefined(context)) {
       return;
     }
 
-    // Read again until the stylesheet has landed: on a first paint (or a
-    // hot reload) the custom properties can still be empty.
+    // The custom properties can still be empty on a first paint or a hot reload.
     const readColors = () => {
       const styles = getComputedStyle(shell);
       const read = (name: string) => styles.getPropertyValue(name).trim();
@@ -176,8 +168,6 @@ export function PartnersStageGlobe({
 
     let tilt = START_TILT_DEGREES * DEGREES;
 
-    // Orthographic projection of a longitude/latitude, the globe turned by
-    // `spin` and tipped towards the viewer by `tilt`.
     const project = (longitude: number, latitude: number, spin: number) => {
       const lambda = (longitude + spin) * DEGREES;
       const phi = latitude * DEGREES;
@@ -217,9 +207,7 @@ export function PartnersStageGlobe({
       const center = size / 2;
       context.clearRect(0, 0, size, size);
 
-      // Dashes fade with depth in fine bands, each stroked once per colour: three
-      // coarse bands drew their edges as visible rings. Edge-on rows pile up at
-      // the rim into a bright ring, so the faintest band starts at 0.15.
+      // Fine depth bands: coarse ones drew visible rings, and the rim would pile up.
       const BAND_COUNT = 16;
       const bands = Array.from({ length: BAND_COUNT }, (_, index) => {
         const progress = index / (BAND_COUNT - 1);
@@ -237,7 +225,7 @@ export function PartnersStageGlobe({
           for (const cell of LAND_CELLS) {
             const isLit =
               currentLit.size > 0 &&
-              cell.region !== null &&
+              isDefined(cell.region) &&
               currentLit.has(cell.region);
             if ((tone === 'lit') !== isLit) {
               continue;
@@ -313,8 +301,6 @@ export function PartnersStageGlobe({
         });
       }
 
-      // Cities, as on the cards: a flat dot in the accent and a crisp ring,
-      // no glow. The ring steps back while the globe is handled.
       const dotRadius = Math.max(2.5, (size / 640) * 3.5);
       for (const city of currentCities) {
         const point = project(city.coordinates[0], city.coordinates[1], spin);
@@ -341,8 +327,6 @@ export function PartnersStageGlobe({
       context.globalAlpha = 1;
     };
 
-    // Drag state: the hand overrides the spin and the region focus; on
-    // release the throw decays, then the slow spin takes over again.
     let isDragging = false;
     let dragX = 0;
     let dragY = 0;
@@ -454,7 +438,7 @@ export function PartnersStageGlobe({
       } else if (Math.abs(throwVelocity) > SPIN_DEGREES_PER_SECOND) {
         spin += throwVelocity * elapsed;
         throwVelocity *= Math.exp(-INERTIA_DECAY_PER_SECOND * elapsed);
-      } else if (focus === null) {
+      } else if (!isDefined(focus)) {
         spin += SPIN_DEGREES_PER_SECOND * elapsed;
       } else {
         // Ease the region to the front by the shortest way round.
@@ -469,8 +453,7 @@ export function PartnersStageGlobe({
         : GLOW_FADE_IN_SECONDS;
       const step = Math.min(1, elapsed / fadeSeconds);
       glowLevel += ((isHandled ? 0 : 1) - glowLevel) * step;
-      // Follow with the home's lag (per 60fps frame), fade in fast, out slow;
-      // the hand turning the globe puts the light out.
+      // Per-60fps-frame lag, so the follow speed does not depend on the frame rate.
       const followStep = 1 - (1 - LIGHT.follow) ** (elapsed * 60);
       light.x += (light.targetX - light.x) * followStep;
       light.y += (light.targetY - light.y) * followStep;
@@ -495,7 +478,7 @@ export function PartnersStageGlobe({
 
     // Reduced motion: still frames only, redrawn when the filter moves.
     function redraw() {
-      if (focusRef.current !== null) {
+      if (isDefined(focusRef.current)) {
         spin = -focusRef.current;
       }
       draw();

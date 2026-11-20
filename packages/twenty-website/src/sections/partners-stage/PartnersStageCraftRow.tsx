@@ -18,13 +18,11 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
+import { cssVariableStyle } from '@/ui/css-variable-style';
 
 import { describePartnersStagePartner } from './describe-partners-stage-partner';
 import { PartnersStageMark } from './PartnersStageMark';
 
-// The same partner as a list row, the /apps card's
-// hover on a line: no box, a hairline between rows, the fill slides in from
-// the left and the logo springs up.
 const Row = styled(LocalizedLink)`
   align-items: center;
   animation: partners-stage-craft-row-in ${DURATION.xl} ${EASING.standard}
@@ -174,9 +172,9 @@ export function PartnersStageCraftRow({
   return (
     <Row
       href={`/partners/profile/${partner.slug}`}
-      style={{
-        ['--partners-stage-row-index' as string]: Math.min(index, 12),
-      }}
+      style={cssVariableStyle({
+        '--partners-stage-row-index': Math.min(index, 12),
+      })}
     >
       <Logo>
         <PartnersStageMark

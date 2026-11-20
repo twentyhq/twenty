@@ -1,9 +1,7 @@
 import { type HalftoneModelProps } from '@/platform/visuals/rigs/HalftoneModel';
 import { paletteColorNumber } from '@/tokens';
 
-// The money model at icon size (level cards, apply dock) until
-// Thomas's shapes land. Finer dashes than the 400px closing model so a small
-// render keeps its detail, and a slow, steady turn without drag.
+// Finer dashes than the closing model, so the coin keeps its detail at icon size.
 export const INTEGRATOR_COIN_MODEL = {
   modelUrl: '/models/money.glb',
   settings: {

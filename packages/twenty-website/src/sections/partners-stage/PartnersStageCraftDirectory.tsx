@@ -12,6 +12,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { filterPartners } from '@/partners-marketplace/filter-partners';
 import { MARKETPLACE_COPY } from '@/partners-marketplace/marketplace-copy';
@@ -34,6 +35,7 @@ import {
 import { PARTNER_DIRECTORY_ANCHOR_ID } from '@/platform/routing/partner-directory-anchor-id';
 import {
   color,
+  containerColumnDeclarations,
   DURATION,
   EASING,
   FONT_WEIGHT,
@@ -48,7 +50,6 @@ import {
 } from '@/tokens';
 import { Body, Button, Heading, SectionShell } from '@/ui';
 
-import { CONTAINER_COLUMN } from '@/ui/container-column';
 import { PartnersStageCraftCell } from './PartnersStageCraftCell';
 import { PartnersStageCraftRow } from './PartnersStageCraftRow';
 import {
@@ -61,11 +62,8 @@ import { usePartnersStageView } from './use-partners-stage-view';
 import { PARTNERS_STAGE_RETURN } from './partners-stage-return';
 import { worldRegionOfCell } from './world-region-of-cell';
 
-// The directory. The site's filters and a Cards /
-// List switch in a bar that sticks under the menu, then the partners grouped
-// by base region, as cards or as rows.
 const Frame = styled.div`
-  ${CONTAINER_COLUMN}
+  ${containerColumnDeclarations()}
 `;
 
 // scroll-margin clears the fixed menu on the hero's anchor jump.
@@ -82,8 +80,7 @@ const Header = styled.div`
   }
 `;
 
-// Sticks under the menu from tablet up, so the filters stay in reach down the
-// whole list; on a phone it would take a third of the screen.
+// Sticky from tablet up; on a phone it would take a third of the screen.
 const FilterBar = styled.div`
   background-color: ${semanticColor.surface};
   padding: ${spacing(3)} 0;
@@ -188,8 +185,7 @@ const Grid = styled.div`
   gap: ${spacing(3)};
   grid-template-columns: minmax(0, 1fr);
 
-  /* Fixed tracks: a region with one or two partners keeps its cards at the
-     row's width, left-aligned; nothing stretches to fill. */
+  /* Fixed tracks: a short row keeps its cards at the row's width. */
   ${mediaUp('sm')} {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -199,8 +195,7 @@ const Grid = styled.div`
   }
 `;
 
-// Cards / List, two joined buttons in the filter buttons' style. Icons only
-// on a phone, with the label kept for assistive tech.
+// Icons only on a phone, the label kept for assistive tech.
 const ViewSwitch = styled.div`
   display: inline-flex;
 `;
@@ -262,8 +257,7 @@ const ViewLabel = styled.span`
   }
 `;
 
-// Rows sit flush with the headings: their padding hangs into the gutter. A
-// hairline between rows, none around them.
+// The rows' padding hangs into the gutter, so they sit flush with the headings.
 const RowList = styled.ul`
   list-style: none;
   margin-inline: calc(${spacing(3)} * -1);
@@ -299,18 +293,16 @@ type RegionKey = ServedGeo | typeof OTHER_REGION;
 const toRegionId = (region: RegionKey) =>
   `partners-region-${region.toLowerCase()}`;
 
-// Where the partner is based; the first region they serve when the base is
-// not on the map.
+// The first region served when the base is not on the map.
 const baseRegionOf = (partner: MarketplacePartner): RegionKey => {
   const coordinates = resolvePartnerCoordinates(
     partner.city ?? '',
     partner.country ?? '',
     partner.region,
   );
-  const based =
-    coordinates !== null
-      ? worldRegionOfCell(coordinates[0], coordinates[1])
-      : null;
+  const based = isDefined(coordinates)
+    ? worldRegionOfCell(coordinates[0], coordinates[1])
+    : null;
 
   return based ?? partner.region[0] ?? OTHER_REGION;
 };
@@ -336,8 +328,7 @@ export function PartnersStageCraftDirectory({
   } = usePartnersStageFilterState();
   const { view, setView } = usePartnersStageView();
 
-  // Opening a partner leaves a mark; finding it on mount means this is the
-  // way back, so the list shows as it was instead of playing its entrance.
+  // A mark left on opening a partner means this is the way back: skip the entrance.
   const [isReturning, setIsReturning] = useState(() => {
     try {
       return (
@@ -359,7 +350,6 @@ export function PartnersStageCraftDirectory({
     }
   }, []);
 
-  // The directory as last seen, for a way back from a page opened directly.
   // Skipped while the router is already on a partner's page.
   useEffect(() => {
     const { pathname, search } = window.location;
@@ -380,7 +370,8 @@ export function PartnersStageCraftDirectory({
   }, [view, criteria]);
 
   const markPartnerOpened = (event: MouseEvent<HTMLDivElement>) => {
-    const link = (event.target as HTMLElement).closest('a');
+    const link =
+      event.target instanceof Element ? event.target.closest('a') : null;
     if (link?.getAttribute('href')?.includes('/partners/profile/')) {
       try {
         window.sessionStorage.setItem(PARTNERS_STAGE_RETURN.leftKey, '1');
@@ -420,33 +411,29 @@ export function PartnersStageCraftDirectory({
     value: TValue,
   ) => partners.filter((partner) => values(partner).includes(value)).length;
 
-  const regionOptions: PartnersStageCraftFilterOption[] = SERVED_GEOS.map(
-    (geo) => ({
+  const regionOptions: PartnersStageCraftFilterOption<ServedGeo>[] =
+    SERVED_GEOS.map((geo) => ({
       value: geo,
       label: i18n._(SERVED_GEO_LABELS[geo]),
       count: countOf((partner) => partner.region, geo),
-    }),
-  );
+    }));
   // Only languages somebody speaks, most spoken first.
-  const languageOptions: PartnersStageCraftFilterOption[] =
+  const languageOptions: PartnersStageCraftFilterOption<SpokenLanguage>[] =
     SPOKEN_LANGUAGES.map((language) => ({
       value: language,
       label: i18n._(SPOKEN_LANGUAGE_LABELS[language]),
       count: countOf((partner) => partner.languagesSpoken, language),
     }))
       .filter(
-        (option) =>
-          option.count > 0 ||
-          criteria.languages.has(option.value as SpokenLanguage),
+        (option) => option.count > 0 || criteria.languages.has(option.value),
       )
       .toSorted((left, right) => right.count - left.count);
-  const scopeOptions: PartnersStageCraftFilterOption[] = PARTNER_SCOPES.map(
-    (scope) => ({
+  const scopeOptions: PartnersStageCraftFilterOption<PartnerScope>[] =
+    PARTNER_SCOPES.map((scope) => ({
       value: scope,
       label: i18n._(PARTNER_SCOPE_LABELS[scope]),
       count: countOf((partner) => partner.partnerScope, scope),
-    }),
-  );
+    }));
 
   const listKey = [
     ...criteria.regions,
@@ -473,21 +460,21 @@ export function PartnersStageCraftDirectory({
               <PartnersStageCraftFilter
                 label={i18n._(msg`Regions`)}
                 onClear={() => clearFacet('regions')}
-                onToggle={(value) => toggleRegion(value as ServedGeo)}
+                onToggle={toggleRegion}
                 options={regionOptions}
                 selected={criteria.regions}
               />
               <PartnersStageCraftFilter
                 label={i18n._(msg`Languages`)}
                 onClear={() => clearFacet('languages')}
-                onToggle={(value) => toggleLanguage(value as SpokenLanguage)}
+                onToggle={toggleLanguage}
                 options={languageOptions}
                 selected={criteria.languages}
               />
               <PartnersStageCraftFilter
                 label={i18n._(MARKETPLACE_COPY.partnerScopeHeading)}
                 onClear={() => clearFacet('categories')}
-                onToggle={(value) => toggleCategory(value as PartnerScope)}
+                onToggle={toggleCategory}
                 options={scopeOptions}
                 selected={criteria.categories}
               />
