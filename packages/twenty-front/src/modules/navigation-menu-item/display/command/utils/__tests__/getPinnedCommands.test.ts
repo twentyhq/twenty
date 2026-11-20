@@ -1,4 +1,3 @@
-import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { createMockCommandMenuItems } from '@/command-menu-item/mock/command-menu-items.mock';
 import { getPinnedCommands } from '@/navigation-menu-item/display/command/utils/getPinnedCommands';
 import { NavigationMenuItemType } from 'twenty-shared/types';
@@ -21,11 +20,7 @@ const buildCommandMenuItem = (
 });
 
 const SEARCH = buildCommandMenuItem({ id: 'search', label: 'Search' });
-const NEW_CHAT = buildCommandMenuItem({
-  id: 'new-chat',
-  label: 'New chat',
-  conditionalAvailabilityExpression: 'permissionFlags.AI',
-});
+const NEW_CHAT = buildCommandMenuItem({ id: 'new-chat', label: 'New chat' });
 const DELETE = buildCommandMenuItem({
   id: 'delete',
   label: 'Delete',
@@ -66,10 +61,6 @@ describe('getPinnedCommands', () => {
         }),
       ],
       commandMenuItems: [SEARCH, NEW_CHAT],
-      commandMenuContextApi: {
-        ...EMPTY_COMMAND_MENU_CONTEXT_API,
-        permissionFlags: { AI: true },
-      },
     });
 
     expect(
@@ -77,18 +68,13 @@ describe('getPinnedCommands', () => {
     ).toEqual(['pinned-search', 'pinned-new-chat']);
   });
 
-  it('should skip commands that are missing, not global or unavailable', () => {
+  it('should skip commands that are missing or not global', () => {
     const pinnedCommands = getPinnedCommands({
       navigationMenuItems: [
         buildCommandNavigationMenuItem({
           id: 'pinned-search',
           commandMenuItemId: SEARCH.id,
           position: 1,
-        }),
-        buildCommandNavigationMenuItem({
-          id: 'pinned-new-chat',
-          commandMenuItemId: NEW_CHAT.id,
-          position: 2,
         }),
         buildCommandNavigationMenuItem({
           id: 'pinned-delete',
@@ -101,8 +87,7 @@ describe('getPinnedCommands', () => {
           position: 4,
         }),
       ],
-      commandMenuItems: [SEARCH, NEW_CHAT, DELETE],
-      commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
+      commandMenuItems: [SEARCH, DELETE],
     });
 
     expect(
@@ -128,7 +113,6 @@ describe('getPinnedCommands', () => {
         },
       ],
       commandMenuItems: [SEARCH],
-      commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
     });
 
     expect(pinnedCommands).toEqual([]);

@@ -1,12 +1,6 @@
 import { type PinnedCommand } from '@/navigation-menu-item/display/command/types/PinnedCommand';
-import {
-  type CommandMenuContextApi,
-  NavigationMenuItemType,
-} from 'twenty-shared/types';
-import {
-  evaluateConditionalAvailabilityExpression,
-  isDefined,
-} from 'twenty-shared/utils';
+import { NavigationMenuItemType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   CommandMenuItemAvailabilityType,
   type CommandMenuItemFieldsFragment,
@@ -16,14 +10,12 @@ import {
 export const getPinnedCommands = ({
   navigationMenuItems,
   commandMenuItems,
-  commandMenuContextApi,
 }: {
   navigationMenuItems: Pick<
     NavigationMenuItem,
     'id' | 'type' | 'parentId' | 'commandMenuItemId' | 'position'
   >[];
   commandMenuItems: CommandMenuItemFieldsFragment[];
-  commandMenuContextApi: CommandMenuContextApi;
 }): PinnedCommand[] => {
   const commandMenuItemsById = new Map(
     commandMenuItems.map((commandMenuItem) => [
@@ -47,11 +39,7 @@ export const getPinnedCommands = ({
       if (
         !isDefined(commandMenuItem) ||
         commandMenuItem.availabilityType !==
-          CommandMenuItemAvailabilityType.GLOBAL ||
-        !evaluateConditionalAvailabilityExpression(
-          commandMenuItem.conditionalAvailabilityExpression,
-          commandMenuContextApi,
-        )
+          CommandMenuItemAvailabilityType.GLOBAL
       ) {
         return [];
       }

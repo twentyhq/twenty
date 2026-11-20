@@ -1,6 +1,5 @@
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
-import { useCurrentCommandMenuContextApi } from '@/command-menu-item/hooks/useCurrentCommandMenuContextApi';
-import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
+import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
@@ -8,45 +7,34 @@ import { NavigationMenuItemPinnedCommand } from '@/navigation-menu-item/display/
 import { PINNED_COMMANDS_COMMAND_MENU_INSTANCE_ID } from '@/navigation-menu-item/display/command/constants/PinnedCommandsCommandMenuInstanceId';
 import { getPinnedCommands } from '@/navigation-menu-item/display/command/utils/getPinnedCommands';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 
-export const NavigationMenuItemPinnedCommands = () => {
+const NavigationMenuItemPinnedCommandList = () => {
+  const { commandMenuItems } = useContext(CommandMenuContext);
   const navigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
-  const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
-  const commandMenuContextApi = useCurrentCommandMenuContextApi();
 
   const pinnedCommands = useMemo(
-    () =>
-      getPinnedCommands({
-        navigationMenuItems,
-        commandMenuItems,
-        commandMenuContextApi,
-      }),
-    [navigationMenuItems, commandMenuItems, commandMenuContextApi],
+    () => getPinnedCommands({ navigationMenuItems, commandMenuItems }),
+    [navigationMenuItems, commandMenuItems],
   );
 
-  return (
-    <CommandMenuComponentInstanceContext.Provider
-      value={{ instanceId: PINNED_COMMANDS_COMMAND_MENU_INSTANCE_ID }}
-    >
-      <CommandMenuContext.Provider
-        value={{
-          displayType: 'listItem',
-          containerType: CommandMenuItemContainerType.NavigationDrawer,
-          commandMenuItems: pinnedCommands.map(
-            ({ commandMenuItem }) => commandMenuItem,
-          ),
-          commandMenuContextApi,
-          isInPreviewMode: false,
-        }}
-      >
-        {pinnedCommands.map(({ navigationMenuItemId, commandMenuItem }) => (
-          <NavigationMenuItemPinnedCommand
-            key={navigationMenuItemId}
-            commandMenuItem={commandMenuItem}
-          />
-        ))}
-      </CommandMenuContext.Provider>
-    </CommandMenuComponentInstanceContext.Provider>
-  );
+  return pinnedCommands.map(({ navigationMenuItemId, commandMenuItem }) => (
+    <NavigationMenuItemPinnedCommand
+      key={navigationMenuItemId}
+      commandMenuItem={commandMenuItem}
+    />
+  ));
 };
+
+export const NavigationMenuItemPinnedCommands = () => (
+  <CommandMenuComponentInstanceContext.Provider
+    value={{ instanceId: PINNED_COMMANDS_COMMAND_MENU_INSTANCE_ID }}
+  >
+    <CommandMenuContextProvider
+      displayType="listItem"
+      containerType={CommandMenuItemContainerType.NavigationDrawer}
+    >
+      <NavigationMenuItemPinnedCommandList />
+    </CommandMenuContextProvider>
+  </CommandMenuComponentInstanceContext.Provider>
+);
