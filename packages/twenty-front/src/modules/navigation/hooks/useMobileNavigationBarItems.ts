@@ -2,8 +2,10 @@ import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiC
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
+import { type NavigationMenuChatAttention } from '@/navigation-menu-item/common/types/NavigationMenuChatAttention';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
-import { useNavigationMenuTabIdsWithUnreadChats } from '@/navigation-menu-item/display/hooks/useNavigationMenuTabIdsWithUnreadChats';
+import { useGetNavigationMenuTabAttentionLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel';
+import { useNavigationMenuChatAttention } from '@/navigation-menu-item/display/hooks/useNavigationMenuChatAttention';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -43,7 +45,7 @@ type MobileNavigationBarItem = {
   label: string;
   Icon: IconComponent;
   onClick: () => void;
-  isUnread?: boolean;
+  attention?: NavigationMenuChatAttention | null;
   hasDividerAfter?: boolean;
 };
 
@@ -68,8 +70,9 @@ export const useMobileNavigationBarItems = (): {
     containerId: null,
   });
   const activeNavigationMenuTab = useActiveNavigationMenuTab();
-  const { tabIdsWithUnreadChats, unreadOpenThreadCount } =
-    useNavigationMenuTabIdsWithUnreadChats();
+  const { getTabChatAttention } = useNavigationMenuChatAttention();
+  const getNavigationMenuTabAttentionLabel =
+    useGetNavigationMenuTabAttentionLabel();
   const setCurrentNavigationMenuTabId = useSetAtomState(
     currentNavigationMenuTabIdState,
   );
@@ -131,18 +134,17 @@ export const useMobileNavigationBarItems = (): {
         onClick: () => openHomePageOnTab(null),
       },
       ...navigationMenuTabs.map((tab, index): MobileNavigationBarItem => {
-        const isOpenOnHomePage =
-          pathname === AppPath.Home && activeNavigationMenuTab?.id === tab.id;
-        const isUnread = !isOpenOnHomePage && tabIdsWithUnreadChats.has(tab.id);
+        const attention = getTabChatAttention(tab.id);
 
         return {
           name: `tab-${tab.id}`,
-          label: isUnread
-            ? t`${tab.name}, ${unreadOpenThreadCount} unread`
-            : tab.name,
+          label: getNavigationMenuTabAttentionLabel({
+            tabName: tab.name,
+            attention,
+          }),
           Icon: getIcon(tab.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT),
           onClick: () => openHomePageOnTab(tab.id),
-          isUnread,
+          attention,
           hasDividerAfter: index === navigationMenuTabs.length - 1,
         };
       }),
