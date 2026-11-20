@@ -1,5 +1,9 @@
-import { useMutation } from '@apollo/client/react';
-import { DeleteManyNavigationMenuItemsDocument } from '~/generated-metadata/graphql';
+import { useApolloClient, useMutation } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  DeleteManyNavigationMenuItemsDocument,
+  FindManyNavigationMenuItemsDocument,
+} from '~/generated-metadata/graphql';
 
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { navigationMenuItemsWithHiddenSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsWithHiddenSelector';
@@ -13,6 +17,7 @@ export const useDeleteManyNavigationMenuItems = () => {
     DeleteManyNavigationMenuItemsDocument,
   );
 
+  const apolloClient = useApolloClient();
   const store = useStore();
 
   const deleteManyNavigationMenuItems = async (ids: string[]) => {
@@ -31,6 +36,16 @@ export const useDeleteManyNavigationMenuItems = () => {
       replaceDraft('navigationMenuItems', previousItems);
       applyChanges();
       throw error;
+    }
+
+    const { data } = await apolloClient.query({
+      query: FindManyNavigationMenuItemsDocument,
+      fetchPolicy: 'network-only',
+    });
+
+    if (isDefined(data?.navigationMenuItems)) {
+      replaceDraft('navigationMenuItems', data.navigationMenuItems);
+      applyChanges();
     }
   };
 
