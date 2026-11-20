@@ -1,4 +1,4 @@
-import { ViewVisibility, WorkflowVisibility } from 'twenty-shared/types';
+import { ViewVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
@@ -128,7 +128,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
     flatEntityMaps.flatCommandMenuItemMaps,
   ).filter((commandMenuItem) => !commandMenuItem.isSystemSideEffect);
   const workflows = findOwned(flatEntityMaps.flatWorkflowMaps).filter(
-    (workflow) => workflow.visibility === WorkflowVisibility.WORKSPACE,
+    (workflow) => !workflow.isPrivate,
   );
   const frontComponents = findOwned(flatEntityMaps.flatFrontComponentMaps);
   const roles = findOwned(flatEntityMaps.flatRoleMaps);
