@@ -36,7 +36,13 @@ const handleAddColumns = () =>
     preprompt: { text: ADD_COLUMNS_PROMPT, mode: 'PREFILL' },
   });
 
-const isColumnsSuggestionShown = async (): Promise<boolean> => {
+type ColumnsSuggestionState = 'none' | 'suggested' | 'dismissed';
+
+const getColumnsSuggestionState = async (): Promise<ColumnsSuggestionState> => {
+  if ((await findAllViewsMissingFields()).length === 0) {
+    return 'none';
+  }
+
   const { appKeyValue } = await new MetadataApiClient().query({
     appKeyValue: {
       __args: { key: VIEW_FIELDS_SUGGESTION_DISMISSED_KEY },
@@ -44,20 +50,18 @@ const isColumnsSuggestionShown = async (): Promise<boolean> => {
     },
   });
 
-  if (appKeyValue?.value?.isDismissed === true) {
-    return false;
-  }
-
-  return (await findAllViewsMissingFields()).length > 0;
+  return appKeyValue?.value?.isDismissed === true ? 'dismissed' : 'suggested';
 };
+
 
 const LastContactSettings = () => {
   const [isStarting, setIsStarting] = useState(false);
-  const [isSuggestionShown, setIsSuggestionShown] = useState(false);
+  const [columnsSuggestionState, setColumnsSuggestionState] =
+    useState<ColumnsSuggestionState>('none');
 
   useEffect(() => {
-    isColumnsSuggestionShown()
-      .then(setIsSuggestionShown)
+    getColumnsSuggestionState()
+      .then(setColumnsSuggestionState)
       .catch((error) =>
         console.error('Could not read the last contact columns', error),
       );
@@ -76,7 +80,7 @@ const LastContactSettings = () => {
           key: true,
         },
       });
-      setIsSuggestionShown(false);
+      setColumnsSuggestionState('dismissed');
     } catch {
       enqueueSnackbar({
         message: t('Could not hide the suggestion. Try again.'),
@@ -117,22 +121,26 @@ const LastContactSettings = () => {
 
   return (
     <>
-      <Section.Root>
-        <Section.Header
-          title={t('Show last contact columns')}
-          description={t(
-            'Ask AI to add the last contact columns to the All People, All Companies, and All Opportunities views.',
-          )}
-        />
-        <div style={{ display: 'flex', gap: themeCssVariables.spacing[2] }}>
-          <MainButton onClick={handleAddColumns}>{t('Add columns')}</MainButton>
-          {isSuggestionShown && (
-            <MainButton variant="outline" onClick={handleHideSuggestion}>
-              {t('Hide suggestion')}
+      {columnsSuggestionState !== 'none' && (
+        <Section.Root>
+          <Section.Header
+            title={t('Show last contact columns')}
+            description={t(
+              'Ask AI to add the last contact columns to the All People, All Companies, and All Opportunities views.',
+            )}
+          />
+          <div style={{ display: 'flex', gap: themeCssVariables.spacing[2] }}>
+            <MainButton onClick={handleAddColumns}>
+              {t('Add columns')}
             </MainButton>
-          )}
-        </div>
-      </Section.Root>
+            {columnsSuggestionState === 'suggested' && (
+              <MainButton variant="outline" onClick={handleHideSuggestion}>
+                {t('Hide suggestion')}
+              </MainButton>
+            )}
+          </div>
+        </Section.Root>
+      )}
       <Section.Root>
         <Section.Header
           title={t('Backfill last contact')}
