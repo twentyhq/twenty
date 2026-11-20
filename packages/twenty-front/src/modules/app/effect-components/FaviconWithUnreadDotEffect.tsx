@@ -1,35 +1,26 @@
 import { useEffect } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
-import { faviconWithUnreadDotState } from '@/app/states/faviconWithUnreadDotState';
+import { faviconWithUnreadDotUrlFamilyState } from '@/app/states/faviconWithUnreadDotUrlFamilyState';
+import { workspaceFaviconUrlSelector } from '@/app/states/workspaceFaviconUrlSelector';
 import { drawFaviconWithUnreadDot } from '@/app/utils/drawFaviconWithUnreadDot';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { logError } from '~/utils/logError';
 
-type FaviconWithUnreadDotEffectProps = {
-  faviconUrl: string;
-};
-
-export const FaviconWithUnreadDotEffect = ({
-  faviconUrl,
-}: FaviconWithUnreadDotEffectProps) => {
-  const setFaviconWithUnreadDot = useSetAtomState(faviconWithUnreadDotState);
+export const FaviconWithUnreadDotEffect = () => {
+  const workspaceFaviconUrl = useAtomStateValue(workspaceFaviconUrlSelector);
+  const setFaviconWithUnreadDotUrl = useSetAtomFamilyState(
+    faviconWithUnreadDotUrlFamilyState,
+    workspaceFaviconUrl,
+  );
 
   useEffect(() => {
-    let isStale = false;
-
-    drawFaviconWithUnreadDot(faviconUrl)
-      .then((href) => {
-        if (!isStale && isDefined(href)) {
-          setFaviconWithUnreadDot({ faviconUrl, href });
-        }
-      })
+    drawFaviconWithUnreadDot(workspaceFaviconUrl)
+      .then((faviconWithUnreadDotUrl) =>
+        setFaviconWithUnreadDotUrl(faviconWithUnreadDotUrl),
+      )
       .catch(logError);
-
-    return () => {
-      isStale = true;
-    };
-  }, [faviconUrl, setFaviconWithUnreadDot]);
+  }, [workspaceFaviconUrl, setFaviconWithUnreadDotUrl]);
 
   return null;
 };
