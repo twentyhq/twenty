@@ -1,10 +1,9 @@
 import { HttpStatus } from '@nestjs/common';
 
-import { isNonEmptyString, isObject, isString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString, isString } from '@sniptt/guards';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
-import { MCP_LEGACY_PROTOCOL_VERSIONS } from 'src/engine/api/mcp/constants/mcp-legacy-protocol-versions.constant';
 import { MCP_META_KEYS } from 'src/engine/api/mcp/constants/mcp-meta-keys.constant';
 import { MCP_STATELESS_METHODS } from 'src/engine/api/mcp/constants/mcp-stateless-methods.constant';
 import { MCP_STATELESS_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-stateless-protocol-version.constant';
@@ -56,18 +55,14 @@ export const resolveMcpRequestProtocol = ({
     return { era: 'legacy' };
   }
 
-  const meta = isObject(params?._meta)
-    ? (params._meta as Record<string, unknown>)
-    : undefined;
+  const meta = isPlainObject(params?._meta) ? params._meta : undefined;
   const requestedVersion = meta?.[MCP_META_KEYS.protocolVersion];
-  const isHeaderVersionLegacy =
-    !isNonEmptyString(headers.protocolVersion) ||
-    MCP_LEGACY_PROTOCOL_VERSIONS.includes(headers.protocolVersion);
 
+  // Legacy clients may send any header value, which servers used to ignore
   if (
     !isDefined(requestedVersion) &&
     method !== 'server/discover' &&
-    isHeaderVersionLegacy
+    headers.protocolVersion !== MCP_STATELESS_PROTOCOL_VERSION
   ) {
     return { era: 'legacy' };
   }
@@ -96,7 +91,7 @@ export const resolveMcpRequestProtocol = ({
     });
   }
 
-  if (!isObject(meta?.[MCP_META_KEYS.clientCapabilities])) {
+  if (!isPlainObject(meta?.[MCP_META_KEYS.clientCapabilities])) {
     return reject(HttpStatus.BAD_REQUEST, {
       code: JSON_RPC_ERROR_CODE.INVALID_PARAMS,
       message: `Missing required _meta field ${MCP_META_KEYS.clientCapabilities}`,

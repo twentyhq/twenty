@@ -39,6 +39,14 @@ describe('resolveMcpRequestProtocol', () => {
         headers: {},
       }),
     ).toEqual({ era: 'legacy' });
+
+    expect(
+      resolveMcpRequestProtocol({
+        method: 'tools/list',
+        params: undefined,
+        headers: { protocolVersion: 'some-unlisted-version' },
+      }),
+    ).toEqual({ era: 'legacy' });
   });
 
   it('accepts a stateless tools/list', () => {

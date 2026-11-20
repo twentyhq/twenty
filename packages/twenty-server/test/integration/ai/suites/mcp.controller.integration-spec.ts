@@ -347,10 +347,15 @@ describe('MCP Controller (integration)', () => {
       'io.modelcontextprotocol/clientCapabilities': {},
     };
 
-    const postStatelessMcp = (
-      body: { method: string; params?: Record<string, unknown> },
-      headers: Record<string, string> = {},
-    ) =>
+    const postStatelessMcp = ({
+      method,
+      params,
+      headers = {},
+    }: {
+      method: string;
+      params?: Record<string, unknown>;
+      headers?: Record<string, string>;
+    }) =>
       request(baseUrl)
         .post(endpoint)
         .set('Authorization', `Bearer ${API_KEY_ACCESS_TOKEN}`)
@@ -358,15 +363,15 @@ describe('MCP Controller (integration)', () => {
         .set('Accept', 'application/json')
         .set({
           'MCP-Protocol-Version': STATELESS_VERSION,
-          'Mcp-Method': body.method,
+          'Mcp-Method': method,
           ...headers,
         })
         .send(
           JSON.stringify({
             jsonrpc: '2.0',
             id: 'stateless',
-            method: body.method,
-            params: { ...body.params, _meta: statelessMeta },
+            method,
+            params: { ...params, _meta: statelessMeta },
           }),
         );
 
@@ -399,35 +404,31 @@ describe('MCP Controller (integration)', () => {
     });
 
     it('should call a tool when Mcp-Name matches', async () => {
-      const res = await postStatelessMcp(
-        {
-          method: 'tools/call',
-          params: { name: 'get_tool_catalog', arguments: {} },
-        },
-        { 'Mcp-Name': 'get_tool_catalog' },
-      ).expect(200);
+      const res = await postStatelessMcp({
+        method: 'tools/call',
+        params: { name: 'get_tool_catalog', arguments: {} },
+        headers: { 'Mcp-Name': 'get_tool_catalog' },
+      }).expect(200);
 
       expect(res.body.result).toMatchObject({ resultType: 'complete' });
       expect(res.body.result.ttlMs).toBeUndefined();
     });
 
     it('should reject an Mcp-Name header that differs from the tool name', async () => {
-      const res = await postStatelessMcp(
-        {
-          method: 'tools/call',
-          params: { name: 'get_tool_catalog', arguments: {} },
-        },
-        { 'Mcp-Name': 'learn_tools' },
-      ).expect(400);
+      const res = await postStatelessMcp({
+        method: 'tools/call',
+        params: { name: 'get_tool_catalog', arguments: {} },
+        headers: { 'Mcp-Name': 'learn_tools' },
+      }).expect(400);
 
       expect(res.body.error.code).toBe(-32020);
     });
 
     it('should reject a protocol version header that differs from _meta', async () => {
-      const res = await postStatelessMcp(
-        { method: 'tools/list' },
-        { 'MCP-Protocol-Version': '2025-06-18' },
-      ).expect(400);
+      const res = await postStatelessMcp({
+        method: 'tools/list',
+        headers: { 'MCP-Protocol-Version': '2025-06-18' },
+      }).expect(400);
 
       expect(res.body.error.code).toBe(-32020);
     });
@@ -487,6 +488,20 @@ describe('MCP Controller (integration)', () => {
 
       expect(res.body.result.resultType).toBeUndefined();
       expect(res.body.result.ttlMs).toBeUndefined();
+    });
+
+    it('should keep ignoring a legacy client protocol header it does not know', async () => {
+      const res = await request(baseUrl)
+        .post(endpoint)
+        .set('Authorization', `Bearer ${API_KEY_ACCESS_TOKEN}`)
+        .set('Content-Type', 'application/json')
+        .set('MCP-Protocol-Version', '2025-11-25')
+        .send(
+          JSON.stringify({ jsonrpc: '2.0', method: 'ping', id: 'unlisted' }),
+        )
+        .expect(200);
+
+      expect(res.body.result).toEqual({});
     });
   });
 });
