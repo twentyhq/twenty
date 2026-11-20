@@ -47,14 +47,15 @@ const matchTeamsDirectoryOnConnect = async ({
 export const registerTeamsConnection = async ({
   connectedAccountId,
   workspaceId,
+  isChatEnabled = isTeamsChatEnabled(),
 }: {
   connectedAccountId: string;
   workspaceId: string;
+  isChatEnabled?: boolean;
 }): Promise<{
   claimedTenantId: string | null;
   conflictingTenantId?: string;
 }> => {
-  const isChatEnabled = isTeamsChatEnabled();
   const connection = isChatEnabled
     ? await getConnection(connectedAccountId)
     : undefined;
