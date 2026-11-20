@@ -41,7 +41,7 @@ const STEP_BY_PAGE: Partial<Record<string, Step>> = {
 type NavigationMenuItemAddDropdownContentProps = {
   dropdownId: string;
   section: NavigationMenuItemSection;
-  showHiddenItems?: boolean;
+  shouldShowHiddenItems?: boolean;
   parentId?: string;
   position?: number;
   onClose: () => void;
@@ -50,7 +50,7 @@ type NavigationMenuItemAddDropdownContentProps = {
 export const NavigationMenuItemAddDropdownContent = ({
   dropdownId,
   section,
-  showHiddenItems = false,
+  shouldShowHiddenItems = false,
   parentId,
   position,
   onClose,
@@ -282,7 +282,7 @@ export const NavigationMenuItemAddDropdownContent = ({
                 </Dropdown.Section>
               </Fragment>
             ))}
-          {showHiddenItems && step === 'main' && !isSearchingAllItems && (
+          {shouldShowHiddenItems && step === 'main' && !isSearchingAllItems && (
             <NavigationMenuAddSectionHiddenItems
               containerId={targetTabId}
               dropdownId={dropdownId}

@@ -14,7 +14,7 @@ type NavigationMenuItemAddDropdownProps = {
   children: ReactElement;
   instanceId?: string;
   section?: NavigationMenuItemSection;
-  showHiddenItems?: boolean;
+  shouldShowHiddenItems?: boolean;
   onOpen?: () => void;
 } & (
   | { parentId: string; position: number }
@@ -25,7 +25,7 @@ export const NavigationMenuItemAddDropdown = ({
   children,
   instanceId,
   section = 'workspace',
-  showHiddenItems = false,
+  shouldShowHiddenItems = false,
   parentId,
   position,
   onOpen,
@@ -62,7 +62,7 @@ export const NavigationMenuItemAddDropdown = ({
       >
         <NavigationMenuItemAddDropdownContent
           section={section}
-          showHiddenItems={showHiddenItems}
+          shouldShowHiddenItems={shouldShowHiddenItems}
           dropdownId={dropdownId}
           parentId={parentId}
           position={position}

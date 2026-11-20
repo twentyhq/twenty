@@ -27,7 +27,7 @@ export const WorkspaceSectionHeaderAddDropdown = ({
     return (
       <NavigationMenuItemAddDropdown
         instanceId="workspace-header"
-        showHiddenItems
+        shouldShowHiddenItems
         parentId={workspaceSidebarRootContainerId}
         position={0}
         onOpen={onOpen}
@@ -40,7 +40,7 @@ export const WorkspaceSectionHeaderAddDropdown = ({
   return (
     <NavigationMenuItemAddDropdown
       instanceId="workspace-header"
-      showHiddenItems
+      shouldShowHiddenItems
       position={0}
       onOpen={onOpen}
     >
