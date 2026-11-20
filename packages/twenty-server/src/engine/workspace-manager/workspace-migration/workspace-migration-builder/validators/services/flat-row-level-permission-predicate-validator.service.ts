@@ -741,7 +741,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       return undefined;
     }
 
-    if (isRelationHopEnabled !== true) {
+    if (!isRelationHopEnabled) {
       return {
         code: RowLevelPermissionPredicateExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED,
         message: t`Predicates reading the current member through a relation are not enabled for this workspace`,

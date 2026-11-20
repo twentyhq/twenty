@@ -19,7 +19,7 @@ import { type AccessGroup } from 'src/engine/permissions/internal/access-group/t
 import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-computation-metadata-maps.type';
 import { buildRecordAccessGroupSQLConditionOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-sql-condition-or-throw.util';
 import { buildWorkspaceAccessGroups } from 'src/engine/permissions/internal/access-group/utils/build-workspace-access-groups.util';
-import { findAccessGroupFamilies } from 'src/engine/permissions/internal/access-group/utils/find-access-group-families.util';
+import { findFamilyRuleIdsByObjectMetadataId } from 'src/engine/permissions/internal/access-group/utils/find-family-rule-ids-by-object-metadata-id.util';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { planAccessGroupSyncRecomputes } from 'src/engine/permissions/internal/access-group/utils/plan-access-group-sync-recomputes.util';
 import { planRecordAccessGroupComputes } from 'src/engine/permissions/internal/access-group/utils/plan-record-access-group-computes.util';
@@ -104,11 +104,10 @@ export class AccessGroupSyncService {
         ].filter(({ objectMetadataId }) =>
           changedObjectMetadataIds.includes(objectMetadataId),
         ),
-        familyRuleIdsByObjectMetadataId:
-          this.findFamilyRuleIdsByObjectMetadataId({
-            metadataMaps,
-            objectMetadataIds: changedObjectMetadataIds,
-          }),
+        familyRuleIdsByObjectMetadataId: findFamilyRuleIdsByObjectMetadataId({
+          metadataMaps,
+          objectMetadataIds: changedObjectMetadataIds,
+        }),
         maxIncrementalChangesPerObject:
           MAX_INCREMENTAL_ACCESS_GROUP_CHANGES_PER_OBJECT,
       });
@@ -146,38 +145,6 @@ export class AccessGroupSyncService {
           .map(({ compactId }) => compactId),
       });
     }
-  }
-
-  private findFamilyRuleIdsByObjectMetadataId({
-    metadataMaps,
-    objectMetadataIds,
-  }: {
-    metadataMaps: RecordAccessGroupComputationMetadataMaps;
-    objectMetadataIds: string[];
-  }): Map<string, Set<string>> {
-    const familyRuleIdsByObjectMetadataId = new Map<string, Set<string>>();
-
-    for (const objectMetadataId of objectMetadataIds) {
-      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: objectMetadataId,
-        flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
-      });
-
-      if (!isDefined(flatObjectMetadata)) {
-        continue;
-      }
-
-      familyRuleIdsByObjectMetadataId.set(
-        objectMetadataId,
-        new Set(
-          findAccessGroupFamilies({ flatObjectMetadata, metadataMaps }).map(
-            ({ ruleId }) => ruleId,
-          ),
-        ),
-      );
-    }
-
-    return familyRuleIdsByObjectMetadataId;
   }
 
   private async applyIncrementalChanges({
