@@ -4,10 +4,11 @@ import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import { useUpdateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useUpdateManyNavigationMenuItems';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
-import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
+import { navigationMenuItemsWithHiddenSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsWithHiddenSelector';
 import { buildCreateNavigationMenuItemInput } from '@/navigation-menu-item/common/utils/buildCreateNavigationMenuItemInput';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterWorkspaceNavigationMenuItems';
 import { buildUpdateInputsFromDraft } from '@/navigation-menu-item/edit/utils/buildUpdateInputsFromDraft';
+import { getNavigationMenuItemIdsToDeleteOnSave } from '@/navigation-menu-item/edit/utils/getNavigationMenuItemIdsToDeleteOnSave';
 import { getObjectMetadataColorUpdates } from '@/navigation-menu-item/edit/utils/getObjectMetadataColorUpdates';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { useStore } from 'jotai';
@@ -23,7 +24,7 @@ export const useSaveNavigationMenuItemsDraft = () => {
 
   const saveDraft = useCallback(async () => {
     const draft = store.get(navigationMenuItemsDraftState.atom);
-    const currentItems = store.get(navigationMenuItemsSelector.atom);
+    const currentItems = store.get(navigationMenuItemsWithHiddenSelector.atom);
 
     if (!draft) {
       return;
@@ -42,11 +43,11 @@ export const useSaveNavigationMenuItemsDraft = () => {
     }
 
     const workspaceItems = filterWorkspaceNavigationMenuItems(currentItems);
-    const draftIds = new Set(draft.map((item) => item.id));
 
-    const deleteAfterLayoutChangeIds = workspaceItems
-      .filter((workspaceItem) => !draftIds.has(workspaceItem.id))
-      .map((workspaceItem) => workspaceItem.id);
+    const deleteAfterLayoutChangeIds = getNavigationMenuItemIdsToDeleteOnSave({
+      workspaceItems,
+      draft,
+    });
 
     await deleteManyNavigationMenuItems(deleteAfterLayoutChangeIds);
 
