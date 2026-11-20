@@ -29,13 +29,10 @@ export const SettingsProfileConnectedAppsSection = () => {
   const applicationAuthorizations =
     data?.currentUserApplicationAuthorizations ?? [];
 
-  const getApplicationAuthorizationDescription = (
-    applicationAuthorization: ApplicationAuthorizationListItem,
-  ) => {
-    const lastUsed = beautifyPastDateRelativeToNow(
-      applicationAuthorization.lastUsedAt,
-      localeCatalog,
-    );
+  const getApplicationAuthorizationDescription = ({
+    lastUsedAt,
+  }: Pick<ApplicationAuthorizationListItem, 'lastUsedAt'>) => {
+    const lastUsed = beautifyPastDateRelativeToNow(lastUsedAt, localeCatalog);
 
     return t`Last used ${lastUsed}`;
   };
