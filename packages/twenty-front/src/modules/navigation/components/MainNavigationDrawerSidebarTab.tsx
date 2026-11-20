@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type MouseEvent, useRef } from 'react';
+import { type MouseEvent, useRef, useState } from 'react';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -69,7 +69,8 @@ export const MainNavigationDrawerSidebarTab = ({
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
   const anchorRef = useRef<HTMLSpanElement>(null);
-  const wasTabMenuOpenOnPointerDownRef = useRef(false);
+  const [wasTabMenuOpenOnPointerDown, setWasTabMenuOpenOnPointerDown] =
+    useState(false);
   const dropdownId = `navigation-menu-tab-menu-${tab.id}`;
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
@@ -81,7 +82,7 @@ export const MainNavigationDrawerSidebarTab = ({
 
   const handleClick = () => {
     if (isActive && canOpenTabMenu) {
-      if (wasTabMenuOpenOnPointerDownRef.current) {
+      if (wasTabMenuOpenOnPointerDown) {
         closeDropdown(dropdownId);
       } else {
         openTabMenu();
@@ -133,9 +134,7 @@ export const MainNavigationDrawerSidebarTab = ({
       )}
       <StyledAnchor
         ref={anchorRef}
-        onPointerDown={() => {
-          wasTabMenuOpenOnPointerDownRef.current = isDropdownOpen;
-        }}
+        onPointerDown={() => setWasTabMenuOpenOnPointerDown(isDropdownOpen)}
       >
         {tabButton}
       </StyledAnchor>
