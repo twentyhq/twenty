@@ -1,4 +1,3 @@
-import { canMoveBuiltInSectionToContainer } from '@/navigation-menu-item/common/utils/canMoveBuiltInSectionToContainer';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export const canAddBuiltInSectionToContainer = ({
@@ -10,14 +9,14 @@ export const canAddBuiltInSectionToContainer = ({
   containerId: string | null;
   items: Pick<NavigationMenuItem, 'builtInSectionKey' | 'parentId'>[];
 }) => {
+  const isAlreadyShownOnHome =
+    builtInSectionKey === 'favorites' && containerId === null;
+
   const isAlreadyInContainer = items.some(
     (item) =>
       item.builtInSectionKey === builtInSectionKey &&
       (item.parentId ?? null) === containerId,
   );
 
-  return (
-    canMoveBuiltInSectionToContainer({ builtInSectionKey, containerId }) &&
-    !isAlreadyInContainer
-  );
+  return !isAlreadyShownOnHome && !isAlreadyInContainer;
 };

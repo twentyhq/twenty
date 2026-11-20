@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { canMoveBuiltInSectionToContainer } from '@/navigation-menu-item/common/utils/canMoveBuiltInSectionToContainer';
 import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { NavigationMenuItemContainerNameEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemContainerNameEditor';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
@@ -31,6 +32,7 @@ export const NavigationMenuSectionMenuContent = ({
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const { goToPage } = useDropdownPage();
+  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const { remove, moveToFolder } = useNavigationMenuItemMoveRemove('workspace');
   const tabs = useWorkspaceNavigationMenuContainers({
     type: NavigationMenuItemType.TAB,
@@ -52,6 +54,7 @@ export const NavigationMenuSectionMenuContent = ({
       canMoveBuiltInSectionToContainer({
         builtInSectionKey: section.builtInSectionKey,
         containerId,
+        items: workspaceNavigationMenuItems,
       }));
 
   const moveTo = (containerId: string | null) => {
