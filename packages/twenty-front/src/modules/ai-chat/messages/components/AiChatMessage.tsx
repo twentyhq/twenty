@@ -67,7 +67,6 @@ const StyledMessageContainer = styled.div<{
   max-width: ${({ isUser }) =>
     isUser ? `min(100%, ${AI_CHAT_USER_MESSAGE_MAX_WIDTH})` : '100%'};
   min-width: 0;
-  position: relative;
   width: ${({ isUser }) => (isUser ? 'fit-content' : '100%')};
 `;
 
@@ -78,13 +77,14 @@ const StyledMessageRow = styled(StyledChatMessageRow)<{
     isGroupedWithNext ? `calc(-1 * ${themeCssVariables.spacing[1.5]})` : '0'};
 `;
 
-const StyledGroupedMessageActions = styled.div<{ isRightAligned: boolean }>`
-  bottom: 0;
-  left: ${({ isRightAligned }) =>
-    isRightAligned ? 'auto' : `calc(100% + ${themeCssVariables.spacing[2]})`};
-  position: absolute;
-  right: ${({ isRightAligned }) =>
-    isRightAligned ? `calc(100% + ${themeCssVariables.spacing[2]})` : 'auto'};
+const StyledGroupedMessageLine = styled.div<{ isRightAligned: boolean }>`
+  align-items: flex-end;
+  display: flex;
+  flex-direction: ${({ isRightAligned }) =>
+    isRightAligned ? 'row-reverse' : 'row'};
+  gap: ${themeCssVariables.spacing[2]};
+  max-width: 100%;
+  min-width: 0;
 `;
 
 const StyledUserMessageContent = styled.div`
@@ -175,11 +175,10 @@ export const AiChatMessage = ({
     threadId,
   );
 
-  const { isGroupedWithPrevious, isGroupedWithNext, isTimeSharedWithNext } =
-    useAtomFamilySelectorValue(aiChatMessageGroupPositionFamilySelector, {
-      threadId,
-      messageId,
-    });
+  const aiChatMessageGroupPosition = useAtomFamilySelectorValue(
+    aiChatMessageGroupPositionFamilySelector,
+    { threadId, messageId },
+  );
   const aiChatMessageReactions = useAtomFamilyStateValue(
     aiChatMessageReactionsFamilyState,
     { messageId },
@@ -202,6 +201,10 @@ export const AiChatMessage = ({
     isSenderlessUserMessageOwn: !isAiChatInboxEnabled,
   });
   const isUser = agentChatMessage.role === AGENT_MESSAGE_ROLE.USER;
+  const isGroupedWithPrevious =
+    isAiChatInboxEnabled && aiChatMessageGroupPosition.isGroupedWithPrevious;
+  const isGroupedWithNext =
+    isAiChatInboxEnabled && aiChatMessageGroupPosition.isGroupedWithNext;
   const canReply = isAiChatInboxEnabled && !isReadOnly;
   const isRightAligned = isAiChatInboxEnabled ? isOwnMessage : isUser;
   const canManageMessage = isUser && isOwnMessage && !isReadOnly;
@@ -264,6 +267,43 @@ export const AiChatMessage = ({
     />
   );
 
+  const messageBody = (
+    <StyledMessageContainer isUser={isUser} isRightAligned={isRightAligned}>
+      {isDefined(messageQuote) && (
+        <AiChatMessageReplyQuote
+          replyMessageId={messageId}
+          quote={messageQuote}
+        />
+      )}
+      {isUser ? (
+        <AiChatUserMessageText
+          messageId={messageId}
+          isOtherMember={isAiChatInboxEnabled && !isOwnMessage}
+          meta={
+            hasTimeInBubble &&
+            !aiChatMessageGroupPosition.isTimeSharedWithNext ? (
+              <StyledChatMessageMeta>
+                <ChatMessageTime date={createdAt} />
+                <AiChatMessageReceipt messageId={messageId} />
+              </StyledChatMessageMeta>
+            ) : undefined
+          }
+        >
+          {messageContent}
+        </AiChatUserMessageText>
+      ) : (
+        <StyledChatMessageBubble>{messageContent}</StyledChatMessageBubble>
+      )}
+      {isNonEmptyArray(attachments) && (
+        <ChatMessageAttachments
+          files={attachments}
+          isRightAligned={isRightAligned}
+        />
+      )}
+      {shouldShowError && <AiChatErrorRenderer error={error} />}
+    </StyledMessageContainer>
+  );
+
   return (
     <>
       {isAiChatInboxEnabled && aiChatFirstUnreadMessageId === messageId && (
@@ -286,55 +326,22 @@ export const AiChatMessage = ({
             createdAt={createdAt}
           />
         )}
-        {!isAiChatInboxEnabled &&
-          isUser &&
-          isDefined(senderId) &&
-          !isGroupedWithPrevious && (
-            <StyledSender>
-              {getAiChatSenderLabel({
-                sender,
-                isCurrentWorkspaceMember: isOwnMessage,
-              })}
-            </StyledSender>
-          )}
-        <StyledMessageContainer isUser={isUser} isRightAligned={isRightAligned}>
-          {isDefined(messageQuote) && (
-            <AiChatMessageReplyQuote
-              replyMessageId={messageId}
-              quote={messageQuote}
-            />
-          )}
-          {isUser ? (
-            <AiChatUserMessageText
-              messageId={messageId}
-              isOtherMember={isAiChatInboxEnabled && !isOwnMessage}
-              meta={
-                hasTimeInBubble && !isTimeSharedWithNext ? (
-                  <StyledChatMessageMeta>
-                    <ChatMessageTime date={createdAt} />
-                    <AiChatMessageReceipt messageId={messageId} />
-                  </StyledChatMessageMeta>
-                ) : undefined
-              }
-            >
-              {messageContent}
-            </AiChatUserMessageText>
-          ) : (
-            <StyledChatMessageBubble>{messageContent}</StyledChatMessageBubble>
-          )}
-          {isNonEmptyArray(attachments) && (
-            <ChatMessageAttachments
-              files={attachments}
-              isRightAligned={isRightAligned}
-            />
-          )}
-          {shouldShowError && <AiChatErrorRenderer error={error} />}
-          {hasGroupedMessageActions && (
-            <StyledGroupedMessageActions isRightAligned={isRightAligned}>
-              {messageActions}
-            </StyledGroupedMessageActions>
-          )}
-        </StyledMessageContainer>
+        {!isAiChatInboxEnabled && isUser && isDefined(senderId) && (
+          <StyledSender>
+            {getAiChatSenderLabel({
+              sender,
+              isCurrentWorkspaceMember: isOwnMessage,
+            })}
+          </StyledSender>
+        )}
+        {hasGroupedMessageActions ? (
+          <StyledGroupedMessageLine isRightAligned={isRightAligned}>
+            {messageBody}
+            {messageActions}
+          </StyledGroupedMessageLine>
+        ) : (
+          messageBody
+        )}
         {isNonEmptyArray(agentChatMessage.parts) &&
           !hasGroupedMessageActions && (
             <StyledChatMessageFooter
