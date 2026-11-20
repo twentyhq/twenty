@@ -1,3 +1,4 @@
+import { parseChatReferences } from 'twenty-shared/ai';
 import { Editor } from '@tiptap/core';
 import { Document } from '@tiptap/extension-document';
 import { Paragraph } from '@tiptap/extension-paragraph';
@@ -7,7 +8,6 @@ import { MentionTag } from '@/mention/extensions/MentionTag';
 import { getMentionTagContent } from '@/mention/utils/getMentionTagContent';
 import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
 import { isAiChatAssistantMentionedInSerializedDocument } from '@/ai-chat/composer/utils/isAiChatAssistantMentionedInSerializedDocument';
-import { parseChatReferences } from '@/ai-chat/message-content/utils/parseChatReferences';
 import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
 jest.mock('@/mention/components/MentionChip', () => ({

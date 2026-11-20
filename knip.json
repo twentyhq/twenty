@@ -60,6 +60,7 @@
     "packages/twenty-front": {
       "entry": [
         "src/index.tsx",
+        "public/service-worker.js",
         "src/**/graphql/**/*.{ts,tsx}",
         "src/modules/geo-map/graphql-query/*.{ts,tsx}",
         "vitest.config.ts",

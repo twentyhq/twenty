@@ -64,7 +64,7 @@ export const ObjectOverrideExpandsInPlace: Story = {
     expect(
       canvas.getByRole('button', { name: 'Remove override' }),
     ).toBeVisible();
-    expect(canvas.getByRole('button', { name: 'Rule' })).toBeVisible();
+    expect(canvas.getByRole('button', { name: 'New rule' })).toBeVisible();
   },
 };
 
