@@ -524,6 +524,7 @@ export interface ApplicationContent {
     frontComponents: ApplicationContentItem[]
     indexes: ApplicationContentItem[]
     logicFunctions: ApplicationContentItem[]
+    mcpServers: ApplicationContentItem[]
     navigationMenuItems: ApplicationContentItem[]
     objects: ApplicationContentItem[]
     pageLayoutTabs: ApplicationContentItem[]
@@ -5109,6 +5110,7 @@ export interface ApplicationContentGenqlSelection{
     frontComponents?: ApplicationContentItemGenqlSelection
     indexes?: ApplicationContentItemGenqlSelection
     logicFunctions?: ApplicationContentItemGenqlSelection
+    mcpServers?: ApplicationContentItemGenqlSelection
     navigationMenuItems?: ApplicationContentItemGenqlSelection
     objects?: ApplicationContentItemGenqlSelection
     pageLayoutTabs?: ApplicationContentItemGenqlSelection

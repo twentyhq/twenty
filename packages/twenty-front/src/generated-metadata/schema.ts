@@ -686,6 +686,7 @@ export type ApplicationContent = {
   frontComponents: Array<ApplicationContentItem>;
   indexes: Array<ApplicationContentItem>;
   logicFunctions: Array<ApplicationContentItem>;
+  mcpServers: Array<ApplicationContentItem>;
   navigationMenuItems: Array<ApplicationContentItem>;
   objects: Array<ApplicationContentItem>;
   pageLayoutTabs: Array<ApplicationContentItem>;

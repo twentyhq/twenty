@@ -638,6 +638,7 @@ type ApplicationContent {
   frontComponents: [ApplicationContentItem!]!
   indexes: [ApplicationContentItem!]!
   logicFunctions: [ApplicationContentItem!]!
+  mcpServers: [ApplicationContentItem!]!
   navigationMenuItems: [ApplicationContentItem!]!
   objects: [ApplicationContentItem!]!
   pageLayoutTabs: [ApplicationContentItem!]!
