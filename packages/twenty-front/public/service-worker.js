@@ -4,8 +4,23 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim());
 });
 
+const updateAppBadge = (badgeCount) => {
+  if (typeof badgeCount !== 'number' || !('setAppBadge' in self.navigator)) {
+    return Promise.resolve();
+  }
+
+  const badgeUpdate =
+    badgeCount > 0
+      ? self.navigator.setAppBadge(badgeCount)
+      : self.navigator.clearAppBadge();
+
+  return badgeUpdate.catch(() => undefined);
+};
+
 self.addEventListener('push', (event) => {
-  const { title, body, url, tag, renotify } = event.data.json();
+  const { title, body, url, tag, renotify, badgeCount } = event.data.json();
+
+  event.waitUntil(updateAppBadge(badgeCount));
 
   event.waitUntil(
     self.registration

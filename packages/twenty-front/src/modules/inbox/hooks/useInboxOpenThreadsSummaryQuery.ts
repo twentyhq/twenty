@@ -1,0 +1,23 @@
+import { useQuery } from '@apollo/client/react';
+
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import {
+  FeatureFlagKey,
+  GetAgentChatOpenThreadsSummaryDocument,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
+
+// Counted by the server over every chat, past the pages loaded here; it is
+// read again wherever the member's inbox state changes
+export const useInboxOpenThreadsSummaryQuery = () => {
+  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
+
+  return useQuery(GetAgentChatOpenThreadsSummaryDocument, {
+    skip: !hasAiPermission || !isAiChatInboxEnabled,
+    fetchPolicy: 'cache-and-network',
+  });
+};
