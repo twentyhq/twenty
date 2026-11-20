@@ -1,0 +1,2 @@
+export const ADD_USER_WORKSPACE_INBOX_NOTIFICATION_SETTINGS_UPGRADE_COMMAND_NAME =
+  '2.61.0_AddUserWorkspaceInboxNotificationSettingsFastInstanceCommand_1795163561823';
