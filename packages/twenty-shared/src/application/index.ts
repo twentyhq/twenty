@@ -218,6 +218,7 @@ export type {
 export type { InboxThreadRecordInput } from './inboxThreadRecordInputType';
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
+export { isApplicationBillingPrice } from './isApplicationBillingPrice';
 export { isApplicationBillingPriceAmount } from './isApplicationBillingPriceAmount';
 export { isApplicationBillingPriceCurrency } from './isApplicationBillingPriceCurrency';
 export { isApplicationBillingPricePeriod } from './isApplicationBillingPricePeriod';
