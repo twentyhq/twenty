@@ -11,6 +11,7 @@ import {
 } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { isMcpServerBundledApplication } from 'src/engine/core-modules/application/application-bundled/utils/is-mcp-server-bundled-application.util';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { buildApplicationContentFromManifest } from 'src/engine/core-modules/application/application-content/utils/build-application-content-from-manifest.util';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
@@ -49,10 +50,12 @@ export class MarketplaceQueryService {
     universalIdentifiers,
     isListed,
     shouldIncludeBuiltInApplications = false,
+    shouldIncludeMcpServerApplications = false,
   }: {
     universalIdentifiers?: string[];
     isListed?: boolean;
     shouldIncludeBuiltInApplications?: boolean;
+    shouldIncludeMcpServerApplications?: boolean;
   } = {}): Promise<MarketplaceAppDTO[]> {
     const appsByUniversalIdentifier =
       (await this.coreEntityCacheService.get(
@@ -60,14 +63,20 @@ export class MarketplaceQueryService {
         MARKETPLACE_CATALOG_CACHE_ENTITY_ID,
       )) ?? {};
 
-    const catalogApps = isNonEmptyArray(universalIdentifiers)
-      ? universalIdentifiers
-          .map(
-            (universalIdentifier) =>
-              appsByUniversalIdentifier[universalIdentifier],
-          )
-          .filter(isDefined)
-      : Object.values(appsByUniversalIdentifier);
+    const catalogApps = (
+      isNonEmptyArray(universalIdentifiers)
+        ? universalIdentifiers
+            .map(
+              (universalIdentifier) =>
+                appsByUniversalIdentifier[universalIdentifier],
+            )
+            .filter(isDefined)
+        : Object.values(appsByUniversalIdentifier)
+    ).filter(
+      (app) =>
+        shouldIncludeMcpServerApplications ||
+        !isMcpServerBundledApplication(app.id),
+    );
 
     const apps = shouldIncludeBuiltInApplications
       ? [...this.findBuiltInApps(universalIdentifiers), ...catalogApps]
@@ -98,9 +107,11 @@ export class MarketplaceQueryService {
   async findMarketplaceAppDetail({
     universalIdentifier,
     shouldIncludeBuiltInApplications = false,
+    shouldIncludeMcpServerApplications = false,
   }: {
     universalIdentifier: string;
     shouldIncludeBuiltInApplications?: boolean;
+    shouldIncludeMcpServerApplications?: boolean;
   }): Promise<MarketplaceAppDetailDTO> {
     const builtInApplication = shouldIncludeBuiltInApplications
       ? findMarketplaceBuiltInApplication(universalIdentifier)
@@ -111,6 +122,16 @@ export class MarketplaceQueryService {
         builtInApplication,
         frontBaseUrl: this.domainServerConfigService.getBaseUrl(),
       });
+    }
+
+    if (
+      !shouldIncludeMcpServerApplications &&
+      isMcpServerBundledApplication(universalIdentifier)
+    ) {
+      throw new ApplicationRegistrationException(
+        `No application registration found for identifier "${universalIdentifier}"`,
+        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
+      );
     }
 
     const registration =
