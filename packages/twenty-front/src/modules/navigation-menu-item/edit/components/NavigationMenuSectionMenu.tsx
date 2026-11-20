@@ -3,6 +3,7 @@ import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconDotsVertical } from 'twenty-ui/icon';
 
+import { navigationMenuDropdownIdToOpenState } from '@/navigation-menu-item/common/states/navigationMenuDropdownIdToOpenState';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { navigationMenuSectionIdAddingItemState } from '@/navigation-menu-item/common/states/navigationMenuSectionIdAddingItemState';
 import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
@@ -14,6 +15,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { getNavigationMenuSectionNavigationSectionId } from '@/navigation-menu-item/display/utils/getNavigationMenuSectionNavigationSectionId';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -37,8 +39,10 @@ export const NavigationMenuSectionMenu = ({
     setNavigationMenuSectionIdAddingItem,
   ] = useAtomState(navigationMenuSectionIdAddingItemState);
   const { openNavigationSection } = useNavigationSection(
-    `navigation-menu-section-${section.id}`,
+    getNavigationMenuSectionNavigationSectionId(section),
   );
+  const [navigationMenuDropdownIdToOpen, setNavigationMenuDropdownIdToOpen] =
+    useAtomState(navigationMenuDropdownIdToOpenState);
   const dropdownId = getNavigationMenuSectionMenuDropdownId(section.id);
   const isAddingItem = navigationMenuSectionIdAddingItem === section.id;
 
@@ -63,6 +67,12 @@ export const NavigationMenuSectionMenu = ({
         <NavigationMenuItemDropdownOpenEffect
           dropdownId={dropdownId}
           onOpen={() => setNavigationMenuItemIdToRename(null)}
+        />
+      )}
+      {navigationMenuDropdownIdToOpen === dropdownId && (
+        <NavigationMenuItemDropdownOpenEffect
+          dropdownId={dropdownId}
+          onOpen={() => setNavigationMenuDropdownIdToOpen(null)}
         />
       )}
       <Dropdown.Trigger

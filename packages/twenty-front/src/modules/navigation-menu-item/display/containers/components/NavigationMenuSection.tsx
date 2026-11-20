@@ -1,3 +1,4 @@
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
@@ -9,7 +10,12 @@ import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sectio
 import { StyledNavigationMenuItemSectionContentGapOffset } from '@/navigation-menu-item/display/sections/components/StyledNavigationMenuItemSectionContentGapOffset';
 import { WorkspaceSectionListReadOnly } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { getNavigationMenuSectionNavigationSectionId } from '@/navigation-menu-item/display/utils/getNavigationMenuSectionNavigationSectionId';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
+
+const StyledSectionContextMenuTarget = styled.div`
+  display: contents;
+`;
 
 type NavigationMenuSectionProps = {
   section: Pick<NamedNavigationMenuItem, 'id' | 'name'>;
@@ -21,7 +27,7 @@ export const NavigationMenuSection = ({
   const { t } = useLingui();
   const [isShowingAllItems, setIsShowingAllItems] = useState(false);
   const { isNavigationSectionOpen, toggleNavigationSection } =
-    useNavigationSection(`navigation-menu-section-${section.id}`);
+    useNavigationSection(getNavigationMenuSectionNavigationSectionId(section));
   const { topLevelItems, folderChildrenById } = useNavigationMenuContainerItems(
     section.id,
   );
@@ -39,29 +45,33 @@ export const NavigationMenuSection = ({
       : topLevelItems;
 
   return (
-    <NavigationMenuItemSection
-      title={section.name}
-      isOpen={isNavigationSectionOpen}
-      onToggle={() => toggleNavigationSection()}
-      contentWrapper={(children) => (
-        <StyledNavigationMenuItemSectionContentGapOffset>
-          {children}
-        </StyledNavigationMenuItemSectionContentGapOffset>
-      )}
+    <StyledSectionContextMenuTarget
+      data-navigation-menu-section-id={section.id}
     >
-      <WorkspaceSectionListReadOnly
-        filteredItems={displayedItems}
-        folderChildrenById={folderChildrenById}
-      />
-      {hasHiddenItems && (
-        <NavigationDrawerItem
-          label={isShowingAllItems ? t`See less` : t`See more`}
-          Icon={isShowingAllItems ? IconChevronUp : IconChevronDown}
-          variant="tertiary"
-          preventCollapseOnMobile
-          onClick={() => setIsShowingAllItems(!isShowingAllItems)}
+      <NavigationMenuItemSection
+        title={section.name}
+        isOpen={isNavigationSectionOpen}
+        onToggle={() => toggleNavigationSection()}
+        contentWrapper={(children) => (
+          <StyledNavigationMenuItemSectionContentGapOffset>
+            {children}
+          </StyledNavigationMenuItemSectionContentGapOffset>
+        )}
+      >
+        <WorkspaceSectionListReadOnly
+          filteredItems={displayedItems}
+          folderChildrenById={folderChildrenById}
         />
-      )}
-    </NavigationMenuItemSection>
+        {hasHiddenItems && (
+          <NavigationDrawerItem
+            label={isShowingAllItems ? t`See less` : t`See more`}
+            Icon={isShowingAllItems ? IconChevronUp : IconChevronDown}
+            variant="tertiary"
+            preventCollapseOnMobile
+            onClick={() => setIsShowingAllItems(!isShowingAllItems)}
+          />
+        )}
+      </NavigationMenuItemSection>
+    </StyledSectionContextMenuTarget>
   );
 };
