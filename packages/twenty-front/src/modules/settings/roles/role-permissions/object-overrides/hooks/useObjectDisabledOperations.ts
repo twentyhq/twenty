@@ -1,0 +1,47 @@
+import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig';
+import { getObjectDisabledOperations } from '@/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperations';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
+
+export const useObjectDisabledOperations = (
+  objectMetadataItem: EnrichedObjectMetadataItem,
+) => {
+  const { t } = useLingui();
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+
+  const disabledOperations = getObjectDisabledOperations(objectMetadataItem);
+
+  const application = currentWorkspace?.installedApplications.find(
+    (installedApplication) =>
+      installedApplication.id === objectMetadataItem.applicationId,
+  );
+
+  const applicationName = isDefined(application)
+    ? getApplicationDisplayName({ application, currentWorkspace })
+    : t`its app`;
+
+  const getDisabledOperationReason = (
+    operation: SettingsRoleObjectPermissionKey,
+  ) => {
+    if (!disabledOperations.includes(operation)) {
+      return undefined;
+    }
+
+    switch (operation) {
+      case 'canReadObjectRecords':
+        return t`Only ${applicationName} can see`;
+      case 'canUpdateObjectRecords':
+        return t`Only ${applicationName} can edit`;
+      case 'canSoftDeleteObjectRecords':
+        return t`Only ${applicationName} can delete`;
+      case 'canDestroyObjectRecords':
+        return t`Only ${applicationName} can destroy`;
+    }
+  };
+
+  return { disabledOperations, getDisabledOperationReason };
+};

@@ -1,6 +1,8 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig';
 import { getRoleWithObjectOperations } from '@/settings/roles/role-permissions/object-overrides/utils/getRoleWithObjectOperations';
 import { getRoleWithoutObjectOverride } from '@/settings/roles/role-permissions/object-overrides/utils/getRoleWithoutObjectOverride';
+import { getObjectDisabledOperations } from '@/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperations';
 import { getObjectOperations } from '@/settings/roles/role-permissions/object-overrides/utils/getObjectOperations';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsRoleExpandedObjectOverrideIdsFamilyState } from '@/settings/roles/states/settingsRoleExpandedObjectOverrideIdsFamilyState';
@@ -16,7 +18,15 @@ export const useSettingsRoleObjectOverrides = (roleId: string) => {
     roleId,
   );
 
-  const addObjectOverride = (objectMetadataId: string) => {
+  const addObjectOverride = (
+    objectMetadataItem: Pick<
+      EnrichedObjectMetadataItem,
+      'id' | 'disabledObjectPermissionActions'
+    >,
+  ) => {
+    const objectMetadataId = objectMetadataItem.id;
+    const disabledOperations = getObjectDisabledOperations(objectMetadataItem);
+
     setSettingsDraftRole((currentSettingsDraftRole) =>
       getRoleWithObjectOperations({
         role: currentSettingsDraftRole,
@@ -24,7 +34,7 @@ export const useSettingsRoleObjectOverrides = (roleId: string) => {
         operations: getObjectOperations({
           role: currentSettingsDraftRole,
           objectMetadataId,
-        }),
+        }).filter((operation) => !disabledOperations.includes(operation)),
       }),
     );
     setSettingsRoleExpandedObjectOverrideIds((currentIds) => [
