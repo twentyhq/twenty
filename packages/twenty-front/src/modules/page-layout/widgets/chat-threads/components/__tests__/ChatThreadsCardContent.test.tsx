@@ -10,10 +10,13 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 
 const NETWORK_ERROR = new Error('Failed to fetch');
 
-const openRecordInSidePanel = jest.fn();
+const handleThreadClick = jest.fn();
+const useAiChatThreadClick = jest.fn((_options: unknown) => ({
+  handleThreadClick,
+}));
 
-jest.mock('@/side-panel/hooks/useOpenRecordInSidePanel', () => ({
-  useOpenRecordInSidePanel: () => ({ openRecordInSidePanel }),
+jest.mock('@/ai-chat/threads/hooks/useAiChatThreadClick', () => ({
+  useAiChatThreadClick: (options: unknown) => useAiChatThreadClick(options),
 }));
 
 jest.mock('@/inbox/components/InboxThreadActionsDropdown', () => ({
@@ -68,10 +71,13 @@ describe('ChatThreadsCardContent', () => {
 
     await userEvent.click(screen.getByText('Pricing questions'));
 
-    expect(openRecordInSidePanel).toHaveBeenCalledWith({
-      recordId: THREAD.id,
-      objectNameSingular: 'agentChatThread',
+    expect(useAiChatThreadClick).toHaveBeenCalledWith({
+      resetNavigationStack: false,
     });
+    expect(handleThreadClick).toHaveBeenCalledWith(
+      expect.objectContaining({ id: THREAD.id }),
+      expect.anything(),
+    );
   });
 
   it('does not claim the record has no conversations while loading', () => {
