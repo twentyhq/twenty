@@ -241,17 +241,17 @@ export class AgentChatWebPushNotificationService {
       return;
     }
 
+    const { unreadOpenThreadCount } =
+      await this.participantService.findOpenThreadsSummary({
+        workspaceId,
+        workspaceMemberId: recipient.id,
+      });
     const isOutsideRenotifyCooldown =
       await this.cacheStorageService.setIfAbsent(
         `agent-chat-renotify-cooldown:${workspaceId}:${thread.id}:${recipient.id}`,
         true,
         RENOTIFY_COOLDOWN_MS,
       );
-    const { unreadOpenThreadCount } =
-      await this.participantService.findOpenThreadsSummary({
-        workspaceId,
-        workspaceMemberId: recipient.id,
-      });
 
     await this.webPushService.sendNotification({
       workspaceId,

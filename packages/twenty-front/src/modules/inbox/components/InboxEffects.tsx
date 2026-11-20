@@ -19,11 +19,11 @@ export const InboxEffects = () => {
       <InboxThreadInitializationEffect />
       <InboxThreadRecordOperationsEffect />
       <InboxChannelsEffect />
-      <InboxAppBadgeEffect />
       {isInboxWebPushEnabled && (
         <>
           <WebPushSubscriptionEffect />
           <FocusedTabEffect />
+          <InboxAppBadgeEffect />
         </>
       )}
       {isDefined(aiChatPageThreadId) && (

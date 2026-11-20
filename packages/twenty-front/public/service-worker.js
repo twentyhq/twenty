@@ -9,12 +9,9 @@ const updateAppBadge = (badgeCount) => {
     return Promise.resolve();
   }
 
-  const badgeUpdate =
-    badgeCount > 0
-      ? self.navigator.setAppBadge(badgeCount)
-      : self.navigator.clearAppBadge();
-
-  return badgeUpdate.catch(() => undefined);
+  return badgeCount > 0
+    ? self.navigator.setAppBadge(badgeCount)
+    : self.navigator.clearAppBadge();
 };
 
 self.addEventListener('push', (event) => {

@@ -6,19 +6,22 @@ const UNREAD_DOT_RADIUS = 14;
 const UNREAD_DOT_GAP = 5;
 
 const loadCrossOriginImage = (url: string) =>
-  new Promise<HTMLImageElement>((resolve, reject) => {
+  new Promise<HTMLImageElement | null>((resolve) => {
     const image = new Image();
 
     image.crossOrigin = 'anonymous';
     image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error(`Could not load favicon ${url}`));
+    image.onerror = () => resolve(null);
     image.src = url;
   });
 
-const fillUnreadDotCircle = (
-  context: CanvasRenderingContext2D,
-  radius: number,
-) => {
+const fillUnreadDotCircle = ({
+  context,
+  radius,
+}: {
+  context: CanvasRenderingContext2D;
+  radius: number;
+}) => {
   context.beginPath();
   context.arc(
     FAVICON_SIZE - UNREAD_DOT_RADIUS,
@@ -39,18 +42,18 @@ export const drawFaviconWithUnreadDot = async (faviconUrl: string) => {
 
   const context = canvas.getContext('2d');
 
-  if (!isDefined(context)) {
-    throw new Error('Canvas 2D context is not available');
+  if (!isDefined(image) || !isDefined(context)) {
+    return null;
   }
 
   context.drawImage(image, 0, 0, FAVICON_SIZE, FAVICON_SIZE);
 
   context.globalCompositeOperation = 'destination-out';
-  fillUnreadDotCircle(context, UNREAD_DOT_RADIUS + UNREAD_DOT_GAP);
+  fillUnreadDotCircle({ context, radius: UNREAD_DOT_RADIUS + UNREAD_DOT_GAP });
 
   context.globalCompositeOperation = 'source-over';
   context.fillStyle = THEME_LIGHT.color.red;
-  fillUnreadDotCircle(context, UNREAD_DOT_RADIUS);
+  fillUnreadDotCircle({ context, radius: UNREAD_DOT_RADIUS });
 
   return canvas.toDataURL('image/png');
 };
