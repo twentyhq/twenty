@@ -32,24 +32,22 @@ const getRelationValueLabel = ({
   return recordCount === 1 ? t`1 record` : t`${recordCount} records`;
 };
 
+type GetDateValueLabel = (predicate: RowLevelPermissionPredicate) => string;
+
 const getPredicateValueLabel = ({
   predicate,
   field,
   workspaceMemberObjectMetadataItem,
   recordLabelById,
+  getDateValueLabel,
 }: {
-  predicate: Pick<
-    RowLevelPermissionPredicate,
-    | 'workspaceMemberFieldMetadataId'
-    | 'workspaceMemberSubFieldName'
-    | 'value'
-    | 'operand'
-  >;
+  predicate: RowLevelPermissionPredicate;
   field?: Pick<FieldMetadataItem, 'type'>;
   workspaceMemberObjectMetadataItem?: {
     fields: Pick<FieldMetadataItem, 'id' | 'name' | 'label'>[];
   };
   recordLabelById?: Map<string, string>;
+  getDateValueLabel?: GetDateValueLabel;
 }) => {
   if (isDefined(predicate.workspaceMemberFieldMetadataId)) {
     const workspaceMemberField = workspaceMemberObjectMetadataItem?.fields.find(
@@ -88,6 +86,15 @@ const getPredicateValueLabel = ({
     return getRelativeDateDisplayValue(relativeDateFilter).toLocaleLowerCase();
   }
 
+  if (
+    isDefined(getDateValueLabel) &&
+    isNonEmptyString(predicate.value) &&
+    (field?.type === FieldMetadataType.DATE ||
+      field?.type === FieldMetadataType.DATE_TIME)
+  ) {
+    return getDateValueLabel(predicate);
+  }
+
   if (isNonEmptyString(predicate.value) || isNumber(predicate.value)) {
     return String(predicate.value);
   }
@@ -100,6 +107,7 @@ export const getRowLevelPermissionRuleLabel = ({
   objectMetadataItem,
   workspaceMemberObjectMetadataItem,
   recordLabelById,
+  getDateValueLabel,
 }: {
   predicates: RowLevelPermissionPredicate[];
   objectMetadataItem: {
@@ -109,6 +117,7 @@ export const getRowLevelPermissionRuleLabel = ({
     fields: Pick<FieldMetadataItem, 'id' | 'name' | 'label'>[];
   };
   recordLabelById?: Map<string, string>;
+  getDateValueLabel?: GetDateValueLabel;
 }) => {
   const [firstPredicate, ...otherPredicates] = predicates;
 
@@ -133,6 +142,7 @@ export const getRowLevelPermissionRuleLabel = ({
       field,
       workspaceMemberObjectMetadataItem,
       recordLabelById,
+      getDateValueLabel,
     }),
   ]
     .filter(isNonEmptyString)
