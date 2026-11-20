@@ -6036,17 +6036,6 @@ msgstr "ワークスペースが使用できる上限を設定します。一般
 msgid "Caps on what your workspace can spend and who they apply to"
 msgstr "ワークスペースで利用できる上限と、その適用対象"
 
-#. js-lingui-id: Po5MgW
-#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
-#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
-#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
-#: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
-#: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
-#: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts
-#: src/pages/auth/PasswordReset.tsx
-msgid "Captcha (anti-bot check) is still loading, try again"
-msgstr "キャプチャ (ボット対策チェック) はまだ読み込み中です。再試行してください。"
-
 #. js-lingui-id: kryGs+
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx

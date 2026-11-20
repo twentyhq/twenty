@@ -6036,17 +6036,6 @@ msgstr "Limiteu el que pot gastar el vostre espai de treball. Comenceu amb un l�
 msgid "Caps on what your workspace can spend and who they apply to"
 msgstr "Límits sobre el que pot gastar el vostre espai de treball i a qui s'apliquen"
 
-#. js-lingui-id: Po5MgW
-#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
-#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
-#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
-#: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
-#: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
-#: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts
-#: src/pages/auth/PasswordReset.tsx
-msgid "Captcha (anti-bot check) is still loading, try again"
-msgstr "El CAPTCHA (verificació anti-bot) encara s'està carregant, torni a intentar-ho"
-
 #. js-lingui-id: kryGs+
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
