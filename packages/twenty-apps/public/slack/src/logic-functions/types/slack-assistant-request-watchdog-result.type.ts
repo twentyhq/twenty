@@ -1,4 +1,4 @@
 export type SlackAssistantRequestWatchdogResult =
-  | { failed: true; attempt: number; replied: boolean }
-  | { failed: false; attempt: number; rescheduled: true }
-  | { failed: false; attempt: number; rescheduled: false; reason: string };
+  | { isFailed: true; attempt: number; hasReplied: boolean }
+  | { isFailed: false; attempt: number; isRescheduled: true }
+  | { isFailed: false; attempt: number; isRescheduled: false; reason: string };

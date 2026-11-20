@@ -36,20 +36,22 @@ export const slackAssistantRequestWatchdogHandler = async ({
       record.status !== SLACK_ASSISTANT_REQUEST_STATUS.PROCESSING)
   ) {
     return {
-      failed: false,
+      isFailed: false,
       attempt,
-      rescheduled: false,
+      isRescheduled: false,
       reason: 'Request is missing or already finished',
     };
   }
 
-  const isStale = isSlackAssistantRequestStale(record);
+  const isStale = isSlackAssistantRequestStale({
+    updatedAt: record.updatedAt,
+  });
 
   if (!isStale && attempt >= SLACK_ASSISTANT_REQUEST_WATCHDOG_MAX_ATTEMPTS) {
     return {
-      failed: false,
+      isFailed: false,
       attempt,
-      rescheduled: false,
+      isRescheduled: false,
       reason: 'Request is still being processed',
     };
   }
@@ -60,7 +62,7 @@ export const slackAssistantRequestWatchdogHandler = async ({
       attempt,
     });
 
-    return { failed: false, attempt, rescheduled: true };
+    return { isFailed: false, attempt, isRescheduled: true };
   }
 
   const isFailed = await failStaleSlackAssistantRequest(client, {
@@ -70,9 +72,9 @@ export const slackAssistantRequestWatchdogHandler = async ({
 
   if (!isFailed) {
     return {
-      failed: false,
+      isFailed: false,
       attempt,
-      rescheduled: false,
+      isRescheduled: false,
       reason: 'Request was finished by another execution',
     };
   }
@@ -83,7 +85,7 @@ export const slackAssistantRequestWatchdogHandler = async ({
     !isNonEmptyString(slackChannelId) ||
     !isNonEmptyString(slackMessageTimestamp)
   ) {
-    return { failed: true, attempt, replied: false };
+    return { isFailed: true, attempt, hasReplied: false };
   }
 
   const parentMessageTimestamp = getSlackAssistantParentMessageTimestamp({
@@ -115,7 +117,7 @@ export const slackAssistantRequestWatchdogHandler = async ({
   });
 
   if (deliveryResult.success) {
-    return { failed: true, attempt, replied: true };
+    return { isFailed: true, attempt, hasReplied: true };
   }
 
   if (isDefined(deliveryResult.retryAfterSeconds)) {
@@ -129,5 +131,5 @@ export const slackAssistantRequestWatchdogHandler = async ({
     );
   }
 
-  return { failed: true, attempt, replied: false };
+  return { isFailed: true, attempt, hasReplied: false };
 };

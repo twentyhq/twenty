@@ -113,7 +113,7 @@ describe('slackAssistantRequestWatchdogHandler', () => {
         slackAssistantRequestId: REQUEST_ID,
       });
 
-      expect(result).toMatchObject({ failed: false, rescheduled: false });
+      expect(result).toMatchObject({ isFailed: false, isRescheduled: false });
       expect(failStaleRequestMock).not.toHaveBeenCalled();
       expect(sendSlackMessageMock).not.toHaveBeenCalled();
       expect(setStatusMock).not.toHaveBeenCalled();
@@ -131,7 +131,7 @@ describe('slackAssistantRequestWatchdogHandler', () => {
         slackAssistantRequestId: REQUEST_ID,
       });
 
-      expect(result).toEqual({ failed: true, attempt: 1, replied: true });
+      expect(result).toEqual({ isFailed: true, attempt: 1, hasReplied: true });
       expect(failStaleRequestMock).toHaveBeenCalledExactlyOnceWith(
         expect.anything(),
         { id: REQUEST_ID, errorMessage: SLACK_ASSISTANT_INTERRUPTED_ERROR },
@@ -160,7 +160,7 @@ describe('slackAssistantRequestWatchdogHandler', () => {
       slackAssistantRequestId: REQUEST_ID,
     });
 
-    expect(result).toMatchObject({ failed: false, rescheduled: false });
+    expect(result).toMatchObject({ isFailed: false, isRescheduled: false });
     expect(sendSlackMessageMock).not.toHaveBeenCalled();
     expect(setStatusMock).not.toHaveBeenCalled();
     expect(enqueueWatchdogMock).not.toHaveBeenCalled();
@@ -175,7 +175,11 @@ describe('slackAssistantRequestWatchdogHandler', () => {
       slackAssistantRequestId: REQUEST_ID,
     });
 
-    expect(result).toEqual({ failed: false, attempt: 1, rescheduled: true });
+    expect(result).toEqual({
+      isFailed: false,
+      attempt: 1,
+      isRescheduled: true,
+    });
     expect(enqueueWatchdogMock).toHaveBeenCalledExactlyOnceWith({
       slackAssistantRequestId: REQUEST_ID,
       attempt: 1,
@@ -194,7 +198,7 @@ describe('slackAssistantRequestWatchdogHandler', () => {
       attempt: SLACK_ASSISTANT_REQUEST_WATCHDOG_MAX_ATTEMPTS,
     });
 
-    expect(result).toMatchObject({ failed: false, rescheduled: false });
+    expect(result).toMatchObject({ isFailed: false, isRescheduled: false });
     expect(enqueueWatchdogMock).not.toHaveBeenCalled();
     expect(failStaleRequestMock).not.toHaveBeenCalled();
     expect(sendSlackMessageMock).not.toHaveBeenCalled();
@@ -214,7 +218,7 @@ describe('slackAssistantRequestWatchdogHandler', () => {
       slackAssistantRequestId: REQUEST_ID,
     });
 
-    expect(result).toEqual({ failed: true, attempt: 1, replied: false });
+    expect(result).toEqual({ isFailed: true, attempt: 1, hasReplied: false });
     expect(enqueueDeliveryMock).toHaveBeenCalledExactlyOnceWith({
       payload: INTERRUPTED_REPLY,
       retryAfterSeconds: 7,

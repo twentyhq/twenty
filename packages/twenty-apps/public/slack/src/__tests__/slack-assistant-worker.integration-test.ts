@@ -505,7 +505,7 @@ describe('Slack assistant worker', () => {
     );
 
     expect(result).toEqual({
-      failed: true,
+      isFailed: true,
       reason: 'Agent is not available',
     });
     expect(botMessagesIn(CHANNEL_ID)).toEqual([
@@ -557,7 +557,7 @@ describe('Slack assistant worker', () => {
     );
 
     expect(result).toEqual({
-      failed: true,
+      isFailed: true,
       reason: SLACK_ASSISTANT_DEADLINE_ERROR,
     });
     expect(botMessagesIn(CHANNEL_ID)).toEqual([
@@ -608,7 +608,7 @@ describe('Slack assistant worker', () => {
     );
 
     expect(result).toEqual({
-      failed: true,
+      isFailed: true,
       reason: SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR,
     });
     expect(botMessagesIn(CHANNEL_ID)).toEqual([
@@ -654,7 +654,7 @@ describe('Slack assistant worker', () => {
     );
 
     expect(result).toEqual({
-      failed: true,
+      isFailed: true,
       reason: expect.stringContaining('Could not deliver Slack answer'),
     });
     await expect(readRequest(request.id)).resolves.toEqual(
@@ -821,7 +821,7 @@ describe('Slack assistant worker', () => {
 
     const result = await runWatchdogWhenItFires(request.id);
 
-    expect(result).toEqual({ failed: true, attempt: 1, replied: true });
+    expect(result).toEqual({ isFailed: true, attempt: 1, hasReplied: true });
     expect(botMessagesIn(CHANNEL_ID)).toEqual([
       expect.objectContaining({
         text: SLACK_ASSISTANT_INTERRUPTED_FAILURE_TEXT,
@@ -844,7 +844,10 @@ describe('Slack assistant worker', () => {
 
     const secondResult = await runWatchdogWhenItFires(request.id);
 
-    expect(secondResult).toMatchObject({ failed: false, rescheduled: false });
+    expect(secondResult).toMatchObject({
+      isFailed: false,
+      isRescheduled: false,
+    });
     expect(botMessagesIn(CHANNEL_ID)).toHaveLength(1);
   });
 });

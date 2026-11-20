@@ -1,11 +1,13 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { type SlackAssistantRequestRecord } from 'src/logic-functions/types/slack-assistant-request-record.type';
 import { getSlackAssistantRequestLeaseCutoff } from 'src/logic-functions/utils/get-slack-assistant-request-lease-cutoff';
 
-export const isSlackAssistantRequestStale = (
-  record: Pick<SlackAssistantRequestRecord, 'updatedAt'>,
-  { nowMs = Date.now() }: { nowMs?: number } = {},
-): boolean =>
-  isNonEmptyString(record.updatedAt) &&
-  new Date(record.updatedAt) < getSlackAssistantRequestLeaseCutoff(nowMs);
+export const isSlackAssistantRequestStale = ({
+  updatedAt,
+  nowMs = Date.now(),
+}: {
+  updatedAt: string | undefined;
+  nowMs?: number;
+}): boolean =>
+  isNonEmptyString(updatedAt) &&
+  new Date(updatedAt) < getSlackAssistantRequestLeaseCutoff(nowMs);

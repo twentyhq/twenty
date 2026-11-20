@@ -8,4 +8,4 @@ export const isSlackAssistantRequestResumable = (
 ): boolean =>
   record.status === SLACK_ASSISTANT_REQUEST_STATUS.PENDING ||
   (record.status === SLACK_ASSISTANT_REQUEST_STATUS.PROCESSING &&
-    isSlackAssistantRequestStale(record, { nowMs }));
+    isSlackAssistantRequestStale({ updatedAt: record.updatedAt, nowMs }));
