@@ -95,8 +95,13 @@ export const useSaveCurrentViewFields = () => {
               createViewFieldInput.relationScope ?? null,
             );
 
+            const hasRelationTargetChanged =
+              (existingField.relationTargetFieldMetadataId ?? null) !==
+              (createViewFieldInput.relationTargetFieldMetadataId ?? null);
+
             if (
               !hasRelationScopeChanged &&
+              !hasRelationTargetChanged &&
               isDeeplyEqual(
                 {
                   position: existingField.position,
@@ -134,6 +139,11 @@ export const useSaveCurrentViewFields = () => {
                       // An unchanged scope stays out, so moving or resizing a column never has it validated again
                       ...(hasRelationScopeChanged && {
                         relationScope: createViewFieldInput.relationScope,
+                      }),
+                      ...(hasRelationTargetChanged && {
+                        relationTargetFieldMetadataId:
+                          createViewFieldInput.relationTargetFieldMetadataId ??
+                          null,
                       }),
                     },
                   },
