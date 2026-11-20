@@ -115,6 +115,48 @@ await enqueueJobs({
 
 The queued run inherits the acting user of the function that enqueued it, so it acts with the same permissions.
 
+## Rate limit jobs
+
+Declare a job group when a run must not start more often than a third-party API allows. Each group lives in its own file:
+
+```ts src/job-groups/contacts-api.job-group.ts
+import { defineJobGroup } from 'twenty-sdk/define';
+
+export const CONTACTS_API_JOB_GROUP = 'a4887e5e-9cdb-4eed-b1da-142572e7e184';
+
+export default defineJobGroup({
+  universalIdentifier: CONTACTS_API_JOB_GROUP,
+  name: 'contacts-api',
+  limiter: { max: 50, durationMs: 60_000 },
+});
+```
+
+Bind it to a logic function with `jobGroupUniversalIdentifiers`. Every queued run of that function is paced, whatever enqueued it: `enqueueJobs`, a cron or a database event.
+
+```ts src/logic-functions/sync-contacts-page.ts
+export default defineLogicFunction({
+  universalIdentifier: SYNC_CONTACTS_PAGE,
+  name: 'sync-contacts-page',
+  jobGroupUniversalIdentifiers: [CONTACTS_API_JOB_GROUP],
+  handler,
+});
+```
+
+Or pass groups to one `enqueueJobs` call. They apply to every job of the call, on top of the function's own groups:
+
+```ts
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
+  jobGroupUniversalIdentifiers: [CONTACTS_API_JOB_GROUP],
+  jobs: pages.map((page) => ({ payload: { page } })),
+});
+```
+
+- A group is counted per workspace: every function of your app that uses it shares the same budget.
+- A build, a sync or an `enqueueJobs` call that references a group your app does not declare fails.
+- Runs are spaced evenly when they are enqueued, one every `durationMs / max` (1.2 seconds above), and read as `DELAYED` until their slot comes. A run paced by several groups waits for the latest of their slots, and `delayMs` is a floor.
+- Pacing sets when a run becomes eligible, not exactly when it starts, and retries are not paced again. Keep handling `429` responses with `RetryableLogicFunctionError`.
+
 ## Queue memory
 
 Queued jobs live in memory until they finish, so each workspace and each application may only hold a share of the queue memory that others leave free. A single job is also capped at 20 MB of serialized payload.
@@ -267,6 +309,6 @@ What makes this hold up:
 - **Make the terminating condition explicit.** Recurse only while a full chunk came back. A chain that stops on "no results" alone will keep going forever if the source ever returns a short page mid-way.
 - **Persist progress before enqueuing the next run,** so a failed link restarts from the last completed chunk instead of the beginning.
 - **Keep each chunk idempotent.** Reprocessing one chunk after a retry must not double-write — key writes on the record or external id you are processing.
-- **Prefer a chunked chain over one giant fan-out** when the work hits a rate-limited third party: a chain with `delayMs` paces itself, whereas thousands of jobs enqueued at once all become eligible immediately.
+- **Pace a fan-out that hits a rate-limited third party** with a [job group](#rate-limit-jobs): thousands of jobs enqueued at once otherwise all become eligible immediately.
 
 <PageBanner illustration="card-page-background-jobs" />

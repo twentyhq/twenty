@@ -113,6 +113,7 @@ export const ALL_OVERRIDABLE_UNIVERSAL_PROPERTIES_BY_METADATA_NAME: Record<
   settingsMenuItem: getOverridableUniversalProperties(
     ALL_METADATA_NAME.settingsMenuItem,
   ),
+  jobGroup: getOverridableUniversalProperties(ALL_METADATA_NAME.jobGroup),
   relatedRecordPath: getOverridableUniversalProperties(
     ALL_METADATA_NAME.relatedRecordPath,
   ),

@@ -9,6 +9,7 @@ export const ENTITY_KEY_BY_KIND: Record<PullEntityKind, ManifestEntityKey> = {
   field: 'fields',
   index: 'indexes',
   permissionFlag: 'permissionFlags',
+  jobGroup: 'jobGroups',
   role: 'roles',
   view: 'views',
   viewField: 'viewFields',

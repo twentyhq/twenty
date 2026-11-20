@@ -1173,6 +1173,25 @@ describe('buildPullEntities', () => {
     ).toBe('src/permission-flags/export-pets.permission-flag.ts');
   });
 
+  it('should write a job group verbatim into src/job-groups, named after its name', () => {
+    const jobGroupManifest = {
+      universalIdentifier: 'b7e2c4a1-3d5f-4a6b-8c9d-0e1f2a3b4c5d',
+      name: 'contacts-api',
+      limiter: { max: 50, durationMs: 60_000 },
+    };
+    const { entities, skipped } = buildPullEntities({
+      manifest: buildManifest({ jobGroups: [jobGroupManifest] }),
+    });
+    const jobGroup = entities.find((entity) => entity.kind === 'jobGroup');
+
+    expect(skipped).toEqual([]);
+    expect(jobGroup?.definer).toBe('defineJobGroup');
+    expect(jobGroup?.config).toEqual(jobGroupManifest);
+    expect(
+      `${jobGroup?.defaultFolder}/${jobGroup?.fileBaseName}${jobGroup?.fileSuffix}`,
+    ).toBe('src/job-groups/contacts-api.job-group.ts');
+  });
+
   it('should write the default role with defineApplicationRole and the other roles with defineRole into src/roles under the role enum bindings', () => {
     const { entities } = buildPullEntities({
       manifest: buildManifest({

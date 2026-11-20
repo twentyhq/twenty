@@ -25,6 +25,7 @@ import {
   LogicFunctionTriggerJob,
   type LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { buildJobGroupLimiters } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-job-group-limiters.util';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -88,10 +89,11 @@ export class ApplicationJobService {
 
     const jobItems = this.getJobItems(input);
 
-    const { flatLogicFunctionMaps, flatApplicationMaps } =
+    const { flatLogicFunctionMaps, flatApplicationMaps, flatJobGroupMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatLogicFunctionMaps',
         'flatApplicationMaps',
+        'flatJobGroupMaps',
       ]);
 
     const flatLogicFunction = findFlatEntityByUniversalIdentifier({
@@ -122,6 +124,23 @@ export class ApplicationJobService {
       );
     }
 
+    const unknownJobGroupUniversalIdentifiers = (
+      input.jobGroupUniversalIdentifiers ?? []
+    ).filter(
+      (jobGroupUniversalIdentifier) =>
+        findFlatEntityByUniversalIdentifier({
+          flatEntityMaps: flatJobGroupMaps,
+          universalIdentifier: jobGroupUniversalIdentifier,
+        })?.applicationId !== applicationId,
+    );
+
+    if (unknownJobGroupUniversalIdentifiers.length > 0) {
+      throw new ApplicationException(
+        `Job groups not found in this application: ${unknownJobGroupUniversalIdentifiers.join(', ')}`,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const jobIds = jobItems.map((jobItem) => jobItem.jobId ?? v4());
 
     const { jobs, availableBytes } =
@@ -143,6 +162,14 @@ export class ApplicationJobService {
           retryLimit: input.retryLimit ?? ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
           backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
           priority: ENQUEUE_JOB_PRIORITY,
+          groupLimiters: buildJobGroupLimiters({
+            flatJobGroupMaps,
+            applicationId,
+            jobGroupUniversalIdentifiers: [
+              ...(flatLogicFunction.jobGroupUniversalIdentifiers ?? []),
+              ...(input.jobGroupUniversalIdentifiers ?? []),
+            ],
+          }),
           ...(isDefined(input.delayMs) ? { delay: input.delayMs } : {}),
         },
       );

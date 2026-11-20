@@ -1,7 +1,10 @@
 import { ApplicationSourceService } from 'src/engine/core-modules/application/application-manifest/services/application-source.service';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
-import { type Manifest } from 'twenty-shared/application';
+import {
+  getJobGroupsManifestErrors,
+  type Manifest,
+} from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
@@ -96,6 +99,18 @@ export class ApplicationSyncService {
     toRequestedIframeMediaPermissionsOrThrow(
       manifest.application.requestedIframeMediaPermissions,
     );
+
+    const jobGroupsErrors = getJobGroupsManifestErrors({
+      jobGroups: manifest.jobGroups ?? [],
+      logicFunctions: manifest.logicFunctions,
+    });
+
+    if (jobGroupsErrors.length > 0) {
+      throw new ApplicationException(
+        jobGroupsErrors.join('; '),
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
 
     const ownerFlatApplication: FlatApplication = dryRun
       ? await this.resolveDryRunOwnerFlatApplication({ workspaceId, manifest })

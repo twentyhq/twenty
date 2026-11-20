@@ -112,6 +112,11 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
         (timelineActivityType) => timelineActivityType.label,
       ),
   },
+  jobGroup: {
+    entityKind: 'job group',
+    getCandidates: (manifest) =>
+      toCandidates(manifest.jobGroups, (jobGroup) => jobGroup.name),
+  },
   settingsMenuItem: {
     entityKind: 'settings menu item',
     getCandidates: (manifest) =>

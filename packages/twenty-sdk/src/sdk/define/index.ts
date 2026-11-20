@@ -186,6 +186,13 @@ export type {
   StandalonePageLayoutWidgetManifest,
 } from '@/sdk/define/common/types/loose-shared-types.type';
 
+export { defineJobGroup } from '@/sdk/define/job-groups/define-job-group';
+export type { JobGroupConfig } from '@/sdk/define/job-groups/job-group-config';
+export type {
+  JobGroupLimiter,
+  JobGroupManifest,
+} from 'twenty-shared/application';
+
 export { definePermissionFlag } from '@/sdk/define/permission-flags/define-permission-flag';
 export type {
   PermissionFlagConfig,

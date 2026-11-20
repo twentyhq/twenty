@@ -37,6 +37,7 @@ import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/app
 import { fromRelatedRecordPathManifestToUniversalFlatRelatedRecordPath } from 'src/engine/core-modules/application/application-manifest/converters/from-related-record-path-manifest-to-universal-flat-related-record-path.util';
 import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
 import { fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType } from 'src/engine/core-modules/application/application-manifest/converters/from-timeline-activity-type-manifest-to-universal-flat-timeline-activity-type.util';
+import { fromJobGroupManifestToUniversalFlatJobGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-job-group-manifest-to-universal-flat-job-group.util';
 import { fromSettingsMenuItemManifestToUniversalFlatSettingsMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-settings-menu-item-manifest-to-universal-flat-settings-menu-item.util';
 import { getLegacySettingsMenuItemManifests } from 'src/engine/core-modules/application/application-manifest/utils/get-legacy-settings-menu-item-manifests.util';
 import { fromViewFieldGroupManifestToUniversalFlatViewFieldGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-field-group-manifest-to-universal-flat-view-field-group.util';
@@ -822,6 +823,18 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           }),
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatSettingsMenuItemMaps,
+      });
+    }
+
+    for (const jobGroupManifest of manifest.jobGroups ?? []) {
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity: fromJobGroupManifestToUniversalFlatJobGroup({
+          jobGroupManifest,
+          applicationUniversalIdentifier,
+          now,
+        }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatJobGroupMaps,
       });
     }
 

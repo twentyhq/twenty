@@ -71,6 +71,8 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 ]
 `;
 
+exports[`getMetadataRelatedMetadataNames should return related metadata names for jobGroup 1`] = `[]`;
+
 exports[`getMetadataRelatedMetadataNames should return related metadata names for logicFunction 1`] = `[]`;
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for mcpServer 1`] = `

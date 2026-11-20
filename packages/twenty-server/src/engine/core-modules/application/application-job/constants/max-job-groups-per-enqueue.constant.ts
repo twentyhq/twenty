@@ -1,0 +1,1 @@
+export const MAX_JOB_GROUPS_PER_ENQUEUE = 10;

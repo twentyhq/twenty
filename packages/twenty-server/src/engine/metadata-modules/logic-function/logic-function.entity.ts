@@ -18,6 +18,7 @@ import {
 } from 'twenty-shared/application';
 
 import { ADD_JOB_CONFIG_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-job-config-to-workflow-and-logic-function-upgrade-command-name.constant';
+import { ADD_JOB_GROUPS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-job-groups-upgrade-command-name.constant';
 import { DROP_JOB_CONFIG_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/drop-job-config-upgrade-command-name.constant';
 import { type MessageQueueJobConfig } from 'src/engine/core-modules/message-queue/types/message-queue-job-config.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
@@ -100,6 +101,12 @@ export class LogicFunctionEntity
 
   @Column({ nullable: true, type: 'jsonb' })
   workflowActionTriggerSettings: JsonbProperty<WorkflowActionTriggerSettings> | null;
+
+  @Column({ type: 'uuid', array: true, nullable: false, default: '{}' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_JOB_GROUPS_UPGRADE_COMMAND_NAME,
+  })
+  jobGroupUniversalIdentifiers: string[];
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:

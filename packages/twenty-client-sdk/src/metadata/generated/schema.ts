@@ -342,7 +342,7 @@ export interface AiSystemPromptSection {
     __typename: 'AiSystemPromptSection'
 }
 
-export type AllMetadataName = 'agent' | 'agentChatChannel' | 'agentChatChannelRole' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'fieldMetadata' | 'fieldMetadataOption' | 'fieldPermission' | 'frontComponent' | 'index' | 'logicFunction' | 'mcpServer' | 'messagingProvider' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'relatedRecordPath' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'rowLevelPermissionRule' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'webhook' | 'workflow' | 'workflowVersion'
+export type AllMetadataName = 'agent' | 'agentChatChannel' | 'agentChatChannelRole' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'fieldMetadata' | 'fieldMetadataOption' | 'fieldPermission' | 'frontComponent' | 'index' | 'jobGroup' | 'logicFunction' | 'mcpServer' | 'messagingProvider' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'relatedRecordPath' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'rowLevelPermissionRule' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'webhook' | 'workflow' | 'workflowVersion'
 
 export interface Analytics {
     /** Boolean that confirms query was dispatched */
@@ -6370,7 +6370,7 @@ export interface EnqueueJobResultGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface EnqueueJobsInput {delayMs?: (Scalars['Int'] | null),jobs?: (EnqueueJobItemInput[] | null),logicFunctionUniversalIdentifier: Scalars['String'],payloads?: (Scalars['JSON'][] | null),retryLimit?: (Scalars['Int'] | null)}
+export interface EnqueueJobsInput {delayMs?: (Scalars['Int'] | null),jobGroupUniversalIdentifiers?: (Scalars['String'][] | null),jobs?: (EnqueueJobItemInput[] | null),logicFunctionUniversalIdentifier: Scalars['String'],payloads?: (Scalars['JSON'][] | null),retryLimit?: (Scalars['Int'] | null)}
 
 export interface EnqueueJobsResultGenqlSelection{
     availableBytes?: boolean | number
@@ -12918,6 +12918,7 @@ export const enumAllMetadataName = {
    fieldPermission: 'fieldPermission' as const,
    frontComponent: 'frontComponent' as const,
    index: 'index' as const,
+   jobGroup: 'jobGroup' as const,
    logicFunction: 'logicFunction' as const,
    mcpServer: 'mcpServer' as const,
    messagingProvider: 'messagingProvider' as const,

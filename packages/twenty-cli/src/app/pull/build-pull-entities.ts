@@ -43,6 +43,7 @@ export const PULL_ENTITY_KINDS = [
   'field',
   'index',
   'permissionFlag',
+  'jobGroup',
   'role',
   'view',
   'viewField',
@@ -241,6 +242,23 @@ export const buildPullEntities = ({
       fileBaseName: toFileBaseName({
         segments: [permissionFlagManifest.key],
         universalIdentifier: permissionFlagManifest.universalIdentifier,
+      }),
+      parentName: null,
+    });
+  }
+
+  for (const jobGroupManifest of manifest.jobGroups ?? []) {
+    entities.push({
+      kind: 'jobGroup',
+      universalIdentifier: jobGroupManifest.universalIdentifier,
+      definer: 'defineJobGroup',
+      config: jobGroupManifest,
+      enumBindings: [],
+      defaultFolder: 'src/job-groups',
+      fileSuffix: '.job-group.ts',
+      fileBaseName: toFileBaseName({
+        segments: [jobGroupManifest.name],
+        universalIdentifier: jobGroupManifest.universalIdentifier,
       }),
       parentName: null,
     });

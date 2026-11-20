@@ -404,6 +404,7 @@ enum AllMetadataName {
   fieldPermission
   frontComponent
   index
+  jobGroup
   logicFunction
   mcpServer
   messagingProvider
@@ -2362,6 +2363,7 @@ type EnqueueJobResult {
 
 input EnqueueJobsInput {
   delayMs: Int
+  jobGroupUniversalIdentifiers: [String!]
   jobs: [EnqueueJobItemInput!]
   logicFunctionUniversalIdentifier: String!
   payloads: [JSON!] @deprecated(reason: "Use jobs instead.")

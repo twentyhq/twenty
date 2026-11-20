@@ -462,6 +462,17 @@ import {
   type UniversalDeleteAgentChatChannelRoleAction,
   type UniversalUpdateAgentChatChannelRoleAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent-chat-channel-role/types/workspace-migration-agent-chat-channel-role-action.type';
+import { type FlatJobGroupMaps } from 'src/engine/metadata-modules/flat-job-group/types/flat-job-group-maps.type';
+import { type FlatJobGroup } from 'src/engine/metadata-modules/flat-job-group/types/flat-job-group.type';
+import { type UniversalFlatJobGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-job-group.type';
+import {
+  type FlatCreateJobGroupAction,
+  type FlatDeleteJobGroupAction,
+  type FlatUpdateJobGroupAction,
+  type UniversalCreateJobGroupAction,
+  type UniversalDeleteJobGroupAction,
+  type UniversalUpdateJobGroupAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/job-group/types/workspace-migration-job-group-action.type';
 import { type FlatSettingsMenuItemMaps } from 'src/engine/metadata-modules/flat-settings-menu-item/types/flat-settings-menu-item-maps.type';
 import { type FlatSettingsMenuItem } from 'src/engine/metadata-modules/flat-settings-menu-item/types/flat-settings-menu-item.type';
 import { type UniversalFlatSettingsMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-settings-menu-item.type';
@@ -1082,6 +1093,22 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatSettingsMenuItem;
     universalFlatEntity: UniversalFlatSettingsMenuItem;
     entity: MetadataEntity<'settingsMenuItem'>;
+  };
+  jobGroup: {
+    flatEntityMaps: FlatJobGroupMaps;
+    universalActions: {
+      create: UniversalCreateJobGroupAction;
+      update: UniversalUpdateJobGroupAction;
+      delete: UniversalDeleteJobGroupAction;
+    };
+    flatActions: {
+      create: FlatCreateJobGroupAction;
+      update: FlatUpdateJobGroupAction;
+      delete: FlatDeleteJobGroupAction;
+    };
+    flatEntity: FlatJobGroup;
+    universalFlatEntity: UniversalFlatJobGroup;
+    entity: MetadataEntity<'jobGroup'>;
   };
   fieldMetadataOption: {
     flatEntityMaps: FlatFieldMetadataOptionMaps;

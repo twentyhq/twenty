@@ -69,6 +69,16 @@ Extract and test:
 - summary count aggregation;
 - error message normalization.
 
+## Job Groups
+
+Pace queued runs that hit a rate-limited API with a job group instead of staggering `delayMs` by hand.
+
+- Declare one per file in `src/job-groups/<name>.job-group.ts`: `defineJobGroup({ universalIdentifier, name, limiter: { max, durationMs } })`. Export its universal identifier as a constant.
+- Bind it to a logic function with `jobGroupUniversalIdentifiers: [<constant>]`. Every queued run of that function is paced, whatever enqueued it (`enqueueJobs`, cron, database event).
+- Pass `jobGroupUniversalIdentifiers` to an `enqueueJobs` call, next to `retryLimit`, to pace every job of that call on top of the function's own groups.
+- A group's budget is shared per workspace by every function of the app that uses it. A group the app does not declare fails the build, the sync and `enqueueJobs`.
+- Pacing sets when a run becomes eligible, not exactly when it starts, and retries are not paced again: still handle `429` with `RetryableLogicFunctionError`.
+
 ## Skills And Agents
 
 Skills and agents should describe when they apply, what context they need, and what output is expected.

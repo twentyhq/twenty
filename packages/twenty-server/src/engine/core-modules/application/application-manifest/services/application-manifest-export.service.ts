@@ -21,6 +21,7 @@ import { reconstructPageLayoutsManifest } from 'src/engine/core-modules/applicat
 import { reconstructRolesManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-roles-manifest.util';
 import { reconstructRelatedRecordPathsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-related-record-paths-manifest.util';
 import { reconstructSkillsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-skills-manifest.util';
+import { reconstructJobGroupsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-job-groups-manifest.util';
 import { reconstructValidationRulesManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-validation-rules-manifest.util';
 import { reconstructViewsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-views-manifest.util';
 import { reconstructWorkflowsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-workflows-manifest.util';
@@ -257,6 +258,8 @@ export class ApplicationManifestExportService {
       });
     const { relatedRecordPaths, coverage: relatedRecordPathsCoverage } =
       reconstructRelatedRecordPathsManifest({ applicationAllFlatEntityMaps });
+    const { jobGroups, coverage: jobGroupsCoverage } =
+      reconstructJobGroupsManifest({ applicationAllFlatEntityMaps });
     const translations = isDefined(flatApplication.applicationRegistrationId)
       ? await this.applicationTranslationCacheService.getCatalogsByLocale(
           flatApplication.applicationRegistrationId,
@@ -307,6 +310,7 @@ export class ApplicationManifestExportService {
       relatedRecordPaths,
       workflows,
       validationRules,
+      jobGroups,
       ...(isDefined(translations) ? { translations } : {}),
     };
 
@@ -334,6 +338,7 @@ export class ApplicationManifestExportService {
             ...agentsCoverage,
             ...skillsCoverage,
             ...validationRulesCoverage,
+            ...jobGroupsCoverage,
             ...relatedRecordPathsCoverage,
           ],
         }),

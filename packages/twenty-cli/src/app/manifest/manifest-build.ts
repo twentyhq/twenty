@@ -46,6 +46,7 @@ import {
   type FieldManifest,
   type FrontComponentManifest,
   type IndexManifest,
+  type JobGroupManifest,
   type ValidationRuleManifest,
   type LogicFunctionManifest,
   type Manifest,
@@ -66,6 +67,7 @@ import {
   type TimelineActivityTypeManifest,
   type ViewManifest,
   type WorkflowManifest,
+  getJobGroupsManifestErrors,
 } from 'twenty-shared/application';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
@@ -113,6 +115,7 @@ export const buildManifest = async (
   const indexes: IndexManifest[] = [];
   const validationRules: ValidationRuleManifest[] = [];
   const permissionFlags: PermissionFlagManifest[] = [];
+  const jobGroups: JobGroupManifest[] = [];
   const roles: LegacyCompliantRoleManifest[] = [];
   const skills: SkillManifest[] = [];
   const agents: AgentManifest[] = [];
@@ -149,6 +152,7 @@ export const buildManifest = async (
   const indexesFilePaths: string[] = [];
   const validationRulesFilePaths: string[] = [];
   const permissionFlagsFilePaths: string[] = [];
+  const jobGroupsFilePaths: string[] = [];
   const rolesFilePaths: string[] = [];
   const skillsFilePaths: string[] = [];
   const agentsFilePaths: string[] = [];
@@ -236,6 +240,17 @@ export const buildManifest = async (
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         permissionFlagsFilePaths.push(relativePath);
+        break;
+      }
+      case 'jobGroups': {
+        const extract = await extractManifestFromFile<JobGroupManifest>({
+          appPath,
+          filePath,
+        });
+        jobGroups.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        jobGroupsFilePaths.push(relativePath);
         break;
       }
       case 'roles': {
@@ -689,6 +704,13 @@ export const buildManifest = async (
   }
 
   errors.push(
+    ...getJobGroupsManifestErrors({
+      jobGroups,
+      logicFunctions,
+    }),
+  );
+
+  errors.push(
     ...validateViewFilterOperands({
       views,
       objects,
@@ -784,6 +806,7 @@ export const buildManifest = async (
         messagingProviders: messagingProviders.sort(byId),
         mcpServers: mcpServers.sort(byId),
         logicFunctions: logicFunctions.sort(byId),
+        jobGroups: jobGroups.sort(byId),
         frontComponents: frontComponents.sort(byId),
         publicAssets: publicAssets.sort(byPath),
         views: views.sort(byId),
@@ -806,6 +829,7 @@ export const buildManifest = async (
     indexes: indexesFilePaths,
     validationRules: validationRulesFilePaths,
     permissionFlags: permissionFlagsFilePaths,
+    jobGroups: jobGroupsFilePaths,
     roles: rolesFilePaths,
     skills: skillsFilePaths,
     agents: agentsFilePaths,

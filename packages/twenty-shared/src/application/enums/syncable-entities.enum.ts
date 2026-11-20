@@ -18,4 +18,5 @@ export enum SyncableEntity {
   CommandMenuItem = 'commandMenuItem',
   TimelineActivityType = 'timelineActivityType',
   SettingsMenuItem = 'settingsMenuItem',
+  JobGroup = 'jobGroup',
 }

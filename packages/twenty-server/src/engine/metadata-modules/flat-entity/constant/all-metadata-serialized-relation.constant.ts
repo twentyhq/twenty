@@ -64,6 +64,7 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   validationRule: {},
   searchFieldMetadata: {},
   settingsMenuItem: {},
+  jobGroup: {},
   workflow: {},
   workflowVersion: {},
   agentChatChannel: {},

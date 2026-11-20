@@ -47,6 +47,7 @@ exports[`registry-derived override property maps derives the overridable propert
   "fieldPermission": [],
   "frontComponent": [],
   "index": [],
+  "jobGroup": [],
   "logicFunction": [],
   "mcpServer": [],
   "messagingProvider": [],

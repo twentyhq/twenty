@@ -119,6 +119,9 @@ import { DeleteAgentChatChannelRoleActionHandlerService } from 'src/engine/works
 import { CreateSettingsMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/settings-menu-item/services/create-settings-menu-item-action-handler.service';
 import { DeleteSettingsMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/settings-menu-item/services/delete-settings-menu-item-action-handler.service';
 import { UpdateSettingsMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/settings-menu-item/services/update-settings-menu-item-action-handler.service';
+import { CreateJobGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/job-group/services/create-job-group-action-handler.service';
+import { DeleteJobGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/job-group/services/delete-job-group-action-handler.service';
+import { UpdateJobGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/job-group/services/update-job-group-action-handler.service';
 import { FieldMetadataOptionEnumSchemaService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/field-metadata-option-enum-schema.service';
 import { CreateFieldMetadataOptionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field-metadata-option/services/create-field-metadata-option-action-handler.service';
 import { DeleteFieldMetadataOptionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field-metadata-option/services/delete-field-metadata-option-action-handler.service';
@@ -294,6 +297,9 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     CreateSettingsMenuItemActionHandlerService,
     UpdateSettingsMenuItemActionHandlerService,
     DeleteSettingsMenuItemActionHandlerService,
+    CreateJobGroupActionHandlerService,
+    UpdateJobGroupActionHandlerService,
+    DeleteJobGroupActionHandlerService,
     CreateAgentChatChannelActionHandlerService,
     UpdateAgentChatChannelActionHandlerService,
     DeleteAgentChatChannelActionHandlerService,

@@ -777,6 +777,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: true,
       universalProperty: undefined,
     },
+    jobGroupUniversalIdentifiers: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     createdAt: {
       toCompare: false,
       toStringify: false,
@@ -2425,6 +2430,24 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     slug: {
       toCompare: true,
       toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  jobGroup: {
+    name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    limiter: {
+      toCompare: true,
+      toStringify: true,
       universalProperty: undefined,
     },
     createdAt: {

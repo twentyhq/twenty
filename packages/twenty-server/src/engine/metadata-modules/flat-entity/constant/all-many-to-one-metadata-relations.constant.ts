@@ -684,6 +684,10 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       universalForeignKey: 'frontComponentUniversalIdentifier',
     },
   },
+  jobGroup: {
+    workspace: null,
+    application: null,
+  },
   searchFieldMetadata: {
     workspace: null,
     application: null,

@@ -41,6 +41,7 @@ import { WorkspaceMigrationTimelineActivityTypeActionsBuilderService } from 'src
 import { WorkspaceMigrationAgentChatChannelActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent-chat-channel/workspace-migration-agent-chat-channel-actions-builder.service';
 import { WorkspaceMigrationAgentChatChannelRoleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent-chat-channel-role/workspace-migration-agent-chat-channel-role-actions-builder.service';
 import { WorkspaceMigrationSettingsMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/settings-menu-item/workspace-migration-settings-menu-item-actions-builder.service';
+import { WorkspaceMigrationJobGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/job-group/workspace-migration-job-group-actions-builder.service';
 import { WorkspaceMigrationFieldMetadataOptionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field-metadata-option/workspace-migration-field-metadata-option-actions-builder.service';
 import { WorkspaceMigrationRelatedRecordPathActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/related-record-path/workspace-migration-related-record-path-actions-builder.service';
 import { WorkspaceMigrationValidationRuleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/validation-rule/workspace-migration-validation-rule-actions-builder.service';
@@ -88,6 +89,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationMessagingProviderActionsBuilderService,
     WorkspaceMigrationTimelineActivityTypeActionsBuilderService,
     WorkspaceMigrationSettingsMenuItemActionsBuilderService,
+    WorkspaceMigrationJobGroupActionsBuilderService,
     WorkspaceMigrationAgentChatChannelActionsBuilderService,
     WorkspaceMigrationAgentChatChannelRoleActionsBuilderService,
     WorkspaceMigrationFieldMetadataOptionActionsBuilderService,
@@ -133,6 +135,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationMessagingProviderActionsBuilderService,
     WorkspaceMigrationTimelineActivityTypeActionsBuilderService,
     WorkspaceMigrationSettingsMenuItemActionsBuilderService,
+    WorkspaceMigrationJobGroupActionsBuilderService,
     WorkspaceMigrationAgentChatChannelActionsBuilderService,
     WorkspaceMigrationAgentChatChannelRoleActionsBuilderService,
     WorkspaceMigrationFieldMetadataOptionActionsBuilderService,

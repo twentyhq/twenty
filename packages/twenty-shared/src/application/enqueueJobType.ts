@@ -22,6 +22,7 @@ export type EnqueueJobItem = {
 
 export type EnqueueJobsInput = EnqueueJobOptions & {
   logicFunctionUniversalIdentifier: string;
+  jobGroupUniversalIdentifiers?: string[];
   payloads?: Record<string, unknown>[];
   jobs?: EnqueueJobItem[];
 };

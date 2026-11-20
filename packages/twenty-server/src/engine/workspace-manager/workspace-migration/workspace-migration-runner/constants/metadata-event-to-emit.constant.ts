@@ -42,6 +42,7 @@ export const METADATA_EVENTS_TO_EMIT = {
   agentChatChannel: true,
   agentChatChannelRole: true,
   settingsMenuItem: true,
+  jobGroup: false,
   workflow: true,
   workflowVersion: true,
 } as const satisfies { [P in AllMetadataName]: boolean };

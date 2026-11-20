@@ -1,3 +1,4 @@
+import { isValidUniversalIdentifier } from 'twenty-shared/application';
 import { HTTPMethod } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -76,6 +77,19 @@ export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
         subject: 'Database event trigger',
         replacement: "eventTriggerSettings with on: 'recordEvent'",
       }),
+    );
+  }
+
+  const invalidJobGroupUniversalIdentifiers = (
+    config.jobGroupUniversalIdentifiers ?? []
+  ).filter(
+    (jobGroupUniversalIdentifier) =>
+      !isValidUniversalIdentifier(jobGroupUniversalIdentifier),
+  );
+
+  if (invalidJobGroupUniversalIdentifiers.length > 0) {
+    errors.push(
+      `Logic function jobGroupUniversalIdentifiers must be valid universal identifiers (got ${invalidJobGroupUniversalIdentifiers.map((jobGroupUniversalIdentifier) => `"${jobGroupUniversalIdentifier}"`).join(', ')})`,
     );
   }
 

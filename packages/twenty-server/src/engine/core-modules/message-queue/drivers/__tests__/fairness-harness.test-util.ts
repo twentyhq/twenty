@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import { FAIR_TICKET_OFFSET } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
+import { type GroupLimiter } from 'src/engine/core-modules/message-queue/drivers/fairness/group-rate-pacer';
 import {
   type QueueJobScope,
   type QueueJobSettings,
@@ -322,7 +323,13 @@ type ScenarioJobScope = {
 type EnqueueInput = { label: string } & ScenarioJobScope &
   Pick<
     QueueJobSettings,
-    'priority' | 'delay' | 'id' | 'retryLimit' | 'backoff' | 'groupKey'
+    | 'priority'
+    | 'delay'
+    | 'id'
+    | 'retryLimit'
+    | 'backoff'
+    | 'groupKey'
+    | 'groupLimiters'
   >;
 
 const buildScenarioJobScope = ({
@@ -458,6 +465,7 @@ export const createFairnessHarness = async ({
       workspaceId,
       applicationUniversalIdentifier,
       groupKey,
+      groupLimiters,
       delay,
       jobIds,
     }: {
@@ -466,6 +474,7 @@ export const createFairnessHarness = async ({
       workspaceId: string;
       applicationUniversalIdentifier?: string;
       groupKey?: string;
+      groupLimiters?: GroupLimiter[];
       delay?: number;
     }) => {
       await driver.bulkAdd<ScenarioJobData>(
@@ -475,6 +484,7 @@ export const createFairnessHarness = async ({
           data: { label, workspaceId },
           jobId: jobIds?.[index],
           groupKey,
+          groupLimiters,
           ...buildScenarioJobScope({
             workspaceId,
             applicationUniversalIdentifier,

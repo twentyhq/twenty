@@ -45,6 +45,7 @@ export const buildWorkflowCodeStepFlatLogicFunction = ({
     serverRouteTriggerSettings: null,
     toolTriggerSettings: null,
     workflowActionTriggerSettings: null,
+    jobGroupUniversalIdentifiers: [],
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

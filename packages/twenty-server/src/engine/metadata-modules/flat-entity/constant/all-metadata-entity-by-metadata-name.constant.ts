@@ -44,6 +44,7 @@ import { RelatedRecordPathEntity } from 'src/engine/metadata-modules/related-rec
 import { ValidationRuleEntity } from 'src/engine/metadata-modules/validation-rule/entities/validation-rule.entity';
 import { TimelineActivityTypeEntity } from 'src/engine/metadata-modules/timeline-activity-type/entities/timeline-activity-type.entity';
 import { SettingsMenuItemEntity } from 'src/engine/metadata-modules/settings-menu-item/entities/settings-menu-item.entity';
+import { JobGroupEntity } from 'src/engine/metadata-modules/job-group/entities/job-group.entity';
 
 export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   viewField: ViewFieldEntity,
@@ -82,6 +83,7 @@ export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   searchFieldMetadata: SearchFieldMetadataEntity,
   timelineActivityType: TimelineActivityTypeEntity,
   settingsMenuItem: SettingsMenuItemEntity,
+  jobGroup: JobGroupEntity,
   fieldMetadataOption: FieldMetadataOptionEntity,
   relatedRecordPath: RelatedRecordPathEntity,
   validationRule: ValidationRuleEntity,

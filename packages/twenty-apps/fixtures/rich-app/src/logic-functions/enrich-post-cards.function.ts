@@ -1,4 +1,5 @@
 import { defineLogicFunction, type TwentyRecord } from 'twenty-sdk/define';
+import { POST_CARD_API_JOB_GROUP_UNIVERSAL_IDENTIFIER } from '../job-groups/post-card-api.job-group';
 
 const handler = async (params: {
   companyId: TwentyRecord<'20202020-b374-4779-a561-80086cb2e17f'>;
@@ -15,6 +16,7 @@ export default defineLogicFunction({
   name: 'enrich-post-cards',
   description: 'Enrich post cards of a company',
   timeoutSeconds: 5,
+  jobGroupUniversalIdentifiers: [POST_CARD_API_JOB_GROUP_UNIVERSAL_IDENTIFIER],
   handler,
   workflowActionTriggerSettings: {
     label: 'Enrich Post Cards',

@@ -294,4 +294,76 @@ describe('BullMQDriver limiter', () => {
 
     expect(await harness.processAll()).toEqual(['U1', 'U2', 'U3', 'U4']);
   });
+
+  it('paces jobs by their own group limiters on a queue without a group limiter', async () => {
+    jest.useFakeTimers({ doNotFake: ['nextTick', 'setImmediate'] });
+
+    const harness = await createFairnessHarness();
+    const labels = buildLabels({ prefix: 'J', count: 3 });
+
+    await harness.enqueueBulk({
+      labels,
+      workspaceId: 'A',
+      applicationUniversalIdentifier: 'H',
+      groupLimiters: [{ groupKey: 'api', limiter: GROUP_LIMITER }],
+    });
+
+    expect(labels.map((label) => harness.readDelay({ label }))).toEqual([
+      undefined,
+      500,
+      1_000,
+    ]);
+  });
+
+  it('delays a job to the latest slot of all its limiters', async () => {
+    jest.useFakeTimers({ doNotFake: ['nextTick', 'setImmediate'] });
+
+    const harness = await createFairnessHarness({
+      groupLimiter: GROUP_LIMITER,
+    });
+    const apiLimiter = {
+      groupKey: 'api',
+      limiter: { max: 1, durationMs: 1_000 },
+    };
+    const scope = { workspaceId: 'A', applicationUniversalIdentifier: 'H' };
+
+    await harness.enqueueBulk({
+      labels: buildLabels({ prefix: 'W', count: 2 }),
+      groupKey: GROUP_KEY,
+      ...scope,
+    });
+    await harness.enqueueBulk({
+      labels: buildLabels({ prefix: 'J', count: 2 }),
+      groupKey: GROUP_KEY,
+      groupLimiters: [apiLimiter],
+      ...scope,
+    });
+    await harness.enqueueBulk({
+      labels: ['K1'],
+      groupLimiters: [apiLimiter],
+      ...scope,
+    });
+
+    expect(
+      ['W1', 'W2', 'J1', 'J2', 'K1'].map((label) =>
+        harness.readDelay({ label }),
+      ),
+    ).toEqual([undefined, 500, 1_000, 1_500, 2_000]);
+  });
+
+  it('dedupes jobs paced by their own limiters against the delayed set', async () => {
+    const harness = await createFairnessHarness();
+    const scope = { workspaceId: 'A', applicationUniversalIdentifier: 'H' };
+
+    await harness.enqueue({ label: 'D1', id: 'job', delay: 5_000, ...scope });
+    await harness.enqueue({
+      label: 'P1',
+      id: 'job',
+      delay: 5_000,
+      groupLimiters: [{ groupKey: 'api', limiter: GROUP_LIMITER }],
+      ...scope,
+    });
+
+    expect(harness.readDelay({ label: 'P1' })).toBeUndefined();
+  });
 });

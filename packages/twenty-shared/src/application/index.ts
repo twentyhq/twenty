@@ -224,6 +224,7 @@ export { isApplicationBillingPricePeriod } from './isApplicationBillingPricePeri
 export { isApplicationBillingPriceType } from './isApplicationBillingPriceType';
 export { isApplicationBillingPriceUnit } from './isApplicationBillingPriceUnit';
 export { isRecordEventTriggerManifestSettings } from './isRecordEventTriggerManifestSettings';
+export type { JobGroupLimiter, JobGroupManifest } from './jobGroupManifestType';
 export type {
   LogicFunctionManifest,
   CronTriggerSettings,
@@ -369,6 +370,8 @@ export {
   ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
   getEffectiveObjectPermissionsFromRoleManifest,
 } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
+export { getJobGroupManifestErrors } from './utils/getJobGroupManifestErrors';
+export { getJobGroupsManifestErrors } from './utils/getJobGroupsManifestErrors';
 export { getReachableObjectPermissionsFromRoleManifest } from './utils/getReachableObjectPermissionsFromRoleManifest';
 export { getRecordsPermissionsFromRoleManifest } from './utils/getRecordsPermissionsFromRoleManifest';
 export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrantsNotCoveredBy';

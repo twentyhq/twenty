@@ -20,6 +20,7 @@ import { ENQUEUE_JOB_MAX_DELAY_MS } from 'src/engine/core-modules/application/ap
 import { ENQUEUE_JOB_MAX_RETRY_LIMIT } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-max-retry-limit.constant';
 import { ENQUEUE_JOB_MIN_DELAY_MS } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-min-delay-ms.constant';
 import { ENQUEUE_JOB_MIN_RETRY_LIMIT } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-min-retry-limit.constant';
+import { MAX_JOB_GROUPS_PER_ENQUEUE } from 'src/engine/core-modules/application/application-job/constants/max-job-groups-per-enqueue.constant';
 import { MAX_JOBS_PER_ENQUEUE } from 'src/engine/core-modules/application/application-job/constants/max-jobs-per-enqueue.constant';
 import { EnqueueJobItemInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-job-item.input';
 
@@ -29,6 +30,12 @@ export class EnqueueJobsInputDTO implements EnqueueJobsInput {
   @IsNotEmpty()
   @Field()
   logicFunctionUniversalIdentifier: string;
+
+  @IsUUID(undefined, { each: true })
+  @ArrayMaxSize(MAX_JOB_GROUPS_PER_ENQUEUE)
+  @IsOptional()
+  @Field(() => [String], { nullable: true })
+  jobGroupUniversalIdentifiers?: string[];
 
   @IsObject({ each: true })
   @ArrayMinSize(1)

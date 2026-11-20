@@ -1,5 +1,5 @@
 import { type LogicFunctionManifest } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
@@ -42,6 +42,12 @@ export const fromFlatLogicFunctionToLogicFunctionManifest = (
       ? {
           workflowActionTriggerSettings:
             logicFunction.workflowActionTriggerSettings,
+        }
+      : {}),
+    ...(isNonEmptyArray(logicFunction.jobGroupUniversalIdentifiers)
+      ? {
+          jobGroupUniversalIdentifiers:
+            logicFunction.jobGroupUniversalIdentifiers,
         }
       : {}),
   };

@@ -36,6 +36,7 @@ export const ALL_METADATA_NAME = {
   searchFieldMetadata: 'searchFieldMetadata',
   timelineActivityType: 'timelineActivityType',
   settingsMenuItem: 'settingsMenuItem',
+  jobGroup: 'jobGroup',
   relatedRecordPath: 'relatedRecordPath',
   validationRule: 'validationRule',
   workflow: 'workflow',

@@ -23,6 +23,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
+import { buildJobGroupLimiters } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-job-group-limiters.util';
 import {
   LogicFunctionTriggerJob,
   type LogicFunctionTriggerJobData,
@@ -128,6 +129,11 @@ export class ConnectionProviderLifecycleHookService {
         return;
       }
 
+      const { flatJobGroupMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatJobGroupMaps',
+        ]);
+
       await this.messageQueueService.add<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
         {
@@ -141,6 +147,12 @@ export class ConnectionProviderLifecycleHookService {
             logicFunction.applicationUniversalIdentifier,
           retryLimit: 3,
           backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+          groupLimiters: buildJobGroupLimiters({
+            flatJobGroupMaps,
+            applicationId: provider.applicationId,
+            jobGroupUniversalIdentifiers:
+              logicFunction.jobGroupUniversalIdentifiers,
+          }),
         },
       );
     });

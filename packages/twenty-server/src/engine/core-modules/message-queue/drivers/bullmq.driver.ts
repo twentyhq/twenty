@@ -46,6 +46,7 @@ import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/cons
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { FairQueueScheduler } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-queue-scheduler';
+import { type GroupLimiter } from 'src/engine/core-modules/message-queue/drivers/fairness/group-rate-pacer';
 import {
   getChargedGroupKeys,
   type JobMemoryReconciliation,
@@ -663,6 +664,7 @@ export class BullMQDriver
         includeDelayed: this.isPacedJob({
           queueName,
           groupKey: options.groupKey,
+          groupLimiters: options.groupLimiters,
         }),
       });
 
@@ -687,6 +689,7 @@ export class BullMQDriver
       queueName,
       scopes: [options],
       limiterGroupKeys: [options.groupKey],
+      groupLimiters: [options.groupLimiters],
       additionalGroupKeys: options.fairnessGroupKeys,
       delay: options.delay,
       staticPriority: queueOptions.priority,
@@ -944,12 +947,16 @@ export class BullMQDriver
   private isPacedJob({
     queueName,
     groupKey,
+    groupLimiters,
   }: {
     queueName: MessageQueue;
     groupKey: string | undefined;
+    groupLimiters: GroupLimiter[] | undefined;
   }): boolean {
     return (
-      isDefined(groupKey) && this.fairQueueScheduler.hasGroupLimiter(queueName)
+      (isDefined(groupKey) &&
+        this.fairQueueScheduler.hasGroupLimiter(queueName)) ||
+      isNonEmptyArray(groupLimiters)
     );
   }
 
@@ -975,10 +982,12 @@ export class BullMQDriver
     queueName,
     jobs,
     defaultGroupKey,
+    defaultGroupLimiters,
   }: {
     queueName: MessageQueue;
     jobs: TJob[];
     defaultGroupKey: string | undefined;
+    defaultGroupLimiters: GroupLimiter[] | undefined;
   }): Promise<TJob[]> {
     if (!jobs.some((job) => isDefined(job.jobId))) {
       return jobs;
@@ -989,6 +998,7 @@ export class BullMQDriver
       this.isPacedJob({
         queueName,
         groupKey: job.groupKey ?? defaultGroupKey,
+        groupLimiters: job.groupLimiters ?? defaultGroupLimiters,
       });
     const waitingJobIds = await this.getWaitingJobIds({
       queueName,
@@ -1032,6 +1042,7 @@ export class BullMQDriver
           queueName,
           jobs: indexedJobs,
           defaultGroupKey: options?.groupKey,
+          defaultGroupLimiters: options?.groupLimiters,
         });
 
     if (jobsToAdd.length === 0) {
@@ -1059,26 +1070,35 @@ export class BullMQDriver
     });
 
     // BullMQ ignores a re-added job id, so it must not take a pacing slot.
-    const existingPacedJobIds = this.fairQueueScheduler.hasGroupLimiter(
+    const pacedJobIds = jobsToAdd.flatMap((job) =>
+      isDefined(job.jobId) &&
+      this.isPacedJob({
+        queueName,
+        groupKey: job.groupKey ?? options?.groupKey,
+        groupLimiters: job.groupLimiters ?? options?.groupLimiters,
+      })
+        ? [job.jobId]
+        : [],
+    );
+    const existingPacedJobIds = await this.findExistingJobIds({
       queueName,
-    )
-      ? await this.findExistingJobIds({
-          queueName,
-          jobIds: jobsToAdd.flatMap((job) =>
-            isDefined(job.jobId) && isDefined(job.groupKey ?? options?.groupKey)
-              ? [job.jobId]
-              : [],
-          ),
-        })
-      : new Set<string>();
+      jobIds: pacedJobIds,
+    });
+    const isExistingPacedJob = (job: (typeof jobsToAdd)[number]) =>
+      isDefined(job.jobId) && existingPacedJobIds.has(job.jobId);
 
     const jobOptions = await this.fairQueueScheduler.computeJobOptions({
       queueName,
       scopes: jobsToAdd,
       limiterGroupKeys: jobsToAdd.map((job) =>
-        isDefined(job.jobId) && existingPacedJobIds.has(job.jobId)
+        isExistingPacedJob(job)
           ? undefined
           : (job.groupKey ?? options?.groupKey),
+      ),
+      groupLimiters: jobsToAdd.map((job) =>
+        isExistingPacedJob(job)
+          ? undefined
+          : (job.groupLimiters ?? options?.groupLimiters),
       ),
       additionalGroupKeys: options?.fairnessGroupKeys,
       delay: options?.delay,

@@ -16,6 +16,7 @@ import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/m
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
+import { buildJobGroupLimiters } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-job-group-limiters.util';
 import { buildApplicationJobMemoryLimitLogEntry } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-application-job-memory-limit-log-entry.util';
 import { buildApplicationJobThrottledLogEntry } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-application-job-throttled-log-entry.util';
 import { buildLogicFunctionTriggerJobIds } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/build-logic-function-trigger-job-ids';
@@ -49,10 +50,10 @@ export class CallDatabaseEventTriggerJobsJob {
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
     { jobId }: MessageQueueJobContext,
   ) {
-    const { flatLogicFunctionMaps, flatApplicationMaps } =
+    const { flatLogicFunctionMaps, flatApplicationMaps, flatJobGroupMaps } =
       await this.workspaceCacheService.getOrRecompute(
         workspaceEventBatch.workspaceId,
-        ['flatLogicFunctionMaps', 'flatApplicationMaps'],
+        ['flatLogicFunctionMaps', 'flatApplicationMaps', 'flatJobGroupMaps'],
       );
 
     const logicFunctionsToTrigger = findLogicFunctionsTriggeredByEventName({
@@ -152,6 +153,12 @@ export class CallDatabaseEventTriggerJobsJob {
         throw error;
       }
 
+      const jobGroupUniversalIdentifiersByLogicFunctionId = new Map(
+        logicFunctions.map(({ id, jobGroupUniversalIdentifiers }) => [
+          id,
+          jobGroupUniversalIdentifiers,
+        ]),
+      );
       const logicFunctionTriggerJobIds = buildLogicFunctionTriggerJobIds({
         triggerJobId: jobId,
         logicFunctionPayloads,
@@ -166,6 +173,14 @@ export class CallDatabaseEventTriggerJobsJob {
               applicationUniversalIdentifier: application.universalIdentifier,
             },
             jobId: logicFunctionTriggerJobIds[index],
+            groupLimiters: buildJobGroupLimiters({
+              flatJobGroupMaps,
+              applicationId: application.id,
+              jobGroupUniversalIdentifiers:
+                jobGroupUniversalIdentifiersByLogicFunctionId.get(
+                  logicFunctionPayload.logicFunctionId,
+                ),
+            }),
             workspaceId: workspaceEventBatch.workspaceId,
             applicationUniversalIdentifier: application.universalIdentifier,
           })),

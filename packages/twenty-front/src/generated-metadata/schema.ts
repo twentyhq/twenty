@@ -436,6 +436,7 @@ export enum AllMetadataName {
   fieldPermission = 'fieldPermission',
   frontComponent = 'frontComponent',
   index = 'index',
+  jobGroup = 'jobGroup',
   logicFunction = 'logicFunction',
   mcpServer = 'mcpServer',
   messagingProvider = 'messagingProvider',
@@ -2482,6 +2483,7 @@ export type EnqueueJobResult = {
 
 export type EnqueueJobsInput = {
   delayMs?: InputMaybe<Scalars['Int']['input']>;
+  jobGroupUniversalIdentifiers?: InputMaybe<Array<Scalars['String']['input']>>;
   jobs?: InputMaybe<Array<EnqueueJobItemInput>>;
   logicFunctionUniversalIdentifier: Scalars['String']['input'];
   retryLimit?: InputMaybe<Scalars['Int']['input']>;

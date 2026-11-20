@@ -419,4 +419,19 @@ describe('defineLogicFunction', () => {
 
     expect(result.success).toBe(true);
   });
+
+  it('should reject jobGroupUniversalIdentifiers that are not universal identifiers', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Backfill batch',
+      handler: mockHandler,
+      jobGroupUniversalIdentifiers: [
+        '9db40a36-4e53-4312-8350-1572a82ea97b',
+        'not-a-uuid',
+      ],
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors[0]).toContain('"not-a-uuid"');
+  });
 });

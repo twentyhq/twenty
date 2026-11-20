@@ -1,3 +1,5 @@
+import { type GroupLimiter } from 'src/engine/core-modules/message-queue/drivers/fairness/group-rate-pacer';
+
 export type QueueJobBackoffOptions = {
   strategy: 'fixed' | 'exponential';
   initialDelayMilliseconds: number;
@@ -51,6 +53,7 @@ export type QueueJobSettings = {
   broadcastTo?: QueueJobRecipient;
   fairnessGroupKeys?: string[];
   groupKey?: string;
+  groupLimiters?: GroupLimiter[];
 };
 
 export type QueueJobOptions = QueueJobSettings & QueueJobScope;
