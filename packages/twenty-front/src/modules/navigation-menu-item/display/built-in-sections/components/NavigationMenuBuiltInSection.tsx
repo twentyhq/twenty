@@ -1,45 +1,50 @@
+import { type ReactNode } from 'react';
+
 import { NavigationDrawerInboxChannelsSection } from '@/inbox/components/NavigationDrawerInboxChannelsSection';
 import { NavigationDrawerInboxTriageSection } from '@/inbox/components/NavigationDrawerInboxTriageSection';
 import { NavigationMenuAiChatFavoritesSection } from '@/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatFavoritesSection';
 import { NavigationMenuAiChatRecentsSection } from '@/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection';
 import { FavoritesSectionDispatcher } from '@/navigation-menu-item/display/sections/favorites/components/FavoritesSectionDispatcher';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import {
-  FeatureFlagKey,
-  type NavigationMenuItem,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { useAreAiChatSectionsAvailable } from '@/navigation-menu-item/display/hooks/useAreAiChatSectionsAvailable';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type NavigationMenuBuiltInSectionProps = {
   section: Pick<NavigationMenuItem, 'id' | 'builtInSectionKey'>;
+  headerAction?: ReactNode;
 };
 
 export const NavigationMenuBuiltInSection = ({
   section,
+  headerAction,
 }: NavigationMenuBuiltInSectionProps) => {
-  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
-  const isAiChatInboxEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-  );
+  const areAiChatSectionsAvailable = useAreAiChatSectionsAvailable();
 
   if (section.builtInSectionKey === 'favorites') {
     return <FavoritesSectionDispatcher />;
   }
 
-  if (!hasAiPermission || !isAiChatInboxEnabled) {
+  if (!areAiChatSectionsAvailable) {
     return null;
   }
 
   switch (section.builtInSectionKey) {
     case 'aiChatInbox':
-      return <NavigationDrawerInboxTriageSection />;
+      return <NavigationDrawerInboxTriageSection headerAction={headerAction} />;
     case 'aiChatFavorites':
-      return <NavigationMenuAiChatFavoritesSection />;
+      return (
+        <NavigationMenuAiChatFavoritesSection headerAction={headerAction} />
+      );
     case 'aiChatChannels':
-      return <NavigationDrawerInboxChannelsSection />;
+      return (
+        <NavigationDrawerInboxChannelsSection headerAction={headerAction} />
+      );
     case 'aiChatRecents':
-      return <NavigationMenuAiChatRecentsSection sectionId={section.id} />;
+      return (
+        <NavigationMenuAiChatRecentsSection
+          sectionId={section.id}
+          headerAction={headerAction}
+        />
+      );
     default:
       return null;
   }

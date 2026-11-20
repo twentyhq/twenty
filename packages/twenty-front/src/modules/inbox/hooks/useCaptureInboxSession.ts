@@ -5,10 +5,10 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 
-export const useCaptureAiChatSession = () => {
+export const useCaptureInboxSession = () => {
   const store = useStore();
 
-  const captureAiChatSession = useCallback(() => {
+  const captureInboxSession = useCallback(() => {
     const workspaceId = store.get(currentWorkspaceState.atom)?.id;
     const userWorkspace = store.get(currentUserWorkspaceState.atom);
     const workspaceMemberId = store.get(currentWorkspaceMemberState.atom)?.id;
@@ -21,5 +21,5 @@ export const useCaptureAiChatSession = () => {
     };
   }, [store]);
 
-  return { captureAiChatSession };
+  return { captureInboxSession };
 };

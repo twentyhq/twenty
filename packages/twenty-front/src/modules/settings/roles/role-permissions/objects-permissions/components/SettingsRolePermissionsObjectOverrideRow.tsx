@@ -5,8 +5,8 @@ import { SettingsRolePermissionsObjectOverridePanel } from '@/settings/roles/rol
 import { OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/objects-permissions/constants/ObjectOverrideTableGridTemplateColumns';
 import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/objects-permissions/hooks/useSettingsRoleObjectOverrides';
 import { getObjectOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperations';
+import { getObjectRowLevelPermissionRules } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionRules';
 import { getObjectOperationsSummary } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperationsSummary';
-import { getObjectRowLevelPermissionPredicates } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionPredicates';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsRoleExpandedObjectOverrideIdsFamilyState } from '@/settings/roles/states/settingsRoleExpandedObjectOverrideIdsFamilyState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -52,10 +52,11 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
     objectMetadataItem.id,
   );
 
-  const rulePredicates = getObjectRowLevelPermissionPredicates({
-    role: settingsDraftRole,
-    objectMetadataId: objectMetadataItem.id,
-  });
+  const hasRule =
+    getObjectRowLevelPermissionRules({
+      role: settingsDraftRole,
+      objectMetadataId: objectMetadataItem.id,
+    }).length > 0;
 
   const hasFieldRestriction = (settingsDraftRole.fieldPermissions ?? []).some(
     (fieldPermission) =>
@@ -68,7 +69,7 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
-  const isAdvanced = rulePredicates.length > 0 || hasFieldRestriction;
+  const isAdvanced = hasRule || hasFieldRestriction;
 
   const { label, Icon: AccessIcon } = getObjectOperationsSummary({
     operations,
