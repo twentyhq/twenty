@@ -1,10 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { getConnection } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
-import { getWhatsappBusinessAccountConnections } from 'src/logic-functions/data/get-whatsapp-business-account-connections.util';
+import { findConnectedAccountIdByWhatsappBusinessAccountId } from 'src/logic-functions/data/find-connected-account-id-by-whatsapp-business-account-id.util';
 
 const getConnectedAccountIdOrThrow = async (whatsappBusinessAccountId: string) => {
-  const connectedAccountId = (await getWhatsappBusinessAccountConnections())[whatsappBusinessAccountId];
+  const connectedAccountId = await findConnectedAccountIdByWhatsappBusinessAccountId(whatsappBusinessAccountId);
 
   if (!isDefined(connectedAccountId)) {
     throw new Error(`WhatsApp Business Account ${whatsappBusinessAccountId} is not connected`);

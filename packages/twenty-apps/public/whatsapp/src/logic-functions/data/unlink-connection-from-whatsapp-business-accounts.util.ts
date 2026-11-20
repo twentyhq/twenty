@@ -1,16 +1,26 @@
 import { kv } from 'twenty-sdk/logic-function';
-import { WHATSAPP_BUSINESS_ACCOUNT_CONNECTIONS_KV_KEY } from 'src/constants/whatsapp-business-account-connections-kv-key.constant';
-import { getWhatsappBusinessAccountConnections } from 'src/logic-functions/data/get-whatsapp-business-account-connections.util';
+import { WHATSAPP_CONNECTION_KV_KEY_PREFIXES } from 'src/constants/whatsapp-connection-kv-key-prefixes.constant';
+import { findConnectedAccountIdByWhatsappBusinessAccountId } from 'src/logic-functions/data/find-connected-account-id-by-whatsapp-business-account-id.util';
 
 export const unlinkConnectionFromWhatsappBusinessAccounts = async (connectedAccountId: string) => {
-  const connections = await getWhatsappBusinessAccountConnections();
+  const connectionKey = `${WHATSAPP_CONNECTION_KV_KEY_PREFIXES.businessAccountIdsByConnectedAccountId}${connectedAccountId}`;
+  const whatsappBusinessAccountIds = (await kv.get<string[]>(connectionKey)) ?? [];
 
-  await kv.set(
-    WHATSAPP_BUSINESS_ACCOUNT_CONNECTIONS_KV_KEY,
-    Object.fromEntries(
-      Object.entries(connections).filter(
-        ([, linkedConnectedAccountId]) => linkedConnectedAccountId !== connectedAccountId,
-      ),
-    ),
+  await Promise.all(
+    whatsappBusinessAccountIds.map(async (whatsappBusinessAccountId) => {
+      // another connection may have taken the account over since
+      if (
+        (await findConnectedAccountIdByWhatsappBusinessAccountId(whatsappBusinessAccountId)) !==
+        connectedAccountId
+      ) {
+        return;
+      }
+
+      await kv.delete(
+        `${WHATSAPP_CONNECTION_KV_KEY_PREFIXES.connectedAccountIdByBusinessAccountId}${whatsappBusinessAccountId}`,
+      );
+    }),
   );
+
+  await kv.delete(connectionKey);
 };

@@ -10,7 +10,7 @@ import { updateTwentyMessageChannel } from "src/logic-functions/data/update-mess
 import { upsertWhatsAppTemplates } from "src/logic-functions/data/upsert-whatsapp-templates.util";
 import { syncWhatsappTemplate } from "src/logic-functions/data/sync-whatsapp-template.util";
 import { getWhatsappAccessTokenOrThrow } from "src/logic-functions/data/get-whatsapp-access-token-or-throw.util";
-import { getWhatsappBusinessAccountConnections } from "src/logic-functions/data/get-whatsapp-business-account-connections.util";
+import { findConnectedAccountIdByWhatsappBusinessAccountId } from "src/logic-functions/data/find-connected-account-id-by-whatsapp-business-account-id.util";
 import { isDefined } from "twenty-sdk/utils";
 import { buildHistoryParseJobs } from "src/logic-functions/data/build-history-parse-jobs.util";
 import { isNonEmptyString } from "@sniptt/guards";
@@ -38,10 +38,8 @@ const handler = async (
     return new Response('', { status: 400 });
   }
 
-  const whatsappBusinessAccountConnections = await getWhatsappBusinessAccountConnections();
-
   for (const entry of body.entry) {
-    if (!isDefined(whatsappBusinessAccountConnections[entry.id])) {
+    if (!isDefined(await findConnectedAccountIdByWhatsappBusinessAccountId(entry.id))) {
       console.warn(`Ignoring webhook for WhatsApp Business Account ${entry.id}, it is not connected`);
       continue;
     }

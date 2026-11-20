@@ -1,7 +1,7 @@
-import { getWhatsappBusinessAccountConnections } from 'src/logic-functions/data/get-whatsapp-business-account-connections.util';
+import { getConnectedWhatsappBusinessAccountIds } from 'src/logic-functions/data/get-connected-whatsapp-business-account-ids.util';
 
 export const getDefaultWhatsappBusinessAccountIdOrThrow = async (): Promise<string> => {
-  const whatsappBusinessAccountIds = Object.keys(await getWhatsappBusinessAccountConnections());
+  const whatsappBusinessAccountIds = await getConnectedWhatsappBusinessAccountIds();
   const [whatsappBusinessAccountId, ...otherWhatsappBusinessAccountIds] = whatsappBusinessAccountIds;
 
   if (whatsappBusinessAccountId === undefined) {
