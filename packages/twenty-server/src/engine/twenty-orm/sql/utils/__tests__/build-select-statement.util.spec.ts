@@ -180,7 +180,7 @@ describe('buildSelectStatement', () => {
           {
             operator: 'and',
             isNegated: false,
-            readsUnreadableColumnsAsNull: true,
+            shouldReadUnreadableColumnsAsNull: true,
             clauses: [{ operator: 'and', sql: '"person"."id" IS NULL' }],
           },
         ],

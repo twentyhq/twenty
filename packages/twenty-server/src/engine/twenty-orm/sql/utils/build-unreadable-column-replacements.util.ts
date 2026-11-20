@@ -3,15 +3,15 @@ import { escapeRegularExpression } from 'src/engine/twenty-orm/sql/utils/escape-
 import { renderUnreadableColumn } from 'src/engine/twenty-orm/sql/utils/render-unreadable-column.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-export type ColumnMasks = {
-  maskedColumnByQuotedColumn: Map<string, string>;
+export type UnreadableColumnReplacements = {
+  replacementByQuotedColumn: Map<string, string>;
   quotedColumnPattern: RegExp;
 };
 
-export const buildColumnMasks = (
+export const buildUnreadableColumnReplacements = (
   unreadableColumnConditions: UnreadableColumnConditions,
-): ColumnMasks | undefined => {
-  const maskedColumnByQuotedColumn = new Map(
+): UnreadableColumnReplacements | undefined => {
+  const replacementByQuotedColumn = new Map(
     Object.entries(unreadableColumnConditions).flatMap(([alias, conditions]) =>
       Object.entries(conditions).map(
         ([columnName, unreadableConditions]): [string, string] => {
@@ -26,14 +26,14 @@ export const buildColumnMasks = (
     ),
   );
 
-  if (maskedColumnByQuotedColumn.size === 0) {
+  if (replacementByQuotedColumn.size === 0) {
     return undefined;
   }
 
   return {
-    maskedColumnByQuotedColumn,
+    replacementByQuotedColumn,
     quotedColumnPattern: new RegExp(
-      [...maskedColumnByQuotedColumn.keys()]
+      [...replacementByQuotedColumn.keys()]
         .map(escapeRegularExpression)
         .join('|'),
       'g',

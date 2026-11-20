@@ -6,14 +6,14 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
 import {
-  buildColumnMasks,
-  type ColumnMasks,
-} from 'src/engine/twenty-orm/sql/utils/build-column-masks.util';
+  buildUnreadableColumnReplacements,
+  type UnreadableColumnReplacements,
+} from 'src/engine/twenty-orm/sql/utils/build-unreadable-column-replacements.util';
 import { findUnreadableColumnConditions } from 'src/engine/twenty-orm/sql/utils/find-unreadable-column-conditions.util';
 import { renderReadableCondition } from 'src/engine/twenty-orm/sql/utils/render-readable-condition.util';
 import { renderUnreadableAwareCondition } from 'src/engine/twenty-orm/sql/utils/render-unreadable-aware-condition.util';
 import { escapeRegularExpression } from 'src/engine/twenty-orm/sql/utils/escape-regular-expression.util';
-import { maskUnreadableColumnReferences } from 'src/engine/twenty-orm/sql/utils/mask-unreadable-column-references.util';
+import { replaceUnreadableColumnReferences } from 'src/engine/twenty-orm/sql/utils/replace-unreadable-column-references.util';
 import { renderUnreadableColumn } from 'src/engine/twenty-orm/sql/utils/render-unreadable-column.util';
 import {
   TwentyOrmException,
@@ -25,19 +25,19 @@ import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/type
 export type WhereConditionClause = {
   operator: 'and' | 'or';
   sql: string;
-  readsUnreadableColumnsAsNull?: boolean;
+  shouldReadUnreadableColumnsAsNull?: boolean;
 };
 
 export type WhereGroupClause = {
   operator: 'and' | 'or';
   isNegated: boolean;
   clauses: WhereClause[];
-  readsUnreadableColumnsAsNull?: boolean;
+  shouldReadUnreadableColumnsAsNull?: boolean;
 };
 
 type RenderWhereCondition = (args: {
   condition: string;
-  readsUnreadableColumnsAsNull: boolean;
+  shouldReadUnreadableColumnsAsNull: boolean;
 }) => string;
 
 export type WhereClause = WhereConditionClause | WhereGroupClause;
@@ -197,18 +197,18 @@ export const quoteQualifiedAliasReferences = (
     )
     .join('');
 
-const renderMaskedExpression = ({
+const replaceUnreadableColumnsInExpression = ({
   expression,
   aliases,
-  columnMasks,
+  unreadableColumnReplacements,
 }: {
   expression: string;
   aliases: string[];
-  columnMasks: ColumnMasks | undefined;
+  unreadableColumnReplacements: UnreadableColumnReplacements | undefined;
 }): string =>
-  maskUnreadableColumnReferences({
+  replaceUnreadableColumnReferences({
     expression: quoteQualifiedAliasReferences(expression, aliases),
-    columnMasks,
+    unreadableColumnReplacements,
   });
 
 export const collectStatementAliases = (
@@ -356,7 +356,9 @@ export const buildProjection = (
   }
 
   const aliases = collectStatementAliases(state);
-  const columnMasks = buildColumnMasks(state.unreadableColumnConditions);
+  const unreadableColumnReplacements = buildUnreadableColumnReplacements(
+    state.unreadableColumnConditions,
+  );
 
   for (const extraSelect of state.extraSelectClauses) {
     const plainColumn = extraSelect.expression.match(PLAIN_COLUMN_EXPRESSION);
@@ -366,10 +368,10 @@ export const buildProjection = (
           alias: plainColumn[1],
           columnName: plainColumn[2],
         })
-      : renderMaskedExpression({
+      : replaceUnreadableColumnsInExpression({
           expression: extraSelect.expression,
           aliases,
-          columnMasks,
+          unreadableColumnReplacements,
         });
 
     expressions.push(`${expression} AS ${escapeIdentifier(extraSelect.alias)}`);
@@ -381,27 +383,28 @@ export const buildProjection = (
 const renderWhereClause = ({
   whereClause,
   renderCondition,
-  readsUnreadableColumnsAsNull,
+  shouldReadUnreadableColumnsAsNull,
 }: {
   whereClause: WhereClause;
   renderCondition: RenderWhereCondition;
-  readsUnreadableColumnsAsNull: boolean;
+  shouldReadUnreadableColumnsAsNull: boolean;
 }): string => {
-  const readsClauseUnreadableColumnsAsNull =
-    readsUnreadableColumnsAsNull ||
-    whereClause.readsUnreadableColumnsAsNull === true;
+  const shouldReadClauseUnreadableColumnsAsNull =
+    shouldReadUnreadableColumnsAsNull ||
+    (whereClause.shouldReadUnreadableColumnsAsNull ?? false);
 
   if ('sql' in whereClause) {
     return renderCondition({
       condition: whereClause.sql,
-      readsUnreadableColumnsAsNull: readsClauseUnreadableColumnsAsNull,
+      shouldReadUnreadableColumnsAsNull:
+        shouldReadClauseUnreadableColumnsAsNull,
     });
   }
 
   const groupExpression = renderUserWhereExpression({
     whereClauses: whereClause.clauses,
     renderCondition,
-    readsUnreadableColumnsAsNull: readsClauseUnreadableColumnsAsNull,
+    shouldReadUnreadableColumnsAsNull: shouldReadClauseUnreadableColumnsAsNull,
   });
 
   return whereClause.isNegated
@@ -412,11 +415,11 @@ const renderWhereClause = ({
 const renderUserWhereExpression = ({
   whereClauses,
   renderCondition = ({ condition }) => condition,
-  readsUnreadableColumnsAsNull = false,
+  shouldReadUnreadableColumnsAsNull = false,
 }: {
   whereClauses: WhereClause[];
   renderCondition?: RenderWhereCondition;
-  readsUnreadableColumnsAsNull?: boolean;
+  shouldReadUnreadableColumnsAsNull?: boolean;
 }): string =>
   whereClauses
     .filter(
@@ -426,7 +429,7 @@ const renderUserWhereExpression = ({
       const renderedClause = renderWhereClause({
         whereClause,
         renderCondition,
-        readsUnreadableColumnsAsNull,
+        shouldReadUnreadableColumnsAsNull,
       });
 
       return index === 0
@@ -437,29 +440,29 @@ const renderUserWhereExpression = ({
 
 const renderReadableWhereCondition = ({
   condition,
-  readsUnreadableColumnsAsNull,
+  shouldReadUnreadableColumnsAsNull,
   aliases,
-  columnMasks,
+  unreadableColumnReplacements,
   unreadableColumnConditions,
 }: {
   condition: string;
-  readsUnreadableColumnsAsNull: boolean;
+  shouldReadUnreadableColumnsAsNull: boolean;
   aliases: string[];
-  columnMasks: ColumnMasks | undefined;
+  unreadableColumnReplacements: UnreadableColumnReplacements | undefined;
   unreadableColumnConditions: UnreadableColumnConditions;
 }): string => {
   const quotedCondition = quoteQualifiedAliasReferences(condition, aliases);
-  const maskedCondition = maskUnreadableColumnReferences({
+  const conditionWithReplacements = replaceUnreadableColumnReferences({
     expression: quotedCondition,
-    columnMasks,
+    unreadableColumnReplacements,
   });
 
-  if (readsUnreadableColumnsAsNull) {
-    return maskedCondition;
+  if (shouldReadUnreadableColumnsAsNull) {
+    return conditionWithReplacements;
   }
 
   return renderUnreadableAwareCondition({
-    condition: maskedCondition,
+    condition: conditionWithReplacements,
     unreadableConditions: findUnreadableColumnConditions({
       expressions: [quotedCondition],
       unreadableColumnConditions,
@@ -501,7 +504,7 @@ const renderExistsFilter = ({
   existsFilterClause,
   includeDeleted,
   unreadableColumnConditions,
-  columnMasks,
+  unreadableColumnReplacements,
 }: {
   existsFilterClause: Pick<
     ExistsFilterClause,
@@ -513,7 +516,7 @@ const renderExistsFilter = ({
   >;
   includeDeleted: boolean;
   unreadableColumnConditions: UnreadableColumnConditions;
-  columnMasks: ColumnMasks | undefined;
+  unreadableColumnReplacements: UnreadableColumnReplacements | undefined;
 }): string => {
   const conditions = [
     existsFilterClause.correlationCondition,
@@ -522,12 +525,12 @@ const renderExistsFilter = ({
 
   const conditionExpression = renderUserWhereExpression({
     whereClauses: existsFilterClause.conditionClauses,
-    renderCondition: ({ condition, readsUnreadableColumnsAsNull }) =>
+    renderCondition: ({ condition, shouldReadUnreadableColumnsAsNull }) =>
       renderReadableWhereCondition({
         condition,
-        readsUnreadableColumnsAsNull,
+        shouldReadUnreadableColumnsAsNull,
         aliases: [existsFilterClause.alias],
-        columnMasks,
+        unreadableColumnReplacements,
         unreadableColumnConditions,
       }),
   });
@@ -569,7 +572,9 @@ export const substituteExistsFilterTokens = ({
   includeDeleted: boolean;
   unreadableColumnConditions?: UnreadableColumnConditions;
 }): string => {
-  const columnMasks = buildColumnMasks(unreadableColumnConditions);
+  const unreadableColumnReplacements = buildUnreadableColumnReplacements(
+    unreadableColumnConditions,
+  );
 
   return existsFilterClauses.reduce(
     (substituted, existsFilterClause) =>
@@ -578,7 +583,7 @@ export const substituteExistsFilterTokens = ({
           existsFilterClause,
           includeDeleted,
           unreadableColumnConditions,
-          columnMasks,
+          unreadableColumnReplacements,
         }),
       ),
     expression,
@@ -596,16 +601,18 @@ export const buildWhereExpression = (
   } = {},
 ): string => {
   const aliases = collectStatementAliases(state);
-  const columnMasks = buildColumnMasks(state.unreadableColumnConditions);
+  const unreadableColumnReplacements = buildUnreadableColumnReplacements(
+    state.unreadableColumnConditions,
+  );
   const renderedWhereExpression = quoteQualifiedAliasReferences(
     renderWhereExpressionWithRowAccess({
       whereClauses: state.whereClauses,
-      renderCondition: ({ condition, readsUnreadableColumnsAsNull }) =>
+      renderCondition: ({ condition, shouldReadUnreadableColumnsAsNull }) =>
         renderReadableWhereCondition({
           condition,
-          readsUnreadableColumnsAsNull,
+          shouldReadUnreadableColumnsAsNull,
           aliases,
-          columnMasks,
+          unreadableColumnReplacements,
           unreadableColumnConditions: state.unreadableColumnConditions,
         }),
       rowAccessConditions: [
@@ -740,7 +747,7 @@ export const buildJoinClause = (state: SelectStatementState): string =>
     })
     .join(' ');
 
-const renderMaskedStatementExpressions = ({
+const replaceUnreadableColumnsInStatementExpressions = ({
   state,
   expressions,
 }: {
@@ -748,10 +755,16 @@ const renderMaskedStatementExpressions = ({
   expressions: string[];
 }): string[] => {
   const aliases = collectStatementAliases(state);
-  const columnMasks = buildColumnMasks(state.unreadableColumnConditions);
+  const unreadableColumnReplacements = buildUnreadableColumnReplacements(
+    state.unreadableColumnConditions,
+  );
 
   return expressions.map((expression) =>
-    renderMaskedExpression({ expression, aliases, columnMasks }),
+    replaceUnreadableColumnsInExpression({
+      expression,
+      aliases,
+      unreadableColumnReplacements,
+    }),
   );
 };
 
@@ -760,7 +773,7 @@ export const buildGroupByClause = (state: SelectStatementState): string => {
     return '';
   }
 
-  return `GROUP BY ${renderMaskedStatementExpressions({
+  return `GROUP BY ${replaceUnreadableColumnsInStatementExpressions({
     state,
     expressions: state.groupByExpressions,
   }).join(', ')}`;
@@ -771,15 +784,16 @@ export const buildOrderByClause = (state: SelectStatementState): string => {
     return '';
   }
 
-  const maskedExpressions = renderMaskedStatementExpressions({
-    state,
-    expressions: state.orderByClauses.map(({ expression }) => expression),
-  });
+  const expressionsWithReplacements =
+    replaceUnreadableColumnsInStatementExpressions({
+      state,
+      expressions: state.orderByClauses.map(({ expression }) => expression),
+    });
 
   return `ORDER BY ${state.orderByClauses
     .map(
       (orderByClause, index) =>
-        `${maskedExpressions[index]} ${orderByClause.direction}${isDefined(orderByClause.nulls) ? ` ${orderByClause.nulls}` : ''}`,
+        `${expressionsWithReplacements[index]} ${orderByClause.direction}${isDefined(orderByClause.nulls) ? ` ${orderByClause.nulls}` : ''}`,
     )
     .join(', ')}`;
 };
@@ -808,7 +822,7 @@ const buildDistinctOnClause = (state: SelectStatementState): string => {
     return '';
   }
 
-  return `DISTINCT ON (${renderMaskedStatementExpressions({
+  return `DISTINCT ON (${replaceUnreadableColumnsInStatementExpressions({
     state,
     expressions: state.distinctOnExpressions,
   }).join(', ')}) `;
