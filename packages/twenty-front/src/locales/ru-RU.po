@@ -575,7 +575,7 @@ msgstr "{0}, назад к полям"
 #. placeholder {0}: tab.name
 #: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
 msgid "{0}, unread"
-msgstr ""
+msgstr "{0}, непрочитано"
 
 #. js-lingui-id: kofqAN
 #. placeholder {0}: selectedResolvedTier.label
@@ -19326,7 +19326,7 @@ msgstr "Перемещение по элементам списка"
 #. js-lingui-id: mcfB2A
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Move to"
-msgstr ""
+msgstr "Переместить в"
 
 #. js-lingui-id: TH+XKl
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
@@ -19349,7 +19349,7 @@ msgstr "Переместить в папку"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 msgid "Move to tab"
-msgstr ""
+msgstr "Переместить на вкладку"
 
 #. js-lingui-id: HV6Nkp
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts

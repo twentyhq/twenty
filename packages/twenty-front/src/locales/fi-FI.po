@@ -575,7 +575,7 @@ msgstr "{0}, takaisin kenttiin"
 #. placeholder {0}: tab.name
 #: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
 msgid "{0}, unread"
-msgstr ""
+msgstr "{0}, lukematta"
 
 #. js-lingui-id: kofqAN
 #. placeholder {0}: selectedResolvedTier.label
@@ -19326,7 +19326,7 @@ msgstr "Siirry luettelon kohteiden välillä"
 #. js-lingui-id: mcfB2A
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Move to"
-msgstr ""
+msgstr "Siirrä kohteeseen"
 
 #. js-lingui-id: TH+XKl
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
@@ -19349,7 +19349,7 @@ msgstr ""
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 msgid "Move to tab"
-msgstr ""
+msgstr "Siirrä välilehteen"
 
 #. js-lingui-id: HV6Nkp
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts

@@ -575,7 +575,7 @@ msgstr "{0}, zpět na pole"
 #. placeholder {0}: tab.name
 #: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
 msgid "{0}, unread"
-msgstr ""
+msgstr "{0}, nepřečtené"
 
 #. js-lingui-id: kofqAN
 #. placeholder {0}: selectedResolvedTier.label
@@ -19326,7 +19326,7 @@ msgstr "Pohybovat se mezi položkami seznamu"
 #. js-lingui-id: mcfB2A
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Move to"
-msgstr ""
+msgstr "Přesunout do"
 
 #. js-lingui-id: TH+XKl
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
@@ -19349,7 +19349,7 @@ msgstr "Přesunout do složky"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 msgid "Move to tab"
-msgstr ""
+msgstr "Přesunout na kartu"
 
 #. js-lingui-id: HV6Nkp
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts

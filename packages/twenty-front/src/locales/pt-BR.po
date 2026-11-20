@@ -575,7 +575,7 @@ msgstr "{0}, voltar aos campos"
 #. placeholder {0}: tab.name
 #: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
 msgid "{0}, unread"
-msgstr ""
+msgstr "{0}, não lidas"
 
 #. js-lingui-id: kofqAN
 #. placeholder {0}: selectedResolvedTier.label
@@ -19326,7 +19326,7 @@ msgstr "Mover pelos itens da lista"
 #. js-lingui-id: mcfB2A
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Move to"
-msgstr ""
+msgstr "Mover para"
 
 #. js-lingui-id: TH+XKl
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
@@ -19349,7 +19349,7 @@ msgstr "Mover para pasta"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 msgid "Move to tab"
-msgstr ""
+msgstr "Mover para a aba"
 
 #. js-lingui-id: HV6Nkp
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
