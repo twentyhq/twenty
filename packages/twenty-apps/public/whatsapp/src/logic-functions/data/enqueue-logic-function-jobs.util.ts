@@ -1,22 +1,37 @@
+import { createHash } from 'node:crypto';
 import { enqueueJobs } from 'twenty-sdk/logic-function';
 import { ENQUEUE_JOBS_MAX_BATCH_SIZE } from 'src/constants/enqueue-jobs-max-batch-size.constant';
 
-// a single history webhook can describe thousands of messages
+// job ids allow only [\w.-] and 128 characters, so the key is hashed
+const buildJobId = ({ logicFunctionUniversalIdentifier, jobKey }: { logicFunctionUniversalIdentifier: string; jobKey: string }) =>
+  createHash('sha256').update(`${logicFunctionUniversalIdentifier}:${jobKey}`).digest('hex');
+
+// the job key collapses duplicate deliveries: a job id that is already queued or done is not added again
 export const enqueueLogicFunctionJobs = async <TPayload extends Record<string, unknown>>({
   logicFunctionUniversalIdentifier,
   payloads,
+  getJobKey,
 }: {
   logicFunctionUniversalIdentifier: string;
   payloads: TPayload[];
+  getJobKey: (payload: TPayload) => string;
 }) => {
-  for (let start = 0; start < payloads.length; start += ENQUEUE_JOBS_MAX_BATCH_SIZE) {
+  const jobs = [
+    ...new Map(
+      payloads.map((payload) => {
+        const jobId = buildJobId({ logicFunctionUniversalIdentifier, jobKey: getJobKey(payload) });
+
+        return [jobId, { jobId, payload }];
+      }),
+    ).values(),
+  ];
+
+  for (let start = 0; start < jobs.length; start += ENQUEUE_JOBS_MAX_BATCH_SIZE) {
     await enqueueJobs({
       logicFunctionUniversalIdentifier,
       retryLimit: 3,
       delayMs: 500,
-      jobs: payloads
-        .slice(start, start + ENQUEUE_JOBS_MAX_BATCH_SIZE)
-        .map((payload) => ({ payload })),
+      jobs: jobs.slice(start, start + ENQUEUE_JOBS_MAX_BATCH_SIZE),
     });
   }
 };

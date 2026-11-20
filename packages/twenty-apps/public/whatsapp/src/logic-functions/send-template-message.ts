@@ -7,7 +7,8 @@ import { type InputJsonSchema } from 'twenty-sdk/logic-function';
 import { WHATSAPP_LOGIC_FUNCTION_SEND_TEMPLATE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { isWhatsAppMarketingOptedOut } from 'src/logic-functions/data/is-whatsapp-marketing-opted-out.util';
 import { getRecipientWhatsAppIdentity } from 'src/logic-functions/data/get-recipient-whatsapp-identity.util';
-import { recordSentWhatsAppTemplateMessage } from 'src/logic-functions/data/record-sent-whatsapp-template-message.util';
+import { ingestSentWhatsAppMessage } from 'src/logic-functions/data/ingest-sent-whatsapp-message.util';
+import { resolveWhatsAppConversationOrThrow } from 'src/logic-functions/data/resolve-whatsapp-conversation-or-throw.util';
 import { renderWhatsAppTemplateText } from 'src/logic-functions/data/render-whatsapp-template-text.util';
 import { buildWhatsAppRecipient } from 'src/logic-functions/data/build-whatsapp-recipient.util';
 import { buildTemplateComponents } from 'src/logic-functions/data/build-template-components.util';
@@ -185,15 +186,17 @@ const handler = async (rawParams: unknown) => {
 
   // the template is already sent, so failing here would only tempt the caller to send it twice
   try {
-    await recordSentWhatsAppTemplateMessage({
-      accessToken,
-      whatsAppBusinessAccountId,
-      phoneNumberId: senderPhoneNumberId,
+    await ingestSentWhatsAppMessage({
+      conversation: await resolveWhatsAppConversationOrThrow({
+        accessToken,
+        whatsAppBusinessAccountId,
+        phoneNumberId: senderPhoneNumberId,
+        recipientIdentity: {
+          whatsAppId: recipientContact?.wa_id ?? recipientIdentityFromInput.whatsAppId,
+          whatsAppUserId: recipientContact?.user_id ?? recipientIdentityFromInput.whatsAppUserId,
+        },
+      }),
       messageId,
-      recipientIdentity: {
-        whatsAppId: recipientContact?.wa_id ?? recipientIdentityFromInput.whatsAppId,
-        whatsAppUserId: recipientContact?.user_id ?? recipientIdentityFromInput.whatsAppUserId,
-      },
       text: isNonEmptyString(renderedText) ? renderedText : whatsAppTemplate.name,
     });
   } catch (error) {

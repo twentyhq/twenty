@@ -65,9 +65,13 @@ type WhatsAppApiContact = {
   urls?: Array<{ url?: string; type?: string }>;
 };
 
-type WhatsAppApiInteractiveBody = { body: { text: string } };
+type WhatsAppApiInteractiveBody = {
+  header?: { type: 'text'; text: string }; // max 60 characters
+  body: { text: string }; // max 1024 characters
+  footer?: { text: string }; // max 60 characters
+};
 
-type WhatsAppApiInteractiveReplyButtons = WhatsAppApiInteractiveBody & {
+export type WhatsAppApiInteractiveReplyButtons = WhatsAppApiInteractiveBody & {
   type: 'button';
   action: {
     buttons: Array<{
@@ -77,7 +81,7 @@ type WhatsAppApiInteractiveReplyButtons = WhatsAppApiInteractiveBody & {
   };
 };
 
-type WhatsAppApiInteractiveList = WhatsAppApiInteractiveBody & {
+export type WhatsAppApiInteractiveList = WhatsAppApiInteractiveBody & {
   type: 'list';
   action: {
     button: string;

@@ -10,7 +10,7 @@ export const buildTemplateDefinitionComponents = ({
   footer,
   parameterFormat,
   bodyExamples,
-}: CreateTemplateParams): WhatsAppApiCreateTemplateRequest['components'] => {
+}: Pick<CreateTemplateParams, 'header' | 'body' | 'footer' | 'parameterFormat' | 'bodyExamples'>): WhatsAppApiCreateTemplateRequest['components'] => {
   const bodyExample =
     bodyExamples.length === 0
       ? undefined

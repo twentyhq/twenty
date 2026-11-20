@@ -1,28 +1,25 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { ingestMessages } from 'twenty-sdk/logic-function';
-import { isDefined } from 'twenty-sdk/utils';
-import { resolveWhatsAppThreadExternalId } from 'src/logic-functions/data/resolve-whatsapp-thread-external-id.util';
 import { findOrCreateWhatsAppMessageChannelOrThrow } from 'src/logic-functions/data/find-or-create-whatsapp-message-channel-or-throw.util';
 import { findOrCreateWhatsAppPersonId } from 'src/logic-functions/data/find-or-create-whatsapp-person-id.util';
+import { resolveWhatsAppThreadExternalId } from 'src/logic-functions/data/resolve-whatsapp-thread-external-id.util';
 import { whatsAppApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
+import { type WhatsAppConversation } from 'src/logic-functions/types/whatsapp-conversation.type';
 import { type WhatsAppIdentity } from 'src/logic-functions/types/whatsapp-identity.type';
 import { type WhatsAppPerson } from 'src/logic-functions/types/whatsapp-person.type';
 
-export const recordSentWhatsAppTemplateMessage = async ({
+// the conversation in Twenty that a message sent from a business phone number to a recipient belongs to
+export const resolveWhatsAppConversationOrThrow = async ({
   accessToken,
   whatsAppBusinessAccountId,
   phoneNumberId,
-  messageId,
   recipientIdentity,
-  text,
 }: {
   accessToken: string;
   whatsAppBusinessAccountId: string;
   phoneNumberId: string;
-  messageId: string;
   recipientIdentity: WhatsAppIdentity;
-  text: string;
-}) => {
+}): Promise<WhatsAppConversation> => {
   const { display_phone_number } = await whatsAppApiRequest({
     accessToken,
     endpoint: 'GET /{phoneNumberId}',
@@ -46,34 +43,20 @@ export const recordSentWhatsAppTemplateMessage = async ({
   });
   const knownPerson: WhatsAppPerson | undefined = person ?? undefined;
 
-  // the person record may know the user ID even when the template was sent to a phone number
+  // the person record may know the user ID even when the message goes to a phone number
   const customerIdentity: WhatsAppIdentity = {
     whatsAppId: knownPerson?.whatsAppId ?? recipientIdentity.whatsAppId,
     whatsAppUserId: knownPerson?.whatsAppUserId ?? recipientIdentity.whatsAppUserId,
   };
-  const customerHandle = customerIdentity.whatsAppId ?? customerIdentity.whatsAppUserId;
+  const customerHandle = [customerIdentity.whatsAppId, customerIdentity.whatsAppUserId].find(isNonEmptyString);
   const threadExternalId = await resolveWhatsAppThreadExternalId({
     messageChannelId: messageChannel.id,
     customerIdentity,
   });
 
-  if (!isDefined(customerHandle) || !isDefined(threadExternalId)) {
-    throw new Error(`WhatsApp template message ${messageId} has no recipient identifier`);
+  if (!isNonEmptyString(customerHandle) || !isNonEmptyString(threadExternalId)) {
+    throw new Error('The WhatsApp recipient has no phone number or user ID');
   }
 
-  await ingestMessages({
-    messageChannelId: messageChannel.id,
-    messages: [
-      {
-        externalId: messageId,
-        threadExternalId,
-        text,
-        receivedAt: new Date(),
-        participants: [
-          { role: 'FROM', handle: messageChannel.handle },
-          { role: 'TO', handle: customerHandle, personId },
-        ],
-      },
-    ],
-  });
+  return { messageChannel, personId, customerHandle, threadExternalId };
 };

@@ -2,24 +2,21 @@ import { type WhatsAppReplyContent } from 'src/logic-functions/types/whatsapp-re
 
 export const buildWhatsAppMediaMessage = ({
   mediaId,
-  contentType,
+  messageType,
   filename,
 }: {
   mediaId: string;
-  contentType: string;
+  messageType: 'image' | 'video' | 'audio' | 'document';
   filename: string;
 }): Exclude<WhatsAppReplyContent, { type: 'text' }> => {
-  if (contentType.startsWith('image/')) {
-    return { type: 'image', image: { id: mediaId } };
+  switch (messageType) {
+    case 'image':
+      return { type: 'image', image: { id: mediaId } };
+    case 'video':
+      return { type: 'video', video: { id: mediaId } };
+    case 'audio':
+      return { type: 'audio', audio: { id: mediaId } };
+    case 'document':
+      return { type: 'document', document: { id: mediaId, filename } };
   }
-
-  if (contentType.startsWith('video/')) {
-    return { type: 'video', video: { id: mediaId } };
-  }
-
-  if (contentType.startsWith('audio/')) {
-    return { type: 'audio', audio: { id: mediaId } };
-  }
-
-  return { type: 'document', document: { id: mediaId, filename } };
 };

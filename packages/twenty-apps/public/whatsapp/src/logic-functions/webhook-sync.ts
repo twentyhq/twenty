@@ -26,6 +26,7 @@ const enqueueParseMessageJobs = (payloads: ParseMessagePayload[]) =>
   enqueueLogicFunctionJobs({
     logicFunctionUniversalIdentifier: WHATSAPP_LOGIC_FUNCTION_PARSE_MESSAGE_UNIVERSAL_IDENTIFIER,
     payloads,
+    getJobKey: ({ messages }) => messages.id,
   });
 
 const handler = async (
@@ -198,6 +199,7 @@ const handler = async (
                 displayPhoneNumber: metadata.display_phone_number,
                 status,
               })),
+              getJobKey: ({ status }) => `${status.id}:${status.status}`,
             });
             break;
           }

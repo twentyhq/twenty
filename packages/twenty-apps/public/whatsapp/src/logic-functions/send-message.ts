@@ -13,6 +13,7 @@ import { findWhatsAppPhoneNumberIdOrThrow } from 'src/logic-functions/data/find-
 import { findLatestIncomingWhatsAppMessage } from 'src/logic-functions/data/find-latest-incoming-whatsapp-message.util';
 import { isWithinWhatsAppCustomerServiceWindow } from 'src/logic-functions/data/is-within-whatsapp-customer-service-window.util';
 import { getWhatsAppAccessTokenOrThrow } from 'src/logic-functions/data/get-whatsapp-access-token-or-throw.util';
+import { getWhatsAppOutgoingMediaTypeOrThrow } from 'src/logic-functions/data/get-whatsapp-outgoing-media-type-or-throw.util';
 import { uploadWhatsAppMedia } from 'src/logic-functions/data/upload-whatsapp-media.util';
 import { whatsAppApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
 import { type WhatsAppReplyContent } from 'src/logic-functions/types/whatsapp-reply-content.type';
@@ -33,6 +34,8 @@ const handler = async ({
   }
 
   const target = buildWhatsAppMessageTarget(threadExternalId);
+  // checked before sending anything, so a bad file never leaves a reply half sent
+  const attachmentMessageTypes = attachments.map(getWhatsAppOutgoingMediaTypeOrThrow);
 
   // Meta accepts these sends and only reports them as failed later, so they are refused upfront
   if (target.recipient_type === 'individual') {
@@ -79,14 +82,14 @@ const handler = async ({
     messageIds.push(await send({ type: 'text', text: { body: text } }));
   }
 
-  for (const attachment of attachments) {
+  for (const [index, attachment] of attachments.entries()) {
     const mediaId = await uploadWhatsAppMedia({ accessToken, phoneNumberId, attachment });
 
     messageIds.push(
       await send(
         buildWhatsAppMediaMessage({
           mediaId,
-          contentType: attachment.contentType,
+          messageType: attachmentMessageTypes[index] ?? 'document',
           filename: attachment.filename,
         }),
       ),
