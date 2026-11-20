@@ -1,6 +1,6 @@
 import { type QueryConfig, types } from 'pg';
 import { type FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined, pascalCase } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, pascalCase } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 
@@ -861,20 +861,14 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
 
       condition.whereFactory(nestedBuilder);
 
-      const nestedSql = nestedBuilder.buildWhereExpression({
-        includeSoftDeletePredicate: false,
-        substituteExistsFilters: false,
-      });
-
       this.setParameters(nestedBuilder.parameters);
       this.existsFilterClauses.push(...nestedBuilder.existsFilterClauses);
 
-      if (nestedSql.length > 0) {
+      if (isNonEmptyArray(nestedBuilder.whereClauses)) {
         this.whereClauses.push({
           operator,
-          sql: isNegatedWhereFactoryLike(condition)
-            ? `NOT (${nestedSql})`
-            : `(${nestedSql})`,
+          isNegated: isNegatedWhereFactoryLike(condition),
+          clauses: [...nestedBuilder.whereClauses],
         });
       }
 
@@ -1079,10 +1073,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         relationFieldName,
         targetTableShape,
         correlationCondition,
-        conditionSql: nestedBuilder.buildWhereExpression({
-          includeSoftDeletePredicate: false,
-          substituteExistsFilters: false,
-        }),
+        conditionClauses: [...nestedBuilder.whereClauses],
         additionalOnConditions: [],
       },
       ...nestedBuilder.existsFilterClauses,

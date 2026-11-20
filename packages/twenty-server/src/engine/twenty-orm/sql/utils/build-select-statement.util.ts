@@ -9,7 +9,9 @@ import {
   buildColumnMasks,
   type ColumnMasks,
 } from 'src/engine/twenty-orm/sql/utils/build-column-masks.util';
-import { buildUnreadableRowExclusionCondition } from 'src/engine/twenty-orm/sql/utils/build-unreadable-row-exclusion-condition.util';
+import { findUnreadableColumnConditions } from 'src/engine/twenty-orm/sql/utils/find-unreadable-column-conditions.util';
+import { renderReadableCondition } from 'src/engine/twenty-orm/sql/utils/render-readable-condition.util';
+import { renderUnreadableAwareCondition } from 'src/engine/twenty-orm/sql/utils/render-unreadable-aware-condition.util';
 import { escapeRegularExpression } from 'src/engine/twenty-orm/sql/utils/escape-regular-expression.util';
 import { maskNullifiedColumnReferences } from 'src/engine/twenty-orm/sql/utils/mask-nullified-column-references.util';
 import { renderNullifiedColumn } from 'src/engine/twenty-orm/sql/utils/render-nullified-column.util';
@@ -20,10 +22,18 @@ import {
 import { type FindOptionsLike } from 'src/engine/twenty-orm/query-builder/types/query-builder.type';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
-export type WhereClause = {
+export type WhereConditionClause = {
   operator: 'and' | 'or';
   sql: string;
 };
+
+export type WhereGroupClause = {
+  operator: 'and' | 'or';
+  isNegated: boolean;
+  clauses: WhereClause[];
+};
+
+export type WhereClause = WhereConditionClause | WhereGroupClause;
 
 export type JoinClause = {
   alias: string;
@@ -53,7 +63,7 @@ export type ExistsFilterClause = {
   relationFieldName: string;
   targetTableShape: WorkspaceTableShape;
   correlationCondition: string;
-  conditionSql: string;
+  conditionClauses: WhereClause[];
   additionalOnConditions: string[];
 };
 
@@ -357,25 +367,91 @@ export const buildProjection = (
   return { expressions, mainAliasColumnNames };
 };
 
-const renderUserWhereExpression = (whereClauses: WhereClause[]): string =>
+const renderWhereClause = ({
+  whereClause,
+  renderCondition,
+}: {
+  whereClause: WhereClause;
+  renderCondition: (condition: string) => string;
+}): string => {
+  if ('sql' in whereClause) {
+    return renderCondition(whereClause.sql);
+  }
+
+  const groupExpression = renderUserWhereExpression({
+    whereClauses: whereClause.clauses,
+    renderCondition,
+  });
+
+  return whereClause.isNegated
+    ? `NOT (${groupExpression})`
+    : `(${groupExpression})`;
+};
+
+const renderUserWhereExpression = ({
+  whereClauses,
+  renderCondition = (condition) => condition,
+}: {
+  whereClauses: WhereClause[];
+  renderCondition?: (condition: string) => string;
+}): string =>
   whereClauses
-    .map((clause, index) =>
-      index === 0
-        ? clause.sql
-        : `${clause.operator.toUpperCase()} ${clause.sql}`,
+    .filter(
+      (whereClause) => 'sql' in whereClause || whereClause.clauses.length > 0,
     )
+    .map((whereClause, index) => {
+      const renderedClause = renderWhereClause({
+        whereClause,
+        renderCondition,
+      });
+
+      return index === 0
+        ? renderedClause
+        : `${whereClause.operator.toUpperCase()} ${renderedClause}`;
+    })
     .join(' ');
+
+const renderReadableWhereCondition = ({
+  condition,
+  aliases,
+  columnMasks,
+  columnNullifyConditions,
+}: {
+  condition: string;
+  aliases: string[];
+  columnMasks: ColumnMasks | undefined;
+  columnNullifyConditions: ColumnNullifyConditions;
+}): string => {
+  const quotedCondition = quoteQualifiedAliasReferences(condition, aliases);
+
+  return renderUnreadableAwareCondition({
+    condition: maskNullifiedColumnReferences({
+      expression: quotedCondition,
+      columnMasks,
+    }),
+    unreadableConditions: findUnreadableColumnConditions({
+      expressions: [quotedCondition],
+      columnNullifyConditions,
+      aliases,
+    }),
+  });
+};
 
 // Row access conditions stay outside the user expression so an OR in it can
 // never bypass them
 export const renderWhereExpressionWithRowAccess = ({
   whereClauses,
   rowAccessConditions,
+  renderCondition,
 }: {
   whereClauses: WhereClause[];
   rowAccessConditions: string[];
+  renderCondition?: (condition: string) => string;
 }): string => {
-  const userExpression = renderUserWhereExpression(whereClauses);
+  const userExpression = renderUserWhereExpression({
+    whereClauses,
+    renderCondition,
+  });
 
   if (rowAccessConditions.length === 0) {
     return userExpression;
@@ -402,7 +478,7 @@ const renderExistsFilter = ({
     | 'targetTableShape'
     | 'correlationCondition'
     | 'additionalOnConditions'
-    | 'conditionSql'
+    | 'conditionClauses'
   >;
   includeDeleted: boolean;
   columnNullifyConditions: ColumnNullifyConditions;
@@ -413,23 +489,23 @@ const renderExistsFilter = ({
     ...existsFilterClause.additionalOnConditions,
   ];
 
-  if (existsFilterClause.conditionSql.length > 0) {
-    conditions.push(
-      maskNullifiedColumnReferences({
-        expression: existsFilterClause.conditionSql,
+  const conditionExpression = renderUserWhereExpression({
+    whereClauses: existsFilterClause.conditionClauses,
+    renderCondition: (condition) =>
+      renderReadableWhereCondition({
+        condition,
+        aliases: [existsFilterClause.alias],
         columnMasks,
+        columnNullifyConditions,
       }),
+  });
+
+  if (conditionExpression.length > 0) {
+    conditions.push(
+      existsFilterClause.conditionClauses.length > 1
+        ? `(${conditionExpression})`
+        : conditionExpression,
     );
-
-    const subqueryExclusionCondition = buildUnreadableRowExclusionCondition({
-      expressions: [existsFilterClause.conditionSql],
-      columnNullifyConditions,
-      aliases: [existsFilterClause.alias],
-    });
-
-    if (isDefined(subqueryExclusionCondition)) {
-      conditions.push(subqueryExclusionCondition);
-    }
   }
 
   if (
@@ -491,29 +567,25 @@ export const buildWhereExpression = (
   const columnMasks = buildColumnMasks(state.columnNullifyConditions);
   const renderedWhereExpression = quoteQualifiedAliasReferences(
     renderWhereExpressionWithRowAccess({
-      whereClauses: state.whereClauses.map((whereClause) => ({
-        ...whereClause,
-        sql: renderMaskedExpression({
-          expression: whereClause.sql,
+      whereClauses: state.whereClauses,
+      renderCondition: (condition) =>
+        renderReadableWhereCondition({
+          condition,
           aliases,
           columnMasks,
+          columnNullifyConditions: state.columnNullifyConditions,
         }),
-      })),
       rowAccessConditions: [
         ...state.rowAccessConditions,
-        buildUnreadableRowExclusionCondition({
-          expressions: [
-            ...state.whereClauses.map(({ sql }) => sql),
-            ...state.existsFilterClauses.map(
-              ({ conditionSql }) => conditionSql,
+        renderReadableCondition(
+          findUnreadableColumnConditions({
+            expressions: state.groupByExpressions.map((expression) =>
+              quoteQualifiedAliasReferences(expression, aliases),
             ),
-            ...state.groupByExpressions,
-          ].map((expression) =>
-            quoteQualifiedAliasReferences(expression, aliases),
-          ),
-          columnNullifyConditions: state.columnNullifyConditions,
-          aliases,
-        }),
+            columnNullifyConditions: state.columnNullifyConditions,
+            aliases,
+          }),
+        ),
       ].filter(isDefined),
     }),
     aliases,

@@ -104,14 +104,14 @@ describe('buildSelectStatement', () => {
     expect(sql).toContain('NOT COALESCE(("person"."x" = :x), FALSE)');
   });
 
-  it('should leave out of a filter the rows its column is unreadable on, order on the nullified value, and leave row access conditions and string literals alone', () => {
+  it('should make a condition on an unreadable column unknown on the rows it is unreadable on, order on the nullified value, and leave row access conditions and string literals alone', () => {
     const sql = buildSelectStatement(
       buildState({
         columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
         whereClauses: [
           {
             operator: 'and',
-            sql: `"person"."id" = :a OR "person"."name" = '"person"."id"'`,
+            sql: `"person"."id" = :a AND "person"."name" = '"person"."id"'`,
           },
         ],
         rowAccessConditions: ['"person"."id" = :ownerId'],
@@ -123,12 +123,56 @@ describe('buildSelectStatement', () => {
       '(CASE WHEN ("person"."x" = :x) THEN NULL ELSE "person"."id" END)';
 
     expect(sql).toContain(
-      `WHERE (${nullifiedColumn} = :a OR "person"."name" = '"person"."id"') AND ("person"."id" = :ownerId) AND (NOT COALESCE(("person"."x" = :x), FALSE))`,
+      `WHERE ((CASE WHEN COALESCE(("person"."x" = :x), FALSE) THEN NULL ELSE ${nullifiedColumn} = :a AND "person"."name" = '"person"."id"' END)) AND ("person"."id" = :ownerId)`,
     );
     expect(sql).toContain(`ORDER BY ${nullifiedColumn} ASC`);
   });
 
-  it('should leave unreadable rows out inside the relation filter whose alias they belong to', () => {
+  it('should keep matching through another condition of an OR when one condition reads an unreadable column', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
+        whereClauses: [
+          {
+            operator: 'and',
+            isNegated: false,
+            clauses: [
+              { operator: 'and', sql: '"person"."name" = :name' },
+              { operator: 'or', sql: '"person"."id" = :a' },
+            ],
+          },
+        ],
+        includeDeleted: true,
+      }),
+    );
+
+    expect(sql).toContain(
+      'WHERE ("person"."name" = :name OR (CASE WHEN COALESCE(("person"."x" = :x), FALSE) THEN NULL ELSE (CASE WHEN ("person"."x" = :x) THEN NULL ELSE "person"."id" END) = :a END))',
+    );
+    expect(sql).not.toContain('NOT COALESCE');
+  });
+
+  it('should keep a negated condition on an unreadable column unknown on the rows it is unreadable on', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
+        whereClauses: [
+          {
+            operator: 'and',
+            isNegated: true,
+            clauses: [{ operator: 'and', sql: '"person"."id" IS NULL' }],
+          },
+        ],
+        includeDeleted: true,
+      }),
+    );
+
+    expect(sql).toContain(
+      'WHERE NOT ((CASE WHEN COALESCE(("person"."x" = :x), FALSE) THEN NULL ELSE (CASE WHEN ("person"."x" = :x) THEN NULL ELSE "person"."id" END) IS NULL END))',
+    );
+  });
+
+  it('should make a relation filter condition unknown on the related rows its column is unreadable on', () => {
     const sql = buildSelectStatement(
       buildState({
         columnNullifyConditions: {
@@ -143,7 +187,9 @@ describe('buildSelectStatement', () => {
             relationFieldName: 'tasks',
             targetTableShape: { ...personTableShape, tableName: 'task' },
             correlationCondition: '"task"."personId" = "person"."id"',
-            conditionSql: `"task"."title" = 'Secret'`,
+            conditionClauses: [
+              { operator: 'and', sql: `"task"."title" = 'Secret'` },
+            ],
             additionalOnConditions: [],
           },
         ],
@@ -152,8 +198,10 @@ describe('buildSelectStatement', () => {
     );
     const subquery = sql.slice(sql.indexOf('EXISTS'));
 
-    expect(subquery).toContain('NOT COALESCE(("task"."x" = :x), FALSE)');
-    expect(sql.slice(0, sql.indexOf('EXISTS'))).not.toContain('NOT COALESCE');
+    expect(subquery).toContain(
+      `(CASE WHEN COALESCE(("task"."x" = :x), FALSE) THEN NULL ELSE (CASE WHEN ("task"."x" = :x) THEN NULL ELSE "task"."title" END) = 'Secret' END)`,
+    );
+    expect(sql.slice(0, sql.indexOf('EXISTS'))).not.toContain('CASE WHEN');
   });
 
   it('should keep every row when only a sort reads an unreadable column', () => {

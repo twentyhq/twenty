@@ -65,6 +65,26 @@ describe('field permissions on an RLS rule (integration)', () => {
     );
   };
 
+  const findPersonIdsMatchingAsMember = async (
+    filter: object,
+  ): Promise<string[]> => {
+    const response = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: 'id',
+        filter: { id: { in: originalPeople.map(({ id }) => id) }, ...filter },
+      }),
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    return response.body.data.people.edges.map(
+      (edge: { node: { id: string } }) => edge.node.id,
+    );
+  };
+
   beforeAll(async () => {
     [{ id: objectMetadataId }] = await global.testDataSource.query(
       `SELECT "id" FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = 'person'`,
@@ -197,6 +217,36 @@ describe('field permissions on an RLS rule (integration)', () => {
       expect(response.body.data.people.edges).toEqual([]);
     },
   );
+
+  it('should match a record through a readable condition of an OR that also reads the unreadable field', async () => {
+    expect(
+      await findPersonIdsMatchingAsMember({
+        or: [
+          { jobTitle: { eq: 'Paris office' } },
+          { avatarUrl: { eq: 'Secret avatar' } },
+        ],
+      }),
+    ).toEqual([originalPeople[0].id]);
+  });
+
+  it('should not match a record through the unreadable condition of an OR', async () => {
+    expect(
+      await findPersonIdsMatchingAsMember({
+        or: [
+          { jobTitle: { eq: 'Nowhere office' } },
+          { avatarUrl: { eq: 'Secret avatar' } },
+        ],
+      }),
+    ).toEqual([]);
+  });
+
+  it('should not match a record through a negated filter on the unreadable field', async () => {
+    expect(
+      await findPersonIdsMatchingAsMember({
+        not: { avatarUrl: { eq: 'Other avatar' } },
+      }),
+    ).toEqual([]);
+  });
 
   it('should leave the rows a field is unreadable on out of a group on it', async () => {
     const introFieldMetadataId = await findFieldMetadataId('intro');
