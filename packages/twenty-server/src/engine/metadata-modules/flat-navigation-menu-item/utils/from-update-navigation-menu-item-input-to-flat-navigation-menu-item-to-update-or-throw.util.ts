@@ -6,48 +6,13 @@ import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-m
 import { FLAT_NAVIGATION_MENU_ITEM_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-navigation-menu-item/constants/flat-navigation-menu-item-editable-properties.constant';
 import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
+import { applyNavigationMenuItemIsActiveOverrideOrThrow } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/apply-navigation-menu-item-is-active-override-or-throw.util';
 import { type UpdateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
-import { dispatchIsActiveUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-update-to-authored-override.util';
-import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
 import {
   NavigationMenuItemException,
   NavigationMenuItemExceptionCode,
 } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
-
-const applyNavigationMenuItemIsActiveOverrideOrThrow = ({
-  flatNavigationMenuItem,
-  isActive,
-  workspaceCustomApplicationUniversalIdentifier,
-}: {
-  flatNavigationMenuItem: FlatNavigationMenuItem;
-  isActive: boolean;
-  workspaceCustomApplicationUniversalIdentifier: string;
-}): FlatNavigationMenuItem => {
-  const isOwnedByAnotherApplication = isCallerOverridingEntity({
-    callerApplicationUniversalIdentifier:
-      workspaceCustomApplicationUniversalIdentifier,
-    entityApplicationUniversalIdentifier:
-      flatNavigationMenuItem.applicationUniversalIdentifier,
-    workspaceCustomApplicationUniversalIdentifier,
-    isSystemSideEffect: false,
-  });
-
-  if (!isOwnedByAnotherApplication) {
-    throw new NavigationMenuItemException(
-      'Only navigation menu items owned by another application can be hidden or restored',
-      NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
-    );
-  }
-
-  return dispatchIsActiveUpdateToAuthoredOverride({
-    metadataName: 'navigationMenuItem',
-    flatEntity: flatNavigationMenuItem,
-    isActive,
-    authorUniversalIdentifier: workspaceCustomApplicationUniversalIdentifier,
-    workspaceCustomApplicationUniversalIdentifier,
-  });
-};
 
 export const fromUpdateNavigationMenuItemInputToFlatNavigationMenuItemToUpdateOrThrow =
   ({
