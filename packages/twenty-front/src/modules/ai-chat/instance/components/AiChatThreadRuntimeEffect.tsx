@@ -204,6 +204,11 @@ export const AiChatThreadRuntimeEffect = ({
     { threadId },
   );
 
+  const aiChatMessagesLoading = useAtomFamilyStateValue(
+    aiChatMessagesLoadingFamilyState,
+    { threadId },
+  );
+
   const aiChatThreadRecord = useAtomFamilySelectorValue(
     aiChatThreadRecordFamilySelector,
     threadId,
@@ -221,7 +226,8 @@ export const AiChatThreadRuntimeEffect = ({
     if (
       aiChatIsStreaming ||
       aiChatIsAwaitingPersistedRefetch ||
-      aiChatIsAwaitingFirstChunk
+      aiChatIsAwaitingFirstChunk ||
+      aiChatMessagesLoading
     ) {
       return;
     }
@@ -232,6 +238,7 @@ export const AiChatThreadRuntimeEffect = ({
     aiChatIsStreaming,
     aiChatIsAwaitingPersistedRefetch,
     aiChatIsAwaitingFirstChunk,
+    aiChatMessagesLoading,
     setAiChatMessages,
   ]);
 
