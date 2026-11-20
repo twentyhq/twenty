@@ -22,7 +22,7 @@ export const updateViewFieldInputSchema = z.object({
     .nullable()
     .optional()
     .describe(
-      'On an extra (non-canonical) column of a many-to-one relation field, show this field of the related record instead of the record. Null shows the related record again.',
+      'On an extra (non-canonical) column of a many-to-one relation field, or of a one-to-many relation field with a relationScope, show this field of the related records instead of the records. Null shows the related records again.',
     ),
   relationScope: viewFieldRelationScopeSchema
     .nullable()

@@ -661,7 +661,7 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           "type": "object",
         },
         "relationTargetFieldMetadataId": {
-          "description": "On an extra (non-canonical) column of a many-to-one relation field, show this field of the related record instead of the record. Must be a non-relation field of the related object.",
+          "description": "On an extra (non-canonical) column of a many-to-one relation field, or of a one-to-many relation field with a relationScope, show this field of the related records instead of the records. Must be a non-relation field of the related object.",
           "format": "uuid",
           "type": "string",
         },
@@ -892,7 +892,7 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
               "type": "null",
             },
           ],
-          "description": "On an extra (non-canonical) column of a many-to-one relation field, show this field of the related record instead of the record. Null shows the related record again.",
+          "description": "On an extra (non-canonical) column of a many-to-one relation field, or of a one-to-many relation field with a relationScope, show this field of the related records instead of the records. Null shows the related records again.",
         },
         "size": {
           "description": "Column width in pixels.",
@@ -1125,7 +1125,7 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
                 "type": "object",
               },
               "relationTargetFieldMetadataId": {
-                "description": "On an extra (non-canonical) column of a many-to-one relation field, show this field of the related record instead of the record. Must be a non-relation field of the related object.",
+                "description": "On an extra (non-canonical) column of a many-to-one relation field, or of a one-to-many relation field with a relationScope, show this field of the related records instead of the records. Must be a non-relation field of the related object.",
                 "format": "uuid",
                 "type": "string",
               },
@@ -1370,7 +1370,7 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
                     "type": "null",
                   },
                 ],
-                "description": "On an extra (non-canonical) column of a many-to-one relation field, show this field of the related record instead of the record. Null shows the related record again.",
+                "description": "On an extra (non-canonical) column of a many-to-one relation field, or of a one-to-many relation field with a relationScope, show this field of the related records instead of the records. Null shows the related records again.",
               },
               "size": {
                 "description": "Column width in pixels.",

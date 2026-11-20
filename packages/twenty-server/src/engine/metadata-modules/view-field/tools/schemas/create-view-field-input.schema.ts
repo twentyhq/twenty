@@ -43,7 +43,7 @@ export const createViewFieldInputSchema = z.object({
     .uuid()
     .optional()
     .describe(
-      'On an extra (non-canonical) column of a many-to-one relation field, show this field of the related record instead of the record. Must be a non-relation field of the related object.',
+      'On an extra (non-canonical) column of a many-to-one relation field, or of a one-to-many relation field with a relationScope, show this field of the related records instead of the records. Must be a non-relation field of the related object.',
     ),
   relationScope: viewFieldRelationScopeSchema.optional(),
 });
