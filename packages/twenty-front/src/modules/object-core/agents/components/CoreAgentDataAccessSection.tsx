@@ -19,7 +19,7 @@ import { getCoreAgentObjectRules } from '@/object-core/agents/utils/getCoreAgent
 import { getCoreAgentRecordAccessLevels } from '@/object-core/agents/utils/getCoreAgentRecordAccessLevels';
 import { getRoleWithCoreAgentRecordAccessLevel } from '@/object-core/agents/utils/getRoleWithCoreAgentRecordAccessLevel';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
-import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
+import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-overrides/hooks/useObjectMetadataItemsThatCanHavePermission';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type CoreAgentDataAccessSectionProps = {
