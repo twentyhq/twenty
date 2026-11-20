@@ -14,6 +14,7 @@ type CampaignMessageNode = {
         role: string;
         handle: string | null;
         displayName: string | null;
+        personId: string | null;
         person: { name: { firstName: string | null; lastName: string | null } | null } | null;
       };
     }>;
@@ -41,7 +42,13 @@ export const findWhatsAppCampaignRecipients = async ({
           whatsAppStatusError: true,
           messageParticipants: {
             edges: {
-              node: { role: true, handle: true, displayName: true, person: { name: { firstName: true, lastName: true } } },
+              node: {
+                role: true,
+                handle: true,
+                displayName: true,
+                personId: true,
+                person: { name: { firstName: true, lastName: true } },
+              },
             },
           },
         },
@@ -104,6 +111,7 @@ export const findWhatsAppCampaignRecipients = async ({
 
     return {
       messageId: message.id,
+      personId: recipient?.personId ?? null,
       recipientName: isNonEmptyString(personName) ? personName : (recipient?.displayName ?? null),
       recipientHandle: recipient?.handle ?? null,
       sentAt: message.receivedAt,

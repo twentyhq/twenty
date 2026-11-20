@@ -11,6 +11,7 @@ const VIEW_FIELD_ORDER = [
   'name',
   'template',
   'scheduledAt',
+  'cancelledAt',
   'queuedCount',
   'sentCount',
   'deliveredCount',

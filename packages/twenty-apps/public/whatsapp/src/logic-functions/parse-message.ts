@@ -20,6 +20,7 @@ import { type IngestMessageParticipant, ingestMessages, kv } from "twenty-sdk/lo
 import { isDefined } from "twenty-sdk/utils";
 import { findOrCreateWhatsAppMessageChannelOrThrow } from "src/logic-functions/data/find-or-create-whatsapp-message-channel-or-throw.util";
 import { parseWhatsAppTimestamp } from "src/logic-functions/data/parse-whatsapp-timestamp.util";
+import { buildWhatsAppAdReferralRecordInput } from "src/logic-functions/data/build-whatsapp-ad-referral-record-input.util";
 import { findWhatsAppCampaignIdsInThread } from "src/logic-functions/data/find-whatsapp-campaign-ids-in-thread.util";
 import { scheduleWhatsAppCampaignRefresh } from "src/logic-functions/data/schedule-whatsapp-campaign-refresh.util";
 import { resolveWhatsAppThreadExternalId } from "src/logic-functions/data/resolve-whatsapp-thread-external-id.util";
@@ -269,6 +270,20 @@ const handler = async ({
 
   if (isDefined(attachments)) {
     await kv.delete(`${WHATSAPP_KV_KEY_PREFIXES.messageAttachment}${messages.id}`);
+  }
+
+  // the first message from a Click-to-WhatsApp ad carries the ad it came from
+  const referral = 'referral' in messages ? messages.referral : undefined;
+
+  if (!isSentByBusiness && isDefined(referral)) {
+    await coreClient.mutation({
+      createWhatsAppAdReferral: {
+        __args: {
+          data: buildWhatsAppAdReferralRecordInput({ referral, personId: customerPersonId, referredAt: sentAt }),
+        },
+        id: true,
+      },
+    });
   }
 
   // a customer reply counts towards the campaigns that reached this conversation

@@ -1,0 +1,1 @@
+export type WhatsAppCampaignSkipReason = 'NO_WHATSAPP_NUMBER' | 'MARKETING_OPT_OUT' | 'MISSING_PERSONALIZED_VALUE';

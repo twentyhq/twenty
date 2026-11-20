@@ -84,20 +84,21 @@ type MediaPayload = {
 
 type ImagePayload = MediaPayload & { caption?: string };
 
+// included when the conversation was started from a Click-to-WhatsApp ad or post
+// reference: https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/reference/messages/text
 type WhatsAppWebhookMessageReferral = {
   referral?: {
-    // included if message was sent via ad https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/reference/messages/audio#syntax
-    source_url: string;
-    source_id: string;
-    source_type: 'ad';
-    body: string;
-    headline: string;
-    media_type: string;
-    image_url: string;
-    video_url: string;
-    thumbnail_url: string;
-    ctwa_clid: string;
-    welcome_message: {
+    source_url?: string;
+    source_id?: string;
+    source_type?: 'ad' | 'post';
+    body?: string;
+    headline?: string;
+    media_type?: string;
+    image_url?: string;
+    video_url?: string;
+    thumbnail_url?: string;
+    ctwa_clid?: string;
+    welcome_message?: {
       text: string;
     };
   }
