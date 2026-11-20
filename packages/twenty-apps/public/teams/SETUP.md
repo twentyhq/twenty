@@ -75,7 +75,8 @@ and a future chat release.
 Chat lets workspace members message the Teams Assistant bot from Microsoft
 Teams. It needs the [bot server variables](#bot-server-variables), the
 `IS_CHAT_ASSISTANT_RELEASED` release flag, and the workspace's **Enable chat**
-setting.
+setting. Chat supports Microsoft 365 commercial and GCC tenants; GCC High and
+DoD tenants are not supported.
 
 1. In the Azure Bot resource, set the messaging endpoint to
    `https://<your-twenty-host>/webhooks/server/<application-registration-id>/c78db1b1-a0ec-4183-9edd-63299ab5a477`
