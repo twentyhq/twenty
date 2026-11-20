@@ -139,6 +139,9 @@
     --t-border-color-danger: color(display-p3 0.348 0.11 0.142);
     --t-border-color-blue: color(display-p3 0.245 0.309 0.575);
     --t-border-color-transparent-strong: color(display-p3 1 1 1 / 0.071);
+    --t-border-color-transparent-primary: color(
+      display-p3 0.09 0.09 0.09 / 0.8
+    );
     --t-border-radius-xs: 2px;
     --t-border-radius-sm: 4px;
     --t-border-radius-md: 8px;

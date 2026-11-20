@@ -15,6 +15,10 @@ export const BORDER_TOKENS = {
     danger: COLOR_TOKENS.red5,
     blue: COLOR_TOKENS.blue7,
     transparentStrong: COLOR_TOKENS.transparent.gray4,
+    transparentPrimary: token({
+      light: 'color(display-p3 1 1 1 / 0.8)',
+      dark: 'color(display-p3 0.09 0.09 0.09 / 0.8)',
+    }),
   },
   radius: {
     xs: token('2px'),

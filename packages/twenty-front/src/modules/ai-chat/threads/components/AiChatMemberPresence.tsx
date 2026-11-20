@@ -18,13 +18,13 @@ const StyledDot = styled.span<{ isOnline: boolean }>`
       ? themeCssVariables.color.green
       : themeCssVariables.grayScale.gray9};
   border-radius: ${themeCssVariables.border.radius.rounded};
-  bottom: -1px;
+  bottom: calc(-0.5 * ${themeCssVariables.spacing['0.5']});
   box-shadow: 0 0 0 ${themeCssVariables.spacing['0.5']}
-    color-mix(in srgb, ${themeCssVariables.background.primary} 80%, transparent);
+    ${themeCssVariables.border.color.transparentPrimary};
   corner-shape: round;
   height: ${themeCssVariables.spacing['1.5']};
   position: absolute;
-  right: -1px;
+  right: calc(-0.5 * ${themeCssVariables.spacing['0.5']});
   width: ${themeCssVariables.spacing['1.5']};
 `;
 

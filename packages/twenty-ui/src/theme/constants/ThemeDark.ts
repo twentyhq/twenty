@@ -146,6 +146,7 @@ export const THEME_DARK: typeof THEME_LIGHT = {
       danger: 'color(display-p3 0.348 0.11 0.142)',
       blue: 'color(display-p3 0.245 0.309 0.575)',
       transparentStrong: 'color(display-p3 1 1 1 / 0.071)',
+      transparentPrimary: 'color(display-p3 0.09 0.09 0.09 / 0.8)',
     },
     radius: {
       xs: '2px',
