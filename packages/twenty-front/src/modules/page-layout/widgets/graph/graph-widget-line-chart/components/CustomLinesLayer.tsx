@@ -46,6 +46,8 @@ const AnimatedLinePath = ({
       fill="none"
       stroke={color}
       strokeWidth={lineWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
       opacity={isDimmed ? LEGEND_HIGHLIGHT_DIMMED_OPACITY : 1}
       style={{
         transition: doNotTranslate('opacity 0.15s ease-in-out'),

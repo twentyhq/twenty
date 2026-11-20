@@ -32,9 +32,10 @@ const StyledTooltipContent = styled.div`
   padding: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledTooltipRow = styled.div`
+const StyledTooltipRow = styled.div<{ isDimmed?: boolean }>`
   align-items: center;
   display: flex;
+  opacity: ${({ isDimmed }) => (isDimmed ? 0.5 : 1)};
 
   gap: ${themeCssVariables.spacing[2]};
 `;
@@ -49,14 +50,20 @@ const StyledTooltipRowContainer = styled.div`
 
 const StyledTooltipLink = styled.div`
   align-items: center;
-  color: ${themeCssVariables.font.color.light};
+  color: ${themeCssVariables.font.color.tertiary};
   cursor: pointer;
   display: flex;
+  font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.regular};
   height: ${themeCssVariables.spacing[6]};
   justify-content: space-between;
   line-height: 140%;
   padding-inline: ${themeCssVariables.spacing[2]};
+  transition: color 0.15s ease-in-out;
+
+  &:hover {
+    color: ${themeCssVariables.font.color.primary};
+  }
 `;
 
 const StyledTooltipSeparator = styled.div`
@@ -66,7 +73,7 @@ const StyledTooltipSeparator = styled.div`
 `;
 
 const StyledTooltipHeader = styled.div`
-  color: ${themeCssVariables.font.color.primary};
+  color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.medium};
   line-height: 140%;
@@ -88,10 +95,7 @@ const StyledTooltipRowRightContent = styled.div`
 `;
 
 const StyledTooltipLabel = styled.span<{ isHighlighted?: boolean }>`
-  color: ${({ isHighlighted }) =>
-    isHighlighted
-      ? themeCssVariables.font.color.secondary
-      : themeCssVariables.font.color.tertiary};
+  color: ${themeCssVariables.font.color.primary};
   flex: 1;
   font-weight: ${({ isHighlighted }) =>
     isHighlighted
@@ -109,15 +113,13 @@ const StyledNoDataMessage = styled.span`
 `;
 
 const StyledTooltipValue = styled.span<{ isHighlighted?: boolean }>`
-  color: ${({ isHighlighted }) =>
-    isHighlighted
-      ? themeCssVariables.font.color.tertiary
-      : themeCssVariables.font.color.extraLight};
+  color: ${themeCssVariables.font.color.secondary};
   flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
   font-weight: ${({ isHighlighted }) =>
     isHighlighted
-      ? themeCssVariables.font.weight.semiBold
-      : themeCssVariables.font.weight.medium};
+      ? themeCssVariables.font.weight.medium
+      : themeCssVariables.font.weight.regular};
   white-space: nowrap;
 `;
 
@@ -177,8 +179,12 @@ export const GraphWidgetTooltip = ({
               filteredItems.map((item) => {
                 const isHighlighted =
                   shouldHighlight && highlightedKey === item.key;
+                const isDimmed =
+                  shouldHighlight &&
+                  isDefined(highlightedKey) &&
+                  !isHighlighted;
                 return (
-                  <StyledTooltipRow key={item.key}>
+                  <StyledTooltipRow key={item.key} isDimmed={isDimmed}>
                     <GraphWidgetLegendDot color={item.dotColor} />
                     <StyledTooltipRowRightContent>
                       <StyledTooltipLabel isHighlighted={isHighlighted}>

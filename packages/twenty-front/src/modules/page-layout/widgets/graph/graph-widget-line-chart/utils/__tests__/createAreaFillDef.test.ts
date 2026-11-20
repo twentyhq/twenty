@@ -43,7 +43,7 @@ describe('createAreaFillDef', () => {
       opacity: LINE_CHART_CONSTANTS.AREA_FILL_START_OPACITY,
     });
     expect(result.colors[1]).toEqual({
-      offset: 100,
+      offset: LINE_CHART_CONSTANTS.AREA_FILL_END_OFFSET_PERCENT,
       color: mockColorScheme.solid,
       opacity: LINE_CHART_CONSTANTS.AREA_FILL_END_OPACITY,
     });

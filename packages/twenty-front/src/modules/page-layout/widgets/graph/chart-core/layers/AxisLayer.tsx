@@ -96,15 +96,6 @@ export const AxisLayer = ({
           strokeWidth={1}
         />
 
-        <line
-          x1={0}
-          y1={0}
-          x2={0}
-          y2={innerHeight}
-          stroke={theme.border.color.light}
-          strokeWidth={1}
-        />
-
         {shouldRenderZeroLine && (
           <ZeroLine
             isVertical={isVertical}

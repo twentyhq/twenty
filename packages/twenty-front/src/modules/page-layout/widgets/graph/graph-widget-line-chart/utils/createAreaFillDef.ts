@@ -19,7 +19,7 @@ export const createAreaFillDef = (
         opacity: LINE_CHART_CONSTANTS.AREA_FILL_START_OPACITY,
       },
       {
-        offset: 100,
+        offset: LINE_CHART_CONSTANTS.AREA_FILL_END_OFFSET_PERCENT,
         color: colorScheme.solid,
         opacity: LINE_CHART_CONSTANTS.AREA_FILL_END_OPACITY,
       },

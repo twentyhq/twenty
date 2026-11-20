@@ -156,7 +156,7 @@ export const GraphWidgetPieChart = ({
   const chartColors = hasNoData
     ? [themeCssVariables.background.tertiary]
     : enrichedData.map((item) => item.colorScheme.solid);
-  const pieChartPadAngle = hasNoData || enrichedData.length <= 1 ? 0 : 0.4;
+  const pieChartPadAngle = hasNoData || enrichedData.length <= 1 ? 0 : 1.5;
 
   const ArcsLayer = useCallback(
     (props: PieCustomLayerProps<PieChartDataItemWithColor>) => (
@@ -200,7 +200,8 @@ export const GraphWidgetPieChart = ({
           <ResponsivePie
             data={chartData}
             margin={showDataLabels && !hasNoData ? PIE_CHART_MARGINS : {}}
-            innerRadius={0.8}
+            innerRadius={0.84}
+            cornerRadius={4}
             colors={chartColors}
             animate
             motionConfig={CHART_MOTION_CONFIG}

@@ -328,7 +328,7 @@ export const GraphWidgetLineChart = ({
             clamp: true,
           }}
           curve={'monotoneX'}
-          lineWidth={1}
+          lineWidth={2}
           enablePoints={true}
           pointSize={0}
           enablePointLabel={false}
@@ -337,8 +337,8 @@ export const GraphWidgetLineChart = ({
           axisTop={null}
           axisRight={null}
           axisBottom={axisBottomConfiguration}
-          axisLeft={axisLeftConfiguration}
-          enableGridX={showGrid}
+          axisLeft={{ ...axisLeftConfiguration, tickSize: 0 }}
+          enableGridX={false}
           enableGridY={showGrid}
           gridYValues={valueTickValues}
           enableSlices={'x'}
