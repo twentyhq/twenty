@@ -1,10 +1,10 @@
-import { toMarketplaceBuiltInAppDTO } from 'src/engine/core-modules/application/application-marketplace/utils/to-marketplace-built-in-app-dto.util';
+import { toMarketplaceConnectListingAppDTO } from 'src/engine/core-modules/application/application-marketplace/utils/to-marketplace-connect-listing-app-dto.util';
 
-describe('toMarketplaceBuiltInAppDTO', () => {
+describe('toMarketplaceConnectListingAppDTO', () => {
   it('should build a listed card with a logo served by the front end', () => {
     expect(
-      toMarketplaceBuiltInAppDTO({
-        builtInApplication: {
+      toMarketplaceConnectListingAppDTO({
+        connectListing: {
           universalIdentifier: '20202020-b759-4b27-9593-4d075aea79ed',
           name: 'Claude',
           description: 'Short description',

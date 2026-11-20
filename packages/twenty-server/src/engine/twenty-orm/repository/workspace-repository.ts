@@ -83,7 +83,7 @@ import {
   partitionEntitiesForSave,
 } from 'src/engine/twenty-orm/repository/utils/resolve-save-and-upsert.util';
 import {
-  getUpdateEventColumnsToReturn,
+  getMutationEventColumnsToReturn,
   mergeReturnedUpdateTimestamps,
 } from 'src/engine/twenty-orm/repository/utils/update-event-records.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
@@ -1132,10 +1132,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const recordsBefore: ObjectRecord[] = [];
     const recordsAfter: ObjectRecord[] = [];
     const generatedMaps: ObjectRecord[] = [];
-    const updateEventColumnsToReturn = getUpdateEventColumnsToReturn(
+    const updateEventColumnsToReturn = getMutationEventColumnsToReturn({
+      kind: 'update',
       columnsToReturn,
-      this.options.tableShape,
-    );
+      tableShape: this.options.tableShape,
+    });
 
     const rawBeforeByInputIndex: ObjectRecord[][] = [];
     const existingRecordsMapById: Record<string, ObjectRecord> = {};
@@ -1658,13 +1659,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const mutationResult = await this.morphAndExecute({
       selectQueryBuilder,
       kind,
-      columnsToReturn:
-        kind === 'update'
-          ? getUpdateEventColumnsToReturn(
-              columnsToReturn,
-              this.options.tableShape,
-            )
-          : columnsToReturn,
+      columnsToReturn: getMutationEventColumnsToReturn({
+        kind,
+        columnsToReturn,
+        tableShape: this.options.tableShape,
+      }),
       setColumns,
     });
 
@@ -1707,24 +1706,28 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           });
 
     const writtenRecordIdSet = new Set(writtenRecordIds);
+    const isWrittenRecord = ({ id }: ObjectRecord) =>
+      writtenRecordIdSet.has(id);
+    const writtenRecordsBefore = recordsBefore.filter(isWrittenRecord);
+    const writtenRecordsAfter = recordsAfterWrite?.filter(isWrittenRecord);
 
     const recordsAfter =
       kind === 'update' && isDefined(setColumns)
         ? mergeReturnedUpdateTimestamps(
             mergeRecordsWithUpdateValues(
               getUpdateEventRecords(
-                recordsBefore.filter(({ id }) => writtenRecordIdSet.has(id)),
-                recordsAfterWrite ?? [],
+                writtenRecordsBefore,
+                writtenRecordsAfter ?? [],
               ),
               setColumns,
             ),
             mutationResult.generatedMaps,
           )
-        : recordsAfterWrite;
+        : writtenRecordsAfter;
 
     this.emitMutationEvent({
       kind,
-      recordsBefore,
+      recordsBefore: writtenRecordsBefore,
       recordsAfter,
     });
 
