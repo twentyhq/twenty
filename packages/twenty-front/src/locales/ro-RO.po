@@ -2161,7 +2161,7 @@ msgid "Add a recipient before sending"
 msgstr "Adaugă un destinatar înainte de trimitere"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "Adăugați un destinatar sau un canal înainte de a trimite."
 
@@ -3175,7 +3175,7 @@ msgstr "Credite AI"
 
 #. js-lingui-id: leS03Y
 #. placeholder {0}: userCreditsUsage.daysUntilReset
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "Creditele AI se reînnoiesc în {0, plural, one {# zi} few {# zile} other {# de zile}}."
 
@@ -6260,7 +6260,7 @@ msgid "Chat Sessions"
 msgstr "Sesiuni de chat"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "Chat stopped: no more available credits."
 msgstr "Chat oprit: nu mai sunt credite disponibile."
 
@@ -7700,7 +7700,7 @@ msgid "Connection successfully updated"
 msgstr "Conexiunea a fost actualizată cu succes"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "Conexiunea cu asistentul s-a pierdut. Reîncarcă pentru a vedea răspunsul."
 
@@ -10568,7 +10568,7 @@ msgid "Direct messages and mentions"
 msgstr ""
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/instance/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Mesajele directe nu acceptă atașamente."
 
@@ -17629,7 +17629,7 @@ msgid "Let this member sign in again if they lost their authenticator app"
 msgstr "Permite acestui membru să se conecteze din nou dacă și-a pierdut aplicația de autentificare"
 
 #. js-lingui-id: RIWS8s
-#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+#: src/modules/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble.tsx
 msgid "Let's set it up around the way you work."
 msgstr "Să-l configurăm în funcție de modul în care lucrezi."
 
@@ -20310,7 +20310,7 @@ msgstr "Niciun model de IA din acest spațiu de lucru nu îndeplinește aceste s
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "Nu este configurat niciun furnizor IA pentru această instanță."
@@ -24843,7 +24843,7 @@ msgid "Remove {0} navigation menu items?"
 msgstr "Eliminați {0} elemente din meniul de navigare?"
 
 #. js-lingui-id: boQErO
-#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
+#: src/modules/chat/components/ChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "Elimină {displayName}"
 
@@ -30328,7 +30328,7 @@ msgstr "Această conexiune nu există sau nu este disponibilă pentru această a
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "This conversation is no longer available."
 msgstr "Această conversație nu mai este disponibilă."
 
@@ -31846,7 +31846,7 @@ msgid "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
 msgstr "Câmp necunoscut „{fieldName}” în „{relationFieldName}”"
 
 #. js-lingui-id: +K1Lj4
-#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
+#: src/modules/chat/components/ChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "Fișier necunoscut"
 
@@ -33328,7 +33328,7 @@ msgid "Wait for Event"
 msgstr "Așteptați evenimentul"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Așteptați ca încărcarea atașamentelor să se finalizeze."
 
@@ -33690,7 +33690,7 @@ msgid "Welcome to Twenty"
 msgstr "Bun venit la Twenty"
 
 #. js-lingui-id: t8ZvkC
-#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+#: src/modules/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
 msgstr "Bun venit în spațiul tău de lucru"

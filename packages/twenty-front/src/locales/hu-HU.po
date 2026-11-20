@@ -2161,7 +2161,7 @@ msgid "Add a recipient before sending"
 msgstr "Küldés előtt adjon hozzá egy címzettet"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "Küldés előtt adjon hozzá egy címzettet vagy egy csatornát."
 
@@ -3175,7 +3175,7 @@ msgstr "AI-kreditek"
 
 #. js-lingui-id: leS03Y
 #. placeholder {0}: userCreditsUsage.daysUntilReset
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "Az AI-kreditek {0, plural, one {# nap} other {# nap}} múlva megújulnak."
 
@@ -6260,7 +6260,7 @@ msgid "Chat Sessions"
 msgstr "Beszélgetési munkamenetek"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "Chat stopped: no more available credits."
 msgstr "A csevegés leállt: nincs több elérhető kredit."
 
@@ -7700,7 +7700,7 @@ msgid "Connection successfully updated"
 msgstr "Kapcsolat sikeresen frissítve"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "Megszakadt a kapcsolat az asszisztenssel. Töltse újra az oldalt a válasz megtekintéséhez."
 
@@ -10568,7 +10568,7 @@ msgid "Direct messages and mentions"
 msgstr ""
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/instance/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "A közvetlen üzenetek nem támogatják a mellékleteket."
 
@@ -17629,7 +17629,7 @@ msgid "Let this member sign in again if they lost their authenticator app"
 msgstr "Engedélyezze ennek a tagnak az újbóli bejelentkezést, ha elvesztette a hitelesítő alkalmazását"
 
 #. js-lingui-id: RIWS8s
-#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+#: src/modules/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble.tsx
 msgid "Let's set it up around the way you work."
 msgstr "Állítsuk be az Ön munkamódszeréhez igazítva."
 
@@ -20310,7 +20310,7 @@ msgstr "Ezen a munkaterületen egyetlen MI-modell sem felel meg ezeknek a beáll
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "Nincs AI-szolgáltató beállítva ezen a példányon."
@@ -24843,7 +24843,7 @@ msgid "Remove {0} navigation menu items?"
 msgstr "Eltávolít {0} navigációs menüelemet?"
 
 #. js-lingui-id: boQErO
-#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
+#: src/modules/chat/components/ChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "{displayName} eltávolítása"
 
@@ -30328,7 +30328,7 @@ msgstr "Ez a kapcsolat nem létezik, vagy nem érhető el ehhez az alkalmazásho
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "This conversation is no longer available."
 msgstr "Ez a beszélgetés már nem érhető el."
 
@@ -31846,7 +31846,7 @@ msgid "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
 msgstr "Ismeretlen \"{fieldName}\" mező ezen: \"{relationFieldName}\""
 
 #. js-lingui-id: +K1Lj4
-#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
+#: src/modules/chat/components/ChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "Ismeretlen fájl"
 
@@ -33328,7 +33328,7 @@ msgid "Wait for Event"
 msgstr "Várakozás eseményre"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Várja meg, amíg a mellékletek feltöltése befejeződik."
 
@@ -33690,7 +33690,7 @@ msgid "Welcome to Twenty"
 msgstr "Üdvözöljük a Twentyben"
 
 #. js-lingui-id: t8ZvkC
-#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+#: src/modules/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
 msgstr "Üdvözöljük a munkaterületén"

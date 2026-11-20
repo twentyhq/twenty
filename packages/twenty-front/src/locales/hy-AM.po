@@ -2161,7 +2161,7 @@ msgid "Add a recipient before sending"
 msgstr "Ուղարկելուց առաջ ավելացրեք ստացող"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "Ուղարկելուց առաջ ավելացրեք ստացող կամ ալիք։"
 
@@ -3175,7 +3175,7 @@ msgstr "AI կրեդիտներ"
 
 #. js-lingui-id: leS03Y
 #. placeholder {0}: userCreditsUsage.daysUntilReset
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "ԱԲ կրեդիտները կթարմացվեն {0, plural, one {# օրից} other {# օրից}}։"
 
@@ -6260,7 +6260,7 @@ msgid "Chat Sessions"
 msgstr "Զրույցի սեսիաներ"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "Chat stopped: no more available credits."
 msgstr "Զրույցը դադարեցվել է. այլևս հասանելի կրեդիտներ չկան։"
 
@@ -7700,7 +7700,7 @@ msgid "Connection successfully updated"
 msgstr "Կապը հաջողությամբ թարմացվեց"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "Օգնականի հետ կապը կորել է։ Պատասխանը տեսնելու համար վերաթարմացրեք։"
 
@@ -10568,7 +10568,7 @@ msgid "Direct messages and mentions"
 msgstr ""
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/instance/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Անձնական հաղորդագրությունները չեն աջակցում կցորդներ։"
 
@@ -17629,7 +17629,7 @@ msgid "Let this member sign in again if they lost their authenticator app"
 msgstr "Թույլատրել այս անդամին կրկին մուտք գործել, եթե նա կորցրել է իր վավերացուցիչ հավելվածը"
 
 #. js-lingui-id: RIWS8s
-#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+#: src/modules/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble.tsx
 msgid "Let's set it up around the way you work."
 msgstr "Եկեք կարգավորենք այն ձեր աշխատելու եղանակին համապատասխան։"
 
@@ -20310,7 +20310,7 @@ msgstr "Այս աշխատանքային տարածքում ոչ մի AI մոդե
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "Այս օրինակում AI մատակարար կարգավորված չէ։"
@@ -24843,7 +24843,7 @@ msgid "Remove {0} navigation menu items?"
 msgstr "Հեռացնե՞լ նավիգացիոն մենյուի {0} տարրերը։"
 
 #. js-lingui-id: boQErO
-#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
+#: src/modules/chat/components/ChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "Հեռացնել {displayName}"
 
@@ -30328,7 +30328,7 @@ msgstr "Այս միացումը գոյություն չունի կամ այս հ
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "This conversation is no longer available."
 msgstr "Այս զրույցն այլևս հասանելի չէ։"
 
@@ -31846,7 +31846,7 @@ msgid "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
 msgstr "Անհայտ \"{fieldName}\" դաշտ՝ \"{relationFieldName}\"-ում"
 
 #. js-lingui-id: +K1Lj4
-#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
+#: src/modules/chat/components/ChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "Անհայտ ֆայլ"
 
@@ -33328,7 +33328,7 @@ msgid "Wait for Event"
 msgstr "Սպասել իրադարձության"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Սպասեք, մինչև կցորդների վերբեռնումն ավարտվի։"
 
@@ -33690,7 +33690,7 @@ msgid "Welcome to Twenty"
 msgstr "Բարի գալուստ Twenty"
 
 #. js-lingui-id: t8ZvkC
-#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+#: src/modules/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
 msgstr "Բարի գալուստ ձեր աշխատանքային տարածք"

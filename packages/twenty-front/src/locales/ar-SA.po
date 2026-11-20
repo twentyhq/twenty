@@ -2161,7 +2161,7 @@ msgid "Add a recipient before sending"
 msgstr "أضف مستلمًا قبل الإرسال"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "أضف مستلِمًا أو قناة قبل الإرسال."
 
@@ -3175,7 +3175,7 @@ msgstr "أرصدة الذكاء الاصطناعي"
 
 #. js-lingui-id: leS03Y
 #. placeholder {0}: userCreditsUsage.daysUntilReset
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "تتجدد أرصدة الذكاء الاصطناعي خلال {0, plural, zero {صفر أيام} one {يوم واحد} two {يومين} few {# أيام} many {# يومًا} other {# يوم}}."
 
@@ -6260,7 +6260,7 @@ msgid "Chat Sessions"
 msgstr "جلسات الدردشة"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "Chat stopped: no more available credits."
 msgstr "توقفت الدردشة: لا مزيد من الأرصدة المتاحة."
 
@@ -7700,7 +7700,7 @@ msgid "Connection successfully updated"
 msgstr "تم تحديث الاتصال بنجاح"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "فُقد الاتصال بالمساعد. أعد التحميل لرؤية الاستجابة."
 
@@ -10568,7 +10568,7 @@ msgid "Direct messages and mentions"
 msgstr ""
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/instance/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "الرسائل المباشرة لا تدعم المرفقات."
 
@@ -17629,7 +17629,7 @@ msgid "Let this member sign in again if they lost their authenticator app"
 msgstr "اسمح لهذا العضو بتسجيل الدخول مجددًا إذا فقد تطبيق المصادقة الخاص به"
 
 #. js-lingui-id: RIWS8s
-#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+#: src/modules/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble.tsx
 msgid "Let's set it up around the way you work."
 msgstr "لنُعِدّه بما يناسب طريقة عملك."
 
@@ -20310,7 +20310,7 @@ msgstr "لا يوجد نموذج ذكاء اصطناعي في مساحة الع�
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "لم تتم تهيئة أي موفر ذكاء اصطناعي على هذا المثيل."
@@ -24843,7 +24843,7 @@ msgid "Remove {0} navigation menu items?"
 msgstr "إزالة {0} عناصر قائمة التنقل؟"
 
 #. js-lingui-id: boQErO
-#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
+#: src/modules/chat/components/ChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "إزالة {displayName}"
 
@@ -30328,7 +30328,7 @@ msgstr "هذا الاتصال غير موجود أو غير متاح لهذا ا
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "This conversation is no longer available."
 msgstr "لم تعد هذه المحادثة متاحة."
 
@@ -31846,7 +31846,7 @@ msgid "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
 msgstr "حقل غير معروف \"{fieldName}\" في \"{relationFieldName}\""
 
 #. js-lingui-id: +K1Lj4
-#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
+#: src/modules/chat/components/ChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "ملف غير معروف"
 
@@ -33328,7 +33328,7 @@ msgid "Wait for Event"
 msgstr "انتظار حدث"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "انتظر حتى تنتهي المرفقات من الرفع."
 
@@ -33690,7 +33690,7 @@ msgid "Welcome to Twenty"
 msgstr "مرحبًا بك في Twenty"
 
 #. js-lingui-id: t8ZvkC
-#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+#: src/modules/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
 msgstr "مرحبًا بك في مساحة عملك"
