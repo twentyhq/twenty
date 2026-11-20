@@ -60,7 +60,10 @@ describe('teamsActivitiesEnqueueHandler', () => {
   it('should schedule a watchdog for the request before answering it', async () => {
     const result = await teamsActivitiesEnqueueHandler(PAYLOAD);
 
-    expect(result).toEqual({ status: 'answered' });
+    expect(result).toEqual({
+      status: 'answered',
+      isWatchdogScheduled: true,
+    });
     expect(enqueueWatchdogMock).toHaveBeenCalledExactlyOnceWith({
       teamsAssistantRequestId: REQUEST.id,
     });
@@ -70,18 +73,21 @@ describe('teamsActivitiesEnqueueHandler', () => {
   });
 
   it('should still answer the request when the watchdog cannot be scheduled', async () => {
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     enqueueWatchdogMock.mockRejectedValue(new Error('queue unreachable'));
 
     const result = await teamsActivitiesEnqueueHandler(PAYLOAD);
 
-    expect(result).toEqual({ status: 'answered' });
+    expect(result).toEqual({
+      status: 'answered',
+      isWatchdogScheduled: false,
+    });
     expect(answerRequestMock).toHaveBeenCalledExactlyOnceWith({
       request: REQUEST,
       agentDeadlineAtMs: expect.any(Number),
     });
 
-    warnSpy.mockRestore();
+    errorSpy.mockRestore();
   });
 });

@@ -13,7 +13,10 @@ import { enqueueTeamsAssistantRequestWatchdog } from 'src/features/chat/logic-fu
 
 export const teamsActivitiesEnqueueHandler = async (
   payload: TeamsActivitiesDispatchPayload,
-): Promise<TeamsActivitiesEnqueueResult | TeamsAssistantAnswerResult> => {
+): Promise<
+  | TeamsActivitiesEnqueueResult
+  | (TeamsAssistantAnswerResult & { isWatchdogScheduled: boolean })
+> => {
   const agentDeadlineAtMs =
     Date.now() + TEAMS_ASSISTANT_AGENT_BUDGET_SECONDS * 1000;
 
@@ -24,19 +27,26 @@ export const teamsActivitiesEnqueueHandler = async (
     return enqueueResult;
   }
 
-  await enqueueTeamsAssistantRequestWatchdog({
+  const isWatchdogScheduled = await enqueueTeamsAssistantRequestWatchdog({
     teamsAssistantRequestId: request.id,
-  }).catch((error: unknown) => {
-    console.warn(
-      `[teams] could not schedule the watchdog for request ${request.id}`,
-      error,
-    );
-  });
+  }).then(
+    () => true,
+    (error: unknown) => {
+      console.error(
+        `[teams] could not schedule the watchdog for request ${request.id}`,
+        error,
+      );
 
-  return await answerTeamsAssistantRequest({
+      return false;
+    },
+  );
+
+  const answerResult = await answerTeamsAssistantRequest({
     request,
     agentDeadlineAtMs,
   });
+
+  return { ...answerResult, isWatchdogScheduled };
 };
 
 export default defineLogicFunction({
