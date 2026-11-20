@@ -26,14 +26,13 @@ export const getNavigationMenuItemMoveDestinations = ({
       .sort((a, b) => a.position - b.position)
       .map((folder) => ({
         kind: 'folder',
-        containerId: folder.id,
         tabId,
         item: folder,
       }));
 
   return [null, ...tabIds].flatMap(
     (tabId): NavigationMenuItemMoveDestination[] => [
-      { kind: 'root', containerId: tabId, tabId },
+      { kind: 'root', tabId },
       ...getFolderDestinations(tabId, tabId),
       ...getNavigationMenuContainersInDisplayOrder({
         navigationMenuItems: items,
@@ -42,7 +41,7 @@ export const getNavigationMenuItemMoveDestinations = ({
       })
         .filter((section) => !isNavigationMenuItemBuiltInSection(section))
         .flatMap((section): NavigationMenuItemMoveDestination[] => [
-          { kind: 'section', containerId: section.id, tabId, item: section },
+          { kind: 'section', tabId, item: section },
           ...getFolderDestinations(section.id, tabId),
         ]),
     ],
