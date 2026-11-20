@@ -5,6 +5,9 @@ export const WORKSPACE_APPLICATION_AUTHORIZATIONS = gql`
     workspaceApplicationAuthorizations {
       id
       applicationId
+      applicationName
+      userId
+      lastUsedAt
     }
   }
 `;
