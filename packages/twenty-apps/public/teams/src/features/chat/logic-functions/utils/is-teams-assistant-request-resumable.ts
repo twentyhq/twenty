@@ -8,4 +8,4 @@ export const isTeamsAssistantRequestResumable = (
 ): boolean =>
   record.status === TEAMS_ASSISTANT_REQUEST_STATUS.PENDING ||
   (record.status === TEAMS_ASSISTANT_REQUEST_STATUS.PROCESSING &&
-    isTeamsAssistantRequestStale(record, { nowMs }));
+    isTeamsAssistantRequestStale({ updatedAt: record.updatedAt, nowMs }));

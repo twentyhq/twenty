@@ -34,20 +34,22 @@ export const teamsAssistantRequestWatchdogHandler = async ({
       record.status !== TEAMS_ASSISTANT_REQUEST_STATUS.PROCESSING)
   ) {
     return {
-      failed: false,
+      isFailed: false,
       attempt,
-      rescheduled: false,
+      isRescheduled: false,
       reason: 'Request is missing or already finished',
     };
   }
 
-  const isStale = isTeamsAssistantRequestStale(record);
+  const isStale = isTeamsAssistantRequestStale({
+    updatedAt: record.updatedAt,
+  });
 
   if (!isStale && attempt >= TEAMS_ASSISTANT_REQUEST_WATCHDOG_MAX_ATTEMPTS) {
     return {
-      failed: false,
+      isFailed: false,
       attempt,
-      rescheduled: false,
+      isRescheduled: false,
       reason: 'Request is still being processed',
     };
   }
@@ -58,7 +60,7 @@ export const teamsAssistantRequestWatchdogHandler = async ({
       attempt,
     });
 
-    return { failed: false, attempt, rescheduled: true };
+    return { isFailed: false, attempt, isRescheduled: true };
   }
 
   const isFailed = await failStaleTeamsAssistantRequest({
@@ -69,9 +71,9 @@ export const teamsAssistantRequestWatchdogHandler = async ({
 
   if (!isFailed) {
     return {
-      failed: false,
+      isFailed: false,
       attempt,
-      rescheduled: false,
+      isRescheduled: false,
       reason: 'Request was finished by another execution',
     };
   }
@@ -82,7 +84,7 @@ export const teamsAssistantRequestWatchdogHandler = async ({
     !isNonEmptyString(teamsServiceUrl) ||
     !isNonEmptyString(teamsConversationId)
   ) {
-    return { failed: true, attempt, replied: false };
+    return { isFailed: true, attempt, hasReplied: false };
   }
 
   try {
@@ -101,10 +103,10 @@ export const teamsAssistantRequestWatchdogHandler = async ({
       error,
     );
 
-    return { failed: true, attempt, replied: false };
+    return { isFailed: true, attempt, hasReplied: false };
   }
 
-  return { failed: true, attempt, replied: true };
+  return { isFailed: true, attempt, hasReplied: true };
 };
 
 export default defineLogicFunction({
