@@ -2,12 +2,20 @@ import { renderHook } from '@testing-library/react';
 
 import { useCoreWorkflowVersionContent } from '@/object-core/workflows/hooks/useCoreWorkflowVersionContent';
 import { useCoreWorkflowVersion } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersion';
+import { CoreWorkflowVersionStatus } from '~/generated/graphql';
 
-jest.mock('@/object-core/workflows/versions/hooks/useCoreWorkflowVersion', () => ({
-  useCoreWorkflowVersion: jest.fn(),
-}));
+jest.mock(
+  '@/object-core/workflows/versions/hooks/useCoreWorkflowVersion',
+  () => ({
+    useCoreWorkflowVersion: jest.fn(),
+  }),
+);
 
 const mockUseCoreWorkflowVersion = jest.mocked(useCoreWorkflowVersion);
+
+type CoreWorkflowVersion = NonNullable<
+  ReturnType<typeof useCoreWorkflowVersion>['coreWorkflowVersion']
+>;
 
 const buildCoreWorkflowVersion = ({
   id,
@@ -15,12 +23,13 @@ const buildCoreWorkflowVersion = ({
 }: {
   id: string;
   coreWorkflowId: string;
-}) => ({
-  __typename: 'CoreWorkflowVersion' as const,
+}): CoreWorkflowVersion => ({
+  __typename: 'CoreWorkflowVersionDTO',
   id,
   coreWorkflowId,
+  workspaceWorkflowVersionId: null,
   label: `Version ${id}`,
-  status: 'DRAFT',
+  status: CoreWorkflowVersionStatus.DRAFT,
   trigger: null,
   steps: [],
   createdAt: '2026-11-20T00:00:00.000Z',
@@ -31,8 +40,8 @@ const mockVersions = ({
   loaded,
   previous,
 }: {
-  loaded: ReturnType<typeof buildCoreWorkflowVersion> | null;
-  previous: ReturnType<typeof buildCoreWorkflowVersion> | null;
+  loaded: CoreWorkflowVersion | null;
+  previous: CoreWorkflowVersion | null;
 }) => {
   mockUseCoreWorkflowVersion.mockReturnValue({
     coreWorkflowVersion: loaded,
@@ -40,7 +49,7 @@ const mockVersions = ({
     loading: false,
     error: undefined,
     refetchCoreWorkflowVersion: jest.fn(),
-  } as unknown as ReturnType<typeof useCoreWorkflowVersion>);
+  });
 };
 
 describe('useCoreWorkflowVersionContent', () => {

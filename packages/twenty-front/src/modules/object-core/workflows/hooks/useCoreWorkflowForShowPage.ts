@@ -37,14 +37,12 @@ export const useCoreWorkflowForShowPage = ({
 
   const coreWorkflow = coreWorkflowData?.coreWorkflow;
 
-  const versions = coreWorkflowVersions.map(
-    (version) => ({
-      id: version.id,
-      name: version.label,
-      status: version.status,
-      createdAt: version.createdAt,
-    }),
-  );
+  const versions = coreWorkflowVersions.map((version) => ({
+    id: version.id,
+    name: version.label,
+    status: version.status,
+    createdAt: version.createdAt,
+  }));
 
   return {
     coreWorkflow: isDefined(coreWorkflow)
