@@ -11,6 +11,7 @@ export enum CoreWorkflowMetadataExceptionCode {
   WORKFLOW_VERSION_NOT_FOUND = 'WORKFLOW_VERSION_NOT_FOUND',
   WORKFLOW_VERSION_ALREADY_EXISTS = 'WORKFLOW_VERSION_ALREADY_EXISTS',
   WORKFLOW_VERSION_MISSING_WORKFLOW = 'WORKFLOW_VERSION_MISSING_WORKFLOW',
+  AMBIGUOUS_WORKFLOW_IDENTIFIER = 'AMBIGUOUS_WORKFLOW_IDENTIFIER',
   TRIGGER_CACHE_REFRESH_FAILED = 'TRIGGER_CACHE_REFRESH_FAILED',
 }
 
@@ -32,6 +33,8 @@ const getCoreWorkflowMetadataExceptionUserFriendlyMessage = (
       return msg`This workflow version already exists.`;
     case CoreWorkflowMetadataExceptionCode.WORKFLOW_VERSION_MISSING_WORKFLOW:
       return msg`This workflow version is not attached to a workflow.`;
+    case CoreWorkflowMetadataExceptionCode.AMBIGUOUS_WORKFLOW_IDENTIFIER:
+      return msg`This workflow identifier matches more than one workflow.`;
     case CoreWorkflowMetadataExceptionCode.TRIGGER_CACHE_REFRESH_FAILED:
       return msg`Your changes were saved, but the workflow triggers could not be refreshed. Please retry.`;
     default:

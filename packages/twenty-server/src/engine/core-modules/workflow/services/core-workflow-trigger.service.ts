@@ -91,8 +91,9 @@ export class CoreWorkflowTriggerService {
     });
 
     if (workflows.length > 1) {
-      throw new Error(
+      throw new CoreWorkflowMetadataException(
         `Ambiguous core workflow mapping for ${workflowId} in workspace ${workspaceId}`,
+        CoreWorkflowMetadataExceptionCode.AMBIGUOUS_WORKFLOW_IDENTIFIER,
       );
     }
 
