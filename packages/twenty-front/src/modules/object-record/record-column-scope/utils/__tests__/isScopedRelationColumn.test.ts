@@ -1,6 +1,9 @@
 import { isScopedRelationColumn } from '@/object-record/record-column-scope/utils/isScopedRelationColumn';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
+
+const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
 
 const companyPeopleField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: getMockObjectMetadataItemOrThrow('company'),
@@ -25,6 +28,7 @@ describe('isScopedRelationColumn', () => {
       isScopedRelationColumn({
         fieldMetadataItem: companyPeopleField,
         recordField: SCOPED_RECORD_FIELD,
+        objectMetadataItems,
         isLookupColumnsEnabled: true,
       }),
     ).toBe(true);
@@ -35,6 +39,7 @@ describe('isScopedRelationColumn', () => {
       isScopedRelationColumn({
         fieldMetadataItem: companyPeopleField,
         recordField: { isCanonical: false, relationScope: null },
+        objectMetadataItems,
         isLookupColumnsEnabled: true,
       }),
     ).toBe(false);
@@ -45,6 +50,7 @@ describe('isScopedRelationColumn', () => {
       isScopedRelationColumn({
         fieldMetadataItem: companyPeopleField,
         recordField: { relationScope: EMPTY_RELATION_SCOPE },
+        objectMetadataItems,
         isLookupColumnsEnabled: true,
       }),
     ).toBe(false);
@@ -55,12 +61,41 @@ describe('isScopedRelationColumn', () => {
       isScopedRelationColumn({
         fieldMetadataItem: personCompanyField,
         recordField: SCOPED_RECORD_FIELD,
+        objectMetadataItems,
         isLookupColumnsEnabled: true,
       }),
     ).toBe(false);
   });
 
-  it('is never scoped on a relation that goes through a junction', () => {
+  it('is scoped on a relation to a join object with one target object', () => {
+    expect(
+      isScopedRelationColumn({
+        fieldMetadataItem: getMockFieldMetadataItemOrThrow({
+          objectMetadataItem: getMockObjectMetadataItemOrThrow('person'),
+          fieldName: 'taskTargets',
+        }),
+        recordField: SCOPED_RECORD_FIELD,
+        objectMetadataItems,
+        isLookupColumnsEnabled: true,
+      }),
+    ).toBe(true);
+  });
+
+  it('is never scoped on a relation to a join object with several target objects', () => {
+    expect(
+      isScopedRelationColumn({
+        fieldMetadataItem: getMockFieldMetadataItemOrThrow({
+          objectMetadataItem: getMockObjectMetadataItemOrThrow('task'),
+          fieldName: 'taskTargets',
+        }),
+        recordField: SCOPED_RECORD_FIELD,
+        objectMetadataItems,
+        isLookupColumnsEnabled: true,
+      }),
+    ).toBe(false);
+  });
+
+  it('is never scoped on a relation whose junction is invalid', () => {
     expect(
       isScopedRelationColumn({
         fieldMetadataItem: {
@@ -71,6 +106,7 @@ describe('isScopedRelationColumn', () => {
           },
         },
         recordField: SCOPED_RECORD_FIELD,
+        objectMetadataItems,
         isLookupColumnsEnabled: true,
       }),
     ).toBe(false);
@@ -81,6 +117,7 @@ describe('isScopedRelationColumn', () => {
       isScopedRelationColumn({
         fieldMetadataItem: companyPeopleField,
         recordField: SCOPED_RECORD_FIELD,
+        objectMetadataItems,
         isLookupColumnsEnabled: false,
       }),
     ).toBe(false);

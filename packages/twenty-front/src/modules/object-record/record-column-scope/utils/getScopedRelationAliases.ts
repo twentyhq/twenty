@@ -49,6 +49,7 @@ export const getScopedRelationAliases = ({
       !isScopedRelationColumn({
         fieldMetadataItem,
         recordField,
+        objectMetadataItems,
         isLookupColumnsEnabled,
       })
     ) {

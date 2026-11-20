@@ -146,6 +146,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
                     isScopedRelationColumn: isScopedRelationColumn({
                       fieldMetadataItem,
                       recordField,
+                      objectMetadataItems,
                       isLookupColumnsEnabled,
                     }),
                   });

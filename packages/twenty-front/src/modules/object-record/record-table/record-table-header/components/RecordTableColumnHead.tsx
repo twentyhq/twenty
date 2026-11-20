@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { FieldDescriptionTooltip } from '@/object-record/record-field/ui/components/FieldDescriptionTooltip';
 
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { useRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useRecordFieldLookupTarget';
 import { isLookupColumnsEnabledSelector } from '@/object-record/record-column-lookup/states/isLookupColumnsEnabledSelector';
@@ -53,6 +54,7 @@ export const RecordTableColumnHead = ({
   const isLookupColumnsEnabled = useAtomStateValue(
     isLookupColumnsEnabledSelector,
   );
+  const { objectMetadataItems } = useObjectMetadataItems();
   const foundFieldMetadataItem =
     correspondingFieldMetadataItem.foundFieldMetadataItem;
   const fieldMetadataItem = isDefined(foundFieldMetadataItem)
@@ -62,6 +64,7 @@ export const RecordTableColumnHead = ({
         isScopedRelationColumn: isScopedRelationColumn({
           fieldMetadataItem: foundFieldMetadataItem,
           recordField,
+          objectMetadataItems,
           isLookupColumnsEnabled,
         }),
       })

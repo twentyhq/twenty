@@ -3,6 +3,7 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { isFieldMetadataItemFilterableAndSortableSelector } from '@/object-metadata/states/isFieldMetadataItemFilterableAndSortableSelector';
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { useRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useRecordFieldLookupTarget';
 import { isLookupColumnsEnabledSelector } from '@/object-record/record-column-lookup/states/isLookupColumnsEnabledSelector';
@@ -140,6 +141,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
     isLookupColumnsEnabledSelector,
   );
   const canAddLookupColumns = useCanAddRecordTableLookupColumns();
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const canEditColumn =
     canAddLookupColumns &&
@@ -147,6 +149,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
     isScopedRelationColumn({
       fieldMetadataItem,
       recordField,
+      objectMetadataItems,
       isLookupColumnsEnabled,
     });
 

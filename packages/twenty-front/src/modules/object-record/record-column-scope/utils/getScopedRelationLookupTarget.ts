@@ -26,6 +26,7 @@ export const getScopedRelationLookupTarget = ({
     !isScopedRelationColumn({
       fieldMetadataItem,
       recordField,
+      objectMetadataItems,
       isLookupColumnsEnabled,
     })
   ) {
