@@ -73,7 +73,6 @@ import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/t
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { truncateFullName } from 'src/engine/core-modules/user/utils/truncate-full-name.util';
 import { INVITATION_APP_TOKEN_TYPES } from 'src/engine/core-modules/workspace-invitation/constants/invitation-app-token-types';
 import { type WorkspaceInvitation } from 'src/engine/core-modules/workspace-invitation/dtos/workspace-invitation.dto';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
@@ -820,10 +819,8 @@ export class AuthService {
       reason: UserSessionRevokedReason.PasswordChanged,
     });
 
-    const { firstName, lastName } = truncateFullName(user);
-
     const emailTemplate = PasswordUpdateNotifyEmail({
-      userName: `${firstName} ${lastName}`,
+      userName: `${user.firstName} ${user.lastName}`,
       email: user.email,
       link: this.domainServerConfigService.getBaseUrl().toString(),
       locale: firstUserWorkspace.locale,

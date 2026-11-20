@@ -28,7 +28,6 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
-import { truncateFullName } from 'src/engine/core-modules/user/utils/truncate-full-name.util';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { truncateWorkspaceDisplayName } from 'src/engine/core-modules/workspace/utils/truncate-workspace-display-name.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -126,11 +125,10 @@ export class CleanerWorkspaceService {
     billingSettingsUrl: string,
     daysSinceInactive: number,
   ) {
-    const { firstName, lastName } = truncateFullName(workspaceMember.name);
     const emailData = {
       daysSinceInactive,
       inactiveDaysBeforeDelete: this.inactiveDaysBeforeSoftDelete,
-      userName: `${firstName} ${lastName}`,
+      userName: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
       workspaceDisplayName: `${truncateWorkspaceDisplayName(workspaceDisplayName)}`,
       link: billingSettingsUrl,
       locale: workspaceMember.locale,
@@ -205,10 +203,9 @@ export class CleanerWorkspaceService {
     workspaceDisplayName: string,
     daysSinceInactive: number,
   ) {
-    const { firstName, lastName } = truncateFullName(workspaceMember.name);
     const emailData = {
       daysSinceInactive: daysSinceInactive,
-      userName: `${firstName} ${lastName}`,
+      userName: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
       workspaceDisplayName: truncateWorkspaceDisplayName(workspaceDisplayName),
       locale: workspaceMember.locale,
     };

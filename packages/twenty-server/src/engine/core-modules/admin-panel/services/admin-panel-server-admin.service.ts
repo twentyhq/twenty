@@ -19,7 +19,6 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { truncateFullName } from 'src/engine/core-modules/user/utils/truncate-full-name.util';
 
 @Injectable()
 export class AdminPanelServerAdminService {
@@ -166,12 +165,9 @@ export class AdminPanelServerAdminService {
       }
       recipientsById.set(targetUser.id, targetUser);
 
-      const truncatedActorName = truncateFullName(actor);
-      const truncatedTargetName = truncateFullName(targetUser);
-      const actorName =
-        `${truncatedActorName.firstName} ${truncatedActorName.lastName}`.trim();
+      const actorName = `${actor.firstName} ${actor.lastName}`.trim();
       const targetName =
-        `${truncatedTargetName.firstName} ${truncatedTargetName.lastName}`.trim();
+        `${targetUser.firstName} ${targetUser.lastName}`.trim();
       const from = `${this.twentyConfigService.get('EMAIL_FROM_NAME')} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`;
 
       const recipientsByLocale = new Map<UserEntity['locale'], UserEntity[]>();
