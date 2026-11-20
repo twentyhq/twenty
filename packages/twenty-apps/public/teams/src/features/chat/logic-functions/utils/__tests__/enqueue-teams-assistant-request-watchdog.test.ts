@@ -25,6 +25,7 @@ describe('enqueueTeamsAssistantRequestWatchdog', () => {
         TEAMS_ASSISTANT_REQUEST_WATCHDOG_UNIVERSAL_IDENTIFIER,
       payloads: [{ teamsAssistantRequestId: REQUEST_ID, attempt: 1 }],
       delayMs: expect.any(Number),
+      retryLimit: 3,
     });
     expect(enqueueJobsMock.mock.calls[0][0].delayMs).toBeGreaterThan(
       TEAMS_ASSISTANT_REQUEST_TIMEOUT_SECONDS * 1000,
