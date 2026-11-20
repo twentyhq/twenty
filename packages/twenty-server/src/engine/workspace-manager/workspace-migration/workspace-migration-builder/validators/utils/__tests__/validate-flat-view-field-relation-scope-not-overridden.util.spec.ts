@@ -1,5 +1,6 @@
 import {
   type UniversalViewFieldRelationScope,
+  ViewFilterOperand,
   ViewSortDirection,
 } from 'twenty-shared/types';
 
@@ -10,8 +11,16 @@ const OTHER_APPLICATION = 'other-application';
 
 const buildRelationScope = (
   limit: number,
+  stageFilterValue = 'OPEN',
 ): UniversalViewFieldRelationScope => ({
-  filters: [],
+  filters: [
+    {
+      id: 'stage-filter',
+      fieldMetadataUniversalIdentifier: 'stage-field',
+      operand: ViewFilterOperand.IS,
+      value: [stageFilterValue],
+    },
+  ],
   filterGroups: [],
   sorts: [
     {
@@ -74,6 +83,13 @@ describe('validateFlatViewFieldRelationScopeNotOverridden', () => {
       ownerApplication: WORKSPACE_CUSTOM_APPLICATION,
       callerApplication: WORKSPACE_CUSTOM_APPLICATION,
       universalRelationScope: buildRelationScope(5),
+    },
+    {
+      title:
+        'only a filter value of an application-owned column changes, as when a select option is renamed',
+      ownerApplication: OTHER_APPLICATION,
+      callerApplication: WORKSPACE_CUSTOM_APPLICATION,
+      universalRelationScope: buildRelationScope(1, 'IN_PROGRESS'),
     },
     {
       title: 'the scope of an application-owned column is unchanged',
