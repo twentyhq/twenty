@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
-import { AiChatThreadRecordPage } from '@/inbox/components/AiChatThreadRecordPage';
+import { AiChatThreadRecordView } from '@/inbox/components/AiChatThreadRecordView';
 
 let mockIsAiChatInboxEnabled = true;
 let mockWorkspaceSurfaceType = 'main';
@@ -24,7 +24,7 @@ jest.mock('@/inbox/components/AiChatThreadPageContent', () => ({
   ),
 }));
 
-describe('AiChatThreadRecordPage', () => {
+describe('AiChatThreadRecordView', () => {
   beforeEach(() => {
     mockWorkspaceSurfaceType = 'main';
   });
@@ -37,7 +37,7 @@ describe('AiChatThreadRecordPage', () => {
     (isAiChatInboxEnabled, expectedPath) => {
       mockIsAiChatInboxEnabled = isAiChatInboxEnabled;
 
-      render(<AiChatThreadRecordPage objectRecordId="chat-1" />);
+      render(<AiChatThreadRecordView objectRecordId="chat-1" />);
 
       expect(screen.getByTestId('navigate')).toHaveTextContent(expectedPath);
     },
@@ -46,7 +46,7 @@ describe('AiChatThreadRecordPage', () => {
   it('shows the chat in place in the side panel', () => {
     mockWorkspaceSurfaceType = 'side-panel';
 
-    render(<AiChatThreadRecordPage objectRecordId="chat-1" />);
+    render(<AiChatThreadRecordView objectRecordId="chat-1" />);
 
     expect(screen.getByTestId('chat-thread')).toHaveTextContent('chat-1');
     expect(screen.queryByTestId('navigate')).not.toBeInTheDocument();

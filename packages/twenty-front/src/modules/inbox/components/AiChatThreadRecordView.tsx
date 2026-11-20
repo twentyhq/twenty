@@ -8,11 +8,11 @@ import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-type AiChatThreadRecordPageProps = CoreObjectShowPageProps;
+type AiChatThreadRecordViewProps = CoreObjectShowPageProps;
 
-export const AiChatThreadRecordPage = ({
+export const AiChatThreadRecordView = ({
   objectRecordId,
-}: AiChatThreadRecordPageProps) => {
+}: AiChatThreadRecordViewProps) => {
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,

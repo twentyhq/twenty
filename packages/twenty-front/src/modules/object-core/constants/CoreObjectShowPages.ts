@@ -24,8 +24,8 @@ export const CORE_OBJECT_SHOW_PAGES: ReadonlyMap<
   [
     StandardObjectNameSingular.AgentChatThread,
     lazy(() =>
-      import('@/inbox/components/AiChatThreadRecordPage').then((module) => ({
-        default: module.AiChatThreadRecordPage,
+      import('@/inbox/components/AiChatThreadRecordView').then((module) => ({
+        default: module.AiChatThreadRecordView,
       })),
     ),
   ],
