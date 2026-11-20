@@ -19,6 +19,7 @@ export const NAVIGATION_MENU_ITEM_FRAGMENT = gql`
     agentChatChannelId
     workflowId
     agentId
+    commandMenuItemId
     position
     applicationId
     isActive
