@@ -1707,17 +1707,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           });
 
     const writtenRecordIdSet = new Set(writtenRecordIds);
-    const eventRecordsBefore =
-      kind === 'update'
-        ? recordsBefore.filter(({ id }) => writtenRecordIdSet.has(id))
-        : recordsBefore;
 
     const recordsAfter =
       kind === 'update' && isDefined(setColumns)
         ? mergeReturnedUpdateTimestamps(
             mergeRecordsWithUpdateValues(
               getUpdateEventRecords(
-                eventRecordsBefore,
+                recordsBefore.filter(({ id }) => writtenRecordIdSet.has(id)),
                 recordsAfterWrite ?? [],
               ),
               setColumns,
@@ -1728,7 +1724,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     this.emitMutationEvent({
       kind,
-      recordsBefore: eventRecordsBefore,
+      recordsBefore,
       recordsAfter,
     });
 

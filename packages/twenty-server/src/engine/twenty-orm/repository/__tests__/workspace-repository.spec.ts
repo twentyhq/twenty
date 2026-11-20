@@ -88,14 +88,17 @@ const DISABLED_FEATURE_FLAGS_MAP = Object.values(FeatureFlagKey).reduce<
 const API_KEY_ID = 'api-key-id';
 const ROLE_ID = 'role-id';
 
+const getStatementKind = (statement: CompiledStatement) =>
+  statement.text.split(' ')[0];
+
 const buildRepository = ({
   shouldBypassPermissionChecks = true,
   shouldSkipEventEmission,
-  statementResults = [],
+  statementResultsByKind = {},
 }: {
   shouldBypassPermissionChecks?: boolean;
   shouldSkipEventEmission: boolean;
-  statementResults?: Record<string, unknown>[][];
+  statementResultsByKind?: Record<string, Record<string, unknown>[][]>;
 }) => {
   const executedStatements: CompiledStatement[] = [];
   const emitDatabaseBatchEvent = jest.fn();
@@ -148,7 +151,9 @@ const buildRepository = ({
       execute: async (statement: CompiledStatement) => {
         executedStatements.push(statement);
 
-        return statementResults[executedStatements.length - 1] ?? [];
+        return (
+          statementResultsByKind[getStatementKind(statement)]?.shift() ?? []
+        );
       },
     },
     permissionsPrincipals: {
@@ -170,7 +175,7 @@ const buildRepository = ({
   });
 
   const getExecutedStatementKinds = () =>
-    executedStatements.map((statement) => statement.text.split(' ')[0]);
+    executedStatements.map(getStatementKind);
 
   return { repository, getExecutedStatementKinds, emitDatabaseBatchEvent };
 };
@@ -235,11 +240,13 @@ describe('WorkspaceRepository mutations', () => {
     it('should emit no event when a filtered update writes no rows', async () => {
       const { repository, emitDatabaseBatchEvent } = buildRepository({
         shouldSkipEventEmission: false,
-        statementResults: [
-          [{ delivery_id: 'delivery-id', delivery_state: 'PENDING' }],
-          [],
-          [],
-        ],
+        statementResultsByKind: {
+          SELECT: [
+            [{ delivery_id: 'delivery-id', delivery_state: 'PENDING' }],
+            [],
+          ],
+          UPDATE: [[]],
+        },
       });
 
       const result = await repository.update(
@@ -254,14 +261,16 @@ describe('WorkspaceRepository mutations', () => {
     it('should recover an event only for the row returned by a filtered update', async () => {
       const { repository, emitDatabaseBatchEvent } = buildRepository({
         shouldSkipEventEmission: false,
-        statementResults: [
-          [
-            { delivery_id: 'written-id', delivery_state: 'PENDING' },
-            { delivery_id: 'skipped-id', delivery_state: 'PENDING' },
+        statementResultsByKind: {
+          SELECT: [
+            [
+              { delivery_id: 'written-id', delivery_state: 'PENDING' },
+              { delivery_id: 'skipped-id', delivery_state: 'PENDING' },
+            ],
+            [],
           ],
-          [{ delivery_id: 'written-id' }],
-          [],
-        ],
+          UPDATE: [[{ delivery_id: 'written-id' }]],
+        },
       });
 
       await repository.update({ state: 'PENDING' }, { state: 'SENT' });
