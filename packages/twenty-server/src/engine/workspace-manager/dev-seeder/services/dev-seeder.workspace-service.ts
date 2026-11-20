@@ -60,6 +60,7 @@ import { getSeedFrontComponentDefinitions } from 'src/engine/workspace-manager/s
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
 @Injectable()
 export class DevSeederWorkspaceService {
@@ -112,7 +113,9 @@ export class DevSeederWorkspaceService {
       initialCursor,
     });
 
-    await this.applicationRegistrationService.findOrCreateCliRegistration();
+    await this.applicationRegistrationService.findOrCreateBuiltInRegistrationOrThrow(
+      TWENTY_CLI_APPLICATION_REGISTRATION,
+    );
 
     const schemaName =
       await this.workspaceSchemaService.createWorkspaceDBSchema(workspaceId);

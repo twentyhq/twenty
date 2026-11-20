@@ -1,4 +1,4 @@
-import { useOpenAskAiThread } from '@/ai-chat/hooks/useOpenAskAiThread';
+import { useOpenAskAiThread } from '@/ai-chat/threads/hooks/useOpenAskAiThread';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';

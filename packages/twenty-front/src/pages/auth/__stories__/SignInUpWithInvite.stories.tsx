@@ -21,7 +21,7 @@ const CaptchaTokenSetterEffect = () => {
   const setCaptchaToken = useSetAtomState(captchaTokenState);
 
   useEffect(() => {
-    setCaptchaToken('MOCKED_CAPTCHA_TOKEN');
+    setCaptchaToken({ token: 'MOCKED_CAPTCHA_TOKEN', issuedAt: Date.now() });
   }, [setCaptchaToken]);
 
   return null;

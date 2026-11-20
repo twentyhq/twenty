@@ -22,6 +22,7 @@ const listRolesInputSchema = z.object({
 
 @DefineTool({
   name: 'list_roles',
+  isReadOnly: true,
   category: ToolCategory.ROLE,
   accessPolicy: ROLE_READ_ACCESS_POLICY,
   description: `List all roles of this workspace with their permissions.

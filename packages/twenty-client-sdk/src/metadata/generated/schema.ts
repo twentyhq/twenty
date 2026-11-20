@@ -524,6 +524,7 @@ export interface ApplicationContent {
     frontComponents: ApplicationContentItem[]
     indexes: ApplicationContentItem[]
     logicFunctions: ApplicationContentItem[]
+    mcpServers: ApplicationContentItem[]
     navigationMenuItems: ApplicationContentItem[]
     objects: ApplicationContentItem[]
     pageLayoutTabs: ApplicationContentItem[]
@@ -731,7 +732,7 @@ export interface ApplicationRegistration {
     __typename: 'ApplicationRegistration'
 }
 
-export type ApplicationRegistrationSourceType = 'LOCAL' | 'NPM' | 'OAUTH_ONLY' | 'TARBALL'
+export type ApplicationRegistrationSourceType = 'BUNDLED' | 'LOCAL' | 'NPM' | 'OAUTH_ONLY' | 'TARBALL'
 
 export interface ApplicationRegistrationStats {
     activeInstalls: Scalars['Int']
@@ -1644,7 +1645,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_LOOKUP_COLUMNS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PERMISSION_TABLES_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
+export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APPLICATION_PRICE_BILLING_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_LOOKUP_COLUMNS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PERMISSION_TABLES_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -2163,6 +2164,7 @@ export interface MarketplaceApp {
     category: Scalars['String']
     connectUrl?: Scalars['String']
     description: Scalars['String']
+    hasMcpServers: Scalars['Boolean']
     id: Scalars['String']
     isListed: Scalars['Boolean']
     logoUrl?: Scalars['String']
@@ -2772,6 +2774,7 @@ export interface NavigationMenuItem {
     folderId?: Scalars['UUID']
     icon?: Scalars['String']
     id: Scalars['UUID']
+    isActive: Scalars['Boolean']
     link?: Scalars['String']
     name?: Scalars['String']
     nativePageKey?: Scalars['String']
@@ -5109,6 +5112,7 @@ export interface ApplicationContentGenqlSelection{
     frontComponents?: ApplicationContentItemGenqlSelection
     indexes?: ApplicationContentItemGenqlSelection
     logicFunctions?: ApplicationContentItemGenqlSelection
+    mcpServers?: ApplicationContentItemGenqlSelection
     navigationMenuItems?: ApplicationContentItemGenqlSelection
     objects?: ApplicationContentItemGenqlSelection
     pageLayoutTabs?: ApplicationContentItemGenqlSelection
@@ -7040,6 +7044,7 @@ export interface MarketplaceAppGenqlSelection{
     category?: boolean | number
     connectUrl?: boolean | number
     description?: boolean | number
+    hasMcpServers?: boolean | number
     id?: boolean | number
     isListed?: boolean | number
     logoUrl?: boolean | number
@@ -7643,6 +7648,7 @@ export interface NavigationMenuItemGenqlSelection{
     folderId?: boolean | number
     icon?: boolean | number
     id?: boolean | number
+    isActive?: boolean | number
     link?: boolean | number
     name?: boolean | number
     nativePageKey?: boolean | number
@@ -9034,7 +9040,7 @@ export interface UpdateMessageFolderInputUpdates {isSynced: Scalars['Boolean']}
 
 export interface UpdateMessageFoldersInput {ids: Scalars['UUID'][],update: UpdateMessageFolderInputUpdates}
 
-export interface UpdateNavigationMenuItemInput {color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),parentId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null)}
+export interface UpdateNavigationMenuItemInput {color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),parentId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null)}
 
 export interface UpdateObjectPayload {color?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isActive?: (Scalars['Boolean'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),labelPlural?: (Scalars['String'] | null),labelSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),openRecordIn?: (ObjectOpenRecordIn | null),shortcut?: (Scalars['String'] | null),translations?: (MetadataTranslationOverrideInput[] | null)}
 
@@ -12981,6 +12987,7 @@ export const enumApplicationHealthStatus = {
 }
 
 export const enumApplicationRegistrationSourceType = {
+   BUNDLED: 'BUNDLED' as const,
    LOCAL: 'LOCAL' as const,
    NPM: 'NPM' as const,
    OAUTH_ONLY: 'OAUTH_ONLY' as const,
@@ -13233,6 +13240,7 @@ export const enumFeatureFlagKey = {
    IS_AI_CHAT_COMPONENT_BUILDER_ENABLED: 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' as const,
    IS_AI_CHAT_INBOX_ENABLED: 'IS_AI_CHAT_INBOX_ENABLED' as const,
    IS_AI_DATA_POLICY_ENABLED: 'IS_AI_DATA_POLICY_ENABLED' as const,
+   IS_APPLICATION_PRICE_BILLING_ENABLED: 'IS_APPLICATION_PRICE_BILLING_ENABLED' as const,
    IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED: 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' as const,
    IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED: 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' as const,
    IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED: 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' as const,

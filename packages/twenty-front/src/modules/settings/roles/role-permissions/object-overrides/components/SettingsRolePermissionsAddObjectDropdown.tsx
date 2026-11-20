@@ -79,7 +79,7 @@ export const SettingsRolePermissionsAddObjectDropdown = ({
                 startIcon={
                   <SelectOptionIcon Icon={Icon} color={iconThemeColor} />
                 }
-                onClick={() => addObjectOverride(objectMetadataItem.id)}
+                onClick={() => addObjectOverride(objectMetadataItem)}
               >
                 {objectMetadataItem.labelPlural}
               </Dropdown.ActionItem>

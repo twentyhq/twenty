@@ -161,6 +161,7 @@ describe('useIsLayoutCustomizationDirty', () => {
       icon: null,
       color: null,
       targetRecordId: null,
+      isActive: true,
       createdAt: '2024-01-01',
       updatedAt: '2024-01-01',
       userWorkspaceId: null,

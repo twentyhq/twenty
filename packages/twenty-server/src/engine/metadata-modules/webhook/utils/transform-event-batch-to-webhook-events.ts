@@ -34,6 +34,7 @@ export const transformEventBatchToWebhookEvents = ({
 
       result.push({
         targetUrl,
+        eventId: eventData.eventId,
         eventName,
         objectMetadata: objectMetadataForWebhook,
         workspaceId,

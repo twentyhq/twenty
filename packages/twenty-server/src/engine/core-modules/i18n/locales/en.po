@@ -111,6 +111,11 @@ msgstr "{hostnameCount} hostnames found for domain \"{domainName}\". Expect 1"
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{operationLabel} of {aggregateFieldLabel}"
 
+#. js-lingui-id: nzKj4z
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "{senderName} in {threadLabel}"
+msgstr "{senderName} in {threadLabel}"
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -2120,6 +2125,11 @@ msgstr "Bring your companies, contacts and deals from any CRM export."
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Bring your team into Twenty."
 msgstr "Bring your team into Twenty."
+
+#. js-lingui-id: pYD4lD
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "Browser notifications were set up with an outdated key. Reload the page to set them up again."
+msgstr "Browser notifications were set up with an outdated key. Reload the page to set them up again."
 
 #. js-lingui-id: 8pSVh1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -6069,6 +6079,11 @@ msgstr "First direct message member ID"
 msgid "First friendly message"
 msgstr "First friendly message"
 
+#. js-lingui-id: 0QhRwZ
+#: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
+msgid "First name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+msgstr "First name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+
 #. js-lingui-id: BUBVGN
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
@@ -6118,6 +6133,11 @@ msgstr "Form action fields must have unique names"
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
 msgid "Form action must have at least one field"
 msgstr "Form action must have at least one field"
+
+#. js-lingui-id: CjVkbV
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "Former member"
+msgstr "Former member"
 
 #. js-lingui-id: JRr+QW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
@@ -8129,6 +8149,11 @@ msgctxt "fieldMetadata.label"
 msgid "Last message sender"
 msgstr "Last message sender"
 
+#. js-lingui-id: bMq9eP
+#: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
+msgid "Last name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+msgstr "Last name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+
 #. js-lingui-id: R2LOsP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -9406,6 +9431,11 @@ msgstr "New"
 msgid "New backup codes were generated for your account"
 msgstr "New backup codes were generated for your account"
 
+#. js-lingui-id: hIQkLb
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "New chat"
+msgstr "New chat"
+
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -9422,6 +9452,11 @@ msgstr "New chat"
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "New email must be different from current email"
 msgstr "New email must be different from current email"
+
+#. js-lingui-id: mTBAsF
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "New message"
+msgstr "New message"
 
 #. js-lingui-id: nXXBKB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -14737,6 +14772,11 @@ msgstr "This app requires a newer version of the Twenty server. Please upgrade y
 msgid "This app requires a newer version than this workspace has finished upgrading to. Please try again once the workspace upgrade completes."
 msgstr "This app requires a newer version than this workspace has finished upgrading to. Please try again once the workspace upgrade completes."
 
+#. js-lingui-id: MZz+Ud
+#: src/engine/core-modules/application/utils/to-application-billing-prices-or-throw.util.ts
+msgid "This application declares invalid prices"
+msgstr "This application declares invalid prices"
+
 #. js-lingui-id: ecIX3O
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This application is already owned by a workspace."
@@ -14781,6 +14821,11 @@ msgstr "This application variable scope is not supported."
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This billing arrangement has invalid settings."
 msgstr "This billing arrangement has invalid settings."
+
+#. js-lingui-id: NsbtYx
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "This browser's push service is not supported."
+msgstr "This browser's push service is not supported."
 
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -18415,6 +18460,11 @@ msgstr "Your role cannot delete some of these records, so they cannot be merged.
 #: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Your role in this workspace could not be found. Please contact your workspace administrator."
+
+#. js-lingui-id: iug+lj
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "Your session has expired. Sign in again to turn on browser notifications."
+msgstr "Your session has expired. Sign in again to turn on browser notifications."
 
 #. js-lingui-id: 9T+AIN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

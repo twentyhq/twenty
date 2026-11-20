@@ -1,5 +1,3 @@
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsRolePermissionsObjectOperationsSelect } from '@/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOperationsSelect';
 import { SettingsRolePermissionsObjectFieldsSelect } from '@/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect';
@@ -10,23 +8,25 @@ import {
 import { OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/object-overrides/constants/ObjectOverrideTableGridTemplateColumns';
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionKeys';
 import { useRowLevelPermissionRulesInDraftRole } from '@/settings/roles/role-permissions/object-overrides/hooks/useRowLevelPermissionRulesInDraftRole';
+import { useObjectDisabledOperations } from '@/settings/roles/role-permissions/object-overrides/hooks/useObjectDisabledOperations';
+import { useRowLevelPermissionRuleLabel } from '@/settings/roles/role-permissions/object-overrides/hooks/useRowLevelPermissionRuleLabel';
 import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/object-overrides/hooks/useSettingsRoleObjectOverrides';
 import { getObjectOperations } from '@/settings/roles/role-permissions/object-overrides/utils/getObjectOperations';
 import { getObjectOperationsWithReadDependency } from '@/settings/roles/role-permissions/object-overrides/utils/getObjectOperationsWithReadDependency';
 import { getObjectRowLevelPermissionRules } from '@/settings/roles/role-permissions/object-overrides/utils/getObjectRowLevelPermissionRules';
-import { getRowLevelPermissionRuleLabel } from '@/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel';
 import { getRecordsGrantOperations } from '@/settings/roles/role-permissions/object-overrides/utils/getRecordsGrantOperations';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { SettingsPath, StandardObjectNameSingular } from 'twenty-shared/types';
-import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
+import { SettingsPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { IconChevronRight, IconPlus, IconTrash } from 'twenty-ui/icon';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { Button, Checkbox } from 'twenty-ui/primitives/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
@@ -47,6 +47,7 @@ const StyledHeaderRow = styled.div`
 
 const StyledActionLabel = styled.span`
   color: ${themeCssVariables.font.color.primary};
+  flex-shrink: 0;
 `;
 
 const StyledFooter = styled.div`
@@ -82,20 +83,13 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
   const { createRule, setRuleOperations } =
     useRowLevelPermissionRulesInDraftRole(roleId);
 
-  const { objectMetadataItem: workspaceMemberObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
-    });
+  const { getRuleLabel } = useRowLevelPermissionRuleLabel(objectMetadataItem);
 
-  const currentWorkspaceMembers = useAtomStateValue(
-    currentWorkspaceMembersState,
-  );
-  const workspaceMemberNameById = new Map(
-    currentWorkspaceMembers.map(({ id, name }) => [
-      id,
-      [name.firstName, name.lastName].filter(isNonEmptyString).join(' '),
-    ]),
-  );
+  const {
+    disabledOperations,
+    disabledOperationReasons,
+    getDisabledOperationReason,
+  } = useObjectDisabledOperations(objectMetadataItem);
 
   const rules = getObjectRowLevelPermissionRules({
     role: settingsDraftRole,
@@ -105,7 +99,34 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
   const operations = getObjectOperations({
     role: settingsDraftRole,
     objectMetadataId: objectMetadataItem.id,
+    disabledOperations,
   });
+
+  const objectLabelPlural = objectMetadataItem.labelPlural.toLocaleLowerCase();
+
+  const getRuleOnlyHint = (operation: SettingsRoleObjectPermissionKey) => {
+    const ruleCount = rules.filter(({ rule }) =>
+      getRecordsGrantOperations({ recordsGrant: rule }).includes(operation),
+    ).length;
+
+    if (operations.includes(operation) || ruleCount === 0) {
+      return null;
+    }
+
+    const throughRules =
+      ruleCount === 1 ? t`through 1 rule` : t`through ${ruleCount} rules`;
+
+    switch (operation) {
+      case 'canReadObjectRecords':
+        return t`See some ${objectLabelPlural} · ${throughRules}`;
+      case 'canUpdateObjectRecords':
+        return t`Edit some ${objectLabelPlural} · ${throughRules}`;
+      case 'canSoftDeleteObjectRecords':
+        return t`Delete some ${objectLabelPlural} · ${throughRules}`;
+      case 'canDestroyObjectRecords':
+        return t`Destroy some ${objectLabelPlural} · ${throughRules}`;
+    }
+  };
 
   const toggleOperation = (key: SettingsRoleObjectPermissionKey) => {
     const nextOperations = operations.includes(key)
@@ -117,6 +138,7 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
       operations: getObjectOperationsWithReadDependency({
         previousOperations: operations,
         nextOperations,
+        disabledOperations,
       }),
     });
   };
@@ -133,23 +155,46 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
     <StyledPanel>
       <StyledHeaderRow>
         <TableHeader>{t`All records`}</TableHeader>
-        <TableHeader />
-        <TableHeader align="right">{t`Allows`}</TableHeader>
+        <TableHeader>{t`Allows`}</TableHeader>
+        <TableHeader align="right">
+          {isEditable && (
+            <LightIconButton
+              emphasis="subtle"
+              aria-label={t`Remove override`}
+              onClick={() => removeObjectOverride(objectMetadataItem.id)}
+            >
+              <IconTrash />
+            </LightIconButton>
+          )}
+        </TableHeader>
       </StyledHeaderRow>
       {SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.map((key) => {
         const { Icon } = SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[key];
+        const disabledReason = getDisabledOperationReason(key);
+        const isOperationEnabled = !isDefined(disabledReason);
+        const hint = disabledReason ?? getRuleOnlyHint(key);
 
         return (
           <TableRow
             key={key}
             gridTemplateColumns={OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS}
-            onClick={isEditable ? () => toggleOperation(key) : undefined}
+            onClick={
+              isEditable && isOperationEnabled
+                ? () => toggleOperation(key)
+                : undefined
+            }
           >
-            <TableCell gap={themeCssVariables.spacing[2]}>
+            <TableCell gap={themeCssVariables.spacing[2]} overflow="hidden">
               <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
               <StyledActionLabel>
                 {t(SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[key].label)}
               </StyledActionLabel>
+              {isDefined(hint) && (
+                <OverflowingTextWithTooltip
+                  color="tertiary"
+                  text={`· ${hint}`}
+                />
+              )}
             </TableCell>
             <TableCell onClick={(event) => event.stopPropagation()}>
               {(key === 'canReadObjectRecords' ||
@@ -168,7 +213,7 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
                   SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[key].label,
                 )}
                 checked={operations.includes(key)}
-                disabled={!isEditable}
+                disabled={!isEditable || !isOperationEnabled}
                 hoverable={false}
                 onClick={(event) => event.stopPropagation()}
                 onCheckedChange={() => toggleOperation(key)}
@@ -180,15 +225,12 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
       {rules.length > 0 && (
         <StyledHeaderRow>
           <TableHeader>{t`Some records`}</TableHeader>
+          <TableHeader>{t`Allows`}</TableHeader>
+          <TableHeader />
         </StyledHeaderRow>
       )}
       {rules.map(({ rule, predicates }) => {
-        const ruleLabel = getRowLevelPermissionRuleLabel({
-          predicates,
-          objectMetadataItem,
-          workspaceMemberObjectMetadataItem,
-          recordLabelById: workspaceMemberNameById,
-        });
+        const ruleLabel = getRuleLabel(predicates);
 
         return (
           <TableRow
@@ -211,7 +253,10 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
             <TableCell onClick={(event) => event.stopPropagation()}>
               <SettingsRolePermissionsObjectOperationsSelect
                 dropdownId={`settings-role-rule-actions-${rule.id}`}
-                selectedOperations={getRecordsGrantOperations(rule)}
+                selectedOperations={getRecordsGrantOperations({
+                  recordsGrant: rule,
+                  disabledOperations,
+                })}
                 onChange={(operations) =>
                   setRuleOperations({
                     rowLevelPermissionRuleId: rule.id,
@@ -219,6 +264,7 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
                   })
                 }
                 disabled={!isEditable}
+                disabledOperationReasons={disabledOperationReasons}
               />
             </TableCell>
             <TableCell
@@ -232,13 +278,6 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
       })}
       {isEditable && (
         <StyledFooter>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => removeObjectOverride(objectMetadataItem.id)}
-          >
-            {t`Remove override`}
-          </Button>
           <Button
             size="sm"
             variant="outline"

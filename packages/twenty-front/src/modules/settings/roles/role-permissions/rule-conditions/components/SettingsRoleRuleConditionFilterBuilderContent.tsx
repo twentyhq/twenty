@@ -2,7 +2,7 @@
 
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconFilter, IconPlus } from 'twenty-ui/icon';
+import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -142,9 +142,9 @@ export const SettingsRoleRuleConditionFilterBuilderContent = ({
             <CommandMenuButton
               command={{
                 Icon: IconPlus,
-                label: t`Add rule`,
-                shortLabel: t`Add rule`,
-                key: 'add-rule',
+                label: t`Add condition`,
+                shortLabel: t`Add condition`,
+                key: 'add-condition',
               }}
               onClick={() => handleAddFilter(rootRecordFilterGroup)}
             />
@@ -152,12 +152,11 @@ export const SettingsRoleRuleConditionFilterBuilderContent = ({
         </StyledContainer>
       ) : (
         <Button
-          startIcon={<IconFilter />}
+          startIcon={<IconPlus />}
           size="sm"
           onClick={handleCreateFirstFilter}
-          aria-label={t`Add filter`}
           variant="outline"
-        >{t`Add filter`}</Button>
+        >{t`Add condition`}</Button>
       )}
     </AdvancedFilterContext.Provider>
   );

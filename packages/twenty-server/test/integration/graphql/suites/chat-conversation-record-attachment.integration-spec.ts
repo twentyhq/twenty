@@ -1,17 +1,18 @@
 import { randomUUID } from 'node:crypto';
 
+import { ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME } from 'twenty-shared/ai';
+
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
-import { type AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
-import { createAttachConversationToRecordsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-records.tool';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -27,7 +28,7 @@ const companyId = randomUUID();
 describe('Attaching a conversation to a record from a chat turn', () => {
   let chat: AgentChatService;
   let actors: AgentChatActorService;
-  let targets: AgentChatThreadTargetService;
+  let toolRegistry: ToolRegistryService;
   let message: Awaited<ReturnType<AgentChatService['addMessage']>>;
   const threadId = randomUUID();
 
@@ -36,8 +37,8 @@ describe('Attaching a conversation to a record from a chat turn', () => {
     actors = getAppProviderByClassName<AgentChatActorService>(
       'AgentChatActorService',
     );
-    targets = getAppProviderByClassName<AgentChatThreadTargetService>(
-      'AgentChatThreadTargetService',
+    toolRegistry = getAppProviderByClassName<ToolRegistryService>(
+      'ToolRegistryService',
     );
     await makeGraphqlApiRequest(
       createOneOperationFactory({
@@ -74,7 +75,9 @@ describe('Attaching a conversation to a record from a chat turn', () => {
     );
   });
 
-  const buildTool = async () => {
+  const attach = async (
+    records: { objectNameSingular: string; recordId: string }[],
+  ) => {
     const {
       authorizedConversation: { authContext },
     } = await actors.authorizeJob({
@@ -85,15 +88,11 @@ describe('Attaching a conversation to a record from a chat turn', () => {
       userWorkspaceId,
     });
 
-    return createAttachConversationToRecordsTool({
-      agentChatThreadTargetService: targets,
-      toolContext: {
-        workspaceId,
-        threadId,
-        userWorkspaceId,
-        authContext,
-      },
-    });
+    return toolRegistry.resolveAndExecute(
+      ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME,
+      { records },
+      { workspaceId, threadId, userWorkspaceId, authContext },
+    );
   };
 
   const listConversationIdsAttachedTo = async (recordId: string) => {
@@ -114,23 +113,17 @@ describe('Attaching a conversation to a record from a chat turn', () => {
   };
 
   it('links the conversation to the record once, however often it is asked', async () => {
-    const tool = await buildTool();
-
     await expect(
-      tool.execute({
-        records: [
-          { objectNameSingular: 'company', recordId: companyId },
-          { objectNameSingular: 'company', recordId: companyId },
-        ],
-      }),
+      attach([
+        { objectNameSingular: 'company', recordId: companyId },
+        { objectNameSingular: 'company', recordId: companyId },
+      ]),
     ).resolves.toMatchObject({ success: true });
     await expect(
-      tool.execute({
-        records: [
-          { objectNameSingular: 'company', recordId: companyId },
-          { objectNameSingular: 'company', recordId: companyId },
-        ],
-      }),
+      attach([
+        { objectNameSingular: 'company', recordId: companyId },
+        { objectNameSingular: 'company', recordId: companyId },
+      ]),
     ).resolves.toMatchObject({ success: true });
 
     const attachedConversationIds =
@@ -144,13 +137,10 @@ describe('Attaching a conversation to a record from a chat turn', () => {
   });
 
   it('reports a record that does not exist without attaching anything', async () => {
-    const tool = await buildTool();
     const missingRecordId = randomUUID();
 
     await expect(
-      tool.execute({
-        records: [{ objectNameSingular: 'company', recordId: missingRecordId }],
-      }),
+      attach([{ objectNameSingular: 'company', recordId: missingRecordId }]),
     ).resolves.toMatchObject({
       success: false,
       message: 'Failed to attach this conversation to records',
@@ -158,13 +148,34 @@ describe('Attaching a conversation to a record from a chat turn', () => {
     });
   });
 
-  it('reports an object conversations cannot be attached to', async () => {
-    const tool = await buildTool();
+  it('keeps the records it could attach when others fail, and warns about the rest', async () => {
+    const missingRecordId = randomUUID();
 
     await expect(
-      tool.execute({
-        records: [{ objectNameSingular: 'unknownObject', recordId: companyId }],
-      }),
+      attach([
+        { objectNameSingular: 'company', recordId: companyId },
+        { objectNameSingular: 'company', recordId: missingRecordId },
+      ]),
+    ).resolves.toMatchObject({
+      success: true,
+      message: 'Attached this conversation to 1 of 2 records',
+      result: {
+        attached: [{ objectNameSingular: 'company', recordId: companyId }],
+        failed: [
+          {
+            objectNameSingular: 'company',
+            recordId: missingRecordId,
+            error: 'Record not found',
+          },
+        ],
+      },
+      warnings: [`company ${missingRecordId}: Record not found`],
+    });
+  });
+
+  it('reports an object conversations cannot be attached to', async () => {
+    await expect(
+      attach([{ objectNameSingular: 'unknownObject', recordId: companyId }]),
     ).resolves.toMatchObject({
       success: false,
       error: expect.stringContaining('Unknown object "unknownObject"'),

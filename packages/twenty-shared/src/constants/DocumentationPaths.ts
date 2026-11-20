@@ -248,6 +248,8 @@ export const DOCUMENTATION_PATHS = {
   USER_GUIDE_AI_CAPABILITIES_PERMISSIONS_ACCESS_CONTROL:
     '/user-guide/ai/capabilities/permissions-access-control',
   USER_GUIDE_AI_HOW_TOS_AI_FAQ: '/user-guide/ai/how-tos/ai-faq',
+  USER_GUIDE_AI_HOW_TOS_INBOX_NOTIFICATIONS:
+    '/user-guide/ai/how-tos/inbox-notifications',
   USER_GUIDE_AI_OVERVIEW: '/user-guide/ai/overview',
   USER_GUIDE_BILLING_CAPABILITIES_CREDITS:
     '/user-guide/billing/capabilities/credits',

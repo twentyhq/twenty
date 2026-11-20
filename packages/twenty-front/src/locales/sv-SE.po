@@ -471,6 +471,12 @@ msgstr "{0} har avanmält sig från det här ämnet"
 msgid "{0} retries"
 msgstr "{0} återförsök"
 
+#. js-lingui-id: nrONSU
+#. placeholder {0}: rules.length
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverrideRow.tsx
+msgid "{0} rules"
+msgstr ""
+
 #. js-lingui-id: fvImQM
 #. placeholder {0}: formatNumber(numberOfSelectedRecords)
 #. placeholder {0}: formatNumber(selectedThreadCount)
@@ -571,7 +577,7 @@ msgstr "{0}, {unreadOpenThreadCount} olästa"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterCompositeSubFieldSelectMenu.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRelationTargetFieldSelectMenu.tsx
 #: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelectSubFieldMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
 msgid "{0}, back to fields"
@@ -611,12 +617,12 @@ msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} för {fieldLabel}"
 
 #. js-lingui-id: zEkduP
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "{allowedFieldCount} of {fieldCount}"
 msgstr "{allowedFieldCount} för {fieldCount}"
 
 #. js-lingui-id: LoDOIo
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "{allowedFieldCount} of {fieldCount} fields"
 msgstr "{allowedFieldCount} av {fieldCount} fält"
 
@@ -634,6 +640,16 @@ msgstr "{appDisplayName} vill göra följande:"
 #: src/modules/getting-started/components/GettingStartedAppInstallButton.tsx
 msgid "{appLabel} installed"
 msgstr "{appLabel} installerad"
+
+#. js-lingui-id: jUUqOu
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMemberActionsCell.tsx
+msgid "{applicationName} can no longer access the account of {memberName}"
+msgstr ""
+
+#. js-lingui-id: 1NAf56
+#: src/modules/settings/profile/connected-apps/components/SettingsConnectedAppRowDropdownMenu.tsx
+msgid "{applicationName} can no longer access your account"
+msgstr ""
 
 #. js-lingui-id: TVseJQ
 #: src/modules/settings/app-preferences/hooks/useAccountGroupApplicationSettingsTabs.ts
@@ -697,6 +713,11 @@ msgstr "{cardCount, plural, one {Godkänna # åtgärd?} other {Godkänna # åtg�
 #: src/modules/activities/emails/components/ChatThreadDisconnectedBanner.tsx
 msgid "{channelName} is disconnected."
 msgstr "{channelName} är frånkopplad."
+
+#. js-lingui-id: Y1n+1u
+#: src/modules/settings/applications/utils/getApplicationsWithConnectedMembersDescription.ts
+msgid "{connectedMemberCount, plural, =0 {No members connected} one {Connected by # member} other {Connected by # members}}"
+msgstr ""
 
 #. js-lingui-id: 3gdGx+
 #: src/modules/settings/applications/hooks/useConnectApplicationWithApiKey.ts
@@ -842,7 +863,7 @@ msgid "{filterRulesCount, plural, one {{filterRulesCount} rule} other {{filterRu
 msgstr "{filterRulesCount, plural, one {{filterRulesCount} regel} other {{filterRulesCount} regler}}"
 
 #. js-lingui-id: 11/gul
-#: src/modules/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
 msgid "{firstPredicateLabel} +{otherPredicateCount}"
 msgstr ""
 
@@ -1029,11 +1050,6 @@ msgstr "{num, selectordinal, one {{num}:a} other {{num}e}}"
 msgid "{numberOfSelectedItems} workspace members"
 msgstr "{numberOfSelectedItems} medlemmar i arbetsytan"
 
-#. js-lingui-id: PliJNk
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
-msgid "{objectLabelPlural} rule"
-msgstr ""
-
 #. js-lingui-id: luWGLQ
 #: src/modules/workflow/workflow-variables/utils/generate/generateWaitForEventOutputSchema.ts
 msgid "{objectLabelSingular} Before Update"
@@ -1112,7 +1128,7 @@ msgid "{readOnlyFieldCount, plural, one {Can't edit # field} other {Can't edit #
 msgstr "{readOnlyFieldCount, plural, one {Kan inte redigera # fält} other {Kan inte redigera # fält}}"
 
 #. js-lingui-id: HFkZ/O
-#: src/modules/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
 msgid "{recordCount} records"
 msgstr ""
 
@@ -1147,10 +1163,35 @@ msgstr "{retentionInHours, plural, one {# timme} other {# timmar}}"
 msgid "{retriedCount, plural, one {Successfully retried {retriedCount} job} other {Successfully retried {retriedCount} jobs}}"
 msgstr "{retriedCount, plural, one {Framgångsrikt återsökt {retriedCount} jobb} other {Framgångsrikt återsökt {retriedCount} jobb}}"
 
+#. js-lingui-id: ssmJCL
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "{roleLabel} already deletes every {objectLabelSingular}"
+msgstr ""
+
+#. js-lingui-id: 09pjSA
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "{roleLabel} already destroys every {objectLabelSingular}"
+msgstr ""
+
+#. js-lingui-id: dPD2BG
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "{roleLabel} already edits every {objectLabelSingular}"
+msgstr ""
+
+#. js-lingui-id: Qs0rBC
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "{roleLabel} already sees every {objectLabelSingular}"
+msgstr ""
+
 #. js-lingui-id: uHZWwU
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
 msgid "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
 msgstr "{roleTargetName} kommer att tilldelas rollen \"{newRoleName}\"."
+
+#. js-lingui-id: uqrFkj
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverrideRow.tsx
+msgid "{ruleOperationsLabel} when {ruleLabel}"
+msgstr ""
 
 #. js-lingui-id: Tsqb9x
 #: src/modules/object-core/agents/components/CoreAgentRunConversation.tsx
@@ -1528,7 +1569,7 @@ msgid "1 of 2 done"
 msgstr "1 av 2 klara"
 
 #. js-lingui-id: qarnor
-#: src/modules/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
 msgid "1 record"
 msgstr ""
 
@@ -1777,16 +1818,6 @@ msgstr "Möjlighet att lägga till fler än ett telefonnummer"
 msgid "Ability to add more than one URL"
 msgstr "Möjlighet att lägga till fler än en URL"
 
-#. js-lingui-id: MjUIIf
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-msgid "Ability to filter the records a user can interact with"
-msgstr "Möjlighet att filtrera de poster som en användare kan interagera med"
-
-#. js-lingui-id: 7J3Y++
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-msgid "Ability to filter the records a user can interact with."
-msgstr "Möjlighet att filtrera de poster som en användare kan interagera med."
-
 #. js-lingui-id: ssjjFt
 #: src/modules/settings/components/SettingsImageInput.tsx
 msgid "Abort"
@@ -1837,7 +1868,7 @@ msgstr "Accepterade och signerade PUB:er för den här arbetsytan, med deras mal
 
 #. js-lingui-id: LuXP9q
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionsTable.tsx
 msgid "Access"
 msgstr "Åtkomst"
@@ -2145,7 +2176,7 @@ msgid "Add a recipient before sending"
 msgstr "Lägg till en mottagare innan du skickar"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "Lägg till en mottagare eller en kanal innan du skickar."
 
@@ -2290,6 +2321,13 @@ msgstr "Lägg till kolumn till vänster"
 msgid "Add column right"
 msgstr "Lägg till kolumn till höger"
 
+#. js-lingui-id: ADCve+
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFilterBuilderContent.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFilterBuilderContent.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFilterBuilderContent.tsx
+msgid "Add condition"
+msgstr ""
+
 #. js-lingui-id: 3iIvQg
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Add conferencing"
@@ -2380,8 +2418,6 @@ msgstr "Lägg till filer, poster eller färdigheter"
 #. js-lingui-id: vCSBPD
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelCreateRootFilterButton.tsx
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelCreateRootFilterButton.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
 #: src/modules/views/components/ViewBarDetailsAddFilterButton.tsx
 msgid "Add filter"
 msgstr "Lägg till filter"
@@ -2483,8 +2519,8 @@ msgid "Add node"
 msgstr "Lägg till nod"
 
 #. js-lingui-id: dEO3Zx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
@@ -2582,8 +2618,6 @@ msgstr "Lägg till rad nedanför"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
@@ -2932,7 +2966,7 @@ msgstr "Administratörer"
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverrideRow.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverrideRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Advanced"
 msgstr "Avancerat"
@@ -3156,7 +3190,7 @@ msgstr "AI-krediter"
 
 #. js-lingui-id: leS03Y
 #. placeholder {0}: userCreditsUsage.daysUntilReset
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "AI-krediter förnyas om {0, plural, one {# dag} other {# dagar}}."
 
@@ -3382,6 +3416,11 @@ msgstr "Alla applikationer"
 msgid "All channels"
 msgstr "Alla kanaler"
 
+#. js-lingui-id: 7cbQyX
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "All chats you follow"
+msgstr ""
+
 #. js-lingui-id: tZLcDK
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 msgid "All Companies"
@@ -3411,8 +3450,8 @@ msgid "All failed jobs have been retried"
 msgstr "Alla misslyckade jobb har återsökts"
 
 #. js-lingui-id: 3xugyj
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "All fields"
 msgstr "Alla fält"
@@ -3468,7 +3507,7 @@ msgid "all objects"
 msgstr "alla objekt"
 
 #. js-lingui-id: zIk4M6
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAllObjectsCard.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAllObjectsCard.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 msgid "All objects"
 msgstr "Alla objekt"
@@ -3497,7 +3536,7 @@ msgstr "alla poster"
 
 #. js-lingui-id: rAUKN+
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "All records"
 msgstr "Alla poster"
 
@@ -3572,6 +3611,11 @@ msgstr "Alla arbetsytans medlemmar har redan den här rollen"
 msgid "All workspaces"
 msgstr "Alla arbetsytor"
 
+#. js-lingui-id: h7peZQ
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Allow"
+msgstr ""
+
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow downloading files and attachments"
@@ -3633,6 +3677,11 @@ msgstr "Tillåt Support Team åtkomst"
 msgid "Allow the invitation of new users by sharing an invite link."
 msgstr "Tillåt inbjudan av nya användare genom att dela en inbjudningslänk."
 
+#. js-lingui-id: lIfNCI
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Allow this browser to show new inbox messages as notifications"
+msgstr ""
+
 #. js-lingui-id: JBjv4v
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow uploading files and attachments"
@@ -3644,8 +3693,8 @@ msgid "Allow users to sign in with an email and password."
 msgstr "Tillåt användare att logga in med e-postadress och lösenord."
 
 #. js-lingui-id: Vwi3xW
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOperationsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOperationsSelect.tsx
 msgid "Allowed actions"
 msgstr "Tillåtna åtgärder"
 
@@ -3655,7 +3704,9 @@ msgid "Allowed redirect URIs for OAuth flows"
 msgstr "Tillåtna omdirigerings-URI:er för OAuth-flöden"
 
 #. js-lingui-id: L36XXB
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
 msgid "Allows"
 msgstr "Tillåter"
 
@@ -3681,8 +3732,8 @@ msgid "Alt text"
 msgstr "Alt-text"
 
 #. js-lingui-id: Lz58MZ
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Always visible"
 msgstr "Alltid synlig"
 
@@ -4106,6 +4157,11 @@ msgstr "Applikationen installerades framgångsrikt."
 msgid "Application Logs"
 msgstr "Applikationsloggar"
 
+#. js-lingui-id: UiH6l9
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Application price billing"
+msgstr ""
+
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -4158,7 +4214,7 @@ msgid "Applies to"
 msgstr "Gäller för"
 
 #. js-lingui-id: 9xcLbN
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAllObjectsCard.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAllObjectsCard.tsx
 msgid "Applies to all objects before overrides"
 msgstr "Gäller alla objekt före undantag"
 
@@ -4250,6 +4306,11 @@ msgstr "Appinställningar"
 #: src/utils/title-utils.ts
 msgid "Apps preferences - Settings"
 msgstr "Appinställningar - Inställningar"
+
+#. js-lingui-id: Eve12g
+#: src/modules/settings/profile/connected-apps/components/SettingsProfileConnectedAppsSection.tsx
+msgid "Apps that can access this workspace on your behalf"
+msgstr ""
 
 #. js-lingui-id: EzsAEI
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
@@ -5160,6 +5221,11 @@ msgstr "mellan den {startOrdinal} och {endOrdinal} av månaden"
 msgid "Bill credits to your workspace"
 msgstr "Debitera krediter till ditt arbetsområde"
 
+#. js-lingui-id: jKtUV8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
+msgstr ""
+
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Billed monthly"
@@ -5247,6 +5313,11 @@ msgstr "Blockstil"
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Blocked"
 msgstr "Blockerad"
+
+#. js-lingui-id: z3pfdo
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Blocked in this browser. Allow notifications for this site in the browser settings"
+msgstr ""
 
 #. js-lingui-id: K1172m
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
@@ -5473,6 +5544,12 @@ msgstr "Punktlista"
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorTextInsertionItems.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Bullet List"
+msgstr ""
+
+#. js-lingui-id: gxG5Ip
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
+msgid "Bundled"
 msgstr ""
 
 #. js-lingui-id: 9emr42
@@ -5759,12 +5836,12 @@ msgid "Campaign unscheduled and back in your drafts"
 msgstr "Kampanjens schemaläggning har avbrutits och den är tillbaka i dina utkast"
 
 #. js-lingui-id: AnhtKd
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Can't be edited"
 msgstr "Kan inte redigeras"
 
 #. js-lingui-id: XccYlu
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Can't be seen"
 msgstr "Kan inte ses"
 
@@ -5995,17 +6072,6 @@ msgstr "Begränsa vad din arbetsyta kan spendera. Börja med en vanlig gräns el
 msgid "Caps on what your workspace can spend and who they apply to"
 msgstr "Gränser för vad din arbetsyta kan spendera och vem de gäller för"
 
-#. js-lingui-id: Po5MgW
-#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
-#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
-#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
-#: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
-#: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
-#: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts
-#: src/pages/auth/PasswordReset.tsx
-msgid "Captcha (anti-bot check) is still loading, try again"
-msgstr "Captcha (anti-botkontroll) laddar fortfarande, försök igen"
-
 #. js-lingui-id: kryGs+
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -6230,7 +6296,7 @@ msgid "Chat Sessions"
 msgstr "Chattsessioner"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "Chat stopped: no more available credits."
 msgstr "Chatten stoppades: inga fler tillgängliga krediter."
 
@@ -6793,7 +6859,7 @@ msgstr "Urklipp kräver en säker anslutning (HTTPS). Öppna den här appen via 
 #: src/modules/onboarding/components/OnboardingSkipDialog.tsx
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
 #: src/modules/workflow/workflow-steps/components/WorkflowDropdownStepOutputItems.tsx
@@ -7263,6 +7329,8 @@ msgid "Computed at"
 msgstr "Beräknad vid"
 
 #. js-lingui-id: wpT1VN
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 #: src/modules/validation-rules/components/ValidationRuleExpressionEditor.tsx
 msgid "Condition"
@@ -7627,6 +7695,16 @@ msgstr "Anslut ditt eget {0}-konto för den här servern för användning å din
 msgid "Connected"
 msgstr "Ansluten"
 
+#. js-lingui-id: YGP/lN
+#: src/modules/settings/profile/connected-apps/components/SettingsProfileConnectedAppsSection.tsx
+msgid "Connected apps"
+msgstr ""
+
+#. js-lingui-id: OVjUoE
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMembersSection.tsx
+msgid "Connected members"
+msgstr ""
+
 #. js-lingui-id: exyUec
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTable.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
@@ -7668,7 +7746,7 @@ msgid "Connection successfully updated"
 msgstr "Anslutning uppdaterades framgångsrikt"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "Anslutningen till assistenten förlorades. Ladda om för att se svaret."
 
@@ -9838,7 +9916,7 @@ msgstr "ta bort"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig.ts
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage.tsx
@@ -10061,6 +10139,11 @@ msgstr "Radera nivå"
 msgid "Delete limit"
 msgstr "Radera gräns"
 
+#. js-lingui-id: Fh7KV2
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "Delete matching {objectLabelPlural}"
+msgstr ""
+
 #. js-lingui-id: u+Hoy8
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 msgid "Delete MCP server"
@@ -10118,7 +10201,7 @@ msgid "Delete row"
 msgstr "Ta bort rad"
 
 #. js-lingui-id: 39Aq/E
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
 msgid "Delete rule"
 msgstr ""
 
@@ -10126,6 +10209,11 @@ msgstr ""
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 msgid "Delete Skill"
 msgstr "Ta bort färdighet"
+
+#. js-lingui-id: 6XdrVG
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Delete some {objectLabelPlural} · {throughRules}"
+msgstr ""
 
 #. js-lingui-id: drg4t8
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
@@ -10377,7 +10465,7 @@ msgstr "förstör"
 
 #. js-lingui-id: 2xxBws
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
-#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig.ts
 msgid "Destroy"
 msgstr "Förstör"
 
@@ -10390,6 +10478,16 @@ msgstr "Förstör {objectLabel}"
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Destroy all records"
 msgstr "Förstör alla poster"
+
+#. js-lingui-id: LhvVfx
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "Destroy matching {objectLabelPlural}"
+msgstr ""
+
+#. js-lingui-id: rEJ7+y
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Destroy some {objectLabelPlural} · {throughRules}"
+msgstr ""
 
 #. js-lingui-id: FOcBn3
 #: src/modules/inbox/components/InboxThreadActionsDropdown.tsx
@@ -10510,10 +10608,20 @@ msgstr "Identitet för direktmeddelandepar"
 msgid "Direct messages"
 msgstr "Direktmeddelanden"
 
+#. js-lingui-id: yBEIpe
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Direct messages and mentions"
+msgstr ""
+
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/instance/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Direktmeddelanden har inte stöd för bilagor."
+
+#. js-lingui-id: +ILAOG
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Direct messages, mentions and chats assigned to you"
+msgstr ""
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -11125,7 +11233,7 @@ msgstr "eddy@gmail.com, @apple.com"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/profile/components/EmailField.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig.ts
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Edit"
 msgstr "Redigera"
@@ -11241,6 +11349,11 @@ msgstr "Redigera länk"
 msgid "Edit linked records"
 msgstr "Redigera länkade poster"
 
+#. js-lingui-id: pFCxAz
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "Edit matching {objectLabelPlural}"
+msgstr ""
+
 #. js-lingui-id: QjH+ZX
 #: src/modules/ai-chat/messages/components/AiChatMessage.tsx
 #: src/modules/ai-chat/messages/components/AiChatMessage.tsx
@@ -11300,6 +11413,11 @@ msgstr "Redigera regel"
 #: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "Edit shared labels"
 msgstr "Redigera delade etiketter"
+
+#. js-lingui-id: yYBXaf
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Edit some {objectLabelPlural} · {throughRules}"
+msgstr ""
 
 #. js-lingui-id: xE9ptR
 #: src/modules/page-layout/components/PageLayoutTabMenuItemSelectAvatar.tsx
@@ -12570,8 +12688,13 @@ msgstr "varje minut"
 msgid "Every Monday"
 msgstr "Varje måndag"
 
+#. js-lingui-id: WZ4tRP
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Every new message in a chat you take part in or follow"
+msgstr ""
+
 #. js-lingui-id: QU6LCC
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Every object follows the all objects access."
 msgstr "Alla objekt följer åtkomsten för alla objekt."
 
@@ -12988,6 +13111,11 @@ msgstr "Uttrycket är inte giltigt"
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 msgid "External Event ID"
 msgstr "Externt händelse-ID"
+
+#. js-lingui-id: ejIVcx
+#: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
+msgid "External tools agents and workflows can use"
+msgstr ""
 
 #. js-lingui-id: 07Wl2A
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -13408,6 +13536,16 @@ msgstr "Det gick inte att återställa tidslinjeaktivitetstypen."
 msgid "Failed to retry jobs. Please try again later."
 msgstr "Det gick inte att återsöka jobben. Försök igen senare."
 
+#. js-lingui-id: YTYTep
+#: src/modules/settings/profile/connected-apps/components/SettingsConnectedAppRowDropdownMenu.tsx
+msgid "Failed to revoke access for {applicationName}"
+msgstr ""
+
+#. js-lingui-id: nNwzE+
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMemberActionsCell.tsx
+msgid "Failed to revoke access for {memberName}"
+msgstr ""
+
 #. js-lingui-id: 70UyPr
 #: src/modules/settings/admin-panel/signing-keys/hooks/useRevokeSigningKey.ts
 msgid "Failed to revoke signing key. Please try again later."
@@ -13804,8 +13942,8 @@ msgstr "Behörigheter på fältnivå"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/data-model/object-details/components/SettingsObjectIndexTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelectFieldMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetFieldDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -13856,12 +13994,12 @@ msgid "Fields shown in each view, and their order"
 msgstr "Fält som visas i varje vy och deras ordning"
 
 #. js-lingui-id: RWZvyt
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Fields to edit"
 msgstr "Fält att redigera"
 
 #. js-lingui-id: YsJAML
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Fields to see"
 msgstr "Fält att se"
 
@@ -14090,7 +14228,7 @@ msgid "Finding connected accounts"
 msgstr "Söker efter anslutna konton"
 
 #. js-lingui-id: JmZ/+d
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
 msgid "Finish"
 msgstr "Avsluta"
 
@@ -14726,11 +14864,21 @@ msgstr "Tyska"
 msgid "Germany"
 msgstr "Tyskland"
 
+#. js-lingui-id: AWtGgd
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Get help"
+msgstr ""
+
 #. js-lingui-id: Et23WT
 #: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Get more credits"
 msgstr "Skaffa fler krediter"
+
+#. js-lingui-id: LBG67E
+#: src/modules/settings/experience/components/SettingsExperienceNotificationsSection.tsx
+msgid "Get notified of new inbox messages on this device when you are not looking at Twenty. Your choices below apply to every device"
+msgstr ""
 
 #. js-lingui-id: AvbPI1
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
@@ -15267,6 +15415,11 @@ msgstr "Hebrew"
 msgid "hello, world"
 msgstr "hej, världen"
 
+#. js-lingui-id: c3XJ18
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Help"
+msgstr ""
+
 #. js-lingui-id: CRzGla
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Help center"
@@ -15283,6 +15436,7 @@ msgid "Hexagon"
 msgstr "Hexagon"
 
 #. js-lingui-id: D+zLDD
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionHiddenItems.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
@@ -16774,6 +16928,11 @@ msgstr "Objekt att iterera över"
 msgid "Iterator"
 msgstr "Iterator"
 
+#. js-lingui-id: 48n0Ly
+#: src/modules/settings/roles/role-permissions/object-overrides/hooks/useObjectDisabledOperations.ts
+msgid "its app"
+msgstr ""
+
 #. js-lingui-id: R9VnB9
 #: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Its chats move to {destinationChannelName}. This cannot be undone."
@@ -17310,6 +17469,16 @@ msgstr "Senaste uppdatering"
 msgid "Last Updated: {0}"
 msgstr "Senast uppdaterad: {0}"
 
+#. js-lingui-id: JGvwnU
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMembersSection.tsx
+msgid "Last used"
+msgstr ""
+
+#. js-lingui-id: 484c8n
+#: src/modules/settings/profile/connected-apps/components/SettingsProfileConnectedAppsSection.tsx
+msgid "Last used {lastUsed}"
+msgstr ""
+
 #. js-lingui-id: p9uaTd
 #: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Later today"
@@ -17546,7 +17715,7 @@ msgid "Let this member sign in again if they lost their authenticator app"
 msgstr "Låt denna medlem logga in igen om de har förlorat sin autentiseringsapp"
 
 #. js-lingui-id: RIWS8s
-#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+#: src/modules/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble.tsx
 msgid "Let's set it up around the way you work."
 msgstr "Låt oss anpassa det efter hur du arbetar."
 
@@ -18615,6 +18784,7 @@ msgstr "Maximalt antal värden"
 #. js-lingui-id: nA8kxD
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+#: src/pages/settings/applications/components/SettingsAvailableApplicationCard.tsx
 msgid "MCP"
 msgstr "MCP"
 
@@ -18651,6 +18821,7 @@ msgstr "MCP-servern har tagits bort"
 
 #. js-lingui-id: 8qgfac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+#: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
 msgid "MCP servers"
 msgstr "MCP-servrar"
@@ -18666,7 +18837,7 @@ msgid "MCP tool step"
 msgstr "MCP-verktygssteg"
 
 #. js-lingui-id: 37Lzw8
-#: src/modules/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
 msgid "me"
 msgstr ""
 
@@ -18676,19 +18847,19 @@ msgstr ""
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionValueInput.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionValueInput.tsx
 #: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "Me"
 msgstr "Jag"
 
 #. js-lingui-id: pfWzog
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "Me (User ID)"
 msgstr "Jag (Användar-ID)"
 
 #. js-lingui-id: BDc6e1
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionValueInput.tsx
 msgid "Me / {workspaceMemberFieldLabel}"
 msgstr "Jag / {workspaceMemberFieldLabel}"
 
@@ -18760,7 +18931,6 @@ msgstr ""
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -18780,6 +18950,11 @@ msgstr "Medlemmar - Inställningar"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Members & invitees"
 msgstr "Medlemmar och inbjudna"
+
+#. js-lingui-id: tajf6H
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMembersSection.tsx
+msgid "Members who let this app access the workspace on their behalf"
+msgstr ""
 
 #. js-lingui-id: pbIEgB
 #: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
@@ -19277,6 +19452,7 @@ msgstr "Fler avancerade fält för avancerade projekt"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionRowDropdownMenu.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+#: src/modules/settings/components/SettingsRevokeAccessDropdownMenu.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
@@ -19463,7 +19639,7 @@ msgid "Must be true to save. A write that makes it false is rejected."
 msgstr "Måste vara sant för att sparas. En skrivning som gör det falskt avvisas."
 
 #. js-lingui-id: lPmo1u
-#: src/modules/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
 msgid "my {workspaceMemberFieldLabel}"
 msgstr ""
 
@@ -19473,7 +19649,7 @@ msgid "My apps"
 msgstr "Mina appar"
 
 #. js-lingui-id: oAOi31
-#: src/modules/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
 msgid "my unknown field"
 msgstr ""
 
@@ -19512,6 +19688,7 @@ msgstr "N/A"
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMembersSection.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentItemsTable.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentTypeTable.tsx
 #: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
@@ -19862,6 +20039,16 @@ msgstr "Ny grupp"
 msgid "New Group"
 msgstr "Ny grupp"
 
+#. js-lingui-id: TC11mZ
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "New inbox messages notify you while your browser is running"
+msgstr ""
+
+#. js-lingui-id: ynuJvo
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "New inbox messages will show up like this"
+msgstr ""
+
 #. js-lingui-id: //H2Cs
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
@@ -19923,7 +20110,8 @@ msgstr "Ny gräns för överföring"
 
 #. js-lingui-id: yBF5J5
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
 msgid "New rule"
 msgstr "Ny regel"
 
@@ -20153,7 +20341,7 @@ msgstr "Inga {objectLabelSingular} hittades"
 
 #. js-lingui-id: oPoLg+
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/utils/getObjectOperationsSummary.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectOperationsSummary.ts
 msgid "No access"
 msgstr "Ingen åtkomst"
 
@@ -20219,7 +20407,7 @@ msgstr "Ingen AI-modell i denna arbetsyta uppfyller dessa inställningar."
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "Ingen AI-leverantör är konfigurerad på denna instans."
@@ -20347,13 +20535,13 @@ msgid "No chats yet"
 msgstr "Inga chattar ännu"
 
 #. js-lingui-id: qTxPPY
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelectFieldMenu.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "No compatible fields"
 msgstr "Inga kompatibla fält"
 
 #. js-lingui-id: RY3VxI
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "No condition"
 msgstr ""
 
@@ -20532,7 +20720,7 @@ msgid "No field configured"
 msgstr "Inget fält konfigurerat"
 
 #. js-lingui-id: gRHpoy
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "No fields"
 msgstr "Inga fält"
 
@@ -20545,7 +20733,7 @@ msgstr ""
 
 #. js-lingui-id: VEYHd4
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
@@ -20733,8 +20921,13 @@ msgstr "Ingen modell är tillgänglig för detta läge."
 msgid "No notes"
 msgstr "Inga anteckningar"
 
+#. js-lingui-id: 9F6fiv
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "No notification for new messages"
+msgstr ""
+
 #. js-lingui-id: arel2K
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
 msgid "No objects found"
 msgstr "Inga objekt hittades"
 
@@ -21440,10 +21633,17 @@ msgid "Nothing to suggest here."
 msgstr "Inget att föreslå här."
 
 #. js-lingui-id: iDNBZe
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/components/SettingsExperienceNotificationsSection.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/components/AppToaster.tsx
 msgid "Notifications"
 msgstr "Aviseringar"
+
+#. js-lingui-id: A09awi
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Notifications are on"
+msgstr ""
 
 #. js-lingui-id: 6RihN0
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -21550,6 +21750,11 @@ msgstr ""
 msgid "OAuth"
 msgstr "OAuth"
 
+#. js-lingui-id: TkatNO
+#: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
+msgid "OAuth (automatic)"
+msgstr ""
+
 #. js-lingui-id: C1b55F
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "OAuth credential metadata for this application connection"
@@ -21640,7 +21845,7 @@ msgstr "Unika fält för objektet"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
@@ -21658,7 +21863,7 @@ msgid "Objects"
 msgstr "Objekt"
 
 #. js-lingui-id: /8Yh6y
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Objects and fields permissions settings"
 msgstr "Objekt och fält behörighetsinställningar"
 
@@ -21671,6 +21876,11 @@ msgstr "Objekt, fält och index som formar dina poster."
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "of"
 msgstr "av"
+
+#. js-lingui-id: az8lvo
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Off"
+msgstr ""
 
 #. js-lingui-id: KNz3EF
 #: src/pages/not-found/NotFound.tsx
@@ -21828,6 +22038,26 @@ msgstr "Enskilda konversationer mellan personer"
 #: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Online"
 msgstr "Ansluten"
+
+#. js-lingui-id: P/Sdzf
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
+msgid "Only {applicationName} can delete"
+msgstr ""
+
+#. js-lingui-id: 5K6L4C
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
+msgid "Only {applicationName} can destroy"
+msgstr ""
+
+#. js-lingui-id: BUPbj+
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
+msgid "Only {applicationName} can edit"
+msgstr ""
+
+#. js-lingui-id: Iysrni
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
+msgid "Only {applicationName} can see"
+msgstr ""
 
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -22523,7 +22753,7 @@ msgid "Override Draft"
 msgstr "Åsidosätt Utkast"
 
 #. js-lingui-id: sJNF3W
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Overrides"
 msgstr "Undantag"
 
@@ -22987,12 +23217,6 @@ msgstr "Behörighetstabeller"
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "Permissions"
 msgstr "Behörigheter"
-
-#. js-lingui-id: KiuPPj
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
-msgid "Permissions · {objectLabelSingular}"
-msgstr "Behörigheter · {objectLabelSingular}"
 
 #. js-lingui-id: JFI3iH
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -24389,12 +24613,6 @@ msgstr "Posttext"
 msgid "Record Type"
 msgstr "Posttyp"
 
-#. js-lingui-id: uMOyEH
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-msgid "Record-level"
-msgstr "Postnivå"
-
 #. js-lingui-id: VQ4KjL
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Record-level filter"
@@ -24747,7 +24965,7 @@ msgid "Remove {0} navigation menu items?"
 msgstr "Ta bort {0} navigationsmenyalternativ?"
 
 #. js-lingui-id: boQErO
-#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
+#: src/modules/chat/components/ChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "Ta bort {displayName}"
 
@@ -24893,7 +25111,7 @@ msgid "Remove output field"
 msgstr "Ta bort utdatafält"
 
 #. js-lingui-id: c8Kx/b
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Remove override"
 msgstr "Ta bort undantag"
 
@@ -25215,7 +25433,7 @@ msgid "Reset to default"
 msgstr "Återställ till standard"
 
 #. js-lingui-id: 14xBUx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionValueInput.tsx
 msgid "Reset to static value"
 msgstr "Återställ till statiskt värde"
 
@@ -25457,6 +25675,7 @@ msgstr "Återkalla"
 
 #. js-lingui-id: cg+Poy
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
+#: src/modules/settings/components/SettingsRevokeAccessDropdownMenu.tsx
 msgid "Revoke access"
 msgstr "Återkalla åtkomst"
 
@@ -25563,8 +25782,8 @@ msgstr "Roll uppdaterad framgångsrikt"
 #: src/modules/object-record/record-sharing/utils/getRecordSharingRecipientGroups.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Roles"
@@ -25628,6 +25847,11 @@ msgstr "grupp med predikat för behörighet på radnivå"
 msgid "row level permission rule"
 msgstr "regel för behörighet på radnivå"
 
+#. js-lingui-id: m9LWSX
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
+msgid "Row-level permission"
+msgstr ""
+
 #. js-lingui-id: Wdh41P
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Row-level permissions"
@@ -25657,6 +25881,11 @@ msgstr "gummianka: på"
 #: src/modules/ui/input/hooks/useColorLabels.ts
 msgid "Ruby"
 msgstr "Rubin"
+
+#. js-lingui-id: oAN4H/
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
+msgid "Rule"
+msgstr ""
 
 #. js-lingui-id: tijGcA
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -26079,12 +26308,12 @@ msgid "Search {lowerCaseTypeLabel}..."
 msgstr "Sök efter {lowerCaseTypeLabel}..."
 
 #. js-lingui-id: g2dQp/
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "Search 1 {fieldTypeLabelLowercase} field"
 msgstr "Sök 1 {fieldTypeLabelLowercase} fält"
 
 #. js-lingui-id: 4XD2Lr
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "Search 1 field"
 msgstr "Sök 1 fält"
 
@@ -26280,10 +26509,10 @@ msgstr "sök fältmetadata"
 #: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelectFieldMenu.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelectFieldMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
@@ -26339,8 +26568,8 @@ msgstr "Sök medlemmar"
 
 #. js-lingui-id: two5rl
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableDataSourceDropdownContent.tsx
@@ -26587,7 +26816,7 @@ msgstr "Säkerhet"
 
 #. js-lingui-id: h+8V38
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
-#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig.ts
 msgid "See"
 msgstr "Se"
 
@@ -26638,6 +26867,11 @@ msgstr "Se installerade applikationer"
 msgid "See less"
 msgstr "Visa mindre"
 
+#. js-lingui-id: KaSkAp
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "See matching {objectLabelPlural}"
+msgstr ""
+
 #. js-lingui-id: V1fa9u
 #: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
 #: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
@@ -26655,6 +26889,11 @@ msgstr "Visa på marknadsplatsen"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "See records"
 msgstr "Visa poster"
+
+#. js-lingui-id: 6+1BUt
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "See some {objectLabelPlural} · {throughRules}"
+msgstr ""
 
 #. js-lingui-id: SXaufV
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
@@ -26720,12 +26959,12 @@ msgid "Select {targetObjectNameSingular}"
 msgstr "Välj {targetObjectNameSingular}"
 
 #. js-lingui-id: 9NFSzl
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "Select 1 {fieldTypeLabelLowercase} field"
 msgstr "Välj 1 {fieldTypeLabelLowercase} fält"
 
 #. js-lingui-id: VjMMyZ
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "Select 1 field"
 msgstr "Välj 1 fält"
 
@@ -26755,7 +26994,7 @@ msgid "Select a currency"
 msgstr "Välj en valuta"
 
 #. js-lingui-id: PWGE2B
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionVariablePicker.tsx
 msgid "Select a current user field"
 msgstr "Välj ett aktuellt användarfält"
 
@@ -26788,7 +27027,7 @@ msgid "Select a field to display in this widget"
 msgstr "Välj ett fält som ska visas i den här widgeten"
 
 #. js-lingui-id: 0DL3XU
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelect.tsx
 msgid "Select a filter field"
 msgstr "Välj ett filterfält"
 
@@ -27185,6 +27424,11 @@ msgstr "Skicka nu"
 #: src/modules/activities/emails/utils/buildCampaignSendButtonTitle.ts
 msgid "Send Now"
 msgstr "Skicka nu"
+
+#. js-lingui-id: eus61c
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Send test"
+msgstr ""
 
 #. js-lingui-id: doZzL7
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -27733,6 +27977,11 @@ msgstr "Visa mindre"
 msgid "Show logs"
 msgstr "Visa loggar"
 
+#. js-lingui-id: /l2KYB
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Show message preview"
+msgstr ""
+
 #. js-lingui-id: fMPkxb
 #: src/modules/ai-chat/messages/components/AiChatUserMessageCollapsibleContent.tsx
 #: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
@@ -27766,6 +28015,11 @@ msgstr "Visa sidan Kom igång och sidofältskortet, och öppna den vid landning 
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes."
 msgstr "Visa fliken Integritet och tillämpa dess policy för AI-data och inställningar för datadelning. Om du stänger av detta tas alla lagrade policyer bort. Aktivera efter att instansuppgraderingen har slutförts."
+
+#. js-lingui-id: soWlp2
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Show the sender, the chat and the message text in notifications. Leave it off on shared screens and devices"
+msgstr ""
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -28168,7 +28422,7 @@ msgid "Some log data was dropped to fit the size limit ({0} entries, {1} bytes).
 msgstr "Viss loggdata togs bort för att rymmas inom storleksgränsen ({0} poster, {1} byte)."
 
 #. js-lingui-id: XG7UMq
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Some records"
 msgstr ""
 
@@ -30149,6 +30403,16 @@ msgstr "Den här applikationens registrering ägs av din arbetsyta."
 msgid "This billing period"
 msgstr "Den här faktureringsperioden"
 
+#. js-lingui-id: YDcfdL
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "This browser cannot show notifications"
+msgstr ""
+
+#. js-lingui-id: 47wc2N
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "This browser could not turn on notifications"
+msgstr ""
+
 #. js-lingui-id: XkzBBX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "This call is being recorded…"
@@ -30193,7 +30457,7 @@ msgstr "Den här anslutningen finns inte eller är inte tillgänglig för den h�
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
 msgid "This conversation is no longer available."
 msgstr "Den här konversationen är inte längre tillgänglig."
 
@@ -30218,7 +30482,7 @@ msgid "This evening"
 msgstr "I kväll"
 
 #. js-lingui-id: i6mVT3
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
 msgid "This feature is part of the Organization plan"
 msgstr "Den här funktionen ingår i Organization-planen"
 
@@ -30571,6 +30835,16 @@ msgstr "tre"
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Three columns side by side"
 msgstr "Tre kolumner sida vid sida"
+
+#. js-lingui-id: JayY0v
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "through {ruleCount} rules"
+msgstr ""
+
+#. js-lingui-id: AbJpHn
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "through 1 rule"
+msgstr ""
 
 #. js-lingui-id: kkDQ8m
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
@@ -31686,7 +31960,7 @@ msgstr "Okänt fel"
 
 #. js-lingui-id: IU3aCs
 #: src/modules/ai-chat/hooks/useGetBrowsingContext.ts
-#: src/modules/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
 msgid "Unknown field"
 msgstr "Okänt fält"
 
@@ -31701,7 +31975,7 @@ msgid "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
 msgstr "Okänt fält \"{fieldName}\" på \"{relationFieldName}\""
 
 #. js-lingui-id: +K1Lj4
-#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
+#: src/modules/chat/components/ChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "Okänd fil"
 
@@ -31735,6 +32009,7 @@ msgstr "Okänt ämne"
 
 #. js-lingui-id: 63niL6
 #: src/modules/log-console/hooks/useLogConsoleMember.ts
+#: src/modules/settings/applications/utils/getApplicationConnectedMemberName.ts
 msgid "Unknown user"
 msgstr "Okänd användare"
 
@@ -32170,7 +32445,7 @@ msgstr "Uppdaterar..."
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
 msgid "Upgrade"
 msgstr "Uppgradera"
 
@@ -32228,7 +32503,7 @@ msgid "Upgrade to {planLabel}?"
 msgstr "Uppgradera till {planLabel}?"
 
 #. js-lingui-id: ggd+Ee
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
 msgid "Upgrade to access"
 msgstr "Uppgradera för att få åtkomst"
 
@@ -32413,6 +32688,7 @@ msgstr "URI är obligatorisk"
 #: src/modules/object-record/record-field/ui/meta-types/input/components/LinksFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormLinksFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 #: src/modules/settings/developers/components/SettingsWebhooksTable.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
@@ -33183,7 +33459,7 @@ msgid "Wait for Event"
 msgstr "Vänta på händelse"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/instance/hooks/useAiChat.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Vänta tills bilagorna har laddats upp."
 
@@ -33545,7 +33821,7 @@ msgid "Welcome to Twenty"
 msgstr "Välkommen till Twenty"
 
 #. js-lingui-id: t8ZvkC
-#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+#: src/modules/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
 msgstr "Välkommen till ditt arbetsområde"
@@ -33559,6 +33835,11 @@ msgstr "Välkommen, {workspaceName}."
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "What {applicationName} adds to your workspace"
 msgstr "Vad {applicationName} lägger till i din arbetsyta"
+
+#. js-lingui-id: 256yw5
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "What {roleLabel} can do on {objectLabelPlural} matching this rule."
+msgstr ""
 
 #. js-lingui-id: 1rpyKy
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
@@ -33620,6 +33901,11 @@ msgstr "Vilka verktyg kan den här agenten använda för sitt uppdrag"
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Whatsapp"
 msgstr "WhatsApp"
+
+#. js-lingui-id: 1ZF9KQ
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionLogicalOperatorCell.tsx
+msgid "When"
+msgstr ""
 
 #. js-lingui-id: 8ssTdk
 #: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
@@ -33689,7 +33975,6 @@ msgstr "När din provperiod slutar debiteras du {priceLabel}."
 #. js-lingui-id: YvwwqC
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell.tsx
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelLogicalOperatorCell.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOperatorCell.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell.tsx
 msgid "Where"
 msgstr "Där"
@@ -33713,6 +33998,12 @@ msgstr "Var servern finns"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Whether this model supports chain-of-thought reasoning"
 msgstr "Om den här modellen stöder chain-of-thought-resonemang"
+
+#. js-lingui-id: 5WnHkc
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
+msgid "Which {objectLabelPlural} this rule applies to. Me is the person viewing."
+msgstr ""
 
 #. js-lingui-id: UbN9B0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -33915,10 +34206,10 @@ msgstr "Arbetsflödesversioner"
 msgid "Workflows"
 msgstr "Arbetsflöden"
 
-#. js-lingui-id: HoWgut
+#. js-lingui-id: H2Xc6F
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
-msgid "Workflows, functions and agents that act for your team."
-msgstr "Arbetsflöden, funktioner och agenter som agerar för ditt team."
+msgid "Workflows, functions, agents and tools that act for your team."
+msgstr ""
 
 #. js-lingui-id: OskBrZ
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
@@ -33965,7 +34256,6 @@ msgstr "Arbetstider börjar"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx

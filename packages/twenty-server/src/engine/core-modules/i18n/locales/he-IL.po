@@ -116,6 +116,11 @@ msgstr "נמצאו {hostnameCount} שמות מתחם עבור הדומיין \"{
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{operationLabel} של {aggregateFieldLabel}"
 
+#. js-lingui-id: nzKj4z
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "{senderName} in {threadLabel}"
+msgstr ""
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -2125,6 +2130,11 @@ msgstr "העבר את החברות, אנשי הקשר והעסקאות שלך מ
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Bring your team into Twenty."
 msgstr "צרף את הצוות שלך ל-Twenty."
+
+#. js-lingui-id: pYD4lD
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "Browser notifications were set up with an outdated key. Reload the page to set them up again."
+msgstr ""
 
 #. js-lingui-id: 8pSVh1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -6074,6 +6084,11 @@ msgstr "מזהה חבר ראשון בהודעה ישירה"
 msgid "First friendly message"
 msgstr "הודעה ידידותית ראשונה"
 
+#. js-lingui-id: 0QhRwZ
+#: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
+msgid "First name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+msgstr ""
+
 #. js-lingui-id: BUBVGN
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
@@ -6123,6 +6138,11 @@ msgstr "שדות פעולה של טופס חייבים להיות בעלי שמ�
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
 msgid "Form action must have at least one field"
 msgstr "פעולת הטופס חייבת לכלול לפחות שדה אחד."
+
+#. js-lingui-id: CjVkbV
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "Former member"
+msgstr ""
 
 #. js-lingui-id: JRr+QW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
@@ -8134,6 +8154,11 @@ msgctxt "fieldMetadata.label"
 msgid "Last message sender"
 msgstr "שולח ההודעה האחרונה"
 
+#. js-lingui-id: bMq9eP
+#: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
+msgid "Last name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+msgstr ""
+
 #. js-lingui-id: R2LOsP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -9411,6 +9436,11 @@ msgstr "חדש"
 msgid "New backup codes were generated for your account"
 msgstr "נוצרו קודי גיבוי חדשים עבור חשבונך"
 
+#. js-lingui-id: hIQkLb
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "New chat"
+msgstr ""
+
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -9426,6 +9456,11 @@ msgstr "צ'אט חדש"
 #. js-lingui-id: TYhxR+
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "New email must be different from current email"
+msgstr ""
+
+#. js-lingui-id: mTBAsF
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "New message"
 msgstr ""
 
 #. js-lingui-id: nXXBKB
@@ -14742,6 +14777,11 @@ msgstr "אפליקציה זו דורשת גרסה חדשה יותר של שרת 
 msgid "This app requires a newer version than this workspace has finished upgrading to. Please try again once the workspace upgrade completes."
 msgstr "אפליקציה זו דורשת גרסה חדשה יותר מזו שמרחב עבודה זה השלים את השדרוג אליה. אנא נסה שוב לאחר שהשדרוג של מרחב העבודה יושלם."
 
+#. js-lingui-id: MZz+Ud
+#: src/engine/core-modules/application/utils/to-application-billing-prices-or-throw.util.ts
+msgid "This application declares invalid prices"
+msgstr ""
+
 #. js-lingui-id: ecIX3O
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This application is already owned by a workspace."
@@ -14786,6 +14826,11 @@ msgstr "היקף משתנה יישום זה אינו נתמך."
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This billing arrangement has invalid settings."
 msgstr "להסדר חיוב זה יש הגדרות לא תקינות."
+
+#. js-lingui-id: NsbtYx
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "This browser's push service is not supported."
+msgstr ""
 
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -18420,6 +18465,11 @@ msgstr "התפקיד שלך אינו יכול למחוק חלק מהרשומות
 #: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "לא נמצא תפקידך במרחב זה. אנא פנה למנהל המרחב שלך."
+
+#. js-lingui-id: iug+lj
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "Your session has expired. Sign in again to turn on browser notifications."
+msgstr ""
 
 #. js-lingui-id: 9T+AIN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

@@ -1,0 +1,1 @@
+export const WORKSPACE_MEMBER_NAME_MAX_LENGTH = 50;

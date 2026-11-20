@@ -31,7 +31,7 @@ import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
@@ -73,7 +73,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     private readonly coreWorkflowIdResolutionService: CoreWorkflowIdResolutionService,
     private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
     private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly workflowMetadataReadService: WorkflowMetadataReadService,
     private readonly workflowVersionValidationWorkspaceService: WorkflowVersionValidationWorkspaceService,
     private readonly commandMenuItemService: CommandMenuItemService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
@@ -174,7 +174,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     );
 
     const { objectIdByNameSingular, flatFieldMetadataMaps } =
-      await this.workflowCommonWorkspaceService.getFlatEntityMaps(workspaceId);
+      await this.workflowMetadataReadService.getFlatEntityMaps(workspaceId);
 
     assertPickRecordLoadBalanceConfigIsValid({
       steps: steps ?? [],
@@ -739,7 +739,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
           availabilityType = CommandMenuItemAvailabilityType.RECORD_SELECTION;
 
           const { objectIdByNameSingular } =
-            await this.workflowCommonWorkspaceService.getFlatEntityMaps(
+            await this.workflowMetadataReadService.getFlatEntityMaps(
               workspaceId,
             );
 

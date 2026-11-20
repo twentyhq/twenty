@@ -50,7 +50,9 @@ exports[`registry-derived override property maps derives the overridable propert
   "logicFunction": [],
   "mcpServer": [],
   "messagingProvider": [],
-  "navigationMenuItem": [],
+  "navigationMenuItem": [
+    "isActive",
+  ],
   "objectMetadata": [
     "openRecordIn",
     "color",

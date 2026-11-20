@@ -1550,6 +1550,17 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'agentUniversalIdentifier',
     },
+    isActive: {
+      isOverridable: true,
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    overrides: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
   },
   rolePermissionFlag: {
     permissionFlagId: {

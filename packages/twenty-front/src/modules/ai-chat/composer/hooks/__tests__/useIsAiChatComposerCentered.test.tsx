@@ -9,7 +9,7 @@ import { useIsAiChatComposerCentered } from '@/ai-chat/composer/hooks/useIsAiCha
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { aiChatMessagesLoadingFamilyState } from '@/ai-chat/states/aiChatMessagesLoadingFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
 import { type AiChatSurface } from '@/ai-chat/types/AiChatSurface';
 import {
   jotaiStore,

@@ -56,6 +56,9 @@ export class ApplicationContentDTO {
   connectionProviders: ApplicationContentItemDTO[];
 
   @Field(() => [ApplicationContentItemDTO])
+  mcpServers: ApplicationContentItemDTO[];
+
+  @Field(() => [ApplicationContentItemDTO])
   publicAssets: ApplicationContentItemDTO[];
 
   @Field(() => [ApplicationContentItemDTO])
