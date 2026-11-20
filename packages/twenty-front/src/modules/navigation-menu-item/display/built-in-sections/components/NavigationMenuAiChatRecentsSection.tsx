@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode } from 'react';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
@@ -12,7 +12,9 @@ import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentTh
 import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
 import { NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT } from '@/navigation-menu-item/common/constants/NavigationMenuSectionVisibleItemLimit';
+import { isNavigationMenuSectionShowingAllItemsFamilyState } from '@/navigation-menu-item/common/states/isNavigationMenuSectionShowingAllItemsFamilyState';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -27,7 +29,10 @@ export const NavigationMenuAiChatRecentsSection = ({
   headerAction,
 }: NavigationMenuAiChatRecentsSectionProps) => {
   const { t } = useLingui();
-  const [isShowingAllThreads, setIsShowingAllThreads] = useState(false);
+  const [isShowingAllThreads, setIsShowingAllThreads] = useAtomFamilyState(
+    isNavigationMenuSectionShowingAllItemsFamilyState,
+    'AiChatRecents',
+  );
   const currentThreadId = useAiChatPageThreadId();
   const { handleThreadClick } = useAiChatThreadClick({
     shouldOpenInFullPage: true,
