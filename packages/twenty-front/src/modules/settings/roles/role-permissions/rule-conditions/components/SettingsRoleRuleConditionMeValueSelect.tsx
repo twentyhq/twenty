@@ -27,13 +27,19 @@ import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/uti
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RLSDynamicValue } from '@/object-record/record-filter/types/RecordFilter';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
-import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
-import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import { RULE_CONDITION_FIELD_TYPES } from '@/settings/roles/role-permissions/rule-conditions/constants/RuleConditionFieldTypes';
 import { getComparableWorkspaceMemberRelationFields } from '@/settings/roles/role-permissions/rule-conditions/utils/getComparableWorkspaceMemberRelationFields';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
+
+type MeValueMenuItem = {
+  id: string;
+  label: string;
+  icon: string | null;
+  fieldMetadataId: string;
+  subFieldName: string | null;
+};
 
 type SettingsRoleRuleConditionMeValueSelectProps = {
   onSelect: (selection: RLSDynamicValue) => void;
@@ -125,100 +131,89 @@ export const SettingsRoleRuleConditionMeValueSelect = ({
         return true;
       }
 
-      if (isCompositeFieldType(field.type)) {
-        const fieldCompositeType = compositeTypeDefinitions.get(field.type);
-
-        if (isDefined(fieldCompositeType)) {
-          return fieldCompositeType.properties.some((property) =>
-            compatibleWorkspaceMemberFieldTypes.includes(property.type),
-          );
-        }
+      if (!isCompositeFieldType(field.type)) {
+        return false;
       }
 
-      return false;
+      return (
+        compositeTypeDefinitions
+          .get(field.type)
+          ?.properties.some((property) =>
+            compatibleWorkspaceMemberFieldTypes.includes(property.type),
+          ) ?? false
+      );
     });
   };
 
   const compatibleWorkspaceMemberFields = getCompatibleWorkspaceMemberFields();
 
-  const menuItems: Array<{
-    id: string;
-    label: string;
-    icon: string | null;
-    fieldMetadataId: string;
-    subFieldName?: string | null;
-  }> = [];
+  const getFieldMenuItems = (
+    field: (typeof compatibleWorkspaceMemberFields)[number],
+  ): MeValueMenuItem[] => {
+    const fieldType = field.type;
+
+    if (!isCompositeFieldType(fieldType)) {
+      return [
+        {
+          id: field.id,
+          label: field.label,
+          icon: field.icon ?? null,
+          fieldMetadataId: field.id,
+          subFieldName: null,
+        },
+      ];
+    }
+
+    const compositeType = compositeTypeDefinitions.get(fieldType);
+
+    return (SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[fieldType]?.subFields ?? [])
+      .filter(
+        (subField) =>
+          subField.isFilterable &&
+          compositeType?.properties.find(
+            (property) => property.name === subField.subFieldName,
+          )?.type !== FieldMetadataType.RAW_JSON,
+      )
+      .filter(
+        (subField) =>
+          !isDefined(compatibleWorkspaceMemberFieldTypes) ||
+          compatibleWorkspaceMemberFieldTypes.includes(
+            getFieldOrSubFieldType({
+              fieldType,
+              subFieldName: subField.subFieldName,
+            }),
+          ),
+      )
+      .map((subField) => ({
+        id: `${field.id}-${subField.subFieldName}`,
+        label: `${field.label} / ${getCompositeSubFieldLabel(
+          fieldType,
+          subField.subFieldName,
+        )}`,
+        icon: field.icon ?? null,
+        fieldMetadataId: field.id,
+        subFieldName: subField.subFieldName,
+      }));
+  };
 
   const idField = workspaceMemberMetadataItem?.fields.find(
     (field) => field.name === 'id',
   );
 
-  if (isDefined(idField) && isRelationToWorkspaceMember) {
-    menuItems.push({
-      id: 'me-id',
-      label: t`Me (User ID)`,
-      icon: null,
-      fieldMetadataId: idField.id,
-      subFieldName: null,
-    });
-  }
-
-  for (const field of compatibleWorkspaceMemberFields) {
-    if (isCompositeFieldType(field.type)) {
-      const compositeConfig =
-        SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[field.type as CompositeFieldType];
-
-      if (isDefined(compositeConfig)) {
-        const compositeType = compositeTypeDefinitions.get(field.type);
-
-        const filterableSubFields = compositeConfig.subFields.filter(
-          (subField) => {
-            if (!subField.isFilterable) {
-              return false;
-            }
-
-            const subFieldProperty = compositeType?.properties.find(
-              (property) => property.name === subField.subFieldName,
-            );
-
-            return subFieldProperty?.type !== FieldMetadataType.RAW_JSON;
+  const menuItems: MeValueMenuItem[] = [
+    ...(isDefined(idField) && isRelationToWorkspaceMember
+      ? [
+          {
+            id: 'me-id',
+            label: t`Me (User ID)`,
+            icon: null,
+            fieldMetadataId: idField.id,
+            subFieldName: null,
           },
-        );
-
-        for (const subField of filterableSubFields) {
-          if (isDefined(compatibleWorkspaceMemberFieldTypes)) {
-            const subFieldType = getFieldOrSubFieldType({
-              fieldType: field.type,
-              subFieldName: subField.subFieldName,
-            });
-
-            if (!compatibleWorkspaceMemberFieldTypes.includes(subFieldType)) {
-              continue;
-            }
-          }
-
-          menuItems.push({
-            id: `${field.id}-${subField.subFieldName}`,
-            label: `${field.label} / ${getCompositeSubFieldLabel(
-              field.type as CompositeFieldType,
-              subField.subFieldName as CompositeFieldSubFieldName,
-            )}`,
-            icon: field.icon ?? null,
-            fieldMetadataId: field.id,
-            subFieldName: subField.subFieldName,
-          });
-        }
-      }
-    } else {
-      menuItems.push({
-        id: field.id,
-        label: field.label,
-        icon: field.icon ?? null,
-        fieldMetadataId: field.id,
-        subFieldName: null,
-      });
-    }
-  }
+        ]
+      : []),
+    ...compatibleWorkspaceMemberFields.flatMap(getFieldMenuItems),
+  ];
 
   const filteredMenuItems = !searchInput
     ? menuItems
