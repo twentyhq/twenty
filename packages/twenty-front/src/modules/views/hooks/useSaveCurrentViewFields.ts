@@ -29,21 +29,23 @@ export const useSaveCurrentViewFields = () => {
   const store = useStore();
 
   const saveViewFields = useCallback(
-    async (viewFieldsToSave: Omit<ViewField, 'definition'>[]) => {
+    async (
+      viewFieldsToSave: Omit<ViewField, 'definition'>[],
+    ): Promise<boolean> => {
       if (!canPersistChanges) {
-        return;
+        return false;
       }
 
       const currentViewId = store.get(currentViewIdCallbackState);
 
       if (!currentViewId) {
-        return;
+        return false;
       }
 
       const view = getViewFromState(currentViewId);
 
       if (!isDefined(view)) {
-        return;
+        return false;
       }
 
       const currentViewFields = view.viewFields;
@@ -87,7 +89,14 @@ export const useSaveCurrentViewFields = () => {
               };
             }
 
+            const hasRelationScopeChanged = !isDeeplyEqual(
+              getViewFieldRelationScopeInput(existingField.relationScope) ??
+                null,
+              createViewFieldInput.relationScope ?? null,
+            );
+
             if (
+              !hasRelationScopeChanged &&
               isDeeplyEqual(
                 {
                   position: existingField.position,
@@ -122,6 +131,10 @@ export const useSaveCurrentViewFields = () => {
                       isVisible: createViewFieldInput.isVisible,
                       position: createViewFieldInput.position,
                       size: createViewFieldInput.size,
+                      // An unchanged scope stays out, so moving or resizing a column never has it validated again
+                      ...(hasRelationScopeChanged && {
+                        relationScope: createViewFieldInput.relationScope,
+                      }),
                     },
                   },
                 },
@@ -134,10 +147,12 @@ export const useSaveCurrentViewFields = () => {
           },
         );
 
-      await Promise.all([
+      const results = await Promise.all([
         performViewFieldApiCreate({ inputs: viewFieldsToCreate }),
         performViewFieldApiUpdate(viewFieldsToUpdate),
       ]);
+
+      return results.every(({ status }) => status === 'successful');
     },
     [
       store,
