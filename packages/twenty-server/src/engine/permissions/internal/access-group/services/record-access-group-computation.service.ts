@@ -25,7 +25,6 @@ import { AccessGroupRepository } from 'src/engine/permissions/internal/record-pe
 import { findRlsRuleRelationPredicatesToObject } from 'src/engine/permissions/internal/access-group/utils/find-rls-rule-relation-predicates-to-object.util';
 import { findRelationJoinColumnsOrThrow } from 'src/engine/permissions/internal/rls/utils/find-relation-join-columns-or-throw.util';
 import { isRlsRuleRelationAffectedByUpdate } from 'src/engine/permissions/internal/access-group/utils/is-rls-rule-relation-affected-by-update.util';
-import { buildRelatedRecordPathInheritances } from 'src/engine/permissions/internal/access-group/utils/build-related-record-path-inheritances.util';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/find-related-record-paths-feeding-access-groups.util';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
@@ -146,11 +145,9 @@ export class RecordAccessGroupComputationService {
           (accessGroup) => accessGroup.objectMetadataId === objectMetadataId,
         ),
       }),
-      relatedRecordPathInheritances: buildRelatedRecordPathInheritances({
-        resolvedRelatedRecordPaths: feedingRelatedRecordPaths,
-        accessGroups,
-        metadataMaps,
-      }),
+      resolvedRelatedRecordPaths: feedingRelatedRecordPaths,
+      accessGroups,
+      metadataMaps,
       recordIds,
       transactionScope,
     });

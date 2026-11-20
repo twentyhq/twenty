@@ -53,7 +53,6 @@ import { isRelatedRecordPathsEnabled } from 'src/engine/permissions/internal/rel
 import { canRelatedRecordPathExtendAccess } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access.util';
 import { buildRecordShareOrPrivateRecordAccessSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-record-share-or-private-record-access-sql-condition.util';
 import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
-import { findFieldMetadataIdsUnreadableByPrincipals } from 'src/engine/permissions/internal/related-record-path/utils/find-field-metadata-ids-unreadable-by-principals.util';
 import {
   type BuildEntrySQLCondition,
   buildRelatedRecordPathJoinSQLCondition,
@@ -724,7 +723,6 @@ export class RecordPermissionsReadService {
       buildEntrySQLCondition: (entry) =>
         this.buildEntrySQLCondition({
           principals,
-          metadataMaps,
           operationType,
           ...entry,
           hypotheticalRecordShareAccessLevel:
@@ -755,10 +753,6 @@ export class RecordPermissionsReadService {
       metadataMaps,
       buildEntrySQLCondition,
       isUncorrelated,
-      unreadableFieldMetadataIds: findFieldMetadataIdsUnreadableByPrincipals({
-        principals,
-        metadataMaps,
-      }),
       canRelatedRecordPathExtendAccessToObject: (reachedFlatObjectMetadata) =>
         canRelatedRecordPathExtendAccessToObject({
           principals,

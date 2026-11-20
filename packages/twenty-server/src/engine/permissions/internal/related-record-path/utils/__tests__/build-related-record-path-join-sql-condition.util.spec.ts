@@ -178,12 +178,10 @@ const buildAttachmentCondition = ({
   entryByObject,
   disabledObjectNames = [],
   privateObjectNames = [],
-  hiddenRelationFieldIds = [],
   isUncorrelated,
   ...metadataMapsArgs
 }: Parameters<typeof buildMetadataMaps>[0] & {
   isUncorrelated?: boolean;
-  hiddenRelationFieldIds?: string[];
   entryByObject: Record<string, boolean | 'owned'>;
   disabledObjectNames?: string[];
   privateObjectNames?: string[];
@@ -194,7 +192,6 @@ const buildAttachmentCondition = ({
     tableAlias: 'attachment',
     metadataMaps: buildMetadataMaps(metadataMapsArgs),
     buildEntrySQLCondition: buildEntrySQLConditionFrom(entryByObject),
-    unreadableFieldMetadataIds: new Set(hiddenRelationFieldIds),
     canRelatedRecordPathExtendAccessToObject: (flatObjectMetadata) =>
       !disabledObjectNames.includes(flatObjectMetadata.nameSingular),
     arePrivateRecordsApplicable: (flatObjectMetadata) =>
@@ -261,16 +258,6 @@ describe('buildRelatedRecordPathJoinSQLCondition', () => {
       sql: `EXISTS (SELECT 1 FROM "${SCHEMA}"."_company" AS "related_record_path_0" WHERE "attachment"."targetCompanyId" = "related_record_path_0"."id" AND "related_record_path_0"."deletedAt" IS NULL AND ("related_record_path_0"."ownerId" = :related_record_path_0Owner))`,
       parameters: { related_record_path_0Owner: 'member-id' },
     });
-  });
-
-  it('denies records when the relation the path starts from is hidden', () => {
-    expect(
-      buildAttachmentCondition({
-        paths: [companyAttachmentsPath],
-        hiddenRelationFieldIds: [companyAttachmentsPath.firstFieldMetadataId],
-        entryByObject: { company: 'owned' },
-      }),
-    ).toBe(false);
   });
 
   it('ignores a path whose source object has no RLS rule', () => {
@@ -414,7 +401,6 @@ describe('buildRelatedRecordPathJoinSQLCondition', () => {
         buildEntrySQLCondition: buildEntrySQLConditionFrom({
           company: true,
         }),
-        unreadableFieldMetadataIds: new Set(),
         canRelatedRecordPathExtendAccessToObject: () => true,
         arePrivateRecordsApplicable: () => false,
       }),

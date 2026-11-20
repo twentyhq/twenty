@@ -2,7 +2,7 @@
 
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
-export const findRoleIdsUnableToReadField = ({
+export const findRoleIdsHidingField = ({
   rolesPermissions,
   objectMetadataId,
   fieldMetadataId,
