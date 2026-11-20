@@ -1,4 +1,5 @@
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
+import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { upsertFieldPermissions } from 'test/integration/metadata/suites/field-permission/utils/upsert-field-permissions.util';
@@ -171,6 +172,180 @@ describe('field permissions on an RLS rule (integration)', () => {
     expect(await listPeopleAsMember()).toEqual([
       { id: originalPeople[0].id, avatarUrl: '', jobTitle: 'Paris office' },
     ]);
+  });
+
+  it.each([
+    ['the unreadable value', { eq: 'Secret avatar' }],
+    ['an empty value', { is: 'NULL' }],
+  ])(
+    'should not match %s in a filter on the unreadable field',
+    async (_, avatarUrlFilter) => {
+      const response = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          gqlFields: 'id',
+          filter: {
+            id: { in: originalPeople.map(({ id }) => id) },
+            avatarUrl: avatarUrlFilter,
+          },
+        }),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.people.edges).toEqual([]);
+    },
+  );
+
+  it('should leave the rows a field is unreadable on out of a group on it', async () => {
+    const introFieldMetadataId = await findFieldMetadataId('intro');
+    const setIntroReadability = (canReadFieldValue: false | null) =>
+      upsertFieldPermissions({
+        expectToFail: false,
+        input: {
+          roleId,
+          fieldPermissions: [
+            {
+              objectMetadataId,
+              fieldMetadataId: introFieldMetadataId,
+              rowLevelPermissionPredicateGroupId: rlsRuleId,
+              canReadFieldValue,
+            },
+          ],
+        },
+      });
+    const [{ intro: originalIntro }] = await global.testDataSource.query(
+      `SELECT "intro" FROM ${PERSON_TABLE} WHERE "id" = $1`,
+      [originalPeople[0].id],
+    );
+
+    await global.testDataSource.query(
+      `UPDATE ${PERSON_TABLE} SET "intro" = 'Secret intro' WHERE "id" = $1`,
+      [originalPeople[0].id],
+    );
+    await setIntroReadability(false);
+
+    try {
+      const response = await makeGraphqlApiRequest(
+        groupByOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          groupBy: [{ intro: true }],
+          filter: { id: { in: originalPeople.map(({ id }) => id) } },
+        }),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.peopleGroupBy).toEqual([]);
+    } finally {
+      await setIntroReadability(null);
+      await global.testDataSource.query(
+        `UPDATE ${PERSON_TABLE} SET "intro" = $1 WHERE "id" = $2`,
+        [originalIntro, originalPeople[0].id],
+      );
+    }
+  });
+
+  it('should make a relation unreadable on the records the RLS rule matches', async () => {
+    const parisPersonId = originalPeople[0].id;
+    const [{ companyId: originalCompanyId }] =
+      await global.testDataSource.query(
+        `SELECT "companyId" FROM ${PERSON_TABLE} WHERE "id" = $1`,
+        [parisPersonId],
+      );
+    const [{ id: companyId }] = await global.testDataSource.query(
+      `SELECT "id" FROM ${SCHEMA}."company" WHERE "deletedAt" IS NULL ORDER BY "id" LIMIT 1`,
+    );
+    const [{ id: taskTargetId, targetPersonId: originalTargetPersonId }] =
+      await global.testDataSource.query(
+        `SELECT "id", "targetPersonId" FROM ${SCHEMA}."taskTarget" WHERE "deletedAt" IS NULL ORDER BY "id" LIMIT 1`,
+      );
+    const setRelationsReadability = async (canReadFieldValue: false | null) =>
+      upsertFieldPermissions({
+        expectToFail: false,
+        input: {
+          roleId,
+          fieldPermissions: await Promise.all(
+            ['company', 'taskTargets'].map(async (name) => ({
+              objectMetadataId,
+              fieldMetadataId: await findFieldMetadataId(name),
+              rowLevelPermissionPredicateGroupId: rlsRuleId,
+              canReadFieldValue,
+            })),
+          ),
+        },
+      });
+    const listParisRelationsAsMember = async (filter: object = {}) => {
+      const response = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          gqlFields:
+            'id companyId company { id } taskTargets { edges { node { id } } }',
+          filter: { id: { eq: parisPersonId }, ...filter },
+        }),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      return response.body.data.people.edges.map(
+        ({
+          node,
+        }: {
+          node: {
+            companyId: string | null;
+            company: { id: string } | null;
+            taskTargets: { edges: { node: { id: string } }[] };
+          };
+        }) => ({
+          companyId: node.companyId,
+          companyRecordId: node.company?.id ?? null,
+          taskTargetCount: node.taskTargets.edges.length,
+        }),
+      );
+    };
+
+    await global.testDataSource.query(
+      `UPDATE ${PERSON_TABLE} SET "companyId" = $1 WHERE "id" = $2`,
+      [companyId, parisPersonId],
+    );
+    await global.testDataSource.query(
+      `UPDATE ${SCHEMA}."taskTarget" SET "targetPersonId" = $1 WHERE "id" = $2`,
+      [parisPersonId, taskTargetId],
+    );
+
+    try {
+      expect(await listParisRelationsAsMember()).toEqual([
+        { companyId, companyRecordId: companyId, taskTargetCount: 1 },
+      ]);
+
+      await setRelationsReadability(false);
+
+      expect(await listParisRelationsAsMember()).toEqual([
+        { companyId: null, companyRecordId: null, taskTargetCount: 0 },
+      ]);
+      expect(
+        await listParisRelationsAsMember({
+          company: { id: { eq: companyId } },
+        }),
+      ).toEqual([]);
+      expect(
+        await listParisRelationsAsMember({ companyId: { is: 'NULL' } }),
+      ).toEqual([]);
+    } finally {
+      await setRelationsReadability(null);
+      await global.testDataSource.query(
+        `UPDATE ${PERSON_TABLE} SET "companyId" = $1 WHERE "id" = $2`,
+        [originalCompanyId, parisPersonId],
+      );
+      await global.testDataSource.query(
+        `UPDATE ${SCHEMA}."taskTarget" SET "targetPersonId" = $1 WHERE "id" = $2`,
+        [originalTargetPersonId, taskTargetId],
+      );
+    }
   });
 
   it('should keep the field on a record reached through a share', async () => {
