@@ -14777,6 +14777,11 @@ msgstr "이 앱을 사용하려면 더 최신 버전의 Twenty 서버가 필요�
 msgid "This app requires a newer version than this workspace has finished upgrading to. Please try again once the workspace upgrade completes."
 msgstr "이 앱은 현재 워크스페이스가 업그레이드를 완료한 버전보다 더 높은 버전을 필요로 합니다. 워크스페이스 업그레이드가 완료된 후 다시 시도하세요."
 
+#. js-lingui-id: MZz+Ud
+#: src/engine/core-modules/application/utils/to-application-billing-prices-or-throw.util.ts
+msgid "This application declares invalid prices"
+msgstr ""
+
 #. js-lingui-id: ecIX3O
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This application is already owned by a workspace."

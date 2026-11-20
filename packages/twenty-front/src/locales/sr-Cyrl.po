@@ -4142,6 +4142,11 @@ msgstr "Апликација је успешно инсталирана."
 msgid "Application Logs"
 msgstr "Дневници апликације"
 
+#. js-lingui-id: UiH6l9
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Application price billing"
+msgstr ""
+
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -5195,6 +5200,11 @@ msgstr "између {startOrdinal} и {endOrdinal} дана у месецу"
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill credits to your workspace"
 msgstr "Наплати кредите вашем радном простору"
+
+#. js-lingui-id: jKtUV8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
+msgstr ""
 
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -14814,15 +14824,20 @@ msgstr "Немачки"
 msgid "Germany"
 msgstr "Немачка"
 
+#. js-lingui-id: AWtGgd
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Get help"
+msgstr ""
+
 #. js-lingui-id: Et23WT
 #: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Get more credits"
 msgstr "Купите још кредита"
 
-#. js-lingui-id: WB4gz7
+#. js-lingui-id: LBG67E
 #: src/modules/settings/experience/components/SettingsExperienceNotificationsSection.tsx
-msgid "Get notified of new inbox messages on this device, even when Twenty is closed. Your choices below apply to every device"
+msgid "Get notified of new inbox messages on this device when you are not looking at Twenty. Your choices below apply to every device"
 msgstr ""
 
 #. js-lingui-id: AvbPI1
@@ -15359,6 +15374,11 @@ msgstr "Хебрејски"
 #: src/modules/navigation/constants/LogsSwitchPhrases.ts
 msgid "hello, world"
 msgstr "здраво, свете"
+
+#. js-lingui-id: c3XJ18
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Help"
+msgstr ""
 
 #. js-lingui-id: CRzGla
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -19960,9 +19980,9 @@ msgstr "Нова група"
 msgid "New Group"
 msgstr "Нова група"
 
-#. js-lingui-id: l7iZgc
+#. js-lingui-id: TC11mZ
 #: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
-msgid "New inbox messages show as notifications on this device, even when Twenty is closed"
+msgid "New inbox messages notify you while your browser is running"
 msgstr ""
 
 #. js-lingui-id: ynuJvo
