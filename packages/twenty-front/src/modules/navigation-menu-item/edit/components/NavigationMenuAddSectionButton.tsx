@@ -11,8 +11,10 @@ import { canAddBuiltInSectionToContainer } from '@/navigation-menu-item/common/u
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { useAreAiChatSectionsAvailable } from '@/navigation-menu-item/display/hooks/useAreAiChatSectionsAvailable';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
+import { NavigationMenuAddSectionHiddenItems } from '@/navigation-menu-item/edit/components/NavigationMenuAddSectionHiddenItems';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
+import { useHiddenNavigationMenuItemsInTab } from '@/navigation-menu-item/edit/hooks/useHiddenNavigationMenuItemsInTab';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -38,6 +40,8 @@ export const NavigationMenuAddSectionButton = ({
   );
   const areAiChatSectionsAvailable = useAreAiChatSectionsAvailable();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
+  const hiddenNavigationMenuItems =
+    useHiddenNavigationMenuItemsInTab(containerId);
   const { createItem } = useNavigationMenuItemEditController('workspace');
   const setNavigationMenuItemIdToRename = useSetAtomState(
     navigationMenuItemIdToRenameState,
@@ -55,7 +59,7 @@ export const NavigationMenuAddSectionButton = ({
       canAddBuiltInSectionToContainer({
         builtInSectionKey: builtInSection.key,
         containerId,
-        items: workspaceNavigationMenuItems,
+        items: [...workspaceNavigationMenuItems, ...hiddenNavigationMenuItems],
       }),
   );
 
@@ -125,6 +129,10 @@ export const NavigationMenuAddSectionButton = ({
                 />
               ))}
             </Dropdown.Section>
+            <NavigationMenuAddSectionHiddenItems
+              containerId={containerId}
+              dropdownId={dropdownId}
+            />
           </DropdownContent>
         </DropdownRoot>
       </NavigationMenuItemEntrance>

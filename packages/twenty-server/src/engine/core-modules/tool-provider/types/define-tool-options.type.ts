@@ -9,4 +9,5 @@ export type DefineToolOptions = {
   accessPolicy: AccessPolicy;
   icon?: string;
   isDestructive?: boolean;
+  isReadOnly?: boolean;
 };

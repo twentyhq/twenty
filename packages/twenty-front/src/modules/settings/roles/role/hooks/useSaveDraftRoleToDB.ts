@@ -4,7 +4,7 @@ import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { useUpdateAgentRole } from '@/settings/roles/hooks/useUpdateAgentRole';
 import { useUpdateApiKeyRole } from '@/settings/roles/hooks/useUpdateApiKeyRole';
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
-import { newFieldPermissionsFilter } from '@/settings/roles/role/utils/newFieldPermissionsFilter';
+import { getFieldPermissionsToUpsert } from '@/settings/roles/role/utils/getFieldPermissionsToUpsert';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
@@ -93,39 +93,10 @@ export const useSaveDraftRoleToDB = ({
 
   const dirtyFields = getRoleDirtyFields(draftRole, settingsPersistedRole);
 
-  const fieldPermissionsThatShouldntBeCreatedBecauseTheyAreUseless =
-    draftRole.fieldPermissions?.filter((fieldPermissionToFilter) => {
-      const fieldPermissionDoesntExistYetInPersistedFieldPermissions =
-        !settingsPersistedRole?.fieldPermissions?.some(
-          (persistedFieldPermissionToFilter) =>
-            persistedFieldPermissionToFilter.fieldMetadataId ===
-            fieldPermissionToFilter.fieldMetadataId,
-        );
-
-      return (
-        fieldPermissionToFilter.canReadFieldValue !== false &&
-        fieldPermissionToFilter.canUpdateFieldValue !== false &&
-        fieldPermissionDoesntExistYetInPersistedFieldPermissions
-      );
-    });
-
-  const onlyMeaningfulFieldPermissions =
-    dirtyFields.fieldPermissions?.filter(
-      (dirtyFieldPermissionToFilter) =>
-        !fieldPermissionsThatShouldntBeCreatedBecauseTheyAreUseless?.some(
-          (fieldPermissionThatShouldntBeCreatedToFilter) =>
-            dirtyFieldPermissionToFilter.fieldMetadataId ===
-            fieldPermissionThatShouldntBeCreatedToFilter.fieldMetadataId,
-        ),
-    ) ?? [];
-
-  const fieldPermissionsToUpsert = onlyMeaningfulFieldPermissions.filter(
-    (dirtyFieldPermission) =>
-      newFieldPermissionsFilter(
-        dirtyFieldPermission,
-        settingsPersistedRole?.fieldPermissions,
-      ),
-  );
+  const fieldPermissionsToUpsert = getFieldPermissionsToUpsert({
+    dirtyFieldPermissions: dirtyFields.fieldPermissions ?? [],
+    persistedFieldPermissions: settingsPersistedRole?.fieldPermissions ?? [],
+  });
 
   const createNewRole = async () => {
     const { data } = await createRole({

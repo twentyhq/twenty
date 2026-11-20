@@ -1582,6 +1582,7 @@ export type ClientConfig = {
   serverUrl: Scalars['String']['output'];
   signInPrefilled: Scalars['Boolean']['output'];
   support: Support;
+  webPushVapidPublicKey: Scalars['String']['output'];
 };
 
 export type ClientConfigMaintenanceMode = {
@@ -3947,8 +3948,10 @@ export type Mutation = {
   updateCalendarChannel: CalendarChannel;
   updateCommandMenuItem: CommandMenuItem;
   updateEmailGroupChannel: MessageChannel;
+  updateFocusedTab: Scalars['Boolean']['output'];
   updateFrontComponent: FrontComponent;
   updateGettingStarted: GettingStartedProgress;
+  updateInboxNotificationSettings: UserWorkspace;
   updateLabPublicFeatureFlag: FeatureFlag;
   updateManyNavigationMenuItems: Array<NavigationMenuItem>;
   updateManyObjects: Array<Object>;
@@ -4008,6 +4011,7 @@ export type Mutation = {
   upsertPermissionFlags: Array<RolePermissionFlag>;
   upsertRowLevelPermissionRules: UpsertRowLevelPermissionRulesResult;
   upsertViewWidget: View;
+  upsertWebPushSubscription: Scalars['Boolean']['output'];
   validateApprovedAccessDomain: ApprovedAccessDomain;
   verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken;
   verifyEmailAndGetWorkspaceAgnosticToken: AvailableWorkspacesAndAccessTokens;
@@ -5252,6 +5256,11 @@ export type MutationUpdateEmailGroupChannelArgs = {
 };
 
 
+export type MutationUpdateFocusedTabArgs = {
+  input: UpdateFocusedTabInput;
+};
+
+
 export type MutationUpdateFrontComponentArgs = {
   input: UpdateFrontComponentInput;
 };
@@ -5259,6 +5268,11 @@ export type MutationUpdateFrontComponentArgs = {
 
 export type MutationUpdateGettingStartedArgs = {
   input: UpdateGettingStartedInput;
+};
+
+
+export type MutationUpdateInboxNotificationSettingsArgs = {
+  input: UpdateInboxNotificationSettingsInput;
 };
 
 
@@ -5545,6 +5559,11 @@ export type MutationUpsertViewWidgetArgs = {
 };
 
 
+export type MutationUpsertWebPushSubscriptionArgs = {
+  input: UpsertWebPushSubscriptionInput;
+};
+
+
 export type MutationValidateApprovedAccessDomainArgs = {
   input: ValidateApprovedAccessDomainInput;
 };
@@ -5592,6 +5611,7 @@ export type NavigationMenuItem = {
   folderId?: Maybe<Scalars['UUID']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
+  isActive: Scalars['Boolean']['output'];
   link?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   nativePageKey?: Maybe<Scalars['String']['output']>;
@@ -7893,6 +7913,11 @@ export type UpdateFieldInput = {
   universalIdentifier?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type UpdateFocusedTabInput = {
+  isFocused: Scalars['Boolean']['input'];
+  tabId: Scalars['String']['input'];
+};
+
 export type UpdateFrontComponentInput = {
   /** The id of the front component to update */
   id: Scalars['UUID']['input'];
@@ -7911,6 +7936,11 @@ export type UpdateGettingStartedInput = {
   isHidden?: InputMaybe<Scalars['Boolean']['input']>;
   selectedStepActionKey?: InputMaybe<GettingStartedStepActionKey>;
   snoozedUntil?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateInboxNotificationSettingsInput = {
+  inboxNotificationLevel: Scalars['String']['input'];
+  isInboxNotificationPreviewEnabled: Scalars['Boolean']['input'];
 };
 
 export type UpdateLabPublicFeatureFlagInput = {
@@ -7985,6 +8015,7 @@ export type UpdateMessageFoldersInput = {
 export type UpdateNavigationMenuItemInput = {
   color?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
   link?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   pageLayoutId?: InputMaybe<Scalars['UUID']['input']>;
@@ -8442,6 +8473,13 @@ export type UpsertViewWidgetViewSortInput = {
   id?: InputMaybe<Scalars['UUID']['input']>;
 };
 
+export type UpsertWebPushSubscriptionInput = {
+  browserAuthSecret: Scalars['String']['input'];
+  browserPublicKey: Scalars['String']['input'];
+  endpoint: Scalars['String']['input'];
+  vapidPublicKey: Scalars['String']['input'];
+};
+
 export type UsageAnalytics = {
   __typename?: 'UsageAnalytics';
   periodEnd: Scalars['DateTime']['output'];
@@ -8681,7 +8719,9 @@ export type UserWorkspace = {
   createdAt: Scalars['DateTime']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
+  inboxNotificationLevel?: Maybe<Scalars['String']['output']>;
   isImpersonating?: Maybe<Scalars['Boolean']['output']>;
+  isInboxNotificationPreviewEnabled?: Maybe<Scalars['Boolean']['output']>;
   locale: Scalars['String']['output'];
   objectRecordsPermissions?: Maybe<Array<ObjectRecordsPermissions>>;
   permissionFlags?: Maybe<Array<PermissionFlagType>>;

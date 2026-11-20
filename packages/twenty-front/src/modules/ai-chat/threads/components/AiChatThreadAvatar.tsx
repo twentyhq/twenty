@@ -1,10 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 import { Avatar, type AvatarSize } from 'twenty-ui/primitives/data-display';
 
 import { useAiChatThreadMembers } from '@/ai-chat/threads/hooks/useAiChatThreadMembers';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
-import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { WorkspaceMemberAvatarStack } from '@/workspace-member/components/WorkspaceMemberAvatarStack';
 

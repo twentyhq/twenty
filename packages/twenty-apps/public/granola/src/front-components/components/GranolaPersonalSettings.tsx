@@ -9,15 +9,21 @@ import { Select } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 import { THEME_DARK, THEME_LIGHT, ThemeProvider } from 'twenty-ui/theme';
 
+import { GranolaFolderTreeSkeleton } from 'src/front-components/components/GranolaFolderTreeSkeleton';
 import { GranolaPersonalFolderSelection } from 'src/front-components/components/GranolaPersonalFolderSelection';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { StyledSettingsSectionStack } from 'src/front-components/components/StyledSettingsSectionStack';
+import { type GranolaPersonalFolders } from 'src/front-components/types/granola-personal-folders.type';
 import { fetchGranolaPersonalConnectionsOrThrow } from 'src/front-components/utils/fetch-granola-personal-connections-or-throw.util';
 
 type GranolaConnectionsState =
   | { status: 'loading' }
   | { status: 'failed' }
-  | { status: 'loaded'; connections: { id: string; name: string }[] };
+  | {
+      status: 'loaded';
+      connections: { id: string; name: string }[];
+      firstConnectionFolders: GranolaPersonalFolders | null;
+    };
 
 export const GranolaPersonalSettings = () => {
   const colorScheme = useColorScheme();
@@ -30,8 +36,9 @@ export const GranolaPersonalSettings = () => {
     setState({ status: 'loading' });
 
     try {
-      const connections = await fetchGranolaPersonalConnectionsOrThrow();
-      setState({ status: 'loaded', connections });
+      const { connections, firstConnectionFolders } =
+        await fetchGranolaPersonalConnectionsOrThrow();
+      setState({ status: 'loaded', connections, firstConnectionFolders });
     } catch {
       setState({ status: 'failed' });
     }
@@ -44,6 +51,19 @@ export const GranolaPersonalSettings = () => {
     value: id,
     label: name,
   }));
+  const initialFolders =
+    state.status === 'loaded' && connection?.id === connections[0]?.id
+      ? (state.firstConnectionFolders ?? undefined)
+      : undefined;
+
+  const handleConnectionChange = (connectionId: string) => {
+    setSelectedConnectionId(connectionId);
+    setState((current) =>
+      current.status === 'loaded'
+        ? { ...current, firstConnectionFolders: null }
+        : current,
+    );
+  };
 
   return (
     <ThemeProvider
@@ -59,6 +79,7 @@ export const GranolaPersonalSettings = () => {
           )}
         />
         <StyledSettingsSectionStack>
+          {state.status === 'loading' && <GranolaFolderTreeSkeleton />}
           {state.status === 'failed' && (
             <InlineBanner
               layout="compact"
@@ -87,7 +108,7 @@ export const GranolaPersonalSettings = () => {
                   value={connection.id}
                   onValueChange={(value, details) => {
                     if (details.reason === 'item-press' && isDefined(value)) {
-                      setSelectedConnectionId(value);
+                      handleConnectionChange(value);
                     }
                   }}
                 >
@@ -112,6 +133,7 @@ export const GranolaPersonalSettings = () => {
               <GranolaPersonalFolderSelection
                 key={connection.id}
                 connectionId={connection.id}
+                initialFolders={initialFolders}
               />
             </>
           )}

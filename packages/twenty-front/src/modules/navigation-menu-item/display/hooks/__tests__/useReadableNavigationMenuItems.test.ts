@@ -29,6 +29,7 @@ const FOLDER: NavigationMenuItem = {
   type: NavigationMenuItemType.FOLDER,
   name: 'New folder',
   position: 0,
+  isActive: true,
   createdAt: '',
   updatedAt: '',
 };

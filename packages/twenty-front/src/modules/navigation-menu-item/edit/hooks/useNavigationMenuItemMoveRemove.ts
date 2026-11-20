@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { getNavigationMenuItemDescendantIds } from '@/navigation-menu-item/common/utils/getNavigationMenuItemDescendantIds';
 import { getNavigationMenuItemMovedPosition } from '@/navigation-menu-item/common/utils/getNavigationMenuItemMovedPosition';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
+import { useWorkspaceSidebarRootContainerId } from '@/navigation-menu-item/display/hooks/useWorkspaceSidebarRootContainerId';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
 
@@ -15,6 +16,9 @@ export const useNavigationMenuItemMoveRemove = (
     useNavigationMenuItemEditController(section);
   const items = useNavigationMenuItemEditSectionItems(section, containerId);
   const visibleItemIds = new Set(items.map((item) => item.id));
+  const workspaceSidebarRootContainerId = useWorkspaceSidebarRootContainerId();
+  const rootContainerId =
+    section === 'workspace' ? workspaceSidebarRootContainerId : null;
 
   const getSortedSiblings = (navigationMenuItemId: string) => {
     const currentItem = currentItems.find(
@@ -23,11 +27,12 @@ export const useNavigationMenuItemMoveRemove = (
     if (!isDefined(currentItem)) {
       return null;
     }
-    const parentId = currentItem.parentId ?? null;
+    const parentId = currentItem.parentId ?? rootContainerId;
     return currentItems
       .filter(
         (item) =>
-          (item.parentId ?? null) === parentId && visibleItemIds.has(item.id),
+          (item.parentId ?? rootContainerId) === parentId &&
+          visibleItemIds.has(item.id),
       )
       .sort((a, b) => a.position - b.position);
   };

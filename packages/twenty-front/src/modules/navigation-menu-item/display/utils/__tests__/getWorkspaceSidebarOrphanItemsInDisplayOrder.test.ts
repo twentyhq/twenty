@@ -28,6 +28,7 @@ const buildNavigationMenuItem = (
   properties: Pick<NavigationMenuItem, 'id' | 'type' | 'position'> &
     Partial<Pick<NavigationMenuItem, 'parentId'>>,
 ): NavigationMenuItem => ({
+  isActive: true,
   createdAt: '2026-11-19T00:00:00.000Z',
   updatedAt: '2026-11-19T00:00:00.000Z',
   ...properties,

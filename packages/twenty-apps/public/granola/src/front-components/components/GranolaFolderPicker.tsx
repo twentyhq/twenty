@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { enqueueSnackbar, t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
@@ -11,6 +11,7 @@ import { GranolaFolderTreeSkeleton } from 'src/front-components/components/Grano
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { useAutosaveGranolaFolderSelection } from 'src/front-components/hooks/use-autosave-granola-folder-selection';
 import { type GranolaFolderPolicy } from 'src/front-components/types/granola-folder-policy.type';
+import { type GranolaFoldersResult } from 'src/front-components/types/granola-folders-result.type';
 import { type GranolaSettingsFolder } from 'src/front-components/types/granola-settings-folder.type';
 import { type GranolaStoredFolderSelection } from 'src/front-components/types/granola-stored-folder-selection.type';
 import { computeGranolaFolderSelection } from 'src/front-components/utils/compute-granola-folder-selection.util';
@@ -42,12 +43,18 @@ type GranolaFolderListState =
   | { step: 'FAILED' }
   | { step: 'LOADED'; folders: GranolaSettingsFolder[] };
 
-type GranolaFolderPickerProps = GranolaStoredFolderSelection;
+type GranolaFolderPickerProps = GranolaStoredFolderSelection & {
+  folderListRequest: Promise<GranolaFoldersResult | undefined>;
+};
 
 export const GranolaFolderPicker = ({
   selectedFolderIds,
   pendingFolderIds,
+  folderListRequest,
 }: GranolaFolderPickerProps) => {
+  const prefetchedFolderListRequest = useRef<
+    Promise<GranolaFoldersResult | undefined> | undefined
+  >(folderListRequest);
   const [selection, setSelection] = useState(() =>
     computeGranolaFolderSelection({ selectedFolderIds, pendingFolderIds }),
   );
@@ -66,9 +73,14 @@ export const GranolaFolderPicker = ({
     }
     setFolderList({ step: 'LOADING' });
 
-    const foldersResult = await fetchGranolaFoldersOrThrow().catch(
-      () => undefined,
-    );
+    const prefetchedFoldersResult = isSelectionStale
+      ? undefined
+      : await prefetchedFolderListRequest.current;
+    prefetchedFolderListRequest.current = undefined;
+
+    const foldersResult =
+      prefetchedFoldersResult ??
+      (await fetchGranolaFoldersOrThrow().catch(() => undefined));
 
     if (!isDefined(foldersResult)) {
       setFolderList({ step: 'FAILED' });
