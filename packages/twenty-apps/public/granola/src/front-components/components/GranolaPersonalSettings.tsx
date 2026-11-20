@@ -76,7 +76,7 @@ export const GranolaPersonalSettings = () => {
         <Section.Header
           title={t('Folders')}
           description={t(
-            'Choose which Granola folders to share with this workspace.',
+            'Notes from the folders you pick become Call Recordings that everyone in this workspace can see.',
           )}
         />
         <StyledSettingsSectionStack>
