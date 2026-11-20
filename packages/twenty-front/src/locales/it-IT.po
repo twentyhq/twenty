@@ -841,6 +841,11 @@ msgstr "Caricamento di {fileName} rifiutato"
 msgid "{filterRulesCount, plural, one {{filterRulesCount} rule} other {{filterRulesCount} rules}}"
 msgstr "{filterRulesCount, plural, one {{filterRulesCount} regola} other {{filterRulesCount} regole}}"
 
+#. js-lingui-id: 11/gul
+#: src/modules/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel.ts
+msgid "{firstPredicateLabel} +{otherPredicateCount}"
+msgstr ""
+
 #. js-lingui-id: WS/avX
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
@@ -1024,10 +1029,10 @@ msgstr "{num, selectordinal, one {{num}°} two {{num}°} few {{num}°} many {{nu
 msgid "{numberOfSelectedItems} workspace members"
 msgstr "{numberOfSelectedItems, plural, one {# membro dello spazio di lavoro} other {# membri dello spazio di lavoro}}"
 
-#. js-lingui-id: DQ+6r7
+#. js-lingui-id: PliJNk
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
-msgid "{objectLabelPlural} permissions"
-msgstr "Permessi di {objectLabelPlural}"
+msgid "{objectLabelPlural} rule"
+msgstr ""
 
 #. js-lingui-id: luWGLQ
 #: src/modules/workflow/workflow-variables/utils/generate/generateWaitForEventOutputSchema.ts
@@ -1105,6 +1110,11 @@ msgstr "{queuedMessage}, ignorando {skipReasons}"
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "{readOnlyFieldCount, plural, one {Can't edit # field} other {Can't edit # fields}}"
 msgstr "{readOnlyFieldCount, plural, one {Impossibile modificare # campo} other {Impossibile modificare # campi}}"
+
+#. js-lingui-id: HFkZ/O
+#: src/modules/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel.ts
+msgid "{recordCount} records"
+msgstr ""
 
 #. js-lingui-id: ociapy
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
@@ -1516,6 +1526,11 @@ msgstr "1 Oggetto"
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailChannelDomainStatusCell.tsx
 msgid "1 of 2 done"
 msgstr "1 di 2 completato"
+
+#. js-lingui-id: qarnor
+#: src/modules/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel.ts
+msgid "1 record"
+msgstr ""
 
 #. js-lingui-id: lKmQeh
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
@@ -10102,6 +10117,11 @@ msgstr "Elimina ruolo permanentemente"
 msgid "Delete row"
 msgstr "Elimina riga"
 
+#. js-lingui-id: 39Aq/E
+#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
+msgid "Delete rule"
+msgstr ""
+
 #. js-lingui-id: rvJGTw
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 msgid "Delete Skill"
@@ -18645,6 +18665,11 @@ msgstr "Server MCP non disponibili"
 msgid "MCP tool step"
 msgstr "Passaggio dello strumento MCP"
 
+#. js-lingui-id: 37Lzw8
+#: src/modules/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel.ts
+msgid "me"
+msgstr ""
+
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect.tsx
@@ -19435,10 +19460,20 @@ msgstr "deve essere un array di email valide"
 msgid "Must be true to save. A write that makes it false is rejected."
 msgstr "Deve essere vera per salvare. Una scrittura che la rende falsa viene rifiutata."
 
+#. js-lingui-id: lPmo1u
+#: src/modules/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel.ts
+msgid "my {workspaceMemberFieldLabel}"
+msgstr ""
+
 #. js-lingui-id: OJCJh9
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
 msgid "My apps"
 msgstr "Le mie app"
+
+#. js-lingui-id: oAOi31
+#: src/modules/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel.ts
+msgid "my unknown field"
+msgstr ""
 
 #. js-lingui-id: XTGSZU
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
@@ -19886,6 +19921,7 @@ msgstr "Nuovo limite di riporto"
 
 #. js-lingui-id: yBF5J5
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "New rule"
 msgstr "Nuova regola"
 
@@ -20313,6 +20349,11 @@ msgstr "Ancora nessuna chat"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
 msgid "No compatible fields"
 msgstr "Nessun campo compatibile"
+
+#. js-lingui-id: RY3VxI
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "No condition"
+msgstr ""
 
 #. js-lingui-id: YFLMyY
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
@@ -24410,11 +24451,6 @@ msgstr "Registri"
 msgid "Records by date"
 msgstr "Record per data"
 
-#. js-lingui-id: b/xmDA
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
-msgid "Records matching the rule"
-msgstr "Record che corrispondono alla regola"
-
 #. js-lingui-id: CjlKOu
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Records reached through these relations follow access to {objectLabel}."
@@ -25619,11 +25655,6 @@ msgstr "anatra di gomma: attiva"
 #: src/modules/ui/input/hooks/useColorLabels.ts
 msgid "Ruby"
 msgstr "Rubino"
-
-#. js-lingui-id: oAN4H/
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
-msgid "Rule"
-msgstr "Regola"
 
 #. js-lingui-id: tijGcA
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -28131,6 +28162,11 @@ msgstr "Non è stato possibile salvare alcune modifiche al layout"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "Some log data was dropped to fit the size limit ({0} entries, {1} bytes)."
 msgstr "Alcuni dati di log sono stati scartati per rientrare nel limite di dimensione ({0} voci, {1} byte)."
+
+#. js-lingui-id: XG7UMq
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Some records"
+msgstr ""
 
 #. js-lingui-id: b5Z5wY
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
@@ -31644,6 +31680,7 @@ msgstr "Errore sconosciuto"
 
 #. js-lingui-id: IU3aCs
 #: src/modules/ai-chat/hooks/useGetBrowsingContext.ts
+#: src/modules/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel.ts
 msgid "Unknown field"
 msgstr "Campo sconosciuto"
 
