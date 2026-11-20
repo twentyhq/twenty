@@ -333,7 +333,10 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     appRegistration,
     targetVersion,
   }: {
-    appRegistration: ApplicationRegistrationEntity;
+    appRegistration: Pick<
+      ApplicationRegistrationEntity,
+      'id' | 'universalIdentifier'
+    >;
     targetVersion?: string;
   }): Promise<ResolvedPackage> {
     const bundledApplication = findBundledApplication(

@@ -72,11 +72,14 @@ export class MarketplaceQueryService {
             )
             .filter(isDefined)
         : Object.values(appsByUniversalIdentifier)
-    ).filter(
-      (app) =>
-        shouldIncludeMcpServerApplications ||
-        !isMcpServerBundledApplication(app.id),
-    );
+    )
+      .filter(
+        (app) =>
+          shouldIncludeMcpServerApplications ||
+          !isMcpServerBundledApplication(app.id),
+      )
+      // Entries cached before the field existed carry no value
+      .map((app) => ({ ...app, hasMcpServers: app.hasMcpServers ?? false }));
 
     const apps = shouldIncludeConnectListings
       ? [...this.findConnectListingApps(universalIdentifiers), ...catalogApps]

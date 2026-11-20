@@ -6583,6 +6583,9 @@ export default {
             "description": [
                 4
             ],
+            "hasMcpServers": [
+                1
+            ],
             "id": [
                 4
             ],

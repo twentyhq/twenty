@@ -3353,6 +3353,7 @@ export type MarketplaceApp = {
   category: Scalars['String']['output'];
   connectUrl?: Maybe<Scalars['String']['output']>;
   description: Scalars['String']['output'];
+  hasMcpServers: Scalars['Boolean']['output'];
   id: Scalars['String']['output'];
   isListed: Scalars['Boolean']['output'];
   logoUrl?: Maybe<Scalars['String']['output']>;

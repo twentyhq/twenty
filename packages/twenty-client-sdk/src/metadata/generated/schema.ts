@@ -2164,6 +2164,7 @@ export interface MarketplaceApp {
     category: Scalars['String']
     connectUrl?: Scalars['String']
     description: Scalars['String']
+    hasMcpServers: Scalars['Boolean']
     id: Scalars['String']
     isListed: Scalars['Boolean']
     logoUrl?: Scalars['String']
@@ -7042,6 +7043,7 @@ export interface MarketplaceAppGenqlSelection{
     category?: boolean | number
     connectUrl?: boolean | number
     description?: boolean | number
+    hasMcpServers?: boolean | number
     id?: boolean | number
     isListed?: boolean | number
     logoUrl?: boolean | number

@@ -120,6 +120,7 @@ export type ApplicationRegistrationCatalogCard = {
   category: string | null;
   logoUrl: string | null;
   requiredServerVersionRange: string | null;
+  hasMcpServers: boolean;
 };
 
 @Injectable()
@@ -1151,6 +1152,7 @@ export class ApplicationRegistrationService {
         this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
       requiredServerVersionRange:
         registration.manifest?.application?.requiredServerVersionRange ?? null,
+      hasMcpServers: isNonEmptyArray(registration.manifest?.mcpServers),
     }));
   }
 

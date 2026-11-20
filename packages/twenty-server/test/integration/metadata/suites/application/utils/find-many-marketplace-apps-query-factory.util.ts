@@ -5,6 +5,7 @@ export const findManyMarketplaceAppsQueryFactory = () => ({
     query FindManyMarketplaceApps {
       findManyMarketplaceApps {
         id
+        hasMcpServers
       }
     }
   `,

@@ -160,13 +160,20 @@ const main = async () => {
       const { version: committedVersion, ...committedContent } =
         committedMcpServer;
 
+      if (isEqual(mcpServer, committedContent)) {
+        return { ...mcpServer, version: committedVersion };
+      }
+
+      const bumpedVersion = semver.inc(committedVersion, 'patch');
+
+      if (!isDefined(bumpedVersion)) {
+        throw new Error(
+          `${registryName} changed but its committed version "${committedVersion}" is not valid semver`,
+        );
+      }
+
       // Workspaces only upgrade an installed app when its version increases
-      return {
-        ...mcpServer,
-        version: isEqual(mcpServer, committedContent)
-          ? committedVersion
-          : (semver.inc(committedVersion, 'patch') ?? committedVersion),
-      };
+      return { ...mcpServer, version: bumpedVersion };
     }),
   );
 

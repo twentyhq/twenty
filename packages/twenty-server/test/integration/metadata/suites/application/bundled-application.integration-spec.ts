@@ -16,15 +16,18 @@ const UNIVERSAL_IDENTIFIER =
   BUNDLED_APPLICATION.manifest.application.universalIdentifier;
 const [BUNDLED_MCP_SERVER] = BUNDLED_APPLICATION.manifest.mcpServers ?? [];
 
-const findMarketplaceAppIds = async (): Promise<string[]> => {
+const findMarketplaceApps = async (): Promise<
+  { id: string; hasMcpServers: boolean }[]
+> => {
   const response = await makeMetadataApiRequest(
     findManyMarketplaceAppsQueryFactory(),
   );
 
-  return response.body.data.findManyMarketplaceApps.map(
-    ({ id }: { id: string }) => id,
-  );
+  return response.body.data.findManyMarketplaceApps;
 };
+
+const findMarketplaceAppIds = async (): Promise<string[]> =>
+  (await findMarketplaceApps()).map(({ id }) => id);
 
 const setMcpServersEnabled = (value: boolean) =>
   updateFeatureFlag({
@@ -58,6 +61,13 @@ describe('Bundled applications (integration)', () => {
     expect(await findMarketplaceAppIds()).not.toContain(UNIVERSAL_IDENTIFIER);
 
     await setMcpServersEnabled(true);
+  });
+
+  it('should flag the listing as having MCP servers', async () => {
+    expect(await findMarketplaceApps()).toContainEqual({
+      id: UNIVERSAL_IDENTIFIER,
+      hasMcpServers: true,
+    });
   });
 
   it('should not let an npm package take over a bundled identifier', async () => {

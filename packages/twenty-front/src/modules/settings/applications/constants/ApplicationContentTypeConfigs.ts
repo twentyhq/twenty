@@ -244,7 +244,7 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
     columns: [{ label: msg`Type`, source: 'tag' }],
     tags: {
       oauth: { label: msg`OAuth`, color: 'blue' },
-      'oauth-discovery': { label: msg`OAuth`, color: 'blue' },
+      'oauth-discovery': { label: msg`OAuth (automatic)`, color: 'sky' },
       custom: { label: msg`Custom`, color: 'purple' },
     },
   },

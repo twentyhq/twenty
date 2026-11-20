@@ -3191,6 +3191,7 @@ type MarketplaceApp {
   category: String!
   connectUrl: String
   description: String!
+  hasMcpServers: Boolean!
   id: String!
   isListed: Boolean!
   logoUrl: String

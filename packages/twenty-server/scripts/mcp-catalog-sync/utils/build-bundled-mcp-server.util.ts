@@ -60,7 +60,6 @@ export const buildBundledMcpServer = ({
   const labelAsName = label
     .toLowerCase()
     .replace(MCP_SERVER_NAME_FORBIDDEN_CHARACTERS, '_');
-  // "Pylon" on usepylon.com: the label is the brand, the domain is not
   const isLabelTheVendorBrand = vendor.toLowerCase().includes(labelAsName);
   const author = isLabelTheVendorBrand ? label : capitalize(vendor);
   // The registry website is often a documentation page, the directory one is the vendor homepage
