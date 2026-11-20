@@ -58,7 +58,7 @@ export class TwoFactorAuthenticationEmailService {
     actor: Pick<AuthContextUser, 'email' | 'firstName' | 'lastName'>;
     expiresAt: Date;
   }): Promise<void> {
-    const actorName = truncateFullName(actor);
+    const truncatedActorName = truncateFullName(actor);
 
     await this.sendSecurityEmail({
       ...recipient,
@@ -66,7 +66,7 @@ export class TwoFactorAuthenticationEmailService {
       buildEmailTemplate: async ({ locale, workspaceDisplayName }) =>
         TwoFactorAuthenticationRecoveryCodeIssuedEmail({
           actorName:
-            `${actorName.firstName} ${actorName.lastName}`.trim() ||
+            `${truncatedActorName.firstName} ${truncatedActorName.lastName}`.trim() ||
             actor.email,
           workspaceDisplayName,
           expiresAt,
