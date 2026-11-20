@@ -199,6 +199,21 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return this.appendWhere('and', condition, parameters);
   }
 
+  andWhereComparingUnreadableColumnsAsNull(
+    condition: WhereConditionLike,
+    parameters?: Record<string, unknown>,
+  ): this {
+    const whereClauseCount = this.whereClauses.length;
+
+    this.appendWhere('and', condition, parameters);
+
+    for (const whereClause of this.whereClauses.slice(whereClauseCount)) {
+      whereClause.comparesUnreadableColumnsAsNull = true;
+    }
+
+    return this;
+  }
+
   orWhere(
     condition: WhereConditionLike,
     parameters?: Record<string, unknown>,

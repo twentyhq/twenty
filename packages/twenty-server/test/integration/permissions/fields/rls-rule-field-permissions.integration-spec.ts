@@ -248,6 +248,50 @@ describe('field permissions on an RLS rule (integration)', () => {
     ).toEqual([]);
   });
 
+  it('should page past the records a sorted field is unreadable on', async () => {
+    const listPersonPageAsMember = async (after?: string) => {
+      const response = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          gqlFields: 'id',
+          filter: { id: { in: originalPeople.map(({ id }) => id) } },
+          orderBy: [{ avatarUrl: 'AscNullsLast' }],
+          first: 1,
+          after,
+        }),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      return response.body.data.people;
+    };
+
+    await global.testDataSource.query(
+      `UPDATE ${PERSON_TABLE} SET "jobTitle" = 'Paris office' WHERE "id" = $1`,
+      [originalPeople[1].id],
+    );
+
+    try {
+      const firstPage = await listPersonPageAsMember();
+      const secondPage = await listPersonPageAsMember(
+        firstPage.pageInfo.endCursor,
+      );
+
+      expect(
+        [...firstPage.edges, ...secondPage.edges]
+          .map((edge: { node: { id: string } }) => edge.node.id)
+          .sort(),
+      ).toEqual(originalPeople.map(({ id }) => id).sort());
+    } finally {
+      await global.testDataSource.query(
+        `UPDATE ${PERSON_TABLE} SET "jobTitle" = 'London office' WHERE "id" = $1`,
+        [originalPeople[1].id],
+      );
+    }
+  });
+
   it('should leave the rows a field is unreadable on out of a group on it', async () => {
     const introFieldMetadataId = await findFieldMetadataId('intro');
     const setIntroReadability = (canReadFieldValue: false | null) =>

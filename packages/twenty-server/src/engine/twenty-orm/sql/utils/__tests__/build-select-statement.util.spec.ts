@@ -172,6 +172,27 @@ describe('buildSelectStatement', () => {
     );
   });
 
+  it('should compare an unreadable column as null in a condition that orders pages', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        columnNullifyConditions: { person: { id: ['"person"."x" = :x'] } },
+        whereClauses: [
+          {
+            operator: 'and',
+            isNegated: false,
+            comparesUnreadableColumnsAsNull: true,
+            clauses: [{ operator: 'and', sql: '"person"."id" IS NULL' }],
+          },
+        ],
+        includeDeleted: true,
+      }),
+    );
+
+    expect(sql).toContain(
+      'WHERE ((CASE WHEN ("person"."x" = :x) THEN NULL ELSE "person"."id" END) IS NULL)',
+    );
+  });
+
   it('should make a relation filter condition unknown on the related rows its column is unreadable on', () => {
     const sql = buildSelectStatement(
       buildState({

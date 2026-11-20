@@ -25,13 +25,20 @@ import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/type
 export type WhereConditionClause = {
   operator: 'and' | 'or';
   sql: string;
+  comparesUnreadableColumnsAsNull?: boolean;
 };
 
 export type WhereGroupClause = {
   operator: 'and' | 'or';
   isNegated: boolean;
   clauses: WhereClause[];
+  comparesUnreadableColumnsAsNull?: boolean;
 };
+
+type RenderWhereCondition = (args: {
+  condition: string;
+  comparesUnreadableColumnsAsNull: boolean;
+}) => string;
 
 export type WhereClause = WhereConditionClause | WhereGroupClause;
 
@@ -370,17 +377,27 @@ export const buildProjection = (
 const renderWhereClause = ({
   whereClause,
   renderCondition,
+  comparesUnreadableColumnsAsNull,
 }: {
   whereClause: WhereClause;
-  renderCondition: (condition: string) => string;
+  renderCondition: RenderWhereCondition;
+  comparesUnreadableColumnsAsNull: boolean;
 }): string => {
+  const comparesClauseUnreadableColumnsAsNull =
+    comparesUnreadableColumnsAsNull ||
+    whereClause.comparesUnreadableColumnsAsNull === true;
+
   if ('sql' in whereClause) {
-    return renderCondition(whereClause.sql);
+    return renderCondition({
+      condition: whereClause.sql,
+      comparesUnreadableColumnsAsNull: comparesClauseUnreadableColumnsAsNull,
+    });
   }
 
   const groupExpression = renderUserWhereExpression({
     whereClauses: whereClause.clauses,
     renderCondition,
+    comparesUnreadableColumnsAsNull: comparesClauseUnreadableColumnsAsNull,
   });
 
   return whereClause.isNegated
@@ -390,10 +407,12 @@ const renderWhereClause = ({
 
 const renderUserWhereExpression = ({
   whereClauses,
-  renderCondition = (condition) => condition,
+  renderCondition = ({ condition }) => condition,
+  comparesUnreadableColumnsAsNull = false,
 }: {
   whereClauses: WhereClause[];
-  renderCondition?: (condition: string) => string;
+  renderCondition?: RenderWhereCondition;
+  comparesUnreadableColumnsAsNull?: boolean;
 }): string =>
   whereClauses
     .filter(
@@ -403,6 +422,7 @@ const renderUserWhereExpression = ({
       const renderedClause = renderWhereClause({
         whereClause,
         renderCondition,
+        comparesUnreadableColumnsAsNull,
       });
 
       return index === 0
@@ -413,22 +433,29 @@ const renderUserWhereExpression = ({
 
 const renderReadableWhereCondition = ({
   condition,
+  comparesUnreadableColumnsAsNull,
   aliases,
   columnMasks,
   columnNullifyConditions,
 }: {
   condition: string;
+  comparesUnreadableColumnsAsNull: boolean;
   aliases: string[];
   columnMasks: ColumnMasks | undefined;
   columnNullifyConditions: ColumnNullifyConditions;
 }): string => {
   const quotedCondition = quoteQualifiedAliasReferences(condition, aliases);
+  const maskedCondition = maskNullifiedColumnReferences({
+    expression: quotedCondition,
+    columnMasks,
+  });
+
+  if (comparesUnreadableColumnsAsNull) {
+    return maskedCondition;
+  }
 
   return renderUnreadableAwareCondition({
-    condition: maskNullifiedColumnReferences({
-      expression: quotedCondition,
-      columnMasks,
-    }),
+    condition: maskedCondition,
     unreadableConditions: findUnreadableColumnConditions({
       expressions: [quotedCondition],
       columnNullifyConditions,
@@ -446,7 +473,7 @@ export const renderWhereExpressionWithRowAccess = ({
 }: {
   whereClauses: WhereClause[];
   rowAccessConditions: string[];
-  renderCondition?: (condition: string) => string;
+  renderCondition?: RenderWhereCondition;
 }): string => {
   const userExpression = renderUserWhereExpression({
     whereClauses,
@@ -491,9 +518,10 @@ const renderExistsFilter = ({
 
   const conditionExpression = renderUserWhereExpression({
     whereClauses: existsFilterClause.conditionClauses,
-    renderCondition: (condition) =>
+    renderCondition: ({ condition, comparesUnreadableColumnsAsNull }) =>
       renderReadableWhereCondition({
         condition,
+        comparesUnreadableColumnsAsNull,
         aliases: [existsFilterClause.alias],
         columnMasks,
         columnNullifyConditions,
@@ -568,9 +596,10 @@ export const buildWhereExpression = (
   const renderedWhereExpression = quoteQualifiedAliasReferences(
     renderWhereExpressionWithRowAccess({
       whereClauses: state.whereClauses,
-      renderCondition: (condition) =>
+      renderCondition: ({ condition, comparesUnreadableColumnsAsNull }) =>
         renderReadableWhereCondition({
           condition,
+          comparesUnreadableColumnsAsNull,
           aliases,
           columnMasks,
           columnNullifyConditions: state.columnNullifyConditions,
