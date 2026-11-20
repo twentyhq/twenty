@@ -5,6 +5,7 @@ import { getSlackAssistantRequestLeaseCutoff } from 'src/logic-functions/utils/g
 
 export const isSlackAssistantRequestStale = (
   record: Pick<SlackAssistantRequestRecord, 'updatedAt'>,
+  { nowMs = Date.now() }: { nowMs?: number } = {},
 ): boolean =>
   isNonEmptyString(record.updatedAt) &&
-  new Date(record.updatedAt) < getSlackAssistantRequestLeaseCutoff();
+  new Date(record.updatedAt) < getSlackAssistantRequestLeaseCutoff(nowMs);

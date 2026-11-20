@@ -5,6 +5,7 @@ import { getTeamsAssistantRequestLeaseCutoff } from 'src/features/chat/logic-fun
 
 export const isTeamsAssistantRequestStale = (
   record: Pick<TeamsAssistantRequestRecord, 'updatedAt'>,
+  { nowMs = Date.now() }: { nowMs?: number } = {},
 ): boolean =>
   isNonEmptyString(record.updatedAt) &&
-  new Date(record.updatedAt) < getTeamsAssistantRequestLeaseCutoff();
+  new Date(record.updatedAt) < getTeamsAssistantRequestLeaseCutoff(nowMs);
