@@ -1,5 +1,4 @@
 import { buildLimitAssignToBulkSelectionUpdate } from 'src/database/commands/upgrade-version-command/2-61/utils/build-limit-assign-to-bulk-selection-update.util';
-import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 
 const NOW = '2026-11-20T00:00:00.000Z';
@@ -7,14 +6,11 @@ const NOW = '2026-11-20T00:00:00.000Z';
 const { universalIdentifier: ASSIGN_UNIVERSAL_IDENTIFIER } =
   STANDARD_COMMAND_MENU_ITEMS.assignAiChat;
 
-const buildExistingItem = (
-  conditionalAvailabilityExpression: string,
-): FlatCommandMenuItem =>
-  ({
-    universalIdentifier: ASSIGN_UNIVERSAL_IDENTIFIER,
-    conditionalAvailabilityExpression,
-    updatedAt: '2025-01-01T00:00:00.000Z',
-  }) as FlatCommandMenuItem;
+const buildExistingItem = (conditionalAvailabilityExpression: string) => ({
+  universalIdentifier: ASSIGN_UNIVERSAL_IDENTIFIER,
+  conditionalAvailabilityExpression,
+  updatedAt: '2025-01-01T00:00:00.000Z',
+});
 
 describe('buildLimitAssignToBulkSelectionUpdate', () => {
   it('offers Assign only when several chats are selected', () => {

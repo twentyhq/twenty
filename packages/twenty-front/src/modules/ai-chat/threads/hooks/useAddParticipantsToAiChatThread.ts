@@ -29,12 +29,17 @@ export const useAddParticipantsToAiChatThread = () => {
       const writerWorkspaceMemberIds =
         store.get(aiChatThreadRecordFamilySelector.selectorFamily(threadId))
           ?.writerWorkspaceMemberIds ?? [];
-      const { rollback } = applyOptimisticAiChatThreadUpdate({
-        id: threadId,
-        writerWorkspaceMemberIds: [
-          ...new Set([...writerWorkspaceMemberIds, ...workspaceMemberIds]),
-        ],
-      });
+      const applyWriters = (addedWorkspaceMemberIds: string[]) =>
+        applyOptimisticAiChatThreadUpdate({
+          id: threadId,
+          writerWorkspaceMemberIds: [
+            ...new Set([
+              ...writerWorkspaceMemberIds,
+              ...addedWorkspaceMemberIds,
+            ]),
+          ],
+        });
+      const { rollback } = applyWriters(workspaceMemberIds);
 
       setIsAdding(true);
 
@@ -48,15 +53,7 @@ export const useAddParticipantsToAiChatThread = () => {
 
         if (addedWorkspaceMemberIds.length < workspaceMemberIds.length) {
           rollback();
-          applyOptimisticAiChatThreadUpdate({
-            id: threadId,
-            writerWorkspaceMemberIds: [
-              ...new Set([
-                ...writerWorkspaceMemberIds,
-                ...addedWorkspaceMemberIds,
-              ]),
-            ],
-          });
+          applyWriters(addedWorkspaceMemberIds);
           enqueueToast({
             status: 'warning',
             children: t`Some members could not be added because they cannot use AI chat.`,
