@@ -25,7 +25,7 @@ export const SettingsExperienceNotificationsSection = () => {
     <Section.Root>
       <Section.Header
         title={t`Notifications`}
-        description={t`Get notified of new inbox messages on this device, even when Twenty is closed. Your choices below apply to every device`}
+        description={t`Get notified of new inbox messages on this device when you are not looking at Twenty. Your choices below apply to every device`}
       />
       <StyledNotificationControls>
         <BrowserNotificationPermissionCard />
