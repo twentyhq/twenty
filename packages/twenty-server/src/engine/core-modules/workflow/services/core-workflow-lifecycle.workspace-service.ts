@@ -546,9 +546,10 @@ export class CoreWorkflowLifecycleWorkspaceService {
 
       if (isDefined(existingCommandMenuItem)) {
         const { flatCommandMenuItemToDelete, flatCommandMenuItemToDeactivate } =
-          await this.commandMenuItemService.computeFlatCommandMenuItemDeletion(
-            { id: existingCommandMenuItem.id, workspaceId },
-          );
+          await this.commandMenuItemService.computeFlatCommandMenuItemDeletion({
+            id: existingCommandMenuItem.id,
+            workspaceId,
+          });
 
         if (isDefined(flatCommandMenuItemToDeactivate)) {
           operations.flatEntityToUpdate.push(flatCommandMenuItemToDeactivate);
