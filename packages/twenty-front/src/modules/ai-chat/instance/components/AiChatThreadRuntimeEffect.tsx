@@ -13,7 +13,6 @@ import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiC
 import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
 import { aiChatFetchedMessagesFamilyState } from '@/ai-chat/states/aiChatFetchedMessagesFamilyState';
 import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
-import { endAiChatReplyStatus } from '@/ai-chat/utils/endAiChatReplyStatus';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { aiChatMessagesLoadingFamilyState } from '@/ai-chat/states/aiChatMessagesLoadingFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
@@ -63,11 +62,6 @@ export const AiChatThreadRuntimeEffect = ({
     { threadId },
   );
 
-  const setAiChatReplyStatus = useSetAtomFamilyState(
-    aiChatReplyStatusFamilyState,
-    { threadId },
-  );
-
   const handleDataLoaded = useCallback(
     (data: GetChatMessagesQuery) => {
       const error = store.get(aiChatErrorFamilyState.atomFamily({ threadId }));
@@ -100,8 +94,6 @@ export const AiChatThreadRuntimeEffect = ({
       setAiChatQueuedMessages(
         uiMessages.filter((message) => message.status === 'queued'),
       );
-      setAiChatReplyStatus(endAiChatReplyStatus('awaiting-persisted-refetch'));
-
       const catchup = data.chatStreamCatchupChunks;
 
       if (!isDefined(catchup)) {
@@ -115,22 +107,13 @@ export const AiChatThreadRuntimeEffect = ({
       applyStreamCatchup,
       setAiChatFetchedMessages,
       setAiChatQueuedMessages,
-      setAiChatReplyStatus,
       store,
     ],
   );
 
   const handleLoadingChange = useCallback(
-    (loading: boolean) => {
-      setAiChatMessagesLoading(loading);
-
-      if (!loading) {
-        setAiChatReplyStatus(
-          endAiChatReplyStatus('awaiting-persisted-refetch'),
-        );
-      }
-    },
-    [setAiChatMessagesLoading, setAiChatReplyStatus],
+    (loading: boolean) => setAiChatMessagesLoading(loading),
+    [setAiChatMessagesLoading],
   );
 
   const { refetch: refetchAiChatMessages } = useQueryWithCallbacks(

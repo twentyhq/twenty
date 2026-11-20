@@ -40,6 +40,7 @@ import { aiChatUploadedFilesFamilyState } from '@/ai-chat/composer/states/aiChat
 import { aiChatUnconfirmedFirstMessageFamilyState } from '@/ai-chat/composer/states/aiChatUnconfirmedFirstMessageFamilyState';
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
+import { aiChatMessagesLoadingFamilyState } from '@/ai-chat/states/aiChatMessagesLoadingFamilyState';
 import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
 import { endAiChatReplyStatus } from '@/ai-chat/utils/endAiChatReplyStatus';
 import { getAiChatReplyStatusUnlessStreaming } from '@/ai-chat/utils/getAiChatReplyStatusUnlessStreaming';
@@ -280,7 +281,11 @@ export const useAiChat = () => {
         } else {
           store.set(
             replyStatusAtom,
-            getAiChatReplyStatusUnlessStreaming('awaiting-persisted-refetch'),
+            endAiChatReplyStatus('awaiting-first-chunk'),
+          );
+          store.set(
+            aiChatMessagesLoadingFamilyState.atomFamily({ threadId }),
+            true,
           );
         }
 

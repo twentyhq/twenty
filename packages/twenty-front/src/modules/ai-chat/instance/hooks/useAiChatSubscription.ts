@@ -24,6 +24,7 @@ import { AI_CHAT_STREAM_LIVENESS_CHECK_INTERVAL_IN_MS } from '@/ai-chat/constant
 import { AI_CHAT_STREAM_LIVENESS_TIMEOUT_IN_MS } from '@/ai-chat/constants/AiChatStreamLivenessTimeoutInMs';
 import { useApplyAiChatThreadUpdate } from '@/ai-chat/threads/hooks/useApplyAiChatThreadUpdate';
 import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
+import { aiChatMessagesLoadingFamilyState } from '@/ai-chat/states/aiChatMessagesLoadingFamilyState';
 import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
 import { endAiChatReplyStatus } from '@/ai-chat/utils/endAiChatReplyStatus';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
@@ -84,6 +85,8 @@ export const useAiChatSubscription = (threadId: string | null) => {
 
     const errorAtom = aiChatErrorFamilyState.atomFamily(familyKey);
     const replyStatusAtom = aiChatReplyStatusFamilyState.atomFamily(familyKey);
+    const messagesLoadingAtom =
+      aiChatMessagesLoadingFamilyState.atomFamily(familyKey);
     const messagesAtom = aiChatMessagesFamilyState.atomFamily(familyKey);
     const fetchedMessagesAtom =
       aiChatFetchedMessagesFamilyState.atomFamily(familyKey);
@@ -109,7 +112,6 @@ export const useAiChatSubscription = (threadId: string | null) => {
     let hasReceivedInitialKeepalive = false;
     let firstLiveSeq: number | null = null;
     let isStreamOpen = false;
-    let isPersistedRefetchPending = false;
 
     const closeWriter = () => {
       if (isDefined(writer)) {
@@ -118,30 +120,14 @@ export const useAiChatSubscription = (threadId: string | null) => {
       }
     };
 
-    const startPersistedRefetch = () => {
-      isPersistedRefetchPending = false;
-      store.set(replyStatusAtom, 'awaiting-persisted-refetch');
-      dispatchAiChatRefetchMessagesEvent(threadId);
-    };
-
-    // The read loop still flushes to the messages after the stream ends, so the refetch waits for it
+    // Marked before the query starts, so the fetched messages never replace the stream in between
     const requestPersistedRefetch = () => {
-      if (isStreamOpen) {
-        isPersistedRefetchPending = true;
-        return;
-      }
-
-      startPersistedRefetch();
+      store.set(messagesLoadingAtom, true);
+      dispatchAiChatRefetchMessagesEvent(threadId);
     };
 
     const endStream = () => {
       isStreamOpen = false;
-
-      if (isPersistedRefetchPending) {
-        startPersistedRefetch();
-        return;
-      }
-
       store.set(replyStatusAtom, endAiChatReplyStatus('streaming'));
     };
 
@@ -400,8 +386,8 @@ export const useAiChatSubscription = (threadId: string | null) => {
       store.set(fetchedMessagesAtom, []);
       store.set(queuedMessagesAtom, []);
       isStreamOpen = false;
-      isPersistedRefetchPending = false;
       store.set(replyStatusAtom, 'idle');
+      store.set(messagesLoadingAtom, false);
       store.set(
         errorAtom,
         createAiChatCodedError(

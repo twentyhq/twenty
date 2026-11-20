@@ -1,5 +1,1 @@
-export type AiChatReplyStatus =
-  | 'idle'
-  | 'awaiting-first-chunk'
-  | 'streaming'
-  | 'awaiting-persisted-refetch';
+export type AiChatReplyStatus = 'idle' | 'awaiting-first-chunk' | 'streaming';
