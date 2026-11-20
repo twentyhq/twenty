@@ -3382,6 +3382,11 @@ msgstr "Tutte le applicazioni"
 msgid "All channels"
 msgstr "Tutti i canali"
 
+#. js-lingui-id: 7cbQyX
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "All chats you follow"
+msgstr ""
+
 #. js-lingui-id: tZLcDK
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 msgid "All Companies"
@@ -3572,6 +3577,11 @@ msgstr "Tutti i membri dello spazio di lavoro hanno già questo ruolo"
 msgid "All workspaces"
 msgstr "Tutti gli spazi di lavoro"
 
+#. js-lingui-id: h7peZQ
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Allow"
+msgstr ""
+
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow downloading files and attachments"
@@ -3632,6 +3642,11 @@ msgstr "Concedi l'accesso al team di supporto"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow the invitation of new users by sharing an invite link."
 msgstr "Consenti l'invito di nuovi utenti condividendo un link di invito."
+
+#. js-lingui-id: lIfNCI
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Allow this browser to show new inbox messages as notifications"
+msgstr ""
 
 #. js-lingui-id: JBjv4v
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -5247,6 +5262,11 @@ msgstr "Stile del blocco"
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Blocked"
 msgstr "Bloccato"
+
+#. js-lingui-id: z3pfdo
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Blocked in this browser. Allow notifications for this site in the browser settings"
+msgstr ""
 
 #. js-lingui-id: K1172m
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
@@ -10510,10 +10530,20 @@ msgstr "Identità della coppia nei messaggi diretti"
 msgid "Direct messages"
 msgstr "Messaggi diretti"
 
+#. js-lingui-id: yBEIpe
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Direct messages and mentions"
+msgstr ""
+
 #. js-lingui-id: Rz4s9r
 #: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "I messaggi diretti non supportano gli allegati."
+
+#. js-lingui-id: +ILAOG
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Direct messages, mentions and chats assigned to you"
+msgstr ""
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -12569,6 +12599,11 @@ msgstr "ogni minuto"
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Every Monday"
 msgstr "Ogni lunedì"
+
+#. js-lingui-id: WZ4tRP
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Every new message in a chat you take part in or follow"
+msgstr ""
 
 #. js-lingui-id: QU6LCC
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
@@ -14731,6 +14766,11 @@ msgstr "Germania"
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Get more credits"
 msgstr "Ottieni più crediti"
+
+#. js-lingui-id: WB4gz7
+#: src/modules/settings/experience/components/SettingsExperienceNotificationsSection.tsx
+msgid "Get notified of new inbox messages on this device, even when Twenty is closed. Your choices below apply to every device"
+msgstr ""
 
 #. js-lingui-id: AvbPI1
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
@@ -19860,6 +19900,16 @@ msgstr "Nuovo gruppo"
 msgid "New Group"
 msgstr "Nuovo gruppo"
 
+#. js-lingui-id: l7iZgc
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "New inbox messages show as notifications on this device, even when Twenty is closed"
+msgstr ""
+
+#. js-lingui-id: ynuJvo
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "New inbox messages will show up like this"
+msgstr ""
+
 #. js-lingui-id: //H2Cs
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
@@ -20731,6 +20781,11 @@ msgstr "Nessun modello è disponibile per questa modalità."
 msgid "No notes"
 msgstr "Nessuna nota"
 
+#. js-lingui-id: 9F6fiv
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "No notification for new messages"
+msgstr ""
+
 #. js-lingui-id: arel2K
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
 msgid "No objects found"
@@ -21438,10 +21493,17 @@ msgid "Nothing to suggest here."
 msgstr "Niente da suggerire qui."
 
 #. js-lingui-id: iDNBZe
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/components/SettingsExperienceNotificationsSection.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/components/AppToaster.tsx
 msgid "Notifications"
 msgstr "Notifiche"
+
+#. js-lingui-id: A09awi
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Notifications are on"
+msgstr ""
 
 #. js-lingui-id: 6RihN0
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -21669,6 +21731,11 @@ msgstr "Oggetti, campi e indici che definiscono i tuoi record."
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "of"
 msgstr "di"
+
+#. js-lingui-id: az8lvo
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Off"
+msgstr ""
 
 #. js-lingui-id: KNz3EF
 #: src/pages/not-found/NotFound.tsx
@@ -27182,6 +27249,11 @@ msgstr "Invia ora"
 msgid "Send Now"
 msgstr "Invia ora"
 
+#. js-lingui-id: eus61c
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Send test"
+msgstr ""
+
 #. js-lingui-id: doZzL7
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
 msgid "Send test email"
@@ -27729,6 +27801,11 @@ msgstr "Mostra meno"
 msgid "Show logs"
 msgstr "Mostra registri"
 
+#. js-lingui-id: /l2KYB
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Show message preview"
+msgstr ""
+
 #. js-lingui-id: fMPkxb
 #: src/modules/ai-chat/messages/components/AiChatUserMessageCollapsibleContent.tsx
 #: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
@@ -27762,6 +27839,11 @@ msgstr "Mostra la pagina Guida introduttiva e la scheda della barra laterale, e 
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes."
 msgstr "Mostra la scheda Privacy e applica la relativa policy sui dati IA e le impostazioni di condivisione dei dati. Disattivando questa opzione viene rimossa qualsiasi policy memorizzata. Attivala dopo il completamento dell'aggiornamento dell'istanza."
+
+#. js-lingui-id: soWlp2
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Show the sender, the chat and the message text in notifications. Leave it off on shared screens and devices"
+msgstr ""
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -30142,6 +30224,16 @@ msgstr "La registrazione di questa applicazione è rivendicata dal tuo spazio di
 #: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This billing period"
 msgstr "Questo periodo di fatturazione"
+
+#. js-lingui-id: YDcfdL
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "This browser cannot show notifications"
+msgstr ""
+
+#. js-lingui-id: 47wc2N
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "This browser could not turn on notifications"
+msgstr ""
 
 #. js-lingui-id: XkzBBX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts

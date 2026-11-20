@@ -3377,6 +3377,11 @@ msgstr "All applications"
 msgid "All channels"
 msgstr "All channels"
 
+#. js-lingui-id: 7cbQyX
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "All chats you follow"
+msgstr "All chats you follow"
+
 #. js-lingui-id: tZLcDK
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 msgid "All Companies"
@@ -3567,6 +3572,11 @@ msgstr "All workspace members already have this role"
 msgid "All workspaces"
 msgstr "All workspaces"
 
+#. js-lingui-id: h7peZQ
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Allow"
+msgstr "Allow"
+
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow downloading files and attachments"
@@ -3627,6 +3637,11 @@ msgstr "Allow Support Team Access"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow the invitation of new users by sharing an invite link."
 msgstr "Allow the invitation of new users by sharing an invite link."
+
+#. js-lingui-id: lIfNCI
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Allow this browser to show new inbox messages as notifications"
+msgstr "Allow this browser to show new inbox messages as notifications"
 
 #. js-lingui-id: JBjv4v
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -5242,6 +5257,11 @@ msgstr "Block style"
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Blocked"
 msgstr "Blocked"
+
+#. js-lingui-id: z3pfdo
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Blocked in this browser. Allow notifications for this site in the browser settings"
+msgstr "Blocked in this browser. Allow notifications for this site in the browser settings"
 
 #. js-lingui-id: K1172m
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
@@ -10505,10 +10525,20 @@ msgstr "Direct message pair identity"
 msgid "Direct messages"
 msgstr "Direct messages"
 
+#. js-lingui-id: yBEIpe
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Direct messages and mentions"
+msgstr "Direct messages and mentions"
+
 #. js-lingui-id: Rz4s9r
 #: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Direct messages don't support attachments."
+
+#. js-lingui-id: +ILAOG
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Direct messages, mentions and chats assigned to you"
+msgstr "Direct messages, mentions and chats assigned to you"
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -12564,6 +12594,11 @@ msgstr "every minute"
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Every Monday"
 msgstr "Every Monday"
+
+#. js-lingui-id: WZ4tRP
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Every new message in a chat you take part in or follow"
+msgstr "Every new message in a chat you take part in or follow"
 
 #. js-lingui-id: QU6LCC
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
@@ -14726,6 +14761,11 @@ msgstr "Germany"
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Get more credits"
 msgstr "Get more credits"
+
+#. js-lingui-id: WB4gz7
+#: src/modules/settings/experience/components/SettingsExperienceNotificationsSection.tsx
+msgid "Get notified of new inbox messages on this device, even when Twenty is closed. Your choices below apply to every device"
+msgstr "Get notified of new inbox messages on this device, even when Twenty is closed. Your choices below apply to every device"
 
 #. js-lingui-id: AvbPI1
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
@@ -19855,6 +19895,16 @@ msgstr "New group"
 msgid "New Group"
 msgstr "New Group"
 
+#. js-lingui-id: l7iZgc
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "New inbox messages show as notifications on this device, even when Twenty is closed"
+msgstr "New inbox messages show as notifications on this device, even when Twenty is closed"
+
+#. js-lingui-id: ynuJvo
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "New inbox messages will show up like this"
+msgstr "New inbox messages will show up like this"
+
 #. js-lingui-id: //H2Cs
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
@@ -20726,6 +20776,11 @@ msgstr "No model is available for this mode."
 msgid "No notes"
 msgstr "No notes"
 
+#. js-lingui-id: 9F6fiv
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "No notification for new messages"
+msgstr "No notification for new messages"
+
 #. js-lingui-id: arel2K
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
 msgid "No objects found"
@@ -21433,10 +21488,17 @@ msgid "Nothing to suggest here."
 msgstr "Nothing to suggest here."
 
 #. js-lingui-id: iDNBZe
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/components/SettingsExperienceNotificationsSection.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/components/AppToaster.tsx
 msgid "Notifications"
 msgstr "Notifications"
+
+#. js-lingui-id: A09awi
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Notifications are on"
+msgstr "Notifications are on"
 
 #. js-lingui-id: 6RihN0
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -21664,6 +21726,11 @@ msgstr "Objects, fields and indexes that shape your records."
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "of"
 msgstr "of"
+
+#. js-lingui-id: az8lvo
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Off"
+msgstr "Off"
 
 #. js-lingui-id: KNz3EF
 #: src/pages/not-found/NotFound.tsx
@@ -27177,6 +27244,11 @@ msgstr "Send now"
 msgid "Send Now"
 msgstr "Send Now"
 
+#. js-lingui-id: eus61c
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Send test"
+msgstr "Send test"
+
 #. js-lingui-id: doZzL7
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
 msgid "Send test email"
@@ -27724,6 +27796,11 @@ msgstr "Show less"
 msgid "Show logs"
 msgstr "Show logs"
 
+#. js-lingui-id: /l2KYB
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Show message preview"
+msgstr "Show message preview"
+
 #. js-lingui-id: fMPkxb
 #: src/modules/ai-chat/messages/components/AiChatUserMessageCollapsibleContent.tsx
 #: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
@@ -27757,6 +27834,11 @@ msgstr "Show the Getting started page and sidebar card, and open it on landing d
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes."
 msgstr "Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes."
+
+#. js-lingui-id: soWlp2
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Show the sender, the chat and the message text in notifications. Leave it off on shared screens and devices"
+msgstr "Show the sender, the chat and the message text in notifications. Leave it off on shared screens and devices"
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -30137,6 +30219,16 @@ msgstr "This application's registration is claimed by your workspace"
 #: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This billing period"
 msgstr "This billing period"
+
+#. js-lingui-id: YDcfdL
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "This browser cannot show notifications"
+msgstr "This browser cannot show notifications"
+
+#. js-lingui-id: 47wc2N
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "This browser could not turn on notifications"
+msgstr "This browser could not turn on notifications"
 
 #. js-lingui-id: XkzBBX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts

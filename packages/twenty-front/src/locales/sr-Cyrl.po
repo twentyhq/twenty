@@ -3382,6 +3382,11 @@ msgstr "Све апликације"
 msgid "All channels"
 msgstr "Сви канали"
 
+#. js-lingui-id: 7cbQyX
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "All chats you follow"
+msgstr ""
+
 #. js-lingui-id: tZLcDK
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 msgid "All Companies"
@@ -3572,6 +3577,11 @@ msgstr "Сви чланови радног простора већ имају о
 msgid "All workspaces"
 msgstr "Сви радни простори"
 
+#. js-lingui-id: h7peZQ
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Allow"
+msgstr ""
+
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow downloading files and attachments"
@@ -3632,6 +3642,11 @@ msgstr "Дозволите приступ тиму за подршку"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow the invitation of new users by sharing an invite link."
 msgstr "Омогућите позивање нових корисника дељењем везе за позив."
+
+#. js-lingui-id: lIfNCI
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Allow this browser to show new inbox messages as notifications"
+msgstr ""
 
 #. js-lingui-id: JBjv4v
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -5247,6 +5262,11 @@ msgstr "Стил блока"
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
 msgid "Blocked"
 msgstr "Блокирано"
+
+#. js-lingui-id: z3pfdo
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Blocked in this browser. Allow notifications for this site in the browser settings"
+msgstr ""
 
 #. js-lingui-id: K1172m
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
@@ -10510,10 +10530,20 @@ msgstr "Идентитет пара директних порука"
 msgid "Direct messages"
 msgstr "Директне поруке"
 
+#. js-lingui-id: yBEIpe
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Direct messages and mentions"
+msgstr ""
+
 #. js-lingui-id: Rz4s9r
 #: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Директне поруке не подржавају прилоге."
+
+#. js-lingui-id: +ILAOG
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Direct messages, mentions and chats assigned to you"
+msgstr ""
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -12569,6 +12599,11 @@ msgstr "сваког минута"
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
 msgid "Every Monday"
 msgstr "Сваког понедељка"
+
+#. js-lingui-id: WZ4tRP
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Every new message in a chat you take part in or follow"
+msgstr ""
 
 #. js-lingui-id: QU6LCC
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
@@ -14731,6 +14766,11 @@ msgstr "Немачка"
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Get more credits"
 msgstr "Купите још кредита"
+
+#. js-lingui-id: WB4gz7
+#: src/modules/settings/experience/components/SettingsExperienceNotificationsSection.tsx
+msgid "Get notified of new inbox messages on this device, even when Twenty is closed. Your choices below apply to every device"
+msgstr ""
 
 #. js-lingui-id: AvbPI1
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
@@ -19860,6 +19900,16 @@ msgstr "Нова група"
 msgid "New Group"
 msgstr "Нова група"
 
+#. js-lingui-id: l7iZgc
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "New inbox messages show as notifications on this device, even when Twenty is closed"
+msgstr ""
+
+#. js-lingui-id: ynuJvo
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "New inbox messages will show up like this"
+msgstr ""
+
 #. js-lingui-id: //H2Cs
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
@@ -20731,6 +20781,11 @@ msgstr "Ниједан модел није доступан за овај реж
 msgid "No notes"
 msgstr "Нема белешки"
 
+#. js-lingui-id: 9F6fiv
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "No notification for new messages"
+msgstr ""
+
 #. js-lingui-id: arel2K
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
 msgid "No objects found"
@@ -21438,10 +21493,17 @@ msgid "Nothing to suggest here."
 msgstr "Овде нема шта да се предложи."
 
 #. js-lingui-id: iDNBZe
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/components/SettingsExperienceNotificationsSection.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/components/AppToaster.tsx
 msgid "Notifications"
 msgstr "Обавештења"
+
+#. js-lingui-id: A09awi
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Notifications are on"
+msgstr ""
 
 #. js-lingui-id: 6RihN0
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -21669,6 +21731,11 @@ msgstr "Објекти, поља и индекси који обликују в�
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "of"
 msgstr "од"
+
+#. js-lingui-id: az8lvo
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Off"
+msgstr ""
 
 #. js-lingui-id: KNz3EF
 #: src/pages/not-found/NotFound.tsx
@@ -27182,6 +27249,11 @@ msgstr "Пошаљи сада"
 msgid "Send Now"
 msgstr "Пошаљи одмах"
 
+#. js-lingui-id: eus61c
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Send test"
+msgstr ""
+
 #. js-lingui-id: doZzL7
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
 msgid "Send test email"
@@ -27729,6 +27801,11 @@ msgstr "Прикажи мање"
 msgid "Show logs"
 msgstr "Прикажи евиденције"
 
+#. js-lingui-id: /l2KYB
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Show message preview"
+msgstr ""
+
 #. js-lingui-id: fMPkxb
 #: src/modules/ai-chat/messages/components/AiChatUserMessageCollapsibleContent.tsx
 #: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
@@ -27762,6 +27839,11 @@ msgstr "Прикажите страницу Почетак рада и карт�
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes."
 msgstr "Прикажите картицу Приватност и примените њену политику података за AI и подешавања дељења података. Искључивањем ове опције уклања се свака сачувана политика. Омогућите је након завршетка надоградње инстанце."
+
+#. js-lingui-id: soWlp2
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Show the sender, the chat and the message text in notifications. Leave it off on shared screens and devices"
+msgstr ""
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -30140,6 +30222,16 @@ msgstr "Регистрацију ове апликације преузео је
 #: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This billing period"
 msgstr "Овај период наплате"
+
+#. js-lingui-id: YDcfdL
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "This browser cannot show notifications"
+msgstr ""
+
+#. js-lingui-id: 47wc2N
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "This browser could not turn on notifications"
+msgstr ""
 
 #. js-lingui-id: XkzBBX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts

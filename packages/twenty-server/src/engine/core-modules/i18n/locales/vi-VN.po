@@ -116,6 +116,11 @@ msgstr "Đã tìm thấy {hostnameCount} tên máy chủ cho miền \"{domainNam
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{operationLabel} của {aggregateFieldLabel}"
 
+#. js-lingui-id: nzKj4z
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "{senderName} in {threadLabel}"
+msgstr ""
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -6129,6 +6134,11 @@ msgstr "Trường hành động biểu mẫu phải có tên duy nhất"
 msgid "Form action must have at least one field"
 msgstr "Hành động biểu mẫu phải có ít nhất một trường"
 
+#. js-lingui-id: CjVkbV
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "Former member"
+msgstr ""
+
 #. js-lingui-id: JRr+QW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
 msgid "Forwarded request headers must be a list of header names"
@@ -9416,6 +9426,11 @@ msgstr "Mới"
 msgid "New backup codes were generated for your account"
 msgstr "Các mã dự phòng mới đã được tạo cho tài khoản của bạn"
 
+#. js-lingui-id: hIQkLb
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "New chat"
+msgstr ""
+
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -9431,6 +9446,11 @@ msgstr "Trò chuyện mới"
 #. js-lingui-id: TYhxR+
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "New email must be different from current email"
+msgstr ""
+
+#. js-lingui-id: mTBAsF
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "New message"
 msgstr ""
 
 #. js-lingui-id: nXXBKB
