@@ -1,6 +1,9 @@
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai-chat/constants/AiChatRefetchMessagesEventName';
+import { AiChatInstanceContext } from '@/ai-chat/contexts/AiChatInstanceContext';
+import { type AiChatThreadEventDetail } from '@/ai-chat/types/AiChatThreadEventDetail';
 import { type useAiChatFrontComponentPreview } from '@/ai-chat/tool-calls/hooks/useAiChatFrontComponentPreview';
 
 type AiChatFrontComponentPreviewEffectProps = Pick<
@@ -11,6 +14,8 @@ type AiChatFrontComponentPreviewEffectProps = Pick<
 export const AiChatFrontComponentPreviewEffect = ({
   loadPreview,
 }: AiChatFrontComponentPreviewEffectProps) => {
+  const threadId = useContext(AiChatInstanceContext)?.threadId;
+
   useEffect(() => {
     let controller: AbortController | undefined;
     let hasPreview = false;
@@ -27,20 +32,35 @@ export const AiChatFrontComponentPreviewEffect = ({
       }
     };
 
+    const handleRefetchMessages = (event: Event) => {
+      const eventThreadId = (event as CustomEvent<AiChatThreadEventDetail>)
+        .detail?.threadId;
+
+      if (
+        isDefined(threadId) &&
+        isDefined(eventThreadId) &&
+        eventThreadId !== threadId
+      ) {
+        return;
+      }
+
+      void refreshPreview();
+    };
+
     void refreshPreview();
     window.addEventListener(
       AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
-      refreshPreview,
+      handleRefetchMessages,
     );
 
     return () => {
       controller?.abort();
       window.removeEventListener(
         AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
-        refreshPreview,
+        handleRefetchMessages,
       );
     };
-  }, [loadPreview]);
+  }, [loadPreview, threadId]);
 
   return null;
 };
