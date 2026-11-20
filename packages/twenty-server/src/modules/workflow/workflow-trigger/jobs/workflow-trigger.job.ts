@@ -55,10 +55,10 @@ export class WorkflowTriggerJob {
     }
 
     const coreWorkflow =
-      await this.coreWorkflowTriggerService.findCoreWorkflowById(
+      await this.coreWorkflowTriggerService.findCoreWorkflowById({
         workspaceId,
-        coreWorkflowVersion.coreWorkflowId,
-      );
+        coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
+      });
 
     if (
       !isDefined(coreWorkflow) ||

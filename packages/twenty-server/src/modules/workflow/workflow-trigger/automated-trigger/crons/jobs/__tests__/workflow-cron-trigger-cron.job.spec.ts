@@ -109,7 +109,7 @@ describe('WorkflowCronTriggerCronJob', () => {
     mockCronTriggerDeduplicationService.shouldDispatch.mockResolvedValue(true);
     mockWorkspaceCaches({});
     mockCoreWorkflowTriggerService.findCoreWorkflowByIdOrWorkspaceWorkflowId.mockImplementation(
-      async (_workspaceId: string, workflowId: string) => ({
+      async ({ workflowId }: { workflowId: string }) => ({
         id: workflowId,
         applicationId: 'application-id',
         workspaceWorkflowId: workflowId,
@@ -120,9 +120,9 @@ describe('WorkflowCronTriggerCronJob', () => {
       }),
     );
     mockCoreWorkflowTriggerService.findCoreWorkflowById.mockImplementation(
-      async (_workspaceId: string, workflowId: string) => ({
-        id: workflowId,
-        name: workflowId,
+      async ({ coreWorkflowId }: { coreWorkflowId: string }) => ({
+        id: coreWorkflowId,
+        name: coreWorkflowId,
       }),
     );
     mockCoreWorkflowTriggerService.findCoreVersionById.mockImplementation(
