@@ -35,9 +35,15 @@ export class TabPresenceService {
   ) {}
 
   async updateTabPresence(tabPresenceUpdate: TabPresenceUpdate): Promise<void> {
+    const { workspaceId, workspaceMemberId } = tabPresenceUpdate;
+
     await Promise.all([
       this.updateFocusedTab(tabPresenceUpdate),
-      this.refreshOnline(tabPresenceUpdate),
+      this.cacheStorageService.set(
+        getOnlineKey(workspaceId, workspaceMemberId),
+        true,
+        ONLINE_TTL_MS,
+      ),
     ]);
   }
 
@@ -64,22 +70,6 @@ export class TabPresenceService {
       keys: [focusedTabKey],
       args: [JSON.stringify(tabId), '0'],
     });
-  }
-
-  private async refreshOnline({
-    workspaceId,
-    workspaceMemberId,
-    status,
-  }: TabPresenceUpdate): Promise<void> {
-    if (status === TabPresenceStatus.CLOSED) {
-      return;
-    }
-
-    await this.cacheStorageService.set(
-      getOnlineKey(workspaceId, workspaceMemberId),
-      true,
-      ONLINE_TTL_MS,
-    );
   }
 
   async findOnlineWorkspaceMemberIds(workspaceId: string): Promise<string[]> {

@@ -53,25 +53,4 @@ describe('tab presence (integration)', () => {
       WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
     );
   });
-
-  it('should keep a member online when one of their tabs closes', async () => {
-    const closingTabId = randomUUID();
-
-    await updateJonyTabPresence({
-      tabId: closingTabId,
-      status: TabPresenceStatus.OPEN,
-    });
-    await updateJonyTabPresence({
-      tabId: randomUUID(),
-      status: TabPresenceStatus.FOCUSED,
-    });
-    await updateJonyTabPresence({
-      tabId: closingTabId,
-      status: TabPresenceStatus.CLOSED,
-    });
-
-    expect(await findOnlineWorkspaceMemberIds()).toContain(
-      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-    );
-  });
 });

@@ -5187,7 +5187,6 @@ input SyncAppMessageFoldersInput {
 }
 
 enum TabPresenceStatus {
-  CLOSED
   FOCUSED
   OPEN
 }

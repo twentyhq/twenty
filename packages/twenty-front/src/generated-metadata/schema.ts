@@ -7598,7 +7598,6 @@ export type SyncAppMessageFoldersInput = {
 };
 
 export enum TabPresenceStatus {
-  CLOSED = 'CLOSED',
   FOCUSED = 'FOCUSED',
   OPEN = 'OPEN'
 }

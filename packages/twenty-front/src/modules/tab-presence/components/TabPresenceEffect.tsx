@@ -19,13 +19,7 @@ export const TabPresenceEffect = () => {
   const [updateTabPresence] = useMutation(UpdateTabPresenceDocument);
 
   useEffect(() => {
-    let isPageHidden = false;
-
     const reportTabPresence = (status: TabPresenceStatus) => {
-      if (isPageHidden) {
-        return;
-      }
-
       updateTabPresence({
         variables: { input: { tabId, status } },
         context: { fetchOptions: { keepalive: true } },
@@ -37,16 +31,6 @@ export const TabPresenceEffect = () => {
     const reportFocused = () => reportTabPresence(TabPresenceStatus.FOCUSED);
     const reportOpen = () => reportTabPresence(TabPresenceStatus.OPEN);
 
-    const reportPageHidden = () => {
-      reportTabPresence(TabPresenceStatus.CLOSED);
-      isPageHidden = true;
-    };
-
-    const reportPageShown = () => {
-      isPageHidden = false;
-      reportCurrentStatus();
-    };
-
     reportCurrentStatus();
 
     const intervalId = setInterval(
@@ -56,16 +40,12 @@ export const TabPresenceEffect = () => {
 
     window.addEventListener('focus', reportFocused);
     window.addEventListener('blur', reportOpen);
-    window.addEventListener('pageshow', reportPageShown);
-    window.addEventListener('pagehide', reportPageHidden);
     document.addEventListener('visibilitychange', reportCurrentStatus);
 
     return () => {
       clearInterval(intervalId);
       window.removeEventListener('focus', reportFocused);
       window.removeEventListener('blur', reportOpen);
-      window.removeEventListener('pageshow', reportPageShown);
-      window.removeEventListener('pagehide', reportPageHidden);
       document.removeEventListener('visibilitychange', reportCurrentStatus);
     };
   }, [tabId, updateTabPresence]);

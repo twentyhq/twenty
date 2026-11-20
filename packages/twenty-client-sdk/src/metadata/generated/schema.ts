@@ -3798,7 +3798,7 @@ export interface Support {
 
 export type SupportDriver = 'FRONT' | 'NONE'
 
-export type TabPresenceStatus = 'CLOSED' | 'FOCUSED' | 'OPEN'
+export type TabPresenceStatus = 'FOCUSED' | 'OPEN'
 
 export interface TasksConfiguration {
     configurationType: WidgetConfigurationType
@@ -13647,7 +13647,6 @@ export const enumSupportDriver = {
 }
 
 export const enumTabPresenceStatus = {
-   CLOSED: 'CLOSED' as const,
    FOCUSED: 'FOCUSED' as const,
    OPEN: 'OPEN' as const
 }
