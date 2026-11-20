@@ -99,7 +99,7 @@ const computeNodeValue = ({
   switch (node.type) {
     case 'LITERAL':
       return node.value;
-    case 'PATH':
+    case 'VARIABLE':
       return readPath({ path: node.path, context });
     case 'COMPARISON':
       return compareValues({
@@ -119,7 +119,7 @@ const computeNodeValue = ({
     }
     case 'NOT':
       return !computeChildValue(node.child);
-    case 'CALL': {
+    case 'FUNCTION_CALL': {
       const conditionalAvailabilityFunction = Object.entries(
         CONDITIONAL_AVAILABILITY_FUNCTIONS,
       ).find(([functionName]) => functionName === node.functionName)?.[1];

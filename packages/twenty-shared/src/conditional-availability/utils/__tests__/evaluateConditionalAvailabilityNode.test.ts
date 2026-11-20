@@ -76,7 +76,7 @@ describe('evaluateConditionalAvailabilityNode', () => {
   it('should hide the item when a variable is missing', () => {
     expect(
       evaluateConditionalAvailabilityNode({
-        node: { type: 'PATH', path: 'featureFlags.IS_ON' },
+        node: { type: 'VARIABLE', path: 'featureFlags.IS_ON' },
         context: {},
       }),
     ).toBe(false);
@@ -85,7 +85,7 @@ describe('evaluateConditionalAvailabilityNode', () => {
   it('should show the item only when the result is exactly true', () => {
     expect(
       evaluateConditionalAvailabilityNode({
-        node: { type: 'PATH', path: 'device' },
+        node: { type: 'VARIABLE', path: 'device' },
         context: { device: 'DESKTOP' },
       }),
     ).toBe(false);
@@ -97,7 +97,7 @@ describe('evaluateConditionalAvailabilityNode', () => {
         node: {
           type: 'COMPARISON',
           operator: 'NOT_EQUAL',
-          left: { type: 'PATH', path: 'device.constructor' },
+          left: { type: 'VARIABLE', path: 'device.constructor' },
           right: { type: 'LITERAL', value: 'x' },
         },
         context: { device: 'DESKTOP' },
@@ -108,7 +108,11 @@ describe('evaluateConditionalAvailabilityNode', () => {
   it('should hide the item when a function is unknown', () => {
     expect(
       evaluateConditionalAvailabilityNode({
-        node: { type: 'CALL', functionName: 'toString', arguments: [] },
+        node: {
+          type: 'FUNCTION_CALL',
+          functionName: 'toString',
+          arguments: [],
+        },
         context: {},
       }),
     ).toBe(false);

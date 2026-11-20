@@ -1,8 +1,8 @@
-import { type ConditionalAvailabilityCheckResult } from './ConditionalAvailabilityCheckResult';
-import { type ExpressionSyntaxError } from './ExpressionSyntaxError';
+import { type ConditionalAvailabilityValidationResult } from '@/conditional-availability/types/ConditionalAvailabilityValidationResult';
+import { type ExpressionSyntaxError } from '@/types/ExpressionSyntaxError';
 
 export type ConditionalAvailabilityParseResult =
-  | ConditionalAvailabilityCheckResult
+  | ConditionalAvailabilityValidationResult
   | {
       isValid: false;
       errorCode: 'EXPRESSION_TOO_LONG';

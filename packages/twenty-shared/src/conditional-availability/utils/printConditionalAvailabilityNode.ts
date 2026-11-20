@@ -1,6 +1,6 @@
 import { isString } from '@sniptt/guards';
 
-import { CONDITIONAL_AVAILABILITY_COMPARISON_OPERATOR_SYMBOLS } from '@/conditional-availability/constants/ConditionalAvailabilityComparisonOperatorSymbols';
+import { CONDITIONAL_AVAILABILITY_SYMBOL_BY_COMPARISON_OPERATOR } from '@/conditional-availability/constants/ConditionalAvailabilitySymbolByComparisonOperator';
 import { type ConditionalAvailabilityLogicalOperator } from '@/conditional-availability/types/ConditionalAvailabilityLogicalOperator';
 import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
 
@@ -44,12 +44,12 @@ export const printConditionalAvailabilityNode = ({
       return isString(node.value)
         ? printConditionalAvailabilityText({ text: node.value })
         : String(node.value);
-    case 'PATH':
+    case 'VARIABLE':
       return node.path;
     case 'COMPARISON':
       return [
         printOperand(node.left),
-        CONDITIONAL_AVAILABILITY_COMPARISON_OPERATOR_SYMBOLS[node.operator],
+        CONDITIONAL_AVAILABILITY_SYMBOL_BY_COMPARISON_OPERATOR[node.operator],
         printOperand(node.right),
       ].join(' ');
     case 'GROUP':
@@ -63,7 +63,7 @@ export const printConditionalAvailabilityNode = ({
         .join(node.logicalOperator === 'AND' ? ' and ' : ' or ');
     case 'NOT':
       return `not ${printOperand(node.child)}`;
-    case 'CALL':
+    case 'FUNCTION_CALL':
       return `${node.functionName}(${node.arguments
         .map((argumentNode) =>
           printConditionalAvailabilityNode({ node: argumentNode }),

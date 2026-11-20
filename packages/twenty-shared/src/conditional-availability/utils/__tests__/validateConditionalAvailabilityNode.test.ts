@@ -1,17 +1,17 @@
 import { CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT } from '@/conditional-availability/constants/ConditionalAvailabilityMaxNodeCount';
-import { checkConditionalAvailabilityNode } from '@/conditional-availability/utils/checkConditionalAvailabilityNode';
+import { validateConditionalAvailabilityNode } from '@/conditional-availability/utils/validateConditionalAvailabilityNode';
 
 const DEVICE_IS_MOBILE = {
   type: 'COMPARISON',
   operator: 'EQUAL',
-  left: { type: 'PATH', path: 'device' },
+  left: { type: 'VARIABLE', path: 'device' },
   right: { type: 'LITERAL', value: 'MOBILE' },
 };
 
-describe('checkConditionalAvailabilityNode', () => {
+describe('validateConditionalAvailabilityNode', () => {
   it.each([null, undefined])('should accept no rule (%p)', (node) => {
     expect(
-      checkConditionalAvailabilityNode({
+      validateConditionalAvailabilityNode({
         node,
         metadataName: 'pageLayoutWidget',
       }),
@@ -20,7 +20,7 @@ describe('checkConditionalAvailabilityNode', () => {
 
   it('should accept a valid tree and hand it back', () => {
     expect(
-      checkConditionalAvailabilityNode({
+      validateConditionalAvailabilityNode({
         node: DEVICE_IS_MOBILE,
         metadataName: 'pageLayoutWidget',
       }),
@@ -56,13 +56,27 @@ describe('checkConditionalAvailabilityNode', () => {
     ],
     [
       'a path with a bracket',
-      { type: 'PATH', path: 'selectedRecords[0]' },
+      { type: 'VARIABLE', path: 'selectedRecords[0]' },
       'path',
+    ],
+    [
+      'a path through a prototype',
+      { type: 'VARIABLE', path: 'device.__proto__' },
+      'path',
+    ],
+    [
+      'a function name with a dot',
+      {
+        type: 'FUNCTION_CALL',
+        functionName: 'device.isDefined',
+        arguments: [],
+      },
+      'functionName',
     ],
     ['a value that is a list', { type: 'LITERAL', value: ['MOBILE'] }, 'value'],
   ])('should refuse %s', (_description, node, path) => {
     expect(
-      checkConditionalAvailabilityNode({
+      validateConditionalAvailabilityNode({
         node,
         metadataName: 'pageLayoutWidget',
       }),
@@ -76,22 +90,17 @@ describe('checkConditionalAvailabilityNode', () => {
   it.each([
     [
       'a variable a widget cannot read',
-      { type: 'PATH', path: 'pageType' },
+      { type: 'VARIABLE', path: 'pageType' },
       'pageType',
     ],
     [
       'a function that is not declared',
-      { type: 'CALL', functionName: 'fooBar', arguments: [] },
+      { type: 'FUNCTION_CALL', functionName: 'fooBar', arguments: [] },
       'fooBar',
-    ],
-    [
-      'a path through a prototype',
-      { type: 'PATH', path: 'device.__proto__' },
-      '__proto__',
     ],
   ])('should refuse %s', (_description, node, name) => {
     expect(
-      checkConditionalAvailabilityNode({
+      validateConditionalAvailabilityNode({
         node,
         metadataName: 'pageLayoutWidget',
       }),
@@ -104,13 +113,13 @@ describe('checkConditionalAvailabilityNode', () => {
 
   it('should refuse a tree with too many nodes', () => {
     expect(
-      checkConditionalAvailabilityNode({
+      validateConditionalAvailabilityNode({
         node: {
           type: 'GROUP',
           logicalOperator: 'OR',
           children: Array.from(
             { length: CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT },
-            () => ({ type: 'PATH', path: 'device' }),
+            () => ({ type: 'VARIABLE', path: 'device' }),
           ),
         },
         metadataName: 'pageLayoutWidget',

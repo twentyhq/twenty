@@ -1,3 +1,4 @@
+// TODO: remove once command menu items use the rule tree
 import { Parser } from 'expr-eval-fork';
 
 import { CONDITIONAL_AVAILABILITY_FUNCTIONS } from '@/conditional-availability/constants/ConditionalAvailabilityFunctions';

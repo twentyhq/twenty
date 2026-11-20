@@ -5,7 +5,7 @@ const getChildNodes = (
 ): ConditionalAvailabilityNode[] => {
   switch (node.type) {
     case 'LITERAL':
-    case 'PATH':
+    case 'VARIABLE':
       return [];
     case 'COMPARISON':
       return [node.left, node.right];
@@ -13,7 +13,7 @@ const getChildNodes = (
       return node.children;
     case 'NOT':
       return [node.child];
-    case 'CALL':
+    case 'FUNCTION_CALL':
       return node.arguments;
   }
 };

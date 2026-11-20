@@ -1,23 +1,20 @@
+// TODO: remove once no rule is written as text anymore (stored widget rules are converted in 2.61; built-in rules and app manifests still send text)
 import { isBoolean, isNumber, isString } from '@sniptt/guards';
 import { type Instruction } from 'expr-eval-fork';
 
-import { CONDITIONAL_AVAILABILITY_COMPARISON_OPERATOR_SYMBOLS } from '@/conditional-availability/constants/ConditionalAvailabilityComparisonOperatorSymbols';
+import { CONDITIONAL_AVAILABILITY_SYMBOL_BY_COMPARISON_OPERATOR } from '@/conditional-availability/constants/ConditionalAvailabilitySymbolByComparisonOperator';
 import { type ConditionalAvailabilityComparisonOperator } from '@/conditional-availability/types/ConditionalAvailabilityComparisonOperator';
 import { type ConditionalAvailabilityLogicalOperator } from '@/conditional-availability/types/ConditionalAvailabilityLogicalOperator';
 import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
 import { typedObjectEntries } from '@/utils/typed-object-entries';
 import { isDefined } from '@/utils/validation/isDefined';
 
-type NodeStackState =
-  | { nodes: ConditionalAvailabilityNode[] }
-  | { unexpectedToken: string };
-
 const toComparisonOperator = (
   symbol: string,
 ): ConditionalAvailabilityComparisonOperator | null =>
-  typedObjectEntries(CONDITIONAL_AVAILABILITY_COMPARISON_OPERATOR_SYMBOLS).find(
-    ([, operatorSymbol]) => operatorSymbol === symbol,
-  )?.[0] ?? null;
+  typedObjectEntries(
+    CONDITIONAL_AVAILABILITY_SYMBOL_BY_COMPARISON_OPERATOR,
+  ).find(([, operatorSymbol]) => operatorSymbol === symbol)?.[0] ?? null;
 
 const toLogicalOperator = (
   symbol: string,
@@ -31,18 +28,6 @@ const toLogicalOperator = (
       return null;
   }
 };
-
-const replaceTopNodes = ({
-  nodes,
-  count,
-  node,
-}: {
-  nodes: ConditionalAvailabilityNode[];
-  count: number;
-  node: ConditionalAvailabilityNode;
-}): NodeStackState => ({
-  nodes: [...nodes.slice(0, nodes.length - count), node],
-});
 
 const toGroupChildren = ({
   operand,
@@ -104,128 +89,107 @@ const toUnaryNode = ({
   return null;
 };
 
-const pushInstruction = (
-  state: NodeStackState,
-  instruction: Instruction,
-): NodeStackState => {
-  if ('unexpectedToken' in state) {
-    return state;
-  }
+const popAndBuildNode = ({
+  instruction,
+  stack,
+}: {
+  instruction: Instruction;
+  stack: ConditionalAvailabilityNode[];
+}): ConditionalAvailabilityNode | null => {
+  const { type, value } = instruction;
 
-  const { nodes } = state;
-  const topNode = nodes[nodes.length - 1];
-  const secondTopNode = nodes[nodes.length - 2];
-  const unexpectedInstruction = {
-    unexpectedToken: String(instruction.value),
-  };
-
-  switch (instruction.type) {
+  switch (type) {
     case 'INUMBER':
-      return isString(instruction.value) ||
-        isNumber(instruction.value) ||
-        isBoolean(instruction.value)
-        ? { nodes: [...nodes, { type: 'LITERAL', value: instruction.value }] }
-        : unexpectedInstruction;
+      return isString(value) || isNumber(value) || isBoolean(value)
+        ? { type: 'LITERAL', value }
+        : null;
     case 'IVAR':
-      return isString(instruction.value)
-        ? { nodes: [...nodes, { type: 'PATH', path: instruction.value }] }
-        : unexpectedInstruction;
-    case 'IMEMBER':
-      return topNode?.type === 'PATH' && isString(instruction.value)
-        ? replaceTopNodes({
-            nodes,
-            count: 1,
-            node: {
-              type: 'PATH',
-              path: `${topNode.path}.${instruction.value}`,
-            },
-          })
-        : { unexpectedToken: `.${String(instruction.value)}` };
-    case 'IOP1': {
-      const unaryNode =
-        isDefined(topNode) && isString(instruction.value)
-          ? toUnaryNode({ symbol: instruction.value, operand: topNode })
-          : null;
+      return isString(value) ? { type: 'VARIABLE', path: value } : null;
+    case 'IMEMBER': {
+      const variable = stack.pop();
 
-      return isDefined(unaryNode)
-        ? replaceTopNodes({ nodes, count: 1, node: unaryNode })
-        : unexpectedInstruction;
+      return variable?.type === 'VARIABLE' && isString(value)
+        ? { type: 'VARIABLE', path: `${variable.path}.${value}` }
+        : null;
+    }
+    case 'IOP1': {
+      const operand = stack.pop();
+
+      return isDefined(operand) && isString(value)
+        ? toUnaryNode({ symbol: value, operand })
+        : null;
     }
     case 'IOP2': {
-      const binaryNode =
-        isDefined(secondTopNode) &&
-        isDefined(topNode) &&
-        isString(instruction.value)
-          ? toBinaryNode({
-              symbol: instruction.value,
-              left: secondTopNode,
-              right: topNode,
-            })
-          : null;
+      const right = stack.pop();
+      const left = stack.pop();
 
-      return isDefined(binaryNode)
-        ? replaceTopNodes({ nodes, count: 2, node: binaryNode })
-        : unexpectedInstruction;
-    }
-    case 'IEXPR': {
-      if (!Array.isArray(instruction.value)) {
-        return unexpectedInstruction;
-      }
-
-      const nestedResult = toConditionalAvailabilityNode({
-        instructions: instruction.value,
-      });
-
-      return 'node' in nestedResult
-        ? { nodes: [...nodes, nestedResult.node] }
-        : nestedResult;
+      return isDefined(left) && isDefined(right) && isString(value)
+        ? toBinaryNode({ symbol: value, left, right })
+        : null;
     }
     case 'IFUNCALL': {
-      const argumentCount = instruction.value;
-
-      if (!isNumber(argumentCount)) {
-        return unexpectedInstruction;
+      if (!isNumber(value) || stack.length <= value) {
+        return null;
       }
 
-      const callee = nodes[nodes.length - argumentCount - 1];
+      const argumentNodes = stack.splice(stack.length - value, value);
+      const callee = stack.pop();
 
-      if (callee?.type !== 'PATH' || callee.path.includes('.')) {
-        return { unexpectedToken: '(' };
-      }
-
-      return replaceTopNodes({
-        nodes,
-        count: argumentCount + 1,
-        node: {
-          type: 'CALL',
-          functionName: callee.path,
-          arguments: nodes.slice(nodes.length - argumentCount),
-        },
-      });
+      return callee?.type === 'VARIABLE' && !callee.path.includes('.')
+        ? {
+            type: 'FUNCTION_CALL',
+            functionName: callee.path,
+            arguments: argumentNodes,
+          }
+        : null;
     }
-    case 'IENDSTATEMENT':
-      return { unexpectedToken: ';' };
     default:
-      return unexpectedInstruction;
+      return null;
   }
 };
+
+const toUnexpectedToken = ({ type, value }: Instruction): string => {
+  switch (type) {
+    case 'IMEMBER':
+      return `.${String(value)}`;
+    case 'IFUNCALL':
+      return '(';
+    case 'IENDSTATEMENT':
+      return ';';
+    default:
+      return String(value);
+  }
+};
+
+const flattenNestedInstructions = (
+  instructions: Instruction[],
+): Instruction[] =>
+  instructions.flatMap((instruction) =>
+    instruction.type === 'IEXPR' && Array.isArray(instruction.value)
+      ? flattenNestedInstructions(instruction.value)
+      : [instruction],
+  );
 
 export const toConditionalAvailabilityNode = ({
   instructions,
 }: {
   instructions: Instruction[];
 }): { node: ConditionalAvailabilityNode } | { unexpectedToken: string } => {
-  const state = instructions.reduce<NodeStackState>(pushInstruction, {
-    nodes: [],
-  });
+  const stack: ConditionalAvailabilityNode[] = [];
 
-  if ('unexpectedToken' in state) {
-    return state;
+  for (const instruction of flattenNestedInstructions(instructions)) {
+    const node = popAndBuildNode({ instruction, stack });
+
+    if (!isDefined(node)) {
+      return { unexpectedToken: toUnexpectedToken(instruction) };
+    }
+
+    stack.push(node);
   }
 
-  const [rootNode] = state.nodes;
+  const [rootNode] = stack;
 
-  return state.nodes.length === 1 && isDefined(rootNode)
+  return stack.length === 1 && isDefined(rootNode)
     ? { node: rootNode }
     : { unexpectedToken: '' };
 };

@@ -1,10 +1,9 @@
-import { CONDITIONAL_AVAILABILITY_FORBIDDEN_PROPERTY_NAMES } from '@/conditional-availability/constants/ConditionalAvailabilityForbiddenPropertyNames';
 import { CONDITIONAL_AVAILABILITY_FUNCTIONS } from '@/conditional-availability/constants/ConditionalAvailabilityFunctions';
 import { CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT } from '@/conditional-availability/constants/ConditionalAvailabilityMaxNodeCount';
 import { CONDITIONAL_AVAILABILITY_VARIABLES } from '@/conditional-availability/constants/ConditionalAvailabilityVariables';
-import { type ConditionalAvailabilityCheckResult } from '@/conditional-availability/types/ConditionalAvailabilityCheckResult';
 import { type ConditionalAvailabilityMetadataName } from '@/conditional-availability/types/ConditionalAvailabilityMetadataName';
 import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
+import { type ConditionalAvailabilityValidationResult } from '@/conditional-availability/types/ConditionalAvailabilityValidationResult';
 import { conditionalAvailabilityNodeSchema } from '@/conditional-availability/utils/conditionalAvailabilityNodeSchema';
 import { listConditionalAvailabilityNodes } from '@/conditional-availability/utils/listConditionalAvailabilityNodes';
 import { isDefined } from '@/utils/validation/isDefined';
@@ -24,25 +23,18 @@ const getUnknownName = ({
   metadataName: ConditionalAvailabilityMetadataName;
 }): string | undefined => {
   switch (node.type) {
-    case 'PATH': {
-      const segments = node.path.split('.');
-      const [rootName] = segments;
+    case 'VARIABLE': {
+      const [variableName] = node.path.split('.');
 
-      if (
-        isDefined(rootName) &&
+      return isDefined(variableName) &&
         !Object.prototype.hasOwnProperty.call(
           CONDITIONAL_AVAILABILITY_VARIABLES[metadataName],
-          rootName,
+          variableName,
         )
-      ) {
-        return rootName;
-      }
-
-      return segments.find((segment) =>
-        CONDITIONAL_AVAILABILITY_FORBIDDEN_PROPERTY_NAMES.has(segment),
-      );
+        ? variableName
+        : undefined;
     }
-    case 'CALL':
+    case 'FUNCTION_CALL':
       return Object.prototype.hasOwnProperty.call(
         CONDITIONAL_AVAILABILITY_FUNCTIONS,
         node.functionName,
@@ -65,13 +57,13 @@ const safeParseNodeSchema = (node: unknown) => {
   }
 };
 
-export const checkConditionalAvailabilityNode = ({
+export const validateConditionalAvailabilityNode = ({
   node,
   metadataName,
 }: {
   node: unknown;
   metadataName: ConditionalAvailabilityMetadataName;
-}): ConditionalAvailabilityCheckResult => {
+}): ConditionalAvailabilityValidationResult => {
   if (!isDefined(node)) {
     return { isValid: true, node: null };
   }

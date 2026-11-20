@@ -83,7 +83,7 @@ describe('printConditionalAvailabilityNode', () => {
       const node = {
         type: 'COMPARISON' as const,
         operator: 'EQUAL' as const,
-        left: { type: 'PATH' as const, path: 'device' },
+        left: { type: 'VARIABLE' as const, path: 'device' },
         right: { type: 'LITERAL' as const, value: text },
       };
 

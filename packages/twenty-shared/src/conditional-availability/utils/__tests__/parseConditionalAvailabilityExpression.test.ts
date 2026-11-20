@@ -10,7 +10,7 @@ const parseWidgetRule = (expression: string | null | undefined) =>
 const DEVICE_IS_MOBILE = {
   type: 'COMPARISON',
   operator: 'EQUAL',
-  left: { type: 'PATH', path: 'device' },
+  left: { type: 'VARIABLE', path: 'device' },
   right: { type: 'LITERAL', value: 'MOBILE' },
 } as const;
 
@@ -43,7 +43,7 @@ describe('parseConditionalAvailabilityExpression', () => {
         children: ['a', 'b', 'c'].map((value) => ({
           type: 'COMPARISON',
           operator: 'EQUAL',
-          left: { type: 'PATH', path: 'device' },
+          left: { type: 'VARIABLE', path: 'device' },
           right: { type: 'LITERAL', value },
         })),
       },
@@ -61,7 +61,7 @@ describe('parseConditionalAvailabilityExpression', () => {
         type: 'GROUP',
         logicalOperator: 'AND',
         children: [
-          { type: 'PATH', path: 'featureFlags.A' },
+          { type: 'VARIABLE', path: 'featureFlags.A' },
           {
             type: 'GROUP',
             logicalOperator: 'OR',
@@ -70,12 +70,12 @@ describe('parseConditionalAvailabilityExpression', () => {
               {
                 type: 'COMPARISON',
                 operator: 'EQUAL',
-                left: { type: 'PATH', path: 'device' },
+                left: { type: 'VARIABLE', path: 'device' },
                 right: { type: 'LITERAL', value: 'DESKTOP' },
               },
             ],
           },
-          { type: 'NOT', child: { type: 'PATH', path: 'featureFlags.B' } },
+          { type: 'NOT', child: { type: 'VARIABLE', path: 'featureFlags.B' } },
         ],
       },
     });
@@ -87,10 +87,10 @@ describe('parseConditionalAvailabilityExpression', () => {
     ).toEqual({
       isValid: true,
       node: {
-        type: 'CALL',
+        type: 'FUNCTION_CALL',
         functionName: 'everyEquals',
         arguments: [
-          { type: 'PATH', path: 'selectedRecords' },
+          { type: 'VARIABLE', path: 'selectedRecords' },
           { type: 'LITERAL', value: 'stage' },
           { type: 'LITERAL', value: 'WON' },
         ],
@@ -111,9 +111,9 @@ describe('parseConditionalAvailabilityExpression', () => {
             type: 'COMPARISON',
             operator: 'GREATER_THAN',
             left: {
-              type: 'CALL',
+              type: 'FUNCTION_CALL',
               functionName: 'arrayLength',
-              arguments: [{ type: 'PATH', path: 'selectedRecords' }],
+              arguments: [{ type: 'VARIABLE', path: 'selectedRecords' }],
             },
             right: { type: 'LITERAL', value: -1 },
           },

@@ -1,13 +1,28 @@
+// TODO: remove once no rule is written as text anymore (stored widget rules are converted in 2.61; built-in rules and app manifests still send text)
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Expression } from 'expr-eval-fork';
 
 import { CONDITIONAL_AVAILABILITY_EXPRESSION_MAX_LENGTH } from '@/conditional-availability/constants/ConditionalAvailabilityExpressionMaxLength';
 import { type ConditionalAvailabilityMetadataName } from '@/conditional-availability/types/ConditionalAvailabilityMetadataName';
 import { type ConditionalAvailabilityParseResult } from '@/conditional-availability/types/ConditionalAvailabilityParseResult';
-import { checkConditionalAvailabilityNode } from '@/conditional-availability/utils/checkConditionalAvailabilityNode';
 import { conditionalAvailabilityStrictParser } from '@/conditional-availability/utils/conditionalAvailabilityStrictParser';
 import { toConditionalAvailabilityNode } from '@/conditional-availability/utils/toConditionalAvailabilityNode';
+import { validateConditionalAvailabilityNode } from '@/conditional-availability/utils/validateConditionalAvailabilityNode';
 import { getExpressionSyntaxError } from '@/utils/expression/getExpressionSyntaxError';
+
+const safeParseExpression = ({
+  expression,
+}: {
+  expression: string;
+}): { parsedExpression: Expression } | { error: unknown } => {
+  try {
+    return {
+      parsedExpression: conditionalAvailabilityStrictParser.parse(expression),
+    };
+  } catch (error) {
+    return { error };
+  }
+};
 
 export const parseConditionalAvailabilityExpression = ({
   expression,
@@ -31,19 +46,17 @@ export const parseConditionalAvailabilityExpression = ({
     };
   }
 
-  let parsedExpression: Expression;
+  const parseResult = safeParseExpression({ expression });
 
-  try {
-    parsedExpression = conditionalAvailabilityStrictParser.parse(expression);
-  } catch (error) {
+  if ('error' in parseResult) {
     return {
       isValid: false,
-      ...getExpressionSyntaxError({ expression, error }),
+      ...getExpressionSyntaxError({ expression, error: parseResult.error }),
     };
   }
 
   const nodeResult = toConditionalAvailabilityNode({
-    instructions: parsedExpression.tokens,
+    instructions: parseResult.parsedExpression.tokens,
   });
 
   if ('unexpectedToken' in nodeResult) {
@@ -55,7 +68,7 @@ export const parseConditionalAvailabilityExpression = ({
     };
   }
 
-  return checkConditionalAvailabilityNode({
+  return validateConditionalAvailabilityNode({
     node: nodeResult.node,
     metadataName,
   });
