@@ -85,7 +85,10 @@ export const useOpenNewAiChatAsDirectMessage = () => {
           }));
           store.set(
             aiChatNewThreadRecipientsFamilyState.atomFamily(newChatThreadId),
-            AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
+            ({ channelId }) => ({
+              ...AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
+              channelId,
+            }),
           );
         }
 

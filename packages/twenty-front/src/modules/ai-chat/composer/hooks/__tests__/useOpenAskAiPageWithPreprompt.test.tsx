@@ -144,6 +144,7 @@ describe('useOpenAskAiPageWithPreprompt', () => {
 
     jotaiStore.set(newAiChatThreadIdState.atom, NEW_CHAT_THREAD_ID);
     jotaiStore.set(newChatRecipientsAtom, {
+      channelId: null,
       isAssistantParticipant: false,
       recipientWorkspaceMemberIds: ['20202020-0000-4000-8000-0000000000bb'],
     });
