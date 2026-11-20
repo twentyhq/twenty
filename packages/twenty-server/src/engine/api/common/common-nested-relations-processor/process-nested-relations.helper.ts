@@ -257,11 +257,27 @@ export class ProcessNestedRelationsHelper {
       name: sourceFieldName,
     });
 
-    const relationIds = getUniqueRelationIds({
+    const uniqueRelationIds = getUniqueRelationIds({
       records: parentObjectRecords,
       idField:
         relationType === RelationType.ONE_TO_MANY ? 'id' : joinColumnName,
     });
+    const relationIds =
+      relationType === RelationType.ONE_TO_MANY
+        ? await (
+            repository
+              ? repository.getRepositoryForObjectMetadataId(
+                  parentObjectMetadataItem.id,
+                )
+              : this.workspaceOrmManager.getRepository(
+                  parentObjectMetadataItem.nameSingular,
+                  { useReplica },
+                )
+          ).filterRecordIdsShowingRelation({
+            recordIds: uniqueRelationIds,
+            relationFieldName: sourceFieldName,
+          })
+        : uniqueRelationIds;
 
     if (
       relationType === RelationType.ONE_TO_MANY &&

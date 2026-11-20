@@ -50,10 +50,12 @@ const buildNoteQuery = ({
   isInherent,
   isPrivateRecordsEnabled = false,
   companyUnreadableFields = [],
+  companyRuleUnreadableFields = [],
 }: {
   isInherent: boolean;
   isPrivateRecordsEnabled?: boolean;
   companyUnreadableFields?: string[];
+  companyRuleUnreadableFields?: string[];
 }) =>
   buildRecomputeRecordAccessGroupIdsQuery({
     workspaceId: WORKSPACE_ID,
@@ -91,6 +93,20 @@ const buildNoteQuery = ({
               canDestroyAllRecords: false,
               unreadableFields: companyUnreadableFields,
               uneditableFields: [],
+              rowLevelRecordsPermissions: [
+                {
+                  ruleId: 'rule-id',
+                  canCreateRecords: false,
+                  canReadRecords: true,
+                  canUpdateRecords: false,
+                  canSoftDeleteRecords: false,
+                  canDestroyRecords: false,
+                  predicates: [],
+                  predicateGroups: [],
+                  unreadableFields: companyRuleUnreadableFields,
+                  uneditableFields: [],
+                },
+              ],
             },
           },
         },
@@ -140,18 +156,43 @@ describe('buildRecomputeRecordAccessGroupIdsQuery', () => {
     expect(parameters).toEqual({ recordIds: ['note-id'] });
   });
 
-  it('should not pass on the groups of a role that cannot read the first relation', () => {
-    const { sql, parameters } = buildNoteQuery({
-      isInherent: true,
+  it.each([
+    {
+      title: 'a role hides it on every record',
       companyUnreadableFields: ['company-note-targets-field-id'],
-    });
+      companyRuleUnreadableFields: [],
+      hidingRoleIds: ['role-id'],
+      hidingRuleIds: [],
+    },
+    {
+      title: 'a rule hides it on the records it matches',
+      companyUnreadableFields: [],
+      companyRuleUnreadableFields: ['company-note-targets-field-id'],
+      hidingRoleIds: [],
+      hidingRuleIds: ['rule-id'],
+    },
+  ])(
+    'should not pass on the groups that cannot read the first relation when $title',
+    ({
+      companyUnreadableFields,
+      companyRuleUnreadableFields,
+      hidingRoleIds,
+      hidingRuleIds,
+    }) => {
+      const { sql, parameters } = buildNoteQuery({
+        isInherent: true,
+        companyUnreadableFields,
+        companyRuleUnreadableFields,
+      });
 
-    expect(sql).toContain(
-      `NOT EXISTS (SELECT 1 FROM "${SCHEMA}"."accessGroup" AS "inheritedAccessGroup" WHERE "inheritedAccessGroup"."compactId" = "inherited"."accessGroupId" AND "inheritedAccessGroup"."roleId" = ANY(CAST(:relatedRecordPathHidingRoleIds_0 AS uuid[])))`,
-    );
-    expect(parameters).toEqual({
-      recordIds: ['note-id'],
-      relatedRecordPathHidingRoleIds_0: ['role-id'],
-    });
-  });
+      expect(sql).toContain(
+        `NOT EXISTS (SELECT 1 FROM "${SCHEMA}"."accessGroup" AS "inheritedAccessGroup" WHERE "inheritedAccessGroup"."compactId" = "inherited"."accessGroupId" AND ("inheritedAccessGroup"."roleId" = ANY(CAST(:relatedRecordPathHidingRoleIds_0 AS uuid[])) OR "inheritedAccessGroup"."rowLevelPermissionPredicateGroupId" = ANY(CAST(:relatedRecordPathHidingRuleIds_0 AS uuid[]))))`,
+      );
+      expect(parameters).toEqual({
+        recordIds: ['note-id'],
+        relatedRecordPathHidingRoleIds_0: hidingRoleIds,
+        relatedRecordPathHidingRuleIds_0: hidingRuleIds,
+      });
+    },
+  );
 });

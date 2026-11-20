@@ -248,6 +248,106 @@ describe('field permissions on an RLS rule (integration)', () => {
     }
   });
 
+  it('should hide a relation on the records the RLS rule matches', async () => {
+    const parisPersonId = originalPeople[0].id;
+    const [{ companyId: originalCompanyId }] =
+      await global.testDataSource.query(
+        `SELECT "companyId" FROM ${PERSON_TABLE} WHERE "id" = $1`,
+        [parisPersonId],
+      );
+    const [{ id: companyId }] = await global.testDataSource.query(
+      `SELECT "id" FROM ${SCHEMA}."company" WHERE "deletedAt" IS NULL ORDER BY "id" LIMIT 1`,
+    );
+    const [{ id: taskTargetId, targetPersonId: originalTargetPersonId }] =
+      await global.testDataSource.query(
+        `SELECT "id", "targetPersonId" FROM ${SCHEMA}."taskTarget" WHERE "deletedAt" IS NULL ORDER BY "id" LIMIT 1`,
+      );
+    const setRelationsReadability = async (canReadFieldValue: false | null) =>
+      upsertFieldPermissions({
+        expectToFail: false,
+        input: {
+          roleId,
+          fieldPermissions: await Promise.all(
+            ['company', 'taskTargets'].map(async (name) => ({
+              objectMetadataId,
+              fieldMetadataId: await findFieldMetadataId(name),
+              rowLevelPermissionPredicateGroupId: rlsRuleId,
+              canReadFieldValue,
+            })),
+          ),
+        },
+      });
+    const listParisRelationsAsMember = async (filter: object = {}) => {
+      const response = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          gqlFields:
+            'id companyId company { id } taskTargets { edges { node { id } } }',
+          filter: { id: { eq: parisPersonId }, ...filter },
+        }),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      return response.body.data.people.edges.map(
+        ({
+          node,
+        }: {
+          node: {
+            companyId: string | null;
+            company: { id: string } | null;
+            taskTargets: { edges: unknown[] };
+          };
+        }) => ({
+          companyId: node.companyId,
+          companyRecordId: node.company?.id ?? null,
+          taskTargetCount: node.taskTargets.edges.length,
+        }),
+      );
+    };
+
+    await global.testDataSource.query(
+      `UPDATE ${PERSON_TABLE} SET "companyId" = $1 WHERE "id" = $2`,
+      [companyId, parisPersonId],
+    );
+    await global.testDataSource.query(
+      `UPDATE ${SCHEMA}."taskTarget" SET "targetPersonId" = $1 WHERE "id" = $2`,
+      [parisPersonId, taskTargetId],
+    );
+
+    try {
+      expect(await listParisRelationsAsMember()).toEqual([
+        { companyId, companyRecordId: companyId, taskTargetCount: 1 },
+      ]);
+
+      await setRelationsReadability(false);
+
+      expect(await listParisRelationsAsMember()).toEqual([
+        { companyId: null, companyRecordId: null, taskTargetCount: 0 },
+      ]);
+      expect(
+        await listParisRelationsAsMember({
+          company: { id: { eq: companyId } },
+        }),
+      ).toEqual([]);
+      expect(
+        await listParisRelationsAsMember({ companyId: { is: 'NULL' } }),
+      ).toEqual([]);
+    } finally {
+      await setRelationsReadability(null);
+      await global.testDataSource.query(
+        `UPDATE ${PERSON_TABLE} SET "companyId" = $1 WHERE "id" = $2`,
+        [originalCompanyId, parisPersonId],
+      );
+      await global.testDataSource.query(
+        `UPDATE ${SCHEMA}."taskTarget" SET "targetPersonId" = $1 WHERE "id" = $2`,
+        [originalTargetPersonId, taskTargetId],
+      );
+    }
+  });
+
   it('should keep the field on a record reached through a share', async () => {
     await updateFeatureFlag({
       featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,

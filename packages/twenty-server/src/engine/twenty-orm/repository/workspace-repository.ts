@@ -89,6 +89,7 @@ import {
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-twenty-orm-statement.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { renderNotHiddenCondition } from 'src/engine/twenty-orm/sql/utils/render-not-hidden-condition.util';
 import { serializeJsonbWriteValue } from 'src/engine/twenty-orm/sql/utils/serialize-jsonb-write-value.util';
 import {
   type WorkspaceRelationShape,
@@ -1931,6 +1932,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         ),
       );
 
+      const relationShapes = Object.values(tableShape.relationShapeByFieldName);
+
       for (const {
         fieldMetadataIds,
         sqlCondition,
@@ -1942,6 +1945,15 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
               fieldMetadataIds.includes(fieldMetadataId),
             )
             .map(([columnName]) => columnName),
+          condition: sqlCondition,
+        });
+        queryBuilder.hideRelationsWhen({
+          alias,
+          relationFieldNames: relationShapes
+            .filter(({ fieldMetadataId }) =>
+              fieldMetadataIds.includes(fieldMetadataId),
+            )
+            .map(({ fieldName }) => fieldName),
           condition: sqlCondition,
         });
       }
@@ -2103,6 +2115,64 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       operationType,
       tableAlias: alias,
     });
+  }
+
+  async filterRecordIdsShowingRelation({
+    recordIds,
+    relationFieldName,
+  }: {
+    recordIds: string[];
+    relationFieldName: string;
+  }): Promise<string[]> {
+    const relationFieldMetadataId =
+      this.options.tableShape.relationShapeByFieldName[relationFieldName]
+        ?.fieldMetadataId;
+
+    if (
+      this.options.shouldBypassPermissionChecks ||
+      !isDefined(relationFieldMetadataId) ||
+      recordIds.length === 0
+    ) {
+      return recordIds;
+    }
+
+    const alias = this.options.tableShape.nameSingular;
+    const hidingSQLConditions = (
+      await this.options.internalContext.recordFieldPermissions.buildUnreadableFieldsSQLConditions(
+        {
+          principals: this.resolvePermissionsPrincipalsOrThrow(),
+          objectMetadataId: this.options.flatObjectMetadata.id,
+          tableAlias: alias,
+        },
+      )
+    )
+      .filter(({ fieldMetadataIds }) =>
+        fieldMetadataIds.includes(relationFieldMetadataId),
+      )
+      .map(({ sqlCondition }) => sqlCondition);
+    const notHiddenCondition = renderNotHiddenCondition(
+      hidingSQLConditions.map(({ sql }) => sql),
+    );
+
+    if (!isDefined(notHiddenCondition)) {
+      return recordIds;
+    }
+
+    const shownRecords = await this.createQueryBuilder(alias)
+      .setFindOptions({ select: { id: true } })
+      .where(`${escapeIdentifier(alias)}."id" IN (:...recordIds)`, {
+        recordIds,
+      })
+      .andWhere(
+        notHiddenCondition,
+        Object.assign(
+          {},
+          ...hidingSQLConditions.map(({ parameters }) => parameters),
+        ),
+      )
+      .getMany();
+
+    return shownRecords.map(({ id }) => id as string);
   }
 
   async isReadDisabled(): Promise<boolean> {

@@ -47,6 +47,7 @@ import {
   type OrderByClause,
   type SelectClause,
   type ColumnNullifyConditions,
+  type HiddenRelationConditions,
   type SelectStatementState,
   type WhereClause,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
@@ -104,6 +105,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
   private readonly aliasesWithColumnNullifyApplied = new Set<string>();
   private readonly columnNullifyConditions: ColumnNullifyConditions = {};
+  private readonly hiddenRelationConditions: HiddenRelationConditions = {};
 
   constructor(alias: string, context: QueryBuilderContext) {
     this.alias = alias;
@@ -713,6 +715,28 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return true;
   }
 
+  hideRelationsWhen({
+    alias,
+    relationFieldNames,
+    condition,
+  }: {
+    alias: string;
+    relationFieldNames: string[];
+    condition: SQLCondition;
+  }): this {
+    const hiddenRelationConditionsOfAlias = (this.hiddenRelationConditions[
+      alias
+    ] ??= {});
+
+    for (const relationFieldName of relationFieldNames) {
+      (hiddenRelationConditionsOfAlias[relationFieldName] ??= []).push(
+        condition.sql,
+      );
+    }
+
+    return this.setParameters(condition.parameters);
+  }
+
   nullifyColumnsWhen({
     alias,
     columnNames,
@@ -1314,6 +1338,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       extraSelectClauses: this.extraSelectClauses,
       columnSelections: this.resolveColumnSelections(),
       columnNullifyConditions: this.columnNullifyConditions,
+      hiddenRelationConditions: this.hiddenRelationConditions,
       joinClauses: this.joinClauses,
       whereClauses: this.whereClauses,
       rowAccessConditions: this.rowAccessConditions,

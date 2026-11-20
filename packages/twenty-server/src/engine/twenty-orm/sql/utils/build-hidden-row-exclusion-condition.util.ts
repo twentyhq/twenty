@@ -1,5 +1,6 @@
 import { SQL_STRING_LITERALS } from 'src/engine/twenty-orm/sql/constants/sql-string-literals.constant';
 import { type ColumnNullifyConditions } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
+import { renderNotHiddenCondition } from 'src/engine/twenty-orm/sql/utils/render-not-hidden-condition.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 export const buildHiddenRowExclusionCondition = ({
@@ -34,9 +35,5 @@ export const buildHiddenRowExclusionCondition = ({
     }),
   );
 
-  return excludedConditions.size > 0
-    ? `NOT COALESCE(${[...excludedConditions]
-        .map((excludedCondition) => `(${excludedCondition})`)
-        .join(' OR ')}, FALSE)`
-    : undefined;
+  return renderNotHiddenCondition([...excludedConditions]);
 };

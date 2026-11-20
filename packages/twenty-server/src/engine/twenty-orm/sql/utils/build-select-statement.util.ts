@@ -11,6 +11,7 @@ import {
 } from 'src/engine/twenty-orm/sql/utils/build-column-masks.util';
 import { buildHiddenRowExclusionCondition } from 'src/engine/twenty-orm/sql/utils/build-hidden-row-exclusion-condition.util';
 import { maskNullifiedColumnReferences } from 'src/engine/twenty-orm/sql/utils/mask-nullified-column-references.util';
+import { renderNotHiddenCondition } from 'src/engine/twenty-orm/sql/utils/render-not-hidden-condition.util';
 import { renderNullifiedColumn } from 'src/engine/twenty-orm/sql/utils/render-nullified-column.util';
 import {
   TwentyOrmException,
@@ -74,6 +75,8 @@ export type OrderByClause = {
 
 export type ColumnNullifyConditions = Record<string, Record<string, string[]>>;
 
+export type HiddenRelationConditions = Record<string, Record<string, string[]>>;
+
 export type SelectStatementState = {
   alias: string;
   tableShape: WorkspaceTableShape;
@@ -82,6 +85,7 @@ export type SelectStatementState = {
   extraSelectClauses: SelectClause[];
   columnSelections: ColumnSelection[];
   columnNullifyConditions: ColumnNullifyConditions;
+  hiddenRelationConditions: HiddenRelationConditions;
   joinClauses: JoinClause[];
   whereClauses: WhereClause[];
   rowAccessConditions: string[];
@@ -393,11 +397,14 @@ const renderExistsFilter = ({
   existsFilterClause,
   includeDeleted,
   columnNullifyConditions,
+  hiddenRelationConditions,
   columnMasks,
 }: {
   existsFilterClause: Pick<
     ExistsFilterClause,
     | 'alias'
+    | 'parentAlias'
+    | 'relationFieldName'
     | 'targetTableShape'
     | 'correlationCondition'
     | 'additionalOnConditions'
@@ -405,12 +412,18 @@ const renderExistsFilter = ({
   >;
   includeDeleted: boolean;
   columnNullifyConditions: ColumnNullifyConditions;
+  hiddenRelationConditions: HiddenRelationConditions;
   columnMasks: ColumnMasks | undefined;
 }): string => {
   const conditions = [
     existsFilterClause.correlationCondition,
     ...existsFilterClause.additionalOnConditions,
-  ];
+    renderNotHiddenCondition(
+      hiddenRelationConditions[existsFilterClause.parentAlias]?.[
+        existsFilterClause.relationFieldName
+      ] ?? [],
+    ),
+  ].filter(isDefined);
 
   if (existsFilterClause.conditionSql.length > 0) {
     conditions.push(
@@ -454,11 +467,13 @@ export const substituteExistsFilterTokens = ({
   existsFilterClauses,
   includeDeleted,
   columnNullifyConditions = {},
+  hiddenRelationConditions = {},
 }: {
   expression: string;
   existsFilterClauses: ExistsFilterClause[];
   includeDeleted: boolean;
   columnNullifyConditions?: ColumnNullifyConditions;
+  hiddenRelationConditions?: HiddenRelationConditions;
 }): string => {
   const columnMasks = buildColumnMasks(columnNullifyConditions);
 
@@ -469,6 +484,7 @@ export const substituteExistsFilterTokens = ({
           existsFilterClause,
           includeDeleted,
           columnNullifyConditions,
+          hiddenRelationConditions,
           columnMasks,
         }),
       ),
@@ -513,6 +529,16 @@ export const buildWhereExpression = (
           columnNullifyConditions: state.columnNullifyConditions,
           aliases,
         }),
+        renderNotHiddenCondition(
+          state.existsFilterClauses.flatMap(
+            ({ parentAlias, relationFieldName }) =>
+              aliases.includes(parentAlias)
+                ? (state.hiddenRelationConditions[parentAlias]?.[
+                    relationFieldName
+                  ] ?? [])
+                : [],
+          ),
+        ),
       ].filter(isDefined),
     }),
     aliases,
@@ -524,6 +550,7 @@ export const buildWhereExpression = (
         existsFilterClauses: state.existsFilterClauses,
         includeDeleted: state.includeDeleted,
         columnNullifyConditions: state.columnNullifyConditions,
+        hiddenRelationConditions: state.hiddenRelationConditions,
       })
     : renderedWhereExpression;
 
@@ -604,7 +631,15 @@ export const buildJoinClause = (state: SelectStatementState): string =>
           ? joinClause.toManyForeignKeyColumnName
           : undefined;
 
-      const onConditions = [condition, ...joinClause.additionalOnConditions];
+      const onConditions = [
+        condition,
+        ...joinClause.additionalOnConditions,
+        renderNotHiddenCondition(
+          state.hiddenRelationConditions[joinClause.parentAlias]?.[
+            joinClause.relationFieldName
+          ] ?? [],
+        ),
+      ].filter(isDefined);
 
       if (
         softDeletePredicateApplies &&
