@@ -1,13 +1,13 @@
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SettingsRoleRouteGuard } from '@/settings/roles/components/SettingsRoleRouteGuard';
-import { SettingsRolePermissionsObjectLevelObjectForm } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm';
+import { SettingsRoleRuleForm } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRoleRuleForm';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { Navigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
-export const SettingsRoleObjectLevel = () => {
+export const SettingsRoleRule = () => {
   const { roleId, objectMetadataId } = useParams();
   const workspaceSurface = useWorkspaceSurface();
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -33,7 +33,7 @@ export const SettingsRoleObjectLevel = () => {
 
   return (
     <SettingsRoleRouteGuard roleId={roleId}>
-      <SettingsRolePermissionsObjectLevelObjectForm
+      <SettingsRoleRuleForm
         roleId={roleId}
         objectMetadataId={objectMetadataId}
       />

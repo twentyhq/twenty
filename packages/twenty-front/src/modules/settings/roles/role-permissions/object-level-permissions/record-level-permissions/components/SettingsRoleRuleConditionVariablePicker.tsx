@@ -8,14 +8,14 @@ import { IconVariablePlus } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
-import { SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect';
-import { RecordLevelPermissionVariablePickerContext } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/contexts/RecordLevelPermissionVariablePickerContext';
+import { SettingsRoleRuleConditionMeValueSelect } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRoleRuleConditionMeValueSelect';
+import { RuleConditionVariablePickerContext } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/contexts/RuleConditionVariablePickerContext';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useLingui } from '@lingui/react/macro';
 
-const StyledRecordLevelPermissionPickerContainer = styled.div<{
+const StyledRuleConditionPickerContainer = styled.div<{
   multiline?: boolean;
   readonly?: boolean;
 }>`
@@ -55,13 +55,11 @@ const StyledRecordLevelPermissionPickerContainer = styled.div<{
   }
 `;
 
-export const SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker: VariablePickerComponent =
+export const SettingsRoleRuleConditionVariablePicker: VariablePickerComponent =
   ({ instanceId, disabled, multiline }) => {
     const { t } = useLingui();
     const theme = useTheme();
-    const pickerContext = useContext(
-      RecordLevelPermissionVariablePickerContext,
-    );
+    const pickerContext = useContext(RuleConditionVariablePickerContext);
 
     if (!isDefined(pickerContext)) {
       return null;
@@ -71,12 +69,12 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePick
 
     return (
       <DropdownRoot
-        dropdownId={`record-level-permission-me-picker-${instanceId}-${recordFilterId}`}
+        dropdownId={`rule-condition-me-picker-${instanceId}-${recordFilterId}`}
         type="picker"
       >
         <Dropdown.Trigger
           render={
-            <StyledRecordLevelPermissionPickerContainer
+            <StyledRuleConditionPickerContainer
               multiline={multiline}
               readonly={disabled}
             />
@@ -92,7 +90,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePick
           align="end"
           width={GenericDropdownContentWidth.Medium}
         >
-          <SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect
+          <SettingsRoleRuleConditionMeValueSelect
             onSelect={onSelect}
             recordFilterId={recordFilterId}
           />

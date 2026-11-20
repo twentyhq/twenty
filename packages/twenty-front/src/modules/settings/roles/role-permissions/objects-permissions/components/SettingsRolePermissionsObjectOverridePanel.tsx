@@ -1,7 +1,7 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { SettingsRolePermissionsObjectActionsSelect } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect';
+import { SettingsRolePermissionsObjectOperationsSelect } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOperationsSelect';
 import { SettingsRolePermissionsObjectFieldsSelect } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect';
 import {
   SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG,
@@ -123,7 +123,7 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
 
   const openRulePage = (rowLevelPermissionRuleId: string) => {
     navigateSettings(
-      SettingsPath.RoleObjectLevel,
+      SettingsPath.RoleRule,
       { roleId, objectMetadataId: objectMetadataItem.id },
       { rowLevelPermissionRuleId },
     );
@@ -209,7 +209,7 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
               />
             </TableCell>
             <TableCell onClick={(event) => event.stopPropagation()}>
-              <SettingsRolePermissionsObjectActionsSelect
+              <SettingsRolePermissionsObjectOperationsSelect
                 dropdownId={`settings-role-rule-actions-${rule.id}`}
                 selectedOperations={getRecordsGrantOperations(rule)}
                 onChange={(operations) =>

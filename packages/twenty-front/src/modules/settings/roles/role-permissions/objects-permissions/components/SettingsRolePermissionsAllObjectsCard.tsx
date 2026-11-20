@@ -1,6 +1,6 @@
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { StyledSettingsSelectGroup } from '@/settings/components/SettingsOptions/StyledSettingsSelectGroup';
-import { SettingsRolePermissionsObjectActionsSelect } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect';
+import { SettingsRolePermissionsObjectOperationsSelect } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOperationsSelect';
 import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectLevelPermissionToRoleObjectPermissionMapping';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionKeys';
@@ -60,7 +60,7 @@ export const SettingsRolePermissionsAllObjectsCard = ({
           title={t`All objects`}
           description={t`Applies to all objects before overrides`}
         >
-          <SettingsRolePermissionsObjectActionsSelect
+          <SettingsRolePermissionsObjectOperationsSelect
             dropdownId={`settings-role-all-objects-actions-${roleId}`}
             selectedOperations={SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.filter(
               (operation) =>

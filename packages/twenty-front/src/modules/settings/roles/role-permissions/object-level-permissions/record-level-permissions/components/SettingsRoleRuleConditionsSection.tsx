@@ -8,7 +8,7 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 import { billingState } from '@/client-config/states/billingState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
-import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder';
+import { SettingsRoleRuleConditionFilterBuilder } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRoleRuleConditionFilterBuilder';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { Button } from 'twenty-ui/primitives/input';
@@ -26,19 +26,19 @@ const StyledCardContainer = styled.div`
   overflow: hidden;
 `;
 
-type SettingsRolePermissionsObjectLevelRecordLevelSectionProps = {
+type SettingsRoleRuleConditionsSectionProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
   roleId: string;
   rowLevelPermissionRuleId: string;
   hasOrganizationPlan: boolean;
 };
 
-export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
+export const SettingsRoleRuleConditionsSection = ({
   objectMetadataItem,
   roleId,
   rowLevelPermissionRuleId,
   hasOrganizationPlan,
-}: SettingsRolePermissionsObjectLevelRecordLevelSectionProps) => {
+}: SettingsRoleRuleConditionsSectionProps) => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
   const billing = useAtomStateValue(billingState);
@@ -87,7 +87,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
         description={t`Ability to filter the records a user can interact with.`}
       />
       <StyledContent>
-        <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder
+        <SettingsRoleRuleConditionFilterBuilder
           roleId={roleId}
           rowLevelPermissionRuleId={rowLevelPermissionRuleId}
           objectMetadataItem={objectMetadataItem}
