@@ -1,5 +1,6 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
+import { NAVIGATION_MENU_ITEM_APPEND_INDEX } from '@/navigation-menu-item/common/constants/NavigationMenuItemAppendIndex';
 import { computeNavigationMenuItemDropPlacement } from '@/navigation-menu-item/common/utils/computeNavigationMenuItemDropPlacement';
 
 const SORTED_ITEMS = [
@@ -106,6 +107,19 @@ describe('computeNavigationMenuItemDropPlacement', () => {
       parentId: 'pipeline-folder',
       folderIdToOpen: 'pipeline-folder',
     });
+  });
+
+  it('should append when the index is past the end of the list', () => {
+    const placement = computeNavigationMenuItemDropPlacement({
+      draggedItem: PIPELINE_LINK,
+      sourceParentId: 'pipeline',
+      destinationTarget: { kind: 'tabOrSectionList', parentId: 'accounts' },
+      destinationIndex: NAVIGATION_MENU_ITEM_APPEND_INDEX,
+      sortedItems: SORTED_ITEMS,
+    });
+
+    expect(placement?.parentId).toBe('accounts');
+    expect(placement?.position).toBeGreaterThan(1);
   });
 
   it('should reorder within the same list without changing the parent', () => {

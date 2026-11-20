@@ -15,5 +15,6 @@ export enum CacheStorageNamespace {
   EngineSubscriptions = 'engine:subscriptions',
   EngineUsageLimit = 'engine:usage-limit',
   EngineOnboardingInviteSuggestions = 'engine:onboarding-invite-suggestions',
+  EngineWebPush = 'engine:web-push',
   IntegrationTests = 'integration-tests',
 }

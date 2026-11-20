@@ -7,17 +7,12 @@ import { type GranolaPersonalSyncScope } from 'src/logic-functions/types/granola
 import { findGranolaPersonalConnection } from 'src/logic-functions/utils/find-granola-personal-connection.util';
 import { getGranolaApiKeyFingerprint } from 'src/logic-functions/utils/get-granola-api-key-fingerprint.util';
 import { getGranolaPersonalFolderSelectionKey } from 'src/logic-functions/utils/get-granola-personal-folder-selection-key.util';
-import { isGranolaPersonalSyncEnabled } from 'src/logic-functions/utils/is-granola-personal-sync-enabled.util';
 
 export const loadGranolaPersonalSync = async ({
   connectionId,
   userWorkspaceId,
   apiKeyFingerprint,
 }: GranolaPersonalSyncScope & { apiKeyFingerprint: string }) => {
-  if (!isGranolaPersonalSyncEnabled()) {
-    return undefined;
-  }
-
   const connection = await findGranolaPersonalConnection({
     connectionId,
     userWorkspaceId,

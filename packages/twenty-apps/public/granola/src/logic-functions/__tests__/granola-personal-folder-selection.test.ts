@@ -4,7 +4,7 @@ import {
   listConnections,
   reportConnectionAuthFailure,
 } from 'twenty-sdk/logic-function';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
   OTHER_CONNECTION,
@@ -28,14 +28,9 @@ const OPTED_IN_AT = '2026-11-18T12:00:00.000Z';
 
 const context = { userWorkspaceId: OWN_CONNECTION.userWorkspaceId };
 
-beforeEach(() => {
-  vi.stubEnv('GRANOLA_PERSONAL_SYNC_ENABLED', 'true');
-});
-
 afterEach(() => {
   vi.resetAllMocks();
   vi.unstubAllGlobals();
-  vi.unstubAllEnvs();
   vi.useRealTimers();
 });
 
@@ -96,9 +91,15 @@ describe('granolaPersonalFolderSelectionHandler', () => {
     expect(kv.set).not.toHaveBeenCalled();
   });
 
-  it('saves settings without scheduling webhook setup before activation', async () => {
-    vi.stubEnv('GRANOLA_PERSONAL_SYNC_ENABLED', undefined);
+  it('schedules webhook removal when the member clears their selection', async () => {
     vi.mocked(listConnections).mockResolvedValue([OWN_CONNECTION]);
+    vi.mocked(enqueueJobs).mockResolvedValue({
+      enqueued: true,
+      logicFunctionUniversalIdentifier: 'granola-personal-reconcile',
+      enqueuedJobsCount: 1,
+      jobIds: [],
+      jobs: [],
+    });
     vi.stubGlobal(
       'fetch',
       vi
@@ -118,7 +119,7 @@ describe('granolaPersonalFolderSelectionHandler', () => {
       getGranolaPersonalFolderSelectionKey(OWN_CONNECTION.id),
       [],
     );
-    expect(enqueueJobs).not.toHaveBeenCalled();
+    expect(enqueueJobs).toHaveBeenCalledOnce();
   });
 
   it('reports a setup failure when saved choices could not schedule reconciliation', async () => {
