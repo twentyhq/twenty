@@ -22,7 +22,7 @@ const PERSON_TABLE = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."pers
 type StoredPerson = {
   id: string;
   jobTitle: string;
-  city: string;
+  avatarUrl: string;
   deletedAt: string | null;
 };
 
@@ -35,7 +35,7 @@ describe('mutations on a record the role can see but its rules do not let it cha
 
   const findStoredPeople = async (): Promise<StoredPerson[]> =>
     global.testDataSource.query(
-      `SELECT "id", "jobTitle", "city", "deletedAt" FROM ${PERSON_TABLE} WHERE "id" = ANY($1) ORDER BY "id"`,
+      `SELECT "id", "jobTitle", "avatarUrl", "deletedAt" FROM ${PERSON_TABLE} WHERE "id" = ANY($1) ORDER BY "id"`,
       [originalPeople.map(({ id }) => id)],
     );
 
@@ -43,8 +43,8 @@ describe('mutations on a record the role can see but its rules do not let it cha
     makeGraphqlApiRequest(
       updateOneOperationFactory({
         objectMetadataSingularName: 'person',
-        gqlFields: 'id city',
-        data: { city: 'Updated by member' },
+        gqlFields: 'id avatarUrl',
+        data: { avatarUrl: 'Updated by member' },
         recordId,
       }),
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
@@ -61,7 +61,7 @@ describe('mutations on a record the role can see but its rules do not let it cha
     );
 
     originalPeople = await global.testDataSource.query(
-      `SELECT "id", "jobTitle", "city", "deletedAt" FROM ${PERSON_TABLE} WHERE "deletedAt" IS NULL ORDER BY "id" LIMIT 2`,
+      `SELECT "id", "jobTitle", "avatarUrl", "deletedAt" FROM ${PERSON_TABLE} WHERE "deletedAt" IS NULL ORDER BY "id" LIMIT 2`,
     );
     [parisPersonId, londonPersonId] = originalPeople.map(({ id }) => id);
 
@@ -135,10 +135,10 @@ describe('mutations on a record the role can see but its rules do not let it cha
     });
     await deleteOneRole({ expectToFail: false, input: { idToDelete: roleId } });
 
-    for (const { id, jobTitle, city, deletedAt } of originalPeople) {
+    for (const { id, jobTitle, avatarUrl, deletedAt } of originalPeople) {
       await global.testDataSource.query(
-        `UPDATE ${PERSON_TABLE} SET "jobTitle" = $1, "city" = $2, "deletedAt" = $3 WHERE "id" = $4`,
-        [jobTitle, city, deletedAt, id],
+        `UPDATE ${PERSON_TABLE} SET "jobTitle" = $1, "avatarUrl" = $2, "deletedAt" = $3 WHERE "id" = $4`,
+        [jobTitle, avatarUrl, deletedAt, id],
       );
     }
   });
@@ -183,7 +183,7 @@ describe('mutations on a record the role can see but its rules do not let it cha
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.updatePerson).toEqual({
       id: parisPersonId,
-      city: 'Updated by member',
+      avatarUrl: 'Updated by member',
     });
   });
 
@@ -201,7 +201,7 @@ describe('mutations on a record the role can see but its rules do not let it cha
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
         gqlFields: 'id',
-        data: { city: 'Updated in batch' },
+        data: { avatarUrl: 'Updated in batch' },
         filter: { id: { in: [parisPersonId, londonPersonId] } },
       }),
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
