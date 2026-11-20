@@ -42,6 +42,12 @@ const getJobGroupLimiterErrors = (
         },
       ];
 
+const getJobGroupNotFoundError = (): FlatEntityValidationError => ({
+  code: JobGroupExceptionCode.JOB_GROUP_NOT_FOUND,
+  message: t`Job group not found`,
+  userFriendlyMessage: msg`Job group not found.`,
+});
+
 @Injectable()
 export class FlatJobGroupValidatorService {
   public validateFlatJobGroupCreation({
@@ -87,11 +93,7 @@ export class FlatJobGroupValidatorService {
     });
 
     if (!isDefined(existingJobGroup)) {
-      validationResult.errors.push({
-        code: JobGroupExceptionCode.JOB_GROUP_NOT_FOUND,
-        message: t`Job group not found`,
-        userFriendlyMessage: msg`Job group not found.`,
-      });
+      validationResult.errors.push(getJobGroupNotFoundError());
 
       return validationResult;
     }
@@ -134,11 +136,7 @@ export class FlatJobGroupValidatorService {
     });
 
     if (!isDefined(existingJobGroup)) {
-      validationResult.errors.push({
-        code: JobGroupExceptionCode.JOB_GROUP_NOT_FOUND,
-        message: t`Job group not found`,
-        userFriendlyMessage: msg`Job group not found.`,
-      });
+      validationResult.errors.push(getJobGroupNotFoundError());
     }
 
     return validationResult;

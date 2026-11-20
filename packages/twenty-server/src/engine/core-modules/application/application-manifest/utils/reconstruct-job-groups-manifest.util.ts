@@ -9,7 +9,7 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 export const reconstructJobGroupsManifest = ({
   applicationAllFlatEntityMaps,
 }: {
-  applicationAllFlatEntityMaps: AllFlatEntityMaps;
+  applicationAllFlatEntityMaps: Pick<AllFlatEntityMaps, 'flatJobGroupMaps'>;
 }): {
   jobGroups: JobGroupManifest[];
   coverage: ApplicationExportCoverageEntry[];
