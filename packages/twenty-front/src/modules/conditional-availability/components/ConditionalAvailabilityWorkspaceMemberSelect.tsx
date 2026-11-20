@@ -2,9 +2,9 @@ import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorksp
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { ConditionalAvailabilityOptionsSelect } from '@/conditional-availability/components/ConditionalAvailabilityOptionsSelect';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 
 type ConditionalAvailabilityWorkspaceMemberSelectProps = {
