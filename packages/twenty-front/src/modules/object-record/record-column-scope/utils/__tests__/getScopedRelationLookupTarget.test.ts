@@ -77,4 +77,25 @@ describe('getScopedRelationLookupTarget', () => {
       }),
     ).toBeUndefined();
   });
+
+  it('has no target on a column that lists the target records of a join object', () => {
+    expect(
+      getScopedRelationLookupTarget({
+        recordField: {
+          isCanonical: false,
+          relationScope: EMPTY_RELATION_SCOPE,
+          relationTargetFieldMetadataId: getMockFieldMetadataItemOrThrow({
+            objectMetadataItem: getMockObjectMetadataItemOrThrow('taskTarget'),
+            fieldName: 'createdAt',
+          }).id,
+        },
+        fieldMetadataItem: getMockFieldMetadataItemOrThrow({
+          objectMetadataItem: personObjectMetadataItem,
+          fieldName: 'taskTargets',
+        }),
+        objectMetadataItems,
+        isLookupColumnsEnabled: true,
+      }),
+    ).toBeUndefined();
+  });
 });

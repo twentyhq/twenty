@@ -39,6 +39,10 @@ const taskTargetTaskField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: taskTargetObjectMetadataItem,
   fieldName: 'task',
 });
+const taskTargetCreatedAtField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: taskTargetObjectMetadataItem,
+  fieldName: 'createdAt',
+});
 const taskStatusField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: taskObjectMetadataItem,
   fieldName: 'status',
@@ -203,7 +207,7 @@ describe('getScopedRelationAliases', () => {
     ).toEqual([]);
   });
 
-  it('scopes a join object relation by the fields of its target records', () => {
+  it('scopes a join object relation by the fields of its target records, which it lists', () => {
     const [taskTargetsAlias] = getScopedRelationAliases({
       recordFields: [
         {
@@ -230,6 +234,7 @@ describe('getScopedRelationAliases', () => {
             ],
             limit: 1,
           },
+          relationTargetFieldMetadataId: taskTargetCreatedAtField.id,
         },
       ],
       fieldMetadataItemByFieldMetadataItemId: {
@@ -258,5 +263,6 @@ describe('getScopedRelationAliases', () => {
         targetObjectMetadataItem: { nameSingular: 'task' },
       },
     });
+    expect(taskTargetsAlias.lookupTarget).toBeUndefined();
   });
 });

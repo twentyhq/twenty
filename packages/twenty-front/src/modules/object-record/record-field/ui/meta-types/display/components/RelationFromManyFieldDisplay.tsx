@@ -55,6 +55,8 @@ export const RelationFromManyFieldDisplay = () => {
     return null;
   }
 
+  const unloadedRecordCount = (totalCount ?? 0) - fieldValue.length;
+
   if (isDefined(junctionConfig)) {
     if (!isUsableJunctionConfig(junctionConfig)) {
       return null;
@@ -90,28 +92,30 @@ export const RelationFromManyFieldDisplay = () => {
     }
 
     return (
-      <OverflowingList
-        overflowLabel={t`Show all items`}
-        showOverflowCount={isFocused}
-        maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
+      <RelationWithUnloadedRecordCount
+        unloadedRecordCount={unloadedRecordCount}
       >
-        {targetRecordsWithMetadata.map(({ record, objectMetadata }) => (
-          <RecordChip
-            key={record.id}
-            objectNameSingular={objectMetadata.nameSingular}
-            record={record}
-            forceDisableClick={disableChipClick}
-            triggerEvent={triggerEvent}
-          />
-        ))}
-      </OverflowingList>
+        <OverflowingList
+          overflowLabel={t`Show all items`}
+          showOverflowCount={isFocused}
+          maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
+        >
+          {targetRecordsWithMetadata.map(({ record, objectMetadata }) => (
+            <RecordChip
+              key={record.id}
+              objectNameSingular={objectMetadata.nameSingular}
+              record={record}
+              forceDisableClick={disableChipClick}
+              triggerEvent={triggerEvent}
+            />
+          ))}
+        </OverflowingList>
+      </RelationWithUnloadedRecordCount>
     );
   }
 
   return (
-    <RelationWithUnloadedRecordCount
-      unloadedRecordCount={(totalCount ?? 0) - fieldValue.length}
-    >
+    <RelationWithUnloadedRecordCount unloadedRecordCount={unloadedRecordCount}>
       <OverflowingList
         overflowLabel={t`Show all items`}
         showOverflowCount={isFocused}
