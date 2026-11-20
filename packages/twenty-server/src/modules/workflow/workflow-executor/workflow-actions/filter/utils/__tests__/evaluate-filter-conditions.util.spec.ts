@@ -5,8 +5,7 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 
-import { WorkflowStepExecutorException } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
-import { isUserFacingWorkflowExecutorError } from 'src/modules/workflow/workflow-executor/utils/is-user-facing-workflow-executor-error.util';
+import { WorkflowStepExecutorExceptionCode } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { evaluateFilterConditions } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-filter-conditions.util';
 
 describe('evaluateFilterConditions', () => {
@@ -1541,26 +1540,40 @@ describe('evaluateFilterConditions', () => {
         expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow();
       });
 
-      it.each(['RELATION', 'NUMBER', 'UUID', 'STRING'])(
-        'should reject an unsupported operand on a %s filter as a user error',
-        (type) => {
-          const filter = createFilter(
-            ViewFilterOperand.IS_NOT_NULL,
-            'value',
-            '',
-            type,
+      it.each([
+        { type: 'TEXT', leftOperand: 'value' },
+        { type: 'RAW_JSON', leftOperand: 'value' },
+        { type: 'BOOLEAN', leftOperand: 'true' },
+        { type: 'DATE', leftOperand: '2026-01-01T00:00:00Z' },
+        { type: 'UUID', leftOperand: 'value' },
+        { type: 'RATING', leftOperand: 'RATING_1' },
+        { type: 'RELATION', leftOperand: 'value' },
+        {
+          type: 'CURRENCY',
+          leftOperand: 'EUR',
+          compositeFieldSubFieldName: 'currencyCode',
+        },
+        { type: 'NUMBER', leftOperand: '1' },
+        { type: 'SELECT', leftOperand: 'value' },
+        { type: 'STRING', leftOperand: 'value' },
+      ])(
+        'should reject an unsupported operand on a $type filter as invalid step input',
+        ({ type, leftOperand, compositeFieldSubFieldName }) => {
+          const filter = {
+            ...createFilter(
+              ViewFilterOperand.IS_NOT_NULL,
+              leftOperand,
+              '',
+              type,
+            ),
+            compositeFieldSubFieldName,
+          };
+
+          expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow(
+            expect.objectContaining({
+              code: WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+            }),
           );
-
-          let thrownError: unknown;
-
-          try {
-            evaluateFilterConditions({ filters: [filter] });
-          } catch (error) {
-            thrownError = error;
-          }
-
-          expect(thrownError).toBeInstanceOf(WorkflowStepExecutorException);
-          expect(isUserFacingWorkflowExecutorError(thrownError)).toBe(true);
         },
       );
 
