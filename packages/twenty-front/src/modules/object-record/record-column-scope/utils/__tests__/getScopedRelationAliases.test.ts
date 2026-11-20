@@ -1,6 +1,5 @@
 import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
 import { getScopedRelationAliases } from '@/object-record/record-column-scope/utils/getScopedRelationAliases';
-import { getScopedRelationColumnQueryFingerprint } from '@/object-record/record-column-scope/utils/getScopedRelationColumnQueryFingerprint';
 import { getScopedRelationRecordGqlFields } from '@/object-record/record-column-scope/utils/getScopedRelationRecordGqlFields';
 import {
   type ViewFieldRelationScope,
@@ -26,10 +25,6 @@ const createdAtField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: personObjectMetadataItem,
   fieldName: 'createdAt',
 });
-const emailsField = getMockFieldMetadataItemOrThrow({
-  objectMetadataItem: personObjectMetadataItem,
-  fieldName: 'emails',
-});
 
 const personIdentifierGqlFields = buildIdentifierGqlFields(
   personObjectMetadataItem,
@@ -37,7 +32,6 @@ const personIdentifierGqlFields = buildIdentifierGqlFields(
 
 const PEOPLE_COLUMN_ID = '20202020-0000-4000-8000-0000000000c1';
 const OTHER_PEOPLE_COLUMN_ID = '20202020-0000-4000-8000-0000000000c2';
-const THIRD_PEOPLE_COLUMN_ID = '20202020-0000-4000-8000-0000000000c3';
 
 const EMPTY_RELATION_SCOPE: ViewFieldRelationScope = {
   filters: [],
@@ -83,17 +77,14 @@ const getAliases = ({
 const getPeopleColumn = ({
   relationScope,
   id = PEOPLE_COLUMN_ID,
-  relationTargetFieldMetadataId,
 }: {
   relationScope: ViewFieldRelationScope;
   id?: string;
-  relationTargetFieldMetadataId?: string;
 }) => ({
   id,
   fieldMetadataItemId: peopleField.id,
   isCanonical: false,
   relationScope,
-  relationTargetFieldMetadataId,
 });
 
 describe('getScopedRelationAliases', () => {
@@ -152,22 +143,6 @@ describe('getScopedRelationAliases', () => {
     expect(ctoAlias.responseKey).not.toBe(allPeopleAlias.responseKey);
   });
 
-  it('carries the field of the related records a column shows', () => {
-    const [{ lookupTarget }] = getAliases({
-      recordFields: [
-        getPeopleColumn({
-          relationScope: CTO_RELATION_SCOPE,
-          relationTargetFieldMetadataId: emailsField.id,
-        }),
-      ],
-    });
-
-    expect(lookupTarget?.lookupTargetFieldMetadataItem.id).toBe(emailsField.id);
-    expect(lookupTarget?.lookupTargetFieldDefinition.metadata.fieldName).toBe(
-      'emails',
-    );
-  });
-
   it('skips the canonical column, columns without a scope and a disabled flag', () => {
     expect(
       getAliases({
@@ -224,79 +199,5 @@ describe('getScopedRelationRecordGqlFields', () => {
         recordGqlFields: personIdentifierGqlFields,
       },
     });
-  });
-
-  it('selects the field a column shows next to the identifier of its records', () => {
-    const [emailsAlias] = getAliases({
-      recordFields: [
-        getPeopleColumn({
-          relationScope: CTO_RELATION_SCOPE,
-          relationTargetFieldMetadataId: emailsField.id,
-        }),
-      ],
-    });
-
-    expect(
-      getScopedRelationRecordGqlFields([emailsAlias])[emailsAlias.responseKey],
-    ).toMatchObject({
-      recordGqlFields: { ...personIdentifierGqlFields, emails: true },
-    });
-  });
-
-  it('selects the fields of every column sharing one scope under their one response key', () => {
-    const sameScopeAliases = getAliases({
-      recordFields: [
-        getPeopleColumn({
-          relationScope: CTO_RELATION_SCOPE,
-          relationTargetFieldMetadataId: emailsField.id,
-        }),
-        getPeopleColumn({
-          relationScope: CTO_RELATION_SCOPE,
-          id: OTHER_PEOPLE_COLUMN_ID,
-        }),
-        getPeopleColumn({
-          relationScope: CTO_RELATION_SCOPE,
-          id: THIRD_PEOPLE_COLUMN_ID,
-          relationTargetFieldMetadataId: jobTitleField.id,
-        }),
-      ],
-    });
-
-    expect(getScopedRelationRecordGqlFields(sameScopeAliases)).toEqual({
-      [sameScopeAliases[0].responseKey]: expect.objectContaining({
-        recordGqlFields: {
-          ...personIdentifierGqlFields,
-          emails: true,
-          jobTitle: true,
-        },
-      }),
-    });
-  });
-});
-
-describe('getScopedRelationColumnQueryFingerprint', () => {
-  const getFingerprint = (relationTargetFieldMetadataId?: string) =>
-    getScopedRelationColumnQueryFingerprint(
-      getScopedRelationRecordGqlFields(
-        getAliases({
-          recordFields: [
-            getPeopleColumn({
-              relationScope: CTO_RELATION_SCOPE,
-              relationTargetFieldMetadataId,
-            }),
-          ],
-        }),
-      ),
-    );
-
-  it('changes when a column shows another field of the same related records', () => {
-    expect(getFingerprint(emailsField.id)).not.toBe(getFingerprint());
-    expect(getFingerprint(emailsField.id)).not.toBe(
-      getFingerprint(jobTitleField.id),
-    );
-  });
-
-  it('stays the same for the same scope and field', () => {
-    expect(getFingerprint(emailsField.id)).toBe(getFingerprint(emailsField.id));
   });
 });

@@ -239,6 +239,19 @@ describe('handleFieldMetadataDeactivationSideEffects', () => {
       ]);
     });
 
+    it('deletes a view field showing the deactivated field of its related records', () => {
+      const scopedViewField: FlatViewField = {
+        ...buildScopedViewField({ filters: [], filterGroups: [], sorts: [] }),
+        relationTargetFieldMetadataId: 'status-field-id',
+        relationTargetFieldMetadataUniversalIdentifier:
+          'status-field-universal-identifier',
+      };
+
+      expect(deactivate(scopedViewField).flatViewFieldsToDelete).toEqual([
+        scopedViewField,
+      ]);
+    });
+
     it('keeps a view field whose scope does not use the deactivated field', () => {
       const scopedViewField = buildScopedViewField({
         filters: [],
