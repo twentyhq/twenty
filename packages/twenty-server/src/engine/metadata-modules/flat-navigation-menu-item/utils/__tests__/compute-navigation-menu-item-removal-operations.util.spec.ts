@@ -176,4 +176,39 @@ describe('computeNavigationMenuItemRemovalOperations', () => {
       'workspace-folder',
     ]);
   });
+
+  it('should only hide a container another application owns when its descendants are removed with it', () => {
+    const standardFolder = buildFlatNavigationMenuItem({
+      id: 'standard-folder',
+      applicationUniversalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    });
+    const workspaceChild = buildFlatNavigationMenuItem({
+      id: 'workspace-child',
+      parentId: standardFolder.id,
+    });
+    const standardChild = buildFlatNavigationMenuItem({
+      id: 'standard-child',
+      parentId: standardFolder.id,
+      applicationUniversalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    });
+    const workspaceGrandchild = buildFlatNavigationMenuItem({
+      id: 'workspace-grandchild',
+      parentId: standardChild.id,
+    });
+    const navigationMenuItems = [
+      standardFolder,
+      workspaceChild,
+      standardChild,
+      workspaceGrandchild,
+    ];
+
+    const { flatEntityToDelete, flatEntityToUpdate } = computeRemoval({
+      rootNavigationMenuItems: navigationMenuItems,
+      navigationMenuItems,
+    });
+
+    expect(flatEntityToDelete).toEqual([]);
+    expect(flatEntityToUpdate.map(({ id }) => id)).toEqual(['standard-folder']);
+    expect(isEffectivelyActive(flatEntityToUpdate[0])).toBe(false);
+  });
 });
