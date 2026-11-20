@@ -4,7 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -12,16 +12,17 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { APPLICATION_PRICE_INTERVALS } from 'src/engine/core-modules/billing/constants/application-price-intervals.constant';
 import { BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS } from 'src/engine/core-modules/billing/constants/billing-subscription-state-lock-options.constant';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
-import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
 import { StripeProductService } from 'src/engine/core-modules/billing/stripe/services/stripe-product.service';
 import { type TargetApplicationProduct } from 'src/engine/core-modules/billing/types/target-application-product.type';
+import { hasEveryIntervalPrice } from 'src/engine/core-modules/billing/utils/has-every-interval-price.util';
 import { buildApplicationStripePriceParams } from 'src/engine/core-modules/billing/utils/build-application-stripe-price-params.util';
 import { buildApplicationStripeProductId } from 'src/engine/core-modules/billing/utils/build-application-stripe-product-id.util';
 import { buildBillingApplicationProductLockKey } from 'src/engine/core-modules/billing/utils/build-billing-application-product-lock-key.util';
@@ -36,21 +37,6 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-const APPLICATION_PRICE_INTERVALS = Object.values(SubscriptionInterval);
-
-const hasEveryIntervalPrice = <
-  TBillingProduct extends Pick<BillingProductEntity, 'billingPrices'>,
->(
-  billingProduct: TBillingProduct | undefined,
-): billingProduct is TBillingProduct =>
-  isDefined(billingProduct) &&
-  APPLICATION_PRICE_INTERVALS.every((interval) =>
-    billingProduct.billingPrices.some(
-      (billingPrice) =>
-        billingPrice.active && billingPrice.interval === interval,
-    ),
-  );
 
 @Injectable()
 export class BillingApplicationProductService {

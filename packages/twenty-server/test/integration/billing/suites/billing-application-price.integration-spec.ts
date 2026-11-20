@@ -9,6 +9,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { type ApplicationBillingPrice } from 'twenty-shared/application';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
@@ -233,7 +234,7 @@ describe('Application price billing (integration)', () => {
 
           const existingItem = stripeItems.find(({ id }) => id === item.id);
 
-          if (existingItem) {
+          if (isDefined(existingItem)) {
             existingItem.price = { id: item.price ?? existingItem.price.id };
             existingItem.quantity = item.quantity ?? existingItem.quantity;
             continue;
