@@ -44,31 +44,7 @@ export const NavigationMenuAddSectionHiddenItems = ({
     return null;
   }
 
-  const getLabel = (navigationMenuItem: NavigationMenuItem) => {
-    const builtInSection = NAVIGATION_MENU_BUILT_IN_SECTIONS.find(
-      ({ key }) => key === navigationMenuItem.builtInSectionKey,
-    );
-
-    return isDefined(builtInSection)
-      ? t(builtInSection.label)
-      : getNavigationMenuItemLabel(
-          navigationMenuItem,
-          objectMetadataItems,
-          views,
-        );
-  };
-
   const getStartIcon = (navigationMenuItem: NavigationMenuItem) => {
-    const builtInSection = NAVIGATION_MENU_BUILT_IN_SECTIONS.find(
-      ({ key }) => key === navigationMenuItem.builtInSectionKey,
-    );
-
-    if (isDefined(builtInSection)) {
-      return (
-        <ColoredIcon Icon={builtInSection.Icon} color={builtInSection.color} />
-      );
-    }
-
     switch (navigationMenuItem.type) {
       case NavigationMenuItemType.FOLDER:
         return (
@@ -102,6 +78,33 @@ export const NavigationMenuAddSectionHiddenItems = ({
     }
   };
 
+  const getHiddenItemDisplay = (navigationMenuItem: NavigationMenuItem) => {
+    const builtInSection = NAVIGATION_MENU_BUILT_IN_SECTIONS.find(
+      ({ key }) => key === navigationMenuItem.builtInSectionKey,
+    );
+
+    if (isDefined(builtInSection)) {
+      return {
+        label: t(builtInSection.label),
+        icon: (
+          <ColoredIcon
+            Icon={builtInSection.Icon}
+            color={builtInSection.color}
+          />
+        ),
+      };
+    }
+
+    return {
+      label: getNavigationMenuItemLabel(
+        navigationMenuItem,
+        objectMetadataItems,
+        views,
+      ),
+      icon: getStartIcon(navigationMenuItem),
+    };
+  };
+
   const handleClick = (navigationMenuItemId: string) => {
     restoreHiddenNavigationMenuItem({
       navigationMenuItemId,
@@ -119,8 +122,7 @@ export const NavigationMenuAddSectionHiddenItems = ({
             key={hiddenNavigationMenuItem.id}
             item={{
               id: hiddenNavigationMenuItem.id,
-              label: getLabel(hiddenNavigationMenuItem),
-              icon: getStartIcon(hiddenNavigationMenuItem),
+              ...getHiddenItemDisplay(hiddenNavigationMenuItem),
               onClick: () => handleClick(hiddenNavigationMenuItem.id),
             }}
           />
