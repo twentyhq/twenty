@@ -34,7 +34,7 @@ describe('isApplicationBillingPrice', () => {
     ['an unknown billingPeriod', { ...price, billingPeriod: 'YEARLY' }],
     ['a negative amountCents', { ...price, amountCents: -1 }],
     ['an unknown currency', { ...price, currency: 'EUR' }],
-    ['an unknown unit', { ...price, per: 'CONNECTED_ACCOUNT' }],
+    ['an unknown unit', { ...price, per: 'CONNECTION' }],
   ])('should reject %s', (_, value) => {
     expect(isApplicationBillingPrice(value)).toBe(false);
   });

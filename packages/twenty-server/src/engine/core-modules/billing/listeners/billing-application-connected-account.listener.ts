@@ -1,0 +1,56 @@
+/* @license Enterprise */
+
+import { Injectable } from '@nestjs/common';
+
+import { isDefined } from 'twenty-shared/utils';
+
+import { OnCustomBatchEvent } from 'src/engine/workspace-event-emitter/decorators/on-custom-batch-event.decorator';
+import { UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS } from 'src/engine/core-modules/billing/constants/update-subscription-quantity-job-retry-options.constant';
+import {
+  SyncSubscriptionApplicationsJob,
+  type SyncSubscriptionApplicationsJobData,
+} from 'src/engine/core-modules/billing/jobs/sync-subscription-applications.job';
+import { BillingApplicationProductService } from 'src/engine/core-modules/billing/services/billing-application-product.service';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { CONNECTED_ACCOUNT_CONNECTION_CHANGED_EVENT } from 'src/engine/metadata-modules/connected-account/constants/connected-account-connection-changed.constant';
+import { CONNECTED_ACCOUNT_DELETED_EVENT } from 'src/engine/metadata-modules/connected-account/constants/connected-account-deleted.constant';
+import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
+
+@Injectable()
+export class BillingApplicationConnectedAccountListener {
+  constructor(
+    @InjectMessageQueue(MessageQueue.billingQueue)
+    private readonly messageQueueService: MessageQueueService,
+    private readonly twentyConfigService: TwentyConfigService,
+    private readonly billingApplicationProductService: BillingApplicationProductService,
+  ) {}
+
+  @OnCustomBatchEvent(CONNECTED_ACCOUNT_CONNECTION_CHANGED_EVENT)
+  @OnCustomBatchEvent(CONNECTED_ACCOUNT_DELETED_EVENT)
+  async handleConnectedAccountCountChange({
+    workspaceId,
+  }: CustomWorkspaceEventBatch<object>): Promise<void> {
+    if (
+      !isDefined(workspaceId) ||
+      !this.twentyConfigService.get('IS_BILLING_ENABLED') ||
+      !(await this.billingApplicationProductService.isApplicationPriceBillingEnabled(
+        workspaceId,
+      ))
+    ) {
+      return;
+    }
+
+    await this.messageQueueService.add<SyncSubscriptionApplicationsJobData>(
+      SyncSubscriptionApplicationsJob.name,
+      { workspaceId },
+      {
+        ...UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS,
+        workspaceId,
+        isWorkspaceJob: true,
+      },
+    );
+  }
+}
