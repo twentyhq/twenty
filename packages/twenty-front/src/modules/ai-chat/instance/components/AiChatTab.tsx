@@ -18,7 +18,6 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 
 import { AiChatQueuedMessages } from '@/ai-chat/composer/components/AiChatQueuedMessages';
 import { AiChatTabMessageList } from '@/ai-chat/messages/components/AiChatTabMessageList';
-import { AiChatTypingParticipants } from '@/ai-chat/messages/components/AiChatTypingParticipants';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
   background: ${themeCssVariables.background.primary};
@@ -80,7 +79,6 @@ export const AiChatTab = () => {
         <>
           <AiChatNewThreadRecipientBar />
           <AiChatTabMessageList />
-          <AiChatTypingParticipants />
           <AiChatQueuedMessages />
           <AiChatEditorSection key={threadId} />
         </>
