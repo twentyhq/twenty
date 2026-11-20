@@ -51,16 +51,18 @@ export const slackAssistantRequestWatchdogHandler = async ({
     };
   }
 
-  if (!isSlackAssistantRequestStale(record)) {
-    if (attempt >= SLACK_ASSISTANT_REQUEST_WATCHDOG_MAX_ATTEMPTS) {
-      return {
-        failed: false,
-        attempt,
-        rescheduled: false,
-        reason: 'Request is still being processed',
-      };
-    }
+  const isStale = isSlackAssistantRequestStale(record);
 
+  if (!isStale && attempt >= SLACK_ASSISTANT_REQUEST_WATCHDOG_MAX_ATTEMPTS) {
+    return {
+      failed: false,
+      attempt,
+      rescheduled: false,
+      reason: 'Request is still being processed',
+    };
+  }
+
+  if (!isStale) {
     await enqueueSlackAssistantRequestWatchdog({
       slackAssistantRequestId,
       attempt,

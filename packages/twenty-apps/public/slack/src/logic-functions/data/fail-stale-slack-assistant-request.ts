@@ -5,7 +5,7 @@ import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/sl
 import { getSlackAssistantRequestLeaseCutoff } from 'src/logic-functions/utils/get-slack-assistant-request-lease-cutoff';
 
 export const failStaleSlackAssistantRequest = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'mutation'>,
   { id, errorMessage }: { id: string; errorMessage: string },
 ): Promise<boolean> => {
   const mutationResult = await client.mutation({

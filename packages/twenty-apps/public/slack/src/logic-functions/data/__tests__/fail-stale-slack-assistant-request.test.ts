@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SLACK_ASSISTANT_REQUEST_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-request-timeout-seconds';
@@ -9,7 +8,7 @@ const REQUEST_ID = '7b1a0f2e-1c2d-4a3b-9e8f-0a1b2c3d4e5f';
 
 const mutationMock = vi.fn();
 
-const client = { mutation: mutationMock } as unknown as CoreApiClient;
+const client = { mutation: mutationMock };
 
 const fail = () =>
   failStaleSlackAssistantRequest(client, {

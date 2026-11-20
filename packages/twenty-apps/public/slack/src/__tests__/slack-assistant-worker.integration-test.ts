@@ -786,8 +786,7 @@ describe('Slack assistant worker', () => {
     expect(slack.calls).toHaveLength(0);
   });
 
-  // The server stamps updatedAt, so the watchdog's clock is moved forward
-  // instead of backdating the record.
+  // the server stamps updatedAt, so the clock moves forward instead of the record back
   const runWatchdogWhenItFires = async (requestId: string) => {
     vi.useFakeTimers({ toFake: ['Date'] });
     vi.setSystemTime(
