@@ -1549,8 +1549,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       : this.runAtomically(writeThenCheckTargetedRecords);
   }
 
-  // Write rules filter rows out silently, which is right for a filter but
-  // not for records the caller named and can see
+  // Write rules drop rows silently, which hides denials on records the caller named and can see
   private async assertUnwrittenRecordsAreUnreadableOrThrow({
     readQueryBuilder,
     targetedRecordIds,

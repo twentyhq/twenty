@@ -1,4 +1,4 @@
-import { isNonEmptyArray, isDefined } from 'twenty-shared/utils';
+import { isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 import { isString } from '@sniptt/guards';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -12,9 +12,9 @@ export const getRecordIdsTargetedByFilter = (
     return undefined;
   }
 
-  const idFilter = filter.id as { eq?: unknown; in?: unknown } | undefined;
+  const idFilter: unknown = filter.id;
 
-  if (!isDefined(idFilter) || Object.keys(idFilter).length !== 1) {
+  if (!isPlainObject(idFilter) || Object.keys(idFilter).length !== 1) {
     return undefined;
   }
 
