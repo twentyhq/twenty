@@ -22,6 +22,7 @@ type NavigationMenuItemContainerNameEditorProps = {
   item: Pick<NavigationMenuItem, 'id' | 'name' | 'icon'>;
   placeholder: string;
   hasIconPicker?: boolean;
+  isNameOptional?: boolean;
   onSubmit: () => void;
 };
 
@@ -29,6 +30,7 @@ export const NavigationMenuItemContainerNameEditor = ({
   item,
   placeholder,
   hasIconPicker = false,
+  isNameOptional = false,
   onSubmit,
 }: NavigationMenuItemContainerNameEditorProps) => {
   const { updateItem } = useNavigationMenuItemEditController('workspace');
@@ -72,7 +74,11 @@ export const NavigationMenuItemContainerNameEditor = ({
           onChange={(value) => {
             setName(value);
             void updateItem(item.id, {
-              name: isNonEmptyString(value.trim()) ? value.trim() : initialName,
+              name: isNonEmptyString(value.trim())
+                ? value.trim()
+                : isNameOptional
+                  ? null
+                  : initialName,
             });
           }}
           onKeyDown={handleKeyDown}

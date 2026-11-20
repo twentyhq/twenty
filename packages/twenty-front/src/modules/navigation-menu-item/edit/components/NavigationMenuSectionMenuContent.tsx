@@ -51,7 +51,8 @@ export const NavigationMenuSectionMenuContent = ({
   const builtInSection = NAVIGATION_MENU_BUILT_IN_SECTIONS.find(
     ({ key }) => key === section.builtInSectionKey,
   );
-  const isRenamable = !isBuiltInSection || builtInSection?.isRenamable === true;
+  const isRenamable =
+    !isBuiltInSection || (builtInSection?.isRenamable ?? false);
 
   const canMoveTo = (containerId: string | null) =>
     containerId !== currentContainerId &&
@@ -96,6 +97,7 @@ export const NavigationMenuSectionMenuContent = ({
                   ? t(builtInSection.label)
                   : t`Section name`
               }
+              isNameOptional={isBuiltInSection}
               onSubmit={onClose}
             />
             <Dropdown.Separator />
