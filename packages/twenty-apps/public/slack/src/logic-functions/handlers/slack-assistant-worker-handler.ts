@@ -23,6 +23,7 @@ import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspac
 import { isSlackAssistantRequestResumable } from 'src/logic-functions/utils/is-slack-assistant-request-resumable';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
+import { renewSlackAssistantRequestLease } from 'src/logic-functions/utils/renew-slack-assistant-request-lease';
 import { resolveSlackAccessDecision } from 'src/logic-functions/utils/resolve-slack-access-decision';
 import { resolveSlackAssistantAttachments } from 'src/logic-functions/utils/resolve-slack-assistant-attachments';
 import { resolveSlackAssistantMentions } from 'src/logic-functions/utils/resolve-slack-assistant-mentions';
@@ -33,7 +34,6 @@ import { sendSlackMessage } from 'src/logic-functions/utils/send-slack-message';
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
 import { startSlackAssistantStatusUpdates } from 'src/logic-functions/utils/start-slack-assistant-status-updates';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
-import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 export const slackAssistantWorkerHandler = async (
   record: SlackAssistantRequestRecord,
@@ -283,15 +283,11 @@ export const slackAssistantWorkerHandler = async (
     }
 
     if (isDefined(deferredRetryAfterSeconds)) {
-      await updateSlackAssistantRequest(client, {
-        id: record.id,
+      await renewSlackAssistantRequestLease({
+        requestId: record.id,
         responseText,
         agentChatThreadId: agentResult.threadId,
-      }).catch((error) =>
-        console.warn(
-          `[slack] could not renew the lease of request ${record.id} before deferring its answer: ${toErrorMessage(error)}`,
-        ),
-      );
+      });
 
       await enqueueSlackMessageDelivery({
         payload: {

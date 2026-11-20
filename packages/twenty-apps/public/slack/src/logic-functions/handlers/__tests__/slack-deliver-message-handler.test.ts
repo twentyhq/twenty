@@ -97,7 +97,14 @@ describe('slackDeliverMessageHandler', () => {
       payload: ANSWER_PAYLOAD,
       retryAfterSeconds: 12,
     });
-    expect(updateRequestMock).not.toHaveBeenCalled();
+    expect(updateRequestMock).toHaveBeenCalledExactlyOnceWith(
+      expect.anything(),
+      {
+        id: REQUEST_ID,
+        responseText: 'here is your answer',
+        agentChatThreadId: AGENT_CHAT_THREAD_ID,
+      },
+    );
     expect(finishWithFailureMock).not.toHaveBeenCalled();
   });
 
