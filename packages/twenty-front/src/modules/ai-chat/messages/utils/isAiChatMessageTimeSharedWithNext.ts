@@ -11,7 +11,7 @@ export const isAiChatMessageTimeSharedWithNext = ({
 }: {
   message: TimedAiChatMessage;
   nextMessage: TimedAiChatMessage;
-}) => {
+}): boolean => {
   const createdAt = message.metadata?.createdAt;
   const nextCreatedAt = nextMessage.metadata?.createdAt;
 

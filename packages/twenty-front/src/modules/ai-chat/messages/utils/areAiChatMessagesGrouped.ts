@@ -10,7 +10,7 @@ export const areAiChatMessagesGrouped = ({
 }: {
   previousMessage: GroupableAiChatMessage;
   message: GroupableAiChatMessage;
-}) =>
+}): boolean =>
   previousMessage.role === AGENT_MESSAGE_ROLE.USER &&
   message.role === AGENT_MESSAGE_ROLE.USER &&
   previousMessage.metadata?.senderWorkspaceMemberId ===
