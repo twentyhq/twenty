@@ -1,8 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { queryMock, metadataQueryMock } = vi.hoisted(() => ({
+const { queryMock, metadataQueryMock, kvGetMock } = vi.hoisted(() => ({
   queryMock: vi.fn(),
   metadataQueryMock: vi.fn(),
+  kvGetMock: vi.fn(),
+}));
+
+vi.mock('twenty-sdk/logic-function', () => ({
+  kv: { get: kvGetMock },
 }));
 
 vi.mock('twenty-client-sdk/core', () => ({
@@ -21,7 +26,6 @@ import { INDEX_VIEW_FIELDS } from 'src/constants/index-view-fields';
 
 import healthCheck from '../health-check';
 
-// Every suggested column is visible on every "All" view, unless overridden.
 const mockIndexViews = ({
   hiddenFieldUniversalIdentifier,
   viewKey = 'INDEX',
@@ -73,6 +77,8 @@ const mockParticipants = ({
 beforeEach(() => {
   queryMock.mockReset();
   metadataQueryMock.mockReset();
+  kvGetMock.mockReset();
+  kvGetMock.mockResolvedValue(null);
   mockIndexViews();
 });
 
@@ -146,8 +152,22 @@ describe('health-check', () => {
       status: 'WARNING',
       title: 'Last contact columns are not shown',
       description: expect.stringContaining('All Companies views'),
-      action: { label: 'Open settings' },
+      action: { label: 'Open settings', location: '#settings' },
     });
+  });
+
+  it('should not read views once the suggestion is dismissed', async () => {
+    mockParticipants({
+      messageParticipantIds: ['message-participant-1'],
+      calendarEventParticipantIds: [],
+    });
+    kvGetMock.mockResolvedValue({ isDismissed: true });
+
+    await expect(healthCheck.config.handler()).resolves.toEqual({
+      status: 'OK',
+    });
+    expect(kvGetMock).toHaveBeenCalledWith('view-fields-suggestion-dismissed');
+    expect(metadataQueryMock).not.toHaveBeenCalled();
   });
 
   it('should ignore objects without an All view', async () => {

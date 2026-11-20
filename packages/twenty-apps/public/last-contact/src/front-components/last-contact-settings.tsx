@@ -8,6 +8,7 @@ import {
   t,
 } from 'twenty-sdk/front-component';
 import { MainButton, Section } from 'twenty-ui/components';
+import { themeCssVariables } from 'twenty-ui/theme';
 import 'twenty-ui/style.css';
 
 import { INDEX_VIEW_FIELDS } from 'src/constants/index-view-fields';
@@ -15,6 +16,7 @@ import {
   BACKFILL_POST_INSTALL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   SETTINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { VIEW_FIELDS_SUGGESTION_DISMISSED_KEY } from 'src/constants/view-fields-suggestion';
 
 const ADD_COLUMNS_PROMPT = [
   'Add these columns to the views below and make them visible. Skip a view if it does not exist, and leave columns already shown as they are.',
@@ -32,6 +34,31 @@ const handleAddColumns = () =>
     pageTitle: t('Ask AI'),
     preprompt: { text: ADD_COLUMNS_PROMPT, mode: 'PREFILL' },
   });
+
+const handleHideSuggestion = async () => {
+  try {
+    await new MetadataApiClient().mutation({
+      setAppKeyValue: {
+        __args: {
+          input: {
+            key: VIEW_FIELDS_SUGGESTION_DISMISSED_KEY,
+            value: { isDismissed: true },
+          },
+        },
+        key: true,
+      },
+    });
+    enqueueSnackbar({
+      message: t('The columns suggestion is hidden.'),
+      variant: 'success',
+    });
+  } catch {
+    enqueueSnackbar({
+      message: t('Could not hide the suggestion. Try again.'),
+      variant: 'error',
+    });
+  }
+};
 
 const LastContactSettings = () => {
   const [isStarting, setIsStarting] = useState(false);
@@ -75,7 +102,12 @@ const LastContactSettings = () => {
             'Ask AI to add the last contact columns to the All People, All Companies, and All Opportunities views.',
           )}
         />
-        <MainButton onClick={handleAddColumns}>{t('Add columns')}</MainButton>
+        <div style={{ display: 'flex', gap: themeCssVariables.spacing[2] }}>
+          <MainButton onClick={handleAddColumns}>{t('Add columns')}</MainButton>
+          <MainButton variant="outline" onClick={handleHideSuggestion}>
+            {t('Hide suggestion')}
+          </MainButton>
+        </div>
       </Section.Root>
       <Section.Root>
         <Section.Header

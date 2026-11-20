@@ -4,10 +4,15 @@ import {
   type ApplicationHealthCheckResult,
   defineHealthCheck,
 } from 'twenty-sdk/define';
+import { kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { INDEX_VIEW_FIELDS } from 'src/constants/index-view-fields';
-import { HEALTH_CHECK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import {
+  HEALTH_CHECK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  SETTINGS_MENU_ITEM_SLUG,
+} from 'src/constants/universal-identifiers';
+import { VIEW_FIELDS_SUGGESTION_DISMISSED_KEY } from 'src/constants/view-fields-suggestion';
 
 const findIndexViewsMissingFields = async (): Promise<string[]> => {
   const { objects, getViews } = await new MetadataApiClient().query({
@@ -92,18 +97,28 @@ const handler = async (): Promise<ApplicationHealthCheckResult> => {
     };
   }
 
+  const viewFieldsSuggestion = await kv.get<{ isDismissed: boolean }>(
+    VIEW_FIELDS_SUGGESTION_DISMISSED_KEY,
+  );
+
+  if (viewFieldsSuggestion?.isDismissed === true) {
+    return { status: 'OK' };
+  }
+
   const objectLabelsMissingColumns = await findIndexViewsMissingFields();
 
   if (objectLabelsMissingColumns.length === 0) {
     return { status: 'OK' };
   }
 
-  // No location: the banner falls back to the app's settings tab.
   return {
     status: 'WARNING',
     title: 'Last contact columns are not shown',
     description: `Some last contact columns are missing from the All ${objectLabelsMissingColumns.join(', ')} views. Use the settings tab to add them.`,
-    action: { label: 'Open settings' },
+    action: {
+      label: 'Open settings',
+      location: `#${SETTINGS_MENU_ITEM_SLUG}`,
+    },
   };
 };
 

@@ -4,6 +4,9 @@
 
 - Add an "Add columns" button to the app settings. It opens Ask AI with a prefilled prompt to show the last-contact columns on the All People, All Companies and All Opportunities views, skipping any of those views that do not exist.
 - Warn on the app settings page when one of those views hides a last-contact column, with a button to the settings tab. The warning about missing synced emails and meetings still takes priority.
+- Add a "Hide suggestion" button next to "Add columns" that stops this warning for the whole workspace.
+- Give the settings tab the `settings` slug so links can open it directly.
+- Require Twenty 2.60.0 or later, and use twenty-sdk and twenty-client-sdk 2.60.0.
 
 ## 1.11.0
 
