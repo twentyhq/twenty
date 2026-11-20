@@ -4,7 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -69,7 +69,7 @@ export class BillingApplicationProductService {
       return [];
     }
 
-    const billingProducts = await this.findBillingProducts(declaredPrices);
+    const catalogEntries = await this.findCatalogEntries(declaredPrices);
 
     const workspaceMemberCount = declaredPrices.some(
       ({ price }) => price.per === 'WORKSPACE_MEMBER',
@@ -77,34 +77,31 @@ export class BillingApplicationProductService {
       ? await this.billingSeatService.countWorkspaceMembers(workspaceId)
       : 0;
 
-    return declaredPrices.flatMap((declaredPrice) => {
-      const stripeProductId = buildApplicationStripeProductId(declaredPrice);
-      const billingProduct = billingProducts.find(
-        (product) => product.stripeProductId === stripeProductId,
-      );
+    return catalogEntries.flatMap(
+      ({ declaredPrice, stripeProductId, billingProduct }) => {
+        if (!isDefined(billingProduct)) {
+          if (subscribedStripeProductIds.includes(stripeProductId)) {
+            throw new BillingException(
+              `Application product ${stripeProductId} of workspace ${workspaceId} is on the subscription but its catalog entry is incomplete`,
+              BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
+            );
+          }
 
-      if (!hasEveryIntervalPrice(billingProduct)) {
-        if (subscribedStripeProductIds.includes(stripeProductId)) {
-          throw new BillingException(
-            `Application product ${stripeProductId} of workspace ${workspaceId} is on the subscription but its catalog entry is incomplete`,
-            BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
+          this.logger.warn(
+            `Application price ${declaredPrice.price.universalIdentifier} of workspace ${workspaceId} has no catalog entry yet`,
           );
+
+          return [];
         }
 
-        this.logger.warn(
-          `Application price ${declaredPrice.price.universalIdentifier} of workspace ${workspaceId} has no catalog entry yet`,
-        );
+        const quantity = computeApplicationPriceQuantity({
+          per: declaredPrice.price.per,
+          workspaceMemberCount,
+        });
 
-        return [];
-      }
-
-      const quantity = computeApplicationPriceQuantity({
-        per: declaredPrice.price.per,
-        workspaceMemberCount,
-      });
-
-      return quantity > 0 ? [{ billingProduct, quantity }] : [];
-    });
+        return quantity > 0 ? [{ billingProduct, quantity }] : [];
+      },
+    );
   }
 
   async createMissingProducts(workspaceId: string): Promise<void> {
@@ -114,21 +111,12 @@ export class BillingApplicationProductService {
       return;
     }
 
-    const billingProducts = await this.findBillingProducts(declaredPrices);
+    const catalogEntries = await this.findCatalogEntries(declaredPrices);
 
-    const missingDeclaredPrices = declaredPrices.filter(
-      (declaredPrice) =>
-        !hasEveryIntervalPrice(
-          billingProducts.find(
-            ({ stripeProductId }) =>
-              stripeProductId ===
-              buildApplicationStripeProductId(declaredPrice),
-          ),
-        ),
-    );
-
-    for (const declaredPrice of missingDeclaredPrices) {
-      await this.createProduct(declaredPrice);
+    for (const { declaredPrice, billingProduct } of catalogEntries) {
+      if (!isDefined(billingProduct)) {
+        await this.createProduct(declaredPrice);
+      }
     }
   }
 
@@ -157,16 +145,37 @@ export class BillingApplicationProductService {
     return collectDeclaredApplicationPrices({ applications });
   }
 
-  private async findBillingProducts(
+  private async findCatalogEntries(
     declaredPrices: DeclaredApplicationPrice[],
-  ): Promise<BillingProductEntity[]> {
-    return await this.billingProductRepository.find({
+  ): Promise<
+    {
+      declaredPrice: DeclaredApplicationPrice;
+      stripeProductId: string;
+      billingProduct: BillingProductEntity | undefined;
+    }[]
+  > {
+    const billingProducts = await this.billingProductRepository.find({
       where: {
         stripeProductId: In(
           declaredPrices.map(buildApplicationStripeProductId),
         ),
       },
       relations: ['billingPrices'],
+    });
+
+    return declaredPrices.map((declaredPrice) => {
+      const stripeProductId = buildApplicationStripeProductId(declaredPrice);
+      const billingProduct = billingProducts.find(
+        (product) => product.stripeProductId === stripeProductId,
+      );
+
+      return {
+        declaredPrice,
+        stripeProductId,
+        billingProduct: hasEveryIntervalPrice(billingProduct)
+          ? billingProduct
+          : undefined,
+      };
     });
   }
 
