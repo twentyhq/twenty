@@ -5717,7 +5717,7 @@ input UpdateSkillInput {
 }
 
 input UpdateTabPresenceInput {
-  state: String!
+  status: String!
   tabId: String!
 }
 

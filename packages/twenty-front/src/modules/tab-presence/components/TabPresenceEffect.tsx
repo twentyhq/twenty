@@ -2,56 +2,56 @@ import { useMutation } from '@apollo/client/react';
 import { useEffect, useState } from 'react';
 import {
   TAB_PRESENCE_HEARTBEAT_INTERVAL_MS,
-  TAB_PRESENCE_STATE,
-  type TabPresenceState,
+  TAB_PRESENCE_STATUS,
+  type TabPresenceStatus,
 } from 'twenty-shared/constants';
 import { v4 as uuidv4 } from 'uuid';
 
-import { UPDATE_TAB_PRESENCE } from '@/tab-presence/graphql/mutations/updateTabPresence';
+import { UpdateTabPresenceDocument } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
-const getCurrentTabPresenceState = (): TabPresenceState =>
+const getCurrentTabPresenceStatus = (): TabPresenceStatus =>
   document.visibilityState === 'visible' && document.hasFocus()
-    ? TAB_PRESENCE_STATE.FOCUSED
-    : TAB_PRESENCE_STATE.OPEN;
+    ? TAB_PRESENCE_STATUS.FOCUSED
+    : TAB_PRESENCE_STATUS.OPEN;
 
 export const TabPresenceEffect = () => {
   const [tabId] = useState(() => uuidv4());
-  const [updateTabPresence] = useMutation(UPDATE_TAB_PRESENCE);
+  const [updateTabPresence] = useMutation(UpdateTabPresenceDocument);
 
   useEffect(() => {
     let isPageHidden = false;
 
-    const reportTabPresence = (state: TabPresenceState) => {
+    const reportTabPresence = (status: TabPresenceStatus) => {
       if (isPageHidden) {
         return;
       }
 
       updateTabPresence({
-        variables: { input: { tabId, state } },
+        variables: { input: { tabId, status } },
         context: { fetchOptions: { keepalive: true } },
       }).catch(logError);
     };
 
-    const reportCurrentState = () =>
-      reportTabPresence(getCurrentTabPresenceState());
-    const reportFocused = () => reportTabPresence(TAB_PRESENCE_STATE.FOCUSED);
-    const reportOpen = () => reportTabPresence(TAB_PRESENCE_STATE.OPEN);
+    const reportCurrentStatus = () =>
+      reportTabPresence(getCurrentTabPresenceStatus());
+    const reportFocused = () => reportTabPresence(TAB_PRESENCE_STATUS.FOCUSED);
+    const reportOpen = () => reportTabPresence(TAB_PRESENCE_STATUS.OPEN);
 
     const reportPageHidden = () => {
-      reportTabPresence(TAB_PRESENCE_STATE.CLOSED);
+      reportTabPresence(TAB_PRESENCE_STATUS.CLOSED);
       isPageHidden = true;
     };
 
     const reportPageShown = () => {
       isPageHidden = false;
-      reportCurrentState();
+      reportCurrentStatus();
     };
 
-    reportCurrentState();
+    reportCurrentStatus();
 
     const intervalId = setInterval(
-      reportCurrentState,
+      reportCurrentStatus,
       TAB_PRESENCE_HEARTBEAT_INTERVAL_MS,
     );
 
@@ -59,7 +59,7 @@ export const TabPresenceEffect = () => {
     window.addEventListener('blur', reportOpen);
     window.addEventListener('pageshow', reportPageShown);
     window.addEventListener('pagehide', reportPageHidden);
-    document.addEventListener('visibilitychange', reportCurrentState);
+    document.addEventListener('visibilitychange', reportCurrentStatus);
 
     return () => {
       clearInterval(intervalId);
@@ -67,7 +67,7 @@ export const TabPresenceEffect = () => {
       window.removeEventListener('blur', reportOpen);
       window.removeEventListener('pageshow', reportPageShown);
       window.removeEventListener('pagehide', reportPageHidden);
-      document.removeEventListener('visibilitychange', reportCurrentState);
+      document.removeEventListener('visibilitychange', reportCurrentStatus);
     };
   }, [tabId, updateTabPresence]);
 

@@ -355,8 +355,9 @@ export class CacheStorageService {
     const redisClient = this.getRedisClient();
 
     if (!isDefined(redisClient)) {
-      throw new Error(
+      throw new CacheStorageException(
         'sortedSetRangeByScore is only supported with Redis cache',
+        CacheStorageExceptionCode.REDIS_CACHE_REQUIRED,
       );
     }
 

@@ -37,7 +37,7 @@ export class TabPresenceResolver {
 
   @Mutation(() => Boolean)
   async updateTabPresence(
-    @Args('input') { tabId, state }: UpdateTabPresenceInput,
+    @Args('input') { tabId, status }: UpdateTabPresenceInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthWorkspaceMemberId() workspaceMemberId: string,
   ): Promise<boolean> {
@@ -45,7 +45,7 @@ export class TabPresenceResolver {
       workspaceId: workspace.id,
       workspaceMemberId,
       tabId,
-      state,
+      status,
     });
 
     return true;

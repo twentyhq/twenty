@@ -8142,7 +8142,7 @@ export type UpdateSkillInput = {
 };
 
 export type UpdateTabPresenceInput = {
-  state: Scalars['String']['input'];
+  status: Scalars['String']['input'];
   tabId: Scalars['String']['input'];
 };
 

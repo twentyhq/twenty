@@ -15222,7 +15222,7 @@ export default {
             ]
         },
         "UpdateTabPresenceInput": {
-            "state": [
+            "status": [
                 4
             ],
             "tabId": [

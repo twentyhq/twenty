@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import {
   TAB_PRESENCE_HEARTBEAT_INTERVAL_MS,
-  TAB_PRESENCE_STATE,
-  type TabPresenceState,
+  TAB_PRESENCE_STATUS,
+  type TabPresenceStatus,
 } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -32,12 +32,12 @@ export class TabPresenceService {
     workspaceId,
     workspaceMemberId,
     tabId,
-    state,
+    status,
   }: {
     workspaceId: string;
     workspaceMemberId: string;
     tabId: string;
-    state: TabPresenceState;
+    status: TabPresenceStatus;
   }): Promise<void> {
     const focusedTabKey = getFocusedTabKey(workspaceId, workspaceMemberId);
     const openTabsKey = getOpenTabsKey(workspaceId);
@@ -45,14 +45,14 @@ export class TabPresenceService {
     const now = Date.now();
 
     await Promise.all([
-      state === TAB_PRESENCE_STATE.FOCUSED
+      status === TAB_PRESENCE_STATUS.FOCUSED
         ? this.cacheStorageService.set(focusedTabKey, tabId, FOCUSED_TAB_TTL_MS)
         : this.cacheStorageService.runScript<number>({
             script: UPDATE_OWNED_KEY_LEASE_SCRIPT,
             keys: [focusedTabKey],
             args: [JSON.stringify(tabId), '0'],
           }),
-      state === TAB_PRESENCE_STATE.CLOSED
+      status === TAB_PRESENCE_STATUS.CLOSED
         ? this.cacheStorageService.sortedSetRemove(openTabsKey, [openTab])
         : this.cacheStorageService.runScript<number>({
             script: REFRESH_OPEN_TAB_SCRIPT,

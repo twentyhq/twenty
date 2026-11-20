@@ -9072,7 +9072,7 @@ export interface UpdateRolePayload {canAccessAllAgentChatChannels?: (Scalars['Bo
 
 export interface UpdateSkillInput {content?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),id: Scalars['UUID'],isActive?: (Scalars['Boolean'] | null),label?: (Scalars['String'] | null),name?: (Scalars['String'] | null)}
 
-export interface UpdateTabPresenceInput {state: Scalars['String'],tabId: Scalars['String']}
+export interface UpdateTabPresenceInput {status: Scalars['String'],tabId: Scalars['String']}
 
 export interface UpdateTimelineActivityTypeInput {icon?: (Scalars['String'] | null),id: Scalars['UUID'],isActive?: (Scalars['Boolean'] | null),label?: (Scalars['String'] | null),translations?: (MetadataTranslationOverrideInput[] | null)}
 
