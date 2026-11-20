@@ -16,6 +16,7 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
+  In,
   IsNull,
   type DeepPartial,
   type FindOptionsWhere,
@@ -26,6 +27,7 @@ import { v4 } from 'uuid';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { shouldRefreshApplicationRegistrationOnInstall } from 'src/engine/core-modules/application/application-install/utils/should-refresh-application-registration-on-install.util';
+import { type BundledApplication } from 'src/engine/core-modules/application/application-bundled/types/bundled-application.type';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { MARKETPLACE_FEATURED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-featured-applications.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
@@ -102,7 +104,7 @@ export type UpsertApplicationRegistrationFromCatalogParams = {
   universalIdentifier: string;
   name: string;
   sourceType: ApplicationRegistrationSourceType;
-  sourcePackage: string;
+  sourcePackage: string | null;
   latestAvailableVersion: string | null;
   manifest: Manifest;
 };
@@ -118,6 +120,7 @@ export type ApplicationRegistrationCatalogCard = {
   category: string | null;
   logoUrl: string | null;
   requiredServerVersionRange: string | null;
+  hasMcpServers: boolean;
 };
 
 @Injectable()
@@ -942,6 +945,42 @@ export class ApplicationRegistrationService {
     });
   }
 
+  async upsertBundled({
+    version,
+    manifest,
+  }: Pick<
+    BundledApplication,
+    'version' | 'manifest'
+  >): Promise<ApplicationRegistrationEntity | null> {
+    const params: UpsertApplicationRegistrationFromCatalogParams = {
+      universalIdentifier: manifest.application.universalIdentifier,
+      name: manifest.application.displayName,
+      sourceType: ApplicationRegistrationSourceType.BUNDLED,
+      sourcePackage: null,
+      latestAvailableVersion: version,
+      manifest,
+    };
+
+    const existing =
+      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
+        params.universalIdentifier,
+      );
+
+    if (!isDefined(existing)) {
+      return this.createFromCatalog(params, { isListed: true });
+    }
+
+    if (existing.sourceType !== ApplicationRegistrationSourceType.BUNDLED) {
+      this.logger.warn(
+        `Skipping bundled application ${params.name}: universal identifier ${params.universalIdentifier} is registered from source ${existing.sourceType}`,
+      );
+
+      return null;
+    }
+
+    return this.updateFromCatalog(existing, params);
+  }
+
   private async updateFromCatalog(
     existing: ApplicationRegistrationEntity,
     params: UpsertApplicationRegistrationFromCatalogParams,
@@ -1093,7 +1132,10 @@ export class ApplicationRegistrationService {
         'manifest',
       ],
       where: {
-        sourceType: ApplicationRegistrationSourceType.NPM,
+        sourceType: In([
+          ApplicationRegistrationSourceType.NPM,
+          ApplicationRegistrationSourceType.BUNDLED,
+        ]),
       },
     });
 
@@ -1110,6 +1152,7 @@ export class ApplicationRegistrationService {
         this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
       requiredServerVersionRange:
         registration.manifest?.application?.requiredServerVersionRange ?? null,
+      hasMcpServers: isNonEmptyArray(registration.manifest?.mcpServers),
     }));
   }
 

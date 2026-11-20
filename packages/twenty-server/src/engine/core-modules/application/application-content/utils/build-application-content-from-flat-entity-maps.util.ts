@@ -34,6 +34,7 @@ export type ApplicationContentFlatEntityMaps = Pick<
   | 'flatPermissionFlagMaps'
   | 'flatRolePermissionFlagMaps'
   | 'flatConnectionProviderMaps'
+  | 'flatMcpServerMaps'
 >;
 
 export const APPLICATION_CONTENT_FLAT_ENTITY_MAPS_KEYS = [
@@ -58,6 +59,7 @@ export const APPLICATION_CONTENT_FLAT_ENTITY_MAPS_KEYS = [
   'flatPermissionFlagMaps',
   'flatRolePermissionFlagMaps',
   'flatConnectionProviderMaps',
+  'flatMcpServerMaps',
 ] as const satisfies (keyof ApplicationContentFlatEntityMaps)[];
 
 // Workspace caches load soft-deleted rows too
@@ -408,6 +410,14 @@ export const buildApplicationContentFromFlatEntityMaps = ({
       label: connectionProvider.displayName,
       tag: connectionProvider.type,
     })),
+    mcpServers: findOwned(flatEntityMaps.flatMcpServerMaps).map(
+      (mcpServer) => ({
+        id: mcpServer.id,
+        universalIdentifier: mcpServer.universalIdentifier,
+        label: mcpServer.label,
+        description: mcpServer.url,
+      }),
+    ),
     publicAssets: [],
     translations: [],
   };
