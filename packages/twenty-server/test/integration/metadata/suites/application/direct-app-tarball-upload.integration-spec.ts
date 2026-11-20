@@ -12,6 +12,9 @@ import {
   createAppTarballUpload,
 } from 'test/integration/metadata/suites/application/utils/create-app-tarball-upload.util';
 import { putApplicationFileUploadTarget } from 'test/integration/metadata/suites/application/utils/put-application-file-upload-target.util';
+import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
+import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
+import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
@@ -844,41 +847,26 @@ describe('Direct app tarball upload', () => {
     beforeAll(async () => {
       originalMemberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
 
-      const createRoleResponse = await makeMetadataApiRequest({
-        query: gql`
-          mutation CreateOneRole {
-            createOneRole(
-              createRoleInput: {
-                label: "App Publisher"
-                canUpdateAllSettings: false
-                canReadAllObjectRecords: true
-                canUpdateAllObjectRecords: false
-                canSoftDeleteAllObjectRecords: false
-                canDestroyAllObjectRecords: false
-              }
-            ) {
-              id
-            }
-          }
-        `,
+      const { data } = await createOneRole({
+        input: {
+          label: 'App Publisher',
+          canUpdateAllSettings: false,
+          canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: false,
+          canSoftDeleteAllObjectRecords: false,
+          canDestroyAllObjectRecords: false,
+        },
+        expectToFail: false,
       });
 
-      customRoleId = createRoleResponse.body.data.createOneRole.id;
+      customRoleId = data.createOneRole.id;
 
-      await makeMetadataApiRequest({
-        query: gql`
-          mutation UpsertPermissionFlags($roleId: UUID!) {
-            upsertPermissionFlags(
-              upsertPermissionFlagsInput: {
-                roleId: $roleId
-                permissionFlagKeys: ["${PermissionFlagType.API_KEYS_AND_WEBHOOKS}"]
-              }
-            ) {
-              id
-            }
-          }
-        `,
-        variables: { roleId: customRoleId },
+      await upsertPermissionFlags({
+        input: {
+          roleId: customRoleId,
+          permissionFlagKeys: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
+        },
+        expectToFail: false,
       });
     });
 
@@ -891,13 +879,9 @@ describe('Direct app tarball upload', () => {
         expectToFail: false,
       });
 
-      await makeMetadataApiRequest({
-        query: gql`
-          mutation DeleteOneRole($roleId: UUID!) {
-            deleteOneRole(roleId: $roleId)
-          }
-        `,
-        variables: { roleId: customRoleId },
+      await deleteOneRole({
+        input: { idToDelete: customRoleId },
+        expectToFail: false,
       });
     });
 
