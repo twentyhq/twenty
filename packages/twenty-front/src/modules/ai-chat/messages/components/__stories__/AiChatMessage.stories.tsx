@@ -16,6 +16,7 @@ import {
   type ExtendedUIMessage,
 } from 'twenty-shared/ai';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatMessage } from '@/ai-chat/messages/components/AiChatMessage';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -972,7 +973,7 @@ export const SendingThenSentReceipt: Story = {
 };
 
 export const LongOwnMessageWithReceipt: Story = {
-  parameters: { isInboxEnabled: true },
+  parameters: { isInboxEnabled: true, messages: [mockLongUserMessage] },
   args: { messageId: mockLongUserMessage.id },
   beforeEach: () =>
     seedReadPositions([
@@ -989,6 +990,18 @@ export const LongOwnMessageWithReceipt: Story = {
     );
     await expect(toggle.getBoundingClientRect().right).toBeLessThanOrEqual(
       receipt.getBoundingClientRect().left,
+    );
+
+    const receiptCenterInPx =
+      (receipt.getBoundingClientRect().top +
+        receipt.getBoundingClientRect().bottom) /
+      2;
+
+    await expect(receiptCenterInPx).toBeGreaterThan(
+      toggle.getBoundingClientRect().top,
+    );
+    await expect(receiptCenterInPx).toBeLessThan(
+      toggle.getBoundingClientRect().bottom,
     );
   },
 };
@@ -1254,13 +1267,15 @@ const mockUserMessageWithManyImages: ExtendedUIMessage = {
   role: 'user',
   parts: [
     { type: 'text', text: 'All the photos from the offsite.' },
-    ...[1, 2, 3, 4, 5, 6].map((photoNumber): AiChatFileUIPart => ({
-      type: 'file',
-      fileId: `file-photo-${photoNumber}`,
-      filename: `photo-${photoNumber}.png`,
-      mediaType: 'image/png',
-      url: IMAGE_URL_MOCK,
-    })),
+    ...[1, 2, 3, 4, 5, 6].map(
+      (photoNumber): AiChatFileUIPart => ({
+        type: 'file',
+        fileId: `file-photo-${photoNumber}`,
+        filename: `photo-${photoNumber}.png`,
+        mediaType: 'image/png',
+        url: IMAGE_URL_MOCK,
+      }),
+    ),
   ],
   metadata: {
     createdAt: MOCKED_DATE,
@@ -1318,13 +1333,15 @@ const getUserMessageWithImagesMock = ({
   role: 'user',
   parts: [
     { type: 'text', text },
-    ...images.map(({ filename, width, height }): AiChatFileUIPart => ({
-      type: 'file',
-      fileId: `file-${filename}`,
-      filename,
-      mediaType: 'image/png',
-      url: getSizedImageUrlMock({ width, height }),
-    })),
+    ...images.map(
+      ({ filename, width, height }): AiChatFileUIPart => ({
+        type: 'file',
+        fileId: `file-${filename}`,
+        filename,
+        mediaType: 'image/png',
+        url: getSizedImageUrlMock({ width, height }),
+      }),
+    ),
   ],
   metadata: {
     createdAt: MOCKED_DATE,
@@ -1395,12 +1412,24 @@ export const MessagesWithImages: Story = {
 
       await expect(image).toBeVisible();
 
-      const ownTextToImageRightEdgeGapInPx =
-        image.getBoundingClientRect().right -
-        canvas.getByText(text).getBoundingClientRect().right;
+      const textElement = canvas.getByText(text);
+      const messageRow = textElement.closest<HTMLElement>(
+        '[data-agent-chat-message-id]',
+      );
+      const receipts = isDefined(messageRow)
+        ? within(messageRow).queryAllByRole('img', {
+            name: /^(Sending|Sent|Read)$/,
+          })
+        : [];
+      const ownContentRightEdgeInPx = Math.max(
+        textElement.getBoundingClientRect().right,
+        ...receipts.map((receipt) => receipt.getBoundingClientRect().right),
+      );
+      const ownContentToImageRightEdgeGapInPx =
+        image.getBoundingClientRect().right - ownContentRightEdgeInPx;
 
-      await expect(ownTextToImageRightEdgeGapInPx).toBeGreaterThanOrEqual(0);
-      await expect(ownTextToImageRightEdgeGapInPx).toBeLessThan(16);
+      await expect(ownContentToImageRightEdgeGapInPx).toBeGreaterThanOrEqual(0);
+      await expect(ownContentToImageRightEdgeGapInPx).toBeLessThan(16);
     }
 
     const teammateImage = await canvas.findByRole('img', {

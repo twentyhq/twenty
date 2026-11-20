@@ -22,8 +22,7 @@ import { AiChatMessageReceipt } from '@/ai-chat/messages/components/AiChatMessag
 import { ChatMessageAttachments } from '@/chat/components/ChatMessageAttachments';
 import { ChatMessageTime } from '@/chat/components/ChatMessageTime';
 import { ChatMessageTimestamp } from '@/chat/components/ChatMessageTimestamp';
-import { StyledChatMessageBubbleContent } from '@/chat/components/StyledChatMessageBubbleContent';
-import { StyledChatMessageMeta } from '@/chat/components/StyledChatMessageMeta';
+import { ChatMessageBubbleContent } from '@/chat/components/ChatMessageBubbleContent';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { StyledChatMessageBubble } from '@/chat/components/StyledChatMessageBubble';
 import { StyledChatMessageFooter } from '@/chat/components/StyledChatMessageFooter';
@@ -72,9 +71,12 @@ const StyledMessageContainer = styled.div<{
 
 const StyledMessageRow = styled(StyledChatMessageRow)<{
   isGroupedWithNext: boolean;
+  hasTimeBeforeNext: boolean;
 }>`
-  margin-bottom: ${({ isGroupedWithNext }) =>
-    isGroupedWithNext ? `calc(-1 * ${themeCssVariables.spacing[1.5]})` : '0'};
+  margin-bottom: ${({ isGroupedWithNext, hasTimeBeforeNext }) =>
+    isGroupedWithNext && !hasTimeBeforeNext
+      ? `calc(-1 * ${themeCssVariables.spacing[1.5]})`
+      : '0'};
 `;
 
 const StyledGroupedMessageLine = styled.div<{ isRightAligned: boolean }>`
@@ -84,12 +86,6 @@ const StyledGroupedMessageLine = styled.div<{ isRightAligned: boolean }>`
     isRightAligned ? 'row-reverse' : 'row'};
   gap: ${themeCssVariables.spacing[2]};
   max-width: 100%;
-  min-width: 0;
-`;
-
-const StyledUserMessageContent = styled.div`
-  display: flex;
-  flex-direction: column;
   min-width: 0;
 `;
 
@@ -107,11 +103,6 @@ const AiChatUserMessageText = ({
   meta,
 }: AiChatUserMessageTextProps) => {
   const sentMessageHandOffRef = useAiChatSentMessageHandOff(messageId);
-  const content = (
-    <AiChatUserMessageCollapsibleContent>
-      {children}
-    </AiChatUserMessageCollapsibleContent>
-  );
 
   return (
     <StyledChatMessageBubble
@@ -119,14 +110,11 @@ const AiChatUserMessageText = ({
       isOtherMember={isOtherMember}
       ref={sentMessageHandOffRef}
     >
-      {isDefined(meta) ? (
-        <StyledChatMessageBubbleContent>
-          <StyledUserMessageContent>{content}</StyledUserMessageContent>
-          {meta}
-        </StyledChatMessageBubbleContent>
-      ) : (
-        content
-      )}
+      <ChatMessageBubbleContent meta={meta}>
+        <AiChatUserMessageCollapsibleContent>
+          {children}
+        </AiChatUserMessageCollapsibleContent>
+      </ChatMessageBubbleContent>
     </StyledChatMessageBubble>
   );
 };
@@ -213,6 +201,8 @@ export const AiChatMessage = ({
   const isOtherMemberMessage = isAiChatInboxEnabled && !isOwnMessage;
   const hasHeader = isOtherMemberMessage && !isGroupedWithPrevious;
   const hasTimeInBubble = isAiChatInboxEnabled && isOwnMessage && isUser;
+  const hasVisibleTimeInBubble =
+    hasTimeInBubble && !aiChatMessageGroupPosition.isTimeSharedWithNext;
   const hasFooterTimestamp =
     !isOtherMemberMessage && !hasTimeInBubble && !isGroupedWithNext;
   const hasReactions =
@@ -280,12 +270,11 @@ export const AiChatMessage = ({
           messageId={messageId}
           isOtherMember={isAiChatInboxEnabled && !isOwnMessage}
           meta={
-            hasTimeInBubble &&
-            !aiChatMessageGroupPosition.isTimeSharedWithNext ? (
-              <StyledChatMessageMeta>
+            hasVisibleTimeInBubble ? (
+              <>
                 <ChatMessageTime date={createdAt} />
                 <AiChatMessageReceipt messageId={messageId} />
-              </StyledChatMessageMeta>
+              </>
             ) : undefined
           }
         >
@@ -316,6 +305,7 @@ export const AiChatMessage = ({
       <StyledMessageRow
         isRightAligned={isRightAligned}
         isGroupedWithNext={isGroupedWithNext}
+        hasTimeBeforeNext={hasVisibleTimeInBubble}
         data-agent-chat-message-id={messageId}
       >
         {hasHeader && (
