@@ -14777,6 +14777,11 @@ msgstr "Aquesta aplicació requereix una versió més recent del servidor Twenty
 msgid "This app requires a newer version than this workspace has finished upgrading to. Please try again once the workspace upgrade completes."
 msgstr "Aquesta aplicació requereix una versió més recent de la que aquest espai de treball ha acabat d'actualitzar. Torna-ho a provar un cop s'hagi completat l'actualització de l'espai de treball."
 
+#. js-lingui-id: MZz+Ud
+#: src/engine/core-modules/application/utils/to-application-billing-prices-or-throw.util.ts
+msgid "This application declares invalid prices"
+msgstr ""
+
 #. js-lingui-id: ecIX3O
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This application is already owned by a workspace."

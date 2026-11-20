@@ -14777,6 +14777,11 @@ msgstr "אפליקציה זו דורשת גרסה חדשה יותר של שרת 
 msgid "This app requires a newer version than this workspace has finished upgrading to. Please try again once the workspace upgrade completes."
 msgstr "אפליקציה זו דורשת גרסה חדשה יותר מזו שמרחב עבודה זה השלים את השדרוג אליה. אנא נסה שוב לאחר שהשדרוג של מרחב העבודה יושלם."
 
+#. js-lingui-id: MZz+Ud
+#: src/engine/core-modules/application/utils/to-application-billing-prices-or-throw.util.ts
+msgid "This application declares invalid prices"
+msgstr ""
+
 #. js-lingui-id: ecIX3O
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This application is already owned by a workspace."
