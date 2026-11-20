@@ -72,10 +72,13 @@ describe('Account team access (integration)', () => {
     return id;
   };
 
-  const findFieldMetadataId = async (
-    objectMetadataId: string,
-    name: string,
-  ) => {
+  const findFieldMetadataId = async ({
+    objectMetadataId,
+    name,
+  }: {
+    objectMetadataId: string;
+    name: string;
+  }) => {
     const [{ id }] = await query<{ id: string }>(
       `SELECT "id" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = $2`,
       [objectMetadataId, name],
@@ -298,11 +301,17 @@ describe('Account team access (integration)', () => {
     const access: Record<string, 'Edit' | 'Read' | 'None'> = {};
 
     for (const opportunityId of opportunityIds) {
-      access[opportunityId] = !readableIds.includes(opportunityId)
-        ? 'None'
-        : (await canEditOpportunity({ login, opportunityId }))
-          ? 'Edit'
-          : 'Read';
+      if (!readableIds.includes(opportunityId)) {
+        access[opportunityId] = 'None';
+        continue;
+      }
+
+      access[opportunityId] = (await canEditOpportunity({
+        login,
+        opportunityId,
+      }))
+        ? 'Edit'
+        : 'Read';
     }
 
     return access;
@@ -447,14 +456,14 @@ describe('Account team access (integration)', () => {
       values: ['WALL_ONE', 'WALL_TWO'],
       type: FieldMetadataType.MULTI_SELECT,
     });
-    metadataIds.opportunityCompany = await findFieldMetadataId(
-      metadataIds.opportunity,
-      'company',
-    );
-    metadataIds.workspaceMemberId = await findFieldMetadataId(
-      metadataIds.workspaceMember,
-      'id',
-    );
+    metadataIds.opportunityCompany = await findFieldMetadataId({
+      objectMetadataId: metadataIds.opportunity,
+      name: 'company',
+    });
+    metadataIds.workspaceMemberId = await findFieldMetadataId({
+      objectMetadataId: metadataIds.workspaceMember,
+      name: 'id',
+    });
 
     const { data } = await createOneRole({
       expectToFail: false,
