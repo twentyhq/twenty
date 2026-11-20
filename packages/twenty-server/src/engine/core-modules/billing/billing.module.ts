@@ -22,7 +22,6 @@ import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/e
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { BillingApplicationConnectedAccountListener } from 'src/engine/core-modules/billing/listeners/billing-application-connected-account.listener';
 import { BillingApplicationListener } from 'src/engine/core-modules/billing/listeners/billing-application.listener';
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
 import { BillingApplicationProductService } from 'src/engine/core-modules/billing/services/billing-application-product.service';
@@ -96,7 +95,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingSubscriptionItemResolver,
     BillingPlanService,
     BillingWorkspaceMemberListener,
-    BillingApplicationConnectedAccountListener,
     BillingService,
     BillingPartnerCodeService,
     BillingRestApiExceptionFilter,
