@@ -23,17 +23,17 @@ import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUp
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
-import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/RecordLevelPermissionPredicateFieldTypes';
+import { RULE_CONDITION_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/RuleConditionFieldTypes';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
-type UseRecordLevelPermissionFilterActionsProps = {
+type UseRuleConditionFilterActionsProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
 };
 
-export const useRecordLevelPermissionFilterActions = ({
+export const useRuleConditionFilterActions = ({
   objectMetadataItem,
-}: UseRecordLevelPermissionFilterActionsProps) => {
+}: UseRuleConditionFilterActionsProps) => {
   const { upsertRecordFilter } = useUpsertRecordFilter();
   const { upsertRecordFilterGroup } = useUpsertRecordFilterGroup();
   const { createEmptyRecordFilterFromFieldMetadataItem } =
@@ -62,9 +62,7 @@ export const useRecordLevelPermissionFilterActions = ({
     const availableFieldMetadataItemsForRls =
       availableFieldMetadataItemsForFilter.filter((fieldMetadataItem) => {
         return (
-          RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES.includes(
-            fieldMetadataItem.type,
-          ) ||
+          RULE_CONDITION_FIELD_TYPES.includes(fieldMetadataItem.type) ||
           (fieldMetadataItem.type === FieldMetadataType.RELATION &&
             fieldMetadataItem.relation?.targetObjectMetadata.nameSingular ===
               StandardObjectNameSingular.WorkspaceMember)

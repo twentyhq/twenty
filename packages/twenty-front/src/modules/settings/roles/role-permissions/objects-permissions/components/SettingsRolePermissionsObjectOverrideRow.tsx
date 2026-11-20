@@ -1,4 +1,3 @@
-import { isFieldPermissionRestrictive } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/utils/isFieldPermissionRestrictive';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsRolePermissionsObjectOverridePanel } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel';
@@ -6,6 +5,7 @@ import { OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/ro
 import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/objects-permissions/hooks/useSettingsRoleObjectOverrides';
 import { getObjectOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperations';
 import { getObjectRowLevelPermissionRules } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionRules';
+import { hasObjectFieldRestriction } from '@/settings/roles/role-permissions/objects-permissions/utils/hasObjectFieldRestriction';
 import { getObjectOperationsSummary } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperationsSummary';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsRoleExpandedObjectOverrideIdsFamilyState } from '@/settings/roles/states/settingsRoleExpandedObjectOverrideIdsFamilyState';
@@ -58,11 +58,10 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
       objectMetadataId: objectMetadataItem.id,
     }).length > 0;
 
-  const hasFieldRestriction = (settingsDraftRole.fieldPermissions ?? []).some(
-    (fieldPermission) =>
-      fieldPermission.objectMetadataId === objectMetadataItem.id &&
-      isFieldPermissionRestrictive(fieldPermission),
-  );
+  const hasFieldRestriction = hasObjectFieldRestriction({
+    role: settingsDraftRole,
+    objectMetadataId: objectMetadataItem.id,
+  });
 
   const operations = getObjectOperations({
     role: settingsDraftRole,

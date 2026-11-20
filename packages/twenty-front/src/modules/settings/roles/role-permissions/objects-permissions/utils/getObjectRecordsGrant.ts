@@ -1,6 +1,7 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type Role } from '~/generated-metadata/graphql';
 
-export const resolveSettingsRoleObjectRecordsGrant = ({
+export const getObjectRecordsGrant = ({
   role,
   objectMetadataId,
 }: {
@@ -12,11 +13,15 @@ export const resolveSettingsRoleObjectRecordsGrant = ({
     | 'canSoftDeleteAllObjectRecords'
     | 'canDestroyAllObjectRecords'
   >;
-  objectMetadataId: string;
+  objectMetadataId?: string;
 }) => {
-  const objectPermission = role.objectPermissions?.find(
-    (rolePermission) => rolePermission.objectMetadataId === objectMetadataId,
-  );
+  const objectPermission = isDefined(objectMetadataId)
+    ? role.objectPermissions?.find(
+        (rolePermission) =>
+          rolePermission.objectMetadataId === objectMetadataId,
+      )
+    : undefined;
+
   return {
     canReadRecords:
       objectPermission?.canReadObjectRecords ?? role.canReadAllObjectRecords,
