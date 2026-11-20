@@ -50,7 +50,6 @@ export const validateWorkflowStepParams = ({
       issues.push(
         ...getUnsupportedStepFilterOperandIssues({
           stepFilters: triggerResult.data.settings.filter?.stepFilters ?? [],
-          subject: 'The trigger',
         }),
       );
     }
@@ -97,8 +96,7 @@ export const validateWorkflowStepParams = ({
       issues.push(
         ...getUnsupportedStepFilterOperandIssues({
           stepFilters: parsedStep.settings.input.stepFilters,
-          subject: `Step "${step.name ?? step.id}"`,
-          stepId: step.id,
+          step,
         }),
       );
     }
