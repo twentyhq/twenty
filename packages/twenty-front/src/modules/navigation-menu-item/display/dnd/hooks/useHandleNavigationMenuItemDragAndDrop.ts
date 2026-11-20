@@ -149,14 +149,19 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       sortedItems: getSortedItems(),
     });
 
+    if (!isDefined(placement)) {
+      return;
+    }
+
+    const isChangingParent = placement.parentId !== undefined;
+
     if (
-      !isDefined(placement) ||
-      (placement.parentId !== undefined &&
-        !canPlaceNavigationMenuItemInContainer({
-          itemId: draggableId,
-          containerId: placement.parentId,
-          items: allItems,
-        }))
+      isChangingParent &&
+      !canPlaceNavigationMenuItemInContainer({
+        itemId: draggableId,
+        containerId: placement.parentId ?? null,
+        items: allItems,
+      })
     ) {
       return;
     }
