@@ -114,7 +114,7 @@ export class McpCoreController {
     await writeMcpWebResponse({
       response,
       res,
-      clientAcceptsEventStream:
+      isEventStreamAccepted:
         request.header('accept')?.includes('text/event-stream') ?? false,
     });
   }

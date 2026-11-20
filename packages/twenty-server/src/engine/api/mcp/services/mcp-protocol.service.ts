@@ -278,12 +278,17 @@ export class McpProtocolService {
     });
 
     server.setRequestHandler('tools/list', () =>
-      this.runToolRequest(context, () => this.handleToolsList(context)),
+      this.runToolRequest({
+        context,
+        handleToolRequest: () => this.handleToolsList(context),
+      }),
     );
     server.setRequestHandler('tools/call', (request, serverContext) =>
-      this.runToolRequest(context, () =>
-        this.handleToolsCall({ request, serverContext, context }),
-      ),
+      this.runToolRequest({
+        context,
+        handleToolRequest: () =>
+          this.handleToolsCall({ request, serverContext, context }),
+      }),
     );
     server.setRequestHandler('resources/list', async () => ({
       resources: [],
@@ -293,10 +298,13 @@ export class McpProtocolService {
     return server;
   }
 
-  private async runToolRequest<TResult>(
-    context: McpCoreQueryContext,
-    handleToolRequest: () => Promise<TResult>,
-  ): Promise<TResult> {
+  private async runToolRequest<TResult>({
+    context,
+    handleToolRequest,
+  }: {
+    context: McpCoreQueryContext;
+    handleToolRequest: () => Promise<TResult>;
+  }): Promise<TResult> {
     try {
       // No tool runs without a workspace member, so a user still onboarding is refused upfront
       if (context.authContext.type === 'pendingActivationUser') {
@@ -308,7 +316,7 @@ export class McpProtocolService {
 
       return await handleToolRequest();
     } catch (error) {
-      const exception = this.reportException(context, error);
+      const exception = this.reportException({ context, error });
 
       // The SDK would send any other error's message as is, internal details included
       const { code, message } = buildJsonRpcError(exception);
@@ -328,11 +336,17 @@ export class McpProtocolService {
         toolMode: context.toolMode,
       });
     } catch (error) {
-      throw this.reportException(context, error);
+      throw this.reportException({ context, error });
     }
   }
 
-  private reportException(context: McpCoreQueryContext, error: unknown): Error {
+  private reportException({
+    context,
+    error,
+  }: {
+    context: McpCoreQueryContext;
+    error: unknown;
+  }): Error {
     const exception = error instanceof Error ? error : new Error(String(error));
 
     handleException({

@@ -44,7 +44,7 @@ describe('writeMcpWebResponse', () => {
     await writeMcpWebResponse({
       response: buildEventStreamResponse(),
       res,
-      clientAcceptsEventStream: true,
+      isEventStreamAccepted: true,
     });
 
     expect(sent.statusCode).toBe(200);
@@ -58,7 +58,7 @@ describe('writeMcpWebResponse', () => {
     await writeMcpWebResponse({
       response: buildEventStreamResponse(),
       res,
-      clientAcceptsEventStream: false,
+      isEventStreamAccepted: false,
     });
 
     expect(sent.jsonBody).toEqual({ jsonrpc: '2.0', id: 1, result: {} });
@@ -73,7 +73,7 @@ describe('writeMcpWebResponse', () => {
         headers: { 'content-type': 'application/json' },
       }),
       res,
-      clientAcceptsEventStream: false,
+      isEventStreamAccepted: false,
     });
 
     expect(sent.statusCode).toBe(400);
@@ -86,7 +86,7 @@ describe('writeMcpWebResponse', () => {
     await writeMcpWebResponse({
       response: new Response(null, { status: 202 }),
       res,
-      clientAcceptsEventStream: false,
+      isEventStreamAccepted: false,
     });
 
     expect(sent.statusCode).toBe(202);

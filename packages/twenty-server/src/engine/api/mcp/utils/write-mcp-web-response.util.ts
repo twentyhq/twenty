@@ -12,14 +12,14 @@ const isEventStream = (response: Response) =>
 export const writeMcpWebResponse = async ({
   response,
   res,
-  clientAcceptsEventStream,
+  isEventStreamAccepted,
 }: {
   response: Response;
   res: McpHttpResponseWriter;
-  clientAcceptsEventStream: boolean;
+  isEventStreamAccepted: boolean;
 }): Promise<void> => {
   // Plain HTTP callers, such as the code interpreter's helper, expect a JSON body
-  if (!clientAcceptsEventStream && isEventStream(response)) {
+  if (!isEventStreamAccepted && isEventStream(response)) {
     const message = findJsonRpcResponseInEventStream(await response.text());
 
     res.status(response.status);
