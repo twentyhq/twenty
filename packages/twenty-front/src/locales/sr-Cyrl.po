@@ -562,7 +562,7 @@ msgstr "{0} чланова радног простора"
 #. placeholder {0}: tab.name
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 msgid "{0}, {unreadOpenThreadCount} unread"
-msgstr ""
+msgstr "{0}, {unreadOpenThreadCount} непрочитано"
 
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label

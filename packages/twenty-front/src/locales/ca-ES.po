@@ -562,7 +562,7 @@ msgstr "{0} membres de l'espai de treball"
 #. placeholder {0}: tab.name
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 msgid "{0}, {unreadOpenThreadCount} unread"
-msgstr ""
+msgstr "{0}, {unreadOpenThreadCount} sense llegir"
 
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label

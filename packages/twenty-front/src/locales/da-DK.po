@@ -562,7 +562,7 @@ msgstr "{0} arbejdsområdemedlemmer"
 #. placeholder {0}: tab.name
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 msgid "{0}, {unreadOpenThreadCount} unread"
-msgstr ""
+msgstr "{0}, {unreadOpenThreadCount} ulæste"
 
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
