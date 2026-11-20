@@ -1,7 +1,7 @@
 import { getNavigationMenuTabIdsWithChatSections } from '@/navigation-menu-item/display/utils/getNavigationMenuTabIdsWithChatSections';
 
 describe('getNavigationMenuTabIdsWithChatSections', () => {
-  it('keeps the tabs that hold a chat section', () => {
+  it('keeps the tabs, Home included, that hold a chat section', () => {
     expect(
       getNavigationMenuTabIdsWithChatSections([
         { parentId: 'chats-tab', builtInSectionKey: 'aiChatChannels' },
@@ -9,6 +9,6 @@ describe('getNavigationMenuTabIdsWithChatSections', () => {
         { parentId: 'sales-tab', builtInSectionKey: null },
         { parentId: null, builtInSectionKey: 'aiChatRecents' },
       ]),
-    ).toEqual(new Set(['chats-tab']));
+    ).toEqual(new Set(['chats-tab', null]));
   });
 });

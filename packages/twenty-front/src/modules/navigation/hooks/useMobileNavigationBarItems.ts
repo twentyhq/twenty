@@ -129,9 +129,13 @@ export const useMobileNavigationBarItems = (): {
     items: [
       {
         name: 'home',
-        label: t`Home`,
+        label: getNavigationMenuTabAttentionLabel({
+          tabName: t`Home`,
+          attention: getTabChatAttention(null),
+        }),
         Icon: IconHome,
         onClick: () => openHomePageOnTab(null),
+        attention: getTabChatAttention(null),
       },
       ...navigationMenuTabs.map((tab, index): MobileNavigationBarItem => {
         const attention = getTabChatAttention(tab.id);
