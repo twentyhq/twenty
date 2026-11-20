@@ -8,12 +8,11 @@ import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-type AgentChatThreadCoreObjectShowPageProps = CoreObjectShowPageProps;
+type AiChatThreadRecordPageProps = CoreObjectShowPageProps;
 
-// A chat's record page is the chat page, on its own route
-export const AgentChatThreadCoreObjectShowPage = ({
+export const AiChatThreadRecordPage = ({
   objectRecordId,
-}: AgentChatThreadCoreObjectShowPageProps) => {
+}: AiChatThreadRecordPageProps) => {
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
