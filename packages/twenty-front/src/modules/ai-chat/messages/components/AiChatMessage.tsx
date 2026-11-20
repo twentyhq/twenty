@@ -4,7 +4,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useIsCurrentAiChatThreadReadOnly } from '@/ai-chat/threads/hooks/useIsCurrentAiChatThreadReadOnly';
 import { useAiChatSentMessageHandOff } from '@/ai-chat/messages/hooks/useAiChatSentMessageHandOff';
-import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
@@ -163,10 +162,6 @@ export const AiChatMessage = ({
     { threadId },
   );
   const isReadOnly = useIsCurrentAiChatThreadReadOnly();
-  const isDirectMessage = useAtomFamilySelectorValue(
-    aiChatThreadIsDirectMessageFamilySelector,
-    threadId,
-  );
 
   const setAiChatQuotedMessageId = useSetAtomFamilyState(
     aiChatQuotedMessageIdFamilyState,
@@ -306,7 +301,7 @@ export const AiChatMessage = ({
             isSpreadOut={!isAiChatInboxEnabled}
             isRightAligned={shouldMirrorMessageActions}
           >
-            {isAiChatInboxEnabled && !isDirectMessage && (
+            {isAiChatInboxEnabled && (
               <AiChatMessageReactions messageId={messageId} />
             )}
             {!hasHeader && !hasOwnReceipt && (
@@ -316,11 +311,9 @@ export const AiChatMessage = ({
               className="message-actions"
               isRightAligned={shouldMirrorMessageActions}
             >
-              {isAiChatInboxEnabled &&
-                !isDirectMessage &&
-                !isLastMessageStreaming && (
-                  <AiChatMessageReactionPicker messageId={messageId} />
-                )}
+              {isAiChatInboxEnabled && !isLastMessageStreaming && (
+                <AiChatMessageReactionPicker messageId={messageId} />
+              )}
               {canReply && (
                 <LightIconButton
                   aria-label={t`Reply`}
