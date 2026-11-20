@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { aiChatFirstUnreadMessageIdFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatFirstUnreadMessageIdFamilySelector';
 import { areAiChatMessagesGrouped } from '@/ai-chat/messages/utils/areAiChatMessagesGrouped';
+import { isAiChatMessageTimeSharedWithNext } from '@/ai-chat/messages/utils/isAiChatMessageTimeSharedWithNext';
 import { isSilentAiChatMessage } from '@/ai-chat/messages/utils/isSilentAiChatMessage';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
@@ -9,6 +10,7 @@ import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/creat
 type AiChatMessageGroupPosition = {
   isGroupedWithPrevious: boolean;
   isGroupedWithNext: boolean;
+  isTimeSharedWithNext: boolean;
 };
 
 export const aiChatMessageGroupPositionFamilySelector =
@@ -33,24 +35,34 @@ export const aiChatMessageGroupPositionFamilySelector =
         const nextMessage = messages[messageIndex + 1];
 
         if (!isDefined(message)) {
-          return { isGroupedWithPrevious: false, isGroupedWithNext: false };
+          return {
+            isGroupedWithPrevious: false,
+            isGroupedWithNext: false,
+            isTimeSharedWithNext: false,
+          };
         }
+
+        const isGroupedWithNext =
+          isDefined(nextMessage) &&
+          nextMessage.id !== firstUnreadMessageId &&
+          areAiChatMessagesGrouped({
+            previousMessage: message,
+            message: nextMessage,
+          });
 
         return {
           isGroupedWithPrevious:
             isDefined(previousMessage) &&
             message.id !== firstUnreadMessageId &&
             areAiChatMessagesGrouped({ previousMessage, message }),
-          isGroupedWithNext:
-            isDefined(nextMessage) &&
-            nextMessage.id !== firstUnreadMessageId &&
-            areAiChatMessagesGrouped({
-              previousMessage: message,
-              message: nextMessage,
-            }),
+          isGroupedWithNext,
+          isTimeSharedWithNext:
+            isGroupedWithNext &&
+            isAiChatMessageTimeSharedWithNext({ message, nextMessage }),
         };
       },
     areEqual: (previous, next) =>
       previous.isGroupedWithPrevious === next.isGroupedWithPrevious &&
-      previous.isGroupedWithNext === next.isGroupedWithNext,
+      previous.isGroupedWithNext === next.isGroupedWithNext &&
+      previous.isTimeSharedWithNext === next.isTimeSharedWithNext,
   });

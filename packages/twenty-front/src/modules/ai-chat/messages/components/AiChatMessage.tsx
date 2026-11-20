@@ -22,7 +22,6 @@ import { AiChatMessageReactionPicker } from '@/ai-chat/messages/components/AiCha
 import { AiChatMessageReactions } from '@/ai-chat/messages/components/AiChatMessageReactions';
 import { AiChatErrorRenderer } from '@/ai-chat/messages/components/AiChatErrorRenderer';
 import { AiChatMessageReceipt } from '@/ai-chat/messages/components/AiChatMessageReceipt';
-import { aiChatThreadReadPositionsFamilyState } from '@/ai-chat/threads/states/aiChatThreadReadPositionsFamilyState';
 import { ChatMessageAttachments } from '@/chat/components/ChatMessageAttachments';
 import { ChatMessageTime } from '@/chat/components/ChatMessageTime';
 import { ChatMessageTimestamp } from '@/chat/components/ChatMessageTimestamp';
@@ -177,10 +176,6 @@ export const AiChatMessage = ({
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
-  const aiChatThreadReadPositions = useAtomFamilyStateValue(
-    aiChatThreadReadPositionsFamilyState,
-    { threadId },
-  );
   const isReadOnly = useIsCurrentAiChatThreadReadOnly();
   const isDirectMessage = useAtomFamilySelectorValue(
     aiChatThreadIsDirectMessageFamilySelector,
@@ -196,7 +191,7 @@ export const AiChatMessage = ({
     shouldFocusChatEditorFamilyState,
     { threadId },
   );
-  const { isGroupedWithPrevious, isGroupedWithNext } =
+  const { isGroupedWithPrevious, isGroupedWithNext, isTimeSharedWithNext } =
     useAtomFamilySelectorValue(aiChatMessageGroupPositionFamilySelector, {
       threadId,
       messageId,
@@ -230,13 +225,9 @@ export const AiChatMessage = ({
   const createdAt = agentChatMessage.metadata?.createdAt ?? new Date();
   const isOtherMemberMessage = isAiChatInboxEnabled && !isOwnMessage;
   const hasHeader = isOtherMemberMessage && !isGroupedWithPrevious;
-  const hasOwnReceipt =
-    isAiChatInboxEnabled &&
-    isOwnMessage &&
-    isUser &&
-    isDefined(aiChatThreadReadPositions);
+  const hasTimeInBubble = isAiChatInboxEnabled && isOwnMessage && isUser;
   const hasFooterTimestamp =
-    !isOtherMemberMessage && !hasOwnReceipt && !isGroupedWithNext;
+    !isOtherMemberMessage && !hasTimeInBubble && !isGroupedWithNext;
   const hasReactions =
     isAiChatInboxEnabled &&
     !isDirectMessage &&
@@ -361,7 +352,7 @@ export const AiChatMessage = ({
               messageId={messageId}
               isOtherMember={isAiChatInboxEnabled && !isOwnMessage}
               meta={
-                hasOwnReceipt ? (
+                hasTimeInBubble && !isTimeSharedWithNext ? (
                   <StyledChatMessageMeta>
                     <ChatMessageTime date={createdAt} />
                     <AiChatMessageReceipt messageId={messageId} />
