@@ -109,14 +109,9 @@ describe('Impersonation - workspace creation denial (integration)', () => {
     });
   });
 
-  it('should refuse to create a workspace with a playground token minted while impersonating', async () => {
-    const impersonationAccessToken = await getImpersonationAccessToken({
-      userId: USER_DATA_SEED_IDS.TIM,
-      workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
-    });
-
+  it('should refuse to create a workspace with a playground token', async () => {
     const { data: playgroundData } = await generatePlaygroundToken({
-      token: impersonationAccessToken,
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       expectToFail: false,
     });
 

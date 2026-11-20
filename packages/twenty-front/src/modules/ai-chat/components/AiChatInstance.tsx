@@ -5,7 +5,7 @@ import { AiChatPrepromptEffect } from '@/ai-chat/composer/components/AiChatPrepr
 import { AiChatSendMessageEffect } from '@/ai-chat/components/AiChatSendMessageEffect';
 import { AiChatRuntimeContext } from '@/ai-chat/contexts/AiChatRuntimeContext';
 import { useIsAiChatRuntimeEnabled } from '@/ai-chat/hooks/useIsAiChatRuntimeEnabled';
-import { AiChatInstanceContext } from '@/ai-chat/states/contexts/AiChatInstanceContext';
+import { AiChatInstanceContext } from '@/ai-chat/contexts/AiChatInstanceContext';
 
 type AiChatInstanceProps = {
   instanceId: string;

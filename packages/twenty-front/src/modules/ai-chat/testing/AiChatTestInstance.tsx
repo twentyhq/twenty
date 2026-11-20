@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 
 import { AiChatInstanceRegistrationEffect } from '@/ai-chat/components/AiChatInstanceRegistrationEffect';
-import { AiChatInstanceContext } from '@/ai-chat/states/contexts/AiChatInstanceContext';
+import { AiChatInstanceContext } from '@/ai-chat/contexts/AiChatInstanceContext';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 

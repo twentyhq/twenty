@@ -29,12 +29,14 @@ const StyledCardContainer = styled.div`
 type SettingsRolePermissionsObjectLevelRecordLevelSectionProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
   roleId: string;
+  rowLevelPermissionRuleId: string;
   hasOrganizationPlan: boolean;
 };
 
 export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
   objectMetadataItem,
   roleId,
+  rowLevelPermissionRuleId,
   hasOrganizationPlan,
 }: SettingsRolePermissionsObjectLevelRecordLevelSectionProps) => {
   const { t } = useLingui();
@@ -87,6 +89,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
       <StyledContent>
         <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder
           roleId={roleId}
+          rowLevelPermissionRuleId={rowLevelPermissionRuleId}
           objectMetadataItem={objectMetadataItem}
         />
       </StyledContent>

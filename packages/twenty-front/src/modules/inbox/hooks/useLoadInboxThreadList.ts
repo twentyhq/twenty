@@ -7,7 +7,7 @@ import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
 import { INBOX_CHANNEL_THREAD_LIST_PAGE_SIZE } from '@/inbox/constants/InboxChannelThreadListPageSize';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { useAddAiChatThreadParticipants } from '@/ai-chat/threads/hooks/useAddAiChatThreadParticipants';
-import { useCaptureAiChatSession } from '@/ai-chat/hooks/useCaptureAiChatSession';
+import { useCaptureInboxSession } from '@/inbox/hooks/useCaptureInboxSession';
 import { useFetchAiChatThreadsPage } from '@/ai-chat/threads/hooks/useFetchAiChatThreadsPage';
 import { useRefreshAiChatThreadPermissions } from '@/ai-chat/threads/hooks/useRefreshAiChatThreadPermissions';
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
@@ -47,7 +47,7 @@ export const useLoadInboxThreadList = () => {
     useRefreshAiChatThreadPermissions();
   const { addAiChatThreadParticipants } = useAddAiChatThreadParticipants();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const { captureAiChatSession } = useCaptureAiChatSession();
+  const { captureInboxSession } = useCaptureInboxSession();
 
   const fetchThreadsByIds = useCallback(
     async (
@@ -192,7 +192,7 @@ export const useLoadInboxThreadList = () => {
         return undefined;
       }
 
-      const { isSameSession } = captureAiChatSession();
+      const { isSameSession } = captureInboxSession();
       const loadCount = store.get(loadCountAtom) + (isFetchMore ? 0 : 1);
 
       store.set(loadCountAtom, loadCount);
@@ -289,7 +289,7 @@ export const useLoadInboxThreadList = () => {
     },
     [
       addAiChatThreadParticipants,
-      captureAiChatSession,
+      captureInboxSession,
       fetchListPage,
       fetchThreadsByIds,
       refreshAiChatThreadPermissions,

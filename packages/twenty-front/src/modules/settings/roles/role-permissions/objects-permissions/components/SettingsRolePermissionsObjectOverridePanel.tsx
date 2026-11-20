@@ -1,5 +1,8 @@
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useUpsertObjectPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useUpsertObjectPermissionInDraftRole';
+import { SettingsRolePermissionsObjectActionsSelect } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect';
 import { SettingsRolePermissionsObjectFieldsSelect } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect';
 import {
   SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG,
@@ -7,20 +10,26 @@ import {
 } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/objects-permissions/constants/ObjectOverrideTableGridTemplateColumns';
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionKeys';
+import { useRowLevelPermissionRulesInDraftRole } from '@/settings/roles/role-permissions/objects-permissions/hooks/useRowLevelPermissionRulesInDraftRole';
 import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/objects-permissions/hooks/useSettingsRoleObjectOverrides';
 import { getObjectOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperations';
 import { getObjectOperationsWithReadDependency } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectOperationsWithReadDependency';
-import { getObjectRowLevelPermissionPredicates } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionPredicates';
+import { getObjectRowLevelPermissionRules } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionRules';
+import { getRowLevelPermissionRuleLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel';
+import { getRecordsGrantOperations } from '@/settings/roles/role-permissions/objects-permissions/utils/getRecordsGrantOperations';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { SettingsPath } from 'twenty-shared/types';
-import { IconChevronRight } from 'twenty-ui/icon';
+import { isNonEmptyString } from '@sniptt/guards';
+import { SettingsPath, StandardObjectNameSingular } from 'twenty-shared/types';
+import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
 import { Button, Checkbox } from 'twenty-ui/primitives/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -73,11 +82,28 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
 
   const { removeObjectOverride } = useSettingsRoleObjectOverrides(roleId);
 
-  const hasRule =
-    getObjectRowLevelPermissionPredicates({
-      role: settingsDraftRole,
-      objectMetadataId: objectMetadataItem.id,
-    }).length > 0;
+  const { createRule, setRuleOperations } =
+    useRowLevelPermissionRulesInDraftRole(roleId);
+
+  const { objectMetadataItem: workspaceMemberObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
+    });
+
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
+  );
+  const workspaceMemberNameById = new Map(
+    currentWorkspaceMembers.map(({ id, name }) => [
+      id,
+      [name.firstName, name.lastName].filter(isNonEmptyString).join(' '),
+    ]),
+  );
+
+  const rules = getObjectRowLevelPermissionRules({
+    role: settingsDraftRole,
+    objectMetadataId: objectMetadataItem.id,
+  });
 
   const operations = getObjectOperations({
     role: settingsDraftRole,
@@ -117,19 +143,18 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
     );
   };
 
-  const openObjectPage = () => {
-    navigateSettings(SettingsPath.RoleObjectLevel, {
-      roleId,
-      objectMetadataId: objectMetadataItem.id,
-    });
+  const openRulePage = (rowLevelPermissionRuleId: string) => {
+    navigateSettings(
+      SettingsPath.RoleObjectLevel,
+      { roleId, objectMetadataId: objectMetadataItem.id },
+      { rowLevelPermissionRuleId },
+    );
   };
 
   return (
     <StyledPanel>
       <StyledHeaderRow>
-        <TableHeader>
-          {hasRule ? t`Records matching the rule` : t`All records`}
-        </TableHeader>
+        <TableHeader>{t`All records`}</TableHeader>
         <TableHeader />
         <TableHeader align="right">{t`Allows`}</TableHeader>
       </StyledHeaderRow>
@@ -174,6 +199,59 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
           </TableRow>
         );
       })}
+      {rules.length > 0 && (
+        <StyledHeaderRow>
+          <TableHeader>{t`Some records`}</TableHeader>
+        </StyledHeaderRow>
+      )}
+      {rules.map(({ rule, predicates }) => {
+        const ruleLabel = getRowLevelPermissionRuleLabel({
+          predicates,
+          objectMetadataItem,
+          workspaceMemberObjectMetadataItem,
+          recordLabelById: workspaceMemberNameById,
+        });
+
+        return (
+          <TableRow
+            key={rule.id}
+            gridTemplateColumns={OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS}
+            onClick={isEditable ? () => openRulePage(rule.id) : undefined}
+          >
+            <TableCell
+              color={
+                isNonEmptyString(ruleLabel)
+                  ? themeCssVariables.font.color.primary
+                  : themeCssVariables.font.color.tertiary
+              }
+              overflow="hidden"
+            >
+              <OverflowingTextWithTooltip
+                text={isNonEmptyString(ruleLabel) ? ruleLabel : t`No condition`}
+              />
+            </TableCell>
+            <TableCell onClick={(event) => event.stopPropagation()}>
+              <SettingsRolePermissionsObjectActionsSelect
+                dropdownId={`settings-role-rule-actions-${rule.id}`}
+                selectedOperations={getRecordsGrantOperations(rule)}
+                onChange={(operations) =>
+                  setRuleOperations({
+                    rowLevelPermissionRuleId: rule.id,
+                    operations,
+                  })
+                }
+                disabled={!isEditable}
+              />
+            </TableCell>
+            <TableCell
+              align="right"
+              color={themeCssVariables.font.color.tertiary}
+            >
+              {isEditable && <IconChevronRight size={theme.icon.size.md} />}
+            </TableCell>
+          </TableRow>
+        );
+      })}
       {isEditable && (
         <StyledFooter>
           <Button
@@ -186,10 +264,10 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
           <Button
             size="sm"
             variant="outline"
-            endIcon={<IconChevronRight />}
-            onClick={openObjectPage}
+            startIcon={<IconPlus />}
+            onClick={() => openRulePage(createRule(objectMetadataItem.id))}
           >
-            {t`Rule`}
+            {t`New rule`}
           </Button>
         </StyledFooter>
       )}
