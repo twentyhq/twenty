@@ -558,6 +558,12 @@ msgstr "{0} sin dirección de correo electrónico"
 msgid "{0} workspace members"
 msgstr "{0} miembros del espacio de trabajo"
 
+#. js-lingui-id: elMxkj
+#. placeholder {0}: tab.name
+#: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
+msgid "{0}, {unreadOpenThreadCount} unread"
+msgstr "{0}, {unreadOpenThreadCount} sin leer"
+
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
 #. placeholder {0}: relationFieldMetadataItem.label

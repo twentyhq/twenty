@@ -558,6 +558,12 @@ msgstr "{0} bez e-mailové adresy"
 msgid "{0} workspace members"
 msgstr "{0} členů pracovního prostoru"
 
+#. js-lingui-id: elMxkj
+#. placeholder {0}: tab.name
+#: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
+msgid "{0}, {unreadOpenThreadCount} unread"
+msgstr "{0}, {unreadOpenThreadCount} nepřečtených"
+
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
 #. placeholder {0}: relationFieldMetadataItem.label
