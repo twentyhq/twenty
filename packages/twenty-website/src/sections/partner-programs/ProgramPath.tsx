@@ -51,6 +51,7 @@ type ProgramPathProps = {
   heading: MessageDescriptor;
   body: MessageDescriptor;
   steps: readonly ProgramStep[];
+  backdropLoading?: 'lazy' | 'eager';
 };
 
 // The steps scroll by while their visual stays pinned.
@@ -60,6 +61,7 @@ export function ProgramPath({
   heading,
   body,
   steps,
+  backdropLoading,
 }: ProgramPathProps) {
   const i18n = getServerI18n();
 
@@ -77,7 +79,7 @@ export function ProgramPath({
             {i18n._(body)}
           </Body>
         </Intro>
-        <ProgramPathScroller steps={steps} />
+        <ProgramPathScroller backdropLoading={backdropLoading} steps={steps} />
       </Layout>
     </SectionShell>
   );

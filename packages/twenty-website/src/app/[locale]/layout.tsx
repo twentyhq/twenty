@@ -9,6 +9,7 @@ import {
 } from '@/platform/i18n/get-route-i18n';
 import { ContactCalModalRoot } from '@/contact-cal';
 import { PartnerAttributionEffect } from '@/partner-attribution';
+import { SmoothAnchorScrollEffect } from '@/platform/motion';
 import { I18nProvider } from '@/platform/i18n/I18nProvider';
 import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
 import { WEBSITE_LOCALE_LIST } from '@/platform/i18n/website-locale-list';
@@ -89,11 +90,6 @@ const globalStyles = css`
 
   :global(html) {
     scroll-padding-top: ${MENU_HEIGHT_PX}px;
-    scroll-behavior: smooth;
-
-    @media (prefers-reduced-motion: reduce) {
-      scroll-behavior: auto;
-    }
   }
 
   :global(body) {
@@ -122,11 +118,12 @@ const LocaleLayout = async ({
   const locale = resolveLocaleParam((await params).locale);
 
   return (
-    <html data-scroll-behavior="smooth" lang={locale}>
+    <html lang={locale}>
       <body
         className={`${tokenCssVariables} ${globalStyles} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable} ${vt323.variable} ${inter.variable}`}
       >
         <PartnerAttributionEffect />
+        <SmoothAnchorScrollEffect />
         <I18nProvider locale={locale} messages={MESSAGES_BY_LOCALE[locale]}>
           <ContactCalModalRoot>{children}</ContactCalModalRoot>
         </I18nProvider>

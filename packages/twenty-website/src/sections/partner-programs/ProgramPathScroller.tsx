@@ -261,10 +261,16 @@ const computeStepStyle = (
 };
 
 type ProgramPathScrollerProps = {
+  // 'eager' has the backdrop drawn before the section is reached, at the cost
+  // of one of the page's six WebGL contexts from the start.
+  backdropLoading?: 'lazy' | 'eager';
   steps: readonly ProgramStep[];
 };
 
-export function ProgramPathScroller({ steps }: ProgramPathScrollerProps) {
+export function ProgramPathScroller({
+  backdropLoading = 'lazy',
+  steps,
+}: ProgramPathScrollerProps) {
   const { i18n } = useLingui();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const isMdUp = useMediaQuery(`(min-width: ${BREAKPOINT_PX.md}px)`);
@@ -354,6 +360,7 @@ export function ProgramPathScroller({ steps }: ProgramPathScrollerProps) {
               <MaskedBackdrop data-illustration="program-path-backdrop">
                 <HalftoneImageBackdrop
                   imageUrl={PROGRAM_PATH_BACKDROP.imageUrl}
+                  loading={backdropLoading}
                   pointerRootSelector="[data-program-path-pointer-root]"
                   reducedMotionMode="poster"
                   settings={PROGRAM_PATH_BACKDROP.settings}

@@ -1,7 +1,7 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 import { DURATION, REDUCED_MOTION } from '@/tokens';
@@ -83,22 +83,47 @@ export function ProgramHeroBackdrop({
   isFaint = false,
   isPriority = false,
 }: ProgramHeroBackdropProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
   const [isReady, setIsReady] = useState(false);
+  const [isOnScreen, setIsOnScreen] = useState(true);
+
+  // The rig keeps its WebGL context for seconds after leaving the viewport;
+  // the visuals right below the hero need it as soon as the hero is gone.
+  useEffect(() => {
+    const root = rootRef.current;
+    if (root === null) {
+      return;
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsOnScreen(entry.isIntersecting);
+      if (!entry.isIntersecting) {
+        setIsReady(false);
+      }
+    });
+    observer.observe(root);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   return (
     <Root
       aria-hidden
       data-faint={isFaint ? '' : undefined}
       data-illustration="program-hero-photo"
+      ref={rootRef}
     >
       <BackdropMount $isReady={isReady}>
-        <HalftoneImageBackdrop
-          imageUrl={imageUrl}
-          loading={isPriority ? 'eager' : undefined}
-          onFirstFrame={() => setIsReady(true)}
-          priority={isPriority}
-          settings={PROGRAM_HERO_BACKDROP_SETTINGS}
-        />
+        {isOnScreen && (
+          <HalftoneImageBackdrop
+            imageUrl={imageUrl}
+            loading={isPriority ? 'eager' : undefined}
+            onFirstFrame={() => setIsReady(true)}
+            priority={isPriority}
+            settings={PROGRAM_HERO_BACKDROP_SETTINGS}
+          />
+        )}
       </BackdropMount>
     </Root>
   );

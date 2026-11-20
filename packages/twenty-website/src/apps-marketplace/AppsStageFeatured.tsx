@@ -68,7 +68,7 @@ export function AppsStageFeatured({ apps }: AppsStageFeaturedProps) {
             {i18n._(msg`Picked by the Twenty team.`)}
           </Body>
         </Header>
-        <AppsStageAppCards apps={featured} />
+        <AppsStageAppCards apps={featured} hasLiveLogos />
       </Frame>
     </SectionShell>
   );

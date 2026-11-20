@@ -86,6 +86,7 @@ export default async function IntegratorProgramPage({
         />
         <ProgramPath
           anchorId={HOW_IT_WORKS_ANCHOR_ID}
+          backdropLoading="eager"
           body={msg`Three steps, and no fee to join. You set your own rates and keep what you bill.`}
           eyebrow={msg`How it works`}
           heading={msg`From application *to clients*`}

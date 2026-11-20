@@ -146,9 +146,14 @@ type CardStyle = CSSProperties & { '--apps-stage-card-index': number };
 
 type AppsStageAppCardsProps = {
   apps: readonly MarketplaceApp[];
+  // For a short row only: each live logo holds one of six WebGL contexts.
+  hasLiveLogos?: boolean;
 };
 
-export function AppsStageAppCards({ apps }: AppsStageAppCardsProps) {
+export function AppsStageAppCards({
+  apps,
+  hasLiveLogos = false,
+}: AppsStageAppCardsProps) {
   return (
     <Cards>
       {apps.map((app, index) => {
@@ -163,7 +168,10 @@ export function AppsStageAppCards({ apps }: AppsStageAppCardsProps) {
             >
               {app.logoUrl !== undefined && (
                 <Visual aria-hidden>
-                  <AppsStageLogoHalftone logoUrl={app.logoUrl} />
+                  <AppsStageLogoHalftone
+                    isLive={hasLiveLogos}
+                    logoUrl={app.logoUrl}
+                  />
                 </Visual>
               )}
               <Content>
