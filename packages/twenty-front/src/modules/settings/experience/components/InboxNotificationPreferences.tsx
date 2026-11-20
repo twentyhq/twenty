@@ -62,7 +62,7 @@ export const InboxNotificationPreferences = () => {
       ({ value }) => value === currentUserWorkspace.inboxNotificationLevel,
     )?.value ?? AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.ALL_FOLLOWED;
   const isInboxNotificationPreviewEnabled =
-    currentUserWorkspace.isInboxNotificationPreviewEnabled ?? false;
+    currentUserWorkspace.isInboxNotificationPreviewEnabled ?? true;
 
   const saveInboxNotificationSettings = async (
     update: Partial<UpdateInboxNotificationSettingsInput>,
