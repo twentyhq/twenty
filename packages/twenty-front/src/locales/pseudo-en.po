@@ -4137,6 +4137,11 @@ msgstr ""
 msgid "Application Logs"
 msgstr ""
 
+#. js-lingui-id: UiH6l9
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Application price billing"
+msgstr ""
+
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -5189,6 +5194,11 @@ msgstr ""
 #. js-lingui-id: +eacS5
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill credits to your workspace"
+msgstr ""
+
+#. js-lingui-id: jKtUV8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
 msgstr ""
 
 #. js-lingui-id: aIkeAd

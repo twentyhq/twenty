@@ -4142,6 +4142,11 @@ msgstr "Հավելվածը հաջողությամբ տեղադրվեց։"
 msgid "Application Logs"
 msgstr "Հավելվածի մատյաններ"
 
+#. js-lingui-id: UiH6l9
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Application price billing"
+msgstr ""
+
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -5195,6 +5200,11 @@ msgstr "ամսվա {startOrdinal}-ից մինչև {endOrdinal} օրերի միջ
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill credits to your workspace"
 msgstr "Կրեդիտները գանձել ձեր աշխատանքային տարածքից"
+
+#. js-lingui-id: jKtUV8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
+msgstr ""
 
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
