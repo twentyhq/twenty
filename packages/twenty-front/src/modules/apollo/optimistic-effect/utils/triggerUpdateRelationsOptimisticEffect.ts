@@ -178,27 +178,30 @@ const triggerUpdateRelationOptimisticEffect = ({
     updatedFieldValueOnSourceRecord,
     { strict: true },
   );
-  if (noDiff && !isDeletion) {
-    // The record stays attached, but its new values may move it in or out of its target's filtered copies
-    if (
-      relation.type === RelationType.MANY_TO_ONE &&
-      isDefined(updatedSourceRecord) &&
-      isDefined(updatedFieldValueOnSourceRecord)
-    ) {
-      triggerUpdateRelationsWithArgumentsOptimisticEffect({
-        cache,
-        sourceObjectMetadataItem,
-        sourceRecordId: updatedSourceRecord.id,
-        attachedSourceRecord: updatedSourceRecord,
-        targetObjectMetadataItem: fullTargetObjectMetadataItem,
-        fieldNameOnTargetRecord: targetFieldMetadataFullObject.name,
-        targetRecordId: updatedFieldValueOnSourceRecord.id,
-        objectMetadataItems,
-        objectPermissionsByObjectMetadataId,
-        upsertRecordsInStore,
-      });
-    }
+  const isRecordStillAttached = noDiff && !isDeletion;
 
+  // The record stays attached, but its new values may move it in or out of its target's filtered copies
+  if (
+    isRecordStillAttached &&
+    relation.type === RelationType.MANY_TO_ONE &&
+    isDefined(updatedSourceRecord) &&
+    isDefined(updatedFieldValueOnSourceRecord)
+  ) {
+    triggerUpdateRelationsWithArgumentsOptimisticEffect({
+      cache,
+      sourceObjectMetadataItem,
+      sourceRecordId: updatedSourceRecord.id,
+      attachedSourceRecord: updatedSourceRecord,
+      targetObjectMetadataItem: fullTargetObjectMetadataItem,
+      fieldNameOnTargetRecord: targetFieldMetadataFullObject.name,
+      targetRecordId: updatedFieldValueOnSourceRecord.id,
+      objectMetadataItems,
+      objectPermissionsByObjectMetadataId,
+      upsertRecordsInStore,
+    });
+  }
+
+  if (isRecordStillAttached) {
     return;
   }
 
