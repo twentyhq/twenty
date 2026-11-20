@@ -9,6 +9,7 @@ import { Select } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 import { THEME_DARK, THEME_LIGHT, ThemeProvider } from 'twenty-ui/theme';
 
+import { GranolaFolderTreeSkeleton } from 'src/front-components/components/GranolaFolderTreeSkeleton';
 import { GranolaPersonalFolderSelection } from 'src/front-components/components/GranolaPersonalFolderSelection';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { StyledSettingsSectionStack } from 'src/front-components/components/StyledSettingsSectionStack';
@@ -78,6 +79,7 @@ export const GranolaPersonalSettings = () => {
           )}
         />
         <StyledSettingsSectionStack>
+          {state.status === 'loading' && <GranolaFolderTreeSkeleton />}
           {state.status === 'failed' && (
             <InlineBanner
               layout="compact"
