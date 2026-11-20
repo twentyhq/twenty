@@ -1,8 +1,6 @@
-import { ViewFilterOperand } from 'twenty-shared/types';
-import {
-  COMPOSITE_FIELD_FILTER_OPERANDS_MAP,
-  FILTER_OPERANDS_MAP,
-} from 'twenty-shared/utils';
+import { ViewFilterOperand } from '@/types';
+import { COMPOSITE_FIELD_FILTER_OPERANDS_MAP } from '@/utils/filter/utils/compositeFieldFilterOperandsMap';
+import { FILTER_OPERANDS_MAP } from '@/utils/filter/utils/filterOperandsMap';
 
 const defaultOperands = [
   ViewFilterOperand.IS,

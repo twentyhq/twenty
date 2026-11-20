@@ -2,13 +2,13 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { ViewFilterOperand, type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { getStepFilterOperands } from 'twenty-shared/workflow';
 
 import { type CoreObjectFilterField } from '@/object-core/filters/types/CoreObjectFilterField';
 import { findCoreObjectFilterField } from '@/object-core/filters/utils/findCoreObjectFilterField';
 import { Select } from '@/ui/input/components/Select';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/filters/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
-import { getStepFilterOperands } from '@/workflow/workflow-steps/filters/utils/getStepFilterOperands';
 
 type CoreObjectFilterFieldSelectProps = {
   filterFields: CoreObjectFilterField[];

@@ -7,10 +7,10 @@ import { WORKFLOW_TIMEZONE } from '@/workflow/constants/WorkflowTimeZone';
 
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/filters/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
-import { getStepFilterOperands } from '@/workflow/workflow-steps/filters/utils/getStepFilterOperands';
 import { useContext } from 'react';
 import { DEFAULT_RELATIVE_DATE_FILTER_VALUE } from 'twenty-shared/constants';
 import { ViewFilterOperand, type StepFilter } from 'twenty-shared/types';
+import { getStepFilterOperands } from 'twenty-shared/workflow';
 
 type WorkflowStepFilterOperandSelectProps = {
   stepFilter: StepFilter;

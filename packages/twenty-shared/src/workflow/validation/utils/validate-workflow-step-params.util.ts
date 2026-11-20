@@ -9,6 +9,7 @@ import {
   type ValidatableWorkflow,
   type WorkflowValidationIssue,
 } from '@/workflow/validation/types/WorkflowValidation';
+import { getUnsupportedStepFilterOperandIssues } from '@/workflow/validation/utils/get-unsupported-step-filter-operand-issues.util';
 import { type z } from 'zod';
 
 const formatZodPath = (path: PropertyKey[]): string =>
@@ -45,6 +46,13 @@ export const validateWorkflowStepParams = ({
           message: `Trigger configuration is invalid - ${message}`,
         });
       }
+    } else if (triggerResult.data.type === 'DATABASE_EVENT') {
+      issues.push(
+        ...getUnsupportedStepFilterOperandIssues({
+          stepFilters: triggerResult.data.settings.filter?.stepFilters ?? [],
+          subject: 'The trigger',
+        }),
+      );
     }
   }
 
@@ -80,6 +88,19 @@ export const validateWorkflowStepParams = ({
         message: `Step "${step.name ?? step.id}" configuration is invalid - settings.input.body: must be a serialized email document ({"type":"doc","content":[...]}), not HTML or plain text`,
         stepId: step.id,
       });
+    }
+
+    if (
+      parsedStep.type === WorkflowActionType.FILTER ||
+      parsedStep.type === WorkflowActionType.IF_ELSE
+    ) {
+      issues.push(
+        ...getUnsupportedStepFilterOperandIssues({
+          stepFilters: parsedStep.settings.input.stepFilters,
+          subject: `Step "${step.name ?? step.id}"`,
+          stepId: step.id,
+        }),
+      );
     }
 
     if (

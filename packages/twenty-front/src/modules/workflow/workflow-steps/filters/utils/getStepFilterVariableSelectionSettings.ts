@@ -1,6 +1,6 @@
-import { getStepFilterOperands } from '@/workflow/workflow-steps/filters/utils/getStepFilterOperands';
 import { FieldMetadataType, type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { getStepFilterOperands } from 'twenty-shared/workflow';
 
 type StepFilterVariableSelectionSettings = Pick<
   StepFilter,

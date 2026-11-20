@@ -192,4 +192,110 @@ describe('validateWorkflowStepParams', () => {
       ).toEqual([]);
     });
   });
+
+  describe('step filter operands', () => {
+    const stepFilterGroups = [{ id: 'group-1', logicalOperator: 'AND' }];
+
+    const buildStepFilter = (
+      type: string,
+      operand: string,
+      compositeFieldSubFieldName?: string,
+    ) => ({
+      id: 'filter-1',
+      type,
+      stepOutputKey: '{{trigger.properties.after.companyId}}',
+      operand,
+      value: '',
+      stepFilterGroupId: 'group-1',
+      compositeFieldSubFieldName,
+    });
+
+    const buildFilterStep = (
+      type: 'FILTER' | 'IF_ELSE',
+      stepFilters: ReturnType<typeof buildStepFilter>[],
+    ) => ({
+      id: '4f1c2d3e-6a7b-4c8d-9e0f-1a2b3c4d5e6f',
+      name: 'Check company',
+      type,
+      valid: true,
+      settings: {
+        input: {
+          stepFilterGroups,
+          stepFilters,
+          ...(type === 'IF_ELSE' ? { branches: [] } : {}),
+        },
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: { value: 0 },
+          continueOnFailure: { value: false },
+        },
+      },
+    });
+
+    it('should block activating filter and if/else steps whose operand the field type does not support', () => {
+      for (const type of ['FILTER', 'IF_ELSE'] as const) {
+        expect(
+          validateWorkflowStepParams({
+            trigger: undefined,
+            steps: [
+              buildFilterStep(type, [
+                buildStepFilter('RELATION', 'IS_NOT_NULL'),
+              ]),
+            ],
+          }),
+        ).toEqual([
+          expect.objectContaining({
+            code: 'UNSUPPORTED_STEP_FILTER_OPERAND',
+            stepId: '4f1c2d3e-6a7b-4c8d-9e0f-1a2b3c4d5e6f',
+            message:
+              'Step "Check company" has a RELATION filter with operand "IS_NOT_NULL", which is not supported for this filter type. Use one of: IS, IS_NOT, IS_EMPTY, IS_NOT_EMPTY.',
+          }),
+        ]);
+      }
+    });
+
+    it('should accept operands the filter editor offers, including deprecated spellings', () => {
+      expect(
+        validateWorkflowStepParams({
+          trigger: undefined,
+          steps: [
+            buildFilterStep('FILTER', [
+              buildStepFilter('RELATION', 'isNotEmpty'),
+              buildStepFilter('ACTOR', 'IS_NOT', 'source'),
+              buildStepFilter('boolean', 'IS'),
+              buildStepFilter('unknown', 'CONTAINS'),
+            ]),
+          ],
+        }),
+      ).toEqual([]);
+    });
+
+    it('should block activating a database event trigger whose filter operand the field type does not support', () => {
+      const databaseEventTrigger = {
+        type: 'DATABASE_EVENT',
+        settings: {
+          eventName: 'person.updated',
+          outputSchema: {},
+          filter: {
+            stepFilterGroups,
+            stepFilters: [buildStepFilter('NUMBER', 'IS_NOT_NULL')],
+          },
+        },
+      };
+
+      expect(
+        validateWorkflowStepParams({
+          trigger: databaseEventTrigger,
+          steps: [],
+        }),
+      ).toEqual([
+        expect.objectContaining({
+          code: 'UNSUPPORTED_STEP_FILTER_OPERAND',
+          message: expect.stringContaining(
+            'The trigger has a NUMBER filter with operand "IS_NOT_NULL"',
+          ),
+        }),
+      ]);
+    });
+  });
 });

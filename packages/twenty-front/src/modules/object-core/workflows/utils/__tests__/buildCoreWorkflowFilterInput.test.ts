@@ -3,10 +3,10 @@ import {
   ViewFilterOperand,
   type StepFilter,
 } from 'twenty-shared/types';
+import { getStepFilterOperands } from 'twenty-shared/workflow';
 
 import { CORE_WORKFLOW_FILTER_FIELDS } from '@/object-core/workflows/constants/CoreWorkflowFilterFields';
 import { buildCoreWorkflowFilterInput } from '@/object-core/workflows/utils/buildCoreWorkflowFilterInput';
-import { getStepFilterOperands } from '@/workflow/workflow-steps/filters/utils/getStepFilterOperands';
 import {
   CoreWorkflowFilterFieldKey,
   CoreWorkflowFilterLogicalOperator,

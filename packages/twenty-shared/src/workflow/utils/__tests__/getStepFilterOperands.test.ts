@@ -1,4 +1,4 @@
-import { getStepFilterOperands } from '@/workflow/workflow-steps/filters/utils/getStepFilterOperands';
+import { getStepFilterOperands } from '@/workflow/utils/getStepFilterOperands';
 
 const filterTypesWithoutSubField = [
   'TEXT',

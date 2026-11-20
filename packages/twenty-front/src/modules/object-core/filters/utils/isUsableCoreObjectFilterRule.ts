@@ -4,10 +4,10 @@ import {
   isRecordFilterOperandExpectingValue,
   parseJson,
 } from 'twenty-shared/utils';
+import { getStepFilterOperands } from 'twenty-shared/workflow';
 
 import { type CoreObjectFilterField } from '@/object-core/filters/types/CoreObjectFilterField';
 import { findCoreObjectFilterField } from '@/object-core/filters/utils/findCoreObjectFilterField';
-import { getStepFilterOperands } from '@/workflow/workflow-steps/filters/utils/getStepFilterOperands';
 
 const isEmptyValue = ({
   value,

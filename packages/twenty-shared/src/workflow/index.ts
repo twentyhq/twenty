@@ -173,6 +173,7 @@ export { canObjectBeManagedByAutomation } from './utils/canObjectBeManagedByAuto
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
 export { getDefaultMcpToolInputFromJsonSchema } from './utils/getDefaultMcpToolInputFromJsonSchema';
 export { getFunctionInputFromInputSchema } from './utils/getFunctionInputFromInputSchema';
+export { getStepFilterOperands } from './utils/getStepFilterOperands';
 export { getWorkflowAiAgentStepConfigIssues } from './utils/getWorkflowAiAgentStepConfigIssues';
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
 export { hasWorkflowAiAgentConfig } from './utils/hasWorkflowAiAgentConfig';
@@ -210,6 +211,7 @@ export {
   getStepInput,
   getStepOutgoingStepIds,
 } from './validation/utils/get-step-outgoing-step-ids.util';
+export { getUnsupportedStepFilterOperandIssues } from './validation/utils/get-unsupported-step-filter-operand-issues.util';
 export { getVariablePathSuggestions } from './validation/utils/get-variable-path-suggestions.util';
 export { validateWorkflowExecutionPaths } from './validation/utils/validate-workflow-execution-paths.util';
 export { validateWorkflowGraph } from './validation/utils/validate-workflow-graph.util';
