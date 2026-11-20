@@ -4,7 +4,9 @@ import { RestApiClient } from 'twenty-client-sdk/rest';
 import {
   closeSidePanel,
   enqueueSnackbar,
+  openCommandConfirmationModal,
   useSelectedRecordIds,
+  useSelectedRecordsFilter,
   useTranslate,
 } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
@@ -14,10 +16,13 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { SEND_TEMPLATE_TO_PEOPLE_ROUTE_PATH } from 'src/constants/send-template-to-people-route-path.constant';
-import { SendWhatsAppTemplateField } from 'src/front-components/components/SendWhatsAppTemplateField';
-import { buildTemplateParametersFromValues } from 'src/logic-functions/data/build-template-parameters-from-values.util';
+import { PersonalizableParameterField } from 'src/front-components/components/PersonalizableParameterField';
+import { usePersonFieldLabels } from 'src/front-components/hooks/use-person-field-labels';
+import { WhatsAppTemplateFormField } from 'src/front-components/components/WhatsAppTemplateFormField';
+import { buildPersonalizableTemplateParameters } from 'src/logic-functions/data/build-personalizable-template-parameters.util';
 import { getWhatsAppTemplateFormFields } from 'src/logic-functions/data/get-whatsapp-template-form-fields.util';
 import { renderWhatsAppTemplateText } from 'src/logic-functions/data/render-whatsapp-template-text.util';
+import { type WhatsAppTemplatePersonField } from 'src/logic-functions/types/personalizable-template-parameter.type';
 import { type WhatsAppTemplateComponent } from 'src/logic-functions/types/whatsapp-template-component.type';
 
 type WhatsAppTemplateOption = {
@@ -36,7 +41,7 @@ type WhatsAppTemplatesResponse = {
 };
 
 type SendTemplateToPeopleResult =
-  | { success: true; queuedCount: number; skipped: Array<{ personId: string; reason: string }> }
+  | { success: true; queuedCount: number; skippedCount: number }
   | { success: false; error: string };
 
 const columnStyle = { display: 'flex', flexDirection: 'column', gap: themeCssVariables.spacing[3] } as const;
@@ -78,12 +83,17 @@ const fetchApprovedTemplates = async (): Promise<WhatsAppTemplateOption[]> => {
 
 export const SendWhatsAppTemplateForm = () => {
   const { t } = useTranslate();
+  const personFieldLabels = usePersonFieldLabels();
   const personIds = useSelectedRecordIds();
+  // the filter also covers "select all", where the selected ids are not all known
+  const selectionFilter = useSelectedRecordsFilter();
+  const recipients = isDefined(selectionFilter) ? { filter: selectionFilter } : { personIds };
   const [templates, setTemplates] = useState<WhatsAppTemplateOption[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | undefined>(undefined);
   const [templateId, setTemplateId] = useState('');
   const [values, setValues] = useState<Record<string, string>>({});
+  const [personFields, setPersonFields] = useState<Record<string, WhatsAppTemplatePersonField | undefined>>({});
   const [isSending, setIsSending] = useState(false);
 
   // front components have no data hook, so templates load once when the panel opens
@@ -124,41 +134,47 @@ export const SendWhatsAppTemplateForm = () => {
       ]
     : [];
   const canSend =
-    isDefined(template) && !isSending && valueKeys.every((key) => isNonEmptyString(values[key]?.trim()));
+    isDefined(template) &&
+    !isSending &&
+    valueKeys.every((key) => isDefined(personFields[key]) || isNonEmptyString(values[key]?.trim()));
 
-  const getScopedValues = (scope: string, keys: string[], { keepPlaceholders }: { keepPlaceholders: boolean }) =>
-    Object.fromEntries(
-      keys.map((key) => {
-        const value = values[`${scope}:${key}`] ?? '';
+  const getScopedEntries = <TValue,>(scope: string, keys: string[], source: Record<string, TValue>) =>
+    Object.fromEntries(keys.map((key) => [key, source[`${scope}:${key}`]]));
 
-        return [key, keepPlaceholders && !isNonEmptyString(value) ? `{{${key}}}` : value];
-      }),
-    );
-
-  const buildParameters = ({ keepPlaceholders }: { keepPlaceholders: boolean }) => ({
-    headerParameters: buildTemplateParametersFromValues({
-      keys: formFields?.headerParameterKeys ?? [],
-      values: getScopedValues('header', formFields?.headerParameterKeys ?? [], { keepPlaceholders }),
+  const buildScopedParameters = (scope: 'header' | 'body', keys: string[]) =>
+    buildPersonalizableTemplateParameters({
+      keys,
+      values: getScopedEntries(scope, keys, values),
+      personFields: getScopedEntries(scope, keys, personFields),
       parameterFormat: template?.parameterFormat,
-    }),
-    parameters: buildTemplateParametersFromValues({
-      keys: formFields?.bodyParameterKeys ?? [],
-      values: getScopedValues('body', formFields?.bodyParameterKeys ?? [], { keepPlaceholders }),
-      parameterFormat: template?.parameterFormat,
-    }),
-  });
+    });
 
-  const previewParameters = buildParameters({ keepPlaceholders: true });
+  const headerParameters = buildScopedParameters('header', formFields?.headerParameterKeys ?? []);
+  const bodyParameters = buildScopedParameters('body', formFields?.bodyParameterKeys ?? []);
+
+  // person fields show as [field name] and empty values keep their placeholder
+  const toPreviewParameters = (parameters: typeof bodyParameters, keys: string[]) =>
+    parameters.map(({ name, value, personField }, index) => ({
+      ...(isDefined(name) ? { name } : {}),
+      value: isDefined(personField)
+        ? `[${personFieldLabels[personField]}]`
+        : isNonEmptyString(value)
+          ? value
+          : `{{${keys[index] ?? ''}}}`,
+    }));
+
   const preview = isDefined(template)
     ? renderWhatsAppTemplateText({
         components: template.components,
-        headerParameters: previewParameters.headerParameters,
-        bodyParameters: previewParameters.parameters,
+        headerParameters: toPreviewParameters(headerParameters, formFields?.headerParameterKeys ?? []),
+        bodyParameters: toPreviewParameters(bodyParameters, formFields?.bodyParameterKeys ?? []),
         parameterFormat: template.parameterFormat,
       })
     : '';
 
   const setValue = (key: string, value: string) => setValues((previous) => ({ ...previous, [key]: value }));
+  const setPersonField = (key: string, personField: WhatsAppTemplatePersonField | undefined) =>
+    setPersonFields((previous) => ({ ...previous, [key]: personField }));
 
   const handleSend = async () => {
     if (!isDefined(template) || !isDefined(formFields)) {
@@ -167,40 +183,73 @@ export const SendWhatsAppTemplateForm = () => {
 
     setIsSending(true);
 
-    try {
-      const result = await new RestApiClient().post<SendTemplateToPeopleResult>(
-        `/s${SEND_TEMPLATE_TO_PEOPLE_ROUTE_PATH}`,
-        {
-          requestId: crypto.randomUUID(),
-          personIds,
-          templateId: template.id,
-          ...buildParameters({ keepPlaceholders: false }),
-          ...(isDefined(formFields.headerMediaType)
-            ? { headerMedia: { type: formFields.headerMediaType, link: values.headerMedia?.trim() } }
-            : {}),
-          buttonParameters: formFields.buttonInputs.map(({ index, subType }) => ({
-            index,
-            subType,
-            value: values[`button:${index}`]?.trim() ?? '',
-          })),
-        },
-      );
+    const request = {
+      requestId: crypto.randomUUID(),
+      recipients,
+      templateId: template.id,
+      headerParameters,
+      parameters: bodyParameters,
+      ...(isDefined(formFields.headerMediaType)
+        ? { headerMedia: { type: formFields.headerMediaType, link: values.headerMedia?.trim() } }
+        : {}),
+      buttonParameters: formFields.buttonInputs.map(({ index, subType }) => ({
+        index,
+        subType,
+        value: values[`button:${index}`]?.trim() ?? '',
+      })),
+    };
+    const postSendRequest = (isDryRun: boolean) =>
+      new RestApiClient().post<SendTemplateToPeopleResult>(`/s${SEND_TEMPLATE_TO_PEOPLE_ROUTE_PATH}`, {
+        ...request,
+        isDryRun,
+      });
 
-      if (!result.success) {
-        enqueueSnackbar({ message: result.error, variant: 'error' });
+    try {
+      const dryRun = await postSendRequest(true);
+
+      if (!dryRun.success) {
+        await enqueueSnackbar({ message: dryRun.error, variant: 'error' });
 
         return;
       }
 
-      enqueueSnackbar({
-        message:
-          result.skipped.length > 0
-            ? t('{queuedCount} WhatsApp messages queued, {skippedCount} people skipped (no WhatsApp number or opted out of marketing).', {
-                queuedCount: result.queuedCount,
-                skippedCount: result.skipped.length,
+      if (dryRun.queuedCount === 0) {
+        await enqueueSnackbar({
+          message: t('None of the selected people can receive this template: no WhatsApp number, opted out of marketing, or a missing personalized value.'),
+          variant: 'warning',
+        });
+
+        return;
+      }
+
+      const choice = await openCommandConfirmationModal({
+        title: t('Send to {count} people?', { count: dryRun.queuedCount }),
+        subtitle:
+          dryRun.skippedCount > 0
+            ? t('{skippedCount} selected people are skipped: no WhatsApp number, opted out of marketing, or a missing personalized value.', {
+                skippedCount: dryRun.skippedCount,
               })
-            : t('{queuedCount} WhatsApp messages queued.', { queuedCount: result.queuedCount }),
-        variant: result.queuedCount > 0 ? 'success' : 'warning',
+            : t('Each message is queued and shows up in its conversation once sent.'),
+        confirmButtonText: t('Send'),
+      });
+
+      if (choice !== 'confirm') {
+        return;
+      }
+
+      const result = await postSendRequest(false);
+
+      if (!result.success) {
+        await enqueueSnackbar({ message: result.error, variant: 'error' });
+
+        return;
+      }
+
+      await enqueueSnackbar({
+        message: t('{queuedCount} WhatsApp messages queued. Follow them in WhatsApp campaigns.', {
+          queuedCount: result.queuedCount,
+        }),
+        variant: 'success',
       });
       await closeSidePanel();
     } catch {
@@ -214,9 +263,7 @@ export const SendWhatsAppTemplateForm = () => {
     <Section.Root>
       <Section.Header
         title={t('Send WhatsApp template')}
-        description={t('Sends an approved template to {count} selected people. Each message is queued and appears in its conversation once sent.', {
-          count: personIds.length,
-        })}
+        description={t('Sends an approved template to the selected people as a campaign. Values can be the same for everyone or taken from each person.')}
       />
       {isLoading ? (
         <span>{t('Loading templates…')}</span>
@@ -234,6 +281,7 @@ export const SendWhatsAppTemplateForm = () => {
             onChange={(event) => {
               setTemplateId(event.target.value);
               setValues({});
+              setPersonFields({});
             }}
           >
             <option value="">{t('Pick a template')}</option>
@@ -246,16 +294,18 @@ export const SendWhatsAppTemplateForm = () => {
           {isDefined(formFields) && (
             <>
               {formFields.headerParameterKeys.map((key) => (
-                <SendWhatsAppTemplateField
+                <PersonalizableParameterField
                   key={`header:${key}`}
                   label={t('Header parameter {key}', { key })}
                   value={values[`header:${key}`] ?? ''}
+                  personField={personFields[`header:${key}`]}
                   disabled={isSending}
-                  onChange={(value) => setValue(`header:${key}`, value)}
+                  onValueChange={(value) => setValue(`header:${key}`, value)}
+                  onPersonFieldChange={(personField) => setPersonField(`header:${key}`, personField)}
                 />
               ))}
               {isDefined(formFields.headerMediaType) && (
-                <SendWhatsAppTemplateField
+                <WhatsAppTemplateFormField
                   label={t('Header {mediaType} link', { mediaType: formFields.headerMediaType })}
                   placeholder="https://"
                   value={values.headerMedia ?? ''}
@@ -264,16 +314,18 @@ export const SendWhatsAppTemplateForm = () => {
                 />
               )}
               {formFields.bodyParameterKeys.map((key) => (
-                <SendWhatsAppTemplateField
+                <PersonalizableParameterField
                   key={`body:${key}`}
                   label={t('Body parameter {key}', { key })}
                   value={values[`body:${key}`] ?? ''}
+                  personField={personFields[`body:${key}`]}
                   disabled={isSending}
-                  onChange={(value) => setValue(`body:${key}`, value)}
+                  onValueChange={(value) => setValue(`body:${key}`, value)}
+                  onPersonFieldChange={(personField) => setPersonField(`body:${key}`, personField)}
                 />
               ))}
               {formFields.buttonInputs.map(({ index, subType, label }) => (
-                <SendWhatsAppTemplateField
+                <WhatsAppTemplateFormField
                   key={`button:${index}`}
                   label={subType === 'url' ? t('{label} link ending', { label }) : t('{label} code', { label })}
                   value={values[`button:${index}`] ?? ''}
@@ -283,7 +335,7 @@ export const SendWhatsAppTemplateForm = () => {
               ))}
               <div style={previewStyle}>{preview}</div>
               <Button type="button" variant="solid" color="accent" disabled={!canSend} onClick={handleSend}>
-                {isSending ? t('Sending…') : t('Send to {count} people', { count: personIds.length })}
+                {isSending ? t('Sending…') : t('Review and send')}
               </Button>
             </>
           )}

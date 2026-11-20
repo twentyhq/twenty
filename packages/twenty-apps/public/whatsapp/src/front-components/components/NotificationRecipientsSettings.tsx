@@ -1,15 +1,11 @@
-import 'twenty-ui/style.css';
-import 'twenty-ui/theme-dark.css';
-import 'twenty-ui/theme-light.css';
-
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { RestApiClient } from 'twenty-client-sdk/rest';
-import { enqueueSnackbar, useColorScheme, useTranslate } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, useTranslate } from 'twenty-sdk/front-component';
 import { Callout } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { Button, Checkbox } from 'twenty-ui/primitives/input';
-import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import {
   NOTIFICATION_RECIPIENTS_GET_ROUTE_PATH,
@@ -100,7 +96,7 @@ const footerStyle = {
   paddingTop: themeCssVariables.spacing[3],
 } as const;
 
-const NotificationRecipientsSettingsContent = () => {
+export const NotificationRecipientsSettings = () => {
   const { t } = useTranslate();
   const [workspaceMembers, setWorkspaceMembers] = useState<WorkspaceMember[]>(
     [],
@@ -241,15 +237,5 @@ const NotificationRecipientsSettingsContent = () => {
         </>
       )}
     </Section.Root>
-  );
-};
-
-export const NotificationRecipientsSettings = () => {
-  const colorScheme = useColorScheme();
-
-  return (
-    <ThemeProvider colorScheme={colorScheme}>
-      <NotificationRecipientsSettingsContent />
-    </ThemeProvider>
   );
 };

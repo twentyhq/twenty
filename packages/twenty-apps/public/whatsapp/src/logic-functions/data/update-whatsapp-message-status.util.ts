@@ -15,7 +15,7 @@ export const updateWhatsAppMessageStatus = async ({
   messageExternalId: string;
   reportedStatus: (typeof WHATSAPP_MESSAGE_STATUSES)[number];
   errors?: Array<{ code: number; title: string; error_data?: { details?: string } }>;
-}): Promise<{ text: string | null; statusError: string | null } | undefined> => {
+}): Promise<{ text: string | null; statusError: string | null; campaignId: string | null } | undefined> => {
   const messageChannel = await findMessageChannelByDisplayPhoneNumber(displayPhoneNumber);
 
   if (!isDefined(messageChannel)) {
@@ -32,10 +32,12 @@ export const updateWhatsAppMessageStatus = async ({
         },
         first: 1,
       },
-      edges: { node: { message: { id: true, text: true, whatsAppStatus: true } } },
+      edges: { node: { message: { id: true, text: true, whatsAppStatus: true, whatsAppCampaignId: true } } },
     },
   });
-  const message: { id: string; text: string | null; whatsAppStatus: string | null } | undefined =
+  const message:
+    | { id: string; text: string | null; whatsAppStatus: string | null; whatsAppCampaignId: string | null }
+    | undefined =
     messageChannelMessageAssociations?.edges[0]?.node.message ?? undefined;
 
   // statuses also arrive for messages Twenty never stored, such as the extra parts of a reply
@@ -70,5 +72,5 @@ export const updateWhatsAppMessageStatus = async ({
     },
   });
 
-  return { text: message.text, statusError };
+  return { text: message.text, statusError, campaignId: message.whatsAppCampaignId };
 };

@@ -438,9 +438,12 @@ export type WhatsAppApiPhoneNumber = {
   display_phone_number: string;
   verified_name: string;
   quality_rating: 'GREEN' | 'YELLOW' | 'RED' | 'NA' | 'UNKNOWN';
+  messaging_limit_tier?: string; // TIER_50, TIER_250, TIER_1K, TIER_10K, TIER_100K, TIER_UNLIMITED
+  status?: string;
+  name_status?: string;
 };
 
-export type WhatsAppApiGetPhoneNumbersQuery = { limit?: number; after?: string };
+export type WhatsAppApiGetPhoneNumbersQuery = { limit?: number; after?: string; fields?: string };
 
 export type WhatsAppApiGetPhoneNumbersResponse = WhatsAppApiPagedResponse<WhatsAppApiPhoneNumber>;
 
@@ -572,7 +575,16 @@ export type WhatsAppApiDeleteTemplatesQuery =
 
 export type WhatsAppApiGetBusinessAccountQuery = { fields?: string };
 
-export type WhatsAppApiGetBusinessAccountResponse = { id: string; name?: string };
+// reference: https://developers.facebook.com/documentation/business-messaging/whatsapp/analytics
+export type WhatsAppApiGetBusinessAccountResponse = {
+  id: string;
+  name?: string;
+  currency?: string;
+  analytics?: { data_points?: Array<{ start: number; end: number; sent?: number; delivered?: number }> };
+  pricing_analytics?: {
+    data?: Array<{ data_points?: Array<{ start: number; end: number; volume?: number; cost?: number }> }>;
+  };
+};
 
 // Access tokens
 // reference: https://developers.facebook.com/docs/graph-api/reference/debug_token

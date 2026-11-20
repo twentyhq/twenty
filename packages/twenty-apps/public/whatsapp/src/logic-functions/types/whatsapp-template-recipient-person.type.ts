@@ -4,4 +4,8 @@ export type WhatsAppTemplateRecipientPerson = {
   whatsAppUserId: string | null;
   whatsAppMarketingOptOut: boolean | null;
   phones: { primaryPhoneNumber: string | null; primaryPhoneCallingCode: string | null } | null;
+  name: { firstName: string | null; lastName: string | null } | null;
+  jobTitle: string | null;
+  city: string | null;
+  company: { name: string | null } | null;
 };

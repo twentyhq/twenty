@@ -11,10 +11,12 @@ export const enqueueLogicFunctionJobs = async <TPayload extends Record<string, u
   logicFunctionUniversalIdentifier,
   payloads,
   getJobKey,
+  delayMs = 500,
 }: {
   logicFunctionUniversalIdentifier: string;
   payloads: TPayload[];
   getJobKey: (payload: TPayload) => string;
+  delayMs?: number;
 }) => {
   const jobs = [
     ...new Map(
@@ -30,7 +32,7 @@ export const enqueueLogicFunctionJobs = async <TPayload extends Record<string, u
     await enqueueJobs({
       logicFunctionUniversalIdentifier,
       retryLimit: 3,
-      delayMs: 500,
+      delayMs,
       jobs: jobs.slice(start, start + ENQUEUE_JOBS_MAX_BATCH_SIZE),
     });
   }

@@ -20,6 +20,8 @@ import { type IngestMessageParticipant, ingestMessages, kv } from "twenty-sdk/lo
 import { isDefined } from "twenty-sdk/utils";
 import { findOrCreateWhatsAppMessageChannelOrThrow } from "src/logic-functions/data/find-or-create-whatsapp-message-channel-or-throw.util";
 import { parseWhatsAppTimestamp } from "src/logic-functions/data/parse-whatsapp-timestamp.util";
+import { findWhatsAppCampaignIdsInThread } from "src/logic-functions/data/find-whatsapp-campaign-ids-in-thread.util";
+import { scheduleWhatsAppCampaignRefresh } from "src/logic-functions/data/schedule-whatsapp-campaign-refresh.util";
 import { resolveWhatsAppThreadExternalId } from "src/logic-functions/data/resolve-whatsapp-thread-external-id.util";
 import { buildRevokedMessageText } from "src/logic-functions/data/build-revoked-message-text.util";
 import { uploadWhatsAppMediaAttachmentOnce } from "src/logic-functions/data/upload-whatsapp-media-attachment-once.util";
@@ -267,6 +269,15 @@ const handler = async ({
 
   if (isDefined(attachments)) {
     await kv.delete(`${WHATSAPP_KV_KEY_PREFIXES.messageAttachment}${messages.id}`);
+  }
+
+  // a customer reply counts towards the campaigns that reached this conversation
+  if (!isSentByBusiness) {
+    const campaignIds = await findWhatsAppCampaignIdsInThread({ messageChannelId: messageChannel.id, threadExternalId });
+
+    if (campaignIds.length > 0) {
+      await scheduleWhatsAppCampaignRefresh(campaignIds);
+    }
   }
 }
 

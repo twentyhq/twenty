@@ -1,11 +1,6 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { getTemplatePlaceholderKeys } from 'src/logic-functions/data/get-template-placeholder-keys.util';
 import { type WhatsAppTemplateComponent } from 'src/logic-functions/types/whatsapp-template-component.type';
 import { type WhatsAppTemplateFormFields } from 'src/logic-functions/types/whatsapp-template-form-fields.type';
-
-const PLACEHOLDER_PATTERN = /\{\{\s*(\w+)\s*\}\}/g;
-
-const getPlaceholderKeys = (text: string | undefined): string[] =>
-  isNonEmptyString(text) ? [...new Set([...text.matchAll(PLACEHOLDER_PATTERN)].map(([, key]) => key ?? ''))] : [];
 
 const findComponent = (components: WhatsAppTemplateComponent[], type: string) =>
   components.find((component) => component.type.toUpperCase() === type);
@@ -19,12 +14,12 @@ export const getWhatsAppTemplateFormFields = (
   const buttons = findComponent(components, 'BUTTONS')?.buttons ?? [];
 
   return {
-    headerParameterKeys: headerFormat === 'TEXT' ? getPlaceholderKeys(header?.text) : [],
+    headerParameterKeys: headerFormat === 'TEXT' ? getTemplatePlaceholderKeys(header?.text) : [],
     headerMediaType:
       headerFormat === 'IMAGE' ? 'image' : headerFormat === 'VIDEO' ? 'video' : headerFormat === 'DOCUMENT' ? 'document' : undefined,
-    bodyParameterKeys: getPlaceholderKeys(findComponent(components, 'BODY')?.text),
+    bodyParameterKeys: getTemplatePlaceholderKeys(findComponent(components, 'BODY')?.text),
     buttonInputs: buttons.flatMap((button, index): WhatsAppTemplateFormFields['buttonInputs'] => {
-      if (button.type.toUpperCase() === 'URL' && getPlaceholderKeys(button.url).length > 0) {
+      if (button.type.toUpperCase() === 'URL' && getTemplatePlaceholderKeys(button.url).length > 0) {
         return [{ index, subType: 'url', label: button.text ?? button.url ?? '' }];
       }
 

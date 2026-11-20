@@ -22,29 +22,41 @@ const inputStyle = {
   width: '100%',
 } as const;
 
-type SendWhatsAppTemplateFieldProps = {
+type WhatsAppTemplateFormFieldProps = {
   label: string;
   value: string;
   placeholder?: string;
   disabled: boolean;
+  isMultiline?: boolean;
   onChange: (value: string) => void;
 };
 
-export const SendWhatsAppTemplateField = ({
+export const WhatsAppTemplateFormField = ({
   label,
   value,
   placeholder,
   disabled,
+  isMultiline = false,
   onChange,
-}: SendWhatsAppTemplateFieldProps) => (
+}: WhatsAppTemplateFormFieldProps) => (
   <label style={labelStyle}>
     {label}
-    <input
-      style={inputStyle}
-      value={value}
-      placeholder={placeholder}
-      disabled={disabled}
-      onChange={(event) => onChange(event.target.value)}
-    />
+    {isMultiline ? (
+      <textarea
+        style={{ ...inputStyle, height: '120px', resize: 'vertical' }}
+        value={value}
+        placeholder={placeholder}
+        disabled={disabled}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    ) : (
+      <input
+        style={inputStyle}
+        value={value}
+        placeholder={placeholder}
+        disabled={disabled}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    )}
   </label>
 );

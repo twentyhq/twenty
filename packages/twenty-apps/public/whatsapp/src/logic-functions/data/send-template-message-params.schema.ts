@@ -3,7 +3,7 @@ import { hasSingleTemplateHeaderKind } from 'src/logic-functions/data/has-single
 import { sendTemplateContentSchema } from 'src/logic-functions/data/send-template-content.schema';
 
 export const sendTemplateMessageParamsSchema = sendTemplateContentSchema
-  .extend({ to: z.string().min(1) })
+  .extend({ to: z.string().min(1), campaignId: z.string().min(1).optional() })
   .refine(hasSingleTemplateHeaderKind, {
     message: 'A header takes either text parameters or media, not both',
     path: ['headerMedia'],

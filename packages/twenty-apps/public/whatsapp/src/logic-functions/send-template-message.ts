@@ -103,7 +103,7 @@ const handler = async (rawParams: unknown) => {
     throw new Error(z.prettifyError(parsedParams.error));
   }
 
-  const { templateId, phoneNumberId, to, parameters, headerParameters, headerMedia, buttonParameters } =
+  const { templateId, phoneNumberId, to, parameters, headerParameters, headerMedia, buttonParameters, campaignId } =
     parsedParams.data;
 
   const { whatsAppTemplate } = await new CoreApiClient().query({
@@ -198,6 +198,7 @@ const handler = async (rawParams: unknown) => {
       }),
       messageId,
       text: isNonEmptyString(renderedText) ? renderedText : whatsAppTemplate.name,
+      campaignId,
     });
   } catch (error) {
     console.error(`WhatsApp template message ${messageId} was sent but could not be added to its conversation`, error);

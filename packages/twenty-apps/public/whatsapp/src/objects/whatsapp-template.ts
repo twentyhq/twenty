@@ -1,5 +1,8 @@
-import { defineObject, FieldType } from 'twenty-sdk/define';
+import { defineObject, FieldType, RelationType } from 'twenty-sdk/define';
 import {
+  WHATSAPP_CAMPAIGN_FIELD_UNIVERSAL_IDENTIFIERS,
+  WHATSAPP_CAMPAIGN_UNIVERSAL_IDENTIFIER,
+  WHATSAPP_TEMPLATE_CAMPAIGNS_FIELD_UNIVERSAL_IDENTIFIER,
   WHATSAPP_TEMPLATE_CATEGORY_FIELD_UNIVERSAL_IDENTIFIER,
   WHATSAPP_TEMPLATE_COMPONENTS_FIELD_UNIVERSAL_IDENTIFIER,
   WHATSAPP_TEMPLATE_LANGUAGE_FIELD_UNIVERSAL_IDENTIFIER,
@@ -111,6 +114,16 @@ export default defineObject({
       description: 'Meta ID of the account that owns the template',
       icon: 'IconBuilding',
       isNullable: true,
+    },
+    {
+      universalIdentifier: WHATSAPP_TEMPLATE_CAMPAIGNS_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.RELATION,
+      name: 'campaigns',
+      label: 'Campaigns',
+      icon: 'IconSpeakerphone',
+      relationTargetObjectMetadataUniversalIdentifier: WHATSAPP_CAMPAIGN_UNIVERSAL_IDENTIFIER,
+      relationTargetFieldMetadataUniversalIdentifier: WHATSAPP_CAMPAIGN_FIELD_UNIVERSAL_IDENTIFIERS.template,
+      universalSettings: { relationType: RelationType.ONE_TO_MANY },
     },
   ],
 });

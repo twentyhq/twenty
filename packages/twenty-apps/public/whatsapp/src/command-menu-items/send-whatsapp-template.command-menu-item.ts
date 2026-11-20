@@ -1,4 +1,4 @@
-import { defineCommandMenuItem, isSelectAll, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+import { defineCommandMenuItem, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
 import {
   WHATSAPP_SEND_TEMPLATE_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
@@ -13,7 +13,5 @@ export default defineCommandMenuItem({
   isPinned: false,
   availabilityType: 'RECORD_SELECTION',
   availabilityObjectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
-  // the route takes explicit person ids, which a select-all selection does not provide
-  conditionalAvailabilityExpression: !isSelectAll,
   frontComponentUniversalIdentifier: WHATSAPP_SEND_TEMPLATE_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
 });

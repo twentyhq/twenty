@@ -16,7 +16,7 @@ export const getWhatsAppBusinessAccountPhoneNumbers = async ({
       accessToken,
       endpoint: 'GET /{wabaId}/phone_numbers',
       pathParams: { wabaId: whatsAppBusinessAccountId },
-      query: { after },
+      query: { after, fields: 'id,display_phone_number,verified_name,quality_rating,messaging_limit_tier,status,name_status' },
     });
 
     phoneNumbers.push(...response.data);

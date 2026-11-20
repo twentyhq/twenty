@@ -4,6 +4,7 @@ import { WHATSAPP_MARKETING_OPT_OUT_ERROR_CODE } from 'src/constants/whatsapp-ma
 import { WHATSAPP_LOGIC_FUNCTION_UPDATE_MESSAGE_STATUS_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { buildFailedWhatsAppMessageNotificationText } from 'src/logic-functions/data/build-failed-whatsapp-message-notification-text.util';
 import { parseWhatsAppTimestamp } from 'src/logic-functions/data/parse-whatsapp-timestamp.util';
+import { scheduleWhatsAppCampaignRefresh } from 'src/logic-functions/data/schedule-whatsapp-campaign-refresh.util';
 import { sendInboxNotification } from 'src/logic-functions/data/send-inbox-notification.util';
 import { updateWhatsAppMarketingPreference } from 'src/logic-functions/data/update-whatsapp-marketing-preference.util';
 import { updateWhatsAppMessageStatus } from 'src/logic-functions/data/update-whatsapp-message-status.util';
@@ -16,6 +17,10 @@ const handler = async ({ whatsAppBusinessAccountId, displayPhoneNumber, status }
     reportedStatus: status.status,
     errors: status.errors,
   });
+
+  if (isDefined(updatedMessage?.campaignId)) {
+    await scheduleWhatsAppCampaignRefresh([updatedMessage.campaignId]);
+  }
 
   if (status.status !== 'failed') {
     return;
