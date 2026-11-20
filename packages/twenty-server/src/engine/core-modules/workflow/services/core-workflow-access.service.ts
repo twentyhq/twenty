@@ -9,6 +9,8 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { getReachableApplications } from 'src/engine/core-modules/application/utils/get-reachable-applications.util';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import { buildCoreWorkflowNotFoundException } from 'src/engine/core-modules/workflow/utils/build-core-workflow-not-found-exception.util';
+import { buildPrivateCoreWorkflowException } from 'src/engine/core-modules/workflow/utils/build-private-core-workflow-exception.util';
 import { isCoreWorkflowVisibleToUser } from 'src/engine/core-modules/workflow/utils/is-core-workflow-visible-to-user.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -16,38 +18,6 @@ import {
   WorkflowQueryValidationException,
   WorkflowQueryValidationExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
-
-const isLoadedCoreWorkflowVisible = ({
-  coreWorkflow,
-  userWorkspaceId,
-}: {
-  coreWorkflow: Pick<WorkflowEntity, 'visibility' | 'createdByUserWorkspaceId'>;
-  userWorkspaceId: string | undefined;
-}): boolean =>
-  isCoreWorkflowVisibleToUser({
-    visibility: coreWorkflow.visibility,
-    createdByUserWorkspaceId: coreWorkflow.createdByUserWorkspaceId,
-    userWorkspaceId,
-  });
-
-export const buildCoreWorkflowNotFoundException = (coreWorkflowId: string) =>
-  new WorkflowQueryValidationException(
-    `Core workflow '${coreWorkflowId}' not found`,
-    WorkflowQueryValidationExceptionCode.FORBIDDEN,
-    {
-      userFriendlyMessage: msg`Workflow not found`,
-    },
-  );
-
-const buildPrivateCoreWorkflowException = (coreWorkflowId: string) =>
-  new WorkflowQueryValidationException(
-    `Core workflow '${coreWorkflowId}' is private to another member`,
-    WorkflowQueryValidationExceptionCode.FORBIDDEN,
-    {
-      // Same message as a missing workflow, so a private one does not announce that it exists.
-      userFriendlyMessage: msg`Workflow not found`,
-    },
-  );
 
 // Versions carry the whole definition, so they answer to the workflow's rule; both asserts live here so a private
 // workflow has one deny to audit.
@@ -455,7 +425,11 @@ export class CoreWorkflowAccessService {
   }): void {
     const inaccessibleCoreWorkflow = coreWorkflows.find(
       (coreWorkflow) =>
-        !isLoadedCoreWorkflowVisible({ coreWorkflow, userWorkspaceId }),
+        !isCoreWorkflowVisibleToUser({
+          visibility: coreWorkflow.visibility,
+          createdByUserWorkspaceId: coreWorkflow.createdByUserWorkspaceId,
+          userWorkspaceId,
+        }),
     );
 
     if (isDefined(inaccessibleCoreWorkflow)) {
@@ -488,7 +462,11 @@ export class CoreWorkflowAccessService {
     // Unknown or deleted ids stay a no-op rather than a refusal.
     return coreWorkflows.filter(
       (coreWorkflow) =>
-        !isLoadedCoreWorkflowVisible({ coreWorkflow, userWorkspaceId }),
+        !isCoreWorkflowVisibleToUser({
+          visibility: coreWorkflow.visibility,
+          createdByUserWorkspaceId: coreWorkflow.createdByUserWorkspaceId,
+          userWorkspaceId,
+        }),
     );
   }
 }
