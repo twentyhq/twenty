@@ -23,6 +23,7 @@ import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/uti
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { SdkClientChecksumsDTO } from 'src/engine/core-modules/sdk-client/dtos/sdk-client-checksums.dto';
+import { buildServedSdkClientCoreChecksum } from 'src/engine/core-modules/sdk-client/utils/build-served-sdk-client-core-checksum.util';
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -91,7 +92,7 @@ export class ApplicationResolver {
     }
 
     return {
-      core: application.sdkClientCoreChecksum,
+      core: buildServedSdkClientCoreChecksum(application.sdkClientCoreChecksum),
       metadata: (await getInstalledSdkMetadataModule()).checksum,
     };
   }
