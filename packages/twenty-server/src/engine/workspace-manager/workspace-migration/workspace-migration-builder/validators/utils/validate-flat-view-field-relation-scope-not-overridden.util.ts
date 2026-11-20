@@ -1,28 +1,20 @@
 import { msg, t } from '@lingui/core/macro';
-import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
+import { fastDeepEqual } from 'twenty-shared/utils';
 
+import { type FlatFieldMetadataOptionMapsForOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
+import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
+import { isFlatViewFieldRelationScopeSelectOptionMaintenance } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-flat-view-field-relation-scope-select-option-maintenance.util';
 import { validateFlatViewFieldNotOverridden } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-not-overridden.util';
 import { type WorkspaceMigrationValidationBuildOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
-// Filter values stay writable: renaming or deleting a select option rewrites them as a side effect of the field update
-const omitRelationScopeFilterValues = (
-  universalRelationScope: UniversalFlatViewField['universalRelationScope'],
-) =>
-  isDefined(universalRelationScope)
-    ? {
-        ...universalRelationScope,
-        filters: universalRelationScope.filters.map(
-          ({ value: _value, ...filter }) => filter,
-        ),
-      }
-    : universalRelationScope;
-
 export const validateFlatViewFieldRelationScopeNotOverridden = ({
   existingFlatViewField,
   updatedFlatViewField,
+  flatFieldMetadataMaps,
+  flatFieldMetadataOptionMaps,
   buildOptions,
 }: {
   existingFlatViewField: Pick<
@@ -32,6 +24,8 @@ export const validateFlatViewFieldRelationScopeNotOverridden = ({
     | 'universalRelationScope'
   >;
   updatedFlatViewField: Pick<UniversalFlatViewField, 'universalRelationScope'>;
+  flatFieldMetadataMaps: AllUniversalFlatEntityMaps['flatFieldMetadataMaps'];
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMapsForOptions;
   buildOptions: Pick<
     WorkspaceMigrationValidationBuildOptions,
     | 'applicationUniversalIdentifier'
@@ -40,13 +34,17 @@ export const validateFlatViewFieldRelationScopeNotOverridden = ({
 }): FlatEntityValidationError<ViewExceptionCode>[] => {
   if (
     fastDeepEqual(
-      omitRelationScopeFilterValues(
+      existingFlatViewField.universalRelationScope,
+      updatedFlatViewField.universalRelationScope,
+    ) ||
+    isFlatViewFieldRelationScopeSelectOptionMaintenance({
+      existingUniversalRelationScope:
         existingFlatViewField.universalRelationScope,
-      ),
-      omitRelationScopeFilterValues(
+      updatedUniversalRelationScope:
         updatedFlatViewField.universalRelationScope,
-      ),
-    )
+      flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
+    })
   ) {
     return [];
   }
