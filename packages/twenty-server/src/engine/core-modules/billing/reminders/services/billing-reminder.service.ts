@@ -30,6 +30,7 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { truncateWorkspaceDisplayName } from 'src/engine/core-modules/workspace/utils/truncate-workspace-display-name.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -290,7 +291,7 @@ export class BillingReminderService {
     const { emailTemplate, subject } = this.buildReminderEmail({
       reminder,
       userName,
-      workspaceDisplayName,
+      workspaceDisplayName: truncateWorkspaceDisplayName(workspaceDisplayName),
       billingSettingsUrl,
       locale,
     });

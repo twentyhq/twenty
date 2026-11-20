@@ -45,6 +45,7 @@ import {
   WorkspaceInvitationException,
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
+import { truncateWorkspaceDisplayName } from 'src/engine/core-modules/workspace/utils/truncate-workspace-display-name.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -351,6 +352,7 @@ export class WorkspaceInvitationService {
     );
 
     const senderName = truncateFullName(sender.name);
+    const workspaceName = truncateWorkspaceDisplayName(workspace.displayName);
 
     for (const invitation of invitationResults) {
       if (invitation.status === 'fulfilled') {
@@ -383,7 +385,7 @@ export class WorkspaceInvitationService {
         const emailData = {
           link: link.toString(),
           workspace: {
-            name: workspace.displayName,
+            name: workspaceName,
             logo,
           },
           sender: {
