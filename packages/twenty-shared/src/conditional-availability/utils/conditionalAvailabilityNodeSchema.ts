@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-import { CONDITIONAL_AVAILABILITY_PATH_PATTERN } from '@/constants/ConditionalAvailabilityPathPattern';
-import { type ConditionalAvailabilityNode } from '@/types/ConditionalAvailabilityNode';
+import { CONDITIONAL_AVAILABILITY_PATH_PATTERN } from '@/conditional-availability/constants/ConditionalAvailabilityPathPattern';
+import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
 
 export const conditionalAvailabilityNodeSchema: z.ZodType<ConditionalAvailabilityNode> =
   z.lazy(() =>

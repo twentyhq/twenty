@@ -1,4 +1,4 @@
-import { type ConditionalAvailabilityVariableDeclaration } from '@/types/ConditionalAvailabilityVariableDeclaration';
+import { type ConditionalAvailabilityVariableDeclaration } from '@/conditional-availability/types/ConditionalAvailabilityVariableDeclaration';
 
 export const CONDITIONAL_AVAILABILITY_VARIABLES = {
   pageLayoutWidget: {

@@ -1,6 +1,6 @@
 import { Parser } from 'expr-eval-fork';
 
-import { CONDITIONAL_AVAILABILITY_FUNCTIONS } from '@/constants/ConditionalAvailabilityFunctions';
+import { CONDITIONAL_AVAILABILITY_FUNCTIONS } from '@/conditional-availability/constants/ConditionalAvailabilityFunctions';
 
 export const conditionalAvailabilityStrictParser = new Parser({
   allowMemberAccess: true,

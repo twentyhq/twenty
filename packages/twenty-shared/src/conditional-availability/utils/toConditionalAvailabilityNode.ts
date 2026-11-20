@@ -1,10 +1,10 @@
 import { isBoolean, isNumber, isString } from '@sniptt/guards';
 import { type Instruction } from 'expr-eval-fork';
 
-import { CONDITIONAL_AVAILABILITY_COMPARISON_OPERATOR_SYMBOLS } from '@/constants/ConditionalAvailabilityComparisonOperatorSymbols';
-import { type ConditionalAvailabilityComparisonOperator } from '@/types/ConditionalAvailabilityComparisonOperator';
-import { type ConditionalAvailabilityLogicalOperator } from '@/types/ConditionalAvailabilityLogicalOperator';
-import { type ConditionalAvailabilityNode } from '@/types/ConditionalAvailabilityNode';
+import { CONDITIONAL_AVAILABILITY_COMPARISON_OPERATOR_SYMBOLS } from '@/conditional-availability/constants/ConditionalAvailabilityComparisonOperatorSymbols';
+import { type ConditionalAvailabilityComparisonOperator } from '@/conditional-availability/types/ConditionalAvailabilityComparisonOperator';
+import { type ConditionalAvailabilityLogicalOperator } from '@/conditional-availability/types/ConditionalAvailabilityLogicalOperator';
+import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
 import { typedObjectEntries } from '@/utils/typed-object-entries';
 import { isDefined } from '@/utils/validation/isDefined';
 

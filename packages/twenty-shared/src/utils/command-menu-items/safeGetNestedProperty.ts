@@ -1,8 +1,12 @@
 import { isObject, isString } from '@sniptt/guards';
 
-import { CONDITIONAL_AVAILABILITY_FORBIDDEN_PROPERTY_NAMES } from '@/constants/ConditionalAvailabilityForbiddenPropertyNames';
-
 import { isDefined } from '../validation/isDefined';
+
+const BLOCKED_PROPERTY_NAMES = new Set([
+  '__proto__',
+  'constructor',
+  'prototype',
+]);
 
 export const safeGetNestedProperty = (
   objectToEvaluate: unknown,
@@ -22,7 +26,7 @@ export const safeGetNestedProperty = (
     }
 
     if (
-      CONDITIONAL_AVAILABILITY_FORBIDDEN_PROPERTY_NAMES.has(part) ||
+      BLOCKED_PROPERTY_NAMES.has(part) ||
       !Object.prototype.hasOwnProperty.call(currentObject, part)
     ) {
       return undefined;

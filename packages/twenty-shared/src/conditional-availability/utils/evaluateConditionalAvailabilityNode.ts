@@ -1,9 +1,9 @@
 import { isFunction, isObject, isString } from '@sniptt/guards';
 
-import { CONDITIONAL_AVAILABILITY_FORBIDDEN_PROPERTY_NAMES } from '@/constants/ConditionalAvailabilityForbiddenPropertyNames';
-import { CONDITIONAL_AVAILABILITY_FUNCTIONS } from '@/constants/ConditionalAvailabilityFunctions';
-import { type ConditionalAvailabilityComparisonOperator } from '@/types/ConditionalAvailabilityComparisonOperator';
-import { type ConditionalAvailabilityNode } from '@/types/ConditionalAvailabilityNode';
+import { CONDITIONAL_AVAILABILITY_FORBIDDEN_PROPERTY_NAMES } from '@/conditional-availability/constants/ConditionalAvailabilityForbiddenPropertyNames';
+import { CONDITIONAL_AVAILABILITY_FUNCTIONS } from '@/conditional-availability/constants/ConditionalAvailabilityFunctions';
+import { type ConditionalAvailabilityComparisonOperator } from '@/conditional-availability/types/ConditionalAvailabilityComparisonOperator';
+import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
 import { isDefined } from '@/utils/validation/isDefined';
 
 type EvaluationContext = Record<string, unknown>;

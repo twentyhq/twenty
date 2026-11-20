@@ -1,8 +1,8 @@
 import { isString } from '@sniptt/guards';
 
-import { CONDITIONAL_AVAILABILITY_COMPARISON_OPERATOR_SYMBOLS } from '@/constants/ConditionalAvailabilityComparisonOperatorSymbols';
-import { type ConditionalAvailabilityLogicalOperator } from '@/types/ConditionalAvailabilityLogicalOperator';
-import { type ConditionalAvailabilityNode } from '@/types/ConditionalAvailabilityNode';
+import { CONDITIONAL_AVAILABILITY_COMPARISON_OPERATOR_SYMBOLS } from '@/conditional-availability/constants/ConditionalAvailabilityComparisonOperatorSymbols';
+import { type ConditionalAvailabilityLogicalOperator } from '@/conditional-availability/types/ConditionalAvailabilityLogicalOperator';
+import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
 
 const BACKSLASH_BEFORE_CLOSING_QUOTE_PATTERN = /\\\\"$/;
 const UNICODE_ESCAPED_BACKSLASH_AND_CLOSING_QUOTE = '\\u005c"';

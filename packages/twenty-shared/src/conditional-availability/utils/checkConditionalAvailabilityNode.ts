@@ -1,12 +1,12 @@
-import { CONDITIONAL_AVAILABILITY_FORBIDDEN_PROPERTY_NAMES } from '@/constants/ConditionalAvailabilityForbiddenPropertyNames';
-import { CONDITIONAL_AVAILABILITY_FUNCTIONS } from '@/constants/ConditionalAvailabilityFunctions';
-import { CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT } from '@/constants/ConditionalAvailabilityMaxNodeCount';
-import { CONDITIONAL_AVAILABILITY_VARIABLES } from '@/constants/ConditionalAvailabilityVariables';
-import { type ConditionalAvailabilityCheckResult } from '@/types/ConditionalAvailabilityCheckResult';
-import { type ConditionalAvailabilityMetadataName } from '@/types/ConditionalAvailabilityMetadataName';
-import { type ConditionalAvailabilityNode } from '@/types/ConditionalAvailabilityNode';
-import { conditionalAvailabilityNodeSchema } from '@/utils/conditional-availability/conditionalAvailabilityNodeSchema';
-import { listConditionalAvailabilityNodes } from '@/utils/conditional-availability/listConditionalAvailabilityNodes';
+import { CONDITIONAL_AVAILABILITY_FORBIDDEN_PROPERTY_NAMES } from '@/conditional-availability/constants/ConditionalAvailabilityForbiddenPropertyNames';
+import { CONDITIONAL_AVAILABILITY_FUNCTIONS } from '@/conditional-availability/constants/ConditionalAvailabilityFunctions';
+import { CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT } from '@/conditional-availability/constants/ConditionalAvailabilityMaxNodeCount';
+import { CONDITIONAL_AVAILABILITY_VARIABLES } from '@/conditional-availability/constants/ConditionalAvailabilityVariables';
+import { type ConditionalAvailabilityCheckResult } from '@/conditional-availability/types/ConditionalAvailabilityCheckResult';
+import { type ConditionalAvailabilityMetadataName } from '@/conditional-availability/types/ConditionalAvailabilityMetadataName';
+import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
+import { conditionalAvailabilityNodeSchema } from '@/conditional-availability/utils/conditionalAvailabilityNodeSchema';
+import { listConditionalAvailabilityNodes } from '@/conditional-availability/utils/listConditionalAvailabilityNodes';
 import { isDefined } from '@/utils/validation/isDefined';
 
 const INVALID_NODE_AT_ROOT = {

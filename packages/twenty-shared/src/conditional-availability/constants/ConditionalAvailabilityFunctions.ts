@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { createArrayPropertyCheck } from '@/utils/conditional-availability/createArrayPropertyCheck';
+import { createArrayPropertyCheck } from '@/conditional-availability/utils/createArrayPropertyCheck';
 import { isDefined } from '@/utils/validation/isDefined';
 
 export const CONDITIONAL_AVAILABILITY_FUNCTIONS = {

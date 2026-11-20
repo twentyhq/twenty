@@ -1,12 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Expression } from 'expr-eval-fork';
 
-import { CONDITIONAL_AVAILABILITY_EXPRESSION_MAX_LENGTH } from '@/constants/ConditionalAvailabilityExpressionMaxLength';
-import { type ConditionalAvailabilityMetadataName } from '@/types/ConditionalAvailabilityMetadataName';
-import { type ConditionalAvailabilityParseResult } from '@/types/ConditionalAvailabilityParseResult';
-import { checkConditionalAvailabilityNode } from '@/utils/conditional-availability/checkConditionalAvailabilityNode';
-import { conditionalAvailabilityStrictParser } from '@/utils/conditional-availability/conditionalAvailabilityStrictParser';
-import { toConditionalAvailabilityNode } from '@/utils/conditional-availability/toConditionalAvailabilityNode';
+import { CONDITIONAL_AVAILABILITY_EXPRESSION_MAX_LENGTH } from '@/conditional-availability/constants/ConditionalAvailabilityExpressionMaxLength';
+import { type ConditionalAvailabilityMetadataName } from '@/conditional-availability/types/ConditionalAvailabilityMetadataName';
+import { type ConditionalAvailabilityParseResult } from '@/conditional-availability/types/ConditionalAvailabilityParseResult';
+import { checkConditionalAvailabilityNode } from '@/conditional-availability/utils/checkConditionalAvailabilityNode';
+import { conditionalAvailabilityStrictParser } from '@/conditional-availability/utils/conditionalAvailabilityStrictParser';
+import { toConditionalAvailabilityNode } from '@/conditional-availability/utils/toConditionalAvailabilityNode';
 import { getExpressionSyntaxError } from '@/utils/expression/getExpressionSyntaxError';
 
 export const parseConditionalAvailabilityExpression = ({

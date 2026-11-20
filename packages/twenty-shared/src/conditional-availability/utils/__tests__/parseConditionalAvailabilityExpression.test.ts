@@ -1,5 +1,5 @@
-import { CONDITIONAL_AVAILABILITY_EXPRESSION_MAX_LENGTH } from '@/constants/ConditionalAvailabilityExpressionMaxLength';
-import { parseConditionalAvailabilityExpression } from '@/utils/conditional-availability/parseConditionalAvailabilityExpression';
+import { CONDITIONAL_AVAILABILITY_EXPRESSION_MAX_LENGTH } from '@/conditional-availability/constants/ConditionalAvailabilityExpressionMaxLength';
+import { parseConditionalAvailabilityExpression } from '@/conditional-availability/utils/parseConditionalAvailabilityExpression';
 
 const parseWidgetRule = (expression: string | null | undefined) =>
   parseConditionalAvailabilityExpression({

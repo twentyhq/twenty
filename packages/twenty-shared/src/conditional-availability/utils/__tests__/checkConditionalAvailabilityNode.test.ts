@@ -1,5 +1,5 @@
-import { CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT } from '@/constants/ConditionalAvailabilityMaxNodeCount';
-import { checkConditionalAvailabilityNode } from '@/utils/conditional-availability/checkConditionalAvailabilityNode';
+import { CONDITIONAL_AVAILABILITY_MAX_NODE_COUNT } from '@/conditional-availability/constants/ConditionalAvailabilityMaxNodeCount';
+import { checkConditionalAvailabilityNode } from '@/conditional-availability/utils/checkConditionalAvailabilityNode';
 
 const DEVICE_IS_MOBILE = {
   type: 'COMPARISON',

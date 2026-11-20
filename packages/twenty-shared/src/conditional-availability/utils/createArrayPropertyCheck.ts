@@ -1,6 +1,6 @@
 import { isNonEmptyArray } from '@sniptt/guards';
 
-import { safeGetNestedProperty } from '@/utils/conditional-availability/safeGetNestedProperty';
+import { safeGetNestedProperty } from '@/utils/command-menu-items/safeGetNestedProperty';
 
 export const createArrayPropertyCheck =
   (

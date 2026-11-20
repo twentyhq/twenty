@@ -1,6 +1,6 @@
-import { evaluateConditionalAvailabilityExpression } from '@/utils/conditional-availability/evaluateConditionalAvailabilityExpression';
-import { evaluateConditionalAvailabilityNode } from '@/utils/conditional-availability/evaluateConditionalAvailabilityNode';
-import { parseConditionalAvailabilityExpression } from '@/utils/conditional-availability/parseConditionalAvailabilityExpression';
+import { evaluateConditionalAvailabilityExpression } from '@/conditional-availability/utils/evaluateConditionalAvailabilityExpression';
+import { evaluateConditionalAvailabilityNode } from '@/conditional-availability/utils/evaluateConditionalAvailabilityNode';
+import { parseConditionalAvailabilityExpression } from '@/conditional-availability/utils/parseConditionalAvailabilityExpression';
 
 const EXPRESSIONS = [
   'true',

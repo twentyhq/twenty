@@ -1,4 +1,4 @@
-import { type ConditionalAvailabilityNode } from '@/types/ConditionalAvailabilityNode';
+import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
 
 const getChildNodes = (
   node: ConditionalAvailabilityNode,

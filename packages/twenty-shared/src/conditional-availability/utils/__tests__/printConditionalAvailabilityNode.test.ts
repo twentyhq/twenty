@@ -1,5 +1,5 @@
-import { parseConditionalAvailabilityExpression } from '@/utils/conditional-availability/parseConditionalAvailabilityExpression';
-import { printConditionalAvailabilityNode } from '@/utils/conditional-availability/printConditionalAvailabilityNode';
+import { parseConditionalAvailabilityExpression } from '@/conditional-availability/utils/parseConditionalAvailabilityExpression';
+import { printConditionalAvailabilityNode } from '@/conditional-availability/utils/printConditionalAvailabilityNode';
 import { isDefined } from '@/utils/validation/isDefined';
 
 const CANONICAL_EXPRESSIONS = [

@@ -1,4 +1,4 @@
-import { type ConditionalAvailabilityComparisonOperator } from '@/types/ConditionalAvailabilityComparisonOperator';
+import { type ConditionalAvailabilityComparisonOperator } from '@/conditional-availability/types/ConditionalAvailabilityComparisonOperator';
 
 export const CONDITIONAL_AVAILABILITY_COMPARISON_OPERATOR_SYMBOLS = {
   EQUAL: '==',
