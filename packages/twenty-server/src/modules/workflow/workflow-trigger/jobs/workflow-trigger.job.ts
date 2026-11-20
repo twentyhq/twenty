@@ -7,7 +7,6 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { WorkflowVersionStatus as CoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
-import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import { buildWorkflowRunSource } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-source.util';
@@ -24,7 +23,6 @@ export class WorkflowTriggerJob {
   private readonly logger = new Logger(WorkflowTriggerJob.name);
   constructor(
     private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
-    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
@@ -49,15 +47,17 @@ export class WorkflowTriggerJob {
       return;
     }
 
-    const coreWorkflow =
-      await this.workflowCoreSyncService.findCoreWorkflowByIdOrWorkspaceWorkflowId(
-        workspaceId,
-        workflowId,
-      );
+    const coreWorkflow = isDefined(coreWorkflowVersion.coreWorkflowId)
+      ? await this.coreWorkflowTriggerService.findCoreWorkflowById(
+          workspaceId,
+          coreWorkflowVersion.coreWorkflowId,
+        )
+      : null;
 
     if (
       !isDefined(coreWorkflow) ||
-      coreWorkflowVersion.coreWorkflowId !== coreWorkflow.id
+      (workflowId !== coreWorkflow.id &&
+        workflowId !== coreWorkflow.workspaceWorkflowId)
     ) {
       this.captureDroppedDispatch(
         `Core workflow version ${coreWorkflowVersionId} does not belong to workflow ${workflowId} in workspace ${workspaceId}`,
