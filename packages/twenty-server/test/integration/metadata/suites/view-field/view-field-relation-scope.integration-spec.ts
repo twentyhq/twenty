@@ -30,6 +30,7 @@ type FieldNode = {
 
 const SCOPED_VIEW_FIELD_GQL_FIELDS = `
   ${VIEW_FIELD_GQL_FIELDS}
+  relationTargetFieldMetadataId
   relationScope {
     filters {
       id
@@ -170,12 +171,14 @@ const buildOpenDealsScope = (): ViewFieldRelationScopeInput => ({
 
 const createScopedViewField = ({
   relationScope,
+  relationTargetFieldMetadataId,
   viewId = testContext.companyViewId,
   fieldMetadataId = testContext.companyDealsFieldId,
   isCanonical = false,
   expectToFail,
 }: {
   relationScope: ViewFieldRelationScopeInput;
+  relationTargetFieldMetadataId?: string;
   viewId?: string;
   fieldMetadataId?: string;
   isCanonical?: boolean;
@@ -184,7 +187,14 @@ const createScopedViewField = ({
   createOneViewField({
     expectToFail,
     gqlFields: SCOPED_VIEW_FIELD_GQL_FIELDS,
-    input: { viewId, fieldMetadataId, relationScope, isCanonical, position: 1 },
+    input: {
+      viewId,
+      fieldMetadataId,
+      relationScope,
+      relationTargetFieldMetadataId,
+      isCanonical,
+      position: 1,
+    },
   });
 
 const findCompanyViewFieldIds = async () => {
@@ -360,6 +370,114 @@ describe('View field filtering, sorting and limiting its related records', () =>
     expect(clearedViewField.relationScope).toBeNull();
   });
 
+  it('shows a field of the related records, then the records again', async () => {
+    const {
+      data: { createViewField },
+    } = await createScopedViewField({
+      relationScope: buildOpenDealsScope(),
+      relationTargetFieldMetadataId: testContext.dealStageFieldId,
+      expectToFail: false,
+    });
+
+    expect(createViewField.relationTargetFieldMetadataId).toBe(
+      testContext.dealStageFieldId,
+    );
+
+    const {
+      data: { updateViewField: closeDateViewField },
+    } = await updateOneViewField({
+      expectToFail: false,
+      gqlFields: SCOPED_VIEW_FIELD_GQL_FIELDS,
+      input: {
+        id: createViewField.id,
+        update: {
+          relationTargetFieldMetadataId: testContext.dealCloseDateFieldId,
+        },
+      },
+    });
+
+    expect(closeDateViewField.relationTargetFieldMetadataId).toBe(
+      testContext.dealCloseDateFieldId,
+    );
+
+    const {
+      data: { updateViewField: recordsViewField },
+    } = await updateOneViewField({
+      expectToFail: false,
+      gqlFields: SCOPED_VIEW_FIELD_GQL_FIELDS,
+      input: {
+        id: createViewField.id,
+        update: { relationTargetFieldMetadataId: null },
+      },
+    });
+
+    expect(recordsViewField.relationTargetFieldMetadataId).toBeNull();
+    expect(recordsViewField.relationScope?.limit).toBe(1);
+  });
+
+  it('keeps the scope of a column showing a field of the related records', async () => {
+    const {
+      data: { createViewField },
+    } = await createScopedViewField({
+      relationScope: buildOpenDealsScope(),
+      relationTargetFieldMetadataId: testContext.dealStageFieldId,
+      expectToFail: false,
+    });
+
+    const response = await updateOneViewField({
+      expectToFail: true,
+      gqlFields: SCOPED_VIEW_FIELD_GQL_FIELDS,
+      input: { id: createViewField.id, update: { relationScope: null } },
+    });
+
+    expect(JSON.stringify(response.errors)).toContain(
+      'one-to-many relation field with a relation scope',
+    );
+
+    const {
+      data: { updateViewField: plainViewField },
+    } = await updateOneViewField({
+      expectToFail: false,
+      gqlFields: SCOPED_VIEW_FIELD_GQL_FIELDS,
+      input: {
+        id: createViewField.id,
+        update: { relationScope: null, relationTargetFieldMetadataId: null },
+      },
+    });
+
+    expect(plainViewField).toMatchObject({
+      relationScope: null,
+      relationTargetFieldMetadataId: null,
+    });
+  });
+
+  it('removes the column when the field it shows is deactivated', async () => {
+    const priorityFieldId = await createField({
+      objectMetadataId: testContext.dealObjectId,
+      name: 'priority',
+      label: 'Priority',
+      type: FieldMetadataType.TEXT,
+    });
+
+    const {
+      data: { createViewField },
+    } = await createScopedViewField({
+      relationScope: buildOpenDealsScope(),
+      relationTargetFieldMetadataId: priorityFieldId,
+      expectToFail: false,
+    });
+
+    await updateOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: priorityFieldId,
+        updatePayload: { isActive: false },
+      },
+    });
+
+    expect(await findCompanyViewFieldIds()).not.toContain(createViewField.id);
+  });
+
   it.each([
     {
       title: 'is canonical',
@@ -414,6 +532,16 @@ describe('View field filtering, sorting and limiting its related records', () =>
       getRelationScope: () => ({ ...buildOpenDealsScope(), limit: 61 }),
       expectedMessage: 'limit must be an integer between 1 and 60',
     },
+    {
+      title: 'shows a field of another object',
+      getRelationTargetFieldId: () => testContext.personCityFieldId,
+      expectedMessage: 'must belong to the relation target object',
+    },
+    {
+      title: 'shows a relation of the related records',
+      getRelationTargetFieldId: () => testContext.dealOwnerFieldId,
+      expectedMessage: 'cannot be a relation',
+    },
   ])(
     'rejects a column that $title',
     async ({
@@ -421,12 +549,14 @@ describe('View field filtering, sorting and limiting its related records', () =>
       getViewId = () => testContext.companyViewId,
       getFieldId = () => testContext.companyDealsFieldId,
       getRelationScope = buildOpenDealsScope,
+      getRelationTargetFieldId = () => undefined,
       expectedMessage,
     }) => {
       const response = await createScopedViewField({
         viewId: getViewId(),
         fieldMetadataId: getFieldId(),
         relationScope: getRelationScope(),
+        relationTargetFieldMetadataId: getRelationTargetFieldId(),
         isCanonical,
         expectToFail: true,
       });
