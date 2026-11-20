@@ -55,11 +55,12 @@ export const MainNavigationDrawerEditButton = () => {
   }
 
   return (
-    <StyledShownOnDrawerHover onMouseEnter={preloadNavigationMenuItemDndKit}>
+    <StyledShownOnDrawerHover>
       <LightIconButton
         emphasis="standard"
         size="sm"
         onClick={() => enterLayoutCustomizationMode()}
+        onMouseEnter={preloadNavigationMenuItemDndKit}
         aria-label={t`Customize sidebar`}
         tooltip={t`Customize sidebar`}
         tooltipDelay={TooltipDelay.longDelay}
