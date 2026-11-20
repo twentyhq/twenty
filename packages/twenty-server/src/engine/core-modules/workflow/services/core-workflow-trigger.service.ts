@@ -48,6 +48,7 @@ export class CoreWorkflowTriggerService {
     coreWorkflowIdsToUnschedule?: string[];
   }): Promise<void> {
     await this.updateCronTriggerCache({
+      workspaceId,
       cronTriggersToPublish,
       coreWorkflowIdsToUnschedule,
     });
@@ -101,9 +102,11 @@ export class CoreWorkflowTriggerService {
   }
 
   private async updateCronTriggerCache({
+    workspaceId,
     cronTriggersToPublish,
     coreWorkflowIdsToUnschedule,
   }: {
+    workspaceId?: string;
     cronTriggersToPublish: CachedCronTrigger[];
     coreWorkflowIdsToUnschedule: string[];
   }): Promise<void> {
@@ -123,15 +126,28 @@ export class CoreWorkflowTriggerService {
         });
       }
     } catch (error) {
+      const affectedWorkflows = [
+        ...coreWorkflowIdsToUnschedule.map(
+          (coreWorkflowId) => `${coreWorkflowId} (workspace ${workspaceId})`,
+        ),
+        ...cronTriggersToPublish.map(
+          (cachedTrigger) =>
+            `${cachedTrigger.workflowId} (workspace ${cachedTrigger.workspaceId})`,
+        ),
+      ].join(', ');
+
       this.logger.error(
-        'Cron trigger cache not updated, dropping it so the next tick rebuilds it from the database',
+        `Cron trigger cache not updated for workflows ${affectedWorkflows}, dropping it so the next tick rebuilds it from the database`,
         error,
       );
 
       try {
         await this.cacheStorageService.del(WORKFLOW_CRON_TRIGGER_CACHE_KEY);
       } catch (invalidationError) {
-        this.logger.error(invalidationError);
+        this.logger.error(
+          `Cron trigger cache could not be dropped after a failed update for workflows ${affectedWorkflows}`,
+          invalidationError,
+        );
       }
     }
   }
