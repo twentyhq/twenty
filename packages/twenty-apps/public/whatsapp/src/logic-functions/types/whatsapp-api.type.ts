@@ -171,9 +171,11 @@ type WhatsAppApiTemplateComponent = {
 
 type WhatsAppApiSendMessageBase = WhatsAppApiMessagingProduct & {
   recipient_type?: 'individual' | 'group';
-  to: string; // phone number, or group ID for group messages
   context?: { message_id: string }; // reply to a message
-};
+} & (
+    | { to: string } // phone number, or group ID for group messages
+    | { recipient: string } // business-scoped user ID (BSUID)
+  );
 
 export type WhatsAppApiSendMessageRequest = WhatsAppApiSendMessageBase &
   (
@@ -283,7 +285,7 @@ export type WhatsAppApiGetGroupResponse = WhatsAppApiMessagingProduct & {
   creation_timestamp?: number;
   suspended?: boolean;
   total_participant_count?: number;
-  participants?: Array<{ wa_id: string }>;
+  participants?: Array<{ wa_id?: string; user_id?: string; username?: string }>;
   join_approval_mode?: string;
 };
 

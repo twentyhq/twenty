@@ -43,11 +43,14 @@ type WhatsappWebhookMessageStatuses = {
   }>;
 }
 
+// https://developers.facebook.com/documentation/business-messaging/whatsapp/business-scoped-user-ids
 export type WhatsAppWebhookMessageContacts = {
   profile: {
     name: string;
   };
-  wa_id: string;
+  wa_id?: string; // phone number, omitted when a username hides it
+  user_id?: string; // business-scoped user ID (BSUID)
+  username?: string;
   identity_key_hash?: string; // audio/button/document message
 };
 
@@ -59,7 +62,8 @@ type WhatsappWebhookMessageMessages = {
 };
 
 type WhatsAppWebhookMessageBase = {
-  from: string; // Phone number
+  from?: string; // phone number, omitted when a username hides it
+  from_user_id?: string; // business-scoped user ID (BSUID)
   group_id?: string; // only for group messages
   id: string; // WhatsApp message ID
   timestamp: string;

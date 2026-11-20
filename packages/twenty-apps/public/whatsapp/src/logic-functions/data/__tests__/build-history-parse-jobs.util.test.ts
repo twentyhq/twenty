@@ -25,11 +25,23 @@ describe('buildHistoryParseJobs', () => {
     expect(jobs[0]?.payload.contacts.wa_id).toBe('16505551234');
   });
 
-  it('should skip threads without any customer phone number', () => {
+  it('should keep threads of users who hide their phone number, keyed by their user ID', () => {
     const jobs = buildHistoryParseJobs(BUSINESS_DATA, [
       {
         metadata: { phase: 0, chunk_order: 1, progress: 100 },
         threads: [{ context: { user_id: 'US.1' }, messages: [buildMessage('15550783881')] }],
+      },
+    ]);
+
+    expect(jobs).toHaveLength(1);
+    expect(jobs[0]?.payload.contacts).toEqual({ wa_id: undefined, user_id: 'US.1', profile: { name: '' } });
+  });
+
+  it('should skip threads without any customer identifier', () => {
+    const jobs = buildHistoryParseJobs(BUSINESS_DATA, [
+      {
+        metadata: { phase: 0, chunk_order: 1, progress: 100 },
+        threads: [{ messages: [buildMessage('15550783881')] }],
       },
     ]);
 

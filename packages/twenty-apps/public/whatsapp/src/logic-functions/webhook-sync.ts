@@ -170,8 +170,11 @@ const handler = async (
                 payload: {
                   businessData: metadata,
                   contacts:
-                    contacts?.find((contact) => contact.wa_id === message.from) ??
-                    contacts?.[0],
+                    contacts?.find(
+                      (contact) =>
+                        (isDefined(message.from_user_id) && contact.user_id === message.from_user_id) ||
+                        (isDefined(message.from) && contact.wa_id === message.from),
+                    ) ?? contacts?.[0],
                   messages: message,
                 },
               })),

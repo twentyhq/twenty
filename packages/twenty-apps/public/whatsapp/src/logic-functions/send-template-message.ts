@@ -4,6 +4,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { type InputJsonSchema } from 'twenty-sdk/logic-function';
 import { WHATSAPP_LOGIC_FUNCTION_SEND_TEMPLATE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { buildWhatsappRecipient } from 'src/logic-functions/data/build-whatsapp-recipient.util';
 import { buildTemplateComponents } from 'src/logic-functions/data/build-template-components.util';
 import { getWhatsappAccessTokenOrThrow } from 'src/logic-functions/data/get-whatsapp-access-token-or-throw.util';
 import { getDefaultWhatsappPhoneNumberIdOrThrow } from 'src/logic-functions/data/get-default-whatsapp-phone-number-id-or-throw.util';
@@ -26,7 +27,8 @@ const SEND_TEMPLATE_MESSAGE_INPUT_SCHEMA: InputJsonSchema = {
     to: {
       type: 'string',
       label: 'Recipient',
-      description: 'Recipient phone number in international format.',
+      description:
+        'Recipient phone number in international format, or the WhatsApp user ID (for example US.13491208655302741918) of a user who hides their number.',
     },
     parameters: {
       type: 'array',
@@ -138,7 +140,7 @@ const handler = async (rawParams: unknown) => {
     },
     data: {
       messaging_product: 'whatsapp',
-      to,
+      ...buildWhatsappRecipient(to),
       type: 'template',
       template: {
         name: whatsAppTemplate.name,

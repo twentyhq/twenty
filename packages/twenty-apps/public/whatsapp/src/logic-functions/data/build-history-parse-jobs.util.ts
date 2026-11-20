@@ -14,15 +14,20 @@ export const buildHistoryParseJobs = (
 
     return chunk.threads.flatMap((thread) => {
       const customerWhatsAppId = thread.id ?? thread.context?.wa_id;
+      const customerWhatsAppUserId = thread.context?.user_id;
 
-      if (!isNonEmptyString(customerWhatsAppId)) {
+      if (!isNonEmptyString(customerWhatsAppId) && !isNonEmptyString(customerWhatsAppUserId)) {
         return [];
       }
 
       return thread.messages.map((message) => ({
         payload: {
           businessData,
-          contacts: { wa_id: customerWhatsAppId, profile: { name: '' } },
+          contacts: {
+            wa_id: customerWhatsAppId,
+            user_id: customerWhatsAppUserId,
+            profile: { name: '' },
+          },
           messages: message,
         },
       }));

@@ -1,4 +1,5 @@
 import { whatsappApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
+import { type WhatsappIdentity } from 'src/logic-functions/types/whatsapp-identity.type';
 
 export const getGroupMessageParticipants = async ({
   accessToken,
@@ -6,7 +7,7 @@ export const getGroupMessageParticipants = async ({
 }: {
   accessToken: string;
   groupId: string;
-}): Promise<string[]> => {
+}): Promise<WhatsappIdentity[]> => {
   const { participants = [] } = await whatsappApiRequest({
     accessToken,
     endpoint: 'GET /{groupId}',
@@ -14,5 +15,5 @@ export const getGroupMessageParticipants = async ({
     query: { fields: 'participants' },
   });
 
-  return participants.map(({ wa_id }) => wa_id);
+  return participants.map(({ wa_id, user_id }) => ({ whatsAppId: wa_id, whatsAppUserId: user_id }));
 };

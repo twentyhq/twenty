@@ -6,13 +6,16 @@ import {
   WhatsAppWebhookMessageContacts,
   WhatsAppWebhookMessageContent
 } from "src/logic-functions/types/whatsapp-webhook-message.type";
-import { createPerson } from "src/logic-functions/data/create-person.util";
-import { findPersonIdsByWhatsappIds } from "src/logic-functions/data/find-person-ids-by-whatsapp-ids.util";
+import { findOrCreateWhatsappPersonId } from "src/logic-functions/data/find-or-create-whatsapp-person-id.util";
+import { findWhatsappPeople } from "src/logic-functions/data/find-whatsapp-people.util";
+import { findPersonForWhatsappIdentity } from "src/logic-functions/data/find-person-for-whatsapp-identity.util";
+import { type WhatsappIdentity } from "src/logic-functions/types/whatsapp-identity.type";
+import { isSameWhatsappIdentity } from "src/logic-functions/data/is-same-whatsapp-identity.util";
 import { getGroupMessageParticipants } from "src/logic-functions/data/get-group-message-participants.util";
 import { WhatsappFile } from "src/logic-functions/types/whatsapp-file.type";
 import { updateMessage } from "src/logic-functions/data/update-message.util";
 import { findMessageByExternalId } from "src/logic-functions/data/find-message-by-external-id.util";
-import { updatePersonWhatsappNumber } from "src/logic-functions/data/update-person-whatsapp-number.util";
+import { updateWhatsappPersonIdentity } from "src/logic-functions/data/update-whatsapp-person-identity.util";
 import { getEditedMessageText } from "src/logic-functions/data/get-edited-message-text.util";
 import { formatSharedContactsText } from "src/logic-functions/data/format-shared-contacts-text.util";
 import { getInteractiveMessageText } from "src/logic-functions/data/get-interactive-message-text.util";
@@ -49,17 +52,19 @@ const handler = async (params: {
     return;
   }
   if (messages.type === 'system') {
-    if (
-      messages.system.type === 'user_changed_number' &&
-      isNonEmptyString(messages.from) &&
-      isNonEmptyString(messages.system.wa_id)
-    ) {
-      await updatePersonWhatsappNumber({
-        client: coreClient,
-        previousWhatsAppId: messages.from,
-        whatsAppId: messages.system.wa_id,
-      });
-    }
+    const { system } = messages;
+    await updateWhatsappPersonIdentity({
+      client: coreClient,
+      ...(system.type === 'user_changed_number'
+        ? {
+            previousIdentity: { whatsAppId: messages.from, whatsAppUserId: system.user_id },
+            identity: { whatsAppId: system.wa_id },
+          }
+        : {
+            previousIdentity: { whatsAppUserId: system.previous_user_id },
+            identity: { whatsAppUserId: system.user_id },
+          }),
+    });
     return;
   }
   const messageChannel = await findMessageChannelByDisplayPhoneNumber(businessData.display_phone_number);
@@ -94,26 +99,32 @@ const handler = async (params: {
   const accessToken = await getWhatsappAccessTokenOrThrow({
     connectedAccountId: messageChannel.connectedAccountId,
   });
-  const customerWhatsAppId = contacts.wa_id;
-  const threadExternalId = messages.group_id ?? customerWhatsAppId;
+  const customerIdentity: WhatsappIdentity = {
+    whatsAppId: contacts.wa_id,
+    whatsAppUserId: contacts.user_id,
+  };
+  const customerHandle = contacts.wa_id ?? contacts.user_id;
+  if (!isNonEmptyString(customerHandle)) {
+    throw new Error(`WhatsApp message ${messages.id} has no sender phone number or user ID`);
+  }
+  // the user ID stays stable when a user hides or changes their phone number
+  const threadExternalId = messages.group_id ?? contacts.user_id ?? customerHandle;
   // history imports include messages the business sent, with the business number as sender
   const isSentByBusiness =
+    isNonEmptyString(messages.from) &&
     normalizeWhatsappPhoneNumber(messages.from) ===
-    normalizeWhatsappPhoneNumber(businessData.display_phone_number);
+      normalizeWhatsappPhoneNumber(businessData.display_phone_number);
 
-  const customerPersonId =
-    (await findPersonIdsByWhatsappIds({ client: coreClient, whatsAppIds: [customerWhatsAppId] })).get(customerWhatsAppId) ??
-    (await createPerson({
-      client: coreClient,
-      whatsAppId: customerWhatsAppId,
-      phoneNumber: customerWhatsAppId,
-      name: contacts.profile.name,
-    }));
+  const customerPersonId = await findOrCreateWhatsappPersonId({
+    client: coreClient,
+    identity: customerIdentity,
+    name: contacts.profile.name,
+  });
 
   const businessParticipant = { handle: businessData.display_phone_number };
   const customerParticipant = {
-    handle: customerWhatsAppId,
-    displayName: isNonEmptyString(contacts.profile.name) ? contacts.profile.name : undefined,
+    handle: customerHandle,
+    displayName: [contacts.profile.name, contacts.username].find(isNonEmptyString),
     personId: customerPersonId,
   };
   const participants: IngestMessageParticipant[] = isSentByBusiness
@@ -122,21 +133,26 @@ const handler = async (params: {
 
   if (isDefined(messages.group_id)) {
     const businessWhatsAppId = normalizeWhatsappPhoneNumber(businessData.display_phone_number);
-    const groupParticipantWhatsAppIds = (
+    const groupParticipants = (
       await getGroupMessageParticipants({ accessToken, groupId: messages.group_id })
     ).filter(
-      (whatsAppId) => whatsAppId !== customerWhatsAppId && whatsAppId !== businessWhatsAppId,
+      (participant) =>
+        participant.whatsAppId !== businessWhatsAppId &&
+        !isSameWhatsappIdentity(participant, customerIdentity),
     );
-    const groupParticipantPersonIds = await findPersonIdsByWhatsappIds({
-      client: coreClient,
-      whatsAppIds: groupParticipantWhatsAppIds,
-    });
+    const groupPeople = await findWhatsappPeople({ client: coreClient, identities: groupParticipants });
 
-    for (const whatsAppId of groupParticipantWhatsAppIds) {
+    for (const participant of groupParticipants) {
+      const handle = participant.whatsAppId ?? participant.whatsAppUserId;
+
+      if (!isNonEmptyString(handle)) {
+        continue;
+      }
+
       participants.push({
         role: 'TO',
-        handle: whatsAppId,
-        personId: groupParticipantPersonIds.get(whatsAppId),
+        handle,
+        personId: findPersonForWhatsappIdentity({ people: groupPeople, identity: participant })?.id,
       });
     }
   }
