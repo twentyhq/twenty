@@ -47,7 +47,9 @@ let mockIsInboxEnabled = true;
 let mockChatAttention: {
   chatAttention: NavigationMenuChatAttention | null;
   unreadOpenThreadCount: number;
-  getTabChatAttention: (tabId: string) => NavigationMenuChatAttention | null;
+  getTabChatAttention: (
+    tabId: string | null,
+  ) => NavigationMenuChatAttention | null;
 } | null = null;
 
 jest.mock(
@@ -331,5 +333,19 @@ describe('MainNavigationDrawerTabSwitcher', () => {
     expect(
       screen.getByRole('button', { name: 'Sales, needs your input' }),
     ).toHaveAttribute('aria-current', 'true');
+  });
+
+  it('marks Home when a chat section sits at its top level', () => {
+    mockChatAttention = {
+      chatAttention: 'unread',
+      unreadOpenThreadCount: 0,
+      getTabChatAttention: (tabId) => (tabId === null ? 'unread' : null),
+    };
+
+    renderTabSwitcher();
+
+    expect(
+      screen.getByRole('button', { name: 'Home, unread' }),
+    ).toBeInTheDocument();
   });
 });

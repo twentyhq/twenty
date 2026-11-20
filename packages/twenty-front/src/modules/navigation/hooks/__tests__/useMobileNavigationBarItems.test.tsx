@@ -19,7 +19,7 @@ jest.mock(
   '@/navigation-menu-item/display/hooks/useNavigationMenuChatAttention',
   () => ({
     useNavigationMenuChatAttention: () => ({
-      getTabChatAttention: (tabId: string) =>
+      getTabChatAttention: (tabId: string | null) =>
         tabId === 'sales-tab' ? 'needs-input' : null,
     }),
   }),

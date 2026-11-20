@@ -1,5 +1,5 @@
 import { type BuiltInSectionKey } from 'twenty-shared/types';
-import { isBuiltInSectionKey, isDefined } from 'twenty-shared/utils';
+import { isBuiltInSectionKey } from 'twenty-shared/utils';
 
 import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -17,10 +17,9 @@ export const getNavigationMenuTabIdsWithChatSections = (
 ) =>
   new Set(
     navigationMenuItems.flatMap((item) =>
-      isDefined(item.parentId) &&
       isBuiltInSectionKey(item.builtInSectionKey) &&
       AI_CHAT_BUILT_IN_SECTION_KEYS.includes(item.builtInSectionKey)
-        ? [item.parentId]
+        ? [item.parentId ?? null]
         : [],
     ),
   );

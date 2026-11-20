@@ -22,7 +22,7 @@ export const useNavigationMenuChatAttention = () => {
   return {
     chatAttention,
     unreadOpenThreadCount: inboxOpenThreadsSummary.unreadOpenThreadCount,
-    getTabChatAttention: (tabId: string) =>
+    getTabChatAttention: (tabId: string | null) =>
       tabIdsWithChatSections.has(tabId) ? chatAttention : null,
   };
 };
