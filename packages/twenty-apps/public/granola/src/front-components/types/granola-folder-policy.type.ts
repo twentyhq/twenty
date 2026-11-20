@@ -1,4 +1,6 @@
+import { type GranolaMemberFolderPolicy } from 'src/front-components/types/granola-member-folder-policy.type';
+import { type GranolaWorkspaceFolderPolicy } from 'src/front-components/types/granola-workspace-folder-policy.type';
+
 export type GranolaFolderPolicy =
-  | 'ALL_FOLDERS'
-  | 'NO_FOLDERS'
-  | 'SELECTED_FOLDERS';
+  | GranolaWorkspaceFolderPolicy
+  | GranolaMemberFolderPolicy;

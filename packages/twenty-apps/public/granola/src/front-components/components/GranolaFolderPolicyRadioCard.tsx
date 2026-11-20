@@ -43,19 +43,21 @@ const StyledExpandedContent = styled.div`
   }
 `;
 
-type GranolaFolderPolicyRadioCardProps = {
-  options: GranolaFolderPolicyOption[];
-  policy: GranolaFolderPolicy | undefined;
-  selectedFoldersContent?: ReactNode;
-  onChange?: (policy: GranolaFolderPolicy) => void;
+type GranolaFolderPolicyRadioCardProps<TPolicy extends GranolaFolderPolicy> = {
+  options: GranolaFolderPolicyOption<TPolicy>[];
+  policy: TPolicy | undefined;
+  expandedContentByPolicy?: Partial<Record<TPolicy, ReactNode>>;
+  onChange?: (policy: TPolicy) => void;
 };
 
-export const GranolaFolderPolicyRadioCard = ({
+export const GranolaFolderPolicyRadioCard = <
+  TPolicy extends GranolaFolderPolicy,
+>({
   options,
   policy,
-  selectedFoldersContent,
+  expandedContentByPolicy,
   onChange = () => undefined,
-}: GranolaFolderPolicyRadioCardProps) => {
+}: GranolaFolderPolicyRadioCardProps<TPolicy>) => {
   const groupId = useId();
   const isPolicyKnown = isDefined(policy);
 
@@ -115,11 +117,10 @@ export const GranolaFolderPolicyRadioCard = ({
                   </Card.Control>
                 </StyledOptionRow>
               </Card.Content>
-              {option.policy === 'SELECTED_FOLDERS' &&
-                policy === 'SELECTED_FOLDERS' &&
-                isDefined(selectedFoldersContent) && (
+              {option.policy === policy &&
+                isDefined(expandedContentByPolicy?.[option.policy]) && (
                   <Card.Content render={<StyledExpandedContent />}>
-                    {selectedFoldersContent}
+                    {expandedContentByPolicy[option.policy]}
                   </Card.Content>
                 )}
               {index < options.length - 1 && <SettingsCardSeparator />}

@@ -10,7 +10,7 @@ import { GranolaFolderPolicyRadioCard } from 'src/front-components/components/Gr
 import { GranolaFolderTree } from 'src/front-components/components/GranolaFolderTree';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { useAutosaveGranolaFolderSelection } from 'src/front-components/hooks/use-autosave-granola-folder-selection';
-import { type GranolaFolderPolicy } from 'src/front-components/types/granola-folder-policy.type';
+import { type GranolaMemberFolderPolicy } from 'src/front-components/types/granola-member-folder-policy.type';
 import { type GranolaPersonalFolders } from 'src/front-components/types/granola-personal-folders.type';
 import { type GranolaSettingsFolder } from 'src/front-components/types/granola-settings-folder.type';
 import { fetchGranolaPersonalFoldersOrThrow } from 'src/front-components/utils/fetch-granola-personal-folders-or-throw.util';
@@ -35,7 +35,9 @@ const getSelectionHint = (selectedFolderCount: number) => {
   return undefined;
 };
 
-const getPolicyForSelection = (folderIds: string[]): GranolaFolderPolicy =>
+const getPolicyForSelection = (
+  folderIds: string[],
+): GranolaMemberFolderPolicy =>
   isNonEmptyArray(folderIds) ? 'SELECTED_FOLDERS' : 'NO_FOLDERS';
 
 type PersonalFolderState =
@@ -44,7 +46,7 @@ type PersonalFolderState =
   | {
       status: 'loaded';
       folders: GranolaSettingsFolder[];
-      policy: GranolaFolderPolicy;
+      policy: GranolaMemberFolderPolicy;
     };
 
 type GranolaPersonalFolderSelectionProps = {
@@ -104,7 +106,7 @@ export const GranolaPersonalFolderSelection = ({
     save(folderIds);
   };
 
-  const handlePolicyChange = (nextPolicy: GranolaFolderPolicy) => {
+  const handlePolicyChange = (nextPolicy: GranolaMemberFolderPolicy) => {
     setState((current) =>
       current.status === 'loaded'
         ? { ...current, policy: nextPolicy }
@@ -167,7 +169,7 @@ export const GranolaPersonalFolderSelection = ({
       <GranolaFolderPolicyRadioCard
         options={getGranolaMemberFolderPolicyOptions()}
         policy={state.status === 'loaded' ? state.policy : undefined}
-        selectedFoldersContent={renderSelectedFolders()}
+        expandedContentByPolicy={{ SELECTED_FOLDERS: renderSelectedFolders() }}
         onChange={handlePolicyChange}
       />
     </>
