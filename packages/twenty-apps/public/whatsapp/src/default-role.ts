@@ -3,37 +3,53 @@ import { defineApplicationRole, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS, SystemPer
 import {
   APP_DISPLAY_NAME,
   DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  WHATSAPP_MESSAGE_THREAD_UNIVERSAL_IDENTIFIER,
+  WHATSAPP_TEMPLATE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+
+const READ_AND_UPDATE_OBJECT_UNIVERSAL_IDENTIFIERS = [
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.message.universalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+  WHATSAPP_MESSAGE_THREAD_UNIVERSAL_IDENTIFIER,
+  WHATSAPP_TEMPLATE_UNIVERSAL_IDENTIFIER,
+];
 
 export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: `${APP_DISPLAY_NAME} default function role`,
   description: `${APP_DISPLAY_NAME} default function role`,
-  canReadAllObjectRecords: false,
-  canUpdateAllObjectRecords: false,
-  canSoftDeleteAllObjectRecords: false,
-  canDestroyAllObjectRecords: false,
+  recordsPermissions: {
+    canReadAllRecords: false,
+    canUpdateAllRecords: false,
+    canSoftDeleteAllRecords: false,
+    canDestroyAllRecords: false,
+    objects: [
+      ...READ_AND_UPDATE_OBJECT_UNIVERSAL_IDENTIFIERS.map((objectUniversalIdentifier) => ({
+        objectUniversalIdentifier,
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: true,
+        canSoftDeleteObjectRecords: false,
+        canDestroyObjectRecords: false,
+      })),
+      {
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageChannelMessageAssociation.universalIdentifier,
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: false,
+        canSoftDeleteObjectRecords: false,
+        canDestroyObjectRecords: false,
+      },
+    ],
+  },
   canUpdateAllSettings: false,
   canBeAssignedToUsers: false,
   canBeAssignedToAgents: false,
   canBeAssignedToApiKeys: false,
   canAccessAllTools: false,
-  objectPermissions: [ // TODO: add for other objects like message?
-    {
-      objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
-      canSoftDeleteObjectRecords: false,
-      canDestroyObjectRecords: false,
-    },
-    {
-      objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
-      canSoftDeleteObjectRecords: false,
-      canDestroyObjectRecords: false,
-    },
+  permissionFlagUniversalIdentifiers: [
+    SystemPermissionFlag.SEND_EMAIL_TOOL,
+    SystemPermissionFlag.UPLOAD_FILE,
   ],
-  fieldPermissions: [],
-  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.SEND_EMAIL_TOOL]
 });

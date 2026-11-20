@@ -52,8 +52,8 @@ export type WhatsAppWebhookMessageContacts = {
 };
 
 type WhatsappWebhookMessageMessages = {
-  // only 1 element
-  contacts: WhatsAppWebhookMessageContacts[];
+  // only 1 element, absent for system messages
+  contacts?: WhatsAppWebhookMessageContacts[];
   // only 1 element
   messages: WhatsAppWebhookMessageContent[];
 };
@@ -158,13 +158,12 @@ type EditMessage = WhatsAppWebhookMessageBase & {
   type: 'edit';
   edit: { // added 11 July https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/reference/messages/edit
     original_message_id: string;
-    message: {
-      context: {
-        id: string;
-      },
-      type: 'image';
-      image: ImagePayload;
-    }
+    message: { context?: { id: string } } & (
+      | { type: 'text'; text: { body: string } }
+      | { type: 'image'; image: ImagePayload }
+      | { type: 'video'; video: ImagePayload }
+      | { type: 'document'; document: ImagePayload & { filename?: string } }
+    );
   }
 }
 
@@ -240,10 +239,13 @@ type StickerMessage = WhatsAppWebhookMessageBase & WhatsAppWebhookMessageReferra
 
 type SystemMessage = WhatsAppWebhookMessageBase & {
   type: 'system';
+  // https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/reference/messages/system
   system: {
     body: string;
-    wa_id: string; // new WhatsApp ID
-    type: 'user_changed_number';
+    wa_id?: string; // new phone number, only for user_changed_number
+    type: 'user_changed_number' | 'user_changed_user_id';
+    user_id?: string;
+    previous_user_id?: string;
   };
 }
 
@@ -485,7 +487,8 @@ export type WhatsAppHistoryValue = WhatsAppWebhookMessagingValue & {
           progress: number; // 0-100
         };
         threads: Array<{
-          id: string; // customer phone number
+          id?: string; // customer phone number, omitted if unavailable
+          context?: { wa_id?: string; user_id?: string };
           messages: Array<
             WhatsAppWebhookMessageContent & {
               to?: string; // only for SMB message echoes

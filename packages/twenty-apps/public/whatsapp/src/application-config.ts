@@ -4,7 +4,7 @@ import {
   APP_DESCRIPTION,
   APP_DISPLAY_NAME,
   APPLICATION_UNIVERSAL_IDENTIFIER,
-  WHATSAPP_APPLICATION_VARIABLE_ACCESS_TOKEN, WHATSAPP_APPLICATION_VARIABLE_VERIFY_TOKEN,
+  WHATSAPP_APPLICATION_VARIABLE_VERIFY_TOKEN,
   WHATSAPP_APPLICATION_VARIABLE_WEBHOOK_VALIDATION_SECRET,
 } from 'src/constants/universal-identifiers';
 
@@ -25,11 +25,6 @@ export default defineApplication({
       isSecret: true,
       description: 'Secret required to validate webhooks from WhatsApp',
     },
-    ACCESS_TOKEN: {
-      universalIdentifier: WHATSAPP_APPLICATION_VARIABLE_ACCESS_TOKEN,
-      isSecret: true,
-      description: 'Access token required to download files sent in chats',
-    }
   },
   category: 'Messaging',
   emailSupport: 'contact@twenty.com'

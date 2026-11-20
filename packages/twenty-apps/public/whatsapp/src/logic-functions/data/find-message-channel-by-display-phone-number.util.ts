@@ -1,9 +1,9 @@
-import { listMessageChannels } from 'twenty-sdk/logic-function';
+import { type AppMessageChannel, listMessageChannels } from 'twenty-sdk/logic-function';
 import { normalizeWhatsappPhoneNumber } from 'src/logic-functions/data/normalize-whatsapp-phone-number.util';
 
-export const findMessageChannelIdByDisplayPhoneNumber = async (
+export const findMessageChannelByDisplayPhoneNumber = async (
   displayPhoneNumber: string,
-): Promise<string | undefined> => {
+): Promise<AppMessageChannel | undefined> => {
   const normalizedDisplayPhoneNumber = normalizeWhatsappPhoneNumber(displayPhoneNumber);
 
   const messageChannels = await listMessageChannels();
@@ -12,5 +12,5 @@ export const findMessageChannelIdByDisplayPhoneNumber = async (
     (messageChannel) =>
       normalizeWhatsappPhoneNumber(messageChannel.handle) ===
       normalizedDisplayPhoneNumber,
-  )?.id;
+  );
 };

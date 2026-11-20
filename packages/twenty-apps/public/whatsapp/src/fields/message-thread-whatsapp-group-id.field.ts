@@ -3,7 +3,7 @@ import { WHATSAPP_GROUP_ID_MESSAGE_THREAD_FIELD_UNIVERSAL_IDENTIFIER } from "src
 
 export default defineField({
   universalIdentifier: WHATSAPP_GROUP_ID_MESSAGE_THREAD_FIELD_UNIVERSAL_IDENTIFIER,
-  name: 'whatsapp-group-id',
+  name: 'whatsAppGroupId',
   label: 'WhatsApp group ID',
   description: 'Group ID from WhatsApp',
   type: FieldType.TEXT,

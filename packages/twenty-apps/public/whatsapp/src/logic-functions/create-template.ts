@@ -3,6 +3,7 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import { type InputJsonSchema } from 'twenty-sdk/logic-function';
 import { WHATSAPP_LOGIC_FUNCTION_CREATE_TEMPLATE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { buildTemplateDefinitionComponents } from 'src/logic-functions/data/build-template-definition-components.util';
+import { getWhatsappAccessTokenOrThrow } from 'src/logic-functions/data/get-whatsapp-access-token-or-throw.util';
 import { createTemplateParamsSchema } from 'src/logic-functions/data/create-template-params.schema';
 import { upsertWhatsAppTemplate } from 'src/logic-functions/data/upsert-whatsapp-template.util';
 import { whatsappApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
@@ -58,10 +59,6 @@ const CREATE_TEMPLATE_INPUT_SCHEMA: InputJsonSchema = {
 };
 
 const handler = async (rawParams: unknown) => {
-  if (!process.env.ACCESS_TOKEN) {
-    return { success: false, error: 'ACCESS_TOKEN is not configured' };
-  }
-
   const parsedParams = createTemplateParamsSchema.safeParse(rawParams);
 
   if (!parsedParams.success) {
@@ -70,8 +67,10 @@ const handler = async (rawParams: unknown) => {
 
   const params = parsedParams.data;
   const components = buildTemplateDefinitionComponents(params);
+  const accessToken = await getWhatsappAccessTokenOrThrow();
 
   const response = await whatsappApiRequest({
+    accessToken,
     endpoint: 'POST /{wabaId}/message_templates',
     pathParams: { wabaId: params.wabaId },
     data: {

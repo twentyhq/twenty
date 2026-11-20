@@ -25,5 +25,8 @@ export const getFileExtension = (mimeType: string): string => {
     'video/mp4': '.mp4',
   };
 
-  return <string>extensions[mimeType];
+  // voice notes arrive as "audio/ogg; codecs=opus"
+  const baseMimeType = mimeType.split(';')[0]?.trim() ?? '';
+
+  return extensions[baseMimeType] ?? '';
 };

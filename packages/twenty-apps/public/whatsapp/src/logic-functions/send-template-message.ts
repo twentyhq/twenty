@@ -4,6 +4,7 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import { type InputJsonSchema } from 'twenty-sdk/logic-function';
 import { WHATSAPP_LOGIC_FUNCTION_SEND_TEMPLATE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { buildTemplateComponents } from 'src/logic-functions/data/build-template-components.util';
+import { getWhatsappAccessTokenOrThrow } from 'src/logic-functions/data/get-whatsapp-access-token-or-throw.util';
 import { sendTemplateMessageParamsSchema } from 'src/logic-functions/data/send-template-message-params.schema';
 import { whatsappApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
 
@@ -53,10 +54,6 @@ const handler = async (rawParams: unknown) => {
 
   const { templateId, phoneNumberId, to, parameters } = parsedParams.data;
 
-  if (!process.env.ACCESS_TOKEN) {
-    return { success: false, error: 'ACCESS_TOKEN is not configured' };
-  }
-
   const { whatsAppTemplate } = await new CoreApiClient().query({
     whatsAppTemplate: {
       __args: { filter: { id: { eq: templateId } } },
@@ -78,7 +75,10 @@ const handler = async (rawParams: unknown) => {
     };
   }
 
+  const accessToken = await getWhatsappAccessTokenOrThrow();
+
   const response = await whatsappApiRequest({
+    accessToken,
     endpoint: 'POST /{phoneNumberId}/messages',
     pathParams: { phoneNumberId },
     data: {

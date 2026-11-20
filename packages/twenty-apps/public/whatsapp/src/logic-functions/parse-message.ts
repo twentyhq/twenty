@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from "twenty-client-sdk/core";
 import {
@@ -5,28 +6,31 @@ import {
   WhatsAppWebhookMessageContacts,
   WhatsAppWebhookMessageContent
 } from "src/logic-functions/types/whatsapp-webhook-message.type";
-import { findPersonByFilter } from "src/logic-functions/data/find-person-by-filter.util";
 import { createPerson } from "src/logic-functions/data/create-person.util";
+import { findPersonIdsByWhatsappIds } from "src/logic-functions/data/find-person-ids-by-whatsapp-ids.util";
 import { getGroupMessageParticipants } from "src/logic-functions/data/get-group-message-participants.util";
 import { WhatsappFile } from "src/logic-functions/types/whatsapp-file.type";
 import { updateMessage } from "src/logic-functions/data/update-message.util";
-import { findMessageById } from "src/logic-functions/data/find-message-by-id.util";
-import { updatePerson } from "src/logic-functions/data/update-person.util";
+import { findMessageByExternalId } from "src/logic-functions/data/find-message-by-external-id.util";
+import { updatePersonWhatsappNumber } from "src/logic-functions/data/update-person-whatsapp-number.util";
+import { getEditedMessageText } from "src/logic-functions/data/get-edited-message-text.util";
+import { formatSharedContactsText } from "src/logic-functions/data/format-shared-contacts-text.util";
 import {
   type IngestMessageParticipant,
   ingestMessages,
   uploadMessageAttachment
 } from "twenty-sdk/logic-function";
-import { findMessageChannelIdByDisplayPhoneNumber } from "src/logic-functions/data/find-message-channel-id-by-display-phone-number.util";
-import { findWhatsappMessageThread } from "src/logic-functions/data/find-whatsapp-message-thread.util";
+import { isDefined } from "twenty-sdk/utils";
+import { findMessageChannelByDisplayPhoneNumber } from "src/logic-functions/data/find-message-channel-by-display-phone-number.util";
+import { getWhatsappAccessTokenOrThrow } from "src/logic-functions/data/get-whatsapp-access-token-or-throw.util";
+import { normalizeWhatsappPhoneNumber } from "src/logic-functions/data/normalize-whatsapp-phone-number.util";
 import { downloadWhatsAppFile } from "src/logic-functions/data/download-file.util";
-import { uploadFile } from "src/logic-functions/data/upload-file.util";
 import { getFileExtension } from "src/logic-functions/data/get-file-extension.util";
 import { WHATSAPP_LOGIC_FUNCTION_PARSE_MESSAGE_UNIVERSAL_IDENTIFIER } from "src/constants/universal-identifiers";
 
 const handler = async (params: {
   businessData: WhatsappWebhookMessageBusinessData,
-  contacts: WhatsAppWebhookMessageContacts,
+  contacts?: WhatsAppWebhookMessageContacts,
   messages: WhatsAppWebhookMessageContent
 }) => {
   const { businessData, contacts, messages } = params;
@@ -39,51 +43,99 @@ const handler = async (params: {
     console.warn();
     return; // not needed at time being to do anything with it, maybe when notifications will be done at some point it'll become useful
   }
-  const messageChannelId = await findMessageChannelIdByDisplayPhoneNumber(businessData.display_phone_number);
-  if (!messageChannelId) {
-    console.error()
+  if (messages.type === 'reaction') {
     return;
   }
-  // find a thread by whatsapp id, if group id is present, use that
-  let messageThread: string = messages.group_id ?? await findWhatsappMessageThread(coreClient);
-  if (!messageThread) {
-    console.error();
+  if (messages.type === 'system') {
+    if (
+      messages.system.type === 'user_changed_number' &&
+      isNonEmptyString(messages.from) &&
+      isNonEmptyString(messages.system.wa_id)
+    ) {
+      await updatePersonWhatsappNumber({
+        client: coreClient,
+        previousWhatsAppId: messages.from,
+        whatsAppId: messages.system.wa_id,
+      });
+    }
+    return;
+  }
+  const messageChannel = await findMessageChannelByDisplayPhoneNumber(businessData.display_phone_number);
+  if (!isDefined(messageChannel)) {
+    throw new Error(`No WhatsApp message channel for ${businessData.display_phone_number}`);
+  }
+  const sentAt = new Date(parseInt(messages.timestamp, 10) * 1000);
+
+  if (messages.type === 'edit' || messages.type === 'revoke') {
+    const originalExternalId =
+      messages.type === 'edit' ? messages.edit.original_message_id : messages.revoke.original_message_id;
+    const originalMessage = await findMessageByExternalId({
+      client: coreClient,
+      messageChannelId: messageChannel.id,
+      externalId: originalExternalId,
+    });
+    if (!isDefined(originalMessage)) {
+      console.warn(`Ignoring WhatsApp ${messages.type}, original message ${originalExternalId} was never imported`);
+      return;
+    }
+    const updatedText =
+      messages.type === 'edit'
+        ? getEditedMessageText(messages.edit.message)
+        : [originalMessage.text, `(Deleted on ${sentAt.toISOString()})`].filter(isNonEmptyString).join('\n\n');
+    await updateMessage(coreClient, originalMessage.id, updatedText);
     return;
   }
 
-  const participants: IngestMessageParticipant[] = [];
-  participants.push({
-    role: "TO",
-    handle: businessData.display_phone_number,
-    displayName: '',
-  })
-  let whatsAppPerson = await findPersonByFilter(coreClient, contacts.wa_id);
-  if (!whatsAppPerson.people?.totalCount || whatsAppPerson.people?.totalCount === 0) {
-    await createPerson(coreClient, contacts.wa_id, messages.from, contacts.profile.name);
-    whatsAppPerson = await findPersonByFilter(coreClient, contacts.wa_id);
+  if (!isDefined(contacts)) {
+    throw new Error(`WhatsApp message ${messages.id} has no contact`);
   }
-  if (!whatsAppPerson.people?.edges[0].node) {
-    return;
-  }
-  participants.push({
-    role: "FROM",
-    handle: messages.from,
-    displayName: contacts.profile.name,
-    personId: whatsAppPerson.people.edges[0].node.id
-  })
-  if (messages.group_id) {
-    const groupParticipants = await getGroupMessageParticipants(messages.group_id);
-    for (const groupParticipant of groupParticipants) {
-      whatsAppPerson = await findPersonByFilter(coreClient, groupParticipant);
-      if (!whatsAppPerson) {
-        await createPerson(coreClient, groupParticipant);
-      }
+  const accessToken = await getWhatsappAccessTokenOrThrow({
+    connectedAccountId: messageChannel.connectedAccountId,
+  });
+  const customerWhatsAppId = contacts.wa_id;
+  const threadExternalId = messages.group_id ?? customerWhatsAppId;
+  // history imports include messages the business sent, with the business number as sender
+  const isSentByBusiness =
+    normalizeWhatsappPhoneNumber(messages.from) ===
+    normalizeWhatsappPhoneNumber(businessData.display_phone_number);
+
+  const customerPersonId =
+    (await findPersonIdsByWhatsappIds({ client: coreClient, whatsAppIds: [customerWhatsAppId] })).get(customerWhatsAppId) ??
+    (await createPerson({
+      client: coreClient,
+      whatsAppId: customerWhatsAppId,
+      phoneNumber: customerWhatsAppId,
+      name: contacts.profile.name,
+    }));
+
+  const businessParticipant = { handle: businessData.display_phone_number };
+  const customerParticipant = {
+    handle: customerWhatsAppId,
+    displayName: isNonEmptyString(contacts.profile.name) ? contacts.profile.name : undefined,
+    personId: customerPersonId,
+  };
+  const participants: IngestMessageParticipant[] = isSentByBusiness
+    ? [{ role: 'FROM', ...businessParticipant }, { role: 'TO', ...customerParticipant }]
+    : [{ role: 'FROM', ...customerParticipant }, { role: 'TO', ...businessParticipant }];
+
+  if (isDefined(messages.group_id)) {
+    const businessWhatsAppId = normalizeWhatsappPhoneNumber(businessData.display_phone_number);
+    const groupParticipantWhatsAppIds = (
+      await getGroupMessageParticipants({ accessToken, groupId: messages.group_id })
+    ).filter(
+      (whatsAppId) => whatsAppId !== customerWhatsAppId && whatsAppId !== businessWhatsAppId,
+    );
+    const groupParticipantPersonIds = await findPersonIdsByWhatsappIds({
+      client: coreClient,
+      whatsAppIds: groupParticipantWhatsAppIds,
+    });
+
+    for (const whatsAppId of groupParticipantWhatsAppIds) {
       participants.push({
         role: 'TO',
-        handle: '',
-        displayName: '',
-        personId: ''
-      })
+        handle: whatsAppId,
+        personId: groupParticipantPersonIds.get(whatsAppId),
+      });
     }
   }
   let text: string = '';
@@ -102,7 +154,7 @@ const handler = async (params: {
       break;
     }
     case 'contacts': {
-      // TODO: when contacts send, create a new Person record or message?
+      text = formatSharedContactsText(messages.contacts ?? []);
       break;
     }
     case 'document': {
@@ -112,10 +164,6 @@ const handler = async (params: {
         mimeType: messages.document.mime_type,
         mediaId: messages.document.id,
       }
-      break;
-    }
-    case 'edit': {
-      await updateMessage(coreClient, messages.edit.original_message_id, messages.edit.message.image.caption ?? '');
       break;
     }
     case 'image': {
@@ -140,26 +188,12 @@ const handler = async (params: {
       text = messages.order.text; // TODO ???
       break;
     }
-    case 'reaction': {
-      // TODO: implement or skip?
-      break;
-    }
-    case "revoke": {
-      const { message } = await findMessageById(coreClient, messages.revoke.original_message_id);
-      if (!message?.text) return;
-      await updateMessage(coreClient, messages.revoke.original_message_id, message.text.concat(` (deleted at ${messages.timestamp})`,));
-      break;
-    }
     case 'sticker': {
       file = {
         fileName: 'sticker_'.concat(messages.timestamp, getFileExtension(messages.sticker.mime_type)),
         mimeType: messages.sticker.mime_type,
         mediaId: messages.sticker.id,
       }
-      break;
-    }
-    case 'system': {
-      await updatePerson(coreClient, whatsAppPerson.people?.edges[0].node.id, messages.system.body, messages.system.wa_id);
       break;
     }
     case 'text': {
@@ -181,20 +215,20 @@ const handler = async (params: {
   }
   let messageAttachment = undefined;
   if (file) {
-    const { fileBuffer } = await downloadWhatsAppFile(file.mediaId);
+    const { fileBuffer } = await downloadWhatsAppFile({ accessToken, mediaId: file.mediaId });
     messageAttachment = [await uploadMessageAttachment({
       filename: file.fileName,
       content: fileBuffer
     })];
   }
   await ingestMessages({
-    messageChannelId,
+    messageChannelId: messageChannel.id,
     messages: [{
       externalId: messages.id,
-      threadExternalId: messageThread,
+      threadExternalId,
       text,
       participants: participants,
-      receivedAt: new Date(messages.timestamp),
+      receivedAt: sentAt,
       attachments: messageAttachment,
     }]
   })

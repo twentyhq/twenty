@@ -540,6 +540,22 @@ export type WhatsAppApiDeleteTemplatesQuery =
   | { name: string; hsm_id?: string }
   | { hsm_ids: string[] };
 
+// Access tokens
+// reference: https://developers.facebook.com/docs/graph-api/reference/debug_token
+
+export type WhatsAppApiDebugTokenQuery = { input_token: string };
+
+export type WhatsAppApiDebugTokenResponse = {
+  data: {
+    app_id: string;
+    type: string;
+    is_valid: boolean;
+    user_id?: string;
+    scopes: string[];
+    granular_scopes: Array<{ scope: string; target_ids?: string[] }>;
+  };
+};
+
 // Endpoint map
 // keys are "<METHOD> <path>", with the API version prefix omitted
 
@@ -550,6 +566,13 @@ type WhatsAppApiEndpoint<TRequest, TResponse, TQuery = undefined> = {
 };
 
 export type WhatsAppApiEndpoints = {
+  // access tokens
+  'GET /debug_token': WhatsAppApiEndpoint<
+    undefined,
+    WhatsAppApiDebugTokenResponse,
+    WhatsAppApiDebugTokenQuery
+  >;
+
   // messages
   'POST /{phoneNumberId}/messages': WhatsAppApiEndpoint<
     WhatsAppApiSendMessageRequest | WhatsAppApiMarkAsReadRequest,

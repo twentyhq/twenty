@@ -3,10 +3,10 @@ import {WHATSAPP_ID_PEOPLE_FIELD_UNIVERSAL_IDENTIFIER} from "src/constants/unive
 
 export default defineField({
   universalIdentifier: WHATSAPP_ID_PEOPLE_FIELD_UNIVERSAL_IDENTIFIER,
-  name: 'whatsapp-id',
+  name: 'whatsAppId',
   label: 'WhatsApp ID',
   description: 'WhatsApp ID used to find people in group conversations',
-  type: FieldType.NUMBER,
+  type: FieldType.TEXT,
   objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
   isNullable: true,
   isUnique: true,

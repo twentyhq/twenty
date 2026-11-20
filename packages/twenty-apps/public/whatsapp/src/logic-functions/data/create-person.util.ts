@@ -1,25 +1,36 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 import { parseWhatsappPhoneNumber } from 'src/logic-functions/data/parse-whatsapp-phone-number.util';
 
-export const createPerson = async (client: CoreApiClient, wa_id: string, phoneNumber?: string, name?: string) => {
-  const data: Record<string, any> = {};
-  data.whatsAppId = wa_id;
-  if (name) {
-    data.name.firstName = name.split(' ')[0];
-    data.name.lastName = name.split(' ')[1];
-  }
-  if (phoneNumber) {
-    const parsedPhoneNumber = parseWhatsappPhoneNumber(phoneNumber);
-    data.phones.primaryPhoneNumber = parsedPhoneNumber?.primaryPhoneNumber;
-    data.phones.primaryPhoneCallingCode = parsedPhoneNumber?.primaryCallingCode;
-  }
+type CreatePersonParams = {
+  client: CoreApiClient;
+  whatsAppId: string;
+  phoneNumber?: string;
+  name?: string;
+};
 
-  return await client.mutation({
+export const createPerson = async ({
+  client,
+  whatsAppId,
+  phoneNumber,
+  name,
+}: CreatePersonParams): Promise<string> => {
+  const [firstName = '', ...lastNameParts] = isNonEmptyString(name) ? name.trim().split(/\s+/) : [];
+  const phones = isNonEmptyString(phoneNumber) ? parseWhatsappPhoneNumber(phoneNumber) : undefined;
+
+  const { createPerson: createdPerson } = await client.mutation({
     createPerson: {
       __args: {
-        data
+        data: {
+          whatsAppId,
+          name: { firstName, lastName: lastNameParts.join(' ') },
+          ...(isDefined(phones) ? { phones } : {}),
+        },
       },
-      id: true
-    }
-  })
-}
+      id: true,
+    },
+  });
+
+  return createdPerson.id;
+};

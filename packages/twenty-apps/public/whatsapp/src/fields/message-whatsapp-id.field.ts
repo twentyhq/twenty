@@ -3,7 +3,7 @@ import { WHATSAPP_ID_MESSAGE_FIELD_UNIVERSAL_IDENTIFIER } from "src/constants/un
 
 export default defineField({
   universalIdentifier: WHATSAPP_ID_MESSAGE_FIELD_UNIVERSAL_IDENTIFIER,
-  name: 'whatsapp-id',
+  name: 'whatsAppId',
   label: 'WhatsApp ID',
   description: 'Message ID from WhatsApp',
   type: FieldType.TEXT,

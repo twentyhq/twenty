@@ -5,11 +5,22 @@ export const validateWebhookPayload = (
   payload: string,
   app_secret: string,
 ): boolean => {
-  const webhookSignature = sha256_signature?.replace('sha256=', '').trim(); // https://developers.facebook.com/docs/graph-api/webhooks/getting-started#validate-payloads
+  // https://developers.facebook.com/docs/graph-api/webhooks/getting-started#validate-payloads
+  const webhookSignature = sha256_signature?.replace('sha256=', '').trim();
+  if (webhookSignature === undefined) {
+    return false;
+  }
+
   const generatedHash = crypto
     .createHmac('sha256', app_secret)
     .update(payload)
     .digest('hex');
 
-  return webhookSignature === generatedHash;
+  const webhookSignatureBuffer = Buffer.from(webhookSignature, 'utf8');
+  const generatedHashBuffer = Buffer.from(generatedHash, 'utf8');
+
+  return (
+    webhookSignatureBuffer.length === generatedHashBuffer.length &&
+    crypto.timingSafeEqual(webhookSignatureBuffer, generatedHashBuffer)
+  );
 };

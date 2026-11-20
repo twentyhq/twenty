@@ -1,16 +1,18 @@
-import axios from 'axios';
-import { preparedWhatsappAPIAddress } from "src/logic-functions/data/prepared-whatsapp-api-address.util";
+import { whatsappApiRequest } from 'src/logic-functions/data/whatsapp-api-request.util';
 
-export const getGroupMessageParticipants = async (groupId: string): Promise<string[]> => {
-  try {
-    const response = await axios.get(preparedWhatsappAPIAddress(groupId), {
-      headers: {
-        Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
-      },
-    });
-    const data = response.data as { participants: { wa_id: string; }[] };
-    return data.participants.map((p) => p.wa_id);
-  } catch (error) {
-    return [];
-  }
-}
+export const getGroupMessageParticipants = async ({
+  accessToken,
+  groupId,
+}: {
+  accessToken: string;
+  groupId: string;
+}): Promise<string[]> => {
+  const { participants = [] } = await whatsappApiRequest({
+    accessToken,
+    endpoint: 'GET /{groupId}',
+    pathParams: { groupId },
+    query: { fields: 'participants' },
+  });
+
+  return participants.map(({ wa_id }) => wa_id);
+};

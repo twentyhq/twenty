@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type WhatsAppHistoryValue } from 'src/logic-functions/types/whatsapp-webhook-message.type';
 
 type HistoryChunk = WhatsAppHistoryValue['history'][number];
@@ -11,14 +12,19 @@ export const buildHistoryParseJobs = (
       return [];
     }
 
-    return chunk.threads.flatMap((thread) =>
-      thread.messages.map((message) => ({
+    return chunk.threads.flatMap((thread) => {
+      const customerWhatsAppId = thread.id ?? thread.context?.wa_id;
+
+      if (!isNonEmptyString(customerWhatsAppId)) {
+        return [];
+      }
+
+      return thread.messages.map((message) => ({
         payload: {
           businessData,
-          // history carries no profile data, only the customer phone number
-          contacts: { wa_id: thread.id, profile: { name: '' } },
+          contacts: { wa_id: customerWhatsAppId, profile: { name: '' } },
           messages: message,
         },
-      })),
-    );
+      }));
+    });
   });

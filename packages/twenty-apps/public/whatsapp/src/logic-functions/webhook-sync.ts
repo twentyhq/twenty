@@ -1,7 +1,7 @@
 import { defineLogicFunction, RoutePayload } from 'twenty-sdk/define';
 import { WhatsAppWebhook } from 'src/logic-functions/types/whatsapp-webhook-message.type';
 import { validateWebhookPayload } from 'src/logic-functions/data/validate-webhook-payload.util';
-import { enqueueJobs } from "twenty-sdk/logic-function";
+import { enqueueJobs, Response } from "twenty-sdk/logic-function";
 import {
   WHATSAPP_LOGIC_FUNCTION_PARSE_MESSAGE_UNIVERSAL_IDENTIFIER,
   WHATSAPP_LOGIC_FUNCTION_WEBHOOK_SYNC_UNIVERSAL_IDENTIFIER
@@ -15,36 +15,23 @@ import { sendInboxNotification } from "src/logic-functions/data/send-inbox-notif
 const handler = async (
   params: RoutePayload<WhatsAppWebhook>,
 ): Promise<object> => {
-  if (!process.env.WEBHOOK_VALIDATION_SECRET || !process.env.ACCESS_TOKEN) {
-    return {
-      success: false,
-    };
+  if (!process.env.WEBHOOK_VALIDATION_SECRET) {
+    console.error('WEBHOOK_VALIDATION_SECRET is not configured');
+    return new Response('', { status: 500 });
   }
 
   const { rawBody, body, headers } = params;
-  if (rawBody === undefined || body === null || body?.entry === undefined || body.object !== 'whatsapp_business_account') {
-    return {
-      success: false,
-    };
-  }
-
   const signature = headers['x-hub-signature-256'];
-  if (!signature || signature === '') {
-    return {
-      success: false,
-    };
+  if (
+    rawBody === undefined ||
+    !isNonEmptyString(signature) ||
+    !validateWebhookPayload(signature, rawBody, process.env.WEBHOOK_VALIDATION_SECRET)
+  ) {
+    return new Response('', { status: 401 });
   }
 
-  if (
-    !validateWebhookPayload(
-      signature,
-      rawBody,
-      process.env.WEBHOOK_VALIDATION_SECRET,
-    )
-  ) {
-    return {
-      success: false,
-    };
+  if (body === null || body?.entry === undefined || body.object !== 'whatsapp_business_account') {
+    return new Response('', { status: 400 });
   }
 
   for (const entry of body.entry) {
@@ -161,32 +148,29 @@ const handler = async (
           });
           break;
         case "user_preferences":
-          return {
-            success: false,
-          }
+          break;
         case "messages": {
           if ('errors' in change.value) {
-            return {
-              success: false,
-            }
+            break;
           }
           if ('statuses' in change.value) {
-            return {
-              success: false,
-            }
+            break;
           }
           if ('messages' in change.value) {
+            const { metadata, contacts, messages } = change.value;
             await enqueueJobs({
               logicFunctionUniversalIdentifier: WHATSAPP_LOGIC_FUNCTION_PARSE_MESSAGE_UNIVERSAL_IDENTIFIER,
               retryLimit: 3,
               delayMs: 500,
-              jobs: [{
+              jobs: messages.map((message) => ({
                 payload: {
-                  businessData: change.value.metadata,
-                  contacts: change.value.contacts[0],
-                  messages: change.value.messages,
-                }
-              }]
+                  businessData: metadata,
+                  contacts:
+                    contacts?.find((contact) => contact.wa_id === message.from) ??
+                    contacts?.[0],
+                  messages: message,
+                },
+              })),
             })
           }
         }
