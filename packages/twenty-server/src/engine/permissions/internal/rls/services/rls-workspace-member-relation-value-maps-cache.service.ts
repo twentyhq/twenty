@@ -6,13 +6,9 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type RowLevelPermissionPredicate } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
-import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   type WorkspaceMemberRelationValueLookup,
@@ -21,42 +17,13 @@ import {
 import { type RlsWorkspaceMemberRelationValueMaps } from 'src/engine/permissions/internal/rls/types/rls-workspace-member-relation-value-maps.type';
 import { buildMemberFieldKey } from 'src/engine/permissions/internal/rls/utils/build-member-field-key.util';
 import { findRelationJoinColumnsOrThrow } from 'src/engine/permissions/internal/rls/utils/find-relation-join-columns-or-throw.util';
+import { findWorkspaceMemberRelationColumnName } from 'src/engine/permissions/internal/rls/utils/find-workspace-member-relation-column-name.util';
+import { toWorkspaceMemberRelationFilterValues } from 'src/engine/permissions/internal/rls/utils/to-workspace-member-relation-filter-values.util';
 import { findWorkspaceMemberRelationPredicates } from 'src/engine/permissions/internal/rls/utils/find-workspace-member-relation-predicates.util';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
-
-const findScalarColumnName = (
-  flatFieldMetadata: OrmFlatFieldMetadata | undefined,
-): string | null => {
-  if (
-    !isDefined(flatFieldMetadata) ||
-    isCompositeFieldMetadataType(flatFieldMetadata.type)
-  ) {
-    return null;
-  }
-
-  if (!isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
-    return flatFieldMetadata.name;
-  }
-
-  if (flatFieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE) {
-    return null;
-  }
-
-  return (
-    flatFieldMetadata.settings.joinColumnName ??
-    computeMorphOrRelationFieldJoinColumnName({ name: flatFieldMetadata.name })
-  );
-};
-
-const toFilterValues = (
-  value: RowLevelPermissionPredicate['workspaceMemberRelationFilterValue'],
-): string[] =>
-  (Array.isArray(value) ? value : [value])
-    .filter(isDefined)
-    .map((filterValue) => String(filterValue));
 
 @Injectable()
 @WorkspaceCache('rlsWorkspaceMemberRelationValueMaps', {
@@ -155,10 +122,10 @@ export class RlsWorkspaceMemberRelationValueMapsCacheService extends WorkspaceCa
       flatEntityId: relationFieldMetadata?.relationTargetObjectMetadataId ?? '',
       flatEntityMaps: flatObjectMetadataMaps,
     });
-    const valueColumnName = findScalarColumnName(
+    const valueColumnName = findWorkspaceMemberRelationColumnName(
       findField(predicate.workspaceMemberFieldMetadataId),
     );
-    const filterColumnName = findScalarColumnName(
+    const filterColumnName = findWorkspaceMemberRelationColumnName(
       findField(predicate.workspaceMemberRelationFilterFieldMetadataId),
     );
 
@@ -188,7 +155,7 @@ export class RlsWorkspaceMemberRelationValueMapsCacheService extends WorkspaceCa
       relatedColumnName: targetColumnName,
       valueColumnName,
       filterColumnName,
-      filterValues: toFilterValues(
+      filterValues: toWorkspaceMemberRelationFilterValues(
         predicate.workspaceMemberRelationFilterValue,
       ),
     };
