@@ -6,6 +6,7 @@ import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
 import { getReducedMotionSnapshot } from '@/platform/motion';
 import {
+  BREAKPOINT_PX,
   color,
   DURATION,
   EASING,
@@ -22,10 +23,12 @@ import { useAppsStageLogoInks } from './use-apps-stage-logo-inks';
 
 const SLOT_COUNT = 44;
 const ORBIT_RADIUS_PX = 560;
+const ORBIT_RADIUS_SMALL_PX = 300;
 
 // The centre sits under the hero's floor, so only the upper arc shows.
 const Stage = styled.div`
-  display: none;
+  --apps-stage-orbit-center: calc(100% + 160px);
+  --apps-stage-orbit-radius: ${ORBIT_RADIUS_SMALL_PX}px;
   inset: 0;
   mask-image: radial-gradient(
     ellipse at 50% 100%,
@@ -39,7 +42,6 @@ const Stage = styled.div`
   ${mediaUp('md')} {
     --apps-stage-orbit-center: calc(100% + 250px);
     --apps-stage-orbit-radius: ${ORBIT_RADIUS_PX}px;
-    display: block;
   }
 `;
 
@@ -57,7 +59,6 @@ const ROWS = (ink: string) => `repeating-linear-gradient(
 )`;
 
 const Texture = styled.div`
-  display: none;
   inset: 0;
   pointer-events: none;
   position: absolute;
@@ -107,10 +108,6 @@ const Texture = styled.div`
 
   &[data-lit] > div {
     opacity: 0.9;
-  }
-
-  ${mediaUp('md')} {
-    display: block;
   }
 
   ${REDUCED_MOTION} {
@@ -309,7 +306,11 @@ export function AppsStageOrbit({ apps }: AppsStageOrbitProps) {
       ring.style.transform = `rotate(${spin}deg)`;
     };
 
-    const DEGREES_PER_PIXEL = DEGREES_PER_RADIAN / ORBIT_RADIUS_PX;
+    const degreesPerPixel = () =>
+      DEGREES_PER_RADIAN /
+      (window.matchMedia(`(min-width: ${BREAKPOINT_PX.md}px)`).matches
+        ? ORBIT_RADIUS_PX
+        : ORBIT_RADIUS_SMALL_PX);
 
     const tick = (now: number) => {
       const elapsed = Math.min(0.1, (now - last) / 1000);
@@ -362,10 +363,8 @@ export function AppsStageOrbit({ apps }: AppsStageOrbitProps) {
     };
 
     const handlePointerDown = (event: PointerEvent) => {
-      // Hidden below md: nothing to grab.
       if (
         event.button !== 0 ||
-        !isDefined(stage.offsetParent) ||
         (event.target instanceof Element &&
           isDefined(event.target.closest('[data-apps-stage-copy]')))
       ) {
@@ -404,7 +403,7 @@ export function AppsStageOrbit({ apps }: AppsStageOrbitProps) {
 
       const deltaX = event.clientX - dragX;
       const deltaTime = Math.max(1, event.timeStamp - dragTime) / 1000;
-      const turn = deltaX * DEGREES_PER_PIXEL;
+      const turn = deltaX * degreesPerPixel();
 
       dragX = event.clientX;
       dragTime = event.timeStamp;

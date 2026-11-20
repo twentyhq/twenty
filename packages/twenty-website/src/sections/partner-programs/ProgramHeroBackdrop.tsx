@@ -5,7 +5,8 @@ import { useEffect, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
-import { DURATION, REDUCED_MOTION } from '@/tokens';
+import { useMediaQuery } from '@/platform/motion';
+import { BREAKPOINT_PX, DURATION, REDUCED_MOTION } from '@/tokens';
 
 import { PROGRAM_HERO_BACKDROP_SETTINGS } from './program-hero-backdrop-settings';
 
@@ -70,6 +71,12 @@ const BackdropMount = styled.div<{ $isReady: boolean }>`
   }
 `;
 
+// A portrait screen would show the photo as a thin strip at the width fit.
+const NARROW_SETTINGS = {
+  ...PROGRAM_HERO_BACKDROP_SETTINGS,
+  imageFit: 'cover',
+} satisfies typeof PROGRAM_HERO_BACKDROP_SETTINGS;
+
 type ProgramHeroBackdropProps = {
   imageUrl: string;
   isFaint?: boolean;
@@ -82,6 +89,9 @@ export function ProgramHeroBackdrop({
   isFaint = false,
   isPriority = false,
 }: ProgramHeroBackdropProps) {
+  const isWide = useMediaQuery(`(min-width: ${BREAKPOINT_PX.md}px)`, {
+    serverFallback: true,
+  });
   const rootRef = useRef<HTMLDivElement>(null);
   const [isReady, setIsReady] = useState(false);
   const [isOnScreen, setIsOnScreen] = useState(true);
@@ -119,7 +129,7 @@ export function ProgramHeroBackdrop({
             loading={isPriority ? 'eager' : undefined}
             onFirstFrame={() => setIsReady(true)}
             priority={isPriority}
-            settings={PROGRAM_HERO_BACKDROP_SETTINGS}
+            settings={isWide ? PROGRAM_HERO_BACKDROP_SETTINGS : NARROW_SETTINGS}
           />
         )}
       </BackdropMount>
