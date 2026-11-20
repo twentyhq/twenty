@@ -25,6 +25,7 @@ import { buildApplicationApiRateLimitedLogEntry } from 'src/engine/api/common/co
 import { buildApplicationApiRateLimitedLogLine } from 'src/engine/api/common/common-query-runners/utils/build-application-api-rate-limited-log-line.util';
 import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
 import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
+import { getRecordIdsTargetedByFilter } from 'src/engine/api/common/common-query-runners/utils/get-record-ids-targeted-by-filter.util';
 import { isRecordFilterEmpty } from 'src/engine/api/common/common-query-runners/utils/is-record-filter-empty.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
@@ -72,6 +73,11 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 import { RelationNestedQueries } from 'src/engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/permissions/permissions.exception';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -463,6 +469,13 @@ export abstract class CommonBaseQueryRunnerService<
 
     const writeRepository = this.getWriteRepository(queryRunnerContext);
 
+    await this.assertTargetedRecordsAreWritableOrThrow({
+      writeRepository,
+      alias,
+      filter,
+      kind,
+    });
+
     const resolvedData =
       kind === 'update' && isDefined(data)
         ? (
@@ -498,6 +511,54 @@ export abstract class CommonBaseQueryRunnerService<
     });
 
     return { result: records, relationAggregatedValues };
+  }
+
+  // Write rules filter rows out silently, which is right for a filter but
+  // not when the caller named records it can see
+  private async assertTargetedRecordsAreWritableOrThrow({
+    writeRepository,
+    alias,
+    filter,
+    kind,
+  }: {
+    writeRepository: WorkspaceRepository;
+    alias: string;
+    filter: Partial<ObjectRecordFilter>;
+    kind: MutationKind;
+  }): Promise<void> {
+    const targetedRecordIds = getRecordIdsTargetedByFilter(filter);
+
+    if (!isDefined(targetedRecordIds)) {
+      return;
+    }
+
+    const buildTargetedRecordIdsQueryBuilder = () =>
+      writeRepository
+        .createQueryBuilder(alias)
+        .select(`${alias}.id`, 'id')
+        .where(`"${alias}"."id" IN (:...targetedRecordIds)`, {
+          targetedRecordIds,
+        })
+        .withDeleted();
+
+    const writableQueryBuilder = buildTargetedRecordIdsQueryBuilder();
+
+    await writeRepository.applyWriteRowLevelPermissions(
+      writableQueryBuilder,
+      kind,
+    );
+
+    const [readableRecords, writableRecords] = await Promise.all([
+      buildTargetedRecordIdsQueryBuilder().getRawMany<{ id: string }>(),
+      writableQueryBuilder.getRawMany<{ id: string }>(),
+    ]);
+
+    if (readableRecords.length > writableRecords.length) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.RECORD_NOT_EDITABLE,
+        PermissionsExceptionCode.RECORD_NOT_EDITABLE,
+      );
+    }
   }
 
   protected async resolveNestedRelations({
