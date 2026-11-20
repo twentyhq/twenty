@@ -16,7 +16,8 @@ const companyName = getFlatFieldMetadataMock({
   objectMetadataId: 'company',
   type: FieldMetadataType.TEXT,
   name: 'name',
-  applicationUniversalIdentifier: TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
 });
 
 const messageThreadSubject = getFlatFieldMetadataMock({
@@ -24,7 +25,8 @@ const messageThreadSubject = getFlatFieldMetadataMock({
   objectMetadataId: 'messageThread',
   type: FieldMetadataType.TEXT,
   name: 'subject',
-  applicationUniversalIdentifier: TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
 });
 
 const messageThreadCategory = getFlatFieldMetadataMock({
@@ -32,7 +34,8 @@ const messageThreadCategory = getFlatFieldMetadataMock({
   objectMetadataId: 'messageThread',
   type: FieldMetadataType.SELECT,
   name: 'category',
-  applicationUniversalIdentifier: WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier:
+    WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
 });
 
 const messageThreadDeal = getFlatFieldMetadataMock({
@@ -40,7 +43,8 @@ const messageThreadDeal = getFlatFieldMetadataMock({
   objectMetadataId: 'messageThread',
   type: FieldMetadataType.RELATION,
   name: 'deal',
-  applicationUniversalIdentifier: WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier:
+    WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
   settings: { relationType: RelationType.MANY_TO_ONE },
 });
 
@@ -57,7 +61,8 @@ const workspaceMemberCategory = getFlatFieldMetadataMock({
   objectMetadataId: 'workspaceMember',
   type: FieldMetadataType.SELECT,
   name: 'category',
-  applicationUniversalIdentifier: WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier:
+    WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
 });
 
 const flatFieldMetadatas = [

@@ -54,6 +54,8 @@ export const canFieldsBeUpdatedByAutomation = ({
       flatFieldMetadataMaps,
     });
 
-    return isDefined(fieldMetadata) && !belongsToTwentyStandardApp(fieldMetadata);
+    return (
+      isDefined(fieldMetadata) && !belongsToTwentyStandardApp(fieldMetadata)
+    );
   });
 };
