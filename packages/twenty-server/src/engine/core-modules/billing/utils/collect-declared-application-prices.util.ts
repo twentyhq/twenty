@@ -8,6 +8,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { toApplicationBillingPricesOrThrow } from 'src/engine/core-modules/application/utils/to-application-billing-prices-or-throw.util';
 
 export type DeclaredApplicationPrice = {
+  applicationId: string;
   applicationUniversalIdentifier: string;
   applicationName: string;
   price: ApplicationBillingPrice;
@@ -18,6 +19,7 @@ export const collectDeclaredApplicationPrices = ({
 }: {
   applications: Pick<
     FlatApplication,
+    | 'id'
     | 'universalIdentifier'
     | 'name'
     | 'version'
@@ -36,6 +38,7 @@ export const collectDeclaredApplicationPrices = ({
     .flatMap((application) =>
       toApplicationBillingPricesOrThrow(application.acceptedBillingPrices).map(
         (price) => ({
+          applicationId: application.id,
           applicationUniversalIdentifier: application.universalIdentifier,
           applicationName: application.name,
           price,

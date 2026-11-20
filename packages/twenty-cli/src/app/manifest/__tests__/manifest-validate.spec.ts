@@ -326,6 +326,32 @@ describe('manifestValidate', () => {
       );
     });
 
+    it('should fail when a price per connected account has no connection provider', () => {
+      const result = manifestValidate({
+        ...validManifest,
+        application: {
+          ...validApplication,
+          billing: {
+            prices: [
+              {
+                universalIdentifier: '3f0c9a52-6b1e-4d7a-9c35-8e2f1a4b7d60',
+                label: 'Per connected account',
+                type: 'RECURRING',
+                billingPeriod: 'MONTHLY',
+                amountCents: 1000,
+                per: 'CONNECTED_ACCOUNT',
+              },
+            ],
+          },
+        },
+      });
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors.join(' ')).toContain(
+        'A billing price per CONNECTED_ACCOUNT needs a connection provider',
+      );
+    });
+
     it('should fail when a billing price universalIdentifier is not a valid UUID', () => {
       const result = manifestValidate({
         ...validManifest,

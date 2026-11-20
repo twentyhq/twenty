@@ -36,6 +36,7 @@ import { transformStripeProductToDatabaseProduct } from 'src/engine/core-modules
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -54,6 +55,8 @@ export class BillingApplicationProductService {
     private readonly billingPriceRepository: Repository<BillingPriceEntity>,
     @InjectWorkspaceScopedRepository(ApplicationEntity)
     private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
+    @InjectRepository(ConnectedAccountEntity)
+    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
   ) {}
 
   async findTargetApplicationProducts({
@@ -77,6 +80,18 @@ export class BillingApplicationProductService {
       ? await this.billingSeatService.countWorkspaceMembers(workspaceId)
       : 0;
 
+    const connectedAccountCountByApplicationId =
+      await this.countConnectedAccountsByApplicationId({
+        workspaceId,
+        applicationIds: [
+          ...new Set(
+            declaredPrices
+              .filter(({ price }) => price.per === 'CONNECTED_ACCOUNT')
+              .map(({ applicationId }) => applicationId),
+          ),
+        ],
+      });
+
     return catalogEntries.flatMap(
       ({ declaredPrice, stripeProductId, billingProduct }) => {
         if (!isDefined(billingProduct)) {
@@ -97,6 +112,10 @@ export class BillingApplicationProductService {
         const quantity = computeApplicationPriceQuantity({
           per: declaredPrice.price.per,
           workspaceMemberCount,
+          connectedAccountCount:
+            connectedAccountCountByApplicationId.get(
+              declaredPrice.applicationId,
+            ) ?? 0,
         });
 
         return quantity > 0 ? [{ billingProduct, quantity }] : [];
@@ -143,6 +162,34 @@ export class BillingApplicationProductService {
     });
 
     return collectDeclaredApplicationPrices({ applications });
+  }
+
+  private async countConnectedAccountsByApplicationId({
+    workspaceId,
+    applicationIds,
+  }: {
+    workspaceId: string;
+    applicationIds: string[];
+  }): Promise<Map<string, number>> {
+    if (!isNonEmptyArray(applicationIds)) {
+      return new Map();
+    }
+
+    const rows = await this.connectedAccountRepository
+      .createQueryBuilder('connectedAccount')
+      .select('connectedAccount.applicationId', 'applicationId')
+      .addSelect('COUNT(*)', 'count')
+      .where({
+        workspaceId,
+        applicationId: In(applicationIds),
+        archivedAt: IsNull(),
+      })
+      .groupBy('connectedAccount.applicationId')
+      .getRawMany<{ applicationId: string; count: string }>();
+
+    return new Map(
+      rows.map(({ applicationId, count }) => [applicationId, Number(count)]),
+    );
   }
 
   private async findCatalogEntries(
