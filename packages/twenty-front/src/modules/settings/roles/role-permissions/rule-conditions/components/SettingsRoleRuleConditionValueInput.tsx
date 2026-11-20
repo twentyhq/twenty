@@ -352,29 +352,37 @@ export const SettingsRoleRuleConditionValueInput = ({
     conditionFieldType === FieldMetadataType.MULTI_SELECT ||
     conditionFieldType === FieldMetadataType.SELECT;
 
+  const getConditionInput = () => {
+    if (isFilterableByMultiSelectValue) {
+      return (
+        <FormMultiSelectFieldInput
+          label=""
+          defaultValue={getMultiSelectConditionValue(recordFilter.value)}
+          onChange={handleChange}
+          options={fieldMetadataItem?.options ?? []}
+          VariablePicker={SettingsRoleRuleConditionVariablePicker}
+          dropdownWidth={200}
+        />
+      );
+    }
+
+    return (
+      <FormFieldInput
+        field={{ ...fieldDefinition, type: conditionFieldType }}
+        defaultValue={recordFilter.value}
+        onChange={handleChange}
+        VariablePicker={SettingsRoleRuleConditionVariablePicker}
+      />
+    );
+  };
+
   return (
     <StyledContainer>
       <RuleConditionVariablePickerContext.Provider
         value={{ recordFilterId, onSelect: handleSelectDynamicValue }}
       >
         <StyledFormFieldInputWrapper>
-          {isFilterableByMultiSelectValue ? (
-            <FormMultiSelectFieldInput
-              label=""
-              defaultValue={getMultiSelectConditionValue(recordFilter.value)}
-              onChange={handleChange}
-              options={fieldMetadataItem?.options ?? []}
-              VariablePicker={SettingsRoleRuleConditionVariablePicker}
-              dropdownWidth={200}
-            />
-          ) : (
-            <FormFieldInput
-              field={{ ...fieldDefinition, type: conditionFieldType }}
-              defaultValue={recordFilter.value}
-              onChange={handleChange}
-              VariablePicker={SettingsRoleRuleConditionVariablePicker}
-            />
-          )}
+          {getConditionInput()}
         </StyledFormFieldInputWrapper>
       </RuleConditionVariablePickerContext.Provider>
     </StyledContainer>
