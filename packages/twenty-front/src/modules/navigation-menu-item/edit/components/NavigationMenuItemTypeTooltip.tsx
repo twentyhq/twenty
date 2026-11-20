@@ -7,6 +7,7 @@ import {
   IconAddressBook,
   IconCompass,
   IconBox,
+  IconCommand,
   IconFolder,
   IconHash,
   IconLayoutList,
@@ -60,6 +61,7 @@ export const NavigationMenuItemTypeTooltip = ({
       label: t`Native page`,
       icon: <IconCompass size={iconSize} />,
     },
+    COMMAND: { label: t`Command`, icon: <IconCommand size={iconSize} /> },
   };
 
   const { label, icon } = labelsByType[type];

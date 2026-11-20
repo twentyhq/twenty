@@ -115,7 +115,8 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       workflowUniversalIdentifier,
       agentId: createNavigationMenuItemInput.agentId ?? null,
       agentUniversalIdentifier,
-      commandMenuItemId: createNavigationMenuItemInput.commandMenuItemId ?? null,
+      commandMenuItemId:
+        createNavigationMenuItemInput.commandMenuItemId ?? null,
       commandMenuItemUniversalIdentifier,
       name: createNavigationMenuItemInput.name ?? null,
       link: createNavigationMenuItemInput.link ?? null,

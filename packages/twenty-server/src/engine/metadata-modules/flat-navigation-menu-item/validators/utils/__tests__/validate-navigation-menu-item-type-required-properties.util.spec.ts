@@ -247,6 +247,20 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
     ]);
   });
 
+  it('should report an error when a command is set on another type', () => {
+    const errors = validateNavigationMenuItemTypeRequiredProperties({
+      flatNavigationMenuItem: buildFlatNavigationMenuItem({
+        type: NavigationMenuItemType.LINK,
+        link: 'https://example.com',
+        commandMenuItemUniversalIdentifier: OTHER_VALID_UUID,
+      }),
+    });
+
+    expect(errors.map(({ message }) => message)).toEqual([
+      'A commandMenuItemUniversalIdentifier is only allowed on COMMAND type',
+    ]);
+  });
+
   it('should return an error when type is unknown', () => {
     const errors = validateNavigationMenuItemTypeRequiredProperties({
       flatNavigationMenuItem: buildFlatNavigationMenuItem({

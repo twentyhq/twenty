@@ -155,6 +155,19 @@ describe('getFlatEntityMapsKeysToInvalidateForWorkspaceMigration', () => {
     expect(result).toContain('flatViewFilterMaps');
   });
 
+  it('invalidates the navigation menu item map when a command menu item is deleted', () => {
+    const result = getFlatEntityMapsKeysToInvalidateForWorkspaceMigration([
+      buildAction({
+        type: 'delete',
+        metadataName: 'commandMenuItem',
+        universalIdentifier: 'command-menu-item-1',
+      }),
+    ]);
+
+    expect(result).toContain('flatCommandMenuItemMaps');
+    expect(result).toContain('flatNavigationMenuItemMaps');
+  });
+
   it('deduplicates keys across several actions', () => {
     const result = getFlatEntityMapsKeysToInvalidateForWorkspaceMigration([
       buildAction({

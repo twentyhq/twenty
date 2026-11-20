@@ -95,6 +95,18 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
     ];
   }
 
+  if (
+    isDefined(commandMenuItemUniversalIdentifier) &&
+    type !== NavigationMenuItemType.COMMAND
+  ) {
+    return [
+      buildInvalidInputError(
+        t`A commandMenuItemUniversalIdentifier is only allowed on COMMAND type`,
+        msg`A commandMenuItemUniversalIdentifier is only allowed on COMMAND type`,
+      ),
+    ];
+  }
+
   switch (type) {
     case NavigationMenuItemType.FOLDER: {
       return validateRequiredName({
