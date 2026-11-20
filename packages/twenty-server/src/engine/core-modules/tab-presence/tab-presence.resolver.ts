@@ -27,7 +27,7 @@ const UPDATE_TAB_PRESENCE_ACCESS_POLICY: AccessPolicy = {
     oauthClient: false,
     application: false,
   },
-  requiredPermissionFlags: [],
+  requiredPermissionFlags: [PermissionFlagType.AI],
   requiredFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
 };
 

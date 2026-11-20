@@ -11,17 +11,32 @@ export const OnlineWorkspaceMemberIdsEffect = () => {
   const setOnlineWorkspaceMemberIds = useSetAtomState(
     onlineWorkspaceMemberIdsState,
   );
-  const { data, refetch } = useQuery(GetOnlineWorkspaceMemberIdsDocument, {
-    fetchPolicy: 'network-only',
-    pollInterval: TAB_PRESENCE_HEARTBEAT_INTERVAL_MS,
-    skipPollAttempt: () => document.hidden,
-  });
+  const { data, error, refetch } = useQuery(
+    GetOnlineWorkspaceMemberIdsDocument,
+    {
+      fetchPolicy: 'network-only',
+      notifyOnNetworkStatusChange: false,
+      pollInterval: TAB_PRESENCE_HEARTBEAT_INTERVAL_MS,
+      skipPollAttempt: () => document.hidden,
+    },
+  );
 
   useEffect(() => {
+    if (isDefined(error)) {
+      setOnlineWorkspaceMemberIds(null);
+
+      return;
+    }
+
     if (isDefined(data)) {
       setOnlineWorkspaceMemberIds(data.onlineWorkspaceMemberIds);
     }
-  }, [data, setOnlineWorkspaceMemberIds]);
+  }, [data, error, setOnlineWorkspaceMemberIds]);
+
+  useEffect(
+    () => () => setOnlineWorkspaceMemberIds(null),
+    [setOnlineWorkspaceMemberIds],
+  );
 
   useEffect(() => {
     const refetchWhenVisible = () => {
