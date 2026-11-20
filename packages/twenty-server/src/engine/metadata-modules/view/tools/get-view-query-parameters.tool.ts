@@ -17,6 +17,7 @@ const getViewQueryParamsInputSchema = z.object({
 
 @DefineTool({
   name: 'get_view_query_parameters',
+  isReadOnly: true,
   category: ToolCategory.VIEW,
   accessPolicy: VIEW_READ_ACCESS_POLICY,
   description:
