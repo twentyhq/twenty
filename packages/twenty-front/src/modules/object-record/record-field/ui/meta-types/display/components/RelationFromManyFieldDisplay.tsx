@@ -1,5 +1,3 @@
-import { styled } from '@linaria/react';
-import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 
@@ -7,6 +5,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
+import { RelationWithUnloadedRecordCount } from '@/object-record/record-field/ui/meta-types/display/components/RelationWithUnloadedRecordCount';
 import { MAX_RELATION_CHIPS_DISPLAYED_INLINE } from '@/object-record/record-field/ui/meta-types/display/constants/MaxRelationChipsDisplayedInline';
 import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useRelationFromManyFieldDisplay';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
@@ -14,23 +13,8 @@ import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/ju
 import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 
 import { OverflowingList } from 'twenty-ui/components/layout';
-import { Chip } from 'twenty-ui/primitives/data-display';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { isArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-
-const StyledRelationWithUnloadedRecordCount = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  min-width: 0;
-  width: 100%;
-`;
-
-const StyledUnloadedRecordCount = styled.div`
-  display: flex;
-  flex-shrink: 0;
-`;
 
 export const RelationFromManyFieldDisplay = () => {
   const { t } = useLingui();
@@ -124,49 +108,28 @@ export const RelationFromManyFieldDisplay = () => {
     );
   }
 
-  const relationRecordChips = (
-    <OverflowingList
-      overflowLabel={t`Show all items`}
-      showOverflowCount={isFocused}
-      maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
-    >
-      {fieldValue.filter(isDefined).map((record) => {
-        const recordChipData = generateRecordChipData(record);
-        return (
-          <RecordChip
-            key={recordChipData.recordId}
-            objectNameSingular={recordChipData.objectNameSingular}
-            record={record}
-            forceDisableClick={disableChipClick}
-            triggerEvent={triggerEvent}
-          />
-        );
-      })}
-    </OverflowingList>
-  );
-
-  const unloadedRecordCount = (totalCount ?? 0) - fieldValue.length;
-
-  if (unloadedRecordCount <= 0) {
-    return relationRecordChips;
-  }
-
   return (
-    <StyledRelationWithUnloadedRecordCount>
-      {relationRecordChips}
-      <StyledUnloadedRecordCount>
-        <Chip
-          variant="soft"
-          tooltipContent={plural(unloadedRecordCount, {
-            one: '# more related record',
-            other: '# more related records',
-          })}
-          tooltipPlace="top"
-          alwaysShowTooltip
-        >
-          {`+${unloadedRecordCount}`}
-        </Chip>
-      </StyledUnloadedRecordCount>
-    </StyledRelationWithUnloadedRecordCount>
+    <RelationWithUnloadedRecordCount
+      unloadedRecordCount={(totalCount ?? 0) - fieldValue.length}
+    >
+      <OverflowingList
+        overflowLabel={t`Show all items`}
+        showOverflowCount={isFocused}
+        maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
+      >
+        {fieldValue.filter(isDefined).map((record) => {
+          const recordChipData = generateRecordChipData(record);
+          return (
+            <RecordChip
+              key={recordChipData.recordId}
+              objectNameSingular={recordChipData.objectNameSingular}
+              record={record}
+              forceDisableClick={disableChipClick}
+              triggerEvent={triggerEvent}
+            />
+          );
+        })}
+      </OverflowingList>
+    </RelationWithUnloadedRecordCount>
   );
 };
