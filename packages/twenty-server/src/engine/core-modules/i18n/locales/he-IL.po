@@ -11886,7 +11886,7 @@ msgstr "לא ניתן להגיש את טווח הקובץ המבוקש."
 #. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
-msgstr ""
+msgstr "לא ניתן להגביל שדות נדרשים וקשרי morph בכללי הרשאה ברמת שורה."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
