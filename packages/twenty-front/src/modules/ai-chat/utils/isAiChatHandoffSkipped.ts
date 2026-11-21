@@ -1,13 +1,13 @@
 import { isObject } from '@sniptt/guards';
 
+import { getCurrentHistoryEntryState } from '~/utils/getCurrentHistoryEntryState';
+
 export const isAiChatHandoffSkipped = () => {
-  const historyState: unknown = window.history.state;
+  const historyEntryState = getCurrentHistoryEntryState();
 
   return (
-    isObject(historyState) &&
-    'usr' in historyState &&
-    isObject(historyState.usr) &&
-    'isAiChatHandoffSkipped' in historyState.usr &&
-    historyState.usr.isAiChatHandoffSkipped === true
+    isObject(historyEntryState) &&
+    'isAiChatHandoffSkipped' in historyEntryState &&
+    historyEntryState.isAiChatHandoffSkipped === true
   );
 };
