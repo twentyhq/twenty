@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { isDefined } from 'twenty-sdk/utils';
@@ -9,6 +10,7 @@ import { findOrCreateLinePersonId } from 'src/logic-functions/data/find-or-creat
 import { getLineAccessTokenOrThrow } from 'src/logic-functions/data/get-line-access-token-or-throw.util';
 import { importMessage } from 'src/logic-functions/data/import-message.util';
 import { findConnectedAccountIdByBotUserId } from 'src/logic-functions/data/link-bot-to-connection.util';
+import { storeMarkAsReadToken } from 'src/logic-functions/data/mark-as-read-token.util';
 import { withConnectionAuthFailureReport } from 'src/logic-functions/data/with-connection-auth-failure-report.util';
 import { type ProcessEventPayload } from 'src/logic-functions/types/process-event-payload.type';
 
@@ -47,6 +49,15 @@ const handler = async ({ botUserId, event }: ProcessEventPayload) => {
       receivedAt: new Date(event.timestamp),
     });
   });
+
+  if (isNonEmptyString(event.message.markAsReadToken)) {
+    await storeMarkAsReadToken({
+      botUserId,
+      userId,
+      token: event.message.markAsReadToken,
+      timestamp: event.timestamp,
+    });
+  }
 };
 
 export default defineLogicFunction({

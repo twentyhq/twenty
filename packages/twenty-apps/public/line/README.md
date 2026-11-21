@@ -29,7 +29,7 @@ In the channel's **Messaging API** tab:
 1. Set the **Webhook URL** to the live URL of the app's `receive-webhook` function, shown in its HTTP trigger settings in Twenty (it ends with `/line`), then press **Verify**.
 2. Turn on **Use webhook** and **Webhook redelivery**, so messages sent while Twenty is unreachable arrive later.
 
-In LINE Official Account Manager, under **Response settings**, turn off auto-response messages if replies should only come from Twenty.
+In LINE Official Account Manager, under **Response settings**, turn off auto-response messages if replies should only come from Twenty, and turn on **Chat**: only then does LINE let the app mark a chat as read when it is opened in Twenty. With Chat off, LINE marks every message read as soon as it arrives.
 
 The URL must be public HTTPS, so a Twenty running on localhost cannot receive messages.
 

@@ -2,6 +2,7 @@ import { defineMessagingProvider } from 'twenty-sdk/define';
 
 import {
   LINE_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
+  LINE_LOGIC_FUNCTION_MARK_THREAD_AS_READ_UNIVERSAL_IDENTIFIER,
   LINE_LOGIC_FUNCTION_SEND_MESSAGE_UNIVERSAL_IDENTIFIER,
   LINE_MESSAGING_PROVIDER_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
@@ -16,5 +17,9 @@ export default defineMessagingProvider({
   },
   sendMessageLogicFunction: {
     universalIdentifier: LINE_LOGIC_FUNCTION_SEND_MESSAGE_UNIVERSAL_IDENTIFIER,
+  },
+  markThreadAsReadLogicFunction: {
+    universalIdentifier:
+      LINE_LOGIC_FUNCTION_MARK_THREAD_AS_READ_UNIVERSAL_IDENTIFIER,
   },
 });
