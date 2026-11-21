@@ -42,7 +42,6 @@ export const findWorkspaceMemberRelationFieldNamesOfObject = ({
       return [
         findField(relationFieldMetadata.relationTargetFieldMetadataId),
         findField(predicate.workspaceMemberFieldMetadataId),
-        findField(predicate.workspaceMemberRelationFilterFieldMetadataId),
       ]
         .filter(isDefined)
         .flatMap(({ name }) => [

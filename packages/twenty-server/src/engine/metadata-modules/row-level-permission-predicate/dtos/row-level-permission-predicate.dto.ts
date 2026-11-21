@@ -41,12 +41,6 @@ export class RowLevelPermissionPredicateDTO {
   workspaceMemberRelationFieldMetadataId?: string | null;
 
   @Field(() => String, { nullable: true })
-  workspaceMemberRelationFilterFieldMetadataId?: string | null;
-
-  @Field(() => GraphQLJSON, { nullable: true })
-  workspaceMemberRelationFilterValue?: RowLevelPermissionPredicateValue | null;
-
-  @Field(() => String, { nullable: true })
   rowLevelPermissionPredicateGroupId?: string | null;
 
   @Field(() => Number, { nullable: true })

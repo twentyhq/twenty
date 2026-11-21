@@ -3562,8 +3562,6 @@ export interface RowLevelPermissionPredicate {
     value?: Scalars['JSON']
     workspaceMemberFieldMetadataId?: Scalars['String']
     workspaceMemberRelationFieldMetadataId?: Scalars['String']
-    workspaceMemberRelationFilterFieldMetadataId?: Scalars['String']
-    workspaceMemberRelationFilterValue?: Scalars['JSON']
     workspaceMemberSubFieldName?: Scalars['String']
     __typename: 'RowLevelPermissionPredicate'
 }
@@ -8517,8 +8515,6 @@ export interface RowLevelPermissionPredicateGenqlSelection{
     value?: boolean | number
     workspaceMemberFieldMetadataId?: boolean | number
     workspaceMemberRelationFieldMetadataId?: boolean | number
-    workspaceMemberRelationFilterFieldMetadataId?: boolean | number
-    workspaceMemberRelationFilterValue?: boolean | number
     workspaceMemberSubFieldName?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -8556,7 +8552,6 @@ export interface RowLevelPermissionRuleInput {canCreateRecords?: (Scalars['Boole
 
 export interface RowLevelPermissionRulePredicateGroupInput {id?: (Scalars['UUID'] | null),logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,position?: (Scalars['Float'] | null),predicateGroups?: (RowLevelPermissionRulePredicateGroupInput[] | null),predicates?: (RowLevelPermissionRulePredicateInput[] | null)}
 
-export interface RowLevelPermissionRulePredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,position?: (Scalars['Float'] | null),relationFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberRelationFieldMetadataId?: (Scalars['UUID'] | null),workspaceMemberRelationFilterFieldMetadataId?: (Scalars['UUID'] | null),workspaceMemberRelationFilterValue?: (Scalars['JSON'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
 
 export interface RowLevelRecordsPermissionsGenqlSelection{
     canCreateRecords?: boolean | number

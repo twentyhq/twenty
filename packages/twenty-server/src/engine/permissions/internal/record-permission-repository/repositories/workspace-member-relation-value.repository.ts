@@ -2,8 +2,6 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
@@ -16,8 +14,6 @@ export type WorkspaceMemberRelationValueLookup = {
   workspaceMemberColumnName: string;
   relatedColumnName: string;
   valueColumnName: string;
-  filterColumnName: string | null;
-  filterValues: string[];
 };
 
 export type WorkspaceMemberRelationValueRow = {
@@ -68,20 +64,10 @@ export class WorkspaceMemberRelationValueRepository {
               WHERE "member"."deletedAt" IS NULL
                 AND "related"."deletedAt" IS NULL
                 AND ${relatedValueColumn} IS NOT NULL
-                ${
-                  isDefined(lookup.filterColumnName)
-                    ? `AND CAST("related".${escapeIdentifier(lookup.filterColumnName)} AS text) = ANY(CAST(:filterValues_${lookupIndex} AS text[]))`
-                    : ''
-                }
               GROUP BY "member"."id"`;
             })
             .join(' UNION ALL '),
-          parameters: Object.fromEntries(
-            lookups.map(({ filterValues }, lookupIndex) => [
-              `filterValues_${lookupIndex}`,
-              filterValues,
-            ]),
-          ),
+          parameters: {},
         },
       },
     );

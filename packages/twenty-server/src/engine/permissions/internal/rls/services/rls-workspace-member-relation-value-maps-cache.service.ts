@@ -18,7 +18,6 @@ import { type RlsWorkspaceMemberRelationValueMaps } from 'src/engine/permissions
 import { buildMemberFieldKey } from 'src/engine/permissions/internal/rls/utils/build-member-field-key.util';
 import { findRelationJoinColumnsOrThrow } from 'src/engine/permissions/internal/rls/utils/find-relation-join-columns-or-throw.util';
 import { findWorkspaceMemberRelationColumnName } from 'src/engine/permissions/internal/rls/utils/find-workspace-member-relation-column-name.util';
-import { toWorkspaceMemberRelationFilterValues } from 'src/engine/permissions/internal/rls/utils/to-workspace-member-relation-filter-values.util';
 import { findWorkspaceMemberRelationPredicates } from 'src/engine/permissions/internal/rls/utils/find-workspace-member-relation-predicates.util';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
@@ -95,8 +94,6 @@ export class RlsWorkspaceMemberRelationValueMapsCacheService extends WorkspaceCa
       RowLevelPermissionPredicate,
       | 'workspaceMemberFieldMetadataId'
       | 'workspaceMemberRelationFieldMetadataId'
-      | 'workspaceMemberRelationFilterFieldMetadataId'
-      | 'workspaceMemberRelationFilterValue'
     >;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
@@ -124,9 +121,6 @@ export class RlsWorkspaceMemberRelationValueMapsCacheService extends WorkspaceCa
     const valueColumnName = findWorkspaceMemberRelationColumnName(
       findField(predicate.workspaceMemberFieldMetadataId),
     );
-    const filterColumnName = findWorkspaceMemberRelationColumnName(
-      findField(predicate.workspaceMemberRelationFilterFieldMetadataId),
-    );
 
     if (
       !isDefined(relationFieldMetadata) ||
@@ -134,9 +128,7 @@ export class RlsWorkspaceMemberRelationValueMapsCacheService extends WorkspaceCa
       workspaceMemberFlatObjectMetadata.universalIdentifier !==
         STANDARD_OBJECTS.workspaceMember.universalIdentifier ||
       !isDefined(relatedFlatObjectMetadata) ||
-      !isDefined(valueColumnName) ||
-      (isDefined(predicate.workspaceMemberRelationFilterFieldMetadataId) &&
-        !isDefined(filterColumnName))
+      !isDefined(valueColumnName)
     ) {
       return null;
     }
@@ -153,10 +145,6 @@ export class RlsWorkspaceMemberRelationValueMapsCacheService extends WorkspaceCa
       workspaceMemberColumnName: sourceColumnName,
       relatedColumnName: targetColumnName,
       valueColumnName,
-      filterColumnName,
-      filterValues: toWorkspaceMemberRelationFilterValues(
-        predicate.workspaceMemberRelationFilterValue,
-      ),
     };
   }
 }

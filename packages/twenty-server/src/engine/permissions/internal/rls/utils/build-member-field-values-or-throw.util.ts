@@ -27,8 +27,6 @@ export const buildMemberFieldValuesOrThrow = ({
     | 'workspaceMemberFieldMetadataId'
     | 'workspaceMemberSubFieldName'
     | 'workspaceMemberRelationFieldMetadataId'
-    | 'workspaceMemberRelationFilterFieldMetadataId'
-    | 'workspaceMemberRelationFilterValue'
   >[];
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): RlsMemberFieldValues => {

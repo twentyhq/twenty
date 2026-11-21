@@ -1,40 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Row Level Permission Predicate upsert should fail when a workspace member relation filter has no workspace member relation 1`] = `
-{
-  "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "rowLevelPermissionPredicate": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
-              "message": "A workspace member relation filter needs a workspace member relation",
-              "userFriendlyMessage": "This filter needs a workspace member relation",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "rowLevelPermissionPredicate",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-    },
-    "message": "Validation failed for 1 rowLevelPermissionPredicate",
-    "summary": {
-      "rowLevelPermissionPredicate": 1,
-      "totalErrors": 1,
-    },
-    "userFriendlyMessage": "This filter needs a workspace member relation",
-  },
-  "message": "Validation errors occurred while upserting row level permission predicates",
-  "name": "GraphQLError",
-}
-`;
-
 exports[`Row Level Permission Predicate upsert should fail when adding a predicate group to a non-editable role 1`] = `
 {
   "extensions": {

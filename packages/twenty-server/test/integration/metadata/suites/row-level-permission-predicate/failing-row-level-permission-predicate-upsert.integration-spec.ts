@@ -37,30 +37,6 @@ const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<Test
   [
     {
       title:
-        'when a workspace member relation filter has no workspace member relation',
-      context: {
-        input: (testSetup) => ({
-          roleId: testSetup.createdRoleId,
-          objectMetadataId: testSetup.companyObjectMetadataId,
-          rules: [
-            {
-              predicates: [
-                {
-                  fieldMetadataId: testSetup.companyNameFieldMetadataId,
-                  operand: RowLevelPermissionPredicateOperand.CONTAINS,
-                  value: 'Apple',
-                  workspaceMemberRelationFilterFieldMetadataId:
-                    testSetup.companyNameFieldMetadataId,
-                  workspaceMemberRelationFilterValue: ['Apple'],
-                },
-              ],
-            },
-          ],
-        }),
-      },
-    },
-    {
-      title:
         'when the workspace member relation is not a relation of the workspace member',
       context: {
         input: (testSetup) => ({

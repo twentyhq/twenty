@@ -528,14 +528,6 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       universalForeignKey:
         'workspaceMemberRelationFieldMetadataUniversalIdentifier',
     },
-    workspaceMemberRelationFilterFieldMetadata: {
-      metadataName: 'fieldMetadata',
-      foreignKey: 'workspaceMemberRelationFilterFieldMetadataId',
-      inverseOneToManyProperty: null,
-      isNullable: true,
-      universalForeignKey:
-        'workspaceMemberRelationFilterFieldMetadataUniversalIdentifier',
-    },
     objectMetadata: {
       metadataName: 'objectMetadata',
       foreignKey: 'objectMetadataId',

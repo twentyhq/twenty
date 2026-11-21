@@ -46,9 +46,6 @@ import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/
 @Index('IDX_RLPP_WORKSPACE_MEMBER_RELATION_FIELD_METADATA_ID', [
   'workspaceMemberRelationFieldMetadataId',
 ])
-@Index('IDX_RLPP_WORKSPACE_MEMBER_RELATION_FILTER_FIELD_METADATA_ID', [
-  'workspaceMemberRelationFilterFieldMetadataId',
-])
 export class RowLevelPermissionPredicateEntity
   extends SyncableEntity
   implements
@@ -140,26 +137,6 @@ export class RowLevelPermissionPredicateEntity
   })
   @JoinColumn({ name: 'workspaceMemberRelationFieldMetadataId' })
   workspaceMemberRelationFieldMetadata: Relation<FieldMetadataEntity> | null;
-
-  @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      ADD_WORKSPACE_MEMBER_RELATION_TO_ROW_LEVEL_PERMISSION_PREDICATE_UPGRADE_COMMAND_NAME,
-  })
-  @Column({ nullable: true, type: 'uuid' })
-  workspaceMemberRelationFilterFieldMetadataId: string | null;
-
-  @ManyToOne(() => FieldMetadataEntity, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'workspaceMemberRelationFilterFieldMetadataId' })
-  workspaceMemberRelationFilterFieldMetadata: Relation<FieldMetadataEntity> | null;
-
-  @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      ADD_WORKSPACE_MEMBER_RELATION_TO_ROW_LEVEL_PERMISSION_PREDICATE_UPGRADE_COMMAND_NAME,
-  })
-  @Column({ nullable: true, type: 'jsonb' })
-  workspaceMemberRelationFilterValue: JsonbProperty<RowLevelPermissionPredicateValue> | null;
 
   @Column({ nullable: true, type: 'uuid' })
   rowLevelPermissionPredicateGroupId: string | null;

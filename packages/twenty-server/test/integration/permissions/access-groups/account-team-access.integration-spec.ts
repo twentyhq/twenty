@@ -38,6 +38,7 @@ const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const SCHEMA = `"${getWorkspaceSchemaName(workspaceId)}"`;
 const ACCOUNT_TEAM_MEMBER = 'accountTeamMember';
 const OPPORTUNITY_TEAM_MEMBER = 'opportunityTeamMember';
+const ACCOUNT_CLIENT_HEAD = 'accountClientHead';
 const FEATURE_FLAGS = [
   FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
   FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
@@ -404,6 +405,7 @@ describe('Account team access (integration)', () => {
     metadataIds.opportunityTeamMember = await createObject(
       OPPORTUNITY_TEAM_MEMBER,
     );
+    metadataIds.accountClientHead = await createObject(ACCOUNT_CLIENT_HEAD);
 
     metadataIds.accountTeamMemberAccount = await createManyToOne({
       objectMetadataId: metadataIds.accountTeamMember,
@@ -420,11 +422,20 @@ describe('Account team access (integration)', () => {
     metadataIds.workspaceMemberAccountTeams = await findInverseFieldMetadataId(
       metadataIds.accountTeamMemberMember,
     );
-    metadataIds.accountTeamMemberTeamRole = await createSelect({
-      objectMetadataId: metadataIds.accountTeamMember,
-      name: 'teamRole',
-      values: ['MEMBER', 'CLIENT_HEAD'],
+    metadataIds.accountClientHeadAccount = await createManyToOne({
+      objectMetadataId: metadataIds.accountClientHead,
+      targetObjectMetadataId: metadataIds.company,
+      name: 'account',
+      targetFieldLabel: 'Client heads',
     });
+    metadataIds.accountClientHeadMember = await createManyToOne({
+      objectMetadataId: metadataIds.accountClientHead,
+      targetObjectMetadataId: metadataIds.workspaceMember,
+      name: 'member',
+      targetFieldLabel: 'Client head accounts',
+    });
+    metadataIds.workspaceMemberClientHeadAccounts =
+      await findInverseFieldMetadataId(metadataIds.accountClientHeadMember);
     metadataIds.opportunityTeamMemberOpportunity = await createManyToOne({
       objectMetadataId: metadataIds.opportunityTeamMember,
       targetObjectMetadataId: metadataIds.opportunity,
@@ -540,10 +551,12 @@ describe('Account team access (integration)', () => {
             predicates: [
               {
                 id: v4(),
-                ...accountTeamPredicate,
-                workspaceMemberRelationFilterFieldMetadataId:
-                  metadataIds.accountTeamMemberTeamRole,
-                workspaceMemberRelationFilterValue: ['CLIENT_HEAD'],
+                fieldMetadataId: metadataIds.opportunityCompany,
+                operand: RowLevelPermissionPredicateOperand.IS,
+                workspaceMemberRelationFieldMetadataId:
+                  metadataIds.workspaceMemberClientHeadAccounts,
+                workspaceMemberFieldMetadataId:
+                  metadataIds.accountClientHeadAccount,
               },
             ],
           },
@@ -583,8 +596,8 @@ describe('Account team access (integration)', () => {
 
     const [{ id: storedClientHeadRuleId }] = await query<{ id: string }>({
       sql: `SELECT "rowLevelPermissionRuleId" AS "id" FROM core."rowLevelPermissionPredicate"
-        WHERE "roleId" = $1 AND "workspaceMemberRelationFilterFieldMetadataId" IS NOT NULL`,
-      parameters: [roleId],
+        WHERE "roleId" = $1 AND "workspaceMemberRelationFieldMetadataId" = $2`,
+      parameters: [roleId, metadataIds.workspaceMemberClientHeadAccounts],
     });
 
     await query({
@@ -647,19 +660,21 @@ describe('Account team access (integration)', () => {
       });
     }
 
-    for (const [workspaceMemberId, accountId, teamRole] of [
-      [logins.clientHead.workspaceMemberId, recordIds.accountX, 'CLIENT_HEAD'],
-      [logins.clientHead.workspaceMemberId, recordIds.accountY, 'CLIENT_HEAD'],
-      [
-        logins.accountTeamMember.workspaceMemberId,
-        recordIds.accountY,
-        'MEMBER',
-      ],
+    for (const [workspaceMemberId, accountId] of [
+      [logins.clientHead.workspaceMemberId, recordIds.accountX],
+      [logins.clientHead.workspaceMemberId, recordIds.accountY],
+      [logins.accountTeamMember.workspaceMemberId, recordIds.accountY],
     ]) {
       await createRecord(ACCOUNT_TEAM_MEMBER, {
         accountId,
         memberId: workspaceMemberId,
-        teamRole,
+      });
+    }
+
+    for (const accountId of [recordIds.accountX, recordIds.accountY]) {
+      await createRecord(ACCOUNT_CLIENT_HEAD, {
+        accountId,
+        memberId: logins.clientHead.workspaceMemberId,
       });
     }
 
@@ -840,7 +855,6 @@ describe('Account team access (integration)', () => {
     await createRecord(ACCOUNT_TEAM_MEMBER, {
       accountId: recordIds.accountX,
       memberId: logins.opportunityTeamMember.workspaceMemberId,
-      teamRole: 'MEMBER',
     });
     await syncAndRecompute();
 
@@ -881,7 +895,6 @@ describe('Account team access (integration)', () => {
     await createRecord(ACCOUNT_TEAM_MEMBER, {
       accountId: accountZ,
       memberId: logins.partner.workspaceMemberId,
-      teamRole: 'MEMBER',
     });
     await syncAndRecompute();
 

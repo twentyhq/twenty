@@ -15,19 +15,10 @@ const sortByContent = <TEntry>(entries: TEntry[]): string[] =>
 
 const serializeWorkspaceMemberRelation = ({
   workspaceMemberRelationFieldMetadataId,
-  workspaceMemberRelationFilterFieldMetadataId,
-  workspaceMemberRelationFilterValue,
-}: RowLevelPermissionPredicate): unknown[] => {
-  if (!isDefined(workspaceMemberRelationFieldMetadataId)) {
-    return [];
-  }
-
-  return [
-    workspaceMemberRelationFieldMetadataId,
-    workspaceMemberRelationFilterFieldMetadataId ?? null,
-    workspaceMemberRelationFilterValue ?? null,
-  ];
-};
+}: RowLevelPermissionPredicate): string[] =>
+  isDefined(workspaceMemberRelationFieldMetadataId)
+    ? [workspaceMemberRelationFieldMetadataId]
+    : [];
 
 const serializeRowLevelPermissionPredicateGroup = ({
   parentPredicateGroupId,

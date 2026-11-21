@@ -373,10 +373,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       'subFieldName' in flatEntityUpdate ||
       'workspaceMemberFieldMetadataUniversalIdentifier' in flatEntityUpdate ||
       'workspaceMemberRelationFieldMetadataUniversalIdentifier' in
-        flatEntityUpdate ||
-      'workspaceMemberRelationFilterFieldMetadataUniversalIdentifier' in
-        flatEntityUpdate ||
-      'workspaceMemberRelationFilterValue' in flatEntityUpdate
+        flatEntityUpdate
     ) {
       const unsupportedOperandError = this.getUnsupportedOperandError({
         fieldType: fieldMetadata.type,
@@ -706,8 +703,6 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       UniversalFlatRowLevelPermissionPredicate,
       | 'workspaceMemberFieldMetadataUniversalIdentifier'
       | 'workspaceMemberRelationFieldMetadataUniversalIdentifier'
-      | 'workspaceMemberRelationFilterFieldMetadataUniversalIdentifier'
-      | 'workspaceMemberRelationFilterValue'
     >;
     flatFieldMetadataMaps:
       | UniversalFlatEntityMaps<UniversalFlatFieldMetadata>
@@ -717,25 +712,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     const {
       workspaceMemberFieldMetadataUniversalIdentifier,
       workspaceMemberRelationFieldMetadataUniversalIdentifier,
-      workspaceMemberRelationFilterFieldMetadataUniversalIdentifier,
-      workspaceMemberRelationFilterValue,
     } = predicate;
-
-    const hasWorkspaceMemberRelationFilter =
-      isDefined(
-        workspaceMemberRelationFilterFieldMetadataUniversalIdentifier,
-      ) || isDefined(workspaceMemberRelationFilterValue);
-
-    if (
-      !isDefined(workspaceMemberRelationFieldMetadataUniversalIdentifier) &&
-      hasWorkspaceMemberRelationFilter
-    ) {
-      return {
-        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
-        message: t`A workspace member relation filter needs a workspace member relation`,
-        userFriendlyMessage: msg`This filter needs a workspace member relation`,
-      };
-    }
 
     if (!isDefined(workspaceMemberRelationFieldMetadataUniversalIdentifier)) {
       return undefined;
@@ -793,35 +770,6 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
         message: t`A workspace member relation needs the field to read on its related records`,
         userFriendlyMessage: msg`Choose the field to read on the related records`,
-      };
-    }
-
-    if (
-      !isDefined(workspaceMemberRelationFilterFieldMetadataUniversalIdentifier)
-    ) {
-      return undefined;
-    }
-
-    const workspaceMemberRelationFilterFieldMetadata =
-      this.findWorkspaceMemberFieldMetadata({
-        workspaceMemberFieldMetadataUniversalIdentifier:
-          workspaceMemberRelationFilterFieldMetadataUniversalIdentifier,
-        flatFieldMetadataMaps,
-      });
-
-    if (
-      !isDefined(workspaceMemberRelationFilterFieldMetadata) ||
-      workspaceMemberRelationFilterFieldMetadata.objectMetadataUniversalIdentifier !==
-        workspaceMemberRelationFieldMetadata.relationTargetObjectMetadataUniversalIdentifier ||
-      isMorphOrRelationUniversalFlatFieldMetadata(
-        workspaceMemberRelationFilterFieldMetadata,
-      ) ||
-      !isDefined(workspaceMemberRelationFilterValue)
-    ) {
-      return {
-        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
-        message: t`A workspace member relation filter compares a field of the related records to a value`,
-        userFriendlyMessage: msg`This workspace member relation filter is not valid`,
       };
     }
 
