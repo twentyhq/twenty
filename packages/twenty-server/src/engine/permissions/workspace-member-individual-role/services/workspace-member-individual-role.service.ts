@@ -65,7 +65,6 @@ export class WorkspaceMemberIndividualRoleService {
                 workspaceCustomFlatApplication.universalIdentifier,
               now: new Date().toISOString(),
             }),
-          // The builder mutates these maps, so it must not get the cache's own
           dependencyAllFlatEntityMaps: structuredClone(flatEntityMaps),
           additionalCacheDataMaps: { featureFlagsMap, billingEntitlements },
         },

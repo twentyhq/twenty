@@ -34,7 +34,6 @@ export const buildChannelVisibilityRules = ({
       )
       .map(({ id }) => id);
 
-    // a rule without a channel would be refused, and grants nothing anyway
     if (channelIds.length === 0) {
       return [];
     }

@@ -75,7 +75,6 @@ const findCreatedAt = ({
   entities.find((entity) => entity.universalIdentifier === universalIdentifier)
     ?.createdAt ?? now;
 
-// From is every stored individual role with its rules, to is the roles the members should hold: the builder diffs them
 export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
   individualRoles,
   flatEntityMaps,

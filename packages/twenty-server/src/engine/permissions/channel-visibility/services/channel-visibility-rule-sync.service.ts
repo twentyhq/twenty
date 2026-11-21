@@ -31,7 +31,6 @@ export class ChannelVisibilityRuleSyncService {
     private readonly cacheLockService: CacheLockService,
   ) {}
 
-  // two syncs of one workspace would each write the lists they read, and the older could land last
   async syncWorkspace(workspaceId: string): Promise<void> {
     await this.cacheLockService.withLock(
       () => this.syncWorkspaceWithLock(workspaceId),

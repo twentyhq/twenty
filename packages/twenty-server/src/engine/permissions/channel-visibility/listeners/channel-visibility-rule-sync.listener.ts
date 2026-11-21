@@ -19,7 +19,6 @@ export class ChannelVisibilityRuleSyncListener {
     private readonly channelVisibilityRuleSyncSchedulerService: ChannelVisibilityRuleSyncSchedulerService,
   ) {}
 
-  // the sync also tears the rules down once the flag is off
   @OnCustomBatchEvent(FEATURE_FLAG_ENABLED_EVENT)
   @OnCustomBatchEvent(FEATURE_FLAG_DISABLED_EVENT)
   async handleFeatureFlagToggled({
