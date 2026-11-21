@@ -475,7 +475,7 @@ msgstr "{0} Wiederholungsversuche"
 #. placeholder {0}: rules.length
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverrideRow.tsx
 msgid "{0} rules"
-msgstr ""
+msgstr "{0} Regeln"
 
 #. js-lingui-id: fvImQM
 #. placeholder {0}: formatNumber(numberOfSelectedRecords)
@@ -641,6 +641,16 @@ msgstr "{appDisplayName} möchte Folgendes:"
 msgid "{appLabel} installed"
 msgstr "{appLabel} installiert"
 
+#. js-lingui-id: jUUqOu
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMemberActionsCell.tsx
+msgid "{applicationName} can no longer access the account of {memberName}"
+msgstr "{applicationName} kann nicht mehr auf das Konto von {memberName} zugreifen"
+
+#. js-lingui-id: 1NAf56
+#: src/modules/settings/profile/connected-apps/components/SettingsConnectedAppRowDropdownMenu.tsx
+msgid "{applicationName} can no longer access your account"
+msgstr "{applicationName} kann nicht mehr auf Ihr Konto zugreifen"
+
 #. js-lingui-id: TVseJQ
 #: src/modules/settings/app-preferences/hooks/useAccountGroupApplicationSettingsTabs.ts
 msgid "{applicationName}: {settingsMenuItemTitle}"
@@ -703,6 +713,11 @@ msgstr "{cardCount, plural, one {# Aktion genehmigen?} other {# Aktionen genehmi
 #: src/modules/activities/emails/components/ChatThreadDisconnectedBanner.tsx
 msgid "{channelName} is disconnected."
 msgstr "{channelName} ist getrennt."
+
+#. js-lingui-id: Y1n+1u
+#: src/modules/settings/applications/utils/getApplicationsWithConnectedMembersDescription.ts
+msgid "{connectedMemberCount, plural, =0 {No members connected} one {Connected by # member} other {Connected by # members}}"
+msgstr ""
 
 #. js-lingui-id: 3gdGx+
 #: src/modules/settings/applications/hooks/useConnectApplicationWithApiKey.ts
@@ -850,7 +865,7 @@ msgstr "{filterRulesCount, plural, one {{filterRulesCount} Regel} other {{filter
 #. js-lingui-id: 11/gul
 #: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
 msgid "{firstPredicateLabel} +{otherPredicateCount}"
-msgstr ""
+msgstr "{firstPredicateLabel} +{otherPredicateCount}"
 
 #. js-lingui-id: WS/avX
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
@@ -1055,16 +1070,6 @@ msgstr "{participantLabels} wird als Teilnehmer hinzugefügt und erhält Zugriff
 msgid "{participantLabels} will be added as participants and get access to this chat"
 msgstr "{participantLabels} werden als Teilnehmer hinzugefügt und erhalten Zugriff auf diesen Chat"
 
-#. js-lingui-id: jCjuhm
-#: src/modules/ai-chat/messages/components/AiChatTypingIndicator.tsx
-msgid "{participantNames} are typing…"
-msgstr "{participantNames} tippen…"
-
-#. js-lingui-id: E0CZYQ
-#: src/modules/ai-chat/messages/components/AiChatTypingIndicator.tsx
-msgid "{participantNames} is typing…"
-msgstr "{participantNames} tippt…"
-
 #. js-lingui-id: v5nX2L
 #: src/modules/getting-started/components/GettingStartedMailboxDoneDescription.tsx
 msgid "{peopleCount, plural, one {{formattedPeopleCount} person} other {{formattedPeopleCount} people}} and {companyCount, plural, one {{formattedCompanyCount} company} other {{formattedCompanyCount} companies}} in your workspace"
@@ -1115,7 +1120,7 @@ msgstr "{readOnlyFieldCount, plural, one {# Feld kann nicht bearbeitet werden} o
 #. js-lingui-id: HFkZ/O
 #: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
 msgid "{recordCount} records"
-msgstr ""
+msgstr "{recordCount} Datensätze"
 
 #. js-lingui-id: ociapy
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
@@ -1151,22 +1156,22 @@ msgstr "{retriedCount, plural, one {Erfolgreich {retriedCount} Aufgabe erneut ve
 #. js-lingui-id: ssmJCL
 #: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
 msgid "{roleLabel} already deletes every {objectLabelSingular}"
-msgstr ""
+msgstr "{roleLabel} löscht bereits jedes {objectLabelSingular}"
 
 #. js-lingui-id: 09pjSA
 #: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
 msgid "{roleLabel} already destroys every {objectLabelSingular}"
-msgstr ""
+msgstr "{roleLabel} zerstört bereits jedes {objectLabelSingular}"
 
 #. js-lingui-id: dPD2BG
 #: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
 msgid "{roleLabel} already edits every {objectLabelSingular}"
-msgstr ""
+msgstr "{roleLabel} bearbeitet bereits jedes {objectLabelSingular}"
 
 #. js-lingui-id: Qs0rBC
 #: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
 msgid "{roleLabel} already sees every {objectLabelSingular}"
-msgstr ""
+msgstr "{roleLabel} sieht bereits jedes {objectLabelSingular}"
 
 #. js-lingui-id: uHZWwU
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
@@ -1176,7 +1181,7 @@ msgstr "{roleTargetName} wird die Rolle \"{newRoleName}\" zugewiesen."
 #. js-lingui-id: uqrFkj
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverrideRow.tsx
 msgid "{ruleOperationsLabel} when {ruleLabel}"
-msgstr ""
+msgstr "{ruleOperationsLabel}, wenn {ruleLabel}"
 
 #. js-lingui-id: Tsqb9x
 #: src/modules/object-core/agents/components/CoreAgentRunConversation.tsx
@@ -1556,7 +1561,7 @@ msgstr "1 von 2 erledigt"
 #. js-lingui-id: qarnor
 #: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
 msgid "1 record"
-msgstr ""
+msgstr "1 Datensatz"
 
 #. js-lingui-id: lKmQeh
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
@@ -2311,7 +2316,7 @@ msgstr "Spalte rechts hinzufügen"
 #: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFilterBuilderContent.tsx
 #: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFilterBuilderContent.tsx
 msgid "Add condition"
-msgstr ""
+msgstr "Bedingung hinzufügen"
 
 #. js-lingui-id: 3iIvQg
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -3404,7 +3409,7 @@ msgstr "Alle Kanäle"
 #. js-lingui-id: 7cbQyX
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
 msgid "All chats you follow"
-msgstr ""
+msgstr "Alle Chats, denen du folgst"
 
 #. js-lingui-id: tZLcDK
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
@@ -3599,7 +3604,7 @@ msgstr "Alle Arbeitsbereiche"
 #. js-lingui-id: h7peZQ
 #: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
 msgid "Allow"
-msgstr ""
+msgstr "Zulassen"
 
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -3665,7 +3670,7 @@ msgstr "Einladung neuer Benutzer durch Teilen eines Einladungslinks zulassen."
 #. js-lingui-id: lIfNCI
 #: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
 msgid "Allow this browser to show new inbox messages as notifications"
-msgstr ""
+msgstr "Diesem Browser erlauben, neue Posteingangsnachrichten als Benachrichtigungen anzuzeigen"
 
 #. js-lingui-id: JBjv4v
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -4145,7 +4150,7 @@ msgstr "Anwendungsprotokolle"
 #. js-lingui-id: UiH6l9
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Application price billing"
-msgstr ""
+msgstr "Abrechnung von Anwendungspreisen"
 
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
@@ -4291,6 +4296,11 @@ msgstr "App-Einstellungen"
 #: src/utils/title-utils.ts
 msgid "Apps preferences - Settings"
 msgstr "App-Einstellungen - Einstellungen"
+
+#. js-lingui-id: Eve12g
+#: src/modules/settings/profile/connected-apps/components/SettingsProfileConnectedAppsSection.tsx
+msgid "Apps that can access this workspace on your behalf"
+msgstr "Apps, die in Ihrem Namen auf diesen Arbeitsbereich zugreifen können"
 
 #. js-lingui-id: EzsAEI
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
@@ -5204,7 +5214,7 @@ msgstr "Guthaben Ihrem Arbeitsbereich in Rechnung stellen"
 #. js-lingui-id: jKtUV8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
-msgstr ""
+msgstr "Stellen Sie die von installierten Apps angegebenen Preise über das Workspace-Abonnement in Rechnung. Der Preis wird vor der Installation noch nicht angezeigt."
 
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -5297,7 +5307,7 @@ msgstr "Blockiert"
 #. js-lingui-id: z3pfdo
 #: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
 msgid "Blocked in this browser. Allow notifications for this site in the browser settings"
-msgstr ""
+msgstr "In diesem Browser blockiert. Erlauben Sie Benachrichtigungen für diese Website in den Browsereinstellungen"
 
 #. js-lingui-id: K1172m
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
@@ -5530,7 +5540,7 @@ msgstr "Aufzählungsliste"
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
 msgid "Bundled"
-msgstr ""
+msgstr "Gebündelt"
 
 #. js-lingui-id: 9emr42
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
@@ -7674,6 +7684,16 @@ msgstr "Verbinde dein eigenes {0}-Konto für diesen Server, damit es in deinem N
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 msgid "Connected"
 msgstr "Verbunden"
+
+#. js-lingui-id: YGP/lN
+#: src/modules/settings/profile/connected-apps/components/SettingsProfileConnectedAppsSection.tsx
+msgid "Connected apps"
+msgstr "Verbundene Apps"
+
+#. js-lingui-id: OVjUoE
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMembersSection.tsx
+msgid "Connected members"
+msgstr "Verbundene Mitglieder"
 
 #. js-lingui-id: exyUec
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTable.tsx
@@ -10112,7 +10132,7 @@ msgstr "Limit löschen"
 #. js-lingui-id: Fh7KV2
 #: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
 msgid "Delete matching {objectLabelPlural}"
-msgstr ""
+msgstr "Übereinstimmende {objectLabelPlural} löschen"
 
 #. js-lingui-id: u+Hoy8
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
@@ -10173,7 +10193,7 @@ msgstr "Zeile löschen"
 #. js-lingui-id: 39Aq/E
 #: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
 msgid "Delete rule"
-msgstr ""
+msgstr "Regel löschen"
 
 #. js-lingui-id: rvJGTw
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
@@ -10183,7 +10203,7 @@ msgstr "Skill löschen"
 #. js-lingui-id: 6XdrVG
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Delete some {objectLabelPlural} · {throughRules}"
-msgstr ""
+msgstr "Einige {objectLabelPlural} löschen · {throughRules}"
 
 #. js-lingui-id: drg4t8
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
@@ -10452,12 +10472,12 @@ msgstr "Alle Datensätze zerstören"
 #. js-lingui-id: LhvVfx
 #: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
 msgid "Destroy matching {objectLabelPlural}"
-msgstr ""
+msgstr "Übereinstimmende {objectLabelPlural} zerstören"
 
 #. js-lingui-id: rEJ7+y
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Destroy some {objectLabelPlural} · {throughRules}"
-msgstr ""
+msgstr "Einige {objectLabelPlural} löschen · {throughRules}"
 
 #. js-lingui-id: FOcBn3
 #: src/modules/inbox/components/InboxThreadActionsDropdown.tsx
@@ -10581,7 +10601,7 @@ msgstr "Direktnachrichten"
 #. js-lingui-id: yBEIpe
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
 msgid "Direct messages and mentions"
-msgstr ""
+msgstr "Direktnachrichten und Erwähnungen"
 
 #. js-lingui-id: Rz4s9r
 #: src/modules/ai-chat/instance/hooks/useOpenNewAiChatAsDirectMessage.ts
@@ -10591,7 +10611,7 @@ msgstr "Direktnachrichten unterstützen keine Anhänge."
 #. js-lingui-id: +ILAOG
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
 msgid "Direct messages, mentions and chats assigned to you"
-msgstr ""
+msgstr "Direktnachrichten, Erwähnungen und Ihnen zugewiesene Chats"
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -11322,7 +11342,7 @@ msgstr "Verknüpfte Datensätze bearbeiten"
 #. js-lingui-id: pFCxAz
 #: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
 msgid "Edit matching {objectLabelPlural}"
-msgstr ""
+msgstr "Übereinstimmende {objectLabelPlural} bearbeiten"
 
 #. js-lingui-id: QjH+ZX
 #: src/modules/ai-chat/messages/components/AiChatMessage.tsx
@@ -11387,7 +11407,7 @@ msgstr "Gemeinsame Labels bearbeiten"
 #. js-lingui-id: yYBXaf
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Edit some {objectLabelPlural} · {throughRules}"
-msgstr ""
+msgstr "Einige {objectLabelPlural} bearbeiten · {throughRules}"
 
 #. js-lingui-id: xE9ptR
 #: src/modules/page-layout/components/PageLayoutTabMenuItemSelectAvatar.tsx
@@ -12661,7 +12681,7 @@ msgstr "Jeden Montag"
 #. js-lingui-id: WZ4tRP
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
 msgid "Every new message in a chat you take part in or follow"
-msgstr ""
+msgstr "Jede neue Nachricht in einem Chat, an dem Sie teilnehmen oder dem Sie folgen"
 
 #. js-lingui-id: QU6LCC
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
@@ -13085,7 +13105,7 @@ msgstr "Externe Ereignis-ID"
 #. js-lingui-id: ejIVcx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "External tools agents and workflows can use"
-msgstr ""
+msgstr "Externe Tools, die Agenten und Workflows verwenden können"
 
 #. js-lingui-id: 07Wl2A
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -13505,6 +13525,16 @@ msgstr "Der Zeitachsen-Aktivitätstyp konnte nicht zurückgesetzt werden."
 #: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
 msgid "Failed to retry jobs. Please try again later."
 msgstr "Aufgaben konnten nicht erneut versucht werden. Bitte versuchen Sie es später noch einmal."
+
+#. js-lingui-id: YTYTep
+#: src/modules/settings/profile/connected-apps/components/SettingsConnectedAppRowDropdownMenu.tsx
+msgid "Failed to revoke access for {applicationName}"
+msgstr "Zugriff für {applicationName} konnte nicht widerrufen werden"
+
+#. js-lingui-id: nNwzE+
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMemberActionsCell.tsx
+msgid "Failed to revoke access for {memberName}"
+msgstr "Zugriff für {memberName} konnte nicht widerrufen werden"
 
 #. js-lingui-id: 70UyPr
 #: src/modules/settings/admin-panel/signing-keys/hooks/useRevokeSigningKey.ts
@@ -14827,7 +14857,7 @@ msgstr "Deutschland"
 #. js-lingui-id: AWtGgd
 #: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
 msgid "Get help"
-msgstr ""
+msgstr "Hilfe erhalten"
 
 #. js-lingui-id: Et23WT
 #: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
@@ -14838,7 +14868,7 @@ msgstr "Mehr Guthaben kaufen"
 #. js-lingui-id: LBG67E
 #: src/modules/settings/experience/components/SettingsExperienceNotificationsSection.tsx
 msgid "Get notified of new inbox messages on this device when you are not looking at Twenty. Your choices below apply to every device"
-msgstr ""
+msgstr "Erhalten Sie Benachrichtigungen über neue Posteingangsnachrichten auf diesem Gerät, wenn Sie Twenty nicht ansehen. Ihre untenstehenden Auswahlmöglichkeiten gelten für jedes Gerät"
 
 #. js-lingui-id: AvbPI1
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
@@ -15378,7 +15408,7 @@ msgstr "Hallo, Welt"
 #. js-lingui-id: c3XJ18
 #: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
 msgid "Help"
-msgstr ""
+msgstr "Hilfe"
 
 #. js-lingui-id: CRzGla
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -16891,7 +16921,7 @@ msgstr "Iterator"
 #. js-lingui-id: 48n0Ly
 #: src/modules/settings/roles/role-permissions/object-overrides/hooks/useObjectDisabledOperations.ts
 msgid "its app"
-msgstr ""
+msgstr "seine App"
 
 #. js-lingui-id: R9VnB9
 #: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
@@ -17428,6 +17458,16 @@ msgstr "Zuletzt aktualisiert"
 #: src/modules/settings/legal/components/DpaDocumentPreview.tsx
 msgid "Last Updated: {0}"
 msgstr "Zuletzt aktualisiert: {0}"
+
+#. js-lingui-id: JGvwnU
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMembersSection.tsx
+msgid "Last used"
+msgstr "Zuletzt verwendet"
+
+#. js-lingui-id: 484c8n
+#: src/modules/settings/profile/connected-apps/components/SettingsProfileConnectedAppsSection.tsx
+msgid "Last used {lastUsed}"
+msgstr "Zuletzt verwendet: {lastUsed}"
 
 #. js-lingui-id: p9uaTd
 #: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
@@ -18789,7 +18829,7 @@ msgstr "MCP-Tool-Schritt"
 #. js-lingui-id: 37Lzw8
 #: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
 msgid "me"
-msgstr ""
+msgstr "ich"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -18900,6 +18940,11 @@ msgstr "Mitglieder - Einstellungen"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Members & invitees"
 msgstr "Mitglieder & Eingeladene"
+
+#. js-lingui-id: tajf6H
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMembersSection.tsx
+msgid "Members who let this app access the workspace on their behalf"
+msgstr "Mitglieder, die dieser App Zugriff auf den Arbeitsbereich in ihrem Namen gewähren"
 
 #. js-lingui-id: pbIEgB
 #: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
@@ -19395,6 +19440,7 @@ msgstr "Weitere erweiterte Felder für erweiterte Projekte"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionRowDropdownMenu.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+#: src/modules/settings/components/SettingsRevokeAccessDropdownMenu.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
@@ -19583,7 +19629,7 @@ msgstr "Muss zum Speichern wahr sein. Ein Schreibvorgang, der sie falsch macht, 
 #. js-lingui-id: lPmo1u
 #: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
 msgid "my {workspaceMemberFieldLabel}"
-msgstr ""
+msgstr "mein {workspaceMemberFieldLabel}"
 
 #. js-lingui-id: OJCJh9
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
@@ -19593,7 +19639,7 @@ msgstr "Meine Apps"
 #. js-lingui-id: oAOi31
 #: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
 msgid "my unknown field"
-msgstr ""
+msgstr "mein unbekanntes Feld"
 
 #. js-lingui-id: XTGSZU
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
@@ -19630,6 +19676,7 @@ msgstr "N/A"
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMembersSection.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentItemsTable.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentTypeTable.tsx
 #: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
@@ -19983,12 +20030,12 @@ msgstr "Neue Gruppe"
 #. js-lingui-id: TC11mZ
 #: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
 msgid "New inbox messages notify you while your browser is running"
-msgstr ""
+msgstr "Neue Posteingangsnachrichten benachrichtigen Sie, während Ihr Browser läuft"
 
 #. js-lingui-id: ynuJvo
 #: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
 msgid "New inbox messages will show up like this"
-msgstr ""
+msgstr "Neue Posteingangsnachrichten werden so angezeigt"
 
 #. js-lingui-id: //H2Cs
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
@@ -20484,7 +20531,7 @@ msgstr "Keine kompatiblen Felder"
 #. js-lingui-id: RY3VxI
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "No condition"
-msgstr ""
+msgstr "Keine Bedingung"
 
 #. js-lingui-id: YFLMyY
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
@@ -20865,7 +20912,7 @@ msgstr "Keine Notizen"
 #. js-lingui-id: 9F6fiv
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
 msgid "No notification for new messages"
-msgstr ""
+msgstr "Keine Benachrichtigung für neue Nachrichten"
 
 #. js-lingui-id: arel2K
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
@@ -21540,11 +21587,6 @@ msgstr "Nicht geteilt mit"
 msgid "Not synced"
 msgstr "Nicht synchronisiert"
 
-#. js-lingui-id: 5xvHen
-#: src/modules/ai-chat/messages/components/AiChatMessageReceipt.tsx
-msgid "Not yet"
-msgstr "Noch nicht"
-
 #. js-lingui-id: KiJn9B
 #: src/modules/page-layout/hooks/useCreateRecordPageNoteWidget.ts
 #: src/modules/page-layout/hooks/useCreateRecordPageNoteWidget.ts
@@ -21584,7 +21626,7 @@ msgstr "Benachrichtigungen"
 #. js-lingui-id: A09awi
 #: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
 msgid "Notifications are on"
-msgstr ""
+msgstr "Benachrichtigungen sind aktiviert"
 
 #. js-lingui-id: 6RihN0
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -21694,7 +21736,7 @@ msgstr "OAuth"
 #. js-lingui-id: TkatNO
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "OAuth (automatic)"
-msgstr ""
+msgstr "OAuth (automatisch)"
 
 #. js-lingui-id: C1b55F
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -21821,7 +21863,7 @@ msgstr "von"
 #. js-lingui-id: az8lvo
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
 msgid "Off"
-msgstr ""
+msgstr "Aus"
 
 #. js-lingui-id: KNz3EF
 #: src/pages/not-found/NotFound.tsx
@@ -21832,11 +21874,6 @@ msgstr "Abseits der ausgetretenen Pfade"
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Official app"
 msgstr "Offizielle App"
-
-#. js-lingui-id: 6Aih4U
-#: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
-msgid "Offline"
-msgstr "Offline"
 
 #. js-lingui-id: Zd5vVt
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -21975,30 +22012,25 @@ msgstr "Einmalig"
 msgid "One-to-one conversations between people"
 msgstr "Einzelgespräche zwischen Personen"
 
-#. js-lingui-id: oXOSPE
-#: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
-msgid "Online"
-msgstr "Online"
-
 #. js-lingui-id: P/Sdzf
 #: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
 msgid "Only {applicationName} can delete"
-msgstr ""
+msgstr "Nur {applicationName} kann löschen"
 
 #. js-lingui-id: 5K6L4C
 #: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
 msgid "Only {applicationName} can destroy"
-msgstr ""
+msgstr "Nur {applicationName} kann zerstören"
 
 #. js-lingui-id: BUPbj+
 #: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
 msgid "Only {applicationName} can edit"
-msgstr ""
+msgstr "Nur {applicationName} kann bearbeiten"
 
 #. js-lingui-id: Iysrni
 #: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
 msgid "Only {applicationName} can see"
-msgstr ""
+msgstr "Nur {applicationName} kann sehen"
 
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -24154,16 +24186,6 @@ msgstr "{target} lesen und schreiben"
 msgid "Read and write data model configuration"
 msgstr "Datenmodellkonfiguration lesen und schreiben"
 
-#. js-lingui-id: RXivwU
-#: src/modules/ai-chat/messages/components/AiChatMessageReceipt.tsx
-msgid "Read by {readerCount} of {recipientCount}"
-msgstr "Gelesen von {readerCount} von {recipientCount}"
-
-#. js-lingui-id: bgP1Ip
-#: src/modules/ai-chat/messages/components/AiChatMessageReceipt.tsx
-msgid "Read by {readerNames}"
-msgstr "Gelesen von {readerNames}"
-
 #. js-lingui-id: 549d7o
 #: src/pages/settings/community/SettingsCommunity.tsx
 msgid "Read changelog"
@@ -25616,6 +25638,7 @@ msgstr "Widerrufen"
 
 #. js-lingui-id: cg+Poy
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
+#: src/modules/settings/components/SettingsRevokeAccessDropdownMenu.tsx
 msgid "Revoke access"
 msgstr "Zugriff widerrufen"
 
@@ -25790,7 +25813,7 @@ msgstr "Berechtigungsregel auf Zeilenebene"
 #. js-lingui-id: m9LWSX
 #: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
 msgid "Row-level permission"
-msgstr ""
+msgstr "Berechtigung auf Zeilenebene"
 
 #. js-lingui-id: Wdh41P
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -25825,7 +25848,7 @@ msgstr "Rubin"
 #. js-lingui-id: oAN4H/
 #: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
 msgid "Rule"
-msgstr ""
+msgstr "Regel"
 
 #. js-lingui-id: tijGcA
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -26808,7 +26831,7 @@ msgstr "Weniger anzeigen"
 #. js-lingui-id: KaSkAp
 #: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
 msgid "See matching {objectLabelPlural}"
-msgstr ""
+msgstr "Übereinstimmende {objectLabelPlural} anzeigen"
 
 #. js-lingui-id: V1fa9u
 #: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
@@ -26831,7 +26854,7 @@ msgstr "Datensätze anzeigen"
 #. js-lingui-id: 6+1BUt
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "See some {objectLabelPlural} · {throughRules}"
-msgstr ""
+msgstr "Einige {objectLabelPlural} anzeigen · {throughRules}"
 
 #. js-lingui-id: SXaufV
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
@@ -27366,7 +27389,7 @@ msgstr "Jetzt senden"
 #. js-lingui-id: eus61c
 #: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
 msgid "Send test"
-msgstr ""
+msgstr "Test senden"
 
 #. js-lingui-id: doZzL7
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -27918,7 +27941,7 @@ msgstr "Protokolle anzeigen"
 #. js-lingui-id: /l2KYB
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
 msgid "Show message preview"
-msgstr ""
+msgstr "Nachrichtenvorschau anzeigen"
 
 #. js-lingui-id: fMPkxb
 #: src/modules/ai-chat/messages/components/AiChatUserMessageCollapsibleContent.tsx
@@ -27957,7 +27980,7 @@ msgstr "Zeigen Sie die Registerkarte „Datenschutz“ an und erzwingen Sie dere
 #. js-lingui-id: soWlp2
 #: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
 msgid "Show the sender, the chat and the message text in notifications. Leave it off on shared screens and devices"
-msgstr ""
+msgstr "Zeigen Sie in Benachrichtigungen den Absender, den Chat und den Nachrichtentext an. Deaktivieren Sie dies auf gemeinsam genutzten Bildschirmen und Geräten"
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -28362,7 +28385,7 @@ msgstr "Einige Protokolldaten wurden verworfen, um die Größengrenze einzuhalte
 #. js-lingui-id: XG7UMq
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Some records"
-msgstr ""
+msgstr "Einige Datensätze"
 
 #. js-lingui-id: b5Z5wY
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
@@ -30340,12 +30363,12 @@ msgstr "Dieser Abrechnungszeitraum"
 #. js-lingui-id: YDcfdL
 #: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
 msgid "This browser cannot show notifications"
-msgstr ""
+msgstr "Dieser Browser kann keine Benachrichtigungen anzeigen"
 
 #. js-lingui-id: 47wc2N
 #: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
 msgid "This browser could not turn on notifications"
-msgstr ""
+msgstr "Benachrichtigungen konnten in diesem Browser nicht aktiviert werden"
 
 #. js-lingui-id: XkzBBX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -30773,12 +30796,12 @@ msgstr "Drei Spalten nebeneinander"
 #. js-lingui-id: JayY0v
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "through {ruleCount} rules"
-msgstr ""
+msgstr "über {ruleCount} Regeln"
 
 #. js-lingui-id: AbJpHn
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "through 1 rule"
-msgstr ""
+msgstr "über 1 Regel"
 
 #. js-lingui-id: kkDQ8m
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
@@ -31943,6 +31966,7 @@ msgstr "Unbekanntes Thema"
 
 #. js-lingui-id: 63niL6
 #: src/modules/log-console/hooks/useLogConsoleMember.ts
+#: src/modules/settings/applications/utils/getApplicationConnectedMemberName.ts
 msgid "Unknown user"
 msgstr "Unbekannter Benutzer"
 
@@ -33772,7 +33796,7 @@ msgstr "Was {applicationName} Ihrem Arbeitsbereich hinzufügt"
 #. js-lingui-id: 256yw5
 #: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
 msgid "What {roleLabel} can do on {objectLabelPlural} matching this rule."
-msgstr ""
+msgstr "Was {roleLabel} mit {objectLabelPlural} tun kann, die dieser Regel entsprechen."
 
 #. js-lingui-id: 1rpyKy
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
@@ -33838,7 +33862,7 @@ msgstr "WhatsApp"
 #. js-lingui-id: 1ZF9KQ
 #: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionLogicalOperatorCell.tsx
 msgid "When"
-msgstr ""
+msgstr "Wenn"
 
 #. js-lingui-id: 8ssTdk
 #: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
@@ -33936,7 +33960,7 @@ msgstr "Ob dieses Modell Chain-of-Thought-Reasoning unterstützt"
 #: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
 #: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
 msgid "Which {objectLabelPlural} this rule applies to. Me is the person viewing."
-msgstr ""
+msgstr "Auf welche {objectLabelPlural} diese Regel angewendet wird. Ich ist die Person, die die Ansicht betrachtet."
 
 #. js-lingui-id: UbN9B0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -34142,7 +34166,7 @@ msgstr "Workflows"
 #. js-lingui-id: H2Xc6F
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
 msgid "Workflows, functions, agents and tools that act for your team."
-msgstr ""
+msgstr "Workflows, Funktionen, Agenten und Tools, die für Ihr Team handeln."
 
 #. js-lingui-id: OskBrZ
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx

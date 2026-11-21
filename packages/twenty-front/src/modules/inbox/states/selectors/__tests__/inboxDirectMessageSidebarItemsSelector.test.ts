@@ -111,17 +111,20 @@ describe('inboxDirectMessageSidebarItemsSelector', () => {
       }),
     ]);
     store.set(aiChatThreadParticipantsState.atom, {
-      'unread-dm': {
-        __typename: 'AgentChatThreadParticipant' as const,
-        id: 'participant',
-        threadId: 'unread-dm',
-        lastReadAt: '2026-11-01T10:00:00.000Z',
-        archivedAt: null,
-        snoozedUntil: null,
-        isSubscribed: true,
-        lastMentionedAt: null,
-        mentionsResolvedAt: null,
-        updatedAt: '2026-11-01T10:00:00.000Z',
+      isLoaded: true,
+      rowsByThreadId: {
+        'unread-dm': {
+          __typename: 'AgentChatThreadParticipant' as const,
+          id: 'participant',
+          threadId: 'unread-dm',
+          lastReadAt: '2026-11-01T10:00:00.000Z',
+          archivedAt: null,
+          snoozedUntil: null,
+          isSubscribed: true,
+          lastMentionedAt: null,
+          mentionsResolvedAt: null,
+          updatedAt: '2026-11-01T10:00:00.000Z',
+        },
       },
     });
 

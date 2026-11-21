@@ -82,6 +82,7 @@ export enum MetricsKeys {
   SdkClientGenerationSucceeded = 'sdk-client-generation/succeeded',
   SdkClientGenerationFailed = 'sdk-client-generation/failed',
   SdkClientGenerationDurationMs = 'sdk-client-generation/duration-ms',
+  SdkClientGenerationArchiveSizeBytes = 'sdk-client-generation/archive-size-bytes',
   ConnectedAccountSyncWebhookReceivedMessaging = 'connected-account-sync-webhook/received/messaging',
   ConnectedAccountSyncWebhookReceivedCalendar = 'connected-account-sync-webhook/received/calendar',
   ConnectedAccountWebhookSubscriptionCreated = 'connected-account-webhook-subscription/created',

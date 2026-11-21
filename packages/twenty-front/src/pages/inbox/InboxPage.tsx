@@ -56,9 +56,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateToInboxThread } from '@/inbox/hooks/useNavigateToInboxThread';
-import { AiChatNewThreadPageContent } from '~/pages/ai-chat/AiChatNewThreadPageContent';
-import { AiChatPageEffects } from '~/pages/ai-chat/AiChatPageEffects';
-import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
+import { AiChatNewThreadPageContent } from '@/ai-chat/instance/components/AiChatNewThreadPageContent';
+import { AiChatPageEffects } from '@/ai-chat/instance/components/AiChatPageEffects';
+import { InboxThreadPageContent } from '@/inbox/components/InboxThreadPageContent';
+import { InboxNewThreadListToggle } from '@/inbox/components/InboxNewThreadListToggle';
 
 const StyledInbox = styled.div`
   --inbox-list-pane-width: ${INBOX_LIST_PANE_WIDTH}px;
@@ -365,6 +366,7 @@ const InboxPageContent = () => {
                 <>
                   <AiChatPageEffects threadId={newAiChatThreadId} isNewChat />
                   <AiChatNewThreadPageContent
+                    headerIcon={<InboxNewThreadListToggle />}
                     showInformationBanner={!isSplitView}
                     headerActions={isMobile ? backToInboxButton : undefined}
                   />
@@ -376,7 +378,7 @@ const InboxPageContent = () => {
                     threadId={selectedThreadId}
                     isNewChat={false}
                   />
-                  <AiChatThreadPageContent
+                  <InboxThreadPageContent
                     threadId={selectedThreadId}
                     headerTitlePrefix={
                       !isSplitView &&

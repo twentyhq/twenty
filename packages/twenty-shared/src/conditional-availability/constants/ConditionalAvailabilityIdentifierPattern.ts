@@ -1,0 +1,1 @@
+export const CONDITIONAL_AVAILABILITY_IDENTIFIER_PATTERN = /^[A-Za-z_$][\w$]*$/;

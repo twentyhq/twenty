@@ -5,8 +5,8 @@ import { IconArrowBackUp, IconEdit, IconTrash } from 'twenty-ui/icon';
 
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { AiChatMessageReactionPicker } from '@/ai-chat/messages/components/AiChatMessageReactionPicker';
-import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/states/aiChatQuotedMessageIdFamilyState';
-import { shouldFocusChatEditorFamilyState } from '@/ai-chat/states/shouldFocusChatEditorFamilyState';
+import { aiChatComposerQuotedMessageIdFamilyState } from '@/ai-chat/states/composer/aiChatComposerQuotedMessageIdFamilyState';
+import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldFocusFamilyState';
 import { StyledChatMessageActions } from '@/chat/components/StyledChatMessageActions';
 import { LightCopyIconButton } from '@/ui/input/components/LightCopyIconButton';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
@@ -32,12 +32,12 @@ export const AiChatMessageActions = ({
 }: AiChatMessageActionsProps) => {
   const { t } = useLingui();
   const { threadId } = useAiChatInstanceOrThrow();
-  const setAiChatQuotedMessageId = useSetAtomFamilyState(
-    aiChatQuotedMessageIdFamilyState,
+  const setAiChatComposerQuotedMessageId = useSetAtomFamilyState(
+    aiChatComposerQuotedMessageIdFamilyState,
     { threadId },
   );
-  const setShouldFocusChatEditor = useSetAtomFamilyState(
-    shouldFocusChatEditorFamilyState,
+  const setAiChatComposerShouldFocus = useSetAtomFamilyState(
+    aiChatComposerShouldFocusFamilyState,
     { threadId },
   );
 
@@ -51,8 +51,8 @@ export const AiChatMessageActions = ({
         <LightIconButton
           aria-label={t`Reply`}
           onClick={() => {
-            setAiChatQuotedMessageId(messageId);
-            setShouldFocusChatEditor(true);
+            setAiChatComposerQuotedMessageId(messageId);
+            setAiChatComposerShouldFocus(true);
           }}
         >
           <IconArrowBackUp />

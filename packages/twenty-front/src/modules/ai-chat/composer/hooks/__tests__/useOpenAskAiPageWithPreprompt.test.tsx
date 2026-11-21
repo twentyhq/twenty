@@ -4,13 +4,13 @@ import { type ReactNode } from 'react';
 
 import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/constants/AiChatNewThreadDefaultRecipients';
 import { useOpenAskAiPageWithPreprompt } from '@/ai-chat/composer/hooks/useOpenAskAiPageWithPreprompt';
-import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
+import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatComposerDraftsState';
 import { aiChatOpenThreadIdByInstanceIdState } from '@/ai-chat/states/aiChatOpenThreadIdByInstanceIdState';
-import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
 import { aiChatPrepromptState } from '@/ai-chat/states/aiChatPrepromptState';
-import { aiChatUploadedFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadedFilesFamilyState';
+import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/states/composer/aiChatComposerAttachmentsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { type AiChatFileUIPart } from '@/ai-chat/composer/types/AiChatFileUIPart';
+import { type AiChatFileUIPart } from '@/ai-chat/types/AiChatFileUIPart';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const NEW_CHAT_THREAD_ID = 'new-chat-thread-id';
@@ -44,7 +44,7 @@ jest.mock('@/ai-chat/composer/hooks/useAiChatFileUpload', () => ({
       new Promise<AiChatFileUIPart[]>((resolve) => {
         finishUpload = () => {
           jotaiStore.set(
-            aiChatUploadedFilesFamilyState.atomFamily({
+            aiChatComposerAttachmentsFamilyState.atomFamily({
               threadId: NEW_CHAT_THREAD_ID,
             }),
             [uploadedFile],
@@ -65,10 +65,10 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 describe('useOpenAskAiPageWithPreprompt', () => {
   beforeEach(() => {
-    jotaiStore.set(aiChatDraftsByThreadIdState.atom, {});
+    jotaiStore.set(aiChatComposerDraftsState.atom, {});
     jotaiStore.set(aiChatPrepromptState.atom, null);
     jotaiStore.set(
-      aiChatUploadedFilesFamilyState.atomFamily({
+      aiChatComposerAttachmentsFamilyState.atomFamily({
         threadId: NEW_CHAT_THREAD_ID,
       }),
       [],
@@ -91,7 +91,7 @@ describe('useOpenAskAiPageWithPreprompt', () => {
       await opening;
     });
 
-    expect(jotaiStore.get(aiChatDraftsByThreadIdState.atom)).toEqual({
+    expect(jotaiStore.get(aiChatComposerDraftsState.atom)).toEqual({
       [NEW_CHAT_THREAD_ID]: 'Import these contacts',
     });
     expect(jotaiStore.get(aiChatPrepromptState.atom)).toEqual({
@@ -101,7 +101,7 @@ describe('useOpenAskAiPageWithPreprompt', () => {
     });
     expect(
       jotaiStore.get(
-        aiChatUploadedFilesFamilyState.atomFamily({
+        aiChatComposerAttachmentsFamilyState.atomFamily({
           threadId: NEW_CHAT_THREAD_ID,
         }),
       ),
@@ -127,11 +127,11 @@ describe('useOpenAskAiPageWithPreprompt', () => {
       await opening;
     });
 
-    expect(jotaiStore.get(aiChatDraftsByThreadIdState.atom)).toEqual({});
+    expect(jotaiStore.get(aiChatComposerDraftsState.atom)).toEqual({});
     expect(jotaiStore.get(aiChatPrepromptState.atom)).toBeNull();
     expect(
       jotaiStore.get(
-        aiChatUploadedFilesFamilyState.atomFamily({
+        aiChatComposerAttachmentsFamilyState.atomFamily({
           threadId: NEW_CHAT_THREAD_ID,
         }),
       ),
@@ -140,10 +140,13 @@ describe('useOpenAskAiPageWithPreprompt', () => {
 
   it('addresses the prompt to the default recipients instead of a leftover draft', async () => {
     const newChatRecipientsAtom =
-      aiChatNewThreadRecipientsFamilyState.atomFamily(NEW_CHAT_THREAD_ID);
+      aiChatComposerNewThreadRecipientsFamilyState.atomFamily(
+        NEW_CHAT_THREAD_ID,
+      );
 
     jotaiStore.set(newAiChatThreadIdState.atom, NEW_CHAT_THREAD_ID);
     jotaiStore.set(newChatRecipientsAtom, {
+      channelId: null,
       isAssistantParticipant: false,
       recipientWorkspaceMemberIds: ['20202020-0000-4000-8000-0000000000bb'],
     });
