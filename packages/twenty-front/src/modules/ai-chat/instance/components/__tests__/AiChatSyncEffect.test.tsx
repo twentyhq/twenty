@@ -4,7 +4,7 @@ import { act, render } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 
-import { useSyncAiChatThreadParticipants } from '@/ai-chat/threads/hooks/useSyncAiChatThreadParticipants';
+import { AiChatSyncEffect } from '@/ai-chat/instance/components/AiChatSyncEffect';
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
 import { mergeAiChatThreadParticipants } from '@/ai-chat/threads/utils/mergeAiChatThreadParticipants';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -63,7 +63,7 @@ const renderEffect = (
   render(
     <JotaiProvider store={store}>
       <MockedProvider>
-        <SyncAiChatThreadParticipantsEffect />
+        <AiChatSyncEffect />
       </MockedProvider>
     </JotaiProvider>,
   );
@@ -110,13 +110,7 @@ const receiveParticipantUpdate = (
     }),
   );
 
-const SyncAiChatThreadParticipantsEffect = () => {
-  useSyncAiChatThreadParticipants();
-
-  return null;
-};
-
-describe('useSyncAiChatThreadParticipants', () => {
+describe('AiChatSyncEffect', () => {
   it('adds a row the member created elsewhere', () => {
     const { store } = renderEffect({});
 
