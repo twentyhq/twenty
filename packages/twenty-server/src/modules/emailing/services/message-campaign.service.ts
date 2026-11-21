@@ -523,16 +523,15 @@ export class MessageCampaignService {
     workspaceId: string;
     fromAddress: string;
   }): Promise<EmailingDomainEntity> {
-    const fromDomain = getDomainFromEmail(fromAddress)?.toLowerCase();
-
-    const emailingDomain = isNonEmptyString(fromDomain)
-      ? await this.emailingDomainRepository.findOne(workspaceId, {
-          where: {
-            domain: fromDomain,
-            status: EmailingDomainStatus.VERIFIED,
-          },
-        })
-      : null;
+    const emailingDomain = await this.emailingDomainRepository.findOne(
+      workspaceId,
+      {
+        where: {
+          domain: getDomainFromEmail(fromAddress)?.toLowerCase(),
+          status: EmailingDomainStatus.VERIFIED,
+        },
+      },
+    );
 
     if (!isDefined(emailingDomain)) {
       throw new EmailingDomainException(

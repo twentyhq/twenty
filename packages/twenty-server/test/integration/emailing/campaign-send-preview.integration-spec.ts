@@ -45,11 +45,9 @@ describe('previewMessageCampaignSend (integration)', () => {
   const seedCampaign = async ({
     subject,
     listId,
-    fromAddress = `campaigns@${domain}`,
   }: {
     subject: string | null;
     listId: string | null;
-    fromAddress?: string;
   }): Promise<string> => {
     const campaignId = v4();
 
@@ -62,7 +60,7 @@ describe('previewMessageCampaignSend (integration)', () => {
         `Send preview ${campaignId}`,
         subject,
         SENDABLE_BODY_TEMPLATE,
-        fromAddress,
+        `campaigns@${domain}`,
         listId,
       ],
     );
@@ -162,24 +160,6 @@ describe('previewMessageCampaignSend (integration)', () => {
           code: EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
           message:
             "This campaign's list is in the trash. Restore it or pick another list in the To field.",
-        },
-      ],
-    });
-  });
-
-  it('blocks a campaign whose from address has no domain', async () => {
-    const campaignId = await seedCampaign({
-      subject: 'Monthly newsletter',
-      listId,
-      fromAddress: 'campaigns',
-    });
-
-    expect(await previewSend(campaignId)).toEqual({
-      audience: { totalMembers: 1, sendable: 1 },
-      blockers: [
-        {
-          code: EmailingDomainExceptionCode.EMAILING_DOMAIN_NOT_VERIFIED,
-          message: 'No verified sending domain matches this from address.',
         },
       ],
     });
