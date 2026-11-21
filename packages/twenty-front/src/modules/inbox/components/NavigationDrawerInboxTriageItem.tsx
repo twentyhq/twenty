@@ -16,6 +16,7 @@ import { useResetRecordSelection } from '@/object-record/record-selection/hooks/
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { useRefreshShownInboxThreadList } from '@/inbox/hooks/useRefreshShownInboxThreadList';
 import { isInboxPath } from '~/utils/isInboxPath';
 
 type NavigationDrawerInboxTriageItemProps = {
@@ -32,6 +33,7 @@ export const NavigationDrawerInboxTriageItem = ({
   const { t } = useLingui();
   const location = useLocation();
   const navigate = useNavigateApp();
+  const { refreshShownInboxThreadList } = useRefreshShownInboxThreadList();
   const [inboxSelectedThreadListSource, setInboxSelectedThreadListSource] =
     useAtomState(inboxSelectedThreadListSourceState);
   const { resetRecordSelection } = useResetRecordSelection(INBOX_INSTANCE_ID);
@@ -49,6 +51,7 @@ export const NavigationDrawerInboxTriageItem = ({
       type: 'presetFilter',
       presetFilter,
     });
+    refreshShownInboxThreadList();
     navigate(AppPath.AiChatInbox, { threadId: null });
   };
 

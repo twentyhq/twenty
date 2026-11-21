@@ -21577,6 +21577,11 @@ msgstr "未与 {notSharedByFullName} 共享"
 msgid "Not shared with"
 msgstr "未与以下对象共享"
 
+#. js-lingui-id: mu1gVr
+#: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
+msgid "Not started"
+msgstr "未开始"
+
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"

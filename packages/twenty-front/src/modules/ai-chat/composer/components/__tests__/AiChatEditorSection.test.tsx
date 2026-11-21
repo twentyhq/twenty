@@ -20,6 +20,11 @@ const useAiChatEditor = jest.fn();
 jest.mock('@/ai-chat/composer/hooks/useAiChatEditor', () => ({
   useAiChatEditor: () => useAiChatEditor(),
 }));
+jest.mock('@/ai-chat/composer/hooks/useSendAiChatComposerMessage', () => ({
+  useSendAiChatComposerMessage: () => ({
+    sendAiChatComposerMessage: jest.fn(),
+  }),
+}));
 jest.mock('@/ai-chat/usage/hooks/useHasReachedAiChatUsageLimit', () => ({
   useHasReachedAiChatUsageLimit: () => false,
 }));

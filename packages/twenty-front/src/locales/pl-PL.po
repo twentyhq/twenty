@@ -21577,6 +21577,11 @@ msgstr "Nie udostępnione przez {notSharedByFullName}"
 msgid "Not shared with"
 msgstr "Nieudostępnione dla"
 
+#. js-lingui-id: mu1gVr
+#: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
+msgid "Not started"
+msgstr "Nie rozpoczęto"
+
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"

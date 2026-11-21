@@ -26,6 +26,7 @@ import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpe
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { AiChatNewThreadPageContent } from '@/ai-chat/instance/components/AiChatNewThreadPageContent';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { ChatObjectMetadataDecorator } from '~/testing/decorators/ChatObjectMetadataDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
@@ -127,7 +128,7 @@ const expectNewChatWelcome = async (canvasElement: HTMLElement) => {
 };
 
 export const FullPageNewChat: Story = {
-  decorators: [ObjectMetadataItemsDecorator],
+  decorators: [ChatObjectMetadataDecorator, ObjectMetadataItemsDecorator],
   beforeEach: () => initializeNewAiChatStory({ isInboxEnabled: false }),
   parameters: {
     ...newChatParameters,
@@ -308,6 +309,7 @@ export const NewChatSuggestedPrompt: Story = {
 };
 
 export const WorkspaceSetup: Story = {
+  decorators: [ChatObjectMetadataDecorator, ObjectMetadataItemsDecorator],
   render: () => <WorkspaceSetupChatStory />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -319,6 +321,7 @@ export const WorkspaceSetup: Story = {
 };
 
 export const WorkspaceSetupCompletion: Story = {
+  decorators: [ChatObjectMetadataDecorator, ObjectMetadataItemsDecorator],
   render: () => <WorkspaceSetupChatStory />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
