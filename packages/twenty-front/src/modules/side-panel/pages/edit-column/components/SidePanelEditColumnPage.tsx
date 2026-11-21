@@ -32,6 +32,7 @@ const SidePanelEditColumnPageContent = ({
     viewId,
     fieldMetadataItemId,
     recordFieldId,
+    kind,
   } = editColumnRequest;
 
   const sidePanelPageId = useAvailableComponentInstanceIdOrThrow(
@@ -112,6 +113,10 @@ const SidePanelEditColumnPageContent = ({
                 recordField?.relationTargetFieldMetadataId
               }
               storedLabel={recordField?.label}
+              storedRelationAggregateOperation={
+                recordField?.relationAggregateOperation
+              }
+              kind={kind}
             />
             <SidePanelEditColumnFilterDropdownStatesEffect />
           </RecordSortsComponentInstanceContext.Provider>
