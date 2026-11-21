@@ -59,5 +59,9 @@ export default defineApplicationRole({
   canBeAssignedToAgents: false,
   canBeAssignedToApiKeys: false,
   canAccessAllTools: false,
-  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.UPLOAD_FILE],
+  permissionFlagUniversalIdentifiers: [
+    // sendInboxMessage requires the AI permission
+    SystemPermissionFlag.AI,
+    SystemPermissionFlag.UPLOAD_FILE,
+  ],
 });

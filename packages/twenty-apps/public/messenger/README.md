@@ -8,6 +8,7 @@ Brings the Facebook Messenger conversations of your Pages into Twenty and lets y
 - When a customer edits a message, the edit replaces its text in Twenty.
 - When a customer taps a button the Page sent, such as Get Started or a menu item, the tap shows in the conversation.
 - When a customer arrives from a Click-to-Messenger ad or an m.me link, the person record shows the source, the link's ref, and the ad ID and title, with the date.
+- When a reply cannot be sent, or Meta stops accepting the token, the members chosen in the app settings get an alert in their inbox.
 - In the app settings, an option creates an opportunity for each person who arrives from a Click-to-Messenger ad, named after the person and the ad.
 - Opening a conversation in Twenty marks it as seen in Messenger.
 - Messages the Page sends show whether the customer received and read them, in the **Messenger status** field.

@@ -7,6 +7,7 @@ import {
 import { isDefined } from 'twenty-sdk/utils';
 
 import { MESSENGER_LOGIC_FUNCTION_SEND_MESSAGE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { buildFailedReplyNotificationText } from 'src/logic-functions/data/build-failed-reply-notification-text.util';
 import { findLatestIncomingMessage } from 'src/logic-functions/data/find-latest-incoming-message.util';
 import { findMessageChannelByIdOrThrow } from 'src/logic-functions/data/find-message-channel-by-id-or-throw.util';
 import { getOutgoingAttachmentTypeOrThrow } from 'src/logic-functions/data/get-outgoing-attachment-type-or-throw.util';
@@ -14,9 +15,10 @@ import { getPageAccessTokenOrThrow } from 'src/logic-functions/data/get-page-acc
 import { getReplyMessagingType } from 'src/logic-functions/data/get-reply-messaging-type.util';
 import { GraphApiError } from 'src/logic-functions/data/graph-api-error';
 import { graphApiRequest } from 'src/logic-functions/data/graph-api-request.util';
+import { sendInboxNotification } from 'src/logic-functions/data/send-inbox-notification.util';
 import { sendMessengerAttachment } from 'src/logic-functions/data/send-messenger-attachment.util';
 
-const handler = async ({
+const sendReply = async ({
   connectedAccountId,
   messageChannelId,
   threadExternalId,
@@ -108,6 +110,31 @@ const handler = async ({
   }
 
   return { externalId };
+};
+
+// the sender sees the error in Twenty; the chosen members also hear about replies sent by agents or workflows
+const handler = async (
+  payload: SendAppMessagePayload,
+): Promise<SendAppMessageResult> => {
+  try {
+    return await sendReply(payload);
+  } catch (error) {
+    const [recipient] = payload.recipients;
+
+    await sendInboxNotification({
+      threadKey: `reply_failed:${payload.messageChannelId}`,
+      idempotencyKey: `reply_failed:${payload.idempotencyKey}`,
+      title: 'Messenger reply not sent',
+      text: buildFailedReplyNotificationText({
+        recipientName:
+          recipient?.displayName ?? recipient?.handle ?? payload.threadExternalId,
+        reason: error instanceof Error ? error.message : String(error),
+        replyText: payload.text,
+      }),
+    });
+
+    throw error;
+  }
 };
 
 export default defineLogicFunction({

@@ -6,6 +6,7 @@ import { useColorScheme } from 'twenty-sdk/front-component';
 import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme';
 
 import { AdReferralSettings } from 'src/front-components/components/AdReferralSettings';
+import { NotificationRecipientsSettings } from 'src/front-components/components/NotificationRecipientsSettings';
 
 const getColumnStyle = () =>
   ({
@@ -20,6 +21,7 @@ export const MessengerSettings = () => {
   return (
     <ThemeProvider colorScheme={colorScheme}>
       <div style={getColumnStyle()}>
+        <NotificationRecipientsSettings />
         <AdReferralSettings />
       </div>
     </ThemeProvider>
