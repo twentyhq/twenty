@@ -94,6 +94,32 @@ describe('Rich text field fileIds column lifecycle', () => {
     expect(errors).toBeDefined();
   });
 
+  it('should rename a field whose fileIds column was not provisioned yet', async () => {
+    await global.testDataSource.query(
+      `ALTER TABLE "${SCHEMA}"."${TABLE_NAME}" DROP COLUMN "summaryFileIds"`,
+    );
+
+    await updateOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: fieldMetadataId,
+        updatePayload: { name: 'outline', label: 'Outline' },
+      },
+      gqlFields: 'id',
+    });
+
+    expect(
+      (await findRichTextColumns('outline')).map(
+        ({ columnName }) => columnName,
+      ),
+    ).toEqual([
+      'outlineBlocknote',
+      'outlineFileIds',
+      'outlineMarkdown',
+      'outlineTiptap',
+    ]);
+  });
+
   it('should rename the fileIds column with the field', async () => {
     await updateOneFieldMetadata({
       expectToFail: false,
@@ -104,7 +130,7 @@ describe('Rich text field fileIds column lifecycle', () => {
       gqlFields: 'id',
     });
 
-    expect(await findRichTextColumns('summary')).toEqual([]);
+    expect(await findRichTextColumns('outline')).toEqual([]);
     expect(
       (await findRichTextColumns('recap')).map(({ columnName }) => columnName),
     ).toEqual([

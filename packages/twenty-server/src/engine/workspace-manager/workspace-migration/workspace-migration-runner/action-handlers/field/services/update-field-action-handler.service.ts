@@ -48,6 +48,7 @@ import {
   type WorkspaceMigrationActionRunnerArgs,
   type WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { buildProvisionedAheadCompositeColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-provisioned-ahead-composite-column-definitions.util';
 import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
@@ -427,6 +428,28 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     }
   }
 
+  // A workspace its provisioning command has not reached lacks these columns, and renaming or altering a missing column fails.
+  private async ensureProvisionedAheadColumnsExist({
+    flatFieldMetadata,
+    queryRunner,
+    schemaName,
+    tableName,
+  }: Pick<
+    UpdateFieldPropertyHandlerArgs,
+    'flatFieldMetadata' | 'queryRunner' | 'schemaName' | 'tableName'
+  >): Promise<void> {
+    await this.workspaceSchemaManagerService.columnManager.addColumns({
+      queryRunner,
+      schemaName,
+      tableName,
+      columnDefinitions: buildProvisionedAheadCompositeColumnDefinitions({
+        fieldType: flatFieldMetadata.type,
+        fieldName: flatFieldMetadata.name,
+      }),
+      shouldSkipExistingColumns: true,
+    });
+  }
+
   private async handleFieldNameUpdate({
     flatFieldMetadata,
     queryRunner,
@@ -437,6 +460,13 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     const fromName = flatFieldMetadata.name;
 
     if (isCompositeFlatFieldMetadata(flatFieldMetadata)) {
+      await this.ensureProvisionedAheadColumnsExist({
+        flatFieldMetadata,
+        queryRunner,
+        schemaName,
+        tableName,
+      });
+
       const compositeProperties = getCompositeColumnPropertiesOrThrow(
         flatFieldMetadata.type,
       );
@@ -518,6 +548,13 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     toDefaultValue,
   }: DefaultValueUpdateHandlerArgs) {
     if (isCompositeFlatFieldMetadata(flatFieldMetadata)) {
+      await this.ensureProvisionedAheadColumnsExist({
+        flatFieldMetadata,
+        queryRunner,
+        schemaName,
+        tableName,
+      });
+
       const compositeProperties = getCompositeColumnPropertiesOrThrow(
         flatFieldMetadata.type,
       );
@@ -602,6 +639,13 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     }
 
     if (isCompositeFlatFieldMetadata(flatFieldMetadata)) {
+      await this.ensureProvisionedAheadColumnsExist({
+        flatFieldMetadata,
+        queryRunner,
+        schemaName,
+        tableName,
+      });
+
       const compositeProperties = getCompositeColumnPropertiesOrThrow(
         flatFieldMetadata.type,
       );
