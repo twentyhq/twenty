@@ -3,14 +3,11 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useReturnFromExpandedAiChat } from '@/ai-chat/hooks/useReturnFromExpandedAiChat';
-import { aiChatContinueInSidePanelThreadIdState } from '@/ai-chat/states/aiChatContinueInSidePanelThreadIdState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-
-const CONTINUED_THREAD_ID = '20202020-0000-4000-8000-000000000002';
 
 const navigateMock = jest.fn();
 
@@ -46,10 +43,6 @@ describe('useReturnFromExpandedAiChat', () => {
   });
 
   it('should navigate to the return location carried by the history entry when collapsing', () => {
-    jotaiStore.set(
-      aiChatContinueInSidePanelThreadIdState.atom,
-      CONTINUED_THREAD_ID,
-    );
     locationState = { returnLocation: '/objects/people' };
 
     const { result } = renderHook(
@@ -63,9 +56,6 @@ describe('useReturnFromExpandedAiChat', () => {
 
     expect(navigateMock).toHaveBeenCalledWith('/objects/people');
     expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
-    expect(jotaiStore.get(aiChatContinueInSidePanelThreadIdState.atom)).toBe(
-      CONTINUED_THREAD_ID,
-    );
   });
 
   it('should navigate home when the history entry has no return location', () => {
@@ -101,10 +91,6 @@ describe('useReturnFromExpandedAiChat', () => {
   });
 
   it('should cancel the side panel continuation when closing', () => {
-    jotaiStore.set(
-      aiChatContinueInSidePanelThreadIdState.atom,
-      CONTINUED_THREAD_ID,
-    );
     jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
 
     const { result } = renderHook(
@@ -116,13 +102,12 @@ describe('useReturnFromExpandedAiChat', () => {
       result.current();
     });
 
-    expect(
-      jotaiStore.get(aiChatContinueInSidePanelThreadIdState.atom),
-    ).toBeNull();
     expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
       false,
     );
     expect(closeSidePanelMenuMock).toHaveBeenCalled();
-    expect(navigateMock).toHaveBeenCalledWith(defaultHomePagePath);
+    expect(navigateMock).toHaveBeenCalledWith(defaultHomePagePath, {
+      state: { isAiChatHandoffSkipped: true },
+    });
   });
 });

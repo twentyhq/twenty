@@ -5,7 +5,9 @@ import { Temporal } from 'temporal-polyfill';
 import { getAgentChatThreadInboxStatus } from 'twenty-shared/ai';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
+import { useSendAiChatComposerMessage } from '@/ai-chat/composer/hooks/useSendAiChatComposerMessage';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
+import { aiChatComposerShouldSendFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldSendFamilyState';
 import { useListenToAiChatThreadEvents } from '@/ai-chat/instance/hooks/useListenToAiChatThreadEvents';
 import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { aiChatUISessionStartTimeState } from '@/ai-chat/states/aiChatUISessionStartTimeState';
@@ -49,6 +51,11 @@ export const AiChatInstanceEffect = () => {
     aiChatThreadIsMissingFamilyState,
     { threadId },
   );
+  const aiChatComposerShouldSend = useAtomFamilyStateValue(
+    aiChatComposerShouldSendFamilyState,
+    { threadId },
+  );
+  const { sendAiChatComposerMessage } = useSendAiChatComposerMessage();
   const aiChatThreadDisplayedMessages = useAtomFamilyStateValue(
     aiChatThreadDisplayedMessagesFamilyState,
     { threadId },
@@ -202,6 +209,17 @@ export const AiChatInstanceEffect = () => {
       onThreadChange(store.get(newAiChatThreadIdState.atom));
     }
   }, [aiChatThreadIsMissing, onThreadChange, store]);
+
+  useEffect(() => {
+    if (!aiChatComposerShouldSend || !sendAiChatComposerMessage()) {
+      return;
+    }
+
+    store.set(
+      aiChatComposerShouldSendFamilyState.atomFamily({ threadId }),
+      false,
+    );
+  }, [aiChatComposerShouldSend, sendAiChatComposerMessage, store, threadId]);
 
   useEffect(() => {
     if (!isDefined(aiChatUISessionStartTime)) {

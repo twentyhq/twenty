@@ -24,7 +24,7 @@ export class AccessGroupReadService {
     private readonly accessGroupReadRepository: AccessGroupReadRepository,
   ) {}
 
-  async findPrincipalsCompactIds({
+  async findPrincipalsAccessGroupCompactIds({
     principals,
     objectMetadataId,
     operationType,
@@ -63,7 +63,7 @@ export class AccessGroupReadService {
     });
   }
 
-  async findPrincipalsRelatedRecordPathCompactIds(
+  async findPrincipalsRelatedRecordPathAccessGroupCompactIds(
     request: PermissionsObjectAccessRequest,
   ): Promise<number[]> {
     if (!canRelatedRecordPathExtendAccess(request)) {

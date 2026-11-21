@@ -16,10 +16,12 @@ import { isInboxOpenThreadPresetFilter } from '@/inbox/utils/isInboxOpenThreadPr
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { useRefreshShownInboxThreadList } from '@/inbox/hooks/useRefreshShownInboxThreadList';
 
 export const InboxPersonalViewDropdown = () => {
   const { t } = useLingui();
   const navigate = useNavigateApp();
+  const { refreshShownInboxThreadList } = useRefreshShownInboxThreadList();
   const [inboxSelectedThreadListSource, setInboxSelectedThreadListSource] =
     useAtomState(inboxSelectedThreadListSourceState);
   const selectedPresetFilter =
@@ -52,6 +54,7 @@ export const InboxPersonalViewDropdown = () => {
       type: 'presetFilter',
       presetFilter,
     });
+    refreshShownInboxThreadList();
     navigate(AppPath.AiChatInbox, { threadId: null });
   };
 
