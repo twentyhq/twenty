@@ -1,8 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-export const parseTeamsConnectorRetryAfterMs = (
-  retryAfter: string | null | undefined,
-): number | undefined => {
+export const parseRetryAfterMs = ({
+  retryAfter,
+  shouldParseHttpDate,
+}: {
+  retryAfter: string | null | undefined;
+  shouldParseHttpDate: boolean;
+}): number | undefined => {
   if (!isNonEmptyString(retryAfter)) {
     return undefined;
   }
@@ -11,6 +15,10 @@ export const parseTeamsConnectorRetryAfterMs = (
 
   if (Number.isFinite(retryAfterSeconds)) {
     return Math.max(retryAfterSeconds * 1_000, 0);
+  }
+
+  if (!shouldParseHttpDate) {
+    return undefined;
   }
 
   const retryAtMs = Date.parse(retryAfter);
