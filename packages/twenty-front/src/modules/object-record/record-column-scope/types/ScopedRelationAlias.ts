@@ -10,7 +10,6 @@ export type ScopedRelationAlias = {
   responseKey: string;
   relationFieldName: string;
   relationObjectMetadataItem: EnrichedObjectMetadataItem;
-  relationJoinColumnName: string;
   filter?: RecordGqlOperationFilter;
   orderBy?: RecordGqlOperationOrderBy;
   first?: number;
