@@ -29,6 +29,7 @@ import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
+import { AccessGroupReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group-read.repository';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
 import { findRlsRuleRelationPredicatesToObject } from 'src/engine/permissions/internal/access-group/utils/find-rls-rule-relation-predicates-to-object.util';
 import { findRelationJoinColumnsOrThrow } from 'src/engine/permissions/internal/rls/utils/find-relation-join-columns-or-throw.util';
@@ -49,6 +50,7 @@ export class RecordAccessGroupComputationService {
   constructor(
     private readonly cacheLockService: CacheLockService,
     private readonly accessGroupRepository: AccessGroupRepository,
+    private readonly accessGroupReadRepository: AccessGroupReadRepository,
     private readonly recordAccessGroupRepository: RecordAccessGroupRepository,
     private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
     private readonly accessGroupPropagationPlanService: AccessGroupPropagationPlanService,
@@ -76,16 +78,28 @@ export class RecordAccessGroupComputationService {
   async recomputeRecordAccessGroupIdsAffectedByAccessGroupIdChanges({
     workspaceId,
     objectMetadataId,
-    addedCompactIds,
+    addedGroupHashes,
     removedCompactIds,
     afterRecordId = null,
   }: {
     workspaceId: string;
     objectMetadataId: string;
-    addedCompactIds: number[];
+    addedGroupHashes: string[];
     removedCompactIds: number[];
     afterRecordId?: string | null;
   }): Promise<void> {
+    const addedCompactIds = isNonEmptyArray(addedGroupHashes)
+      ? await this.cacheLockService.withLock(
+          () =>
+            this.accessGroupReadRepository.findCompactIdsByGroupHashes({
+              workspaceId,
+              groupHashes: addedGroupHashes,
+            }),
+          buildAccessGroupSyncLockKey(workspaceId),
+          ACCESS_GROUP_SYNC_LOCK_OPTIONS,
+        )
+      : [];
+
     await this.recomputeRecordAccessGroupIdsOfMatchingRecords({
       workspaceId,
       objectMetadataId,
@@ -434,7 +448,7 @@ export class RecordAccessGroupComputationService {
       });
     }
 
-    // A running sync may be writing groups, so they are read once its writes are done
+    // The sync stores its plan before writing groups, so they are read once its writes are done
     return this.cacheLockService.withLock(
       () =>
         this.accessGroupRepository.findAccessGroupsOfObjects({

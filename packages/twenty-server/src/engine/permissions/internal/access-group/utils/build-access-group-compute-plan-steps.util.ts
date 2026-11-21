@@ -2,6 +2,7 @@
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type AccessGroupComputePlanStep } from 'src/engine/permissions/internal/access-group/types/access-group-compute-plan-step.type';
+import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group-without-compact-id.type';
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-computation-metadata-maps.type';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
@@ -9,19 +10,24 @@ import { planRecordAccessGroupComputes } from 'src/engine/permissions/internal/a
 import { findAccessGroupValueLookups } from 'src/engine/permissions/internal/access-group/value-lookup/utils/find-access-group-value-lookups.util';
 import { isAccessGroupSyncIncremental } from 'src/engine/permissions/internal/access-group/value-lookup/utils/is-access-group-sync-incremental.util';
 
-type ChangedAccessGroup = Pick<
+type AccessGroupToInsert = Pick<
+  AccessGroupWithoutCompactId,
+  'groupHash' | 'objectMetadataId' | 'ruleShapeHash'
+>;
+
+type StaleAccessGroup = Pick<
   AccessGroup,
   'compactId' | 'objectMetadataId' | 'ruleShapeHash'
 >;
 
 export const buildAccessGroupComputePlanSteps = ({
-  insertedAccessGroups,
+  accessGroupsToInsert,
   staleAccessGroups,
   relatedRecordPathTargetObjectMetadataIds,
   metadataMaps,
 }: {
-  insertedAccessGroups: ChangedAccessGroup[];
-  staleAccessGroups: ChangedAccessGroup[];
+  accessGroupsToInsert: AccessGroupToInsert[];
+  staleAccessGroups: StaleAccessGroup[];
   relatedRecordPathTargetObjectMetadataIds: string[];
   metadataMaps: RecordAccessGroupComputationMetadataMaps;
 }): Pick<
@@ -36,18 +42,21 @@ export const buildAccessGroupComputePlanSteps = ({
       resolvedRelatedRecordPaths: metadataMaps.resolvedRelatedRecordPaths,
       isObjectUsingRecordAccessGroups: isUsingRecordAccessGroups,
     });
-  const findCompactIdsOfObject = (
-    accessGroups: ChangedAccessGroup[],
-    objectMetadataId: string,
-  ) =>
-    accessGroups
-      .filter(
-        (accessGroup) => accessGroup.objectMetadataId === objectMetadataId,
-      )
-      .map(({ compactId }) => compactId);
+  const filterAccessGroupsOfObject = <
+    TAccessGroup extends Pick<AccessGroup, 'objectMetadataId'>,
+  >({
+    accessGroups,
+    objectMetadataId,
+  }: {
+    accessGroups: TAccessGroup[];
+    objectMetadataId: string;
+  }): TAccessGroup[] =>
+    accessGroups.filter(
+      (accessGroup) => accessGroup.objectMetadataId === objectMetadataId,
+    );
 
   const changedAccessGroups = [
-    ...insertedAccessGroups,
+    ...accessGroupsToInsert,
     ...staleAccessGroups,
   ].filter(({ objectMetadataId }) =>
     isUsingRecordAccessGroups(objectMetadataId),
@@ -87,14 +96,14 @@ export const buildAccessGroupComputePlanSteps = ({
   const incrementalSteps = incrementalObjectMetadataIds.flatMap(
     (incrementalObjectMetadataId) => {
       const accessGroupIdChanges = {
-        addedCompactIds: findCompactIdsOfObject(
-          insertedAccessGroups,
-          incrementalObjectMetadataId,
-        ),
-        removedCompactIds: findCompactIdsOfObject(
-          staleAccessGroups,
-          incrementalObjectMetadataId,
-        ),
+        addedGroupHashes: filterAccessGroupsOfObject({
+          accessGroups: accessGroupsToInsert,
+          objectMetadataId: incrementalObjectMetadataId,
+        }).map(({ groupHash }) => groupHash),
+        removedCompactIds: filterAccessGroupsOfObject({
+          accessGroups: staleAccessGroups,
+          objectMetadataId: incrementalObjectMetadataId,
+        }).map(({ compactId }) => compactId),
       };
 
       return [...new Set(planObjects([incrementalObjectMetadataId]))]

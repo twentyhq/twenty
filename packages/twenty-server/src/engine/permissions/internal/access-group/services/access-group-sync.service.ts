@@ -18,11 +18,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
 
-type SyncAccessGroupsOptions = Pick<
-  SyncAccessGroupsJobData,
-  'isRelatedRecordPathChanged'
->;
-
 @Injectable()
 export class AccessGroupSyncService {
   constructor(
@@ -33,10 +28,10 @@ export class AccessGroupSyncService {
     private readonly accessGroupPropagationPlanService: AccessGroupPropagationPlanService,
   ) {}
 
-  async syncAccessGroups(
-    workspaceId: string,
-    { isRelatedRecordPathChanged = false }: SyncAccessGroupsOptions = {},
-  ): Promise<void> {
+  async syncAccessGroups({
+    workspaceId,
+    isRelatedRecordPathChanged = false,
+  }: SyncAccessGroupsJobData): Promise<void> {
     await this.cacheLockService.withLock(
       () =>
         this.syncAccessGroupsWithLock({
@@ -89,26 +84,13 @@ export class AccessGroupSyncService {
         canDeleteStaleAccessGroups && !newGroupHashes.has(groupHash),
     );
 
-    const insertedAccessGroups =
-      await this.accessGroupRepository.insertAccessGroups({
-        workspaceId,
-        newAccessGroups: accessGroupsToInsert,
-      });
-
-    if (isNonEmptyArray(staleAccessGroups)) {
-      await this.accessGroupRepository.deleteAccessGroups({
-        workspaceId,
-        groupHashes: staleAccessGroups.map(({ groupHash }) => groupHash),
-      });
-    }
-
     const metadataMaps =
       await this.recordAccessGroupMetadataMapsService.find(workspaceId);
 
     await this.accessGroupPropagationPlanService.persistPlanSteps({
       workspaceId,
       steps: buildAccessGroupComputePlanSteps({
-        insertedAccessGroups,
+        accessGroupsToInsert,
         staleAccessGroups,
         relatedRecordPathTargetObjectMetadataIds: isRelatedRecordPathChanged
           ? metadataMaps.resolvedRelatedRecordPaths.map(
@@ -118,5 +100,17 @@ export class AccessGroupSyncService {
         metadataMaps,
       }),
     });
+
+    await this.accessGroupRepository.insertAccessGroups({
+      workspaceId,
+      newAccessGroups: accessGroupsToInsert,
+    });
+
+    if (isNonEmptyArray(staleAccessGroups)) {
+      await this.accessGroupRepository.deleteAccessGroups({
+        workspaceId,
+        groupHashes: staleAccessGroups.map(({ groupHash }) => groupHash),
+      });
+    }
   }
 }

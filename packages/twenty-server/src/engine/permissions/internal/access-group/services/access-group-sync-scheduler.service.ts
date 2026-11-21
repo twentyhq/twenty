@@ -27,12 +27,10 @@ export class AccessGroupSyncSchedulerService {
     return isAccessGroupsEnabled({ featureFlagsMap });
   }
 
-  async scheduleSyncIfEnabled(
-    workspaceId: string,
-    {
-      isRelatedRecordPathChanged = false,
-    }: Pick<SyncAccessGroupsJobData, 'isRelatedRecordPathChanged'> = {},
-  ): Promise<void> {
+  async scheduleSyncIfEnabled({
+    workspaceId,
+    isRelatedRecordPathChanged = false,
+  }: SyncAccessGroupsJobData): Promise<void> {
     if (!(await this.isEnabled(workspaceId))) {
       return;
     }
