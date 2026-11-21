@@ -40,6 +40,48 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
+type UpsertOperations = {
+  rulesToCreate: FlatRowLevelPermissionRule[];
+  rulesToUpdate: FlatRowLevelPermissionRule[];
+  rulesToDelete: FlatRowLevelPermissionRule[];
+  fieldPermissionsToUpdate: FlatFieldPermission[];
+  predicatesToCreate: FlatRowLevelPermissionPredicate[];
+  predicatesToUpdate: FlatRowLevelPermissionPredicate[];
+  predicatesToDelete: FlatRowLevelPermissionPredicate[];
+  groupsToCreate: FlatRowLevelPermissionPredicateGroup[];
+  groupsToUpdate: FlatRowLevelPermissionPredicateGroup[];
+  groupsToDelete: FlatRowLevelPermissionPredicateGroup[];
+};
+
+const mergeUpsertOperations = (
+  operationsList: UpsertOperations[],
+): UpsertOperations => ({
+  rulesToCreate: operationsList.flatMap(({ rulesToCreate }) => rulesToCreate),
+  rulesToUpdate: operationsList.flatMap(({ rulesToUpdate }) => rulesToUpdate),
+  rulesToDelete: operationsList.flatMap(({ rulesToDelete }) => rulesToDelete),
+  fieldPermissionsToUpdate: operationsList.flatMap(
+    ({ fieldPermissionsToUpdate }) => fieldPermissionsToUpdate,
+  ),
+  predicatesToCreate: operationsList.flatMap(
+    ({ predicatesToCreate }) => predicatesToCreate,
+  ),
+  predicatesToUpdate: operationsList.flatMap(
+    ({ predicatesToUpdate }) => predicatesToUpdate,
+  ),
+  predicatesToDelete: operationsList.flatMap(
+    ({ predicatesToDelete }) => predicatesToDelete,
+  ),
+  groupsToCreate: operationsList.flatMap(
+    ({ groupsToCreate }) => groupsToCreate,
+  ),
+  groupsToUpdate: operationsList.flatMap(
+    ({ groupsToUpdate }) => groupsToUpdate,
+  ),
+  groupsToDelete: operationsList.flatMap(
+    ({ groupsToDelete }) => groupsToDelete,
+  ),
+});
+
 @Injectable()
 export class RowLevelPermissionPredicateService {
   constructor(
@@ -149,41 +191,22 @@ export class RowLevelPermissionPredicateService {
     }[];
     workspaceId: string;
   }): Promise<void> {
-    const operations = {
-      rulesToCreate: [] as FlatRowLevelPermissionRule[],
-      rulesToUpdate: [] as FlatRowLevelPermissionRule[],
-      rulesToDelete: [] as FlatRowLevelPermissionRule[],
-      fieldPermissionsToUpdate: [] as FlatFieldPermission[],
-      predicatesToCreate: [] as FlatRowLevelPermissionPredicate[],
-      predicatesToUpdate: [] as FlatRowLevelPermissionPredicate[],
-      predicatesToDelete: [] as FlatRowLevelPermissionPredicate[],
-      groupsToCreate: [] as FlatRowLevelPermissionPredicateGroup[],
-      groupsToUpdate: [] as FlatRowLevelPermissionPredicateGroup[],
-      groupsToDelete: [] as FlatRowLevelPermissionPredicateGroup[],
-    };
+    const operationsOfInputs: UpsertOperations[] = [];
 
     for (const { rulesInput } of inputs) {
-      const inputOperations = await this.buildUpsertOperations({
-        input: rulesInput,
-        workspaceId,
-      });
-
-      for (const [key, entities] of Object.entries(inputOperations)) {
-        (operations[key as keyof typeof operations] as unknown[]).push(
-          ...entities,
-        );
-      }
+      operationsOfInputs.push(
+        await this.buildUpsertOperations({ input: rulesInput, workspaceId }),
+      );
     }
 
     await this.runUpsertMigration({
       workspaceId,
       isSystemBuild: true,
-      ...operations,
+      ...mergeUpsertOperations(operationsOfInputs),
       fieldPermissionsToCreate: [],
     });
 
-    // The runner creates field permissions before predicate groups, so they go in a second migration.
-    // Deleting a rule cascades its field permissions in the database only, so the cached map is rebuilt first
+    // field permissions go after their groups exist, on a cache rebuilt past the rule delete cascade
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'flatFieldPermissionMaps',
     ]);
@@ -235,17 +258,8 @@ export class RowLevelPermissionPredicateService {
       await this.runUpsertMigration({
         workspaceId,
         isSystemBuild: true,
-        rulesToCreate: [],
-        rulesToUpdate: [],
-        rulesToDelete: [],
-        fieldPermissionsToUpdate: [],
+        ...mergeUpsertOperations([]),
         fieldPermissionsToCreate,
-        predicatesToCreate: [],
-        predicatesToUpdate: [],
-        predicatesToDelete: [],
-        groupsToCreate: [],
-        groupsToUpdate: [],
-        groupsToDelete: [],
       });
     }
   }
@@ -256,7 +270,7 @@ export class RowLevelPermissionPredicateService {
   }: {
     input: UpsertRowLevelPermissionRulesInput;
     workspaceId: string;
-  }) {
+  }): Promise<UpsertOperations> {
     const { roleId, objectMetadataId } = input;
 
     const { workspaceCustomFlatApplication } =
