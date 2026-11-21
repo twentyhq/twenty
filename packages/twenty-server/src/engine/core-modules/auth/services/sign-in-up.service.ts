@@ -64,6 +64,7 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { isInvitationLinkSharingEnabled } from 'src/engine/core-modules/workspace-invitation/utils/is-invitation-link-sharing-enabled.util';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
@@ -149,6 +150,7 @@ export class SignInUpService {
         user: await this.signInUpWithPersonalInvitation({
           invitation: params.invitation,
           userData: params.userData,
+          authProvider: params.authParams.provider,
         }),
       };
     }
@@ -184,6 +186,7 @@ export class SignInUpService {
   private async signInUpWithPersonalInvitation(
     params: {
       invitation: AppTokenEntity;
+      authProvider: AuthProviderEnum;
     } & ExistingUserOrPartialUserWithPicture,
   ) {
     if (!params.invitation) {
@@ -244,7 +247,17 @@ export class SignInUpService {
       email,
     );
 
-    await this.userService.markEmailAsVerified(updatedUser.id);
+    if (
+      params.authProvider !== AuthProviderEnum.Password ||
+      !isInvitationLinkSharingEnabled({
+        emailDriver: this.twentyConfigService.get('EMAIL_DRIVER'),
+        isEmailVerificationRequired: this.twentyConfigService.get(
+          'IS_EMAIL_VERIFICATION_REQUIRED',
+        ),
+      })
+    ) {
+      await this.userService.markEmailAsVerified(updatedUser.id);
+    }
 
     return updatedUser;
   }

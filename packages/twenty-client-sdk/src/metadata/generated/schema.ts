@@ -1307,6 +1307,7 @@ export interface ClientConfig {
     isGoogleCalendarEnabled: Scalars['Boolean']
     isGoogleMessagingEnabled: Scalars['Boolean']
     isImapSmtpCaldavEnabled: Scalars['Boolean']
+    isInvitationLinkSharingEnabled: Scalars['Boolean']
     isMicrosoftCalendarEnabled: Scalars['Boolean']
     isMicrosoftMessagingEnabled: Scalars['Boolean']
     isMultiWorkspaceEnabled: Scalars['Boolean']
@@ -3331,6 +3332,7 @@ export interface Query {
     getViewSorts: ViewSort[]
     getViews: View[]
     getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDTO
+    getWorkspaceInvitationLink: Scalars['String']
     gettingStartedProgress: GettingStartedProgress
     gettingStartedWorkflowPreviews: GettingStartedWorkflowPreview[]
     githubClaimAuthorizationUrl: Scalars['String']
@@ -3684,6 +3686,8 @@ export interface SendInboxMessageResult {
 
 export interface SendInvitations {
     errors: Scalars['String'][]
+    /** Links to share with the invitees, only returned to callers with the roles permission when invitation link sharing is enabled */
+    inviteLinks: WorkspaceInvitationLink[]
     result: WorkspaceInvitation[]
     /** Boolean that confirms query was dispatched */
     success: Scalars['Boolean']
@@ -4490,6 +4494,12 @@ export interface WorkspaceInvitation {
     id: Scalars['UUID']
     roleId?: Scalars['UUID']
     __typename: 'WorkspaceInvitation'
+}
+
+export interface WorkspaceInvitationLink {
+    email: Scalars['String']
+    link: Scalars['String']
+    __typename: 'WorkspaceInvitationLink'
 }
 
 export interface WorkspaceInviteHashValid {
@@ -5933,6 +5943,7 @@ export interface ClientConfigGenqlSelection{
     isGoogleCalendarEnabled?: boolean | number
     isGoogleMessagingEnabled?: boolean | number
     isImapSmtpCaldavEnabled?: boolean | number
+    isInvitationLinkSharingEnabled?: boolean | number
     isMicrosoftCalendarEnabled?: boolean | number
     isMicrosoftMessagingEnabled?: boolean | number
     isMultiWorkspaceEnabled?: boolean | number
@@ -8252,6 +8263,7 @@ export interface QueryGenqlSelection{
     getViewSorts?: (ViewSortGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
     getViews?: (ViewGenqlSelection & { __args?: {objectMetadataId?: (Scalars['String'] | null), viewTypes?: (ViewType[] | null)} })
     getWorkspaceCreationDefaults?: WorkspaceCreationDefaultsDTOGenqlSelection
+    getWorkspaceInvitationLink?: { __args: {appTokenId: Scalars['String']} }
     gettingStartedProgress?: GettingStartedProgressGenqlSelection
     gettingStartedWorkflowPreviews?: GettingStartedWorkflowPreviewGenqlSelection
     githubClaimAuthorizationUrl?: { __args: {applicationRegistrationId: Scalars['String']} }
@@ -8662,6 +8674,8 @@ export interface SendInboxMessageResultGenqlSelection{
 
 export interface SendInvitationsGenqlSelection{
     errors?: boolean | number
+    /** Links to share with the invitees, only returned to callers with the roles permission when invitation link sharing is enabled */
+    inviteLinks?: WorkspaceInvitationLinkGenqlSelection
     result?: WorkspaceInvitationGenqlSelection
     /** Boolean that confirms query was dispatched */
     success?: boolean | number
@@ -9793,6 +9807,13 @@ export interface WorkspaceInvitationGenqlSelection{
     expiresAt?: boolean | number
     id?: boolean | number
     roleId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface WorkspaceInvitationLinkGenqlSelection{
+    email?: boolean | number
+    link?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -12785,6 +12806,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isWorkspaceInvitation = (obj?: { __typename?: any } | null): obj is WorkspaceInvitation => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceInvitation"')
       return WorkspaceInvitation_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const WorkspaceInvitationLink_possibleTypes: string[] = ['WorkspaceInvitationLink']
+    export const isWorkspaceInvitationLink = (obj?: { __typename?: any } | null): obj is WorkspaceInvitationLink => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceInvitationLink"')
+      return WorkspaceInvitationLink_possibleTypes.includes(obj.__typename)
     }
     
 

@@ -98,3 +98,47 @@ describe('Joining a workspace with the address of a pending invitation and no in
     expectOneNotInternalServerErrorSnapshot({ errors });
   });
 });
+
+describe('Joining a workspace with the address of a pending invitation and no invitation token should fail without email verification on a multi-workspace instance', () => {
+  let invitedEmail: string;
+  let createdUserAccessToken: string;
+
+  beforeEach(async () => {
+    invitedEmail = `pending-invitation-${randomUUID()}@example.com`;
+
+    await sendInvitations({
+      input: { emails: [invitedEmail] },
+      expectToFail: false,
+    });
+
+    const { data } = await signUp({
+      input: { email: invitedEmail, password: PASSWORD },
+      expectToFail: false,
+    });
+
+    createdUserAccessToken =
+      data.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
+  });
+
+  afterEach(async () => {
+    await deleteUser({
+      accessToken: createdUserAccessToken,
+      expectToFail: false,
+    });
+
+    await deleteWorkspaceInvitationsByEmail({ email: invitedEmail });
+  });
+
+  it('when logging in to the workspace with an account that has not verified its email', async () => {
+    const { errors } = await getLoginTokenFromCredentials({
+      input: {
+        email: invitedEmail,
+        password: PASSWORD,
+        origin: buildAppleWorkspaceOrigin(),
+      },
+      expectToFail: true,
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+});

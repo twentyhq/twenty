@@ -369,6 +369,9 @@ export class ClientConfig {
   @Field(() => Boolean)
   isEmailVerificationRequired: boolean;
 
+  @Field(() => Boolean)
+  isInvitationLinkSharingEnabled: boolean;
+
   @Field(() => String, { nullable: true })
   defaultSubdomain: string;
 

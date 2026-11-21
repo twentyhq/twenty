@@ -1463,6 +1463,7 @@ type ClientConfig {
   isGoogleCalendarEnabled: Boolean!
   isGoogleMessagingEnabled: Boolean!
   isImapSmtpCaldavEnabled: Boolean!
+  isInvitationLinkSharingEnabled: Boolean!
   isMicrosoftCalendarEnabled: Boolean!
   isMicrosoftMessagingEnabled: Boolean!
   isMultiWorkspaceEnabled: Boolean!
@@ -4507,6 +4508,7 @@ type Query {
   getViewSorts(viewId: String): [ViewSort!]!
   getViews(objectMetadataId: String, viewTypes: [ViewType!]): [View!]!
   getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDTO!
+  getWorkspaceInvitationLink(appTokenId: String!): String!
   gettingStartedProgress: GettingStartedProgress!
   gettingStartedWorkflowPreviews: [GettingStartedWorkflowPreview!]!
   githubClaimAuthorizationUrl(applicationRegistrationId: String!): String!
@@ -5018,6 +5020,11 @@ type SendInboxMessageResult {
 
 type SendInvitations {
   errors: [String!]!
+
+  """
+  Links to share with the invitees, only returned to callers with the roles permission when invitation link sharing is enabled
+  """
+  inviteLinks: [WorkspaceInvitationLink!]!
   result: [WorkspaceInvitation!]!
 
   """Boolean that confirms query was dispatched"""
@@ -6800,6 +6807,11 @@ type WorkspaceInvitation {
   expiresAt: DateTime!
   id: UUID!
   roleId: UUID
+}
+
+type WorkspaceInvitationLink {
+  email: String!
+  link: String!
 }
 
 type WorkspaceInviteHashValid {

@@ -1,6 +1,8 @@
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isInvitationLinkSharingEnabledState } from '@/client-config/states/isInvitationLinkSharingEnabledState';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
 import { SettingsApprovedAccessDomainsListCard } from '@/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -9,6 +11,7 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { WorkspaceInvitationCopyLinkButton } from '@/workspace-invitation/components/WorkspaceInvitationCopyLinkButton';
 import { useDeleteWorkspaceInvitation } from '@/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
 import { useResendWorkspaceInvitation } from '@/workspace-invitation/hooks/useResendWorkspaceInvitation';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
@@ -27,7 +30,11 @@ import { IconMail, IconReload, IconTrash } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
-import { GetWorkspaceInvitationsDocument } from '~/generated-metadata/graphql';
+import {
+  GetWorkspaceInvitationsDocument,
+  PermissionFlagType,
+  type WorkspaceInvitation,
+} from '~/generated-metadata/graphql';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
 const StyledButtonContainer = styled.div`
@@ -82,6 +89,10 @@ export const SettingsWorkspaceMembersInviteTab = () => {
   const { deleteWorkspaceInvitation } = useDeleteWorkspaceInvitation();
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const isInvitationLinkSharingEnabled = useAtomStateValue(
+    isInvitationLinkSharingEnabledState,
+  );
+  const hasRolesPermission = useHasPermissionFlag(PermissionFlagType.ROLES);
 
   const { data: invitationsData, error: invitationsError } = useQuery(
     GetWorkspaceInvitationsDocument,
@@ -111,12 +122,26 @@ export const SettingsWorkspaceMembersInviteTab = () => {
     }
   };
 
+  const isExpired = (expiresAt: string) =>
+    new Date(expiresAt).getTime() <= Date.now();
+
+  const canCopyInvitationLink = ({
+    expiresAt,
+  }: Pick<WorkspaceInvitation, 'expiresAt'>) =>
+    hasRolesPermission &&
+    isInvitationLinkSharingEnabled &&
+    !isExpired(expiresAt);
+
+  const canResendInvitation = ({
+    expiresAt,
+  }: Pick<WorkspaceInvitation, 'expiresAt'>) =>
+    !isInvitationLinkSharingEnabled || isExpired(expiresAt);
+
   const getExpiresAtText = (expiresAt: string) => {
-    const expirationDate = new Date(expiresAt);
-    if (expirationDate.getTime() <= Date.now()) {
+    if (isExpired(expiresAt)) {
       return t`Expired`;
     }
-    return formatDistanceToNow(expirationDate, { locale: localeCatalog });
+    return formatDistanceToNow(new Date(expiresAt), { locale: localeCatalog });
   };
 
   return (
@@ -139,7 +164,11 @@ export const SettingsWorkspaceMembersInviteTab = () => {
       <Section.Root>
         <Section.Header
           title={t`Invite by email`}
-          description={t`Send an invite email to your team`}
+          description={
+            isInvitationLinkSharingEnabled
+              ? t`Generate personal invite links to share with your team`
+              : t`Send an invite email to your team`
+          }
         />
         <WorkspaceInviteTeam roles={roles} />
         {isNonEmptyArray(workspaceInvitations) && (
@@ -206,18 +235,25 @@ export const SettingsWorkspaceMembersInviteTab = () => {
                     </TableCell>
                     <TableCell align="right">
                       <StyledButtonContainer>
-                        <IconButton
-                          aria-label={t`Resend invitation`}
-                          onClick={() => {
-                            handleResendWorkspaceInvitation(
-                              workspaceInvitation.id,
-                            );
-                          }}
-                          variant="ghost"
-                          size="md"
-                        >
-                          <IconReload />
-                        </IconButton>
+                        {canCopyInvitationLink(workspaceInvitation) && (
+                          <WorkspaceInvitationCopyLinkButton
+                            appTokenId={workspaceInvitation.id}
+                          />
+                        )}
+                        {canResendInvitation(workspaceInvitation) && (
+                          <IconButton
+                            aria-label={t`Resend invitation`}
+                            onClick={() => {
+                              handleResendWorkspaceInvitation(
+                                workspaceInvitation.id,
+                              );
+                            }}
+                            variant="ghost"
+                            size="md"
+                          >
+                            <IconReload />
+                          </IconButton>
+                        )}
                         <IconButton
                           aria-label={t`Remove invitation`}
                           onClick={() => {

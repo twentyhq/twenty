@@ -24,6 +24,7 @@ import { isEmailVerificationRequiredState } from '@/client-config/states/isEmail
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpCaldavEnabledState';
+import { isInvitationLinkSharingEnabledState } from '@/client-config/states/isInvitationLinkSharingEnabledState';
 import { maintenanceModeState } from '@/client-config/states/maintenanceModeState';
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
@@ -69,6 +70,9 @@ export const useClientConfig = (): UseClientConfigResult => {
   );
   const setIsEmailVerificationRequired = useSetAtomState(
     isEmailVerificationRequiredState,
+  );
+  const setIsInvitationLinkSharingEnabled = useSetAtomState(
+    isInvitationLinkSharingEnabledState,
   );
 
   const setBilling = useSetAtomState(billingState);
@@ -197,6 +201,9 @@ export const useClientConfig = (): UseClientConfigResult => {
         setIsEmailVerificationRequired(
           clientConfig.isEmailVerificationRequired,
         );
+        setIsInvitationLinkSharingEnabled(
+          clientConfig.isInvitationLinkSharingEnabled,
+        );
         setBilling(clientConfig.billing);
         setSupportChat(clientConfig.support);
 
@@ -302,6 +309,7 @@ export const useClientConfig = (): UseClientConfigResult => {
       setIsConfigVariablesInDbEnabled,
       setIsDeveloperDefaultSignInPrefilled,
       setIsEmailVerificationRequired,
+      setIsInvitationLinkSharingEnabled,
       setIsImapSmtpCaldavEnabled,
       setIsMultiWorkspaceEnabled,
       setIsEmailingDomainInDemoMode,

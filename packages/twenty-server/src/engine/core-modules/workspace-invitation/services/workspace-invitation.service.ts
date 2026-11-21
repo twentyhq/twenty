@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import crypto from 'crypto';
 
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendInviteLinkEmail, renderEmail } from 'twenty-emails';
@@ -29,6 +30,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { type WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -41,8 +43,10 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { truncateFullName } from 'src/engine/core-modules/user/utils/truncate-full-name.util';
 import { type SendInvitationsDTO } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.dto';
+import { type WorkspaceInvitationLinkDTO } from 'src/engine/core-modules/workspace-invitation/dtos/workspace-invitation-link.dto';
 import { buildInvitationSendingThrottleKey } from 'src/engine/core-modules/workspace-invitation/utils/build-invitation-sending-throttle-key.util';
 import { castAppTokenToWorkspaceInvitationUtil } from 'src/engine/core-modules/workspace-invitation/utils/cast-app-token-to-workspace-invitation.util';
+import { isInvitationLinkSharingEnabled } from 'src/engine/core-modules/workspace-invitation/utils/is-invitation-link-sharing-enabled.util';
 import { isSameWorkDomainInvitation } from 'src/engine/core-modules/workspace-invitation/utils/is-same-work-domain-invitation.util';
 import {
   WorkspaceInvitationException,
@@ -291,6 +295,64 @@ export class WorkspaceInvitationService {
     });
   }
 
+  async getWorkspaceInvitationLinkOrThrow({
+    appTokenId,
+    workspace,
+  }: {
+    appTokenId: string;
+    workspace: WorkspaceEntity;
+  }) {
+    if (
+      !isInvitationLinkSharingEnabled({
+        emailDriver: this.twentyConfigService.get('EMAIL_DRIVER'),
+        isEmailVerificationRequired: this.twentyConfigService.get(
+          'IS_EMAIL_VERIFICATION_REQUIRED',
+        ),
+      })
+    ) {
+      throw new AuthException(
+        'Invitation link sharing is disabled on this instance',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: msg`Invitation links are not available on this instance.`,
+        },
+      );
+    }
+
+    const { inviteHash } = workspace;
+
+    if (!isDefined(inviteHash)) {
+      throw new WorkspaceInvitationException(
+        'Workspace invite hash not found',
+        WorkspaceInvitationExceptionCode.INVALID_INVITATION,
+      );
+    }
+
+    const appToken = await this.appTokenRepository.findOne({
+      where: {
+        id: appTokenId,
+        workspaceId: workspace.id,
+        type: In(INVITATION_APP_TOKEN_TYPES),
+        deletedAt: IsNull(),
+        expiresAt: MoreThan(new Date()),
+      },
+    });
+
+    if (!isDefined(appToken) || !isNonEmptyString(appToken.context?.email)) {
+      throw new WorkspaceInvitationException(
+        'Invalid appToken',
+        WorkspaceInvitationExceptionCode.INVALID_INVITATION,
+      );
+    }
+
+    return this.buildInvitationLink({
+      workspace,
+      workspaceInviteHash: inviteHash,
+      inviteToken: appToken.value,
+      email: appToken.context.email,
+    });
+  }
+
   async sendInvitations({
     emails,
     workspace,
@@ -298,6 +360,7 @@ export class WorkspaceInvitationService {
     roleId,
     isOnboardingInviteRewardOverride,
     appTokenIdToInvalidate,
+    canShareInviteLinks = false,
   }: {
     emails: string[];
     workspace: WorkspaceEntity;
@@ -305,12 +368,14 @@ export class WorkspaceInvitationService {
     roleId?: string;
     isOnboardingInviteRewardOverride?: boolean;
     appTokenIdToInvalidate?: string;
+    canShareInviteLinks?: boolean;
   }): Promise<SendInvitationsDTO> {
     if (!workspace?.inviteHash) {
       return {
         success: false,
         errors: ['Workspace invite hash not found'],
         result: [],
+        inviteLinks: [],
       };
     }
 
@@ -358,18 +423,28 @@ export class WorkspaceInvitationService {
     const senderName = truncateFullName(sender.name);
     const workspaceName = truncateWorkspaceDisplayName(workspace.displayName);
 
+    const shouldReturnInviteLinks =
+      canShareInviteLinks &&
+      isInvitationLinkSharingEnabled({
+        emailDriver: this.twentyConfigService.get('EMAIL_DRIVER'),
+        isEmailVerificationRequired: this.twentyConfigService.get(
+          'IS_EMAIL_VERIFICATION_REQUIRED',
+        ),
+      });
+    const inviteLinks: WorkspaceInvitationLinkDTO[] = [];
+
     for (const invitation of invitationResults) {
       if (invitation.status === 'fulfilled') {
-        const link = this.workspaceDomainsService.buildWorkspaceURL({
+        const link = this.buildInvitationLink({
           workspace,
-          pathname: getAppPath(AppPath.Invite, {
-            workspaceInviteHash: workspace?.inviteHash,
-          }),
-          searchParams: {
-            inviteToken: invitation.value.appToken.value,
-            email: invitation.value.email,
-          },
+          workspaceInviteHash: workspace.inviteHash,
+          inviteToken: invitation.value.appToken.value,
+          email: invitation.value.email,
         });
+
+        if (shouldReturnInviteLinks) {
+          inviteLinks.push({ email: invitation.value.email, link });
+        }
 
         if (!isDefined(sender.userEmail)) {
           throw new WorkspaceInvitationException(
@@ -387,7 +462,7 @@ export class WorkspaceInvitationService {
           : undefined;
 
         const emailData = {
-          link: link.toString(),
+          link,
           workspace: {
             name: workspaceName,
             logo,
@@ -468,7 +543,31 @@ export class WorkspaceInvitationService {
     return {
       success: result.errors.length === 0,
       ...result,
+      inviteLinks,
     };
+  }
+
+  private buildInvitationLink({
+    workspace,
+    workspaceInviteHash,
+    inviteToken,
+    email,
+  }: {
+    workspace: WorkspaceDomainConfig;
+    workspaceInviteHash: string;
+    inviteToken: string;
+    email: string;
+  }) {
+    return this.workspaceDomainsService
+      .buildWorkspaceURL({
+        workspace,
+        pathname: getAppPath(AppPath.Invite, { workspaceInviteHash }),
+        searchParams: {
+          inviteToken,
+          email,
+        },
+      })
+      .toString();
   }
 
   async generateInvitationToken(

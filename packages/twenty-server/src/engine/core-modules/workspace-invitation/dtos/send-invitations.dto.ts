@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { WorkspaceInvitationLinkDTO } from 'src/engine/core-modules/workspace-invitation/dtos/workspace-invitation-link.dto';
 import { WorkspaceInvitation } from 'src/engine/core-modules/workspace-invitation/dtos/workspace-invitation.dto';
 
 @ObjectType('SendInvitations')
@@ -14,4 +15,10 @@ export class SendInvitationsDTO {
 
   @Field(() => [WorkspaceInvitation])
   result: Array<WorkspaceInvitation>;
+
+  @Field(() => [WorkspaceInvitationLinkDTO], {
+    description:
+      'Links to share with the invitees, only returned to callers with the roles permission when invitation link sharing is enabled',
+  })
+  inviteLinks: Array<WorkspaceInvitationLinkDTO>;
 }

@@ -1,17 +1,46 @@
 import { useLingui } from '@lingui/react/macro';
+import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { IconCopy, IconExclamationCircle } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
+
+type ClipboardValue = string | Promise<string>;
+
+const writeValueToClipboard = async (value: ClipboardValue) => {
+  if (isString(value)) {
+    await navigator.clipboard.writeText(value);
+
+    return;
+  }
+
+  if (!isDefined(globalThis.ClipboardItem)) {
+    await navigator.clipboard.writeText(await value);
+
+    return;
+  }
+
+  await navigator.clipboard.write([
+    new ClipboardItem({
+      'text/plain': value.then(
+        (text) => new Blob([text], { type: 'text/plain' }),
+      ),
+    }),
+  ]);
+};
+
 export const useCopyToClipboard = () => {
   const theme = useTheme();
   const { enqueueToast } = useToast();
   const { t } = useLingui();
 
-  const writeToClipboard = async (
-    valueAsString: string,
-    successMessage: string | null,
-  ) => {
+  const writeToClipboard = async ({
+    value,
+    successMessage,
+  }: {
+    value: ClipboardValue;
+    successMessage: string | null;
+  }) => {
     if (!window.isSecureContext) {
       enqueueToast({
         status: 'error',
@@ -24,7 +53,7 @@ export const useCopyToClipboard = () => {
     }
 
     try {
-      await navigator.clipboard.writeText(valueAsString);
+      await writeValueToClipboard(value);
 
       if (!isDefined(successMessage)) {
         return;
@@ -46,11 +75,14 @@ export const useCopyToClipboard = () => {
     }
   };
 
-  const copyToClipboard = async (valueAsString: string, message?: string) =>
-    await writeToClipboard(valueAsString, message || t`Copied to clipboard`);
+  const copyToClipboard = async (value: ClipboardValue, message?: string) =>
+    await writeToClipboard({
+      value,
+      successMessage: message || t`Copied to clipboard`,
+    });
 
-  const copyToClipboardWithoutSuccessToast = async (valueAsString: string) =>
-    await writeToClipboard(valueAsString, null);
+  const copyToClipboardWithoutSuccessToast = async (value: ClipboardValue) =>
+    await writeToClipboard({ value, successMessage: null });
 
   return { copyToClipboard, copyToClipboardWithoutSuccessToast };
 };

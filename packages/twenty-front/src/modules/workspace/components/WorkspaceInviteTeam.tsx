@@ -1,21 +1,26 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { styled } from '@linaria/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { isInvitationLinkSharingEnabledState } from '@/client-config/states/isInvitationLinkSharingEnabledState';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
+import { WorkspaceInvitationLinkList } from '@/workspace/components/WorkspaceInvitationLinkList';
 import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
 import { i18n } from '@lingui/core';
 import { msg, t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { useToast } from 'twenty-ui/components/feedback';
+import { InlineBanner, useToast } from 'twenty-ui/components/feedback';
 import {
+  IconLink,
   IconLock,
   IconSend,
   IconUser,
@@ -24,6 +29,10 @@ import {
 import { useIcons } from 'twenty-ui/icon/provider';
 import { Button } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
+import {
+  PermissionFlagType,
+  type WorkspaceInvitationLink,
+} from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -53,6 +62,10 @@ const StyledRoleContainer = styled.div`
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     flex: 1 1 100%;
   }
+`;
+
+const StyledBannerContainer = styled.div`
+  padding-bottom: ${themeCssVariables.spacing[3]};
 `;
 
 const emailsEmptyErrorMessage = msg`Emails should not be empty`;
@@ -105,6 +118,13 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
 
   const { enqueueToast } = useToast();
   const { sendInvitation } = useCreateWorkspaceInvitation();
+  const isInvitationLinkSharingEnabled = useAtomStateValue(
+    isInvitationLinkSharingEnabledState,
+  );
+  const hasRolesPermission = useHasPermissionFlag(PermissionFlagType.ROLES);
+  const [generatedInviteLinks, setGeneratedInviteLinks] = useState<
+    WorkspaceInvitationLink[] | null
+  >(null);
 
   const roleOptions: Array<{
     label: string;
@@ -136,6 +156,18 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
   );
   const isEmailsEmpty = !watch('emails');
 
+  const getSuccessMessage = (invitationCount: number) => {
+    if (!isInvitationLinkSharingEnabled) {
+      return t`${invitationCount} invitations sent`;
+    }
+
+    if (hasRolesPermission) {
+      return t`${invitationCount} invitation links generated`;
+    }
+
+    return t`${invitationCount} invitations created`;
+  };
+
   const submit = handleSubmit(async ({ emails, roleId }) => {
     const emailsList = sanitizeEmailList(emails.split(','));
     const { data } = await sendInvitation({
@@ -148,9 +180,14 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
 
     if (data.sendInvitations.result.length > 0) {
       const invitationCount = data.sendInvitations.result.length;
+
+      if (isInvitationLinkSharingEnabled) {
+        setGeneratedInviteLinks(data.sendInvitations.inviteLinks);
+      }
+
       enqueueToast({
         status: 'success',
-        children: t`${invitationCount} invitations sent`,
+        children: getSuccessMessage(invitationCount),
         duration: 2000,
       });
 
@@ -218,13 +255,30 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
           />
         </StyledRoleContainer>
         <Button
-          startIcon={<IconSend />}
+          startIcon={
+            isInvitationLinkSharingEnabled ? <IconLink /> : <IconSend />
+          }
           type="submit"
           disabled={isEmailsEmpty || !!errors.emails}
           variant="solid"
           color="accent"
-        >{t`Invite`}</Button>
+        >
+          {isInvitationLinkSharingEnabled ? t`Generate links` : t`Invite`}
+        </Button>
       </StyledContainer>
+      {isNonEmptyArray(generatedInviteLinks) && (
+        <WorkspaceInvitationLinkList
+          key={generatedInviteLinks[0].link}
+          inviteLinks={generatedInviteLinks}
+        />
+      )}
+      {isDefined(generatedInviteLinks) && !hasRolesPermission && (
+        <StyledBannerContainer>
+          <InlineBanner layout="compact" status="info" fullWidth>
+            {t`Only admins can access invitation links. Contact a workspace admin to get them.`}
+          </InlineBanner>
+        </StyledBannerContainer>
+      )}
     </form>
   );
 };

@@ -98,7 +98,7 @@ describe('signUp with a pending personal invitation (integration)', () => {
       ]);
     });
 
-    it('still joins the workspace through the invitation link while unverified', async () => {
+    it('joins the workspace through the invitation link and verifies the email', async () => {
       const response = await makeMetadataApiRequest(
         signUpInWorkspaceOperationFactory({
           email,
@@ -114,17 +114,42 @@ describe('signUp with a pending personal invitation (integration)', () => {
         SEED_APPLE_WORKSPACE_ID,
       );
       expect(await findWorkspaceInvitationsByEmail({ email })).toHaveLength(0);
+      expect(await signInAvailableWorkspacesForSignUp(email)).toEqual([]);
     });
   });
 
-  describe('when email verification is not required', () => {
-    it('lists the invitation for an unverified email', async () => {
-      expect(signUpAvailableWorkspacesForSignUp).toEqual([
-        expect.objectContaining({
-          id: SEED_APPLE_WORKSPACE_ID,
-          personalInviteToken: inviteToken,
-        }),
+  describe('when email verification is not required on a multi-workspace instance', () => {
+    it('does not list the invitation while the email is unverified', async () => {
+      expect(signUpAvailableWorkspacesForSignUp).toEqual([]);
+    });
+
+    it('lists the invitation once the email is verified', async () => {
+      await testDataSource.query(
+        'UPDATE core."user" SET "isEmailVerified" = true WHERE email = $1',
+        [email],
+      );
+
+      expect(await signInAvailableWorkspacesForSignUp(email)).toEqual([
+        { id: SEED_APPLE_WORKSPACE_ID, personalInviteToken: inviteToken },
       ]);
+    });
+
+    it('joins the workspace through the invitation link while unverified', async () => {
+      const response = await makeMetadataApiRequest(
+        signUpInWorkspaceOperationFactory({
+          email,
+          password: PASSWORD,
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          workspacePersonalInviteToken: inviteToken,
+        }),
+        undefined,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.signUpInWorkspace.workspace.id).toBe(
+        SEED_APPLE_WORKSPACE_ID,
+      );
+      expect(await findWorkspaceInvitationsByEmail({ email })).toHaveLength(0);
     });
   });
 });
