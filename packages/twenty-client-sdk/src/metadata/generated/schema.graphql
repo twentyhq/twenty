@@ -4766,6 +4766,9 @@ type RowLevelPermissionPredicate {
   subFieldName: String
   value: JSON
   workspaceMemberFieldMetadataId: String
+  workspaceMemberRelationFieldMetadataId: String
+  workspaceMemberRelationFilterFieldMetadataId: String
+  workspaceMemberRelationFilterValue: JSON
   workspaceMemberSubFieldName: String
 }
 
@@ -4845,6 +4848,9 @@ input RowLevelPermissionRulePredicateInput {
   subFieldName: String
   value: JSON
   workspaceMemberFieldMetadataId: String
+  workspaceMemberRelationFieldMetadataId: UUID
+  workspaceMemberRelationFilterFieldMetadataId: UUID
+  workspaceMemberRelationFilterValue: JSON
   workspaceMemberSubFieldName: String
 }
 

@@ -37,6 +37,9 @@ export type FlattenedRowLevelPermissionPredicateInput = {
   subFieldName?: string | null;
   workspaceMemberFieldMetadataId?: string | null;
   workspaceMemberSubFieldName?: string | null;
+  workspaceMemberRelationFieldMetadataId?: string | null;
+  workspaceMemberRelationFilterFieldMetadataId?: string | null;
+  workspaceMemberRelationFilterValue?: RowLevelPermissionPredicateValue | null;
   positionInRowLevelPermissionPredicateGroup: number | null;
 };
 

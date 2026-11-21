@@ -52,6 +52,19 @@ export class RowLevelPermissionRulePredicateInput {
   @Field(() => String, { nullable: true })
   workspaceMemberSubFieldName?: string | null;
 
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  workspaceMemberRelationFieldMetadataId?: string | null;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  workspaceMemberRelationFilterFieldMetadataId?: string | null;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  workspaceMemberRelationFilterValue?: RowLevelPermissionPredicateValue | null;
+
   @Field(() => Number, { nullable: true })
   position?: number | null;
 }

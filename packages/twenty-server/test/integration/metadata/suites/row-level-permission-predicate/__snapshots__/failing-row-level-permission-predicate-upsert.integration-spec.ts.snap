@@ -1,5 +1,40 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Row Level Permission Predicate upsert should fail when a workspace member relation filter has no workspace member relation 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rowLevelPermissionPredicate": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+              "message": "A workspace member relation filter needs a workspace member relation",
+              "userFriendlyMessage": "This filter needs a workspace member relation",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionPredicate",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rowLevelPermissionPredicate",
+    "summary": {
+      "rowLevelPermissionPredicate": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This filter needs a workspace member relation",
+  },
+  "message": "Validation errors occurred while upserting row level permission predicates",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`Row Level Permission Predicate upsert should fail when adding a predicate group to a non-editable role 1`] = `
 {
   "extensions": {
@@ -287,6 +322,30 @@ exports[`Row Level Permission Predicate upsert should fail when the relation hop
     "userFriendlyMessage": "Invalid row level permission predicate data.",
   },
   "message": "relationFieldMetadataId does not point to a relation field. A rule can only reach another object through a relation.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when the workspace member field is not a field of the object the workspace member relation reaches 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+    "userFriendlyMessage": "Invalid row level permission predicate data.",
+  },
+  "message": "workspaceMemberFieldMetadataId is not a field of the workspaceMember object, or of the object its relation reaches. The rule would silently never apply.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when the workspace member relation is not a relation of the workspace member 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+    "userFriendlyMessage": "Invalid row level permission predicate data.",
+  },
+  "message": "workspaceMemberFieldMetadataId is not a field of the workspaceMember object, or of the object its relation reaches. The rule would silently never apply.",
   "name": "UserInputError",
 }
 `;
