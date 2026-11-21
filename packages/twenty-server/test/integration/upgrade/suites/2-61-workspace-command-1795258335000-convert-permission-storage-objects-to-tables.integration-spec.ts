@@ -26,7 +26,13 @@ const findTableShape = async ({
   schemaName: string;
   tableName: string;
 }) => {
-  const columns: Record<string, unknown>[] = await global.testDataSource.query(
+  const columns: {
+    column_name: string;
+    udt_name: string;
+    is_nullable: string;
+    is_identity: string;
+    column_default: string | null;
+  }[] = await global.testDataSource.query(
     `SELECT column_name, udt_name, is_nullable, is_identity,
        replace(column_default, $1, 'schema') AS column_default
      FROM information_schema.columns
@@ -34,12 +40,13 @@ const findTableShape = async ({
      ORDER BY column_name`,
     [schemaName, tableName],
   );
-  const indexes: Record<string, unknown>[] = await global.testDataSource.query(
-    `SELECT indexname, replace(indexdef, $1, 'schema') AS indexdef
+  const indexes: { indexname: string; indexdef: string }[] =
+    await global.testDataSource.query(
+      `SELECT indexname, replace(indexdef, $1, 'schema') AS indexdef
      FROM pg_indexes WHERE schemaname = $1 AND tablename = $2
      ORDER BY indexname`,
-    [schemaName, tableName],
-  );
+      [schemaName, tableName],
+    );
 
   return { columns, indexes };
 };
