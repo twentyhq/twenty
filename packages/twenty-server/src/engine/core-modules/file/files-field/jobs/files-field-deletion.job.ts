@@ -1,7 +1,5 @@
 import { Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { FilesFieldService } from 'src/engine/core-modules/file/files-field/services/files-field.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -10,6 +8,8 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 export type FilesFieldDeletionJobData = {
   workspaceId: string;
   fileIds: string[];
+  // A rich text body can reference files it does not own: only those the destroyed record owns are deleted.
+  recordOwnedFileCandidates?: { fileId: string; recordId: string }[];
 };
 
 @Processor(MessageQueue.deleteCascadeQueue)
@@ -20,11 +20,15 @@ export class FilesFieldDeletionJob {
 
   @Process(FilesFieldDeletionJob.name)
   async handle(data: FilesFieldDeletionJobData): Promise<void> {
-    const { workspaceId, fileIds } = data;
+    const { workspaceId } = data;
 
-    if (!isDefined(fileIds) || fileIds.length === 0) {
-      return;
-    }
+    const fileIds = [
+      ...(data.fileIds ?? []),
+      ...(await this.filesFieldService.findFileIdsOwnedByRecords({
+        workspaceId,
+        recordOwnedFileCandidates: data.recordOwnedFileCandidates ?? [],
+      })),
+    ];
 
     for (const fileId of fileIds) {
       try {

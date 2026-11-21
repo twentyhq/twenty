@@ -7,6 +7,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { In } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -19,6 +20,7 @@ import {
   FilesFieldExceptionCode,
 } from 'src/engine/core-modules/file/files-field/files-field.exception';
 import { buildRemoteFileExtension } from 'src/engine/core-modules/file/files-field/utils/build-remote-file-extension.util';
+import { buildTemporaryFilesFieldFileSettings } from 'src/engine/core-modules/file/files-field/utils/build-temporary-files-field-file-settings.util';
 import { type FileRemoteOrigin } from 'src/engine/core-modules/file/types/file-remote-origin.type';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
@@ -91,7 +93,7 @@ export class FilesFieldService {
     const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail(
       workspaceId,
       {
-        select: ['applicationId', 'universalIdentifier'],
+        select: ['applicationId', 'universalIdentifier', 'type'],
         where: {
           ...(fieldMetadataId ? { id: fieldMetadataId } : {}),
           ...(fieldMetadataUniversalIdentifier
@@ -117,10 +119,9 @@ export class FilesFieldService {
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId,
       fileId,
-      settings: {
-        isTemporaryFile: true,
-        toDelete: false,
-      },
+      settings: buildTemporaryFilesFieldFileSettings({
+        fieldMetadataType: fieldMetadata.type,
+      }),
     });
 
     return {
@@ -273,6 +274,36 @@ export class FilesFieldService {
       },
       shouldAssertStorageStock,
     });
+  }
+
+  async findFileIdsOwnedByRecords({
+    workspaceId,
+    recordOwnedFileCandidates,
+  }: {
+    workspaceId: string;
+    recordOwnedFileCandidates: { fileId: string; recordId: string }[];
+  }): Promise<string[]> {
+    if (recordOwnedFileCandidates.length === 0) {
+      return [];
+    }
+
+    const candidateFiles = await this.fileRepository.find(workspaceId, {
+      where: {
+        id: In(recordOwnedFileCandidates.map(({ fileId }) => fileId)),
+        recordId: In(recordOwnedFileCandidates.map(({ recordId }) => recordId)),
+      },
+      select: ['id', 'recordId'],
+    });
+
+    const candidateKeys = new Set(
+      recordOwnedFileCandidates.map(
+        ({ fileId, recordId }) => `${fileId}:${recordId}`,
+      ),
+    );
+
+    return candidateFiles
+      .filter(({ id, recordId }) => candidateKeys.has(`${id}:${recordId}`))
+      .map(({ id }) => id);
   }
 
   async deleteFilesFieldFile({

@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { OnDatabaseBatchEvent } from 'src/engine/workspace-event-emitter/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
+import { extractFilesFieldFileIdsFromRichTextValue } from 'src/engine/core-modules/file/files-field/utils/extract-files-field-file-ids-from-rich-text-value.util';
 import {
   FilesFieldDeletionJob,
   FilesFieldDeletionJobData,
@@ -75,12 +76,17 @@ export class FilesFieldDeletionListener {
     const filesFields = objectFields.filter(
       (field) => field.type === FieldMetadataType.FILES,
     );
+    const richTextFields = objectFields.filter(
+      (field) => field.type === FieldMetadataType.RICH_TEXT,
+    );
 
-    if (filesFields.length === 0) {
+    if (filesFields.length === 0 && richTextFields.length === 0) {
       return;
     }
 
     const fileIds = new Set<string>();
+    const recordOwnedFileCandidates: FilesFieldDeletionJobData['recordOwnedFileCandidates'] =
+      [];
 
     for (const event of payload.events) {
       const recordBefore = event.properties.before as Record<string, unknown>;
@@ -102,14 +108,23 @@ export class FilesFieldDeletionListener {
           fileIds.add(fileItem.fileId);
         }
       }
+
+      for (const richTextField of richTextFields) {
+        for (const fileId of extractFilesFieldFileIdsFromRichTextValue(
+          recordBefore[richTextField.name],
+        )) {
+          recordOwnedFileCandidates.push({ fileId, recordId: event.recordId });
+        }
+      }
     }
 
-    if (fileIds.size > 0) {
+    if (fileIds.size > 0 || recordOwnedFileCandidates.length > 0) {
       await this.messageQueueService.add<FilesFieldDeletionJobData>(
         FilesFieldDeletionJob.name,
         {
           workspaceId,
           fileIds: Array.from(fileIds),
+          recordOwnedFileCandidates,
         },
         {
           workspaceId,
