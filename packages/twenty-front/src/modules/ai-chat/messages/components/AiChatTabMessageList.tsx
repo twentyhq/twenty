@@ -10,7 +10,6 @@ import { AiChatNonLastMessageIdsList } from '@/ai-chat/messages/components/AiCha
 import { AiChatPendingResponseIndicator } from '@/ai-chat/messages/components/AiChatPendingResponseIndicator';
 import { AiChatScrollToBottomButton } from '@/ai-chat/messages/components/AiChatScrollToBottomButton';
 import { AiChatThreadStatusNotice } from '@/ai-chat/threads/components/AiChatThreadStatusNotice';
-import { AiChatStreamingAutoScrollEffect } from '@/ai-chat/messages/components/AiChatStreamingAutoScrollEffect';
 import { aiChatHasMessageFamilySelector } from '@/ai-chat/states/selectors/aiChatHasMessageFamilySelector';
 import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
 import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai-chat/constants/AiChatPageContentInlinePadding';
@@ -21,6 +20,7 @@ import { pinAiChatScrollToBottom } from '@/ai-chat/messages/utils/pinAiChatScrol
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { scrollWrapperScrollBottomComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollBottomComponentState';
 import { getScrollBottomInPx } from '@/ui/utilities/scroll/utils/getScrollBottomInPx';
+import { watchStickToBottomScroll } from '@/ui/utilities/scroll/utils/watchStickToBottomScroll';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { WorkspaceSetupChatPreamble } from '@/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -81,7 +81,7 @@ export const AiChatTabMessageList = () => {
     scrollWrapperInstanceId,
   );
 
-  const pinMessageListToBottom = useCallback(
+  const stickMessageListToBottom = useCallback(
     (messageListContentElement: HTMLDivElement | null) => {
       const { scrollWrapperElement } = getScrollWrapperElement();
 
@@ -92,13 +92,22 @@ export const AiChatTabMessageList = () => {
         return;
       }
 
-      return pinAiChatScrollToBottom({
+      const stopPinning = pinAiChatScrollToBottom({
         scrollWrapperElement,
         onPinningStopped: () =>
           setScrollWrapperScrollBottom(
             getScrollBottomInPx(scrollWrapperElement),
           ),
       });
+      const stopSticking = watchStickToBottomScroll({
+        scrollContainerElement: scrollWrapperElement,
+        scrollContentElement: messageListContentElement,
+      });
+
+      return () => {
+        stopPinning();
+        stopSticking();
+      };
     },
     [getScrollWrapperElement, setScrollWrapperScrollBottom],
   );
@@ -133,7 +142,7 @@ export const AiChatTabMessageList = () => {
           <ScrollWrapper componentInstanceId={scrollWrapperInstanceId}>
             <StyledMessageListContent
               key={threadId}
-              ref={pinMessageListToBottom}
+              ref={stickMessageListToBottom}
               hasPageContentInset={hasPageContentInset}
             >
               {isWorkspaceSetupChat && <WorkspaceSetupChatPreamble />}
@@ -143,7 +152,6 @@ export const AiChatTabMessageList = () => {
               <AiChatErrorUnderMessageList />
               <AiChatThreadStatusNotice />
             </StyledMessageListContent>
-            <AiChatStreamingAutoScrollEffect />
           </ScrollWrapper>
           <AiChatScrollToBottomButton />
         </StyledScrollWrapperContainer>
