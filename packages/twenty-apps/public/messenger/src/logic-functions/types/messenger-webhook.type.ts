@@ -28,12 +28,21 @@ export type MessengerMessageEdit = {
   num_edit: number;
 };
 
+// https://developers.facebook.com/docs/messenger-platform/reference/webhook-events/messaging_postbacks
+export type MessengerPostback = {
+  mid?: string;
+  title?: string;
+  payload?: string;
+  referral?: MessengerReferral;
+};
+
 export type MessengerMessagingEvent = {
   sender: { id: string };
   recipient: { id: string };
   timestamp: number;
   message?: MessengerWebhookMessage;
   message_edit?: MessengerMessageEdit;
+  postback?: MessengerPostback;
   referral?: MessengerReferral;
 };
 

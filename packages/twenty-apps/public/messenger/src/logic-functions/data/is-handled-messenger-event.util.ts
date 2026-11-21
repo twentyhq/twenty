@@ -5,4 +5,5 @@ import { type MessengerMessagingEvent } from 'src/logic-functions/types/messenge
 export const isHandledMessengerEvent = (event: MessengerMessagingEvent) =>
   isDefined(event.message) ||
   isDefined(event.message_edit) ||
+  isDefined(event.postback) ||
   isDefined(event.referral);

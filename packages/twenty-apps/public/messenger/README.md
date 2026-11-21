@@ -6,6 +6,7 @@ Brings the Facebook Messenger conversations of your Pages into Twenty and lets y
 - Messages the Page sends from Meta Business Suite are imported too.
 - Conversations can be answered from Twenty within 24 hours of the customer's last message, and up to 7 days with Meta's Human Agent feature. Attachments go up to 8 MB for images and 25 MB for other files.
 - When a customer edits a message, the edit replaces its text in Twenty.
+- When a customer taps a button the Page sent, such as Get Started or a menu item, the tap shows in the conversation.
 - When a customer arrives from a Click-to-Messenger ad or an m.me link, the person record shows the source, the link's ref, and the ad ID and title, with the date.
 - Opening a conversation in Twenty marks it as seen in Messenger.
 - Each customer gets a person record named from their Messenger profile, reused for every later message on the same Page.
@@ -37,7 +38,7 @@ Install the app, then set its variables:
 In the Meta App Dashboard, open **Messenger > Messenger API Settings**:
 
 1. Set the callback URL to the live URL of the app's `receive-webhook` function, shown in its HTTP trigger settings in Twenty (it ends with `/messenger`). Set the verify token to `VERIFY_TOKEN`.
-2. Subscribe to `messages`, `message_echoes`, `message_edits` and `messaging_referrals`.
+2. Subscribe to `messages`, `message_echoes`, `message_edits`, `messaging_referrals` and `messaging_postbacks`.
 
 The URL must be public HTTPS, so a Twenty running on localhost cannot receive messages.
 
@@ -56,7 +57,7 @@ Without Advanced Access, people are named "Messenger user" with the last 4 digit
 ## Limitations
 
 - Replies after 24 hours use the human agent tag and fail until Meta approves the Human Agent feature for your Meta app. Replies after 7 days are refused.
-- Reactions are not imported, and a referral from a Get Started button on a new conversation is not recorded.
+- Reactions are not imported.
 - A person created as "Messenger user" before Advanced Access keeps that name; rename or merge them by hand.
 - A Page-scoped ID differs on each Page, so a customer who writes to two Pages gets two person records until they are merged.
 - A reply with several attachments is sent as one Messenger message per part.
