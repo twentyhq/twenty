@@ -9,6 +9,7 @@ import {
   type RecordGqlFields,
   RelationType,
 } from 'twenty-shared/types';
+import { getRelationWithArgumentsVariableNames } from '@/object-record/graphql/utils/getRelationWithArgumentsVariableNames';
 import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
 import {
   canAccessThroughAllRecordsOrRlsPermission,
@@ -246,9 +247,13 @@ ${mapObjectMetadataToGraphQLQuery({
       }
     }
 
-    const relationSelection = isDefined(relationWithArgumentsResponseKey)
+    const variableNames = isDefined(relationWithArgumentsResponseKey)
+      ? getRelationWithArgumentsVariableNames(relationWithArgumentsResponseKey)
+      : undefined;
+
+    const relationSelection = isDefined(variableNames)
       ? doNotTranslate(
-          `${relationWithArgumentsResponseKey}: ${gqlField}(filter: $${relationWithArgumentsResponseKey}Filter, orderBy: $${relationWithArgumentsResponseKey}OrderBy, first: $${relationWithArgumentsResponseKey}First)`,
+          `${relationWithArgumentsResponseKey}: ${gqlField}(filter: $${variableNames.filter}, orderBy: $${variableNames.orderBy}, first: $${variableNames.first})`,
         )
       : gqlField;
 
