@@ -46,10 +46,7 @@ export class AccessGroupSyncService {
   private async syncAccessGroupsWithLock({
     workspaceId,
     isRelatedRecordPathChanged,
-  }: {
-    workspaceId: string;
-    isRelatedRecordPathChanged: boolean;
-  }): Promise<void> {
+  }: Required<SyncAccessGroupsJobData>): Promise<void> {
     await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
 
     const workspaceCache = await this.workspaceCacheService.getOrRecompute(
