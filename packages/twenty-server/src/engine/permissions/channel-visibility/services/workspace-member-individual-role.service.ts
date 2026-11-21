@@ -30,6 +30,8 @@ export class WorkspaceMemberIndividualRoleService {
     const { featureFlagsMap, billingEntitlements, ...flatEntityMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         ...WORKSPACE_MEMBER_INDIVIDUAL_ROLE_DEPENDENCY_FLAT_ENTITY_MAPS_KEYS,
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
         'featureFlagsMap',
         'billingEntitlements',
       ]);
