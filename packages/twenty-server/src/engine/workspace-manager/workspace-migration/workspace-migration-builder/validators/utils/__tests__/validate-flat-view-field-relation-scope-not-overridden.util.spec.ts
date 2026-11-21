@@ -30,6 +30,23 @@ const stageField = getFlatFieldMetadataMock({
   ],
 });
 
+const buildStageFilters = (
+  stageFilterValues: string[] | null,
+): UniversalViewFieldRelationScope['filters'] => {
+  if (!isDefined(stageFilterValues)) {
+    return [];
+  }
+
+  return [
+    {
+      id: STAGE_FILTER_ID,
+      fieldMetadataUniversalIdentifier: stageField.universalIdentifier,
+      operand: ViewFilterOperand.IS,
+      value: stageFilterValues,
+    },
+  ];
+};
+
 const buildRelationScope = ({
   limit = 1,
   stageFilterValues = ['WON'],
@@ -37,16 +54,7 @@ const buildRelationScope = ({
   limit?: number;
   stageFilterValues?: string[] | null;
 } = {}): UniversalViewFieldRelationScope => ({
-  filters: !isDefined(stageFilterValues)
-    ? []
-    : [
-        {
-          id: STAGE_FILTER_ID,
-          fieldMetadataUniversalIdentifier: stageField.universalIdentifier,
-          operand: ViewFilterOperand.IS,
-          value: stageFilterValues,
-        },
-      ],
+  filters: buildStageFilters(stageFilterValues),
   filterGroups: [],
   sorts: [
     {
