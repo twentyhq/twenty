@@ -42,9 +42,7 @@ const getRuleFieldObjectMetadataIdOrThrow = ({
   return relationTargetObjectMetadataId;
 };
 
-// Ids resolve workspace-wide downstream and migration validators only compare an update to its own row, so another
-// role's or object's ids would be silently rewritten and another object's field would build a never-matching filter
-const findWorkspaceMemberFieldObjectMetadataId = ({
+const findExpectedWorkspaceMemberFieldObjectMetadataId = ({
   workspaceMemberRelationFieldMetadataId,
   workspaceMemberObjectMetadataId,
   flatFieldMetadataMaps,
@@ -69,6 +67,8 @@ const findWorkspaceMemberFieldObjectMetadataId = ({
     : undefined;
 };
 
+// Ids resolve workspace-wide downstream and migration validators only compare an update to its own row, so another
+// role's or object's ids would be silently rewritten and another object's field would build a never-matching filter
 export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
   roleId,
   objectMetadataId,
@@ -184,7 +184,7 @@ export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
       flatEntityMaps: flatFieldMetadataMaps,
     });
     const expectedWorkspaceMemberFieldObjectMetadataId =
-      findWorkspaceMemberFieldObjectMetadataId({
+      findExpectedWorkspaceMemberFieldObjectMetadataId({
         workspaceMemberRelationFieldMetadataId:
           predicate.workspaceMemberRelationFieldMetadataId,
         workspaceMemberObjectMetadataId,
