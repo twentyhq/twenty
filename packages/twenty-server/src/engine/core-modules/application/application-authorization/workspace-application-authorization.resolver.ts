@@ -75,6 +75,15 @@ export class WorkspaceApplicationAuthorizationResolver {
     );
   }
 
+  @Query(() => [ApplicationConnectedMemberCountDTO])
+  async workspaceApplicationConnectedMemberCounts(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<ApplicationConnectedMemberCountDTO[]> {
+    return await this.applicationAuthorizationService.countActiveAuthorizationsByApplicationForWorkspace(
+      { workspaceId: workspace.id },
+    );
+  }
+
   @Mutation(() => Boolean)
   async revokeWorkspaceApplicationAuthorization(
     @AuthWorkspace() workspace: WorkspaceEntity,
