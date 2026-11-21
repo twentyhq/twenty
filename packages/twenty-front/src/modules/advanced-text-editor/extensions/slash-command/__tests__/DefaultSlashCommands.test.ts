@@ -251,24 +251,34 @@ describe('DefaultSlashCommands', () => {
     });
 
     it('should replace the typed command with today in the member date format', () => {
+      const initialFormatPreferences = jotaiStore.get(
+        workspaceMemberFormatPreferencesState.atom,
+      );
+
       jest.useFakeTimers().setSystemTime(new Date('2026-03-25T23:30:00Z'));
       jotaiStore.set(workspaceMemberFormatPreferencesState.atom, {
-        ...jotaiStore.get(workspaceMemberFormatPreferencesState.atom),
+        ...initialFormatPreferences,
         timeZone: 'Asia/Tokyo',
         dateFormat: DateFormat.YEAR_FIRST,
       });
 
-      const todayCommand = DEFAULT_SLASH_COMMANDS.find(
-        (cmd) => cmd.id === 'today',
-      );
+      try {
+        const todayCommand = DEFAULT_SLASH_COMMANDS.find(
+          (cmd) => cmd.id === 'today',
+        );
 
-      editor.commands.setContent('<p>Note /today</p>');
+        editor.commands.setContent('<p>Note /today</p>');
 
-      todayCommand?.getOnSelect(editor, { from: 6, to: 12 })();
+        todayCommand?.getOnSelect(editor, { from: 6, to: 12 })();
 
-      expect(editor.getText()).toBe('Note 2026 Mar 26 ');
-
-      jest.useRealTimers();
+        expect(editor.getText()).toBe('Note 2026 Mar 26 ');
+      } finally {
+        jest.useRealTimers();
+        jotaiStore.set(
+          workspaceMemberFormatPreferencesState.atom,
+          initialFormatPreferences,
+        );
+      }
     });
   });
 

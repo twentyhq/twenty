@@ -1,6 +1,5 @@
-import { formatInTimeZone } from 'date-fns-tz';
-
 import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
+import { formatDateISOStringToDate } from '@/localization/utils/formatDateISOStringToDate';
 import { resolveDateFormat } from '@/localization/utils/resolveDateFormat';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
@@ -9,5 +8,9 @@ export const getFormattedTodayDate = () => {
     workspaceMemberFormatPreferencesState.atom,
   );
 
-  return formatInTimeZone(new Date(), timeZone, resolveDateFormat(dateFormat));
+  return formatDateISOStringToDate({
+    date: new Date().toISOString(),
+    timeZone,
+    dateFormat: resolveDateFormat(dateFormat),
+  });
 };
