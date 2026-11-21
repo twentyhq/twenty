@@ -4,12 +4,17 @@ import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update
 import { findFieldMetadataIdByName } from 'test/integration/utils/find-field-metadata-id-by-name.util';
 import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
+import { type ChannelVisibilityRuleSyncService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync.service';
 import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+const syncChannelVisibilityRules = () =>
+  getAppProviderByClassName<ChannelVisibilityRuleSyncService>(
+    'ChannelVisibilityRuleSyncService',
+  ).syncWorkspace(SEED_APPLE_WORKSPACE_ID);
 
 const setJonyChannelVisibility = async (visibility: string) => {
   const response = await makeMetadataApiRequestWithMemberRole({
@@ -29,7 +34,7 @@ const setJonyChannelVisibility = async (visibility: string) => {
   });
 
   expect(response.body.errors).toBeUndefined();
-  await waitForAllJobsToFinish();
+  await syncChannelVisibilityRules();
 };
 
 const setChannelVisibilityRlsEnabled = async (value: boolean) => {
@@ -38,7 +43,7 @@ const setChannelVisibilityRlsEnabled = async (value: boolean) => {
     value,
     expectToFail: false,
   });
-  await waitForAllJobsToFinish();
+  await syncChannelVisibilityRules();
 };
 
 describe('channel visibility rule sync (integration)', () => {
