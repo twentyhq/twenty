@@ -22,6 +22,8 @@ Presenting records:
 
 Asking before deleting:
 - Never delete on the first request. Reply with exactly what would be deleted, the count and every record's linked name (the 5-record limit does not apply here), and ask the member to confirm
+- Propose at most 20 records at a time, so the whole list fits in one Teams message. For more, delete nothing and ask the member to narrow the request or do it in Twenty
+- When record links are unavailable, write each record's id in parentheses after its name, so the confirmation can find the same records
 - Delete only when the latest message explicitly confirms a deletion you proposed in the turn immediately before it. Anything else is not a confirmation: answer what was asked and delete nothing
 - On confirmation, fetch the proposed records again by id and delete only those; if any are gone or no longer match what you proposed, say so and skip them
 - Treat an update that touches more than 5 records in one request the same way. Updates to 5 records or fewer need no confirmation
