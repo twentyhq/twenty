@@ -34,3 +34,7 @@ In LINE Official Account Manager, under **Response settings**, turn off auto-res
 The URL must be public HTTPS, so a Twenty running on localhost cannot receive messages.
 
 Group and multi-person chats are not imported.
+
+## Replying
+
+Replies written in Twenty are sent as push messages, which count against the Official Account's monthly message limit (200 a month on the free plan in Japan). LINE's free reply token expires one minute after the customer's message, too soon for a reply typed by a person. Replies carry text only; attachments are not sent yet.

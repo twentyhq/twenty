@@ -2,6 +2,7 @@ import { defineMessagingProvider } from 'twenty-sdk/define';
 
 import {
   LINE_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
+  LINE_LOGIC_FUNCTION_SEND_MESSAGE_UNIVERSAL_IDENTIFIER,
   LINE_MESSAGING_PROVIDER_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
@@ -12,5 +13,8 @@ export default defineMessagingProvider({
   conversationStyle: 'chat',
   connectionProvider: {
     universalIdentifier: LINE_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
+  },
+  sendMessageLogicFunction: {
+    universalIdentifier: LINE_LOGIC_FUNCTION_SEND_MESSAGE_UNIVERSAL_IDENTIFIER,
   },
 });
