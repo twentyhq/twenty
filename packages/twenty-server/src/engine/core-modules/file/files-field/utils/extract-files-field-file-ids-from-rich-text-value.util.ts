@@ -10,10 +10,13 @@ import {
 import { extractFilesFieldFileIdFromBlocknoteBlock } from 'src/engine/core-modules/file/files-field/utils/extract-files-field-file-id-from-blocknote-block.util';
 import { extractFilesFieldFileIdFromTipTapNode } from 'src/engine/core-modules/file/files-field/utils/extract-files-field-file-id-from-tiptap-node.util';
 
-const collectTipTapNodeFileIds = (
-  node: TipTapNode,
-  fileIds: Set<string>,
-): void => {
+const collectTipTapNodeFileIds = ({
+  node,
+  fileIds,
+}: {
+  node: TipTapNode;
+  fileIds: Set<string>;
+}): void => {
   const fileId = extractFilesFieldFileIdFromTipTapNode(node);
 
   if (isDefined(fileId)) {
@@ -21,7 +24,7 @@ const collectTipTapNodeFileIds = (
   }
 
   for (const childNode of node.content ?? []) {
-    collectTipTapNodeFileIds(childNode, fileIds);
+    collectTipTapNodeFileIds({ node: childNode, fileIds });
   }
 };
 
@@ -39,7 +42,7 @@ export const extractFilesFieldFileIdsFromRichTextValue = (
     : undefined;
 
   if (isTipTapNode(tiptapDocument)) {
-    collectTipTapNodeFileIds(tiptapDocument, fileIds);
+    collectTipTapNodeFileIds({ node: tiptapDocument, fileIds });
   }
 
   const blocknoteBlocks = isNonEmptyString(richTextValue.blocknote)

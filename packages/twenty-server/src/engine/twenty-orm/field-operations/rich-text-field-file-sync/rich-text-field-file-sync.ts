@@ -114,11 +114,13 @@ export class RichTextFieldFileSync {
         const file = fileById.get(fileId);
 
         const isReleasedFile = isDefined(file?.deletedAt);
+        const isClaimableUpload =
+          isDefined(file?.settings?.expiresAt) && file.settings.isTemporaryFile;
 
         if (
           !isDefined(file) ||
           !isUploadedForField(file) ||
-          (!file.settings?.isTemporaryFile && !isReleasedFile) ||
+          (!isClaimableUpload && !isReleasedFile) ||
           claimedFileIds.has(fileId)
         ) {
           continue;
@@ -192,7 +194,7 @@ export class RichTextFieldFileSync {
     }
 
     if (claimedFileIds.length > 0) {
-      // Only a temporary or released file can be claimed, so one another write claimed first stays with that record.
+      // A file another write claimed first matches neither condition, so it stays with that record.
       await this.fileRepository.query(
         `UPDATE "core"."file" AS "file"
          SET "settings" = '{"isTemporaryFile":false,"toDelete":false}'::jsonb,
@@ -201,7 +203,8 @@ export class RichTextFieldFileSync {
          FROM unnest($1::uuid[], $2::uuid[]) AS "claim"("fileId", "recordId")
          WHERE "file"."id" = "claim"."fileId"
            AND "file"."workspaceId" = $3
-           AND ("file"."settings"->>'isTemporaryFile' = 'true'
+           AND (("file"."settings"->>'isTemporaryFile' = 'true'
+               AND "file"."settings" ? 'expiresAt')
              OR "file"."deletedAt" IS NOT NULL)`,
         [claimedFileIds, claimingRecordIds, workspaceId],
       );

@@ -20,6 +20,7 @@ import {
   FilesFieldExceptionCode,
 } from 'src/engine/core-modules/file/files-field/files-field.exception';
 import { buildRemoteFileExtension } from 'src/engine/core-modules/file/files-field/utils/build-remote-file-extension.util';
+import { buildTemporaryFilesFieldFileSettings } from 'src/engine/core-modules/file/files-field/utils/build-temporary-files-field-file-settings.util';
 import { type FileRemoteOrigin } from 'src/engine/core-modules/file/types/file-remote-origin.type';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
@@ -92,7 +93,7 @@ export class FilesFieldService {
     const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail(
       workspaceId,
       {
-        select: ['applicationId', 'universalIdentifier'],
+        select: ['applicationId', 'universalIdentifier', 'type'],
         where: {
           ...(fieldMetadataId ? { id: fieldMetadataId } : {}),
           ...(fieldMetadataUniversalIdentifier
@@ -118,10 +119,10 @@ export class FilesFieldService {
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId,
       fileId,
-      settings: {
-        isTemporaryFile: true,
-        toDelete: false,
-      },
+      settings: buildTemporaryFilesFieldFileSettings({
+        fieldMetadataType: fieldMetadata.type,
+        now: new Date(),
+      }),
     });
 
     return {

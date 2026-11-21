@@ -92,7 +92,13 @@ describe('Rich text field <> files sync', () => {
     return response.body.data.createRichTextFileSyncTestObject.id;
   };
 
-  const updateRecordBody = async (id: string, fileIds: string[]) => {
+  const updateRecordBody = async ({
+    id,
+    fileIds,
+  }: {
+    id: string;
+    fileIds: string[];
+  }) => {
     const response = await makeGraphqlApiRequest({
       query: updateRecordMutation,
       variables: { id, data: { body: buildBody(fileIds) } },
@@ -179,7 +185,7 @@ describe('Rich text field <> files sync', () => {
     const recordId = await createRecord([]);
     const fileId = await uploadFile(richTextFieldMetadataId);
 
-    await updateRecordBody(recordId, [fileId]);
+    await updateRecordBody({ id: recordId, fileIds: [fileId] });
 
     expect(await findFileRow(fileId)).toMatchObject({
       recordId,
@@ -187,7 +193,7 @@ describe('Rich text field <> files sync', () => {
       settings: { isTemporaryFile: false },
     });
 
-    await updateRecordBody(recordId, []);
+    await updateRecordBody({ id: recordId, fileIds: [] });
 
     expect((await findFileRow(fileId))?.deletedAt).not.toBeNull();
   });
@@ -196,8 +202,8 @@ describe('Rich text field <> files sync', () => {
     const fileId = await uploadFile(richTextFieldMetadataId);
     const recordId = await createRecord([fileId]);
 
-    await updateRecordBody(recordId, []);
-    await updateRecordBody(recordId, [fileId]);
+    await updateRecordBody({ id: recordId, fileIds: [] });
+    await updateRecordBody({ id: recordId, fileIds: [fileId] });
 
     expect(await findFileRow(fileId)).toMatchObject({
       recordId,
@@ -210,8 +216,8 @@ describe('Rich text field <> files sync', () => {
     const firstRecordId = await createRecord([fileId]);
     const secondRecordId = await createRecord([]);
 
-    await updateRecordBody(firstRecordId, []);
-    await updateRecordBody(secondRecordId, [fileId]);
+    await updateRecordBody({ id: firstRecordId, fileIds: [] });
+    await updateRecordBody({ id: secondRecordId, fileIds: [fileId] });
 
     expect(await findFileRow(fileId)).toMatchObject({
       recordId: secondRecordId,
@@ -224,7 +230,7 @@ describe('Rich text field <> files sync', () => {
     const ownerRecordId = await createRecord([fileId]);
     const otherRecordId = await createRecord([fileId]);
 
-    await updateRecordBody(otherRecordId, []);
+    await updateRecordBody({ id: otherRecordId, fileIds: [] });
 
     expect(await findFileRow(fileId)).toMatchObject({
       recordId: ownerRecordId,
@@ -232,11 +238,30 @@ describe('Rich text field <> files sync', () => {
     });
   });
 
+  it('should not claim a file uploaded for the field before uploads carried an expiry', async () => {
+    const fileId = await uploadFile(richTextFieldMetadataId);
+
+    await global.testDataSource.query(
+      `UPDATE core."file" SET "settings" = "settings" - 'expiresAt' WHERE id = $1`,
+      [fileId],
+    );
+
+    const recordId = await createRecord([fileId]);
+
+    await updateRecordBody({ id: recordId, fileIds: [] });
+
+    expect(await findFileRow(fileId)).toMatchObject({
+      recordId: null,
+      deletedAt: null,
+      settings: { isTemporaryFile: true },
+    });
+  });
+
   it('should leave a file uploaded for another field untouched', async () => {
     const fileId = await uploadFile(filesFieldMetadataId);
     const recordId = await createRecord([fileId]);
 
-    await updateRecordBody(recordId, []);
+    await updateRecordBody({ id: recordId, fileIds: [] });
 
     expect(await findFileRow(fileId)).toMatchObject({
       recordId: null,

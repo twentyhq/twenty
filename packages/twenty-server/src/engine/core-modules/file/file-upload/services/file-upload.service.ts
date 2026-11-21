@@ -6,7 +6,7 @@ import { pipeline } from 'stream/promises';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { FileFolder } from 'twenty-shared/types';
+import { type FieldMetadataType, FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -18,6 +18,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { buildTemporaryFilesFieldFileSettings } from 'src/engine/core-modules/file/files-field/utils/build-temporary-files-field-file-settings.util';
 import { COMPLETE_FILE_UPLOAD_DEADLINE_MS } from 'src/engine/core-modules/file/file-upload/constants/complete-file-upload-deadline.constant';
 import { MAX_SANITIZABLE_SVG_BYTES } from 'src/engine/core-modules/file/file-upload/constants/max-sanitizable-svg-size.constant';
 import { FileUploadTargetDTO } from 'src/engine/core-modules/file/file-upload/dtos/file-upload-target.dto';
@@ -121,7 +122,7 @@ export class FileUploadService {
     const fileId = v4();
     const name = `${fileId}${isNonEmptyString(ext) ? `.${ext}` : ''}`;
 
-    const { applicationUniversalIdentifier, resourcePath } =
+    const { applicationUniversalIdentifier, resourcePath, fieldMetadataType } =
       await this.resolveUploadLocation({
         workspaceId,
         fileFolder,
@@ -138,10 +139,10 @@ export class FileUploadService {
       fileId,
       size,
       mimeType,
-      settings: {
-        isTemporaryFile: true,
-        toDelete: false,
-      },
+      settings: buildTemporaryFilesFieldFileSettings({
+        fieldMetadataType,
+        now: new Date(),
+      }),
     });
 
     return this.fileUploadTargetService.buildUploadTarget({
@@ -359,6 +360,7 @@ export class FileUploadService {
   }): Promise<{
     applicationUniversalIdentifier: string;
     resourcePath: string;
+    fieldMetadataType?: FieldMetadataType;
   }> {
     if (fileFolder === FileFolder.FilesField) {
       if (!fieldMetadataId && !fieldMetadataUniversalIdentifier) {
@@ -374,7 +376,7 @@ export class FileUploadService {
       const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail(
         workspaceId,
         {
-          select: ['applicationId', 'universalIdentifier'],
+          select: ['applicationId', 'universalIdentifier', 'type'],
           where: {
             ...(fieldMetadataId ? { id: fieldMetadataId } : {}),
             ...(fieldMetadataUniversalIdentifier
@@ -396,6 +398,7 @@ export class FileUploadService {
       return {
         applicationUniversalIdentifier: application.universalIdentifier,
         resourcePath: `${fieldMetadata.universalIdentifier}/${name}`,
+        fieldMetadataType: fieldMetadata.type,
       };
     }
 
