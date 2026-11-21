@@ -6,7 +6,6 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { getEffectiveToolName } from '@/ai-chat/tool-calls/utils/getEffectiveToolName';
 import { GetToolIndexDocument } from '~/generated-metadata/graphql';
 
-// Tools the index still lacks after a refetch (built-ins outside it) must not refetch again
 const requestedUnknownToolNames = new Set<string>();
 
 export const refetchToolIndexOnUnknownTools = ({

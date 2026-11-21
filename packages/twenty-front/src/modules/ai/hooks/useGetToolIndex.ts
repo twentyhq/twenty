@@ -11,7 +11,6 @@ export const useGetToolIndex = ({
   skip = false,
   isRefreshedOnMount = false,
 }: { skip?: boolean; isRefreshedOnMount?: boolean } = {}) => {
-  // Chat step rows read it cache-first: refreshing on each mount would rebuild it server-side for every row
   const { data, loading, error } = useQuery(GetToolIndexDocument, {
     fetchPolicy: isRefreshedOnMount ? 'cache-and-network' : 'cache-first',
     skip,
