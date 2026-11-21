@@ -19,7 +19,6 @@ type AiChatComposerSendEffectProps = {
   isComposerCentered: boolean;
 };
 
-// Sending needs chat metadata, so it runs here, inside the chat runtime, for every way a message is sent
 export const AiChatComposerSendEffect = ({
   editor,
   isComposerCentered,

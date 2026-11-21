@@ -86,8 +86,8 @@ export const openAiChatThreadStream = ({
   let throttleTimer: ReturnType<typeof setTimeout> | null = null;
   let latestMessage: ExtendedUIMessage | null = null;
   let writer: WritableStreamDefaultWriter<UIMessageChunk> | null = null;
-  let disposed = false;
-  let accessDenied = false;
+  let isDisposed = false;
+  let isAccessDenied = false;
   let lastPermissionsRefreshAt: number | undefined;
   let lastBroadcastAt = Date.now();
   let hasReceivedInitialKeepalive = false;
@@ -95,7 +95,7 @@ export const openAiChatThreadStream = ({
   let isStreamOpen = false;
   let lastFetchId = 0;
 
-  const isInactive = () => disposed || accessDenied;
+  const isInactive = () => isDisposed || isAccessDenied;
 
   const closeWriter = () => {
     if (isDefined(writer)) {
@@ -196,7 +196,7 @@ export const openAiChatThreadStream = ({
     }
     flushLatestMessage();
 
-    if (!disposed) {
+    if (!isDisposed) {
       endStream();
     }
   };
@@ -214,7 +214,7 @@ export const openAiChatThreadStream = ({
       startReadLoop(
         bridge.readable.pipeThrough(createMidStreamAdapter()),
       ).catch(() => {
-        if (!disposed) {
+        if (!isDisposed) {
           endStream();
         }
       });
@@ -419,7 +419,7 @@ export const openAiChatThreadStream = ({
   let disposeSubscription: (() => void) | undefined;
 
   const handleAccessDenied = () => {
-    accessDenied = true;
+    isAccessDenied = true;
     disposeSubscription?.();
     latestMessage = null;
     if (isDefined(throttleTimer)) {
@@ -486,14 +486,14 @@ export const openAiChatThreadStream = ({
         }
       },
       complete: () => {
-        if (!disposed) {
+        if (!isDisposed) {
           cleanupStream();
         }
       },
     },
   );
 
-  if (accessDenied) {
+  if (isAccessDenied) {
     disposeSubscription();
   }
 
@@ -504,7 +504,7 @@ export const openAiChatThreadStream = ({
 
     // Resubscribing clears the pending flags, so a started recovery runs until a broadcast arrives or it gives up
     if (
-      accessDenied ||
+      isAccessDenied ||
       (!isPending && recoveryAttempts === 0) ||
       Date.now() - lastBroadcastAt <= AI_CHAT_STREAM_LIVENESS_TIMEOUT_IN_MS
     ) {
@@ -576,7 +576,7 @@ export const openAiChatThreadStream = ({
 
     const loadedThread = await getDependencies().loadAiChatThread(threadId);
 
-    if (!disposed && loadedThread === null) {
+    if (!isDisposed && loadedThread === null) {
       store.set(aiChatThreadIsMissingFamilyState.atomFamily(familyKey), true);
     }
   };
@@ -591,7 +591,7 @@ export const openAiChatThreadStream = ({
       refetchMessages();
     },
     dispose: () => {
-      disposed = true;
+      isDisposed = true;
       clearInterval(livenessInterval);
       unsubscribeDisplayedSync.forEach((unsubscribe) => unsubscribe());
       chunkSequencer.reset();
@@ -600,7 +600,7 @@ export const openAiChatThreadStream = ({
         clearTimeout(throttleTimer);
       }
       cleanupStream();
-      if (!accessDenied) {
+      if (!isAccessDenied) {
         disposeSubscription?.();
       }
     },

@@ -5,7 +5,6 @@ import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/
 import { aiChatComposerShouldSendFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldSendFamilyState';
 import { type AiChatPrepromptMode } from '@/ai-chat/types/AiChatPrepromptMode';
 
-// For a chat being opened: its composer sends or focuses once it is mounted
 export const useApplyAiChatPreprompt = () => {
   const store = useStore();
 
