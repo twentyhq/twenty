@@ -309,9 +309,9 @@ describe('requestTeamsConnector', () => {
       return buildUnavailableResponse();
     });
 
-    const failure = expect(
-      requestTeamsConnector(POST_REQUEST),
-    ).rejects.toThrow('503 Service Unavailable');
+    const failure = expect(requestTeamsConnector(POST_REQUEST)).rejects.toThrow(
+      '503 Service Unavailable',
+    );
 
     await vi.advanceTimersByTimeAsync(9_500);
     await failure;
