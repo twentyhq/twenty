@@ -4,6 +4,7 @@ import { isNonEmptyArray, isString } from '@sniptt/guards';
 import {
   FieldMetadataType,
   RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
   type CompositeFieldSubFieldName,
   type RecordGqlOperationFilter,
   type RowLevelPermissionPredicate,
@@ -158,6 +159,23 @@ const buildPredicateRecordFilter = ({
 
   if (isDefined(predicate.relationFieldMetadataId) && !isRelationHopEnabled) {
     return UNSATISFIABLE_RECORD_FILTER;
+  }
+
+  // a view filter on a morph relation checks every target, a predicate on one target checks only its own column
+  if (
+    fieldMetadata.type === FieldMetadataType.MORPH_RELATION &&
+    !isDefined(predicate.relationFieldMetadataId) &&
+    (predicate.operand === RowLevelPermissionPredicateOperand.IS_EMPTY ||
+      predicate.operand === RowLevelPermissionPredicateOperand.IS_NOT_EMPTY)
+  ) {
+    return {
+      [`${fieldMetadata.name}Id`]: {
+        is:
+          predicate.operand === RowLevelPermissionPredicateOperand.IS_EMPTY
+            ? 'NULL'
+            : 'NOT_NULL',
+      },
+    };
   }
 
   let predicateValue = predicate.value;

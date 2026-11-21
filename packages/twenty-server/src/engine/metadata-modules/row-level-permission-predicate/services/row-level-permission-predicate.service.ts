@@ -182,7 +182,11 @@ export class RowLevelPermissionPredicateService {
       fieldPermissionsToCreate: [],
     });
 
-    // The runner creates field permissions before predicate groups, so they go in a second migration
+    // The runner creates field permissions before predicate groups, so they go in a second migration.
+    // Deleting a rule cascades its field permissions in the database only, so the cached map is rebuilt first
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatFieldPermissionMaps',
+    ]);
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
