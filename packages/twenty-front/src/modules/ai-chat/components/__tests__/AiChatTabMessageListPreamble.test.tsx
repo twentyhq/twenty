@@ -59,24 +59,15 @@ jest.mock('@/ai-chat/messages/components/AiChatScrollToBottomButton', () => ({
 }));
 const mockPinScrollToBottom = jest.fn();
 
-jest.mock(
-  '@/ai-chat/messages/components/AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect',
-  () => {
-    const { useLayoutEffect } = jest.requireActual<typeof React>('react');
-    return {
-      AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect: () => {
-        useLayoutEffect(mockPinScrollToBottom, []);
-        return null;
-      },
-    };
-  },
-);
-jest.mock(
-  '@/ai-chat/messages/components/AiChatStreamingAutoScrollEffect',
-  () => ({
-    AiChatStreamingAutoScrollEffect: () => null,
-  }),
-);
+jest.mock('@/ai-chat/messages/components/AiChatMessageListScrollEffect', () => {
+  const { useLayoutEffect } = jest.requireActual<typeof React>('react');
+  return {
+    AiChatMessageListScrollEffect: () => {
+      useLayoutEffect(mockPinScrollToBottom, []);
+      return null;
+    },
+  };
+});
 
 jest.mock('@/ai-chat/message-content/components/LazyMarkdownRenderer', () => ({
   MarkdownLoadingSkeleton: () => <div role="status">Loading conversation</div>,

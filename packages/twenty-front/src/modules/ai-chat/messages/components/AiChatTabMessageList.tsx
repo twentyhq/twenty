@@ -10,8 +10,7 @@ import { AiChatNonLastMessageIdsList } from '@/ai-chat/messages/components/AiCha
 import { AiChatPendingResponseIndicator } from '@/ai-chat/messages/components/AiChatPendingResponseIndicator';
 import { AiChatScrollToBottomButton } from '@/ai-chat/messages/components/AiChatScrollToBottomButton';
 import { AiChatThreadStatusNotice } from '@/ai-chat/threads/components/AiChatThreadStatusNotice';
-import { AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect } from '@/ai-chat/messages/components/AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect';
-import { AiChatStreamingAutoScrollEffect } from '@/ai-chat/messages/components/AiChatStreamingAutoScrollEffect';
+import { AiChatMessageListScrollEffect } from '@/ai-chat/messages/components/AiChatMessageListScrollEffect';
 import { aiChatHasMessageFamilySelector } from '@/ai-chat/states/selectors/aiChatHasMessageFamilySelector';
 import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
 import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai-chat/constants/AiChatPageContentInlinePadding';
@@ -105,8 +104,7 @@ export const AiChatTabMessageList = () => {
               <AiChatErrorUnderMessageList />
               <AiChatThreadStatusNotice />
             </StyledMessageListContent>
-            <AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect />
-            <AiChatStreamingAutoScrollEffect />
+            <AiChatMessageListScrollEffect />
           </ScrollWrapper>
           <AiChatScrollToBottomButton />
         </StyledScrollWrapperContainer>
