@@ -88,10 +88,7 @@ import {
 } from 'src/engine/twenty-orm/repository/utils/update-event-records.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-twenty-orm-statement.util';
-import {
-  escapeIdentifier,
-  escapeLiteral,
-} from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { renderReadableCondition } from 'src/engine/twenty-orm/sql/utils/render-readable-condition.util';
 import { serializeJsonbWriteValue } from 'src/engine/twenty-orm/sql/utils/serialize-jsonb-write-value.util';
 import {
@@ -2000,14 +1997,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
             ([columnName]) => columnName,
           ),
           condition: sqlCondition,
-          projectedValueByColumnName: Object.fromEntries(
+          replacementByColumnName: Object.fromEntries(
             unreadableColumnEntries
               .filter(([, fieldMetadataId]) =>
                 isDefined(replacementByFieldMetadataId[fieldMetadataId]),
               )
               .map(([columnName, fieldMetadataId]) => [
                 columnName,
-                escapeLiteral(replacementByFieldMetadataId[fieldMetadataId]),
+                replacementByFieldMetadataId[fieldMetadataId],
               ]),
           ),
         });

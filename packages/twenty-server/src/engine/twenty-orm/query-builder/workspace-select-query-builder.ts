@@ -108,6 +108,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private readonly unreadableColumnConditions: UnreadableColumnConditions = {};
   private readonly unreadableColumnProjectedValues: UnreadableColumnProjectedValues =
     {};
+  private unreadableColumnReplacementCount = 0;
   private readonly unreadableRelationConditions: UnreadableRelationConditions =
     {};
 
@@ -762,12 +763,12 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     alias,
     columnNames,
     condition,
-    projectedValueByColumnName = {},
+    replacementByColumnName = {},
   }: {
     alias: string;
     columnNames: string[];
     condition: SQLCondition;
-    projectedValueByColumnName?: Record<string, string>;
+    replacementByColumnName?: Record<string, string>;
   }): this {
     const unreadableColumnConditionsOfAlias = (this.unreadableColumnConditions[
       alias
@@ -778,9 +779,14 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         condition.sql,
       );
 
-      if (isDefined(projectedValueByColumnName[columnName])) {
+      const replacement = replacementByColumnName[columnName];
+
+      if (isDefined(replacement)) {
+        const parameterName = `unreadableColumnReplacement_${this.unreadableColumnReplacementCount++}`;
+
         (this.unreadableColumnProjectedValues[alias] ??= {})[columnName] =
-          projectedValueByColumnName[columnName];
+          `:${parameterName}`;
+        this.setParameter(parameterName, replacement);
       }
     }
 
