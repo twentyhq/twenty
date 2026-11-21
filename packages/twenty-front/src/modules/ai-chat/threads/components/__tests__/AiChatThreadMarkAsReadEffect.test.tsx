@@ -6,7 +6,7 @@ import { AiChatThreadOpenViewEffect } from '@/ai-chat/threads/components/AiChatT
 import { AiChatTestInstance } from '@/ai-chat/testing/AiChatTestInstance';
 import { aiChatReopenedThreadActivityState } from '@/ai-chat/threads/states/aiChatReopenedThreadActivityState';
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
-import { aiChatThreadVisitFamilyState } from '@/ai-chat/threads/states/aiChatThreadVisitFamilyState';
+import { aiChatThreadViewVisitFamilyState } from '@/ai-chat/states/view/aiChatThreadViewVisitFamilyState';
 import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
 import {
   type CurrentWorkspaceMember,
@@ -87,7 +87,10 @@ describe('AiChatThreadMarkAsReadEffect', () => {
     ]);
     jotaiStore.set(currentWorkspaceMemberState.atom, CURRENT_WORKSPACE_MEMBER);
     jotaiStore.set(aiChatThreadParticipantsState.atom, {
-      [THREAD_ID]: PARTICIPANT,
+      isLoaded: true,
+      rowsByThreadId: {
+        [THREAD_ID]: PARTICIPANT,
+      },
     });
   });
 
@@ -100,7 +103,7 @@ describe('AiChatThreadMarkAsReadEffect', () => {
     });
     expect(
       jotaiStore.get(
-        aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+        aiChatThreadViewVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
       ),
     ).toEqual({
       threadId: THREAD_ID,
@@ -113,7 +116,10 @@ describe('AiChatThreadMarkAsReadEffect', () => {
   });
 
   it('starts tracking a thread the member opens without participating in it', () => {
-    jotaiStore.set(aiChatThreadParticipantsState.atom, {});
+    jotaiStore.set(aiChatThreadParticipantsState.atom, {
+      isLoaded: true,
+      rowsByThreadId: {},
+    });
 
     renderChatView();
 
@@ -124,7 +130,7 @@ describe('AiChatThreadMarkAsReadEffect', () => {
     });
     expect(
       jotaiStore.get(
-        aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+        aiChatThreadViewVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
       ),
     ).toEqual({
       threadId: THREAD_ID,
@@ -143,7 +149,7 @@ describe('AiChatThreadMarkAsReadEffect', () => {
 
     expect(
       jotaiStore.get(
-        aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+        aiChatThreadViewVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
       )?.threadId,
     ).toBe(THREAD_ID);
 
@@ -151,7 +157,7 @@ describe('AiChatThreadMarkAsReadEffect', () => {
 
     expect(
       jotaiStore.get(
-        aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+        aiChatThreadViewVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
       ),
     ).toBeNull();
   });
@@ -159,7 +165,10 @@ describe('AiChatThreadMarkAsReadEffect', () => {
   describe('on leaving the chat', () => {
     const setReadUpTo = (lastReadAt: string) =>
       jotaiStore.set(aiChatThreadParticipantsState.atom, {
-        [THREAD_ID]: { ...PARTICIPANT, lastReadAt },
+        isLoaded: true,
+        rowsByThreadId: {
+          [THREAD_ID]: { ...PARTICIPANT, lastReadAt },
+        },
       });
 
     it('files a chat the member read up to the agent reply', async () => {
@@ -298,7 +307,7 @@ describe('AiChatThreadMarkAsReadEffect', () => {
       );
       expect(
         jotaiStore.get(
-          aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+          aiChatThreadViewVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
         )?.threadId,
       ).toBe(THREAD_ID);
     });

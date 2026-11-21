@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
 import { aiChatContinueInSidePanelThreadIdState } from '@/ai-chat/states/aiChatContinueInSidePanelThreadIdState';
-import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
+import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
@@ -47,7 +47,7 @@ export const SidePanelAskAiHandoffEffect = ({
       aiChatContinueInSidePanelThreadId ===
         store.get(newAiChatThreadIdState.atom) &&
       !store.get(
-        aiChatIsSendingMessageFamilyState.atomFamily({
+        aiChatThreadReplyIsSendingFamilyState.atomFamily({
           threadId: aiChatContinueInSidePanelThreadId,
         }),
       );

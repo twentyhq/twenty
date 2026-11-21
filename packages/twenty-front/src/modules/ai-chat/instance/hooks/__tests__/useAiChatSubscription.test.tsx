@@ -6,12 +6,11 @@ import { type AgentMessageReactionSummary } from 'twenty-shared/ai';
 
 import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai-chat/constants/AiChatRefetchMessagesEventName';
 import { useAiChatSubscription } from '@/ai-chat/instance/hooks/useAiChatSubscription';
-import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
-import { aiChatFetchedMessagesFamilyState } from '@/ai-chat/states/aiChatFetchedMessagesFamilyState';
-import { aiChatQueuedMessagesFamilyState } from '@/ai-chat/composer/states/aiChatQueuedMessagesFamilyState';
-import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
-import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai-chat/states/aiChatIsAwaitingFirstChunkFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionsFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
+import { aiChatThreadFetchedMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadFetchedMessagesFamilyState';
+import { aiChatThreadReplyErrorFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyErrorFamilyState';
+import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import {
@@ -32,10 +31,10 @@ jest.mock('@/ai-chat/usage/hooks/useRefreshAiChatUsage', () => ({
   useRefreshAiChatUsage: () => ({ refreshAiChatUsage }),
 }));
 const key = { threadId: 'thread' };
-const messagesAtom = aiChatMessagesFamilyState.atomFamily(key);
-const fetchedAtom = aiChatFetchedMessagesFamilyState.atomFamily(key);
-const queuedAtom = aiChatQueuedMessagesFamilyState.atomFamily(key);
-const errorAtom = aiChatErrorFamilyState.atomFamily(key);
+const messagesAtom = aiChatThreadDisplayedMessagesFamilyState.atomFamily(key);
+const persistedMessagesAtom =
+  aiChatThreadFetchedMessagesFamilyState.atomFamily(key);
+const errorAtom = aiChatThreadReplyErrorFamilyState.atomFamily(key);
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
@@ -57,8 +56,10 @@ describe('Shared conversation access revocation', () => {
       },
     ];
     jotaiStore.set(messagesAtom, messages);
-    jotaiStore.set(fetchedAtom, messages);
-    jotaiStore.set(queuedAtom, messages);
+    jotaiStore.set(persistedMessagesAtom, {
+      messages,
+      queuedMessages: messages,
+    });
   });
 
   it('refreshes only the subscribed thread on heartbeats, at most once every 30 seconds', () => {
@@ -106,8 +107,8 @@ describe('Shared conversation access revocation', () => {
         channel === 'next' ? sink.next({ errors: denial }) : sink.error(denial),
       );
       expect(jotaiStore.get(messagesAtom)).toEqual([]);
-      expect(jotaiStore.get(fetchedAtom)).toEqual([]);
-      expect(jotaiStore.get(queuedAtom)).toEqual([]);
+      expect(jotaiStore.get(persistedMessagesAtom).messages).toEqual([]);
+      expect(jotaiStore.get(persistedMessagesAtom).queuedMessages).toEqual([]);
       expect(jotaiStore.get(errorAtom)).toMatchObject({ code: 'NOT_FOUND' });
       expect(disconnect).toHaveBeenCalledTimes(1);
       unmount();
@@ -148,7 +149,7 @@ describe('Shared conversation access revocation', () => {
       subscribe.mock.calls[0][1].error([{ extensions: { code: 'FORBIDDEN' } }]),
     );
     expect(jotaiStore.get(messagesAtom)).toEqual([]);
-    expect(jotaiStore.get(queuedAtom)).toEqual([]);
+    expect(jotaiStore.get(persistedMessagesAtom).queuedMessages).toEqual([]);
     expect(disconnect).toHaveBeenCalledTimes(1);
   });
 
@@ -214,8 +215,10 @@ describe('Shared conversation access revocation', () => {
         channel === 'next' ? sink.next({ errors }) : sink.error(errors),
       );
       expect(jotaiStore.get(messagesAtom)).toHaveLength(1);
-      expect(jotaiStore.get(fetchedAtom)).toHaveLength(1);
-      expect(jotaiStore.get(queuedAtom)).toHaveLength(1);
+      expect(jotaiStore.get(persistedMessagesAtom).messages).toHaveLength(1);
+      expect(jotaiStore.get(persistedMessagesAtom).queuedMessages).toHaveLength(
+        1,
+      );
       expect(isGraphqlErrorOfType(jotaiStore.get(errorAtom), 'NOT_FOUND')).toBe(
         false,
       );
@@ -253,7 +256,10 @@ describe('Stream liveness', () => {
     resetJotaiStore();
     subscribe.mockReturnValue(disconnect);
     jotaiStore.set(sseClientState.atom, { subscribe } as never);
-    jotaiStore.set(aiChatIsAwaitingFirstChunkFamilyState.atomFamily(key), true);
+    jotaiStore.set(
+      aiChatThreadReplyStatusFamilyState.atomFamily(key),
+      'awaiting-first-chunk',
+    );
   });
 
   afterEach(() => {

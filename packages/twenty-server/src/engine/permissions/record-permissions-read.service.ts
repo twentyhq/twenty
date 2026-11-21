@@ -723,7 +723,6 @@ export class RecordPermissionsReadService {
       buildEntrySQLCondition: (entry) =>
         this.buildEntrySQLCondition({
           principals,
-          metadataMaps,
           operationType,
           ...entry,
           hypotheticalRecordShareAccessLevel:
