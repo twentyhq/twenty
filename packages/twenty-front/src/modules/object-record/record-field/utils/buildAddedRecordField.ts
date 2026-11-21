@@ -7,12 +7,11 @@ export const buildAddedRecordField = ({
   currentRecordFields,
   fieldMetadataItemId,
   relationTargetFieldMetadataId,
-  relationScope,
 }: {
   currentRecordFields: Pick<RecordField, 'position'>[];
 } & Pick<
   RecordField,
-  'fieldMetadataItemId' | 'relationTargetFieldMetadataId' | 'relationScope'
+  'fieldMetadataItemId' | 'relationTargetFieldMetadataId'
 >): RecordField => ({
   id: v4(),
   fieldMetadataItemId,
@@ -22,5 +21,4 @@ export const buildAddedRecordField = ({
   position:
     Math.max(0, ...currentRecordFields.map(({ position }) => position)) + 1,
   relationTargetFieldMetadataId,
-  relationScope,
 });
