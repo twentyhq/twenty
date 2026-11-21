@@ -23,6 +23,7 @@ import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspac
 import { isSlackAssistantRequestResumable } from 'src/logic-functions/utils/is-slack-assistant-request-resumable';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
+import { renewSlackAssistantRequestLease } from 'src/logic-functions/utils/renew-slack-assistant-request-lease';
 import { resolveSlackAccessDecision } from 'src/logic-functions/utils/resolve-slack-access-decision';
 import { resolveSlackAssistantAttachments } from 'src/logic-functions/utils/resolve-slack-assistant-attachments';
 import { resolveSlackAssistantMentions } from 'src/logic-functions/utils/resolve-slack-assistant-mentions';
@@ -282,6 +283,12 @@ export const slackAssistantWorkerHandler = async (
     }
 
     if (isDefined(deferredRetryAfterSeconds)) {
+      await renewSlackAssistantRequestLease({
+        requestId: record.id,
+        responseText,
+        agentChatThreadId: agentResult.threadId,
+      });
+
       await enqueueSlackMessageDelivery({
         payload: {
           ...answerMessage,

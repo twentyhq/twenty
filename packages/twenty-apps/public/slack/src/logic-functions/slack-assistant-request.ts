@@ -7,6 +7,8 @@ import { SLACK_ASSISTANT_REQUEST_TIMEOUT_SECONDS } from 'src/logic-functions/con
 import { slackAssistantWorkerHandler } from 'src/logic-functions/handlers/slack-assistant-worker-handler';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { enqueueSlackAssistantRequest } from 'src/logic-functions/utils/enqueue-slack-assistant-request';
+import { enqueueSlackAssistantRequestWatchdog } from 'src/logic-functions/utils/enqueue-slack-assistant-request-watchdog';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 export const slackAssistantRequestHandler = async (
   body: SlackEventsRequestBody,
@@ -20,9 +22,26 @@ export const slackAssistantRequestHandler = async (
     return enqueueResult;
   }
 
-  return await slackAssistantWorkerHandler(enqueueResult.request, {
+  const { request } = enqueueResult;
+
+  const isWatchdogScheduled = await enqueueSlackAssistantRequestWatchdog({
+    slackAssistantRequestId: request.id,
+  }).then(
+    () => true,
+    (error: unknown) => {
+      console.error(
+        `[slack] could not schedule the watchdog for request ${request.id}: ${toErrorMessage(error)}`,
+      );
+
+      return false;
+    },
+  );
+
+  const answerResult = await slackAssistantWorkerHandler(request, {
     agentDeadlineAtMs,
   });
+
+  return { ...answerResult, isWatchdogScheduled };
 };
 
 export default defineLogicFunction({

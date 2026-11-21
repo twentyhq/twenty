@@ -1,0 +1,136 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
+
+import { SLACK_ASSISTANT_INTERRUPTED_ERROR } from 'src/logic-functions/constants/slack-assistant-interrupted-error';
+import { SLACK_ASSISTANT_INTERRUPTED_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-interrupted-failure-text';
+import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
+import { SLACK_ASSISTANT_REQUEST_WATCHDOG_MAX_ATTEMPTS } from 'src/logic-functions/constants/slack-assistant-request-watchdog-max-attempts';
+import { failStaleSlackAssistantRequest } from 'src/logic-functions/data/fail-stale-slack-assistant-request';
+import { findSlackAssistantRequestById } from 'src/logic-functions/data/find-slack-assistant-request-by-id';
+import { type SlackAssistantRequestWatchdogPayload } from 'src/logic-functions/types/slack-assistant-request-watchdog-payload.type';
+import { type SlackAssistantRequestWatchdogResult } from 'src/logic-functions/types/slack-assistant-request-watchdog-result.type';
+import { type SlackPostMessageInput } from 'src/logic-functions/types/slack-post-message-input.type';
+import { enqueueSlackAssistantRequestWatchdog } from 'src/logic-functions/utils/enqueue-slack-assistant-request-watchdog';
+import { enqueueSlackMessageDelivery } from 'src/logic-functions/utils/enqueue-slack-message-delivery';
+import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
+import { isSlackAssistantRequestStale } from 'src/logic-functions/utils/is-slack-assistant-request-stale';
+import { resolveBestEffortSlackClient } from 'src/logic-functions/utils/resolve-best-effort-slack-client';
+import { sendSlackMessage } from 'src/logic-functions/utils/send-slack-message';
+import { setSlackAssistantStatus } from 'src/logic-functions/utils/set-slack-assistant-status';
+
+export const slackAssistantRequestWatchdogHandler = async ({
+  slackAssistantRequestId,
+  attempt = 1,
+}: SlackAssistantRequestWatchdogPayload): Promise<SlackAssistantRequestWatchdogResult> => {
+  const client = new CoreApiClient();
+
+  const record = await findSlackAssistantRequestById({
+    client,
+    id: slackAssistantRequestId,
+  });
+
+  if (
+    !isDefined(record) ||
+    (record.status !== SLACK_ASSISTANT_REQUEST_STATUS.PENDING &&
+      record.status !== SLACK_ASSISTANT_REQUEST_STATUS.PROCESSING)
+  ) {
+    return {
+      isFailed: false,
+      attempt,
+      isRescheduled: false,
+      reason: 'Request is missing or already finished',
+    };
+  }
+
+  const isStale = isSlackAssistantRequestStale({
+    updatedAt: record.updatedAt,
+  });
+
+  if (!isStale && attempt >= SLACK_ASSISTANT_REQUEST_WATCHDOG_MAX_ATTEMPTS) {
+    return {
+      isFailed: false,
+      attempt,
+      isRescheduled: false,
+      reason: 'Request is still being processed',
+    };
+  }
+
+  if (!isStale) {
+    await enqueueSlackAssistantRequestWatchdog({
+      slackAssistantRequestId,
+      attempt,
+    });
+
+    return { isFailed: false, attempt, isRescheduled: true };
+  }
+
+  const isFailed = await failStaleSlackAssistantRequest({
+    client,
+    id: slackAssistantRequestId,
+    errorMessage: SLACK_ASSISTANT_INTERRUPTED_ERROR,
+  });
+
+  if (!isFailed) {
+    return {
+      isFailed: false,
+      attempt,
+      isRescheduled: false,
+      reason: 'Request was finished by another execution',
+    };
+  }
+
+  const { slackChannelId, slackMessageTimestamp } = record;
+
+  if (
+    !isNonEmptyString(slackChannelId) ||
+    !isNonEmptyString(slackMessageTimestamp)
+  ) {
+    return { isFailed: true, attempt, hasReplied: false };
+  }
+
+  const parentMessageTimestamp = getSlackAssistantParentMessageTimestamp({
+    slackThreadTimestamp: record.slackThreadTimestamp,
+    slackMessageTimestamp,
+  });
+
+  const slackClient = await resolveBestEffortSlackClient(
+    'assistant.threads.setStatus',
+  );
+
+  if (isDefined(slackClient)) {
+    await setSlackAssistantStatus({
+      client: slackClient,
+      slackChannelId,
+      threadTimestamp: parentMessageTimestamp,
+      status: '',
+    });
+  }
+
+  const interruptedMessage: SlackPostMessageInput = {
+    slackChannelId,
+    messageText: SLACK_ASSISTANT_INTERRUPTED_FAILURE_TEXT,
+    parentMessageTimestamp,
+  };
+
+  const deliveryResult = await sendSlackMessage(interruptedMessage, {
+    waitOutRateLimit: false,
+  });
+
+  if (deliveryResult.success) {
+    return { isFailed: true, attempt, hasReplied: true };
+  }
+
+  if (isDefined(deliveryResult.retryAfterSeconds)) {
+    await enqueueSlackMessageDelivery({
+      payload: interruptedMessage,
+      retryAfterSeconds: deliveryResult.retryAfterSeconds,
+    });
+  } else {
+    console.warn(
+      `[slack] request ${slackAssistantRequestId} was failed as interrupted but the reply could not be posted: ${deliveryResult.error ?? deliveryResult.message}`,
+    );
+  }
+
+  return { isFailed: true, attempt, hasReplied: false };
+};

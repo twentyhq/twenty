@@ -9,6 +9,7 @@ import { buildSlackAnswerDeliveryFailureMessage } from 'src/logic-functions/util
 import { enqueueSlackMessageDelivery } from 'src/logic-functions/utils/enqueue-slack-message-delivery';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { markSlackAssistantRequestDone } from 'src/logic-functions/utils/mark-slack-assistant-request-done';
+import { renewSlackAssistantRequestLease } from 'src/logic-functions/utils/renew-slack-assistant-request-lease';
 import { sendSlackMessage } from 'src/logic-functions/utils/send-slack-message';
 
 export const slackDeliverMessageHandler = async (
@@ -41,6 +42,14 @@ export const slackDeliverMessageHandler = async (
     isDefined(result.retryAfterSeconds) &&
     attempt < SLACK_MESSAGE_DELIVERY_MAX_ATTEMPTS
   ) {
+    if (isNonEmptyString(slackAssistantRequestId)) {
+      await renewSlackAssistantRequestLease({
+        requestId: slackAssistantRequestId,
+        responseText: message.messageText,
+        agentChatThreadId,
+      });
+    }
+
     await enqueueSlackMessageDelivery({
       payload,
       retryAfterSeconds: result.retryAfterSeconds,

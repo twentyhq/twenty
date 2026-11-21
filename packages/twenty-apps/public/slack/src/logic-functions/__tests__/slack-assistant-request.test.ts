@@ -5,11 +5,20 @@ import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/sl
 import { slackAssistantRequestHandler } from 'src/logic-functions/slack-assistant-request';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 
-const { enqueueSlackAssistantRequestMock, slackAssistantWorkerHandlerMock } =
-  vi.hoisted(() => ({
-    enqueueSlackAssistantRequestMock: vi.fn(),
-    slackAssistantWorkerHandlerMock: vi.fn(),
-  }));
+const {
+  enqueueSlackAssistantRequestMock,
+  slackAssistantWorkerHandlerMock,
+  enqueueWatchdogMock,
+} = vi.hoisted(() => ({
+  enqueueSlackAssistantRequestMock: vi.fn(),
+  slackAssistantWorkerHandlerMock: vi.fn(),
+  enqueueWatchdogMock: vi.fn(),
+}));
+
+vi.mock(
+  'src/logic-functions/utils/enqueue-slack-assistant-request-watchdog',
+  () => ({ enqueueSlackAssistantRequestWatchdog: enqueueWatchdogMock }),
+);
 
 vi.mock('src/logic-functions/utils/enqueue-slack-assistant-request', () => ({
   enqueueSlackAssistantRequest: enqueueSlackAssistantRequestMock,
@@ -32,6 +41,7 @@ const PENDING_REQUEST = {
 describe('slackAssistantRequestHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    enqueueWatchdogMock.mockResolvedValue(undefined);
     slackAssistantWorkerHandlerMock.mockResolvedValue({ done: true });
   });
 
@@ -50,7 +60,46 @@ describe('slackAssistantRequestHandler', () => {
       PENDING_REQUEST,
       { agentDeadlineAtMs: expect.any(Number) },
     );
-    expect(result).toEqual({ done: true });
+    expect(result).toEqual({ done: true, isWatchdogScheduled: true });
+  });
+
+  it('should schedule a watchdog for the request before the agent runs', async () => {
+    enqueueSlackAssistantRequestMock.mockResolvedValue({
+      ok: true,
+      request: PENDING_REQUEST,
+    });
+
+    await slackAssistantRequestHandler(EVENT_BODY);
+
+    expect(enqueueWatchdogMock).toHaveBeenCalledExactlyOnceWith({
+      slackAssistantRequestId: PENDING_REQUEST.id,
+    });
+    expect(enqueueWatchdogMock.mock.invocationCallOrder[0]).toBeLessThan(
+      slackAssistantWorkerHandlerMock.mock.invocationCallOrder[0],
+    );
+  });
+
+  it('should still answer the request when the watchdog cannot be scheduled', async () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    enqueueSlackAssistantRequestMock.mockResolvedValue({
+      ok: true,
+      request: PENDING_REQUEST,
+    });
+    enqueueWatchdogMock.mockRejectedValue(new Error('queue unreachable'));
+
+    const result = await slackAssistantRequestHandler(EVENT_BODY);
+
+    expect(result).toEqual({ done: true, isWatchdogScheduled: false });
+    expect(slackAssistantWorkerHandlerMock).toHaveBeenCalledExactlyOnceWith(
+      PENDING_REQUEST,
+      { agentDeadlineAtMs: expect.any(Number) },
+    );
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('queue unreachable'),
+    );
+
+    errorSpy.mockRestore();
   });
 
   it('should count the agent budget from the start of the execution', async () => {
@@ -89,5 +138,6 @@ describe('slackAssistantRequestHandler', () => {
       skipped: 'Slack message is already queued',
     });
     expect(slackAssistantWorkerHandlerMock).not.toHaveBeenCalled();
+    expect(enqueueWatchdogMock).not.toHaveBeenCalled();
   });
 });

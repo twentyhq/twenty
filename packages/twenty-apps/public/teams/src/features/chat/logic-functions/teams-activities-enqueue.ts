@@ -9,23 +9,44 @@ import { type TeamsActivitiesEnqueueResult } from 'src/features/chat/logic-funct
 import { type TeamsAssistantAnswerResult } from 'src/features/chat/logic-functions/types/teams-assistant-answer-result.type';
 import { answerTeamsAssistantRequest } from 'src/features/chat/logic-functions/utils/answer-teams-assistant-request';
 import { enqueueTeamsAssistantRequest } from 'src/features/chat/logic-functions/utils/enqueue-teams-assistant-request';
+import { enqueueTeamsAssistantRequestWatchdog } from 'src/features/chat/logic-functions/utils/enqueue-teams-assistant-request-watchdog';
 
 export const teamsActivitiesEnqueueHandler = async (
   payload: TeamsActivitiesDispatchPayload,
-): Promise<TeamsActivitiesEnqueueResult | TeamsAssistantAnswerResult> => {
+): Promise<
+  | TeamsActivitiesEnqueueResult
+  | (TeamsAssistantAnswerResult & { isWatchdogScheduled: boolean })
+> => {
   const agentDeadlineAtMs =
     Date.now() + TEAMS_ASSISTANT_AGENT_BUDGET_SECONDS * 1000;
 
   const enqueueResult = await enqueueTeamsAssistantRequest(payload);
+  const { request } = enqueueResult;
 
-  if (!isDefined(enqueueResult.request)) {
+  if (!isDefined(request)) {
     return enqueueResult;
   }
 
-  return await answerTeamsAssistantRequest({
-    request: enqueueResult.request,
+  const isWatchdogScheduled = await enqueueTeamsAssistantRequestWatchdog({
+    teamsAssistantRequestId: request.id,
+  }).then(
+    () => true,
+    (error: unknown) => {
+      console.error(
+        `[teams] could not schedule the watchdog for request ${request.id}`,
+        error,
+      );
+
+      return false;
+    },
+  );
+
+  const answerResult = await answerTeamsAssistantRequest({
+    request,
     agentDeadlineAtMs,
   });
+
+  return { ...answerResult, isWatchdogScheduled };
 };
 
 export default defineLogicFunction({
