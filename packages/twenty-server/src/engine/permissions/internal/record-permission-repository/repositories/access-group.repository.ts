@@ -2,6 +2,8 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group-without-compact-id.type';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
@@ -105,9 +107,9 @@ export class AccessGroupRepository {
                   ],
                   [
                     `memberFieldValues${index}`,
-                    memberFieldValues === null
-                      ? null
-                      : JSON.stringify(memberFieldValues),
+                    isDefined(memberFieldValues)
+                      ? JSON.stringify(memberFieldValues)
+                      : null,
                   ],
                   [`value${index}`, value],
                   [`groupHash${index}`, newAccessGroup.groupHash],
