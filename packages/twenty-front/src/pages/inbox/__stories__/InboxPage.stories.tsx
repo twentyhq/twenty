@@ -273,6 +273,13 @@ const meta = {
     ToastDecorator,
   ],
   beforeEach: () => {
+    const storyUrl = window.location.href;
+
+    window.history.replaceState(
+      window.history.state,
+      '',
+      getAppPath(AppPath.AiChatInbox, { threadId: null }),
+    );
     initializeNewAiChatStory({ isInboxEnabled: true });
     jotaiStore.set(inboxLayoutState.atom, INBOX_LAYOUT.RECORD_PAGE);
     jotaiStore.set(inboxSelectedThreadListSourceState.atom, {
@@ -314,6 +321,10 @@ const meta = {
     for (const thread of THREADS) {
       jotaiStore.set(recordStoreFamilyState.atomFamily(thread.id), thread);
     }
+
+    return () => {
+      window.history.replaceState(window.history.state, '', storyUrl);
+    };
   },
   parameters: {
     container: { width: 1200, height: 784 },
