@@ -30,7 +30,8 @@ export const NavigationMenuEditableBuiltInSection = ({
 
   const sectionMenu = <NavigationMenuSectionMenu section={section} />;
   const canShowContent =
-    builtInSection.key !== 'favorites' && areAiChatSectionsAvailable;
+    builtInSection.key !== 'favorites' &&
+    (!builtInSection.isAi || areAiChatSectionsAvailable);
 
   if (canShowContent) {
     return (
