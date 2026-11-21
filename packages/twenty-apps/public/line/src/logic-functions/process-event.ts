@@ -4,14 +4,16 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { LINE_LOGIC_FUNCTION_PROCESS_EVENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { applyMessageEdit } from 'src/logic-functions/data/apply-message-edit.util';
 import { applyUnsend } from 'src/logic-functions/data/apply-unsend.util';
-import { fetchLineUserDisplayName } from 'src/logic-functions/data/fetch-line-user-display-name.util';
+import { fetchLineChatName } from 'src/logic-functions/data/fetch-line-chat-name.util';
 import { findBotMessageChannelOrThrow } from 'src/logic-functions/data/find-bot-message-channel-or-throw.util';
-import { findOrCreateLinePersonId } from 'src/logic-functions/data/find-or-create-line-person-id.util';
 import { getLineAccessTokenOrThrow } from 'src/logic-functions/data/get-line-access-token-or-throw.util';
+import { getLineChatId } from 'src/logic-functions/data/get-line-chat-id.util';
 import { importMessage } from 'src/logic-functions/data/import-message.util';
 import { findConnectedAccountIdByBotUserId } from 'src/logic-functions/data/link-bot-to-connection.util';
 import { storeMarkAsReadToken } from 'src/logic-functions/data/mark-as-read-token.util';
+import { resolveLineSender } from 'src/logic-functions/data/resolve-line-sender.util';
 import {
   forgetUnsentMessage,
   isMessageUnsent,
@@ -44,6 +46,19 @@ const handler = async ({ botUserId, event }: ProcessEventPayload) => {
     return;
   }
 
+  if (event.type === 'messageEdited') {
+    if (event.message.type === 'text') {
+      await applyMessageEdit({
+        client,
+        messageChannelId: messageChannel.id,
+        messageId: event.message.id,
+        text: event.message.text,
+      });
+    }
+
+    return;
+  }
+
   if (await isMessageUnsent(messageChannel.id, event.message.id)) {
     await forgetUnsentMessage(messageChannel.id, event.message.id);
 
@@ -51,23 +66,21 @@ const handler = async ({ botUserId, event }: ProcessEventPayload) => {
   }
 
   const accessToken = await getLineAccessTokenOrThrow(connectedAccountId);
-  const { userId } = event.source;
+  const chatId = getLineChatId(event.source);
 
   await withConnectionAuthFailureReport(connectedAccountId, async () => {
-    const personId = await findOrCreateLinePersonId({
-      client,
-      botUserId,
-      userId,
-      resolveDisplayName: () =>
-        fetchLineUserDisplayName({ accessToken, userId }),
-    });
-
     await importMessage({
       accessToken,
       messageChannelId: messageChannel.id,
       botUserId,
-      userId,
-      personId,
+      chatId,
+      chatName: await fetchLineChatName({ accessToken, source: event.source }),
+      sender: await resolveLineSender({
+        client,
+        accessToken,
+        botUserId,
+        source: event.source,
+      }),
       message: event.message,
       receivedAt: new Date(event.timestamp),
     });
@@ -86,7 +99,7 @@ const handler = async ({ botUserId, event }: ProcessEventPayload) => {
   if (isNonEmptyString(event.message.markAsReadToken)) {
     await storeMarkAsReadToken({
       botUserId,
-      userId,
+      chatId,
       token: event.message.markAsReadToken,
       timestamp: event.timestamp,
     });
@@ -97,7 +110,7 @@ export default defineLogicFunction({
   universalIdentifier: LINE_LOGIC_FUNCTION_PROCESS_EVENT_UNIVERSAL_IDENTIFIER,
   name: 'process-event',
   description:
-    'Processes one LINE event: imports a message into its thread and links the sender to a Person, or removes a message the customer unsent',
+    'Processes one LINE event from a one-on-one or group chat: imports a message and links its sender to a Person, applies an edit, or removes a message the sender unsent',
   timeoutSeconds: 60,
   handler,
 });

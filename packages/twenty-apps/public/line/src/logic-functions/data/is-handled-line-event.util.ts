@@ -1,15 +1,15 @@
 import {
   type LineMessage,
+  type LineMessageEditedEvent,
   type LineMessageEvent,
   type LineUnsendEvent,
   type LineWebhookEvent,
 } from 'src/logic-functions/types/line-webhook.type';
 
-type OneOnOneSource = { source: { type: 'user'; userId: string } };
-
 export type LineHandledEvent =
-  | (LineMessageEvent & OneOnOneSource)
-  | (LineUnsendEvent & OneOnOneSource);
+  | LineMessageEvent
+  | LineUnsendEvent
+  | LineMessageEditedEvent;
 
 const IMPORTED_MESSAGE_TYPES: LineMessage['type'][] = [
   'text',
@@ -21,11 +21,18 @@ const IMPORTED_MESSAGE_TYPES: LineMessage['type'][] = [
   'sticker',
 ];
 
-// group and room chats are not imported yet, and LINE may add message types the app cannot render
+// LINE may add message types the app cannot render, and only text can be edited
 export const isHandledLineEvent = (
   event: LineWebhookEvent,
-): event is LineHandledEvent =>
-  event.source.type === 'user' &&
-  (event.type === 'unsend' ||
-    (event.type === 'message' &&
-      IMPORTED_MESSAGE_TYPES.includes(event.message.type)));
+): event is LineHandledEvent => {
+  switch (event.type) {
+    case 'message':
+      return IMPORTED_MESSAGE_TYPES.includes(event.message.type);
+    case 'messageEdited':
+      return event.message.type === 'text';
+    case 'unsend':
+      return true;
+    default:
+      return false;
+  }
+};

@@ -1,6 +1,6 @@
 # LINE
 
-Read and answer the LINE chats of your LINE Official Account in Twenty. Each Official Account gets a message channel, and each LINE user who writes to it gets a thread linked to a Person.
+Read and answer the LINE chats of your LINE Official Account in Twenty. Each Official Account gets a message channel. Each one-on-one chat, group chat and multi-person chat the account is in gets a thread, and each LINE user who writes gets a Person.
 
 One Official Account can be connected per workspace.
 
@@ -33,7 +33,7 @@ In LINE Official Account Manager, under **Response settings**, turn off auto-res
 
 The URL must be public HTTPS, so a Twenty running on localhost cannot receive messages.
 
-Group and multi-person chats are not imported.
+LINE leaves out the sender of a group message posted from LINE on a computer, so those messages show an unidentified "LINE member". Edits in group chats update the imported message, and an unsent message is removed with its attachments.
 
 ## Replying
 

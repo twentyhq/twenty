@@ -1,5 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { ingestMessages } from 'twenty-sdk/logic-function';
+import {
+  ingestMessages,
+  type IngestMessageParticipant,
+} from 'twenty-sdk/logic-function';
 
 import { buildIncomingMessageText } from 'src/logic-functions/data/build-incoming-message-text.util';
 import { uploadIncomingMedia } from 'src/logic-functions/data/upload-incoming-media.util';
@@ -10,16 +13,18 @@ export const importMessage = async ({
   accessToken,
   messageChannelId,
   botUserId,
-  userId,
-  personId,
+  chatId,
+  chatName,
+  sender,
   message,
   receivedAt,
 }: {
   accessToken: string;
   messageChannelId: string;
   botUserId: string;
-  userId: string;
-  personId: string;
+  chatId: string;
+  chatName: string | undefined;
+  sender: Omit<IngestMessageParticipant, 'role'>;
   message: LineMessage;
   receivedAt: Date;
 }) => {
@@ -33,13 +38,14 @@ export const importMessage = async ({
     messages: [
       {
         externalId: message.id,
-        threadExternalId: userId,
+        threadExternalId: chatId,
+        subject: chatName,
         text: [buildIncomingMessageText(message), note]
           .filter(isNonEmptyString)
           .join(' '),
         receivedAt,
         participants: [
-          { role: 'FROM', handle: userId, personId },
+          { role: 'FROM', ...sender },
           { role: 'TO', handle: botUserId },
         ],
         attachments,

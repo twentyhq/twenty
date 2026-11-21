@@ -11,7 +11,7 @@ const BASE_EVENT = {
 } as const;
 
 describe('isHandledLineEvent', () => {
-  it('handles messages and unsends in one-on-one chats', () => {
+  it('handles messages, edits and unsends in one-on-one and group chats', () => {
     const events: LineWebhookEvent[] = [
       {
         ...BASE_EVENT,
@@ -21,24 +21,31 @@ describe('isHandledLineEvent', () => {
       },
       {
         ...BASE_EVENT,
+        type: 'message',
+        source: { type: 'group', groupId: 'C1', userId: 'U1' },
+        message: { id: '2', type: 'text', text: 'Hi all' },
+      },
+      {
+        ...BASE_EVENT,
+        type: 'messageEdited',
+        source: { type: 'group', groupId: 'C1', userId: 'U1' },
+        message: { id: '2', type: 'text', text: 'Hi everyone' },
+      },
+      {
+        ...BASE_EVENT,
         type: 'unsend',
-        source: { type: 'user', userId: 'U1' },
-        unsend: { messageId: '1' },
+        source: { type: 'room', roomId: 'R1', userId: 'U1' },
+        unsend: { messageId: '3' },
       },
     ];
 
     expect(events.every(isHandledLineEvent)).toBe(true);
   });
 
-  it('skips group chats and other event types', () => {
+  it('skips events that carry no message to import', () => {
     const events: LineWebhookEvent[] = [
-      {
-        ...BASE_EVENT,
-        type: 'message',
-        source: { type: 'group', groupId: 'C1', userId: 'U1' },
-        message: { id: '1', type: 'text', text: 'Hi' },
-      },
       { ...BASE_EVENT, type: 'follow', source: { type: 'user', userId: 'U1' } },
+      { ...BASE_EVENT, type: 'join', source: { type: 'group', groupId: 'C1' } },
     ];
 
     expect(events.some(isHandledLineEvent)).toBe(false);

@@ -83,6 +83,12 @@ export type LineUnsendEvent = LineEventBase & {
   unsend: { messageId: string };
 };
 
+// sent for group chats only, carrying the original message id and the new text
+export type LineMessageEditedEvent = LineEventBase & {
+  type: 'messageEdited';
+  message: LineMessage;
+};
+
 type LineUnhandledEvent = LineEventBase & {
   type:
     | 'follow'
@@ -95,13 +101,13 @@ type LineUnhandledEvent = LineEventBase & {
     | 'videoPlayComplete'
     | 'beacon'
     | 'accountLink'
-    | 'membership'
-    | 'messageEdited';
+    | 'membership';
 };
 
 export type LineWebhookEvent =
   | LineMessageEvent
   | LineUnsendEvent
+  | LineMessageEditedEvent
   | LineUnhandledEvent;
 
 export type LineWebhook = {

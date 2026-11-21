@@ -7,50 +7,50 @@ type StoredMarkAsReadToken = { token: string; timestamp: number };
 
 const buildKey = ({
   botUserId,
-  userId,
+  chatId,
 }: {
   botUserId: string;
-  userId: string;
-}) => `${LINE_KV_KEY_PREFIXES.markAsReadTokenByThread}${botUserId}:${userId}`;
+  chatId: string;
+}) => `${LINE_KV_KEY_PREFIXES.markAsReadTokenByThread}${botUserId}:${chatId}`;
 
 export const findMarkAsReadToken = async (thread: {
   botUserId: string;
-  userId: string;
+  chatId: string;
 }): Promise<StoredMarkAsReadToken | undefined> =>
   (await kv.get<StoredMarkAsReadToken>(buildKey(thread))) ?? undefined;
 
 // events can be processed out of order, and a token marks every message up to its own as read
 export const storeMarkAsReadToken = async ({
   botUserId,
-  userId,
+  chatId,
   token,
   timestamp,
 }: {
   botUserId: string;
-  userId: string;
+  chatId: string;
   token: string;
   timestamp: number;
 }) => {
-  const storedToken = await findMarkAsReadToken({ botUserId, userId });
+  const storedToken = await findMarkAsReadToken({ botUserId, chatId });
 
   if (isDefined(storedToken) && storedToken.timestamp > timestamp) {
     return;
   }
 
-  await kv.set(buildKey({ botUserId, userId }), { token, timestamp });
+  await kv.set(buildKey({ botUserId, chatId }), { token, timestamp });
 };
 
 export const forgetMarkAsReadToken = async ({
   botUserId,
-  userId,
+  chatId,
   token,
 }: {
   botUserId: string;
-  userId: string;
+  chatId: string;
   token: string;
 }) => {
   // a newer message may have stored its own token since
-  if ((await findMarkAsReadToken({ botUserId, userId }))?.token === token) {
-    await kv.delete(buildKey({ botUserId, userId }));
+  if ((await findMarkAsReadToken({ botUserId, chatId }))?.token === token) {
+    await kv.delete(buildKey({ botUserId, chatId }));
   }
 };

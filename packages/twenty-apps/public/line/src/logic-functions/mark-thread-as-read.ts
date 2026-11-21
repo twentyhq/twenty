@@ -19,13 +19,13 @@ const INVALID_TOKEN_STATUS = 400;
 const handler = async ({
   connectedAccountId,
   messageChannelId,
-  threadExternalId: userId,
+  threadExternalId: chatId,
 }: MarkAppThreadAsReadPayload): Promise<void> => {
   const { handle: botUserId } = await findBotMessageChannelOrThrow({
     connectedAccountId,
     messageChannelId,
   });
-  const storedToken = await findMarkAsReadToken({ botUserId, userId });
+  const storedToken = await findMarkAsReadToken({ botUserId, chatId });
 
   if (!isDefined(storedToken)) {
     return;
@@ -54,7 +54,7 @@ const handler = async ({
     console.warn(`LINE did not mark the chat as read: ${error.message}`);
   }
 
-  await forgetMarkAsReadToken({ botUserId, userId, token: storedToken.token });
+  await forgetMarkAsReadToken({ botUserId, chatId, token: storedToken.token });
 };
 
 export default defineLogicFunction({
