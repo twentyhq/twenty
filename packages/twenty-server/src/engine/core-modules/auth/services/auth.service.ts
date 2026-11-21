@@ -216,6 +216,11 @@ export class AuthService {
     if (isWorkspaceMember) {
       await this.validatePasswordCredentialsOrThrow(user, input.password);
 
+      await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
+        user,
+        workspace,
+      );
+
       return user;
     }
 
