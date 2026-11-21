@@ -193,6 +193,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             relationScope: getViewFieldRelationScopeInput(
               viewField.relationScope,
             ),
+            label: viewField.label,
             viewId: newViewId,
           })),
       });
