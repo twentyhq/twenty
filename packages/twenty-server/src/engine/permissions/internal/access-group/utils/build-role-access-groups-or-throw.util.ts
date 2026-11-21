@@ -89,7 +89,7 @@ export const buildRoleAccessGroupsOrThrow = ({
   const buildRuleAccessGroups = (
     rowLevelPermissionRule: RowLevelRecordsPermissions,
   ): AccessGroupWithoutCompactId[] => {
-    const { ruleShapeHash, unreadableFieldIds, literalValuePredicate } =
+    const { ruleShapeHash, unreadableFieldIds, splitPredicate } =
       resolveAccessGroupRuleShape({
         objectMetadataId,
         objectUnreadableFieldIds: unreadableFieldIdsOfObject,
@@ -98,8 +98,8 @@ export const buildRoleAccessGroupsOrThrow = ({
       });
     const groupShape = { objectMetadataId, ruleShapeHash, unreadableFieldIds };
 
-    if (isDefined(literalValuePredicate)) {
-      return [...new Set(literalValuePredicate.value)].map((value) => ({
+    if (isDefined(splitPredicate)) {
+      return [...new Set(splitPredicate.value)].map((value) => ({
         ...groupShape,
         type: 'LITERAL_VALUE',
         groupHash: computeAccessGroupHash({

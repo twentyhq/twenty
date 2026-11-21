@@ -64,11 +64,11 @@ const buildPredicateGroupContent = ({
 
 const buildRuleContent = ({
   rowLevelPermissionRule,
-  literalValuePredicateId,
+  splitPredicateId,
   isRelationHopEnabled,
 }: {
   rowLevelPermissionRule: RlsRule | null;
-  literalValuePredicateId: string | null;
+  splitPredicateId: string | null;
   isRelationHopEnabled: boolean;
 }): { predicates: string[]; predicateGroups: string[] } | null => {
   if (!isDefined(rowLevelPermissionRule)) {
@@ -77,7 +77,7 @@ const buildRuleContent = ({
 
   const predicatesWithoutLiteralValue = rowLevelPermissionRule.predicates.map(
     (predicate) => {
-      if (predicate.id !== literalValuePredicateId) {
+      if (predicate.id !== splitPredicateId) {
         return predicate;
       }
 
@@ -96,13 +96,13 @@ const buildRuleContent = ({
 export const computeRuleShapeHash = ({
   objectMetadataId,
   rowLevelPermissionRule,
-  literalValuePredicateId,
+  splitPredicateId,
   unreadableFieldIds,
   isRelationHopEnabled,
 }: {
   objectMetadataId: string;
   rowLevelPermissionRule: RlsRule | null;
-  literalValuePredicateId: string | null;
+  splitPredicateId: string | null;
   unreadableFieldIds: string[];
   isRelationHopEnabled: boolean;
 }): string =>
@@ -112,7 +112,7 @@ export const computeRuleShapeHash = ({
         objectMetadataId,
         buildRuleContent({
           rowLevelPermissionRule,
-          literalValuePredicateId,
+          splitPredicateId,
           isRelationHopEnabled,
         }),
         [...unreadableFieldIds].sort(),

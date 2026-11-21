@@ -1,5 +1,5 @@
 /* @license Enterprise */
 
-import { type AccessGroupSplit } from 'src/engine/permissions/internal/access-group/types/access-group-split.type';
+import { type AccessGroupSplitValue } from 'src/engine/permissions/internal/access-group/types/access-group-split-value.type';
 
-export type AccessGroupType = AccessGroupSplit['type'];
+export type AccessGroupType = AccessGroupSplitValue['type'];

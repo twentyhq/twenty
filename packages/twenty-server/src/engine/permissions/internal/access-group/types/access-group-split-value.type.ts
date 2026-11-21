@@ -2,7 +2,7 @@
 
 import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
 
-export type AccessGroupSplit =
+export type AccessGroupSplitValue =
   | { type: 'ALL_RECORDS' }
   | { type: 'RULE' }
   | { type: 'MEMBER_VALUE'; memberFieldValues: RlsMemberFieldValues }

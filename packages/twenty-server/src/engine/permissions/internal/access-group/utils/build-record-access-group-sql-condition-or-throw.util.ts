@@ -5,8 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordAccessGroupSQLConditionMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-sql-condition-metadata-maps.type';
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
-import { type AccessGroupSplit } from 'src/engine/permissions/internal/access-group/types/access-group-split.type';
-import { type AccessGroupRuleShape } from 'src/engine/permissions/internal/access-group/types/access-group-rule-shape.type';
+import { type AccessGroupSplitValue } from 'src/engine/permissions/internal/access-group/types/access-group-split-value.type';
+import { type RlsRuleShape } from 'src/engine/permissions/internal/rls/types/rls-rule-shape.type';
 import {
   buildRecordFilterForRule,
   type RlsRule,
@@ -21,8 +21,8 @@ const buildGroupRule = ({
   accessGroup,
   ruleShape,
 }: {
-  accessGroup: Pick<AccessGroup, 'ruleShapeHash'> & AccessGroupSplit;
-  ruleShape: AccessGroupRuleShape;
+  accessGroup: Pick<AccessGroup, 'ruleShapeHash'> & AccessGroupSplitValue;
+  ruleShape: RlsRuleShape;
 }): RlsRule => {
   if (accessGroup.type !== 'LITERAL_VALUE') {
     return ruleShape.rowLevelPermissionRule;
@@ -31,7 +31,7 @@ const buildGroupRule = ({
   return {
     ...ruleShape.rowLevelPermissionRule,
     predicates: ruleShape.rowLevelPermissionRule.predicates.map((predicate) =>
-      predicate.id === ruleShape.literalValuePredicate?.id
+      predicate.id === ruleShape.splitPredicate?.id
         ? { ...predicate, value: [accessGroup.value] }
         : predicate,
     ),
@@ -46,8 +46,8 @@ export const buildRecordAccessGroupSQLConditionOrThrow = ({
   tableAlias,
   metadataMaps,
 }: {
-  accessGroup: Pick<AccessGroup, 'ruleShapeHash'> & AccessGroupSplit;
-  ruleShapeByHash: Map<string, AccessGroupRuleShape>;
+  accessGroup: Pick<AccessGroup, 'ruleShapeHash'> & AccessGroupSplitValue;
+  ruleShapeByHash: Map<string, RlsRuleShape>;
   flatObjectMetadata: FlatObjectMetadata;
   tableAlias: string;
   metadataMaps: RecordAccessGroupSQLConditionMetadataMaps;

@@ -25,11 +25,9 @@ export const resolveAccessGroupRuleShape = ({
 }): {
   ruleShapeHash: string;
   unreadableFieldIds: string[];
-  literalValuePredicate:
-    | (RowLevelPermissionPredicate & { value: string[] })
-    | null;
+  splitPredicate: (RowLevelPermissionPredicate & { value: string[] }) | null;
 } => {
-  const literalValuePredicate = isDefined(rowLevelPermissionRule)
+  const splitPredicate = isDefined(rowLevelPermissionRule)
     ? findRlsRuleLiteralValuesPredicate(rowLevelPermissionRule)
     : null;
   const unreadableFieldIds = [
@@ -43,11 +41,11 @@ export const resolveAccessGroupRuleShape = ({
     ruleShapeHash: computeRuleShapeHash({
       objectMetadataId,
       rowLevelPermissionRule,
-      literalValuePredicateId: literalValuePredicate?.id ?? null,
+      splitPredicateId: splitPredicate?.id ?? null,
       unreadableFieldIds,
       isRelationHopEnabled,
     }),
     unreadableFieldIds,
-    literalValuePredicate,
+    splitPredicate,
   };
 };

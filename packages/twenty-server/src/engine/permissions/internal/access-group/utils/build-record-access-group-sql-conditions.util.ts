@@ -3,7 +3,7 @@
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type RecordAccessGroupSQLConditionMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-sql-condition-metadata-maps.type';
-import { buildAccessGroupRuleShapes } from 'src/engine/permissions/internal/access-group/utils/build-access-group-rule-shapes.util';
+import { buildRlsRuleShapeByHash } from 'src/engine/permissions/internal/access-group/utils/build-rls-rule-shape-by-hash.util';
 import { buildRecordAccessGroupSQLConditionOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-sql-condition-or-throw.util';
 import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
 import { RECORD_ACCESS_GROUP_TABLE_ALIAS } from 'src/engine/permissions/internal/record-permission-repository/constants/record-access-group-table-alias.constant';
@@ -18,7 +18,7 @@ export const buildRecordAccessGroupSQLConditions = ({
   metadataMaps: RecordAccessGroupSQLConditionMetadataMaps;
   accessGroups: AccessGroup[];
 }): RecordAccessGroupSQLCondition[] => {
-  const ruleShapeByHash = buildAccessGroupRuleShapes({
+  const ruleShapeByHash = buildRlsRuleShapeByHash({
     objectMetadataId: flatObjectMetadata.id,
     rolesPermissions: metadataMaps.rolesPermissions,
     isRelationHopEnabled: isRlsRelationHopEnabled(metadataMaps.featureFlagsMap),
