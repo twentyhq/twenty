@@ -10,7 +10,7 @@ const StyledContent = styled.div`
   position: relative;
 
   &::after,
-  & .markdown-section > :last-child::after {
+  & .markdown-section > .markdown-paragraph:last-child::after {
     content: '';
     display: inline-block;
     width: ${CHAT_MESSAGE_META_SPACER_WIDTH};
@@ -18,6 +18,11 @@ const StyledContent = styled.div`
 
   &:has(.markdown-section)::after {
     content: none;
+  }
+
+  /* A list, code block or quote has no last text line to share with the meta */
+  &:has(.markdown-section > :last-child:not(.markdown-paragraph)) {
+    padding-bottom: ${themeCssVariables.spacing[6]};
   }
 `;
 

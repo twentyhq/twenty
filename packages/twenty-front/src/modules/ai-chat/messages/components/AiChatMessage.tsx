@@ -9,6 +9,8 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { AGENT_MESSAGE_ROLE } from '@/ai-chat/messages/constants/AgentMessageRole';
+import { AI_CHAT_GROUPED_MESSAGE_GAP } from '@/ai-chat/messages/constants/AiChatGroupedMessageGap';
+import { AI_CHAT_MESSAGE_LIST_GAP } from '@/ai-chat/messages/constants/AiChatMessageListGap';
 import { AI_CHAT_USER_MESSAGE_MAX_WIDTH } from '@/ai-chat/messages/constants/AiChatUserMessageMaxWidth';
 import { getFieldFilesValueFromFilePart } from '@/chat/utils/getFieldFilesValueFromFilePart';
 
@@ -69,13 +71,13 @@ const StyledMessageContainer = styled.div<{
   width: ${({ isUser }) => (isUser ? 'fit-content' : '100%')};
 `;
 
+// The list spaces rows with one gap, so a grouped row gives back the difference
 const StyledMessageRow = styled(StyledChatMessageRow)<{
-  isGroupedWithNext: boolean;
-  hasTimeBeforeNext: boolean;
+  isTightlyGroupedWithNext: boolean;
 }>`
-  margin-bottom: ${({ isGroupedWithNext, hasTimeBeforeNext }) =>
-    isGroupedWithNext && !hasTimeBeforeNext
-      ? `calc(-1 * ${themeCssVariables.spacing[1.5]})`
+  margin-bottom: ${({ isTightlyGroupedWithNext }) =>
+    isTightlyGroupedWithNext
+      ? `calc(${AI_CHAT_GROUPED_MESSAGE_GAP} - ${AI_CHAT_MESSAGE_LIST_GAP})`
       : '0'};
 `;
 
@@ -207,7 +209,11 @@ export const AiChatMessage = ({
     isAiChatInboxEnabled &&
     !isDirectMessage &&
     isNonEmptyArray(aiChatMessageReactions);
-  const hasGroupedMessageActions = isGroupedWithNext && !hasReactions;
+  const hasContent = isNonEmptyArray(agentChatMessage.parts);
+  const hasSideActions = isAiChatInboxEnabled && isUser;
+  const hasFooter = hasContent && (!hasSideActions || hasReactions);
+  const isTightlyGroupedWithNext =
+    isGroupedWithNext && !hasVisibleTimeInBubble && !hasFooter;
   const shouldShowError =
     isDefined(error) && agentChatMessage.role === AGENT_MESSAGE_ROLE.ASSISTANT;
 
@@ -266,8 +272,7 @@ export const AiChatMessage = ({
       )}
       <StyledMessageRow
         isRightAligned={isRightAligned}
-        isGroupedWithNext={isGroupedWithNext}
-        hasTimeBeforeNext={hasVisibleTimeInBubble}
+        isTightlyGroupedWithNext={isTightlyGroupedWithNext}
         data-agent-chat-message-id={messageId}
       >
         {hasHeader && (
@@ -322,23 +327,22 @@ export const AiChatMessage = ({
             )}
             {shouldShowError && <AiChatErrorRenderer error={error} />}
           </StyledMessageContainer>
-          {hasGroupedMessageActions && messageActions}
+          {hasContent && hasSideActions && messageActions}
         </StyledMessageLine>
-        {isNonEmptyArray(agentChatMessage.parts) &&
-          !hasGroupedMessageActions && (
-            <StyledChatMessageFooter
-              isSpreadOut={!isAiChatInboxEnabled}
-              isRightAligned={shouldMirrorMessageActions}
-            >
-              {isAiChatInboxEnabled && !isDirectMessage && (
-                <AiChatMessageReactions messageId={messageId} />
-              )}
-              {hasFooterTimestamp && (
-                <ChatMessageTimestamp createdAt={createdAt} />
-              )}
-              {messageActions}
-            </StyledChatMessageFooter>
-          )}
+        {hasFooter && (
+          <StyledChatMessageFooter
+            isSpreadOut={!isAiChatInboxEnabled}
+            isRightAligned={shouldMirrorMessageActions}
+          >
+            {isAiChatInboxEnabled && !isDirectMessage && (
+              <AiChatMessageReactions messageId={messageId} />
+            )}
+            {hasFooterTimestamp && (
+              <ChatMessageTimestamp createdAt={createdAt} />
+            )}
+            {!hasSideActions && messageActions}
+          </StyledChatMessageFooter>
+        )}
       </StyledMessageRow>
     </>
   );
