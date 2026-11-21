@@ -16,6 +16,7 @@ const FILTER_ID = '11111111-1111-4111-8111-111111111111';
 const OTHER_FILTER_ID = '22222222-2222-4222-8222-222222222222';
 const FILTER_GROUP_ID = '33333333-3333-4333-8333-333333333333';
 const OTHER_FILTER_GROUP_ID = '44444444-4444-4444-8444-444444444444';
+const THIRD_FILTER_GROUP_ID = '55555555-5555-4555-8555-555555555555';
 
 const buildFlatFieldMetadata = (
   flatFieldMetadata: Partial<FlatFieldMetadata> &
@@ -444,10 +445,34 @@ describe('validateFlatViewFieldRelationScope', () => {
         },
       }),
     ).toMatchObject([
-      { message: expect.stringContaining('cannot be nested in themselves') },
-      { message: expect.stringContaining('cannot be nested in themselves') },
+      { message: expect.stringContaining('nested one level deep') },
+      { message: expect.stringContaining('nested one level deep') },
     ]);
   });
+
+  it('rejects filter groups nested more than one level deep', () =>
+    expectOneErrorContaining({
+      universalRelationScope: {
+        ...OPEN_TASKS_SCOPE,
+        filterGroups: [
+          {
+            id: FILTER_GROUP_ID,
+            logicalOperator: ViewFilterGroupLogicalOperator.AND,
+          },
+          {
+            id: OTHER_FILTER_GROUP_ID,
+            parentFilterGroupId: FILTER_GROUP_ID,
+            logicalOperator: ViewFilterGroupLogicalOperator.OR,
+          },
+          {
+            id: THIRD_FILTER_GROUP_ID,
+            parentFilterGroupId: OTHER_FILTER_GROUP_ID,
+            logicalOperator: ViewFilterGroupLogicalOperator.AND,
+          },
+        ],
+      },
+      expectedMessage: 'nested one level deep',
+    }));
 
   it('rejects a sort on a one-to-many relation', () =>
     expectOneErrorContaining({
