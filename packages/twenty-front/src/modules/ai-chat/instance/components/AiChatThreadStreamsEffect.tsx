@@ -37,28 +37,19 @@ export const AiChatThreadStreamsEffect = () => {
   const { applyAiChatThreadUpdate } = useApplyAiChatThreadUpdate();
   const { loadAiChatThread } = useLoadAiChatThread();
 
-  const [dependencies] = useState<{ current: AiChatThreadStreamDependencies }>(
-    () => ({
-      current: {
-        apolloClient,
-        applyAiChatThreadUpdate,
-        loadAiChatThread,
-        refreshAiChatThreadPermissions,
-        refreshAiChatUsage,
-      },
-    }),
-  );
-  const [removalTimeouts] = useState(
-    () => new Map<string, ReturnType<typeof setTimeout>>(),
-  );
-
-  dependencies.current = {
+  const currentDependencies: AiChatThreadStreamDependencies = {
     apolloClient,
     applyAiChatThreadUpdate,
     loadAiChatThread,
     refreshAiChatThreadPermissions,
     refreshAiChatUsage,
   };
+  const [dependencies] = useState(() => ({ current: currentDependencies }));
+  const [removalTimeouts] = useState(
+    () => new Map<string, ReturnType<typeof setTimeout>>(),
+  );
+
+  dependencies.current = currentDependencies;
 
   const requiredThreadIds = useMemo(
     () =>

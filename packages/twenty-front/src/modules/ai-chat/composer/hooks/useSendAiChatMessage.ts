@@ -78,8 +78,7 @@ import { logError } from '~/utils/logError';
 
 type AiChatSendTarget = {
   threadId: string;
-  // Absent when sending from outside a mounted chat, as a preprompt does
-  instanceId?: string;
+  instanceId: string;
   onThreadChange: (threadId: string) => void;
 };
 
@@ -99,17 +98,6 @@ type AiChatMessageToSend = Pick<
   channelId: string | null | undefined;
   quotedMessageId: string | null;
 };
-
-const isThreadStillShown = ({
-  aiChatRequiredThreadListeners,
-  threadId,
-  instanceId,
-}: Pick<AiChatSendTarget, 'threadId' | 'instanceId'> & {
-  aiChatRequiredThreadListeners: Record<string, string>;
-}) =>
-  isDefined(instanceId)
-    ? aiChatRequiredThreadListeners[instanceId] === threadId
-    : Object.values(aiChatRequiredThreadListeners).includes(threadId);
 
 export const useSendAiChatMessage = () => {
   const { modelIdForRequest } = useAiChatModelId();
@@ -341,13 +329,8 @@ export const useSendAiChatMessage = () => {
           );
 
           if (
-            isThreadStillShown({
-              aiChatRequiredThreadListeners: store.get(
-                aiChatRequiredThreadListenersState.atom,
-              ),
-              threadId,
-              instanceId,
-            })
+            store.get(aiChatRequiredThreadListenersState.atom)[instanceId] ===
+            threadId
           ) {
             onThreadChange(threadId);
           }
@@ -549,13 +532,8 @@ export const useSendAiChatMessage = () => {
         }
 
         if (
-          isThreadStillShown({
-            aiChatRequiredThreadListeners: store.get(
-              aiChatRequiredThreadListenersState.atom,
-            ),
-            threadId,
-            instanceId,
-          })
+          store.get(aiChatRequiredThreadListenersState.atom)[instanceId] ===
+          threadId
         ) {
           onThreadChange(directMessageThreadId);
         }

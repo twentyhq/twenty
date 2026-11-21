@@ -1,16 +1,13 @@
 import { useStore } from 'jotai';
 
-import { useSendAiChatMessage } from '@/ai-chat/composer/hooks/useSendAiChatMessage';
 import { writeAiChatPromptDraft } from '@/ai-chat/composer/utils/writeAiChatPromptDraft';
-import { useOpenAiChatThread } from '@/ai-chat/hooks/useOpenAiChatThread';
 import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldFocusFamilyState';
+import { aiChatComposerShouldSendFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldSendFamilyState';
 import { type AiChatPrepromptMode } from '@/ai-chat/types/AiChatPrepromptMode';
 
-// Sending reads the draft, not the editor, so a prompt can be sent before its chat is on screen
+// For a chat being opened: its composer sends or focuses once it is mounted
 export const useApplyAiChatPreprompt = () => {
   const store = useStore();
-  const { sendAiChatMessage } = useSendAiChatMessage();
-  const { openAiChatThread } = useOpenAiChatThread();
 
   const applyAiChatPreprompt = ({
     threadId,
@@ -23,18 +20,10 @@ export const useApplyAiChatPreprompt = () => {
   }) => {
     writeAiChatPromptDraft({ store, threadId, serializedDocument });
 
-    if (mode === 'SEND') {
-      void sendAiChatMessage({
-        threadId,
-        onThreadChange: (changedThreadId) =>
-          openAiChatThread({ threadId: changedThreadId }),
-      });
-
-      return;
-    }
-
     store.set(
-      aiChatComposerShouldFocusFamilyState.atomFamily({ threadId }),
+      mode === 'SEND'
+        ? aiChatComposerShouldSendFamilyState.atomFamily({ threadId })
+        : aiChatComposerShouldFocusFamilyState.atomFamily({ threadId }),
       true,
     );
   };

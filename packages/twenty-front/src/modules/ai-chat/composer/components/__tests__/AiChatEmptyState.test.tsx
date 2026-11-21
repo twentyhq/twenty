@@ -11,10 +11,6 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-jest.mock('@/ai-chat/composer/hooks/useSendAiChatMessage', () => ({
-  useSendAiChatMessage: () => ({ sendAiChatMessage: jest.fn() }),
-}));
-
 jest.mock('@/ai-chat/composer/components/AiChatSuggestedPrompts', () => ({
   AiChatSuggestedPrompts: () => <div data-testid="suggested-prompts" />,
 }));
