@@ -28,7 +28,7 @@ export const useSendAiChatComposerMessage = () => {
   const sendAiChatComposerMessage = useCallback(
     (composerContent?: AiChatComposerContent) => {
       if (!isAiChatRuntimeMounted || !isAiChatRuntimeEnabled) {
-        return false;
+        return;
       }
 
       store
@@ -48,8 +48,6 @@ export const useSendAiChatComposerMessage = () => {
       }
 
       void handleSendMessage();
-
-      return true;
     },
     [
       handleSendMessage,

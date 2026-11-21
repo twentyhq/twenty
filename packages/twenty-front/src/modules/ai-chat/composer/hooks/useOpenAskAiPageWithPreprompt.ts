@@ -51,7 +51,7 @@ export const useOpenAskAiPageWithPreprompt = () => {
     }
 
     if (!isNonEmptyArray(files)) {
-      applyAiChatPreprompt({
+      await applyAiChatPreprompt({
         threadId: newAiChatThreadId,
         serializedDocument,
         mode,
@@ -83,7 +83,7 @@ export const useOpenAskAiPageWithPreprompt = () => {
       return null;
     }
 
-    applyAiChatPreprompt({
+    await applyAiChatPreprompt({
       threadId: newAiChatThreadId,
       serializedDocument,
       mode: isNonEmptyArray(uploadedFiles) ? mode : 'PREFILL',

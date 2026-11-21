@@ -1,14 +1,17 @@
 import { useStore } from 'jotai';
 
+import { useSendAiChatMessage } from '@/ai-chat/composer/hooks/useSendAiChatMessage';
 import { writeAiChatPromptDraft } from '@/ai-chat/composer/utils/writeAiChatPromptDraft';
+import { useSelectAiChatThreadFromNewChat } from '@/ai-chat/hooks/useSelectAiChatThreadFromNewChat';
 import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldFocusFamilyState';
-import { aiChatComposerShouldSendFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldSendFamilyState';
 import { type AiChatPrepromptMode } from '@/ai-chat/types/AiChatPrepromptMode';
 
 export const useApplyAiChatPreprompt = () => {
   const store = useStore();
+  const { sendAiChatMessage } = useSendAiChatMessage();
+  const { selectAiChatThreadFromNewChat } = useSelectAiChatThreadFromNewChat();
 
-  const applyAiChatPreprompt = ({
+  const applyAiChatPreprompt = async ({
     threadId,
     serializedDocument,
     mode,
@@ -19,10 +22,17 @@ export const useApplyAiChatPreprompt = () => {
   }) => {
     writeAiChatPromptDraft({ store, threadId, serializedDocument });
 
+    if (mode === 'SEND') {
+      await sendAiChatMessage({
+        threadId,
+        onThreadChange: selectAiChatThreadFromNewChat,
+      });
+
+      return;
+    }
+
     store.set(
-      mode === 'SEND'
-        ? aiChatComposerShouldSendFamilyState.atomFamily({ threadId })
-        : aiChatComposerShouldFocusFamilyState.atomFamily({ threadId }),
+      aiChatComposerShouldFocusFamilyState.atomFamily({ threadId }),
       true,
     );
   };
