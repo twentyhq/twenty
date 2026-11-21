@@ -53,8 +53,9 @@ export class AccessGroupSyncListener {
   async handleRelatedRecordPathEvent({
     workspaceId,
   }: Pick<MetadataEventBatch, 'workspaceId'>): Promise<void> {
-    await this.accessGroupSyncSchedulerService.scheduleRelatedRecordPathTargetsRecomputeIfEnabled(
+    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(
       workspaceId,
+      { isRelatedRecordPathChanged: true },
     );
   }
 
@@ -91,9 +92,7 @@ export class AccessGroupSyncListener {
     ) {
       await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(
         workspaceId,
-      );
-      await this.accessGroupSyncSchedulerService.scheduleRelatedRecordPathTargetsRecomputeIfEnabled(
-        workspaceId,
+        { isRelatedRecordPathChanged: true },
       );
     }
   }

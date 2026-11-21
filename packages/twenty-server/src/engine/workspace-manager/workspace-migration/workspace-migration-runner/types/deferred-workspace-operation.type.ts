@@ -18,6 +18,7 @@ type DeferredWorkspaceOperationPayloadByName = {
       };
       plannedRecordCount: number;
       computedRecordCount: number;
+      afterRecordId?: string;
       isComputed: boolean;
     }[];
   };

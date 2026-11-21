@@ -5,9 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { RECOMPUTE_RELATED_RECORD_PATH_TARGETS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/recompute-related-record-path-targets-job-name.constant';
 import { SYNC_ACCESS_GROUPS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/sync-access-groups-job-name.constant';
-import { type RecomputeRelatedRecordPathTargetsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-related-record-path-targets-job-data.type';
 import { type SyncAccessGroupsJobData } from 'src/engine/permissions/internal/access-group/types/sync-access-groups-job-data.type';
 import { isAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/is-access-groups-enabled.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -29,38 +27,19 @@ export class AccessGroupSyncSchedulerService {
     return isAccessGroupsEnabled({ featureFlagsMap });
   }
 
-  async scheduleSyncIfEnabled(workspaceId: string): Promise<void> {
-    await this.scheduleWorkspaceJobIfEnabled({
-      workspaceId,
-      jobName: SYNC_ACCESS_GROUPS_JOB_NAME,
-    });
-  }
-
-  async scheduleRelatedRecordPathTargetsRecomputeIfEnabled(
+  async scheduleSyncIfEnabled(
     workspaceId: string,
+    {
+      isRelatedRecordPathChanged = false,
+    }: Pick<SyncAccessGroupsJobData, 'isRelatedRecordPathChanged'> = {},
   ): Promise<void> {
-    await this.scheduleWorkspaceJobIfEnabled({
-      workspaceId,
-      jobName: RECOMPUTE_RELATED_RECORD_PATH_TARGETS_JOB_NAME,
-    });
-  }
-
-  private async scheduleWorkspaceJobIfEnabled({
-    workspaceId,
-    jobName,
-  }: {
-    workspaceId: string;
-    jobName: string;
-  }): Promise<void> {
     if (!(await this.isEnabled(workspaceId))) {
       return;
     }
 
-    await this.messageQueueService.add<
-      SyncAccessGroupsJobData | RecomputeRelatedRecordPathTargetsJobData
-    >(
-      jobName,
-      { workspaceId },
+    await this.messageQueueService.add<SyncAccessGroupsJobData>(
+      SYNC_ACCESS_GROUPS_JOB_NAME,
+      { workspaceId, isRelatedRecordPathChanged },
       { isWorkspaceJob: true, workspaceId, retryLimit: 3 },
     );
   }
