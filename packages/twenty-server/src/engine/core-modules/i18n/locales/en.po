@@ -11878,10 +11878,10 @@ msgstr "Requested"
 msgid "Requested file range cannot be served."
 msgstr "Requested file range cannot be served."
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "Required fields and relations cannot be restricted on a row level permission rule."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "Required fields and morph relations cannot be restricted on a row level permission rule."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -14771,6 +14771,11 @@ msgstr "This app requires a newer version of the Twenty server. Please upgrade y
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This app requires a newer version than this workspace has finished upgrading to. Please try again once the workspace upgrade completes."
 msgstr "This app requires a newer version than this workspace has finished upgrading to. Please try again once the workspace upgrade completes."
+
+#. js-lingui-id: MZz+Ud
+#: src/engine/core-modules/application/utils/to-application-billing-prices-or-throw.util.ts
+msgid "This application declares invalid prices"
+msgstr "This application declares invalid prices"
 
 #. js-lingui-id: ecIX3O
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -18259,6 +18264,11 @@ msgstr "You do not have permission to access this feature. Please contact your w
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 msgid "You do not have permission to access this workflow."
 msgstr "You do not have permission to access this workflow."
+
+#. js-lingui-id: /qkY9j
+#: src/engine/permissions/permissions.exception.ts
+msgid "You do not have permission to change this record."
+msgstr "You do not have permission to change this record."
 
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts

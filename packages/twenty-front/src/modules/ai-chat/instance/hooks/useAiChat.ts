@@ -26,27 +26,28 @@ import { useOpenNewAiChatAsDirectMessage } from '@/ai-chat/instance/hooks/useOpe
 import { useOptimisticallyRestoreOnSend } from '@/ai-chat/composer/hooks/useOptimisticallyRestoreOnSend';
 import { useRefreshAiChatThreadPermissions } from '@/ai-chat/threads/hooks/useRefreshAiChatThreadPermissions';
 import { useWarnAboutParticipantMentionsNotAdded } from '@/ai-chat/composer/hooks/useWarnAboutParticipantMentionsNotAdded';
-import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
-import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/states/aiChatQuotedMessageIdFamilyState';
+import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatComposerDraftsState';
+import { aiChatComposerQuotedMessageIdFamilyState } from '@/ai-chat/states/composer/aiChatComposerQuotedMessageIdFamilyState';
 import { aiChatMessageAuthorLookupSelector } from '@/ai-chat/messages/states/selectors/aiChatMessageAuthorLookupSelector';
 import { aiChatThreadMessageFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadMessageFamilySelector';
 import { getAiChatMessageAuthor } from '@/ai-chat/messages/utils/getAiChatMessageAuthor';
 import { getAiChatMessageQuoteSource } from '@/ai-chat/composer/utils/getAiChatMessageQuoteSource';
 import { prependAiChatQuoteToText } from '@/ai-chat/composer/utils/prependAiChatQuoteToText';
-import { aiChatLastSentBrowsingContextFamilyState } from '@/ai-chat/states/aiChatLastSentBrowsingContextFamilyState';
-import { aiChatSelectedFilesFamilyState } from '@/ai-chat/composer/states/aiChatSelectedFilesFamilyState';
+import { aiChatThreadReplyLastBrowsingContextFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyLastBrowsingContextFamilyState';
+import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/states/composer/aiChatComposerUploadingFilesFamilyState';
 import { aiChatSentMessageHandOffState } from '@/ai-chat/states/aiChatSentMessageHandOffState';
-import { aiChatUploadedFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadedFilesFamilyState';
-import { aiChatUnconfirmedFirstMessageFamilyState } from '@/ai-chat/composer/states/aiChatUnconfirmedFirstMessageFamilyState';
+import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/states/composer/aiChatComposerAttachmentsFamilyState';
+import { aiChatThreadReplyUnconfirmedFirstMessageFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyUnconfirmedFirstMessageFamilyState';
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
-import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
-import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai-chat/states/aiChatIsAwaitingFirstChunkFamilyState';
-import { aiChatIsAwaitingPersistedRefetchFamilyState } from '@/ai-chat/states/aiChatIsAwaitingPersistedRefetchFamilyState';
-import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadReplyErrorFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyErrorFamilyState';
+import { aiChatThreadIsFetchingMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadIsFetchingMessagesFamilyState';
+import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
+import { endAiChatReplyStatus } from '@/ai-chat/utils/endAiChatReplyStatus';
+import { getAiChatReplyStatusUnlessStreaming } from '@/ai-chat/utils/getAiChatReplyStatusUnlessStreaming';
+import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { aiChatOpenThreadIdByInstanceIdState } from '@/ai-chat/states/aiChatOpenThreadIdByInstanceIdState';
-import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
-import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { type AiChatNewThreadRecipients } from '@/ai-chat/types/AiChatNewThreadRecipients';
 import { type AiChatParticipantMention } from '@/ai-chat/composer/types/AiChatParticipantMention';
@@ -117,9 +118,7 @@ export const useAiChat = () => {
     useRefreshAiChatThreadPermissions();
   const store = useStore();
 
-  const setAiChatDraftsByThreadId = useSetAtomState(
-    aiChatDraftsByThreadIdState,
-  );
+  const setAiChatComposerDrafts = useSetAtomState(aiChatComposerDraftsState);
 
   const sendToThread = useCallback(
     async ({
@@ -135,18 +134,19 @@ export const useAiChat = () => {
       channelId,
       quotedMessageId,
     }: AiChatMessageToSend) => {
-      const isSendingMessageAtom = aiChatIsSendingMessageFamilyState.atomFamily(
-        { threadId },
+      const isSendingMessageAtom =
+        aiChatThreadReplyIsSendingFamilyState.atomFamily({ threadId });
+      const uploadedFilesAtom = aiChatComposerAttachmentsFamilyState.atomFamily(
+        {
+          threadId,
+        },
       );
-      const uploadedFilesAtom = aiChatUploadedFilesFamilyState.atomFamily({
-        threadId,
-      });
-      const aiChatUploadedFiles = isDirectMessage
+      const aiChatComposerAttachments = isDirectMessage
         ? []
         : store.get(uploadedFilesAtom);
       const browsingContext = getBrowsingContext();
       const lastSentBrowsingContextAtom =
-        aiChatLastSentBrowsingContextFamilyState.atomFamily(threadId);
+        aiChatThreadReplyLastBrowsingContextFamilyState.atomFamily(threadId);
       const lastSentBrowsingContext = store.get(lastSentBrowsingContextAtom);
       const isBrowsingContextChanged = isUndefined(lastSentBrowsingContext)
         ? isDefined(browsingContext)
@@ -156,9 +156,11 @@ export const useAiChat = () => {
       const browsingContextToSend = isBrowsingContextChanged
         ? browsingContext
         : null;
-      const fileIds = aiChatUploadedFiles.map(({ fileId }) => fileId);
+      const fileIds = aiChatComposerAttachments.map(({ fileId }) => fileId);
       const unconfirmedFirstMessageAtom =
-        aiChatUnconfirmedFirstMessageFamilyState.atomFamily(threadId);
+        aiChatThreadReplyUnconfirmedFirstMessageFamilyState.atomFamily(
+          threadId,
+        );
       const unconfirmedFirstMessage = isNewChat
         ? store.get(unconfirmedFirstMessageAtom)
         : null;
@@ -178,7 +180,7 @@ export const useAiChat = () => {
         role: 'user',
         parts: [
           { type: 'text' as const, text: contentToSend },
-          ...aiChatUploadedFiles,
+          ...aiChatComposerAttachments,
         ],
         metadata: {
           createdAt: optimisticMessageCreatedAt,
@@ -188,17 +190,23 @@ export const useAiChat = () => {
         status: 'sent',
       };
 
-      const messagesAtom = aiChatMessagesFamilyState.atomFamily({
+      const messagesAtom = aiChatThreadDisplayedMessagesFamilyState.atomFamily({
         threadId,
       });
-      const errorAtom = aiChatErrorFamilyState.atomFamily({ threadId });
-      const isAwaitingFirstChunkAtom =
-        aiChatIsAwaitingFirstChunkFamilyState.atomFamily({ threadId });
+      const errorAtom = aiChatThreadReplyErrorFamilyState.atomFamily({
+        threadId,
+      });
+      const replyStatusAtom = aiChatThreadReplyStatusFamilyState.atomFamily({
+        threadId,
+      });
       const removeOptimisticUserMessage = () => {
         store.set(messagesAtom, (messages) =>
           messages.filter((message) => message.id !== messageId),
         );
-        store.set(isAwaitingFirstChunkAtom, false);
+        store.set(
+          replyStatusAtom,
+          endAiChatReplyStatus('awaiting-first-chunk'),
+        );
       };
 
       store.set(aiChatSentMessageHandOffState.atom, (sentMessageHandOff) =>
@@ -211,9 +219,12 @@ export const useAiChat = () => {
         optimisticUserMessage,
       ]);
       store.set(errorAtom, null);
-      store.set(isAwaitingFirstChunkAtom, true);
+      store.set(
+        replyStatusAtom,
+        getAiChatReplyStatusUnlessStreaming('awaiting-first-chunk'),
+      );
 
-      const fileAttachments = aiChatUploadedFiles.map((file) => ({
+      const fileAttachments = aiChatComposerAttachments.map((file) => ({
         id: file.fileId,
         filename: file.filename,
       }));
@@ -271,12 +282,13 @@ export const useAiChat = () => {
           }
         } else {
           store.set(
-            aiChatIsAwaitingPersistedRefetchFamilyState.atomFamily({
-              threadId,
-            }),
+            replyStatusAtom,
+            endAiChatReplyStatus('awaiting-first-chunk'),
+          );
+          store.set(
+            aiChatThreadIsFetchingMessagesFamilyState.atomFamily({ threadId }),
             true,
           );
-          store.set(isAwaitingFirstChunkAtom, false);
         }
 
         if (!isDirectMessage) {
@@ -305,15 +317,11 @@ export const useAiChat = () => {
         if (isNewChat) {
           await refreshAiChatThreadPermissions([threadId]);
           store.set(newAiChatThreadIdState.atom, v4());
-          store.set(aiChatNewThreadChannelIdState.atom, null);
           store.set(unconfirmedFirstMessageAtom, null);
-
-          if (isDefined(newInboxChatRecipients)) {
-            store.set(
-              aiChatNewThreadRecipientsFamilyState.atomFamily(threadId),
-              AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
-            );
-          }
+          store.set(
+            aiChatComposerNewThreadRecipientsFamilyState.atomFamily(threadId),
+            AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
+          );
 
           const isInstanceStillOnThread =
             store.get(aiChatOpenThreadIdByInstanceIdState.atom)[instanceId] ===
@@ -336,18 +344,17 @@ export const useAiChat = () => {
           });
         }
 
-        setAiChatDraftsByThreadId((prev) => ({
+        setAiChatComposerDrafts((prev) => ({
           ...prev,
           [threadId]: serializedContentToSend,
         }));
         store.set(uploadedFilesAtom, (currentUploadedFiles) => [
-          ...aiChatUploadedFiles,
+          ...aiChatComposerAttachments,
           ...currentUploadedFiles,
         ]);
 
-        const quotedMessageIdAtom = aiChatQuotedMessageIdFamilyState.atomFamily(
-          { threadId },
-        );
+        const quotedMessageIdAtom =
+          aiChatComposerQuotedMessageIdFamilyState.atomFamily({ threadId });
 
         if (!isDefined(store.get(quotedMessageIdAtom))) {
           store.set(quotedMessageIdAtom, quotedMessageId);
@@ -373,7 +380,7 @@ export const useAiChat = () => {
       instanceId,
       onThreadChange,
       getBrowsingContext,
-      setAiChatDraftsByThreadId,
+      setAiChatComposerDrafts,
       modelIdForRequest,
       aiModels,
       refreshAiChatThreadPermissions,
@@ -391,9 +398,10 @@ export const useAiChat = () => {
     const isDirectMessage = store.get(
       aiChatThreadIsDirectMessageFamilySelector.selectorFamily(threadId),
     );
-    const isSendingMessageAtom = aiChatIsSendingMessageFamilyState.atomFamily({
-      threadId,
-    });
+    const isSendingMessageAtom =
+      aiChatThreadReplyIsSendingFamilyState.atomFamily({
+        threadId,
+      });
 
     if (isNewChat && store.get(isSendingMessageAtom)) {
       return;
@@ -401,19 +409,22 @@ export const useAiChat = () => {
 
     const newInboxChatRecipients =
       isNewChat && isAiChatInboxEnabled
-        ? store.get(aiChatNewThreadRecipientsFamilyState.atomFamily(threadId))
+        ? store.get(
+            aiChatComposerNewThreadRecipientsFamilyState.atomFamily(threadId),
+          )
         : undefined;
     const serializedContentToSend =
-      store.get(aiChatDraftsByThreadIdState.atom)[threadId] ?? '';
+      store.get(aiChatComposerDraftsState.atom)[threadId] ?? '';
     const draftText = tipTapDocumentToMarkdown(serializedContentToSend).trim();
 
     if (draftText === '') {
       return;
     }
 
-    const quotedMessageIdAtom = aiChatQuotedMessageIdFamilyState.atomFamily({
-      threadId,
-    });
+    const quotedMessageIdAtom =
+      aiChatComposerQuotedMessageIdFamilyState.atomFamily({
+        threadId,
+      });
     const quotedMessageId = store.get(quotedMessageIdAtom);
     const quotedMessage = store.get(
       aiChatThreadMessageFamilySelector.selectorFamily({
@@ -462,7 +473,9 @@ export const useAiChat = () => {
       serializedContentToSend,
     );
     const channelId = isNewChat
-      ? store.get(aiChatNewThreadChannelIdState.atom)
+      ? store.get(
+          aiChatComposerNewThreadRecipientsFamilyState.atomFamily(threadId),
+        ).channelId
       : undefined;
     const initialRecipients = getAiChatInitialRecipients({
       recipientWorkspaceMemberIds:
@@ -538,11 +551,11 @@ export const useAiChat = () => {
       return;
     }
 
-    const aiChatSelectedFiles = store.get(
-      aiChatSelectedFilesFamilyState.atomFamily({ threadId }),
+    const aiChatComposerUploadingFiles = store.get(
+      aiChatComposerUploadingFilesFamilyState.atomFamily({ threadId }),
     );
 
-    if (!isDirectMessage && aiChatSelectedFiles.length > 0) {
+    if (!isDirectMessage && aiChatComposerUploadingFiles.length > 0) {
       enqueueToast({
         status: 'error',
         children: t`Wait for the attachments to finish uploading.`,
@@ -555,7 +568,7 @@ export const useAiChat = () => {
       onThreadChange(threadId);
     }
 
-    setAiChatDraftsByThreadId((prev) => ({
+    setAiChatComposerDrafts((prev) => ({
       ...prev,
       [threadId]: '',
     }));
@@ -582,7 +595,7 @@ export const useAiChat = () => {
   }, [
     store,
     apolloClient,
-    setAiChatDraftsByThreadId,
+    setAiChatComposerDrafts,
     canSendAiChatMessage,
     isAiChatInboxEnabled,
     isDirectMessageIdentityEnabled,

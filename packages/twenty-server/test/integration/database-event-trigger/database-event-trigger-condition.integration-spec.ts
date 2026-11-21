@@ -18,6 +18,7 @@ const SMALL_COMPANY_ID = randomUUID();
 const buildOpportunityCreatedEvent = (
   companyId: string | null,
 ): ObjectRecordEvent => ({
+  eventId: 'event-1',
   recordId: randomUUID(),
   properties: { after: { stage: 'NEW', companyId } },
 });

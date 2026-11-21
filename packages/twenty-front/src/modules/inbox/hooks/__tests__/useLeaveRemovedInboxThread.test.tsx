@@ -3,7 +3,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useLeaveRemovedInboxThread } from '@/inbox/hooks/useLeaveRemovedInboxThread';
-import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
+import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatComposerDraftsState';
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
 import { aiChatInputIsEmptyFamilySelector } from '@/ai-chat/composer/states/selectors/aiChatInputIsEmptyFamilySelector';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
@@ -78,16 +78,16 @@ describe('useLeaveRemovedAiChatThread', () => {
       buildChat(OLDER_CHAT_ID, '2026-09-01T00:00:00.000Z'),
       buildChat(RECENT_CHAT_ID, '2026-09-20T00:00:00.000Z'),
     ]);
-    jotaiStore.set(
-      aiChatThreadParticipantsState.atom,
-      Object.fromEntries(
+    jotaiStore.set(aiChatThreadParticipantsState.atom, {
+      isLoaded: true,
+      rowsByThreadId: Object.fromEntries(
         [OLDER_CHAT_ID, RECENT_CHAT_ID].map((threadId) => [
           threadId,
           buildFollowedParticipant(threadId),
         ]),
       ),
-    );
-    jotaiStore.set(aiChatDraftsByThreadIdState.atom, {
+    });
+    jotaiStore.set(aiChatComposerDraftsState.atom, {
       [RECENT_CHAT_ID]: 'Pending question',
     });
 

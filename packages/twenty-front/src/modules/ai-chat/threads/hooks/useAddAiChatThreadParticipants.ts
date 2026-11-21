@@ -2,7 +2,6 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
-import { aiChatThreadStreamedParticipantsState } from '@/ai-chat/threads/states/aiChatThreadStreamedParticipantsState';
 import { mergeAiChatThreadParticipants } from '@/ai-chat/threads/utils/mergeAiChatThreadParticipants';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
@@ -12,12 +11,13 @@ export const useAddAiChatThreadParticipants = () => {
 
   const addAiChatThreadParticipants = useCallback(
     (participants: AgentChatThreadParticipantFieldsFragment[]) => {
-      store.set(aiChatThreadParticipantsState.atom, (loadedParticipants) =>
-        mergeAiChatThreadParticipants(
-          mergeAiChatThreadParticipants(loadedParticipants ?? {}, participants),
-          Object.values(store.get(aiChatThreadStreamedParticipantsState.atom)),
+      store.set(aiChatThreadParticipantsState.atom, (currentParticipants) => ({
+        isLoaded: true,
+        rowsByThreadId: mergeAiChatThreadParticipants(
+          currentParticipants.rowsByThreadId,
+          participants,
         ),
-      );
+      }));
     },
     [store],
   );

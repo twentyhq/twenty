@@ -12,7 +12,7 @@ export class AddUserWorkspaceInboxNotificationSettingsFastInstanceCommand
       'ALTER TABLE "core"."userWorkspace" ADD "inboxNotificationLevel" character varying NOT NULL DEFAULT \'ALL_FOLLOWED\'',
     );
     await queryRunner.query(
-      'ALTER TABLE "core"."userWorkspace" ADD "isInboxNotificationPreviewEnabled" boolean NOT NULL DEFAULT false',
+      'ALTER TABLE "core"."userWorkspace" ADD "isInboxNotificationPreviewEnabled" boolean NOT NULL DEFAULT true',
     );
   }
 

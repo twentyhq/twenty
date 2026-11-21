@@ -1,9 +1,9 @@
 import { useStore } from 'jotai';
 
 import { useOpenAiChatThread } from '@/ai-chat/hooks/useOpenAiChatThread';
-import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { shouldFocusChatEditorFamilyState } from '@/ai-chat/states/shouldFocusChatEditorFamilyState';
+import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldFocusFamilyState';
 import { isInboxPath } from '~/utils/isInboxPath';
 
 type UseSwitchToNewAiChatParams = {
@@ -17,16 +17,21 @@ export const useSwitchToNewAiChat = ({
   const { openAiChatThread } = useOpenAiChatThread();
 
   const switchToNewChat = () => {
-    if (!isInboxPath(window.location.pathname)) {
-      store.set(aiChatNewThreadChannelIdState.atom, null);
-    }
-
     const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
+
+    if (!isInboxPath(window.location.pathname)) {
+      store.set(
+        aiChatComposerNewThreadRecipientsFamilyState.atomFamily(
+          newAiChatThreadId,
+        ),
+        (recipients) => ({ ...recipients, channelId: null }),
+      );
+    }
 
     openAiChatThread({ threadId: newAiChatThreadId, shouldOpenInFullPage });
 
     store.set(
-      shouldFocusChatEditorFamilyState.atomFamily({
+      aiChatComposerShouldFocusFamilyState.atomFamily({
         threadId: newAiChatThreadId,
       }),
       true,

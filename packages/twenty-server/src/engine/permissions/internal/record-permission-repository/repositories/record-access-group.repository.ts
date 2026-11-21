@@ -7,7 +7,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
 import { type RecordAccessGroupSQLCondition } from 'src/engine/permissions/internal/record-permission-repository/types/record-access-group-sql-condition.type';
-import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
+import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-computation-metadata-maps.type';
+import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
 import { buildRelatedRecordPathHopsJoin } from 'src/engine/permissions/internal/record-permission-repository/utils/build-related-record-path-hops-join.util';
 import { buildRecomputeRecordAccessGroupIdsQuery } from 'src/engine/permissions/internal/record-permission-repository/utils/build-recompute-record-access-group-ids-query.util';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
@@ -144,14 +146,21 @@ export class RecordAccessGroupRepository {
     workspaceId,
     flatObjectMetadata,
     recordAccessGroupSQLConditions,
-    relatedRecordPathAccessGroupSources,
+    resolvedRelatedRecordPaths,
+    accessGroups,
+    metadataMaps,
     recordIds,
     transactionScope,
   }: {
     workspaceId: string;
     flatObjectMetadata: FlatObjectMetadata;
     recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[];
-    relatedRecordPathAccessGroupSources: RelatedRecordPathAccessGroupSource[];
+    resolvedRelatedRecordPaths: ResolvedRelatedRecordPath[];
+    accessGroups: AccessGroup[];
+    metadataMaps: Pick<
+      RecordAccessGroupComputationMetadataMaps,
+      'rolesPermissions' | 'featureFlagsMap'
+    >;
     recordIds: string[];
     transactionScope?: RecordPermissionTransactionScope;
   }): Promise<string[]> {
@@ -164,7 +173,9 @@ export class RecordAccessGroupRepository {
         workspaceId,
         flatObjectMetadata,
         recordAccessGroupSQLConditions,
-        relatedRecordPathAccessGroupSources,
+        resolvedRelatedRecordPaths,
+        accessGroups,
+        metadataMaps,
         recordIds,
       }),
     });

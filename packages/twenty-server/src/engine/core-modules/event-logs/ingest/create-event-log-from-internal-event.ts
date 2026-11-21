@@ -140,6 +140,7 @@ export class CreateEventLogFromInternalEvent {
   }) {
     return {
       ...(event === OBJECT_RECORD_DESTROYED_EVENT ? {} : eventData.properties),
+      eventId: eventData.eventId,
       recordId: eventData.recordId,
       objectMetadataId: batch.objectMetadata.id,
     };

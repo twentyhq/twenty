@@ -14,11 +14,13 @@ import { FEATURE_FLAG_DISABLED_EVENT } from 'src/engine/core-modules/feature-fla
 import { FEATURE_FLAG_ENABLED_EVENT } from 'src/engine/core-modules/feature-flag/constants/feature-flag-enabled-event.constant';
 import { type FeatureFlagEnabledEvent } from 'src/engine/core-modules/feature-flag/types/feature-flag-enabled-event.type';
 import { AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal/access-group/services/access-group-sync-scheduler.service';
+import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { isWorkspaceMemberUpdateAffectingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-workspace-member-update-affecting-access-groups.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 
 const FLAGS_AFFECTING_ACCESS_GROUPS = [
@@ -32,6 +34,7 @@ export class AccessGroupSyncListener {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly accessGroupSyncSchedulerService: AccessGroupSyncSchedulerService,
+    private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
   ) {}
 
   @OnEvent('metadata.role.*')
@@ -55,6 +58,37 @@ export class AccessGroupSyncListener {
     await this.accessGroupSyncSchedulerService.scheduleRelatedRecordPathTargetsRecomputeIfEnabled(
       workspaceId,
     );
+  }
+
+  @OnEvent('metadata.fieldPermission.*')
+  async handleFieldPermissionEvent({
+    workspaceId,
+    events,
+  }: Pick<MetadataEventBatch, 'workspaceId'> & {
+    events: MetadataEvent<'fieldPermission'>[];
+  }): Promise<void> {
+    const changedFieldMetadataIds = new Set(
+      events.flatMap((event) =>
+        [
+          'before' in event.properties ? event.properties.before : undefined,
+          'after' in event.properties ? event.properties.after : undefined,
+        ]
+          .filter(isDefined)
+          .map((fieldPermission) => fieldPermission.fieldMetadataId),
+      ),
+    );
+    const { resolvedRelatedRecordPaths } =
+      await this.recordAccessGroupMetadataMapsService.find(workspaceId);
+
+    if (
+      resolvedRelatedRecordPaths.some(({ hops }) =>
+        changedFieldMetadataIds.has(hops[0].relationFieldMetadataId),
+      )
+    ) {
+      await this.accessGroupSyncSchedulerService.scheduleRelatedRecordPathTargetsRecomputeIfEnabled(
+        workspaceId,
+      );
+    }
   }
 
   @OnCustomBatchEvent(FEATURE_FLAG_ENABLED_EVENT)

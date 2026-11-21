@@ -10,8 +10,7 @@ import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentTh
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
-import { aiChatThreadStreamedParticipantsState } from '@/ai-chat/threads/states/aiChatThreadStreamedParticipantsState';
-import { aiChatUsageFamilyState } from '@/ai-chat/usage/states/aiChatUsageFamilyState';
+import { aiChatThreadUsageFamilyState } from '@/ai-chat/states/server/aiChatThreadUsageFamilyState';
 import { inboxRecentThreadsSelector } from '@/inbox/states/selectors/inboxRecentThreadsSelector';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
@@ -210,8 +209,9 @@ describe('useLoadInboxThreadList', () => {
       mentionsResolvedAt: null,
       updatedAt: '2026-10-01T10:05:00.000Z',
     };
-    store.set(aiChatThreadStreamedParticipantsState.atom, {
-      'thread-2': streamedParticipant,
+    store.set(aiChatThreadParticipantsState.atom, {
+      isLoaded: false,
+      rowsByThreadId: { 'thread-2': streamedParticipant },
     });
     queryMock.mockResolvedValue(
       buildPage([
@@ -258,7 +258,9 @@ describe('useLoadInboxThreadList', () => {
       await result.current.refreshAiChatThreads();
     });
 
-    expect(store.get(aiChatThreadParticipantsState.atom)).toEqual({
+    expect(
+      store.get(aiChatThreadParticipantsState.atom).rowsByThreadId,
+    ).toEqual({
       'thread-1': {
         __typename: 'AgentChatThreadParticipant' as const,
         id: 'thread-1-member-id',
@@ -462,28 +464,5 @@ describe('useLoadInboxThreadList', () => {
     await act(async () => {
       expect(await result.current.loadAiChatThread('unknown')).toBeUndefined();
     });
-  });
-
-  it('restores the usage of a chat opened past the loaded pages', async () => {
-    const store = buildStore();
-    queryMock.mockResolvedValueOnce(
-      buildPage([
-        {
-          ...buildThread('old-thread', 'Old chat'),
-          conversationSize: 3,
-          contextWindowTokens: 1000,
-          totalInputTokens: 42,
-        },
-      ]),
-    );
-    const result = renderRefresh(store);
-
-    await act(async () => {
-      await result.current.loadAiChatThread('old-thread');
-    });
-
-    expect(
-      store.get(aiChatUsageFamilyState.atomFamily({ threadId: 'old-thread' })),
-    ).toMatchObject({ inputTokens: 42 });
   });
 });
