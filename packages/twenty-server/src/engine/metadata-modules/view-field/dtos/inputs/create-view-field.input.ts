@@ -6,6 +6,7 @@ import {
   IsEnum,
   IsNumber,
   IsOptional,
+  IsString,
   IsUUID,
   ValidateNested,
 } from 'class-validator';
@@ -69,6 +70,16 @@ export class CreateViewFieldInput {
   @Type(() => ViewFieldRelationScopeInput)
   @Field(() => ViewFieldRelationScopeInput, { nullable: true })
   relationScope?: ViewFieldRelationScopeInput;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  label?: string;
+
+  @IsOptional()
+  @IsEnum(AggregateOperations)
+  @Field(() => AggregateOperations, { nullable: true })
+  relationAggregateOperation?: AggregateOperations;
 
   @HideField()
   universalIdentifier?: string;

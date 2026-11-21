@@ -71,6 +71,8 @@ export class GetViewFieldsTool extends BaseTool<
       isCanonical: viewField.isCanonical,
       relationTargetFieldMetadataId: viewField.relationTargetFieldMetadataId,
       relationScope: viewField.relationScope,
+      label: viewField.label,
+      relationAggregateOperation: viewField.relationAggregateOperation,
     }));
 
     return {

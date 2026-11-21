@@ -2058,7 +2058,9 @@ export type CreateViewFieldInput = {
   id?: InputMaybe<Scalars['UUID']['input']>;
   isCanonical?: InputMaybe<Scalars['Boolean']['input']>;
   isVisible?: InputMaybe<Scalars['Boolean']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
+  relationAggregateOperation?: InputMaybe<AggregateOperations>;
   relationScope?: InputMaybe<ViewFieldRelationScopeInput>;
   relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   size?: InputMaybe<Scalars['Float']['input']>;
@@ -8210,7 +8212,9 @@ export type UpdateViewFieldInput = {
 export type UpdateViewFieldInputUpdates = {
   aggregateOperation?: InputMaybe<AggregateOperations>;
   isVisible?: InputMaybe<Scalars['Boolean']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
+  relationAggregateOperation?: InputMaybe<AggregateOperations>;
   relationScope?: InputMaybe<ViewFieldRelationScopeInput>;
   relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   size?: InputMaybe<Scalars['Float']['input']>;
@@ -8857,7 +8861,9 @@ export type ViewField = {
   isOverridden?: Maybe<Scalars['Boolean']['output']>;
   isSystemSideEffect: Scalars['Boolean']['output'];
   isVisible: Scalars['Boolean']['output'];
+  label?: Maybe<Scalars['String']['output']>;
   position: Scalars['Float']['output'];
+  relationAggregateOperation?: Maybe<AggregateOperations>;
   relationScope?: Maybe<ViewFieldRelationScope>;
   relationTargetFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   size: Scalars['Float']['output'];
