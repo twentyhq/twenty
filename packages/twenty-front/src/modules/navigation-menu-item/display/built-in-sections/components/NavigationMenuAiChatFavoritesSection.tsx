@@ -8,10 +8,12 @@ import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavo
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type NavigationMenuAiChatFavoritesSectionProps = {
+  label: string;
   headerAction?: ReactNode;
 };
 
 export const NavigationMenuAiChatFavoritesSection = ({
+  label,
   headerAction,
 }: NavigationMenuAiChatFavoritesSectionProps) => {
   const currentThreadId = useAiChatPageThreadId();
@@ -25,6 +27,7 @@ export const NavigationMenuAiChatFavoritesSection = ({
 
   return (
     <NavigationDrawerInboxFavoritesSection
+      label={label}
       channels={inboxFavoriteChannels}
       threads={inboxFavoriteThreads}
       currentThreadId={currentThreadId}

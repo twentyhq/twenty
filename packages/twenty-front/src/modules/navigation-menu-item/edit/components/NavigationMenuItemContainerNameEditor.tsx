@@ -22,6 +22,7 @@ type NavigationMenuItemContainerNameEditorProps = {
   item: Pick<NavigationMenuItem, 'id' | 'name' | 'icon'>;
   placeholder: string;
   hasIconPicker?: boolean;
+  isNameOptional?: boolean;
   onSubmit: () => void;
 };
 
@@ -29,11 +30,22 @@ export const NavigationMenuItemContainerNameEditor = ({
   item,
   placeholder,
   hasIconPicker = false,
+  isNameOptional = false,
   onSubmit,
 }: NavigationMenuItemContainerNameEditorProps) => {
   const { updateItem } = useNavigationMenuItemEditController('workspace');
   const [initialName] = useState(item.name ?? '');
   const [name, setName] = useState(initialName);
+
+  const getNameToSave = (value: string) => {
+    const trimmedValue = value.trim();
+
+    if (isNonEmptyString(trimmedValue)) {
+      return trimmedValue;
+    }
+
+    return isNameOptional ? null : initialName;
+  };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (
@@ -71,9 +83,7 @@ export const NavigationMenuItemContainerNameEditor = ({
           fullWidth
           onChange={(value) => {
             setName(value);
-            void updateItem(item.id, {
-              name: isNonEmptyString(value.trim()) ? value.trim() : initialName,
-            });
+            void updateItem(item.id, { name: getNameToSave(value) });
           }}
           onKeyDown={handleKeyDown}
         />

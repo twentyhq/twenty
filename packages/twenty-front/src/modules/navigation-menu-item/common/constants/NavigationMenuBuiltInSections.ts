@@ -4,7 +4,7 @@ import {
   IconHeart,
   IconHistory,
   IconInbox,
-  IconMessage,
+  IconMessageHeart,
 } from 'twenty-ui/icon';
 
 export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
@@ -14,6 +14,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconHeart,
     color: 'red',
     isAi: false,
+    isRenamable: true,
   },
   {
     key: 'aiChatInbox',
@@ -21,13 +22,15 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconInbox,
     color: 'blue',
     isAi: true,
+    isRenamable: false,
   },
   {
     key: 'aiChatFavorites',
     label: msg`Favorite chats`,
-    Icon: IconMessage,
+    Icon: IconMessageHeart,
     color: 'pink',
     isAi: true,
+    isRenamable: true,
   },
   {
     key: 'aiChatChannels',
@@ -35,6 +38,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconHash,
     color: 'green',
     isAi: true,
+    isRenamable: true,
   },
   {
     key: 'aiChatRecents',
@@ -42,5 +46,6 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconHistory,
     color: 'orange',
     isAi: true,
+    isRenamable: false,
   },
 ] as const;
