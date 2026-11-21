@@ -9,6 +9,7 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
@@ -18,6 +19,10 @@ import { type RecordAccessGroupSQLConditionMetadataMaps } from 'src/engine/permi
 import { buildRecordFilterForRule } from 'src/engine/permissions/internal/rls/utils/build-rls-record-filter.util';
 import { findRelationJoinColumnsOrThrow } from 'src/engine/permissions/internal/rls/utils/find-relation-join-columns-or-throw.util';
 import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/permissions/permissions.exception';
 import { resolveFilterKeyFieldMetadata } from 'src/engine/record-filter/utils/resolve-filter-key-field-metadata.util';
 
 const PROBE_UUID = '00000000-0000-4000-8000-00000000f00d';
@@ -169,14 +174,20 @@ const resolveKeyFromProbeFilter = ({
     return null;
   }
 
-  const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-    flatEntityId: relationFieldMetadata.relationTargetObjectMetadataId ?? '',
+  if (!isDefined(relationFieldMetadata.relationTargetObjectMetadataId)) {
+    throw new PermissionsException(
+      `Relation field ${relationFieldMetadata.id} has no target object`,
+      PermissionsExceptionCode.RLS_PREDICATE_FIELD_NOT_FOUND,
+    );
+  }
+
+  const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+    flatEntityId: relationFieldMetadata.relationTargetObjectMetadataId,
     flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
   });
   const targetFilterKeys = Object.keys(filterValue);
 
   if (
-    !isDefined(targetFlatObjectMetadata) ||
     targetFilterKeys.length !== 1 ||
     !isEqualityToProbe({
       operatorFilter: filterValue[targetFilterKeys[0]],
