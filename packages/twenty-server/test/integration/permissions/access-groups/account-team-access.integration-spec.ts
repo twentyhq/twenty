@@ -222,7 +222,7 @@ describe('Account team access (integration)', () => {
     objectName,
     ids,
   }: {
-    login: Login;
+    login: Pick<Login, 'token'>;
     objectName: 'opportunity' | 'note';
     ids: string[];
   }): Promise<string[]> => {
@@ -249,7 +249,7 @@ describe('Account team access (integration)', () => {
     login,
     ids,
   }: {
-    login: Login;
+    login: Pick<Login, 'token'>;
     ids: string[];
   }): Promise<string[]> => {
     const response = await makeRestApiRequest({
@@ -269,7 +269,7 @@ describe('Account team access (integration)', () => {
     login,
     opportunityId,
   }: {
-    login: Login;
+    login: Pick<Login, 'token'>;
     opportunityId: string;
   }): Promise<boolean> => {
     const response = await makeGraphqlApiRequest(
@@ -289,7 +289,7 @@ describe('Account team access (integration)', () => {
     login,
     opportunityIds,
   }: {
-    login: Login;
+    login: Pick<Login, 'token'>;
     opportunityIds: string[];
   }): Promise<Record<string, 'Edit' | 'Read' | 'None'>> => {
     const readableIds = await listIdsWithGraphql({
@@ -797,7 +797,7 @@ describe('Account team access (integration)', () => {
       'walledTwoNote',
       'unwalledNote',
     ].map((name) => recordIds[name]);
-    const listNotes = (login: Login) =>
+    const listNotes = (login: Pick<Login, 'token'>) =>
       listIdsWithGraphql({ login, objectName: 'note', ids: noteIds });
 
     expect(await listNotes(logins.opportunityTeamMember)).toEqual([

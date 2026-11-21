@@ -20,6 +20,12 @@ export type WorkspaceMemberRelationValueLookup = {
   filterValues: string[];
 };
 
+export type WorkspaceMemberRelationValueRow = {
+  lookupIndex: number;
+  workspaceMemberId: string;
+  values: string[];
+};
+
 @Injectable()
 export class WorkspaceMemberRelationValueRepository {
   constructor(
@@ -32,25 +38,20 @@ export class WorkspaceMemberRelationValueRepository {
   }: {
     workspaceId: string;
     lookups: WorkspaceMemberRelationValueLookup[];
-  }): Promise<
-    { lookupIndex: number; workspaceMemberId: string; values: string[] }[]
-  > {
+  }): Promise<WorkspaceMemberRelationValueRow[]> {
     if (lookups.length === 0) {
       return [];
     }
 
-    return this.recordPermissionQueryService.execute<{
-      lookupIndex: number;
-      workspaceMemberId: string;
-      values: string[];
-    }>({
-      workspaceId,
-      query: {
-        sql: lookups
-          .map((lookup, lookupIndex) => {
-            const relatedValueColumn = `"related".${escapeIdentifier(lookup.valueColumnName)}`;
+    return this.recordPermissionQueryService.execute<WorkspaceMemberRelationValueRow>(
+      {
+        workspaceId,
+        query: {
+          sql: lookups
+            .map((lookup, lookupIndex) => {
+              const relatedValueColumn = `"related".${escapeIdentifier(lookup.valueColumnName)}`;
 
-            return `SELECT ${lookupIndex} AS "lookupIndex", "member"."id" AS "workspaceMemberId", array_agg(DISTINCT CAST(${relatedValueColumn} AS text)) AS "values"
+              return `SELECT ${lookupIndex} AS "lookupIndex", "member"."id" AS "workspaceMemberId", array_agg(DISTINCT CAST(${relatedValueColumn} AS text)) AS "values"
               FROM ${buildWorkspaceTableExpression({
                 workspaceId,
                 tableName: computeObjectTargetTable(
@@ -73,15 +74,16 @@ export class WorkspaceMemberRelationValueRepository {
                     : ''
                 }
               GROUP BY "member"."id"`;
-          })
-          .join(' UNION ALL '),
-        parameters: Object.fromEntries(
-          lookups.map(({ filterValues }, lookupIndex) => [
-            `filterValues_${lookupIndex}`,
-            filterValues,
-          ]),
-        ),
+            })
+            .join(' UNION ALL '),
+          parameters: Object.fromEntries(
+            lookups.map(({ filterValues }, lookupIndex) => [
+              `filterValues_${lookupIndex}`,
+              filterValues,
+            ]),
+          ),
+        },
       },
-    });
+    );
   }
 }
