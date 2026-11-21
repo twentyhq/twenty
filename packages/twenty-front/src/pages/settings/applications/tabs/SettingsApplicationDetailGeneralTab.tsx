@@ -1,5 +1,6 @@
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
+import { SettingsApplicationConnectedMembersSection } from '@/settings/applications/components/SettingsApplicationConnectedMembersSection';
 import { SettingsApplicationContentSummarySection } from '@/settings/applications/components/SettingsApplicationContentSummarySection';
 import { useInstalledApplicationContent } from '@/settings/applications/hooks/useInstalledApplicationContent';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
@@ -14,6 +15,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/components/layout';
 import {
   type Application,
+  ApplicationRegistrationSourceType,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -187,6 +189,13 @@ export const SettingsApplicationDetailGeneralTab = ({
           applicationId={application.id}
         />
       )}
+      {canManageApplications &&
+        application.applicationRegistration?.sourceType ===
+          ApplicationRegistrationSourceType.OAUTH_ONLY && (
+          <SettingsApplicationConnectedMembersSection
+            applicationId={application.id}
+          />
+        )}
       <SettingsApplicationConnectionsSection applicationId={application.id} />
     </>
   );

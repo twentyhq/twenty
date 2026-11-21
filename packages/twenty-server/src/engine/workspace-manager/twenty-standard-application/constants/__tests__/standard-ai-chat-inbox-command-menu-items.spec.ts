@@ -1,4 +1,4 @@
-import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
+import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/conditional-availability';
 
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 

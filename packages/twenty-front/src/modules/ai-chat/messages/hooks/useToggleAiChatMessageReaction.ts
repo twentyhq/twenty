@@ -4,8 +4,8 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { aiChatLiveReactionRevisionsFamilyState } from '@/ai-chat/messages/states/aiChatLiveReactionRevisionsFamilyState';
-import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
+import { aiChatMessageReactionRevisionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionRevisionsFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionsFamilyState';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { setAgentMessageReaction } from '@/ai-chat/messages/utils/setAgentMessageReaction';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -69,7 +69,7 @@ export const useToggleAiChatMessageReaction = () => {
       };
 
       const liveRevisionsAtom =
-        aiChatLiveReactionRevisionsFamilyState.atomFamily({
+        aiChatMessageReactionRevisionsFamilyState.atomFamily({
           threadId: aiChatThreadId,
         });
       const readLiveRevision = () => store.get(liveRevisionsAtom)[messageId];

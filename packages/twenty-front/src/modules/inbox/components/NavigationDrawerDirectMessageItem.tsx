@@ -1,4 +1,3 @@
-import { AiChatMemberPresence } from '@/ai-chat/threads/components/AiChatMemberPresence';
 import { InboxThreadActionsDropdown } from '@/inbox/components/InboxThreadActionsDropdown';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { type DirectMessageSidebarItem } from '@/inbox/types/DirectMessageSidebarItem';
@@ -39,19 +38,15 @@ export const NavigationDrawerDirectMessageItem = ({
     <NavigationDrawerItem
       label={peerName}
       Icon={
-        <AiChatMemberPresence
-          workspaceMemberId={directMessage.peer?.workspaceMemberId}
-        >
-          <Avatar
-            name={peerName}
-            src={directMessage.peer?.avatarUrl}
-            colorSeed={
-              directMessage.peer?.workspaceMemberId ?? directMessage.threadId
-            }
-            shape="circle"
-            size="md"
-          />
-        </AiChatMemberPresence>
+        <Avatar
+          name={peerName}
+          src={directMessage.peer?.avatarUrl}
+          colorSeed={
+            directMessage.peer?.workspaceMemberId ?? directMessage.threadId
+          }
+          shape="circle"
+          size="md"
+        />
       }
       active={isActive}
       isUnread={directMessage.isUnread}
