@@ -12,6 +12,7 @@ import { findViewFields } from 'test/integration/metadata/suites/view-field/util
 import { updateOneViewField } from 'test/integration/metadata/suites/view-field/utils/update-one-view-field.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import {
+  AggregateOperations,
   FieldMetadataType,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
@@ -31,6 +32,7 @@ type FieldNode = {
 const SCOPED_VIEW_FIELD_GQL_FIELDS = `
   ${VIEW_FIELD_GQL_FIELDS}
   relationTargetFieldMetadataId
+  relationAggregateOperation
   relationScope {
     filters {
       id
@@ -169,9 +171,16 @@ const buildOpenDealsScope = (): ViewFieldRelationScopeInput => ({
   limit: 1,
 });
 
+const buildOpenDealsFilterScope = (): ViewFieldRelationScopeInput => {
+  const { sorts: _sorts, limit: _limit, ...filters } = buildOpenDealsScope();
+
+  return { ...filters, sorts: [] };
+};
+
 const createScopedViewField = ({
   relationScope,
   relationTargetFieldMetadataId,
+  relationAggregateOperation,
   viewId = testContext.companyViewId,
   fieldMetadataId = testContext.companyDealsFieldId,
   isCanonical = false,
@@ -179,6 +188,7 @@ const createScopedViewField = ({
 }: {
   relationScope: ViewFieldRelationScopeInput;
   relationTargetFieldMetadataId?: string;
+  relationAggregateOperation?: AggregateOperations;
   viewId?: string;
   fieldMetadataId?: string;
   isCanonical?: boolean;
@@ -192,6 +202,7 @@ const createScopedViewField = ({
       fieldMetadataId,
       relationScope,
       relationTargetFieldMetadataId,
+      relationAggregateOperation,
       isCanonical,
       position: 1,
     },
@@ -450,6 +461,85 @@ describe('View field filtering, sorting and limiting its related records', () =>
       relationTargetFieldMetadataId: null,
     });
   });
+
+  it('counts the open deals, then shows their earliest close date', async () => {
+    const {
+      data: { createViewField },
+    } = await createScopedViewField({
+      relationScope: buildOpenDealsFilterScope(),
+      relationAggregateOperation: AggregateOperations.COUNT,
+      expectToFail: false,
+    });
+
+    expect(createViewField).toMatchObject({
+      relationAggregateOperation: AggregateOperations.COUNT,
+      relationTargetFieldMetadataId: null,
+    });
+
+    const {
+      data: { updateViewField },
+    } = await updateOneViewField({
+      expectToFail: false,
+      gqlFields: SCOPED_VIEW_FIELD_GQL_FIELDS,
+      input: {
+        id: createViewField.id,
+        update: {
+          relationAggregateOperation: AggregateOperations.MIN,
+          relationTargetFieldMetadataId: testContext.dealCloseDateFieldId,
+        },
+      },
+    });
+
+    expect(updateViewField).toMatchObject({
+      relationAggregateOperation: AggregateOperations.MIN,
+      relationTargetFieldMetadataId: testContext.dealCloseDateFieldId,
+    });
+  });
+
+  it.each([
+    {
+      title: 'its scope is limited',
+      getRelationScope: () => ({ ...buildOpenDealsFilterScope(), limit: 3 }),
+      relationAggregateOperation: AggregateOperations.COUNT,
+      expectedMessage: 'cannot have sorts or a limit',
+    },
+    {
+      title: 'its scope is sorted',
+      getRelationScope: buildOpenDealsScope,
+      relationAggregateOperation: AggregateOperations.COUNT,
+      expectedMessage: 'cannot have sorts or a limit',
+    },
+    {
+      title: 'it sums a date',
+      getRelationScope: buildOpenDealsFilterScope,
+      relationAggregateOperation: AggregateOperations.SUM,
+      getRelationTargetFieldMetadataId: () => testContext.dealCloseDateFieldId,
+      expectedMessage: 'does not support this aggregate operation',
+    },
+    {
+      title: 'it sums without a field',
+      getRelationScope: buildOpenDealsFilterScope,
+      relationAggregateOperation: AggregateOperations.SUM,
+      expectedMessage: 'requires a related record field',
+    },
+  ])(
+    'rejects an aggregate column when $title',
+    async ({
+      getRelationScope,
+      relationAggregateOperation,
+      getRelationTargetFieldMetadataId,
+      expectedMessage,
+    }) => {
+      const response = await createScopedViewField({
+        relationScope: getRelationScope(),
+        relationAggregateOperation,
+        relationTargetFieldMetadataId: getRelationTargetFieldMetadataId?.(),
+        expectToFail: true,
+      });
+
+      expect(JSON.stringify(response.errors)).toContain(expectedMessage);
+    },
+  );
 
   it('removes the column when the field it shows is deactivated', async () => {
     const priorityFieldId = await createField({

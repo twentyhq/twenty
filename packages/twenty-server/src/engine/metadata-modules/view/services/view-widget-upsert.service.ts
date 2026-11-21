@@ -605,6 +605,7 @@ export class ViewWidgetUpsertService {
         relationTargetFieldMetadataUniversalIdentifier: null,
         universalRelationScope: null,
         label: null,
+        relationAggregateOperation: null,
         overrides: null,
         universalOverrides: null,
         isActive: true,

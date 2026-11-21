@@ -4350,6 +4350,9 @@ export default {
             "position": [
                 8
             ],
+            "relationAggregateOperation": [
+                32
+            ],
             "relationScope": [
                 686
             ],
@@ -15384,6 +15387,9 @@ export default {
             "position": [
                 8
             ],
+            "relationAggregateOperation": [
+                32
+            ],
             "relationScope": [
                 686
             ],
@@ -16779,6 +16785,9 @@ export default {
             ],
             "position": [
                 8
+            ],
+            "relationAggregateOperation": [
+                32
             ],
             "relationScope": [
                 681
