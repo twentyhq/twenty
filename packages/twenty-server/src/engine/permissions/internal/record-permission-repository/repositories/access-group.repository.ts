@@ -2,15 +2,13 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
-import {
-  type AccessGroup,
-  type AccessGroupWithoutCompactId,
-} from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group-without-compact-id.type';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { buildAccessGroupTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-access-group-table-expression.util';
+import { type AccessGroupRow } from 'src/engine/permissions/internal/record-permission-repository/types/access-group-row.type';
+import { fromAccessGroupRowToAccessGroup } from 'src/engine/permissions/internal/record-permission-repository/utils/from-access-group-row-to-access-group.util';
 
 const INSERT_BATCH_SIZE = 500;
 
@@ -43,17 +41,20 @@ export class AccessGroupRepository {
     objectMetadataIds: string[];
     transactionScope?: RecordPermissionTransactionScope;
   }): Promise<AccessGroup[]> {
-    return this.recordPermissionQueryService.execute<AccessGroup>({
-      workspaceId,
-      transactionScope,
-      query: {
-        sql: `SELECT "compactId", "groupHash", "roleId", "objectMetadataId", "rowLevelPermissionPredicateGroupId", "memberFieldValues"
-          FROM ${buildAccessGroupTableExpression(workspaceId)}
-          WHERE "objectMetadataId" = ANY(:objectMetadataIds)
-          ORDER BY "compactId"`,
-        parameters: { objectMetadataIds },
-      },
-    });
+    const rows =
+      await this.recordPermissionQueryService.execute<AccessGroupRow>({
+        workspaceId,
+        transactionScope,
+        query: {
+          sql: `SELECT "compactId", "groupHash", "objectMetadataId", "type", "ruleShapeHash", "unreadableFieldIds", "memberFieldValues", "value"
+            FROM ${buildAccessGroupTableExpression(workspaceId)}
+            WHERE "objectMetadataId" = ANY(:objectMetadataIds)
+            ORDER BY "compactId"`,
+          parameters: { objectMetadataIds },
+        },
+      });
+
+    return rows.map(fromAccessGroupRowToAccessGroup);
   }
 
   async insertAccessGroups({
@@ -74,26 +75,30 @@ export class AccessGroupRepository {
         workspaceId,
         query: {
           sql: `INSERT INTO ${buildAccessGroupTableExpression(workspaceId)}
-            ("roleId", "objectMetadataId", "rowLevelPermissionPredicateGroupId", "memberFieldValues", "groupHash")
+            ("objectMetadataId", "type", "ruleShapeHash", "unreadableFieldIds", "memberFieldValues", "value", "groupHash")
             VALUES ${batch
               .map(
                 (_, index) =>
-                  `(:roleId${index}, :objectMetadataId${index}, :ruleId${index}, CAST(:memberFieldValues${index} AS jsonb), :groupHash${index})`,
+                  `(:objectMetadataId${index}, :type${index}, :ruleShapeHash${index}, CAST(:unreadableFieldIds${index} AS uuid[]), CAST(:memberFieldValues${index} AS jsonb), :value${index}, :groupHash${index})`,
               )
               .join(', ')}
             ON CONFLICT DO NOTHING`,
           parameters: Object.fromEntries(
             batch.flatMap((newAccessGroup, index) => [
-              [`roleId${index}`, newAccessGroup.roleId],
               [`objectMetadataId${index}`, newAccessGroup.objectMetadataId],
-              [
-                `ruleId${index}`,
-                newAccessGroup.rowLevelPermissionPredicateGroupId,
-              ],
+              [`type${index}`, newAccessGroup.type],
+              [`ruleShapeHash${index}`, newAccessGroup.ruleShapeHash],
+              [`unreadableFieldIds${index}`, newAccessGroup.unreadableFieldIds],
               [
                 `memberFieldValues${index}`,
-                isDefined(newAccessGroup.memberFieldValues)
+                newAccessGroup.type === 'RLS_MEMBER_VALUE'
                   ? JSON.stringify(newAccessGroup.memberFieldValues)
+                  : null,
+              ],
+              [
+                `value${index}`,
+                newAccessGroup.type === 'RLS_LITERAL_VALUE'
+                  ? newAccessGroup.value
                   : null,
               ],
               [`groupHash${index}`, newAccessGroup.groupHash],

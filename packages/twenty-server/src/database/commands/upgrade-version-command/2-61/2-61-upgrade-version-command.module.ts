@@ -10,7 +10,9 @@ import { RepairSkippedStandardCommandMenuItemsCommand } from 'src/database/comma
 import { AddWorkspaceNavigationMenuSectionCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795106019718-add-workspace-navigation-menu-section.command';
 import { ConvertPermissionStorageObjectsToTablesCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795258335000-convert-permission-storage-objects-to-tables.command';
 import { DeleteStandardHelperAgentCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795261783307-delete-standard-helper-agent.command';
+import { TypeAccessGroupsCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795264768000-type-access-groups.command';
 import { AddRichTextFileIdsColumnsCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795265526661-add-rich-text-file-ids-columns.command';
+import { AccessGroupComputationModule } from 'src/engine/permissions/internal/access-group/access-group-computation.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
@@ -20,6 +22,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 
 @Module({
   imports: [
+    AccessGroupComputationModule,
     ApplicationModule,
     TypeOrmModule.forFeature([CommandMenuItemEntity]),
     WorkspaceCacheModule,
@@ -37,6 +40,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AddWorkspaceNavigationMenuSectionCommand,
     ConvertPermissionStorageObjectsToTablesCommand,
     DeleteStandardHelperAgentCommand,
+    TypeAccessGroupsCommand,
     AddRichTextFileIdsColumnsCommand,
   ],
 })

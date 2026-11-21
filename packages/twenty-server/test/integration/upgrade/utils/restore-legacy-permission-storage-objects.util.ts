@@ -13,25 +13,20 @@ const PERMISSION_TABLE_ENUM_NAMES = [
   'recordShare_principalType_enum',
   'recordShare_rowCause_enum',
   'recordShare_accessLevel_enum',
+  'accessGroup_type_enum',
 ];
 
 const buildInsertPlaceholders = (count: number): string =>
   Array.from({ length: count }, (_, index) => `$${index + 1}`).join(', ');
 
-// Reproduces a workspace created before 2.61, where recordShare and accessGroup are standard objects, keeping their rows
 export const restoreLegacyPermissionStorageObjects = async (
   workspaceId: string,
 ): Promise<void> => {
   const schema = `"${getWorkspaceSchemaName(workspaceId)}"`;
-  const rowsByTableName = new Map<string, Record<string, unknown>[]>();
+  const recordShareRows: Record<string, unknown>[] =
+    await global.testDataSource.query(`SELECT * FROM ${schema}."recordShare"`);
 
   for (const { tableName } of PERMISSION_STORAGE_OBJECTS_TO_CONVERT) {
-    rowsByTableName.set(
-      tableName,
-      await global.testDataSource.query(
-        `SELECT * FROM ${schema}."${tableName}"`,
-      ),
-    );
     await global.testDataSource.query(
       `DROP TABLE ${schema}."${tableName}" CASCADE`,
     );
@@ -104,14 +99,12 @@ export const restoreLegacyPermissionStorageObjects = async (
     );
   }
 
-  for (const [tableName, rows] of rowsByTableName) {
-    for (const row of rows) {
-      const columnNames = Object.keys(row);
+  for (const row of recordShareRows) {
+    const columnNames = Object.keys(row);
 
-      await global.testDataSource.query(
-        `INSERT INTO ${schema}."${tableName}" (${columnNames.map((columnName) => `"${columnName}"`).join(', ')}) OVERRIDING SYSTEM VALUE VALUES (${buildInsertPlaceholders(columnNames.length)})`,
-        Object.values(row),
-      );
-    }
+    await global.testDataSource.query(
+      `INSERT INTO ${schema}."recordShare" (${columnNames.map((columnName) => `"${columnName}"`).join(', ')}) VALUES (${buildInsertPlaceholders(columnNames.length)})`,
+      Object.values(row),
+    );
   }
 };
