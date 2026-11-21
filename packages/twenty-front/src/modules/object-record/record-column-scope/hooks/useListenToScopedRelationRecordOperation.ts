@@ -1,28 +1,44 @@
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
+import { invalidateCachedScopedRelations } from '@/object-record/record-column-scope/utils/invalidateCachedScopedRelations';
 import { useContext } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
-// Scoped values come from the table query, so a related record written elsewhere only shows after a refetch
+// Only the server applies a scope, and a write from another client or to an uncached record names no row,
+// so the reload has to refetch every cached scoped value of the relation
 export const useListenToScopedRelationRecordOperation = ({
+  objectNameSingular,
   onScopedRelationRecordOperation,
 }: {
+  objectNameSingular: string;
   onScopedRelationRecordOperation: () => void;
 }) => {
   const scopedRelationAliases = useContext(ScopedRelationAliasesContext);
+  const apolloCoreClient = useApolloCoreClient();
 
   const handleRecordOperation = ({
     objectMetadataItem,
   }: ObjectRecordOperationBrowserEventDetail) => {
-    const isShownInScopedColumn = scopedRelationAliases.some(
-      ({ relationObjectMetadataItem }) =>
-        relationObjectMetadataItem.id === objectMetadataItem.id,
-    );
+    const scopedRelationFieldNames = scopedRelationAliases
+      .filter(
+        ({ relationObjectMetadataItem }) =>
+          relationObjectMetadataItem.id === objectMetadataItem.id,
+      )
+      .map(({ relationFieldName }) => relationFieldName);
 
-    if (isShownInScopedColumn) {
-      onScopedRelationRecordOperation();
+    if (!isNonEmptyArray(scopedRelationFieldNames)) {
+      return;
     }
+
+    invalidateCachedScopedRelations({
+      cache: apolloCoreClient.cache,
+      objectNameSingular,
+      relationFieldNames: [...new Set(scopedRelationFieldNames)],
+    });
+
+    onScopedRelationRecordOperation();
   };
 
   useListenToObjectRecordOperationBrowserEvent({

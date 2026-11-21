@@ -33,7 +33,7 @@ export const getReadableRelationsWithArguments = ({
         return [];
       }
 
-      // Optimistic effects find the record key from the cached arguments, which only works for the derived key
+      // Readers find the value under the derived key, so any other key would hide it from them
       if (
         responseKey !==
         computeRelationWithArgumentsResponseKey(relationWithArguments)
