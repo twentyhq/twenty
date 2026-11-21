@@ -45,7 +45,9 @@ export class AccessGroupSyncListener {
   async handleMetadataEvent({
     workspaceId,
   }: Pick<MetadataEventBatch, 'workspaceId'>): Promise<void> {
-    await this.refreshWorkspaceMemberRelationValuesAndScheduleSync(workspaceId);
+    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled({
+      workspaceId,
+    });
   }
 
   @OnEvent('metadata.relatedRecordPath.*')
