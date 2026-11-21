@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 import gql from 'graphql-tag';
 import request from 'supertest';
+import { clearOAuthRateLimits } from 'test/integration/oauth/utils/clear-oauth-rate-limits.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { assertIsDefinedOrThrow, base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
@@ -141,6 +142,8 @@ describe('OAuth (integration)', () => {
     tokens: string[];
     applications: string[];
   } = { registrations: [], tokens: [], applications: [] };
+
+  beforeEach(clearOAuthRateLimits);
 
   beforeAll(async () => {
     ds = global.testDataSource;
