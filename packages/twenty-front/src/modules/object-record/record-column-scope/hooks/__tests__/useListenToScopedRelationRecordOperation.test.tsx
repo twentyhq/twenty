@@ -7,13 +7,18 @@ import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils
 import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
 import { useListenToScopedRelationRecordOperation } from '@/object-record/record-column-scope/hooks/useListenToScopedRelationRecordOperation';
 import { type ScopedRelationAlias } from '@/object-record/record-column-scope/types/ScopedRelationAlias';
+import { resolveScopedRelationJunction } from '@/object-record/record-column-scope/utils/resolveScopedRelationJunction';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
+const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 const taskObjectMetadataItem = getMockObjectMetadataItemOrThrow('task');
 
 const COMPANY_ID = '20202020-1111-4000-8000-000000000001';
 const PERSON_ID = '20202020-2222-4000-8000-000000000001';
+const TASK_TARGET_ID = '20202020-3333-4000-8000-000000000001';
 
 const peopleAlias: ScopedRelationAlias = {
   recordFieldId: 'people-column',
@@ -22,7 +27,7 @@ const peopleAlias: ScopedRelationAlias = {
   relationObjectMetadataItem: personObjectMetadataItem,
 };
 
-const PEOPLE_CONNECTION_SELECTION = `
+const CONNECTION_SELECTION = `
   __typename
   edges {
     __typename
@@ -39,7 +44,7 @@ const COMPANY_PEOPLE_QUERY = gql`
       __typename
       id
       people {
-        ${PEOPLE_CONNECTION_SELECTION}
+        ${CONNECTION_SELECTION}
       }
     }
   }
@@ -51,7 +56,19 @@ const COMPANY_SCOPED_PEOPLE_QUERY = gql`
       __typename
       id
       people_scoped: people(first: $first) {
-        ${PEOPLE_CONNECTION_SELECTION}
+        ${CONNECTION_SELECTION}
+      }
+    }
+  }
+`;
+
+const COMPANY_SCOPED_TASK_TARGETS_QUERY = gql`
+  query CompanyScopedTaskTargets($first: Int) {
+    company {
+      __typename
+      id
+      taskTargets_scoped: taskTargets(first: $first) {
+        ${CONNECTION_SELECTION}
       }
     }
   }
@@ -95,6 +112,26 @@ const buildApolloClient = () => {
     },
   });
 
+  apolloClient.cache.writeQuery({
+    query: COMPANY_SCOPED_TASK_TARGETS_QUERY,
+    variables: { first: 1 },
+    data: {
+      company: {
+        __typename: 'Company',
+        id: COMPANY_ID,
+        taskTargets_scoped: {
+          __typename: 'TaskTargetConnection',
+          edges: [
+            {
+              __typename: 'TaskTargetEdge',
+              node: { __typename: 'TaskTarget', id: TASK_TARGET_ID },
+            },
+          ],
+        },
+      },
+    },
+  });
+
   return apolloClient;
 };
 
@@ -124,6 +161,11 @@ const renderListener = (scopedRelationAliases: ScopedRelationAlias[]) => {
     readCachedScopedPeople: () =>
       apolloClient.cache.readQuery({
         query: COMPANY_SCOPED_PEOPLE_QUERY,
+        variables: { first: 1 },
+      }),
+    readCachedScopedTaskTargets: () =>
+      apolloClient.cache.readQuery({
+        query: COMPANY_SCOPED_TASK_TARGETS_QUERY,
         variables: { first: 1 },
       }),
     readCachedPeople: () =>
@@ -159,6 +201,39 @@ describe('useListenToScopedRelationRecordOperation', () => {
     });
 
     expect(onScopedRelationRecordOperation).not.toHaveBeenCalled();
+    expect(readCachedScopedPeople()).not.toBeNull();
+  });
+
+  it('drops the cached scoped values and reloads when a target record of a join object column is written', () => {
+    const { scopedRelationJunction } = resolveScopedRelationJunction({
+      fieldMetadataItem: getMockFieldMetadataItemOrThrow({
+        objectMetadataItem: companyObjectMetadataItem,
+        fieldName: 'taskTargets',
+      }),
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
+    });
+    const {
+      onScopedRelationRecordOperation,
+      readCachedScopedTaskTargets,
+      readCachedScopedPeople,
+    } = renderListener([
+      {
+        recordFieldId: 'task-targets-column',
+        responseKey: 'taskTargets_scoped',
+        relationFieldName: 'taskTargets',
+        relationObjectMetadataItem:
+          getMockObjectMetadataItemOrThrow('taskTarget'),
+        scopedRelationJunction,
+      },
+    ]);
+
+    dispatchObjectRecordOperationBrowserEvent({
+      objectMetadataItem: taskObjectMetadataItem,
+      operation: { type: 'delete-one', deletedRecordId: 'task' },
+    });
+
+    expect(onScopedRelationRecordOperation).toHaveBeenCalledTimes(1);
+    expect(readCachedScopedTaskTargets()).toBeNull();
     expect(readCachedScopedPeople()).not.toBeNull();
   });
 });

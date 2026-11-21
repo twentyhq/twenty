@@ -2,8 +2,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ScopedRelationAlias } from '@/object-record/record-column-scope/types/ScopedRelationAlias';
 import { getRelationScopeRecordFiltersAndSorts } from '@/object-record/record-column-scope/utils/getRelationScopeRecordFiltersAndSorts';
-import { getScopedRelationLookupTarget } from '@/object-record/record-column-scope/utils/getScopedRelationLookupTarget';
-import { isScopedRelationColumn } from '@/object-record/record-column-scope/utils/isScopedRelationColumn';
+import { getScopedRelationColumn } from '@/object-record/record-column-scope/utils/getScopedRelationColumn';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/utils/findRelationTargetObjectMetadataItem';
 import { getQueryVariablesFromFiltersAndSorts } from '@/views/utils/getQueryVariablesFromFiltersAndSorts';
@@ -41,15 +40,18 @@ export const getScopedRelationAliases = ({
       fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
     const { relationScope } = recordField;
 
-    if (
-      !isDefined(fieldMetadataItem) ||
-      !isDefined(relationScope) ||
-      !isScopedRelationColumn({
-        fieldMetadataItem,
-        recordField,
-        isLookupColumnsEnabled,
-      })
-    ) {
+    if (!isDefined(fieldMetadataItem) || !isDefined(relationScope)) {
+      return [];
+    }
+
+    const scopedRelationColumn = getScopedRelationColumn({
+      recordField,
+      fieldMetadataItem,
+      objectMetadataItems,
+      isLookupColumnsEnabled,
+    });
+
+    if (!isDefined(scopedRelationColumn)) {
       return [];
     }
 
@@ -89,12 +91,7 @@ export const getScopedRelationAliases = ({
         filter,
         orderBy,
         first,
-        lookupTarget: getScopedRelationLookupTarget({
-          recordField,
-          fieldMetadataItem,
-          objectMetadataItems,
-          isLookupColumnsEnabled,
-        }),
+        ...scopedRelationColumn,
       },
     ];
   });

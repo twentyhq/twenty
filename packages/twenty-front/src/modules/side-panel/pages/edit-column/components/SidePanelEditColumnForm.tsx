@@ -4,7 +4,10 @@ import { AdvancedFilterSidePanelContainer } from '@/object-record/advanced-filte
 import { getLookupTargetFieldMetadataItems } from '@/object-record/record-column-lookup/utils/getLookupTargetFieldMetadataItems';
 import { getRecordFieldColumnHeader } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnHeader';
 import { useSaveScopedRelationColumn } from '@/object-record/record-column-scope/hooks/useSaveScopedRelationColumn';
+import { type ScopedRelationJunction } from '@/object-record/record-column-scope/types/ScopedRelationJunction';
+import { getRelationScopeFieldMetadataItems } from '@/object-record/record-column-scope/utils/getRelationScopeFieldMetadataItems';
 import { getRelationScopeFromRecordFiltersAndSorts } from '@/object-record/record-column-scope/utils/getRelationScopeFromRecordFiltersAndSorts';
+import { getRelationScopeToSave } from '@/object-record/record-column-scope/utils/getRelationScopeToSave';
 import { parseRelationScopeLimitInput } from '@/object-record/record-column-scope/utils/parseRelationScopeLimitInput';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
@@ -30,6 +33,7 @@ import { useStore } from 'jotai';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
+import { type ViewFieldRelationScope } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -57,18 +61,20 @@ type SidePanelEditColumnFormProps = {
   recordTableId: string;
   fieldMetadataItem: FieldMetadataItem;
   relationObjectMetadataItem: EnrichedObjectMetadataItem;
+  scopedRelationJunction?: ScopedRelationJunction;
   recordFieldId?: string;
-  initialLimit?: number | null;
-  initialRelationTargetFieldMetadataId?: string | null;
+  storedRelationScope?: ViewFieldRelationScope | null;
+  storedRelationTargetFieldMetadataId?: string | null;
 };
 
 export const SidePanelEditColumnForm = ({
   recordTableId,
   fieldMetadataItem,
   relationObjectMetadataItem,
+  scopedRelationJunction,
   recordFieldId,
-  initialLimit,
-  initialRelationTargetFieldMetadataId,
+  storedRelationScope,
+  storedRelationTargetFieldMetadataId,
 }: SidePanelEditColumnFormProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -94,9 +100,16 @@ export const SidePanelEditColumnForm = ({
     currentRecordSortsComponentState,
   );
 
-  const [limitInput, setLimitInput] = useState(initialLimit?.toString() ?? '');
+  const isJunctionRelation = isDefined(scopedRelationJunction);
+
+  const [limitInput, setLimitInput] = useState(
+    storedRelationScope?.limit?.toString() ?? '',
+  );
+  // The target records of a join object are two hops away, too far for a column to show one of their fields
   const [relationTargetFieldMetadataId, setRelationTargetFieldMetadataId] =
-    useState(initialRelationTargetFieldMetadataId ?? null);
+    useState(
+      isJunctionRelation ? null : (storedRelationTargetFieldMetadataId ?? null),
+    );
   const [isSaving, setIsSaving] = useState(false);
 
   const parsedLimitInput = parseRelationScopeLimitInput(limitInput);
@@ -111,11 +124,15 @@ export const SidePanelEditColumnForm = ({
     const isSaved = await saveScopedRelationColumn({
       fieldMetadataItemId: fieldMetadataItem.id,
       recordFieldId,
-      relationScope: getRelationScopeFromRecordFiltersAndSorts({
-        recordFilters: store.get(currentRecordFilters),
-        recordFilterGroups: store.get(currentRecordFilterGroups),
-        recordSorts: store.get(currentRecordSorts),
-        limit: parsedLimitInput.limit,
+      relationScope: getRelationScopeToSave({
+        editedRelationScope: getRelationScopeFromRecordFiltersAndSorts({
+          recordFilters: store.get(currentRecordFilters),
+          recordFilterGroups: store.get(currentRecordFilterGroups),
+          recordSorts: store.get(currentRecordSorts),
+          limit: parsedLimitInput.limit,
+        }),
+        storedRelationScope,
+        scopedRelationJunction,
       }),
       relationTargetFieldMetadataId,
     });
@@ -170,39 +187,50 @@ export const SidePanelEditColumnForm = ({
         }
       />
       <StyledContent>
-        <FormFieldInputContainer>
-          <Field.Label>{t`Show`}</Field.Label>
-          <Select
-            dropdownId={`edit-column-show-${sidePanelPageId}`}
-            fullWidth
-            value={relationTargetFieldMetadataId}
-            pinnedOption={{
-              Icon: getIcon(relationObjectMetadataItem.icon),
-              label: relationObjectMetadataItem.labelPlural,
-              value: null,
-            }}
-            options={lookupTargetFieldMetadataItems.map(
-              (lookupTargetFieldMetadataItem) => ({
-                Icon: getIcon(lookupTargetFieldMetadataItem.icon),
-                label: lookupTargetFieldMetadataItem.label,
-                value: lookupTargetFieldMetadataItem.id,
-              }),
-            )}
-            onChange={setRelationTargetFieldMetadataId}
-            withSearchInput
-          />
-        </FormFieldInputContainer>
+        {!isJunctionRelation && (
+          <FormFieldInputContainer>
+            <Field.Label>{t`Show`}</Field.Label>
+            <Select
+              dropdownId={`edit-column-show-${sidePanelPageId}`}
+              fullWidth
+              value={relationTargetFieldMetadataId}
+              pinnedOption={{
+                Icon: getIcon(relationObjectMetadataItem.icon),
+                label: relationObjectMetadataItem.labelPlural,
+                value: null,
+              }}
+              options={lookupTargetFieldMetadataItems.map(
+                (lookupTargetFieldMetadataItem) => ({
+                  Icon: getIcon(lookupTargetFieldMetadataItem.icon),
+                  label: lookupTargetFieldMetadataItem.label,
+                  value: lookupTargetFieldMetadataItem.id,
+                }),
+              )}
+              onChange={setRelationTargetFieldMetadataId}
+              withSearchInput
+            />
+          </FormFieldInputContainer>
+        )}
         <FormFieldInputContainer>
           <Field.Label>{t`Filter`}</Field.Label>
           <AdvancedFilterSidePanelContainer
-            objectMetadataItem={relationObjectMetadataItem}
+            objectMetadataItem={
+              scopedRelationJunction?.targetObjectMetadataItem ??
+              relationObjectMetadataItem
+            }
             isWorkflowFindRecords={false}
+            shouldHideRelationFields={isJunctionRelation}
           />
         </FormFieldInputContainer>
         <FormFieldInputContainer>
           <Field.Label>{t`Sort`}</Field.Label>
           <RecordTableSettingsSortsContent
-            objectMetadataItem={relationObjectMetadataItem}
+            objectMetadataItem={{
+              fields: getRelationScopeFieldMetadataItems({
+                relationObjectMetadataItem,
+                scopedRelationJunction,
+              }),
+            }}
           />
         </FormFieldInputContainer>
         <TextInput

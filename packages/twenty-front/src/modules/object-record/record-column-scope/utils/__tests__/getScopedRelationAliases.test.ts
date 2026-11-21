@@ -28,6 +28,30 @@ const createdAtField = getMockFieldMetadataItemOrThrow({
   fieldName: 'createdAt',
 });
 
+const taskObjectMetadataItem = getMockObjectMetadataItemOrThrow('task');
+const taskTargetObjectMetadataItem =
+  getMockObjectMetadataItemOrThrow('taskTarget');
+const personTaskTargetsField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: personObjectMetadataItem,
+  fieldName: 'taskTargets',
+});
+const taskTargetTaskField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: taskTargetObjectMetadataItem,
+  fieldName: 'task',
+});
+const taskTargetCreatedAtField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: taskTargetObjectMetadataItem,
+  fieldName: 'createdAt',
+});
+const taskStatusField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: taskObjectMetadataItem,
+  fieldName: 'status',
+});
+const taskTitleField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: taskObjectMetadataItem,
+  fieldName: 'title',
+});
+
 const PEOPLE_COLUMN_ID = '20202020-0000-4000-8000-0000000000c1';
 const OTHER_PEOPLE_COLUMN_ID = '20202020-0000-4000-8000-0000000000c2';
 
@@ -180,5 +204,64 @@ describe('getScopedRelationAliases', () => {
         isLookupColumnsEnabled: false,
       }),
     ).toEqual([]);
+  });
+
+  it('scopes a join object relation by the fields of its target records, which it lists', () => {
+    const [taskTargetsAlias] = getScopedRelationAliases({
+      recordFields: [
+        {
+          id: PEOPLE_COLUMN_ID,
+          fieldMetadataItemId: personTaskTargetsField.id,
+          isCanonical: false,
+          relationScope: {
+            filters: [
+              {
+                id: '20202020-0000-4000-8000-0000000000f2',
+                fieldMetadataId: taskTargetTaskField.id,
+                relationTargetFieldMetadataId: taskStatusField.id,
+                operand: ViewFilterOperand.IS,
+                value: ['TODO'],
+              },
+            ],
+            filterGroups: [],
+            sorts: [
+              {
+                fieldMetadataId: taskTargetTaskField.id,
+                relationTargetFieldMetadataId: taskTitleField.id,
+                direction: ViewSortDirection.DESC,
+              },
+            ],
+            limit: 1,
+          },
+          relationTargetFieldMetadataId: taskTargetCreatedAtField.id,
+        },
+      ],
+      fieldMetadataItemByFieldMetadataItemId: {
+        [personTaskTargetsField.id]: personTaskTargetsField,
+      },
+      objectMetadataItems,
+      fieldMetadataItems: [
+        ...taskTargetObjectMetadataItem.fields,
+        ...taskObjectMetadataItem.fields,
+      ],
+      filterValueDependencies: {},
+      isLookupColumnsEnabled: true,
+    });
+
+    expect(taskTargetsAlias).toMatchObject({
+      relationFieldName: 'taskTargets',
+      relationObjectMetadataItem: { nameSingular: 'taskTarget' },
+      filter: { task: { status: { in: ['TODO'] } } },
+      orderBy: [
+        { task: { title: 'DescNullsLast' } },
+        { position: 'AscNullsFirst' },
+      ],
+      first: 1,
+      scopedRelationJunction: {
+        targetFieldMetadataItem: { name: 'task' },
+        targetObjectMetadataItem: { nameSingular: 'task' },
+      },
+    });
+    expect(taskTargetsAlias.lookupTarget).toBeUndefined();
   });
 });

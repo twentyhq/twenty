@@ -1,3 +1,4 @@
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useScopedRelationAliases } from '@/object-record/record-column-scope/hooks/useScopedRelationAliases';
 import { getScopedRelationColumnQueryFingerprint } from '@/object-record/record-column-scope/utils/getScopedRelationColumnQueryFingerprint';
@@ -16,9 +17,12 @@ export const useRecordIndexTableColumnQuery = ({
     additionalFieldMetadataIds,
   });
 
-  const scopedRelationRecordGqlFields = getScopedRelationRecordGqlFields(
-    useScopedRelationAliases(),
-  );
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const scopedRelationRecordGqlFields = getScopedRelationRecordGqlFields({
+    scopedRelationAliases: useScopedRelationAliases(),
+    objectMetadataItems,
+  });
 
   return {
     recordGqlFields: {

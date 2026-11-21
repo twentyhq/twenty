@@ -3,6 +3,9 @@ import { getScopedRelationFieldNamesShowingObject } from '@/object-record/record
 const PERSON_OBJECT_METADATA_ITEM_ID = 'person-object-metadata-item-id';
 const OPPORTUNITY_OBJECT_METADATA_ITEM_ID =
   'opportunity-object-metadata-item-id';
+const TASK_TARGET_OBJECT_METADATA_ITEM_ID =
+  'task-target-object-metadata-item-id';
+const TASK_OBJECT_METADATA_ITEM_ID = 'task-object-metadata-item-id';
 
 const SCOPED_RELATION_ALIASES = [
   {
@@ -17,6 +20,13 @@ const SCOPED_RELATION_ALIASES = [
     relationFieldName: 'opportunities',
     relationObjectMetadataItem: { id: OPPORTUNITY_OBJECT_METADATA_ITEM_ID },
   },
+  {
+    relationFieldName: 'taskTargets',
+    relationObjectMetadataItem: { id: TASK_TARGET_OBJECT_METADATA_ITEM_ID },
+    scopedRelationJunction: {
+      targetObjectMetadataItem: { id: TASK_OBJECT_METADATA_ITEM_ID },
+    },
+  },
 ];
 
 describe('getScopedRelationFieldNamesShowingObject', () => {
@@ -27,6 +37,15 @@ describe('getScopedRelationFieldNamesShowingObject', () => {
         objectMetadataItemId: PERSON_OBJECT_METADATA_ITEM_ID,
       }),
     ).toEqual(['people']);
+  });
+
+  it('returns a join object relation when its target object is written', () => {
+    expect(
+      getScopedRelationFieldNamesShowingObject({
+        scopedRelationAliases: SCOPED_RELATION_ALIASES,
+        objectMetadataItemId: TASK_OBJECT_METADATA_ITEM_ID,
+      }),
+    ).toEqual(['taskTargets']);
   });
 
   it('returns nothing when no scoped column shows the written object', () => {
