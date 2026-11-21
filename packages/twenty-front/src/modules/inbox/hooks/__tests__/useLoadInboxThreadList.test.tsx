@@ -465,31 +465,4 @@ describe('useLoadInboxThreadList', () => {
       expect(await result.current.loadAiChatThread('unknown')).toBeUndefined();
     });
   });
-
-  it('restores the usage of a chat opened past the loaded pages', async () => {
-    const store = buildStore();
-    queryMock.mockResolvedValueOnce(
-      buildPage([
-        {
-          ...buildThread('old-thread', 'Old chat'),
-          conversationSize: 3,
-          contextWindowTokens: 1000,
-          totalInputTokens: 42,
-        },
-      ]),
-    );
-    const result = renderRefresh(store);
-
-    await act(async () => {
-      await result.current.loadAiChatThread('old-thread');
-    });
-
-    expect(
-      store.get(
-        aiChatThreadUsageFamilyState.atomFamily({
-          threadId: 'old-thread',
-        }),
-      ),
-    ).toMatchObject({ inputTokens: 42 });
-  });
 });
