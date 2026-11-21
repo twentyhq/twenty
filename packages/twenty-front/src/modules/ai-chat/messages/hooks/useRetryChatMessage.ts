@@ -4,10 +4,10 @@ import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
-import { useAiChatModelId } from '@/ai-chat/hooks/useAiChatModelId';
 import { aiChatThreadReplyErrorFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyErrorFamilyState';
 import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
 import { endAiChatReplyStatus } from '@/ai-chat/utils/endAiChatReplyStatus';
+import { getAiChatModelIdForRequest } from '@/ai-chat/utils/getAiChatModelIdForRequest';
 import { getAiChatReplyStatusUnlessStreaming } from '@/ai-chat/utils/getAiChatReplyStatusUnlessStreaming';
 import { isAiChatCreditsExhaustedError } from '@/ai-chat/usage/utils/isAiChatCreditsExhaustedError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -20,7 +20,6 @@ import { RetryChatMessageDocument } from '~/generated-metadata/graphql';
 export const useRetryChatMessage = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
-  const { modelIdForRequest } = useAiChatModelId();
   const { threadId } = useAiChatInstanceOrThrow();
 
   const retryChatMessage = useCallback(async () => {
@@ -41,7 +40,7 @@ export const useRetryChatMessage = () => {
     try {
       await apolloClient.mutate({
         mutation: RetryChatMessageDocument,
-        variables: { threadId, modelId: modelIdForRequest },
+        variables: { threadId, modelId: getAiChatModelIdForRequest(store) },
       });
 
       // Same guard as useAiChat: the stream may already have set a newer credits-exhausted error.
@@ -61,7 +60,7 @@ export const useRetryChatMessage = () => {
         store.set(currentWorkspaceState.atom, markWorkspaceCreditsExhausted);
       }
     }
-  }, [apolloClient, store, modelIdForRequest, threadId]);
+  }, [apolloClient, store, threadId]);
 
   return { retryChatMessage };
 };
