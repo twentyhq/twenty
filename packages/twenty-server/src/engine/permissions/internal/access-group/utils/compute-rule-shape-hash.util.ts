@@ -1,0 +1,97 @@
+/* @license Enterprise */
+
+import { createHash } from 'crypto';
+
+import {
+  type RowLevelPermissionPredicate,
+  type RowLevelPermissionPredicateGroup,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type RlsRule } from 'src/engine/permissions/internal/rls/utils/build-rls-record-filter.util';
+
+const sortByContent = <TEntry>(entries: TEntry[]): string[] =>
+  entries.map((entry) => JSON.stringify(entry)).sort();
+
+export const buildPredicateGroupContent = ({
+  parentPredicateGroupId,
+  predicates,
+  predicateGroups,
+  isRelationHopEnabled,
+}: {
+  parentPredicateGroupId: string | null;
+  predicates: RowLevelPermissionPredicate[];
+  predicateGroups: RowLevelPermissionPredicateGroup[];
+  isRelationHopEnabled: boolean;
+}): { predicates: string[]; predicateGroups: string[] } => ({
+  predicates: sortByContent(
+    predicates
+      .filter(
+        ({ rowLevelPermissionPredicateGroupId }) =>
+          (rowLevelPermissionPredicateGroupId ?? null) ===
+          parentPredicateGroupId,
+      )
+      .map((predicate) => [
+        ...(isDefined(predicate.relationFieldMetadataId)
+          ? [predicate.relationFieldMetadataId, isRelationHopEnabled]
+          : []),
+        predicate.fieldMetadataId,
+        predicate.subFieldName,
+        predicate.operand,
+        predicate.value,
+        predicate.workspaceMemberFieldMetadataId,
+        predicate.workspaceMemberSubFieldName,
+      ]),
+  ),
+  predicateGroups: sortByContent(
+    predicateGroups
+      .filter(
+        ({ parentRowLevelPermissionPredicateGroupId }) =>
+          (parentRowLevelPermissionPredicateGroupId ?? null) ===
+          parentPredicateGroupId,
+      )
+      .map((predicateGroup) => [
+        predicateGroup.logicalOperator,
+        buildPredicateGroupContent({
+          parentPredicateGroupId: predicateGroup.id,
+          predicates,
+          predicateGroups,
+          isRelationHopEnabled,
+        }),
+      ]),
+  ),
+});
+
+export const computeRuleShapeHash = ({
+  objectMetadataId,
+  rowLevelPermissionRule,
+  literalValuePredicateId,
+  unreadableFieldIds,
+  isRelationHopEnabled,
+}: {
+  objectMetadataId: string;
+  rowLevelPermissionRule: RlsRule | null;
+  literalValuePredicateId: string | null;
+  unreadableFieldIds: string[];
+  isRelationHopEnabled: boolean;
+}): string =>
+  createHash('sha256')
+    .update(
+      JSON.stringify([
+        objectMetadataId,
+        isDefined(rowLevelPermissionRule)
+          ? buildPredicateGroupContent({
+              parentPredicateGroupId: null,
+              predicates: rowLevelPermissionRule.predicates.map((predicate) =>
+                predicate.id === literalValuePredicateId
+                  ? { ...predicate, value: null }
+                  : predicate,
+              ),
+              predicateGroups: rowLevelPermissionRule.predicateGroups,
+              isRelationHopEnabled,
+            })
+          : null,
+        [...unreadableFieldIds].sort(),
+      ]),
+    )
+    .digest('hex');

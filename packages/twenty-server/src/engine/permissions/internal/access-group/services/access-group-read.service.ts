@@ -51,7 +51,6 @@ export class AccessGroupReadService {
       workspaceId,
       accessGroups: principals.mainPrincipal.roleIds.flatMap((roleId) =>
         buildRoleAccessGroupsOrThrow({
-          roleId,
           objectMetadataId,
           objectRecordsPermissions:
             rolesPermissions[roleId]?.objects[objectMetadataId],

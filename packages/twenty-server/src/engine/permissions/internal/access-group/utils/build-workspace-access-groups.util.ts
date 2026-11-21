@@ -96,7 +96,6 @@ export const buildWorkspaceAccessGroups = ({
 
       try {
         for (const accessGroup of buildRoleAccessGroupsOrThrow({
-          roleId,
           objectMetadataId,
           objectRecordsPermissions,
           workspaceMembers: workspaceMembersByRoleId.get(roleId) ?? [],

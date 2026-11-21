@@ -1,0 +1,66 @@
+/* @license Enterprise */
+
+import { isNonEmptyString } from '@sniptt/guards';
+import {
+  type RowLevelPermissionPredicate,
+  type RowLevelPermissionPredicateGroup,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type RlsRule } from 'src/engine/permissions/internal/rls/utils/build-rls-record-filter.util';
+
+const isAtRootConjunction = ({
+  predicate,
+  predicateGroups,
+}: {
+  predicate: RowLevelPermissionPredicate;
+  predicateGroups: RowLevelPermissionPredicateGroup[];
+}): boolean => {
+  let groupId = predicate.rowLevelPermissionPredicateGroupId ?? null;
+
+  while (isDefined(groupId)) {
+    const predicateGroup = predicateGroups.find(({ id }) => id === groupId);
+
+    if (
+      !isDefined(predicateGroup) ||
+      predicateGroup.logicalOperator !==
+        RowLevelPermissionPredicateGroupLogicalOperator.AND
+    ) {
+      return false;
+    }
+
+    groupId = predicateGroup.parentRowLevelPermissionPredicateGroupId ?? null;
+  }
+
+  return true;
+};
+
+const isLiteralValueListPredicate = (
+  predicate: RowLevelPermissionPredicate,
+): predicate is RowLevelPermissionPredicate & { value: string[] } =>
+  !isDefined(predicate.workspaceMemberFieldMetadataId) &&
+  predicate.operand === RowLevelPermissionPredicateOperand.IS &&
+  Array.isArray(predicate.value) &&
+  predicate.value.every(isNonEmptyString);
+
+// a rule that must match one of listed values is the union of one group per value
+export const findLiteralValuePredicate = ({
+  predicates,
+  predicateGroups,
+}: RlsRule): (RowLevelPermissionPredicate & { value: string[] }) | null => {
+  if (
+    predicates.some(({ workspaceMemberFieldMetadataId }) =>
+      isDefined(workspaceMemberFieldMetadataId),
+    )
+  ) {
+    return null;
+  }
+
+  const literalValuePredicates = predicates
+    .filter(isLiteralValueListPredicate)
+    .filter((predicate) => isAtRootConjunction({ predicate, predicateGroups }));
+
+  return literalValuePredicates.length === 1 ? literalValuePredicates[0] : null;
+};

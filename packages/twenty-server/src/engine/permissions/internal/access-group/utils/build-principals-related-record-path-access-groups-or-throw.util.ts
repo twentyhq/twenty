@@ -44,7 +44,6 @@ export const buildPrincipalsRelatedRecordPathAccessGroupsOrThrow = ({
         ...(areRecordIdsReadableByPrincipals(sourceRequest)
           ? mainRoleIds.flatMap((roleId) =>
               buildRoleAccessGroupsOrThrow({
-                roleId,
                 objectMetadataId: sourceFlatObjectMetadata.id,
                 objectRecordsPermissions:
                   metadataMaps.rolesPermissions[roleId]?.objects[
