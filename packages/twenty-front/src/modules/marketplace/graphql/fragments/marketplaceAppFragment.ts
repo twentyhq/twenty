@@ -11,5 +11,6 @@ export const MARKETPLACE_APP_FRAGMENT = gql`
     connectUrl
     sourcePackage
     isListed
+    hasMcpServers
   }
 `;

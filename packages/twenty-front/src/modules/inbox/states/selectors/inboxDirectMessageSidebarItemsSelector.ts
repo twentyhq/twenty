@@ -5,7 +5,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 
-import { aiChatThreadMemberStateFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadMemberStateFamilySelector';
+import { aiChatThreadInboxStatusFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadInboxStatusFamilySelector';
 import { inboxRecentThreadsSelector } from '@/inbox/states/selectors/inboxRecentThreadsSelector';
 import { type DirectMessageSidebarItem } from '@/inbox/types/DirectMessageSidebarItem';
 import { sortChatThreadsByLastActivityDesc } from '@/ai-chat/threads/utils/sortChatThreadsByLastActivityDesc';
@@ -39,7 +39,7 @@ export const inboxDirectMessageSidebarItemsSelector = createAtomSelector<
           ({ id }) => id === peerWorkspaceMemberId,
         );
         const { isUnread } = get(
-          aiChatThreadMemberStateFamilySelector,
+          aiChatThreadInboxStatusFamilySelector,
           thread.id,
         );
 

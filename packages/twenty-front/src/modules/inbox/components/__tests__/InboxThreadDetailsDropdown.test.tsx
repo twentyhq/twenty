@@ -239,17 +239,20 @@ const renderDetails = async ({
         buildWorkspaceMember(WRITER_ID, 'Writer'),
       ]);
       store.set(aiChatThreadParticipantsState.atom, {
-        [THREAD_ID]: {
-          __typename: 'AgentChatThreadParticipant',
-          id: 'participant-1',
-          threadId: THREAD_ID,
-          lastReadAt: null,
-          archivedAt: null,
-          snoozedUntil: null,
-          isSubscribed,
-          lastMentionedAt: null,
-          mentionsResolvedAt: null,
-          updatedAt: '2020-01-01T00:00:00.000Z',
+        isLoaded: true,
+        rowsByThreadId: {
+          [THREAD_ID]: {
+            __typename: 'AgentChatThreadParticipant',
+            id: 'participant-1',
+            threadId: THREAD_ID,
+            lastReadAt: null,
+            archivedAt: null,
+            snoozedUntil: null,
+            isSubscribed,
+            lastMentionedAt: null,
+            mentionsResolvedAt: null,
+            updatedAt: '2020-01-01T00:00:00.000Z',
+          },
         },
       });
     },

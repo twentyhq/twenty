@@ -8,8 +8,8 @@ import { useUpdateAiChatThreadStatus } from '@/ai-chat/threads/hooks/useUpdateAi
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
 import {
   type AiChatThreadVisit,
-  aiChatThreadVisitFamilyState,
-} from '@/ai-chat/threads/states/aiChatThreadVisitFamilyState';
+  aiChatThreadViewVisitFamilyState,
+} from '@/ai-chat/states/view/aiChatThreadViewVisitFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -44,18 +44,18 @@ export const AiChatThreadMarkAsReadEffect = () => {
     if (
       !isDefined(threadId) ||
       !isVisible ||
-      !isDefined(aiChatThreadParticipants) ||
+      !aiChatThreadParticipants.isLoaded ||
       !isDefined(lastActivityAt)
     ) {
       return;
     }
 
-    const participant = aiChatThreadParticipants[threadId];
+    const participant = aiChatThreadParticipants.rowsByThreadId[threadId];
     const { isUnread } = getAgentChatThreadInboxStatus({
       lastActivityAt,
       participant,
     });
-    const visitAtom = aiChatThreadVisitFamilyState.atomFamily({ threadId });
+    const visitAtom = aiChatThreadViewVisitFamilyState.atomFamily({ threadId });
     const storedVisit = store.get(visitAtom);
 
     // Taken once per visit, before the read mark, so it sees where the member

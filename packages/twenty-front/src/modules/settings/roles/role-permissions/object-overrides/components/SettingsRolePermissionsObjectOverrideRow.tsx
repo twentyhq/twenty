@@ -5,6 +5,7 @@ import { OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/ro
 import { useRowLevelPermissionRuleLabel } from '@/settings/roles/role-permissions/object-overrides/hooks/useRowLevelPermissionRuleLabel';
 import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/object-overrides/hooks/useSettingsRoleObjectOverrides';
 import { getRecordsGrantOperations } from '@/settings/roles/role-permissions/object-overrides/utils/getRecordsGrantOperations';
+import { getObjectDisabledOperations } from '@/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperations';
 import { getObjectOperations } from '@/settings/roles/role-permissions/object-overrides/utils/getObjectOperations';
 import { getObjectRowLevelPermissionRules } from '@/settings/roles/role-permissions/object-overrides/utils/getObjectRowLevelPermissionRules';
 import { hasObjectFieldRestriction } from '@/settings/roles/role-permissions/object-overrides/utils/hasObjectFieldRestriction';
@@ -70,9 +71,12 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
+  const disabledOperations = getObjectDisabledOperations(objectMetadataItem);
+
   const operations = getObjectOperations({
     role: settingsDraftRole,
     objectMetadataId: objectMetadataItem.id,
+    disabledOperations,
   });
 
   const isAdvanced = hasRule || hasFieldRestriction;
@@ -96,7 +100,10 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
     }
 
     const ruleOperationsLabel = getObjectOperationsSummary({
-      operations: getRecordsGrantOperations(singleRule.rule),
+      operations: getRecordsGrantOperations({
+        recordsGrant: singleRule.rule,
+        disabledOperations,
+      }),
       isAdvanced: false,
     }).label;
     const ruleLabel = getRuleLabel(singleRule.predicates);
@@ -149,7 +156,7 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
           <ChevronIcon size={theme.icon.size.md} />
         </TableCell>
       </TableRow>
-      <Collapsible.Panel dimension="height" containAnimation={false}>
+      <Collapsible.Panel dimension="height">
         <SettingsRolePermissionsObjectOverridePanel
           roleId={roleId}
           objectMetadataItem={objectMetadataItem}

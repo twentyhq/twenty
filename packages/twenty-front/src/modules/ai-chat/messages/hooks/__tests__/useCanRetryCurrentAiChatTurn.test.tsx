@@ -3,7 +3,7 @@ import { setAiChatThreadPermissions } from '@/ai-chat/threads/testing/setAiChatT
 import { renderHook } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { type ReactNode } from 'react';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useCanRetryCurrentAiChatTurn } from '@/ai-chat/messages/hooks/useCanRetryCurrentAiChatTurn';
 import { useCurrentAiChatThreadAccess } from '@/ai-chat/threads/hooks/useCurrentAiChatThreadAccess';
@@ -45,7 +45,9 @@ describe('Shared chat execution controls', () => {
         },
       });
       jotaiStore.set(
-        aiChatMessagesFamilyState.atomFamily({ threadId: 'thread' }),
+        aiChatThreadDisplayedMessagesFamilyState.atomFamily({
+          threadId: 'thread',
+        }),
         [
           {
             id: 'message',

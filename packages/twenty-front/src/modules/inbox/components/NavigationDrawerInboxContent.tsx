@@ -12,7 +12,7 @@ import { NavigationDrawerInboxTriageSection } from '@/inbox/components/Navigatio
 import { NavigationDrawerDirectMessagesSection } from '@/inbox/components/NavigationDrawerDirectMessagesSection';
 import { OpenDirectMessageButton } from '@/inbox/components/OpenDirectMessageButton';
 import { INBOX_RECENT_THREADS_MAX_COUNT } from '@/inbox/constants/InboxRecentThreadsMaxCount';
-import { useAiChatThreadClick } from '@/ai-chat/hooks/useAiChatThreadClick';
+import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadClick';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
 import { inboxDirectMessageSidebarItemsSelector } from '@/inbox/states/selectors/inboxDirectMessageSidebarItemsSelector';

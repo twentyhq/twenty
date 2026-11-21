@@ -1,11 +1,9 @@
 import { styled } from '@linaria/react';
 
-import { AiChatInstance } from '@/ai-chat/components/AiChatInstance';
-import { AiChatTab } from '@/ai-chat/components/AiChatTab';
+import { AiChatSurfaceView } from '@/ai-chat/instance/components/AiChatSurfaceView';
 import { AI_CHAT_SURFACE } from '@/ai-chat/constants/AiChatSurface';
-import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
-import { useAskAiSidePanelThreadId } from '@/side-panel/pages/ask-ai/hooks/useAskAiSidePanelThreadId';
-import { askAiSidePanelThreadIdComponentState } from '@/side-panel/pages/ask-ai/states/askAiSidePanelThreadIdComponentState';
+import { useAskAiSidePanelThreadId } from '@/side-panel/hooks/useAskAiSidePanelThreadId';
+import { askAiSidePanelThreadIdComponentState } from '@/side-panel/states/askAiSidePanelThreadIdComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -25,16 +23,13 @@ export const SidePanelAskAiPage = () => {
   );
 
   return (
-    <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.SIDE_PANEL}>
-      <AiChatInstance
+    <StyledContainer>
+      <AiChatSurfaceView
+        surface={AI_CHAT_SURFACE.SIDE_PANEL}
         instanceId={sidePanelPageInstanceId}
         threadId={askAiSidePanelThreadId}
         onThreadChange={setAskAiSidePanelThreadId}
-      >
-        <StyledContainer>
-          <AiChatTab />
-        </StyledContainer>
-      </AiChatInstance>
-    </AiChatSurfaceContext.Provider>
+      />
+    </StyledContainer>
   );
 };

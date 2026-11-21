@@ -10,7 +10,7 @@ import {
 export const computeSubscriptionUpdateOptions = (
   subscriptionUpdate: SubscriptionUpdate,
   context?: {
-    currentSeats?: number;
+    isQuantityIncrease?: boolean;
     isTrialing?: boolean;
     isSendInvoice?: boolean;
   },
@@ -40,11 +40,10 @@ export const computeSubscriptionUpdateOptions = (
             proration: 'create_prorations',
             anchor: 'now',
           };
-    case SubscriptionUpdateType.SEATS: {
-      const currentSeats = context?.currentSeats ?? subscriptionUpdate.newSeats;
-
+    case SubscriptionUpdateType.QUANTITIES:
+    case SubscriptionUpdateType.APPLICATIONS: {
       const shouldInvoiceImmediately =
-        subscriptionUpdate.newSeats > currentSeats && !context?.isSendInvoice;
+        context?.isQuantityIncrease && !context?.isSendInvoice;
 
       return {
         proration: shouldInvoiceImmediately

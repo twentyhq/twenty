@@ -1,9 +1,8 @@
 import { useLocation } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
 
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
-import { inboxThreadMemberStateByThreadIdFamilySelector } from '@/inbox/states/selectors/inboxThreadMemberStateByThreadIdFamilySelector';
+import { inboxThreadInboxStatusByThreadIdFamilySelector } from '@/inbox/states/selectors/inboxThreadInboxStatusByThreadIdFamilySelector';
 import { getInboxThreadTriageStatus } from '@/inbox/utils/getInboxThreadTriageStatus';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -37,7 +36,7 @@ export const useInboxThreadTriage = ({
     ? (inboxSelectedChannelView?.channelId ?? null)
     : (channelIdOutsideInbox ?? null);
   const { [threadId]: inboxStatus } = useAtomFamilySelectorValue(
-    inboxThreadMemberStateByThreadIdFamilySelector,
+    inboxThreadInboxStatusByThreadIdFamilySelector,
     { threadIds: [threadId], channelId },
   );
   const isInChannel = inboxStatus?.isChannelCopy ?? false;
@@ -46,7 +45,7 @@ export const useInboxThreadTriage = ({
     status: getInboxThreadTriageStatus({
       hasAiPermission,
       isInboxEnabled,
-      areParticipantsLoaded: isInChannel || isDefined(aiChatThreadParticipants),
+      areParticipantsLoaded: isInChannel || aiChatThreadParticipants.isLoaded,
       scope: inboxStatus?.scope ?? 'NONE',
     }),
     isInChannel,
