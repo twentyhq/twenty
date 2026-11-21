@@ -18,9 +18,9 @@ import { RECOMPUTE_RECORD_ACCESS_GROUP_IDS_OF_RECORDS_JOB_NAME } from 'src/engin
 import { type RecomputeRecordAccessGroupIdsOfRecordsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-of-records-job-data.type';
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type RelatedRecords } from 'src/engine/permissions/types/related-records.type';
-import { buildAccessGroupValueLookupIdsExpressions } from 'src/engine/permissions/internal/access-group/utils/build-access-group-value-lookup-ids-expressions.util';
-import { findAccessGroupValueLookups } from 'src/engine/permissions/internal/access-group/utils/find-access-group-value-lookups.util';
+import { findAccessGroupValueLookups } from 'src/engine/permissions/internal/access-group/value-lookup/utils/find-access-group-value-lookups.util';
 import { buildRecordAccessGroupSQLConditions } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-sql-conditions.util';
+import { buildAccessGroupValueLookupIdsExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-access-group-value-lookup-ids-expression.util';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
@@ -157,13 +157,16 @@ export class RecordAccessGroupComputationService {
             !lookupRuleShapeHashes.has(accessGroup.ruleShapeHash),
         ),
       }),
-      accessGroupValueLookupIdsExpressions:
-        buildAccessGroupValueLookupIdsExpressions({
-          workspaceId,
-          flatObjectMetadata,
-          metadataMaps,
-          lookups: accessGroupValueLookups,
-        }),
+      accessGroupValueLookupIdsExpressions: accessGroupValueLookups.map(
+        (lookup, lookupIndex) =>
+          buildAccessGroupValueLookupIdsExpression({
+            workspaceId,
+            flatObjectMetadata,
+            metadataMaps,
+            lookup,
+            lookupIndex,
+          }),
+      ),
       resolvedRelatedRecordPaths: feedingRelatedRecordPaths,
       accessGroups,
       metadataMaps,

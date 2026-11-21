@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { type AccessGroupValueLookupKey } from 'src/engine/permissions/internal/access-group/types/access-group-value-lookup-key.type';
+import { type AccessGroupValueLookupKey } from 'src/engine/permissions/internal/access-group/value-lookup/types/access-group-value-lookup-key.type';
 import { type RlsRule } from 'src/engine/permissions/internal/rls/utils/build-rls-record-filter.util';
 
 export type AccessGroupValueLookup = {

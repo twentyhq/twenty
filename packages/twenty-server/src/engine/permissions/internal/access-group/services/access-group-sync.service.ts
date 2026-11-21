@@ -16,16 +16,15 @@ import { buildWorkspaceAccessGroups } from 'src/engine/permissions/internal/acce
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { MAX_INCREMENTAL_ACCESS_GROUP_CHANGES_PER_OBJECT } from 'src/engine/permissions/internal/access-group/constants/max-incremental-access-group-changes-per-object.constant';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
 import { RecordAccessGroupPropagationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-propagation.service';
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-computation-metadata-maps.type';
 import { buildRecordAccessGroupSQLConditions } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-sql-conditions.util';
-import { findLookupRuleShapeHashesByObjectMetadataId } from 'src/engine/permissions/internal/access-group/utils/find-lookup-rule-shape-hashes-by-object-metadata-id.util';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
-import { planAccessGroupSyncRecomputes } from 'src/engine/permissions/internal/access-group/utils/plan-access-group-sync-recomputes.util';
 import { planRecordAccessGroupComputes } from 'src/engine/permissions/internal/access-group/utils/plan-record-access-group-computes.util';
+import { findAccessGroupValueLookups } from 'src/engine/permissions/internal/access-group/value-lookup/utils/find-access-group-value-lookups.util';
+import { isAccessGroupSyncIncremental } from 'src/engine/permissions/internal/access-group/value-lookup/utils/is-access-group-sync-incremental.util';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
 
 @Injectable()
@@ -92,19 +91,30 @@ export class AccessGroupSyncService {
     ].filter(({ objectMetadataId }) =>
       isObjectUsingRecordAccessGroups({ ...metadataMaps, objectMetadataId }),
     );
-    const { fullRecomputeObjectMetadataIds, incrementalObjectMetadataIds } =
-      planAccessGroupSyncRecomputes({
-        changedAccessGroups,
-        lookupRuleShapeHashesByObjectMetadataId:
-          findLookupRuleShapeHashesByObjectMetadataId({
-            objectMetadataIds: changedAccessGroups.map(
-              ({ objectMetadataId }) => objectMetadataId,
-            ),
+    const changedObjectMetadataIds = [
+      ...new Set(
+        changedAccessGroups.map(({ objectMetadataId }) => objectMetadataId),
+      ),
+    ];
+    const incrementalObjectMetadataIds = changedObjectMetadataIds.filter(
+      (objectMetadataId) =>
+        isAccessGroupSyncIncremental({
+          changedAccessGroups: changedAccessGroups.filter(
+            (accessGroup) => accessGroup.objectMetadataId === objectMetadataId,
+          ),
+          accessGroupValueLookups: findAccessGroupValueLookups({
+            flatObjectMetadata: findFlatEntityByIdInFlatEntityMapsOrThrow({
+              flatEntityId: objectMetadataId,
+              flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
+            }),
             metadataMaps,
           }),
-        maxIncrementalChangesPerObject:
-          MAX_INCREMENTAL_ACCESS_GROUP_CHANGES_PER_OBJECT,
-      });
+        }),
+    );
+    const fullRecomputeObjectMetadataIds = changedObjectMetadataIds.filter(
+      (objectMetadataId) =>
+        !incrementalObjectMetadataIds.includes(objectMetadataId),
+    );
 
     await this.accessGroupPropagationPlanService.planAndApplyComputes({
       workspaceId,

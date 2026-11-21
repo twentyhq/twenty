@@ -6,7 +6,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type RecordAccessGroupSQLConditionMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-sql-condition-metadata-maps.type';
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type AccessGroupSplitValue } from 'src/engine/permissions/internal/access-group/types/access-group-split-value.type';
-import { buildRlsRuleSQLCondition } from 'src/engine/permissions/internal/access-group/utils/build-rls-rule-sql-condition.util';
+import { buildRlsRuleSQLCondition } from 'src/engine/permissions/internal/rls/utils/build-rls-rule-sql-condition.util';
 import { type RlsRuleShape } from 'src/engine/permissions/internal/rls/types/rls-rule-shape.type';
 import { type RlsRule } from 'src/engine/permissions/internal/rls/utils/build-rls-record-filter.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';

@@ -2,9 +2,13 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AccessGroupValueLookup } from 'src/engine/permissions/internal/access-group/types/access-group-value-lookup.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type RecordAccessGroupSQLConditionMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-sql-condition-metadata-maps.type';
+import { type AccessGroupValueLookup } from 'src/engine/permissions/internal/access-group/value-lookup/types/access-group-value-lookup.type';
+import { RECORD_ACCESS_GROUP_TABLE_ALIAS } from 'src/engine/permissions/internal/record-permission-repository/constants/record-access-group-table-alias.constant';
 import { buildAccessGroupTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-access-group-table-expression.util';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
+import { buildRlsRuleSQLCondition } from 'src/engine/permissions/internal/rls/utils/build-rls-rule-sql-condition.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -40,23 +44,30 @@ const buildMatchingValueCondition = ({
 
 export const buildAccessGroupValueLookupIdsExpression = ({
   workspaceId,
-  tableAlias,
+  flatObjectMetadata,
+  metadataMaps,
   lookup,
   lookupIndex,
-  residualSQLCondition,
 }: {
   workspaceId: string;
-  tableAlias: string;
+  flatObjectMetadata: FlatObjectMetadata;
+  metadataMaps: RecordAccessGroupSQLConditionMetadataMaps;
   lookup: AccessGroupValueLookup;
   lookupIndex: number;
-  residualSQLCondition: SQLCondition | null;
 }): SQLCondition => {
+  const residualSQLCondition = buildRlsRuleSQLCondition({
+    rowLevelPermissionRule: lookup.residualRule,
+    memberFieldValues: {},
+    flatObjectMetadata,
+    tableAlias: RECORD_ACCESS_GROUP_TABLE_ALIAS,
+    metadataMaps,
+  });
   const parameterName = (name: string) =>
     `accessGroupValueLookup${lookupIndex}_${name}`;
   const accessGroupAlias = escapeIdentifier(
     `access_group_value_lookup_${lookupIndex}`,
   );
-  const quotedTableAlias = escapeIdentifier(tableAlias);
+  const quotedTableAlias = escapeIdentifier(RECORD_ACCESS_GROUP_TABLE_ALIAS);
 
   const keyLookups: KeyLookup[] = lookup.keys.map((key, keyIndex) => {
     if (!isDefined(key.relationHop)) {

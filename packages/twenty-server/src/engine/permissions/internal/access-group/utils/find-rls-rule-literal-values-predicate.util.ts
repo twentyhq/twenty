@@ -7,7 +7,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { isRlsPredicateAtRootConjunction } from 'src/engine/permissions/internal/access-group/utils/is-rls-predicate-at-root-conjunction.util';
+import { isRlsPredicateAtRootConjunction } from 'src/engine/permissions/internal/rls/utils/is-rls-predicate-at-root-conjunction.util';
 import { type RlsRule } from 'src/engine/permissions/internal/rls/utils/build-rls-record-filter.util';
 
 const isRlsLiteralValuesPredicate = (
