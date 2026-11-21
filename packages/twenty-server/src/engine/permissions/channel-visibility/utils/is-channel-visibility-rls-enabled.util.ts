@@ -1,6 +1,5 @@
 import { FeatureFlagKey } from 'twenty-shared/types';
 
-// the rules reach messages and events through their channel associations, a relation hop
 export const isChannelVisibilityRlsEnabled = (
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>,
 ): boolean =>
