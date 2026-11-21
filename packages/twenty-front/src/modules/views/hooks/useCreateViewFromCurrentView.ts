@@ -194,6 +194,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
               viewField.relationScope,
             ),
             label: viewField.label,
+            relationAggregateOperation: viewField.relationAggregateOperation,
             viewId: newViewId,
           })),
       });
