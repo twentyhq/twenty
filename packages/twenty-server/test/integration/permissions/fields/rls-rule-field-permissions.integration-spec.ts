@@ -93,12 +93,14 @@ describe('field permissions on an RLS rule (integration)', () => {
   > => {
     const { data } = await findRoles({
       gqlFields:
-        'id fieldPermissions { fieldMetadataId rowLevelPermissionPredicateGroupId }',
+        'id fieldPermissions { fieldMetadataId rowLevelPermissionPredicateGroupId } rowLevelPermissionFieldPermissions { fieldMetadataId rowLevelPermissionPredicateGroupId }',
     });
+    const role = data.getRoles.find(({ id }) => id === roleId);
 
-    return (
-      data.getRoles.find((role) => role.id === roleId)?.fieldPermissions ?? []
-    )
+    return [
+      ...(role?.fieldPermissions ?? []),
+      ...(role?.rowLevelPermissionFieldPermissions ?? []),
+    ]
       .filter(
         (fieldPermission) =>
           fieldPermission.fieldMetadataId === avatarUrlFieldMetadataId,
