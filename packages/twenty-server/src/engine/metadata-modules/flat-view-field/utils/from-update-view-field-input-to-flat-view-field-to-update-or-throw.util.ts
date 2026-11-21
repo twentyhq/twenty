@@ -62,13 +62,12 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
     FLAT_VIEW_FIELD_EDITABLE_PROPERTIES,
   );
 
-  const editableProperties =
-    sanitizedEditableProperties.label === undefined
-      ? sanitizedEditableProperties
-      : {
-          ...sanitizedEditableProperties,
-          label: normalizeViewFieldLabel(sanitizedEditableProperties.label),
-        };
+  const editableProperties = !isDefined(sanitizedEditableProperties.label)
+    ? sanitizedEditableProperties
+    : {
+        ...sanitizedEditableProperties,
+        label: normalizeViewFieldLabel(sanitizedEditableProperties.label),
+      };
 
   const shouldOverride = isCallerOverridingEntity({
     callerApplicationUniversalIdentifier,
