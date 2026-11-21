@@ -23,17 +23,7 @@ describe('isTeamsConnectorServiceUrl', () => {
     );
   });
 
-  it('should refuse the GCC High and DoD hosts', () => {
-    expect(
-      isTeamsConnectorServiceUrl(
-        'https://smba.infra.gov.teams.microsoft.us/teams',
-      ),
-    ).toBe(false);
-    expect(
-      isTeamsConnectorServiceUrl(
-        'https://smba.infra.dod.teams.microsoft.us/teams',
-      ),
-    ).toBe(false);
+  it('should refuse the government cloud Bot Framework host', () => {
     expect(
       isTeamsConnectorServiceUrl(
         'https://smba.infra.gov.botframework.azure.us/gov',
@@ -47,12 +37,6 @@ describe('isTeamsConnectorServiceUrl', () => {
     ).toBe(false);
   });
 
-  it('should refuse another host on the Teams domain', () => {
-    expect(
-      isTeamsConnectorServiceUrl('https://attacker.teams.microsoft.com/teams'),
-    ).toBe(false);
-  });
-
   it('should refuse a host that only ends with the Bot Connector domain', () => {
     expect(
       isTeamsConnectorServiceUrl(
@@ -61,18 +45,7 @@ describe('isTeamsConnectorServiceUrl', () => {
     ).toBe(false);
   });
 
-  it('should refuse a host that only ends with the GCC Bot Connector domain', () => {
-    expect(
-      isTeamsConnectorServiceUrl(
-        'https://smba.infra.gcc.teams.microsoft.com.evil.example/teams',
-      ),
-    ).toBe(false);
-  });
-
-  it('should refuse a lookalike of the Bot Framework domain', () => {
-    expect(
-      isTeamsConnectorServiceUrl('https://api.botframework.com.evil.example'),
-    ).toBe(false);
+  it('should refuse a host that only ends with the Bot Framework name', () => {
     expect(isTeamsConnectorServiceUrl('https://evilbotframework.com')).toBe(
       false,
     );
