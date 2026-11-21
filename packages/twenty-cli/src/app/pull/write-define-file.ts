@@ -152,6 +152,7 @@ const buildAggregateOperationBinding = (path: string[]): EnumBinding => ({
 
 export const VIEW_FIELD_ENUM_BINDINGS: EnumBinding[] = [
   buildAggregateOperationBinding(['aggregateOperation']),
+  buildAggregateOperationBinding(['relationAggregateOperation']),
 ];
 
 export const VIEW_ENUM_BINDINGS: EnumBinding[] = [
@@ -169,6 +170,11 @@ export const VIEW_ENUM_BINDINGS: EnumBinding[] = [
     members: ViewCalendarLayout,
   },
   buildAggregateOperationBinding(['fields', '[]', 'aggregateOperation']),
+  buildAggregateOperationBinding([
+    'fields',
+    '[]',
+    'relationAggregateOperation',
+  ]),
   {
     path: ['filters', '[]', 'operand'],
     symbol: 'ViewFilterOperand',
