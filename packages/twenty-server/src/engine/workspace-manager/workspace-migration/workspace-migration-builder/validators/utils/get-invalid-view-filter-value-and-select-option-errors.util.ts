@@ -34,23 +34,26 @@ export const getInvalidViewFilterValueAndSelectOptionErrors = ({
     value,
   });
 
-  const invalidSelectOptionError =
-    isDefined(selectOptionFlatFieldMetadata) &&
-    (isFieldMetadataEntityOfType(
+  if (
+    !isDefined(selectOptionFlatFieldMetadata) ||
+    (!isFieldMetadataEntityOfType(
       selectOptionFlatFieldMetadata,
       FieldMetadataType.SELECT,
-    ) ||
-      isFieldMetadataEntityOfType(
+    ) &&
+      !isFieldMetadataEntityOfType(
         selectOptionFlatFieldMetadata,
         FieldMetadataType.MULTI_SELECT,
       ))
-      ? getInvalidViewFilterSelectOptionError({
-          referencedFieldMetadata: selectOptionFlatFieldMetadata,
-          flatFieldMetadataOptionMaps,
-          operand,
-          value,
-        })
-      : undefined;
+  ) {
+    return [invalidValueError].filter(isDefined);
+  }
+
+  const invalidSelectOptionError = getInvalidViewFilterSelectOptionError({
+    referencedFieldMetadata: selectOptionFlatFieldMetadata,
+    flatFieldMetadataOptionMaps,
+    operand,
+    value,
+  });
 
   return [invalidValueError, invalidSelectOptionError].filter(isDefined);
 };
