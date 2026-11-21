@@ -114,10 +114,14 @@ export const RecordTableAggregateFooterCell = ({
     }),
   );
 
+  // A total of the relation field would count its related records, not add up the summaries
+  const isSummary = isDefined(recordField?.relationAggregateOperation);
+
   const isFooterReadOnly =
     (useIsRecordTableWidgetAggregateNonInteractive() ??
       !isRecordTableColumnResizable) ||
-    isLookup;
+    isLookup ||
+    isSummary;
 
   const isFirstCell = columnIndex === 0;
 
@@ -139,7 +143,7 @@ export const RecordTableAggregateFooterCell = ({
         className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
       >
         {isFooterReadOnly ? (
-          hasAggregateOperationForViewField && !isLookup ? (
+          hasAggregateOperationForViewField && !isLookup && !isSummary ? (
             <RecordTableColumnAggregateFooterValue
               fieldMetadataId={fieldMetadataId}
               dropdownId={`${viewFieldId}-footer-readonly`}

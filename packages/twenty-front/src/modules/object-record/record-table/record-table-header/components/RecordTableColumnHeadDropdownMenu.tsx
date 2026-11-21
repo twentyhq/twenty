@@ -18,6 +18,7 @@ import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges
 import { useLingui } from '@lingui/react/macro';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -113,13 +114,19 @@ export const RecordTableColumnHeadDropdownMenu = ({
     });
   };
 
-  const { isFilterable, isSortable } = useAtomFamilySelectorValue(
-    isFieldMetadataItemFilterableAndSortableSelector,
-    {
-      fieldMetadataItemId:
-        lookupTargetFieldMetadataItem?.id ?? recordField.fieldMetadataItemId,
-    },
-  );
+  const isSummaryColumn = isDefined(recordField.relationAggregateOperation);
+
+  const { isFilterable: isFieldFilterable, isSortable: isFieldSortable } =
+    useAtomFamilySelectorValue(
+      isFieldMetadataItemFilterableAndSortableSelector,
+      {
+        fieldMetadataItemId:
+          lookupTargetFieldMetadataItem?.id ?? recordField.fieldMetadataItemId,
+      },
+    );
+
+  const isFilterable = isFieldFilterable && !isSummaryColumn;
+  const isSortable = isFieldSortable && !isSummaryColumn;
 
   const { canPersistChanges } = useCanPersistViewChanges();
   const isCanonical = isCanonicalRecordField(recordField);

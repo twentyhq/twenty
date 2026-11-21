@@ -86,7 +86,10 @@ export const RecordTableCellFieldContextWrapper = ({
               fieldDefinitionByFieldMetadataItemId[
                 recordField.fieldMetadataItemId
               ],
-            isRecordReadOnly: isRecordReadOnly ?? false,
+            // A summary is computed from the related records, so there is nothing to edit in its cell
+            isRecordReadOnly:
+              (isRecordReadOnly ?? false) ||
+              isDefined(scopedRelationAlias?.summary),
             restrictedFieldNames: isScopedRelationLookupTargetRestricted
               ? [...restrictedFieldNames, fieldMetadataItem.name]
               : restrictedFieldNames,

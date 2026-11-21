@@ -12,6 +12,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { editColumnRequestComponentState } from '@/side-panel/pages/edit-column/states/editColumnRequestComponentState';
+import { type EditColumnKind } from '@/side-panel/pages/edit-column/types/EditColumnKind';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
@@ -42,9 +43,11 @@ export const useOpenEditColumnInSidePanel = (recordTableId: string) => {
     ({
       fieldMetadataItemId,
       recordFieldId,
+      kind,
     }: {
       fieldMetadataItemId: string;
       recordFieldId?: string;
+      kind?: EditColumnKind;
     }) => {
       const viewId = store.get(
         contextStoreCurrentViewIdComponentState.atomFamily({
@@ -63,13 +66,14 @@ export const useOpenEditColumnInSidePanel = (recordTableId: string) => {
         return;
       }
 
-      const relationScope = store
+      const recordField = store
         .get(
           currentRecordFieldsComponentState.atomFamily({
             instanceId: recordTableId,
           }),
         )
-        .find(({ id }) => id === recordFieldId)?.relationScope;
+        .find(({ id }) => id === recordFieldId);
+      const relationScope = recordField?.relationScope;
 
       const { scopedRelationJunction } = resolveScopedRelationJunction({
         fieldMetadataItem,
@@ -117,6 +121,11 @@ export const useOpenEditColumnInSidePanel = (recordTableId: string) => {
           viewId,
           fieldMetadataItemId,
           recordFieldId,
+          kind:
+            kind ??
+            (isDefined(recordField?.relationAggregateOperation)
+              ? 'summary'
+              : 'filtered'),
         },
       );
 

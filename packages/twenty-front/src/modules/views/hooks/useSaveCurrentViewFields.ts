@@ -71,6 +71,8 @@ export const useSaveCurrentViewFields = () => {
                 viewFieldToCreateOrUpdate.relationScope,
               ),
               label: viewFieldToCreateOrUpdate.label,
+              relationAggregateOperation:
+                viewFieldToCreateOrUpdate.relationAggregateOperation,
               size: viewFieldToCreateOrUpdate.size,
               aggregateOperation: viewFieldToCreateOrUpdate.aggregateOperation,
               viewId: currentViewId,
@@ -104,10 +106,15 @@ export const useSaveCurrentViewFields = () => {
               (existingField.label ?? null) !==
               (createViewFieldInput.label ?? null);
 
+            const hasRelationAggregateOperationChanged =
+              (existingField.relationAggregateOperation ?? null) !==
+              (createViewFieldInput.relationAggregateOperation ?? null);
+
             if (
               !hasRelationScopeChanged &&
               !hasRelationTargetChanged &&
               !hasLabelChanged &&
+              !hasRelationAggregateOperationChanged &&
               isDeeplyEqual(
                 {
                   position: existingField.position,
@@ -152,6 +159,11 @@ export const useSaveCurrentViewFields = () => {
                       }),
                       ...(hasLabelChanged && {
                         label: createViewFieldInput.label ?? null,
+                      }),
+                      ...(hasRelationAggregateOperationChanged && {
+                        relationAggregateOperation:
+                          createViewFieldInput.relationAggregateOperation ??
+                          null,
                       }),
                     },
                   },

@@ -234,6 +234,13 @@ export const RecordTableHeaderPlusButtonContent = () => {
             onScopedColumnSelect={() =>
               openEditColumnInSidePanel({
                 fieldMetadataItemId: relationFieldMetadataItem.id,
+                kind: 'filtered',
+              })
+            }
+            onSummaryColumnSelect={() =>
+              openEditColumnInSidePanel({
+                fieldMetadataItemId: relationFieldMetadataItem.id,
+                kind: 'summary',
               })
             }
           />

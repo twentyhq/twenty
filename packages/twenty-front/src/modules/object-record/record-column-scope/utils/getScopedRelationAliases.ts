@@ -27,6 +27,7 @@ export const getScopedRelationAliases = ({
     | 'isCanonical'
     | 'relationScope'
     | 'relationTargetFieldMetadataId'
+    | 'relationAggregateOperation'
   >[];
   fieldMetadataItemByFieldMetadataItemId: Record<string, FieldMetadataItem>;
   objectMetadataItems: EnrichedObjectMetadataItem[];

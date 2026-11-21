@@ -8,6 +8,7 @@ export const VIEW_FIELD_FRAGMENT = gql`
     isVisible
     isCanonical
     label
+    relationAggregateOperation
     relationTargetFieldMetadataId
     relationScope {
       filters {

@@ -2,6 +2,7 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { buildAddedRecordField } from '@/object-record/record-field/utils/buildAddedRecordField';
+import { type AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { useStore } from 'jotai';
@@ -21,12 +22,14 @@ export const useSaveScopedRelationColumn = (recordTableId: string) => {
       recordFieldId,
       relationScope,
       relationTargetFieldMetadataId,
+      relationAggregateOperation,
       label,
     }: {
       fieldMetadataItemId: string;
       recordFieldId?: string;
       relationScope: ViewFieldRelationScope;
       relationTargetFieldMetadataId: string | null;
+      relationAggregateOperation: AggregateOperations | null;
       label: string | null;
     }): Promise<boolean> => {
       const currentRecordFields = store.get(
@@ -47,6 +50,7 @@ export const useSaveScopedRelationColumn = (recordTableId: string) => {
         ...recordFieldToSave,
         relationScope,
         relationTargetFieldMetadataId,
+        relationAggregateOperation,
         label,
       };
 
@@ -77,6 +81,7 @@ export const useSaveScopedRelationColumn = (recordTableId: string) => {
         updateRecordField(recordFieldId, {
           relationScope,
           relationTargetFieldMetadataId,
+          relationAggregateOperation,
           label,
         });
       }
