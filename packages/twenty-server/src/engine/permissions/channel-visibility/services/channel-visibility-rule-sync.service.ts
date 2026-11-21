@@ -18,8 +18,8 @@ import {
   CHANNEL_VISIBILITY_RULE_SYNC_LOCK_OPTIONS,
 } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-rule-sync-lock.constant';
 import { type ChannelVisibilityLevel } from 'src/engine/permissions/channel-visibility/types/channel-visibility-level.type';
-import { WorkspaceMemberIndividualRoleService } from 'src/engine/permissions/channel-visibility/services/workspace-member-individual-role.service';
-import { type WorkspaceMemberIndividualRoleRule } from 'src/engine/permissions/channel-visibility/types/workspace-member-individual-role.type';
+import { WorkspaceMemberIndividualRoleService } from 'src/engine/permissions/workspace-member-individual-role/services/workspace-member-individual-role.service';
+import { type WorkspaceMemberIndividualRoleRule } from 'src/engine/permissions/workspace-member-individual-role/types/workspace-member-individual-role.type';
 import { type VisibilityChannel } from 'src/engine/permissions/channel-visibility/types/visibility-channel.type';
 import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
 import { computeChannelIdsByVisibilityLevel } from 'src/engine/permissions/channel-visibility/utils/compute-channel-ids-by-visibility-level.util';

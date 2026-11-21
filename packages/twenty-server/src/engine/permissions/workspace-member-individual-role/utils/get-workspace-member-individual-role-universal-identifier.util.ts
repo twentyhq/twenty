@@ -1,6 +1,6 @@
 import { v5 } from 'uuid';
 
-import { WORKSPACE_MEMBER_INDIVIDUAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE } from 'src/engine/permissions/channel-visibility/constants/workspace-member-individual-role.constant';
+import { WORKSPACE_MEMBER_INDIVIDUAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE } from 'src/engine/permissions/workspace-member-individual-role/constants/workspace-member-individual-role.constant';
 
 export const getWorkspaceMemberIndividualRoleUniversalIdentifier = (
   userWorkspaceId: string,

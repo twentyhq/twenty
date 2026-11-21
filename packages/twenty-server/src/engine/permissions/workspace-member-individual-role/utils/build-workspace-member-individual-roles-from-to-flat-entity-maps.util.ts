@@ -8,10 +8,10 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import {
   WORKSPACE_MEMBER_INDIVIDUAL_ROLE_LABEL_PREFIX,
   WORKSPACE_MEMBER_INDIVIDUAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
-} from 'src/engine/permissions/channel-visibility/constants/workspace-member-individual-role.constant';
-import { type WorkspaceMemberIndividualRole } from 'src/engine/permissions/channel-visibility/types/workspace-member-individual-role.type';
-import { getWorkspaceMemberIndividualRoleUniversalIdentifier } from 'src/engine/permissions/channel-visibility/utils/get-workspace-member-individual-role-universal-identifier.util';
-import { isWorkspaceMemberIndividualRole } from 'src/engine/permissions/channel-visibility/utils/is-workspace-member-individual-role.util';
+} from 'src/engine/permissions/workspace-member-individual-role/constants/workspace-member-individual-role.constant';
+import { type WorkspaceMemberIndividualRole } from 'src/engine/permissions/workspace-member-individual-role/types/workspace-member-individual-role.type';
+import { getWorkspaceMemberIndividualRoleUniversalIdentifier } from 'src/engine/permissions/workspace-member-individual-role/utils/get-workspace-member-individual-role-universal-identifier.util';
+import { isWorkspaceMemberIndividualRole } from 'src/engine/permissions/workspace-member-individual-role/utils/is-workspace-member-individual-role.util';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 

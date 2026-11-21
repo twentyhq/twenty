@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -9,9 +8,8 @@ import { SyncChannelVisibilityRulesJob } from 'src/engine/permissions/channel-vi
 import { ChannelVisibilityRuleSyncListener } from 'src/engine/permissions/channel-visibility/listeners/channel-visibility-rule-sync.listener';
 import { ChannelVisibilityRuleSyncService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync.service';
 import { ChannelVisibilityRuleSyncSchedulerModule } from 'src/engine/permissions/channel-visibility/channel-visibility-rule-sync-scheduler.module';
-import { WorkspaceMemberIndividualRoleService } from 'src/engine/permissions/channel-visibility/services/workspace-member-individual-role.service';
+import { WorkspaceMemberIndividualRoleModule } from 'src/engine/permissions/workspace-member-individual-role/workspace-member-individual-role.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
@@ -19,18 +17,13 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     TypeOrmModule.forFeature([MessageChannelEntity, CalendarChannelEntity]),
     WorkspaceCacheModule,
     CacheLockModule,
-    WorkspaceMigrationModule,
-    ApplicationModule,
+    WorkspaceMemberIndividualRoleModule,
   ],
   providers: [
-    WorkspaceMemberIndividualRoleService,
     ChannelVisibilityRuleSyncService,
     ChannelVisibilityRuleSyncListener,
     SyncChannelVisibilityRulesJob,
   ],
-  exports: [
-    WorkspaceMemberIndividualRoleService,
-    ChannelVisibilityRuleSyncService,
-  ],
+  exports: [ChannelVisibilityRuleSyncService],
 })
 export class ChannelVisibilityModule {}
