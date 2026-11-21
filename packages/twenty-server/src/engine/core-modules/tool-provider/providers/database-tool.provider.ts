@@ -23,6 +23,7 @@ import { generateCreateManyRecordInputSchema } from 'src/engine/core-modules/rec
 import { generateCreateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-record-input-schema.util';
 import { generateUpdateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-many-record-input-schema.util';
 import { generateUpdateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-record-input-schema.util';
+import { getFieldMetadataIdsNotUpdatableByAutomation } from 'src/engine/core-modules/record-crud/utils/get-field-metadata-ids-not-updatable-by-automation.util';
 import { generateBulkDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/json-schemas/bulk-delete-tool.json-schema';
 import { DELETE_TOOL_INPUT_SCHEMA } from 'src/engine/core-modules/record-crud/json-schemas/delete-tool.json-schema';
 import { FIND_ONE_TOOL_INPUT_SCHEMA } from 'src/engine/core-modules/record-crud/json-schemas/find-one-tool.json-schema';
@@ -222,6 +223,18 @@ export class DatabaseToolProvider implements ToolProvider {
       const canBeManagedByAutomation = canObjectBeManagedByAutomation({
         nameSingular: objectMetadata.nameSingular,
       });
+      const fieldMetadataIdsNotUpdatableByAutomation =
+        getFieldMetadataIdsNotUpdatableByAutomation({
+          flatObjectMetadata: flatObject,
+          flatFieldMetadataMaps,
+        });
+      const canUpdateThroughAutomation =
+        fieldMetadataIdsNotUpdatableByAutomation.length <
+        flatObject.fieldIds.length;
+      const nonUpdatableByAutomationFieldMetadataIds = new Set([
+        ...nonUpdatableFieldMetadataIds,
+        ...fieldMetadataIdsNotUpdatableByAutomation,
+      ]);
 
       const shouldIncludeSchema = (name: string) =>
         includeSchemas && (!toolNames || toolNames.has(name));
@@ -364,7 +377,7 @@ export class DatabaseToolProvider implements ToolProvider {
         });
       }
 
-      if (canUpdateRecords && canBeManagedByAutomation) {
+      if (canUpdateRecords && canUpdateThroughAutomation) {
         descriptors.push({
           name: `update_one_${snakeSingular}`,
           ...getCrudToolLabels(
@@ -378,7 +391,8 @@ export class DatabaseToolProvider implements ToolProvider {
           ...(shouldIncludeSchema(`update_one_${snakeSingular}`) && {
             inputSchema: generateUpdateRecordInputSchema({
               objectMetadata,
-              nonUpdatableFieldMetadataIds,
+              nonUpdatableFieldMetadataIds:
+                nonUpdatableByAutomationFieldMetadataIds,
             }),
           }),
           executionRef: {
@@ -406,7 +420,8 @@ export class DatabaseToolProvider implements ToolProvider {
             inputSchema: generateUpdateManyRecordInputSchema({
               objectMetadata,
               unreadableFieldMetadataIds,
-              nonUpdatableFieldMetadataIds,
+              nonUpdatableFieldMetadataIds:
+                nonUpdatableByAutomationFieldMetadataIds,
             }),
           }),
           executionRef: {

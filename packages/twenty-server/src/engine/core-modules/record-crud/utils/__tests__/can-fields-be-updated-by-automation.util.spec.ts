@@ -1,3 +1,4 @@
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { canFieldsBeUpdatedByAutomation } from 'src/engine/core-modules/record-crud/utils/can-fields-be-updated-by-automation.util';
@@ -6,16 +7,17 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
-const WORKSPACE_CUSTOM_APPLICATION_ID = 'workspace-custom-application-id';
-const STANDARD_APPLICATION_ID = 'twenty-standard-application-id';
-const INSTALLED_APPLICATION_ID = 'installed-application-id';
+const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
+  'workspace-custom-application';
+const INSTALLED_APPLICATION_UNIVERSAL_IDENTIFIER = 'installed-application';
 
 const companyName = getFlatFieldMetadataMock({
   universalIdentifier: 'company-name',
   objectMetadataId: 'company',
   type: FieldMetadataType.TEXT,
   name: 'name',
-  applicationId: STANDARD_APPLICATION_ID,
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
 });
 
 const messageThreadSubject = getFlatFieldMetadataMock({
@@ -23,7 +25,8 @@ const messageThreadSubject = getFlatFieldMetadataMock({
   objectMetadataId: 'messageThread',
   type: FieldMetadataType.TEXT,
   name: 'subject',
-  applicationId: STANDARD_APPLICATION_ID,
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
 });
 
 const messageThreadCategory = getFlatFieldMetadataMock({
@@ -31,7 +34,8 @@ const messageThreadCategory = getFlatFieldMetadataMock({
   objectMetadataId: 'messageThread',
   type: FieldMetadataType.SELECT,
   name: 'category',
-  applicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
+  applicationUniversalIdentifier:
+    WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
 });
 
 const messageThreadDeal = getFlatFieldMetadataMock({
@@ -39,7 +43,8 @@ const messageThreadDeal = getFlatFieldMetadataMock({
   objectMetadataId: 'messageThread',
   type: FieldMetadataType.RELATION,
   name: 'deal',
-  applicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
+  applicationUniversalIdentifier:
+    WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
   settings: { relationType: RelationType.MANY_TO_ONE },
 });
 
@@ -48,7 +53,7 @@ const messageThreadSyncCursor = getFlatFieldMetadataMock({
   objectMetadataId: 'messageThread',
   type: FieldMetadataType.TEXT,
   name: 'syncCursor',
-  applicationId: INSTALLED_APPLICATION_ID,
+  applicationUniversalIdentifier: INSTALLED_APPLICATION_UNIVERSAL_IDENTIFIER,
 });
 
 const workspaceMemberCategory = getFlatFieldMetadataMock({
@@ -56,7 +61,8 @@ const workspaceMemberCategory = getFlatFieldMetadataMock({
   objectMetadataId: 'workspaceMember',
   type: FieldMetadataType.SELECT,
   name: 'category',
-  applicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
+  applicationUniversalIdentifier:
+    WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
 });
 
 const flatFieldMetadatas = [
@@ -113,7 +119,7 @@ describe('canFieldsBeUpdatedByAutomation', () => {
     ['messageThread', ['category'], true],
     ['messageThread', ['dealId'], true],
     ['messageThread', ['subject'], false],
-    ['messageThread', ['syncCursor'], false],
+    ['messageThread', ['syncCursor'], true],
     ['messageThread', ['category', 'subject'], false],
     ['messageThread', ['unknownField'], false],
     ['messageThread', [], false],
@@ -126,7 +132,6 @@ describe('canFieldsBeUpdatedByAutomation', () => {
           flatObjectMetadata: FLAT_OBJECT_METADATA_BY_NAME[objectName],
           flatFieldMetadataMaps,
           fieldNames,
-          workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
         }),
       ).toBe(expected);
     },
