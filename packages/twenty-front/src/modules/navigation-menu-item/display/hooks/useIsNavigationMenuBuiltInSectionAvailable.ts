@@ -1,3 +1,4 @@
+import { isNavigationMenuBuiltInSectionAvailable } from '@/navigation-menu-item/common/utils/isNavigationMenuBuiltInSectionAvailable';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
@@ -5,11 +6,16 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
-export const useAreAiChatSectionsAvailable = () => {
+export const useIsNavigationMenuBuiltInSectionAvailable = () => {
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
 
-  return hasAiPermission && isAiChatInboxEnabled;
+  return (builtInSectionKey: string | null | undefined) =>
+    isNavigationMenuBuiltInSectionAvailable({
+      builtInSectionKey,
+      hasAiPermission,
+      isAiChatInboxEnabled,
+    });
 };
