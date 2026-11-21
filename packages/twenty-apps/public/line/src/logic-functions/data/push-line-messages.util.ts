@@ -1,5 +1,8 @@
+import { isObject } from '@sniptt/guards';
+
 import { LineApiError } from 'src/logic-functions/data/line-api.error';
 import { lineApiRequest } from 'src/logic-functions/data/line-api-request.util';
+import { type LineOutgoingMessage } from 'src/logic-functions/types/line-outgoing-message.type';
 
 type PushResponse = { sentMessages: { id: string }[] };
 
@@ -7,8 +10,7 @@ const RETRY_KEY_ALREADY_ACCEPTED_STATUS = 409;
 const MESSAGE_LIMIT_REACHED_STATUS = 429;
 
 const isPushResponse = (body: unknown): body is PushResponse =>
-  typeof body === 'object' &&
-  body !== null &&
+  isObject(body) &&
   'sentMessages' in body &&
   Array.isArray(body.sentMessages);
 
@@ -16,12 +18,12 @@ const isPushResponse = (body: unknown): body is PushResponse =>
 export const pushLineMessages = async ({
   accessToken,
   to,
-  texts,
+  messages,
   retryKey,
 }: {
   accessToken: string;
   to: string;
-  texts: string[];
+  messages: LineOutgoingMessage[];
   retryKey: string;
 }): Promise<string[]> => {
   try {
@@ -30,7 +32,7 @@ export const pushLineMessages = async ({
       method: 'POST',
       path: '/v2/bot/message/push',
       headers: { 'X-Line-Retry-Key': retryKey },
-      data: { to, messages: texts.map((text) => ({ type: 'text', text })) },
+      data: { to, messages },
     });
 
     return sentMessages.map(({ id }) => String(id));

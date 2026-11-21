@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isObject } from '@sniptt/guards';
 
 import { LINE_API_BASE_URL } from 'src/constants/line-api.constant';
 import { LineApiError } from 'src/logic-functions/data/line-api.error';
@@ -16,8 +16,7 @@ const parseResponseBody = (text: string): unknown => {
 };
 
 const getErrorMessage = (body: unknown): string | undefined =>
-  typeof body === 'object' &&
-  body !== null &&
+  isObject(body) &&
   'message' in body &&
   isNonEmptyString(body.message)
     ? body.message
