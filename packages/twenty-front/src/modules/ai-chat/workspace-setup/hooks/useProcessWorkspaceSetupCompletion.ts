@@ -2,7 +2,6 @@ import { useContext } from 'react';
 import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
 import { AI_CHAT_SURFACE } from '@/ai-chat/constants/AiChatSurface';
 import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
-import { useIsWorkspaceSetupChat } from '@/ai-chat/hooks/useIsWorkspaceSetupChat';
 import { useReturnFromExpandedAiChat } from '@/ai-chat/hooks/useReturnFromExpandedAiChat';
 import { processedWorkspaceSetupCompletionIdsState } from '@/ai-chat/workspace-setup/states/processedWorkspaceSetupCompletionIdsState';
 import { extractCompletedWorkspaceSetupToolParts } from '@/ai-chat/workspace-setup/utils/extractCompletedWorkspaceSetupToolParts';
@@ -10,9 +9,9 @@ import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePat
 import { isSettingsPath } from '~/utils/isSettingsPath';
 import { useStore } from 'jotai';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useProcessWorkspaceSetupCompletion = () => {
-  const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const aiChatSurface = useContext(AiChatSurfaceContext);
   const { defaultHomePagePath } = useDefaultHomePagePath();
 
@@ -44,7 +43,10 @@ export const useProcessWorkspaceSetupCompletion = () => {
       ...completionIds,
     ]);
 
-    if (!isWorkspaceSetupChat) {
+    if (
+      !isDefined(aiChatSurface) ||
+      !store.get(shouldOpenAiChatAfterOnboardingState.atom)
+    ) {
       return;
     }
 

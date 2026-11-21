@@ -32,12 +32,6 @@ jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   useSidePanelMenu: () => ({ closeSidePanelMenu: closeSidePanelMenuMock }),
 }));
 
-let isWorkspaceSetupChat = true;
-
-jest.mock('@/ai-chat/hooks/useIsWorkspaceSetupChat', () => ({
-  useIsWorkspaceSetupChat: () => isWorkspaceSetupChat,
-}));
-
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
     <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.PAGE}>
@@ -69,12 +63,11 @@ describe('useProcessWorkspaceSetupCompletion', () => {
     jest.clearAllMocks();
     sessionStorage.clear();
     resetJotaiStore();
-    isWorkspaceSetupChat = true;
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
     defaultHomePagePath = '/objects/people';
   });
 
   it('keeps the current page and side panel open when setup finishes there', () => {
-    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
     const { result } = renderHook(() => useProcessWorkspaceSetupCompletion(), {
       wrapper: ({ children }) => (
         <Wrapper>
@@ -132,7 +125,6 @@ describe('useProcessWorkspaceSetupCompletion', () => {
 
   it('returns to settings and ends setup when no readable object homepage exists', () => {
     defaultHomePagePath = '/settings/profile';
-    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
     const { result } = renderHook(() => useProcessWorkspaceSetupCompletion(), {
       wrapper: Wrapper,
     });
@@ -152,7 +144,7 @@ describe('useProcessWorkspaceSetupCompletion', () => {
   });
 
   it('should not redirect when the chat already left the setup page', () => {
-    isWorkspaceSetupChat = false;
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, false);
 
     const { result } = renderHook(() => useProcessWorkspaceSetupCompletion(), {
       wrapper: Wrapper,
