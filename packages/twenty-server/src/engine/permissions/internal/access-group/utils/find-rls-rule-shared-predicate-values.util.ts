@@ -9,7 +9,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type AccessGroupSharedPredicate } from 'src/engine/permissions/internal/access-group/types/access-group-shared-predicate.type';
 
-// an "is any of" rule reaches the union of one group per value, shareable by every role listing it
 export const findRlsRuleSharedPredicateValues = (
   rowLevelPermissionRule: Pick<
     RowLevelRecordsPermissions,
