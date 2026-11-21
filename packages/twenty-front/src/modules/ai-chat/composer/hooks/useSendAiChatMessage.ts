@@ -101,6 +101,18 @@ type AiChatMessageToSend = Pick<
   quotedMessageId: string | null;
 };
 
+// A send made outside a chat follows the thread only if some chat still shows it
+const isThreadStillShown = ({
+  aiChatRequiredThreadListeners,
+  threadId,
+  instanceId,
+}: Pick<AiChatSendTarget, 'threadId' | 'instanceId'> & {
+  aiChatRequiredThreadListeners: Record<string, string>;
+}) =>
+  isDefined(instanceId)
+    ? aiChatRequiredThreadListeners[instanceId] === threadId
+    : Object.values(aiChatRequiredThreadListeners).includes(threadId);
+
 export const useSendAiChatMessage = () => {
   const { modelIdForRequest } = useAiChatModelId();
   const aiModels = useAtomStateValue(aiModelsState);
@@ -330,12 +342,15 @@ export const useSendAiChatMessage = () => {
             AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
           );
 
-          const isInstanceStillOnThread =
-            !isDefined(instanceId) ||
-            store.get(aiChatRequiredThreadListenersState.atom)[instanceId] ===
-              threadId;
-
-          if (isInstanceStillOnThread) {
+          if (
+            isThreadStillShown({
+              aiChatRequiredThreadListeners: store.get(
+                aiChatRequiredThreadListenersState.atom,
+              ),
+              threadId,
+              instanceId,
+            })
+          ) {
             onThreadChange(threadId);
           }
         }
@@ -532,12 +547,15 @@ export const useSendAiChatMessage = () => {
         });
 
         if (isDefined(directMessageThreadId)) {
-          const isStillOnNewChat =
-            !isDefined(instanceId) ||
-            store.get(aiChatRequiredThreadListenersState.atom)[instanceId] ===
-              threadId;
-
-          if (isStillOnNewChat) {
+          if (
+            isThreadStillShown({
+              aiChatRequiredThreadListeners: store.get(
+                aiChatRequiredThreadListenersState.atom,
+              ),
+              threadId,
+              instanceId,
+            })
+          ) {
             onThreadChange(directMessageThreadId);
           }
 
