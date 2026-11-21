@@ -9,7 +9,6 @@ import { type RecordPermissionTransactionScope } from 'src/engine/permissions/ty
 import { buildAccessGroupTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-access-group-table-expression.util';
 import { type AccessGroupRow } from 'src/engine/permissions/internal/record-permission-repository/types/access-group-row.type';
 import { fromAccessGroupRowToAccessGroup } from 'src/engine/permissions/internal/record-permission-repository/utils/from-access-group-row-to-access-group.util';
-import { fromAccessGroupToAccessGroupRow } from 'src/engine/permissions/internal/record-permission-repository/utils/from-access-group-to-access-group-row.util';
 
 const INSERT_BATCH_SIZE = 500;
 
@@ -85,11 +84,25 @@ export class AccessGroupRepository {
               .join(', ')}
             ON CONFLICT DO NOTHING`,
           parameters: Object.fromEntries(
-            batch.flatMap((newAccessGroup, index) =>
-              Object.entries(
-                fromAccessGroupToAccessGroupRow(newAccessGroup),
-              ).map(([columnName, value]) => [`${columnName}${index}`, value]),
-            ),
+            batch.flatMap((newAccessGroup, index) => [
+              [`objectMetadataId${index}`, newAccessGroup.objectMetadataId],
+              [`type${index}`, newAccessGroup.type],
+              [`ruleShapeHash${index}`, newAccessGroup.ruleShapeHash],
+              [`unreadableFieldIds${index}`, newAccessGroup.unreadableFieldIds],
+              [
+                `memberFieldValues${index}`,
+                newAccessGroup.type === 'RLS_MEMBER_VALUE'
+                  ? JSON.stringify(newAccessGroup.memberFieldValues)
+                  : null,
+              ],
+              [
+                `value${index}`,
+                newAccessGroup.type === 'RLS_LITERAL_VALUE'
+                  ? newAccessGroup.value
+                  : null,
+              ],
+              [`groupHash${index}`, newAccessGroup.groupHash],
+            ]),
           ),
         },
       });
