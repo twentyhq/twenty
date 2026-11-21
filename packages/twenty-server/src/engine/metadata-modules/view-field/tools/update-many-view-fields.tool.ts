@@ -67,6 +67,8 @@ export class UpdateManyViewFieldsTool extends BaseTool<
               relationTargetFieldMetadataId:
                 viewField.relationTargetFieldMetadataId,
               relationScope: viewField.relationScope,
+              label: viewField.label,
+              relationAggregateOperation: viewField.relationAggregateOperation,
             },
           },
           workspaceId,

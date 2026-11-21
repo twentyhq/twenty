@@ -28,4 +28,18 @@ export const updateViewFieldInputSchema = z.object({
     .nullable()
     .optional()
     .describe('Null shows every related record again.'),
+  label: z
+    .string()
+    .nullable()
+    .optional()
+    .describe(
+      'Column header shown instead of the default one. Null or an empty string shows the default header again.',
+    ),
+  relationAggregateOperation: z
+    .enum(AggregateOperations)
+    .nullable()
+    .optional()
+    .describe(
+      'On an extra (non-canonical) one-to-many column with a relationScope that has no sorts and no limit, show per row an aggregate of the related records the scope keeps instead of the records. COUNT takes no relationTargetFieldMetadataId; SUM, AVG, MIN and MAX need relationTargetFieldMetadataId set to a related object field that supports the operation. Null shows the related records again.',
+    ),
 });

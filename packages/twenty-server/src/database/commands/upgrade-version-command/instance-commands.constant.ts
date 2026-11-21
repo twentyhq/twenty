@@ -324,6 +324,8 @@ import { AddNavigationMenuItemOverridableEntityFastInstanceCommand } from 'src/d
 import { DropConnectedAccountVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795178831970-drop-connected-account-visibility';
 import { AddAcceptedBillingPricesToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795183195168-add-accepted-billing-prices-to-application';
 import { AddViewFieldRelationScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795188552589-add-view-field-relation-scope';
+import { AddViewFieldLabelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795256010100-add-view-field-label';
+import { AddViewFieldRelationAggregateOperationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795257225899-add-view-field-relation-aggregate-operation';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -650,4 +652,6 @@ export const INSTANCE_COMMANDS = [
   DropConnectedAccountVisibilityFastInstanceCommand,
   AddAcceptedBillingPricesToApplicationFastInstanceCommand,
   AddViewFieldRelationScopeFastInstanceCommand,
+  AddViewFieldLabelFastInstanceCommand,
+  AddViewFieldRelationAggregateOperationFastInstanceCommand,
 ];

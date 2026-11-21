@@ -96,6 +96,8 @@ const buildScopedViewField = (
   relationTargetFieldMetadataUniversalIdentifier: null,
   relationScope,
   universalRelationScope: toUniversal(relationScope),
+  label: null,
+  relationAggregateOperation: null,
   isActive: true,
   isSystemSideEffect: false,
   isCanonical: false,

@@ -7,6 +7,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsString,
   IsUUID,
   ValidateNested,
 } from 'class-validator';
@@ -52,6 +53,16 @@ class UpdateViewFieldInputUpdates {
   @Type(() => ViewFieldRelationScopeInput)
   @Field(() => ViewFieldRelationScopeInput, { nullable: true })
   relationScope?: ViewFieldRelationScopeInput | null;
+
+  @IsOptional()
+  @IsString()
+  @Field(() => String, { nullable: true })
+  label?: string | null;
+
+  @IsOptional()
+  @IsEnum(AggregateOperations)
+  @Field(() => AggregateOperations, { nullable: true })
+  relationAggregateOperation?: AggregateOperations | null;
 }
 
 @InputType()
