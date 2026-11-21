@@ -13,6 +13,7 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateFlatViewFieldLabel } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util';
 import { validateFlatViewFieldRelationScope } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util';
 import { validateFlatViewFieldRelationScopeNotOverridden } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-not-overridden.util';
 import { validateFlatViewFieldRelationTarget } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util';
@@ -86,6 +87,13 @@ export class FlatViewFieldValidatorService {
         updatedFlatViewField,
         flatFieldMetadataMaps,
         flatFieldMetadataOptionMaps,
+        buildOptions,
+      }),
+    );
+
+    validationResult.errors.push(
+      ...validateFlatViewFieldLabel({
+        flatViewField: updatedFlatViewField,
         buildOptions,
       }),
     );
@@ -219,6 +227,7 @@ export class FlatViewFieldValidatorService {
       flatViewMaps,
       flatObjectMetadataMaps,
     },
+    buildOptions,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewField
   >): FailedFlatEntityValidation<'viewField', 'create'> {
@@ -246,6 +255,13 @@ export class FlatViewFieldValidatorService {
         userFriendlyMessage: msg`View field metadata already exists`,
       });
     }
+
+    validationResult.errors.push(
+      ...validateFlatViewFieldLabel({
+        flatViewField: flatViewFieldToValidate,
+        buildOptions,
+      }),
+    );
 
     const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
       universalIdentifier:
