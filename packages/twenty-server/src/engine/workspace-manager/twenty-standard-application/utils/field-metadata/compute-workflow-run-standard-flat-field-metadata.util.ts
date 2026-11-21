@@ -246,8 +246,17 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       icon: 'IconStatusChange',
       isNullable: false,
       isUIEditable: false,
-      defaultValue: "'ENQUEUED'",
+      defaultValue: "'NOT_STARTED'",
       options: [
+        {
+          id: '20202020-2ec6-40d8-b9e1-1b1e567bcca9',
+          value: 'NOT_STARTED',
+          label: i18nLabel(
+            msg({ message: `Not started`, context: 'fieldMetadata.label' }),
+          ),
+          position: 0,
+          color: 'gray',
+        },
         {
           id: '20202020-3166-46be-995a-67cb1f4c41d5',
           value: 'RUNNING',

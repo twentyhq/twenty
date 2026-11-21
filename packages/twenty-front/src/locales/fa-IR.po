@@ -21577,6 +21577,11 @@ msgstr "توسط {notSharedByFullName} به اشتراک گذاشته نشده"
 msgid "Not shared with"
 msgstr "به اشتراک گذاشته نشده با"
 
+#. js-lingui-id: mu1gVr
+#: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
+msgid "Not started"
+msgstr "شروع نشده"
+
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"

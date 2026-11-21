@@ -7,7 +7,7 @@ import { type RecordAccessGroupSQLCondition } from 'src/engine/permissions/inter
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-computation-metadata-maps.type';
 import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
-import { buildInheritedAccessGroupIdsExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-inherited-access-group-ids-expression.util';
+import { buildRelatedRecordPathAccessGroupIdsExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-related-record-path-access-group-ids-expression.util';
 import { buildRecordAccessGroupIdsExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-record-access-group-ids-expression.util';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
@@ -18,6 +18,7 @@ export const buildRecomputeRecordAccessGroupIdsQuery = ({
   workspaceId,
   flatObjectMetadata,
   recordAccessGroupSQLConditions,
+  accessGroupValueLookupIdsSQLConditions,
   resolvedRelatedRecordPaths,
   accessGroups,
   metadataMaps,
@@ -26,6 +27,7 @@ export const buildRecomputeRecordAccessGroupIdsQuery = ({
   workspaceId: string;
   flatObjectMetadata: FlatObjectMetadata;
   recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[];
+  accessGroupValueLookupIdsSQLConditions: SQLCondition[];
   resolvedRelatedRecordPaths: ResolvedRelatedRecordPath[];
   accessGroups: AccessGroup[];
   metadataMaps: Pick<
@@ -34,9 +36,9 @@ export const buildRecomputeRecordAccessGroupIdsQuery = ({
   >;
   recordIds: string[];
 }): SQLCondition => {
-  const inheritedAccessGroupIdsExpressions = resolvedRelatedRecordPaths.map(
-    (resolvedPath, pathIndex) =>
-      buildInheritedAccessGroupIdsExpression({
+  const relatedRecordPathAccessGroupIdsExpressions =
+    resolvedRelatedRecordPaths.map((resolvedPath, pathIndex) =>
+      buildRelatedRecordPathAccessGroupIdsExpression({
         workspaceId,
         targetTableAlias: RECORD_ACCESS_GROUP_TABLE_ALIAS,
         pathIndex,
@@ -44,7 +46,7 @@ export const buildRecomputeRecordAccessGroupIdsQuery = ({
         accessGroups,
         metadataMaps,
       }),
-  );
+    );
   const tableExpression = buildWorkspaceTableExpression({
     workspaceId,
     tableName: computeObjectTargetTable(flatObjectMetadata),
@@ -58,8 +60,10 @@ export const buildRecomputeRecordAccessGroupIdsQuery = ({
       FROM (
         SELECT ${alias}."id", ${buildRecordAccessGroupIdsExpression({
           recordAccessGroupSQLConditions,
-          inheritedAccessGroupIdsExpressions:
-            inheritedAccessGroupIdsExpressions.map(({ sql }) => sql),
+          accessGroupValueLookupIdsExpressions:
+            accessGroupValueLookupIdsSQLConditions.map(({ sql }) => sql),
+          relatedRecordPathAccessGroupIdsExpressions:
+            relatedRecordPathAccessGroupIdsExpressions.map(({ sql }) => sql),
         })} AS "accessGroupIds"
         FROM ${tableExpression} AS ${alias}
         WHERE ${alias}."id" = ANY(:recordIds)
@@ -72,7 +76,12 @@ export const buildRecomputeRecordAccessGroupIdsQuery = ({
       ...recordAccessGroupSQLConditions.map(
         ({ sqlCondition }) => sqlCondition?.parameters ?? {},
       ),
-      ...inheritedAccessGroupIdsExpressions.map(({ parameters }) => parameters),
+      ...accessGroupValueLookupIdsSQLConditions.map(
+        ({ parameters }) => parameters,
+      ),
+      ...relatedRecordPathAccessGroupIdsExpressions.map(
+        ({ parameters }) => parameters,
+      ),
     ),
   };
 };

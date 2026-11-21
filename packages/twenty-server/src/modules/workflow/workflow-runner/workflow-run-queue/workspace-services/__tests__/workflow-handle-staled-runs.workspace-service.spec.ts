@@ -22,7 +22,9 @@ const buildService = ({
     find: jest.fn().mockResolvedValueOnce(staledRuns).mockResolvedValue([]),
     update: jest.fn().mockImplementation(async (criteria) => ({
       generatedMaps: (claimedRuns ?? staledRuns).filter(({ id }) =>
-        criteria.id.value.includes(id),
+        criteria.some((where: { id: { value: string[] } }) =>
+          where.id.value.includes(id),
+        ),
       ),
     })),
   };
@@ -82,11 +84,17 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
 
     expect(workflowRunRepository.update).toHaveBeenCalledTimes(1);
     expect(workflowRunRepository.update).toHaveBeenCalledWith(
-      {
-        status: WorkflowRunStatus.ENQUEUED,
-        enqueuedAt: expect.anything(),
-        id: In(['lost-run', 'never-enqueued-run']),
-      },
+      [
+        {
+          status: expect.anything(),
+          id: In(['lost-run', 'never-enqueued-run']),
+        },
+        {
+          status: WorkflowRunStatus.ENQUEUED,
+          enqueuedAt: expect.anything(),
+          id: In(['lost-run', 'never-enqueued-run']),
+        },
+      ],
       { status: WorkflowRunStatus.ENQUEUED, enqueuedAt: expect.any(String) },
       { columnsToReturn: ['id', 'coreWorkflowId'] },
     );

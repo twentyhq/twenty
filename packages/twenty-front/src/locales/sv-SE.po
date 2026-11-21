@@ -21579,6 +21579,11 @@ msgstr "Inte delad av {notSharedByFullName}"
 msgid "Not shared with"
 msgstr "Inte delad med"
 
+#. js-lingui-id: mu1gVr
+#: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
+msgid "Not started"
+msgstr "Inte påbörjad"
+
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"
