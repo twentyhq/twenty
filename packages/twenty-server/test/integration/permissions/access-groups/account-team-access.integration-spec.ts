@@ -672,7 +672,7 @@ describe('Account team access (integration)', () => {
     await recomputeAll();
   }, 300_000);
 
-  it('should look up the member bound rules by value', async () => {
+  it('should look up the member bound rules that read no other member value', async () => {
     const metadataMaps =
       await getAppProviderByClassName<RecordAccessGroupMetadataMapsService>(
         'RecordAccessGroupMetadataMapsService',
@@ -696,12 +696,7 @@ describe('Account team access (integration)', () => {
             .join(','),
         )
         .sort(),
-    ).toEqual([
-      'opportunity.companyId',
-      'opportunity.companyId',
-      'opportunity.practice',
-      `${OPPORTUNITY_TEAM_MEMBER}.memberId`,
-    ]);
+    ).toEqual(['opportunity.companyId', 'opportunity.practice']);
   });
 
   it('should give each login the expected access to the opportunities of an account', async () => {
