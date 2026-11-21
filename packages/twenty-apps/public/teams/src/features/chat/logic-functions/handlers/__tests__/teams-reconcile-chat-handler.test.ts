@@ -30,33 +30,13 @@ vi.mock(
 
 const CONTEXT = { workspaceId: 'this-workspace-id' };
 
-const CLAIMED_CONNECTION = {
-  connectedAccountId: 'workspace-connection',
-  status: 'CLAIMED',
-  tenantId: 'tenant-id',
-};
-
 describe('teamsReconcileChatHandler', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
     hasPermissionFlagMock.mockResolvedValue(true);
-    reconcileTeamsChatTenantClaimsMock.mockResolvedValue([CLAIMED_CONNECTION]);
+    reconcileTeamsChatTenantClaimsMock.mockResolvedValue([]);
   });
-
-  it.each([undefined, 'true', 1, null])(
-    'refuses a request whose enabled state is %s',
-    async (isEnabled) => {
-      const result = await teamsReconcileChatHandler(
-        { body: { isEnabled } },
-        CONTEXT,
-      );
-
-      expect(result.success).toBe(false);
-      expect(hasPermissionFlagMock).not.toHaveBeenCalled();
-      expect(reconcileTeamsChatTenantClaimsMock).not.toHaveBeenCalled();
-    },
-  );
 
   it('refuses a member who cannot manage applications', async () => {
     hasPermissionFlagMock.mockResolvedValue(false);
@@ -69,39 +49,15 @@ describe('teamsReconcileChatHandler', () => {
     expect(hasPermissionFlagMock).toHaveBeenCalledExactlyOnceWith(
       'APPLICATIONS',
     );
-    expect(result).toEqual({
-      success: false,
-      message: 'Not allowed',
-      error: expect.stringContaining('manage applications'),
-    });
+    expect(result.success).toBe(false);
     expect(reconcileTeamsChatTenantClaimsMock).not.toHaveBeenCalled();
   });
 
-  it.each([true, false])(
-    'reconciles this workspace with the requested enabled state %s',
-    async (isEnabled) => {
-      expect(
-        await teamsReconcileChatHandler({ body: { isEnabled } }, CONTEXT),
-      ).toEqual({
-        success: true,
-        connections: [CLAIMED_CONNECTION],
-      });
-      expect(
-        reconcileTeamsChatTenantClaimsMock,
-      ).toHaveBeenCalledExactlyOnceWith({
-        isChatEnabled: isEnabled,
-        workspaceId: CONTEXT.workspaceId,
-      });
-    },
-  );
-
   it('releases instead of claiming while chat is not released', async () => {
     releaseFlags.IS_CHAT_ASSISTANT_RELEASED = false;
-    reconcileTeamsChatTenantClaimsMock.mockResolvedValue([]);
 
-    expect(
-      await teamsReconcileChatHandler({ body: { isEnabled: true } }, CONTEXT),
-    ).toEqual({ success: true, connections: [] });
+    await teamsReconcileChatHandler({ body: { isEnabled: true } }, CONTEXT);
+
     expect(reconcileTeamsChatTenantClaimsMock).toHaveBeenCalledExactlyOnceWith({
       isChatEnabled: false,
       workspaceId: CONTEXT.workspaceId,

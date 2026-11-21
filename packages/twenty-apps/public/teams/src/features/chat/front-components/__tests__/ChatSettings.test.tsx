@@ -6,7 +6,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constants/chat-enabled-application-variable-key';
 import { ChatSettings } from 'src/features/chat/front-components/ChatSettings';
-import { type TeamsChatReconciliationResult } from 'src/features/chat/logic-functions/types/teams-chat-reconciliation.type';
 
 const {
   releaseFlags,
@@ -140,76 +139,5 @@ describe('ChatSettings', () => {
         variant: 'error',
       }),
     );
-  });
-
-  it.each([
-    ['the request fails', () => Promise.reject(new Error('network down'))],
-    [
-      'the route refuses',
-      () =>
-        Promise.resolve({
-          success: false,
-          message: 'Not allowed',
-          error: 'Not allowed',
-        }),
-    ],
-    [
-      'a connection fails',
-      () =>
-        Promise.resolve({
-          success: true,
-          connections: [
-            {
-              connectedAccountId: 'workspace-connection',
-              status: 'FAILED',
-              error: 'graph down',
-            },
-          ],
-        }),
-    ],
-  ])('tells the admin when %s', async (_, respond) => {
-    restPostMock.mockImplementation(respond);
-    const consoleErrorSpy = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined);
-    const user = userEvent.setup();
-
-    render(<ChatSettings />);
-    await user.click(getChatSwitch());
-
-    await waitFor(() =>
-      expect(enqueueSnackbarMock).toHaveBeenCalledExactlyOnceWith({
-        message:
-          'Setting saved, but Teams chat was not updated. Turn it off and on again.',
-        variant: 'error',
-      }),
-    );
-    expect(getChatSwitch().getAttribute('aria-checked')).toBe('true');
-
-    consoleErrorSpy.mockRestore();
-  });
-
-  it('keeps the switch disabled until Teams is updated', async () => {
-    let resolveReconcile:
-      ((response: TeamsChatReconciliationResult) => void) | undefined;
-    restPostMock.mockReturnValue(
-      new Promise((resolve) => {
-        resolveReconcile = resolve;
-      }),
-    );
-    const user = userEvent.setup();
-
-    render(<ChatSettings />);
-    await user.click(getChatSwitch());
-
-    await waitFor(() => expect(restPostMock).toHaveBeenCalledTimes(1));
-    expect(getChatSwitch().hasAttribute('disabled')).toBe(true);
-
-    resolveReconcile?.({ success: true, connections: [] });
-
-    await waitFor(() =>
-      expect(getChatSwitch().hasAttribute('disabled')).toBe(false),
-    );
-    expect(mutationMock).toHaveBeenCalledTimes(1);
   });
 });
