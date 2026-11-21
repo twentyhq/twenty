@@ -194,11 +194,10 @@ describe('Field resolvers under an admitted root operation', () => {
 
             if (ROOT_REFUSALS[documentName].includes(title)) {
               expect(response.body.data).toBeNull();
-              expect(errors).toEqual([
-                expect.objectContaining({
-                  extensions: expect.objectContaining({ code: 'FORBIDDEN' }),
-                }),
-              ]);
+              expect(errors.length).toBeGreaterThan(0);
+              expect(errors.map(({ extensions }) => extensions?.code)).toEqual(
+                errors.map(() => 'FORBIDDEN'),
+              );
             } else {
               expect(errors).toEqual([]);
               expect(response.body.data).not.toBeNull();
