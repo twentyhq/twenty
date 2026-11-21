@@ -4,27 +4,22 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
-  RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { v5 } from 'uuid';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { buildFieldByObjectIdAndNameKey } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-by-object-id-and-name-key.util';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { type UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
-import { type UpsertRowLevelPermissionRulesInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-rules.input';
-import { RowLevelPermissionPredicateService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service';
 import {
   buildChannelVisibilityRuleSyncLockKey,
   CHANNEL_VISIBILITY_RULE_SYNC_LOCK_OPTIONS,
 } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-rule-sync-lock.constant';
-import { PERSONAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE } from 'src/engine/permissions/channel-visibility/constants/personal-role.constant';
-import { PersonalRoleService } from 'src/engine/permissions/channel-visibility/services/personal-role.service';
 import { type ChannelVisibilityLevel } from 'src/engine/permissions/channel-visibility/types/channel-visibility-level.type';
+import { WorkspaceMemberIndividualRoleService } from 'src/engine/permissions/channel-visibility/services/workspace-member-individual-role.service';
+import { type WorkspaceMemberIndividualRoleRule } from 'src/engine/permissions/channel-visibility/types/workspace-member-individual-role.type';
 import { type VisibilityChannel } from 'src/engine/permissions/channel-visibility/types/visibility-channel.type';
 import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
 import { computeChannelIdsByVisibilityLevel } from 'src/engine/permissions/channel-visibility/utils/compute-channel-ids-by-visibility-level.util';
@@ -68,8 +63,7 @@ export class ChannelVisibilityRuleSyncService {
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly personalRoleService: PersonalRoleService,
-    private readonly rowLevelPermissionPredicateService: RowLevelPermissionPredicateService,
+    private readonly workspaceMemberIndividualRoleService: WorkspaceMemberIndividualRoleService,
     private readonly cacheLockService: CacheLockService,
   ) {}
 
@@ -83,61 +77,45 @@ export class ChannelVisibilityRuleSyncService {
   }
 
   private async syncWorkspaceWithLock(workspaceId: string): Promise<void> {
-    const { featureFlagsMap, flatWorkspaceMemberMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'featureFlagsMap',
-        'flatWorkspaceMemberMaps',
-      ]);
-
-    const { objectIdByName, fieldIdByObjectIdAndName } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'objectIdByName',
-        'fieldIdByObjectIdAndName',
-      ]);
+    const {
+      featureFlagsMap,
+      flatWorkspaceMemberMaps,
+      objectIdByName,
+      fieldIdByObjectIdAndName,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'featureFlagsMap',
+      'flatWorkspaceMemberMaps',
+      'objectIdByName',
+      'fieldIdByObjectIdAndName',
+    ]);
 
     if (!isChannelVisibilityRlsEnabled(featureFlagsMap)) {
-      await this.personalRoleService.deletePersonalRoles({ workspaceId });
+      await this.workspaceMemberIndividualRoleService.syncIndividualRoles({
+        workspaceId,
+        individualRoles: [],
+      });
 
       return;
     }
 
-    const userWorkspaceIds = Object.keys(
-      flatWorkspaceMemberMaps.idByUserWorkspaceId,
-    );
-
-    await this.personalRoleService.deletePersonalRoles({
-      workspaceId,
-      keptUserWorkspaceIds: userWorkspaceIds,
-    });
-
-    const personalRoleIdByUserWorkspaceId =
-      await this.personalRoleService.ensurePersonalRoles({
-        workspaceId,
-        userWorkspaceIds,
-      });
     const objectsRules = await this.findObjectsRules(workspaceId);
 
-    const personalRolesInputs = [...personalRoleIdByUserWorkspaceId].flatMap(
-      ([userWorkspaceId, roleId]) =>
-        objectsRules
-          .map((objectRules) =>
-            this.buildRoleObjectRules({
-              userWorkspaceId,
-              roleId,
-              objectRules,
-              objectIdByName,
-              fieldIdByObjectIdAndName,
-            }),
-          )
-          .filter(isDefined),
-    );
-
-    await this.rowLevelPermissionPredicateService.upsertManySystemRowLevelPermissionRules(
-      {
-        workspaceId,
-        inputs: personalRolesInputs,
-      },
-    );
+    await this.workspaceMemberIndividualRoleService.syncIndividualRoles({
+      workspaceId,
+      individualRoles: Object.keys(
+        flatWorkspaceMemberMaps.idByUserWorkspaceId,
+      ).map((userWorkspaceId) => ({
+        userWorkspaceId,
+        rules: objectsRules.flatMap((objectRules) =>
+          this.buildObjectRules({
+            userWorkspaceId,
+            objectRules,
+            objectIdByName,
+            fieldIdByObjectIdAndName,
+          }),
+        ),
+      })),
+    });
   }
 
   private async findObjectsRules(
@@ -191,24 +169,17 @@ export class ChannelVisibilityRuleSyncService {
     ];
   }
 
-  private buildRoleObjectRules({
+  private buildObjectRules({
     userWorkspaceId,
-    roleId,
     objectRules,
     objectIdByName,
     fieldIdByObjectIdAndName,
   }: {
     userWorkspaceId: string;
-    roleId: string;
     objectRules: ChannelVisibilityObjectRules;
     objectIdByName: Record<string, string | undefined>;
     fieldIdByObjectIdAndName: Map<string, string>;
-  }):
-    | {
-        rulesInput: UpsertRowLevelPermissionRulesInput;
-        fieldPermissions: UpsertFieldPermissionsInput['fieldPermissions'];
-      }
-    | undefined {
+  }): WorkspaceMemberIndividualRoleRule[] {
     const objectMetadataId = objectIdByName[objectRules.objectNameSingular];
     const associationObjectMetadataId =
       objectIdByName[objectRules.associationObjectNameSingular];
@@ -217,7 +188,7 @@ export class ChannelVisibilityRuleSyncService {
       !isDefined(objectMetadataId) ||
       !isDefined(associationObjectMetadataId)
     ) {
-      return undefined;
+      return [];
     }
 
     const findFieldIdOrThrow = ({
@@ -252,56 +223,22 @@ export class ChannelVisibilityRuleSyncService {
       channels: objectRules.channels,
       userWorkspaceId,
     });
+
     // a rule without a channel would be refused, and grants nothing anyway
-    const levels = CHANNEL_VISIBILITY_LEVELS.filter(
+    return CHANNEL_VISIBILITY_LEVELS.filter(
       (level) => channelIdsByVisibilityLevel[level].length > 0,
-    );
-    const buildId = (level: ChannelVisibilityLevel, kind: string) =>
-      v5(
-        `${roleId}:${objectMetadataId}:${level}:${kind}`,
-        PERSONAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
-      );
-
-    const rulesInput: UpsertRowLevelPermissionRulesInput = {
-      roleId,
+    ).map((level) => ({
+      ruleKey: `${objectMetadataId}:${level}`,
       objectMetadataId,
-      rules: levels.map((level) => ({
-        id: buildId(level, 'rule'),
-        canReadRecords: true,
-        predicateGroups: [
-          {
-            id: buildId(level, 'group'),
-            logicalOperator:
-              RowLevelPermissionPredicateGroupLogicalOperator.AND,
-            predicates: [
-              {
-                id: buildId(level, 'predicate'),
-                fieldMetadataId: channelIdFieldMetadataId,
-                relationFieldMetadataId,
-                operand: RowLevelPermissionPredicateOperand.IS,
-                value: channelIdsByVisibilityLevel[level],
-              },
-            ],
-          },
-        ],
-      })),
-    };
-
-    const fieldPermissions = levels.flatMap((level) =>
-      (objectRules.unreadableFieldNamesByLevel[level] ?? []).map(
-        (fieldName) => ({
-          objectMetadataId,
-          fieldMetadataId: findFieldIdOrThrow({
-            objectId: objectMetadataId,
-            fieldName,
-          }),
-          rowLevelPermissionPredicateGroupId: buildId(level, 'group'),
-          canReadFieldValue: false,
-          canUpdateFieldValue: false,
-        }),
+      fieldMetadataId: channelIdFieldMetadataId,
+      relationFieldMetadataId,
+      operand: RowLevelPermissionPredicateOperand.IS,
+      value: channelIdsByVisibilityLevel[level],
+      unreadableFieldMetadataIds: (
+        objectRules.unreadableFieldNamesByLevel[level] ?? []
+      ).map((fieldName) =>
+        findFieldIdOrThrow({ objectId: objectMetadataId, fieldName }),
       ),
-    );
-
-    return { rulesInput, fieldPermissions };
+    }));
   }
 }

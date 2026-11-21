@@ -84,10 +84,6 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionRule.create,
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionRule.update,
 
-    ...aggregatedOrchestratorActionsReport.fieldPermission.delete,
-    ...aggregatedOrchestratorActionsReport.fieldPermission.create,
-    ...aggregatedOrchestratorActionsReport.fieldPermission.update,
-
     ...aggregatedOrchestratorActionsReport.rolePermissionFlag.delete,
     ...aggregatedOrchestratorActionsReport.permissionFlag.delete,
     ...aggregatedOrchestratorActionsReport.permissionFlag.create,
@@ -146,6 +142,11 @@ export const computeOrderedMigrationActions = (
       .create,
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicateGroup
       .update,
+
+    // A field permission can point to a predicate group, so it is written once the group exists
+    ...aggregatedOrchestratorActionsReport.fieldPermission.delete,
+    ...aggregatedOrchestratorActionsReport.fieldPermission.create,
+    ...aggregatedOrchestratorActionsReport.fieldPermission.update,
 
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate.delete,
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate.create,
