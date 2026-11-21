@@ -9,12 +9,11 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { CHANNEL_VISIBILITY_CHANGED_EVENT } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-changed-event.constant';
-import { type ChannelVisibilityChangedEvent } from 'src/engine/permissions/channel-visibility/types/channel-visibility-changed-event.type';
 import {
   CalendarChannelException,
   CalendarChannelExceptionCode,
 } from 'src/engine/metadata-modules/calendar-channel/calendar-channel.exception';
+import { emitChannelVisibilityChangedEvent } from 'src/engine/permissions/channel-visibility/utils/emit-channel-visibility-changed-event.util';
 import { CALENDAR_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/calendar-channel/constants/calendar-channel-deleted.constant';
 import { CalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/calendar-channel.dto';
 import { type PublicCalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/public-calendar-channel.dto';
@@ -229,11 +228,10 @@ export class CalendarChannelMetadataService {
     const entity = this.repository.create(data);
     const savedEntity = await this.repository.save(entity);
 
-    this.workspaceEventEmitter.emitCustomBatchEvent<ChannelVisibilityChangedEvent>(
-      CHANNEL_VISIBILITY_CHANGED_EVENT,
-      [{}],
-      data.workspaceId,
-    );
+    emitChannelVisibilityChangedEvent({
+      workspaceEventEmitter: this.workspaceEventEmitter,
+      workspaceId: data.workspaceId,
+    });
 
     return savedEntity;
   }
@@ -253,11 +251,10 @@ export class CalendarChannelMetadataService {
     );
 
     if ('visibility' in data) {
-      this.workspaceEventEmitter.emitCustomBatchEvent<ChannelVisibilityChangedEvent>(
-        CHANNEL_VISIBILITY_CHANGED_EVENT,
-        [{}],
-        workspaceId,
-      );
+      emitChannelVisibilityChangedEvent({
+        workspaceEventEmitter: this.workspaceEventEmitter,
+        workspaceId: workspaceId,
+      });
     }
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
@@ -276,11 +273,10 @@ export class CalendarChannelMetadataService {
 
     await this.repository.delete({ id, workspaceId });
 
-    this.workspaceEventEmitter.emitCustomBatchEvent<ChannelVisibilityChangedEvent>(
-      CHANNEL_VISIBILITY_CHANGED_EVENT,
-      [{}],
-      workspaceId,
-    );
+    emitChannelVisibilityChangedEvent({
+      workspaceEventEmitter: this.workspaceEventEmitter,
+      workspaceId: workspaceId,
+    });
 
     this.workspaceEventEmitter.emitCustomBatchEvent<CalendarChannelDeletedEvent>(
       CALENDAR_CHANNEL_DELETED_EVENT,

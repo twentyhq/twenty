@@ -16,7 +16,6 @@ export class WorkspaceMemberIndividualRoleService {
     private readonly applicationService: ApplicationService,
   ) {}
 
-  // individual roles missing from the list are deleted, with their targets and rules
   async syncIndividualRoles({
     workspaceId,
     individualRoles,

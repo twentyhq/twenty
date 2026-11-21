@@ -1,8 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { CHANNEL_VISIBILITY_CHANGED_EVENT } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-changed-event.constant';
-import { type ChannelVisibilityChangedEvent } from 'src/engine/permissions/channel-visibility/types/channel-visibility-changed-event.type';
+import { emitChannelVisibilityChangedEvent } from 'src/engine/permissions/channel-visibility/utils/emit-channel-visibility-changed-event.util';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { In, IsNull, Repository } from 'typeorm';
 
@@ -528,11 +527,10 @@ export class ConnectedAccountMetadataService {
     });
 
     this.emitConnectionChanged({ connectedAccounts, workspaceId });
-    this.workspaceEventEmitter.emitCustomBatchEvent<ChannelVisibilityChangedEvent>(
-      CHANNEL_VISIBILITY_CHANGED_EVENT,
-      [{}],
-      workspaceId,
-    );
+    emitChannelVisibilityChangedEvent({
+      workspaceEventEmitter: this.workspaceEventEmitter,
+      workspaceId: workspaceId,
+    });
 
     for (const latestConnectedAccount of latestConnectedAccounts) {
       await this.appOAuthRevokeService.revokeIfApp(latestConnectedAccount);
@@ -728,11 +726,10 @@ export class ConnectedAccountMetadataService {
 
     await this.repository.delete({ id: In(connectedAccountIds), workspaceId });
 
-    this.workspaceEventEmitter.emitCustomBatchEvent<ChannelVisibilityChangedEvent>(
-      CHANNEL_VISIBILITY_CHANGED_EVENT,
-      [{}],
-      workspaceId,
-    );
+    emitChannelVisibilityChangedEvent({
+      workspaceEventEmitter: this.workspaceEventEmitter,
+      workspaceId: workspaceId,
+    });
 
     this.workspaceEventEmitter.emitCustomBatchEvent<MessageChannelDeletedEvent>(
       MESSAGE_CHANNEL_DELETED_EVENT,

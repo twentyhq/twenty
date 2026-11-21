@@ -17,8 +17,7 @@ import {
   MessageChannelVisibility,
 } from 'twenty-shared/types';
 
-import { CHANNEL_VISIBILITY_CHANGED_EVENT } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-changed-event.constant';
-import { type ChannelVisibilityChangedEvent } from 'src/engine/permissions/channel-visibility/types/channel-visibility-changed-event.type';
+import { emitChannelVisibilityChangedEvent } from 'src/engine/permissions/channel-visibility/utils/emit-channel-visibility-changed-event.util';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
@@ -244,11 +243,10 @@ export class MessageChannelMetadataService {
     const entity = this.repository.create(data);
     const savedEntity = await this.repository.save(entity);
 
-    this.workspaceEventEmitter.emitCustomBatchEvent<ChannelVisibilityChangedEvent>(
-      CHANNEL_VISIBILITY_CHANGED_EVENT,
-      [{}],
-      data.workspaceId,
-    );
+    emitChannelVisibilityChangedEvent({
+      workspaceEventEmitter: this.workspaceEventEmitter,
+      workspaceId: data.workspaceId,
+    });
 
     return savedEntity;
   }
@@ -268,11 +266,10 @@ export class MessageChannelMetadataService {
     );
 
     if ('visibility' in data) {
-      this.workspaceEventEmitter.emitCustomBatchEvent<ChannelVisibilityChangedEvent>(
-        CHANNEL_VISIBILITY_CHANGED_EVENT,
-        [{}],
-        workspaceId,
-      );
+      emitChannelVisibilityChangedEvent({
+        workspaceEventEmitter: this.workspaceEventEmitter,
+        workspaceId: workspaceId,
+      });
     }
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
@@ -412,11 +409,10 @@ export class MessageChannelMetadataService {
 
     await this.repository.delete({ id, workspaceId });
 
-    this.workspaceEventEmitter.emitCustomBatchEvent<ChannelVisibilityChangedEvent>(
-      CHANNEL_VISIBILITY_CHANGED_EVENT,
-      [{}],
-      workspaceId,
-    );
+    emitChannelVisibilityChangedEvent({
+      workspaceEventEmitter: this.workspaceEventEmitter,
+      workspaceId: workspaceId,
+    });
 
     this.workspaceEventEmitter.emitCustomBatchEvent<MessageChannelDeletedEvent>(
       MESSAGE_CHANNEL_DELETED_EVENT,
