@@ -5,9 +5,17 @@ import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
 import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
-import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
+import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
+import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/constants/AiChatNewThreadDefaultRecipients';
 
 const CHANNEL_ID = '20202020-0000-4000-8000-0000000000cc';
+const NEW_THREAD_ID = '20202020-0000-4000-8000-0000000000dd';
+
+const getNewThreadChannelId = (store: ReturnType<typeof createStore>) =>
+  store.get(
+    aiChatComposerNewThreadRecipientsFamilyState.atomFamily(NEW_THREAD_ID),
+  ).channelId;
 
 jest.mock('@/ai-chat/hooks/useSelectAiChatThread', () => ({
   useSelectAiChatThread: () => ({ selectAiChatThread: jest.fn() }),
@@ -21,10 +29,23 @@ jest.mock('@/side-panel/hooks/useOpenAskAiPageInSidePanel', () => ({
   useOpenAskAiPageInSidePanel: () => ({ openAskAiPage: jest.fn() }),
 }));
 
-const switchToNewChatAt = (pathname: string) => {
+const switchToNewChatAt = ({
+  pathname,
+  inboxChannelId,
+}: {
+  pathname: string;
+  inboxChannelId?: string;
+}) => {
   const store = createStore();
 
-  store.set(aiChatNewThreadChannelIdState.atom, CHANNEL_ID);
+  store.set(newAiChatThreadIdState.atom, NEW_THREAD_ID);
+  store.set(
+    aiChatComposerNewThreadRecipientsFamilyState.atomFamily(NEW_THREAD_ID),
+    {
+      ...AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
+      channelId: CHANNEL_ID,
+    },
+  );
   window.history.pushState({}, '', pathname);
 
   const { result } = renderHook(() => useSwitchToNewAiChat(), {
@@ -34,7 +55,7 @@ const switchToNewChatAt = (pathname: string) => {
   });
 
   act(() => {
-    result.current.switchToNewChat();
+    result.current.switchToNewChat({ inboxChannelId });
   });
 
   return store;
@@ -46,20 +67,21 @@ describe('useSwitchToNewAiChat', () => {
   });
 
   it('starts a new chat outside the inbox in no channel', () => {
-    const store = switchToNewChatAt(
-      getAppPath(AppPath.RecordIndexPage, {
+    const store = switchToNewChatAt({
+      pathname: getAppPath(AppPath.RecordIndexPage, {
         objectNamePlural: 'companies',
       }),
-    );
+    });
 
-    expect(store.get(aiChatNewThreadChannelIdState.atom)).toBeNull();
+    expect(getNewThreadChannelId(store)).toBeNull();
   });
 
-  it('leaves the channel of a new chat started in the inbox to the inbox', () => {
-    const store = switchToNewChatAt(
-      getAppPath(AppPath.AiChatInbox, { threadId: null }),
-    );
+  it('starts a new chat in the inbox in the channel the inbox shows', () => {
+    const store = switchToNewChatAt({
+      pathname: getAppPath(AppPath.AiChatInbox, { threadId: null }),
+      inboxChannelId: 'shown-channel-id',
+    });
 
-    expect(store.get(aiChatNewThreadChannelIdState.atom)).toBe(CHANNEL_ID);
+    expect(getNewThreadChannelId(store)).toBe('shown-channel-id');
   });
 });

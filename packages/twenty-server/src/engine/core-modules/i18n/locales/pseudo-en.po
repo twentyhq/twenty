@@ -9645,6 +9645,12 @@ msgstr ""
 msgid "Not Set"
 msgstr ""
 
+#. js-lingui-id: H1P40W
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Not started"
+msgstr ""
+
 #. js-lingui-id: O2bgDc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -11878,9 +11884,9 @@ msgstr ""
 msgid "Requested file range cannot be served."
 msgstr ""
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
 msgstr ""
 
 #. js-lingui-id: pvmev1
@@ -18263,6 +18269,11 @@ msgstr ""
 #. js-lingui-id: nPwrik
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 msgid "You do not have permission to access this workflow."
+msgstr ""
+
+#. js-lingui-id: /qkY9j
+#: src/engine/permissions/permissions.exception.ts
+msgid "You do not have permission to change this record."
 msgstr ""
 
 #. js-lingui-id: Uyi+DQ

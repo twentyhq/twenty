@@ -37,24 +37,26 @@ export class AccessGroupSyncListener {
   @OnEvent('metadata.role.*')
   @OnEvent('metadata.roleTarget.*')
   @OnEvent('metadata.objectPermission.*')
+  @OnEvent('metadata.fieldPermission.*')
   @OnEvent('metadata.objectMetadata.*')
   @OnEvent('metadata.rowLevelPermissionPredicate.*')
   @OnEvent('metadata.rowLevelPermissionPredicateGroup.*')
   async handleMetadataEvent({
     workspaceId,
   }: Pick<MetadataEventBatch, 'workspaceId'>): Promise<void> {
-    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(
+    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled({
       workspaceId,
-    );
+    });
   }
 
   @OnEvent('metadata.relatedRecordPath.*')
   async handleRelatedRecordPathEvent({
     workspaceId,
   }: Pick<MetadataEventBatch, 'workspaceId'>): Promise<void> {
-    await this.accessGroupSyncSchedulerService.scheduleRelatedRecordPathTargetsRecomputeIfEnabled(
+    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled({
       workspaceId,
-    );
+      isRelatedRecordPathChanged: true,
+    });
   }
 
   @OnCustomBatchEvent(FEATURE_FLAG_ENABLED_EVENT)
@@ -88,12 +90,10 @@ export class AccessGroupSyncListener {
       isDefined(workspaceId) &&
       events.some(({ key }) => FLAGS_AFFECTING_ACCESS_GROUPS.includes(key))
     ) {
-      await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(
+      await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled({
         workspaceId,
-      );
-      await this.accessGroupSyncSchedulerService.scheduleRelatedRecordPathTargetsRecomputeIfEnabled(
-        workspaceId,
-      );
+        isRelatedRecordPathChanged: true,
+      });
     }
   }
 
@@ -149,8 +149,8 @@ export class AccessGroupSyncListener {
       'flatWorkspaceMemberMaps',
     ]);
 
-    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(
+    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled({
       workspaceId,
-    );
+    });
   }
 }

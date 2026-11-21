@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 
 import { useReturnFromExpandedAiChat } from '@/ai-chat/hooks/useReturnFromExpandedAiChat';
-import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
+import { useSwitchToNewAiChatInInboxChannel } from '@/inbox/hooks/useSwitchToNewAiChatInInboxChannel';
 import { getExpandedAiChatReturnLocation } from '@/ai-chat/utils/getExpandedAiChatReturnLocation';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
 import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
@@ -54,7 +54,7 @@ export const useSwitchNavigationDrawerTab = () => {
   );
 
   const { defaultHomePagePath } = useDefaultHomePagePath();
-  const { switchToNewChat } = useSwitchToNewAiChat({
+  const { switchToNewChat } = useSwitchToNewAiChatInInboxChannel({
     shouldOpenInFullPage: true,
   });
   const returnFromExpandedAiChat = useReturnFromExpandedAiChat({

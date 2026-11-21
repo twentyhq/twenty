@@ -125,10 +125,6 @@ jest.mock('@/inbox/components/InboxThreadListFetchMoreTrigger', () => ({
   InboxThreadListFetchMoreTrigger: () => null,
 }));
 
-jest.mock('@/inbox/components/InboxThreadListLoadEffect', () => ({
-  InboxThreadListLoadEffect: () => null,
-}));
-
 jest.mock('@/inbox/hooks/useLoadInboxThreadList', () => ({
   useLoadInboxThreadList: () => ({
     loadInboxThreadList: jest.fn(),
@@ -154,8 +150,8 @@ jest.mock('@/ai-chat/composer/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({ switchToNewChat: jest.fn() }),
 }));
 
-jest.mock('~/pages/ai-chat/AiChatPageEffects', () => ({
-  AiChatPageEffects: () => null,
+jest.mock('@/ai-chat/instance/components/AiChatInstanceEffect', () => ({
+  AiChatInstanceEffect: () => null,
 }));
 
 jest.mock('@/ai-chat/instance/components/AiChatTab', () => ({
@@ -172,8 +168,8 @@ jest.mock('@/ai-chat/components/AiChatPageHeader', () => ({
 }));
 
 // Sending stands in for the composer with what a send applies right away
-jest.mock('~/pages/ai-chat/AiChatThreadPageContent', () => ({
-  AiChatThreadPageContent: ({
+jest.mock('@/inbox/components/InboxThreadPageContent', () => ({
+  InboxThreadPageContent: ({
     threadId,
     headerTitlePrefix,
     headerActions,
@@ -302,9 +298,9 @@ describe('InboxPage', () => {
       },
     );
     // The member's own chats, which they follow
-    jotaiStore.set(
-      aiChatThreadParticipantsState.atom,
-      Object.fromEntries(
+    jotaiStore.set(aiChatThreadParticipantsState.atom, {
+      isLoaded: true,
+      rowsByThreadId: Object.fromEntries(
         THREADS.map(({ id, updatedAt }) => [
           id,
           {
@@ -321,7 +317,7 @@ describe('InboxPage', () => {
           },
         ]),
       ),
-    );
+    });
     isMobile = false;
     mockIsInboxEnabled = true;
   });
@@ -372,9 +368,9 @@ describe('InboxPage', () => {
       type: 'presetFilter',
       presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.DONE,
     });
-    jotaiStore.set(
-      aiChatThreadParticipantsState.atom,
-      Object.fromEntries(
+    jotaiStore.set(aiChatThreadParticipantsState.atom, {
+      isLoaded: true,
+      rowsByThreadId: Object.fromEntries(
         THREADS.map(({ id }) => [
           id,
           {
@@ -391,7 +387,7 @@ describe('InboxPage', () => {
           },
         ]),
       ),
-    );
+    });
 
     renderInbox(`/inbox/${secondThread.id}`);
 

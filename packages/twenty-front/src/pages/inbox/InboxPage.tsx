@@ -16,7 +16,6 @@ import { InboxBreadcrumb } from '@/inbox/components/InboxBreadcrumb';
 import { InboxCommandMenuScope } from '@/inbox/components/InboxCommandMenuScope';
 import { InboxConversationPane } from '@/inbox/components/InboxConversationPane';
 import { InboxListHeader } from '@/inbox/components/InboxListHeader';
-import { InboxNewThreadChannelEffect } from '@/inbox/components/InboxNewThreadChannelEffect';
 import { InboxSelectionEffect } from '@/inbox/components/InboxSelectionEffect';
 import { InboxSelectionPane } from '@/inbox/components/InboxSelectionPane';
 import { InboxSelectionToContextStoreEffect } from '@/inbox/components/InboxSelectionToContextStoreEffect';
@@ -27,9 +26,7 @@ import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai-chat/constants/AiChatNewTh
 import { useInboxRecordSelectionInstanceId } from '@/inbox/hooks/useInboxRecordSelectionInstanceId';
 import { useIsInboxShowingDirectMessage } from '@/inbox/hooks/useIsInboxShowingDirectMessage';
 import { useIsInboxSplitView } from '@/inbox/hooks/useIsInboxSplitView';
-import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { InboxThreadListFetchMoreTrigger } from '@/inbox/components/InboxThreadListFetchMoreTrigger';
-import { InboxThreadListLoadEffect } from '@/inbox/components/InboxThreadListLoadEffect';
 import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
 import { useLoadInboxThreadList } from '@/inbox/hooks/useLoadInboxThreadList';
 import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
@@ -56,9 +53,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateToInboxThread } from '@/inbox/hooks/useNavigateToInboxThread';
-import { AiChatNewThreadPageContent } from '~/pages/ai-chat/AiChatNewThreadPageContent';
-import { AiChatPageEffects } from '~/pages/ai-chat/AiChatPageEffects';
-import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
+import { AiChatNewThreadPageContent } from '@/ai-chat/instance/components/AiChatNewThreadPageContent';
+import { InboxThreadPageContent } from '@/inbox/components/InboxThreadPageContent';
+import { InboxNewThreadListToggle } from '@/inbox/components/InboxNewThreadListToggle';
 
 const StyledInbox = styled.div`
   --inbox-list-pane-width: ${INBOX_LIST_PANE_WIDTH}px;
@@ -125,7 +122,6 @@ const InboxPageContent = () => {
   const isChannelHiddenForDirectMessage =
     useIsInboxShowingDirectMessage() && isDefined(inboxSelectedChannelView);
   const isSplitLayout = isSplitView && !isChannelHiddenForDirectMessage;
-  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
   const inboxSelectedThreadListSource = useAtomStateValue(
     inboxSelectedThreadListSourceState,
   );
@@ -275,8 +271,6 @@ const InboxPageContent = () => {
 
   return (
     <StyledInbox>
-      <InboxThreadListLoadEffect source={inboxSelectedThreadListSource} />
-      <InboxNewThreadChannelEffect key={newAiChatThreadId} />
       <RecordSelectionRecordIdsEffect records={threads} />
       <InboxSelectionEffect
         key={selectedThreadId}
@@ -362,32 +356,24 @@ const InboxPageContent = () => {
           {(isNewThreadShown || isThreadShown) && (
             <InboxConversationPane isSplitView={isSplitLayout}>
               {isNewThreadShown && (
-                <>
-                  <AiChatPageEffects threadId={newAiChatThreadId} isNewChat />
-                  <AiChatNewThreadPageContent
-                    showInformationBanner={!isSplitView}
-                    headerActions={isMobile ? backToInboxButton : undefined}
-                  />
-                </>
+                <AiChatNewThreadPageContent
+                  headerIcon={<InboxNewThreadListToggle />}
+                  showInformationBanner={!isSplitView}
+                  headerActions={isMobile ? backToInboxButton : undefined}
+                />
               )}
               {isThreadShown && (
-                <>
-                  <AiChatPageEffects
-                    threadId={selectedThreadId}
-                    isNewChat={false}
-                  />
-                  <AiChatThreadPageContent
-                    threadId={selectedThreadId}
-                    headerTitlePrefix={
-                      !isSplitView &&
-                      !isMobile &&
-                      !isChannelHiddenForDirectMessage && <InboxBreadcrumb />
-                    }
-                    headerActions={
-                      isMobile ? backToInboxButton : desktopThreadHeaderActions
-                    }
-                  />
-                </>
+                <InboxThreadPageContent
+                  threadId={selectedThreadId}
+                  headerTitlePrefix={
+                    !isSplitView &&
+                    !isMobile &&
+                    !isChannelHiddenForDirectMessage && <InboxBreadcrumb />
+                  }
+                  headerActions={
+                    isMobile ? backToInboxButton : desktopThreadHeaderActions
+                  }
+                />
               )}
             </InboxConversationPane>
           )}

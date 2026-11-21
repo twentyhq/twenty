@@ -79,18 +79,6 @@ jest.mock('@/ai-chat/messages/components/AiChatErrorUnderMessageList', () => ({
 jest.mock('@/ai-chat/messages/components/AiChatScrollToBottomButton', () => ({
   AiChatScrollToBottomButton: () => null,
 }));
-jest.mock(
-  '@/ai-chat/messages/components/AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect',
-  () => ({
-    AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect: () => null,
-  }),
-);
-jest.mock(
-  '@/ai-chat/messages/components/AiChatStreamingAutoScrollEffect',
-  () => ({
-    AiChatStreamingAutoScrollEffect: () => null,
-  }),
-);
 
 describe('AiChatTabMessageList', () => {
   beforeEach(() => {

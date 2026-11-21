@@ -1,13 +1,12 @@
 import { act, render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
-import type * as React from 'react';
 import { AiChatNonLastMessageIdsList } from '@/ai-chat/messages/components/AiChatNonLastMessageIdsList';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 
 import { AiChatTabMessageList } from '@/ai-chat/messages/components/AiChatTabMessageList';
 import { AiChatTestInstance } from '@/ai-chat/testing/AiChatTestInstance';
-import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai-chat/states/aiChatIsAwaitingFirstChunkFamilyState';
+import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -34,8 +33,19 @@ jest.mock(
 );
 
 jest.mock('@/ui/utilities/scroll/components/ScrollWrapper', () => ({
-  ScrollWrapper: ({ children }: { children: ReactNode }) => (
-    <div data-testid="scroll-wrapper">{children}</div>
+  ScrollWrapper: ({
+    children,
+    componentInstanceId,
+  }: {
+    children: ReactNode;
+    componentInstanceId: string;
+  }) => (
+    <div
+      data-testid="scroll-wrapper"
+      id={`scroll-wrapper-${componentInstanceId}`}
+    >
+      {children}
+    </div>
   ),
 }));
 
@@ -59,24 +69,13 @@ jest.mock('@/ai-chat/messages/components/AiChatScrollToBottomButton', () => ({
 }));
 const mockPinScrollToBottom = jest.fn();
 
-jest.mock(
-  '@/ai-chat/messages/components/AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect',
-  () => {
-    const { useLayoutEffect } = jest.requireActual<typeof React>('react');
-    return {
-      AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect: () => {
-        useLayoutEffect(mockPinScrollToBottom, []);
-        return null;
-      },
-    };
+jest.mock('@/ai-chat/messages/utils/pinAiChatScrollToBottom', () => ({
+  pinAiChatScrollToBottom: (...args: unknown[]) => {
+    mockPinScrollToBottom(...args);
+
+    return () => {};
   },
-);
-jest.mock(
-  '@/ai-chat/messages/components/AiChatStreamingAutoScrollEffect',
-  () => ({
-    AiChatStreamingAutoScrollEffect: () => null,
-  }),
-);
+}));
 
 jest.mock('@/ai-chat/message-content/components/LazyMarkdownRenderer', () => ({
   MarkdownLoadingSkeleton: () => <div role="status">Loading conversation</div>,
@@ -101,10 +100,10 @@ describe('AiChatTabMessageList preamble branch', () => {
 
   it('should render the preamble with the pending response loader when the displayed thread is awaiting its first chunk', () => {
     jotaiStore.set(
-      aiChatIsAwaitingFirstChunkFamilyState.atomFamily({
+      aiChatThreadReplyStatusFamilyState.atomFamily({
         threadId: THREAD_ID,
       }),
-      true,
+      'awaiting-first-chunk',
     );
 
     const { getByTestId, queryByTestId } = renderPreambleBranch();
@@ -127,7 +126,9 @@ describe('AiChatTabMessageList loading', () => {
     jest.clearAllMocks();
     resetJotaiStore();
     jotaiStore.set(
-      aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      aiChatThreadDisplayedMessagesFamilyState.atomFamily({
+        threadId: THREAD_ID,
+      }),
       [{ id: 'message-1', role: 'user', parts: [] }],
     );
   });

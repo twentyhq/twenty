@@ -20,6 +20,16 @@ jest.mock('@/ai-chat/composer/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({ switchToNewChat }),
 }));
 
+jest.mock('@/ai-chat/composer/hooks/useSendAiChatMessage', () => ({
+  useSendAiChatMessage: () => ({ sendAiChatMessage: jest.fn() }),
+}));
+
+jest.mock('@/ai-chat/hooks/useSelectAiChatThreadFromNewChat', () => ({
+  useSelectAiChatThreadFromNewChat: () => ({
+    selectAiChatThreadFromNewChat: jest.fn(),
+  }),
+}));
+
 jest.mock('@/ui/layout/contexts/useTargetRecord', () => ({
   useTargetRecord: () => ({
     id: COMPANY_ID,
