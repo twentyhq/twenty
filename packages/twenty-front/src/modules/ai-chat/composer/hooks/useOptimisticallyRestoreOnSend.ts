@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { AI_CHAT_THREAD_PARTICIPANT_UNSAVED_UPDATED_AT } from '@/ai-chat/threads/constants/AiChatThreadParticipantUnsavedUpdatedAt';
 import { useApplyAiChatThreadUpdate } from '@/ai-chat/threads/hooks/useApplyAiChatThreadUpdate';
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
-import { aiChatThreadVisitFamilyState } from '@/ai-chat/threads/states/aiChatThreadVisitFamilyState';
+import { aiChatThreadViewVisitFamilyState } from '@/ai-chat/states/view/aiChatThreadViewVisitFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 
 // Mirrors what the server records when the member sends a message: the
@@ -28,7 +28,7 @@ export const useOptimisticallyRestoreOnSend = () => {
     );
     const previousParticipant = store.get(aiChatThreadParticipantsState.atom)
       .rowsByThreadId[threadId];
-    const visitAtom = aiChatThreadVisitFamilyState.atomFamily({ threadId });
+    const visitAtom = aiChatThreadViewVisitFamilyState.atomFamily({ threadId });
     const previousVisit = store.get(visitAtom);
 
     applyAiChatThreadUpdate({

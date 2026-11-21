@@ -1,9 +1,9 @@
 import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const aiChatMessagesLoadingFamilyState = createAtomFamilyState<
+export const aiChatComposerShouldFocusFamilyState = createAtomFamilyState<
   boolean,
   { threadId: string }
 >({
-  key: 'aiChatMessagesLoadingFamilyState',
+  key: 'aiChatComposerShouldFocusFamilyState',
   defaultValue: false,
 });

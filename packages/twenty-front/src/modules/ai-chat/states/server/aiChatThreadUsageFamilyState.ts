@@ -17,10 +17,10 @@ export type AiChatUsageState = {
   outputCredits: number;
 };
 
-export const aiChatUsageFamilyState = createAtomFamilyState<
+export const aiChatThreadUsageFamilyState = createAtomFamilyState<
   AiChatUsageState | null,
   { threadId: string | null }
 >({
-  key: 'aiChatUsageFamilyState',
+  key: 'aiChatThreadUsageFamilyState',
   defaultValue: null,
 });

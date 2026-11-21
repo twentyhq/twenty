@@ -3,7 +3,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { aiChatIsScrolledToBottomComponentSelector } from '@/ai-chat/messages/states/selectors/aiChatIsScrolledToBottomComponentSelector';
 import { scrollAiChatToBottom } from '@/ai-chat/messages/utils/scrollAiChatToBottom';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
@@ -13,9 +13,12 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 export const AiChatStreamingAutoScrollEffect = () => {
   const { threadId } = useAiChatInstanceOrThrow();
 
-  const aiChatMessages = useAtomFamilyStateValue(aiChatMessagesFamilyState, {
-    threadId,
-  });
+  const aiChatThreadDisplayedMessages = useAtomFamilyStateValue(
+    aiChatThreadDisplayedMessagesFamilyState,
+    {
+      threadId,
+    },
+  );
 
   const aiChatIsScrolledToBottom = useAtomComponentSelectorValue(
     aiChatIsScrolledToBottomComponentSelector,
@@ -24,7 +27,7 @@ export const AiChatStreamingAutoScrollEffect = () => {
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
 
   useEffect(() => {
-    if (!isNonEmptyArray(aiChatMessages)) {
+    if (!isNonEmptyArray(aiChatThreadDisplayedMessages)) {
       return;
     }
 
@@ -37,7 +40,11 @@ export const AiChatStreamingAutoScrollEffect = () => {
     if (isDefined(scrollWrapperElement)) {
       scrollAiChatToBottom(scrollWrapperElement);
     }
-  }, [aiChatMessages, aiChatIsScrolledToBottom, getScrollWrapperElement]);
+  }, [
+    aiChatThreadDisplayedMessages,
+    aiChatIsScrolledToBottom,
+    getScrollWrapperElement,
+  ]);
 
   return null;
 };

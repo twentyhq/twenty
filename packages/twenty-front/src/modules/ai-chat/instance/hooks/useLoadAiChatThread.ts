@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useAddAiChatThreadParticipants } from '@/ai-chat/threads/hooks/useAddAiChatThreadParticipants';
 import { useFetchAiChatThreadsPage } from '@/ai-chat/threads/hooks/useFetchAiChatThreadsPage';
 import { useRefreshAiChatThreadPermissions } from '@/ai-chat/threads/hooks/useRefreshAiChatThreadPermissions';
-import { aiChatUsageFamilyState } from '@/ai-chat/usage/states/aiChatUsageFamilyState';
+import { aiChatThreadUsageFamilyState } from '@/ai-chat/states/server/aiChatThreadUsageFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { mergeLoadedAiChatThread } from '@/ai-chat/threads/utils/mergeLoadedAiChatThread';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -51,7 +51,7 @@ export const useLoadAiChatThread = () => {
       });
       addAiChatThreadParticipants(page.participants);
 
-      const usageAtom = aiChatUsageFamilyState.atomFamily({
+      const usageAtom = aiChatThreadUsageFamilyState.atomFamily({
         threadId: thread.id,
       });
 

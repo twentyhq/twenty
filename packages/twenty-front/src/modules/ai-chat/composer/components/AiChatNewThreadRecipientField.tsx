@@ -15,7 +15,7 @@ import { AiChatNewThreadRecipientPicker } from '@/ai-chat/composer/components/Ai
 import { useAiChatAssistantProfile } from '@/ai-chat/hooks/useAiChatAssistantProfile';
 import { useAiChatNewThreadRecipientSuggestions } from '@/ai-chat/composer/hooks/useAiChatNewThreadRecipientSuggestions';
 import { aiChatChannelsState } from '@/ai-chat/threads/states/aiChatChannelsState';
-import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { AutocompleteRoot } from '@/ui/input/components/AutocompleteRoot';
@@ -74,7 +74,7 @@ export const AiChatNewThreadRecipientField = () => {
     useRemoveFocusItemFromFocusStackById();
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
   const [recipients, setRecipients] = useAtomFamilyState(
-    aiChatNewThreadRecipientsFamilyState,
+    aiChatComposerNewThreadRecipientsFamilyState,
     newAiChatThreadId,
   );
   const currentWorkspaceMembers = useAtomStateValue(

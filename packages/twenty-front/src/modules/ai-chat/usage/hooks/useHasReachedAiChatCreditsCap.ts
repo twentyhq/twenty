@@ -1,5 +1,5 @@
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
-import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
+import { aiChatThreadReplyErrorFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyErrorFamilyState';
 import { isAiChatCreditsExhaustedError } from '@/ai-chat/usage/utils/isAiChatCreditsExhaustedError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -16,9 +16,12 @@ export const useHasReachedAiChatCreditsCap = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const { threadId } = useAiChatInstanceOrThrow();
-  const aiChatError = useAtomFamilyStateValue(aiChatErrorFamilyState, {
-    threadId,
-  });
+  const aiChatThreadReplyError = useAtomFamilyStateValue(
+    aiChatThreadReplyErrorFamilyState,
+    {
+      threadId,
+    },
+  );
 
   if (hasReachedCurrentBillingPeriodCap) {
     return true;
@@ -33,5 +36,5 @@ export const useHasReachedAiChatCreditsCap = () => {
     return false;
   }
 
-  return isAiChatCreditsExhaustedError(aiChatError);
+  return isAiChatCreditsExhaustedError(aiChatThreadReplyError);
 };

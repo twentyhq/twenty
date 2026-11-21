@@ -1,8 +1,8 @@
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { AiChatErrorRenderer } from '@/ai-chat/messages/components/AiChatErrorRenderer';
-import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
-import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
+import { aiChatThreadReplyErrorFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyErrorFamilyState';
+import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
 import { aiChatIsLastMessageFromUserFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatIsLastMessageFromUserFamilySelector';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -14,14 +14,17 @@ const StyledErrorWrapper = styled.div`
 
 export const AiChatErrorUnderMessageList = () => {
   const { threadId } = useAiChatInstanceOrThrow();
-  const aiChatError = useAtomFamilyStateValue(aiChatErrorFamilyState, {
-    threadId,
-  });
-  const aiChatReplyStatus = useAtomFamilyStateValue(
-    aiChatReplyStatusFamilyState,
+  const aiChatThreadReplyError = useAtomFamilyStateValue(
+    aiChatThreadReplyErrorFamilyState,
+    {
+      threadId,
+    },
+  );
+  const aiChatThreadReplyStatus = useAtomFamilyStateValue(
+    aiChatThreadReplyStatusFamilyState,
     { threadId },
   );
-  const isAiChatStreaming = aiChatReplyStatus === 'streaming';
+  const isAiChatStreaming = aiChatThreadReplyStatus === 'streaming';
 
   const aiChatIsLastMessageFromUser = useAtomFamilySelectorValue(
     aiChatIsLastMessageFromUserFamilySelector,
@@ -29,7 +32,7 @@ export const AiChatErrorUnderMessageList = () => {
   );
 
   const showError =
-    aiChatError && !isAiChatStreaming && aiChatIsLastMessageFromUser;
+    aiChatThreadReplyError && !isAiChatStreaming && aiChatIsLastMessageFromUser;
 
   if (!showError) {
     return null;
@@ -37,7 +40,7 @@ export const AiChatErrorUnderMessageList = () => {
 
   return (
     <StyledErrorWrapper>
-      <AiChatErrorRenderer error={aiChatError} />
+      <AiChatErrorRenderer error={aiChatThreadReplyError} />
     </StyledErrorWrapper>
   );
 };

@@ -1,7 +1,7 @@
 import { createStore } from 'jotai';
 
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
-import { aiChatThreadVisitFamilyState } from '@/ai-chat/threads/states/aiChatThreadVisitFamilyState';
+import { aiChatThreadViewVisitFamilyState } from '@/ai-chat/states/view/aiChatThreadViewVisitFamilyState';
 import { aiChatThreadInboxStatusFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadInboxStatusFamilySelector';
 import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
 
@@ -80,7 +80,7 @@ describe('aiChatThreadInboxStatusFamilySelector', () => {
       rowsByThreadId: UNREAD_PARTICIPANT,
     });
     store.set(
-      aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+      aiChatThreadViewVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
       {
         threadId: THREAD_ID,
         isUnread: true,
@@ -92,7 +92,7 @@ describe('aiChatThreadInboxStatusFamilySelector', () => {
     expect(isUnread(store)).toBe(false);
 
     store.set(
-      aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+      aiChatThreadViewVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
       {
         threadId: THREAD_ID,
         isUnread: true,

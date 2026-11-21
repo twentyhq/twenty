@@ -7,11 +7,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { useAiChatModelId } from '@/ai-chat/hooks/useAiChatModelId';
 import { AiChatErrorCode } from '@/ai-chat/utils/aiChatErrorCode';
 import { findToolPartOutput } from '@/ai-chat/tool-calls/utils/findToolPartOutput';
-import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
-import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
+import { aiChatThreadReplyErrorFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyErrorFamilyState';
+import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
 import { endAiChatReplyStatus } from '@/ai-chat/utils/endAiChatReplyStatus';
 import { getAiChatReplyStatusUnlessStreaming } from '@/ai-chat/utils/getAiChatReplyStatusUnlessStreaming';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { isAiChatCreditsExhaustedError } from '@/ai-chat/usage/utils/isAiChatCreditsExhaustedError';
 import { toAiChatError } from '@/ai-chat/utils/toAiChatError';
 import { updateToolPartOutput } from '@/ai-chat/tool-calls/utils/updateToolPartOutput';
@@ -47,11 +47,13 @@ export const useAnswerAiChatToolCall = () => {
         return false;
       }
 
-      const messagesAtom = aiChatMessagesFamilyState.atomFamily({
+      const messagesAtom = aiChatThreadDisplayedMessagesFamilyState.atomFamily({
         threadId,
       });
-      const errorAtom = aiChatErrorFamilyState.atomFamily({ threadId });
-      const replyStatusAtom = aiChatReplyStatusFamilyState.atomFamily({
+      const errorAtom = aiChatThreadReplyErrorFamilyState.atomFamily({
+        threadId,
+      });
+      const replyStatusAtom = aiChatThreadReplyStatusFamilyState.atomFamily({
         threadId,
       });
 

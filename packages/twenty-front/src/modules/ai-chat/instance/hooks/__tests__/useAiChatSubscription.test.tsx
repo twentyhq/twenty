@@ -6,11 +6,11 @@ import { type AgentMessageReactionSummary } from 'twenty-shared/ai';
 
 import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai-chat/constants/AiChatRefetchMessagesEventName';
 import { useAiChatSubscription } from '@/ai-chat/instance/hooks/useAiChatSubscription';
-import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
-import { aiChatPersistedMessagesFamilyState } from '@/ai-chat/states/aiChatPersistedMessagesFamilyState';
-import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
-import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionsFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
+import { aiChatThreadFetchedMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadFetchedMessagesFamilyState';
+import { aiChatThreadReplyErrorFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyErrorFamilyState';
+import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import {
@@ -31,10 +31,10 @@ jest.mock('@/ai-chat/usage/hooks/useRefreshAiChatUsage', () => ({
   useRefreshAiChatUsage: () => ({ refreshAiChatUsage }),
 }));
 const key = { threadId: 'thread' };
-const messagesAtom = aiChatMessagesFamilyState.atomFamily(key);
+const messagesAtom = aiChatThreadDisplayedMessagesFamilyState.atomFamily(key);
 const persistedMessagesAtom =
-  aiChatPersistedMessagesFamilyState.atomFamily(key);
-const errorAtom = aiChatErrorFamilyState.atomFamily(key);
+  aiChatThreadFetchedMessagesFamilyState.atomFamily(key);
+const errorAtom = aiChatThreadReplyErrorFamilyState.atomFamily(key);
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
@@ -257,7 +257,7 @@ describe('Stream liveness', () => {
     subscribe.mockReturnValue(disconnect);
     jotaiStore.set(sseClientState.atom, { subscribe } as never);
     jotaiStore.set(
-      aiChatReplyStatusFamilyState.atomFamily(key),
+      aiChatThreadReplyStatusFamilyState.atomFamily(key),
       'awaiting-first-chunk',
     );
   });

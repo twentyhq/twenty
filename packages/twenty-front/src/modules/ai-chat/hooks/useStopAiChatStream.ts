@@ -3,7 +3,7 @@ import { useStore } from 'jotai';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
-import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
+import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
 import { endAiChatReplyStatus } from '@/ai-chat/utils/endAiChatReplyStatus';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { StopAgentChatStreamDocument } from '~/generated-metadata/graphql';
@@ -16,7 +16,7 @@ export const useStopAiChatStream = () => {
 
   const stopAiChatStream = async () => {
     store.set(
-      aiChatReplyStatusFamilyState.atomFamily({ threadId }),
+      aiChatThreadReplyStatusFamilyState.atomFamily({ threadId }),
       endAiChatReplyStatus('awaiting-first-chunk'),
     );
 

@@ -2,8 +2,8 @@ import { useLingui } from '@lingui/react/macro';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconEdit } from 'twenty-ui/icon';
 
-import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
-import { aiChatShouldFocusEditorFamilyState } from '@/ai-chat/states/aiChatShouldFocusEditorFamilyState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
+import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldFocusFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { useStore } from 'jotai';
 import { askAiSidePanelThreadIdComponentState } from '@/side-panel/states/askAiSidePanelThreadIdComponentState';
@@ -21,14 +21,16 @@ export const SidePanelAskAiNewChatButton = () => {
 
     if (!isInboxPath(window.location.pathname)) {
       store.set(
-        aiChatNewThreadRecipientsFamilyState.atomFamily(newAiChatThreadId),
+        aiChatComposerNewThreadRecipientsFamilyState.atomFamily(
+          newAiChatThreadId,
+        ),
         (recipients) => ({ ...recipients, channelId: null }),
       );
     }
 
     setAskAiSidePanelThreadId(null);
     store.set(
-      aiChatShouldFocusEditorFamilyState.atomFamily({
+      aiChatComposerShouldFocusFamilyState.atomFamily({
         threadId: newAiChatThreadId,
       }),
       true,

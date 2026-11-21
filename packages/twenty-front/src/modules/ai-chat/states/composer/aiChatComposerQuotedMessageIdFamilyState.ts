@@ -1,9 +1,9 @@
 import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const aiChatQuotedMessageIdFamilyState = createAtomFamilyState<
+export const aiChatComposerQuotedMessageIdFamilyState = createAtomFamilyState<
   string | null,
   { threadId: string | null }
 >({
-  key: 'aiChatQuotedMessageIdFamilyState',
+  key: 'aiChatComposerQuotedMessageIdFamilyState',
   defaultValue: null,
 });

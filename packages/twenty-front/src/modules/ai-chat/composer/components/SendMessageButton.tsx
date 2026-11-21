@@ -2,8 +2,8 @@ import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThr
 import { type AiChatInstanceEventDetail } from '@/ai-chat/types/AiChatInstanceEventDetail';
 import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai-chat/constants/AiChatSendMessageEventName';
 import { useStopAiChatStream } from '@/ai-chat/hooks/useStopAiChatStream';
-import { aiChatMessagesLoadingFamilyState } from '@/ai-chat/states/aiChatMessagesLoadingFamilyState';
-import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
+import { aiChatThreadIsFetchingMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadIsFetchingMessagesFamilyState';
+import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
 import { aiChatInputIsEmptyFamilySelector } from '@/ai-chat/composer/states/selectors/aiChatInputIsEmptyFamilySelector';
 import { aiChatIsAssistantReplyPendingFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatIsAssistantReplyPendingFamilySelector';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
@@ -26,15 +26,15 @@ export const SendMessageButton = ({
     aiChatInputIsEmptyFamilySelector,
     threadId,
   );
-  const aiChatMessagesLoading = useAtomFamilyStateValue(
-    aiChatMessagesLoadingFamilyState,
+  const aiChatThreadIsFetchingMessages = useAtomFamilyStateValue(
+    aiChatThreadIsFetchingMessagesFamilyState,
     { threadId },
   );
-  const aiChatReplyStatus = useAtomFamilyStateValue(
-    aiChatReplyStatusFamilyState,
+  const aiChatThreadReplyStatus = useAtomFamilyStateValue(
+    aiChatThreadReplyStatusFamilyState,
     { threadId },
   );
-  const isAiChatStreaming = aiChatReplyStatus === 'streaming';
+  const isAiChatStreaming = aiChatThreadReplyStatus === 'streaming';
   const { stopAiChatStream } = useStopAiChatStream();
   const aiChatIsAssistantReplyPending = useAtomFamilySelectorValue(
     aiChatIsAssistantReplyPendingFamilySelector,
@@ -71,7 +71,9 @@ export const SendMessageButton = ({
       aria-label={t`Send message`}
       size="sm"
       onClick={handleSendClick}
-      disabled={isDisabled || aiChatInputIsEmpty || aiChatMessagesLoading}
+      disabled={
+        isDisabled || aiChatInputIsEmpty || aiChatThreadIsFetchingMessages
+      }
     >
       <IconArrowUp />
     </IconButton>
