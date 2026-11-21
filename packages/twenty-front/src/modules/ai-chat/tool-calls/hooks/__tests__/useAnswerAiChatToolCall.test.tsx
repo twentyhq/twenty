@@ -5,7 +5,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { isToolUIPart } from 'ai';
 
-import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai-chat/constants/AiChatRefetchMessagesEventName';
+import { refetchAiChatThreadMessages } from '@/ai-chat/utils/refetchAiChatThreadMessages';
 import { useAnswerAiChatToolCall } from '@/ai-chat/tool-calls/hooks/useAnswerAiChatToolCall';
 import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
 import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
@@ -13,6 +13,10 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+
+jest.mock('@/ai-chat/utils/refetchAiChatThreadMessages', () => ({
+  refetchAiChatThreadMessages: jest.fn(),
+}));
 
 const mutate = jest.fn();
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
@@ -125,11 +129,6 @@ describe('useAnswerAiChatToolCall', () => {
   });
 
   it('refetches the conversation instead when the call was already answered elsewhere', async () => {
-    const refetchListener = jest.fn();
-    window.addEventListener(
-      AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
-      refetchListener,
-    );
     mutate.mockRejectedValue(
       new CombinedGraphQLErrors({
         data: null,
@@ -143,12 +142,7 @@ describe('useAnswerAiChatToolCall', () => {
     );
 
     expect(await answer()).toBe(false);
-    expect(refetchListener).toHaveBeenCalledTimes(1);
+    expect(refetchAiChatThreadMessages).toHaveBeenCalledTimes(1);
     expect(readToolOutput()).toEqual(ANSWERED_OUTPUT);
-
-    window.removeEventListener(
-      AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
-      refetchListener,
-    );
   });
 });
