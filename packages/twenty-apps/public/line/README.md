@@ -21,3 +21,16 @@ One Official Account can be connected per workspace.
 ### 3. Connect
 
 Connect LINE in Twenty and paste the long-lived channel access token. The app creates the Official Account's message channel.
+
+### 4. Register the webhook
+
+In the channel's **Messaging API** tab:
+
+1. Set the **Webhook URL** to the live URL of the app's `receive-webhook` function, shown in its HTTP trigger settings in Twenty (it ends with `/line`), then press **Verify**.
+2. Turn on **Use webhook** and **Webhook redelivery**, so messages sent while Twenty is unreachable arrive later.
+
+In LINE Official Account Manager, under **Response settings**, turn off auto-response messages if replies should only come from Twenty.
+
+The URL must be public HTTPS, so a Twenty running on localhost cannot receive messages.
+
+Group and multi-person chats are not imported.
