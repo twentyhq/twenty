@@ -14,21 +14,21 @@ export const buildAccessGroupFamilyIdsExpression = ({
   workspaceId,
   tableAlias,
   family,
-  familyIndex,
+  expressionIndex,
   residualMemberFieldValues,
   residualSQLCondition,
 }: {
   workspaceId: string;
   tableAlias: string;
   family: AccessGroupFamily;
-  familyIndex: number;
+  expressionIndex: number;
   residualMemberFieldValues: RlsMemberFieldValues;
   residualSQLCondition: SQLCondition | null;
 }): SQLCondition => {
   const parameterName = (name: string) =>
-    `accessGroupFamily${familyIndex}_${name}`;
+    `accessGroupFamily${expressionIndex}_${name}`;
   const accessGroupAlias = escapeIdentifier(
-    `access_group_family_${familyIndex}`,
+    `access_group_family_${expressionIndex}`,
   );
   const quotedTableAlias = escapeIdentifier(tableAlias);
 
@@ -42,7 +42,7 @@ export const buildAccessGroupFamilyIdsExpression = ({
     }
 
     const hopAlias = escapeIdentifier(
-      `access_group_family_${familyIndex}_${keyIndex}`,
+      `access_group_family_${expressionIndex}_${keyIndex}`,
     );
 
     return {

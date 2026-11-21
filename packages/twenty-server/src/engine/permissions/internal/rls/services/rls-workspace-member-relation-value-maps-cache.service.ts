@@ -86,7 +86,6 @@ export class RlsWorkspaceMemberRelationValueMapsCacheService extends WorkspaceCa
     return { byWorkspaceMemberId };
   }
 
-  // A predicate whose relation cannot be read resolves to no value, which matches nothing
   private buildLookup({
     predicate,
     flatObjectMetadataMaps,

@@ -28,12 +28,12 @@ export const buildAccessGroupFamilyIdsExpressions = ({
         (residualMemberFieldValues) => ({ family, residualMemberFieldValues }),
       ),
     )
-    .map(({ family, residualMemberFieldValues }, familyIndex) =>
+    .map(({ family, residualMemberFieldValues }, expressionIndex) =>
       buildAccessGroupFamilyIdsExpression({
         workspaceId,
         tableAlias: RECORD_ACCESS_GROUP_TABLE_ALIAS,
         family,
-        familyIndex,
+        expressionIndex,
         residualMemberFieldValues,
         residualSQLCondition: buildRuleSQLConditionOrThrow({
           rowLevelPermissionRule: family.residualRule,
