@@ -11,7 +11,7 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 import { AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal/access-group/services/access-group-sync-scheduler.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
-@RegisteredWorkspaceCommand('2.61.0', 1795260363000)
+@RegisteredWorkspaceCommand('2.61.0', 1795264768000)
 @Command({
   name: 'upgrade:2-61:type-access-groups',
   description:

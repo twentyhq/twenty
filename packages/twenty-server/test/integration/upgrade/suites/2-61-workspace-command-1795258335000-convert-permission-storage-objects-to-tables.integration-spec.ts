@@ -5,7 +5,7 @@ import { restoreLegacyPermissionStorageObjects } from 'test/integration/upgrade/
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type ConvertPermissionStorageObjectsToTablesCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795258335000-convert-permission-storage-objects-to-tables.command';
-import { type TypeAccessGroupsCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795260363000-type-access-groups.command';
+import { type TypeAccessGroupsCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795264768000-type-access-groups.command';
 import { PERMISSION_STORAGE_OBJECTS_TO_CONVERT } from 'src/database/commands/upgrade-version-command/2-61/constants/permission-storage-objects-to-convert.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import {
