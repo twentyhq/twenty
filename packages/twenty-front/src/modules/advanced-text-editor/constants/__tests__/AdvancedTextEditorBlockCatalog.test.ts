@@ -61,6 +61,7 @@ describe('ADVANCED_TEXT_EDITOR_BLOCK_CATALOG', () => {
       'h5',
       'h6',
       'blockquote',
+      'today',
       ...ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES.map(({ id }) => id),
       'bulletList',
       'orderedList',
