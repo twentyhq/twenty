@@ -19,11 +19,25 @@ describe('getRecordFieldColumnHeader', () => {
       getRecordFieldColumnHeader({
         fieldMetadataItem: companyField,
         lookupTarget: undefined,
+        isScopedRelationColumn: false,
       }),
     ).toMatchObject({
       label: companyField.label,
       icon: companyField.icon,
       description: companyField.description,
+    });
+  });
+
+  it('qualifies a scoped relation column so it differs from the plain one', () => {
+    expect(
+      getRecordFieldColumnHeader({
+        fieldMetadataItem: employeesField,
+        lookupTarget: undefined,
+        isScopedRelationColumn: true,
+      }),
+    ).toMatchObject({
+      label: `${employeesField.label} · Filtered`,
+      icon: employeesField.icon,
     });
   });
 
@@ -37,6 +51,7 @@ describe('getRecordFieldColumnHeader', () => {
           objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
           isLookupColumnsEnabled: true,
         }),
+        isScopedRelationColumn: false,
       }),
     ).toEqual({
       label: `${companyField.label} › ${employeesField.label}`,

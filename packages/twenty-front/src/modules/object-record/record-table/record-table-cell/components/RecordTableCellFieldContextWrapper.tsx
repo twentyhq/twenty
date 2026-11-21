@@ -1,5 +1,6 @@
 import { useRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useRecordFieldLookupTarget';
 import { RecordTableCellLookupFieldContext } from '@/object-record/record-column-lookup/components/RecordTableCellLookupFieldContext';
+import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -9,7 +10,7 @@ import { RecordTableCellFieldContextGeneric } from '@/object-record/record-table
 import { RecordTableCellFieldContextLabelIdentifier } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextLabelIdentifier';
 import { getRecordTableCellInputIdPrefix } from '@/object-record/record-table/utils/getRecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type RecordTableCellFieldContextWrapperProps = {
@@ -33,6 +34,10 @@ export const RecordTableCellFieldContextWrapper = ({
   } = useRecordIndexContextOrThrow();
 
   const lookupTarget = useRecordFieldLookupTarget(recordField);
+
+  const scopedRelationAlias = useContext(ScopedRelationAliasesContext).find(
+    ({ recordFieldId }) => recordFieldId === recordField.id,
+  );
 
   const fieldMetadataItem =
     fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
@@ -78,6 +83,7 @@ export const RecordTableCellFieldContextWrapper = ({
               ],
             isRecordReadOnly: isRecordReadOnly ?? false,
             restrictedFieldNames,
+            fieldValueKey: scopedRelationAlias?.responseKey,
           }}
         >
           {children}

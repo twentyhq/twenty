@@ -167,6 +167,10 @@ export const mapObjectMetadataToGraphQLQuery = ({
             fieldMetadata: relationFieldMetadataItem,
             relationRecordGqlFields: relationWithArguments.recordGqlFields,
             relationWithArgumentsResponseKey: responseKey,
+            // Only a limit can leave matching records out of the loaded ones
+            shouldIncludeRelationTotalCount: isDefined(
+              relationWithArguments.first,
+            ),
             computeReferences,
             objectPermissionsByObjectMetadataId,
           }),

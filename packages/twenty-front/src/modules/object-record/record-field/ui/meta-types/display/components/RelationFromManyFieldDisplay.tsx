@@ -1,3 +1,5 @@
+import { styled } from '@linaria/react';
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 
@@ -12,13 +14,28 @@ import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/ju
 import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 
 import { OverflowingList } from 'twenty-ui/components/layout';
+import { Chip } from 'twenty-ui/primitives/data-display';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { isArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+
+const StyledRelationWithUnloadedRecordCount = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
+  width: 100%;
+`;
+
+const StyledUnloadedRecordCount = styled.div`
+  display: flex;
+  flex-shrink: 0;
+`;
 
 export const RelationFromManyFieldDisplay = () => {
   const { t } = useLingui();
 
-  const { fieldValue, fieldDefinition, generateRecordChipData } =
+  const { fieldValue, totalCount, fieldDefinition, generateRecordChipData } =
     useRelationFromManyFieldDisplay();
   const { isFocused } = useFieldFocus();
   const { disableChipClick, triggerEvent } = useContext(FieldContext);
@@ -107,7 +124,7 @@ export const RelationFromManyFieldDisplay = () => {
     );
   }
 
-  return (
+  const relationRecordChips = (
     <OverflowingList
       overflowLabel={t`Show all items`}
       showOverflowCount={isFocused}
@@ -126,5 +143,30 @@ export const RelationFromManyFieldDisplay = () => {
         );
       })}
     </OverflowingList>
+  );
+
+  const unloadedRecordCount = (totalCount ?? 0) - fieldValue.length;
+
+  if (unloadedRecordCount <= 0) {
+    return relationRecordChips;
+  }
+
+  return (
+    <StyledRelationWithUnloadedRecordCount>
+      {relationRecordChips}
+      <StyledUnloadedRecordCount>
+        <Chip
+          variant="soft"
+          tooltipContent={plural(unloadedRecordCount, {
+            one: '# more related record',
+            other: '# more related records',
+          })}
+          tooltipPlace="top"
+          alwaysShowTooltip
+        >
+          {`+${unloadedRecordCount}`}
+        </Chip>
+      </StyledUnloadedRecordCount>
+    </StyledRelationWithUnloadedRecordCount>
   );
 };

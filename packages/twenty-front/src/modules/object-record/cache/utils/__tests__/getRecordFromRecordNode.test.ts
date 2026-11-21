@@ -60,6 +60,24 @@ describe('getRecordFromRecordNode', () => {
     expect(result).toMatchSnapshot();
   });
 
+  it('should keep the total count of a connection under a sibling key', () => {
+    const recordNode = {
+      id: '123',
+      __typename: 'Company',
+      people_0123456789abcdef: {
+        totalCount: 3,
+        edges: [{ node: { id: '456', __typename: 'Person' } }],
+      },
+    };
+
+    expect(getRecordFromRecordNode({ recordNode })).toEqual({
+      id: '123',
+      __typename: 'Company',
+      people_0123456789abcdef: [{ id: '456', __typename: 'Person' }],
+      people_0123456789abcdefTotalCount: 3,
+    });
+  });
+
   it('should handle null and undefined values', () => {
     const recordNode = {
       id: '123',

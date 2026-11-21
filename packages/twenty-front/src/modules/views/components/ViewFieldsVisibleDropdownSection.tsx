@@ -7,6 +7,8 @@ import { useProcessOptionDropdownDragEnd } from '@/object-record/object-options-
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { getRecordFieldColumnHeader } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnHeader';
 import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
+import { isLookupColumnsEnabledSelector } from '@/object-record/record-column-lookup/states/isLookupColumnsEnabledSelector';
+import { isScopedRelationColumn } from '@/object-record/record-column-scope/utils/isScopedRelationColumn';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
@@ -16,6 +18,7 @@ import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableLi
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewType } from '@/views/types/ViewType';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -45,6 +48,9 @@ export const ViewFieldsVisibleDropdownSection = () => {
     useGetFieldMetadataItemByIdOrThrow();
 
   const getRecordFieldLookupTarget = useGetRecordFieldLookupTarget();
+  const isLookupColumnsEnabled = useAtomStateValue(
+    isLookupColumnsEnabledSelector,
+  );
 
   const handleReorderFields =
     viewType === ViewType.KANBAN
@@ -126,6 +132,11 @@ export const ViewFieldsVisibleDropdownSection = () => {
                     lookupTarget: getRecordFieldLookupTarget({
                       recordField,
                       fieldMetadataItem,
+                    }),
+                    isScopedRelationColumn: isScopedRelationColumn({
+                      fieldMetadataItem,
+                      recordField,
+                      isLookupColumnsEnabled,
                     }),
                   });
 

@@ -16,6 +16,7 @@ import { type GraphQLView } from '@/views/types/GraphQLView';
 import { ViewType } from '@/views/types/ViewType';
 import { isRecordFieldSupportedByViewType } from '@/object-record/record-field/utils/isRecordFieldSupportedByViewType';
 import { duplicateViewFiltersAndViewFilterGroups } from '@/views/utils/duplicateViewFiltersAndViewFilterGroups';
+import { getViewFieldRelationScopeInput } from '@/views/utils/getViewFieldRelationScopeInput';
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
 import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
 import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
@@ -189,6 +190,9 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             viewFieldGroupId: viewField.viewFieldGroupId,
             relationTargetFieldMetadataId:
               viewField.relationTargetFieldMetadataId,
+            relationScope: getViewFieldRelationScopeInput(
+              viewField.relationScope,
+            ),
             viewId: newViewId,
           })),
       });
