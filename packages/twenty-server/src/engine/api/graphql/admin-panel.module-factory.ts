@@ -28,6 +28,7 @@ export const adminPanelModuleFactory = async (
     autoSchemaFile: true,
     include: [AdminPanelGraphQLApiModule],
     resolverSchemaScope: 'admin',
+    fieldResolverEnhancers: ['guards'],
     buildSchemaOptions: {},
     renderGraphiQL() {
       return renderApolloPlayground({ path: ApiPath.AdminPanel });
