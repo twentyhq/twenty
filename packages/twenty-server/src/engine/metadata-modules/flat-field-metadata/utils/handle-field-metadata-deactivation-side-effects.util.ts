@@ -67,11 +67,8 @@ export const handleFieldMetadataDeactivationSideEffects = ({
   );
 
   const flatViewFieldsToDelete = [
-    ...new Map(
-      [...flatViewFieldsOnField, ...flatViewFieldsReferencingField].map(
-        (flatViewField) => [flatViewField.id, flatViewField],
-      ),
-    ).values(),
+    ...flatViewFieldsOnField,
+    ...flatViewFieldsReferencingField,
   ];
 
   const flatViewSortsToDelete = Object.values(
