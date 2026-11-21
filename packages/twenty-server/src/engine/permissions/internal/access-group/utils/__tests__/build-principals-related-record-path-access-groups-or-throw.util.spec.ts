@@ -105,7 +105,6 @@ const buildPrincipalsAccessGroupObjectMetadataIds = ({
       metadataMaps: {
         featureFlagsMap: {
           [FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]: isAccessGroupsEnabled,
-          [FeatureFlagKey.IS_PERMISSION_TABLES_ENABLED]: true,
         },
         rolesPermissions: {
           sales: {

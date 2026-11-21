@@ -6,7 +6,7 @@ import { renewToken } from 'test/integration/graphql/utils/renew-token.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const createPermissionTestActiveWorkspace = async ({
@@ -44,10 +44,7 @@ export const createPermissionTestActiveWorkspace = async ({
     expectToFail: false,
   });
 
-  for (const featureFlag of [
-    FeatureFlagKey.IS_PERMISSION_TABLES_ENABLED,
-    ...featureFlagsEnabledBeforeActivation,
-  ]) {
+  for (const featureFlag of featureFlagsEnabledBeforeActivation) {
     await updateFeatureFlag({
       featureFlag,
       value: true,
