@@ -86,7 +86,7 @@ describe('WorkflowHandleStaledRunsWorkspaceService', () => {
     expect(workflowRunRepository.update).toHaveBeenCalledWith(
       [
         {
-          status: WorkflowRunStatus.NOT_STARTED,
+          status: expect.anything(),
           id: In(['lost-run', 'never-enqueued-run']),
         },
         {

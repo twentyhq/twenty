@@ -7,13 +7,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import {
-  NOT_STARTED_WORKFLOW_RUN_STATUS_DEFAULT_VALUE,
-  NOT_STARTED_WORKFLOW_RUN_STATUS_OPTION,
-  STOP_WORKFLOW_RUN_AVAILABILITY_EXPRESSION,
-  STOP_WORKFLOW_RUN_AVAILABILITY_EXPRESSION_WITHOUT_NOT_STARTED,
-  STOP_WORKFLOW_RUN_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
-} from 'src/database/commands/upgrade-version-command/2-61/constants/restore-not-started-workflow-run-status.constant';
+import { STOP_WORKFLOW_RUN_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-61/constants/restore-not-started-workflow-run-status.constant';
+import { buildNotStartedWorkflowRunStatusFieldRestore } from 'src/database/commands/upgrade-version-command/2-61/utils/build-not-started-workflow-run-status-field-restore.util';
+import { buildStopWorkflowRunCommandMenuItemRestore } from 'src/database/commands/upgrade-version-command/2-61/utils/build-stop-workflow-run-command-menu-item-restore.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { computeFieldMetadataOptionOperationsForFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/compute-field-metadata-option-operations-for-field-metadatas.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
@@ -21,7 +17,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-// Only workspaces upgraded or created from main while #30841 was merged lost the status; the others are a no-op
 @RegisteredWorkspaceCommand('2.61.0', 1795287331295)
 @Command({
   name: 'upgrade:2-61:restore-not-started-workflow-run-status',
@@ -68,47 +63,29 @@ export class RestoreNotStartedWorkflowRunStatusCommand extends ProvisionedWorksp
     }
 
     const now = new Date().toISOString();
-    const statusOptions = statusField.options ?? [];
-    const hasNotStartedOption = statusOptions.some(
-      ({ value }) => value === NOT_STARTED_WORKFLOW_RUN_STATUS_OPTION.value,
-    );
-
-    const statusFieldsToUpdate = hasNotStartedOption
-      ? []
-      : [
-          {
-            ...statusField,
-            options: [NOT_STARTED_WORKFLOW_RUN_STATUS_OPTION, ...statusOptions],
-            defaultValue: NOT_STARTED_WORKFLOW_RUN_STATUS_DEFAULT_VALUE,
-            updatedAt: now,
-          },
-        ];
-
-    const stopCommandMenuItem =
-      flatCommandMenuItemMaps.byUniversalIdentifier[
-        STOP_WORKFLOW_RUN_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER
-      ];
-
-    const stopCommandMenuItemsToUpdate =
-      isDefined(stopCommandMenuItem) &&
-      stopCommandMenuItem.conditionalAvailabilityExpression ===
-        STOP_WORKFLOW_RUN_AVAILABILITY_EXPRESSION_WITHOUT_NOT_STARTED
-        ? [
-            {
-              ...stopCommandMenuItem,
-              conditionalAvailabilityExpression:
-                STOP_WORKFLOW_RUN_AVAILABILITY_EXPRESSION,
-              updatedAt: now,
-            },
-          ]
-        : [];
+    const statusFieldToUpdate = buildNotStartedWorkflowRunStatusFieldRestore({
+      statusField,
+      now,
+    });
+    const stopCommandMenuItemToUpdate =
+      buildStopWorkflowRunCommandMenuItemRestore({
+        stopCommandMenuItem:
+          flatCommandMenuItemMaps.byUniversalIdentifier[
+            STOP_WORKFLOW_RUN_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER
+          ],
+        now,
+      });
 
     if (
-      statusFieldsToUpdate.length === 0 &&
-      stopCommandMenuItemsToUpdate.length === 0
+      !isDefined(statusFieldToUpdate) &&
+      !isDefined(stopCommandMenuItemToUpdate)
     ) {
       return;
     }
+
+    const statusFieldsToUpdate = isDefined(statusFieldToUpdate)
+      ? [statusFieldToUpdate]
+      : [];
 
     if (options.dryRun ?? false) {
       this.logger.log(
@@ -142,7 +119,9 @@ export class RestoreNotStartedWorkflowRunStatusCommand extends ProvisionedWorksp
             commandMenuItem: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: stopCommandMenuItemsToUpdate,
+              flatEntityToUpdate: isDefined(stopCommandMenuItemToUpdate)
+                ? [stopCommandMenuItemToUpdate]
+                : [],
             },
           },
         },

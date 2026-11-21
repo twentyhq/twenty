@@ -27,7 +27,6 @@ const RUN_ON_WORKSPACE_ARGS = {
   total: 1,
 };
 
-// Reproduces a workspace that ran the dropped 2.61 drop-not-started command
 const dropNotStartedWorkflowRunStatus = async (): Promise<void> => {
   const workspaceCacheService =
     getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService');

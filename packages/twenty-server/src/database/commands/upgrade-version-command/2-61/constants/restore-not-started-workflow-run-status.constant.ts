@@ -1,4 +1,3 @@
-// Frozen at 2.61 so replaying the command never picks up later standard changes
 export const NOT_STARTED_WORKFLOW_RUN_STATUS_OPTION = {
   id: '20202020-2ec6-40d8-b9e1-1b1e567bcca9',
   value: 'NOT_STARTED',
