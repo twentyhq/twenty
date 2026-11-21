@@ -31,6 +31,22 @@ export const useFindManyRecordsQuery = ({
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
+  const readableRelationsWithArguments = useMemo(
+    () =>
+      getReadableRelationsWithArguments({
+        objectMetadataItem,
+        objectMetadataItems,
+        recordGqlFields,
+        objectPermissionsByObjectMetadataId,
+      }),
+    [
+      objectMetadataItem,
+      objectMetadataItems,
+      recordGqlFields,
+      objectPermissionsByObjectMetadataId,
+    ],
+  );
+
   const findManyRecordsQuery = useMemo(
     () =>
       generateFindManyRecordsQuery({
@@ -40,6 +56,7 @@ export const useFindManyRecordsQuery = ({
         computeReferences,
         cursorDirection,
         objectPermissionsByObjectMetadataId,
+        readableRelationsWithArguments,
       }),
     [
       objectMetadataItem,
@@ -48,25 +65,13 @@ export const useFindManyRecordsQuery = ({
       computeReferences,
       cursorDirection,
       objectPermissionsByObjectMetadataId,
+      readableRelationsWithArguments,
     ],
   );
 
   const relationsWithArgumentsVariables = useMemo(
-    () =>
-      getRelationsWithArgumentsVariables(
-        getReadableRelationsWithArguments({
-          objectMetadataItem,
-          objectMetadataItems,
-          recordGqlFields,
-          objectPermissionsByObjectMetadataId,
-        }),
-      ),
-    [
-      objectMetadataItem,
-      objectMetadataItems,
-      recordGqlFields,
-      objectPermissionsByObjectMetadataId,
-    ],
+    () => getRelationsWithArgumentsVariables(readableRelationsWithArguments),
+    [readableRelationsWithArguments],
   );
 
   return {

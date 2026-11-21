@@ -15,7 +15,6 @@ const buildPeopleAlias = (
   recordFieldId: 'people-column',
   relationFieldName: 'people',
   relationObjectMetadataItem: personObjectMetadataItem,
-  relationJoinColumnName: 'companyId',
   ...scopedRelationAlias,
 });
 
@@ -37,7 +36,6 @@ describe('getScopedRelationRecordGqlFields', () => {
         filter: limitedAlias.filter,
         orderBy: limitedAlias.orderBy,
         first: 2,
-        shouldIncludeTotalCount: true,
         recordGqlFields: personIdentifierGqlFields,
       },
       people_all: {
@@ -45,7 +43,6 @@ describe('getScopedRelationRecordGqlFields', () => {
         filter: undefined,
         orderBy: undefined,
         first: undefined,
-        shouldIncludeTotalCount: false,
         recordGqlFields: personIdentifierGqlFields,
       },
     });

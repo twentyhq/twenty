@@ -1,12 +1,12 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { isOneToManyRelationField } from '@/object-metadata/utils/isOneToManyRelationField';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { type ReadableRelationWithArguments } from '@/object-record/graphql/types/ReadableRelationWithArguments';
+import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/utils/findRelationTargetObjectMetadataItem';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import {
-  FieldMetadataType,
   type ObjectRecordsPermissions,
   type RecordGqlFields,
-  RelationType,
 } from 'twenty-shared/types';
 import {
   canAccessThroughAllRecordsOrRlsPermission,
@@ -54,16 +54,16 @@ export const getReadableRelationsWithArguments = ({
 
       // The server only takes arguments on one-to-many relations
       if (
-        relationFieldMetadataItem?.type !== FieldMetadataType.RELATION ||
-        relationFieldMetadataItem.relation?.type !== RelationType.ONE_TO_MANY
+        !isDefined(relationFieldMetadataItem) ||
+        !isOneToManyRelationField(relationFieldMetadataItem)
       ) {
         return [];
       }
 
-      const relationObjectMetadataItem = objectMetadataItems.find(
-        ({ id }) =>
-          id === relationFieldMetadataItem.relation?.targetObjectMetadata.id,
-      );
+      const relationObjectMetadataItem = findRelationTargetObjectMetadataItem({
+        fieldMetadataItem: relationFieldMetadataItem,
+        objectMetadataItems,
+      });
 
       if (
         !isDefined(relationObjectMetadataItem) ||
