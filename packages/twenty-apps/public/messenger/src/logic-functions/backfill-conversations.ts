@@ -9,7 +9,10 @@ import {
   MESSENGER_LOGIC_FUNCTION_BACKFILL_CONVERSATIONS_UNIVERSAL_IDENTIFIER,
   MESSENGER_LOGIC_FUNCTION_IMPORT_CONVERSATION_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
-import { markBackfillCompleted } from 'src/logic-functions/data/backfill-completion.util';
+import {
+  isCurrentBackfillRun,
+  markBackfillCompleted,
+} from 'src/logic-functions/data/backfill-state.util';
 import { enqueueBackfillConversations } from 'src/logic-functions/data/enqueue-backfill-conversations.util';
 import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
 import { findConnectedAccountIdByPageId } from 'src/logic-functions/data/find-connected-account-id-by-page-id.util';
@@ -29,7 +32,10 @@ const handler = async ({
 }: BackfillConversationsPayload) => {
   const connectedAccountId = await findConnectedAccountIdByPageId(pageId);
 
-  if (!isDefined(connectedAccountId)) {
+  if (
+    !isDefined(connectedAccountId) ||
+    !(await isCurrentBackfillRun({ pageId, backfillRunId }))
+  ) {
     return;
   }
 

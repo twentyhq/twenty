@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-sdk/utils';
 
-import { isBackfillCompleted } from 'src/logic-functions/data/backfill-completion.util';
+import { isBackfillCompleted } from 'src/logic-functions/data/backfill-state.util';
 import { getMessengerAccessTokenOrThrow } from 'src/logic-functions/data/get-messenger-access-token-or-throw.util';
 import { getWebhookSubscriptionState } from 'src/logic-functions/data/get-webhook-subscription-state.util';
 import { type SubscribedApp } from 'src/logic-functions/types/subscribed-app.type';

@@ -42,17 +42,23 @@ const handler = async ({
     return new Response('', { status: 400 });
   }
 
-  const payloads = [];
+  const allPayloads = buildMessengerEventPayloads(body);
+  // one lookup per Page, not per event, to answer Meta within its 5 seconds
+  const connectedPageIds = new Set<string>();
 
-  for (const payload of buildMessengerEventPayloads(body)) {
-    if (isDefined(await findConnectedAccountIdByPageId(payload.pageId))) {
-      payloads.push(payload);
+  for (const pageId of new Set(allPayloads.map(({ pageId }) => pageId))) {
+    if (isDefined(await findConnectedAccountIdByPageId(pageId))) {
+      connectedPageIds.add(pageId);
     } else {
       console.warn(
-        `Ignoring Messenger event for Page ${payload.pageId}, it is not connected`,
+        `Ignoring Messenger events for Page ${pageId}, it is not connected`,
       );
     }
   }
+
+  const payloads = allPayloads.filter(({ pageId }) =>
+    connectedPageIds.has(pageId),
+  );
 
   await enqueueLogicFunctionJobs({
     logicFunctionUniversalIdentifier:

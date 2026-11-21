@@ -6,7 +6,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { MESSENGER_CONVERSATIONS_API_CALL_INTERVAL_MS } from 'src/constants/messenger-backfill.constant';
 import { MESSENGER_LOGIC_FUNCTION_IMPORT_CONVERSATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { markBackfillCompleted } from 'src/logic-functions/data/backfill-completion.util';
+import {
+  isCurrentBackfillRun,
+  markBackfillCompleted,
+} from 'src/logic-functions/data/backfill-state.util';
 import { buildBackfillIngestMessages } from 'src/logic-functions/data/build-backfill-ingest-messages.util';
 import { findConnectedAccountIdByPageId } from 'src/logic-functions/data/find-connected-account-id-by-page-id.util';
 import { findConversationCustomer } from 'src/logic-functions/data/find-conversation-customer.util';
@@ -95,6 +98,10 @@ const importConversation = async ({
 };
 
 const handler = async (payload: ImportConversationPayload) => {
+  if (!(await isCurrentBackfillRun(payload))) {
+    return;
+  }
+
   await importConversation(payload);
 
   if (payload.isLastConversation) {

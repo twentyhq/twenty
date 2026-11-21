@@ -1,7 +1,10 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { MESSENGER_LOGIC_FUNCTION_ON_CONNECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { isBackfillCompleted } from 'src/logic-functions/data/backfill-completion.util';
+import {
+  isBackfillCompleted,
+  startBackfillRun,
+} from 'src/logic-functions/data/backfill-state.util';
 import { enqueueBackfillConversations } from 'src/logic-functions/data/enqueue-backfill-conversations.util';
 import { getMessengerAccessTokenOrThrow } from 'src/logic-functions/data/get-messenger-access-token-or-throw.util';
 import { linkPagesToConnection } from 'src/logic-functions/data/link-pages-to-connection.util';
@@ -42,12 +45,13 @@ const handler = async ({
     });
   }
 
-  const backfillRunId = String(Date.now());
-
   for (const page of pages) {
     if (!(await isBackfillCompleted(page.id))) {
       await enqueueBackfillConversations({
-        payload: { pageId: page.id, backfillRunId },
+        payload: {
+          pageId: page.id,
+          backfillRunId: await startBackfillRun(page.id),
+        },
       });
     }
   }
