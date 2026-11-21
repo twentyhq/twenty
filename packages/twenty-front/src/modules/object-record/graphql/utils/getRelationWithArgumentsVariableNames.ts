@@ -1,5 +1,7 @@
+import { doNotTranslate } from 'twenty-shared/i18n';
+
 export const getRelationWithArgumentsVariableNames = (responseKey: string) => ({
-  filter: `${responseKey}Filter`,
-  orderBy: `${responseKey}OrderBy`,
-  first: `${responseKey}First`,
+  filter: doNotTranslate(`${responseKey}Filter`),
+  orderBy: doNotTranslate(`${responseKey}OrderBy`),
+  first: doNotTranslate(`${responseKey}First`),
 });
