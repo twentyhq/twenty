@@ -37,10 +37,16 @@ export type LegacyRowLevelPermissionPredicateManifest =
     position?: number | null;
   };
 
-export type RowLevelPermissionRulePredicateManifest = Omit<
-  LegacyRowLevelPermissionPredicateManifest,
-  'objectUniversalIdentifier' | 'predicateGroupUniversalIdentifier'
->;
+export type RowLevelPermissionRulePredicateManifest = SyncableEntityOptions & {
+  fieldUniversalIdentifier: string;
+  relationFieldUniversalIdentifier?: string | null;
+  operand: RowLevelPermissionPredicateOperand;
+  value?: RowLevelPermissionPredicateValue | null;
+  subFieldName?: string | null;
+  workspaceMemberFieldUniversalIdentifier?: string | null;
+  workspaceMemberSubFieldName?: string | null;
+  position?: number | null;
+};
 
 export type RowLevelPermissionRulePredicateGroupManifest =
   SyncableEntityOptions & {
