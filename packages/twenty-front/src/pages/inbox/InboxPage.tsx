@@ -57,7 +57,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateToInboxThread } from '@/inbox/hooks/useNavigateToInboxThread';
 import { AiChatNewThreadPageContent } from '@/ai-chat/instance/components/AiChatNewThreadPageContent';
-import { AiChatPageEffects } from '@/ai-chat/instance/components/AiChatPageEffects';
+import { AiChatPageContinueInSidePanelEffect } from '@/ai-chat/components/AiChatPageContinueInSidePanelEffect';
 import { InboxThreadPageContent } from '@/inbox/components/InboxThreadPageContent';
 import { InboxNewThreadListToggle } from '@/inbox/components/InboxNewThreadListToggle';
 
@@ -364,7 +364,9 @@ const InboxPageContent = () => {
             <InboxConversationPane isSplitView={isSplitLayout}>
               {isNewThreadShown && (
                 <>
-                  <AiChatPageEffects threadId={newAiChatThreadId} isNewChat />
+                  <AiChatPageContinueInSidePanelEffect
+                    threadId={newAiChatThreadId}
+                  />
                   <AiChatNewThreadPageContent
                     headerIcon={<InboxNewThreadListToggle />}
                     showInformationBanner={!isSplitView}
@@ -374,9 +376,8 @@ const InboxPageContent = () => {
               )}
               {isThreadShown && (
                 <>
-                  <AiChatPageEffects
+                  <AiChatPageContinueInSidePanelEffect
                     threadId={selectedThreadId}
-                    isNewChat={false}
                   />
                   <InboxThreadPageContent
                     threadId={selectedThreadId}

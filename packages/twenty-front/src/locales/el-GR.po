@@ -2166,7 +2166,7 @@ msgid "Add a recipient before sending"
 msgstr "Προσθέστε έναν παραλήπτη πριν από την αποστολή"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "Προσθέστε έναν παραλήπτη ή ένα κανάλι πριν από την αποστολή."
 
@@ -6286,7 +6286,7 @@ msgid "Chat Sessions"
 msgstr "Συνεδρίες συνομιλίας"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "Chat stopped: no more available credits."
 msgstr "Η συνομιλία διακόπηκε: δεν υπάρχουν άλλες διαθέσιμες πιστώσεις."
 
@@ -7736,7 +7736,7 @@ msgid "Connection successfully updated"
 msgstr "Η σύνδεση ενημερώθηκε επιτυχώς"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "Η σύνδεση με τον βοηθό χάθηκε. Επαναφορτώστε για να δείτε την απάντηση."
 
@@ -8657,11 +8657,6 @@ msgstr "Δημιουργία εγγραφής"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "Δημιουργία εγγραφής"
-
-#. js-lingui-id: fYhMZY
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
-msgstr "Δημιουργία αποθήκευσης κοινοποίησης εγγραφών και ομάδων πρόσβασης ως πινάκων που ανήκουν στη μηχανή δικαιωμάτων αντί για αντικείμενα. Ισχύει μόνο όταν δημιουργείται ένας χώρος εργασίας."
 
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -10140,8 +10135,8 @@ msgid "Delete MCP server"
 msgstr "Διαγραφή διακομιστή MCP"
 
 #. js-lingui-id: KDfTdX
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 msgid "Delete message"
 msgstr "Διαγραφή μηνύματος"
 
@@ -10604,7 +10599,7 @@ msgid "Direct messages and mentions"
 msgstr "Άμεσα μηνύματα και αναφορές"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/instance/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Τα άμεσα μηνύματα δεν υποστηρίζουν συνημμένα αρχεία."
 
@@ -11345,8 +11340,8 @@ msgid "Edit matching {objectLabelPlural}"
 msgstr "Επεξεργασία αντιστοιχιζόμενων {objectLabelPlural}"
 
 #. js-lingui-id: QjH+ZX
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 msgid "Edit message"
 msgstr "Επεξεργασία μηνύματος"
 
@@ -15597,7 +15592,7 @@ msgid "Hours between triggers"
 msgstr "Ώρες μεταξύ ενεργοποιήσεων"
 
 #. js-lingui-id: 3WYTm2
-#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/composer/components/AiChatSuggestedPrompts.tsx
 msgid "How can I help you?"
 msgstr "Πώς μπορώ να σας βοηθήσω;"
 
@@ -20395,7 +20390,7 @@ msgstr "Κανένα μοντέλο AI σε αυτόν τον χώρο εργα�
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "Δεν έχει ρυθμιστεί πάροχος AI σε αυτό το στιγμιότυπο."
@@ -23177,11 +23172,6 @@ msgstr "σημαία δικαιώματος"
 msgid "Permission flags"
 msgstr "Σημαίες δικαιώματος"
 
-#. js-lingui-id: yAZKh+
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Permission tables"
-msgstr "Πίνακες δικαιωμάτων"
-
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -25247,7 +25237,7 @@ msgid "Replit install links require an HTTPS MCP URL."
 msgstr "Οι σύνδεσμοι εγκατάστασης Replit απαιτούν μια HTTPS MCP URL."
 
 #. js-lingui-id: ImOQa9
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 #: src/modules/ai-chat/threads/components/AiChatThreadRequestActions.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -30416,7 +30406,7 @@ msgstr "Αυτή η σύνδεση δεν υπάρχει ή δεν είναι δ
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "This conversation is no longer available."
 msgstr "Αυτή η συνομιλία δεν είναι πλέον διαθέσιμη."
 
@@ -33418,7 +33408,7 @@ msgid "Wait for Event"
 msgstr "Αναμονή για συμβάν"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Περιμένετε να ολοκληρωθεί η μεταφόρτωση των συνημμένων."
 
@@ -33806,7 +33796,7 @@ msgid "What AI model should your agent run on"
 msgstr "Με ποιο μοντέλο AI θα πρέπει να εκτελείται ο πράκτοράς σας"
 
 #. js-lingui-id: Itn+J7
-#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/composer/components/AiChatSuggestedPrompts.tsx
 msgid "What can I help you with?"
 msgstr "Με τι μπορώ να σας βοηθήσω;"
 

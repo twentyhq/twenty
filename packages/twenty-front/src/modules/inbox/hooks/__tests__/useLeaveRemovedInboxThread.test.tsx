@@ -21,7 +21,7 @@ jest.mock('@/ai-chat/hooks/useProjectAiChatThreadToUrl', () => ({
   useProjectAiChatThreadToUrl: () => ({ projectAiChatThreadToUrl }),
 }));
 
-jest.mock('@/ai-chat/instance/hooks/useLoadAiChatThread', () => ({
+jest.mock('@/ai-chat/threads/hooks/useLoadAiChatThread', () => ({
   useLoadAiChatThread: () => ({ loadAiChatThread }),
 }));
 
