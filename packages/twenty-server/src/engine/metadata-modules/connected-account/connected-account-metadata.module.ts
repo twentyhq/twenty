@@ -15,9 +15,11 @@ import { WebhookSubscriptionModule } from 'src/modules/connected-account/webhook
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
 import { UserWorkspaceSuccessorModule } from 'src/engine/core-modules/user-workspace/user-workspace-successor.module';
+import { ChannelVisibilityRuleSyncSchedulerModule } from 'src/engine/permissions/channel-visibility/channel-visibility-rule-sync-scheduler.module';
 
 @Module({
   imports: [
+    ChannelVisibilityRuleSyncSchedulerModule,
     ApplicationLookupModule,
     ApplicationRegistrationLookupModule,
     TypeOrmModule.forFeature([

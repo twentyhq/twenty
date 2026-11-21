@@ -8,12 +8,14 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { SyncChannelVisibilityRulesJob } from 'src/engine/permissions/channel-visibility/jobs/sync-channel-visibility-rules.job';
 import { ChannelVisibilityRuleSyncListener } from 'src/engine/permissions/channel-visibility/listeners/channel-visibility-rule-sync.listener';
 import { ChannelVisibilityRuleSyncService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync.service';
+import { ChannelVisibilityRuleSyncSchedulerModule } from 'src/engine/permissions/channel-visibility/channel-visibility-rule-sync-scheduler.module';
 import { WorkspaceMemberIndividualRoleService } from 'src/engine/permissions/channel-visibility/services/workspace-member-individual-role.service';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
+    ChannelVisibilityRuleSyncSchedulerModule,
     TypeOrmModule.forFeature([MessageChannelEntity, CalendarChannelEntity]),
     WorkspaceCacheModule,
     CacheLockModule,

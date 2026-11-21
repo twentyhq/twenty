@@ -17,7 +17,7 @@ import {
   MessageChannelVisibility,
 } from 'twenty-shared/types';
 
-import { emitChannelVisibilityChangedEvent } from 'src/engine/permissions/channel-visibility/utils/emit-channel-visibility-changed-event.util';
+import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync-scheduler.service';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
@@ -47,6 +47,7 @@ export class MessageChannelMetadataService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailingDomainService: EmailingDomainService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly channelVisibilityRuleSyncSchedulerService: ChannelVisibilityRuleSyncSchedulerService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
   ) {}
 
@@ -243,10 +244,9 @@ export class MessageChannelMetadataService {
     const entity = this.repository.create(data);
     const savedEntity = await this.repository.save(entity);
 
-    emitChannelVisibilityChangedEvent({
-      workspaceEventEmitter: this.workspaceEventEmitter,
-      workspaceId: data.workspaceId,
-    });
+    await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+      data.workspaceId,
+    );
 
     return savedEntity;
   }
@@ -266,10 +266,9 @@ export class MessageChannelMetadataService {
     );
 
     if ('visibility' in data) {
-      emitChannelVisibilityChangedEvent({
-        workspaceEventEmitter: this.workspaceEventEmitter,
-        workspaceId: workspaceId,
-      });
+      await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+        workspaceId,
+      );
     }
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
@@ -409,10 +408,9 @@ export class MessageChannelMetadataService {
 
     await this.repository.delete({ id, workspaceId });
 
-    emitChannelVisibilityChangedEvent({
-      workspaceEventEmitter: this.workspaceEventEmitter,
-      workspaceId: workspaceId,
-    });
+    await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+      workspaceId,
+    );
 
     this.workspaceEventEmitter.emitCustomBatchEvent<MessageChannelDeletedEvent>(
       MESSAGE_CHANNEL_DELETED_EVENT,

@@ -33,9 +33,11 @@ import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-co
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { ChannelVisibilityRuleSyncSchedulerModule } from 'src/engine/permissions/channel-visibility/channel-visibility-rule-sync-scheduler.module';
 
 @Module({
   imports: [
+    ChannelVisibilityRuleSyncSchedulerModule,
     FeatureFlagModule,
     TypeOrmModule.forFeature([
       MessageChannelEntity,

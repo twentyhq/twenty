@@ -7,9 +7,11 @@ import { ApplicationCalendarChannelsResolver } from 'src/engine/metadata-modules
 import { CalendarChannelResolver } from 'src/engine/metadata-modules/calendar-channel/resolvers/calendar-channel.resolver';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
+import { ChannelVisibilityRuleSyncSchedulerModule } from 'src/engine/permissions/channel-visibility/channel-visibility-rule-sync-scheduler.module';
 
 @Module({
   imports: [
+    ChannelVisibilityRuleSyncSchedulerModule,
     TypeOrmModule.forFeature([CalendarChannelEntity]),
     ConnectedAccountMetadataModule,
     CalendarCommonModule,

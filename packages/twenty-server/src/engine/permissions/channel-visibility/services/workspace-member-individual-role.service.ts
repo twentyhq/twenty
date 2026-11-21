@@ -2,11 +2,22 @@ import { Injectable } from '@nestjs/common';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type WorkspaceMemberIndividualRole } from 'src/engine/permissions/channel-visibility/types/workspace-member-individual-role.type';
-import { WORKSPACE_MEMBER_INDIVIDUAL_ROLE_DEPENDENCY_FLAT_ENTITY_MAPS_KEYS } from 'src/engine/permissions/channel-visibility/constants/workspace-member-individual-role-dependency-flat-entity-maps-keys.constant';
+import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { getMetadataRelatedMetadataNamesForValidation } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names-for-validation.util';
+import { WORKSPACE_MEMBER_INDIVIDUAL_ROLE_METADATA_NAMES } from 'src/engine/permissions/channel-visibility/constants/workspace-member-individual-role-metadata-names.constant';
 import { buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps } from 'src/engine/permissions/channel-visibility/utils/build-workspace-member-individual-roles-from-to-flat-entity-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+
+const DEPENDENCY_FLAT_ENTITY_MAPS_KEYS = [
+  ...new Set(
+    WORKSPACE_MEMBER_INDIVIDUAL_ROLE_METADATA_NAMES.flatMap((metadataName) => [
+      metadataName,
+      ...getMetadataRelatedMetadataNamesForValidation(metadataName),
+    ]),
+  ),
+].map(getMetadataFlatEntityMapsKey);
 
 @Injectable()
 export class WorkspaceMemberIndividualRoleService {
@@ -29,7 +40,7 @@ export class WorkspaceMemberIndividualRoleService {
       );
     const { featureFlagsMap, billingEntitlements, ...flatEntityMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        ...WORKSPACE_MEMBER_INDIVIDUAL_ROLE_DEPENDENCY_FLAT_ENTITY_MAPS_KEYS,
+        ...DEPENDENCY_FLAT_ENTITY_MAPS_KEYS,
         'flatObjectMetadataMaps',
         'flatFieldMetadataMaps',
         'featureFlagsMap',
