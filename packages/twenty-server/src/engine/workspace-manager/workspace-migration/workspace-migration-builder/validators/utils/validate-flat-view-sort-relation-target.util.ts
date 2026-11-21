@@ -35,7 +35,7 @@ export const validateFlatViewSortRelationTarget = ({
   }
 
   switch (relationTarget.failureReason) {
-    case 'NOT_A_MANY_TO_ONE_RELATION':
+    case 'UNEXPECTED_RELATION_TYPE':
       return [
         {
           code: ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
