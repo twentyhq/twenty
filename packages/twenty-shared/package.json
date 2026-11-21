@@ -48,6 +48,7 @@
     "ai": "7.0.126",
     "cjs-module-lexer": "^2.2.0",
     "class-validator": "^0.14.0",
+    "date-fns": "^4.4.0",
     "entities": "^4.5.0",
     "esbuild": "^0.28.1",
     "expr-eval-fork": "3.0.3",

@@ -2166,7 +2166,7 @@ msgid "Add a recipient before sending"
 msgstr "请先添加收件人再发送"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "请先添加收件人或频道再发送。"
 
@@ -6286,7 +6286,7 @@ msgid "Chat Sessions"
 msgstr "聊天会话"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "Chat stopped: no more available credits."
 msgstr "聊天已停止：没有更多可用积分。"
 
@@ -7736,7 +7736,7 @@ msgid "Connection successfully updated"
 msgstr "连接已成功更新"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "与助手的连接已丢失。重新加载以查看回复。"
 
@@ -8657,11 +8657,6 @@ msgstr "创建记录"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "创建记录"
-
-#. js-lingui-id: fYhMZY
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
-msgstr "将记录共享和访问组存储创建为由权限引擎拥有的表，而非对象。仅在创建工作区时适用。"
 
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -10140,8 +10135,8 @@ msgid "Delete MCP server"
 msgstr "删除 MCP 服务器"
 
 #. js-lingui-id: KDfTdX
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 msgid "Delete message"
 msgstr "删除消息"
 
@@ -10604,7 +10599,7 @@ msgid "Direct messages and mentions"
 msgstr "私信和提及"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/instance/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "私信不支持附件。"
 
@@ -11345,8 +11340,8 @@ msgid "Edit matching {objectLabelPlural}"
 msgstr "编辑匹配的 {objectLabelPlural}"
 
 #. js-lingui-id: QjH+ZX
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 msgid "Edit message"
 msgstr "编辑消息"
 
@@ -15597,7 +15592,7 @@ msgid "Hours between triggers"
 msgstr "触发之间的小时数"
 
 #. js-lingui-id: 3WYTm2
-#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/composer/components/AiChatSuggestedPrompts.tsx
 msgid "How can I help you?"
 msgstr "我能帮您做什么？"
 
@@ -20395,7 +20390,7 @@ msgstr "此工作区中没有 AI 模型符合这些设置。"
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "此实例未配置 AI 提供商。"
@@ -23177,11 +23172,6 @@ msgstr "权限标志"
 msgid "Permission flags"
 msgstr "权限标志"
 
-#. js-lingui-id: yAZKh+
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Permission tables"
-msgstr "权限表"
-
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -25247,7 +25237,7 @@ msgid "Replit install links require an HTTPS MCP URL."
 msgstr "Replit 安装链接需要使用 HTTPS MCP URL。"
 
 #. js-lingui-id: ImOQa9
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 #: src/modules/ai-chat/threads/components/AiChatThreadRequestActions.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -30414,7 +30404,7 @@ msgstr "此连接不存在，或不适用于此应用。"
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "This conversation is no longer available."
 msgstr "此会话不再可用。"
 
@@ -33416,7 +33406,7 @@ msgid "Wait for Event"
 msgstr "等待事件"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "请等待附件上传完成。"
 
@@ -33804,7 +33794,7 @@ msgid "What AI model should your agent run on"
 msgstr "您的代理应使用哪种 AI 模型运行"
 
 #. js-lingui-id: Itn+J7
-#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/composer/components/AiChatSuggestedPrompts.tsx
 msgid "What can I help you with?"
 msgstr "我能帮您做什么？"
 

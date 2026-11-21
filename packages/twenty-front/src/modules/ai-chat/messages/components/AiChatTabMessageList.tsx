@@ -5,6 +5,7 @@ import { MarkdownLoadingSkeleton } from '@/ai-chat/message-content/components/La
 import { StyledAiChatContentContainer } from '@/ai-chat/components/StyledAiChatContentContainer';
 import { AiChatErrorUnderMessageList } from '@/ai-chat/messages/components/AiChatErrorUnderMessageList';
 import { AiChatLastMessageWithStreamingState } from '@/ai-chat/messages/components/AiChatLastMessageWithStreamingState';
+import { AI_CHAT_MESSAGE_LIST_GAP } from '@/ai-chat/messages/constants/AiChatMessageListGap';
 import { AiChatNonLastMessageIdsList } from '@/ai-chat/messages/components/AiChatNonLastMessageIdsList';
 import { AiChatPendingResponseIndicator } from '@/ai-chat/messages/components/AiChatPendingResponseIndicator';
 import { AiChatScrollToBottomButton } from '@/ai-chat/messages/components/AiChatScrollToBottomButton';
@@ -47,7 +48,7 @@ const StyledMessageListContent = styled(StyledAiChatContentContainer)<{
 }>`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
+  gap: ${AI_CHAT_MESSAGE_LIST_GAP};
   padding: ${({ hasPageContentInset }) =>
     hasPageContentInset
       ? `${themeCssVariables.spacing[4]} ${AI_CHAT_PAGE_CONTENT_INLINE_PADDING} 0`
