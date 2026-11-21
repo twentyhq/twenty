@@ -30,6 +30,9 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import uniqBy from 'lodash.uniqby';
 import { FilesFieldSync } from 'src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync';
+import { RichTextFieldFileSync } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/rich-text-field-file-sync';
+import { getInsertedRecordIdsByInputIndex } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/utils/get-inserted-record-ids-by-input-index.util';
+import { type RichTextFieldFileOwnershipUpdates } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/types/rich-text-field-file-ownership-updates.type';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
@@ -158,6 +161,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private _filesFieldSync?: FilesFieldSync;
 
+  private _richTextFieldFileSync?: RichTextFieldFileSync;
+
   constructor(options: WorkspaceRepositoryOptions<TEntity>) {
     this.options = options;
   }
@@ -177,6 +182,52 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return (this._filesFieldSync ??= new FilesFieldSync(
       this.options.internalContext,
     ));
+  }
+
+  private get richTextFieldFileSync(): RichTextFieldFileSync {
+    return (this._richTextFieldFileSync ??= new RichTextFieldFileSync(
+      this.options.internalContext,
+    ));
+  }
+
+  private async resolveRichTextFieldFileOwnershipUpdatesOrThrow(
+    recordWrites: {
+      payload: Partial<ObjectRecord>;
+      recordBeforeWrite: ObjectRecord | undefined;
+    }[],
+  ): Promise<RichTextFieldFileOwnershipUpdates | null> {
+    const fileReferenceChanges =
+      this.richTextFieldFileSync.computeFileReferenceChanges({
+        recordWrites,
+        objectMetadataId: this.options.flatObjectMetadata.id,
+      });
+
+    if (fileReferenceChanges.length === 0) {
+      return null;
+    }
+
+    return this.richTextFieldFileSync.resolveFileOwnershipUpdatesOrThrow({
+      fileReferenceChanges,
+      workspaceId: this.options.internalContext.workspaceId,
+    });
+  }
+
+  private async applyRichTextFieldFileOwnershipUpdates({
+    fileOwnershipUpdates,
+    recordIds,
+  }: {
+    fileOwnershipUpdates: RichTextFieldFileOwnershipUpdates | null;
+    recordIds: (string | undefined)[];
+  }): Promise<void> {
+    if (!isDefined(fileOwnershipUpdates)) {
+      return;
+    }
+
+    await this.richTextFieldFileSync.applyFileOwnershipUpdates({
+      fileOwnershipUpdates,
+      recordIds,
+      workspaceId: this.options.internalContext.workspaceId,
+    });
   }
 
   async executeRaw<T extends Record<string, unknown>>(
@@ -1029,6 +1080,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       recordsToInsert = enriched.entities as Partial<ObjectRecord>[];
     }
 
+    const richTextFieldFileOwnershipUpdates =
+      await this.resolveRichTextFieldFileOwnershipUpdatesOrThrow(
+        recordsToInsert.map((record) => ({
+          payload: record,
+          recordBeforeWrite: undefined,
+        })),
+      );
+
     const { columnNames, rows, parameters, insertedColumns, formattedRecords } =
       this.buildInsertRows(recordsToInsert);
 
@@ -1074,6 +1133,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     const generatedMaps = this.formatResult<ObjectRecord[]>(rawRows);
     const insertedIds = rawRows.map((row) => row.id).filter(isNonEmptyString);
+
+    await this.applyRichTextFieldFileOwnershipUpdates({
+      fileOwnershipUpdates: richTextFieldFileOwnershipUpdates,
+      recordIds: getInsertedRecordIdsByInputIndex({
+        records: recordsToInsert,
+        insertedIds,
+      }),
+    });
 
     await this.recomputeRecordAccessGroupIdsAfterWrite({
       writtenRecordIds: insertedIds,
@@ -1188,6 +1255,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       dataByInputIndex = enriched.entities as Partial<ObjectRecord>[];
     }
 
+    const richTextFieldFileOwnershipUpdates =
+      await this.resolveRichTextFieldFileOwnershipUpdatesOrThrow(
+        writableInputs.map((input, inputIndex) => ({
+          payload: dataByInputIndex[inputIndex],
+          recordBeforeWrite: existingRecordsMapById[input.id],
+        })),
+      );
+
     const writtenRecords = dataByInputIndex.map((data) =>
       this.formatWriteData(data),
     );
@@ -1284,6 +1359,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
     }
+
+    await this.applyRichTextFieldFileOwnershipUpdates({
+      fileOwnershipUpdates: richTextFieldFileOwnershipUpdates,
+      recordIds: writableInputs.map((input) => input.id),
+    });
 
     this.emitMutationEvent({ kind: 'update', recordsBefore, recordsAfter });
 
@@ -1606,10 +1686,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       !(
         kind === 'update' &&
         isDefined(data) &&
-        this.filesFieldSync.isUpdatingFilesField(
+        (this.filesFieldSync.isUpdatingFilesField(
           data,
           this.options.flatObjectMetadata.id,
-        )
+        ) ||
+          this.richTextFieldFileSync.isWritingRichTextField({
+            payload: data,
+            objectMetadataId: this.options.flatObjectMetadata.id,
+          }))
       ) &&
       !(await this.options.internalContext.recordAccessGroupWrite.isRecordsBeforeWriteRequired(
         this.buildRecordAccessGroupWriteTarget(),
@@ -1639,10 +1723,28 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     let filesFieldFileIds = null;
+    let richTextFieldFileOwnershipUpdates: RichTextFieldFileOwnershipUpdates | null =
+      null;
     let dataToWrite = data;
 
     if (kind === 'update' && isDefined(data)) {
       const formattedBefore = this.formatResult<ObjectRecord[]>(recordsBefore);
+
+      if (
+        this.richTextFieldFileSync.isWritingRichTextField({
+          payload: data,
+          objectMetadataId: this.options.flatObjectMetadata.id,
+        })
+      ) {
+        richTextFieldFileOwnershipUpdates =
+          await this.resolveRichTextFieldFileOwnershipUpdatesOrThrow(
+            formattedBefore.map((recordBeforeWrite) => ({
+              payload: data,
+              recordBeforeWrite,
+            })),
+          );
+      }
+
       const filesFieldDiff =
         this.filesFieldSync.computeFilesFieldDiffBeforeUpdateOne(
           data,
@@ -1736,6 +1838,15 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
     }
 
+    const writtenRecordIdSet = new Set(writtenRecordIds);
+
+    await this.applyRichTextFieldFileOwnershipUpdates({
+      fileOwnershipUpdates: richTextFieldFileOwnershipUpdates,
+      recordIds: recordsBefore.map(({ id }) =>
+        writtenRecordIdSet.has(id) ? id : undefined,
+      ),
+    });
+
     const recordsAfterWrite =
       kind === 'delete' || this.options.shouldSkipEventEmission
         ? undefined
@@ -1743,7 +1854,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
             noFormatting: true,
           });
 
-    const writtenRecordIdSet = new Set(writtenRecordIds);
     const isWrittenRecord = ({ id }: ObjectRecord) =>
       writtenRecordIdSet.has(id);
     const writtenRecordsBefore = recordsBefore.filter(isWrittenRecord);
