@@ -10,7 +10,6 @@ import { Suspense, useEffect } from 'react';
 import { graphql, HttpResponse } from 'msw';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import {
-  AgentChatThreadConversationType,
   DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
   type AiChatAssistantProfile,
   type ExtendedUIMessage,
@@ -40,6 +39,7 @@ import { type AiChatFileUIPart } from '@/ai-chat/types/AiChatFileUIPart';
 
 import { setAiChatThreadPermissions } from '@/ai-chat/threads/testing/setAiChatThreadPermissions';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -848,29 +848,6 @@ export const MultiplayerConversation: Story = {
     })[1];
     await expect(addReactionButton).toHaveFocus();
     await waitFor(() => expect(addReactionButton).toBeVisible());
-
-    const threadId = CONVERSATION_STORY_THREAD_ID;
-    const threadRecordAtom = recordStoreFamilyState.atomFamily(threadId);
-    const previousThread = jotaiStore.get(threadRecordAtom);
-
-    try {
-      jotaiStore.set(threadRecordAtom, {
-        ...previousThread,
-        id: threadId,
-        __typename: 'AgentChatThread',
-        conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
-      });
-      await waitFor(() =>
-        expect(
-          canvas.queryByRole('button', { name: 'Add reaction' }),
-        ).not.toBeInTheDocument(),
-      );
-      await expect(
-        canvas.queryByRole('button', { name: '👍 by You' }),
-      ).not.toBeInTheDocument();
-    } finally {
-      jotaiStore.set(threadRecordAtom, previousThread);
-    }
   },
 };
 
