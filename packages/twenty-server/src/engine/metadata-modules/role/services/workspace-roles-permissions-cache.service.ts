@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { IsNull } from 'typeorm';
+import { In, IsNull } from 'typeorm';
 
 import {
   type PermissionFlagType,
@@ -8,6 +8,7 @@ import {
 } from 'twenty-shared/constants';
 import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
 
+import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
 import { buildResolveMorphRelationPermissionFieldIds } from 'src/engine/metadata-modules/role/utils/build-resolve-morph-relation-permission-field-ids.util';
@@ -48,7 +49,12 @@ const ROLES_PERMISSIONS_ROWS_REQUIREMENT = {
   },
   featureFlag: {
     columns: ['key', 'value'],
-    where: { key: FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED },
+    where: {
+      key: In([
+        FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED,
+        FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
+      ]),
+    },
   },
 } as const satisfies WorkspaceCacheRowsRequirement;
 
@@ -75,11 +81,13 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       rowLevelPermissionRule: rowLevelPermissionRules,
       objectMetadata: workspaceObjectMetadataCollection,
       fieldMetadata: morphRelationFieldMetadatas,
-      featureFlag: channelVisibilityRlsFeatureFlags,
+      featureFlag: channelVisibilityFeatureFlags,
     } = rows;
 
-    const isChannelVisibilityRlsEnabled = channelVisibilityRlsFeatureFlags.some(
-      ({ value }) => value,
+    const isChannelVisibilityEnforcedByRules = isChannelVisibilityRlsEnabled(
+      Object.fromEntries(
+        channelVisibilityFeatureFlags.map(({ key, value }) => [key, value]),
+      ),
     );
 
     const resolveMorphRelationPermissionFieldIds =
@@ -125,7 +133,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
             rowLevelPermissionPredicateGroups.byRoleId.get(role.id) ?? [],
           rowLevelPermissionRules:
             rowLevelPermissionRules.byRoleId.get(role.id) ?? [],
-          isChannelVisibilityRlsEnabled,
+          isChannelVisibilityRlsEnabled: isChannelVisibilityEnforcedByRules,
         },
         objectMetadataCollection: workspaceObjectMetadataCollection,
         resolveMorphRelationPermissionFieldIds,
