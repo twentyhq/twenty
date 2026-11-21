@@ -1,12 +1,9 @@
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
-import { type AiChatInstanceEventDetail } from '@/ai-chat/types/AiChatInstanceEventDetail';
-import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai-chat/constants/AiChatSendMessageEventName';
 import { useStopAiChatStream } from '@/ai-chat/hooks/useStopAiChatStream';
 import { aiChatThreadIsFetchingMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadIsFetchingMessagesFamilyState';
 import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
 import { aiChatInputIsEmptyFamilySelector } from '@/ai-chat/composer/states/selectors/aiChatInputIsEmptyFamilySelector';
 import { aiChatIsAssistantReplyPendingFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatIsAssistantReplyPendingFamilySelector';
-import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconArrowUp, IconPlayerStop } from 'twenty-ui/icon';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -15,13 +12,15 @@ import { useLingui } from '@lingui/react/macro';
 
 type SendMessageButtonProps = {
   isDisabled?: boolean;
+  onSend: () => void;
 };
 
 export const SendMessageButton = ({
   isDisabled = false,
+  onSend,
 }: SendMessageButtonProps) => {
   const { t } = useLingui();
-  const { instanceId, threadId } = useAiChatInstanceOrThrow();
+  const { threadId } = useAiChatInstanceOrThrow();
   const aiChatInputIsEmpty = useAtomFamilySelectorValue(
     aiChatInputIsEmptyFamilySelector,
     threadId,
@@ -40,13 +39,6 @@ export const SendMessageButton = ({
     aiChatIsAssistantReplyPendingFamilySelector,
     threadId,
   );
-
-  const handleSendClick = () => {
-    dispatchBrowserEvent<AiChatInstanceEventDetail>(
-      AI_CHAT_SEND_MESSAGE_EVENT_NAME,
-      { instanceId },
-    );
-  };
 
   if (isAiChatStreaming || aiChatIsAssistantReplyPending) {
     return (
@@ -70,7 +62,7 @@ export const SendMessageButton = ({
       shape="round"
       aria-label={t`Send message`}
       size="sm"
-      onClick={handleSendClick}
+      onClick={onSend}
       disabled={
         isDisabled || aiChatInputIsEmpty || aiChatThreadIsFetchingMessages
       }

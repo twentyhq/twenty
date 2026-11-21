@@ -1,5 +1,4 @@
 import { type AiChatRestoreEditorContentEventDetail } from '@/ai-chat/composer/types/AiChatRestoreEditorContentEventDetail';
-import { type AiChatInstanceEventDetail } from '@/ai-chat/types/AiChatInstanceEventDetail';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { useCallback, useEffect, useLayoutEffect } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -17,8 +16,6 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatComposerDraftsState';
 import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldFocusFamilyState';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
-import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai-chat/constants/AiChatSendMessageEventName';
-import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
@@ -36,10 +33,14 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
 
-export const useAiChatEditor = () => {
+type UseAiChatEditorParams = {
+  onSend: (composerContent: { element: HTMLElement; text: string }) => void;
+};
+
+export const useAiChatEditor = ({ onSend }: UseAiChatEditorParams) => {
   const { t } = useLingui();
   const { displayName: assistantDisplayName } = useAiChatAssistantProfile();
-  const { instanceId, threadId: draftKey } = useAiChatInstanceOrThrow();
+  const { threadId: draftKey } = useAiChatInstanceOrThrow();
   const aiModels = useAtomStateValue(aiModelsState);
   const [aiChatComposerDrafts, setAiChatComposerDrafts] = useAtomState(
     aiChatComposerDraftsState,
@@ -81,10 +82,10 @@ export const useAiChatEditor = () => {
           }
 
           event.preventDefault();
-          dispatchBrowserEvent<AiChatInstanceEventDetail>(
-            AI_CHAT_SEND_MESSAGE_EVENT_NAME,
-            { instanceId },
-          );
+          onSend({
+            element: view.dom,
+            text: view.state.doc.textContent,
+          });
           return true;
         }
         return false;

@@ -47,6 +47,7 @@ import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavi
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { InboxPage } from '~/pages/inbox/InboxPage';
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
+import { ChatObjectMetadataDecorator } from '~/testing/decorators/ChatObjectMetadataDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
@@ -156,74 +157,6 @@ const InboxRouteDecorator: Decorator = (Story) => (
   </HelmetProvider>
 );
 
-const loadChatRecordMetadata = () => {
-  const objectMetadataItems = jotaiStore.get(objectMetadataItemsSelector.atom);
-  const objectMetadataTemplate = objectMetadataItems.find(
-    ({ nameSingular }) => nameSingular === StandardObjectNameSingular.Note,
-  );
-
-  assertIsDefinedOrThrow(objectMetadataTemplate);
-
-  const chatObjectDefinitions = [
-    {
-      id: CHAT_OBJECT_METADATA_ID,
-      nameSingular: StandardObjectNameSingular.AgentChatThread,
-      namePlural: 'agentChatThreads',
-      labelSingular: 'Chat',
-      labelPlural: 'Chats',
-      labelFieldName: 'title',
-      fieldNames: CHAT_FIELD_NAMES,
-    },
-    {
-      id: CHAT_TARGET_OBJECT_METADATA_ID,
-      nameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
-      namePlural: 'agentChatThreadTargets',
-      labelSingular: 'Chat target',
-      labelPlural: 'Chat targets',
-      labelFieldName: 'id',
-      fieldNames: ['id'],
-    },
-  ];
-  const chatObjectMetadataItems = chatObjectDefinitions.map(
-    ({ labelFieldName, fieldNames, ...objectDefinition }) => {
-      const fields = objectMetadataTemplate.fields
-        .filter(({ name }) => fieldNames.includes(name))
-        .map((field) => {
-          const id = uuidv4();
-
-          return {
-            ...field,
-            id,
-            universalIdentifier: id,
-            objectMetadataId: objectDefinition.id,
-          };
-        });
-      const labelField = fields.find(({ name }) => name === labelFieldName);
-
-      assertIsDefinedOrThrow(labelField);
-
-      return {
-        ...objectMetadataTemplate,
-        ...objectDefinition,
-        universalIdentifier: objectDefinition.id,
-        labelIdentifierFieldMetadataId: labelField.id,
-        isSystem: true,
-        isSearchable: false,
-        fields,
-        readableFields: fields,
-        updatableFields: fields,
-        indexMetadatas: [],
-        searchFieldMetadatas: [],
-      };
-    },
-  );
-
-  setTestObjectMetadataItemsInMetadataStore(jotaiStore, [
-    ...objectMetadataItems,
-    ...chatObjectMetadataItems,
-  ]);
-};
-
 const getThreadRow = ({
   canvasElement,
   title,
@@ -268,6 +201,7 @@ const meta = {
   decorators: [
     InboxRouteDecorator,
     ComponentDecorator,
+    ChatObjectMetadataDecorator,
     ObjectMetadataItemsDecorator,
     RootDecorator,
     ToastDecorator,
@@ -444,7 +378,6 @@ export const SavedChatNavigationClearsSelection: Story = {
     const user = userEvent.setup();
 
     await canvas.findByText(FIRST_THREAD_TITLE);
-    loadChatRecordMetadata();
     jotaiStore.set(inboxLayoutState.atom, INBOX_LAYOUT.SPLIT_VIEW);
     await user.click(
       within(
@@ -512,7 +445,6 @@ export const CloseConversationPane: Story = {
     const user = userEvent.setup();
 
     await canvas.findByText(FIRST_THREAD_TITLE);
-    loadChatRecordMetadata();
 
     const list = canvas.getByRole('region', { name: 'Conversation list' });
     const fullListWidth = list.getBoundingClientRect().width;
@@ -603,7 +535,6 @@ export const AskAiAfterClosingConversation: Story = {
     const user = userEvent.setup();
 
     await canvas.findByText(FIRST_THREAD_TITLE);
-    loadChatRecordMetadata();
     await user.click(
       within(
         getThreadRow({ canvasElement, title: FIRST_THREAD_TITLE }),
@@ -631,7 +562,6 @@ export const ClosedConversationHistory: Story = {
     const user = userEvent.setup();
 
     await canvas.findByText(FIRST_THREAD_TITLE);
-    loadChatRecordMetadata();
     await user.click(
       within(
         getThreadRow({ canvasElement, title: FIRST_THREAD_TITLE }),
@@ -677,7 +607,6 @@ export const TriageAfterReopeningConversation: Story = {
     const user = userEvent.setup();
 
     await canvas.findByText(FIRST_THREAD_TITLE);
-    loadChatRecordMetadata();
     await user.click(
       within(
         getThreadRow({ canvasElement, title: FIRST_THREAD_TITLE }),
