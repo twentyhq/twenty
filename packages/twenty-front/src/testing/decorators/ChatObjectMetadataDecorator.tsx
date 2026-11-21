@@ -22,5 +22,5 @@ export const ChatObjectMetadataDecorator: Decorator = (Story) => {
     }
   }, [hasChatObjectMetadata, isMetadataLoaded, store]);
 
-  return hasChatObjectMetadata ? <Story /> : null;
+  return <>{hasChatObjectMetadata && <Story />}</>;
 };
