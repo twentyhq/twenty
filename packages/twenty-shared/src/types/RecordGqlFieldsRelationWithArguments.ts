@@ -8,5 +8,7 @@ export type RecordGqlFieldsRelationWithArguments = {
   filter?: RecordGqlOperationFilter;
   orderBy?: RecordGqlOperationOrderBy;
   first?: number;
+  // Aggregates of the connection selected beside its edges, such as sumAmountAmountMicros
+  aggregateGqlFieldNames?: string[];
   recordGqlFields: RecordGqlFields;
 };

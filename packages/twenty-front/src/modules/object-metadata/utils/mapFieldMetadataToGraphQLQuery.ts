@@ -28,7 +28,7 @@ type MapFieldMetadataToGraphQLQueryArgs = {
   >;
   relationRecordGqlFields?: RecordGqlFields;
   relationWithArgumentsResponseKey?: string;
-  shouldIncludeRelationTotalCount?: boolean;
+  relationAggregateGqlFieldNames?: string[];
   computeReferences?: boolean;
   objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
 };
@@ -39,7 +39,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
   fieldMetadata,
   relationRecordGqlFields,
   relationWithArgumentsResponseKey,
-  shouldIncludeRelationTotalCount = false,
+  relationAggregateGqlFieldNames = [],
   computeReferences = false,
   objectPermissionsByObjectMetadataId,
 }: MapFieldMetadataToGraphQLQueryArgs): string => {
@@ -259,13 +259,13 @@ ${mapObjectMetadataToGraphQLQuery({
         )
       : gqlField;
 
-    const totalCountSelection = shouldIncludeRelationTotalCount
-      ? doNotTranslate('totalCount\n  ')
-      : '';
+    const aggregatesSelection = relationAggregateGqlFieldNames
+      .map((aggregateGqlFieldName) => `${aggregateGqlFieldName}\n  `)
+      .join('');
 
     return doNotTranslate(`${relationSelection}
 {
-  ${totalCountSelection}edges {
+  ${aggregatesSelection}edges {
     node ${mapObjectMetadataToGraphQLQuery({
       objectMetadataItems,
       objectMetadataItem: relationMetadataItem,

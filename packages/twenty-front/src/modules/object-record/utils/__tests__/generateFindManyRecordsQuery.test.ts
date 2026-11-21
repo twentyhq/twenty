@@ -63,6 +63,20 @@ describe('generateFindManyRecordsQuery with relations with arguments', () => {
     expect(generateQuery()).toMatch(/totalCount\s+edges/);
   });
 
+  it('selects the aggregates of the relation beside its edges, the total count once', () => {
+    const query = generateQuery({
+      relation: {
+        ...peopleInParis,
+        aggregateGqlFieldNames: ['totalCount', 'countUniqueValuesCity'],
+      },
+    });
+
+    expect(query).toMatch(/totalCount\s+countUniqueValuesCity\s+edges/);
+    expect(query.match(/totalCount/g)).toEqual(
+      generateQuery().match(/totalCount/g),
+    );
+  });
+
   it('selects a composite field of the related records with its sub-fields', () => {
     expect(
       generateQuery({
