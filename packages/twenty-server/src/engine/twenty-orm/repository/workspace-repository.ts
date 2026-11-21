@@ -30,6 +30,9 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import uniqBy from 'lodash.uniqby';
 import { FilesFieldSync } from 'src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync';
+import { RichTextFieldFileSync } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/rich-text-field-file-sync';
+import { type RichTextFieldWrittenDocument } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/types/rich-text-field-written-document.type';
+import { getInsertedRecordIdsByInputIndex } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/utils/get-inserted-record-ids-by-input-index.util';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
@@ -158,6 +161,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private _filesFieldSync?: FilesFieldSync;
 
+  private _richTextFieldFileSync?: RichTextFieldFileSync;
+
   constructor(options: WorkspaceRepositoryOptions<TEntity>) {
     this.options = options;
   }
@@ -177,6 +182,61 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return (this._filesFieldSync ??= new FilesFieldSync(
       this.options.internalContext,
     ));
+  }
+
+  private get richTextFieldFileSync(): RichTextFieldFileSync {
+    return (this._richTextFieldFileSync ??= new RichTextFieldFileSync(
+      this.options.internalContext,
+    ));
+  }
+
+  private buildRichTextFieldRecordTable() {
+    return {
+      tableExpression: this.getTableExpression(
+        this.options.flatObjectMetadata.id,
+      ),
+      executeRawQuery: (sql: string, parameters: unknown[]) =>
+        this.options.executor.execute({
+          text: sql,
+          values: parameters,
+        }) as Promise<Record<string, unknown>[]>,
+    };
+  }
+
+  private async computeRichTextFieldWrittenDocumentsOrThrow(
+    payloads: Partial<ObjectRecord>[],
+  ): Promise<RichTextFieldWrittenDocument[][]> {
+    const writtenDocumentsByPayloadIndex = payloads.map((payload) =>
+      this.richTextFieldFileSync.computeWrittenDocuments({
+        payload,
+        objectMetadataId: this.options.flatObjectMetadata.id,
+      }),
+    );
+
+    await this.richTextFieldFileSync.assertReferencedUploadsAreCompleteOrThrow({
+      writtenDocuments: writtenDocumentsByPayloadIndex.flat(),
+      workspaceId: this.options.internalContext.workspaceId,
+    });
+
+    return writtenDocumentsByPayloadIndex;
+  }
+
+  private async syncRichTextFieldOwnedFiles({
+    recordWrites,
+    isInsert,
+  }: {
+    recordWrites: {
+      recordId: string;
+      writtenDocuments: RichTextFieldWrittenDocument[];
+    }[];
+    isInsert: boolean;
+  }): Promise<void> {
+    await this.richTextFieldFileSync.syncOwnedFiles({
+      recordWrites,
+      recordTable: this.buildRichTextFieldRecordTable(),
+      workspaceId: this.options.internalContext.workspaceId,
+      isInsert,
+    });
   }
 
   async executeRaw<T extends Record<string, unknown>>(
@@ -1029,6 +1089,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       recordsToInsert = enriched.entities as Partial<ObjectRecord>[];
     }
 
+    const richTextFieldWrittenDocumentsByRecordIndex =
+      await this.computeRichTextFieldWrittenDocumentsOrThrow(recordsToInsert);
+
     const { columnNames, rows, parameters, insertedColumns, formattedRecords } =
       this.buildInsertRows(recordsToInsert);
 
@@ -1074,6 +1137,24 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     const generatedMaps = this.formatResult<ObjectRecord[]>(rawRows);
     const insertedIds = rawRows.map((row) => row.id).filter(isNonEmptyString);
+
+    await this.syncRichTextFieldOwnedFiles({
+      recordWrites: getInsertedRecordIdsByInputIndex({
+        records: recordsToInsert,
+        insertedIds,
+      }).flatMap((recordId, recordIndex) =>
+        isDefined(recordId)
+          ? [
+              {
+                recordId,
+                writtenDocuments:
+                  richTextFieldWrittenDocumentsByRecordIndex[recordIndex],
+              },
+            ]
+          : [],
+      ),
+      isInsert: true,
+    });
 
     await this.recomputeRecordAccessGroupIdsAfterWrite({
       writtenRecordIds: insertedIds,
@@ -1188,6 +1269,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       dataByInputIndex = enriched.entities as Partial<ObjectRecord>[];
     }
 
+    const richTextFieldWrittenDocumentsByInputIndex =
+      await this.computeRichTextFieldWrittenDocumentsOrThrow(dataByInputIndex);
+
     const writtenRecords = dataByInputIndex.map((data) =>
       this.formatWriteData(data),
     );
@@ -1284,6 +1368,21 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
     }
+
+    const writtenRecordIdSet = new Set(
+      generatedMaps.map((record) => record.id),
+    );
+
+    await this.syncRichTextFieldOwnedFiles({
+      recordWrites: writableInputs
+        .map((input, inputIndex) => ({
+          recordId: input.id,
+          writtenDocuments:
+            richTextFieldWrittenDocumentsByInputIndex[inputIndex],
+        }))
+        .filter(({ recordId }) => writtenRecordIdSet.has(recordId)),
+      isInsert: false,
+    });
 
     this.emitMutationEvent({ kind: 'update', recordsBefore, recordsAfter });
 
@@ -1611,6 +1710,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           this.options.flatObjectMetadata.id,
         )
       ) &&
+      !(
+        kind === 'delete' &&
+        this.richTextFieldFileSync.hasRichTextFields(
+          this.options.flatObjectMetadata.id,
+        )
+      ) &&
       !(await this.options.internalContext.recordAccessGroupWrite.isRecordsBeforeWriteRequired(
         this.buildRecordAccessGroupWriteTarget(),
       ));
@@ -1664,12 +1769,26 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     let setColumns: Record<string, unknown> | undefined;
+    let richTextFieldWrittenDocuments: RichTextFieldWrittenDocument[] = [];
 
     if (kind === 'update' && isDefined(dataToWrite)) {
       const { id: _id, ...columns } = this.formatWriteData(dataToWrite);
 
       setColumns = columns;
+      [richTextFieldWrittenDocuments] =
+        await this.computeRichTextFieldWrittenDocumentsOrThrow([dataToWrite]);
     }
+
+    const richTextFieldFileIdsByRecordIdBeforeDelete =
+      kind === 'delete'
+        ? await this.richTextFieldFileSync.findOwnedFileIdsByRecordId({
+            recordIds: recordsBefore
+              .map((recordBefore) => recordBefore.id)
+              .filter(isNonEmptyString),
+            objectMetadataId: this.options.flatObjectMetadata.id,
+            recordTable: this.buildRichTextFieldRecordTable(),
+          })
+        : undefined;
 
     if (kind === 'update' && isDefined(setColumns)) {
       await this.validateRLSPredicatesForUpdatedRecords(
@@ -1734,6 +1853,24 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     if (isDefined(filesFieldFileIds)) {
       await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
+    }
+
+    await this.syncRichTextFieldOwnedFiles({
+      recordWrites: writtenRecordIds.map((recordId) => ({
+        recordId,
+        writtenDocuments: richTextFieldWrittenDocuments,
+      })),
+      isInsert: false,
+    });
+
+    if (isDefined(richTextFieldFileIdsByRecordIdBeforeDelete)) {
+      await this.richTextFieldFileSync.releaseFiles({
+        fileIds: writtenRecordIds.flatMap(
+          (recordId) =>
+            richTextFieldFileIdsByRecordIdBeforeDelete.get(recordId) ?? [],
+        ),
+        workspaceId: this.options.internalContext.workspaceId,
+      });
     }
 
     const recordsAfterWrite =

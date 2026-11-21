@@ -148,6 +148,8 @@ A composite sub-field is a column the ORM selects on every workspace as soon as 
 1. **Release N: provision the column.** List the property in `COMPOSITE_PROPERTIES_PROVISIONED_AHEAD_OF_RUNTIME`, so field creation, rename and deletion already handle its column, and add a workspace command that adds the column to existing fields. Nothing reads or writes it.
 2. **Release N+1: declare the property.** Move the property into the composite type in `twenty-shared` and remove it from the constant. This PR must not ship in release N.
 
+A column only the server reads, such as the `fileIds` of a rich text field, is never declared: every API surface derives from the composite type, so declaring it would expose it. It stays in the constant, and the code that reads it still waits for release N+1.
+
 ## Execution Order
 
 Within a given version of Twenty, the upgrade pipeline runs commands in this order, sorted by timestamp within each group:
