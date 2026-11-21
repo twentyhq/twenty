@@ -6258,7 +6258,7 @@ export type Query = {
   findUninstallApplicationJobStatus?: Maybe<JobStatus>;
   findUpgradeApplicationJobStatus?: Maybe<JobStatus>;
   findWorkspaceAiStats: WorkspaceAiStats;
-  findWorkspaceFromInviteHash: Workspace;
+  findWorkspaceFromInviteHash: WorkspaceFromInviteHash;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   frontComponent?: Maybe<FrontComponent>;
   frontComponents: Array<FrontComponent>;
@@ -9235,6 +9235,14 @@ export enum WorkspaceDiscoverability {
   MEMBERS_AND_INVITEES = 'MEMBERS_AND_INVITEES',
   PUBLIC = 'PUBLIC'
 }
+
+export type WorkspaceFromInviteHash = {
+  __typename?: 'WorkspaceFromInviteHash';
+  allowImpersonation: Scalars['Boolean']['output'];
+  displayName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  logo?: Maybe<Scalars['String']['output']>;
+};
 
 export type WorkspaceInvitation = {
   __typename?: 'WorkspaceInvitation';
