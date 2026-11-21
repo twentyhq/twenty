@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai-chat/states/aiChatIsAwaitingFirstChunkFamilyState';
+import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
 import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
@@ -15,7 +15,8 @@ export const aiChatIsAssistantReplyPendingFamilySelector =
         }
 
         return (
-          get(aiChatIsAwaitingFirstChunkFamilyState, { threadId }) &&
+          get(aiChatReplyStatusFamilyState, { threadId }) ===
+            'awaiting-first-chunk' &&
           !get(aiChatIsSendingMessageFamilyState, { threadId })
         );
       },

@@ -242,17 +242,22 @@ const getThreadRow = ({
 };
 
 const archiveThread = (threadId: string) => {
-  const participants = jotaiStore.get(aiChatThreadParticipantsState.atom);
-  const participant = participants?.[threadId];
+  const participants = jotaiStore.get(
+    aiChatThreadParticipantsState.atom,
+  ).rowsByThreadId;
+  const participant = participants[threadId];
 
   assertIsDefinedOrThrow(participant);
 
   jotaiStore.set(aiChatThreadParticipantsState.atom, {
-    ...participants,
-    [threadId]: {
-      ...participant,
-      archivedAt: THREAD_ARCHIVED_AT,
-      updatedAt: THREAD_ARCHIVED_AT,
+    isLoaded: true,
+    rowsByThreadId: {
+      ...participants,
+      [threadId]: {
+        ...participant,
+        archivedAt: THREAD_ARCHIVED_AT,
+        updatedAt: THREAD_ARCHIVED_AT,
+      },
     },
   });
 };
@@ -285,9 +290,9 @@ const meta = {
         lastLoadedActivityAt: null,
       },
     );
-    jotaiStore.set(
-      aiChatThreadParticipantsState.atom,
-      Object.fromEntries(
+    jotaiStore.set(aiChatThreadParticipantsState.atom, {
+      isLoaded: true,
+      rowsByThreadId: Object.fromEntries(
         THREADS.map(({ id }) => [
           id,
           {
@@ -304,7 +309,7 @@ const meta = {
           },
         ]),
       ),
-    );
+    });
 
     for (const thread of THREADS) {
       jotaiStore.set(recordStoreFamilyState.atomFamily(thread.id), thread);

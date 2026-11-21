@@ -5,7 +5,6 @@ import { normalizeSearchText } from 'twenty-ui/utilities';
 import { AI_CHAT_ASSISTANT_RECIPIENT_SUGGESTION_ID } from '@/ai-chat/composer/constants/AiChatAssistantRecipientSuggestionId';
 import { AI_CHAT_NEW_THREAD_RECIPIENT_SUGGESTIONS_PAGE_SIZE } from '@/ai-chat/composer/constants/AiChatNewThreadRecipientSuggestionsPageSize';
 import { useAiChatAssistantProfile } from '@/ai-chat/hooks/useAiChatAssistantProfile';
-import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { aiChatAccessibleChannelsSelector } from '@/ai-chat/threads/states/selectors/aiChatAccessibleChannelsSelector';
@@ -27,9 +26,6 @@ export const useAiChatNewThreadRecipientSuggestions = ({
   const aiChatNewThreadRecipients = useAtomFamilyStateValue(
     aiChatNewThreadRecipientsFamilyState,
     newAiChatThreadId,
-  );
-  const aiChatNewThreadChannelId = useAtomStateValue(
-    aiChatNewThreadChannelIdState,
   );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
@@ -62,7 +58,7 @@ export const useAiChatNewThreadRecipientSuggestions = ({
   });
   const matchingChannels = filterBySearchQuery({
     items: aiChatAccessibleChannels.filter(
-      ({ id }) => id !== aiChatNewThreadChannelId,
+      ({ id }) => id !== aiChatNewThreadRecipients.channelId,
     ),
     searchQuery,
     getSearchableValues: ({ name }) => [name],

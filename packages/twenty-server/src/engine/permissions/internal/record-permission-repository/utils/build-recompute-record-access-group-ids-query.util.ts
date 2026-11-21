@@ -4,7 +4,8 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { ACCESS_GROUP_IDS_COLUMN_NAME } from 'src/engine/permissions/internal/record-permission-repository/constants/access-group-column-names.constant';
 import { RECORD_ACCESS_GROUP_TABLE_ALIAS } from 'src/engine/permissions/internal/record-permission-repository/constants/record-access-group-table-alias.constant';
 import { type RecordAccessGroupSQLCondition } from 'src/engine/permissions/internal/record-permission-repository/types/record-access-group-sql-condition.type';
-import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
+import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-computation-metadata-maps.type';
+import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
 import { buildInheritedAccessGroupIdsExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-inherited-access-group-ids-expression.util';
 import { buildRecordAccessGroupIdsExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-record-access-group-ids-expression.util';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
@@ -17,26 +18,31 @@ export const buildRecomputeRecordAccessGroupIdsQuery = ({
   flatObjectMetadata,
   recordAccessGroupSQLConditions,
   accessGroupFamilyIdsExpressions,
-  relatedRecordPathAccessGroupSources,
+  resolvedRelatedRecordPaths,
+  metadataMaps,
   recordIds,
 }: {
   workspaceId: string;
   flatObjectMetadata: FlatObjectMetadata;
   recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[];
   accessGroupFamilyIdsExpressions: SQLCondition[];
-  relatedRecordPathAccessGroupSources: RelatedRecordPathAccessGroupSource[];
+  resolvedRelatedRecordPaths: ResolvedRelatedRecordPath[];
+  metadataMaps: Pick<
+    RecordAccessGroupComputationMetadataMaps,
+    'rolesPermissions' | 'featureFlagsMap'
+  >;
   recordIds: string[];
 }): SQLCondition => {
-  const inheritedAccessGroupIdsExpressions =
-    relatedRecordPathAccessGroupSources.map(
-      (relatedRecordPathAccessGroupSource, pathIndex) =>
-        buildInheritedAccessGroupIdsExpression({
-          workspaceId,
-          targetTableAlias: RECORD_ACCESS_GROUP_TABLE_ALIAS,
-          pathIndex,
-          relatedRecordPathAccessGroupSource,
-        }),
-    );
+  const inheritedAccessGroupIdsExpressions = resolvedRelatedRecordPaths.map(
+    (resolvedPath, pathIndex) =>
+      buildInheritedAccessGroupIdsExpression({
+        workspaceId,
+        targetTableAlias: RECORD_ACCESS_GROUP_TABLE_ALIAS,
+        pathIndex,
+        resolvedPath,
+        metadataMaps,
+      }),
+  );
   const tableExpression = buildWorkspaceTableExpression({
     workspaceId,
     tableName: computeObjectTargetTable(flatObjectMetadata),

@@ -18270,6 +18270,11 @@ msgstr "אין לך הרשאה לגשת לתכונה זו. אנא פנה למנ�
 msgid "You do not have permission to access this workflow."
 msgstr "אין לך הרשאה לגשת לזרימת עבודה זו."
 
+#. js-lingui-id: /qkY9j
+#: src/engine/permissions/permissions.exception.ts
+msgid "You do not have permission to change this record."
+msgstr "אין לך הרשאה לשנות רשומה זו."
+
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."

@@ -9,7 +9,8 @@ import { ACCESS_GROUP_IDS_COLUMN_NAME } from 'src/engine/permissions/internal/re
 import { RECORD_ACCESS_GROUP_TABLE_ALIAS } from 'src/engine/permissions/internal/record-permission-repository/constants/record-access-group-table-alias.constant';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
 import { type RecordAccessGroupSQLCondition } from 'src/engine/permissions/internal/record-permission-repository/types/record-access-group-sql-condition.type';
-import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
+import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-computation-metadata-maps.type';
+import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
 import { buildRelatedRecordPathHopsJoin } from 'src/engine/permissions/internal/record-permission-repository/utils/build-related-record-path-hops-join.util';
 import { buildRecomputeRecordAccessGroupIdsQuery } from 'src/engine/permissions/internal/record-permission-repository/utils/build-recompute-record-access-group-ids-query.util';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
@@ -148,7 +149,8 @@ export class RecordAccessGroupRepository {
     flatObjectMetadata,
     recordAccessGroupSQLConditions,
     accessGroupFamilyIdsExpressions,
-    relatedRecordPathAccessGroupSources,
+    resolvedRelatedRecordPaths,
+    metadataMaps,
     recordIds,
     transactionScope,
   }: {
@@ -156,7 +158,11 @@ export class RecordAccessGroupRepository {
     flatObjectMetadata: FlatObjectMetadata;
     recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[];
     accessGroupFamilyIdsExpressions: SQLCondition[];
-    relatedRecordPathAccessGroupSources: RelatedRecordPathAccessGroupSource[];
+    resolvedRelatedRecordPaths: ResolvedRelatedRecordPath[];
+    metadataMaps: Pick<
+      RecordAccessGroupComputationMetadataMaps,
+      'rolesPermissions' | 'featureFlagsMap'
+    >;
     recordIds: string[];
     transactionScope?: RecordPermissionTransactionScope;
   }): Promise<string[]> {
@@ -170,7 +176,8 @@ export class RecordAccessGroupRepository {
         flatObjectMetadata,
         recordAccessGroupSQLConditions,
         accessGroupFamilyIdsExpressions,
-        relatedRecordPathAccessGroupSources,
+        resolvedRelatedRecordPaths,
+        metadataMaps,
         recordIds,
       }),
     });

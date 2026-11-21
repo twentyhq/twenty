@@ -18,14 +18,13 @@ import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThre
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
-import { aiChatTypingWorkspaceMemberIdsFamilyState } from '@/ai-chat/messages/states/aiChatTypingWorkspaceMemberIdsFamilyState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
 import { initializeNewAiChatStory } from '@/inbox/testing/initializeNewAiChatStory';
 import { hasRequestedWorkspaceSetupChatState } from '@/onboarding/states/hasRequestedWorkspaceSetupChatState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { AiChatNewThreadPageContent } from '~/pages/ai-chat/AiChatNewThreadPageContent';
+import { AiChatNewThreadPageContent } from '@/ai-chat/instance/components/AiChatNewThreadPageContent';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
@@ -335,66 +334,6 @@ export const WorkspaceSetupCompletion: Story = {
       ).not.toBeInTheDocument(),
     );
     await expect(canvas.getByRole('textbox')).toBeVisible();
-  },
-};
-
-const seedTypingConversation = (typingWorkspaceMemberIds: string[]) => {
-  const threadId = jotaiStore.get(newAiChatThreadIdState.atom);
-
-  jotaiStore.set(aiChatMessagesFamilyState.atomFamily({ threadId }), [
-    {
-      id: '20202020-7c1e-4a0f-9d2b-3f4e5a6b7c90',
-      role: 'user',
-      parts: [{ type: 'text', text: 'Can you take Stripe?' }],
-    },
-  ]);
-  jotaiStore.set(
-    aiChatTypingWorkspaceMemberIdsFamilyState.atomFamily({ threadId }),
-    typingWorkspaceMemberIds,
-  );
-};
-
-export const MemberTyping: Story = {
-  ...FullPageNewChat,
-  beforeEach: () => {
-    initializeNewAiChatStory({ isInboxEnabled: true });
-    seedTypingConversation(
-      jotaiStore
-        .get(currentWorkspaceMembersState.atom)
-        .filter(({ name }) => name.firstName === 'Jane')
-        .map(({ id }) => id),
-    );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await expect(await canvas.findByText('Jane Doe is typing…')).toBeVisible();
-
-    seedTypingConversation([]);
-
-    await waitFor(() =>
-      expect(canvas.queryByText('Jane Doe is typing…')).not.toBeInTheDocument(),
-    );
-  },
-};
-
-export const MemberTypingInSidePanel: Story = {
-  ...MemberTyping,
-  parameters: {
-    ...newChatParameters,
-    container: { width: 400, height: 784 },
-  },
-  render: () => (
-    <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.SIDE_PANEL}>
-      <Suspense fallback={null}>
-        <AiChatTab />
-      </Suspense>
-    </AiChatSurfaceContext.Provider>
-  ),
-  play: async ({ canvasElement }) => {
-    await expect(
-      await within(canvasElement).findByText('Jane Doe is typing…'),
-    ).toBeVisible();
   },
 };
 

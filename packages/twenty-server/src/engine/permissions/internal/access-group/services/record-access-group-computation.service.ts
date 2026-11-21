@@ -28,8 +28,6 @@ import { findRelationJoinColumnsOrThrow } from 'src/engine/permissions/internal/
 import { isRlsRuleRelationAffectedByUpdate } from 'src/engine/permissions/internal/access-group/utils/is-rls-rule-relation-affected-by-update.util';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/find-related-record-paths-feeding-access-groups.util';
-import { isPrivateRecordsEnabled } from 'src/engine/permissions/internal/private-record/utils/is-private-records-enabled.util';
-import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
 import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
 
@@ -125,18 +123,9 @@ export class RecordAccessGroupComputationService {
       flatEntityId: objectMetadataId,
       flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
     });
-    const relatedRecordPathAccessGroupSources: RelatedRecordPathAccessGroupSource[] =
-      findRelatedRecordPathsFeedingAccessGroups({
-        ...metadataMaps,
-        objectMetadataId,
-      }).map(({ hops, isInherent, sourceFlatObjectMetadata }) => ({
-        hops,
-        sourceObjectMetadataId: isInherent ? null : sourceFlatObjectMetadata.id,
-        isSourcePrivacyApplicable: isPrivateRecordsEnabled({
-          flatObjectMetadata: sourceFlatObjectMetadata,
-          featureFlagsMap: metadataMaps.featureFlagsMap,
-        }),
-      }));
+    const feedingRelatedRecordPaths = findRelatedRecordPathsFeedingAccessGroups(
+      { ...metadataMaps, objectMetadataId },
+    );
     const families = findAccessGroupFamilies({
       flatObjectMetadata,
       metadataMaps,
@@ -177,7 +166,8 @@ export class RecordAccessGroupComputationService {
               residualMemberFieldValuesByFamily,
             },
           ),
-          relatedRecordPathAccessGroupSources,
+          resolvedRelatedRecordPaths: feedingRelatedRecordPaths,
+          metadataMaps,
           recordIds,
           transactionScope,
         });

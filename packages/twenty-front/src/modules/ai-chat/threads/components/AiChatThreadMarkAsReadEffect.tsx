@@ -44,13 +44,13 @@ export const AiChatThreadMarkAsReadEffect = () => {
     if (
       !isDefined(threadId) ||
       !isVisible ||
-      !isDefined(aiChatThreadParticipants) ||
+      !aiChatThreadParticipants.isLoaded ||
       !isDefined(lastActivityAt)
     ) {
       return;
     }
 
-    const participant = aiChatThreadParticipants[threadId];
+    const participant = aiChatThreadParticipants.rowsByThreadId[threadId];
     const { isUnread } = getAgentChatThreadInboxStatus({
       lastActivityAt,
       participant,

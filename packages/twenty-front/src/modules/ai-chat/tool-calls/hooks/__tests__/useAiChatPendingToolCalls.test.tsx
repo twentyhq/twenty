@@ -5,7 +5,7 @@ import { type ReactNode } from 'react';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
 import { useAiChatPendingToolCalls } from '@/ai-chat/tool-calls/hooks/useAiChatPendingToolCalls';
-import { aiChatIsStreamingFamilyState } from '@/ai-chat/states/aiChatIsStreamingFamilyState';
+import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
 import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
 import {
   jotaiStore,
@@ -61,7 +61,7 @@ describe('useAiChatPendingToolCalls', () => {
   });
 
   it('waits on nothing while the turn is still streaming', () => {
-    jotaiStore.set(aiChatIsStreamingFamilyState.atomFamily(key), true);
+    jotaiStore.set(aiChatReplyStatusFamilyState.atomFamily(key), 'streaming');
 
     const { result } = renderHook(() => useAiChatPendingToolCalls(), {
       wrapper,

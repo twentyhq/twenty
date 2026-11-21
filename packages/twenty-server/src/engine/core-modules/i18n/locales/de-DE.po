@@ -18270,6 +18270,11 @@ msgstr "Sie haben keine Berechtigung, auf diese Funktion zuzugreifen. Bitte kont
 msgid "You do not have permission to access this workflow."
 msgstr "Sie haben keine Berechtigung, auf diesen Workflow zuzugreifen."
 
+#. js-lingui-id: /qkY9j
+#: src/engine/permissions/permissions.exception.ts
+msgid "You do not have permission to change this record."
+msgstr "Sie haben keine Berechtigung, diesen Datensatz zu ändern."
+
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."

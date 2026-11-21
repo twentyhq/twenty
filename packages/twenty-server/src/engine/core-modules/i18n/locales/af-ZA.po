@@ -18270,6 +18270,11 @@ msgstr "Jy het nie toestemming om toegang tot hierdie funksie te kry nie. Kontak
 msgid "You do not have permission to access this workflow."
 msgstr "Jy het nie toestemming om toegang tot hierdie werkvloei te kry nie."
 
+#. js-lingui-id: /qkY9j
+#: src/engine/permissions/permissions.exception.ts
+msgid "You do not have permission to change this record."
+msgstr "U het nie toestemming om hierdie rekord te verander nie."
+
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."

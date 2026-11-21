@@ -55,9 +55,8 @@ export const AiChatThreadOpenViewEffect = ({
         thread.lastActivityAt !== reopenedThreadActivity[threadId] &&
         isAiChatThreadSettledForMember({
           thread,
-          participant: store.get(aiChatThreadParticipantsState.atom)?.[
-            threadId
-          ],
+          participant: store.get(aiChatThreadParticipantsState.atom)
+            .rowsByThreadId[threadId],
           workspaceMemberId,
         })
       ) {
