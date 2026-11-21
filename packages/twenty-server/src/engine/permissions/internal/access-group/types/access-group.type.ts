@@ -17,7 +17,7 @@ export type AccessGroupWithoutCompactId = {
   | { type: 'ALL_RECORDS' }
   | { type: 'RULE' }
   | { type: 'MEMBER_VALUE'; memberFieldValues: RlsMemberFieldValues }
-  | { type: 'LITERAL_VALUE'; valuePredicateKey: string; value: string }
+  | { type: 'LITERAL_VALUE'; value: string }
 );
 
 export type AccessGroup = AccessGroupWithoutCompactId & { compactId: number };

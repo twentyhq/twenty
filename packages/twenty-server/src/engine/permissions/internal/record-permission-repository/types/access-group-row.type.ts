@@ -11,6 +11,5 @@ export type AccessGroupRow = {
   ruleShapeHash: string;
   unreadableFieldIds: string[];
   memberFieldValues: RlsMemberFieldValues | null;
-  valuePredicateKey: string | null;
   value: string | null;
 };

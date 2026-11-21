@@ -49,7 +49,7 @@ export class AccessGroupRepository {
         workspaceId,
         transactionScope,
         query: {
-          sql: `SELECT "compactId", "groupHash", "objectMetadataId", "type", "ruleShapeHash", "unreadableFieldIds", "memberFieldValues", "valuePredicateKey", "value"
+          sql: `SELECT "compactId", "groupHash", "objectMetadataId", "type", "ruleShapeHash", "unreadableFieldIds", "memberFieldValues", "value"
             FROM ${buildAccessGroupTableExpression(workspaceId)}
             WHERE "objectMetadataId" = ANY(:objectMetadataIds)
             ORDER BY "compactId"`,
@@ -78,11 +78,11 @@ export class AccessGroupRepository {
         workspaceId,
         query: {
           sql: `INSERT INTO ${buildAccessGroupTableExpression(workspaceId)}
-            ("objectMetadataId", "type", "ruleShapeHash", "unreadableFieldIds", "memberFieldValues", "valuePredicateKey", "value", "groupHash")
+            ("objectMetadataId", "type", "ruleShapeHash", "unreadableFieldIds", "memberFieldValues", "value", "groupHash")
             VALUES ${batch
               .map(
                 (_, index) =>
-                  `(:objectMetadataId${index}, :type${index}, :ruleShapeHash${index}, CAST(:unreadableFieldIds${index} AS uuid[]), CAST(:memberFieldValues${index} AS jsonb), :valuePredicateKey${index}, :value${index}, :groupHash${index})`,
+                  `(:objectMetadataId${index}, :type${index}, :ruleShapeHash${index}, CAST(:unreadableFieldIds${index} AS uuid[]), CAST(:memberFieldValues${index} AS jsonb), :value${index}, :groupHash${index})`,
               )
               .join(', ')}
             ON CONFLICT DO NOTHING`,

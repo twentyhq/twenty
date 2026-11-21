@@ -16,8 +16,6 @@ export const fromAccessGroupToAccessGroupRow = (
     accessGroup.type === 'MEMBER_VALUE'
       ? JSON.stringify(accessGroup.memberFieldValues)
       : null,
-  valuePredicateKey:
-    accessGroup.type === 'LITERAL_VALUE' ? accessGroup.valuePredicateKey : null,
   value: accessGroup.type === 'LITERAL_VALUE' ? accessGroup.value : null,
   groupHash: accessGroup.groupHash,
 });

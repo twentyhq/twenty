@@ -84,14 +84,13 @@ export const buildCreatePermissionTablesStatements = ({
       "ruleShapeHash" text NOT NULL,
       "unreadableFieldIds" uuid[] NOT NULL DEFAULT '{}',
       "memberFieldValues" jsonb,
-      "valuePredicateKey" text,
       "value" text,
       "groupHash" text NOT NULL,
       "compactId" integer GENERATED ALWAYS AS IDENTITY,
       CONSTRAINT "CHK_ACCESS_GROUP_TYPE_COLUMNS" CHECK (
-        ("type" IN ('ALL_RECORDS', 'RULE') AND "memberFieldValues" IS NULL AND "valuePredicateKey" IS NULL AND "value" IS NULL)
-        OR ("type" = 'MEMBER_VALUE' AND "memberFieldValues" IS NOT NULL AND "valuePredicateKey" IS NULL AND "value" IS NULL)
-        OR ("type" = 'LITERAL_VALUE' AND "memberFieldValues" IS NULL AND "valuePredicateKey" IS NOT NULL AND "value" IS NOT NULL)
+        ("type" IN ('ALL_RECORDS', 'RULE') AND "memberFieldValues" IS NULL AND "value" IS NULL)
+        OR ("type" = 'MEMBER_VALUE' AND "memberFieldValues" IS NOT NULL AND "value" IS NULL)
+        OR ("type" = 'LITERAL_VALUE' AND "memberFieldValues" IS NULL AND "value" IS NOT NULL)
       )
     )`,
     `CREATE UNIQUE INDEX "IDX_UNIQUE_b784cebdb5d8238240a4b99b8e2" ON ${accessGroup} ("groupHash")`,

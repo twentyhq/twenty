@@ -11,7 +11,6 @@ export const fromAccessGroupRowToAccessGroup = ({
   ruleShapeHash,
   unreadableFieldIds,
   memberFieldValues,
-  valuePredicateKey,
   value,
 }: AccessGroupRow): AccessGroup => {
   const groupShape = {
@@ -33,7 +32,6 @@ export const fromAccessGroupRowToAccessGroup = ({
       return {
         ...groupShape,
         type,
-        valuePredicateKey: valuePredicateKey ?? '',
         value: value ?? '',
       };
     default:

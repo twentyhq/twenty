@@ -17,12 +17,11 @@ export const buildTypedAccessGroupStatements = ({
       ADD COLUMN "type" ${schema}."accessGroup_type_enum" NOT NULL,
       ADD COLUMN "ruleShapeHash" text NOT NULL,
       ADD COLUMN "unreadableFieldIds" uuid[] NOT NULL DEFAULT '{}',
-      ADD COLUMN "valuePredicateKey" text,
       ADD COLUMN "value" text,
       ADD CONSTRAINT "CHK_ACCESS_GROUP_TYPE_COLUMNS" CHECK (
-        ("type" IN ('ALL_RECORDS', 'RULE') AND "memberFieldValues" IS NULL AND "valuePredicateKey" IS NULL AND "value" IS NULL)
-        OR ("type" = 'MEMBER_VALUE' AND "memberFieldValues" IS NOT NULL AND "valuePredicateKey" IS NULL AND "value" IS NULL)
-        OR ("type" = 'LITERAL_VALUE' AND "memberFieldValues" IS NULL AND "valuePredicateKey" IS NOT NULL AND "value" IS NOT NULL)
+        ("type" IN ('ALL_RECORDS', 'RULE') AND "memberFieldValues" IS NULL AND "value" IS NULL)
+        OR ("type" = 'MEMBER_VALUE' AND "memberFieldValues" IS NOT NULL AND "value" IS NULL)
+        OR ("type" = 'LITERAL_VALUE' AND "memberFieldValues" IS NULL AND "value" IS NOT NULL)
       )`,
     `CREATE INDEX "IDX_ACCESS_GROUP_RULE_SHAPE_MEMBER_FIELD_VALUES" ON ${accessGroup} ("ruleShapeHash", "memberFieldValues") WHERE "type" = 'MEMBER_VALUE'`,
     `CREATE INDEX "IDX_ACCESS_GROUP_RULE_SHAPE_VALUE" ON ${accessGroup} ("ruleShapeHash", "value") WHERE "type" = 'LITERAL_VALUE'`,

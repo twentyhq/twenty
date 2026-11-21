@@ -37,7 +37,6 @@ export const PERMISSION_TABLES: PermissionTable[] = [
       'ruleShapeHash',
       'unreadableFieldIds',
       'memberFieldValues',
-      'valuePredicateKey',
       'value',
       'groupHash',
       'compactId',
