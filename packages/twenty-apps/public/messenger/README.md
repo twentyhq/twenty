@@ -1,0 +1,65 @@
+# Messenger for Twenty
+
+Brings the Facebook Messenger conversations of your Pages into Twenty and lets you answer them from Twenty.
+
+- Incoming messages and their attachments are imported as conversations, one message channel per Page.
+- Messages the Page sends from Meta Business Suite are imported too.
+- Conversations can be answered from Twenty within 24 hours of the customer's last message, with attachments up to 8 MB for images and 25 MB for other files.
+- Opening a conversation in Twenty marks it as seen in Messenger.
+- Each customer gets a person record, reused for every later message on the same Page.
+
+## Setup
+
+Each workspace uses its own Meta app. Meta allows one webhook URL per app, so one Meta app serves one workspace.
+
+### 1. Prepare Meta
+
+1. In the [Meta App Dashboard](https://developers.facebook.com/apps), create an app of type **Business** and add the **Messenger** product.
+2. In Meta Business Suite, add the app to each Page under **All tools > Business apps**.
+3. In [Business settings](https://business.facebook.com/settings), create a system user, add the app to it, and assign it each Page with full control.
+4. Generate a system user token that never expires, with `pages_messaging`, `pages_manage_metadata`, `pages_read_engagement` and `pages_show_list`.
+5. Copy the **App secret** from **App settings > Basic**.
+
+### 2. Configure the app in Twenty
+
+Install the app, then set its variables:
+
+| Variable | Value |
+| --- | --- |
+| `VERIFY_TOKEN` | Any random string. Meta sends it back when you register the webhook. |
+| `APP_SECRET` | The Meta **App secret**, used to check the signature of every webhook. |
+
+### 3. Register the webhook
+
+In the Meta App Dashboard, open **Messenger > Messenger API Settings**:
+
+1. Set the callback URL to the live URL of the app's `receive-webhook` function, shown in its HTTP trigger settings in Twenty (it ends with `/messenger`). Set the verify token to `VERIFY_TOKEN`.
+2. Subscribe to `messages` and `message_echoes`.
+
+The URL must be public HTTPS, so a Twenty running on localhost cannot receive messages.
+
+### 4. Connect
+
+Connect Messenger in Twenty with the system user token. For every Page the token manages, the app subscribes the Page to the webhook and creates its message channel.
+
+Reconnect after assigning new Pages to the system user. Meta unsubscribes a Page after an hour of failed webhook deliveries, so reconnect after an outage too.
+
+### 5. Production access
+
+Until Meta grants Advanced Access, webhooks only arrive for people who have a role on the Meta app. To message customers, complete Business Verification and submit App Review for `pages_messaging`, `pages_manage_metadata`, `pages_read_engagement` and `pages_show_list`.
+
+## Limitations
+
+- Messenger only allows replies within 24 hours of the customer's last message, so later replies are refused.
+- People are created as "Messenger user" with the last 4 digits of their Page-scoped ID. Names need Advanced Access to Business Asset User Profile Access, which this version does not use yet.
+- A Page-scoped ID differs on each Page, so a customer who writes to two Pages gets two person records until they are merged.
+- A reply with several attachments is sent as one Messenger message per part.
+- Past conversations are not imported.
+
+## Development
+
+- `yarn twenty dev`: start the development server and sync the app
+- `yarn test:unit`: unit tests
+- `yarn test`: integration tests against a local Twenty server
+- `yarn lint`: lint with oxlint
+- `yarn typecheck`: type-check
