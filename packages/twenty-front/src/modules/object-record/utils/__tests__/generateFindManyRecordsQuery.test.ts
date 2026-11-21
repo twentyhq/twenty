@@ -27,14 +27,17 @@ const buildPermissions = (canReadPeople: boolean) => ({
 });
 
 describe('generateFindManyRecordsQuery with relations with arguments', () => {
-  const generateQuery = ({ withRelation = true, canReadPeople = true } = {}) =>
+  const generateQuery = ({
+    shouldIncludeRelation = true,
+    canReadPeople = true,
+  } = {}) =>
     print(
       generateFindManyRecordsQuery({
         objectMetadataItem: companyObjectMetadataItem,
         objectMetadataItems,
         recordGqlFields: {
           id: true,
-          ...(withRelation && { [responseKey]: peopleInParis }),
+          ...(shouldIncludeRelation && { [responseKey]: peopleInParis }),
         },
         objectPermissionsByObjectMetadataId: buildPermissions(canReadPeople),
       }),
@@ -52,7 +55,7 @@ describe('generateFindManyRecordsQuery with relations with arguments', () => {
 
   it('selects and declares nothing for an unreadable target', () => {
     expect(generateQuery({ canReadPeople: false })).toBe(
-      generateQuery({ withRelation: false, canReadPeople: false }),
+      generateQuery({ shouldIncludeRelation: false, canReadPeople: false }),
     );
   });
 });
