@@ -20,11 +20,7 @@ const SET_RECORD_SHARE = parse(
 describe('permission tables', () => {
   it('should store record shares in a workspace created without the record share and access group objects', async () => {
     const { workspaceId, workspaceOrigin, inviteHash, adminAccessToken } =
-      await createPermissionTestActiveWorkspace({
-        featureFlagsEnabledBeforeActivation: [
-          FeatureFlagKey.IS_PERMISSION_TABLES_ENABLED,
-        ],
-      });
+      await createPermissionTestActiveWorkspace();
 
     const permissionStorageObjects = await global.testDataSource.query(
       `SELECT "id" FROM core."objectMetadata"

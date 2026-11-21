@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { IconMessageCirclePlus } from 'twenty-ui/icon';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
-import { useStageAiChatPreprompt } from '@/ai-chat/hooks/useStageAiChatPreprompt';
+import { useApplyAiChatPreprompt } from '@/ai-chat/composer/hooks/useApplyAiChatPreprompt';
 import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
 import { COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID } from '@/command-menu-item/constants/CommandMenuAskAiFallbackItemId';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
@@ -19,11 +19,11 @@ export const CommandMenuAskAiFallbackItem = ({
 }: CommandMenuAskAiFallbackItemProps) => {
   const { t } = useLingui();
   const { switchToNewChat } = useSwitchToNewAiChat();
-  const { stageAiChatPreprompt } = useStageAiChatPreprompt();
+  const { applyAiChatPreprompt } = useApplyAiChatPreprompt();
   const setSidePanelSearch = useSetAtomState(sidePanelSearchState);
 
   const handleClick = () => {
-    stageAiChatPreprompt({
+    applyAiChatPreprompt({
       threadId: switchToNewChat(),
       serializedDocument:
         serializePlainTextAsAdvancedTextEditorDocument(prompt),
