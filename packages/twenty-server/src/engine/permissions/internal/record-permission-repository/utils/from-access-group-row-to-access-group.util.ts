@@ -9,11 +9,21 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { type AccessGroupRow } from 'src/engine/permissions/internal/record-permission-repository/types/access-group-row.type';
 
-const throwMalformedAccessGroupRow = (compactId: number): never => {
-  throw new PermissionsException(
-    `Access group ${compactId} does not have the columns of its type`,
-    PermissionsExceptionCode.RECORD_PERMISSION_QUERY_FAILED,
-  );
+const findAccessGroupColumnOrThrow = <TValue>({
+  compactId,
+  value,
+}: {
+  compactId: number;
+  value: TValue | null;
+}): TValue => {
+  if (!isDefined(value)) {
+    throw new PermissionsException(
+      `Access group ${compactId} does not have the columns of its type`,
+      PermissionsExceptionCode.RECORD_PERMISSION_QUERY_FAILED,
+    );
+  }
+
+  return value;
 };
 
 export const fromAccessGroupRowToAccessGroup = ({
@@ -39,17 +49,16 @@ export const fromAccessGroupRowToAccessGroup = ({
       return {
         ...groupShape,
         type,
-        memberFieldValues: isDefined(memberFieldValues)
-          ? memberFieldValues
-          : throwMalformedAccessGroupRow(compactId),
+        memberFieldValues: findAccessGroupColumnOrThrow({
+          compactId,
+          value: memberFieldValues,
+        }),
       };
     case 'LITERAL_VALUE':
       return {
         ...groupShape,
         type,
-        value: isDefined(value)
-          ? value
-          : throwMalformedAccessGroupRow(compactId),
+        value: findAccessGroupColumnOrThrow({ compactId, value }),
       };
     default:
       return { ...groupShape, type };
