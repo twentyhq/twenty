@@ -1,10 +1,9 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
-import { type MessengerMessageStatus } from 'src/constants/messenger-message-statuses.constant';
-import {
-  type OutgoingMessage,
-  selectMessagesToMark,
-} from 'src/logic-functions/data/select-messages-to-mark.util';
+import { type MessengerMessageStatus } from 'src/logic-functions/types/messenger-message-status.type';
+import { selectMessagesToMark } from 'src/logic-functions/data/select-messages-to-mark.util';
+import { type OutgoingMessage } from 'src/logic-functions/types/outgoing-message.type';
 
 // receipts only matter for recent messages; older ones were marked by earlier receipts
 const RECENT_OUTGOING_MESSAGES_LIMIT = 50;
@@ -55,30 +54,39 @@ export const applyMessageStatus = async ({
 
   const messages: OutgoingMessage[] = (
     messageChannelMessageAssociations?.edges ?? []
-  ).flatMap(({ node }: { node: AssociationNode }) =>
-    node.message === null
-      ? []
-      : [
-          {
-            id: node.message.id,
-            externalId: node.messageExternalId,
-            receivedAt: node.message.receivedAt,
-            messengerStatus: node.message.messengerStatus,
-          },
-        ],
-  );
+  ).flatMap(({ node }: { node: AssociationNode }) => {
+    const { message } = node;
 
-  for (const message of selectMessagesToMark({
+    return isDefined(message)
+      ? [
+          {
+            id: message.id,
+            externalId: node.messageExternalId,
+            receivedAt: message.receivedAt,
+            messengerStatus: message.messengerStatus,
+          },
+        ]
+      : [];
+  });
+
+  const messageIdsToMark = selectMessagesToMark({
     messages,
     status,
     watermark,
     mids,
-  })) {
-    await client.mutation({
-      updateMessage: {
-        __args: { id: message.id, data: { messengerStatus: status } },
-        id: true,
-      },
-    });
+  }).map(({ id }) => id);
+
+  if (messageIdsToMark.length === 0) {
+    return;
   }
+
+  await client.mutation({
+    updateMessages: {
+      __args: {
+        filter: { id: { in: messageIdsToMark } },
+        data: { messengerStatus: status },
+      },
+      id: true,
+    },
+  });
 };

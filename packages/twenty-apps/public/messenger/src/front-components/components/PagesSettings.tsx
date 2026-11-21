@@ -49,7 +49,7 @@ const getDetailStyle = () =>
   }) as const;
 
 const needsResubscribe = (page: PageHealth) =>
-  page.error === null &&
+  !isDefined(page.error) &&
   (!page.isSubscribed || page.missingWebhookFields.length > 0);
 
 export const PagesSettings = () => {

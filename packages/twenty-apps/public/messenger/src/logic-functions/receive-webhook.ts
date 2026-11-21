@@ -4,10 +4,10 @@ import { Response } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
 import {
-  MESSENGER_LOGIC_FUNCTION_PARSE_MESSAGE_UNIVERSAL_IDENTIFIER,
+  MESSENGER_LOGIC_FUNCTION_PROCESS_EVENT_UNIVERSAL_IDENTIFIER,
   MESSENGER_LOGIC_FUNCTION_RECEIVE_WEBHOOK_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
-import { buildParseMessagePayloads } from 'src/logic-functions/data/build-parse-message-payloads.util';
+import { buildMessengerEventPayloads } from 'src/logic-functions/data/build-messenger-event-payloads.util';
 import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
 import { findConnectedAccountIdByPageId } from 'src/logic-functions/data/find-connected-account-id-by-page-id.util';
 import { getMessengerEventJobKey } from 'src/logic-functions/data/get-messenger-event-job-key.util';
@@ -44,7 +44,7 @@ const handler = async ({
 
   const payloads = [];
 
-  for (const payload of buildParseMessagePayloads(body)) {
+  for (const payload of buildMessengerEventPayloads(body)) {
     if (isDefined(await findConnectedAccountIdByPageId(payload.pageId))) {
       payloads.push(payload);
     } else {
@@ -56,7 +56,7 @@ const handler = async ({
 
   await enqueueLogicFunctionJobs({
     logicFunctionUniversalIdentifier:
-      MESSENGER_LOGIC_FUNCTION_PARSE_MESSAGE_UNIVERSAL_IDENTIFIER,
+      MESSENGER_LOGIC_FUNCTION_PROCESS_EVENT_UNIVERSAL_IDENTIFIER,
     payloads,
     getJobKey: ({ event }) => getMessengerEventJobKey(event),
   });

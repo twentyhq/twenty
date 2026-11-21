@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildParseMessagePayloads } from 'src/logic-functions/data/build-parse-message-payloads.util';
+import { buildMessengerEventPayloads } from 'src/logic-functions/data/build-messenger-event-payloads.util';
 
-describe('buildParseMessagePayloads', () => {
+describe('buildMessengerEventPayloads', () => {
   it('returns one payload per message across entries, oldest first', () => {
-    const payloads = buildParseMessagePayloads({
+    const payloads = buildMessengerEventPayloads({
       object: 'page',
       entry: [
         {
@@ -42,7 +42,7 @@ describe('buildParseMessagePayloads', () => {
 
   it('skips events without a message, such as read receipts', () => {
     expect(
-      buildParseMessagePayloads({
+      buildMessengerEventPayloads({
         object: 'page',
         entry: [
           {
@@ -62,7 +62,7 @@ describe('buildParseMessagePayloads', () => {
   });
 
   it('keeps edits and referrals', () => {
-    const payloads = buildParseMessagePayloads({
+    const payloads = buildMessengerEventPayloads({
       object: 'page',
       entry: [
         {
@@ -90,6 +90,6 @@ describe('buildParseMessagePayloads', () => {
   });
 
   it('handles a webhook without entries', () => {
-    expect(buildParseMessagePayloads({ object: 'page' })).toEqual([]);
+    expect(buildMessengerEventPayloads({ object: 'page' })).toEqual([]);
   });
 });

@@ -1,9 +1,9 @@
+import { isDefined } from 'twenty-sdk/utils';
+
 import { isBackfillCompleted } from 'src/logic-functions/data/backfill-completion.util';
 import { getMessengerAccessTokenOrThrow } from 'src/logic-functions/data/get-messenger-access-token-or-throw.util';
-import {
-  getWebhookSubscriptionState,
-  type SubscribedApp,
-} from 'src/logic-functions/data/get-webhook-subscription-state.util';
+import { getWebhookSubscriptionState } from 'src/logic-functions/data/get-webhook-subscription-state.util';
+import { type SubscribedApp } from 'src/logic-functions/types/subscribed-app.type';
 import { graphApiRequest } from 'src/logic-functions/data/graph-api-request.util';
 import { findPageIdsOfConnection } from 'src/logic-functions/data/link-pages-to-connection.util';
 import { listMessengerPages } from 'src/logic-functions/data/list-messenger-pages.util';
@@ -32,7 +32,7 @@ export const getConnectionPagesHealth = async (
         isHistoryImported,
       };
 
-      if (page === undefined) {
+      if (!isDefined(page)) {
         return {
           ...unhealthy,
           error:

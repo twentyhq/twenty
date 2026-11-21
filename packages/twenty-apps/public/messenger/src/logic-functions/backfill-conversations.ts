@@ -14,7 +14,7 @@ import { enqueueBackfillConversations } from 'src/logic-functions/data/enqueue-b
 import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
 import { findConnectedAccountIdByPageId } from 'src/logic-functions/data/find-connected-account-id-by-page-id.util';
 import { getPageAccessTokenOrThrow } from 'src/logic-functions/data/get-page-access-token-or-throw.util';
-import { GraphApiError } from 'src/logic-functions/data/graph-api-error';
+import { GraphApiError } from 'src/logic-functions/data/graph-api.error';
 import { graphApiRequest } from 'src/logic-functions/data/graph-api-request.util';
 import {
   type BackfillConversationsPayload,

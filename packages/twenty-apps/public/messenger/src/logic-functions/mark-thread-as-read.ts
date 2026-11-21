@@ -2,7 +2,7 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import { type MarkAppThreadAsReadPayload } from 'twenty-sdk/logic-function';
 
 import { MESSENGER_LOGIC_FUNCTION_MARK_THREAD_AS_READ_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { findMessageChannelByIdOrThrow } from 'src/logic-functions/data/find-message-channel-by-id-or-throw.util';
+import { findMessageChannelOrThrow } from 'src/logic-functions/data/find-message-channel-or-throw.util';
 import { getPageAccessTokenOrThrow } from 'src/logic-functions/data/get-page-access-token-or-throw.util';
 import { graphApiRequest } from 'src/logic-functions/data/graph-api-request.util';
 
@@ -11,7 +11,7 @@ const handler = async ({
   messageChannelId,
   threadExternalId,
 }: MarkAppThreadAsReadPayload): Promise<void> => {
-  const { handle: pageId } = await findMessageChannelByIdOrThrow({
+  const { handle: pageId } = await findMessageChannelOrThrow({
     connectedAccountId,
     messageChannelId,
   });

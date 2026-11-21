@@ -11,7 +11,7 @@ import { buildBackfillIngestMessages } from 'src/logic-functions/data/build-back
 import { findConnectedAccountIdByPageId } from 'src/logic-functions/data/find-connected-account-id-by-page-id.util';
 import { findConversationCustomer } from 'src/logic-functions/data/find-conversation-customer.util';
 import { findOrCreateMessengerPersonId } from 'src/logic-functions/data/find-or-create-messenger-person-id.util';
-import { findPageMessageChannelOrThrow } from 'src/logic-functions/data/find-page-message-channel-or-throw.util';
+import { findMessageChannelOrThrow } from 'src/logic-functions/data/find-message-channel-or-throw.util';
 import { getPageAccessTokenOrThrow } from 'src/logic-functions/data/get-page-access-token-or-throw.util';
 import { graphApiRequest } from 'src/logic-functions/data/graph-api-request.util';
 import { splitFullName } from 'src/logic-functions/data/split-full-name.util';
@@ -70,7 +70,7 @@ const importConversation = async ({
     return;
   }
 
-  const messageChannel = await findPageMessageChannelOrThrow({
+  const messageChannel = await findMessageChannelOrThrow({
     connectedAccountId,
     pageId,
   });

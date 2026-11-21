@@ -1,12 +1,7 @@
 import { type SendAppMessageAttachment } from 'twenty-sdk/logic-function';
 
 import { MESSENGER_ATTACHMENT_MAX_SIZE_BYTES } from 'src/constants/messenger-attachment-max-size-bytes.constant';
-
-export type MessengerOutgoingAttachmentType =
-  | 'image'
-  | 'video'
-  | 'audio'
-  | 'file';
+import { type MessengerOutgoingAttachmentType } from 'src/logic-functions/types/messenger-outgoing-attachment-type.type';
 
 const getAttachmentType = (
   contentType: string,

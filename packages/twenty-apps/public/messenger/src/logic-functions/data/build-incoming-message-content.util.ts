@@ -1,26 +1,22 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 
 import {
   MESSENGER_FILE_ATTACHMENT_TYPES,
   MESSENGER_SHARED_CONTENT_LABELS,
 } from 'src/constants/messenger-attachment-labels.constant';
+import { type IncomingFileAttachment } from 'src/logic-functions/types/incoming-file-attachment.type';
 import {
   type MessengerWebhookAttachment,
   type MessengerWebhookMessage,
 } from 'src/logic-functions/types/messenger-webhook.type';
-
-export type IncomingFileAttachment = {
-  url: string;
-  type: string;
-  index: number;
-};
 
 const describeAttachment = (
   attachment: MessengerWebhookAttachment,
 ): string => {
   const label = MESSENGER_SHARED_CONTENT_LABELS[attachment.type];
 
-  if (label === undefined) {
+  if (!isDefined(label)) {
     return `[Messenger content not supported in Twenty: ${attachment.type}]`;
   }
 

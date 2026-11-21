@@ -1,14 +1,8 @@
-import {
-  MESSENGER_MESSAGE_STATUSES,
-  type MessengerMessageStatus,
-} from 'src/constants/messenger-message-statuses.constant';
+import { isDefined } from 'twenty-sdk/utils';
 
-export type OutgoingMessage = {
-  id: string;
-  externalId: string | null;
-  receivedAt: string | null;
-  messengerStatus: string | null;
-};
+import { MESSENGER_MESSAGE_STATUSES } from 'src/constants/messenger-message-statuses.constant';
+import { type MessengerMessageStatus } from 'src/logic-functions/types/messenger-message-status.type';
+import { type OutgoingMessage } from 'src/logic-functions/types/outgoing-message.type';
 
 const getStatusRank = (status: string | null) =>
   MESSENGER_MESSAGE_STATUSES.findIndex((candidate) => candidate === status);
@@ -27,8 +21,8 @@ export const selectMessagesToMark = ({
 }): OutgoingMessage[] =>
   messages.filter((message) => {
     const isCovered =
-      (message.externalId !== null && mids.includes(message.externalId)) ||
-      (message.receivedAt !== null &&
+      (isDefined(message.externalId) && mids.includes(message.externalId)) ||
+      (isDefined(message.receivedAt) &&
         new Date(message.receivedAt).getTime() <= watermark);
 
     return (

@@ -1,8 +1,8 @@
 import { type SendAppMessageAttachment } from 'twenty-sdk/logic-function';
 
 import { graphApiRequest } from 'src/logic-functions/data/graph-api-request.util';
-import { type MessengerOutgoingAttachmentType } from 'src/logic-functions/data/get-outgoing-attachment-type-or-throw.util';
-import { type ReplyMessagingType } from 'src/logic-functions/data/get-reply-messaging-type.util';
+import { type MessengerOutgoingAttachmentType } from 'src/logic-functions/types/messenger-outgoing-attachment-type.type';
+import { type ReplyMessagingType } from 'src/logic-functions/types/reply-messaging-type.type';
 
 // uploaded as file data because the Twenty download URL may not be reachable from Meta
 export const sendMessengerAttachment = async ({

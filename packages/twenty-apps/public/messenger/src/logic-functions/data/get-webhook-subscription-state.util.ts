@@ -1,6 +1,7 @@
-import { MESSENGER_WEBHOOK_FIELDS } from 'src/constants/messenger-webhook-fields.constant';
+import { isDefined } from 'twenty-sdk/utils';
 
-export type SubscribedApp = { id: string; subscribed_fields?: string[] };
+import { MESSENGER_WEBHOOK_FIELDS } from 'src/constants/messenger-webhook-fields.constant';
+import { type SubscribedApp } from 'src/logic-functions/types/subscribed-app.type';
 
 export const getWebhookSubscriptionState = ({
   subscribedApps,
@@ -13,7 +14,7 @@ export const getWebhookSubscriptionState = ({
   const subscribedFields = subscribedApp?.subscribed_fields ?? [];
 
   return {
-    isSubscribed: subscribedApp !== undefined,
+    isSubscribed: isDefined(subscribedApp),
     missingWebhookFields: MESSENGER_WEBHOOK_FIELDS.filter(
       (field) => !subscribedFields.includes(field),
     ),

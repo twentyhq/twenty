@@ -5,7 +5,7 @@ import {
   GRAPH_API_BASE_URL,
   GRAPH_API_VERSION,
 } from 'src/constants/graph-api.constant';
-import { GraphApiError } from 'src/logic-functions/data/graph-api-error';
+import { GraphApiError } from 'src/logic-functions/data/graph-api.error';
 
 type GraphApiErrorResponse = {
   error?: { message: string; code: number; error_user_msg?: string };

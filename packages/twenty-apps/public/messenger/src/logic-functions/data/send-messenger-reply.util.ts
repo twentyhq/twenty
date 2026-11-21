@@ -3,11 +3,11 @@ import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { findLastCustomerMessageAt } from 'src/logic-functions/data/find-last-customer-message-at.util';
-import { findMessageChannelByIdOrThrow } from 'src/logic-functions/data/find-message-channel-by-id-or-throw.util';
+import { findMessageChannelOrThrow } from 'src/logic-functions/data/find-message-channel-or-throw.util';
 import { getOutgoingAttachmentTypeOrThrow } from 'src/logic-functions/data/get-outgoing-attachment-type-or-throw.util';
 import { getPageAccessTokenOrThrow } from 'src/logic-functions/data/get-page-access-token-or-throw.util';
 import { getReplyMessagingType } from 'src/logic-functions/data/get-reply-messaging-type.util';
-import { GraphApiError } from 'src/logic-functions/data/graph-api-error';
+import { GraphApiError } from 'src/logic-functions/data/graph-api.error';
 import { graphApiRequest } from 'src/logic-functions/data/graph-api-request.util';
 import { sendMessengerAttachment } from 'src/logic-functions/data/send-messenger-attachment.util';
 
@@ -27,7 +27,7 @@ export const sendMessengerReply = async ({
   | 'text'
   | 'attachments'
 > & { isHumanAgentTagAllowed: boolean }): Promise<{ externalId: string }> => {
-  const messageChannel = await findMessageChannelByIdOrThrow({
+  const messageChannel = await findMessageChannelOrThrow({
     connectedAccountId,
     messageChannelId,
   });

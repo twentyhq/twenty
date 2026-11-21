@@ -2,7 +2,7 @@ import axios from 'axios';
 import { uploadMessageAttachment } from 'twenty-sdk/logic-function';
 
 import { buildIncomingAttachmentFilename } from 'src/logic-functions/data/build-incoming-attachment-filename.util';
-import { type IncomingFileAttachment } from 'src/logic-functions/data/build-incoming-message-content.util';
+import { type IncomingFileAttachment } from 'src/logic-functions/types/incoming-file-attachment.type';
 
 export const uploadIncomingAttachments = async ({
   messageId,

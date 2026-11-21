@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { GraphApiError } from 'src/logic-functions/data/graph-api-error';
+import { GraphApiError } from 'src/logic-functions/data/graph-api.error';
 import { graphApiRequest } from 'src/logic-functions/data/graph-api-request.util';
 import { type PersonName } from 'src/logic-functions/types/person-name.type';
 

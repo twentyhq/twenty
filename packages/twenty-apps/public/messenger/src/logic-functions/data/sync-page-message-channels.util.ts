@@ -3,6 +3,7 @@ import {
   listMessageChannels,
   updateMessageChannel,
 } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { MESSENGER_MESSAGING_PROVIDER_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type MessengerPage } from 'src/logic-functions/types/messenger-page.type';
@@ -28,7 +29,7 @@ export const syncPageMessageChannels = async ({
       ({ handle }) => handle === page.id,
     );
 
-    if (existingMessageChannel === undefined) {
+    if (!isDefined(existingMessageChannel)) {
       await createMessageChannel({
         connectedAccountId,
         handle: page.id,

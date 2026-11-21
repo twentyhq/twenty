@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { GraphApiError } from 'src/logic-functions/data/graph-api-error';
+import { GraphApiError } from 'src/logic-functions/data/graph-api.error';
 import { withConnectionAuthFailureReport } from 'src/logic-functions/data/with-connection-auth-failure-report.util';
 
 const { reportConnectionAuthFailure, sendInboxNotification } = vi.hoisted(

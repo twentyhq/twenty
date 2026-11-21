@@ -1,9 +1,8 @@
 import { isDefined } from 'twenty-sdk/utils';
 
 import { getReplyMessagingType } from 'src/logic-functions/data/get-reply-messaging-type.util';
+import { type ReplyWindow } from 'src/logic-functions/types/reply-window.type';
 import { type MessengerConversationMessage } from 'src/logic-functions/types/messenger-conversation.type';
-
-export type ReplyWindow = 'OPEN' | 'HUMAN_ONLY' | 'CLOSED';
 
 // tells the assistant whether it may send, or only a person can still reply by hand
 export const getReplyWindow = (

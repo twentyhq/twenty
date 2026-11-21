@@ -1,7 +1,7 @@
 import { reportConnectionAuthFailure } from 'twenty-sdk/logic-function';
 
 import { GRAPH_API_INVALID_TOKEN_ERROR_CODE } from 'src/constants/graph-api-invalid-token-error-code.constant';
-import { GraphApiError } from 'src/logic-functions/data/graph-api-error';
+import { GraphApiError } from 'src/logic-functions/data/graph-api.error';
 import { sendInboxNotification } from 'src/logic-functions/data/send-inbox-notification.util';
 
 export const withConnectionAuthFailureReport = async <TResult>(

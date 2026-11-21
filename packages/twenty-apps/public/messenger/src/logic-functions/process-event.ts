@@ -2,19 +2,19 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { MESSENGER_LOGIC_FUNCTION_PARSE_MESSAGE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { MESSENGER_LOGIC_FUNCTION_PROCESS_EVENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { applyMessageEdit } from 'src/logic-functions/data/apply-message-edit.util';
 import { applyReferral } from 'src/logic-functions/data/apply-referral.util';
 import { buildPostbackMessage } from 'src/logic-functions/data/build-postback-message.util';
 import { applyMessageStatus } from 'src/logic-functions/data/apply-message-status.util';
 import { findConnectedAccountIdByPageId } from 'src/logic-functions/data/find-connected-account-id-by-page-id.util';
-import { findPageMessageChannelOrThrow } from 'src/logic-functions/data/find-page-message-channel-or-throw.util';
+import { findMessageChannelOrThrow } from 'src/logic-functions/data/find-message-channel-or-throw.util';
 import { getMessengerEventTimestamp } from 'src/logic-functions/data/get-messenger-event-timestamp.util';
 import { importMessage } from 'src/logic-functions/data/import-message.util';
 import { resolveCustomerPersonId } from 'src/logic-functions/data/resolve-customer-person-id.util';
-import { type ParseMessagePayload } from 'src/logic-functions/types/parse-message-payload.type';
+import { type MessengerEventPayload } from 'src/logic-functions/types/messenger-event-payload.type';
 
-const handler = async ({ pageId, event }: ParseMessagePayload) => {
+const handler = async ({ pageId, event }: MessengerEventPayload) => {
   const connectedAccountId = await findConnectedAccountIdByPageId(pageId);
 
   if (!isDefined(connectedAccountId)) {
@@ -26,7 +26,7 @@ const handler = async ({ pageId, event }: ParseMessagePayload) => {
   }
 
   const client = new CoreApiClient();
-  const messageChannel = await findPageMessageChannelOrThrow({
+  const messageChannel = await findMessageChannelOrThrow({
     connectedAccountId,
     pageId,
   });
@@ -95,8 +95,8 @@ const handler = async ({ pageId, event }: ParseMessagePayload) => {
 };
 
 export default defineLogicFunction({
-  universalIdentifier: MESSENGER_LOGIC_FUNCTION_PARSE_MESSAGE_UNIVERSAL_IDENTIFIER,
-  name: 'parse-message',
+  universalIdentifier: MESSENGER_LOGIC_FUNCTION_PROCESS_EVENT_UNIVERSAL_IDENTIFIER,
+  name: 'process-event',
   description:
     'Processes one Messenger event: imports a message with its attachments or a button tap, applies an edit or a delivery or read receipt, or records the ad or link that brought the customer',
   timeoutSeconds: 60,
