@@ -51,7 +51,7 @@ const renderError = ({
 
   const result = {
     data: {
-      aiChatUsage: null,
+      aiChatThreadFetchedUsage: null,
       aiChatUserCreditsUsage: {
         __typename: 'AiChatUserCreditsUsage',
         limitValue: 830000,

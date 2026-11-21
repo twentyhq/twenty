@@ -3,7 +3,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useLeaveRemovedInboxThread } from '@/inbox/hooks/useLeaveRemovedInboxThread';
-import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
+import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatComposerDraftsState';
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
 import { aiChatInputIsEmptyFamilySelector } from '@/ai-chat/composer/states/selectors/aiChatInputIsEmptyFamilySelector';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
@@ -87,7 +87,7 @@ describe('useLeaveRemovedAiChatThread', () => {
         ]),
       ),
     });
-    jotaiStore.set(aiChatDraftsByThreadIdState.atom, {
+    jotaiStore.set(aiChatComposerDraftsState.atom, {
       [RECENT_CHAT_ID]: 'Pending question',
     });
 

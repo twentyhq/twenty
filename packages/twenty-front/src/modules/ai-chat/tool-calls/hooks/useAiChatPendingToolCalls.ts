@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { type AiChatPendingToolCall } from '@/ai-chat/tool-calls/types/AiChatPendingToolCall';
 import { parsePendingToolCall } from '@/ai-chat/tool-calls/utils/parsePendingToolCall';
@@ -10,24 +10,27 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 
 export const useAiChatPendingToolCalls = (): AiChatPendingToolCall[] => {
   const { threadId } = useAiChatInstanceOrThrow();
-  const aiChatMessages = useAtomFamilyStateValue(aiChatMessagesFamilyState, {
-    threadId,
-  });
-  const aiChatReplyStatus = useAtomFamilyStateValue(
-    aiChatReplyStatusFamilyState,
+  const aiChatThreadDisplayedMessages = useAtomFamilyStateValue(
+    aiChatThreadDisplayedMessagesFamilyState,
+    {
+      threadId,
+    },
+  );
+  const aiChatThreadReplyStatus = useAtomFamilyStateValue(
+    aiChatThreadReplyStatusFamilyState,
     { threadId },
   );
-  const isAiChatStreaming = aiChatReplyStatus === 'streaming';
+  const isAiChatStreaming = aiChatThreadReplyStatus === 'streaming';
 
   return useMemo(
     () =>
       isAiChatStreaming
         ? []
-        : aiChatMessages.flatMap((message) =>
+        : aiChatThreadDisplayedMessages.flatMap((message) =>
             message.parts
               .map(parsePendingToolCall)
               .filter((pendingToolCall) => isDefined(pendingToolCall)),
           ),
-    [aiChatMessages, isAiChatStreaming],
+    [aiChatThreadDisplayedMessages, isAiChatStreaming],
   );
 };

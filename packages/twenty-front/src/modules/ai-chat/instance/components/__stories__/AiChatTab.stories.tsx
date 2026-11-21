@@ -14,12 +14,12 @@ import { AiChatTab } from '@/ai-chat/instance/components/AiChatTab';
 import { AI_CHAT_NEW_THREAD_RECIPIENT_SUGGESTIONS_PAGE_SIZE } from '@/ai-chat/composer/constants/AiChatNewThreadRecipientSuggestionsPageSize';
 import { AI_CHAT_SURFACE } from '@/ai-chat/constants/AiChatSurface';
 import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
-import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
+import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatComposerDraftsState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
-import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
+import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
 import { initializeNewAiChatStory } from '@/inbox/testing/initializeNewAiChatStory';
 import { hasRequestedWorkspaceSetupChatState } from '@/onboarding/states/hasRequestedWorkspaceSetupChatState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
@@ -89,7 +89,7 @@ const newChatParameters = {
   msw: {
     handlers: [
       graphql.query('GetAiChatUsage', () =>
-        HttpResponse.json({ data: { aiChatUsage: null } }),
+        HttpResponse.json({ data: { aiChatThreadFetchedUsage: null } }),
       ),
     ],
   },
@@ -193,7 +193,7 @@ export const InboxNewChat: Story = {
     ).not.toBeInTheDocument();
     await expect(
       jotaiStore.get(
-        aiChatNewThreadRecipientsFamilyState.atomFamily(
+        aiChatComposerNewThreadRecipientsFamilyState.atomFamily(
           jotaiStore.get(newAiChatThreadIdState.atom),
         ),
       ).isAssistantParticipant,
@@ -248,9 +248,10 @@ export const InboxNewChat: Story = {
       within(recipients).queryByText('Jane Doe'),
     ).not.toBeInTheDocument();
     await expect(addRecipients).toHaveValue('');
-    const isSendingMessageAtom = aiChatIsSendingMessageFamilyState.atomFamily({
-      threadId: jotaiStore.get(newAiChatThreadIdState.atom),
-    });
+    const isSendingMessageAtom =
+      aiChatThreadReplyIsSendingFamilyState.atomFamily({
+        threadId: jotaiStore.get(newAiChatThreadIdState.atom),
+      });
 
     jotaiStore.set(isSendingMessageAtom, true);
     await waitFor(() =>
@@ -298,7 +299,7 @@ export const NewChatSuggestedPrompt: Story = {
 
     await waitFor(() =>
       expect(
-        jotaiStore.get(aiChatDraftsByThreadIdState.atom)[
+        jotaiStore.get(aiChatComposerDraftsState.atom)[
           jotaiStore.get(newAiChatThreadIdState.atom)
         ],
       ).toContain('A new partner'),
@@ -348,7 +349,7 @@ const initializeInboxChatWithTeammate = (
     .find(({ name }) => name.firstName === 'Jane');
 
   jotaiStore.set(
-    aiChatMessagesFamilyState.atomFamily({ threadId }),
+    aiChatThreadDisplayedMessagesFamilyState.atomFamily({ threadId }),
     getMessages(teammate?.id),
   );
 };

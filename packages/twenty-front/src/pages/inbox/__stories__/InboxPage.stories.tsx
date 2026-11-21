@@ -320,7 +320,7 @@ const meta = {
     msw: {
       handlers: [
         graphql.query('GetAiChatUsage', () =>
-          HttpResponse.json({ data: { aiChatUsage: null } }),
+          HttpResponse.json({ data: { aiChatThreadFetchedUsage: null } }),
         ),
         graphql.query('MyConnectedAccounts', () =>
           HttpResponse.json({ data: { myConnectedAccounts: [] } }),

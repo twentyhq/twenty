@@ -2,9 +2,9 @@ import { dispatchAiChatRefetchMessagesEvent } from '@/ai-chat/utils/dispatchAiCh
 import { useRefreshAiChatThreadPermissions } from '@/ai-chat/threads/hooks/useRefreshAiChatThreadPermissions';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
-import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
-import { aiChatLiveReactionRevisionsFamilyState } from '@/ai-chat/messages/states/aiChatLiveReactionRevisionsFamilyState';
-import { aiChatPersistedMessagesFamilyState } from '@/ai-chat/states/aiChatPersistedMessagesFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionsFamilyState';
+import { aiChatMessageReactionRevisionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionRevisionsFamilyState';
+import { aiChatThreadFetchedMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadFetchedMessagesFamilyState';
 import { useRefreshAiChatUsage } from '@/ai-chat/usage/hooks/useRefreshAiChatUsage';
 import { isChatAccessDenied } from '@/ai-chat/utils/isChatAccessDenied';
 import { useCallback, useEffect, useState } from 'react';
@@ -22,13 +22,13 @@ import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 import { AI_CHAT_STREAM_LIVENESS_CHECK_INTERVAL_IN_MS } from '@/ai-chat/constants/AiChatStreamLivenessCheckIntervalInMs';
 import { AI_CHAT_STREAM_LIVENESS_TIMEOUT_IN_MS } from '@/ai-chat/constants/AiChatStreamLivenessTimeoutInMs';
 import { useApplyAiChatThreadUpdate } from '@/ai-chat/threads/hooks/useApplyAiChatThreadUpdate';
-import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
-import { aiChatMessagesLoadingFamilyState } from '@/ai-chat/states/aiChatMessagesLoadingFamilyState';
-import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
+import { aiChatThreadReplyErrorFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyErrorFamilyState';
+import { aiChatThreadIsFetchingMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadIsFetchingMessagesFamilyState';
+import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
 import { endAiChatReplyStatus } from '@/ai-chat/utils/endAiChatReplyStatus';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
-import { aiChatStreamRecoveryAttemptsFamilyState } from '@/ai-chat/states/aiChatStreamRecoveryAttemptsFamilyState';
-import { aiChatUsageFamilyState } from '@/ai-chat/usage/states/aiChatUsageFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
+import { aiChatThreadReplyRecoveryAttemptsFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyRecoveryAttemptsFamilyState';
+import { aiChatThreadFetchedUsageFamilyState } from '@/ai-chat/states/server/aiChatThreadFetchedUsageFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { accumulateAiChatUsage } from '@/ai-chat/usage/utils/accumulateAiChatUsage';
 import { AiChatErrorCode } from '@/ai-chat/utils/aiChatErrorCode';
@@ -82,18 +82,20 @@ export const useAiChatSubscription = (threadId: string | null) => {
 
     const familyKey = { threadId };
 
-    const errorAtom = aiChatErrorFamilyState.atomFamily(familyKey);
-    const replyStatusAtom = aiChatReplyStatusFamilyState.atomFamily(familyKey);
+    const errorAtom = aiChatThreadReplyErrorFamilyState.atomFamily(familyKey);
+    const replyStatusAtom =
+      aiChatThreadReplyStatusFamilyState.atomFamily(familyKey);
     const messagesLoadingAtom =
-      aiChatMessagesLoadingFamilyState.atomFamily(familyKey);
-    const messagesAtom = aiChatMessagesFamilyState.atomFamily(familyKey);
+      aiChatThreadIsFetchingMessagesFamilyState.atomFamily(familyKey);
+    const messagesAtom =
+      aiChatThreadDisplayedMessagesFamilyState.atomFamily(familyKey);
     const persistedMessagesAtom =
-      aiChatPersistedMessagesFamilyState.atomFamily(familyKey);
-    const usageAtom = aiChatUsageFamilyState.atomFamily(familyKey);
+      aiChatThreadFetchedMessagesFamilyState.atomFamily(familyKey);
+    const usageAtom = aiChatThreadFetchedUsageFamilyState.atomFamily(familyKey);
     const recoveryAttemptsAtom =
-      aiChatStreamRecoveryAttemptsFamilyState.atomFamily(familyKey);
+      aiChatThreadReplyRecoveryAttemptsFamilyState.atomFamily(familyKey);
     const liveReactionRevisionsAtom =
-      aiChatLiveReactionRevisionsFamilyState.atomFamily(familyKey);
+      aiChatMessageReactionRevisionsFamilyState.atomFamily(familyKey);
 
     // Changes made while unsubscribed were missed, so fetches must fill them in again
     store.set(liveReactionRevisionsAtom, {});

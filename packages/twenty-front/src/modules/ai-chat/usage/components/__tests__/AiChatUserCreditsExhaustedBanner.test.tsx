@@ -66,7 +66,7 @@ const renderBanner = ({
             request: { query: GetAiChatUsageDocument },
             result: {
               data: {
-                aiChatUsage: null,
+                aiChatThreadFetchedUsage: null,
                 aiChatUserCreditsUsage: {
                   __typename: 'AiChatUserCreditsUsage',
                   limitValue: 4160000,

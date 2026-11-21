@@ -13,7 +13,7 @@ import {
 } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { aiChatUsageFamilyState } from '@/ai-chat/usage/states/aiChatUsageFamilyState';
+import { aiChatThreadFetchedUsageFamilyState } from '@/ai-chat/states/server/aiChatThreadFetchedUsageFamilyState';
 import { formatNumber } from '@/localization/utils/formatNumber';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
@@ -36,14 +36,17 @@ export const AiChatContextUsageDetails = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const { threadId } = useAiChatInstanceOrThrow();
-  const aiChatUsage = useAtomFamilyStateValue(aiChatUsageFamilyState, {
-    threadId,
-  });
-  if (!isDefined(aiChatUsage)) {
+  const aiChatThreadFetchedUsage = useAtomFamilyStateValue(
+    aiChatThreadFetchedUsageFamilyState,
+    {
+      threadId,
+    },
+  );
+  if (!isDefined(aiChatThreadFetchedUsage)) {
     return null;
   }
 
-  const lastMessage = aiChatUsage.lastMessage;
+  const lastMessage = aiChatThreadFetchedUsage.lastMessage;
 
   return (
     <>
@@ -87,26 +90,27 @@ export const AiChatContextUsageDetails = () => {
         <StyledSectionTitle>{t`Conversation`}</StyledSectionTitle>
         <MetricRow
           startIcon={<IconArrowUp size={theme.icon.size.sm} />}
-          value={formatAiChatTokens(aiChatUsage.inputTokens)}
+          value={formatAiChatTokens(aiChatThreadFetchedUsage.inputTokens)}
         >
           {t`Input tokens`}
         </MetricRow>
         <MetricRow
           startIcon={<IconHistory size={theme.icon.size.sm} />}
-          value={formatAiChatTokens(aiChatUsage.cachedInputTokens)}
+          value={formatAiChatTokens(aiChatThreadFetchedUsage.cachedInputTokens)}
         >
           {t`Cached input`}
         </MetricRow>
         <MetricRow
           startIcon={<IconArrowDown size={theme.icon.size.sm} />}
-          value={formatAiChatTokens(aiChatUsage.outputTokens)}
+          value={formatAiChatTokens(aiChatThreadFetchedUsage.outputTokens)}
         >
           {t`Output tokens`}
         </MetricRow>
         <MetricRow
           startIcon={<IconCoins size={theme.icon.size.sm} />}
           value={formatNumber(
-            aiChatUsage.inputCredits + aiChatUsage.outputCredits,
+            aiChatThreadFetchedUsage.inputCredits +
+              aiChatThreadFetchedUsage.outputCredits,
             { decimals: 3 },
           )}
         >

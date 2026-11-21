@@ -22,7 +22,7 @@ import { useAiChatUserCreditsUsage } from '@/ai-chat/usage/hooks/useAiChatUserCr
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { useIsWorkspaceSetupChat } from '@/ai-chat/hooks/useIsWorkspaceSetupChat';
-import { aiChatUsageFamilyState } from '@/ai-chat/usage/states/aiChatUsageFamilyState';
+import { aiChatThreadFetchedUsageFamilyState } from '@/ai-chat/states/server/aiChatThreadFetchedUsageFamilyState';
 import { aiChatUserSelectedModelTierState } from '@/ai-chat/states/aiChatUserSelectedModelTierState';
 import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRingColor';
 import { StyledInformationCard } from '@/ui/layout/information-card/components/StyledInformationCard';
@@ -59,9 +59,12 @@ export const AiChatContextUsageButton = () => {
 
   const { threadId } = useAiChatInstanceOrThrow();
 
-  const aiChatUsage = useAtomFamilyStateValue(aiChatUsageFamilyState, {
-    threadId,
-  });
+  const aiChatThreadFetchedUsage = useAtomFamilyStateValue(
+    aiChatThreadFetchedUsageFamilyState,
+    {
+      threadId,
+    },
+  );
 
   const tiers = useAiModelTiers();
 
@@ -78,11 +81,11 @@ export const AiChatContextUsageButton = () => {
     : (aiChatUserSelectedModelTier ?? chatTier);
 
   const contextWindow =
-    aiChatUsage?.contextWindowTokens ??
+    aiChatThreadFetchedUsage?.contextWindowTokens ??
     tiers.find(({ tier }) => tier === modelTier)?.model?.contextWindowTokens ??
     0;
 
-  const conversationSize = aiChatUsage?.conversationSize ?? 0;
+  const conversationSize = aiChatThreadFetchedUsage?.conversationSize ?? 0;
 
   const percentage =
     contextWindow > 0
@@ -192,7 +195,7 @@ export const AiChatContextUsageButton = () => {
                 />
               )}
             {showDetails && <AiChatContextUsageDetails />}
-            {isDefined(aiChatUsage) && (
+            {isDefined(aiChatThreadFetchedUsage) && (
               <>
                 <Separator />
                 <StyledFooter>

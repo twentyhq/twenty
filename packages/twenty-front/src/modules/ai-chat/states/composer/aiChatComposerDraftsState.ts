@@ -3,7 +3,7 @@ import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomStat
 
 const DRAFTS_STORAGE_KEY = 'ai/agentChatDraftsByThreadIdState';
 
-export const aiChatDraftsByThreadIdState = createAtomState<
+export const aiChatComposerDraftsState = createAtomState<
   Record<string, string>
 >({
   key: DRAFTS_STORAGE_KEY,

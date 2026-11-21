@@ -22,9 +22,9 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
-import { aiChatThreadVisitFamilyState } from '@/ai-chat/threads/states/aiChatThreadVisitFamilyState';
-import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
+import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
+import { aiChatThreadViewVisitFamilyState } from '@/ai-chat/states/view/aiChatThreadViewVisitFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionsFamilyState';
 import {
   FeatureFlagKey,
   PermissionFlagType,
@@ -36,11 +36,11 @@ import {
 } from '~/testing/mock-data/users';
 import { MarkdownLoadingSkeleton } from '@/ai-chat/message-content/components/LazyMarkdownRenderer';
 import { PROTECTED_CHAT_REFERENCE_MARKER } from '@/ai-chat/message-content/constants/ProtectedChatReferenceMarker';
-import { type AiChatFileUIPart } from '@/ai-chat/composer/types/AiChatFileUIPart';
+import { type AiChatFileUIPart } from '@/ai-chat/types/AiChatFileUIPart';
 
 import { setAiChatThreadPermissions } from '@/ai-chat/threads/testing/setAiChatThreadPermissions';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -505,11 +505,11 @@ const AiChatMessagesSetterEffect = ({
     const previousUserWorkspace = store.get(currentUserWorkspaceState.atom);
     const previousMember = store.get(currentWorkspaceMemberState.atom);
     const previousMembers = store.get(currentWorkspaceMembersState.atom);
-    const visitAtom = aiChatThreadVisitFamilyState.atomFamily({
+    const visitAtom = aiChatThreadViewVisitFamilyState.atomFamily({
       threadId: currentThreadId,
     });
     const previousVisit = store.get(visitAtom);
-    const messagesAtom = aiChatMessagesFamilyState.atomFamily({
+    const messagesAtom = aiChatThreadDisplayedMessagesFamilyState.atomFamily({
       threadId: currentThreadId,
     });
     const reactionsAtom = aiChatMessageReactionsFamilyState.atomFamily({

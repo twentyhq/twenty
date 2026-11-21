@@ -7,17 +7,17 @@ import { useQueryWithCallbacks } from '@/apollo/hooks/useQueryWithCallbacks';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai-chat/constants/AiChatRefetchMessagesEventName';
 import { useAiChatSubscription } from '@/ai-chat/instance/hooks/useAiChatSubscription';
-import { aiChatLiveReactionRevisionsFamilyState } from '@/ai-chat/messages/states/aiChatLiveReactionRevisionsFamilyState';
-import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
-import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
-import { aiChatPersistedMessagesFamilyState } from '@/ai-chat/states/aiChatPersistedMessagesFamilyState';
-import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
-import { aiChatMessagesLoadingFamilyState } from '@/ai-chat/states/aiChatMessagesLoadingFamilyState';
+import { aiChatMessageReactionRevisionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionRevisionsFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionsFamilyState';
+import { aiChatThreadReplyErrorFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyErrorFamilyState';
+import { aiChatThreadFetchedMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadFetchedMessagesFamilyState';
+import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
+import { aiChatThreadIsFetchingMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadIsFetchingMessagesFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { type AiChatThreadEventDetail } from '@/ai-chat/types/AiChatThreadEventDetail';
-import { aiChatUsageFamilyState } from '@/ai-chat/usage/states/aiChatUsageFamilyState';
+import { aiChatThreadFetchedUsageFamilyState } from '@/ai-chat/states/server/aiChatThreadFetchedUsageFamilyState';
 import { getAiChatUsageFromThread } from '@/ai-chat/usage/utils/getAiChatUsageFromThread';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -46,26 +46,28 @@ export const AiChatThreadRuntimeEffect = ({
     isNewThread ? null : threadId,
   );
 
-  const setAiChatMessagesLoading = useSetAtomFamilyState(
-    aiChatMessagesLoadingFamilyState,
+  const setAiChatThreadIsFetchingMessages = useSetAtomFamilyState(
+    aiChatThreadIsFetchingMessagesFamilyState,
     { threadId },
   );
 
-  const setAiChatPersistedMessages = useSetAtomFamilyState(
-    aiChatPersistedMessagesFamilyState,
+  const setAiChatThreadFetchedMessages = useSetAtomFamilyState(
+    aiChatThreadFetchedMessagesFamilyState,
     { threadId },
   );
 
   const handleDataLoaded = useCallback(
     (data: GetChatMessagesQuery) => {
-      const error = store.get(aiChatErrorFamilyState.atomFamily({ threadId }));
+      const error = store.get(
+        aiChatThreadReplyErrorFamilyState.atomFamily({ threadId }),
+      );
       if (isGraphqlErrorOfType(error, 'NOT_FOUND')) {
         return;
       }
       const uiMessages = mapAgentMessagesToUIMessages(data.chatMessages ?? []);
       // A live snapshot is at least as recent as a fetch, which may have been read before it
       const liveReactionRevisions = store.get(
-        aiChatLiveReactionRevisionsFamilyState.atomFamily({
+        aiChatMessageReactionRevisionsFamilyState.atomFamily({
           threadId,
         }),
       );
@@ -82,7 +84,7 @@ export const AiChatThreadRuntimeEffect = ({
           message.reactions,
         );
       }
-      setAiChatPersistedMessages({
+      setAiChatThreadFetchedMessages({
         messages: uiMessages.filter((message) => message.status !== 'queued'),
         queuedMessages: uiMessages.filter(
           (message) => message.status === 'queued',
@@ -96,12 +98,12 @@ export const AiChatThreadRuntimeEffect = ({
 
       applyStreamCatchup(catchup);
     },
-    [threadId, applyStreamCatchup, setAiChatPersistedMessages, store],
+    [threadId, applyStreamCatchup, setAiChatThreadFetchedMessages, store],
   );
 
   const handleLoadingChange = useCallback(
-    (loading: boolean) => setAiChatMessagesLoading(loading),
-    [setAiChatMessagesLoading],
+    (loading: boolean) => setAiChatThreadIsFetchingMessages(loading),
+    [setAiChatThreadIsFetchingMessages],
   );
 
   const { refetch: refetchAiChatMessages } = useQueryWithCallbacks(
@@ -139,7 +141,7 @@ export const AiChatThreadRuntimeEffect = ({
 
   const handleSseClientReconnected = useCallback(() => {
     store.set(
-      aiChatLiveReactionRevisionsFamilyState.atomFamily({
+      aiChatMessageReactionRevisionsFamilyState.atomFamily({
         threadId,
       }),
       {},
@@ -152,22 +154,25 @@ export const AiChatThreadRuntimeEffect = ({
     onBrowserEvent: handleSseClientReconnected,
   });
 
-  const aiChatPersistedMessages = useAtomFamilyStateValue(
-    aiChatPersistedMessagesFamilyState,
+  const aiChatThreadFetchedMessages = useAtomFamilyStateValue(
+    aiChatThreadFetchedMessagesFamilyState,
     { threadId },
   );
 
-  const setAiChatMessages = useSetAtomFamilyState(aiChatMessagesFamilyState, {
-    threadId,
-  });
+  const setAiChatThreadDisplayedMessages = useSetAtomFamilyState(
+    aiChatThreadDisplayedMessagesFamilyState,
+    {
+      threadId,
+    },
+  );
 
-  const aiChatReplyStatus = useAtomFamilyStateValue(
-    aiChatReplyStatusFamilyState,
+  const aiChatThreadReplyStatus = useAtomFamilyStateValue(
+    aiChatThreadReplyStatusFamilyState,
     { threadId },
   );
 
-  const aiChatMessagesLoading = useAtomFamilyStateValue(
-    aiChatMessagesLoadingFamilyState,
+  const aiChatThreadIsFetchingMessages = useAtomFamilyStateValue(
+    aiChatThreadIsFetchingMessagesFamilyState,
     { threadId },
   );
 
@@ -177,7 +182,9 @@ export const AiChatThreadRuntimeEffect = ({
   );
 
   useEffect(() => {
-    const usageAtom = aiChatUsageFamilyState.atomFamily({ threadId });
+    const usageAtom = aiChatThreadFetchedUsageFamilyState.atomFamily({
+      threadId,
+    });
 
     if (isDefined(aiChatThreadRecord) && !isDefined(store.get(usageAtom))) {
       store.set(usageAtom, getAiChatUsageFromThread(aiChatThreadRecord));
@@ -185,16 +192,16 @@ export const AiChatThreadRuntimeEffect = ({
   }, [store, threadId, aiChatThreadRecord]);
 
   useEffect(() => {
-    if (aiChatReplyStatus !== 'idle' || aiChatMessagesLoading) {
+    if (aiChatThreadReplyStatus !== 'idle' || aiChatThreadIsFetchingMessages) {
       return;
     }
 
-    setAiChatMessages(aiChatPersistedMessages.messages);
+    setAiChatThreadDisplayedMessages(aiChatThreadFetchedMessages.messages);
   }, [
-    aiChatPersistedMessages,
-    aiChatReplyStatus,
-    aiChatMessagesLoading,
-    setAiChatMessages,
+    aiChatThreadFetchedMessages,
+    aiChatThreadReplyStatus,
+    aiChatThreadIsFetchingMessages,
+    setAiChatThreadDisplayedMessages,
   ]);
 
   return null;

@@ -1,5 +1,5 @@
-import { aiChatUploadingFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadingFilesFamilyState';
-import { aiChatUploadedFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadedFilesFamilyState';
+import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/states/composer/aiChatComposerUploadingFilesFamilyState';
+import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/states/composer/aiChatComposerAttachmentsFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useLingui } from '@lingui/react/macro';
@@ -8,7 +8,7 @@ import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { type AiChatFileUIPart } from '@/ai-chat/composer/types/AiChatFileUIPart';
+import { type AiChatFileUIPart } from '@/ai-chat/types/AiChatFileUIPart';
 import { FileFolder } from '~/generated-metadata/graphql';
 
 export const useAiChatFileUpload = () => {
@@ -24,9 +24,10 @@ export const useAiChatFileUpload = () => {
     file: File;
     threadId: string;
   }): Promise<AiChatFileUIPart | null> => {
-    const uploadingFilesAtom = aiChatUploadingFilesFamilyState.atomFamily({
-      threadId,
-    });
+    const uploadingFilesAtom =
+      aiChatComposerUploadingFilesFamilyState.atomFamily({
+        threadId,
+      });
     const abortController = new AbortController();
     const unsubscribeFromUploadingFiles = store.sub(uploadingFilesAtom, () => {
       if (!store.get(uploadingFilesAtom).includes(file)) {
@@ -89,7 +90,7 @@ export const useAiChatFileUpload = () => {
     }
 
     store.set(
-      aiChatUploadingFilesFamilyState.atomFamily({ threadId }),
+      aiChatComposerUploadingFilesFamilyState.atomFamily({ threadId }),
       (previousUploadingFiles) => [...previousUploadingFiles, ...files],
     );
 
@@ -99,7 +100,7 @@ export const useAiChatFileUpload = () => {
 
     if (isNonEmptyArray(successfulUploads)) {
       store.set(
-        aiChatUploadedFilesFamilyState.atomFamily({ threadId }),
+        aiChatComposerAttachmentsFamilyState.atomFamily({ threadId }),
         (previousUploadedFiles) => [
           ...previousUploadedFiles,
           ...successfulUploads,

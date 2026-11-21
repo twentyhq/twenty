@@ -5,8 +5,8 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 import { useAiChatModelId } from '@/ai-chat/hooks/useAiChatModelId';
-import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
-import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
+import { aiChatThreadReplyErrorFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyErrorFamilyState';
+import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
 import { endAiChatReplyStatus } from '@/ai-chat/utils/endAiChatReplyStatus';
 import { getAiChatReplyStatusUnlessStreaming } from '@/ai-chat/utils/getAiChatReplyStatusUnlessStreaming';
 import { isAiChatCreditsExhaustedError } from '@/ai-chat/usage/utils/isAiChatCreditsExhaustedError';
@@ -24,8 +24,10 @@ export const useRetryChatMessage = () => {
   const { threadId } = useAiChatInstanceOrThrow();
 
   const retryChatMessage = useCallback(async () => {
-    const errorAtom = aiChatErrorFamilyState.atomFamily({ threadId });
-    const replyStatusAtom = aiChatReplyStatusFamilyState.atomFamily({
+    const errorAtom = aiChatThreadReplyErrorFamilyState.atomFamily({
+      threadId,
+    });
+    const replyStatusAtom = aiChatThreadReplyStatusFamilyState.atomFamily({
       threadId,
     });
     const previousError = store.get(errorAtom);
