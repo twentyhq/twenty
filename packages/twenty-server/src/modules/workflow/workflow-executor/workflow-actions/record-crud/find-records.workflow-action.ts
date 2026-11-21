@@ -14,7 +14,7 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/inte
 
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { computeRecordGqlOperationFilterFromFlatMaps } from 'src/engine/utils/compute-record-gql-operation-filter-from-flat-maps.util';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -36,7 +36,7 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
   constructor(
     private readonly findRecordsService: FindRecordsService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly workflowMetadataReadService: WorkflowMetadataReadService,
   ) {}
 
   async execute({
@@ -76,7 +76,7 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       flatObjectMetadata,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
-    } = await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+    } = await this.workflowMetadataReadService.getObjectMetadataInfo(
       workflowActionInput.objectName,
       workspaceId,
     );

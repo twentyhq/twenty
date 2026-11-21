@@ -16,7 +16,7 @@ const toUpdatePrices = {
   baseProductPriceId: 'price_base_year',
   seats: 7,
   resourceCreditPriceId: 'price_credit_year',
-  applicationPriceIds: [],
+  applicationItems: [],
 };
 
 const PHASE_START = 1_700_000_000;
@@ -50,22 +50,33 @@ describe('buildPhaseUpdateParamsOrThrow', () => {
     ]);
   });
 
-  it('moves an application item to its price for the new interval and keeps its quantity', () => {
+  it('replaces the application items of the phase with the target ones', () => {
     const phase = buildPhaseUpdateParamsOrThrow({
       currentPhase: buildPhase([
         { price: BASE_PRICE_ID, quantity: 3 },
+        { price: 'price_uninstalled_application_month', quantity: 1 },
         { price: CREDIT_PRICE_ID, quantity: 1 },
         { price: 'price_application_month', quantity: 4 },
       ]),
       productKeyByPriceId: new Map([
         ...productKeyByPriceId,
         ['price_application_month', BillingProductKey.APPLICATION],
+        ['price_uninstalled_application_month', BillingProductKey.APPLICATION],
       ]),
       toUpdatePrices: {
         ...toUpdatePrices,
-        targetApplicationPriceIdByCurrentPriceId: new Map([
-          ['price_application_month', 'price_application_year'],
-        ]),
+        applicationItems: [
+          {
+            stripeProductId: 'prod_application',
+            stripePriceId: 'price_application_year',
+            quantity: 5,
+          },
+          {
+            stripeProductId: 'prod_installed_application',
+            stripePriceId: 'price_installed_application_year',
+            quantity: 1,
+          },
+        ],
       },
       startDate: NEW_START,
       endDate: undefined,
@@ -74,7 +85,8 @@ describe('buildPhaseUpdateParamsOrThrow', () => {
     expect(phase.items).toEqual([
       { price: 'price_base_year', quantity: 7 },
       { price: 'price_credit_year', quantity: 1 },
-      { price: 'price_application_year', quantity: 4 },
+      { price: 'price_application_year', quantity: 5 },
+      { price: 'price_installed_application_year', quantity: 1 },
     ]);
   });
 

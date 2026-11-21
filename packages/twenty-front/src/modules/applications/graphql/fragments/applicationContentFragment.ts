@@ -70,6 +70,9 @@ export const APPLICATION_CONTENT_FRAGMENT = gql`
     connectionProviders {
       ...ApplicationContentItemFields
     }
+    mcpServers {
+      ...ApplicationContentItemFields
+    }
     publicAssets {
       ...ApplicationContentItemFields
     }

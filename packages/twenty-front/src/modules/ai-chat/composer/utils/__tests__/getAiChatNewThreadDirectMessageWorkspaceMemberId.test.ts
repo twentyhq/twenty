@@ -6,6 +6,7 @@ const BOB = { workspaceMemberId: 'bob', label: 'Bob' };
 const ONE_PERSON_WITHOUT_ADA = {
   isDirectMessageIdentityEnabled: true,
   newInboxChatRecipients: {
+    channelId: null,
     isAssistantParticipant: false,
     recipientWorkspaceMemberIds: ['jane'],
   },
@@ -48,6 +49,7 @@ describe('getAiChatNewThreadDirectMessageWorkspaceMemberId', () => {
       'Ada is a recipient',
       {
         newInboxChatRecipients: {
+          channelId: null,
           isAssistantParticipant: true,
           recipientWorkspaceMemberIds: ['jane'],
         },

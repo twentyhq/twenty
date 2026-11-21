@@ -15,6 +15,8 @@ import { IsNull, Not, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 import { z } from 'zod';
 
+import { buildBundledApplicationPackageJson } from 'src/engine/core-modules/application/application-bundled/utils/build-bundled-application-package-json.util';
+import { findBundledApplication } from 'src/engine/core-modules/application/application-bundled/utils/find-bundled-application.util';
 import { assertValidNpmPackageName } from 'src/engine/core-modules/application/application-package/utils/assert-valid-npm-package-name.util';
 import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
 import { assertValidNpmVersionSpec } from 'src/engine/core-modules/application/application-package/utils/is-valid-npm-version-spec.util';
@@ -124,6 +126,11 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
         );
       case ApplicationRegistrationSourceType.TARBALL:
         return this.resolveFromTarball(appRegistration);
+      case ApplicationRegistrationSourceType.BUNDLED:
+        return this.resolveFromBundled({
+          appRegistration,
+          targetVersion: options?.targetVersion,
+        });
       case ApplicationRegistrationSourceType.LOCAL:
       case ApplicationRegistrationSourceType.OAUTH_ONLY:
         return null;
@@ -319,6 +326,63 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
         ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED,
       );
     }
+  }
+
+  // Install reads package files from a directory, so the embedded manifest is written to one
+  private async resolveFromBundled({
+    appRegistration,
+    targetVersion,
+  }: {
+    appRegistration: Pick<
+      ApplicationRegistrationEntity,
+      'id' | 'universalIdentifier'
+    >;
+    targetVersion?: string;
+  }): Promise<ResolvedPackage> {
+    const bundledApplication = findBundledApplication(
+      appRegistration.universalIdentifier,
+    );
+
+    if (!isDefined(bundledApplication)) {
+      throw new ApplicationException(
+        `App registration ${appRegistration.id} has sourceType=bundled but this server ships no such application`,
+        ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+      );
+    }
+
+    // During a rollout an older worker still ships the previous version
+    if (
+      isDefined(targetVersion) &&
+      targetVersion !== bundledApplication.version
+    ) {
+      throw new ApplicationException(
+        `Bundled application ${appRegistration.universalIdentifier}@${targetVersion} was requested but this server ships ${bundledApplication.version}`,
+        ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+      );
+    }
+
+    const workDir = join(APP_FETCHER_TMPDIR, v4());
+    const packageJson = buildBundledApplicationPackageJson({
+      universalIdentifier: appRegistration.universalIdentifier,
+      version: bundledApplication.version,
+    });
+
+    await fs.mkdir(workDir, { recursive: true });
+    await fs.writeFile(
+      join(workDir, 'manifest.json'),
+      JSON.stringify(bundledApplication.manifest),
+    );
+    await fs.writeFile(
+      join(workDir, 'package.json'),
+      JSON.stringify(packageJson),
+    );
+
+    return {
+      extractedDir: workDir,
+      cleanupDir: workDir,
+      manifest: bundledApplication.manifest,
+      packageJson,
+    };
   }
 
   private async fetchRegistryTarballUrlOrThrow(

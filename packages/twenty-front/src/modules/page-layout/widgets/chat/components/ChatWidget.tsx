@@ -1,11 +1,9 @@
 import { styled } from '@linaria/react';
 import { useId } from 'react';
 
-import { AiChatInstance } from '@/ai-chat/components/AiChatInstance';
-import { AiChatTab } from '@/ai-chat/components/AiChatTab';
+import { AiChatSurfaceView } from '@/ai-chat/instance/components/AiChatSurfaceView';
 import { AI_CHAT_SURFACE } from '@/ai-chat/constants/AiChatSurface';
-import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
-import { useAiChatThreadClick } from '@/ai-chat/hooks/useAiChatThreadClick';
+import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadClick';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 
@@ -30,19 +28,14 @@ export const ChatWidget = () => {
 
   return (
     <StyledChatContainer>
-      <AiChatSurfaceContext.Provider
-        value={
+      <AiChatSurfaceView
+        surface={
           isInSidePanel ? AI_CHAT_SURFACE.SIDE_PANEL : AI_CHAT_SURFACE.PAGE
         }
-      >
-        <AiChatInstance
-          instanceId={instanceId}
-          threadId={targetRecord.id}
-          onThreadChange={(threadId) => handleThreadClick({ id: threadId })}
-        >
-          <AiChatTab />
-        </AiChatInstance>
-      </AiChatSurfaceContext.Provider>
+        instanceId={instanceId}
+        threadId={targetRecord.id}
+        onThreadChange={(threadId) => handleThreadClick({ id: threadId })}
+      />
     </StyledChatContainer>
   );
 };

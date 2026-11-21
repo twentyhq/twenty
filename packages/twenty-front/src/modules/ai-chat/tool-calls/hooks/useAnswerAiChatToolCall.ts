@@ -7,9 +7,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { useAiChatModelId } from '@/ai-chat/hooks/useAiChatModelId';
 import { AiChatErrorCode } from '@/ai-chat/utils/aiChatErrorCode';
 import { findToolPartOutput } from '@/ai-chat/tool-calls/utils/findToolPartOutput';
-import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
-import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai-chat/states/aiChatIsAwaitingFirstChunkFamilyState';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadReplyErrorFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyErrorFamilyState';
+import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
+import { endAiChatReplyStatus } from '@/ai-chat/utils/endAiChatReplyStatus';
+import { getAiChatReplyStatusUnlessStreaming } from '@/ai-chat/utils/getAiChatReplyStatusUnlessStreaming';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { isAiChatCreditsExhaustedError } from '@/ai-chat/usage/utils/isAiChatCreditsExhaustedError';
 import { toAiChatError } from '@/ai-chat/utils/toAiChatError';
 import { updateToolPartOutput } from '@/ai-chat/tool-calls/utils/updateToolPartOutput';
@@ -45,12 +47,15 @@ export const useAnswerAiChatToolCall = () => {
         return false;
       }
 
-      const messagesAtom = aiChatMessagesFamilyState.atomFamily({
+      const messagesAtom = aiChatThreadDisplayedMessagesFamilyState.atomFamily({
         threadId,
       });
-      const errorAtom = aiChatErrorFamilyState.atomFamily({ threadId });
-      const isAwaitingFirstChunkAtom =
-        aiChatIsAwaitingFirstChunkFamilyState.atomFamily({ threadId });
+      const errorAtom = aiChatThreadReplyErrorFamilyState.atomFamily({
+        threadId,
+      });
+      const replyStatusAtom = aiChatThreadReplyStatusFamilyState.atomFamily({
+        threadId,
+      });
 
       const previousToolOutput = findToolPartOutput({
         messages: store.get(messagesAtom),
@@ -67,7 +72,10 @@ export const useAnswerAiChatToolCall = () => {
         );
       }
 
-      store.set(isAwaitingFirstChunkAtom, true);
+      store.set(
+        replyStatusAtom,
+        getAiChatReplyStatusUnlessStreaming('awaiting-first-chunk'),
+      );
 
       try {
         const { data } = await apolloCoreClient.mutate({
@@ -85,14 +93,20 @@ export const useAnswerAiChatToolCall = () => {
 
         // No chunk follows when a workflow run resumes in its own executor or other calls still wait.
         if (!isDefined(streamId)) {
-          store.set(isAwaitingFirstChunkAtom, false);
+          store.set(
+            replyStatusAtom,
+            endAiChatReplyStatus('awaiting-first-chunk'),
+          );
         }
 
         dispatchAiChatRefetchMessagesEvent(threadId);
 
         return true;
       } catch (error) {
-        store.set(isAwaitingFirstChunkAtom, false);
+        store.set(
+          replyStatusAtom,
+          endAiChatReplyStatus('awaiting-first-chunk'),
+        );
 
         // The banner reads the workspace flag, then the thread error when no resource credit item carries that flag
         if (isAiChatCreditsExhaustedError(error)) {

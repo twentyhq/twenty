@@ -17,9 +17,11 @@ import { type ConnectedAccountProvider } from 'twenty-shared/types';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ADD_ACCESS_TOKEN_EXPIRES_AT_TO_CONNECTED_ACCOUNT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-54/add-access-token-expires-at-to-connected-account-upgrade-command-name.constant';
+import { DROP_CONNECTED_ACCOUNT_VISIBILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/drop-connected-account-visibility-upgrade-command-name.constant';
 import { type EncryptedImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { EXTERNAL_ACCOUNT_ID_MAX_LENGTH } from 'src/engine/metadata-modules/connected-account/constants/external-account-id-max-length.constant';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -145,7 +147,9 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   })
   scope: ConnectedAccountScope;
 
-  // TODO: drop with the sync trigger next release; only previous-release servers use it
+  @WasRemovedInUpgrade({
+    upgradeCommandName: DROP_CONNECTED_ACCOUNT_VISIBILITY_UPGRADE_COMMAND_NAME,
+  })
   @Column({
     type: 'varchar',
     nullable: false,
@@ -153,7 +157,7 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
     insert: false,
     update: false,
   })
-  visibility: 'user' | 'workspace';
+  visibility: WasRemovedInUpgrade<'user' | 'workspace'>;
 
   @OneToMany(
     'MessageChannelEntity',

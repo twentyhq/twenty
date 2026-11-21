@@ -2,13 +2,13 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
+import { IconSearch } from 'twenty-ui/icon';
+import { Checkbox, Input } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { Text } from 'twenty-ui/primitives/typography';
 
-import { Checkbox } from 'src/front-components/components/Checkbox';
+import { GranolaFolderEmptyState } from 'src/front-components/components/GranolaFolderEmptyState';
 import { GranolaFolderTreeItem } from 'src/front-components/components/GranolaFolderTreeItem';
-import { StyledSettingsHint } from 'src/front-components/components/StyledSettingsHint';
-import { StyledSettingsTextInput } from 'src/front-components/components/StyledSettingsTextInput';
 import { type GranolaSettingsFolder } from 'src/front-components/types/granola-settings-folder.type';
 import { computeGranolaFolderAncestorIds } from 'src/front-components/utils/compute-granola-folder-ancestor-ids.util';
 import { computeGranolaFolderTree } from 'src/front-components/utils/compute-granola-folder-tree.util';
@@ -23,10 +23,8 @@ const StyledSearchInputContainer = styled.div`
 `;
 
 const StyledLabelContainer = styled.span`
-  align-items: center;
   color: ${() => themeCssVariables.font.color.tertiary};
-  display: flex;
-  justify-content: space-between;
+  display: block;
   margin-bottom: ${() => themeCssVariables.spacing[2]};
   margin-top: ${() => themeCssVariables.spacing[2]};
 `;
@@ -99,55 +97,69 @@ export const GranolaFolderTree = ({
     onReplaceSelection(isEveryFolderSelected ? [] : rootFolderIds);
   };
 
+  const renderFolderList = () => {
+    if (tree.length === 0) {
+      return (
+        <GranolaFolderEmptyState
+          Icon={IconSearch}
+          message={t('No folders match "{search}"', { search: search.trim() })}
+        />
+      );
+    }
+
+    return (
+      <>
+        <StyledSectionHeader>
+          <Text size="xs" weight="semibold" color="light">
+            {t('Toggle all folders')}
+          </Text>
+          <Checkbox
+            checked={isEveryFolderSelected}
+            indeterminate={
+              !isEveryFolderSelected && selectedFolderIds.length > 0
+            }
+            disabled={!canSelectEveryFolder}
+            aria-label={t('Toggle all folders')}
+            onCheckedChange={handleToggleAllFolders}
+          />
+        </StyledSectionHeader>
+        <StyledTreeList>
+          {tree.map((node, index) => (
+            <GranolaFolderTreeItem
+              key={node.folder.id}
+              node={node}
+              isLast={index === tree.length - 1}
+              selectedFolderIds={selectedFolderIdSet}
+              coveredFolderIds={coveredFolderIds}
+              isSelectionFull={selectedFolderIds.length >= selectionLimit}
+              onToggleFolder={onToggleFolder}
+            />
+          ))}
+        </StyledTreeList>
+      </>
+    );
+  };
+
   return (
     <StyledContainer>
       <StyledSearchInputContainer>
-        <StyledSettingsTextInput
-          type="text"
+        <Input
           placeholder={t('Search folders...')}
           value={search}
-          onChange={(event) => setSearch(event.target.value)}
+          onValueChange={setSearch}
         />
       </StyledSearchInputContainer>
       <StyledLabelContainer>
         <Text size="xs" weight="semibold" color="light">
           {t('Folders')}
         </Text>
-        <Text size="xs" weight="semibold" color="light">
-          {selectedFolderIds.length}/{selectionLimit}
-        </Text>
       </StyledLabelContainer>
-      <StyledSectionHeader>
-        <Text size="xs" weight="semibold" color="light">
-          {t('Toggle all folders')}
+      {renderFolderList()}
+      {isDefined(hint) && (
+        <Text size="sm" color="tertiary">
+          {hint}
         </Text>
-        <Checkbox
-          checked={isEveryFolderSelected}
-          indeterminate={!isEveryFolderSelected && selectedFolderIds.length > 0}
-          disabled={!canSelectEveryFolder}
-          aria-label={t('Toggle all folders')}
-          onChange={handleToggleAllFolders}
-        />
-      </StyledSectionHeader>
-      {tree.length === 0 && (
-        <StyledSettingsHint>
-          {t('No folder matches your search.')}
-        </StyledSettingsHint>
       )}
-      <StyledTreeList>
-        {tree.map((node, index) => (
-          <GranolaFolderTreeItem
-            key={node.folder.id}
-            node={node}
-            isLast={index === tree.length - 1}
-            selectedFolderIds={selectedFolderIdSet}
-            coveredFolderIds={coveredFolderIds}
-            isSelectionFull={selectedFolderIds.length >= selectionLimit}
-            onToggleFolder={onToggleFolder}
-          />
-        ))}
-      </StyledTreeList>
-      {isDefined(hint) && <StyledSettingsHint>{hint}</StyledSettingsHint>}
     </StyledContainer>
   );
 };

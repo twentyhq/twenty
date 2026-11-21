@@ -7,11 +7,12 @@ import type Stripe from 'stripe';
 import { type BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { type BillingProductMetadata } from 'src/engine/core-modules/billing/types/billing-product-metadata.type';
 import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
+import { buildApplicationItemsUpdate } from 'src/engine/core-modules/billing/utils/build-application-items-update.util';
 import { resolveManagedItemPrice } from 'src/engine/core-modules/billing/utils/resolve-managed-item-price.util';
 
 type SubscriptionItemToUpdate = Pick<
   BillingSubscriptionItemEntity,
-  'stripeSubscriptionItemId' | 'stripePriceId'
+  'stripeSubscriptionItemId'
 > & {
   billingProduct?: {
     metadata?: Pick<BillingProductMetadata, 'productKey'> | null;
@@ -21,39 +22,44 @@ type SubscriptionItemToUpdate = Pick<
 export const buildSubscriptionItemsUpdate = ({
   billingSubscriptionItems,
   stripeSubscriptionItems,
+  currentPrices,
   toUpdatePrices,
 }: {
   billingSubscriptionItems: SubscriptionItemToUpdate[];
-  stripeSubscriptionItems: Pick<Stripe.SubscriptionItem, 'id' | 'quantity'>[];
+  stripeSubscriptionItems: (Pick<Stripe.SubscriptionItem, 'id'> & {
+    price: Pick<Stripe.Price, 'id'>;
+  })[];
+  currentPrices: Pick<SubscriptionStripePrices, 'applicationItems'>;
   toUpdatePrices: SubscriptionStripePrices;
-}): Stripe.SubscriptionUpdateParams.Item[] =>
-  billingSubscriptionItems.flatMap(
-    ({ stripeSubscriptionItemId, stripePriceId, billingProduct }) => {
+}): Stripe.SubscriptionUpdateParams.Item[] => {
+  const managedItems = billingSubscriptionItems.flatMap(
+    ({ stripeSubscriptionItemId, billingProduct }) => {
       const managedPrice = resolveManagedItemPrice({
         productKey: billingProduct?.metadata?.productKey,
         toUpdatePrices,
       });
 
-      if (isDefined(managedPrice)) {
-        return [{ id: stripeSubscriptionItemId, ...managedPrice }];
-      }
-
-      const applicationPriceId =
-        toUpdatePrices.targetApplicationPriceIdByCurrentPriceId?.get(
-          stripePriceId,
-        );
-
-      return isDefined(applicationPriceId) &&
-        applicationPriceId !== stripePriceId
-        ? [
-            {
-              id: stripeSubscriptionItemId,
-              price: applicationPriceId,
-              quantity: stripeSubscriptionItems.find(
-                ({ id }) => id === stripeSubscriptionItemId,
-              )?.quantity,
-            },
-          ]
+      return isDefined(managedPrice)
+        ? [{ id: stripeSubscriptionItemId, ...managedPrice }]
         : [];
     },
   );
+
+  const currentApplicationItems = stripeSubscriptionItems.flatMap(
+    ({ id, price }) => {
+      const applicationItem = currentPrices.applicationItems.find(
+        ({ stripePriceId }) => stripePriceId === price.id,
+      );
+
+      return isDefined(applicationItem) ? [{ id, ...applicationItem }] : [];
+    },
+  );
+
+  return [
+    ...managedItems,
+    ...buildApplicationItemsUpdate({
+      currentApplicationItems,
+      targetApplicationItems: toUpdatePrices.applicationItems,
+    }),
+  ];
+};

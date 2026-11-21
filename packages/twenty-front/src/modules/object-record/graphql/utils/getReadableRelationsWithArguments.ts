@@ -16,7 +16,6 @@ import {
   isRecordGqlFieldsRelationWithArguments,
 } from 'twenty-shared/utils';
 
-// A query builds its selections, variable definitions and variables from this one list, so they cannot disagree
 export const getReadableRelationsWithArguments = ({
   objectMetadataItem,
   objectMetadataItems,

@@ -1,3 +1,4 @@
+import { getObjectDisabledOperations } from '@/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperations';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -110,6 +111,7 @@ export const CoreAgentDataAccessSection = ({
       const levels = getCoreAgentRecordAccessLevels({
         role,
         objectMetadataId: objectMetadataItem.id,
+        disabledOperations: getObjectDisabledOperations(objectMetadataItem),
       });
 
       const objectRules = formatObjectRules({
