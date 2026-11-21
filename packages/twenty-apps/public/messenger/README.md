@@ -14,6 +14,8 @@ Brings the Facebook Messenger conversations of your Pages into Twenty and lets y
 - Opening a conversation in Twenty marks it as seen in Messenger.
 - Messages the Page sends show whether the customer received and read them, in the **Messenger status** field.
 - Each customer gets a person record named from their Messenger profile, reused for every later message on the same Page.
+- The **Messenger Assistant** agent summarizes conversations, drafts replies, and links conversations to companies and opportunities as notes and tasks. It sends a reply only after the member confirms it, and only within 24 hours of the customer's last message; after that, a person replies by hand.
+- AI tools: `get-messenger-conversation` and `send-messenger-reply`.
 - On connect, past conversations are imported: the 20 most recent messages of each, as Meta allows no more.
 
 ## Setup
