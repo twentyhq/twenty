@@ -15,12 +15,11 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { RecordTableSettingsSortsContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent';
+import { SidePanelEditColumnHeader } from '@/side-panel/pages/edit-column/components/SidePanelEditColumnHeader';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
-import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -65,6 +64,7 @@ type SidePanelEditColumnFormProps = {
   recordFieldId?: string;
   storedRelationScope?: ViewFieldRelationScope | null;
   storedRelationTargetFieldMetadataId?: string | null;
+  storedLabel?: string | null;
 };
 
 export const SidePanelEditColumnForm = ({
@@ -75,6 +75,7 @@ export const SidePanelEditColumnForm = ({
   recordFieldId,
   storedRelationScope,
   storedRelationTargetFieldMetadataId,
+  storedLabel,
 }: SidePanelEditColumnFormProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -110,9 +111,27 @@ export const SidePanelEditColumnForm = ({
     useState(
       isJunctionRelation ? null : (storedRelationTargetFieldMetadataId ?? null),
     );
+  const [label, setLabel] = useState(storedLabel ?? null);
   const [isSaving, setIsSaving] = useState(false);
 
   const parsedLimitInput = parseRelationScopeLimitInput(limitInput);
+
+  const lookupTargetFieldMetadataItems = getLookupTargetFieldMetadataItems(
+    relationObjectMetadataItem,
+  );
+  const selectedLookupTargetFieldMetadataItem =
+    lookupTargetFieldMetadataItems.find(
+      ({ id }) => id === relationTargetFieldMetadataId,
+    );
+
+  const defaultColumnHeader = getRecordFieldColumnHeader({
+    fieldMetadataItem,
+    lookupTarget: isDefined(selectedLookupTargetFieldMetadataItem)
+      ? { lookupTargetFieldMetadataItem: selectedLookupTargetFieldMetadataItem }
+      : undefined,
+    isScopedRelationColumn: true,
+    customLabel: undefined,
+  });
 
   const handleSaveClick = async () => {
     if (!parsedLimitInput.isValid || isSaving) {
@@ -135,6 +154,7 @@ export const SidePanelEditColumnForm = ({
         scopedRelationJunction,
       }),
       relationTargetFieldMetadataId,
+      label,
     });
 
     if (!isSaved) {
@@ -153,39 +173,18 @@ export const SidePanelEditColumnForm = ({
     dependencies: [currentFocusId, handleSaveClick],
   });
 
-  const lookupTargetFieldMetadataItems = getLookupTargetFieldMetadataItems(
-    relationObjectMetadataItem,
-  );
-  const selectedLookupTargetFieldMetadataItem =
-    lookupTargetFieldMetadataItems.find(
-      ({ id }) => id === relationTargetFieldMetadataId,
-    );
-
-  const columnHeader = getRecordFieldColumnHeader({
-    fieldMetadataItem,
-    lookupTarget: isDefined(selectedLookupTargetFieldMetadataItem)
-      ? { lookupTargetFieldMetadataItem: selectedLookupTargetFieldMetadataItem }
-      : undefined,
-    isScopedRelationColumn: true,
-    customLabel: undefined,
-  });
-
-  const ColumnIcon = getIcon(columnHeader.icon);
+  const ColumnIcon = getIcon(defaultColumnHeader.icon);
 
   return (
     <StyledContainer ref={containerRef} tabIndex={-1}>
-      <PageCardHeader
-        title={
-          <HeaderIdentifier
-            icon={
-              <ColumnIcon
-                size={theme.icon.size.md}
-                stroke={theme.icon.stroke.sm}
-              />
-            }
-            title={columnHeader.label}
-          />
+      <SidePanelEditColumnHeader
+        instanceId={`edit-column-label-${sidePanelPageId}`}
+        icon={
+          <ColumnIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         }
+        defaultLabel={defaultColumnHeader.label}
+        label={label}
+        onLabelChange={setLabel}
       />
       <StyledContent>
         {!isJunctionRelation && (
