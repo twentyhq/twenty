@@ -15,9 +15,12 @@ export const useListenToScopedRelationRecordOperation = ({
   const handleRecordOperation = ({
     objectMetadataItem,
   }: ObjectRecordOperationBrowserEventDetail) => {
+    // A join object column also lists its target records, which carry no reference to the rows showing them
     const isShownInScopedColumn = scopedRelationAliases.some(
-      ({ relationObjectMetadataItem }) =>
-        relationObjectMetadataItem.id === objectMetadataItem.id,
+      ({ relationObjectMetadataItem, scopedRelationJunction }) =>
+        relationObjectMetadataItem.id === objectMetadataItem.id ||
+        scopedRelationJunction?.targetObjectMetadataItem.id ===
+          objectMetadataItem.id,
     );
 
     if (isShownInScopedColumn) {

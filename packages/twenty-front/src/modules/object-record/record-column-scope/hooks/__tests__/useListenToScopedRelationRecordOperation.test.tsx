@@ -2,9 +2,12 @@ import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils
 import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
 import { useListenToScopedRelationRecordOperation } from '@/object-record/record-column-scope/hooks/useListenToScopedRelationRecordOperation';
 import { type ScopedRelationAlias } from '@/object-record/record-column-scope/types/ScopedRelationAlias';
+import { resolveScopedRelationJunction } from '@/object-record/record-column-scope/utils/resolveScopedRelationJunction';
 import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 const taskObjectMetadataItem = getMockObjectMetadataItemOrThrow('task');
@@ -57,5 +60,32 @@ describe('useListenToScopedRelationRecordOperation', () => {
     });
 
     expect(onScopedRelationRecordOperation).not.toHaveBeenCalled();
+  });
+
+  it('reloads when a target record of a join object column is written', () => {
+    const { scopedRelationJunction } = resolveScopedRelationJunction({
+      fieldMetadataItem: getMockFieldMetadataItemOrThrow({
+        objectMetadataItem: personObjectMetadataItem,
+        fieldName: 'taskTargets',
+      }),
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
+    });
+    const onScopedRelationRecordOperation = renderListener([
+      {
+        recordFieldId: 'task-targets-column',
+        responseKey: 'taskTargets_scoped',
+        relationFieldName: 'taskTargets',
+        relationObjectMetadataItem:
+          getMockObjectMetadataItemOrThrow('taskTarget'),
+        scopedRelationJunction,
+      },
+    ]);
+
+    dispatchObjectRecordOperationBrowserEvent({
+      objectMetadataItem: taskObjectMetadataItem,
+      operation: { type: 'delete-one', deletedRecordId: 'task' },
+    });
+
+    expect(onScopedRelationRecordOperation).toHaveBeenCalledTimes(1);
   });
 });
