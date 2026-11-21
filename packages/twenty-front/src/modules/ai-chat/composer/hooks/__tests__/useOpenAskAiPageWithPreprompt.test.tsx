@@ -5,7 +5,7 @@ import { type ReactNode } from 'react';
 import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/constants/AiChatNewThreadDefaultRecipients';
 import { useOpenAskAiPageWithPreprompt } from '@/ai-chat/composer/hooks/useOpenAskAiPageWithPreprompt';
 import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatComposerDraftsState';
-import { aiChatOpenThreadIdByInstanceIdState } from '@/ai-chat/states/aiChatOpenThreadIdByInstanceIdState';
+import { aiChatRequiredThreadListenersState } from '@/ai-chat/states/aiChatRequiredThreadListenersState';
 import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
 import { aiChatPrepromptState } from '@/ai-chat/states/aiChatPrepromptState';
 import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/states/composer/aiChatComposerAttachmentsFamilyState';
@@ -29,7 +29,7 @@ let finishUpload: () => void = () => {};
 jest.mock('@/ai-chat/composer/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({
     switchToNewChat: () => {
-      jotaiStore.set(aiChatOpenThreadIdByInstanceIdState.atom, {
+      jotaiStore.set(aiChatRequiredThreadListenersState.atom, {
         'side-panel': NEW_CHAT_THREAD_ID,
       });
 
@@ -120,7 +120,7 @@ describe('useOpenAskAiPageWithPreprompt', () => {
         files: [new File(['name'], 'contacts.csv')],
       });
 
-      jotaiStore.set(aiChatOpenThreadIdByInstanceIdState.atom, {
+      jotaiStore.set(aiChatRequiredThreadListenersState.atom, {
         'side-panel': OTHER_CHAT_THREAD_ID,
       });
       finishUpload();

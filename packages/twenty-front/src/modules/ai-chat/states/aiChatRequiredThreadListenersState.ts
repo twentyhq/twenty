@@ -1,8 +1,8 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const aiChatOpenThreadIdByInstanceIdState = createAtomState<
+export const aiChatRequiredThreadListenersState = createAtomState<
   Record<string, string>
 >({
-  key: 'ai/aiChatOpenThreadIdByInstanceIdState',
+  key: 'aiChatRequiredThreadListenersState',
   defaultValue: {},
 });

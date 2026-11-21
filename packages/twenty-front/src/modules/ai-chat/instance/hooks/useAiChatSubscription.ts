@@ -42,8 +42,8 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
+import { type AiChatStreamCatchup } from '@/ai-chat/types/AiChatStreamCatchup';
 import {
-  type GetChatMessagesQuery,
   OnAgentChatEventDocument,
   type OnAgentChatEventSubscription,
 } from '~/generated-metadata/graphql';
@@ -51,10 +51,6 @@ import {
 const THROTTLE_MS = 100;
 const PERMISSIONS_REFRESH_INTERVAL_MS = 30_000;
 const MAX_SILENT_RECOVERY_ATTEMPTS = 3;
-
-type AiChatStreamCatchup = NonNullable<
-  GetChatMessagesQuery['chatStreamCatchupChunks']
->;
 
 type AiChatLiveStream = {
   handleEvent: (event: AgentChatSubscriptionEvent) => void;
