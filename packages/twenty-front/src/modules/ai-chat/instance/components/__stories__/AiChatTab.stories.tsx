@@ -89,7 +89,7 @@ const newChatParameters = {
   msw: {
     handlers: [
       graphql.query('GetAiChatUsage', () =>
-        HttpResponse.json({ data: { aiChatThreadFetchedUsage: null } }),
+        HttpResponse.json({ data: { aiChatUsage: null } }),
       ),
     ],
   },

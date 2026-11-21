@@ -8,9 +8,9 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { AiChatContextUsageButton } from '@/ai-chat/usage/components/AiChatContextUsageButton';
 import { AiChatContextUsageDetails } from '@/ai-chat/usage/components/AiChatContextUsageDetails';
 import {
-  aiChatThreadFetchedUsageFamilyState,
+  aiChatThreadUsageFamilyState,
   type AiChatUsageState,
-} from '@/ai-chat/states/server/aiChatThreadFetchedUsageFamilyState';
+} from '@/ai-chat/states/server/aiChatThreadUsageFamilyState';
 import { type AiChatUserCreditsUsage } from '@/ai-chat/usage/types/AiChatUserCreditsUsage';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
@@ -64,7 +64,7 @@ const UsageStory = ({
       billingCustomer: { id: 'billing-customer', userCreditsFallback },
     });
     storyStore.set(
-      aiChatThreadFetchedUsageFamilyState.atomFamily({
+      aiChatThreadUsageFamilyState.atomFamily({
         threadId: 'story-thread',
       }),
       usage,
@@ -85,7 +85,7 @@ const UsageStory = ({
                 : {
                     result: {
                       data: {
-                        aiChatThreadFetchedUsage:
+                        aiChatUsage:
                           limit === null
                             ? null
                             : {

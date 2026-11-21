@@ -17,7 +17,7 @@ import { aiChatThreadIsFetchingMessagesFamilyState } from '@/ai-chat/states/serv
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { type AiChatThreadEventDetail } from '@/ai-chat/types/AiChatThreadEventDetail';
-import { aiChatThreadFetchedUsageFamilyState } from '@/ai-chat/states/server/aiChatThreadFetchedUsageFamilyState';
+import { aiChatThreadUsageFamilyState } from '@/ai-chat/states/server/aiChatThreadUsageFamilyState';
 import { getAiChatUsageFromThread } from '@/ai-chat/usage/utils/getAiChatUsageFromThread';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -182,7 +182,7 @@ export const AiChatThreadRuntimeEffect = ({
   );
 
   useEffect(() => {
-    const usageAtom = aiChatThreadFetchedUsageFamilyState.atomFamily({
+    const usageAtom = aiChatThreadUsageFamilyState.atomFamily({
       threadId,
     });
 

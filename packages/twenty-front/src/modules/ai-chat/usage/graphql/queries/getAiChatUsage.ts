@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 
 export const GET_AI_CHAT_USAGE = gql`
   query GetAiChatUsage {
-    aiChatThreadFetchedUsage {
+    aiChatUsage {
       limitValue
       consumedValue
       periodEnd

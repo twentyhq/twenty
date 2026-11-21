@@ -28,7 +28,7 @@ import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiCha
 import { endAiChatReplyStatus } from '@/ai-chat/utils/endAiChatReplyStatus';
 import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { aiChatThreadReplyRecoveryAttemptsFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyRecoveryAttemptsFamilyState';
-import { aiChatThreadFetchedUsageFamilyState } from '@/ai-chat/states/server/aiChatThreadFetchedUsageFamilyState';
+import { aiChatThreadUsageFamilyState } from '@/ai-chat/states/server/aiChatThreadUsageFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { accumulateAiChatUsage } from '@/ai-chat/usage/utils/accumulateAiChatUsage';
 import { AiChatErrorCode } from '@/ai-chat/utils/aiChatErrorCode';
@@ -91,7 +91,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
       aiChatThreadDisplayedMessagesFamilyState.atomFamily(familyKey);
     const persistedMessagesAtom =
       aiChatThreadFetchedMessagesFamilyState.atomFamily(familyKey);
-    const usageAtom = aiChatThreadFetchedUsageFamilyState.atomFamily(familyKey);
+    const usageAtom = aiChatThreadUsageFamilyState.atomFamily(familyKey);
     const recoveryAttemptsAtom =
       aiChatThreadReplyRecoveryAttemptsFamilyState.atomFamily(familyKey);
     const liveReactionRevisionsAtom =

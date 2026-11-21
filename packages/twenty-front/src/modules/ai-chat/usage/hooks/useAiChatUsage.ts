@@ -17,16 +17,16 @@ export const useAiChatUsage = ({
     fetchPolicy,
   });
 
-  const aiChatThreadFetchedUsage = data?.aiChatThreadFetchedUsage;
+  const aiChatUsage = data?.aiChatUsage;
 
-  const usage: AiChatUsage | null = isDefined(aiChatThreadFetchedUsage)
+  const usage: AiChatUsage | null = isDefined(aiChatUsage)
     ? {
-        limitValue: Number(aiChatThreadFetchedUsage.limitValue),
-        consumedValue: isDefined(aiChatThreadFetchedUsage.consumedValue)
-          ? Number(aiChatThreadFetchedUsage.consumedValue)
+        limitValue: Number(aiChatUsage.limitValue),
+        consumedValue: isDefined(aiChatUsage.consumedValue)
+          ? Number(aiChatUsage.consumedValue)
           : null,
-        periodEnd: aiChatThreadFetchedUsage.periodEnd ?? null,
-        kind: aiChatThreadFetchedUsage.kind,
+        periodEnd: aiChatUsage.periodEnd ?? null,
+        kind: aiChatUsage.kind,
       }
     : null;
 

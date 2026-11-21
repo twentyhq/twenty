@@ -6193,7 +6193,7 @@ export type Query = {
   agentRunInsights: AgentRunInsights;
   agentRunSummaries: Array<AgentRunSummary>;
   agentRuns: Array<AgentRun>;
-  aiChatThreadFetchedUsage?: Maybe<AiChatUsage>;
+  aiChatUsage?: Maybe<AiChatUsage>;
   aiChatUserCreditsUsage?: Maybe<AiChatUserCreditsUsage>;
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
