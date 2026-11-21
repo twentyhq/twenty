@@ -169,7 +169,6 @@ export const SidePanelEditColumnForm = ({
     customLabel: undefined,
   });
 
-  // Until its field is picked, a summary has no operation and field to be named after
   const defaultColumnLabel =
     isSummary && !isDefined(summary)
       ? `${fieldMetadataItem.label} · ${t`Summary`}`

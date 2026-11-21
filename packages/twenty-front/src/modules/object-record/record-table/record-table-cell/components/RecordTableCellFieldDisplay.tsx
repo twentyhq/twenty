@@ -16,7 +16,7 @@ export const RecordTableCellFieldDisplay = () => {
   );
   const lookupTarget = scopedRelationAlias?.lookupTarget;
 
-  if (isDefined(scopedRelationAlias?.summary) && isForbidden !== true) {
+  if (isDefined(scopedRelationAlias?.summary) && !isForbidden) {
     return (
       <ScopedRelationSummaryFieldDisplay
         responseKey={scopedRelationAlias.responseKey}
@@ -25,7 +25,7 @@ export const RecordTableCellFieldDisplay = () => {
     );
   }
 
-  if (!isDefined(lookupTarget) || isForbidden === true) {
+  if (!isDefined(lookupTarget) || isForbidden) {
     return <FieldDisplay />;
   }
 

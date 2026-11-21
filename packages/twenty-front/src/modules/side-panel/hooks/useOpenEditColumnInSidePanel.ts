@@ -47,7 +47,6 @@ export const useOpenEditColumnInSidePanel = (recordTableId: string) => {
     }: {
       fieldMetadataItemId: string;
       recordFieldId?: string;
-      // Read from the column when it exists, a summary being a column with an aggregate operation
       kind?: EditColumnKind;
     }) => {
       const viewId = store.get(

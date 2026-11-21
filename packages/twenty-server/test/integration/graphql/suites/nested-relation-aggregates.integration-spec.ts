@@ -70,7 +70,6 @@ type OpportunityAggregates = {
   minCloseDate: string | null;
 };
 
-// The aggregates of a filtered nested connection, as a filtered column of a table selects them
 describe('Aggregates of a filtered nested one-to-many relation (e2e)', () => {
   beforeAll(async () => {
     await makeGraphqlApiRequest(
