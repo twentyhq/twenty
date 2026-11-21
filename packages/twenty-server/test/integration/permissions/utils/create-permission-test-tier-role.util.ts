@@ -9,7 +9,10 @@ export const createPermissionTestTierRole = async ({
   ruleId,
   tiers,
 }: {
-  workspace: PermissionTestWorkspace;
+  workspace: Pick<
+    PermissionTestWorkspace,
+    'objectMetadataId' | 'tierFieldMetadataId' | 'adminAccessToken'
+  >;
   label: string;
   ruleId: string;
   tiers: string[];

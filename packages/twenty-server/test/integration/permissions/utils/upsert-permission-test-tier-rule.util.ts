@@ -12,7 +12,10 @@ export const upsertPermissionTestTierRule = ({
   ruleId,
   tiers,
 }: {
-  workspace: PermissionTestWorkspace;
+  workspace: Pick<
+    PermissionTestWorkspace,
+    'objectMetadataId' | 'tierFieldMetadataId' | 'adminAccessToken'
+  >;
   roleId: string;
   ruleId: string;
   tiers: string[];
