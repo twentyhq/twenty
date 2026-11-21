@@ -2,8 +2,9 @@ import { MockedProvider } from '@apollo/client/testing/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 import { IconComment, IconHome, IconSettings } from 'twenty-ui/icon';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -39,6 +40,17 @@ jest.mock(
   '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController',
   () => ({
     useNavigationMenuItemEditController: () => ({ createItem: jest.fn() }),
+  }),
+);
+
+const mockEnterLayoutCustomizationMode = jest.fn();
+
+jest.mock(
+  '@/layout-customization/hooks/useEnterLayoutCustomizationMode',
+  () => ({
+    useEnterLayoutCustomizationMode: () => ({
+      enterLayoutCustomizationMode: mockEnterLayoutCustomizationMode,
+    }),
   }),
 );
 
@@ -88,9 +100,11 @@ const buildOpenThreadsSummaryMock = (hasUnreadOpenThread: boolean) => ({
 const renderTabSwitcher = ({
   isLayoutCustomizationModeEnabled = false,
   hasUnreadOpenThread = false,
+  permissionFlags = [PermissionFlagType.AI],
 }: {
   isLayoutCustomizationModeEnabled?: boolean;
   hasUnreadOpenThread?: boolean;
+  permissionFlags?: PermissionFlagType[];
 } = {}) => {
   const store = createStore();
 
@@ -100,7 +114,7 @@ const renderTabSwitcher = ({
   );
   store.set(currentUserWorkspaceState.atom, {
     ...mockedUserData.currentUserWorkspace,
-    permissionFlags: [PermissionFlagType.AI],
+    permissionFlags,
   });
 
   render(
@@ -109,7 +123,9 @@ const renderTabSwitcher = ({
         <MockedProvider
           mocks={[buildOpenThreadsSummaryMock(hasUnreadOpenThread)]}
         >
-          <MainNavigationDrawerTabSwitcher />
+          <MemoryRouter>
+            <MainNavigationDrawerTabSwitcher />
+          </MemoryRouter>
         </MockedProvider>
       </JotaiProvider>
     </I18nProvider>,
@@ -291,6 +307,72 @@ describe('MainNavigationDrawerTabSwitcher', () => {
     );
     expect(screen.getByRole('button', { name: 'Home' })).not.toHaveAttribute(
       'aria-current',
+    );
+  });
+
+  it('opens Customize sidebar when the active sidebar tab is clicked again', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
+
+    renderTabSwitcher({ permissionFlags: [PermissionFlagType.LAYOUTS] });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Sales' }));
+    await userEvent.click(
+      await screen.findByRole('menuitem', { name: 'Customize sidebar' }),
+    );
+
+    expect(mockEnterLayoutCustomizationMode).toHaveBeenCalledTimes(1);
+    expect(mockSwitchToNavigationMenuTab).not.toHaveBeenCalled();
+  });
+
+  it('opens Customize sidebar from a right-click on a sidebar tab', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
+
+    renderTabSwitcher({ permissionFlags: [PermissionFlagType.LAYOUTS] });
+
+    await userEvent.pointer({
+      target: screen.getByRole('button', { name: 'Sales' }),
+      keys: '[MouseRight]',
+    });
+
+    expect(
+      await screen.findByRole('menuitem', { name: 'Customize sidebar' }),
+    ).toBeInTheDocument();
+  });
+
+  it('keeps switching to the active sidebar tab without the layouts permission', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
+
+    renderTabSwitcher();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Sales' }));
+
+    expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith('sales-tab-id');
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+  });
+
+  it('closes the tab menu when the active sidebar tab is clicked again', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
+
+    renderTabSwitcher({ permissionFlags: [PermissionFlagType.LAYOUTS] });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Sales' }));
+    expect(await screen.findByRole('menu')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Sales' }));
+    await waitFor(() =>
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
     );
   });
 });

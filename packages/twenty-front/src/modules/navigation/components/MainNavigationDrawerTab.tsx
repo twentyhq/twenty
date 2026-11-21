@@ -1,14 +1,18 @@
 import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { styled } from '@linaria/react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { type ReactNode } from 'react';
+import { type MouseEvent, type ReactNode } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 
-const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
+const StyledMode = styled.button<{
+  isActive: boolean;
+  isExpanded: boolean;
+  isSelectedInEditMode: boolean;
+}>`
   align-items: center;
   background: ${({ isActive }) =>
     isActive ? themeCssVariables.background.transparent.light : 'transparent'};
@@ -39,6 +43,11 @@ const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
   justify-content: ${({ isExpanded }) =>
     isExpanded ? 'flex-start' : 'center'};
   min-width: 0;
+  outline: ${({ isSelectedInEditMode }) =>
+    isSelectedInEditMode
+      ? `1px solid ${themeCssVariables.color.blue}`
+      : 'none'};
+  outline-offset: -1px;
   padding: ${({ isExpanded }) =>
     isExpanded ? `0 ${themeCssVariables.spacing['1.5']}` : '0'};
   transition:
@@ -96,6 +105,8 @@ type MainNavigationDrawerTabProps = {
   tooltip: string;
   shouldShowTooltip: boolean;
   onClick: () => void;
+  onContextMenu?: (event: MouseEvent<HTMLButtonElement>) => void;
+  isSelectedInEditMode?: boolean;
   ariaLabel?: string;
   iconAccessory?: ReactNode;
 };
@@ -109,6 +120,8 @@ export const MainNavigationDrawerTab = ({
   tooltip,
   shouldShowTooltip,
   onClick,
+  onContextMenu,
+  isSelectedInEditMode = false,
   ariaLabel,
   iconAccessory,
 }: MainNavigationDrawerTabProps) => {
@@ -127,6 +140,7 @@ export const MainNavigationDrawerTab = ({
         type="button"
         isActive={isActive}
         isExpanded={isExpanded}
+        isSelectedInEditMode={isSelectedInEditMode}
         aria-label={ariaLabel ?? label}
         aria-current={isActive || undefined}
         aria-disabled={isDisabled}
@@ -137,6 +151,7 @@ export const MainNavigationDrawerTab = ({
 
           onClick();
         }}
+        onContextMenu={onContextMenu}
       >
         <StyledModeIcon>
           <Icon size={theme.icon.size.md} />
