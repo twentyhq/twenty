@@ -21,15 +21,12 @@ import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/int
 import { RecordAccessGroupPropagationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-propagation.service';
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-computation-metadata-maps.type';
-import { buildRecordAccessGroupSQLConditionOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-sql-condition-or-throw.util';
-import { buildRlsRuleShapeByHash } from 'src/engine/permissions/internal/access-group/utils/build-rls-rule-shape-by-hash.util';
-import { findAccessGroupValueLookups } from 'src/engine/permissions/internal/access-group/utils/find-access-group-value-lookups.util';
+import { buildRecordAccessGroupSQLConditions } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-sql-conditions.util';
+import { findLookupRuleShapeHashesByObjectMetadataId } from 'src/engine/permissions/internal/access-group/utils/find-lookup-rule-shape-hashes-by-object-metadata-id.util';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { planAccessGroupSyncRecomputes } from 'src/engine/permissions/internal/access-group/utils/plan-access-group-sync-recomputes.util';
 import { planRecordAccessGroupComputes } from 'src/engine/permissions/internal/access-group/utils/plan-record-access-group-computes.util';
-import { RECORD_ACCESS_GROUP_TABLE_ALIAS } from 'src/engine/permissions/internal/record-permission-repository/constants/record-access-group-table-alias.constant';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
-import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
 
 @Injectable()
 export class AccessGroupSyncService {
@@ -99,7 +96,7 @@ export class AccessGroupSyncService {
       planAccessGroupSyncRecomputes({
         changedAccessGroups,
         lookupRuleShapeHashesByObjectMetadataId:
-          this.findLookupRuleShapeHashesByObjectMetadataId({
+          findLookupRuleShapeHashesByObjectMetadataId({
             objectMetadataIds: changedAccessGroups.map(
               ({ objectMetadataId }) => objectMetadataId,
             ),
@@ -144,29 +141,6 @@ export class AccessGroupSyncService {
     }
   }
 
-  private findLookupRuleShapeHashesByObjectMetadataId({
-    objectMetadataIds,
-    metadataMaps,
-  }: {
-    objectMetadataIds: string[];
-    metadataMaps: RecordAccessGroupComputationMetadataMaps;
-  }): Map<string, Set<string>> {
-    return new Map(
-      [...new Set(objectMetadataIds)].map((objectMetadataId) => [
-        objectMetadataId,
-        new Set(
-          findAccessGroupValueLookups({
-            flatObjectMetadata: findFlatEntityByIdInFlatEntityMapsOrThrow({
-              flatEntityId: objectMetadataId,
-              flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
-            }),
-            metadataMaps,
-          }).map(({ ruleShapeHash }) => ruleShapeHash),
-        ),
-      ]),
-    );
-  }
-
   private async applyIncrementalChanges({
     workspaceId,
     objectMetadataId,
@@ -207,43 +181,25 @@ export class AccessGroupSyncService {
       flatEntityId: objectMetadataId,
       flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
     });
-    const ruleShapeByHash = buildRlsRuleShapeByHash({
-      objectMetadataId,
-      rolesPermissions: metadataMaps.rolesPermissions,
-      isRelationHopEnabled: isRlsRelationHopEnabled(
-        metadataMaps.featureFlagsMap,
-      ),
-    });
-    const changedRecordIds = new Set<string>();
-
-    for (const insertedAccessGroup of insertedAccessGroups) {
-      const matchingRecordIds =
-        await this.recordAccessGroupRepository.addAccessGroupIdToMatchingRecords(
-          {
-            workspaceId,
+    const changedRecordIds =
+      await this.recordAccessGroupRepository.addAccessGroupIdsToMatchingRecords(
+        {
+          workspaceId,
+          flatObjectMetadata,
+          recordAccessGroupSQLConditions: buildRecordAccessGroupSQLConditions({
             flatObjectMetadata,
-            compactId: insertedAccessGroup.compactId,
-            sqlCondition: buildRecordAccessGroupSQLConditionOrThrow({
-              accessGroup: insertedAccessGroup,
-              ruleShapeByHash,
-              flatObjectMetadata,
-              tableAlias: RECORD_ACCESS_GROUP_TABLE_ALIAS,
-              metadataMaps,
-            }),
-          },
-        );
-
-      for (const recordId of matchingRecordIds) {
-        changedRecordIds.add(recordId);
-      }
-    }
+            metadataMaps,
+            accessGroups: insertedAccessGroups,
+          }),
+        },
+      );
 
     for (const followingRecords of await this.recordAccessGroupPropagationService.findRecordsFollowingRelatedRecordPaths(
       {
         workspaceId,
         objectMetadataId,
-        changedRecordIds: [...changedRecordIds],
-        writtenRecordIds: [...changedRecordIds],
+        changedRecordIds,
+        writtenRecordIds: changedRecordIds,
         recordsBefore: [],
       },
     )) {

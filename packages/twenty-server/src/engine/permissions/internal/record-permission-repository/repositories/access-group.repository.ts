@@ -12,26 +12,19 @@ import { fromAccessGroupRowToAccessGroup } from 'src/engine/permissions/internal
 
 const INSERT_BATCH_SIZE = 500;
 
+type StoredAccessGroupKey = Pick<
+  AccessGroup,
+  'compactId' | 'groupHash' | 'objectMetadataId' | 'ruleShapeHash'
+>;
+
 @Injectable()
 export class AccessGroupRepository {
   constructor(
     private readonly recordPermissionQueryService: RecordPermissionQueryService,
   ) {}
 
-  async findAccessGroups(
-    workspaceId: string,
-  ): Promise<
-    Pick<
-      AccessGroup,
-      'compactId' | 'groupHash' | 'objectMetadataId' | 'ruleShapeHash'
-    >[]
-  > {
-    return this.recordPermissionQueryService.execute<
-      Pick<
-        AccessGroup,
-        'compactId' | 'groupHash' | 'objectMetadataId' | 'ruleShapeHash'
-      >
-    >({
+  async findAccessGroups(workspaceId: string): Promise<StoredAccessGroupKey[]> {
+    return this.recordPermissionQueryService.execute<StoredAccessGroupKey>({
       workspaceId,
       query: {
         sql: `SELECT "compactId", "groupHash", "objectMetadataId", "ruleShapeHash" FROM ${buildAccessGroupTableExpression(workspaceId)}`,

@@ -12,6 +12,7 @@ import { type RecordAccessGroupSQLCondition } from 'src/engine/permissions/inter
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-computation-metadata-maps.type';
 import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
+import { buildOwnAccessGroupIdsExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-own-access-group-ids-expression.util';
 import { buildRelatedRecordPathHopsJoin } from 'src/engine/permissions/internal/record-permission-repository/utils/build-related-record-path-hops-join.util';
 import { buildRecomputeRecordAccessGroupIdsQuery } from 'src/engine/permissions/internal/record-permission-repository/utils/build-recompute-record-access-group-ids-query.util';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
@@ -189,23 +190,24 @@ export class RecordAccessGroupRepository {
     return updatedRows.map(({ id }) => id);
   }
 
-  async addAccessGroupIdToMatchingRecords({
+  async addAccessGroupIdsToMatchingRecords({
     workspaceId,
     flatObjectMetadata,
-    compactId,
-    sqlCondition,
+    recordAccessGroupSQLConditions,
   }: {
     workspaceId: string;
     flatObjectMetadata: FlatObjectMetadata;
-    compactId: number;
-    sqlCondition: SQLCondition | null;
+    recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[];
   }): Promise<string[]> {
+    if (recordAccessGroupSQLConditions.length === 0) {
+      return [];
+    }
+
     const alias = escapeIdentifier(RECORD_ACCESS_GROUP_TABLE_ALIAS);
     const accessGroupIds = `COALESCE(${alias}.${escapeIdentifier(ACCESS_GROUP_IDS_COLUMN_NAME)}, CAST('{}' AS integer[]))`;
-    const addedAccessGroupIds = `CAST(ARRAY[:addedCompactId] AS integer[])`;
-    const matchingCondition = isDefined(sqlCondition)
-      ? ` AND (${sqlCondition.sql})`
-      : '';
+    const addedAccessGroupIds = buildOwnAccessGroupIdsExpression(
+      recordAccessGroupSQLConditions,
+    );
     const rows = await this.recordPermissionQueryService.execute<{
       id: string;
     }>({
@@ -216,12 +218,14 @@ export class RecordAccessGroupRepository {
           tableName: computeObjectTargetTable(flatObjectMetadata),
         })} AS ${alias}
           SET ${escapeIdentifier(ACCESS_GROUP_IDS_COLUMN_NAME)} = ARRAY(SELECT DISTINCT "accessGroupId" FROM unnest(${accessGroupIds} || ${addedAccessGroupIds}) AS "accessGroupId" ORDER BY "accessGroupId")
-          WHERE NOT (${accessGroupIds} @> ${addedAccessGroupIds})${matchingCondition}
+          WHERE NOT (${accessGroupIds} @> ${addedAccessGroupIds})
           RETURNING ${alias}."id"`,
-        parameters: {
-          ...sqlCondition?.parameters,
-          addedCompactId: compactId,
-        },
+        parameters: Object.assign(
+          {},
+          ...recordAccessGroupSQLConditions.map(
+            ({ sqlCondition }) => sqlCondition?.parameters ?? {},
+          ),
+        ),
       },
     });
 

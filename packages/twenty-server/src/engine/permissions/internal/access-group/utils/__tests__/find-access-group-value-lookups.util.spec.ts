@@ -190,10 +190,13 @@ const buildPredicate = ({
   ...predicate,
 });
 
-const buildPredicateGroup = (
-  id: string,
-  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,
-): RowLevelPermissionPredicateGroup => ({
+const buildPredicateGroup = ({
+  id,
+  logicalOperator,
+}: {
+  id: string;
+  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
+}): RowLevelPermissionPredicateGroup => ({
   id,
   objectMetadataId: OPPORTUNITY_ID,
   positionInRowLevelPermissionPredicateGroup: null,
@@ -395,14 +398,14 @@ describe('findAccessGroupValueLookups', () => {
   });
 
   it('should only use a key reached through AND groups', () => {
-    const orGroup = buildPredicateGroup(
-      'or-group',
-      RowLevelPermissionPredicateGroupLogicalOperator.OR,
-    );
-    const andGroup = buildPredicateGroup(
-      'and-group',
-      RowLevelPermissionPredicateGroupLogicalOperator.AND,
-    );
+    const orGroup = buildPredicateGroup({
+      id: 'or-group',
+      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+    });
+    const andGroup = buildPredicateGroup({
+      id: 'and-group',
+      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+    });
 
     expect(
       findLookups({
