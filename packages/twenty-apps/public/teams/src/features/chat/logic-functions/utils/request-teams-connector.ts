@@ -35,7 +35,6 @@ export const requestTeamsConnector = async ({
     );
   }
 
-  // Attempts and waits share one timeout, so retries never outlast what callers budget for a single call.
   const deadlineAtMs = Date.now() + TEAMS_CONNECTOR_REQUEST_TIMEOUT_MS;
 
   const sendRequest = async ({
@@ -45,7 +44,6 @@ export const requestTeamsConnector = async ({
     attempt: number;
     waitedMs: number;
   }): Promise<string> => {
-    // A thrown fetch is never retried: a send that timed out may have been delivered.
     const response = await fetch(`${normalizedServiceUrl}${path}`, {
       method,
       headers: {
@@ -87,7 +85,7 @@ export const requestTeamsConnector = async ({
 
     await sleepForMilliseconds(delayMs);
 
-    if (isDefined(retryAbortSignal) && retryAbortSignal.aborted) {
+    if (retryAbortSignal?.aborted === true) {
       throw failure;
     }
 

@@ -69,7 +69,6 @@ export const startTeamsAssistantStream = async ({
       });
     },
     finish: (text) => {
-      // An update still backing off must not be resent after the final message.
       streamClosing.abort();
 
       return sendStreamActivity({
