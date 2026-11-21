@@ -186,7 +186,7 @@ describe('buildRecomputeRecordAccessGroupIdsQuery', () => {
       });
 
       expect(sql).toContain(
-        `NOT EXISTS (SELECT 1 FROM "${SCHEMA}"."accessGroup" AS "inheritedAccessGroup" WHERE "inheritedAccessGroup"."compactId" = "inherited"."accessGroupId" AND ("inheritedAccessGroup"."roleId" = ANY(CAST(:relatedRecordPathRoleIdsUnableToReadRelation_0 AS uuid[])) OR "inheritedAccessGroup"."rowLevelPermissionPredicateGroupId" = ANY(CAST(:relatedRecordPathRuleIdsUnableToReadRelation_0 AS uuid[]))))`,
+        `NOT EXISTS (SELECT 1 FROM "${SCHEMA}"."accessGroup" AS "inheritedAccessGroup" WHERE "inheritedAccessGroup"."compactId" = "inherited"."accessGroupId" AND CASE WHEN "inheritedAccessGroup"."memberFieldValues" -> 'sharedPredicate' IS NOT NULL THEN "inheritedAccessGroup"."memberFieldValues" -> 'sharedPredicate' -> 'unreadableFieldIds' @> jsonb_build_array(CAST(:relatedRecordPathRelationFieldMetadataId_0 AS text)) ELSE "inheritedAccessGroup"."roleId" = ANY(CAST(:relatedRecordPathRoleIdsUnableToReadRelation_0 AS uuid[])) OR "inheritedAccessGroup"."rowLevelPermissionPredicateGroupId" = ANY(CAST(:relatedRecordPathRuleIdsUnableToReadRelation_0 AS uuid[])) END)`,
       );
       expect(parameters).toEqual({
         recordIds: ['note-id'],
@@ -194,6 +194,8 @@ describe('buildRecomputeRecordAccessGroupIdsQuery', () => {
           roleIdsUnableToReadRelation,
         relatedRecordPathRuleIdsUnableToReadRelation_0:
           ruleIdsUnableToReadRelation,
+        relatedRecordPathRelationFieldMetadataId_0:
+          'company-note-targets-field-id',
       });
     },
   );

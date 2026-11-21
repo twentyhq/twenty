@@ -1,14 +1,50 @@
 /* @license Enterprise */
 
+import { type RowLevelRecordsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordAccessGroupSQLConditionMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-sql-condition-metadata-maps.type';
+import { ACCESS_GROUP_SHARED_PREDICATE_KEY } from 'src/engine/permissions/internal/access-group/constants/access-group-shared-predicate-key.constant';
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import { type AccessGroupSharedPredicate } from 'src/engine/permissions/internal/access-group/types/access-group-shared-predicate.type';
+import { findAccessGroupSharedPredicate } from 'src/engine/permissions/internal/access-group/utils/find-access-group-shared-predicate.util';
 import { buildRecordFilterForRule } from 'src/engine/permissions/internal/rls/utils/build-rls-record-filter.util';
 import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
 import { renderRlsRecordFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-rls-record-filter-to-sql.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
+
+const buildSharedPredicateRule = ({
+  sharedPredicate: {
+    objectMetadataId,
+    relationFieldMetadataId,
+    fieldMetadataId,
+    subFieldName,
+    operand,
+    value,
+  },
+  roleId,
+}: {
+  sharedPredicate: AccessGroupSharedPredicate;
+  roleId: string;
+}): Pick<RowLevelRecordsPermissions, 'predicates' | 'predicateGroups'> => ({
+  predicates: [
+    {
+      id: ACCESS_GROUP_SHARED_PREDICATE_KEY,
+      roleId,
+      objectMetadataId,
+      relationFieldMetadataId,
+      fieldMetadataId,
+      subFieldName,
+      operand,
+      value: [value],
+      workspaceMemberFieldMetadataId: null,
+      workspaceMemberSubFieldName: null,
+      rowLevelPermissionPredicateGroupId: null,
+    },
+  ],
+  predicateGroups: [],
+});
 
 // null when the group reaches every record of the object
 export const buildRecordAccessGroupSQLConditionOrThrow = ({
@@ -25,13 +61,23 @@ export const buildRecordAccessGroupSQLConditionOrThrow = ({
   tableAlias: string;
   metadataMaps: RecordAccessGroupSQLConditionMetadataMaps;
 }): SQLCondition | null => {
+  const sharedPredicate = findAccessGroupSharedPredicate(accessGroup);
+  // a shared group outlives the role it was first stored with, so it carries its own predicate
   const recordFilter = buildRecordFilterForRule({
-    rowLevelPermissionRule: metadataMaps.rolesPermissions[
-      accessGroup.roleId
-    ]?.objects[flatObjectMetadata.id]?.rowLevelRecordsPermissions?.find(
-      ({ ruleId }) => ruleId === accessGroup.rowLevelPermissionPredicateGroupId,
-    ),
-    memberFieldValues: accessGroup.memberFieldValues ?? {},
+    rowLevelPermissionRule: isDefined(sharedPredicate)
+      ? buildSharedPredicateRule({
+          sharedPredicate,
+          roleId: accessGroup.roleId,
+        })
+      : metadataMaps.rolesPermissions[accessGroup.roleId]?.objects[
+          flatObjectMetadata.id
+        ]?.rowLevelRecordsPermissions?.find(
+          ({ ruleId }) =>
+            ruleId === accessGroup.rowLevelPermissionPredicateGroupId,
+        ),
+    memberFieldValues: isDefined(sharedPredicate)
+      ? {}
+      : (accessGroup.memberFieldValues ?? {}),
     flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
     flatFieldMetadataOptionMaps: metadataMaps.flatFieldMetadataOptionMaps,
     flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,

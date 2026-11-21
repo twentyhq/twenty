@@ -2,6 +2,7 @@
 
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
+import { ACCESS_GROUP_SHARED_PREDICATE_KEY } from 'src/engine/permissions/internal/access-group/constants/access-group-shared-predicate-key.constant';
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-computation-metadata-maps.type';
 import { findRolesAndRulesUnableToReadField } from 'src/engine/permissions/internal/access-group/utils/find-roles-and-rules-unable-to-read-field.util';
@@ -50,6 +51,7 @@ export const buildInheritedAccessGroupIdsExpression = ({
   const sourceCompactIdsParameterName = `relatedRecordPathSourceCompactIds_${pathIndex}`;
   const roleIdsUnableToReadRelationParameterName = `relatedRecordPathRoleIdsUnableToReadRelation_${pathIndex}`;
   const ruleIdsUnableToReadRelationParameterName = `relatedRecordPathRuleIdsUnableToReadRelation_${pathIndex}`;
+  const relationFieldMetadataIdParameterName = `relatedRecordPathRelationFieldMetadataId_${pathIndex}`;
   const sourceCompactIds = accessGroups
     .filter(
       ({ objectMetadataId }) =>
@@ -91,7 +93,8 @@ export const buildInheritedAccessGroupIdsExpression = ({
         ]),
     ...(isRelationUnreadable
       ? [
-          `NOT EXISTS (SELECT 1 FROM ${buildAccessGroupTableExpression(workspaceId)} AS "inheritedAccessGroup" WHERE "inheritedAccessGroup"."compactId" = ${INHERITED_ACCESS_GROUP_ID} AND ("inheritedAccessGroup"."roleId" = ANY(CAST(:${roleIdsUnableToReadRelationParameterName} AS uuid[])) OR "inheritedAccessGroup"."rowLevelPermissionPredicateGroupId" = ANY(CAST(:${ruleIdsUnableToReadRelationParameterName} AS uuid[]))))`,
+          // a shared group may outlive the role it was stored with, so it is matched by the fields it cannot read
+          `NOT EXISTS (SELECT 1 FROM ${buildAccessGroupTableExpression(workspaceId)} AS "inheritedAccessGroup" WHERE "inheritedAccessGroup"."compactId" = ${INHERITED_ACCESS_GROUP_ID} AND CASE WHEN "inheritedAccessGroup"."memberFieldValues" -> '${ACCESS_GROUP_SHARED_PREDICATE_KEY}' IS NOT NULL THEN "inheritedAccessGroup"."memberFieldValues" -> '${ACCESS_GROUP_SHARED_PREDICATE_KEY}' -> 'unreadableFieldIds' @> jsonb_build_array(CAST(:${relationFieldMetadataIdParameterName} AS text)) ELSE "inheritedAccessGroup"."roleId" = ANY(CAST(:${roleIdsUnableToReadRelationParameterName} AS uuid[])) OR "inheritedAccessGroup"."rowLevelPermissionPredicateGroupId" = ANY(CAST(:${ruleIdsUnableToReadRelationParameterName} AS uuid[])) END)`,
         ]
       : []),
   ];
@@ -111,6 +114,8 @@ export const buildInheritedAccessGroupIdsExpression = ({
               roleIdsUnableToReadRelation,
             [ruleIdsUnableToReadRelationParameterName]:
               ruleIdsUnableToReadRelation,
+            [relationFieldMetadataIdParameterName]:
+              hops[0].relationFieldMetadataId,
           }
         : {}),
     },

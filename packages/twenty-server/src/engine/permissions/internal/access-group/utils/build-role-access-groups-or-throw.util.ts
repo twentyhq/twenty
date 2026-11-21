@@ -15,7 +15,12 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { buildAccessGroupMemberFieldValuesOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-access-group-member-field-values-or-throw.util';
-import { computeAccessGroupHash } from 'src/engine/permissions/internal/access-group/utils/compute-access-group-hash.util';
+import { ACCESS_GROUP_SHARED_PREDICATE_KEY } from 'src/engine/permissions/internal/access-group/constants/access-group-shared-predicate-key.constant';
+import {
+  computeAccessGroupHash,
+  computeSharedAccessGroupHash,
+} from 'src/engine/permissions/internal/access-group/utils/compute-access-group-hash.util';
+import { findRlsRuleSharedPredicateValues } from 'src/engine/permissions/internal/access-group/utils/find-rls-rule-shared-predicate-values.util';
 import { type RlsWorkspaceMember } from 'src/engine/permissions/internal/rls/types/rls-workspace-member.type';
 
 const ALL_OPERATION_TYPES: ObjectRecordsOperationType[] = [
@@ -34,6 +39,7 @@ export const buildRoleAccessGroupsOrThrow = ({
   workspaceMembers,
   flatFieldMetadataMaps,
   isRelationHopEnabled,
+  isSharingAccessGroupsByValue,
 }: {
   roleId: string;
   objectMetadataId: string;
@@ -42,6 +48,7 @@ export const buildRoleAccessGroupsOrThrow = ({
   workspaceMembers: RlsWorkspaceMember[];
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   isRelationHopEnabled: boolean;
+  isSharingAccessGroupsByValue: boolean;
 }): AccessGroupWithoutCompactId[] => {
   if (!isDefined(objectRecordsPermissions)) {
     return [];
@@ -90,9 +97,58 @@ export const buildRoleAccessGroupsOrThrow = ({
     };
   };
 
+  const buildSharedRuleAccessGroups = (
+    rowLevelPermissionRule: RowLevelRecordsPermissions,
+  ): AccessGroupWithoutCompactId[] | undefined => {
+    const sharedPredicateValues = findRlsRuleSharedPredicateValues(
+      rowLevelPermissionRule,
+    );
+
+    if (!isDefined(sharedPredicateValues)) {
+      return undefined;
+    }
+
+    // the fields a group cannot read are part of it, so paths can stop at its unreadable relations
+    const unreadableFieldIds = [
+      ...new Set([
+        ...objectRecordsPermissions.unreadableFields,
+        ...rowLevelPermissionRule.unreadableFields,
+      ]),
+    ].sort();
+
+    return sharedPredicateValues.values.map((value) => {
+      const sharedPredicate = {
+        ...sharedPredicateValues.sharedPredicate,
+        value,
+        unreadableFieldIds,
+      };
+
+      return {
+        groupHash: computeSharedAccessGroupHash({
+          sharedPredicate,
+          isRelationHopEnabled,
+        }),
+        roleId,
+        objectMetadataId,
+        rowLevelPermissionPredicateGroupId: rowLevelPermissionRule.ruleId,
+        memberFieldValues: {
+          [ACCESS_GROUP_SHARED_PREDICATE_KEY]: sharedPredicate,
+        },
+      };
+    });
+  };
+
   const buildRuleAccessGroups = (
     rowLevelPermissionRule: RowLevelRecordsPermissions,
   ): AccessGroupWithoutCompactId[] => {
+    const sharedRuleAccessGroups = isSharingAccessGroupsByValue
+      ? buildSharedRuleAccessGroups(rowLevelPermissionRule)
+      : undefined;
+
+    if (isDefined(sharedRuleAccessGroups)) {
+      return sharedRuleAccessGroups;
+    }
+
     const workspaceMemberBoundPredicates =
       rowLevelPermissionRule.predicates.filter(
         ({ workspaceMemberFieldMetadataId }) =>

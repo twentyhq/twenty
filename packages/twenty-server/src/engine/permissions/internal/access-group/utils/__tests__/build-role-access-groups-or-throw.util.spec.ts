@@ -148,6 +148,7 @@ const build = (
     workspaceMembers: [],
     flatFieldMetadataMaps,
     isRelationHopEnabled: true,
+    isSharingAccessGroupsByValue: false,
     ...overrides,
   });
 
@@ -448,5 +449,115 @@ describe('buildRoleAccessGroupsOrThrow', () => {
         }),
       }),
     ).toEqual([]);
+  });
+
+  describe('groups shared by value', () => {
+    const buildValueListPermissions = ({
+      ruleId = RULE_ID,
+      values,
+      unreadableFields = [],
+    }: {
+      ruleId?: string;
+      values: string[];
+      unreadableFields?: string[];
+    }): ObjectRecordsPermissions => ({
+      ...noAccess,
+      rowLevelRecordsPermissions: [
+        {
+          ...buildRule({
+            ruleId,
+            predicates: [
+              buildPredicate({
+                id: `${ruleId}-predicate`,
+                value: values,
+                rowLevelPermissionPredicateGroupId: ruleId,
+              }),
+            ],
+            predicateGroups: [
+              buildPredicateGroup({
+                id: ruleId,
+                parentRowLevelPermissionPredicateGroupId: null,
+              }),
+            ],
+          }),
+          unreadableFields,
+        },
+      ],
+    });
+    const buildShared = (
+      overrides: Pick<
+        Parameters<typeof buildRoleAccessGroupsOrThrow>[0],
+        'objectRecordsPermissions'
+      > &
+        Partial<Parameters<typeof buildRoleAccessGroupsOrThrow>[0]>,
+    ) => build({ isSharingAccessGroupsByValue: true, ...overrides });
+
+    it('should make one group per value, reached by every role listing it', () => {
+      const groupHashes = buildShared({
+        objectRecordsPermissions: buildValueListPermissions({
+          values: ['channel-a', 'channel-b'],
+        }),
+      }).map(({ groupHash }) => groupHash);
+      const otherRoleGroupHashes = buildShared({
+        roleId: 'other-role-id',
+        objectRecordsPermissions: buildValueListPermissions({
+          ruleId: 'other-rule-id',
+          values: ['channel-b'],
+        }),
+      }).map(({ groupHash }) => groupHash);
+
+      expect(groupHashes).toHaveLength(2);
+      expect(otherRoleGroupHashes).toEqual([groupHashes[1]]);
+    });
+
+    it('should keep groups apart when they cannot read the same fields', () => {
+      const [readableGroup] = buildShared({
+        objectRecordsPermissions: buildValueListPermissions({
+          values: ['channel-a'],
+        }),
+      });
+      const [unreadableGroup] = buildShared({
+        objectRecordsPermissions: buildValueListPermissions({
+          values: ['channel-a'],
+          unreadableFields: ['subject-field-id'],
+        }),
+      });
+
+      expect(readableGroup.groupHash).not.toBe(unreadableGroup.groupHash);
+      expect(unreadableGroup.memberFieldValues).toEqual({
+        sharedPredicate: expect.objectContaining({
+          value: 'channel-a',
+          unreadableFieldIds: ['subject-field-id'],
+        }),
+      });
+    });
+
+    it('should keep a group per role for a rule that is not a single value list', () => {
+      const [accessGroup] = buildShared({
+        objectRecordsPermissions: UNGROUPED_RULE_PERMISSIONS,
+      });
+      const [otherRoleAccessGroup] = buildShared({
+        roleId: 'other-role-id',
+        objectRecordsPermissions: UNGROUPED_RULE_PERMISSIONS,
+      });
+
+      expect(accessGroup.groupHash).not.toBe(otherRoleAccessGroup.groupHash);
+    });
+
+    it('should keep a group per role without the flag', () => {
+      const [accessGroup] = build({
+        objectRecordsPermissions: buildValueListPermissions({
+          values: ['channel-a'],
+        }),
+      });
+      const [otherRoleAccessGroup] = build({
+        roleId: 'other-role-id',
+        objectRecordsPermissions: buildValueListPermissions({
+          values: ['channel-a'],
+        }),
+      });
+
+      expect(accessGroup.groupHash).not.toBe(otherRoleAccessGroup.groupHash);
+    });
   });
 });
