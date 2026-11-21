@@ -4,7 +4,10 @@ import { type ViewFieldRelationScope } from 'twenty-shared/types';
 export const getSummaryRelationScope = ({
   filters,
   filterGroups,
-}: ViewFieldRelationScope): ViewFieldRelationScope => ({
+}: Pick<
+  ViewFieldRelationScope,
+  'filters' | 'filterGroups'
+>): ViewFieldRelationScope => ({
   filters,
   filterGroups,
   sorts: [],

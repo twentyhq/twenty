@@ -125,7 +125,6 @@ export const RecordTableColumnHeadDropdownMenu = ({
       },
     );
 
-  // The table is filtered and sorted by its records' own values, which a summary is not
   const isFilterable = isFieldFilterable && !isSummaryColumn;
   const isSortable = isFieldSortable && !isSummaryColumn;
 
