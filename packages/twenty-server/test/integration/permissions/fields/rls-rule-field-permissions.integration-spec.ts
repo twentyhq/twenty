@@ -489,7 +489,7 @@ describe('field permissions on an RLS rule (integration)', () => {
         }) => ({
           companyId: node.companyId,
           companyRecordId: node.company?.id ?? null,
-          taskTargetCount: node.taskTargets.edges.length,
+          taskTargetIds: node.taskTargets.edges.map(({ node }) => node.id),
         }),
       );
     };
@@ -498,13 +498,17 @@ describe('field permissions on an RLS rule (integration)', () => {
 
     try {
       expect(await listParisRelationsAsMember()).toEqual([
-        { companyId, companyRecordId: companyId, taskTargetCount: 1 },
+        {
+          companyId,
+          companyRecordId: companyId,
+          taskTargetIds: expect.arrayContaining([taskTargetId]),
+        },
       ]);
 
       await setRelationsReadability(false);
 
       expect(await listParisRelationsAsMember()).toEqual([
-        { companyId: null, companyRecordId: null, taskTargetCount: 0 },
+        { companyId: null, companyRecordId: null, taskTargetIds: [] },
       ]);
       expect(
         await listParisRelationsAsMember({
