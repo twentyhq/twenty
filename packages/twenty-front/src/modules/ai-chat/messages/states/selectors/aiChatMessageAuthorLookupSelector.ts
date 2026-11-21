@@ -4,12 +4,28 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
+// The workspace object is replaced after each send, but authors only depend on its applications
 export const aiChatMessageAuthorLookupSelector =
   createAtomSelector<AiChatMessageAuthorLookup>({
     key: 'aiChatMessageAuthorLookupSelector',
-    get: ({ get }) => ({
-      workspaceMembers: get(currentWorkspaceMembersState),
-      assistantDisplayName: get(aiChatAssistantProfileSelector).displayName,
-      currentWorkspace: get(currentWorkspaceState),
-    }),
+    get: ({ get }) => {
+      const currentWorkspace = get(currentWorkspaceState);
+
+      return {
+        workspaceMembers: get(currentWorkspaceMembersState),
+        assistantDisplayName: get(aiChatAssistantProfileSelector).displayName,
+        currentWorkspace: currentWorkspace && {
+          installedApplications: currentWorkspace.installedApplications,
+          workspaceCustomApplication:
+            currentWorkspace.workspaceCustomApplication,
+        },
+      };
+    },
+    areEqual: (previous, next) =>
+      previous.workspaceMembers === next.workspaceMembers &&
+      previous.assistantDisplayName === next.assistantDisplayName &&
+      previous.currentWorkspace?.installedApplications ===
+        next.currentWorkspace?.installedApplications &&
+      previous.currentWorkspace?.workspaceCustomApplication ===
+        next.currentWorkspace?.workspaceCustomApplication,
   });
