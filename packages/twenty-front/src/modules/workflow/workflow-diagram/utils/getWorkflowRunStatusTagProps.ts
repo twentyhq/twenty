@@ -7,6 +7,13 @@ export const getWorkflowRunStatusTagProps = ({
 }: {
   workflowRunStatus: WorkflowRunStatus;
 }): { color: TagColor; text: string } => {
+  if (workflowRunStatus === 'NOT_STARTED') {
+    return {
+      color: 'gray',
+      text: t`Not started`,
+    };
+  }
+
   if (workflowRunStatus === 'RUNNING') {
     return {
       color: 'yellow',

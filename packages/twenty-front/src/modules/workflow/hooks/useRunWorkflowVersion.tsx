@@ -80,7 +80,7 @@ export const useRunWorkflowVersion = () => {
 
     const recordInput: Partial<WorkflowRun> = {
       name: '#0',
-      status: 'ENQUEUED',
+      status: 'NOT_STARTED',
       coreWorkflowVersionId: workflowVersionId,
       coreWorkflowId: workflowId,
       createdAt: new Date().toISOString(),

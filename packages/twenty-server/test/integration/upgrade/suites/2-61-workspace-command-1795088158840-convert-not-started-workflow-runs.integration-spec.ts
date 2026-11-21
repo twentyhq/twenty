@@ -1,10 +1,8 @@
 import { randomUUID } from 'crypto';
 
-import { restoreLegacyNotStartedWorkflowRunStatus } from 'test/integration/upgrade/utils/restore-legacy-not-started-workflow-run-status.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type ConvertNotStartedWorkflowRunsCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795088158840-convert-not-started-workflow-runs.command';
-import { type DropNotStartedWorkflowRunStatusCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795095338141-drop-not-started-workflow-run-status.command';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -45,18 +43,13 @@ describe('2-61 workspace command - convert not started workflow runs (integratio
     );
   };
 
-  // The status is dropped by a later 2.61 command, so it is brought back for these runs and dropped again after
-  beforeAll(async () => {
+  beforeAll(() => {
     command = getAppProviderByClassName<ConvertNotStartedWorkflowRunsCommand>(
       'ConvertNotStartedWorkflowRunsCommand',
     );
-    await restoreLegacyNotStartedWorkflowRunStatus(SEED_APPLE_WORKSPACE_ID);
   });
 
   afterAll(async () => {
-    await getAppProviderByClassName<DropNotStartedWorkflowRunStatusCommand>(
-      'DropNotStartedWorkflowRunStatusCommand',
-    ).runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
     await global.testDataSource.query(
       `DELETE FROM ${SCHEMA}."workflowRun" WHERE id = ANY($1)`,
       [insertedRunIds],
