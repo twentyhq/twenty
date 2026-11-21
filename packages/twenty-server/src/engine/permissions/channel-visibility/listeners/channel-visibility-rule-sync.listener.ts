@@ -32,8 +32,11 @@ export class ChannelVisibilityRuleSyncListener {
   >): Promise<void> {
     if (
       isDefined(workspaceId) &&
-      events.some(
-        ({ key }) => key === FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED,
+      events.some(({ key }) =>
+        [
+          FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED,
+          FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
+        ].includes(key),
       )
     ) {
       await this.channelVisibilityRuleSyncSchedulerService.scheduleSync(
