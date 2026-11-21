@@ -9,8 +9,7 @@ import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dro
 import { getRecordFieldColumnHeader } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnHeader';
 import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
 import { isLookupColumnsEnabledSelector } from '@/object-record/record-column-lookup/states/isLookupColumnsEnabledSelector';
-import { getScopedRelationLookupTarget } from '@/object-record/record-column-scope/utils/getScopedRelationLookupTarget';
-import { isScopedRelationColumn } from '@/object-record/record-column-scope/utils/isScopedRelationColumn';
+import { getScopedRelationColumn } from '@/object-record/record-column-scope/utils/getScopedRelationColumn';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
@@ -130,25 +129,20 @@ export const ViewFieldsVisibleDropdownSection = () => {
                   const { fieldMetadataItem } = getFieldMetadataItemByIdOrThrow(
                     recordField.fieldMetadataItemId,
                   );
+                  const scopedRelationColumn = getScopedRelationColumn({
+                    recordField,
+                    fieldMetadataItem,
+                    objectMetadataItems,
+                    isLookupColumnsEnabled,
+                  });
                   const columnHeader = getRecordFieldColumnHeader({
                     fieldMetadataItem,
                     lookupTarget:
                       getRecordFieldLookupTarget({
                         recordField,
                         fieldMetadataItem,
-                      }) ??
-                      getScopedRelationLookupTarget({
-                        recordField,
-                        fieldMetadataItem,
-                        objectMetadataItems,
-                        isLookupColumnsEnabled,
-                      }),
-                    isScopedRelationColumn: isScopedRelationColumn({
-                      fieldMetadataItem,
-                      recordField,
-                      objectMetadataItems,
-                      isLookupColumnsEnabled,
-                    }),
+                      }) ?? scopedRelationColumn?.lookupTarget,
+                    isScopedRelationColumn: isDefined(scopedRelationColumn),
                   });
 
                   return (
