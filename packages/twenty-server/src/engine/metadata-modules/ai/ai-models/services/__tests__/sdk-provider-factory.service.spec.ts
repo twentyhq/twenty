@@ -37,9 +37,29 @@ describe('SdkProviderFactoryService', () => {
       expect(instance.createModel).toBeDefined();
       instance.createModel?.('openai/gpt-oss-120b');
 
+      expect(wrapLanguageModel).toHaveBeenCalledTimes(1);
       expect(wrapLanguageModel).toHaveBeenCalledWith({
         model: expect.objectContaining({
           modelId: 'openai/gpt-oss-120b',
+        }),
+        middleware: sanitizeGroqAssistantReasoningMiddleware,
+      });
+    });
+
+    it('wraps language model when providerName indicates Groq even if proxy baseUrl is used and name is unset', () => {
+      const instance = factory.createProvider('groq', {
+        npm: AI_SDK_OPENAI_COMPATIBLE,
+        baseUrl: 'https://proxy.internal/v1',
+        apiKey: 'proxy_test',
+      });
+
+      expect(instance.createModel).toBeDefined();
+      instance.createModel?.('llama-3.3-70b-versatile');
+
+      expect(wrapLanguageModel).toHaveBeenCalledTimes(1);
+      expect(wrapLanguageModel).toHaveBeenCalledWith({
+        model: expect.objectContaining({
+          modelId: 'llama-3.3-70b-versatile',
         }),
         middleware: sanitizeGroqAssistantReasoningMiddleware,
       });

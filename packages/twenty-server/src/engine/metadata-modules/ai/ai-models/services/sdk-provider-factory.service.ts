@@ -62,7 +62,7 @@ export class SdkProviderFactoryService {
       return cached;
     }
 
-    const instance = this.buildProviderInstance(config);
+    const instance = this.buildProviderInstance(config, providerName);
 
     this.providerInstances.set(providerName, instance);
 
@@ -120,6 +120,7 @@ export class SdkProviderFactoryService {
 
   private buildProviderInstance(
     config: AiProviderConfig,
+    providerName?: string,
   ): AiSdkProviderInstance {
     switch (config.npm) {
       case AI_SDK_OPENAI:
@@ -137,7 +138,7 @@ export class SdkProviderFactoryService {
       case AI_SDK_BEDROCK:
         return this.buildBedrockProvider(config);
       case AI_SDK_OPENAI_COMPATIBLE:
-        return this.buildOpenAiCompatibleProvider(config);
+        return this.buildOpenAiCompatibleProvider(config, providerName);
       case AI_SDK_AZURE:
         return this.buildAzureProvider(config);
       case AI_SDK_TYPESAFE_AI:
@@ -220,6 +221,7 @@ export class SdkProviderFactoryService {
 
   private buildOpenAiCompatibleProvider(
     config: AiProviderConfig,
+    providerName?: string,
   ): AiSdkProviderInstance {
     if (!config.baseUrl) {
       throw new Error('baseUrl is required for openai-compatible providers');
@@ -231,7 +233,7 @@ export class SdkProviderFactoryService {
       ...(config.apiKey && { apiKey: config.apiKey }),
     });
 
-    const isGroq = isGroqOpenAiCompatible(config);
+    const isGroq = isGroqOpenAiCompatible(config, providerName);
 
     return this.toProviderInstance(
       provider,

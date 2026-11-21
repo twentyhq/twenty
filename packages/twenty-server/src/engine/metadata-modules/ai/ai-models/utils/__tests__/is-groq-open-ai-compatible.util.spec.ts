@@ -39,6 +39,28 @@ describe('isGroqOpenAiCompatible', () => {
     ).toBe(true);
   });
 
+  it('returns true when config.name is unset but providerName indicates groq', () => {
+    expect(
+      isGroqOpenAiCompatible(
+        {
+          npm: AI_SDK_OPENAI_COMPATIBLE,
+          baseUrl: 'https://proxy.internal/v1',
+        },
+        'groq',
+      ),
+    ).toBe(true);
+
+    expect(
+      isGroqOpenAiCompatible(
+        {
+          npm: AI_SDK_OPENAI_COMPATIBLE,
+          baseUrl: 'https://proxy.internal/v1',
+        },
+        'groq-proxy',
+      ),
+    ).toBe(true);
+  });
+
   it('returns false for other OpenAI-compatible providers', () => {
     expect(
       isGroqOpenAiCompatible({
