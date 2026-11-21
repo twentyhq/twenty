@@ -103,7 +103,6 @@ describe('getScopedRelationAliases', () => {
         relationObjectMetadataItem: expect.objectContaining({
           id: personObjectMetadataItem.id,
         }),
-        relationJoinColumnName: 'companyId',
         filter: { jobTitle: { ilike: '%cto%' } },
         orderBy: [{ createdAt: 'AscNullsLast' }, { position: 'AscNullsFirst' }],
         first: 2,

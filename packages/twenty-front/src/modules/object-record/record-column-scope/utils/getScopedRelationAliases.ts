@@ -8,7 +8,6 @@ import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/uti
 import { getQueryVariablesFromFiltersAndSorts } from '@/views/utils/getQueryVariablesFromFiltersAndSorts';
 import { type RecordFilterValueDependencies } from 'twenty-shared/types';
 import {
-  computeRelationGqlFieldJoinColumnName,
   computeRelationWithArgumentsResponseKey,
   isDefined,
 } from 'twenty-shared/utils';
@@ -54,13 +53,7 @@ export const getScopedRelationAliases = ({
       objectMetadataItems,
     });
 
-    const relationTargetFieldName =
-      fieldMetadataItem.relation?.targetFieldMetadata.name;
-
-    if (
-      !isDefined(relationObjectMetadataItem) ||
-      !isDefined(relationTargetFieldName)
-    ) {
+    if (!isDefined(relationObjectMetadataItem)) {
       return [];
     }
 
@@ -88,9 +81,6 @@ export const getScopedRelationAliases = ({
         }),
         relationFieldName: fieldMetadataItem.name,
         relationObjectMetadataItem,
-        relationJoinColumnName: computeRelationGqlFieldJoinColumnName({
-          name: relationTargetFieldName,
-        }),
         filter,
         orderBy,
         first,
