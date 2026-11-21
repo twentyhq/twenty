@@ -5,8 +5,7 @@ import { v5 } from 'uuid';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { getMetadataRelatedMetadataNamesForValidation } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names-for-validation.util';
+import { WORKSPACE_MEMBER_INDIVIDUAL_ROLE_METADATA_NAMES } from 'src/engine/permissions/channel-visibility/constants/workspace-member-individual-role-metadata-names.constant';
 import {
   WORKSPACE_MEMBER_INDIVIDUAL_ROLE_LABEL_PREFIX,
   WORKSPACE_MEMBER_INDIVIDUAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
@@ -17,32 +16,10 @@ import { isWorkspaceMemberIndividualRole } from 'src/engine/permissions/channel-
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 
-const WORKSPACE_MEMBER_INDIVIDUAL_ROLE_METADATA_NAMES = [
-  'role',
-  'roleTarget',
-  'rowLevelPermissionRule',
-  'rowLevelPermissionPredicateGroup',
-  'rowLevelPermissionPredicate',
-  'fieldPermission',
-] as const;
-
 type WorkspaceMemberIndividualRoleFlatEntityMapsKey =
   MetadataToFlatEntityMapsKey<
     (typeof WORKSPACE_MEMBER_INDIVIDUAL_ROLE_METADATA_NAMES)[number]
   >;
-
-// The individual roles' own maps plus what their validators look up
-export const WORKSPACE_MEMBER_INDIVIDUAL_ROLE_DEPENDENCY_FLAT_ENTITY_MAPS_KEYS =
-  [
-    ...new Set(
-      WORKSPACE_MEMBER_INDIVIDUAL_ROLE_METADATA_NAMES.flatMap(
-        (metadataName) => [
-          metadataName,
-          ...getMetadataRelatedMetadataNamesForValidation(metadataName),
-        ],
-      ),
-    ),
-  ].map(getMetadataFlatEntityMapsKey);
 
 type WorkspaceMemberIndividualRoleUniversalFlatEntityMaps = Pick<
   AllUniversalFlatEntityMaps,

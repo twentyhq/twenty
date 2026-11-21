@@ -1,9 +1,8 @@
-import { gql } from 'graphql-tag';
-import { makeMetadataApiRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { findFieldMetadataIdByName } from 'test/integration/utils/find-field-metadata-id-by-name.util';
 import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { updateMessageChannelVisibilityWithMemberRole } from 'test/integration/utils/update-message-channel-visibility-with-member-role.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { type ChannelVisibilityRuleSyncService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync.service';
@@ -17,23 +16,10 @@ const syncChannelVisibilityRules = () =>
   ).syncWorkspace(SEED_APPLE_WORKSPACE_ID);
 
 const setJonyChannelVisibility = async (visibility: string) => {
-  const response = await makeMetadataApiRequestWithMemberRole({
-    query: gql`
-      mutation UpdateMessageChannel($input: UpdateMessageChannelInput!) {
-        updateMessageChannel(input: $input) {
-          visibility
-        }
-      }
-    `,
-    variables: {
-      input: {
-        id: MESSAGE_CHANNEL_DATA_SEED_IDS.JONY,
-        update: { visibility },
-      },
-    },
+  await updateMessageChannelVisibilityWithMemberRole({
+    messageChannelId: MESSAGE_CHANNEL_DATA_SEED_IDS.JONY,
+    visibility,
   });
-
-  expect(response.body.errors).toBeUndefined();
   await syncChannelVisibilityRules();
 };
 
