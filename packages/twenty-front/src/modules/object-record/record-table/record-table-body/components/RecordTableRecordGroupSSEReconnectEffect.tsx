@@ -29,6 +29,7 @@ export const RecordTableRecordGroupSSEReconnectEffect = () => {
   });
 
   useListenToScopedRelationRecordOperation({
+    objectNameSingular,
     onScopedRelationRecordOperation: debouncedReloadRecordGroup,
   });
 
