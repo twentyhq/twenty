@@ -1,4 +1,5 @@
 import { useStore } from 'jotai';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { useSendAiChatMessage } from '@/ai-chat/composer/hooks/useSendAiChatMessage';
 import { writeAiChatPromptDraft } from '@/ai-chat/composer/utils/writeAiChatPromptDraft';
@@ -6,11 +7,15 @@ import { useSelectAiChatThreadFromNewChat } from '@/ai-chat/hooks/useSelectAiCha
 import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
 import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldFocusFamilyState';
 import { type AiChatPrepromptMode } from '@/ai-chat/types/AiChatPrepromptMode';
+import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 
 export const useApplyAiChatPreprompt = () => {
   const store = useStore();
   const { sendAiChatMessage } = useSendAiChatMessage();
   const { selectAiChatThreadFromNewChat } = useSelectAiChatThreadFromNewChat();
+  const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
+    WorkspaceActivationStatus.SUSPENDED,
+  );
 
   const applyAiChatPreprompt = async ({
     threadId,
@@ -25,7 +30,7 @@ export const useApplyAiChatPreprompt = () => {
       aiChatThreadReplyIsSendingFamilyState.atomFamily({ threadId }),
     );
 
-    if (mode === 'SEND' && isThreadSending) {
+    if (mode === 'SEND' && (isThreadSending || isWorkspaceSuspended)) {
       return;
     }
 
