@@ -4465,7 +4465,7 @@ type Query {
   findUninstallApplicationJobStatus(jobId: String, universalIdentifier: String!): JobStatus
   findUpgradeApplicationJobStatus(jobId: String, universalIdentifier: String!): JobStatus
   findWorkspaceAiStats: WorkspaceAiStats!
-  findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
+  findWorkspaceFromInviteHash(inviteHash: String!): WorkspaceFromInviteHash!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
   frontComponent(id: UUID!): FrontComponent
   frontComponents: [FrontComponent!]!
@@ -6798,6 +6798,13 @@ enum WorkspaceDiscoverability {
   HIDDEN
   MEMBERS_AND_INVITEES
   PUBLIC
+}
+
+type WorkspaceFromInviteHash {
+  allowImpersonation: Boolean!
+  displayName: String
+  id: UUID!
+  logo: String
 }
 
 type WorkspaceInvitation {
