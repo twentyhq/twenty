@@ -33,7 +33,7 @@ describePermissionTestWorkspace({
     const syncAccessGroups = async () => {
       await getAppProviderByClassName<AccessGroupSyncService>(
         'AccessGroupSyncService',
-      ).syncAccessGroups(findWorkspace().workspaceId);
+      ).syncAccessGroups({ workspaceId: findWorkspace().workspaceId });
       await getAppProviderByClassName<DeferredWorkspaceOperationRunnerService>(
         'DeferredWorkspaceOperationRunnerService',
       ).runPendingOperations(findWorkspace().workspaceId);

@@ -437,7 +437,7 @@ describe('Record access through related record paths', () => {
   it('should store the groups of the source record on the records related to it', async () => {
     await getAppProviderByClassName<AccessGroupSyncService>(
       'AccessGroupSyncService',
-    ).syncAccessGroups(workspaceId);
+    ).syncAccessGroups({ workspaceId });
 
     for (const objectMetadataId of [
       projectObjectMetadataId,

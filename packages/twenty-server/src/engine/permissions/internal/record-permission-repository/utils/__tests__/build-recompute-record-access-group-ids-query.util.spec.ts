@@ -61,7 +61,7 @@ const buildNoteQuery = ({
     workspaceId: WORKSPACE_ID,
     flatObjectMetadata: note,
     recordAccessGroupSQLConditions: [{ compactId: 7, sqlCondition: null }],
-    accessGroupValueLookupIdsExpressions: [],
+    accessGroupValueLookupIdsSQLConditions: [],
     resolvedRelatedRecordPaths: [
       {
         isInherent,
@@ -123,7 +123,7 @@ describe('buildRecomputeRecordAccessGroupIdsQuery', () => {
         workspaceId: WORKSPACE_ID,
         flatObjectMetadata: note,
         recordAccessGroupSQLConditions: [{ compactId: 7, sqlCondition: null }],
-        accessGroupValueLookupIdsExpressions: [],
+        accessGroupValueLookupIdsSQLConditions: [],
         resolvedRelatedRecordPaths: [],
         accessGroups: [],
         metadataMaps: { featureFlagsMap: {}, rolesPermissions: {} },

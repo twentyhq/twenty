@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordAccessGroupSQLConditionMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-sql-condition-metadata-maps.type';
 import { type AccessGroupValueLookup } from 'src/engine/permissions/internal/access-group/value-lookup/types/access-group-value-lookup.type';
+import { findAccessGroupTypeHandler } from 'src/engine/permissions/internal/access-group/utils/find-access-group-type-handler.util';
 import { RECORD_ACCESS_GROUP_TABLE_ALIAS } from 'src/engine/permissions/internal/record-permission-repository/constants/record-access-group-table-alias.constant';
 import { buildAccessGroupTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-access-group-table-expression.util';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
@@ -13,33 +14,10 @@ import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.ty
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-type KeyLookup = {
+type KeyValueExpression = {
   valueExpression: string;
   fromExpressions: string[];
   joinConditions: string[];
-};
-
-const buildMatchingValueCondition = ({
-  lookup,
-  keyLookups,
-  accessGroupAlias,
-  parameterName,
-}: {
-  lookup: AccessGroupValueLookup;
-  keyLookups: KeyLookup[];
-  accessGroupAlias: string;
-  parameterName: (name: string) => string;
-}): string => {
-  if (lookup.type === 'RLS_LITERAL_VALUE') {
-    return `${accessGroupAlias}."value" = CAST(${keyLookups[0].valueExpression} AS varchar)`;
-  }
-
-  return `${accessGroupAlias}."memberFieldValues" = jsonb_build_object(${keyLookups
-    .map(
-      ({ valueExpression }, keyIndex) =>
-        `CAST(:${parameterName(`key${keyIndex}`)} AS text), ${valueExpression}`,
-    )
-    .join(', ')})`;
 };
 
 export const buildAccessGroupValueLookupIdsExpression = ({
@@ -69,51 +47,54 @@ export const buildAccessGroupValueLookupIdsExpression = ({
   );
   const quotedTableAlias = escapeIdentifier(RECORD_ACCESS_GROUP_TABLE_ALIAS);
 
-  const keyLookups: KeyLookup[] = lookup.keys.map((key, keyIndex) => {
-    if (!isDefined(key.relationHop)) {
+  const keyValueExpressions: KeyValueExpression[] = lookup.keys.map(
+    (key, keyIndex) => {
+      if (!isDefined(key.relationHop)) {
+        return {
+          valueExpression: `${quotedTableAlias}.${escapeIdentifier(key.columnName)}`,
+          fromExpressions: [],
+          joinConditions: [],
+        };
+      }
+
+      const hopAlias = escapeIdentifier(
+        `access_group_value_lookup_${lookupIndex}_${keyIndex}`,
+      );
+
       return {
-        valueExpression: `${quotedTableAlias}.${escapeIdentifier(key.columnName)}`,
-        fromExpressions: [],
-        joinConditions: [],
+        valueExpression: `${hopAlias}.${escapeIdentifier(key.columnName)}`,
+        fromExpressions: [
+          `${buildWorkspaceTableExpression({
+            workspaceId,
+            tableName: computeObjectTargetTable(
+              key.relationHop.targetFlatObjectMetadata,
+            ),
+          })} AS ${hopAlias}`,
+        ],
+        joinConditions: [
+          `${hopAlias}.${escapeIdentifier(key.relationHop.targetColumnName)} = ${quotedTableAlias}.${escapeIdentifier(key.relationHop.sourceColumnName)}`,
+          `${hopAlias}."deletedAt" IS NULL`,
+        ],
       };
-    }
-
-    const hopAlias = escapeIdentifier(
-      `access_group_value_lookup_${lookupIndex}_${keyIndex}`,
-    );
-
-    return {
-      valueExpression: `${hopAlias}.${escapeIdentifier(key.columnName)}`,
-      fromExpressions: [
-        `${buildWorkspaceTableExpression({
-          workspaceId,
-          tableName: computeObjectTargetTable(
-            key.relationHop.targetFlatObjectMetadata,
-          ),
-        })} AS ${hopAlias}`,
-      ],
-      joinConditions: [
-        `${hopAlias}.${escapeIdentifier(key.relationHop.targetColumnName)} = ${quotedTableAlias}.${escapeIdentifier(key.relationHop.sourceColumnName)}`,
-        `${hopAlias}."deletedAt" IS NULL`,
-      ],
-    };
-  });
+    },
+  );
 
   const lookupSql = `ARRAY(SELECT ${accessGroupAlias}."compactId" FROM ${[
-    ...keyLookups.flatMap(({ fromExpressions }) => fromExpressions),
+    ...keyValueExpressions.flatMap(({ fromExpressions }) => fromExpressions),
     `${buildAccessGroupTableExpression(workspaceId)} AS ${accessGroupAlias}`,
   ].join(', ')} WHERE ${[
-    ...keyLookups.flatMap(({ joinConditions }) => joinConditions),
-    ...keyLookups.map(
+    ...keyValueExpressions.flatMap(({ joinConditions }) => joinConditions),
+    ...keyValueExpressions.map(
       ({ valueExpression }) => `${valueExpression} IS NOT NULL`,
     ),
     `${accessGroupAlias}."type" = '${lookup.type}'`,
     `${accessGroupAlias}."ruleShapeHash" = :${parameterName('ruleShapeHash')}`,
-    buildMatchingValueCondition({
-      lookup,
-      keyLookups,
+    findAccessGroupTypeHandler(lookup.type).buildValueLookupCondition({
       accessGroupAlias,
-      parameterName,
+      valueExpressions: keyValueExpressions.map(
+        ({ valueExpression }) => valueExpression,
+      ),
+      buildKeyParameterName: (keyIndex) => parameterName(`key${keyIndex}`),
     }),
   ].join(' AND ')})`;
 

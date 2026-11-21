@@ -11,15 +11,12 @@ import {
 } from 'src/engine/permissions/internal/access-group/constants/access-group-sync-lock.constant';
 import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
+import { type SyncAccessGroupsJobData } from 'src/engine/permissions/internal/access-group/types/sync-access-groups-job-data.type';
+import { buildAccessGroupComputePlanSteps } from 'src/engine/permissions/internal/access-group/utils/build-access-group-compute-plan-steps.util';
 import { buildWorkspaceAccessGroups } from 'src/engine/permissions/internal/access-group/utils/build-workspace-access-groups.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
-import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
-import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
-import { findAccessGroupValueLookups } from 'src/engine/permissions/internal/access-group/value-lookup/utils/find-access-group-value-lookups.util';
-import { isAccessGroupSyncIncremental } from 'src/engine/permissions/internal/access-group/value-lookup/utils/is-access-group-sync-incremental.util';
 
 @Injectable()
 export class AccessGroupSyncService {
@@ -31,15 +28,25 @@ export class AccessGroupSyncService {
     private readonly accessGroupPropagationPlanService: AccessGroupPropagationPlanService,
   ) {}
 
-  async syncAccessGroups(workspaceId: string): Promise<void> {
+  async syncAccessGroups({
+    workspaceId,
+    isRelatedRecordPathChanged = false,
+  }: SyncAccessGroupsJobData): Promise<void> {
     await this.cacheLockService.withLock(
-      () => this.syncAccessGroupsWithLock(workspaceId),
+      () =>
+        this.syncAccessGroupsWithLock({
+          workspaceId,
+          isRelatedRecordPathChanged,
+        }),
       buildAccessGroupSyncLockKey(workspaceId),
       ACCESS_GROUP_SYNC_LOCK_OPTIONS,
     );
   }
 
-  private async syncAccessGroupsWithLock(workspaceId: string): Promise<void> {
+  private async syncAccessGroupsWithLock({
+    workspaceId,
+    isRelatedRecordPathChanged,
+  }: Required<SyncAccessGroupsJobData>): Promise<void> {
     await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
 
     const workspaceCache = await this.workspaceCacheService.getOrRecompute(
@@ -76,73 +83,31 @@ export class AccessGroupSyncService {
 
     const metadataMaps =
       await this.recordAccessGroupMetadataMapsService.find(workspaceId);
-    const changedAccessGroups = [
-      ...accessGroupsToInsert,
-      ...staleAccessGroups,
-    ].filter(({ objectMetadataId }) =>
-      isObjectUsingRecordAccessGroups({ ...metadataMaps, objectMetadataId }),
-    );
-    const changedObjectMetadataIds = [
-      ...new Set(
-        changedAccessGroups.map(({ objectMetadataId }) => objectMetadataId),
-      ),
-    ];
-    const incrementalObjectMetadataIds = changedObjectMetadataIds.filter(
-      (objectMetadataId) =>
-        isAccessGroupSyncIncremental({
-          changedAccessGroups: changedAccessGroups.filter(
-            (accessGroup) => accessGroup.objectMetadataId === objectMetadataId,
-          ),
-          accessGroupValueLookups: findAccessGroupValueLookups({
-            flatObjectMetadata: findFlatEntityByIdInFlatEntityMapsOrThrow({
-              flatEntityId: objectMetadataId,
-              flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
-            }),
-            metadataMaps,
-          }),
-        }),
-    );
-    const fullRecomputeObjectMetadataIds = changedObjectMetadataIds.filter(
-      (objectMetadataId) =>
-        !incrementalObjectMetadataIds.includes(objectMetadataId),
-    );
 
-    await this.accessGroupPropagationPlanService.planAndApplyComputes({
+    await this.accessGroupPropagationPlanService.persistPlanSteps({
       workspaceId,
-      objectMetadataIds: fullRecomputeObjectMetadataIds,
+      steps: buildAccessGroupComputePlanSteps({
+        accessGroupsToInsert,
+        staleAccessGroups,
+        relatedRecordPathTargetObjectMetadataIds: isRelatedRecordPathChanged
+          ? metadataMaps.resolvedRelatedRecordPaths.map(
+              ({ targetObjectMetadataId }) => targetObjectMetadataId,
+            )
+          : [],
+        metadataMaps,
+      }),
     });
 
-    const insertedAccessGroups =
-      await this.accessGroupRepository.insertAccessGroups({
-        workspaceId,
-        newAccessGroups: accessGroupsToInsert,
-      });
+    await this.accessGroupRepository.insertAccessGroups({
+      workspaceId,
+      newAccessGroups: accessGroupsToInsert,
+    });
 
     if (isNonEmptyArray(staleAccessGroups)) {
       await this.accessGroupRepository.deleteAccessGroups({
         workspaceId,
         groupHashes: staleAccessGroups.map(({ groupHash }) => groupHash),
       });
-    }
-
-    for (const objectMetadataId of incrementalObjectMetadataIds) {
-      const findCompactIdsOfObject = (
-        accessGroups: Pick<AccessGroup, 'compactId' | 'objectMetadataId'>[],
-      ) =>
-        accessGroups
-          .filter(
-            (accessGroup) => accessGroup.objectMetadataId === objectMetadataId,
-          )
-          .map(({ compactId }) => compactId);
-
-      await this.accessGroupPropagationPlanService.planAndApplyAccessGroupIdChanges(
-        {
-          workspaceId,
-          objectMetadataId,
-          addedCompactIds: findCompactIdsOfObject(insertedAccessGroups),
-          removedCompactIds: findCompactIdsOfObject(staleAccessGroups),
-        },
-      );
     }
   }
 }

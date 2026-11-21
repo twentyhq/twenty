@@ -16,7 +16,7 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 
 const INHERITED_ACCESS_GROUP_ID = '"inherited"."accessGroupId"';
 
-export const buildInheritedAccessGroupIdsExpression = ({
+export const buildRelatedRecordPathAccessGroupIdsExpression = ({
   workspaceId,
   targetTableAlias,
   pathIndex,
