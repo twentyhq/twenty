@@ -49,11 +49,23 @@ export const useSaveScopedRelationColumn = (recordTableId: string) => {
         return false;
       }
 
-      // Only the scope is patched, so a resize made while saving is kept
-      if (isDefined(recordFieldId)) {
-        updateRecordField(recordFieldId, { relationScope });
-      } else {
+      if (!isDefined(recordFieldId)) {
         upsertRecordField(savedRecordField);
+
+        return true;
+      }
+
+      const isRecordFieldStillDisplayed = store
+        .get(
+          currentRecordFieldsComponentState.atomFamily({
+            instanceId: recordTableId,
+          }),
+        )
+        .some(({ id }) => id === recordFieldId);
+
+      // Only the scope is patched, so a resize made while saving is kept
+      if (isRecordFieldStillDisplayed) {
+        updateRecordField(recordFieldId, { relationScope });
       }
 
       return true;
