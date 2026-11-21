@@ -137,7 +137,7 @@ export const InboxSyncEffect = () => {
     hasAiPermission &&
     !isWorkspaceSuspended &&
     isThreadSyncEnabled &&
-    isNonEmptyArray(chatObjectMetadataItem?.readableFields) &&
+    isNonEmptyArray(chatObjectMetadataItem.readableFields) &&
     canAccessThroughAllRecordsOrRlsPermission({
       objectRecordsPermissions: chatObjectPermissions,
       operationType: 'read',

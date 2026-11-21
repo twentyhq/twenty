@@ -41,7 +41,6 @@ import { GlobalFilePreviewModal } from '@/ui/field/display/components/GlobalFile
 import { UserThemeProviderEffect } from '@/workspace-member/effect-components/UserThemeProviderEffect';
 import { UserUiScaleProviderEffect } from '@/workspace-member/effect-components/UserUiScaleProviderEffect';
 import { PageFavicon } from '@/app/components/PageFavicon';
-import { ToolIndexInvalidationEffect } from '@/ai/components/ToolIndexInvalidationEffect';
 import { UserContextProvider } from '@/users/components/UserContextProvider';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 
@@ -67,7 +66,6 @@ export const WorkspaceAppProviders = () => {
                   >
                     <AppToaster />
                     <ErrorMessageEffect />
-                    <ToolIndexInvalidationEffect />
                     <AiChatProvider>
                       <InboxEffects />
                       <DialogComponentInstanceContext.Provider
