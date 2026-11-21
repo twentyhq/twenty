@@ -80,9 +80,9 @@ jest.mock('@/ai-chat/messages/components/AiChatScrollToBottomButton', () => ({
   AiChatScrollToBottomButton: () => null,
 }));
 jest.mock(
-  '@/ai-chat/messages/components/AiChatMessageListScrollEffect',
+  '@/ai-chat/messages/components/AiChatStreamingAutoScrollEffect',
   () => ({
-    AiChatMessageListScrollEffect: () => null,
+    AiChatStreamingAutoScrollEffect: () => null,
   }),
 );
 
