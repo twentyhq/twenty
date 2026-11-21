@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -159,7 +159,7 @@ export class PersonalRoleService {
           !keptUniversalIdentifiers.has(flatRole.universalIdentifier),
       );
 
-    if (flatRolesToDelete.length === 0) {
+    if (!isNonEmptyArray(flatRolesToDelete)) {
       return;
     }
 
