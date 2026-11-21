@@ -2,12 +2,12 @@ import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/ho
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
+import { getScopedRelationFieldNamesShowingObject } from '@/object-record/record-column-scope/utils/getScopedRelationFieldNamesShowingObject';
 import { invalidateCachedScopedRelations } from '@/object-record/record-column-scope/utils/invalidateCachedScopedRelations';
 import { useContext } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
-// Only the server applies a scope, and a write from another client or to an uncached record names no row,
-// so the reload has to refetch every cached scoped value of the relation
+// Only the server applies a scope, so a write the client cannot place drops every cached scoped value
 export const useListenToScopedRelationRecordOperation = ({
   objectNameSingular,
   onScopedRelationRecordOperation,
@@ -21,21 +21,19 @@ export const useListenToScopedRelationRecordOperation = ({
   const handleRecordOperation = ({
     objectMetadataItem,
   }: ObjectRecordOperationBrowserEventDetail) => {
-    const scopedRelationFieldNames = scopedRelationAliases
-      .filter(
-        ({ relationObjectMetadataItem }) =>
-          relationObjectMetadataItem.id === objectMetadataItem.id,
-      )
-      .map(({ relationFieldName }) => relationFieldName);
+    const relationFieldNames = getScopedRelationFieldNamesShowingObject({
+      scopedRelationAliases,
+      objectMetadataItemId: objectMetadataItem.id,
+    });
 
-    if (!isNonEmptyArray(scopedRelationFieldNames)) {
+    if (!isNonEmptyArray(relationFieldNames)) {
       return;
     }
 
     invalidateCachedScopedRelations({
       cache: apolloCoreClient.cache,
       objectNameSingular,
-      relationFieldNames: [...new Set(scopedRelationFieldNames)],
+      relationFieldNames,
     });
 
     onScopedRelationRecordOperation();
