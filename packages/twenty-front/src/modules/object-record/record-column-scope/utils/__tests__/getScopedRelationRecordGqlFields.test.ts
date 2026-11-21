@@ -1,3 +1,4 @@
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
 import { type ScopedRelationAlias } from '@/object-record/record-column-scope/types/ScopedRelationAlias';
@@ -158,5 +159,71 @@ describe('getScopedRelationRecordGqlFields', () => {
         },
       }),
     });
+  });
+
+  it('selects the aggregate of a summary with the ids of its records only', () => {
+    expect(
+      getScopedRelationRecordGqlFields({
+        scopedRelationAliases: [
+          buildPeopleAlias({
+            responseKey: 'people_all',
+            summary: {
+              aggregateOperation: AggregateOperations.COUNT,
+              aggregateGqlFieldName: 'totalCount',
+              isAggregatedFieldReadable: true,
+            },
+          }),
+        ],
+        objectMetadataItems,
+      }),
+    ).toEqual({
+      people_all: expect.objectContaining({
+        aggregateGqlFieldNames: ['totalCount'],
+        recordGqlFields: { id: true },
+      }),
+    });
+  });
+
+  it('keeps the records and adds the aggregate when a summary shares a scope with a records column', () => {
+    const summaryAlias = buildPeopleAlias({
+      recordFieldId: 'summary-column',
+      responseKey: 'people_all',
+      summary: {
+        aggregateOperation: AggregateOperations.COUNT_UNIQUE_VALUES,
+        aggregateGqlFieldName: 'countUniqueValuesCity',
+        isAggregatedFieldReadable: true,
+      },
+    });
+
+    expect(
+      getScopedRelationRecordGqlFields({
+        scopedRelationAliases: [
+          buildPeopleAlias({ responseKey: 'people_all' }),
+          summaryAlias,
+        ],
+        objectMetadataItems,
+      }).people_all,
+    ).toMatchObject({
+      aggregateGqlFieldNames: ['countUniqueValuesCity'],
+      recordGqlFields: personIdentifierGqlFields,
+    });
+  });
+
+  it('selects no aggregate of a field the user cannot read', () => {
+    expect(
+      getScopedRelationRecordGqlFields({
+        scopedRelationAliases: [
+          buildPeopleAlias({
+            responseKey: 'people_all',
+            summary: {
+              aggregateOperation: AggregateOperations.SUM,
+              aggregateGqlFieldName: 'sumSalary',
+              isAggregatedFieldReadable: false,
+            },
+          }),
+        ],
+        objectMetadataItems,
+      }).people_all,
+    ).not.toHaveProperty('aggregateGqlFieldNames');
   });
 });
