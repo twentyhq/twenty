@@ -1,6 +1,6 @@
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
-import { inboxThreadMemberStateByThreadIdFamilySelector } from '@/inbox/states/selectors/inboxThreadMemberStateByThreadIdFamilySelector';
+import { inboxThreadInboxStatusByThreadIdFamilySelector } from '@/inbox/states/selectors/inboxThreadInboxStatusByThreadIdFamilySelector';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
@@ -113,14 +113,14 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   const inboxStatusThreadIds =
     objectMetadataItem?.nameSingular ===
       StandardObjectNameSingular.AgentChatThread &&
-    isDefined(aiChatThreadParticipants)
+    aiChatThreadParticipants.isLoaded
       ? (recordIds ?? [])
       : [];
   const inboxSelectedChannelView = useAtomStateValue(
     inboxSelectedChannelViewSelector,
   );
-  const inboxThreadMemberStateByThreadId = useAtomFamilySelectorValue(
-    inboxThreadMemberStateByThreadIdFamilySelector,
+  const inboxThreadInboxStatusByThreadId = useAtomFamilySelectorValue(
+    inboxThreadInboxStatusByThreadIdFamilySelector,
     {
       threadIds: inboxStatusThreadIds,
       // Every menu on the inbox page, the open chat's included, files the
@@ -137,8 +137,8 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     ...(isDefined(recordPermissionsByRecordId[record.id]) && {
       recordPermissions: recordPermissionsByRecordId[record.id],
     }),
-    ...(isDefined(inboxThreadMemberStateByThreadId[record.id]) && {
-      inboxStatus: inboxThreadMemberStateByThreadId[record.id],
+    ...(isDefined(inboxThreadInboxStatusByThreadId[record.id]) && {
+      inboxStatus: inboxThreadInboxStatusByThreadId[record.id],
     }),
   }));
 

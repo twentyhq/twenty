@@ -8,7 +8,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { AiModelTierDropdown } from '@/ai-chat/components/AiModelTierDropdown';
 import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
 import { aiChatUserSelectedModelTierState } from '@/ai-chat/states/aiChatUserSelectedModelTierState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
 
 const StyledTriggerContainer = styled.div`
   margin-top: 200px;

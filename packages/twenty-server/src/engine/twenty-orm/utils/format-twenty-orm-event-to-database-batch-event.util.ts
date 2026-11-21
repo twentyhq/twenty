@@ -153,9 +153,9 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
               diff,
             },
           } satisfies
-            | ObjectRecordUpdateEvent<T>
-            | ObjectRecordDeleteEvent<T>
-            | ObjectRecordRestoreEvent<T>;
+            | Omit<ObjectRecordUpdateEvent<T>, 'eventId'>
+            | Omit<ObjectRecordDeleteEvent<T>, 'eventId'>
+            | Omit<ObjectRecordRestoreEvent<T>, 'eventId'>;
 
           switch (action) {
             case DatabaseEventAction.DELETED:

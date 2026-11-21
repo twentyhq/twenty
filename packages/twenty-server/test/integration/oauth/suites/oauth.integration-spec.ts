@@ -1398,6 +1398,33 @@ describe('OAuth (integration)', () => {
       expect(await findListedAuthorization()).toBeUndefined();
     });
 
+    it('should stop the access token being accepted when revoked from the list', async () => {
+      const { accessToken } = await exchangeForTokens();
+
+      const requestWithAccessToken = () =>
+        request(baseUrl)
+          .get('/rest/people?limit=1')
+          .set('Authorization', `Bearer ${accessToken}`);
+
+      const introspectAccessToken = () =>
+        request(baseUrl).post('/oauth/introspect').send({
+          token: accessToken,
+          client_id: testRegistration.oAuthClientId,
+          client_secret: testClientSecret,
+        });
+
+      // The test application has no role, so an accepted token is forbidden rather than served
+      await requestWithAccessToken().expect(403);
+      expect((await introspectAccessToken()).body.active).toBe(true);
+
+      const { id } = await findListedAuthorization();
+
+      await revokeListedAuthorization(id, APPLE_JANE_ADMIN_ACCESS_TOKEN);
+
+      await requestWithAccessToken().expect(401);
+      expect((await introspectAccessToken()).body.active).toBe(false);
+    });
+
     it('should report a repeated revocation as a no-op', async () => {
       await exchangeForTokens();
 

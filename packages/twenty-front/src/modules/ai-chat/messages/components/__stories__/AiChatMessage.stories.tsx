@@ -22,11 +22,9 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
-import { aiChatThreadReadPositionsFamilyState } from '@/ai-chat/threads/states/aiChatThreadReadPositionsFamilyState';
-import { type AiChatThreadReadPosition } from '@/ai-chat/threads/types/AiChatThreadReadPosition';
-import { aiChatThreadVisitFamilyState } from '@/ai-chat/threads/states/aiChatThreadVisitFamilyState';
-import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
+import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
+import { aiChatThreadViewVisitFamilyState } from '@/ai-chat/states/view/aiChatThreadViewVisitFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionsFamilyState';
 import {
   FeatureFlagKey,
   PermissionFlagType,
@@ -38,11 +36,11 @@ import {
 } from '~/testing/mock-data/users';
 import { MarkdownLoadingSkeleton } from '@/ai-chat/message-content/components/LazyMarkdownRenderer';
 import { PROTECTED_CHAT_REFERENCE_MARKER } from '@/ai-chat/message-content/constants/ProtectedChatReferenceMarker';
-import { type AiChatFileUIPart } from '@/ai-chat/composer/types/AiChatFileUIPart';
+import { type AiChatFileUIPart } from '@/ai-chat/types/AiChatFileUIPart';
 
 import { setAiChatThreadPermissions } from '@/ai-chat/threads/testing/setAiChatThreadPermissions';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -507,11 +505,11 @@ const AiChatMessagesSetterEffect = ({
     const previousUserWorkspace = store.get(currentUserWorkspaceState.atom);
     const previousMember = store.get(currentWorkspaceMemberState.atom);
     const previousMembers = store.get(currentWorkspaceMembersState.atom);
-    const visitAtom = aiChatThreadVisitFamilyState.atomFamily({
+    const visitAtom = aiChatThreadViewVisitFamilyState.atomFamily({
       threadId: currentThreadId,
     });
     const previousVisit = store.get(visitAtom);
-    const messagesAtom = aiChatMessagesFamilyState.atomFamily({
+    const messagesAtom = aiChatThreadDisplayedMessagesFamilyState.atomFamily({
       threadId: currentThreadId,
     });
     const reactionsAtom = aiChatMessageReactionsFamilyState.atomFamily({
@@ -873,123 +871,6 @@ export const MultiplayerConversation: Story = {
     } finally {
       jotaiStore.set(threadRecordAtom, previousThread);
     }
-  },
-};
-
-const seedReadPositions = (readPositions: AiChatThreadReadPosition[]) => {
-  const readPositionsAtom = aiChatThreadReadPositionsFamilyState.atomFamily({
-    threadId: CONVERSATION_STORY_THREAD_ID,
-  });
-
-  jotaiStore.set(readPositionsAtom, readPositions);
-
-  return () => jotaiStore.set(readPositionsAtom, null);
-};
-
-export const ReadReceipts: Story = {
-  ...MultiplayerConversation,
-  beforeEach: () =>
-    seedReadPositions([
-      {
-        workspaceMemberId: mockedWorkspaceMemberData.id,
-        lastReadAt: MOCKED_DATE,
-      },
-      { workspaceMemberId: mockTeammate.id, lastReadAt: MOCKED_DATE },
-      { workspaceMemberId: 'former-member', lastReadAt: null },
-    ]),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const receipts = await canvas.findAllByRole('img', { name: 'Read' });
-
-    await expect(receipts).toHaveLength(3);
-    await userEvent.hover(receipts[0]);
-    await expect(
-      await within(document.body).findByText('Read by 1 of 2'),
-    ).toBeVisible();
-    await expect(within(document.body).getByText('Not yet')).toBeVisible();
-  },
-};
-
-export const SentReceipts: Story = {
-  ...MultiplayerConversation,
-  beforeEach: () =>
-    seedReadPositions([
-      {
-        workspaceMemberId: mockedWorkspaceMemberData.id,
-        lastReadAt: MOCKED_DATE,
-      },
-      { workspaceMemberId: mockTeammate.id, lastReadAt: null },
-    ]),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await expect(
-      await canvas.findByRole('img', { name: 'Sent' }),
-    ).toBeVisible();
-    await expect(canvas.getAllByRole('img', { name: 'Read' })).toHaveLength(2);
-  },
-};
-
-export const SendingThenSentReceipt: Story = {
-  parameters: {
-    isInboxEnabled: true,
-    messages: [mockTeammateMessage, mockUserMessage],
-  },
-  args: { messageId: mockUserMessage.id },
-  beforeEach: () => {
-    const isSendingMessageAtom = aiChatIsSendingMessageFamilyState.atomFamily({
-      threadId: CONVERSATION_STORY_THREAD_ID,
-    });
-    const resetReadPositions = seedReadPositions([
-      { workspaceMemberId: mockTeammate.id, lastReadAt: null },
-    ]);
-
-    jotaiStore.set(isSendingMessageAtom, true);
-
-    return () => {
-      jotaiStore.set(isSendingMessageAtom, false);
-      resetReadPositions();
-    };
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await expect(
-      await canvas.findByRole('img', { name: 'Sending' }),
-    ).toBeVisible();
-
-    jotaiStore.set(
-      aiChatIsSendingMessageFamilyState.atomFamily({
-        threadId: CONVERSATION_STORY_THREAD_ID,
-      }),
-      false,
-    );
-
-    await expect(
-      await canvas.findByRole('img', { name: 'Sent' }),
-    ).toBeVisible();
-  },
-};
-
-export const LongOwnMessageWithReceipt: Story = {
-  parameters: { isInboxEnabled: true },
-  args: { messageId: mockLongUserMessage.id },
-  beforeEach: () =>
-    seedReadPositions([
-      { workspaceMemberId: mockTeammate.id, lastReadAt: MOCKED_DATE },
-    ]),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const toggle = await canvas.findByRole('button', { name: 'Show more' });
-    const text = canvas.getByText(/Help me set up my workspace/);
-    const receipt = await canvas.findByRole('img', { name: 'Read' });
-
-    await expect(toggle.getBoundingClientRect().top).toBeGreaterThan(
-      text.getBoundingClientRect().top,
-    );
-    await expect(toggle.getBoundingClientRect().right).toBeLessThanOrEqual(
-      receipt.getBoundingClientRect().left,
-    );
   },
 };
 

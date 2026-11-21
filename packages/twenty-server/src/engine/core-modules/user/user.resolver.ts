@@ -452,7 +452,12 @@ export class UserResolver {
   @UseGuards(
     AccessPolicyGuard({
       authPrincipals: {
-        userSession: true,
+        userSession: {
+          standard: true,
+          impersonated: { server: true, workspace: false },
+          playground: false,
+          workspaceAgnostic: true,
+        },
         apiKey: false,
         oauthClient: false,
         application: false,
@@ -796,8 +801,8 @@ export class UserResolver {
       authPrincipals: {
         userSession: {
           standard: true,
-          impersonated: true,
-          playground: true,
+          impersonated: { server: true, workspace: false },
+          playground: false,
           workspaceAgnostic: false,
         },
         apiKey: false,

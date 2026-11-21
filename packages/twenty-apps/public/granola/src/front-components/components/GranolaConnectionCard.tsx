@@ -2,11 +2,11 @@ import { t } from 'twenty-sdk/front-component';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconKey } from 'twenty-ui/icon';
+import { Loader } from 'twenty-ui/primitives/feedback';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { type ThemeColor } from 'twenty-ui/theme';
 
-import { SettingsControlLoader } from 'src/front-components/components/SettingsControlLoader';
 import { SettingsOptionCardContent } from 'src/front-components/components/SettingsOptionCardContent';
-import { StyledSettingsCard } from 'src/front-components/components/StyledSettingsCard';
 import { type GranolaConnectionState } from 'src/front-components/types/granola-connection-state.type';
 
 type GranolaKnownConnectionState = Exclude<GranolaConnectionState, 'CHECKING'>;
@@ -71,14 +71,14 @@ export const GranolaConnectionCard = ({
   onReplaceKey,
 }: GranolaConnectionCardProps) => (
   <>
-    <StyledSettingsCard>
+    <Card.Root fullWidth>
       <SettingsOptionCardContent
         Icon={IconKey}
         title={t('API key')}
         description={getDescription({ connectionState, isWorkspaceKey })}
       >
         {connectionState === 'CHECKING' ? (
-          <SettingsControlLoader />
+          <Loader />
         ) : (
           <Status
             color={STATUS_COLOR_BY_CONNECTION_STATE[connectionState]}
@@ -89,7 +89,7 @@ export const GranolaConnectionCard = ({
           </Status>
         )}
       </SettingsOptionCardContent>
-    </StyledSettingsCard>
+    </Card.Root>
     {connectionState === 'INVALID_KEY' && (
       <InlineBanner
         layout="compact"

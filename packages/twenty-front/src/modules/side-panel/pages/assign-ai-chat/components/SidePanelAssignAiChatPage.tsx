@@ -8,13 +8,13 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { useAssignAiChatThreads } from '@/ai-chat/threads/hooks/useAssignAiChatThreads';
-import { aiChatThreadsSharedAssigneeIdFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadsSharedAssigneeIdFamilySelector';
+import { aiChatThreadsAssigneeSummaryFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadsAssigneeSummaryFamilySelector';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { assignAiChatThreadIdsComponentState } from '@/side-panel/pages/assign-ai-chat/states/assignAiChatThreadIdsComponentState';
+import { assignAiChatThreadIdsComponentState } from '@/side-panel/states/assignAiChatThreadIdsComponentState';
 import { getAssignAiChatMemberOptions } from '@/side-panel/pages/assign-ai-chat/utils/getAssignAiChatMemberOptions';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -41,7 +41,7 @@ export const SidePanelAssignAiChatPage = () => {
   );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { sharedAssigneeId, hasAssignee } = useAtomFamilySelectorValue(
-    aiChatThreadsSharedAssigneeIdFamilySelector,
+    aiChatThreadsAssigneeSummaryFamilySelector,
     { threadIds: assignAiChatThreadIds },
   );
   const { assignAiChatThreads } = useAssignAiChatThreads();

@@ -86,9 +86,6 @@ export const InboxThreadRecordOperationsEffect = () => {
 
   const handleRecordOperation = useCallback(
     ({ operation }: ObjectRecordOperationBrowserEventDetail) => {
-      // Activity, assignment, questions and deletion all move the counts
-      refreshInboxOpenThreadsSummary();
-
       const applyUpdates = (
         updates: (Partial<AiChatThreadRecord> & { id: string })[],
       ) => {
@@ -161,7 +158,6 @@ export const InboxThreadRecordOperationsEffect = () => {
     [
       addInboxThread,
       applyAiChatThreadUpdate,
-      refreshInboxOpenThreadsSummary,
       refreshAiChatThreads,
       reloadAiChatThreads,
       store,

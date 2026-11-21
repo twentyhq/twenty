@@ -1,22 +1,28 @@
 import { useEffect } from 'react';
 
-import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
+import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
 export const InboxNewThreadChannelEffect = () => {
   const inboxSelectedChannelView = useAtomStateValue(
     inboxSelectedChannelViewSelector,
   );
-  const setAiChatNewThreadChannelId = useSetAtomState(
-    aiChatNewThreadChannelIdState,
+  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
+  const setAiChatComposerNewThreadRecipients = useSetAtomFamilyState(
+    aiChatComposerNewThreadRecipientsFamilyState,
+    newAiChatThreadId,
   );
   const shownChannelId = inboxSelectedChannelView?.channelId ?? null;
 
   useEffect(() => {
-    setAiChatNewThreadChannelId(shownChannelId);
-  }, [setAiChatNewThreadChannelId, shownChannelId]);
+    setAiChatComposerNewThreadRecipients((recipients) => ({
+      ...recipients,
+      channelId: shownChannelId,
+    }));
+  }, [setAiChatComposerNewThreadRecipients, shownChannelId]);
 
   return null;
 };

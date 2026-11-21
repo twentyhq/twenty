@@ -119,7 +119,7 @@ msgstr "{operationLabel} של {aggregateFieldLabel}"
 #. js-lingui-id: nzKj4z
 #: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
 msgid "{senderName} in {threadLabel}"
-msgstr ""
+msgstr "{senderName} ב-{threadLabel}"
 
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2134,7 +2134,7 @@ msgstr "צרף את הצוות שלך ל-Twenty."
 #. js-lingui-id: pYD4lD
 #: src/engine/core-modules/web-push/web-push.exception.ts
 msgid "Browser notifications were set up with an outdated key. Reload the page to set them up again."
-msgstr ""
+msgstr "התראות הדפדפן הוגדרו באמצעות מפתח מיושן. יש לטעון מחדש את הדף כדי להגדיר אותן שוב."
 
 #. js-lingui-id: 8pSVh1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -6084,6 +6084,11 @@ msgstr "מזהה חבר ראשון בהודעה ישירה"
 msgid "First friendly message"
 msgstr "הודעה ידידותית ראשונה"
 
+#. js-lingui-id: 0QhRwZ
+#: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
+msgid "First name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+msgstr "השם הפרטי חייב לכלול לכל היותר {WORKSPACE_MEMBER_NAME_MAX_LENGTH} תווים."
+
 #. js-lingui-id: BUBVGN
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
@@ -6137,7 +6142,7 @@ msgstr "פעולת הטופס חייבת לכלול לפחות שדה אחד."
 #. js-lingui-id: CjVkbV
 #: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
 msgid "Former member"
-msgstr ""
+msgstr "חבר לשעבר"
 
 #. js-lingui-id: JRr+QW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
@@ -8149,6 +8154,11 @@ msgctxt "fieldMetadata.label"
 msgid "Last message sender"
 msgstr "שולח ההודעה האחרונה"
 
+#. js-lingui-id: bMq9eP
+#: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
+msgid "Last name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+msgstr "שם המשפחה חייב לכלול לכל היותר {WORKSPACE_MEMBER_NAME_MAX_LENGTH} תווים."
+
 #. js-lingui-id: R2LOsP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -9429,7 +9439,7 @@ msgstr "נוצרו קודי גיבוי חדשים עבור חשבונך"
 #. js-lingui-id: hIQkLb
 #: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
 msgid "New chat"
-msgstr ""
+msgstr "צ'אט חדש"
 
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -9451,7 +9461,7 @@ msgstr ""
 #. js-lingui-id: mTBAsF
 #: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
 msgid "New message"
-msgstr ""
+msgstr "הודעה חדשה"
 
 #. js-lingui-id: nXXBKB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -11873,10 +11883,10 @@ msgstr "התבקשה"
 msgid "Requested file range cannot be served."
 msgstr "לא ניתן להגיש את טווח הקובץ המבוקש."
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "לא ניתן להגביל שדות וקשרים נדרשים בכלל הרשאה ברמת שורה."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "לא ניתן להגביל שדות נדרשים וקשרי morph בכללי הרשאה ברמת שורה."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -14767,6 +14777,11 @@ msgstr "אפליקציה זו דורשת גרסה חדשה יותר של שרת 
 msgid "This app requires a newer version than this workspace has finished upgrading to. Please try again once the workspace upgrade completes."
 msgstr "אפליקציה זו דורשת גרסה חדשה יותר מזו שמרחב עבודה זה השלים את השדרוג אליה. אנא נסה שוב לאחר שהשדרוג של מרחב העבודה יושלם."
 
+#. js-lingui-id: MZz+Ud
+#: src/engine/core-modules/application/utils/to-application-billing-prices-or-throw.util.ts
+msgid "This application declares invalid prices"
+msgstr "יישום זה מצהיר על מחירים לא תקינים"
+
 #. js-lingui-id: ecIX3O
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This application is already owned by a workspace."
@@ -14815,7 +14830,7 @@ msgstr "להסדר חיוב זה יש הגדרות לא תקינות."
 #. js-lingui-id: NsbtYx
 #: src/engine/core-modules/web-push/web-push.exception.ts
 msgid "This browser's push service is not supported."
-msgstr ""
+msgstr "שירות הדחיפה של דפדפן זה אינו נתמך."
 
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -18255,6 +18270,11 @@ msgstr "אין לך הרשאה לגשת לתכונה זו. אנא פנה למנ�
 msgid "You do not have permission to access this workflow."
 msgstr "אין לך הרשאה לגשת לזרימת עבודה זו."
 
+#. js-lingui-id: /qkY9j
+#: src/engine/permissions/permissions.exception.ts
+msgid "You do not have permission to change this record."
+msgstr "אין לך הרשאה לשנות רשומה זו."
+
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
@@ -18454,7 +18474,7 @@ msgstr "לא נמצא תפקידך במרחב זה. אנא פנה למנהל ה�
 #. js-lingui-id: iug+lj
 #: src/engine/core-modules/web-push/web-push.exception.ts
 msgid "Your session has expired. Sign in again to turn on browser notifications."
-msgstr ""
+msgstr "תוקף ההפעלה שלך פג. יש להיכנס שוב כדי להפעיל התראות דפדפן."
 
 #. js-lingui-id: 9T+AIN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

@@ -2,8 +2,9 @@ import { type Editor } from '@tiptap/react';
 import { useLayoutEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { shouldFocusChatEditorState } from '@/ai-chat/states/shouldFocusChatEditorState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldFocusFamilyState';
+import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
+import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 
 type AiChatEditorFocusEffectProps = {
   editor: Editor | null;
@@ -12,19 +13,23 @@ type AiChatEditorFocusEffectProps = {
 export const AiChatEditorFocusEffect = ({
   editor,
 }: AiChatEditorFocusEffectProps) => {
-  const [shouldFocusChatEditor, setShouldFocusChatEditor] = useAtomState(
-    shouldFocusChatEditorState,
-  );
+  const { threadId } = useAiChatInstanceOrThrow();
+  const [aiChatComposerShouldFocus, setAiChatComposerShouldFocus] =
+    useAtomFamilyState(aiChatComposerShouldFocusFamilyState, { threadId });
 
   useLayoutEffect(() => {
     // A destroyed editor is still defined while its replacement mounts and its commands throw; keeping the request hands focus to the live one.
-    if (!shouldFocusChatEditor || !isDefined(editor) || editor.isDestroyed) {
+    if (
+      !aiChatComposerShouldFocus ||
+      !isDefined(editor) ||
+      editor.isDestroyed
+    ) {
       return;
     }
 
     editor.commands.focus('end');
-    setShouldFocusChatEditor(false);
-  }, [shouldFocusChatEditor, editor, setShouldFocusChatEditor]);
+    setAiChatComposerShouldFocus(false);
+  }, [aiChatComposerShouldFocus, editor, setAiChatComposerShouldFocus]);
 
   return null;
 };

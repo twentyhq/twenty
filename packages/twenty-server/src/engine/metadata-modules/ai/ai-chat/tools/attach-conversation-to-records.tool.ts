@@ -1,10 +1,19 @@
+import {
+  ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME,
+  ToolCategory,
+} from 'twenty-shared/ai';
+import { PermissionFlagType } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
-import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { type AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
+import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
+import { AiException } from 'src/engine/metadata-modules/ai/ai.exception';
 
 const ATTACH_CONVERSATION_TO_RECORDS_MAX_RECORDS = 100;
 
@@ -22,7 +31,7 @@ const recordToAttachSchema = z.object({
     ),
 });
 
-export const attachConversationToRecordsInputSchema = z.object({
+const attachConversationToRecordsInputSchema = z.object({
   records: z
     .array(recordToAttachSchema)
     .min(1)
@@ -31,10 +40,6 @@ export const attachConversationToRecordsInputSchema = z.object({
 });
 
 type RecordToAttach = z.infer<typeof recordToAttachSchema>;
-
-type AttachConversationToRecordsInput = z.infer<
-  typeof attachConversationToRecordsInputSchema
->;
 
 type RecordAttachmentFailure = RecordToAttach & { error: string };
 
@@ -62,95 +67,104 @@ const buildOutputMessage = ({
     ? `Attached this conversation to ${attached.length} record(s)`
     : `Attached this conversation to ${attached.length} of ${attached.length + failed.length} records`;
 
-export const createAttachConversationToRecordsTool = ({
-  agentChatThreadTargetService,
-  toolContext,
-}: {
-  agentChatThreadTargetService: Pick<
-    AgentChatThreadTargetService,
-    'attachThreadToRecord'
-  >;
-  toolContext: ToolContext;
-}) => ({
+@DefineTool({
+  name: ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME,
+  category: ToolCategory.ACTION,
+  accessPolicy: {
+    authPrincipals: {
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: false,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: { withUser: true, withoutUser: false },
+    },
+    requiredPermissionFlags: [PermissionFlagType.AI],
+    requiredFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
+  },
   description:
     "Attach this conversation to records, so it is listed on each record's Conversations tab " +
     'for anyone who can already see the conversation. Attach the records the conversation is ' +
     'materially about: the one the user is working on, and those you create or change for ' +
     'them. Do not attach records you only read, search or list along the way. Pass every ' +
     'record to attach in a single call. Attaching a record twice is harmless.',
-  inputSchema: attachConversationToRecordsInputSchema,
-  execute: async ({
-    records,
-  }: AttachConversationToRecordsInput): Promise<
+})
+export class AttachConversationToRecordsTool extends BaseTool<
+  typeof attachConversationToRecordsInputSchema
+> {
+  readonly inputSchema = attachConversationToRecordsInputSchema;
+
+  constructor(
+    private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input: { records },
+    context: { workspaceId, threadId, authContext },
+  }: ToolExecuteArgs<typeof attachConversationToRecordsInputSchema>): Promise<
     ToolOutput<AttachConversationToRecordsResult>
-  > => {
-    try {
-      // resolved at call time so access withdrawn mid-turn is honored
-      const { workspaceId, threadId, authContext } =
-        await (toolContext.resolveExecutionContext?.() ?? toolContext);
-
-      if (
-        !isDefined(threadId) ||
-        !isDefined(authContext) ||
-        !isUserAuthContext(authContext)
-      ) {
-        return {
-          success: false,
-          message: FAILURE_MESSAGE,
-          error:
-            'Only a conversation with a workspace member can be attached to a record.',
-        };
-      }
-
-      const result: AttachConversationToRecordsResult = {
-        attached: [],
-        failed: [],
-      };
-
-      // sequential so duplicate links to custom objects, deduplicated by lookup, cannot race
-      for (const record of deduplicateRecords(records)) {
-        try {
-          await agentChatThreadTargetService.attachThreadToRecord({
-            workspaceId,
-            threadId,
-            ...record,
-            authContext,
-          });
-          result.attached.push(record);
-        } catch (error) {
-          result.failed.push({
-            ...record,
-            error: error instanceof Error ? error.message : String(error),
-          });
-        }
-      }
-
-      const failureReasons = result.failed.map(
-        ({ objectNameSingular, recordId, error }) =>
-          `${objectNameSingular} ${recordId}: ${error}`,
-      );
-
-      if (result.attached.length === 0) {
-        return {
-          success: false,
-          message: FAILURE_MESSAGE,
-          error: failureReasons.join('; '),
-          result,
-        };
-      }
-
-      return {
-        success: true,
-        message: buildOutputMessage(result),
-        result,
-        ...(failureReasons.length > 0 ? { warnings: failureReasons } : {}),
-      };
-    } catch (error) {
+  > {
+    if (
+      !isDefined(threadId) ||
+      !isDefined(authContext) ||
+      !isUserAuthContext(authContext)
+    ) {
       return {
         success: false,
         message: FAILURE_MESSAGE,
-        error: error instanceof Error ? error.message : String(error),
+        error:
+          'Only a conversation with a workspace member can be attached to a record.',
       };
     }
-  },
-});
+
+    const result: AttachConversationToRecordsResult = {
+      attached: [],
+      failed: [],
+    };
+
+    // sequential so duplicate links to custom objects, deduplicated by lookup, cannot race
+    for (const record of deduplicateRecords(records)) {
+      try {
+        await this.agentChatThreadTargetService.attachThreadToRecord({
+          workspaceId,
+          threadId,
+          ...record,
+          authContext,
+        });
+        result.attached.push(record);
+      } catch (error) {
+        if (!(error instanceof AiException)) {
+          throw error;
+        }
+
+        result.failed.push({ ...record, error: error.message });
+      }
+    }
+
+    const failureReasons = result.failed.map(
+      ({ objectNameSingular, recordId, error }) =>
+        `${objectNameSingular} ${recordId}: ${error}`,
+    );
+
+    if (result.attached.length === 0) {
+      return {
+        success: false,
+        message: FAILURE_MESSAGE,
+        error: failureReasons.join('; '),
+        result,
+      };
+    }
+
+    return {
+      success: true,
+      message: buildOutputMessage(result),
+      result,
+      ...(failureReasons.length > 0 ? { warnings: failureReasons } : {}),
+    };
+  }
+}

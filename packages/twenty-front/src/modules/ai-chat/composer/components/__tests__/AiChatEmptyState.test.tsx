@@ -4,8 +4,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { AiChatEmptyState } from '@/ai-chat/composer/components/AiChatEmptyState';
-import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai-chat/states/aiChatIsAwaitingFirstChunkFamilyState';
-import { aiChatIsStreamingFamilyState } from '@/ai-chat/states/aiChatIsStreamingFamilyState';
+import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import {
   jotaiStore,
@@ -44,10 +43,10 @@ describe('AiChatEmptyState', () => {
 
   it('should render nothing when the current thread is awaiting its first chunk', () => {
     jotaiStore.set(
-      aiChatIsAwaitingFirstChunkFamilyState.atomFamily({
+      aiChatThreadReplyStatusFamilyState.atomFamily({
         threadId: THREAD_ID,
       }),
-      true,
+      'awaiting-first-chunk',
     );
 
     const { container } = render(<AiChatEmptyState />, {
@@ -59,8 +58,8 @@ describe('AiChatEmptyState', () => {
 
   it('should render nothing when the current thread is streaming', () => {
     jotaiStore.set(
-      aiChatIsStreamingFamilyState.atomFamily({ threadId: THREAD_ID }),
-      true,
+      aiChatThreadReplyStatusFamilyState.atomFamily({ threadId: THREAD_ID }),
+      'streaming',
     );
 
     const { container } = render(<AiChatEmptyState />, {
