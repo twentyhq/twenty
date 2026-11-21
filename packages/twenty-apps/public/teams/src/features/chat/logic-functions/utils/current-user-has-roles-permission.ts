@@ -1,19 +1,6 @@
-import { MetadataApiClient, MetadataSchema } from 'twenty-client-sdk/metadata';
+import { MetadataSchema } from 'twenty-client-sdk/metadata';
 
-export const currentUserHasRolesPermission = async (): Promise<boolean> => {
-  try {
-    const { currentUser } = await new MetadataApiClient().query({
-      currentUser: {
-        currentUserWorkspace: {
-          permissionFlags: true,
-        },
-      },
-    });
+import { currentUserHasPermissionFlag } from 'src/features/chat/logic-functions/utils/current-user-has-permission-flag';
 
-    return (currentUser.currentUserWorkspace?.permissionFlags ?? []).includes(
-      MetadataSchema.enumPermissionFlagType.ROLES,
-    );
-  } catch {
-    return false;
-  }
-};
+export const currentUserHasRolesPermission = (): Promise<boolean> =>
+  currentUserHasPermissionFlag(MetadataSchema.enumPermissionFlagType.ROLES);

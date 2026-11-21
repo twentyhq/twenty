@@ -222,6 +222,19 @@ describe('registerTeamsConnection', () => {
     expect(kvDeleteMock).toHaveBeenCalledExactlyOnceWith(CLAIM_CONFLICT_KV_KEY);
   });
 
+  it('should claim on an explicit enabled state while the injected setting still reads disabled', async () => {
+    process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = 'false';
+
+    expect(
+      await registerTeamsConnection({
+        connectedAccountId: CONNECTED_ACCOUNT_ID,
+        workspaceId: WORKSPACE_ID,
+        isChatEnabled: true,
+      }),
+    ).toEqual({ claimedTenantId: TENANT_ID });
+    expect(releaseMock).not.toHaveBeenCalled();
+  });
+
   it('should link directory users by email once the tenant is claimed', async () => {
     await registerTeamsConnection({
       connectedAccountId: CONNECTED_ACCOUNT_ID,
@@ -235,6 +248,17 @@ describe('registerTeamsConnection', () => {
     expect(kvSetMock.mock.invocationCallOrder[1]).toBeLessThan(
       matchTeamsDirectoryByEmailMock.mock.invocationCallOrder[0],
     );
+  });
+
+  it('should claim without the directory match when asked to skip it', async () => {
+    expect(
+      await registerTeamsConnection({
+        connectedAccountId: CONNECTED_ACCOUNT_ID,
+        workspaceId: WORKSPACE_ID,
+        shouldMatchDirectory: false,
+      }),
+    ).toEqual({ claimedTenantId: TENANT_ID });
+    expect(matchTeamsDirectoryByEmailMock).not.toHaveBeenCalled();
   });
 
   it('should keep the claim when the directory match fails', async () => {

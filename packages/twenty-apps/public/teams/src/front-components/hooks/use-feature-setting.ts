@@ -18,9 +18,9 @@ export const useFeatureSetting = ({
   const [isSaving, setIsSaving] = useState(false);
   const [hasSaveError, setHasSaveError] = useState(false);
 
-  const updateSetting = async (isEnabled: boolean) => {
+  const updateSetting = async (isEnabled: boolean): Promise<boolean> => {
     if (!isAvailable || isSaving) {
-      return;
+      return false;
     }
 
     setIsSaving(true);
@@ -29,8 +29,12 @@ export const useFeatureSetting = ({
     try {
       await saveFeatureSettingOrThrow({ variableKey, isEnabled });
       setSettingValue(String(isEnabled));
+
+      return true;
     } catch {
       setHasSaveError(true);
+
+      return false;
     } finally {
       setIsSaving(false);
     }
