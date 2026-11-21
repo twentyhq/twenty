@@ -5,24 +5,18 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CHAT_MESSAGE_META_SPACER_WIDTH } from '@/chat/constants/ChatMessageMetaSpacerWidth';
 
-const StyledContent = styled.div`
+const META_HEIGHT = themeCssVariables.spacing[6];
+
+const StyledContent = styled.div<{ isSpacerReservedByContent: boolean }>`
+  --chat-message-meta-spacer-height: ${META_HEIGHT};
   overflow-wrap: anywhere;
   position: relative;
 
-  &::after,
-  & .markdown-section > .markdown-paragraph:last-child::after {
+  &::after {
     content: '';
-    display: inline-block;
+    display: ${({ isSpacerReservedByContent }) =>
+      isSpacerReservedByContent ? 'none' : 'inline-block'};
     width: ${CHAT_MESSAGE_META_SPACER_WIDTH};
-  }
-
-  &:has(.markdown-section)::after {
-    content: none;
-  }
-
-  /* A list, code block or quote has no last text line to share with the meta */
-  &:has(.markdown-section > :last-child:not(.markdown-paragraph)) {
-    padding-bottom: ${themeCssVariables.spacing[6]};
   }
 `;
 
@@ -31,7 +25,7 @@ const StyledMeta = styled.div`
   bottom: 0;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-  height: ${themeCssVariables.spacing[6]};
+  height: ${META_HEIGHT};
   position: absolute;
   right: 0;
 `;
@@ -39,11 +33,14 @@ const StyledMeta = styled.div`
 type ChatMessageBubbleContentProps = {
   children: ReactNode;
   meta?: ReactNode;
+  // For block content that reads the spacer variables to make room itself
+  isSpacerReservedByContent?: boolean;
 };
 
 export const ChatMessageBubbleContent = ({
   children,
   meta,
+  isSpacerReservedByContent = false,
 }: ChatMessageBubbleContentProps) => {
   const observeMetaWidth = useCallback((metaElement: HTMLDivElement | null) => {
     const contentElement = metaElement?.parentElement;
@@ -73,7 +70,7 @@ export const ChatMessageBubbleContent = ({
   }
 
   return (
-    <StyledContent>
+    <StyledContent isSpacerReservedByContent={isSpacerReservedByContent}>
       {children}
       <StyledMeta ref={observeMetaWidth}>{meta}</StyledMeta>
     </StyledContent>

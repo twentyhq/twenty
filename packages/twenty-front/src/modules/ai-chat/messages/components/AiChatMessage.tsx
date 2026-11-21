@@ -112,7 +112,7 @@ const AiChatUserMessageText = ({
       isOtherMember={isOtherMember}
       ref={sentMessageHandOffRef}
     >
-      <ChatMessageBubbleContent meta={meta}>
+      <ChatMessageBubbleContent meta={meta} isSpacerReservedByContent>
         <AiChatUserMessageCollapsibleContent>
           {children}
         </AiChatUserMessageCollapsibleContent>
@@ -247,6 +247,10 @@ export const AiChatMessage = ({
     />
   );
 
+  const bubbleTime = hasVisibleTimeInBubble ? (
+    <ChatMessageTime date={createdAt} />
+  ) : undefined;
+
   const messageActions = (
     <AiChatMessageActions
       messageId={messageId}
@@ -306,11 +310,7 @@ export const AiChatMessage = ({
               <AiChatUserMessageText
                 messageId={messageId}
                 isOtherMember={isOtherMemberMessage}
-                meta={
-                  hasVisibleTimeInBubble ? (
-                    <ChatMessageTime date={createdAt} />
-                  ) : undefined
-                }
+                meta={bubbleTime}
               >
                 {messageContent}
               </AiChatUserMessageText>
