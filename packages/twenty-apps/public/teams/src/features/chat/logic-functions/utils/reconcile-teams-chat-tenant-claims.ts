@@ -21,7 +21,6 @@ const reconcileTeamsConnectionTenantClaim = async ({
         connectedAccountId,
         workspaceId,
         isChatEnabled,
-        // A directory scan can outlast the settings request; senders still link by email on their first message.
         shouldMatchDirectory: false,
       });
 
@@ -60,7 +59,6 @@ export const reconcileTeamsChatTenantClaims = async ({
     : connections;
   const reconciliations: TeamsChatConnectionReconciliation[] = [];
 
-  // Sequential: claims and releases of connections sharing a tenant race when run together.
   for (const connection of connectionsToReconcile) {
     reconciliations.push(
       await reconcileTeamsConnectionTenantClaim({

@@ -56,12 +56,7 @@ export const ChatSettings = () => {
     }
   };
 
-  // One flag spans the save and the Teams update, so the switch never re-enables between them.
   const handleChange = async (isEnabled: boolean) => {
-    if (isUpdating) {
-      return;
-    }
-
     setIsUpdating(true);
 
     try {

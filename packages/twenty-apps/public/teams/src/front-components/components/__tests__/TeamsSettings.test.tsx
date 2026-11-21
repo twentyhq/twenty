@@ -85,11 +85,7 @@ describe('TeamsSettings', () => {
     });
     mutationMock.mockResolvedValue({ updateOneApplicationVariable: true });
     restGetMock.mockResolvedValue({ data: { teamsUserLinks: [] } });
-    restPostMock.mockResolvedValue({
-      success: true,
-      isChatEnabled: true,
-      connections: [],
-    });
+    restPostMock.mockResolvedValue({ success: true, connections: [] });
   });
 
   afterEach(cleanup);

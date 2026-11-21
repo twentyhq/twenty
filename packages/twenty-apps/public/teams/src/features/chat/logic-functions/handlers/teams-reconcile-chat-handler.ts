@@ -1,10 +1,11 @@
 import { isBoolean } from '@sniptt/guards';
 import { type RoutePayload } from 'twenty-sdk/define';
+import { MetadataSchema } from 'twenty-client-sdk/metadata';
 import { type LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
 
 import { RELEASE_FLAGS } from 'src/constants/release-flags';
 import { type TeamsChatReconciliationResult } from 'src/features/chat/logic-functions/types/teams-chat-reconciliation.type';
-import { currentUserHasApplicationsPermission } from 'src/features/chat/logic-functions/utils/current-user-has-applications-permission';
+import { currentUserHasPermissionFlag } from 'src/features/chat/logic-functions/utils/current-user-has-permission-flag';
 import { reconcileTeamsChatTenantClaims } from 'src/features/chat/logic-functions/utils/reconcile-teams-chat-tenant-claims';
 import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
 import { toErrorMessage } from 'src/utils/to-error-message';
@@ -23,7 +24,11 @@ export const teamsReconcileChatHandler = async (
     };
   }
 
-  if (!(await currentUserHasApplicationsPermission())) {
+  if (
+    !(await currentUserHasPermissionFlag(
+      MetadataSchema.enumPermissionFlagType.APPLICATIONS,
+    ))
+  ) {
     return {
       success: false,
       message: 'Not allowed',
@@ -32,7 +37,6 @@ export const teamsReconcileChatHandler = async (
     };
   }
 
-  // The setting comes from the caller: the env copy can lag a save by a few seconds.
   const isChatEnabled = isFeatureEnabled({
     isAvailable: RELEASE_FLAGS.IS_CHAT_ASSISTANT_RELEASED,
     settingValue: String(isEnabled),
@@ -41,7 +45,6 @@ export const teamsReconcileChatHandler = async (
   try {
     return {
       success: true,
-      isChatEnabled,
       connections: await reconcileTeamsChatTenantClaims({
         isChatEnabled,
         workspaceId: context.workspaceId,

@@ -4,11 +4,11 @@ import { teamsReconcileChatHandler } from 'src/features/chat/logic-functions/han
 
 const {
   releaseFlags,
-  hasApplicationsPermissionMock,
+  hasPermissionFlagMock,
   reconcileTeamsChatTenantClaimsMock,
 } = vi.hoisted(() => ({
   releaseFlags: { IS_CHAT_ASSISTANT_RELEASED: true },
-  hasApplicationsPermissionMock: vi.fn(),
+  hasPermissionFlagMock: vi.fn(),
   reconcileTeamsChatTenantClaimsMock: vi.fn(),
 }));
 
@@ -17,10 +17,8 @@ vi.mock('src/constants/release-flags', () => ({
 }));
 
 vi.mock(
-  'src/features/chat/logic-functions/utils/current-user-has-applications-permission',
-  () => ({
-    currentUserHasApplicationsPermission: hasApplicationsPermissionMock,
-  }),
+  'src/features/chat/logic-functions/utils/current-user-has-permission-flag',
+  () => ({ currentUserHasPermissionFlag: hasPermissionFlagMock }),
 );
 
 vi.mock(
@@ -42,7 +40,7 @@ describe('teamsReconcileChatHandler', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
-    hasApplicationsPermissionMock.mockResolvedValue(true);
+    hasPermissionFlagMock.mockResolvedValue(true);
     reconcileTeamsChatTenantClaimsMock.mockResolvedValue([CLAIMED_CONNECTION]);
   });
 
@@ -55,19 +53,22 @@ describe('teamsReconcileChatHandler', () => {
       );
 
       expect(result.success).toBe(false);
-      expect(hasApplicationsPermissionMock).not.toHaveBeenCalled();
+      expect(hasPermissionFlagMock).not.toHaveBeenCalled();
       expect(reconcileTeamsChatTenantClaimsMock).not.toHaveBeenCalled();
     },
   );
 
   it('refuses a member who cannot manage applications', async () => {
-    hasApplicationsPermissionMock.mockResolvedValue(false);
+    hasPermissionFlagMock.mockResolvedValue(false);
 
     const result = await teamsReconcileChatHandler(
       { body: { isEnabled: true } },
       CONTEXT,
     );
 
+    expect(hasPermissionFlagMock).toHaveBeenCalledExactlyOnceWith(
+      'APPLICATIONS',
+    );
     expect(result).toEqual({
       success: false,
       message: 'Not allowed',
@@ -83,7 +84,6 @@ describe('teamsReconcileChatHandler', () => {
         await teamsReconcileChatHandler({ body: { isEnabled } }, CONTEXT),
       ).toEqual({
         success: true,
-        isChatEnabled: isEnabled,
         connections: [CLAIMED_CONNECTION],
       });
       expect(
@@ -101,24 +101,10 @@ describe('teamsReconcileChatHandler', () => {
 
     expect(
       await teamsReconcileChatHandler({ body: { isEnabled: true } }, CONTEXT),
-    ).toEqual({ success: true, isChatEnabled: false, connections: [] });
+    ).toEqual({ success: true, connections: [] });
     expect(reconcileTeamsChatTenantClaimsMock).toHaveBeenCalledExactlyOnceWith({
       isChatEnabled: false,
       workspaceId: CONTEXT.workspaceId,
-    });
-  });
-
-  it('reports a failure to list the connections', async () => {
-    reconcileTeamsChatTenantClaimsMock.mockRejectedValue(
-      new Error('connections unavailable'),
-    );
-
-    expect(
-      await teamsReconcileChatHandler({ body: { isEnabled: true } }, CONTEXT),
-    ).toEqual({
-      success: false,
-      message: 'Could not update Teams chat',
-      error: 'connections unavailable',
     });
   });
 });

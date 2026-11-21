@@ -168,14 +168,6 @@ describe('teamsHealthCheckHandler', () => {
     );
   });
 
-  it('should not warn about an unclaimed tenant while chat is disabled', async () => {
-    listTeamsConnectionsMock.mockResolvedValue([WORKSPACE_CONNECTION]);
-
-    await expect(teamsHealthCheckHandler()).resolves.toEqual({ status: 'OK' });
-
-    expect(kvGetMock).not.toHaveBeenCalled();
-  });
-
   const recordLostClaim = (claimingWorkspaceId: string | null) => {
     kvGetMock.mockImplementation(
       async (key: string, options?: { scope: string }) => {

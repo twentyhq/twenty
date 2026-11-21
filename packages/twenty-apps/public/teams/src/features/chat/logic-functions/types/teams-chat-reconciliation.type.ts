@@ -5,9 +5,5 @@ export type TeamsChatConnectionReconciliation =
   | { connectedAccountId: string; status: 'FAILED'; error: string };
 
 export type TeamsChatReconciliationResult =
-  | {
-      success: true;
-      isChatEnabled: boolean;
-      connections: TeamsChatConnectionReconciliation[];
-    }
+  | { success: true; connections: TeamsChatConnectionReconciliation[] }
   | { success: false; message: string; error: string };

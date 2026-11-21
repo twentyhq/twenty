@@ -70,7 +70,6 @@ describe('ChatSettings', () => {
     mutationMock.mockResolvedValue({ updateOneApplicationVariable: true });
     restPostMock.mockResolvedValue({
       success: true,
-      isChatEnabled: true,
       connections: [
         {
           connectedAccountId: 'workspace-connection',
@@ -83,38 +82,29 @@ describe('ChatSettings', () => {
 
   afterEach(cleanup);
 
-  it('registers the Microsoft organization once chat is saved as enabled', async () => {
-    const user = userEvent.setup();
+  it.each([
+    ['registers', 'false', true],
+    ['releases', 'true', false],
+  ])(
+    '%s the Microsoft organization once chat is saved',
+    async (_, savedValue, isEnabled) => {
+      variables[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = savedValue;
+      const user = userEvent.setup();
 
-    render(<ChatSettings />);
-    await user.click(getChatSwitch());
+      render(<ChatSettings />);
+      await user.click(getChatSwitch());
 
-    await waitFor(() =>
-      expect(restPostMock).toHaveBeenCalledExactlyOnceWith(RECONCILE_ROUTE, {
-        isEnabled: true,
-      }),
-    );
-    expect(mutationMock.mock.invocationCallOrder[0]).toBeLessThan(
-      restPostMock.mock.invocationCallOrder[0],
-    );
-    expect(getChatSwitch().getAttribute('aria-checked')).toBe('true');
-    expect(enqueueSnackbarMock).not.toHaveBeenCalled();
-  });
-
-  it('releases the Microsoft organization once chat is saved as disabled', async () => {
-    variables[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
-    const user = userEvent.setup();
-
-    render(<ChatSettings />);
-    await user.click(getChatSwitch());
-
-    await waitFor(() =>
-      expect(restPostMock).toHaveBeenCalledExactlyOnceWith(RECONCILE_ROUTE, {
-        isEnabled: false,
-      }),
-    );
-    expect(enqueueSnackbarMock).not.toHaveBeenCalled();
-  });
+      await waitFor(() =>
+        expect(restPostMock).toHaveBeenCalledExactlyOnceWith(RECONCILE_ROUTE, {
+          isEnabled,
+        }),
+      );
+      expect(mutationMock.mock.invocationCallOrder[0]).toBeLessThan(
+        restPostMock.mock.invocationCallOrder[0],
+      );
+      expect(enqueueSnackbarMock).not.toHaveBeenCalled();
+    },
+  );
 
   it('leaves Teams alone when the setting could not be saved', async () => {
     mutationMock.mockRejectedValue(new Error('Not allowed'));
@@ -130,7 +120,6 @@ describe('ChatSettings', () => {
   it('tells the admin when another workspace holds the Microsoft organization', async () => {
     restPostMock.mockResolvedValue({
       success: true,
-      isChatEnabled: true,
       connections: [
         {
           connectedAccountId: 'workspace-connection',
@@ -169,7 +158,6 @@ describe('ChatSettings', () => {
       () =>
         Promise.resolve({
           success: true,
-          isChatEnabled: true,
           connections: [
             {
               connectedAccountId: 'workspace-connection',
@@ -203,8 +191,7 @@ describe('ChatSettings', () => {
 
   it('keeps the switch disabled until Teams is updated', async () => {
     let resolveReconcile:
-      | ((response: TeamsChatReconciliationResult) => void)
-      | undefined;
+      ((response: TeamsChatReconciliationResult) => void) | undefined;
     restPostMock.mockReturnValue(
       new Promise((resolve) => {
         resolveReconcile = resolve;
@@ -218,7 +205,7 @@ describe('ChatSettings', () => {
     await waitFor(() => expect(restPostMock).toHaveBeenCalledTimes(1));
     expect(getChatSwitch().hasAttribute('disabled')).toBe(true);
 
-    resolveReconcile?.({ success: true, isChatEnabled: true, connections: [] });
+    resolveReconcile?.({ success: true, connections: [] });
 
     await waitFor(() =>
       expect(getChatSwitch().hasAttribute('disabled')).toBe(false),

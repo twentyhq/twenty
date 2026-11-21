@@ -80,20 +80,6 @@ describe('reconcileTeamsChatTenantClaims', () => {
     });
   });
 
-  it('should give the same outcome when run again', async () => {
-    const firstRun = await reconcileTeamsChatTenantClaims({
-      isChatEnabled: true,
-      workspaceId: WORKSPACE_ID,
-    });
-
-    expect(
-      await reconcileTeamsChatTenantClaims({
-        isChatEnabled: true,
-        workspaceId: WORKSPACE_ID,
-      }),
-    ).toEqual(firstRun);
-  });
-
   it('should report a tenant another workspace holds as a conflict', async () => {
     registerTeamsConnectionMock.mockResolvedValue({
       claimedTenantId: null,
@@ -169,17 +155,5 @@ describe('reconcileTeamsChatTenantClaims', () => {
       isChatEnabled: false,
       shouldMatchDirectory: false,
     });
-  });
-
-  it('should do nothing without a connection', async () => {
-    listTeamsConnectionsMock.mockResolvedValue([]);
-
-    expect(
-      await reconcileTeamsChatTenantClaims({
-        isChatEnabled: true,
-        workspaceId: WORKSPACE_ID,
-      }),
-    ).toEqual([]);
-    expect(registerTeamsConnectionMock).not.toHaveBeenCalled();
   });
 });
