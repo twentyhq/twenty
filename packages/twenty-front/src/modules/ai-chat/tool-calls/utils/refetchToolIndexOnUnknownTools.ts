@@ -4,9 +4,13 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { getEffectiveToolName } from '@/ai-chat/tool-calls/utils/getEffectiveToolName';
+import { invalidateToolIndex } from '@/ai/utils/invalidateToolIndex';
 import { GetToolIndexDocument } from '~/generated-metadata/graphql';
 
-const requestedUnknownToolNames = new Set<string>();
+const requestedUnknownToolNamesByClient = new WeakMap<
+  ApolloClient,
+  Set<string>
+>();
 
 export const refetchToolIndexOnUnknownTools = ({
   apolloClient,
@@ -23,16 +27,26 @@ export const refetchToolIndexOnUnknownTools = ({
     return;
   }
 
+  const requestedUnknownToolNames =
+    requestedUnknownToolNamesByClient.get(apolloClient) ?? new Set<string>();
+
+  requestedUnknownToolNamesByClient.set(
+    apolloClient,
+    requestedUnknownToolNames,
+  );
+
   const knownToolNames = new Set(toolIndex.map(({ name }) => name));
-  const unknownToolNames = messages
-    .flatMap(({ parts }) => parts)
-    .filter(isToolUIPart)
-    .map(getEffectiveToolName)
-    .filter(
-      (toolName) =>
-        !knownToolNames.has(toolName) &&
-        !requestedUnknownToolNames.has(toolName),
-    );
+  const unknownToolNames = [
+    ...new Set(
+      messages
+        .flatMap(({ parts }) => parts)
+        .filter(isToolUIPart)
+        .map(getEffectiveToolName),
+    ),
+  ].filter(
+    (toolName) =>
+      !knownToolNames.has(toolName) && !requestedUnknownToolNames.has(toolName),
+  );
 
   if (!isNonEmptyArray(unknownToolNames)) {
     return;
@@ -42,11 +56,9 @@ export const refetchToolIndexOnUnknownTools = ({
     requestedUnknownToolNames.add(toolName),
   );
 
-  apolloClient
-    .refetchQueries({
-      updateCache: (cache) => {
-        cache.evict({ id: 'ROOT_QUERY', fieldName: 'getToolIndex' });
-      },
-    })
-    .catch(() => undefined);
+  invalidateToolIndex(apolloClient).catch(() =>
+    unknownToolNames.forEach((toolName) =>
+      requestedUnknownToolNames.delete(toolName),
+    ),
+  );
 };
