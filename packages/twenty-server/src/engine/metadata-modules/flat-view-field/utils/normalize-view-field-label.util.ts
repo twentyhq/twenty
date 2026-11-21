@@ -1,4 +1,4 @@
-import { isNull } from '@sniptt/guards';
+import { isNonEmptyString, isNull } from '@sniptt/guards';
 import { trimAndRemoveDuplicatedWhitespacesFromString } from 'twenty-shared/utils';
 
 export const normalizeViewFieldLabel = (
@@ -10,5 +10,5 @@ export const normalizeViewFieldLabel = (
 
   const trimmedLabel = trimAndRemoveDuplicatedWhitespacesFromString(label);
 
-  return trimmedLabel === '' ? null : trimmedLabel;
+  return isNonEmptyString(trimmedLabel) ? trimmedLabel : null;
 };
