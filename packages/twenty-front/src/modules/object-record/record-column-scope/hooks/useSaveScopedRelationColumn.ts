@@ -55,14 +55,26 @@ export const useSaveScopedRelationColumn = (recordTableId: string) => {
         return false;
       }
 
+      if (!isDefined(recordFieldId)) {
+        upsertRecordField(savedRecordField);
+
+        return true;
+      }
+
+      const isRecordFieldStillDisplayed = store
+        .get(
+          currentRecordFieldsComponentState.atomFamily({
+            instanceId: recordTableId,
+          }),
+        )
+        .some(({ id }) => id === recordFieldId);
+
       // Only what the editor sets is patched, so a resize made while saving is kept
-      if (isDefined(recordFieldId)) {
+      if (isRecordFieldStillDisplayed) {
         updateRecordField(recordFieldId, {
           relationScope,
           relationTargetFieldMetadataId,
         });
-      } else {
-        upsertRecordField(savedRecordField);
       }
 
       return true;

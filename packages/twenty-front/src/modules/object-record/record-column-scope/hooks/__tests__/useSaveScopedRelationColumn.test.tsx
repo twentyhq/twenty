@@ -260,6 +260,29 @@ describe('useSaveScopedRelationColumn', () => {
     ]);
   });
 
+  it('does not bring back a column deleted while its scope is saving', async () => {
+    const store = createStore();
+    store.set(currentRecordFieldsAtom, [nameColumn, scopedColumn]);
+    saveViewFieldsMock.mockImplementation(async () => {
+      store.set(currentRecordFieldsAtom, [nameColumn]);
+
+      return true;
+    });
+
+    const { result } = renderSaveHook(store);
+
+    await act(() =>
+      result.current.saveScopedRelationColumn({
+        fieldMetadataItemId: PEOPLE_FIELD_METADATA_ITEM_ID,
+        recordFieldId: scopedColumn.id,
+        relationScope: RELATION_SCOPE,
+        relationTargetFieldMetadataId: null,
+      }),
+    );
+
+    expect(store.get(currentRecordFieldsAtom)).toEqual([nameColumn]);
+  });
+
   it('saves nothing for a column deleted in the meantime', async () => {
     const store = createStore();
     store.set(currentRecordFieldsAtom, [nameColumn]);
