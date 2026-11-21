@@ -8,6 +8,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
+import { findChannelVisibilityRestrictedValues } from 'src/engine/permissions/channel-visibility/utils/find-channel-visibility-restricted-values.util';
 import { buildFieldsUnreadableByEveryMatchingRuleSQLConditions } from 'src/engine/permissions/internal/field-access/utils/build-fields-unreadable-by-every-matching-rule-sql-conditions.util';
 import { findRlsRuleInaccessibleFields } from 'src/engine/permissions/internal/field-access/utils/find-rls-rule-inaccessible-fields.util';
 import { renderRlsRecordFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-rls-record-filter-to-sql.util';
@@ -46,7 +47,11 @@ export class RecordFieldPermissionsReadService {
     objectMetadataId,
     tableAlias,
   }: ObjectQuestion & { tableAlias: string }): Promise<
-    { fieldMetadataIds: string[]; sqlCondition: SQLCondition }[]
+    {
+      fieldMetadataIds: string[];
+      sqlCondition: SQLCondition;
+      replacementByFieldMetadataId: Record<string, string>;
+    }[]
   > {
     if (!isDefined(principals)) {
       return [];
@@ -85,9 +90,18 @@ export class RecordFieldPermissionsReadService {
       }),
     );
 
+    const replacementByFieldMetadataId = findChannelVisibilityRestrictedValues({
+      flatObjectMetadata,
+      flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+      featureFlagsMap: metadataMaps.featureFlagsMap,
+    });
+
     return buildFieldsUnreadableByEveryMatchingRuleSQLConditions(
       rlsRuleSQLConditions,
-    );
+    ).map((unreadableFieldsSQLCondition) => ({
+      ...unreadableFieldsSQLCondition,
+      replacementByFieldMetadataId,
+    }));
   }
 
   private async findObjectInaccessibleFieldMetadataIds({

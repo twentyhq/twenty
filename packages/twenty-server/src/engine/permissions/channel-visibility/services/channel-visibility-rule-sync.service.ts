@@ -117,7 +117,15 @@ export class ChannelVisibilityRuleSyncService {
     );
   }
 
+  // role wide grants on channel objects follow the flag only once the rules that replace them are written
   private async syncWorkspaceWithLock(workspaceId: string): Promise<void> {
+    await this.writeOrRemoveRules(workspaceId);
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'rolesPermissions',
+    ]);
+  }
+
+  private async writeOrRemoveRules(workspaceId: string): Promise<void> {
     const { featureFlagsMap, flatWorkspaceMemberMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'featureFlagsMap',

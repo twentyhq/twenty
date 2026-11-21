@@ -1,7 +1,6 @@
-import { gql } from 'graphql-tag';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { makeMetadataApiRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
+import { updateMessageChannelVisibility } from 'test/integration/permissions/channel-visibility/utils/update-message-channel-visibility.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
@@ -17,26 +16,11 @@ const FLAGS = [
   FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED,
 ];
 
-const setJonyChannelVisibility = async (visibility: string) => {
-  const response = await makeMetadataApiRequestWithMemberRole({
-    query: gql`
-      mutation UpdateMessageChannel($input: UpdateMessageChannelInput!) {
-        updateMessageChannel(input: $input) {
-          visibility
-        }
-      }
-    `,
-    variables: {
-      input: {
-        id: MESSAGE_CHANNEL_DATA_SEED_IDS.JONY,
-        update: { visibility },
-      },
-    },
+const setJonyChannelVisibility = (visibility: string) =>
+  updateMessageChannelVisibility({
+    messageChannelId: MESSAGE_CHANNEL_DATA_SEED_IDS.JONY,
+    visibility,
   });
-
-  expect(response.body.errors).toBeUndefined();
-  await waitForAllJobsToFinish();
-};
 
 const findMessagesOfChannel = async ({
   messageChannelId,

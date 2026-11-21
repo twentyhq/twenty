@@ -1,12 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
-  FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
-  QUERY_MAX_RECORDS,
-} from 'twenty-shared/constants';
-import {
-  FeatureFlagKey,
-  FieldMetadataType,
   type ObjectRecord,
   type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
@@ -93,8 +88,6 @@ import {
 } from 'src/engine/twenty-orm/repository/utils/update-event-records.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-twenty-orm-statement.util';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { CHANNEL_VISIBILITY_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-object-universal-identifiers.constant';
 import {
   escapeIdentifier,
   escapeLiteral,
@@ -1990,48 +1983,33 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           this.options.internalContext.flatFieldMetadataMaps,
         ),
       );
-      // a channel text a member cannot read is shown as not shared, where an empty value would read as blank
-      const projectedValueByColumnName: Record<string, string> =
-        this.options.internalContext.featureFlagsMap[
-          FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED
-        ] &&
-        CHANNEL_VISIBILITY_OBJECT_UNIVERSAL_IDENTIFIERS.includes(
-          flatObjectMetadata.universalIdentifier,
-        )
-          ? Object.fromEntries(
-              columnEntries
-                .filter(
-                  ([, fieldMetadataId]) =>
-                    findFlatEntityByIdInFlatEntityMaps({
-                      flatEntityId: fieldMetadataId,
-                      flatEntityMaps:
-                        this.options.internalContext.flatFieldMetadataMaps,
-                    })?.type === FieldMetadataType.TEXT,
-                )
-                .map(([columnName]) => [
-                  columnName,
-                  escapeLiteral(
-                    FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
-                  ),
-                ]),
-            )
-          : {};
-
       const relationShapes = Object.values(tableShape.relationShapeByFieldName);
 
       for (const {
         fieldMetadataIds,
         sqlCondition,
+        replacementByFieldMetadataId,
       } of unreadableFieldsSQLConditions) {
+        const unreadableColumnEntries = columnEntries.filter(
+          ([, fieldMetadataId]) => fieldMetadataIds.includes(fieldMetadataId),
+        );
+
         queryBuilder.makeColumnsUnreadableWhen({
           alias,
-          columnNames: columnEntries
-            .filter(([, fieldMetadataId]) =>
-              fieldMetadataIds.includes(fieldMetadataId),
-            )
-            .map(([columnName]) => columnName),
+          columnNames: unreadableColumnEntries.map(
+            ([columnName]) => columnName,
+          ),
           condition: sqlCondition,
-          projectedValueByColumnName,
+          projectedValueByColumnName: Object.fromEntries(
+            unreadableColumnEntries
+              .filter(([, fieldMetadataId]) =>
+                isDefined(replacementByFieldMetadataId[fieldMetadataId]),
+              )
+              .map(([columnName, fieldMetadataId]) => [
+                columnName,
+                escapeLiteral(replacementByFieldMetadataId[fieldMetadataId]),
+              ]),
+          ),
         });
         queryBuilder.makeRelationsUnreadableWhen({
           alias,

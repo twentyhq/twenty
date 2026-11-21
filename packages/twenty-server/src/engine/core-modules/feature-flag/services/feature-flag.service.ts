@@ -77,10 +77,9 @@ export class FeatureFlagService {
         },
       );
 
-      await this.workspaceCacheService.invalidateAndRecompute(
-        workspaceId,
-        this.findCacheKeysDependingOnFeatureFlags(keys),
-      );
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'featureFlagsMap',
+      ]);
 
       this.emitFeatureFlagsEnabled({ keys, workspaceId });
     }
@@ -130,10 +129,9 @@ export class FeatureFlagService {
       ['workspaceId', 'key'],
     );
 
-    await this.workspaceCacheService.invalidateAndRecompute(
-      workspaceId,
-      this.findCacheKeysDependingOnFeatureFlags([featureFlag]),
-    );
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'featureFlagsMap',
+    ]);
 
     this.workspaceEventEmitter.emitCustomBatchEvent<FeatureFlagEnabledEvent>(
       value ? FEATURE_FLAG_ENABLED_EVENT : FEATURE_FLAG_DISABLED_EVENT,
@@ -142,14 +140,6 @@ export class FeatureFlagService {
     );
 
     return result;
-  }
-
-  private findCacheKeysDependingOnFeatureFlags(
-    keys: FeatureFlagKey[],
-  ): ('featureFlagsMap' | 'rolesPermissions')[] {
-    return keys.includes(FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED)
-      ? ['featureFlagsMap', 'rolesPermissions']
-      : ['featureFlagsMap'];
   }
 
   private emitFeatureFlagsEnabled({
