@@ -1,7 +1,7 @@
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
-import { getAdvancedFilterFieldMetadataItems } from '@/object-record/advanced-filter/utils/getAdvancedFilterFieldMetadataItems';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { useContext } from 'react';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export const useAdvancedFilterFieldMetadataItems = () => {
   const { objectMetadataItem, shouldHideRelationFields } = useContext(
@@ -12,9 +12,10 @@ export const useAdvancedFilterFieldMetadataItems = () => {
   );
 
   return {
-    advancedFilterFieldMetadataItems: getAdvancedFilterFieldMetadataItems({
-      filterableFieldMetadataItems,
-      shouldHideRelationFields,
-    }),
+    advancedFilterFieldMetadataItems: shouldHideRelationFields
+      ? filterableFieldMetadataItems.filter(
+          ({ type }) => type !== FieldMetadataType.RELATION,
+        )
+      : filterableFieldMetadataItems,
   };
 };
