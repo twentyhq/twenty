@@ -1942,6 +1942,7 @@ input CreateViewFieldInput {
   id: UUID
   isCanonical: Boolean = true
   isVisible: Boolean = true
+  label: String
   position: Float = 0
   relationScope: ViewFieldRelationScopeInput
   relationTargetFieldMetadataId: UUID
@@ -5788,6 +5789,7 @@ input UpdateViewFieldInput {
 input UpdateViewFieldInputUpdates {
   aggregateOperation: AggregateOperations
   isVisible: Boolean
+  label: String
   position: Float
   relationScope: ViewFieldRelationScopeInput
   relationTargetFieldMetadataId: UUID
@@ -6443,6 +6445,7 @@ type ViewField {
   isOverridden: Boolean @deprecated(reason: "isOverridden is deprecated")
   isSystemSideEffect: Boolean!
   isVisible: Boolean!
+  label: String
   position: Float!
   relationScope: ViewFieldRelationScope
   relationTargetFieldMetadataId: UUID

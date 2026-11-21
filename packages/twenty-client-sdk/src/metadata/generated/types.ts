@@ -4344,6 +4344,9 @@ export default {
             "isVisible": [
                 1
             ],
+            "label": [
+                4
+            ],
             "position": [
                 8
             ],
@@ -15375,6 +15378,9 @@ export default {
             "isVisible": [
                 1
             ],
+            "label": [
+                4
+            ],
             "position": [
                 8
             ],
@@ -16767,6 +16773,9 @@ export default {
             ],
             "isVisible": [
                 1
+            ],
+            "label": [
+                4
             ],
             "position": [
                 8
