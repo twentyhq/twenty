@@ -45,6 +45,68 @@ export type AiSdkProviderInstance = {
   sdkPackage: AiSdkPackage;
 };
 
+type OpenAiCompatibleProviderSettings = Parameters<
+  typeof createOpenAICompatible
+>[0];
+
+type OpenAiCompatibleTransformRequestBody = NonNullable<
+  OpenAiCompatibleProviderSettings['transformRequestBody']
+>;
+
+const isGroqBaseUrl = (baseUrl: string): boolean => {
+  try {
+    const { hostname } = new URL(baseUrl);
+
+    return hostname === 'groq.com' || hostname.endsWith('.groq.com');
+  } catch {
+    return false;
+  }
+};
+
+const stripReasoningContentFromAssistantMessages = (
+  requestBody: Record<string, unknown>,
+): Record<string, unknown> => {
+  const messages = requestBody.messages;
+
+  if (!Array.isArray(messages)) {
+    return requestBody;
+  }
+
+  let hasChanged = false;
+
+  const sanitizedMessages = messages.map((message) => {
+    if (
+      !message ||
+      typeof message !== 'object' ||
+      Array.isArray(message) ||
+      (message as Record<string, unknown>).role !== 'assistant' ||
+      !('reasoning_content' in message)
+    ) {
+      return message;
+    }
+
+    hasChanged = true;
+
+    const sanitizedMessage = { ...(message as Record<string, unknown>) };
+
+    delete sanitizedMessage.reasoning_content;
+
+    return sanitizedMessage;
+  });
+
+  return hasChanged
+    ? { ...requestBody, messages: sanitizedMessages }
+    : requestBody;
+};
+
+const buildGroqTransformRequestBody =
+  (): OpenAiCompatibleTransformRequestBody => {
+    return ({ requestBody }) =>
+      stripReasoningContentFromAssistantMessages(
+        requestBody as Record<string, unknown>,
+      ) as typeof requestBody;
+  };
+
 @Injectable()
 export class SdkProviderFactoryService {
   private readonly logger = new Logger(SdkProviderFactoryService.name);
@@ -223,10 +285,15 @@ export class SdkProviderFactoryService {
       throw new Error('baseUrl is required for openai-compatible providers');
     }
 
+    const transformRequestBody = isGroqBaseUrl(config.baseUrl)
+      ? buildGroqTransformRequestBody()
+      : undefined;
+
     const provider = createOpenAICompatible({
       name: config.name ?? 'openai-compatible',
       baseURL: config.baseUrl,
       ...(config.apiKey && { apiKey: config.apiKey }),
+      ...(isDefined(transformRequestBody) && { transformRequestBody }),
     });
 
     return this.toProviderInstance(
