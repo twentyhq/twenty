@@ -26,6 +26,36 @@ const createFilterField = async ({
   return data.createOneField;
 };
 
+const PERMISSION_TEST_TIERS = ['gold', 'silver', 'bronze'];
+
+const createTierField = async ({
+  objectMetadataId,
+  accessToken,
+}: {
+  objectMetadataId: string;
+  accessToken: string;
+}) => {
+  const { data } = await createOneFieldMetadata({
+    input: {
+      name: 'tier',
+      label: 'tier',
+      type: FieldMetadataType.SELECT,
+      objectMetadataId,
+      options: PERMISSION_TEST_TIERS.map((tier, position) => ({
+        label: tier,
+        value: tier.toUpperCase(),
+        color: 'blue',
+        position,
+      })),
+    },
+    gqlFields: 'id universalIdentifier',
+    expectToFail: false,
+    token: accessToken,
+  });
+
+  return data.createOneField;
+};
+
 export const createPermissionTestObject = async ({
   nameSingular,
   namePlural,
@@ -63,10 +93,11 @@ export const createPermissionTestObject = async ({
     objectMetadataId,
     accessToken,
   });
+  const tier = await createTierField({ objectMetadataId, accessToken });
 
   return {
     objectMetadataId,
     objectUniversalIdentifier: data.createOneObject.universalIdentifier,
-    fields: { status, category, region },
+    fields: { status, category, region, tier },
   };
 };
