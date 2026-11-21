@@ -8,7 +8,6 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { buildPrincipalsRelatedRecordPathAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-principals-related-record-path-access-groups-or-throw.util';
 import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
-import { isSharingAccessGroupsByValueEnabled } from 'src/engine/permissions/internal/access-group/utils/is-sharing-access-groups-by-value-enabled.util';
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { canRelatedRecordPathExtendAccess } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access.util';
 import { type RlsWorkspaceMember } from 'src/engine/permissions/internal/rls/types/rls-workspace-member.type';
@@ -60,9 +59,6 @@ export class AccessGroupReadService {
           workspaceMembers,
           flatFieldMetadataMaps,
           isRelationHopEnabled: isRlsRelationHopEnabled(featureFlagsMap),
-          isSharingAccessGroupsByValue: isSharingAccessGroupsByValueEnabled({
-            featureFlagsMap,
-          }),
         }),
       ),
     });

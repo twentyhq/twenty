@@ -12,7 +12,6 @@ import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-targ
 import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
 import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
-import { isSharingAccessGroupsByValueEnabled } from 'src/engine/permissions/internal/access-group/utils/is-sharing-access-groups-by-value-enabled.util';
 import { PermissionsException } from 'src/engine/permissions/permissions.exception';
 import { type RlsWorkspaceMember } from 'src/engine/permissions/internal/rls/types/rls-workspace-member.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
@@ -103,9 +102,6 @@ export const buildWorkspaceAccessGroups = ({
           workspaceMembers: workspaceMembersByRoleId.get(roleId) ?? [],
           flatFieldMetadataMaps,
           isRelationHopEnabled: isRlsRelationHopEnabled(featureFlagsMap),
-          isSharingAccessGroupsByValue: isSharingAccessGroupsByValueEnabled({
-            featureFlagsMap,
-          }),
         })) {
           accessGroupByGroupHash.set(accessGroup.groupHash, accessGroup);
         }

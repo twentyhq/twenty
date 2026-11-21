@@ -186,10 +186,6 @@ describe('access groups shared by value (integration)', () => {
       },
     });
     await setFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED,
-      value: true,
-    });
-    await setFeatureFlag({
       featureFlag: FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
       value: true,
     });
@@ -200,10 +196,6 @@ describe('access groups shared by value (integration)', () => {
   afterAll(async () => {
     await setFeatureFlag({
       featureFlag: FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
-      value: false,
-    });
-    await setFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED,
       value: false,
     });
     await updateWorkspaceMemberRole({
