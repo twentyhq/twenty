@@ -59,4 +59,18 @@ describe('getRecordFieldColumnHeader', () => {
       description: employeesField.description,
     });
   });
+
+  it('names a scoped lookup column after its relation, its scope and its looked-up field', () => {
+    expect(
+      getRecordFieldColumnHeader({
+        fieldMetadataItem: employeesField,
+        lookupTarget: { lookupTargetFieldMetadataItem: companyField },
+        isScopedRelationColumn: true,
+      }),
+    ).toEqual({
+      label: `${employeesField.label} · Filtered › ${companyField.label}`,
+      icon: companyField.icon,
+      description: companyField.description,
+    });
+  });
 });

@@ -20,10 +20,12 @@ export const useSaveScopedRelationColumn = (recordTableId: string) => {
       fieldMetadataItemId,
       recordFieldId,
       relationScope,
+      relationTargetFieldMetadataId,
     }: {
       fieldMetadataItemId: string;
       recordFieldId?: string;
       relationScope: ViewFieldRelationScope;
+      relationTargetFieldMetadataId: string | null;
     }): Promise<boolean> => {
       const currentRecordFields = store.get(
         currentRecordFieldsComponentState.atomFamily({
@@ -39,7 +41,11 @@ export const useSaveScopedRelationColumn = (recordTableId: string) => {
         return false;
       }
 
-      const savedRecordField = { ...recordFieldToSave, relationScope };
+      const savedRecordField = {
+        ...recordFieldToSave,
+        relationScope,
+        relationTargetFieldMetadataId,
+      };
 
       const isSaved = await saveViewFields([
         mapRecordFieldToViewField(savedRecordField),
@@ -63,9 +69,12 @@ export const useSaveScopedRelationColumn = (recordTableId: string) => {
         )
         .some(({ id }) => id === recordFieldId);
 
-      // Only the scope is patched, so a resize made while saving is kept
+      // Only what the editor sets is patched, so a resize made while saving is kept
       if (isRecordFieldStillDisplayed) {
-        updateRecordField(recordFieldId, { relationScope });
+        updateRecordField(recordFieldId, {
+          relationScope,
+          relationTargetFieldMetadataId,
+        });
       }
 
       return true;

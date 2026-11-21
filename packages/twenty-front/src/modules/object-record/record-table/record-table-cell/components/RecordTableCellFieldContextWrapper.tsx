@@ -1,5 +1,6 @@
 import { useRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useRecordFieldLookupTarget';
 import { RecordTableCellLookupFieldContext } from '@/object-record/record-column-lookup/components/RecordTableCellLookupFieldContext';
+import { isLookupTargetFieldReadable } from '@/object-record/record-column-lookup/utils/isLookupTargetFieldReadable';
 import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -51,6 +52,10 @@ export const RecordTableCellFieldContextWrapper = ({
   const isLabelIdentifier =
     labelIdentifierFieldMetadataItem?.id === recordField.fieldMetadataItemId;
 
+  const isScopedRelationLookupTargetRestricted =
+    isDefined(scopedRelationAlias?.lookupTarget) &&
+    !isLookupTargetFieldReadable(scopedRelationAlias.lookupTarget);
+
   if (isDefined(lookupTarget)) {
     return (
       <RecordTableCellLookupFieldContext
@@ -82,7 +87,9 @@ export const RecordTableCellFieldContextWrapper = ({
                 recordField.fieldMetadataItemId
               ],
             isRecordReadOnly: isRecordReadOnly ?? false,
-            restrictedFieldNames,
+            restrictedFieldNames: isScopedRelationLookupTargetRestricted
+              ? [...restrictedFieldNames, fieldMetadataItem.name]
+              : restrictedFieldNames,
             fieldValueKey: scopedRelationAlias?.responseKey,
           }}
         >

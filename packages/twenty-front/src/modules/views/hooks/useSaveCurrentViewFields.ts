@@ -95,8 +95,13 @@ export const useSaveCurrentViewFields = () => {
               createViewFieldInput.relationScope ?? null,
             );
 
+            const hasRelationTargetChanged =
+              (existingField.relationTargetFieldMetadataId ?? null) !==
+              (createViewFieldInput.relationTargetFieldMetadataId ?? null);
+
             if (
               !hasRelationScopeChanged &&
+              !hasRelationTargetChanged &&
               isDeeplyEqual(
                 {
                   position: existingField.position,
@@ -133,6 +138,11 @@ export const useSaveCurrentViewFields = () => {
                       size: createViewFieldInput.size,
                       ...(hasRelationScopeChanged && {
                         relationScope: createViewFieldInput.relationScope,
+                      }),
+                      ...(hasRelationTargetChanged && {
+                        relationTargetFieldMetadataId:
+                          createViewFieldInput.relationTargetFieldMetadataId ??
+                          null,
                       }),
                     },
                   },
