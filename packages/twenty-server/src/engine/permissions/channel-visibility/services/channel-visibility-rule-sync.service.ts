@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import {
   CalendarChannelVisibility,
-  FeatureFlagKey,
   MessageChannelVisibility,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
@@ -29,6 +28,7 @@ import { PersonalRoleService } from 'src/engine/permissions/channel-visibility/s
 import { type ChannelVisibilityLevel } from 'src/engine/permissions/channel-visibility/types/channel-visibility-level.type';
 import { type VisibilityChannel } from 'src/engine/permissions/channel-visibility/types/visibility-channel.type';
 import { isPersonalRole } from 'src/engine/permissions/channel-visibility/utils/is-personal-role.util';
+import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
 import { computeChannelIdsByVisibilityLevel } from 'src/engine/permissions/channel-visibility/utils/compute-channel-ids-by-visibility-level.util';
 import {
   PermissionsException,
@@ -134,7 +134,7 @@ export class ChannelVisibilityRuleSyncService {
         'fieldIdByObjectIdAndName',
       ]);
 
-    if (!featureFlagsMap[FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED]) {
+    if (!isChannelVisibilityRlsEnabled(featureFlagsMap)) {
       await this.personalRoleService.deletePersonalRoles({ workspaceId });
       await this.rowLevelPermissionPredicateService.upsertManySystemRowLevelPermissionRules(
         {

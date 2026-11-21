@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
-
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
 import { SYNC_CHANNEL_VISIBILITY_RULES_JOB_NAME } from 'src/engine/permissions/channel-visibility/constants/sync-channel-visibility-rules-job-name.constant';
 import { type SyncChannelVisibilityRulesJobData } from 'src/engine/permissions/channel-visibility/types/sync-channel-visibility-rules-job-data.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -23,7 +22,7 @@ export class ChannelVisibilityRuleSyncSchedulerService {
       ['featureFlagsMap'],
     );
 
-    if (!featureFlagsMap[FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED]) {
+    if (!isChannelVisibilityRlsEnabled(featureFlagsMap)) {
       return;
     }
 
