@@ -136,6 +136,7 @@ export const createStandardViewFieldFlatMetadata = <
     relationScope: null,
     relationTargetFieldMetadataUniversalIdentifier: null,
     universalRelationScope: null,
+    label: null,
     isActive: true,
     isSystemSideEffect: parentView.isSystemSideEffect,
     isCanonical: true,

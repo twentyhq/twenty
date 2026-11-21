@@ -12,6 +12,7 @@ import { FLAT_VIEW_FIELD_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules
 import { type FlatViewFieldMaps } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field-maps.type';
 import { fromViewFieldOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-view-field/utils/from-view-field-overrides-to-universal-overrides.util';
 import { fromViewFieldRelationScopeToUniversalRelationScope } from 'src/engine/metadata-modules/flat-view-field/utils/from-view-field-relation-scope-to-universal-relation-scope.util';
+import { normalizeViewFieldLabel } from 'src/engine/metadata-modules/flat-view-field/utils/normalize-view-field-label.util';
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
 import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/overrides/utils/sanitize-overridable-entity-input.util';
 import { type UpdateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/update-view-field.input';
@@ -56,10 +57,18 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
     );
   }
 
-  const editableProperties = extractAndSanitizeObjectStringFields(
+  const sanitizedEditableProperties = extractAndSanitizeObjectStringFields(
     rawUpdateViewFieldInput.update,
     FLAT_VIEW_FIELD_EDITABLE_PROPERTIES,
   );
+
+  const editableProperties =
+    sanitizedEditableProperties.label === undefined
+      ? sanitizedEditableProperties
+      : {
+          ...sanitizedEditableProperties,
+          label: normalizeViewFieldLabel(sanitizedEditableProperties.label),
+        };
 
   const shouldOverride = isCallerOverridingEntity({
     callerApplicationUniversalIdentifier,

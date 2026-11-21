@@ -126,6 +126,7 @@ const VIEW_FIELD_MANIFEST: ViewFieldManifest = {
     ],
     limit: 1,
   },
+  label: 'Open opportunities',
 };
 
 const STANDALONE_VIEW_FIELD_MANIFEST: StandaloneViewFieldManifest = {

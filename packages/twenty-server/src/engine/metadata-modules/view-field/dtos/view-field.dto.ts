@@ -57,6 +57,9 @@ export class ViewFieldDTO {
   @Field(() => ViewFieldRelationScopeDTO, { nullable: true })
   relationScope?: ViewFieldRelationScopeDTO | null;
 
+  @Field(() => String, { nullable: true })
+  label?: string | null;
+
   @Field(() => UUIDScalarType, { nullable: false })
   workspaceId: string;
 
