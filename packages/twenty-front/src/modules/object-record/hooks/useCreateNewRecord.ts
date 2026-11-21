@@ -25,6 +25,41 @@ type UseCreateNewRecordProps = {
   onRecordCreated?: OnRecordCreated;
 };
 
+const removeUneditableFieldsFromRecordInput = ({
+  objectMetadataItem,
+  recordInput,
+}: {
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  recordInput: Partial<ObjectRecord>;
+}): Partial<ObjectRecord> => {
+  const uneditableFieldNames = new Set(
+    (objectMetadataItem.uneditableFields ?? []).map((field) => field.name),
+  );
+
+  if (uneditableFieldNames.size === 0) {
+    return recordInput;
+  }
+
+  return Object.fromEntries(
+    Object.entries(recordInput).filter(([fieldName]) => {
+      if (uneditableFieldNames.has(fieldName)) {
+        return false;
+      }
+
+      // Relation join columns are stored as `${fieldName}Id` in record inputs.
+      if (fieldName.endsWith('Id')) {
+        const relationFieldName = fieldName.slice(0, -2);
+
+        if (uneditableFieldNames.has(relationFieldName)) {
+          return false;
+        }
+      }
+
+      return true;
+    }),
+  );
+};
+
 export const useCreateNewRecord = ({
   objectMetadataItem,
   buildRecordInput,
@@ -61,11 +96,14 @@ export const useCreateNewRecord = ({
       const recordInputFromRLSPredicates = buildRecordInputFromRLSPredicates();
       const additionalRecordInput = buildRecordInput?.();
 
-      const mergedRecordInput = {
-        ...recordInputFromRLSPredicates,
-        ...additionalRecordInput,
-        ...recordInput,
-      };
+      const mergedRecordInput = removeUneditableFieldsFromRecordInput({
+        objectMetadataItem,
+        recordInput: {
+          ...recordInputFromRLSPredicates,
+          ...additionalRecordInput,
+          ...recordInput,
+        },
+      });
 
       const createdRecord = await createOneRecord({
         id: recordId,
@@ -74,7 +112,12 @@ export const useCreateNewRecord = ({
 
       return createdRecord;
     },
-    [buildRecordInputFromRLSPredicates, buildRecordInput, createOneRecord],
+    [
+      buildRecordInputFromRLSPredicates,
+      buildRecordInput,
+      createOneRecord,
+      objectMetadataItem,
+    ],
   );
 
   const createAndStoreRecord = useCallback(
@@ -95,11 +138,14 @@ export const useCreateNewRecord = ({
 
       const createdRecord = await requestRecordCreation({
         objectMetadataItem,
-        initialDraftRecord: {
-          ...buildRecordInputFromRLSPredicates(),
-          ...buildRecordInput?.(),
-          ...recordInput,
-        },
+        initialDraftRecord: removeUneditableFieldsFromRecordInput({
+          objectMetadataItem,
+          recordInput: {
+            ...buildRecordInputFromRLSPredicates(),
+            ...buildRecordInput?.(),
+            ...recordInput,
+          },
+        }),
         createRecord: (draftRecord) => {
           submittedRecordInput = { ...recordInput, ...draftRecord };
           return createAndStoreRecord(submittedRecordInput);
