@@ -27,6 +27,7 @@ import { useLeaveRemovedInboxThread } from '@/inbox/hooks/useLeaveRemovedInboxTh
 import { useLoadInboxThreadList } from '@/inbox/hooks/useLoadInboxThreadList';
 import { useRefreshInboxChannelSummaries } from '@/inbox/hooks/useRefreshInboxChannelSummaries';
 import { useRefreshInboxChannels } from '@/inbox/hooks/useRefreshInboxChannels';
+import { useRefreshShownInboxThreadList } from '@/inbox/hooks/useRefreshShownInboxThreadList';
 import { useRefreshInboxOpenThreadsSummary } from '@/inbox/hooks/useRefreshInboxOpenThreadsSummary';
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
@@ -123,6 +124,7 @@ export const InboxSyncEffect = () => {
   );
 
   const { loadInboxThreadList } = useLoadInboxThreadList();
+  const { refreshShownInboxThreadList } = useRefreshShownInboxThreadList();
   const { addInboxThread, prependInboxThreadToRecentList } =
     useAddInboxThread();
   const { applyAiChatThreadUpdate } = useApplyAiChatThreadUpdate();
@@ -193,7 +195,12 @@ export const InboxSyncEffect = () => {
     const refreshUntilLoaded = async () => {
       const agentChatThreads = await refreshRecentThreads();
 
-      if (!isActive || isDefined(agentChatThreads)) {
+      if (!isActive) {
+        return;
+      }
+
+      if (isDefined(agentChatThreads)) {
+        refreshShownInboxThreadList();
         return;
       }
 
@@ -218,6 +225,7 @@ export const InboxSyncEffect = () => {
     canLoadChatThreads,
     favoriteThreadIdsKey,
     refreshRecentThreads,
+    refreshShownInboxThreadList,
     store,
   ]);
 

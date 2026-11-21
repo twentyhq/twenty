@@ -27,7 +27,6 @@ import { useInboxRecordSelectionInstanceId } from '@/inbox/hooks/useInboxRecordS
 import { useIsInboxShowingDirectMessage } from '@/inbox/hooks/useIsInboxShowingDirectMessage';
 import { useIsInboxSplitView } from '@/inbox/hooks/useIsInboxSplitView';
 import { InboxThreadListFetchMoreTrigger } from '@/inbox/components/InboxThreadListFetchMoreTrigger';
-import { InboxThreadListLoadEffect } from '@/inbox/components/InboxThreadListLoadEffect';
 import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
 import { useLoadInboxThreadList } from '@/inbox/hooks/useLoadInboxThreadList';
 import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
@@ -272,7 +271,6 @@ const InboxPageContent = () => {
 
   return (
     <StyledInbox>
-      <InboxThreadListLoadEffect source={inboxSelectedThreadListSource} />
       <RecordSelectionRecordIdsEffect records={threads} />
       <InboxSelectionEffect
         key={selectedThreadId}

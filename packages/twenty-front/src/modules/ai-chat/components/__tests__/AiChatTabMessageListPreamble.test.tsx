@@ -70,15 +70,12 @@ jest.mock('@/ai-chat/messages/components/AiChatScrollToBottomButton', () => ({
 const mockPinScrollToBottom = jest.fn();
 
 jest.mock('@/ai-chat/messages/utils/pinAiChatScrollToBottom', () => ({
-  pinAiChatScrollToBottom: (...args: unknown[]) =>
-    mockPinScrollToBottom(...args),
+  pinAiChatScrollToBottom: (...args: unknown[]) => {
+    mockPinScrollToBottom(...args);
+
+    return () => {};
+  },
 }));
-jest.mock(
-  '@/ai-chat/messages/components/AiChatStreamingAutoScrollEffect',
-  () => ({
-    AiChatStreamingAutoScrollEffect: () => null,
-  }),
-);
 
 jest.mock('@/ai-chat/message-content/components/LazyMarkdownRenderer', () => ({
   MarkdownLoadingSkeleton: () => <div role="status">Loading conversation</div>,
