@@ -12,6 +12,15 @@ describe('getRecordFieldCustomLabel', () => {
     ).toBe('Open tasks');
   });
 
+  it('collapses repeated spaces like the server does', () => {
+    expect(
+      getRecordFieldCustomLabel({
+        editedLabel: 'Open   tasks',
+        defaultLabel: DEFAULT_LABEL,
+      }),
+    ).toBe('Open tasks');
+  });
+
   it('drops an emptied label so the default label shows again', () => {
     expect(
       getRecordFieldCustomLabel({

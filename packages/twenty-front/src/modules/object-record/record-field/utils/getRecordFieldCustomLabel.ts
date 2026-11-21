@@ -1,4 +1,6 @@
-// A label left empty or set back to the default header means the column has no custom label
+import { trimAndRemoveDuplicatedWhitespacesFromString } from 'twenty-shared/utils';
+
+// Storing the default header would pin it, so a later rename of the field would not show
 export const getRecordFieldCustomLabel = ({
   editedLabel,
   defaultLabel,
@@ -6,9 +8,10 @@ export const getRecordFieldCustomLabel = ({
   editedLabel: string;
   defaultLabel: string;
 }): string | null => {
-  const trimmedLabel = editedLabel.trim();
+  const normalizedLabel =
+    trimAndRemoveDuplicatedWhitespacesFromString(editedLabel);
 
-  return trimmedLabel === '' || trimmedLabel === defaultLabel
+  return normalizedLabel === '' || normalizedLabel === defaultLabel
     ? null
-    : trimmedLabel;
+    : normalizedLabel;
 };
