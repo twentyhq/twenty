@@ -13,10 +13,13 @@ type UniversalRelationScopeFieldReference = Pick<
   | 'relationTargetFieldMetadataUniversalIdentifier'
 >;
 
-const toFieldMetadataIdOrThrow = (
-  universalIdentifier: string | null,
-  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>,
-): string =>
+const toFieldMetadataIdOrThrow = ({
+  universalIdentifier,
+  flatFieldMetadataMaps,
+}: {
+  universalIdentifier: string | null;
+  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
+}): string =>
   findFlatEntityByUniversalIdentifierOrThrow({
     flatEntityMaps: flatFieldMetadataMaps,
     // An unresolved (null) reference never matches, so it throws like a missing one
@@ -25,25 +28,28 @@ const toFieldMetadataIdOrThrow = (
 
 const toFieldReference = <
   TUniversalFieldReference extends UniversalRelationScopeFieldReference,
->(
-  {
+>({
+  universalFieldReference: {
     fieldMetadataUniversalIdentifier,
     relationTargetFieldMetadataUniversalIdentifier,
     ...fieldReference
-  }: TUniversalFieldReference,
-  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>,
-) => ({
+  },
+  flatFieldMetadataMaps,
+}: {
+  universalFieldReference: TUniversalFieldReference;
+  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
+}) => ({
   ...fieldReference,
-  fieldMetadataId: toFieldMetadataIdOrThrow(
-    fieldMetadataUniversalIdentifier,
+  fieldMetadataId: toFieldMetadataIdOrThrow({
+    universalIdentifier: fieldMetadataUniversalIdentifier,
     flatFieldMetadataMaps,
-  ),
+  }),
   ...(isDefined(relationTargetFieldMetadataUniversalIdentifier)
     ? {
-        relationTargetFieldMetadataId: toFieldMetadataIdOrThrow(
-          relationTargetFieldMetadataUniversalIdentifier,
+        relationTargetFieldMetadataId: toFieldMetadataIdOrThrow({
+          universalIdentifier: relationTargetFieldMetadataUniversalIdentifier,
           flatFieldMetadataMaps,
-        ),
+        }),
       }
     : {}),
 });
@@ -57,9 +63,12 @@ export const fromUniversalRelationScopeToViewFieldRelationScope = ({
 }): ViewFieldRelationScope => ({
   ...universalRelationScope,
   filters: universalRelationScope.filters.map((filter) =>
-    toFieldReference(filter, flatFieldMetadataMaps),
+    toFieldReference({
+      universalFieldReference: filter,
+      flatFieldMetadataMaps,
+    }),
   ),
   sorts: universalRelationScope.sorts.map((sort) =>
-    toFieldReference(sort, flatFieldMetadataMaps),
+    toFieldReference({ universalFieldReference: sort, flatFieldMetadataMaps }),
   ),
 });
