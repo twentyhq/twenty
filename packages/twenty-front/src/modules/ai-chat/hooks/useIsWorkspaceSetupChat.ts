@@ -1,7 +1,8 @@
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+
 import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
 import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
+import { getIsWorkspaceSetupChat } from '@/ai-chat/utils/getIsWorkspaceSetupChat';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useIsWorkspaceSetupChat = () => {
@@ -10,5 +11,5 @@ export const useIsWorkspaceSetupChat = () => {
     shouldOpenAiChatAfterOnboardingState,
   );
 
-  return shouldOpenAiChatAfterOnboarding && isDefined(surface);
+  return getIsWorkspaceSetupChat({ surface, shouldOpenAiChatAfterOnboarding });
 };

@@ -28,6 +28,7 @@ import { aiChatComposerQuotedMessageIdFamilyState } from '@/ai-chat/states/compo
 import { aiChatMessageAuthorLookupSelector } from '@/ai-chat/messages/states/selectors/aiChatMessageAuthorLookupSelector';
 import { aiChatThreadMessageFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadMessageFamilySelector';
 import { getAiChatMessageAuthor } from '@/ai-chat/messages/utils/getAiChatMessageAuthor';
+import { getCanSendAiChatMessage } from '@/ai-chat/composer/utils/getCanSendAiChatMessage';
 import { getAiChatMessageQuoteSource } from '@/ai-chat/composer/utils/getAiChatMessageQuoteSource';
 import { prependAiChatQuoteToText } from '@/ai-chat/composer/utils/prependAiChatQuoteToText';
 import { aiChatThreadReplyLastBrowsingContextFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyLastBrowsingContextFamilyState';
@@ -499,8 +500,10 @@ export const useSendAiChatMessage = () => {
       }
 
       if (
-        !isNonEmptyArray(store.get(aiModelsState.atom)) &&
-        !isAiChatInboxEnabled
+        !getCanSendAiChatMessage({
+          aiModels: store.get(aiModelsState.atom),
+          isAiChatInboxEnabled,
+        })
       ) {
         enqueueToast({
           status: 'error',
