@@ -28,7 +28,7 @@ const buildPermissions = (canReadPeople: boolean) => ({
 
 describe('generateFindManyRecordsQuery with relations with arguments', () => {
   const generateQuery = ({
-    withRelation = true,
+    shouldIncludeRelation = true,
     relation = peopleInParis,
     canReadPeople = true,
   } = {}) =>
@@ -38,7 +38,7 @@ describe('generateFindManyRecordsQuery with relations with arguments', () => {
         objectMetadataItems,
         recordGqlFields: {
           id: true,
-          ...(withRelation && {
+          ...(shouldIncludeRelation && {
             [computeRelationWithArgumentsResponseKey(relation)]: relation,
           }),
         },
@@ -76,7 +76,7 @@ describe('generateFindManyRecordsQuery with relations with arguments', () => {
 
   it('selects and declares nothing for an unreadable target', () => {
     expect(generateQuery({ canReadPeople: false })).toBe(
-      generateQuery({ withRelation: false, canReadPeople: false }),
+      generateQuery({ shouldIncludeRelation: false, canReadPeople: false }),
     );
   });
 });
