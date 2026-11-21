@@ -14,7 +14,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
+import { getCompositeColumnPropertiesOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-column-properties-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
@@ -437,9 +437,11 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     const fromName = flatFieldMetadata.name;
 
     if (isCompositeFlatFieldMetadata(flatFieldMetadata)) {
-      const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
+      const compositeProperties = getCompositeColumnPropertiesOrThrow(
+        flatFieldMetadata.type,
+      );
 
-      for (const property of compositeType.properties) {
+      for (const property of compositeProperties) {
         if (isMorphOrRelationFieldMetadataType(property.type)) {
           throw new WorkspaceMigrationActionExecutionException({
             message:
@@ -516,9 +518,11 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     toDefaultValue,
   }: DefaultValueUpdateHandlerArgs) {
     if (isCompositeFlatFieldMetadata(flatFieldMetadata)) {
-      const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
+      const compositeProperties = getCompositeColumnPropertiesOrThrow(
+        flatFieldMetadata.type,
+      );
 
-      for (const property of compositeType.properties) {
+      for (const property of compositeProperties) {
         const columnType = fieldMetadataTypeToColumnType(
           property.type,
         ) as ColumnType;
@@ -598,9 +602,11 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     }
 
     if (isCompositeFlatFieldMetadata(flatFieldMetadata)) {
-      const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
+      const compositeProperties = getCompositeColumnPropertiesOrThrow(
+        flatFieldMetadata.type,
+      );
 
-      for (const property of compositeType.properties) {
+      for (const property of compositeProperties) {
         if (isMorphOrRelationFieldMetadataType(property.type)) {
           throw new WorkspaceMigrationActionExecutionException({
             message:

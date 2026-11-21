@@ -9,6 +9,7 @@ import { DropNotStartedWorkflowRunStatusCommand } from 'src/database/commands/up
 import { RepairSkippedStandardCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795103130063-repair-skipped-standard-command-menu-items.command';
 import { AddWorkspaceNavigationMenuSectionCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795106019718-add-workspace-navigation-menu-section.command';
 import { ConvertPermissionStorageObjectsToTablesCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795258335000-convert-permission-storage-objects-to-tables.command';
+import { AddRichTextFileIdsColumnsCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795261457407-add-rich-text-file-ids-columns.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
@@ -34,6 +35,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     RepairSkippedStandardCommandMenuItemsCommand,
     AddWorkspaceNavigationMenuSectionCommand,
     ConvertPermissionStorageObjectsToTablesCommand,
+    AddRichTextFileIdsColumnsCommand,
   ],
 })
 export class V2_61_UpgradeVersionCommandModule {}
