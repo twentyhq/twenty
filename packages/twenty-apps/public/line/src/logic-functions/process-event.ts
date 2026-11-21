@@ -4,6 +4,7 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { LINE_LOGIC_FUNCTION_PROCESS_EVENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { applyUnsend } from 'src/logic-functions/data/apply-unsend.util';
 import { fetchLineUserDisplayName } from 'src/logic-functions/data/fetch-line-user-display-name.util';
 import { findBotMessageChannelOrThrow } from 'src/logic-functions/data/find-bot-message-channel-or-throw.util';
 import { findOrCreateLinePersonId } from 'src/logic-functions/data/find-or-create-line-person-id.util';
@@ -23,16 +24,28 @@ const handler = async ({ botUserId, event }: ProcessEventPayload) => {
     return;
   }
 
+  const client = new CoreApiClient();
   const messageChannel = await findBotMessageChannelOrThrow({
     connectedAccountId,
     botUserId,
   });
+
+  if (event.type === 'unsend') {
+    await applyUnsend({
+      client,
+      messageChannelId: messageChannel.id,
+      messageId: event.unsend.messageId,
+    });
+
+    return;
+  }
+
   const accessToken = await getLineAccessTokenOrThrow(connectedAccountId);
   const { userId } = event.source;
 
   await withConnectionAuthFailureReport(connectedAccountId, async () => {
     const personId = await findOrCreateLinePersonId({
-      client: new CoreApiClient(),
+      client,
       botUserId,
       userId,
       resolveDisplayName: () =>
@@ -64,7 +77,7 @@ export default defineLogicFunction({
   universalIdentifier: LINE_LOGIC_FUNCTION_PROCESS_EVENT_UNIVERSAL_IDENTIFIER,
   name: 'process-event',
   description:
-    'Processes one LINE event: imports a message into its thread and links the sender to a Person',
+    'Processes one LINE event: imports a message into its thread and links the sender to a Person, or removes a message the customer unsent',
   timeoutSeconds: 60,
   handler,
 });

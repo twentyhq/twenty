@@ -37,6 +37,15 @@ export default defineApplicationRole({
         canDestroyAllRecords: false,
       },
       {
+        // an unsent message's attachments are deleted for good, as LINE asks
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+        canReadAllRecords: true,
+        canUpdateAllRecords: false,
+        canSoftDeleteAllRecords: false,
+        canDestroyAllRecords: true,
+      },
+      {
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.message.universalIdentifier,
         canReadAllRecords: true,
