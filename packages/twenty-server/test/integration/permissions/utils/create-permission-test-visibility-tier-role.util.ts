@@ -1,21 +1,21 @@
 import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { type PermissionTestWorkspace } from 'test/integration/permissions/utils/permission-test-workspace.type';
-import { upsertPermissionTestTierRule } from 'test/integration/permissions/utils/upsert-permission-test-tier-rule.util';
+import { upsertPermissionTestVisibilityTierRule } from 'test/integration/permissions/utils/upsert-permission-test-visibility-tier-rule.util';
 
-export const createPermissionTestTierRole = async ({
+export const createPermissionTestVisibilityTierRole = async ({
   workspace,
   label,
   ruleId,
-  tiers,
+  visibilityTiers,
 }: {
   workspace: Pick<
     PermissionTestWorkspace,
-    'objectMetadataId' | 'tierFieldMetadataId' | 'adminAccessToken'
+    'objectMetadataId' | 'visibilityTierFieldMetadataId' | 'adminAccessToken'
   >;
   label: string;
   ruleId: string;
-  tiers: string[];
+  visibilityTiers: string[];
 }): Promise<string> => {
   const { data } = await createOneRole({
     input: {
@@ -37,7 +37,12 @@ export const createPermissionTestTierRole = async ({
     objectMetadataId: workspace.objectMetadataId,
     token: workspace.adminAccessToken,
   });
-  await upsertPermissionTestTierRule({ workspace, roleId, ruleId, tiers });
+  await upsertPermissionTestVisibilityTierRule({
+    workspace,
+    roleId,
+    ruleId,
+    visibilityTiers,
+  });
 
   return roleId;
 };

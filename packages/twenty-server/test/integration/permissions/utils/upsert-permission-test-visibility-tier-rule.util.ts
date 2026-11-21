@@ -6,19 +6,19 @@ import {
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
-export const upsertPermissionTestTierRule = ({
+export const upsertPermissionTestVisibilityTierRule = ({
   workspace,
   roleId,
   ruleId,
-  tiers,
+  visibilityTiers,
 }: {
   workspace: Pick<
     PermissionTestWorkspace,
-    'objectMetadataId' | 'tierFieldMetadataId' | 'adminAccessToken'
+    'objectMetadataId' | 'visibilityTierFieldMetadataId' | 'adminAccessToken'
   >;
   roleId: string;
   ruleId: string;
-  tiers: string[];
+  visibilityTiers: string[];
 }) =>
   upsertRowLevelPermissionRules({
     input: {
@@ -35,9 +35,9 @@ export const upsertPermissionTestTierRule = ({
               predicates: [
                 {
                   id: v4(),
-                  fieldMetadataId: workspace.tierFieldMetadataId,
+                  fieldMetadataId: workspace.visibilityTierFieldMetadataId,
                   operand: RowLevelPermissionPredicateOperand.IS,
-                  value: tiers,
+                  value: visibilityTiers,
                 },
               ],
             },

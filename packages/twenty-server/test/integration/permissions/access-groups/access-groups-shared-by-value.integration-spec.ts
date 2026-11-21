@@ -1,10 +1,10 @@
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { addPermissionTestWorkspaceMember } from 'test/integration/permissions/utils/add-permission-test-workspace-member.util';
-import { createPermissionTestTierRole } from 'test/integration/permissions/utils/create-permission-test-tier-role.util';
+import { createPermissionTestVisibilityTierRole } from 'test/integration/permissions/utils/create-permission-test-visibility-tier-role.util';
 import { describePermissionTestWorkspace } from 'test/integration/permissions/utils/describe-permission-test-workspace.util';
 import { type PermissionTestRecordName } from 'test/integration/permissions/utils/permission-test-workspace.type';
-import { upsertPermissionTestTierRule } from 'test/integration/permissions/utils/upsert-permission-test-tier-rule.util';
+import { upsertPermissionTestVisibilityTierRule } from 'test/integration/permissions/utils/upsert-permission-test-visibility-tier-rule.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
@@ -15,10 +15,10 @@ import { type RecordAccessGroupComputationService } from 'src/engine/permissions
 import { type PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { type RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 
-const TIER_RECORDS: PermissionTestRecordName[] = [
-  'goldTier',
-  'silverTier',
-  'bronzeTier',
+const VISIBILITY_TIER_RECORDS: PermissionTestRecordName[] = [
+  'lowVisibilityTier',
+  'mediumVisibilityTier',
+  'fullVisibilityTier',
 ];
 
 describePermissionTestWorkspace({
@@ -42,17 +42,17 @@ describePermissionTestWorkspace({
         objectMetadataId: findWorkspace().objectMetadataId,
       });
 
-    const setMemberTiers = async (tiers: string[]) => {
-      await upsertPermissionTestTierRule({
+    const setMemberVisibilityTiers = async (visibilityTiers: string[]) => {
+      await upsertPermissionTestVisibilityTierRule({
         workspace: findWorkspace(),
         roleId: memberRoleId,
         ruleId: memberRuleId,
-        tiers,
+        visibilityTiers,
       });
       await syncAccessGroups();
     };
 
-    const findReadableTierRecords = async (): Promise<
+    const findReadableVisibilityTierRecords = async (): Promise<
       PermissionTestRecordName[]
     > => {
       const workspace = findWorkspace();
@@ -71,7 +71,7 @@ describePermissionTestWorkspace({
         );
       const readableRecords: PermissionTestRecordName[] = [];
 
-      for (const record of TIER_RECORDS) {
+      for (const record of VISIBILITY_TIER_RECORDS) {
         if (
           await recordPermissionsReadService.canAccessRecords({
             principals,
@@ -90,17 +90,17 @@ describePermissionTestWorkspace({
     beforeAll(async () => {
       const workspace = findWorkspace();
 
-      memberRoleId = await createPermissionTestTierRole({
+      memberRoleId = await createPermissionTestVisibilityTierRole({
         workspace,
-        label: 'Gold and silver',
+        label: 'Low and medium visibility',
         ruleId: memberRuleId,
-        tiers: ['GOLD', 'SILVER'],
+        visibilityTiers: ['LOW', 'MEDIUM'],
       });
-      otherRoleId = await createPermissionTestTierRole({
+      otherRoleId = await createPermissionTestVisibilityTierRole({
         workspace,
-        label: 'Bronze',
+        label: 'Full visibility',
         ruleId: v4(),
-        tiers: ['BRONZE'],
+        visibilityTiers: ['FULL'],
       });
       workspaceMemberId = await addPermissionTestWorkspaceMember({
         workspaceId: workspace.workspaceId,
@@ -120,18 +120,18 @@ describePermissionTestWorkspace({
     });
 
     it('should read the records of every value the rule lists', async () => {
-      expect(await findReadableTierRecords()).toEqual([
-        'goldTier',
-        'silverTier',
+      expect(await findReadableVisibilityTierRecords()).toEqual([
+        'lowVisibilityTier',
+        'mediumVisibilityTier',
       ]);
     });
 
     it('should read the records of a value another role already lists without recomputing them', async () => {
-      await setMemberTiers(['GOLD', 'BRONZE']);
+      await setMemberVisibilityTiers(['LOW', 'FULL']);
 
-      expect(await findReadableTierRecords()).toEqual([
-        'goldTier',
-        'bronzeTier',
+      expect(await findReadableVisibilityTierRecords()).toEqual([
+        'lowVisibilityTier',
+        'fullVisibilityTier',
       ]);
     });
 
@@ -144,9 +144,9 @@ describePermissionTestWorkspace({
       await syncAccessGroups();
       await recomputeRecords();
 
-      expect(await findReadableTierRecords()).toEqual([
-        'goldTier',
-        'bronzeTier',
+      expect(await findReadableVisibilityTierRecords()).toEqual([
+        'lowVisibilityTier',
+        'fullVisibilityTier',
       ]);
     });
   },

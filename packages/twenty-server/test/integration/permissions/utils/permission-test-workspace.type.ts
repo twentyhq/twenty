@@ -21,9 +21,9 @@ export type PermissionTestRecordName =
   | 'outsideCategoryFilter'
   | 'outsideRegionFilter'
   | 'sharedWithMemberWithoutAccess'
-  | 'goldTier'
-  | 'silverTier'
-  | 'bronzeTier';
+  | 'lowVisibilityTier'
+  | 'mediumVisibilityTier'
+  | 'fullVisibilityTier';
 
 export type PermissionTestWorkspace = {
   workspaceId: string;
@@ -31,7 +31,7 @@ export type PermissionTestWorkspace = {
   inviteHash: string;
   adminAccessToken: string;
   objectMetadataId: string;
-  tierFieldMetadataId: string;
+  visibilityTierFieldMetadataId: string;
   objectNameSingular: string;
   roleIds: Record<PermissionTestRoleGrant, string>;
   workspaceMemberIds: Record<PermissionTestRoleGrant, string>;

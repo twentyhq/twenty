@@ -26,9 +26,9 @@ const createFilterField = async ({
   return data.createOneField;
 };
 
-const PERMISSION_TEST_TIERS = ['gold', 'silver', 'bronze'];
+const PERMISSION_TEST_VISIBILITY_TIERS = ['low', 'medium', 'full'];
 
-const createTierField = async ({
+const createVisibilityTierField = async ({
   objectMetadataId,
   accessToken,
 }: {
@@ -37,16 +37,18 @@ const createTierField = async ({
 }) => {
   const { data } = await createOneFieldMetadata({
     input: {
-      name: 'tier',
-      label: 'tier',
+      name: 'visibilityTier',
+      label: 'visibilityTier',
       type: FieldMetadataType.SELECT,
       objectMetadataId,
-      options: PERMISSION_TEST_TIERS.map((tier, position) => ({
-        label: tier,
-        value: tier.toUpperCase(),
-        color: 'blue',
-        position,
-      })),
+      options: PERMISSION_TEST_VISIBILITY_TIERS.map(
+        (visibilityTier, position) => ({
+          label: visibilityTier,
+          value: visibilityTier.toUpperCase(),
+          color: 'blue',
+          position,
+        }),
+      ),
     },
     gqlFields: 'id universalIdentifier',
     expectToFail: false,
@@ -93,11 +95,14 @@ export const createPermissionTestObject = async ({
     objectMetadataId,
     accessToken,
   });
-  const tier = await createTierField({ objectMetadataId, accessToken });
+  const visibilityTier = await createVisibilityTierField({
+    objectMetadataId,
+    accessToken,
+  });
 
   return {
     objectMetadataId,
     objectUniversalIdentifier: data.createOneObject.universalIdentifier,
-    fields: { status, category, region, tier },
+    fields: { status, category, region, visibilityTier },
   };
 };
