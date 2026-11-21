@@ -70,7 +70,7 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   },
   [FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED]: {
     label: msg`Channel visibility through rules`,
-    description: msg`In progress: share record access groups per value, on the way to enforcing channel visibility with record-level permission rules.`,
+    description: msg`Enforce message and calendar channel visibility with record-level permission rules instead of query hooks.`,
   },
   [FeatureFlagKey.IS_GETTING_STARTED_ENABLED]: {
     label: msg`Getting started`,
