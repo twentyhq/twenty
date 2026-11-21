@@ -593,6 +593,22 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'relationTargetFieldMetadataUniversalIdentifier',
     },
+    relationScope: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: 'universalRelationScope',
+    },
+    label: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
+    relationAggregateOperation: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     deletedAt: {
       toCompare: true,
       toStringify: false,

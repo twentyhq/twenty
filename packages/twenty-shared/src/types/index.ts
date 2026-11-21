@@ -364,9 +364,17 @@ export type { ValidationRuleFieldDescriptor } from './ValidationRuleFieldDescrip
 export type { ValidationRuleFunctionName } from './ValidationRuleFunctionName';
 export { IsValidGraphQLEnumName } from './validators/is-valid-graphql-enum-name.validator';
 export { ViewCalendarLayout } from './ViewCalendarLayout';
+export type {
+  ViewFieldRelationScopeFilter,
+  ViewFieldRelationScopeFilterGroup,
+  ViewFieldRelationScopeSort,
+  ViewFieldRelationScope,
+  UniversalViewFieldRelationScope,
+} from './ViewFieldRelationScope';
 export { ViewFilterGroupLogicalOperator } from './ViewFilterGroupLogicalOperator';
 export { ViewFilterOperand } from './ViewFilterOperand';
 export { ViewFilterOperandDeprecated } from './ViewFilterOperandDeprecated';
+export type { ViewFilterValue } from './ViewFilterValue';
 export { ViewKey } from './ViewKey';
 export { ViewOpenRecordIn } from './ViewOpenRecordIn';
 export { ViewSortDirection } from './ViewSortDirection';

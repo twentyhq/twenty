@@ -8,28 +8,32 @@ import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
-export type RelationTargetFieldMetadataViolation =
-  | 'NOT_MANY_TO_ONE_RELATION'
+export type RelationTargetFlatFieldMetadataFailureReason =
+  | 'UNEXPECTED_RELATION_TYPE'
   | 'NOT_ON_RELATION_TARGET_OBJECT'
   | 'INACTIVE'
-  | 'IS_RELATION';
+  | 'IS_A_RELATION';
 
-export const getRelationTargetFieldMetadataViolation = ({
+export const resolveRelationTargetFlatFieldMetadata = ({
   flatFieldMetadata,
   relationTargetFieldMetadataUniversalIdentifier,
   flatFieldMetadataMaps,
+  relationType = RelationType.MANY_TO_ONE,
 }: {
   flatFieldMetadata: UniversalFlatFieldMetadata;
   relationTargetFieldMetadataUniversalIdentifier: string;
   flatFieldMetadataMaps: AllUniversalFlatEntityMaps['flatFieldMetadataMaps'];
-}): RelationTargetFieldMetadataViolation | undefined => {
+  relationType?: RelationType;
+}):
+  | { relationTargetFlatFieldMetadata: UniversalFlatFieldMetadata }
+  | { failureReason: RelationTargetFlatFieldMetadataFailureReason } => {
   if (
     !isRelationUniversalFlatFieldMetadataOfType({
       flatFieldMetadata,
-      relationType: RelationType.MANY_TO_ONE,
+      relationType,
     })
   ) {
-    return 'NOT_MANY_TO_ONE_RELATION';
+    return { failureReason: 'UNEXPECTED_RELATION_TYPE' };
   }
 
   const relationTargetFlatFieldMetadata = findFlatEntityByUniversalIdentifier({
@@ -42,7 +46,7 @@ export const getRelationTargetFieldMetadataViolation = ({
     relationTargetFlatFieldMetadata.objectMetadataUniversalIdentifier !==
       flatFieldMetadata.relationTargetObjectMetadataUniversalIdentifier
   ) {
-    return 'NOT_ON_RELATION_TARGET_OBJECT';
+    return { failureReason: 'NOT_ON_RELATION_TARGET_OBJECT' };
   }
 
   if (
@@ -52,14 +56,14 @@ export const getRelationTargetFieldMetadataViolation = ({
       property: 'isActive',
     })
   ) {
-    return 'INACTIVE';
+    return { failureReason: 'INACTIVE' };
   }
 
   if (
     isMorphOrRelationFieldMetadataType(relationTargetFlatFieldMetadata.type)
   ) {
-    return 'IS_RELATION';
+    return { failureReason: 'IS_A_RELATION' };
   }
 
-  return undefined;
+  return { relationTargetFlatFieldMetadata };
 };

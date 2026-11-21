@@ -1,6 +1,7 @@
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import {
   type AggregateOperations,
+  type UniversalViewFieldRelationScope,
   type ViewCalendarLayout,
   type ViewFilterGroupLogicalOperator,
   type ViewFilterOperand,
@@ -27,6 +28,9 @@ export type ViewFieldManifest = SyncableEntityOptions & {
   viewFieldGroupUniversalIdentifier?: string;
   isCanonical?: boolean;
   relationTargetFieldMetadataUniversalIdentifier?: string;
+  relationScope?: UniversalViewFieldRelationScope;
+  label?: string;
+  relationAggregateOperation?: AggregateOperations;
 };
 
 export type StandaloneViewFieldManifest = ViewFieldManifest & {
