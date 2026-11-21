@@ -12,6 +12,7 @@ import {
 import { v4 } from 'uuid';
 import { EntityManager, Repository } from 'typeorm';
 
+import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync-scheduler.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -59,6 +60,7 @@ export class MicrosoftAPIsService {
   private readonly logger = new Logger(MicrosoftAPIsService.name);
 
   constructor(
+    private readonly channelVisibilityRuleSyncSchedulerService: ChannelVisibilityRuleSyncSchedulerService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -251,6 +253,10 @@ export class MicrosoftAPIsService {
               );
           }
         },
+      );
+
+      await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+        workspaceId,
       );
 
       if (
