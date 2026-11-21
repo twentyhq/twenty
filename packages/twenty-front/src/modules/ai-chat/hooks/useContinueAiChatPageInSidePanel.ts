@@ -1,18 +1,13 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { type Location } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
-import { getAiChatPageThreadId } from '@/ai-chat/utils/getAiChatPageThreadId';
-import { isAiChatHandoffSkipped } from '@/ai-chat/utils/isAiChatHandoffSkipped';
+import { getAiChatPageSidePanelContinuation } from '@/ai-chat/utils/getAiChatPageSidePanelContinuation';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
-import { isAiChatPath } from '~/utils/isAiChatPath';
-import { isInboxPath } from '~/utils/isInboxPath';
-import { isSettingsPath } from '~/utils/isSettingsPath';
 
 export const useContinueAiChatPageInSidePanel = () => {
   const store = useStore();
@@ -25,38 +20,33 @@ export const useContinueAiChatPageInSidePanel = () => {
       location,
     }: {
       previousPathname: string;
-      location: Location;
+      location: Pick<Location, 'pathname' | 'state'>;
     }) => {
       const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
-      const threadId = getAiChatPageThreadId({
-        pathname: previousPathname,
+      const continuation = getAiChatPageSidePanelContinuation({
+        previousPathname,
+        location,
+        isMobile,
         newAiChatThreadId,
+        isNewAiChatThreadReplySending: store.get(
+          aiChatThreadReplyIsSendingFamilyState.atomFamily({
+            threadId: newAiChatThreadId,
+          }),
+        ),
       });
 
-      if (
-        !isDefined(threadId) ||
-        isMobile ||
-        isAiChatPath(location.pathname) ||
-        isInboxPath(location.pathname) ||
-        isAiChatHandoffSkipped(location.state)
-      ) {
+      if (continuation.type === 'none') {
         return false;
       }
 
       store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
 
-      if (isSettingsPath(location.pathname)) {
+      if (continuation.type === 'endWorkspaceSetupChat') {
         return false;
       }
 
-      const isIdleNewChat =
-        threadId === newAiChatThreadId &&
-        !store.get(
-          aiChatThreadReplyIsSendingFamilyState.atomFamily({ threadId }),
-        );
-
       openAskAiPage({
-        threadId: isIdleNewChat ? undefined : threadId,
+        threadId: continuation.threadId,
         resetNavigationStack: true,
         isContinuedFromFullWidth: true,
       });
