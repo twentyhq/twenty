@@ -32,6 +32,8 @@ import { fromCreateFieldPermissionInputToUniversalFlatFieldPermission } from 'sr
 import { type FieldPermissionInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
 import { type UniversalFlatFieldPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-permission.type';
 import { type FlatRowLevelPermissionRule } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-rule.type';
+import { type RowLevelPermissionUpsertOperations } from 'src/engine/metadata-modules/row-level-permission-predicate/types/row-level-permission-upsert-operations.type';
+import { mergeRowLevelPermissionUpsertOperations } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/merge-row-level-permission-upsert-operations.util';
 import { flattenRowLevelPermissionRuleInputs } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/flatten-row-level-permission-rule-inputs.util';
 import { removeDisabledOperationsFromRowLevelPermissionRule } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/remove-disabled-operations-from-row-level-permission-rule.util';
 import { validateRowLevelPermissionRuleOwnershipOrThrow } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/validate-row-level-permission-rule-ownership.util';
@@ -39,48 +41,6 @@ import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-
-type UpsertOperations = {
-  rulesToCreate: FlatRowLevelPermissionRule[];
-  rulesToUpdate: FlatRowLevelPermissionRule[];
-  rulesToDelete: FlatRowLevelPermissionRule[];
-  fieldPermissionsToUpdate: FlatFieldPermission[];
-  predicatesToCreate: FlatRowLevelPermissionPredicate[];
-  predicatesToUpdate: FlatRowLevelPermissionPredicate[];
-  predicatesToDelete: FlatRowLevelPermissionPredicate[];
-  groupsToCreate: FlatRowLevelPermissionPredicateGroup[];
-  groupsToUpdate: FlatRowLevelPermissionPredicateGroup[];
-  groupsToDelete: FlatRowLevelPermissionPredicateGroup[];
-};
-
-const mergeUpsertOperations = (
-  operationsList: UpsertOperations[],
-): UpsertOperations => ({
-  rulesToCreate: operationsList.flatMap(({ rulesToCreate }) => rulesToCreate),
-  rulesToUpdate: operationsList.flatMap(({ rulesToUpdate }) => rulesToUpdate),
-  rulesToDelete: operationsList.flatMap(({ rulesToDelete }) => rulesToDelete),
-  fieldPermissionsToUpdate: operationsList.flatMap(
-    ({ fieldPermissionsToUpdate }) => fieldPermissionsToUpdate,
-  ),
-  predicatesToCreate: operationsList.flatMap(
-    ({ predicatesToCreate }) => predicatesToCreate,
-  ),
-  predicatesToUpdate: operationsList.flatMap(
-    ({ predicatesToUpdate }) => predicatesToUpdate,
-  ),
-  predicatesToDelete: operationsList.flatMap(
-    ({ predicatesToDelete }) => predicatesToDelete,
-  ),
-  groupsToCreate: operationsList.flatMap(
-    ({ groupsToCreate }) => groupsToCreate,
-  ),
-  groupsToUpdate: operationsList.flatMap(
-    ({ groupsToUpdate }) => groupsToUpdate,
-  ),
-  groupsToDelete: operationsList.flatMap(
-    ({ groupsToDelete }) => groupsToDelete,
-  ),
-});
 
 @Injectable()
 export class RowLevelPermissionPredicateService {
@@ -143,7 +103,10 @@ export class RowLevelPermissionPredicateService {
     await this.runUpsertMigration({
       workspaceId,
       isSystemBuild: false,
-      ...(await this.buildUpsertOperations({ input, workspaceId })),
+      ...(await this.buildRowLevelPermissionUpsertOperations({
+        input,
+        workspaceId,
+      })),
       fieldPermissionsToCreate: [],
     });
 
@@ -190,18 +153,21 @@ export class RowLevelPermissionPredicateService {
     }[];
     workspaceId: string;
   }): Promise<void> {
-    const operationsOfInputs: UpsertOperations[] = [];
+    const operationsOfInputs: RowLevelPermissionUpsertOperations[] = [];
 
     for (const { rulesInput } of inputs) {
       operationsOfInputs.push(
-        await this.buildUpsertOperations({ input: rulesInput, workspaceId }),
+        await this.buildRowLevelPermissionUpsertOperations({
+          input: rulesInput,
+          workspaceId,
+        }),
       );
     }
 
     await this.runUpsertMigration({
       workspaceId,
       isSystemBuild: true,
-      ...mergeUpsertOperations(operationsOfInputs),
+      ...mergeRowLevelPermissionUpsertOperations(operationsOfInputs),
       fieldPermissionsToCreate: [],
     });
 
@@ -257,19 +223,19 @@ export class RowLevelPermissionPredicateService {
       await this.runUpsertMigration({
         workspaceId,
         isSystemBuild: true,
-        ...mergeUpsertOperations([]),
+        ...mergeRowLevelPermissionUpsertOperations([]),
         fieldPermissionsToCreate,
       });
     }
   }
 
-  private async buildUpsertOperations({
+  private async buildRowLevelPermissionUpsertOperations({
     input,
     workspaceId,
   }: {
     input: UpsertRowLevelPermissionRulesInput;
     workspaceId: string;
-  }): Promise<UpsertOperations> {
+  }): Promise<RowLevelPermissionUpsertOperations> {
     const { roleId, objectMetadataId } = input;
 
     const { workspaceCustomFlatApplication } =
