@@ -223,6 +223,7 @@ export class WorkflowRunnerWorkspaceService {
       });
 
     const stoppableStatuses = [
+      WorkflowRunStatus.NOT_STARTED,
       WorkflowRunStatus.ENQUEUED,
       WorkflowRunStatus.RUNNING,
     ];
