@@ -104,7 +104,6 @@ export const computeAccessGroupHash = ({
     )
     .digest('hex');
 
-// no role or rule in the hash, so every role listing the value reaches the same group
 export const computeSharedAccessGroupHash = ({
   sharedPredicate,
   isRelationHopEnabled,

@@ -89,8 +89,13 @@ describe('access groups shared by value (integration)', () => {
       objectMetadataId,
     });
 
-  const setFeatureFlag = (featureFlag: FeatureFlagKey, value: boolean) =>
-    updateFeatureFlag({ featureFlag, value, expectToFail: false });
+  const setFeatureFlag = ({
+    featureFlag,
+    value,
+  }: {
+    featureFlag: FeatureFlagKey;
+    value: boolean;
+  }) => updateFeatureFlag({ featureFlag, value, expectToFail: false });
 
   const findOpportunityIdsAsMember = async (): Promise<string[]> => {
     const response = await makeGraphqlApiRequest(
@@ -180,21 +185,27 @@ describe('access groups shared by value (integration)', () => {
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       },
     });
-    await setFeatureFlag(
-      FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED,
-      true,
-    );
-    await setFeatureFlag(FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED, true);
+    await setFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED,
+      value: true,
+    });
+    await setFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
+      value: true,
+    });
     await syncAccessGroups();
     await recomputeOpportunities();
   });
 
   afterAll(async () => {
-    await setFeatureFlag(FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED, false);
-    await setFeatureFlag(
-      FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED,
-      false,
-    );
+    await setFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
+      value: false,
+    });
+    await setFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED,
+      value: false,
+    });
     await updateWorkspaceMemberRole({
       expectToFail: false,
       input: {
