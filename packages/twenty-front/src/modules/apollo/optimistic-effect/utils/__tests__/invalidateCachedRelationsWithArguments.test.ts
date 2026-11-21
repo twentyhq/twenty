@@ -21,7 +21,13 @@ const COMPANY_ID = '20202020-1111-4000-8000-000000000001';
 const PARIS_PERSON_ID = '20202020-2222-4000-8000-000000000001';
 const NEW_PERSON_ID = '20202020-2222-4000-8000-000000000002';
 
-const buildPerson = ({ id, city }: { id: string; city: string }) => ({
+const buildPerson = ({
+  id,
+  city,
+}: {
+  id: string;
+  city: string;
+}): ObjectRecord => ({
   __typename: 'Person',
   id,
   city,
@@ -90,7 +96,7 @@ const buildCache = () => {
         records: [
           buildPerson({ id: PARIS_PERSON_ID, city: 'Paris' }),
           buildPerson({ id: NEW_PERSON_ID, city: 'Paris' }),
-        ] as ObjectRecord[],
+        ],
       },
     ],
   });
