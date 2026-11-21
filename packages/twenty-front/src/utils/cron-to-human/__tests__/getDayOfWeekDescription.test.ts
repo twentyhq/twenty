@@ -43,6 +43,20 @@ describe('getDayOfWeekDescription', () => {
     );
   });
 
+  it('should handle day lists containing ranges', () => {
+    expect(getDayOfWeekDescription('1-3,5', options)).toBe(
+      'only on Monday, Tuesday, Wednesday and Friday',
+    );
+    expect(getDayOfWeekDescription('0,4-6', options)).toBe(
+      'only on Sunday, Thursday, Friday and Saturday',
+    );
+  });
+
+  it('should describe a list that reduces to a single day as that day', () => {
+    expect(getDayOfWeekDescription('1,1', options)).toBe('only on Monday');
+    expect(getDayOfWeekDescription('1-1,1', options)).toBe('only on Monday');
+  });
+
   it('should handle step values', () => {
     expect(getDayOfWeekDescription('*/2', options)).toBe('every 2 days');
     expect(getDayOfWeekDescription('*/1', options)).toBe('every day');
