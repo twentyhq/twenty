@@ -47,6 +47,7 @@ import {
   type OrderByClause,
   type SelectClause,
   type UnreadableColumnConditions,
+  type UnreadableRelationConditions,
   type SelectStatementState,
   type WhereClause,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
@@ -104,6 +105,8 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
   private readonly aliasesWithUnreadableColumnsApplied = new Set<string>();
   private readonly unreadableColumnConditions: UnreadableColumnConditions = {};
+  private readonly unreadableRelationConditions: UnreadableRelationConditions =
+    {};
 
   constructor(alias: string, context: QueryBuilderContext) {
     this.alias = alias;
@@ -731,6 +734,27 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return true;
   }
 
+  makeRelationsUnreadableWhen({
+    alias,
+    relationFieldNames,
+    condition,
+  }: {
+    alias: string;
+    relationFieldNames: string[];
+    condition: SQLCondition;
+  }): this {
+    const unreadableRelationConditionsOfAlias =
+      (this.unreadableRelationConditions[alias] ??= {});
+
+    for (const relationFieldName of relationFieldNames) {
+      (unreadableRelationConditionsOfAlias[relationFieldName] ??= []).push(
+        condition.sql,
+      );
+    }
+
+    return this.setParameters(condition.parameters);
+  }
+
   makeColumnsUnreadableWhen({
     alias,
     columnNames,
@@ -1325,6 +1349,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       extraSelectClauses: this.extraSelectClauses,
       columnSelections: this.resolveColumnSelections(),
       unreadableColumnConditions: this.unreadableColumnConditions,
+      unreadableRelationConditions: this.unreadableRelationConditions,
       joinClauses: this.joinClauses,
       whereClauses: this.whereClauses,
       rowAccessConditions: this.rowAccessConditions,

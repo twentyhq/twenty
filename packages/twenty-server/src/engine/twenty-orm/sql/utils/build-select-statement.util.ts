@@ -90,10 +90,11 @@ export type OrderByClause = {
   nulls?: 'NULLS FIRST' | 'NULLS LAST';
 };
 
-export type UnreadableColumnConditions = Record<
-  string,
-  Record<string, string[]>
->;
+type SQLConditionsByAliasAndName = Record<string, Record<string, string[]>>;
+
+export type UnreadableColumnConditions = SQLConditionsByAliasAndName;
+
+export type UnreadableRelationConditions = SQLConditionsByAliasAndName;
 
 export type SelectStatementState = {
   alias: string;
@@ -103,6 +104,7 @@ export type SelectStatementState = {
   extraSelectClauses: SelectClause[];
   columnSelections: ColumnSelection[];
   unreadableColumnConditions: UnreadableColumnConditions;
+  unreadableRelationConditions: UnreadableRelationConditions;
   joinClauses: JoinClause[];
   whereClauses: WhereClause[];
   rowAccessConditions: string[];
@@ -438,18 +440,57 @@ const renderUserWhereExpression = ({
     })
     .join(' ');
 
+const findUnreadableRelationConditions = ({
+  unreadableRelationConditions,
+  parentAlias,
+  relationFieldName,
+}: {
+  unreadableRelationConditions: UnreadableRelationConditions;
+  parentAlias: string;
+  relationFieldName: string;
+}): string[] =>
+  unreadableRelationConditions[parentAlias]?.[relationFieldName] ?? [];
+
+const findUnreadableRelationFilterConditions = ({
+  condition,
+  aliases,
+  existsFilterClauses,
+  unreadableRelationConditions,
+}: {
+  condition: string;
+  aliases: string[];
+  existsFilterClauses: ExistsFilterClause[];
+  unreadableRelationConditions: UnreadableRelationConditions;
+}): string[] =>
+  existsFilterClauses
+    .filter(
+      ({ token, parentAlias }) =>
+        aliases.includes(parentAlias) && condition.includes(token),
+    )
+    .flatMap(({ parentAlias, relationFieldName }) =>
+      findUnreadableRelationConditions({
+        unreadableRelationConditions,
+        parentAlias,
+        relationFieldName,
+      }),
+    );
+
 const renderReadableWhereCondition = ({
   condition,
   shouldReadUnreadableColumnsAsNull,
   aliases,
   unreadableColumnReplacements,
   unreadableColumnConditions,
+  existsFilterClauses,
+  unreadableRelationConditions,
 }: {
   condition: string;
   shouldReadUnreadableColumnsAsNull: boolean;
   aliases: string[];
   unreadableColumnReplacements: UnreadableColumnReplacements | undefined;
   unreadableColumnConditions: UnreadableColumnConditions;
+  existsFilterClauses: ExistsFilterClause[];
+  unreadableRelationConditions: UnreadableRelationConditions;
 }): string => {
   const quotedCondition = quoteQualifiedAliasReferences(condition, aliases);
   const conditionWithReplacements = replaceUnreadableColumnReferences({
@@ -463,11 +504,19 @@ const renderReadableWhereCondition = ({
 
   return renderUnreadableAwareCondition({
     condition: conditionWithReplacements,
-    unreadableConditions: findUnreadableColumnConditions({
-      expressions: [quotedCondition],
-      unreadableColumnConditions,
-      aliases,
-    }),
+    unreadableConditions: [
+      ...findUnreadableColumnConditions({
+        expressions: [quotedCondition],
+        unreadableColumnConditions,
+        aliases,
+      }),
+      ...findUnreadableRelationFilterConditions({
+        condition,
+        aliases,
+        existsFilterClauses,
+        unreadableRelationConditions,
+      }),
+    ],
   });
 };
 
@@ -502,26 +551,39 @@ export const renderWhereExpressionWithRowAccess = ({
 
 const renderExistsFilter = ({
   existsFilterClause,
+  existsFilterClauses,
   includeDeleted,
   unreadableColumnConditions,
   unreadableColumnReplacements,
+  unreadableRelationConditions,
 }: {
   existsFilterClause: Pick<
     ExistsFilterClause,
     | 'alias'
+    | 'parentAlias'
+    | 'relationFieldName'
     | 'targetTableShape'
     | 'correlationCondition'
     | 'additionalOnConditions'
     | 'conditionClauses'
   >;
+  existsFilterClauses: ExistsFilterClause[];
   includeDeleted: boolean;
   unreadableColumnConditions: UnreadableColumnConditions;
   unreadableColumnReplacements: UnreadableColumnReplacements | undefined;
+  unreadableRelationConditions: UnreadableRelationConditions;
 }): string => {
   const conditions = [
     existsFilterClause.correlationCondition,
     ...existsFilterClause.additionalOnConditions,
-  ];
+    renderReadableCondition(
+      findUnreadableRelationConditions({
+        unreadableRelationConditions,
+        parentAlias: existsFilterClause.parentAlias,
+        relationFieldName: existsFilterClause.relationFieldName,
+      }),
+    ),
+  ].filter(isDefined);
 
   const conditionExpression = renderUserWhereExpression({
     whereClauses: existsFilterClause.conditionClauses,
@@ -532,6 +594,8 @@ const renderExistsFilter = ({
         aliases: [existsFilterClause.alias],
         unreadableColumnReplacements,
         unreadableColumnConditions,
+        existsFilterClauses,
+        unreadableRelationConditions,
       }),
   });
 
@@ -566,11 +630,13 @@ export const substituteExistsFilterTokens = ({
   existsFilterClauses,
   includeDeleted,
   unreadableColumnConditions = {},
+  unreadableRelationConditions = {},
 }: {
   expression: string;
   existsFilterClauses: ExistsFilterClause[];
   includeDeleted: boolean;
   unreadableColumnConditions?: UnreadableColumnConditions;
+  unreadableRelationConditions?: UnreadableRelationConditions;
 }): string => {
   const unreadableColumnReplacements = buildUnreadableColumnReplacements(
     unreadableColumnConditions,
@@ -581,9 +647,11 @@ export const substituteExistsFilterTokens = ({
       substituted.split(existsFilterClause.token).join(
         renderExistsFilter({
           existsFilterClause,
+          existsFilterClauses,
           includeDeleted,
           unreadableColumnConditions,
           unreadableColumnReplacements,
+          unreadableRelationConditions,
         }),
       ),
     expression,
@@ -614,6 +682,8 @@ export const buildWhereExpression = (
           aliases,
           unreadableColumnReplacements,
           unreadableColumnConditions: state.unreadableColumnConditions,
+          existsFilterClauses: state.existsFilterClauses,
+          unreadableRelationConditions: state.unreadableRelationConditions,
         }),
       rowAccessConditions: [
         ...state.rowAccessConditions,
@@ -637,6 +707,7 @@ export const buildWhereExpression = (
         existsFilterClauses: state.existsFilterClauses,
         includeDeleted: state.includeDeleted,
         unreadableColumnConditions: state.unreadableColumnConditions,
+        unreadableRelationConditions: state.unreadableRelationConditions,
       })
     : renderedWhereExpression;
 
@@ -717,7 +788,17 @@ export const buildJoinClause = (state: SelectStatementState): string =>
           ? joinClause.toManyForeignKeyColumnName
           : undefined;
 
-      const onConditions = [condition, ...joinClause.additionalOnConditions];
+      const onConditions = [
+        condition,
+        ...joinClause.additionalOnConditions,
+        renderReadableCondition(
+          findUnreadableRelationConditions({
+            unreadableRelationConditions: state.unreadableRelationConditions,
+            parentAlias: joinClause.parentAlias,
+            relationFieldName: joinClause.relationFieldName,
+          }),
+        ),
+      ].filter(isDefined);
 
       if (
         softDeletePredicateApplies &&
