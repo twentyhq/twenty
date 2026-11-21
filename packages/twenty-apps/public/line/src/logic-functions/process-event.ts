@@ -38,6 +38,7 @@ const handler = async ({ botUserId, event }: ProcessEventPayload) => {
     });
 
     await importMessage({
+      accessToken,
       messageChannelId: messageChannel.id,
       botUserId,
       userId,
