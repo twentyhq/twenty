@@ -6,7 +6,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 
 import { DirectMessageMemberPicker } from '@/inbox/components/DirectMessageMemberPicker';
 import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadClick';
-import { useLoadAiChatThread } from '@/ai-chat/instance/hooks/useLoadAiChatThread';
+import { useLoadAiChatThread } from '@/ai-chat/threads/hooks/useLoadAiChatThread';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';

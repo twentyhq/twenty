@@ -2166,7 +2166,7 @@ msgid "Add a recipient before sending"
 msgstr "پیش از ارسال، یک گیرنده اضافه کنید"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "پیش از ارسال، یک گیرنده یا یک کانال اضافه کنید."
 
@@ -6286,7 +6286,7 @@ msgid "Chat Sessions"
 msgstr "جلسه‌های چت"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "Chat stopped: no more available credits."
 msgstr "گفت‌وگو متوقف شد: اعتبار بیشتری در دسترس نیست."
 
@@ -7736,7 +7736,7 @@ msgid "Connection successfully updated"
 msgstr "اتصال با موفقیت به‌روزرسانی شد"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "اتصال به دستیار قطع شد. برای دیدن پاسخ، دوباره بارگیری کنید."
 
@@ -8657,11 +8657,6 @@ msgstr "ایجاد رکورد"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "ایجاد رکورد"
-
-#. js-lingui-id: fYhMZY
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
-msgstr "ذخیره‌سازی اشتراک‌گذاری رکورد و گروه دسترسی را به‌جای اشیا، به‌صورت جدول‌های متعلق به موتور مجوز ایجاد کنید. فقط هنگام ایجاد یک فضای کاری اعمال می‌شود."
 
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -10140,8 +10135,8 @@ msgid "Delete MCP server"
 msgstr "حذف سرور MCP"
 
 #. js-lingui-id: KDfTdX
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 msgid "Delete message"
 msgstr "حذف پیام"
 
@@ -10604,7 +10599,7 @@ msgid "Direct messages and mentions"
 msgstr "پیام‌های مستقیم و اشاره‌ها"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/instance/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "پیام‌های مستقیم از پیوست‌ها پشتیبانی نمی‌کنند."
 
@@ -11345,8 +11340,8 @@ msgid "Edit matching {objectLabelPlural}"
 msgstr "ویرایش {objectLabelPlural} منطبق"
 
 #. js-lingui-id: QjH+ZX
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 msgid "Edit message"
 msgstr "ویرایش پیام"
 
@@ -15597,7 +15592,7 @@ msgid "Hours between triggers"
 msgstr "ساعت‌های بین راه‌اندازی‌ها"
 
 #. js-lingui-id: 3WYTm2
-#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/composer/components/AiChatSuggestedPrompts.tsx
 msgid "How can I help you?"
 msgstr "چگونه می‌توانم به شما کمک کنم؟"
 
@@ -20395,7 +20390,7 @@ msgstr "هیچ مدل هوش مصنوعی در این فضای کاری با ا�
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "هیچ ارائه‌دهنده هوش مصنوعی در این نمونه پیکربندی نشده است."
@@ -23177,11 +23172,6 @@ msgstr "پرچم مجوز"
 msgid "Permission flags"
 msgstr "پرچم‌های مجوز"
 
-#. js-lingui-id: yAZKh+
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Permission tables"
-msgstr "جدول‌های مجوز"
-
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -25247,7 +25237,7 @@ msgid "Replit install links require an HTTPS MCP URL."
 msgstr "پیوندهای نصب Replit به یک نشانی اینترنتی HTTPS MCP نیاز دارند."
 
 #. js-lingui-id: ImOQa9
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 #: src/modules/ai-chat/threads/components/AiChatThreadRequestActions.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -30414,7 +30404,7 @@ msgstr "این اتصال وجود ندارد یا برای این برنامه 
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "This conversation is no longer available."
 msgstr "این گفت‌وگو دیگر در دسترس نیست."
 
@@ -33416,7 +33406,7 @@ msgid "Wait for Event"
 msgstr "انتظار برای رویداد"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "منتظر بمانید تا بارگذاری پیوست‌ها تمام شود."
 
@@ -33804,7 +33794,7 @@ msgid "What AI model should your agent run on"
 msgstr "عامل شما باید با کدام مدل هوش مصنوعی اجرا شود"
 
 #. js-lingui-id: Itn+J7
-#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/composer/components/AiChatSuggestedPrompts.tsx
 msgid "What can I help you with?"
 msgstr "چگونه می‌توانم به شما کمک کنم؟"
 

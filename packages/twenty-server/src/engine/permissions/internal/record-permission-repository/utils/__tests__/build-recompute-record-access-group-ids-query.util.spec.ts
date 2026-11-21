@@ -41,9 +41,9 @@ const buildAccessGroup = ({
   compactId,
   objectMetadataId,
   groupHash: `group-${compactId}`,
-  roleId: 'role-id',
-  rowLevelPermissionPredicateGroupId: null,
-  memberFieldValues: null,
+  type: 'ALL_RECORDS',
+  ruleShapeHash: `shape-${compactId}`,
+  unreadableFieldIds: [],
 });
 
 const buildNoteQuery = ({
@@ -161,24 +161,15 @@ describe('buildRecomputeRecordAccessGroupIdsQuery', () => {
       title: 'a role cannot read it on any record',
       companyUnreadableFields: ['company-note-targets-field-id'],
       companyRuleUnreadableFields: [],
-      roleIdsUnableToReadRelation: ['role-id'],
-      ruleIdsUnableToReadRelation: [],
     },
     {
       title: 'a rule cannot read it on the records it matches',
       companyUnreadableFields: [],
       companyRuleUnreadableFields: ['company-note-targets-field-id'],
-      roleIdsUnableToReadRelation: [],
-      ruleIdsUnableToReadRelation: ['rule-id'],
     },
   ])(
     'should not pass on the groups that cannot read the first relation when $title',
-    ({
-      companyUnreadableFields,
-      companyRuleUnreadableFields,
-      roleIdsUnableToReadRelation,
-      ruleIdsUnableToReadRelation,
-    }) => {
+    ({ companyUnreadableFields, companyRuleUnreadableFields }) => {
       const { sql, parameters } = buildNoteQuery({
         isInherent: true,
         companyUnreadableFields,
@@ -186,14 +177,11 @@ describe('buildRecomputeRecordAccessGroupIdsQuery', () => {
       });
 
       expect(sql).toContain(
-        `NOT EXISTS (SELECT 1 FROM "${SCHEMA}"."accessGroup" AS "inheritedAccessGroup" WHERE "inheritedAccessGroup"."compactId" = "inherited"."accessGroupId" AND ("inheritedAccessGroup"."roleId" = ANY(CAST(:relatedRecordPathRoleIdsUnableToReadRelation_0 AS uuid[])) OR "inheritedAccessGroup"."rowLevelPermissionPredicateGroupId" = ANY(CAST(:relatedRecordPathRuleIdsUnableToReadRelation_0 AS uuid[]))))`,
+        `NOT EXISTS (SELECT 1 FROM "${SCHEMA}"."accessGroup" AS "inheritedAccessGroup" WHERE "inheritedAccessGroup"."compactId" = "inherited"."accessGroupId" AND CAST(:relatedRecordPathUnreadableRelation_0 AS uuid) = ANY("inheritedAccessGroup"."unreadableFieldIds"))`,
       );
       expect(parameters).toEqual({
         recordIds: ['note-id'],
-        relatedRecordPathRoleIdsUnableToReadRelation_0:
-          roleIdsUnableToReadRelation,
-        relatedRecordPathRuleIdsUnableToReadRelation_0:
-          ruleIdsUnableToReadRelation,
+        relatedRecordPathUnreadableRelation_0: 'company-note-targets-field-id',
       });
     },
   );
