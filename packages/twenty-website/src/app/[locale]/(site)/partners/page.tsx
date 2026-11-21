@@ -1,11 +1,6 @@
 import { msg } from '@lingui/core/macro';
-import { Suspense } from 'react';
 
 import { ClientBriefModalRoot, GetMatchedButton } from '@/client-brief';
-import { PartnerApplicationModalRoot } from '@/partner-application';
-import { MarketplaceBriefPrompt } from '@/partners-marketplace/MarketplaceBriefPrompt';
-import { getMarketplacePartners } from '@/partners-marketplace/marketplace-partners-source';
-import { MarketplaceListSkeleton } from '@/partners-marketplace/MarketplaceListSkeleton';
 import { getCommunityStats } from '@/platform/community';
 import {
   getRouteI18n,
@@ -17,68 +12,67 @@ import {
   buildRouteMetadata,
   JsonLd,
 } from '@/platform/seo';
-import { PartnerFaq } from '@/sections/faq';
+import { FaqBackdrop } from '@/sections/faq/FaqBackdrop';
 import { Menu } from '@/sections/menu';
-import { PartnerLeadHero } from '@/sections/partner-hero';
+import { BrowseDirectoryButton } from '@/sections/partner-hero/BrowseDirectoryButton';
 import {
-  PartnerBecomeStrip,
-  PartnerDirectory,
-  PartnerDirectoryPanel,
-  PartnerServicesExplainer,
-} from '@/sections/partner-lead';
+  loadDirectoryPartners,
+  PartnersStageCraftClosing,
+  PartnersStageCraftDirectory,
+  PartnersStageCraftMapHero,
+  PartnersStageCraftServices,
+} from '@/sections/partners-stage';
 
 export const generateMetadata = buildRouteMetadata('partners');
 
 export const dynamic = 'force-dynamic';
-
-// Kept out of the page-level await: the rest of the page must not wait on a
-// call only the directory needs, and awaiting it there also resolves it before
-// the boundary renders, leaving MarketplaceListSkeleton dead.
-async function PartnerDirectoryZone() {
-  const partners = await getMarketplacePartners();
-
-  return <PartnerDirectoryPanel partners={partners} />;
-}
 
 export default async function PartnersPage({
   params,
 }: {
   params: Promise<LocaleRouteParams>;
 }) {
-  const [, communityStats] = await Promise.all([
+  const [, communityStats, partners] = await Promise.all([
     getRouteI18n(params),
     getCommunityStats(),
+    loadDirectoryPartners(),
   ]);
   const locale = resolveLocaleParam((await params).locale);
 
   return (
-    <PartnerApplicationModalRoot>
-      <ClientBriefModalRoot>
-        <JsonLd
-          data={buildBreadcrumbListJsonLd(
-            [
-              { name: 'Home', path: '/' },
-              { name: 'Partners', path: '/partners' },
-            ],
-            locale,
-          )}
+    <ClientBriefModalRoot>
+      <JsonLd
+        data={buildBreadcrumbListJsonLd(
+          [
+            { name: 'Home', path: '/' },
+            { name: 'Partners', path: '/partners' },
+          ],
+          locale,
+        )}
+      />
+      <Menu communityStats={communityStats} scheme="dark" />
+      <main>
+        <PartnersStageCraftMapHero
+          actions={
+            <>
+              <BrowseDirectoryButton />
+              <GetMatchedButton label={msg`Get matched`} variant="outlined" />
+            </>
+          }
+          partners={partners}
         />
-        <Menu communityStats={communityStats} />
-        <main>
-          <PartnerLeadHero />
-          <PartnerDirectory>
-            <Suspense fallback={<MarketplaceListSkeleton />}>
-              <PartnerDirectoryZone />
-            </Suspense>
-          </PartnerDirectory>
-          <PartnerServicesExplainer />
-          <MarketplaceBriefPrompt
-            cta={<GetMatchedButton label={msg`Submit a brief`} />}
-          />
-          <PartnerFaq />
-          <PartnerBecomeStrip />
-        </main>
-      </ClientBriefModalRoot>
-    </PartnerApplicationModalRoot>
+        <PartnersStageCraftServices />
+        <PartnersStageCraftDirectory
+          matchCta={
+            <GetMatchedButton label={msg`Get matched`} variant="filled" />
+          }
+          partners={partners}
+        />
+        <PartnersStageCraftClosing
+          action={<GetMatchedButton label={msg`Submit a brief`} />}
+          backdrop={<FaqBackdrop />}
+        />
+      </main>
+    </ClientBriefModalRoot>
   );
 }
