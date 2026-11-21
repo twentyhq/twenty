@@ -47,6 +47,7 @@ import {
   type OrderByClause,
   type SelectClause,
   type UnreadableColumnConditions,
+  type UnreadableColumnProjectedValues,
   type UnreadableRelationConditions,
   type SelectStatementState,
   type WhereClause,
@@ -105,6 +106,8 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
   private readonly aliasesWithUnreadableColumnsApplied = new Set<string>();
   private readonly unreadableColumnConditions: UnreadableColumnConditions = {};
+  private readonly unreadableColumnProjectedValues: UnreadableColumnProjectedValues =
+    {};
   private readonly unreadableRelationConditions: UnreadableRelationConditions =
     {};
 
@@ -759,10 +762,12 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     alias,
     columnNames,
     condition,
+    projectedValueByColumnName = {},
   }: {
     alias: string;
     columnNames: string[];
     condition: SQLCondition;
+    projectedValueByColumnName?: Record<string, string>;
   }): this {
     const unreadableColumnConditionsOfAlias = (this.unreadableColumnConditions[
       alias
@@ -772,6 +777,11 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       (unreadableColumnConditionsOfAlias[columnName] ??= []).push(
         condition.sql,
       );
+
+      if (isDefined(projectedValueByColumnName[columnName])) {
+        (this.unreadableColumnProjectedValues[alias] ??= {})[columnName] =
+          projectedValueByColumnName[columnName];
+      }
     }
 
     return this.setParameters(condition.parameters);
@@ -1349,6 +1359,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       extraSelectClauses: this.extraSelectClauses,
       columnSelections: this.resolveColumnSelections(),
       unreadableColumnConditions: this.unreadableColumnConditions,
+      unreadableColumnProjectedValues: this.unreadableColumnProjectedValues,
       unreadableRelationConditions: this.unreadableRelationConditions,
       joinClauses: this.joinClauses,
       whereClauses: this.whereClauses,

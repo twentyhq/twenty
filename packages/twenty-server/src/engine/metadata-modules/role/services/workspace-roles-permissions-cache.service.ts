@@ -6,7 +6,7 @@ import {
   type PermissionFlagType,
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -46,6 +46,10 @@ const ROLES_PERMISSIONS_ROWS_REQUIREMENT = {
     columns: ['id', 'type', 'universalIdentifier', 'morphId'],
     where: { type: FieldMetadataType.MORPH_RELATION },
   },
+  featureFlag: {
+    columns: ['key', 'value'],
+    where: { key: FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED },
+  },
 } as const satisfies WorkspaceCacheRowsRequirement;
 
 @Injectable()
@@ -71,7 +75,12 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       rowLevelPermissionRule: rowLevelPermissionRules,
       objectMetadata: workspaceObjectMetadataCollection,
       fieldMetadata: morphRelationFieldMetadatas,
+      featureFlag: channelVisibilityRlsFeatureFlags,
     } = rows;
+
+    const isChannelVisibilityRlsEnabled = channelVisibilityRlsFeatureFlags.some(
+      ({ value }) => value,
+    );
 
     const resolveMorphRelationPermissionFieldIds =
       buildResolveMorphRelationPermissionFieldIds(morphRelationFieldMetadatas);
@@ -116,6 +125,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
             rowLevelPermissionPredicateGroups.byRoleId.get(role.id) ?? [],
           rowLevelPermissionRules:
             rowLevelPermissionRules.byRoleId.get(role.id) ?? [],
+          isChannelVisibilityRlsEnabled,
         },
         objectMetadataCollection: workspaceObjectMetadataCollection,
         resolveMorphRelationPermissionFieldIds,

@@ -35,6 +35,7 @@ export class ApplyCalendarEventsVisibilityRestrictionsService
     this.commonRecordVisibilityService.registerHandler({
       objectNameSingular: 'calendarEvent',
       handler: this,
+      isReplacedByChannelVisibilityRules: true,
     });
   }
 
