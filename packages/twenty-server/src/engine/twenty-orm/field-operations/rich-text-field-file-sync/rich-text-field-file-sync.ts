@@ -115,7 +115,7 @@ export class RichTextFieldFileSync {
 
         const isReleasedFile = isDefined(file?.deletedAt);
         const isClaimableUpload =
-          isDefined(file?.settings?.expiresAt) && file.settings.isTemporaryFile;
+          file?.settings?.isTemporaryFile && file.settings.isClaimableByRecord;
 
         if (
           !isDefined(file) ||
@@ -204,7 +204,7 @@ export class RichTextFieldFileSync {
          WHERE "file"."id" = "claim"."fileId"
            AND "file"."workspaceId" = $3
            AND (("file"."settings"->>'isTemporaryFile' = 'true'
-               AND "file"."settings" ? 'expiresAt')
+               AND "file"."settings"->>'isClaimableByRecord' = 'true')
              OR "file"."deletedAt" IS NOT NULL)`,
         [claimedFileIds, claimingRecordIds, workspaceId],
       );

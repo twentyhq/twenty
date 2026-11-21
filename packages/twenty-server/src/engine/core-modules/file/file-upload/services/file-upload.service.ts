@@ -141,7 +141,6 @@ export class FileUploadService {
       mimeType,
       settings: buildTemporaryFilesFieldFileSettings({
         fieldMetadataType,
-        now: new Date(),
       }),
     });
 

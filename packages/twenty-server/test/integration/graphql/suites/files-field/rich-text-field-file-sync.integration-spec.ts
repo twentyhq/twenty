@@ -238,11 +238,11 @@ describe('Rich text field <> files sync', () => {
     });
   });
 
-  it('should not claim a file uploaded for the field before uploads carried an expiry', async () => {
+  it('should not claim a file uploaded for the field before uploads were flagged as claimable', async () => {
     const fileId = await uploadFile(richTextFieldMetadataId);
 
     await global.testDataSource.query(
-      `UPDATE core."file" SET "settings" = "settings" - 'expiresAt' WHERE id = $1`,
+      `UPDATE core."file" SET "settings" = "settings" - 'isClaimableByRecord' WHERE id = $1`,
       [fileId],
     );
 

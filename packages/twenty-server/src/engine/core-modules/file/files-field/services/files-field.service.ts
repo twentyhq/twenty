@@ -121,7 +121,6 @@ export class FilesFieldService {
       fileId,
       settings: buildTemporaryFilesFieldFileSettings({
         fieldMetadataType: fieldMetadata.type,
-        now: new Date(),
       }),
     });
 
