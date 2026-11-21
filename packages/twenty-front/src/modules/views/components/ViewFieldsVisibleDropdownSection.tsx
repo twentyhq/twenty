@@ -117,7 +117,8 @@ export const ViewFieldsVisibleDropdownSection = () => {
             dragHandleVisibility="always"
             isDragDisabled
           >
-            {fieldMetadataItemLabelIdentifier.label}
+            {nonDraggableRecordField?.label ??
+              fieldMetadataItemLabelIdentifier.label}
           </DraggableListRow>
         )}
         {draggableRecordFields.length > 0 && (
@@ -143,6 +144,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
                         fieldMetadataItem,
                       }) ?? scopedRelationColumn?.lookupTarget,
                     isScopedRelationColumn: isDefined(scopedRelationColumn),
+                    customLabel: recordField.label,
                   });
 
                   return (

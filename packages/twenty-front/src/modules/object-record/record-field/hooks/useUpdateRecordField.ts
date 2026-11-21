@@ -26,6 +26,7 @@ export const useUpdateRecordField = (
           | 'position'
           | 'relationScope'
           | 'relationTargetFieldMetadataId'
+          | 'label'
         >
       >,
     ) => {
