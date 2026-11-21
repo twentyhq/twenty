@@ -1,6 +1,6 @@
 import { type ApolloCache, type StoreObject } from '@apollo/client';
 
-import { triggerUpdateRelationsWithArgumentsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsWithArgumentsOptimisticEffect';
+import { invalidateCachedRelationsWithArguments } from '@/apollo/optimistic-effect/utils/invalidateCachedRelationsWithArguments';
 import { triggerUpdateRootQueriesOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRootQueriesOptimisticEffect';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
@@ -54,18 +54,16 @@ export const triggerAttachRelationOptimisticEffect = ({
     __typename: targetRecordTypeName,
   });
 
+  invalidateCachedRelationsWithArguments({
+    cache,
+    recordCacheId: targetRecordCacheId,
+    relationFieldName: fieldNameOnTargetRecord,
+  });
+
   cache.modify<StoreObject>({
     id: targetRecordCacheId,
     fields: {
-      [fieldNameOnTargetRecord]: (
-        targetRecordFieldValue,
-        { toReference, storeFieldName },
-      ) => {
-        // Copies with arguments are filtered or limited: triggerUpdateRelationsWithArgumentsOptimisticEffect owns them
-        if (storeFieldName !== fieldNameOnTargetRecord) {
-          return targetRecordFieldValue;
-        }
-
+      [fieldNameOnTargetRecord]: (targetRecordFieldValue, { toReference }) => {
         const fieldValueIsObjectRecordConnectionWithRefs =
           isObjectRecordConnectionWithRefs(
             sourceObjectNameSingular,
@@ -124,25 +122,6 @@ export const triggerAttachRelationOptimisticEffect = ({
       },
     },
   });
-
-  const sourceObjectMetadataItem = objectMetadataItems.find(
-    ({ nameSingular }) => nameSingular === sourceObjectNameSingular,
-  );
-
-  if (isDefined(sourceObjectMetadataItem)) {
-    triggerUpdateRelationsWithArgumentsOptimisticEffect({
-      cache,
-      sourceObjectMetadataItem,
-      sourceRecordId,
-      attachedSourceRecord: sourceRecord,
-      targetObjectMetadataItem,
-      fieldNameOnTargetRecord,
-      targetRecordId,
-      objectMetadataItems,
-      objectPermissionsByObjectMetadataId,
-      upsertRecordsInStore,
-    });
-  }
 
   const newCachedRecord = getRecordFromCache({
     cache,
