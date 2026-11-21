@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { aiChatAssistantProfileSelector } from '@/ai-chat/states/selectors/aiChatAssistantProfileSelector';
 import { type AiChatMessageAuthorLookup } from '@/ai-chat/messages/types/AiChatMessageAuthorLookup';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -14,11 +16,13 @@ export const aiChatMessageAuthorLookupSelector =
       return {
         workspaceMembers: get(currentWorkspaceMembersState),
         assistantDisplayName: get(aiChatAssistantProfileSelector).displayName,
-        currentWorkspace: currentWorkspace && {
-          installedApplications: currentWorkspace.installedApplications,
-          workspaceCustomApplication:
-            currentWorkspace.workspaceCustomApplication,
-        },
+        currentWorkspace: isDefined(currentWorkspace)
+          ? {
+              installedApplications: currentWorkspace.installedApplications,
+              workspaceCustomApplication:
+                currentWorkspace.workspaceCustomApplication,
+            }
+          : currentWorkspace,
       };
     },
     areEqual: (previous, next) =>
