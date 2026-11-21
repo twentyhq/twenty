@@ -16,7 +16,6 @@ import { InboxBreadcrumb } from '@/inbox/components/InboxBreadcrumb';
 import { InboxCommandMenuScope } from '@/inbox/components/InboxCommandMenuScope';
 import { InboxConversationPane } from '@/inbox/components/InboxConversationPane';
 import { InboxListHeader } from '@/inbox/components/InboxListHeader';
-import { InboxNewThreadChannelEffect } from '@/inbox/components/InboxNewThreadChannelEffect';
 import { InboxSelectionEffect } from '@/inbox/components/InboxSelectionEffect';
 import { InboxSelectionPane } from '@/inbox/components/InboxSelectionPane';
 import { InboxSelectionToContextStoreEffect } from '@/inbox/components/InboxSelectionToContextStoreEffect';
@@ -27,7 +26,6 @@ import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai-chat/constants/AiChatNewTh
 import { useInboxRecordSelectionInstanceId } from '@/inbox/hooks/useInboxRecordSelectionInstanceId';
 import { useIsInboxShowingDirectMessage } from '@/inbox/hooks/useIsInboxShowingDirectMessage';
 import { useIsInboxSplitView } from '@/inbox/hooks/useIsInboxSplitView';
-import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { InboxThreadListFetchMoreTrigger } from '@/inbox/components/InboxThreadListFetchMoreTrigger';
 import { InboxThreadListLoadEffect } from '@/inbox/components/InboxThreadListLoadEffect';
 import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
@@ -125,7 +123,6 @@ const InboxPageContent = () => {
   const isChannelHiddenForDirectMessage =
     useIsInboxShowingDirectMessage() && isDefined(inboxSelectedChannelView);
   const isSplitLayout = isSplitView && !isChannelHiddenForDirectMessage;
-  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
   const inboxSelectedThreadListSource = useAtomStateValue(
     inboxSelectedThreadListSourceState,
   );
@@ -276,7 +273,6 @@ const InboxPageContent = () => {
   return (
     <StyledInbox>
       <InboxThreadListLoadEffect source={inboxSelectedThreadListSource} />
-      <InboxNewThreadChannelEffect key={newAiChatThreadId} />
       <RecordSelectionRecordIdsEffect records={threads} />
       <InboxSelectionEffect
         key={selectedThreadId}

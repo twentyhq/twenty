@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 
-import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
+import { useSwitchToNewAiChatInInboxChannel } from '@/inbox/hooks/useSwitchToNewAiChatInInboxChannel';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isAiModePath } from '~/utils/isAiModePath';
@@ -9,7 +9,7 @@ export const NewAiChatCommand = () => {
   const { pathname } = useLocation();
   const shouldOpenInFullPage = isAiModePath(pathname);
   const { closeSidePanelMenu } = useSidePanelMenu();
-  const { switchToNewChat } = useSwitchToNewAiChat({
+  const { switchToNewChat } = useSwitchToNewAiChatInInboxChannel({
     shouldOpenInFullPage,
   });
 

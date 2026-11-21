@@ -29,7 +29,7 @@ jest.mock('@/side-panel/hooks/useOpenAskAiPageInSidePanel', () => ({
   useOpenAskAiPageInSidePanel: () => ({ openAskAiPage: jest.fn() }),
 }));
 
-const switchToNewChatAt = (pathname: string) => {
+const switchToNewChatAt = (pathname: string, inboxChannelId?: string) => {
   const store = createStore();
 
   store.set(newAiChatThreadIdState.atom, NEW_THREAD_ID);
@@ -49,7 +49,7 @@ const switchToNewChatAt = (pathname: string) => {
   });
 
   act(() => {
-    result.current.switchToNewChat();
+    result.current.switchToNewChat({ inboxChannelId });
   });
 
   return store;
@@ -70,11 +70,12 @@ describe('useSwitchToNewAiChat', () => {
     expect(getNewThreadChannelId(store)).toBeNull();
   });
 
-  it('leaves the channel of a new chat started in the inbox to the inbox', () => {
+  it('starts a new chat in the inbox in the channel the inbox shows', () => {
     const store = switchToNewChatAt(
       getAppPath(AppPath.AiChatInbox, { threadId: null }),
+      'shown-channel-id',
     );
 
-    expect(getNewThreadChannelId(store)).toBe(CHANNEL_ID);
+    expect(getNewThreadChannelId(store)).toBe('shown-channel-id');
   });
 });
