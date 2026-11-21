@@ -1944,6 +1944,7 @@ input CreateViewFieldInput {
   isVisible: Boolean = true
   label: String
   position: Float = 0
+  relationAggregateOperation: AggregateOperations
   relationScope: ViewFieldRelationScopeInput
   relationTargetFieldMetadataId: UUID
   size: Float = 0
@@ -5791,6 +5792,7 @@ input UpdateViewFieldInputUpdates {
   isVisible: Boolean
   label: String
   position: Float
+  relationAggregateOperation: AggregateOperations
   relationScope: ViewFieldRelationScopeInput
   relationTargetFieldMetadataId: UUID
   size: Float
@@ -6447,6 +6449,7 @@ type ViewField {
   isVisible: Boolean!
   label: String
   position: Float!
+  relationAggregateOperation: AggregateOperations
   relationScope: ViewFieldRelationScope
   relationTargetFieldMetadataId: UUID
   size: Float!
