@@ -18,6 +18,8 @@ import { RECOMPUTE_RECORD_ACCESS_GROUP_IDS_OF_RECORDS_JOB_NAME } from 'src/engin
 import { type RecomputeRecordAccessGroupIdsOfRecordsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-of-records-job-data.type';
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type RelatedRecords } from 'src/engine/permissions/types/related-records.type';
+import { buildAccessGroupValueLookupIdsExpressions } from 'src/engine/permissions/internal/access-group/utils/build-access-group-value-lookup-ids-expressions.util';
+import { findAccessGroupValueLookups } from 'src/engine/permissions/internal/access-group/utils/find-access-group-value-lookups.util';
 import { buildRecordAccessGroupSQLConditions } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-sql-conditions.util';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
@@ -135,6 +137,14 @@ export class RecordAccessGroupComputationService {
       ],
       transactionScope,
     });
+    const accessGroupValueLookups = findAccessGroupValueLookups({
+      flatObjectMetadata,
+      metadataMaps,
+    });
+    const lookupRuleShapeHashes = new Set(
+      accessGroupValueLookups.map(({ ruleShapeHash }) => ruleShapeHash),
+    );
+
     return this.recordAccessGroupRepository.updateRecordAccessGroupIds({
       workspaceId,
       flatObjectMetadata,
@@ -142,9 +152,18 @@ export class RecordAccessGroupComputationService {
         flatObjectMetadata,
         metadataMaps,
         accessGroups: accessGroups.filter(
-          (accessGroup) => accessGroup.objectMetadataId === objectMetadataId,
+          (accessGroup) =>
+            accessGroup.objectMetadataId === objectMetadataId &&
+            !lookupRuleShapeHashes.has(accessGroup.ruleShapeHash),
         ),
       }),
+      accessGroupValueLookupIdsExpressions:
+        buildAccessGroupValueLookupIdsExpressions({
+          workspaceId,
+          flatObjectMetadata,
+          metadataMaps,
+          lookups: accessGroupValueLookups,
+        }),
       resolvedRelatedRecordPaths: feedingRelatedRecordPaths,
       accessGroups,
       metadataMaps,
@@ -184,21 +203,6 @@ export class RecordAccessGroupComputationService {
       ...(await this.recordAccessGroupMetadataMapsService.find(workspaceId)),
       objectMetadataId,
     });
-  }
-
-  async filterObjectsUsingRecordAccessGroups({
-    workspaceId,
-    objectMetadataIds,
-  }: {
-    workspaceId: string;
-    objectMetadataIds: string[];
-  }): Promise<string[]> {
-    const metadataMaps =
-      await this.recordAccessGroupMetadataMapsService.find(workspaceId);
-
-    return objectMetadataIds.filter((objectMetadataId) =>
-      isObjectUsingRecordAccessGroups({ ...metadataMaps, objectMetadataId }),
-    );
   }
 
   async isObjectReferencedByRlsRuleRelation({

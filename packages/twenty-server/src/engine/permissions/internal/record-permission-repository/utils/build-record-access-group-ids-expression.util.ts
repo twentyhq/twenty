@@ -23,18 +23,24 @@ const buildOwnAccessGroupIdsExpression = (
 
 export const buildRecordAccessGroupIdsExpression = ({
   recordAccessGroupSQLConditions,
+  accessGroupValueLookupIdsExpressions,
   inheritedAccessGroupIdsExpressions,
 }: {
   recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[];
+  accessGroupValueLookupIdsExpressions: string[];
   inheritedAccessGroupIdsExpressions: string[];
 }): string => {
   const ownAccessGroupIdsExpression = buildOwnAccessGroupIdsExpression(
     recordAccessGroupSQLConditions,
   );
+  const additionalAccessGroupIdsExpressions = [
+    ...accessGroupValueLookupIdsExpressions,
+    ...inheritedAccessGroupIdsExpressions,
+  ];
 
-  if (inheritedAccessGroupIdsExpressions.length === 0) {
+  if (additionalAccessGroupIdsExpressions.length === 0) {
     return ownAccessGroupIdsExpression;
   }
 
-  return `ARRAY(SELECT DISTINCT "accessGroupId" FROM unnest(${[ownAccessGroupIdsExpression, ...inheritedAccessGroupIdsExpressions].join(' || ')}) AS "accessGroupId" ORDER BY "accessGroupId")`;
+  return `ARRAY(SELECT DISTINCT "accessGroupId" FROM unnest(${[ownAccessGroupIdsExpression, ...additionalAccessGroupIdsExpressions].join(' || ')}) AS "accessGroupId" ORDER BY "accessGroupId")`;
 };

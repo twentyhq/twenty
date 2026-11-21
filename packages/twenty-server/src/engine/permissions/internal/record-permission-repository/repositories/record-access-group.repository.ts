@@ -5,6 +5,8 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { ACCESS_GROUP_IDS_COLUMN_NAME } from 'src/engine/permissions/internal/record-permission-repository/constants/access-group-column-names.constant';
+import { RECORD_ACCESS_GROUP_TABLE_ALIAS } from 'src/engine/permissions/internal/record-permission-repository/constants/record-access-group-table-alias.constant';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
 import { type RecordAccessGroupSQLCondition } from 'src/engine/permissions/internal/record-permission-repository/types/record-access-group-sql-condition.type';
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
@@ -14,6 +16,7 @@ import { buildRelatedRecordPathHopsJoin } from 'src/engine/permissions/internal/
 import { buildRecomputeRecordAccessGroupIdsQuery } from 'src/engine/permissions/internal/record-permission-repository/utils/build-recompute-record-access-group-ids-query.util';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
 import { type RelatedRecordPathFollowingLookup } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-following-lookup.type';
+import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -146,6 +149,7 @@ export class RecordAccessGroupRepository {
     workspaceId,
     flatObjectMetadata,
     recordAccessGroupSQLConditions,
+    accessGroupValueLookupIdsExpressions,
     resolvedRelatedRecordPaths,
     accessGroups,
     metadataMaps,
@@ -155,6 +159,7 @@ export class RecordAccessGroupRepository {
     workspaceId: string;
     flatObjectMetadata: FlatObjectMetadata;
     recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[];
+    accessGroupValueLookupIdsExpressions: SQLCondition[];
     resolvedRelatedRecordPaths: ResolvedRelatedRecordPath[];
     accessGroups: AccessGroup[];
     metadataMaps: Pick<
@@ -173,6 +178,7 @@ export class RecordAccessGroupRepository {
         workspaceId,
         flatObjectMetadata,
         recordAccessGroupSQLConditions,
+        accessGroupValueLookupIdsExpressions,
         resolvedRelatedRecordPaths,
         accessGroups,
         metadataMaps,
@@ -181,6 +187,70 @@ export class RecordAccessGroupRepository {
     });
 
     return updatedRows.map(({ id }) => id);
+  }
+
+  async addAccessGroupIdToMatchingRecords({
+    workspaceId,
+    flatObjectMetadata,
+    compactId,
+    sqlCondition,
+  }: {
+    workspaceId: string;
+    flatObjectMetadata: FlatObjectMetadata;
+    compactId: number;
+    sqlCondition: SQLCondition | null;
+  }): Promise<string[]> {
+    const alias = escapeIdentifier(RECORD_ACCESS_GROUP_TABLE_ALIAS);
+    const accessGroupIds = `COALESCE(${alias}.${escapeIdentifier(ACCESS_GROUP_IDS_COLUMN_NAME)}, CAST('{}' AS integer[]))`;
+    const addedAccessGroupIds = `CAST(ARRAY[:addedCompactId] AS integer[])`;
+    const matchingCondition = isDefined(sqlCondition)
+      ? ` AND (${sqlCondition.sql})`
+      : '';
+    const rows = await this.recordPermissionQueryService.execute<{
+      id: string;
+    }>({
+      workspaceId,
+      query: {
+        sql: `UPDATE ${buildWorkspaceTableExpression({
+          workspaceId,
+          tableName: computeObjectTargetTable(flatObjectMetadata),
+        })} AS ${alias}
+          SET ${escapeIdentifier(ACCESS_GROUP_IDS_COLUMN_NAME)} = ARRAY(SELECT DISTINCT "accessGroupId" FROM unnest(${accessGroupIds} || ${addedAccessGroupIds}) AS "accessGroupId" ORDER BY "accessGroupId")
+          WHERE NOT (${accessGroupIds} @> ${addedAccessGroupIds})${matchingCondition}
+          RETURNING ${alias}."id"`,
+        parameters: {
+          ...sqlCondition?.parameters,
+          addedCompactId: compactId,
+        },
+      },
+    });
+
+    return rows.map(({ id }) => id);
+  }
+
+  async removeAccessGroupIdsFromRecords({
+    workspaceId,
+    flatObjectMetadata,
+    compactIds,
+  }: {
+    workspaceId: string;
+    flatObjectMetadata: FlatObjectMetadata;
+    compactIds: number[];
+  }): Promise<void> {
+    const accessGroupIdsColumn = escapeIdentifier(ACCESS_GROUP_IDS_COLUMN_NAME);
+
+    await this.recordPermissionQueryService.execute({
+      workspaceId,
+      query: {
+        sql: `UPDATE ${buildWorkspaceTableExpression({
+          workspaceId,
+          tableName: computeObjectTargetTable(flatObjectMetadata),
+        })}
+          SET ${accessGroupIdsColumn} = ARRAY(SELECT "accessGroupId" FROM unnest(${accessGroupIdsColumn}) AS "accessGroupId" WHERE NOT ("accessGroupId" = ANY(CAST(:removedCompactIds AS integer[]))) ORDER BY "accessGroupId")
+          WHERE ${accessGroupIdsColumn} && CAST(:removedCompactIds AS integer[])`,
+        parameters: { removedCompactIds: compactIds },
+      },
+    });
   }
 
   async findRecordsFollowingRelatedRecordPaths({
