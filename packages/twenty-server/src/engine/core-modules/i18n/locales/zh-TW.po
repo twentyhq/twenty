@@ -11883,10 +11883,10 @@ msgstr "已請求"
 msgid "Requested file range cannot be served."
 msgstr "無法提供所要求的檔案範圍。"
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "必填欄位和關聯無法在資料列層級權限規則中受到限制。"
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "必填欄位和多型關聯無法在資料列層級權限規則中受到限制。"
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts

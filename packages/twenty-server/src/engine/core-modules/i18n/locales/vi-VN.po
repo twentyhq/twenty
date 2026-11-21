@@ -11883,10 +11883,10 @@ msgstr "Đã được yêu cầu"
 msgid "Requested file range cannot be served."
 msgstr "Không thể cung cấp phạm vi tệp được yêu cầu."
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "Không thể hạn chế các trường và mối quan hệ bắt buộc trong quy tắc quyền ở cấp hàng."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "Không thể hạn chế các trường bắt buộc và quan hệ morph trong quy tắc quyền ở cấp hàng."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts

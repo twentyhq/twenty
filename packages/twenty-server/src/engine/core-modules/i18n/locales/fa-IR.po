@@ -11883,10 +11883,10 @@ msgstr "درخواست‌شده"
 msgid "Requested file range cannot be served."
 msgstr "محدوده فایل درخواست‌شده قابل ارائه نیست."
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "فیلدها و روابط الزامی را نمی‌توان در یک قانون مجوز سطح ردیف محدود کرد."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "فیلدهای الزامی و روابط morph را نمی‌توان در قانون مجوز در سطح ردیف محدود کرد."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts

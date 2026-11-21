@@ -11883,10 +11883,10 @@ msgstr "Igényelve"
 msgid "Requested file range cannot be served."
 msgstr "A kért fájltartomány nem szolgálható ki."
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "A kötelező mezők és kapcsolatok nem korlátozhatók rekordszintű jogosultsági szabályban."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "A kötelező mezők és a morfológiai kapcsolatok nem korlátozhatók rekordszintű jogosultsági szabályban."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts

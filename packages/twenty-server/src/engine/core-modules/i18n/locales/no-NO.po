@@ -11883,10 +11883,10 @@ msgstr "Forespurt"
 msgid "Requested file range cannot be served."
 msgstr "Det forespurte filområdet kan ikke leveres."
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "Obligatoriske felt og relasjoner kan ikke begrenses i en tilgangsregel på radnivå."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "Obligatoriske felt og morph-relasjoner kan ikke begrenses i en tillatelsesregel på radnivå."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts

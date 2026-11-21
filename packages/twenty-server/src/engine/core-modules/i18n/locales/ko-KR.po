@@ -11883,10 +11883,10 @@ msgstr "요청됨"
 msgid "Requested file range cannot be served."
 msgstr "요청한 파일 범위를 제공할 수 없습니다."
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "필수 필드 및 관계는 행 수준 권한 규칙에서 제한할 수 없습니다."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "필수 필드 및 morph 관계는 행 수준 권한 규칙에서 제한할 수 없습니다."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts

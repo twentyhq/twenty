@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { isFieldUnreadableByRole } from 'src/engine/permissions/internal/related-record-path/utils/is-field-unreadable-by-role.util';
+import { isFieldUnreadableByRule } from 'src/engine/permissions/internal/related-record-path/utils/is-field-unreadable-by-rule.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const omitObjectRecordsIfFieldUnreadable = ({
@@ -18,15 +19,35 @@ const omitObjectRecordsIfFieldUnreadable = ({
   const objectRecordsPermissions =
     roleRecordsPermissions.objects[objectMetadataId];
 
+  if (!isDefined(objectRecordsPermissions)) {
+    return roleRecordsPermissions;
+  }
+
   if (
-    !isDefined(objectRecordsPermissions) ||
     !isFieldUnreadableByRole({
       roleRecordsPermissions,
       objectMetadataId,
       fieldMetadataId,
     })
   ) {
-    return roleRecordsPermissions;
+    return {
+      ...roleRecordsPermissions,
+      objects: {
+        ...roleRecordsPermissions.objects,
+        [objectMetadataId]: {
+          ...objectRecordsPermissions,
+          rowLevelRecordsPermissions: (
+            objectRecordsPermissions.rowLevelRecordsPermissions ?? []
+          ).filter(
+            (rowLevelRecordsPermissions) =>
+              !isFieldUnreadableByRule({
+                rowLevelRecordsPermissions,
+                fieldMetadataId,
+              }),
+          ),
+        },
+      },
+    };
   }
 
   return {

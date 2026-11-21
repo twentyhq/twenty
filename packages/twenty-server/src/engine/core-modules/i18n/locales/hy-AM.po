@@ -11883,10 +11883,10 @@ msgstr "Հարցված"
 msgid "Requested file range cannot be served."
 msgstr "Հայցված ֆայլի տիրույթը չի կարող սպասարկվել։"
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "Պարտադիր դաշտերն ու կապերը չեն կարող սահմանափակվել տողի մակարդակի թույլտվության կանոնում."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "Պարտադիր դաշտերը և մորֆային կապերը չեն կարող սահմանափակվել տողի մակարդակի թույլտվության կանոնով:"
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts

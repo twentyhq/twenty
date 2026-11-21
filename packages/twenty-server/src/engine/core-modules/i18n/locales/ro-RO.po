@@ -11883,10 +11883,10 @@ msgstr "Solicitat"
 msgid "Requested file range cannot be served."
 msgstr "Intervalul de fișier solicitat nu poate fi servit."
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "Câmpurile și relațiile obligatorii nu pot fi restricționate într-o regulă de permisiune la nivel de rând."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "Câmpurile obligatorii și relațiile morph nu pot fi restricționate printr-o regulă de permisiuni la nivel de rând."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts

@@ -11883,10 +11883,10 @@ msgstr "Запрошено"
 msgid "Requested file range cannot be served."
 msgstr "Запрошенный диапазон файла не может быть обработан."
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "Обязательные поля и связи не могут быть ограничены в правиле разрешений на уровне строки."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "Обязательные поля и морф-связи нельзя ограничивать в правиле разрешений на уровне строк."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts

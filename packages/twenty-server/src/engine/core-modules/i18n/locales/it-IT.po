@@ -11883,10 +11883,10 @@ msgstr "Richiesta effettuata"
 msgid "Requested file range cannot be served."
 msgstr "Non è possibile fornire l'intervallo di file richiesto."
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "I campi e le relazioni obbligatori non possono essere limitati in una regola di autorizzazione a livello di riga."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "I campi obbligatori e le relazioni morph non possono essere limitati in una regola di autorizzazione a livello di riga."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts

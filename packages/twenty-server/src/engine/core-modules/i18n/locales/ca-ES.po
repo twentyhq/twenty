@@ -11883,10 +11883,10 @@ msgstr "Sol·licitat"
 msgid "Requested file range cannot be served."
 msgstr "No es pot servir l'interval de fitxer sol·licitat."
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "Els camps obligatoris i les relacions no es poden restringir en una regla de permisos de nivell de fila."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "Els camps obligatoris i les relacions morph no es poden restringir en una regla de permisos de nivell de fila."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts

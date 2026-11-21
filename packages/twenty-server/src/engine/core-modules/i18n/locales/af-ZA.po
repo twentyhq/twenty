@@ -11883,10 +11883,10 @@ msgstr "Aangevra"
 msgid "Requested file range cannot be served."
 msgstr "Versoekte lêerreeks kan nie bedien word nie."
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "Verpligte velde en verwantskappe kan nie op 'n toestemmingreël op ryvlak beperk word nie."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "Vereiste velde en morf-verhoudings kan nie op 'n toestemmingreël op ryvlak beperk word nie."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
