@@ -220,14 +220,15 @@ describe('teamsHealthCheckHandler', () => {
     ['this workspace holds the tenant again', 'this-workspace-id'],
     ['nobody holds the tenant any more', null],
   ])(
-    'should report nothing for a recorded conflict once %s',
+    'should warn that chat is not active for a stale conflict once %s',
     async (_, claimingWorkspaceId) => {
       enableChat();
       listTeamsConnectionsMock.mockResolvedValue([WORKSPACE_CONNECTION]);
       recordLostClaim(claimingWorkspaceId);
 
-      await expect(teamsHealthCheckHandler()).resolves.toEqual({
-        status: 'OK',
+      await expect(teamsHealthCheckHandler()).resolves.toMatchObject({
+        status: 'WARNING',
+        title: 'Microsoft Teams chat is not active',
       });
     },
   );

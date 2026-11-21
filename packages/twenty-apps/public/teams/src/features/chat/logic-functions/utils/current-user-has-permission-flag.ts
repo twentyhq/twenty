@@ -18,7 +18,12 @@ export const currentUserHasPermissionFlag = async (
     return (currentUser.currentUserWorkspace?.permissionFlags ?? []).includes(
       permissionFlag,
     );
-  } catch {
+  } catch (error) {
+    console.warn(
+      `[teams] could not read the permissions of the current user, treating ${permissionFlag} as missing`,
+      error,
+    );
+
     return false;
   }
 };

@@ -85,8 +85,10 @@ setting.
    `TEAMS_BOT_APP_ID` as the bot ID) and install it for your users.
 3. Turn on **Enable chat** and add a **workspace-shared** Microsoft connection,
    in either order. Whichever comes last claims the connection's Microsoft
-   tenant for this workspace, so activities from that tenant route here, and
-   links every directory user whose email matches a workspace member. Turning
+   tenant for this workspace, so activities from that tenant route here. Adding
+   the connection also links every directory user whose email matches a
+   workspace member; turning the setting on does not run that scan, so members
+   link on their first message or from **Auto-link by email**. Turning
    **Enable chat** off releases the tenant. Personal connections do not claim a
    tenant, and a tenant can only be claimed by one workspace. When another
    workspace already holds the tenant, the connection is kept for transcripts

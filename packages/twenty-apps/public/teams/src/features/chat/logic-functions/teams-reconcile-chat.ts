@@ -8,7 +8,7 @@ export default defineLogicFunction({
   universalIdentifier: TEAMS_RECONCILE_CHAT_UNIVERSAL_IDENTIFIER,
   name: 'teams-reconcile-chat',
   description:
-    'Runs when the Enable chat setting is saved. With chat on, claims the Microsoft tenant of every working workspace-shared connection for this workspace and links directory users by email, as adding the connection would. With chat off, releases those claims so another workspace can use the tenant. Takes the saved state in the request, never claims while chat is unreleased, and reports one outcome per connection. Restricted to members who can manage applications.',
+    'Runs when the Enable chat setting is saved. With chat on, claims the Microsoft tenant of every working workspace-shared connection for this workspace, as adding the connection would, without the directory email match: members link on their first message or from Auto-link by email. With chat off, releases those claims so another workspace can use the tenant. Takes the saved state in the request, never claims while chat is unreleased, and reports one outcome per connection. Restricted to members who can manage applications.',
   timeoutSeconds: 120,
   httpRouteTriggerSettings: {
     path: TEAMS_CHAT_RECONCILE_ROUTE_PATH,

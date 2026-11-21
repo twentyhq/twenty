@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constants/chat-enabled-application-variable-key';
 import { ChatSettings } from 'src/features/chat/front-components/ChatSettings';
+import { type TeamsChatReconciliationResult } from 'src/features/chat/logic-functions/types/teams-chat-reconciliation.type';
 
 const {
   releaseFlags,
@@ -201,7 +202,9 @@ describe('ChatSettings', () => {
   });
 
   it('keeps the switch disabled until Teams is updated', async () => {
-    let resolveReconcile: ((response: unknown) => void) | undefined;
+    let resolveReconcile:
+      | ((response: TeamsChatReconciliationResult) => void)
+      | undefined;
     restPostMock.mockReturnValue(
       new Promise((resolve) => {
         resolveReconcile = resolve;

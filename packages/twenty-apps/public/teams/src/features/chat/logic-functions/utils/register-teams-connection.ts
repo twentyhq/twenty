@@ -48,10 +48,12 @@ export const registerTeamsConnection = async ({
   connectedAccountId,
   workspaceId,
   isChatEnabled = isTeamsChatEnabled(),
+  shouldMatchDirectory = true,
 }: {
   connectedAccountId: string;
   workspaceId: string;
   isChatEnabled?: boolean;
+  shouldMatchDirectory?: boolean;
 }): Promise<{
   claimedTenantId: string | null;
   conflictingTenantId?: string;
@@ -93,7 +95,9 @@ export const registerTeamsConnection = async ({
 
   await deleteTeamsTenantClaimConflict({ connectedAccountId });
 
-  await matchTeamsDirectoryOnConnect({ connection, accessToken, tenantId });
+  if (shouldMatchDirectory) {
+    await matchTeamsDirectoryOnConnect({ connection, accessToken, tenantId });
+  }
 
   return { claimedTenantId: tenantId };
 };

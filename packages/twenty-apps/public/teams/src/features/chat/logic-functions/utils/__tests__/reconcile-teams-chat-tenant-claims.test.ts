@@ -92,6 +92,7 @@ describe('reconcileTeamsChatTenantClaims', () => {
       connectedAccountId: WORKSPACE_CONNECTION.id,
       workspaceId: WORKSPACE_ID,
       isChatEnabled: true,
+      shouldMatchDirectory: false,
     });
     expect(releaseMock).not.toHaveBeenCalled();
     expect(deleteConflictMock).not.toHaveBeenCalled();

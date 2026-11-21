@@ -250,6 +250,17 @@ describe('registerTeamsConnection', () => {
     );
   });
 
+  it('should claim without the directory match when asked to skip it', async () => {
+    expect(
+      await registerTeamsConnection({
+        connectedAccountId: CONNECTED_ACCOUNT_ID,
+        workspaceId: WORKSPACE_ID,
+        shouldMatchDirectory: false,
+      }),
+    ).toEqual({ claimedTenantId: TENANT_ID });
+    expect(matchTeamsDirectoryByEmailMock).not.toHaveBeenCalled();
+  });
+
   it('should keep the claim when the directory match fails', async () => {
     matchTeamsDirectoryByEmailMock.mockRejectedValue(new Error('graph down'));
     const consoleWarnSpy = vi

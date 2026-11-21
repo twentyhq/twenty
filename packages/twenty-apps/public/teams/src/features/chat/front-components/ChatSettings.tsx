@@ -1,9 +1,10 @@
+import { useState } from 'react';
 import { enqueueSnackbar, useTranslate } from 'twenty-sdk/front-component';
 
 import { RELEASE_FLAGS } from 'src/constants/release-flags';
 import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constants/chat-enabled-application-variable-key';
 import { TeamsUserLinksSettings } from 'src/features/chat/front-components/TeamsUserLinksSettings';
-import { useReconcileTeamsChat } from 'src/features/chat/front-components/hooks/use-reconcile-teams-chat';
+import { reconcileTeamsChat } from 'src/features/chat/front-components/utils/reconcile-teams-chat';
 import { FeatureSettingsSection } from 'src/front-components/components/FeatureSettingsSection';
 import { useFeatureSetting } from 'src/front-components/hooks/use-feature-setting';
 import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
@@ -16,20 +17,20 @@ export const ChatSettings = () => {
       isAvailable: RELEASE_FLAGS.IS_CHAT_ASSISTANT_RELEASED,
     });
 
-  const { reconcileTeamsChat, isReconciling } = useReconcileTeamsChat();
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const isChatEnabled = isFeatureEnabled({
     isAvailable: RELEASE_FLAGS.IS_CHAT_ASSISTANT_RELEASED,
     settingValue,
   });
 
-  const handleChange = async (isEnabled: boolean) => {
-    if (isReconciling || !(await updateSetting(isEnabled))) {
+  const updateChat = async (isEnabled: boolean) => {
+    if (!(await updateSetting(isEnabled))) {
       return;
     }
 
     const result = await reconcileTeamsChat(isEnabled);
-    const connections = result.success ? result.connections : [];
+    const connections = result?.success === true ? result.connections : [];
 
     if (connections.some((connection) => connection.status === 'CONFLICT')) {
       enqueueSnackbar({
@@ -43,7 +44,7 @@ export const ChatSettings = () => {
     }
 
     if (
-      !result.success ||
+      result?.success !== true ||
       connections.some((connection) => connection.status === 'FAILED')
     ) {
       enqueueSnackbar({
@@ -52,6 +53,21 @@ export const ChatSettings = () => {
         ),
         variant: 'error',
       });
+    }
+  };
+
+  // One flag spans the save and the Teams update, so the switch never re-enables between them.
+  const handleChange = async (isEnabled: boolean) => {
+    if (isUpdating) {
+      return;
+    }
+
+    setIsUpdating(true);
+
+    try {
+      await updateChat(isEnabled);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -65,7 +81,7 @@ export const ChatSettings = () => {
         )}
         isAvailable={RELEASE_FLAGS.IS_CHAT_ASSISTANT_RELEASED}
         isEnabled={isChatEnabled}
-        isSaving={isSaving || isReconciling}
+        isSaving={isSaving || isUpdating}
         hasSaveError={hasSaveError}
         onChange={handleChange}
       />

@@ -30,6 +30,8 @@ const reconcileTeamsConnectionTenantClaim = async ({
         connectedAccountId,
         workspaceId,
         isChatEnabled,
+        // A directory scan can outlast the settings request; senders still link by email on their first message.
+        shouldMatchDirectory: false,
       });
 
     if (isNonEmptyString(conflictingTenantId)) {
