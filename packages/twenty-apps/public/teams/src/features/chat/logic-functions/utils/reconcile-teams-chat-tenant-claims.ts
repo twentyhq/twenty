@@ -1,10 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type TeamsChatConnectionReconciliation } from 'src/features/chat/logic-functions/types/teams-chat-reconciliation.type';
-import { deleteTeamsTenantClaimConflict } from 'src/features/chat/logic-functions/utils/delete-teams-tenant-claim-conflict';
 import { isWorkingTeamsWorkspaceConnection } from 'src/features/chat/logic-functions/utils/is-working-teams-workspace-connection';
 import { registerTeamsConnection } from 'src/features/chat/logic-functions/utils/register-teams-connection';
-import { releaseTeamsConnectionTenant } from 'src/features/chat/logic-functions/utils/release-teams-connection-tenant';
 import { listTeamsConnections } from 'src/features/transcripts/logic-functions/utils/list-teams-connections';
 import { toErrorMessage } from 'src/utils/to-error-message';
 
@@ -18,13 +16,6 @@ const reconcileTeamsConnectionTenantClaim = async ({
   workspaceId: string;
 }): Promise<TeamsChatConnectionReconciliation> => {
   try {
-    if (!isChatEnabled) {
-      await releaseTeamsConnectionTenant({ connectedAccountId });
-      await deleteTeamsTenantClaimConflict({ connectedAccountId });
-
-      return { connectedAccountId, status: 'RELEASED' };
-    }
-
     const { claimedTenantId, conflictingTenantId } =
       await registerTeamsConnection({
         connectedAccountId,

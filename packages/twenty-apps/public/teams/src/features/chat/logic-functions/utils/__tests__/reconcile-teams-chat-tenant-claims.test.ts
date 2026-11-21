@@ -2,17 +2,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { reconcileTeamsChatTenantClaims } from 'src/features/chat/logic-functions/utils/reconcile-teams-chat-tenant-claims';
 
-const {
-  listTeamsConnectionsMock,
-  registerTeamsConnectionMock,
-  releaseMock,
-  deleteConflictMock,
-} = vi.hoisted(() => ({
-  listTeamsConnectionsMock: vi.fn(),
-  registerTeamsConnectionMock: vi.fn(),
-  releaseMock: vi.fn(),
-  deleteConflictMock: vi.fn(),
-}));
+const { listTeamsConnectionsMock, registerTeamsConnectionMock } = vi.hoisted(
+  () => ({
+    listTeamsConnectionsMock: vi.fn(),
+    registerTeamsConnectionMock: vi.fn(),
+  }),
+);
 
 vi.mock(
   'src/features/transcripts/logic-functions/utils/list-teams-connections',
@@ -22,16 +17,6 @@ vi.mock(
 vi.mock(
   'src/features/chat/logic-functions/utils/register-teams-connection',
   () => ({ registerTeamsConnection: registerTeamsConnectionMock }),
-);
-
-vi.mock(
-  'src/features/chat/logic-functions/utils/release-teams-connection-tenant',
-  () => ({ releaseTeamsConnectionTenant: releaseMock }),
-);
-
-vi.mock(
-  'src/features/chat/logic-functions/utils/delete-teams-tenant-claim-conflict',
-  () => ({ deleteTeamsTenantClaimConflict: deleteConflictMock }),
 );
 
 const WORKSPACE_ID = 'this-workspace-id';
@@ -72,7 +57,6 @@ describe('reconcileTeamsChatTenantClaims', () => {
     registerTeamsConnectionMock.mockResolvedValue({
       claimedTenantId: TENANT_ID,
     });
-    releaseMock.mockResolvedValue({ releasedTenantId: TENANT_ID });
   });
 
   it('should claim the tenant of each working workspace connection when chat is enabled', async () => {
@@ -94,8 +78,6 @@ describe('reconcileTeamsChatTenantClaims', () => {
       isChatEnabled: true,
       shouldMatchDirectory: false,
     });
-    expect(releaseMock).not.toHaveBeenCalled();
-    expect(deleteConflictMock).not.toHaveBeenCalled();
   });
 
   it('should give the same outcome when run again', async () => {
@@ -158,8 +140,10 @@ describe('reconcileTeamsChatTenantClaims', () => {
     ]);
   });
 
-  it('should release every connection and forget its conflict when chat is disabled', async () => {
-    releaseMock.mockRejectedValueOnce(new Error('kv unavailable'));
+  it('should release every connection when chat is disabled', async () => {
+    registerTeamsConnectionMock
+      .mockRejectedValueOnce(new Error('kv unavailable'))
+      .mockResolvedValue({ claimedTenantId: null });
 
     expect(
       await reconcileTeamsChatTenantClaims({
@@ -178,12 +162,13 @@ describe('reconcileTeamsChatTenantClaims', () => {
         status: 'RELEASED',
       },
     ]);
-    expect(releaseMock).toHaveBeenCalledTimes(3);
-    expect(deleteConflictMock.mock.calls).toEqual([
-      [{ connectedAccountId: WORKSPACE_CONNECTION.id }],
-      [{ connectedAccountId: REJECTED_WORKSPACE_CONNECTION.id }],
-    ]);
-    expect(registerTeamsConnectionMock).not.toHaveBeenCalled();
+    expect(registerTeamsConnectionMock).toHaveBeenCalledTimes(3);
+    expect(registerTeamsConnectionMock).toHaveBeenLastCalledWith({
+      connectedAccountId: REJECTED_WORKSPACE_CONNECTION.id,
+      workspaceId: WORKSPACE_ID,
+      isChatEnabled: false,
+      shouldMatchDirectory: false,
+    });
   });
 
   it('should do nothing without a connection', async () => {
