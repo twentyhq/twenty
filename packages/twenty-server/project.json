@@ -202,23 +202,10 @@
       }
     },
     "test": {
-      "executor": "nx:run-commands",
-      "cache": true,
-      "dependsOn": ["^build"],
-      "inputs": [
-        "^default",
-        "excludeStories",
-        "{workspaceRoot}/jest.preset.js"
-      ],
-      "outputs": ["{projectRoot}/coverage"],
       "options": {
-        "cwd": "{projectRoot}",
         "command": "jest --config ./jest.config.mjs --silent --coverageReporters=text-summary --cacheDirectory=../../.cache/jest/{projectRoot} --maxWorkers=50%"
       },
       "configurations": {
-        "ci": {
-          "command": "jest --config ./jest.config.mjs --silent --coverageReporters=text-summary --cacheDirectory=../../.cache/jest/{projectRoot} --ci --maxWorkers=1 --coverage"
-        },
         "coverage": {
           "command": "jest --config ./jest.config.mjs --silent --coverageReporters=lcov --coverageReporters=text --cacheDirectory=../../.cache/jest/{projectRoot} --maxWorkers=50% --coverage"
         },
