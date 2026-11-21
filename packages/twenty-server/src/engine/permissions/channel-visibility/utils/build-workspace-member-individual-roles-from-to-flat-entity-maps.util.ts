@@ -5,7 +5,6 @@ import { v5 } from 'uuid';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { WORKSPACE_MEMBER_INDIVIDUAL_ROLE_METADATA_NAMES } from 'src/engine/permissions/channel-visibility/constants/workspace-member-individual-role-metadata-names.constant';
 import {
   WORKSPACE_MEMBER_INDIVIDUAL_ROLE_LABEL_PREFIX,
   WORKSPACE_MEMBER_INDIVIDUAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
@@ -15,6 +14,15 @@ import { getWorkspaceMemberIndividualRoleUniversalIdentifier } from 'src/engine/
 import { isWorkspaceMemberIndividualRole } from 'src/engine/permissions/channel-visibility/utils/is-workspace-member-individual-role.util';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
+
+export const WORKSPACE_MEMBER_INDIVIDUAL_ROLE_METADATA_NAMES = [
+  'role',
+  'roleTarget',
+  'rowLevelPermissionRule',
+  'rowLevelPermissionPredicateGroup',
+  'rowLevelPermissionPredicate',
+  'fieldPermission',
+] as const;
 
 type WorkspaceMemberIndividualRoleFlatEntityMapsKey =
   MetadataToFlatEntityMapsKey<
