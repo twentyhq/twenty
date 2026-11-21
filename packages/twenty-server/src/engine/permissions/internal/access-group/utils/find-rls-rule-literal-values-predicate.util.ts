@@ -15,8 +15,14 @@ const isAtRootConjunction = ({
   predicate,
   predicateGroups,
 }: {
-  predicate: RowLevelPermissionPredicate;
-  predicateGroups: RowLevelPermissionPredicateGroup[];
+  predicate: Pick<
+    RowLevelPermissionPredicate,
+    'rowLevelPermissionPredicateGroupId'
+  >;
+  predicateGroups: Pick<
+    RowLevelPermissionPredicateGroup,
+    'id' | 'logicalOperator' | 'parentRowLevelPermissionPredicateGroupId'
+  >[];
 }): boolean => {
   let groupId = predicate.rowLevelPermissionPredicateGroupId ?? null;
 
