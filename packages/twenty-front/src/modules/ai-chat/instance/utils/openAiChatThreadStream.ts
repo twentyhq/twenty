@@ -25,6 +25,7 @@ import { aiChatThreadUsageFamilyState } from '@/ai-chat/states/server/aiChatThre
 import { type AiChatThreadStreamDependencies } from '@/ai-chat/instance/types/AiChatThreadStreamDependencies';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { getAiChatMessageThreadTitle } from '@/ai-chat/threads/utils/getAiChatMessageThreadTitle';
+import { refetchToolIndexOnUnknownTools } from '@/ai-chat/tool-calls/utils/refetchToolIndexOnUnknownTools';
 import { type AiChatStreamCatchup } from '@/ai-chat/types/AiChatStreamCatchup';
 import { type AiChatThreadStream } from '@/ai-chat/types/AiChatThreadStream';
 import { accumulateAiChatUsage } from '@/ai-chat/usage/utils/accumulateAiChatUsage';
@@ -127,6 +128,10 @@ export const openAiChatThreadStream = ({
     store.set(displayedMessagesAtom, (currentMessages) =>
       upsertAiChatMessage(currentMessages, messageToFlush),
     );
+    refetchToolIndexOnUnknownTools({
+      apolloClient: getDependencies().apolloClient,
+      messages: [messageToFlush],
+    });
   };
 
   const scheduleFlush = (message: ExtendedUIMessage) => {
@@ -265,6 +270,11 @@ export const openAiChatThreadStream = ({
       }
 
       const uiMessages = mapAgentMessagesToUIMessages(data.chatMessages ?? []);
+
+      refetchToolIndexOnUnknownTools({
+        apolloClient: getDependencies().apolloClient,
+        messages: uiMessages,
+      });
 
       store.set(fetchedMessagesAtom, {
         messages: uiMessages.filter((message) => message.status !== 'queued'),
