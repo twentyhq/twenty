@@ -4,6 +4,7 @@ import {
   IsBoolean,
   isDefined,
   IsEnum,
+  IsIn,
   IsNumber,
   IsObject,
   isString,
@@ -202,7 +203,13 @@ export const typeTransformers: Record<
       return value.filter((item) => options.includes(item as string));
     },
 
-    getValidators: (): PropertyDecorator[] => [IsArray()],
+    getValidators: (options?: ConfigVariableOptions): PropertyDecorator[] => {
+      if (!options) {
+        return [IsArray()];
+      }
+
+      return [IsArray(), IsIn(Object.values(options), { each: true })];
+    },
 
     getTransformers: (): PropertyDecorator[] => [
       Transform(({ value }) => {
