@@ -4,6 +4,7 @@ import {
 } from 'twenty-shared/types';
 
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type WorkspaceMemberIndividualRoleRule } from 'src/engine/permissions/workspace-member-individual-role/types/workspace-member-individual-role.type';
 
@@ -16,7 +17,12 @@ export const buildChannelVisibilityRules = ({
   unreadableFieldMetadataUniversalIdentifiersByVisibility,
 }: {
   userWorkspaceId: string;
-  channels: (MessageChannelEntity | CalendarChannelEntity)[];
+  channels: (Pick<
+    MessageChannelEntity | CalendarChannelEntity,
+    'id' | 'visibility'
+  > & {
+    connectedAccount: Pick<ConnectedAccountEntity, 'userWorkspaceId'> | null;
+  })[];
   objectMetadataUniversalIdentifier: string;
   associationRelationFieldMetadataUniversalIdentifier: string;
   channelIdFieldMetadataUniversalIdentifier: string;

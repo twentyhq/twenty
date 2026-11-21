@@ -1,6 +1,5 @@
 import { MessageChannelVisibility } from 'twenty-shared/types';
 
-import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { buildChannelVisibilityRules } from 'src/engine/permissions/channel-visibility/utils/build-channel-visibility-rules.util';
 
 const buildChannel = ({
@@ -11,12 +10,11 @@ const buildChannel = ({
   id: string;
   ownerUserWorkspaceId: string;
   visibility: MessageChannelVisibility;
-}) =>
-  ({
-    id,
-    visibility,
-    connectedAccount: { userWorkspaceId: ownerUserWorkspaceId },
-  }) as MessageChannelEntity;
+}) => ({
+  id,
+  visibility,
+  connectedAccount: { userWorkspaceId: ownerUserWorkspaceId },
+});
 
 const channels = [
   buildChannel({
