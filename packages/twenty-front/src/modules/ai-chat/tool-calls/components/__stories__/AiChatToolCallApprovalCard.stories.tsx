@@ -136,6 +136,7 @@ export const DisabledFeature: Story = {
 };
 
 export const SupersededAfterRefresh: Story = {
+  parameters: { aiChatThreadId: 'approval-preview-story' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByRole('button', { name: 'Count: 0' }, { timeout: 30000 });

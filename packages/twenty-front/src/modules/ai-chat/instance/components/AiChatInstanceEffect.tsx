@@ -171,7 +171,6 @@ export const AiChatInstanceEffect = () => {
       visit.readRequestedForActivityAt === lastActivityAt &&
       visit.readRequestedForParticipantUpdatedAt === participant?.updatedAt;
 
-    // A chat the member does not follow yet starts being tracked, so later activity reads as unread
     if (
       (!isUnread && isDefined(participant)) ||
       visit.isKeptUnread ||
