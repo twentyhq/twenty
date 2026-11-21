@@ -4,6 +4,8 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { getReadableRelationsWithArguments } from '@/object-record/graphql/utils/getReadableRelationsWithArguments';
+import { getRelationsWithArgumentsVariables } from '@/object-record/graphql/utils/getRelationsWithArgumentsVariables';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import {
   type QueryCursorDirection,
@@ -29,6 +31,22 @@ export const useFindManyRecordsQuery = ({
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
+  const readableRelationsWithArguments = useMemo(
+    () =>
+      getReadableRelationsWithArguments({
+        objectMetadataItem,
+        objectMetadataItems,
+        recordGqlFields,
+        objectPermissionsByObjectMetadataId,
+      }),
+    [
+      objectMetadataItem,
+      objectMetadataItems,
+      recordGqlFields,
+      objectPermissionsByObjectMetadataId,
+    ],
+  );
+
   const findManyRecordsQuery = useMemo(
     () =>
       generateFindManyRecordsQuery({
@@ -38,6 +56,7 @@ export const useFindManyRecordsQuery = ({
         computeReferences,
         cursorDirection,
         objectPermissionsByObjectMetadataId,
+        readableRelationsWithArguments,
       }),
     [
       objectMetadataItem,
@@ -46,10 +65,17 @@ export const useFindManyRecordsQuery = ({
       computeReferences,
       cursorDirection,
       objectPermissionsByObjectMetadataId,
+      readableRelationsWithArguments,
     ],
+  );
+
+  const relationsWithArgumentsVariables = useMemo(
+    () => getRelationsWithArgumentsVariables(readableRelationsWithArguments),
+    [readableRelationsWithArguments],
   );
 
   return {
     findManyRecordsQuery,
+    relationsWithArgumentsVariables,
   };
 };

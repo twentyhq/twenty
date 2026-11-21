@@ -1,5 +1,6 @@
 import { type ApolloCache, type StoreObject } from '@apollo/client';
 
+import { invalidateCachedRelationsWithArguments } from '@/apollo/optimistic-effect/utils/invalidateCachedRelationsWithArguments';
 import { triggerUpdateRootQueriesOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRootQueriesOptimisticEffect';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
@@ -37,6 +38,12 @@ export const triggerDetachRelationOptimisticEffect = ({
   const targetRecordCacheId = cache.identify({
     id: targetRecordId,
     __typename: targetRecordTypeName,
+  });
+
+  invalidateCachedRelationsWithArguments({
+    cache,
+    recordCacheId: targetRecordCacheId,
+    relationFieldName: fieldNameOnTargetRecord,
   });
 
   cache.modify<StoreObject>({
