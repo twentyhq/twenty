@@ -67,6 +67,10 @@ export class AccessGroupSyncListener {
   }: Pick<MetadataEventBatch, 'workspaceId'> & {
     events: MetadataEvent<'fieldPermission'>[];
   }): Promise<void> {
+    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(
+      workspaceId,
+    );
+
     const changedFieldMetadataIds = new Set(
       events.flatMap((event) =>
         [

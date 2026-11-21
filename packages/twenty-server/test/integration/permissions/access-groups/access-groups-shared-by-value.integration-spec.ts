@@ -149,5 +149,40 @@ describePermissionTestWorkspace({
         'fullVisibilityTier',
       ]);
     });
+
+    it('should read the records of a value first listed once the sync adds its group to them', async () => {
+      await setMemberVisibilityTiers(['LOW', 'MEDIUM', 'FULL']);
+
+      expect(await findReadableVisibilityTierRecords()).toEqual([
+        'lowVisibilityTier',
+        'mediumVisibilityTier',
+        'fullVisibilityTier',
+      ]);
+    });
+
+    it('should stop reading the records of a value no rule lists once the sync drops its group from them', async () => {
+      await setMemberVisibilityTiers(['LOW']);
+
+      expect(await findReadableVisibilityTierRecords()).toEqual([
+        'lowVisibilityTier',
+      ]);
+    });
+
+    it('should reach the same records after a full recompute as after the incremental changes', async () => {
+      await setMemberVisibilityTiers(['MEDIUM', 'FULL']);
+
+      const readableRecordsAfterIncrementalChanges =
+        await findReadableVisibilityTierRecords();
+
+      await recomputeRecords();
+
+      expect(await findReadableVisibilityTierRecords()).toEqual(
+        readableRecordsAfterIncrementalChanges,
+      );
+      expect(readableRecordsAfterIncrementalChanges).toEqual([
+        'mediumVisibilityTier',
+        'fullVisibilityTier',
+      ]);
+    });
   },
 });
