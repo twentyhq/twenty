@@ -13,7 +13,7 @@ import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.ty
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-type KeyLookup = {
+type KeyValueExpression = {
   valueExpression: string;
   fromExpressions: string[];
   joinConditions: string[];
@@ -21,20 +21,20 @@ type KeyLookup = {
 
 const buildMatchingValueCondition = ({
   lookup,
-  keyLookups,
+  keyValueExpressions,
   accessGroupAlias,
   parameterName,
 }: {
   lookup: AccessGroupValueLookup;
-  keyLookups: KeyLookup[];
+  keyValueExpressions: KeyValueExpression[];
   accessGroupAlias: string;
   parameterName: (name: string) => string;
 }): string => {
   if (lookup.type === 'RLS_LITERAL_VALUE') {
-    return `${accessGroupAlias}."value" = CAST(${keyLookups[0].valueExpression} AS varchar)`;
+    return `${accessGroupAlias}."value" = CAST(${keyValueExpressions[0].valueExpression} AS varchar)`;
   }
 
-  return `${accessGroupAlias}."memberFieldValues" = jsonb_build_object(${keyLookups
+  return `${accessGroupAlias}."memberFieldValues" = jsonb_build_object(${keyValueExpressions
     .map(
       ({ valueExpression }, keyIndex) =>
         `CAST(:${parameterName(`key${keyIndex}`)} AS text), ${valueExpression}`,
@@ -69,49 +69,51 @@ export const buildAccessGroupValueLookupIdsExpression = ({
   );
   const quotedTableAlias = escapeIdentifier(RECORD_ACCESS_GROUP_TABLE_ALIAS);
 
-  const keyLookups: KeyLookup[] = lookup.keys.map((key, keyIndex) => {
-    if (!isDefined(key.relationHop)) {
+  const keyValueExpressions: KeyValueExpression[] = lookup.keys.map(
+    (key, keyIndex) => {
+      if (!isDefined(key.relationHop)) {
+        return {
+          valueExpression: `${quotedTableAlias}.${escapeIdentifier(key.columnName)}`,
+          fromExpressions: [],
+          joinConditions: [],
+        };
+      }
+
+      const hopAlias = escapeIdentifier(
+        `access_group_value_lookup_${lookupIndex}_${keyIndex}`,
+      );
+
       return {
-        valueExpression: `${quotedTableAlias}.${escapeIdentifier(key.columnName)}`,
-        fromExpressions: [],
-        joinConditions: [],
+        valueExpression: `${hopAlias}.${escapeIdentifier(key.columnName)}`,
+        fromExpressions: [
+          `${buildWorkspaceTableExpression({
+            workspaceId,
+            tableName: computeObjectTargetTable(
+              key.relationHop.targetFlatObjectMetadata,
+            ),
+          })} AS ${hopAlias}`,
+        ],
+        joinConditions: [
+          `${hopAlias}.${escapeIdentifier(key.relationHop.targetColumnName)} = ${quotedTableAlias}.${escapeIdentifier(key.relationHop.sourceColumnName)}`,
+          `${hopAlias}."deletedAt" IS NULL`,
+        ],
       };
-    }
-
-    const hopAlias = escapeIdentifier(
-      `access_group_value_lookup_${lookupIndex}_${keyIndex}`,
-    );
-
-    return {
-      valueExpression: `${hopAlias}.${escapeIdentifier(key.columnName)}`,
-      fromExpressions: [
-        `${buildWorkspaceTableExpression({
-          workspaceId,
-          tableName: computeObjectTargetTable(
-            key.relationHop.targetFlatObjectMetadata,
-          ),
-        })} AS ${hopAlias}`,
-      ],
-      joinConditions: [
-        `${hopAlias}.${escapeIdentifier(key.relationHop.targetColumnName)} = ${quotedTableAlias}.${escapeIdentifier(key.relationHop.sourceColumnName)}`,
-        `${hopAlias}."deletedAt" IS NULL`,
-      ],
-    };
-  });
+    },
+  );
 
   const lookupSql = `ARRAY(SELECT ${accessGroupAlias}."compactId" FROM ${[
-    ...keyLookups.flatMap(({ fromExpressions }) => fromExpressions),
+    ...keyValueExpressions.flatMap(({ fromExpressions }) => fromExpressions),
     `${buildAccessGroupTableExpression(workspaceId)} AS ${accessGroupAlias}`,
   ].join(', ')} WHERE ${[
-    ...keyLookups.flatMap(({ joinConditions }) => joinConditions),
-    ...keyLookups.map(
+    ...keyValueExpressions.flatMap(({ joinConditions }) => joinConditions),
+    ...keyValueExpressions.map(
       ({ valueExpression }) => `${valueExpression} IS NOT NULL`,
     ),
     `${accessGroupAlias}."type" = '${lookup.type}'`,
     `${accessGroupAlias}."ruleShapeHash" = :${parameterName('ruleShapeHash')}`,
     buildMatchingValueCondition({
       lookup,
-      keyLookups,
+      keyValueExpressions,
       accessGroupAlias,
       parameterName,
     }),

@@ -13,7 +13,7 @@ import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permis
 import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/find-related-record-paths-feeding-access-groups.util';
 import { isRelatedRecordPathFollowed } from 'src/engine/permissions/internal/access-group/utils/is-related-record-path-followed.util';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
-import { type RelatedRecordPathFollowingLookup } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-following-lookup.type';
+import { type RelatedRecordPathFollowingQuery } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-following-query.type';
 import { RECOMPUTE_BATCH_SIZE } from 'src/engine/permissions/internal/access-group/constants/recompute-batch-size.constant';
 import { buildRecordAccessGroupSQLConditions } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-sql-conditions.util';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
@@ -230,7 +230,7 @@ export class RecordAccessGroupPropagationService {
   }): Promise<RelatedRecords[]> {
     const metadataMaps =
       await this.recordAccessGroupMetadataMapsService.find(workspaceId);
-    const lookups: RelatedRecordPathFollowingLookup[] = [];
+    const followingQueries: RelatedRecordPathFollowingQuery[] = [];
 
     for (const resolvedPath of this.findRelatedRecordPathsLeadingFromObject({
       metadataMaps,
@@ -266,7 +266,7 @@ export class RecordAccessGroupPropagationService {
           continue;
         }
 
-        lookups.push({
+        followingQueries.push({
           targetFlatObjectMetadata: findFlatEntityByIdInFlatEntityMapsOrThrow({
             flatEntityId: targetObjectMetadataId,
             flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
@@ -281,7 +281,7 @@ export class RecordAccessGroupPropagationService {
 
     const followingRecords =
       await this.recordAccessGroupRepository.findRecordsFollowingRelatedRecordPaths(
-        { workspaceId, lookups, transactionScope },
+        { workspaceId, followingQueries, transactionScope },
       );
     const followingObjectMetadataIds = [
       ...new Set(

@@ -6,18 +6,18 @@ import { type RecordAccessGroupSQLCondition } from 'src/engine/permissions/inter
 export const buildRecordAccessGroupIdsExpression = ({
   recordAccessGroupSQLConditions,
   accessGroupValueLookupIdsExpressions,
-  inheritedAccessGroupIdsExpressions,
+  relatedRecordPathAccessGroupIdsExpressions,
 }: {
   recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[];
   accessGroupValueLookupIdsExpressions: string[];
-  inheritedAccessGroupIdsExpressions: string[];
+  relatedRecordPathAccessGroupIdsExpressions: string[];
 }): string => {
   const ownAccessGroupIdsExpression = buildOwnAccessGroupIdsExpression(
     recordAccessGroupSQLConditions,
   );
   const additionalAccessGroupIdsExpressions = [
     ...accessGroupValueLookupIdsExpressions,
-    ...inheritedAccessGroupIdsExpressions,
+    ...relatedRecordPathAccessGroupIdsExpressions,
   ];
 
   if (additionalAccessGroupIdsExpressions.length === 0) {

@@ -156,7 +156,7 @@ export class RecordAccessGroupComputationService {
             !lookupRuleShapeHashes.has(accessGroup.ruleShapeHash),
         ),
       }),
-      accessGroupValueLookupIdsExpressions: accessGroupValueLookups.map(
+      accessGroupValueLookupIdsSQLConditions: accessGroupValueLookups.map(
         (lookup, lookupIndex) =>
           buildAccessGroupValueLookupIdsExpression({
             workspaceId,

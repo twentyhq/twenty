@@ -6,7 +6,7 @@ import { ACCESS_GROUP_IDS_COLUMN_NAME } from 'src/engine/permissions/internal/re
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-export const buildRecordAccessGroupsSQLCondition = ({
+export const buildPrincipalsAccessGroupsSQLCondition = ({
   tableAlias,
   principalsAccessGroupCompactIds,
 }: {

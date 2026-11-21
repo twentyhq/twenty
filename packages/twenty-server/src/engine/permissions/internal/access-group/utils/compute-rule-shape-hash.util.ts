@@ -13,7 +13,7 @@ import { type RlsRule } from 'src/engine/permissions/internal/rls/utils/build-rl
 const sortByContent = <TEntry>(entries: TEntry[]): string[] =>
   entries.map((entry) => JSON.stringify(entry)).sort();
 
-const buildPredicateGroupContent = ({
+const serializeRlsPredicateGroup = ({
   parentPredicateGroupId,
   predicates,
   predicateGroups,
@@ -52,7 +52,7 @@ const buildPredicateGroupContent = ({
       )
       .map((predicateGroup) => [
         predicateGroup.logicalOperator,
-        buildPredicateGroupContent({
+        serializeRlsPredicateGroup({
           parentPredicateGroupId: predicateGroup.id,
           predicates,
           predicateGroups,
@@ -62,7 +62,7 @@ const buildPredicateGroupContent = ({
   ),
 });
 
-const buildRuleContent = ({
+const serializeRlsRule = ({
   rowLevelPermissionRule,
   splitPredicateId,
   isRelationHopEnabled,
@@ -85,7 +85,7 @@ const buildRuleContent = ({
     },
   );
 
-  return buildPredicateGroupContent({
+  return serializeRlsPredicateGroup({
     parentPredicateGroupId: null,
     predicates: predicatesWithoutLiteralValue,
     predicateGroups: rowLevelPermissionRule.predicateGroups,
@@ -110,7 +110,7 @@ export const computeRuleShapeHash = ({
     .update(
       JSON.stringify([
         objectMetadataId,
-        buildRuleContent({
+        serializeRlsRule({
           rowLevelPermissionRule,
           splitPredicateId,
           isRelationHopEnabled,

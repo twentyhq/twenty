@@ -18,7 +18,7 @@ const isRlsLiteralValuesPredicate = (
   Array.isArray(predicate.value) &&
   predicate.value.every(isNonEmptyString);
 
-export const findRlsRuleLiteralValuesPredicate = ({
+export const findRlsRuleSplitPredicate = ({
   predicates,
   predicateGroups,
 }: Pick<RlsRule, 'predicates' | 'predicateGroups'>):

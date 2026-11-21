@@ -187,11 +187,12 @@ describe('access group sync (integration)', () => {
       roleIds: [await findAdminRoleId()],
     });
     const objectMetadataId = await findPersonObjectMetadataId();
-    const compactIds = await accessGroupReadService.findPrincipalsCompactIds({
-      principals,
-      objectMetadataId,
-      operationType: 'read',
-    });
+    const compactIds =
+      await accessGroupReadService.findPrincipalsAccessGroupCompactIds({
+        principals,
+        objectMetadataId,
+        operationType: 'read',
+      });
     const storedCompactIds = (await readAccessGroups()).map(
       ({ compactId }) => compactId,
     );

@@ -16,7 +16,7 @@ import { buildOwnAccessGroupIdsExpression } from 'src/engine/permissions/interna
 import { buildRelatedRecordPathHopsJoin } from 'src/engine/permissions/internal/record-permission-repository/utils/build-related-record-path-hops-join.util';
 import { buildRecomputeRecordAccessGroupIdsQuery } from 'src/engine/permissions/internal/record-permission-repository/utils/build-recompute-record-access-group-ids-query.util';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
-import { type RelatedRecordPathFollowingLookup } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-following-lookup.type';
+import { type RelatedRecordPathFollowingQuery } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-following-query.type';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -150,7 +150,7 @@ export class RecordAccessGroupRepository {
     workspaceId,
     flatObjectMetadata,
     recordAccessGroupSQLConditions,
-    accessGroupValueLookupIdsExpressions,
+    accessGroupValueLookupIdsSQLConditions,
     resolvedRelatedRecordPaths,
     accessGroups,
     metadataMaps,
@@ -160,7 +160,7 @@ export class RecordAccessGroupRepository {
     workspaceId: string;
     flatObjectMetadata: FlatObjectMetadata;
     recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[];
-    accessGroupValueLookupIdsExpressions: SQLCondition[];
+    accessGroupValueLookupIdsSQLConditions: SQLCondition[];
     resolvedRelatedRecordPaths: ResolvedRelatedRecordPath[];
     accessGroups: AccessGroup[];
     metadataMaps: Pick<
@@ -179,7 +179,7 @@ export class RecordAccessGroupRepository {
         workspaceId,
         flatObjectMetadata,
         recordAccessGroupSQLConditions,
-        accessGroupValueLookupIdsExpressions,
+        accessGroupValueLookupIdsSQLConditions,
         resolvedRelatedRecordPaths,
         accessGroups,
         metadataMaps,
@@ -269,14 +269,14 @@ export class RecordAccessGroupRepository {
 
   async findRecordsFollowingRelatedRecordPaths({
     workspaceId,
-    lookups,
+    followingQueries,
     transactionScope,
   }: {
     workspaceId: string;
-    lookups: RelatedRecordPathFollowingLookup[];
+    followingQueries: RelatedRecordPathFollowingQuery[];
     transactionScope?: RecordPermissionTransactionScope;
   }): Promise<{ objectMetadataId: string; id: string }[]> {
-    if (lookups.length === 0) {
+    if (followingQueries.length === 0) {
       return [];
     }
 
@@ -285,10 +285,10 @@ export class RecordAccessGroupRepository {
         workspaceId,
         tableName: computeObjectTargetTable(flatObjectMetadata),
       });
-    const lookupQueries = lookups.map(
+    const followingQuerySqls = followingQueries.map(
       (
         { targetFlatObjectMetadata, writtenHop, followingHops },
-        lookupIndex,
+        followingQueryIndex,
       ) => {
         const followingHopAliases = followingHops.map(
           (_, hopIndex) => `following_${hopIndex}`,
@@ -302,35 +302,35 @@ export class RecordAccessGroupRepository {
           });
         const writtenJoinColumn = `${escapeIdentifier(followingHopAliases[0] ?? 'target')}.${escapeIdentifier(writtenHop.targetColumnName)}`;
 
-        return `SELECT ${lookupIndex} AS "lookupIndex", "target"."id"
+        return `SELECT ${followingQueryIndex} AS "followingQueryIndex", "target"."id"
           FROM ${[
             ...fromExpressions,
             `${buildTableExpression(targetFlatObjectMetadata)} AS "target"`,
           ].join(', ')}
-          WHERE (${writtenJoinColumn} = ANY(:joinValuesBefore_${lookupIndex})
+          WHERE (${writtenJoinColumn} = ANY(:joinValuesBefore_${followingQueryIndex})
             OR ${writtenJoinColumn} IN (
               SELECT "written".${escapeIdentifier(writtenHop.sourceColumnName)}
               FROM ${buildTableExpression(writtenHop.flatObjectMetadata)} AS "written"
-              WHERE "written"."id" = ANY(:recordIds_${lookupIndex})
+              WHERE "written"."id" = ANY(:recordIds_${followingQueryIndex})
             ))
             ${joinConditions.map((joinCondition) => `AND ${joinCondition}`).join(' ')}`;
       },
     );
 
     const rows = await this.recordPermissionQueryService.execute<{
-      lookupIndex: number;
+      followingQueryIndex: number;
       id: string;
     }>({
       workspaceId,
       transactionScope,
       query: {
-        sql: lookupQueries.join(' UNION '),
+        sql: followingQuerySqls.join(' UNION '),
         parameters: Object.fromEntries(
-          lookups.flatMap(
-            ({ writtenHop, recordIds, recordsBefore }, lookupIndex) => [
-              [`recordIds_${lookupIndex}`, recordIds],
+          followingQueries.flatMap(
+            ({ writtenHop, recordIds, recordsBefore }, followingQueryIndex) => [
+              [`recordIds_${followingQueryIndex}`, recordIds],
               [
-                `joinValuesBefore_${lookupIndex}`,
+                `joinValuesBefore_${followingQueryIndex}`,
                 recordsBefore
                   .map(
                     (recordBefore) => recordBefore[writtenHop.sourceColumnName],
@@ -343,9 +343,10 @@ export class RecordAccessGroupRepository {
       },
     });
 
-    return rows.map(({ lookupIndex, id }) => ({
+    return rows.map(({ followingQueryIndex, id }) => ({
       objectMetadataId:
-        lookups[Number(lookupIndex)].targetFlatObjectMetadata.id,
+        followingQueries[Number(followingQueryIndex)].targetFlatObjectMetadata
+          .id,
       id,
     }));
   }
