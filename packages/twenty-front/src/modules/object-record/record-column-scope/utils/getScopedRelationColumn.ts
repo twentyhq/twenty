@@ -43,16 +43,19 @@ export const getScopedRelationColumn = ({
   }
 
   // A field of the target records is two hops away, and a field of the join records is not what the column lists
-  const lookupTarget =
+  if (
     isDefined(scopedRelationJunction) ||
     !isDefined(recordField.relationTargetFieldMetadataId)
-      ? undefined
-      : getRelationLookupTarget({
-          relationFieldMetadataItem: fieldMetadataItem,
-          relationTargetFieldMetadataId:
-            recordField.relationTargetFieldMetadataId,
-          objectMetadataItems,
-        });
+  ) {
+    return { lookupTarget: undefined, scopedRelationJunction };
+  }
 
-  return { lookupTarget, scopedRelationJunction };
+  return {
+    lookupTarget: getRelationLookupTarget({
+      relationFieldMetadataItem: fieldMetadataItem,
+      relationTargetFieldMetadataId: recordField.relationTargetFieldMetadataId,
+      objectMetadataItems,
+    }),
+    scopedRelationJunction,
+  };
 };
