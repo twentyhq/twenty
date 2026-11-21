@@ -14,10 +14,9 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatPendingAskGate } from '@/ai-chat/tool-calls/components/AiChatPendingAskGate';
 import { AiChatFrontComponentToolPreview } from '@/ai-chat/tool-calls/components/AiChatFrontComponentToolPreview';
-import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai-chat/constants/AiChatRefetchMessagesEventName';
+import { aiChatThreadFetchedMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadFetchedMessagesFamilyState';
 import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
-import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { AiChatToolCallApprovalCard } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalCard';
 import {
@@ -148,7 +147,12 @@ export const SupersededAfterRefresh: Story = {
         HttpResponse.json(getFrontComponentPreviewMock('superseded')),
       ),
     );
-    dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+    jotaiStore.set(
+      aiChatThreadFetchedMessagesFamilyState.atomFamily({
+        threadId: 'approval-preview-story',
+      }),
+      { messages: [], queuedMessages: [] },
+    );
     await expect(
       await canvas.findByText(
         'A newer revision exists. Open the latest preview to save.',

@@ -14,6 +14,11 @@ import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectM
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
+jest.mock('@/ai-chat/composer/hooks/useSendAiChatMessage', () => ({
+  useSendAiChatMessage: () => ({ sendAiChatMessage: jest.fn() }),
+  useAiChat: () => ({ handleSendMessage: jest.fn() }),
+}));
+
 jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   useObjectMetadataItems: () => ({
     objectMetadataItems: [

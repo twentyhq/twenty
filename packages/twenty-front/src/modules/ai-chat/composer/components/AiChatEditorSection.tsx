@@ -25,10 +25,8 @@ import { AiChatDictationEffect } from '@/ai-chat/dictation/components/AiChatDict
 import { AiChatDictationHint } from '@/ai-chat/dictation/components/AiChatDictationHint';
 import { AiChatComposerActionsRow } from '@/ai-chat/components/AiChatComposerActionsRow';
 import { AiChatContextUsageButton } from '@/ai-chat/usage/components/AiChatContextUsageButton';
-import { AiChatEditorFocusEffect } from '@/ai-chat/composer/components/AiChatEditorFocusEffect';
-import { AiChatEditorDraftSyncEffect } from '@/ai-chat/composer/components/AiChatEditorDraftSyncEffect';
-import { AiChatSentMessageHandOffEffect } from '@/ai-chat/composer/components/AiChatSentMessageHandOffEffect';
 import { SendMessageButton } from '@/ai-chat/composer/components/SendMessageButton';
+import { useAiChatComposerSend } from '@/ai-chat/composer/hooks/useAiChatComposerSend';
 import { useAiChatEditor } from '@/ai-chat/composer/hooks/useAiChatEditor';
 import { useInsertDictatedText } from '@/ai-chat/dictation/hooks/useInsertDictatedText';
 import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai-chat/constants/AiChatPageContentInlinePadding';
@@ -161,6 +159,8 @@ const EditableAiChatEditorSection = () => {
 
   const { editor } = useAiChatEditor();
 
+  useAiChatComposerSend({ editor, isComposerCentered });
+
   const insertDictatedText = useInsertDictatedText(editor);
   const [dictationInterimText, setDictationInterimText] = useState('');
 
@@ -196,12 +196,6 @@ const EditableAiChatEditorSection = () => {
 
   return (
     <>
-      <AiChatEditorFocusEffect editor={editor} />
-      <AiChatEditorDraftSyncEffect editor={editor} />
-      <AiChatSentMessageHandOffEffect
-        editor={editor}
-        isComposerCentered={isComposerCentered}
-      />
       {!isDirectMessage && (
         <AiChatDictationEffect
           onInterimText={setDictationInterimText}

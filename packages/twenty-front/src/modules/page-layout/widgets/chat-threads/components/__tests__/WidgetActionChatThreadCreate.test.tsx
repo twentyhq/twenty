@@ -10,6 +10,11 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { WidgetActionChatThreadCreate } from '@/page-layout/widgets/chat-threads/components/WidgetActionChatThreadCreate';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
+jest.mock('@/ai-chat/composer/hooks/useSendAiChatMessage', () => ({
+  useSendAiChatMessage: () => ({ sendAiChatMessage: jest.fn() }),
+  useAiChat: () => ({ handleSendMessage: jest.fn() }),
+}));
+
 const COMPANY_ID = '20202020-0000-4000-8000-000000000002';
 const NEW_CHAT_ID = '20202020-0000-4000-8000-0000000000dd';
 

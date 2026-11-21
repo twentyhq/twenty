@@ -8,7 +8,7 @@ import { NavigatePreservingSearchAndHash } from '@/app/routing/components/Naviga
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLegacyAiChatInboxRedirectPath } from '@/legacy-ai-chat/hooks/useLegacyAiChatInboxRedirectPath';
 import { AiChatNewThreadPageContent } from '@/ai-chat/instance/components/AiChatNewThreadPageContent';
-import { AiChatPageEffects } from '@/ai-chat/instance/components/AiChatPageEffects';
+import { AiChatPageContinueInSidePanelEffect } from '@/ai-chat/components/AiChatPageContinueInSidePanelEffect';
 import { AiChatThreadPageContent } from '@/ai-chat/instance/components/AiChatThreadPageContent';
 
 export const LegacyAiChatPage = () => {
@@ -24,7 +24,7 @@ export const LegacyAiChatPage = () => {
   if (!isDefined(threadId) || !isValidUuid(threadId)) {
     return (
       <>
-        <AiChatPageEffects threadId={newAiChatThreadId} isNewChat />
+        <AiChatPageContinueInSidePanelEffect threadId={newAiChatThreadId} />
         <AiChatNewThreadPageContent />
       </>
     );
@@ -32,7 +32,7 @@ export const LegacyAiChatPage = () => {
 
   return (
     <>
-      <AiChatPageEffects threadId={threadId} isNewChat={false} />
+      <AiChatPageContinueInSidePanelEffect threadId={threadId} />
       <AiChatThreadPageContent
         threadId={threadId}
         headerActions={isMobile && <AiChatCloseButton />}
