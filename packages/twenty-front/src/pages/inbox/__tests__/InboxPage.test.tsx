@@ -154,12 +154,8 @@ jest.mock('@/ai-chat/composer/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({ switchToNewChat: jest.fn() }),
 }));
 
-jest.mock('@/ai-chat/instance/components/AiChatPageEffects', () => ({
-  AiChatPageEffects: () => null,
-}));
-
-jest.mock('@/ai-chat/instance/components/AiChatInstanceEffects', () => ({
-  AiChatInstanceEffects: () => null,
+jest.mock('@/ai-chat/instance/components/AiChatInstanceEffect', () => ({
+  AiChatInstanceEffect: () => null,
 }));
 
 jest.mock('@/ai-chat/instance/components/AiChatTab', () => ({

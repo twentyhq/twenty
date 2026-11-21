@@ -498,6 +498,12 @@ export interface ApplicationConnectedAccountDTO {
     __typename: 'ApplicationConnectedAccountDTO'
 }
 
+export interface ApplicationConnectedMemberCount {
+    applicationId: Scalars['UUID']
+    connectedMemberCount: Scalars['Int']
+    __typename: 'ApplicationConnectedMemberCount'
+}
+
 export interface ApplicationConnectionProvider {
     applicationId: Scalars['String']
     displayName: Scalars['String']
@@ -1645,7 +1651,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APPLICATION_PRICE_BILLING_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_LOOKUP_COLUMNS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PERMISSION_TABLES_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
+export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APPLICATION_PRICE_BILLING_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_LOOKUP_COLUMNS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -3379,6 +3385,7 @@ export interface Query {
     webhook?: Webhook
     webhooks: Webhook[]
     workspaceApplicationAuthorizations: ApplicationAuthorization[]
+    workspaceApplicationConnectedMemberCounts: ApplicationConnectedMemberCount[]
     __typename: 'Query'
 }
 
@@ -5079,6 +5086,13 @@ export interface ApplicationConnectedAccountDTOGenqlSelection{
     userWorkspaceId?: boolean | number
     /** @deprecated Use scope instead. */
     visibility?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationConnectedMemberCountGenqlSelection{
+    applicationId?: boolean | number
+    connectedMemberCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8305,7 +8319,8 @@ export interface QueryGenqlSelection{
     validationRulesReadingField?: (ValidationRuleGenqlSelection & { __args: {fieldMetadataId: Scalars['UUID']} })
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     webhooks?: WebhookGenqlSelection
-    workspaceApplicationAuthorizations?: ApplicationAuthorizationGenqlSelection
+    workspaceApplicationAuthorizations?: (ApplicationAuthorizationGenqlSelection & { __args?: {applicationId?: (Scalars['UUID'] | null)} })
+    workspaceApplicationConnectedMemberCounts?: ApplicationConnectedMemberCountGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -10153,6 +10168,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isApplicationConnectedAccountDTO = (obj?: { __typename?: any } | null): obj is ApplicationConnectedAccountDTO => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectedAccountDTO"')
       return ApplicationConnectedAccountDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationConnectedMemberCount_possibleTypes: string[] = ['ApplicationConnectedMemberCount']
+    export const isApplicationConnectedMemberCount = (obj?: { __typename?: any } | null): obj is ApplicationConnectedMemberCount => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectedMemberCount"')
+      return ApplicationConnectedMemberCount_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -13250,7 +13273,6 @@ export const enumFeatureFlagKey = {
    IS_LOOKUP_COLUMNS_ENABLED: 'IS_LOOKUP_COLUMNS_ENABLED' as const,
    IS_MCP_SERVERS_ENABLED: 'IS_MCP_SERVERS_ENABLED' as const,
    IS_MESSAGE_ATTACHMENT_ENABLED: 'IS_MESSAGE_ATTACHMENT_ENABLED' as const,
-   IS_PERMISSION_TABLES_ENABLED: 'IS_PERMISSION_TABLES_ENABLED' as const,
    IS_PRIVATE_RECORDS_ENABLED: 'IS_PRIVATE_RECORDS_ENABLED' as const,
    IS_RECORD_GROUP_TABS_ENABLED: 'IS_RECORD_GROUP_TABS_ENABLED' as const,
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,

@@ -57,7 +57,6 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateToInboxThread } from '@/inbox/hooks/useNavigateToInboxThread';
 import { AiChatNewThreadPageContent } from '@/ai-chat/instance/components/AiChatNewThreadPageContent';
-import { AiChatPageEffects } from '@/ai-chat/instance/components/AiChatPageEffects';
 import { InboxThreadPageContent } from '@/inbox/components/InboxThreadPageContent';
 import { InboxNewThreadListToggle } from '@/inbox/components/InboxNewThreadListToggle';
 
@@ -363,33 +362,24 @@ const InboxPageContent = () => {
           {(isNewThreadShown || isThreadShown) && (
             <InboxConversationPane isSplitView={isSplitLayout}>
               {isNewThreadShown && (
-                <>
-                  <AiChatPageEffects threadId={newAiChatThreadId} isNewChat />
-                  <AiChatNewThreadPageContent
-                    headerIcon={<InboxNewThreadListToggle />}
-                    showInformationBanner={!isSplitView}
-                    headerActions={isMobile ? backToInboxButton : undefined}
-                  />
-                </>
+                <AiChatNewThreadPageContent
+                  headerIcon={<InboxNewThreadListToggle />}
+                  showInformationBanner={!isSplitView}
+                  headerActions={isMobile ? backToInboxButton : undefined}
+                />
               )}
               {isThreadShown && (
-                <>
-                  <AiChatPageEffects
-                    threadId={selectedThreadId}
-                    isNewChat={false}
-                  />
-                  <InboxThreadPageContent
-                    threadId={selectedThreadId}
-                    headerTitlePrefix={
-                      !isSplitView &&
-                      !isMobile &&
-                      !isChannelHiddenForDirectMessage && <InboxBreadcrumb />
-                    }
-                    headerActions={
-                      isMobile ? backToInboxButton : desktopThreadHeaderActions
-                    }
-                  />
-                </>
+                <InboxThreadPageContent
+                  threadId={selectedThreadId}
+                  headerTitlePrefix={
+                    !isSplitView &&
+                    !isMobile &&
+                    !isChannelHiddenForDirectMessage && <InboxBreadcrumb />
+                  }
+                  headerActions={
+                    isMobile ? backToInboxButton : desktopThreadHeaderActions
+                  }
+                />
               )}
             </InboxConversationPane>
           )}

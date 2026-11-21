@@ -1,3 +1,4 @@
+import { useContinueAiChatPageInSidePanel } from '@/ai-chat/hooks/useContinueAiChatPageInSidePanel';
 import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksOnAnyLocationChange';
 import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { isAppEffectRedirectEnabledState } from '@/auth/states/isAppEffectRedirectEnabledState';
@@ -101,6 +102,7 @@ export const PageChangeEffect = () => {
   );
 
   const { closeSidePanelMenu } = useSidePanelMenu();
+  const { continueAiChatPageInSidePanel } = useContinueAiChatPageInSidePanel();
   const { removePageFromSidePanelHistory } = useSidePanelHistory();
 
   const { saveReturnToPath, getReturnToPath, clearReturnToPath } =
@@ -116,7 +118,14 @@ export const PageChangeEffect = () => {
 
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
-      if (!hasRoutedSidePanelTarget) {
+      const isAiChatPageContinuedInSidePanel =
+        !hasRoutedSidePanelTarget &&
+        continueAiChatPageInSidePanel({
+          previousPathname: previousLocation,
+          location,
+        });
+
+      if (!hasRoutedSidePanelTarget && !isAiChatPageContinuedInSidePanel) {
         const currentPage = store.get(sidePanelPageInfoSelector.atom).page;
         const shouldKeepSidePanelOpen =
           currentPage === SidePanelPages.AskAI ||
@@ -155,6 +164,7 @@ export const PageChangeEffect = () => {
     hasRoutedSidePanelTarget,
     closeSidePanelMenu,
     removePageFromSidePanelHistory,
+    continueAiChatPageInSidePanel,
   ]);
 
   useEffect(() => {

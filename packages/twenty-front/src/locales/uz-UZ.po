@@ -2166,7 +2166,7 @@ msgid "Add a recipient before sending"
 msgstr "Yuborishdan oldin qabul qiluvchini qo‘shing"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "Yuborishdan oldin qabul qiluvchi yoki kanal qo‘shing."
 
@@ -6286,7 +6286,7 @@ msgid "Chat Sessions"
 msgstr "Chat seanslari"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "Chat stopped: no more available credits."
 msgstr "Chat to‘xtatildi: mavjud kreditlar qolmadi."
 
@@ -7736,7 +7736,7 @@ msgid "Connection successfully updated"
 msgstr "Ulanish muvaffaqiyatli yangilandi"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "Yordamchi bilan aloqa uzildi. Javobni ko‘rish uchun sahifani qayta yuklang."
 
@@ -8657,11 +8657,6 @@ msgstr "Yozuv yarating"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "Yozuv yaratish"
-
-#. js-lingui-id: fYhMZY
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
-msgstr "Yozuvlarni ulashish va kirish guruhi xotirasini obyektlar o‘rniga ruxsat mexanizmiga tegishli jadvallar sifatida yarating. Faqat ish maydoni yaratilganda qo‘llaniladi."
 
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -10140,8 +10135,8 @@ msgid "Delete MCP server"
 msgstr "MCP serverni o‘chirish"
 
 #. js-lingui-id: KDfTdX
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 msgid "Delete message"
 msgstr "Xabarni o‘chirish"
 
@@ -10604,7 +10599,7 @@ msgid "Direct messages and mentions"
 msgstr "Shaxsiy xabarlar va eslatmalar"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/instance/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "To‘g‘ridan-to‘g‘ri xabarlar qo‘shimchalarni qo‘llab-quvvatlamaydi."
 
@@ -11345,8 +11340,8 @@ msgid "Edit matching {objectLabelPlural}"
 msgstr "Mos keladigan {objectLabelPlural} ni tahrirlash"
 
 #. js-lingui-id: QjH+ZX
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 msgid "Edit message"
 msgstr "Xabarni tahrirlash"
 
@@ -15597,7 +15592,7 @@ msgid "Hours between triggers"
 msgstr "Triggerlar orasidagi soatlar soni"
 
 #. js-lingui-id: 3WYTm2
-#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/composer/components/AiChatSuggestedPrompts.tsx
 msgid "How can I help you?"
 msgstr "Sizga qanday yordam bera olaman?"
 
@@ -20395,7 +20390,7 @@ msgstr "Bu ish maydonida hech bir AI modeli ushbu sozlamalarga mos kelmaydi."
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "Ushbu instance uchun AI provayder sozlanmagan."
@@ -23177,11 +23172,6 @@ msgstr "ruxsat belgisi"
 msgid "Permission flags"
 msgstr "Ruxsat belgilari"
 
-#. js-lingui-id: yAZKh+
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Permission tables"
-msgstr "Ruxsat jadvallari"
-
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -25247,7 +25237,7 @@ msgid "Replit install links require an HTTPS MCP URL."
 msgstr "Replit o‘rnatish havolalari HTTPS MCP URL manzilini talab qiladi."
 
 #. js-lingui-id: ImOQa9
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 #: src/modules/ai-chat/threads/components/AiChatThreadRequestActions.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -30414,7 +30404,7 @@ msgstr "Bu ulanish mavjud emas yoki ushbu ilova uchun mavjud emas."
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "This conversation is no longer available."
 msgstr "Bu suhbat endi mavjud emas."
 
@@ -33416,7 +33406,7 @@ msgid "Wait for Event"
 msgstr "Hodisani kutish"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Biriktirmalar yuklanishi tugashini kuting."
 
@@ -33804,7 +33794,7 @@ msgid "What AI model should your agent run on"
 msgstr "Agentingiz qaysi AI modelida ishlashi kerak"
 
 #. js-lingui-id: Itn+J7
-#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/composer/components/AiChatSuggestedPrompts.tsx
 msgid "What can I help you with?"
 msgstr "Qanday yordam bera olaman?"
 

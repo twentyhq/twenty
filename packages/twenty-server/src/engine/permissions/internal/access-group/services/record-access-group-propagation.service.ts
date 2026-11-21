@@ -14,6 +14,9 @@ import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permission
 import { isRelatedRecordPathFollowed } from 'src/engine/permissions/internal/access-group/utils/is-related-record-path-followed.util';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { type RelatedRecordPathFollowingLookup } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-following-lookup.type';
+import { RECOMPUTE_BATCH_SIZE } from 'src/engine/permissions/internal/access-group/constants/recompute-batch-size.constant';
+import { buildRecordAccessGroupSQLConditions } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-sql-conditions.util';
+import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
 import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
@@ -25,8 +28,91 @@ export class RecordAccessGroupPropagationService {
     private readonly recordAccessGroupComputationService: RecordAccessGroupComputationService,
     private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
     private readonly recordAccessGroupRepository: RecordAccessGroupRepository,
+    private readonly accessGroupRepository: AccessGroupRepository,
     private readonly accessGroupPropagationPlanService: AccessGroupPropagationPlanService,
   ) {}
+
+  async applyAccessGroupIdChangesToAllObjectRecords({
+    workspaceId,
+    objectMetadataId,
+    addedCompactIds,
+    removedCompactIds,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    addedCompactIds: number[];
+    removedCompactIds: number[];
+  }): Promise<void> {
+    const metadataMaps =
+      await this.recordAccessGroupMetadataMapsService.findAfterEvictingLocalCache(
+        workspaceId,
+      );
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: objectMetadataId,
+      flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
+    });
+    const recordAccessGroupSQLConditions = buildRecordAccessGroupSQLConditions({
+      flatObjectMetadata,
+      metadataMaps,
+      accessGroups: (
+        await this.accessGroupRepository.findAccessGroupsOfObjects({
+          workspaceId,
+          objectMetadataIds: [objectMetadataId],
+        })
+      ).filter(({ compactId }) => addedCompactIds.includes(compactId)),
+    });
+    let recordIds = await this.recordAccessGroupRepository.findRecordIds({
+      workspaceId,
+      flatObjectMetadata,
+      afterRecordId: null,
+      limit: RECOMPUTE_BATCH_SIZE,
+    });
+
+    while (isNonEmptyArray(recordIds)) {
+      await this.recordAccessGroupRepository.removeAccessGroupIdsFromRecords({
+        workspaceId,
+        flatObjectMetadata,
+        compactIds: removedCompactIds,
+        recordIds,
+      });
+
+      const changedRecordIds =
+        await this.recordAccessGroupRepository.addAccessGroupIdsToMatchingRecords(
+          {
+            workspaceId,
+            flatObjectMetadata,
+            recordAccessGroupSQLConditions,
+            recordIds,
+          },
+        );
+
+      for (const followingRecords of await this.findRecordsFollowingRelatedRecordPaths(
+        {
+          workspaceId,
+          objectMetadataId,
+          changedRecordIds,
+          writtenRecordIds: changedRecordIds,
+          recordsBefore: [],
+        },
+      )) {
+        await this.recordAccessGroupComputationService.queueRecomputeRecordAccessGroupIdsOfRecords(
+          { workspaceId, ...followingRecords },
+        );
+      }
+
+      await this.accessGroupPropagationPlanService.trackComputedRecords({
+        workspaceId,
+        recordCount: recordIds.length,
+      });
+
+      recordIds = await this.recordAccessGroupRepository.findRecordIds({
+        workspaceId,
+        flatObjectMetadata,
+        afterRecordId: recordIds[recordIds.length - 1],
+        limit: RECOMPUTE_BATCH_SIZE,
+      });
+    }
+  }
 
   async planAndApplyRecomputeOfRelatedRecordPathTargets({
     workspaceId,

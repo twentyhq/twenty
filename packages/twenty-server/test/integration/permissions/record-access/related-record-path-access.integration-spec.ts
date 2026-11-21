@@ -34,6 +34,7 @@ import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delet
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { findRoleAccessGroupCompactIds } from 'test/integration/permissions/utils/find-role-access-group-compact-ids.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
@@ -450,10 +451,11 @@ describe('Record access through related record paths', () => {
       });
     }
 
-    [{ compactId: projectRuleCompactId }] = await global.testDataSource.query(
-      `SELECT "compactId" FROM ${SCHEMA}."accessGroup" WHERE "roleId" = $1 AND "objectMetadataId" = $2 AND "rowLevelPermissionPredicateGroupId" IS NOT NULL`,
-      [projectRuleRoleId, projectObjectMetadataId],
-    );
+    [projectRuleCompactId] = await findRoleAccessGroupCompactIds({
+      workspaceId,
+      roleId: projectRuleRoleId,
+      objectMetadataId: projectObjectMetadataId,
+    });
 
     expect(await findTaskAccessGroupIds(taskOfProjectId)).toContain(
       projectRuleCompactId,
@@ -681,18 +683,17 @@ describe('Record access through related record paths', () => {
 
   it('should not follow the path from a relation the reader cannot read', async () => {
     const memberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
-    const memberProjectCompactIds: number[] = (
-      await global.testDataSource.query(
-        `SELECT "compactId" FROM ${SCHEMA}."accessGroup" WHERE "roleId" = $1 AND "objectMetadataId" = $2`,
-        [memberRoleId, projectObjectMetadataId],
-      )
-    ).map(({ compactId }: { compactId: number }) => compactId);
-
-    expect(memberProjectCompactIds).not.toEqual([]);
 
     await setProjectTasksReadability(false);
 
     try {
+      const memberProjectCompactIds = await findRoleAccessGroupCompactIds({
+        workspaceId,
+        roleId: memberRoleId,
+        objectMetadataId: projectObjectMetadataId,
+      });
+
+      expect(memberProjectCompactIds).not.toEqual([]);
       expect(await canJonyReadTask(taskOfProjectId)).toBe(false);
       expect(await findTaskIdsListedByJony()).toEqual([]);
       expect(

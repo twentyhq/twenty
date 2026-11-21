@@ -1,7 +1,9 @@
 import { type ReactNode, useMemo } from 'react';
 
 import { AiChatInstanceContext } from '@/ai-chat/contexts/AiChatInstanceContext';
-import { AiChatInstanceEffects } from '@/ai-chat/instance/components/AiChatInstanceEffects';
+import { AiChatInstanceEffect } from '@/ai-chat/instance/components/AiChatInstanceEffect';
+import { useIsWorkspaceSetupChat } from '@/ai-chat/hooks/useIsWorkspaceSetupChat';
+import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
 
 type AiChatInstanceProps = {
   instanceId: string;
@@ -16,6 +18,7 @@ export const AiChatInstance = ({
   onThreadChange,
   children,
 }: AiChatInstanceProps) => {
+  const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const aiChatInstance = useMemo(
     () => ({ instanceId, threadId, onThreadChange }),
     [instanceId, threadId, onThreadChange],
@@ -23,7 +26,8 @@ export const AiChatInstance = ({
 
   return (
     <AiChatInstanceContext.Provider value={aiChatInstance}>
-      <AiChatInstanceEffects />
+      <AiChatInstanceEffect />
+      {isWorkspaceSetupChat && <WorkspaceSetupChatKickoffEffect />}
       {children}
     </AiChatInstanceContext.Provider>
   );

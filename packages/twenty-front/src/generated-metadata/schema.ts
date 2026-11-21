@@ -659,6 +659,12 @@ export type ApplicationConnectedAccountDto = {
   visibility: Scalars['String']['output'];
 };
 
+export type ApplicationConnectedMemberCount = {
+  __typename?: 'ApplicationConnectedMemberCount';
+  applicationId: Scalars['UUID']['output'];
+  connectedMemberCount: Scalars['Int']['output'];
+};
+
 export type ApplicationConnectionProvider = {
   __typename?: 'ApplicationConnectionProvider';
   applicationId: Scalars['String']['output'];
@@ -2626,7 +2632,6 @@ export enum FeatureFlagKey {
   IS_LOOKUP_COLUMNS_ENABLED = 'IS_LOOKUP_COLUMNS_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_MESSAGE_ATTACHMENT_ENABLED = 'IS_MESSAGE_ATTACHMENT_ENABLED',
-  IS_PERMISSION_TABLES_ENABLED = 'IS_PERMISSION_TABLES_ENABLED',
   IS_PRIVATE_RECORDS_ENABLED = 'IS_PRIVATE_RECORDS_ENABLED',
   IS_RECORD_GROUP_TABS_ENABLED = 'IS_RECORD_GROUP_TABS_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
@@ -6347,6 +6352,7 @@ export type Query = {
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
   workspaceApplicationAuthorizations: Array<ApplicationAuthorization>;
+  workspaceApplicationConnectedMemberCounts: Array<ApplicationConnectedMemberCount>;
 };
 
 
@@ -6903,6 +6909,11 @@ export type QueryValidationRulesReadingFieldArgs = {
 
 export type QueryWebhookArgs = {
   id: Scalars['UUID']['input'];
+};
+
+
+export type QueryWorkspaceApplicationAuthorizationsArgs = {
+  applicationId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type RatioAggregateConfig = {

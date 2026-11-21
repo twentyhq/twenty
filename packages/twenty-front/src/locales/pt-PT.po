@@ -2166,7 +2166,7 @@ msgid "Add a recipient before sending"
 msgstr "Adicione um destinatário antes de enviar"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "Adicione um destinatário ou um canal antes de enviar."
 
@@ -6286,7 +6286,7 @@ msgid "Chat Sessions"
 msgstr "Sessões de chat"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "Chat stopped: no more available credits."
 msgstr "Chat interrompido: não há mais créditos disponíveis."
 
@@ -7736,7 +7736,7 @@ msgid "Connection successfully updated"
 msgstr "Conexão atualizada com sucesso"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "A conexão com o assistente foi perdida. Recarregue para ver a resposta."
 
@@ -8657,11 +8657,6 @@ msgstr "Criar registro"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "Criar Registro"
-
-#. js-lingui-id: fYhMZY
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
-msgstr "Criar o armazenamento de compartilhamento de registros e grupos de acesso como tabelas pertencentes ao mecanismo de permissões em vez de objetos. Aplica-se apenas quando um espaço de trabalho é criado."
 
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -10140,8 +10135,8 @@ msgid "Delete MCP server"
 msgstr "Excluir servidor MCP"
 
 #. js-lingui-id: KDfTdX
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 msgid "Delete message"
 msgstr "Excluir mensagem"
 
@@ -10604,7 +10599,7 @@ msgid "Direct messages and mentions"
 msgstr "Mensagens diretas e menções"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/instance/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "As mensagens diretas não aceitam anexos."
 
@@ -11345,8 +11340,8 @@ msgid "Edit matching {objectLabelPlural}"
 msgstr "Editar {objectLabelPlural} correspondentes"
 
 #. js-lingui-id: QjH+ZX
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 msgid "Edit message"
 msgstr "Editar mensagem"
 
@@ -15597,7 +15592,7 @@ msgid "Hours between triggers"
 msgstr "Horas entre gatilhos"
 
 #. js-lingui-id: 3WYTm2
-#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/composer/components/AiChatSuggestedPrompts.tsx
 msgid "How can I help you?"
 msgstr "Como posso ajudar?"
 
@@ -20395,7 +20390,7 @@ msgstr "Nenhum modelo de IA neste espaço de trabalho atende a essas configuraç
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "Nenhum provedor de IA está configurado nesta instância."
@@ -23177,11 +23172,6 @@ msgstr "indicador de permissão"
 msgid "Permission flags"
 msgstr "Indicadores de permissão"
 
-#. js-lingui-id: yAZKh+
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Permission tables"
-msgstr "Tabelas de permissões"
-
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -25247,7 +25237,7 @@ msgid "Replit install links require an HTTPS MCP URL."
 msgstr "Os links de instalação do Replit requerem um URL MCP HTTPS."
 
 #. js-lingui-id: ImOQa9
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 #: src/modules/ai-chat/threads/components/AiChatThreadRequestActions.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -30414,7 +30404,7 @@ msgstr "Esta conexão não existe ou não está disponível para este aplicativo
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "This conversation is no longer available."
 msgstr "Esta conversa não está mais disponível."
 
@@ -33416,7 +33406,7 @@ msgid "Wait for Event"
 msgstr "Aguardar evento"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Aguarde o término do envio dos anexos."
 
@@ -33804,7 +33794,7 @@ msgid "What AI model should your agent run on"
 msgstr "Em qual modelo de IA seu agente deve ser executado"
 
 #. js-lingui-id: Itn+J7
-#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/composer/components/AiChatSuggestedPrompts.tsx
 msgid "What can I help you with?"
 msgstr "Em que posso ajudar?"
 

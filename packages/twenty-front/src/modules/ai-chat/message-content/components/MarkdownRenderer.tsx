@@ -71,7 +71,11 @@ const MARKDOWN_COMPONENTS = {
       <table>{children}</table>
     </StyledTableScrollContainer>
   ),
-  p: createChatReferenceElement(StyledParagraph),
+  p: ({ children }: { children?: React.ReactNode }) => (
+    <StyledParagraph className="markdown-paragraph">
+      {processChildrenForChatReferences(children)}
+    </StyledParagraph>
+  ),
   td: createChatReferenceElement('td'),
   th: createChatReferenceElement('th'),
   li: createChatReferenceElement('li'),

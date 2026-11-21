@@ -1,4 +1,4 @@
-import { dispatchAiChatRefetchMessagesEvent } from '@/ai-chat/utils/dispatchAiChatRefetchMessagesEvent';
+import { refetchAiChatThreadMessages } from '@/ai-chat/utils/refetchAiChatThreadMessages';
 import { isDefined } from 'twenty-shared/utils';
 import { useApolloClient } from '@apollo/client/react';
 import { useCallback } from 'react';
@@ -20,7 +20,7 @@ export const useDeleteQueuedMessage = ({
       });
 
       if (data?.deleteQueuedChatMessage && isDefined(threadId)) {
-        dispatchAiChatRefetchMessagesEvent(threadId);
+        refetchAiChatThreadMessages(threadId);
       }
     },
     [apolloClient, threadId],

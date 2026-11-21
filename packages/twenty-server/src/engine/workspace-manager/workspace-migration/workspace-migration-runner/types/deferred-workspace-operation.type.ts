@@ -12,6 +12,10 @@ type DeferredWorkspaceOperationPayloadByName = {
   compute_recordAccessGroupIds: {
     objectComputes: {
       objectMetadataId: string;
+      accessGroupIdChanges?: {
+        addedCompactIds: number[];
+        removedCompactIds: number[];
+      };
       plannedRecordCount: number;
       computedRecordCount: number;
       isComputed: boolean;
