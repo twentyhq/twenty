@@ -8,13 +8,10 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
 import { useProcessWorkspaceSetupCompletion } from '@/ai-chat/workspace-setup/hooks/useProcessWorkspaceSetupCompletion';
 import { processedWorkspaceSetupCompletionIdsState } from '@/ai-chat/workspace-setup/states/processedWorkspaceSetupCompletionIdsState';
-import { aiChatContinueInSidePanelThreadIdState } from '@/ai-chat/states/aiChatContinueInSidePanelThreadIdState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-
-const CONTINUED_THREAD_ID = '20202020-0000-4000-8000-000000000002';
 
 const navigateMock = jest.fn();
 
@@ -103,11 +100,6 @@ describe('useProcessWorkspaceSetupCompletion', () => {
   });
 
   it('should redirect to the available homepage and move the chat to the side panel', () => {
-    jotaiStore.set(
-      aiChatContinueInSidePanelThreadIdState.atom,
-      CONTINUED_THREAD_ID,
-    );
-
     const { result } = renderHook(() => useProcessWorkspaceSetupCompletion(), {
       wrapper: Wrapper,
     });
@@ -120,9 +112,6 @@ describe('useProcessWorkspaceSetupCompletion', () => {
 
     expect(navigateMock).toHaveBeenCalledWith('/objects/people');
     expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
-    expect(jotaiStore.get(aiChatContinueInSidePanelThreadIdState.atom)).toBe(
-      CONTINUED_THREAD_ID,
-    );
     expect(getProcessedToolCallIds()).toEqual(['call-1']);
   });
 
@@ -144,10 +133,6 @@ describe('useProcessWorkspaceSetupCompletion', () => {
   it('returns to settings and ends setup when no readable object homepage exists', () => {
     defaultHomePagePath = '/settings/profile';
     jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
-    jotaiStore.set(
-      aiChatContinueInSidePanelThreadIdState.atom,
-      CONTINUED_THREAD_ID,
-    );
     const { result } = renderHook(() => useProcessWorkspaceSetupCompletion(), {
       wrapper: Wrapper,
     });
@@ -158,14 +143,12 @@ describe('useProcessWorkspaceSetupCompletion', () => {
       ),
     );
 
-    expect(navigateMock).toHaveBeenCalledWith('/settings/profile');
+    expect(navigateMock).toHaveBeenCalledWith('/settings/profile', {
+      state: { isAiChatHandoffSkipped: true },
+    });
     expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
       false,
     );
-    expect(
-      jotaiStore.get(aiChatContinueInSidePanelThreadIdState.atom),
-    ).toBeNull();
-    expect(closeSidePanelMenuMock).toHaveBeenCalledTimes(1);
   });
 
   it('should not redirect when the chat already left the setup page', () => {

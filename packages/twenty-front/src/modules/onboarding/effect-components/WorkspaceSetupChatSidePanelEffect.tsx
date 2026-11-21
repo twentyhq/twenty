@@ -2,7 +2,6 @@ import { useLayoutEffect } from 'react';
 import { useStore } from 'jotai';
 
 import { hasOpenedWorkspaceSetupChatSidePanelState } from '@/onboarding/states/hasOpenedWorkspaceSetupChatSidePanelState';
-import { aiChatContinueInSidePanelThreadIdState } from '@/ai-chat/states/aiChatContinueInSidePanelThreadIdState';
 import { getAiChatPageRoute } from '@/ai-chat/utils/getAiChatPageRoute';
 import { getCurrentAiChatPageThreadId } from '@/ai-chat/utils/getCurrentAiChatPageThreadId';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -40,21 +39,21 @@ export const WorkspaceSetupChatSidePanelEffect = () => {
 
     if (
       store.get(hasOpenedWorkspaceSetupChatSidePanelState.atom) ||
-      isDefined(getCurrentAiChatPageThreadId(store)) ||
-      isSettingsPath(pathname) ||
-      isDefined(store.get(aiChatContinueInSidePanelThreadIdState.atom))
+      isSettingsPath(pathname)
     ) {
       return;
     }
 
     store.set(hasOpenedWorkspaceSetupChatSidePanelState.atom, true);
-    openAskAiPage({ resetNavigationStack: true });
+
+    if (!isDefined(getCurrentAiChatPageThreadId(store))) {
+      openAskAiPage({ resetNavigationStack: true });
+    }
   }, [shouldOpenAiChatAfterOnboarding, store, pathname, openAskAiPage]);
 
   if (
     shouldOpenAiChatAfterOnboarding &&
     !store.get(hasOpenedWorkspaceSetupChatSidePanelState.atom) &&
-    !isDefined(store.get(aiChatContinueInSidePanelThreadIdState.atom)) &&
     isSettingsPath(pathname)
   ) {
     return (
