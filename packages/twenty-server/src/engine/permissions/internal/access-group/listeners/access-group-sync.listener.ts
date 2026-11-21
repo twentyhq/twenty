@@ -67,6 +67,11 @@ export class AccessGroupSyncListener {
   }: Pick<MetadataEventBatch, 'workspaceId'> & {
     events: MetadataEvent<'fieldPermission'>[];
   }): Promise<void> {
+    // Unreadable field ids are part of the group hash.
+    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(
+      workspaceId,
+    );
+
     const changedFieldMetadataIds = new Set(
       events.flatMap((event) =>
         [
