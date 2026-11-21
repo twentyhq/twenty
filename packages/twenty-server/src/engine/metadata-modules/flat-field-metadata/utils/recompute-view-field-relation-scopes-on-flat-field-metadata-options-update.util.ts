@@ -1,7 +1,7 @@
 import {
   type EnumFieldMetadataType,
   type FromTo,
-  type ViewFieldRelationScopeFilterValue,
+  type ViewFilterValue,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,7 +17,7 @@ type RecomputeViewFieldRelationScopesOnFlatFieldMetadataOptionsUpdateArgs = {
   Pick<AllFlatEntityMaps, 'flatViewFieldMaps'>;
 
 const applyRecomputedFilterValues = <
-  TFilter extends { id: string; value: ViewFieldRelationScopeFilterValue },
+  TFilter extends { id: string; value: ViewFilterValue },
 >({
   filters,
   recomputedValueByFilterId,

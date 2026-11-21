@@ -2,21 +2,15 @@ import { type FormatRecordSerializedRelationProperties } from './FormatRecordSer
 import { type SerializedRelation } from './SerializedRelation';
 import { type ViewFilterGroupLogicalOperator } from './ViewFilterGroupLogicalOperator';
 import { type ViewFilterOperand } from './ViewFilterOperand';
+import { type ViewFilterValue } from './ViewFilterValue';
 import { type ViewSortDirection } from './ViewSortDirection';
-
-export type ViewFieldRelationScopeFilterValue =
-  | string
-  | string[]
-  | boolean
-  | number
-  | Record<string, unknown>;
 
 // Filter and filter group ids are local to the scope and only used for grouping
 export type ViewFieldRelationScopeFilter = {
   id: string;
   fieldMetadataId: SerializedRelation;
   operand: ViewFilterOperand;
-  value: ViewFieldRelationScopeFilterValue;
+  value: ViewFilterValue;
   subFieldName?: string | null;
   relationTargetFieldMetadataId?: SerializedRelation | null;
   filterGroupId?: string | null;

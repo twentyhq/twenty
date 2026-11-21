@@ -1,17 +1,12 @@
 import { msg, t } from '@lingui/core/macro';
-import {
-  FieldMetadataType,
-  type UniversalViewFieldRelationScope,
-} from 'twenty-shared/types';
+import { type UniversalViewFieldRelationScope } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadataOptionMapsForOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
-import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getIncompatibleViewFilterOperandError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-view-filter-operand-error.util';
 import { getInvalidFlatViewFieldRelationScopeError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-flat-view-field-relation-scope-error.util';
-import { getInvalidViewFilterSelectOptionError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util';
-import { getInvalidViewFilterValueError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-error.util';
+import { getInvalidViewFilterValueAndSelectOptionErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-and-select-option-errors.util';
 import { resolveFlatViewFieldRelationScopeFieldReference } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 
@@ -85,41 +80,14 @@ export const validateFlatViewFieldRelationScopeFilter = ({
     return [...errors, incompatibleOperandError];
   }
 
-  const invalidValueError = getInvalidViewFilterValueError({
-    ...filterFieldArgs,
-    value: filter.value,
-  });
-
-  if (isDefined(invalidValueError)) {
-    errors.push(invalidValueError);
-  }
-
-  const effectiveFlatFieldMetadata =
-    relationTargetFlatFieldMetadata ?? flatFieldMetadata;
-
-  if (
-    !isFieldMetadataEntityOfType(
-      effectiveFlatFieldMetadata,
-      FieldMetadataType.SELECT,
-    ) &&
-    !isFieldMetadataEntityOfType(
-      effectiveFlatFieldMetadata,
-      FieldMetadataType.MULTI_SELECT,
-    )
-  ) {
-    return errors;
-  }
-
-  const invalidSelectOptionError = getInvalidViewFilterSelectOptionError({
-    referencedFieldMetadata: effectiveFlatFieldMetadata,
-    flatFieldMetadataOptionMaps,
-    operand: filter.operand,
-    value: filter.value,
-  });
-
-  if (isDefined(invalidSelectOptionError)) {
-    errors.push(invalidSelectOptionError);
-  }
-
-  return errors;
+  return [
+    ...errors,
+    ...getInvalidViewFilterValueAndSelectOptionErrors({
+      ...filterFieldArgs,
+      value: filter.value,
+      selectOptionFlatFieldMetadata:
+        relationTargetFlatFieldMetadata ?? flatFieldMetadata,
+      flatFieldMetadataOptionMaps,
+    }),
+  ];
 };
