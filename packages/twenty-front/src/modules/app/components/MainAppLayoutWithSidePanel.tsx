@@ -1,4 +1,3 @@
-import { AiChatPageHandoffEffect } from '@/ai-chat/components/AiChatPageHandoffEffect';
 import { WorkspaceSetupChatSidePanelEffect } from '@/onboarding/effect-components/WorkspaceSetupChatSidePanelEffect';
 import { CommandMenuForMobile } from '@/command-menu/components/CommandMenuForMobile';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
@@ -67,7 +66,6 @@ export const MainAppLayoutWithSidePanel = () => {
       <RouteContextStoreProvider />
       <SidePanelPathUrlSyncEffect />
       <WorkspaceSetupChatSidePanelEffect />
-      <AiChatPageHandoffEffect />
       <StyledMainColumn>
         <StyledContent>
           <Outlet />
