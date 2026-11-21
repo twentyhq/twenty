@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
@@ -235,10 +236,12 @@ const seedStatusScenario = (scenario: StatusScenario) => {
       ? null
       : [{ ...CHANNEL, isAccessible: !scenario.isChannelInaccessible }],
   );
-  jotaiStore.set(
-    aiChatThreadParticipantsState.atom,
-    getScenarioParticipants(scenario),
-  );
+  const scenarioParticipants = getScenarioParticipants(scenario);
+
+  jotaiStore.set(aiChatThreadParticipantsState.atom, {
+    isLoaded: isDefined(scenarioParticipants),
+    rowsByThreadId: scenarioParticipants ?? {},
+  });
   setInboxSelectedChannelView(
     jotaiStore,
     scenario.isChannelView
@@ -293,9 +296,8 @@ const meta = {
           return HttpResponse.json({
             data: {
               updateAgentChatThreadInboxState: [
-                jotaiStore.get(aiChatThreadParticipantsState.atom)?.[
-                  THREAD_ID
-                ] ?? PARTICIPANT,
+                jotaiStore.get(aiChatThreadParticipantsState.atom)
+                  .rowsByThreadId[THREAD_ID] ?? PARTICIPANT,
               ],
             },
           });

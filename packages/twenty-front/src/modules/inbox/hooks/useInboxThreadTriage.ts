@@ -1,5 +1,4 @@
 import { useLocation } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
 
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
@@ -46,7 +45,7 @@ export const useInboxThreadTriage = ({
     status: getInboxThreadTriageStatus({
       hasAiPermission,
       isInboxEnabled,
-      areParticipantsLoaded: isInChannel || isDefined(aiChatThreadParticipants),
+      areParticipantsLoaded: isInChannel || aiChatThreadParticipants.isLoaded,
       scope: inboxStatus?.scope ?? 'NONE',
     }),
     isInChannel,

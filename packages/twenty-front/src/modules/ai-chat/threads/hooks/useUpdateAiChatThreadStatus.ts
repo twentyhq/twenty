@@ -1,4 +1,5 @@
 import { useApolloClient } from '@apollo/client/react';
+import { updateLoadedAiChatThreadParticipantRows } from '@/ai-chat/threads/utils/updateLoadedAiChatThreadParticipantRows';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { applyAgentChatInboxAction } from 'twenty-shared/ai';
@@ -53,7 +54,7 @@ export const useUpdateAiChatThreadStatus = () => {
       const optimisticVisit = OPTIMISTIC_VISIT_BY_ACTION[action];
       const previousParticipants = store.get(
         aiChatThreadParticipantsState.atom,
-      );
+      ).rowsByThreadId;
 
       const visitUpdates = threadIds.map((threadId) => {
         const visitAtom = aiChatThreadVisitFamilyState.atomFamily({
@@ -97,32 +98,31 @@ export const useUpdateAiChatThreadStatus = () => {
         );
       }
 
-      store.set(aiChatThreadParticipantsState.atom, (participants) => {
-        if (!isDefined(participants)) {
-          return participants;
-        }
+      store.set(
+        aiChatThreadParticipantsState.atom,
+        updateLoadedAiChatThreadParticipantRows((participants) => {
+          const updatedParticipants = { ...participants };
 
-        const updatedParticipants = { ...participants };
+          for (const threadId of threadIds) {
+            updatedParticipants[threadId] = {
+              ...participants[threadId],
+              ...applyAgentChatInboxAction({
+                participant: participants[threadId],
+                action,
+                now,
+                threadLastActivityAt: getThreadLastActivityAt(threadId),
+                snoozedUntil: snoozedUntil?.toISOString(),
+              }),
+              threadId,
+            };
+          }
 
-        for (const threadId of threadIds) {
-          updatedParticipants[threadId] = {
-            ...participants[threadId],
-            ...applyAgentChatInboxAction({
-              participant: participants[threadId],
-              action,
-              now,
-              threadLastActivityAt: getThreadLastActivityAt(threadId),
-              snoozedUntil: snoozedUntil?.toISOString(),
-            }),
-            threadId,
-          };
-        }
-
-        return updatedParticipants;
-      });
+          return updatedParticipants;
+        }),
+      );
       const optimisticParticipants = store.get(
         aiChatThreadParticipantsState.atom,
-      );
+      ).rowsByThreadId;
 
       try {
         await client.mutate({
@@ -147,29 +147,28 @@ export const useUpdateAiChatThreadStatus = () => {
         }
 
         // A newer row may have arrived since, and is kept
-        store.set(aiChatThreadParticipantsState.atom, (participants) => {
-          if (!isDefined(participants)) {
-            return participants;
-          }
+        store.set(
+          aiChatThreadParticipantsState.atom,
+          updateLoadedAiChatThreadParticipantRows((participants) => {
+            const restoredParticipants = { ...participants };
 
-          const restoredParticipants = { ...participants };
+            for (const threadId of threadIds) {
+              if (participants[threadId] !== optimisticParticipants[threadId]) {
+                continue;
+              }
 
-          for (const threadId of threadIds) {
-            if (participants[threadId] !== optimisticParticipants?.[threadId]) {
-              continue;
+              const previousParticipant = previousParticipants[threadId];
+
+              if (isDefined(previousParticipant)) {
+                restoredParticipants[threadId] = previousParticipant;
+              } else {
+                delete restoredParticipants[threadId];
+              }
             }
 
-            const previousParticipant = previousParticipants?.[threadId];
-
-            if (isDefined(previousParticipant)) {
-              restoredParticipants[threadId] = previousParticipant;
-            } else {
-              delete restoredParticipants[threadId];
-            }
-          }
-
-          return restoredParticipants;
-        });
+            return restoredParticipants;
+          }),
+        );
       }
     },
     [client, enqueueToast, store],

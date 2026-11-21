@@ -374,7 +374,10 @@ const meta = {
         lastLoadedActivityAt: null,
       },
     );
-    jotaiStore.set(aiChatThreadParticipantsState.atom, {});
+    jotaiStore.set(aiChatThreadParticipantsState.atom, {
+      isLoaded: true,
+      rowsByThreadId: {},
+    });
 
     const noteMetadata = getMockObjectMetadataItemOrThrow(
       StandardObjectNameSingular.Note,

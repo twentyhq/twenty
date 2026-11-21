@@ -4,8 +4,7 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
 import { aiChatLiveReactionRevisionsFamilyState } from '@/ai-chat/messages/states/aiChatLiveReactionRevisionsFamilyState';
-import { aiChatFetchedMessagesFamilyState } from '@/ai-chat/states/aiChatFetchedMessagesFamilyState';
-import { aiChatQueuedMessagesFamilyState } from '@/ai-chat/composer/states/aiChatQueuedMessagesFamilyState';
+import { aiChatPersistedMessagesFamilyState } from '@/ai-chat/states/aiChatPersistedMessagesFamilyState';
 import { useRefreshAiChatUsage } from '@/ai-chat/usage/hooks/useRefreshAiChatUsage';
 import { isChatAccessDenied } from '@/ai-chat/utils/isChatAccessDenied';
 import { useCallback, useEffect, useState } from 'react';
@@ -88,10 +87,8 @@ export const useAiChatSubscription = (threadId: string | null) => {
     const messagesLoadingAtom =
       aiChatMessagesLoadingFamilyState.atomFamily(familyKey);
     const messagesAtom = aiChatMessagesFamilyState.atomFamily(familyKey);
-    const fetchedMessagesAtom =
-      aiChatFetchedMessagesFamilyState.atomFamily(familyKey);
-    const queuedMessagesAtom =
-      aiChatQueuedMessagesFamilyState.atomFamily(familyKey);
+    const persistedMessagesAtom =
+      aiChatPersistedMessagesFamilyState.atomFamily(familyKey);
     const usageAtom = aiChatUsageFamilyState.atomFamily(familyKey);
     const recoveryAttemptsAtom =
       aiChatStreamRecoveryAttemptsFamilyState.atomFamily(familyKey);
@@ -383,8 +380,7 @@ export const useAiChatSubscription = (threadId: string | null) => {
       }
       resetStreamProcessing();
       store.set(messagesAtom, []);
-      store.set(fetchedMessagesAtom, []);
-      store.set(queuedMessagesAtom, []);
+      store.set(persistedMessagesAtom, { messages: [], queuedMessages: [] });
       isStreamOpen = false;
       store.set(replyStatusAtom, 'idle');
       store.set(messagesLoadingAtom, false);

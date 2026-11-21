@@ -302,9 +302,9 @@ describe('InboxPage', () => {
       },
     );
     // The member's own chats, which they follow
-    jotaiStore.set(
-      aiChatThreadParticipantsState.atom,
-      Object.fromEntries(
+    jotaiStore.set(aiChatThreadParticipantsState.atom, {
+      isLoaded: true,
+      rowsByThreadId: Object.fromEntries(
         THREADS.map(({ id, updatedAt }) => [
           id,
           {
@@ -321,7 +321,7 @@ describe('InboxPage', () => {
           },
         ]),
       ),
-    );
+    });
     isMobile = false;
     mockIsInboxEnabled = true;
   });
@@ -372,9 +372,9 @@ describe('InboxPage', () => {
       type: 'presetFilter',
       presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.DONE,
     });
-    jotaiStore.set(
-      aiChatThreadParticipantsState.atom,
-      Object.fromEntries(
+    jotaiStore.set(aiChatThreadParticipantsState.atom, {
+      isLoaded: true,
+      rowsByThreadId: Object.fromEntries(
         THREADS.map(({ id }) => [
           id,
           {
@@ -391,7 +391,7 @@ describe('InboxPage', () => {
           },
         ]),
       ),
-    );
+    });
 
     renderInbox(`/inbox/${secondThread.id}`);
 
