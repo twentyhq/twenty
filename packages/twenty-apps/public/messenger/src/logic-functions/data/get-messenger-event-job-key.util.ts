@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-sdk/utils';
 
+import { getMessengerEventTimestamp } from 'src/logic-functions/data/get-messenger-event-timestamp.util';
 import { getPostbackExternalId } from 'src/logic-functions/data/get-postback-external-id.util';
 import { type MessengerMessagingEvent } from 'src/logic-functions/types/messenger-webhook.type';
 
@@ -17,5 +18,13 @@ export const getMessengerEventJobKey = (event: MessengerMessagingEvent) => {
     return getPostbackExternalId(event);
   }
 
-  return `referral:${event.sender.id}:${event.timestamp}`;
+  if (isDefined(event.delivery)) {
+    return `delivery:${event.sender.id}:${event.delivery.watermark}`;
+  }
+
+  if (isDefined(event.read)) {
+    return `read:${event.sender.id}:${event.read.watermark}`;
+  }
+
+  return `referral:${event.sender.id}:${getMessengerEventTimestamp(event)}`;
 };

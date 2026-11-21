@@ -5,4 +5,6 @@ export const MESSENGER_WEBHOOK_FIELDS = [
   'message_edits',
   'messaging_referrals',
   'messaging_postbacks',
+  'message_deliveries',
+  'message_reads',
 ];

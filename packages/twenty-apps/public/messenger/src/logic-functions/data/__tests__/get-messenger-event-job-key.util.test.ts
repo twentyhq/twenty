@@ -24,6 +24,19 @@ describe('getMessengerEventJobKey', () => {
     ).toBe('edit:m-1:2');
   });
 
+  it('keys receipts by their sender and watermark', () => {
+    expect(
+      getMessengerEventJobKey({
+        sender: { id: 'customer-1' },
+        recipient: { id: 'page-1' },
+        delivery: { watermark: 500 },
+      }),
+    ).toBe('delivery:customer-1:500');
+    expect(
+      getMessengerEventJobKey({ ...BASE_EVENT, read: { watermark: 600 } }),
+    ).toBe('read:customer-1:600');
+  });
+
   it('keys a referral by its sender and time', () => {
     expect(
       getMessengerEventJobKey({ ...BASE_EVENT, referral: { source: 'ADS' } }),

@@ -1,3 +1,4 @@
+import { getMessengerEventTimestamp } from 'src/logic-functions/data/get-messenger-event-timestamp.util';
 import { isHandledMessengerEvent } from 'src/logic-functions/data/is-handled-messenger-event.util';
 import { type MessengerWebhook } from 'src/logic-functions/types/messenger-webhook.type';
 import { type ParseMessagePayload } from 'src/logic-functions/types/parse-message-payload.type';
@@ -13,5 +14,7 @@ export const buildParseMessagePayloads = (
         .map((event) => ({ pageId: entry.id, event })),
     )
     .sort(
-      (first, second) => first.event.timestamp - second.event.timestamp,
+      (first, second) =>
+        getMessengerEventTimestamp(first.event) -
+        getMessengerEventTimestamp(second.event),
     );

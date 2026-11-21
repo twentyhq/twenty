@@ -10,6 +10,7 @@ Brings the Facebook Messenger conversations of your Pages into Twenty and lets y
 - When a customer arrives from a Click-to-Messenger ad or an m.me link, the person record shows the source, the link's ref, and the ad ID and title, with the date.
 - In the app settings, an option creates an opportunity for each person who arrives from a Click-to-Messenger ad, named after the person and the ad.
 - Opening a conversation in Twenty marks it as seen in Messenger.
+- Messages the Page sends show whether the customer received and read them, in the **Messenger status** field.
 - Each customer gets a person record named from their Messenger profile, reused for every later message on the same Page.
 - On connect, past conversations are imported: the 20 most recent messages of each, as Meta allows no more.
 
@@ -39,7 +40,7 @@ Install the app, then set its variables:
 In the Meta App Dashboard, open **Messenger > Messenger API Settings**:
 
 1. Set the callback URL to the live URL of the app's `receive-webhook` function, shown in its HTTP trigger settings in Twenty (it ends with `/messenger`). Set the verify token to `VERIFY_TOKEN`.
-2. Subscribe to `messages`, `message_echoes`, `message_edits`, `messaging_referrals` and `messaging_postbacks`.
+2. Subscribe to `messages`, `message_echoes`, `message_edits`, `messaging_referrals`, `messaging_postbacks`, `message_deliveries` and `message_reads`.
 
 The URL must be public HTTPS, so a Twenty running on localhost cannot receive messages.
 

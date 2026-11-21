@@ -36,10 +36,24 @@ export type MessengerPostback = {
   referral?: MessengerReferral;
 };
 
+// https://developers.facebook.com/docs/messenger-platform/reference/webhook-events/message-deliveries
+export type MessengerDelivery = {
+  mids?: string[];
+  watermark: number;
+};
+
+// https://developers.facebook.com/docs/messenger-platform/reference/webhook-events/message-reads
+export type MessengerRead = {
+  watermark: number;
+};
+
+// delivery events carry no timestamp of their own
 export type MessengerMessagingEvent = {
   sender: { id: string };
   recipient: { id: string };
-  timestamp: number;
+  timestamp?: number;
+  delivery?: MessengerDelivery;
+  read?: MessengerRead;
   message?: MessengerWebhookMessage;
   message_edit?: MessengerMessageEdit;
   postback?: MessengerPostback;
