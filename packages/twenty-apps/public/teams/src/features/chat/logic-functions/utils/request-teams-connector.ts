@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { TEAMS_CONNECTOR_IDEMPOTENT_RETRYABLE_STATUSES } from 'src/features/chat/logic-functions/constants/teams-connector-idempotent-retryable-statuses';
 import { TEAMS_CONNECTOR_REQUEST_MAX_ATTEMPTS } from 'src/features/chat/logic-functions/constants/teams-connector-request-max-attempts';
 import { TEAMS_CONNECTOR_REQUEST_TIMEOUT_MS } from 'src/features/chat/logic-functions/constants/teams-connector-request-timeout-ms';
 import { TEAMS_CONNECTOR_RETRY_MAX_TOTAL_WAIT_MS } from 'src/features/chat/logic-functions/constants/teams-connector-retry-max-total-wait-ms';
@@ -65,10 +66,12 @@ export const requestTeamsConnector = async ({
       `Bot Connector ${method} ${path} failed: ${response.status} ${response.statusText}${isNonEmptyString(responseBody) ? ` - ${responseBody}` : ''}`,
     );
 
-    if (
-      !TEAMS_CONNECTOR_RETRYABLE_STATUSES.has(response.status) ||
-      attempt + 1 >= TEAMS_CONNECTOR_REQUEST_MAX_ATTEMPTS
-    ) {
+    const isRetryable =
+      TEAMS_CONNECTOR_RETRYABLE_STATUSES.has(response.status) ||
+      (method !== 'POST' &&
+        TEAMS_CONNECTOR_IDEMPOTENT_RETRYABLE_STATUSES.has(response.status));
+
+    if (!isRetryable || attempt + 1 >= TEAMS_CONNECTOR_REQUEST_MAX_ATTEMPTS) {
       throw failure;
     }
 
@@ -84,7 +87,7 @@ export const requestTeamsConnector = async ({
 
     await sleepForMilliseconds(delayMs);
 
-    if (retryAbortSignal?.aborted === true) {
+    if (isDefined(retryAbortSignal) && retryAbortSignal.aborted) {
       throw failure;
     }
 

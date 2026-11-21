@@ -31,10 +31,13 @@ export const startTeamsAssistantStream = async ({
   });
 
   // Follow-up stream calls answer 202 with no payload to parse.
-  const sendStreamActivity = async (
-    activity: TeamsActivity,
-    retryAbortSignal?: AbortSignal,
-  ) => {
+  const sendStreamActivity = async ({
+    activity,
+    retryAbortSignal,
+  }: {
+    activity: TeamsActivity;
+    retryAbortSignal?: AbortSignal;
+  }) => {
     await requestTeamsConnector({
       serviceUrl,
       path: buildTeamsActivityPath({ conversationId }),
@@ -49,8 +52,8 @@ export const startTeamsAssistantStream = async ({
     update: (text) => {
       streamSequence += 1;
 
-      return sendStreamActivity(
-        {
+      return sendStreamActivity({
+        activity: {
           type: 'typing',
           text,
           entities: [
@@ -62,17 +65,19 @@ export const startTeamsAssistantStream = async ({
             },
           ],
         },
-        streamClosing.signal,
-      );
+        retryAbortSignal: streamClosing.signal,
+      });
     },
     finish: (text) => {
       // An update still backing off must not be resent after the final message.
       streamClosing.abort();
 
       return sendStreamActivity({
-        type: 'message',
-        text,
-        entities: [{ type: 'streaminfo', streamId, streamType: 'final' }],
+        activity: {
+          type: 'message',
+          text,
+          entities: [{ type: 'streaminfo', streamId, streamType: 'final' }],
+        },
       });
     },
   };

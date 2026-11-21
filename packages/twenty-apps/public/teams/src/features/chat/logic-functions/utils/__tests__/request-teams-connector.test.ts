@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-sdk/utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { requestTeamsConnector } from 'src/features/chat/logic-functions/utils/request-teams-connector';
@@ -24,7 +25,7 @@ const buildResponse = ({
   status,
   statusText,
   headers: new Headers(
-    retryAfter === undefined ? {} : { 'retry-after': retryAfter },
+    isDefined(retryAfter) ? { 'retry-after': retryAfter } : {},
   ),
   text: async () => body,
 });
@@ -189,7 +190,7 @@ describe('requestTeamsConnector', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
-  it.each([412, 429, 502, 503, 504])(
+  it.each([412, 429, 503])(
     'should give up on a %i after three attempts and report the last status',
     async (status) => {
       fetchMock
@@ -251,21 +252,54 @@ describe('requestTeamsConnector', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
-  it('should cap a long Retry-After and stop once the wait budget is spent', async () => {
+  it('should not retry when Retry-After asks for longer than the wait budget', async () => {
     fetchMock.mockResolvedValue(buildUnavailableResponse('120'));
 
-    const failure = expect(
-      requestTeamsConnector(POST_REQUEST),
-    ).rejects.toThrow('503 Service Unavailable');
+    await expect(requestTeamsConnector(POST_REQUEST)).rejects.toThrow(
+      '503 Service Unavailable',
+    );
 
-    await vi.advanceTimersByTimeAsync(3_999);
     expect(fetchMock).toHaveBeenCalledTimes(1);
-
-    await vi.advanceTimersByTimeAsync(1);
-    await failure;
-
-    expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it.each([
+    [502, 'Bad Gateway'],
+    [504, 'Gateway Timeout'],
+  ])(
+    'should not resend a POST on a %i, which may have been delivered',
+    async (status, statusText) => {
+      fetchMock.mockResolvedValue(
+        buildResponse({ ok: false, status, statusText }),
+      );
+
+      await expect(requestTeamsConnector(POST_REQUEST)).rejects.toThrow(
+        `${status} ${statusText}`,
+      );
+
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(vi.getTimerCount()).toBe(0);
+    },
+  );
+
+  it.each([502, 504])('should retry a GET on a %i', async (status) => {
+    fetchMock
+      .mockResolvedValueOnce(
+        buildResponse({ ok: false, status, statusText: 'Gateway' }),
+      )
+      .mockResolvedValueOnce(buildResponse({ body: '{"id":"member-1"}' }));
+
+    const request = requestTeamsConnector({
+      serviceUrl: SERVICE_URL,
+      path: '/v3/conversations/a/members/b',
+      method: 'GET',
+      accessToken: ACCESS_TOKEN,
+    });
+
+    await vi.advanceTimersByTimeAsync(1_000);
+
+    await expect(request).resolves.toBe('{"id":"member-1"}');
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
   it('should not retry when the wait would outlast the request timeout', async () => {

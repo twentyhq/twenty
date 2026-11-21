@@ -16,10 +16,15 @@ export const getTeamsConnectorRetryDelayMs = ({
   const retryAfterMs = parseTeamsConnectorRetryAfterMs(retryAfter);
   const backoffMs = TEAMS_CONNECTOR_RETRY_BASE_DELAY_MS * 2 ** attempt;
 
+  if (isDefined(retryAfterMs)) {
+    // Retrying sooner than asked only earns another refusal, so a wait over budget means no retry.
+    return retryAfterMs > maxDelayMs
+      ? 0
+      : Math.max(retryAfterMs, TEAMS_CONNECTOR_RETRY_BASE_DELAY_MS);
+  }
+
   return Math.min(
-    isDefined(retryAfterMs)
-      ? Math.max(retryAfterMs, TEAMS_CONNECTOR_RETRY_BASE_DELAY_MS)
-      : backoffMs * (1 + Math.random() * TEAMS_CONNECTOR_RETRY_JITTER_RATIO),
+    backoffMs * (1 + Math.random() * TEAMS_CONNECTOR_RETRY_JITTER_RATIO),
     maxDelayMs,
   );
 };
