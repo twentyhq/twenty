@@ -37,7 +37,10 @@ const buildWorkspaceMember = ({
 const buildAuthorizationsMock = (
   authorizations: { userId: string; applicationId: string }[],
 ) => ({
-  request: { query: WorkspaceApplicationAuthorizationsDocument },
+  request: {
+    query: WorkspaceApplicationAuthorizationsDocument,
+    variables: { applicationId: APPLICATION_ID },
+  },
   result: {
     data: {
       workspaceApplicationAuthorizations: authorizations.map(
@@ -87,11 +90,10 @@ const renderSection = (apolloMocks: MockedResponse[]) =>
   );
 
 describe('SettingsApplicationConnectedMembersSection', () => {
-  it('lists only the members connected to this app', async () => {
+  it('lists the connected members by name', async () => {
     renderSection([
       buildAuthorizationsMock([
         { userId: 'user-jane', applicationId: APPLICATION_ID },
-        { userId: 'user-john', applicationId: 'another-application' },
         { userId: 'user-removed', applicationId: APPLICATION_ID },
       ]),
     ]);
@@ -102,11 +104,7 @@ describe('SettingsApplicationConnectedMembersSection', () => {
   });
 
   it('shows nothing when no member is connected', async () => {
-    renderSection([
-      buildAuthorizationsMock([
-        { userId: 'user-john', applicationId: 'another-application' },
-      ]),
-    ]);
+    renderSection([buildAuthorizationsMock([])]);
 
     await new Promise((resolve) => setTimeout(resolve, 0));
 

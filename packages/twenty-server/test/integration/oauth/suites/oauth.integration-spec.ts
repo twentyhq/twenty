@@ -1510,6 +1510,71 @@ describe('OAuth (integration)', () => {
       expect(await findListedAuthorization()).toBeUndefined();
     });
 
+    it('should list only the requested application when filtered', async () => {
+      await exchangeForTokens({ userId: OTHER_MEMBER_USER_ID });
+
+      const filtered = await makeMetadataApiRequest(
+        {
+          query: gql`
+            query WorkspaceApplicationAuthorizations($applicationId: UUID) {
+              workspaceApplicationAuthorizations(
+                applicationId: $applicationId
+              ) {
+                applicationId
+                userId
+              }
+            }
+          `,
+          variables: { applicationId: testApplication.id },
+        },
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(filtered.body.errors).toBeUndefined();
+      expect(filtered.body.data.workspaceApplicationAuthorizations).toEqual([
+        { applicationId: testApplication.id, userId: OTHER_MEMBER_USER_ID },
+      ]);
+    });
+
+    it('should count the active authorizations of each application', async () => {
+      const countConnectedMembers = async () => {
+        const response = await makeMetadataApiRequest(
+          {
+            query: gql`
+              query WorkspaceApplicationConnectedMemberCounts {
+                workspaceApplicationConnectedMemberCounts {
+                  applicationId
+                  connectedMemberCount
+                }
+              }
+            `,
+          },
+          APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        );
+
+        expect(response.body.errors).toBeUndefined();
+
+        return response.body.data.workspaceApplicationConnectedMemberCounts.find(
+          ({ applicationId }: { applicationId: string }) =>
+            applicationId === testApplication.id,
+        )?.connectedMemberCount;
+      };
+
+      await exchangeForTokens({ userId: OTHER_MEMBER_USER_ID });
+      await exchangeForTokens();
+
+      expect(await countConnectedMembers()).toBe(2);
+
+      const { id } = await findOtherMemberAuthorization();
+
+      await makeMetadataApiRequest(
+        revokeWorkspaceAuthorizationOperation(id),
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(await countConnectedMembers()).toBe(1);
+    });
+
     it('should let a user who manages applications revoke another member authorization', async () => {
       const { refreshToken } = await exchangeForTokens({
         userId: OTHER_MEMBER_USER_ID,
