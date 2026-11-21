@@ -153,8 +153,7 @@ export const AiChatInstanceEffect = () => {
       threadId: persistedThreadId,
     });
     const storedVisit = store.get(visitAtom);
-    // Taken once per visit, before the read mark, so it sees where the member
-    // left off
+    // Taken before the read mark, so it keeps where the member left off
     const newVisit: AiChatThreadVisit = {
       threadId: persistedThreadId,
       isUnread,
@@ -172,8 +171,7 @@ export const AiChatInstanceEffect = () => {
       visit.readRequestedForActivityAt === lastActivityAt &&
       visit.readRequestedForParticipantUpdatedAt === participant?.updatedAt;
 
-    // Opening a chat the member does not participate in yet starts tracking
-    // it for them, so later activity in it reads as unread
+    // A chat the member does not follow yet starts being tracked, so later activity reads as unread
     if (
       (!isUnread && isDefined(participant)) ||
       visit.isKeptUnread ||

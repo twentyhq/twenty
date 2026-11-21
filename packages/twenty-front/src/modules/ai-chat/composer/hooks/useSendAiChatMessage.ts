@@ -17,7 +17,6 @@ import { v4 } from 'uuid';
 
 import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/constants/AiChatNewThreadDefaultRecipients';
 import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai-chat/composer/constants/AiChatRestoreEditorContentEventName';
-import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { useAiChatModelId } from '@/ai-chat/hooks/useAiChatModelId';
 import { useAttachChatThreadToRecord } from '@/ai-chat/threads/hooks/useAttachChatThreadToRecord';
 import { useCanSendAiChatMessage } from '@/ai-chat/composer/hooks/useCanSendAiChatMessage';
@@ -101,7 +100,6 @@ type AiChatMessageToSend = Pick<
   quotedMessageId: string | null;
 };
 
-// A send made outside a chat follows the thread only if some chat still shows it
 const isThreadStillShown = ({
   aiChatRequiredThreadListeners,
   threadId,
@@ -546,36 +544,37 @@ export const useSendAiChatMessage = () => {
           serializedDraft: serializedContentToSend,
         });
 
-        if (isDefined(directMessageThreadId)) {
-          if (
-            isThreadStillShown({
-              aiChatRequiredThreadListeners: store.get(
-                aiChatRequiredThreadListenersState.atom,
-              ),
-              threadId,
-              instanceId,
-            })
-          ) {
-            onThreadChange(directMessageThreadId);
-          }
-
-          await sendToThread({
-            threadId: directMessageThreadId,
-            isNewChat: false,
-            isDirectMessage: true,
-            newInboxChatRecipients: undefined,
-            serializedContentToSend,
-            contentToSend,
-            participantMentions: [],
-            initialRecipients: [],
-            isAssistantMentioned: false,
-            channelId: undefined,
-            quotedMessageId: null,
-            instanceId,
-            onThreadChange,
-          });
+        if (!isDefined(directMessageThreadId)) {
+          return;
         }
 
+        if (
+          isThreadStillShown({
+            aiChatRequiredThreadListeners: store.get(
+              aiChatRequiredThreadListenersState.atom,
+            ),
+            threadId,
+            instanceId,
+          })
+        ) {
+          onThreadChange(directMessageThreadId);
+        }
+
+        await sendToThread({
+          threadId: directMessageThreadId,
+          isNewChat: false,
+          isDirectMessage: true,
+          newInboxChatRecipients: undefined,
+          serializedContentToSend,
+          contentToSend,
+          participantMentions: [],
+          initialRecipients: [],
+          isAssistantMentioned: false,
+          channelId: undefined,
+          quotedMessageId: null,
+          instanceId,
+          onThreadChange,
+        });
         return;
       }
 
@@ -637,16 +636,4 @@ export const useSendAiChatMessage = () => {
   );
 
   return { sendAiChatMessage };
-};
-
-export const useAiChat = () => {
-  const { instanceId, threadId, onThreadChange } = useAiChatInstanceOrThrow();
-  const { sendAiChatMessage } = useSendAiChatMessage();
-
-  const handleSendMessage = useCallback(
-    () => sendAiChatMessage({ threadId, instanceId, onThreadChange }),
-    [sendAiChatMessage, threadId, instanceId, onThreadChange],
-  );
-
-  return { handleSendMessage };
 };

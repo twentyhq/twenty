@@ -9,6 +9,6 @@ export type AiChatThreadStreamDependencies = {
   loadAiChatThread: (
     threadId: string,
   ) => Promise<AiChatThreadRecord | null | undefined>;
-  refreshAiChatThreadPermissions: (threadIds: string[]) => Promise<unknown>;
+  refreshAiChatThreadPermissions: (threadIds: string[]) => Promise<void>;
   refreshAiChatUsage: () => void;
 };

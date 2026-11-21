@@ -213,7 +213,6 @@ export const useAiChatEditor = () => {
 
   const draft = aiChatComposerDrafts[draftKey] ?? '';
 
-  // Shows a draft written elsewhere, by another view of the thread or a preprompt
   useEffect(() => {
     if (
       !isDefined(editor) ||

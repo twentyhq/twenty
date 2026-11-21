@@ -20,7 +20,6 @@ import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseC
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-// Keeps one stream per thread a chat listens to, like SSEQuerySubscribeEffect does for record queries
 export const AiChatThreadStreamsEffect = () => {
   const store = useStore();
   const apolloClient = useApolloClient();

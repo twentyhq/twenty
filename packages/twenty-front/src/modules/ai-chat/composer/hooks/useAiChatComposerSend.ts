@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai-chat/constants/AiChatSendMessageEventName';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
-import { useAiChat } from '@/ai-chat/composer/hooks/useSendAiChatMessage';
+import { useAiChat } from '@/ai-chat/composer/hooks/useAiChat';
 import { aiChatSentMessageHandOffState } from '@/ai-chat/states/aiChatSentMessageHandOffState';
 import { type AiChatInstanceEventDetail } from '@/ai-chat/types/AiChatInstanceEventDetail';
 import { getTextBoundingClientRect } from '@/ai-chat/utils/getTextBoundingClientRect';

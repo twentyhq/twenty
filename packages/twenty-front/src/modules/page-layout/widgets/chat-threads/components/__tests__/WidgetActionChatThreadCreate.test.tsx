@@ -12,7 +12,6 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 
 jest.mock('@/ai-chat/composer/hooks/useSendAiChatMessage', () => ({
   useSendAiChatMessage: () => ({ sendAiChatMessage: jest.fn() }),
-  useAiChat: () => ({ handleSendMessage: jest.fn() }),
 }));
 
 const COMPANY_ID = '20202020-0000-4000-8000-000000000002';

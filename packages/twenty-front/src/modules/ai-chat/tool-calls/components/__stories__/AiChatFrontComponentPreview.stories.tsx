@@ -19,7 +19,7 @@ import { RootDecorator } from '~/testing/decorators/RootDecorator';
 
 const PREVIEW_STORY_THREAD_ID = 'front-component-preview-story';
 
-const refetchStoryThreadMessages = () =>
+const replaceStoryThreadFetchedMessages = () =>
   jotaiStore.set(
     aiChatThreadFetchedMessagesFamilyState.atomFamily({
       threadId: PREVIEW_STORY_THREAD_ID,
@@ -179,7 +179,7 @@ export const RetryDraftLoad: Story = {
     await expect(await canvas.findByRole('alert')).toHaveTextContent(
       'Could not load preview.',
     );
-    refetchStoryThreadMessages();
+    replaceStoryThreadFetchedMessages();
     await expect(
       await canvas.findByRole(
         'button',
@@ -233,7 +233,7 @@ export const RefreshStatusPreservesInteraction: Story = {
           { once: true },
         ),
       );
-      refetchStoryThreadMessages();
+      replaceStoryThreadFetchedMessages();
       await expect(
         await canvas.findByText(
           status === 'saved'
@@ -279,7 +279,7 @@ export const SupersededInitialLoad: Story = {
     await expect(canvas.getByRole('status')).toHaveTextContent(
       'Loading preview',
     );
-    refetchStoryThreadMessages();
+    replaceStoryThreadFetchedMessages();
     await canvas.findByRole('button', { name: 'Count: 0' }, { timeout: 30000 });
     completeInitialRequest?.();
     await userEvent.click(canvas.getByRole('button', { name: 'Count: 0' }));

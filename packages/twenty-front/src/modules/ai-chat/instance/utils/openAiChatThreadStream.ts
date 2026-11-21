@@ -50,7 +50,6 @@ const THROTTLE_MS = 100;
 const PERMISSIONS_REFRESH_INTERVAL_MS = 30_000;
 const MAX_SILENT_RECOVERY_ATTEMPTS = 3;
 
-// One live thread: its chat subscription, its messages query and what is derived from them
 export const openAiChatThreadStream = ({
   threadId,
   store,
@@ -307,7 +306,7 @@ export const openAiChatThreadStream = ({
     }
     switch (event.type) {
       case 'stream-chunk': {
-        if (isDefined(event.seq) && firstLiveSeq === null) {
+        if (isDefined(event.seq) && !isDefined(firstLiveSeq)) {
           firstLiveSeq = event.seq;
         }
 
@@ -402,7 +401,7 @@ export const openAiChatThreadStream = ({
   };
 
   function applyCatchup(catchup: AiChatStreamCatchup) {
-    const hasAppliedLiveChunk = firstLiveSeq !== null;
+    const hasAppliedLiveChunk = isDefined(firstLiveSeq);
 
     catchup.chunks.forEach((chunk, index) =>
       handleEvent({ type: 'stream-chunk', chunk, seq: index + 1 }),
@@ -532,8 +531,7 @@ export const openAiChatThreadStream = ({
 
   let isDisplayedSyncScheduled = false;
 
-  // Fetched messages replace the displayed ones only between replies. Deferred
-  // because a chunk briefly sets the status to idle before streaming.
+  // Deferred: a chunk sets the status to idle for an instant before streaming
   const syncDisplayedMessages = () => {
     if (isDisplayedSyncScheduled) {
       return;

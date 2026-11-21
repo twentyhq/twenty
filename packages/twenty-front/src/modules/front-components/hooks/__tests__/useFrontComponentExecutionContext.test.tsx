@@ -16,7 +16,6 @@ import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTe
 
 jest.mock('@/ai-chat/composer/hooks/useSendAiChatMessage', () => ({
   useSendAiChatMessage: () => ({ sendAiChatMessage: jest.fn() }),
-  useAiChat: () => ({ handleSendMessage: jest.fn() }),
 }));
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({

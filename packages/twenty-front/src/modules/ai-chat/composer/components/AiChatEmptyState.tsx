@@ -2,9 +2,7 @@ import { MarkdownRenderer } from '@/ai-chat/message-content/components/MarkdownR
 import { StyledAiChatContentContainer } from '@/ai-chat/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
 
-import { AiChatSuggestedPrompts } from '@/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts';
-import { useApplyAiChatPreprompt } from '@/ai-chat/composer/hooks/useApplyAiChatPreprompt';
-import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
+import { AiChatSuggestedPrompts } from '@/ai-chat/composer/components/AiChatSuggestedPrompts';
 import { useShouldShowAiChatEmptyState } from '@/ai-chat/hooks/useShouldShowAiChatEmptyState';
 
 const StyledEmptyState = styled(StyledAiChatContentContainer)`
@@ -22,8 +20,6 @@ export const AiChatEmptyState = ({
   isCentered = false,
 }: AiChatEmptyStateProps) => {
   const shouldShowAiChatEmptyState = useShouldShowAiChatEmptyState();
-  const { applyAiChatPreprompt } = useApplyAiChatPreprompt();
-  const { instanceId, threadId, onThreadChange } = useAiChatInstanceOrThrow();
 
   MarkdownRenderer.preload();
 
@@ -33,18 +29,7 @@ export const AiChatEmptyState = ({
 
   return (
     <StyledEmptyState>
-      <AiChatSuggestedPrompts
-        isCentered={isCentered}
-        onPromptSelect={({ serializedDocument, mode }) =>
-          applyAiChatPreprompt({
-            threadId,
-            instanceId,
-            onThreadChange,
-            serializedDocument,
-            mode,
-          })
-        }
-      />
+      <AiChatSuggestedPrompts isCentered={isCentered} />
     </StyledEmptyState>
   );
 };

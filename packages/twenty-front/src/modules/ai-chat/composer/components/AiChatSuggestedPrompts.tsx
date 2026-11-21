@@ -9,7 +9,7 @@ import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-
 import { AiChatAssistantAvatar } from '@/ai-chat/components/AiChatAssistantAvatar';
 import { getAiChatSuggestedPrompts } from '@/ai-chat/suggested-prompts/utils/getAiChatSuggestedPrompts';
 import { useAiChatSuggestedPromptsContext } from '@/ai-chat/suggested-prompts/hooks/useAiChatSuggestedPromptsContext';
-import { type AiChatPrepromptMode } from '@/ai-chat/types/AiChatPrepromptMode';
+import { useApplyAiChatPromptInChat } from '@/ai-chat/composer/hooks/useApplyAiChatPromptInChat';
 import { type SuggestedPrompt } from '@/ai-chat/suggested-prompts/types/SuggestedPrompt';
 
 const StyledContainer = styled.div<{ isCentered: boolean }>`
@@ -58,26 +58,22 @@ const pickRandom = <TItem,>(items: TItem[]): TItem =>
 
 type AiChatSuggestedPromptsProps = {
   isCentered?: boolean;
-  onPromptSelect: (prompt: {
-    serializedDocument: string;
-    mode: AiChatPrepromptMode;
-  }) => void;
 };
 
 export const AiChatSuggestedPrompts = ({
   isCentered = false,
-  onPromptSelect,
 }: AiChatSuggestedPromptsProps) => {
   const { t } = useLingui();
   const { t: resolveMessage } = useLingui();
   const aiChatSuggestedPromptsContext = useAiChatSuggestedPromptsContext();
+  const { applyAiChatPromptInChat } = useApplyAiChatPromptInChat();
 
   const suggestedPrompts = getAiChatSuggestedPrompts(
     aiChatSuggestedPromptsContext,
   );
 
   const handleClick = (suggestedPrompt: SuggestedPrompt) => {
-    onPromptSelect({
+    applyAiChatPromptInChat({
       serializedDocument: serializePlainTextAsAdvancedTextEditorDocument(
         resolveMessage(pickRandom(suggestedPrompt.prompts)),
       ),

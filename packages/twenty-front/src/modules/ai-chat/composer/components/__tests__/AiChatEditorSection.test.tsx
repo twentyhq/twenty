@@ -16,7 +16,6 @@ import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestE
 
 jest.mock('@/ai-chat/composer/hooks/useSendAiChatMessage', () => ({
   useSendAiChatMessage: () => ({ sendAiChatMessage: jest.fn() }),
-  useAiChat: () => ({ handleSendMessage: jest.fn() }),
 }));
 
 const NEW_CHAT_THREAD_ID = '20202020-7c1e-4a0f-9d2b-3f4e5a6b7c8d';
