@@ -1,22 +1,17 @@
 import { useCallback } from 'react';
 import { useAtom, useStore } from 'jotai';
 
-import { type Attachment } from '@/activities/files/types/Attachment';
-import { useAttachmentSync } from '@/activities/files/hooks/useAttachmentSync';
-import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
-import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
 import { AdvancedTextEditorBlockHandle } from '@/advanced-text-editor/components/AdvancedTextEditorBlockHandle';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { type UploadErrorHandler } from '@/advanced-text-editor/types/UploadErrorHandler';
 import { getStorableEditorDocument } from '@/advanced-text-editor/utils/getStorableEditorDocument';
 import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
+import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RICH_TEXT_FIELD_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/object-record/record-field/ui/meta-types/input/constants/RichTextFieldEditorGlobalHotkeysConfig';
 import { RICH_TEXT_FIELD_EDITOR_PROFILE } from '@/object-record/record-field/ui/meta-types/input/constants/RichTextFieldEditorProfile';
@@ -33,10 +28,11 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { styled } from '@linaria/react';
 import { type Editor } from '@tiptap/core';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { useDebouncedCallback } from 'use-debounce';
 import { useLingui } from '@lingui/react/macro';
+import { FileFolder } from '~/generated-metadata/graphql';
 
 const StyledEditorContainer = styled.div`
   box-sizing: border-box;
@@ -93,34 +89,25 @@ export const RichTextFieldEditor = ({
 
   const focusId = `${recordId}-${fieldName}`;
 
-  const attachmentTargetFieldIdName = getActivityTargetObjectFieldIdName({
-    nameSingular: objectNameSingular,
-  });
-
-  const { records: attachments } = useFindManyRecords<Attachment>({
-    objectNameSingular: StandardObjectNameSingular.Attachment,
-    filter: {
-      [attachmentTargetFieldIdName]: {
-        eq: recordId,
-      },
-    },
-  });
-
-  const { syncAttachments } = useAttachmentSync(attachments);
-
-  const { uploadAttachmentFile } = useUploadAttachmentFile();
+  const { uploadFile } = useDirectFileUpload();
 
   const { searchMentionRecords } = useMentionSearch();
 
   const { enqueueToast } = useToast();
 
   const handleUploadFile = async (file: File) => {
-    const { attachmentAbsoluteURL } = await uploadAttachmentFile(file, {
-      id: recordId,
-      targetObjectNameSingular: objectNameSingular,
+    assertIsDefinedOrThrow(
+      fieldMetadataItem,
+      new Error(t`Field "${fieldName}" not found`),
+    );
+
+    // Uploaded under the field itself: the record claims the file when its body is saved.
+    const uploadedFile = await uploadFile(file, {
+      fileFolder: FileFolder.FilesField,
+      fieldMetadataId: fieldMetadataItem.id,
     });
 
-    return { url: attachmentAbsoluteURL };
+    return { url: uploadedFile.url };
   };
 
   const handleUploadFileError: UploadErrorHandler = ({ file }) => {
@@ -165,10 +152,7 @@ export const RichTextFieldEditor = ({
       },
     });
 
-  const handleBodyChange = async (newSerializedDocument: string) => {
-    const oldRecord = store.get(recordStoreFamilyState.atomFamily(recordId));
-    const oldFieldValue: FieldRichTextValue | undefined =
-      oldRecord?.[fieldName];
+  const handleBodyChange = (newSerializedDocument: string) => {
     const newFieldValue: FieldRichTextValue = {
       blocknote: null,
       markdown: null,
@@ -177,7 +161,7 @@ export const RichTextFieldEditor = ({
 
     store.set(
       recordStoreFamilyState.atomFamily(recordId),
-      (prev: typeof oldRecord) => ({
+      (prev: typeof recordInStore) => ({
         ...prev,
         id: recordId,
         [fieldName]: newFieldValue,
@@ -194,13 +178,7 @@ export const RichTextFieldEditor = ({
       objectMetadataItem,
     });
 
-    // Only after capturing the pre-edit body: persisting rewrites the record, so the diff would miss removed attachments.
     updateDraft({ tiptap: stripRichTextFileUrlTokens(newSerializedDocument) });
-
-    await syncAttachments(
-      newSerializedDocument,
-      getRichTextFieldSerializedContent(oldFieldValue),
-    );
   };
 
   const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);
