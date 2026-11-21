@@ -21580,7 +21580,7 @@ msgstr "Nie gedeel met"
 #. js-lingui-id: mu1gVr
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
 msgid "Not started"
-msgstr ""
+msgstr "Nie begin nie"
 
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
