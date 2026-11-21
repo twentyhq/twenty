@@ -6,6 +6,7 @@ import {
   createParamDecorator,
 } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
+import { isString } from '@sniptt/guards';
 
 import assert from 'assert';
 
@@ -194,6 +195,9 @@ export class WorkspaceResolver {
       return await this.workspaceService.updateWorkspaceById({
         payload: {
           ...data,
+          ...(isString(data.displayName)
+            ? { displayName: data.displayName.trim() }
+            : {}),
           id: workspace.id,
         },
         userWorkspaceId,

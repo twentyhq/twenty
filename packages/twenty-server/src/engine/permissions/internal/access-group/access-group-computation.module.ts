@@ -40,6 +40,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
   ],
   exports: [
     AccessGroupPropagationPlanService,
+    AccessGroupSyncSchedulerService,
     AccessGroupSyncService,
     RecordAccessGroupComputationService,
     RecordAccessGroupPropagationService,

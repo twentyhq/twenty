@@ -1,7 +1,7 @@
 import { type AiChatRestoreEditorContentEventDetail } from '@/ai-chat/composer/types/AiChatRestoreEditorContentEventDetail';
 import { type AiChatInstanceEventDetail } from '@/ai-chat/types/AiChatInstanceEventDetail';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useLayoutEffect } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
@@ -15,6 +15,8 @@ import { useAiChatAssistantProfile } from '@/ai-chat/hooks/useAiChatAssistantPro
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatComposerDraftsState';
+import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldFocusFamilyState';
+import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai-chat/constants/AiChatSendMessageEventName';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
@@ -189,6 +191,43 @@ export const useAiChatEditor = () => {
     eventName: AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
     onBrowserEvent: handleRestoreEditorContent,
   });
+
+  const [aiChatComposerShouldFocus, setAiChatComposerShouldFocus] =
+    useAtomFamilyState(aiChatComposerShouldFocusFamilyState, {
+      threadId: draftKey,
+    });
+
+  useLayoutEffect(() => {
+    // A destroyed editor is still defined while its replacement mounts and its commands throw; keeping the request hands focus to the live one.
+    if (
+      !aiChatComposerShouldFocus ||
+      !isDefined(editor) ||
+      editor.isDestroyed
+    ) {
+      return;
+    }
+
+    editor.commands.focus('end');
+    setAiChatComposerShouldFocus(false);
+  }, [aiChatComposerShouldFocus, editor, setAiChatComposerShouldFocus]);
+
+  const draft = aiChatComposerDrafts[draftKey] ?? '';
+
+  useEffect(() => {
+    if (
+      !isDefined(editor) ||
+      editor.isDestroyed ||
+      editor.isFocused ||
+      serializeAiChatEditorDraft(editor) === draft
+    ) {
+      return;
+    }
+
+    editor.commands.setContent(
+      deserializeAdvancedTextEditorDocument({ serializedDocument: draft }),
+      { emitUpdate: false },
+    );
+  }, [draft, editor]);
 
   return { editor };
 };
