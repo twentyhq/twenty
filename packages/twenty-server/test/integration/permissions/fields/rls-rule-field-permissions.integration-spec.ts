@@ -408,6 +408,51 @@ describe('field permissions on an RLS rule (integration)', () => {
     }
   });
 
+  it('should make the label identifier unreadable on the records the RLS rule matches', async () => {
+    const nameFieldMetadataId = await findFieldMetadataId('name');
+    const setNameReadability = (canReadFieldValue: false | null) =>
+      upsertFieldPermissions({
+        expectToFail: false,
+        input: {
+          roleId,
+          fieldPermissions: [
+            {
+              objectMetadataId,
+              fieldMetadataId: nameFieldMetadataId,
+              rowLevelPermissionPredicateGroupId: rlsRuleId,
+              canReadFieldValue,
+            },
+          ],
+        },
+      });
+
+    await setNameReadability(false);
+
+    try {
+      const response = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          gqlFields: 'id name { firstName lastName }',
+          filter: { id: { in: originalPeople.map(({ id }) => id) } },
+        }),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.people.edges).toEqual([
+        {
+          node: {
+            id: originalPeople[0].id,
+            name: { firstName: '', lastName: '' },
+          },
+        },
+      ]);
+    } finally {
+      await setNameReadability(null);
+    }
+  });
+
   it('should make a relation unreadable on the records the RLS rule matches', async () => {
     const parisPersonId = originalPeople[0].id;
     const {
