@@ -1,5 +1,5 @@
-import { gql } from 'graphql-tag';
 import { makeMetadataApiRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
+import { updateMessageChannelQueryFactory } from 'test/integration/utils/update-message-channel-query-factory.util';
 
 export const updateMessageChannelVisibilityWithMemberRole = async ({
   messageChannelId,
@@ -8,20 +8,9 @@ export const updateMessageChannelVisibilityWithMemberRole = async ({
   messageChannelId: string;
   visibility: string;
 }): Promise<void> => {
-  const response = await makeMetadataApiRequestWithMemberRole({
-    query: gql`
-      mutation UpdateMessageChannelVisibility(
-        $input: UpdateMessageChannelInput!
-      ) {
-        updateMessageChannel(input: $input) {
-          visibility
-        }
-      }
-    `,
-    variables: {
-      input: { id: messageChannelId, update: { visibility } },
-    },
-  });
+  const response = await makeMetadataApiRequestWithMemberRole(
+    updateMessageChannelQueryFactory({ messageChannelId, visibility }),
+  );
 
   expect(response.body.errors).toBeUndefined();
 };
