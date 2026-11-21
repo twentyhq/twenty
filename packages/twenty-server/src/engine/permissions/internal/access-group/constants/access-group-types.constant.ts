@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { type AccessGroupType } from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import { type AccessGroupType } from 'src/engine/permissions/internal/access-group/types/access-group-type.type';
 
 export const ACCESS_GROUP_TYPES: readonly AccessGroupType[] = [
   'ALL_RECORDS',

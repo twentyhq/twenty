@@ -4,11 +4,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordAccessGroupSQLConditionMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-sql-condition-metadata-maps.type';
-import {
-  type AccessGroup,
-  type AccessGroupSplit,
-} from 'src/engine/permissions/internal/access-group/types/access-group.type';
-import { type AccessGroupRuleShape } from 'src/engine/permissions/internal/access-group/utils/build-access-group-rule-shapes.util';
+import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import { type AccessGroupSplit } from 'src/engine/permissions/internal/access-group/types/access-group-split.type';
+import { type AccessGroupRuleShape } from 'src/engine/permissions/internal/access-group/types/access-group-rule-shape.type';
 import {
   buildRecordFilterForRule,
   type RlsRule,
@@ -60,7 +58,6 @@ export const buildRecordAccessGroupSQLConditionOrThrow = ({
 
   const ruleShape = ruleShapeByHash.get(accessGroup.ruleShapeHash);
 
-  // a group no current rule produces is dropped by the next sync, and must not reach records meanwhile
   if (!isDefined(ruleShape)) {
     return MATCHING_NO_RECORD;
   }

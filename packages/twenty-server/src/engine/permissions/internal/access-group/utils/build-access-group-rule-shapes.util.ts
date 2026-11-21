@@ -1,16 +1,10 @@
 /* @license Enterprise */
 
-import { type RowLevelPermissionPredicate } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type AccessGroupRuleShape } from 'src/engine/permissions/internal/access-group/types/access-group-rule-shape.type';
 import { resolveAccessGroupRuleShape } from 'src/engine/permissions/internal/access-group/utils/resolve-access-group-rule-shape.util';
-import { type RlsRule } from 'src/engine/permissions/internal/rls/utils/build-rls-record-filter.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
-
-export type AccessGroupRuleShape = {
-  rowLevelPermissionRule: RlsRule;
-  literalValuePredicate: RowLevelPermissionPredicate | null;
-};
 
 export const buildAccessGroupRuleShapes = ({
   objectMetadataId,

@@ -19,7 +19,6 @@ const PERMISSION_TABLE_ENUM_NAMES = [
 const buildInsertPlaceholders = (count: number): string =>
   Array.from({ length: count }, (_, index) => `$${index + 1}`).join(', ');
 
-// Reproduces a workspace created before 2.61, where recordShare and accessGroup are standard objects; record shares are kept, access groups are derived
 export const restoreLegacyPermissionStorageObjects = async (
   workspaceId: string,
 ): Promise<void> => {

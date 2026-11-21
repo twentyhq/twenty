@@ -1,20 +1,5 @@
 /* @license Enterprise */
 
-import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
-
-export type AccessGroupSplit =
-  | { type: 'ALL_RECORDS' }
-  | { type: 'RULE' }
-  | { type: 'MEMBER_VALUE'; memberFieldValues: RlsMemberFieldValues }
-  | { type: 'LITERAL_VALUE'; value: string };
-
-export type AccessGroupType = AccessGroupSplit['type'];
-
-export type AccessGroupWithoutCompactId = {
-  groupHash: string;
-  objectMetadataId: string;
-  ruleShapeHash: string;
-  unreadableFieldIds: string[];
-} & AccessGroupSplit;
+import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group-without-compact-id.type';
 
 export type AccessGroup = AccessGroupWithoutCompactId & { compactId: number };

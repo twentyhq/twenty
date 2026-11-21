@@ -1,6 +1,5 @@
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-// Groups are derived from rules, so the next sync rebuilds them; compact ids keep counting, so stale ids on records never match a new group
 export const buildTypedAccessGroupStatements = ({
   schemaName,
 }: {

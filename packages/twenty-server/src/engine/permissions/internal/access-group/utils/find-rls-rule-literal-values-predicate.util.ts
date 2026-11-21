@@ -37,7 +37,7 @@ const isAtRootConjunction = ({
   return true;
 };
 
-const isLiteralValueListPredicate = (
+const isRlsLiteralValuesPredicate = (
   predicate: RowLevelPermissionPredicate,
 ): predicate is RowLevelPermissionPredicate & { value: string[] } =>
   !isDefined(predicate.workspaceMemberFieldMetadataId) &&
@@ -45,8 +45,7 @@ const isLiteralValueListPredicate = (
   Array.isArray(predicate.value) &&
   predicate.value.every(isNonEmptyString);
 
-// a rule that must match one of listed values is the union of one group per value
-export const findLiteralValuePredicate = ({
+export const findRlsRuleLiteralValuesPredicate = ({
   predicates,
   predicateGroups,
 }: Pick<RlsRule, 'predicates' | 'predicateGroups'>):
@@ -61,7 +60,7 @@ export const findLiteralValuePredicate = ({
   }
 
   const literalValuePredicates = predicates
-    .filter(isLiteralValueListPredicate)
+    .filter(isRlsLiteralValuesPredicate)
     .filter((predicate) => isAtRootConjunction({ predicate, predicateGroups }));
 
   return literalValuePredicates.length === 1 ? literalValuePredicates[0] : null;
