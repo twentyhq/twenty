@@ -10,8 +10,7 @@ export const watchStickToBottomScroll = ({
   let isPinnedToBottom = true;
   let lastScrollTop = scrollContainerElement.scrollTop;
 
-  // Only scrolling up unpins: content can grow again before the scroll event
-  // of our own scroll to the bottom fires, which then looks far from the bottom
+  // Only scrolling up unpins: growth can land before our own scroll event fires
   const handleScroll = () => {
     const { scrollHeight, scrollTop, clientHeight } = scrollContainerElement;
 
