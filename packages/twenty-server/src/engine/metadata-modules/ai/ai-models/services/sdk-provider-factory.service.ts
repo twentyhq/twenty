@@ -32,10 +32,12 @@ import {
   AI_SDK_XAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.constant';
 import { sanitizeGeminiToolResultRefsMiddleware } from 'src/engine/metadata-modules/ai/ai-models/middleware/sanitize-gemini-tool-result-refs.middleware';
+import { sanitizeGroqAssistantReasoningMiddleware } from 'src/engine/metadata-modules/ai/ai-models/middleware/sanitize-groq-assistant-reasoning.middleware';
 import { type AiEvaluationModel } from 'src/engine/metadata-modules/ai/ai-models/types/ai-evaluation-model.type';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
 import { getEvaluationModelFactory } from 'src/engine/metadata-modules/ai/ai-models/utils/get-evaluation-model-factory.util';
 import { getTranscriptionModelFactory } from 'src/engine/metadata-modules/ai/ai-models/utils/get-transcription-model-factory.util';
+import { isGroqOpenAiCompatible } from 'src/engine/metadata-modules/ai/ai-models/utils/is-groq-open-ai-compatible.util';
 
 export type AiSdkProviderInstance = {
   createModel?: (modelId: string) => LanguageModel;
@@ -60,7 +62,7 @@ export class SdkProviderFactoryService {
       return cached;
     }
 
-    const instance = this.buildProviderInstance(config);
+    const instance = this.buildProviderInstance(config, providerName);
 
     this.providerInstances.set(providerName, instance);
 
@@ -118,6 +120,7 @@ export class SdkProviderFactoryService {
 
   private buildProviderInstance(
     config: AiProviderConfig,
+    providerName?: string,
   ): AiSdkProviderInstance {
     switch (config.npm) {
       case AI_SDK_OPENAI:
@@ -135,7 +138,7 @@ export class SdkProviderFactoryService {
       case AI_SDK_BEDROCK:
         return this.buildBedrockProvider(config);
       case AI_SDK_OPENAI_COMPATIBLE:
-        return this.buildOpenAiCompatibleProvider(config);
+        return this.buildOpenAiCompatibleProvider(config, providerName);
       case AI_SDK_AZURE:
         return this.buildAzureProvider(config);
       case AI_SDK_TYPESAFE_AI:
@@ -218,6 +221,7 @@ export class SdkProviderFactoryService {
 
   private buildOpenAiCompatibleProvider(
     config: AiProviderConfig,
+    providerName?: string,
   ): AiSdkProviderInstance {
     if (!config.baseUrl) {
       throw new Error('baseUrl is required for openai-compatible providers');
@@ -229,10 +233,21 @@ export class SdkProviderFactoryService {
       ...(config.apiKey && { apiKey: config.apiKey }),
     });
 
+    const isGroq = isGroqOpenAiCompatible(config, providerName);
+
     return this.toProviderInstance(
       provider,
       AI_SDK_OPENAI_COMPATIBLE,
-      (modelId: string) => provider(modelId),
+      (modelId: string) => {
+        const model = provider(modelId);
+
+        return isGroq
+          ? wrapLanguageModel({
+              model,
+              middleware: sanitizeGroqAssistantReasoningMiddleware,
+            })
+          : model;
+      },
     );
   }
 
