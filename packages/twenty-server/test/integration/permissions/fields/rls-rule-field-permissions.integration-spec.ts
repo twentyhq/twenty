@@ -440,13 +440,12 @@ describe('field permissions on an RLS rule (integration)', () => {
       );
 
       expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.people.edges).toEqual([
-        {
-          node: {
-            id: originalPeople[0].id,
-            name: { firstName: '', lastName: '' },
-          },
-        },
+      expect(
+        response.body.data.people.edges.map(
+          (edge: { node: { id: string } }) => edge.node,
+        ),
+      ).toEqual([
+        { id: originalPeople[0].id, name: { firstName: '', lastName: '' } },
       ]);
     } finally {
       await setNameReadability(null);
