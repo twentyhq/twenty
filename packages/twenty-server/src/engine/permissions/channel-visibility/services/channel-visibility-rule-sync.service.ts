@@ -63,13 +63,17 @@ const CHANNEL_VISIBILITY_LEVELS: ChannelVisibilityLevel[] = [
   'metadata',
 ];
 
-// a role keeps the attachments of its role wide grant, except the ones of a message
 const buildAttachmentNotOfMessageRule = ({
   flatRole,
   buildId,
   targetMessageFieldMetadataId,
 }: {
-  flatRole: FlatRole;
+  flatRole: Pick<
+    FlatRole,
+    | 'canUpdateAllObjectRecords'
+    | 'canSoftDeleteAllObjectRecords'
+    | 'canDestroyAllObjectRecords'
+  >;
   buildId: (kind: string) => string;
   targetMessageFieldMetadataId: string;
 }): UpsertRowLevelPermissionRulesInput['rules'][number] => ({
