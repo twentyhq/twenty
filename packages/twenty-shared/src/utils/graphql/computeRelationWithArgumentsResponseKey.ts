@@ -6,7 +6,7 @@ import { sortKeysDeeply } from '../sortKeysDeeply';
 
 const RESPONSE_KEY_HASH_LENGTH = 16;
 
-// Derived from the field and its arguments alone, so a cache entry can be mapped back to the record key without knowing who queried it
+// Derived from the field and its arguments alone, so the query and the readers of its result agree on the key without sharing state
 export const computeRelationWithArgumentsResponseKey = ({
   relationFieldName,
   filter,
