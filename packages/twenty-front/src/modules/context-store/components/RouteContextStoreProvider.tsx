@@ -7,7 +7,8 @@ import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { useEnsureObjectViewsLoaded } from '@/views/hooks/useEnsureObjectViewsLoaded';
+import { viewSummariesSelector } from '@/views/states/selectors/viewSummariesSelector';
 import { computeObjectViewTargetIds } from '@/views/utils/computeObjectViewTargetIds';
 import { isUsableLastVisitedView } from '@/views/utils/isUsableLastVisitedView';
 import { matchRoutes, useLocation, useSearchParams } from 'react-router-dom';
@@ -87,7 +88,7 @@ export const RouteContextStoreProvider = () => {
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const metadataStore = useAtomFamilyStateValue(metadataStoreState, 'views');
-  const views = useAtomStateValue(viewsSelector);
+  const viewSummaries = useAtomStateValue(viewSummariesSelector);
 
   const objectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>
@@ -95,9 +96,11 @@ export const RouteContextStoreProvider = () => {
       objectMetadataItem.nameSingular === objectNameSingular,
   );
 
+  useEnsureObjectViewsLoaded([objectMetadataItem?.id]);
+
   const { getLastVisitedViewIdFromObjectNamePlural } = useLastVisitedView();
 
-  const viewIdQueryParamView = views.find(
+  const viewIdQueryParamView = viewSummaries.find(
     (view) =>
       view.id === viewIdQueryParamRaw &&
       view.objectMetadataId === objectMetadataItem?.id,
@@ -113,7 +116,7 @@ export const RouteContextStoreProvider = () => {
     objectMetadataItem?.namePlural ?? '',
   );
 
-  const lastVisitedView = views.find(
+  const lastVisitedView = viewSummaries.find(
     (view) => view.id === lastVisitedViewIdRaw,
   );
 
@@ -124,7 +127,7 @@ export const RouteContextStoreProvider = () => {
     : undefined;
 
   const { firstSelectableViewId, indexViewId } = computeObjectViewTargetIds({
-    views,
+    views: viewSummaries,
     objectMetadataId: objectMetadataItem?.id,
   });
 

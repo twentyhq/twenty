@@ -2406,6 +2406,7 @@ export type MetadataTranslationProvenance = 'INHERITED' | 'SHIPPED' | 'WORKSPACE
 export interface MinimalMetadata {
     collectionHashes: CollectionHash[]
     objectMetadataItems: MinimalObjectMetadata[]
+    objectViewsHashes: ObjectViewsHash[]
     views: MinimalView[]
     __typename: 'MinimalMetadata'
 }
@@ -2425,10 +2426,16 @@ export interface MinimalObjectMetadata {
 }
 
 export interface MinimalView {
+    icon: Scalars['String']
     id: Scalars['UUID']
+    isActive: Scalars['Boolean']
     key?: ViewKey
+    name: Scalars['String']
     objectMetadataId: Scalars['UUID']
+    position: Scalars['Float']
     type: ViewType
+    universalIdentifier: Scalars['UUID']
+    visibility: ViewVisibility
     __typename: 'MinimalView'
 }
 
@@ -2938,6 +2945,12 @@ export interface ObjectRecordsPermissions {
     uneditableFields: Scalars['UUID'][]
     unreadableFields: Scalars['UUID'][]
     __typename: 'ObjectRecordsPermissions'
+}
+
+export interface ObjectViewsHash {
+    hash: Scalars['String']
+    objectMetadataId: Scalars['UUID']
+    __typename: 'ObjectViewsHash'
 }
 
 
@@ -7276,6 +7289,7 @@ export interface MetadataTranslationsInput {fieldMetadataId?: (Scalars['UUID'] |
 export interface MinimalMetadataGenqlSelection{
     collectionHashes?: CollectionHashGenqlSelection
     objectMetadataItems?: MinimalObjectMetadataGenqlSelection
+    objectViewsHashes?: ObjectViewsHashGenqlSelection
     views?: MinimalViewGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -7297,10 +7311,16 @@ export interface MinimalObjectMetadataGenqlSelection{
 }
 
 export interface MinimalViewGenqlSelection{
+    icon?: boolean | number
     id?: boolean | number
+    isActive?: boolean | number
     key?: boolean | number
+    name?: boolean | number
     objectMetadataId?: boolean | number
+    position?: boolean | number
     type?: boolean | number
+    universalIdentifier?: boolean | number
+    visibility?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7827,6 +7847,13 @@ export interface ObjectRecordsPermissionsGenqlSelection{
     rowLevelRecordsPermissions?: RowLevelRecordsPermissionsGenqlSelection
     uneditableFields?: boolean | number
     unreadableFields?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ObjectViewsHashGenqlSelection{
+    hash?: boolean | number
+    objectMetadataId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -11745,6 +11772,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isObjectRecordsPermissions = (obj?: { __typename?: any } | null): obj is ObjectRecordsPermissions => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isObjectRecordsPermissions"')
       return ObjectRecordsPermissions_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ObjectViewsHash_possibleTypes: string[] = ['ObjectViewsHash']
+    export const isObjectViewsHash = (obj?: { __typename?: any } | null): obj is ObjectViewsHash => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectViewsHash"')
+      return ObjectViewsHash_possibleTypes.includes(obj.__typename)
     }
     
 

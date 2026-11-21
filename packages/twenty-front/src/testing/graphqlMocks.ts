@@ -187,22 +187,14 @@ export const graphqlMocks = {
         data: { minimalMetadata: mockedMinimalMetadata },
       });
     }),
-    metadataGraphql.query('FindAllViews', () => {
-      return HttpResponse.json({
-        data: { getViews: mockedViews },
-      });
-    }),
-    metadataGraphql.query('FindFieldsWidgetViews', () => {
+    metadataGraphql.query('FindManyViews', ({ variables }) => {
       return HttpResponse.json({
         data: {
-          getViews: mockedViews.filter((view) => view.type === 'FIELDS_WIDGET'),
-        },
-      });
-    }),
-    metadataGraphql.query('FindTableWidgetViews', () => {
-      return HttpResponse.json({
-        data: {
-          getViews: mockedViews.filter((view) => view.type === 'TABLE_WIDGET'),
+          getViews: mockedViews.filter(
+            (view) =>
+              !isDefined(variables.objectMetadataId) ||
+              view.objectMetadataId === variables.objectMetadataId,
+          ),
         },
       });
     }),

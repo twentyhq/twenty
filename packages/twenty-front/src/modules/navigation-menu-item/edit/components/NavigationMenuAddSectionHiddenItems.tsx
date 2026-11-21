@@ -18,7 +18,7 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { viewSummariesSelector } from '@/views/states/selectors/viewSummariesSelector';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type NavigationMenuAddSectionHiddenItemsProps = {
@@ -35,7 +35,7 @@ export const NavigationMenuAddSectionHiddenItems = ({
   const hiddenNavigationMenuItems =
     useHiddenNavigationMenuItemsInTab(containerId);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-  const views = useAtomStateValue(viewsSelector);
+  const viewSummaries = useAtomStateValue(viewSummariesSelector);
   const { restoreHiddenNavigationMenuItem } =
     useRestoreHiddenNavigationMenuItem();
   const { closeDropdown } = useCloseDropdown();
@@ -99,7 +99,7 @@ export const NavigationMenuAddSectionHiddenItems = ({
       label: getNavigationMenuItemLabel(
         navigationMenuItem,
         objectMetadataItems,
-        views,
+        viewSummaries,
       ),
       icon: getStartIcon(navigationMenuItem),
     };

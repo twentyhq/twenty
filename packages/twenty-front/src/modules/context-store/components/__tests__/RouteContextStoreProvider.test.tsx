@@ -17,8 +17,15 @@ jest.mock('@/object-metadata/states/objectMetadataItemsSelector', () => ({
   objectMetadataItemsSelector: { key: 'object-metadata-items' },
 }));
 
-jest.mock('@/views/states/selectors/viewsSelector', () => ({
-  viewsSelector: { key: 'views' },
+jest.mock('@/views/states/selectors/viewSummariesSelector', () => ({
+  viewSummariesSelector: { key: 'view-summaries' },
+}));
+
+const mockUseEnsureObjectViewsLoaded = jest.fn();
+
+jest.mock('@/views/hooks/useEnsureObjectViewsLoaded', () => ({
+  useEnsureObjectViewsLoaded: (objectMetadataIds: (string | undefined)[]) =>
+    mockUseEnsureObjectViewsLoaded(objectMetadataIds),
 }));
 
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
@@ -205,6 +212,14 @@ describe('RouteContextStoreProvider', () => {
       'data-view-id',
       'company-view',
     );
+  });
+
+  it('loads the views of the route object', () => {
+    renderAt('/objects/companies', <MainSurfaceRoutes />);
+
+    expect(mockUseEnsureObjectViewsLoaded).toHaveBeenLastCalledWith([
+      'company-object',
+    ]);
   });
 
   it('falls back when the query-param view belongs to another object', () => {

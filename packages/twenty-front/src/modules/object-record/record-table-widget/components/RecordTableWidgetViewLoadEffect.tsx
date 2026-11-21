@@ -8,8 +8,7 @@ import { recordTableWidgetViewDraftByWidgetIdComponentFamilySelector } from '@/p
 import { constructViewFromRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/constructViewFromRecordTableWidgetViewSnapshot';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
+import { useViewById } from '@/views/hooks/useViewById';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -45,10 +44,7 @@ export const RecordTableWidgetViewLoadEffect = ({
       ? constructViewFromRecordTableWidgetViewSnapshot(draftSnapshot)
       : undefined;
 
-  const viewFromSelector = useAtomFamilySelectorValue(
-    viewFromViewIdFamilySelector,
-    { viewId },
-  );
+  const { view: viewFromSelector } = useViewById(viewId);
 
   const currentView = viewFromDraft ?? viewFromSelector;
 

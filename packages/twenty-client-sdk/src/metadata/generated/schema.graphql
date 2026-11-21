@@ -3488,6 +3488,7 @@ input MetadataTranslationsInput {
 type MinimalMetadata {
   collectionHashes: [CollectionHash!]!
   objectMetadataItems: [MinimalObjectMetadata!]!
+  objectViewsHashes: [ObjectViewsHash!]!
   views: [MinimalView!]!
 }
 
@@ -3505,10 +3506,16 @@ type MinimalObjectMetadata {
 }
 
 type MinimalView {
+  icon: String!
   id: UUID!
+  isActive: Boolean!
   key: ViewKey
+  name: String!
   objectMetadataId: UUID!
+  position: Float!
   type: ViewType!
+  universalIdentifier: UUID!
+  visibility: ViewVisibility!
 }
 
 enum ModelFamily {
@@ -4058,6 +4065,11 @@ type ObjectRecordsPermissions {
   rowLevelRecordsPermissions: [RowLevelRecordsPermissions!]
   uneditableFields: [UUID!]!
   unreadableFields: [UUID!]!
+}
+
+type ObjectViewsHash {
+  hash: String!
+  objectMetadataId: UUID!
 }
 
 """Onboarding status"""
