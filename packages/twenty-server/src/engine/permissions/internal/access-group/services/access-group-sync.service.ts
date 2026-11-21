@@ -16,6 +16,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
+import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { findAccessGroupValueLookups } from 'src/engine/permissions/internal/access-group/value-lookup/utils/find-access-group-value-lookups.util';
 import { isAccessGroupSyncIncremental } from 'src/engine/permissions/internal/access-group/value-lookup/utils/is-access-group-sync-incremental.util';
@@ -125,22 +126,21 @@ export class AccessGroupSyncService {
     }
 
     for (const objectMetadataId of incrementalObjectMetadataIds) {
+      const findCompactIdsOfObject = (
+        accessGroups: Pick<AccessGroup, 'compactId' | 'objectMetadataId'>[],
+      ) =>
+        accessGroups
+          .filter(
+            (accessGroup) => accessGroup.objectMetadataId === objectMetadataId,
+          )
+          .map(({ compactId }) => compactId);
+
       await this.accessGroupPropagationPlanService.planAndApplyAccessGroupIdChanges(
         {
           workspaceId,
           objectMetadataId,
-          addedCompactIds: insertedAccessGroups
-            .filter(
-              (accessGroup) =>
-                accessGroup.objectMetadataId === objectMetadataId,
-            )
-            .map(({ compactId }) => compactId),
-          removedCompactIds: staleAccessGroups
-            .filter(
-              (accessGroup) =>
-                accessGroup.objectMetadataId === objectMetadataId,
-            )
-            .map(({ compactId }) => compactId),
+          addedCompactIds: findCompactIdsOfObject(insertedAccessGroups),
+          removedCompactIds: findCompactIdsOfObject(staleAccessGroups),
         },
       );
     }
