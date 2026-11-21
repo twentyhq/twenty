@@ -15,7 +15,10 @@ const sortByContent = <TEntry>(entries: TEntry[]): string[] =>
 
 const serializeWorkspaceMemberRelation = ({
   workspaceMemberRelationFieldMetadataId,
-}: RowLevelPermissionPredicate): string[] =>
+}: Pick<
+  RowLevelPermissionPredicate,
+  'workspaceMemberRelationFieldMetadataId'
+>): string[] =>
   isDefined(workspaceMemberRelationFieldMetadataId)
     ? [workspaceMemberRelationFieldMetadataId]
     : [];
