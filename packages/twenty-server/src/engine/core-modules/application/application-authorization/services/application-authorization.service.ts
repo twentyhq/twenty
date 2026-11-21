@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
@@ -282,16 +283,16 @@ export class ApplicationAuthorizationService {
       .returning(['id'])
       .execute();
 
-    const [revokedAuthorization] = raw as { id: string }[];
+    const revokedAuthorizationId: unknown = raw[0]?.id;
 
-    if (!isDefined(revokedAuthorization)) {
+    if (!isNonEmptyString(revokedAuthorizationId)) {
       return false;
     }
 
     // Access tokens are checked against the cached row, so they die here rather than at expiry
     await this.coreEntityCacheService.invalidate(
       'applicationAuthorization',
-      revokedAuthorization.id,
+      revokedAuthorizationId,
     );
 
     return true;
