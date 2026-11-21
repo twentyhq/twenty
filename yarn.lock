@@ -46169,7 +46169,6 @@ __metadata:
     "@nx/js": "npm:23.3.1"
     "@nx/react": "npm:23.3.1"
     "@nx/storybook": "npm:23.3.1"
-    "@nx/vite": "npm:23.3.1"
     "@nx/web": "npm:23.3.1"
     "@types/react": "npm:^19.2.0"
     "@types/react-dom": "npm:^19.2.0"
