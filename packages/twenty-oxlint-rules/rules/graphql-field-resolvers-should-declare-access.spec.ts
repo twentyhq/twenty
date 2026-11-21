@@ -36,8 +36,28 @@ ruleTester.run(RULE_NAME, rule, {
     {
       code: `
         class TestResolver {
-          @UseGuards(${ACCEPT_USER_SESSIONS})
           @ResolveField(() => String, { nullable: true })
+          @UseGuards(${ACCEPT_USER_SESSIONS})
+          testField() {}
+        }
+      `,
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        @UseGuards(AccessPolicyGuard(WORKSPACE_MEMBERS_ACCESS_POLICY))
+        class TestResolver {
+          @ResolveField(() => String)
+          testField() {}
+        }
+      `,
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        @UseGuards(NoPermissionGuard)
+        class TestResolver {
+          @ResolveField(() => String)
           testField() {}
         }
       `,
@@ -73,13 +93,7 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [{ messageId: 'graphqlFieldResolversShouldDeclareAccess' }],
       filename: 'test.tsx',
     },
-    ...[
-      'CustomPermissionGuard',
-      'PublicEndpointGuard',
-      'AccessPolicyGuard(VIEW_POLICY)',
-      'AccessPolicyGuard({ ...WORKSPACE_MEMBERS_ACCESS_POLICY })',
-      'AccessPolicyGuard()',
-    ].map((guard) => ({
+    ...['CustomPermissionGuard', 'PublicEndpointGuard'].map((guard) => ({
       code: `
         class TestResolver {
           @ResolveField(() => String)
@@ -91,22 +105,47 @@ ruleTester.run(RULE_NAME, rule, {
       filename: 'test.tsx',
     })),
     ...[
-      'AccessPolicyGuard(WORKSPACE_MEMBERS_ACCESS_POLICY)',
-      'NoPermissionGuard',
-    ].map((classGuard) => ({
+      'AccessPolicyGuard(VIEW_POLICY)',
+      'AccessPolicyGuard({ ...WORKSPACE_MEMBERS_ACCESS_POLICY })',
+      'AccessPolicyGuard()',
+    ].map((accessPolicyGuard) => ({
       code: `
-        @UseGuards(${classGuard})
         class TestResolver {
           @ResolveField(() => String)
+          @UseGuards(${accessPolicyGuard})
           testField() {}
         }
       `,
       errors: [
-        { messageId: 'classGuardOnFieldResolverClass' },
         { messageId: 'graphqlFieldResolversShouldDeclareAccess' },
+        { messageId: 'accessPolicyGuardWithoutPolicy' },
       ],
       filename: 'test.tsx',
     })),
+    {
+      code: `
+        @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY))
+        class TestResolver {
+          @ResolveField(() => String)
+          @UseGuards(AccessPolicyGuard(WORKSPACE_MEMBERS_ACCESS_POLICY))
+          testField() {}
+        }
+      `,
+      errors: [{ messageId: 'accessPolicyGuardOnClassAndMethod' }],
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        class TestResolver {
+          @UseGuards(CustomPermissionGuard)
+          @ResolveField(() => String)
+          @UseGuards(NoPermissionGuard)
+          testField() {}
+        }
+      `,
+      errors: [{ messageId: 'stackedUseGuards' }],
+      filename: 'test.tsx',
+    },
     {
       code: `
         @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY))
@@ -115,11 +154,10 @@ ruleTester.run(RULE_NAME, rule, {
           testQuery() {}
 
           @ResolveField(() => String)
-          @UseGuards(NoPermissionGuard)
           testField() {}
         }
       `,
-      errors: [{ messageId: 'classGuardOnFieldResolverClass' }],
+      errors: [{ messageId: 'classGuardOnRootsAndFieldResolvers' }],
       filename: 'test.tsx',
     },
   ],
