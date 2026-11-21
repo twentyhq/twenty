@@ -28,6 +28,9 @@ import {
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 import { type FlatFieldPermission } from 'src/engine/metadata-modules/flat-field-permission/types/flat-field-permission.type';
+import { fromCreateFieldPermissionInputToUniversalFlatFieldPermission } from 'src/engine/metadata-modules/flat-field-permission/utils/from-create-field-permission-input-to-universal-flat-field-permission.util';
+import { type FieldPermissionInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
+import { type UniversalFlatFieldPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-permission.type';
 import { type FlatRowLevelPermissionRule } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-rule.type';
 import { flattenRowLevelPermissionRuleInputs } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/flatten-row-level-permission-rule-inputs.util';
 import { removeDisabledOperationsFromRowLevelPermissionRule } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/remove-disabled-operations-from-row-level-permission-rule.util';
@@ -88,6 +91,172 @@ export class RowLevelPermissionPredicateService {
   }): Promise<UpsertRowLevelPermissionRulesResultDTO> {
     await this.hasRowLevelPermissionFeatureOrThrow(workspaceId);
 
+    const { roleId, objectMetadataId } = input;
+    const isOfRoleAndObject = (entity: {
+      roleId: string;
+      objectMetadataId: string;
+    }) =>
+      entity.roleId === roleId && entity.objectMetadataId === objectMetadataId;
+
+    await this.runUpsertMigration({
+      workspaceId,
+      isSystemBuild: false,
+      ...(await this.buildUpsertOperations({ input, workspaceId })),
+      fieldPermissionsToCreate: [],
+    });
+
+    const {
+      flatRowLevelPermissionRuleMaps: updatedRuleMaps,
+      flatRowLevelPermissionPredicateMaps: updatedPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps: updatedGroupMaps,
+    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatRowLevelPermissionRuleMaps',
+          'flatRowLevelPermissionPredicateMaps',
+          'flatRowLevelPermissionPredicateGroupMaps',
+        ],
+      },
+    );
+
+    return {
+      rules: Object.values(updatedRuleMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .filter(isOfRoleAndObject),
+      predicateGroups: Object.values(updatedGroupMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .filter((group) => group.deletedAt === null && isOfRoleAndObject(group))
+        .map(fromFlatRowLevelPermissionPredicateGroupToDto),
+      predicates: Object.values(updatedPredicateMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .filter(
+          (predicate) =>
+            predicate.deletedAt === null && isOfRoleAndObject(predicate),
+        )
+        .map(fromFlatRowLevelPermissionPredicateToDto),
+    };
+  }
+
+  // Platform managed rules, written in one migration so a sync over many roles pays one cache recompute
+  async upsertManySystemRowLevelPermissionRules({
+    inputs,
+    workspaceId,
+  }: {
+    inputs: {
+      rulesInput: UpsertRowLevelPermissionRulesInput;
+      fieldPermissions: FieldPermissionInput[];
+    }[];
+    workspaceId: string;
+  }): Promise<void> {
+    const operations = {
+      rulesToCreate: [] as FlatRowLevelPermissionRule[],
+      rulesToUpdate: [] as FlatRowLevelPermissionRule[],
+      rulesToDelete: [] as FlatRowLevelPermissionRule[],
+      fieldPermissionsToUpdate: [] as FlatFieldPermission[],
+      predicatesToCreate: [] as FlatRowLevelPermissionPredicate[],
+      predicatesToUpdate: [] as FlatRowLevelPermissionPredicate[],
+      predicatesToDelete: [] as FlatRowLevelPermissionPredicate[],
+      groupsToCreate: [] as FlatRowLevelPermissionPredicateGroup[],
+      groupsToUpdate: [] as FlatRowLevelPermissionPredicateGroup[],
+      groupsToDelete: [] as FlatRowLevelPermissionPredicateGroup[],
+    };
+
+    for (const { rulesInput } of inputs) {
+      const inputOperations = await this.buildUpsertOperations({
+        input: rulesInput,
+        workspaceId,
+      });
+
+      for (const [key, entities] of Object.entries(inputOperations)) {
+        (operations[key as keyof typeof operations] as unknown[]).push(
+          ...entities,
+        );
+      }
+    }
+
+    await this.runUpsertMigration({
+      workspaceId,
+      isSystemBuild: true,
+      ...operations,
+      fieldPermissionsToCreate: [],
+    });
+
+    // The runner creates field permissions before predicate groups, so they go in a second migration.
+    // Deleting a rule cascades its field permissions in the database only, so the cached map is rebuilt first
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatFieldPermissionMaps',
+    ]);
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+    const {
+      flatRoleMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatFieldPermissionMaps,
+      flatRowLevelPermissionPredicateGroupMaps,
+    } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatRoleMaps',
+            'flatObjectMetadataMaps',
+            'flatFieldMetadataMaps',
+            'flatFieldPermissionMaps',
+            'flatRowLevelPermissionPredicateGroupMaps',
+          ],
+        },
+      );
+    const fieldPermissionsToCreate = inputs
+      .flatMap(({ rulesInput, fieldPermissions }) =>
+        fieldPermissions.map((fieldPermissionInput) =>
+          fromCreateFieldPermissionInputToUniversalFlatFieldPermission({
+            fieldPermissionInput,
+            roleId: rulesInput.roleId,
+            flatApplication: workspaceCustomFlatApplication,
+            flatRoleMaps,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            flatRowLevelPermissionPredicateGroupMaps,
+          }),
+        ),
+      )
+      .filter(
+        ({ universalIdentifier }) =>
+          !isDefined(
+            flatFieldPermissionMaps.byUniversalIdentifier[universalIdentifier],
+          ),
+      );
+
+    if (fieldPermissionsToCreate.length > 0) {
+      await this.runUpsertMigration({
+        workspaceId,
+        isSystemBuild: true,
+        rulesToCreate: [],
+        rulesToUpdate: [],
+        rulesToDelete: [],
+        fieldPermissionsToUpdate: [],
+        fieldPermissionsToCreate,
+        predicatesToCreate: [],
+        predicatesToUpdate: [],
+        predicatesToDelete: [],
+        groupsToCreate: [],
+        groupsToUpdate: [],
+        groupsToDelete: [],
+      });
+    }
+  }
+
+  private async buildUpsertOperations({
+    input,
+    workspaceId,
+  }: {
+    input: UpsertRowLevelPermissionRulesInput;
+    workspaceId: string;
+  }) {
     const { roleId, objectMetadataId } = input;
 
     const { workspaceCustomFlatApplication } =
@@ -389,8 +558,7 @@ export class RowLevelPermissionPredicateService {
         ];
       });
 
-    await this.runUpsertMigration({
-      workspaceId,
+    return {
       rulesToCreate,
       rulesToUpdate,
       rulesToDelete: existingRules.filter(isNotIn(flattened.rules)),
@@ -403,47 +571,17 @@ export class RowLevelPermissionPredicateService {
       predicatesToDelete: existingPredicates.filter(
         isNotIn(flattened.predicates),
       ),
-    });
-
-    const {
-      flatRowLevelPermissionRuleMaps: updatedRuleMaps,
-      flatRowLevelPermissionPredicateMaps: updatedPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps: updatedGroupMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatRowLevelPermissionRuleMaps',
-          'flatRowLevelPermissionPredicateMaps',
-          'flatRowLevelPermissionPredicateGroupMaps',
-        ],
-      },
-    );
-
-    return {
-      rules: Object.values(updatedRuleMaps.byUniversalIdentifier)
-        .filter(isDefined)
-        .filter(isOfRoleAndObject),
-      predicateGroups: Object.values(updatedGroupMaps.byUniversalIdentifier)
-        .filter(isDefined)
-        .filter((group) => group.deletedAt === null && isOfRoleAndObject(group))
-        .map(fromFlatRowLevelPermissionPredicateGroupToDto),
-      predicates: Object.values(updatedPredicateMaps.byUniversalIdentifier)
-        .filter(isDefined)
-        .filter(
-          (predicate) =>
-            predicate.deletedAt === null && isOfRoleAndObject(predicate),
-        )
-        .map(fromFlatRowLevelPermissionPredicateToDto),
     };
   }
 
   private async runUpsertMigration({
     workspaceId,
+    isSystemBuild,
     rulesToCreate,
     rulesToUpdate,
     rulesToDelete,
     fieldPermissionsToUpdate,
+    fieldPermissionsToCreate,
     predicatesToCreate,
     predicatesToUpdate,
     predicatesToDelete,
@@ -452,10 +590,12 @@ export class RowLevelPermissionPredicateService {
     groupsToDelete,
   }: {
     workspaceId: string;
+    isSystemBuild: boolean;
     rulesToCreate: FlatRowLevelPermissionRule[];
     rulesToUpdate: FlatRowLevelPermissionRule[];
     rulesToDelete: FlatRowLevelPermissionRule[];
     fieldPermissionsToUpdate: FlatFieldPermission[];
+    fieldPermissionsToCreate: (UniversalFlatFieldPermission & { id: string })[];
     predicatesToCreate: FlatRowLevelPermissionPredicate[];
     predicatesToUpdate: FlatRowLevelPermissionPredicate[];
     predicatesToDelete: FlatRowLevelPermissionPredicate[];
@@ -488,13 +628,13 @@ export class RowLevelPermissionPredicateService {
               flatEntityToDelete: predicatesToDelete,
             },
             fieldPermission: {
-              flatEntityToCreate: [],
+              flatEntityToCreate: fieldPermissionsToCreate,
               flatEntityToUpdate: fieldPermissionsToUpdate,
               flatEntityToDelete: [],
             },
           },
           workspaceId,
-          isSystemBuild: false,
+          isSystemBuild,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
         },
