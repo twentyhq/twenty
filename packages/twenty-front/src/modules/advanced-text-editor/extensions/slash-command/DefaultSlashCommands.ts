@@ -1,9 +1,11 @@
 import { ADVANCED_TEXT_EDITOR_BLOCK_SLASH_COMMANDS } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockSlashCommands';
 import { RICH_TEXT_BLOCK_SLASH_COMMANDS } from '@/advanced-text-editor/constants/RichTextBlockSlashCommands';
 import { type SlashCommandConfig } from '@/advanced-text-editor/extensions/slash-command/types/SlashCommandConfig';
+import { getFormattedTodayDate } from '@/advanced-text-editor/utils/getFormattedTodayDate';
 import { msg } from '@lingui/core/macro';
 import {
   IconBlockquote,
+  IconCalendar,
   IconH1,
   IconH2,
   IconH3,
@@ -104,6 +106,22 @@ const TEXT_SLASH_COMMANDS: SlashCommandConfig[] = [
     getIsVisible: (editor) => editor.can().toggleBlockquote?.() ?? false,
     getOnSelect: (editor, range) => () =>
       editor.chain().focus().deleteRange(range).toggleBlockquote().run(),
+  },
+  {
+    id: 'today',
+    title: msg`Today`,
+    description: msg`Insert today's date`,
+    icon: IconCalendar,
+    keywords: [msg`today`, msg`date`, msg`now`],
+    getIsActive: () => false,
+    getIsVisible: (editor) => editor.can().insertContent(' '),
+    getOnSelect: (editor, range) => () =>
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .insertContent(`${getFormattedTodayDate()} `)
+        .run(),
   },
 ];
 

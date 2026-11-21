@@ -7,6 +7,9 @@ import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
 
 import { DEFAULT_SLASH_COMMANDS } from '@/advanced-text-editor/extensions/slash-command/DefaultSlashCommands';
+import { DateFormat } from '@/localization/constants/DateFormat';
+import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 describe('DefaultSlashCommands', () => {
   let editor: Editor;
@@ -245,6 +248,27 @@ describe('DefaultSlashCommands', () => {
       onSelect?.();
 
       expect(editor.isActive('bulletList')).toBe(true);
+    });
+
+    it('should replace the typed command with today in the member date format', () => {
+      jest.useFakeTimers().setSystemTime(new Date('2026-03-25T23:30:00Z'));
+      jotaiStore.set(workspaceMemberFormatPreferencesState.atom, {
+        ...jotaiStore.get(workspaceMemberFormatPreferencesState.atom),
+        timeZone: 'Asia/Tokyo',
+        dateFormat: DateFormat.YEAR_FIRST,
+      });
+
+      const todayCommand = DEFAULT_SLASH_COMMANDS.find(
+        (cmd) => cmd.id === 'today',
+      );
+
+      editor.commands.setContent('<p>Note /today</p>');
+
+      todayCommand?.getOnSelect(editor, { from: 6, to: 12 })();
+
+      expect(editor.getText()).toBe('Note 2026 Mar 26 ');
+
+      jest.useRealTimers();
     });
   });
 
