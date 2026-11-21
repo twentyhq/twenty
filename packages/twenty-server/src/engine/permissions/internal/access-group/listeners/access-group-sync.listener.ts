@@ -25,6 +25,7 @@ import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event
 
 const FLAGS_AFFECTING_ACCESS_GROUPS = [
   FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
+  FeatureFlagKey.IS_PERMISSION_TABLES_ENABLED,
   FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
   FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
 ];
