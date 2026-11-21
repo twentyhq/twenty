@@ -76,7 +76,6 @@ export const getScopedRelationRecordGqlFields = ({
           recordGqlFields: {
             // Columns with the same scope share a response key, so its entry selects the fields of all of them
             ...sameScopeRelationWithArguments?.recordGqlFields,
-            // A summary reads its aggregate alone, so its related records are fetched by id only
             ...(isDefined(summary)
               ? { id: true }
               : getRelatedRecordGqlFields({
