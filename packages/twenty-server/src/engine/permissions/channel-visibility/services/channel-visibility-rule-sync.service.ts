@@ -30,6 +30,11 @@ import { type ChannelVisibilityLevel } from 'src/engine/permissions/channel-visi
 import { type VisibilityChannel } from 'src/engine/permissions/channel-visibility/types/visibility-channel.type';
 import { isPersonalRole } from 'src/engine/permissions/channel-visibility/utils/is-personal-role.util';
 import { computeChannelIdsByVisibilityLevel } from 'src/engine/permissions/channel-visibility/utils/compute-channel-ids-by-visibility-level.util';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/permissions/permissions.exception';
+import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type ChannelVisibilityObjectRules = {
@@ -51,6 +56,43 @@ const MESSAGE_SHARED_LEVEL: Record<
   [MessageChannelVisibility.SUBJECT]: 'subject',
   [MessageChannelVisibility.METADATA]: 'metadata',
 };
+
+const CHANNEL_VISIBILITY_LEVELS: ChannelVisibilityLevel[] = [
+  'full',
+  'subject',
+  'metadata',
+];
+
+// a role keeps the attachments of its role wide grant, except the ones of a message
+const buildAttachmentNotOfMessageRule = ({
+  flatRole,
+  buildId,
+  targetMessageFieldMetadataId,
+}: {
+  flatRole: FlatRole;
+  buildId: (kind: string) => string;
+  targetMessageFieldMetadataId: string;
+}): UpsertRowLevelPermissionRulesInput['rules'][number] => ({
+  id: buildId('rule'),
+  canReadRecords: true,
+  canUpdateRecords: flatRole.canUpdateAllObjectRecords,
+  canSoftDeleteRecords: flatRole.canSoftDeleteAllObjectRecords,
+  canDestroyRecords: flatRole.canDestroyAllObjectRecords,
+  predicateGroups: [
+    {
+      id: buildId('group'),
+      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+      predicates: [
+        {
+          id: buildId('predicate'),
+          fieldMetadataId: targetMessageFieldMetadataId,
+          operand: RowLevelPermissionPredicateOperand.IS_EMPTY,
+          value: null,
+        },
+      ],
+    },
+  ],
+});
 
 @Injectable()
 export class ChannelVisibilityRuleSyncService {
@@ -82,7 +124,26 @@ export class ChannelVisibilityRuleSyncService {
         'flatWorkspaceMemberMaps',
       ]);
 
+    const { objectIdByName, fieldIdByObjectIdAndName } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'objectIdByName',
+        'fieldIdByObjectIdAndName',
+      ]);
+
     if (!featureFlagsMap[FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED]) {
+      await this.personalRoleService.deletePersonalRoles({ workspaceId });
+      await this.rowLevelPermissionPredicateService.upsertManySystemRowLevelPermissionRules(
+        {
+          workspaceId,
+          inputs: await this.buildAttachmentRulesInputs({
+            workspaceId,
+            objectIdByName,
+            fieldIdByObjectIdAndName,
+            isChannelVisibilityRlsEnabled: false,
+          }),
+        },
+      );
+
       return;
     }
 
@@ -101,11 +162,6 @@ export class ChannelVisibilityRuleSyncService {
         userWorkspaceIds,
       });
     const objectsRules = await this.findObjectsRules(workspaceId);
-    const { objectIdByName, fieldIdByObjectIdAndName } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'objectIdByName',
-        'fieldIdByObjectIdAndName',
-      ]);
 
     const personalRolesInputs = [...personalRoleIdByUserWorkspaceId].flatMap(
       ([userWorkspaceId, roleId]) =>
@@ -131,22 +187,23 @@ export class ChannelVisibilityRuleSyncService {
             workspaceId,
             objectIdByName,
             fieldIdByObjectIdAndName,
+            isChannelVisibilityRlsEnabled: true,
           })),
         ],
       },
     );
   }
 
-  // A role keeps the attachments it reached through its role wide grant, except the ones of a message, which follow the message.
-  // A role an admin already set up on attachments, with a grant or rules of their own, is left as they decided.
   private async buildAttachmentRulesInputs({
     workspaceId,
     objectIdByName,
     fieldIdByObjectIdAndName,
+    isChannelVisibilityRlsEnabled,
   }: {
     workspaceId: string;
     objectIdByName: Record<string, string | undefined>;
     fieldIdByObjectIdAndName: Map<string, string>;
+    isChannelVisibilityRlsEnabled: boolean;
   }): Promise<
     {
       rulesInput: UpsertRowLevelPermissionRulesInput;
@@ -219,11 +276,12 @@ export class ChannelVisibilityRuleSyncService {
         );
         const hasSystemRule = ruleIds.includes(buildId('rule'));
         const shouldHaveSystemRule =
+          isChannelVisibilityRlsEnabled &&
           flatRole.canReadAllObjectRecords &&
-          !roleIdsWithObjectPermission.has(flatRole.id) &&
-          !hasOwnRules;
+          !roleIdsWithObjectPermission.has(flatRole.id);
 
-        if (!shouldHaveSystemRule && !hasSystemRule) {
+        // an upsert replaces every rule of the role on attachments, so a role with rules of its own is left alone
+        if (hasOwnRules || (!shouldHaveSystemRule && !hasSystemRule)) {
           return [];
         }
 
@@ -235,30 +293,11 @@ export class ChannelVisibilityRuleSyncService {
               objectMetadataId,
               rules: shouldHaveSystemRule
                 ? [
-                    {
-                      id: buildId('rule'),
-                      canReadRecords: true,
-                      canUpdateRecords: flatRole.canUpdateAllObjectRecords,
-                      canSoftDeleteRecords:
-                        flatRole.canSoftDeleteAllObjectRecords,
-                      canDestroyRecords: flatRole.canDestroyAllObjectRecords,
-                      predicateGroups: [
-                        {
-                          id: buildId('group'),
-                          logicalOperator:
-                            RowLevelPermissionPredicateGroupLogicalOperator.AND,
-                          predicates: [
-                            {
-                              id: buildId('predicate'),
-                              fieldMetadataId: targetMessageFieldMetadataId,
-                              operand:
-                                RowLevelPermissionPredicateOperand.IS_EMPTY,
-                              value: null,
-                            },
-                          ],
-                        },
-                      ],
-                    },
+                    buildAttachmentNotOfMessageRule({
+                      flatRole,
+                      buildId,
+                      targetMessageFieldMetadataId,
+                    }),
                   ]
                 : [],
             },
@@ -353,8 +392,9 @@ export class ChannelVisibilityRuleSyncService {
       );
 
       if (!isDefined(fieldMetadataId)) {
-        throw new Error(
+        throw new PermissionsException(
           `Field ${fieldName} not found for channel visibility rules`,
+          PermissionsExceptionCode.FIELD_METADATA_NOT_FOUND,
         );
       }
 
@@ -373,9 +413,9 @@ export class ChannelVisibilityRuleSyncService {
       userWorkspaceId,
     });
     // a rule without a channel would be refused, and grants nothing anyway
-    const levels = (
-      Object.keys(channelIdsByVisibilityLevel) as ChannelVisibilityLevel[]
-    ).filter((level) => channelIdsByVisibilityLevel[level].length > 0);
+    const levels = CHANNEL_VISIBILITY_LEVELS.filter(
+      (level) => channelIdsByVisibilityLevel[level].length > 0,
+    );
     const buildId = (level: ChannelVisibilityLevel, kind: string) =>
       v5(
         `${roleId}:${objectMetadataId}:${level}:${kind}`,

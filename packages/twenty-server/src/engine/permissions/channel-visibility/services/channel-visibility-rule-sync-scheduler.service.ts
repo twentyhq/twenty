@@ -27,6 +27,10 @@ export class ChannelVisibilityRuleSyncSchedulerService {
       return;
     }
 
+    await this.scheduleSync(workspaceId);
+  }
+
+  async scheduleSync(workspaceId: string): Promise<void> {
     await this.messageQueueService.add<SyncChannelVisibilityRulesJobData>(
       SYNC_CHANNEL_VISIBILITY_RULES_JOB_NAME,
       { workspaceId },
