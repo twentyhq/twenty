@@ -119,7 +119,7 @@ msgstr "{operationLabel} de {aggregateFieldLabel}"
 #. js-lingui-id: nzKj4z
 #: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
 msgid "{senderName} in {threadLabel}"
-msgstr ""
+msgstr "{senderName} dans {threadLabel}"
 
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2134,7 +2134,7 @@ msgstr "Invitez votre équipe sur Twenty."
 #. js-lingui-id: pYD4lD
 #: src/engine/core-modules/web-push/web-push.exception.ts
 msgid "Browser notifications were set up with an outdated key. Reload the page to set them up again."
-msgstr ""
+msgstr "Les notifications du navigateur ont été configurées avec une clé obsolète. Rechargez la page pour les configurer à nouveau."
 
 #. js-lingui-id: 8pSVh1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -6087,7 +6087,7 @@ msgstr "Premier message amical"
 #. js-lingui-id: 0QhRwZ
 #: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
 msgid "First name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
-msgstr ""
+msgstr "Le prénom doit comporter au maximum {WORKSPACE_MEMBER_NAME_MAX_LENGTH} caractères."
 
 #. js-lingui-id: BUBVGN
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
@@ -6142,7 +6142,7 @@ msgstr "L'action du formulaire doit avoir au moins un champ"
 #. js-lingui-id: CjVkbV
 #: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
 msgid "Former member"
-msgstr ""
+msgstr "Ancien membre"
 
 #. js-lingui-id: JRr+QW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
@@ -8157,7 +8157,7 @@ msgstr "Expéditeur du dernier message"
 #. js-lingui-id: bMq9eP
 #: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
 msgid "Last name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
-msgstr ""
+msgstr "Le nom doit comporter au maximum {WORKSPACE_MEMBER_NAME_MAX_LENGTH} caractères."
 
 #. js-lingui-id: R2LOsP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -9439,7 +9439,7 @@ msgstr "De nouveaux codes de secours ont été générés pour votre compte"
 #. js-lingui-id: hIQkLb
 #: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
 msgid "New chat"
-msgstr ""
+msgstr "Nouveau chat"
 
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -9461,7 +9461,7 @@ msgstr "La nouvelle adresse e-mail doit être différente de l'e-mail actuel"
 #. js-lingui-id: mTBAsF
 #: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
 msgid "New message"
-msgstr ""
+msgstr "Nouveau message"
 
 #. js-lingui-id: nXXBKB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -14780,7 +14780,7 @@ msgstr "Cette application nécessite une version plus récente que celle à laqu
 #. js-lingui-id: MZz+Ud
 #: src/engine/core-modules/application/utils/to-application-billing-prices-or-throw.util.ts
 msgid "This application declares invalid prices"
-msgstr ""
+msgstr "Cette application déclare des prix non valides"
 
 #. js-lingui-id: ecIX3O
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -14830,7 +14830,7 @@ msgstr "Cette disposition de facturation comporte des paramètres non valides."
 #. js-lingui-id: NsbtYx
 #: src/engine/core-modules/web-push/web-push.exception.ts
 msgid "This browser's push service is not supported."
-msgstr ""
+msgstr "Le service de notifications push de ce navigateur n'est pas pris en charge."
 
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -18270,6 +18270,11 @@ msgstr "Vous n'avez pas la permission d'accéder à cette fonctionnalité. Veuil
 msgid "You do not have permission to access this workflow."
 msgstr "Vous n'avez pas l'autorisation d'accéder à ce workflow."
 
+#. js-lingui-id: /qkY9j
+#: src/engine/permissions/permissions.exception.ts
+msgid "You do not have permission to change this record."
+msgstr "Vous n'avez pas l'autorisation de modifier cet enregistrement."
+
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
@@ -18469,7 +18474,7 @@ msgstr "Votre rôle dans cet espace de travail n'a pas pu être trouvé. Veuille
 #. js-lingui-id: iug+lj
 #: src/engine/core-modules/web-push/web-push.exception.ts
 msgid "Your session has expired. Sign in again to turn on browser notifications."
-msgstr ""
+msgstr "Votre session a expiré. Connectez-vous à nouveau pour activer les notifications du navigateur."
 
 #. js-lingui-id: 9T+AIN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

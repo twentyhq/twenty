@@ -119,7 +119,7 @@ msgstr "{operationLabel} 的 {aggregateFieldLabel}"
 #. js-lingui-id: nzKj4z
 #: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
 msgid "{senderName} in {threadLabel}"
-msgstr ""
+msgstr "{senderName} 在 {threadLabel} 中"
 
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2134,7 +2134,7 @@ msgstr "将您的团队带入 Twenty。"
 #. js-lingui-id: pYD4lD
 #: src/engine/core-modules/web-push/web-push.exception.ts
 msgid "Browser notifications were set up with an outdated key. Reload the page to set them up again."
-msgstr ""
+msgstr "浏览器通知使用了过时的密钥进行设置。请重新加载页面以再次设置。"
 
 #. js-lingui-id: 8pSVh1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -6087,7 +6087,7 @@ msgstr "第一条友好提示"
 #. js-lingui-id: 0QhRwZ
 #: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
 msgid "First name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
-msgstr ""
+msgstr "名字不得超过 {WORKSPACE_MEMBER_NAME_MAX_LENGTH} 个字符。"
 
 #. js-lingui-id: BUBVGN
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
@@ -6142,7 +6142,7 @@ msgstr "表单操作必须至少包含一个字段"
 #. js-lingui-id: CjVkbV
 #: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
 msgid "Former member"
-msgstr ""
+msgstr "前成员"
 
 #. js-lingui-id: JRr+QW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
@@ -8157,7 +8157,7 @@ msgstr "最后一条消息的发送者"
 #. js-lingui-id: bMq9eP
 #: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
 msgid "Last name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
-msgstr ""
+msgstr "姓氏不得超过 {WORKSPACE_MEMBER_NAME_MAX_LENGTH} 个字符。"
 
 #. js-lingui-id: R2LOsP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -9439,7 +9439,7 @@ msgstr "已为您的账户生成新的备用代码"
 #. js-lingui-id: hIQkLb
 #: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
 msgid "New chat"
-msgstr ""
+msgstr "新聊天"
 
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -9461,7 +9461,7 @@ msgstr ""
 #. js-lingui-id: mTBAsF
 #: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
 msgid "New message"
-msgstr ""
+msgstr "新消息"
 
 #. js-lingui-id: nXXBKB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -14780,7 +14780,7 @@ msgstr "此应用所需版本高于当前工作区已升级到的版本。请在
 #. js-lingui-id: MZz+Ud
 #: src/engine/core-modules/application/utils/to-application-billing-prices-or-throw.util.ts
 msgid "This application declares invalid prices"
-msgstr ""
+msgstr "此应用程序声明了无效的价格"
 
 #. js-lingui-id: ecIX3O
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -14830,7 +14830,7 @@ msgstr "此计费安排的设置无效。"
 #. js-lingui-id: NsbtYx
 #: src/engine/core-modules/web-push/web-push.exception.ts
 msgid "This browser's push service is not supported."
-msgstr ""
+msgstr "不支持此浏览器的推送服务。"
 
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -18270,6 +18270,11 @@ msgstr "您无权访问此功能。请联系您的工作区管理员获取权限
 msgid "You do not have permission to access this workflow."
 msgstr "您没有权限访问此工作流。"
 
+#. js-lingui-id: /qkY9j
+#: src/engine/permissions/permissions.exception.ts
+msgid "You do not have permission to change this record."
+msgstr "您没有权限更改此记录。"
+
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
@@ -18469,7 +18474,7 @@ msgstr "无法找到您在此工作区中的角色。请联系您的工作区管
 #. js-lingui-id: iug+lj
 #: src/engine/core-modules/web-push/web-push.exception.ts
 msgid "Your session has expired. Sign in again to turn on browser notifications."
-msgstr ""
+msgstr "您的会话已过期。请重新登录以开启浏览器通知。"
 
 #. js-lingui-id: 9T+AIN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

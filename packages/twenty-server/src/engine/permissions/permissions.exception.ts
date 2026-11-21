@@ -31,6 +31,7 @@ export enum PermissionsExceptionCode {
   OBJECT_METADATA_NOT_FOUND = 'OBJECT_METADATA_NOT_FOUND_PERMISSIONS',
   INVALID_SETTING = 'INVALID_SETTING_PERMISSIONS',
   ROLE_NOT_EDITABLE = 'ROLE_NOT_EDITABLE',
+  RECORD_NOT_EDITABLE = 'RECORD_NOT_EDITABLE',
   DEFAULT_ROLE_CANNOT_BE_DELETED = 'DEFAULT_ROLE_CANNOT_BE_DELETED',
   MEMBER_ROLE_CANNOT_BE_DELETED = 'MEMBER_ROLE_CANNOT_BE_DELETED',
   CUSTOM_ROLES_NOT_ENTITLED = 'CUSTOM_ROLES_NOT_ENTITLED',
@@ -116,6 +117,8 @@ const getPermissionsExceptionUserFriendlyMessage = (
       return msg`Invalid permission setting.`;
     case PermissionsExceptionCode.ROLE_NOT_EDITABLE:
       return msg`This role cannot be edited.`;
+    case PermissionsExceptionCode.RECORD_NOT_EDITABLE:
+      return msg`You do not have permission to change this record.`;
     case PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED:
       return msg`The default role cannot be deleted.`;
     case PermissionsExceptionCode.MEMBER_ROLE_CANNOT_BE_DELETED:
@@ -210,6 +213,7 @@ export enum PermissionsExceptionMessage {
   OBJECT_METADATA_NOT_FOUND = 'Object metadata not found',
   INVALID_SETTING = 'Invalid permission setting (unknown value)',
   ROLE_NOT_EDITABLE = 'Role is not editable',
+  RECORD_NOT_EDITABLE = 'Record is not editable',
   DEFAULT_ROLE_CANNOT_BE_DELETED = 'Default role cannot be deleted',
   MEMBER_ROLE_CANNOT_BE_DELETED = 'Member role cannot be deleted',
   CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT = 'Cannot add object permission on system object',

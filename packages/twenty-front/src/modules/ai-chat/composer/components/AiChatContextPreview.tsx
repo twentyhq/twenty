@@ -1,7 +1,7 @@
 import { ChatFilePreview } from '@/chat/components/ChatFilePreview';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
-import { aiChatSelectedFilesFamilyState } from '@/ai-chat/composer/states/aiChatSelectedFilesFamilyState';
-import { aiChatUploadedFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadedFilesFamilyState';
+import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/states/composer/aiChatComposerUploadingFilesFamilyState';
+import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/states/composer/aiChatComposerAttachmentsFamilyState';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -15,23 +15,20 @@ const StyledPreviewsContainer = styled.div`
 
 export const AiChatContextPreview = () => {
   const { threadId } = useAiChatInstanceOrThrow();
-  const [aiChatSelectedFiles, setAiChatSelectedFiles] = useAtomFamilyState(
-    aiChatSelectedFilesFamilyState,
-    { threadId },
-  );
-  const [aiChatUploadedFiles, setAiChatUploadedFiles] = useAtomFamilyState(
-    aiChatUploadedFilesFamilyState,
-    { threadId },
-  );
+  const [aiChatComposerUploadingFiles, setAiChatComposerUploadingFiles] =
+    useAtomFamilyState(aiChatComposerUploadingFilesFamilyState, { threadId });
+  const [aiChatComposerAttachments, setAiChatComposerAttachments] =
+    useAtomFamilyState(aiChatComposerAttachmentsFamilyState, { threadId });
 
   const handleRemoveUploadedFile = (fileIndex: number) => {
-    setAiChatUploadedFiles(
-      aiChatUploadedFiles.filter((_, index) => fileIndex !== index),
+    setAiChatComposerAttachments(
+      aiChatComposerAttachments.filter((_, index) => fileIndex !== index),
     );
   };
 
   const hasFiles =
-    aiChatSelectedFiles.length > 0 || aiChatUploadedFiles.length > 0;
+    aiChatComposerUploadingFiles.length > 0 ||
+    aiChatComposerAttachments.length > 0;
 
   if (!hasFiles) {
     return null;
@@ -39,13 +36,13 @@ export const AiChatContextPreview = () => {
 
   return (
     <StyledPreviewsContainer>
-      {aiChatSelectedFiles.map((file, index) => (
+      {aiChatComposerUploadingFiles.map((file, index) => (
         <ChatFilePreview
           file={file}
           key={`${index}-${file.name}`}
           onRemove={() => {
-            setAiChatSelectedFiles(
-              aiChatSelectedFiles.filter(
+            setAiChatComposerUploadingFiles(
+              aiChatComposerUploadingFiles.filter(
                 (selectedFile) => selectedFile !== file,
               ),
             );
@@ -53,7 +50,7 @@ export const AiChatContextPreview = () => {
           isUploading
         />
       ))}
-      {aiChatUploadedFiles.map((file, index) => (
+      {aiChatComposerAttachments.map((file, index) => (
         <ChatFilePreview
           file={file}
           key={index}

@@ -15,8 +15,7 @@ import { AiChatNewThreadRecipientPicker } from '@/ai-chat/composer/components/Ai
 import { useAiChatAssistantProfile } from '@/ai-chat/hooks/useAiChatAssistantProfile';
 import { useAiChatNewThreadRecipientSuggestions } from '@/ai-chat/composer/hooks/useAiChatNewThreadRecipientSuggestions';
 import { aiChatChannelsState } from '@/ai-chat/threads/states/aiChatChannelsState';
-import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
-import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { AutocompleteRoot } from '@/ui/input/components/AutocompleteRoot';
@@ -29,7 +28,6 @@ import { useRemoveFocusItemFromFocusStackOnUnmount } from '@/ui/utilities/focus/
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -76,17 +74,14 @@ export const AiChatNewThreadRecipientField = () => {
     useRemoveFocusItemFromFocusStackById();
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
   const [recipients, setRecipients] = useAtomFamilyState(
-    aiChatNewThreadRecipientsFamilyState,
+    aiChatComposerNewThreadRecipientsFamilyState,
     newAiChatThreadId,
-  );
-  const [aiChatNewThreadChannelId, setAiChatNewThreadChannelId] = useAtomState(
-    aiChatNewThreadChannelIdState,
   );
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
   const channel = useAtomStateValue(aiChatChannelsState)?.find(
-    ({ id }) => id === aiChatNewThreadChannelId,
+    ({ id }) => id === recipients.channelId,
   );
   const recipientWorkspaceMembers = currentWorkspaceMembers.filter(({ id }) =>
     recipients.recipientWorkspaceMemberIds.includes(id),
@@ -224,7 +219,7 @@ export const AiChatNewThreadRecipientField = () => {
               }
               onRemove={() => {
                 focusAddRecipientsInput();
-                setAiChatNewThreadChannelId(null);
+                setRecipients((current) => ({ ...current, channelId: null }));
               }}
             />
           )}

@@ -1,8 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_MESSAGE_ROLE } from '@/ai-chat/messages/constants/AgentMessageRole';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
-import { aiChatThreadVisitFamilyState } from '@/ai-chat/threads/states/aiChatThreadVisitFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
+import { aiChatThreadViewVisitFamilyState } from '@/ai-chat/states/view/aiChatThreadViewVisitFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { isAiChatMessageOwn } from '@/ai-chat/messages/utils/isAiChatMessageOwn';
 import { isSilentAiChatMessage } from '@/ai-chat/messages/utils/isSilentAiChatMessage';
@@ -16,7 +16,7 @@ export const aiChatFirstUnreadMessageIdFamilySelector =
     get:
       (threadId) =>
       ({ get }) => {
-        const visit = get(aiChatThreadVisitFamilyState, { threadId });
+        const visit = get(aiChatThreadViewVisitFamilyState, { threadId });
 
         if (!visit?.isUnread) {
           return null;
@@ -34,9 +34,9 @@ export const aiChatFirstUnreadMessageIdFamilySelector =
           ? new Date(visit.lastReadAt).getTime()
           : null;
 
-        const messages = get(aiChatMessagesFamilyState, { threadId }).filter(
-          (message) => !isSilentAiChatMessage(message),
-        );
+        const messages = get(aiChatThreadDisplayedMessagesFamilyState, {
+          threadId,
+        }).filter((message) => !isSilentAiChatMessage(message));
 
         const firstUnreadMessageIndex = messages.findIndex((message) => {
           const createdAt = message.metadata?.createdAt;

@@ -52,12 +52,6 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   }),
 }));
 
-let mockIsAiChatInboxEnabled = true;
-
-jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => mockIsAiChatInboxEnabled,
-}));
-
 jest.mock('@/ui/layout/page/components/WorkspaceRouteUnavailable', () => ({
   WorkspaceRouteUnavailable: () => <div data-testid="route-unavailable" />,
 }));
@@ -115,13 +109,16 @@ jest.mock('@/ui/layout/page/components/PageCardLayout', () => ({
   ),
 }));
 
-jest.mock('~/pages/object-record/RecordShowPageHeader', () => ({
-  RecordShowPageHeader: ({ children }: { children?: React.ReactNode }) => (
-    <div data-testid="record-header">{children}</div>
-  ),
-}));
+jest.mock(
+  '@/object-record/record-show/components/RecordShowPageHeader',
+  () => ({
+    RecordShowPageHeader: ({ children }: { children?: React.ReactNode }) => (
+      <div data-testid="record-header">{children}</div>
+    ),
+  }),
+);
 
-jest.mock('~/pages/object-record/RecordShowPageTitle', () => ({
+jest.mock('@/object-record/record-show/components/RecordShowPageTitle', () => ({
   RecordShowPageTitle: () => <div data-testid="record-page-title" />,
 }));
 
@@ -160,26 +157,6 @@ describe('RecordShowPage workspace surface composition', () => {
     );
     expect(screen.queryByTestId('record-renderer')).not.toBeInTheDocument();
   });
-
-  it.each([
-    [true, '/inbox/chat-1'],
-    [false, '/chat/chat-1'],
-  ])(
-    'sends a chat record with the inbox on=%s to %s',
-    (isAiChatInboxEnabled, expectedPath) => {
-      mockIsAiChatInboxEnabled = isAiChatInboxEnabled;
-      mockObjectMetadataItems = [{ nameSingular: 'agentChatThread' }];
-      mockParameters = {
-        objectNameSingular: 'agentChatThread',
-        objectRecordId: 'chat-1',
-      };
-
-      render(<RecordShowPage />);
-
-      expect(screen.getByTestId('navigate')).toHaveTextContent(expectedPath);
-      expect(screen.queryByTestId('record-renderer')).not.toBeInTheDocument();
-    },
-  );
 
   it('keeps the existing main-page chrome and canonical renderer', () => {
     render(<RecordShowPage />);
