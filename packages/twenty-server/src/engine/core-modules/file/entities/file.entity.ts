@@ -16,6 +16,7 @@ import {
 import { ADD_STATUS_TO_FILE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-status-to-file-upgrade-command-name.constant';
 import { ALLOW_SERVER_SCOPED_FILE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/allow-server-scoped-file-upgrade-command-name.constant';
 import { ADD_REMOTE_ORIGIN_TO_FILE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-remote-origin-to-file-upgrade-command-name.constant';
+import { ADD_RECORD_ID_TO_FILE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-record-id-to-file-upgrade-command-name.constant';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileRemoteOrigin } from 'src/engine/core-modules/file/types/file-remote-origin.type';
@@ -144,4 +145,10 @@ export class FileEntity {
   })
   @Column({ type: 'jsonb', nullable: true })
   remoteOrigin: FileRemoteOrigin | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_RECORD_ID_TO_FILE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'uuid', nullable: true })
+  recordId: string | null;
 }
