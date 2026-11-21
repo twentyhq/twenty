@@ -48,6 +48,8 @@ export default defineView({
 - You can also declare `filters`, `filterGroups`, `sorts`, `groups`, and `fieldGroups` for advanced configurations.
 - `position` controls ordering when multiple views exist for the same object.
 
+A `relationScope`, a target on a scoped column, `relationAggregateOperation` and `label` are stored and validated, but tables do not show them yet.
+
 ## Optional properties
 
 | Property                                                                                                    | Values                                                                              | Description                                                                                                                                                                                    |
@@ -174,8 +176,6 @@ fields: [
 | `limit`        | How many related records to show, from 1 to 60.                                                                                                                                                                                                                                              |
 
 Deleting or deactivating a field a scope uses removes the column, rather than dropping the condition and showing more records.
-
-The scope is stored and validated, but the app does not apply it to the column yet.
 
 ## How views show up in the UI
 
