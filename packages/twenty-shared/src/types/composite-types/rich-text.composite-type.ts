@@ -25,6 +25,12 @@ export const richTextCompositeType: CompositeType = {
       hidden: false,
       isRequired: false,
     },
+    {
+      name: 'fileIds',
+      type: FieldMetadataType.RAW_JSON,
+      hidden: true,
+      isRequired: false,
+    },
   ],
 };
 
