@@ -54,8 +54,6 @@ export const getScopedRelationRecordGqlFields = ({
           filter,
           orderBy,
           first,
-          // Only a limit can leave matching records out of the loaded ones
-          shouldIncludeTotalCount: isDefined(first),
           recordGqlFields: {
             // Columns with the same scope share a response key, so its entry selects the fields of all of them
             ...(isRecordGqlFieldsRelationWithArguments(sameScopeRelation) &&

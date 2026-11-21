@@ -20,7 +20,6 @@ describe('buildAddedRecordField', () => {
       isCanonical: false,
       position: 8,
       relationTargetFieldMetadataId: 'industry-field',
-      relationScope: undefined,
     });
   });
 

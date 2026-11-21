@@ -1,4 +1,5 @@
 import { type ReadableRelationWithArguments } from '@/object-record/graphql/types/ReadableRelationWithArguments';
+import { getRelationWithArgumentsVariableNames } from '@/object-record/graphql/utils/getRelationWithArgumentsVariableNames';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { capitalize } from 'twenty-shared/utils';
 
@@ -9,9 +10,10 @@ export const getRelationsWithArgumentsVariableDefinitions = (
   readableRelationsWithArguments
     .map(({ responseKey, relationObjectMetadataItem }) => {
       const typeName = capitalize(relationObjectMetadataItem.nameSingular);
+      const variableNames = getRelationWithArgumentsVariableNames(responseKey);
 
       return doNotTranslate(
-        `, $${responseKey}Filter: ${typeName}FilterInput, $${responseKey}OrderBy: [${typeName}OrderByInput], $${responseKey}First: Int`,
+        `, $${variableNames.filter}: ${typeName}FilterInput, $${variableNames.orderBy}: [${typeName}OrderByInput], $${variableNames.first}: Int`,
       );
     })
     .join('');

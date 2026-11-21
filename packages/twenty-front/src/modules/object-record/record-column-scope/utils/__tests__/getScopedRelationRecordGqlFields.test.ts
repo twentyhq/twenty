@@ -39,7 +39,6 @@ const buildPeopleAlias = (
   recordFieldId: 'people-column',
   relationFieldName: 'people',
   relationObjectMetadataItem: personObjectMetadataItem,
-  relationJoinColumnName: 'companyId',
   ...scopedRelationAlias,
 });
 
@@ -64,7 +63,6 @@ describe('getScopedRelationRecordGqlFields', () => {
         filter: limitedAlias.filter,
         orderBy: limitedAlias.orderBy,
         first: 2,
-        shouldIncludeTotalCount: true,
         recordGqlFields: personIdentifierGqlFields,
       },
       people_all: {
@@ -72,7 +70,6 @@ describe('getScopedRelationRecordGqlFields', () => {
         filter: undefined,
         orderBy: undefined,
         first: undefined,
-        shouldIncludeTotalCount: false,
         recordGqlFields: personIdentifierGqlFields,
       },
     });
@@ -93,7 +90,6 @@ describe('getScopedRelationRecordGqlFields', () => {
     ).toEqual({
       people_limited: expect.objectContaining({
         first: 2,
-        shouldIncludeTotalCount: true,
         recordGqlFields: { ...personIdentifierGqlFields, emails: true },
       }),
     });
@@ -145,7 +141,6 @@ describe('getScopedRelationRecordGqlFields', () => {
             responseKey: 'taskTargets_limited',
             relationFieldName: 'taskTargets',
             relationObjectMetadataItem: taskTargetObjectMetadataItem,
-            relationJoinColumnName: 'targetPersonId',
             first: 1,
             scopedRelationJunction,
           },
@@ -155,7 +150,6 @@ describe('getScopedRelationRecordGqlFields', () => {
     ).toEqual({
       taskTargets_limited: expect.objectContaining({
         relationFieldName: 'taskTargets',
-        shouldIncludeTotalCount: true,
         recordGqlFields: {
           ...buildIdentifierGqlFields(taskTargetObjectMetadataItem),
           task: buildIdentifierGqlFields(

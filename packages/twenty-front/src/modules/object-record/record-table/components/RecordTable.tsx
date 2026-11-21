@@ -90,7 +90,7 @@ export const RecordTable = () => {
 
   return (
     <ScopedRelationAliasesContext.Provider value={scopedRelationAliases}>
-      {/* Under the provider: a reload stores the related records its scoped relation aliases look up */}
+      {/* Must stay under the provider: a reload stores related records under the scoped relation aliases */}
       <RecordTableRecordLimitReloadEffect />
       {canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions: objectPermissions,

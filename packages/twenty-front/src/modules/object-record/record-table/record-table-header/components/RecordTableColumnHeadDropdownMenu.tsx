@@ -3,11 +3,8 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { isFieldMetadataItemFilterableAndSortableSelector } from '@/object-metadata/states/isFieldMetadataItemFilterableAndSortableSelector';
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { useRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useRecordFieldLookupTarget';
-import { isLookupColumnsEnabledSelector } from '@/object-record/record-column-lookup/states/isLookupColumnsEnabledSelector';
-import { isScopedRelationColumn } from '@/object-record/record-column-scope/utils/isScopedRelationColumn';
+import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
@@ -17,11 +14,10 @@ import { useDeleteRecordTableColumn } from '@/object-record/record-table/hooks/u
 import { useMoveTableColumn } from '@/object-record/record-table/hooks/useMoveTableColumn';
 import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
 import { useOpenEditColumnInSidePanel } from '@/side-panel/hooks/useOpenEditColumnInSidePanel';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { isDefined } from 'twenty-shared/utils';
+import { useContext } from 'react';
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -133,25 +129,12 @@ export const RecordTableColumnHeadDropdownMenu = ({
 
   const { deleteRecordTableColumn } = useDeleteRecordTableColumn(recordTableId);
 
-  const { foundFieldMetadataItem: fieldMetadataItem } =
-    useAtomFamilySelectorValue(fieldMetadataItemByIdSelector, {
-      fieldMetadataItemId: recordField.fieldMetadataItemId,
-    });
-  const isLookupColumnsEnabled = useAtomStateValue(
-    isLookupColumnsEnabledSelector,
+  const isScopedRelationColumn = useContext(ScopedRelationAliasesContext).some(
+    ({ recordFieldId }) => recordFieldId === recordField.id,
   );
   const canAddLookupColumns = useCanAddRecordTableLookupColumns();
-  const { objectMetadataItems } = useObjectMetadataItems();
 
-  const canEditColumn =
-    canAddLookupColumns &&
-    isDefined(fieldMetadataItem) &&
-    isScopedRelationColumn({
-      fieldMetadataItem,
-      recordField,
-      objectMetadataItems,
-      isLookupColumnsEnabled,
-    });
+  const canEditColumn = canAddLookupColumns && isScopedRelationColumn;
 
   const { openEditColumnInSidePanel } =
     useOpenEditColumnInSidePanel(recordTableId);
