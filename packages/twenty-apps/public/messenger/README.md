@@ -8,6 +8,7 @@ Brings the Facebook Messenger conversations of your Pages into Twenty and lets y
 - When a customer edits a message, the edit replaces its text in Twenty.
 - When a customer taps a button the Page sent, such as Get Started or a menu item, the tap shows in the conversation.
 - When a customer arrives from a Click-to-Messenger ad or an m.me link, the person record shows the source, the link's ref, and the ad ID and title, with the date.
+- In the app settings, an option creates an opportunity for each person who arrives from a Click-to-Messenger ad, named after the person and the ad.
 - Opening a conversation in Twenty marks it as seen in Messenger.
 - Each customer gets a person record named from their Messenger profile, reused for every later message on the same Page.
 - On connect, past conversations are imported: the 20 most recent messages of each, as Meta allows no more.

@@ -21,6 +21,14 @@ export default defineApplicationRole({
     objects: [
       {
         objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
+        canReadAllRecords: true,
+        canUpdateAllRecords: true,
+        canSoftDeleteAllRecords: false,
+        canDestroyAllRecords: false,
+      },
+      {
+        objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
         canReadAllRecords: true,
         canUpdateAllRecords: true,
