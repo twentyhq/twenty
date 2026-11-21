@@ -8,7 +8,7 @@ import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiC
 import { type AiChatPrepromptMode } from '@/ai-chat/states/aiChatPrepromptState';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/states/composer/aiChatComposerAttachmentsFamilyState';
-import { aiChatOpenThreadIdByInstanceIdState } from '@/ai-chat/states/aiChatOpenThreadIdByInstanceIdState';
+import { aiChatRequiredThreadListenersState } from '@/ai-chat/states/aiChatRequiredThreadListenersState';
 import { aiChatUserSelectedModelTierState } from '@/ai-chat/states/aiChatUserSelectedModelTierState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -66,7 +66,7 @@ export const useOpenAskAiPageWithPreprompt = () => {
     });
 
     const isNewChatStillOpen = Object.values(
-      store.get(aiChatOpenThreadIdByInstanceIdState.atom),
+      store.get(aiChatRequiredThreadListenersState.atom),
     ).includes(newAiChatThreadId);
 
     if (!isNewChatStillOpen) {

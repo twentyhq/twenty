@@ -46,7 +46,7 @@ import { endAiChatReplyStatus } from '@/ai-chat/utils/endAiChatReplyStatus';
 import { getAiChatReplyStatusUnlessStreaming } from '@/ai-chat/utils/getAiChatReplyStatusUnlessStreaming';
 import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
 import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
-import { aiChatOpenThreadIdByInstanceIdState } from '@/ai-chat/states/aiChatOpenThreadIdByInstanceIdState';
+import { aiChatRequiredThreadListenersState } from '@/ai-chat/states/aiChatRequiredThreadListenersState';
 import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { type AiChatNewThreadRecipients } from '@/ai-chat/types/AiChatNewThreadRecipients';
@@ -324,7 +324,7 @@ export const useAiChat = () => {
           );
 
           const isInstanceStillOnThread =
-            store.get(aiChatOpenThreadIdByInstanceIdState.atom)[instanceId] ===
+            store.get(aiChatRequiredThreadListenersState.atom)[instanceId] ===
             threadId;
 
           if (isInstanceStillOnThread) {
@@ -526,7 +526,7 @@ export const useAiChat = () => {
 
       if (isDefined(directMessageThreadId)) {
         const isStillOnNewChat =
-          store.get(aiChatOpenThreadIdByInstanceIdState.atom)[instanceId] ===
+          store.get(aiChatRequiredThreadListenersState.atom)[instanceId] ===
           threadId;
 
         if (isStillOnNewChat) {

@@ -1,27 +1,22 @@
 import { useStore } from 'jotai';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { mapAgentMessagesToUIMessages } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useQueryWithCallbacks } from '@/apollo/hooks/useQueryWithCallbacks';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
+import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai-chat/constants/AiChatRefetchMessagesEventName';
-import { useAiChatSubscription } from '@/ai-chat/instance/hooks/useAiChatSubscription';
+import { AI_CHAT_STREAM_CATCHUP_EVENT_NAME } from '@/ai-chat/constants/AiChatStreamCatchupEventName';
 import { aiChatMessageReactionRevisionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionRevisionsFamilyState';
 import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionsFamilyState';
 import { aiChatThreadReplyErrorFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyErrorFamilyState';
 import { aiChatThreadFetchedMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadFetchedMessagesFamilyState';
-import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
-import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { aiChatThreadIsFetchingMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadIsFetchingMessagesFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
+import { type AiChatStreamCatchupEventDetail } from '@/ai-chat/types/AiChatStreamCatchupEventDetail';
 import { type AiChatThreadEventDetail } from '@/ai-chat/types/AiChatThreadEventDetail';
-import { aiChatThreadUsageFamilyState } from '@/ai-chat/states/server/aiChatThreadUsageFamilyState';
-import { getAiChatUsageFromThread } from '@/ai-chat/usage/utils/getAiChatUsageFromThread';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import {
@@ -30,21 +25,17 @@ import {
 } from '~/generated-metadata/graphql';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
-type AiChatThreadRuntimeEffectProps = {
+type AiChatThreadMessagesLoadEffectProps = {
   threadId: string;
 };
 
-export const AiChatThreadRuntimeEffect = ({
+export const AiChatThreadMessagesLoadEffect = ({
   threadId,
-}: AiChatThreadRuntimeEffectProps) => {
+}: AiChatThreadMessagesLoadEffectProps) => {
   const store = useStore();
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
 
   const isNewThread = threadId === newAiChatThreadId;
-
-  const { applyStreamCatchup } = useAiChatSubscription(
-    isNewThread ? null : threadId,
-  );
 
   const setAiChatThreadIsFetchingMessages = useSetAtomFamilyState(
     aiChatThreadIsFetchingMessagesFamilyState,
@@ -96,9 +87,12 @@ export const AiChatThreadRuntimeEffect = ({
         return;
       }
 
-      applyStreamCatchup(catchup);
+      dispatchBrowserEvent<AiChatStreamCatchupEventDetail>(
+        AI_CHAT_STREAM_CATCHUP_EVENT_NAME,
+        { threadId, catchup },
+      );
     },
-    [threadId, applyStreamCatchup, setAiChatThreadFetchedMessages, store],
+    [threadId, setAiChatThreadFetchedMessages, store],
   );
 
   const handleLoadingChange = useCallback(
@@ -153,56 +147,6 @@ export const AiChatThreadRuntimeEffect = ({
     eventName: SSE_CLIENT_RECONNECTED_EVENT_NAME,
     onBrowserEvent: handleSseClientReconnected,
   });
-
-  const aiChatThreadFetchedMessages = useAtomFamilyStateValue(
-    aiChatThreadFetchedMessagesFamilyState,
-    { threadId },
-  );
-
-  const setAiChatThreadDisplayedMessages = useSetAtomFamilyState(
-    aiChatThreadDisplayedMessagesFamilyState,
-    {
-      threadId,
-    },
-  );
-
-  const aiChatThreadReplyStatus = useAtomFamilyStateValue(
-    aiChatThreadReplyStatusFamilyState,
-    { threadId },
-  );
-
-  const aiChatThreadIsFetchingMessages = useAtomFamilyStateValue(
-    aiChatThreadIsFetchingMessagesFamilyState,
-    { threadId },
-  );
-
-  const aiChatThreadRecord = useAtomFamilySelectorValue(
-    aiChatThreadRecordFamilySelector,
-    threadId,
-  );
-
-  useEffect(() => {
-    const usageAtom = aiChatThreadUsageFamilyState.atomFamily({
-      threadId,
-    });
-
-    if (isDefined(aiChatThreadRecord) && !isDefined(store.get(usageAtom))) {
-      store.set(usageAtom, getAiChatUsageFromThread(aiChatThreadRecord));
-    }
-  }, [store, threadId, aiChatThreadRecord]);
-
-  useEffect(() => {
-    if (aiChatThreadReplyStatus !== 'idle' || aiChatThreadIsFetchingMessages) {
-      return;
-    }
-
-    setAiChatThreadDisplayedMessages(aiChatThreadFetchedMessages.messages);
-  }, [
-    aiChatThreadFetchedMessages,
-    aiChatThreadReplyStatus,
-    aiChatThreadIsFetchingMessages,
-    setAiChatThreadDisplayedMessages,
-  ]);
 
   return null;
 };

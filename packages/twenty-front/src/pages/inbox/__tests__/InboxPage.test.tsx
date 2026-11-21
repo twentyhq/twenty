@@ -158,6 +158,10 @@ jest.mock('@/ai-chat/instance/components/AiChatPageEffects', () => ({
   AiChatPageEffects: () => null,
 }));
 
+jest.mock('@/ai-chat/instance/components/AiChatInstanceEffects', () => ({
+  AiChatInstanceEffects: () => null,
+}));
+
 jest.mock('@/ai-chat/instance/components/AiChatTab', () => ({
   AiChatTab: () => <div>New conversation composer</div>,
 }));
