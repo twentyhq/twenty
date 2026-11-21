@@ -2,5 +2,5 @@ import { type MessengerMessagingEvent } from 'src/logic-functions/types/messenge
 
 export type ParseMessagePayload = {
   pageId: string;
-  event: MessengerMessagingEvent & { message: NonNullable<MessengerMessagingEvent['message']> };
+  event: MessengerMessagingEvent;
 };

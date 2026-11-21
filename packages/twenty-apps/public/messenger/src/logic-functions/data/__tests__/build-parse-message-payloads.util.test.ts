@@ -34,7 +34,7 @@ describe('buildParseMessagePayloads', () => {
       ],
     });
 
-    expect(payloads.map(({ pageId, event }) => [pageId, event.message.mid])).toEqual([
+    expect(payloads.map(({ pageId, event }) => [pageId, event.message?.mid])).toEqual([
       ['page-2', 'm-1'],
       ['page-1', 'm-3'],
     ]);
@@ -59,6 +59,34 @@ describe('buildParseMessagePayloads', () => {
         ],
       }),
     ).toEqual([]);
+  });
+
+  it('keeps edits and referrals', () => {
+    const payloads = buildParseMessagePayloads({
+      object: 'page',
+      entry: [
+        {
+          id: 'page-1',
+          time: 1,
+          messaging: [
+            {
+              sender: { id: 'customer-1' },
+              recipient: { id: 'page-1' },
+              timestamp: 100,
+              message_edit: { mid: 'm-1', text: 'edited', num_edit: 1 },
+            },
+            {
+              sender: { id: 'customer-1' },
+              recipient: { id: 'page-1' },
+              timestamp: 200,
+              referral: { source: 'SHORTLINK', type: 'OPEN_THREAD', ref: 'spring' },
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(payloads).toHaveLength(2);
   });
 
   it('handles a webhook without entries', () => {

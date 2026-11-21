@@ -11,8 +11,9 @@ import { findLatestIncomingMessage } from 'src/logic-functions/data/find-latest-
 import { findMessageChannelByIdOrThrow } from 'src/logic-functions/data/find-message-channel-by-id-or-throw.util';
 import { getOutgoingAttachmentTypeOrThrow } from 'src/logic-functions/data/get-outgoing-attachment-type-or-throw.util';
 import { getPageAccessTokenOrThrow } from 'src/logic-functions/data/get-page-access-token-or-throw.util';
+import { getReplyMessagingType } from 'src/logic-functions/data/get-reply-messaging-type.util';
+import { GraphApiError } from 'src/logic-functions/data/graph-api-error';
 import { graphApiRequest } from 'src/logic-functions/data/graph-api-request.util';
-import { isWithinStandardMessagingWindow } from 'src/logic-functions/data/is-within-standard-messaging-window.util';
 import { sendMessengerAttachment } from 'src/logic-functions/data/send-messenger-attachment.util';
 
 const handler = async ({
@@ -34,14 +35,13 @@ const handler = async ({
     messageChannelId,
     threadExternalId,
   });
+  const replyMessagingType = getReplyMessagingType({
+    lastCustomerMessageAt: latestIncomingMessage?.receivedAt,
+  });
 
-  if (
-    !isWithinStandardMessagingWindow({
-      lastCustomerMessageAt: latestIncomingMessage?.receivedAt,
-    })
-  ) {
+  if (!isDefined(replyMessagingType)) {
     throw new Error(
-      "Messenger only allows replies within 24 hours of the customer's last message.",
+      "Messenger only allows replies within 7 days of the customer's last message.",
     );
   }
 
@@ -49,33 +49,56 @@ const handler = async ({
     connectedAccountId,
     pageId,
   });
-  const messageIds: string[] = [];
 
-  if (isNonEmptyString(text.trim())) {
-    const { message_id } = await graphApiRequest<{ message_id: string }>({
-      accessToken: pageAccessToken,
-      method: 'POST',
-      path: `${pageId}/messages`,
-      data: {
-        recipient: { id: threadExternalId },
-        messaging_type: 'RESPONSE',
-        message: { text },
-      },
-    });
+  const send = async () => {
+    const messageIds: string[] = [];
 
-    messageIds.push(message_id);
-  }
+    if (isNonEmptyString(text.trim())) {
+      const { message_id } = await graphApiRequest<{ message_id: string }>({
+        accessToken: pageAccessToken,
+        method: 'POST',
+        path: `${pageId}/messages`,
+        data: {
+          recipient: { id: threadExternalId },
+          ...replyMessagingType,
+          message: { text },
+        },
+      });
 
-  for (const [index, attachment] of attachments.entries()) {
-    messageIds.push(
-      await sendMessengerAttachment({
-        pageAccessToken,
-        pageId,
-        recipientId: threadExternalId,
-        attachment,
-        attachmentType: attachmentTypes[index] ?? 'file',
-      }),
-    );
+      messageIds.push(message_id);
+    }
+
+    for (const [index, attachment] of attachments.entries()) {
+      messageIds.push(
+        await sendMessengerAttachment({
+          pageAccessToken,
+          pageId,
+          recipientId: threadExternalId,
+          attachment,
+          attachmentType: attachmentTypes[index] ?? 'file',
+          replyMessagingType,
+        }),
+      );
+    }
+
+    return messageIds;
+  };
+
+  let messageIds: string[];
+
+  try {
+    messageIds = await send();
+  } catch (error) {
+    if (
+      error instanceof GraphApiError &&
+      replyMessagingType.messaging_type === 'MESSAGE_TAG'
+    ) {
+      throw new Error(
+        `Replies more than 24 hours after the customer's last message need Meta to approve the Human Agent feature for your Meta app. ${error.message}`,
+      );
+    }
+
+    throw error;
   }
 
   const [externalId] = messageIds;
@@ -91,7 +114,7 @@ export default defineLogicFunction({
   universalIdentifier: MESSENGER_LOGIC_FUNCTION_SEND_MESSAGE_UNIVERSAL_IDENTIFIER,
   name: 'send-message',
   description:
-    'Sends a reply written in Twenty, with its attachments, to its Messenger conversation within the 24 hour window',
+    'Sends a reply written in Twenty, with its attachments, to its Messenger conversation: a standard reply within 24 hours, with the human agent tag up to 7 days',
   timeoutSeconds: 60,
   handler,
 });

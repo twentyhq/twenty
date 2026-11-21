@@ -1,5 +1,4 @@
-import { isDefined } from 'twenty-sdk/utils';
-
+import { isHandledMessengerEvent } from 'src/logic-functions/data/is-handled-messenger-event.util';
 import { type MessengerWebhook } from 'src/logic-functions/types/messenger-webhook.type';
 import { type ParseMessagePayload } from 'src/logic-functions/types/parse-message-payload.type';
 
@@ -9,13 +8,9 @@ export const buildParseMessagePayloads = (
 ): ParseMessagePayload[] =>
   (webhook.entry ?? [])
     .flatMap((entry) =>
-      (entry.messaging ?? []).flatMap((event) => {
-        const { message } = event;
-
-        return isDefined(message)
-          ? [{ pageId: entry.id, event: { ...event, message } }]
-          : [];
-      }),
+      (entry.messaging ?? [])
+        .filter(isHandledMessengerEvent)
+        .map((event) => ({ pageId: entry.id, event })),
     )
     .sort(
       (first, second) => first.event.timestamp - second.event.timestamp,

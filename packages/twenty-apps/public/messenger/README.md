@@ -4,7 +4,9 @@ Brings the Facebook Messenger conversations of your Pages into Twenty and lets y
 
 - Incoming messages and their attachments are imported as conversations, one message channel per Page.
 - Messages the Page sends from Meta Business Suite are imported too.
-- Conversations can be answered from Twenty within 24 hours of the customer's last message, with attachments up to 8 MB for images and 25 MB for other files.
+- Conversations can be answered from Twenty within 24 hours of the customer's last message, and up to 7 days with Meta's Human Agent feature. Attachments go up to 8 MB for images and 25 MB for other files.
+- When a customer edits a message, the edit replaces its text in Twenty.
+- When a customer arrives from a Click-to-Messenger ad or an m.me link, the person record shows the source, the link's ref, and the ad ID and title, with the date.
 - Opening a conversation in Twenty marks it as seen in Messenger.
 - Each customer gets a person record named from their Messenger profile, reused for every later message on the same Page.
 - On connect, past conversations are imported: the 20 most recent messages of each, as Meta allows no more.
@@ -35,7 +37,7 @@ Install the app, then set its variables:
 In the Meta App Dashboard, open **Messenger > Messenger API Settings**:
 
 1. Set the callback URL to the live URL of the app's `receive-webhook` function, shown in its HTTP trigger settings in Twenty (it ends with `/messenger`). Set the verify token to `VERIFY_TOKEN`.
-2. Subscribe to `messages` and `message_echoes`.
+2. Subscribe to `messages`, `message_echoes`, `message_edits` and `messaging_referrals`.
 
 The URL must be public HTTPS, so a Twenty running on localhost cannot receive messages.
 
@@ -43,17 +45,18 @@ The URL must be public HTTPS, so a Twenty running on localhost cannot receive me
 
 Connect Messenger in Twenty with the system user token. For every Page the token manages, the app subscribes the Page to the webhook and creates its message channel.
 
-Reconnect after assigning new Pages to the system user. Meta unsubscribes a Page after an hour of failed webhook deliveries, so reconnect after an outage too.
+Reconnect after assigning new Pages to the system user, and once after updating the app so each Page subscribes to the new webhook fields. Meta unsubscribes a Page after an hour of failed webhook deliveries, so reconnect after an outage too.
 
 ### 5. Production access
 
-Until Meta grants Advanced Access, webhooks only arrive for people who have a role on the Meta app. To message customers, complete Business Verification and submit App Review for `pages_messaging`, `pages_manage_metadata`, `pages_read_engagement`, `pages_show_list` and the Business Asset User Profile Access feature.
+Until Meta grants Advanced Access, webhooks only arrive for people who have a role on the Meta app. To message customers, complete Business Verification and submit App Review for `pages_messaging`, `pages_manage_metadata`, `pages_read_engagement`, `pages_show_list`, the Business Asset User Profile Access feature, and the Human Agent feature for replies after 24 hours.
 
 Without Advanced Access, people are named "Messenger user" with the last 4 digits of their Page-scoped ID, and past conversations with people outside the app are not imported. Once access is granted, disconnect and connect again to import them.
 
 ## Limitations
 
-- Messenger only allows replies within 24 hours of the customer's last message, so later replies are refused.
+- Replies after 24 hours use the human agent tag and fail until Meta approves the Human Agent feature for your Meta app. Replies after 7 days are refused.
+- Reactions are not imported, and a referral from a Get Started button on a new conversation is not recorded.
 - A person created as "Messenger user" before Advanced Access keeps that name; rename or merge them by hand.
 - A Page-scoped ID differs on each Page, so a customer who writes to two Pages gets two person records until they are merged.
 - A reply with several attachments is sent as one Messenger message per part.

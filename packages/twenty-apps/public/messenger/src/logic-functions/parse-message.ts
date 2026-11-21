@@ -1,86 +1,77 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import {
-  ingestMessages,
-  type IngestMessageParticipant,
-} from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { MESSENGER_LOGIC_FUNCTION_PARSE_MESSAGE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { applyMessageEdit } from 'src/logic-functions/data/apply-message-edit.util';
+import { applyReferral } from 'src/logic-functions/data/apply-referral.util';
 import { findConnectedAccountIdByPageId } from 'src/logic-functions/data/find-connected-account-id-by-page-id.util';
-import { fetchUserProfileName } from 'src/logic-functions/data/fetch-user-profile-name.util';
-import { findOrCreateMessengerPersonId } from 'src/logic-functions/data/find-or-create-messenger-person-id.util';
-import { getPageAccessTokenOrThrow } from 'src/logic-functions/data/get-page-access-token-or-throw.util';
 import { findPageMessageChannelOrThrow } from 'src/logic-functions/data/find-page-message-channel-or-throw.util';
-import { uploadIncomingAttachments } from 'src/logic-functions/data/upload-incoming-attachments.util';
+import { importMessage } from 'src/logic-functions/data/import-message.util';
+import { resolveCustomerPersonId } from 'src/logic-functions/data/resolve-customer-person-id.util';
 import { type ParseMessagePayload } from 'src/logic-functions/types/parse-message-payload.type';
 
 const handler = async ({ pageId, event }: ParseMessagePayload) => {
   const connectedAccountId = await findConnectedAccountIdByPageId(pageId);
 
   if (!isDefined(connectedAccountId)) {
-    console.warn(`Ignoring Messenger message, Page ${pageId} is no longer connected`);
+    console.warn(
+      `Ignoring Messenger event, Page ${pageId} is no longer connected`,
+    );
 
     return;
   }
 
-  const { message } = event;
-  // echoes are messages the Page sent, from Twenty or from Meta Business Suite
-  const isSentByPage = message.is_echo === true;
-  const pageScopedId = isSentByPage ? event.recipient.id : event.sender.id;
-
+  const client = new CoreApiClient();
   const messageChannel = await findPageMessageChannelOrThrow({
     connectedAccountId,
     pageId,
   });
-  const personId = await findOrCreateMessengerPersonId({
-    client: new CoreApiClient(),
+
+  if (isDefined(event.message_edit)) {
+    await applyMessageEdit({
+      client,
+      messageChannelId: messageChannel.id,
+      messageEdit: event.message_edit,
+    });
+
+    return;
+  }
+
+  const pageScopedId =
+    event.message?.is_echo === true ? event.recipient.id : event.sender.id;
+  const personId = await resolveCustomerPersonId({
+    client,
+    connectedAccountId,
     pageId,
     pageScopedId,
-    resolveName: async () =>
-      fetchUserProfileName({
-        pageAccessToken: await getPageAccessTokenOrThrow({
-          connectedAccountId,
-          pageId,
-        }),
-        pageScopedId,
-      }),
   });
+  const receivedAt = new Date(event.timestamp);
 
-  // Twenty marks a message outgoing only when its sender handle is exactly the channel handle
-  const pageParticipant = { handle: messageChannel.handle };
-  const customerParticipant = { handle: pageScopedId, personId };
-  const participants: IngestMessageParticipant[] = isSentByPage
-    ? [
-        { role: 'FROM', ...pageParticipant },
-        { role: 'TO', ...customerParticipant },
-      ]
-    : [
-        { role: 'FROM', ...customerParticipant },
-        { role: 'TO', ...pageParticipant },
-      ];
+  if (isDefined(event.message)) {
+    await importMessage({
+      messageChannelId: messageChannel.id,
+      pageHandle: messageChannel.handle,
+      pageScopedId,
+      personId,
+      message: event.message,
+      receivedAt,
+    });
+  }
 
-  // ingestion skips a mid it already holds, so retries and echoes of Twenty's own replies import once
-  await ingestMessages({
-    messageChannelId: messageChannel.id,
-    messages: [
-      {
-        externalId: message.mid,
-        threadExternalId: pageScopedId,
-        text: message.text ?? '',
-        receivedAt: new Date(event.timestamp),
-        participants,
-        attachments: await uploadIncomingAttachments(message),
-      },
-    ],
-  });
+  // an ad's first message carries its referral; a later ad or m.me link arrives as a referral event
+  const referral = event.message?.referral ?? event.referral;
+
+  if (isDefined(referral)) {
+    await applyReferral({ client, personId, referral, referredAt: receivedAt });
+  }
 };
 
 export default defineLogicFunction({
   universalIdentifier: MESSENGER_LOGIC_FUNCTION_PARSE_MESSAGE_UNIVERSAL_IDENTIFIER,
   name: 'parse-message',
   description:
-    'Imports one Messenger message, with its attachments, into the conversation of its customer',
+    'Processes one Messenger event: imports a message with its attachments, applies an edit, or records the ad or link that brought the customer',
   timeoutSeconds: 60,
   handler,
 });

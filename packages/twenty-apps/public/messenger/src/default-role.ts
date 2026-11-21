@@ -40,7 +40,7 @@ export default defineApplicationRole({
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.message.universalIdentifier,
         canReadAllRecords: true,
-        canUpdateAllRecords: false,
+        canUpdateAllRecords: true,
         canSoftDeleteAllRecords: false,
         canDestroyAllRecords: false,
       },

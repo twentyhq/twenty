@@ -2,6 +2,7 @@ import { type SendAppMessageAttachment } from 'twenty-sdk/logic-function';
 
 import { graphApiRequest } from 'src/logic-functions/data/graph-api-request.util';
 import { type MessengerOutgoingAttachmentType } from 'src/logic-functions/data/get-outgoing-attachment-type-or-throw.util';
+import { type ReplyMessagingType } from 'src/logic-functions/data/get-reply-messaging-type.util';
 
 // uploaded as file data because the Twenty download URL may not be reachable from Meta
 export const sendMessengerAttachment = async ({
@@ -10,12 +11,14 @@ export const sendMessengerAttachment = async ({
   recipientId,
   attachment,
   attachmentType,
+  replyMessagingType,
 }: {
   pageAccessToken: string;
   pageId: string;
   recipientId: string;
   attachment: SendAppMessageAttachment;
   attachmentType: MessengerOutgoingAttachmentType;
+  replyMessagingType: ReplyMessagingType;
 }): Promise<string> => {
   const response = await fetch(attachment.downloadUrl);
 
@@ -28,7 +31,9 @@ export const sendMessengerAttachment = async ({
   const formData = new FormData();
 
   formData.append('recipient', JSON.stringify({ id: recipientId }));
-  formData.append('messaging_type', 'RESPONSE');
+  for (const [key, value] of Object.entries(replyMessagingType)) {
+    formData.append(key, value);
+  }
   formData.append(
     'message',
     JSON.stringify({ attachment: { type: attachmentType, payload: {} } }),

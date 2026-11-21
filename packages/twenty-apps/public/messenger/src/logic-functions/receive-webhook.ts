@@ -10,6 +10,7 @@ import {
 import { buildParseMessagePayloads } from 'src/logic-functions/data/build-parse-message-payloads.util';
 import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
 import { findConnectedAccountIdByPageId } from 'src/logic-functions/data/find-connected-account-id-by-page-id.util';
+import { getMessengerEventJobKey } from 'src/logic-functions/data/get-messenger-event-job-key.util';
 import { validateWebhookSignature } from 'src/logic-functions/data/validate-webhook-signature.util';
 import { type MessengerWebhook } from 'src/logic-functions/types/messenger-webhook.type';
 
@@ -57,7 +58,7 @@ const handler = async ({
     logicFunctionUniversalIdentifier:
       MESSENGER_LOGIC_FUNCTION_PARSE_MESSAGE_UNIVERSAL_IDENTIFIER,
     payloads,
-    getJobKey: ({ event }) => event.message.mid,
+    getJobKey: ({ event }) => getMessengerEventJobKey(event),
   });
 
   return new Response('EVENT_RECEIVED', { status: 200 });
@@ -68,7 +69,7 @@ export default defineLogicFunction({
     MESSENGER_LOGIC_FUNCTION_RECEIVE_WEBHOOK_UNIVERSAL_IDENTIFIER,
   name: 'receive-webhook',
   description:
-    'Receives Messenger webhooks, checks they come from Meta and queues each message for import',
+    'Receives Messenger webhooks, checks they come from Meta and queues each event for processing',
   timeoutSeconds: 5,
   handler,
   httpRouteTriggerSettings: {
