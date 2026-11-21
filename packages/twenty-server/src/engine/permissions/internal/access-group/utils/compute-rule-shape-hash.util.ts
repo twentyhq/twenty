@@ -62,6 +62,37 @@ const buildPredicateGroupContent = ({
   ),
 });
 
+const buildRuleContent = ({
+  rowLevelPermissionRule,
+  literalValuePredicateId,
+  isRelationHopEnabled,
+}: {
+  rowLevelPermissionRule: RlsRule | null;
+  literalValuePredicateId: string | null;
+  isRelationHopEnabled: boolean;
+}): { predicates: string[]; predicateGroups: string[] } | null => {
+  if (!isDefined(rowLevelPermissionRule)) {
+    return null;
+  }
+
+  const predicatesWithoutLiteralValue = rowLevelPermissionRule.predicates.map(
+    (predicate) => {
+      if (predicate.id !== literalValuePredicateId) {
+        return predicate;
+      }
+
+      return { ...predicate, value: null };
+    },
+  );
+
+  return buildPredicateGroupContent({
+    parentPredicateGroupId: null,
+    predicates: predicatesWithoutLiteralValue,
+    predicateGroups: rowLevelPermissionRule.predicateGroups,
+    isRelationHopEnabled,
+  });
+};
+
 export const computeRuleShapeHash = ({
   objectMetadataId,
   rowLevelPermissionRule,
@@ -79,18 +110,11 @@ export const computeRuleShapeHash = ({
     .update(
       JSON.stringify([
         objectMetadataId,
-        isDefined(rowLevelPermissionRule)
-          ? buildPredicateGroupContent({
-              parentPredicateGroupId: null,
-              predicates: rowLevelPermissionRule.predicates.map((predicate) =>
-                predicate.id === literalValuePredicateId
-                  ? { ...predicate, value: null }
-                  : predicate,
-              ),
-              predicateGroups: rowLevelPermissionRule.predicateGroups,
-              isRelationHopEnabled,
-            })
-          : null,
+        buildRuleContent({
+          rowLevelPermissionRule,
+          literalValuePredicateId,
+          isRelationHopEnabled,
+        }),
         [...unreadableFieldIds].sort(),
       ]),
     )
