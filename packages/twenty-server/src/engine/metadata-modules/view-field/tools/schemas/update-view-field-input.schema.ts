@@ -28,4 +28,11 @@ export const updateViewFieldInputSchema = z.object({
     .nullable()
     .optional()
     .describe('Null shows every related record again.'),
+  label: z
+    .string()
+    .nullable()
+    .optional()
+    .describe(
+      'Column header shown instead of the default one. Null or an empty string shows the default header again.',
+    ),
 });

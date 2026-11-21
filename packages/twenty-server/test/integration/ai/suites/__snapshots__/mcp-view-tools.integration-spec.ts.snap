@@ -500,6 +500,10 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           "description": "Whether the field is visible in the view.",
           "type": "boolean",
         },
+        "label": {
+          "description": "Column header shown instead of the default one. Leave it out to show the default header.",
+          "type": "string",
+        },
         "position": {
           "default": 0,
           "description": "Position of the field in the view (0-based).",
@@ -714,6 +718,13 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
         "isVisible": {
           "description": "Whether the field is visible.",
           "type": "boolean",
+        },
+        "label": {
+          "description": "Column header shown instead of the default one. Null or an empty string shows the default header again.",
+          "type": [
+            "string",
+            "null",
+          ],
         },
         "position": {
           "description": "Position of the field.",
@@ -964,6 +975,10 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
                 "description": "Whether the field is visible in the view.",
                 "type": "boolean",
               },
+              "label": {
+                "description": "Column header shown instead of the default one. Leave it out to show the default header.",
+                "type": "string",
+              },
               "position": {
                 "default": 0,
                 "description": "Position of the field in the view (0-based).",
@@ -1192,6 +1207,13 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
               "isVisible": {
                 "description": "Whether the field is visible.",
                 "type": "boolean",
+              },
+              "label": {
+                "description": "Column header shown instead of the default one. Null or an empty string shows the default header again.",
+                "type": [
+                  "string",
+                  "null",
+                ],
               },
               "position": {
                 "description": "Position of the field.",
