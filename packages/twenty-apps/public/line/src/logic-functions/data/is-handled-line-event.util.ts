@@ -1,4 +1,5 @@
 import {
+  type LineMessage,
   type LineMessageEvent,
   type LineUnsendEvent,
   type LineWebhookEvent,
@@ -10,9 +11,21 @@ export type LineHandledEvent =
   | (LineMessageEvent & OneOnOneSource)
   | (LineUnsendEvent & OneOnOneSource);
 
-// group and room chats are not imported yet
+const IMPORTED_MESSAGE_TYPES: LineMessage['type'][] = [
+  'text',
+  'image',
+  'video',
+  'audio',
+  'file',
+  'location',
+  'sticker',
+];
+
+// group and room chats are not imported yet, and LINE may add message types the app cannot render
 export const isHandledLineEvent = (
   event: LineWebhookEvent,
 ): event is LineHandledEvent =>
   event.source.type === 'user' &&
-  (event.type === 'message' || event.type === 'unsend');
+  (event.type === 'unsend' ||
+    (event.type === 'message' &&
+      IMPORTED_MESSAGE_TYPES.includes(event.message.type)));

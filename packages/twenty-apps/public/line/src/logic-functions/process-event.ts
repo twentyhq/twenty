@@ -12,6 +12,10 @@ import { getLineAccessTokenOrThrow } from 'src/logic-functions/data/get-line-acc
 import { importMessage } from 'src/logic-functions/data/import-message.util';
 import { findConnectedAccountIdByBotUserId } from 'src/logic-functions/data/link-bot-to-connection.util';
 import { storeMarkAsReadToken } from 'src/logic-functions/data/mark-as-read-token.util';
+import {
+  forgetUnsentMessage,
+  isMessageUnsent,
+} from 'src/logic-functions/data/unsent-message-marker.util';
 import { withConnectionAuthFailureReport } from 'src/logic-functions/data/with-connection-auth-failure-report.util';
 import { type ProcessEventPayload } from 'src/logic-functions/types/process-event-payload.type';
 
@@ -40,6 +44,12 @@ const handler = async ({ botUserId, event }: ProcessEventPayload) => {
     return;
   }
 
+  if (await isMessageUnsent(messageChannel.id, event.message.id)) {
+    await forgetUnsentMessage(messageChannel.id, event.message.id);
+
+    return;
+  }
+
   const accessToken = await getLineAccessTokenOrThrow(connectedAccountId);
   const { userId } = event.source;
 
@@ -62,6 +72,16 @@ const handler = async ({ botUserId, event }: ProcessEventPayload) => {
       receivedAt: new Date(event.timestamp),
     });
   });
+
+  if (await isMessageUnsent(messageChannel.id, event.message.id)) {
+    await applyUnsend({
+      client,
+      messageChannelId: messageChannel.id,
+      messageId: event.message.id,
+    });
+
+    return;
+  }
 
   if (isNonEmptyString(event.message.markAsReadToken)) {
     await storeMarkAsReadToken({

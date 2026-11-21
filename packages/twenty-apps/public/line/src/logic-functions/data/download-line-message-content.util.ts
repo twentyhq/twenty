@@ -1,4 +1,5 @@
 import { RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { LINE_DATA_API_BASE_URL } from 'src/constants/line-api.constant';
 import { LINE_INCOMING_ATTACHMENT_MAX_SIZE_BYTES } from 'src/constants/line-incoming-attachment-max-size-bytes.constant';
@@ -8,6 +9,42 @@ import { type LineMessageContent } from 'src/logic-functions/types/line-message-
 const CONTENT_BEING_PREPARED_STATUS = 202;
 // 404 once LINE deleted the content, 410 when the user unsent the message
 const CONTENT_UNAVAILABLE_STATUSES = [404, 410];
+
+// stops reading past the limit even when the response has no Content-Length
+const readBodyWithinLimit = async (
+  response: Response,
+): Promise<Uint8Array | undefined> => {
+  if (
+    Number(response.headers.get('content-length') ?? 0) >
+    LINE_INCOMING_ATTACHMENT_MAX_SIZE_BYTES
+  ) {
+    await response.body?.cancel();
+
+    return undefined;
+  }
+
+  if (!isDefined(response.body)) {
+    return new Uint8Array();
+  }
+
+  const reader = response.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let totalBytes = 0;
+
+  for (let read = await reader.read(); !read.done; read = await reader.read()) {
+    totalBytes += read.value.byteLength;
+
+    if (totalBytes > LINE_INCOMING_ATTACHMENT_MAX_SIZE_BYTES) {
+      await reader.cancel();
+
+      return undefined;
+    }
+
+    chunks.push(read.value);
+  }
+
+  return Buffer.concat(chunks);
+};
 
 // https://developers.line.biz/en/reference/messaging-api/#get-content
 export const downloadLineMessageContent = async ({
@@ -44,18 +81,9 @@ export const downloadLineMessageContent = async ({
     );
   }
 
-  if (
-    Number(response.headers.get('content-length') ?? 0) >
-    LINE_INCOMING_ATTACHMENT_MAX_SIZE_BYTES
-  ) {
-    await response.body?.cancel();
+  const content = await readBodyWithinLimit(response);
 
-    return { status: 'tooLarge' };
-  }
-
-  const content = new Uint8Array(await response.arrayBuffer());
-
-  if (content.byteLength > LINE_INCOMING_ATTACHMENT_MAX_SIZE_BYTES) {
+  if (!isDefined(content)) {
     return { status: 'tooLarge' };
   }
 

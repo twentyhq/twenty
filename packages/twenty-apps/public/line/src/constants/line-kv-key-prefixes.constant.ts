@@ -3,4 +3,5 @@ export const LINE_KV_KEY_PREFIXES = {
   botUserIdByConnectedAccountId: 'line-connection-bot:',
   personIdByLineUserId: 'line-person:',
   markAsReadTokenByThread: 'line-read-token:',
+  unsentMessage: 'line-unsent:',
 } as const;

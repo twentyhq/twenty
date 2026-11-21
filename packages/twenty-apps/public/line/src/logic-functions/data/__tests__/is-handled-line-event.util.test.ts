@@ -43,4 +43,20 @@ describe('isHandledLineEvent', () => {
 
     expect(events.some(isHandledLineEvent)).toBe(false);
   });
+
+  it('skips message types LINE added after this app was written', () => {
+    // parsed from JSON, as webhook bodies are, since the type has no such message
+    const events: LineWebhookEvent[] = JSON.parse(
+      JSON.stringify([
+        {
+          ...BASE_EVENT,
+          type: 'message',
+          source: { type: 'user', userId: 'U1' },
+          message: { id: '1', type: 'hologram' },
+        },
+      ]),
+    );
+
+    expect(events.some(isHandledLineEvent)).toBe(false);
+  });
 });
