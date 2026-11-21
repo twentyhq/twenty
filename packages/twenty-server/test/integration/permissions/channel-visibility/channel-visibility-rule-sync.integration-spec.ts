@@ -46,7 +46,6 @@ describe('channel visibility rule sync (integration)', () => {
   let subjectFieldMetadataId: string;
   let textFieldMetadataId: string;
 
-  // the unreadable fields of every message rule listing Jony's channel, one entry per role
   const findUnreadableFieldsOfRulesListingJonyChannel = async (): Promise<
     string[][]
   > => {
