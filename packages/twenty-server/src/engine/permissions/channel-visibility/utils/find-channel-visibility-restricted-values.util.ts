@@ -21,8 +21,7 @@ export const findChannelVisibilityRestrictedValues = ({
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
 }): Record<string, string> => {
   if (
-    featureFlagsMap[FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED] !==
-      true ||
+    !featureFlagsMap[FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED] ||
     !CHANNEL_VISIBILITY_OBJECT_UNIVERSAL_IDENTIFIERS.includes(
       flatObjectMetadata.universalIdentifier,
     )
