@@ -1,8 +1,8 @@
 import { MockedProvider } from '@apollo/client/testing/react';
 import { act, render, screen, waitFor } from '@testing-library/react';
 
-import { useInvalidateAiChatToolIndexOnMetadataChange } from '@/ai-chat/tool-calls/hooks/useInvalidateAiChatToolIndexOnMetadataChange';
-import { TOOL_INDEX_INVALIDATION_DEBOUNCE_TIME_IN_MS } from '@/ai-chat/tool-calls/constants/ToolIndexInvalidationDebounceTimeInMs';
+import { ToolIndexInvalidationEffect } from '@/ai/components/ToolIndexInvalidationEffect';
+import { TOOL_INDEX_INVALIDATION_DEBOUNCE_TIME_IN_MS } from '@/ai/constants/ToolIndexInvalidationDebounceTimeInMs';
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
 import { dispatchMetadataOperationBrowserEvent } from '@/browser-event/utils/dispatchMetadataOperationBrowserEvent';
 import { GetToolIndexDocument } from '~/generated-metadata/graphql';
@@ -33,12 +33,6 @@ const TOOL_INDEX_MOCKS = [1, 2, 3].map(() => ({
   result: toolIndexResult,
 }));
 
-const InvalidateToolIndexOnMetadataChangeEffect = () => {
-  useInvalidateAiChatToolIndexOnMetadataChange();
-
-  return null;
-};
-
 const ToolStepLabel = () => {
   const { toolIndex } = useGetToolIndex();
 
@@ -52,7 +46,7 @@ const buildChat = (toolStepCount: number) => (
     defaultOptions={{ watchQuery: { fetchPolicy: 'cache-and-network' } }}
   >
     <>
-      <InvalidateToolIndexOnMetadataChangeEffect />
+      <ToolIndexInvalidationEffect />
       {Array.from({ length: toolStepCount }, (_, index) => (
         <ToolStepLabel key={index} />
       ))}

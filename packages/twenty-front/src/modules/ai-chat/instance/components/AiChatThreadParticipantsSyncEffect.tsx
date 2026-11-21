@@ -15,9 +15,7 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
-// The member's inbox state follows what they do in their other tabs and
-// devices, and snoozes the server ends
-export const useSyncAiChatThreadParticipants = () => {
+export const AiChatThreadParticipantsSyncEffect = () => {
   const store = useStore();
   const participantObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
@@ -29,13 +27,12 @@ export const useSyncAiChatThreadParticipants = () => {
   const currentWorkspaceMemberId = useAtomStateValue(
     currentWorkspaceMemberState,
   )?.id;
-  const isEnabled =
+  const isParticipantSyncEnabled =
     isDefined(participantObjectMetadataItem) &&
     isDefined(currentWorkspaceMemberId);
 
-  // Roles that read every record could receive every member's rows, so only
-  // the member's own are asked for
-  const operationSignature = useMemo(
+  // Roles that read every record could receive every member's rows, so only the member's own are asked for
+  const participantOperationSignature = useMemo(
     () => ({
       objectNameSingular: StandardObjectNameSingular.AgentChatThreadParticipant,
       variables: {
@@ -47,11 +44,11 @@ export const useSyncAiChatThreadParticipants = () => {
 
   useListenToEventsForQuery({
     queryId: 'agent-chat-thread-participant-operations',
-    operationSignature,
-    skip: !isEnabled,
+    operationSignature: participantOperationSignature,
+    skip: !isParticipantSyncEnabled,
   });
 
-  const handleRecordOperation = useCallback(
+  const handleParticipantOperation = useCallback(
     ({ operation }: ObjectRecordOperationBrowserEventDetail) => {
       const applyParticipants = (
         participants: AgentChatThreadParticipantFieldsFragment[],
@@ -96,8 +93,10 @@ export const useSyncAiChatThreadParticipants = () => {
   );
 
   useListenToObjectRecordOperationBrowserEvent({
-    onObjectRecordOperationBrowserEvent: handleRecordOperation,
+    onObjectRecordOperationBrowserEvent: handleParticipantOperation,
     objectMetadataItemId: participantObjectMetadataItem?.id,
-    enabled: isEnabled,
+    enabled: isParticipantSyncEnabled,
   });
+
+  return null;
 };
