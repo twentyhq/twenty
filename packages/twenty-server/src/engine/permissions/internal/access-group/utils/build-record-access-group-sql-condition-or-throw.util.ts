@@ -46,6 +46,41 @@ const buildSharedPredicateRule = ({
   predicateGroups: [],
 });
 
+// a shared group outlives the role it was first stored with, so it carries its own predicate
+const findAccessGroupRuleAndMemberFieldValues = ({
+  accessGroup,
+  flatObjectMetadata,
+  metadataMaps,
+}: {
+  accessGroup: Pick<
+    AccessGroup,
+    'roleId' | 'rowLevelPermissionPredicateGroupId' | 'memberFieldValues'
+  >;
+  flatObjectMetadata: FlatObjectMetadata;
+  metadataMaps: RecordAccessGroupSQLConditionMetadataMaps;
+}) => {
+  const sharedPredicate = findAccessGroupSharedPredicate(accessGroup);
+
+  if (isDefined(sharedPredicate)) {
+    return {
+      rowLevelPermissionRule: buildSharedPredicateRule({
+        sharedPredicate,
+        roleId: accessGroup.roleId,
+      }),
+      memberFieldValues: {},
+    };
+  }
+
+  return {
+    rowLevelPermissionRule: metadataMaps.rolesPermissions[
+      accessGroup.roleId
+    ]?.objects[flatObjectMetadata.id]?.rowLevelRecordsPermissions?.find(
+      ({ ruleId }) => ruleId === accessGroup.rowLevelPermissionPredicateGroupId,
+    ),
+    memberFieldValues: accessGroup.memberFieldValues ?? {},
+  };
+};
+
 // null when the group reaches every record of the object
 export const buildRecordAccessGroupSQLConditionOrThrow = ({
   accessGroup,
@@ -61,23 +96,12 @@ export const buildRecordAccessGroupSQLConditionOrThrow = ({
   tableAlias: string;
   metadataMaps: RecordAccessGroupSQLConditionMetadataMaps;
 }): SQLCondition | null => {
-  const sharedPredicate = findAccessGroupSharedPredicate(accessGroup);
-  // a shared group outlives the role it was first stored with, so it carries its own predicate
   const recordFilter = buildRecordFilterForRule({
-    rowLevelPermissionRule: isDefined(sharedPredicate)
-      ? buildSharedPredicateRule({
-          sharedPredicate,
-          roleId: accessGroup.roleId,
-        })
-      : metadataMaps.rolesPermissions[accessGroup.roleId]?.objects[
-          flatObjectMetadata.id
-        ]?.rowLevelRecordsPermissions?.find(
-          ({ ruleId }) =>
-            ruleId === accessGroup.rowLevelPermissionPredicateGroupId,
-        ),
-    memberFieldValues: isDefined(sharedPredicate)
-      ? {}
-      : (accessGroup.memberFieldValues ?? {}),
+    ...findAccessGroupRuleAndMemberFieldValues({
+      accessGroup,
+      flatObjectMetadata,
+      metadataMaps,
+    }),
     flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
     flatFieldMetadataOptionMaps: metadataMaps.flatFieldMetadataOptionMaps,
     flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
