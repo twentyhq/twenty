@@ -98,6 +98,8 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
         })
       : null,
     label: normalizeViewFieldLabel(createViewFieldInput.label ?? null),
+    relationAggregateOperation:
+      createViewFieldInput.relationAggregateOperation ?? null,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
   };
 };

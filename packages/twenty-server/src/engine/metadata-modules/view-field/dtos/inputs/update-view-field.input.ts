@@ -58,6 +58,11 @@ class UpdateViewFieldInputUpdates {
   @IsString()
   @Field(() => String, { nullable: true })
   label?: string | null;
+
+  @IsOptional()
+  @IsEnum(AggregateOperations)
+  @Field(() => AggregateOperations, { nullable: true })
+  relationAggregateOperation?: AggregateOperations | null;
 }
 
 @InputType()

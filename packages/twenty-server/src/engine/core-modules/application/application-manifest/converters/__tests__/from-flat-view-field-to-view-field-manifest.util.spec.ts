@@ -61,6 +61,7 @@ const VIEW_FIELD_MANIFEST: Required<ViewFieldManifest> = {
     limit: 1,
   },
   label: 'Open tasks',
+  relationAggregateOperation: AggregateOperations.SUM,
 };
 
 const MINIMAL_VIEW_FIELD_MANIFEST: ViewFieldManifest = {
@@ -109,6 +110,7 @@ describe('fromFlatViewFieldToViewFieldManifest', () => {
       relationTargetFieldMetadataUniversalIdentifier: null,
       universalRelationScope: VIEW_FIELD_MANIFEST.relationScope,
       label: 'Open tasks',
+      relationAggregateOperation: AggregateOperations.COUNT,
       isActive: true,
       isSystemSideEffect: false,
       isCanonical: true,
@@ -137,6 +139,7 @@ describe('fromFlatViewFieldToViewFieldManifest', () => {
     );
     expect(viewFieldManifest).not.toHaveProperty('relationScope');
     expect(viewFieldManifest).not.toHaveProperty('label');
+    expect(viewFieldManifest).not.toHaveProperty('relationAggregateOperation');
   });
 });
 

@@ -76,6 +76,11 @@ export class CreateViewFieldInput {
   @Field({ nullable: true })
   label?: string;
 
+  @IsOptional()
+  @IsEnum(AggregateOperations)
+  @Field(() => AggregateOperations, { nullable: true })
+  relationAggregateOperation?: AggregateOperations;
+
   @HideField()
   universalIdentifier?: string;
 

@@ -158,6 +158,7 @@ export class FieldRecordPageViewFieldOnCreateSideEffectHandlerService extends Me
       relationTargetFieldMetadataUniversalIdentifier: null,
       universalRelationScope: null,
       label: null,
+      relationAggregateOperation: null,
       isActive: true,
       isSystemSideEffect: true,
       isCanonical: true,
