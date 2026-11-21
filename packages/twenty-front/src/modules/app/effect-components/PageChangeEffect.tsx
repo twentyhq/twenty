@@ -1,5 +1,6 @@
 import { useContinueAiChatPageInSidePanel } from '@/ai-chat/hooks/useContinueAiChatPageInSidePanel';
 import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksOnAnyLocationChange';
+import { useOpenWorkspaceSetupChatInSidePanel } from '@/onboarding/hooks/useOpenWorkspaceSetupChatInSidePanel';
 import { useWorkspaceRouteObjects } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
 import { isAppEffectRedirectEnabledState } from '@/auth/states/isAppEffectRedirectEnabledState';
 import { useReturnToPath } from '@/auth/hooks/useReturnToPath';
@@ -103,6 +104,8 @@ export const PageChangeEffect = () => {
 
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { continueAiChatPageInSidePanel } = useContinueAiChatPageInSidePanel();
+  const { openWorkspaceSetupChatInSidePanel } =
+    useOpenWorkspaceSetupChatInSidePanel();
   const { removePageFromSidePanelHistory } = useSidePanelHistory();
 
   const { saveReturnToPath, getReturnToPath, clearReturnToPath } =
@@ -118,14 +121,20 @@ export const PageChangeEffect = () => {
 
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
-      const isAiChatPageContinuedInSidePanel =
+      const isAskAiOpenedInSidePanel =
         !hasRoutedSidePanelTarget &&
-        continueAiChatPageInSidePanel({
+        (continueAiChatPageInSidePanel({
           previousPathname: previousLocation,
           location,
-        });
+        }) ||
+          (isWorkspaceLocationAvailableOnSurface(
+            workspaceRouteObjects,
+            'main',
+            location,
+          ) &&
+            openWorkspaceSetupChatInSidePanel(location)));
 
-      if (!hasRoutedSidePanelTarget && !isAiChatPageContinuedInSidePanel) {
+      if (!hasRoutedSidePanelTarget && !isAskAiOpenedInSidePanel) {
         const currentPage = store.get(sidePanelPageInfoSelector.atom).page;
         const shouldKeepSidePanelOpen =
           currentPage === SidePanelPages.AskAI ||
@@ -165,6 +174,8 @@ export const PageChangeEffect = () => {
     closeSidePanelMenu,
     removePageFromSidePanelHistory,
     continueAiChatPageInSidePanel,
+    workspaceRouteObjects,
+    openWorkspaceSetupChatInSidePanel,
   ]);
 
   useEffect(() => {

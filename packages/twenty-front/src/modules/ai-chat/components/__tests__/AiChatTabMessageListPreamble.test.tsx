@@ -1,7 +1,6 @@
 import { act, render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
-import type * as React from 'react';
 import { AiChatNonLastMessageIdsList } from '@/ai-chat/messages/components/AiChatNonLastMessageIdsList';
 import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 
@@ -34,8 +33,19 @@ jest.mock(
 );
 
 jest.mock('@/ui/utilities/scroll/components/ScrollWrapper', () => ({
-  ScrollWrapper: ({ children }: { children: ReactNode }) => (
-    <div data-testid="scroll-wrapper">{children}</div>
+  ScrollWrapper: ({
+    children,
+    componentInstanceId,
+  }: {
+    children: ReactNode;
+    componentInstanceId: string;
+  }) => (
+    <div
+      data-testid="scroll-wrapper"
+      id={`scroll-wrapper-${componentInstanceId}`}
+    >
+      {children}
+    </div>
   ),
 }));
 
@@ -59,18 +69,10 @@ jest.mock('@/ai-chat/messages/components/AiChatScrollToBottomButton', () => ({
 }));
 const mockPinScrollToBottom = jest.fn();
 
-jest.mock(
-  '@/ai-chat/messages/components/AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect',
-  () => {
-    const { useLayoutEffect } = jest.requireActual<typeof React>('react');
-    return {
-      AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect: () => {
-        useLayoutEffect(mockPinScrollToBottom, []);
-        return null;
-      },
-    };
-  },
-);
+jest.mock('@/ai-chat/messages/utils/pinAiChatScrollToBottom', () => ({
+  pinAiChatScrollToBottom: (...args: unknown[]) =>
+    mockPinScrollToBottom(...args),
+}));
 jest.mock(
   '@/ai-chat/messages/components/AiChatStreamingAutoScrollEffect',
   () => ({
