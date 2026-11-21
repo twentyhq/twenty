@@ -1,4 +1,4 @@
-import { type Tool } from '@modelcontextprotocol/sdk/types.js';
+import { type Tool } from '@modelcontextprotocol/client';
 
 import { mcpServerToolSchema } from 'src/engine/metadata-modules/mcp-server/types/mcp-server-tool.schema';
 import { type McpServerTool } from 'src/engine/metadata-modules/mcp-server/types/mcp-server-tool.type';
