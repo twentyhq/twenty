@@ -1,16 +1,6 @@
-import { type RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
-
-export type WorkspaceMemberIndividualRoleRule = {
-  ruleKey: string;
-  objectMetadataUniversalIdentifier: string;
-  fieldMetadataUniversalIdentifier: string;
-  relationFieldMetadataUniversalIdentifier: string | null;
-  operand: RowLevelPermissionPredicateOperand;
-  value: string[];
-  unreadableFieldMetadataUniversalIdentifiers: string[];
-};
+import { type RoleManifest } from 'twenty-shared/application';
 
 export type WorkspaceMemberIndividualRole = {
   userWorkspaceId: string;
-  rules: WorkspaceMemberIndividualRoleRule[];
+  recordsPermissions: RoleManifest['recordsPermissions'];
 };

@@ -12,7 +12,7 @@ import {
   buildChannelVisibilityRuleSyncLockKey,
   CHANNEL_VISIBILITY_RULE_SYNC_LOCK_OPTIONS,
 } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-rule-sync-lock.constant';
-import { buildChannelVisibilityRules } from 'src/engine/permissions/channel-visibility/utils/build-channel-visibility-rules.util';
+import { buildChannelVisibilityObjectRecordsPermissions } from 'src/engine/permissions/channel-visibility/utils/build-channel-visibility-object-records-permissions.util';
 import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
 import { WorkspaceMemberIndividualRoleService } from 'src/engine/permissions/workspace-member-individual-role/services/workspace-member-individual-role.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -65,48 +65,49 @@ export class ChannelVisibilityRuleSyncService {
       workspaceId,
       individualRoles: userWorkspaceIds.map((userWorkspaceId) => ({
         userWorkspaceId,
-        rules: [
-          ...buildChannelVisibilityRules({
-            userWorkspaceId,
-            channels: messageChannels,
-            objectMetadataUniversalIdentifier: message.universalIdentifier,
-            associationRelationFieldMetadataUniversalIdentifier:
-              message.fields.messageChannelMessageAssociations
-                .universalIdentifier,
-            channelIdFieldMetadataUniversalIdentifier:
-              STANDARD_OBJECTS.messageChannelMessageAssociation.fields
-                .messageChannelId.universalIdentifier,
-            unreadableFieldMetadataUniversalIdentifiersByVisibility: {
-              [MessageChannelVisibility.SUBJECT]: [
-                message.fields.text.universalIdentifier,
-                message.fields.attachments.universalIdentifier,
-              ],
-              [MessageChannelVisibility.METADATA]: [
-                message.fields.subject.universalIdentifier,
-                message.fields.text.universalIdentifier,
-                message.fields.attachments.universalIdentifier,
-              ],
-            },
-          }),
-          ...buildChannelVisibilityRules({
-            userWorkspaceId,
-            channels: calendarChannels,
-            objectMetadataUniversalIdentifier:
-              calendarEvent.universalIdentifier,
-            associationRelationFieldMetadataUniversalIdentifier:
-              calendarEvent.fields.calendarChannelEventAssociations
-                .universalIdentifier,
-            channelIdFieldMetadataUniversalIdentifier:
-              STANDARD_OBJECTS.calendarChannelEventAssociation.fields
-                .calendarChannelId.universalIdentifier,
-            unreadableFieldMetadataUniversalIdentifiersByVisibility: {
-              [MessageChannelVisibility.METADATA]: [
-                calendarEvent.fields.title.universalIdentifier,
-                calendarEvent.fields.description.universalIdentifier,
-              ],
-            },
-          }),
-        ],
+        recordsPermissions: {
+          objects: [
+            buildChannelVisibilityObjectRecordsPermissions({
+              userWorkspaceId,
+              channels: messageChannels,
+              objectUniversalIdentifier: message.universalIdentifier,
+              associationRelationFieldUniversalIdentifier:
+                message.fields.messageChannelMessageAssociations
+                  .universalIdentifier,
+              channelIdFieldUniversalIdentifier:
+                STANDARD_OBJECTS.messageChannelMessageAssociation.fields
+                  .messageChannelId.universalIdentifier,
+              unreadableFieldUniversalIdentifiersByVisibility: {
+                [MessageChannelVisibility.SUBJECT]: [
+                  message.fields.text.universalIdentifier,
+                  message.fields.attachments.universalIdentifier,
+                ],
+                [MessageChannelVisibility.METADATA]: [
+                  message.fields.subject.universalIdentifier,
+                  message.fields.text.universalIdentifier,
+                  message.fields.attachments.universalIdentifier,
+                ],
+              },
+            }),
+            buildChannelVisibilityObjectRecordsPermissions({
+              userWorkspaceId,
+              channels: calendarChannels,
+              objectUniversalIdentifier: calendarEvent.universalIdentifier,
+              associationRelationFieldUniversalIdentifier:
+                calendarEvent.fields.calendarChannelEventAssociations
+                  .universalIdentifier,
+              channelIdFieldUniversalIdentifier:
+                STANDARD_OBJECTS.calendarChannelEventAssociation.fields
+                  .calendarChannelId.universalIdentifier,
+              unreadableFieldUniversalIdentifiersByVisibility: {
+                [MessageChannelVisibility.METADATA]: [
+                  calendarEvent.fields.title.universalIdentifier,
+                  calendarEvent.fields.description.universalIdentifier,
+                ],
+              },
+            }),
+          ],
+        },
       })),
     });
   }

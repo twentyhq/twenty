@@ -1,9 +1,12 @@
-import { RowLevelPermissionPredicateGroupLogicalOperator } from 'twenty-shared/types';
+import { type RoleManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { v5 } from 'uuid';
 
+import { fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util';
+import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-role.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key.type';
+import { buildUniversalFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/build-universal-flat-entity-maps.util';
 import {
   WORKSPACE_MEMBER_INDIVIDUAL_ROLE_LABEL_PREFIX,
   WORKSPACE_MEMBER_INDIVIDUAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
@@ -17,10 +20,11 @@ import { type FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-mana
 export const WORKSPACE_MEMBER_INDIVIDUAL_ROLE_METADATA_NAMES = [
   'role',
   'roleTarget',
+  'objectPermission',
+  'fieldPermission',
   'rowLevelPermissionRule',
   'rowLevelPermissionPredicateGroup',
   'rowLevelPermissionPredicate',
-  'fieldPermission',
 ] as const;
 
 type WorkspaceMemberIndividualRoleFlatEntityMapsKey =
@@ -32,19 +36,6 @@ type WorkspaceMemberIndividualRoleUniversalFlatEntityMaps = Pick<
   AllUniversalFlatEntityMaps,
   WorkspaceMemberIndividualRoleFlatEntityMapsKey
 >;
-
-const toUniversalFlatEntityMaps = <
-  TUniversalFlatEntity extends { universalIdentifier: string },
->(
-  universalFlatEntities: TUniversalFlatEntity[],
-) => ({
-  byUniversalIdentifier: Object.fromEntries(
-    universalFlatEntities.map((universalFlatEntity) => [
-      universalFlatEntity.universalIdentifier,
-      universalFlatEntity,
-    ]),
-  ),
-});
 
 const findEntitiesOfRoles = <
   TFlatEntity extends { roleUniversalIdentifier: string },
@@ -97,212 +88,130 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
   const existingRoleUniversalIdentifiers = new Set(
     existingFlatRoles.map(({ universalIdentifier }) => universalIdentifier),
   );
-  const existingFlatRoleTargets = findEntitiesOfRoles({
-    flatEntityMaps: flatEntityMaps.flatRoleTargetMaps,
-    roleUniversalIdentifiers: existingRoleUniversalIdentifiers,
-  });
+  const findExistingEntities = <
+    TFlatEntity extends { roleUniversalIdentifier: string },
+  >(existingFlatEntityMaps: {
+    byUniversalIdentifier: Partial<Record<string, TFlatEntity>>;
+  }) =>
+    findEntitiesOfRoles({
+      flatEntityMaps: existingFlatEntityMaps,
+      roleUniversalIdentifiers: existingRoleUniversalIdentifiers,
+    });
+  const existingFlatRoleTargets = findExistingEntities(
+    flatEntityMaps.flatRoleTargetMaps,
+  );
 
   const from: WorkspaceMemberIndividualRoleUniversalFlatEntityMaps = {
-    flatRoleMaps: toUniversalFlatEntityMaps(existingFlatRoles),
-    flatRoleTargetMaps: toUniversalFlatEntityMaps(existingFlatRoleTargets),
-    flatRowLevelPermissionRuleMaps: toUniversalFlatEntityMaps(
-      findEntitiesOfRoles({
-        flatEntityMaps: flatEntityMaps.flatRowLevelPermissionRuleMaps,
-        roleUniversalIdentifiers: existingRoleUniversalIdentifiers,
-      }),
+    flatRoleMaps: buildUniversalFlatEntityMaps(existingFlatRoles),
+    flatRoleTargetMaps: buildUniversalFlatEntityMaps(existingFlatRoleTargets),
+    flatObjectPermissionMaps: buildUniversalFlatEntityMaps(
+      findExistingEntities(flatEntityMaps.flatObjectPermissionMaps),
     ),
-    flatRowLevelPermissionPredicateGroupMaps: toUniversalFlatEntityMaps(
-      findEntitiesOfRoles({
-        flatEntityMaps: flatEntityMaps.flatRowLevelPermissionPredicateGroupMaps,
-        roleUniversalIdentifiers: existingRoleUniversalIdentifiers,
-      }),
+    flatFieldPermissionMaps: buildUniversalFlatEntityMaps(
+      findExistingEntities(flatEntityMaps.flatFieldPermissionMaps),
     ),
-    flatRowLevelPermissionPredicateMaps: toUniversalFlatEntityMaps(
-      findEntitiesOfRoles({
-        flatEntityMaps: flatEntityMaps.flatRowLevelPermissionPredicateMaps,
-        roleUniversalIdentifiers: existingRoleUniversalIdentifiers,
-      }),
+    flatRowLevelPermissionRuleMaps: buildUniversalFlatEntityMaps(
+      findExistingEntities(flatEntityMaps.flatRowLevelPermissionRuleMaps),
     ),
-    flatFieldPermissionMaps: toUniversalFlatEntityMaps(
-      findEntitiesOfRoles({
-        flatEntityMaps: flatEntityMaps.flatFieldPermissionMaps,
-        roleUniversalIdentifiers: existingRoleUniversalIdentifiers,
-      }),
+    flatRowLevelPermissionPredicateGroupMaps: buildUniversalFlatEntityMaps(
+      findExistingEntities(
+        flatEntityMaps.flatRowLevelPermissionPredicateGroupMaps,
+      ),
+    ),
+    flatRowLevelPermissionPredicateMaps: buildUniversalFlatEntityMaps(
+      findExistingEntities(flatEntityMaps.flatRowLevelPermissionPredicateMaps),
     ),
   };
 
-  const desiredEntities = individualRoles.map(({ userWorkspaceId, rules }) => {
-    const roleUniversalIdentifier =
-      getWorkspaceMemberIndividualRoleUniversalIdentifier(userWorkspaceId);
-    const owner = {
-      applicationUniversalIdentifier:
-        workspaceCustomApplicationUniversalIdentifier,
-      roleUniversalIdentifier,
-      createdAt: now,
-      updatedAt: now,
-    };
-    const roleTargetUniversalIdentifier =
-      existingFlatRoleTargets.find(
-        (flatRoleTarget) =>
-          flatRoleTarget.roleUniversalIdentifier === roleUniversalIdentifier &&
-          flatRoleTarget.userWorkspaceId === userWorkspaceId,
-      )?.universalIdentifier ??
-      v5(
-        `${roleUniversalIdentifier}:roleTarget`,
-        WORKSPACE_MEMBER_INDIVIDUAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
-      );
-
-    const ruleEntities = rules.map((rule) => {
-      const buildUniversalIdentifier = (kind: string) =>
-        v5(
-          `${roleUniversalIdentifier}:${rule.ruleKey}:${kind}`,
-          WORKSPACE_MEMBER_INDIVIDUAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
-        );
-      const ruleUniversalIdentifier = buildUniversalIdentifier('rule');
-      const groupUniversalIdentifier = buildUniversalIdentifier('group');
-      const { objectMetadataUniversalIdentifier } = rule;
-      const operations = {
-        canReadRecords: true,
-        canCreateRecords: false,
-        canUpdateRecords: false,
-        canSoftDeleteRecords: false,
-        canDestroyRecords: false,
-      };
-
-      return {
-        rule: {
-          ...owner,
-          ...operations,
-          universalIdentifier: ruleUniversalIdentifier,
-          objectMetadataUniversalIdentifier,
-        },
-        group: {
-          ...owner,
-          ...operations,
-          universalIdentifier: groupUniversalIdentifier,
-          objectMetadataUniversalIdentifier,
-          rowLevelPermissionRuleUniversalIdentifier: ruleUniversalIdentifier,
-          parentRowLevelPermissionPredicateGroupUniversalIdentifier: null,
-          logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
-          positionInRowLevelPermissionPredicateGroup: null,
-          deletedAt: null,
-          childRowLevelPermissionPredicateGroupUniversalIdentifiers: [],
-          rowLevelPermissionPredicateUniversalIdentifiers: [],
-        },
-        predicate: {
-          ...owner,
-          universalIdentifier: buildUniversalIdentifier('predicate'),
-          objectMetadataUniversalIdentifier,
-          fieldMetadataUniversalIdentifier:
-            rule.fieldMetadataUniversalIdentifier,
-          relationFieldMetadataUniversalIdentifier:
-            rule.relationFieldMetadataUniversalIdentifier,
-          operand: rule.operand,
-          value: rule.value,
-          subFieldName: null,
-          workspaceMemberFieldMetadataUniversalIdentifier: null,
-          workspaceMemberSubFieldName: null,
-          rowLevelPermissionPredicateGroupUniversalIdentifier:
-            groupUniversalIdentifier,
-          rowLevelPermissionRuleUniversalIdentifier: ruleUniversalIdentifier,
-          positionInRowLevelPermissionPredicateGroup: null,
-          deletedAt: null,
-        },
-        fieldPermissions: rule.unreadableFieldMetadataUniversalIdentifiers.map(
-          (fieldMetadataUniversalIdentifier) => ({
-            ...owner,
-            universalIdentifier: buildUniversalIdentifier(
-              `field:${fieldMetadataUniversalIdentifier}`,
-            ),
-            objectMetadataUniversalIdentifier,
-            fieldMetadataUniversalIdentifier,
-            rowLevelPermissionPredicateGroupUniversalIdentifier:
-              groupUniversalIdentifier,
-            rowLevelPermissionRuleUniversalIdentifier: ruleUniversalIdentifier,
-            canReadFieldValue: false,
-            canUpdateFieldValue: false,
-          }),
-        ),
-      };
-    });
-
-    return {
-      role: {
+  const desiredEntities = individualRoles.map(
+    ({ userWorkspaceId, recordsPermissions }) => {
+      const roleUniversalIdentifier =
+        getWorkspaceMemberIndividualRoleUniversalIdentifier(userWorkspaceId);
+      const roleManifest: RoleManifest = {
         universalIdentifier: roleUniversalIdentifier,
-        applicationUniversalIdentifier:
-          workspaceCustomApplicationUniversalIdentifier,
         label: `${WORKSPACE_MEMBER_INDIVIDUAL_ROLE_LABEL_PREFIX}${userWorkspaceId}`,
-        description: 'Channel visibility of one workspace member',
+        description: 'Permissions of one workspace member',
         icon: 'IconLock',
-        canUpdateAllSettings: false,
-        canAccessAllTools: false,
-        canAccessAllAgentChatChannels: false,
-        canReadAllObjectRecords: false,
-        canCreateAllObjectRecords: false,
-        canUpdateAllObjectRecords: false,
-        canSoftDeleteAllObjectRecords: false,
-        canDestroyAllObjectRecords: false,
-        isEditable: false,
-        isSystemSideEffect: true,
         canBeAssignedToUsers: false,
         canBeAssignedToAgents: false,
         canBeAssignedToApiKeys: false,
-        canBeAssignedToApplications: false,
-        roleTargetUniversalIdentifiers: [],
-        objectPermissionUniversalIdentifiers: [],
-        fieldPermissionUniversalIdentifiers: [],
-        rowLevelPermissionRuleUniversalIdentifiers: [],
-        rolePermissionFlagUniversalIdentifiers: [],
-        rowLevelPermissionPredicateUniversalIdentifiers: [],
-        rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
-        agentChatChannelRoleUniversalIdentifiers: [],
-        createdAt: findCreatedAt({
-          entities: existingFlatRoles,
-          universalIdentifier: roleUniversalIdentifier,
-          now,
-        }),
-        updatedAt: now,
-      },
-      roleTarget: {
-        ...owner,
-        universalIdentifier: roleTargetUniversalIdentifier,
-        isSystemSideEffect: true,
-        userWorkspaceId,
-        agentUniversalIdentifier: null,
-        apiKeyId: null,
-        webhookUniversalIdentifier: null,
-        targetApplicationUniversalIdentifier: null,
-        createdAt: findCreatedAt({
-          entities: existingFlatRoleTargets,
-          universalIdentifier: roleTargetUniversalIdentifier,
-          now,
-        }),
-      },
-      ruleEntities,
-    };
-  });
+        recordsPermissions,
+      };
+      const converterArgs = {
+        roleManifest,
+        applicationUniversalIdentifier:
+          workspaceCustomApplicationUniversalIdentifier,
+        now,
+      };
+      const roleTargetUniversalIdentifier =
+        existingFlatRoleTargets.find(
+          (flatRoleTarget) =>
+            flatRoleTarget.roleUniversalIdentifier ===
+              roleUniversalIdentifier &&
+            flatRoleTarget.userWorkspaceId === userWorkspaceId,
+        )?.universalIdentifier ??
+        v5(
+          `${roleUniversalIdentifier}:roleTarget`,
+          WORKSPACE_MEMBER_INDIVIDUAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
+        );
 
-  const ruleEntities = desiredEntities.flatMap(
-    ({ ruleEntities }) => ruleEntities,
+      return {
+        role: {
+          ...fromRoleManifestToUniversalFlatRole(converterArgs),
+          isEditable: false,
+          isSystemSideEffect: true,
+          createdAt: findCreatedAt({
+            entities: existingFlatRoles,
+            universalIdentifier: roleUniversalIdentifier,
+            now,
+          }),
+        },
+        roleTarget: {
+          universalIdentifier: roleTargetUniversalIdentifier,
+          applicationUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
+          roleUniversalIdentifier,
+          isSystemSideEffect: true,
+          userWorkspaceId,
+          agentUniversalIdentifier: null,
+          apiKeyId: null,
+          webhookUniversalIdentifier: null,
+          targetApplicationUniversalIdentifier: null,
+          createdAt: findCreatedAt({
+            entities: existingFlatRoleTargets,
+            universalIdentifier: roleTargetUniversalIdentifier,
+            now,
+          }),
+          updatedAt: now,
+        },
+        ...fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow(
+          converterArgs,
+        ),
+      };
+    },
   );
+
   const to: WorkspaceMemberIndividualRoleUniversalFlatEntityMaps = {
-    flatRoleMaps: toUniversalFlatEntityMaps(
+    flatRoleMaps: buildUniversalFlatEntityMaps(
       desiredEntities.map(({ role }) => role),
     ),
-    flatRoleTargetMaps: toUniversalFlatEntityMaps(
+    flatRoleTargetMaps: buildUniversalFlatEntityMaps(
       desiredEntities.map(({ roleTarget }) => roleTarget),
     ),
-    flatRowLevelPermissionRuleMaps: toUniversalFlatEntityMaps(
-      ruleEntities.map(({ rule }) => rule),
+    flatObjectPermissionMaps: buildUniversalFlatEntityMaps(
+      desiredEntities.flatMap(({ objectPermissions }) => objectPermissions),
     ),
-    flatRowLevelPermissionPredicateGroupMaps: toUniversalFlatEntityMaps(
-      ruleEntities.map(({ group }) => group),
+    flatFieldPermissionMaps: buildUniversalFlatEntityMaps(
+      desiredEntities.flatMap(({ fieldPermissions }) => fieldPermissions),
     ),
-    flatRowLevelPermissionPredicateMaps: toUniversalFlatEntityMaps(
-      ruleEntities.map(({ predicate }) => predicate),
+    flatRowLevelPermissionRuleMaps: buildUniversalFlatEntityMaps(
+      desiredEntities.flatMap(({ rules }) => rules),
     ),
-    flatFieldPermissionMaps: toUniversalFlatEntityMaps(
-      ruleEntities.flatMap(({ fieldPermissions }) => fieldPermissions),
+    flatRowLevelPermissionPredicateGroupMaps: buildUniversalFlatEntityMaps(
+      desiredEntities.flatMap(({ predicateGroups }) => predicateGroups),
+    ),
+    flatRowLevelPermissionPredicateMaps: buildUniversalFlatEntityMaps(
+      desiredEntities.flatMap(({ predicates }) => predicates),
     ),
   };
 
@@ -311,6 +220,14 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
     flatRoleTargetMaps: {
       from: from.flatRoleTargetMaps,
       to: to.flatRoleTargetMaps,
+    },
+    flatObjectPermissionMaps: {
+      from: from.flatObjectPermissionMaps,
+      to: to.flatObjectPermissionMaps,
+    },
+    flatFieldPermissionMaps: {
+      from: from.flatFieldPermissionMaps,
+      to: to.flatFieldPermissionMaps,
     },
     flatRowLevelPermissionRuleMaps: {
       from: from.flatRowLevelPermissionRuleMaps,
@@ -323,10 +240,6 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
     flatRowLevelPermissionPredicateMaps: {
       from: from.flatRowLevelPermissionPredicateMaps,
       to: to.flatRowLevelPermissionPredicateMaps,
-    },
-    flatFieldPermissionMaps: {
-      from: from.flatFieldPermissionMaps,
-      to: to.flatFieldPermissionMaps,
     },
   };
 };
