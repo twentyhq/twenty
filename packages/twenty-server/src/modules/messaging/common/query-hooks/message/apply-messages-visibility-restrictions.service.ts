@@ -36,7 +36,6 @@ export class ApplyMessagesVisibilityRestrictionsService
     this.commonRecordVisibilityService.registerHandler({
       objectNameSingular: 'message',
       handler: this,
-      isReplacedByChannelVisibilityRules: true,
     });
   }
 

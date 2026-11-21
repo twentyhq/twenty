@@ -33,7 +33,6 @@ export class ApplyAttachmentsVisibilityRestrictionsService
     this.commonRecordVisibilityService.registerHandler({
       objectNameSingular: 'attachment',
       handler: this,
-      isReplacedByChannelVisibilityRules: true,
     });
   }
 
