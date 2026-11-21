@@ -1,9 +1,9 @@
 import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const aiChatShouldFocusEditorFamilyState = createAtomFamilyState<
+export const aiChatThreadIsFetchingMessagesFamilyState = createAtomFamilyState<
   boolean,
   { threadId: string }
 >({
-  key: 'ai/aiChatShouldFocusEditorFamilyState',
+  key: 'aiChatThreadIsFetchingMessagesFamilyState',
   defaultValue: false,
 });

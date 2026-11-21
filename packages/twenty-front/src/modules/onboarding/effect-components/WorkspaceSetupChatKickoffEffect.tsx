@@ -6,7 +6,7 @@ import { useStore } from 'jotai';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
+import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
 import { getAiChatReplyStatusUnlessStreaming } from '@/ai-chat/utils/getAiChatReplyStatusUnlessStreaming';
 import { WORKSPACE_SETUP_CHAT_ENRICHMENT_MAX_WAIT_MS } from '@/onboarding/constants/WorkspaceSetupChatEnrichmentMaxWaitMs';
 import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
@@ -97,7 +97,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
 
         if (result.outcome === WorkspaceSetupChatOutcome.STARTED) {
           store.set(
-            aiChatReplyStatusFamilyState.atomFamily({
+            aiChatThreadReplyStatusFamilyState.atomFamily({
               threadId: thread.id,
             }),
             getAiChatReplyStatusUnlessStreaming('awaiting-first-chunk'),

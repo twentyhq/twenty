@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { aiChatLastReplyMessageIdFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatLastReplyMessageIdFamilySelector';
 import { aiChatNonLastMessageIdsFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatNonLastMessageIdsFamilySelector';
 import {
@@ -47,7 +47,9 @@ describe('aiChatLastReplyMessageIdFamilySelector', () => {
     '$description',
     ({ messages, expectedNonLastMessageIds, expectedLastMessageId }) => {
       jotaiStore.set(
-        aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+        aiChatThreadDisplayedMessagesFamilyState.atomFamily({
+          threadId: THREAD_ID,
+        }),
         messages,
       );
 

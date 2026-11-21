@@ -4,7 +4,7 @@ import { Temporal } from 'temporal-polyfill';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { aiChatUISessionStartTimeState } from '@/ai-chat/states/aiChatUISessionStartTimeState';
 import { useProcessWorkspaceSetupCompletion } from '@/ai-chat/workspace-setup/hooks/useProcessWorkspaceSetupCompletion';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -12,9 +12,12 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 export const AiChatWorkspaceSetupCompletionEffect = () => {
   const { threadId } = useAiChatInstanceOrThrow();
-  const aiChatMessages = useAtomFamilyStateValue(aiChatMessagesFamilyState, {
-    threadId,
-  });
+  const aiChatThreadDisplayedMessages = useAtomFamilyStateValue(
+    aiChatThreadDisplayedMessagesFamilyState,
+    {
+      threadId,
+    },
+  );
   const aiChatUISessionStartTime = useAtomStateValue(
     aiChatUISessionStartTimeState,
   );
@@ -26,7 +29,7 @@ export const AiChatWorkspaceSetupCompletionEffect = () => {
       return;
     }
 
-    for (const message of aiChatMessages) {
+    for (const message of aiChatThreadDisplayedMessages) {
       const messageCreatedAt = message.metadata?.createdAt;
 
       if (
@@ -38,7 +41,7 @@ export const AiChatWorkspaceSetupCompletionEffect = () => {
       }
     }
   }, [
-    aiChatMessages,
+    aiChatThreadDisplayedMessages,
     aiChatUISessionStartTime,
     processWorkspaceSetupCompletion,
   ]);

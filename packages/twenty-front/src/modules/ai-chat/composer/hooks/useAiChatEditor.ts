@@ -14,7 +14,7 @@ import { useAiChatFileUpload } from '@/ai-chat/composer/hooks/useAiChatFileUploa
 import { useAiChatAssistantProfile } from '@/ai-chat/hooks/useAiChatAssistantProfile';
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
+import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatComposerDraftsState';
 import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai-chat/constants/AiChatSendMessageEventName';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
@@ -39,8 +39,8 @@ export const useAiChatEditor = () => {
   const { displayName: assistantDisplayName } = useAiChatAssistantProfile();
   const { instanceId, threadId: draftKey } = useAiChatInstanceOrThrow();
   const aiModels = useAtomStateValue(aiModelsState);
-  const [aiChatDraftsByThreadId, setAiChatDraftsByThreadId] = useAtomState(
-    aiChatDraftsByThreadIdState,
+  const [aiChatComposerDrafts, setAiChatComposerDrafts] = useAtomState(
+    aiChatComposerDraftsState,
   );
   const { searchMentionRecords } = useMentionSearch();
   const { searchWorkspaceMembers } = useWorkspaceMemberMentionSearch();
@@ -57,7 +57,7 @@ export const useAiChatEditor = () => {
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const initialDraft = aiChatDraftsByThreadId[draftKey] ?? '';
+  const initialDraft = aiChatComposerDrafts[draftKey] ?? '';
   const editor = useAdvancedTextEditor({
     profile: AI_CHAT_EDITOR_PROFILE,
     placeholder: isDirectMessage
@@ -110,7 +110,7 @@ export const useAiChatEditor = () => {
     onUpdate: (currentEditor) => {
       const serializedDraft = serializeAiChatEditorDraft(currentEditor);
 
-      setAiChatDraftsByThreadId((prev) => ({
+      setAiChatComposerDrafts((prev) => ({
         ...prev,
         [draftKey]: serializedDraft,
       }));

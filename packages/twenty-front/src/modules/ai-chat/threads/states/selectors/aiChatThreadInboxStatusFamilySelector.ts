@@ -6,7 +6,7 @@ import {
 
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { aiChatThreadVisitFamilyState } from '@/ai-chat/threads/states/aiChatThreadVisitFamilyState';
+import { aiChatThreadViewVisitFamilyState } from '@/ai-chat/states/view/aiChatThreadViewVisitFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -20,7 +20,7 @@ export const aiChatThreadInboxStatusFamilySelector = createAtomFamilySelector<
     (threadId) =>
     ({ get }) => {
       const participants = get(aiChatThreadParticipantsState);
-      const visit = get(aiChatThreadVisitFamilyState, { threadId });
+      const visit = get(aiChatThreadViewVisitFamilyState, { threadId });
       const thread = get(aiChatThreadRecordFamilySelector, threadId);
       const currentWorkspaceMemberId = get(currentWorkspaceMemberState)?.id;
       const status = getAgentChatThreadInboxStatus({

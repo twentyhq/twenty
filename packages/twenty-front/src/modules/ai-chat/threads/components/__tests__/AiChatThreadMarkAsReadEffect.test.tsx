@@ -6,7 +6,7 @@ import { AiChatThreadOpenViewEffect } from '@/ai-chat/threads/components/AiChatT
 import { AiChatTestInstance } from '@/ai-chat/testing/AiChatTestInstance';
 import { aiChatReopenedThreadActivityState } from '@/ai-chat/threads/states/aiChatReopenedThreadActivityState';
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
-import { aiChatThreadVisitFamilyState } from '@/ai-chat/threads/states/aiChatThreadVisitFamilyState';
+import { aiChatThreadViewVisitFamilyState } from '@/ai-chat/states/view/aiChatThreadViewVisitFamilyState';
 import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
 import {
   type CurrentWorkspaceMember,
@@ -103,7 +103,7 @@ describe('AiChatThreadMarkAsReadEffect', () => {
     });
     expect(
       jotaiStore.get(
-        aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+        aiChatThreadViewVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
       ),
     ).toEqual({
       threadId: THREAD_ID,
@@ -130,7 +130,7 @@ describe('AiChatThreadMarkAsReadEffect', () => {
     });
     expect(
       jotaiStore.get(
-        aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+        aiChatThreadViewVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
       ),
     ).toEqual({
       threadId: THREAD_ID,
@@ -149,7 +149,7 @@ describe('AiChatThreadMarkAsReadEffect', () => {
 
     expect(
       jotaiStore.get(
-        aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+        aiChatThreadViewVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
       )?.threadId,
     ).toBe(THREAD_ID);
 
@@ -157,7 +157,7 @@ describe('AiChatThreadMarkAsReadEffect', () => {
 
     expect(
       jotaiStore.get(
-        aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+        aiChatThreadViewVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
       ),
     ).toBeNull();
   });
@@ -307,7 +307,7 @@ describe('AiChatThreadMarkAsReadEffect', () => {
       );
       expect(
         jotaiStore.get(
-          aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+          aiChatThreadViewVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
         )?.threadId,
       ).toBe(THREAD_ID);
     });

@@ -5,7 +5,7 @@ import { type ReactNode } from 'react';
 import { useUpdateAiChatThreadStatus } from '@/ai-chat/threads/hooks/useUpdateAiChatThreadStatus';
 import { aiChatReopenedThreadActivityState } from '@/ai-chat/threads/states/aiChatReopenedThreadActivityState';
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
-import { aiChatThreadVisitFamilyState } from '@/ai-chat/threads/states/aiChatThreadVisitFamilyState';
+import { aiChatThreadViewVisitFamilyState } from '@/ai-chat/states/view/aiChatThreadViewVisitFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
@@ -214,7 +214,7 @@ describe('useUpdateAiChatThreadStatus', () => {
     const { result, store } = renderUpdateInboxState();
 
     store.set(
-      aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+      aiChatThreadViewVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
       {
         threadId: THREAD_ID,
         isUnread: false,
@@ -232,7 +232,7 @@ describe('useUpdateAiChatThreadStatus', () => {
 
     expect(
       store.get(
-        aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+        aiChatThreadViewVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
       ),
     ).toEqual({
       threadId: THREAD_ID,
@@ -253,7 +253,7 @@ describe('useUpdateAiChatThreadStatus', () => {
     };
 
     store.set(
-      aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+      aiChatThreadViewVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
       visit,
     );
 
@@ -266,7 +266,7 @@ describe('useUpdateAiChatThreadStatus', () => {
 
     expect(
       store.get(
-        aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+        aiChatThreadViewVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
       ),
     ).toEqual(visit);
   });
@@ -282,13 +282,15 @@ describe('useUpdateAiChatThreadStatus', () => {
 
     mutate.mockImplementation(async () => {
       store.set(
-        aiChatThreadVisitFamilyState.atomFamily({ threadId: OTHER_THREAD_ID }),
+        aiChatThreadViewVisitFamilyState.atomFamily({
+          threadId: OTHER_THREAD_ID,
+        }),
         otherVisit,
       );
       throw new Error('Network error');
     });
     store.set(
-      aiChatThreadVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
+      aiChatThreadViewVisitFamilyState.atomFamily({ threadId: THREAD_ID }),
       {
         threadId: THREAD_ID,
         isUnread: false,
@@ -306,7 +308,9 @@ describe('useUpdateAiChatThreadStatus', () => {
 
     expect(
       store.get(
-        aiChatThreadVisitFamilyState.atomFamily({ threadId: OTHER_THREAD_ID }),
+        aiChatThreadViewVisitFamilyState.atomFamily({
+          threadId: OTHER_THREAD_ID,
+        }),
       ),
     ).toEqual(otherVisit);
   });

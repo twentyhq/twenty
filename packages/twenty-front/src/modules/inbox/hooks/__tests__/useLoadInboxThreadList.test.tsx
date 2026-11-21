@@ -10,7 +10,7 @@ import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentTh
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
-import { aiChatUsageFamilyState } from '@/ai-chat/usage/states/aiChatUsageFamilyState';
+import { aiChatThreadUsageFamilyState } from '@/ai-chat/states/server/aiChatThreadUsageFamilyState';
 import { inboxRecentThreadsSelector } from '@/inbox/states/selectors/inboxRecentThreadsSelector';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
@@ -485,7 +485,11 @@ describe('useLoadInboxThreadList', () => {
     });
 
     expect(
-      store.get(aiChatUsageFamilyState.atomFamily({ threadId: 'old-thread' })),
+      store.get(
+        aiChatThreadUsageFamilyState.atomFamily({
+          threadId: 'old-thread',
+        }),
+      ),
     ).toMatchObject({ inputTokens: 42 });
   });
 });

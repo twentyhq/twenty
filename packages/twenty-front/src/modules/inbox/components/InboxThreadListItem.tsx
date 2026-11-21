@@ -17,7 +17,7 @@ import { useAiChatThreadSubtitleContent } from '@/ai-chat/threads/hooks/useAiCha
 import { useAiChatThreadDisplayLabel } from '@/ai-chat/threads/hooks/useAiChatThreadDisplayLabel';
 import { useAiChatThreadRename } from '@/ai-chat/threads/hooks/useAiChatThreadRename';
 import { useInboxThreadTriage } from '@/inbox/hooks/useInboxThreadTriage';
-import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
+import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { type AiChatThreadRowVariant } from '@/ai-chat/threads/types/AiChatThreadRowVariant';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
@@ -85,11 +85,11 @@ export const InboxThreadListItem = ({
   const { status: triageStatus } = useInboxThreadTriage({
     threadId: thread.id,
   });
-  const aiChatReplyStatus = useAtomFamilyStateValue(
-    aiChatReplyStatusFamilyState,
+  const aiChatThreadReplyStatus = useAtomFamilyStateValue(
+    aiChatThreadReplyStatusFamilyState,
     { threadId: thread.id },
   );
-  const isAiChatStreaming = aiChatReplyStatus === 'streaming';
+  const isAiChatStreaming = aiChatThreadReplyStatus === 'streaming';
   const { hasContent: hasSubtitleContent } =
     useAiChatThreadSubtitleContent(thread);
   const isCompact = variant === 'compact';

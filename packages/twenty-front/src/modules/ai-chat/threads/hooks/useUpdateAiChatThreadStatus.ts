@@ -10,8 +10,8 @@ import { aiChatReopenedThreadActivityState } from '@/ai-chat/threads/states/aiCh
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
 import {
   type AiChatThreadVisit,
-  aiChatThreadVisitFamilyState,
-} from '@/ai-chat/threads/states/aiChatThreadVisitFamilyState';
+  aiChatThreadViewVisitFamilyState,
+} from '@/ai-chat/states/view/aiChatThreadViewVisitFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { closeAiChatThreadWebPushNotifications } from '@/ai-chat/threads/utils/closeAiChatThreadWebPushNotifications';
@@ -57,7 +57,7 @@ export const useUpdateAiChatThreadStatus = () => {
       ).rowsByThreadId;
 
       const visitUpdates = threadIds.map((threadId) => {
-        const visitAtom = aiChatThreadVisitFamilyState.atomFamily({
+        const visitAtom = aiChatThreadViewVisitFamilyState.atomFamily({
           threadId,
         });
         const previousVisit = store.get(visitAtom);
