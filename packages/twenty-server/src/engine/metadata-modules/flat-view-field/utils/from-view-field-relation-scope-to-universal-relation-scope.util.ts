@@ -13,14 +13,17 @@ type RelationScopeFieldReference = Pick<
 // Unresolved ids become null so the validator rejects them; a null relation target means none
 const toUniversalFieldReference = <
   TFieldReference extends RelationScopeFieldReference,
->(
-  {
+>({
+  fieldReference: {
     fieldMetadataId,
     relationTargetFieldMetadataId,
     ...fieldReference
-  }: TFieldReference,
-  fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>,
-) => {
+  },
+  fieldMetadataUniversalIdentifierById,
+}: {
+  fieldReference: TFieldReference;
+  fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+}) => {
   const fieldMetadataUniversalIdentifier =
     fieldMetadataUniversalIdentifierById[fieldMetadataId] ?? null;
 
@@ -49,9 +52,15 @@ export const fromViewFieldRelationScopeToUniversalRelationScope = ({
 }): UniversalViewFieldRelationScope => ({
   ...relationScope,
   filters: relationScope.filters.map((filter) =>
-    toUniversalFieldReference(filter, fieldMetadataUniversalIdentifierById),
+    toUniversalFieldReference({
+      fieldReference: filter,
+      fieldMetadataUniversalIdentifierById,
+    }),
   ),
   sorts: relationScope.sorts.map((sort) =>
-    toUniversalFieldReference(sort, fieldMetadataUniversalIdentifierById),
+    toUniversalFieldReference({
+      fieldReference: sort,
+      fieldMetadataUniversalIdentifierById,
+    }),
   ),
 });
