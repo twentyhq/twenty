@@ -3,6 +3,7 @@ import { kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { MESSENGER_KV_KEY_PREFIXES } from 'src/constants/messenger-kv-key-prefixes.constant';
+import { type PersonName } from 'src/logic-functions/types/person-name.type';
 
 // A PSID is scoped to one Page, so the same customer has a different id on each Page
 const buildPersonKey = ({
@@ -29,10 +30,12 @@ export const findOrCreateMessengerPersonId = async ({
   client,
   pageId,
   pageScopedId,
+  resolveName,
 }: {
   client: CoreApiClient;
   pageId: string;
   pageScopedId: string;
+  resolveName: () => Promise<PersonName | undefined>;
 }): Promise<string> => {
   const personKey = buildPersonKey({ pageId, pageScopedId });
   const storedPersonId = await kv.get<string>(personKey);
@@ -42,17 +45,14 @@ export const findOrCreateMessengerPersonId = async ({
     return storedPersonId;
   }
 
-  // names need Advanced Access to Business Asset User Profile Access, so start with a placeholder
+  const name = (await resolveName()) ?? {
+    firstName: 'Messenger user',
+    lastName: pageScopedId.slice(-4),
+  };
+
   const { createPerson } = await client.mutation({
     createPerson: {
-      __args: {
-        data: {
-          name: {
-            firstName: 'Messenger user',
-            lastName: pageScopedId.slice(-4),
-          },
-        },
-      },
+      __args: { data: { name } },
       id: true,
     },
   });

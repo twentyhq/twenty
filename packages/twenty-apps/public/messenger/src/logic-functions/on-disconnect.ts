@@ -1,6 +1,7 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { MESSENGER_LOGIC_FUNCTION_ON_DISCONNECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { forgetBackfillCompletion } from 'src/logic-functions/data/backfill-completion.util';
 import { getMessengerAccessTokenOrThrow } from 'src/logic-functions/data/get-messenger-access-token-or-throw.util';
 import { graphApiRequest } from 'src/logic-functions/data/graph-api-request.util';
 import {
@@ -39,6 +40,13 @@ const handler = async ({
       error,
     );
   }
+
+  // a later connection imports the history again, since disconnecting may remove the channels
+  await Promise.all(
+    (await findPageIdsOfConnection(connectedAccountId)).map(
+      forgetBackfillCompletion,
+    ),
+  );
 
   await unlinkPagesFromConnection(connectedAccountId);
 };

@@ -6,7 +6,8 @@ Brings the Facebook Messenger conversations of your Pages into Twenty and lets y
 - Messages the Page sends from Meta Business Suite are imported too.
 - Conversations can be answered from Twenty within 24 hours of the customer's last message, with attachments up to 8 MB for images and 25 MB for other files.
 - Opening a conversation in Twenty marks it as seen in Messenger.
-- Each customer gets a person record, reused for every later message on the same Page.
+- Each customer gets a person record named from their Messenger profile, reused for every later message on the same Page.
+- On connect, past conversations are imported: the 20 most recent messages of each, as Meta allows no more.
 
 ## Setup
 
@@ -46,15 +47,17 @@ Reconnect after assigning new Pages to the system user. Meta unsubscribes a Page
 
 ### 5. Production access
 
-Until Meta grants Advanced Access, webhooks only arrive for people who have a role on the Meta app. To message customers, complete Business Verification and submit App Review for `pages_messaging`, `pages_manage_metadata`, `pages_read_engagement` and `pages_show_list`.
+Until Meta grants Advanced Access, webhooks only arrive for people who have a role on the Meta app. To message customers, complete Business Verification and submit App Review for `pages_messaging`, `pages_manage_metadata`, `pages_read_engagement`, `pages_show_list` and the Business Asset User Profile Access feature.
+
+Without Advanced Access, people are named "Messenger user" with the last 4 digits of their Page-scoped ID, and past conversations with people outside the app are not imported. Once access is granted, disconnect and connect again to import them.
 
 ## Limitations
 
 - Messenger only allows replies within 24 hours of the customer's last message, so later replies are refused.
-- People are created as "Messenger user" with the last 4 digits of their Page-scoped ID. Names need Advanced Access to Business Asset User Profile Access, which this version does not use yet.
+- A person created as "Messenger user" before Advanced Access keeps that name; rename or merge them by hand.
 - A Page-scoped ID differs on each Page, so a customer who writes to two Pages gets two person records until they are merged.
 - A reply with several attachments is sent as one Messenger message per part.
-- Past conversations are not imported.
+- Past conversations bring only their 20 most recent messages, without attachments. The import paces itself to 2 Meta calls per second per Page, so a Page with many conversations takes a while: about 11 seconds per conversation.
 
 ## Development
 
