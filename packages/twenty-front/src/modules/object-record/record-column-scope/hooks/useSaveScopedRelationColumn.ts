@@ -1,5 +1,6 @@
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
-import { upsertSavedScopedRecordField } from '@/object-record/record-column-scope/utils/upsertSavedScopedRecordField';
+import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
+import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { buildAddedRecordField } from '@/object-record/record-field/utils/buildAddedRecordField';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
@@ -11,6 +12,8 @@ import { isDefined } from 'twenty-shared/utils';
 export const useSaveScopedRelationColumn = (recordTableId: string) => {
   const store = useStore();
   const { saveViewFields } = useSaveCurrentViewFields();
+  const { upsertRecordField } = useUpsertRecordField(recordTableId);
+  const { updateRecordField } = useUpdateRecordField(recordTableId);
 
   const saveScopedRelationColumn = useCallback(
     async ({
@@ -22,12 +25,11 @@ export const useSaveScopedRelationColumn = (recordTableId: string) => {
       recordFieldId?: string;
       relationScope: ViewFieldRelationScope;
     }): Promise<boolean> => {
-      const currentRecordFieldsAtom =
+      const currentRecordFields = store.get(
         currentRecordFieldsComponentState.atomFamily({
           instanceId: recordTableId,
-        });
-
-      const currentRecordFields = store.get(currentRecordFieldsAtom);
+        }),
+      );
 
       const recordFieldToSave = isDefined(recordFieldId)
         ? currentRecordFields.find(({ id }) => id === recordFieldId)
@@ -47,16 +49,22 @@ export const useSaveScopedRelationColumn = (recordTableId: string) => {
         return false;
       }
 
-      store.set(currentRecordFieldsAtom, (latestRecordFields) =>
-        upsertSavedScopedRecordField({
-          recordFields: latestRecordFields,
-          savedRecordField,
-        }),
-      );
+      // Only the scope is patched, so a resize made while saving is kept
+      if (isDefined(recordFieldId)) {
+        updateRecordField(recordFieldId, { relationScope });
+      } else {
+        upsertRecordField(savedRecordField);
+      }
 
       return true;
     },
-    [recordTableId, saveViewFields, store],
+    [
+      recordTableId,
+      saveViewFields,
+      store,
+      updateRecordField,
+      upsertRecordField,
+    ],
   );
 
   return { saveScopedRelationColumn };
