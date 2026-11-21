@@ -15,23 +15,24 @@ import { isRlsPredicateAtRootConjunction } from 'src/engine/permissions/internal
 import { resolveAccessGroupValueLookupKey } from 'src/engine/permissions/internal/access-group/utils/resolve-access-group-value-lookup-key.util';
 import { type RlsRuleShape } from 'src/engine/permissions/internal/rls/types/rls-rule-shape.type';
 import { buildMemberFieldKey } from 'src/engine/permissions/internal/rls/utils/build-member-field-key.util';
+import { type RlsRule } from 'src/engine/permissions/internal/rls/utils/build-rls-record-filter.util';
 import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
 
 const findLiteralValueLookupKeys = ({
-  ruleShape,
+  splitPredicate,
   flatObjectMetadata,
   metadataMaps,
 }: {
-  ruleShape: RlsRuleShape;
+  splitPredicate: RlsRuleShape['splitPredicate'];
   flatObjectMetadata: FlatObjectMetadata;
   metadataMaps: RecordAccessGroupSQLConditionMetadataMaps;
 }): AccessGroupValueLookupKey[] | null => {
-  if (!isDefined(ruleShape.splitPredicate)) {
+  if (!isDefined(splitPredicate)) {
     return null;
   }
 
   const key = resolveAccessGroupValueLookupKey({
-    predicate: ruleShape.splitPredicate,
+    predicate: splitPredicate,
     memberFieldKey: null,
     flatObjectMetadata,
     metadataMaps,
@@ -47,13 +48,13 @@ const findLiteralValueLookupKeys = ({
 const findMemberValueLookupKey = ({
   predicate,
   memberPredicates,
-  ruleShape,
+  predicateGroups,
   flatObjectMetadata,
   metadataMaps,
 }: {
   predicate: RowLevelPermissionPredicate;
   memberPredicates: RowLevelPermissionPredicate[];
-  ruleShape: RlsRuleShape;
+  predicateGroups: RlsRule['predicateGroups'];
   flatObjectMetadata: FlatObjectMetadata;
   metadataMaps: RecordAccessGroupSQLConditionMetadataMaps;
 }): AccessGroupValueLookupKey | null => {
@@ -69,7 +70,7 @@ const findMemberValueLookupKey = ({
     !isOnlyPredicateReadingKey ||
     !isRlsPredicateAtRootConjunction({
       predicate,
-      predicateGroups: ruleShape.rowLevelPermissionRule.predicateGroups,
+      predicateGroups,
     })
   ) {
     return null;
@@ -84,15 +85,15 @@ const findMemberValueLookupKey = ({
 };
 
 const findMemberValueLookupKeys = ({
-  ruleShape,
+  rowLevelPermissionRule,
   flatObjectMetadata,
   metadataMaps,
 }: {
-  ruleShape: RlsRuleShape;
+  rowLevelPermissionRule: RlsRule;
   flatObjectMetadata: FlatObjectMetadata;
   metadataMaps: RecordAccessGroupSQLConditionMetadataMaps;
 }): AccessGroupValueLookupKey[] | null => {
-  const memberPredicates = ruleShape.rowLevelPermissionRule.predicates.filter(
+  const memberPredicates = rowLevelPermissionRule.predicates.filter(
     ({ workspaceMemberFieldMetadataId }) =>
       isDefined(workspaceMemberFieldMetadataId),
   );
@@ -105,7 +106,7 @@ const findMemberValueLookupKeys = ({
     findMemberValueLookupKey({
       predicate,
       memberPredicates,
-      ruleShape,
+      predicateGroups: rowLevelPermissionRule.predicateGroups,
       flatObjectMetadata,
       metadataMaps,
     }),
@@ -135,7 +136,7 @@ export const findAccessGroupValueLookups = ({
     ([ruleShapeHash, ruleShape]): AccessGroupValueLookup[] => {
       const { predicates, predicateGroups } = ruleShape.rowLevelPermissionRule;
       const literalValueLookupKeys = findLiteralValueLookupKeys({
-        ruleShape,
+        splitPredicate: ruleShape.splitPredicate,
         flatObjectMetadata,
         metadataMaps,
       });
@@ -157,7 +158,7 @@ export const findAccessGroupValueLookups = ({
       }
 
       const memberValueLookupKeys = findMemberValueLookupKeys({
-        ruleShape,
+        rowLevelPermissionRule: ruleShape.rowLevelPermissionRule,
         flatObjectMetadata,
         metadataMaps,
       });
