@@ -8,6 +8,7 @@ Brings the Facebook Messenger conversations of your Pages into Twenty and lets y
 - When a customer edits a message, the edit replaces its text in Twenty.
 - When a customer taps a button the Page sent, such as Get Started or a menu item, the tap shows in the conversation.
 - When a customer arrives from a Click-to-Messenger ad or an m.me link, the person record shows the source, the link's ref, and the ad ID and title, with the date.
+- The app settings list each connected Page, whether Meta still sends its messages, any webhook field it misses, and whether its past conversations were imported. A Page Meta dropped can be resubscribed there.
 - When a reply cannot be sent, or Meta stops accepting the token, the members chosen in the app settings get an alert in their inbox.
 - In the app settings, an option creates an opportunity for each person who arrives from a Click-to-Messenger ad, named after the person and the ad.
 - Opening a conversation in Twenty marks it as seen in Messenger.
@@ -49,7 +50,7 @@ The URL must be public HTTPS, so a Twenty running on localhost cannot receive me
 
 Connect Messenger in Twenty with the system user token. For every Page the token manages, the app subscribes the Page to the webhook and creates its message channel.
 
-Reconnect after assigning new Pages to the system user, and once after updating the app so each Page subscribes to the new webhook fields. Meta unsubscribes a Page after an hour of failed webhook deliveries, so reconnect after an outage too.
+Reconnect after assigning new Pages to the system user, and once after updating the app so each Page subscribes to the new webhook fields. Meta unsubscribes a Page after an hour of failed webhook deliveries; resubscribe it from the app settings, or reconnect.
 
 ### 5. Production access
 

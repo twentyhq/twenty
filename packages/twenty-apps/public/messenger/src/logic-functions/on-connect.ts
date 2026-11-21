@@ -1,13 +1,12 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
-import { MESSENGER_WEBHOOK_FIELDS } from 'src/constants/messenger-webhook-fields.constant';
 import { MESSENGER_LOGIC_FUNCTION_ON_CONNECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { isBackfillCompleted } from 'src/logic-functions/data/backfill-completion.util';
 import { enqueueBackfillConversations } from 'src/logic-functions/data/enqueue-backfill-conversations.util';
 import { getMessengerAccessTokenOrThrow } from 'src/logic-functions/data/get-messenger-access-token-or-throw.util';
-import { graphApiRequest } from 'src/logic-functions/data/graph-api-request.util';
 import { linkPagesToConnection } from 'src/logic-functions/data/link-pages-to-connection.util';
 import { listMessengerPages } from 'src/logic-functions/data/list-messenger-pages.util';
+import { subscribePage } from 'src/logic-functions/data/subscribe-page.util';
 import { syncPageMessageChannels } from 'src/logic-functions/data/sync-page-message-channels.util';
 
 // reconnecting runs this again, which also resubscribes Pages Meta unsubscribed after failed deliveries
@@ -20,12 +19,7 @@ const handler = async ({
   const pages = await listMessengerPages(accessToken);
 
   for (const page of pages) {
-    await graphApiRequest({
-      accessToken: page.access_token,
-      method: 'POST',
-      path: `${page.id}/subscribed_apps`,
-      query: { subscribed_fields: MESSENGER_WEBHOOK_FIELDS.join(',') },
-    });
+    await subscribePage({ pageId: page.id, pageAccessToken: page.access_token });
   }
 
   await linkPagesToConnection({
