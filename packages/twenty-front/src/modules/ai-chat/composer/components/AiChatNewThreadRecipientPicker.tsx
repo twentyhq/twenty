@@ -10,7 +10,7 @@ import { AiChatChannelIcon } from '@/ai-chat/threads/components/AiChatChannelIco
 import { AiChatAssistantAvatar } from '@/ai-chat/components/AiChatAssistantAvatar';
 import { AI_CHAT_ASSISTANT_RECIPIENT_SUGGESTION_ID } from '@/ai-chat/composer/constants/AiChatAssistantRecipientSuggestionId';
 import { useAiChatAssistantProfile } from '@/ai-chat/hooks/useAiChatAssistantProfile';
-import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { type AiChatChannel } from '@/ai-chat/threads/types/AiChatChannel';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
@@ -47,8 +47,8 @@ export const AiChatNewThreadRecipientPicker = ({
   const { t } = useLingui();
   const { displayName: assistantName } = useAiChatAssistantProfile();
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
-  const setAiChatNewThreadRecipients = useSetAtomFamilyState(
-    aiChatNewThreadRecipientsFamilyState,
+  const setAiChatComposerNewThreadRecipients = useSetAtomFamilyState(
+    aiChatComposerNewThreadRecipientsFamilyState,
     newAiChatThreadId,
   );
   const [suggestionList, setSuggestionList] = useState<HTMLDivElement | null>(
@@ -80,7 +80,7 @@ export const AiChatNewThreadRecipientPicker = ({
             value={AI_CHAT_ASSISTANT_RECIPIENT_SUGGESTION_ID}
             startIcon={<AiChatAssistantAvatar />}
             onClick={() => {
-              setAiChatNewThreadRecipients((current) => ({
+              setAiChatComposerNewThreadRecipients((current) => ({
                 ...current,
                 isAssistantParticipant: true,
               }));
@@ -108,7 +108,7 @@ export const AiChatNewThreadRecipientPicker = ({
               }
               description={workspaceMember.userEmail}
               onClick={() => {
-                setAiChatNewThreadRecipients((current) => ({
+                setAiChatComposerNewThreadRecipients((current) => ({
                   ...current,
                   recipientWorkspaceMemberIds: [
                     ...current.recipientWorkspaceMemberIds,
@@ -129,7 +129,7 @@ export const AiChatNewThreadRecipientPicker = ({
             startIcon={<AiChatChannelIcon channel={channel} />}
             description={t`Channel`}
             onClick={() => {
-              setAiChatNewThreadRecipients((current) => ({
+              setAiChatComposerNewThreadRecipients((current) => ({
                 ...current,
                 channelId: channel.id,
               }));

@@ -13,10 +13,10 @@ export type AiChatThreadVisit = {
   readRequestedForParticipantUpdatedAt?: string;
 };
 
-export const aiChatThreadVisitFamilyState = createAtomFamilyState<
+export const aiChatThreadViewVisitFamilyState = createAtomFamilyState<
   AiChatThreadVisit | null,
   { threadId: string }
 >({
-  key: 'ai/aiChatThreadVisitFamilyState',
+  key: 'aiChatThreadViewVisitFamilyState',
   defaultValue: null,
 });

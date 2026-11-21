@@ -1,10 +1,10 @@
 import { type AiChatReplyStatus } from '@/ai-chat/types/AiChatReplyStatus';
 import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const aiChatReplyStatusFamilyState = createAtomFamilyState<
+export const aiChatThreadReplyStatusFamilyState = createAtomFamilyState<
   AiChatReplyStatus,
   { threadId: string | null }
 >({
-  key: 'aiChatReplyStatusFamilyState',
+  key: 'aiChatThreadReplyStatusFamilyState',
   defaultValue: 'idle',
 });

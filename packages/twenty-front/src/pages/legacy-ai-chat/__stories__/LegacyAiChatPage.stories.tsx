@@ -13,7 +13,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai-chat/constants/AiChatNewThreadPathSegment';
-import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
+import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatComposerDraftsState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { initializeNewAiChatStory } from '@/inbox/testing/initializeNewAiChatStory';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -85,7 +85,7 @@ const initializeChatPageStory = () => {
   initializeNewAiChatStory({ isInboxEnabled: false });
   const draftThreadId = jotaiStore.get(newAiChatThreadIdState.atom);
 
-  jotaiStore.set(aiChatDraftsByThreadIdState.atom, {
+  jotaiStore.set(aiChatComposerDraftsState.atom, {
     [draftThreadId]: serializePlainTextAsAdvancedTextEditorDocument(DRAFT_TEXT),
   });
 };
@@ -221,7 +221,7 @@ export const NewChatRouteHistory: Story = {
       DRAFT_TEXT,
     );
 
-    jotaiStore.set(aiChatDraftsByThreadIdState.atom, (drafts) => ({
+    jotaiStore.set(aiChatComposerDraftsState.atom, (drafts) => ({
       ...drafts,
       [NEXT_DRAFT_THREAD_ID]:
         serializePlainTextAsAdvancedTextEditorDocument(NEXT_DRAFT_TEXT),
@@ -238,7 +238,7 @@ export const NewChatRouteHistory: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Leave chat' }));
     await expect(await canvas.findByText('Outside chat')).toBeVisible();
 
-    jotaiStore.set(aiChatDraftsByThreadIdState.atom, (drafts) => ({
+    jotaiStore.set(aiChatComposerDraftsState.atom, (drafts) => ({
       ...drafts,
       [RETURNED_DRAFT_THREAD_ID]:
         serializePlainTextAsAdvancedTextEditorDocument(RETURNED_DRAFT_TEXT),

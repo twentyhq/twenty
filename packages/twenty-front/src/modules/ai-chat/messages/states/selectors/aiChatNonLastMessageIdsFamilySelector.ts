@@ -1,4 +1,4 @@
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { aiChatLastReplyMessageIdFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatLastReplyMessageIdFamilySelector';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
@@ -15,7 +15,7 @@ export const aiChatNonLastMessageIdsFamilySelector = createAtomFamilySelector<
         threadId,
       );
 
-      return get(aiChatMessagesFamilyState, { threadId })
+      return get(aiChatThreadDisplayedMessagesFamilyState, { threadId })
         .filter((message) => message.id !== lastMessageId)
         .map((message) => message.id);
     },

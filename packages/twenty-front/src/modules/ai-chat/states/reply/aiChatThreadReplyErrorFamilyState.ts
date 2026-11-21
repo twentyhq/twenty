@@ -1,10 +1,10 @@
 import { type AiChatError } from '@/ai-chat/types/AiChatError';
 import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const aiChatErrorFamilyState = createAtomFamilyState<
+export const aiChatThreadReplyErrorFamilyState = createAtomFamilyState<
   AiChatError | null,
   { threadId: string | null }
 >({
-  key: 'aiChatErrorFamilyState',
+  key: 'aiChatThreadReplyErrorFamilyState',
   defaultValue: null,
 });

@@ -7,8 +7,8 @@ import { isToolUIPart } from 'ai';
 
 import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai-chat/constants/AiChatRefetchMessagesEventName';
 import { useAnswerAiChatToolCall } from '@/ai-chat/tool-calls/hooks/useAnswerAiChatToolCall';
-import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -27,8 +27,8 @@ jest.mock('@/ai-chat/hooks/useAiChatModelId', () => ({
 }));
 
 const key = { threadId: 'thread-id' };
-const messagesAtom = aiChatMessagesFamilyState.atomFamily(key);
-const replyStatusAtom = aiChatReplyStatusFamilyState.atomFamily(key);
+const messagesAtom = aiChatThreadDisplayedMessagesFamilyState.atomFamily(key);
+const replyStatusAtom = aiChatThreadReplyStatusFamilyState.atomFamily(key);
 
 const PENDING_OUTPUT = { result: { questions: [], status: 'pending' } };
 const ANSWERED_OUTPUT = { result: { questions: [], status: 'answered' } };

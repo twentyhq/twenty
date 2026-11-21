@@ -5,7 +5,7 @@ import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
 import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
-import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/constants/AiChatNewThreadDefaultRecipients';
 
@@ -13,8 +13,9 @@ const CHANNEL_ID = '20202020-0000-4000-8000-0000000000cc';
 const NEW_THREAD_ID = '20202020-0000-4000-8000-0000000000dd';
 
 const getNewThreadChannelId = (store: ReturnType<typeof createStore>) =>
-  store.get(aiChatNewThreadRecipientsFamilyState.atomFamily(NEW_THREAD_ID))
-    .channelId;
+  store.get(
+    aiChatComposerNewThreadRecipientsFamilyState.atomFamily(NEW_THREAD_ID),
+  ).channelId;
 
 jest.mock('@/ai-chat/hooks/useSelectAiChatThread', () => ({
   useSelectAiChatThread: () => ({ selectAiChatThread: jest.fn() }),
@@ -32,10 +33,13 @@ const switchToNewChatAt = (pathname: string) => {
   const store = createStore();
 
   store.set(newAiChatThreadIdState.atom, NEW_THREAD_ID);
-  store.set(aiChatNewThreadRecipientsFamilyState.atomFamily(NEW_THREAD_ID), {
-    ...AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
-    channelId: CHANNEL_ID,
-  });
+  store.set(
+    aiChatComposerNewThreadRecipientsFamilyState.atomFamily(NEW_THREAD_ID),
+    {
+      ...AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
+      channelId: CHANNEL_ID,
+    },
+  );
   window.history.pushState({}, '', pathname);
 
   const { result } = renderHook(() => useSwitchToNewAiChat(), {

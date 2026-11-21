@@ -4,6 +4,7 @@ import { isNonEmptyArray, isString } from '@sniptt/guards';
 import {
   FieldMetadataType,
   RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
   type CompositeFieldSubFieldName,
   type RecordGqlOperationFilter,
   type RowLevelPermissionPredicate,
@@ -12,6 +13,7 @@ import {
   type RowLevelRecordsPermissions,
 } from 'twenty-shared/types';
 import {
+  computeRelationGqlFieldJoinColumnName,
   convertViewFilterValueToString,
   getFilterOperandsForFilterableFieldType,
   getFilterTypeFromFieldType,
@@ -162,6 +164,23 @@ const buildPredicateRecordFilter = ({
     !isRelationHopEnabled
   ) {
     return UNSATISFIABLE_RECORD_FILTER;
+  }
+
+  // as a view filter, emptiness on a morph target would require every target empty
+  if (
+    fieldMetadata.type === FieldMetadataType.MORPH_RELATION &&
+    !isDefined(predicate.relationFieldMetadataId) &&
+    (predicate.operand === RowLevelPermissionPredicateOperand.IS_EMPTY ||
+      predicate.operand === RowLevelPermissionPredicateOperand.IS_NOT_EMPTY)
+  ) {
+    return {
+      [computeRelationGqlFieldJoinColumnName({ name: fieldMetadata.name })]: {
+        is:
+          predicate.operand === RowLevelPermissionPredicateOperand.IS_EMPTY
+            ? 'NULL'
+            : 'NOT_NULL',
+      },
+    };
   }
 
   let predicateValue = predicate.value;

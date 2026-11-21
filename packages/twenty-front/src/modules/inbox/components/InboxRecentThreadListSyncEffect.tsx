@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
+import { aiChatThreadReplyErrorFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyErrorFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { useAddInboxThread } from '@/inbox/hooks/useAddInboxThread';
@@ -21,13 +21,19 @@ export const InboxRecentThreadListSyncEffect = ({
     aiChatThreadRecordFamilySelector,
     threadId,
   );
-  const aiChatError = useAtomFamilyStateValue(aiChatErrorFamilyState, {
-    threadId,
-  });
+  const aiChatThreadReplyError = useAtomFamilyStateValue(
+    aiChatThreadReplyErrorFamilyState,
+    {
+      threadId,
+    },
+  );
   const { prependInboxThreadToRecentList } = useAddInboxThread();
   const { loadInboxThreadList } = useLoadInboxThreadList();
   const isThreadFetched = isDefined(aiChatThreadRecord?.conversationType);
-  const isThreadNotFound = isGraphqlErrorOfType(aiChatError, 'NOT_FOUND');
+  const isThreadNotFound = isGraphqlErrorOfType(
+    aiChatThreadReplyError,
+    'NOT_FOUND',
+  );
 
   useEffect(() => {
     if (isThreadFetched) {

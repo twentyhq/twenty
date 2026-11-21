@@ -9,8 +9,8 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { AGENT_MESSAGE_ROLE } from '@/ai-chat/messages/constants/AgentMessageRole';
-import { aiChatShouldFocusEditorFamilyState } from '@/ai-chat/states/aiChatShouldFocusEditorFamilyState';
-import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/states/aiChatQuotedMessageIdFamilyState';
+import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldFocusFamilyState';
+import { aiChatComposerQuotedMessageIdFamilyState } from '@/ai-chat/states/composer/aiChatComposerQuotedMessageIdFamilyState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { AI_CHAT_USER_MESSAGE_MAX_WIDTH } from '@/ai-chat/messages/constants/AiChatUserMessageMaxWidth';
 import { getFieldFilesValueFromFilePart } from '@/chat/utils/getFieldFilesValueFromFilePart';
@@ -140,13 +140,13 @@ export const AiChatMessage = ({
     threadId,
   );
 
-  const setAiChatQuotedMessageId = useSetAtomFamilyState(
-    aiChatQuotedMessageIdFamilyState,
+  const setAiChatComposerQuotedMessageId = useSetAtomFamilyState(
+    aiChatComposerQuotedMessageIdFamilyState,
     { threadId },
   );
 
-  const setAiChatShouldFocusEditor = useSetAtomFamilyState(
-    aiChatShouldFocusEditorFamilyState,
+  const setAiChatComposerShouldFocus = useSetAtomFamilyState(
+    aiChatComposerShouldFocusFamilyState,
     { threadId },
   );
 
@@ -282,8 +282,8 @@ export const AiChatMessage = ({
                 <LightIconButton
                   aria-label={t`Reply`}
                   onClick={() => {
-                    setAiChatQuotedMessageId(messageId);
-                    setAiChatShouldFocusEditor(true);
+                    setAiChatComposerQuotedMessageId(messageId);
+                    setAiChatComposerShouldFocus(true);
                   }}
                 >
                   <IconArrowBackUp />

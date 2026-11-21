@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { aiChatIsMessageBeforeFirstUserMessageFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatIsMessageBeforeFirstUserMessageFamilySelector';
 import {
   jotaiStore,
@@ -27,7 +27,9 @@ describe('aiChatIsMessageBeforeFirstUserMessageFamilySelector', () => {
   beforeEach(() => {
     resetJotaiStore();
     jotaiStore.set(
-      aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      aiChatThreadDisplayedMessagesFamilyState.atomFamily({
+        threadId: THREAD_ID,
+      }),
       MESSAGES,
     );
   });

@@ -1,3 +1,5 @@
+import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
+import { destroyOneOperation } from 'test/integration/graphql/utils/destroy-one-operation.util';
 import { findOneOperation } from 'test/integration/graphql/utils/find-one-operation.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { updateOneOperation } from 'test/integration/graphql/utils/update-one-operation.util';
@@ -406,6 +408,183 @@ describe('field permissions on an RLS rule (integration)', () => {
     }
   });
 
+  it('should make the label identifier unreadable on the records the RLS rule matches', async () => {
+    const nameFieldMetadataId = await findFieldMetadataId('name');
+    const setNameReadability = (canReadFieldValue: false | null) =>
+      upsertFieldPermissions({
+        expectToFail: false,
+        input: {
+          roleId,
+          fieldPermissions: [
+            {
+              objectMetadataId,
+              fieldMetadataId: nameFieldMetadataId,
+              rowLevelPermissionPredicateGroupId: rlsRuleId,
+              canReadFieldValue,
+            },
+          ],
+        },
+      });
+
+    await setNameReadability(false);
+
+    try {
+      const response = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          gqlFields: 'id name { firstName lastName }',
+          filter: { id: { in: originalPeople.map(({ id }) => id) } },
+        }),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        response.body.data.people.edges.map(
+          (edge: { node: { id: string } }) => edge.node,
+        ),
+      ).toEqual([
+        { id: originalPeople[0].id, name: { firstName: '', lastName: '' } },
+      ]);
+    } finally {
+      await setNameReadability(null);
+    }
+  });
+
+  it('should make a relation unreadable on the records the RLS rule matches', async () => {
+    const parisPersonId = originalPeople[0].id;
+    const {
+      data: {
+        findResponse: { companyId: originalCompanyId },
+      },
+    } = await findOneOperation({
+      objectMetadataSingularName: 'person',
+      gqlFields: 'id companyId',
+      filter: { id: { eq: parisPersonId } },
+    });
+    const [
+      {
+        data: {
+          createOneResponse: { id: companyId },
+        },
+      },
+      {
+        data: {
+          createOneResponse: { id: taskId },
+        },
+      },
+    ] = await Promise.all([
+      createOneOperation({
+        objectMetadataSingularName: 'company',
+        input: { name: 'RLS rule relation company' },
+      }),
+      createOneOperation({
+        objectMetadataSingularName: 'task',
+        input: { title: 'RLS rule relation task' },
+      }),
+    ]);
+    const {
+      data: {
+        createOneResponse: { id: taskTargetId },
+      },
+    } = await createOneOperation({
+      objectMetadataSingularName: 'taskTarget',
+      input: { taskId, targetPersonId: parisPersonId },
+    });
+    const setRelationsReadability = async (canReadFieldValue: false | null) =>
+      upsertFieldPermissions({
+        expectToFail: false,
+        input: {
+          roleId,
+          fieldPermissions: await Promise.all(
+            ['company', 'taskTargets'].map(async (name) => ({
+              objectMetadataId,
+              fieldMetadataId: await findFieldMetadataId(name),
+              rowLevelPermissionPredicateGroupId: rlsRuleId,
+              canReadFieldValue,
+            })),
+          ),
+        },
+      });
+    const listParisRelationsAsMember = async (filter: object = {}) => {
+      const response = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          gqlFields:
+            'id companyId company { id } taskTargets { edges { node { id } } }',
+          filter: { id: { eq: parisPersonId }, ...filter },
+        }),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      return response.body.data.people.edges.map(
+        ({
+          node,
+        }: {
+          node: {
+            companyId: string | null;
+            company: { id: string } | null;
+            taskTargets: { edges: { node: { id: string } }[] };
+          };
+        }) => ({
+          companyId: node.companyId,
+          companyRecordId: node.company?.id ?? null,
+          taskTargetIds: node.taskTargets.edges.map(({ node }) => node.id),
+        }),
+      );
+    };
+
+    await updatePerson({ recordId: parisPersonId, input: { companyId } });
+
+    try {
+      expect(await listParisRelationsAsMember()).toEqual([
+        {
+          companyId,
+          companyRecordId: companyId,
+          taskTargetIds: expect.arrayContaining([taskTargetId]),
+        },
+      ]);
+
+      await setRelationsReadability(false);
+
+      expect(await listParisRelationsAsMember()).toEqual([
+        { companyId: null, companyRecordId: null, taskTargetIds: [] },
+      ]);
+      expect(
+        await listParisRelationsAsMember({
+          company: { id: { eq: companyId } },
+        }),
+      ).toEqual([]);
+      expect(
+        await listParisRelationsAsMember({ companyId: { is: 'NULL' } }),
+      ).toEqual([]);
+    } finally {
+      await setRelationsReadability(null);
+      await updatePerson({
+        recordId: parisPersonId,
+        input: { companyId: originalCompanyId },
+      });
+      await destroyOneOperation({
+        objectMetadataSingularName: 'taskTarget',
+        recordId: taskTargetId,
+      });
+      await Promise.all([
+        destroyOneOperation({
+          objectMetadataSingularName: 'task',
+          recordId: taskId,
+        }),
+        destroyOneOperation({
+          objectMetadataSingularName: 'company',
+          recordId: companyId,
+        }),
+      ]);
+    }
+  });
+
   it('should keep the field on a record reached through a share', async () => {
     await updateFeatureFlag({
       featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
@@ -679,7 +858,7 @@ describe('field permissions on an RLS rule (integration)', () => {
     }
   });
 
-  it('should reject a relation field', async () => {
+  it('should reject a required field', async () => {
     const { errors } = await upsertFieldPermissions({
       expectToFail: true,
       input: {
@@ -687,7 +866,7 @@ describe('field permissions on an RLS rule (integration)', () => {
         fieldPermissions: [
           {
             objectMetadataId,
-            fieldMetadataId: await findFieldMetadataId('company'),
+            fieldMetadataId: await findFieldMetadataId('createdBy'),
             rowLevelPermissionPredicateGroupId: rlsRuleId,
             canReadFieldValue: false,
           },

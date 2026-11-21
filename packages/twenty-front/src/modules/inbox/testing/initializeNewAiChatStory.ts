@@ -3,8 +3,8 @@ import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentTh
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
-import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
+import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -27,13 +27,13 @@ export const initializeNewAiChatStory = ({
 }) => {
   jotaiStore.set(newAiChatThreadIdState.atom, NEW_CHAT_THREAD_ID);
   jotaiStore.set(
-    aiChatIsSendingMessageFamilyState.atomFamily({
+    aiChatThreadReplyIsSendingFamilyState.atomFamily({
       threadId: NEW_CHAT_THREAD_ID,
     }),
     false,
   );
   jotaiStore.set(
-    aiChatNewThreadRecipientsFamilyState.atomFamily(NEW_CHAT_THREAD_ID),
+    aiChatComposerNewThreadRecipientsFamilyState.atomFamily(NEW_CHAT_THREAD_ID),
     AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
   );
   jotaiStore.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
