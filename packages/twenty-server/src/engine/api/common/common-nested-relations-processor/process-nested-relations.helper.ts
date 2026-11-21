@@ -341,7 +341,7 @@ export class ProcessNestedRelationsHelper {
     repository,
     useReplica,
   }: {
-    parentObjectMetadataItem: FlatObjectMetadata;
+    parentObjectMetadataItem: Pick<FlatObjectMetadata, 'id' | 'nameSingular'>;
     parentObjectRecords: ObjectRecord[];
     relationType: RelationType;
     joinColumnName: string;

@@ -440,6 +440,17 @@ const renderUserWhereExpression = ({
     })
     .join(' ');
 
+const findUnreadableRelationConditions = ({
+  unreadableRelationConditions,
+  parentAlias,
+  relationFieldName,
+}: {
+  unreadableRelationConditions: UnreadableRelationConditions;
+  parentAlias: string;
+  relationFieldName: string;
+}): string[] =>
+  unreadableRelationConditions[parentAlias]?.[relationFieldName] ?? [];
+
 const findUnreadableRelationFilterConditions = ({
   condition,
   aliases,
@@ -456,9 +467,12 @@ const findUnreadableRelationFilterConditions = ({
       ({ token, parentAlias }) =>
         aliases.includes(parentAlias) && condition.includes(token),
     )
-    .flatMap(
-      ({ parentAlias, relationFieldName }) =>
-        unreadableRelationConditions[parentAlias]?.[relationFieldName] ?? [],
+    .flatMap(({ parentAlias, relationFieldName }) =>
+      findUnreadableRelationConditions({
+        unreadableRelationConditions,
+        parentAlias,
+        relationFieldName,
+      }),
     );
 
 const renderReadableWhereCondition = ({
@@ -563,9 +577,11 @@ const renderExistsFilter = ({
     existsFilterClause.correlationCondition,
     ...existsFilterClause.additionalOnConditions,
     renderReadableCondition(
-      unreadableRelationConditions[existsFilterClause.parentAlias]?.[
-        existsFilterClause.relationFieldName
-      ] ?? [],
+      findUnreadableRelationConditions({
+        unreadableRelationConditions,
+        parentAlias: existsFilterClause.parentAlias,
+        relationFieldName: existsFilterClause.relationFieldName,
+      }),
     ),
   ].filter(isDefined);
 
@@ -776,9 +792,11 @@ export const buildJoinClause = (state: SelectStatementState): string =>
         condition,
         ...joinClause.additionalOnConditions,
         renderReadableCondition(
-          state.unreadableRelationConditions[joinClause.parentAlias]?.[
-            joinClause.relationFieldName
-          ] ?? [],
+          findUnreadableRelationConditions({
+            unreadableRelationConditions: state.unreadableRelationConditions,
+            parentAlias: joinClause.parentAlias,
+            relationFieldName: joinClause.relationFieldName,
+          }),
         ),
       ].filter(isDefined);
 
