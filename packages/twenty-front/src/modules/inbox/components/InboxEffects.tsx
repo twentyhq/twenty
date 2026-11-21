@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
+import { InboxAppBadgeEffect } from '@/inbox/components/InboxAppBadgeEffect';
 import { InboxChannelsEffect } from '@/inbox/components/InboxChannelsEffect';
 import { InboxRecentThreadListSyncEffect } from '@/inbox/components/InboxRecentThreadListSyncEffect';
 import { InboxThreadInitializationEffect } from '@/inbox/components/InboxThreadInitializationEffect';
@@ -22,6 +23,7 @@ export const InboxEffects = () => {
         <>
           <WebPushSubscriptionEffect />
           <FocusedTabEffect />
+          <InboxAppBadgeEffect />
         </>
       )}
       {isDefined(aiChatPageThreadId) && (
