@@ -59,7 +59,7 @@ describe('SettingsProfileConnectedAppsSection', () => {
     expect(screen.getByText('ChatGPT')).toBeInTheDocument();
     expect(screen.getByText('Connected apps')).toBeInTheDocument();
     expect(
-      screen.getAllByText(/^Can read and write records · Last used /),
+      screen.getAllByText(/^Access your workspace data · Last used /),
     ).toHaveLength(2);
   });
 

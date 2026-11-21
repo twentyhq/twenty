@@ -119,7 +119,6 @@ export class ApplicationResolver {
     );
   }
 
-  // Resolved on the server so clients never build file urls themselves
   @ResolveField(() => String, { nullable: true })
   logoUrl(
     @Parent()

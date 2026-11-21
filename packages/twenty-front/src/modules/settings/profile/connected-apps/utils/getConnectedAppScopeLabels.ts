@@ -1,4 +1,4 @@
-import { CONNECTED_APP_SCOPE_LABELS } from '@/settings/profile/connected-apps/constants/ConnectedAppScopeLabels';
+import { OAUTH_SCOPE_LABELS } from '@/applications/constants/OAuthScopeLabels';
 import { i18n } from '@lingui/core';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -7,6 +7,6 @@ export const getConnectedAppScopeLabels = (
   scopes: string[] | null | undefined,
 ): string[] =>
   (scopes ?? [])
-    .map((scope) => CONNECTED_APP_SCOPE_LABELS[scope])
+    .map((scope) => OAUTH_SCOPE_LABELS[scope])
     .filter(isDefined)
     .map((scopeLabel) => i18n._(scopeLabel));
