@@ -10,10 +10,16 @@ import {
   buildAccessGroupSyncLockKey,
 } from 'src/engine/permissions/internal/access-group/constants/access-group-sync-lock.constant';
 import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
-import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
 import { buildWorkspaceAccessGroups } from 'src/engine/permissions/internal/access-group/utils/build-workspace-access-groups.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
+import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
+import { findAccessGroupValueLookups } from 'src/engine/permissions/internal/access-group/value-lookup/utils/find-access-group-value-lookups.util';
+import { isAccessGroupSyncIncremental } from 'src/engine/permissions/internal/access-group/value-lookup/utils/is-access-group-sync-incremental.util';
 
 @Injectable()
 export class AccessGroupSyncService {
@@ -21,7 +27,7 @@ export class AccessGroupSyncService {
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly accessGroupRepository: AccessGroupRepository,
-    private readonly recordAccessGroupComputationService: RecordAccessGroupComputationService,
+    private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
     private readonly accessGroupPropagationPlanService: AccessGroupPropagationPlanService,
   ) {}
 
@@ -58,7 +64,7 @@ export class AccessGroupSyncService {
     const newGroupHashes = new Set(
       newAccessGroups.map(({ groupHash }) => groupHash),
     );
-    const insertedAccessGroups = newAccessGroups.filter(
+    const accessGroupsToInsert = newAccessGroups.filter(
       ({ groupHash }) => !existingGroupHashes.has(groupHash),
     );
     const canDeleteStaleAccessGroups =
@@ -68,35 +74,75 @@ export class AccessGroupSyncService {
         canDeleteStaleAccessGroups && !newGroupHashes.has(groupHash),
     );
 
-    const objectMetadataIdsToRecompute =
-      await this.recordAccessGroupComputationService.filterObjectsUsingRecordAccessGroups(
-        {
-          workspaceId,
-          objectMetadataIds: [
-            ...new Set(
-              [...insertedAccessGroups, ...staleAccessGroups].map(
-                ({ objectMetadataId }) => objectMetadataId,
-              ),
-            ),
-          ],
-        },
-      );
+    const metadataMaps =
+      await this.recordAccessGroupMetadataMapsService.find(workspaceId);
+    const changedAccessGroups = [
+      ...accessGroupsToInsert,
+      ...staleAccessGroups,
+    ].filter(({ objectMetadataId }) =>
+      isObjectUsingRecordAccessGroups({ ...metadataMaps, objectMetadataId }),
+    );
+    const changedObjectMetadataIds = [
+      ...new Set(
+        changedAccessGroups.map(({ objectMetadataId }) => objectMetadataId),
+      ),
+    ];
+    const incrementalObjectMetadataIds = changedObjectMetadataIds.filter(
+      (objectMetadataId) =>
+        isAccessGroupSyncIncremental({
+          changedAccessGroups: changedAccessGroups.filter(
+            (accessGroup) => accessGroup.objectMetadataId === objectMetadataId,
+          ),
+          accessGroupValueLookups: findAccessGroupValueLookups({
+            flatObjectMetadata: findFlatEntityByIdInFlatEntityMapsOrThrow({
+              flatEntityId: objectMetadataId,
+              flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
+            }),
+            metadataMaps,
+          }),
+        }),
+    );
+    const fullRecomputeObjectMetadataIds = changedObjectMetadataIds.filter(
+      (objectMetadataId) =>
+        !incrementalObjectMetadataIds.includes(objectMetadataId),
+    );
 
     await this.accessGroupPropagationPlanService.planAndApplyComputes({
       workspaceId,
-      objectMetadataIds: objectMetadataIdsToRecompute,
+      objectMetadataIds: fullRecomputeObjectMetadataIds,
     });
 
-    await this.accessGroupRepository.insertAccessGroups({
-      workspaceId,
-      newAccessGroups: insertedAccessGroups,
-    });
+    const insertedAccessGroups =
+      await this.accessGroupRepository.insertAccessGroups({
+        workspaceId,
+        newAccessGroups: accessGroupsToInsert,
+      });
 
     if (isNonEmptyArray(staleAccessGroups)) {
       await this.accessGroupRepository.deleteAccessGroups({
         workspaceId,
         groupHashes: staleAccessGroups.map(({ groupHash }) => groupHash),
       });
+    }
+
+    for (const objectMetadataId of incrementalObjectMetadataIds) {
+      const findCompactIdsOfObject = (
+        accessGroups: Pick<AccessGroup, 'compactId' | 'objectMetadataId'>[],
+      ) =>
+        accessGroups
+          .filter(
+            (accessGroup) => accessGroup.objectMetadataId === objectMetadataId,
+          )
+          .map(({ compactId }) => compactId);
+
+      await this.accessGroupPropagationPlanService.planAndApplyAccessGroupIdChanges(
+        {
+          workspaceId,
+          objectMetadataId,
+          addedCompactIds: findCompactIdsOfObject(insertedAccessGroups),
+          removedCompactIds: findCompactIdsOfObject(staleAccessGroups),
+        },
+      );
     }
   }
 }

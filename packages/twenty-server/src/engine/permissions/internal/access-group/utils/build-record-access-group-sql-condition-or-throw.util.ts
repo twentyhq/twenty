@@ -6,13 +6,9 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type RecordAccessGroupSQLConditionMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-sql-condition-metadata-maps.type';
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type AccessGroupSplitValue } from 'src/engine/permissions/internal/access-group/types/access-group-split-value.type';
+import { buildRlsRuleSQLCondition } from 'src/engine/permissions/internal/rls/utils/build-rls-rule-sql-condition.util';
 import { type RlsRuleShape } from 'src/engine/permissions/internal/rls/types/rls-rule-shape.type';
-import {
-  buildRecordFilterForRule,
-  type RlsRule,
-} from 'src/engine/permissions/internal/rls/utils/build-rls-record-filter.util';
-import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
-import { renderRlsRecordFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-rls-record-filter-to-sql.util';
+import { type RlsRule } from 'src/engine/permissions/internal/rls/utils/build-rls-record-filter.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 
 const MATCHING_NO_RECORD: SQLCondition = { sql: 'FALSE', parameters: {} };
@@ -62,27 +58,14 @@ export const buildRecordAccessGroupSQLConditionOrThrow = ({
     return MATCHING_NO_RECORD;
   }
 
-  const recordFilter = buildRecordFilterForRule({
+  return buildRlsRuleSQLCondition({
     rowLevelPermissionRule: buildGroupRule({ accessGroup, ruleShape }),
     memberFieldValues:
       accessGroup.type === 'RLS_MEMBER_VALUE'
         ? accessGroup.memberFieldValues
         : {},
-    flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
-    flatFieldMetadataOptionMaps: metadataMaps.flatFieldMetadataOptionMaps,
-    flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
-    isRelationHopEnabled: isRlsRelationHopEnabled(metadataMaps.featureFlagsMap),
-  });
-
-  if (!isDefined(recordFilter)) {
-    return null;
-  }
-
-  return renderRlsRecordFilterToSql({
-    recordFilter,
+    flatObjectMetadata,
     tableAlias,
-    objectMetadata: flatObjectMetadata,
-    flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
-    flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
+    metadataMaps,
   });
 };
