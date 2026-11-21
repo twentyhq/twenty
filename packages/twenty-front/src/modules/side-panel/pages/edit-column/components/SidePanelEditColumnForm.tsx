@@ -167,6 +167,7 @@ export const SidePanelEditColumnForm = ({
       ? { lookupTargetFieldMetadataItem: selectedLookupTargetFieldMetadataItem }
       : undefined,
     isScopedRelationColumn: true,
+    customLabel: undefined,
   });
 
   const ColumnIcon = getIcon(columnHeader.icon);
