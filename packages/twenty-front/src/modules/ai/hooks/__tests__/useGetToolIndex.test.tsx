@@ -1,8 +1,8 @@
 import { MockedProvider } from '@apollo/client/testing/react';
 import { act, render, screen, waitFor } from '@testing-library/react';
 
-import { AiChatSyncEffect } from '@/ai-chat/instance/components/AiChatSyncEffect';
-import { TOOL_INDEX_INVALIDATION_DEBOUNCE_TIME_IN_MS } from '@/ai-chat/tool-calls/constants/ToolIndexInvalidationDebounceTimeInMs';
+import { ToolIndexInvalidationEffect } from '@/ai/components/ToolIndexInvalidationEffect';
+import { TOOL_INDEX_INVALIDATION_DEBOUNCE_TIME_IN_MS } from '@/ai/constants/ToolIndexInvalidationDebounceTimeInMs';
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
 import { dispatchMetadataOperationBrowserEvent } from '@/browser-event/utils/dispatchMetadataOperationBrowserEvent';
 import { GetToolIndexDocument } from '~/generated-metadata/graphql';
@@ -46,7 +46,7 @@ const buildChat = (toolStepCount: number) => (
     defaultOptions={{ watchQuery: { fetchPolicy: 'cache-and-network' } }}
   >
     <>
-      <AiChatSyncEffect />
+      <ToolIndexInvalidationEffect />
       {Array.from({ length: toolStepCount }, (_, index) => (
         <ToolStepLabel key={index} />
       ))}
