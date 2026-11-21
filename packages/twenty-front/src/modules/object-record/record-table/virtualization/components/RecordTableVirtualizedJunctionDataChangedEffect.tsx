@@ -24,6 +24,7 @@ export const RecordTableVirtualizedJunctionDataChangedEffect = () => {
   });
 
   useListenToScopedRelationRecordOperation({
+    objectNameSingular,
     onScopedRelationRecordOperation:
       debouncedResetVirtualizationBecauseDataChanged,
   });
