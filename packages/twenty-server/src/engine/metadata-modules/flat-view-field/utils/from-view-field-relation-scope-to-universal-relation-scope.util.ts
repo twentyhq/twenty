@@ -1,9 +1,44 @@
 import {
   type UniversalViewFieldRelationScope,
   type ViewFieldRelationScope,
+  type ViewFieldRelationScopeFilter,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
-import { fromRelationScopeFieldReferenceToUniversalFieldReference } from 'src/engine/metadata-modules/flat-view-field/utils/from-relation-scope-field-reference-to-universal-field-reference.util';
+type RelationScopeFieldReference = Pick<
+  ViewFieldRelationScopeFilter,
+  'fieldMetadataId' | 'relationTargetFieldMetadataId'
+>;
+
+// Unresolved ids become null so the validator rejects them; a null relation target means none
+const toUniversalFieldReference = <
+  TFieldReference extends RelationScopeFieldReference,
+>(
+  {
+    fieldMetadataId,
+    relationTargetFieldMetadataId,
+    ...fieldReference
+  }: TFieldReference,
+  fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>,
+) => {
+  const fieldMetadataUniversalIdentifier =
+    fieldMetadataUniversalIdentifierById[fieldMetadataId] ?? null;
+
+  if (!isDefined(relationTargetFieldMetadataId)) {
+    return { ...fieldReference, fieldMetadataUniversalIdentifier };
+  }
+
+  const relationTargetFieldMetadataUniversalIdentifier =
+    fieldMetadataUniversalIdentifierById[relationTargetFieldMetadataId];
+
+  return isDefined(relationTargetFieldMetadataUniversalIdentifier)
+    ? {
+        ...fieldReference,
+        fieldMetadataUniversalIdentifier,
+        relationTargetFieldMetadataUniversalIdentifier,
+      }
+    : { ...fieldReference, fieldMetadataUniversalIdentifier: null };
+};
 
 export const fromViewFieldRelationScopeToUniversalRelationScope = ({
   relationScope,
@@ -13,22 +48,10 @@ export const fromViewFieldRelationScopeToUniversalRelationScope = ({
   fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
 }): UniversalViewFieldRelationScope => ({
   ...relationScope,
-  filters: relationScope.filters.map(
-    ({ fieldMetadataId, relationTargetFieldMetadataId, ...filter }) => ({
-      ...filter,
-      ...fromRelationScopeFieldReferenceToUniversalFieldReference({
-        fieldReference: { fieldMetadataId, relationTargetFieldMetadataId },
-        fieldMetadataUniversalIdentifierById,
-      }),
-    }),
+  filters: relationScope.filters.map((filter) =>
+    toUniversalFieldReference(filter, fieldMetadataUniversalIdentifierById),
   ),
-  sorts: relationScope.sorts.map(
-    ({ fieldMetadataId, relationTargetFieldMetadataId, ...sort }) => ({
-      ...sort,
-      ...fromRelationScopeFieldReferenceToUniversalFieldReference({
-        fieldReference: { fieldMetadataId, relationTargetFieldMetadataId },
-        fieldMetadataUniversalIdentifierById,
-      }),
-    }),
+  sorts: relationScope.sorts.map((sort) =>
+    toUniversalFieldReference(sort, fieldMetadataUniversalIdentifierById),
   ),
 });

@@ -2,9 +2,51 @@ import {
   type UniversalViewFieldRelationScope,
   type ViewFieldRelationScope,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
-import { fromUniversalRelationScopeFieldReferenceToFieldReference } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-field/services/utils/from-universal-relation-scope-field-reference-to-field-reference.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+
+type UniversalRelationScopeFieldReference = Pick<
+  UniversalViewFieldRelationScope['filters'][number],
+  | 'fieldMetadataUniversalIdentifier'
+  | 'relationTargetFieldMetadataUniversalIdentifier'
+>;
+
+const toFieldMetadataIdOrThrow = (
+  universalIdentifier: string | null,
+  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>,
+): string =>
+  findFlatEntityByUniversalIdentifierOrThrow({
+    flatEntityMaps: flatFieldMetadataMaps,
+    // An unresolved (null) reference never matches, so it throws like a missing one
+    universalIdentifier: universalIdentifier ?? '',
+  }).id;
+
+const toFieldReference = <
+  TUniversalFieldReference extends UniversalRelationScopeFieldReference,
+>(
+  {
+    fieldMetadataUniversalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier,
+    ...fieldReference
+  }: TUniversalFieldReference,
+  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>,
+) => ({
+  ...fieldReference,
+  fieldMetadataId: toFieldMetadataIdOrThrow(
+    fieldMetadataUniversalIdentifier,
+    flatFieldMetadataMaps,
+  ),
+  ...(isDefined(relationTargetFieldMetadataUniversalIdentifier)
+    ? {
+        relationTargetFieldMetadataId: toFieldMetadataIdOrThrow(
+          relationTargetFieldMetadataUniversalIdentifier,
+          flatFieldMetadataMaps,
+        ),
+      }
+    : {}),
+});
 
 export const fromUniversalRelationScopeToViewFieldRelationScope = ({
   universalRelationScope,
@@ -14,36 +56,10 @@ export const fromUniversalRelationScopeToViewFieldRelationScope = ({
   flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
 }): ViewFieldRelationScope => ({
   ...universalRelationScope,
-  filters: universalRelationScope.filters.map(
-    ({
-      fieldMetadataUniversalIdentifier,
-      relationTargetFieldMetadataUniversalIdentifier,
-      ...filter
-    }) => ({
-      ...filter,
-      ...fromUniversalRelationScopeFieldReferenceToFieldReference({
-        universalFieldReference: {
-          fieldMetadataUniversalIdentifier,
-          relationTargetFieldMetadataUniversalIdentifier,
-        },
-        flatFieldMetadataMaps,
-      }),
-    }),
+  filters: universalRelationScope.filters.map((filter) =>
+    toFieldReference(filter, flatFieldMetadataMaps),
   ),
-  sorts: universalRelationScope.sorts.map(
-    ({
-      fieldMetadataUniversalIdentifier,
-      relationTargetFieldMetadataUniversalIdentifier,
-      ...sort
-    }) => ({
-      ...sort,
-      ...fromUniversalRelationScopeFieldReferenceToFieldReference({
-        universalFieldReference: {
-          fieldMetadataUniversalIdentifier,
-          relationTargetFieldMetadataUniversalIdentifier,
-        },
-        flatFieldMetadataMaps,
-      }),
-    }),
+  sorts: universalRelationScope.sorts.map((sort) =>
+    toFieldReference(sort, flatFieldMetadataMaps),
   ),
 });
