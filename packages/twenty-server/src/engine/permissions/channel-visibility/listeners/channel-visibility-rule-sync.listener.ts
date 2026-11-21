@@ -12,6 +12,7 @@ import { type FeatureFlagEnabledEvent } from 'src/engine/core-modules/feature-fl
 import { CHANNEL_VISIBILITY_SOURCE_CHANGED_EVENT } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-source-changed-event.constant';
 import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync-scheduler.service';
 import { type ChannelVisibilitySourceChangedEvent } from 'src/engine/permissions/channel-visibility/types/channel-visibility-source-changed-event.type';
+import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { type CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 
 @Injectable()
@@ -65,9 +66,7 @@ export class ChannelVisibilityRuleSyncListener {
   @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.RESTORED)
   async handleWorkspaceMemberChanged({
     workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<void> {
+  }: Pick<WorkspaceEventBatch<never>, 'workspaceId'>): Promise<void> {
     await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
       workspaceId,
     );
