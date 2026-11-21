@@ -38,52 +38,53 @@ export const buildChannelVisibilityObjectRecordsPermissions = ({
 
   return {
     objectUniversalIdentifier,
-    rowLevelRecordsPermissions: Object.values(
-      MessageChannelVisibility,
-    ).flatMap((visibility) => {
-      const channelIds = channels
-        .filter(
-          (channel) =>
-            (channel.connectedAccount?.userWorkspaceId === userWorkspaceId
-              ? MessageChannelVisibility.SHARE_EVERYTHING
-              : channel.visibility) === visibility,
-        )
-        .map(({ id }) => id);
+    rowLevelRecordsPermissions: Object.values(MessageChannelVisibility).flatMap(
+      (visibility) => {
+        const channelIds = channels
+          .filter(
+            (channel) =>
+              (channel.connectedAccount?.userWorkspaceId === userWorkspaceId
+                ? MessageChannelVisibility.SHARE_EVERYTHING
+                : channel.visibility) === visibility,
+          )
+          .map(({ id }) => id);
 
-      if (channelIds.length === 0) {
-        return [];
-      }
+        if (channelIds.length === 0) {
+          return [];
+        }
 
-      const buildUniversalIdentifier = (kind: string) =>
-        v5(
-          `${objectUniversalIdentifier}:${visibility}:${kind}`,
-          roleUniversalIdentifier,
-        );
+        const buildUniversalIdentifier = (kind: string) =>
+          v5(
+            `${objectUniversalIdentifier}:${visibility}:${kind}`,
+            roleUniversalIdentifier,
+          );
 
-      return [
-        {
-          universalIdentifier: buildUniversalIdentifier('rule'),
-          canReadRecords: true,
-          unreadableFields:
-            unreadableFieldUniversalIdentifiersByVisibility[visibility] ?? [],
-          predicateGroups: [
-            {
-              universalIdentifier: buildUniversalIdentifier('group'),
-              logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
-              predicates: [
-                {
-                  universalIdentifier: buildUniversalIdentifier('predicate'),
-                  fieldUniversalIdentifier: channelIdFieldUniversalIdentifier,
-                  relationFieldUniversalIdentifier:
-                    associationRelationFieldUniversalIdentifier,
-                  operand: RowLevelPermissionPredicateOperand.IS,
-                  value: channelIds,
-                },
-              ],
-            },
-          ],
-        },
-      ];
-    }),
+        return [
+          {
+            universalIdentifier: buildUniversalIdentifier('rule'),
+            canReadRecords: true,
+            unreadableFields:
+              unreadableFieldUniversalIdentifiersByVisibility[visibility] ?? [],
+            predicateGroups: [
+              {
+                universalIdentifier: buildUniversalIdentifier('group'),
+                logicalOperator:
+                  RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                predicates: [
+                  {
+                    universalIdentifier: buildUniversalIdentifier('predicate'),
+                    fieldUniversalIdentifier: channelIdFieldUniversalIdentifier,
+                    relationFieldUniversalIdentifier:
+                      associationRelationFieldUniversalIdentifier,
+                    operand: RowLevelPermissionPredicateOperand.IS,
+                    value: channelIds,
+                  },
+                ],
+              },
+            ],
+          },
+        ];
+      },
+    ),
   };
 };

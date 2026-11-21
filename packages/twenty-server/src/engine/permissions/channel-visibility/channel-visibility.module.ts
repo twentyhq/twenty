@@ -7,23 +7,26 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { SyncChannelVisibilityRulesJob } from 'src/engine/permissions/channel-visibility/jobs/sync-channel-visibility-rules.job';
 import { ChannelVisibilityRuleSyncListener } from 'src/engine/permissions/channel-visibility/listeners/channel-visibility-rule-sync.listener';
 import { ChannelVisibilityRuleSyncService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync.service';
-import { ChannelVisibilityRuleSyncSchedulerModule } from 'src/engine/permissions/channel-visibility/channel-visibility-rule-sync-scheduler.module';
+import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync-scheduler.service';
 import { WorkspaceMemberIndividualRoleModule } from 'src/engine/permissions/workspace-member-individual-role/workspace-member-individual-role.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
-    ChannelVisibilityRuleSyncSchedulerModule,
     TypeOrmModule.forFeature([MessageChannelEntity, CalendarChannelEntity]),
     WorkspaceCacheModule,
     CacheLockModule,
     WorkspaceMemberIndividualRoleModule,
   ],
   providers: [
+    ChannelVisibilityRuleSyncSchedulerService,
     ChannelVisibilityRuleSyncService,
     ChannelVisibilityRuleSyncListener,
     SyncChannelVisibilityRulesJob,
   ],
-  exports: [ChannelVisibilityRuleSyncService],
+  exports: [
+    ChannelVisibilityRuleSyncService,
+    ChannelVisibilityRuleSyncSchedulerService,
+  ],
 })
 export class ChannelVisibilityModule {}

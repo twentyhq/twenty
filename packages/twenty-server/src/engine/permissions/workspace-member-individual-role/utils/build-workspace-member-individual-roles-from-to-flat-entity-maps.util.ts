@@ -6,7 +6,6 @@ import { fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow } from 'src/en
 import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-role.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key.type';
-import { buildUniversalFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/build-universal-flat-entity-maps.util';
 import {
   WORKSPACE_MEMBER_INDIVIDUAL_ROLE_LABEL_PREFIX,
   WORKSPACE_MEMBER_INDIVIDUAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
@@ -36,6 +35,19 @@ type WorkspaceMemberIndividualRoleUniversalFlatEntityMaps = Pick<
   AllUniversalFlatEntityMaps,
   WorkspaceMemberIndividualRoleFlatEntityMapsKey
 >;
+
+const buildUniversalFlatEntityMaps = <
+  TUniversalFlatEntity extends { universalIdentifier: string },
+>(
+  universalFlatEntities: TUniversalFlatEntity[],
+) => ({
+  byUniversalIdentifier: Object.fromEntries(
+    universalFlatEntities.map((universalFlatEntity) => [
+      universalFlatEntity.universalIdentifier,
+      universalFlatEntity,
+    ]),
+  ),
+});
 
 const findEntitiesOfRoles = <
   TFlatEntity extends { roleUniversalIdentifier: string },
