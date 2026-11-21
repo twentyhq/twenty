@@ -12,6 +12,7 @@ import {
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type RecordAccessGroupSQLConditionMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-sql-condition-metadata-maps.type';
 import { type AccessGroupValueLookupKey } from 'src/engine/permissions/internal/access-group/value-lookup/types/access-group-value-lookup-key.type';
@@ -32,10 +33,10 @@ const isManyToOneRelation = (fieldMetadata: OrmFlatFieldMetadata): boolean =>
 
 const findSingleValueColumnName = ({
   fieldMetadata,
-  metadataMaps,
+  flatFieldMetadataMaps,
 }: {
   fieldMetadata: OrmFlatFieldMetadata | undefined;
-  metadataMaps: RecordAccessGroupSQLConditionMetadataMaps;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): string | null => {
   if (
     !isDefined(fieldMetadata) ||
@@ -51,7 +52,7 @@ const findSingleValueColumnName = ({
   return isManyToOneRelation(fieldMetadata)
     ? findRelationJoinColumnsOrThrow({
         relationFieldMetadata: fieldMetadata,
-        flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+        flatFieldMetadataMaps,
       }).sourceColumnName
     : null;
 };
@@ -59,15 +60,18 @@ const findSingleValueColumnName = ({
 const isMemberValueComparableToField = ({
   predicate,
   fieldMetadata,
-  metadataMaps,
+  flatFieldMetadataMaps,
 }: {
-  predicate: RowLevelPermissionPredicate;
+  predicate: Pick<
+    RowLevelPermissionPredicate,
+    'workspaceMemberFieldMetadataId' | 'workspaceMemberSubFieldName'
+  >;
   fieldMetadata: OrmFlatFieldMetadata;
-  metadataMaps: RecordAccessGroupSQLConditionMetadataMaps;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): boolean => {
   const workspaceMemberFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: predicate.workspaceMemberFieldMetadataId ?? '',
-    flatEntityMaps: metadataMaps.flatFieldMetadataMaps,
+    flatEntityMaps: flatFieldMetadataMaps,
   });
 
   return (
@@ -92,7 +96,10 @@ export const resolveAccessGroupValueLookupKey = ({
     flatEntityId: predicate.fieldMetadataId,
     flatEntityMaps: metadataMaps.flatFieldMetadataMaps,
   });
-  const columnName = findSingleValueColumnName({ fieldMetadata, metadataMaps });
+  const columnName = findSingleValueColumnName({
+    fieldMetadata,
+    flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+  });
   const isMemberBound = isDefined(predicate.workspaceMemberFieldMetadataId);
 
   if (
@@ -103,7 +110,7 @@ export const resolveAccessGroupValueLookupKey = ({
       !isMemberValueComparableToField({
         predicate,
         fieldMetadata,
-        metadataMaps,
+        flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
       }))
   ) {
     return null;
