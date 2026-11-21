@@ -9,7 +9,7 @@ import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/da
 import { FEATURE_FLAG_DISABLED_EVENT } from 'src/engine/core-modules/feature-flag/constants/feature-flag-disabled-event.constant';
 import { FEATURE_FLAG_ENABLED_EVENT } from 'src/engine/core-modules/feature-flag/constants/feature-flag-enabled-event.constant';
 import { type FeatureFlagEnabledEvent } from 'src/engine/core-modules/feature-flag/types/feature-flag-enabled-event.type';
-import { CHANNEL_VISIBILITY_SOURCE_CHANGED_EVENT } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-source-changed-event.constant';
+import { CHANNEL_VISIBILITY_CHANGED_EVENT } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-changed-event.constant';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -17,7 +17,7 @@ import { SYNC_CHANNEL_VISIBILITY_RULES_JOB_NAME } from 'src/engine/permissions/c
 import { type SyncChannelVisibilityRulesJobData } from 'src/engine/permissions/channel-visibility/types/sync-channel-visibility-rules-job-data.type';
 import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type ChannelVisibilitySourceChangedEvent } from 'src/engine/permissions/channel-visibility/types/channel-visibility-source-changed-event.type';
+import { type ChannelVisibilityChangedEvent } from 'src/engine/permissions/channel-visibility/types/channel-visibility-changed-event.type';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { type CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 
@@ -52,11 +52,11 @@ export class ChannelVisibilityRuleSyncListener {
     }
   }
 
-  @OnCustomBatchEvent(CHANNEL_VISIBILITY_SOURCE_CHANGED_EVENT)
-  async handleChannelVisibilitySourceChanged({
+  @OnCustomBatchEvent(CHANNEL_VISIBILITY_CHANGED_EVENT)
+  async handleChannelVisibilityChanged({
     workspaceId,
   }: Pick<
-    CustomWorkspaceEventBatch<ChannelVisibilitySourceChangedEvent>,
+    CustomWorkspaceEventBatch<ChannelVisibilityChangedEvent>,
     'workspaceId'
   >): Promise<void> {
     if (isDefined(workspaceId)) {

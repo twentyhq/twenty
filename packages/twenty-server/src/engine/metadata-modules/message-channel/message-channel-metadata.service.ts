@@ -17,8 +17,8 @@ import {
   MessageChannelVisibility,
 } from 'twenty-shared/types';
 
-import { CHANNEL_VISIBILITY_SOURCE_CHANGED_EVENT } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-source-changed-event.constant';
-import { type ChannelVisibilitySourceChangedEvent } from 'src/engine/permissions/channel-visibility/types/channel-visibility-source-changed-event.type';
+import { CHANNEL_VISIBILITY_CHANGED_EVENT } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-changed-event.constant';
+import { type ChannelVisibilityChangedEvent } from 'src/engine/permissions/channel-visibility/types/channel-visibility-changed-event.type';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
@@ -244,9 +244,9 @@ export class MessageChannelMetadataService {
     const entity = this.repository.create(data);
     const savedEntity = await this.repository.save(entity);
 
-    this.workspaceEventEmitter.emitCustomBatchEvent<ChannelVisibilitySourceChangedEvent>(
-      CHANNEL_VISIBILITY_SOURCE_CHANGED_EVENT,
-      [{ reason: 'channelCreated' }],
+    this.workspaceEventEmitter.emitCustomBatchEvent<ChannelVisibilityChangedEvent>(
+      CHANNEL_VISIBILITY_CHANGED_EVENT,
+      [{}],
       data.workspaceId,
     );
 
@@ -268,9 +268,9 @@ export class MessageChannelMetadataService {
     );
 
     if ('visibility' in data) {
-      this.workspaceEventEmitter.emitCustomBatchEvent<ChannelVisibilitySourceChangedEvent>(
-        CHANNEL_VISIBILITY_SOURCE_CHANGED_EVENT,
-        [{ reason: 'channelVisibilityUpdated' }],
+      this.workspaceEventEmitter.emitCustomBatchEvent<ChannelVisibilityChangedEvent>(
+        CHANNEL_VISIBILITY_CHANGED_EVENT,
+        [{}],
         workspaceId,
       );
     }
@@ -412,9 +412,9 @@ export class MessageChannelMetadataService {
 
     await this.repository.delete({ id, workspaceId });
 
-    this.workspaceEventEmitter.emitCustomBatchEvent<ChannelVisibilitySourceChangedEvent>(
-      CHANNEL_VISIBILITY_SOURCE_CHANGED_EVENT,
-      [{ reason: 'channelDeleted' }],
+    this.workspaceEventEmitter.emitCustomBatchEvent<ChannelVisibilityChangedEvent>(
+      CHANNEL_VISIBILITY_CHANGED_EVENT,
+      [{}],
       workspaceId,
     );
 
