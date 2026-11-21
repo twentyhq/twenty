@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { differenceInDays } from 'date-fns';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Not, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
@@ -418,30 +418,16 @@ export class BillingSubscriptionService {
         workspaceId,
       );
 
-    // V2 subscriptions have no quantityless metered item; skip the stale-item cleanup in that case
-    const meterBillingSubscriptionItem = billingSubscriptionItems.find(
-      (item) => !isDefined(item.quantity),
-    );
-
-    if (isDefined(meterBillingSubscriptionItem)) {
-      const existingBillingSubscriptionItem =
-        await this.billingSubscriptionItemRepository.findOne({
-          where: {
-            billingSubscriptionId: currentBillingSubscription.id,
-            stripeProductId: meterBillingSubscriptionItem.stripeProductId,
-          },
-        });
-
-      if (
-        existingBillingSubscriptionItem?.stripeSubscriptionItemId !==
-        meterBillingSubscriptionItem.stripeSubscriptionItemId
-      ) {
-        await this.billingSubscriptionItemRepository.delete({
-          billingSubscriptionId: currentBillingSubscription.id,
-          stripeProductId: meterBillingSubscriptionItem.stripeProductId,
-        });
-      }
-    }
+    await this.billingSubscriptionItemRepository.delete({
+      billingSubscriptionId: currentBillingSubscription.id,
+      stripeSubscriptionItemId: Not(
+        In(
+          billingSubscriptionItems.map(
+            ({ stripeSubscriptionItemId }) => stripeSubscriptionItemId,
+          ),
+        ),
+      ),
+    });
 
     await this.billingSubscriptionItemRepository.upsert(
       billingSubscriptionItems,

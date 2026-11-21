@@ -1,6 +1,6 @@
 import { type QueryConfig, types } from 'pg';
 import { type FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined, pascalCase } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, pascalCase } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 
@@ -46,7 +46,8 @@ import {
   type JoinClause,
   type OrderByClause,
   type SelectClause,
-  type ColumnNullifyConditions,
+  type UnreadableColumnConditions,
+  type UnreadableRelationConditions,
   type SelectStatementState,
   type WhereClause,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
@@ -102,8 +103,10 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private includeDeleted = false;
   private explicitSelection?: string[];
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
-  private readonly aliasesWithColumnNullifyApplied = new Set<string>();
-  private readonly columnNullifyConditions: ColumnNullifyConditions = {};
+  private readonly aliasesWithUnreadableColumnsApplied = new Set<string>();
+  private readonly unreadableColumnConditions: UnreadableColumnConditions = {};
+  private readonly unreadableRelationConditions: UnreadableRelationConditions =
+    {};
 
   constructor(alias: string, context: QueryBuilderContext) {
     this.alias = alias;
@@ -197,6 +200,24 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     parameters?: Record<string, unknown>,
   ): this {
     return this.appendWhere('and', condition, parameters);
+  }
+
+  andWhereReadingUnreadableColumnsAsNull({
+    condition,
+    parameters,
+  }: {
+    condition: WhereConditionLike;
+    parameters?: Record<string, unknown>;
+  }): this {
+    const whereClauseCount = this.whereClauses.length;
+
+    this.appendWhere('and', condition, parameters);
+
+    for (const whereClause of this.whereClauses.slice(whereClauseCount)) {
+      whereClause.shouldReadUnreadableColumnsAsNull = true;
+    }
+
+    return this;
   }
 
   orWhere(
@@ -703,17 +724,38 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return Number(rows[0]?.count ?? 0);
   }
 
-  markColumnNullifyApplied(alias: string): boolean {
-    if (this.aliasesWithColumnNullifyApplied.has(alias)) {
+  markUnreadableColumnsApplied(alias: string): boolean {
+    if (this.aliasesWithUnreadableColumnsApplied.has(alias)) {
       return false;
     }
 
-    this.aliasesWithColumnNullifyApplied.add(alias);
+    this.aliasesWithUnreadableColumnsApplied.add(alias);
 
     return true;
   }
 
-  nullifyColumnsWhen({
+  makeRelationsUnreadableWhen({
+    alias,
+    relationFieldNames,
+    condition,
+  }: {
+    alias: string;
+    relationFieldNames: string[];
+    condition: SQLCondition;
+  }): this {
+    const unreadableRelationConditionsOfAlias =
+      (this.unreadableRelationConditions[alias] ??= {});
+
+    for (const relationFieldName of relationFieldNames) {
+      (unreadableRelationConditionsOfAlias[relationFieldName] ??= []).push(
+        condition.sql,
+      );
+    }
+
+    return this.setParameters(condition.parameters);
+  }
+
+  makeColumnsUnreadableWhen({
     alias,
     columnNames,
     condition,
@@ -722,12 +764,14 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     columnNames: string[];
     condition: SQLCondition;
   }): this {
-    const columnNullifyConditionsOfAlias = (this.columnNullifyConditions[
+    const unreadableColumnConditionsOfAlias = (this.unreadableColumnConditions[
       alias
     ] ??= {});
 
     for (const columnName of columnNames) {
-      (columnNullifyConditionsOfAlias[columnName] ??= []).push(condition.sql);
+      (unreadableColumnConditionsOfAlias[columnName] ??= []).push(
+        condition.sql,
+      );
     }
 
     return this.setParameters(condition.parameters);
@@ -861,20 +905,14 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
 
       condition.whereFactory(nestedBuilder);
 
-      const nestedSql = nestedBuilder.buildWhereExpression({
-        includeSoftDeletePredicate: false,
-        substituteExistsFilters: false,
-      });
-
       this.setParameters(nestedBuilder.parameters);
       this.existsFilterClauses.push(...nestedBuilder.existsFilterClauses);
 
-      if (nestedSql.length > 0) {
+      if (isNonEmptyArray(nestedBuilder.whereClauses)) {
         this.whereClauses.push({
           operator,
-          sql: isNegatedWhereFactoryLike(condition)
-            ? `NOT (${nestedSql})`
-            : `(${nestedSql})`,
+          isNegated: isNegatedWhereFactoryLike(condition),
+          clauses: [...nestedBuilder.whereClauses],
         });
       }
 
@@ -1079,10 +1117,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         relationFieldName,
         targetTableShape,
         correlationCondition,
-        conditionSql: nestedBuilder.buildWhereExpression({
-          includeSoftDeletePredicate: false,
-          substituteExistsFilters: false,
-        }),
+        conditionClauses: [...nestedBuilder.whereClauses],
         additionalOnConditions: [],
       },
       ...nestedBuilder.existsFilterClauses,
@@ -1313,7 +1348,8 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       explicitSelection: this.explicitSelection,
       extraSelectClauses: this.extraSelectClauses,
       columnSelections: this.resolveColumnSelections(),
-      columnNullifyConditions: this.columnNullifyConditions,
+      unreadableColumnConditions: this.unreadableColumnConditions,
+      unreadableRelationConditions: this.unreadableRelationConditions,
       joinClauses: this.joinClauses,
       whereClauses: this.whereClauses,
       rowAccessConditions: this.rowAccessConditions,

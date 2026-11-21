@@ -15,7 +15,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { AiChatPendingAskGate } from '@/ai-chat/tool-calls/components/AiChatPendingAskGate';
 import { AiChatFrontComponentToolPreview } from '@/ai-chat/tool-calls/components/AiChatFrontComponentToolPreview';
 import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai-chat/constants/AiChatRefetchMessagesEventName';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -194,7 +194,7 @@ export const PendingRequests: Story = {
         },
       ),
     );
-    const messagesAtom = aiChatMessagesFamilyState.atomFamily({
+    const messagesAtom = aiChatThreadDisplayedMessagesFamilyState.atomFamily({
       threadId: 'approval-preview-story',
     });
     const previousMessages = jotaiStore.get(messagesAtom);

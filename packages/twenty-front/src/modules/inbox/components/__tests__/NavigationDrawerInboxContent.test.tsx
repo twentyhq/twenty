@@ -119,7 +119,7 @@ jest.mock('@/ai-chat/hooks/useAiChatPageThreadId', () => ({
   useAiChatPageThreadId: () => null,
 }));
 
-jest.mock('@/ai-chat/hooks/useAiChatThreadClick', () => ({
+jest.mock('@/ai-chat/threads/hooks/useAiChatThreadClick', () => ({
   useAiChatThreadClick: () => ({ handleThreadClick: jest.fn() }),
 }));
 

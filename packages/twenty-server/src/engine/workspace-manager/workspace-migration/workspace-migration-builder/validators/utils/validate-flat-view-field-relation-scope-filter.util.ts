@@ -98,25 +98,27 @@ export const validateFlatViewFieldRelationScopeFilter = ({
     relationTargetFlatFieldMetadata ?? flatFieldMetadata;
 
   if (
-    isFieldMetadataEntityOfType(
+    !isFieldMetadataEntityOfType(
       effectiveFlatFieldMetadata,
       FieldMetadataType.SELECT,
-    ) ||
-    isFieldMetadataEntityOfType(
+    ) &&
+    !isFieldMetadataEntityOfType(
       effectiveFlatFieldMetadata,
       FieldMetadataType.MULTI_SELECT,
     )
   ) {
-    const invalidSelectOptionError = getInvalidViewFilterSelectOptionError({
-      referencedFieldMetadata: effectiveFlatFieldMetadata,
-      flatFieldMetadataOptionMaps,
-      operand: filter.operand,
-      value: filter.value,
-    });
+    return errors;
+  }
 
-    if (isDefined(invalidSelectOptionError)) {
-      errors.push(invalidSelectOptionError);
-    }
+  const invalidSelectOptionError = getInvalidViewFilterSelectOptionError({
+    referencedFieldMetadata: effectiveFlatFieldMetadata,
+    flatFieldMetadataOptionMaps,
+    operand: filter.operand,
+    value: filter.value,
+  });
+
+  if (isDefined(invalidSelectOptionError)) {
+    errors.push(invalidSelectOptionError);
   }
 
   return errors;

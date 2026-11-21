@@ -13,7 +13,7 @@ import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai-chat/constants/AiChatP
 import { useHasAiChatPageContentInset } from '@/ai-chat/hooks/useHasAiChatPageContentInset';
 import { useDeleteQueuedMessage } from '@/ai-chat/composer/hooks/useDeleteQueuedMessage';
 import { useIsCurrentAiChatThreadReadOnly } from '@/ai-chat/threads/hooks/useIsCurrentAiChatThreadReadOnly';
-import { aiChatQueuedMessagesFamilyState } from '@/ai-chat/composer/states/aiChatQueuedMessagesFamilyState';
+import { aiChatThreadFetchedMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadFetchedMessagesFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -41,10 +41,11 @@ export const AiChatQueuedMessages = () => {
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
-  const aiChatQueuedMessages = useAtomFamilyStateValue(
-    aiChatQueuedMessagesFamilyState,
+  const aiChatThreadFetchedMessages = useAtomFamilyStateValue(
+    aiChatThreadFetchedMessagesFamilyState,
     { threadId },
   );
+  const aiChatQueuedMessages = aiChatThreadFetchedMessages.queuedMessages;
   const { deleteQueuedMessage } = useDeleteQueuedMessage({
     threadId,
   });

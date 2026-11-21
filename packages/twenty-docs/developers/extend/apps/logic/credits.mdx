@@ -46,7 +46,7 @@ All three land on the same credit meter and the same **Settings > Usage** breakd
 ## Recurring charges
 
 <Warning>
-  Deprecated in favor of [prices](#prices). The build warns about recurring charges, but they keep being raised: prices are not billed yet, so keep yours until they are.
+  Deprecated in favor of [prices](#prices). The build warns about recurring charges, but they keep being raised: price billing is not generally available yet, so keep yours until it is.
 </Warning>
 
 A recurring charge is a subscription fee: a flat monthly amount, an amount per workspace member, or both. You declare the amount and the platform charges it. Your app never calls `chargeCredits` for these.
@@ -87,7 +87,7 @@ How they are raised:
 ## Prices
 
 <Warning>
-  Declaration only for now. The build validates `billing.prices`, but the platform does not bill them yet.
+  Price billing is being rolled out and is off by default: until it is enabled for a workspace, the build validates `billing.prices` but the workspace is not charged.
 </Warning>
 
 A price is charged in real currency instead of credits. It is billed as a line of the workspace's own Twenty subscription, so the workspace keeps a single invoice. Prices are in US dollars only for now.
@@ -125,11 +125,17 @@ billing: {
 | `billingPeriod` | `MONTHLY`, the only period for now |
 | `amountCents` | Price per month in USD cents, a positive integer up to 8,333,333 |
 | `currency` | Optional. `USD` is the only supported currency for now, and the default |
-| `per` | Omit for a flat fee. `WORKSPACE_MEMBER` makes the amount a rate per workspace member |
+| `per` | Omit for a flat fee. `WORKSPACE_MEMBER` makes the amount a rate per workspace member. `CONNECTED_ACCOUNT` makes it a rate per account connected through one of your app's [connection providers](/developers/extend/apps/logic/connections) |
 
 A price follows the billing interval of the workspace: a workspace on a monthly Twenty plan pays the monthly amount, a workspace on a yearly plan pays 12 times the monthly amount once a year.
 
-The build rejects a missing, duplicated or invalid `universalIdentifier`, an empty `label` or `description`, an unknown `type`, `billingPeriod` or `per`, an `amountCents` that is not a positive integer or exceeds 8,333,333 (12 times that is the most Stripe accepts for one price), and a `currency` other than `USD`.
+Billing starts when the install completes and stops at uninstall, prorated to the days left in the billing period. A price `per: 'WORKSPACE_MEMBER'` follows the member count of the workspace. A price `per: 'CONNECTED_ACCOUNT'` follows the number of accounts connected to your app in the workspace. Accounts of all your app's connection providers count together: with a Google and a Microsoft provider, a workspace with two Google accounts and one Microsoft account pays for three. The price is not billed while no account is connected, and a disconnected account stops being billed. A workspace on a trial is not charged before the trial ends.
+
+A workspace keeps the prices it installed your app with, including after it upgrades. When a new version changes, adds or removes a price, only new installations get the new prices.
+
+Prices are not billed on a server without billing enabled, nor for an app synced from a local source with `twenty app dev`.
+
+The build rejects a missing, duplicated or invalid `universalIdentifier`, an empty `label` or `description`, an unknown `type`, `billingPeriod` or `per`, an `amountCents` that is not a positive integer or exceeds 8,333,333 (12 times that is the most Stripe accepts for one price), a `currency` other than `USD`, and a price `per: 'CONNECTED_ACCOUNT'` in an app that declares no connection provider.
 
 ## Billable operations
 

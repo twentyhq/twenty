@@ -119,6 +119,7 @@ describe('webhook events with an unreadable field', () => {
       objectMetadata: { id: objectMetadataId, nameSingular: 'person' },
       events: [
         {
+          eventId: 'event-1',
           recordId: VISIBLE_CHANGE_RECORD_ID,
           properties: {
             before: {
@@ -139,6 +140,7 @@ describe('webhook events with an unreadable field', () => {
           },
         },
         {
+          eventId: 'event-2',
           recordId: HIDDEN_CHANGE_RECORD_ID,
           properties: {
             before: { id: HIDDEN_CHANGE_RECORD_ID, intro: 'Hidden before' },

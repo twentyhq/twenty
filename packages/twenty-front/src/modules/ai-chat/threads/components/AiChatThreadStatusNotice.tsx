@@ -6,7 +6,7 @@ import { IconBellOff, IconCheck, IconZzz } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { useFormatAiChatThreadDate } from '@/ai-chat/threads/hooks/useFormatAiChatThreadDate';
-import { aiChatThreadMemberStateFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadMemberStateFamilySelector';
+import { aiChatThreadInboxStatusFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadInboxStatusFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -27,7 +27,7 @@ export const AiChatThreadStatusNotice = () => {
   const { formatAiChatThreadDateTime } = useFormatAiChatThreadDate();
   const { threadId } = useAiChatInstanceOrThrow();
   const { event } = useAtomFamilySelectorValue(
-    aiChatThreadMemberStateFamilySelector,
+    aiChatThreadInboxStatusFamilySelector,
     threadId,
   );
 

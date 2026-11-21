@@ -10,9 +10,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { AiChatComposerQuote } from '@/ai-chat/composer/components/AiChatComposerQuote';
 import { AiChatMessage } from '@/ai-chat/messages/components/AiChatMessage';
 import { AiChatTestInstance } from '@/ai-chat/testing/AiChatTestInstance';
-import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/states/aiChatQuotedMessageIdFamilyState';
+import { aiChatComposerQuotedMessageIdFamilyState } from '@/ai-chat/states/composer/aiChatComposerQuotedMessageIdFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { scrollToAiChatMessage } from '@/ai-chat/messages/utils/scrollToAiChatMessage';
@@ -58,7 +58,7 @@ jest.mock('@/ai-chat/messages/components/AiChatMessageReactions', () => ({
   AiChatMessageReactions: () => null,
 }));
 
-jest.mock('@/ai-chat/components/AiChatErrorRenderer', () => ({
+jest.mock('@/ai-chat/messages/components/AiChatErrorRenderer', () => ({
   AiChatErrorRenderer: ({ error }: { error: Error }) => <>{error.message}</>,
 }));
 
@@ -223,7 +223,9 @@ const renderMessage = ({
   ]);
   jotaiStore.set(newAiChatThreadIdState.atom, THREAD_ID);
   jotaiStore.set(
-    aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+    aiChatThreadDisplayedMessagesFamilyState.atomFamily({
+      threadId: THREAD_ID,
+    }),
     [
       USER_MESSAGE,
       ASSISTANT_MESSAGE,
@@ -431,7 +433,7 @@ describe('AiChatMessage', () => {
     act(() => {
       jotaiStore.set(newAiChatThreadIdState.atom, 'another-thread');
       jotaiStore.set(
-        aiChatQuotedMessageIdFamilyState.atomFamily({
+        aiChatComposerQuotedMessageIdFamilyState.atomFamily({
           threadId: 'another-thread',
         }),
         USER_MESSAGE.id,

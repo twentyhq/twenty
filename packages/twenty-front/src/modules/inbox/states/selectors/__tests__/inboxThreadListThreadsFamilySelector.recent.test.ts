@@ -35,17 +35,20 @@ describe('inboxThreadListThreadsFamilySelector for recent chats', () => {
       buildThread({ id: 'read-channel-chat', channelId: 'channel' }),
     ]);
     store.set(aiChatThreadParticipantsState.atom, {
-      'followed-channel-chat': {
-        __typename: 'AgentChatThreadParticipant' as const,
-        id: 'participant',
-        threadId: 'followed-channel-chat',
-        lastReadAt: null,
-        archivedAt: null,
-        snoozedUntil: null,
-        isSubscribed: true,
-        lastMentionedAt: null,
-        mentionsResolvedAt: null,
-        updatedAt: LAST_ACTIVITY_AT,
+      isLoaded: true,
+      rowsByThreadId: {
+        'followed-channel-chat': {
+          __typename: 'AgentChatThreadParticipant' as const,
+          id: 'participant',
+          threadId: 'followed-channel-chat',
+          lastReadAt: null,
+          archivedAt: null,
+          snoozedUntil: null,
+          isSubscribed: true,
+          lastMentionedAt: null,
+          mentionsResolvedAt: null,
+          updatedAt: LAST_ACTIVITY_AT,
+        },
       },
     });
 

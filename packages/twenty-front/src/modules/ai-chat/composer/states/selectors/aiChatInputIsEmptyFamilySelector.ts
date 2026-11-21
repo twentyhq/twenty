@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
+import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatComposerDraftsState';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
 // The editor stores an empty draft whenever its text is whitespace only
@@ -12,5 +12,5 @@ export const aiChatInputIsEmptyFamilySelector = createAtomFamilySelector<
   get:
     (threadId) =>
     ({ get }) =>
-      !isNonEmptyString(get(aiChatDraftsByThreadIdState)[threadId]),
+      !isNonEmptyString(get(aiChatComposerDraftsState)[threadId]),
 });

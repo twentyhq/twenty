@@ -1,4 +1,4 @@
-import { askAiSidePanelThreadIdComponentState } from '@/side-panel/pages/ask-ai/states/askAiSidePanelThreadIdComponentState';
+import { askAiSidePanelThreadIdComponentState } from '@/side-panel/states/askAiSidePanelThreadIdComponentState';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
@@ -19,7 +19,7 @@ import { IconMessage, IconSearch } from 'twenty-ui/icon';
 import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
+import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatComposerDraftsState';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
@@ -374,7 +374,10 @@ const meta = {
         lastLoadedActivityAt: null,
       },
     );
-    jotaiStore.set(aiChatThreadParticipantsState.atom, {});
+    jotaiStore.set(aiChatThreadParticipantsState.atom, {
+      isLoaded: true,
+      rowsByThreadId: {},
+    });
 
     const noteMetadata = getMockObjectMetadataItemOrThrow(
       StandardObjectNameSingular.Note,
@@ -413,7 +416,7 @@ const meta = {
         recordNode: mockedWorkspaceMemberRecords[0],
       }),
     );
-    jotaiStore.set(aiChatDraftsByThreadIdState.atom, {
+    jotaiStore.set(aiChatComposerDraftsState.atom, {
       [CURRENT_THREAD_ID]: PRESERVED_DRAFT,
     });
     jotaiStore.set(sidePanelSearchState.atom, '');
@@ -641,7 +644,7 @@ export const OpenChatWithKeyboard: Story = {
       canvas.getByTestId('underlying-record-path'),
     ).toHaveTextContent(RECORD_PATH);
     await expect(
-      jotaiStore.get(aiChatDraftsByThreadIdState.atom)[CURRENT_THREAD_ID],
+      jotaiStore.get(aiChatComposerDraftsState.atom)[CURRENT_THREAD_ID],
     ).toBe(PRESERVED_DRAFT);
   },
 };

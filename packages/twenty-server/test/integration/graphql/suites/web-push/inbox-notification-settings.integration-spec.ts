@@ -34,7 +34,7 @@ const updateInboxNotificationSettings = ({
       variables: {
         input: {
           inboxNotificationLevel,
-          isInboxNotificationPreviewEnabled: true,
+          isInboxNotificationPreviewEnabled: false,
         },
       },
     },
@@ -66,7 +66,7 @@ describe('inbox notification settings (integration)', () => {
       {
         inboxNotificationLevel:
           AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.ALL_FOLLOWED,
-        isInboxNotificationPreviewEnabled: false,
+        isInboxNotificationPreviewEnabled: true,
       },
     );
     updatedUserWorkspaceId = undefined;
@@ -87,7 +87,7 @@ describe('inbox notification settings (integration)', () => {
     const expectedSettings = {
       inboxNotificationLevel:
         AGENT_CHAT_INBOX_NOTIFICATION_LEVEL.DIRECT_MENTIONS_AND_ASSIGNED,
-      isInboxNotificationPreviewEnabled: true,
+      isInboxNotificationPreviewEnabled: false,
     };
 
     expect(updatedUserWorkspace).toMatchObject(expectedSettings);
