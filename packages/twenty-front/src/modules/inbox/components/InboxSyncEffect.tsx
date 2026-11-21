@@ -75,7 +75,6 @@ const toThreadUpdate = ({
   };
 };
 
-// Keeps the inbox lists, channels and counts in step with server changes
 export const InboxSyncEffect = () => {
   const store = useStore();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
@@ -137,8 +136,8 @@ export const InboxSyncEffect = () => {
   const canLoadChatThreads =
     hasAiPermission &&
     !isWorkspaceSuspended &&
-    isDefined(chatObjectMetadataItem) &&
-    isNonEmptyArray(chatObjectMetadataItem.readableFields) &&
+    isThreadSyncEnabled &&
+    isNonEmptyArray(chatObjectMetadataItem?.readableFields) &&
     canAccessThroughAllRecordsOrRlsPermission({
       objectRecordsPermissions: chatObjectPermissions,
       operationType: 'read',

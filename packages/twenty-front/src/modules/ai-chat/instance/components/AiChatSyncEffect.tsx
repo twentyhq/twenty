@@ -23,7 +23,6 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
-// Keeps the member's participant rows and the AI tool index in step with server changes
 export const AiChatSyncEffect = () => {
   const store = useStore();
   const participantObjectMetadataItem = useAtomFamilySelectorValue(
