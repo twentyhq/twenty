@@ -108,37 +108,6 @@
         "command": "knip --workspace {projectRoot}"
       }
     },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "cache": true,
-      "dependsOn": ["^build"],
-      "inputs": [
-        "^default",
-        "excludeStories",
-        "{workspaceRoot}/jest.preset.js"
-      ],
-      "outputs": ["{projectRoot}/coverage"],
-      "options": {
-        "jestConfig": "{projectRoot}/jest.config.mjs",
-        "silent": true,
-        "coverageReporters": ["text-summary"],
-        "cacheDirectory": "../../.cache/jest/{projectRoot}"
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "maxWorkers": 1,
-          "coverage": true
-        },
-        "coverage": {
-          "coverage": true,
-          "coverageReporters": ["lcov", "text"]
-        },
-        "watch": {
-          "watch": true
-        }
-      }
-    },
     "test:e2e": {
       "cache": true,
       "dependsOn": ["^build"]
@@ -230,32 +199,6 @@
           "reporter": "text"
         }
       }
-    },
-    "@nx/jest:jest": {
-      "cache": true,
-      "inputs": [
-        "^default",
-        "excludeStories",
-        "{workspaceRoot}/jest.preset.js"
-      ],
-      "options": {
-        "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "codeCoverage": true
-        }
-      }
-    },
-    "@nx/vite:build": {
-      "cache": true,
-      "dependsOn": ["^build"],
-      "inputs": ["default", "^default"]
-    },
-    "@nx/vitest:test": {
-      "cache": true,
-      "inputs": ["default", "^default"]
     }
   },
   "generators": {
