@@ -13,7 +13,7 @@ import {
   computeColumnName,
   computeCompositeColumnName,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
+import { getCompositeColumnPropertiesOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-column-properties-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
@@ -196,9 +196,11 @@ export const generateColumnDefinitions = ({
   });
 
   if (isCompositeFlatFieldMetadata(flatFieldMetadata)) {
-    const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
+    const compositeProperties = getCompositeColumnPropertiesOrThrow(
+      flatFieldMetadata.type,
+    );
 
-    return compositeType.properties.map((property) =>
+    return compositeProperties.map((property) =>
       generateCompositeColumnDefinition({
         compositeProperty: property,
         parentFlatFieldMetadata: flatFieldMetadata,

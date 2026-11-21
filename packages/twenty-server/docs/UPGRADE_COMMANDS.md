@@ -141,6 +141,13 @@ An upgrade command is frozen once released: self-hosters can jump several versio
 
 A command should also not reach into runtime services to do its work. Their behavior changes with every release; the command's must not.
 
+## Adding a sub-field to a composite type
+
+A composite sub-field is a column the ORM selects on every workspace as soon as the property is declared in the composite type, while a workspace command adds that column one workspace at a time. Declaring the property and adding the column in the same release leaves every workspace the command has not reached unable to write to that field. Split the change across two releases:
+
+1. **Release N: provision the column.** List the property in `COMPOSITE_PROPERTIES_PROVISIONED_AHEAD_OF_RUNTIME`, so field creation, rename and deletion already handle its column, and add a workspace command that adds the column to existing fields. Nothing reads or writes it.
+2. **Release N+1: declare the property.** Move the property into the composite type in `twenty-shared` and remove it from the constant. This PR must not ship in release N.
+
 ## Execution Order
 
 Within a given version of Twenty, the upgrade pipeline runs commands in this order, sorted by timestamp within each group:
