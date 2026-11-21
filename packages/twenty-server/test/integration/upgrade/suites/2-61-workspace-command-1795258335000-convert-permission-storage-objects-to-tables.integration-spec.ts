@@ -1,9 +1,11 @@
 import { randomUUID } from 'crypto';
 
+import { findWorkspaceTableShape } from 'test/integration/upgrade/utils/find-workspace-table-shape.util';
 import { restoreLegacyPermissionStorageObjects } from 'test/integration/upgrade/utils/restore-legacy-permission-storage-objects.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type ConvertPermissionStorageObjectsToTablesCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795258335000-convert-permission-storage-objects-to-tables.command';
+import { type TypeAccessGroupsCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795264768000-type-access-groups.command';
 import { PERMISSION_STORAGE_OBJECTS_TO_CONVERT } from 'src/database/commands/upgrade-version-command/2-61/constants/permission-storage-objects-to-convert.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import {
@@ -13,47 +15,11 @@ import {
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const REFERENCE_SCHEMA = getWorkspaceSchemaName(SEED_YCOMBINATOR_WORKSPACE_ID);
-const TABLE_NAMES = PERMISSION_STORAGE_OBJECTS_TO_CONVERT.map(
-  ({ tableName }) => tableName,
-);
 const RECORD_SHARE_ID = randomUUID();
-const ACCESS_GROUP_HASH = `convert-permission-storage-${randomUUID()}`;
 
-const findTableShape = async ({
-  schemaName,
-  tableName,
-}: {
-  schemaName: string;
-  tableName: string;
-}) => {
-  const columns: {
-    column_name: string;
-    udt_name: string;
-    is_nullable: string;
-    is_identity: string;
-    column_default: string | null;
-  }[] = await global.testDataSource.query(
-    `SELECT column_name, udt_name, is_nullable, is_identity,
-       replace(column_default, $1, 'schema') AS column_default
-     FROM information_schema.columns
-     WHERE table_schema = $1 AND table_name = $2
-     ORDER BY column_name`,
-    [schemaName, tableName],
-  );
-  const indexes: { indexname: string; indexdef: string }[] =
-    await global.testDataSource.query(
-      `SELECT indexname, replace(indexdef, $1, 'schema') AS indexdef
-     FROM pg_indexes WHERE schemaname = $1 AND tablename = $2
-     ORDER BY indexname`,
-      [schemaName, tableName],
-    );
-
-  return { columns, indexes };
-};
-
-const findRows = (tableName: string) =>
+const findRecordShareRows = () =>
   global.testDataSource.query(
-    `SELECT * FROM "${SCHEMA}"."${tableName}" ORDER BY "id"`,
+    `SELECT * FROM "${SCHEMA}"."recordShare" ORDER BY "id"`,
   );
 
 const findPermissionStorageObjectNames = async (): Promise<string[]> =>
@@ -73,21 +39,25 @@ const findPermissionStorageObjectNames = async (): Promise<string[]> =>
 
 describe('2-61 workspace command - convert permission storage objects to tables (integration)', () => {
   let command: ConvertPermissionStorageObjectsToTablesCommand;
-  const rowsBeforeByTableName = new Map<string, unknown[]>();
+  let typeAccessGroupsCommand: TypeAccessGroupsCommand;
+  let recordShareRowsBefore: unknown[];
 
-  const runOnWorkspace = (options: { dryRun?: boolean } = {}) =>
-    command.runOnWorkspace({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      options,
-      index: 0,
-      total: 1,
-      dataSource: global.testDataSource,
-    });
+  const runOnWorkspaceArgs = (options: { dryRun?: boolean } = {}) => ({
+    workspaceId: SEED_APPLE_WORKSPACE_ID,
+    options,
+    index: 0,
+    total: 1,
+    dataSource: global.testDataSource,
+  });
 
   beforeAll(async () => {
     command =
       getAppProviderByClassName<ConvertPermissionStorageObjectsToTablesCommand>(
         'ConvertPermissionStorageObjectsToTablesCommand',
+      );
+    typeAccessGroupsCommand =
+      getAppProviderByClassName<TypeAccessGroupsCommand>(
+        'TypeAccessGroupsCommand',
       );
 
     await global.testDataSource.query(
@@ -96,28 +66,18 @@ describe('2-61 workspace command - convert permission storage objects to tables 
        VALUES ($1, $2, $3, $4, 'WORKSPACE_MEMBER', 'MANUAL', $5, 'READ_WRITE')`,
       [RECORD_SHARE_ID, randomUUID(), randomUUID(), randomUUID(), randomUUID()],
     );
-    await global.testDataSource.query(
-      `INSERT INTO "${SCHEMA}"."accessGroup" ("roleId", "groupHash")
-       VALUES ($1, $2)`,
-      [randomUUID(), ACCESS_GROUP_HASH],
-    );
 
-    for (const tableName of TABLE_NAMES) {
-      rowsBeforeByTableName.set(tableName, await findRows(tableName));
-    }
+    recordShareRowsBefore = await findRecordShareRows();
 
     await restoreLegacyPermissionStorageObjects(SEED_APPLE_WORKSPACE_ID);
   });
 
   afterAll(async () => {
-    await runOnWorkspace();
+    await command.runOnWorkspace(runOnWorkspaceArgs());
+    await typeAccessGroupsCommand.runOnWorkspace(runOnWorkspaceArgs());
     await global.testDataSource.query(
       `DELETE FROM "${SCHEMA}"."recordShare" WHERE "id" = $1`,
       [RECORD_SHARE_ID],
-    );
-    await global.testDataSource.query(
-      `DELETE FROM "${SCHEMA}"."accessGroup" WHERE "groupHash" = $1`,
-      [ACCESS_GROUP_HASH],
     );
   });
 
@@ -127,7 +87,7 @@ describe('2-61 workspace command - convert permission storage objects to tables 
       'recordShare',
     ]);
 
-    const { columns } = await findTableShape({
+    const { columns } = await findWorkspaceTableShape({
       schemaName: SCHEMA,
       tableName: 'recordShare',
     });
@@ -138,7 +98,7 @@ describe('2-61 workspace command - convert permission storage objects to tables 
   });
 
   it('leaves the standard objects in place on a dry run', async () => {
-    await runOnWorkspace({ dryRun: true });
+    await command.runOnWorkspace(runOnWorkspaceArgs({ dryRun: true }));
 
     expect(await findPermissionStorageObjectNames()).toEqual([
       'accessGroup',
@@ -146,35 +106,31 @@ describe('2-61 workspace command - convert permission storage objects to tables 
     ]);
   });
 
-  it('removes both standard objects and keeps every row', async () => {
-    await runOnWorkspace();
+  it('removes both standard objects and keeps every record share', async () => {
+    await command.runOnWorkspace(runOnWorkspaceArgs());
 
     expect(await findPermissionStorageObjectNames()).toEqual([]);
-
-    for (const tableName of TABLE_NAMES) {
-      expect(await findRows(tableName)).toEqual(
-        rowsBeforeByTableName.get(tableName),
-      );
-    }
+    expect(await findRecordShareRows()).toEqual(recordShareRowsBefore);
   });
 
-  it('leaves tables shaped like the permission tables of a workspace created with them', async () => {
-    for (const tableName of TABLE_NAMES) {
-      expect(await findTableShape({ schemaName: SCHEMA, tableName })).toEqual(
-        await findTableShape({ schemaName: REFERENCE_SCHEMA, tableName }),
-      );
-    }
+  it('leaves a recordShare table shaped like the one of a workspace created with it', async () => {
+    expect(
+      await findWorkspaceTableShape({
+        schemaName: SCHEMA,
+        tableName: 'recordShare',
+      }),
+    ).toEqual(
+      await findWorkspaceTableShape({
+        schemaName: REFERENCE_SCHEMA,
+        tableName: 'recordShare',
+      }),
+    );
   });
 
   it('changes nothing when run again', async () => {
-    await runOnWorkspace();
+    await command.runOnWorkspace(runOnWorkspaceArgs());
 
     expect(await findPermissionStorageObjectNames()).toEqual([]);
-
-    for (const tableName of TABLE_NAMES) {
-      expect(await findRows(tableName)).toEqual(
-        rowsBeforeByTableName.get(tableName),
-      );
-    }
+    expect(await findRecordShareRows()).toEqual(recordShareRowsBefore);
   });
 });
