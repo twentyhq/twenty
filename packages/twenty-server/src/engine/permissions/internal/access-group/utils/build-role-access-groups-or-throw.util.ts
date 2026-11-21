@@ -16,10 +16,8 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { buildAccessGroupMemberFieldValuesOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-access-group-member-field-values-or-throw.util';
 import { ACCESS_GROUP_SHARED_PREDICATE_KEY } from 'src/engine/permissions/internal/access-group/constants/access-group-shared-predicate-key.constant';
-import {
-  computeAccessGroupHash,
-  computeSharedAccessGroupHash,
-} from 'src/engine/permissions/internal/access-group/utils/compute-access-group-hash.util';
+import { computeAccessGroupHash } from 'src/engine/permissions/internal/access-group/utils/compute-access-group-hash.util';
+import { computeSharedAccessGroupHash } from 'src/engine/permissions/internal/access-group/utils/compute-shared-access-group-hash.util';
 import { findRlsRuleSharedPredicateValues } from 'src/engine/permissions/internal/access-group/utils/find-rls-rule-shared-predicate-values.util';
 import { type RlsWorkspaceMember } from 'src/engine/permissions/internal/rls/types/rls-workspace-member.type';
 
