@@ -500,10 +500,32 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           "description": "Whether the field is visible in the view.",
           "type": "boolean",
         },
+        "label": {
+          "description": "Column header shown instead of the default one. Leave it out to show the default header.",
+          "type": "string",
+        },
         "position": {
           "default": 0,
           "description": "Position of the field in the view (0-based).",
           "type": "number",
+        },
+        "relationAggregateOperation": {
+          "description": "On an extra (non-canonical) one-to-many column with a relationScope that has no sorts and no limit, show per row an aggregate of the related records the scope keeps instead of the records. COUNT takes no relationTargetFieldMetadataId; SUM, AVG, MIN and MAX need relationTargetFieldMetadataId set to a related object field that supports the operation.",
+          "enum": [
+            "MIN",
+            "MAX",
+            "AVG",
+            "SUM",
+            "COUNT",
+            "COUNT_UNIQUE_VALUES",
+            "COUNT_EMPTY",
+            "COUNT_NOT_EMPTY",
+            "COUNT_TRUE",
+            "COUNT_FALSE",
+            "PERCENTAGE_EMPTY",
+            "PERCENTAGE_NOT_EMPTY",
+          ],
+          "type": "string",
         },
         "relationScope": {
           "description": "On an extra (non-canonical) column of a one-to-many relation field, the filters, sorts and limit applied to the related records, in the view filter and view sort shape, e.g. open tasks sorted by due date, first 1.",
@@ -661,7 +683,7 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           "type": "object",
         },
         "relationTargetFieldMetadataId": {
-          "description": "On an extra (non-canonical) column of a many-to-one relation field, show this field of the related record instead of the record. Must be a non-relation field of the related object.",
+          "description": "On an extra (non-canonical) column of a many-to-one relation field, or of a one-to-many relation field with a relationScope, show this field of the related records instead of the records. Must be a non-relation field of the related object.",
           "format": "uuid",
           "type": "string",
         },
@@ -715,9 +737,41 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           "description": "Whether the field is visible.",
           "type": "boolean",
         },
+        "label": {
+          "description": "Column header shown instead of the default one. Null or an empty string shows the default header again.",
+          "type": [
+            "string",
+            "null",
+          ],
+        },
         "position": {
           "description": "Position of the field.",
           "type": "number",
+        },
+        "relationAggregateOperation": {
+          "anyOf": [
+            {
+              "enum": [
+                "MIN",
+                "MAX",
+                "AVG",
+                "SUM",
+                "COUNT",
+                "COUNT_UNIQUE_VALUES",
+                "COUNT_EMPTY",
+                "COUNT_NOT_EMPTY",
+                "COUNT_TRUE",
+                "COUNT_FALSE",
+                "PERCENTAGE_EMPTY",
+                "PERCENTAGE_NOT_EMPTY",
+              ],
+              "type": "string",
+            },
+            {
+              "type": "null",
+            },
+          ],
+          "description": "On an extra (non-canonical) one-to-many column with a relationScope that has no sorts and no limit, show per row an aggregate of the related records the scope keeps instead of the records. COUNT takes no relationTargetFieldMetadataId; SUM, AVG, MIN and MAX need relationTargetFieldMetadataId set to a related object field that supports the operation. Null shows the related records again.",
         },
         "relationScope": {
           "anyOf": [
@@ -892,7 +946,7 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
               "type": "null",
             },
           ],
-          "description": "On an extra (non-canonical) column of a many-to-one relation field, show this field of the related record instead of the record. Null shows the related record again.",
+          "description": "On an extra (non-canonical) column of a many-to-one relation field, or of a one-to-many relation field with a relationScope, show this field of the related records instead of the records. Null shows the related records again.",
         },
         "size": {
           "description": "Column width in pixels.",
@@ -964,10 +1018,32 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
                 "description": "Whether the field is visible in the view.",
                 "type": "boolean",
               },
+              "label": {
+                "description": "Column header shown instead of the default one. Leave it out to show the default header.",
+                "type": "string",
+              },
               "position": {
                 "default": 0,
                 "description": "Position of the field in the view (0-based).",
                 "type": "number",
+              },
+              "relationAggregateOperation": {
+                "description": "On an extra (non-canonical) one-to-many column with a relationScope that has no sorts and no limit, show per row an aggregate of the related records the scope keeps instead of the records. COUNT takes no relationTargetFieldMetadataId; SUM, AVG, MIN and MAX need relationTargetFieldMetadataId set to a related object field that supports the operation.",
+                "enum": [
+                  "MIN",
+                  "MAX",
+                  "AVG",
+                  "SUM",
+                  "COUNT",
+                  "COUNT_UNIQUE_VALUES",
+                  "COUNT_EMPTY",
+                  "COUNT_NOT_EMPTY",
+                  "COUNT_TRUE",
+                  "COUNT_FALSE",
+                  "PERCENTAGE_EMPTY",
+                  "PERCENTAGE_NOT_EMPTY",
+                ],
+                "type": "string",
               },
               "relationScope": {
                 "description": "On an extra (non-canonical) column of a one-to-many relation field, the filters, sorts and limit applied to the related records, in the view filter and view sort shape, e.g. open tasks sorted by due date, first 1.",
@@ -1125,7 +1201,7 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
                 "type": "object",
               },
               "relationTargetFieldMetadataId": {
-                "description": "On an extra (non-canonical) column of a many-to-one relation field, show this field of the related record instead of the record. Must be a non-relation field of the related object.",
+                "description": "On an extra (non-canonical) column of a many-to-one relation field, or of a one-to-many relation field with a relationScope, show this field of the related records instead of the records. Must be a non-relation field of the related object.",
                 "format": "uuid",
                 "type": "string",
               },
@@ -1193,9 +1269,41 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
                 "description": "Whether the field is visible.",
                 "type": "boolean",
               },
+              "label": {
+                "description": "Column header shown instead of the default one. Null or an empty string shows the default header again.",
+                "type": [
+                  "string",
+                  "null",
+                ],
+              },
               "position": {
                 "description": "Position of the field.",
                 "type": "number",
+              },
+              "relationAggregateOperation": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "MIN",
+                      "MAX",
+                      "AVG",
+                      "SUM",
+                      "COUNT",
+                      "COUNT_UNIQUE_VALUES",
+                      "COUNT_EMPTY",
+                      "COUNT_NOT_EMPTY",
+                      "COUNT_TRUE",
+                      "COUNT_FALSE",
+                      "PERCENTAGE_EMPTY",
+                      "PERCENTAGE_NOT_EMPTY",
+                    ],
+                    "type": "string",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
+                "description": "On an extra (non-canonical) one-to-many column with a relationScope that has no sorts and no limit, show per row an aggregate of the related records the scope keeps instead of the records. COUNT takes no relationTargetFieldMetadataId; SUM, AVG, MIN and MAX need relationTargetFieldMetadataId set to a related object field that supports the operation. Null shows the related records again.",
               },
               "relationScope": {
                 "anyOf": [
@@ -1370,7 +1478,7 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
                     "type": "null",
                   },
                 ],
-                "description": "On an extra (non-canonical) column of a many-to-one relation field, show this field of the related record instead of the record. Null shows the related record again.",
+                "description": "On an extra (non-canonical) column of a many-to-one relation field, or of a one-to-many relation field with a relationScope, show this field of the related records instead of the records. Null shows the related records again.",
               },
               "size": {
                 "description": "Column width in pixels.",

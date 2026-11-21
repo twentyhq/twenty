@@ -113,6 +113,8 @@ describe('handleFieldMetadataDeactivationSideEffects', () => {
         'target-field-universal-identifier',
       relationScope: null,
       universalRelationScope: null,
+      label: null,
+      relationAggregateOperation: null,
       isActive: true,
       isSystemSideEffect: false,
       isCanonical: false,
@@ -169,6 +171,8 @@ describe('handleFieldMetadataDeactivationSideEffects', () => {
       relationTargetFieldMetadataId: null,
       relationTargetFieldMetadataUniversalIdentifier: null,
       relationScope: null,
+      label: null,
+      relationAggregateOperation: null,
       universalRelationScope,
       isActive: true,
       isSystemSideEffect: false,
@@ -233,6 +237,19 @@ describe('handleFieldMetadataDeactivationSideEffects', () => {
           },
         ],
       });
+
+      expect(deactivate(scopedViewField).flatViewFieldsToDelete).toEqual([
+        scopedViewField,
+      ]);
+    });
+
+    it('deletes a view field showing the deactivated field of its related records', () => {
+      const scopedViewField: FlatViewField = {
+        ...buildScopedViewField({ filters: [], filterGroups: [], sorts: [] }),
+        relationTargetFieldMetadataId: 'status-field-id',
+        relationTargetFieldMetadataUniversalIdentifier:
+          'status-field-universal-identifier',
+      };
 
       expect(deactivate(scopedViewField).flatViewFieldsToDelete).toEqual([
         scopedViewField,

@@ -49,6 +49,8 @@ export class UpdateViewFieldTool extends BaseTool<
           aggregateOperation: input.aggregateOperation,
           relationTargetFieldMetadataId: input.relationTargetFieldMetadataId,
           relationScope: input.relationScope,
+          label: input.label,
+          relationAggregateOperation: input.relationAggregateOperation,
         },
       },
       workspaceId,
@@ -67,6 +69,8 @@ export class UpdateViewFieldTool extends BaseTool<
         aggregateOperation: viewField.aggregateOperation,
         relationTargetFieldMetadataId: viewField.relationTargetFieldMetadataId,
         relationScope: viewField.relationScope,
+        label: viewField.label,
+        relationAggregateOperation: viewField.relationAggregateOperation,
       },
     };
   }

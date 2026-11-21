@@ -9,7 +9,7 @@ import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/wo
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 export type RelationTargetFlatFieldMetadataFailureReason =
-  | 'NOT_A_MANY_TO_ONE_RELATION'
+  | 'UNEXPECTED_RELATION_TYPE'
   | 'NOT_ON_RELATION_TARGET_OBJECT'
   | 'INACTIVE'
   | 'IS_A_RELATION';
@@ -18,20 +18,22 @@ export const resolveRelationTargetFlatFieldMetadata = ({
   flatFieldMetadata,
   relationTargetFieldMetadataUniversalIdentifier,
   flatFieldMetadataMaps,
+  relationType = RelationType.MANY_TO_ONE,
 }: {
   flatFieldMetadata: UniversalFlatFieldMetadata;
   relationTargetFieldMetadataUniversalIdentifier: string;
   flatFieldMetadataMaps: AllUniversalFlatEntityMaps['flatFieldMetadataMaps'];
+  relationType?: RelationType;
 }):
   | { relationTargetFlatFieldMetadata: UniversalFlatFieldMetadata }
   | { failureReason: RelationTargetFlatFieldMetadataFailureReason } => {
   if (
     !isRelationUniversalFlatFieldMetadataOfType({
       flatFieldMetadata,
-      relationType: RelationType.MANY_TO_ONE,
+      relationType,
     })
   ) {
-    return { failureReason: 'NOT_A_MANY_TO_ONE_RELATION' };
+    return { failureReason: 'UNEXPECTED_RELATION_TYPE' };
   }
 
   const relationTargetFlatFieldMetadata = findFlatEntityByUniversalIdentifier({

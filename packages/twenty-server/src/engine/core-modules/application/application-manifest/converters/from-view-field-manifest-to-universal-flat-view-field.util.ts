@@ -1,5 +1,6 @@
 import { type ViewFieldManifest } from 'twenty-shared/application';
 
+import { normalizeViewFieldLabel } from 'src/engine/metadata-modules/flat-view-field/utils/normalize-view-field-label.util';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
 export const fromViewFieldManifestToUniversalFlatViewField = ({
@@ -31,6 +32,9 @@ export const fromViewFieldManifestToUniversalFlatViewField = ({
     relationTargetFieldMetadataUniversalIdentifier:
       viewFieldManifest.relationTargetFieldMetadataUniversalIdentifier ?? null,
     universalRelationScope: viewFieldManifest.relationScope ?? null,
+    label: normalizeViewFieldLabel(viewFieldManifest.label ?? null),
+    relationAggregateOperation:
+      viewFieldManifest.relationAggregateOperation ?? null,
     universalOverrides: null,
     createdAt: now,
     updatedAt: now,
