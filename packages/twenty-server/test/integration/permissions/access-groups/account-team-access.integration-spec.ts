@@ -55,20 +55,23 @@ describe('Account team access (integration)', () => {
   >;
   let roleId: string;
 
-  const query = async <TRow>(
-    sql: string,
-    parameters: unknown[] = [],
-  ): Promise<TRow[]> => {
+  const query = async <TRow>({
+    sql,
+    parameters = [],
+  }: {
+    sql: string;
+    parameters?: unknown[];
+  }): Promise<TRow[]> => {
     const rows: TRow[] = await global.testDataSource.query(sql, parameters);
 
     return rows;
   };
 
   const findObjectMetadataId = async (nameSingular: string) => {
-    const [{ id }] = await query<{ id: string }>(
-      `SELECT "id" FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = $2`,
-      [workspaceId, nameSingular],
-    );
+    const [{ id }] = await query<{ id: string }>({
+      sql: `SELECT "id" FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = $2`,
+      parameters: [workspaceId, nameSingular],
+    });
 
     return id;
   };
@@ -80,10 +83,10 @@ describe('Account team access (integration)', () => {
     objectMetadataId: string;
     name: string;
   }) => {
-    const [{ id }] = await query<{ id: string }>(
-      `SELECT "id" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = $2`,
-      [objectMetadataId, name],
-    );
+    const [{ id }] = await query<{ id: string }>({
+      sql: `SELECT "id" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = $2`,
+      parameters: [objectMetadataId, name],
+    });
 
     return id;
   };
@@ -91,10 +94,10 @@ describe('Account team access (integration)', () => {
   const findInverseFieldMetadataId = async (fieldMetadataId: string) => {
     const [{ relationTargetFieldMetadataId }] = await query<{
       relationTargetFieldMetadataId: string;
-    }>(
-      `SELECT "relationTargetFieldMetadataId" FROM core."fieldMetadata" WHERE "id" = $1`,
-      [fieldMetadataId],
-    );
+    }>({
+      sql: `SELECT "relationTargetFieldMetadataId" FROM core."fieldMetadata" WHERE "id" = $1`,
+      parameters: [fieldMetadataId],
+    });
 
     return relationTargetFieldMetadataId;
   };
@@ -319,24 +322,24 @@ describe('Account team access (integration)', () => {
   };
 
   const findCompactAccessGroupIds = async (objectName: string) =>
-    query<{ id: string; accessGroupIds: number[] }>(
-      `SELECT "id", "_accessGroupIds" AS "accessGroupIds" FROM ${SCHEMA}."${objectName}" ORDER BY "id"`,
-    );
+    query<{ id: string; accessGroupIds: number[] }>({
+      sql: `SELECT "id", "_accessGroupIds" AS "accessGroupIds" FROM ${SCHEMA}."${objectName}" ORDER BY "id"`,
+    });
 
   const countFullRecomputeSteps = async () => {
-    const [{ count }] = await query<{ count: string }>(
-      `SELECT count(*) FROM core."deferredWorkspaceOperation", jsonb_array_elements("payload"->'objectComputes') AS "step"
+    const [{ count }] = await query<{ count: string }>({
+      sql: `SELECT count(*) FROM core."deferredWorkspaceOperation", jsonb_array_elements("payload"->'objectComputes') AS "step"
         WHERE "workspaceId" = $1 AND "name" = 'compute_recordAccessGroupIds' AND NOT "step" ? 'accessGroupIdChanges'`,
-      [workspaceId],
-    );
+      parameters: [workspaceId],
+    });
 
     return Number(count);
   };
 
   const createLogins = async () => {
     // Seeded users beyond the named ones have no workspace member yet
-    const workspaceMembers = await query<{ id: string; userId: string }>(
-      `INSERT INTO ${SCHEMA}."workspaceMember" ("userId", "userEmail", "nameFirstName", "nameLastName")
+    const workspaceMembers = await query<{ id: string; userId: string }>({
+      sql: `INSERT INTO ${SCHEMA}."workspaceMember" ("userId", "userEmail", "nameFirstName", "nameLastName")
         SELECT "user"."id", "user"."email", 'Deal', "user"."email"
         FROM core."userWorkspace"
         JOIN core."user" ON "user"."id" = "userWorkspace"."userId"
@@ -346,8 +349,8 @@ describe('Account team access (integration)', () => {
         ORDER BY "user"."id"
         LIMIT 4
         RETURNING "id", "userId"`,
-      [workspaceId],
-    );
+      parameters: [workspaceId],
+    });
 
     await getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
@@ -578,20 +581,25 @@ describe('Account team access (integration)', () => {
       },
     });
 
-    const [{ id: storedClientHeadRuleId }] = await query<{ id: string }>(
-      `SELECT "rowLevelPermissionRuleId" AS "id" FROM core."rowLevelPermissionPredicate"
+    const [{ id: storedClientHeadRuleId }] = await query<{ id: string }>({
+      sql: `SELECT "rowLevelPermissionRuleId" AS "id" FROM core."rowLevelPermissionPredicate"
         WHERE "roleId" = $1 AND "workspaceMemberRelationFilterFieldMetadataId" IS NOT NULL`,
-      [roleId],
-    );
+      parameters: [roleId],
+    });
 
-    await query(
-      `INSERT INTO core."fieldPermission" ("roleId", "objectMetadataId", "fieldMetadataId", "canReadFieldValue", "canUpdateFieldValue", "workspaceId", "universalIdentifier", "applicationId", "rowLevelPermissionRuleId")
+    await query({
+      sql: `INSERT INTO core."fieldPermission" ("roleId", "objectMetadataId", "fieldMetadataId", "canReadFieldValue", "canUpdateFieldValue", "workspaceId", "universalIdentifier", "applicationId", "rowLevelPermissionRuleId")
         SELECT $1, "fieldMetadata"."objectMetadataId", "fieldMetadata"."id", FALSE, FALSE, $2, uuid_generate_v4(), "role"."applicationId", $3
         FROM core."fieldMetadata", core."role"
         WHERE "fieldMetadata"."objectMetadataId" = $4 AND "role"."id" = $1
           AND "fieldMetadata"."name" NOT IN ('id', 'name') AND "fieldMetadata"."isSystem" = FALSE`,
-      [roleId, workspaceId, storedClientHeadRuleId, metadataIds.opportunity],
-    );
+      parameters: [
+        roleId,
+        workspaceId,
+        storedClientHeadRuleId,
+        metadataIds.opportunity,
+      ],
+    });
 
     await createLogins();
 
@@ -602,14 +610,14 @@ describe('Account team access (integration)', () => {
       });
     }
 
-    await query(
-      `UPDATE ${SCHEMA}."workspaceMember" SET "practice" = 'ADVISORY' WHERE "id" = $1`,
-      [logins.partner.workspaceMemberId],
-    );
-    await query(
-      `UPDATE ${SCHEMA}."workspaceMember" SET "clearedWalls" = ARRAY['WALL_TWO']::${SCHEMA}."workspaceMember_clearedWalls_enum"[] WHERE "id" = $1`,
-      [logins.clientHead.workspaceMemberId],
-    );
+    await query({
+      sql: `UPDATE ${SCHEMA}."workspaceMember" SET "practice" = 'ADVISORY' WHERE "id" = $1`,
+      parameters: [logins.partner.workspaceMemberId],
+    });
+    await query({
+      sql: `UPDATE ${SCHEMA}."workspaceMember" SET "clearedWalls" = ARRAY['WALL_TWO']::${SCHEMA}."workspaceMember_clearedWalls_enum"[] WHERE "id" = $1`,
+      parameters: [logins.clientHead.workspaceMemberId],
+    });
     await getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     ).invalidateAndRecompute(workspaceId, ['flatWorkspaceMemberMaps']);
@@ -821,10 +829,10 @@ describe('Account team access (integration)', () => {
 
   it('should grant a new account team member without recomputing opportunities', async () => {
     // Same wall clearance as the client head, so the account team groups it needs already exist
-    await query(
-      `UPDATE ${SCHEMA}."workspaceMember" SET "clearedWalls" = ARRAY['WALL_TWO']::${SCHEMA}."workspaceMember_clearedWalls_enum"[] WHERE "id" = $1`,
-      [logins.opportunityTeamMember.workspaceMemberId],
-    );
+    await query({
+      sql: `UPDATE ${SCHEMA}."workspaceMember" SET "clearedWalls" = ARRAY['WALL_TWO']::${SCHEMA}."workspaceMember_clearedWalls_enum"[] WHERE "id" = $1`,
+      parameters: [logins.opportunityTeamMember.workspaceMemberId],
+    });
     await getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     ).invalidateAndRecompute(workspaceId, ['flatWorkspaceMemberMaps']);

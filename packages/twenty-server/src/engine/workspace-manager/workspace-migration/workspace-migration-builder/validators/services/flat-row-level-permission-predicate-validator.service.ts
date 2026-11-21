@@ -769,6 +769,11 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         STANDARD_OBJECTS.workspaceMember.universalIdentifier ||
       workspaceMemberRelationFieldMetadata.type !==
         FieldMetadataType.RELATION ||
+      !isMorphOrRelationUniversalFlatFieldMetadata(
+        workspaceMemberRelationFieldMetadata,
+      ) ||
+      workspaceMemberRelationFieldMetadata.universalSettings?.relationType !==
+        RelationType.ONE_TO_MANY ||
       !isDefined(
         workspaceMemberRelationFieldMetadata.relationTargetObjectMetadataUniversalIdentifier,
       )
@@ -778,8 +783,8 @@ export class FlatRowLevelPermissionPredicateValidatorService {
 
       return {
         code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
-        message: t`Field "${workspaceMemberRelationFieldName}" is not a relation of the workspaceMember object`,
-        userFriendlyMessage: msg`This field is not a relation of the workspace member object`,
+        message: t`Field "${workspaceMemberRelationFieldName}" is not a one-to-many relation of the workspaceMember object`,
+        userFriendlyMessage: msg`This field is not a one-to-many relation of the workspace member object`,
       };
     }
 
