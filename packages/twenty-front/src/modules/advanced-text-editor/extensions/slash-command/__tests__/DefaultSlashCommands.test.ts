@@ -264,7 +264,7 @@ describe('DefaultSlashCommands', () => {
 
       try {
         const todayCommand = DEFAULT_SLASH_COMMANDS.find(
-          (cmd) => cmd.id === 'today',
+          (command) => command.id === 'today',
         );
 
         editor.commands.setContent('<p>Note /today</p>');
