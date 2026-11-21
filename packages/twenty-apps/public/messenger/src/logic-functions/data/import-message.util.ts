@@ -3,6 +3,7 @@ import {
   type IngestMessageParticipant,
 } from 'twenty-sdk/logic-function';
 
+import { buildIncomingMessageContent } from 'src/logic-functions/data/build-incoming-message-content.util';
 import { uploadIncomingAttachments } from 'src/logic-functions/data/upload-incoming-attachments.util';
 import { type MessengerWebhookMessage } from 'src/logic-functions/types/messenger-webhook.type';
 
@@ -36,6 +37,8 @@ export const importMessage = async ({
         { role: 'TO', ...pageParticipant },
       ];
 
+  const { text, fileAttachments } = buildIncomingMessageContent(message);
+
   // ingestion skips a mid it already holds, so retries and echoes of Twenty's own replies import once
   await ingestMessages({
     messageChannelId,
@@ -43,10 +46,13 @@ export const importMessage = async ({
       {
         externalId: message.mid,
         threadExternalId: pageScopedId,
-        text: message.text ?? '',
+        text,
         receivedAt,
         participants,
-        attachments: await uploadIncomingAttachments(message),
+        attachments: await uploadIncomingAttachments({
+          messageId: message.mid,
+          fileAttachments,
+        }),
       },
     ],
   });

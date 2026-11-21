@@ -2,7 +2,7 @@
 
 Brings the Facebook Messenger conversations of your Pages into Twenty and lets you answer them from Twenty.
 
-- Incoming messages and their attachments are imported as conversations, one message channel per Page.
+- Incoming messages and their attachments are imported as conversations, one message channel per Page. Shared posts, reels and links show as a line of text with their link.
 - Messages the Page sends from Meta Business Suite are imported too.
 - Conversations can be answered from Twenty within 24 hours of the customer's last message, and up to 7 days with Meta's Human Agent feature. Attachments go up to 8 MB for images and 25 MB for other files.
 - When a customer edits a message, the edit replaces its text in Twenty.

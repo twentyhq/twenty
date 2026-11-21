@@ -1,22 +1,19 @@
 import axios from 'axios';
 import { uploadMessageAttachment } from 'twenty-sdk/logic-function';
-import { isNonEmptyString } from '@sniptt/guards';
 
 import { buildIncomingAttachmentFilename } from 'src/logic-functions/data/build-incoming-attachment-filename.util';
-import { type MessengerWebhookMessage } from 'src/logic-functions/types/messenger-webhook.type';
+import { type IncomingFileAttachment } from 'src/logic-functions/data/build-incoming-message-content.util';
 
-export const uploadIncomingAttachments = async (
-  message: MessengerWebhookMessage,
-) => {
+export const uploadIncomingAttachments = async ({
+  messageId,
+  fileAttachments,
+}: {
+  messageId: string;
+  fileAttachments: IncomingFileAttachment[];
+}) => {
   const uploadedAttachments: { fileId: string; label: string }[] = [];
 
-  for (const [index, attachment] of (message.attachments ?? []).entries()) {
-    const url = attachment.payload?.url;
-
-    if (!isNonEmptyString(url)) {
-      continue;
-    }
-
+  for (const { url, type, index } of fileAttachments) {
     const { data } = await axios.get<ArrayBuffer>(url, {
       responseType: 'arraybuffer',
     });
@@ -25,8 +22,8 @@ export const uploadIncomingAttachments = async (
       await uploadMessageAttachment({
         filename: buildIncomingAttachmentFilename({
           url,
-          attachmentType: attachment.type,
-          messageId: message.mid,
+          attachmentType: type,
+          messageId,
           index,
         }),
         content: new Uint8Array(data),
