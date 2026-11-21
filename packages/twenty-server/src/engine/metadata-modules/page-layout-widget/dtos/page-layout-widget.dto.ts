@@ -5,6 +5,7 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 import GraphQLJSON from 'graphql-type-json';
+import { ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
 import {
   PageLayoutWidgetConditionalDisplay,
   PageLayoutWidgetPosition,
@@ -78,6 +79,9 @@ export class PageLayoutWidgetDTO {
 
   @Field(() => String, { nullable: true })
   conditionalAvailabilityExpression?: string | null;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  conditionalAvailability?: ConditionalAvailabilityNode | null;
 
   @Field()
   createdAt: Date;

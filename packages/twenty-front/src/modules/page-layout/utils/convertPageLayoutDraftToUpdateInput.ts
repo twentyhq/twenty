@@ -80,6 +80,8 @@ export const convertPageLayoutDraftToUpdateInput = (
             configuration: widget.configuration ?? null,
             conditionalAvailabilityExpression:
               widget.conditionalAvailabilityExpression ?? null,
+            conditionalDisplay: widget.conditionalDisplay ?? null,
+            conditionalAvailability: widget.conditionalAvailability ?? null,
           })),
         };
       }),

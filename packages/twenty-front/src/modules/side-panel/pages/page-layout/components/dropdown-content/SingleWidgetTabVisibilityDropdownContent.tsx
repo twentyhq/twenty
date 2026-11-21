@@ -1,30 +1,30 @@
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { WidgetVisibilityOptionsList } from '@/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityOptionsList';
-import { expressionToOptionId } from '@/side-panel/pages/page-layout/utils/expressionToOptionId';
-import { optionIdToExpression } from '@/side-panel/pages/page-layout/utils/optionIdToExpression';
+import { getWidgetVisibilityPropertiesFromOptionId } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityPropertiesFromOptionId';
 
 type SingleWidgetTabVisibilityDropdownContentProps = {
   widgetId: string;
-  currentExpression: string | null | undefined;
+  currentOptionId: string;
   pageLayoutId: string;
 };
 
 export const SingleWidgetTabVisibilityDropdownContent = ({
   widgetId,
-  currentExpression,
+  currentOptionId,
   pageLayoutId,
 }: SingleWidgetTabVisibilityDropdownContentProps) => {
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
 
   const handleSelectVisibility = (optionId: string) => {
-    updatePageLayoutWidget(widgetId, {
-      conditionalAvailabilityExpression: optionIdToExpression(optionId),
-    });
+    updatePageLayoutWidget(
+      widgetId,
+      getWidgetVisibilityPropertiesFromOptionId(optionId),
+    );
   };
 
   return (
     <WidgetVisibilityOptionsList
-      currentOptionId={expressionToOptionId(currentExpression)}
+      currentOptionId={currentOptionId}
       onSelectVisibility={handleSelectVisibility}
     />
   );
