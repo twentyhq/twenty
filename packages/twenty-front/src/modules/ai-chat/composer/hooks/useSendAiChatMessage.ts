@@ -78,7 +78,7 @@ import { logError } from '~/utils/logError';
 
 type AiChatSendTarget = {
   threadId: string;
-  instanceId: string;
+  instanceId?: string;
   onThreadChange: (threadId: string) => void;
 };
 
@@ -329,8 +329,9 @@ export const useSendAiChatMessage = () => {
           );
 
           if (
+            !isDefined(instanceId) ||
             store.get(aiChatRequiredThreadListenersState.atom)[instanceId] ===
-            threadId
+              threadId
           ) {
             onThreadChange(threadId);
           }
@@ -532,8 +533,9 @@ export const useSendAiChatMessage = () => {
         }
 
         if (
+          !isDefined(instanceId) ||
           store.get(aiChatRequiredThreadListenersState.atom)[instanceId] ===
-          threadId
+            threadId
         ) {
           onThreadChange(directMessageThreadId);
         }

@@ -22,14 +22,14 @@ export const CommandMenuAskAiFallbackItem = ({
   const { applyAiChatPreprompt } = useApplyAiChatPreprompt();
   const setSidePanelSearch = useSetAtomState(sidePanelSearchState);
 
-  const handleClick = () => {
-    applyAiChatPreprompt({
+  const handleClick = async () => {
+    setSidePanelSearch('');
+    await applyAiChatPreprompt({
       threadId: switchToNewChat(),
       serializedDocument:
         serializePlainTextAsAdvancedTextEditorDocument(prompt),
       mode: 'SEND',
     });
-    setSidePanelSearch('');
   };
 
   return (

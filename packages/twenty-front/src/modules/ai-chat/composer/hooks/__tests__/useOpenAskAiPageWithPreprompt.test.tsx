@@ -7,7 +7,6 @@ import { useOpenAskAiPageWithPreprompt } from '@/ai-chat/composer/hooks/useOpenA
 import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatComposerDraftsState';
 import { aiChatRequiredThreadListenersState } from '@/ai-chat/states/aiChatRequiredThreadListenersState';
 import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
-import { aiChatComposerShouldSendFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldSendFamilyState';
 import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/states/composer/aiChatComposerAttachmentsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { type AiChatFileUIPart } from '@/ai-chat/types/AiChatFileUIPart';
@@ -25,6 +24,17 @@ const uploadedFile: AiChatFileUIPart = {
 };
 
 let finishUpload: () => void = () => {};
+const sendAiChatMessage = jest.fn();
+
+jest.mock('@/ai-chat/composer/hooks/useSendAiChatMessage', () => ({
+  useSendAiChatMessage: () => ({ sendAiChatMessage }),
+}));
+
+jest.mock('@/ai-chat/hooks/useSelectAiChatThreadFromNewChat', () => ({
+  useSelectAiChatThreadFromNewChat: () => ({
+    selectAiChatThreadFromNewChat: jest.fn(),
+  }),
+}));
 
 jest.mock('@/ai-chat/composer/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({
@@ -65,13 +75,8 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 describe('useOpenAskAiPageWithPreprompt', () => {
   beforeEach(() => {
+    sendAiChatMessage.mockClear();
     jotaiStore.set(aiChatComposerDraftsState.atom, {});
-    jotaiStore.set(
-      aiChatComposerShouldSendFamilyState.atomFamily({
-        threadId: NEW_CHAT_THREAD_ID,
-      }),
-      false,
-    );
     jotaiStore.set(
       aiChatComposerAttachmentsFamilyState.atomFamily({
         threadId: NEW_CHAT_THREAD_ID,
@@ -99,13 +104,9 @@ describe('useOpenAskAiPageWithPreprompt', () => {
     expect(jotaiStore.get(aiChatComposerDraftsState.atom)).toEqual({
       [NEW_CHAT_THREAD_ID]: 'Import these contacts',
     });
-    expect(
-      jotaiStore.get(
-        aiChatComposerShouldSendFamilyState.atomFamily({
-          threadId: NEW_CHAT_THREAD_ID,
-        }),
-      ),
-    ).toBe(true);
+    expect(sendAiChatMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ threadId: NEW_CHAT_THREAD_ID }),
+    );
     expect(
       jotaiStore.get(
         aiChatComposerAttachmentsFamilyState.atomFamily({
@@ -135,13 +136,7 @@ describe('useOpenAskAiPageWithPreprompt', () => {
     });
 
     expect(jotaiStore.get(aiChatComposerDraftsState.atom)).toEqual({});
-    expect(
-      jotaiStore.get(
-        aiChatComposerShouldSendFamilyState.atomFamily({
-          threadId: NEW_CHAT_THREAD_ID,
-        }),
-      ),
-    ).toBe(false);
+    expect(sendAiChatMessage).not.toHaveBeenCalled();
     expect(
       jotaiStore.get(
         aiChatComposerAttachmentsFamilyState.atomFamily({
