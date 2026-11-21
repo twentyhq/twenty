@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordAccessGroupSQLConditionMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-sql-condition-metadata-maps.type';
 import { type AccessGroupValueLookup } from 'src/engine/permissions/internal/access-group/value-lookup/types/access-group-value-lookup.type';
+import { findAccessGroupTypeHandler } from 'src/engine/permissions/internal/access-group/utils/find-access-group-type-handler.util';
 import { RECORD_ACCESS_GROUP_TABLE_ALIAS } from 'src/engine/permissions/internal/record-permission-repository/constants/record-access-group-table-alias.constant';
 import { buildAccessGroupTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-access-group-table-expression.util';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
@@ -17,29 +18,6 @@ type KeyValueExpression = {
   valueExpression: string;
   fromExpressions: string[];
   joinConditions: string[];
-};
-
-const buildMatchingValueCondition = ({
-  lookup,
-  keyValueExpressions,
-  accessGroupAlias,
-  parameterName,
-}: {
-  lookup: AccessGroupValueLookup;
-  keyValueExpressions: KeyValueExpression[];
-  accessGroupAlias: string;
-  parameterName: (name: string) => string;
-}): string => {
-  if (lookup.type === 'RLS_LITERAL_VALUE') {
-    return `${accessGroupAlias}."value" = CAST(${keyValueExpressions[0].valueExpression} AS varchar)`;
-  }
-
-  return `${accessGroupAlias}."memberFieldValues" = jsonb_build_object(${keyValueExpressions
-    .map(
-      ({ valueExpression }, keyIndex) =>
-        `CAST(:${parameterName(`key${keyIndex}`)} AS text), ${valueExpression}`,
-    )
-    .join(', ')})`;
 };
 
 export const buildAccessGroupValueLookupIdsExpression = ({
@@ -111,11 +89,12 @@ export const buildAccessGroupValueLookupIdsExpression = ({
     ),
     `${accessGroupAlias}."type" = '${lookup.type}'`,
     `${accessGroupAlias}."ruleShapeHash" = :${parameterName('ruleShapeHash')}`,
-    buildMatchingValueCondition({
-      lookup,
-      keyValueExpressions,
+    findAccessGroupTypeHandler(lookup.type).buildValueLookupCondition({
       accessGroupAlias,
-      parameterName,
+      valueExpressions: keyValueExpressions.map(
+        ({ valueExpression }) => valueExpression,
+      ),
+      buildKeyParameterName: (keyIndex) => parameterName(`key${keyIndex}`),
     }),
   ].join(' AND ')})`;
 
