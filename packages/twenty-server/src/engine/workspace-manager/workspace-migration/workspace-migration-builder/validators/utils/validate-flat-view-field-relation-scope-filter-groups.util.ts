@@ -48,36 +48,26 @@ export const validateFlatViewFieldRelationScopeFilterGroups = (
     );
   }
 
-  for (const filterGroup of filterGroups) {
-    if (
-      isDefined(filterGroup.parentFilterGroupId) &&
-      !parentFilterGroupIdById.has(filterGroup.parentFilterGroupId)
-    ) {
+  for (const { parentFilterGroupId } of filterGroups) {
+    if (!isDefined(parentFilterGroupId)) {
+      continue;
+    }
+
+    if (!parentFilterGroupIdById.has(parentFilterGroupId)) {
       errors.push(
         getInvalidFlatViewFieldRelationScopeError({
           message: t`Relation scope filter group parent not found`,
           userFriendlyMessage: msg`Related records filter groups are invalid`,
         }),
       );
-      continue;
-    }
-
-    const visitedFilterGroupIds = new Set<string>([filterGroup.id]);
-    let parentFilterGroupId = filterGroup.parentFilterGroupId;
-
-    while (isDefined(parentFilterGroupId)) {
-      if (visitedFilterGroupIds.has(parentFilterGroupId)) {
-        errors.push(
-          getInvalidFlatViewFieldRelationScopeError({
-            message: t`Relation scope filter groups cannot be nested in themselves`,
-            userFriendlyMessage: msg`Related records filter groups are invalid`,
-          }),
-        );
-        break;
-      }
-
-      visitedFilterGroupIds.add(parentFilterGroupId);
-      parentFilterGroupId = parentFilterGroupIdById.get(parentFilterGroupId);
+    } else if (isDefined(parentFilterGroupIdById.get(parentFilterGroupId))) {
+      // Same depth-2 cap as view filter groups, which also rules out cycles
+      errors.push(
+        getInvalidFlatViewFieldRelationScopeError({
+          message: t`Relation scope filter groups can only be nested one level deep`,
+          userFriendlyMessage: msg`Related records filter groups are invalid`,
+        }),
+      );
     }
   }
 
