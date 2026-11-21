@@ -2166,7 +2166,7 @@ msgid "Add a recipient before sending"
 msgstr "Lägg till en mottagare innan du skickar"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "Lägg till en mottagare eller en kanal innan du skickar."
 
@@ -6286,7 +6286,7 @@ msgid "Chat Sessions"
 msgstr "Chattsessioner"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "Chat stopped: no more available credits."
 msgstr "Chatten stoppades: inga fler tillgängliga krediter."
 
@@ -7736,7 +7736,7 @@ msgid "Connection successfully updated"
 msgstr "Anslutning uppdaterades framgångsrikt"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "Anslutningen till assistenten förlorades. Ladda om för att se svaret."
 
@@ -10599,7 +10599,7 @@ msgid "Direct messages and mentions"
 msgstr "Direktmeddelanden och omnämnanden"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/instance/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Direktmeddelanden har inte stöd för bilagor."
 
@@ -15592,7 +15592,7 @@ msgid "Hours between triggers"
 msgstr "Timmar mellan triggers"
 
 #. js-lingui-id: 3WYTm2
-#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/composer/components/AiChatSuggestedPrompts.tsx
 msgid "How can I help you?"
 msgstr "Hur kan jag hjälpa dig?"
 
@@ -20392,7 +20392,7 @@ msgstr "Ingen AI-modell i denna arbetsyta uppfyller dessa inställningar."
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "Ingen AI-leverantör är konfigurerad på denna instans."
@@ -30412,7 +30412,7 @@ msgstr "Den här anslutningen finns inte eller är inte tillgänglig för den h�
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "This conversation is no longer available."
 msgstr "Den här konversationen är inte längre tillgänglig."
 
@@ -33414,7 +33414,7 @@ msgid "Wait for Event"
 msgstr "Vänta på händelse"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Vänta tills bilagorna har laddats upp."
 
@@ -33802,7 +33802,7 @@ msgid "What AI model should your agent run on"
 msgstr "Vilken AI-modell ska din agent köras på"
 
 #. js-lingui-id: Itn+J7
-#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/composer/components/AiChatSuggestedPrompts.tsx
 msgid "What can I help you with?"
 msgstr "Vad kan jag hjälpa dig med?"
 
