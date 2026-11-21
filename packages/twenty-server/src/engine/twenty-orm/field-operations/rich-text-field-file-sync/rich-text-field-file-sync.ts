@@ -95,7 +95,8 @@ export class RichTextFieldFileSync {
 
     const files = await this.fileRepository.find({
       where: { id: In(fileIds), workspaceId },
-      select: ['id', 'path', 'settings', 'status', 'recordId'],
+      select: ['id', 'path', 'settings', 'status', 'recordId', 'deletedAt'],
+      withDeleted: true,
     });
     const fileById = new Map(files.map((file) => [file.id, file]));
 
@@ -112,10 +113,12 @@ export class RichTextFieldFileSync {
       for (const fileId of fileReferenceChange.addedFileIds) {
         const file = fileById.get(fileId);
 
+        const isReleasedFile = isDefined(file?.deletedAt);
+
         if (
           !isDefined(file) ||
           !isUploadedForField(file) ||
-          file.settings?.isTemporaryFile !== true ||
+          (!file.settings?.isTemporaryFile && !isReleasedFile) ||
           claimedFileIds.has(fileId)
         ) {
           continue;
@@ -143,6 +146,7 @@ export class RichTextFieldFileSync {
 
         if (
           isDefined(file) &&
+          !isDefined(file.deletedAt) &&
           isDefined(recordId) &&
           file.recordId === recordId &&
           isUploadedForField(file)
@@ -188,15 +192,17 @@ export class RichTextFieldFileSync {
     }
 
     if (claimedFileIds.length > 0) {
-      // A file another write claimed first stays with that record.
+      // Only a temporary or released file can be claimed, so one another write claimed first stays with that record.
       await this.fileRepository.query(
         `UPDATE "core"."file" AS "file"
          SET "settings" = '{"isTemporaryFile":false,"toDelete":false}'::jsonb,
-             "recordId" = "claim"."recordId"
+             "recordId" = "claim"."recordId",
+             "deletedAt" = NULL
          FROM unnest($1::uuid[], $2::uuid[]) AS "claim"("fileId", "recordId")
          WHERE "file"."id" = "claim"."fileId"
            AND "file"."workspaceId" = $3
-           AND "file"."settings"->>'isTemporaryFile' = 'true'`,
+           AND ("file"."settings"->>'isTemporaryFile' = 'true'
+             OR "file"."deletedAt" IS NOT NULL)`,
         [claimedFileIds, claimingRecordIds, workspaceId],
       );
     }

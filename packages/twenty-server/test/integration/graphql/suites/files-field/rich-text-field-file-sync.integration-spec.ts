@@ -192,6 +192,33 @@ describe('Rich text field <> files sync', () => {
     expect((await findFileRow(fileId))?.deletedAt).not.toBeNull();
   });
 
+  it('should restore a released file when the body references it again', async () => {
+    const fileId = await uploadFile(richTextFieldMetadataId);
+    const recordId = await createRecord([fileId]);
+
+    await updateRecordBody(recordId, []);
+    await updateRecordBody(recordId, [fileId]);
+
+    expect(await findFileRow(fileId)).toMatchObject({
+      recordId,
+      deletedAt: null,
+    });
+  });
+
+  it('should hand a released file over to the next record that references it', async () => {
+    const fileId = await uploadFile(richTextFieldMetadataId);
+    const firstRecordId = await createRecord([fileId]);
+    const secondRecordId = await createRecord([]);
+
+    await updateRecordBody(firstRecordId, []);
+    await updateRecordBody(secondRecordId, [fileId]);
+
+    expect(await findFileRow(fileId)).toMatchObject({
+      recordId: secondRecordId,
+      deletedAt: null,
+    });
+  });
+
   it('should leave a file owned by another record untouched', async () => {
     const fileId = await uploadFile(richTextFieldMetadataId);
     const ownerRecordId = await createRecord([fileId]);

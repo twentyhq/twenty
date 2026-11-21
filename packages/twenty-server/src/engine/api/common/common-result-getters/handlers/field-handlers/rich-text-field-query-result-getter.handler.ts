@@ -3,7 +3,7 @@ import {
   FileFolder,
   type ObjectRecord,
 } from 'twenty-shared/types';
-import { isNonEmptyString, isString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   getTipTapFileUrlAttributeName,
   isDefined,
@@ -15,7 +15,8 @@ import {
 import { type QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
 
 import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
+import { extractFilesFieldFileIdFromBlocknoteBlock } from 'src/engine/core-modules/file/files-field/utils/extract-files-field-file-id-from-blocknote-block.util';
+import { extractFilesFieldFileIdFromTipTapNode } from 'src/engine/core-modules/file/files-field/utils/extract-files-field-file-id-from-tiptap-node.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 // oxlint-disable-next-line typescript/no-explicit-any
@@ -98,14 +99,7 @@ export class RichTextFieldQueryResultGetterHandler implements QueryResultGetterH
   ): Promise<RichTextBlock[]> => {
     return Promise.all(
       blocknoteBlocks.map(async (block: RichTextBlock) => {
-        if (!isDefined(block.props?.url)) {
-          return block;
-        }
-
-        const fileIdFromUrl = extractFileIdFromUrl(
-          block.props.url,
-          FileFolder.FilesField,
-        );
+        const fileIdFromUrl = extractFilesFieldFileIdFromBlocknoteBlock(block);
 
         if (!isDefined(fileIdFromUrl)) {
           return block;
@@ -165,17 +159,9 @@ export class RichTextFieldQueryResultGetterHandler implements QueryResultGetterH
       : node;
 
     const fileUrlAttributeName = getTipTapFileUrlAttributeName(node.type);
+    const fileIdFromUrl = extractFilesFieldFileIdFromTipTapNode(node);
 
-    if (!isDefined(fileUrlAttributeName)) {
-      return signedNode;
-    }
-
-    const fileUrl = node.attrs?.[fileUrlAttributeName];
-    const fileIdFromUrl = isString(fileUrl)
-      ? extractFileIdFromUrl(fileUrl, FileFolder.FilesField)
-      : undefined;
-
-    if (!isDefined(fileIdFromUrl)) {
+    if (!isDefined(fileUrlAttributeName) || !isDefined(fileIdFromUrl)) {
       return signedNode;
     }
 

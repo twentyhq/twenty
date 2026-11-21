@@ -7,6 +7,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { In } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -273,6 +274,36 @@ export class FilesFieldService {
       },
       shouldAssertStorageStock,
     });
+  }
+
+  async findFileIdsOwnedByRecords({
+    workspaceId,
+    recordOwnedFileCandidates,
+  }: {
+    workspaceId: string;
+    recordOwnedFileCandidates: { fileId: string; recordId: string }[];
+  }): Promise<string[]> {
+    if (recordOwnedFileCandidates.length === 0) {
+      return [];
+    }
+
+    const candidateFiles = await this.fileRepository.find(workspaceId, {
+      where: {
+        id: In(recordOwnedFileCandidates.map(({ fileId }) => fileId)),
+        recordId: In(recordOwnedFileCandidates.map(({ recordId }) => recordId)),
+      },
+      select: ['id', 'recordId'],
+    });
+
+    const candidateKeys = new Set(
+      recordOwnedFileCandidates.map(
+        ({ fileId, recordId }) => `${fileId}:${recordId}`,
+      ),
+    );
+
+    return candidateFiles
+      .filter(({ id, recordId }) => candidateKeys.has(`${id}:${recordId}`))
+      .map(({ id }) => id);
   }
 
   async deleteFilesFieldFile({

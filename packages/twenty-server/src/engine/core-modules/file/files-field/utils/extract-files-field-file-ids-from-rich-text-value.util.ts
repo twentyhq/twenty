@@ -1,19 +1,30 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { FileFolder } from 'twenty-shared/types';
-import { isPlainObject, isValidUuid } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isPlainObject,
+  isTipTapNode,
+  parseJson,
+  type TipTapNode,
+} from 'twenty-shared/utils';
 
-const RICH_TEXT_SERIALIZED_SUBFIELD_NAMES = [
-  'tiptap',
-  'blocknote',
-  'markdown',
-] as const;
+import { extractFilesFieldFileIdFromBlocknoteBlock } from 'src/engine/core-modules/file/files-field/utils/extract-files-field-file-id-from-blocknote-block.util';
+import { extractFilesFieldFileIdFromTipTapNode } from 'src/engine/core-modules/file/files-field/utils/extract-files-field-file-id-from-tiptap-node.util';
 
-const FILES_FIELD_FILE_URL_PATTERN = new RegExp(
-  `/file/${FileFolder.FilesField}/([0-9a-fA-F-]{36})`,
-  'g',
-);
+const collectTipTapNodeFileIds = (
+  node: TipTapNode,
+  fileIds: Set<string>,
+): void => {
+  const fileId = extractFilesFieldFileIdFromTipTapNode(node);
 
-// Matches file URLs in the serialized text so every subfield format is covered the same way.
+  if (isDefined(fileId)) {
+    fileIds.add(fileId);
+  }
+
+  for (const childNode of node.content ?? []) {
+    collectTipTapNodeFileIds(childNode, fileIds);
+  }
+};
+
 export const extractFilesFieldFileIdsFromRichTextValue = (
   richTextValue: unknown,
 ): Set<string> => {
@@ -23,18 +34,24 @@ export const extractFilesFieldFileIdsFromRichTextValue = (
     return fileIds;
   }
 
-  for (const subfieldName of RICH_TEXT_SERIALIZED_SUBFIELD_NAMES) {
-    const serializedValue = richTextValue[subfieldName];
+  const tiptapDocument = isNonEmptyString(richTextValue.tiptap)
+    ? parseJson<unknown>(richTextValue.tiptap)
+    : undefined;
 
-    if (!isNonEmptyString(serializedValue)) {
-      continue;
-    }
+  if (isTipTapNode(tiptapDocument)) {
+    collectTipTapNodeFileIds(tiptapDocument, fileIds);
+  }
 
-    for (const [, fileId] of serializedValue.matchAll(
-      FILES_FIELD_FILE_URL_PATTERN,
-    )) {
-      if (isValidUuid(fileId)) {
-        fileIds.add(fileId.toLowerCase());
+  const blocknoteBlocks = isNonEmptyString(richTextValue.blocknote)
+    ? parseJson<unknown>(richTextValue.blocknote)
+    : undefined;
+
+  if (Array.isArray(blocknoteBlocks)) {
+    for (const block of blocknoteBlocks) {
+      const fileId = extractFilesFieldFileIdFromBlocknoteBlock(block);
+
+      if (isDefined(fileId)) {
+        fileIds.add(fileId);
       }
     }
   }

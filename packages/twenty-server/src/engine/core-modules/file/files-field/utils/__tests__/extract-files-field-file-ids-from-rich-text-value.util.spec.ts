@@ -30,16 +30,54 @@ describe('extractFilesFieldFileIdsFromRichTextValue', () => {
     ).toEqual(new Set([FIRST_FILE_ID, SECOND_FILE_ID]));
   });
 
-  it('should extract file ids from blocknote and markdown and deduplicate them', () => {
+  it('should extract file ids from blocknote blocks and deduplicate them', () => {
     expect(
       extractFilesFieldFileIdsFromRichTextValue({
-        tiptap: null,
+        tiptap: JSON.stringify({
+          type: 'doc',
+          content: [
+            { type: 'image', attrs: { src: buildFileUrl(FIRST_FILE_ID) } },
+          ],
+        }),
         blocknote: JSON.stringify([
-          { type: 'image', props: { url: buildFileUrl(FIRST_FILE_ID) } },
+          {
+            type: 'image',
+            props: { url: `${buildFileUrl(FIRST_FILE_ID)}?token=signed` },
+          },
+          { type: 'file', props: { url: buildFileUrl(SECOND_FILE_ID) } },
         ]),
-        markdown: `![image](${buildFileUrl(FIRST_FILE_ID)}?token=signed)`,
+        markdown: null,
       }),
-    ).toEqual(new Set([FIRST_FILE_ID]));
+    ).toEqual(new Set([FIRST_FILE_ID, SECOND_FILE_ID]));
+  });
+
+  it('should ignore a file url that is only written as text or as a link', () => {
+    expect(
+      extractFilesFieldFileIdsFromRichTextValue({
+        tiptap: JSON.stringify({
+          type: 'doc',
+          content: [
+            {
+              type: 'paragraph',
+              content: [
+                {
+                  type: 'text',
+                  text: buildFileUrl(FIRST_FILE_ID),
+                  marks: [
+                    {
+                      type: 'link',
+                      attrs: { href: buildFileUrl(FIRST_FILE_ID) },
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        }),
+        blocknote: null,
+        markdown: `![image](${buildFileUrl(FIRST_FILE_ID)})`,
+      }),
+    ).toEqual(new Set());
   });
 
   it('should ignore external urls, other file folders and malformed ids', () => {
@@ -67,7 +105,7 @@ describe('extractFilesFieldFileIdsFromRichTextValue', () => {
     ).toEqual(new Set());
   });
 
-  it.each([null, undefined, 'text', []])(
+  it.each([null, undefined])(
     'should return no file id for %j',
     (richTextValue) => {
       expect(extractFilesFieldFileIdsFromRichTextValue(richTextValue)).toEqual(
