@@ -20,11 +20,18 @@ export type PermissionTestRecordName =
   | 'outsideStatusFilter'
   | 'outsideCategoryFilter'
   | 'outsideRegionFilter'
-  | 'sharedWithMemberWithoutAccess';
+  | 'sharedWithMemberWithoutAccess'
+  | 'lowVisibilityTier'
+  | 'mediumVisibilityTier'
+  | 'fullVisibilityTier';
 
 export type PermissionTestWorkspace = {
   workspaceId: string;
+  workspaceOrigin: string;
+  inviteHash: string;
+  adminAccessToken: string;
   objectMetadataId: string;
+  visibilityTierFieldMetadataId: string;
   objectNameSingular: string;
   roleIds: Record<PermissionTestRoleGrant, string>;
   workspaceMemberIds: Record<PermissionTestRoleGrant, string>;

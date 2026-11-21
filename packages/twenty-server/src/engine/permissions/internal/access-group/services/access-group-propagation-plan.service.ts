@@ -9,20 +9,14 @@ import { DataSource } from 'typeorm';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
+import { type AccessGroupComputePlanStep } from 'src/engine/permissions/internal/access-group/types/access-group-compute-plan-step.type';
 import { type AccessGroupPropagationProgress } from 'src/engine/permissions/internal/access-group/types/access-group-propagation-progress.type';
 import { areRecordAccessGroupComputesAlreadyPlanned } from 'src/engine/permissions/internal/access-group/utils/are-record-access-group-computes-already-planned.util';
-import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
-import { planRecordAccessGroupComputes } from 'src/engine/permissions/internal/access-group/utils/plan-record-access-group-computes.util';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
 import { DeferredWorkspaceOperationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-operation-runner.service';
-import { type DeferredWorkspaceOperationPayload } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-operation.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 const COMPUTE_OPERATION_NAME = 'compute_recordAccessGroupIds';
-
-type ObjectCompute = DeferredWorkspaceOperationPayload<
-  typeof COMPUTE_OPERATION_NAME
->['objectComputes'][number];
 
 @Injectable()
 export class AccessGroupPropagationPlanService {
@@ -35,40 +29,22 @@ export class AccessGroupPropagationPlanService {
     private readonly recordAccessGroupRepository: RecordAccessGroupRepository,
   ) {}
 
-  async planAndApplyComputes({
+  async persistPlanSteps({
     workspaceId,
-    objectMetadataIds,
+    steps,
   }: {
     workspaceId: string;
-    objectMetadataIds: string[];
+    steps: Pick<
+      AccessGroupComputePlanStep,
+      'objectMetadataId' | 'accessGroupIdChanges'
+    >[];
   }): Promise<void> {
-    const metadataMaps =
-      await this.recordAccessGroupMetadataMapsService.find(workspaceId);
-    const plannedObjectMetadataIds = planRecordAccessGroupComputes({
-      objectMetadataIds,
-      resolvedRelatedRecordPaths: metadataMaps.resolvedRelatedRecordPaths,
-      isObjectUsingRecordAccessGroups: (objectMetadataId) =>
-        isObjectUsingRecordAccessGroups({ ...metadataMaps, objectMetadataId }),
-    });
-
-    if (!isNonEmptyArray(plannedObjectMetadataIds)) {
+    if (!isNonEmptyArray(steps)) {
       return;
     }
 
-    const recordCountByObjectMetadataId =
-      await this.recordAccessGroupRepository.estimateRecordCountByObjectMetadataId(
-        {
-          workspaceId,
-          flatObjectMetadatas: [...new Set(plannedObjectMetadataIds)]
-            .map((objectMetadataId) =>
-              findFlatEntityByIdInFlatEntityMaps({
-                flatEntityId: objectMetadataId,
-                flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
-              }),
-            )
-            .filter(isDefined),
-        },
-      );
+    const metadataMaps =
+      await this.recordAccessGroupMetadataMapsService.find(workspaceId);
 
     await this.cacheLockService.withLock(async () => {
       const waitingComputePayloads =
@@ -79,21 +55,49 @@ export class AccessGroupPropagationPlanService {
             statuses: ['PENDING'],
           },
         );
-
-      if (
+      const fullStepObjectMetadataIds = steps
+        .filter(({ accessGroupIdChanges }) => !isDefined(accessGroupIdChanges))
+        .map(({ objectMetadataId }) => objectMetadataId);
+      const areFullStepsAlreadyPlanned =
         areRecordAccessGroupComputesAlreadyPlanned({
           waitingObjectMetadataIds: waitingComputePayloads.flatMap(
             ({ objectComputes }) =>
               objectComputes
-                .filter(({ isComputed }) => !isComputed)
+                .filter(
+                  ({ isComputed, accessGroupIdChanges }) =>
+                    !isComputed && !isDefined(accessGroupIdChanges),
+                )
                 .map(({ objectMetadataId }) => objectMetadataId),
           ),
-          objectMetadataIds: plannedObjectMetadataIds,
-        })
-      ) {
+          objectMetadataIds: fullStepObjectMetadataIds,
+        });
+      const stepsToPersist = steps.filter(
+        ({ accessGroupIdChanges }) =>
+          isDefined(accessGroupIdChanges) || !areFullStepsAlreadyPlanned,
+      );
+
+      if (!isNonEmptyArray(stepsToPersist)) {
         return;
       }
 
+      const recordCountByObjectMetadataId =
+        await this.recordAccessGroupRepository.estimateRecordCountByObjectMetadataId(
+          {
+            workspaceId,
+            flatObjectMetadatas: [
+              ...new Set(
+                stepsToPersist.map(({ objectMetadataId }) => objectMetadataId),
+              ),
+            ]
+              .map((objectMetadataId) =>
+                findFlatEntityByIdInFlatEntityMaps({
+                  flatEntityId: objectMetadataId,
+                  flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
+                }),
+              )
+              .filter(isDefined),
+          },
+        );
       const queryRunner = this.coreDataSource.createQueryRunner();
 
       try {
@@ -105,15 +109,14 @@ export class AccessGroupPropagationPlanService {
             {
               name: COMPUTE_OPERATION_NAME,
               payload: {
-                objectComputes: plannedObjectMetadataIds.map(
-                  (objectMetadataId) => ({
-                    objectMetadataId,
-                    plannedRecordCount:
-                      recordCountByObjectMetadataId.get(objectMetadataId) ?? 0,
-                    computedRecordCount: 0,
-                    isComputed: false,
-                  }),
-                ),
+                objectComputes: stepsToPersist.map((step) => ({
+                  ...step,
+                  plannedRecordCount:
+                    recordCountByObjectMetadataId.get(step.objectMetadataId) ??
+                    0,
+                  computedRecordCount: 0,
+                  isComputed: false,
+                })),
               },
             },
           ],
@@ -130,25 +133,18 @@ export class AccessGroupPropagationPlanService {
   async trackComputedRecords({
     workspaceId,
     recordCount,
+    afterRecordId,
   }: {
     workspaceId: string;
     recordCount: number;
+    afterRecordId: string;
   }): Promise<void> {
     await this.updateNextObjectCompute({
       workspaceId,
       updateObjectCompute: (objectCompute) => ({
         ...objectCompute,
         computedRecordCount: objectCompute.computedRecordCount + recordCount,
-      }),
-    });
-  }
-
-  async startNextObjectCompute(workspaceId: string): Promise<void> {
-    await this.updateNextObjectCompute({
-      workspaceId,
-      updateObjectCompute: (objectCompute) => ({
-        ...objectCompute,
-        computedRecordCount: 0,
+        afterRecordId,
       }),
     });
   }
@@ -207,7 +203,9 @@ export class AccessGroupPropagationPlanService {
     updateObjectCompute,
   }: {
     workspaceId: string;
-    updateObjectCompute: (objectCompute: ObjectCompute) => ObjectCompute;
+    updateObjectCompute: (
+      objectCompute: AccessGroupComputePlanStep,
+    ) => AccessGroupComputePlanStep;
   }): Promise<void> {
     await this.deferredWorkspaceOperationRunnerService.updateInProgressOperationPayload(
       {

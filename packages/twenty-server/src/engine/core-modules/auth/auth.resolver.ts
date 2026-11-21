@@ -906,6 +906,7 @@ export class AuthResolver {
         impersonatedUserWorkspaceId,
         impersonatorUserId,
         impersonatedUserId,
+        impersonationLevel,
       } = await this.validateAndLogImpersonation(
         tokenPayload,
         workspace,
@@ -921,6 +922,7 @@ export class AuthResolver {
           impersonatedUserWorkspaceId,
           _impersonatorUserId: impersonatorUserId,
           impersonatedUserId,
+          impersonationLevel,
         });
     } else {
       await this.validateRegularAuthentication(workspace, userWorkspace);
@@ -1143,6 +1145,7 @@ export class AuthResolver {
       impersonatedUserWorkspaceId: toImpersonateUserWorkspace.id,
       impersonatorUserId: impersonatorUserWorkspace.user.id,
       impersonatedUserId: toImpersonateUserWorkspace.user.id,
+      impersonationLevel: authorizationResult.level,
     };
   }
 

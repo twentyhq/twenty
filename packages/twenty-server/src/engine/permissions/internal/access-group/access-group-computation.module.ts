@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { RecomputeRecordAccessGroupIdsOfRecordsJob } from 'src/engine/permissions/internal/access-group/jobs/recompute-record-access-group-ids-of-records.job';
-import { RecomputeRelatedRecordPathTargetsJob } from 'src/engine/permissions/internal/access-group/jobs/recompute-related-record-path-targets.job';
 import { ComputeRecordAccessGroupIdsDeferredOperationHandlerService } from 'src/engine/permissions/internal/access-group/deferred-operation-handlers/compute-record-access-group-ids-deferred-operation-handler.service';
 import { SyncAccessGroupsJob } from 'src/engine/permissions/internal/access-group/jobs/sync-access-groups.job';
 import { AccessGroupSyncListener } from 'src/engine/permissions/internal/access-group/listeners/access-group-sync.listener';
@@ -35,11 +34,11 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     AccessGroupSyncSchedulerService,
     ComputeRecordAccessGroupIdsDeferredOperationHandlerService,
     RecomputeRecordAccessGroupIdsOfRecordsJob,
-    RecomputeRelatedRecordPathTargetsJob,
     SyncAccessGroupsJob,
   ],
   exports: [
     AccessGroupPropagationPlanService,
+    AccessGroupSyncSchedulerService,
     AccessGroupSyncService,
     RecordAccessGroupComputationService,
     RecordAccessGroupPropagationService,

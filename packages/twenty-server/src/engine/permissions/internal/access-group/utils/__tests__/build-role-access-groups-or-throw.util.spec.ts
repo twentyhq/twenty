@@ -143,13 +143,19 @@ const build = (
     Partial<Parameters<typeof buildRoleAccessGroupsOrThrow>[0]>,
 ) =>
   buildRoleAccessGroupsOrThrow({
-    roleId: ROLE_ID,
     objectMetadataId: OBJECT_METADATA_ID,
     workspaceMembers: [],
     flatFieldMetadataMaps,
     isRelationHopEnabled: true,
     ...overrides,
   });
+
+const findMemberFieldValues = (
+  accessGroup: ReturnType<typeof build>[number],
+) =>
+  accessGroup.type === 'RLS_MEMBER_VALUE'
+    ? accessGroup.memberFieldValues
+    : null;
 
 describe('buildRoleAccessGroupsOrThrow', () => {
   it('should make no group for a role with no access', () => {
@@ -166,8 +172,7 @@ describe('buildRoleAccessGroupsOrThrow', () => {
       objectMetadataId: 'other-object-metadata-id',
     });
 
-    expect(accessGroup.rowLevelPermissionPredicateGroupId).toBeNull();
-    expect(accessGroup.memberFieldValues).toBeNull();
+    expect(accessGroup.type).toBe('ALL_RECORDS');
     expect(accessGroup.groupHash).not.toBe(otherObjectAccessGroup.groupHash);
   });
 
@@ -195,9 +200,7 @@ describe('buildRoleAccessGroupsOrThrow', () => {
       }),
     });
 
-    expect(accessGroups).toHaveLength(1);
-    expect(accessGroups[0].rowLevelPermissionPredicateGroupId).toBe(RULE_ID);
-    expect(accessGroups[0].memberFieldValues).toBeNull();
+    expect(accessGroups.map(({ type }) => type)).toEqual(['RLS_RULE']);
   });
 
   it('should make one group per list value, shared by members with the same value', () => {
@@ -217,9 +220,7 @@ describe('buildRoleAccessGroupsOrThrow', () => {
     );
 
     expect(uniqueGroupHashes.size).toBe(2);
-    expect(
-      accessGroups.map((accessGroup) => accessGroup.memberFieldValues),
-    ).toEqual([
+    expect(accessGroups.map(findMemberFieldValues)).toEqual([
       { [MEMBER_FIELD_KEY]: 'sales' },
       { [MEMBER_FIELD_KEY]: 'support' },
       { [MEMBER_FIELD_KEY]: 'sales' },
@@ -240,9 +241,7 @@ describe('buildRoleAccessGroupsOrThrow', () => {
       workspaceMembers: [{ ...JANE, teams: ['support', 'sales'] }, BOB],
     });
 
-    expect(
-      accessGroups.map((accessGroup) => accessGroup.memberFieldValues),
-    ).toEqual([
+    expect(accessGroups.map(findMemberFieldValues)).toEqual([
       { [MEMBER_FIELD_KEY]: ['sales', 'support'] },
       { [MEMBER_FIELD_KEY]: ['sales'] },
     ]);
@@ -266,9 +265,9 @@ describe('buildRoleAccessGroupsOrThrow', () => {
       workspaceMembers: [JANE],
     });
 
-    expect(
-      accessGroups.map((accessGroup) => accessGroup.memberFieldValues),
-    ).toEqual([{ [MEMBER_FIELD_KEY]: ['sales', 'support'] }]);
+    expect(accessGroups.map(findMemberFieldValues)).toEqual([
+      { [MEMBER_FIELD_KEY]: ['sales', 'support'] },
+    ]);
   });
 
   it('should make one rule per role and object, whatever the predicates hang on', () => {
@@ -298,21 +297,21 @@ describe('buildRoleAccessGroupsOrThrow', () => {
 
     expect(
       accessGroups.map((accessGroup) => [
-        accessGroup.rowLevelPermissionPredicateGroupId,
-        accessGroup.memberFieldValues,
+        accessGroup.type,
+        findMemberFieldValues(accessGroup),
       ]),
     ).toEqual([
-      [RULE_ID, { [MEMBER_FIELD_KEY]: 'sales' }],
-      [RULE_ID, { [MEMBER_FIELD_KEY]: 'support' }],
+      ['RLS_MEMBER_VALUE', { [MEMBER_FIELD_KEY]: 'sales' }],
+      ['RLS_MEMBER_VALUE', { [MEMBER_FIELD_KEY]: 'support' }],
     ]);
   });
 
   it('should make a group for predicates without a predicate group', () => {
     expect(
       build({ objectRecordsPermissions: UNGROUPED_RULE_PERMISSIONS }).map(
-        (accessGroup) => accessGroup.rowLevelPermissionPredicateGroupId,
+        ({ type }) => type,
       ),
-    ).toEqual([RULE_ID]);
+    ).toEqual(['RLS_RULE']);
   });
 
   it('should make one group per rule granting an asked operation', () => {
@@ -333,11 +332,18 @@ describe('buildRoleAccessGroupsOrThrow', () => {
       ],
     };
 
-    expect(
-      build({ objectRecordsPermissions, operationTypes: ['read'] }).map(
-        (accessGroup) => accessGroup.rowLevelPermissionPredicateGroupId,
-      ),
-    ).toEqual([RULE_ID, 'second-rule-id']);
+    const accessGroups = build({
+      objectRecordsPermissions,
+      operationTypes: ['read'],
+    });
+
+    expect(accessGroups.map(({ type }) => type)).toEqual([
+      'RLS_RULE',
+      'RLS_RULE',
+    ]);
+    expect(new Set(accessGroups.map(({ groupHash }) => groupHash)).size).toBe(
+      2,
+    );
   });
 
   it('should make an all records group next to the rule groups when the role reaches all records', () => {
@@ -349,8 +355,8 @@ describe('buildRoleAccessGroupsOrThrow', () => {
           }),
           canReadAllRecords: true,
         },
-      }).map((accessGroup) => accessGroup.rowLevelPermissionPredicateGroupId),
-    ).toEqual([null, RULE_ID]);
+      }).map(({ type }) => type),
+    ).toEqual(['ALL_RECORDS', 'RLS_RULE']);
   });
 
   it('should not give predicates without a predicate group the hash of an all records group', () => {
@@ -450,7 +456,7 @@ describe('buildRoleAccessGroupsOrThrow', () => {
     ).toEqual([]);
   });
 
-  describe('groups shared by value', () => {
+  describe('literal value lists', () => {
     const buildValueListPermissions = ({
       ruleId = RULE_ID,
       values,
@@ -461,45 +467,58 @@ describe('buildRoleAccessGroupsOrThrow', () => {
       unreadableFields?: string[];
     }): ObjectRecordsPermissions => ({
       ...noAccess,
+      unreadableFields,
       rowLevelRecordsPermissions: [
-        {
-          ...buildRule({
-            ruleId,
-            predicates: [
-              buildPredicate({
-                id: `${ruleId}-predicate`,
-                value: values,
-                rowLevelPermissionPredicateGroupId: ruleId,
-              }),
-            ],
-            predicateGroups: [
-              buildPredicateGroup({
-                id: ruleId,
-                parentRowLevelPermissionPredicateGroupId: null,
-              }),
-            ],
-          }),
-          unreadableFields,
-        },
+        buildRule({
+          ruleId,
+          predicates: [
+            buildPredicate({
+              id: `${ruleId}-predicate`,
+              value: values,
+              rowLevelPermissionPredicateGroupId: ruleId,
+            }),
+          ],
+          predicateGroups: [
+            buildPredicateGroup({
+              id: ruleId,
+              parentRowLevelPermissionPredicateGroupId: null,
+            }),
+          ],
+        }),
       ],
     });
 
-    it('should make one group per value, reached by every role listing it', () => {
-      const groupHashes = build({
+    it('should make one group per listed value', () => {
+      expect(
+        build({
+          objectRecordsPermissions: buildValueListPermissions({
+            values: ['channel-a', 'channel-b'],
+          }),
+        }).map((accessGroup) =>
+          accessGroup.type === 'RLS_LITERAL_VALUE'
+            ? [accessGroup.type, accessGroup.value]
+            : [accessGroup.type],
+        ),
+      ).toEqual([
+        ['RLS_LITERAL_VALUE', 'channel-a'],
+        ['RLS_LITERAL_VALUE', 'channel-b'],
+      ]);
+    });
+
+    it('should give the same group to a value listed by another rule', () => {
+      const [, channelBGroup] = build({
         objectRecordsPermissions: buildValueListPermissions({
           values: ['channel-a', 'channel-b'],
         }),
-      }).map(({ groupHash }) => groupHash);
-      const otherRoleGroupHashes = build({
-        roleId: 'other-role-id',
+      });
+      const [otherRuleGroup] = build({
         objectRecordsPermissions: buildValueListPermissions({
           ruleId: 'other-rule-id',
           values: ['channel-b'],
         }),
-      }).map(({ groupHash }) => groupHash);
+      });
 
-      expect(groupHashes).toHaveLength(2);
-      expect(otherRoleGroupHashes).toEqual([groupHashes[1]]);
+      expect(otherRuleGroup.groupHash).toBe(channelBGroup.groupHash);
     });
 
     it('should keep groups apart when they cannot read the same fields', () => {
@@ -515,25 +534,8 @@ describe('buildRoleAccessGroupsOrThrow', () => {
         }),
       });
 
-      expect(readableGroup.groupHash).not.toBe(unreadableGroup.groupHash);
-      expect(unreadableGroup.memberFieldValues).toEqual({
-        sharedPredicate: expect.objectContaining({
-          value: 'channel-a',
-          unreadableFieldIds: ['subject-field-id'],
-        }),
-      });
-    });
-
-    it('should keep a group per role for a rule that is not a single value list', () => {
-      const [accessGroup] = build({
-        objectRecordsPermissions: UNGROUPED_RULE_PERMISSIONS,
-      });
-      const [otherRoleAccessGroup] = build({
-        roleId: 'other-role-id',
-        objectRecordsPermissions: UNGROUPED_RULE_PERMISSIONS,
-      });
-
-      expect(accessGroup.groupHash).not.toBe(otherRoleAccessGroup.groupHash);
+      expect(unreadableGroup.groupHash).not.toBe(readableGroup.groupHash);
+      expect(unreadableGroup.unreadableFieldIds).toEqual(['subject-field-id']);
     });
   });
 });

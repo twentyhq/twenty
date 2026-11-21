@@ -9650,6 +9650,12 @@ msgstr "לא הוקלט"
 msgid "Not Set"
 msgstr "לא מוגדר"
 
+#. js-lingui-id: H1P40W
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Not started"
+msgstr ""
+
 #. js-lingui-id: O2bgDc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -11886,7 +11892,7 @@ msgstr "לא ניתן להגיש את טווח הקובץ המבוקש."
 #. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
-msgstr ""
+msgstr "לא ניתן להגביל שדות נדרשים וקשרי morph בכללי הרשאה ברמת שורה."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts

@@ -1,5 +1,5 @@
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
-import { dispatchAiChatRefetchMessagesEvent } from '@/ai-chat/utils/dispatchAiChatRefetchMessagesEvent';
+import { refetchAiChatThreadMessages } from '@/ai-chat/utils/refetchAiChatThreadMessages';
 import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -49,7 +49,7 @@ export const useRetryChatMessage = () => {
         store.set(currentWorkspaceState.atom, markWorkspaceCreditsAvailable);
       }
 
-      dispatchAiChatRefetchMessagesEvent(threadId);
+      refetchAiChatThreadMessages(threadId);
     } catch (retryError) {
       store.set(replyStatusAtom, endAiChatReplyStatus('awaiting-first-chunk'));
       store.set(

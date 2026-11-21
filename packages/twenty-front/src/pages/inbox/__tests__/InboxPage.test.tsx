@@ -125,10 +125,6 @@ jest.mock('@/inbox/components/InboxThreadListFetchMoreTrigger', () => ({
   InboxThreadListFetchMoreTrigger: () => null,
 }));
 
-jest.mock('@/inbox/components/InboxThreadListLoadEffect', () => ({
-  InboxThreadListLoadEffect: () => null,
-}));
-
 jest.mock('@/inbox/hooks/useLoadInboxThreadList', () => ({
   useLoadInboxThreadList: () => ({
     loadInboxThreadList: jest.fn(),
@@ -154,8 +150,8 @@ jest.mock('@/ai-chat/composer/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({ switchToNewChat: jest.fn() }),
 }));
 
-jest.mock('@/ai-chat/instance/components/AiChatPageEffects', () => ({
-  AiChatPageEffects: () => null,
+jest.mock('@/ai-chat/instance/components/AiChatInstanceEffect', () => ({
+  AiChatInstanceEffect: () => null,
 }));
 
 jest.mock('@/ai-chat/instance/components/AiChatTab', () => ({
