@@ -8,10 +8,8 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
-import {
-  buildPersonalFlatRole,
-  getPersonalRoleUniversalIdentifier,
-} from 'src/engine/permissions/channel-visibility/utils/build-personal-flat-role.util';
+import { buildPersonalFlatRole } from 'src/engine/permissions/channel-visibility/utils/build-personal-flat-role.util';
+import { getPersonalRoleUniversalIdentifier } from 'src/engine/permissions/channel-visibility/utils/get-personal-role-universal-identifier.util';
 import { isPersonalRole } from 'src/engine/permissions/channel-visibility/utils/is-personal-role.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';

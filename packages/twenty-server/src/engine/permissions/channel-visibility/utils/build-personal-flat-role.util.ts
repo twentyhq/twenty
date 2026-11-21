@@ -1,15 +1,9 @@
-import { v4, v5 } from 'uuid';
+import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
-import {
-  PERSONAL_ROLE_LABEL_PREFIX,
-  PERSONAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
-} from 'src/engine/permissions/channel-visibility/constants/personal-role.constant';
-
-export const getPersonalRoleUniversalIdentifier = (
-  userWorkspaceId: string,
-): string => v5(userWorkspaceId, PERSONAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE);
+import { PERSONAL_ROLE_LABEL_PREFIX } from 'src/engine/permissions/channel-visibility/constants/personal-role.constant';
+import { getPersonalRoleUniversalIdentifier } from 'src/engine/permissions/channel-visibility/utils/get-personal-role-universal-identifier.util';
 
 export const buildPersonalFlatRole = ({
   workspaceId,

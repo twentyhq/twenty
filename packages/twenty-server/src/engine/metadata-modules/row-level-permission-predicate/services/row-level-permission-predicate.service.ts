@@ -180,7 +180,6 @@ export class RowLevelPermissionPredicateService {
     };
   }
 
-  // Platform managed rules, written in one migration so a sync over many roles pays one cache recompute
   async upsertManySystemRowLevelPermissionRules({
     inputs,
     workspaceId,

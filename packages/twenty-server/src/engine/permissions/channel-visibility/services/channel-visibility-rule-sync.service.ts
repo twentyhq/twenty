@@ -386,7 +386,13 @@ export class ChannelVisibilityRuleSyncService {
       return undefined;
     }
 
-    const findFieldIdOrThrow = (objectId: string, fieldName: string) => {
+    const findFieldIdOrThrow = ({
+      objectId,
+      fieldName,
+    }: {
+      objectId: string;
+      fieldName: string;
+    }) => {
       const fieldMetadataId = fieldIdByObjectIdAndName.get(
         buildFieldByObjectIdAndNameKey(objectId, fieldName),
       );
@@ -400,14 +406,14 @@ export class ChannelVisibilityRuleSyncService {
 
       return fieldMetadataId;
     };
-    const relationFieldMetadataId = findFieldIdOrThrow(
-      objectMetadataId,
-      objectRules.associationRelationFieldName,
-    );
-    const channelIdFieldMetadataId = findFieldIdOrThrow(
-      associationObjectMetadataId,
-      objectRules.channelIdFieldName,
-    );
+    const relationFieldMetadataId = findFieldIdOrThrow({
+      objectId: objectMetadataId,
+      fieldName: objectRules.associationRelationFieldName,
+    });
+    const channelIdFieldMetadataId = findFieldIdOrThrow({
+      objectId: associationObjectMetadataId,
+      fieldName: objectRules.channelIdFieldName,
+    });
     const channelIdsByVisibilityLevel = computeChannelIdsByVisibilityLevel({
       channels: objectRules.channels,
       userWorkspaceId,
@@ -451,7 +457,10 @@ export class ChannelVisibilityRuleSyncService {
       (objectRules.unreadableFieldNamesByLevel[level] ?? []).map(
         (fieldName) => ({
           objectMetadataId,
-          fieldMetadataId: findFieldIdOrThrow(objectMetadataId, fieldName),
+          fieldMetadataId: findFieldIdOrThrow({
+            objectId: objectMetadataId,
+            fieldName,
+          }),
           rowLevelPermissionPredicateGroupId: buildId(level, 'group'),
           canReadFieldValue: false,
           canUpdateFieldValue: false,
