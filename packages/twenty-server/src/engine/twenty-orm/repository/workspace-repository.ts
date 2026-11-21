@@ -1,7 +1,11 @@
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
+  FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+  QUERY_MAX_RECORDS,
+} from 'twenty-shared/constants';
+import {
+  FieldMetadataType,
   type ObjectRecord,
   type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
@@ -88,7 +92,12 @@ import {
 } from 'src/engine/twenty-orm/repository/utils/update-event-records.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-twenty-orm-statement.util';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { CHANNEL_VISIBILITY_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-object-universal-identifiers.constant';
+import {
+  escapeIdentifier,
+  escapeLiteral,
+} from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { renderReadableCondition } from 'src/engine/twenty-orm/sql/utils/render-readable-condition.util';
 import { serializeJsonbWriteValue } from 'src/engine/twenty-orm/sql/utils/serialize-jsonb-write-value.util';
 import {
@@ -1970,14 +1979,39 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         continue;
       }
 
+      const flatObjectMetadata =
+        this.options.flatObjectMetadataByObjectMetadataId(
+          tableShape.objectMetadataId,
+        );
       const columnEntries = Object.entries(
         getColumnNameToFieldMetadataIdMap(
-          this.options.flatObjectMetadataByObjectMetadataId(
-            tableShape.objectMetadataId,
-          ),
+          flatObjectMetadata,
           this.options.internalContext.flatFieldMetadataMaps,
         ),
       );
+      // a channel text a member cannot read is shown as not shared, where an empty value would read as blank
+      const projectedValueByColumnName: Record<string, string> =
+        CHANNEL_VISIBILITY_OBJECT_UNIVERSAL_IDENTIFIERS.includes(
+          flatObjectMetadata.universalIdentifier,
+        )
+          ? Object.fromEntries(
+              columnEntries
+                .filter(
+                  ([, fieldMetadataId]) =>
+                    findFlatEntityByIdInFlatEntityMaps({
+                      flatEntityId: fieldMetadataId,
+                      flatEntityMaps:
+                        this.options.internalContext.flatFieldMetadataMaps,
+                    })?.type === FieldMetadataType.TEXT,
+                )
+                .map(([columnName]) => [
+                  columnName,
+                  escapeLiteral(
+                    FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+                  ),
+                ]),
+            )
+          : {};
 
       const relationShapes = Object.values(tableShape.relationShapeByFieldName);
 
@@ -1993,6 +2027,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
             )
             .map(([columnName]) => columnName),
           condition: sqlCondition,
+          projectedValueByColumnName,
         });
         queryBuilder.makeRelationsUnreadableWhen({
           alias,
