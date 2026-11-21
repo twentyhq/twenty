@@ -84,6 +84,8 @@ export class FlatViewFieldValidatorService {
       ...validateFlatViewFieldRelationScopeNotOverridden({
         existingFlatViewField,
         updatedFlatViewField,
+        flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
         buildOptions,
       }),
     );

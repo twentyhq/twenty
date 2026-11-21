@@ -1,7 +1,7 @@
 import { AiChatNewThreadRecipientField } from '@/ai-chat/composer/components/AiChatNewThreadRecipientField';
 import { useIsOnNewAiChatSlot } from '@/ai-chat/hooks/useIsOnNewAiChatSlot';
-import { useIsWorkspaceSetupChat } from '@/ai-chat/workspace-setup/hooks/useIsWorkspaceSetupChat';
-import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
+import { useIsWorkspaceSetupChat } from '@/ai-chat/hooks/useIsWorkspaceSetupChat';
+import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -15,8 +15,8 @@ export const AiChatNewThreadRecipientBar = () => {
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
-  const aiChatIsSendingMessage = useAtomFamilyStateValue(
-    aiChatIsSendingMessageFamilyState,
+  const aiChatThreadReplyIsSending = useAtomFamilyStateValue(
+    aiChatThreadReplyIsSendingFamilyState,
     { threadId: newAiChatThreadId },
   );
 
@@ -24,7 +24,7 @@ export const AiChatNewThreadRecipientBar = () => {
     !isAiChatInboxEnabled ||
     !isOnNewAiChatSlot ||
     isWorkspaceSetupChat ||
-    aiChatIsSendingMessage
+    aiChatThreadReplyIsSending
   ) {
     return null;
   }

@@ -11,7 +11,7 @@ import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-
 import { InboxThreadListItem } from '@/inbox/components/InboxThreadListItem';
 import { setInboxSelectedChannelView } from '@/inbox/testing/setInboxSelectedChannelView';
 import { aiChatChannelsState } from '@/ai-chat/threads/states/aiChatChannelsState';
-import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
+import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatComposerDraftsState';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import {
   jotaiStore,
@@ -134,7 +134,7 @@ describe('InboxThreadListItem', () => {
   it('shows an unsent draft in place of the last message', () => {
     const thread = buildThread({});
 
-    jotaiStore.set(aiChatDraftsByThreadIdState.atom, {
+    jotaiStore.set(aiChatComposerDraftsState.atom, {
       [thread.id]: serializePlainTextAsAdvancedTextEditorDocument(
         'Quote the **annual** plan',
       ),
@@ -152,7 +152,7 @@ describe('InboxThreadListItem', () => {
   it('shows no draft once the composer is cleared', () => {
     const thread = buildThread({});
 
-    jotaiStore.set(aiChatDraftsByThreadIdState.atom, { [thread.id]: '' });
+    jotaiStore.set(aiChatComposerDraftsState.atom, { [thread.id]: '' });
 
     renderListItem({ thread });
 

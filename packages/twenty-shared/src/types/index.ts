@@ -96,6 +96,8 @@ export type { ExcludeFunctions } from './ExcludeFunctions';
 export type { ExpressionDate } from './ExpressionDate';
 export type { ExpressionDatePart } from './ExpressionDatePart';
 export type { ExpressionDateUnit } from './ExpressionDateUnit';
+export type { ExpressionSyntaxError } from './ExpressionSyntaxError';
+export type { ExpressionSyntaxErrorCode } from './ExpressionSyntaxErrorCode';
 export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEndsWithId';
 export type { ExtractPropertiesThatEndsWithIds } from './ExtractPropertiesThatEndsWithIds';
 export type { ExtractSerializedRelationProperties } from './ExtractSerializedRelationProperties';

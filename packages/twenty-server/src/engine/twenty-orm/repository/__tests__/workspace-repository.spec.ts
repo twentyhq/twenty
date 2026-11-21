@@ -290,6 +290,51 @@ describe('WorkspaceRepository mutations', () => {
       );
     });
 
+    it('should emit a destroy event only for the row returned by a filtered delete', async () => {
+      const { repository, emitDatabaseBatchEvent } = buildRepository({
+        shouldSkipEventEmission: false,
+        statementResultsByKind: {
+          SELECT: [
+            [
+              { delivery_id: 'written-id', delivery_state: 'PENDING' },
+              { delivery_id: 'skipped-id', delivery_state: 'PENDING' },
+            ],
+          ],
+          DELETE: [[{ delivery_id: 'written-id' }]],
+        },
+      });
+
+      await repository.delete({ state: 'PENDING' });
+
+      expect(emitDatabaseBatchEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          events: [expect.objectContaining({ recordId: 'written-id' })],
+        }),
+      );
+    });
+
+    it('should emit no event when a soft delete writes no rows', async () => {
+      const { repository, emitDatabaseBatchEvent } = buildRepository({
+        shouldSkipEventEmission: false,
+        statementResultsByKind: {
+          SELECT: [
+            [{ delivery_id: 'delivery-id', delivery_deletedAt: null }],
+            [
+              {
+                delivery_id: 'delivery-id',
+                delivery_deletedAt: '2026-11-20T00:00:00.000Z',
+              },
+            ],
+          ],
+          UPDATE: [[]],
+        },
+      });
+
+      await repository.softDelete({ id: 'delivery-id' });
+
+      expect(emitDatabaseBatchEvent).not.toHaveBeenCalled();
+    });
+
     it('should read the before-image before a delete', async () => {
       const { repository, getExecutedStatementKinds } = buildRepository({
         shouldSkipEventEmission: false,

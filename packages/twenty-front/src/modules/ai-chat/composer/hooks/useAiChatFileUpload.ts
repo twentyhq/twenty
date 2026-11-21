@@ -1,5 +1,5 @@
-import { aiChatSelectedFilesFamilyState } from '@/ai-chat/composer/states/aiChatSelectedFilesFamilyState';
-import { aiChatUploadedFilesFamilyState } from '@/ai-chat/composer/states/aiChatUploadedFilesFamilyState';
+import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/states/composer/aiChatComposerUploadingFilesFamilyState';
+import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/states/composer/aiChatComposerAttachmentsFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useLingui } from '@lingui/react/macro';
@@ -8,7 +8,7 @@ import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { type AiChatFileUIPart } from '@/ai-chat/composer/types/AiChatFileUIPart';
+import { type AiChatFileUIPart } from '@/ai-chat/types/AiChatFileUIPart';
 import { FileFolder } from '~/generated-metadata/graphql';
 
 export const useAiChatFileUpload = () => {
@@ -24,12 +24,13 @@ export const useAiChatFileUpload = () => {
     file: File;
     threadId: string;
   }): Promise<AiChatFileUIPart | null> => {
-    const selectedFilesAtom = aiChatSelectedFilesFamilyState.atomFamily({
-      threadId,
-    });
+    const uploadingFilesAtom =
+      aiChatComposerUploadingFilesFamilyState.atomFamily({
+        threadId,
+      });
     const abortController = new AbortController();
-    const unsubscribeFromSelectedFiles = store.sub(selectedFilesAtom, () => {
-      if (!store.get(selectedFilesAtom).includes(file)) {
+    const unsubscribeFromUploadingFiles = store.sub(uploadingFilesAtom, () => {
+      if (!store.get(uploadingFilesAtom).includes(file)) {
         abortController.abort();
       }
     });
@@ -40,7 +41,7 @@ export const useAiChatFileUpload = () => {
         signal: abortController.signal,
       });
 
-      if (!store.get(selectedFilesAtom).includes(file)) {
+      if (!store.get(uploadingFilesAtom).includes(file)) {
         return null;
       }
 
@@ -63,9 +64,9 @@ export const useAiChatFileUpload = () => {
 
       return null;
     } finally {
-      unsubscribeFromSelectedFiles();
-      store.set(selectedFilesAtom, (previousSelectedFiles) =>
-        previousSelectedFiles.filter((selectedFile) => selectedFile !== file),
+      unsubscribeFromUploadingFiles();
+      store.set(uploadingFilesAtom, (previousUploadingFiles) =>
+        previousUploadingFiles.filter((selectedFile) => selectedFile !== file),
       );
     }
   };
@@ -89,8 +90,8 @@ export const useAiChatFileUpload = () => {
     }
 
     store.set(
-      aiChatSelectedFilesFamilyState.atomFamily({ threadId }),
-      (previousSelectedFiles) => [...previousSelectedFiles, ...files],
+      aiChatComposerUploadingFilesFamilyState.atomFamily({ threadId }),
+      (previousUploadingFiles) => [...previousUploadingFiles, ...files],
     );
 
     const successfulUploads = (
@@ -99,7 +100,7 @@ export const useAiChatFileUpload = () => {
 
     if (isNonEmptyArray(successfulUploads)) {
       store.set(
-        aiChatUploadedFilesFamilyState.atomFamily({ threadId }),
+        aiChatComposerAttachmentsFamilyState.atomFamily({ threadId }),
         (previousUploadedFiles) => [
           ...previousUploadedFiles,
           ...successfulUploads,

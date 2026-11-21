@@ -7,8 +7,8 @@ import { isToolUIPart } from 'ai';
 
 import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai-chat/constants/AiChatRefetchMessagesEventName';
 import { useAnswerAiChatToolCall } from '@/ai-chat/tool-calls/hooks/useAnswerAiChatToolCall';
-import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai-chat/states/aiChatIsAwaitingFirstChunkFamilyState';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -27,9 +27,8 @@ jest.mock('@/ai-chat/hooks/useAiChatModelId', () => ({
 }));
 
 const key = { threadId: 'thread-id' };
-const messagesAtom = aiChatMessagesFamilyState.atomFamily(key);
-const isAwaitingFirstChunkAtom =
-  aiChatIsAwaitingFirstChunkFamilyState.atomFamily(key);
+const messagesAtom = aiChatThreadDisplayedMessagesFamilyState.atomFamily(key);
+const replyStatusAtom = aiChatThreadReplyStatusFamilyState.atomFamily(key);
 
 const PENDING_OUTPUT = { result: { questions: [], status: 'pending' } };
 const ANSWERED_OUTPUT = { result: { questions: [], status: 'answered' } };
@@ -103,7 +102,7 @@ describe('useAnswerAiChatToolCall', () => {
       }),
     );
     expect(readToolOutput()).toEqual(ANSWERED_OUTPUT);
-    expect(jotaiStore.get(isAwaitingFirstChunkAtom)).toBe(true);
+    expect(jotaiStore.get(replyStatusAtom)).toBe('awaiting-first-chunk');
   });
 
   it('expects no stream when the answer resumes a workflow run', async () => {
@@ -113,7 +112,7 @@ describe('useAnswerAiChatToolCall', () => {
 
     await answer();
 
-    expect(jotaiStore.get(isAwaitingFirstChunkAtom)).toBe(false);
+    expect(jotaiStore.get(replyStatusAtom)).toBe('idle');
   });
 
   it('puts the tool call back as it was when the answer is refused', async () => {
@@ -121,7 +120,7 @@ describe('useAnswerAiChatToolCall', () => {
 
     expect(await answer()).toBe(false);
     expect(readToolOutput()).toEqual(PENDING_OUTPUT);
-    expect(jotaiStore.get(isAwaitingFirstChunkAtom)).toBe(false);
+    expect(jotaiStore.get(replyStatusAtom)).toBe('idle');
     expect(enqueueToast).toHaveBeenCalled();
   });
 

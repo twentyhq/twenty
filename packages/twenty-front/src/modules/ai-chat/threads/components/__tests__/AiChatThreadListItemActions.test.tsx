@@ -166,17 +166,20 @@ const renderThread = async ({
       });
       store.set(recordStoreFamilyState.atomFamily(THREAD_ID), thread);
       store.set(aiChatThreadParticipantsState.atom, {
-        [THREAD_ID]: {
-          __typename: 'AgentChatThreadParticipant',
-          id: '20202020-0000-4000-8000-0000000000bb',
-          threadId: THREAD_ID,
-          isSubscribed: true,
-          archivedAt: scope === 'INBOX' ? null : INBOX_EVENT_AT,
-          snoozedUntil: scope === 'SNOOZED' ? SNOOZED_UNTIL : null,
-          lastReadAt: THREAD_ACTIVITY_AT,
-          lastMentionedAt: null,
-          mentionsResolvedAt: null,
-          updatedAt: INBOX_EVENT_AT,
+        isLoaded: true,
+        rowsByThreadId: {
+          [THREAD_ID]: {
+            __typename: 'AgentChatThreadParticipant',
+            id: '20202020-0000-4000-8000-0000000000bb',
+            threadId: THREAD_ID,
+            isSubscribed: true,
+            archivedAt: scope === 'INBOX' ? null : INBOX_EVENT_AT,
+            snoozedUntil: scope === 'SNOOZED' ? SNOOZED_UNTIL : null,
+            lastReadAt: THREAD_ACTIVITY_AT,
+            lastMentionedAt: null,
+            mentionsResolvedAt: null,
+            updatedAt: INBOX_EVENT_AT,
+          },
         },
       });
     },

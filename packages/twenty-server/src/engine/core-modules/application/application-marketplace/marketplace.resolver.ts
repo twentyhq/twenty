@@ -2,6 +2,7 @@ import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
@@ -14,6 +15,9 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
@@ -43,6 +47,7 @@ export class MarketplaceResolver {
     private readonly marketplaceQueryService: MarketplaceQueryService,
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Query(() => [MarketplaceAppDTO])
@@ -53,11 +58,15 @@ export class MarketplaceResolver {
       type: () => [String],
       nullable: true,
     })
-    universalIdentifiers?: string[],
+    universalIdentifiers: string[] | undefined,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<MarketplaceAppDTO[]> {
     return this.marketplaceQueryService.findManyMarketplaceApps({
       universalIdentifiers,
-      shouldIncludeBuiltInApplications: true,
+      shouldIncludeConnectListings: true,
+      shouldIncludeMcpServerApplications: await this.isMcpServersEnabled(
+        workspace.id,
+      ),
     });
   }
 
@@ -65,11 +74,22 @@ export class MarketplaceResolver {
   @UseGuards(AccessPolicyGuard(MARKETPLACE_READ_ACCESS_POLICY))
   async findMarketplaceAppDetail(
     @Args('universalIdentifier') universalIdentifier: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<MarketplaceAppDetailDTO> {
     return this.marketplaceQueryService.findMarketplaceAppDetail({
       universalIdentifier,
-      shouldIncludeBuiltInApplications: true,
+      shouldIncludeConnectListings: true,
+      shouldIncludeMcpServerApplications: await this.isMcpServersEnabled(
+        workspace.id,
+      ),
     });
+  }
+
+  private isMcpServersEnabled(workspaceId: string): Promise<boolean> {
+    return this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_MCP_SERVERS_ENABLED,
+      workspaceId,
+    );
   }
 
   @Mutation(() => Boolean)

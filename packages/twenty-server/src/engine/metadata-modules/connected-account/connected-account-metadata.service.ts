@@ -15,6 +15,7 @@ import {
   canConnectedAccountPerformEmailOperation,
   getEmailProvidersForOperation,
   isDefined,
+  isNonEmptyArray,
 } from 'twenty-shared/utils';
 
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
@@ -34,6 +35,8 @@ import { type ConnectedAccountUsableByCaller } from 'src/engine/metadata-modules
 import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
 import { getConnectedAccountAdministrationPermissionFlag } from 'src/engine/metadata-modules/connected-account/utils/get-connected-account-administration-permission-flag.util';
 import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-caller.util';
+import { CONNECTED_ACCOUNT_CONNECTION_CHANGED_EVENT } from 'src/engine/metadata-modules/connected-account/constants/connected-account-connection-changed.constant';
+import { type ConnectedAccountConnectionChangedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-connection-changed.type';
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
@@ -522,6 +525,8 @@ export class ConnectedAccountMetadataService {
       );
     });
 
+    this.emitConnectionChanged({ connectedAccounts, workspaceId });
+
     for (const latestConnectedAccount of latestConnectedAccounts) {
       await this.appOAuthRevokeService.revokeIfApp(latestConnectedAccount);
     }
@@ -619,6 +624,11 @@ export class ConnectedAccountMetadataService {
         },
         { webhookSubscriptionStatus: WebhookSubscriptionStatus.EXPIRED },
       );
+    });
+
+    this.emitConnectionChanged({
+      connectedAccounts: [connectedAccount],
+      workspaceId,
     });
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
@@ -729,10 +739,35 @@ export class ConnectedAccountMetadataService {
 
     this.workspaceEventEmitter.emitCustomBatchEvent<ConnectedAccountDeletedEvent>(
       CONNECTED_ACCOUNT_DELETED_EVENT,
-      connectedAccounts.map(({ id, userWorkspaceId }) => ({
+      connectedAccounts.map(({ id, userWorkspaceId, applicationId }) => ({
         connectedAccountId: id,
         userWorkspaceId,
+        applicationId,
       })),
+      workspaceId,
+    );
+  }
+
+  private emitConnectionChanged({
+    connectedAccounts,
+    workspaceId,
+  }: {
+    connectedAccounts: Pick<ConnectedAccountEntity, 'id' | 'applicationId'>[];
+    workspaceId: string;
+  }): void {
+    const events = connectedAccounts.flatMap(({ id, applicationId }) =>
+      isDefined(applicationId)
+        ? [{ connectedAccountId: id, applicationId }]
+        : [],
+    );
+
+    if (!isNonEmptyArray(events)) {
+      return;
+    }
+
+    this.workspaceEventEmitter.emitCustomBatchEvent<ConnectedAccountConnectionChangedEvent>(
+      CONNECTED_ACCOUNT_CONNECTION_CHANGED_EVENT,
+      events,
       workspaceId,
     );
   }

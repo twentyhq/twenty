@@ -3,7 +3,7 @@ import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 
 import { AiChatThreadFollowersField } from '@/ai-chat/threads/components/AiChatThreadFollowersField';
 import { useExecuteAiChatThreadStatusAction } from '@/ai-chat/threads/hooks/useExecuteAiChatThreadStatusAction';
-import { aiChatThreadMemberStateFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadMemberStateFamilySelector';
+import { aiChatThreadInboxStatusFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadInboxStatusFamilySelector';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -23,7 +23,7 @@ export const AiChatThreadDetailsFollowing = ({
     threadId,
   );
   const { isSubscribed, isAssignedToMe } = useAtomFamilySelectorValue(
-    aiChatThreadMemberStateFamilySelector,
+    aiChatThreadInboxStatusFamilySelector,
     threadId,
   );
   const { executeAiChatThreadStatusAction, isPending } =

@@ -4,9 +4,9 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { useUpdateAiChatThreadStatus } from '@/ai-chat/threads/hooks/useUpdateAiChatThreadStatus';
 import { aiChatReopenedThreadActivityState } from '@/ai-chat/threads/states/aiChatReopenedThreadActivityState';
-import { aiChatThreadOpenViewCountFamilyState } from '@/ai-chat/threads/states/aiChatThreadOpenViewCountFamilyState';
+import { aiChatThreadViewOpenCountFamilyState } from '@/ai-chat/states/view/aiChatThreadViewOpenCountFamilyState';
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
-import { aiChatThreadVisitFamilyState } from '@/ai-chat/threads/states/aiChatThreadVisitFamilyState';
+import { aiChatThreadViewVisitFamilyState } from '@/ai-chat/states/view/aiChatThreadViewVisitFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { isAiChatThreadSettledForMember } from '@/ai-chat/threads/utils/isAiChatThreadSettledForMember';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -27,7 +27,7 @@ export const AiChatThreadOpenViewEffect = ({
       return;
     }
 
-    const openViewCountAtom = aiChatThreadOpenViewCountFamilyState.atomFamily({
+    const openViewCountAtom = aiChatThreadViewOpenCountFamilyState.atomFamily({
       threadId,
     });
 
@@ -38,7 +38,10 @@ export const AiChatThreadOpenViewEffect = ({
         return;
       }
 
-      store.set(aiChatThreadVisitFamilyState.atomFamily({ threadId }), null);
+      store.set(
+        aiChatThreadViewVisitFamilyState.atomFamily({ threadId }),
+        null,
+      );
 
       // Filed on leave, not on read, so the chat stays put while being read
       const thread = store.get(
@@ -55,9 +58,8 @@ export const AiChatThreadOpenViewEffect = ({
         thread.lastActivityAt !== reopenedThreadActivity[threadId] &&
         isAiChatThreadSettledForMember({
           thread,
-          participant: store.get(aiChatThreadParticipantsState.atom)?.[
-            threadId
-          ],
+          participant: store.get(aiChatThreadParticipantsState.atom)
+            .rowsByThreadId[threadId],
           workspaceMemberId,
         })
       ) {

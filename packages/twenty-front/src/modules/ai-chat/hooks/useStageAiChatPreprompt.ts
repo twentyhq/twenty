@@ -1,9 +1,9 @@
 import { useStore } from 'jotai';
 
 import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/constants/AiChatNewThreadDefaultRecipients';
-import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
-import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
-import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
+import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatComposerDraftsState';
+import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
 import {
   type AiChatPrepromptMode,
   aiChatPrepromptState,
@@ -14,9 +14,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 // Sending reads the draft, not the editor, so it's written before AiChatPrepromptEffect picks it up.
 export const useStageAiChatPreprompt = () => {
   const store = useStore();
-  const setAiChatDraftsByThreadId = useSetAtomState(
-    aiChatDraftsByThreadIdState,
-  );
+  const setAiChatComposerDrafts = useSetAtomState(aiChatComposerDraftsState);
   const setAiChatPreprompt = useSetAtomState(aiChatPrepromptState);
 
   const stageAiChatPreprompt = ({
@@ -30,17 +28,22 @@ export const useStageAiChatPreprompt = () => {
   }) => {
     const isIdleNewChat =
       threadId === store.get(newAiChatThreadIdState.atom) &&
-      !store.get(aiChatIsSendingMessageFamilyState.atomFamily({ threadId }));
+      !store.get(
+        aiChatThreadReplyIsSendingFamilyState.atomFamily({ threadId }),
+      );
 
-    setAiChatDraftsByThreadId((previousDrafts) => ({
+    setAiChatComposerDrafts((previousDrafts) => ({
       ...previousDrafts,
       [threadId]: serializedDocument,
     }));
 
     if (isIdleNewChat) {
       store.set(
-        aiChatNewThreadRecipientsFamilyState.atomFamily(threadId),
-        AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
+        aiChatComposerNewThreadRecipientsFamilyState.atomFamily(threadId),
+        ({ channelId }) => ({
+          ...AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
+          channelId,
+        }),
       );
     }
 
