@@ -1,6 +1,5 @@
 import { InjectDataSource } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
-import { isNonEmptyArray } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -8,6 +7,7 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { buildTypedAccessGroupStatements } from 'src/database/commands/upgrade-version-command/2-61/utils/build-typed-access-group-statements.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 @RegisteredWorkspaceCommand('2.61.0', 1795260363000)
@@ -29,13 +29,16 @@ export class TypeAccessGroupsCommand extends ProvisionedWorkspaceCommandRunner {
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
     const schemaName = getWorkspaceSchemaName(workspaceId);
-    const legacyColumns: { column_name: string }[] = await this.dataSource.query(
-      `SELECT column_name FROM information_schema.columns
-       WHERE table_schema = $1 AND table_name = 'accessGroup' AND column_name = 'roleId'`,
-      [schemaName],
-    );
+    const [{ hasRoleIdColumn }]: { hasRoleIdColumn: boolean }[] =
+      await this.dataSource.query(
+        `SELECT EXISTS (
+           SELECT 1 FROM pg_attribute
+           WHERE attrelid = to_regclass($1) AND attname = 'roleId' AND NOT attisdropped
+         ) AS "hasRoleIdColumn"`,
+        [`${escapeIdentifier(schemaName)}."accessGroup"`],
+      );
 
-    if (!isNonEmptyArray(legacyColumns)) {
+    if (!hasRoleIdColumn) {
       return;
     }
 
