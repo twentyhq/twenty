@@ -37,7 +37,11 @@ export class ComputeRecordAccessGroupIdsDeferredOperationHandlerService implemen
         continue;
       }
 
-      if (isDefined(accessGroupIdChanges)) {
+      // TODO(@charlesBochet): steps stored before addedGroupHashes replaced addedCompactIds run as full recomputes; remove after one release
+      if (
+        isDefined(accessGroupIdChanges) &&
+        Array.isArray(accessGroupIdChanges.addedGroupHashes)
+      ) {
         await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsAffectedByAccessGroupIdChanges(
           {
             workspaceId,

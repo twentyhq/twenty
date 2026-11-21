@@ -7,7 +7,7 @@ import { RECOMPUTE_RELATED_RECORD_PATH_TARGETS_JOB_NAME } from 'src/engine/permi
 import { AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal/access-group/services/access-group-sync-scheduler.service';
 import { type RecomputeRelatedRecordPathTargetsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-related-record-path-targets-job-data.type';
 
-// Forwards jobs queued before SyncAccessGroupsJob took over related record path changes; remove after one release
+// TODO(@charlesBochet): remove after one release; forwards jobs queued before SyncAccessGroupsJob took over related record path changes
 @Processor(MessageQueue.accessGroupQueue)
 export class RecomputeRelatedRecordPathTargetsJob {
   constructor(
