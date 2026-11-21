@@ -13,9 +13,9 @@ export const fromAccessGroupToAccessGroupRow = (
   ruleShapeHash: accessGroup.ruleShapeHash,
   unreadableFieldIds: accessGroup.unreadableFieldIds,
   memberFieldValues:
-    accessGroup.type === 'MEMBER_VALUE'
+    accessGroup.type === 'RLS_MEMBER_VALUE'
       ? JSON.stringify(accessGroup.memberFieldValues)
       : null,
-  value: accessGroup.type === 'LITERAL_VALUE' ? accessGroup.value : null,
+  value: accessGroup.type === 'RLS_LITERAL_VALUE' ? accessGroup.value : null,
   groupHash: accessGroup.groupHash,
 });

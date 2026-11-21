@@ -153,7 +153,9 @@ const build = (
 const findMemberFieldValues = (
   accessGroup: ReturnType<typeof build>[number],
 ) =>
-  accessGroup.type === 'MEMBER_VALUE' ? accessGroup.memberFieldValues : null;
+  accessGroup.type === 'RLS_MEMBER_VALUE'
+    ? accessGroup.memberFieldValues
+    : null;
 
 describe('buildRoleAccessGroupsOrThrow', () => {
   it('should make no group for a role with no access', () => {
@@ -198,7 +200,7 @@ describe('buildRoleAccessGroupsOrThrow', () => {
       }),
     });
 
-    expect(accessGroups.map(({ type }) => type)).toEqual(['RULE']);
+    expect(accessGroups.map(({ type }) => type)).toEqual(['RLS_RULE']);
   });
 
   it('should make one group per list value, shared by members with the same value', () => {
@@ -299,8 +301,8 @@ describe('buildRoleAccessGroupsOrThrow', () => {
         findMemberFieldValues(accessGroup),
       ]),
     ).toEqual([
-      ['MEMBER_VALUE', { [MEMBER_FIELD_KEY]: 'sales' }],
-      ['MEMBER_VALUE', { [MEMBER_FIELD_KEY]: 'support' }],
+      ['RLS_MEMBER_VALUE', { [MEMBER_FIELD_KEY]: 'sales' }],
+      ['RLS_MEMBER_VALUE', { [MEMBER_FIELD_KEY]: 'support' }],
     ]);
   });
 
@@ -309,7 +311,7 @@ describe('buildRoleAccessGroupsOrThrow', () => {
       build({ objectRecordsPermissions: UNGROUPED_RULE_PERMISSIONS }).map(
         ({ type }) => type,
       ),
-    ).toEqual(['RULE']);
+    ).toEqual(['RLS_RULE']);
   });
 
   it('should make one group per rule granting an asked operation', () => {
@@ -335,7 +337,10 @@ describe('buildRoleAccessGroupsOrThrow', () => {
       operationTypes: ['read'],
     });
 
-    expect(accessGroups.map(({ type }) => type)).toEqual(['RULE', 'RULE']);
+    expect(accessGroups.map(({ type }) => type)).toEqual([
+      'RLS_RULE',
+      'RLS_RULE',
+    ]);
     expect(new Set(accessGroups.map(({ groupHash }) => groupHash)).size).toBe(
       2,
     );
@@ -351,7 +356,7 @@ describe('buildRoleAccessGroupsOrThrow', () => {
           canReadAllRecords: true,
         },
       }).map(({ type }) => type),
-    ).toEqual(['ALL_RECORDS', 'RULE']);
+    ).toEqual(['ALL_RECORDS', 'RLS_RULE']);
   });
 
   it('should not give predicates without a predicate group the hash of an all records group', () => {
@@ -490,13 +495,13 @@ describe('buildRoleAccessGroupsOrThrow', () => {
             values: ['channel-a', 'channel-b'],
           }),
         }).map((accessGroup) =>
-          accessGroup.type === 'LITERAL_VALUE'
+          accessGroup.type === 'RLS_LITERAL_VALUE'
             ? [accessGroup.type, accessGroup.value]
             : [accessGroup.type],
         ),
       ).toEqual([
-        ['LITERAL_VALUE', 'channel-a'],
-        ['LITERAL_VALUE', 'channel-b'],
+        ['RLS_LITERAL_VALUE', 'channel-a'],
+        ['RLS_LITERAL_VALUE', 'channel-b'],
       ]);
     });
 

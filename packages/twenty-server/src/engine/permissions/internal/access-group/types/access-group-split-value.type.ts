@@ -4,6 +4,6 @@ import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/t
 
 export type AccessGroupSplitValue =
   | { type: 'ALL_RECORDS' }
-  | { type: 'RULE' }
-  | { type: 'MEMBER_VALUE'; memberFieldValues: RlsMemberFieldValues }
-  | { type: 'LITERAL_VALUE'; value: string };
+  | { type: 'RLS_RULE' }
+  | { type: 'RLS_MEMBER_VALUE'; memberFieldValues: RlsMemberFieldValues }
+  | { type: 'RLS_LITERAL_VALUE'; value: string };

@@ -101,9 +101,9 @@ export const buildRoleAccessGroupsOrThrow = ({
     if (isDefined(splitPredicate)) {
       return [...new Set(splitPredicate.value)].map((value) => ({
         ...groupShape,
-        type: 'LITERAL_VALUE',
+        type: 'RLS_LITERAL_VALUE',
         groupHash: computeAccessGroupHash({
-          type: 'LITERAL_VALUE',
+          type: 'RLS_LITERAL_VALUE',
           ruleShapeHash,
           splitValue: value,
         }),
@@ -121,9 +121,9 @@ export const buildRoleAccessGroupsOrThrow = ({
       return [
         {
           ...groupShape,
-          type: 'RULE',
+          type: 'RLS_RULE',
           groupHash: computeAccessGroupHash({
-            type: 'RULE',
+            type: 'RLS_RULE',
             ruleShapeHash,
             splitValue: null,
           }),
@@ -138,9 +138,9 @@ export const buildRoleAccessGroupsOrThrow = ({
         flatFieldMetadataMaps,
       }).map((memberFieldValues) => ({
         ...groupShape,
-        type: 'MEMBER_VALUE' as const,
+        type: 'RLS_MEMBER_VALUE' as const,
         groupHash: computeAccessGroupHash({
-          type: 'MEMBER_VALUE',
+          type: 'RLS_MEMBER_VALUE',
           ruleShapeHash,
           splitValue: memberFieldValues,
         }),

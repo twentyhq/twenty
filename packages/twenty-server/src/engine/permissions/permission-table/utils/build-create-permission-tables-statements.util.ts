@@ -88,15 +88,15 @@ export const buildCreatePermissionTablesStatements = ({
       "groupHash" text NOT NULL,
       "compactId" integer GENERATED ALWAYS AS IDENTITY,
       CONSTRAINT "CHK_ACCESS_GROUP_TYPE_COLUMNS" CHECK (
-        ("type" IN ('ALL_RECORDS', 'RULE') AND "memberFieldValues" IS NULL AND "value" IS NULL)
-        OR ("type" = 'MEMBER_VALUE' AND "memberFieldValues" IS NOT NULL AND "value" IS NULL)
-        OR ("type" = 'LITERAL_VALUE' AND "memberFieldValues" IS NULL AND "value" IS NOT NULL)
+        ("type" IN ('ALL_RECORDS', 'RLS_RULE') AND "memberFieldValues" IS NULL AND "value" IS NULL)
+        OR ("type" = 'RLS_MEMBER_VALUE' AND "memberFieldValues" IS NOT NULL AND "value" IS NULL)
+        OR ("type" = 'RLS_LITERAL_VALUE' AND "memberFieldValues" IS NULL AND "value" IS NOT NULL)
       )
     )`,
     `CREATE UNIQUE INDEX "IDX_UNIQUE_b784cebdb5d8238240a4b99b8e2" ON ${accessGroup} ("groupHash")`,
     `CREATE UNIQUE INDEX "IDX_ACCESS_GROUP_COMPACT_ID_UNIQUE" ON ${accessGroup} ("compactId")`,
     `CREATE INDEX "IDX_3794d47209882e7c43f4f786f33" ON ${accessGroup} ("objectMetadataId")`,
-    `CREATE INDEX "IDX_ACCESS_GROUP_RULE_SHAPE_MEMBER_FIELD_VALUES" ON ${accessGroup} ("ruleShapeHash", "memberFieldValues") WHERE "type" = 'MEMBER_VALUE'`,
-    `CREATE INDEX "IDX_ACCESS_GROUP_RULE_SHAPE_VALUE" ON ${accessGroup} ("ruleShapeHash", "value") WHERE "type" = 'LITERAL_VALUE'`,
+    `CREATE INDEX "IDX_ACCESS_GROUP_RULE_SHAPE_MEMBER_FIELD_VALUES" ON ${accessGroup} ("ruleShapeHash", "memberFieldValues") WHERE "type" = 'RLS_MEMBER_VALUE'`,
+    `CREATE INDEX "IDX_ACCESS_GROUP_RULE_SHAPE_VALUE" ON ${accessGroup} ("ruleShapeHash", "value") WHERE "type" = 'RLS_LITERAL_VALUE'`,
   ];
 };

@@ -24,7 +24,7 @@ const buildGroupRule = ({
   accessGroup: Pick<AccessGroup, 'ruleShapeHash'> & AccessGroupSplitValue;
   ruleShape: RlsRuleShape;
 }): RlsRule => {
-  if (accessGroup.type !== 'LITERAL_VALUE') {
+  if (accessGroup.type !== 'RLS_LITERAL_VALUE') {
     return ruleShape.rowLevelPermissionRule;
   }
 
@@ -65,7 +65,9 @@ export const buildRecordAccessGroupSQLConditionOrThrow = ({
   const recordFilter = buildRecordFilterForRule({
     rowLevelPermissionRule: buildGroupRule({ accessGroup, ruleShape }),
     memberFieldValues:
-      accessGroup.type === 'MEMBER_VALUE' ? accessGroup.memberFieldValues : {},
+      accessGroup.type === 'RLS_MEMBER_VALUE'
+        ? accessGroup.memberFieldValues
+        : {},
     flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
     flatFieldMetadataOptionMaps: metadataMaps.flatFieldMetadataOptionMaps,
     flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,

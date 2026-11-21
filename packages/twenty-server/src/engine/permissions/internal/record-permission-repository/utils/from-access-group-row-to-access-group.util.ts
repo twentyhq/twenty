@@ -45,7 +45,7 @@ export const fromAccessGroupRowToAccessGroup = ({
   };
 
   switch (type) {
-    case 'MEMBER_VALUE':
+    case 'RLS_MEMBER_VALUE':
       return {
         ...groupShape,
         type,
@@ -54,7 +54,7 @@ export const fromAccessGroupRowToAccessGroup = ({
           value: memberFieldValues,
         }),
       };
-    case 'LITERAL_VALUE':
+    case 'RLS_LITERAL_VALUE':
       return {
         ...groupShape,
         type,

@@ -4,7 +4,7 @@ import { type AccessGroupType } from 'src/engine/permissions/internal/access-gro
 
 export const ACCESS_GROUP_TYPES: readonly AccessGroupType[] = [
   'ALL_RECORDS',
-  'RULE',
-  'MEMBER_VALUE',
-  'LITERAL_VALUE',
+  'RLS_RULE',
+  'RLS_MEMBER_VALUE',
+  'RLS_LITERAL_VALUE',
 ];
