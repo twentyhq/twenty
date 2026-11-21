@@ -58,20 +58,32 @@ const handler = async ({
     throw error;
   }
 
+  const nextCursor = conversations.paging?.cursors?.after;
+  const isLastPage =
+    !isDefined(conversations.paging?.next) || !isDefined(nextCursor);
+
   for (const [index, { id: conversationId }] of conversations.data.entries()) {
     await enqueueLogicFunctionJobs({
       logicFunctionUniversalIdentifier:
         MESSENGER_LOGIC_FUNCTION_IMPORT_CONVERSATION_UNIVERSAL_IDENTIFIER,
-      payloads: [{ pageId, backfillRunId, conversationId }],
+      payloads: [
+        {
+          pageId,
+          backfillRunId,
+          conversationId,
+          isLastConversation:
+            isLastPage && index === conversations.data.length - 1,
+        },
+      ],
       getJobKey: () => `${backfillRunId}:${conversationId}`,
       delayMs: index * MESSENGER_BACKFILL_CONVERSATION_SPACING_MS,
     });
   }
 
-  const nextCursor = conversations.paging?.cursors?.after;
-
-  if (!isDefined(conversations.paging?.next) || !isDefined(nextCursor)) {
-    await markBackfillCompleted(pageId);
+  if (isLastPage) {
+    if (conversations.data.length === 0) {
+      await markBackfillCompleted(pageId);
+    }
 
     return;
   }

@@ -1,6 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { buildReferralPersonFields } from 'src/logic-functions/data/build-referral-person-fields.util';
+import { claimAdOpportunity } from 'src/logic-functions/data/claim-ad-opportunity.util';
 import { createAdOpportunity } from 'src/logic-functions/data/create-ad-opportunity.util';
 import { getAdReferralSettings } from 'src/logic-functions/data/get-ad-referral-settings.util';
 import { type MessengerReferral } from 'src/logic-functions/types/messenger-webhook.type';
@@ -28,7 +29,8 @@ export const applyReferral = async ({
 
   if (
     referral.source === 'ADS' &&
-    (await getAdReferralSettings()).isOpportunityCreated
+    (await getAdReferralSettings()).isOpportunityCreated &&
+    (await claimAdOpportunity({ personId, referral }))
   ) {
     await createAdOpportunity({
       client,

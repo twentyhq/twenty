@@ -3,7 +3,10 @@ import { kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { MESSENGER_KV_KEY_PREFIXES } from 'src/constants/messenger-kv-key-prefixes.constant';
+import { wait } from 'src/logic-functions/data/wait.util';
 import { type PersonName } from 'src/logic-functions/types/person-name.type';
+
+const PERSON_CREATION_SETTLE_MS = 1_000;
 
 // A PSID is scoped to one Page, so the same customer has a different id on each Page
 const buildPersonKey = ({
@@ -58,6 +61,19 @@ export const findOrCreateMessengerPersonId = async ({
   });
 
   await kv.set(personKey, createPerson.id);
+
+  // a customer's first messages arrive together and run in parallel; the last id written wins and the others are removed
+  await wait(PERSON_CREATION_SETTLE_MS);
+
+  const winningPersonId = await kv.get<string>(personKey);
+
+  if (isDefined(winningPersonId) && winningPersonId !== createPerson.id) {
+    await client.mutation({
+      deletePerson: { __args: { id: createPerson.id }, id: true },
+    });
+
+    return winningPersonId;
+  }
 
   return createPerson.id;
 };

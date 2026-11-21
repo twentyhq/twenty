@@ -28,4 +28,6 @@ export type ImportConversationPayload = {
   pageId: string;
   backfillRunId: string;
   conversationId: string;
+  // the last conversation of the history marks the import done, once it is stored
+  isLastConversation: boolean;
 };

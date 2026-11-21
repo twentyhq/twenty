@@ -10,7 +10,7 @@ Brings the Facebook Messenger conversations of your Pages into Twenty and lets y
 - When a customer arrives from a Click-to-Messenger ad or an m.me link, the person record shows the source, the link's ref, and the ad ID and title, with the date.
 - The app settings list each connected Page, whether Meta still sends its messages, any webhook field it misses, and whether its past conversations were imported. A Page Meta dropped can be resubscribed there.
 - When a reply cannot be sent, or Meta stops accepting the token, the members chosen in the app settings get an alert in their inbox.
-- In the app settings, an option creates an opportunity for each person who arrives from a Click-to-Messenger ad, named after the person and the ad.
+- In the app settings, an option creates an opportunity, named after the person and the ad, the first time a person arrives from a given Click-to-Messenger ad.
 - Opening a conversation in Twenty marks it as seen in Messenger.
 - Messages the Page sends show whether the customer received and read them, in the **Messenger status** field.
 - Each customer gets a person record named from their Messenger profile, reused for every later message on the same Page.
@@ -50,7 +50,7 @@ The URL must be public HTTPS, so a Twenty running on localhost cannot receive me
 
 ### 4. Connect
 
-Connect Messenger in Twenty with the system user token. For every Page the token manages, the app subscribes the Page to the webhook and creates its message channel.
+Connect Messenger in Twenty with the system user token. For every Page the token manages, the app subscribes the Page to the webhook and creates its message channel. A Page Meta refuses is reported to the notification recipients and can be resubscribed from the app settings.
 
 Reconnect after assigning new Pages to the system user, and once after updating the app so each Page subscribes to the new webhook fields. Meta unsubscribes a Page after an hour of failed webhook deliveries; resubscribe it from the app settings, or reconnect.
 

@@ -9,14 +9,19 @@ type SendInboxNotificationParams = {
   text: string;
 };
 
+// alerts accompany a failure; a failing alert must never replace the error it reports
 export const sendInboxNotification = async (
   params: SendInboxNotificationParams,
 ) => {
-  const workspaceMemberIds = await getNotificationRecipientIds();
+  try {
+    const workspaceMemberIds = await getNotificationRecipientIds();
 
-  if (workspaceMemberIds.length === 0) {
-    return;
+    if (workspaceMemberIds.length === 0) {
+      return;
+    }
+
+    await sendInboxMessage({ ...params, workspaceMemberIds });
+  } catch (error) {
+    console.error(`Could not send the Messenger alert "${params.title}"`, error);
   }
-
-  await sendInboxMessage({ ...params, workspaceMemberIds });
 };

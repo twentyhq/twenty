@@ -32,7 +32,7 @@ export default defineApplicationRole({
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
         canReadAllRecords: true,
         canUpdateAllRecords: true,
-        canSoftDeleteAllRecords: false,
+        canSoftDeleteAllRecords: true,
         canDestroyAllRecords: false,
       },
       {

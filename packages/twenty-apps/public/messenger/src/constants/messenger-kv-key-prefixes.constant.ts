@@ -3,4 +3,5 @@ export const MESSENGER_KV_KEY_PREFIXES = {
   pageIdsByConnectedAccountId: 'messenger-connection-pages:',
   personIdByPageScopedId: 'messenger-person:',
   backfillCompletedByPageId: 'messenger-backfill-completed:',
+  adOpportunityByPersonAndAd: 'messenger-ad-opportunity:',
 } as const;

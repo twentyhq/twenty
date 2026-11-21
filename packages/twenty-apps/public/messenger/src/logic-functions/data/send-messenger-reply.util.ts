@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { findLatestIncomingMessage } from 'src/logic-functions/data/find-latest-incoming-message.util';
+import { findLastCustomerMessageAt } from 'src/logic-functions/data/find-last-customer-message-at.util';
 import { findMessageChannelByIdOrThrow } from 'src/logic-functions/data/find-message-channel-by-id-or-throw.util';
 import { getOutgoingAttachmentTypeOrThrow } from 'src/logic-functions/data/get-outgoing-attachment-type-or-throw.util';
 import { getPageAccessTokenOrThrow } from 'src/logic-functions/data/get-page-access-token-or-throw.util';
@@ -35,12 +35,11 @@ export const sendMessengerReply = async ({
   // checked before sending anything, so a bad file never leaves a reply half sent
   const attachmentTypes = attachments.map(getOutgoingAttachmentTypeOrThrow);
 
-  const latestIncomingMessage = await findLatestIncomingMessage({
-    messageChannelId,
-    threadExternalId,
-  });
   const replyMessagingType = getReplyMessagingType({
-    lastCustomerMessageAt: latestIncomingMessage?.receivedAt,
+    lastCustomerMessageAt: await findLastCustomerMessageAt({
+      messageChannelId,
+      threadExternalId,
+    }),
   });
 
   if (!isDefined(replyMessagingType)) {

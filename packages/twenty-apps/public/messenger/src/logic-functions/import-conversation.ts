@@ -6,6 +6,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { MESSENGER_CONVERSATIONS_API_CALL_INTERVAL_MS } from 'src/constants/messenger-backfill.constant';
 import { MESSENGER_LOGIC_FUNCTION_IMPORT_CONVERSATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { markBackfillCompleted } from 'src/logic-functions/data/backfill-completion.util';
 import { buildBackfillIngestMessages } from 'src/logic-functions/data/build-backfill-ingest-messages.util';
 import { findConnectedAccountIdByPageId } from 'src/logic-functions/data/find-connected-account-id-by-page-id.util';
 import { findConversationCustomer } from 'src/logic-functions/data/find-conversation-customer.util';
@@ -24,7 +25,10 @@ import {
 // Meta returns the details of only the 20 most recent messages of a conversation
 const MESSENGER_BACKFILL_MESSAGES_PER_CONVERSATION = 20;
 
-const handler = async ({ pageId, conversationId }: ImportConversationPayload) => {
+const importConversation = async ({
+  pageId,
+  conversationId,
+}: Pick<ImportConversationPayload, 'pageId' | 'conversationId'>) => {
   const connectedAccountId = await findConnectedAccountIdByPageId(pageId);
 
   if (!isDefined(connectedAccountId)) {
@@ -88,6 +92,14 @@ const handler = async ({ pageId, conversationId }: ImportConversationPayload) =>
       messages,
     }),
   });
+};
+
+const handler = async (payload: ImportConversationPayload) => {
+  await importConversation(payload);
+
+  if (payload.isLastConversation) {
+    await markBackfillCompleted(payload.pageId);
+  }
 };
 
 export default defineLogicFunction({
