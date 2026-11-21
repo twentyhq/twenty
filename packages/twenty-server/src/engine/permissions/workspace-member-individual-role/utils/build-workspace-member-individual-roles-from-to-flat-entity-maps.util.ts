@@ -4,7 +4,6 @@ import { v5 } from 'uuid';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import {
   WORKSPACE_MEMBER_INDIVIDUAL_ROLE_LABEL_PREFIX,
   WORKSPACE_MEMBER_INDIVIDUAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
@@ -86,9 +85,7 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
   individualRoles: WorkspaceMemberIndividualRole[];
   flatEntityMaps: Pick<
     AllFlatEntityMaps,
-    | WorkspaceMemberIndividualRoleFlatEntityMapsKey
-    | 'flatObjectMetadataMaps'
-    | 'flatFieldMetadataMaps'
+    WorkspaceMemberIndividualRoleFlatEntityMapsKey
   >;
   workspaceCustomApplicationUniversalIdentifier: string;
   now: string;
@@ -135,17 +132,6 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
     ),
   };
 
-  const findObjectUniversalIdentifier = (objectMetadataId: string) =>
-    findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: objectMetadataId,
-      flatEntityMaps: flatEntityMaps.flatObjectMetadataMaps,
-    }).universalIdentifier;
-  const findFieldUniversalIdentifier = (fieldMetadataId: string) =>
-    findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: fieldMetadataId,
-      flatEntityMaps: flatEntityMaps.flatFieldMetadataMaps,
-    }).universalIdentifier;
-
   const desiredEntities = individualRoles.map(({ userWorkspaceId, rules }) => {
     const roleUniversalIdentifier =
       getWorkspaceMemberIndividualRoleUniversalIdentifier(userWorkspaceId);
@@ -175,9 +161,7 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
         );
       const ruleUniversalIdentifier = buildUniversalIdentifier('rule');
       const groupUniversalIdentifier = buildUniversalIdentifier('group');
-      const objectMetadataUniversalIdentifier = findObjectUniversalIdentifier(
-        rule.objectMetadataId,
-      );
+      const { objectMetadataUniversalIdentifier } = rule;
       const operations = {
         canReadRecords: true,
         canCreateRecords: false,
@@ -210,14 +194,10 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
           ...owner,
           universalIdentifier: buildUniversalIdentifier('predicate'),
           objectMetadataUniversalIdentifier,
-          fieldMetadataUniversalIdentifier: findFieldUniversalIdentifier(
-            rule.fieldMetadataId,
-          ),
-          relationFieldMetadataUniversalIdentifier: isDefined(
-            rule.relationFieldMetadataId,
-          )
-            ? findFieldUniversalIdentifier(rule.relationFieldMetadataId)
-            : null,
+          fieldMetadataUniversalIdentifier:
+            rule.fieldMetadataUniversalIdentifier,
+          relationFieldMetadataUniversalIdentifier:
+            rule.relationFieldMetadataUniversalIdentifier,
           operand: rule.operand,
           value: rule.value,
           subFieldName: null,
@@ -229,15 +209,14 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
           positionInRowLevelPermissionPredicateGroup: null,
           deletedAt: null,
         },
-        fieldPermissions: rule.unreadableFieldMetadataIds.map(
-          (fieldMetadataId) => ({
+        fieldPermissions: rule.unreadableFieldMetadataUniversalIdentifiers.map(
+          (fieldMetadataUniversalIdentifier) => ({
             ...owner,
             universalIdentifier: buildUniversalIdentifier(
-              `field:${fieldMetadataId}`,
+              `field:${fieldMetadataUniversalIdentifier}`,
             ),
             objectMetadataUniversalIdentifier,
-            fieldMetadataUniversalIdentifier:
-              findFieldUniversalIdentifier(fieldMetadataId),
+            fieldMetadataUniversalIdentifier,
             rowLevelPermissionPredicateGroupUniversalIdentifier:
               groupUniversalIdentifier,
             rowLevelPermissionRuleUniversalIdentifier: ruleUniversalIdentifier,
