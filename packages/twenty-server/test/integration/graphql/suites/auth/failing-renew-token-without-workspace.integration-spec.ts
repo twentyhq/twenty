@@ -2,13 +2,13 @@ import { randomUUID } from 'crypto';
 
 import * as jwt from 'jsonwebtoken';
 import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { forgeLegacyHs256Token } from 'test/integration/graphql/utils/forge-legacy-hs256-token.util';
 import { renewToken } from 'test/integration/graphql/utils/renew-token.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { type RefreshTokenJwtPayload } from 'src/engine/core-modules/auth/types/refresh-token-jwt-payload.type';
-import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 describe('renewToken with a refresh token not bound to a workspace (integration)', () => {
   let workspaceAgnosticToken: string;
@@ -50,9 +50,7 @@ describe('renewToken with a refresh token not bound to a workspace (integration)
 
     const response = await renewToken(legacyRefreshToken);
 
-    expect(response.body.errors?.[0]?.extensions?.code).toBe(
-      ErrorCode.BAD_USER_INPUT,
-    );
+    expectOneNotInternalServerErrorSnapshot({ errors: response.body.errors });
 
     const [appToken] = await global.testDataSource.query(
       'SELECT "revokedAt" FROM core."appToken" WHERE id = $1',
