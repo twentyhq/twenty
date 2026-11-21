@@ -434,7 +434,7 @@ export class RecordAccessGroupComputationService {
       });
     }
 
-    // The sync queues this job before writing, so groups are read once its writes are done
+    // A running sync may be writing groups, so they are read once its writes are done
     return this.cacheLockService.withLock(
       () =>
         this.accessGroupRepository.findAccessGroupsOfObjects({
