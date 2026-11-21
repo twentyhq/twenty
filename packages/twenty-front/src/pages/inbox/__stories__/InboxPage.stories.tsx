@@ -47,6 +47,7 @@ import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavi
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { InboxPage } from '~/pages/inbox/InboxPage';
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
+import { TEST_CHAT_OBJECT_METADATA_ID } from '~/testing/constants/TestChatObjectMetadataId';
 import { ChatObjectMetadataDecorator } from '~/testing/decorators/ChatObjectMetadataDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
@@ -59,9 +60,6 @@ const FIRST_THREAD_TITLE = 'Qualify the lead';
 const SECOND_THREAD_TITLE = 'Prepare the customer call';
 const THREAD_ACTIVITY_AT = '2026-10-21T09:00:00.000Z';
 const THREAD_ARCHIVED_AT = '2026-10-21T11:00:00.000Z';
-const CHAT_OBJECT_METADATA_ID = '20202020-0000-4000-8000-0000000000cc';
-const CHAT_TARGET_OBJECT_METADATA_ID = '20202020-0000-4000-8000-0000000000dd';
-const CHAT_FIELD_NAMES = ['id', 'title', 'createdAt', 'updatedAt', 'deletedAt'];
 const NEW_CHAT_PATH = getAppPath(AppPath.AiChatInbox, {
   threadId: AI_CHAT_NEW_THREAD_PATH_SEGMENT,
 });
@@ -279,7 +277,7 @@ const meta = {
             objectMetadataItemsSelector.atom,
           );
           const objectMetadataItem = objectMetadataItems.find(
-            ({ id }) => id === CHAT_OBJECT_METADATA_ID,
+            ({ id }) => id === TEST_CHAT_OBJECT_METADATA_ID,
           );
 
           assertIsDefinedOrThrow(objectMetadataItem);

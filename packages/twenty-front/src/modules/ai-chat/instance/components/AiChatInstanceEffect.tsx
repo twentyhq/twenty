@@ -211,7 +211,7 @@ export const AiChatInstanceEffect = () => {
   }, [aiChatThreadIsMissing, onThreadChange, store]);
 
   useEffect(() => {
-    if (!aiChatComposerShouldSend) {
+    if (!aiChatComposerShouldSend || !sendAiChatComposerMessage()) {
       return;
     }
 
@@ -219,7 +219,6 @@ export const AiChatInstanceEffect = () => {
       aiChatComposerShouldSendFamilyState.atomFamily({ threadId }),
       false,
     );
-    sendAiChatComposerMessage();
   }, [aiChatComposerShouldSend, sendAiChatComposerMessage, store, threadId]);
 
   useEffect(() => {

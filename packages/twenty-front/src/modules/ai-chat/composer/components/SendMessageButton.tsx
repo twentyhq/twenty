@@ -9,15 +9,19 @@ import { IconArrowUp, IconPlayerStop } from 'twenty-ui/icon';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useLingui } from '@lingui/react/macro';
+import { type Editor } from '@tiptap/react';
+import { isDefined } from 'twenty-shared/utils';
+
+import { useSendAiChatComposerMessage } from '@/ai-chat/composer/hooks/useSendAiChatComposerMessage';
 
 type SendMessageButtonProps = {
   isDisabled?: boolean;
-  onSend: () => void;
+  editor: Editor | null;
 };
 
 export const SendMessageButton = ({
   isDisabled = false,
-  onSend,
+  editor,
 }: SendMessageButtonProps) => {
   const { t } = useLingui();
   const { threadId } = useAiChatInstanceOrThrow();
@@ -35,6 +39,15 @@ export const SendMessageButton = ({
   );
   const isAiChatStreaming = aiChatThreadReplyStatus === 'streaming';
   const { stopAiChatStream } = useStopAiChatStream();
+  const { sendAiChatComposerMessage } = useSendAiChatComposerMessage();
+
+  const handleSendClick = () => {
+    sendAiChatComposerMessage(
+      isDefined(editor)
+        ? { element: editor.view.dom, text: editor.getText() }
+        : undefined,
+    );
+  };
   const aiChatIsAssistantReplyPending = useAtomFamilySelectorValue(
     aiChatIsAssistantReplyPendingFamilySelector,
     threadId,
@@ -62,7 +75,7 @@ export const SendMessageButton = ({
       shape="round"
       aria-label={t`Send message`}
       size="sm"
-      onClick={onSend}
+      onClick={handleSendClick}
       disabled={
         isDisabled || aiChatInputIsEmpty || aiChatThreadIsFetchingMessages
       }

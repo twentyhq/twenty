@@ -4,11 +4,12 @@ import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { TEST_CHAT_OBJECT_METADATA_ID } from '~/testing/constants/TestChatObjectMetadataId';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
 const CHAT_OBJECT_DEFINITIONS = [
   {
-    id: '20202020-0000-4000-8000-0000000000cc',
+    id: TEST_CHAT_OBJECT_METADATA_ID,
     nameSingular: StandardObjectNameSingular.AgentChatThread,
     namePlural: 'agentChatThreads',
     labelSingular: 'Chat',

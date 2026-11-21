@@ -2,7 +2,6 @@ import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThr
 import { useCurrentAiChatThreadAccess } from '@/ai-chat/threads/hooks/useCurrentAiChatThreadAccess';
 import { StyledAiChatContentContainer } from '@/ai-chat/components/StyledAiChatContentContainer';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
@@ -188,13 +187,7 @@ const EditableAiChatEditorSection = () => {
         sendButton={
           <SendMessageButton
             isDisabled={!canSendAiChatMessage}
-            onSend={() =>
-              sendAiChatComposerMessage(
-                isDefined(editor)
-                  ? { element: editor.view.dom, text: editor.getText() }
-                  : undefined,
-              )
-            }
+            editor={editor}
           />
         }
       />
