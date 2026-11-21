@@ -9,6 +9,7 @@ import {
   STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS,
   STANDARD_NAVIGATION_MENU_ITEMS,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
+import { createStandardNavigationMenuItemBuiltInSectionFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-built-in-section-flat-metadata.util';
 import { createStandardNavigationMenuItemFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-flat-metadata.util';
 import {
   createStandardNavigationMenuItemFolderFlatMetadata,
@@ -56,6 +57,23 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
     ...createEmptyFlatEntityMaps(),
     byUserWorkspaceIdAndParentId: {},
   };
+
+  const favoritesSectionDefinition =
+    STANDARD_NAVIGATION_MENU_ITEMS.favoritesSection;
+
+  addFlatNavigationMenuItemToMapsAndUpdateIndex({
+    flatNavigationMenuItem:
+      createStandardNavigationMenuItemBuiltInSectionFlatMetadata({
+        universalIdentifier: favoritesSectionDefinition.universalIdentifier,
+        builtInSectionKey: favoritesSectionDefinition.builtInSectionKey,
+        position: favoritesSectionDefinition.position,
+        navigationMenuItemId: v4(),
+        workspaceId,
+        twentyStandardApplicationId,
+        now,
+      }),
+    flatNavigationMenuItemMaps,
+  });
 
   const workspaceSectionDefinition =
     STANDARD_NAVIGATION_MENU_ITEMS.workspaceSection;

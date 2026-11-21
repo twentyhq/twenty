@@ -5,6 +5,12 @@ import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-m
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 export const STANDARD_NAVIGATION_MENU_ITEMS = {
+  favoritesSection: {
+    universalIdentifier: '20202020-b00f-4b0f-8b0f-c0aba11c000f',
+    type: NavigationMenuItemType.SECTION,
+    builtInSectionKey: 'favorites',
+    position: -1,
+  },
   workspaceSection: {
     universalIdentifier: '20202020-b00e-4b0e-8b0e-c0aba11c000e',
     type: NavigationMenuItemType.SECTION,
