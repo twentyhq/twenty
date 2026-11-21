@@ -16,8 +16,10 @@ import {
   type ExtendedUIMessage,
 } from 'twenty-shared/ai';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatMessage } from '@/ai-chat/messages/components/AiChatMessage';
+import { AI_CHAT_MESSAGE_LIST_GAP } from '@/ai-chat/messages/constants/AiChatMessageListGap';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -61,6 +63,14 @@ const StyledConversationContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
+  max-width: 700px;
+  padding: 24px;
+`;
+
+const StyledMessageListContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${AI_CHAT_MESSAGE_LIST_GAP};
   max-width: 700px;
   padding: 24px;
 `;
@@ -842,7 +852,8 @@ export const MultiplayerConversation: Story = {
     const selectedReaction = canvas.getByRole('button', { name: '👍 by You' });
     await expect(selectedReaction).toBeVisible();
     selectedReaction.focus();
-    await userEvent.tab();
+    await userEvent.tab({ shift: true });
+    await userEvent.tab({ shift: true });
     const addReactionButton = canvas.getAllByRole('button', {
       name: 'Add reaction',
     })[1];
@@ -871,6 +882,162 @@ export const MultiplayerConversation: Story = {
     } finally {
       jotaiStore.set(threadRecordAtom, previousThread);
     }
+  },
+};
+
+const buildGroupedMessage = ({
+  id,
+  text,
+  secondsAgo,
+  senderWorkspaceMemberId = mockedWorkspaceMemberData.id,
+}: {
+  id: string;
+  text: string;
+  secondsAgo: number;
+  senderWorkspaceMemberId?: string;
+}): ExtendedUIMessage => ({
+  id,
+  role: 'user',
+  parts: [{ type: 'text', text }],
+  metadata: {
+    createdAt: getMockedDateWithOffset({ seconds: -secondsAgo }),
+    senderWorkspaceMemberId,
+  },
+});
+
+const mockGroupedMessages = [
+  buildGroupedMessage({
+    id: 'msg-grouped-own-1',
+    text: 'Quick question about the Acme renewal',
+    secondsAgo: 600,
+  }),
+  buildGroupedMessage({
+    id: 'msg-grouped-own-2',
+    text: 'Who owns it now?',
+    secondsAgo: 580,
+  }),
+  buildGroupedMessage({
+    id: 'msg-grouped-own-3',
+    text: 'I can take it if nobody does',
+    secondsAgo: 560,
+  }),
+  buildGroupedMessage({
+    id: 'msg-grouped-own-4',
+    text: 'Never mind, found it',
+    secondsAgo: 480,
+  }),
+  buildGroupedMessage({
+    id: 'msg-grouped-teammate-1',
+    text: 'It moved to my pipeline last week',
+    secondsAgo: 360,
+    senderWorkspaceMemberId: mockTeammate.id,
+  }),
+  buildGroupedMessage({
+    id: 'msg-grouped-teammate-2',
+    text: 'I will send you the contract',
+    secondsAgo: 300,
+    senderWorkspaceMemberId: mockTeammate.id,
+  }),
+  buildGroupedMessage({
+    id: 'msg-grouped-own-list',
+    text: 'Then I need:\n\n- the signed contract\n- the renewal date',
+    secondsAgo: 240,
+  }),
+  buildGroupedMessage({
+    id: 'msg-grouped-own-code',
+    text: 'The filter I use:\n\n```\nstage = RENEWAL\n```',
+    secondsAgo: 180,
+  }),
+];
+
+export const GroupedMessages: Story = {
+  parameters: { isInboxEnabled: true, messages: mockGroupedMessages },
+  render: () => (
+    <StyledMessageListContainer>
+      {mockGroupedMessages.map((message) => (
+        <AiChatMessage key={message.id} messageId={message.id} />
+      ))}
+    </StyledMessageListContainer>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const getMessageRow = (text: string) => {
+      const messageRow = canvas
+        .getByText(text)
+        .closest<HTMLElement>('[data-agent-chat-message-id]');
+
+      if (!isDefined(messageRow)) {
+        throw new Error(`No message row for "${text}"`);
+      }
+
+      return messageRow;
+    };
+
+    await canvas.findByText('stage = RENEWAL');
+
+    const firstQuickRow = getMessageRow(
+      'Quick question about the Acme renewal',
+    );
+    const secondQuickRow = getMessageRow('Who owns it now?');
+    const lastQuickRow = getMessageRow('I can take it if nobody does');
+
+    await expect(
+      secondQuickRow.getBoundingClientRect().top -
+        firstQuickRow.getBoundingClientRect().bottom,
+    ).toBe(2);
+    await expect(canvas.getAllByRole('time')).toHaveLength(4);
+    await expect(within(lastQuickRow).getByRole('time')).toBeVisible();
+    await expect(lastQuickRow.getBoundingClientRect().height).toBe(
+      secondQuickRow.getBoundingClientRect().height,
+    );
+    await expect(canvas.getAllByText('Marco Rossi')).toHaveLength(1);
+
+    const listRow = getMessageRow('the renewal date');
+
+    await expect(
+      within(listRow).getByRole('time').getBoundingClientRect().top,
+    ).toBeGreaterThanOrEqual(
+      within(listRow).getByRole('list').getBoundingClientRect().bottom,
+    );
+
+    const copyButton = within(secondQuickRow).getByRole('button', {
+      name: 'Copy to Clipboard',
+    });
+
+    copyButton.focus();
+    await waitFor(() => expect(copyButton).toBeVisible());
+    await expect(copyButton.getBoundingClientRect().right).toBeLessThanOrEqual(
+      canvas.getByText('Who owns it now?').getBoundingClientRect().left,
+    );
+  },
+};
+
+export const LongOwnMessageWithTime: Story = {
+  parameters: { isInboxEnabled: true, messages: [mockLongUserMessage] },
+  args: { messageId: mockLongUserMessage.id },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const toggle = await canvas.findByRole('button', { name: 'Show more' });
+    const text = canvas.getByText(/Help me set up my workspace/);
+    const time = await canvas.findByRole('time');
+
+    await expect(toggle.getBoundingClientRect().top).toBeGreaterThan(
+      text.getBoundingClientRect().top,
+    );
+    await expect(toggle.getBoundingClientRect().right).toBeLessThanOrEqual(
+      time.getBoundingClientRect().left,
+    );
+
+    const timeCenterInPx =
+      (time.getBoundingClientRect().top + time.getBoundingClientRect().bottom) /
+      2;
+
+    await expect(timeCenterInPx).toBeGreaterThan(
+      toggle.getBoundingClientRect().top,
+    );
+    await expect(timeCenterInPx).toBeLessThan(
+      toggle.getBoundingClientRect().bottom,
+    );
   },
 };
 
@@ -1276,12 +1443,22 @@ export const MessagesWithImages: Story = {
 
       await expect(image).toBeVisible();
 
-      const ownTextToImageRightEdgeGapInPx =
-        image.getBoundingClientRect().right -
-        canvas.getByText(text).getBoundingClientRect().right;
+      const textElement = canvas.getByText(text);
+      const messageRow = textElement.closest<HTMLElement>(
+        '[data-agent-chat-message-id]',
+      );
+      const times = isDefined(messageRow)
+        ? within(messageRow).queryAllByRole('time')
+        : [];
+      const ownContentRightEdgeInPx = Math.max(
+        textElement.getBoundingClientRect().right,
+        ...times.map((time) => time.getBoundingClientRect().right),
+      );
+      const ownContentToImageRightEdgeGapInPx =
+        image.getBoundingClientRect().right - ownContentRightEdgeInPx;
 
-      await expect(ownTextToImageRightEdgeGapInPx).toBeGreaterThanOrEqual(0);
-      await expect(ownTextToImageRightEdgeGapInPx).toBeLessThan(16);
+      await expect(ownContentToImageRightEdgeGapInPx).toBeGreaterThanOrEqual(0);
+      await expect(ownContentToImageRightEdgeGapInPx).toBeLessThan(16);
     }
 
     const teammateImage = await canvas.findByRole('img', {

@@ -2166,7 +2166,7 @@ msgid "Add a recipient before sending"
 msgstr "أضف مستلمًا قبل الإرسال"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "أضف مستلِمًا أو قناة قبل الإرسال."
 
@@ -6286,7 +6286,7 @@ msgid "Chat Sessions"
 msgstr "جلسات الدردشة"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "Chat stopped: no more available credits."
 msgstr "توقفت الدردشة: لا مزيد من الأرصدة المتاحة."
 
@@ -7736,7 +7736,7 @@ msgid "Connection successfully updated"
 msgstr "تم تحديث الاتصال بنجاح"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "فُقد الاتصال بالمساعد. أعد التحميل لرؤية الاستجابة."
 
@@ -8657,11 +8657,6 @@ msgstr "إنشاء سجل"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "إنشاء سجل"
-
-#. js-lingui-id: fYhMZY
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
-msgstr "إنشاء تخزين مشاركة السجل ومجموعة الوصول كجداول مملوكة لمحرك الصلاحيات بدلاً من كائنات. ينطبق فقط عند إنشاء مساحة عمل."
 
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -10140,8 +10135,8 @@ msgid "Delete MCP server"
 msgstr "حذف خادم MCP"
 
 #. js-lingui-id: KDfTdX
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 msgid "Delete message"
 msgstr "حذف الرسالة"
 
@@ -10604,7 +10599,7 @@ msgid "Direct messages and mentions"
 msgstr "الرسائل المباشرة والإشارات"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/instance/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "الرسائل المباشرة لا تدعم المرفقات."
 
@@ -11345,8 +11340,8 @@ msgid "Edit matching {objectLabelPlural}"
 msgstr "تحرير {objectLabelPlural} المطابقة"
 
 #. js-lingui-id: QjH+ZX
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 msgid "Edit message"
 msgstr "تحرير الرسالة"
 
@@ -15597,7 +15592,7 @@ msgid "Hours between triggers"
 msgstr "ساعات بين المشغلات"
 
 #. js-lingui-id: 3WYTm2
-#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/composer/components/AiChatSuggestedPrompts.tsx
 msgid "How can I help you?"
 msgstr "كيف يمكنني مساعدتك؟"
 
@@ -20395,7 +20390,7 @@ msgstr "لا يوجد نموذج ذكاء اصطناعي في مساحة الع�
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "لم تتم تهيئة أي موفر ذكاء اصطناعي على هذا المثيل."
@@ -23177,11 +23172,6 @@ msgstr "علم الصلاحية"
 msgid "Permission flags"
 msgstr "أعلام الصلاحيات"
 
-#. js-lingui-id: yAZKh+
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Permission tables"
-msgstr "جداول الصلاحيات"
-
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -25247,7 +25237,7 @@ msgid "Replit install links require an HTTPS MCP URL."
 msgstr "تتطلّب روابط تثبيت Replit عنوان MCP URL عبر HTTPS."
 
 #. js-lingui-id: ImOQa9
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 #: src/modules/ai-chat/threads/components/AiChatThreadRequestActions.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -30414,7 +30404,7 @@ msgstr "هذا الاتصال غير موجود أو غير متاح لهذا ا
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "This conversation is no longer available."
 msgstr "لم تعد هذه المحادثة متاحة."
 
@@ -33416,7 +33406,7 @@ msgid "Wait for Event"
 msgstr "انتظار حدث"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "انتظر حتى تنتهي المرفقات من الرفع."
 
@@ -33804,7 +33794,7 @@ msgid "What AI model should your agent run on"
 msgstr "أي نموذج ذكاء اصطناعي يجب أن يعمل عليه وكيلك"
 
 #. js-lingui-id: Itn+J7
-#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/composer/components/AiChatSuggestedPrompts.tsx
 msgid "What can I help you with?"
 msgstr "بماذا يمكنني مساعدتك؟"
 

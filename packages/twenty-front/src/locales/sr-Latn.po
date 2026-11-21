@@ -2166,7 +2166,7 @@ msgid "Add a recipient before sending"
 msgstr "Dodajte primaoca pre slanja"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "Dodajte primaoca ili kanal pre slanja."
 
@@ -6286,7 +6286,7 @@ msgid "Chat Sessions"
 msgstr "Sesije ćaskanja"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "Chat stopped: no more available credits."
 msgstr "Ćaskanje je zaustavljeno: nema više dostupnih kredita."
 
@@ -7736,7 +7736,7 @@ msgid "Connection successfully updated"
 msgstr "Veza je uspešno ažurirana"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "Veza sa asistentom je izgubljena. Ponovo učitajte stranicu da biste videli odgovor."
 
@@ -8657,11 +8657,6 @@ msgstr "Kreiraj zapis"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "Kreiraj zapis"
-
-#. js-lingui-id: fYhMZY
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
-msgstr "Kreirajte skladište deljenja zapisa i grupa za pristup kao tabele kojima upravlja mehanizam dozvola umesto kao objekte. Važi samo kada se kreira radni prostor."
 
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -10140,8 +10135,8 @@ msgid "Delete MCP server"
 msgstr "Obrišite MCP server"
 
 #. js-lingui-id: KDfTdX
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 msgid "Delete message"
 msgstr "Obriši poruku"
 
@@ -10604,7 +10599,7 @@ msgid "Direct messages and mentions"
 msgstr "Direktne poruke i pominjanja"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/instance/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Direktne poruke ne podržavaju priloge."
 
@@ -11345,8 +11340,8 @@ msgid "Edit matching {objectLabelPlural}"
 msgstr "Izmeni podudarne {objectLabelPlural}"
 
 #. js-lingui-id: QjH+ZX
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 msgid "Edit message"
 msgstr "Uredi poruku"
 
@@ -15597,7 +15592,7 @@ msgid "Hours between triggers"
 msgstr "Sati između okidača"
 
 #. js-lingui-id: 3WYTm2
-#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/composer/components/AiChatSuggestedPrompts.tsx
 msgid "How can I help you?"
 msgstr "Kako mogu da vam pomognem?"
 
@@ -20395,7 +20390,7 @@ msgstr "Nijedan model AI-ja u ovom radnom prostoru ne ispunjava ova podešavanja
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "Nijedan AI provajder nije konfigurisan na ovoj instanci."
@@ -23177,11 +23172,6 @@ msgstr "zastavica dozvole"
 msgid "Permission flags"
 msgstr "Zastavice dozvola"
 
-#. js-lingui-id: yAZKh+
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Permission tables"
-msgstr "Tabele dozvola"
-
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -25247,7 +25237,7 @@ msgid "Replit install links require an HTTPS MCP URL."
 msgstr "Replit linkovi za instalaciju zahtevaju HTTPS MCP URL."
 
 #. js-lingui-id: ImOQa9
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 #: src/modules/ai-chat/threads/components/AiChatThreadRequestActions.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -30414,7 +30404,7 @@ msgstr "Ova veza ne postoji ili nije dostupna za ovu aplikaciju."
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "This conversation is no longer available."
 msgstr "Ovaj razgovor više nije dostupan."
 
@@ -33416,7 +33406,7 @@ msgid "Wait for Event"
 msgstr "Sačekaj događaj"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Sačekajte da se otpremanje priloga završi."
 
@@ -33804,7 +33794,7 @@ msgid "What AI model should your agent run on"
 msgstr "Na kom AI modelu treba da radi vaš agent"
 
 #. js-lingui-id: Itn+J7
-#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/composer/components/AiChatSuggestedPrompts.tsx
 msgid "What can I help you with?"
 msgstr "Čime mogu da vam pomognem?"
 

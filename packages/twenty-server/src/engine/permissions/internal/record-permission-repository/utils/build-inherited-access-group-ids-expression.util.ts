@@ -48,8 +48,7 @@ export const buildInheritedAccessGroupIdsExpression = ({
     targetTableAlias,
   });
   const sourceCompactIdsParameterName = `relatedRecordPathSourceCompactIds_${pathIndex}`;
-  const roleIdsUnableToReadRelationParameterName = `relatedRecordPathRoleIdsUnableToReadRelation_${pathIndex}`;
-  const ruleIdsUnableToReadRelationParameterName = `relatedRecordPathRuleIdsUnableToReadRelation_${pathIndex}`;
+  const unreadableRelationParameterName = `relatedRecordPathUnreadableRelation_${pathIndex}`;
   const sourceCompactIds = accessGroups
     .filter(
       ({ objectMetadataId }) =>
@@ -91,7 +90,7 @@ export const buildInheritedAccessGroupIdsExpression = ({
         ]),
     ...(isRelationUnreadable
       ? [
-          `NOT EXISTS (SELECT 1 FROM ${buildAccessGroupTableExpression(workspaceId)} AS "inheritedAccessGroup" WHERE "inheritedAccessGroup"."compactId" = ${INHERITED_ACCESS_GROUP_ID} AND ("inheritedAccessGroup"."roleId" = ANY(CAST(:${roleIdsUnableToReadRelationParameterName} AS uuid[])) OR "inheritedAccessGroup"."rowLevelPermissionPredicateGroupId" = ANY(CAST(:${ruleIdsUnableToReadRelationParameterName} AS uuid[]))))`,
+          `NOT EXISTS (SELECT 1 FROM ${buildAccessGroupTableExpression(workspaceId)} AS "inheritedAccessGroup" WHERE "inheritedAccessGroup"."compactId" = ${INHERITED_ACCESS_GROUP_ID} AND CAST(:${unreadableRelationParameterName} AS uuid) = ANY("inheritedAccessGroup"."unreadableFieldIds"))`,
         ]
       : []),
   ];
@@ -107,10 +106,7 @@ export const buildInheritedAccessGroupIdsExpression = ({
         : { [sourceCompactIdsParameterName]: sourceCompactIds }),
       ...(isRelationUnreadable
         ? {
-            [roleIdsUnableToReadRelationParameterName]:
-              roleIdsUnableToReadRelation,
-            [ruleIdsUnableToReadRelationParameterName]:
-              ruleIdsUnableToReadRelation,
+            [unreadableRelationParameterName]: hops[0].relationFieldMetadataId,
           }
         : {}),
     },

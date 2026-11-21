@@ -6,6 +6,7 @@ import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites
 import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
+import { findRoleAccessGroupCompactIds } from 'test/integration/permissions/utils/find-role-access-group-compact-ids.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
   FeatureFlagKey,
@@ -49,22 +50,19 @@ describe('access group ids on records (integration)', () => {
 
   const readCompactIds = async ({
     roleLabel,
-    predicateGroupId,
   }: {
     roleLabel: string;
-    predicateGroupId: string | null;
   }): Promise<number[]> => {
-    const rows: { compactId: number }[] = await global.testDataSource.query(
-      `SELECT "accessGroup"."compactId" FROM ${ACCESS_GROUP_TABLE} "accessGroup"
-        JOIN core."role" "role" ON "role"."id" = "accessGroup"."roleId"
-        WHERE "role"."label" = $1 AND "accessGroup"."objectMetadataId" = $2
-          AND "accessGroup"."rowLevelPermissionPredicateGroupId" IS NOT DISTINCT FROM (
-            SELECT "rowLevelPermissionRuleId" FROM core."rowLevelPermissionPredicateGroup" WHERE "id" = $3
-          )`,
-      [roleLabel, objectMetadataId, predicateGroupId],
+    const [{ id: roleId }] = await global.testDataSource.query(
+      `SELECT "id" FROM core."role" WHERE "workspaceId" = $1 AND "label" = $2`,
+      [SEED_APPLE_WORKSPACE_ID, roleLabel],
     );
 
-    return rows.map(({ compactId }) => compactId);
+    return findRoleAccessGroupCompactIds({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      roleId,
+      objectMetadataId,
+    });
   };
 
   const syncAndRecompute = async () => {
@@ -184,11 +182,9 @@ describe('access group ids on records (integration)', () => {
 
       const [adminCompactId] = await readCompactIds({
         roleLabel: 'Admin',
-        predicateGroupId: null,
       });
       const [parisCompactId] = await readCompactIds({
         roleLabel,
-        predicateGroupId,
       });
       const [parisPerson, londonPerson] = await readPeople();
 
@@ -203,7 +199,6 @@ describe('access group ids on records (integration)', () => {
 
       const [londonCompactId] = await readCompactIds({
         roleLabel,
-        predicateGroupId,
       });
       const [parisPersonAfterEdit, londonPersonAfterEdit] = await readPeople();
 
@@ -277,7 +272,6 @@ describe('access group ids on records (integration)', () => {
 
       const [parisCompactId] = await readCompactIds({
         roleLabel,
-        predicateGroupId,
       });
       const readCreatedPersonAccessGroupIds = async (): Promise<number[]> => {
         const [{ accessGroupIds }] = await global.testDataSource.query(
