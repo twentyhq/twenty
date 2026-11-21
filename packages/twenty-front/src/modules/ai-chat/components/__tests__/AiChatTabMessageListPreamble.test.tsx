@@ -7,7 +7,7 @@ import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamily
 
 import { AiChatTabMessageList } from '@/ai-chat/messages/components/AiChatTabMessageList';
 import { AiChatTestInstance } from '@/ai-chat/testing/AiChatTestInstance';
-import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai-chat/states/aiChatIsAwaitingFirstChunkFamilyState';
+import { aiChatReplyStatusFamilyState } from '@/ai-chat/states/aiChatReplyStatusFamilyState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -101,10 +101,10 @@ describe('AiChatTabMessageList preamble branch', () => {
 
   it('should render the preamble with the pending response loader when the displayed thread is awaiting its first chunk', () => {
     jotaiStore.set(
-      aiChatIsAwaitingFirstChunkFamilyState.atomFamily({
+      aiChatReplyStatusFamilyState.atomFamily({
         threadId: THREAD_ID,
       }),
-      true,
+      'awaiting-first-chunk',
     );
 
     const { getByTestId, queryByTestId } = renderPreambleBranch();

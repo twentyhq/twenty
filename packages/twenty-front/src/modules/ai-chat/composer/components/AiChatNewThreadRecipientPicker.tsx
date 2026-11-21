@@ -10,7 +10,6 @@ import { AiChatChannelIcon } from '@/ai-chat/threads/components/AiChatChannelIco
 import { AiChatAssistantAvatar } from '@/ai-chat/components/AiChatAssistantAvatar';
 import { AI_CHAT_ASSISTANT_RECIPIENT_SUGGESTION_ID } from '@/ai-chat/composer/constants/AiChatAssistantRecipientSuggestionId';
 import { useAiChatAssistantProfile } from '@/ai-chat/hooks/useAiChatAssistantProfile';
-import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { type AiChatChannel } from '@/ai-chat/threads/types/AiChatChannel';
@@ -19,7 +18,6 @@ import { AutocompleteContent } from '@/ui/input/components/AutocompleteContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const RECIPIENT_PICKER_SIDE_OFFSET_PX = 6;
@@ -52,9 +50,6 @@ export const AiChatNewThreadRecipientPicker = ({
   const setAiChatNewThreadRecipients = useSetAtomFamilyState(
     aiChatNewThreadRecipientsFamilyState,
     newAiChatThreadId,
-  );
-  const setAiChatNewThreadChannelId = useSetAtomState(
-    aiChatNewThreadChannelIdState,
   );
   const [suggestionList, setSuggestionList] = useState<HTMLDivElement | null>(
     null,
@@ -134,7 +129,10 @@ export const AiChatNewThreadRecipientPicker = ({
             startIcon={<AiChatChannelIcon channel={channel} />}
             description={t`Channel`}
             onClick={() => {
-              setAiChatNewThreadChannelId(channel.id);
+              setAiChatNewThreadRecipients((current) => ({
+                ...current,
+                channelId: channel.id,
+              }));
               onPick();
             }}
           >
