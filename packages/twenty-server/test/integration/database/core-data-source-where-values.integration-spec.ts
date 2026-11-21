@@ -10,6 +10,6 @@ describe('Core data source where values', () => {
 
     await expect(
       userWorkspaceRepository.findOne({ where: { id: undefined } }),
-    ).rejects.toThrow('Undefined value encountered');
+    ).rejects.toThrowErrorMatchingSnapshot();
   });
 });
