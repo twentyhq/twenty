@@ -4,7 +4,6 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
-import { isSharingAccessGroupsByValueEnabled } from 'src/engine/permissions/internal/access-group/utils/is-sharing-access-groups-by-value-enabled.util';
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { findRelatedRecordPathsExtendingAccess } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-paths-extending-access.util';
 import { canRelatedRecordPathExtendAccessToObject } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access-to-object.util';
@@ -57,10 +56,6 @@ export const buildPrincipalsRelatedRecordPathAccessGroupsOrThrow = ({
                 isRelationHopEnabled: isRlsRelationHopEnabled(
                   metadataMaps.featureFlagsMap,
                 ),
-                isSharingAccessGroupsByValue:
-                  isSharingAccessGroupsByValueEnabled({
-                    featureFlagsMap: metadataMaps.featureFlagsMap,
-                  }),
               }),
             )
           : []),

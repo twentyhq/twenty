@@ -39,7 +39,6 @@ export const buildRoleAccessGroupsOrThrow = ({
   workspaceMembers,
   flatFieldMetadataMaps,
   isRelationHopEnabled,
-  isSharingAccessGroupsByValue,
 }: {
   roleId: string;
   objectMetadataId: string;
@@ -48,7 +47,6 @@ export const buildRoleAccessGroupsOrThrow = ({
   workspaceMembers: RlsWorkspaceMember[];
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   isRelationHopEnabled: boolean;
-  isSharingAccessGroupsByValue: boolean;
 }): AccessGroupWithoutCompactId[] => {
   if (!isDefined(objectRecordsPermissions)) {
     return [];
@@ -141,9 +139,9 @@ export const buildRoleAccessGroupsOrThrow = ({
   const buildRuleAccessGroups = (
     rowLevelPermissionRule: RowLevelRecordsPermissions,
   ): AccessGroupWithoutCompactId[] => {
-    const sharedRuleAccessGroups = isSharingAccessGroupsByValue
-      ? buildSharedRuleAccessGroups(rowLevelPermissionRule)
-      : undefined;
+    const sharedRuleAccessGroups = buildSharedRuleAccessGroups(
+      rowLevelPermissionRule,
+    );
 
     if (isDefined(sharedRuleAccessGroups)) {
       return sharedRuleAccessGroups;
