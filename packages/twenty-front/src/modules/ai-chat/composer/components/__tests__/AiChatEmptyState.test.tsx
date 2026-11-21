@@ -11,12 +11,9 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-jest.mock(
-  '@/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts',
-  () => ({
-    AiChatSuggestedPrompts: () => <div data-testid="suggested-prompts" />,
-  }),
-);
+jest.mock('@/ai-chat/composer/components/AiChatSuggestedPrompts', () => ({
+  AiChatSuggestedPrompts: () => <div data-testid="suggested-prompts" />,
+}));
 
 const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
 

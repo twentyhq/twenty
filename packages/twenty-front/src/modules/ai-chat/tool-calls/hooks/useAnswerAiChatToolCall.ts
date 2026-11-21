@@ -1,5 +1,5 @@
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
-import { dispatchAiChatRefetchMessagesEvent } from '@/ai-chat/utils/dispatchAiChatRefetchMessagesEvent';
+import { refetchAiChatThreadMessages } from '@/ai-chat/utils/refetchAiChatThreadMessages';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -99,7 +99,7 @@ export const useAnswerAiChatToolCall = () => {
           );
         }
 
-        dispatchAiChatRefetchMessagesEvent(threadId);
+        refetchAiChatThreadMessages(threadId);
 
         return true;
       } catch (error) {
@@ -117,7 +117,7 @@ export const useAnswerAiChatToolCall = () => {
         if (
           isGraphqlErrorOfType(error, AiChatErrorCode.TOOL_CALL_NOT_PENDING)
         ) {
-          dispatchAiChatRefetchMessagesEvent(threadId);
+          refetchAiChatThreadMessages(threadId);
         } else if (isDefined(optimisticToolOutput)) {
           store.set(messagesAtom, (messages) =>
             updateToolPartOutput({

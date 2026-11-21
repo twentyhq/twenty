@@ -3,12 +3,12 @@ import { type AiModelTier } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { useAiChatFileUpload } from '@/ai-chat/composer/hooks/useAiChatFileUpload';
-import { useStageAiChatPreprompt } from '@/ai-chat/hooks/useStageAiChatPreprompt';
+import { useApplyAiChatPreprompt } from '@/ai-chat/composer/hooks/useApplyAiChatPreprompt';
 import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
-import { type AiChatPrepromptMode } from '@/ai-chat/states/aiChatPrepromptState';
+import { type AiChatPrepromptMode } from '@/ai-chat/types/AiChatPrepromptMode';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/states/composer/aiChatComposerAttachmentsFamilyState';
-import { aiChatOpenThreadIdByInstanceIdState } from '@/ai-chat/states/aiChatOpenThreadIdByInstanceIdState';
+import { aiChatRequiredThreadListenersState } from '@/ai-chat/states/aiChatRequiredThreadListenersState';
 import { aiChatUserSelectedModelTierState } from '@/ai-chat/states/aiChatUserSelectedModelTierState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -23,7 +23,7 @@ const TIER_BY_PRESELECTION: Record<AiChatModelPreselection, AiModelTier> = {
 export const useOpenAskAiPageWithPreprompt = () => {
   const store = useStore();
   const { switchToNewChat } = useSwitchToNewAiChat();
-  const { stageAiChatPreprompt } = useStageAiChatPreprompt();
+  const { applyAiChatPreprompt } = useApplyAiChatPreprompt();
   const setAiChatUserSelectedModelTier = useSetAtomState(
     aiChatUserSelectedModelTierState,
   );
@@ -51,7 +51,7 @@ export const useOpenAskAiPageWithPreprompt = () => {
     }
 
     if (!isNonEmptyArray(files)) {
-      stageAiChatPreprompt({
+      applyAiChatPreprompt({
         threadId: newAiChatThreadId,
         serializedDocument,
         mode,
@@ -66,7 +66,7 @@ export const useOpenAskAiPageWithPreprompt = () => {
     });
 
     const isNewChatStillOpen = Object.values(
-      store.get(aiChatOpenThreadIdByInstanceIdState.atom),
+      store.get(aiChatRequiredThreadListenersState.atom),
     ).includes(newAiChatThreadId);
 
     if (!isNewChatStillOpen) {
@@ -83,7 +83,7 @@ export const useOpenAskAiPageWithPreprompt = () => {
       return null;
     }
 
-    stageAiChatPreprompt({
+    applyAiChatPreprompt({
       threadId: newAiChatThreadId,
       serializedDocument,
       mode: isNonEmptyArray(uploadedFiles) ? mode : 'PREFILL',

@@ -2166,7 +2166,7 @@ msgid "Add a recipient before sending"
 msgstr "Ուղարկելուց առաջ ավելացրեք ստացող"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "Ուղարկելուց առաջ ավելացրեք ստացող կամ ալիք։"
 
@@ -6286,7 +6286,7 @@ msgid "Chat Sessions"
 msgstr "Զրույցի սեսիաներ"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "Chat stopped: no more available credits."
 msgstr "Զրույցը դադարեցվել է. այլևս հասանելի կրեդիտներ չկան։"
 
@@ -7736,7 +7736,7 @@ msgid "Connection successfully updated"
 msgstr "Կապը հաջողությամբ թարմացվեց"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "Օգնականի հետ կապը կորել է։ Պատասխանը տեսնելու համար վերաթարմացրեք։"
 
@@ -8657,11 +8657,6 @@ msgstr "Ստեղծել գրառում"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "Ստեղծել գրառում"
-
-#. js-lingui-id: fYhMZY
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
-msgstr "Ստեղծել գրառումների համօգտագործման և մուտքի խմբերի պահեստավորում՝ որպես թույլտվությունների շարժիչին պատկանող աղյուսակներ՝ օբյեկտների փոխարեն։ Կիրառվում է միայն աշխատանքային տարածք ստեղծելիս։"
 
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -10140,8 +10135,8 @@ msgid "Delete MCP server"
 msgstr "Ջնջել MCP սպասարկիչը"
 
 #. js-lingui-id: KDfTdX
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 msgid "Delete message"
 msgstr "Ջնջել հաղորդագրությունը"
 
@@ -10604,7 +10599,7 @@ msgid "Direct messages and mentions"
 msgstr "Ուղիղ հաղորդագրություններ և հիշատակումներ"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai-chat/instance/hooks/useOpenNewAiChatAsDirectMessage.ts
+#: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Անձնական հաղորդագրությունները չեն աջակցում կցորդներ։"
 
@@ -11345,8 +11340,8 @@ msgid "Edit matching {objectLabelPlural}"
 msgstr "Խմբագրել այս կանոնին համապատասխանող {objectLabelPlural}"
 
 #. js-lingui-id: QjH+ZX
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 msgid "Edit message"
 msgstr "Խմբագրել հաղորդագրությունը"
 
@@ -15597,7 +15592,7 @@ msgid "Hours between triggers"
 msgstr "Ժամերը գործարկումների միջև"
 
 #. js-lingui-id: 3WYTm2
-#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/composer/components/AiChatSuggestedPrompts.tsx
 msgid "How can I help you?"
 msgstr "Ինչո՞վ կարող եմ օգնել ձեզ։"
 
@@ -20395,7 +20390,7 @@ msgstr "Այս աշխատանքային տարածքում ոչ մի AI մոդե
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "Այս օրինակում AI մատակարար կարգավորված չէ։"
@@ -23177,11 +23172,6 @@ msgstr "թույլտվության դրոշակ"
 msgid "Permission flags"
 msgstr "Թույլտվության դրոշակներ"
 
-#. js-lingui-id: yAZKh+
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Permission tables"
-msgstr "Թույլտվությունների աղյուսակներ"
-
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -25247,7 +25237,7 @@ msgid "Replit install links require an HTTPS MCP URL."
 msgstr "Replit-ի install հղումները պահանջում են HTTPS MCP URL։"
 
 #. js-lingui-id: ImOQa9
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 #: src/modules/ai-chat/threads/components/AiChatThreadRequestActions.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -30414,7 +30404,7 @@ msgstr "Այս միացումը գոյություն չունի կամ այս հ
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/instance/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "This conversation is no longer available."
 msgstr "Այս զրույցն այլևս հասանելի չէ։"
 
@@ -33416,7 +33406,7 @@ msgid "Wait for Event"
 msgstr "Սպասել իրադարձության"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai-chat/instance/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Սպասեք, մինչև կցորդների վերբեռնումն ավարտվի։"
 
@@ -33804,7 +33794,7 @@ msgid "What AI model should your agent run on"
 msgstr "Ո՞ր AI մոդելի վրա պետք է գործարկվի ձեր գործակալը"
 
 #. js-lingui-id: Itn+J7
-#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/composer/components/AiChatSuggestedPrompts.tsx
 msgid "What can I help you with?"
 msgstr "Ինչո՞վ կարող եմ օգնել ձեզ։"
 
