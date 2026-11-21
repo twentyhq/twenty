@@ -121,6 +121,8 @@ const workspaceMember: FlatWorkspaceMember = {
   messageParticipants: [],
   blocklist: [],
   calendarEventParticipants: [],
+  accountOwnerForCalendarChannelEventAssociations: [],
+  accountOwnerForMessageChannelMessageAssociations: [],
   timelineActivities: [],
   agentMessages: [],
   agentChatThreads: [],
