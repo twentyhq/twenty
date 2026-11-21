@@ -20,6 +20,7 @@ import { ADD_AGENT_CHAT_CHANNEL_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME } from
 import { ADD_NATIVE_PAGE_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-56/add-native-page-navigation-menu-item-upgrade-command-name.constant';
 import { ADD_WORKFLOW_AND_AGENT_NAVIGATION_MENU_ITEMS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-workflow-and-agent-navigation-menu-items-upgrade-command-name.constant';
 import { RENAME_NAVIGATION_MENU_ITEM_FOLDER_ID_TO_PARENT_ID_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-60/rename-navigation-menu-item-folder-id-to-parent-id-upgrade-command-name.constant';
+import { ADD_COMMAND_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-command-navigation-menu-item-upgrade-command-name.constant';
 import { ADD_NAVIGATION_MENU_ITEM_BUILT_IN_SECTION_KEY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-navigation-menu-item-built-in-section-key-upgrade-command-name.constant';
 import { ADD_NAVIGATION_MENU_ITEM_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-navigation-menu-item-overridable-entity-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
@@ -28,6 +29,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -78,6 +80,10 @@ export type NavigationMenuItemOverrides = {
   'agentId',
   'workspaceId',
 ])
+@Index('IDX_NAVIGATION_MENU_ITEM_COMMAND_MENU_ITEM_ID_WORKSPACE_ID', [
+  'commandMenuItemId',
+  'workspaceId',
+])
 @Check(
   'CHK_navigation_menu_item_type_fields',
   `("type" = 'FOLDER')
@@ -91,7 +97,8 @@ export type NavigationMenuItemOverrides = {
   OR ("type" = 'WORKFLOW' AND "workflowId" IS NOT NULL)
   OR ("type" = 'AGENT' AND "agentId" IS NOT NULL)
   OR ("type" = 'TAB')
-  OR ("type" = 'SECTION')`,
+  OR ("type" = 'SECTION')
+  OR ("type" = 'COMMAND' AND "commandMenuItemId" IS NOT NULL)`,
 )
 export class NavigationMenuItemEntity
   extends OverridableEntity<NavigationMenuItemOverrides>
@@ -234,6 +241,19 @@ export class NavigationMenuItemEntity
   })
   @Column({ nullable: true, type: 'uuid' })
   agentId: string | null;
+
+  @ManyToOne(() => CommandMenuItemEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'commandMenuItemId' })
+  commandMenuItem: Relation<CommandMenuItemEntity> | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_COMMAND_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid' })
+  commandMenuItemId: string | null;
 
   @Column({ nullable: false, type: 'double precision' })
   position: number;

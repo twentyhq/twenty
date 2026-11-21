@@ -20,6 +20,7 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     flatAgentChatChannelMaps,
     flatWorkflowMaps,
     flatAgentMaps,
+    flatCommandMenuItemMaps,
   }: {
     createNavigationMenuItemInput: CreateNavigationMenuItemInput;
     workspaceId: string;
@@ -33,6 +34,7 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     | 'flatAgentChatChannelMaps'
     | 'flatWorkflowMaps'
     | 'flatAgentMaps'
+    | 'flatCommandMenuItemMaps'
   >): FlatNavigationMenuItem => {
     const id = createNavigationMenuItemInput.id ?? uuidv4();
     const now = new Date().toISOString();
@@ -65,6 +67,7 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       agentChatChannelUniversalIdentifier,
       workflowUniversalIdentifier,
       agentUniversalIdentifier,
+      commandMenuItemUniversalIdentifier,
     } = resolveEntityRelationUniversalIdentifiers({
       metadataName: 'navigationMenuItem',
       foreignKeyValues: {
@@ -76,6 +79,7 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
         agentChatChannelId: createNavigationMenuItemInput.agentChatChannelId,
         workflowId: createNavigationMenuItemInput.workflowId,
         agentId: createNavigationMenuItemInput.agentId,
+        commandMenuItemId: createNavigationMenuItemInput.commandMenuItemId,
       },
       flatEntityMaps: {
         flatObjectMetadataMaps,
@@ -85,6 +89,7 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
         flatAgentChatChannelMaps,
         flatWorkflowMaps,
         flatAgentMaps,
+        flatCommandMenuItemMaps,
       },
     });
 
@@ -110,6 +115,9 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       workflowUniversalIdentifier,
       agentId: createNavigationMenuItemInput.agentId ?? null,
       agentUniversalIdentifier,
+      commandMenuItemId:
+        createNavigationMenuItemInput.commandMenuItemId ?? null,
+      commandMenuItemUniversalIdentifier,
       name: createNavigationMenuItemInput.name ?? null,
       link: createNavigationMenuItemInput.link ?? null,
       nativePageKey: createNavigationMenuItemInput.nativePageKey ?? null,

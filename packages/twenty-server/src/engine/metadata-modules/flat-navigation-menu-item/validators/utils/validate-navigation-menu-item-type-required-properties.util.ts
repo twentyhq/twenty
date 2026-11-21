@@ -74,6 +74,7 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
     builtInSectionKey,
     workflowUniversalIdentifier,
     agentUniversalIdentifier,
+    commandMenuItemUniversalIdentifier,
   } = flatNavigationMenuItem;
 
   if (!isDefined(type)) {
@@ -90,6 +91,18 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
       buildInvalidInputError(
         t`A builtInSectionKey is only allowed on SECTION type`,
         msg`A builtInSectionKey is only allowed on SECTION type`,
+      ),
+    ];
+  }
+
+  if (
+    isDefined(commandMenuItemUniversalIdentifier) &&
+    type !== NavigationMenuItemType.COMMAND
+  ) {
+    return [
+      buildInvalidInputError(
+        t`A commandMenuItemUniversalIdentifier is only allowed on COMMAND type`,
+        msg`A commandMenuItemUniversalIdentifier is only allowed on COMMAND type`,
       ),
     ];
   }
@@ -201,6 +214,13 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
         value: agentUniversalIdentifier,
         message: t`A valid agentUniversalIdentifier is required for AGENT type`,
         userFriendlyMessage: msg`A valid agentUniversalIdentifier is required for AGENT type`,
+      });
+    }
+    case NavigationMenuItemType.COMMAND: {
+      return validateUuidProperty({
+        value: commandMenuItemUniversalIdentifier,
+        message: t`A valid commandMenuItemUniversalIdentifier is required for COMMAND type`,
+        userFriendlyMessage: msg`A valid commandMenuItemUniversalIdentifier is required for COMMAND type`,
       });
     }
     default: {

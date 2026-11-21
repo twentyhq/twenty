@@ -57,6 +57,8 @@ export const getNavigationMenuItemFlatEntitySeeds = ({
       workflowUniversalIdentifier: null,
       agentId: null,
       agentUniversalIdentifier: null,
+      commandMenuItemId: null,
+      commandMenuItemUniversalIdentifier: null,
       isActive: true,
       overrides: null,
       createdAt: now,

@@ -1904,6 +1904,7 @@ export type CreateNavigationMenuItemInput = {
   agentId?: InputMaybe<Scalars['UUID']['input']>;
   builtInSectionKey?: InputMaybe<Scalars['String']['input']>;
   color?: InputMaybe<Scalars['String']['input']>;
+  commandMenuItemId?: InputMaybe<Scalars['UUID']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['UUID']['input']>;
   link?: InputMaybe<Scalars['String']['input']>;
@@ -2428,6 +2429,7 @@ export enum EngineComponentKey {
   NAVIGATE_TO_PREVIOUS_RECORD = 'NAVIGATE_TO_PREVIOUS_RECORD',
   NAVIGATION = 'NAVIGATION',
   NEW_AI_CHAT = 'NEW_AI_CHAT',
+  OPEN_COMMAND_MENU = 'OPEN_COMMAND_MENU',
   REMOVE_FROM_FAVORITES = 'REMOVE_FROM_FAVORITES',
   REOPEN_AI_CHAT = 'REOPEN_AI_CHAT',
   REPLY_TO_EMAIL_THREAD = 'REPLY_TO_EMAIL_THREAD',
@@ -5610,6 +5612,7 @@ export type NavigationMenuItem = {
   applicationId?: Maybe<Scalars['UUID']['output']>;
   builtInSectionKey?: Maybe<Scalars['String']['output']>;
   color?: Maybe<Scalars['String']['output']>;
+  commandMenuItemId?: Maybe<Scalars['UUID']['output']>;
   createdAt: Scalars['DateTime']['output'];
   /** @deprecated Use parentId instead. */
   folderId?: Maybe<Scalars['UUID']['output']>;
@@ -5635,6 +5638,7 @@ export type NavigationMenuItem = {
 export enum NavigationMenuItemType {
   AGENT = 'AGENT',
   AGENT_CHAT_CHANNEL = 'AGENT_CHAT_CHANNEL',
+  COMMAND = 'COMMAND',
   FOLDER = 'FOLDER',
   LINK = 'LINK',
   NATIVE_PAGE = 'NATIVE_PAGE',

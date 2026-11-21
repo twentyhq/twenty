@@ -35,6 +35,21 @@ describe('validateNavigationMenuItemHierarchy', () => {
     ).toBe(false);
   });
 
+  it('should refuse any parent for a command', () => {
+    expect(
+      isAllowed({
+        type: NavigationMenuItemType.COMMAND,
+        parentType: NavigationMenuItemType.TAB,
+      }),
+    ).toBe(false);
+    expect(
+      isAllowed({
+        type: NavigationMenuItemType.COMMAND,
+        parentType: NavigationMenuItemType.FOLDER,
+      }),
+    ).toBe(false);
+  });
+
   it('should only allow a section inside a tab', () => {
     expect(
       isAllowed({

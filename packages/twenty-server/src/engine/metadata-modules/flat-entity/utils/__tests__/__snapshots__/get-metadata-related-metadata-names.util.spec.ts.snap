@@ -90,6 +90,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "agentChatChannel",
   "workflow",
   "agent",
+  "commandMenuItem",
 ]
 `;
 

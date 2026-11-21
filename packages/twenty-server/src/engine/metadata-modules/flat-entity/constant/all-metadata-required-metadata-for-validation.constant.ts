@@ -80,6 +80,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     agentChatChannel: true,
     workflow: true,
     agent: true,
+    commandMenuItem: true,
   },
   rolePermissionFlag: {
     permissionFlag: true,

@@ -136,6 +136,8 @@ const NAVIGATION_MENU_ITEM: FlatNavigationMenuItem = {
   workflowUniversalIdentifier: null,
   agentId: null,
   agentUniversalIdentifier: null,
+  commandMenuItemId: null,
+  commandMenuItemUniversalIdentifier: null,
   position: 0,
   isActive: true,
   overrides: null,

@@ -85,6 +85,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     agent: {
       foreignKey: 'agentId',
     },
+    commandMenuItem: {
+      foreignKey: 'commandMenuItemId',
+    },
   },
   fieldMetadata: {
     object: {

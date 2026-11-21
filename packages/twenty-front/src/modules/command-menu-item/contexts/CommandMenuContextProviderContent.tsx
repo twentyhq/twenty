@@ -113,6 +113,10 @@ export const CommandMenuContextProviderContent = ({
     const contextCommandMenuItems = commandMenuItemsToDisplay
       .filter(
         (item) =>
+          item.engineComponentKey !== EngineComponentKey.OPEN_COMMAND_MENU,
+      )
+      .filter(
+        (item) =>
           !isCoreWorkflowIndex ||
           item.engineComponentKey !== EngineComponentKey.DELETE_RECORDS,
       )

@@ -29,6 +29,7 @@ const EXTRA_DELETE_AFFECTED_METADATA_NAMES: Partial<
   rowLevelPermissionPredicateGroup: ['fieldMetadata'],
   rowLevelPermissionRule: ['fieldMetadata'],
   workflow: ['workflowVersion'],
+  commandMenuItem: ['navigationMenuItem'],
 };
 
 const getUpdateAffectedMetadataNames = ({

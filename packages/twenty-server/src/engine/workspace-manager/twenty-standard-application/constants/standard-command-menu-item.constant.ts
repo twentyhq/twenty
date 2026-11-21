@@ -856,6 +856,24 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.NEW_AI_CHAT,
     hotKeys: null,
   },
+  openCommandMenu: {
+    universalIdentifier: '4789b559-8349-4973-918c-2d20c3f78c30',
+    label: i18nLabel(
+      msg({ message: `All commands`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconCommand',
+    isPinned: false,
+    position: 81,
+    shortLabel: i18nLabel(
+      msg({ message: `All commands`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression: null,
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.OPEN_COMMAND_MENU,
+    hotKeys: ['⌘K'],
+  },
   shareRecord: {
     universalIdentifier: 'b9336f9f-d10c-42c0-b7cd-40c94ae235ef',
     label: i18nLabel(

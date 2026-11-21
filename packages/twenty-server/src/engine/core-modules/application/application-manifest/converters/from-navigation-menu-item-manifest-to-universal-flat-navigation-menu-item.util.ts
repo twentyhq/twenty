@@ -38,6 +38,8 @@ export const fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem =
       agentChatChannelUniversalIdentifier: null,
       workflowUniversalIdentifier: null,
       agentUniversalIdentifier: null,
+      commandMenuItemUniversalIdentifier:
+        navigationMenuItemManifest.commandMenuItemUniversalIdentifier ?? null,
       targetRecordId: null,
       userWorkspaceId: null,
       isActive: true,

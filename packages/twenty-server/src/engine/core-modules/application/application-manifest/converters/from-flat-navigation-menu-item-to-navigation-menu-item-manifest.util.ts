@@ -52,4 +52,10 @@ export const fromFlatNavigationMenuItemToNavigationMenuItemManifest = ({
           flatNavigationMenuItem.pageLayoutUniversalIdentifier,
       }
     : {}),
+  ...(isDefined(flatNavigationMenuItem.commandMenuItemUniversalIdentifier)
+    ? {
+        commandMenuItemUniversalIdentifier:
+          flatNavigationMenuItem.commandMenuItemUniversalIdentifier,
+      }
+    : {}),
 });
