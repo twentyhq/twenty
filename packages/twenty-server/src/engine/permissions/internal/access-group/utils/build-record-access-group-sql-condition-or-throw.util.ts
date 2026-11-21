@@ -4,7 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordAccessGroupSQLConditionMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-sql-condition-metadata-maps.type';
-import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import {
+  type AccessGroup,
+  type AccessGroupSplit,
+} from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type AccessGroupRuleShape } from 'src/engine/permissions/internal/access-group/utils/build-access-group-rule-shapes.util';
 import {
   buildRecordFilterForRule,
@@ -20,7 +23,7 @@ const buildGroupRule = ({
   accessGroup,
   ruleShape,
 }: {
-  accessGroup: AccessGroup;
+  accessGroup: Pick<AccessGroup, 'ruleShapeHash'> & AccessGroupSplit;
   ruleShape: AccessGroupRuleShape;
 }): RlsRule => {
   if (accessGroup.type !== 'LITERAL_VALUE') {
@@ -45,7 +48,7 @@ export const buildRecordAccessGroupSQLConditionOrThrow = ({
   tableAlias,
   metadataMaps,
 }: {
-  accessGroup: AccessGroup;
+  accessGroup: Pick<AccessGroup, 'ruleShapeHash'> & AccessGroupSplit;
   ruleShapeByHash: Map<string, AccessGroupRuleShape>;
   flatObjectMetadata: FlatObjectMetadata;
   tableAlias: string;

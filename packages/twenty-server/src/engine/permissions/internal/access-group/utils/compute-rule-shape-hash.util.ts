@@ -13,7 +13,7 @@ import { type RlsRule } from 'src/engine/permissions/internal/rls/utils/build-rl
 const sortByContent = <TEntry>(entries: TEntry[]): string[] =>
   entries.map((entry) => JSON.stringify(entry)).sort();
 
-export const buildPredicateGroupContent = ({
+const buildPredicateGroupContent = ({
   parentPredicateGroupId,
   predicates,
   predicateGroups,

@@ -49,7 +49,9 @@ const isLiteralValueListPredicate = (
 export const findLiteralValuePredicate = ({
   predicates,
   predicateGroups,
-}: RlsRule): (RowLevelPermissionPredicate & { value: string[] }) | null => {
+}: Pick<RlsRule, 'predicates' | 'predicateGroups'>):
+  | (RowLevelPermissionPredicate & { value: string[] })
+  | null => {
   if (
     predicates.some(({ workspaceMemberFieldMetadataId }) =>
       isDefined(workspaceMemberFieldMetadataId),

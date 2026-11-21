@@ -15,9 +15,9 @@ export const buildTypedAccessGroupStatements = ({
     `CREATE TYPE ${schema}."accessGroup_type_enum" AS ENUM ('ALL_RECORDS', 'RULE', 'MEMBER_VALUE', 'LITERAL_VALUE')`,
     `ALTER TABLE ${accessGroup}
       ADD COLUMN "type" ${schema}."accessGroup_type_enum" NOT NULL,
-      ADD COLUMN "ruleShapeHash" text NOT NULL,
+      ADD COLUMN "ruleShapeHash" varchar NOT NULL,
       ADD COLUMN "unreadableFieldIds" uuid[] NOT NULL DEFAULT '{}',
-      ADD COLUMN "value" text,
+      ADD COLUMN "value" varchar,
       ADD CONSTRAINT "CHK_ACCESS_GROUP_TYPE_COLUMNS" CHECK (
         ("type" IN ('ALL_RECORDS', 'RULE') AND "memberFieldValues" IS NULL AND "value" IS NULL)
         OR ("type" = 'MEMBER_VALUE' AND "memberFieldValues" IS NOT NULL AND "value" IS NULL)

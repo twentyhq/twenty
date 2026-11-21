@@ -8,18 +8,20 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { buildTypedAccessGroupStatements } from 'src/database/commands/upgrade-version-command/2-61/utils/build-typed-access-group-statements.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal/access-group/services/access-group-sync-scheduler.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 @RegisteredWorkspaceCommand('2.61.0', 1795260363000)
 @Command({
   name: 'upgrade:2-61:type-access-groups',
   description:
-    'Give accessGroup an explicit type and rule shape instead of a role and a rule, emptying it for the next sync',
+    'Give accessGroup an explicit type and rule shape instead of a role and a rule, and schedule the sync that rebuilds it',
 })
 export class TypeAccessGroupsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     @InjectDataSource() private readonly dataSource: DataSource,
+    private readonly accessGroupSyncSchedulerService: AccessGroupSyncSchedulerService,
   ) {
     super(workspaceIteratorService);
   }
@@ -57,6 +59,10 @@ export class TypeAccessGroupsCommand extends ProvisionedWorkspaceCommandRunner {
         await entityManager.query(statement);
       }
     });
+
+    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(
+      workspaceId,
+    );
 
     this.logger.log(`Typed the accessGroup table of workspace ${workspaceId}`);
   }

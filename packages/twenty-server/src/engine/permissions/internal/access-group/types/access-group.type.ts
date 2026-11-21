@@ -8,16 +8,17 @@ export type AccessGroupType =
   | 'MEMBER_VALUE'
   | 'LITERAL_VALUE';
 
+export type AccessGroupSplit =
+  | { type: 'ALL_RECORDS' }
+  | { type: 'RULE' }
+  | { type: 'MEMBER_VALUE'; memberFieldValues: RlsMemberFieldValues }
+  | { type: 'LITERAL_VALUE'; value: string };
+
 export type AccessGroupWithoutCompactId = {
   groupHash: string;
   objectMetadataId: string;
   ruleShapeHash: string;
   unreadableFieldIds: string[];
-} & (
-  | { type: 'ALL_RECORDS' }
-  | { type: 'RULE' }
-  | { type: 'MEMBER_VALUE'; memberFieldValues: RlsMemberFieldValues }
-  | { type: 'LITERAL_VALUE'; value: string }
-);
+} & AccessGroupSplit;
 
 export type AccessGroup = AccessGroupWithoutCompactId & { compactId: number };

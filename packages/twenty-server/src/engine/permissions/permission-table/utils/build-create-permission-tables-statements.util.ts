@@ -81,10 +81,10 @@ export const buildCreatePermissionTablesStatements = ({
       "deletedAt" timestamptz,
       "objectMetadataId" uuid,
       "type" ${schema}."accessGroup_type_enum" NOT NULL,
-      "ruleShapeHash" text NOT NULL,
+      "ruleShapeHash" varchar NOT NULL,
       "unreadableFieldIds" uuid[] NOT NULL DEFAULT '{}',
       "memberFieldValues" jsonb,
-      "value" text,
+      "value" varchar,
       "groupHash" text NOT NULL,
       "compactId" integer GENERATED ALWAYS AS IDENTITY,
       CONSTRAINT "CHK_ACCESS_GROUP_TYPE_COLUMNS" CHECK (

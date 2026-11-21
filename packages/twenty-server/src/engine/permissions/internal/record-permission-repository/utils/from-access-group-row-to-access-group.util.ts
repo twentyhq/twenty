@@ -1,7 +1,20 @@
 /* @license Enterprise */
 
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
+import { isDefined } from 'twenty-shared/utils';
+
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/permissions/permissions.exception';
 import { type AccessGroupRow } from 'src/engine/permissions/internal/record-permission-repository/types/access-group-row.type';
+
+const throwMalformedAccessGroupRow = (compactId: number): never => {
+  throw new PermissionsException(
+    `Access group ${compactId} does not have the columns of its type`,
+    PermissionsExceptionCode.RECORD_PERMISSION_QUERY_FAILED,
+  );
+};
 
 export const fromAccessGroupRowToAccessGroup = ({
   compactId,
@@ -26,13 +39,17 @@ export const fromAccessGroupRowToAccessGroup = ({
       return {
         ...groupShape,
         type,
-        memberFieldValues: memberFieldValues ?? {},
+        memberFieldValues: isDefined(memberFieldValues)
+          ? memberFieldValues
+          : throwMalformedAccessGroupRow(compactId),
       };
     case 'LITERAL_VALUE':
       return {
         ...groupShape,
         type,
-        value: value ?? '',
+        value: isDefined(value)
+          ? value
+          : throwMalformedAccessGroupRow(compactId),
       };
     default:
       return { ...groupShape, type };
