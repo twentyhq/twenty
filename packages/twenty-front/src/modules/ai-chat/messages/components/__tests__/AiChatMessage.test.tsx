@@ -280,7 +280,8 @@ describe('AiChatMessage', () => {
     ).toBeInTheDocument();
     expect(screen.queryByText('You')).not.toBeInTheDocument();
     expect(screen.queryByText('Julia Martin')).not.toBeInTheDocument();
-    expect(screen.getAllByText(/ago$/)).toHaveLength(1);
+    expect(screen.getByRole('time')).toBeInTheDocument();
+    expect(screen.queryByText(/ago$/)).not.toBeInTheDocument();
   });
 
   it('lets the current member quote their own inbox message', () => {
