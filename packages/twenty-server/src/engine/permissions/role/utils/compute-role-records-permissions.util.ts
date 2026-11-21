@@ -15,6 +15,7 @@ import { type ObjectPermissionEntity } from 'src/engine/metadata-modules/object-
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type RowLevelPermissionRuleEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-rule.entity';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
+import { CHANNEL_VISIBILITY_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-object-universal-identifiers.constant';
 
 const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS: string[] = [
   STANDARD_OBJECTS.workflowRun.universalIdentifier,
@@ -31,6 +32,7 @@ type RoleDefinitionForRecordsPermissions = Pick<
   isPermissionFlagGranted: (permissionFlag: PermissionFlagType) => boolean;
   // an AI run scope leaves system objects readable but not writable unless it grants them
   areSystemObjectsReadOnlyByDefault?: boolean;
+  isChannelVisibilityRlsEnabled?: boolean;
   objectPermissions: Pick<
     ObjectPermissionEntity,
     | 'objectMetadataId'
@@ -115,8 +117,16 @@ const resolveObjectRecordsAccess = ({
     };
   }
 
+  const isChannelVisibilityObject =
+    (roleDefinition.isChannelVisibilityRlsEnabled ?? false) &&
+    CHANNEL_VISIBILITY_OBJECT_UNIVERSAL_IDENTIFIERS.includes(
+      universalIdentifier,
+    );
+  const isSystemObjectReadableByDefault =
+    isSystem && !isChannelVisibilityObject;
   const isSystemObjectWritableByDefault =
-    isSystem && !roleDefinition.areSystemObjectsReadOnlyByDefault;
+    isSystemObjectReadableByDefault &&
+    !roleDefinition.areSystemObjectsReadOnlyByDefault;
   const objectPermissionOverride = objectPermissions.find(
     (objectPermission) =>
       objectPermission.objectMetadataId === objectMetadataId,
@@ -125,27 +135,33 @@ const resolveObjectRecordsAccess = ({
   return {
     canCreate: resolveObjectPermissionValue({
       objectValue: objectPermissionOverride?.canCreateObjectRecords,
-      hasAllObjectsPermission: roleDefinition.canCreateAllObjectRecords,
+      hasAllObjectsPermission:
+        !isChannelVisibilityObject && roleDefinition.canCreateAllObjectRecords,
       isSystemObject: isSystemObjectWritableByDefault,
     }),
     canRead: resolveObjectPermissionValue({
       objectValue: objectPermissionOverride?.canReadObjectRecords,
-      hasAllObjectsPermission: roleDefinition.canReadAllObjectRecords,
-      isSystemObject: isSystem,
+      hasAllObjectsPermission:
+        !isChannelVisibilityObject && roleDefinition.canReadAllObjectRecords,
+      isSystemObject: isSystemObjectReadableByDefault,
     }),
     canUpdate: resolveObjectPermissionValue({
       objectValue: objectPermissionOverride?.canUpdateObjectRecords,
-      hasAllObjectsPermission: roleDefinition.canUpdateAllObjectRecords,
+      hasAllObjectsPermission:
+        !isChannelVisibilityObject && roleDefinition.canUpdateAllObjectRecords,
       isSystemObject: isSystemObjectWritableByDefault,
     }),
     canSoftDelete: resolveObjectPermissionValue({
       objectValue: objectPermissionOverride?.canSoftDeleteObjectRecords,
-      hasAllObjectsPermission: roleDefinition.canSoftDeleteAllObjectRecords,
+      hasAllObjectsPermission:
+        !isChannelVisibilityObject &&
+        roleDefinition.canSoftDeleteAllObjectRecords,
       isSystemObject: isSystemObjectWritableByDefault,
     }),
     canDestroy: resolveObjectPermissionValue({
       objectValue: objectPermissionOverride?.canDestroyObjectRecords,
-      hasAllObjectsPermission: roleDefinition.canDestroyAllObjectRecords,
+      hasAllObjectsPermission:
+        !isChannelVisibilityObject && roleDefinition.canDestroyAllObjectRecords,
       isSystemObject: isSystemObjectWritableByDefault,
     }),
   };
