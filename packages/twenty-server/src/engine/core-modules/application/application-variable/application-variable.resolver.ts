@@ -1,12 +1,11 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Parent, ResolveField } from '@nestjs/graphql';
+import { Args, Mutation } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationVariableEntityExceptionFilter } from 'src/engine/core-modules/application/application-variable/application-variable-exception-filter';
-import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
 import { UpdateApplicationVariableEntityInput } from 'src/engine/core-modules/application/application-variable/dtos/update-application-variable.input';
@@ -45,11 +44,6 @@ export class ApplicationVariableEntityResolver {
   constructor(
     private readonly applicationVariableService: ApplicationVariableEntityService,
   ) {}
-
-  @ResolveField(() => String)
-  value(@Parent() applicationVariable: ApplicationVariableEntity): string {
-    return this.applicationVariableService.getDisplayValue(applicationVariable);
-  }
 
   @Mutation(() => Boolean)
   async updateOneApplicationVariable(

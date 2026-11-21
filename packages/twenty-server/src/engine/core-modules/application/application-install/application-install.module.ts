@@ -12,6 +12,7 @@ import { MarketplaceModule } from 'src/engine/core-modules/application/applicati
 import { ApplicationInstallResolver } from 'src/engine/core-modules/application/application-install/application-install.resolver';
 import { ApplicationCapabilityResolver } from 'src/engine/core-modules/application/application-install/application-capability.resolver';
 import { ApplicationIframeMediaPermissionResolver } from 'src/engine/core-modules/application/application-install/application-iframe-media-permission.resolver';
+import { ApplicationIframeMediaPermissionFieldsResolver } from 'src/engine/core-modules/application/application-install/application-iframe-media-permission-fields.resolver';
 import { ApplicationIframeMediaPermissionService } from 'src/engine/core-modules/application/application-install/application-iframe-media-permission.service';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { InstallApplicationCommand } from 'src/engine/core-modules/application/application-install/commands/install-application.command';
@@ -51,6 +52,7 @@ import { ApplicationRegistrationVersionModule } from 'src/engine/core-modules/ap
   providers: [
     ApplicationCapabilityResolver,
     ApplicationIframeMediaPermissionResolver,
+    ApplicationIframeMediaPermissionFieldsResolver,
     ApplicationIframeMediaPermissionService,
     ApplicationInstallResolver,
     ApplicationInstallService,

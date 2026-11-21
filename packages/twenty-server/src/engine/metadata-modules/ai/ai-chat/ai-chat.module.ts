@@ -39,6 +39,7 @@ import { AgentInboxProposalService } from 'src/engine/metadata-modules/ai/ai-cha
 import { FlushQueuedAgentChatMessagesJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages.job';
 import { StreamAgentChatJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job';
 import { AgentChatResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat.resolver';
+import { AgentChatThreadFieldsResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat-thread-fields.resolver';
 import { AgentChatChannelResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat-channel.resolver';
 import { AgentChatThreadParticipantResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat-thread-participant.resolver';
 import { AgentChatMessageReactionResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat-message-reaction.resolver';
@@ -99,6 +100,7 @@ import { AgentChatWebPushNotificationService } from 'src/engine/metadata-modules
     AiChatUsageService,
     AiChatUsageResolver,
     AgentChatResolver,
+    AgentChatThreadFieldsResolver,
     AgentChatHistoryResolver,
     AgentChatChannelResolver,
     AgentChatThreadParticipantResolver,

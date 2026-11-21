@@ -5,6 +5,7 @@ import { CalendarChannelMetadataService } from 'src/engine/metadata-modules/cale
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ApplicationCalendarChannelsResolver } from 'src/engine/metadata-modules/calendar-channel/resolvers/application-calendar-channels.resolver';
 import { CalendarChannelResolver } from 'src/engine/metadata-modules/calendar-channel/resolvers/calendar-channel.resolver';
+import { CalendarChannelFieldsResolver } from 'src/engine/metadata-modules/calendar-channel/resolvers/calendar-channel-fields.resolver';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
 import { ChannelVisibilityModule } from 'src/engine/permissions/channel-visibility/channel-visibility.module';
@@ -19,6 +20,7 @@ import { ChannelVisibilityModule } from 'src/engine/permissions/channel-visibili
   providers: [
     CalendarChannelMetadataService,
     CalendarChannelResolver,
+    CalendarChannelFieldsResolver,
     ApplicationCalendarChannelsResolver,
   ],
 })

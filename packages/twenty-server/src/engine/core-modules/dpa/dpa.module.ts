@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { DpaResolver } from 'src/engine/core-modules/dpa/dpa.resolver';
+import { DpaAgreementFieldsResolver } from 'src/engine/core-modules/dpa/dpa-agreement-fields.resolver';
 import { DpaAgreementEntity } from 'src/engine/core-modules/dpa/entities/dpa-agreement.entity';
 import { DpaRegionService } from 'src/engine/core-modules/dpa/services/dpa-region.service';
 import { DpaService } from 'src/engine/core-modules/dpa/services/dpa.service';
@@ -17,6 +18,11 @@ import { PermissionsModule } from 'src/engine/permissions/permissions.module';
     ApplicationModule,
     PermissionsModule,
   ],
-  providers: [DpaService, DpaRegionService, DpaResolver],
+  providers: [
+    DpaService,
+    DpaRegionService,
+    DpaResolver,
+    DpaAgreementFieldsResolver,
+  ],
 })
 export class DpaModule {}

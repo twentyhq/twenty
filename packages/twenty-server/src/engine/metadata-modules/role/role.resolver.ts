@@ -72,6 +72,7 @@ import { RolePermissionsService } from 'src/engine/permissions/role-permissions.
 import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 @MetadataResolver(() => RoleDTO)
 @UsePipes(ResolverValidationPipe)
@@ -355,6 +356,7 @@ export class RoleResolver {
   }
 
   @ResolveField('workspaceMembers', () => [WorkspaceMemberDTO])
+  @UseGuards(NoPermissionGuard)
   async getWorkspaceMembersAssignedToRole(
     @Parent() role: RoleDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -367,6 +369,7 @@ export class RoleResolver {
   }
 
   @ResolveField('agents', () => [AgentDTO])
+  @UseGuards(NoPermissionGuard)
   async getAgentsAssignedToRole(
     @Parent() role: RoleDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -385,6 +388,7 @@ export class RoleResolver {
   }
 
   @ResolveField('apiKeys', () => [ApiKeyForRoleDTO])
+  @UseGuards(NoPermissionGuard)
   async getApiKeysAssignedToRole(
     @Parent() role: RoleDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -401,6 +405,7 @@ export class RoleResolver {
     () => [RowLevelPermissionPredicateDTO],
     { nullable: true },
   )
+  @UseGuards(NoPermissionGuard)
   async getRowLevelPermissionPredicatesForRole(
     @Parent() role: RoleDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -420,6 +425,7 @@ export class RoleResolver {
     () => [RowLevelPermissionPredicateGroupDTO],
     { nullable: true },
   )
+  @UseGuards(NoPermissionGuard)
   async getRowLevelPermissionPredicateGroupsForRole(
     @Parent() role: RoleDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -437,6 +443,7 @@ export class RoleResolver {
   @ResolveField('rowLevelPermissionRules', () => [RowLevelPermissionRuleDTO], {
     nullable: true,
   })
+  @UseGuards(NoPermissionGuard)
   async getRowLevelPermissionRulesForRole(
     @Parent() role: RoleDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,

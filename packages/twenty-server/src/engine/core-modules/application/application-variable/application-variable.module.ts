@@ -8,6 +8,7 @@ import { UserApplicationVariableValueResolver } from 'src/engine/core-modules/ap
 import { UserApplicationVariableValueService } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.service';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { ApplicationVariableEntityResolver } from 'src/engine/core-modules/application/application-variable/application-variable.resolver';
+import { ApplicationVariableEntityFieldsResolver } from 'src/engine/core-modules/application/application-variable/application-variable-fields.resolver';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { WorkspaceUserApplicationVariableValueMapCacheService } from 'src/engine/core-modules/application/application-variable/workspace-user-application-variable-value-map-cache.service';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
@@ -39,6 +40,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(UserWorkspaceEntity),
     ApplicationVariableEntityService,
     ApplicationVariableEntityResolver,
+    ApplicationVariableEntityFieldsResolver,
     UserApplicationVariableValueService,
     UserApplicationVariableValueResolver,
     WorkspaceUserApplicationVariableValueMapCacheService,

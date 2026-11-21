@@ -49,6 +49,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { VIEW_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-read-access-policy.constant';
 import { VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-by-visibility-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 @MetadataResolver(() => ViewDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter, AuthGraphqlApiExceptionFilter)
@@ -60,6 +61,7 @@ export class ViewResolver {
   ) {}
 
   @ResolveField(() => String)
+  @UseGuards(NoPermissionGuard)
   async name(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
@@ -90,6 +92,7 @@ export class ViewResolver {
   @ResolveField(() => Boolean, {
     deprecationReason: IS_CUSTOM_DEPRECATION_REASON,
   })
+  @UseGuards(NoPermissionGuard)
   isCustom(
     @Parent() view: ViewDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -285,6 +288,7 @@ export class ViewResolver {
   }
 
   @ResolveField(() => [ViewFieldDTO])
+  @UseGuards(NoPermissionGuard)
   async viewFields(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
@@ -300,6 +304,7 @@ export class ViewResolver {
   }
 
   @ResolveField(() => [ViewFilterDTO])
+  @UseGuards(NoPermissionGuard)
   async viewFilters(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
@@ -315,6 +320,7 @@ export class ViewResolver {
   }
 
   @ResolveField(() => [ViewFilterGroupDTO])
+  @UseGuards(NoPermissionGuard)
   async viewFilterGroups(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
@@ -330,6 +336,7 @@ export class ViewResolver {
   }
 
   @ResolveField(() => [ViewSortDTO])
+  @UseGuards(NoPermissionGuard)
   async viewSorts(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
@@ -345,6 +352,7 @@ export class ViewResolver {
   }
 
   @ResolveField(() => [ViewGroupDTO])
+  @UseGuards(NoPermissionGuard)
   async viewGroups(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
@@ -360,6 +368,7 @@ export class ViewResolver {
   }
 
   @ResolveField(() => [ViewFieldGroupDTO])
+  @UseGuards(NoPermissionGuard)
   async viewFieldGroups(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },

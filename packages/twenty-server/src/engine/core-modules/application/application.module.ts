@@ -10,6 +10,7 @@ import { ApplicationGaugeService } from 'src/engine/core-modules/application/app
 import { ApplicationStopModule } from 'src/engine/core-modules/application/application-stop/application-stop.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationResolver } from 'src/engine/core-modules/application/application.resolver';
+import { ApplicationFieldsResolver } from 'src/engine/core-modules/application/application-fields.resolver';
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { ApplicationGrantRoleLookupModule } from 'src/engine/core-modules/application/application-grant-role-lookup/application-grant-role-lookup.module';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -56,6 +57,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
   exports: [ApplicationService, ApplicationStopModule],
   providers: [
     ApplicationResolver,
+    ApplicationFieldsResolver,
     ApplicationService,
     ApplicationContentService,
     ApplicationGaugeService,

@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
+import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
@@ -66,14 +66,5 @@ export class DpaResolver {
       userEmail: user.email,
       input,
     });
-  }
-
-  // Null for click-through records, which have no signed PDF.
-  @ResolveField(() => String, { nullable: true })
-  async downloadUrl(
-    @Parent() agreement: DpaAgreementEntity,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<string | null> {
-    return this.dpaService.getDownloadUrl(agreement, workspace.id);
   }
 }
