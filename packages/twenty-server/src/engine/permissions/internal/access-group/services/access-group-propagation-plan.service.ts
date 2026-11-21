@@ -9,6 +9,7 @@ import { DataSource } from 'typeorm';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
+import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-computation-metadata-maps.type';
 import { type AccessGroupPropagationProgress } from 'src/engine/permissions/internal/access-group/types/access-group-propagation-progress.type';
 import { areRecordAccessGroupComputesAlreadyPlanned } from 'src/engine/permissions/internal/access-group/utils/are-record-access-group-computes-already-planned.util';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
@@ -44,32 +45,109 @@ export class AccessGroupPropagationPlanService {
   }): Promise<void> {
     const metadataMaps =
       await this.recordAccessGroupMetadataMapsService.find(workspaceId);
-    const plannedObjectMetadataIds = planRecordAccessGroupComputes({
+    const plannedObjectMetadataIds = this.planObjectMetadataIds({
+      metadataMaps,
+      objectMetadataIds,
+    });
+
+    await this.persistObjectComputes({
+      workspaceId,
+      metadataMaps,
+      findObjectComputesToPersist: (waitingObjectComputes) =>
+        areRecordAccessGroupComputesAlreadyPlanned({
+          waitingObjectMetadataIds: waitingObjectComputes
+            .filter(
+              ({ accessGroupIdChanges }) => !isDefined(accessGroupIdChanges),
+            )
+            .map(({ objectMetadataId }) => objectMetadataId),
+          objectMetadataIds: plannedObjectMetadataIds,
+        })
+          ? []
+          : plannedObjectMetadataIds.map((objectMetadataId) => ({
+              objectMetadataId,
+            })),
+    });
+  }
+
+  async planAndApplyAccessGroupIdChanges({
+    workspaceId,
+    objectMetadataId,
+    addedCompactIds,
+    removedCompactIds,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    addedCompactIds: number[];
+    removedCompactIds: number[];
+  }): Promise<void> {
+    const metadataMaps =
+      await this.recordAccessGroupMetadataMapsService.find(workspaceId);
+    const plannedObjectMetadataIds = [
+      ...new Set(
+        this.planObjectMetadataIds({
+          metadataMaps,
+          objectMetadataIds: [objectMetadataId],
+        }),
+      ),
+    ];
+
+    await this.persistObjectComputes({
+      workspaceId,
+      metadataMaps,
+      findObjectComputesToPersist: (waitingObjectComputes) => {
+        const objectMetadataIdsWaitingFullCompute = new Set(
+          waitingObjectComputes
+            .filter(
+              ({ accessGroupIdChanges }) => !isDefined(accessGroupIdChanges),
+            )
+            .map(({ objectMetadataId }) => objectMetadataId),
+        );
+
+        return plannedObjectMetadataIds
+          .filter(
+            (plannedObjectMetadataId) =>
+              !objectMetadataIdsWaitingFullCompute.has(plannedObjectMetadataId),
+          )
+          .map((plannedObjectMetadataId) => ({
+            objectMetadataId: plannedObjectMetadataId,
+            accessGroupIdChanges: {
+              addedCompactIds:
+                plannedObjectMetadataId === objectMetadataId
+                  ? addedCompactIds
+                  : [],
+              removedCompactIds,
+            },
+          }));
+      },
+    });
+  }
+
+  private planObjectMetadataIds({
+    metadataMaps,
+    objectMetadataIds,
+  }: {
+    metadataMaps: RecordAccessGroupComputationMetadataMaps;
+    objectMetadataIds: string[];
+  }): string[] {
+    return planRecordAccessGroupComputes({
       objectMetadataIds,
       resolvedRelatedRecordPaths: metadataMaps.resolvedRelatedRecordPaths,
       isObjectUsingRecordAccessGroups: (objectMetadataId) =>
         isObjectUsingRecordAccessGroups({ ...metadataMaps, objectMetadataId }),
     });
+  }
 
-    if (!isNonEmptyArray(plannedObjectMetadataIds)) {
-      return;
-    }
-
-    const recordCountByObjectMetadataId =
-      await this.recordAccessGroupRepository.estimateRecordCountByObjectMetadataId(
-        {
-          workspaceId,
-          flatObjectMetadatas: [...new Set(plannedObjectMetadataIds)]
-            .map((objectMetadataId) =>
-              findFlatEntityByIdInFlatEntityMaps({
-                flatEntityId: objectMetadataId,
-                flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
-              }),
-            )
-            .filter(isDefined),
-        },
-      );
-
+  private async persistObjectComputes({
+    workspaceId,
+    metadataMaps,
+    findObjectComputesToPersist,
+  }: {
+    workspaceId: string;
+    metadataMaps: RecordAccessGroupComputationMetadataMaps;
+    findObjectComputesToPersist: (
+      waitingObjectComputes: ObjectCompute[],
+    ) => Pick<ObjectCompute, 'objectMetadataId' | 'accessGroupIdChanges'>[];
+  }): Promise<void> {
     await this.cacheLockService.withLock(async () => {
       const waitingComputePayloads =
         await this.deferredWorkspaceOperationRunnerService.findOperationPayloads(
@@ -79,21 +157,36 @@ export class AccessGroupPropagationPlanService {
             statuses: ['PENDING'],
           },
         );
+      const objectComputesToPersist = findObjectComputesToPersist(
+        waitingComputePayloads.flatMap(({ objectComputes }) =>
+          objectComputes.filter(({ isComputed }) => !isComputed),
+        ),
+      );
 
-      if (
-        areRecordAccessGroupComputesAlreadyPlanned({
-          waitingObjectMetadataIds: waitingComputePayloads.flatMap(
-            ({ objectComputes }) =>
-              objectComputes
-                .filter(({ isComputed }) => !isComputed)
-                .map(({ objectMetadataId }) => objectMetadataId),
-          ),
-          objectMetadataIds: plannedObjectMetadataIds,
-        })
-      ) {
+      if (!isNonEmptyArray(objectComputesToPersist)) {
         return;
       }
 
+      const recordCountByObjectMetadataId =
+        await this.recordAccessGroupRepository.estimateRecordCountByObjectMetadataId(
+          {
+            workspaceId,
+            flatObjectMetadatas: [
+              ...new Set(
+                objectComputesToPersist.map(
+                  ({ objectMetadataId }) => objectMetadataId,
+                ),
+              ),
+            ]
+              .map((objectMetadataId) =>
+                findFlatEntityByIdInFlatEntityMaps({
+                  flatEntityId: objectMetadataId,
+                  flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
+                }),
+              )
+              .filter(isDefined),
+          },
+        );
       const queryRunner = this.coreDataSource.createQueryRunner();
 
       try {
@@ -105,11 +198,13 @@ export class AccessGroupPropagationPlanService {
             {
               name: COMPUTE_OPERATION_NAME,
               payload: {
-                objectComputes: plannedObjectMetadataIds.map(
-                  (objectMetadataId) => ({
-                    objectMetadataId,
+                objectComputes: objectComputesToPersist.map(
+                  (objectCompute) => ({
+                    ...objectCompute,
                     plannedRecordCount:
-                      recordCountByObjectMetadataId.get(objectMetadataId) ?? 0,
+                      recordCountByObjectMetadataId.get(
+                        objectCompute.objectMetadataId,
+                      ) ?? 0,
                     computedRecordCount: 0,
                     isComputed: false,
                   }),

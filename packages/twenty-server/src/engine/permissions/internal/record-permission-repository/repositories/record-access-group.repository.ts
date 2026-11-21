@@ -194,10 +194,12 @@ export class RecordAccessGroupRepository {
     workspaceId,
     flatObjectMetadata,
     recordAccessGroupSQLConditions,
+    recordIds,
   }: {
     workspaceId: string;
     flatObjectMetadata: FlatObjectMetadata;
     recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[];
+    recordIds: string[];
   }): Promise<string[]> {
     if (recordAccessGroupSQLConditions.length === 0) {
       return [];
@@ -218,10 +220,11 @@ export class RecordAccessGroupRepository {
           tableName: computeObjectTargetTable(flatObjectMetadata),
         })} AS ${alias}
           SET ${escapeIdentifier(ACCESS_GROUP_IDS_COLUMN_NAME)} = ARRAY(SELECT DISTINCT "accessGroupId" FROM unnest(${accessGroupIds} || ${addedAccessGroupIds}) AS "accessGroupId" ORDER BY "accessGroupId")
-          WHERE NOT (${accessGroupIds} @> ${addedAccessGroupIds})
+          WHERE ${alias}."id" = ANY(CAST(:recordIds AS uuid[]))
+            AND NOT (${accessGroupIds} @> ${addedAccessGroupIds})
           RETURNING ${alias}."id"`,
         parameters: Object.assign(
-          {},
+          { recordIds },
           ...recordAccessGroupSQLConditions.map(
             ({ sqlCondition }) => sqlCondition?.parameters ?? {},
           ),
@@ -236,11 +239,17 @@ export class RecordAccessGroupRepository {
     workspaceId,
     flatObjectMetadata,
     compactIds,
+    recordIds,
   }: {
     workspaceId: string;
     flatObjectMetadata: FlatObjectMetadata;
     compactIds: number[];
+    recordIds: string[];
   }): Promise<void> {
+    if (compactIds.length === 0) {
+      return;
+    }
+
     const accessGroupIdsColumn = escapeIdentifier(ACCESS_GROUP_IDS_COLUMN_NAME);
 
     await this.recordPermissionQueryService.execute({
@@ -251,8 +260,9 @@ export class RecordAccessGroupRepository {
           tableName: computeObjectTargetTable(flatObjectMetadata),
         })}
           SET ${accessGroupIdsColumn} = ARRAY(SELECT "accessGroupId" FROM unnest(${accessGroupIdsColumn}) AS "accessGroupId" WHERE NOT ("accessGroupId" = ANY(CAST(:removedCompactIds AS integer[]))) ORDER BY "accessGroupId")
-          WHERE ${accessGroupIdsColumn} && CAST(:removedCompactIds AS integer[])`,
-        parameters: { removedCompactIds: compactIds },
+          WHERE "id" = ANY(CAST(:recordIds AS uuid[]))
+            AND ${accessGroupIdsColumn} && CAST(:removedCompactIds AS integer[])`,
+        parameters: { removedCompactIds: compactIds, recordIds },
       },
     });
   }

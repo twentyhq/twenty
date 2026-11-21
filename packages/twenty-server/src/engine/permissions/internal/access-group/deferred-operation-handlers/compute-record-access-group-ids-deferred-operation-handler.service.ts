@@ -2,7 +2,10 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
+import { RecordAccessGroupPropagationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-propagation.service';
 import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { DeferredWorkspaceOperationHandlerDecorator } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-operation-handlers/decorators/deferred-workspace-operation-handler.decorator';
 import { type DeferredWorkspaceOperationHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-operation-handlers/interfaces/deferred-workspace-operation-handler.interface';
@@ -17,6 +20,7 @@ export class ComputeRecordAccessGroupIdsDeferredOperationHandlerService implemen
   constructor(
     private readonly recordAccessGroupComputationService: RecordAccessGroupComputationService,
     private readonly accessGroupPropagationPlanService: AccessGroupPropagationPlanService,
+    private readonly recordAccessGroupPropagationService: RecordAccessGroupPropagationService,
   ) {}
 
   async execute({
@@ -25,7 +29,11 @@ export class ComputeRecordAccessGroupIdsDeferredOperationHandlerService implemen
   }: DeferredWorkspaceOperationExecutionArgs<
     DeferredWorkspaceOperationPayload<'compute_recordAccessGroupIds'>
   >): Promise<void> {
-    for (const { objectMetadataId, isComputed } of objectComputes) {
+    for (const {
+      objectMetadataId,
+      accessGroupIdChanges,
+      isComputed,
+    } of objectComputes) {
       if (isComputed) {
         continue;
       }
@@ -33,9 +41,15 @@ export class ComputeRecordAccessGroupIdsDeferredOperationHandlerService implemen
       await this.accessGroupPropagationPlanService.startNextObjectCompute(
         workspaceId,
       );
-      await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
-        { workspaceId, objectMetadataId },
-      );
+      if (isDefined(accessGroupIdChanges)) {
+        await this.recordAccessGroupPropagationService.applyAccessGroupIdChangesToAllObjectRecords(
+          { workspaceId, objectMetadataId, ...accessGroupIdChanges },
+        );
+      } else {
+        await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
+          { workspaceId, objectMetadataId },
+        );
+      }
       await this.accessGroupPropagationPlanService.completeNextObjectCompute(
         workspaceId,
       );

@@ -11,6 +11,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { type AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
+import { type DeferredWorkspaceOperationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-operation-runner.service';
 import { type RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { type PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { type RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
@@ -29,10 +30,14 @@ describePermissionTestWorkspace({
     let otherRoleId: string;
     let workspaceMemberId: string;
 
-    const syncAccessGroups = () =>
-      getAppProviderByClassName<AccessGroupSyncService>(
+    const syncAccessGroups = async () => {
+      await getAppProviderByClassName<AccessGroupSyncService>(
         'AccessGroupSyncService',
       ).syncAccessGroups(findWorkspace().workspaceId);
+      await getAppProviderByClassName<DeferredWorkspaceOperationRunnerService>(
+        'DeferredWorkspaceOperationRunnerService',
+      ).runPendingOperations(findWorkspace().workspaceId);
+    };
 
     const recomputeRecords = () =>
       getAppProviderByClassName<RecordAccessGroupComputationService>(

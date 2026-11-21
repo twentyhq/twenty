@@ -21,6 +21,7 @@ import { type RelatedRecords } from 'src/engine/permissions/types/related-record
 import { findAccessGroupValueLookups } from 'src/engine/permissions/internal/access-group/value-lookup/utils/find-access-group-value-lookups.util';
 import { buildRecordAccessGroupSQLConditions } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-sql-conditions.util';
 import { buildAccessGroupValueLookupIdsExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-access-group-value-lookup-ids-expression.util';
+import { RECOMPUTE_BATCH_SIZE } from 'src/engine/permissions/internal/access-group/constants/recompute-batch-size.constant';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
@@ -31,8 +32,6 @@ import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal
 import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/find-related-record-paths-feeding-access-groups.util';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
 import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
-
-const RECOMPUTE_BATCH_SIZE = 1_000;
 
 @Injectable()
 export class RecordAccessGroupComputationService {
