@@ -15,7 +15,6 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { buildFieldByObjectIdAndNameKey } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-by-object-id-and-name-key.util';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
 import { type UpsertRowLevelPermissionRulesInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-rules.input';
 import { RowLevelPermissionPredicateService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service';
@@ -27,14 +26,12 @@ import { PERSONAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE } from 'src/engine/permiss
 import { PersonalRoleService } from 'src/engine/permissions/channel-visibility/services/personal-role.service';
 import { type ChannelVisibilityLevel } from 'src/engine/permissions/channel-visibility/types/channel-visibility-level.type';
 import { type VisibilityChannel } from 'src/engine/permissions/channel-visibility/types/visibility-channel.type';
-import { isPersonalRole } from 'src/engine/permissions/channel-visibility/utils/is-personal-role.util';
 import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
 import { computeChannelIdsByVisibilityLevel } from 'src/engine/permissions/channel-visibility/utils/compute-channel-ids-by-visibility-level.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/permissions/permissions.exception';
-import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type ChannelVisibilityObjectRules = {
@@ -63,41 +60,6 @@ const CHANNEL_VISIBILITY_LEVELS: ChannelVisibilityLevel[] = [
   'metadata',
 ];
 
-const buildAttachmentNotOfMessageRule = ({
-  flatRole,
-  buildId,
-  targetMessageFieldMetadataId,
-}: {
-  flatRole: Pick<
-    FlatRole,
-    | 'canUpdateAllObjectRecords'
-    | 'canSoftDeleteAllObjectRecords'
-    | 'canDestroyAllObjectRecords'
-  >;
-  buildId: (kind: string) => string;
-  targetMessageFieldMetadataId: string;
-}): UpsertRowLevelPermissionRulesInput['rules'][number] => ({
-  id: buildId('rule'),
-  canReadRecords: true,
-  canUpdateRecords: flatRole.canUpdateAllObjectRecords,
-  canSoftDeleteRecords: flatRole.canSoftDeleteAllObjectRecords,
-  canDestroyRecords: flatRole.canDestroyAllObjectRecords,
-  predicateGroups: [
-    {
-      id: buildId('group'),
-      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
-      predicates: [
-        {
-          id: buildId('predicate'),
-          fieldMetadataId: targetMessageFieldMetadataId,
-          operand: RowLevelPermissionPredicateOperand.IS_EMPTY,
-          value: null,
-        },
-      ],
-    },
-  ],
-});
-
 @Injectable()
 export class ChannelVisibilityRuleSyncService {
   constructor(
@@ -108,7 +70,6 @@ export class ChannelVisibilityRuleSyncService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly personalRoleService: PersonalRoleService,
     private readonly rowLevelPermissionPredicateService: RowLevelPermissionPredicateService,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly cacheLockService: CacheLockService,
   ) {}
 
@@ -136,17 +97,6 @@ export class ChannelVisibilityRuleSyncService {
 
     if (!isChannelVisibilityRlsEnabled(featureFlagsMap)) {
       await this.personalRoleService.deletePersonalRoles({ workspaceId });
-      await this.rowLevelPermissionPredicateService.upsertManySystemRowLevelPermissionRules(
-        {
-          workspaceId,
-          inputs: await this.buildAttachmentRulesInputs({
-            workspaceId,
-            objectIdByName,
-            fieldIdByObjectIdAndName,
-            isChannelVisibilityRlsEnabled: false,
-          }),
-        },
-      );
 
       return;
     }
@@ -185,129 +135,9 @@ export class ChannelVisibilityRuleSyncService {
     await this.rowLevelPermissionPredicateService.upsertManySystemRowLevelPermissionRules(
       {
         workspaceId,
-        inputs: [
-          ...personalRolesInputs,
-          ...(await this.buildAttachmentRulesInputs({
-            workspaceId,
-            objectIdByName,
-            fieldIdByObjectIdAndName,
-            isChannelVisibilityRlsEnabled: true,
-          })),
-        ],
+        inputs: personalRolesInputs,
       },
     );
-  }
-
-  private async buildAttachmentRulesInputs({
-    workspaceId,
-    objectIdByName,
-    fieldIdByObjectIdAndName,
-    isChannelVisibilityRlsEnabled,
-  }: {
-    workspaceId: string;
-    objectIdByName: Record<string, string | undefined>;
-    fieldIdByObjectIdAndName: Map<string, string>;
-    isChannelVisibilityRlsEnabled: boolean;
-  }): Promise<
-    {
-      rulesInput: UpsertRowLevelPermissionRulesInput;
-      fieldPermissions: UpsertFieldPermissionsInput['fieldPermissions'];
-    }[]
-  > {
-    const objectMetadataId = objectIdByName.attachment;
-    const targetMessageFieldMetadataId = isDefined(objectMetadataId)
-      ? fieldIdByObjectIdAndName.get(
-          buildFieldByObjectIdAndNameKey(objectMetadataId, 'targetMessage'),
-        )
-      : undefined;
-
-    if (
-      !isDefined(objectMetadataId) ||
-      !isDefined(targetMessageFieldMetadataId)
-    ) {
-      return [];
-    }
-
-    const {
-      flatRoleMaps,
-      flatObjectPermissionMaps,
-      flatRowLevelPermissionRuleMaps,
-    } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: [
-            'flatRoleMaps',
-            'flatObjectPermissionMaps',
-            'flatRowLevelPermissionRuleMaps',
-          ],
-        },
-      );
-    const roleIdsWithObjectPermission = new Set(
-      Object.values(flatObjectPermissionMaps.byUniversalIdentifier)
-        .filter(isDefined)
-        .filter(
-          (objectPermission) =>
-            objectPermission.objectMetadataId === objectMetadataId,
-        )
-        .map(({ roleId }) => roleId),
-    );
-    const ruleIdsByRoleId = new Map<string, string[]>();
-
-    for (const rule of Object.values(
-      flatRowLevelPermissionRuleMaps.byUniversalIdentifier,
-    )) {
-      if (isDefined(rule) && rule.objectMetadataId === objectMetadataId) {
-        ruleIdsByRoleId.set(rule.roleId, [
-          ...(ruleIdsByRoleId.get(rule.roleId) ?? []),
-          rule.id,
-        ]);
-      }
-    }
-
-    return Object.values(flatRoleMaps.byUniversalIdentifier)
-      .filter(isDefined)
-      .filter((flatRole) => !isPersonalRole(flatRole))
-      .flatMap((flatRole) => {
-        const buildId = (kind: string) =>
-          v5(
-            `${flatRole.id}:${objectMetadataId}:notOfMessage:${kind}`,
-            PERSONAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
-          );
-        const ruleIds = ruleIdsByRoleId.get(flatRole.id) ?? [];
-        const hasOwnRules = ruleIds.some(
-          (ruleId) => ruleId !== buildId('rule'),
-        );
-        const hasSystemRule = ruleIds.includes(buildId('rule'));
-        const shouldHaveSystemRule =
-          isChannelVisibilityRlsEnabled &&
-          flatRole.canReadAllObjectRecords &&
-          !roleIdsWithObjectPermission.has(flatRole.id);
-
-        // an upsert replaces every rule of the role on attachments, so a role with rules of its own is left alone
-        if (hasOwnRules || (!shouldHaveSystemRule && !hasSystemRule)) {
-          return [];
-        }
-
-        return [
-          {
-            fieldPermissions: [],
-            rulesInput: {
-              roleId: flatRole.id,
-              objectMetadataId,
-              rules: shouldHaveSystemRule
-                ? [
-                    buildAttachmentNotOfMessageRule({
-                      flatRole,
-                      buildId,
-                      targetMessageFieldMetadataId,
-                    }),
-                  ]
-                : [],
-            },
-          },
-        ];
-      });
   }
 
   private async findObjectsRules(

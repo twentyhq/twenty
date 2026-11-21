@@ -10,7 +10,6 @@ import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permi
 import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
 import { SyncChannelVisibilityRulesJob } from 'src/engine/permissions/channel-visibility/jobs/sync-channel-visibility-rules.job';
 import { ChannelVisibilityRuleSyncListener } from 'src/engine/permissions/channel-visibility/listeners/channel-visibility-rule-sync.listener';
-import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync-scheduler.service';
 import { ChannelVisibilityRuleSyncService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync.service';
 import { PersonalRoleService } from 'src/engine/permissions/channel-visibility/services/personal-role.service';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -30,14 +29,9 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   providers: [
     PersonalRoleService,
     ChannelVisibilityRuleSyncService,
-    ChannelVisibilityRuleSyncSchedulerService,
     ChannelVisibilityRuleSyncListener,
     SyncChannelVisibilityRulesJob,
   ],
-  exports: [
-    PersonalRoleService,
-    ChannelVisibilityRuleSyncService,
-    ChannelVisibilityRuleSyncSchedulerService,
-  ],
+  exports: [PersonalRoleService, ChannelVisibilityRuleSyncService],
 })
 export class ChannelVisibilityModule {}
