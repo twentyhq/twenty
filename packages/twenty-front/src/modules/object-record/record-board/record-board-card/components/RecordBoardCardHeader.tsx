@@ -3,12 +3,10 @@ import { RecordBoardCardContext } from '@/object-record/record-board/record-boar
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { useToggleRecordSelection } from '@/object-record/record-selection/hooks/useToggleRecordSelection';
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
-import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
+import { useOpenRecordBoardCard } from '@/object-record/record-board/record-board-card/hooks/useOpenRecordBoardCard';
 import { recordBoardCardIsExpandedComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardIsExpandedComponentState';
 import { RecordCardHeaderContainer } from '@/object-record/record-card/components/RecordCardHeaderContainer';
-import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
@@ -48,9 +46,7 @@ export const RecordBoardCardHeader = () => {
   const { recordId } = useContext(RecordBoardCardContext);
 
   const { objectMetadataItem, recordBoardId } = useContext(RecordBoardContext);
-  const { rowIndex, columnIndex } = useContext(RecordBoardCardContext);
-  const { activateBoardCard } = useActiveRecordBoardCard(recordBoardId);
-  const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
+  const { openRecordBoardCard } = useOpenRecordBoardCard();
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -65,8 +61,6 @@ export const RecordBoardCardHeader = () => {
   );
 
   const { toggleRecordSelection } = useToggleRecordSelection(recordBoardId);
-
-  const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
   const openRecordIn = useResolveOpenRecordIn(objectMetadataItem.nameSingular);
 
@@ -83,17 +77,13 @@ export const RecordBoardCardHeader = () => {
   return (
     <RecordCardHeaderContainer isCompact={isCompactModeActive}>
       <StyledRecordChipContainer>
-        <StopPropagationContainer>
+        <StopPropagationContainer shouldLetBackgroundClicksThrough>
           {isDefined(recordStore) && (
             <RecordChip
               objectNameSingular={objectMetadataItem.nameSingular}
               record={recordStore}
               variant="ghost"
-              onClick={() => {
-                activateBoardCard({ rowIndex, columnIndex });
-                unfocusBoardCard();
-                openRecordFromIndexView({ recordId });
-              }}
+              onClick={openRecordBoardCard}
               triggerEvent={triggerEvent}
             />
           )}
