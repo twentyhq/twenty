@@ -4,7 +4,7 @@ import GraphQLJSON from 'graphql-type-json';
 import {
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
-  type ViewFieldRelationScopeFilterValue,
+  type ViewFilterValue,
   ViewSortDirection,
 } from 'twenty-shared/types';
 
@@ -22,7 +22,7 @@ export class ViewFieldRelationScopeFilterDTO {
   operand: ViewFilterOperand;
 
   @Field(() => GraphQLJSON)
-  value: ViewFieldRelationScopeFilterValue;
+  value: ViewFilterValue;
 
   @Field(() => String, { nullable: true })
   subFieldName?: string | null;
