@@ -16,11 +16,11 @@ jest.mock(
 );
 
 jest.mock(
-  '@/navigation-menu-item/display/hooks/useNavigationMenuTabIdsWithUnreadChats',
+  '@/navigation-menu-item/display/hooks/useNavigationMenuChatAttention',
   () => ({
-    useNavigationMenuTabIdsWithUnreadChats: () => ({
-      tabIdsWithUnreadChats: new Set(['sales-tab']),
-      unreadOpenThreadCount: 1,
+    useNavigationMenuChatAttention: () => ({
+      getTabChatAttention: (tabId: string) =>
+        tabId === 'sales-tab' ? 'needs-input' : null,
     }),
   }),
 );
@@ -118,8 +118,8 @@ describe('useMobileNavigationBarItems', () => {
     expect(
       result.current.items.find(({ name }) => name === 'tab-sales-tab'),
     ).toMatchObject({
-      label: 'Sales, 1 unread',
-      isUnread: true,
+      label: 'Sales, needs your input',
+      attention: 'needs-input',
       hasDividerAfter: true,
     });
 
