@@ -1,4 +1,4 @@
-import { getNavigationMenuItemPlacementScopeId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemPlacementScopeId';
+import { getNavigationMenuItemContainerId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemContainerId';
 import { isSameNavigationMenuItemTarget } from '@/navigation-menu-item/common/utils/isSameNavigationMenuItemTarget';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -9,18 +9,13 @@ export const isNavigationMenuItemTargetInPlacementScope = ({
   item: NavigationMenuItem;
   items: NavigationMenuItem[];
 }) => {
-  const scopeId = getNavigationMenuItemPlacementScopeId({
-    parentId: item.parentId,
-    items,
-  });
+  const scopeId = getNavigationMenuItemContainerId({ item, items });
 
   return items.some(
     (candidate) =>
       candidate.id !== item.id &&
-      getNavigationMenuItemPlacementScopeId({
-        parentId: candidate.parentId,
-        items,
-      }) === scopeId &&
+      getNavigationMenuItemContainerId({ item: candidate, items }) ===
+        scopeId &&
       isSameNavigationMenuItemTarget({
         firstItem: item,
         secondItem: candidate,

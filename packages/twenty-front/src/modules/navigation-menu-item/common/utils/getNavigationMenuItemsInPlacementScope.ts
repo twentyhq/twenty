@@ -1,4 +1,4 @@
-import { getNavigationMenuItemPlacementScopeId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemPlacementScopeId';
+import { getNavigationMenuItemContainerId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemContainerId';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export const getNavigationMenuItemsInPlacementScope = <
@@ -10,13 +10,12 @@ export const getNavigationMenuItemsInPlacementScope = <
   parentId: string | null | undefined;
   items: TItem[];
 }): TItem[] => {
-  const scopeId = getNavigationMenuItemPlacementScopeId({ parentId, items });
+  const scopeId = getNavigationMenuItemContainerId({
+    item: { parentId },
+    items,
+  });
 
   return items.filter(
-    (item) =>
-      getNavigationMenuItemPlacementScopeId({
-        parentId: item.parentId,
-        items,
-      }) === scopeId,
+    (item) => getNavigationMenuItemContainerId({ item, items }) === scopeId,
   );
 };
