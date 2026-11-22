@@ -42,6 +42,7 @@ export const WorkspaceSectionListDndKit = ({
   folderChildrenById,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
+  renderSection,
 }: WorkspaceSectionListDndKitProps) => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
@@ -76,16 +77,23 @@ export const WorkspaceSectionListDndKit = ({
               !isLayoutCustomizationModeEnabled || workspaceDropDisabled
             }
           >
-            <NavigationMenuItemDisplay
-              item={item}
-              editModeProps={getEditModeProps(item)}
-              isDragging={isDragging}
-              folderChildrenById={folderChildrenById}
-              folderCount={folderCount}
-              onNavigationMenuItemClick={onNavigationMenuItemClick}
-              onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-              orphanIndex={index}
-            />
+            {item.type === NavigationMenuItemType.SECTION &&
+            isDefined(renderSection) ? (
+              renderSection(item)
+            ) : (
+              <NavigationMenuItemDisplay
+                item={item}
+                editModeProps={getEditModeProps(item)}
+                isDragging={isDragging}
+                folderChildrenById={folderChildrenById}
+                folderCount={folderCount}
+                onNavigationMenuItemClick={onNavigationMenuItemClick}
+                onActiveObjectMetadataItemClick={
+                  onActiveObjectMetadataItemClick
+                }
+                orphanIndex={index}
+              />
+            )}
           </NavigationMenuItemSortableItem>
         </StyledListItemRow>
       ))}

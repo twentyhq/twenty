@@ -1,7 +1,10 @@
 import { GettingStartedOpenedSection } from '@/getting-started/components/GettingStartedOpenedSection';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { NavigationDrawerOpenedSection } from '@/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection';
+import { useSelectActiveNavigationMenuItemInEditMode } from '@/navigation-menu-item/display/hooks/useSelectActiveNavigationMenuItemInEditMode';
 import { NavigationDrawerWorkspaceSectionSkeletonLoader } from '@/object-metadata/components/NavigationDrawerWorkspaceSectionSkeletonLoader';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { styled } from '@linaria/react';
 import { lazy, Suspense } from 'react';
@@ -25,10 +28,10 @@ const WorkspaceSectionDispatcher = lazy(() =>
   ),
 );
 
-const NavigationMenuSectionList = lazy(() =>
-  import('@/navigation-menu-item/display/containers/components/NavigationMenuSectionList').then(
+const NavigationMenuContainerContent = lazy(() =>
+  import('@/navigation-menu-item/display/containers/components/NavigationMenuContainerContent').then(
     (module) => ({
-      default: module.NavigationMenuSectionList,
+      default: module.NavigationMenuContainerContent,
     }),
   ),
 );
@@ -49,6 +52,11 @@ const StyledScrollableItemsContainer = styled.div`
 
 export const MainNavigationDrawerScrollableItems = () => {
   const activeNavigationMenuTab = useActiveNavigationMenuTab();
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
+  const handleActiveObjectMetadataItemClick =
+    useSelectActiveNavigationMenuItemInEditMode();
 
   if (isDefined(activeNavigationMenuTab)) {
     return (
@@ -71,8 +79,16 @@ export const MainNavigationDrawerScrollableItems = () => {
       <GettingStartedOpenedSection />
       <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
         <FavoritesSectionDispatcher />
-        <WorkspaceSectionDispatcher />
-        <NavigationMenuSectionList containerId={null} />
+        {isCustomizableSidebarEnabled ? (
+          <NavigationMenuContainerContent
+            containerId={null}
+            onActiveObjectMetadataItemClick={
+              handleActiveObjectMetadataItemClick
+            }
+          />
+        ) : (
+          <WorkspaceSectionDispatcher />
+        )}
       </Suspense>
     </StyledScrollableItemsContainer>
   );
