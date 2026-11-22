@@ -466,8 +466,8 @@ describePermissionTestWorkspace({
           metadataMaps,
         })
           .map(
-            ({ type, keys, residualMemberFieldKeys }) =>
-              `${type}:${keys.map(({ columnName, relationHop }) => `${relationHop?.targetFlatObjectMetadata.nameSingular ?? 'accessRecord'}.${columnName}`).join(',')}:${residualMemberFieldKeys.length}`,
+            ({ type, keys, residualRuleMemberFieldKeys }) =>
+              `${type}:${keys.map(({ columnName, relationHop }) => `${relationHop?.targetFlatObjectMetadata.nameSingular ?? 'accessRecord'}.${columnName}`).join(',')}:${residualRuleMemberFieldKeys.length}`,
           )
           .sort(),
       ).toEqual([

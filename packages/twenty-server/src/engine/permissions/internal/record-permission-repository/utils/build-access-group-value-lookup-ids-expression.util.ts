@@ -16,17 +16,17 @@ import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.ty
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-const findResidualMemberFieldValueCombinations = ({
+const findResidualRuleMemberFieldValueCombinations = ({
   lookup,
   accessGroups,
 }: {
   lookup: Pick<
     AccessGroupValueLookup,
-    'type' | 'ruleShapeHash' | 'residualMemberFieldKeys'
+    'type' | 'ruleShapeHash' | 'residualRuleMemberFieldKeys'
   >;
   accessGroups: AccessGroup[];
 }): RlsMemberFieldValues[] => {
-  if (lookup.residualMemberFieldKeys.length === 0) {
+  if (lookup.residualRuleMemberFieldKeys.length === 0) {
     return [{}];
   }
 
@@ -41,7 +41,7 @@ const findResidualMemberFieldValueCombinations = ({
     }
 
     const combination = Object.fromEntries(
-      lookup.residualMemberFieldKeys.map((memberFieldKey) => [
+      lookup.residualRuleMemberFieldKeys.map((memberFieldKey) => [
         memberFieldKey,
         accessGroup.memberFieldValues[memberFieldKey] ?? null,
       ]),
@@ -114,7 +114,7 @@ export const buildAccessGroupValueLookupIdsExpression = ({
   );
 
   const buildLookupSql = (
-    residualMemberFieldValuesParameterName: string | null,
+    residualRuleMemberFieldValuesParameterName: string | null,
   ) =>
     `ARRAY(SELECT ${accessGroupAlias}."compactId" FROM ${[
       ...keyValueExpressions.flatMap(({ fromExpressions }) => fromExpressions),
@@ -132,22 +132,24 @@ export const buildAccessGroupValueLookupIdsExpression = ({
           ({ valueExpression }) => valueExpression,
         ),
         buildKeyParameterName: (keyIndex) => parameterName(`key${keyIndex}`),
-        residualMemberFieldValuesParameterName,
+        residualRuleMemberFieldValuesParameterName,
       }),
     ].join(' AND ')})`;
-  const combinationSQLConditions = findResidualMemberFieldValueCombinations({
+  const lookupSQLConditions = findResidualRuleMemberFieldValueCombinations({
     lookup,
     accessGroups,
-  }).map((residualMemberFieldValues, combinationIndex): SQLCondition => {
-    const residualMemberFieldValuesParameterName = isNonEmptyArray(
-      lookup.residualMemberFieldKeys,
+  }).map((residualRuleMemberFieldValues, combinationIndex): SQLCondition => {
+    const residualRuleMemberFieldValuesParameterName = isNonEmptyArray(
+      lookup.residualRuleMemberFieldKeys,
     )
       ? parameterName(`residual${combinationIndex}`)
       : null;
-    const lookupSql = buildLookupSql(residualMemberFieldValuesParameterName);
+    const lookupSql = buildLookupSql(
+      residualRuleMemberFieldValuesParameterName,
+    );
     const residualSQLCondition = buildRlsRuleSQLCondition({
       rowLevelPermissionRule: lookup.residualRule,
-      memberFieldValues: residualMemberFieldValues,
+      memberFieldValues: residualRuleMemberFieldValues,
       flatObjectMetadata,
       tableAlias: RECORD_ACCESS_GROUP_TABLE_ALIAS,
       metadataMaps,
@@ -159,9 +161,9 @@ export const buildAccessGroupValueLookupIdsExpression = ({
         : lookupSql,
       parameters: {
         ...residualSQLCondition?.parameters,
-        ...(isDefined(residualMemberFieldValuesParameterName) && {
-          [residualMemberFieldValuesParameterName]: JSON.stringify(
-            residualMemberFieldValues,
+        ...(isDefined(residualRuleMemberFieldValuesParameterName) && {
+          [residualRuleMemberFieldValuesParameterName]: JSON.stringify(
+            residualRuleMemberFieldValues,
           ),
         }),
       },
@@ -169,13 +171,13 @@ export const buildAccessGroupValueLookupIdsExpression = ({
   });
 
   return {
-    sql: isNonEmptyArray(combinationSQLConditions)
-      ? combinationSQLConditions.map(({ sql }) => `(${sql})`).join(' || ')
+    sql: isNonEmptyArray(lookupSQLConditions)
+      ? lookupSQLConditions.map(({ sql }) => `(${sql})`).join(' || ')
       : `CAST('{}' AS integer[])`,
     parameters: {
       ...Object.assign(
         {},
-        ...combinationSQLConditions.map(({ parameters }) => parameters),
+        ...lookupSQLConditions.map(({ parameters }) => parameters),
       ),
       ...Object.fromEntries(
         lookup.keys.map(({ memberFieldKey }, keyIndex) => [

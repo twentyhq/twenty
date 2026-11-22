@@ -8,5 +8,5 @@ export type AccessGroupValueLookup = {
   ruleShapeHash: string;
   keys: AccessGroupValueLookupKey[];
   residualRule: RlsRule;
-  residualMemberFieldKeys: string[];
+  residualRuleMemberFieldKeys: string[];
 };

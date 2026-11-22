@@ -27,7 +27,7 @@ export const RLS_MEMBER_VALUE_ACCESS_GROUP_TYPE_HANDLER: AccessGroupTypeHandler<
       accessGroupAlias,
       valueExpressions,
       buildKeyParameterName,
-      residualMemberFieldValuesParameterName,
+      residualRuleMemberFieldValuesParameterName,
     }) =>
       `${accessGroupAlias}."memberFieldValues" = jsonb_build_object(${valueExpressions
         .map(
@@ -35,8 +35,8 @@ export const RLS_MEMBER_VALUE_ACCESS_GROUP_TYPE_HANDLER: AccessGroupTypeHandler<
             `CAST(:${buildKeyParameterName(keyIndex)} AS text), ${valueExpression}`,
         )
         .join(', ')})${
-        isDefined(residualMemberFieldValuesParameterName)
-          ? ` || CAST(:${residualMemberFieldValuesParameterName} AS jsonb)`
+        isDefined(residualRuleMemberFieldValuesParameterName)
+          ? ` || CAST(:${residualRuleMemberFieldValuesParameterName} AS jsonb)`
           : ''
       }`,
   };
