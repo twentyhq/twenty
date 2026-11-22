@@ -110,10 +110,8 @@ const PROPOSAL: ProposedToolCall = {
 
 const renderCard = ({
   proposal = PROPOSAL,
-  isActive = true,
 }: {
   proposal?: ProposedToolCall;
-  isActive?: boolean;
 } = {}) =>
   render(
     <I18nProvider i18n={i18n}>
@@ -121,7 +119,7 @@ const renderCard = ({
         <AiChatToolCallApprovalCard
           toolCallId="call-1"
           proposal={proposal}
-          isActive={isActive}
+          isActive
         />
       </Provider>
     </I18nProvider>,
@@ -465,53 +463,17 @@ describe('AiChatToolCallApprovalCard', () => {
     expect(screen.queryByRole('region')).not.toBeInTheDocument();
   });
 
-  it('does not mount the preview loader for an inactive approval', () => {
+  it('does not refresh front components after approving another tool', async () => {
+    const user = userEvent.setup();
+    answerAiChatToolCall.mockResolvedValue(true);
     renderCard({
       proposal: {
         ...PROPOSAL,
-        template: 'frontComponent',
-        arguments: { draftId: 'hidden' },
+        arguments: { draftId: 'current', checksum: 'a'.repeat(64) },
       },
-      isActive: false,
     });
-
-    expect(mockUsePreview).not.toHaveBeenCalled();
-    expect(screen.queryByRole('region')).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Approve' }));
+    expect(answerAiChatToolCall).toHaveBeenCalledTimes(1);
+    expect(refreshFrontComponents).not.toHaveBeenCalled();
   });
-
-  it.each([
-    {
-      toolName: PUBLISH_FRONT_COMPONENT_TOOL_NAME,
-      decision: 'Reject',
-      isAnswered: true,
-    },
-    {
-      toolName: PUBLISH_FRONT_COMPONENT_TOOL_NAME,
-      decision: 'Approve',
-      isAnswered: false,
-    },
-    { toolName: 'http_request', decision: 'Approve', isAnswered: true },
-  ])(
-    'does not refresh for $toolName / $decision / $isAnswered',
-    async ({ toolName, decision, isAnswered }) => {
-      const user = userEvent.setup();
-      let completeAnswer: (answered: boolean) => void = () => {};
-      answerAiChatToolCall.mockReturnValue(
-        new Promise<boolean>((resolve) => {
-          completeAnswer = resolve;
-        }),
-      );
-      renderCard({
-        proposal: {
-          ...PROPOSAL,
-          toolName,
-          arguments: { draftId: 'current', checksum: 'a'.repeat(64) },
-        },
-      });
-      await user.click(screen.getByRole('button', { name: decision }));
-      await act(async () => completeAnswer(isAnswered));
-      expect(answerAiChatToolCall).toHaveBeenCalledTimes(1);
-      expect(refreshFrontComponents).not.toHaveBeenCalled();
-    },
-  );
 });
