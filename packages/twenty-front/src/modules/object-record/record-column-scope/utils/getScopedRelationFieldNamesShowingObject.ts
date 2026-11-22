@@ -1,12 +1,16 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type RecordGqlFieldsRelationWithArguments } from 'twenty-shared/types';
 
 export const getScopedRelationFieldNamesShowingObject = ({
   scopedRelationAliases,
   objectMetadataItemId,
 }: {
   scopedRelationAliases: {
-    relationFieldName: string;
     relationObjectMetadataItem: Pick<EnrichedObjectMetadataItem, 'id'>;
+    relationWithArguments: Pick<
+      RecordGqlFieldsRelationWithArguments,
+      'relationFieldName'
+    >;
   }[];
   objectMetadataItemId: string;
 }): string[] => [
@@ -16,6 +20,8 @@ export const getScopedRelationFieldNamesShowingObject = ({
         ({ relationObjectMetadataItem }) =>
           relationObjectMetadataItem.id === objectMetadataItemId,
       )
-      .map(({ relationFieldName }) => relationFieldName),
+      .map(
+        ({ relationWithArguments }) => relationWithArguments.relationFieldName,
+      ),
   ),
 ];

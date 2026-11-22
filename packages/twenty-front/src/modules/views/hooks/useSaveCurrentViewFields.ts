@@ -7,13 +7,13 @@ import { usePerformViewFieldApiPersist } from '@/views/hooks/internal/usePerform
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetViewFromState } from '@/views/hooks/useGetViewFromState';
 import { type ViewField } from '@/views/types/ViewField';
-import { getViewFieldRelationScopeInput } from '@/views/utils/getViewFieldRelationScopeInput';
 import {
   type CreateViewFieldInput,
   type UpdateViewFieldMutationVariables,
 } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from 'twenty-shared/utils';
+import { removeTypenames } from '~/utils/removeTypenames';
 
 export const useSaveCurrentViewFields = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
@@ -67,7 +67,7 @@ export const useSaveCurrentViewFields = () => {
               isCanonical: viewFieldToCreateOrUpdate.isCanonical,
               relationTargetFieldMetadataId:
                 viewFieldToCreateOrUpdate.relationTargetFieldMetadataId,
-              relationScope: getViewFieldRelationScopeInput(
+              relationScope: removeTypenames(
                 viewFieldToCreateOrUpdate.relationScope,
               ),
               size: viewFieldToCreateOrUpdate.size,

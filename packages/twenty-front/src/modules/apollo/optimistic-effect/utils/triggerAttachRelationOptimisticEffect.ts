@@ -1,6 +1,5 @@
 import { type ApolloCache, type StoreObject } from '@apollo/client';
 
-import { invalidateCachedRelationsWithArguments } from '@/apollo/optimistic-effect/utils/invalidateCachedRelationsWithArguments';
 import { triggerUpdateRootQueriesOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRootQueriesOptimisticEffect';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
@@ -54,16 +53,23 @@ export const triggerAttachRelationOptimisticEffect = ({
     __typename: targetRecordTypeName,
   });
 
-  invalidateCachedRelationsWithArguments({
-    cache,
-    recordCacheId: targetRecordCacheId,
-    relationFieldName: fieldNameOnTargetRecord,
-  });
+  // Without an id, cache.modify would fall back to the root query and change its lists
+  if (!isDefined(targetRecordCacheId)) {
+    return;
+  }
 
   cache.modify<StoreObject>({
     id: targetRecordCacheId,
     fields: {
-      [fieldNameOnTargetRecord]: (targetRecordFieldValue, { toReference }) => {
+      [fieldNameOnTargetRecord]: (
+        targetRecordFieldValue,
+        { toReference, storeFieldName, DELETE },
+      ) => {
+        // Only the server applies a relation's filter, sort and limit, so copies with arguments are dropped for refetch
+        if (storeFieldName !== fieldNameOnTargetRecord) {
+          return DELETE;
+        }
+
         const fieldValueIsObjectRecordConnectionWithRefs =
           isObjectRecordConnectionWithRefs(
             sourceObjectNameSingular,

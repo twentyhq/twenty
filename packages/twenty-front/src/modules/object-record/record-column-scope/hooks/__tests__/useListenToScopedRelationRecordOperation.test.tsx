@@ -18,8 +18,11 @@ const PERSON_ID = '20202020-2222-4000-8000-000000000001';
 const peopleAlias: ScopedRelationAlias = {
   recordFieldId: 'people-column',
   responseKey: 'people_scoped',
-  relationFieldName: 'people',
   relationObjectMetadataItem: personObjectMetadataItem,
+  relationWithArguments: {
+    relationFieldName: 'people',
+    recordGqlFields: { id: true },
+  },
 };
 
 const PEOPLE_CONNECTION_SELECTION = `

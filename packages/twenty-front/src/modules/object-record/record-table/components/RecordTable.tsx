@@ -2,8 +2,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useRef } from 'react';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
-import { useScopedRelationAliases } from '@/object-record/record-column-scope/hooks/useScopedRelationAliases';
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { recordIndexHasRecordsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexHasRecordsComponentSelector';
@@ -34,8 +32,6 @@ export const RecordTable = () => {
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
   );
-
-  const scopedRelationAliases = useScopedRelationAliases();
 
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
@@ -88,7 +84,7 @@ export const RecordTable = () => {
   };
 
   return (
-    <ScopedRelationAliasesContext.Provider value={scopedRelationAliases}>
+    <>
       {canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions: objectPermissions,
         operationType: 'read',
@@ -117,6 +113,6 @@ export const RecordTable = () => {
           recordTableId={recordTableId}
         />
       )}
-    </ScopedRelationAliasesContext.Provider>
+    </>
   );
 };

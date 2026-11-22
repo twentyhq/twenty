@@ -6,16 +6,16 @@ const OPPORTUNITY_OBJECT_METADATA_ITEM_ID =
 
 const SCOPED_RELATION_ALIASES = [
   {
-    relationFieldName: 'people',
     relationObjectMetadataItem: { id: PERSON_OBJECT_METADATA_ITEM_ID },
+    relationWithArguments: { relationFieldName: 'people' },
   },
   {
-    relationFieldName: 'people',
     relationObjectMetadataItem: { id: PERSON_OBJECT_METADATA_ITEM_ID },
+    relationWithArguments: { relationFieldName: 'people' },
   },
   {
-    relationFieldName: 'opportunities',
     relationObjectMetadataItem: { id: OPPORTUNITY_OBJECT_METADATA_ITEM_ID },
+    relationWithArguments: { relationFieldName: 'opportunities' },
   },
 ];
 
