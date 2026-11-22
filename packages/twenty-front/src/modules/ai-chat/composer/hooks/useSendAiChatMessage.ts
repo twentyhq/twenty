@@ -435,7 +435,6 @@ export const useSendAiChatMessage = () => {
         }),
       );
       const quotedAgentId = quotedMessage?.metadata?.agentId;
-      // the composer preview starts loading the agent when the quote is picked; awaiting it here would race with further edits
       const quotedAgentName = isDefined(quotedAgentId)
         ? (apolloClient.cache.readQuery({
             query: FindChatMessageAgentDocument,

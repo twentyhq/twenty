@@ -12,7 +12,6 @@ import { aiChatRequiredThreadListenersState } from '@/ai-chat/states/aiChatRequi
 import { aiChatUserSelectedModelTierState } from '@/ai-chat/states/aiChatUserSelectedModelTierState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-// Kept coarse because it is part of the front component SDK surface.
 export type AiChatModelPreselection = 'FAST' | 'SMART';
 
 const TIER_BY_PRESELECTION: Record<AiChatModelPreselection, AiModelTier> = {
@@ -46,7 +45,6 @@ export const useOpenAskAiPageWithPreprompt = () => {
     if (isDefined(model)) {
       const tier = TIER_BY_PRESELECTION[model];
 
-      // null keeps following the workspace, so a later change there applies.
       setAiChatUserSelectedModelTier(tier === chatTier ? null : tier);
     }
 

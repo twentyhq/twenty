@@ -23,7 +23,6 @@ export const StyledMarkdownContainer = styled.div<{
     display: none;
   }
 
-  /* Room for a bubble's meta: beside a closing paragraph, else on its own line */
   > .markdown-paragraph:last-child::after {
     content: '';
     display: inline-block;

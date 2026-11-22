@@ -135,7 +135,6 @@ export const useAiChatEditor = ({ onSend }: UseAiChatEditorParams) => {
     },
   });
 
-  // Extension storage avoids stale closures without a ref.
   if (isDefined(editor)) {
     const storage = editor.extensionStorage;
     const mentionStorage = storage['mention-suggestion'] as {
@@ -199,7 +198,6 @@ export const useAiChatEditor = ({ onSend }: UseAiChatEditorParams) => {
     });
 
   useLayoutEffect(() => {
-    // A destroyed editor is still defined while its replacement mounts and its commands throw; keeping the request hands focus to the live one.
     if (
       !aiChatComposerShouldFocus ||
       !isDefined(editor) ||

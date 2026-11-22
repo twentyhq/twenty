@@ -43,7 +43,6 @@ export const useRetryChatMessage = () => {
         variables: { threadId, modelId: getAiChatModelIdForRequest(store) },
       });
 
-      // Same guard as useAiChat: the stream may already have set a newer credits-exhausted error.
       if (!isAiChatCreditsExhaustedError(store.get(errorAtom))) {
         store.set(currentWorkspaceState.atom, markWorkspaceCreditsAvailable);
       }

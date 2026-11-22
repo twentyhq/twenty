@@ -81,7 +81,6 @@ export const openAiChatThreadStream = ({
   const liveReactionRevisionsAtom =
     aiChatMessageReactionRevisionsFamilyState.atomFamily(familyKey);
 
-  // Changes made while unsubscribed were missed, so fetches must fill them in again
   store.set(liveReactionRevisionsAtom, {});
 
   let throttleTimer: ReturnType<typeof setTimeout> | null = null;
@@ -237,7 +236,6 @@ export const openAiChatThreadStream = ({
 
     const fetchId = ++lastFetchId;
 
-    // Marked before the query starts, so the fetched messages never replace the stream in between
     store.set(isFetchingAtom, true);
 
     try {
@@ -255,7 +253,6 @@ export const openAiChatThreadStream = ({
         return;
       }
 
-      // A live snapshot is at least as recent as a fetch, which may have been read before it
       const liveReactionRevisions = store.get(liveReactionRevisionsAtom);
 
       for (const message of data.chatMessages ?? []) {
@@ -364,7 +361,6 @@ export const openAiChatThreadStream = ({
       }
 
       case 'keepalive': {
-        // The reconnect heartbeat also reloads shared link access, catching edit downgrades without polling.
         if (
           !isDefined(lastPermissionsRefreshAt) ||
           Date.now() - lastPermissionsRefreshAt >=
@@ -462,7 +458,6 @@ export const openAiChatThreadStream = ({
           handleAccessDenied();
           return;
         }
-        // The server yields the first keepalive itself on subscribe, so only later events prove pub/sub delivers
         if (hasReceivedInitialKeepalive) {
           lastBroadcastAt = Date.now();
           store.set(recoveryAttemptsAtom, 0);
@@ -511,11 +506,11 @@ export const openAiChatThreadStream = ({
     const isPending =
       isStreamOpen || store.get(replyStatusAtom) === 'awaiting-first-chunk';
     const recoveryAttempts = store.get(recoveryAttemptsAtom);
+    const isRecoveryInProgress = recoveryAttempts !== 0;
 
-    // Resubscribing clears the pending flags, so a started recovery runs until a broadcast arrives or it gives up
     if (
       isAccessDenied ||
-      (!isPending && recoveryAttempts === 0) ||
+      (!isPending && !isRecoveryInProgress) ||
       Date.now() - lastBroadcastAt <= AI_CHAT_STREAM_LIVENESS_TIMEOUT_IN_MS
     ) {
       return;
@@ -541,7 +536,6 @@ export const openAiChatThreadStream = ({
 
   let isDisplayedSyncScheduled = false;
 
-  // Deferred: a chunk sets the status to idle for an instant before streaming
   const syncDisplayedMessages = () => {
     if (isDisplayedSyncScheduled) {
       return;
@@ -579,7 +573,6 @@ export const openAiChatThreadStream = ({
       aiChatThreadRecordFamilySelector.selectorFamily(threadId),
     );
 
-    // A live update or a favorite can store a thread before it is fetched
     if (isDefined(storedThread?.conversationType)) {
       return;
     }

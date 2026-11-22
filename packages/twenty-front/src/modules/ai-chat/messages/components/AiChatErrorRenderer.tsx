@@ -19,7 +19,6 @@ export const AiChatErrorRenderer = ({ error }: AiChatErrorRendererProps) => {
   const { retryChatMessage } = useRetryChatMessage();
   const canRetry = useCanRetryCurrentAiChatTurn();
 
-  // Rendered by AiChatNoMoreBillingCreditsBanner, which stays mounted for this error.
   if (isAiChatCreditsExhaustedError(error)) {
     return null;
   }
@@ -39,7 +38,6 @@ export const AiChatErrorRenderer = ({ error }: AiChatErrorRendererProps) => {
     return <AiChatUserCreditsExhaustedMessage error={error} />;
   }
 
-  // The quota is checked before persistence, so a retry repeats the same refusal
   if (getAiChatQuotaExhaustedKind(error) === 'limit') {
     return <AiChatQuotaLimitExhaustedMessage error={error} />;
   }
