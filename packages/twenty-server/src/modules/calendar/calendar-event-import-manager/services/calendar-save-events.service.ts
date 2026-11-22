@@ -24,7 +24,7 @@ import { buildCalendarEventParticipantSaveOperations } from 'src/modules/calenda
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
-import { computeChannelAssociationAccountOwner } from 'src/modules/connected-account/utils/compute-channel-association-account-owner.util';
+import { computeChannelAssociationSource } from 'src/modules/connected-account/utils/compute-channel-association-source.util';
 
 @Injectable()
 export class CalendarSaveEventsService {
@@ -57,10 +57,11 @@ export class CalendarSaveEventsService {
         'flatWorkspaceMemberMaps',
       ]);
 
-    const accountOwner = computeChannelAssociationAccountOwner({
+    const associationSource = computeChannelAssociationSource({
       accountOwnerFieldUniversalIdentifier:
         STANDARD_OBJECTS.calendarChannelEventAssociation.fields.accountOwner
           .universalIdentifier,
+      channelHandle: calendarChannel.handle,
       flatFieldMetadataMaps,
       flatWorkspaceMemberMaps,
       userWorkspaceId: connectedAccount.userWorkspaceId,
@@ -219,7 +220,7 @@ export class CalendarSaveEventsService {
           calendarEventIdToLinkByEventExternalId,
           otherChannelIdsByCalendarEventId,
           otherCalendarChannels,
-          accountOwner,
+          associationSource,
         });
 
         const existingParticipants =

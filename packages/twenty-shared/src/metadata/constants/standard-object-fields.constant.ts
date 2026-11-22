@@ -575,6 +575,9 @@ export const STANDARD_OBJECT_FIELDS = {
     accountOwner: {
       universalIdentifier: 'c87b6c5a-d761-4d8f-b62e-af459a11ba1f',
     },
+    handle: {
+      universalIdentifier: 'f3a2e285-abb7-44c5-a4bf-06a44101a33f',
+    },
   },
   calendarEventParticipant: {
     ...buildStandardObjectSystemFields(
@@ -989,6 +992,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     accountOwner: {
       universalIdentifier: 'a54a940b-d839-4c47-a02c-5bab7e300841',
+    },
+    handle: {
+      universalIdentifier: 'ff274ea7-69e0-4d54-9389-8ec8f14c7073',
     },
   },
   messageChannelMessageAssociationMessageFolder: {

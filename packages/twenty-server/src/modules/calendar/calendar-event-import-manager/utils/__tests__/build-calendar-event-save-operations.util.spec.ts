@@ -70,14 +70,14 @@ const buildPlan = ({
   existingCalendarEvents,
   calendarEventIdToLinkByEventExternalId = new Map(),
   otherCalendarChannels = [],
-  accountOwner = {},
+  associationSource = {},
 }: {
   fetchedCalendarEvents: FetchedCalendarEvent[];
   existingAssociations: CalendarChannelEventAssociationWorkspaceEntity[];
   existingCalendarEvents: ComparableCalendarEvent[];
   calendarEventIdToLinkByEventExternalId?: Map<string, string>;
   otherCalendarChannels?: CalendarEventSharingChannel[];
-  accountOwner?: { accountOwnerId?: string | null };
+  associationSource?: { accountOwnerId?: string | null; handle?: string };
 }) =>
   buildCalendarEventSaveOperations({
     fetchedCalendarEvents,
@@ -90,7 +90,7 @@ const buildPlan = ({
       [CALENDAR_EVENT_ID, otherCalendarChannels.map(({ id }) => id)],
     ]),
     otherCalendarChannels,
-    accountOwner,
+    associationSource,
   });
 
 describe('buildCalendarEventSaveOperations', () => {
@@ -274,7 +274,7 @@ describe('buildCalendarEventSaveOperations', () => {
     expect(plan.participantsOfNewEvents).toHaveLength(1);
   });
 
-  it('records the account owner on inserted and linked associations', () => {
+  it('records the account owner and the channel handle on inserted and linked associations', () => {
     const plan = buildPlan({
       fetchedCalendarEvents: [
         buildFetchedCalendarEvent(),
@@ -285,24 +285,30 @@ describe('buildCalendarEventSaveOperations', () => {
       calendarEventIdToLinkByEventExternalId: new Map([
         ['linked-event-id', CALENDAR_EVENT_ID],
       ]),
-      accountOwner: { accountOwnerId: 'workspace-member-id' },
+      associationSource: {
+        accountOwnerId: 'workspace-member-id',
+        handle: CHANNEL_HANDLE,
+      },
     });
 
     expect(
       plan.saveOperations.associationsToInsert.map(
-        ({ eventExternalId, accountOwnerId }) => ({
+        ({ eventExternalId, accountOwnerId, handle }) => ({
           eventExternalId,
           accountOwnerId,
+          handle,
         }),
       ),
     ).toEqual([
       {
         eventExternalId: 'external-event-id',
         accountOwnerId: 'workspace-member-id',
+        handle: CHANNEL_HANDLE,
       },
       {
         eventExternalId: 'linked-event-id',
         accountOwnerId: 'workspace-member-id',
+        handle: CHANNEL_HANDLE,
       },
     ]);
   });

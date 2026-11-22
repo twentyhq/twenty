@@ -21,10 +21,14 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 // Each batch commits on its own so a large mailbox never holds every row lock at once
 const BACKFILL_BATCH_SIZE = 5000;
 
-const ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIERS = [
+const FIELD_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.calendarChannelEventAssociation.fields.accountOwner
     .universalIdentifier,
+  STANDARD_OBJECTS.calendarChannelEventAssociation.fields.handle
+    .universalIdentifier,
   STANDARD_OBJECTS.messageChannelMessageAssociation.fields.accountOwner
+    .universalIdentifier,
+  STANDARD_OBJECTS.messageChannelMessageAssociation.fields.handle
     .universalIdentifier,
   STANDARD_OBJECTS.workspaceMember.fields
     .accountOwnerForCalendarChannelEventAssociations.universalIdentifier,
@@ -54,11 +58,11 @@ const ASSOCIATION_BACKFILLS = [
 
 @RegisteredWorkspaceCommand('2.61.0', 1795350723008)
 @Command({
-  name: 'upgrade:2-61:add-channel-association-account-owner',
+  name: 'upgrade:2-61:add-channel-association-account-owner-and-handle',
   description:
-    'Add the account owner relation to calendar and message channel associations and backfill it from each channel owner',
+    'Add the account owner relation and the channel handle to calendar and message channel associations and backfill them from each channel',
 })
-export class AddChannelAssociationAccountOwnerCommand extends ProvisionedWorkspaceCommandRunner {
+export class AddChannelAssociationAccountOwnerAndHandleCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -96,7 +100,7 @@ export class AddChannelAssociationAccountOwnerCommand extends ProvisionedWorkspa
 
     if (isDefined(missingObjectUniversalIdentifier)) {
       this.logger.warn(
-        `Object ${missingObjectUniversalIdentifier} not found for workspace ${workspaceId}, skipping account owner creation`,
+        `Object ${missingObjectUniversalIdentifier} not found for workspace ${workspaceId}, skipping account owner and handle creation`,
       );
 
       return;
@@ -119,7 +123,7 @@ export class AddChannelAssociationAccountOwnerCommand extends ProvisionedWorkspa
             standardFlatEntityMaps:
               standardAllFlatEntityMaps.flatFieldMetadataMaps,
             existingFlatEntityMaps: flatFieldMetadataMaps,
-            universalIdentifiers: ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIERS,
+            universalIdentifiers: FIELD_UNIVERSAL_IDENTIFIERS,
           }),
         flatEntityToDelete: [],
         flatEntityToUpdate: [],
@@ -144,7 +148,7 @@ export class AddChannelAssociationAccountOwnerCommand extends ProvisionedWorkspa
 
     if (isDryRun) {
       this.logger.log(
-        `[DRY RUN] Would create ${creationSummary} and backfill account owners for workspace ${workspaceId}`,
+        `[DRY RUN] Would create ${creationSummary} and backfill account owners and handles for workspace ${workspaceId}`,
       );
 
       return;
@@ -165,7 +169,7 @@ export class AddChannelAssociationAccountOwnerCommand extends ProvisionedWorkspa
 
       if (result.status === 'fail') {
         throw new Error(
-          `Failed to create the channel association account owner for workspace ${workspaceId}: ${JSON.stringify(result, null, 2)}`,
+          `Failed to create the channel association account owner and handle for workspace ${workspaceId}: ${JSON.stringify(result, null, 2)}`,
         );
       }
 
@@ -175,11 +179,14 @@ export class AddChannelAssociationAccountOwnerCommand extends ProvisionedWorkspa
     }
 
     for (const associationBackfill of ASSOCIATION_BACKFILLS) {
-      await this.backfillAccountOwners({ workspaceId, ...associationBackfill });
+      await this.backfillAssociationSources({
+        workspaceId,
+        ...associationBackfill,
+      });
     }
   }
 
-  private async backfillAccountOwners({
+  private async backfillAssociationSources({
     workspaceId,
     associationTableName,
     channelIdColumnName,
@@ -193,14 +200,14 @@ export class AddChannelAssociationAccountOwnerCommand extends ProvisionedWorkspa
     const schemaName = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
 
     // A member who left and rejoined keeps a soft-deleted row beside the live one
-    const channelOwners = await this.dataSource.query<
-      { channelId: string; workspaceMemberId: string }[]
+    const channelSources = await this.dataSource.query<
+      { channelId: string; handle: string; workspaceMemberId: string | null }[]
     >(
-      `SELECT channel.id AS "channelId", member.id AS "workspaceMemberId"
+      `SELECT channel.id AS "channelId", channel.handle AS "handle", member.id AS "workspaceMemberId"
        FROM core.${escapeIdentifier(coreChannelTableName)} channel
        JOIN core."connectedAccount" account ON account.id = channel."connectedAccountId"
        JOIN core."userWorkspace" "userWorkspace" ON "userWorkspace".id = account."userWorkspaceId"
-       JOIN ${schemaName}."workspaceMember" member
+       LEFT JOIN ${schemaName}."workspaceMember" member
          ON member."userId" = "userWorkspace"."userId" AND member."deletedAt" IS NULL
        WHERE channel."workspaceId" = $1`,
       [workspaceId],
@@ -210,19 +217,20 @@ export class AddChannelAssociationAccountOwnerCommand extends ProvisionedWorkspa
     const channelIdColumn = escapeIdentifier(channelIdColumnName);
     let updatedCount = 0;
 
-    for (const { channelId, workspaceMemberId } of channelOwners) {
+    for (const { channelId, handle, workspaceMemberId } of channelSources) {
       let batchCount: number;
 
+      // A channel whose owner left has no member to record, so the handle marks the rows already done
       do {
         [, batchCount] = await this.dataSource.query<[unknown[], number]>(
           `UPDATE ${associationTable}
-           SET "accountOwnerId" = $1
+           SET "accountOwnerId" = $1, "handle" = $2
            WHERE id IN (
              SELECT id FROM ${associationTable}
-             WHERE ${channelIdColumn} = $2 AND "accountOwnerId" IS NULL
+             WHERE ${channelIdColumn} = $3 AND "handle" IS NULL
              LIMIT ${BACKFILL_BATCH_SIZE}
            )`,
-          [workspaceMemberId, channelId],
+          [workspaceMemberId, handle, channelId],
         );
 
         updatedCount += batchCount;
@@ -230,7 +238,7 @@ export class AddChannelAssociationAccountOwnerCommand extends ProvisionedWorkspa
     }
 
     this.logger.log(
-      `Workspace ${workspaceId}: backfilled the account owner of ${updatedCount} ${associationTableName} row(s)`,
+      `Workspace ${workspaceId}: backfilled the account owner and handle of ${updatedCount} ${associationTableName} row(s)`,
     );
   }
 }

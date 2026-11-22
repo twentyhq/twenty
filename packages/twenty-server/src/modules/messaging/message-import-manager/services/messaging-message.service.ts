@@ -46,7 +46,10 @@ type MessageAccumulator = {
     | 'direction'
   > &
     Partial<
-      Pick<MessageChannelMessageAssociationWorkspaceEntity, 'accountOwnerId'>
+      Pick<
+        MessageChannelMessageAssociationWorkspaceEntity,
+        'accountOwnerId' | 'handle'
+      >
     >;
 };
 @Injectable()
@@ -60,14 +63,17 @@ export class MessagingMessageService {
     messageChannelId,
     transactionScope,
     workspaceId,
-    accountOwner,
+    associationSource,
   }: {
     messages: MessageWithParticipants[];
     messageChannelId: string;
     transactionScope: WorkspaceTransactionScope;
     workspaceId: string;
-    accountOwner: Partial<
-      Pick<MessageChannelMessageAssociationWorkspaceEntity, 'accountOwnerId'>
+    associationSource: Partial<
+      Pick<
+        MessageChannelMessageAssociationWorkspaceEntity,
+        'accountOwnerId' | 'handle'
+      >
     >;
   }): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
@@ -245,7 +251,7 @@ export class MessagingMessageService {
               messageExternalId: message.externalId,
               messageThreadExternalId: message.messageThreadExternalId,
               direction: message.direction,
-              ...accountOwner,
+              ...associationSource,
             };
 
             associationToCreateByMessageId.set(

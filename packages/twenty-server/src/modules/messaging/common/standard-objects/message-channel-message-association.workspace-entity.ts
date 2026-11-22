@@ -17,4 +17,5 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
   >;
   accountOwner: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
   accountOwnerId: string | null;
+  handle: string | null;
 }

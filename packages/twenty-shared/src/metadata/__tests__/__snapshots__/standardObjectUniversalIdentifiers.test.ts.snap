@@ -803,6 +803,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "eventExternalId": {
         "universalIdentifier": "20202020-9ec8-48bb-b279-21d0734a75a1",
       },
+      "handle": {
+        "universalIdentifier": "f3a2e285-abb7-44c5-a4bf-06a44101a33f",
+      },
       "id": {
         "universalIdentifier": "091cefe6-349d-57a5-8a88-1e1d8bf99937",
       },
@@ -2080,6 +2083,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "direction": {
         "universalIdentifier": "75c9b0f7-9e76-44d4-a2f9-47051e61eec7",
+      },
+      "handle": {
+        "universalIdentifier": "ff274ea7-69e0-4d54-9389-8ec8f14c7073",
       },
       "id": {
         "universalIdentifier": "a433efbf-d423-5a5a-9615-143b0abd53ed",

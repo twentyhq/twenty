@@ -1,4 +1,4 @@
-import { computeChannelAssociationAccountOwner } from 'src/modules/connected-account/utils/compute-channel-association-account-owner.util';
+import { computeChannelAssociationSource } from 'src/modules/connected-account/utils/compute-channel-association-source.util';
 
 const ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER = 'account-owner-field';
 
@@ -15,40 +15,46 @@ const flatWorkspaceMemberMaps = {
   idByUserWorkspaceId: { 'user-workspace-id': 'workspace-member-id' },
 };
 
-describe('computeChannelAssociationAccountOwner', () => {
-  it('returns the member behind the connected account', () => {
+describe('computeChannelAssociationSource', () => {
+  it('returns the member behind the connected account and the channel handle', () => {
     expect(
-      computeChannelAssociationAccountOwner({
+      computeChannelAssociationSource({
         accountOwnerFieldUniversalIdentifier:
           ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
+        channelHandle: 'tim@apple.dev',
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
           ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
         ]),
         flatWorkspaceMemberMaps,
         userWorkspaceId: 'user-workspace-id',
       }),
-    ).toEqual({ accountOwnerId: 'workspace-member-id' });
+    ).toEqual({
+      accountOwnerId: 'workspace-member-id',
+      handle: 'tim@apple.dev',
+    });
   });
 
   it('returns a null owner when no member matches the connected account', () => {
     expect(
-      computeChannelAssociationAccountOwner({
+      computeChannelAssociationSource({
         accountOwnerFieldUniversalIdentifier:
           ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
+        channelHandle: 'tim@apple.dev',
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([
           ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
         ]),
         flatWorkspaceMemberMaps,
         userWorkspaceId: 'unknown-user-workspace-id',
       }),
-    ).toEqual({ accountOwnerId: null });
+    ).toEqual({ accountOwnerId: null, handle: 'tim@apple.dev' });
   });
 
-  it('leaves the owner out while the workspace does not have the field yet', () => {
+  it('leaves both fields out while the workspace does not have them yet', () => {
     expect(
-      computeChannelAssociationAccountOwner({
+      computeChannelAssociationSource({
         accountOwnerFieldUniversalIdentifier:
           ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
+        channelHandle: 'tim@apple.dev',
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([]),
         flatWorkspaceMemberMaps,
         userWorkspaceId: 'user-workspace-id',

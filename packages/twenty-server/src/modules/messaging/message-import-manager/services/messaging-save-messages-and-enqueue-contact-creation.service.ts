@@ -26,7 +26,7 @@ import {
   type Participant,
   type ParticipantWithMessageId,
 } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
-import { computeChannelAssociationAccountOwner } from 'src/modules/connected-account/utils/compute-channel-association-account-owner.util';
+import { computeChannelAssociationSource } from 'src/modules/connected-account/utils/compute-channel-association-source.util';
 import { MessagingMessageAttachmentService } from 'src/modules/messaging/message-import-manager/services/messaging-message-attachment.service';
 import { MessagingMessageFolderAssociationService } from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-association.service';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
@@ -80,10 +80,11 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
         'flatFieldMetadataMaps',
         'flatWorkspaceMemberMaps',
       ]);
-    const accountOwner = computeChannelAssociationAccountOwner({
+    const associationSource = computeChannelAssociationSource({
       accountOwnerFieldUniversalIdentifier:
         STANDARD_OBJECTS.messageChannelMessageAssociation.fields.accountOwner
           .universalIdentifier,
+      channelHandle: messageChannel.handle,
       flatFieldMetadataMaps,
       flatWorkspaceMemberMaps,
       userWorkspaceId: connectedAccount.userWorkspaceId,
@@ -103,7 +104,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
             messageChannelId: messageChannel.id,
             transactionScope,
             workspaceId,
-            accountOwner,
+            associationSource,
           });
 
           const folderAssociations: MessageChannelMessageAssociationFolderAssociation[] =

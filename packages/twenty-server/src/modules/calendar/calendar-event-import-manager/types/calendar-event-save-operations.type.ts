@@ -17,7 +17,10 @@ export type CalendarEventSaveOperations = {
     | 'recurringEventExternalId'
   > &
     Partial<
-      Pick<CalendarChannelEventAssociationWorkspaceEntity, 'accountOwnerId'>
+      Pick<
+        CalendarChannelEventAssociationWorkspaceEntity,
+        'accountOwnerId' | 'handle'
+      >
     >)[];
   associationsToUpdate: {
     criteria: string;

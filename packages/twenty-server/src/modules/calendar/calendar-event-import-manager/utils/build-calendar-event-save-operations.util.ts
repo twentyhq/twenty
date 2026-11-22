@@ -23,7 +23,7 @@ export const buildCalendarEventSaveOperations = ({
   calendarEventIdToLinkByEventExternalId,
   otherChannelIdsByCalendarEventId,
   otherCalendarChannels,
-  accountOwner,
+  associationSource,
 }: {
   fetchedCalendarEvents: FetchedCalendarEvent[];
   existingAssociations: CalendarChannelEventAssociationWorkspaceEntity[];
@@ -33,7 +33,7 @@ export const buildCalendarEventSaveOperations = ({
   calendarEventIdToLinkByEventExternalId: Map<string, string>;
   otherChannelIdsByCalendarEventId: Map<string, string[]>;
   otherCalendarChannels: CalendarEventSharingChannel[];
-  accountOwner: { accountOwnerId?: string | null };
+  associationSource: { accountOwnerId?: string | null; handle?: string };
 }): CalendarEventSavePlan => {
   const existingAssociationByEventExternalId = new Map(
     existingAssociations.map((association) => [
@@ -116,7 +116,7 @@ export const buildCalendarEventSaveOperations = ({
         eventExternalId,
         calendarChannelId,
         recurringEventExternalId,
-        ...accountOwner,
+        ...associationSource,
       });
       participantsOfNewEvents.push(
         ...participants.map((participant) => ({
@@ -189,7 +189,7 @@ export const buildCalendarEventSaveOperations = ({
       eventExternalId,
       calendarChannelId,
       recurringEventExternalId,
-      ...accountOwner,
+      ...associationSource,
     });
     participantsOfLinkedEvents.push(...eventParticipants);
   }

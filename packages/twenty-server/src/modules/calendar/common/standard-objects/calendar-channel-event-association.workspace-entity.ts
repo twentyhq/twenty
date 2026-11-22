@@ -11,4 +11,5 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspac
   calendarEventId: string;
   accountOwner: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
   accountOwnerId: string | null;
+  handle: string | null;
 }
