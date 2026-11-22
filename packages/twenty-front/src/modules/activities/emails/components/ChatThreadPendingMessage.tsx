@@ -3,10 +3,9 @@ import { useLingui } from '@lingui/react/macro';
 
 import { ChatFilePreview } from '@/chat/components/ChatFilePreview';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
+import { ChatMessageBubbleContent } from '@/chat/components/ChatMessageBubbleContent';
 import { ChatMessageReceipt } from '@/chat/components/ChatMessageReceipt';
 import { StyledChatMessageBubble } from '@/chat/components/StyledChatMessageBubble';
-import { StyledChatMessageBubbleContent } from '@/chat/components/StyledChatMessageBubbleContent';
-import { StyledChatMessageMeta } from '@/chat/components/StyledChatMessageMeta';
 import { StyledChatMessageRow } from '@/chat/components/StyledChatMessageRow';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isNonEmptyArray } from 'twenty-shared/utils';
@@ -60,14 +59,15 @@ export const ChatThreadPendingMessage = ({
     <StyledChatMessageRow isRightAligned>
       {isNonEmptyString(pendingMessage.text) && (
         <StyledPendingBubble isUser isDimmed={isSending}>
-          <StyledChatMessageBubbleContent>
-            {pendingMessage.text}
-            {pendingMessage.status !== 'failed' && (
-              <StyledChatMessageMeta>
+          <ChatMessageBubbleContent
+            meta={
+              pendingMessage.status !== 'failed' ? (
                 <ChatMessageReceipt status={pendingMessage.status} />
-              </StyledChatMessageMeta>
-            )}
-          </StyledChatMessageBubbleContent>
+              ) : undefined
+            }
+          >
+            {pendingMessage.text}
+          </ChatMessageBubbleContent>
         </StyledPendingBubble>
       )}
       {isNonEmptyArray(pendingMessage.files) && (

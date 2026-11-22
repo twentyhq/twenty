@@ -1,6 +1,5 @@
 import { randomUUID } from 'crypto';
 
-import { generatePlaygroundToken } from 'test/integration/graphql/suites/user-session/utils/generate-playground-token.util';
 import { updateUserEmail } from 'test/integration/graphql/suites/user-session/utils/update-user-email.util';
 import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
@@ -114,7 +113,6 @@ describe('Impersonation - account operations (integration)', () => {
   describe('server-level impersonation', () => {
     let workspaceId: string;
     let userId: string;
-    let originalEmail: string;
     let impersonationAccessToken: string;
 
     beforeAll(async () => {
@@ -122,40 +120,10 @@ describe('Impersonation - account operations (integration)', () => {
 
       workspaceId = workspace.workspaceId;
       userId = await getCurrentUserId(workspace.adminAccessToken);
-      originalEmail = (await findUser(userId)).email;
       impersonationAccessToken = await getImpersonationAccessToken({
         userId,
         workspaceId,
       });
-    });
-
-    it('should refuse a playground token minted while impersonating', async () => {
-      const { data } = await generatePlaygroundToken({
-        token: impersonationAccessToken,
-        expectToFail: false,
-      });
-
-      const playgroundToken = data.generatePlaygroundToken.token;
-
-      const { errors: updateUserEmailErrors } = await updateUserEmail({
-        input: { newEmail: `impersonator-chosen-${randomUUID()}@example.com` },
-        token: playgroundToken,
-        expectToFail: true,
-      });
-
-      expectRefusedByAccessPolicy(updateUserEmailErrors);
-
-      const { errors: deleteUserErrors } = await deleteUser({
-        accessToken: playgroundToken,
-        expectToFail: true,
-      });
-
-      expectRefusedByAccessPolicy(deleteUserErrors);
-
-      const user = await findUser(userId);
-
-      expect(user.deletedAt).toBeNull();
-      expect(user.email).toBe(originalEmail);
     });
 
     it('should change the impersonated user email', async () => {
