@@ -11,7 +11,10 @@ export const buildLogicFunctionFailureHandlerJob = ({
   failureHandler,
   error,
 }: {
-  failedLogicFunctionPayload: LogicFunctionJobPayload;
+  failedLogicFunctionPayload: Pick<
+    LogicFunctionJobPayload,
+    'payload' | 'workspaceId' | 'userId' | 'userWorkspaceId'
+  >;
   failedFlatLogicFunction: Pick<
     FlatLogicFunction,
     'universalIdentifier' | 'applicationId' | 'applicationUniversalIdentifier'

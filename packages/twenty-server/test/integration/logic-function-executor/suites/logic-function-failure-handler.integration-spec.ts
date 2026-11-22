@@ -89,6 +89,11 @@ describe('Logic function failure handler (integration)', () => {
   let failingFunctionId: string;
   let failureHandlerId: string;
 
+  const getFailureHandlerJobs = async () =>
+    (
+      await logicFunctionInspectionQueue.getJobs(['completed', 'failed'])
+    ).filter((job) => job.data.logicFunctionId === failureHandlerId);
+
   beforeAll(async () => {
     redisConnection = new IORedis(
       process.env.REDIS_QUEUE_URL ??
@@ -175,9 +180,7 @@ describe('Logic function failure handler (integration)', () => {
 
     await waitForAllJobsToFinish();
 
-    const failureHandlerJobs = (
-      await logicFunctionInspectionQueue.getJobs(['completed', 'failed'])
-    ).filter((job) => job.data.logicFunctionId === failureHandlerId);
+    const failureHandlerJobs = await getFailureHandlerJobs();
 
     expect(failureHandlerJobs).toHaveLength(1);
     expect(await failureHandlerJobs[0].getState()).toBe('completed');
@@ -193,12 +196,7 @@ describe('Logic function failure handler (integration)', () => {
   }, 120000);
 
   it('does not run a failure handler when a failure handler run fails', async () => {
-    const getFailureHandlerJobCount = async () =>
-      (
-        await logicFunctionInspectionQueue.getJobs(['completed', 'failed'])
-      ).filter((job) => job.data.logicFunctionId === failureHandlerId).length;
-
-    const failureHandlerJobCountBefore = await getFailureHandlerJobCount();
+    const failureHandlerJobCountBefore = (await getFailureHandlerJobs()).length;
 
     await global.app
       .get<MessageQueueService>(
@@ -222,7 +220,7 @@ describe('Logic function failure handler (integration)', () => {
 
     await waitForAllJobsToFinish();
 
-    expect(await getFailureHandlerJobCount()).toBe(
+    expect((await getFailureHandlerJobs()).length).toBe(
       failureHandlerJobCountBefore,
     );
   }, 120000);
