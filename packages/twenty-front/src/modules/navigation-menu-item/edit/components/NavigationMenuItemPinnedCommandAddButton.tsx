@@ -53,7 +53,7 @@ export const NavigationMenuItemPinnedCommandAddButton = () => {
           <StyledDisabledAddCommand>{addCommandItem}</StyledDisabledAddCommand>
         </Tooltip>
       ) : (
-        <DropdownRoot dropdownId="navigation-add-pinned-command" type="picker">
+        <DropdownRoot dropdownId="navigation-add-pinned-command" type="menu">
           <Dropdown.Trigger
             nativeButton={false}
             render={<div tabIndex={-1}>{addCommandItem}</div>}
@@ -61,7 +61,8 @@ export const NavigationMenuItemPinnedCommandAddButton = () => {
           <DropdownContent
             side="right"
             align="start"
-            width={GenericDropdownContentWidth.Large}
+            width={GenericDropdownContentWidth.ExtraLarge}
+            aria-label={t`Add command`}
           >
             <Dropdown.Section>
               {pinnableCommandOptions.map((option) => (

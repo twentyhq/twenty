@@ -1,12 +1,14 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { navigationMenuItemsWithHiddenSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsWithHiddenSelector';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterWorkspaceNavigationMenuItems';
 import { getNavigationMenuItemMovedPosition } from '@/navigation-menu-item/common/utils/getNavigationMenuItemMovedPosition';
-import { getPinnedCommandNavigationMenuItems } from '@/navigation-menu-item/display/command/utils/getPinnedCommandNavigationMenuItems';
+import { getPinnedCommands } from '@/navigation-menu-item/display/command/utils/getPinnedCommands';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useRestoreHiddenNavigationMenuItem } from '@/navigation-menu-item/edit/hooks/useRestoreHiddenNavigationMenuItem';
+import { findRestorablePinnedCommandNavigationMenuItem } from '@/navigation-menu-item/edit/utils/findRestorablePinnedCommandNavigationMenuItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const usePinnedCommandsEdit = () => {
@@ -17,13 +19,20 @@ export const usePinnedCommandsEdit = () => {
   const navigationMenuItemsWithHidden = useAtomStateValue(
     navigationMenuItemsWithHiddenSelector,
   );
+  const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
 
-  const pinnedCommandNavigationMenuItems =
-    getPinnedCommandNavigationMenuItems(currentItems);
+  const pinnedCommands = getPinnedCommands({
+    navigationMenuItems: currentItems,
+    commandMenuItems,
+  });
+  const pinnedCommandSiblings = pinnedCommands.flatMap(
+    ({ navigationMenuItemId }) =>
+      currentItems.filter(({ id }) => id === navigationMenuItemId),
+  );
 
   const getMovedPosition = (navigationMenuItemId: string, offset: -1 | 1) =>
     getNavigationMenuItemMovedPosition({
-      siblings: pinnedCommandNavigationMenuItems,
+      siblings: pinnedCommandSiblings,
       itemId: navigationMenuItemId,
       offset,
     });
@@ -36,29 +45,28 @@ export const usePinnedCommandsEdit = () => {
     }
   };
 
-  const remove = (navigationMenuItemId: string) =>
-    void deleteItems([navigationMenuItemId]);
-
   const isPinned = (commandMenuItemId: string) =>
-    pinnedCommandNavigationMenuItems.some(
-      (navigationMenuItem) =>
-        navigationMenuItem.commandMenuItemId === commandMenuItemId,
+    pinnedCommands.some(
+      ({ commandMenuItem }) => commandMenuItem.id === commandMenuItemId,
     );
 
   const pin = (commandMenuItemId: string) => {
-    const currentItemIds = new Set(currentItems.map(({ id }) => id));
-    const hiddenPinnedCommand = filterWorkspaceNavigationMenuItems(
-      navigationMenuItemsWithHidden,
-    ).find(
-      (navigationMenuItem) =>
-        navigationMenuItem.type === NavigationMenuItemType.COMMAND &&
-        navigationMenuItem.commandMenuItemId === commandMenuItemId &&
-        !currentItemIds.has(navigationMenuItem.id),
-    );
+    if (isPinned(commandMenuItemId)) {
+      return;
+    }
 
-    if (isDefined(hiddenPinnedCommand)) {
+    const restorablePinnedCommand =
+      findRestorablePinnedCommandNavigationMenuItem({
+        savedWorkspaceNavigationMenuItems: filterWorkspaceNavigationMenuItems(
+          navigationMenuItemsWithHidden,
+        ),
+        draftNavigationMenuItems: currentItems,
+        commandMenuItemId,
+      });
+
+    if (isDefined(restorablePinnedCommand)) {
       restoreHiddenNavigationMenuItem({
-        navigationMenuItemId: hiddenPinnedCommand.id,
+        navigationMenuItemId: restorablePinnedCommand.id,
         fallbackParentId: null,
       });
       return;
@@ -72,7 +80,8 @@ export const usePinnedCommandsEdit = () => {
       isDefined(getMovedPosition(navigationMenuItemId, offset)),
     moveUp: (navigationMenuItemId: string) => move(navigationMenuItemId, -1),
     moveDown: (navigationMenuItemId: string) => move(navigationMenuItemId, 1),
-    remove,
+    remove: (navigationMenuItemId: string) =>
+      void deleteItems([navigationMenuItemId]),
     isPinned,
     pin,
   };

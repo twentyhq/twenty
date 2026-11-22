@@ -31,7 +31,6 @@ export const usePinnableCommandOptions = (): NavigationMenuItemOption[] => {
         label: commandMenuItem.shortLabel ?? commandMenuItem.label,
         Icon: getIcon(commandMenuItem.icon),
         isAlreadyInSidebar,
-        isDisabled: isAlreadyInSidebar,
         onClick: () => pin(commandMenuItem.id),
       },
     ];

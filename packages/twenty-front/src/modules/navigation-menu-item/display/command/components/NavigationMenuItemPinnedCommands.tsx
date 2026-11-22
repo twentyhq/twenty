@@ -1,5 +1,6 @@
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
+import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { NavigationMenuItemPinnedCommand } from '@/navigation-menu-item/display/command/components/NavigationMenuItemPinnedCommand';
@@ -12,7 +13,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useContext, useMemo } from 'react';
 
 const NavigationMenuItemPinnedCommandList = () => {
-  const { commandMenuItems } = useContext(CommandMenuContext);
+  const { commandMenuItems: availableCommandMenuItems } =
+    useContext(CommandMenuContext);
+  const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
@@ -22,9 +25,16 @@ const NavigationMenuItemPinnedCommandList = () => {
     () =>
       getPinnedCommands({
         navigationMenuItems: workspaceNavigationMenuItems,
-        commandMenuItems,
+        commandMenuItems: isLayoutCustomizationModeEnabled
+          ? commandMenuItems
+          : availableCommandMenuItems,
       }),
-    [workspaceNavigationMenuItems, commandMenuItems],
+    [
+      workspaceNavigationMenuItems,
+      isLayoutCustomizationModeEnabled,
+      commandMenuItems,
+      availableCommandMenuItems,
+    ],
   );
 
   return (
