@@ -3,9 +3,8 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ScopedRelationAlias } from '@/object-record/record-column-scope/types/ScopedRelationAlias';
 import { getRelationScopeRecordFiltersAndSorts } from '@/object-record/record-column-scope/utils/getRelationScopeRecordFiltersAndSorts';
-import { isScopedRelationColumn } from '@/object-record/record-column-scope/utils/isScopedRelationColumn';
+import { getScopedRelationColumn } from '@/object-record/record-column-scope/utils/getScopedRelationColumn';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/utils/findRelationTargetObjectMetadataItem';
 import { getQueryVariablesFromFiltersAndSorts } from '@/views/utils/getQueryVariablesFromFiltersAndSorts';
 import { type RecordFilterValueDependencies } from 'twenty-shared/types';
 import {
@@ -37,26 +36,22 @@ export const getScopedRelationAliases = ({
       fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
     const { relationScope } = recordField;
 
-    if (
-      !isDefined(fieldMetadataItem) ||
-      !isDefined(relationScope) ||
-      !isScopedRelationColumn({
-        fieldMetadataItem,
-        recordField,
-        isLookupColumnsEnabled,
-      })
-    ) {
+    if (!isDefined(fieldMetadataItem) || !isDefined(relationScope)) {
       return [];
     }
 
-    const relationObjectMetadataItem = findRelationTargetObjectMetadataItem({
+    const scopedRelationColumn = getScopedRelationColumn({
+      recordField,
       fieldMetadataItem,
       objectMetadataItems,
+      isLookupColumnsEnabled,
     });
 
-    if (!isDefined(relationObjectMetadataItem)) {
+    if (!isDefined(scopedRelationColumn)) {
       return [];
     }
+
+    const { relationObjectMetadataItem } = scopedRelationColumn;
 
     const { filter, orderBy } = getQueryVariablesFromFiltersAndSorts({
       ...getRelationScopeRecordFiltersAndSorts({
