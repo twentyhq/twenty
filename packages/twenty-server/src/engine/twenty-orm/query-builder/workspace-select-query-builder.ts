@@ -47,7 +47,7 @@ import {
   type OrderByClause,
   type SelectClause,
   type UnreadableColumnConditions,
-  type UnreadableColumnProjectedValues,
+  type UnreadableColumnPlaceholders,
   type UnreadableRelationConditions,
   type SelectStatementState,
   type WhereClause,
@@ -106,9 +106,9 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
   private readonly aliasesWithUnreadableColumnsApplied = new Set<string>();
   private readonly unreadableColumnConditions: UnreadableColumnConditions = {};
-  private readonly unreadableColumnProjectedValues: UnreadableColumnProjectedValues =
+  private readonly unreadableColumnPlaceholders: UnreadableColumnPlaceholders =
     {};
-  private unreadableColumnReplacementCount = 0;
+  private unreadableColumnPlaceholderCount = 0;
   private readonly unreadableRelationConditions: UnreadableRelationConditions =
     {};
 
@@ -763,12 +763,12 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     alias,
     columnNames,
     condition,
-    replacementByColumnName = {},
+    placeholderByColumnName = {},
   }: {
     alias: string;
     columnNames: string[];
     condition: SQLCondition;
-    replacementByColumnName?: Record<string, string>;
+    placeholderByColumnName?: Record<string, string>;
   }): this {
     const unreadableColumnConditionsOfAlias = (this.unreadableColumnConditions[
       alias
@@ -779,14 +779,14 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         condition.sql,
       );
 
-      const replacement = replacementByColumnName[columnName];
+      const placeholder = placeholderByColumnName[columnName];
 
-      if (isDefined(replacement)) {
-        const parameterName = `unreadableColumnReplacement_${this.unreadableColumnReplacementCount++}`;
+      if (isDefined(placeholder)) {
+        const parameterName = `unreadableColumnPlaceholder_${this.unreadableColumnPlaceholderCount++}`;
 
-        (this.unreadableColumnProjectedValues[alias] ??= {})[columnName] =
+        (this.unreadableColumnPlaceholders[alias] ??= {})[columnName] =
           `:${parameterName}`;
-        this.setParameter(parameterName, replacement);
+        this.setParameter(parameterName, placeholder);
       }
     }
 
@@ -1365,7 +1365,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       extraSelectClauses: this.extraSelectClauses,
       columnSelections: this.resolveColumnSelections(),
       unreadableColumnConditions: this.unreadableColumnConditions,
-      unreadableColumnProjectedValues: this.unreadableColumnProjectedValues,
+      unreadableColumnPlaceholders: this.unreadableColumnPlaceholders,
       unreadableRelationConditions: this.unreadableRelationConditions,
       joinClauses: this.joinClauses,
       whereClauses: this.whereClauses,

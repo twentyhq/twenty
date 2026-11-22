@@ -51,7 +51,7 @@ export class RecordFieldPermissionsReadService {
     {
       fieldMetadataIds: string[];
       sqlCondition: SQLCondition;
-      replacementByFieldMetadataId: Record<string, string>;
+      placeholderByFieldMetadataId: Record<string, string>;
     }[]
   > {
     if (!isDefined(principals)) {
@@ -91,7 +91,7 @@ export class RecordFieldPermissionsReadService {
       }),
     );
 
-    const replacementByFieldMetadataId = Object.fromEntries(
+    const placeholderByFieldMetadataId = Object.fromEntries(
       flatObjectMetadata.fieldIds
         .filter((fieldMetadataId) => {
           const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
@@ -116,7 +116,7 @@ export class RecordFieldPermissionsReadService {
       rlsRuleSQLConditions,
     ).map((unreadableFieldsSQLCondition) => ({
       ...unreadableFieldsSQLCondition,
-      replacementByFieldMetadataId,
+      placeholderByFieldMetadataId,
     }));
   }
 

@@ -1985,7 +1985,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       for (const {
         fieldMetadataIds,
         sqlCondition,
-        replacementByFieldMetadataId,
+        placeholderByFieldMetadataId,
       } of unreadableFieldsSQLConditions) {
         const unreadableColumnEntries = columnEntries.filter(
           ([, fieldMetadataId]) => fieldMetadataIds.includes(fieldMetadataId),
@@ -1997,14 +1997,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
             ([columnName]) => columnName,
           ),
           condition: sqlCondition,
-          replacementByColumnName: Object.fromEntries(
+          placeholderByColumnName: Object.fromEntries(
             unreadableColumnEntries
               .filter(([, fieldMetadataId]) =>
-                isDefined(replacementByFieldMetadataId[fieldMetadataId]),
+                isDefined(placeholderByFieldMetadataId[fieldMetadataId]),
               )
               .map(([columnName, fieldMetadataId]) => [
                 columnName,
-                replacementByFieldMetadataId[fieldMetadataId],
+                placeholderByFieldMetadataId[fieldMetadataId],
               ]),
           ),
         });

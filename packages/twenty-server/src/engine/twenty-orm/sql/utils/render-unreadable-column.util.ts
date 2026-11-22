@@ -1,12 +1,12 @@
 export const renderUnreadableColumn = ({
   quotedColumn,
   unreadableConditions,
-  replacement = 'NULL',
+  placeholder = 'NULL',
 }: {
   quotedColumn: string;
   unreadableConditions: string[];
-  replacement?: string;
+  placeholder?: string;
 }): string =>
   `CASE WHEN ${unreadableConditions
     .map((unreadableCondition) => `(${unreadableCondition})`)
-    .join(' OR ')} THEN ${replacement} ELSE ${quotedColumn} END`;
+    .join(' OR ')} THEN ${placeholder} ELSE ${quotedColumn} END`;
