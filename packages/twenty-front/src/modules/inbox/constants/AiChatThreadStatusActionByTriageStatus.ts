@@ -1,4 +1,4 @@
-import { type AiChatThreadTriageStatus } from '@/ai-chat/threads/types/AiChatThreadTriageStatus';
+import { type AiChatThreadTriageStatus } from '@/inbox/types/AiChatThreadTriageStatus';
 import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
 export const AI_CHAT_THREAD_STATUS_ACTION_BY_TRIAGE_STATUS: Record<

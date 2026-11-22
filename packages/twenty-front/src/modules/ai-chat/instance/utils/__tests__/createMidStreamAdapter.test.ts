@@ -1,6 +1,6 @@
 import { type UIMessageChunk } from 'ai';
 
-import { createMidStreamAdapter } from '@/ai-chat/utils/createMidStreamAdapter';
+import { createMidStreamAdapter } from '@/ai-chat/instance/utils/createMidStreamAdapter';
 
 const adapt = async (chunks: UIMessageChunk[]) => {
   const adaptedChunks: UIMessageChunk[] = [];

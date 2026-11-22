@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatSkeletonLoader } from '@/ai-chat/components/internal/AiChatSkeletonLoader';
+import { AiChatSkeletonLoader } from '@/ai-chat/components/AiChatSkeletonLoader';
 import { NavigationDrawerInboxChannelsSection } from '@/inbox/components/NavigationDrawerInboxChannelsSection';
 import { NavigationDrawerInboxFavoritesSection } from '@/inbox/components/NavigationDrawerInboxFavoritesSection';
 import { NavigationDrawerInboxThreadSection } from '@/inbox/components/NavigationDrawerInboxThreadSection';

@@ -3,7 +3,7 @@ import { useStore } from 'jotai';
 import { useEffect, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AI_CHAT_THREAD_EVENT_STREAM_REMOVAL_DEBOUNCE_IN_MS } from '@/ai-chat/constants/AiChatThreadEventStreamRemovalDebounceInMs';
+import { AI_CHAT_THREAD_EVENT_STREAM_REMOVAL_DEBOUNCE_IN_MS } from '@/ai-chat/instance/constants/AiChatThreadEventStreamRemovalDebounceInMs';
 import { useIsAiChatRuntimeEnabled } from '@/ai-chat/hooks/useIsAiChatRuntimeEnabled';
 import { useLoadAiChatThread } from '@/ai-chat/threads/hooks/useLoadAiChatThread';
 import { aiChatRequiredThreadListenersState } from '@/ai-chat/states/aiChatRequiredThreadListenersState';

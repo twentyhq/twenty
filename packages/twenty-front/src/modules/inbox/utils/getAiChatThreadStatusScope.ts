@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AiChatChannel } from '@/ai-chat/threads/types/AiChatChannel';
-import { type AiChatThreadStatusScope } from '@/ai-chat/threads/types/AiChatThreadStatusScope';
+import { type AiChatThreadStatusScope } from '@/inbox/types/AiChatThreadStatusScope';
 
 export const getAiChatThreadStatusScope = ({
   isInChannel,

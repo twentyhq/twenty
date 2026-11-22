@@ -1,5 +1,5 @@
-import { type OutputSchemaField } from '@/ai/types/OutputSchemaField';
-import { createDefaultOutputSchemaField } from '@/ai/utils/createDefaultOutputSchemaField';
+import { type OutputSchemaField } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/OutputSchemaField';
+import { createDefaultOutputSchemaField } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/createDefaultOutputSchemaField';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
@@ -11,8 +11,8 @@ import { IconPlus } from 'twenty-ui/icon';
 import { Collapsible } from 'twenty-ui/primitives/layout';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { AgentOutputFieldTypeSelector } from '@/ai/components/AgentOutputFieldTypeSelector';
-import { AgentOutputSchemaFieldHeader } from '@/ai/components/AgentOutputSchemaFieldHeader';
+import { AgentOutputFieldTypeSelector } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputFieldTypeSelector';
+import { AgentOutputSchemaFieldHeader } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaFieldHeader';
 import { useLingui } from '@lingui/react/macro';
 
 type AgentOutputSchemaBuilderProps = {

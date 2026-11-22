@@ -1,4 +1,4 @@
-import { type OutputSchemaField } from '@/ai/types/OutputSchemaField';
+import { type OutputSchemaField } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/OutputSchemaField';
 import {
   type AgentResponseFieldType,
   type AgentResponseSchema,

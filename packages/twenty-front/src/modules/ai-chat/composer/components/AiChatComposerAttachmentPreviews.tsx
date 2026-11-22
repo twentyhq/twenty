@@ -1,7 +1,7 @@
 import { ChatFilePreview } from '@/chat/components/ChatFilePreview';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
-import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/states/composer/aiChatComposerUploadingFilesFamilyState';
-import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/states/composer/aiChatComposerAttachmentsFamilyState';
+import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/composer/states/aiChatComposerUploadingFilesFamilyState';
+import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/composer/states/aiChatComposerAttachmentsFamilyState';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';

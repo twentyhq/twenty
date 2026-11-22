@@ -15,7 +15,7 @@ import {
 import { useToast } from 'twenty-ui/components/feedback';
 import { v4 } from 'uuid';
 
-import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/constants/AiChatNewThreadDefaultRecipients';
+import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/composer/constants/AiChatNewThreadDefaultRecipients';
 import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai-chat/composer/constants/AiChatRestoreEditorContentEventName';
 import { useAttachAiChatThreadToRecord } from '@/ai-chat/threads/hooks/useAttachAiChatThreadToRecord';
 import { useGetBrowsingContext } from '@/ai-chat/hooks/useGetBrowsingContext';
@@ -31,11 +31,11 @@ import { getAiChatMessageAuthor } from '@/ai-chat/messages/utils/getAiChatMessag
 import { getCanSendAiChatMessage } from '@/ai-chat/composer/utils/getCanSendAiChatMessage';
 import { getAiChatMessageQuoteSource } from '@/ai-chat/composer/utils/getAiChatMessageQuoteSource';
 import { prependAiChatQuoteToText } from '@/ai-chat/composer/utils/prependAiChatQuoteToText';
-import { aiChatThreadReplyLastBrowsingContextFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyLastBrowsingContextFamilyState';
-import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/states/composer/aiChatComposerUploadingFilesFamilyState';
+import { aiChatThreadReplyLastBrowsingContextFamilyState } from '@/ai-chat/composer/states/aiChatThreadReplyLastBrowsingContextFamilyState';
+import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/composer/states/aiChatComposerUploadingFilesFamilyState';
 import { aiChatSentMessageHandOffState } from '@/ai-chat/states/aiChatSentMessageHandOffState';
-import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/states/composer/aiChatComposerAttachmentsFamilyState';
-import { aiChatThreadReplyUnconfirmedFirstMessageFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyUnconfirmedFirstMessageFamilyState';
+import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/composer/states/aiChatComposerAttachmentsFamilyState';
+import { aiChatThreadReplyUnconfirmedFirstMessageFamilyState } from '@/ai-chat/composer/states/aiChatThreadReplyUnconfirmedFirstMessageFamilyState';
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { aiChatThreadReplyErrorFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyErrorFamilyState';
 import { aiChatThreadIsFetchingMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadIsFetchingMessagesFamilyState';
@@ -46,9 +46,9 @@ import { getAiChatReplyStatusUnlessStreaming } from '@/ai-chat/utils/getAiChatRe
 import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
 import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { aiChatRequiredThreadListenersState } from '@/ai-chat/states/aiChatRequiredThreadListenersState';
-import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/aiChatComposerNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { type AiChatNewThreadRecipients } from '@/ai-chat/types/AiChatNewThreadRecipients';
+import { type AiChatNewThreadRecipients } from '@/ai-chat/composer/types/AiChatNewThreadRecipients';
 import { type AiChatParticipantMention } from '@/ai-chat/composer/types/AiChatParticipantMention';
 import { type AiChatRestoreEditorContentEventDetail } from '@/ai-chat/composer/types/AiChatRestoreEditorContentEventDetail';
 import { getConversationTargetsFromSerializedDocument } from '@/ai-chat/composer/utils/getConversationTargetsFromSerializedDocument';

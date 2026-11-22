@@ -9,11 +9,11 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai-chat/threads/constants/AiChatThreadDetailsLabelWidthInPx';
-import { AiChatThreadFollowersField } from '@/ai-chat/threads/components/AiChatThreadFollowersField';
+import { AiChatThreadFollowersField } from '@/inbox/components/AiChatThreadFollowersField';
 import { AiChatThreadLabelsField } from '@/ai-chat/threads/components/AiChatThreadLabelsField';
-import { AiChatThreadStatusField } from '@/ai-chat/threads/components/AiChatThreadStatusField';
+import { AiChatThreadStatusField } from '@/inbox/components/AiChatThreadStatusField';
 import { type AiChatThreadLabel } from '@/ai-chat/threads/types/AiChatThreadLabel';
-import { type AiChatThreadStatusScope } from '@/ai-chat/threads/types/AiChatThreadStatusScope';
+import { type AiChatThreadStatusScope } from '@/inbox/types/AiChatThreadStatusScope';
 
 const StyledFields = styled.dl`
   background: ${themeCssVariables.background.primary};
