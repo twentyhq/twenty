@@ -2,6 +2,8 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
 import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { DeferredWorkspaceOperationHandlerDecorator } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-operation-handlers/decorators/deferred-workspace-operation-handler.decorator';
@@ -25,17 +27,30 @@ export class ComputeRecordAccessGroupIdsDeferredOperationHandlerService implemen
   }: DeferredWorkspaceOperationExecutionArgs<
     DeferredWorkspaceOperationPayload<'compute_recordAccessGroupIds'>
   >): Promise<void> {
-    for (const { objectMetadataId, isComputed } of objectComputes) {
+    for (const {
+      objectMetadataId,
+      accessGroupIdChanges,
+      afterRecordId = null,
+      isComputed,
+    } of objectComputes) {
       if (isComputed) {
         continue;
       }
 
-      await this.accessGroupPropagationPlanService.startNextObjectCompute(
-        workspaceId,
-      );
-      await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
-        { workspaceId, objectMetadataId },
-      );
+      if (isDefined(accessGroupIdChanges)) {
+        await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsAffectedByAccessGroupIdChanges(
+          {
+            workspaceId,
+            objectMetadataId,
+            afterRecordId,
+            ...accessGroupIdChanges,
+          },
+        );
+      } else {
+        await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
+          { workspaceId, objectMetadataId, afterRecordId },
+        );
+      }
       await this.accessGroupPropagationPlanService.completeNextObjectCompute(
         workspaceId,
       );

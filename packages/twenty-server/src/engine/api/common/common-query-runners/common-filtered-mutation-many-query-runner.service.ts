@@ -14,8 +14,11 @@ import {
   CommonExtendedInput,
   CommonInput,
   DeleteManyQueryArgs,
+  DeleteOneQueryArgs,
   DestroyManyQueryArgs,
+  DestroyOneQueryArgs,
   RestoreManyQueryArgs,
+  RestoreOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
@@ -41,6 +44,24 @@ export abstract class CommonFilteredMutationManyQueryRunnerService extends Commo
       filter: args.filter,
       selection: args.selectedFieldsResult,
       kind: this.mutationKind,
+    });
+  }
+
+  async runOnOneRecord(
+    args: Pick<
+      CommonExtendedInput<
+        DeleteOneQueryArgs | DestroyOneQueryArgs | RestoreOneQueryArgs
+      >,
+      'id' | 'selectedFieldsResult'
+    >,
+    queryRunnerContext: CommonExtendedQueryRunnerContext,
+  ): Promise<CommonQueryRunResult<ObjectRecord[]>> {
+    return this.runFilteredMutation({
+      queryRunnerContext,
+      filter: { id: { eq: args.id } },
+      selection: args.selectedFieldsResult,
+      kind: this.mutationKind,
+      shouldWriteAtLeastOneRecord: true,
     });
   }
 

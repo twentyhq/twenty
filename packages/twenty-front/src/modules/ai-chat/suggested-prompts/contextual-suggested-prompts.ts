@@ -59,7 +59,6 @@ export const RECORD_PAGE_SUGGESTED_PROMPTS: SuggestedPrompt[] = [
   },
 ];
 
-// Objects without an entry, custom ones included, fall back to RECORD_PAGE_SUGGESTED_PROMPTS.
 export const RECORD_PAGE_SUGGESTED_PROMPTS_BY_OBJECT_NAME_SINGULAR: Record<
   string,
   SuggestedPrompt[]

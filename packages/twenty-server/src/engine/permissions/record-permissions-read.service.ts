@@ -12,6 +12,8 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { assertUpdatedColumnsAreEditableOrThrow } from 'src/engine/permissions/internal/field-access/utils/assert-updated-columns-are-editable-or-throw.util';
@@ -100,6 +102,7 @@ export class RecordPermissionsReadService {
     private readonly privateRecordRepository: PrivateRecordRepository,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
     private readonly accessGroupReadService: AccessGroupReadService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async findRecordsActions({
@@ -139,6 +142,39 @@ export class RecordPermissionsReadService {
           canSoftDelete: isAllowed(recordId, 'softDelete'),
         },
       ]),
+    );
+  }
+
+  async findObjectMetadataIdsWithReadableRecords({
+    principals,
+  }: {
+    principals: PermissionsPrincipalsWithRolesContext;
+  }): Promise<Set<string>> {
+    const { flatObjectMetadataMaps } =
+      await this.permissionsMetadataMapsService.loadForPrincipals({
+        principals,
+      });
+
+    const objectMetadataIds = Object.values(
+      flatObjectMetadataMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .map(({ id }) => id);
+
+    const isReadableByObjectMetadataId = await Promise.all(
+      objectMetadataIds.map((objectMetadataId) =>
+        this.canAccessSomeRecords({
+          principals,
+          objectMetadataId,
+          operationType: 'read',
+        }),
+      ),
+    );
+
+    return new Set(
+      objectMetadataIds.filter(
+        (_objectMetadataId, index) => isReadableByObjectMetadataId[index],
+      ),
     );
   }
 
@@ -353,7 +389,7 @@ export class RecordPermissionsReadService {
       principalsRelatedRecordPathAccessGroupCompactIds,
     ] = await Promise.all([
       this.findPrincipalsAccessGroupCompactIds(objectAccessRequest),
-      this.accessGroupReadService.findPrincipalsRelatedRecordPathCompactIds(
+      this.accessGroupReadService.findPrincipalsRelatedRecordPathAccessGroupCompactIds(
         objectAccessRequest,
       ),
     ]);
@@ -364,8 +400,19 @@ export class RecordPermissionsReadService {
       principalsAccessGroupCompactIds,
       principalsRelatedRecordPathAccessGroupCompactIds,
     });
+    const isAccessExtendedByRelatedRecordPath =
+      canRelatedRecordPathExtendAccess(objectAccessRequest);
 
-    if (!canRelatedRecordPathExtendAccess(objectAccessRequest)) {
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.RecordPermissionsReadAccessCondition,
+      amount: 1,
+      attributes: {
+        strategy: resolveRecordsAccessSQLConditionStrategy(objectAccessRequest),
+        related_record_path: isAccessExtendedByRelatedRecordPath,
+      },
+    });
+
+    if (!isAccessExtendedByRelatedRecordPath) {
       return sqlCondition;
     }
 
@@ -395,7 +442,7 @@ export class RecordPermissionsReadService {
       return undefined;
     }
 
-    return this.accessGroupReadService.findPrincipalsCompactIds({
+    return this.accessGroupReadService.findPrincipalsAccessGroupCompactIds({
       principals: objectAccessRequest.principals,
       objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
       operationType: 'read',
@@ -723,7 +770,6 @@ export class RecordPermissionsReadService {
       buildEntrySQLCondition: (entry) =>
         this.buildEntrySQLCondition({
           principals,
-          metadataMaps,
           operationType,
           ...entry,
           hypotheticalRecordShareAccessLevel:

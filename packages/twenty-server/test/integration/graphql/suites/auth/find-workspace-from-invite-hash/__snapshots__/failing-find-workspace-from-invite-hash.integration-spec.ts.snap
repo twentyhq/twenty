@@ -1,0 +1,88 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`findWorkspaceFromInviteHash should fail (integration) when an unauthenticated caller selects defaultRole 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+  },
+  "locations": [
+    {
+      "column": 5,
+      "line": 4,
+    },
+  ],
+  "message": "Cannot query field "defaultRole" on type "WorkspaceFromInviteHash".",
+}
+`;
+
+exports[`findWorkspaceFromInviteHash should fail (integration) when an unauthenticated caller selects featureFlags 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+  },
+  "locations": [
+    {
+      "column": 5,
+      "line": 4,
+    },
+  ],
+  "message": "Cannot query field "featureFlags" on type "WorkspaceFromInviteHash".",
+}
+`;
+
+exports[`findWorkspaceFromInviteHash should fail (integration) when an unauthenticated caller selects installedApplications 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+  },
+  "locations": [
+    {
+      "column": 5,
+      "line": 4,
+    },
+  ],
+  "message": "Cannot query field "installedApplications" on type "WorkspaceFromInviteHash".",
+}
+`;
+
+exports[`findWorkspaceFromInviteHash should fail (integration) when an unauthenticated caller selects inviteHash 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+  },
+  "locations": [
+    {
+      "column": 5,
+      "line": 4,
+    },
+  ],
+  "message": "Cannot query field "inviteHash" on type "WorkspaceFromInviteHash".",
+}
+`;
+
+exports[`findWorkspaceFromInviteHash should fail (integration) when an unauthenticated caller selects workspaceMembersCount 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+  },
+  "locations": [
+    {
+      "column": 5,
+      "line": 4,
+    },
+  ],
+  "message": "Cannot query field "workspaceMembersCount" on type "WorkspaceFromInviteHash".",
+}
+`;
+
+exports[`findWorkspaceFromInviteHash should fail (integration) when the invite hash does not exist 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Workspace does not exist.",
+  },
+  "message": "Workspace does not exist",
+  "name": "UserInputError",
+}
+`;

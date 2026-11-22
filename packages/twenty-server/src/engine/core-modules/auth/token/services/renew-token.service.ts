@@ -54,6 +54,18 @@ export class RenewTokenService {
 
     const resolvedAuthProvider = authProvider ?? AuthProviderEnum.Password;
 
+    const isWorkspaceAgnosticRenewal =
+      isDefined(authProvider) &&
+      targetedTokenType === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC &&
+      !isDefined(workspaceId);
+
+    if (!isWorkspaceAgnosticRenewal && !isDefined(workspaceId)) {
+      throw new AuthException(
+        'Refresh token is not bound to a workspace',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const refreshToken = await this.appTokenRepository.manager.transaction(
       async (entityManager) => {
         await acquireUserAuthenticationLock({
@@ -107,24 +119,21 @@ export class RenewTokenService {
       },
     );
 
-    const accessToken =
-      isDefined(authProvider) &&
-      targetedTokenType === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC &&
-      !isDefined(workspaceId)
-        ? await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
-            {
-              userId: user.id,
-              authProvider,
-            },
-          )
-        : await this.accessTokenService.generateAccessToken({
+    const accessToken = isDefined(workspaceId)
+      ? await this.accessTokenService.generateAccessToken({
+          userId: user.id,
+          workspaceId,
+          authProvider: resolvedAuthProvider,
+          isImpersonating,
+          impersonatorUserWorkspaceId,
+          impersonatedUserWorkspaceId,
+        })
+      : await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
+          {
             userId: user.id,
-            workspaceId: workspaceId as string,
             authProvider: resolvedAuthProvider,
-            isImpersonating,
-            impersonatorUserWorkspaceId,
-            impersonatedUserWorkspaceId,
-          });
+          },
+        );
 
     return {
       accessOrWorkspaceAgnosticToken: accessToken,
