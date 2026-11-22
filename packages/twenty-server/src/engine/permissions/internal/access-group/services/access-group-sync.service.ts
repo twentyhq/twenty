@@ -58,6 +58,7 @@ export class AccessGroupSyncService {
         'flatFieldMetadataMaps',
         'userWorkspaceRoleMap',
         'flatWorkspaceMemberMaps',
+        'rlsWorkspaceMemberRelationValueMaps',
       ],
     );
     const { accessGroups: newAccessGroups, hasFailures } =

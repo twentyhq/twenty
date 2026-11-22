@@ -38,7 +38,7 @@ jest.mock('@/ai-chat/hooks/useSelectAiChatThreadFromNewChat', () => ({
 
 jest.mock('@/ai-chat/composer/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({
-    switchToNewChat: () => {
+    switchToNewAiChat: () => {
       jotaiStore.set(aiChatRequiredThreadListenersState.atom, {
         'side-panel': NEW_CHAT_THREAD_ID,
       });

@@ -12,6 +12,7 @@ import {
   buildChannelVisibilityRuleSyncLockKey,
   CHANNEL_VISIBILITY_RULE_SYNC_LOCK_OPTIONS,
 } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-rule-sync-lock.constant';
+import { CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-child-object-universal-identifiers.constant';
 import { buildChannelVisibilityObjectRecordsPermissions } from 'src/engine/permissions/channel-visibility/utils/build-channel-visibility-object-records-permissions.util';
 import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
 import { WorkspaceMemberIndividualRoleService } from 'src/engine/permissions/workspace-member-individual-role/services/workspace-member-individual-role.service';
@@ -40,6 +41,13 @@ export class ChannelVisibilityRuleSyncService {
   }
 
   private async syncWorkspaceWithLock(workspaceId: string): Promise<void> {
+    await this.writeOrRemoveRules(workspaceId);
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'rolesPermissions',
+    ]);
+  }
+
+  private async writeOrRemoveRules(workspaceId: string): Promise<void> {
     const { featureFlagsMap, flatWorkspaceMemberMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'featureFlagsMap',
@@ -106,7 +114,20 @@ export class ChannelVisibilityRuleSyncService {
                 ],
               },
             }),
-          ],
+            ...[
+              ...CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS,
+              STANDARD_OBJECTS.attachment.universalIdentifier,
+            ].map((objectUniversalIdentifier) => ({
+              objectUniversalIdentifier,
+            })),
+          ].map((objectRecordsPermissions) => ({
+            ...objectRecordsPermissions,
+            canReadAllRecords: false,
+            canCreateAllRecords: false,
+            canUpdateAllRecords: false,
+            canSoftDeleteAllRecords: false,
+            canDestroyAllRecords: false,
+          })),
         },
       })),
     });

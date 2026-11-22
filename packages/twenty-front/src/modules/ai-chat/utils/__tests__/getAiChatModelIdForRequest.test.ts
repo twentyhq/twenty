@@ -1,5 +1,5 @@
 import { aiChatUserSelectedModelTierState } from '@/ai-chat/states/aiChatUserSelectedModelTierState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
+import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 import { getAiChatModelIdForRequest } from '@/ai-chat/utils/getAiChatModelIdForRequest';
 import {
   jotaiStore,
@@ -32,7 +32,7 @@ describe('getAiChatModelIdForRequest', () => {
   });
 
   it('runs the workspace setup chat on the fast tier unless the user picked one', () => {
-    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    jotaiStore.set(isWorkspaceSetupChatActiveState.atom, true);
 
     expect(getAiChatModelIdForRequest(jotaiStore)).toBe('default-fast-model');
 

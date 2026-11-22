@@ -9,7 +9,6 @@ import {
   isWorkspaceMemberFieldCompatibleWithRlsPredicate,
 } from 'twenty-shared/utils';
 
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -18,6 +17,7 @@ import { type RecordAccessGroupSQLConditionMetadataMaps } from 'src/engine/permi
 import { type AccessGroupValueLookupKey } from 'src/engine/permissions/internal/access-group/value-lookup/types/access-group-value-lookup-key.type';
 import { buildMemberFieldKey } from 'src/engine/permissions/internal/rls/utils/build-member-field-key.util';
 import { findRelationJoinColumnsOrThrow } from 'src/engine/permissions/internal/rls/utils/find-relation-join-columns-or-throw.util';
+import { isManyToOneFlatFieldMetadata } from 'src/engine/twenty-orm/utils/is-many-to-one-flat-field-metadata.util';
 import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
 
 const SINGLE_VALUE_FIELD_TYPES: FieldMetadataType[] = [
@@ -25,11 +25,6 @@ const SINGLE_VALUE_FIELD_TYPES: FieldMetadataType[] = [
   FieldMetadataType.SELECT,
   FieldMetadataType.RELATION,
 ];
-
-const isManyToOneRelation = (fieldMetadata: OrmFlatFieldMetadata): boolean =>
-  fieldMetadata.type === FieldMetadataType.RELATION &&
-  isMorphOrRelationFlatFieldMetadata(fieldMetadata) &&
-  fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE;
 
 const findSingleValueColumnName = ({
   fieldMetadata,
@@ -49,7 +44,8 @@ const findSingleValueColumnName = ({
     return fieldMetadata.name;
   }
 
-  return isManyToOneRelation(fieldMetadata)
+  return isMorphOrRelationFlatFieldMetadata(fieldMetadata) &&
+    isManyToOneFlatFieldMetadata(fieldMetadata)
     ? findRelationJoinColumnsOrThrow({
         relationFieldMetadata: fieldMetadata,
         flatFieldMetadataMaps,
@@ -134,7 +130,8 @@ export const resolveAccessGroupValueLookupKey = ({
   if (
     !isRlsRelationHopEnabled(metadataMaps.featureFlagsMap) ||
     !isDefined(relationFieldMetadata) ||
-    !isManyToOneRelation(relationFieldMetadata) ||
+    relationFieldMetadata.type !== FieldMetadataType.RELATION ||
+    !isMorphOrRelationFlatFieldMetadata(relationFieldMetadata) ||
     !isDefined(targetFlatObjectMetadata)
   ) {
     return null;

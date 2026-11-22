@@ -13,6 +13,8 @@ import { canRelatedRecordPathExtendAccess } from 'src/engine/permissions/interna
 import { type RlsWorkspaceMember } from 'src/engine/permissions/internal/rls/types/rls-workspace-member.type';
 import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/internal/principal/utils/is-permission-main-principal-workspace-member.util';
 import { AccessGroupReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group-read.repository';
+import { attachRlsRelationValues } from 'src/engine/permissions/internal/rls/utils/attach-rls-relation-values.util';
+import { findWorkspaceMemberRelationPredicates } from 'src/engine/permissions/internal/rls/utils/find-workspace-member-relation-predicates.util';
 import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -99,11 +101,30 @@ export class AccessGroupReadService {
       return undefined;
     }
 
-    const { flatWorkspaceMemberMaps } =
+    const { flatWorkspaceMemberMaps, rolesPermissions } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkspaceMemberMaps',
+        'rolesPermissions',
       ]);
-    return flatWorkspaceMemberMaps.byId[mainPrincipal.workspaceMemberId];
+    const workspaceMember =
+      flatWorkspaceMemberMaps.byId[mainPrincipal.workspaceMemberId];
+
+    if (
+      !isDefined(workspaceMember) ||
+      !isNonEmptyArray(findWorkspaceMemberRelationPredicates(rolesPermissions))
+    ) {
+      return workspaceMember;
+    }
+
+    const { rlsWorkspaceMemberRelationValueMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'rlsWorkspaceMemberRelationValueMaps',
+      ]);
+
+    return attachRlsRelationValues({
+      workspaceMember,
+      rlsWorkspaceMemberRelationValueMaps,
+    });
   }
 
   private async findCompactIds({

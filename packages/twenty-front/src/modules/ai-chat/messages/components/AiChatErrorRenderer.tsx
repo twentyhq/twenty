@@ -3,7 +3,7 @@ import { AiChatErrorMessage } from '@/ai-chat/components/AiChatErrorMessage';
 import { AiChatQuotaLimitExhaustedMessage } from '@/ai-chat/usage/components/AiChatQuotaLimitExhaustedMessage';
 import { AiChatUserCreditsExhaustedMessage } from '@/ai-chat/messages/components/AiChatUserCreditsExhaustedMessage';
 import { useCanRetryCurrentAiChatTurn } from '@/ai-chat/messages/hooks/useCanRetryCurrentAiChatTurn';
-import { useRetryChatMessage } from '@/ai-chat/messages/hooks/useRetryChatMessage';
+import { useRetryAiChatMessage } from '@/ai-chat/messages/hooks/useRetryAiChatMessage';
 import { type AiChatError } from '@/ai-chat/types/AiChatError';
 import { AiChatErrorCode } from '@/ai-chat/utils/aiChatErrorCode';
 import { getAiChatQuotaExhaustedKind } from '@/ai-chat/usage/utils/getAiChatQuotaExhaustedKind';
@@ -16,10 +16,9 @@ type AiChatErrorRendererProps = {
 };
 
 export const AiChatErrorRenderer = ({ error }: AiChatErrorRendererProps) => {
-  const { retryChatMessage } = useRetryChatMessage();
+  const { retryChatMessage } = useRetryAiChatMessage();
   const canRetry = useCanRetryCurrentAiChatTurn();
 
-  // Rendered by AiChatNoMoreBillingCreditsBanner, which stays mounted for this error.
   if (isAiChatCreditsExhaustedError(error)) {
     return null;
   }
@@ -39,7 +38,6 @@ export const AiChatErrorRenderer = ({ error }: AiChatErrorRendererProps) => {
     return <AiChatUserCreditsExhaustedMessage error={error} />;
   }
 
-  // The quota is checked before persistence, so a retry repeats the same refusal
   if (getAiChatQuotaExhaustedKind(error) === 'limit') {
     return <AiChatQuotaLimitExhaustedMessage error={error} />;
   }

@@ -5,7 +5,7 @@ import { useIsMobile } from 'twenty-ui/utilities';
 
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
+import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 import { getAiChatPageSidePanelContinuation } from '@/ai-chat/utils/getAiChatPageSidePanelContinuation';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 
@@ -39,7 +39,7 @@ export const useContinueAiChatPageInSidePanel = () => {
         return false;
       }
 
-      store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+      store.set(isWorkspaceSetupChatActiveState.atom, false);
 
       if (continuation.type === 'endWorkspaceSetupChat') {
         return false;

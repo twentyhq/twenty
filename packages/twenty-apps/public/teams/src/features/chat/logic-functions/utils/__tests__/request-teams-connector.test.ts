@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-sdk/utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { TeamsConnectorRequestError } from 'src/features/chat/logic-functions/types/teams-connector-request-error';
 import { requestTeamsConnector } from 'src/features/chat/logic-functions/utils/request-teams-connector';
 
 const SERVICE_URL = 'https://smba.trafficmanager.net/amer/';
@@ -136,16 +137,20 @@ describe('requestTeamsConnector', () => {
       }),
     );
 
-    await expect(
-      requestTeamsConnector({
-        serviceUrl: SERVICE_URL,
-        path: '/v3/conversations/a/activities',
-        method: 'POST',
-        accessToken: ACCESS_TOKEN,
-      }),
-    ).rejects.toThrow(
-      '403 Forbidden - {"error":{"code":"BotNotInConversationRoster"}}',
-    );
+    const failure = await requestTeamsConnector({
+      serviceUrl: SERVICE_URL,
+      path: '/v3/conversations/a/activities',
+      method: 'POST',
+      accessToken: ACCESS_TOKEN,
+    }).catch((error: unknown) => error);
+
+    expect(failure).toBeInstanceOf(TeamsConnectorRequestError);
+    expect(failure).toMatchObject({
+      status: 403,
+      message: expect.stringContaining(
+        '403 Forbidden - {"error":{"code":"BotNotInConversationRoster"}}',
+      ),
+    });
   });
 
   it('should retry a throttled request with a growing delay until it succeeds', async () => {

@@ -2,7 +2,7 @@ import { useLocation } from 'react-router-dom';
 
 import { aiChatThreadParticipantsAreLoadedSelector } from '@/ai-chat/threads/states/selectors/aiChatThreadParticipantsAreLoadedSelector';
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
-import { inboxThreadInboxStatusByThreadIdFamilySelector } from '@/inbox/states/selectors/inboxThreadInboxStatusByThreadIdFamilySelector';
+import { inboxThreadStatusByThreadIdFamilySelector } from '@/inbox/states/selectors/inboxThreadStatusByThreadIdFamilySelector';
 import { getInboxThreadTriageStatus } from '@/inbox/utils/getInboxThreadTriageStatus';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -36,7 +36,7 @@ export const useInboxThreadTriage = ({
     ? (inboxSelectedChannelView?.channelId ?? null)
     : (channelIdOutsideInbox ?? null);
   const { [threadId]: inboxStatus } = useAtomFamilySelectorValue(
-    inboxThreadInboxStatusByThreadIdFamilySelector,
+    inboxThreadStatusByThreadIdFamilySelector,
     { threadIds: [threadId], channelId },
   );
   const isInChannel = inboxStatus?.isChannelCopy ?? false;

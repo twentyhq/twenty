@@ -2,7 +2,6 @@
 
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
-import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-computation-metadata-maps.type';
 import { findRolesAndRulesUnableToReadField } from 'src/engine/permissions/internal/access-group/utils/find-roles-and-rules-unable-to-read-field.util';
 import { buildPrivateRecordStateSQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-private-record-state-sql-condition.util';
@@ -21,7 +20,6 @@ export const buildRelatedRecordPathAccessGroupIdsExpression = ({
   targetTableAlias,
   pathIndex,
   resolvedPath: { hops, isInherent, sourceFlatObjectMetadata },
-  accessGroups,
   metadataMaps,
 }: {
   workspaceId: string;
@@ -31,7 +29,6 @@ export const buildRelatedRecordPathAccessGroupIdsExpression = ({
     ResolvedRelatedRecordPath,
     'hops' | 'isInherent' | 'sourceFlatObjectMetadata'
   >;
-  accessGroups: AccessGroup[];
   metadataMaps: Pick<
     RecordAccessGroupComputationMetadataMaps,
     'rolesPermissions' | 'featureFlagsMap'
@@ -47,14 +44,8 @@ export const buildRelatedRecordPathAccessGroupIdsExpression = ({
     hopTableAliases,
     targetTableAlias,
   });
-  const sourceCompactIdsParameterName = `relatedRecordPathSourceCompactIds_${pathIndex}`;
+  const sourceObjectMetadataIdParameterName = `relatedRecordPathSourceObjectMetadataId_${pathIndex}`;
   const unreadableRelationParameterName = `relatedRecordPathUnreadableRelation_${pathIndex}`;
-  const sourceCompactIds = accessGroups
-    .filter(
-      ({ objectMetadataId }) =>
-        objectMetadataId === sourceFlatObjectMetadata.id,
-    )
-    .map(({ compactId }) => compactId);
   const {
     roleIds: roleIdsUnableToReadRelation,
     ruleIds: ruleIdsUnableToReadRelation,
@@ -86,7 +77,8 @@ export const buildRelatedRecordPathAccessGroupIdsExpression = ({
     ...(isInherent
       ? []
       : [
-          `${INHERITED_ACCESS_GROUP_ID} = ANY(CAST(:${sourceCompactIdsParameterName} AS integer[]))`,
+          // ARRAY() keeps it an init plan; an IN subquery becomes a join per record
+          `${INHERITED_ACCESS_GROUP_ID} = ANY(ARRAY(SELECT "compactId" FROM ${buildAccessGroupTableExpression(workspaceId)} WHERE "objectMetadataId" = :${sourceObjectMetadataIdParameterName}))`,
         ]),
     ...(isRelationUnreadable
       ? [
@@ -103,7 +95,9 @@ export const buildRelatedRecordPathAccessGroupIdsExpression = ({
     parameters: {
       ...(isInherent
         ? {}
-        : { [sourceCompactIdsParameterName]: sourceCompactIds }),
+        : {
+            [sourceObjectMetadataIdParameterName]: sourceFlatObjectMetadata.id,
+          }),
       ...(isRelationUnreadable
         ? {
             [unreadableRelationParameterName]: hops[0].relationFieldMetadataId,

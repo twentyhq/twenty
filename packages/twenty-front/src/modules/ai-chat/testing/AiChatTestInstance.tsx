@@ -5,7 +5,7 @@ import { useListenToAiChatThreadEvents } from '@/ai-chat/instance/hooks/useListe
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const AI_CHAT_TEST_INSTANCE_ID = 'ai-chat-test-instance';
+const AI_CHAT_TEST_INSTANCE_ID = 'ai-chat-test-instance';
 
 type AiChatTestInstanceProps = {
   children: ReactNode;

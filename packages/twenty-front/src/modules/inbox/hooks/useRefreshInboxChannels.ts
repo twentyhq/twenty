@@ -11,7 +11,6 @@ import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelected
 import { isInboxSelectedThreadListSourceAccessible } from '@/inbox/utils/isInboxSelectedThreadListSourceAccessible';
 import { GetAgentChatChannelsDocument } from '~/generated-metadata/graphql';
 
-// A failed load keeps what was shown, as the next change loads again
 export const useRefreshInboxChannels = () => {
   const apolloClient = useApolloClient();
   const store = useStore();

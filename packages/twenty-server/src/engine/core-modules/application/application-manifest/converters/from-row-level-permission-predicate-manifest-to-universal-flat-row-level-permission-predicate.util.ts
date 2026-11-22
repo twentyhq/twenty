@@ -37,6 +37,7 @@ export const fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermi
         null,
       workspaceMemberSubFieldName:
         rowLevelPermissionPredicateManifest.workspaceMemberSubFieldName ?? null,
+      workspaceMemberRelationFieldMetadataUniversalIdentifier: null,
       rowLevelPermissionPredicateGroupUniversalIdentifier:
         rowLevelPermissionPredicateManifest.predicateGroupUniversalIdentifier ??
         null,
