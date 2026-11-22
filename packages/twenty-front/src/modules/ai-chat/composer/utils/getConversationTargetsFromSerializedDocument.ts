@@ -1,35 +1,22 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  isDefined,
-  parseCanonicalTipTapJsonDocument,
-  TIPTAP_NODE_TYPES,
-  type TipTapNode,
-} from 'twenty-shared/utils';
 
+import { getAiChatMentionNodes } from '@/ai-chat/composer/utils/getAiChatMentionNodes';
 import { type AiChatConversationTarget } from '@/ai-chat/threads/types/AiChatConversationTarget';
-
-const getConversationTargetsFromNode = (
-  node: TipTapNode,
-): AiChatConversationTarget[] => {
-  const objectNameSingular = node.attrs?.objectNameSingular;
-  const recordId = node.attrs?.recordId;
-
-  const isConversationTargetMention =
-    node.type === TIPTAP_NODE_TYPES.MENTION_TAG &&
-    node.attrs?.isConversationTarget === true &&
-    isNonEmptyString(objectNameSingular) &&
-    isNonEmptyString(recordId);
-
-  return [
-    ...(isConversationTargetMention ? [{ objectNameSingular, recordId }] : []),
-    ...(node.content ?? []).flatMap(getConversationTargetsFromNode),
-  ];
-};
 
 export const getConversationTargetsFromSerializedDocument = (
   serializedDocument: string,
-): AiChatConversationTarget[] => {
-  const document = parseCanonicalTipTapJsonDocument(serializedDocument);
+): AiChatConversationTarget[] =>
+  getAiChatMentionNodes(serializedDocument).flatMap(({ attrs: attributes }) => {
+    const objectNameSingular = attributes?.objectNameSingular;
+    const recordId = attributes?.recordId;
 
-  return isDefined(document) ? getConversationTargetsFromNode(document) : [];
-};
+    if (
+      attributes?.isConversationTarget !== true ||
+      !isNonEmptyString(objectNameSingular) ||
+      !isNonEmptyString(recordId)
+    ) {
+      return [];
+    }
+
+    return [{ objectNameSingular, recordId }];
+  });
