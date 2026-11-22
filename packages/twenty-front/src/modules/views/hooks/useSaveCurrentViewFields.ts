@@ -90,8 +90,7 @@ export const useSaveCurrentViewFields = () => {
             }
 
             const hasRelationScopeChanged = !isDeeplyEqual(
-              getViewFieldRelationScopeInput(existingField.relationScope) ??
-                null,
+              removeTypenames(existingField.relationScope) ?? null,
               createViewFieldInput.relationScope ?? null,
             );
 
