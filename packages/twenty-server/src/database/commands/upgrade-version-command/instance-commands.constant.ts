@@ -324,7 +324,8 @@ import { AddNavigationMenuItemOverridableEntityFastInstanceCommand } from 'src/d
 import { DropConnectedAccountVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795178831970-drop-connected-account-visibility';
 import { AddAcceptedBillingPricesToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795183195168-add-accepted-billing-prices-to-application';
 import { AddWorkspaceMemberRelationToRowLevelPermissionPredicateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795297090000-add-workspace-member-relation-to-row-level-permission-predicate';
-import { AddLogicFunctionOnFailureLogicFunctionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795323384349-add-logic-function-on-failure-logic-function';
+import { AddWorkflowIsPrivateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-62/2-62-instance-command-fast-1795368198117-add-workflow-is-private';
+import { AddLogicFunctionOnFailureLogicFunctionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-62/2-62-instance-command-fast-1795374854779-add-logic-function-on-failure-logic-function';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -651,5 +652,6 @@ export const INSTANCE_COMMANDS = [
   DropConnectedAccountVisibilityFastInstanceCommand,
   AddAcceptedBillingPricesToApplicationFastInstanceCommand,
   AddWorkspaceMemberRelationToRowLevelPermissionPredicateFastInstanceCommand,
+  AddWorkflowIsPrivateFastInstanceCommand,
   AddLogicFunctionOnFailureLogicFunctionFastInstanceCommand,
 ];

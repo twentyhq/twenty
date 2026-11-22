@@ -3,13 +3,13 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatSkeletonLoader } from '@/ai-chat/components/internal/AiChatSkeletonLoader';
+import { AiChatSkeletonLoader } from '@/ai-chat/components/AiChatSkeletonLoader';
 import { NavigationDrawerInboxChannelsSection } from '@/inbox/components/NavigationDrawerInboxChannelsSection';
 import { NavigationDrawerInboxFavoritesSection } from '@/inbox/components/NavigationDrawerInboxFavoritesSection';
 import { NavigationDrawerInboxThreadSection } from '@/inbox/components/NavigationDrawerInboxThreadSection';
 import { NavigationDrawerInboxTriageSection } from '@/inbox/components/NavigationDrawerInboxTriageSection';
-import { NavigationDrawerDirectMessagesSection } from '@/inbox/components/NavigationDrawerDirectMessagesSection';
-import { OpenDirectMessageButton } from '@/inbox/components/OpenDirectMessageButton';
+import { NavigationDrawerInboxDirectMessagesSection } from '@/inbox/components/NavigationDrawerInboxDirectMessagesSection';
+import { InboxOpenDirectMessageButton } from '@/inbox/components/InboxOpenDirectMessageButton';
 import { INBOX_RECENT_THREADS_MAX_COUNT } from '@/inbox/constants/InboxRecentThreadsMaxCount';
 import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadClick';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
@@ -96,11 +96,11 @@ export const NavigationDrawerInboxContent = () => {
           />
           <NavigationDrawerInboxChannelsSection />
           {isDirectMessageEnabled && (
-            <NavigationDrawerDirectMessagesSection
+            <NavigationDrawerInboxDirectMessagesSection
               directMessages={inboxDirectMessageSidebarItems}
               currentThreadId={aiChatPageThreadId}
               onSelect={(threadId) => handleThreadClick({ id: threadId })}
-              memberPicker={<OpenDirectMessageButton />}
+              memberPicker={<InboxOpenDirectMessageButton />}
             />
           )}
           {recentThreads.length > 0 && (

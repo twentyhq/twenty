@@ -11,6 +11,7 @@ import {
   STOP_WORKFLOW_RUN_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
 } from 'src/database/commands/upgrade-version-command/2-61/constants/restore-not-started-workflow-run-status.constant';
 import { type RestoreNotStartedWorkflowRunStatusCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795287331295-restore-not-started-workflow-run-status.command';
+import { type DropNotStartedWorkflowRunStatusCommand } from 'src/database/commands/upgrade-version-command/2-62/2-62-workspace-command-1795369199914-drop-not-started-workflow-run-status.command';
 import { computeFieldMetadataOptionOperationsForFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/compute-field-metadata-option-operations-for-field-metadatas.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -152,15 +153,18 @@ const readState = async () => {
 describe('2-61 workspace command - restore not started workflow run status (integration)', () => {
   let command: RestoreNotStartedWorkflowRunStatusCommand;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     command =
       getAppProviderByClassName<RestoreNotStartedWorkflowRunStatusCommand>(
         'RestoreNotStartedWorkflowRunStatusCommand',
       );
+    await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
   });
 
   afterAll(async () => {
-    await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
+    await getAppProviderByClassName<DropNotStartedWorkflowRunStatusCommand>(
+      'DropNotStartedWorkflowRunStatusCommand',
+    ).runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
   });
 
   it('changes nothing on a workspace that still has the status', async () => {
