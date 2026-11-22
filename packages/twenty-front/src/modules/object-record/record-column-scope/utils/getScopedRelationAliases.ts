@@ -9,12 +9,33 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { getQueryVariablesFromFiltersAndSorts } from '@/views/utils/getQueryVariablesFromFiltersAndSorts';
 import {
   type RecordFilterValueDependencies,
+  type RecordGqlFields,
   type RecordGqlFieldsRelationWithArguments,
 } from 'twenty-shared/types';
 import {
   computeRelationWithArgumentsResponseKey,
   isDefined,
 } from 'twenty-shared/utils';
+
+const getRelatedRecordGqlFields = ({
+  scopedRelationColumn: { relationObjectMetadataItem, scopedRelationJunction },
+  objectMetadataItems,
+}: {
+  scopedRelationColumn: Pick<
+    ScopedRelationAlias,
+    'relationObjectMetadataItem' | 'scopedRelationJunction'
+  >;
+  objectMetadataItems: EnrichedObjectMetadataItem[];
+}): RecordGqlFields => {
+  if (isDefined(scopedRelationJunction)) {
+    return generateJunctionRelationGqlFields({
+      junctionConfig: scopedRelationJunction.junctionConfig,
+      objectMetadataItems,
+    });
+  }
+
+  return buildIdentifierGqlFields(relationObjectMetadataItem);
+};
 
 export const getScopedRelationAliases = ({
   recordFields,
@@ -79,12 +100,10 @@ export const getScopedRelationAliases = ({
       orderBy,
       first: relationScope.limit ?? undefined,
       recordGqlFields: {
-        ...(isDefined(scopedRelationJunction)
-          ? generateJunctionRelationGqlFields({
-              junctionConfig: scopedRelationJunction.junctionConfig,
-              objectMetadataItems,
-            })
-          : buildIdentifierGqlFields(relationObjectMetadataItem)),
+        ...getRelatedRecordGqlFields({
+          scopedRelationColumn,
+          objectMetadataItems,
+        }),
         ...(isDefined(lookupTarget) && {
           [lookupTarget.lookupTargetFieldMetadataItem.name]: true,
         }),
