@@ -1,6 +1,6 @@
 import { isNonEmptyArray } from '@sniptt/guards';
 
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
 export const aiChatHasMessageFamilySelector = createAtomFamilySelector<
@@ -11,5 +11,7 @@ export const aiChatHasMessageFamilySelector = createAtomFamilySelector<
   get:
     (threadId) =>
     ({ get }) =>
-      isNonEmptyArray(get(aiChatMessagesFamilyState, { threadId })),
+      isNonEmptyArray(
+        get(aiChatThreadDisplayedMessagesFamilyState, { threadId }),
+      ),
 });

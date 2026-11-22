@@ -42,24 +42,35 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ```json
 {
-  "event": "person.created",
-  "data": {
-    "id": "abc12345",
-    "firstName": "Alice",
-    "lastName": "Doe",
-    "email": "alice@example.com",
-    "createdAt": "2025-02-10T15:30:45Z",
-    "createdBy": "user_123"
+  "targetUrl": "https://example.com/webhooks/twenty",
+  "eventId": "6f1c2b7e-9a4d-4f3b-8c1e-2d5a7b9c0e1f",
+  "eventName": "person.updated",
+  "objectMetadata": {
+    "id": "0d9a1c3e-5b7f-4a2c-9e8d-1f3b5c7a9e0d",
+    "nameSingular": "person"
   },
-  "timestamp": "2025-02-10T15:30:50Z"
+  "workspaceId": "3b8e1f2a-7c4d-4e9b-a6f1-5d2c8e0b4a7f",
+  "webhookId": "9e4a2d1c-3b5f-4c7e-8a9d-0f1e2b3c4d5e",
+  "eventDate": "2025-02-10T15:30:50.000Z",
+  "workspaceMemberId": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+  "record": {
+    "id": "abc12345",
+    "name": { "firstName": "Alice", "lastName": "Doe" },
+    "jobTitle": "CTO"
+  },
+  "updatedFields": ["jobTitle"]
 }
 ```
 
-| الحقل           | الوصف                                           |
-| --------------- | ----------------------------------------------- |
-| `حدث`           | ما الذي حدث (على سبيل المثال، `person.created`) |
-| `بيانات`        | السجل الكامل الذي تم إنشاؤه/تحديثه/حذفه         |
-| `الطابع الزمني` | وقت حدوث الحدث (UTC)                            |
+| الحقل                         | الوصف                                                                                            |
+| ----------------------------- | ------------------------------------------------------------------------------------------------ |
+| `eventId`                     | المعرّف الفريد للحدث. يبقى كما هو إذا تم تسليم الحدث نفسه مرة أخرى، لذا استخدمه لتجاهل التكرارات |
+| `eventName`                   | ما الذي حدث (على سبيل المثال، `person.updated`)                                                  |
+| `objectMetadata`              | المعرّف والاسم المفرد لكائن السجل                                                                |
+| `السجل`                       | السجل بعد التغيير (وقبله، في حالة سجل تم إتلافه)                                                 |
+| `updatedFields`               | الحقول التي تغيّرت، في أحداث التحديث                                                             |
+| `eventDate`                   | وقت إعداد التسليم (UTC)                                                                          |
+| `userId`, `workspaceMemberId` | الجهة التي أجرت التغيير، عند توفر هذه المعلومة                                                   |
 
 <Note>
 استجب بحالة **HTTP 2xx** ‏(200-299) لتأكيد الاستلام. تُسجَّل الاستجابات غير 2xx كإخفاقات في التسليم.

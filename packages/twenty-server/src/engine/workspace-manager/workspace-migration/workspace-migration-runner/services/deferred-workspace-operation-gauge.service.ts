@@ -5,6 +5,7 @@ import { DataSource } from 'typeorm';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { DeferredWorkspaceOperationEntity } from 'src/engine/metadata-modules/deferred-workspace-operation/deferred-workspace-operation.entity';
+import { DEFERRED_WORKSPACE_OPERATION_NAMES } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferred-workspace-operation-names.constant';
 import { type DeferredWorkspaceOperationStatus } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-operation-status.type';
 
 const DEFERRED_WORKSPACE_OPERATIONS_METRIC_NAME =
@@ -26,29 +27,41 @@ export class DeferredWorkspaceOperationGaugeService implements OnModuleInit {
       metricName: DEFERRED_WORKSPACE_OPERATIONS_METRIC_NAME,
       options: {
         description:
-          'Number of deferred workspace operations, labelled by status.',
+          'Number of deferred workspace operations, labelled by operation_name and status.',
       },
       callback: async () => {
-        const operationCountByStatus = await this.getOperationCountByStatus();
+        const operationCounts = await this.getOperationCountByNameAndStatus();
 
-        return DEFERRED_WORKSPACE_OPERATION_STATUSES.map((status) => ({
-          value: operationCountByStatus.get(status) ?? 0,
-          attributes: { status },
-        }));
+        return Object.values(DEFERRED_WORKSPACE_OPERATION_NAMES).flatMap(
+          (operationName) =>
+            DEFERRED_WORKSPACE_OPERATION_STATUSES.map((status) => ({
+              value: operationCounts.get(`${operationName}:${status}`) ?? 0,
+              attributes: { operation_name: operationName, status },
+            })),
+        );
       },
       cacheValue: true,
     });
   }
 
-  private async getOperationCountByStatus(): Promise<Map<string, number>> {
+  private async getOperationCountByNameAndStatus(): Promise<
+    Map<string, number>
+  > {
     const rows = await this.coreDataSource
       .getRepository(DeferredWorkspaceOperationEntity)
       .createQueryBuilder('deferredWorkspaceOperation')
-      .select('deferredWorkspaceOperation.status', 'status')
+      .select('deferredWorkspaceOperation.name', 'name')
+      .addSelect('deferredWorkspaceOperation.status', 'status')
       .addSelect('COUNT(*)', 'operationCount')
-      .groupBy('deferredWorkspaceOperation.status')
-      .getRawMany<{ status: string; operationCount: string }>();
+      .groupBy('deferredWorkspaceOperation.name')
+      .addGroupBy('deferredWorkspaceOperation.status')
+      .getRawMany<{ name: string; status: string; operationCount: string }>();
 
-    return new Map(rows.map((row) => [row.status, Number(row.operationCount)]));
+    return new Map(
+      rows.map((row) => [
+        `${row.name}:${row.status}`,
+        Number(row.operationCount),
+      ]),
+    );
   }
 }

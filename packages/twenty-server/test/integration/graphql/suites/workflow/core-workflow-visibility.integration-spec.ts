@@ -139,6 +139,7 @@ const UPDATE_CORE_WORKFLOW_MUTATION = `
     updateCoreWorkflow(input: $input) {
       id
       name
+      isPrivate
       visibility
     }
   }
@@ -621,7 +622,7 @@ describe('core workflow visibility (e2e)', () => {
       });
 
       assertIsDefinedOrThrow(cachedFlatWorkflow);
-      expect(cachedFlatWorkflow.visibility).toBe(WorkflowVisibility.PRIVATE);
+      expect(cachedFlatWorkflow.isPrivate).toBe(true);
       expect(cachedFlatWorkflow.createdByUserWorkspaceId).not.toBeNull();
     });
 
@@ -652,7 +653,7 @@ describe('core workflow visibility (e2e)', () => {
               metadataName: 'workflow',
               recordId: updatedCoreWorkflowId,
               properties: expect.objectContaining({
-                updatedFields: ['visibility'],
+                updatedFields: ['isPrivate'],
               }),
             }),
           ]),
@@ -698,6 +699,38 @@ describe('core workflow visibility (e2e)', () => {
       });
     });
 
+    it('makes it private through isPrivate and reports both fields', async () => {
+      const response = await workflowGraphqlRequest(
+        UPDATE_CORE_WORKFLOW_MUTATION,
+        { input: { coreWorkflowId: updatedCoreWorkflowId, isPrivate: true } },
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.updateCoreWorkflow).toMatchObject({
+        isPrivate: true,
+        visibility: 'PRIVATE',
+      });
+    });
+
+    it('lets isPrivate win over a deprecated visibility sent with it', async () => {
+      const response = await workflowGraphqlRequest(
+        UPDATE_CORE_WORKFLOW_MUTATION,
+        {
+          input: {
+            coreWorkflowId: updatedCoreWorkflowId,
+            isPrivate: false,
+            visibility: WorkflowVisibility.PRIVATE,
+          },
+        },
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.updateCoreWorkflow).toMatchObject({
+        isPrivate: false,
+        visibility: 'WORKSPACE',
+      });
+    });
+
     it('still lets another member rename a workspace-visible workflow', async () => {
       const response = await asOtherMember(UPDATE_CORE_WORKFLOW_MUTATION, {
         input: {
@@ -723,7 +756,7 @@ describe('core workflow visibility (e2e)', () => {
         await createCoreWorkflow({ name: 'Ownerless Private Workflow' }));
 
       await global.testDataSource.query(
-        `UPDATE core."workflow" SET "createdByUserWorkspaceId" = NULL, "visibility" = 'PRIVATE' WHERE id = $1`,
+        `UPDATE core."workflow" SET "createdByUserWorkspaceId" = NULL, "isPrivate" = true WHERE id = $1`,
         [ownerlessPrivateCoreWorkflowId],
       );
 
@@ -735,7 +768,7 @@ describe('core workflow visibility (e2e)', () => {
     afterAll(async () => {
       if (isDefined(ownerlessPrivateCoreWorkflowId)) {
         await global.testDataSource.query(
-          `UPDATE core."workflow" SET "visibility" = 'WORKSPACE' WHERE id = $1`,
+          `UPDATE core."workflow" SET "isPrivate" = false WHERE id = $1`,
           [ownerlessPrivateCoreWorkflowId],
         );
 

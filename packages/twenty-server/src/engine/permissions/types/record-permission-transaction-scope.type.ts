@@ -4,4 +4,5 @@ export type RecordPermissionTransactionScope = {
     sql: string,
     parameters?: unknown[],
   ) => Promise<Record<string, unknown>[]>;
+  afterCommit?: (callback: () => void | Promise<void>) => void;
 };

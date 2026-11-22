@@ -1,9 +1,8 @@
 import { useLocation } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
 
-import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
+import { aiChatThreadParticipantsAreLoadedSelector } from '@/ai-chat/threads/states/selectors/aiChatThreadParticipantsAreLoadedSelector';
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
-import { inboxThreadMemberStateByThreadIdFamilySelector } from '@/inbox/states/selectors/inboxThreadMemberStateByThreadIdFamilySelector';
+import { inboxThreadStatusByThreadIdFamilySelector } from '@/inbox/states/selectors/inboxThreadStatusByThreadIdFamilySelector';
 import { getInboxThreadTriageStatus } from '@/inbox/utils/getInboxThreadTriageStatus';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -26,8 +25,8 @@ export const useInboxThreadTriage = ({
   const isInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
-  const aiChatThreadParticipants = useAtomStateValue(
-    aiChatThreadParticipantsState,
+  const aiChatThreadParticipantsAreLoaded = useAtomStateValue(
+    aiChatThreadParticipantsAreLoadedSelector,
   );
   const location = useLocation();
   const inboxSelectedChannelView = useAtomStateValue(
@@ -37,7 +36,7 @@ export const useInboxThreadTriage = ({
     ? (inboxSelectedChannelView?.channelId ?? null)
     : (channelIdOutsideInbox ?? null);
   const { [threadId]: inboxStatus } = useAtomFamilySelectorValue(
-    inboxThreadMemberStateByThreadIdFamilySelector,
+    inboxThreadStatusByThreadIdFamilySelector,
     { threadIds: [threadId], channelId },
   );
   const isInChannel = inboxStatus?.isChannelCopy ?? false;
@@ -46,7 +45,7 @@ export const useInboxThreadTriage = ({
     status: getInboxThreadTriageStatus({
       hasAiPermission,
       isInboxEnabled,
-      areParticipantsLoaded: isInChannel || isDefined(aiChatThreadParticipants),
+      areParticipantsLoaded: isInChannel || aiChatThreadParticipantsAreLoaded,
       scope: inboxStatus?.scope ?? 'NONE',
     }),
     isInChannel,
