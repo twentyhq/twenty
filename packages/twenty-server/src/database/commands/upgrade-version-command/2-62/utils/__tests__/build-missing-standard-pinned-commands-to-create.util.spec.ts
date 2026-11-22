@@ -11,6 +11,20 @@ const WORKSPACE_ID = 'workspace-id';
 const TWENTY_STANDARD_APPLICATION_ID = 'twenty-standard-application-id';
 const NOW = '2026-11-22T00:00:00.000Z';
 
+const buildFlatCommandMenuItem = (
+  commandMenuItemName: keyof typeof STANDARD_COMMAND_MENU_ITEMS,
+) =>
+  createStandardCommandMenuItemFlatMetadata({
+    commandMenuItemName,
+    commandMenuItemId: `${commandMenuItemName}-id`,
+    workspaceId: WORKSPACE_ID,
+    twentyStandardApplicationId: TWENTY_STANDARD_APPLICATION_ID,
+    dependencyFlatEntityMaps: {
+      flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+    },
+    now: NOW,
+  });
+
 const buildFlatCommandMenuItemMaps = (
   commandMenuItemNames: (keyof typeof STANDARD_COMMAND_MENU_ITEMS)[],
 ) => ({
@@ -18,16 +32,7 @@ const buildFlatCommandMenuItemMaps = (
   byUniversalIdentifier: Object.fromEntries(
     commandMenuItemNames.map((commandMenuItemName) => [
       STANDARD_COMMAND_MENU_ITEMS[commandMenuItemName].universalIdentifier,
-      createStandardCommandMenuItemFlatMetadata({
-        commandMenuItemName,
-        commandMenuItemId: `${commandMenuItemName}-id`,
-        workspaceId: WORKSPACE_ID,
-        twentyStandardApplicationId: TWENTY_STANDARD_APPLICATION_ID,
-        dependencyFlatEntityMaps: {
-          flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
-        },
-        now: NOW,
-      }),
+      buildFlatCommandMenuItem(commandMenuItemName),
     ]),
   ),
 });
@@ -44,6 +49,21 @@ const buildFlatNavigationMenuItemMaps = (
   ),
 });
 
+const buildPinnedSearchCommand = (universalIdentifier: string) =>
+  createStandardNavigationMenuItemCommandFlatMetadata({
+    universalIdentifier,
+    flatCommandMenuItem: buildFlatCommandMenuItem('searchRecords'),
+    position: 0,
+    navigationMenuItemId: `${universalIdentifier}-id`,
+    workspaceId: WORKSPACE_ID,
+    twentyStandardApplicationId: TWENTY_STANDARD_APPLICATION_ID,
+    now: NOW,
+  });
+
+const getUniversalIdentifiers = (
+  flatNavigationMenuItems: FlatNavigationMenuItem[],
+) => flatNavigationMenuItems.map(({ universalIdentifier }) => universalIdentifier);
+
 describe('buildMissingStandardPinnedCommandsToCreate', () => {
   it('should pin Search and New chat on a workspace that has neither', () => {
     const flatNavigationMenuItems = buildMissingStandardPinnedCommandsToCreate({
@@ -53,15 +73,21 @@ describe('buildMissingStandardPinnedCommandsToCreate', () => {
         'newAiChat',
       ]),
       workspaceId: WORKSPACE_ID,
-      twentyStandardApplicationId: TWENTY_STANDARD_APPLICATION_ID,
       now: NOW,
     });
 
     expect(
       flatNavigationMenuItems.map(
-        ({ universalIdentifier, commandMenuItemId, parentId, position }) => ({
+        ({
           universalIdentifier,
           commandMenuItemId,
+          applicationId,
+          parentId,
+          position,
+        }) => ({
+          universalIdentifier,
+          commandMenuItemId,
+          applicationId,
           parentId,
           position,
         }),
@@ -71,6 +97,7 @@ describe('buildMissingStandardPinnedCommandsToCreate', () => {
         universalIdentifier:
           STANDARD_NAVIGATION_MENU_ITEMS.searchCommand.universalIdentifier,
         commandMenuItemId: 'searchRecords-id',
+        applicationId: TWENTY_STANDARD_APPLICATION_ID,
         parentId: null,
         position: 0,
       },
@@ -78,45 +105,50 @@ describe('buildMissingStandardPinnedCommandsToCreate', () => {
         universalIdentifier:
           STANDARD_NAVIGATION_MENU_ITEMS.newAiChatCommand.universalIdentifier,
         commandMenuItemId: 'newAiChat-id',
+        applicationId: TWENTY_STANDARD_APPLICATION_ID,
         parentId: null,
         position: 1,
       },
     ]);
   });
 
-  it('should leave out a pinned command the workspace already has, hidden or not', () => {
-    const flatCommandMenuItemMaps = buildFlatCommandMenuItemMaps([
-      'searchRecords',
-      'newAiChat',
-    ]);
-    const hiddenSearchCommand = createStandardNavigationMenuItemCommandFlatMetadata(
-      {
-        universalIdentifier:
-          STANDARD_NAVIGATION_MENU_ITEMS.searchCommand.universalIdentifier,
-        commandMenuItemUniversalIdentifier:
-          STANDARD_COMMAND_MENU_ITEMS.searchRecords.universalIdentifier,
-        position: 0,
-        navigationMenuItemId: 'existing-search-command-id',
-        workspaceId: WORKSPACE_ID,
-        twentyStandardApplicationId: TWENTY_STANDARD_APPLICATION_ID,
-        dependencyFlatEntityMaps: { flatCommandMenuItemMaps },
-        now: NOW,
-      },
-    );
-
+  it('should leave a hidden standard pinned command hidden', () => {
     const flatNavigationMenuItems = buildMissingStandardPinnedCommandsToCreate({
-      flatNavigationMenuItemMaps: buildFlatNavigationMenuItemMaps(
-        hiddenSearchCommand ? [{ ...hiddenSearchCommand, isActive: false }] : [],
-      ),
-      flatCommandMenuItemMaps,
+      flatNavigationMenuItemMaps: buildFlatNavigationMenuItemMaps([
+        {
+          ...buildPinnedSearchCommand(
+            STANDARD_NAVIGATION_MENU_ITEMS.searchCommand.universalIdentifier,
+          ),
+          isActive: false,
+        },
+      ]),
+      flatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([
+        'searchRecords',
+        'newAiChat',
+      ]),
       workspaceId: WORKSPACE_ID,
-      twentyStandardApplicationId: TWENTY_STANDARD_APPLICATION_ID,
       now: NOW,
     });
 
-    expect(
-      flatNavigationMenuItems.map(({ universalIdentifier }) => universalIdentifier),
-    ).toEqual([
+    expect(getUniversalIdentifiers(flatNavigationMenuItems)).toEqual([
+      STANDARD_NAVIGATION_MENU_ITEMS.newAiChatCommand.universalIdentifier,
+    ]);
+  });
+
+  it('should not pin a command the workspace layout already pins', () => {
+    const flatNavigationMenuItems = buildMissingStandardPinnedCommandsToCreate({
+      flatNavigationMenuItemMaps: buildFlatNavigationMenuItemMaps([
+        buildPinnedSearchCommand('20202020-c004-4c04-8c04-c0aba11c0004'),
+      ]),
+      flatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([
+        'searchRecords',
+        'newAiChat',
+      ]),
+      workspaceId: WORKSPACE_ID,
+      now: NOW,
+    });
+
+    expect(getUniversalIdentifiers(flatNavigationMenuItems)).toEqual([
       STANDARD_NAVIGATION_MENU_ITEMS.newAiChatCommand.universalIdentifier,
     ]);
   });
@@ -126,12 +158,11 @@ describe('buildMissingStandardPinnedCommandsToCreate', () => {
       flatNavigationMenuItemMaps: buildFlatNavigationMenuItemMaps([]),
       flatCommandMenuItemMaps: buildFlatCommandMenuItemMaps(['searchRecords']),
       workspaceId: WORKSPACE_ID,
-      twentyStandardApplicationId: TWENTY_STANDARD_APPLICATION_ID,
       now: NOW,
     });
 
-    expect(
-      flatNavigationMenuItems.map(({ universalIdentifier }) => universalIdentifier),
-    ).toEqual([STANDARD_NAVIGATION_MENU_ITEMS.searchCommand.universalIdentifier]);
+    expect(getUniversalIdentifiers(flatNavigationMenuItems)).toEqual([
+      STANDARD_NAVIGATION_MENU_ITEMS.searchCommand.universalIdentifier,
+    ]);
   });
 });

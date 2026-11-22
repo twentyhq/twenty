@@ -1,56 +1,59 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
-import { createStandardNavigationMenuItemFolderFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-folder-flat-metadata.util';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 export const createStandardNavigationMenuItemCommandFlatMetadata = ({
   universalIdentifier,
-  commandMenuItemUniversalIdentifier,
+  flatCommandMenuItem,
   position,
   navigationMenuItemId,
   workspaceId,
   twentyStandardApplicationId,
-  dependencyFlatEntityMaps: { flatCommandMenuItemMaps },
   now,
 }: {
   universalIdentifier: string;
-  commandMenuItemUniversalIdentifier: string;
+  flatCommandMenuItem: Pick<FlatCommandMenuItem, 'id' | 'universalIdentifier'>;
   position: number;
   navigationMenuItemId: string;
   workspaceId: string;
   twentyStandardApplicationId: string;
-  dependencyFlatEntityMaps: {
-    flatCommandMenuItemMaps: FlatEntityMaps<FlatCommandMenuItem>;
-  };
   now: string;
-}): FlatNavigationMenuItem | undefined => {
-  const flatCommandMenuItem = findFlatEntityByUniversalIdentifier({
-    universalIdentifier: commandMenuItemUniversalIdentifier,
-    flatEntityMaps: flatCommandMenuItemMaps,
-  });
-
-  if (!isDefined(flatCommandMenuItem)) {
-    return undefined;
-  }
-
-  return {
-    ...createStandardNavigationMenuItemFolderFlatMetadata({
-      universalIdentifier,
-      name: '',
-      color: null,
-      position,
-      navigationMenuItemId,
-      workspaceId,
-      twentyStandardApplicationId,
-      now,
-    }),
-    type: NavigationMenuItemType.COMMAND,
-    name: null,
-    commandMenuItemId: flatCommandMenuItem.id,
-    commandMenuItemUniversalIdentifier: flatCommandMenuItem.universalIdentifier,
-  };
-};
+}): FlatNavigationMenuItem => ({
+  id: navigationMenuItemId,
+  type: NavigationMenuItemType.COMMAND,
+  universalIdentifier,
+  applicationId: twentyStandardApplicationId,
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION.universalIdentifier,
+  workspaceId,
+  userWorkspaceId: null,
+  targetRecordId: null,
+  targetObjectMetadataId: null,
+  targetObjectMetadataUniversalIdentifier: null,
+  viewId: null,
+  viewUniversalIdentifier: null,
+  parentId: null,
+  parentUniversalIdentifier: null,
+  pageLayoutId: null,
+  pageLayoutUniversalIdentifier: null,
+  agentChatChannelId: null,
+  agentChatChannelUniversalIdentifier: null,
+  workflowId: null,
+  workflowUniversalIdentifier: null,
+  agentId: null,
+  agentUniversalIdentifier: null,
+  commandMenuItemId: flatCommandMenuItem.id,
+  commandMenuItemUniversalIdentifier: flatCommandMenuItem.universalIdentifier,
+  name: null,
+  link: null,
+  nativePageKey: null,
+  builtInSectionKey: null,
+  icon: null,
+  color: null,
+  position,
+  isActive: true,
+  overrides: null,
+  createdAt: now,
+  updatedAt: now,
+});
