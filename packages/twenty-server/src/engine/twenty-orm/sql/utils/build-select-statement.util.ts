@@ -96,7 +96,7 @@ export type UnreadableColumnConditions = SQLConditionsByAliasAndName;
 
 export type UnreadableRelationConditions = SQLConditionsByAliasAndName;
 
-export type UnreadableColumnPlaceholders = Record<string, string[]>;
+export type UnreadableColumnPlaceholders = Partial<Record<string, string[]>>;
 
 export const UNREADABLE_COLUMN_PLACEHOLDER_PARAMETER_NAME =
   'unreadableColumnPlaceholder';
