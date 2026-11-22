@@ -5,14 +5,12 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { useRemoveFocusItemFromFocusStackOnUnmount } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackOnUnmount';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 
-// Blocks page shortcuts while typing; buttons are excluded since one removed on click may never blur.
 export const useAiChatAskCardFieldFocus = () => {
   const focusId = useId();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  // a card answered while a field is focused unmounts without a blur
   useRemoveFocusItemFromFocusStackOnUnmount({ focusId, isEnabled: true });
 
   const handleFieldFocus = (event: FocusEvent) => {

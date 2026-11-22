@@ -11,7 +11,7 @@ import { ConvertPermissionStorageObjectsToTablesCommand } from 'src/database/com
 import { DeleteStandardHelperAgentCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795261783307-delete-standard-helper-agent.command';
 import { RestoreNotStartedWorkflowRunStatusCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795287331295-restore-not-started-workflow-run-status.command';
 import { TypeAccessGroupsCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795264768000-type-access-groups.command';
-import { AddRichTextFileIdsColumnsCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795295227624-add-rich-text-file-ids-columns.command';
+import { AddRichTextFileIdsColumnsCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795351100191-add-rich-text-file-ids-columns.command';
 import { AccessGroupComputationModule } from 'src/engine/permissions/internal/access-group/access-group-computation.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';

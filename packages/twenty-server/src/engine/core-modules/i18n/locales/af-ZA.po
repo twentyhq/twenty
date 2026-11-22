@@ -696,6 +696,11 @@ msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "'n Werksruimtelid"
 
+#. js-lingui-id: /WlOrK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation needs the field to read on its related records"
+msgstr "’n Werkruimtelid-verhouding benodig die veld om op sy verwante rekords te lees"
+
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "A workspace-wide blocklist entry cannot target a workspace member."
@@ -3069,6 +3074,11 @@ msgstr "Kies ’n bestaande tydlynaktiwiteitstipe om te oorskryf"
 #: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Kies een persoon of een rol om mee te deel."
+
+#. js-lingui-id: IkeRn2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the field to read on the related records"
+msgstr "Kies die veld om op die verwante rekords te lees"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5598,6 +5608,11 @@ msgstr "Veld \"{relationFieldName}\" is nie 'n relasie nie"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "Veld \"{workspaceMemberFieldName}\" is nie 'n veld van die workspaceMember-voorwerp nie; die predikaat sal nooit toegepas word nie"
+
+#. js-lingui-id: moiE3i
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
+msgstr "Veld \"{workspaceMemberRelationFieldName}\" is nie ’n een-tot-baie-verhouding van die workspaceMember-objek nie"
 
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
@@ -11132,6 +11147,11 @@ msgstr "Predikaatwaarde is nie geldig vir hierdie operand nie."
 msgid "Predicates reaching a field through a relation are not enabled for this workspace"
 msgstr "Predikate wat 'n veld deur 'n relasie bereik, is nie vir hierdie werksruimte geaktiveer nie"
 
+#. js-lingui-id: v5akl/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicates reading the current member through a relation are not enabled for this workspace"
+msgstr "Predikate wat die huidige lid deur ’n verhouding lees, is nie vir hierdie werkruimte geaktiveer nie"
+
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -12357,6 +12377,7 @@ msgid "Rule"
 msgstr "Reël"
 
 #. js-lingui-id: zhLAHJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Rules through a relation are not enabled for this workspace"
 msgstr "Reëls deur 'n relasie is nie vir hierdie werksruimte geaktiveer nie"
@@ -15049,6 +15070,11 @@ msgstr "Hierdie veld behoort nie aan die werksruimtelid-voorwerp nie"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "This field has no database column to index."
 msgstr "Hierdie veld het geen databasis-kolom om te indekseer nie."
+
+#. js-lingui-id: /62EJW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field is not a one-to-many relation of the workspace member object"
+msgstr "Hierdie veld is nie 'n een-tot-baie-verhouding van die werkruimtelid-objek nie"
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17963,6 +17989,12 @@ msgstr "Werkruimte lid posisie"
 msgctxt "view.name"
 msgid "Workspace Member Record Page Fields"
 msgstr "Werkruimte-lidrekordbladsyvelde"
+
+#. js-lingui-id: VWPelK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Workspace member relation field metadata not found"
+msgstr "Werkruimtelid-verhoudingsveldmetadata nie gevind nie"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

@@ -13,10 +13,6 @@ type InboxSelectionEffectProps = {
   threads: Pick<AiChatThreadRecord, 'id'>[];
 };
 
-// A chat leaves the list when it is done, snoozed or deleted; the one that
-// takes its place is selected, the way a mail inbox moves on. The list is
-// watched because generic record deletes, other tabs and reloads change it
-// before any chat code hears of it
 export const InboxSelectionEffect = ({
   selectedThreadId,
   threads,
@@ -56,9 +52,6 @@ export const InboxSelectionEffect = ({
       return;
     }
 
-    // A chat opened from a link without being listed stays open, and so does
-    // one that left the list by coming back to the inbox, as a done or
-    // snoozed chat does when the member writes in it
     if (
       lastListedSelection?.threadId !== selectedThreadId ||
       isSelectedThreadInInbox

@@ -33,14 +33,14 @@ export const InboxListHeader = ({
     inboxSelectedChannelViewSelector,
   );
   const isMobile = useIsMobile();
-  const { switchToNewChat } = useSwitchToNewAiChatInInboxChannel({
+  const { switchToNewAiChat } = useSwitchToNewAiChatInInboxChannel({
     shouldOpenInFullPage: true,
   });
   const { resetRecordSelection } = useResetRecordSelection();
 
   const handleNewChat = () => {
     resetRecordSelection();
-    switchToNewChat();
+    switchToNewAiChat();
   };
 
   const viewDropdown = isDefined(inboxSelectedChannelView) ? (

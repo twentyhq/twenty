@@ -1,10 +1,9 @@
-import { type DynamicToolUIPart, getToolName, type ToolUIPart } from 'ai';
+import { type DynamicToolUIPart, type ToolUIPart } from 'ai';
 
 import { AiChatToolFrontComponent } from '@/ai-chat/tool-calls/components/AiChatToolFrontComponent';
 import { ThinkingToolStepRow } from '@/ai-chat/thinking-steps/components/ThinkingToolStepRow';
-import { type ToolInput } from '@/ai/types/ToolInput';
 import { isThinkingStepPartActive } from '@/ai-chat/thinking-steps/utils/isThinkingStepPartActive';
-import { unwrapToolInput } from '@/ai/utils/tool-display/unwrapToolInput';
+import { unwrapToolPartInput } from '@/ai/utils/tool-display/unwrapToolPartInput';
 
 type AiChatToolWidgetProps = {
   toolPart: ToolUIPart | DynamicToolUIPart;
@@ -17,11 +16,7 @@ export const AiChatToolWidget = ({
   frontComponentId,
   isStreaming,
 }: AiChatToolWidgetProps) => {
-  // execute_tool wraps the real tool, and the widget belongs to the dispatched one.
-  const { toolName, toolInput } = unwrapToolInput({
-    input: toolPart.input as ToolInput,
-    toolName: getToolName(toolPart),
-  });
+  const { toolName, toolInput } = unwrapToolPartInput(toolPart);
 
   const toolCall = {
     toolCallId: toolPart.toolCallId,

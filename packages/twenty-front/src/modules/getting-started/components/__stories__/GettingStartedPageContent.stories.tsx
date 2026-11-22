@@ -39,6 +39,7 @@ import {
   WorkflowActionType,
 } from '~/generated-metadata/graphql';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { ChatObjectMetadataDecorator } from '~/testing/decorators/ChatObjectMetadataDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import {
@@ -121,6 +122,7 @@ const meta: Meta<typeof GettingStartedPageContent> = {
       </StyledPageFrame>
     ),
     ToastDecorator,
+    ChatObjectMetadataDecorator,
     ObjectMetadataItemsDecorator,
     ComponentWithRouterDecorator,
     (Story, { parameters }) => {
