@@ -15,6 +15,12 @@ describe('getWorkspaceSidebarRootSectionId', () => {
             applicationId: 'custom-application',
           },
           {
+            id: 'favorites-section',
+            type: NavigationMenuItemType.SECTION,
+            applicationId: STANDARD_APPLICATION_ID,
+            builtInSectionKey: 'favorites',
+          },
+          {
             id: 'workspace-section',
             type: NavigationMenuItemType.SECTION,
             applicationId: STANDARD_APPLICATION_ID,

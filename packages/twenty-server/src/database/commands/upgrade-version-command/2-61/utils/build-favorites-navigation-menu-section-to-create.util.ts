@@ -1,13 +1,13 @@
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
-import { createStandardNavigationMenuItemBuiltInSectionFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-built-in-section-flat-metadata.util';
 
 export const buildFavoritesNavigationMenuSectionToCreate = ({
   navigationMenuItems,
   sectionId,
-  twentyStandardApplicationId,
+  twentyStandardApplication,
   workspaceId,
   now,
 }: {
@@ -20,7 +20,7 @@ export const buildFavoritesNavigationMenuSectionToCreate = ({
     | 'position'
   >[];
   sectionId: string;
-  twentyStandardApplicationId: string;
+  twentyStandardApplication: { id: string; universalIdentifier: string };
   workspaceId: string;
   now: string;
 }): FlatNavigationMenuItem | null => {
@@ -45,13 +45,40 @@ export const buildFavoritesNavigationMenuSectionToCreate = ({
     return null;
   }
 
-  return createStandardNavigationMenuItemBuiltInSectionFlatMetadata({
+  return {
+    id: sectionId,
     universalIdentifier: favoritesSectionDefinition.universalIdentifier,
+    type: NavigationMenuItemType.SECTION,
+    name: null,
+    icon: null,
+    color: null,
+    link: null,
+    nativePageKey: null,
     builtInSectionKey: favoritesSectionDefinition.builtInSectionKey,
+    isActive: true,
+    overrides: null,
+    userWorkspaceId: null,
+    parentId: null,
+    parentUniversalIdentifier: null,
+    targetRecordId: null,
+    targetObjectMetadataId: null,
+    targetObjectMetadataUniversalIdentifier: null,
+    viewId: null,
+    viewUniversalIdentifier: null,
+    pageLayoutId: null,
+    pageLayoutUniversalIdentifier: null,
+    agentChatChannelId: null,
+    agentChatChannelUniversalIdentifier: null,
+    workflowId: null,
+    workflowUniversalIdentifier: null,
+    agentId: null,
+    agentUniversalIdentifier: null,
     position: Math.min(0, ...homeRootItems.map((item) => item.position)) - 1,
-    navigationMenuItemId: sectionId,
     workspaceId,
-    twentyStandardApplicationId,
-    now,
-  });
+    applicationId: twentyStandardApplication.id,
+    applicationUniversalIdentifier:
+      twentyStandardApplication.universalIdentifier,
+    createdAt: now,
+    updatedAt: now,
+  };
 };

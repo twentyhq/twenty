@@ -10,7 +10,7 @@ export const getWorkspaceSidebarRootSectionId = ({
 }: {
   navigationMenuItems: Pick<
     NavigationMenuItem,
-    'id' | 'type' | 'parentId' | 'applicationId'
+    'id' | 'type' | 'parentId' | 'applicationId' | 'builtInSectionKey'
   >[];
   standardApplicationId: string | undefined;
 }): string | null =>
@@ -19,5 +19,6 @@ export const getWorkspaceSidebarRootSectionId = ({
       isDefined(standardApplicationId) &&
       item.type === NavigationMenuItemType.SECTION &&
       !isDefined(item.parentId) &&
+      !isDefined(item.builtInSectionKey) &&
       item.applicationId === standardApplicationId,
   )?.id ?? null;

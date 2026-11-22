@@ -55,7 +55,7 @@ export class AddFavoritesNavigationMenuSectionCommand extends ProvisionedWorkspa
         flatNavigationMenuItemMaps.byUniversalIdentifier,
       ).filter(isDefined),
       sectionId: v4(),
-      twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      twentyStandardApplication: twentyStandardFlatApplication,
       workspaceId,
       now: new Date().toISOString(),
     });

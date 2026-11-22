@@ -18,7 +18,10 @@ const build = (navigationMenuItems: NavigationMenuItemInput[]) =>
   buildFavoritesNavigationMenuSectionToCreate({
     navigationMenuItems,
     sectionId: 'favorites-section',
-    twentyStandardApplicationId: 'standard-app',
+    twentyStandardApplication: {
+      id: 'standard-app',
+      universalIdentifier: 'standard-app-uid',
+    },
     workspaceId: 'workspace',
     now: '2026-11-20T00:00:00.000Z',
   });
