@@ -68,6 +68,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Record rules through relations`,
     description: msg`Let record-level permission rules compare a field of a related record.`,
   },
+  [FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED]: {
+    label: msg`Channel visibility through rules`,
+    description: msg`In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops.`,
+  },
   [FeatureFlagKey.IS_GETTING_STARTED_ENABLED]: {
     label: msg`Getting started`,
     description: msg`Show the Getting started page and sidebar card, and open it on landing during the trial.`,

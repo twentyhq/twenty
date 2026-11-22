@@ -84,7 +84,7 @@ describe('useSwitchNavigationDrawerTab', () => {
     localStorage.clear();
 
     jest.mocked(useSwitchToNewAiChat).mockReturnValue({
-      switchToNewChat: mockSwitchToNewChat,
+      switchToNewAiChat: mockSwitchToNewChat,
     });
     jest
       .mocked(useReturnFromExpandedAiChat)

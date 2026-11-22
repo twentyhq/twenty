@@ -1,7 +1,6 @@
 import { type UIMessageChunk } from 'ai';
 import { v4 } from 'uuid';
 
-// readUIMessageStream needs start chunks that a mid-stream reconnect missed, so inject synthetic ones.
 export const createMidStreamAdapter = () => {
   let hasSeenStart = false;
   const knownTextPartIds = new Set<string>();

@@ -7,8 +7,6 @@ import { hasReachedCurrentBillingPeriodCapSelector } from '@/workspace/states/ha
 import { isResourceCreditSubscriptionItem } from '@/workspace/utils/isResourceCreditSubscriptionItem';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
-// The credits error renders nothing, so this keeps the banner mounted. The resource credit item's flag is
-// authoritative; the thread error stands in only without the item, else it would outlive an upgrade.
 export const useHasReachedAiChatCreditsCap = () => {
   const hasReachedCurrentBillingPeriodCap = useAtomStateValue(
     hasReachedCurrentBillingPeriodCapSelector,

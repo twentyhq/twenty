@@ -48,7 +48,6 @@ export const AiChatDictationEffect = ({
 
     const createdEngine = createWebSpeechDictationEngine({
       isIOS,
-      // Read imperatively so a language change doesn't rebuild the engine; the next session picks it up.
       getLanguage: () =>
         getDictationLanguage(
           store.get(currentWorkspaceMemberState.atom)?.locale,
@@ -63,7 +62,6 @@ export const AiChatDictationEffect = ({
     };
   }, [isSupported, isIOS, store, setDictationEngine]);
 
-  // Separate so fresh handler identities re-subscribe without tearing down a live recording.
   useEffect(() => {
     if (!isDefined(dictationEngine)) {
       return;
@@ -84,7 +82,6 @@ export const AiChatDictationEffect = ({
           }
           break;
         case 'error':
-          // iOS only: elsewhere one missed start (cold speech service) would hide the button for the origin's life.
           if (event.reason === 'engine-silent' && isIOS) {
             setHasWebSpeechProvenSilent(true);
           }

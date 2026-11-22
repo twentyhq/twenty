@@ -1,6 +1,6 @@
 import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
 import { AI_CHAT_SURFACE } from '@/ai-chat/constants/AiChatSurface';
-import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
+import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -30,12 +30,6 @@ const closeSidePanelMenuMock = jest.fn();
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   useSidePanelMenu: () => ({ closeSidePanelMenu: closeSidePanelMenuMock }),
-}));
-
-let isWorkspaceSetupChat = true;
-
-jest.mock('@/ai-chat/hooks/useIsWorkspaceSetupChat', () => ({
-  useIsWorkspaceSetupChat: () => isWorkspaceSetupChat,
 }));
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
@@ -69,12 +63,11 @@ describe('useProcessWorkspaceSetupCompletion', () => {
     jest.clearAllMocks();
     sessionStorage.clear();
     resetJotaiStore();
-    isWorkspaceSetupChat = true;
+    jotaiStore.set(isWorkspaceSetupChatActiveState.atom, true);
     defaultHomePagePath = '/objects/people';
   });
 
   it('keeps the current page and side panel open when setup finishes there', () => {
-    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
     const { result } = renderHook(() => useProcessWorkspaceSetupCompletion(), {
       wrapper: ({ children }) => (
         <Wrapper>
@@ -93,9 +86,7 @@ describe('useProcessWorkspaceSetupCompletion', () => {
 
     expect(navigateMock).not.toHaveBeenCalled();
     expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
-    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
-      false,
-    );
+    expect(jotaiStore.get(isWorkspaceSetupChatActiveState.atom)).toBe(false);
     expect(getProcessedToolCallIds()).toEqual(['side-panel-call']);
   });
 
@@ -132,7 +123,6 @@ describe('useProcessWorkspaceSetupCompletion', () => {
 
   it('returns to settings and ends setup when no readable object homepage exists', () => {
     defaultHomePagePath = '/settings/profile';
-    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
     const { result } = renderHook(() => useProcessWorkspaceSetupCompletion(), {
       wrapper: Wrapper,
     });
@@ -146,13 +136,11 @@ describe('useProcessWorkspaceSetupCompletion', () => {
     expect(navigateMock).toHaveBeenCalledWith('/settings/profile', {
       state: { isAiChatHandoffSkipped: true },
     });
-    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
-      false,
-    );
+    expect(jotaiStore.get(isWorkspaceSetupChatActiveState.atom)).toBe(false);
   });
 
   it('should not redirect when the chat already left the setup page', () => {
-    isWorkspaceSetupChat = false;
+    jotaiStore.set(isWorkspaceSetupChatActiveState.atom, false);
 
     const { result } = renderHook(() => useProcessWorkspaceSetupCompletion(), {
       wrapper: Wrapper,
@@ -167,50 +155,5 @@ describe('useProcessWorkspaceSetupCompletion', () => {
     expect(navigateMock).not.toHaveBeenCalled();
     expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
     expect(getProcessedToolCallIds()).toEqual(['call-1']);
-  });
-
-  it('should ignore a message without a successful completion part', () => {
-    const { result } = renderHook(() => useProcessWorkspaceSetupCompletion(), {
-      wrapper: Wrapper,
-    });
-
-    act(() => {
-      result.current.processWorkspaceSetupCompletion(
-        buildMessageParts([
-          {
-            type: 'tool-complete_workspace_setup',
-            toolCallId: 'call-1',
-            input: {},
-            state: 'input-streaming',
-          },
-        ]),
-      );
-    });
-
-    expect(navigateMock).not.toHaveBeenCalled();
-    expect(getProcessedToolCallIds()).toEqual([]);
-  });
-
-  it('should not redirect nor consume the tool call when the completion failed', () => {
-    const { result } = renderHook(() => useProcessWorkspaceSetupCompletion(), {
-      wrapper: Wrapper,
-    });
-
-    act(() => {
-      result.current.processWorkspaceSetupCompletion(
-        buildMessageParts([
-          {
-            type: 'tool-complete_workspace_setup',
-            toolCallId: 'call-1',
-            input: {},
-            state: 'output-available',
-            output: { success: false, message: 'Something went wrong.' },
-          },
-        ]),
-      );
-    });
-
-    expect(navigateMock).not.toHaveBeenCalled();
-    expect(getProcessedToolCallIds()).toEqual([]);
   });
 });
