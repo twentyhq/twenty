@@ -94,7 +94,6 @@ const renderListItem = ({
 
 describe('InboxThreadListItem', () => {
   beforeAll(() => {
-    // jsdom has no PointerEvent, which the checkbox dispatches on click
     window.PointerEvent ??= MouseEvent as typeof PointerEvent;
   });
 

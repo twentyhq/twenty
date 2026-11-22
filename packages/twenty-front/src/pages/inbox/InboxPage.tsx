@@ -142,7 +142,6 @@ const InboxPageContent = () => {
   const threadListContainerRef = useRef<HTMLDivElement>(null);
   const { resetRecordSelection } = useResetRecordSelection();
 
-  // Rows hold a menu and a rename input, which a link cannot contain
   const { navigateToInboxThread } = useNavigateToInboxThread();
   const selectThread = (nextThreadId: string | null) =>
     navigateToInboxThread({ threadId: nextThreadId });
@@ -151,8 +150,6 @@ const InboxPageContent = () => {
     { id }: AiChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => {
-    // A phone has no modifier keys, so once a selection is started a tap
-    // adds to it
     if (isMobile && selectedRecordIds.length > 0) {
       toggleRecordSelection({ recordId: id });
       return;
@@ -164,7 +161,6 @@ const InboxPageContent = () => {
       return;
     }
 
-    // A selection starts from the chat on screen
     if (
       selectedRecordIds.length === 0 &&
       isDefined(selectedThreadId) &&
@@ -202,8 +198,6 @@ const InboxPageContent = () => {
 
   const isSelectionShown = selectedRecordIds.length > 0;
 
-  // Split view shows the list beside the chat or the selection; otherwise
-  // the list and a chat each take the whole page
   const isListShown =
     isSplitLayout || (!isDefined(selectedThreadId) && !isNewThreadRoute);
   const isSelectionPaneShown = isSplitLayout && isSelectionShown;
@@ -277,8 +271,6 @@ const InboxPageContent = () => {
         selectedThreadId={selectedThreadId}
         threads={threads}
       />
-      {/* The selection takes the place of the chat on screen, so the command
-      menu acts on it */}
       {isSelectionShown && !isThreadShown && (
         <InboxSelectionToContextStoreEffect
           contextStoreInstanceId={MAIN_CONTEXT_STORE_INSTANCE_ID}
@@ -384,7 +376,6 @@ const InboxPageContent = () => {
 };
 
 export const InboxPage = () => {
-  // A new instance per visit, so a selection does not outlive the inbox
   const recordSelectionInstanceId = useInboxRecordSelectionInstanceId();
   const { threadId } = useParams();
   const isAiChatInboxEnabled = useIsFeatureEnabled(

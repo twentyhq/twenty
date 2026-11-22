@@ -17,7 +17,6 @@ export const AiChatToolWidget = ({
   frontComponentId,
   isStreaming,
 }: AiChatToolWidgetProps) => {
-  // execute_tool wraps the real tool, and the widget belongs to the dispatched one.
   const { toolName, toolInput } = unwrapToolInput({
     input: toolPart.input as ToolInput,
     toolName: getToolName(toolPart),

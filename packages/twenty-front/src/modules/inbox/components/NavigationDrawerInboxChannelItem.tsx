@@ -32,7 +32,6 @@ const StyledIconPickerTrigger = styled.div`
   display: flex;
 `;
 
-// The picker opens from the icon, so its clicks must not open the channel
 const stopPropagation = (event: MouseEvent) => event.stopPropagation();
 
 type NavigationDrawerInboxChannelItemProps = {

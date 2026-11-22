@@ -52,7 +52,6 @@ import {
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 const INBOX_THREADS_LOAD_RETRY_DELAY_MS = 3000;
-// Changes come in bursts, as a message updates a chat and its members' rows
 const INBOX_CHANNELS_REFRESH_DEBOUNCE_MS = 1000;
 
 const AI_CHAT_THREADS_OPERATION_SIGNATURE = {
@@ -95,7 +94,6 @@ export const InboxSyncEffect = () => {
   const chatObjectPermissions = useObjectPermissionsForObject(
     chatObjectMetadataItem?.id ?? '',
   );
-  // The record API builds chat queries from the chat object's fields
   const areFieldMetadataItemsLoaded =
     useAtomFamilySelectorValue(
       metadataStoreStatusFamilySelector,
@@ -156,7 +154,6 @@ export const InboxSyncEffect = () => {
     [loadInboxThreadList],
   );
 
-  // The removal check looks the chat up itself, so it runs even if the reload fails
   const reloadThreads = useCallback(async () => {
     refreshInboxOpenThreadsSummary();
     await refreshRecentThreads();
@@ -260,7 +257,6 @@ export const InboxSyncEffect = () => {
 
           applyUpdates(updateInputs.map(toThreadUpdate));
 
-          // An updated chat past the loaded pages moves to the top
           const listedThreadIds =
             store.get(
               inboxThreadListFamilyState.atomFamily(
@@ -301,7 +297,6 @@ export const InboxSyncEffect = () => {
           return;
         }
         default:
-          // Destroy and bulk create events carry no ids
           void reloadThreads();
       }
     },
@@ -355,7 +350,6 @@ export const InboxSyncEffect = () => {
     isChannelSyncEnabled,
   ]);
 
-  // Changes broadcast while disconnected are not replayed
   useListenToBrowserEvent({
     eventName: SSE_CLIENT_RECONNECTED_EVENT_NAME,
     onBrowserEvent: handleChannelOperation,

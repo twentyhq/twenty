@@ -30,7 +30,6 @@ import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
 const isDocumentVisible = () => document.visibilityState === 'visible';
 
-// Everything a chat does because it is on screen; thread data lives in AiChatThreadStreamsEffect
 export const AiChatInstanceEffect = () => {
   const store = useStore();
   const { instanceId, threadId, onThreadChange } = useAiChatInstanceOrThrow();
@@ -97,7 +96,6 @@ export const AiChatInstanceEffect = () => {
         null,
       );
 
-      // Filed on leave, not on read, so the chat stays put while being read
       const thread = store.get(
         aiChatThreadRecordFamilySelector.selectorFamily(persistedThreadId),
       );
@@ -153,15 +151,16 @@ export const AiChatInstanceEffect = () => {
       threadId: persistedThreadId,
     });
     const storedVisit = store.get(visitAtom);
-    // Taken before the read mark, so it keeps where the member left off
-    const newVisit: AiChatThreadVisit = {
+    const visitBeforeReadMark: AiChatThreadVisit = {
       threadId: persistedThreadId,
       isUnread,
       lastReadAt: participant?.lastReadAt ?? null,
       isKeptUnread: false,
     };
     const visit =
-      storedVisit?.threadId === persistedThreadId ? storedVisit : newVisit;
+      storedVisit?.threadId === persistedThreadId
+        ? storedVisit
+        : visitBeforeReadMark;
 
     if (visit !== storedVisit) {
       store.set(visitAtom, visit);

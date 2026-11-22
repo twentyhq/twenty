@@ -21,8 +21,6 @@ import {
 } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
-// On the thread on screen, a chat marked unread stays unread until the member
-// leaves it, and its unread line moves to the first message from someone else
 const OPTIMISTIC_VISIT_BY_ACTION: Partial<
   Record<AgentChatInboxAction, Partial<AiChatThreadVisit>>
 > = {
@@ -39,7 +37,6 @@ export const useUpdateAiChatThreadStatus = () => {
   const store = useStore();
   const { enqueueToast } = useToast();
 
-  // The change shows right away, and is put back if the server refuses it
   const updateAgentChatThreadInboxState = useCallback(
     async ({
       threadIds,
@@ -146,7 +143,6 @@ export const useUpdateAiChatThreadStatus = () => {
           );
         }
 
-        // A newer row may have arrived since, and is kept
         store.set(
           aiChatThreadParticipantsState.atom,
           updateLoadedAiChatThreadParticipantRows((participants) => {

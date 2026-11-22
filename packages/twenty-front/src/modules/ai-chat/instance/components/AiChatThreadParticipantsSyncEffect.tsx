@@ -31,8 +31,7 @@ export const AiChatThreadParticipantsSyncEffect = () => {
     isDefined(participantObjectMetadataItem) &&
     isDefined(currentWorkspaceMemberId);
 
-  // Roles that read every record could receive every member's rows, so only the member's own are asked for
-  const participantOperationSignature = useMemo(
+  const ownParticipantOperationSignature = useMemo(
     () => ({
       objectNameSingular: StandardObjectNameSingular.AgentChatThreadParticipant,
       variables: {
@@ -44,7 +43,7 @@ export const AiChatThreadParticipantsSyncEffect = () => {
 
   useListenToEventsForQuery({
     queryId: 'agent-chat-thread-participant-operations',
-    operationSignature: participantOperationSignature,
+    operationSignature: ownParticipantOperationSignature,
     skip: !isParticipantSyncEnabled,
   });
 

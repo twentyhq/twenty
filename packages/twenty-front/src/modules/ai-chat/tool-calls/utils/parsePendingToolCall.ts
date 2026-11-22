@@ -15,7 +15,6 @@ import { isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 
 import { type AiChatPendingToolCall } from '@/ai-chat/tool-calls/types/AiChatPendingToolCall';
 
-// The server validated input against the tool schema, so only each card's needed shape is checked.
 export const parsePendingToolCall = (
   part: ExtendedUIMessagePart,
 ): AiChatPendingToolCall | null => {
@@ -75,7 +74,6 @@ export const parsePendingToolCall = (
         };
       }
 
-      // the server answers a call recorded without its proposal as a generic one, so the card does too
       return isString(input.toolName) &&
         isString(input.summary) &&
         isPlainObject(input.arguments)

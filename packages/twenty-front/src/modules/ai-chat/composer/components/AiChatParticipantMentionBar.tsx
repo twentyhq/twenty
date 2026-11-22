@@ -54,7 +54,6 @@ export const AiChatParticipantMentionBar = ({
       ? t`${participantLabels} will be added as a participant and get access to this chat`
       : t`${participantLabels} will be added as participants and get access to this chat`;
 
-  // The mentions stay in the message, only without bringing anyone in
   const handleUndo = () => {
     if (!isDefined(editor)) {
       return;

@@ -95,7 +95,6 @@ export const AiChatNewThreadRecipientField = () => {
     showMoreSuggestions,
     resetVisibleSuggestionCount,
   } = useAiChatNewThreadRecipientSuggestions({
-    // The list fades out on close, so it keeps the results it showed.
     search: isDropdownOpen ? search : searchWhenSuggestionsClosed,
   });
 
