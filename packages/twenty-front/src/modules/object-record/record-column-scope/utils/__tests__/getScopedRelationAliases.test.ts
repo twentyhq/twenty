@@ -1,4 +1,5 @@
 import { getScopedRelationAliases } from '@/object-record/record-column-scope/utils/getScopedRelationAliases';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import {
   type ViewFieldRelationScope,
   ViewFilterOperand,
@@ -8,6 +9,7 @@ import { computeRelationWithArgumentsResponseKey } from 'twenty-shared/utils';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
+import { type RecordGqlFieldsRelationWithArguments } from 'twenty-shared/types';
 
 const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
@@ -112,37 +114,43 @@ const getPeopleColumn = ({
   relationTargetFieldMetadataId,
 });
 
+const CTO_RELATION_WITH_ARGUMENTS: Omit<
+  RecordGqlFieldsRelationWithArguments,
+  'recordGqlFields'
+> = {
+  relationFieldName: 'people',
+  filter: { jobTitle: { ilike: '%cto%' } },
+  orderBy: [{ createdAt: 'AscNullsLast' }, { position: 'AscNullsFirst' }],
+  first: 2,
+};
+
 describe('getScopedRelationAliases', () => {
   it('turns the scope filters, sorts and limit into nested arguments', () => {
-    expect(
-      getAliases({
-        recordFields: [getPeopleColumn({ relationScope: CTO_RELATION_SCOPE })],
+    const [scopedRelationAlias] = getAliases({
+      recordFields: [getPeopleColumn({ relationScope: CTO_RELATION_SCOPE })],
+    });
+
+    expect(scopedRelationAlias).toEqual({
+      recordFieldId: PEOPLE_COLUMN_ID,
+      responseKey: computeRelationWithArgumentsResponseKey(
+        scopedRelationAlias.relationWithArguments,
+      ),
+      relationObjectMetadataItem: expect.objectContaining({
+        id: personObjectMetadataItem.id,
       }),
-    ).toEqual([
-      {
-        recordFieldId: PEOPLE_COLUMN_ID,
-        responseKey: computeRelationWithArgumentsResponseKey({
-          relationFieldName: 'people',
-          filter: { jobTitle: { ilike: '%cto%' } },
-          orderBy: [
-            { createdAt: 'AscNullsLast' },
-            { position: 'AscNullsFirst' },
-          ],
-          first: 2,
-        }),
-        relationFieldName: 'people',
-        relationObjectMetadataItem: expect.objectContaining({
-          id: personObjectMetadataItem.id,
-        }),
-        filter: { jobTitle: { ilike: '%cto%' } },
-        orderBy: [{ createdAt: 'AscNullsLast' }, { position: 'AscNullsFirst' }],
-        first: 2,
+      relationWithArguments: {
+        ...CTO_RELATION_WITH_ARGUMENTS,
+        recordGqlFields: expect.objectContaining({ id: true }),
       },
-    ]);
+    });
   });
 
   it('keeps the default order and no limit for an empty scope', () => {
-    const [{ filter, orderBy, first }] = getAliases({
+    const [
+      {
+        relationWithArguments: { filter, orderBy, first },
+      },
+    ] = getAliases({
       recordFields: [getPeopleColumn({ relationScope: EMPTY_RELATION_SCOPE })],
     });
 
@@ -181,6 +189,23 @@ describe('getScopedRelationAliases', () => {
     expect(ctoAlias.recordFieldId).toBe(PEOPLE_COLUMN_ID);
     expect(allPeopleAlias.recordFieldId).toBe(OTHER_PEOPLE_COLUMN_ID);
     expect(ctoAlias.responseKey).not.toBe(allPeopleAlias.responseKey);
+  });
+
+  it('selects the aggregate of a summary with the ids of its records only', () => {
+    const [{ relationWithArguments, summary }] = getAliases({
+      recordFields: [
+        {
+          ...getPeopleColumn({ relationScope: CTO_RELATION_SCOPE }),
+          relationAggregateOperation: AggregateOperations.COUNT,
+        },
+      ],
+    });
+
+    expect(summary?.aggregateGqlFieldName).toBe('totalCount');
+    expect(relationWithArguments).toMatchObject({
+      aggregateGqlFieldNames: ['totalCount'],
+      recordGqlFields: { id: true },
+    });
   });
 
   it('skips the canonical column, columns without a scope and a disabled flag', () => {
@@ -249,14 +274,17 @@ describe('getScopedRelationAliases', () => {
     });
 
     expect(taskTargetsAlias).toMatchObject({
-      relationFieldName: 'taskTargets',
       relationObjectMetadataItem: { nameSingular: 'taskTarget' },
-      filter: { task: { status: { in: ['TODO'] } } },
-      orderBy: [
-        { task: { title: 'DescNullsLast' } },
-        { position: 'AscNullsFirst' },
-      ],
-      first: 1,
+      relationWithArguments: {
+        relationFieldName: 'taskTargets',
+        filter: { task: { status: { in: ['TODO'] } } },
+        orderBy: [
+          { task: { title: 'DescNullsLast' } },
+          { position: 'AscNullsFirst' },
+        ],
+        first: 1,
+        recordGqlFields: { task: expect.any(Object) },
+      },
       scopedRelationJunction: {
         targetFieldMetadataItem: { name: 'task' },
         targetObjectMetadataItem: { nameSingular: 'task' },

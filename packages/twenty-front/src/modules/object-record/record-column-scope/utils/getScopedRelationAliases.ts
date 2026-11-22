@@ -1,12 +1,17 @@
+import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
+import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ScopedRelationAlias } from '@/object-record/record-column-scope/types/ScopedRelationAlias';
-import { getRelationScopeRecordFiltersAndSorts } from '@/object-record/record-column-scope/utils/getRelationScopeRecordFiltersAndSorts';
 import { getScopedRelationColumn } from '@/object-record/record-column-scope/utils/getScopedRelationColumn';
+import { getRelationScopeRecordFiltersAndSorts } from '@/object-record/record-column-scope/utils/getRelationScopeRecordFiltersAndSorts';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/utils/findRelationTargetObjectMetadataItem';
 import { getQueryVariablesFromFiltersAndSorts } from '@/views/utils/getQueryVariablesFromFiltersAndSorts';
-import { type RecordFilterValueDependencies } from 'twenty-shared/types';
+import {
+  type RecordFilterValueDependencies,
+  type RecordGqlFieldsRelationWithArguments,
+} from 'twenty-shared/types';
 import {
   computeRelationWithArgumentsResponseKey,
   isDefined,
@@ -76,23 +81,45 @@ export const getScopedRelationAliases = ({
       filterValueDependencies,
     });
 
-    const first = relationScope.limit ?? undefined;
+    const { lookupTarget, scopedRelationJunction, summary } =
+      scopedRelationColumn;
+
+    const relationWithArguments: RecordGqlFieldsRelationWithArguments = {
+      relationFieldName: fieldMetadataItem.name,
+      filter,
+      orderBy,
+      first: relationScope.limit ?? undefined,
+      // Selecting an aggregate of a field the user cannot read would fail the whole query
+      ...(isDefined(summary) &&
+        summary.isAggregatedFieldReadable && {
+          aggregateGqlFieldNames: [summary.aggregateGqlFieldName],
+        }),
+      recordGqlFields: {
+        ...(isDefined(summary)
+          ? { id: true }
+          : isDefined(scopedRelationJunction)
+            ? generateJunctionRelationGqlFields({
+                junctionConfig: scopedRelationJunction.junctionConfig,
+                objectMetadataItems,
+              })
+            : buildIdentifierGqlFields(relationObjectMetadataItem)),
+        ...(isDefined(lookupTarget) && {
+          [lookupTarget.lookupTargetFieldMetadataItem.name]: true,
+        }),
+      },
+    };
 
     return [
       {
         recordFieldId: recordField.id,
-        responseKey: computeRelationWithArgumentsResponseKey({
-          relationFieldName: fieldMetadataItem.name,
-          filter,
-          orderBy,
-          first,
-        }),
-        relationFieldName: fieldMetadataItem.name,
+        responseKey: computeRelationWithArgumentsResponseKey(
+          relationWithArguments,
+        ),
         relationObjectMetadataItem,
-        filter,
-        orderBy,
-        first,
-        ...scopedRelationColumn,
+        relationWithArguments,
+        lookupTarget,
+        summary,
+        scopedRelationJunction,
       },
     ];
   });

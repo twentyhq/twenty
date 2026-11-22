@@ -23,8 +23,11 @@ const TASK_TARGET_ID = '20202020-3333-4000-8000-000000000001';
 const peopleAlias: ScopedRelationAlias = {
   recordFieldId: 'people-column',
   responseKey: 'people_scoped',
-  relationFieldName: 'people',
   relationObjectMetadataItem: personObjectMetadataItem,
+  relationWithArguments: {
+    relationFieldName: 'people',
+    recordGqlFields: { id: true },
+  },
 };
 
 const CONNECTION_SELECTION = `
@@ -220,9 +223,12 @@ describe('useListenToScopedRelationRecordOperation', () => {
       {
         recordFieldId: 'task-targets-column',
         responseKey: 'taskTargets_scoped',
-        relationFieldName: 'taskTargets',
         relationObjectMetadataItem:
           getMockObjectMetadataItemOrThrow('taskTarget'),
+        relationWithArguments: {
+          relationFieldName: 'taskTargets',
+          recordGqlFields: { id: true },
+        },
         scopedRelationJunction,
       },
     ]);

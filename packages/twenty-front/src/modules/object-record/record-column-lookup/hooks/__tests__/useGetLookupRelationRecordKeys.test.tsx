@@ -19,8 +19,11 @@ const buildPeopleAlias = (
     Partial<ScopedRelationAlias>,
 ): ScopedRelationAlias => ({
   recordFieldId: scopedRelationAlias.responseKey,
-  relationFieldName: 'people',
   relationObjectMetadataItem: personObjectMetadataItem,
+  relationWithArguments: {
+    relationFieldName: 'people',
+    recordGqlFields: { id: true },
+  },
   ...scopedRelationAlias,
 });
 

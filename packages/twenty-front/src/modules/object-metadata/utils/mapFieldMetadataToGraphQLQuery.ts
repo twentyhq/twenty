@@ -9,7 +9,6 @@ import {
   type RecordGqlFields,
   RelationType,
 } from 'twenty-shared/types';
-import { getRelationWithArgumentsVariableNames } from '@/object-record/graphql/utils/getRelationWithArgumentsVariableNames';
 import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
 import {
   canAccessThroughAllRecordsOrRlsPermission,
@@ -27,8 +26,7 @@ type MapFieldMetadataToGraphQLQueryArgs = {
     'name' | 'type' | 'relation' | 'morphRelations' | 'settings'
   >;
   relationRecordGqlFields?: RecordGqlFields;
-  relationWithArgumentsResponseKey?: string;
-  relationAggregateGqlFieldNames?: string[];
+  relationConnectionGqlFieldNames?: string[];
   computeReferences?: boolean;
   objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
 };
@@ -38,8 +36,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
   gqlField,
   fieldMetadata,
   relationRecordGqlFields,
-  relationWithArgumentsResponseKey,
-  relationAggregateGqlFieldNames = [],
+  relationConnectionGqlFieldNames = [],
   computeReferences = false,
   objectPermissionsByObjectMetadataId,
 }: MapFieldMetadataToGraphQLQueryArgs): string => {
@@ -249,23 +246,13 @@ ${mapObjectMetadataToGraphQLQuery({
       }
     }
 
-    const variableNames = isDefined(relationWithArgumentsResponseKey)
-      ? getRelationWithArgumentsVariableNames(relationWithArgumentsResponseKey)
-      : undefined;
-
-    const relationSelection = isDefined(variableNames)
-      ? doNotTranslate(
-          `${relationWithArgumentsResponseKey}: ${gqlField}(filter: $${variableNames.filter}, orderBy: $${variableNames.orderBy}, first: $${variableNames.first})`,
-        )
-      : gqlField;
-
-    const aggregatesSelection = relationAggregateGqlFieldNames
-      .map((aggregateGqlFieldName) => `${aggregateGqlFieldName}\n  `)
+    const connectionFieldsSelection = relationConnectionGqlFieldNames
+      .map((connectionGqlFieldName) => `${connectionGqlFieldName}\n  `)
       .join('');
 
-    return doNotTranslate(`${relationSelection}
+    return doNotTranslate(`${gqlField}
 {
-  ${aggregatesSelection}edges {
+  ${connectionFieldsSelection}edges {
     node ${mapObjectMetadataToGraphQLQuery({
       objectMetadataItems,
       objectMetadataItem: relationMetadataItem,

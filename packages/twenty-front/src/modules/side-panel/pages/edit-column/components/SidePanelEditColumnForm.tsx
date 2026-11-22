@@ -15,7 +15,6 @@ import { type ScopedRelationJunction } from '@/object-record/record-column-scope
 import { getRelationScopeFieldMetadataItems } from '@/object-record/record-column-scope/utils/getRelationScopeFieldMetadataItems';
 import { getRelationScopeFromRecordFiltersAndSorts } from '@/object-record/record-column-scope/utils/getRelationScopeFromRecordFiltersAndSorts';
 import { getRelationScopeToSave } from '@/object-record/record-column-scope/utils/getRelationScopeToSave';
-import { parseRelationScopeLimitInput } from '@/object-record/record-column-scope/utils/parseRelationScopeLimitInput';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -130,7 +129,13 @@ export const SidePanelEditColumnForm = ({
   );
   const [isSaving, setIsSaving] = useState(false);
 
-  const parsedLimitInput = parseRelationScopeLimitInput(limitInput);
+  const trimmedLimitInput = limitInput.trim();
+  const limit = trimmedLimitInput === '' ? null : Number(trimmedLimitInput);
+  const isLimitValid =
+    limit === null ||
+    (Number.isInteger(limit) &&
+      limit >= 1 &&
+      limit <= QUERY_MAX_RECORDS_FROM_RELATION);
 
   const lookupTargetFieldMetadataItems = getLookupTargetFieldMetadataItems(
     relationObjectMetadataItem,
@@ -174,7 +179,7 @@ export const SidePanelEditColumnForm = ({
       ? `${fieldMetadataItem.label} · ${t`Summary`}`
       : defaultColumnHeader.label;
 
-  const canSave = isSummary ? isDefined(summary) : parsedLimitInput.isValid;
+  const canSave = isSummary ? isDefined(summary) : isLimitValid;
 
   const handleAggregateOperationChange = (
     selectedAggregateOperation: AggregateOperations,
@@ -204,10 +209,7 @@ export const SidePanelEditColumnForm = ({
         recordFilters: store.get(currentRecordFilters),
         recordFilterGroups: store.get(currentRecordFilterGroups),
         recordSorts: isSummary ? [] : store.get(currentRecordSorts),
-        limit:
-          !isSummary && parsedLimitInput.isValid
-            ? parsedLimitInput.limit
-            : null,
+        limit: isSummary ? null : limit,
       }),
       storedRelationScope,
       scopedRelationJunction,
@@ -347,7 +349,7 @@ export const SidePanelEditColumnForm = ({
               type="number"
               value={limitInput}
               error={
-                parsedLimitInput.isValid
+                isLimitValid
                   ? undefined
                   : t`Enter a number between 1 and ${QUERY_MAX_RECORDS_FROM_RELATION}`
               }
