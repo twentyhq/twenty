@@ -71,7 +71,6 @@ const StyledMessageContainer = styled.div<{
   width: ${({ isUser }) => (isUser ? 'fit-content' : '100%')};
 `;
 
-// The list spaces rows with one gap, so a grouped row gives back the difference
 const StyledMessageRow = styled(StyledChatMessageRow)<{
   isTightlyGroupedWithNext: boolean;
 }>`

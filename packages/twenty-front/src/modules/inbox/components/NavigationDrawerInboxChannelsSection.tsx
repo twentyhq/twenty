@@ -51,7 +51,6 @@ export const NavigationDrawerInboxChannelsSection = ({
     return null;
   }
 
-  // Listed only for who manages channels, so they keep a way to set them up
   const inaccessibleChannels = (aiChatChannels ?? []).filter(
     ({ isAccessible }) => !isAccessible,
   );

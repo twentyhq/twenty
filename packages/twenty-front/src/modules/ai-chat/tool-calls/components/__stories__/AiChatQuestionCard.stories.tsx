@@ -42,7 +42,6 @@ const TONE_QUESTION = {
   options: [{ label: 'Friendly', isRecommended: true }, { label: 'Formal' }],
 };
 
-// calls asked before ask_question took one question at a time
 const multipleQuestions: AiChatPendingQuestion = {
   toolCallId: 'call-2',
   kind: 'questions',

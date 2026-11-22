@@ -128,7 +128,6 @@ const StyledComposerBottomSpacer = styled.div`
   transition-property: flex-grow;
   transition-timing-function: ease-out;
 
-  // Only the collapse animates: re-centering on a thread switch would trail the content change.
   &.is-centered {
     flex-grow: 1;
     transition-property: none;

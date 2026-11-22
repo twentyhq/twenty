@@ -185,7 +185,6 @@ export const AiChatAssistantMessageRenderer = ({
   const renderItemsWithoutThinkingSteps = groupedRenderItems.filter(
     (renderItem) => renderItem.type !== 'thinking-steps',
   );
-  // Falling back to the steps keeps a finished message from rendering as an empty entry
   const visibleRenderItems =
     shouldHideThinkingSteps &&
     (isLastMessageStreaming || renderItemsWithoutThinkingSteps.length > 0)
@@ -202,7 +201,6 @@ export const AiChatAssistantMessageRenderer = ({
     : visibleRenderItems;
 
   const lastRenderItemIndex = renderItems.length - 1;
-  // the duration covers the whole message, so only the steps right before the final answer carry it
   const lastThinkingStepsRenderItemIndex = renderItems.findLastIndex(
     (renderItem) => renderItem.type === 'thinking-steps',
   );

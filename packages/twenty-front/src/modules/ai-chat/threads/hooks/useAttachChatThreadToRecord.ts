@@ -37,7 +37,6 @@ export const useAttachChatThreadToRecord = () => {
   });
   const { refetchAggregateQueries } = useRefetchAggregateQueries();
 
-  // The chat model may link the same record through its own tool, so an existing link counts as success.
   const attachChatThreadToRecord = async ({
     threadId,
     objectNameSingular,
@@ -60,7 +59,6 @@ export const useAttachChatThreadToRecord = () => {
     }
 
     try {
-      // Custom object links have no unique index to upsert on.
       const { data: existingLinks, error: existingLinksError } =
         await apolloCoreClient.query<RecordGqlOperationFindManyResult>({
           query: findExistingLinksQuery,
@@ -102,7 +100,6 @@ export const useAttachChatThreadToRecord = () => {
       return;
     }
 
-    // The link exists by now, so a failed count refresh isn't a failed attach.
     refetchAggregateQueries({
       objectMetadataNamePlural:
         junctionConfig.junctionObjectMetadata.namePlural,

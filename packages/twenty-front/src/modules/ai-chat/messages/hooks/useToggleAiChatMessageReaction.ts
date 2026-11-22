@@ -20,7 +20,6 @@ type ReactionRequestQueue = {
   isConfirmedReacted: boolean;
 };
 
-// Shared by every caller so one emoji's changes reach the server in the order they were made
 const reactionRequestQueues = new Map<string, ReactionRequestQueue>();
 
 export const useToggleAiChatMessageReaction = () => {
@@ -29,7 +28,6 @@ export const useToggleAiChatMessageReaction = () => {
   const { threadId: aiChatThreadId } = useAiChatInstanceOrThrow();
   const { enqueueToast } = useToast();
 
-  // Live snapshots carry the server's state, so a refused change only takes back its own reaction
   const toggleAiChatMessageReaction = useCallback(
     async ({ messageId, emoji }: { messageId: string; emoji: string }) => {
       const workspaceMemberId = store.get(currentWorkspaceMemberState.atom)?.id;
@@ -86,7 +84,6 @@ export const useToggleAiChatMessageReaction = () => {
           });
           queue.isConfirmedReacted = !hasReacted;
         } catch (error) {
-          // A newer change, or a live snapshot of the server's state, settles the reaction instead
           if (
             queue.lastRequest === request &&
             readLiveRevision() === liveRevisionBeforeRequest

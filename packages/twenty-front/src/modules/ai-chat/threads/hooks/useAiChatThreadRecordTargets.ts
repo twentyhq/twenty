@@ -70,7 +70,6 @@ export const useAiChatThreadRecordTargets = ({
     skip: isThreadQuerySkipped,
   });
 
-  // The chat model links conversations through its own server tool, so links are reread on any write.
   const linksOperationSignature = useMemo(
     () => ({
       objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
@@ -103,7 +102,6 @@ export const useAiChatThreadRecordTargets = ({
     relationValue: junctionRecords,
     junctionConfig: { targetFields: junctionConfig?.targetFields ?? [] },
   });
-  // A chat can hold several links to the same record
   const targetRecords = uniqBy(
     junctionTargetRecords,
     ({ record, objectNameSingular }) => `${objectNameSingular}-${record.id}`,

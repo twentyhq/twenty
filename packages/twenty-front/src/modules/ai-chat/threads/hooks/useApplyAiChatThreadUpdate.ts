@@ -13,7 +13,6 @@ export const useApplyAiChatThreadUpdate = () => {
   const store = useStore();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  // A list page requested before this update must not overwrite it
   const applyAiChatThreadUpdate = useCallback(
     (update: AiChatThreadUpdate) => {
       upsertRecordsInStore({

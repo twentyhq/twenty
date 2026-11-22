@@ -67,16 +67,21 @@ const findEntitiesOfRoles = <
     );
 
 const findCreatedAt = ({
-  entities,
+  existingUniversalFlatEntities,
   universalIdentifier,
   now,
 }: {
-  entities: { universalIdentifier: string; createdAt: string }[];
+  existingUniversalFlatEntities: {
+    universalIdentifier: string;
+    createdAt: string;
+  }[];
   universalIdentifier: string;
   now: string;
 }): string =>
-  entities.find((entity) => entity.universalIdentifier === universalIdentifier)
-    ?.createdAt ?? now;
+  existingUniversalFlatEntities.find(
+    (existingUniversalFlatEntity) =>
+      existingUniversalFlatEntity.universalIdentifier === universalIdentifier,
+  )?.createdAt ?? now;
 
 export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
   individualRoles,
@@ -173,7 +178,7 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
           isEditable: false,
           isSystemSideEffect: true,
           createdAt: findCreatedAt({
-            entities: existingFlatRoles,
+            existingUniversalFlatEntities: existingFlatRoles,
             universalIdentifier: roleUniversalIdentifier,
             now,
           }),
@@ -190,7 +195,7 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
           webhookUniversalIdentifier: null,
           targetApplicationUniversalIdentifier: null,
           createdAt: findCreatedAt({
-            entities: existingFlatRoleTargets,
+            existingUniversalFlatEntities: existingFlatRoleTargets,
             universalIdentifier: roleTargetUniversalIdentifier,
             now,
           }),

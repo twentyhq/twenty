@@ -30,7 +30,6 @@ export const useLeaveRemovedInboxThread = () => {
       return;
     }
 
-    // Only the first page is reloaded, so an older chat is looked up first
     if (
       (await loadAiChatThread(currentThreadId)) !== null ||
       getCurrentAiChatPageThreadId(store) !== currentThreadId
