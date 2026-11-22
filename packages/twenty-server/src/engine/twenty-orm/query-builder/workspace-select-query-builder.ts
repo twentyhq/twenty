@@ -781,7 +781,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       );
     }
 
-    if (placeholderColumnNames.length > 0) {
+    if (isNonEmptyArray(placeholderColumnNames)) {
       (this.unreadableColumnPlaceholders[alias] ??= []).push(
         ...placeholderColumnNames,
       );
