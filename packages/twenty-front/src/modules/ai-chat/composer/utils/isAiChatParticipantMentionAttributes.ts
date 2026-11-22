@@ -1,7 +1,8 @@
 import { StandardObjectNameSingular } from 'twenty-shared/types';
+import { type TipTapNode } from 'twenty-shared/utils';
 
 export const isAiChatParticipantMentionAttributes = (
-  attributes: Record<string, unknown> | undefined,
+  attributes: TipTapNode['attrs'],
 ): boolean =>
   attributes?.objectNameSingular ===
     StandardObjectNameSingular.WorkspaceMember &&

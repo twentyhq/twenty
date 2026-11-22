@@ -10,9 +10,13 @@ export const getConversationTargetsFromSerializedDocument = (
     const objectNameSingular = attrs?.objectNameSingular;
     const recordId = attrs?.recordId;
 
-    return attrs?.isConversationTarget === true &&
-      isNonEmptyString(objectNameSingular) &&
-      isNonEmptyString(recordId)
-      ? [{ objectNameSingular, recordId }]
-      : [];
+    if (
+      attrs?.isConversationTarget !== true ||
+      !isNonEmptyString(objectNameSingular) ||
+      !isNonEmptyString(recordId)
+    ) {
+      return [];
+    }
+
+    return [{ objectNameSingular, recordId }];
   });
