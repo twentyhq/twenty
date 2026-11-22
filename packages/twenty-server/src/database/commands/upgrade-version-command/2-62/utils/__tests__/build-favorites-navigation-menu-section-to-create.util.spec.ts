@@ -4,8 +4,8 @@ import { buildFavoritesNavigationMenuSectionToCreate } from 'src/database/comman
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 
 const buildItem = (
-  overrides: Partial<NavigationMenuItemInput>,
-): NavigationMenuItemInput => ({
+  overrides: Partial<NavigationMenuItemFixture>,
+): NavigationMenuItemFixture => ({
   universalIdentifier: 'item',
   userWorkspaceId: null,
   parentId: null,
@@ -14,7 +14,7 @@ const buildItem = (
   ...overrides,
 });
 
-const build = (navigationMenuItems: NavigationMenuItemInput[]) =>
+const build = (navigationMenuItems: NavigationMenuItemFixture[]) =>
   buildFavoritesNavigationMenuSectionToCreate({
     navigationMenuItems,
     sectionId: 'favorites-section',
@@ -26,7 +26,7 @@ const build = (navigationMenuItems: NavigationMenuItemInput[]) =>
     now: '2026-11-20T00:00:00.000Z',
   });
 
-type NavigationMenuItemInput = Parameters<
+type NavigationMenuItemFixture = Parameters<
   typeof buildFavoritesNavigationMenuSectionToCreate
 >[0]['navigationMenuItems'][number];
 
