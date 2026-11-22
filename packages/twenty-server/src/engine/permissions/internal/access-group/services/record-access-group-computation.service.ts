@@ -38,6 +38,8 @@ import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal
 import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/find-related-record-paths-feeding-access-groups.util';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
 import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 type RecomputeInputs = {
   flatObjectMetadata: FlatObjectMetadata;
@@ -56,6 +58,7 @@ export class RecordAccessGroupComputationService {
     private readonly accessGroupPropagationPlanService: AccessGroupPropagationPlanService,
     @InjectMessageQueue(MessageQueue.accessGroupQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async recomputeRecordAccessGroupIdsOfAllObjectRecords({
@@ -145,6 +148,14 @@ export class RecordAccessGroupComputationService {
     ) {
       return [];
     }
+
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.AccessGroupRecomputeRecords,
+      amount: recordIds.length,
+      attributes: {
+        mode: isDefined(transactionScope) ? 'in_write' : 'background',
+      },
+    });
 
     const { flatObjectMetadata, feedingRelatedRecordPaths, accessGroups } =
       await this.findRecomputeInputs({
@@ -295,6 +306,11 @@ export class RecordAccessGroupComputationService {
     recordIds,
     fromRelatedObjectMetadataIds,
   }: RecomputeRecordAccessGroupIdsOfRecordsJobData): Promise<void> {
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.AccessGroupRecomputeRecordsQueued,
+      amount: recordIds.length,
+    });
+
     for (const recordIdsBatch of chunk(recordIds, RECOMPUTE_BATCH_SIZE)) {
       await this.messageQueueService.add<RecomputeRecordAccessGroupIdsOfRecordsJobData>(
         RECOMPUTE_RECORD_ACCESS_GROUP_IDS_OF_RECORDS_JOB_NAME,

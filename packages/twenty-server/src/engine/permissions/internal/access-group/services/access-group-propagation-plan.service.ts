@@ -9,14 +9,14 @@ import { DataSource } from 'typeorm';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
+import { COMPUTE_RECORD_ACCESS_GROUP_IDS_OPERATION_NAME } from 'src/engine/permissions/internal/access-group/constants/compute-record-access-group-ids-operation-name.constant';
 import { type AccessGroupComputePlanStep } from 'src/engine/permissions/internal/access-group/types/access-group-compute-plan-step.type';
 import { type AccessGroupPropagationProgress } from 'src/engine/permissions/internal/access-group/types/access-group-propagation-progress.type';
+import { computeAccessGroupPropagationRecordCounts } from 'src/engine/permissions/internal/access-group/utils/compute-access-group-propagation-record-counts.util';
 import { areRecordAccessGroupComputesAlreadyPlanned } from 'src/engine/permissions/internal/access-group/utils/are-record-access-group-computes-already-planned.util';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
 import { DeferredWorkspaceOperationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-operation-runner.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
-
-const COMPUTE_OPERATION_NAME = 'compute_recordAccessGroupIds';
 
 @Injectable()
 export class AccessGroupPropagationPlanService {
@@ -51,7 +51,7 @@ export class AccessGroupPropagationPlanService {
         await this.deferredWorkspaceOperationRunnerService.findOperationPayloads(
           {
             workspaceId,
-            name: COMPUTE_OPERATION_NAME,
+            name: COMPUTE_RECORD_ACCESS_GROUP_IDS_OPERATION_NAME,
             statuses: ['PENDING'],
           },
         );
@@ -107,7 +107,7 @@ export class AccessGroupPropagationPlanService {
             TWENTY_STANDARD_APPLICATION.universalIdentifier,
           deferredOperations: [
             {
-              name: COMPUTE_OPERATION_NAME,
+              name: COMPUTE_RECORD_ACCESS_GROUP_IDS_OPERATION_NAME,
               payload: {
                 objectComputes: stepsToPersist.map((step) => ({
                   ...step,
@@ -165,34 +165,13 @@ export class AccessGroupPropagationPlanService {
     const computePayloads =
       await this.deferredWorkspaceOperationRunnerService.findOperationPayloads({
         workspaceId,
-        name: COMPUTE_OPERATION_NAME,
+        name: COMPUTE_RECORD_ACCESS_GROUP_IDS_OPERATION_NAME,
         statuses: ['PENDING', 'IN_PROGRESS'],
-      });
-    const recordCounts = computePayloads
-      .flatMap(({ objectComputes }) => objectComputes)
-      .map(({ plannedRecordCount, computedRecordCount, isComputed }) => {
-        const totalRecordCount = Math.max(
-          plannedRecordCount,
-          computedRecordCount,
-        );
-
-        return {
-          totalRecordCount,
-          remainingRecordCount: isComputed
-            ? 0
-            : totalRecordCount - computedRecordCount,
-        };
       });
 
     return {
-      totalRecordCount: recordCounts.reduce(
-        (recordCount, { totalRecordCount }) => recordCount + totalRecordCount,
-        0,
-      ),
-      remainingRecordCount: recordCounts.reduce(
-        (recordCount, { remainingRecordCount }) =>
-          recordCount + remainingRecordCount,
-        0,
+      ...computeAccessGroupPropagationRecordCounts(
+        computePayloads.flatMap(({ objectComputes }) => objectComputes),
       ),
       isInProgress: isNonEmptyArray(computePayloads),
     };
@@ -210,7 +189,7 @@ export class AccessGroupPropagationPlanService {
     await this.deferredWorkspaceOperationRunnerService.updateInProgressOperationPayload(
       {
         workspaceId,
-        name: COMPUTE_OPERATION_NAME,
+        name: COMPUTE_RECORD_ACCESS_GROUP_IDS_OPERATION_NAME,
         updatePayload: ({ objectComputes }) => {
           const nextObjectComputeIndex = objectComputes.findIndex(
             ({ isComputed }) => !isComputed,
