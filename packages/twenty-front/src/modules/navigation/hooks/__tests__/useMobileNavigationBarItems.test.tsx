@@ -1,4 +1,5 @@
 import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
+import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { useMobileNavigationBarItems } from '@/navigation/hooks/useMobileNavigationBarItems';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -182,5 +183,29 @@ describe('useMobileNavigationBarItems', () => {
     act(() => result.current.navigate(-1));
 
     expect(result.current.location.pathname).toBe('/objects/people');
+  });
+
+  it('keeps each tab on the folder it had open', () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([
+        { id: 'sales-tab', name: 'Sales', icon: null },
+      ] as ReturnType<typeof useWorkspaceNavigationMenuContainers>);
+
+    const { result, store } = renderMobileNavigationBarItems('/objects/people');
+
+    act(() => tapItem(result, 'tab-sales-tab'));
+    act(() => store.set(currentNavigationMenuItemFolderIdState.atom, 'deals'));
+
+    act(() => tapItem(result, 'home'));
+    expect(store.get(currentNavigationMenuItemFolderIdState.atom)).toBeNull();
+
+    act(() => tapItem(result, 'tab-sales-tab'));
+    expect(store.get(currentNavigationMenuItemFolderIdState.atom)).toBe(
+      'deals',
+    );
+
+    act(() => tapItem(result, 'tab-sales-tab'));
+    expect(store.get(currentNavigationMenuItemFolderIdState.atom)).toBeNull();
   });
 });

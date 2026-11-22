@@ -2,6 +2,7 @@ import { useSwitchToNewAiChatInInboxChannel } from '@/inbox/hooks/useSwitchToNew
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
+import { navigationMenuItemFolderIdByTabIdState } from '@/navigation-menu-item/common/states/navigationMenuItemFolderIdByTabIdState';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { useNavigationMenuTabIdsWithUnreadChats } from '@/navigation-menu-item/display/hooks/useNavigationMenuTabIdsWithUnreadChats';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
@@ -18,6 +19,7 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -76,9 +78,14 @@ export const useMobileNavigationBarItems = (): {
   const setNavigationDrawerActiveTab = useSetAtomState(
     navigationDrawerActiveTabState,
   );
-  const setCurrentNavigationMenuItemFolderId = useSetAtomState(
-    currentNavigationMenuItemFolderIdState,
-  );
+  const [
+    currentNavigationMenuItemFolderId,
+    setCurrentNavigationMenuItemFolderId,
+  ] = useAtomState(currentNavigationMenuItemFolderIdState);
+  const [
+    navigationMenuItemFolderIdByTabId,
+    setNavigationMenuItemFolderIdByTabId,
+  ] = useAtomState(navigationMenuItemFolderIdByTabIdState);
 
   const setContextStoreCurrentObjectMetadataItemId = useSetAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -107,7 +114,20 @@ export const useMobileNavigationBarItems = (): {
     closeSettingsDrawer();
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     setCurrentNavigationMenuTabId(tabId);
-    setCurrentNavigationMenuItemFolderId(null);
+    const currentTabKey = activeNavigationMenuTab?.id ?? 'home';
+    const nextTabKey = tabId ?? 'home';
+    const isReopeningCurrentTab =
+      pathname === AppPath.Home && currentTabKey === nextTabKey;
+
+    setNavigationMenuItemFolderIdByTabId({
+      ...navigationMenuItemFolderIdByTabId,
+      [currentTabKey]: currentNavigationMenuItemFolderId,
+    });
+    setCurrentNavigationMenuItemFolderId(
+      isReopeningCurrentTab
+        ? null
+        : (navigationMenuItemFolderIdByTabId[nextTabKey] ?? null),
+    );
     navigate(AppPath.Home, { replace: isSettingsDrawer });
   };
 
