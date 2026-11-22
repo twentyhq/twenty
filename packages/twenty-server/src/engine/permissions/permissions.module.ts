@@ -22,6 +22,8 @@ import { RelatedRecordPathReadModule } from 'src/engine/permissions/internal/rel
 import { RecordPermissionRepositoryModule } from 'src/engine/permissions/internal/record-permission-repository/record-permission-repository.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
+import { PermissionsMetricsModule } from 'src/engine/permissions/internal/metrics/permissions-metrics.module';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     AccessGroupReadModule,
     ApplicationGrantRoleLookupModule,
     CoreEntityCacheModule,
+    MetricsModule,
+    PermissionsMetricsModule,
     TypeOrmModule.forFeature([RoleTargetEntity]),
     WorkspaceCacheModule,
     RecordPermissionRepositoryModule,

@@ -12,6 +12,8 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { assertUpdatedColumnsAreEditableOrThrow } from 'src/engine/permissions/internal/field-access/utils/assert-updated-columns-are-editable-or-throw.util';
@@ -100,6 +102,7 @@ export class RecordPermissionsReadService {
     private readonly privateRecordRepository: PrivateRecordRepository,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
     private readonly accessGroupReadService: AccessGroupReadService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async findRecordsActions({
@@ -397,8 +400,19 @@ export class RecordPermissionsReadService {
       principalsAccessGroupCompactIds,
       principalsRelatedRecordPathAccessGroupCompactIds,
     });
+    const isAccessExtendedByRelatedRecordPath =
+      canRelatedRecordPathExtendAccess(objectAccessRequest);
 
-    if (!canRelatedRecordPathExtendAccess(objectAccessRequest)) {
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.RecordPermissionsReadAccessCondition,
+      amount: 1,
+      attributes: {
+        strategy: resolveRecordsAccessSQLConditionStrategy(objectAccessRequest),
+        related_record_path: isAccessExtendedByRelatedRecordPath,
+      },
+    });
+
+    if (!isAccessExtendedByRelatedRecordPath) {
       return sqlCondition;
     }
 
