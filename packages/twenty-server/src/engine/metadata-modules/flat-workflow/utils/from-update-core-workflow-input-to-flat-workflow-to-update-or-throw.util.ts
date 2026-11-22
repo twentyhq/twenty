@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { type WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
@@ -11,12 +10,12 @@ import {
 export const fromUpdateCoreWorkflowInputToFlatWorkflowToUpdateOrThrow = ({
   existingFlatWorkflow,
   name,
-  visibility,
+  isPrivate,
   userWorkspaceId,
 }: {
   existingFlatWorkflow: FlatWorkflow;
   name?: string;
-  visibility?: WorkflowVisibility;
+  isPrivate?: boolean;
   userWorkspaceId: string | undefined;
 }): FlatWorkflow => {
   const flatWorkflowToUpdate: FlatWorkflow = {
@@ -24,7 +23,7 @@ export const fromUpdateCoreWorkflowInputToFlatWorkflowToUpdateOrThrow = ({
     ...(isDefined(name) ? { name } : {}),
   };
 
-  if (!isDefined(visibility)) {
+  if (!isDefined(isPrivate)) {
     return flatWorkflowToUpdate;
   }
 
@@ -40,7 +39,7 @@ export const fromUpdateCoreWorkflowInputToFlatWorkflowToUpdateOrThrow = ({
 
   return {
     ...flatWorkflowToUpdate,
-    visibility,
+    isPrivate,
     createdByUserWorkspaceId: userWorkspaceId,
   };
 };

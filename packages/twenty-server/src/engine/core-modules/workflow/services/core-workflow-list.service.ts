@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { type WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, In } from 'typeorm';
 
@@ -21,6 +20,7 @@ import {
 import { buildCoreWorkflowFilterPredicate } from 'src/engine/core-modules/workflow/utils/build-core-workflow-filter-predicate.util';
 import { buildCoreWorkflowVisibilitySqlPredicate } from 'src/engine/core-modules/workflow/utils/build-core-workflow-visibility-sql-predicate.util';
 import { buildCoreWorkflowVisibilityWhere } from 'src/engine/core-modules/workflow/utils/build-core-workflow-visibility-where.util';
+import { getCoreWorkflowVisibilityFromIsPrivate } from 'src/engine/core-modules/workflow/utils/get-core-workflow-visibility-from-is-private.util';
 import { canChangeCoreWorkflowVisibility } from 'src/engine/core-modules/workflow/utils/can-change-core-workflow-visibility.util';
 import { canChangeCoreWorkflowVisibilitySelectExpression } from 'src/engine/core-modules/workflow/utils/can-change-core-workflow-visibility-select-expression.util';
 import { buildCoreWorkflowVersionLabel } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-label.util';
@@ -45,7 +45,7 @@ type CoreWorkflowRow = {
   applicationId: string | null;
   workspaceWorkflowId: string | null;
   isSystem: boolean;
-  visibility: WorkflowVisibility;
+  isPrivate: boolean;
   canChangeVisibility: boolean;
   updatedAt: Date;
   hasDraftVersion: boolean;
@@ -109,7 +109,7 @@ const CORE_WORKFLOW_AGGREGATE_COLUMNS = `
          c."lastPublishedVersionId", c."lastPublishedCoreWorkflowVersionId",
          c."applicationId",
          c."isSystem",
-         c."visibility",
+         c."isPrivate",
          ${canChangeCoreWorkflowVisibilitySelectExpression({ tableAlias: 'c', userWorkspaceIdParameter: READER_PARAMETER })} AS "canChangeVisibility",
          c."createdAt",
          c."updatedAt",
@@ -130,7 +130,8 @@ const toCoreWorkflowDTO = (row: CoreWorkflowRow): CoreWorkflowDTO => ({
   applicationId: row.applicationId,
   workspaceWorkflowId: row.workspaceWorkflowId,
   isSystem: row.isSystem,
-  visibility: row.visibility,
+  isPrivate: row.isPrivate,
+  visibility: getCoreWorkflowVisibilityFromIsPrivate(row.isPrivate),
   canChangeVisibility: row.canChangeVisibility,
   createdAt: row.createdAt.toISOString(),
   updatedAt: row.updatedAt.toISOString(),
@@ -304,7 +305,10 @@ export class CoreWorkflowListService {
             applicationId: workflow.applicationId,
             workspaceWorkflowId: workflow.workspaceWorkflowId,
             isSystem: workflow.isSystem,
-            visibility: workflow.visibility,
+            isPrivate: workflow.isPrivate,
+            visibility: getCoreWorkflowVisibilityFromIsPrivate(
+              workflow.isPrivate,
+            ),
             canChangeVisibility: canChangeCoreWorkflowVisibility({
               createdByUserWorkspaceId: workflow.createdByUserWorkspaceId,
               userWorkspaceId,

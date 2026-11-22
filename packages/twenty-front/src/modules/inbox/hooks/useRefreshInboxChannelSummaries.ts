@@ -29,7 +29,6 @@ export const useRefreshInboxChannelSummaries = () => {
       summaries.map(({ channelId, ...summary }) => [channelId, summary]),
     );
 
-    // Most chat changes leave the counts as they were
     if (
       !isDeeplyEqual(
         store.get(inboxChannelSummariesState.atom),
