@@ -84,6 +84,8 @@ const buildFlatPredicate = (
   workspaceMemberFieldMetadataId: null,
   workspaceMemberFieldMetadataUniversalIdentifier: null,
   workspaceMemberSubFieldName: null,
+  workspaceMemberRelationFieldMetadataId: null,
+  workspaceMemberRelationFieldMetadataUniversalIdentifier: null,
   rowLevelPermissionPredicateGroupId: null,
   rowLevelPermissionPredicateGroupUniversalIdentifier: null,
   rowLevelPermissionRuleId: null,

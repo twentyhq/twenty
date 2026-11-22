@@ -33,8 +33,6 @@ export { canAccessThroughAllRecordsOrRlsPermission } from './canAccessThroughAll
 export { canAccessThroughAllRecordsPermission } from './canAccessThroughAllRecordsPermission';
 export { canAccessThroughRlsPermission } from './canAccessThroughRlsPermission';
 export { canRlsRuleAccessOperation } from './canRlsRuleAccessOperation';
-export { conditionalAvailabilityParser } from './command-menu-items/conditionalAvailabilityParser';
-export { evaluateConditionalAvailabilityExpression } from './command-menu-items/evaluateConditionalAvailabilityExpression';
 export { isCommandMenuCoreObjectName } from './command-menu-items/isCommandMenuCoreObjectName';
 export { resolveObjectMetadataLabel } from './command-menu-items/resolveObjectMetadataLabel';
 export { safeGetNestedProperty } from './command-menu-items/safeGetNestedProperty';
@@ -91,6 +89,7 @@ export { parseExpressionDate } from './expression-date/parseExpressionDate';
 export { toExpressionDateTimeInUtc } from './expression-date/toExpressionDateTimeInUtc';
 export { truncateExpressionDate } from './expression-date/truncateExpressionDate';
 export { truncateTowardZero } from './expression-date/truncateTowardZero';
+export { getExpressionSyntaxError } from './expression/getExpressionSyntaxError';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { computeMorphRelationGqlFieldName } from './fieldMetadata/compute-morph-relation-gql-field-name';
 export {
@@ -404,7 +403,6 @@ export { createValidationRuleEvaluator } from './validation-rule/createValidatio
 export { evaluateValidationRuleExpression } from './validation-rule/evaluateValidationRuleExpression';
 export { getValidationRulePreviousValueFieldPath } from './validation-rule/getValidationRulePreviousValueFieldPath';
 export { getValidationRuleRecordsFromDatabaseEvent } from './validation-rule/getValidationRuleRecordsFromDatabaseEvent';
-export { getValidationRuleSyntaxError } from './validation-rule/getValidationRuleSyntaxError';
 export { hasValidationRuleBracketAccess } from './validation-rule/hasValidationRuleBracketAccess';
 export { isValidationRuleDateInRelativeRange } from './validation-rule/isValidationRuleDateInRelativeRange';
 export { isValidationRulePreviousValuePath } from './validation-rule/isValidationRulePreviousValuePath';
