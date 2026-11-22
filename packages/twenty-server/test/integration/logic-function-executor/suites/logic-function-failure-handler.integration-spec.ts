@@ -8,6 +8,7 @@ import { uploadApplicationFile } from 'test/integration/metadata/suites/applicat
 import { findLogicFunctionId } from 'test/integration/server-route-trigger/utils/find-logic-function-id.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { type LogicFunctionManifest } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   LogicFunctionTriggerJob,
@@ -52,13 +53,13 @@ const buildFunctionManifest = ({
   sourceHandlerPath: `src/${name}.ts`,
   builtHandlerPath: `dist/${name}.mjs`,
   builtHandlerChecksum: `checksum-${name}`,
-  ...(onFailureUniversalIdentifier === undefined
-    ? {}
-    : {
+  ...(isDefined(onFailureUniversalIdentifier)
+    ? {
         onFailureLogicFunction: {
           universalIdentifier: onFailureUniversalIdentifier,
         },
-      }),
+      }
+    : {}),
 });
 
 const failureHandlerManifest = buildFunctionManifest({

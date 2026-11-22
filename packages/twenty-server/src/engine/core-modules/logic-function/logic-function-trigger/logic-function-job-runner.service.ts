@@ -188,7 +188,7 @@ export class LogicFunctionJobRunnerService {
     enqueueFailureHandler: EnqueueFailureHandler;
   }): Promise<void> {
     // A failing handler must not trigger another handler, or two could loop.
-    if (logicFunctionPayload.isFailureHandlerRun === true) {
+    if (logicFunctionPayload.isFailureHandlerRun) {
       return;
     }
 
