@@ -83,6 +83,7 @@ export const answerTeamsAssistantRequest = async ({
       client,
       id: request.id,
       workspaceMemberId,
+      requestText,
     });
 
     const [history, workspaceBaseUrl] = await Promise.all([

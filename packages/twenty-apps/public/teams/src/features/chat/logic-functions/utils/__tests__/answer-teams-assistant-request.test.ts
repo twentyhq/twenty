@@ -133,6 +133,17 @@ describe('answerTeamsAssistantRequest', () => {
     );
   });
 
+  it('should save the request text only once the sender is matched', async () => {
+    await answer();
+
+    expect(updateMock).toHaveBeenCalledWith({
+      client: expect.anything(),
+      id: REQUEST.id,
+      workspaceMemberId: 'workspace-member-1',
+      requestText: REQUEST.requestText,
+    });
+  });
+
   it('should pass the earlier turns of the sender in this conversation to the agent', async () => {
     const history = [{ requestText: 'hi', responseText: 'Hi!' }];
     findHistoryMock.mockResolvedValue(history);
@@ -189,6 +200,9 @@ describe('answerTeamsAssistantRequest', () => {
     await expect(answer()).resolves.toMatchObject({ status: 'declined' });
     expect(runAgentMock).not.toHaveBeenCalled();
     expect(finishedTexts()).toEqual([TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT]);
+    expect(updateMock).not.toHaveBeenCalledWith(
+      expect.objectContaining({ requestText: expect.anything() }),
+    );
   });
 
   it('should tell the member when the agent ran out of time', async () => {

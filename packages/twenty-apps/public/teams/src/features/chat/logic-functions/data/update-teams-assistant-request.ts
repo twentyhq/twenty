@@ -2,6 +2,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type TeamsAssistantRequestStatus } from 'src/features/chat/logic-functions/types/teams-assistant-request-status.type';
+import { buildTeamsAssistantRequestName } from 'src/features/chat/logic-functions/utils/build-teams-assistant-request-name';
 
 export const updateTeamsAssistantRequest = async ({
   client,
@@ -10,6 +11,7 @@ export const updateTeamsAssistantRequest = async ({
   responseText,
   errorMessage,
   workspaceMemberId,
+  requestText,
 }: {
   client: Pick<CoreApiClient, 'mutation'>;
   id: string;
@@ -17,6 +19,7 @@ export const updateTeamsAssistantRequest = async ({
   responseText?: string;
   errorMessage?: string;
   workspaceMemberId?: string;
+  requestText?: string;
 }): Promise<void> => {
   await client.mutation({
     updateTeamsAssistantRequest: {
@@ -29,6 +32,12 @@ export const updateTeamsAssistantRequest = async ({
             : {}),
           ...(isDefined(errorMessage) ? { errorMessage } : {}),
           ...(isDefined(workspaceMemberId) ? { workspaceMemberId } : {}),
+          ...(isDefined(requestText)
+            ? {
+                name: buildTeamsAssistantRequestName(requestText),
+                requestText: { blocknote: null, markdown: requestText },
+              }
+            : {}),
         },
       },
       id: true,

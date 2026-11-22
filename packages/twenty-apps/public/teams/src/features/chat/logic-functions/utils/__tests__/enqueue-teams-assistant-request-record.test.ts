@@ -71,6 +71,32 @@ describe('enqueueTeamsAssistantRequestRecord', () => {
     });
   });
 
+  it('should record the request without its text, which waits for the sender to be matched', async () => {
+    findTeamsAssistantRequestByTeamsActivityMock.mockResolvedValue(undefined);
+    createTeamsAssistantRequestMock.mockResolvedValue('request-1');
+
+    await enqueueTeamsAssistantRequestRecord(REQUEST_DRAFT);
+
+    const [[{ draft }]] = createTeamsAssistantRequestMock.mock.calls;
+
+    expect(draft).not.toHaveProperty('requestText');
+    expect(draft).toMatchObject({ teamsActivityId: '1700000000000' });
+  });
+
+  it('should take the text of a resumed request from the redelivered activity', async () => {
+    const { requestText: _requestText, ...storedDraft } = REQUEST_DRAFT;
+
+    findTeamsAssistantRequestByTeamsActivityMock.mockResolvedValue({
+      id: 'request-1',
+      status: TEAMS_ASSISTANT_REQUEST_STATUS.PENDING,
+      ...storedDraft,
+    });
+
+    const result = await enqueueTeamsAssistantRequestRecord(REQUEST_DRAFT);
+
+    expect(result.request?.requestText).toBe(REQUEST_DRAFT.requestText);
+  });
+
   it('should hand back an unanswered request so a retry can resume it', async () => {
     const pendingRequest = {
       id: 'request-1',
