@@ -1,0 +1,1 @@
+export const BUNDLED_MCP_SERVER_APPLICATION_CATEGORY = 'MCP servers';

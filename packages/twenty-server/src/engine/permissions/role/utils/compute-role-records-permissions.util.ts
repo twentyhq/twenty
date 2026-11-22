@@ -155,10 +155,12 @@ const buildUnreadableAndUneditableFields = ({
   objectMetadata,
   fieldPermissions,
   resolveMorphRelationPermissionFieldIds,
+  isLabelIdentifierAlwaysReadable,
 }: {
   objectMetadata: Pick<ObjectMetadataEntity, 'labelIdentifierFieldMetadataId'>;
   fieldPermissions: RoleDefinitionForRecordsPermissions['fieldPermissions'];
   resolveMorphRelationPermissionFieldIds: (fieldMetadataId: string) => string[];
+  isLabelIdentifierAlwaysReadable: boolean;
 }): { unreadableFields: string[]; uneditableFields: string[] } => {
   const unreadableFields = new Set<string>();
   const uneditableFields = new Set<string>();
@@ -166,8 +168,11 @@ const buildUnreadableAndUneditableFields = ({
   for (const fieldPermission of fieldPermissions) {
     const isUnreadable =
       fieldPermission.canReadFieldValue === false &&
-      fieldPermission.fieldMetadataId !==
-        objectMetadata.labelIdentifierFieldMetadataId;
+      !(
+        isLabelIdentifierAlwaysReadable &&
+        fieldPermission.fieldMetadataId ===
+          objectMetadata.labelIdentifierFieldMetadataId
+      );
 
     for (const restrictedFieldId of resolveMorphRelationPermissionFieldIds(
       fieldPermission.fieldMetadataId,
@@ -276,6 +281,7 @@ export const computeRoleRecordsPermissions = ({
                   rowLevelPermissionRuleId === rule.id,
               ),
               resolveMorphRelationPermissionFieldIds,
+              isLabelIdentifierAlwaysReadable: false,
             })),
       }));
 
@@ -290,6 +296,7 @@ export const computeRoleRecordsPermissions = ({
                 !isDefined(fieldPermission.rowLevelPermissionRuleId),
             ),
             resolveMorphRelationPermissionFieldIds,
+            isLabelIdentifierAlwaysReadable: true,
           }),
       objectRecordsAccess: {
         canCreate: objectRecordsAccess.canCreate && hasAiAccess,

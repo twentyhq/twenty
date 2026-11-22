@@ -5,7 +5,7 @@ import { resolveInput } from 'twenty-shared/utils';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
@@ -22,7 +22,7 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
   constructor(
     private readonly createRecordService: CreateRecordService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly workflowMetadataReadService: WorkflowMetadataReadService,
   ) {}
 
   async execute({
@@ -41,7 +41,7 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
     const rawInput = step.settings.input as WorkflowCreateRecordActionInput;
 
     const objectMetadataInfo =
-      await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+      await this.workflowMetadataReadService.getObjectMetadataInfo(
         rawInput.objectName,
         workspaceId,
       );

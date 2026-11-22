@@ -10,10 +10,13 @@ import {
   buildAccessGroupSyncLockKey,
 } from 'src/engine/permissions/internal/access-group/constants/access-group-sync-lock.constant';
 import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
-import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
+import { type SyncAccessGroupsJobData } from 'src/engine/permissions/internal/access-group/types/sync-access-groups-job-data.type';
+import { buildAccessGroupComputePlanSteps } from 'src/engine/permissions/internal/access-group/utils/build-access-group-compute-plan-steps.util';
 import { buildWorkspaceAccessGroups } from 'src/engine/permissions/internal/access-group/utils/build-workspace-access-groups.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
 
 @Injectable()
 export class AccessGroupSyncService {
@@ -21,19 +24,29 @@ export class AccessGroupSyncService {
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly accessGroupRepository: AccessGroupRepository,
-    private readonly recordAccessGroupComputationService: RecordAccessGroupComputationService,
+    private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
     private readonly accessGroupPropagationPlanService: AccessGroupPropagationPlanService,
   ) {}
 
-  async syncAccessGroups(workspaceId: string): Promise<void> {
+  async syncAccessGroups({
+    workspaceId,
+    isRelatedRecordPathChanged = false,
+  }: SyncAccessGroupsJobData): Promise<void> {
     await this.cacheLockService.withLock(
-      () => this.syncAccessGroupsWithLock(workspaceId),
+      () =>
+        this.syncAccessGroupsWithLock({
+          workspaceId,
+          isRelatedRecordPathChanged,
+        }),
       buildAccessGroupSyncLockKey(workspaceId),
       ACCESS_GROUP_SYNC_LOCK_OPTIONS,
     );
   }
 
-  private async syncAccessGroupsWithLock(workspaceId: string): Promise<void> {
+  private async syncAccessGroupsWithLock({
+    workspaceId,
+    isRelatedRecordPathChanged,
+  }: Required<SyncAccessGroupsJobData>): Promise<void> {
     await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
 
     const workspaceCache = await this.workspaceCacheService.getOrRecompute(
@@ -45,6 +58,7 @@ export class AccessGroupSyncService {
         'flatFieldMetadataMaps',
         'userWorkspaceRoleMap',
         'flatWorkspaceMemberMaps',
+        'rlsWorkspaceMemberRelationValueMaps',
       ],
     );
     const { accessGroups: newAccessGroups, hasFailures } =
@@ -58,7 +72,7 @@ export class AccessGroupSyncService {
     const newGroupHashes = new Set(
       newAccessGroups.map(({ groupHash }) => groupHash),
     );
-    const insertedAccessGroups = newAccessGroups.filter(
+    const accessGroupsToInsert = newAccessGroups.filter(
       ({ groupHash }) => !existingGroupHashes.has(groupHash),
     );
     const canDeleteStaleAccessGroups =
@@ -68,28 +82,26 @@ export class AccessGroupSyncService {
         canDeleteStaleAccessGroups && !newGroupHashes.has(groupHash),
     );
 
-    const objectMetadataIdsToRecompute =
-      await this.recordAccessGroupComputationService.filterObjectsUsingRecordAccessGroups(
-        {
-          workspaceId,
-          objectMetadataIds: [
-            ...new Set(
-              [...insertedAccessGroups, ...staleAccessGroups].map(
-                ({ objectMetadataId }) => objectMetadataId,
-              ),
-            ),
-          ],
-        },
-      );
+    const metadataMaps =
+      await this.recordAccessGroupMetadataMapsService.find(workspaceId);
 
-    await this.accessGroupPropagationPlanService.planAndApplyComputes({
+    await this.accessGroupPropagationPlanService.persistPlanSteps({
       workspaceId,
-      objectMetadataIds: objectMetadataIdsToRecompute,
+      steps: buildAccessGroupComputePlanSteps({
+        accessGroupsToInsert,
+        staleAccessGroups,
+        relatedRecordPathTargetObjectMetadataIds: isRelatedRecordPathChanged
+          ? metadataMaps.resolvedRelatedRecordPaths.map(
+              ({ targetObjectMetadataId }) => targetObjectMetadataId,
+            )
+          : [],
+        metadataMaps,
+      }),
     });
 
     await this.accessGroupRepository.insertAccessGroups({
       workspaceId,
-      newAccessGroups: insertedAccessGroups,
+      newAccessGroups: accessGroupsToInsert,
     });
 
     if (isNonEmptyArray(staleAccessGroups)) {

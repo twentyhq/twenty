@@ -68,7 +68,9 @@ export const useGetRecordFilterDisplayValue = () => {
 
     if (filterType === 'DATE') {
       switch (recordFilter.operand) {
-        case RecordFilterOperand.IS: {
+        case RecordFilterOperand.IS:
+        case RecordFilterOperand.IS_AFTER:
+        case RecordFilterOperand.IS_BEFORE: {
           if (!isDefined(recordFilter.value)) {
             return '';
           }

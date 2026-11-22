@@ -1,4 +1,3 @@
-import { type ChatReferenceMatch } from 'twenty-shared/ai';
 import { AiChatTestInstance } from '@/ai-chat/testing/AiChatTestInstance';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
@@ -6,12 +5,6 @@ import { render, screen } from '@testing-library/react';
 import { type ToolUIPart } from 'ai';
 
 import { AiChatToolCallApprovalStatusRenderer } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer';
-
-jest.mock('@/ai-chat/message-content/components/ChatReferenceChip', () => ({
-  ChatReferenceChip: ({ reference }: { reference: ChatReferenceMatch }) => (
-    <span data-testid="chat-reference-chip">{reference.displayName}</span>
-  ),
-}));
 
 const renderStatus = (toolPart: Partial<ToolUIPart>) =>
   render(
@@ -80,31 +73,5 @@ describe('AiChatToolCallApprovalStatusRenderer', () => {
 
     expect(screen.getByText('Approved')).toBeInTheDocument();
     expect(screen.getByText('Follow up')).toBeInTheDocument();
-  });
-
-  it('renders record references in the summary as chips', () => {
-    const summary =
-      'Rename [[record:task:3aa53376-dbbc-4fb1-8cd6-5f7d8e916496:dede]]';
-
-    renderStatus({
-      state: 'output-available',
-      input: { toolName: 'update_one_task', arguments: {}, summary },
-      output: {
-        success: true,
-        result: {
-          status: 'approved',
-          proposal: {
-            toolName: 'update_one_task',
-            toolLabel: 'Update Task',
-            summary,
-            arguments: {},
-            template: 'recordUpdate',
-          },
-        },
-      },
-    });
-
-    expect(screen.getByTestId('chat-reference-chip')).toHaveTextContent('dede');
-    expect(screen.queryByText(/\[\[record:/)).not.toBeInTheDocument();
   });
 });

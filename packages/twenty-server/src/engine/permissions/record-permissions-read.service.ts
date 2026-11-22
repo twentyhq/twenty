@@ -353,7 +353,7 @@ export class RecordPermissionsReadService {
       principalsRelatedRecordPathAccessGroupCompactIds,
     ] = await Promise.all([
       this.findPrincipalsAccessGroupCompactIds(objectAccessRequest),
-      this.accessGroupReadService.findPrincipalsRelatedRecordPathCompactIds(
+      this.accessGroupReadService.findPrincipalsRelatedRecordPathAccessGroupCompactIds(
         objectAccessRequest,
       ),
     ]);
@@ -395,7 +395,7 @@ export class RecordPermissionsReadService {
       return undefined;
     }
 
-    return this.accessGroupReadService.findPrincipalsCompactIds({
+    return this.accessGroupReadService.findPrincipalsAccessGroupCompactIds({
       principals: objectAccessRequest.principals,
       objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
       operationType: 'read',
@@ -723,7 +723,6 @@ export class RecordPermissionsReadService {
       buildEntrySQLCondition: (entry) =>
         this.buildEntrySQLCondition({
           principals,
-          metadataMaps,
           operationType,
           ...entry,
           hypotheticalRecordShareAccessLevel:

@@ -75,13 +75,13 @@ describe('computeSubscriptionUpdateOptions', () => {
     });
   });
 
-  it('returns always_invoice when increasing seats', () => {
+  it('returns always_invoice when a quantity goes up', () => {
     const result = computeSubscriptionUpdateOptions(
       {
-        type: SubscriptionUpdateType.SEATS,
+        type: SubscriptionUpdateType.QUANTITIES,
         newSeats: 10,
       },
-      { currentSeats: 5 },
+      { isQuantityIncrease: true },
     );
 
     expect(result).toEqual({
@@ -89,13 +89,13 @@ describe('computeSubscriptionUpdateOptions', () => {
     });
   });
 
-  it('returns create_prorations when decreasing seats', () => {
+  it('returns create_prorations when no quantity goes up', () => {
     const result = computeSubscriptionUpdateOptions(
       {
-        type: SubscriptionUpdateType.SEATS,
+        type: SubscriptionUpdateType.QUANTITIES,
         newSeats: 5,
       },
-      { currentSeats: 10 },
+      { isQuantityIncrease: false },
     );
 
     expect(result).toEqual({
@@ -103,13 +103,13 @@ describe('computeSubscriptionUpdateOptions', () => {
     });
   });
 
-  it('returns create_prorations when seat count is unchanged', () => {
+  it('returns create_prorations when a quantity goes up on an invoice-paying subscription', () => {
     const result = computeSubscriptionUpdateOptions(
       {
-        type: SubscriptionUpdateType.SEATS,
+        type: SubscriptionUpdateType.QUANTITIES,
         newSeats: 10,
       },
-      { currentSeats: 10 },
+      { isQuantityIncrease: true, isSendInvoice: true },
     );
 
     expect(result).toEqual({
@@ -117,17 +117,14 @@ describe('computeSubscriptionUpdateOptions', () => {
     });
   });
 
-  it('returns create_prorations when increasing seats on an invoice-paying subscription', () => {
+  it('returns always_invoice when an applications update raises a quantity', () => {
     const result = computeSubscriptionUpdateOptions(
-      {
-        type: SubscriptionUpdateType.SEATS,
-        newSeats: 10,
-      },
-      { currentSeats: 5, isSendInvoice: true },
+      { type: SubscriptionUpdateType.APPLICATIONS },
+      { isQuantityIncrease: true },
     );
 
     expect(result).toEqual({
-      proration: 'create_prorations',
+      proration: 'always_invoice',
     });
   });
 });

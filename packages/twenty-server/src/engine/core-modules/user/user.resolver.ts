@@ -49,6 +49,7 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly } from 'src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util';
 import { assertWorkspaceMemberUpdateValuesAreValid } from 'src/engine/core-modules/user/utils/assert-workspace-member-update-values-are-valid.util';
+import { trimWorkspaceMemberName } from 'src/engine/core-modules/user/utils/trim-workspace-member-name.util';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
@@ -452,7 +453,12 @@ export class UserResolver {
   @UseGuards(
     AccessPolicyGuard({
       authPrincipals: {
-        userSession: true,
+        userSession: {
+          standard: true,
+          impersonated: { server: true, workspace: false },
+          playground: false,
+          workspaceAgnostic: true,
+        },
         apiKey: false,
         oauthClient: false,
         application: false,
@@ -597,13 +603,13 @@ export class UserResolver {
       );
     }
 
-    assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly({
-      update: input.update,
-    });
+    const update = isDefined(input.update.name)
+      ? { ...input.update, name: trimWorkspaceMemberName(input.update.name) }
+      : input.update;
 
-    assertWorkspaceMemberUpdateValuesAreValid({
-      update: input.update,
-    });
+    assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly({ update });
+
+    assertWorkspaceMemberUpdateValuesAreValid({ update });
 
     const workspaceMemberRepository =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () =>
@@ -628,7 +634,7 @@ export class UserResolver {
     const workspaceMemberUpdatePayload: Partial<WorkspaceMemberWorkspaceEntity> =
       {
         id: workspaceMember.id,
-        ...(input.update as Partial<WorkspaceMemberWorkspaceEntity>),
+        ...(update as Partial<WorkspaceMemberWorkspaceEntity>),
       };
 
     await this.workspaceOrmManager.executeInWorkspaceContext(() =>
@@ -796,8 +802,8 @@ export class UserResolver {
       authPrincipals: {
         userSession: {
           standard: true,
-          impersonated: true,
-          playground: true,
+          impersonated: { server: true, workspace: false },
+          playground: false,
           workspaceAgnostic: false,
         },
         apiKey: false,

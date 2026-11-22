@@ -9,7 +9,7 @@ import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { getAiModelTierLabel } from '@/ai/utils/getAiModelTierLabel';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { workspaceAiModelsSelector } from '@/ai/states/workspaceAiModelsSelector';
+import { workspaceAiModelsSelector } from '@/ai/states/selectors/workspaceAiModelsSelector';
 import { AiModelPinSelect } from '@/ai/components/AiModelPinSelect';
 import { getAiModelModeDescription } from '@/ai/utils/getAiModelModeDescription';
 import { getSettingsAiModelsSectionVisibility } from '@/settings/ai/utils/getSettingsAiModelsSectionVisibility';

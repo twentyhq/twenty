@@ -119,7 +119,7 @@ msgstr "{operationLabel} de {aggregateFieldLabel}"
 #. js-lingui-id: nzKj4z
 #: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
 msgid "{senderName} in {threadLabel}"
-msgstr ""
+msgstr "{senderName} em {threadLabel}"
 
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -695,6 +695,11 @@ msgstr "Uma Execução de Workflow"
 msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "Um Membro do Espaço de Trabalho"
+
+#. js-lingui-id: /WlOrK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation needs the field to read on its related records"
+msgstr "Uma relação de membro do espaço de trabalho precisa do campo a ser lido em seus registros relacionados"
 
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
@@ -2134,7 +2139,7 @@ msgstr "Traga sua equipe para o Twenty."
 #. js-lingui-id: pYD4lD
 #: src/engine/core-modules/web-push/web-push.exception.ts
 msgid "Browser notifications were set up with an outdated key. Reload the page to set them up again."
-msgstr ""
+msgstr "As notificações do navegador foram configuradas com uma chave desatualizada. Recarregue a página para configurá-las novamente."
 
 #. js-lingui-id: 8pSVh1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -3069,6 +3074,11 @@ msgstr "Escolha um tipo de atividade da linha do tempo existente para substituir
 #: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Escolha uma pessoa ou uma função com quem compartilhar."
+
+#. js-lingui-id: IkeRn2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the field to read on the related records"
+msgstr "Escolha o campo a ser lido nos registros relacionados"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5599,6 +5609,11 @@ msgstr "O campo \"{relationFieldName}\" não é uma relação"
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "O campo \"{workspaceMemberFieldName}\" não é um campo do objeto workspaceMember; o predicado nunca seria aplicado"
 
+#. js-lingui-id: moiE3i
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
+msgstr "O campo \"{workspaceMemberRelationFieldName}\" não é uma relação um-para-muitos do objeto workspaceMember"
+
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -6087,7 +6102,7 @@ msgstr "Primeira mensagem amigável"
 #. js-lingui-id: 0QhRwZ
 #: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
 msgid "First name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
-msgstr ""
+msgstr "O primeiro nome deve ter no máximo {WORKSPACE_MEMBER_NAME_MAX_LENGTH} caracteres."
 
 #. js-lingui-id: BUBVGN
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
@@ -6142,7 +6157,7 @@ msgstr "A ação do formulário deve ter pelo menos um campo"
 #. js-lingui-id: CjVkbV
 #: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
 msgid "Former member"
-msgstr ""
+msgstr "Ex-membro"
 
 #. js-lingui-id: JRr+QW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
@@ -8157,7 +8172,7 @@ msgstr "Remetente da última mensagem"
 #. js-lingui-id: bMq9eP
 #: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
 msgid "Last name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
-msgstr ""
+msgstr "O sobrenome deve ter no máximo {WORKSPACE_MEMBER_NAME_MAX_LENGTH} caracteres."
 
 #. js-lingui-id: R2LOsP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -9439,7 +9454,7 @@ msgstr "Novos códigos de backup foram gerados para sua conta"
 #. js-lingui-id: hIQkLb
 #: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
 msgid "New chat"
-msgstr ""
+msgstr "Novo chat"
 
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -9461,7 +9476,7 @@ msgstr "O novo e-mail deve ser diferente do e-mail atual"
 #. js-lingui-id: mTBAsF
 #: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
 msgid "New message"
-msgstr ""
+msgstr "Nova mensagem"
 
 #. js-lingui-id: nXXBKB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -9649,6 +9664,12 @@ msgstr "Não gravado"
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Not Set"
 msgstr "Não Definido"
+
+#. js-lingui-id: H1P40W
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Not started"
+msgstr "Não iniciado"
 
 #. js-lingui-id: O2bgDc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
@@ -11126,6 +11147,11 @@ msgstr "O valor do predicado não é válido para este operando"
 msgid "Predicates reaching a field through a relation are not enabled for this workspace"
 msgstr "Predicados que alcançam um campo por meio de uma relação não estão habilitados para este espaço de trabalho"
 
+#. js-lingui-id: v5akl/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicates reading the current member through a relation are not enabled for this workspace"
+msgstr "Os predicados que leem o membro atual por meio de uma relação não estão habilitados para este espaço de trabalho"
+
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -11883,10 +11909,10 @@ msgstr "Solicitado"
 msgid "Requested file range cannot be served."
 msgstr "Não é possível atender ao intervalo de arquivo solicitado."
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "Campos e relações obrigatórios não podem ser restritos em uma regra de permissão em nível de linha."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "Campos obrigatórios e relações morph não podem ser restringidos em uma regra de permissão em nível de linha."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -12351,6 +12377,7 @@ msgid "Rule"
 msgstr "Regra"
 
 #. js-lingui-id: zhLAHJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Rules through a relation are not enabled for this workspace"
 msgstr "Regras por meio de uma relação não estão habilitadas para este espaço de trabalho"
@@ -14777,6 +14804,11 @@ msgstr "Este aplicativo requer uma versão mais recente do servidor Twenty. Atua
 msgid "This app requires a newer version than this workspace has finished upgrading to. Please try again once the workspace upgrade completes."
 msgstr "Este aplicativo requer uma versão mais recente do que aquela para a qual este espaço de trabalho concluiu a atualização. Tente novamente quando a atualização do espaço de trabalho for concluída."
 
+#. js-lingui-id: MZz+Ud
+#: src/engine/core-modules/application/utils/to-application-billing-prices-or-throw.util.ts
+msgid "This application declares invalid prices"
+msgstr "Este aplicativo declara preços inválidos"
+
 #. js-lingui-id: ecIX3O
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This application is already owned by a workspace."
@@ -14825,7 +14857,7 @@ msgstr "Esta configuração de faturamento tem definições inválidas."
 #. js-lingui-id: NsbtYx
 #: src/engine/core-modules/web-push/web-push.exception.ts
 msgid "This browser's push service is not supported."
-msgstr ""
+msgstr "O serviço de push deste navegador não é suportado."
 
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -15038,6 +15070,11 @@ msgstr "Este campo não pertence ao objeto de membro do espaço de trabalho"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "This field has no database column to index."
 msgstr "Este campo não tem coluna de banco de dados para indexar."
+
+#. js-lingui-id: /62EJW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field is not a one-to-many relation of the workspace member object"
+msgstr "Este campo não é uma relação um-para-muitos do objeto de membro do espaço de trabalho"
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17953,6 +17990,12 @@ msgctxt "view.name"
 msgid "Workspace Member Record Page Fields"
 msgstr "Campos da página de registro de membro do espaço de trabalho"
 
+#. js-lingui-id: VWPelK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Workspace member relation field metadata not found"
+msgstr "Metadados do campo de relação de membro do espaço de trabalho não encontrados"
+
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -18265,6 +18308,11 @@ msgstr "Você não tem permissão para acessar este recurso. Por favor, contate 
 msgid "You do not have permission to access this workflow."
 msgstr "Você não tem permissão para acessar este fluxo de trabalho."
 
+#. js-lingui-id: /qkY9j
+#: src/engine/permissions/permissions.exception.ts
+msgid "You do not have permission to change this record."
+msgstr "Você não tem permissão para alterar este registro."
+
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
@@ -18464,7 +18512,7 @@ msgstr "Seu papel neste espaço de trabalho não pôde ser encontrado. Por favor
 #. js-lingui-id: iug+lj
 #: src/engine/core-modules/web-push/web-push.exception.ts
 msgid "Your session has expired. Sign in again to turn on browser notifications."
-msgstr ""
+msgstr "Sua sessão expirou. Faça login novamente para ativar as notificações do navegador."
 
 #. js-lingui-id: 9T+AIN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
