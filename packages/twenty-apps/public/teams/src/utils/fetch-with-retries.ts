@@ -57,6 +57,9 @@ export const fetchWithRetries = async ({
       return response;
     }
 
+    // An unread body keeps the undici connection busy.
+    await response.body?.cancel();
+
     return sendAttempt({ attempt: attempt + 1, waitedMs: waitedMs + delayMs });
   };
 

@@ -3,7 +3,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { fetchWithRetries } from 'src/utils/fetch-with-retries';
 
-const buildResponse = (status: number, retryAfter?: string) =>
+const buildResponse = ({
+  status,
+  retryAfter,
+}: {
+  status: number;
+  retryAfter?: string;
+}) =>
   new Response(null, {
     status,
     headers: isDefined(retryAfter) ? { 'retry-after': retryAfter } : {},
@@ -34,7 +40,7 @@ describe('fetchWithRetries', () => {
   });
 
   it('should return a successful response without retrying', async () => {
-    sendRequestMock.mockResolvedValue(buildResponse(200));
+    sendRequestMock.mockResolvedValue(buildResponse({ status: 200 }));
 
     await expect(fetchWithTestRetries()).resolves.toHaveProperty('status', 200);
 
@@ -44,8 +50,8 @@ describe('fetchWithRetries', () => {
 
   it('should retry a retryable status after the delay the caller chose', async () => {
     sendRequestMock
-      .mockResolvedValueOnce(buildResponse(503, '7'))
-      .mockResolvedValueOnce(buildResponse(200));
+      .mockResolvedValueOnce(buildResponse({ status: 503, retryAfter: '7' }))
+      .mockResolvedValueOnce(buildResponse({ status: 200 }));
 
     const request = fetchWithTestRetries();
 
@@ -63,7 +69,7 @@ describe('fetchWithRetries', () => {
   });
 
   it('should report the time already waited on later attempts', async () => {
-    sendRequestMock.mockResolvedValue(buildResponse(503));
+    sendRequestMock.mockResolvedValue(buildResponse({ status: 503 }));
 
     const request = fetchWithTestRetries();
 
@@ -78,7 +84,7 @@ describe('fetchWithRetries', () => {
   });
 
   it('should hand back the failed response once attempts run out', async () => {
-    sendRequestMock.mockResolvedValue(buildResponse(503));
+    sendRequestMock.mockResolvedValue(buildResponse({ status: 503 }));
 
     const request = fetchWithTestRetries();
 
@@ -89,7 +95,7 @@ describe('fetchWithRetries', () => {
   });
 
   it('should not retry a status the caller does not list', async () => {
-    sendRequestMock.mockResolvedValue(buildResponse(404));
+    sendRequestMock.mockResolvedValue(buildResponse({ status: 404 }));
 
     await expect(fetchWithTestRetries()).resolves.toHaveProperty('status', 404);
 
@@ -98,7 +104,7 @@ describe('fetchWithRetries', () => {
 
   it('should give up when the caller returns no delay', async () => {
     getRetryDelayMsMock.mockReturnValue(undefined);
-    sendRequestMock.mockResolvedValue(buildResponse(503));
+    sendRequestMock.mockResolvedValue(buildResponse({ status: 503 }));
 
     await expect(fetchWithTestRetries()).resolves.toHaveProperty('status', 503);
 
@@ -109,7 +115,7 @@ describe('fetchWithRetries', () => {
   it('should not resend once the retries are aborted', async () => {
     const retryAbortController = new AbortController();
 
-    sendRequestMock.mockResolvedValue(buildResponse(503));
+    sendRequestMock.mockResolvedValue(buildResponse({ status: 503 }));
 
     const request = fetchWithTestRetries(retryAbortController.signal);
 
@@ -119,6 +125,21 @@ describe('fetchWithRetries', () => {
 
     await expect(request).resolves.toHaveProperty('status', 503);
     expect(sendRequestMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('should cancel the body of a response it discards', async () => {
+    const discardedResponse = new Response('busy', { status: 503 });
+
+    sendRequestMock
+      .mockResolvedValueOnce(discardedResponse)
+      .mockResolvedValueOnce(buildResponse({ status: 200 }));
+
+    const request = fetchWithTestRetries();
+
+    await vi.advanceTimersByTimeAsync(1_000);
+    await request;
+
+    await expect(discardedResponse.text()).rejects.toThrow();
   });
 
   it('should not retry a request that throws', async () => {
