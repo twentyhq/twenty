@@ -5,7 +5,6 @@
     "@nx/js": "23.3.1",
     "@nx/react": "23.3.1",
     "@nx/storybook": "23.3.1",
-    "@nx/vite": "23.3.1",
     "@nx/web": "23.3.1",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
