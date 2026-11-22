@@ -13,6 +13,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AgentChatOpenThreadsSummaryDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-open-threads-summary.dto';
 import { AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
 import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
+import { AgentChatThreadMemberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-member.service';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -21,6 +22,7 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
+import { RecordSharingDTO } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
 @UseGuards(
@@ -47,7 +49,53 @@ export class AgentChatThreadParticipantResolver {
     private readonly participantService: AgentChatThreadParticipantService,
     private readonly threadService: AgentChatThreadService,
     private readonly triageService: AgentChatThreadTriageService,
+    private readonly memberService: AgentChatThreadMemberService,
   ) {}
+
+  @Query(() => RecordSharingDTO)
+  async agentChatThreadMembers(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<RecordSharingDTO> {
+    return this.memberService.findMembers({
+      threadId,
+      workspaceMemberId,
+      workspaceId,
+    });
+  }
+
+  @Mutation(() => RecordSharingDTO)
+  async addAgentChatThreadMember(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+    @Args('memberWorkspaceMemberId', { type: () => UUIDScalarType })
+    memberWorkspaceMemberId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<RecordSharingDTO> {
+    return this.memberService.addMember({
+      threadId,
+      memberWorkspaceMemberId,
+      workspaceMemberId,
+      workspaceId,
+    });
+  }
+
+  @Mutation(() => RecordSharingDTO)
+  async removeAgentChatThreadMember(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+    @Args('memberWorkspaceMemberId', { type: () => UUIDScalarType })
+    memberWorkspaceMemberId: string,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<RecordSharingDTO> {
+    return this.memberService.removeMember({
+      threadId,
+      memberWorkspaceMemberId,
+      workspaceMemberId,
+      workspaceId,
+    });
+  }
 
   @Query(() => AgentChatOpenThreadsSummaryDTO)
   async agentChatOpenThreadsSummary(

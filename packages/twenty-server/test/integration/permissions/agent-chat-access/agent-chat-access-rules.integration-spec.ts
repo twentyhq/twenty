@@ -13,7 +13,6 @@ import { readSharedChatThreadOperationFactory } from 'test/integration/graphql/u
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { syncAgentChatAccessRules } from 'test/integration/permissions/agent-chat-access/utils/sync-agent-chat-access-rules.util';
-import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
@@ -31,21 +30,21 @@ const FLAGS = [
   FeatureFlagKey.IS_AGENT_CHAT_RLS_ENABLED,
 ];
 
-const RECORD_SHARING = parse(`query Sharing($target: RecordTargetInput!) {
-  recordSharing(target: $target) {
+const CHAT_MEMBERS = parse(`query Members($threadId: UUID!) {
+  agentChatThreadMembers(threadId: $threadId) {
     canManageSharing
     shares { principalType principalId accessLevel rowCause }
   }
 }`);
 
-const SET_SHARE =
-  parse(`mutation SetShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!, $accessLevel: RecordShareAccessLevel!) {
-  setRecordShare(target: $target, principal: $principal, accessLevel: $accessLevel) { canManageSharing }
+const ADD_MEMBER =
+  parse(`mutation AddMember($threadId: UUID!, $memberWorkspaceMemberId: UUID!) {
+  addAgentChatThreadMember(threadId: $threadId, memberWorkspaceMemberId: $memberWorkspaceMemberId) { canManageSharing }
 }`);
 
-const REMOVE_SHARE =
-  parse(`mutation RemoveShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!) {
-  removeRecordShare(target: $target, principal: $principal) { canManageSharing }
+const REMOVE_MEMBER =
+  parse(`mutation RemoveMember($threadId: UUID!, $memberWorkspaceMemberId: UUID!) {
+  removeAgentChatThreadMember(threadId: $threadId, memberWorkspaceMemberId: $memberWorkspaceMemberId) { canManageSharing }
 }`);
 
 const UPDATE_CHANNEL_ROLES = parse(
@@ -107,7 +106,6 @@ const canReadThreadRecord = async (threadId: string, token: string) => {
 describe('chat access through individual role rules (integration)', () => {
   const createdThreads: { threadId: string; token: string }[] = [];
   const createdChannelIds: string[] = [];
-  let threadObjectMetadataId: string;
   let memberRoleId: string;
 
   const createThread = async ({
@@ -160,8 +158,6 @@ describe('chat access through individual role rules (integration)', () => {
   });
 
   beforeAll(async () => {
-    threadObjectMetadataId =
-      await findObjectMetadataIdByName('agentChatThread');
     memberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
 
     for (const featureFlag of FLAGS) {
@@ -209,43 +205,33 @@ describe('chat access through individual role rules (integration)', () => {
     ).toBe(false);
   });
 
-  it('adds and removes members as participants through the share panel', async () => {
+  it('adds and removes chat members as participants', async () => {
     const threadId = await createThread({
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
-    const target = {
-      objectMetadataId: threadObjectMetadataId,
-      recordId: threadId,
-    };
-    const principal = {
-      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+    const variables = {
+      threadId,
+      memberWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
     };
 
-    const setShareResponse = await makeMetadataApiRequest(
-      {
-        query: SET_SHARE,
-        variables: {
-          target,
-          principal,
-          accessLevel: RecordShareAccessLevel.READ_WRITE,
-        },
-      },
+    const addMemberResponse = await makeMetadataApiRequest(
+      { query: ADD_MEMBER, variables },
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
-    expect(setShareResponse.body.errors).toBeUndefined();
+    expect(addMemberResponse.body.errors).toBeUndefined();
     await waitForAllJobsToFinish();
 
     expect(await canReadThread(threadId, APPLE_JANE_ADMIN_ACCESS_TOKEN)).toBe(
       true,
     );
 
-    const sharingResponse = await makeMetadataApiRequest(
-      { query: RECORD_SHARING, variables: { target } },
+    const membersResponse = await makeMetadataApiRequest(
+      { query: CHAT_MEMBERS, variables: { threadId } },
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
-    expect(sharingResponse.body.data.recordSharing).toMatchObject({
+    expect(membersResponse.body.data.agentChatThreadMembers).toMatchObject({
       canManageSharing: true,
       shares: expect.arrayContaining([
         expect.objectContaining({
@@ -259,12 +245,12 @@ describe('chat access through individual role rules (integration)', () => {
       ]),
     });
 
-    const removeShareResponse = await makeMetadataApiRequest(
-      { query: REMOVE_SHARE, variables: { target, principal } },
+    const removeMemberResponse = await makeMetadataApiRequest(
+      { query: REMOVE_MEMBER, variables },
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
-    expect(removeShareResponse.body.errors).toBeUndefined();
+    expect(removeMemberResponse.body.errors).toBeUndefined();
     await waitForAllJobsToFinish();
 
     expect(await canReadThread(threadId, APPLE_JANE_ADMIN_ACCESS_TOKEN)).toBe(

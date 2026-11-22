@@ -2444,6 +2444,7 @@ export interface Mutation {
     activateSkill: Skill
     activateWorkspace: Workspace
     addAgentChatMessageReaction: AgentMessageReactionSummary[]
+    addAgentChatThreadMember: RecordSharingDTO
     addQueryToEventStream: Scalars['Boolean']
     approveApplicationIframeMediaPermissions: Application
     archiveInboxThread: Scalars['Boolean']
@@ -2612,6 +2613,7 @@ export interface Mutation {
     refreshEnterpriseValidityToken: Scalars['Boolean']
     releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO
     removeAgentChatMessageReaction: AgentMessageReactionSummary[]
+    removeAgentChatThreadMember: RecordSharingDTO
     removeQueryFromEventStream: Scalars['Boolean']
     removeRecordShare: RecordSharingDTO
     removeRoleFromAgent: Scalars['Boolean']
@@ -3229,6 +3231,7 @@ export interface Query {
     agentChatChannelThreadIds: AgentChatChannelThreadIds
     agentChatChannels: AgentChatChannel[]
     agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary
+    agentChatThreadMembers: RecordSharingDTO
     agentRunInsights: AgentRunInsights
     agentRunSummaries: AgentRunSummary[]
     agentRuns: AgentRun[]
@@ -7333,6 +7336,7 @@ export interface MutationGenqlSelection{
     activateSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     activateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: ActivateWorkspaceInput} })
     addAgentChatMessageReaction?: (AgentMessageReactionSummaryGenqlSelection & { __args: {emoji: Scalars['String'], messageId: Scalars['UUID']} })
+    addAgentChatThreadMember?: (RecordSharingDTOGenqlSelection & { __args: {memberWorkspaceMemberId: Scalars['UUID'], threadId: Scalars['UUID']} })
     addQueryToEventStream?: { __args: {input: AddQuerySubscriptionInput} }
     approveApplicationIframeMediaPermissions?: (ApplicationGenqlSelection & { __args: {applicationId: Scalars['UUID'], approvedIframeMediaPermissions: IframeMediaPermissionInput[]} })
     archiveInboxThread?: { __args: {input: ArchiveInboxThreadInput} }
@@ -7501,6 +7505,7 @@ export interface MutationGenqlSelection{
     refreshEnterpriseValidityToken?: boolean | number
     releaseEnterpriseServerBinding?: EnterpriseLicenseInfoDTOGenqlSelection
     removeAgentChatMessageReaction?: (AgentMessageReactionSummaryGenqlSelection & { __args: {emoji: Scalars['String'], messageId: Scalars['UUID']} })
+    removeAgentChatThreadMember?: (RecordSharingDTOGenqlSelection & { __args: {memberWorkspaceMemberId: Scalars['UUID'], threadId: Scalars['UUID']} })
     removeQueryFromEventStream?: { __args: {input: RemoveQueryFromEventStreamInput} }
     removeRecordShare?: (RecordSharingDTOGenqlSelection & { __args: {principal: RecordSharePrincipalInput, target: RecordTargetInput} })
     removeRoleFromAgent?: { __args: {agentId: Scalars['UUID']} }
@@ -8160,6 +8165,7 @@ export interface QueryGenqlSelection{
     agentChatChannelThreadIds?: (AgentChatChannelThreadIdsGenqlSelection & { __args: {after?: (Scalars['String'] | null), assignment?: (AgentChatChannelAssignmentFilter | null), channelId: Scalars['UUID'], filter?: (AgentChatChannelThreadFilter | null), first?: (Scalars['Int'] | null), status?: (AgentChatChannelThreadStatus | null)} })
     agentChatChannels?: AgentChatChannelGenqlSelection
     agentChatOpenThreadsSummary?: AgentChatOpenThreadsSummaryGenqlSelection
+    agentChatThreadMembers?: (RecordSharingDTOGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     agentRunInsights?: (AgentRunInsightsGenqlSelection & { __args: {agentId: Scalars['UUID'], 
     /** IANA time zone the days are counted in */
     timeZone: Scalars['String']} })

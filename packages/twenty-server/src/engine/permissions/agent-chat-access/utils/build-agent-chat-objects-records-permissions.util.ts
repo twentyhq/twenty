@@ -131,6 +131,8 @@ export const buildAgentChatObjectsRecordsPermissions = ({
             agentChatThreadParticipant.fields.workspaceMember
               .universalIdentifier,
           value: memberValue,
+          // Participant rows are written by the platform only
+          canUpdateRecords: false,
         }),
       ],
     },

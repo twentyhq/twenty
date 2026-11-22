@@ -129,6 +129,6 @@ export const useRecordSharing = ({
     setPrivate,
     setShare,
     removeShare,
-    refetch,
+    refetch: (): Promise<unknown> => refetch(),
   };
 };

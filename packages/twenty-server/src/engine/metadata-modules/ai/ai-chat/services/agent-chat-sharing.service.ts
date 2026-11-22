@@ -21,6 +21,7 @@ import {
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type AgentInboxCallerAuthContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-caller-auth-context.type';
 import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/utils/build-record-share-lock-key.util';
@@ -252,9 +253,42 @@ export class AgentChatSharingService {
     threadId: string;
     operationType: ObjectRecordsOperationType;
   }): Promise<void> {
+    // Rules cannot grant updates on participant rows, so a participant writes
+    // in a chat they can read
+    const isReplyByParticipant =
+      operationType === 'update' &&
+      isUserAuthContext(authContext) &&
+      (await this.isAgentChatRlsEnabled(authContext.workspace.id)) &&
+      (await this.isParticipant({
+        workspaceId: authContext.workspace.id,
+        workspaceMemberId: authContext.workspaceMemberId,
+        threadId,
+      }));
+
     await this.workspaceOrmManager.executeInWorkspaceContext(
-      () => this.assertOperationAllowed(threadId, operationType),
+      () =>
+        this.assertOperationAllowed(
+          threadId,
+          isReplyByParticipant ? 'read' : operationType,
+        ),
       authContext,
+    );
+  }
+
+  private isParticipant({
+    workspaceId,
+    workspaceMemberId,
+    threadId,
+  }: AgentChatThreadAccessArgs): Promise<boolean> {
+    return this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager
+          .getRepositoryWithoutPermissionChecks<AgentChatThreadParticipantRow>(
+            'agentChatThreadParticipant',
+          )
+          .exists({ where: { threadId, workspaceMemberId } }),
+      buildSystemAuthContext(workspaceId),
+      { lite: true },
     );
   }
 

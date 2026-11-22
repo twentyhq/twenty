@@ -20,6 +20,8 @@ export enum AiExceptionCode {
   INVALID_CHAT_MESSAGE_REACTION_EMOJI = 'INVALID_CHAT_MESSAGE_REACTION_EMOJI',
   CHAT_THREAD_ASSIGNEE_CANNOT_REPLY = 'CHAT_THREAD_ASSIGNEE_CANNOT_REPLY',
   CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE = 'CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE',
+  CHAT_THREAD_MEMBER_CANNOT_REPLY = 'CHAT_THREAD_MEMBER_CANNOT_REPLY',
+  CHAT_THREAD_OWNER_CANNOT_BE_REMOVED = 'CHAT_THREAD_OWNER_CANNOT_BE_REMOVED',
   CHAT_THREAD_NOT_IN_CHANNEL = 'CHAT_THREAD_NOT_IN_CHANNEL',
   CHAT_THREAD_CANNOT_LEAVE_CHANNEL = 'CHAT_THREAD_CANNOT_LEAVE_CHANNEL',
   CHAT_CHANNEL_NOT_FOUND = 'CHAT_CHANNEL_NOT_FOUND',
@@ -84,6 +86,10 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`This member can't reply in this chat, so it can't be assigned to them.`;
     case AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE:
       return msg`Unassign yourself before unsubscribing from this chat.`;
+    case AiExceptionCode.CHAT_THREAD_MEMBER_CANNOT_REPLY:
+      return msg`This member can't use chats, so they can't be added to this one.`;
+    case AiExceptionCode.CHAT_THREAD_OWNER_CANNOT_BE_REMOVED:
+      return msg`The owner of a chat can't be removed from it.`;
     case AiExceptionCode.CHAT_THREAD_NOT_IN_CHANNEL:
       return msg`This chat is not in a channel.`;
     case AiExceptionCode.CHAT_THREAD_CANNOT_LEAVE_CHANNEL:

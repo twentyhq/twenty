@@ -3529,6 +3529,7 @@ type Mutation {
   activateSkill(id: UUID!): Skill!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
   addAgentChatMessageReaction(emoji: String!, messageId: UUID!): [AgentMessageReactionSummary!]!
+  addAgentChatThreadMember(memberWorkspaceMemberId: UUID!, threadId: UUID!): RecordSharingDTO!
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   approveApplicationIframeMediaPermissions(applicationId: UUID!, approvedIframeMediaPermissions: [IframeMediaPermissionInput!]!): Application!
   archiveInboxThread(input: ArchiveInboxThreadInput!): Boolean!
@@ -3695,6 +3696,7 @@ type Mutation {
   refreshEnterpriseValidityToken: Boolean!
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!
   removeAgentChatMessageReaction(emoji: String!, messageId: UUID!): [AgentMessageReactionSummary!]!
+  removeAgentChatThreadMember(memberWorkspaceMemberId: UUID!, threadId: UUID!): RecordSharingDTO!
   removeQueryFromEventStream(input: RemoveQueryFromEventStreamInput!): Boolean!
   removeRecordShare(principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
   removeRoleFromAgent(agentId: UUID!): Boolean!
@@ -4391,6 +4393,7 @@ type Query {
   agentChatChannelThreadIds(after: String, assignment: AgentChatChannelAssignmentFilter, channelId: UUID!, filter: AgentChatChannelThreadFilter, first: Int, status: AgentChatChannelThreadStatus): AgentChatChannelThreadIds!
   agentChatChannels: [AgentChatChannel!]!
   agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary!
+  agentChatThreadMembers(threadId: UUID!): RecordSharingDTO!
   agentRunInsights(
     agentId: UUID!
 

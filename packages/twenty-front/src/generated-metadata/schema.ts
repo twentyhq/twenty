@@ -3712,6 +3712,7 @@ export type Mutation = {
   activateSkill: Skill;
   activateWorkspace: Workspace;
   addAgentChatMessageReaction: Array<AgentMessageReactionSummary>;
+  addAgentChatThreadMember: RecordSharingDto;
   addQueryToEventStream: Scalars['Boolean']['output'];
   approveApplicationIframeMediaPermissions: Application;
   archiveInboxThread: Scalars['Boolean']['output'];
@@ -3880,6 +3881,7 @@ export type Mutation = {
   refreshEnterpriseValidityToken: Scalars['Boolean']['output'];
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDto;
   removeAgentChatMessageReaction: Array<AgentMessageReactionSummary>;
+  removeAgentChatThreadMember: RecordSharingDto;
   removeQueryFromEventStream: Scalars['Boolean']['output'];
   removeRecordShare: RecordSharingDto;
   removeRoleFromAgent: Scalars['Boolean']['output'];
@@ -4044,6 +4046,12 @@ export type MutationActivateWorkspaceArgs = {
 export type MutationAddAgentChatMessageReactionArgs = {
   emoji: Scalars['String']['input'];
   messageId: Scalars['UUID']['input'];
+};
+
+
+export type MutationAddAgentChatThreadMemberArgs = {
+  memberWorkspaceMemberId: Scalars['UUID']['input'];
+  threadId: Scalars['UUID']['input'];
 };
 
 
@@ -4855,6 +4863,12 @@ export type MutationPrepareGettingStartedWorkflowArgs = {
 export type MutationRemoveAgentChatMessageReactionArgs = {
   emoji: Scalars['String']['input'];
   messageId: Scalars['UUID']['input'];
+};
+
+
+export type MutationRemoveAgentChatThreadMemberArgs = {
+  memberWorkspaceMemberId: Scalars['UUID']['input'];
+  threadId: Scalars['UUID']['input'];
 };
 
 
@@ -6198,6 +6212,7 @@ export type Query = {
   agentChatChannelThreadIds: AgentChatChannelThreadIds;
   agentChatChannels: Array<AgentChatChannel>;
   agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary;
+  agentChatThreadMembers: RecordSharingDto;
   agentRunInsights: AgentRunInsights;
   agentRunSummaries: Array<AgentRunSummary>;
   agentRuns: Array<AgentRun>;
@@ -6366,6 +6381,11 @@ export type QueryAgentChatChannelThreadIdsArgs = {
   filter?: InputMaybe<AgentChatChannelThreadFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   status?: InputMaybe<AgentChatChannelThreadStatus>;
+};
+
+
+export type QueryAgentChatThreadMembersArgs = {
+  threadId: Scalars['UUID']['input'];
 };
 
 

@@ -7,6 +7,7 @@ import { AgentChatChannelRoleEntity } from 'src/engine/metadata-modules/agent-ch
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
 import { RevokeRoleWideAccessToAgentChatObjectsCommand } from 'src/engine/permissions/agent-chat-access/commands/revoke-role-wide-access-to-agent-chat-objects.command';
 import { AgentChatIndividualRoleRecordsPermissionsService } from 'src/engine/permissions/agent-chat-access/services/agent-chat-individual-role-records-permissions.service';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
@@ -22,6 +23,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ApplicationModule,
   ],
   providers: [
+    provideWorkspaceScopedRepository(AgentChatChannelEntity),
+    provideWorkspaceScopedRepository(AgentChatChannelRoleEntity),
     AgentChatIndividualRoleRecordsPermissionsService,
     RevokeRoleWideAccessToAgentChatObjectsCommand,
   ],

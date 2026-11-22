@@ -1,25 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ObjectRecordsPermissionsManifest } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { AgentChatChannelRoleEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel-role.entity';
 import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { buildAgentChatObjectsRecordsPermissions } from 'src/engine/permissions/agent-chat-access/utils/build-agent-chat-objects-records-permissions.util';
 import { resolveUserWorkspaceIdsWithPermissionFlag } from 'src/engine/permissions/role/utils/resolve-user-workspace-ids-with-permission-flag.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class AgentChatIndividualRoleRecordsPermissionsService {
   constructor(
-    @InjectRepository(AgentChatChannelEntity)
-    private readonly channelRepository: Repository<AgentChatChannelEntity>,
-    @InjectRepository(AgentChatChannelRoleEntity)
-    private readonly channelRoleRepository: Repository<AgentChatChannelRoleEntity>,
+    @InjectWorkspaceScopedRepository(AgentChatChannelEntity)
+    private readonly channelRepository: WorkspaceScopedRepository<AgentChatChannelEntity>,
+    @InjectWorkspaceScopedRepository(AgentChatChannelRoleEntity)
+    private readonly channelRoleRepository: WorkspaceScopedRepository<AgentChatChannelRoleEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -45,13 +45,9 @@ export class AgentChatIndividualRoleRecordsPermissionsService {
     ]);
 
     const [channels, channelRoles] = await Promise.all([
-      this.channelRepository.find({
-        select: { id: true },
-        where: { workspaceId },
-      }),
-      this.channelRoleRepository.find({
+      this.channelRepository.find(workspaceId, { select: { id: true } }),
+      this.channelRoleRepository.find(workspaceId, {
         select: { channelId: true, roleId: true },
-        where: { workspaceId },
       }),
     ]);
 

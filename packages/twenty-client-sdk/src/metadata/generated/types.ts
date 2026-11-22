@@ -7238,6 +7238,19 @@ export default {
                     ]
                 }
             ],
+            "addAgentChatThreadMember": [
+                464,
+                {
+                    "memberWorkspaceMemberId": [
+                        562,
+                        "UUID!"
+                    ],
+                    "threadId": [
+                        562,
+                        "UUID!"
+                    ]
+                }
+            ],
             "addQueryToEventStream": [
                 1,
                 {
@@ -8835,6 +8848,19 @@ export default {
                         "String!"
                     ],
                     "messageId": [
+                        562,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "removeAgentChatThreadMember": [
+                464,
+                {
+                    "memberWorkspaceMemberId": [
+                        562,
+                        "UUID!"
+                    ],
+                    "threadId": [
                         562,
                         "UUID!"
                     ]
@@ -11456,6 +11482,15 @@ export default {
             ],
             "agentChatOpenThreadsSummary": [
                 17
+            ],
+            "agentChatThreadMembers": [
+                464,
+                {
+                    "threadId": [
+                        562,
+                        "UUID!"
+                    ]
+                }
             ],
             "agentRunInsights": [
                 28,
