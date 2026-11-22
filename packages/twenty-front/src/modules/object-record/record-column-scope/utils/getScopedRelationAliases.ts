@@ -9,12 +9,42 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { getQueryVariablesFromFiltersAndSorts } from '@/views/utils/getQueryVariablesFromFiltersAndSorts';
 import {
   type RecordFilterValueDependencies,
+  type RecordGqlFields,
   type RecordGqlFieldsRelationWithArguments,
 } from 'twenty-shared/types';
 import {
   computeRelationWithArgumentsResponseKey,
   isDefined,
 } from 'twenty-shared/utils';
+
+const getRelatedRecordGqlFields = ({
+  scopedRelationColumn: {
+    relationObjectMetadataItem,
+    scopedRelationJunction,
+    summary,
+  },
+  objectMetadataItems,
+}: {
+  scopedRelationColumn: Pick<
+    ScopedRelationAlias,
+    'relationObjectMetadataItem' | 'scopedRelationJunction' | 'summary'
+  >;
+  objectMetadataItems: EnrichedObjectMetadataItem[];
+}): RecordGqlFields => {
+  // A summary reads its aggregate, so it only needs the ids of the related records
+  if (isDefined(summary)) {
+    return { id: true };
+  }
+
+  if (isDefined(scopedRelationJunction)) {
+    return generateJunctionRelationGqlFields({
+      junctionConfig: scopedRelationJunction.junctionConfig,
+      objectMetadataItems,
+    });
+  }
+
+  return buildIdentifierGqlFields(relationObjectMetadataItem);
+};
 
 export const getScopedRelationAliases = ({
   recordFields,
@@ -89,14 +119,10 @@ export const getScopedRelationAliases = ({
           aggregateGqlFieldNames: [summary.aggregateGqlFieldName],
         }),
       recordGqlFields: {
-        ...(isDefined(summary)
-          ? { id: true }
-          : isDefined(scopedRelationJunction)
-            ? generateJunctionRelationGqlFields({
-                junctionConfig: scopedRelationJunction.junctionConfig,
-                objectMetadataItems,
-              })
-            : buildIdentifierGqlFields(relationObjectMetadataItem)),
+        ...getRelatedRecordGqlFields({
+          scopedRelationColumn,
+          objectMetadataItems,
+        }),
         ...(isDefined(lookupTarget) && {
           [lookupTarget.lookupTargetFieldMetadataItem.name]: true,
         }),

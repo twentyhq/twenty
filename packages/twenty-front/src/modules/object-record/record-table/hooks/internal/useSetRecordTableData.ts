@@ -10,7 +10,7 @@ import {
 } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { useGetLookupRelationRecordKeys } from '@/object-record/record-column-lookup/hooks/useGetLookupRelationRecordKeys';
+import { useGetLookupRelationRecordKeys } from '@/object-record/record-column-scope/hooks/useGetLookupRelationRecordKeys';
 import { getRecordsWithLookupRelatedRecords } from '@/object-record/record-column-lookup/utils/getRecordsWithLookupRelatedRecords';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';

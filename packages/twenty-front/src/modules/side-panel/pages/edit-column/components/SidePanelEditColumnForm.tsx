@@ -132,7 +132,7 @@ export const SidePanelEditColumnForm = ({
   const trimmedLimitInput = limitInput.trim();
   const limit = trimmedLimitInput === '' ? null : Number(trimmedLimitInput);
   const isLimitValid =
-    limit === null ||
+    !isDefined(limit) ||
     (Number.isInteger(limit) &&
       limit >= 1 &&
       limit <= QUERY_MAX_RECORDS_FROM_RELATION);
