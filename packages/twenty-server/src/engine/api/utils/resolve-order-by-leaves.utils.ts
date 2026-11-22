@@ -24,6 +24,7 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
+import { isFormulaFlatFieldMetadata } from 'src/engine/metadata-modules/formula-field/utils/is-formula-flat-field-metadata.util';
 
 export type OrderByLeaf = {
   // Both the cursor value path and the keyset filter nesting, e.g. ['company', 'name', 'firstName']
@@ -138,6 +139,16 @@ const resolveRelationLeaf = ({
     flatFieldMetadata: targetFieldMetadata,
   });
 
+  if (isFormulaFlatFieldMetadata(targetFieldMetadata)) {
+    if (strictValidation) {
+      throwInvalidOrderByInput(
+        `Field "${path[0]}.${targetFieldName}" is a formula field and cannot be sorted on`,
+      );
+    }
+
+    return null;
+  }
+
   if (isCompositeFieldMetadataType(targetFieldMetadata.type)) {
     const targetCompositeProperty = compositeTypeDefinitions
       .get(targetFieldMetadata.type)
@@ -250,6 +261,15 @@ export const resolveOrderByLeaves = ({
         flatObjectMetadata,
         flatFieldMetadata: fieldMetadata,
       });
+
+      if (isFormulaFlatFieldMetadata(fieldMetadata)) {
+        if (strictValidation) {
+          throwInvalidOrderByInput(
+            `Field "${fieldName}" is a formula field and cannot be sorted on`,
+          );
+        }
+        continue;
+      }
 
       if (
         isReferencedByFieldName &&

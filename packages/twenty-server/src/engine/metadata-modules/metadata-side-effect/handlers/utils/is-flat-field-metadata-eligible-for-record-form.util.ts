@@ -1,4 +1,5 @@
 import {
+  getFieldMetadataFormulaExpression,
   isDefined,
   isFieldMetadataEligibleForRecordForm,
 } from 'twenty-shared/utils';
@@ -38,7 +39,11 @@ export const isFlatFieldMetadataEligibleForRecordForm = (
       property: 'isActive',
     }),
     isSystem: flatFieldMetadata.isSystem,
-    isUIEditable: flatFieldMetadata.isUIEditable,
+    isUIEditable:
+      flatFieldMetadata.isUIEditable &&
+      !isDefined(
+        getFieldMetadataFormulaExpression({ settings: universalSettings }),
+      ),
     relationType:
       isDefined(universalSettings) && 'relationType' in universalSettings
         ? universalSettings.relationType

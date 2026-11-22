@@ -22,6 +22,8 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { computeFormulaFieldValues } from 'src/engine/metadata-modules/formula-field/utils/compute-formula-field-values.util';
+import { getFormulaFieldEvaluationPlans } from 'src/engine/metadata-modules/formula-field/utils/get-formula-field-evaluation-plans.util';
 
 type ResultGettersArgs = {
   flatObjectMetadata: FlatObjectMetadata;
@@ -35,6 +37,7 @@ type ResultProcessingContext = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   workspaceId: string;
+  now: string;
   fieldMetadataByNameByObjectMetadataId: Map<
     string,
     ReadonlyMap<string, OrmFlatFieldMetadata>
@@ -124,6 +127,7 @@ export class CommonResultGettersService {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       workspaceId,
+      now: new Date().toISOString(),
       fieldMetadataByNameByObjectMetadataId: new Map(),
     };
   }
@@ -234,7 +238,15 @@ export class CommonResultGettersService {
       );
 
     return {
-      ...objectRecordProcessedWithoutRelationFields,
+      ...computeFormulaFieldValues({
+        record: objectRecordProcessedWithoutRelationFields,
+        formulaFieldEvaluationPlans: getFormulaFieldEvaluationPlans({
+          flatObjectMetadata,
+          flatObjectMetadataMaps: context.flatObjectMetadataMaps,
+          flatFieldMetadataMaps: context.flatFieldMetadataMaps,
+        }),
+        now: context.now,
+      }),
       ...relationFieldsProcessedMap,
     };
   }
