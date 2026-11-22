@@ -160,7 +160,7 @@ export const SidePanelEditColumnForm = ({
       })
     : undefined;
 
-  const defaultColumnHeader = getRecordFieldColumnHeader({
+  const columnHeader = getRecordFieldColumnHeader({
     fieldMetadataItem,
     lookupTarget:
       !isSummary && isDefined(selectedLookupTargetFieldMetadataItem)
@@ -177,7 +177,7 @@ export const SidePanelEditColumnForm = ({
   const defaultColumnLabel =
     isSummary && !isDefined(summary)
       ? `${fieldMetadataItem.label} · ${t`Summary`}`
-      : defaultColumnHeader.label;
+      : columnHeader.label;
 
   const canSave = isSummary ? isDefined(summary) : isLimitValid;
 
@@ -242,7 +242,7 @@ export const SidePanelEditColumnForm = ({
     dependencies: [currentFocusId, handleSaveClick],
   });
 
-  const ColumnIcon = getIcon(defaultColumnHeader.icon);
+  const ColumnIcon = getIcon(columnHeader.icon);
 
   return (
     <StyledContainer ref={containerRef} tabIndex={-1}>

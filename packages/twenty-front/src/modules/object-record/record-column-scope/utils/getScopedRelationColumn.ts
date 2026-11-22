@@ -29,7 +29,10 @@ export const getScopedRelationColumn = ({
 }):
   | Pick<
       ScopedRelationAlias,
-      'lookupTarget' | 'scopedRelationJunction' | 'summary'
+      | 'relationObjectMetadataItem'
+      | 'lookupTarget'
+      | 'scopedRelationJunction'
+      | 'summary'
     >
   | undefined => {
   if (
@@ -50,17 +53,24 @@ export const getScopedRelationColumn = ({
     return undefined;
   }
 
+  const relationObjectMetadataItem = findRelationTargetObjectMetadataItem({
+    fieldMetadataItem,
+    objectMetadataItems,
+  });
+
+  if (!isDefined(relationObjectMetadataItem)) {
+    return undefined;
+  }
+
   if (isDefined(recordField.relationAggregateOperation)) {
-    const relationObjectMetadataItem = findRelationTargetObjectMetadataItem({
-      fieldMetadataItem,
-      objectMetadataItems,
+    const summary = getRecordFieldSummary({
+      recordField,
+      relationObjectMetadataItem,
     });
 
-    const summary = isDefined(relationObjectMetadataItem)
-      ? getRecordFieldSummary({ recordField, relationObjectMetadataItem })
+    return isDefined(summary)
+      ? { relationObjectMetadataItem, scopedRelationJunction, summary }
       : undefined;
-
-    return isDefined(summary) ? { scopedRelationJunction, summary } : undefined;
   }
 
   // A field of the target records is two hops away, and a field of the join records is not what the column lists
@@ -68,10 +78,11 @@ export const getScopedRelationColumn = ({
     isDefined(scopedRelationJunction) ||
     !isDefined(recordField.relationTargetFieldMetadataId)
   ) {
-    return { lookupTarget: undefined, scopedRelationJunction };
+    return { relationObjectMetadataItem, scopedRelationJunction };
   }
 
   return {
+    relationObjectMetadataItem,
     lookupTarget: getRelationLookupTarget({
       relationFieldMetadataItem: fieldMetadataItem,
       relationTargetFieldMetadataId: recordField.relationTargetFieldMetadataId,
