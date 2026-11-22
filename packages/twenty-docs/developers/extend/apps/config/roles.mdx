@@ -88,8 +88,10 @@ group.
 
 A predicate references a field by its `universalIdentifier`, an `operand`, and (optionally) a
 workspaceMember field whose value is injected at query time — so you can express "the record's owner
-relation **is** the current workspace member". This role can create any company, but reads and
-updates only the companies it owns:
+relation **is** the current workspace member". With `relationFieldUniversalIdentifier`, a predicate
+compares a field of the records related through that relation field instead, for example the
+`messageChannelId` of a message's channel associations. This role can create any company, but reads
+and updates only the companies it owns:
 
 ```ts src/roles/partner-role.ts
 import {

@@ -61,11 +61,11 @@ export class UpdateWorkflowActionHandlerService extends WorkspaceMigrationRunner
     const workflowRepository =
       queryRunner.manager.getRepository<WorkflowEntity>(WorkflowEntity);
 
-    const hasVisibilityOrCreatorChange =
-      !isUndefined(update.visibility) ||
+    const hasPrivacyOrCreatorChange =
+      !isUndefined(update.isPrivate) ||
       !isUndefined(update.createdByUserWorkspaceId);
 
-    if (!hasVisibilityOrCreatorChange) {
+    if (!hasPrivacyOrCreatorChange) {
       await workflowRepository.update({ id: entityId, workspaceId }, update);
 
       return;

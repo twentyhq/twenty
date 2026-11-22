@@ -15,6 +15,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AI_CHAT_USER_MESSAGE_COLLAPSED_LINE_COUNT } from '@/ai-chat/messages/constants/AiChatUserMessageCollapsedLineCount';
 import { isAiChatUserMessageCollapsible } from '@/ai-chat/messages/utils/isAiChatUserMessageCollapsible';
+import { CHAT_MESSAGE_META_SPACER_WIDTH } from '@/chat/constants/ChatMessageMetaSpacerWidth';
 import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/states/contexts/ScrollWrapperComponentInstanceContext';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 
@@ -33,6 +34,7 @@ const StyledToggleContainer = styled.div`
   justify-content: flex-end;
   margin-inline: calc(-1 * ${themeCssVariables.spacing[1]});
   padding-bottom: ${themeCssVariables.spacing[1]};
+  padding-inline-end: ${CHAT_MESSAGE_META_SPACER_WIDTH};
 `;
 
 type AiChatUserMessageCollapsibleContentProps = {
@@ -52,7 +54,6 @@ export const AiChatUserMessageCollapsibleContent = ({
 
   const isCollapsed = isCollapsible && !isExpanded;
 
-  // Measured in a ref callback, during commit: an effect would paint a tall message at full height for 1 to 2 frames.
   const observeContentHeight = useCallback(
     (contentElement: HTMLDivElement | null) => {
       if (!isDefined(contentElement)) {
@@ -102,7 +103,6 @@ export const AiChatUserMessageCollapsibleContent = ({
 
     flushSync(() => setIsExpanded(false));
 
-    // Scrolls up by the removed height so the toggle and the messages below stay in place.
     scrollWrapperElement.scrollTop -=
       toggleTopBeforeCollapseInPx -
       toggleButtonElement.getBoundingClientRect().top;
