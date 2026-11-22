@@ -38,7 +38,6 @@ import {
   type ObjectQuestion,
 } from 'src/engine/permissions/types/record-permissions-question.type';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
-import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-share-keys.util';
@@ -52,7 +51,6 @@ import { canRelatedRecordPathExtendAccessToObject } from 'src/engine/permissions
 import { areRecordIdsReadableByPrincipals } from 'src/engine/permissions/internal/role/utils/are-record-ids-readable-by-principals.util';
 import { isRelatedRecordPathsEnabled } from 'src/engine/permissions/internal/related-record-path/utils/is-related-record-paths-enabled.util';
 import { canRelatedRecordPathExtendAccess } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access.util';
-import { setCanReadSomeRecords } from 'src/engine/permissions/internal/role/utils/set-can-read-some-records.util';
 import { buildRecordShareOrPrivateRecordAccessSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-record-share-or-private-record-access-sql-condition.util';
 import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
 import {
@@ -144,39 +142,37 @@ export class RecordPermissionsReadService {
     );
   }
 
-  async setCanReadSomeRecords({
+  async findObjectMetadataIdsWithReadableRecords({
     principals,
-    recordsPermissions,
   }: {
     principals: PermissionsPrincipalsWithRolesContext;
-    recordsPermissions: RoleRecordsPermissions;
-  }): Promise<RoleRecordsPermissions> {
-    const metadataMaps =
+  }): Promise<Set<string>> {
+    const { flatObjectMetadataMaps } =
       await this.permissionsMetadataMapsService.loadForPrincipals({
         principals,
       });
 
-    const readableObjectMetadataIds = new Set<string>();
+    const objectMetadataIds = Object.values(
+      flatObjectMetadataMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .map(({ id }) => id);
 
-    for (const flatObjectMetadata of Object.values(
-      metadataMaps.flatObjectMetadataMaps.byUniversalIdentifier,
-    ).filter(isDefined)) {
-      if (
-        await this.canAccessSomeRecordsOfRequest({
+    const isReadableByObjectMetadataId = await Promise.all(
+      objectMetadataIds.map((objectMetadataId) =>
+        this.canAccessSomeRecords({
           principals,
-          metadataMaps,
-          flatObjectMetadata,
+          objectMetadataId,
           operationType: 'read',
-        })
-      ) {
-        readableObjectMetadataIds.add(flatObjectMetadata.id);
-      }
-    }
+        }),
+      ),
+    );
 
-    return setCanReadSomeRecords({
-      recordsPermissions,
-      readableObjectMetadataIds,
-    });
+    return new Set(
+      objectMetadataIds.filter(
+        (_objectMetadataId, index) => isReadableByObjectMetadataId[index],
+      ),
+    );
   }
 
   async canAccessSomeRecords({
@@ -190,14 +186,10 @@ export class RecordPermissionsReadService {
       operationType,
     });
 
-    return (
-      isDefined(request) && (await this.canAccessSomeRecordsOfRequest(request))
-    );
-  }
+    if (!isDefined(request)) {
+      return false;
+    }
 
-  private async canAccessSomeRecordsOfRequest(
-    request: PermissionsObjectAccessRequest,
-  ): Promise<boolean> {
     if (
       isObjectOperationDisabledToPrincipals(request) ||
       isObjectOperationDeniedToPrincipals(request)

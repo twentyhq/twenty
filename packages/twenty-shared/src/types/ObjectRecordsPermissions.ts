@@ -9,5 +9,5 @@ export type ObjectRecordsPermissions = {
   unreadableFields: string[];
   uneditableFields: string[];
   rowLevelRecordsPermissions?: RowLevelRecordsPermissions[] | null;
-  canReadSomeRecords?: boolean | null;
+  canReadSomeRecords?: boolean;
 };

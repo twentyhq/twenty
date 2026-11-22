@@ -2935,7 +2935,7 @@ export interface ObjectRecordsPermissions {
     canCreateAllRecords: Scalars['Boolean']
     canDestroyAllRecords: Scalars['Boolean']
     canReadAllRecords: Scalars['Boolean']
-    canReadSomeRecords?: Scalars['Boolean']
+    canReadSomeRecords: Scalars['Boolean']
     canSoftDeleteAllRecords: Scalars['Boolean']
     canUpdateAllRecords: Scalars['Boolean']
     objectMetadataId: Scalars['UUID']

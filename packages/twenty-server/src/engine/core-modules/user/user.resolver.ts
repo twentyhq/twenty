@@ -9,7 +9,6 @@ import { msg } from '@lingui/core/macro';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
@@ -72,11 +71,9 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
-import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
-import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user-workspace-permissions.type';
+import { UserWorkspacePermissionsReadService } from 'src/engine/permissions/user-workspace-permissions-read.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { fromUserWorkspacePermissionsToUserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/utils/fromUserWorkspacePermissionsToUserWorkspacePermissionsDto';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -122,47 +119,8 @@ export class UserResolver {
     private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
-    private readonly recordPermissionsReadService: RecordPermissionsReadService,
+    private readonly userWorkspacePermissionsReadService: UserWorkspacePermissionsReadService,
   ) {}
-
-  private async getUserWorkspacePermissions({
-    currentUserWorkspace,
-    workspace,
-  }: {
-    workspace: WorkspaceEntity;
-    currentUserWorkspace: UserWorkspaceEntity;
-  }): Promise<UserWorkspacePermissions> {
-    const workspaceIsPendingOrOngoingCreation = [
-      WorkspaceActivationStatus.PENDING_CREATION,
-      WorkspaceActivationStatus.ONGOING_CREATION,
-    ].includes(workspace.activationStatus);
-
-    if (workspaceIsPendingOrOngoingCreation) {
-      return this.settingPermissionsService.getDefaultUserWorkspacePermissions();
-    }
-
-    const userWorkspacePermissions =
-      await this.settingPermissionsService.getUserWorkspacePermissions({
-        userWorkspaceId: currentUserWorkspace.id,
-        workspaceId: workspace.id,
-      });
-
-    return {
-      ...userWorkspacePermissions,
-      recordsPermissions:
-        await this.recordPermissionsReadService.setCanReadSomeRecords({
-          principals:
-            await this.principalPermissionsReadService.resolveUserWorkspacePermissionsPrincipalsOrThrow(
-              {
-                workspaceId: workspace.id,
-                userWorkspaceId: currentUserWorkspace.id,
-              },
-            ),
-          recordsPermissions: userWorkspacePermissions.recordsPermissions,
-        }),
-    };
-  }
 
   @Query(() => UserEntity)
   @UseGuards(AccessPolicyGuard(USER_ACCESS_POLICY))
@@ -213,10 +171,12 @@ export class UserResolver {
 
     const userWorkspacePermissions =
       fromUserWorkspacePermissionsToUserWorkspacePermissionsDto(
-        await this.getUserWorkspacePermissions({
-          currentUserWorkspace,
-          workspace: refreshedWorkspace,
-        }),
+        await this.userWorkspacePermissionsReadService.findCurrentUserWorkspacePermissions(
+          {
+            workspace: refreshedWorkspace,
+            userWorkspaceId: currentUserWorkspace.id,
+          },
+        ),
       );
 
     const twoFactorAuthenticationMethodSummary = isUserSession
