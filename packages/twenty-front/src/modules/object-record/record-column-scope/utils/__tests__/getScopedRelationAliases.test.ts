@@ -1,6 +1,7 @@
 import { getScopedRelationAliases } from '@/object-record/record-column-scope/utils/getScopedRelationAliases';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import {
+  type RecordGqlFieldsRelationWithArguments,
   type ViewFieldRelationScope,
   ViewFilterOperand,
   ViewSortDirection,
@@ -9,7 +10,6 @@ import { computeRelationWithArgumentsResponseKey } from 'twenty-shared/utils';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
-import { type RecordGqlFieldsRelationWithArguments } from 'twenty-shared/types';
 
 const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
