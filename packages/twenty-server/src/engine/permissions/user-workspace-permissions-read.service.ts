@@ -22,7 +22,7 @@ export class UserWorkspacePermissionsReadService {
     workspace,
     userWorkspaceId,
   }: {
-    workspace: WorkspaceEntity;
+    workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>;
     userWorkspaceId: string;
   }): Promise<CurrentUserWorkspacePermissions> {
     if (
