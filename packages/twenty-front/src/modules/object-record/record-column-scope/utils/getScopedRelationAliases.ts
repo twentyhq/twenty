@@ -1,3 +1,4 @@
+import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ScopedRelationAlias } from '@/object-record/record-column-scope/types/ScopedRelationAlias';
@@ -68,22 +69,22 @@ export const getScopedRelationAliases = ({
       filterValueDependencies,
     });
 
-    const first = relationScope.limit ?? undefined;
+    const relationWithArguments = {
+      relationFieldName: fieldMetadataItem.name,
+      filter,
+      orderBy,
+      first: relationScope.limit ?? undefined,
+      recordGqlFields: buildIdentifierGqlFields(relationObjectMetadataItem),
+    };
 
     return [
       {
         recordFieldId: recordField.id,
-        responseKey: computeRelationWithArgumentsResponseKey({
-          relationFieldName: fieldMetadataItem.name,
-          filter,
-          orderBy,
-          first,
-        }),
-        relationFieldName: fieldMetadataItem.name,
+        responseKey: computeRelationWithArgumentsResponseKey(
+          relationWithArguments,
+        ),
         relationObjectMetadataItem,
-        filter,
-        orderBy,
-        first,
+        relationWithArguments,
       },
     ];
   });
