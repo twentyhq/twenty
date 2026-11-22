@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type MouseEvent, type RefObject } from 'react';
+import { type RefObject } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -10,6 +10,8 @@ import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRec
 import { InboxListHeader } from '@/inbox/components/InboxListHeader';
 import { InboxPageThreadList } from '@/inbox/components/InboxPageThreadList';
 import { InboxThreadListFetchMoreTrigger } from '@/inbox/components/InboxThreadListFetchMoreTrigger';
+import { useInboxThreadListClickHandlers } from '@/inbox/hooks/useInboxThreadListClickHandlers';
+import { useNavigateToInboxThread } from '@/inbox/hooks/useNavigateToInboxThread';
 import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
@@ -62,16 +64,8 @@ type InboxPageListPaneProps = {
   isLoading: boolean;
   isFullWidth: boolean;
   isSecondaryPaneShown: boolean;
-  openThreadIds: string[];
+  selectedThreadId: string | undefined;
   threadListContainerRef: RefObject<HTMLDivElement | null>;
-  onThreadClick: (
-    thread: AiChatThreadRecord,
-    event: MouseEvent<HTMLDivElement>,
-  ) => void;
-  onThreadCheckboxClick: (
-    thread: AiChatThreadRecord,
-    event: MouseEvent<HTMLDivElement>,
-  ) => void;
 };
 
 export const InboxPageListPane = ({
@@ -79,10 +73,8 @@ export const InboxPageListPane = ({
   isLoading,
   isFullWidth,
   isSecondaryPaneShown,
-  openThreadIds,
+  selectedThreadId,
   threadListContainerRef,
-  onThreadClick,
-  onThreadCheckboxClick,
 }: InboxPageListPaneProps) => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
@@ -95,6 +87,17 @@ export const InboxPageListPane = ({
   const inboxSelectedThreadListSource = useAtomStateValue(
     inboxSelectedThreadListSourceState,
   );
+  const { navigateToInboxThread } = useNavigateToInboxThread();
+  const { handleThreadClick, handleThreadCheckboxClick } =
+    useInboxThreadListClickHandlers({
+      threads,
+      selectedThreadId,
+      selectThread: (threadId) => navigateToInboxThread({ threadId }),
+    });
+  const openThreadIds =
+    isDefined(selectedThreadId) && selectedRecordIds.length === 0
+      ? [selectedThreadId]
+      : [];
 
   return (
     <StyledListPane
@@ -133,8 +136,8 @@ export const InboxPageListPane = ({
                   threads={threads}
                   selectedThreadIds={openThreadIds}
                   checkedThreadIds={selectedRecordIds}
-                  onThreadClick={onThreadClick}
-                  onThreadCheckboxClick={onThreadCheckboxClick}
+                  onThreadClick={handleThreadClick}
+                  onThreadCheckboxClick={handleThreadCheckboxClick}
                 />
               )}
               <InboxThreadListFetchMoreTrigger

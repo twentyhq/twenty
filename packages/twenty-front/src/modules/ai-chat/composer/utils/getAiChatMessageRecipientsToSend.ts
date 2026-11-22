@@ -49,7 +49,7 @@ export const getAiChatMessageRecipientsToSend = ({
     workspaceMembers: store.get(currentWorkspaceMembersState.atom),
   });
   const hasRecipients =
-    newThreadRecipients?.isAssistantParticipant === true ||
+    newThreadRecipients?.isAssistantParticipant ||
     isAssistantMentioned ||
     isNonEmptyArray(initialRecipients) ||
     isNonEmptyArray(participantMentions) ||

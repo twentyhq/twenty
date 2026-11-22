@@ -4,20 +4,14 @@ import {
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
+import { useCanSyncInbox } from '@/inbox/hooks/useCanSyncInbox';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const useInboxThreadSyncStatus = () => {
-  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
-  const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
-    WorkspaceActivationStatus.SUSPENDED,
-  );
+  const canSyncInbox = useCanSyncInbox();
   const chatObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
@@ -31,8 +25,7 @@ export const useInboxThreadSyncStatus = () => {
 
   const isThreadSyncEnabled = isDefined(chatObjectMetadataItem);
   const canLoadChatThreads =
-    hasAiPermission &&
-    !isWorkspaceSuspended &&
+    canSyncInbox &&
     isThreadSyncEnabled &&
     isNonEmptyArray(chatObjectMetadataItem.readableFields) &&
     canAccessThroughAllRecordsOrRlsPermission({

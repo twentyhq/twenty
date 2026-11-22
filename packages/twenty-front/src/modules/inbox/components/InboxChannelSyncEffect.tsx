@@ -1,31 +1,23 @@
 import { useCallback, useEffect } from 'react';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
 import { aiChatThreadRecordUpdateCountState } from '@/ai-chat/threads/states/aiChatThreadRecordUpdateCountState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
+import { useCanSyncInbox } from '@/inbox/hooks/useCanSyncInbox';
 import { useRefreshInboxChannelSummaries } from '@/inbox/hooks/useRefreshInboxChannelSummaries';
 import { useRefreshInboxChannels } from '@/inbox/hooks/useRefreshInboxChannels';
 import { useRefreshInboxOpenThreadsSummary } from '@/inbox/hooks/useRefreshInboxOpenThreadsSummary';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const INBOX_CHANNELS_REFRESH_DEBOUNCE_MS = 1000;
 
 export const InboxChannelSyncEffect = () => {
-  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
-  const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
-    WorkspaceActivationStatus.SUSPENDED,
-  );
+  const canSyncInbox = useCanSyncInbox();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
@@ -41,8 +33,7 @@ export const InboxChannelSyncEffect = () => {
   const { refreshInboxChannels } = useRefreshInboxChannels();
   const { refreshInboxChannelSummaries } = useRefreshInboxChannelSummaries();
 
-  const isChannelSyncEnabled =
-    isAiChatInboxEnabled && hasAiPermission && !isWorkspaceSuspended;
+  const isChannelSyncEnabled = isAiChatInboxEnabled && canSyncInbox;
 
   const debouncedRefreshChannels = useDebouncedCallback(
     () => void refreshInboxChannels(),

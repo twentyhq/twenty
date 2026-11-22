@@ -20,7 +20,6 @@ import { InboxThreadPagination } from '@/inbox/components/InboxThreadPagination'
 import { INBOX_LIST_PANE_WIDTH } from '@/inbox/constants/InboxListPaneWidth';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai-chat/constants/AiChatNewThreadPathSegment';
 import { useInboxRecordSelectionInstanceId } from '@/inbox/hooks/useInboxRecordSelectionInstanceId';
-import { useInboxThreadListClickHandlers } from '@/inbox/hooks/useInboxThreadListClickHandlers';
 import { useInboxThreadListKeyboardNavigation } from '@/inbox/hooks/useInboxThreadListKeyboardNavigation';
 import { useIsInboxShowingDirectMessage } from '@/inbox/hooks/useIsInboxShowingDirectMessage';
 import { useIsInboxSplitView } from '@/inbox/hooks/useIsInboxSplitView';
@@ -95,13 +94,6 @@ const InboxPageContent = () => {
   const selectThread = (nextThreadId: string | null) =>
     navigateToInboxThread({ threadId: nextThreadId });
 
-  const { handleThreadClick, handleThreadCheckboxClick } =
-    useInboxThreadListClickHandlers({
-      threads,
-      selectedThreadId,
-      selectThread,
-    });
-
   const isSelectionShown = selectedRecordIds.length > 0;
 
   const isListShown =
@@ -118,9 +110,6 @@ const InboxPageContent = () => {
   const shouldRenderConversationPane =
     !isSelectionPaneShown &&
     (isSecondaryPaneShown || !isSidePanelShowingAiChat);
-
-  const openThreadIds =
-    isDefined(selectedThreadId) && !isSelectionShown ? [selectedThreadId] : [];
 
   useInboxThreadListKeyboardNavigation({
     threadListContainerRef,
@@ -183,10 +172,8 @@ const InboxPageContent = () => {
             isLoading={isLoading}
             isFullWidth={isListFullWidth}
             isSecondaryPaneShown={isSecondaryPaneShown}
-            openThreadIds={openThreadIds}
+            selectedThreadId={selectedThreadId}
             threadListContainerRef={threadListContainerRef}
-            onThreadClick={handleThreadClick}
-            onThreadCheckboxClick={handleThreadCheckboxClick}
           />
         )}
         {isSelectionPaneShown && (
