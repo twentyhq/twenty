@@ -3,6 +3,8 @@
 exports[`Standard related record paths declares the standard paths and their inherent flag 1`] = `
 [
   "agentChatThread.attachments inherent",
+  "agentChatThread.recordTargets inherent",
+  "agentChatThreadParticipant.thread inherent",
   "calendarEvent.calendarChannelEventAssociations inherent",
   "calendarEvent.calendarEventParticipants inherent",
   "company.attachments inherent",

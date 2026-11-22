@@ -52,6 +52,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Direct message pair identity`,
     description: msg`Reuse the same conversation when the same two workspace members start a direct message. Enabled after the workspace upgrade completes.`,
   },
+  [FeatureFlagKey.IS_AGENT_CHAT_RLS_ENABLED]: {
+    label: msg`Chat access through rules`,
+    description: msg`In progress: reach chats through record-level permission rules and related record paths instead of record shares. Needs related record paths.`,
+  },
   [FeatureFlagKey.IS_MCP_SERVERS_ENABLED]: {
     label: msg`MCP servers`,
     description: msg`Register external MCP servers in Developers settings and expose their tools to AI chat.`,

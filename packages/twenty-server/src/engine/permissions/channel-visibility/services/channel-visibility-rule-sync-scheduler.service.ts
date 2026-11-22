@@ -5,6 +5,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { SYNC_CHANNEL_VISIBILITY_RULES_JOB_NAME } from 'src/engine/permissions/channel-visibility/constants/sync-channel-visibility-rules-job-name.constant';
 import { type SyncChannelVisibilityRulesJobData } from 'src/engine/permissions/channel-visibility/types/sync-channel-visibility-rules-job-data.type';
+import { isAgentChatRlsEnabled } from 'src/engine/permissions/agent-chat-access/utils/is-agent-chat-rls-enabled.util';
 import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -22,7 +23,10 @@ export class ChannelVisibilityRuleSyncSchedulerService {
       ['featureFlagsMap'],
     );
 
-    if (isChannelVisibilityRlsEnabled(featureFlagsMap)) {
+    if (
+      isChannelVisibilityRlsEnabled(featureFlagsMap) ||
+      isAgentChatRlsEnabled(featureFlagsMap)
+    ) {
       await this.scheduleSync(workspaceId);
     }
   }

@@ -20,6 +20,16 @@ export const STANDARD_RELATED_RECORD_PATHS: StandardRelatedRecordPath[] = [
     fieldNames: ['attachments'],
     isInherent: true,
   },
+  {
+    objectName: 'agentChatThreadParticipant',
+    fieldNames: ['thread'],
+    isInherent: true,
+  },
+  {
+    objectName: 'agentChatThread',
+    fieldNames: ['recordTargets'],
+    isInherent: true,
+  },
   { objectName: 'company', fieldNames: ['attachments'], isInherent: true },
   { objectName: 'dashboard', fieldNames: ['attachments'], isInherent: true },
   { objectName: 'note', fieldNames: ['attachments'], isInherent: true },

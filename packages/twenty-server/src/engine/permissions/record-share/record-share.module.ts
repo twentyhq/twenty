@@ -11,6 +11,7 @@ import { RecordShareStorageModule } from 'src/engine/permissions/internal/record
 import { RecordSharingChangeModule } from 'src/engine/permissions/record-share/record-sharing-change.module';
 import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
+import { RecordSharingDelegateRegistryService } from 'src/engine/permissions/record-share/services/record-sharing-delegate-registry.service';
 import { RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
 import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -31,7 +32,12 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     RecordSharingWriteService,
     RecordShareSystemWriteService,
     RecordSharingResolver,
+    RecordSharingDelegateRegistryService,
   ],
-  exports: [RecordSharingWriteService, RecordShareSystemWriteService],
+  exports: [
+    RecordSharingWriteService,
+    RecordShareSystemWriteService,
+    RecordSharingDelegateRegistryService,
+  ],
 })
 export class RecordShareModule {}

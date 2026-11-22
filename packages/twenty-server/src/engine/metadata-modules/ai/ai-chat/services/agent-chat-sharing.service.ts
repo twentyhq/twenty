@@ -55,8 +55,10 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/is-permission-flag-granted-to-flat-role.util';
+import { isAgentChatRlsEnabled } from 'src/engine/permissions/agent-chat-access/utils/is-agent-chat-rls-enabled.util';
 import { RecordSharingPermissionsService } from 'src/engine/permissions/record-sharing-permissions.service';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { RecordAccessGroupWriteService } from 'src/engine/permissions/record-access-group-write.service';
 import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
@@ -81,6 +83,7 @@ export class AgentChatSharingService {
     private readonly recordSharingPermissionsService: RecordSharingPermissionsService,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
     private readonly recordPermissionsReadService: RecordPermissionsReadService,
+    private readonly recordAccessGroupWriteService: RecordAccessGroupWriteService,
     private readonly settingPermissionsService: SettingPermissionsService,
     private readonly rolePermissionsService: RolePermissionsService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
@@ -124,6 +127,15 @@ export class AgentChatSharingService {
         AiExceptionCode.CHAT_UPGRADE_IN_PROGRESS,
       );
     }
+  }
+
+  async isAgentChatRlsEnabled(workspaceId: string): Promise<boolean> {
+    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['featureFlagsMap'],
+    );
+
+    return isAgentChatRlsEnabled(featureFlagsMap);
   }
 
   async getParticipantObjectMetadataId(workspaceId: string): Promise<string> {
@@ -284,8 +296,11 @@ export class AgentChatSharingService {
       }).then(() => true),
     );
 
-    if (chatMemberIds.length === 0) {
-      return [];
+    if (
+      chatMemberIds.length === 0 ||
+      (await this.isAgentChatRlsEnabled(args.workspaceId))
+    ) {
+      return chatMemberIds;
     }
 
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
@@ -364,6 +379,13 @@ export class AgentChatSharingService {
 
     if (memberIdsWithAiAccess.size === 0) {
       return [];
+    }
+
+    // Participants reach the chat through their own participant row
+    if (await this.isAgentChatRlsEnabled(workspaceId)) {
+      return candidateMemberIds.filter((memberId) =>
+        memberIdsWithAiAccess.has(memberId),
+      );
     }
 
     const threadFlatObjectMetadata =
@@ -571,8 +593,11 @@ export class AgentChatSharingService {
 
     const participantObjectMetadataId =
       await this.getParticipantObjectMetadataId(args.workspaceId);
+    const threadObjectMetadata = await this.getThreadObjectMetadata(
+      args.workspaceId,
+    );
 
-    return this.threadRepository.query(
+    const claim = await this.threadRepository.query(
       args.workspaceId,
       async ({ manager, table }) => {
         const [thread] = await manager.query<AgentChatThreadWorkspaceEntity[]>(
@@ -611,7 +636,7 @@ export class AgentChatSharingService {
             AiExceptionCode.THREAD_NOT_FOUND,
           );
         }
-        await manager.query(
+        const participants = await manager.query<{ id: string }[]>(
           `WITH participant AS (
              INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId", "${IS_PRIVATE_COLUMN_NAME}", "lastReadAt", "isSubscribed")
              VALUES ($1, $2, true, clock_timestamp(), false)
@@ -632,9 +657,29 @@ export class AgentChatSharingService {
           ],
         );
 
-        return thread;
+        return { thread, participantIds: participants.map(({ id }) => id) };
       },
     );
+
+    if (!isDefined(claim)) {
+      return null;
+    }
+
+    await this.recordAccessGroupWriteService.queueRecompute({
+      workspaceId: args.workspaceId,
+      recordsToQueue: [
+        {
+          objectMetadataId: threadObjectMetadata.id,
+          recordIds: [claim.thread.id],
+        },
+        {
+          objectMetadataId: participantObjectMetadataId,
+          recordIds: claim.participantIds,
+        },
+      ],
+    });
+
+    return claim.thread;
   }
 
   // A new thread sorts by its creation and starts read in its creator's

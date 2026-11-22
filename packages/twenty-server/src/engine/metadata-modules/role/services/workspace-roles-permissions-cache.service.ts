@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { IsNull } from 'typeorm';
 
 import {
-  type PermissionFlagType,
+  PermissionFlagType,
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -15,6 +15,7 @@ import { computeRoleRecordsPermissions } from 'src/engine/permissions/role/utils
 import { buildIsPermissionFlagGranted } from 'src/engine/permissions/role/utils/build-is-permission-flag-granted.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { type PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
+import { isWorkspaceMemberIndividualRole } from 'src/engine/permissions/workspace-member-individual-role/utils/is-workspace-member-individual-role.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
@@ -86,7 +87,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
     const permissionsByRoleId: Record<string, RoleRecordsPermissions> = {};
 
     for (const role of roles) {
-      const isPermissionFlagGranted = buildIsPermissionFlagGranted({
+      const isRolePermissionFlagGranted = buildIsPermissionFlagGranted({
         role,
         permissionFlagUniversalIdentifiers: (
           rolePermissionFlags.byRoleId.get(role.id) ?? []
@@ -99,6 +100,11 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
           }),
         ),
       });
+      // Individual roles only hold chat rules for members whose other roles grant AI
+      const isPermissionFlagGranted = (permissionFlag: PermissionFlagType) =>
+        (permissionFlag === PermissionFlagType.AI &&
+          isWorkspaceMemberIndividualRole(role)) ||
+        isRolePermissionFlagGranted(permissionFlag);
 
       permissionsByRoleId[role.id] = computeRoleRecordsPermissions({
         roleDefinition: {

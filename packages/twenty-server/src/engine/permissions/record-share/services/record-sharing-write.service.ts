@@ -38,7 +38,7 @@ import { type ShareWithInput } from 'src/engine/permissions/record-share/types/s
 import { type CreatedRecordSharing } from 'src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util';
 import { isRecordSharingEnabled } from 'src/engine/permissions/record-share/utils/is-record-sharing-enabled.util';
 import { canSetPrivateRecordState } from 'src/engine/permissions/private-record/utils/can-set-private-record-state.util';
-import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/utils/is-private-by-default-object.util';
+import { isObjectPrivateByDefault } from 'src/engine/permissions/private-record/utils/is-object-private-by-default.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
@@ -222,7 +222,10 @@ export class RecordSharingWriteService {
             })
           : undefined,
         shareWith,
-        isPrivateByDefault: isPrivateByDefaultObject(flatObjectMetadata),
+        isPrivateByDefault: isObjectPrivateByDefault({
+          flatObjectMetadata,
+          featureFlagsMap,
+        }),
         isPrivate,
       }),
       transactionScope,

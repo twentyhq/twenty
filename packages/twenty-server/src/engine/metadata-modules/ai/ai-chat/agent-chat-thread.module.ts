@@ -1,4 +1,5 @@
 import { AgentChatInboxParticipantWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-participant-writer.service';
+import { AgentChatRecordSharingDelegateService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-record-sharing-delegate.service';
 import { AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
 import { AgentChatAssistantParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-participation.service';
 import { Module } from '@nestjs/common';
@@ -70,6 +71,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     AgentChatChannelService,
     AgentChatChannelThreadsService,
     AgentChatDirectMessageIdentityService,
+    AgentChatRecordSharingDelegateService,
     AgentChatSharingService,
     AgentChatThreadParticipantEventService,
     AgentChatThreadParticipantService,

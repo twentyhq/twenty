@@ -6,10 +6,12 @@ import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/da
 import { type AgentChatThreadParticipantWrite } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-write.type';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
+import { RecordAccessGroupWriteService } from 'src/engine/permissions/record-access-group-write.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 // Participant rows are written in SQL, outside the ORM that would send these
+// events and recompute their access groups
 @Injectable()
 export class AgentChatThreadParticipantEventService {
   private readonly logger = new Logger(
@@ -19,6 +21,7 @@ export class AgentChatThreadParticipantEventService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly recordAccessGroupWriteService: RecordAccessGroupWriteService,
   ) {}
 
   // Sent once the write has committed, so a failure here must not report the
@@ -53,6 +56,15 @@ export class AgentChatThreadParticipantEventService {
 
     if (!isDefined(objectMetadata)) {
       return;
+    }
+
+    if (!isDefined(before)) {
+      await this.recordAccessGroupWriteService.queueRecompute({
+        workspaceId,
+        recordsToQueue: [
+          { objectMetadataId: objectMetadata.id, recordIds: [after.id] },
+        ],
+      });
     }
 
     const event = formatTwentyOrmEventToDatabaseBatchEvent({

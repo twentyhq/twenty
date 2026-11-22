@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { type ObjectRecordsPermissionsManifest } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MessageChannelVisibility } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
@@ -15,6 +16,8 @@ import {
 import { CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-child-object-universal-identifiers.constant';
 import { buildChannelVisibilityObjectRecordsPermissions } from 'src/engine/permissions/channel-visibility/utils/build-channel-visibility-object-records-permissions.util';
 import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
+import { AgentChatIndividualRoleRecordsPermissionsService } from 'src/engine/permissions/agent-chat-access/services/agent-chat-individual-role-records-permissions.service';
+import { isAgentChatRlsEnabled } from 'src/engine/permissions/agent-chat-access/utils/is-agent-chat-rls-enabled.util';
 import { WorkspaceMemberIndividualRoleService } from 'src/engine/permissions/workspace-member-individual-role/services/workspace-member-individual-role.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -30,6 +33,7 @@ export class ChannelVisibilityRuleSyncService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMemberIndividualRoleService: WorkspaceMemberIndividualRoleService,
     private readonly cacheLockService: CacheLockService,
+    private readonly agentChatIndividualRoleRecordsPermissionsService: AgentChatIndividualRoleRecordsPermissionsService,
   ) {}
 
   async syncWorkspace(workspaceId: string): Promise<void> {
@@ -54,10 +58,50 @@ export class ChannelVisibilityRuleSyncService {
         'flatWorkspaceMemberMaps',
       ]);
 
-    const userWorkspaceIds = isChannelVisibilityRlsEnabled(featureFlagsMap)
-      ? Object.keys(flatWorkspaceMemberMaps.idByUserWorkspaceId)
-      : [];
+    const isChannelVisibilityEnabled =
+      isChannelVisibilityRlsEnabled(featureFlagsMap);
+    const isAgentChatEnabled = isAgentChatRlsEnabled(featureFlagsMap);
+    const userWorkspaceIds =
+      isChannelVisibilityEnabled || isAgentChatEnabled
+        ? Object.keys(flatWorkspaceMemberMaps.idByUserWorkspaceId)
+        : [];
 
+    const [channelVisibilityObjects, agentChatObjectsByUserWorkspaceId] =
+      await Promise.all([
+        isChannelVisibilityEnabled
+          ? this.buildChannelVisibilityObjectsByUserWorkspaceId({
+              workspaceId,
+              userWorkspaceIds,
+            })
+          : new Map<string, ObjectRecordsPermissionsManifest[]>(),
+        isAgentChatEnabled
+          ? this.agentChatIndividualRoleRecordsPermissionsService.buildByUserWorkspaceId(
+              { workspaceId, userWorkspaceIds },
+            )
+          : new Map<string, ObjectRecordsPermissionsManifest[]>(),
+      ]);
+
+    await this.workspaceMemberIndividualRoleService.syncIndividualRoles({
+      workspaceId,
+      individualRoles: userWorkspaceIds.map((userWorkspaceId) => ({
+        userWorkspaceId,
+        recordsPermissions: {
+          objects: [
+            ...(channelVisibilityObjects.get(userWorkspaceId) ?? []),
+            ...(agentChatObjectsByUserWorkspaceId.get(userWorkspaceId) ?? []),
+          ],
+        },
+      })),
+    });
+  }
+
+  private async buildChannelVisibilityObjectsByUserWorkspaceId({
+    workspaceId,
+    userWorkspaceIds,
+  }: {
+    workspaceId: string;
+    userWorkspaceIds: string[];
+  }): Promise<Map<string, ObjectRecordsPermissionsManifest[]>> {
     const [messageChannels, calendarChannels] = await Promise.all([
       this.messageChannelRepository.find({
         where: { workspaceId },
@@ -69,67 +113,64 @@ export class ChannelVisibilityRuleSyncService {
       }),
     ]);
 
-    await this.workspaceMemberIndividualRoleService.syncIndividualRoles({
-      workspaceId,
-      individualRoles: userWorkspaceIds.map((userWorkspaceId) => ({
+    return new Map(
+      userWorkspaceIds.map((userWorkspaceId) => [
         userWorkspaceId,
-        recordsPermissions: {
-          objects: [
-            buildChannelVisibilityObjectRecordsPermissions({
-              userWorkspaceId,
-              channels: messageChannels,
-              objectUniversalIdentifier: message.universalIdentifier,
-              associationRelationFieldUniversalIdentifier:
-                message.fields.messageChannelMessageAssociations
-                  .universalIdentifier,
-              channelIdFieldUniversalIdentifier:
-                STANDARD_OBJECTS.messageChannelMessageAssociation.fields
-                  .messageChannelId.universalIdentifier,
-              unreadableFieldUniversalIdentifiersByVisibility: {
-                [MessageChannelVisibility.SUBJECT]: [
-                  message.fields.text.universalIdentifier,
-                  message.fields.attachments.universalIdentifier,
-                ],
-                [MessageChannelVisibility.METADATA]: [
-                  message.fields.subject.universalIdentifier,
-                  message.fields.text.universalIdentifier,
-                  message.fields.attachments.universalIdentifier,
-                ],
-              },
-            }),
-            buildChannelVisibilityObjectRecordsPermissions({
-              userWorkspaceId,
-              channels: calendarChannels,
-              objectUniversalIdentifier: calendarEvent.universalIdentifier,
-              associationRelationFieldUniversalIdentifier:
-                calendarEvent.fields.calendarChannelEventAssociations
-                  .universalIdentifier,
-              channelIdFieldUniversalIdentifier:
-                STANDARD_OBJECTS.calendarChannelEventAssociation.fields
-                  .calendarChannelId.universalIdentifier,
-              unreadableFieldUniversalIdentifiersByVisibility: {
-                [MessageChannelVisibility.METADATA]: [
-                  calendarEvent.fields.title.universalIdentifier,
-                  calendarEvent.fields.description.universalIdentifier,
-                ],
-              },
-            }),
-            ...[
-              ...CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS,
-              STANDARD_OBJECTS.attachment.universalIdentifier,
-            ].map((objectUniversalIdentifier) => ({
-              objectUniversalIdentifier,
-            })),
-          ].map((objectRecordsPermissions) => ({
-            ...objectRecordsPermissions,
-            canReadAllRecords: false,
-            canCreateAllRecords: false,
-            canUpdateAllRecords: false,
-            canSoftDeleteAllRecords: false,
-            canDestroyAllRecords: false,
+        [
+          buildChannelVisibilityObjectRecordsPermissions({
+            userWorkspaceId,
+            channels: messageChannels,
+            objectUniversalIdentifier: message.universalIdentifier,
+            associationRelationFieldUniversalIdentifier:
+              message.fields.messageChannelMessageAssociations
+                .universalIdentifier,
+            channelIdFieldUniversalIdentifier:
+              STANDARD_OBJECTS.messageChannelMessageAssociation.fields
+                .messageChannelId.universalIdentifier,
+            unreadableFieldUniversalIdentifiersByVisibility: {
+              [MessageChannelVisibility.SUBJECT]: [
+                message.fields.text.universalIdentifier,
+                message.fields.attachments.universalIdentifier,
+              ],
+              [MessageChannelVisibility.METADATA]: [
+                message.fields.subject.universalIdentifier,
+                message.fields.text.universalIdentifier,
+                message.fields.attachments.universalIdentifier,
+              ],
+            },
+          }),
+          buildChannelVisibilityObjectRecordsPermissions({
+            userWorkspaceId,
+            channels: calendarChannels,
+            objectUniversalIdentifier: calendarEvent.universalIdentifier,
+            associationRelationFieldUniversalIdentifier:
+              calendarEvent.fields.calendarChannelEventAssociations
+                .universalIdentifier,
+            channelIdFieldUniversalIdentifier:
+              STANDARD_OBJECTS.calendarChannelEventAssociation.fields
+                .calendarChannelId.universalIdentifier,
+            unreadableFieldUniversalIdentifiersByVisibility: {
+              [MessageChannelVisibility.METADATA]: [
+                calendarEvent.fields.title.universalIdentifier,
+                calendarEvent.fields.description.universalIdentifier,
+              ],
+            },
+          }),
+          ...[
+            ...CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS,
+            STANDARD_OBJECTS.attachment.universalIdentifier,
+          ].map((objectUniversalIdentifier) => ({
+            objectUniversalIdentifier,
           })),
-        },
-      })),
-    });
+        ].map((objectRecordsPermissions) => ({
+          ...objectRecordsPermissions,
+          canReadAllRecords: false,
+          canCreateAllRecords: false,
+          canUpdateAllRecords: false,
+          canSoftDeleteAllRecords: false,
+          canDestroyAllRecords: false,
+        })),
+      ]),
+    );
   }
 }
