@@ -100,7 +100,7 @@ const SidePanelEditColumnPageContent = ({
               fieldMetadataItem={fieldMetadataItem}
               relationObjectMetadataItem={relationObjectMetadataItem}
               recordFieldId={recordFieldId}
-              initialLimit={recordField?.relationScope?.limit}
+              storedRelationScope={recordField?.relationScope}
             />
             <SidePanelEditColumnFilterDropdownStatesEffect />
           </RecordSortsComponentInstanceContext.Provider>

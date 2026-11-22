@@ -10,11 +10,10 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { RecordTableSettingsSortsContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent';
+import { SidePanelEditColumnHeader } from '@/side-panel/pages/edit-column/components/SidePanelEditColumnHeader';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
-import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -27,6 +26,7 @@ import { useStore } from 'jotai';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
+import { type ViewFieldRelationScope } from 'twenty-shared/types';
 import { IconCheck } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { Button, Field } from 'twenty-ui/primitives/input';
@@ -54,7 +54,7 @@ type SidePanelEditColumnFormProps = {
   fieldMetadataItem: FieldMetadataItem;
   relationObjectMetadataItem: EnrichedObjectMetadataItem;
   recordFieldId?: string;
-  initialLimit?: number | null;
+  storedRelationScope?: ViewFieldRelationScope | null;
 };
 
 export const SidePanelEditColumnForm = ({
@@ -62,7 +62,7 @@ export const SidePanelEditColumnForm = ({
   fieldMetadataItem,
   relationObjectMetadataItem,
   recordFieldId,
-  initialLimit,
+  storedRelationScope,
 }: SidePanelEditColumnFormProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -88,7 +88,9 @@ export const SidePanelEditColumnForm = ({
     currentRecordSortsComponentState,
   );
 
-  const [limitInput, setLimitInput] = useState(initialLimit?.toString() ?? '');
+  const [limitInput, setLimitInput] = useState(
+    storedRelationScope?.limit?.toString() ?? '',
+  );
   const [isSaving, setIsSaving] = useState(false);
 
   const trimmedLimitInput = limitInput.trim();
@@ -99,6 +101,12 @@ export const SidePanelEditColumnForm = ({
       limit >= 1 &&
       limit <= QUERY_MAX_RECORDS_FROM_RELATION);
 
+  const columnHeader = getRecordFieldColumnHeader({
+    fieldMetadataItem,
+    lookupTarget: undefined,
+    isScopedRelationColumn: true,
+  });
+
   const handleSaveClick = async () => {
     if (!isLimitValid || isSaving) {
       return;
@@ -106,15 +114,17 @@ export const SidePanelEditColumnForm = ({
 
     setIsSaving(true);
 
+    const relationScope = getRelationScopeFromRecordFiltersAndSorts({
+      recordFilters: store.get(currentRecordFilters),
+      recordFilterGroups: store.get(currentRecordFilterGroups),
+      recordSorts: store.get(currentRecordSorts),
+      limit,
+    });
+
     const isSaved = await saveScopedRelationColumn({
       fieldMetadataItemId: fieldMetadataItem.id,
       recordFieldId,
-      relationScope: getRelationScopeFromRecordFiltersAndSorts({
-        recordFilters: store.get(currentRecordFilters),
-        recordFilterGroups: store.get(currentRecordFilterGroups),
-        recordSorts: store.get(currentRecordSorts),
-        limit,
-      }),
+      relationScope,
     });
 
     if (!isSaved) {
@@ -133,28 +143,15 @@ export const SidePanelEditColumnForm = ({
     dependencies: [currentFocusId, handleSaveClick],
   });
 
-  const FieldIcon = getIcon(fieldMetadataItem.icon);
+  const ColumnIcon = getIcon(columnHeader.icon);
 
   return (
     <StyledContainer ref={containerRef} tabIndex={-1}>
-      <PageCardHeader
-        title={
-          <HeaderIdentifier
-            icon={
-              <FieldIcon
-                size={theme.icon.size.md}
-                stroke={theme.icon.stroke.sm}
-              />
-            }
-            title={
-              getRecordFieldColumnHeader({
-                fieldMetadataItem,
-                lookupTarget: undefined,
-                isScopedRelationColumn: true,
-              }).label
-            }
-          />
+      <SidePanelEditColumnHeader
+        icon={
+          <ColumnIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         }
+        defaultLabel={columnHeader.label}
       />
       <StyledContent>
         <FormFieldInputContainer>

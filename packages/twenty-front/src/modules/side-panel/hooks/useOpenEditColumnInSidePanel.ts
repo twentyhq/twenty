@@ -49,24 +49,27 @@ export const useOpenEditColumnInSidePanel = (recordTableId: string) => {
         }),
       );
 
+      const fieldMetadataItems = store.get(
+        flattenedFieldMetadataItemsSelector.atom,
+      );
+
       if (!isDefined(viewId)) {
         return;
       }
 
-      const relationScope = store
+      const recordField = store
         .get(
           currentRecordFieldsComponentState.atomFamily({
             instanceId: recordTableId,
           }),
         )
-        .find(({ id }) => id === recordFieldId)?.relationScope;
+        .find(({ id }) => id === recordFieldId);
+      const relationScope = recordField?.relationScope;
 
       const { recordSorts, ...recordFiltersAndRecordFilterGroups } =
         getRelationScopeRecordFiltersAndSorts({
           relationScope: relationScope ?? EMPTY_RELATION_SCOPE,
-          fieldMetadataItems: store.get(
-            flattenedFieldMetadataItemsSelector.atom,
-          ),
+          fieldMetadataItems,
         });
 
       // The filter editor only shows filters held by a root filter group
