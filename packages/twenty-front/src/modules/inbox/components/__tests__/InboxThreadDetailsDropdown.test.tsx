@@ -49,12 +49,12 @@ const mockThread: { current: ObjectRecord | undefined } = {
   current: undefined,
 };
 
-jest.mock('@/ai-chat/threads/hooks/useAttachChatThreadToRecord', () => ({
-  useAttachChatThreadToRecord: () => ({ attachChatThreadToRecord }),
+jest.mock('@/ai-chat/threads/hooks/useAttachAiChatThreadToRecord', () => ({
+  useAttachAiChatThreadToRecord: () => ({ attachChatThreadToRecord }),
 }));
 
-jest.mock('@/ai-chat/threads/hooks/useDetachChatThreadFromRecord', () => ({
-  useDetachChatThreadFromRecord: () => ({
+jest.mock('@/ai-chat/threads/hooks/useDetachAiChatThreadFromRecord', () => ({
+  useDetachAiChatThreadFromRecord: () => ({
     detachChatThreadFromRecord: (linkIds: string[]) =>
       detachChatThreadFromRecord(linkIds),
   }),

@@ -5,14 +5,14 @@ import { type AiChatParticipantMention } from '@/ai-chat/composer/types/AiChatPa
 
 export const getAiChatNewThreadDirectMessageWorkspaceMemberId = ({
   isDirectMessageIdentityEnabled,
-  newInboxChatRecipients,
+  newThreadRecipients,
   isAssistantMentioned,
   channelId,
   initialRecipients,
   participantMentions,
 }: {
   isDirectMessageIdentityEnabled: boolean;
-  newInboxChatRecipients: AiChatNewThreadRecipients | undefined;
+  newThreadRecipients: AiChatNewThreadRecipients | undefined;
   isAssistantMentioned: boolean;
   channelId: string | null | undefined;
   initialRecipients: AiChatParticipantMention[];
@@ -20,8 +20,8 @@ export const getAiChatNewThreadDirectMessageWorkspaceMemberId = ({
 }): string | undefined => {
   if (
     !isDirectMessageIdentityEnabled ||
-    !isDefined(newInboxChatRecipients) ||
-    newInboxChatRecipients.isAssistantParticipant ||
+    !isDefined(newThreadRecipients) ||
+    newThreadRecipients.isAssistantParticipant ||
     isAssistantMentioned ||
     isDefined(channelId)
   ) {

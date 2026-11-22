@@ -83,7 +83,7 @@ const multiSelectQuestion: AiChatPendingQuestion = {
 };
 
 const meta: Meta<typeof AiChatQuestionCard> = {
-  title: 'Modules/AiChat/AiChatQuestionCard',
+  title: 'Modules/AI/AiChatQuestionCard',
   component: AiChatQuestionCard,
   parameters: { aiChatThreadId: 'thread-1' },
   decorators: [

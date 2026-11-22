@@ -127,14 +127,12 @@ const StyledInput = styled.input`
 type AiModelTierSliderProps = {
   selectedTier: AiModelTier;
   onTierChange: (tier: AiModelTier) => void;
-  title?: string;
   disabled?: boolean;
 };
 
 export const AiModelTierSlider = ({
   selectedTier,
   onTierChange,
-  title,
   disabled = false,
 }: AiModelTierSliderProps) => {
   const { t } = useLingui();
@@ -153,7 +151,7 @@ export const AiModelTierSlider = ({
   return (
     <StyledContainer>
       <StyledHeader>
-        <StyledTitle>{title ?? resolvedTier.label}</StyledTitle>
+        <StyledTitle>{resolvedTier.label}</StyledTitle>
         <AiModelTierInformationButton resolvedTier={resolvedTier} />
       </StyledHeader>
       <StyledTrack

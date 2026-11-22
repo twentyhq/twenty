@@ -16,7 +16,7 @@ export const useSwitchToNewAiChat = ({
   const store = useStore();
   const { openAiChatThread } = useOpenAiChatThread();
 
-  const switchToNewChat = ({
+  const switchToNewAiChat = ({
     inboxChannelId = null,
   }: { inboxChannelId?: string | null } = {}) => {
     const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
@@ -45,5 +45,5 @@ export const useSwitchToNewAiChat = ({
     return newAiChatThreadId;
   };
 
-  return { switchToNewChat };
+  return { switchToNewAiChat };
 };

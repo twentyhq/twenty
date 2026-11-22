@@ -57,8 +57,8 @@ const sentShouldAssistantReply = jest.fn();
 const sentChannelId = jest.fn();
 const sentMessageVariables = jest.fn();
 
-jest.mock('@/ai-chat/threads/hooks/useAttachChatThreadToRecord', () => ({
-  useAttachChatThreadToRecord: () => ({ attachChatThreadToRecord }),
+jest.mock('@/ai-chat/threads/hooks/useAttachAiChatThreadToRecord', () => ({
+  useAttachAiChatThreadToRecord: () => ({ attachChatThreadToRecord }),
 }));
 
 const loadAiChatThread = jest.fn(async (threadId: string) => ({

@@ -35,7 +35,7 @@ import { createAiChatCodedError } from '@/ai-chat/utils/createAiChatCodedError';
 import { createMidStreamAdapter } from '@/ai-chat/utils/createMidStreamAdapter';
 import { createStreamChunkSequencer } from '@/ai-chat/utils/createStreamChunkSequencer';
 import { endAiChatReplyStatus } from '@/ai-chat/utils/endAiChatReplyStatus';
-import { isChatAccessDenied } from '@/ai-chat/utils/isChatAccessDenied';
+import { isAiChatAccessDenied } from '@/ai-chat/utils/isAiChatAccessDenied';
 import { upsertAiChatMessage } from '@/ai-chat/utils/upsertAiChatMessage';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -454,7 +454,7 @@ export const openAiChatThreadStream = ({
         if (isInactive()) {
           return;
         }
-        if (isChatAccessDenied(value.errors)) {
+        if (isAiChatAccessDenied(value.errors)) {
           handleAccessDenied();
           return;
         }
@@ -486,7 +486,7 @@ export const openAiChatThreadStream = ({
         if (isInactive()) {
           return;
         }
-        if (Array.isArray(errors) && isChatAccessDenied(errors)) {
+        if (Array.isArray(errors) && isAiChatAccessDenied(errors)) {
           handleAccessDenied();
         }
       },

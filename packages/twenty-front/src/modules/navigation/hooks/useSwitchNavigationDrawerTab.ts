@@ -54,7 +54,7 @@ export const useSwitchNavigationDrawerTab = () => {
   );
 
   const { defaultHomePagePath } = useDefaultHomePagePath();
-  const { switchToNewChat } = useSwitchToNewAiChatInInboxChannel({
+  const { switchToNewAiChat } = useSwitchToNewAiChatInInboxChannel({
     shouldOpenInFullPage: true,
   });
   const returnFromExpandedAiChat = useReturnFromExpandedAiChat({
@@ -91,7 +91,7 @@ export const useSwitchNavigationDrawerTab = () => {
   const switchToAiChat = () => {
     setCurrentMobileNavigationDrawer('main');
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
-    switchToNewChat();
+    switchToNewAiChat();
   };
 
   // AI mode also lists chat history beside other pages, so only the chat and inbox pages make a click a no-op.

@@ -14,18 +14,18 @@ import { AiChatInlineBanner } from '@/ai-chat/components/AiChatInlineBanner';
 import { AiChatEmptyState } from '@/ai-chat/composer/components/AiChatEmptyState';
 import { AiChatParticipantMentionBar } from '@/ai-chat/composer/components/AiChatParticipantMentionBar';
 import { AiChatPendingAskGate } from '@/ai-chat/tool-calls/components/AiChatPendingAskGate';
-import { AiChatNoMoreBillingCreditsBanner } from '@/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner';
+import { AiChatWorkspaceCreditsExhaustedBanner } from '@/ai-chat/usage/components/AiChatWorkspaceCreditsExhaustedBanner';
 import { AiChatUsageLimitReachedBanner } from '@/ai-chat/usage/components/AiChatUsageLimitReachedBanner';
 import { AiChatUserCreditsExhaustedBanner } from '@/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner';
 import { AiChatStandaloneError } from '@/ai-chat/composer/components/AiChatStandaloneError';
-import { AiChatContextPreview } from '@/ai-chat/composer/components/AiChatContextPreview';
+import { AiChatComposerAttachmentPreviews } from '@/ai-chat/composer/components/AiChatComposerAttachmentPreviews';
 import { AiChatAddMenu } from '@/ai-chat/composer/components/AiChatAddMenu';
 import { AiChatDictationButton } from '@/ai-chat/dictation/components/AiChatDictationButton';
 import { AiChatDictationEffect } from '@/ai-chat/dictation/components/AiChatDictationEffect';
 import { AiChatDictationHint } from '@/ai-chat/dictation/components/AiChatDictationHint';
 import { AiChatComposerActionsRow } from '@/ai-chat/components/AiChatComposerActionsRow';
 import { AiChatContextUsageButton } from '@/ai-chat/usage/components/AiChatContextUsageButton';
-import { SendMessageButton } from '@/ai-chat/composer/components/SendMessageButton';
+import { AiChatSendMessageButton } from '@/ai-chat/composer/components/AiChatSendMessageButton';
 import { useSendAiChatComposerMessage } from '@/ai-chat/composer/hooks/useSendAiChatComposerMessage';
 import { useAiChatEditor } from '@/ai-chat/composer/hooks/useAiChatEditor';
 import { useInsertDictatedText } from '@/ai-chat/dictation/hooks/useInsertDictatedText';
@@ -184,7 +184,7 @@ const EditableAiChatEditorSection = () => {
         modelTierDropdownId="ai-chat-model-tier-dropdown"
         isModelPickerHidden={isDirectMessage}
         sendButton={
-          <SendMessageButton
+          <AiChatSendMessageButton
             isDisabled={!canSendAiChatMessage}
             editor={editor}
           />
@@ -218,12 +218,12 @@ const EditableAiChatEditorSection = () => {
         hasPageContentInset={hasPageContentInset}
       >
         {isComposerCentered && <AiChatEmptyState isCentered />}
-        {!isDirectMessage && <AiChatContextPreview />}
+        {!isDirectMessage && <AiChatComposerAttachmentPreviews />}
         {hasNoEnabledModels && !isDirectMessage && (
           <AiChatInlineBanner>{t`No AI provider is configured on this instance.`}</AiChatInlineBanner>
         )}
         {hasReachedAiChatCreditsCap && !isDirectMessage && (
-          <AiChatNoMoreBillingCreditsBanner />
+          <AiChatWorkspaceCreditsExhaustedBanner />
         )}
         {shouldShowUsageLimitBanner && !isDirectMessage && (
           <AiChatUsageLimitReachedBanner />

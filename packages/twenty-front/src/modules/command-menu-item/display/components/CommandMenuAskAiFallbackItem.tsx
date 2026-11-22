@@ -18,14 +18,14 @@ export const CommandMenuAskAiFallbackItem = ({
   prompt,
 }: CommandMenuAskAiFallbackItemProps) => {
   const { t } = useLingui();
-  const { switchToNewChat } = useSwitchToNewAiChatInInboxChannel();
+  const { switchToNewAiChat } = useSwitchToNewAiChatInInboxChannel();
   const { applyAiChatPreprompt } = useApplyAiChatPreprompt();
   const setSidePanelSearch = useSetAtomState(sidePanelSearchState);
 
   const handleClick = async () => {
     setSidePanelSearch('');
     await applyAiChatPreprompt({
-      threadId: switchToNewChat(),
+      threadId: switchToNewAiChat(),
       serializedDocument:
         serializePlainTextAsAdvancedTextEditorDocument(prompt),
       mode: 'SEND',

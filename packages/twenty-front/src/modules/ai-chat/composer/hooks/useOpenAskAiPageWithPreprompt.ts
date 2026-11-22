@@ -12,7 +12,7 @@ import { aiChatRequiredThreadListenersState } from '@/ai-chat/states/aiChatRequi
 import { aiChatUserSelectedModelTierState } from '@/ai-chat/states/aiChatUserSelectedModelTierState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-export type AiChatModelPreselection = 'FAST' | 'SMART';
+type AiChatModelPreselection = 'FAST' | 'SMART';
 
 const TIER_BY_PRESELECTION: Record<AiChatModelPreselection, AiModelTier> = {
   FAST: 'fast',
@@ -21,7 +21,7 @@ const TIER_BY_PRESELECTION: Record<AiChatModelPreselection, AiModelTier> = {
 
 export const useOpenAskAiPageWithPreprompt = () => {
   const store = useStore();
-  const { switchToNewChat } = useSwitchToNewAiChat();
+  const { switchToNewAiChat } = useSwitchToNewAiChat();
   const { applyAiChatPreprompt } = useApplyAiChatPreprompt();
   const setAiChatUserSelectedModelTier = useSetAtomState(
     aiChatUserSelectedModelTierState,
@@ -40,7 +40,7 @@ export const useOpenAskAiPageWithPreprompt = () => {
     model?: AiChatModelPreselection;
     files?: File[];
   }): Promise<string | null> => {
-    const newAiChatThreadId = switchToNewChat();
+    const newAiChatThreadId = switchToNewAiChat();
 
     if (isDefined(model)) {
       const tier = TIER_BY_PRESELECTION[model];
