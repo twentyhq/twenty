@@ -1,5 +1,7 @@
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
@@ -9,6 +11,7 @@ import {
   STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS,
   STANDARD_NAVIGATION_MENU_ITEMS,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
+import { createStandardNavigationMenuItemCommandFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-command-flat-metadata.util';
 import { createStandardNavigationMenuItemFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-flat-metadata.util';
 import {
   createStandardNavigationMenuItemFolderFlatMetadata,
@@ -24,6 +27,8 @@ const FLAT_NAVIGATION_MENU_ITEM_NAMES = [
   'allPeople',
   'allTasks',
 ] as const;
+
+const PINNED_COMMAND_NAMES = ['searchCommand', 'newAiChatCommand'] as const;
 
 const FOLDERS = [
   {
@@ -43,19 +48,44 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
   now,
   workspaceId,
   twentyStandardApplicationId,
-  dependencyFlatEntityMaps: { flatViewMaps },
+  dependencyFlatEntityMaps: { flatViewMaps, flatCommandMenuItemMaps },
 }: {
   now: string;
   workspaceId: string;
   twentyStandardApplicationId: string;
   dependencyFlatEntityMaps: {
     flatViewMaps: FlatEntityMaps<FlatView>;
+    flatCommandMenuItemMaps: FlatEntityMaps<FlatCommandMenuItem>;
   };
 }): FlatNavigationMenuItemMaps => {
   const flatNavigationMenuItemMaps: FlatNavigationMenuItemMaps = {
     ...createEmptyFlatEntityMaps(),
     byUserWorkspaceIdAndParentId: {},
   };
+
+  for (const pinnedCommandName of PINNED_COMMAND_NAMES) {
+    const pinnedCommandDefinition =
+      STANDARD_NAVIGATION_MENU_ITEMS[pinnedCommandName];
+
+    const pinnedCommand = createStandardNavigationMenuItemCommandFlatMetadata({
+      universalIdentifier: pinnedCommandDefinition.universalIdentifier,
+      commandMenuItemUniversalIdentifier:
+        pinnedCommandDefinition.commandMenuItemUniversalIdentifier,
+      position: pinnedCommandDefinition.position,
+      navigationMenuItemId: v4(),
+      workspaceId,
+      twentyStandardApplicationId,
+      dependencyFlatEntityMaps: { flatCommandMenuItemMaps },
+      now,
+    });
+
+    if (isDefined(pinnedCommand)) {
+      addFlatNavigationMenuItemToMapsAndUpdateIndex({
+        flatNavigationMenuItem: pinnedCommand,
+        flatNavigationMenuItemMaps,
+      });
+    }
+  }
 
   const workspaceSectionDefinition =
     STANDARD_NAVIGATION_MENU_ITEMS.workspaceSection;

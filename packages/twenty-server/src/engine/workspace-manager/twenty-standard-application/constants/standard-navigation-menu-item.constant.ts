@@ -2,9 +2,24 @@ import { msg } from '@lingui/core/macro';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
+import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 export const STANDARD_NAVIGATION_MENU_ITEMS = {
+  searchCommand: {
+    universalIdentifier: '20202020-b00f-4b0f-8b0f-c0aba11c000f',
+    type: NavigationMenuItemType.COMMAND,
+    commandMenuItemUniversalIdentifier:
+      STANDARD_COMMAND_MENU_ITEMS.searchRecords.universalIdentifier,
+    position: 0,
+  },
+  newAiChatCommand: {
+    universalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
+    type: NavigationMenuItemType.COMMAND,
+    commandMenuItemUniversalIdentifier:
+      STANDARD_COMMAND_MENU_ITEMS.newAiChat.universalIdentifier,
+    position: 1,
+  },
   workspaceSection: {
     universalIdentifier: '20202020-b00e-4b0e-8b0e-c0aba11c000e',
     type: NavigationMenuItemType.SECTION,

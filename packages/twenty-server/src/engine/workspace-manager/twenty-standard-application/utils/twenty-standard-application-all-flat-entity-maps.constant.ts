@@ -247,21 +247,22 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
       flatPageLayoutWidgetMaps,
     );
 
-  const flatNavigationMenuItemMaps = buildStandardFlatNavigationMenuItemMaps({
-    now,
-    workspaceId,
-    twentyStandardApplicationId,
-    dependencyFlatEntityMaps: {
-      flatViewMaps,
-    },
-  });
-
   const flatCommandMenuItemMaps = buildStandardFlatCommandMenuItemMaps({
     now,
     workspaceId,
     twentyStandardApplicationId,
     dependencyFlatEntityMaps: {
       flatObjectMetadataMaps,
+    },
+  });
+
+  const flatNavigationMenuItemMaps = buildStandardFlatNavigationMenuItemMaps({
+    now,
+    workspaceId,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps: {
+      flatViewMaps,
+      flatCommandMenuItemMaps,
     },
   });
 
