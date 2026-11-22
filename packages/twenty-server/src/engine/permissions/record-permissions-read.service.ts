@@ -52,7 +52,7 @@ import { canRelatedRecordPathExtendAccessToObject } from 'src/engine/permissions
 import { areRecordIdsReadableByPrincipals } from 'src/engine/permissions/internal/role/utils/are-record-ids-readable-by-principals.util';
 import { isRelatedRecordPathsEnabled } from 'src/engine/permissions/internal/related-record-path/utils/is-related-record-paths-enabled.util';
 import { canRelatedRecordPathExtendAccess } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access.util';
-import { markObjectsReadableThroughRelatedRecordPaths } from 'src/engine/permissions/internal/related-record-path/utils/mark-objects-readable-through-related-record-paths.util';
+import { setCanReadSomeRecords } from 'src/engine/permissions/internal/role/utils/set-can-read-some-records.util';
 import { buildRecordShareOrPrivateRecordAccessSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-record-share-or-private-record-access-sql-condition.util';
 import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
 import {
@@ -144,7 +144,7 @@ export class RecordPermissionsReadService {
     );
   }
 
-  async markRecordsReadableThroughRelatedRecordPaths({
+  async setCanReadSomeRecords({
     principals,
     recordsPermissions,
   }: {
@@ -156,27 +156,26 @@ export class RecordPermissionsReadService {
         principals,
       });
 
-    return markObjectsReadableThroughRelatedRecordPaths({
-      recordsPermissions,
-      objectMetadataIdsReadableThroughRelatedRecordPaths: new Set(
-        Object.values(metadataMaps.flatObjectMetadataMaps.byUniversalIdentifier)
-          .filter(isDefined)
-          .filter((flatObjectMetadata) => {
-            const request: PermissionsObjectAccessRequest = {
-              principals,
-              metadataMaps,
-              flatObjectMetadata,
-              operationType: 'read',
-            };
+    const readableObjectMetadataIds = new Set<string>();
 
-            return (
-              !isObjectOperationDisabledToPrincipals(request) &&
-              !isObjectOperationDeniedToPrincipals(request) &&
-              canRelatedRecordPathExtendAccess(request)
-            );
-          })
-          .map(({ id }) => id),
-      ),
+    for (const flatObjectMetadata of Object.values(
+      metadataMaps.flatObjectMetadataMaps.byUniversalIdentifier,
+    ).filter(isDefined)) {
+      if (
+        await this.canAccessSomeRecordsOfRequest({
+          principals,
+          metadataMaps,
+          flatObjectMetadata,
+          operationType: 'read',
+        })
+      ) {
+        readableObjectMetadataIds.add(flatObjectMetadata.id);
+      }
+    }
+
+    return setCanReadSomeRecords({
+      recordsPermissions,
+      readableObjectMetadataIds,
     });
   }
 
@@ -191,10 +190,14 @@ export class RecordPermissionsReadService {
       operationType,
     });
 
-    if (!isDefined(request)) {
-      return false;
-    }
+    return (
+      isDefined(request) && (await this.canAccessSomeRecordsOfRequest(request))
+    );
+  }
 
+  private async canAccessSomeRecordsOfRequest(
+    request: PermissionsObjectAccessRequest,
+  ): Promise<boolean> {
     if (
       isObjectOperationDisabledToPrincipals(request) ||
       isObjectOperationDeniedToPrincipals(request)

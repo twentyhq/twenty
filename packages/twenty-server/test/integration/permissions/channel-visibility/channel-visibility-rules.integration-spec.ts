@@ -304,7 +304,7 @@ describe('channel visibility through row level rules (integration)', () => {
     ).toBe(true);
   });
 
-  it('tells the front that records reached only through related record paths can be read', async () => {
+  it('tells the front it can read some records of an object reached only through related record paths', async () => {
     const response = await makeMetadataApiRequest(
       {
         query: gql`
@@ -314,7 +314,7 @@ describe('channel visibility through row level rules (integration)', () => {
                 objectRecordsPermissions {
                   objectMetadataId
                   canReadAllRecords
-                  canReadRecordsThroughRelatedRecordPaths
+                  canReadSomeRecords
                 }
               }
             }
@@ -336,7 +336,7 @@ describe('channel visibility through row level rules (integration)', () => {
       ),
     ).toMatchObject({
       canReadAllRecords: false,
-      canReadRecordsThroughRelatedRecordPaths: true,
+      canReadSomeRecords: true,
     });
   });
 

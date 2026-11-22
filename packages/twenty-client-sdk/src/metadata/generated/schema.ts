@@ -2935,7 +2935,7 @@ export interface ObjectRecordsPermissions {
     canCreateAllRecords: Scalars['Boolean']
     canDestroyAllRecords: Scalars['Boolean']
     canReadAllRecords: Scalars['Boolean']
-    canReadRecordsThroughRelatedRecordPaths: Scalars['Boolean']
+    canReadSomeRecords?: Scalars['Boolean']
     canSoftDeleteAllRecords: Scalars['Boolean']
     canUpdateAllRecords: Scalars['Boolean']
     objectMetadataId: Scalars['UUID']
@@ -7843,7 +7843,7 @@ export interface ObjectRecordsPermissionsGenqlSelection{
     canCreateAllRecords?: boolean | number
     canDestroyAllRecords?: boolean | number
     canReadAllRecords?: boolean | number
-    canReadRecordsThroughRelatedRecordPaths?: boolean | number
+    canReadSomeRecords?: boolean | number
     canSoftDeleteAllRecords?: boolean | number
     canUpdateAllRecords?: boolean | number
     objectMetadataId?: boolean | number

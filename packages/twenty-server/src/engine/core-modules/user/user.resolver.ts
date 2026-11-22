@@ -151,18 +151,16 @@ export class UserResolver {
     return {
       ...userWorkspacePermissions,
       recordsPermissions:
-        await this.recordPermissionsReadService.markRecordsReadableThroughRelatedRecordPaths(
-          {
-            principals:
-              await this.principalPermissionsReadService.resolveUserWorkspacePermissionsPrincipalsOrThrow(
-                {
-                  workspaceId: workspace.id,
-                  userWorkspaceId: currentUserWorkspace.id,
-                },
-              ),
-            recordsPermissions: userWorkspacePermissions.recordsPermissions,
-          },
-        ),
+        await this.recordPermissionsReadService.setCanReadSomeRecords({
+          principals:
+            await this.principalPermissionsReadService.resolveUserWorkspacePermissionsPrincipalsOrThrow(
+              {
+                workspaceId: workspace.id,
+                userWorkspaceId: currentUserWorkspace.id,
+              },
+            ),
+          recordsPermissions: userWorkspacePermissions.recordsPermissions,
+        }),
     };
   }
 

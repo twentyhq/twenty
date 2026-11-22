@@ -50,7 +50,7 @@ export const USER_QUERY_FRAGMENT = gql`
         canDestroyAllRecords
         unreadableFields
         uneditableFields
-        canReadRecordsThroughRelatedRecordPaths
+        canReadSomeRecords
         rowLevelRecordsPermissions {
           ruleId
           canCreateRecords
