@@ -1,6 +1,6 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import { upsertAiChatMessage } from '@/ai-chat/utils/upsertAiChatMessage';
+import { upsertAiChatMessage } from '@/ai-chat/instance/utils/upsertAiChatMessage';
 
 const buildMessage = (id: string, text: string): ExtendedUIMessage => ({
   id,

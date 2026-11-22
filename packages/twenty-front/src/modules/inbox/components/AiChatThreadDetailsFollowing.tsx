@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 
-import { AiChatThreadFollowersField } from '@/ai-chat/threads/components/AiChatThreadFollowersField';
+import { AiChatThreadFollowersField } from '@/inbox/components/AiChatThreadFollowersField';
 import { useExecuteAiChatThreadStatusAction } from '@/ai-chat/threads/hooks/useExecuteAiChatThreadStatusAction';
 import { aiChatThreadInboxStatusFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadInboxStatusFamilySelector';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';

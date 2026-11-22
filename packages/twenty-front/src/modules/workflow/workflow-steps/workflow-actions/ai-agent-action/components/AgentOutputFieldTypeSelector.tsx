@@ -1,4 +1,4 @@
-import { OUTPUT_FIELD_TYPE_OPTIONS } from '@/ai/constants/OutputFieldTypeOptions';
+import { OUTPUT_FIELD_TYPE_OPTIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/OutputFieldTypeOptions';
 import { Select } from '@/ui/input/components/Select';
 import { type AgentResponseFieldType } from 'twenty-shared/ai';
 import { useLingui } from '@lingui/react/macro';

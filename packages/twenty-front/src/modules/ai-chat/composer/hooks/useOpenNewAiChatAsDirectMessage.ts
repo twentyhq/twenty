@@ -5,13 +5,13 @@ import { useCallback } from 'react';
 import { assertIsDefinedOrThrow, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/constants/AiChatNewThreadDefaultRecipients';
+import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/composer/constants/AiChatNewThreadDefaultRecipients';
 import { useLoadAiChatThread } from '@/ai-chat/threads/hooks/useLoadAiChatThread';
 import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatComposerDraftsState';
 import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
-import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
-import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/states/composer/aiChatComposerUploadingFilesFamilyState';
-import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/states/composer/aiChatComposerAttachmentsFamilyState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/aiChatComposerNewThreadRecipientsFamilyState';
+import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/composer/states/aiChatComposerUploadingFilesFamilyState';
+import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/composer/states/aiChatComposerAttachmentsFamilyState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { OpenDirectMessageDocument } from '~/generated-metadata/graphql';
 

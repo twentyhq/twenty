@@ -14,8 +14,8 @@ import { Tag } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai-chat/threads/constants/AiChatThreadDetailsLabelWidthInPx';
-import { type AiChatThreadStatusScope } from '@/ai-chat/threads/types/AiChatThreadStatusScope';
-import { type AiChatThreadTriageStatus } from '@/ai-chat/threads/types/AiChatThreadTriageStatus';
+import { type AiChatThreadStatusScope } from '@/inbox/types/AiChatThreadStatusScope';
+import { type AiChatThreadTriageStatus } from '@/inbox/types/AiChatThreadTriageStatus';
 
 const StyledScope = styled.span`
   color: ${themeCssVariables.font.color.tertiary};

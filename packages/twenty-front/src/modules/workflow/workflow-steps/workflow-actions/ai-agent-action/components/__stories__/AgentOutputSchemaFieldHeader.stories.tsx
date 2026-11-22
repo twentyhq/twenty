@@ -1,4 +1,4 @@
-import { AgentOutputSchemaFieldHeader } from '@/ai/components/AgentOutputSchemaFieldHeader';
+import { AgentOutputSchemaFieldHeader } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaFieldHeader';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';

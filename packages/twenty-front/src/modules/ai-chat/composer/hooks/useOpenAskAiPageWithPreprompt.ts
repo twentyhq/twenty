@@ -7,7 +7,7 @@ import { useApplyAiChatPreprompt } from '@/ai-chat/composer/hooks/useApplyAiChat
 import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
 import { type AiChatPrepromptMode } from '@/ai-chat/types/AiChatPrepromptMode';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
-import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/states/composer/aiChatComposerAttachmentsFamilyState';
+import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/composer/states/aiChatComposerAttachmentsFamilyState';
 import { aiChatRequiredThreadListenersState } from '@/ai-chat/states/aiChatRequiredThreadListenersState';
 import { aiChatUserSelectedModelTierState } from '@/ai-chat/states/aiChatUserSelectedModelTierState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';

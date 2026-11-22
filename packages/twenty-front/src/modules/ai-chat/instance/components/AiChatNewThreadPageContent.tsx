@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { type ReactNode, useId } from 'react';
 
-import { AiChatNewThreadPageHeader } from '@/ai-chat/components/AiChatNewThreadPageHeader';
+import { AiChatNewThreadPageHeader } from '@/ai-chat/instance/components/AiChatNewThreadPageHeader';
 import { AiChatSurfaceView } from '@/ai-chat/instance/components/AiChatSurfaceView';
 import { AI_CHAT_SURFACE } from '@/ai-chat/constants/AiChatSurface';
 import { useSelectAiChatThreadFromNewChat } from '@/ai-chat/hooks/useSelectAiChatThreadFromNewChat';

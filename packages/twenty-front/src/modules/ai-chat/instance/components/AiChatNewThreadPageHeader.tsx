@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { AiChatCloseButton } from '@/ai-chat/components/AiChatCloseButton';
-import { AiChatNewThreadPageActions } from '@/ai-chat/components/AiChatNewThreadPageActions';
+import { AiChatNewThreadPageActions } from '@/ai-chat/instance/components/AiChatNewThreadPageActions';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 
 type AiChatNewThreadPageHeaderProps = {

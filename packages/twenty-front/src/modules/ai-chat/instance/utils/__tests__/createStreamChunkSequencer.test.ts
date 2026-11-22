@@ -1,6 +1,6 @@
 import { type UIMessageChunk } from 'ai';
 
-import { createStreamChunkSequencer } from '@/ai-chat/utils/createStreamChunkSequencer';
+import { createStreamChunkSequencer } from '@/ai-chat/instance/utils/createStreamChunkSequencer';
 
 const chunk = (text: string) =>
   ({ type: 'text-delta', id: 'text-1', delta: text }) as UIMessageChunk;
