@@ -65,7 +65,6 @@ import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { WorkflowRunQueueModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-run-queue.module';
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
-import { RevokeRoleWideAccessToChannelObjectsCommand } from 'src/engine/permissions/channel-visibility/commands/revoke-role-wide-access-to-channel-objects.command';
 
 @Module({
   imports: [
@@ -133,7 +132,6 @@ import { RevokeRoleWideAccessToChannelObjectsCommand } from 'src/engine/permissi
     RebuildApplicationDefaultDepsCommand,
     InstallPreInstalledAppsCommand,
     UpdateFeatureFlagCommand,
-    RevokeRoleWideAccessToChannelObjectsCommand,
     provideWorkspaceScopedRepository(RoleEntity),
   ],
 })
