@@ -9,7 +9,6 @@ import { v5 } from 'uuid';
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { NO_ALL_RECORDS_PERMISSIONS } from 'src/engine/permissions/channel-visibility/constants/no-all-records-permissions.constant';
 import { getWorkspaceMemberIndividualRoleUniversalIdentifier } from 'src/engine/permissions/workspace-member-individual-role/utils/get-workspace-member-individual-role-universal-identifier.util';
 
 export const buildChannelVisibilityObjectRecordsPermissions = ({
@@ -39,7 +38,6 @@ export const buildChannelVisibilityObjectRecordsPermissions = ({
 
   return {
     objectUniversalIdentifier,
-    ...NO_ALL_RECORDS_PERMISSIONS,
     rowLevelRecordsPermissions: Object.values(MessageChannelVisibility).flatMap(
       (visibility) => {
         const channelIds = channels
