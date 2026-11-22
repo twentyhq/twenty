@@ -9,20 +9,18 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { COMPUTE_RECORD_ACCESS_GROUP_IDS_OPERATION_NAME } from 'src/engine/permissions/internal/access-group/constants/compute-record-access-group-ids-operation-name.constant';
 import { type AccessGroupComputePlanStep } from 'src/engine/permissions/internal/access-group/types/access-group-compute-plan-step.type';
 import { computeAccessGroupPropagationRecordCounts } from 'src/engine/permissions/internal/access-group/utils/compute-access-group-propagation-record-counts.util';
-import { type DeferredWorkspaceOperationStatus } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-operation-status.type';
 
 type ComputeOperationRow = {
   workspaceId: string;
-  status: DeferredWorkspaceOperationStatus;
   objectComputes: AccessGroupComputePlanStep[] | null;
   createdAt: Date;
 };
 
 const COMPUTE_OPERATIONS_SQL = `
-  SELECT operation."workspaceId", operation.status, operation.payload->'objectComputes' AS "objectComputes", operation."createdAt"
+  SELECT operation."workspaceId", operation.payload->'objectComputes' AS "objectComputes", operation."createdAt"
   FROM core."deferredWorkspaceOperation" operation
   JOIN core."workspace" workspace ON workspace.id = operation."workspaceId" AND workspace."deletedAt" IS NULL
-  WHERE operation.name = $1
+  WHERE operation.name = $1 AND operation.status IN ('PENDING', 'IN_PROGRESS')
 `;
 
 @Injectable()
@@ -38,20 +36,13 @@ export class AccessGroupPropagationGaugeService implements OnModuleInit {
       metricName: 'twenty_access_group_propagation_backlog',
       options: {
         description:
-          'Backlog of record access group propagation across workspaces, labelled by measure: operations by status, workspaces in progress, remaining records and age in seconds of the oldest unfinished operation.',
+          'Backlog of record access group propagation across workspaces, labelled by measure: workspaces in progress, remaining records and age in seconds of the oldest unfinished operation.',
       },
       callback: async () => {
-        const operations: ComputeOperationRow[] =
+        const unfinishedOperations: ComputeOperationRow[] =
           await this.coreDataSource.query(COMPUTE_OPERATIONS_SQL, [
             COMPUTE_RECORD_ACCESS_GROUP_IDS_OPERATION_NAME,
           ]);
-        const unfinishedOperations = operations.filter(
-          ({ status }) => status !== 'FAILED',
-        );
-        const countOperationsWithStatus = (
-          status: DeferredWorkspaceOperationStatus,
-        ) =>
-          operations.filter((operation) => operation.status === status).length;
         const oldestCreatedAt = Math.min(
           ...unfinishedOperations.map(({ createdAt }) =>
             new Date(createdAt).getTime(),
@@ -59,18 +50,6 @@ export class AccessGroupPropagationGaugeService implements OnModuleInit {
         );
 
         return [
-          {
-            measure: 'pending_operations',
-            value: countOperationsWithStatus('PENDING'),
-          },
-          {
-            measure: 'in_progress_operations',
-            value: countOperationsWithStatus('IN_PROGRESS'),
-          },
-          {
-            measure: 'failed_operations',
-            value: countOperationsWithStatus('FAILED'),
-          },
           {
             measure: 'workspaces_in_progress',
             value: new Set(
