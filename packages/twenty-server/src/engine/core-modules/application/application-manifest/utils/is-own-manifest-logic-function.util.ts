@@ -21,7 +21,6 @@ export const isOwnManifestLogicFunction = ({
       universalIdentifier,
     }),
   ) ||
-  // fromFlatLogicFunctionMaps only holds this application's functions, which a partial sync keeps.
   (!inferDeletionFromMissingEntities &&
     isDefined(
       findFlatEntityByUniversalIdentifier({

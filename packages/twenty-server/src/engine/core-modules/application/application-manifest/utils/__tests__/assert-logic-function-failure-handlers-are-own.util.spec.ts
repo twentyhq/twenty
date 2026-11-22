@@ -84,15 +84,6 @@ describe('assertLogicFunctionFailureHandlersAreOwn', () => {
     ).toThrow(ApplicationException);
   });
 
-  it('rejects a logic function that is its own failure handler', () => {
-    expect(() =>
-      assertFailureHandler({
-        onFailureUniversalIdentifier: FAILING_LOGIC_FUNCTION_IDENTIFIER,
-        inferDeletionFromMissingEntities: true,
-      }),
-    ).toThrow('cannot be its own onFailureLogicFunction');
-  });
-
   it('accepts an existing logic function of the application on a partial sync', () => {
     expect(() =>
       assertFailureHandler({

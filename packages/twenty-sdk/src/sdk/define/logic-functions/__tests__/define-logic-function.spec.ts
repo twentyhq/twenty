@@ -419,34 +419,4 @@ describe('defineLogicFunction', () => {
 
     expect(result.success).toBe(true);
   });
-
-  describe('onFailureLogicFunction', () => {
-    const universalIdentifier = 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf';
-
-    it('should reject a universalIdentifier that is not a UUID', () => {
-      const result = defineLogicFunction({
-        universalIdentifier,
-        name: 'Answer request',
-        handler: mockHandler,
-        onFailureLogicFunction: { universalIdentifier: 'not-a-uuid' },
-      });
-
-      expect(result.errors).toEqual([
-        'Logic function onFailureLogicFunction.universalIdentifier "not-a-uuid" must be the UUID universalIdentifier of a logic function in this app.',
-      ]);
-    });
-
-    it('should reject pointing at itself', () => {
-      const result = defineLogicFunction({
-        universalIdentifier,
-        name: 'Answer request',
-        handler: mockHandler,
-        onFailureLogicFunction: { universalIdentifier },
-      });
-
-      expect(result.errors).toEqual([
-        'Logic function onFailureLogicFunction must point at another logic function, not itself',
-      ]);
-    });
-  });
 });

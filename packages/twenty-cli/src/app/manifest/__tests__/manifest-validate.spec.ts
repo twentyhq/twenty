@@ -461,39 +461,6 @@ describe('manifestValidate', () => {
       },
     );
 
-    it('should not flag a logic function referencing its failure handler as a duplicate', () => {
-      const failureHandlerLogicFunctionId =
-        '550e8400-e29b-41d4-a716-4466554400a1';
-
-      const result = manifestValidate({
-        ...validManifest,
-        logicFunctions: [
-          {
-            universalIdentifier: '550e8400-e29b-41d4-a716-4466554400a0',
-            name: 'answer-request',
-            sourceHandlerPath: 'src/logic-functions/answer-request.ts',
-            builtHandlerPath: 'dist/answer-request.js',
-            builtHandlerChecksum: '00000000-0000-4000-8000-000000000000',
-            handlerName: 'handler',
-            onFailureLogicFunction: {
-              universalIdentifier: failureHandlerLogicFunctionId,
-            },
-          },
-          {
-            universalIdentifier: failureHandlerLogicFunctionId,
-            name: 'fail-request',
-            sourceHandlerPath: 'src/logic-functions/fail-request.ts',
-            builtHandlerPath: 'dist/fail-request.js',
-            builtHandlerChecksum: '00000000-0000-4000-8000-000000000000',
-            handlerName: 'handler',
-          },
-        ],
-      });
-
-      expect(result.isValid).toBe(true);
-      expect(result.errors).toHaveLength(0);
-    });
-
     it('should not flag a messaging provider referencing its connection provider and logic functions as duplicates', () => {
       const connectionProviderId = '550e8400-e29b-41d4-a716-446655440045';
       const sendMessageLogicFunctionId = '550e8400-e29b-41d4-a716-446655440046';

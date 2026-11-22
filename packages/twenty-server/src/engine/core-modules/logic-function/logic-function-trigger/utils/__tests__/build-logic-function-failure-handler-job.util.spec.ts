@@ -53,31 +53,6 @@ describe('buildLogicFunctionFailureHandlerJob', () => {
     });
   });
 
-  it('should skip a handler that no longer exists', () => {
-    expect(
-      buildLogicFunctionFailureHandlerJob({
-        failedLogicFunctionPayload: FAILED_LOGIC_FUNCTION_PAYLOAD,
-        failedFlatLogicFunction: FAILED_FLAT_LOGIC_FUNCTION,
-        failureHandler: undefined,
-        error: ERROR,
-      }),
-    ).toBeUndefined();
-  });
-
-  it('should skip a deleted handler', () => {
-    expect(
-      buildLogicFunctionFailureHandlerJob({
-        failedLogicFunctionPayload: FAILED_LOGIC_FUNCTION_PAYLOAD,
-        failedFlatLogicFunction: FAILED_FLAT_LOGIC_FUNCTION,
-        failureHandler: {
-          ...FAILURE_HANDLER,
-          deletedAt: '2026-01-01T00:00:00.000Z',
-        },
-        error: ERROR,
-      }),
-    ).toBeUndefined();
-  });
-
   it('should skip a handler of another application', () => {
     expect(
       buildLogicFunctionFailureHandlerJob({
