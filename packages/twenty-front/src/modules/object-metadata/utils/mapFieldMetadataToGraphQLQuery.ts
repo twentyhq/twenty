@@ -9,7 +9,6 @@ import {
   type RecordGqlFields,
   RelationType,
 } from 'twenty-shared/types';
-import { getRelationWithArgumentsVariableNames } from '@/object-record/graphql/utils/getRelationWithArgumentsVariableNames';
 import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
 import {
   canAccessThroughAllRecordsOrRlsPermission,
@@ -27,7 +26,6 @@ type MapFieldMetadataToGraphQLQueryArgs = {
     'name' | 'type' | 'relation' | 'morphRelations' | 'settings'
   >;
   relationRecordGqlFields?: RecordGqlFields;
-  relationWithArgumentsResponseKey?: string;
   computeReferences?: boolean;
   objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
 };
@@ -37,7 +35,6 @@ export const mapFieldMetadataToGraphQLQuery = ({
   gqlField,
   fieldMetadata,
   relationRecordGqlFields,
-  relationWithArgumentsResponseKey,
   computeReferences = false,
   objectPermissionsByObjectMetadataId,
 }: MapFieldMetadataToGraphQLQueryArgs): string => {
@@ -247,17 +244,7 @@ ${mapObjectMetadataToGraphQLQuery({
       }
     }
 
-    const variableNames = isDefined(relationWithArgumentsResponseKey)
-      ? getRelationWithArgumentsVariableNames(relationWithArgumentsResponseKey)
-      : undefined;
-
-    const relationSelection = isDefined(variableNames)
-      ? doNotTranslate(
-          `${relationWithArgumentsResponseKey}: ${gqlField}(filter: $${variableNames.filter}, orderBy: $${variableNames.orderBy}, first: $${variableNames.first})`,
-        )
-      : gqlField;
-
-    return doNotTranslate(`${relationSelection}
+    return doNotTranslate(`${gqlField}
 {
   edges {
     node ${mapObjectMetadataToGraphQLQuery({

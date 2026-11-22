@@ -10,6 +10,7 @@ import {
 } from 'twenty-shared/types';
 import {
   canAccessThroughAllRecordsOrRlsPermission,
+  capitalize,
   computeRelationWithArgumentsResponseKey,
   CustomError,
   isDefined,
@@ -78,12 +79,29 @@ export const getReadableRelationsWithArguments = ({
         return [];
       }
 
+      const { relationFieldName, filter, orderBy, first, recordGqlFields } =
+        relationWithArguments;
+      const typeName = capitalize(relationObjectMetadataItem.nameSingular);
+      const filterVariableName = doNotTranslate(`${responseKey}Filter`);
+      const orderByVariableName = doNotTranslate(`${responseKey}OrderBy`);
+      const firstVariableName = doNotTranslate(`${responseKey}First`);
+
       return [
         {
-          responseKey,
-          relationWithArguments,
-          relationFieldMetadataItem,
-          relationObjectMetadataItem,
+          fieldMetadataItem: relationFieldMetadataItem,
+          recordGqlFields,
+          selectionHead: doNotTranslate(
+            `${responseKey}: ${relationFieldName}(filter: $${filterVariableName}, orderBy: $${orderByVariableName}, first: $${firstVariableName})`,
+          ),
+          // Arguments go in as variables because some filter values are enums, which inline JSON cannot express
+          variableDefinitions: doNotTranslate(
+            `, $${filterVariableName}: ${typeName}FilterInput, $${orderByVariableName}: [${typeName}OrderByInput], $${firstVariableName}: Int`,
+          ),
+          variables: {
+            [filterVariableName]: filter,
+            [orderByVariableName]: orderBy,
+            [firstVariableName]: first,
+          },
         },
       ];
     },
