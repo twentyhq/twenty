@@ -2,8 +2,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useRef } from 'react';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
-import { useScopedRelationAliases } from '@/object-record/record-column-scope/hooks/useScopedRelationAliases';
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { recordIndexHasRecordsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexHasRecordsComponentSelector';
@@ -17,7 +15,6 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { isRecordTableEmptyStateHiddenComponentState } from '@/object-record/record-table/states/isRecordTableEmptyStateHiddenComponentState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
-import { RecordTableRecordLimitReloadEffect } from '@/object-record/record-table/virtualization/components/RecordTableRecordLimitReloadEffect';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -35,8 +32,6 @@ export const RecordTable = () => {
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
   );
-
-  const scopedRelationAliases = useScopedRelationAliases();
 
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
@@ -89,9 +84,7 @@ export const RecordTable = () => {
   };
 
   return (
-    <ScopedRelationAliasesContext.Provider value={scopedRelationAliases}>
-      {/* Must stay under the provider: a reload stores related records under the scoped relation aliases */}
-      <RecordTableRecordLimitReloadEffect />
+    <>
       {canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions: objectPermissions,
         operationType: 'read',
@@ -120,6 +113,6 @@ export const RecordTable = () => {
           recordTableId={recordTableId}
         />
       )}
-    </ScopedRelationAliasesContext.Provider>
+    </>
   );
 };

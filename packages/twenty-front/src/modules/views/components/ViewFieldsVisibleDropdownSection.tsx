@@ -1,15 +1,13 @@
 import { DraggableListRow } from '@/ui/layout/draggable-list/components/DraggableListRow';
 import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useProcessOptionDropdownDragEnd } from '@/object-record/object-options-dropdown/hooks/useProcessOptionDropdownDragEnd';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { getRecordFieldColumnHeader } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnHeader';
 import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
-import { isLookupColumnsEnabledSelector } from '@/object-record/record-column-lookup/states/isLookupColumnsEnabledSelector';
-import { getScopedRelationColumn } from '@/object-record/record-column-scope/utils/getScopedRelationColumn';
+import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
@@ -19,7 +17,6 @@ import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableLi
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewType } from '@/views/types/ViewType';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -49,10 +46,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
     useGetFieldMetadataItemByIdOrThrow();
 
   const getRecordFieldLookupTarget = useGetRecordFieldLookupTarget();
-  const { objectMetadataItems } = useObjectMetadataItems();
-  const isLookupColumnsEnabled = useAtomStateValue(
-    isLookupColumnsEnabledSelector,
-  );
+  const scopedRelationAliases = useContext(ScopedRelationAliasesContext);
 
   const handleReorderFields =
     viewType === ViewType.KANBAN
@@ -129,20 +123,17 @@ export const ViewFieldsVisibleDropdownSection = () => {
                   const { fieldMetadataItem } = getFieldMetadataItemByIdOrThrow(
                     recordField.fieldMetadataItemId,
                   );
-                  const scopedRelationColumn = getScopedRelationColumn({
-                    recordField,
-                    fieldMetadataItem,
-                    objectMetadataItems,
-                    isLookupColumnsEnabled,
-                  });
+                  const scopedRelationAlias = scopedRelationAliases.find(
+                    ({ recordFieldId }) => recordFieldId === recordField.id,
+                  );
                   const columnHeader = getRecordFieldColumnHeader({
                     fieldMetadataItem,
                     lookupTarget:
                       getRecordFieldLookupTarget({
                         recordField,
                         fieldMetadataItem,
-                      }) ?? scopedRelationColumn?.lookupTarget,
-                    isScopedRelationColumn: isDefined(scopedRelationColumn),
+                      }) ?? scopedRelationAlias?.lookupTarget,
+                    isScopedRelationColumn: isDefined(scopedRelationAlias),
                   });
 
                   return (

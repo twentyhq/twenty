@@ -16,7 +16,6 @@ import { type GraphQLView } from '@/views/types/GraphQLView';
 import { ViewType } from '@/views/types/ViewType';
 import { isRecordFieldSupportedByViewType } from '@/object-record/record-field/utils/isRecordFieldSupportedByViewType';
 import { duplicateViewFiltersAndViewFilterGroups } from '@/views/utils/duplicateViewFiltersAndViewFilterGroups';
-import { getViewFieldRelationScopeInput } from '@/views/utils/getViewFieldRelationScopeInput';
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
 import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
 import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
@@ -27,6 +26,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 } from 'uuid';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
+import { removeTypenames } from '~/utils/removeTypenames';
 
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const { performViewApiCreate } = usePerformViewApiPersist();
@@ -190,9 +190,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             viewFieldGroupId: viewField.viewFieldGroupId,
             relationTargetFieldMetadataId:
               viewField.relationTargetFieldMetadataId,
-            relationScope: getViewFieldRelationScopeInput(
-              viewField.relationScope,
-            ),
+            relationScope: removeTypenames(viewField.relationScope),
             viewId: newViewId,
           })),
       });

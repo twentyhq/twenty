@@ -1,7 +1,10 @@
 import { getDefaultObjectPermissions } from '@/object-metadata/utils/getDefaultObjectPermissions';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import { print } from 'graphql';
-import { type RecordGqlFieldsRelationWithArguments } from 'twenty-shared/types';
+import {
+  type RecordGqlFields,
+  type RecordGqlFieldsRelationWithArguments,
+} from 'twenty-shared/types';
 import { computeRelationWithArgumentsResponseKey } from 'twenty-shared/utils';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
@@ -19,64 +22,101 @@ const peopleInParis: RecordGqlFieldsRelationWithArguments = {
 
 const responseKey = computeRelationWithArgumentsResponseKey(peopleInParis);
 
-const buildPermissions = (canReadPeople: boolean) => ({
-  [personObjectMetadataItem.id]: {
-    ...getDefaultObjectPermissions(),
-    canReadAllRecords: canReadPeople,
-  },
-});
+const generateQuery = ({
+  extraRecordGqlFields = { [responseKey]: peopleInParis },
+  canReadPeople = true,
+}: {
+  extraRecordGqlFields?: RecordGqlFields;
+  canReadPeople?: boolean;
+} = {}) => {
+  const { query, variables } = generateFindManyRecordsQuery({
+    objectMetadataItem: companyObjectMetadataItem,
+    objectMetadataItems,
+    recordGqlFields: { id: true, ...extraRecordGqlFields },
+    objectPermissionsByObjectMetadataId: {
+      [personObjectMetadataItem.id]: {
+        ...getDefaultObjectPermissions(),
+        canReadAllRecords: canReadPeople,
+      },
+    },
+  });
+
+  return { query: print(query), variables };
+};
 
 describe('generateFindManyRecordsQuery with relations with arguments', () => {
-  const generateQuery = ({
-    shouldIncludeRelation = true,
-    relation = peopleInParis,
-    canReadPeople = true,
-  } = {}) =>
-    print(
-      generateFindManyRecordsQuery({
-        objectMetadataItem: companyObjectMetadataItem,
-        objectMetadataItems,
-        recordGqlFields: {
-          id: true,
-          ...(shouldIncludeRelation && {
-            [computeRelationWithArgumentsResponseKey(relation)]: relation,
-          }),
-        },
-        objectPermissionsByObjectMetadataId: buildPermissions(canReadPeople),
-      }),
+  it('selects the relation under its response key and passes its arguments as variables', () => {
+    const { query, variables } = generateQuery();
+
+    expect(query).toContain(
+      `$${responseKey}Filter: PersonFilterInput, $${responseKey}OrderBy: [PersonOrderByInput], $${responseKey}First: Int`,
     );
-
-  it('selects the relation under its response key and declares its variables', () => {
-    const query = generateQuery();
-
-    expect(query).toContain(`$${responseKey}Filter: PersonFilterInput`);
     expect(query).toContain(`${responseKey}: people(`);
     expect(query).toContain(`filter: $${responseKey}Filter`);
     expect(query).toContain(`orderBy: $${responseKey}OrderBy`);
     expect(query).toContain(`first: $${responseKey}First`);
+    expect(variables).toEqual({
+      [`${responseKey}Filter`]: { city: { eq: 'Paris' } },
+      [`${responseKey}OrderBy`]: undefined,
+      [`${responseKey}First`]: 1,
+    });
   });
 
   it('selects the total count of the relation only when it is limited', () => {
+    const peopleInParisUnlimited = { ...peopleInParis, first: undefined };
+
     expect(
-      generateQuery({ relation: { ...peopleInParis, first: undefined } }),
+      generateQuery({
+        extraRecordGqlFields: {
+          [computeRelationWithArgumentsResponseKey(peopleInParisUnlimited)]:
+            peopleInParisUnlimited,
+        },
+      }).query,
     ).not.toMatch(/totalCount\s+edges/);
-    expect(generateQuery()).toMatch(/totalCount\s+edges/);
+    expect(generateQuery().query).toMatch(/totalCount\s+edges/);
   });
 
   it('selects a composite field of the related records with its sub-fields', () => {
+    const peopleInParisWithEmails: RecordGqlFieldsRelationWithArguments = {
+      ...peopleInParis,
+      recordGqlFields: { id: true, emails: true },
+    };
+
     expect(
       generateQuery({
-        relation: {
-          ...peopleInParis,
-          recordGqlFields: { id: true, emails: true },
+        extraRecordGqlFields: {
+          [computeRelationWithArgumentsResponseKey(peopleInParisWithEmails)]:
+            peopleInParisWithEmails,
         },
-      }),
+      }).query,
     ).toMatch(/emails \{\s+primaryEmail\s+additionalEmails\s+\}/);
   });
 
   it('selects and declares nothing for an unreadable target', () => {
-    expect(generateQuery({ canReadPeople: false })).toBe(
-      generateQuery({ shouldIncludeRelation: false, canReadPeople: false }),
+    expect(generateQuery({ canReadPeople: false })).toEqual(
+      generateQuery({ extraRecordGqlFields: {}, canReadPeople: false }),
     );
+  });
+
+  it('selects and declares nothing for a field that is not a one-to-many relation', () => {
+    const relationToOne = {
+      ...peopleInParis,
+      relationFieldName: 'accountOwner',
+    };
+
+    expect(
+      generateQuery({
+        extraRecordGqlFields: {
+          [computeRelationWithArgumentsResponseKey(relationToOne)]:
+            relationToOne,
+        },
+      }),
+    ).toEqual(generateQuery({ extraRecordGqlFields: {} }));
+  });
+
+  it('rejects a key that is not derived from the arguments', () => {
+    expect(() =>
+      generateQuery({ extraRecordGqlFields: { scopedPeople: peopleInParis } }),
+    ).toThrow('must be keyed by computeRelationWithArgumentsResponseKey');
   });
 });
