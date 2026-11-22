@@ -699,7 +699,7 @@ msgstr "Un membru al spațiului de lucru"
 #. js-lingui-id: /WlOrK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A workspace member relation needs the field to read on its related records"
-msgstr ""
+msgstr "O relație de membru al spațiului de lucru necesită câmpul de citit din înregistrările asociate"
 
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
@@ -3078,7 +3078,7 @@ msgstr "Alegeți o persoană sau un rol cu care să partajați."
 #. js-lingui-id: IkeRn2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Choose the field to read on the related records"
-msgstr ""
+msgstr "Alegeți câmpul de citit din înregistrările asociate"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5612,7 +5612,7 @@ msgstr "Câmpul \"{workspaceMemberFieldName}\" nu este un câmp al obiectului wo
 #. js-lingui-id: moiE3i
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
-msgstr ""
+msgstr "Câmpul \"{workspaceMemberRelationFieldName}\" nu este o relație unu-la-mulți a obiectului workspaceMember"
 
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
@@ -11150,7 +11150,7 @@ msgstr "Predicatele care accesează un câmp printr-o relație nu sunt activate 
 #. js-lingui-id: v5akl/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Predicates reading the current member through a relation are not enabled for this workspace"
-msgstr ""
+msgstr "Predicatele care citesc membrul curent printr-o relație nu sunt activate pentru acest spațiu de lucru"
 
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -15074,7 +15074,7 @@ msgstr "Acest câmp nu are o coloană de bază de date de indexat."
 #. js-lingui-id: /62EJW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field is not a one-to-many relation of the workspace member object"
-msgstr ""
+msgstr "Acest câmp nu este o relație unu-la-mai-mulți a obiectului membru al spațiului de lucru"
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17994,7 +17994,7 @@ msgstr "Câmpurile paginii de înregistrare a membrului spațiului de lucru"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Workspace member relation field metadata not found"
-msgstr ""
+msgstr "Metadatele câmpului de relație al membrului spațiului de lucru nu au fost găsite"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

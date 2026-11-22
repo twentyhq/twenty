@@ -699,7 +699,7 @@ msgstr "Ένα μέλος χώρου εργασίας"
 #. js-lingui-id: /WlOrK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A workspace member relation needs the field to read on its related records"
-msgstr ""
+msgstr "Μια σχέση μέλους χώρου εργασίας χρειάζεται το πεδίο που θα διαβάζει στις σχετιζόμενες εγγραφές της"
 
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
@@ -3078,7 +3078,7 @@ msgstr "Επιλέξτε ένα άτομο ή έναν ρόλο για κοιν�
 #. js-lingui-id: IkeRn2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Choose the field to read on the related records"
-msgstr ""
+msgstr "Επιλέξτε το πεδίο προς ανάγνωση στις σχετιζόμενες εγγραφές"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5612,7 +5612,7 @@ msgstr "Το πεδίο \"{workspaceMemberFieldName}\" δεν είναι πεδ�
 #. js-lingui-id: moiE3i
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
-msgstr ""
+msgstr "Το πεδίο \"{workspaceMemberRelationFieldName}\" δεν αποτελεί σχέση ένα-προς-πολλά του αντικειμένου workspaceMember"
 
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
@@ -11150,7 +11150,7 @@ msgstr "Τα κατηγορήματα που φτάνουν σε ένα πεδί
 #. js-lingui-id: v5akl/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Predicates reading the current member through a relation are not enabled for this workspace"
-msgstr ""
+msgstr "Τα κατηγορήματα που διαβάζουν το τρέχον μέλος μέσω μιας σχέσης δεν είναι ενεργοποιημένα για αυτόν τον χώρο εργασίας"
 
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -15074,7 +15074,7 @@ msgstr "Αυτό το πεδίο δεν έχει στήλη βάσης δεδο�
 #. js-lingui-id: /62EJW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field is not a one-to-many relation of the workspace member object"
-msgstr ""
+msgstr "Αυτό το πεδίο δεν είναι σχέση ένα-προς-πολλά του αντικειμένου μέλους χώρου εργασίας"
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17994,7 +17994,7 @@ msgstr "Πεδία σελίδας εγγραφής μέλους χώρου ερ�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Workspace member relation field metadata not found"
-msgstr ""
+msgstr "Δεν βρέθηκαν μεταδεδομένα πεδίου σχέσης μέλους χώρου εργασίας"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

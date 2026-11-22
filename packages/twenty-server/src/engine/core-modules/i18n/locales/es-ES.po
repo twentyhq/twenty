@@ -699,7 +699,7 @@ msgstr "Un miembro del espacio de trabajo"
 #. js-lingui-id: /WlOrK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A workspace member relation needs the field to read on its related records"
-msgstr ""
+msgstr "Una relación de miembro del espacio de trabajo necesita el campo que se debe leer en sus registros relacionados"
 
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
@@ -3078,7 +3078,7 @@ msgstr "Elige una persona o un rol con quien compartir."
 #. js-lingui-id: IkeRn2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Choose the field to read on the related records"
-msgstr ""
+msgstr "Elige el campo que se debe leer en los registros relacionados"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5612,7 +5612,7 @@ msgstr "El campo \"{workspaceMemberFieldName}\" no es un campo del objeto worksp
 #. js-lingui-id: moiE3i
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
-msgstr ""
+msgstr "El campo \"{workspaceMemberRelationFieldName}\" no es una relación de uno a varios del objeto workspaceMember"
 
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
@@ -11150,7 +11150,7 @@ msgstr "Los predicados que alcanzan un campo a través de una relación no está
 #. js-lingui-id: v5akl/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Predicates reading the current member through a relation are not enabled for this workspace"
-msgstr ""
+msgstr "Los predicados que leen el miembro actual a través de una relación no están habilitados para este espacio de trabajo"
 
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -15074,7 +15074,7 @@ msgstr "Este campo no tiene ninguna columna de base de datos que indexar."
 #. js-lingui-id: /62EJW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field is not a one-to-many relation of the workspace member object"
-msgstr ""
+msgstr "Este campo no es una relación de uno a varios del objeto miembro del espacio de trabajo"
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17994,7 +17994,7 @@ msgstr "Campos de la página de registro de miembros del espacio de trabajo"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Workspace member relation field metadata not found"
-msgstr ""
+msgstr "No se encontraron metadatos del campo de relación de miembro del espacio de trabajo"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

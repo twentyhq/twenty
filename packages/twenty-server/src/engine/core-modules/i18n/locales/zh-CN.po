@@ -699,7 +699,7 @@ msgstr "工作区成员"
 #. js-lingui-id: /WlOrK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A workspace member relation needs the field to read on its related records"
-msgstr ""
+msgstr "工作区成员关系需要指定要在其关联记录上读取的字段"
 
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
@@ -3078,7 +3078,7 @@ msgstr "请选择一位人员或一个角色进行共享。"
 #. js-lingui-id: IkeRn2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Choose the field to read on the related records"
-msgstr ""
+msgstr "选择要在关联记录上读取的字段"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5612,7 +5612,7 @@ msgstr "字段 \"{workspaceMemberFieldName}\" 不是 workspaceMember 对象的�
 #. js-lingui-id: moiE3i
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
-msgstr ""
+msgstr "字段 \"{workspaceMemberRelationFieldName}\" 不是 workspaceMember 对象的一对多关系"
 
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
@@ -11150,7 +11150,7 @@ msgstr "此工作区未启用通过关系到达字段的谓词"
 #. js-lingui-id: v5akl/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Predicates reading the current member through a relation are not enabled for this workspace"
-msgstr ""
+msgstr "此工作区未启用通过关系读取当前成员的谓词"
 
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -15074,7 +15074,7 @@ msgstr "此字段没有可建立索引的数据库列。"
 #. js-lingui-id: /62EJW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field is not a one-to-many relation of the workspace member object"
-msgstr ""
+msgstr "此字段不是工作区成员对象的一对多关系"
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17994,7 +17994,7 @@ msgstr "工作区成员记录页面字段"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Workspace member relation field metadata not found"
-msgstr ""
+msgstr "未找到工作区成员关系字段元数据"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
