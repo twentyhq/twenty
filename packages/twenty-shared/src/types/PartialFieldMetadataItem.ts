@@ -7,4 +7,5 @@ export type PartialFieldMetadataItem = {
   type: FieldMetadataType;
   label: string;
   options?: PartialFieldMetadataItemOption[] | null;
+  settings?: object | null;
 };

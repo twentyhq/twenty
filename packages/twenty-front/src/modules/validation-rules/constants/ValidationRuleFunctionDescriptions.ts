@@ -15,5 +15,6 @@ export const VALIDATION_RULE_FUNCTION_DESCRIPTIONS: Record<
   dateAdd: msg`The date moved by a whole number of units, in UTC. A month added to the 31st lands on the last day of the month.`,
   dateTrunc: msg`The start of the unit containing the date, in UTC. Weeks start on Monday.`,
   datePart: msg`One part of the date as a number, in UTC: YEAR, QUARTER, MONTH, WEEK, DAY, DAY_OF_WEEK (1 is Monday), HOUR or MINUTE.`,
+  if: msg`The second value when the condition is true, otherwise the third.`,
   isInRelativeDateRange: msg`True when the date falls in a period counted from today, in UTC: PAST, NEXT or THIS, an amount, and a unit such as DAY, WEEK or MONTH. PAST and NEXT leave out the current period.`,
 };

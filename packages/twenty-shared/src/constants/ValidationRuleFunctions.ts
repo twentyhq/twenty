@@ -48,6 +48,14 @@ export const VALIDATION_RULE_FUNCTIONS = {
     signature: 'datePart(date, part)',
     evaluate: getExpressionDatePart,
   },
+  if: {
+    signature: 'if(condition, valueIfTrue, valueIfFalse)',
+    evaluate: (
+      condition: unknown,
+      valueIfTrue: unknown,
+      valueIfFalse: unknown,
+    ) => (condition === true ? valueIfTrue : valueIfFalse),
+  },
   isInRelativeDateRange: {
     signature: 'isInRelativeDateRange(date, direction, amount, unit)',
     evaluate: isValidationRuleDateInRelativeRange,

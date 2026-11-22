@@ -12,6 +12,7 @@ import {
 } from '@/utils';
 import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
 import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
+import { getFieldMetadataFormulaExpression } from '@/utils/formula/getFieldMetadataFormulaExpression';
 import { createAnyFieldRecordFilterBaseProperties } from '@/utils/filter/utils/createAnyFieldRecordFilterBaseProperties';
 import { isDefined } from '@/utils/validation';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -37,6 +38,10 @@ export const turnAnyFieldFilterIntoRecordGqlFilter = ({
   const isFilterValueANumber = z.coerce.number().safeParse(filterValue).success;
 
   for (const field of fields) {
+    if (isDefined(getFieldMetadataFormulaExpression(field))) {
+      continue;
+    }
+
     switch (field.type) {
       case FieldMetadataType.TEXT: {
         anyFieldRecordFilters.push({
