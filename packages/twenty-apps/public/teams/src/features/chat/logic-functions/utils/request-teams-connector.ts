@@ -10,7 +10,7 @@ import { type TeamsActivity } from 'src/features/chat/logic-functions/types/team
 import { getTeamsConnectorRetryDelayMs } from 'src/features/chat/logic-functions/utils/get-teams-connector-retry-delay-ms';
 import { isTeamsConnectorServiceUrl } from 'src/features/chat/logic-functions/utils/is-teams-connector-service-url';
 import { normalizeTeamsServiceUrl } from 'src/features/chat/logic-functions/utils/normalize-teams-service-url';
-import { sleepForMilliseconds } from 'src/features/transcripts/logic-functions/utils/sleep-for-milliseconds';
+import { fetchWithRetries } from 'src/utils/fetch-with-retries';
 
 export const requestTeamsConnector = async ({
   serviceUrl,
@@ -37,60 +37,43 @@ export const requestTeamsConnector = async ({
 
   const deadlineAtMs = Date.now() + TEAMS_CONNECTOR_REQUEST_TIMEOUT_MS;
 
-  const sendRequest = async ({
-    attempt,
-    waitedMs,
-  }: {
-    attempt: number;
-    waitedMs: number;
-  }): Promise<string> => {
-    const response = await fetch(`${normalizedServiceUrl}${path}`, {
-      method,
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-        ...(isDefined(body) ? { 'content-type': 'application/json' } : {}),
-      },
-      ...(isDefined(body) ? { body: JSON.stringify(body) } : {}),
-      signal: AbortSignal.timeout(Math.max(deadlineAtMs - Date.now(), 1)),
-    });
-
-    const responseBody = await response.text();
-
-    if (response.ok) {
-      return responseBody;
-    }
-
-    const failure = new Error(
-      `Bot Connector ${method} ${path} failed: ${response.status} ${response.statusText}${isNonEmptyString(responseBody) ? ` - ${responseBody}` : ''}`,
-    );
-
-    const isRetryable =
-      TEAMS_CONNECTOR_RETRYABLE_STATUSES.has(response.status) ||
+  const response = await fetchWithRetries({
+    sendRequest: () =>
+      fetch(`${normalizedServiceUrl}${path}`, {
+        method,
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+          ...(isDefined(body) ? { 'content-type': 'application/json' } : {}),
+        },
+        ...(isDefined(body) ? { body: JSON.stringify(body) } : {}),
+        signal: AbortSignal.timeout(Math.max(deadlineAtMs - Date.now(), 1)),
+      }),
+    maxAttempts: TEAMS_CONNECTOR_REQUEST_MAX_ATTEMPTS,
+    isRetryableStatus: (status) =>
+      TEAMS_CONNECTOR_RETRYABLE_STATUSES.has(status) ||
       (method !== 'POST' &&
-        TEAMS_CONNECTOR_IDEMPOTENT_RETRYABLE_STATUSES.has(response.status));
+        TEAMS_CONNECTOR_IDEMPOTENT_RETRYABLE_STATUSES.has(status)),
+    getRetryDelayMs: ({ attempt, retryAfterMs, waitedMs }) => {
+      const delayMs = getTeamsConnectorRetryDelayMs({
+        attempt,
+        retryAfterMs,
+        maxDelayMs: TEAMS_CONNECTOR_RETRY_MAX_TOTAL_WAIT_MS - waitedMs,
+      });
 
-    if (!isRetryable || attempt + 1 >= TEAMS_CONNECTOR_REQUEST_MAX_ATTEMPTS) {
-      throw failure;
-    }
+      return delayMs <= 0 || Date.now() + delayMs >= deadlineAtMs
+        ? undefined
+        : delayMs;
+    },
+    retryAbortSignal,
+  });
 
-    const delayMs = getTeamsConnectorRetryDelayMs({
-      attempt,
-      retryAfter: response.headers.get('retry-after'),
-      maxDelayMs: TEAMS_CONNECTOR_RETRY_MAX_TOTAL_WAIT_MS - waitedMs,
-    });
+  const responseBody = await response.text();
 
-    if (delayMs <= 0 || Date.now() + delayMs >= deadlineAtMs) {
-      throw failure;
-    }
+  if (response.ok) {
+    return responseBody;
+  }
 
-    await sleepForMilliseconds(delayMs);
-
-    if (retryAbortSignal?.aborted === true) {
-      throw failure;
-    }
-
-    return sendRequest({ attempt: attempt + 1, waitedMs: waitedMs + delayMs });
-  };
-
-  return sendRequest({ attempt: 0, waitedMs: 0 });
+  throw new Error(
+    `Bot Connector ${method} ${path} failed: ${response.status} ${response.statusText}${isNonEmptyString(responseBody) ? ` - ${responseBody}` : ''}`,
+  );
 };

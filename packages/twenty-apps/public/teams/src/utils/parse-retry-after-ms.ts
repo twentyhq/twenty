@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-export const parseTeamsConnectorRetryAfterMs = (
+export const parseRetryAfterMs = (
   retryAfter: string | null | undefined,
 ): number | undefined => {
   if (!isNonEmptyString(retryAfter)) {
