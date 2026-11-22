@@ -18,8 +18,6 @@ type ComputeOperationRow = {
   createdAt: Date;
 };
 
-// Completed operations are deleted by the runner, so this table only holds
-// pending, in progress and failed work and stays small.
 const COMPUTE_OPERATIONS_SQL = `
   SELECT operation."workspaceId", operation.status, operation.payload->'objectComputes' AS "objectComputes", operation."createdAt"
   FROM core."deferredWorkspaceOperation" operation

@@ -44,8 +44,6 @@ const PERMISSIONS_CONFIGURATION_COUNTS_SQL = `
   SELECT 'related_record_path_depth_' || depth, COUNT(DISTINCT "workspaceId"), COUNT(*) FROM "activeRelatedRecordPath" GROUP BY depth
 `;
 
-// Fleet-wide counts read the core tables directly: there is no workspace
-// context during a metrics scrape.
 @Injectable()
 export class PermissionsConfigurationGaugeService implements OnModuleInit {
   constructor(
