@@ -1985,7 +1985,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       for (const {
         fieldMetadataIds,
         sqlCondition,
-        placeholderByFieldMetadataId,
+        placeholderFieldMetadataIds,
       } of unreadableFieldsSQLConditions) {
         const unreadableColumnEntries = columnEntries.filter(
           ([, fieldMetadataId]) => fieldMetadataIds.includes(fieldMetadataId),
@@ -1997,16 +1997,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
             ([columnName]) => columnName,
           ),
           condition: sqlCondition,
-          placeholderByColumnName: Object.fromEntries(
-            unreadableColumnEntries
-              .filter(([, fieldMetadataId]) =>
-                isDefined(placeholderByFieldMetadataId[fieldMetadataId]),
-              )
-              .map(([columnName, fieldMetadataId]) => [
-                columnName,
-                placeholderByFieldMetadataId[fieldMetadataId],
-              ]),
-          ),
+          placeholderColumnNames: unreadableColumnEntries
+            .filter(([, fieldMetadataId]) =>
+              placeholderFieldMetadataIds.includes(fieldMetadataId),
+            )
+            .map(([columnName]) => columnName),
         });
         queryBuilder.makeRelationsUnreadableWhen({
           alias,

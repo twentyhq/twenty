@@ -1,4 +1,5 @@
 import { type QueryConfig, types } from 'pg';
+import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray, pascalCase } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
@@ -51,6 +52,7 @@ import {
   type UnreadableRelationConditions,
   type SelectStatementState,
   type WhereClause,
+  UNREADABLE_COLUMN_PLACEHOLDER_PARAMETER_NAME,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
@@ -108,7 +110,6 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private readonly unreadableColumnConditions: UnreadableColumnConditions = {};
   private readonly unreadableColumnPlaceholders: UnreadableColumnPlaceholders =
     {};
-  private unreadableColumnPlaceholderCount = 0;
   private readonly unreadableRelationConditions: UnreadableRelationConditions =
     {};
 
@@ -763,12 +764,12 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     alias,
     columnNames,
     condition,
-    placeholderByColumnName = {},
+    placeholderColumnNames = [],
   }: {
     alias: string;
     columnNames: string[];
     condition: SQLCondition;
-    placeholderByColumnName?: Record<string, string>;
+    placeholderColumnNames?: string[];
   }): this {
     const unreadableColumnConditionsOfAlias = (this.unreadableColumnConditions[
       alias
@@ -778,16 +779,16 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       (unreadableColumnConditionsOfAlias[columnName] ??= []).push(
         condition.sql,
       );
+    }
 
-      const placeholder = placeholderByColumnName[columnName];
-
-      if (isDefined(placeholder)) {
-        const parameterName = `unreadableColumnPlaceholder_${this.unreadableColumnPlaceholderCount++}`;
-
-        (this.unreadableColumnPlaceholders[alias] ??= {})[columnName] =
-          `:${parameterName}`;
-        this.setParameter(parameterName, placeholder);
-      }
+    if (placeholderColumnNames.length > 0) {
+      (this.unreadableColumnPlaceholders[alias] ??= []).push(
+        ...placeholderColumnNames,
+      );
+      this.setParameter(
+        UNREADABLE_COLUMN_PLACEHOLDER_PARAMETER_NAME,
+        FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+      );
     }
 
     return this.setParameters(condition.parameters);

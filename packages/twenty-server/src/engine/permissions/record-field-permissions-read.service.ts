@@ -2,7 +2,6 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -51,7 +50,7 @@ export class RecordFieldPermissionsReadService {
     {
       fieldMetadataIds: string[];
       sqlCondition: SQLCondition;
-      placeholderByFieldMetadataId: Record<string, string>;
+      placeholderFieldMetadataIds: string[];
     }[]
   > {
     if (!isDefined(principals)) {
@@ -91,32 +90,27 @@ export class RecordFieldPermissionsReadService {
       }),
     );
 
-    const placeholderByFieldMetadataId = Object.fromEntries(
-      flatObjectMetadata.fieldIds
-        .filter((fieldMetadataId) => {
-          const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: fieldMetadataId,
-            flatEntityMaps: metadataMaps.flatFieldMetadataMaps,
-          });
+    const placeholderFieldMetadataIds = flatObjectMetadata.fieldIds.filter(
+      (fieldMetadataId) => {
+        const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: fieldMetadataId,
+          flatEntityMaps: metadataMaps.flatFieldMetadataMaps,
+        });
 
-          return (
-            isDefined(flatFieldMetadata) &&
-            RESTRICTED_PLACEHOLDER_FIELD_UNIVERSAL_IDENTIFIERS.includes(
-              flatFieldMetadata.universalIdentifier,
-            )
-          );
-        })
-        .map((fieldMetadataId) => [
-          fieldMetadataId,
-          FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
-        ]),
+        return (
+          isDefined(flatFieldMetadata) &&
+          RESTRICTED_PLACEHOLDER_FIELD_UNIVERSAL_IDENTIFIERS.includes(
+            flatFieldMetadata.universalIdentifier,
+          )
+        );
+      },
     );
 
     return buildFieldsUnreadableByEveryMatchingRuleSQLConditions(
       rlsRuleSQLConditions,
     ).map((unreadableFieldsSQLCondition) => ({
       ...unreadableFieldsSQLCondition,
-      placeholderByFieldMetadataId,
+      placeholderFieldMetadataIds,
     }));
   }
 
