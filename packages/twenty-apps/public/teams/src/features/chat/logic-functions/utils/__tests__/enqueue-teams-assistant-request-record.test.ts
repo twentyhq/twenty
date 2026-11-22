@@ -42,6 +42,8 @@ const REQUEST_DRAFT = {
   requestText: 'how many open deals does Acme have?',
 };
 
+const { requestText: _requestText, ...STORED_REQUEST_DRAFT } = REQUEST_DRAFT;
+
 describe('enqueueTeamsAssistantRequestRecord', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -61,6 +63,10 @@ describe('enqueueTeamsAssistantRequestRecord', () => {
       teamsConversationId: 'a:personal-conversation',
       teamsActivityId: '1700000000000',
     });
+    expect(createTeamsAssistantRequestMock).toHaveBeenCalledWith({
+      client: expect.anything(),
+      draft: STORED_REQUEST_DRAFT,
+    });
     expect(result).toEqual({
       ok: true,
       request: {
@@ -71,46 +77,23 @@ describe('enqueueTeamsAssistantRequestRecord', () => {
     });
   });
 
-  it('should record the request without its text, which waits for the sender to be matched', async () => {
-    findTeamsAssistantRequestByTeamsActivityMock.mockResolvedValue(undefined);
-    createTeamsAssistantRequestMock.mockResolvedValue('request-1');
-
-    await enqueueTeamsAssistantRequestRecord(REQUEST_DRAFT);
-
-    const [[{ draft }]] = createTeamsAssistantRequestMock.mock.calls;
-
-    expect(draft).not.toHaveProperty('requestText');
-    expect(draft).toMatchObject({ teamsActivityId: '1700000000000' });
-  });
-
-  it('should take the text of a resumed request from the redelivered activity', async () => {
-    const { requestText: _requestText, ...storedDraft } = REQUEST_DRAFT;
-
+  it('should hand back an unanswered request with the text of the redelivered activity', async () => {
     findTeamsAssistantRequestByTeamsActivityMock.mockResolvedValue({
       id: 'request-1',
       status: TEAMS_ASSISTANT_REQUEST_STATUS.PENDING,
-      ...storedDraft,
+      ...STORED_REQUEST_DRAFT,
     });
 
     const result = await enqueueTeamsAssistantRequestRecord(REQUEST_DRAFT);
 
-    expect(result.request?.requestText).toBe(REQUEST_DRAFT.requestText);
-  });
-
-  it('should hand back an unanswered request so a retry can resume it', async () => {
-    const pendingRequest = {
-      id: 'request-1',
-      status: TEAMS_ASSISTANT_REQUEST_STATUS.PENDING,
-      ...REQUEST_DRAFT,
-    };
-
-    findTeamsAssistantRequestByTeamsActivityMock.mockResolvedValue(
-      pendingRequest,
-    );
-
-    const result = await enqueueTeamsAssistantRequestRecord(REQUEST_DRAFT);
-
-    expect(result).toEqual({ ok: true, request: pendingRequest });
+    expect(result).toEqual({
+      ok: true,
+      request: {
+        id: 'request-1',
+        status: TEAMS_ASSISTANT_REQUEST_STATUS.PENDING,
+        ...REQUEST_DRAFT,
+      },
+    });
     expect(createTeamsAssistantRequestMock).not.toHaveBeenCalled();
   });
 

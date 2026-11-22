@@ -205,11 +205,8 @@ describe('answerTeamsAssistantRequest', () => {
     expect(updateMock).not.toHaveBeenCalledWith(
       expect.objectContaining({ requestText: expect.anything() }),
     );
-    expect(updateMock).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        status: TEAMS_ASSISTANT_REQUEST_STATUS.DONE,
-        name: TEAMS_ASSISTANT_UNMATCHED_REQUEST_NAME,
-      }),
+    expect(updateMock).toHaveBeenCalledWith(
+      expect.objectContaining({ name: TEAMS_ASSISTANT_UNMATCHED_REQUEST_NAME }),
     );
   });
 

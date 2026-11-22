@@ -12,7 +12,6 @@ import { isTeamsAssistantRequestResumable } from 'src/features/chat/logic-functi
 
 const ALREADY_QUEUED_SKIP_REASON = 'Teams activity is already queued';
 
-// The text is not stored until the sender is matched, so a resumed request takes it from the redelivered activity.
 const resolveExistingRequest = ({
   existingRequest,
   requestText,
