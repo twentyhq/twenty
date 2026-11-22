@@ -1,5 +1,7 @@
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
+import { isOAuthOnlyApplication } from '@/settings/applications/utils/isOAuthOnlyApplication';
+import { SettingsApplicationConnectedMembersSection } from '@/settings/applications/components/SettingsApplicationConnectedMembersSection';
 import { SettingsApplicationContentSummarySection } from '@/settings/applications/components/SettingsApplicationContentSummarySection';
 import { useInstalledApplicationContent } from '@/settings/applications/hooks/useInstalledApplicationContent';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
@@ -184,6 +186,11 @@ export const SettingsApplicationDetailGeneralTab = ({
       )}
       {applicationHasHttpTriggeredFunctions(application) && (
         <SettingsApplicationFunctionDomainSection
+          applicationId={application.id}
+        />
+      )}
+      {canManageApplications && isOAuthOnlyApplication(application) && (
+        <SettingsApplicationConnectedMembersSection
           applicationId={application.id}
         />
       )}

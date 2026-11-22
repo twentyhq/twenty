@@ -37,6 +37,7 @@ const getPredicateValueLabel = ({
   field,
   workspaceMemberObjectMetadataItem,
   recordLabelById,
+  dateValueLabel,
 }: {
   predicate: Pick<
     RowLevelPermissionPredicate,
@@ -50,6 +51,7 @@ const getPredicateValueLabel = ({
     fields: Pick<FieldMetadataItem, 'id' | 'name' | 'label'>[];
   };
   recordLabelById?: Map<string, string>;
+  dateValueLabel?: string;
 }) => {
   if (isDefined(predicate.workspaceMemberFieldMetadataId)) {
     const workspaceMemberField = workspaceMemberObjectMetadataItem?.fields.find(
@@ -88,6 +90,10 @@ const getPredicateValueLabel = ({
     return getRelativeDateDisplayValue(relativeDateFilter).toLocaleLowerCase();
   }
 
+  if (isDefined(dateValueLabel)) {
+    return dateValueLabel;
+  }
+
   if (isNonEmptyString(predicate.value) || isNumber(predicate.value)) {
     return String(predicate.value);
   }
@@ -100,6 +106,7 @@ export const getRowLevelPermissionRuleLabel = ({
   objectMetadataItem,
   workspaceMemberObjectMetadataItem,
   recordLabelById,
+  getDateValueLabel,
 }: {
   predicates: RowLevelPermissionPredicate[];
   objectMetadataItem: {
@@ -109,6 +116,7 @@ export const getRowLevelPermissionRuleLabel = ({
     fields: Pick<FieldMetadataItem, 'id' | 'name' | 'label'>[];
   };
   recordLabelById?: Map<string, string>;
+  getDateValueLabel?: (predicate: RowLevelPermissionPredicate) => string;
 }) => {
   const [firstPredicate, ...otherPredicates] = predicates;
 
@@ -120,6 +128,11 @@ export const getRowLevelPermissionRuleLabel = ({
     (objectField) => objectField.id === firstPredicate.fieldMetadataId,
   );
   const fieldLabel = field?.label ?? t`Unknown field`;
+
+  const isDateValue =
+    isNonEmptyString(firstPredicate.value) &&
+    (field?.type === FieldMetadataType.DATE ||
+      field?.type === FieldMetadataType.DATE_TIME);
 
   const operandLabel = getOperandLabel(
     mapRLSOperandToRecordFilterOperand(firstPredicate.operand),
@@ -133,6 +146,9 @@ export const getRowLevelPermissionRuleLabel = ({
       field,
       workspaceMemberObjectMetadataItem,
       recordLabelById,
+      dateValueLabel: isDateValue
+        ? getDateValueLabel?.(firstPredicate)
+        : undefined,
     }),
   ]
     .filter(isNonEmptyString)

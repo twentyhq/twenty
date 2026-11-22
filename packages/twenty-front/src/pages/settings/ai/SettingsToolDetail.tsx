@@ -53,6 +53,7 @@ export const SettingsToolDetail = () => {
 
   const { toolIndex, loading: toolIndexLoading } = useGetToolIndex({
     skip: isCustomTool,
+    isRefreshedOnMount: true,
   });
 
   const systemTool = toolIndex.find((entry) => entry.name === toolIdentifier);

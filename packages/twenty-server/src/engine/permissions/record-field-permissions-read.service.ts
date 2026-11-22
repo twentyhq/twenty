@@ -5,9 +5,11 @@ import { Injectable } from '@nestjs/common';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
+import { RESTRICTED_PLACEHOLDER_FIELD_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/constants/restricted-placeholder-field-universal-identifiers.constant';
 import { buildFieldsUnreadableByEveryMatchingRuleSQLConditions } from 'src/engine/permissions/internal/field-access/utils/build-fields-unreadable-by-every-matching-rule-sql-conditions.util';
 import { findRlsRuleInaccessibleFields } from 'src/engine/permissions/internal/field-access/utils/find-rls-rule-inaccessible-fields.util';
 import { renderRlsRecordFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-rls-record-filter-to-sql.util';
@@ -46,7 +48,11 @@ export class RecordFieldPermissionsReadService {
     objectMetadataId,
     tableAlias,
   }: ObjectQuestion & { tableAlias: string }): Promise<
-    { fieldMetadataIds: string[]; sqlCondition: SQLCondition }[]
+    {
+      fieldMetadataIds: string[];
+      sqlCondition: SQLCondition;
+      placeholderFieldMetadataIds: string[];
+    }[]
   > {
     if (!isDefined(principals)) {
       return [];
@@ -85,9 +91,24 @@ export class RecordFieldPermissionsReadService {
       }),
     );
 
+    const placeholderFieldMetadataIds =
+      findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps({
+        flatEntityMaps: metadataMaps.flatFieldMetadataMaps,
+        universalIdentifiers:
+          RESTRICTED_PLACEHOLDER_FIELD_UNIVERSAL_IDENTIFIERS,
+      })
+        .filter(
+          (flatFieldMetadata) =>
+            flatFieldMetadata.objectMetadataId === flatObjectMetadata.id,
+        )
+        .map(({ id }) => id);
+
     return buildFieldsUnreadableByEveryMatchingRuleSQLConditions(
       rlsRuleSQLConditions,
-    );
+    ).map((unreadableFieldsSQLCondition) => ({
+      ...unreadableFieldsSQLCondition,
+      placeholderFieldMetadataIds,
+    }));
   }
 
   private async findObjectInaccessibleFieldMetadataIds({
