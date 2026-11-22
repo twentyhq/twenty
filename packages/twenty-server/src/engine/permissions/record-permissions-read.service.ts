@@ -142,6 +142,39 @@ export class RecordPermissionsReadService {
     );
   }
 
+  async findObjectMetadataIdsWithReadableRecords({
+    principals,
+  }: {
+    principals: PermissionsPrincipalsWithRolesContext;
+  }): Promise<Set<string>> {
+    const { flatObjectMetadataMaps } =
+      await this.permissionsMetadataMapsService.loadForPrincipals({
+        principals,
+      });
+
+    const objectMetadataIds = Object.values(
+      flatObjectMetadataMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .map(({ id }) => id);
+
+    const isReadableByObjectMetadataId = await Promise.all(
+      objectMetadataIds.map((objectMetadataId) =>
+        this.canAccessSomeRecords({
+          principals,
+          objectMetadataId,
+          operationType: 'read',
+        }),
+      ),
+    );
+
+    return new Set(
+      objectMetadataIds.filter(
+        (_objectMetadataId, index) => isReadableByObjectMetadataId[index],
+      ),
+    );
+  }
+
   async canAccessSomeRecords({
     principals,
     objectMetadataId,

@@ -10764,6 +10764,9 @@ export default {
             "canReadAllRecords": [
                 1
             ],
+            "canReadSomeRecords": [
+                1
+            ],
             "canSoftDeleteAllRecords": [
                 1
             ],
