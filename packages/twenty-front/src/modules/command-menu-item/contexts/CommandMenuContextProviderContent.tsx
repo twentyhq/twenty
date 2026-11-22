@@ -5,6 +5,7 @@ import {
   type CommandMenuContextType,
 } from '@/command-menu-item/contexts/CommandMenuContext';
 import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
+import { isSidebarOnlyCommandMenuItem } from '@/command-menu-item/utils/isSidebarOnlyCommandMenuItem';
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { doesCommandMenuItemMatchCoreObjectName } from '@/command-menu-item/utils/doesCommandMenuItemMatchCoreObjectName';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
@@ -114,7 +115,7 @@ export const CommandMenuContextProviderContent = ({
       .filter(
         (item) =>
           containerType === CommandMenuItemContainerType.NavigationDrawer ||
-          item.engineComponentKey !== EngineComponentKey.OPEN_COMMAND_MENU,
+          !isSidebarOnlyCommandMenuItem(item),
       )
       .filter(
         (item) =>
