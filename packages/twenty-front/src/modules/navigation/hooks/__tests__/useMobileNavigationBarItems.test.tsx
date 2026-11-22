@@ -84,7 +84,7 @@ describe('useMobileNavigationBarItems', () => {
     jest.mocked(useHasPermissionFlag).mockReturnValue(true);
     jest.mocked(useWorkspaceNavigationMenuContainers).mockReturnValue([]);
     jest.mocked(useSwitchToNewAiChat).mockReturnValue({
-      switchToNewChat: mockSwitchToNewChat,
+      switchToNewAiChat: mockSwitchToNewChat,
     });
   });
 

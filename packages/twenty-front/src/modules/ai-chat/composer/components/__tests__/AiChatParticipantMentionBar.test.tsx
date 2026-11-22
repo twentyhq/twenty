@@ -12,7 +12,7 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
 import { AiChatParticipantMentionBar } from '@/ai-chat/composer/components/AiChatParticipantMentionBar';
-import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
+import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatComposerDraftsState';
 import { MentionTag } from '@/mention/extensions/MentionTag';
 import { getMentionTagContent } from '@/mention/utils/getMentionTagContent';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -47,7 +47,7 @@ describe('AiChatParticipantMentionBar', () => {
     editor = new Editor({
       extensions: [Document, Paragraph, Text, MentionTag],
       onUpdate: ({ editor: updatedEditor }) => {
-        jotaiStore.set(aiChatDraftsByThreadIdState.atom, {
+        jotaiStore.set(aiChatComposerDraftsState.atom, {
           [THREAD_ID]: serializeAdvancedTextEditorDocument(updatedEditor),
         });
       },

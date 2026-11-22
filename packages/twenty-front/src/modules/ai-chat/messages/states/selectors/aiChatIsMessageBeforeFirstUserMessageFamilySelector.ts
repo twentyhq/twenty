@@ -1,5 +1,5 @@
 import { AGENT_MESSAGE_ROLE } from '@/ai-chat/messages/constants/AgentMessageRole';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
 export const aiChatIsMessageBeforeFirstUserMessageFamilySelector =
@@ -8,7 +8,9 @@ export const aiChatIsMessageBeforeFirstUserMessageFamilySelector =
     get:
       ({ threadId, messageId }) =>
       ({ get }) => {
-        const messages = get(aiChatMessagesFamilyState, { threadId });
+        const messages = get(aiChatThreadDisplayedMessagesFamilyState, {
+          threadId,
+        });
 
         for (const message of messages) {
           if (message.id === messageId) {

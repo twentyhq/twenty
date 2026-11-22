@@ -8,7 +8,7 @@ import { IconPlus } from 'twenty-ui/icon';
 
 import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
 import { canAddBuiltInSectionToContainer } from '@/navigation-menu-item/common/utils/canAddBuiltInSectionToContainer';
-import { navigationMenuDropdownIdToOpenState } from '@/navigation-menu-item/common/states/navigationMenuDropdownIdToOpenState';
+import { navigationMenuDropdownOpenRequestState } from '@/navigation-menu-item/common/states/navigationMenuDropdownOpenRequestState';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { useAreAiChatSectionsAvailable } from '@/navigation-menu-item/display/hooks/useAreAiChatSectionsAvailable';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
@@ -51,8 +51,10 @@ export const NavigationMenuAddSectionButton = ({
     navigationMenuItemIdToRenameState,
   );
   const { closeDropdown } = useCloseDropdown();
-  const [navigationMenuDropdownIdToOpen, setNavigationMenuDropdownIdToOpen] =
-    useAtomState(navigationMenuDropdownIdToOpenState);
+  const [
+    navigationMenuDropdownOpenRequest,
+    setNavigationMenuDropdownOpenRequest,
+  ] = useAtomState(navigationMenuDropdownOpenRequestState);
   const dropdownId = getNavigationMenuAddSectionDropdownId(containerId);
 
   if (!isCustomizableSidebarEnabled) {
@@ -90,10 +92,10 @@ export const NavigationMenuAddSectionButton = ({
     <NavigationDrawerSection>
       <NavigationMenuItemEntrance>
         <DropdownRoot dropdownId={dropdownId} type="menu">
-          {navigationMenuDropdownIdToOpen === dropdownId && (
+          {navigationMenuDropdownOpenRequest?.dropdownId === dropdownId && (
             <NavigationMenuItemDropdownOpenEffect
               dropdownId={dropdownId}
-              onOpen={() => setNavigationMenuDropdownIdToOpen(null)}
+              onOpen={() => setNavigationMenuDropdownOpenRequest(null)}
             />
           )}
           <Dropdown.Trigger

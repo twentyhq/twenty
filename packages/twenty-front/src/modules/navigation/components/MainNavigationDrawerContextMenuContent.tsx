@@ -7,18 +7,18 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconNewSection,
-  IconPaint,
   IconPlus,
 } from 'twenty-ui/icon';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
-import { navigationMenuDropdownIdToOpenState } from '@/navigation-menu-item/common/states/navigationMenuDropdownIdToOpenState';
+import { type NavigationMenuDropdownOpenRequest } from '@/navigation-menu-item/common/types/NavigationMenuDropdownOpenRequest';
+import { navigationMenuDropdownOpenRequestState } from '@/navigation-menu-item/common/states/navigationMenuDropdownOpenRequestState';
 import { NAVIGATION_SECTION_ID_BY_BUILT_IN_SECTION_KEY } from '@/navigation-menu-item/common/constants/NavigationSectionIdByBuiltInSectionKey';
-import { navigationMenuSectionIdAddingItemState } from '@/navigation-menu-item/common/states/navigationMenuSectionIdAddingItemState';
 import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { getNavigationMenuSectionNavigationSectionId } from '@/navigation-menu-item/display/utils/getNavigationMenuSectionNavigationSectionId';
+import { NavigationMenuTabCustomizeMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuTabCustomizeMenuContent';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { getNavigationMenuAddSectionDropdownId } from '@/navigation-menu-item/edit/utils/getNavigationMenuAddSectionDropdownId';
@@ -57,21 +57,19 @@ export const MainNavigationDrawerContextMenuContent = ({
     ...sections.map(getNavigationMenuSectionNavigationSectionId),
   ].filter(isDefined);
 
-  const customizeAndOpenDropdown = ({
-    dropdownId,
-    onCustomizationModeEntered,
-  }: {
-    dropdownId: string;
-    onCustomizationModeEntered?: () => void;
-  }) => {
+  const customizeAndOpenDropdown = (
+    navigationMenuDropdownOpenRequest: NavigationMenuDropdownOpenRequest,
+  ) => {
     onClose();
 
     if (!enterLayoutCustomizationMode()) {
       return;
     }
 
-    onCustomizationModeEntered?.();
-    store.set(navigationMenuDropdownIdToOpenState.atom, dropdownId);
+    store.set(
+      navigationMenuDropdownOpenRequestState.atom,
+      navigationMenuDropdownOpenRequest,
+    );
   };
 
   const setAllSectionsOpen = (isOpen: boolean) => {
@@ -90,16 +88,6 @@ export const MainNavigationDrawerContextMenuContent = ({
       return [];
     }
 
-    const startAddingItem = () => {
-      store.set(navigationMenuSectionIdAddingItemState.atom, targetSection.id);
-      store.set(
-        isNavigationSectionOpenFamilyState.atomFamily(
-          getNavigationMenuSectionNavigationSectionId(targetSection),
-        ),
-        true,
-      );
-    };
-
     return [
       {
         id: 'add-item',
@@ -110,7 +98,7 @@ export const MainNavigationDrawerContextMenuContent = ({
             dropdownId: getNavigationMenuSectionMenuDropdownId(
               targetSection.id,
             ),
-            onCustomizationModeEntered: startAddingItem,
+            addTarget: { parentId: targetSection.id },
           }),
       },
     ];
@@ -146,19 +134,7 @@ export const MainNavigationDrawerContextMenuContent = ({
 
   return (
     <>
-      <Dropdown.Section>
-        <NavigationMenuItemSelectableItem
-          item={{
-            id: 'customize-sidebar',
-            label: t`Customize sidebar`,
-            Icon: IconPaint,
-            onClick: () => {
-              onClose();
-              enterLayoutCustomizationMode();
-            },
-          }}
-        />
-      </Dropdown.Section>
+      <NavigationMenuTabCustomizeMenuContent onClose={onClose} />
       <Dropdown.Separator />
       <Dropdown.Section>
         {addOptions.map((option) => (

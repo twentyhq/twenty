@@ -2,22 +2,21 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type TeamsAssistantRequestDraft } from 'src/features/chat/logic-functions/types/teams-assistant-request-draft.type';
-import { buildTeamsAssistantRequestName } from 'src/features/chat/logic-functions/utils/build-teams-assistant-request-name';
+import { TEAMS_ASSISTANT_PENDING_REQUEST_NAME } from 'src/features/chat/logic-functions/constants/teams-assistant-pending-request-name';
 
 export const createTeamsAssistantRequest = async ({
   client,
   draft,
 }: {
   client: CoreApiClient;
-  draft: TeamsAssistantRequestDraft;
+  draft: Omit<TeamsAssistantRequestDraft, 'requestText'>;
 }): Promise<string> => {
   const mutationResult = await client.mutation({
     createTeamsAssistantRequest: {
       __args: {
         data: {
           ...draft,
-          name: buildTeamsAssistantRequestName(draft.requestText),
-          requestText: { blocknote: null, markdown: draft.requestText },
+          name: TEAMS_ASSISTANT_PENDING_REQUEST_NAME,
         },
       },
       id: true,

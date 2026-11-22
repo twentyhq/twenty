@@ -2,27 +2,20 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent, type ReactNode, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIsMobile } from 'twenty-ui/utilities';
 
 import { type PositionType } from '@/command-menu-item/types/PositionType';
 import { createVirtualElementFromPosition } from '@/command-menu-item/utils/createVirtualElementFromPosition';
-import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { MainNavigationDrawerContextMenuContent } from '@/navigation/components/MainNavigationDrawerContextMenuContent';
 import { MAIN_NAVIGATION_DRAWER_CONTEXT_MENU_DROPDOWN_ID } from '@/navigation/constants/MainNavigationDrawerContextMenuDropdownId';
+import { useCanCustomizeSidebar } from '@/navigation/hooks/useCanCustomizeSidebar';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
 
 const StyledContextMenuArea = styled.div`
   display: contents;
@@ -36,35 +29,26 @@ export const MainNavigationDrawerContextMenu = ({
   children,
 }: MainNavigationDrawerContextMenuProps) => {
   const { t } = useLingui();
-  const isMobile = useIsMobile();
   const isSettingsDrawer = useIsSettingsDrawer();
-  const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
-  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
-  );
+  const canCustomizeSidebar = useCanCustomizeSidebar();
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const isLayoutCustomizationAllowedOnCurrentPage =
-    useIsLayoutCustomizationAllowedOnCurrentPage();
   const [position, setPosition] = useState<PositionType>({ x: null, y: null });
   const [targetSectionId, setTargetSectionId] = useState<string | null>(null);
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
 
-  const canCustomizeSidebar =
-    isCustomizableSidebarEnabled &&
-    !isMobile &&
+  const canOpenContextMenu =
+    canCustomizeSidebar &&
     !isSettingsDrawer &&
-    hasLayoutsPermission &&
-    isLayoutCustomizationAllowedOnCurrentPage &&
     !isLayoutCustomizationModeEnabled;
 
   const handleContextMenu = (event: MouseEvent<HTMLDivElement>) => {
     const target = event.target instanceof Element ? event.target : null;
 
     if (
-      !canCustomizeSidebar ||
+      !canOpenContextMenu ||
       event.defaultPrevented ||
       isDefined(target?.closest('a'))
     ) {
@@ -87,7 +71,7 @@ export const MainNavigationDrawerContextMenu = ({
   return (
     <StyledContextMenuArea onContextMenu={handleContextMenu}>
       {children}
-      {canCustomizeSidebar && (
+      {canOpenContextMenu && (
         <DropdownRoot
           dropdownId={MAIN_NAVIGATION_DRAWER_CONTEXT_MENU_DROPDOWN_ID}
           type="menu"

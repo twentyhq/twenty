@@ -24,7 +24,6 @@ export const MarkdownLoadingSkeleton = () => {
   );
 };
 
-// Memoized per block so only the streaming tail re-parses references on each flush.
 const MemoizedMarkdownBlock = memo(
   ({ blockText, noImage }: { blockText: string; noImage?: boolean }) => (
     <MarkdownRenderer noImage={noImage}>
@@ -44,7 +43,6 @@ export const LazyMarkdownContent = ({
   noImage,
   displayMode = 'default',
 }: LazyMarkdownContentProps) => {
-  // Not state: only caches the previous split so streaming appends skip settled blocks.
   // oxlint-disable-next-line twenty/no-state-useref
   const blockSplitCacheRef = useRef(EMPTY_MARKDOWN_BLOCK_SPLIT_CACHE);
 

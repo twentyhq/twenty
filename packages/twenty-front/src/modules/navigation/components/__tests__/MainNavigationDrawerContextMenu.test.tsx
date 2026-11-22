@@ -8,8 +8,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
-import { navigationMenuDropdownIdToOpenState } from '@/navigation-menu-item/common/states/navigationMenuDropdownIdToOpenState';
-import { navigationMenuSectionIdAddingItemState } from '@/navigation-menu-item/common/states/navigationMenuSectionIdAddingItemState';
+import { navigationMenuDropdownOpenRequestState } from '@/navigation-menu-item/common/states/navigationMenuDropdownOpenRequestState';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { MainNavigationDrawerContextMenu } from '@/navigation/components/MainNavigationDrawerContextMenu';
@@ -126,12 +125,10 @@ describe('MainNavigationDrawerContextMenu', () => {
     );
 
     expect(mockEnterLayoutCustomizationMode).toHaveBeenCalledTimes(1);
-    expect(store.get(navigationMenuSectionIdAddingItemState.atom)).toBe(
-      WORKSPACE_SECTION.id,
-    );
-    expect(store.get(navigationMenuDropdownIdToOpenState.atom)).toBe(
-      `navigation-menu-section-menu-${WORKSPACE_SECTION.id}`,
-    );
+    expect(store.get(navigationMenuDropdownOpenRequestState.atom)).toEqual({
+      dropdownId: `navigation-menu-section-menu-${WORKSPACE_SECTION.id}`,
+      addTarget: { parentId: WORKSPACE_SECTION.id },
+    });
   });
 
   it('leaves the section menu alone when edit mode cannot start', async () => {
@@ -143,8 +140,7 @@ describe('MainNavigationDrawerContextMenu', () => {
       await screen.findByRole('menuitem', { name: 'Add item to Workspace' }),
     );
 
-    expect(store.get(navigationMenuSectionIdAddingItemState.atom)).toBeNull();
-    expect(store.get(navigationMenuDropdownIdToOpenState.atom)).toBeNull();
+    expect(store.get(navigationMenuDropdownOpenRequestState.atom)).toBeNull();
   });
 
   it('opens the add section menu of the current tab', async () => {
@@ -155,9 +151,9 @@ describe('MainNavigationDrawerContextMenu', () => {
       await screen.findByRole('menuitem', { name: 'Add section' }),
     );
 
-    expect(store.get(navigationMenuDropdownIdToOpenState.atom)).toBe(
-      'navigation-menu-add-section-home',
-    );
+    expect(store.get(navigationMenuDropdownOpenRequestState.atom)).toEqual({
+      dropdownId: 'navigation-menu-add-section-home',
+    });
   });
 
   it('collapses and expands every section of the tab', async () => {
