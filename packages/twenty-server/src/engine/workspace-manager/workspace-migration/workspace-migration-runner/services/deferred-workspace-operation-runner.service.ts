@@ -351,7 +351,16 @@ export class DeferredWorkspaceOperationRunnerService {
 
       this.recordExecutionDuration({
         status: 'success',
+        operationName: pendingOperation.name,
         durationMs: performance.now() - executionStart,
+      });
+      this.metricsService.recordHistogram({
+        key: MetricsKeys.DeferredWorkspaceOperationCompletionDelayMs,
+        value: Date.now() - new Date(pendingOperation.createdAt).getTime(),
+        unit: 'ms',
+        attributes: { operation_name: pendingOperation.name },
+        bucketBoundaries:
+          DEFERRED_WORKSPACE_OPERATION_DURATION_MS_BUCKET_BOUNDARIES,
       });
 
       this.logger.log(
@@ -362,6 +371,7 @@ export class DeferredWorkspaceOperationRunnerService {
     } catch (error) {
       this.recordExecutionDuration({
         status: 'fail',
+        operationName: pendingOperation.name,
         durationMs: performance.now() - executionStart,
       });
 
@@ -390,16 +400,18 @@ export class DeferredWorkspaceOperationRunnerService {
 
   private recordExecutionDuration({
     status,
+    operationName,
     durationMs,
   }: {
     status: 'success' | 'fail';
+    operationName: DeferredWorkspaceOperationName;
     durationMs: number;
   }): void {
     this.metricsService.recordHistogram({
       key: MetricsKeys.DeferredWorkspaceOperationDurationMs,
       value: durationMs,
       unit: 'ms',
-      attributes: { status },
+      attributes: { status, operation_name: operationName },
       bucketBoundaries:
         DEFERRED_WORKSPACE_OPERATION_DURATION_MS_BUCKET_BOUNDARIES,
     });

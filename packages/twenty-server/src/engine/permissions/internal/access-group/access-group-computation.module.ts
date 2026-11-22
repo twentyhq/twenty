@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RecomputeRecordAccessGroupIdsOfRecordsJob } from 'src/engine/permissions/internal/access-group/jobs/recompute-record-access-group-ids-of-records.job';
 import { ComputeRecordAccessGroupIdsDeferredOperationHandlerService } from 'src/engine/permissions/internal/access-group/deferred-operation-handlers/compute-record-access-group-ids-deferred-operation-handler.service';
 import { SyncAccessGroupsJob } from 'src/engine/permissions/internal/access-group/jobs/sync-access-groups.job';
@@ -20,6 +21,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
 @Module({
   imports: [
     CacheLockModule,
+    MetricsModule,
     RecordPermissionRepositoryModule,
     RelatedRecordPathReadModule,
     WorkspaceCacheModule,
