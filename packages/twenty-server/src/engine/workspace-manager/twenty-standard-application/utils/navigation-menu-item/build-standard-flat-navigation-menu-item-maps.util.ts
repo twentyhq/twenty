@@ -4,6 +4,7 @@ import { v4 } from 'uuid';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { addFlatNavigationMenuItemToMapsAndUpdateIndex } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/add-flat-navigation-menu-item-to-maps-and-update-index.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -67,24 +68,31 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
     const pinnedCommandDefinition =
       STANDARD_NAVIGATION_MENU_ITEMS[pinnedCommandName];
 
-    const pinnedCommand = createStandardNavigationMenuItemCommandFlatMetadata({
-      universalIdentifier: pinnedCommandDefinition.universalIdentifier,
-      commandMenuItemUniversalIdentifier:
+    const flatCommandMenuItem = findFlatEntityByUniversalIdentifier({
+      universalIdentifier:
         pinnedCommandDefinition.commandMenuItemUniversalIdentifier,
-      position: pinnedCommandDefinition.position,
-      navigationMenuItemId: v4(),
-      workspaceId,
-      twentyStandardApplicationId,
-      dependencyFlatEntityMaps: { flatCommandMenuItemMaps },
-      now,
+      flatEntityMaps: flatCommandMenuItemMaps,
     });
 
-    if (isDefined(pinnedCommand)) {
-      addFlatNavigationMenuItemToMapsAndUpdateIndex({
-        flatNavigationMenuItem: pinnedCommand,
-        flatNavigationMenuItemMaps,
-      });
+    if (!isDefined(flatCommandMenuItem)) {
+      throw new Error(
+        `Command menu item not found for universal identifier ${pinnedCommandDefinition.commandMenuItemUniversalIdentifier}`,
+      );
     }
+
+    addFlatNavigationMenuItemToMapsAndUpdateIndex({
+      flatNavigationMenuItem:
+        createStandardNavigationMenuItemCommandFlatMetadata({
+          universalIdentifier: pinnedCommandDefinition.universalIdentifier,
+          flatCommandMenuItem,
+          position: pinnedCommandDefinition.position,
+          navigationMenuItemId: v4(),
+          workspaceId,
+          twentyStandardApplicationId,
+          now,
+        }),
+      flatNavigationMenuItemMaps,
+    });
   }
 
   const workspaceSectionDefinition =
