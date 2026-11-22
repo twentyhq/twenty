@@ -1,3 +1,4 @@
+import { useStore } from 'jotai';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -16,9 +17,7 @@ export const usePinnedCommandsEdit = () => {
     useNavigationMenuItemEditController('workspace');
   const { restoreHiddenNavigationMenuItem } =
     useRestoreHiddenNavigationMenuItem();
-  const navigationMenuItemsWithHidden = useAtomStateValue(
-    navigationMenuItemsWithHiddenSelector,
-  );
+  const store = useStore();
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
 
   const pinnedCommands = getPinnedCommands({
@@ -70,7 +69,7 @@ export const usePinnedCommandsEdit = () => {
     const restorablePinnedCommand =
       findRestorablePinnedCommandNavigationMenuItem({
         savedWorkspaceNavigationMenuItems: filterWorkspaceNavigationMenuItems(
-          navigationMenuItemsWithHidden,
+          store.get(navigationMenuItemsWithHiddenSelector.atom),
         ),
         draftNavigationMenuItems: currentItems,
         commandMenuItemId,

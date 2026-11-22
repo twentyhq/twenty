@@ -2,15 +2,20 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-export const findRestorablePinnedCommandNavigationMenuItem = ({
+export const findRestorablePinnedCommandNavigationMenuItem = <
+  TNavigationMenuItem extends Pick<
+    NavigationMenuItem,
+    'id' | 'type' | 'commandMenuItemId' | 'parentId'
+  >,
+>({
   savedWorkspaceNavigationMenuItems,
   draftNavigationMenuItems,
   commandMenuItemId,
 }: {
-  savedWorkspaceNavigationMenuItems: NavigationMenuItem[];
+  savedWorkspaceNavigationMenuItems: TNavigationMenuItem[];
   draftNavigationMenuItems: Pick<NavigationMenuItem, 'id'>[];
   commandMenuItemId: string;
-}): NavigationMenuItem | undefined => {
+}): TNavigationMenuItem | undefined => {
   const draftNavigationMenuItemIds = new Set(
     draftNavigationMenuItems.map(({ id }) => id),
   );
