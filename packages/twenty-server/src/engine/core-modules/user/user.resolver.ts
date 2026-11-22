@@ -72,6 +72,8 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user-workspace-permissions.type';
@@ -120,6 +122,8 @@ export class UserResolver {
     private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
   ) {}
 
   private async getUserWorkspacePermissions({
@@ -138,10 +142,28 @@ export class UserResolver {
       return this.settingPermissionsService.getDefaultUserWorkspacePermissions();
     }
 
-    return await this.settingPermissionsService.getUserWorkspacePermissions({
-      userWorkspaceId: currentUserWorkspace.id,
-      workspaceId: workspace.id,
-    });
+    const userWorkspacePermissions =
+      await this.settingPermissionsService.getUserWorkspacePermissions({
+        userWorkspaceId: currentUserWorkspace.id,
+        workspaceId: workspace.id,
+      });
+
+    return {
+      ...userWorkspacePermissions,
+      recordsPermissions:
+        await this.recordPermissionsReadService.markRecordsReadableThroughRelatedRecordPaths(
+          {
+            principals:
+              await this.principalPermissionsReadService.resolveUserWorkspacePermissionsPrincipalsOrThrow(
+                {
+                  workspaceId: workspace.id,
+                  userWorkspaceId: currentUserWorkspace.id,
+                },
+              ),
+            recordsPermissions: userWorkspacePermissions.recordsPermissions,
+          },
+        ),
+    };
   }
 
   @Query(() => UserEntity)
