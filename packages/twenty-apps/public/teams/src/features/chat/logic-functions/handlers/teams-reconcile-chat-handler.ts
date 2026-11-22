@@ -11,7 +11,7 @@ import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
 import { toErrorMessage } from 'src/utils/to-error-message';
 
 export const teamsReconcileChatHandler = async (
-  payload: Pick<RoutePayload<{ isEnabled?: unknown }>, 'body'>,
+  payload: Pick<RoutePayload<{ isEnabled?: boolean }>, 'body'>,
   context: Pick<LogicFunctionExecutionContext, 'workspaceId'>,
 ): Promise<TeamsChatReconciliationResult> => {
   const isEnabled = payload.body?.isEnabled;
