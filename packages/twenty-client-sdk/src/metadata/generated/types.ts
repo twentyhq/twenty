@@ -13056,6 +13056,9 @@ export default {
             "workspaceMemberFieldMetadataId": [
                 4
             ],
+            "workspaceMemberRelationFieldMetadataId": [
+                4
+            ],
             "workspaceMemberSubFieldName": [
                 4
             ],
@@ -13202,6 +13205,9 @@ export default {
             ],
             "workspaceMemberFieldMetadataId": [
                 4
+            ],
+            "workspaceMemberRelationFieldMetadataId": [
+                562
             ],
             "workspaceMemberSubFieldName": [
                 4
