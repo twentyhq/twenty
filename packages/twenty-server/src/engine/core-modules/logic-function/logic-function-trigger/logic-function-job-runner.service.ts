@@ -187,14 +187,12 @@ export class LogicFunctionJobRunnerService {
     failure: LogicFunctionFailureHandlerPayload['error'];
     enqueueFailureHandler: EnqueueFailureHandler;
   }): Promise<void> {
-    // A failing handler must not trigger another handler, or two could loop.
     if (logicFunctionPayload.isFailureHandlerRun) {
       return;
     }
 
     const { logicFunctionId, workspaceId } = logicFunctionPayload;
 
-    // Throwing here would make the queue retry the run that already failed.
     try {
       const { flatLogicFunctionMaps } =
         await this.workspaceCacheService.getOrRecompute(workspaceId, [

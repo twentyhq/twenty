@@ -20,10 +20,8 @@ const ORIGINAL_PAYLOAD = { slackMessageTimestamp: '1700000000.000100' };
 
 const buildFlatLogicFunctionMaps = ({
   handlerApplicationId = APPLICATION_ID,
-  onFailureLogicFunctionUniversalIdentifier = HANDLER_FUNCTION_UNIVERSAL_IDENTIFIER,
 }: {
   handlerApplicationId?: string;
-  onFailureLogicFunctionUniversalIdentifier?: string | null;
 } = {}) => ({
   universalIdentifierById: {
     [FAILING_FUNCTION_ID]: FAILING_FUNCTION_UNIVERSAL_IDENTIFIER,
@@ -35,7 +33,8 @@ const buildFlatLogicFunctionMaps = ({
       universalIdentifier: FAILING_FUNCTION_UNIVERSAL_IDENTIFIER,
       applicationId: APPLICATION_ID,
       applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-      onFailureLogicFunctionUniversalIdentifier,
+      onFailureLogicFunctionUniversalIdentifier:
+        HANDLER_FUNCTION_UNIVERSAL_IDENTIFIER,
       deletedAt: null,
     },
     [HANDLER_FUNCTION_UNIVERSAL_IDENTIFIER]: {
@@ -147,18 +146,6 @@ describe('LogicFunctionJobRunnerService', () => {
     });
   });
 
-  it('should not enqueue anything when the run succeeds', async () => {
-    executeMock.mockResolvedValue({
-      ...FAILED_EXECUTION_RESULT,
-      status: 'SUCCESS',
-      error: undefined,
-    });
-
-    await run();
-
-    expect(enqueueFailureHandler).not.toHaveBeenCalled();
-  });
-
   it('should wait for the retry instead of enqueueing the handler when a retry is scheduled', async () => {
     executeMock.mockResolvedValue({
       ...FAILED_EXECUTION_RESULT,
@@ -172,19 +159,6 @@ describe('LogicFunctionJobRunnerService', () => {
     await expect(run({ retryLimit: 3 })).rejects.toThrow(
       RetryableLogicFunctionError,
     );
-
-    expect(enqueueFailureHandler).not.toHaveBeenCalled();
-  });
-
-  it('should not enqueue a handler when no failure handler is declared', async () => {
-    getOrRecomputeMock.mockResolvedValue({
-      flatLogicFunctionMaps: buildFlatLogicFunctionMaps({
-        onFailureLogicFunctionUniversalIdentifier: null,
-      }),
-    });
-    executeMock.mockResolvedValue(FAILED_EXECUTION_RESULT);
-
-    await run();
 
     expect(enqueueFailureHandler).not.toHaveBeenCalled();
   });

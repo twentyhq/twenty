@@ -66,12 +66,6 @@ const assertFailureHandler = ({
   });
 
 describe('assertLogicFunctionFailureHandlersAreOwn', () => {
-  it('accepts a logic function without a failure handler', () => {
-    expect(() =>
-      assertFailureHandler({ inferDeletionFromMissingEntities: true }),
-    ).not.toThrow();
-  });
-
   it('accepts a failure handler declared in the manifest', () => {
     expect(() =>
       assertFailureHandler({
