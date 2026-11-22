@@ -29,6 +29,7 @@ const NO_RECORDS_PERMISSIONS = {
   canDestroyObjectRecords: false,
 };
 
+// TODO(@charlesBochet): delete this command once channel visibility is enforced through individual roles everywhere
 @Command({
   name: 'channel-visibility:revoke-role-wide-access',
   description:
