@@ -1,5 +1,5 @@
 import { type PinnedCommand } from '@/navigation-menu-item/display/command/types/PinnedCommand';
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import { getPinnedCommandNavigationMenuItems } from '@/navigation-menu-item/display/command/utils/getPinnedCommandNavigationMenuItems';
 import { isDefined } from 'twenty-shared/utils';
 import {
   CommandMenuItemAvailabilityType,
@@ -24,15 +24,8 @@ export const getPinnedCommands = ({
     ]),
   );
 
-  return navigationMenuItems
-    .filter(
-      (navigationMenuItem) =>
-        navigationMenuItem.type === NavigationMenuItemType.COMMAND &&
-        !isDefined(navigationMenuItem.parentId) &&
-        navigationMenuItem.isActive !== false,
-    )
-    .sort((first, second) => first.position - second.position)
-    .flatMap((navigationMenuItem) => {
+  return getPinnedCommandNavigationMenuItems(navigationMenuItems).flatMap(
+    (navigationMenuItem) => {
       const commandMenuItem = isDefined(navigationMenuItem.commandMenuItemId)
         ? commandMenuItemsById.get(navigationMenuItem.commandMenuItemId)
         : undefined;
@@ -46,5 +39,6 @@ export const getPinnedCommands = ({
       }
 
       return [{ navigationMenuItemId: navigationMenuItem.id, commandMenuItem }];
-    });
+    },
+  );
 };

@@ -26,6 +26,7 @@ export type NewNavigationMenuItemInput = {
   pageLayoutId?: string | null;
   workflowId?: string | null;
   agentId?: string | null;
+  commandMenuItemId?: string | null;
   icon?: string | null;
   targetRecordId?: string | null;
   targetRecordIdentifier?: NavigationMenuItem['targetRecordIdentifier'];
@@ -98,6 +99,7 @@ export const useNavigationMenuItemEditController = (
       pageLayoutId: input.pageLayoutId ?? undefined,
       workflowId: input.workflowId ?? undefined,
       agentId: input.agentId ?? undefined,
+      commandMenuItemId: input.commandMenuItemId ?? undefined,
       icon: input.icon ?? undefined,
       name: input.name ?? undefined,
       link: input.link ?? undefined,

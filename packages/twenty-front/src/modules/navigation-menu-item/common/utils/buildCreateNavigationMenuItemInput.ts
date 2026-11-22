@@ -53,6 +53,8 @@ export const buildCreateNavigationMenuItemInput = (
   } else if (isDefined(draftItem.agentId)) {
     input.agentId = draftItem.agentId;
     input.name = draftItem.name ?? undefined;
+  } else if (isDefined(draftItem.commandMenuItemId)) {
+    input.commandMenuItemId = draftItem.commandMenuItemId;
   }
 
   if (isDefined(draftItem.parentId)) {

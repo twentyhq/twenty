@@ -17,6 +17,7 @@ export const buildOptimisticNavigationMenuItem = (
   agentChatChannelId: input.agentChatChannelId ?? null,
   workflowId: input.workflowId ?? null,
   agentId: input.agentId ?? null,
+  commandMenuItemId: input.commandMenuItemId ?? null,
   parentId: input.parentId ?? null,
   name: input.name ?? null,
   link: input.link ?? null,

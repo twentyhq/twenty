@@ -1,5 +1,8 @@
 import { msg } from '@lingui/core/macro';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  STANDARD_OBJECTS,
+  STANDARD_PINNABLE_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-shared/metadata';
 
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
@@ -760,7 +763,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     hotKeys: null,
   },
   searchRecords: {
-    universalIdentifier: 'fa24e25e-68f8-4548-82ff-c7b5168b7c7d',
+    universalIdentifier:
+      STANDARD_PINNABLE_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS.searchRecords,
     label: i18nLabel(
       msg({ message: `Search`, context: 'commandMenuItem.label' }),
     ),
@@ -837,7 +841,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     hotKeys: null,
   },
   newAiChat: {
-    universalIdentifier: '604bc9b2-e438-4572-bd35-726fa0fb2ec7',
+    universalIdentifier:
+      STANDARD_PINNABLE_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS.newAiChat,
     label: i18nLabel(
       msg({ message: `New chat`, context: 'commandMenuItem.label' }),
     ),
@@ -857,7 +862,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     hotKeys: null,
   },
   openCommandMenu: {
-    universalIdentifier: '4789b559-8349-4973-918c-2d20c3f78c30',
+    universalIdentifier:
+      STANDARD_PINNABLE_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS.openCommandMenu,
     label: i18nLabel(
       msg({ message: `All commands`, context: 'commandMenuItem.label' }),
     ),
@@ -1299,7 +1305,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     hotKeys: null,
   },
   goToSettings: {
-    universalIdentifier: 'ef9aba44-0068-453e-930a-f8c182af18ee',
+    universalIdentifier:
+      STANDARD_PINNABLE_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS.goToSettings,
     label: i18nLabel(
       msg({ message: `Go to Settings`, context: 'commandMenuItem.label' }),
     ),

@@ -6,11 +6,17 @@ import { NavigationMenuItemPinnedCommand } from '@/navigation-menu-item/display/
 import { PINNED_COMMANDS_COMMAND_MENU_INSTANCE_ID } from '@/navigation-menu-item/display/command/constants/PinnedCommandsCommandMenuInstanceId';
 import { getPinnedCommands } from '@/navigation-menu-item/display/command/utils/getPinnedCommands';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
+import { NavigationMenuItemPinnedCommandAddButton } from '@/navigation-menu-item/edit/components/NavigationMenuItemPinnedCommandAddButton';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useMemo } from 'react';
 
 const NavigationMenuItemPinnedCommandList = () => {
   const { commandMenuItems } = useContext(CommandMenuContext);
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
 
   const pinnedCommands = useMemo(
     () =>
@@ -21,12 +27,21 @@ const NavigationMenuItemPinnedCommandList = () => {
     [workspaceNavigationMenuItems, commandMenuItems],
   );
 
-  return pinnedCommands.map(({ navigationMenuItemId, commandMenuItem }) => (
-    <NavigationMenuItemPinnedCommand
-      key={navigationMenuItemId}
-      commandMenuItem={commandMenuItem}
-    />
-  ));
+  return (
+    <>
+      {pinnedCommands.map(({ navigationMenuItemId, commandMenuItem }) => (
+        <NavigationMenuItemPinnedCommand
+          key={navigationMenuItemId}
+          navigationMenuItemId={navigationMenuItemId}
+          commandMenuItem={commandMenuItem}
+          isEditing={isLayoutCustomizationModeEnabled}
+        />
+      ))}
+      {isLayoutCustomizationModeEnabled && (
+        <NavigationMenuItemPinnedCommandAddButton />
+      )}
+    </>
+  );
 };
 
 export const NavigationMenuItemPinnedCommands = () => (

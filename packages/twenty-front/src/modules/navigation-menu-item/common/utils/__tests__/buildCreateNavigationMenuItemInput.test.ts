@@ -65,6 +65,11 @@ describe('buildCreateNavigationMenuItemInput', () => {
       NavigationMenuItemType.AGENT,
       { agentId: 'agent-id', name: 'Helper' },
     ],
+    [
+      'a pinned command',
+      NavigationMenuItemType.COMMAND,
+      { commandMenuItemId: 'command-menu-item-id' },
+    ],
   ])('saves %s', (_, type, target) => {
     const input = buildCreateNavigationMenuItemInput(
       {

@@ -22,6 +22,7 @@ export type { StandardObjectWithUniversalIdentifierName } from './constants/stan
 export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from './constants/standard-object-universal-identifiers.constant';
 export { STANDARD_OBJECTS } from './constants/standard-object.constant';
 export { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from './constants/standard-page-layout-universal-identifiers.constant';
+export { STANDARD_PINNABLE_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS } from './constants/standard-pinnable-command-menu-item-universal-identifiers.constant';
 export type { AllMetadataName } from './types/AllMetadataName';
 export type {
   FailedMetadataValidationError,
