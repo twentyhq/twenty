@@ -1,5 +1,3 @@
-import { WorkflowVisibility } from 'twenty-shared/types';
-
 // SQL twin of buildCoreWorkflowVisibilityWhere for the raw keyset list query; keep them in sync
 export const buildCoreWorkflowVisibilitySqlPredicate = ({
   tableAlias,
@@ -8,4 +6,4 @@ export const buildCoreWorkflowVisibilitySqlPredicate = ({
   tableAlias: string;
   userWorkspaceIdParameter: string;
 }): string =>
-  `(${tableAlias}."visibility" = '${WorkflowVisibility.WORKSPACE}' OR ${tableAlias}."createdByUserWorkspaceId" = ${userWorkspaceIdParameter}::uuid)`;
+  `(NOT ${tableAlias}."isPrivate" OR ${tableAlias}."createdByUserWorkspaceId" = ${userWorkspaceIdParameter}::uuid)`;

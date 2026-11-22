@@ -4,18 +4,17 @@ import { doNotTranslate } from 'twenty-shared/i18n';
 import { getSpeechRecognitionConstructor } from '@/ai-chat/dictation/utils/getSpeechRecognitionConstructor';
 import { type DictationSurface } from '@/ai-chat/dictation/types/DictationSurface';
 
-// Every iOS browser is WKWebView, so third-party ones are detected by name.
 const THIRD_PARTY_IOS_BROWSER_PATTERN = /CriOS|FxiOS|EdgiOS|OPiOS/;
 const IOS_DEVICE_PATTERN = /iPad|iPhone|iPod/;
 
 type StandaloneNavigator = { standalone?: boolean };
 
-const getIsIOS = (userAgent: string): boolean =>
-  IOS_DEVICE_PATTERN.test(userAgent) ||
-  // iPadOS reports itself as a Mac; the touch points are what give it away.
-  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const getIsIPadReportingAsMac = (): boolean =>
+  navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
 
-// matchMedia is missing from some embedded WebViews, so fall back to the legacy iOS flag.
+const getIsIOS = (userAgent: string): boolean =>
+  IOS_DEVICE_PATTERN.test(userAgent) || getIsIPadReportingAsMac();
+
 const getIsStandaloneDisplayMode = (): boolean =>
   (isDefined(window.matchMedia) &&
     window.matchMedia(doNotTranslate('(display-mode: standalone)')).matches) ||

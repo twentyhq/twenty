@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadClick';
-import { useLoadAiChatThread } from '@/ai-chat/instance/hooks/useLoadAiChatThread';
+import { useLoadAiChatThread } from '@/ai-chat/threads/hooks/useLoadAiChatThread';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { aiChatPickerOpenErrorComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerOpenErrorComponentState';

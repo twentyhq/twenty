@@ -16,7 +16,7 @@ const StyledContainer = styled.div`
 `;
 
 const meta: Meta<typeof AiChatFormCard> = {
-  title: 'Modules/AiChat/AiChatFormCard',
+  title: 'Modules/AI/AiChatFormCard',
   component: AiChatFormCard,
   parameters: { aiChatThreadId: 'thread-1' },
   decorators: [

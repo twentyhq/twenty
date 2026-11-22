@@ -91,7 +91,10 @@ export class WorkspaceMigrationRunnerService {
       ...new Set([
         ...withDerivedFieldMetadataMaps(allFlatEntityMapsKeys),
         ...(hasRolesPermissionsChanged || hasMorphRelationFieldChanged
-          ? ['rolesPermissions' as const]
+          ? [
+              'rolesPermissions' as const,
+              'rlsWorkspaceMemberRelationValueMaps' as const,
+            ]
           : []),
         ...(hasWorkflowVersionsChanged
           ? ['workflowAutomatedTriggerMaps' as const]

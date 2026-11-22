@@ -14,19 +14,19 @@ import { AiChatTab } from '@/ai-chat/instance/components/AiChatTab';
 import { AI_CHAT_NEW_THREAD_RECIPIENT_SUGGESTIONS_PAGE_SIZE } from '@/ai-chat/composer/constants/AiChatNewThreadRecipientSuggestionsPageSize';
 import { AI_CHAT_SURFACE } from '@/ai-chat/constants/AiChatSurface';
 import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
-import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
+import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatComposerDraftsState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
-import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
-import { aiChatTypingWorkspaceMemberIdsFamilyState } from '@/ai-chat/messages/states/aiChatTypingWorkspaceMemberIdsFamilyState';
+import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/aiChatComposerNewThreadRecipientsFamilyState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
+import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
 import { initializeNewAiChatStory } from '@/inbox/testing/initializeNewAiChatStory';
 import { hasRequestedWorkspaceSetupChatState } from '@/onboarding/states/hasRequestedWorkspaceSetupChatState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
+import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { AiChatNewThreadPageContent } from '~/pages/ai-chat/AiChatNewThreadPageContent';
+import { AiChatNewThreadPageContent } from '@/ai-chat/instance/components/AiChatNewThreadPageContent';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { ChatObjectMetadataDecorator } from '~/testing/decorators/ChatObjectMetadataDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
@@ -51,12 +51,12 @@ const WorkspaceSetupChatStory = () => {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    store.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    store.set(isWorkspaceSetupChatActiveState.atom, true);
     store.set(hasRequestedWorkspaceSetupChatState.atom, true);
     setIsReady(true);
 
     return () => {
-      store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+      store.set(isWorkspaceSetupChatActiveState.atom, false);
       store.set(hasRequestedWorkspaceSetupChatState.atom, false);
     };
   }, [store]);
@@ -128,7 +128,7 @@ const expectNewChatWelcome = async (canvasElement: HTMLElement) => {
 };
 
 export const FullPageNewChat: Story = {
-  decorators: [ObjectMetadataItemsDecorator],
+  decorators: [ChatObjectMetadataDecorator, ObjectMetadataItemsDecorator],
   beforeEach: () => initializeNewAiChatStory({ isInboxEnabled: false }),
   parameters: {
     ...newChatParameters,
@@ -194,7 +194,7 @@ export const InboxNewChat: Story = {
     ).not.toBeInTheDocument();
     await expect(
       jotaiStore.get(
-        aiChatNewThreadRecipientsFamilyState.atomFamily(
+        aiChatComposerNewThreadRecipientsFamilyState.atomFamily(
           jotaiStore.get(newAiChatThreadIdState.atom),
         ),
       ).isAssistantParticipant,
@@ -249,9 +249,10 @@ export const InboxNewChat: Story = {
       within(recipients).queryByText('Jane Doe'),
     ).not.toBeInTheDocument();
     await expect(addRecipients).toHaveValue('');
-    const isSendingMessageAtom = aiChatIsSendingMessageFamilyState.atomFamily({
-      threadId: jotaiStore.get(newAiChatThreadIdState.atom),
-    });
+    const isSendingMessageAtom =
+      aiChatThreadReplyIsSendingFamilyState.atomFamily({
+        threadId: jotaiStore.get(newAiChatThreadIdState.atom),
+      });
 
     jotaiStore.set(isSendingMessageAtom, true);
     await waitFor(() =>
@@ -299,7 +300,7 @@ export const NewChatSuggestedPrompt: Story = {
 
     await waitFor(() =>
       expect(
-        jotaiStore.get(aiChatDraftsByThreadIdState.atom)[
+        jotaiStore.get(aiChatComposerDraftsState.atom)[
           jotaiStore.get(newAiChatThreadIdState.atom)
         ],
       ).toContain('A new partner'),
@@ -308,6 +309,7 @@ export const NewChatSuggestedPrompt: Story = {
 };
 
 export const WorkspaceSetup: Story = {
+  decorators: [ChatObjectMetadataDecorator, ObjectMetadataItemsDecorator],
   render: () => <WorkspaceSetupChatStory />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -319,6 +321,7 @@ export const WorkspaceSetup: Story = {
 };
 
 export const WorkspaceSetupCompletion: Story = {
+  decorators: [ChatObjectMetadataDecorator, ObjectMetadataItemsDecorator],
   render: () => <WorkspaceSetupChatStory />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -327,7 +330,7 @@ export const WorkspaceSetupCompletion: Story = {
     ).toBeVisible();
     await expect(canvas.getByRole('textbox')).toBeVisible();
 
-    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+    jotaiStore.set(isWorkspaceSetupChatActiveState.atom, false);
 
     await waitFor(() =>
       expect(
@@ -335,66 +338,6 @@ export const WorkspaceSetupCompletion: Story = {
       ).not.toBeInTheDocument(),
     );
     await expect(canvas.getByRole('textbox')).toBeVisible();
-  },
-};
-
-const seedTypingConversation = (typingWorkspaceMemberIds: string[]) => {
-  const threadId = jotaiStore.get(newAiChatThreadIdState.atom);
-
-  jotaiStore.set(aiChatMessagesFamilyState.atomFamily({ threadId }), [
-    {
-      id: '20202020-7c1e-4a0f-9d2b-3f4e5a6b7c90',
-      role: 'user',
-      parts: [{ type: 'text', text: 'Can you take Stripe?' }],
-    },
-  ]);
-  jotaiStore.set(
-    aiChatTypingWorkspaceMemberIdsFamilyState.atomFamily({ threadId }),
-    typingWorkspaceMemberIds,
-  );
-};
-
-export const MemberTyping: Story = {
-  ...FullPageNewChat,
-  beforeEach: () => {
-    initializeNewAiChatStory({ isInboxEnabled: true });
-    seedTypingConversation(
-      jotaiStore
-        .get(currentWorkspaceMembersState.atom)
-        .filter(({ name }) => name.firstName === 'Jane')
-        .map(({ id }) => id),
-    );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await expect(await canvas.findByText('Jane Doe is typing…')).toBeVisible();
-
-    seedTypingConversation([]);
-
-    await waitFor(() =>
-      expect(canvas.queryByText('Jane Doe is typing…')).not.toBeInTheDocument(),
-    );
-  },
-};
-
-export const MemberTypingInSidePanel: Story = {
-  ...MemberTyping,
-  parameters: {
-    ...newChatParameters,
-    container: { width: 400, height: 784 },
-  },
-  render: () => (
-    <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.SIDE_PANEL}>
-      <Suspense fallback={null}>
-        <AiChatTab />
-      </Suspense>
-    </AiChatSurfaceContext.Provider>
-  ),
-  play: async ({ canvasElement }) => {
-    await expect(
-      await within(canvasElement).findByText('Jane Doe is typing…'),
-    ).toBeVisible();
   },
 };
 
@@ -409,7 +352,7 @@ const initializeInboxChatWithTeammate = (
     .find(({ name }) => name.firstName === 'Jane');
 
   jotaiStore.set(
-    aiChatMessagesFamilyState.atomFamily({ threadId }),
+    aiChatThreadDisplayedMessagesFamilyState.atomFamily({ threadId }),
     getMessages(teammate?.id),
   );
 };

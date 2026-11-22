@@ -57,8 +57,10 @@ import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFiel
 import { isFieldTextValue } from '@/object-record/record-field/ui/types/guards/isFieldTextValue';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { useToast } from 'twenty-ui/components/feedback';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const usePersistField = ({
@@ -79,6 +81,7 @@ export const usePersistField = ({
 
   const store = useStore();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
+  const { enqueueToast } = useToast();
 
   const persistField = useCallback(
     async ({
@@ -318,6 +321,11 @@ export const usePersistField = ({
           objectNameSingular: objectMetadataItem.nameSingular,
           idToUpdate: recordId,
           updateOneRecordInput: completedUpdateInput,
+        }).catch((error: Error) => {
+          if (isDeeplyEqual(store.get(recordFieldSelector), valueToPersist)) {
+            store.set(recordFieldSelector, currentValue);
+          }
+          enqueueToast(getToastOptionsFromError({ error }));
         });
       } else {
         throw new Error(
@@ -338,6 +346,7 @@ export const usePersistField = ({
       updateOneRecord,
       upsertRecordsInStore,
       completeRecordUpdate,
+      enqueueToast,
     ],
   );
 

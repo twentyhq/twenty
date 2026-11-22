@@ -1,5 +1,3 @@
-import { WorkflowVisibility } from 'twenty-shared/types';
-
 import { buildCoreWorkflowVisibilitySqlPredicate } from 'src/engine/core-modules/workflow/utils/build-core-workflow-visibility-sql-predicate.util';
 import { buildCoreWorkflowVisibilityWhere } from 'src/engine/core-modules/workflow/utils/build-core-workflow-visibility-where.util';
 import { canChangeCoreWorkflowVisibility } from 'src/engine/core-modules/workflow/utils/can-change-core-workflow-visibility.util';
@@ -15,7 +13,7 @@ describe('buildCoreWorkflowVisibilityWhere', () => {
         userWorkspaceId: READER_USER_WORKSPACE_ID,
       }),
     ).toEqual([
-      { visibility: WorkflowVisibility.WORKSPACE },
+      { isPrivate: false },
       { createdByUserWorkspaceId: READER_USER_WORKSPACE_ID },
     ]);
   });
@@ -23,7 +21,7 @@ describe('buildCoreWorkflowVisibilityWhere', () => {
   it('should keep an API key out of everyone private workflows', () => {
     expect(
       buildCoreWorkflowVisibilityWhere({ userWorkspaceId: undefined }),
-    ).toEqual([{ visibility: WorkflowVisibility.WORKSPACE }]);
+    ).toEqual([{ isPrivate: false }]);
   });
 
   it('should repeat the other conditions in both clauses', () => {
@@ -47,9 +45,7 @@ describe('buildCoreWorkflowVisibilitySqlPredicate', () => {
         tableAlias: 'c',
         userWorkspaceIdParameter: '$2',
       }),
-    ).toBe(
-      `(c."visibility" = 'WORKSPACE' OR c."createdByUserWorkspaceId" = $2::uuid)`,
-    );
+    ).toBe(`(NOT c."isPrivate" OR c."createdByUserWorkspaceId" = $2::uuid)`);
   });
 });
 
@@ -99,21 +95,21 @@ describe('isCoreWorkflowVisibleToUser', () => {
   it('should show workspace workflows to everyone and private ones to their creator only', () => {
     expect(
       isCoreWorkflowVisibleToUser({
-        visibility: WorkflowVisibility.WORKSPACE,
+        isPrivate: false,
         createdByUserWorkspaceId: null,
         userWorkspaceId: undefined,
       }),
     ).toBe(true);
     expect(
       isCoreWorkflowVisibleToUser({
-        visibility: WorkflowVisibility.PRIVATE,
+        isPrivate: true,
         createdByUserWorkspaceId: READER_USER_WORKSPACE_ID,
         userWorkspaceId: READER_USER_WORKSPACE_ID,
       }),
     ).toBe(true);
     expect(
       isCoreWorkflowVisibleToUser({
-        visibility: WorkflowVisibility.PRIVATE,
+        isPrivate: true,
         createdByUserWorkspaceId: 'someone-else',
         userWorkspaceId: READER_USER_WORKSPACE_ID,
       }),
@@ -123,7 +119,7 @@ describe('isCoreWorkflowVisibleToUser', () => {
   it('should hide a private workflow with no creator from everyone', () => {
     expect(
       isCoreWorkflowVisibleToUser({
-        visibility: WorkflowVisibility.PRIVATE,
+        isPrivate: true,
         createdByUserWorkspaceId: null,
         userWorkspaceId: READER_USER_WORKSPACE_ID,
       }),

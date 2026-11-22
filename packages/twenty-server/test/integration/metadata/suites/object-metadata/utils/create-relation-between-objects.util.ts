@@ -19,6 +19,7 @@ export const createRelationBetweenObjects = async <
   isLabelSyncedWithName,
   targetFieldLabel,
   targetFieldIcon,
+  token,
 }: {
   objectMetadataId: string;
   targetObjectMetadataId: string;
@@ -29,6 +30,7 @@ export const createRelationBetweenObjects = async <
   isLabelSyncedWithName?: boolean;
   targetFieldLabel?: string;
   targetFieldIcon?: string;
+  token?: string;
 }) => {
   const createFieldInput: CreateOneFieldFactoryInput = {
     name: name || 'person',
@@ -82,6 +84,7 @@ export const createRelationBetweenObjects = async <
             }
           `,
     expectToFail: false,
+    token,
   });
 
   return data.createOneField;
