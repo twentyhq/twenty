@@ -1,4 +1,4 @@
-import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
+import { useSwitchToNewAiChatInInboxChannel } from '@/inbox/hooks/useSwitchToNewAiChatInInboxChannel';
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
@@ -58,7 +58,7 @@ export const useMobileNavigationBarItems = (): {
   const { pathname } = useLocation();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
-  const { switchToNewChat } = useSwitchToNewAiChat();
+  const { switchToNewAiChat } = useSwitchToNewAiChatInInboxChannel();
   const isSettingsPage = useIsSettingsPage();
   const isSettingsDrawer = useIsSettingsDrawer();
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
@@ -184,7 +184,7 @@ export const useMobileNavigationBarItems = (): {
               onClick: () => {
                 closeSidePanelMenu();
                 closeSettingsDrawer();
-                switchToNewChat();
+                switchToNewAiChat();
               },
             },
           ]

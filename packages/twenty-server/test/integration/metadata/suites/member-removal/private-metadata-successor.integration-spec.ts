@@ -11,7 +11,7 @@ import { createOneViewOnObject } from 'test/integration/metadata/suites/view/uti
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { findViewOwnership } from 'test/integration/metadata/suites/view/utils/find-view-ownership.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { ViewVisibility, WorkflowVisibility } from 'twenty-shared/types';
+import { ViewVisibility } from 'twenty-shared/types';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
@@ -41,18 +41,18 @@ const findWorkflowOwner = async (
 
 const createWorkflowOwnedBy = async ({
   name,
-  visibility,
+  isPrivate,
   userWorkspaceId,
 }: {
   name: string;
-  visibility: WorkflowVisibility;
+  isPrivate: boolean;
   userWorkspaceId: string;
 }): Promise<string> => {
   const { coreWorkflowId } = await createCoreWorkflow({ name });
 
   await global.testDataSource.query(
-    `UPDATE core."workflow" SET "createdByUserWorkspaceId" = $2, "visibility" = $3 WHERE id = $1`,
-    [coreWorkflowId, userWorkspaceId, visibility],
+    `UPDATE core."workflow" SET "createdByUserWorkspaceId" = $2, "isPrivate" = $3 WHERE id = $1`,
+    [coreWorkflowId, userWorkspaceId, isPrivate],
   );
 
   await getAppProviderByClassName<WorkspaceCacheService>(
@@ -99,12 +99,12 @@ describe('removing a member from the workspace', () => {
 
     privateCoreWorkflowId = await createWorkflowOwnedBy({
       name: 'Leaving member private workflow',
-      visibility: WorkflowVisibility.PRIVATE,
+      isPrivate: true,
       userWorkspaceId: leavingUserWorkspaceId,
     });
     sharedCoreWorkflowId = await createWorkflowOwnedBy({
       name: 'Leaving member shared workflow',
-      visibility: WorkflowVisibility.WORKSPACE,
+      isPrivate: false,
       userWorkspaceId: leavingUserWorkspaceId,
     });
 

@@ -4,7 +4,6 @@ import { AppPath } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getCurrentHistoryEntryState } from '~/utils/getCurrentHistoryEntryState';
 
-// The history state carries where an expanded chat returns to
 export const useNavigateToInboxThread = () => {
   const navigate = useNavigateApp();
 

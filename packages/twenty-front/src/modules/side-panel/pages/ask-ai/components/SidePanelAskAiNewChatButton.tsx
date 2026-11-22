@@ -2,14 +2,12 @@ import { useLingui } from '@lingui/react/macro';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconEdit } from 'twenty-ui/icon';
 
-import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
-import { shouldFocusChatEditorFamilyState } from '@/ai-chat/states/shouldFocusChatEditorFamilyState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/aiChatComposerNewThreadRecipientsFamilyState';
+import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldFocusFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { useStore } from 'jotai';
-import { askAiSidePanelThreadIdComponentState } from '@/side-panel/pages/ask-ai/states/askAiSidePanelThreadIdComponentState';
+import { askAiSidePanelThreadIdComponentState } from '@/side-panel/states/askAiSidePanelThreadIdComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { isInboxPath } from '~/utils/isInboxPath';
 
 export const SidePanelAskAiNewChatButton = () => {
   const { t } = useLingui();
@@ -17,19 +15,20 @@ export const SidePanelAskAiNewChatButton = () => {
     askAiSidePanelThreadIdComponentState,
   );
   const store = useStore();
-  const setAiChatNewThreadChannelId = useSetAtomState(
-    aiChatNewThreadChannelIdState,
-  );
-
   const handleClick = () => {
-    if (!isInboxPath(window.location.pathname)) {
-      setAiChatNewThreadChannelId(null);
-    }
+    const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
+
+    store.set(
+      aiChatComposerNewThreadRecipientsFamilyState.atomFamily(
+        newAiChatThreadId,
+      ),
+      (recipients) => ({ ...recipients, channelId: null }),
+    );
 
     setAskAiSidePanelThreadId(null);
     store.set(
-      shouldFocusChatEditorFamilyState.atomFamily({
-        threadId: store.get(newAiChatThreadIdState.atom),
+      aiChatComposerShouldFocusFamilyState.atomFamily({
+        threadId: newAiChatThreadId,
       }),
       true,
     );

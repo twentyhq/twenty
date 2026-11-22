@@ -1,5 +1,5 @@
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
-import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';
+import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/settings/ai/constants/AiInstructionsEditorProfile';
 import { useSettingsAiWorkspaceInstructions } from '@/settings/ai/hooks/useSettingsAiWorkspaceInstructions';
 import { styled } from '@linaria/react';
 import { Section } from 'twenty-ui/components/layout';
