@@ -27,14 +27,12 @@ const StyledRow = styled.div<{ hasEffortSelect: boolean }>`
 
 type AiModelPinSelectProps = {
   dropdownId: string;
-  // null follows the tier automatically; a variant id names its effort.
   modelId: string | null;
   onChange: (modelId: string | null) => void;
   aiModels: PinnableAiModel[];
   emptyOptionLabel?: string;
   automaticOptions?: SelectOption<string>[];
   label?: string;
-  description?: string;
   disabled?: boolean;
   selectSizeVariant?: ComponentProps<typeof Select>['selectSizeVariant'];
   dropdownWidth?: ComponentProps<typeof Select>['dropdownWidth'];
@@ -48,7 +46,6 @@ export const AiModelPinSelect = ({
   emptyOptionLabel,
   automaticOptions = [],
   label,
-  description,
   disabled = false,
   selectSizeVariant,
   dropdownWidth,
@@ -99,7 +96,6 @@ export const AiModelPinSelect = ({
       <Select
         dropdownId={dropdownId}
         label={label}
-        description={description}
         value={selectedModelValue}
         onChange={handleModelChange}
         showIconInControl={isDefined(modelId)}

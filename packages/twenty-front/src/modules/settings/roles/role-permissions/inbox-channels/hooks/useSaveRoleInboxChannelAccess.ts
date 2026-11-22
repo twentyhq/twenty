@@ -9,11 +9,11 @@ export const useSaveRoleInboxChannelAccess = (roleId: string) => {
     useRoleInboxChannelsWithChangedAccess(roleId);
   const { resetRoleInboxChannelAccess } =
     useResetRoleInboxChannelAccess(roleId);
-  const { updateAgentChatChannel } = useUpdateInboxChannel();
+  const { updateInboxChannel } = useUpdateInboxChannel();
 
   const saveRoleInboxChannelAccess = async () => {
     for (const channel of roleInboxChannelsWithChangedAccess) {
-      const updatedChannel = await updateAgentChatChannel({
+      const updatedChannel = await updateInboxChannel({
         channelId: channel.id,
         input: {
           roleIds: channel.roleIds.includes(roleId)

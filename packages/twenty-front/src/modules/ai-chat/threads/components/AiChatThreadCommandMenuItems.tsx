@@ -10,7 +10,6 @@ import {
 export const AiChatThreadCommandMenuItems = () => {
   const { commandMenuItems } = useContext(CommandMenuContext);
 
-  // A row is not the chat page, so it does not start a new chat
   return commandMenuItems
     .filter(
       (item) =>

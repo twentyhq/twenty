@@ -1,8 +1,9 @@
+import { useStore } from 'jotai';
 import { useContext, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai-chat/constants/AiChatRefetchMessagesEventName';
 import { AiChatInstanceContext } from '@/ai-chat/contexts/AiChatInstanceContext';
+import { aiChatThreadFetchedMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadFetchedMessagesFamilyState';
 import { type useAiChatFrontComponentPreview } from '@/ai-chat/tool-calls/hooks/useAiChatFrontComponentPreview';
 
 type AiChatFrontComponentPreviewEffectProps = Pick<
@@ -13,6 +14,7 @@ type AiChatFrontComponentPreviewEffectProps = Pick<
 export const AiChatFrontComponentPreviewEffect = ({
   loadPreview,
 }: AiChatFrontComponentPreviewEffectProps) => {
+  const store = useStore();
   const threadId = useContext(AiChatInstanceContext)?.threadId;
 
   useEffect(() => {
@@ -31,35 +33,20 @@ export const AiChatFrontComponentPreviewEffect = ({
       }
     };
 
-    const handleRefetchMessages = (event: Event) => {
-      const eventThreadId: unknown =
-        event instanceof CustomEvent ? event.detail?.threadId : undefined;
-
-      if (
-        isDefined(threadId) &&
-        isDefined(eventThreadId) &&
-        eventThreadId !== threadId
-      ) {
-        return;
-      }
-
-      void refreshPreview();
-    };
-
     void refreshPreview();
-    window.addEventListener(
-      AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
-      handleRefetchMessages,
-    );
+
+    const unsubscribeFromFetchedMessages = isDefined(threadId)
+      ? store.sub(
+          aiChatThreadFetchedMessagesFamilyState.atomFamily({ threadId }),
+          () => void refreshPreview(),
+        )
+      : undefined;
 
     return () => {
       controller?.abort();
-      window.removeEventListener(
-        AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
-        handleRefetchMessages,
-      );
+      unsubscribeFromFetchedMessages?.();
     };
-  }, [loadPreview, threadId]);
+  }, [loadPreview, store, threadId]);
 
   return null;
 };
