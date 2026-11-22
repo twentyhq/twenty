@@ -48,7 +48,6 @@ export const buildAccessGroupIdChangesRecordSQLCondition = ({
             targetTableAlias: RECORD_ACCESS_GROUP_TABLE_ALIAS,
             pathIndex,
             resolvedPath,
-            accessGroups,
             metadataMaps,
           });
 

@@ -26,10 +26,17 @@ const SINGLE_VALUE_FIELD_TYPES: FieldMetadataType[] = [
   FieldMetadataType.RELATION,
 ];
 
-const isManyToOneRelation = (fieldMetadata: OrmFlatFieldMetadata): boolean =>
+const isRelationOfType = ({
+  fieldMetadata,
+  relationTypes,
+}: {
+  fieldMetadata: OrmFlatFieldMetadata;
+  relationTypes: RelationType[];
+}): boolean =>
   fieldMetadata.type === FieldMetadataType.RELATION &&
   isMorphOrRelationFlatFieldMetadata(fieldMetadata) &&
-  fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE;
+  isDefined(fieldMetadata.settings?.relationType) &&
+  relationTypes.includes(fieldMetadata.settings.relationType);
 
 const findSingleValueColumnName = ({
   fieldMetadata,
@@ -49,7 +56,10 @@ const findSingleValueColumnName = ({
     return fieldMetadata.name;
   }
 
-  return isManyToOneRelation(fieldMetadata)
+  return isRelationOfType({
+    fieldMetadata,
+    relationTypes: [RelationType.MANY_TO_ONE],
+  })
     ? findRelationJoinColumnsOrThrow({
         relationFieldMetadata: fieldMetadata,
         flatFieldMetadataMaps,
@@ -134,7 +144,10 @@ export const resolveAccessGroupValueLookupKey = ({
   if (
     !isRlsRelationHopEnabled(metadataMaps.featureFlagsMap) ||
     !isDefined(relationFieldMetadata) ||
-    !isManyToOneRelation(relationFieldMetadata) ||
+    !isRelationOfType({
+      fieldMetadata: relationFieldMetadata,
+      relationTypes: [RelationType.MANY_TO_ONE, RelationType.ONE_TO_MANY],
+    }) ||
     !isDefined(targetFlatObjectMetadata)
   ) {
     return null;

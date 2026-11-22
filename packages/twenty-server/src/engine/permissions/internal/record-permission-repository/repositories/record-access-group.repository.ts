@@ -8,7 +8,6 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { RECORD_ACCESS_GROUP_TABLE_ALIAS } from 'src/engine/permissions/internal/record-permission-repository/constants/record-access-group-table-alias.constant';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
 import { type RecordAccessGroupSQLCondition } from 'src/engine/permissions/internal/record-permission-repository/types/record-access-group-sql-condition.type';
-import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-computation-metadata-maps.type';
 import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
 import { buildRelatedRecordPathHopsJoin } from 'src/engine/permissions/internal/record-permission-repository/utils/build-related-record-path-hops-join.util';
@@ -160,7 +159,6 @@ export class RecordAccessGroupRepository {
     recordAccessGroupSQLConditions,
     accessGroupValueLookupIdsSQLConditions,
     resolvedRelatedRecordPaths,
-    accessGroups,
     metadataMaps,
     recordIds,
     transactionScope,
@@ -170,7 +168,6 @@ export class RecordAccessGroupRepository {
     recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[];
     accessGroupValueLookupIdsSQLConditions: SQLCondition[];
     resolvedRelatedRecordPaths: ResolvedRelatedRecordPath[];
-    accessGroups: AccessGroup[];
     metadataMaps: Pick<
       RecordAccessGroupComputationMetadataMaps,
       'rolesPermissions' | 'featureFlagsMap'
@@ -189,7 +186,6 @@ export class RecordAccessGroupRepository {
         recordAccessGroupSQLConditions,
         accessGroupValueLookupIdsSQLConditions,
         resolvedRelatedRecordPaths,
-        accessGroups,
         metadataMaps,
         recordIds,
       }),

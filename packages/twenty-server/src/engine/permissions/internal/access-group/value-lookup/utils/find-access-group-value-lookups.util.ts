@@ -1,9 +1,6 @@
 /* @license Enterprise */
 
-import {
-  type RowLevelPermissionPredicate,
-  RowLevelPermissionPredicateOperand,
-} from 'twenty-shared/types';
+import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -23,27 +20,48 @@ const findMemberValueLookupKeys = ({
 }: {
   rowLevelPermissionRule: RlsRule;
   metadataMaps: RecordAccessGroupSQLConditionMetadataMaps;
-}): AccessGroupValueLookupKey[] | null => {
+}): {
+  keys: AccessGroupValueLookupKey[];
+  keyPredicateIds: string[];
+  residualMemberFieldKeys: string[];
+} | null => {
   const memberPredicates = predicates.filter(
     ({ workspaceMemberFieldMetadataId }) =>
       isDefined(workspaceMemberFieldMetadataId),
   );
   const memberFieldKeys = memberPredicates.map(buildMemberFieldKey);
-  const isEligible = (predicate: RowLevelPermissionPredicate): boolean =>
-    predicate.operand === RowLevelPermissionPredicateOperand.IS &&
-    memberFieldKeys.filter((key) => key === buildMemberFieldKey(predicate))
-      .length === 1 &&
-    isRlsPredicateAtRootConjunction({ predicate, predicateGroups });
+  const keyPredicatesWithKeys = memberPredicates.flatMap((predicate) => {
+    const key =
+      predicate.operand === RowLevelPermissionPredicateOperand.IS &&
+      memberFieldKeys.filter(
+        (memberFieldKey) => memberFieldKey === buildMemberFieldKey(predicate),
+      ).length === 1 &&
+      isRlsPredicateAtRootConjunction({ predicate, predicateGroups })
+        ? resolveAccessGroupValueLookupKey({ predicate, metadataMaps })
+        : null;
 
-  if (memberPredicates.length === 0 || !memberPredicates.every(isEligible)) {
+    return isDefined(key) ? [{ predicate, key }] : [];
+  });
+
+  if (keyPredicatesWithKeys.length === 0) {
     return null;
   }
 
-  const keys = memberPredicates.map((predicate) =>
-    resolveAccessGroupValueLookupKey({ predicate, metadataMaps }),
+  const keyPredicateIds = keyPredicatesWithKeys.map(
+    ({ predicate }) => predicate.id,
   );
 
-  return keys.every(isDefined) ? keys : null;
+  return {
+    keys: keyPredicatesWithKeys.map(({ key }) => key),
+    keyPredicateIds,
+    residualMemberFieldKeys: [
+      ...new Set(
+        memberPredicates
+          .filter(({ id }) => !keyPredicateIds.includes(id))
+          .map(buildMemberFieldKey),
+      ),
+    ],
+  };
 };
 
 export const findAccessGroupValueLookups = ({
@@ -86,6 +104,7 @@ export const findAccessGroupValueLookups = ({
               ),
               predicateGroups,
             },
+            residualMemberFieldKeys: [],
           },
         ];
       }
@@ -99,18 +118,21 @@ export const findAccessGroupValueLookups = ({
         return [];
       }
 
+      const { keys, keyPredicateIds, residualMemberFieldKeys } =
+        memberValueLookupKeys;
+
       return [
         {
           type: 'RLS_MEMBER_VALUE',
           ruleShapeHash,
-          keys: memberValueLookupKeys,
+          keys,
           residualRule: {
             predicates: predicates.filter(
-              ({ workspaceMemberFieldMetadataId }) =>
-                !isDefined(workspaceMemberFieldMetadataId),
+              ({ id }) => !keyPredicateIds.includes(id),
             ),
             predicateGroups,
           },
+          residualMemberFieldKeys,
         },
       ];
     },

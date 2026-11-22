@@ -1,6 +1,8 @@
 /* @license Enterprise */
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
+import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-relation-between-objects.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
@@ -17,6 +19,7 @@ import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs
 import {
   FeatureFlagKey,
   FieldMetadataType,
+  RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -85,11 +88,48 @@ describePermissionTestWorkspace({
         token: findWorkspace().adminAccessToken,
       });
 
-    const createAccessRecordOfAccount = (accountId: string) =>
+    const createAccessRecord = ({
+      accountId,
+      wall,
+    }: {
+      accountId: string;
+      wall?: string;
+    }) =>
       createRecord({
         objectName: findWorkspace().objectNameSingular,
-        data: { accountId },
+        data: { accountId, wall },
       });
+
+    const createSelectField = async ({
+      objectMetadataId,
+      name,
+      type,
+    }: {
+      objectMetadataId: string;
+      name: string;
+      type: FieldMetadataType.SELECT | FieldMetadataType.MULTI_SELECT;
+    }): Promise<string> => {
+      const { data } = await createOneFieldMetadata({
+        input: {
+          objectMetadataId,
+          name,
+          label: name,
+          type,
+          isNullable: true,
+          options: ['WALL_ONE', 'WALL_TWO'].map((value, position) => ({
+            label: value,
+            value,
+            color: 'blue',
+            position,
+          })),
+        },
+        gqlFields: 'id',
+        expectToFail: false,
+        token: findWorkspace().adminAccessToken,
+      });
+
+      return data.createOneField.id;
+    };
 
     const joinAccountTeam = ({
       workspaceMemberId,
@@ -173,23 +213,37 @@ describePermissionTestWorkspace({
       const { objects } = await findManyObjectMetadata<{
         id: string;
         nameSingular: string;
+        fieldsList: { id: string; name: string }[];
       }>({
         input: { filter: {}, paging: { first: 1000 } },
-        gqlFields: 'id nameSingular',
+        gqlFields: 'id nameSingular fieldsList { id name }',
         expectToFail: false,
         token,
       });
-      const workspaceMemberObjectMetadataId = objects.find(
+      const workspaceMemberObjectMetadata = objects.find(
         ({ nameSingular }) => nameSingular === 'workspaceMember',
-      )?.id;
+      );
+      const workspaceMemberIdFieldMetadataId =
+        workspaceMemberObjectMetadata?.fieldsList.find(
+          ({ name }) => name === 'id',
+        )?.id;
 
-      if (!isDefined(workspaceMemberObjectMetadataId)) {
+      if (
+        !isDefined(workspaceMemberObjectMetadata) ||
+        !isDefined(workspaceMemberIdFieldMetadataId)
+      ) {
         throw new Error('workspaceMember object metadata not found');
       }
 
-      const [accountObjectMetadataId, accountTeamMemberObjectMetadataId] =
-        await Promise.all(
-          ['account', 'accountTeamMember'].map(async (nameSingular) => {
+      const workspaceMemberObjectMetadataId = workspaceMemberObjectMetadata.id;
+
+      const [
+        accountObjectMetadataId,
+        accountTeamMemberObjectMetadataId,
+        recordTeamMemberObjectMetadataId,
+      ] = await Promise.all(
+        ['account', 'accountTeamMember', 'recordTeamMember'].map(
+          async (nameSingular) => {
             const { data } = await createOneObjectMetadata({
               input: {
                 nameSingular,
@@ -204,8 +258,9 @@ describePermissionTestWorkspace({
             });
 
             return data.createOneObject.id;
-          }),
-        );
+          },
+        ),
+      );
 
       accessRecordAccountFieldMetadataId = (
         await createManyToOneField({
@@ -231,6 +286,30 @@ describePermissionTestWorkspace({
 
       accountTeamMembersFieldMetadataId =
         accountTeamMemberMemberField.relation.targetFieldMetadata.id;
+
+      const recordTeamMemberRecordField = await createManyToOneField({
+        objectMetadataId: recordTeamMemberObjectMetadataId,
+        targetObjectMetadataId: workspace.objectMetadataId,
+        name: 'accessRecord',
+        targetFieldLabel: 'Record team',
+      });
+      const recordTeamMemberMemberField = await createManyToOneField({
+        objectMetadataId: recordTeamMemberObjectMetadataId,
+        targetObjectMetadataId: workspaceMemberObjectMetadataId,
+        name: 'member',
+        targetFieldLabel: 'Record teams',
+      });
+      const accessRecordWallFieldMetadataId = await createSelectField({
+        objectMetadataId: workspace.objectMetadataId,
+        name: 'wall',
+        type: FieldMetadataType.SELECT,
+      });
+      const workspaceMemberClearedWallsFieldMetadataId =
+        await createSelectField({
+          objectMetadataId: workspaceMemberObjectMetadataId,
+          name: 'clearedWalls',
+          type: FieldMetadataType.MULTI_SELECT,
+        });
 
       const { data } = await createOneRole({
         input: {
@@ -270,6 +349,41 @@ describePermissionTestWorkspace({
                     accountTeamMemberAccountField.id,
                 },
               ],
+              predicateGroups: [
+                {
+                  id: v4(),
+                  logicalOperator:
+                    RowLevelPermissionPredicateGroupLogicalOperator.OR,
+                  predicates: [
+                    {
+                      id: v4(),
+                      fieldMetadataId: accessRecordWallFieldMetadataId,
+                      operand: RowLevelPermissionPredicateOperand.IS_EMPTY,
+                    },
+                    {
+                      id: v4(),
+                      fieldMetadataId: accessRecordWallFieldMetadataId,
+                      operand: RowLevelPermissionPredicateOperand.IS,
+                      workspaceMemberFieldMetadataId:
+                        workspaceMemberClearedWallsFieldMetadataId,
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              canReadRecords: true,
+              predicates: [
+                {
+                  id: v4(),
+                  relationFieldMetadataId:
+                    recordTeamMemberRecordField.relation.targetFieldMetadata.id,
+                  fieldMetadataId: recordTeamMemberMemberField.id,
+                  operand: RowLevelPermissionPredicateOperand.IS,
+                  workspaceMemberFieldMetadataId:
+                    workspaceMemberIdFieldMetadataId,
+                },
+              ],
             },
           ],
         },
@@ -297,12 +411,31 @@ describePermissionTestWorkspace({
         objectName: 'account',
         data: { name: 'Account Y' },
       });
-      recordIds.recordOfX = await createAccessRecordOfAccount(
-        recordIds.accountX,
-      );
-      recordIds.recordOfY = await createAccessRecordOfAccount(
-        recordIds.accountY,
-      );
+      recordIds.recordOfX = await createAccessRecord({
+        accountId: recordIds.accountX,
+      });
+      recordIds.recordOfY = await createAccessRecord({
+        accountId: recordIds.accountY,
+      });
+      recordIds.wallOneRecordOfX = await createAccessRecord({
+        accountId: recordIds.accountX,
+        wall: 'WALL_ONE',
+      });
+      recordIds.wallTwoRecordOfX = await createAccessRecord({
+        accountId: recordIds.accountX,
+        wall: 'WALL_TWO',
+      });
+      for (const workspaceMemberId of [teamMemberId, outsiderId]) {
+        await makeGraphqlApiRequest(
+          updateOneOperationFactory({
+            objectMetadataSingularName: 'workspaceMember',
+            gqlFields: 'id',
+            recordId: workspaceMemberId,
+            data: { clearedWalls: ['WALL_ONE'] },
+          }),
+          token,
+        );
+      }
       await joinAccountTeam({
         workspaceMemberId: teamMemberId,
         accountId: recordIds.accountX,
@@ -317,7 +450,7 @@ describePermissionTestWorkspace({
       });
     });
 
-    it('should look up the account team rule by value', async () => {
+    it('should look up the walled account team rule and the record team rule by value', async () => {
       const workspace = findWorkspace();
       const metadataMaps =
         await getAppProviderByClassName<RecordAccessGroupMetadataMapsService>(
@@ -331,10 +464,16 @@ describePermissionTestWorkspace({
             flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
           }),
           metadataMaps,
-        }).flatMap(({ type, keys }) =>
-          keys.map(({ columnName }) => `${type}:${columnName}`),
-        ),
-      ).toEqual(['RLS_MEMBER_VALUE:accountId']);
+        })
+          .map(
+            ({ type, keys, residualMemberFieldKeys }) =>
+              `${type}:${keys.map(({ columnName, relationHop }) => `${relationHop?.targetFlatObjectMetadata.nameSingular ?? 'accessRecord'}.${columnName}`).join(',')}:${residualMemberFieldKeys.length}`,
+          )
+          .sort(),
+      ).toEqual([
+        'RLS_MEMBER_VALUE:accessRecord.accountId:1',
+        'RLS_MEMBER_VALUE:recordTeamMember.memberId:0',
+      ]);
     });
 
     it('should let a team member read the records of their accounts only', async () => {
@@ -380,9 +519,9 @@ describePermissionTestWorkspace({
         objectName: 'account',
         data: { name: 'Account Z' },
       });
-      recordIds.recordOfZ = await createAccessRecordOfAccount(
-        recordIds.accountZ,
-      );
+      recordIds.recordOfZ = await createAccessRecord({
+        accountId: recordIds.accountZ,
+      });
       await joinAccountTeam({
         workspaceMemberId: teamMemberId,
         accountId: recordIds.accountZ,
@@ -400,6 +539,40 @@ describePermissionTestWorkspace({
           ],
         }),
       ).toEqual([recordIds.recordOfX, recordIds.recordOfZ]);
+    });
+
+    it('should keep walled records of an account from team members not cleared for their wall', async () => {
+      for (const workspaceMemberId of [teamMemberId, outsiderId]) {
+        expect(
+          await findReadableRecordIds({
+            workspaceMemberId,
+            candidateRecordIds: [
+              recordIds.recordOfX,
+              recordIds.wallOneRecordOfX,
+              recordIds.wallTwoRecordOfX,
+            ],
+          }),
+        ).toEqual([recordIds.recordOfX, recordIds.wallOneRecordOfX]);
+      }
+    });
+
+    it('should let a member read a record once they join its record team', async () => {
+      await createRecord({
+        objectName: 'recordTeamMember',
+        data: {
+          accessRecordId: recordIds.recordOfY,
+          memberId: outsiderId,
+        },
+      });
+      await syncAccessGroups();
+      await runPendingComputes();
+
+      expect(
+        await findReadableRecordIds({
+          workspaceMemberId: outsiderId,
+          candidateRecordIds: [recordIds.recordOfY],
+        }),
+      ).toEqual([recordIds.recordOfY]);
     });
   },
 });
