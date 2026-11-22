@@ -8,7 +8,10 @@ import { Placeholder } from '@tiptap/extensions/placeholder';
 import { UndoRedo } from '@tiptap/extensions/undo-redo';
 import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 import { useState } from 'react';
-import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
+import {
+  type ValidationRuleCompilationResult,
+  type ValidationRuleFieldDescriptor,
+} from 'twenty-shared/types';
 import {
   compileValidationRuleExpression,
   isDefined,
@@ -110,6 +113,11 @@ type ValidationRuleExpressionEditorProps = {
   fields: ValidationRuleFieldDescriptor[];
   editorFields: ValidationRuleEditorField[];
   onChange: (expression: string) => void;
+  compileExpression?: (args: {
+    expression: string;
+    fields: ValidationRuleFieldDescriptor[];
+  }) => ValidationRuleCompilationResult;
+  ariaLabel?: string;
 };
 
 export const ValidationRuleExpressionEditor = ({
@@ -117,6 +125,8 @@ export const ValidationRuleExpressionEditor = ({
   fields,
   editorFields,
   onChange,
+  compileExpression = compileValidationRuleExpression,
+  ariaLabel,
 }: ValidationRuleExpressionEditorProps) => {
   const { t } = useLingui();
 
@@ -196,7 +206,7 @@ export const ValidationRuleExpressionEditor = ({
     editorProps: {
       attributes: {
         role: 'textbox',
-        'aria-label': t`Condition`,
+        'aria-label': ariaLabel ?? t`Condition`,
         spellcheck: 'false',
       },
       handleKeyDown: (_view, event) => handleEditorKeyDown(event),
@@ -258,10 +268,7 @@ export const ValidationRuleExpressionEditor = ({
     return true;
   };
 
-  const compilationResult = compileValidationRuleExpression({
-    expression: value,
-    fields,
-  });
+  const compilationResult = compileExpression({ expression: value, fields });
   const errorMessage =
     value.trim().length > 0 && !compilationResult.isValid
       ? getValidationRuleErrorMessage(compilationResult)

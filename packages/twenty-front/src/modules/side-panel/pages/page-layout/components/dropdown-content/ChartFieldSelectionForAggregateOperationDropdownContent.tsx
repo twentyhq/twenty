@@ -1,3 +1,4 @@
+import { isFormulaFieldMetadataItem } from '@/object-metadata/utils/isFormulaFieldMetadataItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { ChartAggregateOperationSelectionDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent';
 import { ChartRatioOptionValueSelectionDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent';
@@ -51,7 +52,12 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
 
   const availableFieldMetadataItems = (
     sourceObjectMetadataItem?.fields ?? []
-  ).filter((field) => !isFieldRelation(field) && !isHiddenSystemField(field));
+  ).filter(
+    (field) =>
+      !isFieldRelation(field) &&
+      !isHiddenSystemField(field) &&
+      !isFormulaFieldMetadataItem(field),
+  );
   const filteredFieldMetadataItems = filterBySearchQuery({
     items: availableFieldMetadataItems,
     searchQuery,

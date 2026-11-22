@@ -1,3 +1,4 @@
+import { isFormulaFieldMetadataItem } from '@/object-metadata/utils/isFormulaFieldMetadataItem';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useDeleteOneFieldMetadataItem } from '@/object-metadata/hooks/useDeleteOneFieldMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -219,7 +220,11 @@ export const SettingsObjectFieldItemTableRow = ({
           Icon={RelationIcon}
           label={label}
           labelDetail={
-            fieldMetadataItem.settings?.type === 'percentage' ? '%' : undefined
+            isFormulaFieldMetadataItem(fieldMetadataItem)
+              ? t`Formula`
+              : fieldMetadataItem.settings?.type === 'percentage'
+                ? '%'
+                : undefined
           }
           to={
             isRelatedObjectLinkable

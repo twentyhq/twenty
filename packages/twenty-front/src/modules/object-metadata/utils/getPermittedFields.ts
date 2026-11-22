@@ -1,3 +1,4 @@
+import { isFormulaFieldMetadataItem } from '@/object-metadata/utils/isFormulaFieldMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
 import { isDefined } from 'twenty-shared/utils';
@@ -60,7 +61,7 @@ export const getPermittedFields = ({
       );
     }
 
-    if (canUpdateField) {
+    if (canUpdateField && !isFormulaFieldMetadataItem(field)) {
       updatableFields.push(
         getFieldWithPermittedMorphTargets({
           field,

@@ -47,6 +47,28 @@ describe('formatFieldMetadataItemInput', () => {
     expect(result).toEqual(expected);
   });
 
+  it('should store a formula in the field settings', () => {
+    expect(
+      formatFieldMetadataItemInput({
+        settings: { decimals: 2 },
+        formula: ' price * quantity ',
+      }).settings,
+    ).toEqual({ decimals: 2, formula: { expression: 'price * quantity' } });
+  });
+
+  it('should clear the formula when it is emptied', () => {
+    expect(
+      formatFieldMetadataItemInput({ settings: { decimals: 2 }, formula: ' ' })
+        .settings,
+    ).toEqual({ decimals: 2, formula: null });
+  });
+
+  it('should leave settings as they are when no formula is given', () => {
+    expect(
+      formatFieldMetadataItemInput({ settings: { decimals: 2 } }).settings,
+    ).toEqual({ decimals: 2 });
+  });
+
   it('should handle input without options', () => {
     const input = {
       label: 'Example Label',

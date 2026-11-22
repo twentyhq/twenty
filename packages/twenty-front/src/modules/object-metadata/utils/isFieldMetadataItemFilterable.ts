@@ -1,3 +1,4 @@
+import { isFormulaFieldMetadataItem } from '@/object-metadata/utils/isFormulaFieldMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
@@ -38,7 +39,8 @@ export const isFieldMetadataItemFilterable = (field: FieldMetadataItem) => {
     (!isHiddenSystemField(field) || isIdField) &&
     isFieldActive &&
     isRelationFieldHandled &&
-    isFieldTypeFilterable;
+    isFieldTypeFilterable &&
+    !isFormulaFieldMetadataItem(field);
 
   return isFieldFilterable;
 };

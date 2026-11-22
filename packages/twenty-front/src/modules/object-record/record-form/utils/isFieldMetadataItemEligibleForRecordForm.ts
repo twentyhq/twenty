@@ -1,3 +1,4 @@
+import { isFormulaFieldMetadataItem } from '@/object-metadata/utils/isFormulaFieldMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isFieldMetadataEligibleForRecordForm } from 'twenty-shared/utils';
 
@@ -12,6 +13,8 @@ export const isFieldMetadataItemEligibleForRecordForm = (
     fieldType: fieldMetadataItem.type,
     isActive: fieldMetadataItem.isActive === true,
     isSystem: fieldMetadataItem.isSystem === true,
-    isUIEditable: fieldMetadataItem.isUIEditable !== false,
+    isUIEditable:
+      fieldMetadataItem.isUIEditable !== false &&
+      !isFormulaFieldMetadataItem(fieldMetadataItem),
     relationType: fieldMetadataItem.settings?.relationType,
   });

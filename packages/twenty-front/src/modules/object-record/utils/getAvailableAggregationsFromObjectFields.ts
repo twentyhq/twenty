@@ -1,3 +1,4 @@
+import { isFormulaFieldMetadataItem } from '@/object-metadata/utils/isFormulaFieldMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
@@ -26,7 +27,8 @@ export const getAvailableAggregationsFromObjectFields = (
 
       if (
         field.type === FieldMetadataType.RELATION ||
-        field.type === FieldMetadataType.MORPH_RELATION
+        field.type === FieldMetadataType.MORPH_RELATION ||
+        isFormulaFieldMetadataItem(field)
       ) {
         acc[field.name] = {
           [AggregateOperations.COUNT]: 'totalCount',

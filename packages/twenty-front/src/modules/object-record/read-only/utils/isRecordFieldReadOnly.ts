@@ -1,3 +1,4 @@
+import { isFormulaFieldMetadataItem } from '@/object-metadata/utils/isFormulaFieldMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectPermissionsByObjectMetadataId } from '@/object-metadata/types/ObjectPermissionsByObjectMetadataId';
 import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
@@ -13,7 +14,8 @@ import {
 type IsRecordFieldReadOnlyParams = {
   isRecordReadOnly: boolean;
   objectMetadataId: string;
-  fieldMetadataItem: Pick<FieldMetadataItem, 'id' | 'isUIEditable'>;
+  fieldMetadataItem: Pick<FieldMetadataItem, 'id' | 'isUIEditable'> &
+    Partial<Pick<FieldMetadataItem, 'settings'>>;
   objectPermissionsByObjectMetadataId: ObjectPermissionsByObjectMetadataId;
   fieldDefinition?: FieldDefinition<FieldMetadata>;
 };
@@ -25,7 +27,11 @@ export const isRecordFieldReadOnly = ({
   objectPermissionsByObjectMetadataId,
   fieldDefinition,
 }: IsRecordFieldReadOnlyParams) => {
-  if (isRecordReadOnly || !(fieldMetadataItem.isUIEditable ?? true)) {
+  if (
+    isRecordReadOnly ||
+    !(fieldMetadataItem.isUIEditable ?? true) ||
+    isFormulaFieldMetadataItem(fieldMetadataItem)
+  ) {
     return true;
   }
 

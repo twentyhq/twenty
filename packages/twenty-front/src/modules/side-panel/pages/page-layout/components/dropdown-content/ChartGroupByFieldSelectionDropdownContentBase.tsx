@@ -1,3 +1,4 @@
+import { isFormulaFieldMetadataItem } from '@/object-metadata/utils/isFormulaFieldMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
@@ -39,7 +40,7 @@ export const ChartGroupByFieldSelectionDropdownContentBase = ({
   const groupableFields = useMemo(
     () =>
       (sourceObjectMetadataItem?.fields ?? []).filter((field) => {
-        if (isHiddenSystemField(field)) {
+        if (isHiddenSystemField(field) || isFormulaFieldMetadataItem(field)) {
           return false;
         }
 

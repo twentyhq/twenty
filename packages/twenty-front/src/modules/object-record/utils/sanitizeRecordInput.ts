@@ -1,3 +1,4 @@
+import { isFormulaFieldMetadataItem } from '@/object-metadata/utils/isFormulaFieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
@@ -68,6 +69,13 @@ export const sanitizeRecordInput = ({
         }
 
         if (fieldMetadataItem?.isNullable === false && fieldValue == null) {
+          return undefined;
+        }
+
+        if (
+          isDefined(fieldMetadataItem) &&
+          isFormulaFieldMetadataItem(fieldMetadataItem)
+        ) {
           return undefined;
         }
 

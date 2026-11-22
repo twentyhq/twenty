@@ -1,3 +1,6 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
+
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
 export const formatFieldMetadataItemInput = (
@@ -15,8 +18,10 @@ export const formatFieldMetadataItemInput = (
       | 'isLabelSyncedWithName'
       | 'isUnique'
     >
-  >,
+  > & { formula?: string },
 ) => {
+  const formulaExpression = input.formula?.trim();
+
   return {
     defaultValue: input.defaultValue,
     description: input.description?.trim() ?? null,
@@ -24,7 +29,14 @@ export const formatFieldMetadataItemInput = (
     label: input.label?.trim(),
     name: input.name?.trim(),
     options: input.options,
-    settings: input.settings,
+    settings: isDefined(formulaExpression)
+      ? {
+          ...input.settings,
+          formula: isNonEmptyString(formulaExpression)
+            ? { expression: formulaExpression }
+            : null,
+        }
+      : input.settings,
     isLabelSyncedWithName: input.isLabelSyncedWithName,
     isUnique: input.isUnique,
   };
