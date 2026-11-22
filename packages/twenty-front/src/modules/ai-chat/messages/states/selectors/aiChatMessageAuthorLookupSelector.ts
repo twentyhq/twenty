@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { aiChatAssistantProfileSelector } from '@/ai-chat/states/selectors/aiChatAssistantProfileSelector';
 import { type AiChatMessageAuthorLookup } from '@/ai-chat/messages/types/AiChatMessageAuthorLookup';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -7,9 +9,26 @@ import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomS
 export const aiChatMessageAuthorLookupSelector =
   createAtomSelector<AiChatMessageAuthorLookup>({
     key: 'aiChatMessageAuthorLookupSelector',
-    get: ({ get }) => ({
-      workspaceMembers: get(currentWorkspaceMembersState),
-      assistantDisplayName: get(aiChatAssistantProfileSelector).displayName,
-      currentWorkspace: get(currentWorkspaceState),
-    }),
+    get: ({ get }) => {
+      const currentWorkspace = get(currentWorkspaceState);
+
+      return {
+        workspaceMembers: get(currentWorkspaceMembersState),
+        assistantDisplayName: get(aiChatAssistantProfileSelector).displayName,
+        currentWorkspace: isDefined(currentWorkspace)
+          ? {
+              installedApplications: currentWorkspace.installedApplications,
+              workspaceCustomApplication:
+                currentWorkspace.workspaceCustomApplication,
+            }
+          : currentWorkspace,
+      };
+    },
+    areEqual: (previous, next) =>
+      previous.workspaceMembers === next.workspaceMembers &&
+      previous.assistantDisplayName === next.assistantDisplayName &&
+      previous.currentWorkspace?.installedApplications ===
+        next.currentWorkspace?.installedApplications &&
+      previous.currentWorkspace?.workspaceCustomApplication ===
+        next.currentWorkspace?.workspaceCustomApplication,
   });

@@ -1,1 +1,0 @@
-export const INBOX_RECENT_THREADS_NAVIGATION_SECTION_ID = 'AiChatRecents';

@@ -1,4 +1,5 @@
-import { conditionalAvailabilityParser, isDefined } from 'twenty-shared/utils';
+import { conditionalAvailabilityParser } from 'twenty-shared/conditional-availability';
+import { isDefined } from 'twenty-shared/utils';
 
 const LEGACY_PAGE_EDIT_MODE_IDENTIFIER = 'isPageInEditMode';
 const DASHBOARD_PAGE_LAYOUT_EDIT_MODE_IDENTIFIER =

@@ -52,6 +52,11 @@ export class RowLevelPermissionRulePredicateInput {
   @Field(() => String, { nullable: true })
   workspaceMemberSubFieldName?: string | null;
 
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  workspaceMemberRelationFieldMetadataId?: string | null;
+
   @Field(() => Number, { nullable: true })
   position?: number | null;
 }
