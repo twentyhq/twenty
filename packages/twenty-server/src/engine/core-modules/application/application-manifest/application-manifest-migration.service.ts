@@ -13,6 +13,7 @@ import { buildAllFlatEntityOperationRecordByMetadataNameFromFromTo } from 'src/e
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import { assertConnectionProviderLogicFunctionsAreOwn } from 'src/engine/core-modules/application/application-manifest/utils/assert-connection-provider-logic-functions-are-own.util';
+import { assertLogicFunctionFailureHandlersAreOwn } from 'src/engine/core-modules/application/application-manifest/utils/assert-logic-function-failure-handlers-are-own.util';
 import { resolveApplicationReferenceIdOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/resolve-application-reference-id-or-throw.util';
 import {
   ApplicationException,
@@ -225,6 +226,14 @@ export class ApplicationManifestMigrationService {
       });
 
     assertConnectionProviderLogicFunctionsAreOwn({
+      manifest,
+      fromFlatLogicFunctionMaps: fromAllFlatEntityMaps.flatLogicFunctionMaps,
+      toFlatLogicFunctionMaps:
+        toAllUniversalFlatEntityMaps.flatLogicFunctionMaps,
+      inferDeletionFromMissingEntities,
+    });
+
+    assertLogicFunctionFailureHandlersAreOwn({
       manifest,
       fromFlatLogicFunctionMaps: fromAllFlatEntityMaps.flatLogicFunctionMaps,
       toFlatLogicFunctionMaps:

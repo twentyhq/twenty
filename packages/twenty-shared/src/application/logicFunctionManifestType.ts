@@ -10,6 +10,7 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
   name?: string;
   description?: string;
   timeoutSeconds?: number;
+  onFailureLogicFunction?: SyncableEntityOptions;
   cronTriggerSettings?: CronTriggerSettings;
   eventTriggerSettings?: EventTriggerManifestSettings;
   // Replaced by eventTriggerSettings; still accepted

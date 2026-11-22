@@ -87,6 +87,8 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     )
       ? Math.min(timeoutSeconds, CONNECTION_FLOW_LOGIC_FUNCTION_TIMEOUT_SECONDS)
       : timeoutSeconds,
+    onFailureLogicFunctionUniversalIdentifier:
+      logicFunctionManifest.onFailureLogicFunction?.universalIdentifier ?? null,
     sourceHandlerPath: logicFunctionManifest.sourceHandlerPath,
     builtHandlerPath: logicFunctionManifest.builtHandlerPath,
     handlerName: logicFunctionManifest.handlerName,

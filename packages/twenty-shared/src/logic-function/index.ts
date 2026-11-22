@@ -22,6 +22,7 @@ export type {
   LogicFunctionExecutionContext,
   LogicFunctionRetryContext,
 } from './logic-function-execution-context.type';
+export type { LogicFunctionFailureHandlerPayload } from './logic-function-failure-handler-payload.type';
 export {
   RETRYABLE_LOGIC_FUNCTION_ERROR_NAME,
   RetryableLogicFunctionError,

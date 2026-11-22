@@ -16,6 +16,14 @@ export const fromFlatLogicFunctionToLogicFunctionManifest = (
       ? { description: logicFunction.description }
       : {}),
     timeoutSeconds: logicFunction.timeoutSeconds,
+    ...(isDefined(logicFunction.onFailureLogicFunctionUniversalIdentifier)
+      ? {
+          onFailureLogicFunction: {
+            universalIdentifier:
+              logicFunction.onFailureLogicFunctionUniversalIdentifier,
+          },
+        }
+      : {}),
     sourceHandlerPath: logicFunction.sourceHandlerPath,
     builtHandlerPath: logicFunction.builtHandlerPath,
     builtHandlerChecksum: logicFunction.checksum,

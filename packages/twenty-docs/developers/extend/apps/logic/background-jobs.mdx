@@ -169,6 +169,67 @@ The queue delays retry attempts with exponential backoff and jitter. The exact d
 Retries re-run the whole handler and may happen after some side effects succeeded. Make the handler idempotent before requesting retries.
 </Warning>
 
+## React when a run fails for good
+
+A run can end without your code reaching its own error handling, for example when it hits `timeoutSeconds`. Set `onFailureLogicFunction` to another logic function of your app, and Twenty enqueues that function once a queued run fails and will not be retried.
+
+```ts src/logic-functions/answer-request.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+
+export default defineLogicFunction({
+  universalIdentifier: 'b4d7e0f1-5c2a-4e8b-9a3d-6f1e2c7b8a90',
+  name: 'answer-request',
+  timeoutSeconds: 240,
+  onFailureLogicFunction: {
+    universalIdentifier: 'c5e8f1a2-6d3b-4f9c-8b4e-7a2f3d8c9b01',
+  },
+  handler: async (payload: { requestId: string }) => {
+    // ...
+  },
+});
+```
+
+```ts src/logic-functions/fail-request.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { type LogicFunctionFailureHandlerPayload } from 'twenty-sdk/logic-function';
+
+export default defineLogicFunction({
+  universalIdentifier: 'c5e8f1a2-6d3b-4f9c-8b4e-7a2f3d8c9b01',
+  name: 'fail-request',
+  handler: async ({
+    payload,
+    error,
+  }: LogicFunctionFailureHandlerPayload<{ requestId: string }>) => {
+    await markRequestFailed(payload.requestId, error.errorMessage);
+  },
+});
+```
+
+The failure handler receives:
+
+| Field | Description |
+|-------|-------------|
+| `failedLogicFunctionUniversalIdentifier` | The function whose run failed. |
+| `payload` | The payload of the failed run. |
+| `error.errorType` | `TimeoutError` for a timeout, the error's `name` for a thrown error. |
+| `error.errorMessage` | The error message. |
+
+The handler runs after:
+
+- an error thrown by your code that is not retried, including a `RetryableLogicFunctionError` once `maxRetries` is reached;
+- a timeout;
+- a platform error once the queued job has no attempts left.
+
+It does not run:
+
+- for executions that do not go through the job queue, such as HTTP routes, tool calls and workflow steps;
+- when the worker process running the job crashes. The queue runs the job again instead;
+- when the failure handler itself fails, so two handlers cannot trigger each other.
+
+<Warning>
+The failed run may have completed some side effects before it stopped. Do not re-run the same work blindly from the failure handler; record the failure or tell the user instead. Make the handler idempotent, because the queue retries it up to three times on a platform error.
+</Warning>
+
 ## Use it: page through a long sync
 
 The classic shape is a function that enqueues *itself* with the next cursor. Each run does one page of work well inside its own timeout, and the chain stops when there is nothing left.

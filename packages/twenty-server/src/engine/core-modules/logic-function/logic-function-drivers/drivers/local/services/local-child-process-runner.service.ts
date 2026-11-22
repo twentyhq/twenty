@@ -270,7 +270,11 @@ export class LocalChildProcessRunnerService {
           );
           timeout = setTimeout(
             () =>
-              resolve({ ok: false, error: `Timed out after ${timeoutMs}ms` }),
+              resolve({
+                ok: false,
+                error: `Timed out after ${timeoutMs}ms`,
+                errorType: 'TimeoutError',
+              }),
             timeoutMs,
           );
           child.send({ type: 'run', payload, context }, (error) => {

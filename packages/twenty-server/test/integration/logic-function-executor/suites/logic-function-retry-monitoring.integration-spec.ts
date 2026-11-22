@@ -226,6 +226,7 @@ describe('Logic function retry monitoring (integration)', () => {
         retryLimit: 3,
         attemptsMade: 3,
         persistRetryCount,
+        enqueueFailureHandler: jest.fn(),
       }),
     ).resolves.toBeUndefined();
 

@@ -40,6 +40,7 @@ export {
   RetryableLogicFunctionError,
   type InputJsonSchema,
   type LogicFunctionExecutionContext,
+  type LogicFunctionFailureHandlerPayload,
 } from 'twenty-shared/logic-function';
 
 export { getConnection } from '@/sdk/logic-function/connections/get-connection';

@@ -5,6 +5,7 @@ import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-fun
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { getDatabaseEventTriggerSettingsErrors } from '@/sdk/define/common/utils/get-database-event-trigger-settings-errors';
 import { getRecordEventTriggerSettingsErrors } from '@/sdk/define/common/utils/get-record-event-trigger-settings-errors';
+import { isValidPostgresUuid } from '@/sdk/define/common/utils/is-valid-postgres-uuid';
 import type { DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 
 export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
@@ -42,6 +43,21 @@ export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
     errors.push(
       'Server route trigger only supports the GET and POST http methods',
     );
+  }
+
+  if (isDefined(config.onFailureLogicFunction)) {
+    const { universalIdentifier: onFailureUniversalIdentifier } =
+      config.onFailureLogicFunction;
+
+    if (!isValidPostgresUuid(onFailureUniversalIdentifier)) {
+      errors.push(
+        `Logic function onFailureLogicFunction.universalIdentifier "${onFailureUniversalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`,
+      );
+    } else if (onFailureUniversalIdentifier === config.universalIdentifier) {
+      errors.push(
+        'Logic function onFailureLogicFunction must point at another logic function, not itself',
+      );
+    }
   }
 
   if (config.cronTriggerSettings) {
