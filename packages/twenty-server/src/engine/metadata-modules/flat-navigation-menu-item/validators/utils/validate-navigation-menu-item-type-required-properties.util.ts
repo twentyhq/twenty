@@ -75,6 +75,7 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
     workflowUniversalIdentifier,
     agentUniversalIdentifier,
     commandMenuItemUniversalIdentifier,
+    userWorkspaceId,
   } = flatNavigationMenuItem;
 
   if (!isDefined(type)) {
@@ -217,6 +218,15 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
       });
     }
     case NavigationMenuItemType.COMMAND: {
+      if (isDefined(userWorkspaceId)) {
+        return [
+          buildInvalidInputError(
+            t`A COMMAND navigation menu item cannot belong to a single user`,
+            msg`A COMMAND navigation menu item cannot belong to a single user`,
+          ),
+        ];
+      }
+
       return validateUuidProperty({
         value: commandMenuItemUniversalIdentifier,
         message: t`A valid commandMenuItemUniversalIdentifier is required for COMMAND type`,

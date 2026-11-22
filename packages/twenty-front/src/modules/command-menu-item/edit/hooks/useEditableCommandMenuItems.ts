@@ -6,6 +6,7 @@ import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/
 import { doesCommandMenuItemMatchObjectContext } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectContext';
 import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageType';
 import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/utils/doesCommandMenuItemMatchSelectionState';
+import { isSidebarOnlyCommandMenuItem } from '@/command-menu-item/utils/isSidebarOnlyCommandMenuItem';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo } from 'react';
@@ -23,6 +24,7 @@ export const useEditableCommandMenuItems = () => {
       commandMenuContextApi.numberOfSelectedRecords > 0;
 
     return (commandMenuItemsDraft ?? [])
+      .filter((item) => !isSidebarOnlyCommandMenuItem(item))
       .filter(
         doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
       )

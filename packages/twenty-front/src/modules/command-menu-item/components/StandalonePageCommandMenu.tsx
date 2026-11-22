@@ -10,6 +10,7 @@ import { commandMenuTargetObjectPermissionsSelector } from '@/command-menu-item/
 import { doesCommandMenuItemMatchCoreObjectName } from '@/command-menu-item/utils/doesCommandMenuItemMatchCoreObjectName';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
+import { isSidebarOnlyCommandMenuItem } from '@/command-menu-item/utils/isSidebarOnlyCommandMenuItem';
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
@@ -81,6 +82,7 @@ export const StandalonePageCommandMenu = () => {
 
   const filteredCommandMenuItems = useMemo(() => {
     return commandMenuItems
+      .filter((item) => !isSidebarOnlyCommandMenuItem(item))
       .filter(
         (item) =>
           item.engineComponentKey !==

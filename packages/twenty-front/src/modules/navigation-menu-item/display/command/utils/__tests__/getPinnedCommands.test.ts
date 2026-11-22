@@ -32,17 +32,20 @@ const buildCommandNavigationMenuItem = ({
   commandMenuItemId,
   position,
   parentId = null,
+  isActive = true,
 }: {
   id: string;
   commandMenuItemId: string;
   position: number;
   parentId?: string | null;
+  isActive?: boolean;
 }) => ({
   id,
   type: NavigationMenuItemType.COMMAND,
   commandMenuItemId,
   position,
   parentId,
+  isActive,
 });
 
 describe('getPinnedCommands', () => {
@@ -95,6 +98,22 @@ describe('getPinnedCommands', () => {
     ).toEqual(['pinned-search']);
   });
 
+  it('should skip a hidden pinned command', () => {
+    const pinnedCommands = getPinnedCommands({
+      navigationMenuItems: [
+        buildCommandNavigationMenuItem({
+          id: 'hidden-search',
+          commandMenuItemId: SEARCH.id,
+          position: 1,
+          isActive: false,
+        }),
+      ],
+      commandMenuItems: [SEARCH],
+    });
+
+    expect(pinnedCommands).toEqual([]);
+  });
+
   it('should ignore command items nested under a parent and other item types', () => {
     const pinnedCommands = getPinnedCommands({
       navigationMenuItems: [
@@ -110,6 +129,7 @@ describe('getPinnedCommands', () => {
           commandMenuItemId: null,
           position: 2,
           parentId: null,
+          isActive: true,
         },
       ],
       commandMenuItems: [SEARCH],

@@ -13,7 +13,7 @@ export const getPinnedCommands = ({
 }: {
   navigationMenuItems: Pick<
     NavigationMenuItem,
-    'id' | 'type' | 'parentId' | 'commandMenuItemId' | 'position'
+    'id' | 'type' | 'parentId' | 'commandMenuItemId' | 'position' | 'isActive'
   >[];
   commandMenuItems: CommandMenuItemFieldsFragment[];
 }): PinnedCommand[] => {
@@ -28,7 +28,8 @@ export const getPinnedCommands = ({
     .filter(
       (navigationMenuItem) =>
         navigationMenuItem.type === NavigationMenuItemType.COMMAND &&
-        !isDefined(navigationMenuItem.parentId),
+        !isDefined(navigationMenuItem.parentId) &&
+        navigationMenuItem.isActive !== false,
     )
     .sort((first, second) => first.position - second.position)
     .flatMap((navigationMenuItem) => {
