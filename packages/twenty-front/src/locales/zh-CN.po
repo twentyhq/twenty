@@ -6232,7 +6232,7 @@ msgstr "频道角色"
 #. js-lingui-id: Kjphnm
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Channel visibility through rules"
-msgstr ""
+msgstr "通过规则控制频道可见性"
 
 #. js-lingui-id: lfFsZ4
 #: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
@@ -16118,7 +16118,7 @@ msgstr "进行中"
 #. js-lingui-id: 2zgsSp
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops."
-msgstr ""
+msgstr "进行中：使用记录级权限规则强制实施消息和日历频道可见性。需要关系跳转。"
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
