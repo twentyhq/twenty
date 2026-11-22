@@ -1,6 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
-import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
@@ -11,6 +10,7 @@ import { NavigationDrawerInboxThreadSection } from '@/inbox/components/Navigatio
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
+import { filterInboxRecentThreads } from '@/inbox/utils/filterInboxRecentThreads';
 import { NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT } from '@/navigation-menu-item/common/constants/NavigationMenuSectionVisibleItemLimit';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -38,17 +38,12 @@ export const NavigationMenuAiChatRecentsSection = ({
   const { threads, inboxThreadList } = useInboxThreadList(
     INBOX_RECENT_THREAD_LIST_SOURCE,
   );
-  const favoriteThreadIds = new Set(
-    useAtomStateValue(inboxFavoriteThreadsSelector).map(({ id }) => id),
-  );
-  const recentThreads = threads.filter(
-    ({ id, conversationType }) =>
-      !favoriteThreadIds.has(id) &&
-      !(
-        isDirectMessageEnabled &&
-        conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
-      ),
-  );
+  const inboxFavoriteThreads = useAtomStateValue(inboxFavoriteThreadsSelector);
+  const recentThreads = filterInboxRecentThreads({
+    threads,
+    favoriteThreads: inboxFavoriteThreads,
+    isDirectMessageEnabled,
+  });
 
   if (recentThreads.length === 0 && !isDefined(headerAction)) {
     return null;

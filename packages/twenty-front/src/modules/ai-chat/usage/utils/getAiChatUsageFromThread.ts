@@ -1,7 +1,7 @@
 import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AiChatUsageState } from '@/ai-chat/usage/states/aiChatUsageFamilyState';
+import { type AiChatUsageState } from '@/ai-chat/usage/states/aiChatThreadUsageFamilyState';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 
 const toDisplayCredits = (internalCredits: number | string | undefined) =>

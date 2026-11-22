@@ -1,8 +1,6 @@
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
+import { type AiChatThreadUpdate } from '@/ai-chat/threads/types/AiChatThreadUpdate';
 
-type AiChatThreadUpdate = Partial<AiChatThreadRecord> & { id: string };
-
-// Fields changed together are restored together, or not at all
 export const getAiChatThreadRollbackUpdate = ({
   optimisticUpdate,
   previousThread,

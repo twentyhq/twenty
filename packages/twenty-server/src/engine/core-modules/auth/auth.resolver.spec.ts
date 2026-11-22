@@ -27,6 +27,7 @@ import { EmailVerificationService } from 'src/engine/core-modules/email-verifica
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
@@ -139,6 +140,10 @@ describe('AuthResolver', () => {
         },
         {
           provide: FileUploadService,
+          useValue: {},
+        },
+        {
+          provide: FileUrlService,
           useValue: {},
         },
         {

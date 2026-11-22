@@ -7,8 +7,6 @@ type InboxTriageCommandMenuItemsProps = {
   children: ReactNode;
 };
 
-// The list header only has room for triage; every other command stays in the
-// command menu
 export const InboxTriageCommandMenuItems = ({
   children,
 }: InboxTriageCommandMenuItemsProps) => {

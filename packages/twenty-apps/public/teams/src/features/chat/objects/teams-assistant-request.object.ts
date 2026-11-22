@@ -43,7 +43,8 @@ export default defineObject({
         TEAMS_ASSISTANT_REQUEST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
       type: FieldType.TEXT,
       label: 'Name',
-      description: 'Short preview of the request',
+      description:
+        'Short preview of the request, set once the sender is matched to a workspace member',
       icon: 'IconAbc',
       name: 'name',
     },
@@ -137,7 +138,8 @@ export default defineObject({
         TEAMS_ASSISTANT_REQUEST_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
       type: FieldType.RICH_TEXT,
       label: 'Request',
-      description: 'Message text with the bot mention stripped',
+      description:
+        'Message text with the bot mention stripped, saved once the sender is matched to a workspace member',
       icon: 'IconMessage',
       name: 'requestText',
     },

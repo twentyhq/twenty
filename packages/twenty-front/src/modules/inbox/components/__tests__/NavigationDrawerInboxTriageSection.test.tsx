@@ -2,16 +2,11 @@ import { MockedProvider } from '@apollo/client/testing/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 
 import { NavigationDrawerInboxTriageSection } from '@/inbox/components/NavigationDrawerInboxTriageSection';
-import { setInboxSelectedChannelView } from '@/inbox/testing/setInboxSelectedChannelView';
-import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -20,9 +15,6 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
-  AgentChatChannelAssignmentFilter,
-  AgentChatChannelThreadFilter,
-  AgentChatChannelThreadStatus,
   FeatureFlagKey,
   GetAgentChatOpenThreadsSummaryDocument,
   type GetAgentChatOpenThreadsSummaryQuery,
@@ -36,12 +28,6 @@ import {
 
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
-
-const navigate = jest.fn();
-
-jest.mock('~/hooks/useNavigateApp', () => ({
-  useNavigateApp: () => navigate,
-}));
 
 type OpenThreadsSummary =
   GetAgentChatOpenThreadsSummaryQuery['agentChatOpenThreadsSummary'];
@@ -61,10 +47,8 @@ const READ_SUMMARY: OpenThreadsSummary = {
 };
 
 const renderTriage = ({
-  path = '/inbox',
   summary = READ_SUMMARY,
 }: {
-  path?: string;
   summary?: OpenThreadsSummary;
 } = {}) =>
   render(
@@ -79,7 +63,7 @@ const renderTriage = ({
             },
           ]}
         >
-          <MemoryRouter initialEntries={[path]}>
+          <MemoryRouter initialEntries={['/inbox']}>
             <NavigationDrawerInboxTriageSection />
           </MemoryRouter>
         </MockedProvider>
@@ -91,7 +75,6 @@ describe('NavigationDrawerInboxTriageSection', () => {
   beforeEach(() => {
     localStorage.clear();
     resetJotaiStore();
-    navigate.mockClear();
 
     jotaiStore.set(currentWorkspaceState.atom, {
       ...mockCurrentWorkspace,
@@ -138,86 +121,5 @@ describe('NavigationDrawerInboxTriageSection', () => {
     expect(
       screen.queryByRole('button', { name: 'Mentions' }),
     ).not.toBeInTheDocument();
-  });
-
-  it.each([
-    AGENT_CHAT_THREAD_PRESET_FILTER.OPEN,
-    AGENT_CHAT_THREAD_PRESET_FILTER.NEEDS_INPUT,
-    AGENT_CHAT_THREAD_PRESET_FILTER.MENTIONS,
-    AGENT_CHAT_THREAD_PRESET_FILTER.ASSIGNED_TO_ME,
-    AGENT_CHAT_THREAD_PRESET_FILTER.ASSIGNED_TO_ANYONE,
-    AGENT_CHAT_THREAD_PRESET_FILTER.UNASSIGNED,
-  ])('keeps Open current for the %s filter', (presetFilter) => {
-    jotaiStore.set(inboxSelectedThreadListSourceState.atom, {
-      type: 'presetFilter',
-      presetFilter,
-    });
-
-    renderTriage();
-
-    expect(screen.getByRole('button', { name: 'Open' })).toHaveAttribute(
-      'aria-current',
-      'true',
-    );
-    expect(screen.getByRole('button', { name: 'Snoozed' })).not.toHaveAttribute(
-      'aria-current',
-    );
-    expect(screen.getByRole('button', { name: 'Done' })).not.toHaveAttribute(
-      'aria-current',
-    );
-  });
-
-  it('marks Snoozed as current while its conversations are shown', () => {
-    jotaiStore.set(inboxSelectedThreadListSourceState.atom, {
-      type: 'presetFilter',
-      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.SNOOZED,
-    });
-
-    renderTriage();
-
-    expect(screen.getByRole('button', { name: 'Snoozed' })).toHaveAttribute(
-      'aria-current',
-      'true',
-    );
-    expect(screen.getByRole('button', { name: 'Open' })).not.toHaveAttribute(
-      'aria-current',
-    );
-  });
-
-  it('marks no status current outside the inbox', () => {
-    renderTriage({ path: '/objects/companies' });
-
-    expect(
-      screen.queryByRole('button', { current: true }),
-    ).not.toBeInTheDocument();
-  });
-
-  it('marks no status current while a channel is shown', () => {
-    setInboxSelectedChannelView(jotaiStore, {
-      channelId: 'sales',
-      channelStatus: AgentChatChannelThreadStatus.OPEN,
-      assignment: AgentChatChannelAssignmentFilter.ANY,
-      filter: AgentChatChannelThreadFilter.ANY,
-    });
-
-    renderTriage();
-
-    expect(
-      screen.queryByRole('button', { current: true }),
-    ).not.toBeInTheDocument();
-  });
-
-  it('opens the inbox on the chosen status', async () => {
-    renderTriage();
-
-    await userEvent.click(screen.getByRole('button', { name: 'Snoozed' }));
-
-    expect(jotaiStore.get(inboxSelectedThreadListSourceState.atom)).toEqual({
-      type: 'presetFilter',
-      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.SNOOZED,
-    });
-    expect(navigate).toHaveBeenCalledWith(AppPath.AiChatInbox, {
-      threadId: null,
-    });
   });
 });

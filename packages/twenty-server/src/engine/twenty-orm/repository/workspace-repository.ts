@@ -89,6 +89,7 @@ import {
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-twenty-orm-statement.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { renderReadableCondition } from 'src/engine/twenty-orm/sql/utils/render-readable-condition.util';
 import { serializeJsonbWriteValue } from 'src/engine/twenty-orm/sql/utils/serialize-jsonb-write-value.util';
 import {
   type WorkspaceRelationShape,
@@ -1505,7 +1506,44 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return new Set(rows.map((row) => String(row.id)));
   }
 
-  async runMutation(args: {
+  async runMutation({
+    shouldWriteAtLeastOneRecord = false,
+    ...args
+  }: {
+    selectQueryBuilder: WorkspaceSelectQueryBuilder;
+    rowLevelPermissionsApplied: boolean;
+    kind: MutationKind;
+    columnsToReturn: string[];
+    data?: Partial<ObjectRecord>;
+    shouldWriteAtLeastOneRecord?: boolean;
+  }): Promise<ObjectRecord[]> {
+    if (!shouldWriteAtLeastOneRecord) {
+      return this.runMutationOnFilter(args);
+    }
+
+    const readQueryBuilder = args.selectQueryBuilder.clone();
+    const writtenRecords = await this.runMutationOnFilter(args);
+
+    if (writtenRecords.length > 0) {
+      return writtenRecords;
+    }
+
+    const alias = readQueryBuilder.alias;
+    const readableRecord = await readQueryBuilder
+      .select(`${alias}.id`, 'id')
+      .getRawOne();
+
+    if (isDefined(readableRecord)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.RECORD_NOT_EDITABLE,
+        PermissionsExceptionCode.RECORD_NOT_EDITABLE,
+      );
+    }
+
+    return writtenRecords;
+  }
+
+  private async runMutationOnFilter(args: {
     selectQueryBuilder: WorkspaceSelectQueryBuilder;
     rowLevelPermissionsApplied: boolean;
     kind: MutationKind;
@@ -1893,10 +1931,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   ): Promise<void> {
     await this.applyRowLevelPermissionPredicates(queryBuilder);
     await this.validateQueryIsPermitted(queryBuilder);
-    await this.nullifyRlsRuleUnreadableFields(queryBuilder);
+    await this.makeRlsRuleFieldsUnreadable(queryBuilder);
   }
 
-  private async nullifyRlsRuleUnreadableFields(
+  private async makeRlsRuleFieldsUnreadable(
     queryBuilder: WorkspaceSelectQueryBuilder,
   ): Promise<void> {
     if (this.options.shouldBypassPermissionChecks) {
@@ -1914,7 +1952,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     for (const { alias, tableShape } of aliases) {
       if (
         !isDefined(tableShape) ||
-        !queryBuilder.markColumnNullifyApplied(alias)
+        !queryBuilder.markUnreadableColumnsApplied(alias)
       ) {
         continue;
       }
@@ -1932,26 +1970,46 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         continue;
       }
 
+      const flatObjectMetadata =
+        this.options.flatObjectMetadataByObjectMetadataId(
+          tableShape.objectMetadataId,
+        );
       const columnEntries = Object.entries(
         getColumnNameToFieldMetadataIdMap(
-          this.options.flatObjectMetadataByObjectMetadataId(
-            tableShape.objectMetadataId,
-          ),
+          flatObjectMetadata,
           this.options.internalContext.flatFieldMetadataMaps,
         ),
       );
+      const relationShapes = Object.values(tableShape.relationShapeByFieldName);
 
       for (const {
         fieldMetadataIds,
         sqlCondition,
+        placeholderFieldMetadataIds,
       } of unreadableFieldsSQLConditions) {
-        queryBuilder.nullifyColumnsWhen({
+        const unreadableColumnEntries = columnEntries.filter(
+          ([, fieldMetadataId]) => fieldMetadataIds.includes(fieldMetadataId),
+        );
+
+        queryBuilder.makeColumnsUnreadableWhen({
           alias,
-          columnNames: columnEntries
+          columnNames: unreadableColumnEntries.map(
+            ([columnName]) => columnName,
+          ),
+          condition: sqlCondition,
+          placeholderColumnNames: unreadableColumnEntries
             .filter(([, fieldMetadataId]) =>
-              fieldMetadataIds.includes(fieldMetadataId),
+              placeholderFieldMetadataIds.includes(fieldMetadataId),
             )
             .map(([columnName]) => columnName),
+        });
+        queryBuilder.makeRelationsUnreadableWhen({
+          alias,
+          relationFieldNames: relationShapes
+            .filter(({ fieldMetadataId }) =>
+              fieldMetadataIds.includes(fieldMetadataId),
+            )
+            .map(({ fieldName }) => fieldName),
           condition: sqlCondition,
         });
       }
@@ -2113,6 +2171,67 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       operationType,
       tableAlias: alias,
     });
+  }
+
+  async filterRecordIdsWithReadableRelation({
+    recordIds,
+    relationFieldName,
+  }: {
+    recordIds: string[];
+    relationFieldName: string;
+  }): Promise<string[]> {
+    const relationFieldMetadataId =
+      this.options.tableShape.relationShapeByFieldName[relationFieldName]
+        ?.fieldMetadataId;
+
+    if (!isDefined(relationFieldMetadataId)) {
+      throw new TwentyOrmException(
+        `Relation "${relationFieldName}" does not exist on "${this.options.tableShape.nameSingular}"`,
+        TwentyOrmExceptionCode.UNKNOWN_RELATION,
+      );
+    }
+
+    if (this.options.shouldBypassPermissionChecks || recordIds.length === 0) {
+      return recordIds;
+    }
+
+    const alias = this.options.tableShape.nameSingular;
+    const unreadableSQLConditions = (
+      await this.options.internalContext.recordFieldPermissions.buildUnreadableFieldsSQLConditions(
+        {
+          principals: this.resolvePermissionsPrincipalsOrThrow(),
+          objectMetadataId: this.options.flatObjectMetadata.id,
+          tableAlias: alias,
+        },
+      )
+    )
+      .filter(({ fieldMetadataIds }) =>
+        fieldMetadataIds.includes(relationFieldMetadataId),
+      )
+      .map(({ sqlCondition }) => sqlCondition);
+    const readableCondition = renderReadableCondition(
+      unreadableSQLConditions.map(({ sql }) => sql),
+    );
+
+    if (!isDefined(readableCondition)) {
+      return recordIds;
+    }
+
+    const readableRelationRecords = await this.createQueryBuilder(alias)
+      .setFindOptions({ select: { id: true } })
+      .where(`${escapeIdentifier(alias)}."id" IN (:...recordIds)`, {
+        recordIds,
+      })
+      .andWhere(
+        readableCondition,
+        Object.assign(
+          {},
+          ...unreadableSQLConditions.map(({ parameters }) => parameters),
+        ),
+      )
+      .getMany<{ id: string }>();
+
+    return readableRelationRecords.map(({ id }) => id);
   }
 
   async isReadDisabled(): Promise<boolean> {

@@ -19,6 +19,7 @@ declare module 'expr-eval-fork' {
     allowMemberAccess?: boolean;
     operators?: {
       add?: boolean;
+      array?: boolean;
       comparison?: boolean;
       concatenate?: boolean;
       conditional?: boolean;
