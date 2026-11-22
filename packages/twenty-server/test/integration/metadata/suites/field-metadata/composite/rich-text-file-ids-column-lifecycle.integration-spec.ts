@@ -12,16 +12,24 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const TABLE_NAME = '_richTextColumnTestObject';
 
-const findRichTextColumns = async (
-  fieldName: string,
-): Promise<{ columnName: string; dataType: string }[]> =>
-  global.testDataSource.query(
-    `SELECT column_name AS "columnName", data_type AS "dataType"
-     FROM information_schema.columns
-     WHERE table_schema = $1 AND table_name = $2 AND column_name LIKE $3
-     ORDER BY column_name`,
-    [SCHEMA, TABLE_NAME, `${fieldName}%`],
+const findColumns = async (
+  columnNamePrefix: string,
+): Promise<{ columnName: string; dataType: string }[]> => {
+  const columns: { columnName: string; dataType: string }[] =
+    await global.testDataSource.query(
+      `SELECT column_name AS "columnName", data_type AS "dataType"
+       FROM information_schema.columns
+       WHERE table_schema = $1 AND table_name = $2 AND column_name LIKE $3`,
+      [SCHEMA, TABLE_NAME, `${columnNamePrefix}%`],
+    );
+
+  return columns.sort((columnA, columnB) =>
+    columnA.columnName < columnB.columnName ? -1 : 1,
   );
+};
+
+const findColumnNames = async (columnNamePrefix: string): Promise<string[]> =>
+  (await findColumns(columnNamePrefix)).map(({ columnName }) => columnName);
 
 describe('Rich text field fileIds column lifecycle', () => {
   let objectMetadataId = '';
@@ -71,17 +79,17 @@ describe('Rich text field fileIds column lifecycle', () => {
 
     fieldMetadataId = createOneField.id;
 
-    expect(await findRichTextColumns('summary')).toEqual([
+    expect(await findColumns('summary')).toEqual([
       { columnName: 'summaryBlocknote', dataType: 'text' },
-      { columnName: 'summaryFileIds', dataType: 'jsonb' },
       { columnName: 'summaryMarkdown', dataType: 'text' },
       { columnName: 'summaryTiptap', dataType: 'text' },
+      { columnName: 'summary_fileIds', dataType: 'jsonb' },
     ]);
   });
 
-  it('should refuse a field whose name is the fileIds column of a rich text field', async () => {
-    const { errors } = await createOneFieldMetadata({
-      expectToFail: true,
+  it('should accept a field named after the rich text field, whose column the fileIds column cannot shadow', async () => {
+    await createOneFieldMetadata({
+      expectToFail: false,
       input: {
         name: 'summaryFileIds',
         label: 'Summary file ids',
@@ -91,12 +99,18 @@ describe('Rich text field fileIds column lifecycle', () => {
       gqlFields: 'id',
     });
 
-    expect(errors).toBeDefined();
+    expect(await findColumnNames('summary')).toEqual([
+      'summaryBlocknote',
+      'summaryFileIds',
+      'summaryMarkdown',
+      'summaryTiptap',
+      'summary_fileIds',
+    ]);
   });
 
   it('should rename a field whose fileIds column was not provisioned yet', async () => {
     await global.testDataSource.query(
-      `ALTER TABLE "${SCHEMA}"."${TABLE_NAME}" DROP COLUMN "summaryFileIds"`,
+      `ALTER TABLE "${SCHEMA}"."${TABLE_NAME}" DROP COLUMN "summary_fileIds"`,
     );
 
     await updateOneFieldMetadata({
@@ -108,16 +122,13 @@ describe('Rich text field fileIds column lifecycle', () => {
       gqlFields: 'id',
     });
 
-    expect(
-      (await findRichTextColumns('outline')).map(
-        ({ columnName }) => columnName,
-      ),
-    ).toEqual([
+    expect(await findColumnNames('outline')).toEqual([
       'outlineBlocknote',
-      'outlineFileIds',
       'outlineMarkdown',
       'outlineTiptap',
+      'outline_fileIds',
     ]);
+    expect(await findColumnNames('summary')).toEqual(['summaryFileIds']);
   });
 
   it('should rename the fileIds column with the field', async () => {
@@ -130,14 +141,12 @@ describe('Rich text field fileIds column lifecycle', () => {
       gqlFields: 'id',
     });
 
-    expect(await findRichTextColumns('outline')).toEqual([]);
-    expect(
-      (await findRichTextColumns('recap')).map(({ columnName }) => columnName),
-    ).toEqual([
+    expect(await findColumnNames('outline')).toEqual([]);
+    expect(await findColumnNames('recap')).toEqual([
       'recapBlocknote',
-      'recapFileIds',
       'recapMarkdown',
       'recapTiptap',
+      'recap_fileIds',
     ]);
   });
 
@@ -155,6 +164,7 @@ describe('Rich text field fileIds column lifecycle', () => {
       input: { idToDelete: fieldMetadataId },
     });
 
-    expect(await findRichTextColumns('recap')).toEqual([]);
+    expect(await findColumnNames('recap')).toEqual([]);
+    expect(await findColumnNames('summary')).toEqual(['summaryFileIds']);
   });
 });

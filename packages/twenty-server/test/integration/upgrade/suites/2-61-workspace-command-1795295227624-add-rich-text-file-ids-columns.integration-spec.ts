@@ -12,7 +12,7 @@ const findFileIdsColumnDataTypes = async (
   const rows: { dataType: string }[] = await global.testDataSource.query(
     `SELECT data_type AS "dataType"
      FROM information_schema.columns
-     WHERE table_schema = $1 AND table_name = $2 AND column_name = 'bodyV2FileIds'`,
+     WHERE table_schema = $1 AND table_name = $2 AND column_name = 'bodyV2_fileIds'`,
     [SCHEMA, tableName],
   );
 
@@ -21,7 +21,7 @@ const findFileIdsColumnDataTypes = async (
 
 const dropFileIdsColumn = (tableName: string) =>
   global.testDataSource.query(
-    `ALTER TABLE "${SCHEMA}"."${tableName}" DROP COLUMN IF EXISTS "bodyV2FileIds"`,
+    `ALTER TABLE "${SCHEMA}"."${tableName}" DROP COLUMN IF EXISTS "bodyV2_fileIds"`,
   );
 
 describe('2-61 workspace command - add rich text fileIds columns (integration)', () => {

@@ -1,17 +1,17 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { buildProvisionedAheadCompositeColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-provisioned-ahead-composite-column-definitions.util';
+import { buildServerOnlyCompositeColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-server-only-composite-column-definitions.util';
 
-describe('buildProvisionedAheadCompositeColumnDefinitions', () => {
+describe('buildServerOnlyCompositeColumnDefinitions', () => {
   it('should define the nullable fileIds column of a rich text field', () => {
     expect(
-      buildProvisionedAheadCompositeColumnDefinitions({
+      buildServerOnlyCompositeColumnDefinitions({
         fieldType: FieldMetadataType.RICH_TEXT,
         fieldName: 'summary',
       }),
     ).toEqual([
       {
-        name: 'summaryFileIds',
+        name: 'summary_fileIds',
         type: 'jsonb',
         isNullable: true,
         isArray: false,
@@ -21,9 +21,9 @@ describe('buildProvisionedAheadCompositeColumnDefinitions', () => {
     ]);
   });
 
-  it('should define no column for a type with nothing provisioned ahead', () => {
+  it('should define no column for a type without server-only columns', () => {
     expect(
-      buildProvisionedAheadCompositeColumnDefinitions({
+      buildServerOnlyCompositeColumnDefinitions({
         fieldType: FieldMetadataType.FULL_NAME,
         fieldName: 'name',
       }),

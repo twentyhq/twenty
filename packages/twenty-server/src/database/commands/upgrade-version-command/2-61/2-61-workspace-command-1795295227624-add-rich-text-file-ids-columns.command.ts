@@ -3,10 +3,12 @@ import { Inject } from '@nestjs/common';
 import { Command } from 'nest-commander';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { type QueryRunner } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { RICH_TEXT_FILE_IDS_COLUMN_NAME_SUFFIX } from 'src/database/commands/upgrade-version-command/2-61/constants/rich-text-file-ids-column-name-suffix.constant';
 import { buildAddRichTextFileIdsColumnStatements } from 'src/database/commands/upgrade-version-command/2-61/utils/build-add-rich-text-file-ids-column-statements.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -18,7 +20,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 @Command({
   name: 'upgrade:2-61:add-rich-text-file-ids-columns',
   description:
-    'Add the fileIds column to every rich text field, ahead of the release that declares the sub-field',
+    'Add the server-only fileIds column to every rich text field, ahead of the release that reads it',
 })
 export class AddRichTextFileIdsColumnsCommand extends ProvisionedWorkspaceCommandRunner {
   @Inject(WorkspaceCacheService)
@@ -75,21 +77,92 @@ export class AddRichTextFileIdsColumnsCommand extends ProvisionedWorkspaceComman
       ];
     });
 
-    const statements = buildAddRichTextFileIdsColumnStatements({
-      schemaName: getWorkspaceSchemaName(workspaceId),
-      richTextFields,
-    });
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+    const queryRunner = dataSource.createQueryRunner('master');
+    let isQueryRunnerConnected = false;
 
-    this.logger.log(
-      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: adding the fileIds column to ${richTextFields.length} rich text field(s)`,
+    try {
+      await queryRunner.connect();
+      isQueryRunnerConnected = true;
+
+      const existingTableNames = await this.findTableNames({
+        queryRunner,
+        schemaName,
+      });
+      const provisionedColumnKeys = await this.findProvisionedColumnKeys({
+        queryRunner,
+        schemaName,
+      });
+      const richTextFieldsToProvision = richTextFields.filter(
+        ({ tableName, fieldName }) =>
+          existingTableNames.has(tableName) &&
+          !provisionedColumnKeys.has(
+            `${tableName}.${fieldName}${RICH_TEXT_FILE_IDS_COLUMN_NAME_SUFFIX}`,
+          ),
+      );
+
+      this.logger.log(
+        `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: adding the fileIds column to ${richTextFieldsToProvision.length} of ${richTextFields.length} rich text field(s)`,
+      );
+
+      if (options.dryRun) {
+        return;
+      }
+
+      const statements = buildAddRichTextFileIdsColumnStatements({
+        schemaName,
+        richTextFields: richTextFieldsToProvision,
+      });
+
+      // Metadata-only, but the exclusive lock must not queue every query on the table
+      await queryRunner.query(`SET lock_timeout = '8s'`);
+
+      try {
+        for (const statement of statements) {
+          await queryRunner.query(statement);
+        }
+      } finally {
+        await queryRunner.query('RESET lock_timeout');
+      }
+    } finally {
+      if (isQueryRunnerConnected) {
+        await queryRunner.release();
+      }
+    }
+  }
+
+  private async findTableNames({
+    queryRunner,
+    schemaName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+  }): Promise<Set<string>> {
+    const tables: { tableName: string }[] = await queryRunner.query(
+      `SELECT table_name AS "tableName" FROM information_schema.tables WHERE table_schema = $1`,
+      [schemaName],
     );
 
-    if (options.dryRun) {
-      return;
-    }
+    return new Set(tables.map(({ tableName }) => tableName));
+  }
 
-    for (const statement of statements) {
-      await dataSource.query(statement);
-    }
+  private async findProvisionedColumnKeys({
+    queryRunner,
+    schemaName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+  }): Promise<Set<string>> {
+    const columns: { tableName: string; columnName: string }[] =
+      await queryRunner.query(
+        `SELECT table_name AS "tableName", column_name AS "columnName"
+         FROM information_schema.columns
+         WHERE table_schema = $1 AND right(column_name, length($2)) = $2`,
+        [schemaName, RICH_TEXT_FILE_IDS_COLUMN_NAME_SUFFIX],
+      );
+
+    return new Set(
+      columns.map(({ tableName, columnName }) => `${tableName}.${columnName}`),
+    );
   }
 }
