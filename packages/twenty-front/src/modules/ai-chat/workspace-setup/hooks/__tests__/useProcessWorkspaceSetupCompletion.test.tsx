@@ -1,6 +1,6 @@
 import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
 import { AI_CHAT_SURFACE } from '@/ai-chat/constants/AiChatSurface';
-import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
+import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -63,7 +63,7 @@ describe('useProcessWorkspaceSetupCompletion', () => {
     jest.clearAllMocks();
     sessionStorage.clear();
     resetJotaiStore();
-    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    jotaiStore.set(isWorkspaceSetupChatActiveState.atom, true);
     defaultHomePagePath = '/objects/people';
   });
 
@@ -86,9 +86,7 @@ describe('useProcessWorkspaceSetupCompletion', () => {
 
     expect(navigateMock).not.toHaveBeenCalled();
     expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
-    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
-      false,
-    );
+    expect(jotaiStore.get(isWorkspaceSetupChatActiveState.atom)).toBe(false);
     expect(getProcessedToolCallIds()).toEqual(['side-panel-call']);
   });
 
@@ -138,13 +136,11 @@ describe('useProcessWorkspaceSetupCompletion', () => {
     expect(navigateMock).toHaveBeenCalledWith('/settings/profile', {
       state: { isAiChatHandoffSkipped: true },
     });
-    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
-      false,
-    );
+    expect(jotaiStore.get(isWorkspaceSetupChatActiveState.atom)).toBe(false);
   });
 
   it('should not redirect when the chat already left the setup page', () => {
-    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+    jotaiStore.set(isWorkspaceSetupChatActiveState.atom, false);
 
     const { result } = renderHook(() => useProcessWorkspaceSetupCompletion(), {
       wrapper: Wrapper,

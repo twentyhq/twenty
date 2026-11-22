@@ -17,7 +17,7 @@ import { v4 } from 'uuid';
 
 import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/constants/AiChatNewThreadDefaultRecipients';
 import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai-chat/composer/constants/AiChatRestoreEditorContentEventName';
-import { useAttachChatThreadToRecord } from '@/ai-chat/threads/hooks/useAttachChatThreadToRecord';
+import { useAttachAiChatThreadToRecord } from '@/ai-chat/threads/hooks/useAttachAiChatThreadToRecord';
 import { useGetBrowsingContext } from '@/ai-chat/hooks/useGetBrowsingContext';
 import { useOpenNewAiChatAsDirectMessage } from '@/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage';
 import { useOptimisticallyRestoreOnSend } from '@/ai-chat/composer/hooks/useOptimisticallyRestoreOnSend';
@@ -88,7 +88,7 @@ type AiChatMessageToSend = Pick<
   threadId: string;
   isNewChat: boolean;
   isDirectMessage: boolean;
-  newInboxChatRecipients: AiChatNewThreadRecipients | undefined;
+  newThreadRecipients: AiChatNewThreadRecipients | undefined;
   serializedContentToSend: string;
   contentToSend: string;
   participantMentions: AiChatParticipantMention[];
@@ -102,7 +102,7 @@ export const useSendAiChatMessage = () => {
   const { openNewAiChatAsDirectMessage } = useOpenNewAiChatAsDirectMessage();
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticRestore } = useOptimisticallyRestoreOnSend();
-  const { attachChatThreadToRecord } = useAttachChatThreadToRecord();
+  const { attachChatThreadToRecord } = useAttachAiChatThreadToRecord();
   const { warnAboutParticipantMentionsNotAdded } =
     useWarnAboutParticipantMentionsNotAdded();
   const apolloClient = useApolloClient();
@@ -118,7 +118,7 @@ export const useSendAiChatMessage = () => {
       threadId,
       isNewChat,
       isDirectMessage,
-      newInboxChatRecipients,
+      newThreadRecipients,
       serializedContentToSend,
       contentToSend,
       participantMentions,
@@ -253,10 +253,9 @@ export const useSendAiChatMessage = () => {
             shouldAssistantReply: isNonEmptyArray(
               store.get(aiModelsState.atom),
             ),
-            isAssistantParticipant:
-              newInboxChatRecipients?.isAssistantParticipant,
+            isAssistantParticipant: newThreadRecipients?.isAssistantParticipant,
             isAssistantMentioned,
-            recipientWorkspaceMemberIds: isDefined(newInboxChatRecipients)
+            recipientWorkspaceMemberIds: isDefined(newThreadRecipients)
               ? initialRecipients.map(
                   ({ workspaceMemberId }) => workspaceMemberId,
                 )
@@ -407,7 +406,7 @@ export const useSendAiChatMessage = () => {
         return;
       }
 
-      const newInboxChatRecipients =
+      const newThreadRecipients =
         isNewChat && isAiChatInboxEnabled
           ? store.get(
               aiChatComposerNewThreadRecipientsFamilyState.atomFamily(threadId),
@@ -479,17 +478,17 @@ export const useSendAiChatMessage = () => {
         : undefined;
       const initialRecipients = getAiChatInitialRecipients({
         recipientWorkspaceMemberIds:
-          newInboxChatRecipients?.recipientWorkspaceMemberIds ?? [],
+          newThreadRecipients?.recipientWorkspaceMemberIds ?? [],
         workspaceMembers: store.get(currentWorkspaceMembersState.atom),
       });
       const hasRecipients =
-        newInboxChatRecipients?.isAssistantParticipant ||
+        newThreadRecipients?.isAssistantParticipant ||
         isAssistantMentioned ||
         isNonEmptyArray(initialRecipients) ||
         isNonEmptyArray(participantMentions) ||
         isDefined(channelId);
 
-      if (isDefined(newInboxChatRecipients) && !hasRecipients) {
+      if (isDefined(newThreadRecipients) && !hasRecipients) {
         enqueueToast({
           status: 'error',
           children: t`Add a recipient or a channel before sending.`,
@@ -519,7 +518,7 @@ export const useSendAiChatMessage = () => {
               FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,
               currentWorkspace,
             ),
-          newInboxChatRecipients,
+          newThreadRecipients,
           isAssistantMentioned,
           channelId,
           initialRecipients,
@@ -549,7 +548,7 @@ export const useSendAiChatMessage = () => {
           threadId: directMessageThreadId,
           isNewChat: false,
           isDirectMessage: true,
-          newInboxChatRecipients: undefined,
+          newThreadRecipients: undefined,
           serializedContentToSend,
           contentToSend,
           participantMentions: [],
@@ -595,7 +594,7 @@ export const useSendAiChatMessage = () => {
         threadId,
         isNewChat,
         isDirectMessage,
-        newInboxChatRecipients,
+        newThreadRecipients,
         serializedContentToSend,
         contentToSend,
         participantMentions,

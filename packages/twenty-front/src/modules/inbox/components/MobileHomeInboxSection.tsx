@@ -6,7 +6,7 @@ import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
 import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
 import { useLingui } from '@lingui/react/macro';
 
-const MOBILE_HOME_AI_CHAT_SECTION_ID = 'MobileHomeAiChat';
+const MOBILE_HOME_INBOX_SECTION_ID = 'MobileHomeAiChat';
 
 export const MobileHomeInboxSection = () => {
   const { t } = useLingui();
@@ -28,7 +28,7 @@ export const MobileHomeInboxSection = () => {
   return (
     <>
       <NavigationDrawerInboxThreadSection
-        sectionId={MOBILE_HOME_AI_CHAT_SECTION_ID}
+        sectionId={MOBILE_HOME_INBOX_SECTION_ID}
         title={t`Conversations`}
         threads={threads}
         currentThreadId={aiChatPageThreadId}

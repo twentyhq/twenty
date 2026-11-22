@@ -4,7 +4,7 @@ import { type Location, useNavigate } from 'react-router-dom';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
+import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 import { getAiChatPageRoute } from '@/ai-chat/utils/getAiChatPageRoute';
 import { getAiChatPageThreadId } from '@/ai-chat/utils/getAiChatPageThreadId';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
@@ -26,7 +26,7 @@ export const useOpenWorkspaceSetupChatInSidePanel = () => {
   const openWorkspaceSetupChatInSidePanel = useCallback(
     ({ pathname }: Pick<Location, 'pathname'>) => {
       if (
-        !store.get(shouldOpenAiChatAfterOnboardingState.atom) ||
+        !store.get(isWorkspaceSetupChatActiveState.atom) ||
         store.get(hasOpenedWorkspaceSetupChatSidePanelState.atom)
       ) {
         return false;

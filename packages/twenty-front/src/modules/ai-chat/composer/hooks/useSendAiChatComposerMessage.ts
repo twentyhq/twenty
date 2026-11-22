@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useAiChat } from '@/ai-chat/composer/hooks/useAiChat';
 import { useIsAiChatComposerCentered } from '@/ai-chat/composer/hooks/useIsAiChatComposerCentered';
-import { AiChatRuntimeContext } from '@/ai-chat/contexts/AiChatRuntimeContext';
+import { AiChatIsRuntimeMountedContext } from '@/ai-chat/contexts/AiChatIsRuntimeMountedContext';
 import { dictationEngineComponentState } from '@/ai-chat/dictation/states/dictationEngineComponentState';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { useIsAiChatRuntimeEnabled } from '@/ai-chat/hooks/useIsAiChatRuntimeEnabled';
@@ -20,7 +20,7 @@ type AiChatComposerContent = {
 export const useSendAiChatComposerMessage = () => {
   const store = useStore();
   const { instanceId } = useAiChatInstanceOrThrow();
-  const isAiChatRuntimeMounted = useContext(AiChatRuntimeContext);
+  const isAiChatRuntimeMounted = useContext(AiChatIsRuntimeMountedContext);
   const isAiChatRuntimeEnabled = useIsAiChatRuntimeEnabled();
   const isComposerCentered = useIsAiChatComposerCentered();
   const { handleSendMessage } = useAiChat();

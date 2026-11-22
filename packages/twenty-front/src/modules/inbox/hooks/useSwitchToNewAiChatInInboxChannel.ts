@@ -12,14 +12,14 @@ export const useSwitchToNewAiChatInInboxChannel = (
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
-  const { switchToNewChat } = useSwitchToNewAiChat(params);
+  const { switchToNewAiChat } = useSwitchToNewAiChat(params);
 
   const switchToNewChatInInboxChannel = () =>
-    switchToNewChat({
+    switchToNewAiChat({
       inboxChannelId: isAiChatInboxEnabled
         ? (store.get(inboxSelectedChannelViewSelector.atom)?.channelId ?? null)
         : null,
     });
 
-  return { switchToNewChat: switchToNewChatInInboxChannel };
+  return { switchToNewAiChat: switchToNewChatInInboxChannel };
 };

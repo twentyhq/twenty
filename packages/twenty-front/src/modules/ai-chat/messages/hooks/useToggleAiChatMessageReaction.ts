@@ -7,7 +7,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { aiChatMessageReactionRevisionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionRevisionsFamilyState';
 import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionsFamilyState';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
-import { setAgentMessageReaction } from '@/ai-chat/messages/utils/setAgentMessageReaction';
+import { setAiChatMessageReaction } from '@/ai-chat/messages/utils/setAiChatMessageReaction';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import {
@@ -50,7 +50,7 @@ export const useToggleAiChatMessageReaction = () => {
       const setOwnReaction = (isReacted: boolean) =>
         store.set(
           reactionsAtom,
-          setAgentMessageReaction({
+          setAiChatMessageReaction({
             reactions: store.get(reactionsAtom),
             emoji,
             workspaceMemberId,

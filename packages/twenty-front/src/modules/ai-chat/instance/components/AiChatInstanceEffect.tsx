@@ -16,7 +16,7 @@ import {
   type AiChatThreadVisit,
   aiChatThreadViewVisitFamilyState,
 } from '@/ai-chat/states/view/aiChatThreadViewVisitFamilyState';
-import { useUpdateAiChatThreadStatus } from '@/ai-chat/threads/hooks/useUpdateAiChatThreadStatus';
+import { useUpdateAiChatThreadInboxState } from '@/ai-chat/threads/hooks/useUpdateAiChatThreadInboxState';
 import { aiChatReopenedThreadActivityState } from '@/ai-chat/threads/states/aiChatReopenedThreadActivityState';
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
@@ -33,7 +33,7 @@ const isDocumentVisible = () => document.visibilityState === 'visible';
 export const AiChatInstanceEffect = () => {
   const store = useStore();
   const { instanceId, threadId, onThreadChange } = useAiChatInstanceOrThrow();
-  const { updateAgentChatThreadInboxState } = useUpdateAiChatThreadStatus();
+  const { updateAiChatThreadInboxState } = useUpdateAiChatThreadInboxState();
   const { processWorkspaceSetupCompletion } =
     useProcessWorkspaceSetupCompletion();
   const persistedThreadId = isValidUuid(threadId) ? threadId : null;
@@ -115,7 +115,7 @@ export const AiChatInstanceEffect = () => {
           workspaceMemberId,
         })
       ) {
-        void updateAgentChatThreadInboxState({
+        void updateAiChatThreadInboxState({
           threadIds: [persistedThreadId],
           action: AgentChatInboxAction.ARCHIVE,
         });
@@ -129,7 +129,7 @@ export const AiChatInstanceEffect = () => {
         queueMicrotask(leaveIfNoViewLeft);
       }
     };
-  }, [store, persistedThreadId, updateAgentChatThreadInboxState]);
+  }, [store, persistedThreadId, updateAiChatThreadInboxState]);
 
   useEffect(() => {
     if (
@@ -183,7 +183,7 @@ export const AiChatInstanceEffect = () => {
       readRequestedForActivityAt: lastActivityAt,
       readRequestedForParticipantUpdatedAt: participant?.updatedAt,
     });
-    void updateAgentChatThreadInboxState({
+    void updateAiChatThreadInboxState({
       threadIds: [persistedThreadId],
       action: AgentChatInboxAction.READ,
     });
@@ -191,7 +191,7 @@ export const AiChatInstanceEffect = () => {
     isVisible,
     lastActivityAt,
     aiChatThreadParticipants,
-    updateAgentChatThreadInboxState,
+    updateAiChatThreadInboxState,
     store,
     persistedThreadId,
   ]);

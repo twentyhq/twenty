@@ -64,8 +64,8 @@ export const NavigationDrawerInboxChannelItem = ({
     isDropdownOpenComponentState,
     dropdownId,
   );
-  const { updateAgentChatChannel } = useUpdateInboxChannel();
-  const { deleteAgentChatChannel } = useDeleteInboxChannel();
+  const { updateInboxChannel } = useUpdateInboxChannel();
+  const { deleteInboxChannel } = useDeleteInboxChannel();
   const { openDropdown } = useOpenDropdown();
   const { openDialog } = useDialog();
   const [draftName, setDraftName] = useState<string | null>(null);
@@ -79,7 +79,7 @@ export const NavigationDrawerInboxChannelItem = ({
     const trimmedName = name.trim();
 
     if (isNonEmptyString(trimmedName) && trimmedName !== channel.name) {
-      void updateAgentChatChannel({
+      void updateInboxChannel({
         channelId: channel.id,
         input: { name: trimmedName },
       });
@@ -115,7 +115,7 @@ export const NavigationDrawerInboxChannelItem = ({
         dropdownId={iconPickerDropdownId}
         selectedIconKey={channel.icon ?? undefined}
         onChange={({ iconKey }) =>
-          void updateAgentChatChannel({
+          void updateInboxChannel({
             channelId: channel.id,
             input: { icon: iconKey },
           })
@@ -123,7 +123,7 @@ export const NavigationDrawerInboxChannelItem = ({
         iconColorPicker={{
           selectedColor: parseThemeColor(channel.color),
           onColorChange: (color) =>
-            void updateAgentChatChannel({
+            void updateInboxChannel({
               channelId: channel.id,
               input: { color },
             }),
@@ -167,7 +167,7 @@ export const NavigationDrawerInboxChannelItem = ({
                 })
               }
               onUpdate={(input) =>
-                void updateAgentChatChannel({ channelId: channel.id, input })
+                void updateInboxChannel({ channelId: channel.id, input })
               }
               onDelete={(destinationChannelId) => {
                 setDeleteDestinationChannelId(destinationChannelId);
@@ -186,7 +186,7 @@ export const NavigationDrawerInboxChannelItem = ({
             : t`With no other channel to move its chats to, only an empty channel can be deleted. This cannot be undone.`
         }
         onConfirmClick={() =>
-          void deleteAgentChatChannel({
+          void deleteInboxChannel({
             channelId: channel.id,
             destinationChannelId: deleteDestinationChannelId,
           })

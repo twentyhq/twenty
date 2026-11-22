@@ -40,7 +40,7 @@ type UseAiChatEditorParams = {
 export const useAiChatEditor = ({ onSend }: UseAiChatEditorParams) => {
   const { t } = useLingui();
   const { displayName: assistantDisplayName } = useAiChatAssistantProfile();
-  const { threadId: draftKey } = useAiChatInstanceOrThrow();
+  const { threadId } = useAiChatInstanceOrThrow();
   const aiModels = useAtomStateValue(aiModelsState);
   const [aiChatComposerDrafts, setAiChatComposerDrafts] = useAtomState(
     aiChatComposerDraftsState,
@@ -54,13 +54,13 @@ export const useAiChatEditor = ({ onSend }: UseAiChatEditorParams) => {
   const { uploadFiles } = useAiChatFileUpload();
   const isDirectMessage = useAtomFamilySelectorValue(
     aiChatThreadIsDirectMessageFamilySelector,
-    draftKey,
+    threadId,
   );
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const initialDraft = aiChatComposerDrafts[draftKey] ?? '';
+  const initialDraft = aiChatComposerDrafts[threadId] ?? '';
   const editor = useAdvancedTextEditor({
     profile: AI_CHAT_EDITOR_PROFILE,
     placeholder: isDirectMessage
@@ -106,7 +106,7 @@ export const useAiChatEditor = ({ onSend }: UseAiChatEditorParams) => {
           return false;
         }
 
-        uploadFiles({ files: pastedFiles, threadId: draftKey });
+        uploadFiles({ files: pastedFiles, threadId });
         return true;
       },
     },
@@ -115,7 +115,7 @@ export const useAiChatEditor = ({ onSend }: UseAiChatEditorParams) => {
 
       setAiChatComposerDrafts((prev) => ({
         ...prev,
-        [draftKey]: serializedDraft,
+        [threadId]: serializedDraft,
       }));
     },
     onFocus: () => {
@@ -176,7 +176,7 @@ export const useAiChatEditor = ({ onSend }: UseAiChatEditorParams) => {
 
   const handleRestoreEditorContent = useCallback(
     (detail?: AiChatRestoreEditorContentEventDetail) => {
-      if (detail?.threadId === draftKey && isDefined(detail.content)) {
+      if (detail?.threadId === threadId && isDefined(detail.content)) {
         editor?.commands.setContent(
           deserializeAdvancedTextEditorDocument({
             serializedDocument: detail.content,
@@ -184,7 +184,7 @@ export const useAiChatEditor = ({ onSend }: UseAiChatEditorParams) => {
         );
       }
     },
-    [draftKey, editor],
+    [threadId, editor],
   );
 
   useListenToBrowserEvent<AiChatRestoreEditorContentEventDetail>({
@@ -194,7 +194,7 @@ export const useAiChatEditor = ({ onSend }: UseAiChatEditorParams) => {
 
   const [aiChatComposerShouldFocus, setAiChatComposerShouldFocus] =
     useAtomFamilyState(aiChatComposerShouldFocusFamilyState, {
-      threadId: draftKey,
+      threadId,
     });
 
   useLayoutEffect(() => {
@@ -210,7 +210,7 @@ export const useAiChatEditor = ({ onSend }: UseAiChatEditorParams) => {
     setAiChatComposerShouldFocus(false);
   }, [aiChatComposerShouldFocus, editor, setAiChatComposerShouldFocus]);
 
-  const draft = aiChatComposerDrafts[draftKey] ?? '';
+  const draft = aiChatComposerDrafts[threadId] ?? '';
 
   useEffect(() => {
     if (

@@ -33,7 +33,6 @@ type AiModelPinSelectProps = {
   emptyOptionLabel?: string;
   automaticOptions?: SelectOption<string>[];
   label?: string;
-  description?: string;
   disabled?: boolean;
   selectSizeVariant?: ComponentProps<typeof Select>['selectSizeVariant'];
   dropdownWidth?: ComponentProps<typeof Select>['dropdownWidth'];
@@ -47,7 +46,6 @@ export const AiModelPinSelect = ({
   emptyOptionLabel,
   automaticOptions = [],
   label,
-  description,
   disabled = false,
   selectSizeVariant,
   dropdownWidth,
@@ -98,7 +96,6 @@ export const AiModelPinSelect = ({
       <Select
         dropdownId={dropdownId}
         label={label}
-        description={description}
         value={selectedModelValue}
         onChange={handleModelChange}
         showIconInControl={isDefined(modelId)}

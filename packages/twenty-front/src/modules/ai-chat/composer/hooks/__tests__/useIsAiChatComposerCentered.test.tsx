@@ -7,7 +7,7 @@ import { AI_CHAT_SURFACE } from '@/ai-chat/constants/AiChatSurface';
 import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
 import { useIsAiChatComposerCentered } from '@/ai-chat/composer/hooks/useIsAiChatComposerCentered';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
+import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 import { type AiChatSurface } from '@/ai-chat/types/AiChatSurface';
 import {
   jotaiStore,
@@ -55,7 +55,7 @@ describe('useIsAiChatComposerCentered', () => {
   });
 
   it('should not center the composer while the workspace setup preamble owns the intro', () => {
-    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    jotaiStore.set(isWorkspaceSetupChatActiveState.atom, true);
     const { result } = renderForSurface();
 
     expect(result.current).toBe(false);

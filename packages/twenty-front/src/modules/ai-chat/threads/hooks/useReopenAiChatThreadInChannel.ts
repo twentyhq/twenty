@@ -6,7 +6,7 @@ import { ReopenAgentChatThreadInChannelDocument } from '~/generated-metadata/gra
 export const useReopenAiChatThreadInChannel = () => {
   const { updateAiChatThreadChannelCopy } = useUpdateAiChatThreadChannelCopy();
 
-  const reopenAgentChatThreadInChannel = useCallback(
+  const reopenAiChatThreadInChannel = useCallback(
     (threadId: string) =>
       updateAiChatThreadChannelCopy({
         mutation: ReopenAgentChatThreadInChannelDocument,
@@ -19,5 +19,5 @@ export const useReopenAiChatThreadInChannel = () => {
     [updateAiChatThreadChannelCopy],
   );
 
-  return { reopenAgentChatThreadInChannel };
+  return { reopenAiChatThreadInChannel };
 };

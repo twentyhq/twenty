@@ -25,7 +25,7 @@ import { AiChatThreadLabelsField } from '@/ai-chat/threads/components/AiChatThre
 import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai-chat/threads/constants/AiChatThreadDetailsLabelWidthInPx';
 import { aiChatChannelFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatChannelFamilySelector';
 import { useAiChatThreadRecordTargets } from '@/ai-chat/threads/hooks/useAiChatThreadRecordTargets';
-import { useChatTargetNavigation } from '@/ai-chat/threads/hooks/useChatTargetNavigation';
+import { useAiChatTargetNavigation } from '@/ai-chat/threads/hooks/useAiChatTargetNavigation';
 import { useIsAiChatArtifactSurface } from '@/ai-chat/hooks/useIsAiChatArtifactSurface';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { aiChatThreadPermissionsFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadPermissionsFamilySelector';
@@ -105,7 +105,7 @@ export const InboxThreadDetailsDropdown = ({
   );
   const { closeDropdown } = useCloseDropdown();
   const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
-  const { openRecordTarget } = useChatTargetNavigation();
+  const { openRecordTarget } = useAiChatTargetNavigation();
   const dropdownContentRef = useRef<HTMLDivElement>(null);
   const detailsTriggerRef = useRef<HTMLButtonElement>(null);
   const recordPickerContentRef = useRef<HTMLDivElement>(null);

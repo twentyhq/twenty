@@ -12,7 +12,7 @@ import { AiChatQueuedMessageList } from '@/ai-chat/composer/components/AiChatQue
 import { StyledAiChatContentContainer } from '@/ai-chat/components/StyledAiChatContentContainer';
 import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai-chat/constants/AiChatPageContentInlinePadding';
 import { useHasAiChatPageContentInset } from '@/ai-chat/hooks/useHasAiChatPageContentInset';
-import { useDeleteQueuedMessage } from '@/ai-chat/composer/hooks/useDeleteQueuedMessage';
+import { useDeleteAiChatQueuedMessage } from '@/ai-chat/composer/hooks/useDeleteAiChatQueuedMessage';
 import { useIsCurrentAiChatThreadReadOnly } from '@/ai-chat/threads/hooks/useIsCurrentAiChatThreadReadOnly';
 import { aiChatThreadFetchedMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadFetchedMessagesFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -47,7 +47,7 @@ export const AiChatQueuedMessages = () => {
     { threadId },
   );
   const aiChatQueuedMessages = aiChatThreadFetchedMessages.queuedMessages;
-  const { deleteQueuedMessage } = useDeleteQueuedMessage({
+  const { deleteQueuedMessage } = useDeleteAiChatQueuedMessage({
     threadId,
   });
 

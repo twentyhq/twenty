@@ -44,7 +44,7 @@ const StyledSectionsContainer = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
+const INBOX_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
 
 export const NavigationDrawerInboxContent = () => {
   const { t } = useLingui();
@@ -105,7 +105,7 @@ export const NavigationDrawerInboxContent = () => {
           )}
           {recentThreads.length > 0 && (
             <NavigationDrawerInboxThreadSection
-              sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
+              sectionId={INBOX_RECENTS_NAVIGATION_SECTION_ID}
               title={t`Recent`}
               threads={recentThreads}
               currentThreadId={aiChatPageThreadId}

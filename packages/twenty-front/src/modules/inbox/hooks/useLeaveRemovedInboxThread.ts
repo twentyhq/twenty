@@ -9,8 +9,8 @@ import { inboxRecentThreadsSelector } from '@/inbox/states/selectors/inboxRecent
 import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
 import { inboxThreadListThreadsFamilySelector } from '@/inbox/states/selectors/inboxThreadListThreadsFamilySelector';
 import { getCurrentAiChatPageThreadId } from '@/ai-chat/utils/getCurrentAiChatPageThreadId';
-import { sortChatThreadsByLastActivityDesc } from '@/ai-chat/threads/utils/sortChatThreadsByLastActivityDesc';
-import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
+import { sortAiChatThreadsByLastActivityDesc } from '@/ai-chat/threads/utils/sortAiChatThreadsByLastActivityDesc';
+import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 
 export const useLeaveRemovedInboxThread = () => {
   const store = useStore();
@@ -37,10 +37,10 @@ export const useLeaveRemovedInboxThread = () => {
       return;
     }
 
-    store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+    store.set(isWorkspaceSetupChatActiveState.atom, false);
 
     const nextThreadId =
-      sortChatThreadsByLastActivityDesc(
+      sortAiChatThreadsByLastActivityDesc(
         store.get(
           inboxThreadListThreadsFamilySelector.selectorFamily(
             store.get(inboxSelectedThreadListSourceState.atom),

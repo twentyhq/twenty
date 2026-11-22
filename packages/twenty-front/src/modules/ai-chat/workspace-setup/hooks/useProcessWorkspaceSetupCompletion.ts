@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
 import { AI_CHAT_SURFACE } from '@/ai-chat/constants/AiChatSurface';
-import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
+import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 import { useReturnFromExpandedAiChat } from '@/ai-chat/hooks/useReturnFromExpandedAiChat';
 import { processedWorkspaceSetupCompletionIdsState } from '@/ai-chat/workspace-setup/states/processedWorkspaceSetupCompletionIdsState';
 import { getIsWorkspaceSetupChat } from '@/ai-chat/utils/getIsWorkspaceSetupChat';
@@ -46,8 +46,8 @@ export const useProcessWorkspaceSetupCompletion = () => {
     if (
       !getIsWorkspaceSetupChat({
         surface: aiChatSurface,
-        shouldOpenAiChatAfterOnboarding: store.get(
-          shouldOpenAiChatAfterOnboardingState.atom,
+        isWorkspaceSetupChatActive: store.get(
+          isWorkspaceSetupChatActiveState.atom,
         ),
       })
     ) {
@@ -57,7 +57,7 @@ export const useProcessWorkspaceSetupCompletion = () => {
     if (aiChatSurface === AI_CHAT_SURFACE.PAGE) {
       returnFromExpandedAiChat();
     } else {
-      store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+      store.set(isWorkspaceSetupChatActiveState.atom, false);
     }
   };
 

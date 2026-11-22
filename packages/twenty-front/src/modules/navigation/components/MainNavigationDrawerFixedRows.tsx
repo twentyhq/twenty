@@ -18,7 +18,7 @@ export const MainNavigationDrawerFixedRows = () => {
   );
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
-  const { switchToNewChat } = useSwitchToNewAiChatInInboxChannel();
+  const { switchToNewAiChat } = useSwitchToNewAiChatInInboxChannel();
 
   if (!isCustomizableSidebarEnabled) {
     return null;
@@ -36,7 +36,7 @@ export const MainNavigationDrawerFixedRows = () => {
         <NavigationDrawerItem
           label={t`New AI chat`}
           Icon={IconMessageCirclePlus}
-          onClick={switchToNewChat}
+          onClick={switchToNewAiChat}
           triggerEvent="CLICK"
         />
       )}
