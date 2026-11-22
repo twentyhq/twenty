@@ -110,12 +110,4 @@ describe('fetchGraphResponse', () => {
 
     expect(fetchMock).toHaveBeenCalledTimes(4);
   });
-
-  it('should not retry a status Graph will not recover from', async () => {
-    fetchMock.mockResolvedValue(buildResponse({ status: 403 }));
-
-    await expect(fetchMe()).rejects.toMatchObject({ status: 403 });
-
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-  });
 });

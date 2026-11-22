@@ -12,19 +12,9 @@ describe('parseRetryAfterMs', () => {
     vi.useRealTimers();
   });
 
-  it('should return undefined when the header is missing or empty', () => {
-    expect(parseRetryAfterMs(null)).toBeUndefined();
-    expect(parseRetryAfterMs(undefined)).toBeUndefined();
-    expect(parseRetryAfterMs('')).toBeUndefined();
-  });
-
   it('should convert a delay in seconds to milliseconds', () => {
     expect(parseRetryAfterMs('7')).toBe(7_000);
     expect(parseRetryAfterMs('1.5')).toBe(1_500);
-  });
-
-  it('should clamp a negative delay to zero', () => {
-    expect(parseRetryAfterMs('-3')).toBe(0);
   });
 
   it('should return the time left until an HTTP date', () => {

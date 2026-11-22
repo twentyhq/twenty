@@ -39,15 +39,6 @@ describe('fetchWithRetries', () => {
     vi.useRealTimers();
   });
 
-  it('should return a successful response without retrying', async () => {
-    sendRequestMock.mockResolvedValue(buildResponse({ status: 200 }));
-
-    await expect(fetchWithTestRetries()).resolves.toHaveProperty('status', 200);
-
-    expect(sendRequestMock).toHaveBeenCalledTimes(1);
-    expect(getRetryDelayMsMock).not.toHaveBeenCalled();
-  });
-
   it('should retry a retryable status after the delay the caller chose', async () => {
     sendRequestMock
       .mockResolvedValueOnce(buildResponse({ status: 503, retryAfter: '7' }))

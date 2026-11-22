@@ -7,7 +7,6 @@ type FetchWithRetriesOptions = {
   sendRequest: () => Promise<Response>;
   maxAttempts: number;
   isRetryableStatus: (status: number) => boolean;
-  // Returns undefined to give up and hand back the failed response.
   getRetryDelayMs: (retry: {
     attempt: number;
     retryAfterMs: number | undefined;
@@ -16,7 +15,6 @@ type FetchWithRetriesOptions = {
   retryAbortSignal?: AbortSignal;
 };
 
-// A thrown fetch is never retried: the request may have reached the server.
 export const fetchWithRetries = async ({
   sendRequest,
   maxAttempts,
@@ -57,7 +55,6 @@ export const fetchWithRetries = async ({
       return response;
     }
 
-    // An unread body keeps the undici connection busy.
     await response.body?.cancel();
 
     return sendAttempt({ attempt: attempt + 1, waitedMs: waitedMs + delayMs });
