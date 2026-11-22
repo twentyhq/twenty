@@ -2,4 +2,5 @@ import { type TeamsInboundActivity } from 'src/features/chat/logic-functions/typ
 
 export const isTeamsInstallActivity = (
   activity: Pick<TeamsInboundActivity, 'type' | 'action'>,
-): boolean => activity.type === 'installationUpdate' && activity.action === 'add';
+): boolean =>
+  activity.type === 'installationUpdate' && activity.action === 'add';

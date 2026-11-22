@@ -8,13 +8,14 @@ import { teamsActivitiesResolverHandler } from 'src/features/chat/logic-function
 import { TeamsActivityTokenInvalidError } from 'src/features/chat/logic-functions/types/teams-activity-token-invalid-error';
 import { type TeamsInboundActivity } from 'src/features/chat/logic-functions/types/teams-inbound-activity.type';
 
-const { kvGetMock, verifyTokenMock, sendNoticeMock, releaseFlags } =
-  vi.hoisted(() => ({
+const { kvGetMock, verifyTokenMock, sendNoticeMock, releaseFlags } = vi.hoisted(
+  () => ({
     kvGetMock: vi.fn(),
     verifyTokenMock: vi.fn(),
     sendNoticeMock: vi.fn(),
     releaseFlags: { IS_CHAT_ASSISTANT_RELEASED: true },
-  }));
+  }),
+);
 
 vi.mock('src/constants/release-flags', () => ({
   RELEASE_FLAGS: releaseFlags,

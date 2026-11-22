@@ -28,7 +28,7 @@ const EMPTY_REQUEST = {
 };
 
 const CLAIM_KEY =
-  'teams-empty-request-reply:19:channel@thread.tacv2;messageid=1699999999999:1700000000000';
+  'teams-help-reply:19:channel@thread.tacv2;messageid=1699999999999:1700000000000';
 
 describe('replyWithTeamsAssistantHelp', () => {
   beforeEach(() => {
@@ -40,9 +40,9 @@ describe('replyWithTeamsAssistantHelp', () => {
   });
 
   it('should post the hint once in the conversation', async () => {
-    await expect(
-      replyWithTeamsAssistantHelp(EMPTY_REQUEST),
-    ).resolves.toEqual({ ok: true });
+    await expect(replyWithTeamsAssistantHelp(EMPTY_REQUEST)).resolves.toEqual({
+      ok: true,
+    });
 
     expect(kvMock.set).toHaveBeenCalledExactlyOnceWith(CLAIM_KEY, {
       expiresAt: expect.any(Number),
@@ -60,7 +60,9 @@ describe('replyWithTeamsAssistantHelp', () => {
 
     await expect(
       replyWithTeamsAssistantHelp(EMPTY_REQUEST),
-    ).resolves.toMatchObject({ skipped: 'Help was already sent for this activity' });
+    ).resolves.toMatchObject({
+      skipped: 'Help was already sent for this activity',
+    });
 
     expect(sendActivityMock).not.toHaveBeenCalled();
   });
@@ -68,9 +70,9 @@ describe('replyWithTeamsAssistantHelp', () => {
   it('should free the claim when the hint cannot be sent', async () => {
     sendActivityMock.mockRejectedValue(new Error('Bot Connector POST failed'));
 
-    await expect(
-      replyWithTeamsAssistantHelp(EMPTY_REQUEST),
-    ).rejects.toThrow('Bot Connector POST failed');
+    await expect(replyWithTeamsAssistantHelp(EMPTY_REQUEST)).rejects.toThrow(
+      'Bot Connector POST failed',
+    );
 
     expect(kvMock.delete).toHaveBeenCalledExactlyOnceWith(CLAIM_KEY);
   });

@@ -11,13 +11,13 @@ import { enqueueTeamsAssistantRequest } from 'src/features/chat/logic-functions/
 const {
   releaseFlags,
   enqueueTeamsAssistantRequestRecordMock,
-  replyToEmptyRequestMock,
+  replyWithHelpMock,
   sendNoticeMock,
 } = vi.hoisted(() => ({
   sendNoticeMock: vi.fn(),
   releaseFlags: { IS_CHAT_ASSISTANT_RELEASED: true },
   enqueueTeamsAssistantRequestRecordMock: vi.fn(),
-  replyToEmptyRequestMock: vi.fn(),
+  replyWithHelpMock: vi.fn(),
 }));
 
 vi.mock('src/constants/release-flags', () => ({
@@ -33,7 +33,7 @@ vi.mock(
 
 vi.mock(
   'src/features/chat/logic-functions/utils/reply-with-teams-assistant-help',
-  () => ({ replyWithTeamsAssistantHelp: replyToEmptyRequestMock }),
+  () => ({ replyWithTeamsAssistantHelp: replyWithHelpMock }),
 );
 
 vi.mock(
@@ -66,7 +66,7 @@ describe('enqueueTeamsAssistantRequest', () => {
       ok: true,
       request: { id: 'request-1' },
     });
-    replyToEmptyRequestMock.mockResolvedValue({ ok: true });
+    replyWithHelpMock.mockResolvedValue({ ok: true });
     sendNoticeMock.mockResolvedValue(true);
   });
 
@@ -79,7 +79,7 @@ describe('enqueueTeamsAssistantRequest', () => {
       });
 
       expect(result).toEqual({ ok: true });
-      expect(replyToEmptyRequestMock).toHaveBeenCalledExactlyOnceWith(
+      expect(replyWithHelpMock).toHaveBeenCalledExactlyOnceWith(
         expect.objectContaining({
           teamsActivityId: '1700000000000',
           teamsConversationId: 'a:personal-conversation',
@@ -113,7 +113,7 @@ describe('enqueueTeamsAssistantRequest', () => {
   });
 
   it('should answer a bare mention with a hint instead of recording it', async () => {
-    replyToEmptyRequestMock.mockResolvedValue({ ok: true });
+    replyWithHelpMock.mockResolvedValue({ ok: true });
 
     const result = await enqueueTeamsAssistantRequest({
       ...PAYLOAD,
@@ -135,7 +135,7 @@ describe('enqueueTeamsAssistantRequest', () => {
     });
 
     expect(result).toEqual({ ok: true });
-    expect(replyToEmptyRequestMock).toHaveBeenCalledExactlyOnceWith({
+    expect(replyWithHelpMock).toHaveBeenCalledExactlyOnceWith({
       teamsActivityId: '1700000000000',
       teamsConversationId: '19:channel@thread.tacv2;messageid=1699999999999',
       teamsServiceUrl: PAYLOAD.serviceUrl,
