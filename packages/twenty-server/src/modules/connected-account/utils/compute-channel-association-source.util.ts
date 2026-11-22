@@ -17,7 +17,7 @@ export const computeChannelAssociationSource = ({
   flatWorkspaceMemberMaps: Pick<FlatWorkspaceMemberMaps, 'idByUserWorkspaceId'>;
   userWorkspaceId: string;
 }): { accountOwnerId?: string | null; handle?: string } => {
-  // TODO(@FelixMalfait): drop this check once 2.61 leaves the upgrade window; both fields arrive with its upgrade
+  // TODO(@FelixMalfait): drop this check once 2.62 leaves the upgrade window; both fields arrive with its upgrade
   if (
     !isDefined(
       flatFieldMetadataMaps.byUniversalIdentifier[
