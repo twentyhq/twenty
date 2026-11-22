@@ -77,7 +77,7 @@ export class AddMissingStandardRelatedRecordPathsCommand extends ProvisionedWork
             (fieldMetadataUniversalIdentifier) =>
               flatFieldMetadataMaps.byUniversalIdentifier[
                 fieldMetadataUniversalIdentifier
-              ]?.isActive === true,
+              ]?.isActive ?? false,
           ),
       );
 
