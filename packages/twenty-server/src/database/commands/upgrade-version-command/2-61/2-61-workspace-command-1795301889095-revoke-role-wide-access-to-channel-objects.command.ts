@@ -56,11 +56,10 @@ export class RevokeRoleWideAccessToChannelObjectsCommand extends ProvisionedWork
     ]);
 
     if (
-      featureFlagsMap[FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED] !==
-        true ||
-      featureFlagsMap[
+      !featureFlagsMap[FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED] ||
+      !featureFlagsMap[
         FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
-      ] !== true
+      ]
     ) {
       return;
     }
