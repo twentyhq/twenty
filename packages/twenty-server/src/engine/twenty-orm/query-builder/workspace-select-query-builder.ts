@@ -47,6 +47,7 @@ import {
   type OrderByClause,
   type SelectClause,
   type UnreadableColumnConditions,
+  type UnreadableColumnProjectedValues,
   type UnreadableRelationConditions,
   type SelectStatementState,
   type WhereClause,
@@ -105,6 +106,9 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
   private readonly aliasesWithUnreadableColumnsApplied = new Set<string>();
   private readonly unreadableColumnConditions: UnreadableColumnConditions = {};
+  private readonly unreadableColumnProjectedValues: UnreadableColumnProjectedValues =
+    {};
+  private unreadableColumnReplacementCount = 0;
   private readonly unreadableRelationConditions: UnreadableRelationConditions =
     {};
 
@@ -759,10 +763,12 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     alias,
     columnNames,
     condition,
+    replacementByColumnName = {},
   }: {
     alias: string;
     columnNames: string[];
     condition: SQLCondition;
+    replacementByColumnName?: Record<string, string>;
   }): this {
     const unreadableColumnConditionsOfAlias = (this.unreadableColumnConditions[
       alias
@@ -772,6 +778,16 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       (unreadableColumnConditionsOfAlias[columnName] ??= []).push(
         condition.sql,
       );
+
+      const replacement = replacementByColumnName[columnName];
+
+      if (isDefined(replacement)) {
+        const parameterName = `unreadableColumnReplacement_${this.unreadableColumnReplacementCount++}`;
+
+        (this.unreadableColumnProjectedValues[alias] ??= {})[columnName] =
+          `:${parameterName}`;
+        this.setParameter(parameterName, replacement);
+      }
     }
 
     return this.setParameters(condition.parameters);
@@ -1349,6 +1365,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       extraSelectClauses: this.extraSelectClauses,
       columnSelections: this.resolveColumnSelections(),
       unreadableColumnConditions: this.unreadableColumnConditions,
+      unreadableColumnProjectedValues: this.unreadableColumnProjectedValues,
       unreadableRelationConditions: this.unreadableRelationConditions,
       joinClauses: this.joinClauses,
       whereClauses: this.whereClauses,

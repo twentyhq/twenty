@@ -1970,29 +1970,43 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         continue;
       }
 
+      const flatObjectMetadata =
+        this.options.flatObjectMetadataByObjectMetadataId(
+          tableShape.objectMetadataId,
+        );
       const columnEntries = Object.entries(
         getColumnNameToFieldMetadataIdMap(
-          this.options.flatObjectMetadataByObjectMetadataId(
-            tableShape.objectMetadataId,
-          ),
+          flatObjectMetadata,
           this.options.internalContext.flatFieldMetadataMaps,
         ),
       );
-
       const relationShapes = Object.values(tableShape.relationShapeByFieldName);
 
       for (const {
         fieldMetadataIds,
         sqlCondition,
+        replacementByFieldMetadataId,
       } of unreadableFieldsSQLConditions) {
+        const unreadableColumnEntries = columnEntries.filter(
+          ([, fieldMetadataId]) => fieldMetadataIds.includes(fieldMetadataId),
+        );
+
         queryBuilder.makeColumnsUnreadableWhen({
           alias,
-          columnNames: columnEntries
-            .filter(([, fieldMetadataId]) =>
-              fieldMetadataIds.includes(fieldMetadataId),
-            )
-            .map(([columnName]) => columnName),
+          columnNames: unreadableColumnEntries.map(
+            ([columnName]) => columnName,
+          ),
           condition: sqlCondition,
+          replacementByColumnName: Object.fromEntries(
+            unreadableColumnEntries
+              .filter(([, fieldMetadataId]) =>
+                isDefined(replacementByFieldMetadataId[fieldMetadataId]),
+              )
+              .map(([columnName, fieldMetadataId]) => [
+                columnName,
+                replacementByFieldMetadataId[fieldMetadataId],
+              ]),
+          ),
         });
         queryBuilder.makeRelationsUnreadableWhen({
           alias,
