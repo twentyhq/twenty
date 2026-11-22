@@ -9,6 +9,10 @@ import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/fla
 import { addFlatNavigationMenuItemToMapsAndUpdateIndex } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/add-flat-navigation-menu-item-to-maps-and-update-index.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import {
+  NavigationMenuItemException,
+  NavigationMenuItemExceptionCode,
+} from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
+import {
   STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS,
   STANDARD_NAVIGATION_MENU_ITEMS,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
@@ -75,8 +79,9 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
     });
 
     if (!isDefined(flatCommandMenuItem)) {
-      throw new Error(
+      throw new NavigationMenuItemException(
         `Command menu item not found for universal identifier ${pinnedCommandDefinition.commandMenuItemUniversalIdentifier}`,
+        NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
       );
     }
 
