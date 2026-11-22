@@ -19,6 +19,16 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 const { message, calendarEvent } = STANDARD_OBJECTS;
 
+const CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS = [
+  STANDARD_OBJECTS.messageThread.universalIdentifier,
+  STANDARD_OBJECTS.messageParticipant.universalIdentifier,
+  STANDARD_OBJECTS.messageChannelMessageAssociation.universalIdentifier,
+  STANDARD_OBJECTS.messageChannelMessageAssociationMessageFolder
+    .universalIdentifier,
+  STANDARD_OBJECTS.calendarEventParticipant.universalIdentifier,
+  STANDARD_OBJECTS.calendarChannelEventAssociation.universalIdentifier,
+];
+
 @Injectable()
 export class ChannelVisibilityRuleSyncService {
   constructor(
@@ -40,6 +50,13 @@ export class ChannelVisibilityRuleSyncService {
   }
 
   private async syncWorkspaceWithLock(workspaceId: string): Promise<void> {
+    await this.writeOrRemoveRules(workspaceId);
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'rolesPermissions',
+    ]);
+  }
+
+  private async writeOrRemoveRules(workspaceId: string): Promise<void> {
     const { featureFlagsMap, flatWorkspaceMemberMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'featureFlagsMap',
@@ -106,7 +123,17 @@ export class ChannelVisibilityRuleSyncService {
                 ],
               },
             }),
-          ],
+            ...CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS.map(
+              (objectUniversalIdentifier) => ({ objectUniversalIdentifier }),
+            ),
+          ].map((objectRecordsPermissions) => ({
+            ...objectRecordsPermissions,
+            canReadAllRecords: false,
+            canCreateAllRecords: false,
+            canUpdateAllRecords: false,
+            canSoftDeleteAllRecords: false,
+            canDestroyAllRecords: false,
+          })),
         },
       })),
     });

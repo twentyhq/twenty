@@ -96,6 +96,11 @@ export type UnreadableColumnConditions = SQLConditionsByAliasAndName;
 
 export type UnreadableRelationConditions = SQLConditionsByAliasAndName;
 
+export type UnreadableColumnPlaceholders = Record<
+  string,
+  Record<string, string>
+>;
+
 export type SelectStatementState = {
   alias: string;
   tableShape: WorkspaceTableShape;
@@ -104,6 +109,7 @@ export type SelectStatementState = {
   extraSelectClauses: SelectClause[];
   columnSelections: ColumnSelection[];
   unreadableColumnConditions: UnreadableColumnConditions;
+  unreadableColumnPlaceholders?: UnreadableColumnPlaceholders;
   unreadableRelationConditions: UnreadableRelationConditions;
   joinClauses: JoinClause[];
   whereClauses: WhereClause[];
@@ -131,7 +137,9 @@ const renderProjectedColumn = ({
 }: {
   state: Pick<
     SelectStatementState,
-    'unreadableColumnConditions' | 'groupByExpressions'
+    | 'unreadableColumnConditions'
+    | 'unreadableColumnPlaceholders'
+    | 'groupByExpressions'
   >;
   alias: string;
   columnName: string;
@@ -148,7 +156,11 @@ const renderProjectedColumn = ({
     return `(${renderUnreadableColumn({ quotedColumn, unreadableConditions })})`;
   }
 
-  return renderUnreadableColumn({ quotedColumn, unreadableConditions });
+  return renderUnreadableColumn({
+    quotedColumn,
+    unreadableConditions,
+    placeholder: state.unreadableColumnPlaceholders?.[alias]?.[columnName],
+  });
 };
 
 export const normaliseColumnExpression = (
