@@ -17,9 +17,7 @@ import { v4 } from 'uuid';
 
 import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/constants/AiChatNewThreadDefaultRecipients';
 import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai-chat/composer/constants/AiChatRestoreEditorContentEventName';
-import { useAiChatModelId } from '@/ai-chat/hooks/useAiChatModelId';
 import { useAttachChatThreadToRecord } from '@/ai-chat/threads/hooks/useAttachChatThreadToRecord';
-import { useCanSendAiChatMessage } from '@/ai-chat/composer/hooks/useCanSendAiChatMessage';
 import { useGetBrowsingContext } from '@/ai-chat/hooks/useGetBrowsingContext';
 import { useOpenNewAiChatAsDirectMessage } from '@/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage';
 import { useOptimisticallyRestoreOnSend } from '@/ai-chat/composer/hooks/useOptimisticallyRestoreOnSend';
@@ -30,6 +28,7 @@ import { aiChatComposerQuotedMessageIdFamilyState } from '@/ai-chat/states/compo
 import { aiChatMessageAuthorLookupSelector } from '@/ai-chat/messages/states/selectors/aiChatMessageAuthorLookupSelector';
 import { aiChatThreadMessageFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadMessageFamilySelector';
 import { getAiChatMessageAuthor } from '@/ai-chat/messages/utils/getAiChatMessageAuthor';
+import { getCanSendAiChatMessage } from '@/ai-chat/composer/utils/getCanSendAiChatMessage';
 import { getAiChatMessageQuoteSource } from '@/ai-chat/composer/utils/getAiChatMessageQuoteSource';
 import { prependAiChatQuoteToText } from '@/ai-chat/composer/utils/prependAiChatQuoteToText';
 import { aiChatThreadReplyLastBrowsingContextFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyLastBrowsingContextFamilyState';
@@ -42,6 +41,7 @@ import { aiChatThreadReplyErrorFamilyState } from '@/ai-chat/states/reply/aiChat
 import { aiChatThreadIsFetchingMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadIsFetchingMessagesFamilyState';
 import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
 import { endAiChatReplyStatus } from '@/ai-chat/utils/endAiChatReplyStatus';
+import { getAiChatModelIdForRequest } from '@/ai-chat/utils/getAiChatModelIdForRequest';
 import { getAiChatReplyStatusUnlessStreaming } from '@/ai-chat/utils/getAiChatReplyStatusUnlessStreaming';
 import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
 import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
@@ -61,9 +61,8 @@ import { toAiChatError } from '@/ai-chat/utils/toAiChatError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { checkIfFeatureFlagIsEnabledOnWorkspace } from '@/workspace/utils/checkIfFeatureFlagIsEnabledOnWorkspace';
 import {
   markWorkspaceCreditsAvailable,
   markWorkspaceCreditsExhausted,
@@ -100,15 +99,6 @@ type AiChatMessageToSend = Pick<
 };
 
 export const useSendAiChatMessage = () => {
-  const { modelIdForRequest } = useAiChatModelId();
-  const aiModels = useAtomStateValue(aiModelsState);
-  const canSendAiChatMessage = useCanSendAiChatMessage();
-  const isAiChatInboxEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-  );
-  const isDirectMessageIdentityEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,
-  );
   const { openNewAiChatAsDirectMessage } = useOpenNewAiChatAsDirectMessage();
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticRestore } = useOptimisticallyRestoreOnSend();
@@ -248,7 +238,9 @@ export const useSendAiChatMessage = () => {
             text: contentToSend,
             messageId,
             browsingContext: isDirectMessage ? null : browsingContextToSend,
-            modelId: isDirectMessage ? undefined : modelIdForRequest,
+            modelId: isDirectMessage
+              ? undefined
+              : getAiChatModelIdForRequest(store),
             fileAttachments:
               fileAttachments.length > 0 ? fileAttachments : undefined,
             mentionedWorkspaceMemberIds:
@@ -258,7 +250,9 @@ export const useSendAiChatMessage = () => {
                   )
                 : undefined,
             channelId,
-            shouldAssistantReply: isNonEmptyArray(aiModels),
+            shouldAssistantReply: isNonEmptyArray(
+              store.get(aiModelsState.atom),
+            ),
             isAssistantParticipant:
               newInboxChatRecipients?.isAssistantParticipant,
             isAssistantMentioned,
@@ -384,8 +378,6 @@ export const useSendAiChatMessage = () => {
       store,
       getBrowsingContext,
       setAiChatComposerDrafts,
-      modelIdForRequest,
-      aiModels,
       refreshAiChatThreadPermissions,
       apolloClient,
       applyOptimisticRestore,
@@ -397,6 +389,11 @@ export const useSendAiChatMessage = () => {
   const sendAiChatMessage = useCallback(
     async ({ threadId, instanceId, onThreadChange }: AiChatSendTarget) => {
       const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
+      const currentWorkspace = store.get(currentWorkspaceState.atom);
+      const isAiChatInboxEnabled = checkIfFeatureFlagIsEnabledOnWorkspace(
+        FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+        currentWorkspace,
+      );
       const isNewChat = threadId === newAiChatThreadId;
       const isDirectMessage = store.get(
         aiChatThreadIsDirectMessageFamilySelector.selectorFamily(threadId),
@@ -502,7 +499,12 @@ export const useSendAiChatMessage = () => {
         return;
       }
 
-      if (!canSendAiChatMessage) {
+      if (
+        !getCanSendAiChatMessage({
+          aiModels: store.get(aiModelsState.atom),
+          isAiChatInboxEnabled,
+        })
+      ) {
         enqueueToast({
           status: 'error',
           children: t`No AI provider is configured on this instance.`,
@@ -513,7 +515,11 @@ export const useSendAiChatMessage = () => {
 
       const directMessageWorkspaceMemberId =
         getAiChatNewThreadDirectMessageWorkspaceMemberId({
-          isDirectMessageIdentityEnabled,
+          isDirectMessageIdentityEnabled:
+            checkIfFeatureFlagIsEnabledOnWorkspace(
+              FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,
+              currentWorkspace,
+            ),
           newInboxChatRecipients,
           isAssistantMentioned,
           channelId,
@@ -606,9 +612,6 @@ export const useSendAiChatMessage = () => {
       store,
       apolloClient,
       setAiChatComposerDrafts,
-      canSendAiChatMessage,
-      isAiChatInboxEnabled,
-      isDirectMessageIdentityEnabled,
       openNewAiChatAsDirectMessage,
       enqueueToast,
       sendToThread,

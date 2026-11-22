@@ -7,15 +7,12 @@ import { useSelectAiChatThreadFromNewChat } from '@/ai-chat/hooks/useSelectAiCha
 import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
 import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldFocusFamilyState';
 import { type AiChatPrepromptMode } from '@/ai-chat/types/AiChatPrepromptMode';
-import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 
 export const useApplyAiChatPreprompt = () => {
   const store = useStore();
   const { sendAiChatMessage } = useSendAiChatMessage();
   const { selectAiChatThreadFromNewChat } = useSelectAiChatThreadFromNewChat();
-  const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
-    WorkspaceActivationStatus.SUSPENDED,
-  );
 
   const applyAiChatPreprompt = async ({
     threadId,
@@ -29,6 +26,9 @@ export const useApplyAiChatPreprompt = () => {
     const isThreadSending = store.get(
       aiChatThreadReplyIsSendingFamilyState.atomFamily({ threadId }),
     );
+    const isWorkspaceSuspended =
+      store.get(currentWorkspaceState.atom)?.activationStatus ===
+      WorkspaceActivationStatus.SUSPENDED;
 
     if (mode === 'SEND' && (isThreadSending || isWorkspaceSuspended)) {
       return;
