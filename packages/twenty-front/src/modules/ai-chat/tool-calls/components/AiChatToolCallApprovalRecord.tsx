@@ -50,7 +50,6 @@ export const AiChatToolCallApprovalRecord = ({
           <RecordChip objectNameSingular={objectNameSingular} record={record} />
         </>
       ) : (
-        // approving still runs the call, which then fails, so the person must see why
         <StyledMissingRecord>
           {isDefined(error)
             ? t`This record could not be loaded.`

@@ -13,6 +13,16 @@ import { type RlsRule } from 'src/engine/permissions/internal/rls/utils/build-rl
 const sortByContent = <TEntry>(entries: TEntry[]): string[] =>
   entries.map((entry) => JSON.stringify(entry)).sort();
 
+const serializeWorkspaceMemberRelation = ({
+  workspaceMemberRelationFieldMetadataId,
+}: Pick<
+  RowLevelPermissionPredicate,
+  'workspaceMemberRelationFieldMetadataId'
+>): string[] =>
+  isDefined(workspaceMemberRelationFieldMetadataId)
+    ? [workspaceMemberRelationFieldMetadataId]
+    : [];
+
 const serializeRowLevelPermissionPredicateGroup = ({
   parentPredicateGroupId,
   predicates,
@@ -41,6 +51,7 @@ const serializeRowLevelPermissionPredicateGroup = ({
         predicate.value,
         predicate.workspaceMemberFieldMetadataId,
         predicate.workspaceMemberSubFieldName,
+        ...serializeWorkspaceMemberRelation(predicate),
       ]),
   ),
   predicateGroups: sortByContent(

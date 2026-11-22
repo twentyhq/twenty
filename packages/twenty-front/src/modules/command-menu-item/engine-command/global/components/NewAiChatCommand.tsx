@@ -9,12 +9,12 @@ export const NewAiChatCommand = () => {
   const { pathname } = useLocation();
   const shouldOpenInFullPage = isAiModePath(pathname);
   const { closeSidePanelMenu } = useSidePanelMenu();
-  const { switchToNewChat } = useSwitchToNewAiChatInInboxChannel({
+  const { switchToNewAiChat } = useSwitchToNewAiChatInInboxChannel({
     shouldOpenInFullPage,
   });
 
   const onExecute = () => {
-    switchToNewChat();
+    switchToNewAiChat();
 
     if (shouldOpenInFullPage) {
       void closeSidePanelMenu();

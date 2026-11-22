@@ -696,6 +696,11 @@ msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "Työtilan jäsen"
 
+#. js-lingui-id: /WlOrK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation needs the field to read on its related records"
+msgstr "Työtilan jäsenen relaatiolle on määritettävä kenttä, jota luetaan siihen liittyvistä tietueista"
+
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "A workspace-wide blocklist entry cannot target a workspace member."
@@ -3069,6 +3074,11 @@ msgstr "Valitse korvattava olemassa oleva aikajanatoimintotyyppi."
 #: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Valitse yksi henkilö tai yksi rooli, jonka kanssa jaetaan."
+
+#. js-lingui-id: IkeRn2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the field to read on the related records"
+msgstr "Valitse kenttä, jota luetaan liittyvistä tietueista"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5598,6 +5608,11 @@ msgstr "Kenttä \"{relationFieldName}\" ei ole relaatio"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "Kenttä \"{workspaceMemberFieldName}\" ei ole workspaceMember-kohteen kenttä, joten predikaatti ei koskaan olisi voimassa"
+
+#. js-lingui-id: moiE3i
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
+msgstr "Kenttä \"{workspaceMemberRelationFieldName}\" ei ole workspaceMember-objektin yksi-moneen-relaatio"
 
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
@@ -11132,6 +11147,11 @@ msgstr "Predikaatin arvo ei ole kelvollinen tälle operaandille"
 msgid "Predicates reaching a field through a relation are not enabled for this workspace"
 msgstr "Tämän työtilan relaatioiden kautta kenttään kohdistuvat predikaatit eivät ole käytössä"
 
+#. js-lingui-id: v5akl/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicates reading the current member through a relation are not enabled for this workspace"
+msgstr "Predikaatit, jotka lukevat nykyisen jäsenen relaation kautta, eivät ole käytössä tässä työtilassa"
+
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -12357,6 +12377,7 @@ msgid "Rule"
 msgstr "Sääntö"
 
 #. js-lingui-id: zhLAHJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Rules through a relation are not enabled for this workspace"
 msgstr "Relaation kautta käytettävät säännöt eivät ole käytössä tässä työtilassa"
@@ -15049,6 +15070,11 @@ msgstr "Tämä kenttä ei kuulu työtilan jäsenen kohteeseen"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "This field has no database column to index."
 msgstr "Tällä kentällä ei ole indeksoitavaa tietokantasaraketta."
+
+#. js-lingui-id: /62EJW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field is not a one-to-many relation of the workspace member object"
+msgstr "Tämä kenttä ei ole työtilan jäsenobjektin yksi-moneen-suhde"
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17963,6 +17989,12 @@ msgstr "Työtilan jäsenen asema"
 msgctxt "view.name"
 msgid "Workspace Member Record Page Fields"
 msgstr "Työtilan jäsenen tietuesivun kentät"
+
+#. js-lingui-id: VWPelK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Workspace member relation field metadata not found"
+msgstr "Työtilan jäsenrelaatiokentän metatietoja ei löytynyt"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

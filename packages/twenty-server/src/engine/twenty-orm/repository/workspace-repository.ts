@@ -2107,29 +2107,38 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         continue;
       }
 
+      const flatObjectMetadata =
+        this.options.flatObjectMetadataByObjectMetadataId(
+          tableShape.objectMetadataId,
+        );
       const columnEntries = Object.entries(
         getColumnNameToFieldMetadataIdMap(
-          this.options.flatObjectMetadataByObjectMetadataId(
-            tableShape.objectMetadataId,
-          ),
+          flatObjectMetadata,
           this.options.internalContext.flatFieldMetadataMaps,
         ),
       );
-
       const relationShapes = Object.values(tableShape.relationShapeByFieldName);
 
       for (const {
         fieldMetadataIds,
         sqlCondition,
+        placeholderFieldMetadataIds,
       } of unreadableFieldsSQLConditions) {
+        const unreadableColumnEntries = columnEntries.filter(
+          ([, fieldMetadataId]) => fieldMetadataIds.includes(fieldMetadataId),
+        );
+
         queryBuilder.makeColumnsUnreadableWhen({
           alias,
-          columnNames: columnEntries
+          columnNames: unreadableColumnEntries.map(
+            ([columnName]) => columnName,
+          ),
+          condition: sqlCondition,
+          placeholderColumnNames: unreadableColumnEntries
             .filter(([, fieldMetadataId]) =>
-              fieldMetadataIds.includes(fieldMetadataId),
+              placeholderFieldMetadataIds.includes(fieldMetadataId),
             )
             .map(([columnName]) => columnName),
-          condition: sqlCondition,
         });
         queryBuilder.makeRelationsUnreadableWhen({
           alias,

@@ -22,7 +22,7 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
 import { initializeNewAiChatStory } from '@/inbox/testing/initializeNewAiChatStory';
 import { hasRequestedWorkspaceSetupChatState } from '@/onboarding/states/hasRequestedWorkspaceSetupChatState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
+import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { AiChatNewThreadPageContent } from '@/ai-chat/instance/components/AiChatNewThreadPageContent';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -51,12 +51,12 @@ const WorkspaceSetupChatStory = () => {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    store.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    store.set(isWorkspaceSetupChatActiveState.atom, true);
     store.set(hasRequestedWorkspaceSetupChatState.atom, true);
     setIsReady(true);
 
     return () => {
-      store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+      store.set(isWorkspaceSetupChatActiveState.atom, false);
       store.set(hasRequestedWorkspaceSetupChatState.atom, false);
     };
   }, [store]);
@@ -330,7 +330,7 @@ export const WorkspaceSetupCompletion: Story = {
     ).toBeVisible();
     await expect(canvas.getByRole('textbox')).toBeVisible();
 
-    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+    jotaiStore.set(isWorkspaceSetupChatActiveState.atom, false);
 
     await waitFor(() =>
       expect(

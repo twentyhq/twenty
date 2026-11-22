@@ -28,9 +28,6 @@ export const aiChatThreadInboxStatusFamilySelector = createAtomFamilySelector<
         participant: participants.rowsByThreadId[threadId],
       });
 
-      // Before the rows load every thread would read as unread. The thread
-      // on screen is being read, so it never shows as unread while its read
-      // mark is on its way
       const isOnScreen = isDefined(visit) && !visit.isKeptUnread;
 
       return {

@@ -2,6 +2,7 @@ import { AI_CHAT_THREAD_STATUS_ACTION_BY_TRIAGE_STATUS } from '@/ai-chat/threads
 import { useInboxThreadTriage } from '@/inbox/hooks/useInboxThreadTriage';
 import { useExecuteAiChatThreadStatusAction } from '@/ai-chat/threads/hooks/useExecuteAiChatThreadStatusAction';
 import { aiChatChannelsState } from '@/ai-chat/threads/states/aiChatChannelsState';
+import { aiChatChannelFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatChannelFamilySelector';
 import { aiChatThreadPermissionsFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadPermissionsFamilySelector';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { type AiChatThreadTriageStatus } from '@/ai-chat/threads/types/AiChatThreadTriageStatus';
@@ -33,9 +34,13 @@ export const useInboxThreadDetailsStatus = (threadId: string) => {
       channels: aiChatChannels,
     }),
   });
+  const aiChatChannel = useAtomFamilySelectorValue(
+    aiChatChannelFamilySelector,
+    channelId,
+  );
   const scope = getAiChatThreadStatusScope({
     isInChannel,
-    channel: aiChatChannels?.find(({ id }) => id === channelId),
+    channel: aiChatChannel,
   });
   const { status, canChangeStatus } = getAiChatThreadDetailsStatusAccess({
     thread,

@@ -4,7 +4,6 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { ACCESS_GROUP_IDS_COLUMN_NAME } from 'src/engine/permissions/internal/record-permission-repository/constants/access-group-column-names.constant';
 import { RECORD_ACCESS_GROUP_TABLE_ALIAS } from 'src/engine/permissions/internal/record-permission-repository/constants/record-access-group-table-alias.constant';
 import { type RecordAccessGroupSQLCondition } from 'src/engine/permissions/internal/record-permission-repository/types/record-access-group-sql-condition.type';
-import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-computation-metadata-maps.type';
 import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
 import { buildRelatedRecordPathAccessGroupIdsExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-related-record-path-access-group-ids-expression.util';
@@ -20,7 +19,6 @@ export const buildRecomputeRecordAccessGroupIdsQuery = ({
   recordAccessGroupSQLConditions,
   accessGroupValueLookupIdsSQLConditions,
   resolvedRelatedRecordPaths,
-  accessGroups,
   metadataMaps,
   recordIds,
 }: {
@@ -29,7 +27,6 @@ export const buildRecomputeRecordAccessGroupIdsQuery = ({
   recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[];
   accessGroupValueLookupIdsSQLConditions: SQLCondition[];
   resolvedRelatedRecordPaths: ResolvedRelatedRecordPath[];
-  accessGroups: AccessGroup[];
   metadataMaps: Pick<
     RecordAccessGroupComputationMetadataMaps,
     'rolesPermissions' | 'featureFlagsMap'
@@ -43,7 +40,6 @@ export const buildRecomputeRecordAccessGroupIdsQuery = ({
         targetTableAlias: RECORD_ACCESS_GROUP_TABLE_ALIAS,
         pathIndex,
         resolvedPath,
-        accessGroups,
         metadataMaps,
       }),
     );

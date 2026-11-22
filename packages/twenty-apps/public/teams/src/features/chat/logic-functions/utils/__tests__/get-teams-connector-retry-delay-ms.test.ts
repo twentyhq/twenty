@@ -7,7 +7,7 @@ describe('getTeamsConnectorRetryDelayMs', () => {
     expect(
       getTeamsConnectorRetryDelayMs({
         attempt: 1,
-        retryAfter: '0',
+        retryAfterMs: 0,
         maxDelayMs: 500,
       }),
     ).toBe(0);

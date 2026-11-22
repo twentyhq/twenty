@@ -6,7 +6,6 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
-// The workspace object is replaced after each send, but authors only depend on its applications
 export const aiChatMessageAuthorLookupSelector =
   createAtomSelector<AiChatMessageAuthorLookup>({
     key: 'aiChatMessageAuthorLookupSelector',

@@ -1,5 +1,7 @@
 /* @license Enterprise */
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { type AccessGroupTypeHandler } from 'src/engine/permissions/internal/access-group/types/access-group-type-handler.type';
 import { findAccessGroupColumnOrThrow } from 'src/engine/permissions/internal/access-group/utils/find-access-group-column-or-throw.util';
 
@@ -24,12 +26,17 @@ export const RLS_MEMBER_VALUE_ACCESS_GROUP_TYPE_HANDLER: AccessGroupTypeHandler<
     buildValueLookupCondition: ({
       accessGroupAlias,
       valueExpressions,
-      buildKeyParameterName,
+      buildMemberFieldKeyParameterName,
+      residualMemberFieldValuesParameterName,
     }) =>
       `${accessGroupAlias}."memberFieldValues" = jsonb_build_object(${valueExpressions
         .map(
           (valueExpression, keyIndex) =>
-            `CAST(:${buildKeyParameterName(keyIndex)} AS text), ${valueExpression}`,
+            `CAST(:${buildMemberFieldKeyParameterName(keyIndex)} AS text), ${valueExpression}`,
         )
-        .join(', ')})`,
+        .join(', ')})${
+        isDefined(residualMemberFieldValuesParameterName)
+          ? ` || CAST(:${residualMemberFieldValuesParameterName} AS jsonb)`
+          : ''
+      }`,
   };

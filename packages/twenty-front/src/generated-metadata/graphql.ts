@@ -3061,7 +3061,7 @@ export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceFromInviteHashQuery = { findWorkspaceFromInviteHash: { __typename: 'Workspace', id: string, displayName: string | null, logo: string | null, allowImpersonation: boolean } };
+export type GetWorkspaceFromInviteHashQuery = { findWorkspaceFromInviteHash: { __typename: 'WorkspaceFromInviteHash', id: string, displayName: string | null, logo: string | null, allowImpersonation: boolean } };
 
 export type FindManyApplicationsForToolTableQueryVariables = Exact<{ [key: string]: never; }>;
 

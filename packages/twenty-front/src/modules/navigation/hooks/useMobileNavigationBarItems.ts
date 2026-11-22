@@ -56,7 +56,7 @@ export const useMobileNavigationBarItems = (): {
   const { pathname } = useLocation();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
-  const { switchToNewChat } = useSwitchToNewAiChatInInboxChannel();
+  const { switchToNewAiChat } = useSwitchToNewAiChatInInboxChannel();
   const isSettingsPage = useIsSettingsPage();
   const isSettingsDrawer = useIsSettingsDrawer();
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
@@ -176,7 +176,7 @@ export const useMobileNavigationBarItems = (): {
               onClick: () => {
                 closeSidePanelMenu();
                 closeSettingsDrawer();
-                switchToNewChat();
+                switchToNewAiChat();
               },
             },
           ]

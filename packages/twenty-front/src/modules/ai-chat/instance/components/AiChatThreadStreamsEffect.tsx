@@ -25,7 +25,6 @@ export const AiChatThreadStreamsEffect = () => {
   const apolloClient = useApolloClient();
   const isAiChatRuntimeEnabled = useIsAiChatRuntimeEnabled();
   const sseClient = useAtomStateValue(sseClientState);
-  // Only a resubscribe trigger: an access denial ends the subscription until the member's permissions change
   const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
   const aiChatRequiredThreadListeners = useAtomStateValue(
     aiChatRequiredThreadListenersState,
@@ -89,7 +88,6 @@ export const AiChatThreadStreamsEffect = () => {
       }
     }
 
-    // A chat moving to another view hands its stream over instead of restarting it
     for (const threadId of aiChatThreadStreams.keys()) {
       if (
         requiredThreadIds.includes(threadId) ||

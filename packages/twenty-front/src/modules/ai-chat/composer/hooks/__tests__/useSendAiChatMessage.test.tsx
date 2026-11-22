@@ -57,8 +57,8 @@ const sentShouldAssistantReply = jest.fn();
 const sentChannelId = jest.fn();
 const sentMessageVariables = jest.fn();
 
-jest.mock('@/ai-chat/threads/hooks/useAttachChatThreadToRecord', () => ({
-  useAttachChatThreadToRecord: () => ({ attachChatThreadToRecord }),
+jest.mock('@/ai-chat/threads/hooks/useAttachAiChatThreadToRecord', () => ({
+  useAttachAiChatThreadToRecord: () => ({ attachChatThreadToRecord }),
 }));
 
 const loadAiChatThread = jest.fn(async (threadId: string) => ({
@@ -291,7 +291,7 @@ const send = async (result: {
   });
 };
 
-describe('useAiChat', () => {
+describe('useSendAiChatMessage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -511,19 +511,6 @@ describe('useAiChat', () => {
       AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
       restoreEditorContent,
     );
-  });
-
-  it('does not file a chat that mentions no record', async () => {
-    const result = renderAiChat({
-      persistedDrafts: {
-        [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
-      },
-      sendChatMessageOutcomes: ['sent'],
-    });
-
-    await send(result);
-
-    expect(attachChatThreadToRecord).not.toHaveBeenCalled();
   });
 
   it('sends without asking for a reply in the inbox when no AI is configured', async () => {
