@@ -12,8 +12,7 @@ const StyledRelationWithUnloadedRecordCount = styled.div`
   width: 100%;
 `;
 
-const StyledUnloadedRecordCount = styled.div`
-  display: flex;
+const StyledUnloadedRecordCountChip = styled(Chip)`
   flex-shrink: 0;
 `;
 
@@ -33,19 +32,17 @@ export const RelationWithUnloadedRecordCount = ({
   return (
     <StyledRelationWithUnloadedRecordCount>
       {children}
-      <StyledUnloadedRecordCount>
-        <Chip
-          variant="soft"
-          tooltipContent={plural(unloadedRecordCount, {
-            one: '# more related record',
-            other: '# more related records',
-          })}
-          tooltipPlace="top"
-          alwaysShowTooltip
-        >
-          {`+${unloadedRecordCount}`}
-        </Chip>
-      </StyledUnloadedRecordCount>
+      <StyledUnloadedRecordCountChip
+        variant="soft"
+        tooltipContent={plural(unloadedRecordCount, {
+          one: '# more related record',
+          other: '# more related records',
+        })}
+        tooltipPlace="top"
+        alwaysShowTooltip
+      >
+        {`+${unloadedRecordCount}`}
+      </StyledUnloadedRecordCountChip>
     </StyledRelationWithUnloadedRecordCount>
   );
 };
