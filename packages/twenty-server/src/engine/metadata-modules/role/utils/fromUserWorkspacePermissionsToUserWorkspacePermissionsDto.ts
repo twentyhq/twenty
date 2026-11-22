@@ -3,7 +3,7 @@ import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildDeprecatedRestrictedFields } from 'src/engine/metadata-modules/role/utils/build-deprecated-restricted-fields.util';
-import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user-workspace-permissions.type';
+import { type CurrentUserWorkspacePermissions } from 'src/engine/permissions/types/current-user-workspace-permissions.type';
 import { type UserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/dtos/user-workspace-permissions.dto';
 import { type ObjectRecordsPermissionsDTO } from 'src/engine/permissions/dtos/object-records-permissions.dto';
 
@@ -26,7 +26,8 @@ const buildFieldLists = ({
 export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
   recordsPermissions,
   permissionFlags: rawSettingsPermissions,
-}: UserWorkspacePermissions): UserWorkspacePermissionsDto => {
+  objectMetadataIdsWithReadableRecords,
+}: CurrentUserWorkspacePermissions): UserWorkspacePermissionsDto => {
   const objectRecordsPermissions: ObjectRecordsPermissionsDTO[] = [];
 
   for (const [objectMetadataId, permissions] of Object.entries(
@@ -45,6 +46,8 @@ export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
       canDestroyAllRecords: permissions.canDestroyAllRecords,
       ...buildFieldLists(permissions),
       rowLevelRecordsPermissions: permissions.rowLevelRecordsPermissions,
+      canReadSomeRecords:
+        objectMetadataIdsWithReadableRecords.has(objectMetadataId),
     });
   }
 

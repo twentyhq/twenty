@@ -10,7 +10,6 @@ export const useToolCallApprovalFieldDefinitions = (
 ) => {
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
 
-  // a many-to-one relation is set through its foreign key
   const fieldDefinitionsByArgumentName = useMemo(
     () =>
       new Map(

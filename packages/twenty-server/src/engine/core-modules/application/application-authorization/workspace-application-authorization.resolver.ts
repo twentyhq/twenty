@@ -5,6 +5,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApplicationConnectedMemberCountDTO } from 'src/engine/core-modules/application/application-authorization/dtos/application-connected-member-count.dto';
 import { ApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/dtos/application-authorization.dto';
 import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
 import { toApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/utils/to-application-authorization-dto.util';
@@ -41,13 +42,27 @@ export class WorkspaceApplicationAuthorizationResolver {
   @Query(() => [ApplicationAuthorizationDTO])
   async workspaceApplicationAuthorizations(
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('applicationId', { type: () => UUIDScalarType, nullable: true })
+    applicationId?: string | null,
   ): Promise<ApplicationAuthorizationDTO[]> {
     const authorizations =
       await this.applicationAuthorizationService.findActiveAuthorizationsForWorkspace(
-        { workspaceId: workspace.id },
+        {
+          workspaceId: workspace.id,
+          applicationId: applicationId ?? undefined,
+        },
       );
 
     return authorizations.map(toApplicationAuthorizationDTO);
+  }
+
+  @Query(() => [ApplicationConnectedMemberCountDTO])
+  async workspaceApplicationConnectedMemberCounts(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<ApplicationConnectedMemberCountDTO[]> {
+    return await this.applicationAuthorizationService.countActiveAuthorizationsByApplicationForWorkspace(
+      { workspaceId: workspace.id },
+    );
   }
 
   @Mutation(() => Boolean)

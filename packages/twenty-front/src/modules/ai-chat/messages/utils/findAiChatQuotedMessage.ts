@@ -6,7 +6,6 @@ import { getAiChatMessageAuthor } from '@/ai-chat/messages/utils/getAiChatMessag
 import { getAiChatMessageQuoteExcerpt } from '@/ai-chat/messages/utils/getAiChatMessageQuoteExcerpt';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
-// a reply does not store the id it quotes, so the original is matched by the quoted text
 export const findAiChatQuotedMessage = ({
   messages,
   replyMessageId,
@@ -35,7 +34,6 @@ export const findAiChatQuotedMessage = ({
 
     const author = getAiChatMessageAuthor({ message, authorLookup });
 
-    // a placeholder name (former member, agent not loaded here) cannot be compared
     return !author.isNameResolved || author.name === quote.authorName;
   });
 };

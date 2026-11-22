@@ -264,7 +264,7 @@ describe('computeRoleRecordsPermissions', () => {
     ]);
   });
 
-  it('should keep the label identifier readable on an RLS rule', () => {
+  it('should let an RLS rule make the label identifier unreadable', () => {
     expect(
       findRule({
         objectPermissions: computeObjectPermissions({
@@ -278,7 +278,7 @@ describe('computeRoleRecordsPermissions', () => {
         }),
         ruleId: RLS_RULE_ID,
       })?.unreadableFields,
-    ).toEqual([]);
+    ).toEqual([LABEL_FIELD_ID]);
   });
 
   it('should give each rule the field lists of its own field permissions', () => {
