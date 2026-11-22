@@ -19,6 +19,7 @@ import {
   FieldMetadataType,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -182,7 +183,9 @@ describePermissionTestWorkspace({
         ({ nameSingular }) => nameSingular === 'workspaceMember',
       )?.id;
 
-      expect(workspaceMemberObjectMetadataId).toBeDefined();
+      if (!isDefined(workspaceMemberObjectMetadataId)) {
+        throw new Error('workspaceMember object metadata not found');
+      }
 
       const [accountObjectMetadataId, accountTeamMemberObjectMetadataId] =
         await Promise.all(
@@ -221,7 +224,7 @@ describePermissionTestWorkspace({
       });
       const accountTeamMemberMemberField = await createManyToOneField({
         objectMetadataId: accountTeamMemberObjectMetadataId,
-        targetObjectMetadataId: workspaceMemberObjectMetadataId as string,
+        targetObjectMetadataId: workspaceMemberObjectMetadataId,
         name: 'member',
         targetFieldLabel: 'Account teams',
       });
