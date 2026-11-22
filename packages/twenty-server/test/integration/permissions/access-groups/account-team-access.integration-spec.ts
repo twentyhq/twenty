@@ -1,370 +1,402 @@
 /* @license Enterprise */
-import { type AccessTestLogin } from 'test/integration/permissions/access-groups/utils/access-test-login.type';
-import { createAccessTestLogins } from 'test/integration/permissions/access-groups/utils/create-access-test-logins.util';
-import { createAccessTestManyToOneField } from 'test/integration/permissions/access-groups/utils/create-access-test-many-to-one-field.util';
-import { createAccessTestObject } from 'test/integration/permissions/access-groups/utils/create-access-test-object.util';
-import { createAccessTestRecord } from 'test/integration/permissions/access-groups/utils/create-access-test-record.util';
-import { findFieldMetadataIdByName } from 'test/integration/permissions/access-groups/utils/find-field-metadata-id-by-name.util';
-import { findInverseFieldMetadataId } from 'test/integration/permissions/access-groups/utils/find-inverse-field-metadata-id.util';
-import { findObjectMetadataIdByName } from 'test/integration/permissions/access-groups/utils/find-object-metadata-id-by-name.util';
-import { findOpportunityAccess } from 'test/integration/permissions/access-groups/utils/find-opportunity-access.util';
-import { listRecordIdsWithGraphql } from 'test/integration/permissions/access-groups/utils/list-record-ids-with-graphql.util';
-import { queryTestDatabase } from 'test/integration/permissions/access-groups/utils/query-test-database.util';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { createRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-relation-between-objects.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
-import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
+import { findAccessGroupPropagationProgress } from 'test/integration/metadata/suites/role/utils/find-access-group-propagation-progress.util';
 import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { addPermissionTestWorkspaceMember } from 'test/integration/permissions/utils/add-permission-test-workspace-member.util';
+import { describePermissionTestWorkspace } from 'test/integration/permissions/utils/describe-permission-test-workspace.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import {
   FeatureFlagKey,
+  FieldMetadataType,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
 import { type RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { type RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
 import { findAccessGroupValueLookups } from 'src/engine/permissions/internal/access-group/value-lookup/utils/find-access-group-value-lookups.util';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { type PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { type RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
+import { type DeferredWorkspaceOperationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-operation-runner.service';
 
-const workspaceId = SEED_APPLE_WORKSPACE_ID;
-const SCHEMA = `"${getWorkspaceSchemaName(workspaceId)}"`;
-const ACCOUNT_TEAM_MEMBER = 'accountTeamMember';
-const FEATURE_FLAGS = [
-  FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
-  FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
-  FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
-];
+describePermissionTestWorkspace({
+  name: 'account team access through a relation of the workspace member',
+  defineTests: ({ findWorkspace }) => {
+    const recordIds: Record<string, string> = {};
+    let accountTeamMembersFieldMetadataId: string;
+    let accessRecordAccountFieldMetadataId: string;
+    let teamMemberId: string;
+    let outsiderId: string;
 
-describe('Account team access (integration)', () => {
-  const metadataIds: Record<string, string> = {};
-  const recordIds: Record<string, string> = {};
-  let logins: Record<'teamMember' | 'outsider', AccessTestLogin>;
-
-  const syncAndRecompute = async () => {
-    await waitForAllJobsToFinish();
-    await getAppProviderByClassName<WorkspaceCacheService>(
-      'WorkspaceCacheService',
-    ).invalidateAndRecompute(workspaceId, [
-      'rolesPermissions',
-      'rlsWorkspaceMemberRelationValueMaps',
-    ]);
-    await getAppProviderByClassName<AccessGroupSyncService>(
-      'AccessGroupSyncService',
-    ).syncAccessGroups({ workspaceId });
-    await waitForAllJobsToFinish();
-  };
-
-  const findCompactAccessGroupIds = async (objectName: string) =>
-    queryTestDatabase<{ id: string; accessGroupIds: number[] }>({
-      sql: `SELECT "id", "_accessGroupIds" AS "accessGroupIds" FROM ${SCHEMA}."${objectName}" ORDER BY "id"`,
-    });
-
-  const countFullRecomputeSteps = async () => {
-    const [{ count }] = await queryTestDatabase<{ count: string }>({
-      sql: `SELECT count(*) FROM core."deferredWorkspaceOperation", jsonb_array_elements("payload"->'objectComputes') AS "step"
-        WHERE "workspaceId" = $1 AND "name" = 'compute_recordAccessGroupIds' AND NOT "step" ? 'accessGroupIdChanges'`,
-      parameters: [workspaceId],
-    });
-
-    return Number(count);
-  };
-
-  const createOpportunityWithNote = async ({
-    name,
-    accountId,
-  }: {
-    name: string;
-    accountId: string;
-  }) => {
-    recordIds[name] = await createAccessTestRecord({
-      objectName: 'opportunity',
-      data: { name, companyId: accountId },
-    });
-    recordIds[`${name}Note`] = await createAccessTestRecord({
-      objectName: 'note',
-      data: { title: `Note of ${name}` },
-    });
-    await createAccessTestRecord({
-      objectName: 'noteTarget',
-      data: {
-        noteId: recordIds[`${name}Note`],
-        targetOpportunityId: recordIds[name],
-      },
-    });
-  };
-
-  const joinAccountTeam = ({
-    login,
-    accountId,
-  }: {
-    login: Pick<AccessTestLogin, 'workspaceMemberId'>;
-    accountId: string;
-  }) =>
-    createAccessTestRecord({
-      objectName: ACCOUNT_TEAM_MEMBER,
-      data: { accountId, memberId: login.workspaceMemberId },
-    });
-
-  beforeAll(async () => {
-    for (const featureFlag of FEATURE_FLAGS) {
-      await updateFeatureFlag({
-        expectToFail: false,
-        featureFlag,
-        value: true,
-      });
-    }
-
-    metadataIds.opportunity = await findObjectMetadataIdByName({
-      workspaceId,
-      nameSingular: 'opportunity',
-    });
-    metadataIds.note = await findObjectMetadataIdByName({
-      workspaceId,
-      nameSingular: 'note',
-    });
-    metadataIds.noteTarget = await findObjectMetadataIdByName({
-      workspaceId,
-      nameSingular: 'noteTarget',
-    });
-    metadataIds.accountTeamMember = await createAccessTestObject({
-      nameSingular: ACCOUNT_TEAM_MEMBER,
-    });
-    metadataIds.accountTeamMemberAccount = await createAccessTestManyToOneField(
-      {
-        objectMetadataId: metadataIds.accountTeamMember,
-        targetObjectMetadataId: await findObjectMetadataIdByName({
-          workspaceId,
-          nameSingular: 'company',
+    const createRecord = async ({
+      objectName,
+      data,
+    }: {
+      objectName: string;
+      data: object;
+    }): Promise<string> => {
+      const response = await makeGraphqlApiRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: objectName,
+          gqlFields: 'id',
+          data,
         }),
-        name: 'account',
-        targetFieldLabel: 'Account team',
-      },
-    );
-    metadataIds.workspaceMemberAccountTeams = await findInverseFieldMetadataId({
-      fieldMetadataId: await createAccessTestManyToOneField({
-        objectMetadataId: metadataIds.accountTeamMember,
-        targetObjectMetadataId: await findObjectMetadataIdByName({
-          workspaceId,
-          nameSingular: 'workspaceMember',
-        }),
-        name: 'member',
-        targetFieldLabel: 'Account teams',
-      }),
-    });
-
-    const { data } = await createOneRole({
-      expectToFail: false,
-      input: {
-        label: `Account team ${v4()}`,
-        description: 'Account team',
-        canReadAllObjectRecords: true,
-        canUpdateAllObjectRecords: true,
-        canSoftDeleteAllObjectRecords: false,
-        canDestroyAllObjectRecords: false,
-      },
-    });
-    const roleId = data.createOneRole.id;
-
-    await revokeObjectRecordsPermissions({
-      roleId,
-      objectMetadataId: metadataIds.opportunity,
-    });
-    // Notes are only reached through the opportunities they are attached to
-    await revokeObjectRecordsPermissions({
-      roleId,
-      objectMetadataId: metadataIds.note,
-    });
-    await upsertRowLevelPermissionRules({
-      expectToFail: false,
-      input: {
-        roleId,
-        objectMetadataId: metadataIds.opportunity,
-        rules: [
-          {
-            canReadRecords: true,
-            canUpdateRecords: true,
-            predicates: [
-              {
-                id: v4(),
-                fieldMetadataId: await findFieldMetadataIdByName({
-                  objectMetadataId: metadataIds.opportunity,
-                  name: 'company',
-                }),
-                operand: RowLevelPermissionPredicateOperand.IS,
-                workspaceMemberRelationFieldMetadataId:
-                  metadataIds.workspaceMemberAccountTeams,
-                workspaceMemberFieldMetadataId:
-                  metadataIds.accountTeamMemberAccount,
-              },
-            ],
-          },
-        ],
-      },
-    });
-
-    const [teamMember, outsider] = await createAccessTestLogins({
-      workspaceId,
-      count: 2,
-    });
-
-    logins = { teamMember, outsider };
-
-    for (const login of Object.values(logins)) {
-      await updateWorkspaceMemberRole({
-        expectToFail: false,
-        input: { workspaceMemberId: login.workspaceMemberId, roleId },
-      });
-    }
-
-    recordIds.accountX = await createAccessTestRecord({
-      objectName: 'company',
-      data: { name: 'Account X' },
-    });
-    recordIds.accountY = await createAccessTestRecord({
-      objectName: 'company',
-      data: { name: 'Account Y' },
-    });
-    await createOpportunityWithNote({
-      name: 'opportunityX',
-      accountId: recordIds.accountX,
-    });
-    await createOpportunityWithNote({
-      name: 'opportunityY',
-      accountId: recordIds.accountY,
-    });
-    await joinAccountTeam({
-      login: logins.teamMember,
-      accountId: recordIds.accountX,
-    });
-    await syncAndRecompute();
-
-    const computationService =
-      getAppProviderByClassName<RecordAccessGroupComputationService>(
-        'RecordAccessGroupComputationService',
+        findWorkspace().adminAccessToken,
       );
 
-    for (const objectMetadataId of [
-      metadataIds.opportunity,
-      metadataIds.noteTarget,
-      metadataIds.note,
-    ]) {
-      await computationService.recomputeRecordAccessGroupIdsOfAllObjectRecords({
-        workspaceId,
+      expect(response.body.errors).toBeUndefined();
+
+      return Object.values<{ id: string }>(response.body.data)[0].id;
+    };
+
+    const createManyToOneField = async ({
+      objectMetadataId,
+      targetObjectMetadataId,
+      name,
+      targetFieldLabel,
+    }: {
+      objectMetadataId: string;
+      targetObjectMetadataId: string;
+      name: string;
+      targetFieldLabel: string;
+    }) =>
+      createRelationBetweenObjects({
         objectMetadataId,
+        targetObjectMetadataId,
+        type: FieldMetadataType.RELATION,
+        relationType: RelationType.MANY_TO_ONE,
+        name,
+        label: name,
+        targetFieldLabel,
+        targetFieldIcon: 'IconUsers',
+        token: findWorkspace().adminAccessToken,
       });
-    }
-  }, 300_000);
 
-  it('should look up the account team rule by value', async () => {
-    const metadataMaps =
-      await getAppProviderByClassName<RecordAccessGroupMetadataMapsService>(
-        'RecordAccessGroupMetadataMapsService',
-      ).findAfterEvictingLocalCache(workspaceId);
+    const createAccessRecordOfAccount = (accountId: string) =>
+      createRecord({
+        objectName: findWorkspace().objectNameSingular,
+        data: { accountId },
+      });
 
-    expect(
-      findAccessGroupValueLookups({
-        flatObjectMetadata: findFlatEntityByIdInFlatEntityMapsOrThrow({
-          flatEntityId: metadataIds.opportunity,
-          flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
+    const joinAccountTeam = ({
+      workspaceMemberId,
+      accountId,
+    }: {
+      workspaceMemberId: string;
+      accountId: string;
+    }) =>
+      createRecord({
+        objectName: 'accountTeamMember',
+        data: { accountId, memberId: workspaceMemberId },
+      });
+
+    const syncAccessGroups = async () => {
+      await waitForAllJobsToFinish();
+      await getAppProviderByClassName<AccessGroupSyncService>(
+        'AccessGroupSyncService',
+      ).syncAccessGroups({ workspaceId: findWorkspace().workspaceId });
+    };
+
+    const runPendingComputes = () =>
+      getAppProviderByClassName<DeferredWorkspaceOperationRunnerService>(
+        'DeferredWorkspaceOperationRunnerService',
+      ).runPendingOperations(findWorkspace().workspaceId);
+
+    const findReadableRecordIds = async ({
+      workspaceMemberId,
+      candidateRecordIds,
+    }: {
+      workspaceMemberId: string;
+      candidateRecordIds: string[];
+    }): Promise<string[]> => {
+      const workspace = findWorkspace();
+      const principals =
+        await getAppProviderByClassName<PrincipalPermissionsReadService>(
+          'PrincipalPermissionsReadService',
+        ).resolvePermissionsPrincipals({
+          authContext: await resolveWorkspaceMemberAuthContext({
+            workspaceId: workspace.workspaceId,
+            workspaceMemberId,
+          }),
+        });
+      const recordPermissionsReadService =
+        getAppProviderByClassName<RecordPermissionsReadService>(
+          'RecordPermissionsReadService',
+        );
+      const readableRecordIds: string[] = [];
+
+      for (const recordId of candidateRecordIds) {
+        if (
+          await recordPermissionsReadService.canAccessRecords({
+            principals,
+            objectMetadataId: workspace.objectMetadataId,
+            recordIds: [recordId],
+            operationType: 'read',
+          })
+        ) {
+          readableRecordIds.push(recordId);
+        }
+      }
+
+      return readableRecordIds;
+    };
+
+    beforeAll(async () => {
+      const workspace = findWorkspace();
+      const token = workspace.adminAccessToken;
+
+      for (const featureFlag of [
+        FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
+        FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
+      ]) {
+        await updateFeatureFlag({
+          featureFlag,
+          value: true,
+          workspaceId: workspace.workspaceId,
+          expectToFail: false,
+        });
+      }
+
+      const { objects } = await findManyObjectMetadata<{
+        id: string;
+        nameSingular: string;
+      }>({
+        input: { filter: {}, paging: { first: 1000 } },
+        gqlFields: 'id nameSingular',
+        expectToFail: false,
+        token,
+      });
+      const workspaceMemberObjectMetadataId = objects.find(
+        ({ nameSingular }) => nameSingular === 'workspaceMember',
+      )?.id;
+
+      expect(workspaceMemberObjectMetadataId).toBeDefined();
+
+      const [accountObjectMetadataId, accountTeamMemberObjectMetadataId] =
+        await Promise.all(
+          ['account', 'accountTeamMember'].map(async (nameSingular) => {
+            const { data } = await createOneObjectMetadata({
+              input: {
+                nameSingular,
+                namePlural: `${nameSingular}s`,
+                labelSingular: nameSingular,
+                labelPlural: `${nameSingular}s`,
+                icon: 'IconUsers',
+              },
+              gqlFields: 'id',
+              expectToFail: false,
+              token,
+            });
+
+            return data.createOneObject.id;
+          }),
+        );
+
+      accessRecordAccountFieldMetadataId = (
+        await createManyToOneField({
+          objectMetadataId: workspace.objectMetadataId,
+          targetObjectMetadataId: accountObjectMetadataId,
+          name: 'account',
+          targetFieldLabel: 'Access records',
+        })
+      ).id;
+
+      const accountTeamMemberAccountField = await createManyToOneField({
+        objectMetadataId: accountTeamMemberObjectMetadataId,
+        targetObjectMetadataId: accountObjectMetadataId,
+        name: 'account',
+        targetFieldLabel: 'Account team',
+      });
+      const accountTeamMemberMemberField = await createManyToOneField({
+        objectMetadataId: accountTeamMemberObjectMetadataId,
+        targetObjectMetadataId: workspaceMemberObjectMetadataId as string,
+        name: 'member',
+        targetFieldLabel: 'Account teams',
+      });
+
+      accountTeamMembersFieldMetadataId =
+        accountTeamMemberMemberField.relation.targetFieldMetadata.id;
+
+      const { data } = await createOneRole({
+        input: {
+          label: 'Account team',
+          canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: false,
+          canSoftDeleteAllObjectRecords: false,
+          canDestroyAllObjectRecords: false,
+          canBeAssignedToUsers: true,
+        },
+        gqlFields: 'id',
+        expectToFail: false,
+        token,
+      });
+      const roleId: string = data.createOneRole.id;
+
+      await revokeObjectRecordsPermissions({
+        roleId,
+        objectMetadataId: workspace.objectMetadataId,
+        token,
+      });
+      await upsertRowLevelPermissionRules({
+        input: {
+          roleId,
+          objectMetadataId: workspace.objectMetadataId,
+          rules: [
+            {
+              canReadRecords: true,
+              predicates: [
+                {
+                  id: v4(),
+                  fieldMetadataId: accessRecordAccountFieldMetadataId,
+                  operand: RowLevelPermissionPredicateOperand.IS,
+                  workspaceMemberRelationFieldMetadataId:
+                    accountTeamMembersFieldMetadataId,
+                  workspaceMemberFieldMetadataId:
+                    accountTeamMemberAccountField.id,
+                },
+              ],
+            },
+          ],
+        },
+        expectToFail: false,
+        token,
+      });
+
+      [teamMemberId, outsiderId] = await Promise.all(
+        [0, 1].map(() =>
+          addPermissionTestWorkspaceMember({
+            workspaceId: workspace.workspaceId,
+            workspaceOrigin: workspace.workspaceOrigin,
+            inviteHash: workspace.inviteHash,
+            roleId,
+            adminAccessToken: token,
+          }),
+        ),
+      );
+
+      recordIds.accountX = await createRecord({
+        objectName: 'account',
+        data: { name: 'Account X' },
+      });
+      recordIds.accountY = await createRecord({
+        objectName: 'account',
+        data: { name: 'Account Y' },
+      });
+      recordIds.recordOfX = await createAccessRecordOfAccount(
+        recordIds.accountX,
+      );
+      recordIds.recordOfY = await createAccessRecordOfAccount(
+        recordIds.accountY,
+      );
+      await joinAccountTeam({
+        workspaceMemberId: teamMemberId,
+        accountId: recordIds.accountX,
+      });
+      await syncAccessGroups();
+      await runPendingComputes();
+      await getAppProviderByClassName<RecordAccessGroupComputationService>(
+        'RecordAccessGroupComputationService',
+      ).recomputeRecordAccessGroupIdsOfAllObjectRecords({
+        workspaceId: workspace.workspaceId,
+        objectMetadataId: workspace.objectMetadataId,
+      });
+    });
+
+    it('should look up the account team rule by value', async () => {
+      const workspace = findWorkspace();
+      const metadataMaps =
+        await getAppProviderByClassName<RecordAccessGroupMetadataMapsService>(
+          'RecordAccessGroupMetadataMapsService',
+        ).findAfterEvictingLocalCache(workspace.workspaceId);
+
+      expect(
+        findAccessGroupValueLookups({
+          flatObjectMetadata: findFlatEntityByIdInFlatEntityMapsOrThrow({
+            flatEntityId: workspace.objectMetadataId,
+            flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
+          }),
+          metadataMaps,
+        }).flatMap(({ type, keys }) =>
+          keys.map(({ columnName }) => `${type}:${columnName}`),
+        ),
+      ).toEqual(['RLS_MEMBER_VALUE:accountId']);
+    });
+
+    it('should let a team member read the records of their accounts only', async () => {
+      const candidateRecordIds = [recordIds.recordOfX, recordIds.recordOfY];
+
+      expect(
+        await findReadableRecordIds({
+          workspaceMemberId: teamMemberId,
+          candidateRecordIds,
         }),
-        metadataMaps,
-      }).flatMap(({ type, keys }) =>
-        keys.map(({ columnName }) => `${type}:${columnName}`),
-      ),
-    ).toEqual(['RLS_MEMBER_VALUE:companyId']);
-  });
-
-  it('should give team members access to the opportunities and notes of their accounts', async () => {
-    const opportunityIds = [recordIds.opportunityX, recordIds.opportunityY];
-
-    expect(
-      await findOpportunityAccess({ login: logins.teamMember, opportunityIds }),
-    ).toEqual({
-      [recordIds.opportunityX]: 'Edit',
-      [recordIds.opportunityY]: 'None',
-    });
-    expect(
-      await findOpportunityAccess({ login: logins.outsider, opportunityIds }),
-    ).toEqual({
-      [recordIds.opportunityX]: 'None',
-      [recordIds.opportunityY]: 'None',
-    });
-    expect(
-      await listRecordIdsWithGraphql({
-        login: logins.teamMember,
-        objectName: 'note',
-        ids: [recordIds.opportunityXNote, recordIds.opportunityYNote],
-      }),
-    ).toEqual([recordIds.opportunityXNote]);
-  });
-
-  it('should grant a member joining an existing team without recomputing opportunities', async () => {
-    const opportunityAccessGroupIdsBefore =
-      await findCompactAccessGroupIds('opportunity');
-    const fullRecomputeStepsBefore = await countFullRecomputeSteps();
-
-    await joinAccountTeam({
-      login: logins.outsider,
-      accountId: recordIds.accountX,
-    });
-    await syncAndRecompute();
-
-    expect(await countFullRecomputeSteps()).toBe(fullRecomputeStepsBefore);
-    expect(await findCompactAccessGroupIds('opportunity')).toEqual(
-      opportunityAccessGroupIdsBefore,
-    );
-    expect(
-      await findOpportunityAccess({
-        login: logins.outsider,
-        opportunityIds: [recordIds.opportunityX],
-      }),
-    ).toEqual({ [recordIds.opportunityX]: 'Edit' });
-  });
-
-  it('should only change the records of an account getting its first team member', async () => {
-    const accountZ = await createAccessTestRecord({
-      objectName: 'company',
-      data: { name: 'Account Z' },
+      ).toEqual([recordIds.recordOfX]);
+      expect(
+        await findReadableRecordIds({
+          workspaceMemberId: outsiderId,
+          candidateRecordIds,
+        }),
+      ).toEqual([]);
     });
 
-    await createOpportunityWithNote({
-      name: 'opportunityZ',
-      accountId: accountZ,
+    it('should let a member joining an existing team read its records without planning any compute', async () => {
+      await joinAccountTeam({
+        workspaceMemberId: outsiderId,
+        accountId: recordIds.accountX,
+      });
+      await syncAccessGroups();
+
+      const { data } = await findAccessGroupPropagationProgress({
+        expectToFail: false,
+        token: findWorkspace().adminAccessToken,
+      });
+
+      expect(data.accessGroupPropagationProgress.isInProgress).toBe(false);
+      expect(
+        await findReadableRecordIds({
+          workspaceMemberId: outsiderId,
+          candidateRecordIds: [recordIds.recordOfX, recordIds.recordOfY],
+        }),
+      ).toEqual([recordIds.recordOfX]);
     });
-    await syncAndRecompute();
 
-    const fullRecomputeStepsBefore = await countFullRecomputeSteps();
-    const otherOpportunitiesBefore = (
-      await findCompactAccessGroupIds('opportunity')
-    ).filter(({ id }) => id !== recordIds.opportunityZ);
+    it('should let the first team member of an account read its records once the sync applies its group', async () => {
+      recordIds.accountZ = await createRecord({
+        objectName: 'account',
+        data: { name: 'Account Z' },
+      });
+      recordIds.recordOfZ = await createAccessRecordOfAccount(
+        recordIds.accountZ,
+      );
+      await joinAccountTeam({
+        workspaceMemberId: teamMemberId,
+        accountId: recordIds.accountZ,
+      });
+      await syncAccessGroups();
+      await runPendingComputes();
 
-    await joinAccountTeam({ login: logins.teamMember, accountId: accountZ });
-    await syncAndRecompute();
-
-    expect(await countFullRecomputeSteps()).toBe(fullRecomputeStepsBefore);
-    expect(
-      (await findCompactAccessGroupIds('opportunity')).filter(
-        ({ id }) => id !== recordIds.opportunityZ,
-      ),
-    ).toEqual(otherOpportunitiesBefore);
-    expect(
-      await findOpportunityAccess({
-        login: logins.teamMember,
-        opportunityIds: [recordIds.opportunityZ],
-      }),
-    ).toEqual({ [recordIds.opportunityZ]: 'Edit' });
-    expect(
-      await listRecordIdsWithGraphql({
-        login: logins.teamMember,
-        objectName: 'note',
-        ids: [recordIds.opportunityZNote],
-      }),
-    ).toEqual([recordIds.opportunityZNote]);
-  });
+      expect(
+        await findReadableRecordIds({
+          workspaceMemberId: teamMemberId,
+          candidateRecordIds: [
+            recordIds.recordOfX,
+            recordIds.recordOfY,
+            recordIds.recordOfZ,
+          ],
+        }),
+      ).toEqual([recordIds.recordOfX, recordIds.recordOfZ]);
+    });
+  },
 });
