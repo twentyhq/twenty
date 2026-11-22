@@ -103,6 +103,26 @@ describe('startTeamsAssistantStream', () => {
     ]);
   });
 
+  it('should stop update retries once the final message is sent', async () => {
+    const writer = await startTeamsAssistantStream({
+      ...CONVERSATION,
+      text: 'Thinking…',
+    });
+
+    await writer.update('Digging through your CRM…');
+
+    const [[{ retryAbortSignal }]] = requestConnectorMock.mock.calls;
+
+    expect(retryAbortSignal.aborted).toBe(false);
+
+    await writer.finish('Acme has 3 open deals.');
+
+    expect(retryAbortSignal.aborted).toBe(true);
+    expect(
+      requestConnectorMock.mock.calls[1][0].retryAbortSignal,
+    ).toBeUndefined();
+  });
+
   it('should not open a stream when Teams rejects the first update', async () => {
     sendActivityMock.mockRejectedValue(
       new Error('403 ContentStreamNotAllowed'),

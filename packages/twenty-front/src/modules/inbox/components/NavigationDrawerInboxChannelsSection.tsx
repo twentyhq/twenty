@@ -38,7 +38,7 @@ export const NavigationDrawerInboxChannelsSection = ({
   const { openNavigationSection } = useNavigationSection(
     INBOX_CHANNELS_NAVIGATION_SECTION_ID,
   );
-  const { createAgentChatChannel } = useCreateInboxChannel();
+  const { createInboxChannel } = useCreateInboxChannel();
   const canManageChannels = useHasPermissionFlag(
     PermissionFlagType.AI_SETTINGS,
   );
@@ -51,7 +51,6 @@ export const NavigationDrawerInboxChannelsSection = ({
     return null;
   }
 
-  // Listed only for who manages channels, so they keep a way to set them up
   const inaccessibleChannels = (aiChatChannels ?? []).filter(
     ({ isAccessible }) => !isAccessible,
   );
@@ -70,7 +69,7 @@ export const NavigationDrawerInboxChannelsSection = ({
       return;
     }
 
-    const channelId = await createAgentChatChannel(trimmedName);
+    const channelId = await createInboxChannel(trimmedName);
 
     if (isDefined(channelId)) {
       openInboxChannel({ channelId });

@@ -125,9 +125,7 @@ export const WithImageFiles: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    // Text includes file count: "Generated Files (2)"
     expect(await canvas.findByText(/Generated Files/)).toBeInTheDocument();
-    // Filenames may be truncated, check by title attribute
     expect(await canvas.findByTitle('revenue_chart.png')).toBeInTheDocument();
     expect(await canvas.findByTitle('pie_chart.png')).toBeInTheDocument();
   },
@@ -166,7 +164,6 @@ print("Files exported successfully!")`,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    // Filenames may be truncated, check by title attribute
     expect(await canvas.findByTitle('report.csv')).toBeInTheDocument();
     expect(await canvas.findByTitle('data.json')).toBeInTheDocument();
   },

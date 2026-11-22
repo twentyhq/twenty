@@ -7,7 +7,7 @@ import { GRAPH_RETRYABLE_STATUSES } from 'src/features/transcripts/logic-functio
 import { GraphRequestError } from 'src/features/transcripts/logic-functions/types/graph-request-error';
 import { type GraphRequestMethod } from 'src/features/transcripts/logic-functions/types/graph-request-method.type';
 import { resolveGraphUrlOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-graph-url-or-throw';
-import { sleepForMilliseconds } from 'src/features/transcripts/logic-functions/utils/sleep-for-milliseconds';
+import { fetchWithRetries } from 'src/utils/fetch-with-retries';
 
 type GraphErrorBody = {
   error?: {
@@ -24,49 +24,37 @@ type GraphRequest = {
   body?: object;
 };
 
-const fetchGraphResponseWithRetries = async ({
+export const fetchGraphResponse = async ({
   accessToken,
   url,
   accept,
   method,
   body,
-  attempt,
-}: GraphRequest & { attempt: number }): Promise<Response> => {
-  const response = await fetch(url, {
-    method,
-    redirect: 'error',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      Accept: accept,
-      ...(isDefined(body) ? { 'Content-Type': 'application/json' } : {}),
-    },
-    body: isDefined(body) ? JSON.stringify(body) : undefined,
+}: GraphRequest): Promise<Response> => {
+  const resolvedUrl = resolveGraphUrlOrThrow(url);
+
+  const response = await fetchWithRetries({
+    sendRequest: () =>
+      fetch(resolvedUrl, {
+        method,
+        redirect: 'error',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          Accept: accept,
+          ...(isDefined(body) ? { 'Content-Type': 'application/json' } : {}),
+        },
+        body: isDefined(body) ? JSON.stringify(body) : undefined,
+      }),
+    maxAttempts: GRAPH_REQUEST_MAX_ATTEMPTS,
+    isRetryableStatus: (status) => GRAPH_RETRYABLE_STATUSES.has(status),
+    getRetryDelayMs: ({ attempt, retryAfterMs }) =>
+      isDefined(retryAfterMs) && retryAfterMs > 0
+        ? retryAfterMs
+        : GRAPH_REQUEST_RETRY_BASE_DELAY_MILLISECONDS * 2 ** attempt,
   });
 
   if (response.ok) {
     return response;
-  }
-
-  if (
-    GRAPH_RETRYABLE_STATUSES.has(response.status) &&
-    attempt + 1 < GRAPH_REQUEST_MAX_ATTEMPTS
-  ) {
-    const retryAfterSeconds = Number(response.headers.get('Retry-After'));
-
-    await sleepForMilliseconds(
-      retryAfterSeconds > 0
-        ? retryAfterSeconds * 1_000
-        : GRAPH_REQUEST_RETRY_BASE_DELAY_MILLISECONDS * 2 ** attempt,
-    );
-
-    return fetchGraphResponseWithRetries({
-      accessToken,
-      url,
-      accept,
-      method,
-      body,
-      attempt: attempt + 1,
-    });
   }
 
   const errorBody: GraphErrorBody = await response.json().catch(() => ({}));
@@ -83,13 +71,3 @@ const fetchGraphResponseWithRetries = async ({
     innerErrorCode,
   });
 };
-
-export const fetchGraphResponse = ({
-  url,
-  ...request
-}: GraphRequest): Promise<Response> =>
-  fetchGraphResponseWithRetries({
-    ...request,
-    url: resolveGraphUrlOrThrow(url),
-    attempt: 0,
-  });
