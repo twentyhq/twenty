@@ -56,18 +56,13 @@ export class UpdatePageLayoutWidgetWithIdInput {
   @IsOptional()
   configuration: AllPageLayoutWidgetConfiguration;
 
-  @Field(() => GraphQLJSON, {
-    nullable: true,
-    deprecationReason: 'Use conditionalAvailability instead',
-  })
+  // TODO(@neo773): conditionalDisplay and conditionalAvailabilityExpression are legacy; no deprecationReason here because the front type generation drops deprecated input fields and it still sends null to empty them. Removed with the columns
+  @Field(() => GraphQLJSON, { nullable: true })
   @IsObject()
   @IsOptional()
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
 
-  @Field(() => String, {
-    nullable: true,
-    deprecationReason: 'Use conditionalAvailability instead',
-  })
+  @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
   conditionalAvailabilityExpression?: string | null;
