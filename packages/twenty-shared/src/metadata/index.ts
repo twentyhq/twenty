@@ -17,12 +17,12 @@ export { DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS } from './constants/default-rela
 export { IDENTIFIER_MAX_CHAR_LENGTH } from './constants/identifier-max-char-length.constant';
 export { RESERVED_METADATA_NAME_KEYWORDS } from './constants/reserved-metadata-name-keywords.constant';
 export { RESERVED_SYSTEM_FIELD_TYPE_BY_NAME } from './constants/reserved-system-field-type-by-name.constant';
+export { STANDARD_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS } from './constants/standard-command-menu-item-universal-identifiers.constant';
 export { STANDARD_OBJECT_FIELDS } from './constants/standard-object-fields.constant';
 export type { StandardObjectWithUniversalIdentifierName } from './constants/standard-object-universal-identifiers.constant';
 export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from './constants/standard-object-universal-identifiers.constant';
 export { STANDARD_OBJECTS } from './constants/standard-object.constant';
 export { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from './constants/standard-page-layout-universal-identifiers.constant';
-export { STANDARD_PINNABLE_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS } from './constants/standard-pinnable-command-menu-item-universal-identifiers.constant';
 export type { AllMetadataName } from './types/AllMetadataName';
 export type {
   FailedMetadataValidationError,
