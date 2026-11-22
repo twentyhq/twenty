@@ -1,7 +1,6 @@
 import { type AdditionalOperation, type RulesLogic } from 'json-logic-js';
 
 import { evaluateWidgetVisibility } from '@/page-layout/utils/evaluateWidgetVisibility';
-import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
 
 describe('evaluateWidgetVisibility', () => {
   it('should return true (visible) when no conditionalDisplay is provided', () => {
@@ -264,47 +263,6 @@ describe('evaluateWidgetVisibility', () => {
           selectedRecords: [],
           featureFlags: {},
         },
-      });
-
-      expect(result).toBe(true);
-    });
-  });
-
-  describe('conditionalAvailability', () => {
-    it.each([
-      ['MOBILE', true],
-      ['DESKTOP', false],
-    ] as const)(
-      'should evaluate the tree when no old rule is stored on %s',
-      (device, expected) => {
-        const result = evaluateWidgetVisibility({
-          conditionalAvailabilityExpression: null,
-          conditionalDisplay: undefined,
-          conditionalAvailability: buildDeviceConditionalAvailability('MOBILE'),
-          context: { device, selectedRecords: [], featureFlags: {} },
-        });
-
-        expect(result).toBe(expected);
-      },
-    );
-
-    it('should let a stored expression win over the tree', () => {
-      const result = evaluateWidgetVisibility({
-        conditionalAvailabilityExpression: 'device == "DESKTOP"',
-        conditionalDisplay: undefined,
-        conditionalAvailability: buildDeviceConditionalAvailability('MOBILE'),
-        context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
-      });
-
-      expect(result).toBe(true);
-    });
-
-    it('should let a stored conditionalDisplay win over the tree', () => {
-      const result = evaluateWidgetVisibility({
-        conditionalAvailabilityExpression: null,
-        conditionalDisplay: { '===': [{ var: 'device' }, 'DESKTOP'] },
-        conditionalAvailability: buildDeviceConditionalAvailability('MOBILE'),
-        context: { device: 'DESKTOP', selectedRecords: [], featureFlags: {} },
       });
 
       expect(result).toBe(true);

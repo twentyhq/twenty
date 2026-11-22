@@ -2,8 +2,9 @@ import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayo
 import { WidgetVisibilityOptionsList } from '@/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityOptionsList';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
-import { getWidgetVisibilityOptionId } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityOptionId';
-import { getWidgetVisibilityPropertiesFromOptionId } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityPropertiesFromOptionId';
+import { type WidgetVisibilityDevice } from '@/side-panel/pages/page-layout/types/WidgetVisibilityDevice';
+import { getWidgetVisibilityDevice } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityDevice';
+import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
 import { isDefined } from 'twenty-shared/utils';
 
 export const WidgetVisibilityDropdownContent = () => {
@@ -13,21 +14,26 @@ export const WidgetVisibilityDropdownContent = () => {
 
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
 
-  const handleSelectVisibility = (optionId: string) => {
+  const handleSelectDevice = (device: WidgetVisibilityDevice) => {
     if (!isDefined(widgetInEditMode)) {
       return;
     }
 
-    updatePageLayoutWidget(
-      widgetInEditMode.id,
-      getWidgetVisibilityPropertiesFromOptionId(optionId),
-    );
+    updatePageLayoutWidget(widgetInEditMode.id, {
+      conditionalAvailability:
+        device === 'ANY_DEVICE'
+          ? null
+          : buildDeviceConditionalAvailability(device),
+      // TODO(@neo773): a widget holds its rule in one place, so a new tree empties the two legacy fields; stop one release after stored rules are converted to trees
+      conditionalAvailabilityExpression: null,
+      conditionalDisplay: null,
+    });
   };
 
   return (
     <WidgetVisibilityOptionsList
-      currentOptionId={getWidgetVisibilityOptionId(widgetInEditMode)}
-      onSelectVisibility={handleSelectVisibility}
+      selectedDevice={getWidgetVisibilityDevice(widgetInEditMode)}
+      onSelectDevice={handleSelectDevice}
     />
   );
 };

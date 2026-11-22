@@ -1,6 +1,6 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useVisibilityLabels } from '@/side-panel/pages/page-layout/hooks/useVisibilityLabels';
-import { getWidgetVisibilityOptionId } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityOptionId';
+import { getWidgetVisibilityDevice } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityDevice';
 
 export const useTranslatedVisibilityLabel = (
   widget:
@@ -12,5 +12,5 @@ export const useTranslatedVisibilityLabel = (
 ): string => {
   const visibilityLabels = useVisibilityLabels();
 
-  return visibilityLabels[getWidgetVisibilityOptionId(widget)];
+  return visibilityLabels[getWidgetVisibilityDevice(widget)];
 };

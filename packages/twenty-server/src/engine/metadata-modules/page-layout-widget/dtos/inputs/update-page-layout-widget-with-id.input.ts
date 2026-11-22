@@ -56,12 +56,18 @@ export class UpdatePageLayoutWidgetWithIdInput {
   @IsOptional()
   configuration: AllPageLayoutWidgetConfiguration;
 
-  @Field(() => GraphQLJSON, { nullable: true })
+  @Field(() => GraphQLJSON, {
+    nullable: true,
+    deprecationReason: 'Use conditionalAvailability instead',
+  })
   @IsObject()
   @IsOptional()
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    deprecationReason: 'Use conditionalAvailability instead',
+  })
   @IsString()
   @IsOptional()
   conditionalAvailabilityExpression?: string | null;

@@ -1,31 +1,37 @@
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { WidgetVisibilityOptionsList } from '@/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityOptionsList';
-import { getWidgetVisibilityPropertiesFromOptionId } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityPropertiesFromOptionId';
+import { type WidgetVisibilityDevice } from '@/side-panel/pages/page-layout/types/WidgetVisibilityDevice';
+import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
 
 type SingleWidgetTabVisibilityDropdownContentProps = {
   widgetId: string;
-  currentOptionId: string;
+  selectedDevice: WidgetVisibilityDevice;
   pageLayoutId: string;
 };
 
 export const SingleWidgetTabVisibilityDropdownContent = ({
   widgetId,
-  currentOptionId,
+  selectedDevice,
   pageLayoutId,
 }: SingleWidgetTabVisibilityDropdownContentProps) => {
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
 
-  const handleSelectVisibility = (optionId: string) => {
-    updatePageLayoutWidget(
-      widgetId,
-      getWidgetVisibilityPropertiesFromOptionId(optionId),
-    );
+  const handleSelectDevice = (device: WidgetVisibilityDevice) => {
+    updatePageLayoutWidget(widgetId, {
+      conditionalAvailability:
+        device === 'ANY_DEVICE'
+          ? null
+          : buildDeviceConditionalAvailability(device),
+      // TODO(@neo773): a widget holds its rule in one place, so a new tree empties the two legacy fields; stop one release after stored rules are converted to trees
+      conditionalAvailabilityExpression: null,
+      conditionalDisplay: null,
+    });
   };
 
   return (
     <WidgetVisibilityOptionsList
-      currentOptionId={currentOptionId}
-      onSelectVisibility={handleSelectVisibility}
+      selectedDevice={selectedDevice}
+      onSelectDevice={handleSelectDevice}
     />
   );
 };

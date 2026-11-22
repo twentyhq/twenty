@@ -1,16 +1,17 @@
-import { VISIBILITY_OPTIONS } from '@/side-panel/pages/page-layout/constants/VisibilityOptions';
+import { WIDGET_VISIBILITY_DEVICES } from '@/side-panel/pages/page-layout/constants/WidgetVisibilityDevices';
 import { useVisibilityLabels } from '@/side-panel/pages/page-layout/hooks/useVisibilityLabels';
+import { type WidgetVisibilityDevice } from '@/side-panel/pages/page-layout/types/WidgetVisibilityDevice';
 import { useLingui } from '@lingui/react/macro';
 import { Dropdown } from 'twenty-ui/components/navigation';
 
 type WidgetVisibilityOptionsListProps = {
-  currentOptionId: string;
-  onSelectVisibility: (optionId: string) => void;
+  selectedDevice: WidgetVisibilityDevice;
+  onSelectDevice: (device: WidgetVisibilityDevice) => void;
 };
 
 export const WidgetVisibilityOptionsList = ({
-  currentOptionId,
-  onSelectVisibility,
+  selectedDevice,
+  onSelectDevice,
 }: WidgetVisibilityOptionsListProps) => {
   const { t } = useLingui();
   const visibilityLabels = useVisibilityLabels();
@@ -19,15 +20,15 @@ export const WidgetVisibilityOptionsList = ({
     <Dropdown.Section>
       <Dropdown.SelectionGroup
         aria-label={t`Visibility restriction`}
-        value={currentOptionId}
+        value={selectedDevice}
       >
-        {VISIBILITY_OPTIONS.map((option) => (
+        {WIDGET_VISIBILITY_DEVICES.map((device) => (
           <Dropdown.OptionItem
-            key={option.id}
-            value={option.id}
-            onSelect={() => onSelectVisibility(option.id)}
+            key={device}
+            value={device}
+            onSelect={() => onSelectDevice(device)}
           >
-            {visibilityLabels[option.id]}
+            {visibilityLabels[device]}
           </Dropdown.OptionItem>
         ))}
       </Dropdown.SelectionGroup>

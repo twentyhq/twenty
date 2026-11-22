@@ -1,4 +1,4 @@
-// TODO(@neo773): drop the text and json-logic branches once stored widget rules are converted to trees
+// TODO(@neo773): the text and json-logic branches serve widgets not converted yet; drop them one release after stored rules are converted to trees
 import jsonLogic, {
   type AdditionalOperation,
   type RulesLogic,

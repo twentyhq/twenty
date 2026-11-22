@@ -92,6 +92,7 @@ export class PageLayoutWidgetEntity<
   @JoinColumn({ name: 'objectMetadataId' })
   objectMetadata: Relation<ObjectMetadataEntity> | null;
 
+  // TODO(@neo773): conditionalDisplay and conditionalAvailabilityExpression are replaced by conditionalAvailability; unused one release after stored rules are converted to trees, dropped the release after
   @Column({ type: 'jsonb', nullable: true })
   conditionalDisplay: JsonbProperty<PageLayoutWidgetConditionalDisplay | null>;
 
