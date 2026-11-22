@@ -6,6 +6,7 @@ import { type ScopedRelationAlias } from '@/object-record/record-column-scope/ty
 import { resolveScopedRelationJunction } from '@/object-record/record-column-scope/utils/resolveScopedRelationJunction';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
+import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/utils/findRelationTargetObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getScopedRelationColumn = ({
@@ -22,7 +23,10 @@ export const getScopedRelationColumn = ({
   objectMetadataItems: EnrichedObjectMetadataItem[];
   isLookupColumnsEnabled: boolean;
 }):
-  | Pick<ScopedRelationAlias, 'lookupTarget' | 'scopedRelationJunction'>
+  | Pick<
+      ScopedRelationAlias,
+      'relationObjectMetadataItem' | 'lookupTarget' | 'scopedRelationJunction'
+    >
   | undefined => {
   if (
     !isLookupColumnsEnabled ||
@@ -42,15 +46,25 @@ export const getScopedRelationColumn = ({
     return undefined;
   }
 
+  const relationObjectMetadataItem = findRelationTargetObjectMetadataItem({
+    fieldMetadataItem,
+    objectMetadataItems,
+  });
+
+  if (!isDefined(relationObjectMetadataItem)) {
+    return undefined;
+  }
+
   // A field of the target records is two hops away, and a field of the join records is not what the column lists
   if (
     isDefined(scopedRelationJunction) ||
     !isDefined(recordField.relationTargetFieldMetadataId)
   ) {
-    return { lookupTarget: undefined, scopedRelationJunction };
+    return { relationObjectMetadataItem, scopedRelationJunction };
   }
 
   return {
+    relationObjectMetadataItem,
     lookupTarget: getRelationLookupTarget({
       relationFieldMetadataItem: fieldMetadataItem,
       relationTargetFieldMetadataId: recordField.relationTargetFieldMetadataId,

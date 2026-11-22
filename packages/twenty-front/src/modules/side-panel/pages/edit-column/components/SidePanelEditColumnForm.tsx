@@ -14,12 +14,11 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { RecordTableSettingsSortsContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent';
+import { SidePanelEditColumnHeader } from '@/side-panel/pages/edit-column/components/SidePanelEditColumnHeader';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
-import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -119,6 +118,22 @@ export const SidePanelEditColumnForm = ({
       limit >= 1 &&
       limit <= QUERY_MAX_RECORDS_FROM_RELATION);
 
+  const lookupTargetFieldMetadataItems = getLookupTargetFieldMetadataItems(
+    relationObjectMetadataItem,
+  );
+  const selectedLookupTargetFieldMetadataItem =
+    lookupTargetFieldMetadataItems.find(
+      ({ id }) => id === relationTargetFieldMetadataId,
+    );
+
+  const columnHeader = getRecordFieldColumnHeader({
+    fieldMetadataItem,
+    lookupTarget: isDefined(selectedLookupTargetFieldMetadataItem)
+      ? { lookupTargetFieldMetadataItem: selectedLookupTargetFieldMetadataItem }
+      : undefined,
+    isScopedRelationColumn: true,
+  });
+
   const handleSaveClick = async () => {
     if (!isLimitValid || isSaving) {
       return;
@@ -126,19 +141,21 @@ export const SidePanelEditColumnForm = ({
 
     setIsSaving(true);
 
+    const relationScope = getRelationScopeToSave({
+      editedRelationScope: getRelationScopeFromRecordFiltersAndSorts({
+        recordFilters: store.get(currentRecordFilters),
+        recordFilterGroups: store.get(currentRecordFilterGroups),
+        recordSorts: store.get(currentRecordSorts),
+        limit,
+      }),
+      storedRelationScope,
+      scopedRelationJunction,
+    });
+
     const isSaved = await saveScopedRelationColumn({
       fieldMetadataItemId: fieldMetadataItem.id,
       recordFieldId,
-      relationScope: getRelationScopeToSave({
-        editedRelationScope: getRelationScopeFromRecordFiltersAndSorts({
-          recordFilters: store.get(currentRecordFilters),
-          recordFilterGroups: store.get(currentRecordFilterGroups),
-          recordSorts: store.get(currentRecordSorts),
-          limit,
-        }),
-        storedRelationScope,
-        scopedRelationJunction,
-      }),
+      relationScope,
       relationTargetFieldMetadataId,
     });
 
@@ -158,38 +175,15 @@ export const SidePanelEditColumnForm = ({
     dependencies: [currentFocusId, handleSaveClick],
   });
 
-  const lookupTargetFieldMetadataItems = getLookupTargetFieldMetadataItems(
-    relationObjectMetadataItem,
-  );
-  const selectedLookupTargetFieldMetadataItem =
-    lookupTargetFieldMetadataItems.find(
-      ({ id }) => id === relationTargetFieldMetadataId,
-    );
-
-  const columnHeader = getRecordFieldColumnHeader({
-    fieldMetadataItem,
-    lookupTarget: isDefined(selectedLookupTargetFieldMetadataItem)
-      ? { lookupTargetFieldMetadataItem: selectedLookupTargetFieldMetadataItem }
-      : undefined,
-    isScopedRelationColumn: true,
-  });
-
   const ColumnIcon = getIcon(columnHeader.icon);
 
   return (
     <StyledContainer ref={containerRef} tabIndex={-1}>
-      <PageCardHeader
-        title={
-          <HeaderIdentifier
-            icon={
-              <ColumnIcon
-                size={theme.icon.size.md}
-                stroke={theme.icon.stroke.sm}
-              />
-            }
-            title={columnHeader.label}
-          />
+      <SidePanelEditColumnHeader
+        icon={
+          <ColumnIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         }
+        defaultLabel={columnHeader.label}
       />
       <StyledContent>
         {!isJunctionRelation && (

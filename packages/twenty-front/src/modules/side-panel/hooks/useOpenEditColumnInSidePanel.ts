@@ -63,13 +63,14 @@ export const useOpenEditColumnInSidePanel = (recordTableId: string) => {
         return;
       }
 
-      const relationScope = store
+      const recordField = store
         .get(
           currentRecordFieldsComponentState.atomFamily({
             instanceId: recordTableId,
           }),
         )
-        .find(({ id }) => id === recordFieldId)?.relationScope;
+        .find(({ id }) => id === recordFieldId);
+      const relationScope = recordField?.relationScope;
 
       const { scopedRelationJunction } = resolveScopedRelationJunction({
         fieldMetadataItem,

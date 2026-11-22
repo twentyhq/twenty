@@ -1,5 +1,5 @@
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
-import { getRelationTotalCountRecordKey } from '@/object-record/cache/utils/getRelationTotalCountRecordKey';
+import { getRelationAggregateRecordKey } from '@/object-record/cache/utils/getRelationAggregateRecordKey';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
@@ -28,14 +28,27 @@ export const getRecordFromRecordNode = <T extends ObjectRecord>({
           ];
         }
 
+        const {
+          edges: _edges,
+          pageInfo: _pageInfo,
+          __typename: _typename,
+          ...aggregateValues
+        } = value;
+
         return [
           [
             fieldName,
             getRecordsFromRecordConnection({ recordConnection: value }),
           ],
-          ...(isDefined(value.totalCount)
-            ? [[getRelationTotalCountRecordKey(fieldName), value.totalCount]]
-            : []),
+          ...Object.entries(aggregateValues).map(
+            ([aggregateGqlFieldName, aggregateValue]) => [
+              getRelationAggregateRecordKey({
+                relationRecordKey: fieldName,
+                aggregateGqlFieldName,
+              }),
+              aggregateValue,
+            ],
+          ),
         ];
       }),
     ),

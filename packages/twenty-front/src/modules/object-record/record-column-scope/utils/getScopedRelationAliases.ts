@@ -3,10 +3,9 @@ import { generateJunctionRelationGqlFields } from '@/object-record/graphql/recor
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ScopedRelationAlias } from '@/object-record/record-column-scope/types/ScopedRelationAlias';
-import { getScopedRelationColumn } from '@/object-record/record-column-scope/utils/getScopedRelationColumn';
 import { getRelationScopeRecordFiltersAndSorts } from '@/object-record/record-column-scope/utils/getRelationScopeRecordFiltersAndSorts';
+import { getScopedRelationColumn } from '@/object-record/record-column-scope/utils/getScopedRelationColumn';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/utils/findRelationTargetObjectMetadataItem';
 import { getQueryVariablesFromFiltersAndSorts } from '@/views/utils/getQueryVariablesFromFiltersAndSorts';
 import {
   type RecordFilterValueDependencies,
@@ -60,14 +59,8 @@ export const getScopedRelationAliases = ({
       return [];
     }
 
-    const relationObjectMetadataItem = findRelationTargetObjectMetadataItem({
-      fieldMetadataItem,
-      objectMetadataItems,
-    });
-
-    if (!isDefined(relationObjectMetadataItem)) {
-      return [];
-    }
+    const { relationObjectMetadataItem, lookupTarget, scopedRelationJunction } =
+      scopedRelationColumn;
 
     const { filter, orderBy } = getQueryVariablesFromFiltersAndSorts({
       ...getRelationScopeRecordFiltersAndSorts({
@@ -79,8 +72,6 @@ export const getScopedRelationAliases = ({
       fieldMetadataItems,
       filterValueDependencies,
     });
-
-    const { lookupTarget, scopedRelationJunction } = scopedRelationColumn;
 
     const relationWithArguments: RecordGqlFieldsRelationWithArguments = {
       relationFieldName: fieldMetadataItem.name,
