@@ -4,6 +4,7 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findAccessGroupPropagationProgress } from 'test/integration/metadata/suites/role/utils/find-access-group-propagation-progress.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { findRoleAccessGroupCompactIds } from 'test/integration/permissions/utils/find-role-access-group-compact-ids.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import {
@@ -70,18 +71,22 @@ describe('access group sync (integration)', () => {
   });
 
   it('should create a group per grant, keep their ids and remove stale ones', async () => {
-    await accessGroupSyncService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+    await accessGroupSyncService.syncAccessGroups({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    });
 
     const accessGroups = await readAccessGroups();
 
     expect(accessGroups.length).toBeGreaterThan(0);
 
     await global.testDataSource.query(
-      `INSERT INTO ${ACCESS_GROUP_TABLE} ("roleId", "objectMetadataId", "groupHash") VALUES ($1, $2, 'stale-group')`,
-      [await findAdminRoleId(), await findPersonObjectMetadataId()],
+      `INSERT INTO ${ACCESS_GROUP_TABLE} ("type", "ruleShapeHash", "objectMetadataId", "groupHash") VALUES ('ALL_RECORDS', 'stale-rule-shape', $1, 'stale-group')`,
+      [await findPersonObjectMetadataId()],
     );
 
-    await accessGroupSyncService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+    await accessGroupSyncService.syncAccessGroups({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    });
 
     expect(await readAccessGroups()).toEqual(accessGroups);
   });
@@ -136,25 +141,33 @@ describe('access group sync (integration)', () => {
           ],
         },
       });
-    const readRuleAccessGroups = (): Promise<
+    const readRuleAccessGroups = async (): Promise<
       { compactId: number; groupHash: string }[]
     > =>
       global.testDataSource.query(
-        `SELECT "compactId", "groupHash" FROM ${ACCESS_GROUP_TABLE} WHERE "rowLevelPermissionPredicateGroupId" = (
-          SELECT "rowLevelPermissionRuleId" FROM core."rowLevelPermissionPredicateGroup" WHERE "id" = $1
-        )`,
-        [predicateGroupId],
+        `SELECT "compactId", "groupHash" FROM ${ACCESS_GROUP_TABLE} WHERE "compactId" = ANY($1)`,
+        [
+          await findRoleAccessGroupCompactIds({
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            roleId,
+            objectMetadataId,
+          }),
+        ],
       );
 
     try {
       await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
       await upsertRule('Paris');
-      await accessGroupSyncService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+      await accessGroupSyncService.syncAccessGroups({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+      });
 
       const [parisAccessGroup] = await readRuleAccessGroups();
 
       await upsertRule('London');
-      await accessGroupSyncService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+      await accessGroupSyncService.syncAccessGroups({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+      });
 
       const londonAccessGroups = await readRuleAccessGroups();
 
@@ -175,18 +188,21 @@ describe('access group sync (integration)', () => {
   });
 
   it('should resolve the caller to the groups of its role', async () => {
-    await accessGroupSyncService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+    await accessGroupSyncService.syncAccessGroups({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    });
 
     const principals = buildRolePermissionsPrincipals({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       roleIds: [await findAdminRoleId()],
     });
     const objectMetadataId = await findPersonObjectMetadataId();
-    const compactIds = await accessGroupReadService.findPrincipalsCompactIds({
-      principals,
-      objectMetadataId,
-      operationType: 'read',
-    });
+    const compactIds =
+      await accessGroupReadService.findPrincipalsAccessGroupCompactIds({
+        principals,
+        objectMetadataId,
+        operationType: 'read',
+      });
     const storedCompactIds = (await readAccessGroups()).map(
       ({ compactId }) => compactId,
     );
@@ -344,7 +360,7 @@ describe('access group propagation progress (integration)', () => {
         [SEED_APPLE_WORKSPACE_ID],
       );
       const accessGroups = await global.testDataSource.query(
-        `SELECT "objectMetadataId", "roleId", "rowLevelPermissionPredicateGroupId" FROM ${ACCESS_GROUP_TABLE}`,
+        `SELECT "objectMetadataId", "type", "ruleShapeHash" FROM ${ACCESS_GROUP_TABLE}`,
       );
 
       throw new Error(

@@ -42,6 +42,31 @@ const getRuleFieldObjectMetadataIdOrThrow = ({
   return relationTargetObjectMetadataId;
 };
 
+const findExpectedWorkspaceMemberFieldObjectMetadataId = ({
+  workspaceMemberRelationFieldMetadataId,
+  workspaceMemberObjectMetadataId,
+  flatFieldMetadataMaps,
+}: {
+  workspaceMemberRelationFieldMetadataId: string | null | undefined;
+  workspaceMemberObjectMetadataId: string;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+}): string | null | undefined => {
+  if (!isDefined(workspaceMemberRelationFieldMetadataId)) {
+    return workspaceMemberObjectMetadataId;
+  }
+
+  const workspaceMemberRelationFieldMetadata =
+    findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: workspaceMemberRelationFieldMetadataId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+
+  return workspaceMemberRelationFieldMetadata?.objectMetadataId ===
+    workspaceMemberObjectMetadataId
+    ? workspaceMemberRelationFieldMetadata.relationTargetObjectMetadataId
+    : undefined;
+};
+
 // Ids resolve workspace-wide downstream and migration validators only compare an update to its own row, so another
 // role's or object's ids would be silently rewritten and another object's field would build a never-matching filter
 export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
@@ -158,14 +183,22 @@ export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
       flatEntityId: workspaceMemberFieldMetadataId,
       flatEntityMaps: flatFieldMetadataMaps,
     });
+    const expectedWorkspaceMemberFieldObjectMetadataId =
+      findExpectedWorkspaceMemberFieldObjectMetadataId({
+        workspaceMemberRelationFieldMetadataId:
+          predicate.workspaceMemberRelationFieldMetadataId,
+        workspaceMemberObjectMetadataId,
+        flatFieldMetadataMaps,
+      });
 
     if (
       !isDefined(workspaceMemberFieldMetadata) ||
+      !isDefined(expectedWorkspaceMemberFieldObjectMetadataId) ||
       workspaceMemberFieldMetadata.objectMetadataId !==
-        workspaceMemberObjectMetadataId
+        expectedWorkspaceMemberFieldObjectMetadataId
     ) {
       throw new RowLevelPermissionPredicateException(
-        'workspaceMemberFieldMetadataId is not a field of the workspaceMember object. The rule would silently never apply.',
+        'workspaceMemberFieldMetadataId is not a field of the workspaceMember object, or of the object its relation reaches. The rule would silently never apply.',
         RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
       );
     }

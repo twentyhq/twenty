@@ -26,6 +26,5 @@ export const getAiChatMessageWorkDurationMs = ({
     : Date.now();
   const durationMs = endedAtMs - new Date(startedAt).getTime();
 
-  // messages written in a single save, like agent run replies, carry no real duration
   return durationMs >= MINIMUM_WORK_DURATION_MS ? durationMs : null;
 };

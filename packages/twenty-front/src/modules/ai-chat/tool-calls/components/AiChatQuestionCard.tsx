@@ -251,7 +251,6 @@ export const AiChatQuestionCard = ({
           },
     );
 
-    // The card goes once its call is closed, so it stays disabled until then.
     if (!isAnswered) {
       setIsSubmitting(false);
     }

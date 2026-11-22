@@ -9,6 +9,7 @@ import { RecordPermissionQueryService } from 'src/engine/permissions/internal/re
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
 import { PrivateRecordRepository } from 'src/engine/permissions/internal/private-record/repositories/private-record.repository';
 import { RecordShareRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-share.repository';
+import { WorkspaceMemberRelationValueRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/workspace-member-relation-value.repository';
 import { WorkspaceQueryExecutorModule } from 'src/engine/workspace-query-executor/workspace-query-executor.module';
 
 @Module({
@@ -21,6 +22,7 @@ import { WorkspaceQueryExecutorModule } from 'src/engine/workspace-query-executo
     RecordPermissionReadRepository,
     RecordShareRepository,
     PrivateRecordRepository,
+    WorkspaceMemberRelationValueRepository,
   ],
   exports: [
     RecordAccessGroupRepository,
@@ -29,6 +31,7 @@ import { WorkspaceQueryExecutorModule } from 'src/engine/workspace-query-executo
     RecordPermissionReadRepository,
     RecordShareRepository,
     PrivateRecordRepository,
+    WorkspaceMemberRelationValueRepository,
   ],
 })
 export class RecordPermissionRepositoryModule {}

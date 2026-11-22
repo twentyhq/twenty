@@ -1,13 +1,14 @@
 import { getLambdaSdkLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-sdk-layer-name.util';
+import { SDK_CLIENT_GENERATION_KEY } from 'src/engine/core-modules/sdk-client/constants/sdk-client-generation-key';
 
 describe('getLambdaSdkLayerName', () => {
-  it('joins prefix with workspaceId and applicationUniversalIdentifier', () => {
+  it('joins prefix, generation key, workspaceId and applicationUniversalIdentifier', () => {
     expect(
       getLambdaSdkLayerName({
         workspaceId: 'ws-1',
         applicationUniversalIdentifier: 'app-2',
       }),
-    ).toBe('sdk-ws-1-app-2');
+    ).toBe(`sdk-${SDK_CLIENT_GENERATION_KEY}-ws-1-app-2`);
   });
 
   it('produces distinct names for distinct identifiers', () => {
