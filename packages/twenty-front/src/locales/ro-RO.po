@@ -7923,7 +7923,7 @@ msgid "Conversation key"
 msgstr "Cheie conversație"
 
 #. js-lingui-id: 9xGqrK
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversation list"
 msgstr "Listă de conversații"
 
@@ -7938,7 +7938,7 @@ msgid "Conversations"
 msgstr "Conversații"
 
 #. js-lingui-id: gM204O
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversations in this channel will appear here."
 msgstr "Conversațiile din acest canal vor apărea aici."
 
@@ -7948,7 +7948,7 @@ msgid "Conversations linked to this record will appear here."
 msgstr "Conversațiile asociate acestei înregistrări vor apărea aici."
 
 #. js-lingui-id: LMvWS1
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversations you can open will appear here."
 msgstr "Conversațiile pe care le poți deschide vor apărea aici."
 
@@ -20554,8 +20554,8 @@ msgid "No conversation uses this channel."
 msgstr "Nicio conversație nu utilizează acest canal."
 
 #. js-lingui-id: ICXANZ
+#: src/modules/inbox/components/InboxPageListPane.tsx
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
-#: src/pages/inbox/InboxPage.tsx
 msgid "No conversations"
 msgstr "Nicio conversație"
 

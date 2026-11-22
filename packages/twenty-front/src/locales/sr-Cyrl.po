@@ -7923,7 +7923,7 @@ msgid "Conversation key"
 msgstr "Кључ разговора"
 
 #. js-lingui-id: 9xGqrK
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversation list"
 msgstr "Листа разговора"
 
@@ -7938,7 +7938,7 @@ msgid "Conversations"
 msgstr "Разговори"
 
 #. js-lingui-id: gM204O
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversations in this channel will appear here."
 msgstr "Разговори у овом каналу ће се појавити овде."
 
@@ -7948,7 +7948,7 @@ msgid "Conversations linked to this record will appear here."
 msgstr "Разговори повезани са овим записом појавиће се овде."
 
 #. js-lingui-id: LMvWS1
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversations you can open will appear here."
 msgstr "Разговори које можете да отворите појавиће се овде."
 
@@ -20554,8 +20554,8 @@ msgid "No conversation uses this channel."
 msgstr "Ниједан разговор не користи овај канал."
 
 #. js-lingui-id: ICXANZ
+#: src/modules/inbox/components/InboxPageListPane.tsx
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
-#: src/pages/inbox/InboxPage.tsx
 msgid "No conversations"
 msgstr "Нема разговора"
 

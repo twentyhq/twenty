@@ -7923,7 +7923,7 @@ msgid "Conversation key"
 msgstr "Samtalenøkkel"
 
 #. js-lingui-id: 9xGqrK
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversation list"
 msgstr "Samtaleliste"
 
@@ -7938,7 +7938,7 @@ msgid "Conversations"
 msgstr "Samtaler"
 
 #. js-lingui-id: gM204O
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversations in this channel will appear here."
 msgstr "Samtaler i denne kanalen vises her."
 
@@ -7948,7 +7948,7 @@ msgid "Conversations linked to this record will appear here."
 msgstr "Samtaler knyttet til denne posten vises her."
 
 #. js-lingui-id: LMvWS1
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversations you can open will appear here."
 msgstr "Samtaler du kan åpne, vises her."
 
@@ -20554,8 +20554,8 @@ msgid "No conversation uses this channel."
 msgstr "Ingen samtale bruker denne kanalen."
 
 #. js-lingui-id: ICXANZ
+#: src/modules/inbox/components/InboxPageListPane.tsx
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
-#: src/pages/inbox/InboxPage.tsx
 msgid "No conversations"
 msgstr "Ingen samtaler"
 

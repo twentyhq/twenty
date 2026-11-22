@@ -7923,7 +7923,7 @@ msgid "Conversation key"
 msgstr "Զրույցի բանալի"
 
 #. js-lingui-id: 9xGqrK
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversation list"
 msgstr "Զրույցների ցանկ"
 
@@ -7938,7 +7938,7 @@ msgid "Conversations"
 msgstr "Զրույցներ"
 
 #. js-lingui-id: gM204O
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversations in this channel will appear here."
 msgstr "Այս ալիքի զրույցները կհայտնվեն այստեղ։"
 
@@ -7948,7 +7948,7 @@ msgid "Conversations linked to this record will appear here."
 msgstr "Այս գրառմանը կապված զրույցները կհայտնվեն այստեղ։"
 
 #. js-lingui-id: LMvWS1
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversations you can open will appear here."
 msgstr "Զրույցները, որոնք կարող եք բացել, կհայտնվեն այստեղ։"
 
@@ -20554,8 +20554,8 @@ msgid "No conversation uses this channel."
 msgstr "Ոչ մի զրույց չի օգտագործում այս ալիքը։"
 
 #. js-lingui-id: ICXANZ
+#: src/modules/inbox/components/InboxPageListPane.tsx
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
-#: src/pages/inbox/InboxPage.tsx
 msgid "No conversations"
 msgstr "Զրույցներ չկան"
 

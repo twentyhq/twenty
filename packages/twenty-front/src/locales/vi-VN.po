@@ -7923,7 +7923,7 @@ msgid "Conversation key"
 msgstr "Khóa cuộc trò chuyện"
 
 #. js-lingui-id: 9xGqrK
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversation list"
 msgstr "Danh sách cuộc trò chuyện"
 
@@ -7938,7 +7938,7 @@ msgid "Conversations"
 msgstr "Cuộc trò chuyện"
 
 #. js-lingui-id: gM204O
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversations in this channel will appear here."
 msgstr "Các cuộc trò chuyện trong kênh này sẽ xuất hiện ở đây."
 
@@ -7948,7 +7948,7 @@ msgid "Conversations linked to this record will appear here."
 msgstr "Các cuộc trò chuyện được liên kết với bản ghi này sẽ xuất hiện ở đây."
 
 #. js-lingui-id: LMvWS1
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversations you can open will appear here."
 msgstr "Các cuộc trò chuyện bạn có thể mở sẽ xuất hiện ở đây."
 
@@ -20554,8 +20554,8 @@ msgid "No conversation uses this channel."
 msgstr "Không có cuộc trò chuyện nào sử dụng kênh này."
 
 #. js-lingui-id: ICXANZ
+#: src/modules/inbox/components/InboxPageListPane.tsx
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
-#: src/pages/inbox/InboxPage.tsx
 msgid "No conversations"
 msgstr "Không có cuộc trò chuyện nào"
 
