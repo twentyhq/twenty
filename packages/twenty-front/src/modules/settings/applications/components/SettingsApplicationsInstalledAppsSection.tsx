@@ -3,13 +3,14 @@ import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/comp
 import { SettingsApplicationsTable } from '@/settings/applications/components/SettingsApplicationsTable';
 import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/useEnabledBuiltInAccountApps';
 import { useWorkspaceApplicationStatusesById } from '@/settings/applications/hooks/useWorkspaceApplicationStatusesById';
+import { isOAuthOnlyApplication } from '@/settings/applications/utils/isOAuthOnlyApplication';
 import { getApplicationsWithConnectedMembersDescription } from '@/settings/applications/utils/getApplicationsWithConnectedMembersDescription';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { WorkspaceApplicationAuthorizationsDocument } from '~/generated-metadata/graphql';
+import { WorkspaceApplicationConnectedMemberCountsDocument } from '~/generated-metadata/graphql';
 
 const StyledToolbar = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -19,9 +20,12 @@ export const SettingsApplicationsInstalledAppsSection = () => {
   const { t } = useLingui();
   const installedApplications = useInstalledApplications();
   const { enabledBuiltInAccountApps } = useEnabledBuiltInAccountApps();
-  const { data: applicationAuthorizationsData } = useQuery(
-    WorkspaceApplicationAuthorizationsDocument,
-    { fetchPolicy: 'cache-and-network' },
+  const { data: connectedMemberCountsData } = useQuery(
+    WorkspaceApplicationConnectedMemberCountsDocument,
+    {
+      fetchPolicy: 'cache-and-network',
+      skip: !installedApplications.some(isOAuthOnlyApplication),
+    },
   );
   const {
     statusesById,
@@ -52,11 +56,11 @@ export const SettingsApplicationsInstalledAppsSection = () => {
         ) : undefined
       }
       applications={
-        isDefined(applicationAuthorizationsData)
+        isDefined(connectedMemberCountsData)
           ? getApplicationsWithConnectedMembersDescription({
               applications: installedApplications,
-              applicationAuthorizations:
-                applicationAuthorizationsData.workspaceApplicationAuthorizations,
+              connectedMemberCounts:
+                connectedMemberCountsData.workspaceApplicationConnectedMemberCounts,
             })
           : installedApplications
       }

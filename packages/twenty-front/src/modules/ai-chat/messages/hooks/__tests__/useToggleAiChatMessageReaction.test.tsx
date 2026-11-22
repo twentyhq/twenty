@@ -4,8 +4,8 @@ import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useToggleAiChatMessageReaction } from '@/ai-chat/messages/hooks/useToggleAiChatMessageReaction';
-import { aiChatLiveReactionRevisionsFamilyState } from '@/ai-chat/messages/states/aiChatLiveReactionRevisionsFamilyState';
-import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
+import { aiChatMessageReactionRevisionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionRevisionsFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionsFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 
 const THREAD_ID = 'thread-id';
@@ -186,7 +186,7 @@ describe('useToggleAiChatMessageReaction', () => {
 
     await act(async () => {
       store.set(
-        aiChatLiveReactionRevisionsFamilyState.atomFamily({
+        aiChatMessageReactionRevisionsFamilyState.atomFamily({
           threadId: THREAD_ID,
         }),
         { [MESSAGE_ID]: 1 },

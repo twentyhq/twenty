@@ -8,7 +8,7 @@ import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState'
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getCurrentHistoryEntryState } from '~/utils/getCurrentHistoryEntryState';
 import { isInboxPath } from '~/utils/isInboxPath';
-import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
+import { isAiModePath } from '~/utils/isAiModePath';
 import { isMatchingPathname } from '~/utils/isMatchingPathname';
 
 export const useProjectAiChatThreadToUrl = () => {
@@ -24,7 +24,7 @@ export const useProjectAiChatThreadToUrl = () => {
         getAppPath(AppPath.AiChatInbox, { threadId: null }),
       );
 
-      if (!isCurrentPathAiChatPage() && !isOnInboxPage) {
+      if (!isAiModePath(pathname)) {
         return;
       }
 
