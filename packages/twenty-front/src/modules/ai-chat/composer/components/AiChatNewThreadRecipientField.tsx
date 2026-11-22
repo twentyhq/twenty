@@ -14,7 +14,7 @@ import { ChatRecipientChip } from '@/chat/components/ChatRecipientChip';
 import { AiChatNewThreadRecipientPicker } from '@/ai-chat/composer/components/AiChatNewThreadRecipientPicker';
 import { useAiChatAssistantProfile } from '@/ai-chat/hooks/useAiChatAssistantProfile';
 import { useAiChatNewThreadRecipientSuggestions } from '@/ai-chat/composer/hooks/useAiChatNewThreadRecipientSuggestions';
-import { aiChatChannelsState } from '@/ai-chat/threads/states/aiChatChannelsState';
+import { aiChatChannelFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatChannelFamilySelector';
 import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -28,6 +28,7 @@ import { useRemoveFocusItemFromFocusStackOnUnmount } from '@/ui/utilities/focus/
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -80,8 +81,9 @@ export const AiChatNewThreadRecipientField = () => {
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
-  const channel = useAtomStateValue(aiChatChannelsState)?.find(
-    ({ id }) => id === recipients.channelId,
+  const aiChatChannel = useAtomFamilySelectorValue(
+    aiChatChannelFamilySelector,
+    recipients.channelId,
   );
   const recipientWorkspaceMembers = currentWorkspaceMembers.filter(({ id }) =>
     recipients.recipientWorkspaceMemberIds.includes(id),
@@ -207,12 +209,12 @@ export const AiChatNewThreadRecipientField = () => {
               />
             );
           })}
-          {isDefined(channel) && (
+          {isDefined(aiChatChannel) && (
             <ChatRecipientChip
-              label={channel.name}
+              label={aiChatChannel.name}
               avatar={
                 <AiChatChannelIcon
-                  channel={channel}
+                  channel={aiChatChannel}
                   size={theme.icon.size.sm}
                 />
               }

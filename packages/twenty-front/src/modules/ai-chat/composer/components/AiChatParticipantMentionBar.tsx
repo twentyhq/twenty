@@ -1,13 +1,13 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/react';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 import { LightButton } from 'twenty-ui/components/input';
 import { IconUsers } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { useAiChatPendingParticipantMentions } from '@/ai-chat/composer/hooks/useAiChatPendingParticipantMentions';
+import { isAiChatParticipantMentionAttributes } from '@/ai-chat/composer/utils/isAiChatParticipantMentionAttributes';
 
 const StyledBar = styled.div`
   align-items: center;
@@ -65,9 +65,7 @@ export const AiChatParticipantMentionBar = ({
     state.doc.descendants((node, position) => {
       if (
         node.type.name === TIPTAP_NODE_TYPES.MENTION_TAG &&
-        node.attrs.objectNameSingular ===
-          StandardObjectNameSingular.WorkspaceMember &&
-        node.attrs.shouldAddAsParticipant === true
+        isAiChatParticipantMentionAttributes(node.attrs)
       ) {
         transaction.setNodeMarkup(position, undefined, {
           ...node.attrs,

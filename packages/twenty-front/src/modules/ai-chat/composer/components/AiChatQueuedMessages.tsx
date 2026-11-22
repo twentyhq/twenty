@@ -2,6 +2,7 @@ import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThr
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { isAiChatMessageOwn } from '@/ai-chat/messages/utils/isAiChatMessageOwn';
+import { getAiChatMessageText } from '@/ai-chat/messages/utils/getAiChatMessageText';
 import { isAiChatQueuedMessageRemovable } from '@/ai-chat/composer/utils/isAiChatQueuedMessageRemovable';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -72,7 +73,7 @@ export const AiChatQueuedMessages = () => {
     });
     const queuedMessage = {
       id: message.id,
-      text: message.parts.find((part) => part.type === 'text')?.text ?? '',
+      text: getAiChatMessageText(message),
       isRemovable: isAiChatQueuedMessageRemovable({
         message,
         currentWorkspaceMemberId: currentWorkspaceMember?.id,

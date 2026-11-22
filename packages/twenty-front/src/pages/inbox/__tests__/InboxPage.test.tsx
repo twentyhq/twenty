@@ -75,6 +75,17 @@ jest.mock('@/object-metadata/states/objectMetadataItemFamilySelector', () => ({
   },
 }));
 
+jest.mock(
+  '@/ai-chat/threads/states/selectors/aiChatThreadObjectMetadataItemSelector',
+  () => ({
+    aiChatThreadObjectMetadataItemSelector: {
+      get atom() {
+        return chatObjectMetadataItemAtom;
+      },
+    },
+  }),
+);
+
 jest.mock('@/inbox/components/InboxThreadList', () => ({
   InboxThreadList: ({
     threads,

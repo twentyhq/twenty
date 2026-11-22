@@ -23,7 +23,7 @@ import { AiChatThreadDetailsFollowing } from '@/ai-chat/threads/components/AiCha
 import { InboxThreadDetailsStatus } from '@/inbox/components/InboxThreadDetailsStatus';
 import { AiChatThreadLabelsField } from '@/ai-chat/threads/components/AiChatThreadLabelsField';
 import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai-chat/threads/constants/AiChatThreadDetailsLabelWidthInPx';
-import { aiChatChannelsState } from '@/ai-chat/threads/states/aiChatChannelsState';
+import { aiChatChannelFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatChannelFamilySelector';
 import { useAiChatThreadRecordTargets } from '@/ai-chat/threads/hooks/useAiChatThreadRecordTargets';
 import { useChatTargetNavigation } from '@/ai-chat/threads/hooks/useChatTargetNavigation';
 import { useIsAiChatArtifactSurface } from '@/ai-chat/hooks/useIsAiChatArtifactSurface';
@@ -96,8 +96,9 @@ export const InboxThreadDetailsDropdown = ({
   const assignee = currentWorkspaceMembers.find(
     (workspaceMember) => workspaceMember.id === thread?.assigneeId,
   );
-  const channel = useAtomStateValue(aiChatChannelsState)?.find(
-    ({ id }) => id === thread?.channelId,
+  const aiChatChannel = useAtomFamilySelectorValue(
+    aiChatChannelFamilySelector,
+    thread?.channelId,
   );
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
@@ -223,13 +224,13 @@ export const InboxThreadDetailsDropdown = ({
                 )
               }
             >
-              {isDefined(channel) ? (
+              {isDefined(aiChatChannel) ? (
                 <StyledChannel>
                   <AiChatChannelIcon
-                    channel={channel}
+                    channel={aiChatChannel}
                     size={theme.icon.size.sm}
                   />
-                  {channel.name}
+                  {aiChatChannel.name}
                 </StyledChannel>
               ) : (
                 <StyledEmptyValue>{t`None`}</StyledEmptyValue>

@@ -17,6 +17,7 @@ import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatTh
 import { aiChatThreadRecordUpdateCountState } from '@/ai-chat/threads/states/aiChatThreadRecordUpdateCountState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
+import { type AiChatThreadUpdate } from '@/ai-chat/threads/types/AiChatThreadUpdate';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
@@ -63,9 +64,7 @@ const toThreadUpdate = ({
   recordId,
   updatedFields,
   updatedRecord,
-}: ObjectRecordOperationUpdateInput): Partial<AiChatThreadRecord> & {
-  id: string;
-} => {
+}: ObjectRecordOperationUpdateInput): AiChatThreadUpdate => {
   const updatedAt = updatedRecord?.updatedAt;
 
   return {
@@ -235,9 +234,7 @@ export const InboxSyncEffect = () => {
 
   const handleThreadOperation = useCallback(
     ({ operation }: ObjectRecordOperationBrowserEventDetail) => {
-      const applyUpdates = (
-        updates: (Partial<AiChatThreadRecord> & { id: string })[],
-      ) => {
+      const applyUpdates = (updates: AiChatThreadUpdate[]) => {
         for (const update of updates) {
           applyAiChatThreadUpdate(update);
         }
