@@ -1,10 +1,11 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type RecordGqlFieldsRelationWithArguments } from 'twenty-shared/types';
+import { type RecordGqlFields } from 'twenty-shared/types';
 
 export type ReadableRelationWithArguments = {
-  responseKey: string;
-  relationWithArguments: RecordGqlFieldsRelationWithArguments;
-  relationFieldMetadataItem: FieldMetadataItem;
-  relationObjectMetadataItem: EnrichedObjectMetadataItem;
+  fieldMetadataItem: FieldMetadataItem;
+  recordGqlFields: RecordGqlFields;
+  selectionHead: string;
+  connectionGqlFieldNames: string[];
+  variableDefinitions: string;
+  variables: Record<string, unknown>;
 };

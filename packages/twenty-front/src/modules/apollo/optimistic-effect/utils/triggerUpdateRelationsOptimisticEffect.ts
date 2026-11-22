@@ -179,27 +179,24 @@ const triggerUpdateRelationOptimisticEffect = ({
     updatedFieldValueOnSourceRecord,
     { strict: true },
   );
-  const isRecordStillAttached = noDiff && !isDeletion;
+  if (noDiff && !isDeletion) {
+    // The record stays attached, but its new values may move it in or out of its target's copies with arguments
+    if (
+      relation.type === RelationType.MANY_TO_ONE &&
+      isDefined(updatedFieldValueOnSourceRecord)
+    ) {
+      invalidateCachedRelationsWithArguments({
+        cache,
+        recordCacheId: cache.identify({
+          id: updatedFieldValueOnSourceRecord.id,
+          __typename: getObjectTypename(
+            fullTargetObjectMetadataItem.nameSingular,
+          ),
+        }),
+        relationFieldName: targetFieldMetadataFullObject.name,
+      });
+    }
 
-  // The record stays attached, but its new values may move it in or out of its target's copies with arguments
-  if (
-    isRecordStillAttached &&
-    relation.type === RelationType.MANY_TO_ONE &&
-    isDefined(updatedFieldValueOnSourceRecord)
-  ) {
-    invalidateCachedRelationsWithArguments({
-      cache,
-      recordCacheId: cache.identify({
-        id: updatedFieldValueOnSourceRecord.id,
-        __typename: getObjectTypename(
-          fullTargetObjectMetadataItem.nameSingular,
-        ),
-      }),
-      relationFieldName: targetFieldMetadataFullObject.name,
-    });
-  }
-
-  if (isRecordStillAttached) {
     return;
   }
 

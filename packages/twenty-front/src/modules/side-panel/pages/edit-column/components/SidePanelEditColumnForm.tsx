@@ -5,7 +5,6 @@ import { getLookupTargetFieldMetadataItems } from '@/object-record/record-column
 import { getRecordFieldColumnHeader } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnHeader';
 import { useSaveScopedRelationColumn } from '@/object-record/record-column-scope/hooks/useSaveScopedRelationColumn';
 import { getRelationScopeFromRecordFiltersAndSorts } from '@/object-record/record-column-scope/utils/getRelationScopeFromRecordFiltersAndSorts';
-import { parseRelationScopeLimitInput } from '@/object-record/record-column-scope/utils/parseRelationScopeLimitInput';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -99,10 +98,16 @@ export const SidePanelEditColumnForm = ({
     useState(initialRelationTargetFieldMetadataId ?? null);
   const [isSaving, setIsSaving] = useState(false);
 
-  const parsedLimitInput = parseRelationScopeLimitInput(limitInput);
+  const trimmedLimitInput = limitInput.trim();
+  const limit = trimmedLimitInput === '' ? null : Number(trimmedLimitInput);
+  const isLimitValid =
+    limit === null ||
+    (Number.isInteger(limit) &&
+      limit >= 1 &&
+      limit <= QUERY_MAX_RECORDS_FROM_RELATION);
 
   const handleSaveClick = async () => {
-    if (!parsedLimitInput.isValid || isSaving) {
+    if (!isLimitValid || isSaving) {
       return;
     }
 
@@ -115,7 +120,7 @@ export const SidePanelEditColumnForm = ({
         recordFilters: store.get(currentRecordFilters),
         recordFilterGroups: store.get(currentRecordFilterGroups),
         recordSorts: store.get(currentRecordSorts),
-        limit: parsedLimitInput.limit,
+        limit,
       }),
       relationTargetFieldMetadataId,
     });
@@ -210,7 +215,7 @@ export const SidePanelEditColumnForm = ({
           type="number"
           value={limitInput}
           error={
-            parsedLimitInput.isValid
+            isLimitValid
               ? undefined
               : t`Enter a number between 1 and ${QUERY_MAX_RECORDS_FROM_RELATION}`
           }
@@ -231,7 +236,7 @@ export const SidePanelEditColumnForm = ({
             startIcon={<IconCheck />}
             size="sm"
             onClick={handleSaveClick}
-            disabled={!parsedLimitInput.isValid}
+            disabled={!isLimitValid}
             loading={isSaving}
             shortcut={['Mod', 'Enter']}
             variant="solid"

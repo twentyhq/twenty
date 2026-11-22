@@ -8,6 +8,7 @@ import { computeRelationWithArgumentsResponseKey } from 'twenty-shared/utils';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
+import { type RecordGqlFieldsRelationWithArguments } from 'twenty-shared/types';
 
 const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
@@ -88,37 +89,43 @@ const getPeopleColumn = ({
   relationTargetFieldMetadataId,
 });
 
+const CTO_RELATION_WITH_ARGUMENTS: Omit<
+  RecordGqlFieldsRelationWithArguments,
+  'recordGqlFields'
+> = {
+  relationFieldName: 'people',
+  filter: { jobTitle: { ilike: '%cto%' } },
+  orderBy: [{ createdAt: 'AscNullsLast' }, { position: 'AscNullsFirst' }],
+  first: 2,
+};
+
 describe('getScopedRelationAliases', () => {
   it('turns the scope filters, sorts and limit into nested arguments', () => {
-    expect(
-      getAliases({
-        recordFields: [getPeopleColumn({ relationScope: CTO_RELATION_SCOPE })],
+    const [scopedRelationAlias] = getAliases({
+      recordFields: [getPeopleColumn({ relationScope: CTO_RELATION_SCOPE })],
+    });
+
+    expect(scopedRelationAlias).toEqual({
+      recordFieldId: PEOPLE_COLUMN_ID,
+      responseKey: computeRelationWithArgumentsResponseKey(
+        scopedRelationAlias.relationWithArguments,
+      ),
+      relationObjectMetadataItem: expect.objectContaining({
+        id: personObjectMetadataItem.id,
       }),
-    ).toEqual([
-      {
-        recordFieldId: PEOPLE_COLUMN_ID,
-        responseKey: computeRelationWithArgumentsResponseKey({
-          relationFieldName: 'people',
-          filter: { jobTitle: { ilike: '%cto%' } },
-          orderBy: [
-            { createdAt: 'AscNullsLast' },
-            { position: 'AscNullsFirst' },
-          ],
-          first: 2,
-        }),
-        relationFieldName: 'people',
-        relationObjectMetadataItem: expect.objectContaining({
-          id: personObjectMetadataItem.id,
-        }),
-        filter: { jobTitle: { ilike: '%cto%' } },
-        orderBy: [{ createdAt: 'AscNullsLast' }, { position: 'AscNullsFirst' }],
-        first: 2,
+      relationWithArguments: {
+        ...CTO_RELATION_WITH_ARGUMENTS,
+        recordGqlFields: expect.objectContaining({ id: true }),
       },
-    ]);
+    });
   });
 
   it('keeps the default order and no limit for an empty scope', () => {
-    const [{ filter, orderBy, first }] = getAliases({
+    const [
+      {
+        relationWithArguments: { filter, orderBy, first },
+      },
+    ] = getAliases({
       recordFields: [getPeopleColumn({ relationScope: EMPTY_RELATION_SCOPE })],
     });
 

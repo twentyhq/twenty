@@ -1,13 +1,17 @@
+import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ScopedRelationAlias } from '@/object-record/record-column-scope/types/ScopedRelationAlias';
-import { getRelationScopeRecordFiltersAndSorts } from '@/object-record/record-column-scope/utils/getRelationScopeRecordFiltersAndSorts';
 import { getScopedRelationLookupTarget } from '@/object-record/record-column-scope/utils/getScopedRelationLookupTarget';
+import { getRelationScopeRecordFiltersAndSorts } from '@/object-record/record-column-scope/utils/getRelationScopeRecordFiltersAndSorts';
 import { isScopedRelationColumn } from '@/object-record/record-column-scope/utils/isScopedRelationColumn';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/utils/findRelationTargetObjectMetadataItem';
 import { getQueryVariablesFromFiltersAndSorts } from '@/views/utils/getQueryVariablesFromFiltersAndSorts';
-import { type RecordFilterValueDependencies } from 'twenty-shared/types';
+import {
+  type RecordFilterValueDependencies,
+  type RecordGqlFieldsRelationWithArguments,
+} from 'twenty-shared/types';
 import {
   computeRelationWithArgumentsResponseKey,
   isDefined,
@@ -73,28 +77,35 @@ export const getScopedRelationAliases = ({
       filterValueDependencies,
     });
 
-    const first = relationScope.limit ?? undefined;
+    const lookupTarget = getScopedRelationLookupTarget({
+      recordField,
+      fieldMetadataItem,
+      objectMetadataItems,
+      isLookupColumnsEnabled,
+    });
+
+    const relationWithArguments: RecordGqlFieldsRelationWithArguments = {
+      relationFieldName: fieldMetadataItem.name,
+      filter,
+      orderBy,
+      first: relationScope.limit ?? undefined,
+      recordGqlFields: {
+        ...buildIdentifierGqlFields(relationObjectMetadataItem),
+        ...(isDefined(lookupTarget) && {
+          [lookupTarget.lookupTargetFieldMetadataItem.name]: true,
+        }),
+      },
+    };
 
     return [
       {
         recordFieldId: recordField.id,
-        responseKey: computeRelationWithArgumentsResponseKey({
-          relationFieldName: fieldMetadataItem.name,
-          filter,
-          orderBy,
-          first,
-        }),
-        relationFieldName: fieldMetadataItem.name,
+        responseKey: computeRelationWithArgumentsResponseKey(
+          relationWithArguments,
+        ),
         relationObjectMetadataItem,
-        filter,
-        orderBy,
-        first,
-        lookupTarget: getScopedRelationLookupTarget({
-          recordField,
-          fieldMetadataItem,
-          objectMetadataItems,
-          isLookupColumnsEnabled,
-        }),
+        relationWithArguments,
+        lookupTarget,
       },
     ];
   });
