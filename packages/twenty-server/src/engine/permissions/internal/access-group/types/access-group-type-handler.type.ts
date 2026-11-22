@@ -30,7 +30,8 @@ export type AccessGroupTypeHandler<TType extends AccessGroupType> = {
     ? (args: {
         accessGroupAlias: string;
         valueExpressions: string[];
-        buildKeyParameterName: (keyIndex: number) => string;
+        buildMemberFieldKeyParameterName: (keyIndex: number) => string;
+        residualMemberFieldValuesParameterName: string | null;
       }) => string
     : null;
 };

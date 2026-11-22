@@ -2,8 +2,9 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { MAX_RECORDS_RECOMPUTED_IN_WRITE } from 'src/engine/permissions/internal/access-group/constants/max-records-recomputed-in-write.constant';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
@@ -59,7 +60,6 @@ export class RecordAccessGroupPropagationService {
     }
   }
 
-  // TODO(@charlesBochet): above MAX_RECORDS_RECOMPUTED_IN_WRITE, queue a job after commit once the transaction scope exposes afterCommit
   async recomputeRecordsFollowingRelatedRecordPathsInWrite({
     workspaceId,
     objectMetadataId,
@@ -80,6 +80,21 @@ export class RecordAccessGroupPropagationService {
         transactionScope,
       },
     )) {
+      const { afterCommit } = transactionScope;
+
+      if (
+        followingRecords.recordIds.length > MAX_RECORDS_RECOMPUTED_IN_WRITE &&
+        isDefined(afterCommit)
+      ) {
+        afterCommit(() =>
+          this.recordAccessGroupComputationService.queueRecomputeRecordAccessGroupIdsOfRecords(
+            { workspaceId, ...followingRecords },
+          ),
+        );
+
+        continue;
+      }
+
       await this.recomputeRecordsFollowingRelatedRecordPathsInWrite({
         workspaceId,
         objectMetadataId: followingRecords.objectMetadataId,
