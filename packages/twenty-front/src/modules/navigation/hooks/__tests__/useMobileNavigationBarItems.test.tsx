@@ -1,4 +1,6 @@
 import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
+import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
+import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { useMobileNavigationBarItems } from '@/navigation/hooks/useMobileNavigationBarItems';
@@ -207,5 +209,32 @@ describe('useMobileNavigationBarItems', () => {
 
     act(() => tapItem(result, 'tab-sales-tab'));
     expect(store.get(currentNavigationMenuItemFolderIdState.atom)).toBeNull();
+  });
+
+  it('files the open folder under its own tab when leaving the AI drawer', () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([
+        { id: 'sales-tab', name: 'Sales', icon: null },
+      ] as ReturnType<typeof useWorkspaceNavigationMenuContainers>);
+
+    const { result, store } = renderMobileNavigationBarItems('/objects/people');
+
+    act(() => tapItem(result, 'tab-sales-tab'));
+    act(() => store.set(currentNavigationMenuItemFolderIdState.atom, 'deals'));
+    act(() =>
+      store.set(
+        navigationDrawerActiveTabState.atom,
+        NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+      ),
+    );
+
+    act(() => tapItem(result, 'home'));
+    expect(store.get(currentNavigationMenuItemFolderIdState.atom)).toBeNull();
+
+    act(() => tapItem(result, 'tab-sales-tab'));
+    expect(store.get(currentNavigationMenuItemFolderIdState.atom)).toBe(
+      'deals',
+    );
   });
 });

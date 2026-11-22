@@ -9,6 +9,7 @@ import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/dis
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
+import { getMobileNavigationMenuTabFolderSwitch } from '@/navigation/utils/getMobileNavigationMenuTabFolderSwitch';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -72,9 +73,8 @@ export const useMobileNavigationBarItems = (): {
   const activeNavigationMenuTab = useActiveNavigationMenuTab();
   const { tabIdsWithUnreadChats, unreadOpenThreadCount } =
     useNavigationMenuTabIdsWithUnreadChats();
-  const setCurrentNavigationMenuTabId = useSetAtomState(
-    currentNavigationMenuTabIdState,
-  );
+  const [currentNavigationMenuTabId, setCurrentNavigationMenuTabId] =
+    useAtomState(currentNavigationMenuTabIdState);
   const setNavigationDrawerActiveTab = useSetAtomState(
     navigationDrawerActiveTabState,
   );
@@ -114,20 +114,20 @@ export const useMobileNavigationBarItems = (): {
     closeSettingsDrawer();
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     setCurrentNavigationMenuTabId(tabId);
-    const currentTabKey = activeNavigationMenuTab?.id ?? 'home';
-    const nextTabKey = tabId ?? 'home';
-    const isReopeningCurrentTab =
-      pathname === AppPath.Home && currentTabKey === nextTabKey;
 
-    setNavigationMenuItemFolderIdByTabId({
-      ...navigationMenuItemFolderIdByTabId,
-      [currentTabKey]: currentNavigationMenuItemFolderId,
-    });
-    setCurrentNavigationMenuItemFolderId(
-      isReopeningCurrentTab
-        ? null
-        : (navigationMenuItemFolderIdByTabId[nextTabKey] ?? null),
-    );
+    const { folderIdByTabId, nextFolderId } =
+      getMobileNavigationMenuTabFolderSwitch({
+        folderIdByTabId: navigationMenuItemFolderIdByTabId,
+        currentTabId: currentNavigationMenuTabId,
+        currentFolderId: currentNavigationMenuItemFolderId,
+        nextTabId: tabId,
+        isReopeningCurrentTab:
+          pathname === AppPath.Home &&
+          (activeNavigationMenuTab?.id ?? null) === tabId,
+      });
+
+    setNavigationMenuItemFolderIdByTabId(folderIdByTabId);
+    setCurrentNavigationMenuItemFolderId(nextFolderId);
     navigate(AppPath.Home, { replace: isSettingsDrawer });
   };
 
