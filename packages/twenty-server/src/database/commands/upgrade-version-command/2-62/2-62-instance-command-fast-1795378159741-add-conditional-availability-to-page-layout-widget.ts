@@ -3,7 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.61.0', 1795198776643)
+@RegisteredInstanceCommand('2.62.0', 1795378159741)
 export class AddConditionalAvailabilityToPageLayoutWidgetFastInstanceCommand
   implements FastInstanceCommand
 {
