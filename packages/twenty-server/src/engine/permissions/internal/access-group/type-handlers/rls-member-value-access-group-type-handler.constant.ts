@@ -26,17 +26,17 @@ export const RLS_MEMBER_VALUE_ACCESS_GROUP_TYPE_HANDLER: AccessGroupTypeHandler<
     buildValueLookupCondition: ({
       accessGroupAlias,
       valueExpressions,
-      buildKeyParameterName,
-      residualRuleMemberFieldValuesParameterName,
+      buildMemberFieldKeyParameterName,
+      residualMemberFieldValuesParameterName,
     }) =>
       `${accessGroupAlias}."memberFieldValues" = jsonb_build_object(${valueExpressions
         .map(
           (valueExpression, keyIndex) =>
-            `CAST(:${buildKeyParameterName(keyIndex)} AS text), ${valueExpression}`,
+            `CAST(:${buildMemberFieldKeyParameterName(keyIndex)} AS text), ${valueExpression}`,
         )
         .join(', ')})${
-        isDefined(residualRuleMemberFieldValuesParameterName)
-          ? ` || CAST(:${residualRuleMemberFieldValuesParameterName} AS jsonb)`
+        isDefined(residualMemberFieldValuesParameterName)
+          ? ` || CAST(:${residualMemberFieldValuesParameterName} AS jsonb)`
           : ''
       }`,
   };

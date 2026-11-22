@@ -16,17 +16,17 @@ import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.ty
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-const findResidualRuleMemberFieldValueCombinations = ({
+const findResidualMemberFieldValueCombinations = ({
   lookup,
   accessGroups,
 }: {
   lookup: Pick<
     AccessGroupValueLookup,
-    'type' | 'ruleShapeHash' | 'residualRuleMemberFieldKeys'
+    'type' | 'ruleShapeHash' | 'residualMemberFieldKeys'
   >;
   accessGroups: AccessGroup[];
 }): RlsMemberFieldValues[] => {
-  if (lookup.residualRuleMemberFieldKeys.length === 0) {
+  if (lookup.residualMemberFieldKeys.length === 0) {
     return [{}];
   }
 
@@ -41,7 +41,7 @@ const findResidualRuleMemberFieldValueCombinations = ({
     }
 
     const combination = Object.fromEntries(
-      lookup.residualRuleMemberFieldKeys.map((memberFieldKey) => [
+      lookup.residualMemberFieldKeys.map((memberFieldKey) => [
         memberFieldKey,
         accessGroup.memberFieldValues[memberFieldKey] ?? null,
       ]),
@@ -114,7 +114,7 @@ export const buildAccessGroupValueLookupIdsExpression = ({
   );
 
   const buildLookupSql = (
-    residualRuleMemberFieldValuesParameterName: string | null,
+    residualMemberFieldValuesParameterName: string | null,
   ) =>
     `ARRAY(SELECT ${accessGroupAlias}."compactId" FROM ${[
       ...keyValueExpressions.flatMap(({ fromExpressions }) => fromExpressions),
@@ -131,25 +131,24 @@ export const buildAccessGroupValueLookupIdsExpression = ({
         valueExpressions: keyValueExpressions.map(
           ({ valueExpression }) => valueExpression,
         ),
-        buildKeyParameterName: (keyIndex) => parameterName(`key${keyIndex}`),
-        residualRuleMemberFieldValuesParameterName,
+        buildMemberFieldKeyParameterName: (keyIndex) =>
+          parameterName(`key${keyIndex}`),
+        residualMemberFieldValuesParameterName,
       }),
     ].join(' AND ')})`;
-  const lookupSQLConditions = findResidualRuleMemberFieldValueCombinations({
+  const lookupSQLConditions = findResidualMemberFieldValueCombinations({
     lookup,
     accessGroups,
-  }).map((residualRuleMemberFieldValues, combinationIndex): SQLCondition => {
-    const residualRuleMemberFieldValuesParameterName = isNonEmptyArray(
-      lookup.residualRuleMemberFieldKeys,
+  }).map((residualMemberFieldValues, combinationIndex): SQLCondition => {
+    const residualMemberFieldValuesParameterName = isNonEmptyArray(
+      lookup.residualMemberFieldKeys,
     )
       ? parameterName(`residual${combinationIndex}`)
       : null;
-    const lookupSql = buildLookupSql(
-      residualRuleMemberFieldValuesParameterName,
-    );
+    const lookupSql = buildLookupSql(residualMemberFieldValuesParameterName);
     const residualSQLCondition = buildRlsRuleSQLCondition({
       rowLevelPermissionRule: lookup.residualRule,
-      memberFieldValues: residualRuleMemberFieldValues,
+      memberFieldValues: residualMemberFieldValues,
       flatObjectMetadata,
       tableAlias: RECORD_ACCESS_GROUP_TABLE_ALIAS,
       metadataMaps,
@@ -161,9 +160,9 @@ export const buildAccessGroupValueLookupIdsExpression = ({
         : lookupSql,
       parameters: {
         ...residualSQLCondition?.parameters,
-        ...(isDefined(residualRuleMemberFieldValuesParameterName) && {
-          [residualRuleMemberFieldValuesParameterName]: JSON.stringify(
-            residualRuleMemberFieldValues,
+        ...(isDefined(residualMemberFieldValuesParameterName) && {
+          [residualMemberFieldValuesParameterName]: JSON.stringify(
+            residualMemberFieldValues,
           ),
         }),
       },

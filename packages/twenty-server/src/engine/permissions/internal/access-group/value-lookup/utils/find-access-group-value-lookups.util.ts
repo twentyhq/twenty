@@ -94,7 +94,7 @@ export const findAccessGroupValueLookups = ({
               ),
               predicateGroups,
             },
-            residualRuleMemberFieldKeys: [],
+            residualMemberFieldKeys: [],
           },
         ];
       }
@@ -121,7 +121,7 @@ export const findAccessGroupValueLookups = ({
           ruleShapeHash,
           keys: lookedUpMemberPredicates.map(({ key }) => key),
           residualRule: { predicates: residualPredicates, predicateGroups },
-          residualRuleMemberFieldKeys: [
+          residualMemberFieldKeys: [
             ...new Set(
               residualPredicates
                 .filter(({ workspaceMemberFieldMetadataId }) =>
