@@ -100,8 +100,8 @@ const SidePanelEditColumnPageContent = ({
               fieldMetadataItem={fieldMetadataItem}
               relationObjectMetadataItem={relationObjectMetadataItem}
               recordFieldId={recordFieldId}
-              initialLimit={recordField?.relationScope?.limit}
-              initialRelationTargetFieldMetadataId={
+              storedRelationScope={recordField?.relationScope}
+              storedRelationTargetFieldMetadataId={
                 recordField?.relationTargetFieldMetadataId
               }
             />
