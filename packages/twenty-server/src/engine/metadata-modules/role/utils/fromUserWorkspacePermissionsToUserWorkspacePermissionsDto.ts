@@ -45,6 +45,8 @@ export const fromUserWorkspacePermissionsToUserWorkspacePermissionsDto = ({
       canDestroyAllRecords: permissions.canDestroyAllRecords,
       ...buildFieldLists(permissions),
       rowLevelRecordsPermissions: permissions.rowLevelRecordsPermissions,
+      canReadRecordsThroughRelatedRecordPaths:
+        permissions.canReadRecordsThroughRelatedRecordPaths ?? false,
     });
   }
 

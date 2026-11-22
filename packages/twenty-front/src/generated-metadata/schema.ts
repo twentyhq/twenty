@@ -5836,6 +5836,7 @@ export type ObjectRecordsPermissions = {
   canCreateAllRecords: Scalars['Boolean']['output'];
   canDestroyAllRecords: Scalars['Boolean']['output'];
   canReadAllRecords: Scalars['Boolean']['output'];
+  canReadRecordsThroughRelatedRecordPaths: Scalars['Boolean']['output'];
   canSoftDeleteAllRecords: Scalars['Boolean']['output'];
   canUpdateAllRecords: Scalars['Boolean']['output'];
   objectMetadataId: Scalars['UUID']['output'];

@@ -20,4 +20,7 @@ export const canAccessThroughAllRecordsOrRlsPermission = ({
       rowLevelRecordsPermissions:
         objectRecordsPermissions.rowLevelRecordsPermissions,
       operationType,
-    }));
+    }) ||
+    (operationType === 'read' &&
+      (objectRecordsPermissions.canReadRecordsThroughRelatedRecordPaths ??
+        false)));
