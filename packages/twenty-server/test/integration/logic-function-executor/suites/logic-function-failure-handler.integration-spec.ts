@@ -192,6 +192,41 @@ describe('Logic function failure handler (integration)', () => {
     });
   }, 120000);
 
+  it('does not run a failure handler when a failure handler run fails', async () => {
+    const getFailureHandlerJobCount = async () =>
+      (
+        await logicFunctionInspectionQueue.getJobs(['completed', 'failed'])
+      ).filter((job) => job.data.logicFunctionId === failureHandlerId).length;
+
+    const failureHandlerJobCountBefore = await getFailureHandlerJobCount();
+
+    await global.app
+      .get<MessageQueueService>(
+        getQueueToken(MessageQueue.logicFunctionQueue),
+        { strict: false },
+      )
+      .add<LogicFunctionTriggerJobData>(
+        LogicFunctionTriggerJob.name,
+        {
+          logicFunctionId: failingFunctionId,
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          payload: { requestId: 'request-2' },
+          isFailureHandlerRun: true,
+        },
+        {
+          retryLimit: 0,
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
+        },
+      );
+
+    await waitForAllJobsToFinish();
+
+    expect(await getFailureHandlerJobCount()).toBe(
+      failureHandlerJobCountBefore,
+    );
+  }, 120000);
+
   it('rejects a failure handler that is not a logic function of the application', async () => {
     await syncApplication({
       manifest: buildManifest(UNKNOWN_FUNCTION_UNIVERSAL_IDENTIFIER),

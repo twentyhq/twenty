@@ -14,6 +14,8 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { isLogicFunctionRetryScheduled } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/is-logic-function-retry-scheduled.util';
 import { LOGIC_FUNCTION_APPLICATION_RETRY_LIMIT } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-application-retry-limit.constant';
+import { type LogicFunctionFailureHandlerJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/types/logic-function-failure-handler-job.type';
+import { buildLogicFunctionFailureHandlerJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-logic-function-failure-handler-job.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -34,11 +36,6 @@ export type LogicFunctionJobPayload = {
   userWorkspaceId?: string;
   applicationRetryCount?: number;
   isFailureHandlerRun?: boolean;
-};
-
-export type LogicFunctionFailureHandlerJob = {
-  jobData: LogicFunctionJobPayload;
-  applicationUniversalIdentifier: string;
 };
 
 type EnqueueFailureHandler = (
@@ -214,16 +211,17 @@ export class LogicFunctionJobRunnerService {
         return;
       }
 
-      const failureHandler = findFlatEntityByUniversalIdentifier({
-        flatEntityMaps: flatLogicFunctionMaps,
-        universalIdentifier: failureHandlerUniversalIdentifier,
+      const failureHandlerJob = buildLogicFunctionFailureHandlerJob({
+        failedLogicFunctionPayload: logicFunctionPayload,
+        failedFlatLogicFunction,
+        failureHandler: findFlatEntityByUniversalIdentifier({
+          flatEntityMaps: flatLogicFunctionMaps,
+          universalIdentifier: failureHandlerUniversalIdentifier,
+        }),
+        error: failure,
       });
 
-      if (
-        !isDefined(failureHandler) ||
-        isDefined(failureHandler.deletedAt) ||
-        failureHandler.applicationId !== failedFlatLogicFunction.applicationId
-      ) {
+      if (!isDefined(failureHandlerJob)) {
         this.logger.warn(
           `Skipping failure handler ${failureHandlerUniversalIdentifier} of function ${logicFunctionId} (workspace ${workspaceId}): not a logic function of the same application`,
         );
@@ -231,25 +229,7 @@ export class LogicFunctionJobRunnerService {
         return;
       }
 
-      const failureHandlerPayload: LogicFunctionFailureHandlerPayload = {
-        failedLogicFunctionUniversalIdentifier:
-          failedFlatLogicFunction.universalIdentifier,
-        payload: logicFunctionPayload.payload ?? {},
-        error: failure,
-      };
-
-      await enqueueFailureHandler({
-        jobData: {
-          logicFunctionId: failureHandler.id,
-          workspaceId,
-          payload: failureHandlerPayload,
-          userId: logicFunctionPayload.userId,
-          userWorkspaceId: logicFunctionPayload.userWorkspaceId,
-          isFailureHandlerRun: true,
-        },
-        applicationUniversalIdentifier:
-          failedFlatLogicFunction.applicationUniversalIdentifier,
-      });
+      await enqueueFailureHandler(failureHandlerJob);
     } catch (error) {
       this.logger.error(
         `Could not enqueue the failure handler of function ${logicFunctionId} (workspace ${workspaceId}): ${error instanceof Error ? error.message : String(error)}`,
