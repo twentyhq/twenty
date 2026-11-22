@@ -6,7 +6,7 @@ export const isAiChatAssistantMentionedInSerializedDocument = (
   serializedDocument: string,
 ): boolean =>
   getAiChatMentionNodes(serializedDocument).some(
-    ({ attrs }) =>
-      attrs?.objectNameSingular ===
+    ({ attrs: attributes }) =>
+      attributes?.objectNameSingular ===
       AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
   );

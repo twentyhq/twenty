@@ -9,14 +9,16 @@ export const getParticipantMentionsFromSerializedDocument = (
   serializedDocument: string,
 ): AiChatParticipantMention[] =>
   uniqBy(
-    getAiChatMentionNodes(serializedDocument).flatMap(({ attrs }) => {
-      const workspaceMemberId = attrs?.recordId;
-      const label = attrs?.label;
+    getAiChatMentionNodes(serializedDocument).flatMap(
+      ({ attrs: attributes }) => {
+        const workspaceMemberId = attributes?.recordId;
+        const label = attributes?.label;
 
-      return isAiChatParticipantMentionAttributes(attrs) &&
-        isNonEmptyString(workspaceMemberId)
-        ? [{ workspaceMemberId, label: isNonEmptyString(label) ? label : '' }]
-        : [];
-    }),
+        return isAiChatParticipantMentionAttributes(attributes) &&
+          isNonEmptyString(workspaceMemberId)
+          ? [{ workspaceMemberId, label: isNonEmptyString(label) ? label : '' }]
+          : [];
+      },
+    ),
     'workspaceMemberId',
   );

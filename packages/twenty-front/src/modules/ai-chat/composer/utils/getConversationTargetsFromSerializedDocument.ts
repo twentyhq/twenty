@@ -6,12 +6,12 @@ import { type AiChatConversationTarget } from '@/ai-chat/threads/types/AiChatCon
 export const getConversationTargetsFromSerializedDocument = (
   serializedDocument: string,
 ): AiChatConversationTarget[] =>
-  getAiChatMentionNodes(serializedDocument).flatMap(({ attrs }) => {
-    const objectNameSingular = attrs?.objectNameSingular;
-    const recordId = attrs?.recordId;
+  getAiChatMentionNodes(serializedDocument).flatMap(({ attrs: attributes }) => {
+    const objectNameSingular = attributes?.objectNameSingular;
+    const recordId = attributes?.recordId;
 
     if (
-      attrs?.isConversationTarget !== true ||
+      attributes?.isConversationTarget !== true ||
       !isNonEmptyString(objectNameSingular) ||
       !isNonEmptyString(recordId)
     ) {
