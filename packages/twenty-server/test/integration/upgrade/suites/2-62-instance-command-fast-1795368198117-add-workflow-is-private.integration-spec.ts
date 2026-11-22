@@ -1,14 +1,14 @@
 import { type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { AddWorkflowIsPrivateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795177992769-add-workflow-is-private';
+import { AddWorkflowIsPrivateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-62/2-62-instance-command-fast-1795368198117-add-workflow-is-private';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 jest.useRealTimers();
 
 type PrivacyColumns = { isPrivate?: boolean; visibility?: string };
 
-describe('2-61 instance command 1795177992769 - add workflow isPrivate (integration)', () => {
+describe('2-62 instance command 1795368198117 - add workflow isPrivate (integration)', () => {
   const addIsPrivateCommand = new AddWorkflowIsPrivateFastInstanceCommand();
   let queryRunner: QueryRunner;
 
