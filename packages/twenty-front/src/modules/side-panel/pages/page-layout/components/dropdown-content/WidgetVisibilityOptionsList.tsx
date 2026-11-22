@@ -1,32 +1,60 @@
+import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WIDGET_VISIBILITY_DEVICES } from '@/side-panel/pages/page-layout/constants/WidgetVisibilityDevices';
 import { useVisibilityLabels } from '@/side-panel/pages/page-layout/hooks/useVisibilityLabels';
 import { type WidgetVisibilityDevice } from '@/side-panel/pages/page-layout/types/WidgetVisibilityDevice';
+import { getWidgetVisibilityDevice } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityDevice';
 import { useLingui } from '@lingui/react/macro';
+import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
+import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 
 type WidgetVisibilityOptionsListProps = {
-  selectedDevice: WidgetVisibilityDevice;
-  onSelectDevice: (device: WidgetVisibilityDevice) => void;
+  pageLayoutId: string;
+  widget:
+    | Pick<
+        PageLayoutWidget,
+        'id' | 'conditionalAvailabilityExpression' | 'conditionalAvailability'
+      >
+    | undefined;
 };
 
 export const WidgetVisibilityOptionsList = ({
-  selectedDevice,
-  onSelectDevice,
+  pageLayoutId,
+  widget,
 }: WidgetVisibilityOptionsListProps) => {
   const { t } = useLingui();
   const visibilityLabels = useVisibilityLabels();
+
+  const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
+
+  const handleSelectDevice = (device: WidgetVisibilityDevice) => {
+    if (!isDefined(widget)) {
+      return;
+    }
+
+    updatePageLayoutWidget(widget.id, {
+      conditionalAvailability:
+        device === 'ANY_DEVICE'
+          ? null
+          : buildDeviceConditionalAvailability(device),
+      // TODO(@neo773): a widget holds its rule in one place, so a new tree empties the two legacy fields; stop one release after stored rules are converted to trees
+      conditionalAvailabilityExpression: null,
+      conditionalDisplay: null,
+    });
+  };
 
   return (
     <Dropdown.Section>
       <Dropdown.SelectionGroup
         aria-label={t`Visibility restriction`}
-        value={selectedDevice}
+        value={getWidgetVisibilityDevice(widget)}
       >
         {WIDGET_VISIBILITY_DEVICES.map((device) => (
           <Dropdown.OptionItem
             key={device}
             value={device}
-            onSelect={() => onSelectDevice(device)}
+            onSelect={() => handleSelectDevice(device)}
           >
             {visibilityLabels[device]}
           </Dropdown.OptionItem>
