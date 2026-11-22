@@ -150,51 +150,58 @@ const commonEffectArguments = {
 };
 
 describe('relations with arguments in the optimistic effects', () => {
-  it('drops the cached copies with arguments when a record is attached, and still attaches it to the plain relation', () => {
-    const cache = buildCache();
+  it.each([
+    {
+      change: 'a record is attached',
+      runEffect: (cache: ReturnType<typeof buildCache>) =>
+        triggerAttachRelationOptimisticEffect({
+          ...commonEffectArguments,
+          cache,
+          sourceObjectNameSingular: 'person',
+          sourceRecord: buildPerson({ id: NEW_PERSON_ID, city: 'Paris' }),
+        }),
+      expectedPeopleIds: [PARIS_PERSON_ID, NEW_PERSON_ID],
+    },
+    {
+      change: 'a record is detached',
+      runEffect: (cache: ReturnType<typeof buildCache>) =>
+        triggerDetachRelationOptimisticEffect({
+          ...commonEffectArguments,
+          cache,
+          sourceObjectNameSingular: 'person',
+          sourceRecordId: PARIS_PERSON_ID,
+        }),
+      expectedPeopleIds: [],
+    },
+    {
+      change: 'an attached record changes',
+      runEffect: (cache: ReturnType<typeof buildCache>) =>
+        triggerUpdateRelationsOptimisticEffect({
+          cache,
+          sourceObjectMetadataItem: personObjectMetadataItem,
+          currentSourceRecord: buildPerson({
+            id: PARIS_PERSON_ID,
+            city: 'Paris',
+          }),
+          updatedSourceRecord: buildPerson({
+            id: PARIS_PERSON_ID,
+            city: 'London',
+          }),
+          objectMetadataItems,
+          objectPermissionsByObjectMetadataId: {},
+          upsertRecordsInStore,
+        }),
+      expectedPeopleIds: [PARIS_PERSON_ID],
+    },
+  ])(
+    'drops the cached copies with arguments when $change, and updates the plain relation as before',
+    ({ runEffect, expectedPeopleIds }) => {
+      const cache = buildCache();
 
-    triggerAttachRelationOptimisticEffect({
-      ...commonEffectArguments,
-      cache,
-      sourceObjectNameSingular: 'person',
-      sourceRecord: buildPerson({ id: NEW_PERSON_ID, city: 'Paris' }),
-    });
+      runEffect(cache);
 
-    expect(readCachedScopedPeople(cache)).toBeNull();
-    expect(readCachedPeopleIds(cache)).toEqual([
-      PARIS_PERSON_ID,
-      NEW_PERSON_ID,
-    ]);
-  });
-
-  it('drops the cached copies with arguments when a record is detached, and still detaches it from the plain relation', () => {
-    const cache = buildCache();
-
-    triggerDetachRelationOptimisticEffect({
-      ...commonEffectArguments,
-      cache,
-      sourceObjectNameSingular: 'person',
-      sourceRecordId: PARIS_PERSON_ID,
-    });
-
-    expect(readCachedScopedPeople(cache)).toBeNull();
-    expect(readCachedPeopleIds(cache)).toEqual([]);
-  });
-
-  it('drops the cached copies with arguments when an attached record changes, and leaves the plain relation as it is', () => {
-    const cache = buildCache();
-
-    triggerUpdateRelationsOptimisticEffect({
-      cache,
-      sourceObjectMetadataItem: personObjectMetadataItem,
-      currentSourceRecord: buildPerson({ id: PARIS_PERSON_ID, city: 'Paris' }),
-      updatedSourceRecord: buildPerson({ id: PARIS_PERSON_ID, city: 'London' }),
-      objectMetadataItems,
-      objectPermissionsByObjectMetadataId: {},
-      upsertRecordsInStore,
-    });
-
-    expect(readCachedScopedPeople(cache)).toBeNull();
-    expect(readCachedPeopleIds(cache)).toEqual([PARIS_PERSON_ID]);
-  });
+      expect(readCachedScopedPeople(cache)).toBeNull();
+      expect(readCachedPeopleIds(cache)).toEqual(expectedPeopleIds);
+    },
+  );
 });

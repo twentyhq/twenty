@@ -48,7 +48,10 @@ jest.mock('@/object-metadata/states/objectMetadataItemFamilySelector', () => ({
 }));
 
 jest.mock('@/object-record/utils/generateFindManyRecordsQuery', () => ({
-  generateFindManyRecordsQuery: () => 'find-many-agent-chat-threads',
+  generateFindManyRecordsQuery: () => ({
+    query: 'find-many-agent-chat-threads',
+    variables: {},
+  }),
 }));
 
 const refreshAiChatThreadPermissions = jest.fn();

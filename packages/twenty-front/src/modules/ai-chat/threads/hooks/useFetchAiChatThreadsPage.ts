@@ -94,7 +94,7 @@ export const useFetchAiChatThreadsPage = () => {
             objectMetadataItems: store.get(objectMetadataItemsSelector.atom),
             recordGqlFields: AI_CHAT_THREAD_RECORD_GQL_FIELDS,
             objectPermissionsByObjectMetadataId,
-          }),
+          }).query,
           variables: {
             filter: isDefined(threadIdFilter)
               ? { and: [AI_CHAT_THREADS_FILTER, threadIdFilter] }
