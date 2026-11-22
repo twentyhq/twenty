@@ -4,11 +4,14 @@ import { getNavigationMenuContainerBlocks } from '@/navigation-menu-item/common/
 import { sortNavigationMenuContainerChildren } from '@/navigation-menu-item/common/utils/sortNavigationMenuContainerChildren';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-const buildItem = (
-  id: string,
-  type: NavigationMenuItemType,
-  position: number,
-): NavigationMenuItem => ({
+const buildItem = ({
+  id,
+  type,
+  position,
+}: Pick<
+  NavigationMenuItem,
+  'id' | 'type' | 'position'
+>): NavigationMenuItem => ({
   __typename: 'NavigationMenuItem',
   id,
   type,
@@ -22,13 +25,33 @@ describe('getNavigationMenuContainerBlocks', () => {
   it('should interleave sections with runs of items by position', () => {
     const sortedChildren = sortNavigationMenuContainerChildren({
       items: [
-        buildItem('people', NavigationMenuItemType.OBJECT, 3),
-        buildItem('companies', NavigationMenuItemType.OBJECT, 0),
-        buildItem('tasks', NavigationMenuItemType.OBJECT, 4),
+        buildItem({
+          id: 'people',
+          type: NavigationMenuItemType.OBJECT,
+          position: 3,
+        }),
+        buildItem({
+          id: 'companies',
+          type: NavigationMenuItemType.OBJECT,
+          position: 0,
+        }),
+        buildItem({
+          id: 'tasks',
+          type: NavigationMenuItemType.OBJECT,
+          position: 4,
+        }),
       ],
       sections: [
-        buildItem('sales', NavigationMenuItemType.SECTION, 1),
-        buildItem('support', NavigationMenuItemType.SECTION, 2),
+        buildItem({
+          id: 'sales',
+          type: NavigationMenuItemType.SECTION,
+          position: 1,
+        }),
+        buildItem({
+          id: 'support',
+          type: NavigationMenuItemType.SECTION,
+          position: 2,
+        }),
       ],
     });
 
@@ -44,8 +67,20 @@ describe('getNavigationMenuContainerBlocks', () => {
   it('should keep items before a section sharing their position', () => {
     expect(
       sortNavigationMenuContainerChildren({
-        items: [buildItem('companies', NavigationMenuItemType.OBJECT, 1)],
-        sections: [buildItem('sales', NavigationMenuItemType.SECTION, 1)],
+        items: [
+          buildItem({
+            id: 'companies',
+            type: NavigationMenuItemType.OBJECT,
+            position: 1,
+          }),
+        ],
+        sections: [
+          buildItem({
+            id: 'sales',
+            type: NavigationMenuItemType.SECTION,
+            position: 1,
+          }),
+        ],
       }).map(({ id }) => id),
     ).toEqual(['companies', 'sales']);
   });

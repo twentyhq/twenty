@@ -5,26 +5,23 @@ import { getNavigationMenuContainerBlocks } from '@/navigation-menu-item/common/
 import { sortNavigationMenuContainerChildren } from '@/navigation-menu-item/common/utils/sortNavigationMenuContainerChildren';
 import { NavigationMenuContainerEditableItems } from '@/navigation-menu-item/display/containers/components/NavigationMenuContainerEditableItems';
 import { NavigationMenuSectionRenderer } from '@/navigation-menu-item/display/containers/components/NavigationMenuSectionRenderer';
+import { useSelectActiveNavigationMenuItemInEditMode } from '@/navigation-menu-item/display/hooks/useSelectActiveNavigationMenuItemInEditMode';
 import { useNavigationMenuContainerItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuContainerItems';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { WorkspaceSectionListReadOnly } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly';
 import { NavigationMenuAddSectionButton } from '@/navigation-menu-item/edit/components/NavigationMenuAddSectionButton';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type NavigationMenuContainerContentProps = {
   containerId: string | null;
-  onActiveObjectMetadataItemClick?: (
-    objectMetadataItem: EnrichedObjectMetadataItem,
-    navigationMenuItemId: string,
-  ) => void;
 };
 
 export const NavigationMenuContainerContent = ({
   containerId,
-  onActiveObjectMetadataItemClick,
 }: NavigationMenuContainerContentProps) => {
+  const handleActiveObjectMetadataItemClick =
+    useSelectActiveNavigationMenuItemInEditMode();
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -70,7 +67,9 @@ export const NavigationMenuContainerContent = ({
             <WorkspaceSectionListReadOnly
               filteredItems={block.items}
               folderChildrenById={folderChildrenById}
-              onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
+              onActiveObjectMetadataItemClick={
+                handleActiveObjectMetadataItemClick
+              }
             />
           </NavigationDrawerSection>
         ),

@@ -1,7 +1,6 @@
 import { GettingStartedOpenedSection } from '@/getting-started/components/GettingStartedOpenedSection';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { NavigationDrawerOpenedSection } from '@/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection';
-import { useSelectActiveNavigationMenuItemInEditMode } from '@/navigation-menu-item/display/hooks/useSelectActiveNavigationMenuItemInEditMode';
 import { NavigationDrawerWorkspaceSectionSkeletonLoader } from '@/object-metadata/components/NavigationDrawerWorkspaceSectionSkeletonLoader';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -55,8 +54,6 @@ export const MainNavigationDrawerScrollableItems = () => {
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
-  const handleActiveObjectMetadataItemClick =
-    useSelectActiveNavigationMenuItemInEditMode();
 
   if (isDefined(activeNavigationMenuTab)) {
     return (
@@ -80,12 +77,7 @@ export const MainNavigationDrawerScrollableItems = () => {
       <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
         <FavoritesSectionDispatcher />
         {isCustomizableSidebarEnabled ? (
-          <NavigationMenuContainerContent
-            containerId={null}
-            onActiveObjectMetadataItemClick={
-              handleActiveObjectMetadataItemClick
-            }
-          />
+          <NavigationMenuContainerContent containerId={null} />
         ) : (
           <WorkspaceSectionDispatcher />
         )}
