@@ -6232,7 +6232,7 @@ msgstr "função do canal"
 #. js-lingui-id: Kjphnm
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Channel visibility through rules"
-msgstr ""
+msgstr "Visibilidade do canal por meio de regras"
 
 #. js-lingui-id: lfFsZ4
 #: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
@@ -16118,7 +16118,7 @@ msgstr "Em andamento"
 #. js-lingui-id: 2zgsSp
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops."
-msgstr ""
+msgstr "Em andamento: aplicar visibilidade de canais de mensagens e calendário com regras de permissão no nível do registro. Precisa de saltos de relação."
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx

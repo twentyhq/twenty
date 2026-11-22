@@ -6232,7 +6232,7 @@ msgstr "kanaalrol"
 #. js-lingui-id: Kjphnm
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Channel visibility through rules"
-msgstr ""
+msgstr "Zichtbaarheid van kanalen via regels"
 
 #. js-lingui-id: lfFsZ4
 #: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
@@ -16118,7 +16118,7 @@ msgstr "In behandeling"
 #. js-lingui-id: 2zgsSp
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops."
-msgstr ""
+msgstr "In uitvoering: zichtbaarheid van bericht- en kalenderkanalen afdwingen met machtigingsregels op recordniveau. Relatiehops vereist."
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
