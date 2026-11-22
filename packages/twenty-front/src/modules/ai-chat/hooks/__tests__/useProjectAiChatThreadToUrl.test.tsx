@@ -20,42 +20,6 @@ describe('useProjectAiChatThreadToUrl', () => {
     window.history.pushState(null, '', '/');
   });
 
-  it('should write the selected thread into the chat url', () => {
-    window.history.pushState(null, '', '/chat');
-
-    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
-
-    act(() => {
-      result.current.projectAiChatThreadToUrl(THREAD_A);
-    });
-
-    expect(navigateAppMock).toHaveBeenCalledWith(
-      AppPath.AiChat,
-      { threadId: THREAD_A },
-      undefined,
-      { replace: true, state: null },
-    );
-  });
-
-  it('should clear the url param for the new chat', () => {
-    window.history.pushState(null, '', `/chat/${THREAD_A}`);
-
-    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
-
-    act(() => {
-      result.current.projectAiChatThreadToUrl(
-        getDefaultStore().get(newAiChatThreadIdState.atom),
-      );
-    });
-
-    expect(navigateAppMock).toHaveBeenCalledWith(
-      AppPath.AiChat,
-      { threadId: null },
-      undefined,
-      { replace: true, state: null },
-    );
-  });
-
   it('keeps the inbox route when selecting a draft', () => {
     window.history.pushState(null, '', `/inbox/${THREAD_A}`);
 
@@ -90,27 +54,6 @@ describe('useProjectAiChatThreadToUrl', () => {
 
     expect(navigateAppMock).toHaveBeenCalledWith(
       AppPath.AiChatInbox,
-      { threadId: THREAD_A },
-      undefined,
-      { replace: true, state: { returnLocation: '/objects/people' } },
-    );
-  });
-
-  it('should carry the history entry state forward', () => {
-    window.history.pushState(
-      { usr: { returnLocation: '/objects/people' } },
-      '',
-      '/chat',
-    );
-
-    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
-
-    act(() => {
-      result.current.projectAiChatThreadToUrl(THREAD_A);
-    });
-
-    expect(navigateAppMock).toHaveBeenCalledWith(
-      AppPath.AiChat,
       { threadId: THREAD_A },
       undefined,
       { replace: true, state: { returnLocation: '/objects/people' } },

@@ -1,10 +1,10 @@
 import { useStore } from 'jotai';
 
 import { useOpenAiChatThread } from '@/ai-chat/hooks/useOpenAiChatThread';
-import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/aiChatComposerNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { shouldFocusChatEditorFamilyState } from '@/ai-chat/states/shouldFocusChatEditorFamilyState';
-import { isInboxPath } from '~/utils/isInboxPath';
+import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldFocusFamilyState';
+import { isAiModePath } from '~/utils/isAiModePath';
 
 type UseSwitchToNewAiChatParams = {
   shouldOpenInFullPage?: boolean;
@@ -16,17 +16,27 @@ export const useSwitchToNewAiChat = ({
   const store = useStore();
   const { openAiChatThread } = useOpenAiChatThread();
 
-  const switchToNewChat = () => {
-    if (!isInboxPath(window.location.pathname)) {
-      store.set(aiChatNewThreadChannelIdState.atom, null);
-    }
-
+  const switchToNewAiChat = ({
+    inboxChannelId = null,
+  }: { inboxChannelId?: string | null } = {}) => {
     const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
+    const isShownInPage =
+      shouldOpenInFullPage || isAiModePath(window.location.pathname);
+
+    store.set(
+      aiChatComposerNewThreadRecipientsFamilyState.atomFamily(
+        newAiChatThreadId,
+      ),
+      (recipients) => ({
+        ...recipients,
+        channelId: isShownInPage ? inboxChannelId : null,
+      }),
+    );
 
     openAiChatThread({ threadId: newAiChatThreadId, shouldOpenInFullPage });
 
     store.set(
-      shouldFocusChatEditorFamilyState.atomFamily({
+      aiChatComposerShouldFocusFamilyState.atomFamily({
         threadId: newAiChatThreadId,
       }),
       true,
@@ -35,5 +45,5 @@ export const useSwitchToNewAiChat = ({
     return newAiChatThreadId;
   };
 
-  return { switchToNewChat };
+  return { switchToNewAiChat };
 };

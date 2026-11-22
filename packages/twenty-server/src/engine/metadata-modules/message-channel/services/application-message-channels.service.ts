@@ -25,6 +25,7 @@ import {
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
 import { findMessagingProviderOnConnectionProvider } from 'src/engine/metadata-modules/messaging-provider/utils/find-messaging-provider-on-connection-provider.util';
+import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync-scheduler.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { PersonHandleFieldService } from 'src/modules/match-participant/person-handle-field/person-handle-field.service';
@@ -88,6 +89,7 @@ export class ApplicationMessageChannelsService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly personHandleFieldService: PersonHandleFieldService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly channelVisibilityRuleSyncSchedulerService: ChannelVisibilityRuleSyncSchedulerService,
   ) {}
 
   async list({
@@ -192,7 +194,14 @@ export class ApplicationMessageChannelsService {
       pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
     });
 
-    return this.messageChannelRepository.save(entity);
+    const savedMessageChannel =
+      await this.messageChannelRepository.save(entity);
+
+    await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+      workspaceId,
+    );
+
+    return savedMessageChannel;
   }
 
   // the channel's own handle shares its participants' namespace, so direction still compares like with like
@@ -287,6 +296,12 @@ export class ApplicationMessageChannelsService {
 
     await this.messageChannelRepository.update({ id, workspaceId }, data);
 
+    if (isDefined(data.visibility)) {
+      await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+        workspaceId,
+      );
+    }
+
     return this.messageChannelRepository.findOneOrFail({
       where: { id, workspaceId },
     });
@@ -306,6 +321,10 @@ export class ApplicationMessageChannelsService {
     });
 
     await this.messageChannelRepository.delete({ id, workspaceId });
+
+    await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+      workspaceId,
+    );
 
     this.workspaceEventEmitter.emitCustomBatchEvent<MessageChannelDeletedEvent>(
       MESSAGE_CHANNEL_DELETED_EVENT,

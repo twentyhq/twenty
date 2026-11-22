@@ -15,7 +15,6 @@ describe('useInsertDictatedText', () => {
   let editor: Editor;
 
   beforeEach(() => {
-    // Marks in the schema are what make a bare string insertion parse as HTML.
     editor = new Editor({
       extensions: [Document, Paragraph, Text, Bold, Italic],
       content: '<p></p>',

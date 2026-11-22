@@ -1,5 +1,5 @@
-import { useChatThreadsForRecord } from '@/ai-chat/threads/hooks/useChatThreadsForRecord';
-import { useDetachChatThreadFromRecord } from '@/ai-chat/threads/hooks/useDetachChatThreadFromRecord';
+import { useAiChatThreadsForRecord } from '@/ai-chat/threads/hooks/useAiChatThreadsForRecord';
+import { useDetachAiChatThreadFromRecord } from '@/ai-chat/threads/hooks/useDetachAiChatThreadFromRecord';
 import { ChatThreadsCardContent } from '@/page-layout/widgets/chat-threads/components/ChatThreadsCardContent';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -19,8 +19,8 @@ export const ChatThreadsCard = () => {
     hasNextPage,
     fetchMoreThreads,
     isFetchingMoreThreads,
-  } = useChatThreadsForRecord(targetRecord);
-  const { detachChatThreadFromRecord } = useDetachChatThreadFromRecord();
+  } = useAiChatThreadsForRecord(targetRecord);
+  const { detachChatThreadFromRecord } = useDetachAiChatThreadFromRecord();
   const { enqueueToast } = useToast();
 
   const handleDetachThread = async (threadId: string) => {

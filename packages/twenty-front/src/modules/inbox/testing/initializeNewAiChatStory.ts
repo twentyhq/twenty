@@ -1,11 +1,10 @@
-import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/constants/AiChatNewThreadDefaultRecipients';
+import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/composer/constants/AiChatNewThreadDefaultRecipients';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
-import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
-import { aiChatIsSendingMessageFamilyState } from '@/ai-chat/states/aiChatIsSendingMessageFamilyState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/aiChatComposerNewThreadRecipientsFamilyState';
+import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -27,15 +26,14 @@ export const initializeNewAiChatStory = ({
   isInboxEnabled: boolean;
 }) => {
   jotaiStore.set(newAiChatThreadIdState.atom, NEW_CHAT_THREAD_ID);
-  jotaiStore.set(aiChatNewThreadChannelIdState.atom, null);
   jotaiStore.set(
-    aiChatIsSendingMessageFamilyState.atomFamily({
+    aiChatThreadReplyIsSendingFamilyState.atomFamily({
       threadId: NEW_CHAT_THREAD_ID,
     }),
     false,
   );
   jotaiStore.set(
-    aiChatNewThreadRecipientsFamilyState.atomFamily(NEW_CHAT_THREAD_ID),
+    aiChatComposerNewThreadRecipientsFamilyState.atomFamily(NEW_CHAT_THREAD_ID),
     AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
   );
   jotaiStore.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
