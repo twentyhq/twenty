@@ -10,6 +10,8 @@ import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { GettingStartedStepAction } from '@/getting-started/components/GettingStartedStepAction';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { GettingStartedStepActionKey } from '~/generated-metadata/graphql';
+import { ChatObjectMetadataDecorator } from '~/testing/decorators/ChatObjectMetadataDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { mockGettingStartedStepDefinitions } from '~/testing/mock-data/gettingStartedSteps';
@@ -40,6 +42,8 @@ const meta: Meta<typeof GettingStartedStepAction> = {
         <Story />
       </StyledFrame>
     ),
+    ChatObjectMetadataDecorator,
+    ObjectMetadataItemsDecorator,
     ComponentWithRouterDecorator,
     (Story, { parameters }) => {
       const { apolloMocks }: { apolloMocks?: MockedResponse[] } = parameters;
