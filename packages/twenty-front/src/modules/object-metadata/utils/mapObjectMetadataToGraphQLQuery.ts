@@ -160,17 +160,18 @@ export const mapObjectMetadataToGraphQLQuery = ({
     })
     .concat(
       readableRelationsWithArguments.map(
-        ({ responseKey, relationWithArguments, relationFieldMetadataItem }) =>
+        ({
+          fieldMetadataItem,
+          recordGqlFields,
+          selectionHead,
+          connectionGqlFieldNames,
+        }) =>
           mapFieldMetadataToGraphQLQuery({
             objectMetadataItems,
-            gqlField: relationFieldMetadataItem.name,
-            fieldMetadata: relationFieldMetadataItem,
-            relationRecordGqlFields: relationWithArguments.recordGqlFields,
-            relationWithArgumentsResponseKey: responseKey,
-            // Only a limit can leave matching records out of the loaded ones
-            shouldIncludeRelationTotalCount: isDefined(
-              relationWithArguments.first,
-            ),
+            gqlField: selectionHead,
+            fieldMetadata: fieldMetadataItem,
+            relationRecordGqlFields: recordGqlFields,
+            relationConnectionGqlFieldNames: connectionGqlFieldNames,
             computeReferences,
             objectPermissionsByObjectMetadataId,
           }),

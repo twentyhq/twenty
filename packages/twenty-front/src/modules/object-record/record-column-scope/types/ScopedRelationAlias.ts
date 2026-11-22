@@ -1,19 +1,13 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFieldLookupTarget } from '@/object-record/record-column-lookup/types/RecordFieldLookupTarget';
 import { type ScopedRelationJunction } from '@/object-record/record-column-scope/types/ScopedRelationJunction';
-import {
-  type RecordGqlOperationFilter,
-  type RecordGqlOperationOrderBy,
-} from 'twenty-shared/types';
+import { type RecordGqlFieldsRelationWithArguments } from 'twenty-shared/types';
 
 export type ScopedRelationAlias = {
   recordFieldId: string;
   responseKey: string;
-  relationFieldName: string;
   relationObjectMetadataItem: EnrichedObjectMetadataItem;
-  filter?: RecordGqlOperationFilter;
-  orderBy?: RecordGqlOperationOrderBy;
-  first?: number;
+  relationWithArguments: RecordGqlFieldsRelationWithArguments;
   lookupTarget?: RecordFieldLookupTarget;
   scopedRelationJunction?: ScopedRelationJunction;
 };

@@ -2,9 +2,7 @@ import gql from 'graphql-tag';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { type ReadableRelationWithArguments } from '@/object-record/graphql/types/ReadableRelationWithArguments';
 import { getReadableRelationsWithArguments } from '@/object-record/graphql/utils/getReadableRelationsWithArguments';
-import { getRelationsWithArgumentsVariableDefinitions } from '@/object-record/graphql/utils/getRelationsWithArgumentsVariableDefinitions';
 import {
   type ObjectRecordsPermissions,
   type QueryCursorDirection,
@@ -19,12 +17,6 @@ export const generateFindManyRecordsQuery = ({
   computeReferences,
   cursorDirection,
   objectPermissionsByObjectMetadataId,
-  readableRelationsWithArguments = getReadableRelationsWithArguments({
-    objectMetadataItem,
-    objectMetadataItems,
-    recordGqlFields,
-    objectPermissionsByObjectMetadataId,
-  }),
 }: {
   objectMetadataItem: EnrichedObjectMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
@@ -32,17 +24,24 @@ export const generateFindManyRecordsQuery = ({
   computeReferences?: boolean;
   cursorDirection?: QueryCursorDirection;
   objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
-  readableRelationsWithArguments?: ReadableRelationWithArguments[];
-}) => gql`
+}) => {
+  const readableRelationsWithArguments = getReadableRelationsWithArguments({
+    objectMetadataItem,
+    objectMetadataItems,
+    recordGqlFields,
+    objectPermissionsByObjectMetadataId,
+  });
+
+  const query = gql`
 query FindMany${capitalize(
-  objectMetadataItem.namePlural,
-)}($filter: ${capitalize(
-  objectMetadataItem.nameSingular,
-)}FilterInput, $orderBy: [${capitalize(
-  objectMetadataItem.nameSingular,
-)}OrderByInput], $lastCursor: String, $limit: Int, $offset: Int${getRelationsWithArgumentsVariableDefinitions(
-  readableRelationsWithArguments,
-)}) {
+    objectMetadataItem.namePlural,
+  )}($filter: ${capitalize(
+    objectMetadataItem.nameSingular,
+  )}FilterInput, $orderBy: [${capitalize(
+    objectMetadataItem.nameSingular,
+  )}OrderByInput], $lastCursor: String, $limit: Int, $offset: Int${readableRelationsWithArguments
+    .map(({ variableDefinitions }) => variableDefinitions)
+    .join('')}) {
   ${objectMetadataItem.namePlural}(filter: $filter, orderBy: $orderBy, ${
     cursorDirection === 'before'
       ? 'last: $limit, before: $lastCursor'
@@ -69,3 +68,11 @@ query FindMany${capitalize(
   }
 }
 `;
+
+  const variables: Record<string, unknown> = Object.assign(
+    {},
+    ...readableRelationsWithArguments.map(({ variables }) => variables),
+  );
+
+  return { query, variables };
+};

@@ -9,20 +9,20 @@ const TASK_OBJECT_METADATA_ITEM_ID = 'task-object-metadata-item-id';
 
 const SCOPED_RELATION_ALIASES = [
   {
-    relationFieldName: 'people',
     relationObjectMetadataItem: { id: PERSON_OBJECT_METADATA_ITEM_ID },
+    relationWithArguments: { relationFieldName: 'people' },
   },
   {
-    relationFieldName: 'people',
     relationObjectMetadataItem: { id: PERSON_OBJECT_METADATA_ITEM_ID },
+    relationWithArguments: { relationFieldName: 'people' },
   },
   {
-    relationFieldName: 'opportunities',
     relationObjectMetadataItem: { id: OPPORTUNITY_OBJECT_METADATA_ITEM_ID },
+    relationWithArguments: { relationFieldName: 'opportunities' },
   },
   {
-    relationFieldName: 'taskTargets',
     relationObjectMetadataItem: { id: TASK_TARGET_OBJECT_METADATA_ITEM_ID },
+    relationWithArguments: { relationFieldName: 'taskTargets' },
     scopedRelationJunction: {
       targetObjectMetadataItem: { id: TASK_OBJECT_METADATA_ITEM_ID },
     },

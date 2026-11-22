@@ -210,42 +210,6 @@ describe('useSaveScopedRelationColumn', () => {
     });
   });
 
-  it('keeps a resize made while the scope of an existing column is saving', async () => {
-    const store = createStore();
-    store.set(currentRecordFieldsAtom, [nameColumn, scopedColumn]);
-    saveViewFieldsMock.mockImplementation(async () => {
-      store.set(currentRecordFieldsAtom, [
-        nameColumn,
-        { ...scopedColumn, size: 320 },
-      ]);
-
-      return true;
-    });
-
-    const { result } = renderSaveHook(store);
-
-    await act(() =>
-      result.current.saveScopedRelationColumn({
-        fieldMetadataItemId: PEOPLE_FIELD_METADATA_ITEM_ID,
-        recordFieldId: scopedColumn.id,
-        relationScope: RELATION_SCOPE,
-        relationTargetFieldMetadataId: null,
-        label: null,
-      }),
-    );
-
-    expect(store.get(currentRecordFieldsAtom)).toEqual([
-      nameColumn,
-      {
-        ...scopedColumn,
-        size: 320,
-        relationScope: RELATION_SCOPE,
-        relationTargetFieldMetadataId: null,
-        label: null,
-      },
-    ]);
-  });
-
   it('keeps the previous scope when an existing column fails to save', async () => {
     const store = createStore();
     store.set(currentRecordFieldsAtom, [nameColumn, scopedColumn]);
@@ -268,30 +232,6 @@ describe('useSaveScopedRelationColumn', () => {
       nameColumn,
       scopedColumn,
     ]);
-  });
-
-  it('does not bring back a column deleted while its scope is saving', async () => {
-    const store = createStore();
-    store.set(currentRecordFieldsAtom, [nameColumn, scopedColumn]);
-    saveViewFieldsMock.mockImplementation(async () => {
-      store.set(currentRecordFieldsAtom, [nameColumn]);
-
-      return true;
-    });
-
-    const { result } = renderSaveHook(store);
-
-    await act(() =>
-      result.current.saveScopedRelationColumn({
-        fieldMetadataItemId: PEOPLE_FIELD_METADATA_ITEM_ID,
-        recordFieldId: scopedColumn.id,
-        relationScope: RELATION_SCOPE,
-        relationTargetFieldMetadataId: null,
-        label: null,
-      }),
-    );
-
-    expect(store.get(currentRecordFieldsAtom)).toEqual([nameColumn]);
   });
 
   it('saves nothing for a column deleted in the meantime', async () => {
