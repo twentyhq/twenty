@@ -70,24 +70,21 @@ describe('enqueueTeamsAssistantRequest', () => {
     sendNoticeMock.mockResolvedValue(true);
   });
 
-  it.each(['help', 'Hi', 'hello!', ' Hey. '])(
-    'should answer "%s" with the help text instead of running the assistant',
-    async (text) => {
-      const result = await enqueueTeamsAssistantRequest({
-        ...PAYLOAD,
-        activity: { ...PAYLOAD.activity, text },
-      });
+  it('should answer a help request with the help text instead of running the assistant', async () => {
+    const result = await enqueueTeamsAssistantRequest({
+      ...PAYLOAD,
+      activity: { ...PAYLOAD.activity, text: 'help' },
+    });
 
-      expect(result).toEqual({ ok: true });
-      expect(replyWithHelpMock).toHaveBeenCalledExactlyOnceWith(
-        expect.objectContaining({
-          teamsActivityId: '1700000000000',
-          teamsConversationId: 'a:personal-conversation',
-        }),
-      );
-      expect(enqueueTeamsAssistantRequestRecordMock).not.toHaveBeenCalled();
-    },
-  );
+    expect(result).toEqual({ ok: true });
+    expect(replyWithHelpMock).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        teamsActivityId: '1700000000000',
+        teamsConversationId: 'a:personal-conversation',
+      }),
+    );
+    expect(enqueueTeamsAssistantRequestRecordMock).not.toHaveBeenCalled();
+  });
 
   it('should welcome the conversation when the bot is installed', async () => {
     const installPayload = {

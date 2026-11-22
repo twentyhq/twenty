@@ -5,7 +5,6 @@ import { type TeamsAssistantNoticeKind } from 'src/features/chat/logic-functions
 import { isTeamsActivityAddressedToBot } from 'src/features/chat/logic-functions/utils/is-teams-activity-addressed-to-bot';
 import { sendTeamsReplyOnce } from 'src/features/chat/logic-functions/utils/send-teams-reply-once';
 
-// A notice is a courtesy: failing to post it must not fail or retry the activity.
 export const sendTeamsAssistantNotice = async ({
   payload,
   kind,

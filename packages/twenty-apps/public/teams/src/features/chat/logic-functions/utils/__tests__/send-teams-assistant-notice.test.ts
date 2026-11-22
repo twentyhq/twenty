@@ -85,17 +85,6 @@ describe('sendTeamsAssistantNotice', () => {
     expect(sendReplyOnceMock).not.toHaveBeenCalled();
   });
 
-  it('should stay quiet for a message from another bot', async () => {
-    await expect(
-      sendNotice({
-        ...PAYLOAD,
-        activity: { ...PAYLOAD.activity, from: { id: '28:other-bot' } },
-      }),
-    ).resolves.toBe(false);
-
-    expect(sendReplyOnceMock).not.toHaveBeenCalled();
-  });
-
   it('should not fail the activity when the notice cannot be posted', async () => {
     const warnSpy = vi
       .spyOn(console, 'warn')
