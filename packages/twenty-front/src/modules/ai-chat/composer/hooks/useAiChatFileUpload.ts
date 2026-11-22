@@ -1,5 +1,5 @@
-import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/states/composer/aiChatComposerUploadingFilesFamilyState';
-import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/states/composer/aiChatComposerAttachmentsFamilyState';
+import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/composer/states/aiChatComposerUploadingFilesFamilyState';
+import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/composer/states/aiChatComposerAttachmentsFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useLingui } from '@lingui/react/macro';

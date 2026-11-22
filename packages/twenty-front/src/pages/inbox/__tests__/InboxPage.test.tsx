@@ -169,7 +169,7 @@ jest.mock('@/ai-chat/instance/components/AiChatTab', () => ({
   AiChatTab: () => <div>New conversation composer</div>,
 }));
 
-jest.mock('@/ai-chat/components/AiChatNewThreadPageHeader', () => ({
+jest.mock('@/ai-chat/instance/components/AiChatNewThreadPageHeader', () => ({
   AiChatNewThreadPageHeader: ({
     actionButton,
   }: {

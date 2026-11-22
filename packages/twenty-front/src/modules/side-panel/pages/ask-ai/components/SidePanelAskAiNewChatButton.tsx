@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconEdit } from 'twenty-ui/icon';
 
-import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/aiChatComposerNewThreadRecipientsFamilyState';
 import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldFocusFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { useStore } from 'jotai';

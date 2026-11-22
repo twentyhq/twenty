@@ -6,7 +6,7 @@ import { type ReactNode } from 'react';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 
 import { useAiChatFileUpload } from '@/ai-chat/composer/hooks/useAiChatFileUpload';
-import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/states/composer/aiChatComposerUploadingFilesFamilyState';
+import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/composer/states/aiChatComposerUploadingFilesFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';

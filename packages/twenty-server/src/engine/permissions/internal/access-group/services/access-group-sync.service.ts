@@ -5,10 +5,16 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { ACCESS_GROUP_COUNT_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/access-group-count-bucket-boundaries.constant';
+import { ACCESS_GROUP_SYNC_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/access-group-sync-duration-ms-bucket-boundaries.constant';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import {
   ACCESS_GROUP_SYNC_LOCK_OPTIONS,
   buildAccessGroupSyncLockKey,
 } from 'src/engine/permissions/internal/access-group/constants/access-group-sync-lock.constant';
+import { ACCESS_GROUP_TYPES } from 'src/engine/permissions/internal/access-group/constants/access-group-types.constant';
+import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group-without-compact-id.type';
 import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
 import { type SyncAccessGroupsJobData } from 'src/engine/permissions/internal/access-group/types/sync-access-groups-job-data.type';
@@ -26,6 +32,7 @@ export class AccessGroupSyncService {
     private readonly accessGroupRepository: AccessGroupRepository,
     private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
     private readonly accessGroupPropagationPlanService: AccessGroupPropagationPlanService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async syncAccessGroups({
@@ -47,6 +54,8 @@ export class AccessGroupSyncService {
     workspaceId,
     isRelatedRecordPathChanged,
   }: Required<SyncAccessGroupsJobData>): Promise<void> {
+    const syncStart = performance.now();
+
     await this.workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
 
     const workspaceCache = await this.workspaceCacheService.getOrRecompute(
@@ -108,6 +117,68 @@ export class AccessGroupSyncService {
       await this.accessGroupRepository.deleteAccessGroups({
         workspaceId,
         groupHashes: staleAccessGroups.map(({ groupHash }) => groupHash),
+      });
+    }
+
+    this.recordSyncMetrics({
+      durationMs: performance.now() - syncStart,
+      accessGroupCount: newAccessGroups.length,
+      accessGroupsToInsert,
+      deletedAccessGroupCount: staleAccessGroups.length,
+      hasFailures,
+    });
+  }
+
+  private recordSyncMetrics({
+    durationMs,
+    accessGroupCount,
+    accessGroupsToInsert,
+    deletedAccessGroupCount,
+    hasFailures,
+  }: {
+    durationMs: number;
+    accessGroupCount: number;
+    accessGroupsToInsert: AccessGroupWithoutCompactId[];
+    deletedAccessGroupCount: number;
+    hasFailures: boolean;
+  }): void {
+    this.metricsService.recordHistogram({
+      key: MetricsKeys.AccessGroupSyncDurationMs,
+      value: durationMs,
+      unit: 'ms',
+      bucketBoundaries: ACCESS_GROUP_SYNC_DURATION_MS_BUCKET_BOUNDARIES,
+    });
+    this.metricsService.recordHistogram({
+      key: MetricsKeys.AccessGroupSyncAccessGroupCount,
+      value: accessGroupCount,
+      bucketBoundaries: ACCESS_GROUP_COUNT_BUCKET_BOUNDARIES,
+    });
+
+    for (const type of ACCESS_GROUP_TYPES) {
+      const insertedCount = accessGroupsToInsert.filter(
+        (accessGroup) => accessGroup.type === type,
+      ).length;
+
+      if (insertedCount > 0) {
+        this.metricsService.incrementCounterBy({
+          key: MetricsKeys.AccessGroupSyncAccessGroupsInserted,
+          amount: insertedCount,
+          attributes: { type },
+        });
+      }
+    }
+
+    if (deletedAccessGroupCount > 0) {
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.AccessGroupSyncAccessGroupsDeleted,
+        amount: deletedAccessGroupCount,
+      });
+    }
+
+    if (hasFailures) {
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.AccessGroupSyncBuildFailed,
+        amount: 1,
       });
     }
   }

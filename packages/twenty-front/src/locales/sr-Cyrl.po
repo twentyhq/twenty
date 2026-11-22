@@ -2527,7 +2527,7 @@ msgid "Add or remove users"
 msgstr "Додајте или уклоните кориснике"
 
 #. js-lingui-id: 7YdkgZ
-#: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
 msgid "Add Output Field"
 msgstr "Додај излазно поље"
 
@@ -5370,7 +5370,7 @@ msgid "Book a Call"
 msgstr "Закажите позив"
 
 #. js-lingui-id: bOwPjT
-#: src/modules/ai/constants/OutputFieldTypeOptions.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/OutputFieldTypeOptions.ts
 msgid "Boolean"
 msgstr "Булевска вредност"
 
@@ -5435,7 +5435,7 @@ msgid "Breakdown across AI models."
 msgstr "Подела по AI моделима."
 
 #. js-lingui-id: qDsMss
-#: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
 msgid "Brief explanation of this output field"
 msgstr "Кратко објашњење овог излазног поља"
 
@@ -6160,7 +6160,7 @@ msgid "Change Password"
 msgstr "Промени лозинку"
 
 #. js-lingui-id: 98W3AT
-#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
+#: src/modules/inbox/components/AiChatThreadStatusField.tsx
 msgid "Change status in {scopeLabel}"
 msgstr "Промени статус у {scopeLabel}"
 
@@ -6769,7 +6769,7 @@ msgid "Click on \"Add Field\" below to add the first input to your form. The for
 msgstr "Кликните на „Додај поље“ испод да бисте додали први унос у образац. Образац се појављује за особу која ручно покреће ток рада. За токове рада са другим покретачима, попуњава се из покретања тока рада."
 
 #. js-lingui-id: q2R9+z
-#: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
 msgid "Click on \"Add Output Field\" below to define the structure of your agent's response. These fields will be used to format and validate the agent's output when the workflow is executed, and can be referenced by subsequent workflow steps."
 msgstr "Кликните на \"Додај излазно поље\" испод да дефинишете структуру одговора вашег агента. Ова поља ће се користити за форматирање и валидацију излаза агента када се радни ток извршава и на њих се могу позивати наредни кораци радног тока."
 
@@ -7923,7 +7923,7 @@ msgid "Conversation key"
 msgstr "Кључ разговора"
 
 #. js-lingui-id: 9xGqrK
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversation list"
 msgstr "Листа разговора"
 
@@ -7938,7 +7938,7 @@ msgid "Conversations"
 msgstr "Разговори"
 
 #. js-lingui-id: gM204O
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversations in this channel will appear here."
 msgstr "Разговори у овом каналу ће се појавити овде."
 
@@ -7948,7 +7948,7 @@ msgid "Conversations linked to this record will appear here."
 msgstr "Разговори повезани са овим записом појавиће се овде."
 
 #. js-lingui-id: LMvWS1
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversations you can open will appear here."
 msgstr "Разговори које можете да отворите појавиће се овде."
 
@@ -10594,7 +10594,7 @@ msgid "Direct message pair identity"
 msgstr "Идентитет пара директних порука"
 
 #. js-lingui-id: 23aX1b
-#: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxDirectMessagesSection.tsx
 msgid "Direct messages"
 msgstr "Директне поруке"
 
@@ -10873,7 +10873,7 @@ msgid "Don't import events marked as private"
 msgstr "Не увози догађаје означене као приватне"
 
 #. js-lingui-id: DPfwMq
-#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
+#: src/modules/inbox/components/AiChatThreadStatusField.tsx
 #: src/modules/inbox/components/InboxBulkActions.tsx
 #: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 #: src/modules/inbox/constants/InboxChannelNavigationItems.ts
@@ -11158,7 +11158,7 @@ msgid "E.g., \"We are a B2B SaaS company. Always use formal language...\""
 msgstr "На пример, \"Ми смо B2B SaaS компанија. Увек користите формалан језик...\""
 
 #. js-lingui-id: GhTFTJ
-#: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
 msgid "e.g., summary, status, count"
 msgstr "нпр. резиме, статус, број"
 
@@ -14378,7 +14378,7 @@ msgid "Folders"
 msgstr "Фасцикле"
 
 #. js-lingui-id: 2z3uoE
-#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
+#: src/modules/inbox/components/AiChatThreadFollowersField.tsx
 msgid "Follow for me"
 msgstr "Прати уместо мене"
 
@@ -14388,7 +14388,7 @@ msgid "Follow us on X"
 msgstr "Запратите нас на X"
 
 #. js-lingui-id: y6sq5j
-#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
+#: src/modules/inbox/components/AiChatThreadFollowersField.tsx
 msgid "Following"
 msgstr "Праћено"
 
@@ -14476,7 +14476,7 @@ msgstr "Формати"
 #: src/modules/ai-chat/threads/hooks/useAiChatThreadDisplayLabel.ts
 #: src/modules/ai-chat/utils/getAiChatSenderLabel.ts
 #: src/modules/inbox/components/InboxDirectMessageTitle.tsx
-#: src/modules/inbox/components/NavigationDrawerDirectMessageItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxDirectMessageItem.tsx
 msgid "Former member"
 msgstr "Бивши члан"
 
@@ -15556,7 +15556,7 @@ msgid "Hire a partner to help you implement and customize Twenty."
 msgstr "Ангажујте партнера који ће вам помоћи да примените и прилагодите Twenty."
 
 #. js-lingui-id: i0qMbr
-#: src/modules/ai-chat/components/AiChatNewThreadPageActions.tsx
+#: src/modules/ai-chat/instance/components/AiChatNewThreadPageActions.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
@@ -16470,7 +16470,7 @@ msgid "Instance status"
 msgstr "Статус инстанце"
 
 #. js-lingui-id: tc328m
-#: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
 msgid "Instruction for AI"
 msgstr "Упутство за AI"
 
@@ -18140,7 +18140,7 @@ msgid "Loading jobs..."
 msgstr "Учитавање послова..."
 
 #. js-lingui-id: YyMToN
-#: src/modules/inbox/components/DirectMessageMemberPicker.tsx
+#: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
 msgid "Loading members"
 msgstr "Учитавање чланова"
 
@@ -18922,7 +18922,7 @@ msgid "Member removed from workspace"
 msgstr ""
 
 #. js-lingui-id: wlQNTg
-#: src/modules/inbox/components/DirectMessageMemberPicker.tsx
+#: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -19964,7 +19964,7 @@ msgid "New channel"
 msgstr "Нови канал"
 
 #. js-lingui-id: hIQkLb
-#: src/modules/ai-chat/components/AiChatNewThreadPageHeader.tsx
+#: src/modules/ai-chat/instance/components/AiChatNewThreadPageHeader.tsx
 #: src/modules/inbox/components/InboxListHeader.tsx
 #: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
@@ -19988,7 +19988,7 @@ msgid "New credit pack"
 msgstr "Нови пакет кредита"
 
 #. js-lingui-id: ctNfZE
-#: src/modules/inbox/components/DirectMessageMemberPicker.tsx
+#: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
 msgid "New direct message"
 msgstr "Нова директна порука"
 
@@ -20554,8 +20554,8 @@ msgid "No conversation uses this channel."
 msgstr "Ниједан разговор не користи овај канал."
 
 #. js-lingui-id: ICXANZ
+#: src/modules/inbox/components/InboxPageListPane.tsx
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
-#: src/pages/inbox/InboxPage.tsx
 msgid "No conversations"
 msgstr "Нема разговора"
 
@@ -20864,7 +20864,7 @@ msgid "No members assigned"
 msgstr "Нема додељених чланова"
 
 #. js-lingui-id: FK5/sf
-#: src/modules/inbox/components/DirectMessageMemberPicker.tsx
+#: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
 msgid "No members found"
 msgstr "Није пронађен ниједан члан"
 
@@ -21404,9 +21404,9 @@ msgid "Node settings"
 msgstr "Подешавања чвора"
 
 #. js-lingui-id: EdQY6l
-#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
 #: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
+#: src/modules/inbox/components/AiChatThreadFollowersField.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
@@ -21587,11 +21587,6 @@ msgstr "Није дељено од стране {notSharedByFullName}"
 msgid "Not shared with"
 msgstr "Није подељено са"
 
-#. js-lingui-id: mu1gVr
-#: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
-msgid "Not started"
-msgstr "Није започето"
-
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"
@@ -21671,9 +21666,9 @@ msgid "number"
 msgstr "број"
 
 #. js-lingui-id: HptUxX
-#: src/modules/ai/constants/OutputFieldTypeOptions.ts
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/OutputFieldTypeOptions.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/constants/FormFieldDefaultTexts.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/constants/FormSelectFieldTypeOptions.ts
 msgid "Number"
@@ -22150,7 +22145,7 @@ msgid "Only you will be able to see your emails and events"
 msgstr "Само ћете ви моћи да видите своје имејлове и догађаје"
 
 #. js-lingui-id: 1TNIig
-#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
+#: src/modules/inbox/components/AiChatThreadStatusField.tsx
 #: src/modules/inbox/constants/InboxChannelNavigationItems.ts
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
@@ -22691,11 +22686,11 @@ msgstr "Аутлук"
 #: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 #: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
-#: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 #: src/modules/workflow/components/WorkflowStepExecutionResult.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
@@ -25074,7 +25069,7 @@ msgid "Remove option"
 msgstr "Уклони опцију"
 
 #. js-lingui-id: y/tlit
-#: src/modules/ai/components/AgentOutputSchemaFieldHeader.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaFieldHeader.tsx
 msgid "Remove output field"
 msgstr "Уклони излазно поље"
 
@@ -26526,8 +26521,8 @@ msgid "Search icon"
 msgstr "Претрага сличица"
 
 #. js-lingui-id: AaDUlx
-#: src/modules/inbox/components/DirectMessageMemberPicker.tsx
-#: src/modules/inbox/components/DirectMessageMemberPicker.tsx
+#: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
+#: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "Search members"
 msgstr "Претражите чланове"
@@ -27934,7 +27929,7 @@ msgstr "Прикажи пријемно сандуче"
 #. js-lingui-id: 6lGV3K
 #: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 #: src/modules/ai-chat/messages/components/AiChatUserMessageCollapsibleContent.tsx
-#: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxDirectMessagesSection.tsx
 msgid "Show less"
 msgstr "Прикажи мање"
 
@@ -27950,7 +27945,7 @@ msgstr "Прикажи преглед поруке"
 
 #. js-lingui-id: fMPkxb
 #: src/modules/ai-chat/messages/components/AiChatUserMessageCollapsibleContent.tsx
-#: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxDirectMessagesSection.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show more"
@@ -28349,7 +28344,7 @@ msgid "Snooze until {snoozedUntilLabel}"
 msgstr "Одложи до {snoozedUntilLabel}"
 
 #. js-lingui-id: rz6s8e
-#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
+#: src/modules/inbox/components/AiChatThreadStatusField.tsx
 #: src/modules/inbox/constants/InboxChannelNavigationItems.ts
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Snoozed"
@@ -28755,8 +28750,8 @@ msgid "Statistics"
 msgstr "Статистика"
 
 #. js-lingui-id: uAQUqI
-#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
+#: src/modules/inbox/components/AiChatThreadStatusField.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleWebhookStatusColumn.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
@@ -29674,9 +29669,9 @@ msgstr "текст"
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorTextInsertionItems.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/hooks/useTurnIntoBlockOptions.ts
-#: src/modules/ai/constants/OutputFieldTypeOptions.ts
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBlockInsertList.tsx
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/OutputFieldTypeOptions.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/constants/FormFieldDefaultTexts.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/constants/FormSelectFieldTypeOptions.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
@@ -31607,7 +31602,6 @@ msgid "Two-factor authentication was reset for this workspace. Set it up again f
 msgstr "Двофакторска аутентификација је ресетована за овај радни простор. Поново је подесите у Подешавањима, у Профилу."
 
 #. js-lingui-id: +zy2Nq
-#: src/modules/ai/components/AgentOutputFieldTypeSelector.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
@@ -31625,6 +31619,7 @@ msgstr "Двофакторска аутентификација је ресет�
 #: src/modules/settings/data-model/object-details/components/SettingsObjectIndexTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputFieldTypeSelector.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema.ts
@@ -31798,7 +31793,7 @@ msgid "Unexpected error in cron expression parsing"
 msgstr "Неочекивана грешка при рашчлањивању cron израза"
 
 #. js-lingui-id: 6Y7jUZ
-#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
+#: src/modules/inbox/components/AiChatThreadFollowersField.tsx
 msgid "Unfollow for me"
 msgstr "Престани да пратиш у моје име"
 
@@ -32192,7 +32187,7 @@ msgid "Untitled agent"
 msgstr "Неименовани агент"
 
 #. js-lingui-id: zJsHrW
-#: src/modules/ai/components/AgentOutputSchemaFieldHeader.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaFieldHeader.tsx
 msgid "Untitled field"
 msgstr "Неназвано поље"
 
@@ -32808,7 +32803,7 @@ msgid "Use lowercase letters, digits and underscores, starting with a letter"
 msgstr "Користите мала слова, цифре и доње црте, почевши словом"
 
 #. js-lingui-id: oSORjU
-#: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
 msgid "Use only letters, numbers, underscores, dots or hyphens (max 64 characters)."
 msgstr "Користите само слова, бројеве, доње црте, тачке или цртице (највише 64 карактера)."
 
@@ -33070,7 +33065,7 @@ msgid "Variable {title} updated"
 msgstr "Променљива {title} је ажурирана"
 
 #. js-lingui-id: +woNYv
-#: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
 msgid "Variable Name"
 msgstr "Назив променљиве"
 
@@ -34816,7 +34811,7 @@ msgid "Your handler receives this object. The body is empty because GET requests
 msgstr "Ваш обрађивач прима овај објекат. Тело је празно јер GET захтеви не садрже тело поруке."
 
 #. js-lingui-id: HCqgJ0
-#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
+#: src/modules/inbox/components/AiChatThreadStatusField.tsx
 msgid "Your inbox"
 msgstr "Ваше пријемно сандуче"
 

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { UserWorkspaceSuccessorService } from 'src/engine/core-modules/user-workspace/services/user-workspace-successor.service';
@@ -29,7 +28,7 @@ export class CoreWorkflowOwnershipTransferService {
     const { workspaceId } = removedUserWorkspace;
     const privateWorkflowsOfRemovedMember = {
       createdByUserWorkspaceId: removedUserWorkspace.id,
-      visibility: WorkflowVisibility.PRIVATE,
+      isPrivate: true,
     };
 
     const hasPrivateWorkflows = await this.coreWorkflowRepository.exists(
