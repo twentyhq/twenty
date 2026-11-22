@@ -4,6 +4,7 @@ import { TEAMS_ASSISTANT_DEADLINE_FAILURE_TEXT } from 'src/features/chat/logic-f
 import { TEAMS_ASSISTANT_FAILURE_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-failure-text';
 import { TeamsAssistantDeadlineError } from 'src/features/chat/logic-functions/types/teams-assistant-deadline-error';
 import { TEAMS_ASSISTANT_REQUEST_STATUS } from 'src/features/chat/logic-functions/constants/teams-assistant-request-status';
+import { TEAMS_ASSISTANT_UNMATCHED_REQUEST_NAME } from 'src/features/chat/logic-functions/constants/teams-assistant-unmatched-request-name';
 import { TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-unmatched-sender-text';
 import { answerTeamsAssistantRequest } from 'src/features/chat/logic-functions/utils/answer-teams-assistant-request';
 
@@ -202,6 +203,12 @@ describe('answerTeamsAssistantRequest', () => {
     expect(finishedTexts()).toEqual([TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT]);
     expect(updateMock).not.toHaveBeenCalledWith(
       expect.objectContaining({ requestText: expect.anything() }),
+    );
+    expect(updateMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        status: TEAMS_ASSISTANT_REQUEST_STATUS.DONE,
+        name: TEAMS_ASSISTANT_UNMATCHED_REQUEST_NAME,
+      }),
     );
   });
 

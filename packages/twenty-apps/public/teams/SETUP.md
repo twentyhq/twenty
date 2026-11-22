@@ -103,7 +103,9 @@ account under **Linked Teams accounts**, and replies with a short notice when no
 member matches. Members who can manage roles can remove a link there, link a
 directory user by hand, or press **Auto-link by email** to match the whole
 directory again; an account matched on email is linked again on its next
-message or on the next auto-link run.
+message or on the next auto-link run. A message's text is saved on its Teams Assistant
+Request only once the sender is matched to a workspace member, so messages from
+unlinked accounts are not stored.
 
 ## Twenty registration and shared webhook
 

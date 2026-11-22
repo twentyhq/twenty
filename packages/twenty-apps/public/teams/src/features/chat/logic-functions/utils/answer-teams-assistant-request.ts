@@ -3,6 +3,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { TEAMS_ASSISTANT_REQUEST_STATUS } from 'src/features/chat/logic-functions/constants/teams-assistant-request-status';
+import { TEAMS_ASSISTANT_UNMATCHED_REQUEST_NAME } from 'src/features/chat/logic-functions/constants/teams-assistant-unmatched-request-name';
 import { TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-unmatched-sender-text';
 import { claimTeamsAssistantRequest } from 'src/features/chat/logic-functions/data/claim-teams-assistant-request';
 import { findTeamsAssistantHistory } from 'src/features/chat/logic-functions/data/find-teams-assistant-history';
@@ -74,6 +75,7 @@ export const answerTeamsAssistantRequest = async ({
         id: request.id,
         status: TEAMS_ASSISTANT_REQUEST_STATUS.DONE,
         responseText: TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT,
+        name: TEAMS_ASSISTANT_UNMATCHED_REQUEST_NAME,
       }).catch(() => undefined);
 
       return { status: 'declined', reason: 'Sender is not a workspace member' };
