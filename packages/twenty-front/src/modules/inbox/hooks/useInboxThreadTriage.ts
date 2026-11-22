@@ -25,7 +25,7 @@ export const useInboxThreadTriage = ({
   const isInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
-  const areAiChatThreadParticipantsLoaded = useAtomStateValue(
+  const aiChatThreadParticipantsAreLoaded = useAtomStateValue(
     aiChatThreadParticipantsAreLoadedSelector,
   );
   const location = useLocation();
@@ -45,7 +45,7 @@ export const useInboxThreadTriage = ({
     status: getInboxThreadTriageStatus({
       hasAiPermission,
       isInboxEnabled,
-      areParticipantsLoaded: isInChannel || areAiChatThreadParticipantsLoaded,
+      areParticipantsLoaded: isInChannel || aiChatThreadParticipantsAreLoaded,
       scope: inboxStatus?.scope ?? 'NONE',
     }),
     isInChannel,
