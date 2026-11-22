@@ -1,8 +1,9 @@
 import { msg } from '@lingui/core/macro';
+import { compositeTypeDefinitions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { getCompositeColumnProperties } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-column-properties.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps.util';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
@@ -19,10 +20,17 @@ const getReservedCompositeFieldNames = (
   return objectUniversalFlatFieldMetadatas.flatMap(
     (universalFlatFieldMetadata) => {
       if (isCompositeFieldMetadataType(universalFlatFieldMetadata.type)) {
-        return getCompositeColumnProperties(
+        const base = universalFlatFieldMetadata.name;
+        const compositeType = compositeTypeDefinitions.get(
           universalFlatFieldMetadata.type,
-        ).map((property) =>
-          computeCompositeColumnName(universalFlatFieldMetadata.name, property),
+        );
+
+        if (!isDefined(compositeType)) {
+          return [];
+        }
+
+        return compositeType.properties.map((property) =>
+          computeCompositeColumnName(base, property),
         );
       }
 

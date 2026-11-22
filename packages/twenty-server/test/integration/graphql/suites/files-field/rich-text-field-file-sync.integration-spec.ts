@@ -74,11 +74,11 @@ const findFileIdsOwnedByRecord = async (
   recordId: string,
 ): Promise<string[] | null> => {
   const [recordRow] = await global.testDataSource.query(
-    `SELECT "bodyFileIds" FROM "${SCHEMA}"."${TABLE_NAME}" WHERE id = $1`,
+    `SELECT "body_fileIds" FROM "${SCHEMA}"."${TABLE_NAME}" WHERE id = $1`,
     [recordId],
   );
 
-  return recordRow.bodyFileIds;
+  return recordRow.body_fileIds;
 };
 
 describe('Rich text field <> files sync', () => {
