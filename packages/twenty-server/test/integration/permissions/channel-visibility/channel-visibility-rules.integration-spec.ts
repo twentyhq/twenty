@@ -1,3 +1,5 @@
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateMessageChannelVisibility } from 'test/integration/permissions/channel-visibility/utils/update-message-channel-visibility.util';
@@ -13,6 +15,7 @@ import { type RevokeRoleWideAccessToChannelObjectsCommand } from 'src/engine/per
 import { CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-child-object-universal-identifiers.constant';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/calendar-channel-seed-ids.constant';
+import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -46,15 +49,55 @@ const restoreRoleWideAccessToChannelObjects = async () => {
         STANDARD_OBJECTS.message.universalIdentifier,
         STANDARD_OBJECTS.calendarEvent.universalIdentifier,
         ...CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS,
+        STANDARD_OBJECTS.attachment.universalIdentifier,
       ],
     ],
+  );
+  await global.testDataSource.query(
+    `DELETE FROM core."rowLevelPermissionRule" "rule"
+      USING core."objectMetadata" "objectMetadata", core."role" "role"
+      WHERE "objectMetadata".id = "rule"."objectMetadataId"
+        AND "role".id = "rule"."roleId"
+        AND "role"."canBeAssignedToUsers"
+        AND "rule"."workspaceId" = $1
+        AND "objectMetadata"."universalIdentifier" = $2`,
+    [SEED_APPLE_WORKSPACE_ID, STANDARD_OBJECTS.attachment.universalIdentifier],
   );
   await getAppProviderByClassName<WorkspaceCacheService>(
     'WorkspaceCacheService',
   ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
     'flatObjectPermissionMaps',
+    'flatRowLevelPermissionRuleMaps',
+    'flatRowLevelPermissionPredicateGroupMaps',
+    'flatRowLevelPermissionPredicateMaps',
     'rolesPermissions',
   ]);
+};
+
+const createAttachment = async (data: Record<string, unknown>) => {
+  const response = await makeGraphqlApiRequest(
+    createOneOperationFactory({
+      objectMetadataSingularName: 'attachment',
+      gqlFields: 'id',
+      data,
+    }),
+  );
+
+  expect(response.body.errors).toBeUndefined();
+
+  return response.body.data.createAttachment.id as string;
+};
+
+const destroyAttachment = async (attachmentId: string) => {
+  const response = await makeGraphqlApiRequest(
+    destroyOneOperationFactory({
+      objectMetadataSingularName: 'attachment',
+      gqlFields: 'id',
+      recordId: attachmentId,
+    }),
+  );
+
+  expect(response.body.errors).toBeUndefined();
 };
 
 const setJonyChannelVisibility = (visibility: string) =>
@@ -95,7 +138,24 @@ const findMessagesOfChannel = async ({
 };
 
 describe('channel visibility through row level rules (integration)', () => {
+  let companyAttachmentId: string;
+  let messageAttachmentId: string;
+
   beforeAll(async () => {
+    const [jonyMessage] = await findMessagesOfChannel({
+      messageChannelId: MESSAGE_CHANNEL_DATA_SEED_IDS.JONY,
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+
+    companyAttachmentId = await createAttachment({
+      name: 'Company attachment',
+      targetCompanyId: COMPANY_DATA_SEED_IDS.ID_1,
+    });
+    messageAttachmentId = await createAttachment({
+      name: 'Message attachment',
+      targetMessageId: jonyMessage.id,
+    });
+
     for (const featureFlag of FLAGS) {
       await updateFeatureFlag({
         featureFlag,
@@ -110,6 +170,8 @@ describe('channel visibility through row level rules (integration)', () => {
 
   afterAll(async () => {
     await restoreRoleWideAccessToChannelObjects();
+    await destroyAttachment(companyAttachmentId);
+    await destroyAttachment(messageAttachmentId);
     await setJonyChannelVisibility('SHARE_EVERYTHING');
 
     for (const featureFlag of [...FLAGS].reverse()) {
@@ -171,6 +233,27 @@ describe('channel visibility through row level rules (integration)', () => {
     });
 
     expect(messages).toEqual([]);
+  });
+
+  it('reads the attachments of other records but not those of a metadata channel message', async () => {
+    await setJonyChannelVisibility('METADATA');
+
+    const response = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'attachment',
+        objectMetadataPluralName: 'attachments',
+        gqlFields: 'id',
+        filter: { id: { in: [companyAttachmentId, messageAttachmentId] } },
+      }),
+      APPLE_PHIL_GUEST_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(
+      response.body.data.attachments.edges.map(
+        ({ node }: { node: { id: string } }) => node.id,
+      ),
+    ).toEqual([companyAttachmentId]);
   });
 
   it('lets the owner of a metadata channel read every field', async () => {

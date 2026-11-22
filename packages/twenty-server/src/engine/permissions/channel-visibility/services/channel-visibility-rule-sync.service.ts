@@ -114,9 +114,12 @@ export class ChannelVisibilityRuleSyncService {
                 ],
               },
             }),
-            ...CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS.map(
-              (objectUniversalIdentifier) => ({ objectUniversalIdentifier }),
-            ),
+            ...[
+              ...CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS,
+              STANDARD_OBJECTS.attachment.universalIdentifier,
+            ].map((objectUniversalIdentifier) => ({
+              objectUniversalIdentifier,
+            })),
           ].map((objectRecordsPermissions) => ({
             ...objectRecordsPermissions,
             canReadAllRecords: false,
