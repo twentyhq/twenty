@@ -12,8 +12,8 @@ describe('buildAddRichTextFileIdsColumnStatements', () => {
         ],
       }),
     ).toEqual([
-      'ALTER TABLE "workspace_abc"."note" ADD COLUMN IF NOT EXISTS "bodyV2FileIds" jsonb',
-      'ALTER TABLE "workspace_abc"."_meeting" ADD COLUMN IF NOT EXISTS "briefFileIds" jsonb, ADD COLUMN IF NOT EXISTS "summaryFileIds" jsonb',
+      'ALTER TABLE "workspace_abc"."note" ADD COLUMN IF NOT EXISTS "bodyV2_fileIds" jsonb',
+      'ALTER TABLE "workspace_abc"."_meeting" ADD COLUMN IF NOT EXISTS "brief_fileIds" jsonb, ADD COLUMN IF NOT EXISTS "summary_fileIds" jsonb',
     ]);
   });
 
