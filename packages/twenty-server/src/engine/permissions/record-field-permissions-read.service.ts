@@ -2,10 +2,10 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
@@ -51,7 +51,7 @@ export class RecordFieldPermissionsReadService {
     {
       fieldMetadataIds: string[];
       sqlCondition: SQLCondition;
-      placeholderByFieldMetadataId: Record<string, string>;
+      placeholderFieldMetadataIds: string[];
     }[]
   > {
     if (!isDefined(principals)) {
@@ -91,32 +91,23 @@ export class RecordFieldPermissionsReadService {
       }),
     );
 
-    const placeholderByFieldMetadataId = Object.fromEntries(
-      flatObjectMetadata.fieldIds
-        .filter((fieldMetadataId) => {
-          const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: fieldMetadataId,
-            flatEntityMaps: metadataMaps.flatFieldMetadataMaps,
-          });
-
-          return (
-            isDefined(flatFieldMetadata) &&
-            RESTRICTED_PLACEHOLDER_FIELD_UNIVERSAL_IDENTIFIERS.includes(
-              flatFieldMetadata.universalIdentifier,
-            )
-          );
-        })
-        .map((fieldMetadataId) => [
-          fieldMetadataId,
-          FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
-        ]),
-    );
+    const placeholderFieldMetadataIds =
+      findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps({
+        flatEntityMaps: metadataMaps.flatFieldMetadataMaps,
+        universalIdentifiers:
+          RESTRICTED_PLACEHOLDER_FIELD_UNIVERSAL_IDENTIFIERS,
+      })
+        .filter(
+          (flatFieldMetadata) =>
+            flatFieldMetadata.objectMetadataId === flatObjectMetadata.id,
+        )
+        .map(({ id }) => id);
 
     return buildFieldsUnreadableByEveryMatchingRuleSQLConditions(
       rlsRuleSQLConditions,
     ).map((unreadableFieldsSQLCondition) => ({
       ...unreadableFieldsSQLCondition,
-      placeholderByFieldMetadataId,
+      placeholderFieldMetadataIds,
     }));
   }
 

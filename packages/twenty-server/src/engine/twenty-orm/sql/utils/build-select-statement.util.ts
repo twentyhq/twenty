@@ -96,10 +96,10 @@ export type UnreadableColumnConditions = SQLConditionsByAliasAndName;
 
 export type UnreadableRelationConditions = SQLConditionsByAliasAndName;
 
-export type UnreadableColumnPlaceholders = Record<
-  string,
-  Record<string, string>
->;
+export type UnreadableColumnPlaceholders = Partial<Record<string, string[]>>;
+
+export const UNREADABLE_COLUMN_PLACEHOLDER_PARAMETER_NAME =
+  'unreadableColumnPlaceholder';
 
 export type SelectStatementState = {
   alias: string;
@@ -159,7 +159,11 @@ const renderProjectedColumn = ({
   return renderUnreadableColumn({
     quotedColumn,
     unreadableConditions,
-    placeholder: state.unreadableColumnPlaceholders?.[alias]?.[columnName],
+    placeholder: state.unreadableColumnPlaceholders?.[alias]?.includes(
+      columnName,
+    )
+      ? `:${UNREADABLE_COLUMN_PLACEHOLDER_PARAMETER_NAME}`
+      : undefined,
   });
 };
 
