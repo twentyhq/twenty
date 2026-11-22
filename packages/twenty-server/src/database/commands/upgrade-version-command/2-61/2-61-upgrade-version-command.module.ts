@@ -12,7 +12,6 @@ import { DeleteStandardHelperAgentCommand } from 'src/database/commands/upgrade-
 import { RestoreNotStartedWorkflowRunStatusCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795287331295-restore-not-started-workflow-run-status.command';
 import { TypeAccessGroupsCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795264768000-type-access-groups.command';
 import { AccessGroupComputationModule } from 'src/engine/permissions/internal/access-group/access-group-computation.module';
-import { AddFavoritesNavigationMenuSectionCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795384895267-add-favorites-navigation-menu-section.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
@@ -41,7 +40,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     DeleteStandardHelperAgentCommand,
     TypeAccessGroupsCommand,
     RestoreNotStartedWorkflowRunStatusCommand,
-    AddFavoritesNavigationMenuSectionCommand,
   ],
 })
 export class V2_61_UpgradeVersionCommandModule {}

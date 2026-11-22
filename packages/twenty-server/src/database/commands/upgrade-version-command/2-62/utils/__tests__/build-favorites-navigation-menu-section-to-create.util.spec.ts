@@ -1,6 +1,6 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
-import { buildFavoritesNavigationMenuSectionToCreate } from 'src/database/commands/upgrade-version-command/2-61/utils/build-favorites-navigation-menu-section-to-create.util';
+import { buildFavoritesNavigationMenuSectionToCreate } from 'src/database/commands/upgrade-version-command/2-62/utils/build-favorites-navigation-menu-section-to-create.util';
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 
 const buildItem = (
