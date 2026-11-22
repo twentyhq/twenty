@@ -94,25 +94,23 @@ const CTO_RELATION_WITH_ARGUMENTS: Omit<
 
 describe('getScopedRelationAliases', () => {
   it('turns the scope filters, sorts and limit into nested arguments', () => {
-    expect(
-      getAliases({
-        recordFields: [getPeopleColumn({ relationScope: CTO_RELATION_SCOPE })],
+    const [scopedRelationAlias] = getAliases({
+      recordFields: [getPeopleColumn({ relationScope: CTO_RELATION_SCOPE })],
+    });
+
+    expect(scopedRelationAlias).toEqual({
+      recordFieldId: PEOPLE_COLUMN_ID,
+      responseKey: computeRelationWithArgumentsResponseKey(
+        scopedRelationAlias.relationWithArguments,
+      ),
+      relationObjectMetadataItem: expect.objectContaining({
+        id: personObjectMetadataItem.id,
       }),
-    ).toEqual([
-      {
-        recordFieldId: PEOPLE_COLUMN_ID,
-        responseKey: computeRelationWithArgumentsResponseKey(
-          CTO_RELATION_WITH_ARGUMENTS,
-        ),
-        relationObjectMetadataItem: expect.objectContaining({
-          id: personObjectMetadataItem.id,
-        }),
-        relationWithArguments: {
-          ...CTO_RELATION_WITH_ARGUMENTS,
-          recordGqlFields: expect.objectContaining({ id: true }),
-        },
+      relationWithArguments: {
+        ...CTO_RELATION_WITH_ARGUMENTS,
+        recordGqlFields: expect.objectContaining({ id: true }),
       },
-    ]);
+    });
   });
 
   it('keeps the default order and no limit for an empty scope', () => {
