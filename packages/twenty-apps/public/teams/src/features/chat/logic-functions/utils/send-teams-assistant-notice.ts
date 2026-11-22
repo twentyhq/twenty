@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { RELEASE_FLAGS } from 'src/constants/release-flags';
 import { type TeamsActivitiesDispatchPayload } from 'src/features/chat/logic-functions/types/teams-activities-dispatch-payload.type';
 import { type TeamsAssistantNoticeKind } from 'src/features/chat/logic-functions/types/teams-assistant-notice-kind.type';
 import { isTeamsActivityAddressedToBot } from 'src/features/chat/logic-functions/utils/is-teams-activity-addressed-to-bot';
@@ -19,6 +20,7 @@ export const sendTeamsAssistantNotice = async ({
   const conversationId = payload.activity.conversation?.id;
 
   if (
+    !RELEASE_FLAGS.IS_CHAT_ASSISTANT_RELEASED ||
     !isNonEmptyString(conversationId) ||
     !isTeamsActivityAddressedToBot(payload)
   ) {

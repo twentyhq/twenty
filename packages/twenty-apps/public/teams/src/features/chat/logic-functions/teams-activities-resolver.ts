@@ -6,7 +6,6 @@ import {
   type ServerRouteResolverResult,
 } from 'twenty-sdk/logic-function';
 
-import { RELEASE_FLAGS } from 'src/constants/release-flags';
 import {
   TEAMS_ACTIVITIES_ENQUEUE_UNIVERSAL_IDENTIFIER,
   TEAMS_ACTIVITIES_ROUTE_UNIVERSAL_IDENTIFIER,
@@ -69,14 +68,12 @@ export const teamsActivitiesResolverHandler = async (
   });
 
   if (!isNonEmptyString(workspaceId)) {
-    if (RELEASE_FLAGS.IS_CHAT_ASSISTANT_RELEASED) {
-      await sendTeamsAssistantNotice({
-        payload: { activity, serviceUrl, tenantId },
-        kind: 'not-connected',
-        text: TEAMS_ASSISTANT_NOT_CONNECTED_TEXT,
-        ttlMs: TEAMS_ASSISTANT_NOTICE_TTL_MS,
-      });
-    }
+    await sendTeamsAssistantNotice({
+      payload: { activity, serviceUrl, tenantId },
+      kind: 'not-connected',
+      text: TEAMS_ASSISTANT_NOT_CONNECTED_TEXT,
+      ttlMs: TEAMS_ASSISTANT_NOTICE_TTL_MS,
+    });
 
     return new Response({
       ok: true,

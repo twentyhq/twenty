@@ -3,8 +3,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { type TeamsActivitiesDispatchPayload } from 'src/features/chat/logic-functions/types/teams-activities-dispatch-payload.type';
 import { sendTeamsAssistantNotice } from 'src/features/chat/logic-functions/utils/send-teams-assistant-notice';
 
-const { sendReplyOnceMock } = vi.hoisted(() => ({
+const { sendReplyOnceMock, releaseFlags } = vi.hoisted(() => ({
   sendReplyOnceMock: vi.fn(),
+  releaseFlags: { IS_CHAT_ASSISTANT_RELEASED: true },
+}));
+
+vi.mock('src/constants/release-flags', () => ({
+  RELEASE_FLAGS: releaseFlags,
 }));
 
 vi.mock(
@@ -40,6 +45,14 @@ describe('sendTeamsAssistantNotice', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     sendReplyOnceMock.mockResolvedValue(true);
+    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
+  });
+
+  it('should stay quiet while chat is unreleased', async () => {
+    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = false;
+
+    await expect(sendNotice(PAYLOAD)).resolves.toBe(false);
+    expect(sendReplyOnceMock).not.toHaveBeenCalled();
   });
 
   it('should post the notice once per conversation and kind', async () => {

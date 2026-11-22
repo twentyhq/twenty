@@ -8,17 +8,10 @@ import { teamsActivitiesResolverHandler } from 'src/features/chat/logic-function
 import { TeamsActivityTokenInvalidError } from 'src/features/chat/logic-functions/types/teams-activity-token-invalid-error';
 import { type TeamsInboundActivity } from 'src/features/chat/logic-functions/types/teams-inbound-activity.type';
 
-const { kvGetMock, verifyTokenMock, sendNoticeMock, releaseFlags } = vi.hoisted(
-  () => ({
-    kvGetMock: vi.fn(),
-    verifyTokenMock: vi.fn(),
-    sendNoticeMock: vi.fn(),
-    releaseFlags: { IS_CHAT_ASSISTANT_RELEASED: true },
-  }),
-);
-
-vi.mock('src/constants/release-flags', () => ({
-  RELEASE_FLAGS: releaseFlags,
+const { kvGetMock, verifyTokenMock, sendNoticeMock } = vi.hoisted(() => ({
+  kvGetMock: vi.fn(),
+  verifyTokenMock: vi.fn(),
+  sendNoticeMock: vi.fn(),
 }));
 
 vi.mock(
@@ -62,7 +55,6 @@ describe('teamsActivitiesResolverHandler', () => {
     verifyTokenMock.mockResolvedValue(SERVICE_URL);
     kvGetMock.mockResolvedValue('workspace-1');
     sendNoticeMock.mockResolvedValue(true);
-    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
   });
 
   it('routes a bot install so the workspace can post its welcome', async () => {
@@ -204,14 +196,5 @@ describe('teamsActivitiesResolverHandler', () => {
       text: TEAMS_ASSISTANT_NOT_CONNECTED_TEXT,
       ttlMs: TEAMS_ASSISTANT_NOTICE_TTL_MS,
     });
-  });
-
-  it('stays silent for an unclaimed tenant while chat is unreleased', async () => {
-    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = false;
-    kvGetMock.mockResolvedValue(null);
-
-    await resolve(MESSAGE_ACTIVITY);
-
-    expect(sendNoticeMock).not.toHaveBeenCalled();
   });
 });
