@@ -6,23 +6,18 @@ import { sortKeysDeeply } from '../sortKeysDeeply';
 
 const RESPONSE_KEY_HASH_LENGTH = 16;
 
-// Derived from the field and its arguments alone, so the query and the readers of its result agree on the key without sharing state
+// Derived from the whole entry, so the query and its readers agree on the key without sharing state, and two entries share a key only when they select the same thing
 export const computeRelationWithArgumentsResponseKey = ({
   relationFieldName,
-  filter,
-  orderBy,
-  first,
-}: Pick<
-  RecordGqlFieldsRelationWithArguments,
-  'relationFieldName' | 'filter' | 'orderBy' | 'first'
->): string => {
-  const serializedArguments = JSON.stringify(
-    sortKeysDeeply({ filter, first, orderBy }),
+  ...relationArgumentsAndSelection
+}: RecordGqlFieldsRelationWithArguments): string => {
+  const serializedArgumentsAndSelection = JSON.stringify(
+    sortKeysDeeply(relationArgumentsAndSelection),
   );
 
-  const argumentsHash = bytesToHex(
-    sha256(utf8ToBytes(serializedArguments)),
+  const hash = bytesToHex(
+    sha256(utf8ToBytes(serializedArgumentsAndSelection)),
   ).slice(0, RESPONSE_KEY_HASH_LENGTH);
 
-  return `${relationFieldName}_${argumentsHash}`;
+  return `${relationFieldName}_${hash}`;
 };
