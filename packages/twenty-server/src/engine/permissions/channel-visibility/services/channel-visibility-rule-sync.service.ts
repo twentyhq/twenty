@@ -12,22 +12,13 @@ import {
   buildChannelVisibilityRuleSyncLockKey,
   CHANNEL_VISIBILITY_RULE_SYNC_LOCK_OPTIONS,
 } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-rule-sync-lock.constant';
+import { CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-child-object-universal-identifiers.constant';
 import { buildChannelVisibilityObjectRecordsPermissions } from 'src/engine/permissions/channel-visibility/utils/build-channel-visibility-object-records-permissions.util';
 import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
 import { WorkspaceMemberIndividualRoleService } from 'src/engine/permissions/workspace-member-individual-role/services/workspace-member-individual-role.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const { message, calendarEvent } = STANDARD_OBJECTS;
-
-const CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_OBJECTS.messageThread.universalIdentifier,
-  STANDARD_OBJECTS.messageParticipant.universalIdentifier,
-  STANDARD_OBJECTS.messageChannelMessageAssociation.universalIdentifier,
-  STANDARD_OBJECTS.messageChannelMessageAssociationMessageFolder
-    .universalIdentifier,
-  STANDARD_OBJECTS.calendarEventParticipant.universalIdentifier,
-  STANDARD_OBJECTS.calendarChannelEventAssociation.universalIdentifier,
-];
 
 @Injectable()
 export class ChannelVisibilityRuleSyncService {

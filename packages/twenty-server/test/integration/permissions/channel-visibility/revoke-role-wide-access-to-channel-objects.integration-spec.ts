@@ -5,7 +5,7 @@ import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-m
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
-import { type RevokeRoleWideAccessToChannelObjectsCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795301889095-revoke-role-wide-access-to-channel-objects.command';
+import { type RevokeRoleWideAccessToChannelObjectsCommand } from 'src/engine/permissions/channel-visibility/commands/revoke-role-wide-access-to-channel-objects.command';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -37,7 +37,7 @@ const recomputeObjectPermissionCaches = () =>
     'rolesPermissions',
   ]);
 
-describe('2-61 workspace command - revoke role wide access to channel objects (integration)', () => {
+describe('revoke role wide access to channel objects command (integration)', () => {
   let command: RevokeRoleWideAccessToChannelObjectsCommand;
   let messageObjectMetadataId: string;
   let agentRoleId: string;

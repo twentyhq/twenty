@@ -9,7 +9,6 @@ import { RepairSkippedStandardCommandMenuItemsCommand } from 'src/database/comma
 import { AddWorkspaceNavigationMenuSectionCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795106019718-add-workspace-navigation-menu-section.command';
 import { ConvertPermissionStorageObjectsToTablesCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795258335000-convert-permission-storage-objects-to-tables.command';
 import { DeleteStandardHelperAgentCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795261783307-delete-standard-helper-agent.command';
-import { RevokeRoleWideAccessToChannelObjectsCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795301889095-revoke-role-wide-access-to-channel-objects.command';
 import { RestoreNotStartedWorkflowRunStatusCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795287331295-restore-not-started-workflow-run-status.command';
 import { TypeAccessGroupsCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795264768000-type-access-groups.command';
 import { AccessGroupComputationModule } from 'src/engine/permissions/internal/access-group/access-group-computation.module';
@@ -41,7 +40,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     DeleteStandardHelperAgentCommand,
     TypeAccessGroupsCommand,
     RestoreNotStartedWorkflowRunStatusCommand,
-    RevokeRoleWideAccessToChannelObjectsCommand,
   ],
 })
 export class V2_61_UpgradeVersionCommandModule {}

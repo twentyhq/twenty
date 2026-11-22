@@ -1,19 +1,25 @@
 import { Command } from 'nest-commander';
 import { getObjectPermissionUniversalIdentifier } from 'twenty-shared/application';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { CHANNEL_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/database/commands/upgrade-version-command/2-61/constants/channel-object-universal-identifiers.constant';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-child-object-universal-identifiers.constant';
+import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type UniversalFlatObjectPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-permission.type';
+
+const CHANNEL_OBJECT_UNIVERSAL_IDENTIFIERS = [
+  STANDARD_OBJECTS.message.universalIdentifier,
+  STANDARD_OBJECTS.calendarEvent.universalIdentifier,
+  ...CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS,
+];
 
 const NO_RECORDS_PERMISSIONS = {
   canReadObjectRecords: false,
@@ -23,9 +29,8 @@ const NO_RECORDS_PERMISSIONS = {
   canDestroyObjectRecords: false,
 };
 
-@RegisteredWorkspaceCommand('2.61.0', 1795301889095)
 @Command({
-  name: 'upgrade:2-61:revoke-role-wide-access-to-channel-objects',
+  name: 'channel-visibility:revoke-role-wide-access',
   description:
     'Revoke the role wide access of user roles to message and calendar objects in workspaces enforcing channel visibility through individual roles',
 })
@@ -55,12 +60,7 @@ export class RevokeRoleWideAccessToChannelObjectsCommand extends ProvisionedWork
       'flatObjectMetadataMaps',
     ]);
 
-    if (
-      !featureFlagsMap[FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED] ||
-      !featureFlagsMap[
-        FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
-      ]
-    ) {
+    if (!isChannelVisibilityRlsEnabled(featureFlagsMap)) {
       return;
     }
 
