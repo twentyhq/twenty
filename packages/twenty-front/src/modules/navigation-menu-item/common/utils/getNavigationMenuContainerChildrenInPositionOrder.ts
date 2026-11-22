@@ -1,5 +1,6 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
+import { sortNavigationMenuContainerChildren } from '@/navigation-menu-item/common/utils/sortNavigationMenuContainerChildren';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export const getNavigationMenuContainerChildrenInPositionOrder = <
@@ -10,11 +11,19 @@ export const getNavigationMenuContainerChildrenInPositionOrder = <
 }: {
   items: TItem[];
   containerId: string | null;
-}): TItem[] =>
-  items
-    .filter(
-      (item) =>
-        (item.parentId ?? null) === containerId &&
-        item.type !== NavigationMenuItemType.TAB,
-    )
-    .sort((a, b) => a.position - b.position);
+}): TItem[] => {
+  const children = items.filter(
+    (item) =>
+      (item.parentId ?? null) === containerId &&
+      item.type !== NavigationMenuItemType.TAB,
+  );
+
+  return sortNavigationMenuContainerChildren({
+    items: children.filter(
+      (child) => child.type !== NavigationMenuItemType.SECTION,
+    ),
+    sections: children.filter(
+      (child) => child.type === NavigationMenuItemType.SECTION,
+    ),
+  });
+};

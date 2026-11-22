@@ -42,4 +42,26 @@ describe('getNavigationMenuContainerChildrenInPositionOrder', () => {
       }).map(({ id }) => id),
     ).toEqual(['people', 'sales', 'companies']);
   });
+
+  it('should keep an item before a section sharing its position', () => {
+    expect(
+      getNavigationMenuContainerChildrenInPositionOrder({
+        items: [
+          {
+            id: 'sales',
+            type: NavigationMenuItemType.SECTION,
+            parentId: null,
+            position: 1,
+          },
+          {
+            id: 'companies',
+            type: NavigationMenuItemType.OBJECT,
+            parentId: null,
+            position: 1,
+          },
+        ],
+        containerId: null,
+      }).map(({ id }) => id),
+    ).toEqual(['companies', 'sales']);
+  });
 });
