@@ -8,17 +8,17 @@ import { type QueryRunner } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { RICH_TEXT_FILE_IDS_COLUMN_NAME_SUFFIX } from 'src/database/commands/upgrade-version-command/2-61/constants/rich-text-file-ids-column-name-suffix.constant';
-import { buildAddRichTextFileIdsColumnStatements } from 'src/database/commands/upgrade-version-command/2-61/utils/build-add-rich-text-file-ids-column-statements.util';
+import { RICH_TEXT_FILE_IDS_COLUMN_NAME_SUFFIX } from 'src/database/commands/upgrade-version-command/2-62/constants/rich-text-file-ids-column-name-suffix.constant';
+import { buildAddRichTextFileIdsColumnStatements } from 'src/database/commands/upgrade-version-command/2-62/utils/build-add-rich-text-file-ids-column-statements.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
-@RegisteredWorkspaceCommand('2.61.0', 1795351100191)
+@RegisteredWorkspaceCommand('2.62.0', 1795380171758)
 @Command({
-  name: 'upgrade:2-61:add-rich-text-file-ids-columns',
+  name: 'upgrade:2-62:add-rich-text-file-ids-columns',
   description:
     'Add the server-only fileIds column to every rich text field, ahead of the release that reads it',
 })

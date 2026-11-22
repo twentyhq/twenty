@@ -524,7 +524,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     tableName,
     toName,
   }: {
-    flatFieldMetadata: FlatFieldMetadata;
+    flatFieldMetadata: Pick<FlatFieldMetadata, 'type' | 'name'>;
     queryRunner: QueryRunner;
     schemaName: string;
     tableName: string;

@@ -1,4 +1,4 @@
-import { buildAddRichTextFileIdsColumnStatements } from 'src/database/commands/upgrade-version-command/2-61/utils/build-add-rich-text-file-ids-column-statements.util';
+import { buildAddRichTextFileIdsColumnStatements } from 'src/database/commands/upgrade-version-command/2-62/utils/build-add-rich-text-file-ids-column-statements.util';
 
 describe('buildAddRichTextFileIdsColumnStatements', () => {
   it('should add one column per rich text field, in one statement per table', () => {

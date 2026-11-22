@@ -1,4 +1,4 @@
-import { RICH_TEXT_FILE_IDS_COLUMN_NAME_SUFFIX } from 'src/database/commands/upgrade-version-command/2-61/constants/rich-text-file-ids-column-name-suffix.constant';
+import { RICH_TEXT_FILE_IDS_COLUMN_NAME_SUFFIX } from 'src/database/commands/upgrade-version-command/2-62/constants/rich-text-file-ids-column-name-suffix.constant';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 export const buildAddRichTextFileIdsColumnStatements = ({
