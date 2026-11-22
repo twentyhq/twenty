@@ -5,6 +5,7 @@ import {
   type CommandMenuContextType,
 } from '@/command-menu-item/contexts/CommandMenuContext';
 import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
+import { isSidebarOnlyCommandMenuItem } from '@/command-menu-item/utils/isSidebarOnlyCommandMenuItem';
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { doesCommandMenuItemMatchCoreObjectName } from '@/command-menu-item/utils/doesCommandMenuItemMatchCoreObjectName';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
@@ -111,10 +112,7 @@ export const CommandMenuContextProviderContent = ({
       (commandMenuContextApi.featureFlags.IS_AI_CHAT_INBOX_ENABLED ?? false);
 
     const contextCommandMenuItems = commandMenuItemsToDisplay
-      .filter(
-        (item) =>
-          item.engineComponentKey !== EngineComponentKey.OPEN_COMMAND_MENU,
-      )
+      .filter((item) => !isSidebarOnlyCommandMenuItem(item))
       .filter(
         (item) =>
           !isCoreWorkflowIndex ||

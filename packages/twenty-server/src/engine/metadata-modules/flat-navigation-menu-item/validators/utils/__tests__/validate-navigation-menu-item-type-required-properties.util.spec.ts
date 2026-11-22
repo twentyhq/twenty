@@ -247,6 +247,20 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
     ]);
   });
 
+  it('should report an error when a command item belongs to a single user', () => {
+    const errors = validateNavigationMenuItemTypeRequiredProperties({
+      flatNavigationMenuItem: buildFlatNavigationMenuItem({
+        type: NavigationMenuItemType.COMMAND,
+        commandMenuItemUniversalIdentifier: OTHER_VALID_UUID,
+        userWorkspaceId: VALID_UUID,
+      }),
+    });
+
+    expect(errors.map(({ message }) => message)).toEqual([
+      'A COMMAND navigation menu item cannot belong to a single user',
+    ]);
+  });
+
   it('should report an error when a command is set on another type', () => {
     const errors = validateNavigationMenuItemTypeRequiredProperties({
       flatNavigationMenuItem: buildFlatNavigationMenuItem({
