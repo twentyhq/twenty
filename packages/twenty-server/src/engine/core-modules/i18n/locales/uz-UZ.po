@@ -696,6 +696,11 @@ msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "Ish maydoni a’zosi"
 
+#. js-lingui-id: /WlOrK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation needs the field to read on its related records"
+msgstr ""
+
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "A workspace-wide blocklist entry cannot target a workspace member."
@@ -3069,6 +3074,11 @@ msgstr "Qayta belgilash uchun mavjud vaqt jadvali faoliyati turini tanlang"
 #: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Ulashish uchun bitta shaxs yoki bitta rolni tanlang."
+
+#. js-lingui-id: IkeRn2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the field to read on the related records"
+msgstr ""
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5598,6 +5608,11 @@ msgstr "\"{relationFieldName}\" maydoni bog‘lanish emas"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "\"{workspaceMemberFieldName}\" maydoni workspaceMember ob’ektining maydoni emas, predikat hech qachon qo‘llanilmaydi"
+
+#. js-lingui-id: moiE3i
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
+msgstr ""
 
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
@@ -11132,6 +11147,11 @@ msgstr "Predikat qiymati ushbu operand uchun yaroqsiz"
 msgid "Predicates reaching a field through a relation are not enabled for this workspace"
 msgstr "Bog‘lanish orqali maydonga yetib boruvchi predikatlar ushbu ish maydoni uchun yoqilmagan"
 
+#. js-lingui-id: v5akl/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicates reading the current member through a relation are not enabled for this workspace"
+msgstr ""
+
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -12357,6 +12377,7 @@ msgid "Rule"
 msgstr "Qoida"
 
 #. js-lingui-id: zhLAHJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Rules through a relation are not enabled for this workspace"
 msgstr "Bog‘lanish orqali qoidalar ushbu ish maydoni uchun yoqilmagan"
@@ -15049,6 +15070,11 @@ msgstr "Bu maydon ish maydoni a’zosi ob’ektiga tegishli emas"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "This field has no database column to index."
 msgstr "Ushbu maydonda indekslash uchun ma’lumotlar bazasi ustuni yo‘q."
+
+#. js-lingui-id: /62EJW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field is not a one-to-many relation of the workspace member object"
+msgstr ""
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17963,6 +17989,12 @@ msgstr "Ish maydoni a’zosi lavozimi"
 msgctxt "view.name"
 msgid "Workspace Member Record Page Fields"
 msgstr "Ish maydoni a'zosi yozuv sahifasi maydonlari"
+
+#. js-lingui-id: VWPelK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Workspace member relation field metadata not found"
+msgstr ""
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
