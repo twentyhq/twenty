@@ -65,7 +65,7 @@ const StyledItem = styled.button<StyledItemProps>`
   border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   color: ${({ active, isSoon, variant }) => {
-    if (variant === 'placeholder') {
+    if (variant === 'placeholder' || variant === 'disabled') {
       return themeCssVariables.font.color.light;
     }
     if (variant === 'tertiary') {
@@ -102,7 +102,9 @@ const StyledItem = styled.button<StyledItemProps>`
       : themeCssVariables.spacing[1]};
   padding-top: ${themeCssVariables.spacing[1]};
   pointer-events: ${({ isSoon, variant }) =>
-    isSoon || variant === 'placeholder' ? 'none' : 'auto'};
+    isSoon || variant === 'placeholder' || variant === 'disabled'
+      ? 'none'
+      : 'auto'};
   text-decoration: none;
   user-select: none;
   width: ${({ isNavigationDrawerExpanded, hasRightOptions }) =>
@@ -270,7 +272,10 @@ export const NavigationDrawerItem = ({
     isDefined(rightOptions) &&
     isDefined(onClick);
   const isRowKeyboardEnabled =
-    isRowButton && !isSoon && variant !== 'placeholder';
+    isRowButton &&
+    !isSoon &&
+    variant !== 'placeholder' &&
+    variant !== 'disabled';
   const ariaCurrentWhenActive = isDefined(to) ? 'page' : true;
 
   const handleMobileNavigation = () => {
@@ -347,7 +352,7 @@ export const NavigationDrawerItem = ({
           aria-controls={isRowButton ? undefined : ariaControls}
           isSoon={isSoon}
           variant={variant}
-          disabled={variant === 'placeholder'}
+          disabled={variant === 'placeholder' || variant === 'disabled'}
           indentationLevel={indentationLevel}
           isNavigationDrawerExpanded={isExpanded}
           isDragging={isDragging}

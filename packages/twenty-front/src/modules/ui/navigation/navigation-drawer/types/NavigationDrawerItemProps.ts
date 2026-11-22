@@ -30,6 +30,6 @@ export type NavigationDrawerItemProps = {
   triggerEvent?: TriggerEventType;
   preventCollapseOnMobile?: boolean;
   isSelectedInEditMode?: boolean;
-  variant?: 'default' | 'tertiary' | 'placeholder';
+  variant?: 'default' | 'tertiary' | 'placeholder' | 'disabled';
   isUnread?: boolean;
 };

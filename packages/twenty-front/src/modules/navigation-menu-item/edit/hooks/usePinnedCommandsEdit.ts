@@ -30,15 +30,27 @@ export const usePinnedCommandsEdit = () => {
       currentItems.filter(({ id }) => id === navigationMenuItemId),
   );
 
-  const getMovedPosition = (navigationMenuItemId: string, offset: -1 | 1) =>
+  const getMovedPosition = ({
+    navigationMenuItemId,
+    offset,
+  }: {
+    navigationMenuItemId: string;
+    offset: -1 | 1;
+  }) =>
     getNavigationMenuItemMovedPosition({
       siblings: pinnedCommandSiblings,
       itemId: navigationMenuItemId,
       offset,
     });
 
-  const move = (navigationMenuItemId: string, offset: -1 | 1) => {
-    const position = getMovedPosition(navigationMenuItemId, offset);
+  const move = ({
+    navigationMenuItemId,
+    offset,
+  }: {
+    navigationMenuItemId: string;
+    offset: -1 | 1;
+  }) => {
+    const position = getMovedPosition({ navigationMenuItemId, offset });
 
     if (isDefined(position)) {
       void updateItem(navigationMenuItemId, { position });
@@ -76,10 +88,12 @@ export const usePinnedCommandsEdit = () => {
   };
 
   return {
-    canMove: (navigationMenuItemId: string, offset: -1 | 1) =>
-      isDefined(getMovedPosition(navigationMenuItemId, offset)),
-    moveUp: (navigationMenuItemId: string) => move(navigationMenuItemId, -1),
-    moveDown: (navigationMenuItemId: string) => move(navigationMenuItemId, 1),
+    canMove: (movement: { navigationMenuItemId: string; offset: -1 | 1 }) =>
+      isDefined(getMovedPosition(movement)),
+    moveUp: (navigationMenuItemId: string) =>
+      move({ navigationMenuItemId, offset: -1 }),
+    moveDown: (navigationMenuItemId: string) =>
+      move({ navigationMenuItemId, offset: 1 }),
     remove: (navigationMenuItemId: string) =>
       void deleteItems([navigationMenuItemId]),
     isPinned,

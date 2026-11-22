@@ -15,6 +15,6 @@ export const getPinnedCommandNavigationMenuItems = <
       (navigationMenuItem) =>
         navigationMenuItem.type === NavigationMenuItemType.COMMAND &&
         !isDefined(navigationMenuItem.parentId) &&
-        navigationMenuItem.isActive !== false,
+        navigationMenuItem.isActive,
     )
     .sort((first, second) => first.position - second.position);

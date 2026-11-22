@@ -51,7 +51,7 @@ export const NavigationMenuItemPinnedCommandActions = ({
               id: 'up',
               label: t`Move up`,
               Icon: IconChevronUp,
-              isDisabled: !canMove(navigationMenuItemId, -1),
+              isDisabled: !canMove({ navigationMenuItemId, offset: -1 }),
               onClick: () => moveUp(navigationMenuItemId),
             }}
           />
@@ -60,7 +60,7 @@ export const NavigationMenuItemPinnedCommandActions = ({
               id: 'down',
               label: t`Move down`,
               Icon: IconChevronDown,
-              isDisabled: !canMove(navigationMenuItemId, 1),
+              isDisabled: !canMove({ navigationMenuItemId, offset: 1 }),
               onClick: () => moveDown(navigationMenuItemId),
             }}
           />

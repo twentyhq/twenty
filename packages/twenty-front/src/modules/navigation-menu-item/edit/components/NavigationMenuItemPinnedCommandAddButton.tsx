@@ -3,7 +3,6 @@ import { useLingui } from '@lingui/react/macro';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconPlus } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
@@ -16,13 +15,6 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 
 const StyledDisabledAddCommand = styled.div`
   cursor: not-allowed;
-
-  .navigation-drawer-item,
-  .navigation-drawer-item:hover {
-    background: transparent;
-    color: ${themeCssVariables.font.color.light};
-    pointer-events: none;
-  }
 `;
 
 export const NavigationMenuItemPinnedCommandAddButton = () => {
@@ -37,7 +29,7 @@ export const NavigationMenuItemPinnedCommandAddButton = () => {
       Icon={IconPlus}
       label={t`Add command`}
       triggerEvent="CLICK"
-      variant="tertiary"
+      variant={areAllCommandsPinned ? 'disabled' : 'tertiary'}
     />
   );
 
