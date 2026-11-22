@@ -2,6 +2,8 @@ import { createOneOperationFactory } from 'test/integration/graphql/utils/create
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { findCurrentUserObjectRecordsPermissions } from 'test/integration/permissions/channel-visibility/utils/find-current-user-object-records-permissions.util';
+import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
 import { updateMessageChannelVisibility } from 'test/integration/permissions/channel-visibility/utils/update-message-channel-visibility.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { syncChannelVisibilityRules } from 'test/integration/permissions/channel-visibility/utils/sync-channel-visibility-rules.util';
@@ -299,6 +301,27 @@ describe('channel visibility through row level rules (integration)', () => {
           text === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
       ),
     ).toBe(true);
+  });
+
+  it('tells the front it can read some records of an object reached only through related record paths', async () => {
+    const response = await findCurrentUserObjectRecordsPermissions(
+      APPLE_PHIL_GUEST_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    const messageThreadObjectMetadataId =
+      await findObjectMetadataIdByName('messageThread');
+
+    expect(
+      response.body.data.currentUser.currentUserWorkspace.objectRecordsPermissions.find(
+        ({ objectMetadataId }: { objectMetadataId: string }) =>
+          objectMetadataId === messageThreadObjectMetadataId,
+      ),
+    ).toMatchObject({
+      canReadAllRecords: false,
+      canReadSomeRecords: true,
+    });
   });
 
   it('cannot read the title of an event of a metadata calendar of another member', async () => {

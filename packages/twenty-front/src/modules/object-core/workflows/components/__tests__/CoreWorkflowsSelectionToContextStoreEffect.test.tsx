@@ -9,14 +9,14 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { CoreWorkflowsSelectionToContextStoreEffect } from '@/object-core/workflows/components/CoreWorkflowsSelectionToContextStoreEffect';
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { CoreWorkflowStatus, WorkflowVisibility } from '~/generated/graphql';
+import { CoreWorkflowStatus } from '~/generated/graphql';
 
 const buildCoreWorkflow = (id: string, name: string): CoreWorkflow => ({
   id,
   name,
   statuses: [CoreWorkflowStatus.ACTIVE],
   isSystem: false,
-  visibility: WorkflowVisibility.WORKSPACE,
+  isPrivate: false,
   canChangeVisibility: true,
   updatedAt: '2026-10-01T10:00:00.000Z',
   __typename: 'CoreWorkflowDTO',

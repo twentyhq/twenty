@@ -375,7 +375,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
         ...INITIATORS[initiator],
         context: {},
       },
-      status: WorkflowRunStatus.NOT_STARTED,
+      status: WorkflowRunStatus.ENQUEUED,
       triggerPayload: {},
       workspaceId,
     });
