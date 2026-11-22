@@ -9,6 +9,7 @@ import {
 } from 'twenty-ui/icon';
 
 import { getNavigationMenuItemMovedPosition } from '@/navigation-menu-item/common/utils/getNavigationMenuItemMovedPosition';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
@@ -25,7 +26,21 @@ export const useNavigationMenuContainerReorderOptions = ({
   onMoved: () => void;
 }): NavigationMenuItemOption[] => {
   const { t } = useLingui();
-  const siblings = useWorkspaceNavigationMenuContainers({ type, containerId });
+  const containers = useWorkspaceNavigationMenuContainers({
+    type,
+    containerId,
+  });
+  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
+  const siblings =
+    type === NavigationMenuItemType.SECTION
+      ? workspaceNavigationMenuItems
+          .filter(
+            (item) =>
+              (item.parentId ?? null) === containerId &&
+              item.type !== NavigationMenuItemType.TAB,
+          )
+          .sort((a, b) => a.position - b.position)
+      : containers;
   const { updateItem } = useNavigationMenuItemEditController('workspace');
   const isHorizontal = type === NavigationMenuItemType.TAB;
 
