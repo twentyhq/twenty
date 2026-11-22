@@ -1,5 +1,5 @@
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
-import { useGetLookupRelationRecordKeys } from '@/object-record/record-column-lookup/hooks/useGetLookupRelationRecordKeys';
+import { useGetLookupRelationRecordKeys } from '@/object-record/record-column-scope/hooks/useGetLookupRelationRecordKeys';
 import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
 import { type ScopedRelationAlias } from '@/object-record/record-column-scope/types/ScopedRelationAlias';
 import { renderHook } from '@testing-library/react';
