@@ -1,11 +1,11 @@
-import { type DirectMessageSidebarItem } from '@/inbox/types/DirectMessageSidebarItem';
+import { type InboxDirectMessageSidebarItem } from '@/inbox/types/InboxDirectMessageSidebarItem';
 
-export const getVisibleDirectMessageSidebarItems = ({
+export const getVisibleInboxDirectMessageSidebarItems = ({
   directMessages,
   currentThreadId,
   maxCount,
 }: {
-  directMessages: readonly DirectMessageSidebarItem[];
+  directMessages: readonly InboxDirectMessageSidebarItem[];
   currentThreadId: string | null;
   maxCount: number;
 }) =>

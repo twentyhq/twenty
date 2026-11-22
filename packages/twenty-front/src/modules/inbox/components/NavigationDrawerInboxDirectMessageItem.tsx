@@ -1,6 +1,6 @@
 import { InboxThreadActionsDropdown } from '@/inbox/components/InboxThreadActionsDropdown';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
-import { type DirectMessageSidebarItem } from '@/inbox/types/DirectMessageSidebarItem';
+import { type InboxDirectMessageSidebarItem } from '@/inbox/types/InboxDirectMessageSidebarItem';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -11,17 +11,17 @@ import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 
-type NavigationDrawerDirectMessageItemProps = {
-  directMessage: DirectMessageSidebarItem;
+type NavigationDrawerInboxDirectMessageItemProps = {
+  directMessage: InboxDirectMessageSidebarItem;
   isActive: boolean;
   onSelect: (threadId: string) => void;
 };
 
-export const NavigationDrawerDirectMessageItem = ({
+export const NavigationDrawerInboxDirectMessageItem = ({
   directMessage,
   isActive,
   onSelect,
-}: NavigationDrawerDirectMessageItemProps) => {
+}: NavigationDrawerInboxDirectMessageItemProps) => {
   const { t } = useLingui();
   const peerName = directMessage.peer?.name ?? t`Former member`;
   const thread = useAtomFamilySelectorValue(

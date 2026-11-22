@@ -5,9 +5,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconHash, IconMessage } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { DirectMessageMemberPicker } from '@/inbox/components/DirectMessageMemberPicker';
-import { NavigationDrawerDirectMessagesSection } from '@/inbox/components/NavigationDrawerDirectMessagesSection';
-import { DIRECT_MESSAGE_PRESENTATION_FIXTURE } from '@/inbox/components/__stories__/directMessagePresentationFixture';
+import { InboxDirectMessageMemberPicker } from '@/inbox/components/InboxDirectMessageMemberPicker';
+import { NavigationDrawerInboxDirectMessagesSection } from '@/inbox/components/NavigationDrawerInboxDirectMessagesSection';
+import { INBOX_DIRECT_MESSAGE_PRESENTATION_FIXTURE } from '@/inbox/components/__stories__/inboxDirectMessagePresentationFixture';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerConstraints';
@@ -25,17 +25,17 @@ const StyledSidebar = styled.div`
   width: ${NAVIGATION_DRAWER_CONSTRAINTS.default}px;
 `;
 
-type DirectMessagePresentationExampleProps = {
+type InboxDirectMessagePresentationExampleProps = {
   onSelectThread: (threadId: string) => void;
   onSelectMember: (workspaceMemberId: string) => void;
   memberState?: 'loading' | 'refreshing' | 'results';
 };
 
-export const DirectMessagePresentationExample = ({
+export const InboxDirectMessagePresentationExample = ({
   onSelectThread,
   onSelectMember,
   memberState = 'results',
-}: DirectMessagePresentationExampleProps) => {
+}: InboxDirectMessagePresentationExampleProps) => {
   const [store] = useState(() => {
     const initialStore = createStore();
     initialStore.set(isNavigationDrawerExpandedState.atom, true);
@@ -43,7 +43,8 @@ export const DirectMessagePresentationExample = ({
   });
   const [currentThreadId, setCurrentThreadId] = useState('dm-anna');
   const [searchValue, setSearchValue] = useState('');
-  const { currentMember, directMessages } = DIRECT_MESSAGE_PRESENTATION_FIXTURE;
+  const { currentMember, directMessages } =
+    INBOX_DIRECT_MESSAGE_PRESENTATION_FIXTURE;
   const matchingHumanMembers = filterBySearchQuery({
     items: [
       currentMember,
@@ -63,7 +64,7 @@ export const DirectMessagePresentationExample = ({
           <NavigationDrawerItem label="General" Icon={IconHash} />
           <NavigationDrawerItem label="Product" Icon={IconHash} />
         </CollapsibleNavigationDrawerSection>
-        <NavigationDrawerDirectMessagesSection
+        <NavigationDrawerInboxDirectMessagesSection
           directMessages={directMessages}
           currentThreadId={currentThreadId}
           onSelect={(threadId) => {
@@ -71,7 +72,7 @@ export const DirectMessagePresentationExample = ({
             onSelectThread(threadId);
           }}
           memberPicker={
-            <DirectMessageMemberPicker
+            <InboxDirectMessageMemberPicker
               humanMembers={
                 memberState === 'loading' ? [] : matchingHumanMembers
               }

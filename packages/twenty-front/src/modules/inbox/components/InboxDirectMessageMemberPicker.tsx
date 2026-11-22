@@ -1,4 +1,4 @@
-import { type DirectMessageMember } from '@/inbox/types/DirectMessageMember';
+import { type InboxDirectMessageMember } from '@/inbox/types/InboxDirectMessageMember';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -11,8 +11,8 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 
 const DIRECT_MESSAGE_MEMBER_PICKER_DROPDOWN_ID = 'direct-message-member-picker';
 
-type DirectMessageMemberPickerProps = {
-  humanMembers: readonly DirectMessageMember[];
+type InboxDirectMessageMemberPickerProps = {
+  humanMembers: readonly InboxDirectMessageMember[];
   currentWorkspaceMemberId: string;
   searchValue: string;
   onSearchChange: (searchValue: string) => void;
@@ -20,14 +20,14 @@ type DirectMessageMemberPickerProps = {
   onSelect: (workspaceMemberId: string) => void;
 };
 
-export const DirectMessageMemberPicker = ({
+export const InboxDirectMessageMemberPicker = ({
   humanMembers,
   currentWorkspaceMemberId,
   searchValue,
   onSearchChange,
   isLoading,
   onSelect,
-}: DirectMessageMemberPickerProps) => {
+}: InboxDirectMessageMemberPickerProps) => {
   const { t } = useLingui();
   const otherHumanMembers = humanMembers.filter(
     ({ workspaceMemberId }) => workspaceMemberId !== currentWorkspaceMemberId,

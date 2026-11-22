@@ -1,8 +1,8 @@
-import { NavigationDrawerDirectMessageItem } from '@/inbox/components/NavigationDrawerDirectMessageItem';
+import { NavigationDrawerInboxDirectMessageItem } from '@/inbox/components/NavigationDrawerInboxDirectMessageItem';
 import { INBOX_DIRECT_MESSAGES_COLLAPSED_MAX_COUNT } from '@/inbox/constants/InboxDirectMessagesCollapsedMaxCount';
 import { INBOX_DIRECT_MESSAGES_EXPANDED_MAX_COUNT } from '@/inbox/constants/InboxDirectMessagesExpandedMaxCount';
-import { type DirectMessageSidebarItem } from '@/inbox/types/DirectMessageSidebarItem';
-import { getVisibleDirectMessageSidebarItems } from '@/inbox/utils/getVisibleDirectMessageSidebarItems';
+import { type InboxDirectMessageSidebarItem } from '@/inbox/types/InboxDirectMessageSidebarItem';
+import { getVisibleInboxDirectMessageSidebarItems } from '@/inbox/utils/getVisibleInboxDirectMessageSidebarItems';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
@@ -12,30 +12,30 @@ import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
 const INBOX_DIRECT_MESSAGES_NAVIGATION_SECTION_ID = 'AiChatDirectMessages';
 
-type NavigationDrawerDirectMessagesSectionProps = {
-  directMessages: readonly DirectMessageSidebarItem[];
+type NavigationDrawerInboxDirectMessagesSectionProps = {
+  directMessages: readonly InboxDirectMessageSidebarItem[];
   currentThreadId: string | null;
   onSelect: (threadId: string) => void;
   memberPicker: ReactNode;
 };
 
-export const NavigationDrawerDirectMessagesSection = ({
+export const NavigationDrawerInboxDirectMessagesSection = ({
   directMessages,
   currentThreadId,
   onSelect,
   memberPicker,
-}: NavigationDrawerDirectMessagesSectionProps) => {
+}: NavigationDrawerInboxDirectMessagesSectionProps) => {
   const { t } = useLingui();
   const isNavigationDrawerContentExpanded =
     useIsNavigationDrawerContentExpanded();
   const [isShowingMore, setIsShowingMore] = useState(false);
 
-  const collapsedDirectMessages = getVisibleDirectMessageSidebarItems({
+  const collapsedDirectMessages = getVisibleInboxDirectMessageSidebarItems({
     directMessages,
     currentThreadId,
     maxCount: INBOX_DIRECT_MESSAGES_COLLAPSED_MAX_COUNT,
   });
-  const expandedDirectMessages = getVisibleDirectMessageSidebarItems({
+  const expandedDirectMessages = getVisibleInboxDirectMessageSidebarItems({
     directMessages,
     currentThreadId,
     maxCount: INBOX_DIRECT_MESSAGES_EXPANDED_MAX_COUNT,
@@ -54,7 +54,7 @@ export const NavigationDrawerDirectMessagesSection = ({
       alwaysShowRightIcon
     >
       {visibleDirectMessages.map((directMessage) => (
-        <NavigationDrawerDirectMessageItem
+        <NavigationDrawerInboxDirectMessageItem
           key={directMessage.threadId}
           directMessage={directMessage}
           isActive={directMessage.threadId === currentThreadId}

@@ -9,8 +9,8 @@ import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 import { Text } from 'twenty-ui/primitives/typography';
 
-import { DirectMessagePresentationExample } from '@/inbox/components/__stories__/DirectMessagePresentationExample';
-import { OpenDirectMessageButton } from '@/inbox/components/OpenDirectMessageButton';
+import { InboxDirectMessagePresentationExample } from '@/inbox/components/__stories__/InboxDirectMessagePresentationExample';
+import { InboxOpenDirectMessageButton } from '@/inbox/components/InboxOpenDirectMessageButton';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -38,26 +38,26 @@ const DIRECT_MESSAGE_THREAD_ID = '20202020-0000-4000-8000-000000000041';
 const DIRECT_MESSAGE_PEER_ID = '20202020-0000-4000-8000-000000000042';
 const openDirectMessageRequest = fn();
 
-const DirectMessageRouteExample = () => {
+const InboxDirectMessageRouteExample = () => {
   const { pathname } = useLocation();
 
   return (
     <>
-      <OpenDirectMessageButton />
+      <InboxOpenDirectMessageButton />
       <Text>{pathname}</Text>
     </>
   );
 };
 
 const meta = {
-  title: 'Modules/AI/NavigationDrawerDirectMessagesSection',
-  component: DirectMessagePresentationExample,
+  title: 'Modules/AI/NavigationDrawerInboxDirectMessagesSection',
+  component: InboxDirectMessagePresentationExample,
   decorators: [ComponentDecorator, MemoryRouterDecorator],
   args: {
     onSelectThread: fn(),
     onSelectMember: fn(),
   },
-} satisfies Meta<typeof DirectMessagePresentationExample>;
+} satisfies Meta<typeof InboxDirectMessagePresentationExample>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -215,7 +215,7 @@ export const RefreshingMembersDisablesStaleRows: Story = {
 };
 
 export const OpenMemberConversation: Story = {
-  render: () => <DirectMessageRouteExample />,
+  render: () => <InboxDirectMessageRouteExample />,
   decorators: [ToastDecorator, RootDecorator],
   beforeEach: () => {
     openDirectMessageRequest.mockClear();
