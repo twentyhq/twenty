@@ -60,7 +60,13 @@ export const WorkspaceSectionListDndKit = ({
     parentId: containerId,
     navigationMenuItemSection: 'workspace',
   });
-  const renderListEntry = (item: NavigationMenuItem, index: number) => {
+  const renderListEntry = ({
+    item,
+    index,
+  }: {
+    item: NavigationMenuItem;
+    index: number;
+  }) => {
     if (
       item.type === NavigationMenuItemType.SECTION &&
       isDefined(renderSection)
@@ -100,7 +106,7 @@ export const WorkspaceSectionListDndKit = ({
               !isLayoutCustomizationModeEnabled || workspaceDropDisabled
             }
           >
-            {renderListEntry(item, index)}
+            {renderListEntry({ item, index })}
           </NavigationMenuItemSortableItem>
         </StyledListItemRow>
       ))}

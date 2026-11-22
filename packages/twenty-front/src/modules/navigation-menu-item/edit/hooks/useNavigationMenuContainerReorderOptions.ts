@@ -8,6 +8,7 @@ import {
   IconChevronUp,
 } from 'twenty-ui/icon';
 
+import { getNavigationMenuContainerChildrenInPositionOrder } from '@/navigation-menu-item/common/utils/getNavigationMenuContainerChildrenInPositionOrder';
 import { getNavigationMenuItemMovedPosition } from '@/navigation-menu-item/common/utils/getNavigationMenuItemMovedPosition';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
@@ -33,13 +34,10 @@ export const useNavigationMenuContainerReorderOptions = ({
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const siblings =
     type === NavigationMenuItemType.SECTION
-      ? workspaceNavigationMenuItems
-          .filter(
-            (item) =>
-              (item.parentId ?? null) === containerId &&
-              item.type !== NavigationMenuItemType.TAB,
-          )
-          .sort((a, b) => a.position - b.position)
+      ? getNavigationMenuContainerChildrenInPositionOrder({
+          items: workspaceNavigationMenuItems,
+          containerId,
+        })
       : containers;
   const { updateItem } = useNavigationMenuItemEditController('workspace');
   const isHorizontal = type === NavigationMenuItemType.TAB;
