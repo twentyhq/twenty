@@ -15,20 +15,24 @@ import { parseTeamsAssistantRequest } from 'src/features/chat/logic-functions/ut
 import { replyWithTeamsAssistantHelp } from 'src/features/chat/logic-functions/utils/reply-with-teams-assistant-help';
 import { sendTeamsAssistantNotice } from 'src/features/chat/logic-functions/utils/send-teams-assistant-notice';
 
+const CHAT_DISABLED_SKIP_REASON = 'Chat is disabled';
+
 export const enqueueTeamsAssistantRequest = async (
   payload: TeamsActivitiesDispatchPayload,
 ): Promise<TeamsActivitiesEnqueueResult> => {
-  if (!isTeamsChatEnabled()) {
-    if (RELEASE_FLAGS.IS_CHAT_ASSISTANT_RELEASED) {
-      await sendTeamsAssistantNotice({
-        payload,
-        kind: 'chat-off',
-        text: TEAMS_ASSISTANT_CHAT_OFF_TEXT,
-        ttlMs: TEAMS_ASSISTANT_NOTICE_TTL_MS,
-      });
-    }
+  if (!RELEASE_FLAGS.IS_CHAT_ASSISTANT_RELEASED) {
+    return { ok: true, skipped: CHAT_DISABLED_SKIP_REASON };
+  }
 
-    return { ok: true, skipped: 'Chat is disabled' };
+  if (!isTeamsChatEnabled()) {
+    await sendTeamsAssistantNotice({
+      payload,
+      kind: 'chat-off',
+      text: TEAMS_ASSISTANT_CHAT_OFF_TEXT,
+      ttlMs: TEAMS_ASSISTANT_NOTICE_TTL_MS,
+    });
+
+    return { ok: true, skipped: CHAT_DISABLED_SKIP_REASON };
   }
 
   if (isTeamsInstallActivity(payload.activity)) {

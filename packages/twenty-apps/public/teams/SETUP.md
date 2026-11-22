@@ -102,8 +102,7 @@ workspace has turned **Enable chat** off. The bot answers direct messages, and
 channel or group messages that mention it. It posts a short welcome when it is
 installed, once per conversation, and answers `help`, `hi`, `hello` or a bare
 mention with the same text, without running the assistant or needing a linked
-account. A message's text is saved on its Teams Assistant Request only once the
-sender is matched to a workspace member. It answers as the
+account. It answers as the
 workspace member whose email matches the sender's Microsoft account, links that
 account under **Linked Teams accounts**, and replies with a short notice when no
 member matches. Members who can manage roles can remove a link there, link a
