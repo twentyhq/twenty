@@ -17,6 +17,7 @@ export const findManyObjectMetadata = async <
   input,
   gqlFields,
   expectToFail,
+  token,
 }: PerformMetadataQueryParams<FindManyObjectMetadataFactoryInput>): Promise<{
   errors: BaseGraphQLError[];
   objects: TObject[];
@@ -26,7 +27,7 @@ export const findManyObjectMetadata = async <
     gqlFields,
   });
 
-  const response = await makeMetadataApiRequest(graphqlOperation);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

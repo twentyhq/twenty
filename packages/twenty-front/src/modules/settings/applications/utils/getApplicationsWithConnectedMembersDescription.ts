@@ -1,31 +1,29 @@
 import { type SettingsApplicationsTableApplication } from '@/settings/applications/types/SettingsApplicationsTableApplication';
 import { plural } from '@lingui/core/macro';
-import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
+import { isOAuthOnlyApplication } from '@/settings/applications/utils/isOAuthOnlyApplication';
 
 // An OAuth-only app has nothing installed to describe, so its row says who connected it instead
 export const getApplicationsWithConnectedMembersDescription = <
   TApplication extends SettingsApplicationsTableApplication,
 >({
   applications,
-  applicationAuthorizations,
+  connectedMemberCounts,
 }: {
   applications: TApplication[];
-  applicationAuthorizations: { applicationId: string }[];
+  connectedMemberCounts: {
+    applicationId: string;
+    connectedMemberCount: number;
+  }[];
 }): TApplication[] => {
-  const connectedMemberCountByApplicationId = new Map<string, number>();
-
-  for (const { applicationId } of applicationAuthorizations) {
-    connectedMemberCountByApplicationId.set(
+  const connectedMemberCountByApplicationId = new Map(
+    connectedMemberCounts.map(({ applicationId, connectedMemberCount }) => [
       applicationId,
-      (connectedMemberCountByApplicationId.get(applicationId) ?? 0) + 1,
-    );
-  }
+      connectedMemberCount,
+    ]),
+  );
 
   return applications.map((application) => {
-    if (
-      application.applicationRegistration?.sourceType !==
-      ApplicationRegistrationSourceType.OAUTH_ONLY
-    ) {
+    if (!isOAuthOnlyApplication(application)) {
       return application;
     }
 

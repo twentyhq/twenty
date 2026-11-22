@@ -20,7 +20,7 @@ import { ADD_AGENT_CHAT_CHANNEL_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME } from
 import { ADD_NATIVE_PAGE_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-56/add-native-page-navigation-menu-item-upgrade-command-name.constant';
 import { ADD_WORKFLOW_AND_AGENT_NAVIGATION_MENU_ITEMS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-workflow-and-agent-navigation-menu-items-upgrade-command-name.constant';
 import { RENAME_NAVIGATION_MENU_ITEM_FOLDER_ID_TO_PARENT_ID_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-60/rename-navigation-menu-item-folder-id-to-parent-id-upgrade-command-name.constant';
-import { ADD_COMMAND_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-command-navigation-menu-item-upgrade-command-name.constant';
+import { ADD_COMMAND_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-62/add-command-navigation-menu-item-upgrade-command-name.constant';
 import { ADD_NAVIGATION_MENU_ITEM_BUILT_IN_SECTION_KEY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-navigation-menu-item-built-in-section-key-upgrade-command-name.constant';
 import { ADD_NAVIGATION_MENU_ITEM_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-navigation-menu-item-overridable-entity-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';

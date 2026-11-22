@@ -1,2 +1,0 @@
-export const ADD_COMMAND_NAVIGATION_MENU_ITEM_UPGRADE_COMMAND_NAME =
-  '2.61.0_AddCommandNavigationMenuItemFastInstanceCommand_1795195446893';

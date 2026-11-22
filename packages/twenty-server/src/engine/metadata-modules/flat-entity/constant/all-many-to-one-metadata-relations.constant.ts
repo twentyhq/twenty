@@ -527,6 +527,14 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'workspaceMemberFieldMetadataUniversalIdentifier',
     },
+    workspaceMemberRelationFieldMetadata: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'workspaceMemberRelationFieldMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey:
+        'workspaceMemberRelationFieldMetadataUniversalIdentifier',
+    },
     objectMetadata: {
       metadataName: 'objectMetadata',
       foreignKey: 'objectMetadataId',

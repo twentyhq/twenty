@@ -5,11 +5,11 @@ import { type Request } from 'express';
 import { type PermissionFlagType } from 'twenty-shared/constants';
 import { type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { WORKSPACE_ACTIVATION_STATUSES_WITHOUT_ROLES } from 'src/engine/guards/constants/workspace-activation-statuses-without-roles.constant';
 import { AuthPrincipalRefusedException } from 'src/engine/guards/exceptions/auth-principal-refused.exception';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 import { type AuthPrincipalGuardConfig } from 'src/engine/guards/types/auth-principal-guard-config.type';
@@ -22,11 +22,6 @@ import { withAgentsAdmitted } from 'src/engine/guards/access-policy/utils/with-a
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 // A workspace being created has no roles to check settings permissions against yet
-const WORKSPACE_ACTIVATION_STATUSES_WITHOUT_ROLES = [
-  WorkspaceActivationStatus.PENDING_CREATION,
-  WorkspaceActivationStatus.ONGOING_CREATION,
-];
-
 @Injectable()
 export class AccessPolicyService {
   constructor(
