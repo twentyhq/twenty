@@ -11,6 +11,7 @@ import { updateTeamsAssistantRequest } from 'src/features/chat/logic-functions/d
 import { type TeamsAssistantAnswerResult } from 'src/features/chat/logic-functions/types/teams-assistant-answer-result.type';
 import { type TeamsAssistantRequestRecord } from 'src/features/chat/logic-functions/types/teams-assistant-request-record.type';
 import { buildTeamsAssistantAnswerText } from 'src/features/chat/logic-functions/utils/build-teams-assistant-answer-text';
+import { buildTeamsAssistantRequestName } from 'src/features/chat/logic-functions/utils/build-teams-assistant-request-name';
 import { fetchWorkspaceBaseUrl } from 'src/features/chat/logic-functions/utils/fetch-workspace-base-url';
 import { getTeamsAssistantFailureText } from 'src/features/chat/logic-functions/utils/get-teams-assistant-failure-text';
 import { getTeamsConnectorAccessTokenOrThrow } from 'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw';
@@ -86,6 +87,7 @@ export const answerTeamsAssistantRequest = async ({
       id: request.id,
       workspaceMemberId,
       requestText,
+      name: buildTeamsAssistantRequestName(requestText),
     });
 
     const [history, workspaceBaseUrl] = await Promise.all([

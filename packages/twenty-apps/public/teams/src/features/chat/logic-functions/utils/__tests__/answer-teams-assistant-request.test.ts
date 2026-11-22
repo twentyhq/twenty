@@ -142,6 +142,7 @@ describe('answerTeamsAssistantRequest', () => {
       id: REQUEST.id,
       workspaceMemberId: 'workspace-member-1',
       requestText: REQUEST.requestText,
+      name: REQUEST.requestText,
     });
   });
 

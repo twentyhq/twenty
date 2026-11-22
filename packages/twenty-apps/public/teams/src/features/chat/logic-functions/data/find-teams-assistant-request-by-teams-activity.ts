@@ -32,7 +32,6 @@ export const findTeamsAssistantRequestByTeamsActivity = async ({
           teamsTenantId: true,
           teamsUserId: true,
           teamsUserAadObjectId: true,
-          requestText: { markdown: true },
           updatedAt: true,
         },
       },
@@ -45,5 +44,5 @@ export const findTeamsAssistantRequestByTeamsActivity = async ({
     return undefined;
   }
 
-  return { ...node, requestText: node.requestText?.markdown ?? undefined };
+  return node;
 };
