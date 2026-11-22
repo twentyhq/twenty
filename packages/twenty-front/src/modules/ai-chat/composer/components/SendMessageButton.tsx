@@ -1,7 +1,7 @@
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { useStopAiChatStream } from '@/ai-chat/hooks/useStopAiChatStream';
 import { aiChatThreadIsFetchingMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadIsFetchingMessagesFamilyState';
-import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
+import { aiChatThreadIsStreamingFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadIsStreamingFamilySelector';
 import { aiChatInputIsEmptyFamilySelector } from '@/ai-chat/composer/states/selectors/aiChatInputIsEmptyFamilySelector';
 import { aiChatIsAssistantReplyPendingFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatIsAssistantReplyPendingFamilySelector';
 import { IconButton } from 'twenty-ui/components/input';
@@ -33,11 +33,10 @@ export const SendMessageButton = ({
     aiChatThreadIsFetchingMessagesFamilyState,
     { threadId },
   );
-  const aiChatThreadReplyStatus = useAtomFamilyStateValue(
-    aiChatThreadReplyStatusFamilyState,
+  const aiChatThreadIsStreaming = useAtomFamilySelectorValue(
+    aiChatThreadIsStreamingFamilySelector,
     { threadId },
   );
-  const isAiChatStreaming = aiChatThreadReplyStatus === 'streaming';
   const { stopAiChatStream } = useStopAiChatStream();
   const { sendAiChatComposerMessage } = useSendAiChatComposerMessage();
 
@@ -53,7 +52,7 @@ export const SendMessageButton = ({
     threadId,
   );
 
-  if (isAiChatStreaming || aiChatIsAssistantReplyPending) {
+  if (aiChatThreadIsStreaming || aiChatIsAssistantReplyPending) {
     return (
       <IconButton
         variant="solid"

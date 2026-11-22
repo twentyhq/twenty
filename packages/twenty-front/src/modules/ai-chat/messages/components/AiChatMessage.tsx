@@ -36,6 +36,7 @@ import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/server/aiCha
 import { AI_CHAT_UNGROUPED_MESSAGE_POSITION } from '@/ai-chat/messages/constants/AiChatUngroupedMessagePosition';
 import { aiChatThreadMessageFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadMessageFamilySelector';
 import { isAiChatMessageOwn } from '@/ai-chat/messages/utils/isAiChatMessageOwn';
+import { getAiChatMessageText } from '@/ai-chat/messages/utils/getAiChatMessageText';
 import { parseAiChatMessageQuote } from '@/ai-chat/messages/utils/parseAiChatMessageQuote';
 import { getAiChatSenderLabel } from '@/ai-chat/utils/getAiChatSenderLabel';
 import { isSilentAiChatMessage } from '@/ai-chat/messages/utils/isSilentAiChatMessage';
@@ -219,8 +220,7 @@ export const AiChatMessage = ({
   const attachments = agentChatMessage.parts
     .filter(isExtendedFileUIPart)
     .map(getFieldFilesValueFromFilePart);
-  const messageText =
-    agentChatMessage.parts.find((part) => part.type === 'text')?.text ?? '';
+  const messageText = getAiChatMessageText(agentChatMessage);
   const messageQuote =
     isAiChatInboxEnabled && isUser
       ? parseAiChatMessageQuote(messageText)

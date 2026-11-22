@@ -1,6 +1,5 @@
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
-
-type AiChatThreadUpdate = Partial<AiChatThreadRecord> & { id: string };
+import { type AiChatThreadUpdate } from '@/ai-chat/threads/types/AiChatThreadUpdate';
 
 export const getAiChatThreadRollbackUpdate = ({
   optimisticUpdate,

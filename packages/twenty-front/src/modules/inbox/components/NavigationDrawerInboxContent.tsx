@@ -1,7 +1,6 @@
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatSkeletonLoader } from '@/ai-chat/components/internal/AiChatSkeletonLoader';
@@ -19,6 +18,7 @@ import { inboxDirectMessageSidebarItemsSelector } from '@/inbox/states/selectors
 import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
 import { inboxFavoriteChannelsSelector } from '@/inbox/states/selectors/inboxFavoriteChannelsSelector';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
+import { filterInboxRecentThreads } from '@/inbox/utils/filterInboxRecentThreads';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -77,21 +77,11 @@ export const NavigationDrawerInboxContent = () => {
     );
   }
 
-  const inboxFavoriteThreadIds = new Set(
-    inboxFavoriteThreads.map(({ id }) => id),
-  );
-  const threadsOutsideOtherSections = threads.filter(
-    ({ id, conversationType }) =>
-      !inboxFavoriteThreadIds.has(id) &&
-      !(
-        isDirectMessageEnabled &&
-        conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
-      ),
-  );
-  const recentThreads = threadsOutsideOtherSections.slice(
-    0,
-    INBOX_RECENT_THREADS_MAX_COUNT,
-  );
+  const recentThreads = filterInboxRecentThreads({
+    threads,
+    favoriteThreads: inboxFavoriteThreads,
+    isDirectMessageEnabled,
+  }).slice(0, INBOX_RECENT_THREADS_MAX_COUNT);
 
   return (
     <StyledContainer>
