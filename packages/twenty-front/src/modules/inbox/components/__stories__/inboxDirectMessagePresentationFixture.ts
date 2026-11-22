@@ -1,7 +1,7 @@
-import { type DirectMessageMember } from '@/inbox/types/DirectMessageMember';
-import { type DirectMessageSidebarItem } from '@/inbox/types/DirectMessageSidebarItem';
+import { type InboxDirectMessageMember } from '@/inbox/types/InboxDirectMessageMember';
+import { type InboxDirectMessageSidebarItem } from '@/inbox/types/InboxDirectMessageSidebarItem';
 
-export const DIRECT_MESSAGE_PRESENTATION_FIXTURE = {
+export const INBOX_DIRECT_MESSAGE_PRESENTATION_FIXTURE = {
   currentMember: {
     workspaceMemberId: 'raphael',
     name: 'Raphael',
@@ -69,6 +69,6 @@ export const DIRECT_MESSAGE_PRESENTATION_FIXTURE = {
     },
   ],
 } satisfies {
-  currentMember: DirectMessageMember;
-  directMessages: DirectMessageSidebarItem[];
+  currentMember: InboxDirectMessageMember;
+  directMessages: InboxDirectMessageSidebarItem[];
 };

@@ -4,7 +4,7 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { DirectMessageMemberPicker } from '@/inbox/components/DirectMessageMemberPicker';
+import { InboxDirectMessageMemberPicker } from '@/inbox/components/InboxDirectMessageMemberPicker';
 import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadClick';
 import { useLoadAiChatThread } from '@/ai-chat/threads/hooks/useLoadAiChatThread';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -14,7 +14,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { OpenDirectMessageDocument } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
-export const OpenDirectMessageButton = () => {
+export const InboxOpenDirectMessageButton = () => {
   const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
   const { loadAiChatThread } = useLoadAiChatThread();
@@ -67,7 +67,7 @@ export const OpenDirectMessageButton = () => {
   }
 
   return (
-    <DirectMessageMemberPicker
+    <InboxDirectMessageMemberPicker
       humanMembers={humanMembers}
       currentWorkspaceMemberId={currentWorkspaceMember.id}
       searchValue={searchValue}

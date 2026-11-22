@@ -1,5 +1,5 @@
-import { type DirectMessageSidebarItem } from '@/inbox/types/DirectMessageSidebarItem';
-import { getVisibleDirectMessageSidebarItems } from '@/inbox/utils/getVisibleDirectMessageSidebarItems';
+import { type InboxDirectMessageSidebarItem } from '@/inbox/types/InboxDirectMessageSidebarItem';
+import { getVisibleInboxDirectMessageSidebarItems } from '@/inbox/utils/getVisibleInboxDirectMessageSidebarItems';
 
 const buildDirectMessage = ({
   threadId,
@@ -7,13 +7,13 @@ const buildDirectMessage = ({
 }: {
   threadId: string;
   isUnread?: boolean;
-}): DirectMessageSidebarItem => ({
+}): InboxDirectMessageSidebarItem => ({
   threadId,
   peer: null,
   isUnread,
 });
 
-describe('getVisibleDirectMessageSidebarItems', () => {
+describe('getVisibleInboxDirectMessageSidebarItems', () => {
   it('keeps the first direct messages, plus unread ones and the open one past the cap', () => {
     const directMessages = [
       buildDirectMessage({ threadId: 'first' }),
@@ -24,7 +24,7 @@ describe('getVisibleDirectMessageSidebarItems', () => {
     ];
 
     expect(
-      getVisibleDirectMessageSidebarItems({
+      getVisibleInboxDirectMessageSidebarItems({
         directMessages,
         currentThreadId: 'open',
         maxCount: 2,
