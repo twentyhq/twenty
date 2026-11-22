@@ -46,7 +46,7 @@ Tutti e tre confluiscono nello stesso contatore di crediti e nella stessa ripart
 ## Addebiti ricorrenti
 
 <Warning>
-  Deprecato a favore di [prezzi](#prices). La build avvisa riguardo alle tariffe ricorrenti, ma continuano a essere addebitate: i prezzi non sono ancora fatturati, quindi mantieni le tue finché non lo saranno.
+  Deprecato a favore di [prezzi](#prices). La build avvisa degli addebiti ricorrenti, ma continuano a essere aumentati: la fatturazione per prezzo non è ancora generalmente disponibile, quindi mantieni la tua finché non lo sarà.
 </Warning>
 
 Un addebito ricorrente è una tariffa di abbonamento: un importo mensile fisso, un importo per membro del workspace o entrambi. Dichiari l'importo e la piattaforma lo addebita. La tua app non chiama mai `chargeCredits` per questi.
@@ -87,7 +87,7 @@ Modalità di applicazione:
 ## Prezzi
 
 <Warning>
-  Solo dichiarazione per ora. La build convalida `billing.prices`, ma la piattaforma non li fattura ancora.
+  La fatturazione per prezzo è in fase di distribuzione ed è disattivata per impostazione predefinita: finché non viene abilitata per un workspace, la build convalida `billing.prices` ma al workspace non viene addebitato alcun costo.
 </Warning>
 
 Un prezzo viene addebitato in valuta reale anziché in crediti. Viene fatturato come voce dell'abbonamento Twenty dello spazio di lavoro, in modo che lo spazio di lavoro mantenga un'unica fattura. Per ora i prezzi sono solo in dollari statunitensi.
@@ -116,20 +116,26 @@ billing: {
 },
 ```
 
-| Campo                 | Descrizione                                                                                                                                                     |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `universalIdentifier` | Un UUID che identifica il prezzo tra le versioni della tua app. Generalo una volta e non modificarlo mai: un nuovo identificatore corrisponde a un nuovo prezzo |
-| `label`               | Ciò che gli amministratori leggono per quella voce                                                                                                              |
-| `description`         | Facoltativo. Una spiegazione più dettagliata di ciò che copre il prezzo                                                                                         |
-| `type`                | `RECURRING`, l'unico tipo per ora                                                                                                                               |
-| `billingPeriod`       | `MONTHLY`, l'unico periodo per ora                                                                                                                              |
-| `amountCents`         | Prezzo mensile in centesimi USD, un numero intero positivo fino a 8.333.333                                                                                     |
-| `valuta`              | Facoltativo. `USD` è per ora l'unica valuta supportata, nonché quella predefinita                                                                               |
-| `per`                 | Ometti per una tariffa fissa. `WORKSPACE_MEMBER` rende l'importo una tariffa per membro dello spazio di lavoro                                                  |
+| Campo                 | Descrizione                                                                                                                                                                                                                                                                                     |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier` | Un UUID che identifica il prezzo tra le versioni della tua app. Generalo una volta e non modificarlo mai: un nuovo identificatore corrisponde a un nuovo prezzo                                                                                                                                 |
+| `label`               | Ciò che gli amministratori leggono per quella voce                                                                                                                                                                                                                                              |
+| `description`         | Facoltativo. Una spiegazione più dettagliata di ciò che copre il prezzo                                                                                                                                                                                                                         |
+| `type`                | `RECURRING`, l'unico tipo per ora                                                                                                                                                                                                                                                               |
+| `billingPeriod`       | `MONTHLY`, l'unico periodo per ora                                                                                                                                                                                                                                                              |
+| `amountCents`         | Prezzo mensile in centesimi USD, un numero intero positivo fino a 8.333.333                                                                                                                                                                                                                     |
+| `valuta`              | Facoltativo. `USD` è per ora l'unica valuta supportata, nonché quella predefinita                                                                                                                                                                                                               |
+| `per`                 | Ometti per una tariffa fissa. `WORKSPACE_MEMBER` rende l'importo una tariffa per membro del workspace. `CONNECTED_ACCOUNT` lo rende una tariffa per account connesso tramite uno dei provider di connessione della tua app [provider di connessione](/it/developers/extend/apps/logic/connections) |
 
 Un prezzo segue l'intervallo di fatturazione dello spazio di lavoro: uno spazio di lavoro con un piano Twenty mensile paga l'importo mensile, mentre uno spazio di lavoro con un piano annuale paga una volta all'anno 12 volte l'importo mensile.
 
-La build rifiuta un `universalIdentifier` mancante, duplicato o non valido, un `label` o una `description` vuoti, un `type`, `billingPeriod` o `per` sconosciuto, un `amountCents` che non sia un numero intero positivo o che superi 8.333.333 (12 volte tale valore è il massimo che Stripe accetta per un singolo prezzo) e una `currency` diversa da `USD`.
+La fatturazione inizia quando l'installazione viene completata e termina con la disinstallazione, ripartita proporzionalmente ai giorni rimanenti del periodo di fatturazione. Un prezzo `per: 'WORKSPACE_MEMBER'` segue il numero di membri del workspace. Un prezzo `per: 'CONNECTED_ACCOUNT'` segue il numero di account connessi alla tua app nello spazio di lavoro. Gli account di tutti i provider di connessione della tua app vengono conteggiati insieme: con un provider Google e uno Microsoft, uno spazio di lavoro con due account Google e un account Microsoft paga per tre. Il prezzo non viene fatturato quando non è connesso alcun account e un account disconnesso non viene più fatturato. A uno spazio di lavoro in prova non viene addebitato nulla prima della fine del periodo di prova.
+
+Uno spazio di lavoro mantiene i prezzi con cui ha installato la tua app, anche dopo l'aggiornamento. Quando una nuova versione modifica, aggiunge o rimuove un prezzo, solo le nuove installazioni ricevono i nuovi prezzi.
+
+I prezzi non vengono fatturati su un server senza fatturazione abilitata, né per un'app sincronizzata da un'origine locale con `twenty app dev`.
+
+La build rifiuta un `universalIdentifier` mancante, duplicato o non valido, un `label` o una `description` vuoti, un `type`, `billingPeriod` o `per` sconosciuto, un `amountCents` che non è un numero intero positivo o supera 8.333.333 (12 volte tale importo è il massimo che Stripe accetta per un prezzo), una `currency` diversa da `USD` e un prezzo `per: 'CONNECTED_ACCOUNT'` in un'app che non dichiara alcun provider di connessione.
 
 ## Operazioni fatturabili
 
