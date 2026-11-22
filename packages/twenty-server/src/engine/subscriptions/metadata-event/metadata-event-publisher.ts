@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { ViewVisibility, WorkflowVisibility } from 'twenty-shared/types';
+import { ViewVisibility } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -22,7 +22,7 @@ import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-ev
 
 type BroadcastEventRecord = {
   userWorkspaceId?: string | null;
-  visibility?: WorkflowVisibility | ViewVisibility | null;
+  visibility?: ViewVisibility | null;
   isPrivate?: boolean | null;
   createdByUserWorkspaceId?: string | null;
   coreWorkflowId?: string | null;
@@ -43,10 +43,10 @@ const getBroadcastEventRecord = (event: MetadataEventBatch['events'][number]) =>
 const getWorkflowRecipientUserWorkspaceIds = (
   workflow: Pick<
     BroadcastEventRecord,
-    'visibility' | 'createdByUserWorkspaceId'
+    'isPrivate' | 'createdByUserWorkspaceId'
   >,
 ): string[] | undefined => {
-  if (workflow.visibility !== WorkflowVisibility.PRIVATE) {
+  if (!workflow.isPrivate) {
     return undefined;
   }
 

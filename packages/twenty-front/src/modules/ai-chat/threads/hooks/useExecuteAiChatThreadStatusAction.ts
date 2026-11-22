@@ -3,17 +3,17 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { useMarkAiChatThreadAsDoneInChannel } from '@/ai-chat/threads/hooks/useMarkAiChatThreadAsDoneInChannel';
 import { useReopenAiChatThreadInChannel } from '@/ai-chat/threads/hooks/useReopenAiChatThreadInChannel';
-import { useUpdateAiChatThreadStatus } from '@/ai-chat/threads/hooks/useUpdateAiChatThreadStatus';
+import { useUpdateAiChatThreadInboxState } from '@/ai-chat/threads/hooks/useUpdateAiChatThreadInboxState';
 import { useOpenAssignAiChatInSidePanel } from '@/side-panel/hooks/useOpenAssignAiChatInSidePanel';
 import { useOpenSnoozeAiChatInSidePanel } from '@/side-panel/hooks/useOpenSnoozeAiChatInSidePanel';
 import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
 export const useExecuteAiChatThreadStatusAction = () => {
   const [isPending, setIsPending] = useState(false);
-  const { updateAgentChatThreadInboxState } = useUpdateAiChatThreadStatus();
-  const { markAgentChatThreadAsDoneInChannel } =
+  const { updateAiChatThreadInboxState } = useUpdateAiChatThreadInboxState();
+  const { markAiChatThreadAsDoneInChannel } =
     useMarkAiChatThreadAsDoneInChannel();
-  const { reopenAgentChatThreadInChannel } = useReopenAiChatThreadInChannel();
+  const { reopenAiChatThreadInChannel } = useReopenAiChatThreadInChannel();
   const { openSnoozeAiChatInSidePanel } = useOpenSnoozeAiChatInSidePanel();
   const { openAssignAiChatInSidePanel } = useOpenAssignAiChatInSidePanel();
 
@@ -27,18 +27,18 @@ export const useExecuteAiChatThreadStatusAction = () => {
     isInChannel: boolean;
   }) => {
     if (isInChannel && action === AgentChatInboxAction.ARCHIVE) {
-      await Promise.all(threadIds.map(markAgentChatThreadAsDoneInChannel));
+      await Promise.all(threadIds.map(markAiChatThreadAsDoneInChannel));
 
       return;
     }
 
     if (isInChannel && action === AgentChatInboxAction.MOVE_TO_INBOX) {
-      await Promise.all(threadIds.map(reopenAgentChatThreadInChannel));
+      await Promise.all(threadIds.map(reopenAiChatThreadInChannel));
 
       return;
     }
 
-    await updateAgentChatThreadInboxState({ threadIds, action });
+    await updateAiChatThreadInboxState({ threadIds, action });
   };
 
   const executeAiChatThreadStatusAction = async ({

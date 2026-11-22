@@ -2,6 +2,7 @@ import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThr
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { isAiChatMessageOwn } from '@/ai-chat/messages/utils/isAiChatMessageOwn';
+import { getAiChatMessageText } from '@/ai-chat/messages/utils/getAiChatMessageText';
 import { isAiChatQueuedMessageRemovable } from '@/ai-chat/composer/utils/isAiChatQueuedMessageRemovable';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -11,9 +12,9 @@ import { AiChatQueuedMessageList } from '@/ai-chat/composer/components/AiChatQue
 import { StyledAiChatContentContainer } from '@/ai-chat/components/StyledAiChatContentContainer';
 import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai-chat/constants/AiChatPageContentInlinePadding';
 import { useHasAiChatPageContentInset } from '@/ai-chat/hooks/useHasAiChatPageContentInset';
-import { useDeleteQueuedMessage } from '@/ai-chat/composer/hooks/useDeleteQueuedMessage';
+import { useDeleteAiChatQueuedMessage } from '@/ai-chat/composer/hooks/useDeleteAiChatQueuedMessage';
 import { useIsCurrentAiChatThreadReadOnly } from '@/ai-chat/threads/hooks/useIsCurrentAiChatThreadReadOnly';
-import { aiChatQueuedMessagesFamilyState } from '@/ai-chat/composer/states/aiChatQueuedMessagesFamilyState';
+import { aiChatThreadFetchedMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadFetchedMessagesFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -41,11 +42,12 @@ export const AiChatQueuedMessages = () => {
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
-  const aiChatQueuedMessages = useAtomFamilyStateValue(
-    aiChatQueuedMessagesFamilyState,
+  const aiChatThreadFetchedMessages = useAtomFamilyStateValue(
+    aiChatThreadFetchedMessagesFamilyState,
     { threadId },
   );
-  const { deleteQueuedMessage } = useDeleteQueuedMessage({
+  const aiChatQueuedMessages = aiChatThreadFetchedMessages.queuedMessages;
+  const { deleteQueuedMessage } = useDeleteAiChatQueuedMessage({
     threadId,
   });
 
@@ -71,7 +73,7 @@ export const AiChatQueuedMessages = () => {
     });
     const queuedMessage = {
       id: message.id,
-      text: message.parts.find((part) => part.type === 'text')?.text ?? '',
+      text: getAiChatMessageText(message),
       isRemovable: isAiChatQueuedMessageRemovable({
         message,
         currentWorkspaceMemberId: currentWorkspaceMember?.id,

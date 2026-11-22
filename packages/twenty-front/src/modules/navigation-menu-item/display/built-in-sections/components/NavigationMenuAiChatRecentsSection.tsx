@@ -1,6 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
-import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
@@ -11,7 +10,7 @@ import { NavigationDrawerInboxThreadSection } from '@/inbox/components/Navigatio
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
-import { NavigationMenuAiChatRecentsFetchMoreEffect } from '@/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsFetchMoreEffect';
+import { filterInboxRecentThreads } from '@/inbox/utils/filterInboxRecentThreads';
 import { NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT } from '@/navigation-menu-item/common/constants/NavigationMenuSectionVisibleItemLimit';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -39,29 +38,20 @@ export const NavigationMenuAiChatRecentsSection = ({
   const { threads, inboxThreadList } = useInboxThreadList(
     INBOX_RECENT_THREAD_LIST_SOURCE,
   );
-  const favoriteThreadIds = new Set(
-    useAtomStateValue(inboxFavoriteThreadsSelector).map(({ id }) => id),
-  );
-  const recentThreads = threads.filter(
-    ({ id, conversationType }) =>
-      !favoriteThreadIds.has(id) &&
-      !(
-        isDirectMessageEnabled &&
-        conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
-      ),
-  );
-
-  const fetchMoreEffect = (
-    <NavigationMenuAiChatRecentsFetchMoreEffect
-      key={inboxThreadList?.endCursor ?? ''}
-      shouldFetchMore={
-        recentThreads.length === 0 && (inboxThreadList?.hasNextPage ?? false)
-      }
-    />
-  );
+  const inboxFavoriteThreads = useAtomStateValue(inboxFavoriteThreadsSelector);
+  const recentThreads = filterInboxRecentThreads({
+    threads,
+    favoriteThreads: inboxFavoriteThreads,
+    isDirectMessageEnabled,
+  });
 
   if (recentThreads.length === 0 && !isDefined(headerAction)) {
-    return fetchMoreEffect;
+    return (
+      <InboxThreadListFetchMoreTrigger
+        key={inboxThreadList?.endCursor ?? ''}
+        source={INBOX_RECENT_THREAD_LIST_SOURCE}
+      />
+    );
   }
 
   const hasHiddenThreads =
@@ -74,35 +64,32 @@ export const NavigationMenuAiChatRecentsSection = ({
       : recentThreads;
 
   return (
-    <>
-      {fetchMoreEffect}
-      <NavigationDrawerInboxThreadSection
-        sectionId={`navigation-menu-section-${sectionId}`}
-        title={t`Recent chats`}
-        threads={displayedThreads}
-        currentThreadId={currentThreadId}
-        onThreadClick={handleThreadClick}
-        headerAction={headerAction}
-        footer={
-          hasHiddenThreads && (
-            <>
-              {isShowingAllThreads && (
-                <InboxThreadListFetchMoreTrigger
-                  source={INBOX_RECENT_THREAD_LIST_SOURCE}
-                />
-              )}
-              <NavigationDrawerItem
-                label={isShowingAllThreads ? t`See less` : t`See more`}
-                Icon={isShowingAllThreads ? IconChevronUp : IconChevronDown}
-                variant="tertiary"
-                preventCollapseOnMobile
-                triggerEvent="CLICK"
-                onClick={() => setIsShowingAllThreads(!isShowingAllThreads)}
+    <NavigationDrawerInboxThreadSection
+      sectionId={`navigation-menu-section-${sectionId}`}
+      title={t`Recent chats`}
+      threads={displayedThreads}
+      currentThreadId={currentThreadId}
+      onThreadClick={handleThreadClick}
+      headerAction={headerAction}
+      footer={
+        hasHiddenThreads && (
+          <>
+            {isShowingAllThreads && (
+              <InboxThreadListFetchMoreTrigger
+                source={INBOX_RECENT_THREAD_LIST_SOURCE}
               />
-            </>
-          )
-        }
-      />
-    </>
+            )}
+            <NavigationDrawerItem
+              label={isShowingAllThreads ? t`See less` : t`See more`}
+              Icon={isShowingAllThreads ? IconChevronUp : IconChevronDown}
+              variant="tertiary"
+              preventCollapseOnMobile
+              triggerEvent="CLICK"
+              onClick={() => setIsShowingAllThreads(!isShowingAllThreads)}
+            />
+          </>
+        )
+      }
+    />
   );
 };

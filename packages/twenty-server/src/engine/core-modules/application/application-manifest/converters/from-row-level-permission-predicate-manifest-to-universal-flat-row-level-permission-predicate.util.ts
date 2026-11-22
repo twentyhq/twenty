@@ -1,4 +1,4 @@
-import { type LegacyRowLevelPermissionPredicateManifest } from 'twenty-shared/application';
+import { type FlattenedRowLevelPermissionPredicateManifest } from 'twenty-shared/application';
 
 import { type UniversalFlatRowLevelPermissionPredicate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate.type';
 
@@ -9,7 +9,10 @@ export const fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermi
     applicationUniversalIdentifier,
     now,
   }: {
-    rowLevelPermissionPredicateManifest: LegacyRowLevelPermissionPredicateManifest;
+    rowLevelPermissionPredicateManifest: Omit<
+      FlattenedRowLevelPermissionPredicateManifest,
+      'rowLevelPermissionRuleUniversalIdentifier'
+    >;
     roleUniversalIdentifier: string;
     applicationUniversalIdentifier: string;
     now: string;
@@ -23,7 +26,9 @@ export const fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermi
         rowLevelPermissionPredicateManifest.objectUniversalIdentifier,
       fieldMetadataUniversalIdentifier:
         rowLevelPermissionPredicateManifest.fieldUniversalIdentifier,
-      relationFieldMetadataUniversalIdentifier: null,
+      relationFieldMetadataUniversalIdentifier:
+        rowLevelPermissionPredicateManifest.relationFieldUniversalIdentifier ??
+        null,
       operand: rowLevelPermissionPredicateManifest.operand,
       value: rowLevelPermissionPredicateManifest.value ?? null,
       subFieldName: rowLevelPermissionPredicateManifest.subFieldName ?? null,
@@ -32,6 +37,7 @@ export const fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermi
         null,
       workspaceMemberSubFieldName:
         rowLevelPermissionPredicateManifest.workspaceMemberSubFieldName ?? null,
+      workspaceMemberRelationFieldMetadataUniversalIdentifier: null,
       rowLevelPermissionPredicateGroupUniversalIdentifier:
         rowLevelPermissionPredicateManifest.predicateGroupUniversalIdentifier ??
         null,

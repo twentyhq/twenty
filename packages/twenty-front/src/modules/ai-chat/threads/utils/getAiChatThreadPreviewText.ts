@@ -6,8 +6,6 @@ import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRec
 import { getAiChatSenderLabel } from '@/ai-chat/utils/getAiChatSenderLabel';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
-// Members' messages carry who wrote them; agent replies read as plain text,
-// as they do in the chat itself
 export const getAiChatThreadPreviewText = ({
   thread,
   workspaceMembers,

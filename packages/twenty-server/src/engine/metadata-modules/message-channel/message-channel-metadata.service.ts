@@ -17,6 +17,7 @@ import {
   MessageChannelVisibility,
 } from 'twenty-shared/types';
 
+import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync-scheduler.service';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
@@ -46,6 +47,7 @@ export class MessageChannelMetadataService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailingDomainService: EmailingDomainService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly channelVisibilityRuleSyncSchedulerService: ChannelVisibilityRuleSyncSchedulerService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
   ) {}
 
@@ -240,8 +242,13 @@ export class MessageChannelMetadataService {
     },
   ): Promise<MessageChannelDTO> {
     const entity = this.repository.create(data);
+    const savedEntity = await this.repository.save(entity);
 
-    return this.repository.save(entity);
+    await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+      data.workspaceId,
+    );
+
+    return savedEntity;
   }
 
   async update({
@@ -257,6 +264,12 @@ export class MessageChannelMetadataService {
       { id, workspaceId },
       data as Record<string, unknown>,
     );
+
+    if ('visibility' in data) {
+      await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+        workspaceId,
+      );
+    }
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
@@ -394,6 +407,10 @@ export class MessageChannelMetadataService {
     });
 
     await this.repository.delete({ id, workspaceId });
+
+    await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+      workspaceId,
+    );
 
     this.workspaceEventEmitter.emitCustomBatchEvent<MessageChannelDeletedEvent>(
       MESSAGE_CHANNEL_DELETED_EVENT,
