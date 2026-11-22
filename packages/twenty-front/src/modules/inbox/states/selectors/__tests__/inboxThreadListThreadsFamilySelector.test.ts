@@ -54,10 +54,13 @@ const buildThread = ({
   lastActivityAt,
 });
 
-const buildFollowedParticipant = (
-  threadId: string,
-  archivedAt: string | null = null,
-) => ({
+const buildFollowedParticipant = ({
+  threadId,
+  archivedAt = null,
+}: {
+  threadId: string;
+  archivedAt?: string | null;
+}) => ({
   __typename: 'AgentChatThreadParticipant' as const,
   id: `participant-${threadId}`,
   threadId,
@@ -70,10 +73,13 @@ const buildFollowedParticipant = (
   updatedAt: LAST_ACTIVITY_AT,
 });
 
-const getThreadIds = (
-  store: ReturnType<typeof createStore>,
-  source: InboxThreadListSource,
-) =>
+const getThreadIds = ({
+  store,
+  source,
+}: {
+  store: ReturnType<typeof createStore>;
+  source: InboxThreadListSource;
+}) =>
   store
     .get(inboxThreadListThreadsFamilySelector.selectorFamily(source))
     .map(({ id }) => id);
@@ -90,16 +96,15 @@ describe('inboxThreadListThreadsFamilySelector', () => {
     store.set(aiChatThreadParticipantsState.atom, {
       isLoaded: true,
       rowsByThreadId: {
-        'followed-channel-chat': buildFollowedParticipant(
-          'followed-channel-chat',
-        ),
+        'followed-channel-chat': buildFollowedParticipant({
+          threadId: 'followed-channel-chat',
+        }),
       },
     });
 
-    expect(getThreadIds(store, INBOX_RECENT_THREAD_LIST_SOURCE)).toEqual([
-      'own',
-      'followed-channel-chat',
-    ]);
+    expect(
+      getThreadIds({ store, source: INBOX_RECENT_THREAD_LIST_SOURCE }),
+    ).toEqual(['own', 'followed-channel-chat']);
   });
 
   it.each([
@@ -118,17 +123,17 @@ describe('inboxThreadListThreadsFamilySelector', () => {
       store.set(aiChatThreadParticipantsState.atom, {
         isLoaded: true,
         rowsByThreadId: {
-          open: buildFollowedParticipant('open'),
-          archived: buildFollowedParticipant(
-            'archived',
-            '2026-10-01T11:00:00.000Z',
-          ),
-          deleted: buildFollowedParticipant('deleted'),
+          open: buildFollowedParticipant({ threadId: 'open' }),
+          archived: buildFollowedParticipant({
+            threadId: 'archived',
+            archivedAt: '2026-10-01T11:00:00.000Z',
+          }),
+          deleted: buildFollowedParticipant({ threadId: 'deleted' }),
         },
       });
 
       expect(
-        getThreadIds(store, { type: 'presetFilter', presetFilter }),
+        getThreadIds({ store, source: { type: 'presetFilter', presetFilter } }),
       ).toEqual(expectedThreadIds);
     },
   );
@@ -160,6 +165,9 @@ describe('inboxThreadListThreadsFamilySelector', () => {
       },
     );
 
-    expect(getThreadIds(store, CHANNEL_SOURCE)).toEqual(['recent', 'older']);
+    expect(getThreadIds({ store, source: CHANNEL_SOURCE })).toEqual([
+      'recent',
+      'older',
+    ]);
   });
 });

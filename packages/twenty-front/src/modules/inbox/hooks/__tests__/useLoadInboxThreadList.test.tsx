@@ -4,6 +4,7 @@ import { type ReactNode } from 'react';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
+import { useLoadAiChatThread } from '@/ai-chat/threads/hooks/useLoadAiChatThread';
 import { useLoadInboxThreadList } from '@/inbox/hooks/useLoadInboxThreadList';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
@@ -117,6 +118,7 @@ const useInboxThreadListLoading = () => {
         source: INBOX_RECENT_THREAD_LIST_SOURCE,
         mode: 'fetch-more',
       }),
+    ...useLoadAiChatThread(),
   };
 };
 
@@ -408,5 +410,47 @@ describe('useLoadInboxThreadList', () => {
     });
 
     expect(store.get(RECENT_THREAD_LIST_ATOM)).toBeNull();
+  });
+
+  it('stores a chat opened past the loaded pages, and tells a missing chat from a failed lookup', async () => {
+    const store = buildStore();
+    store.set(RECENT_THREAD_LIST_ATOM, {
+      threadIds: ['thread-1'],
+      hasNextPage: true,
+      endCursor: 'page-1',
+      lastLoadedActivityAt: null,
+    });
+    const result = renderRefresh(store);
+
+    queryMock.mockResolvedValueOnce(
+      buildPage([buildThread('old-thread', 'Old chat')]),
+    );
+    await act(async () => {
+      expect(await result.current.loadAiChatThread('old-thread')).toMatchObject(
+        { id: 'old-thread' },
+      );
+    });
+    expect(queryMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        variables: expect.objectContaining({
+          filter: expect.objectContaining({
+            and: expect.arrayContaining([{ id: { eq: 'old-thread' } }]),
+          }),
+        }),
+      }),
+    );
+    expect(
+      store.get(aiChatThreadRecordFamilySelector.selectorFamily('old-thread')),
+    ).toMatchObject({ id: 'old-thread', title: 'Old chat' });
+
+    queryMock.mockResolvedValueOnce(buildPage([]));
+    await act(async () => {
+      expect(await result.current.loadAiChatThread('gone')).toBeNull();
+    });
+
+    queryMock.mockRejectedValueOnce(new Error('Network error'));
+    await act(async () => {
+      expect(await result.current.loadAiChatThread('unknown')).toBeUndefined();
+    });
   });
 });
