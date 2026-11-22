@@ -3291,7 +3291,7 @@ export interface Query {
     findUninstallApplicationJobStatus?: JobStatus
     findUpgradeApplicationJobStatus?: JobStatus
     findWorkspaceAiStats: WorkspaceAiStats
-    findWorkspaceFromInviteHash: Workspace
+    findWorkspaceFromInviteHash: WorkspaceFromInviteHash
     findWorkspaceInvitations: WorkspaceInvitation[]
     frontComponent?: FrontComponent
     frontComponents: FrontComponent[]
@@ -4491,6 +4491,14 @@ export interface WorkspaceCreationDefaultsDTO {
 }
 
 export type WorkspaceDiscoverability = 'HIDDEN' | 'MEMBERS_AND_INVITEES' | 'PUBLIC'
+
+export interface WorkspaceFromInviteHash {
+    allowImpersonation: Scalars['Boolean']
+    displayName?: Scalars['String']
+    id: Scalars['UUID']
+    logo?: Scalars['String']
+    __typename: 'WorkspaceFromInviteHash'
+}
 
 export interface WorkspaceInvitation {
     email: Scalars['String']
@@ -8221,7 +8229,7 @@ export interface QueryGenqlSelection{
     findUninstallApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {jobId?: (Scalars['String'] | null), universalIdentifier: Scalars['String']} })
     findUpgradeApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {jobId?: (Scalars['String'] | null), universalIdentifier: Scalars['String']} })
     findWorkspaceAiStats?: WorkspaceAiStatsGenqlSelection
-    findWorkspaceFromInviteHash?: (WorkspaceGenqlSelection & { __args: {inviteHash: Scalars['String']} })
+    findWorkspaceFromInviteHash?: (WorkspaceFromInviteHashGenqlSelection & { __args: {inviteHash: Scalars['String']} })
     findWorkspaceInvitations?: WorkspaceInvitationGenqlSelection
     frontComponent?: (FrontComponentGenqlSelection & { __args: {id: Scalars['UUID']} })
     frontComponents?: FrontComponentGenqlSelection
@@ -9801,6 +9809,15 @@ export interface WorkspaceCompanyEnrichmentResultGenqlSelection{
 export interface WorkspaceCreationDefaultsDTOGenqlSelection{
     displayName?: boolean | number
     subdomain?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface WorkspaceFromInviteHashGenqlSelection{
+    allowImpersonation?: boolean | number
+    displayName?: boolean | number
+    id?: boolean | number
+    logo?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -12802,6 +12819,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isWorkspaceCreationDefaultsDTO = (obj?: { __typename?: any } | null): obj is WorkspaceCreationDefaultsDTO => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceCreationDefaultsDTO"')
       return WorkspaceCreationDefaultsDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const WorkspaceFromInviteHash_possibleTypes: string[] = ['WorkspaceFromInviteHash']
+    export const isWorkspaceFromInviteHash = (obj?: { __typename?: any } | null): obj is WorkspaceFromInviteHash => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceFromInviteHash"')
+      return WorkspaceFromInviteHash_possibleTypes.includes(obj.__typename)
     }
     
 
