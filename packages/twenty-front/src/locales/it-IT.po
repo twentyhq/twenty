@@ -21587,11 +21587,6 @@ msgstr "Non condiviso da {notSharedByFullName}"
 msgid "Not shared with"
 msgstr "Non condiviso con"
 
-#. js-lingui-id: mu1gVr
-#: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
-msgid "Not started"
-msgstr "Non avviato"
-
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"

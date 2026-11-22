@@ -21587,11 +21587,6 @@ msgstr "Δεν κοινοποιήθηκε από τον/την {notSharedByFullN
 msgid "Not shared with"
 msgstr "Δεν κοινοποιήθηκε με"
 
-#. js-lingui-id: mu1gVr
-#: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
-msgid "Not started"
-msgstr "Δεν έχει ξεκινήσει"
-
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"
