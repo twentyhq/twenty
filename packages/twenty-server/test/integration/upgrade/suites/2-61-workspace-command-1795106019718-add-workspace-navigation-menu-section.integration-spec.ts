@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type AddWorkspaceNavigationMenuSectionCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795106019718-add-workspace-navigation-menu-section.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
+import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
@@ -33,9 +34,15 @@ const readNavigationMenuItems = async (): Promise<NavigationMenuItemRow[]> =>
     [SEED_APPLE_WORKSPACE_ID],
   );
 
-const removeWorkspaceSection = async () => {
+const removeWorkspaceSectionAndPinnedCommands = async () => {
   const navigationMenuItemRepository =
     getCoreRepository<NavigationMenuItemEntity>(NavigationMenuItemEntity);
+
+  await navigationMenuItemRepository.delete({
+    workspaceId: SEED_APPLE_WORKSPACE_ID,
+    type: NavigationMenuItemType.COMMAND,
+  });
+
   const section = await navigationMenuItemRepository.findOne({
     where: {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -75,7 +82,7 @@ describe('2-61 workspace command - add workspace navigation menu section (integr
       getAppProviderByClassName<AddWorkspaceNavigationMenuSectionCommand>(
         'AddWorkspaceNavigationMenuSectionCommand',
       );
-    await removeWorkspaceSection();
+    await removeWorkspaceSectionAndPinnedCommands();
     navigationMenuItemsBefore = await readNavigationMenuItems();
   });
 
