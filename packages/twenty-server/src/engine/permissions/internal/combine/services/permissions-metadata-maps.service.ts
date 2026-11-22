@@ -7,6 +7,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { RelatedRecordPathReadService } from 'src/engine/permissions/internal/related-record-path/services/related-record-path-read.service';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
+import { type WorkspaceCacheDataMap } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
+import { findWorkspaceMemberRelationPredicates } from 'src/engine/permissions/internal/rls/utils/find-workspace-member-relation-predicates.util';
 import { findWorkspaceMemberBoundPredicates } from 'src/engine/permissions/internal/rls/utils/find-workspace-member-bound-predicates.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
@@ -56,26 +58,63 @@ export class PermissionsMetadataMapsService {
       rolesPermissions,
     };
 
-    const [flatWorkspaceMemberMaps, flatRelatedRecordPathMaps] =
-      await Promise.all([
-        findWorkspaceMemberBoundPredicates(rolesPermissions).length > 0
-          ? this.workspaceCacheService
-              .getOrRecompute(workspaceId, ['flatWorkspaceMemberMaps'])
-              .then((cache) => cache.flatWorkspaceMemberMaps)
-          : undefined,
-        this.relatedRecordPathReadService.findEnabledFlatRelatedRecordPathMaps({
-          workspaceId,
-          featureFlagsMap,
-        }),
-      ]);
+    const [
+      flatWorkspaceMemberMaps,
+      rlsWorkspaceMemberRelationValueMaps,
+      flatRelatedRecordPathMaps,
+    ] = await Promise.all([
+      this.findCacheValueWhenPredicatesExist({
+        workspaceId,
+        hasPredicates:
+          findWorkspaceMemberBoundPredicates(rolesPermissions).length > 0,
+        cacheKeyName: 'flatWorkspaceMemberMaps',
+      }),
+      this.findCacheValueWhenPredicatesExist({
+        workspaceId,
+        hasPredicates:
+          findWorkspaceMemberRelationPredicates(rolesPermissions).length > 0,
+        cacheKeyName: 'rlsWorkspaceMemberRelationValueMaps',
+      }),
+      this.relatedRecordPathReadService.findEnabledFlatRelatedRecordPathMaps({
+        workspaceId,
+        featureFlagsMap,
+      }),
+    ]);
 
     return {
       ...metadataMaps,
       ...(isDefined(flatWorkspaceMemberMaps) && { flatWorkspaceMemberMaps }),
+      ...(isDefined(rlsWorkspaceMemberRelationValueMaps) && {
+        rlsWorkspaceMemberRelationValueMaps,
+      }),
       ...(isDefined(flatRelatedRecordPathMaps) && {
         flatRelatedRecordPathMaps,
       }),
     };
+  }
+
+  private async findCacheValueWhenPredicatesExist<
+    TCacheKeyName extends
+      | 'flatWorkspaceMemberMaps'
+      | 'rlsWorkspaceMemberRelationValueMaps',
+  >({
+    workspaceId,
+    hasPredicates,
+    cacheKeyName,
+  }: {
+    workspaceId: string;
+    hasPredicates: boolean;
+    cacheKeyName: TCacheKeyName;
+  }): Promise<WorkspaceCacheDataMap[TCacheKeyName] | undefined> {
+    if (!hasPredicates) {
+      return undefined;
+    }
+
+    const cache = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      cacheKeyName,
+    ]);
+
+    return cache[cacheKeyName];
   }
 
   async loadForPrincipals({

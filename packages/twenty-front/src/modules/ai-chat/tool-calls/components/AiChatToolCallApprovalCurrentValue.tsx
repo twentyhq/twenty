@@ -28,7 +28,6 @@ type AiChatToolCallApprovalCurrentValueProps = {
   fieldDefinition: FieldDefinition<FieldMetadata>;
 };
 
-// the record is loaded in the store by the card, so its value shows as anywhere else in the app
 export const AiChatToolCallApprovalCurrentValue = ({
   objectNameSingular,
   recordId,
@@ -39,7 +38,6 @@ export const AiChatToolCallApprovalCurrentValue = ({
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
   const fieldValue = useRecordFieldValue(recordId, fieldName, fieldDefinition);
 
-  // the card loads the record, and a value read before then would show as empty
   if (!isDefined(recordStore)) {
     return null;
   }

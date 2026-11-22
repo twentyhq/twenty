@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RecomputeRecordAccessGroupIdsOfRecordsJob } from 'src/engine/permissions/internal/access-group/jobs/recompute-record-access-group-ids-of-records.job';
-import { RecomputeRelatedRecordPathTargetsJob } from 'src/engine/permissions/internal/access-group/jobs/recompute-related-record-path-targets.job';
 import { ComputeRecordAccessGroupIdsDeferredOperationHandlerService } from 'src/engine/permissions/internal/access-group/deferred-operation-handlers/compute-record-access-group-ids-deferred-operation-handler.service';
 import { SyncAccessGroupsJob } from 'src/engine/permissions/internal/access-group/jobs/sync-access-groups.job';
 import { AccessGroupSyncListener } from 'src/engine/permissions/internal/access-group/listeners/access-group-sync.listener';
@@ -12,6 +12,7 @@ import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/int
 import { RecordAccessGroupPropagationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-propagation.service';
 import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
+import { RlsWorkspaceMemberRelationValueMapsCacheService } from 'src/engine/permissions/internal/rls/services/rls-workspace-member-relation-value-maps-cache.service';
 import { RelatedRecordPathReadModule } from 'src/engine/permissions/internal/related-record-path/related-record-path-read.module';
 import { RecordPermissionRepositoryModule } from 'src/engine/permissions/internal/record-permission-repository/record-permission-repository.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -20,6 +21,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
 @Module({
   imports: [
     CacheLockModule,
+    MetricsModule,
     RecordPermissionRepositoryModule,
     RelatedRecordPathReadModule,
     WorkspaceCacheModule,
@@ -35,11 +37,12 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     AccessGroupSyncSchedulerService,
     ComputeRecordAccessGroupIdsDeferredOperationHandlerService,
     RecomputeRecordAccessGroupIdsOfRecordsJob,
-    RecomputeRelatedRecordPathTargetsJob,
     SyncAccessGroupsJob,
+    RlsWorkspaceMemberRelationValueMapsCacheService,
   ],
   exports: [
     AccessGroupPropagationPlanService,
+    AccessGroupSyncSchedulerService,
     AccessGroupSyncService,
     RecordAccessGroupComputationService,
     RecordAccessGroupPropagationService,

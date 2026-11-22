@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { computeDaysUntilReset } from '@/ai-chat/usage/utils/computeDaysUntilReset';
+import { mapAiChatUsageCounters } from '@/ai-chat/usage/utils/mapAiChatUsageCounters';
 import { isAiChatUserCreditsExhausted } from '@/ai-chat/usage/utils/isAiChatUserCreditsExhausted';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -27,10 +28,7 @@ export const useAiChatUserCreditsUsage = ({
   }
 
   const usage = {
-    limitValue: Number(aiChatUserCreditsUsage.limitValue),
-    consumedValue: isDefined(aiChatUserCreditsUsage.consumedValue)
-      ? Number(aiChatUserCreditsUsage.consumedValue)
-      : null,
+    ...mapAiChatUsageCounters(aiChatUserCreditsUsage),
     periodEnd: aiChatUserCreditsUsage.periodEnd,
   };
 

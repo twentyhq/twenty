@@ -22,7 +22,7 @@ export const GET_CORE_WORKFLOWS = gql`
           statuses
           workspaceWorkflowId
           isSystem
-          visibility
+          isPrivate
           canChangeVisibility
           updatedAt
         }
