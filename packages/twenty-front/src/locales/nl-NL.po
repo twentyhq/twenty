@@ -7923,7 +7923,7 @@ msgid "Conversation key"
 msgstr "Gesprekssleutel"
 
 #. js-lingui-id: 9xGqrK
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversation list"
 msgstr "Gesprekkenlijst"
 
@@ -7938,7 +7938,7 @@ msgid "Conversations"
 msgstr "Gesprekken"
 
 #. js-lingui-id: gM204O
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversations in this channel will appear here."
 msgstr "Gesprekken in dit kanaal verschijnen hier."
 
@@ -7948,7 +7948,7 @@ msgid "Conversations linked to this record will appear here."
 msgstr "Gesprekken die aan dit record zijn gekoppeld, verschijnen hier."
 
 #. js-lingui-id: LMvWS1
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversations you can open will appear here."
 msgstr "Gesprekken die je kunt openen, verschijnen hier."
 
@@ -20554,8 +20554,8 @@ msgid "No conversation uses this channel."
 msgstr "Geen enkel gesprek gebruikt dit kanaal."
 
 #. js-lingui-id: ICXANZ
+#: src/modules/inbox/components/InboxPageListPane.tsx
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
-#: src/pages/inbox/InboxPage.tsx
 msgid "No conversations"
 msgstr "Geen gesprekken"
 

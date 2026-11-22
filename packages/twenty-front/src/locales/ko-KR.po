@@ -7923,7 +7923,7 @@ msgid "Conversation key"
 msgstr "대화 키"
 
 #. js-lingui-id: 9xGqrK
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversation list"
 msgstr "대화 목록"
 
@@ -7938,7 +7938,7 @@ msgid "Conversations"
 msgstr "대화"
 
 #. js-lingui-id: gM204O
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversations in this channel will appear here."
 msgstr "이 채널의 대화가 여기에 표시됩니다."
 
@@ -7948,7 +7948,7 @@ msgid "Conversations linked to this record will appear here."
 msgstr "이 레코드에 연결된 대화가 여기에 표시됩니다."
 
 #. js-lingui-id: LMvWS1
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversations you can open will appear here."
 msgstr "열 수 있는 대화가 여기에 표시됩니다."
 
@@ -20554,8 +20554,8 @@ msgid "No conversation uses this channel."
 msgstr "이 채널을 사용하는 대화가 없습니다."
 
 #. js-lingui-id: ICXANZ
+#: src/modules/inbox/components/InboxPageListPane.tsx
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
-#: src/pages/inbox/InboxPage.tsx
 msgid "No conversations"
 msgstr "대화 없음"
 
