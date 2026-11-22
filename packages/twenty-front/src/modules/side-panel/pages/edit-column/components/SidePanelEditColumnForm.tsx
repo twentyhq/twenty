@@ -129,7 +129,7 @@ export const SidePanelEditColumnForm = ({
       ({ id }) => id === relationTargetFieldMetadataId,
     );
 
-  const defaultColumnHeader = getRecordFieldColumnHeader({
+  const columnHeader = getRecordFieldColumnHeader({
     fieldMetadataItem,
     lookupTarget: isDefined(selectedLookupTargetFieldMetadataItem)
       ? { lookupTargetFieldMetadataItem: selectedLookupTargetFieldMetadataItem }
@@ -145,19 +145,21 @@ export const SidePanelEditColumnForm = ({
 
     setIsSaving(true);
 
+    const relationScope = getRelationScopeToSave({
+      editedRelationScope: getRelationScopeFromRecordFiltersAndSorts({
+        recordFilters: store.get(currentRecordFilters),
+        recordFilterGroups: store.get(currentRecordFilterGroups),
+        recordSorts: store.get(currentRecordSorts),
+        limit,
+      }),
+      storedRelationScope,
+      scopedRelationJunction,
+    });
+
     const isSaved = await saveScopedRelationColumn({
       fieldMetadataItemId: fieldMetadataItem.id,
       recordFieldId,
-      relationScope: getRelationScopeToSave({
-        editedRelationScope: getRelationScopeFromRecordFiltersAndSorts({
-          recordFilters: store.get(currentRecordFilters),
-          recordFilterGroups: store.get(currentRecordFilterGroups),
-          recordSorts: store.get(currentRecordSorts),
-          limit,
-        }),
-        storedRelationScope,
-        scopedRelationJunction,
-      }),
+      relationScope,
       relationTargetFieldMetadataId,
       label,
     });
@@ -178,7 +180,7 @@ export const SidePanelEditColumnForm = ({
     dependencies: [currentFocusId, handleSaveClick],
   });
 
-  const ColumnIcon = getIcon(defaultColumnHeader.icon);
+  const ColumnIcon = getIcon(columnHeader.icon);
 
   return (
     <StyledContainer ref={containerRef} tabIndex={-1}>
@@ -187,7 +189,7 @@ export const SidePanelEditColumnForm = ({
         icon={
           <ColumnIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         }
-        defaultLabel={defaultColumnHeader.label}
+        defaultLabel={columnHeader.label}
         label={label}
         onLabelChange={setLabel}
       />

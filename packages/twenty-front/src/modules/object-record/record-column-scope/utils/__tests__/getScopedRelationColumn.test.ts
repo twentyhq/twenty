@@ -46,8 +46,9 @@ const getColumn = ({
 describe('getScopedRelationColumn', () => {
   it('resolves an added column with a scope on a one-to-many relation', () => {
     expect(getColumn()).toEqual({
-      lookupTarget: undefined,
-      scopedRelationJunction: undefined,
+      relationObjectMetadataItem: expect.objectContaining({
+        id: personObjectMetadataItem.id,
+      }),
     });
   });
 
@@ -115,17 +116,18 @@ describe('getScopedRelationColumn', () => {
   });
 
   it('has no lookup target for a field that is not on the related object', () => {
-    expect(
-      getColumn({
-        recordField: {
-          ...SCOPED_RECORD_FIELD,
-          relationTargetFieldMetadataId: getMockFieldMetadataItemOrThrow({
-            objectMetadataItem: companyObjectMetadataItem,
-            fieldName: 'name',
-          }).id,
-        },
-      }),
-    ).toEqual({ lookupTarget: undefined, scopedRelationJunction: undefined });
+    const scopedRelationColumn = getColumn({
+      recordField: {
+        ...SCOPED_RECORD_FIELD,
+        relationTargetFieldMetadataId: getMockFieldMetadataItemOrThrow({
+          objectMetadataItem: companyObjectMetadataItem,
+          fieldName: 'name',
+        }).id,
+      },
+    });
+
+    expect(scopedRelationColumn).toBeDefined();
+    expect(scopedRelationColumn?.lookupTarget).toBeUndefined();
   });
 
   it('resolves the join object of a relation with one target object, without a lookup target', () => {

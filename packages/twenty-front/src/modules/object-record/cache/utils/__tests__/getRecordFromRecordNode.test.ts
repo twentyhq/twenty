@@ -78,6 +78,27 @@ describe('getRecordFromRecordNode', () => {
     });
   });
 
+  it('should keep each aggregate of a connection under its own sibling key', () => {
+    const recordNode = {
+      id: '123',
+      __typename: 'Company',
+      opportunities_0123456789abcdef: {
+        __typename: 'OpportunityConnection',
+        sumAmountAmountMicros: 1500000000,
+        minCloseDate: null,
+        edges: [],
+      },
+    };
+
+    expect(getRecordFromRecordNode({ recordNode })).toEqual({
+      id: '123',
+      __typename: 'Company',
+      opportunities_0123456789abcdef: [],
+      opportunities_0123456789abcdefSumAmountAmountMicros: 1500000000,
+      opportunities_0123456789abcdefMinCloseDate: null,
+    });
+  });
+
   it('should handle null and undefined values', () => {
     const recordNode = {
       id: '123',

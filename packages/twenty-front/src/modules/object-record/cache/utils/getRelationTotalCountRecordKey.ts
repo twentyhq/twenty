@@ -1,3 +1,7 @@
-// A record holds a relation as a plain list, so the total count of its connection lives under a sibling key
+import { getRelationAggregateRecordKey } from '@/object-record/cache/utils/getRelationAggregateRecordKey';
+
 export const getRelationTotalCountRecordKey = (relationRecordKey: string) =>
-  `${relationRecordKey}TotalCount`;
+  getRelationAggregateRecordKey({
+    relationRecordKey,
+    aggregateGqlFieldName: 'totalCount',
+  });
