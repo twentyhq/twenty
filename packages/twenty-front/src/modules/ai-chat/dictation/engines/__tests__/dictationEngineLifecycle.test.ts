@@ -4,7 +4,6 @@ import { type WebSpeechRecognitionConstructor } from '@/ai-chat/dictation/types/
 import { type WebSpeechRecognitionEvent } from '@/ai-chat/dictation/types/WebSpeechRecognitionEvent';
 import { type WebSpeechRecognitionInstance } from '@/ai-chat/dictation/types/WebSpeechRecognitionInstance';
 
-// endSession stands in for the recognizer reporting it finished, the only thing releasing the started slot.
 type FakeRecognition = WebSpeechRecognitionInstance & {
   start: jest.Mock;
   stop: jest.Mock;
@@ -45,7 +44,6 @@ const mockGetUserMedia = (implementation: () => Promise<FakeMediaStream>) => {
   });
 };
 
-// Models the spec's [[started]] slot: start() throws until the end event releases it.
 const stubSpeechRecognition = () => {
   const instances: FakeRecognition[] = [];
 
@@ -201,7 +199,6 @@ describe('createWebSpeechDictationEngine', () => {
     expect(instances[0]?.start).toHaveBeenCalledTimes(2);
   });
 
-  // iOS can end a session without onend, and such a recognizer throws InvalidStateError on start().
   it('replaces a recognizer that never reported the session ended', async () => {
     const engine = createTestEngine({ isIOS: true });
     const events = collectEvents(engine);
@@ -209,7 +206,6 @@ describe('createWebSpeechDictationEngine', () => {
     await engine.start();
     engine.stop();
 
-    // Deliberately no end event: this is the platform behaviour being guarded.
     await engine.start();
 
     expect(instances).toHaveLength(2);
@@ -282,7 +278,6 @@ describe('createWebSpeechDictationEngine', () => {
     expect(instances[0]?.abort).toHaveBeenCalledTimes(1);
   });
 
-  // An error ends the session, and iOS can skip the end event that follows it.
   it('reports the failure and ends the session on a recognizer error', async () => {
     const engine = createTestEngine({ isIOS: true });
     const events = collectEvents(engine);
