@@ -1,7 +1,12 @@
 import {
-  type LanguageModelV4AssistantMessage,
+  type LanguageModelV4Message,
   type LanguageModelV4Prompt,
 } from '@ai-sdk/provider';
+
+type LanguageModelV4AssistantMessage = Extract<
+  LanguageModelV4Message,
+  { role: 'assistant' }
+>;
 
 // Groq rejects historical assistant reasoning_content with HTTP 400 (#30436).
 // Omitting reasoning parts prevents OpenAI-compatible serialization from including reasoning_content.

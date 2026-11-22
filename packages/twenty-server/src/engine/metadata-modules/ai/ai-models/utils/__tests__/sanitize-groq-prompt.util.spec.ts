@@ -1,9 +1,14 @@
 import {
-  type LanguageModelV4AssistantMessage,
+  type LanguageModelV4Message,
   type LanguageModelV4Prompt,
 } from '@ai-sdk/provider';
 
 import { sanitizeGroqPrompt } from 'src/engine/metadata-modules/ai/ai-models/utils/sanitize-groq-prompt.util';
+
+type LanguageModelV4AssistantMessage = Extract<
+  LanguageModelV4Message,
+  { role: 'assistant' }
+>;
 
 describe('sanitizeGroqPrompt', () => {
   it('omits reasoning parts from assistant messages while preserving text and tool parts', () => {
@@ -64,7 +69,7 @@ describe('sanitizeGroqPrompt', () => {
             type: 'tool-call',
             toolCallId: 'call_1',
             toolName: 'find_company',
-            args: { name: 'Acme' },
+            input: { name: 'Acme' },
           },
         ],
       },
@@ -78,7 +83,7 @@ describe('sanitizeGroqPrompt', () => {
         type: 'tool-call',
         toolCallId: 'call_1',
         toolName: 'find_company',
-        args: { name: 'Acme' },
+        input: { name: 'Acme' },
       },
     ]);
   });
