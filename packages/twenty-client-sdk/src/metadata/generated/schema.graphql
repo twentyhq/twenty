@@ -4157,8 +4157,8 @@ type PageLayoutWidget {
   applicationId: UUID!
   applicationName: String
   conditionalAvailability: JSON
-  conditionalAvailabilityExpression: String
-  conditionalDisplay: JSON
+  conditionalAvailabilityExpression: String @deprecated(reason: "Use conditionalAvailability instead")
+  conditionalDisplay: JSON @deprecated(reason: "Use conditionalAvailability instead")
   configuration: WidgetConfiguration!
   createdAt: DateTime!
   deletedAt: DateTime

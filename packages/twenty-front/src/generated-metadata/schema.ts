@@ -5941,7 +5941,9 @@ export type PageLayoutWidget = {
   applicationId: Scalars['UUID']['output'];
   applicationName?: Maybe<Scalars['String']['output']>;
   conditionalAvailability?: Maybe<Scalars['JSON']['output']>;
+  /** @deprecated Use conditionalAvailability instead */
   conditionalAvailabilityExpression?: Maybe<Scalars['String']['output']>;
+  /** @deprecated Use conditionalAvailability instead */
   conditionalDisplay?: Maybe<Scalars['JSON']['output']>;
   configuration: WidgetConfiguration;
   createdAt: Scalars['DateTime']['output'];

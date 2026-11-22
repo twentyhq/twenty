@@ -3018,7 +3018,9 @@ export interface PageLayoutWidget {
     applicationId: Scalars['UUID']
     applicationName?: Scalars['String']
     conditionalAvailability?: Scalars['JSON']
+    /** @deprecated Use conditionalAvailability instead */
     conditionalAvailabilityExpression?: Scalars['String']
+    /** @deprecated Use conditionalAvailability instead */
     conditionalDisplay?: Scalars['JSON']
     configuration: WidgetConfiguration
     createdAt: Scalars['DateTime']
@@ -7905,7 +7907,9 @@ export interface PageLayoutWidgetGenqlSelection{
     applicationId?: boolean | number
     applicationName?: boolean | number
     conditionalAvailability?: boolean | number
+    /** @deprecated Use conditionalAvailability instead */
     conditionalAvailabilityExpression?: boolean | number
+    /** @deprecated Use conditionalAvailability instead */
     conditionalDisplay?: boolean | number
     configuration?: WidgetConfigurationGenqlSelection
     createdAt?: boolean | number
