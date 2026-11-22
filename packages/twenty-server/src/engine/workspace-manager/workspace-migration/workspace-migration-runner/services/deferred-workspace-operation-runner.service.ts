@@ -179,6 +179,48 @@ export class DeferredWorkspaceOperationRunnerService {
       .map(({ payload }) => payload);
   }
 
+  async findUnfinishedOperationsAcrossWorkspaces<
+    TName extends DeferredWorkspaceOperationName,
+  >({
+    name,
+  }: {
+    name: TName;
+  }): Promise<
+    {
+      workspaceId: string;
+      createdAt: Date;
+      payload: DeferredWorkspaceOperationPayload<TName>;
+    }[]
+  > {
+    const unfinishedStatuses: DeferredWorkspaceOperationStatus[] = [
+      'PENDING',
+      'IN_PROGRESS',
+    ];
+    const deferredOperations = await this.coreDataSource
+      .getRepository(DeferredWorkspaceOperationEntity)
+      .createQueryBuilder('deferredWorkspaceOperation')
+      .innerJoin(
+        'deferredWorkspaceOperation.workspace',
+        'workspace',
+        'workspace.deletedAt IS NULL',
+      )
+      .where('deferredWorkspaceOperation.name = :name', { name })
+      .andWhere('deferredWorkspaceOperation.status IN (:...statuses)', {
+        statuses: unfinishedStatuses,
+      })
+      .getMany();
+
+    return deferredOperations
+      .filter((deferredOperation) =>
+        isDeferredWorkspaceOperationNamed(deferredOperation, name),
+      )
+      .map(({ workspaceId, createdAt, payload }) => ({
+        workspaceId,
+        createdAt,
+        payload,
+      }));
+  }
+
   async updateInProgressOperationPayload<
     TName extends DeferredWorkspaceOperationName,
   >({

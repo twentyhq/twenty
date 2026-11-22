@@ -32,11 +32,12 @@ export class DeferredWorkspaceOperationGaugeService implements OnModuleInit {
       callback: async () => {
         const operationCounts = await this.getOperationCountByNameAndStatus();
 
-        return DEFERRED_WORKSPACE_OPERATION_NAMES.flatMap((operationName) =>
-          DEFERRED_WORKSPACE_OPERATION_STATUSES.map((status) => ({
-            value: operationCounts.get(`${operationName}:${status}`) ?? 0,
-            attributes: { operation_name: operationName, status },
-          })),
+        return Object.values(DEFERRED_WORKSPACE_OPERATION_NAMES).flatMap(
+          (operationName) =>
+            DEFERRED_WORKSPACE_OPERATION_STATUSES.map((status) => ({
+              value: operationCounts.get(`${operationName}:${status}`) ?? 0,
+              attributes: { operation_name: operationName, status },
+            })),
         );
       },
       cacheValue: true,
