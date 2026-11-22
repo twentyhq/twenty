@@ -1,6 +1,6 @@
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type AddRichTextFileIdsColumnsCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795295227624-add-rich-text-file-ids-columns.command';
+import { type AddRichTextFileIdsColumnsCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795351100191-add-rich-text-file-ids-columns.command';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
