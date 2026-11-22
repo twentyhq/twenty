@@ -16,7 +16,6 @@ type InboxThreadChannelPickerProps = {
   dropdownId: string;
 };
 
-// A chat without an owner has no one to fall back to, so it stays in a channel
 export const InboxThreadChannelPicker = ({
   thread,
   dropdownId,

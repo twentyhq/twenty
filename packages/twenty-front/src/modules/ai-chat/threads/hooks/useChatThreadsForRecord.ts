@@ -56,13 +56,11 @@ const CHAT_THREADS_FOR_RECORD_GQL_FIELDS = {
   },
 } satisfies RecordGqlFields;
 
-// Link events carry no conversation, so new links are read back.
 const LINK_OPERATION_TYPES: ObjectRecordOperation['type'][] = [
   'create-one',
   'create-many',
 ];
 
-// Title and activity changes arrive through the record cache; these change which conversations are listed.
 const THREAD_OPERATION_TYPES: ObjectRecordOperation['type'][] = [
   'delete-one',
   'delete-many',

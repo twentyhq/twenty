@@ -29,7 +29,6 @@ export const useAnswerAiChatToolCall = () => {
   const { enqueueToast } = useToast();
   const { threadId: aiChatThreadId } = useAiChatInstanceOrThrow();
 
-  // Returns whether answered, so a card stays disabled until the call closes.
   const answerAiChatToolCall = useCallback(
     async ({
       toolCallId,
@@ -90,7 +89,6 @@ export const useAnswerAiChatToolCall = () => {
         });
         const streamId = data?.answerToolCall.streamId;
 
-        // No chunk follows when a workflow run resumes in its own executor or other calls still wait.
         if (!isDefined(streamId)) {
           store.set(
             replyStatusAtom,
@@ -107,7 +105,6 @@ export const useAnswerAiChatToolCall = () => {
           endAiChatReplyStatus('awaiting-first-chunk'),
         );
 
-        // The banner reads the workspace flag, then the thread error when no resource credit item carries that flag
         if (isAiChatCreditsExhaustedError(error)) {
           store.set(currentWorkspaceState.atom, markWorkspaceCreditsExhausted);
           store.set(errorAtom, toAiChatError(error));

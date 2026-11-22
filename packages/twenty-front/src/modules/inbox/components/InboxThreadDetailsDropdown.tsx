@@ -126,7 +126,6 @@ export const InboxThreadDetailsDropdown = ({
     : t`Link to a record`;
   const EditRecordTargetsIcon = hasTargetRecords ? IconPencil : IconPlus;
 
-  // The picker is a dropdown of its own, so it opens where the details were
   const editRecordTargets = () => {
     closeDropdown(dropdownId);
     openRecordPicker();
@@ -159,7 +158,6 @@ export const InboxThreadDetailsDropdown = ({
         />
         <DropdownContent
           ref={dropdownContentRef}
-          // The details are read first, so focus stays off the first chip
           initialFocus={() => dropdownContentRef.current}
           align="start"
           width={GenericDropdownContentWidth.ExtraExtraLarge}
@@ -194,7 +192,6 @@ export const InboxThreadDetailsDropdown = ({
                       key={`${objectNameSingular}-${record.id}`}
                       objectNameSingular={objectNameSingular}
                       record={record}
-                      // Linked records open like the records the chat mentions
                       onClick={
                         isAiChatArtifactSurface
                           ? () => {

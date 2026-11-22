@@ -10,7 +10,6 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type InboxThreadInboxStatusByThreadIdFamilyKey = {
   threadIds: string[];
-  // Chats of the channel on screen are filed for the whole channel
   channelId?: string | null;
 };
 

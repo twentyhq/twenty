@@ -32,7 +32,6 @@ jest.mock('@/ai-chat/tool-calls/hooks/useAnswerAiChatToolCall', () => ({
   useAnswerAiChatToolCall: () => ({ answerAiChatToolCall }),
 }));
 
-// record fields need workspace metadata, so a stub stands in for them
 const mockRecordFields = jest.fn(
   (_props: RecordFieldsStubProps): ReactNode => null,
 );
@@ -77,7 +76,6 @@ type ToolFrontComponentStubProps = {
   onToolCallArgumentsChange: (toolArguments: Record<string, unknown>) => void;
 };
 
-// the app's component runs in a sandboxed worker, so a stub plays its part
 jest.mock('@/ai-chat/tool-calls/components/AiChatToolFrontComponent', () => ({
   AiChatToolFrontComponent: ({
     toolCall,
@@ -233,7 +231,6 @@ describe('AiChatToolCallApprovalCard', () => {
   it('keeps every edit to one composite field when approving a record', async () => {
     const user = userEvent.setup();
     answerAiChatToolCall.mockReturnValue(new Promise(() => {}));
-    // like the composite form inputs, each part is changed from the values it is given
     mockRecordFields.mockImplementation(({ values, onChange }) => {
       const name = values.name as Record<string, string>;
 

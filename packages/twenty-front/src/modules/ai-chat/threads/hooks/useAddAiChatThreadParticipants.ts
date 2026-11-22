@@ -5,7 +5,6 @@ import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatTh
 import { mergeAiChatThreadParticipants } from '@/ai-chat/threads/utils/mergeAiChatThreadParticipants';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
-// The member's inbox state comes with the threads it belongs to
 export const useAddAiChatThreadParticipants = () => {
   const store = useStore();
 

@@ -58,7 +58,6 @@ describe('inboxThreadListThreadsFamilySelector for a channel view', () => {
     });
 
     store.set(recordStoreFamilyState.atomFamily('older'), olderThread);
-    // A refresh replaced the main list with its first page
     setInboxThreadList(store, [recentThread]);
     store.set(
       inboxThreadListFamilyState.atomFamily(

@@ -9,7 +9,6 @@ const COMPANY_ID = '20202020-0000-4000-8000-000000000002';
 
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
-// Any relation to company stands in for the thread target's company leg.
 const companyTargetField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: personObjectMetadataItem,
   fieldName: 'company',

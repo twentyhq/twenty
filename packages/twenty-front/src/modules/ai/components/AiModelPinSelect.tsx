@@ -27,7 +27,6 @@ const StyledRow = styled.div<{ hasEffortSelect: boolean }>`
 
 type AiModelPinSelectProps = {
   dropdownId: string;
-  // null follows the tier automatically; a variant id names its effort.
   modelId: string | null;
   onChange: (modelId: string | null) => void;
   aiModels: PinnableAiModel[];

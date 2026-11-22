@@ -36,7 +36,6 @@ const ToolStepLabel = () => {
   return <span>{toolIndex[0]?.label}</span>;
 };
 
-// Mirrors the metadata client, whose default policy is cache-and-network
 const buildChat = (toolStepCount: number) => (
   <MockedProvider
     mocks={TOOL_INDEX_MOCKS}

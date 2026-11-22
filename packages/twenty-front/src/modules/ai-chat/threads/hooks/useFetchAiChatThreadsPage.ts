@@ -125,7 +125,6 @@ export const useFetchAiChatThreadsPage = () => {
         threads: records.map(
           ({ participants: _participants, ...thread }) => thread,
         ),
-        // Roles that read every record get every member's row
         participants: records
           .flatMap(({ participants }) => participants ?? [])
           .filter(

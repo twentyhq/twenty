@@ -17,8 +17,6 @@ export const MobileHomeInboxSection = () => {
   });
   const { threads } = useInboxThreadList(INBOX_RECENT_THREAD_LIST_SOURCE);
 
-  // Earlier pages can hold only chats filtered out of this list, so an empty
-  // list keeps fetching until it finds some or runs out
   if (threads.length === 0) {
     return (
       <InboxThreadListFetchMoreTrigger
