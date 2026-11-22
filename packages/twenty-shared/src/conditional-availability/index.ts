@@ -7,6 +7,7 @@
  *                              |___/
  */
 
+export { CONDITIONAL_AVAILABILITY_DEVICES } from './constants/ConditionalAvailabilityDevices';
 export { CONDITIONAL_AVAILABILITY_EXPRESSION_MAX_LENGTH } from './constants/ConditionalAvailabilityExpressionMaxLength';
 export { CONDITIONAL_AVAILABILITY_FUNCTIONS } from './constants/ConditionalAvailabilityFunctions';
 export { CONDITIONAL_AVAILABILITY_IDENTIFIER_PATTERN } from './constants/ConditionalAvailabilityIdentifierPattern';
@@ -15,6 +16,7 @@ export { CONDITIONAL_AVAILABILITY_SYMBOL_BY_COMPARISON_OPERATOR } from './consta
 export { CONDITIONAL_AVAILABILITY_VARIABLE_PATH_PATTERN } from './constants/ConditionalAvailabilityVariablePathPattern';
 export { CONDITIONAL_AVAILABILITY_VARIABLES } from './constants/ConditionalAvailabilityVariables';
 export type { ConditionalAvailabilityComparisonOperator } from './types/ConditionalAvailabilityComparisonOperator';
+export type { ConditionalAvailabilityDevice } from './types/ConditionalAvailabilityDevice';
 export type { ConditionalAvailabilityLogicalOperator } from './types/ConditionalAvailabilityLogicalOperator';
 export type { ConditionalAvailabilityMetadataName } from './types/ConditionalAvailabilityMetadataName';
 export type { ConditionalAvailabilityNode } from './types/ConditionalAvailabilityNode';

@@ -1,7 +1,8 @@
+import { type ConditionalAvailabilityDevice } from '@/conditional-availability/types/ConditionalAvailabilityDevice';
 import { type ConditionalAvailabilityNode } from '@/conditional-availability/types/ConditionalAvailabilityNode';
 
 export const buildDeviceConditionalAvailability = (
-  device: 'MOBILE' | 'DESKTOP',
+  device: ConditionalAvailabilityDevice,
 ): ConditionalAvailabilityNode => ({
   type: 'COMPARISON',
   operator: 'EQUAL',
