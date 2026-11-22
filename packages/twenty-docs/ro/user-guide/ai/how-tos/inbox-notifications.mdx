@@ -1,0 +1,105 @@
+---
+title: Notificări în Mesaje primite
+description: Primește notificări despre mesaje noi în Mesaje primite și remediază notificările care nu apar.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+<Warning>
+Mesaje primite este o funcționalitate de laborator: încă se află în acces anticipat, deci se poate schimba și poate avea imperfecțiuni. Pentru a o încerca, accesează **Setări → Comunitate**, deschide secțiunea **Funcționalități** și activează **Mesaje primite**. Consultă [Setări comunitate](/ro/user-guide/settings/capabilities/community-settings).
+</Warning>
+
+Twenty poate afișa mesajele noi din inbox ca notificări pe computerul dvs., chiar și atunci când nu este deschisă nicio filă Twenty.
+
+## Activați notificările
+
+1. Accesați **Setări → Experiență** și găsiți secțiunea **Notificări**.
+2. Faceți clic pe **Permiteți**, apoi acceptați solicitarea browserului.
+3. Twenty trimite imediat o notificare de test. Dacă o vedeți, ați terminat.
+4. Alegeți pentru ce mesaje primiți notificări: **Toate conversațiile pe care le urmăriți**, **Mesaje directe și mențiuni** sau **Dezactivat**.
+5. Activați **Afișați previzualizarea mesajului** pentru a vedea expeditorul și textul mesajului în notificări. Lăsați opțiunea dezactivată pe ecranele partajate.
+
+Bine de știut:
+
+* Notificările se activează pentru fiecare browser și spațiu de lucru: faceți clic pe **Permiteți** în fiecare browser și în fiecare spațiu de lucru pe care îl utilizați.
+* Nivelul de notificare și opțiunile de previzualizare se aplică pe toate dispozitivele.
+* Secțiunea este afișată numai când Inbox este activat și rolul dvs. are acces la AI.
+* Utilizați **Trimiteți testul** după fiecare modificare de mai jos pentru a verifica dacă apar notificările.
+
+## De ce nu vedeți notificările
+
+### Twenty se deschide în fața dvs
+
+Twenty nu trimite o notificare cât timp vă uitați la una dintre filele sale: vedeți deja mesajul. Când testați împreună cu un coleg, comutați mai întâi la altă aplicație sau filă.
+
+### Mesajul nu corespunde nivelului dvs. de notificare
+
+Cu **Mesaje directe și mențiuni**, nu primiți notificări pentru alte mesaje din conversațiile pe care le urmăriți. Cu **Dezactivat**, nu primiți nicio notificare. Modificați opțiunea în **Setări → Experiență**.
+
+### Browserul dvs. blochează Twenty
+
+Dacă nu a apărut nicio solicitare când ați făcut clic pe **Permiteți**, căutați o pictogramă în formă de clopoțel în bara de adrese: Chrome și Edge afișează uneori acolo o solicitare discretă în locul unei ferestre pop-up.
+
+Dacă cardul spune că notificările sunt blocate, permiteți-le din nou, apoi reîncărcați Twenty:
+
+<Tabs>
+  <Tab title="Chrome, Brave, Opera, Arc">
+    Faceți clic pe pictograma de informații despre site din stânga barei de adrese, apoi setați **Notificări** la **Permiteți**.
+  </Tab>
+  <Tab title="Edge">
+    Faceți clic pe pictograma lacătului din stânga barei de adrese, deschideți **Permisiuni pentru acest site**, apoi setați **Notificări** la **Permiteți**.
+  </Tab>
+  <Tab title="Firefox">
+    Faceți clic pe pictograma de permisiuni sau pe lacătul din bara de adrese și eliminați **Trimite notificări: Blocat**. De asemenea, puteți accesa **Setări → Confidențialitate și securitate → Permisiuni → Notificări**.
+  </Tab>
+  <Tab title="Safari">
+    Accesați **Safari → Setări → Site-uri web → Notificări** și setați Twenty la **Permiteți**.
+  </Tab>
+</Tabs>
+
+Ferestrele private și incognito nu pot primi notificări.
+
+### Computerul dvs. blochează notificările browserului
+
+Browserul dvs. poate permite Twenty, în timp ce computerul încă ascunde tot ce trimite browserul. Twenty nu poate detecta acest lucru, așa că verificați aceste setări:
+
+<Tabs>
+  <Tab title="macOS">
+    1. Deschide **Setări de sistem → Notificări** şi selectează browserul (Google Chrome, Microsoft Edge, Brave Browser sau Firefox). Porniți **Permiteți notificări**. Chrome, Edge și Brave pot lista, de asemenea, o piesă „Helper (Alerte)”: porniți-o și ea. Cu Safari, fiecare site web are propria sa intrare: selectaţi una.
+
+       Chrome cere macOS pentru această permisiune o singură dată, prima dată când începe. Dacă solicitarea a fost omisă, notificările rămân oprite până când le activați aici.
+    2. Setează stilul de alertă pe **Bannere** sau **Alerte**. Pe macOS 26, verificați **Desktop**. Cu **Niciunul**, mergi la Centrul de Notificări.
+    3. Opriți **Focus** sau **Nu deranja** (Centrul de Control din bara de meniu), sau adăugați browser-ul la aplicațiile permise ale Focus în **Setări de sistem → Focus**. Un Focus activat pe iPhone-ul tău se aplică și pentru Mac-ul tău atunci când **Distribuie pe dispozitive** este pornit.
+    4. macOS ascunde notificări în timp ce partajați sau oglindiți ecranul, de exemplu în timpul unui apel video. Puteți schimba acest lucru cu **Permiteți notificări la oglindirea sau partajarea afișajului** în **Setări de sistem → Notificări**.
+  </Tab>
+  <Tab title="Ferestre">
+    1. Deschide **Setări → Sistem → Notificări** (Windows 10: **Notificări & acţiuni**). Porniți **Notificări**, apoi browser-ul (Google Chrome, Microsoft Edge sau Firefox), apoi **Afișați bannere de notificare** pentru acel browser.
+    2. Oprește **Nu deranja** (Windows 11) sau **Focus assist** (Windows 10), sau adaugă browserul la notificările prioritare. Verifică și regulile automate: Windows o poate activa în timpul aplicațiilor pe ecran complet, jocurilor, sau când îți duplici afișajul. Sesiunile focalizate activează, de asemenea, opțiunea Nu deranja.
+    3. Bannerele de notificare dispar după 5 secunde în mod implicit. Cele ratate stau în centrul de notificări.
+  </Tab>
+</Tabs>
+
+### Browserul tău a fost închis
+
+Chrome, Edge, Brave și Firefox primesc notificări numai în timp ce rulează. Safari le primeşte chiar şi atunci când este închis.
+
+* **Pe Mac**, închiderea tuturor ferestrelor este în regulă, dar ieșirea din browser (Cmd+Q) oprește notificările până când îl deschideți din nou.
+* **Pe Windows**, Chrome și Edge se opresc când închizi ultima lor fereastră, cu excepția cazului în care pornești:
+  * Chrome: **Setări → Sistem → Continuă rularea aplicaţiilor de fundal atunci când Google Chrome este închis**
+  * Edge: **Setări → Sistem şi performanţă → Continuă să rulezi extensii de fundal şi aplicaţii când Microsoft Edge este închis**
+
+Notificările pentru mesaje trimise în timp ce browser-ul a fost închis pentru mai mult de o oră sunt sărite. Încă vei găsi mesajele în căsuța ta poștală.
+
+### Folosești Brave
+
+Curajul dezactivează navigatoarele de servicii folosite pentru a trimite notificări. Dacă douăzeci spune "Acest browser nu poate porni notificări", deschideți `brave://settings/privacy`, pornește **Utilizează serviciile Google pentru a trimite mesaje**, repornește Brave, apoi apasă **Trimite test** din nou.
+
+### Organizația dvs. blochează notificările
+
+Pe un calculator de lucru, echipa IT poate bloca notificările sau serviciul care le oferă. Meniul browser-ului afișează apoi "Managed by your organization". Cereți echipei IT să permită notificări pentru Twenty.
+
+## Încă nu funcționează?
+
+Dacă **Trimite testul** afișează o notificare, dar mesajele noi nu fac, verifică nivelul de notificare și că douăzeci nu au fost în fața ta. Altfel, contactați [comunitatea Discord](https://discord.gg/cx5n4Jzs57) sau contactați asistența.
+
+<PageBanner illustration="card-page-messaging-channels" />

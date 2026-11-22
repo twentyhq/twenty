@@ -19,7 +19,7 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { AiChatChannelIcon } from '@/ai-chat/threads/components/AiChatChannelIcon';
 import { InboxThreadChannelPicker } from '@/inbox/components/InboxThreadChannelPicker';
-import { AiChatThreadDetailsFollowing } from '@/ai-chat/threads/components/AiChatThreadDetailsFollowing';
+import { AiChatThreadDetailsFollowing } from '@/inbox/components/AiChatThreadDetailsFollowing';
 import { InboxThreadDetailsStatus } from '@/inbox/components/InboxThreadDetailsStatus';
 import { AiChatThreadLabelsField } from '@/ai-chat/threads/components/AiChatThreadLabelsField';
 import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai-chat/threads/constants/AiChatThreadDetailsLabelWidthInPx';

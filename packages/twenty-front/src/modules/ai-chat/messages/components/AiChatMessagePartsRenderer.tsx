@@ -1,136 +1,30 @@
-import { AiChatFrontComponentToolPreview } from '@/ai-chat/tool-calls/components/AiChatFrontComponentToolPreview';
-import { AiChatCompactionIndicator } from '@/ai-chat/messages/components/AiChatCompactionIndicator';
-import { AiChatInitialLoadingIndicator } from '@/ai-chat/messages/components/AiChatInitialLoadingIndicator';
-import { CodeExecutionDisplay } from '@/ai-chat/message-content/components/CodeExecutionDisplay';
-import { ThinkingStepsDisplay } from '@/ai-chat/thinking-steps/components/ThinkingStepsDisplay';
-
-import { AiChatFormStatusRenderer } from '@/ai-chat/tool-calls/components/AiChatFormStatusRenderer';
-import { AiChatQuestionStatusRenderer } from '@/ai-chat/tool-calls/components/AiChatQuestionStatusRenderer';
-import { AiChatToolCallApprovalStatusRenderer } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalStatusRenderer';
-import { AiChatToolWidget } from '@/ai-chat/tool-calls/components/AiChatToolWidget';
-import { LazyMarkdownContent } from '@/ai-chat/message-content/components/LazyMarkdownRenderer';
-import { type AiChatMessageRenderItem } from '@/ai-chat/messages/types/AiChatMessageRenderItem';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
-import { useFrontComponentIdByToolName } from '@/ai-chat/tool-calls/hooks/useFrontComponentIdByToolName';
-import { getEffectiveToolName } from '@/ai-chat/tool-calls/utils/getEffectiveToolName';
-import { shouldToolPartRenderStandalone } from '@/ai-chat/tool-calls/utils/shouldToolPartRenderStandalone';
-import { groupContiguousThinkingStepParts } from '@/ai-chat/messages/utils/groupContiguousThinkingStepParts';
-import { isHiddenReasoningPart } from '@/ai-chat/thinking-steps/utils/isHiddenReasoningPart';
-import { isHiddenCompleteWorkspaceSetupToolPart } from '@/ai-chat/workspace-setup/utils/isHiddenCompleteWorkspaceSetupToolPart';
 import { styled } from '@linaria/react';
-import { getToolName, isToolUIPart } from 'ai';
+import { isToolUIPart } from 'ai';
 import {
-  ASK_QUESTION_TOOL_NAME,
-  ASK_QUESTIONS_TOOL_NAME,
   type ExtendedUIMessagePart,
   isNoReplyToolPart,
   isSucceededCompleteWorkspaceSetupToolPart,
-  PREVIEW_FRONT_COMPONENT_TOOL_NAME,
-  PROPOSE_TOOL_CALL_TOOL_NAME,
-  REQUEST_FORM_TOOL_NAME,
 } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
+
+import { AiChatInitialLoadingIndicator } from '@/ai-chat/messages/components/AiChatInitialLoadingIndicator';
+import { AiChatMessagePartRenderer } from '@/ai-chat/messages/components/AiChatMessagePartRenderer';
+import { type AiChatMessageRenderItem } from '@/ai-chat/messages/types/AiChatMessageRenderItem';
+import { groupContiguousThinkingStepParts } from '@/ai-chat/messages/utils/groupContiguousThinkingStepParts';
+import { ThinkingStepsDisplay } from '@/ai-chat/thinking-steps/components/ThinkingStepsDisplay';
+import { isHiddenReasoningPart } from '@/ai-chat/thinking-steps/utils/isHiddenReasoningPart';
+import { useFrontComponentIdByToolName } from '@/ai-chat/tool-calls/hooks/useFrontComponentIdByToolName';
+import { getEffectiveToolName } from '@/ai-chat/tool-calls/utils/getEffectiveToolName';
+import { shouldToolPartRenderStandalone } from '@/ai-chat/tool-calls/utils/shouldToolPartRenderStandalone';
+import { isHiddenCompleteWorkspaceSetupToolPart } from '@/ai-chat/workspace-setup/utils/isHiddenCompleteWorkspaceSetupToolPart';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledMessagePartsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
 `;
-
-const MessagePartRenderer = ({
-  part,
-  frontComponentIdByToolName,
-  isStreaming,
-  isUserMessage,
-}: {
-  part: ExtendedUIMessagePart;
-  frontComponentIdByToolName: Map<string, string>;
-  isStreaming: boolean;
-  isUserMessage?: boolean;
-}) => {
-  const displayMode = isUserMessage ? 'bubble' : 'chat';
-
-  switch (part.type) {
-    case 'text':
-      return (
-        <LazyMarkdownContent
-          text={part.text}
-          displayMode={isDefined(isUserMessage) ? displayMode : 'default'}
-        />
-      );
-    case 'data-compaction':
-      return <AiChatCompactionIndicator />;
-    case 'data-code-execution':
-      return (
-        <CodeExecutionDisplay
-          code={part.data.code}
-          stdout={part.data.stdout}
-          stderr={part.data.stderr}
-          exitCode={part.data.exitCode}
-          files={part.data.files}
-          isRunning={
-            part.data.state === 'running' || part.data.state === 'pending'
-          }
-        />
-      );
-    default:
-      if (isToolUIPart(part)) {
-        if (
-          getToolName(part) === ASK_QUESTION_TOOL_NAME ||
-          getToolName(part) === ASK_QUESTIONS_TOOL_NAME
-        ) {
-          return (
-            <AiChatQuestionStatusRenderer
-              toolPart={part}
-              isStreaming={isStreaming}
-            />
-          );
-        }
-
-        if (getToolName(part) === PROPOSE_TOOL_CALL_TOOL_NAME) {
-          return (
-            <AiChatToolCallApprovalStatusRenderer
-              toolPart={part}
-              isStreaming={isStreaming}
-            />
-          );
-        }
-
-        if (getToolName(part) === REQUEST_FORM_TOOL_NAME) {
-          return (
-            <AiChatFormStatusRenderer
-              toolPart={part}
-              isStreaming={isStreaming}
-            />
-          );
-        }
-
-        if (getEffectiveToolName(part) === PREVIEW_FRONT_COMPONENT_TOOL_NAME) {
-          return (
-            <AiChatFrontComponentToolPreview
-              toolPart={part}
-              isStreaming={isStreaming}
-            />
-          );
-        }
-
-        const frontComponentId = frontComponentIdByToolName.get(
-          getEffectiveToolName(part),
-        );
-
-        return isDefined(frontComponentId) ? (
-          <AiChatToolWidget
-            toolPart={part}
-            frontComponentId={frontComponentId}
-            isStreaming={isStreaming}
-          />
-        ) : null;
-      }
-      return null;
-  }
-};
 
 export const AiChatMessagePartsRenderer = ({
   messageParts,
@@ -236,7 +130,7 @@ export const AiChatMessagePartsRenderer = ({
               }
             />
           ) : (
-            <MessagePartRenderer
+            <AiChatMessagePartRenderer
               key={index}
               part={renderItem.part}
               frontComponentIdByToolName={frontComponentIdByToolName}

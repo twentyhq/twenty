@@ -1,4 +1,4 @@
-import { agentResponseSchemaToOutputSchema } from '@/ai/utils/agentResponseSchemaToOutputSchema';
+import { agentResponseSchemaToOutputSchema } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/agentResponseSchemaToOutputSchema';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { WorkflowStepTabPanel } from '@/workflow/workflow-steps/components/WorkflowStepTabPanel';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
