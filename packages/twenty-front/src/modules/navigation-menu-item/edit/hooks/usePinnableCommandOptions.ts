@@ -2,14 +2,14 @@ import { STANDARD_PINNABLE_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS } from 'twent
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon/provider';
 
-import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
+import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { usePinnedCommandsEdit } from '@/navigation-menu-item/edit/hooks/usePinnedCommandsEdit';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useContext } from 'react';
 
 export const usePinnableCommandOptions = (): NavigationMenuItemOption[] => {
   const { getIcon } = useIcons();
-  const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
+  const { commandMenuItems } = useContext(CommandMenuContext);
   const { isPinned, pin } = usePinnedCommandsEdit();
 
   return Object.values(
