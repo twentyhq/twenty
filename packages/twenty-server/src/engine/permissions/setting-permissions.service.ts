@@ -14,9 +14,9 @@ import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { getPermissionsPrincipalsLimitingRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-limiting-role-ids.util';
-import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
 import { markObjectsReadableThroughRelatedRecordPaths } from 'src/engine/permissions/internal/related-record-path/utils/mark-objects-readable-through-related-record-paths.util';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { findUserWorkspaceRoleIdsOrThrow } from 'src/engine/permissions/internal/principal/utils/find-user-workspace-role-ids-or-throw.util';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -28,7 +28,7 @@ export class SettingPermissionsService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
     private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
-    private readonly permissionsMetadataMapsService: PermissionsMetadataMapsService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
   ) {}
 
   public async getUserWorkspacePermissions({
@@ -75,24 +75,27 @@ export class SettingPermissionsService {
       ]),
     ) as Record<PermissionFlagType, boolean>;
 
+    const principals = buildRolePermissionsPrincipals({
+      workspaceId,
+      roleIds,
+    });
+
     return {
       permissionFlags,
       recordsPermissions: markObjectsReadableThroughRelatedRecordPaths({
         recordsPermissions: followUpdateWhenCreatePermissionIsDisabled({
           recordsPermissions: computePrincipalsRecordsPermissions({
-            principals: buildRolePermissionsPrincipals({
-              workspaceId,
-              roleIds,
-            }),
+            principals,
             rolesPermissions,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
           }),
           featureFlagsMap,
         }),
-        metadataMaps: await this.permissionsMetadataMapsService.load({
-          workspaceId,
-        }),
+        objectMetadataIdsReadableThroughRelatedRecordPaths:
+          await this.recordPermissionsReadService.findObjectMetadataIdsReadableThroughRelatedRecordPaths(
+            { principals },
+          ),
       }),
     };
   }

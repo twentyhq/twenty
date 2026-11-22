@@ -4056,6 +4056,7 @@ type ObjectRecordsPermissions {
   canCreateAllRecords: Boolean!
   canDestroyAllRecords: Boolean!
   canReadAllRecords: Boolean!
+  canReadRecordsThroughRelatedRecordPaths: Boolean!
   canSoftDeleteAllRecords: Boolean!
   canUpdateAllRecords: Boolean!
   objectMetadataId: UUID!
