@@ -197,10 +197,22 @@ export class RevokeRoleWideAccessToChannelObjectsCommand extends ProvisionedWork
             attachment.universalIdentifier,
       );
 
+      const hasOwnAttachmentSettings =
+        hasAttachmentObjectPermission ||
+        isDefined(attachmentRecordsPermissions?.rowLevelRecordsPermissions);
+
       if (
-        attachmentRecordsPermissions?.canReadAllRecords === true &&
-        !isDefined(attachmentRecordsPermissions.rowLevelRecordsPermissions) &&
-        !hasAttachmentObjectPermission
+        attachmentRecordsPermissions?.canReadAllRecords &&
+        hasOwnAttachmentSettings
+      ) {
+        this.logger.warn(
+          `Workspace ${workspaceId}: role ${label} keeps its own attachment settings, so it may still read message attachments`,
+        );
+      }
+
+      if (
+        attachmentRecordsPermissions?.canReadAllRecords &&
+        !hasOwnAttachmentSettings
       ) {
         const buildUniversalIdentifier = (kind: string) =>
           v5(`attachmentNotOfMessage:${kind}`, roleUniversalIdentifier);

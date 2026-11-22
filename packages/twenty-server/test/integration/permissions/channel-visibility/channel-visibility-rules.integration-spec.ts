@@ -74,7 +74,9 @@ const restoreRoleWideAccessToChannelObjects = async () => {
   ]);
 };
 
-const createAttachment = async (data: Record<string, unknown>) => {
+const createAttachment = async (
+  data: Record<string, unknown>,
+): Promise<string> => {
   const response = await makeGraphqlApiRequest(
     createOneOperationFactory({
       objectMetadataSingularName: 'attachment',
@@ -85,7 +87,7 @@ const createAttachment = async (data: Record<string, unknown>) => {
 
   expect(response.body.errors).toBeUndefined();
 
-  return response.body.data.createAttachment.id as string;
+  return response.body.data.createAttachment.id;
 };
 
 const destroyAttachment = async (attachmentId: string) => {
@@ -235,25 +237,34 @@ describe('channel visibility through row level rules (integration)', () => {
     expect(messages).toEqual([]);
   });
 
-  it('reads the attachments of other records but not those of a metadata channel message', async () => {
+  it('reads the attachments of other records, and those of a message only when it is fully readable', async () => {
+    const findAttachmentIds = async () => {
+      const response = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'attachment',
+          objectMetadataPluralName: 'attachments',
+          gqlFields: 'id',
+          filter: { id: { in: [companyAttachmentId, messageAttachmentId] } },
+        }),
+        APPLE_PHIL_GUEST_ACCESS_TOKEN,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      return response.body.data.attachments.edges
+        .map(({ node }: { node: { id: string } }) => node.id)
+        .sort();
+    };
+
     await setJonyChannelVisibility('METADATA');
 
-    const response = await makeGraphqlApiRequest(
-      findManyOperationFactory({
-        objectMetadataSingularName: 'attachment',
-        objectMetadataPluralName: 'attachments',
-        gqlFields: 'id',
-        filter: { id: { in: [companyAttachmentId, messageAttachmentId] } },
-      }),
-      APPLE_PHIL_GUEST_ACCESS_TOKEN,
-    );
+    expect(await findAttachmentIds()).toEqual([companyAttachmentId]);
 
-    expect(response.body.errors).toBeUndefined();
-    expect(
-      response.body.data.attachments.edges.map(
-        ({ node }: { node: { id: string } }) => node.id,
-      ),
-    ).toEqual([companyAttachmentId]);
+    await setJonyChannelVisibility('SHARE_EVERYTHING');
+
+    expect(await findAttachmentIds()).toEqual(
+      [companyAttachmentId, messageAttachmentId].sort(),
+    );
   });
 
   it('lets the owner of a metadata channel read every field', async () => {
