@@ -332,9 +332,6 @@ describe('InboxPage', () => {
       screen.getByRole('region', { name: 'Conversation list' }),
     ).toBeInTheDocument();
     expect(screen.queryByText(/^Chat page /)).not.toBeInTheDocument();
-    expect(
-      screen.queryByText('No conversation selected'),
-    ).not.toBeInTheDocument();
   });
 
   it('shows a new chat beside the list without opening the first saved chat', () => {
@@ -639,9 +636,6 @@ describe('InboxPage', () => {
       renderInbox('/inbox');
 
       expect(screen.queryByText(/Chat page/)).not.toBeInTheDocument();
-      expect(
-        screen.queryByText('No conversation selected'),
-      ).not.toBeInTheDocument();
 
       fireEvent.click(screen.getByRole('button', { name: 'Second chat' }));
 

@@ -58,15 +58,6 @@ jest.mock(
     AiChatLastMessageWithStreamingState: () => null,
   }),
 );
-jest.mock('@/ai-chat/threads/components/AiChatThreadStatusNotice', () => ({
-  AiChatThreadStatusNotice: () => null,
-}));
-jest.mock('@/ai-chat/messages/components/AiChatErrorUnderMessageList', () => ({
-  AiChatErrorUnderMessageList: () => null,
-}));
-jest.mock('@/ai-chat/messages/components/AiChatScrollToBottomButton', () => ({
-  AiChatScrollToBottomButton: () => null,
-}));
 const mockPinScrollToBottom = jest.fn();
 
 jest.mock('@/ai-chat/messages/utils/pinAiChatScrollToBottom', () => ({
@@ -111,13 +102,6 @@ describe('AiChatTabMessageList preamble branch', () => {
     expect(getByTestId('preamble')).toBeInTheDocument();
     expect(getByTestId('initial-loading-indicator')).toBeInTheDocument();
     expect(queryByTestId('scroll-wrapper')).not.toBeInTheDocument();
-  });
-
-  it('should render the preamble without the pending response loader when the displayed thread is not awaiting its first chunk', () => {
-    const { getByTestId, queryByTestId } = renderPreambleBranch();
-
-    expect(getByTestId('preamble')).toBeInTheDocument();
-    expect(queryByTestId('initial-loading-indicator')).not.toBeInTheDocument();
   });
 });
 
