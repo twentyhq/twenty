@@ -1,8 +1,8 @@
-import { AgentOutputSchemaBuilder } from '@/ai/components/AgentOutputSchemaBuilder';
-import { type OutputSchemaField } from '@/ai/types/OutputSchemaField';
-import { createDefaultOutputSchemaField } from '@/ai/utils/createDefaultOutputSchemaField';
-import { fieldsToSchema } from '@/ai/utils/fieldsToSchema';
-import { schemaToFields } from '@/ai/utils/schemaToFields';
+import { AgentOutputSchemaBuilder } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder';
+import { type OutputSchemaField } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/OutputSchemaField';
+import { createDefaultOutputSchemaField } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/createDefaultOutputSchemaField';
+import { fieldsToSchema } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/fieldsToSchema';
+import { schemaToFields } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/schemaToFields';
 import { useState } from 'react';
 import { type AgentResponseFormat } from 'twenty-shared/ai';
 

@@ -7,7 +7,6 @@ import { formatDateISOStringToDateTime } from '@/localization/utils/formatDateIS
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
-// Today reads as its time alone, other days in the member's date format
 export const useFormatAiChatThreadDate = () => {
   const { t } = useLingui();
   const { timeZone, dateFormat, timeFormat } = useDateTimeFormat();
