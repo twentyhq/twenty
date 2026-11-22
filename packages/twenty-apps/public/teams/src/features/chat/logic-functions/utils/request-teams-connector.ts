@@ -7,6 +7,7 @@ import { TEAMS_CONNECTOR_REQUEST_TIMEOUT_MS } from 'src/features/chat/logic-func
 import { TEAMS_CONNECTOR_RETRY_MAX_TOTAL_WAIT_MS } from 'src/features/chat/logic-functions/constants/teams-connector-retry-max-total-wait-ms';
 import { TEAMS_CONNECTOR_RETRYABLE_STATUSES } from 'src/features/chat/logic-functions/constants/teams-connector-retryable-statuses';
 import { type TeamsActivity } from 'src/features/chat/logic-functions/types/teams-activity.type';
+import { TeamsConnectorRequestError } from 'src/features/chat/logic-functions/types/teams-connector-request-error';
 import { getTeamsConnectorRetryDelayMs } from 'src/features/chat/logic-functions/utils/get-teams-connector-retry-delay-ms';
 import { isTeamsConnectorServiceUrl } from 'src/features/chat/logic-functions/utils/is-teams-connector-service-url';
 import { normalizeTeamsServiceUrl } from 'src/features/chat/logic-functions/utils/normalize-teams-service-url';
@@ -73,7 +74,8 @@ export const requestTeamsConnector = async ({
     return responseBody;
   }
 
-  throw new Error(
-    `Bot Connector ${method} ${path} failed: ${response.status} ${response.statusText}${isNonEmptyString(responseBody) ? ` - ${responseBody}` : ''}`,
-  );
+  throw new TeamsConnectorRequestError({
+    message: `Bot Connector ${method} ${path} failed: ${response.status} ${response.statusText}${isNonEmptyString(responseBody) ? ` - ${responseBody}` : ''}`,
+    status: response.status,
+  });
 };
