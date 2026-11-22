@@ -1,4 +1,5 @@
 import { type LogicFunctionManifest } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
 import { assertLogicFunctionFailureHandlersAreOwn } from 'src/engine/core-modules/application/application-manifest/utils/assert-logic-function-failure-handlers-are-own.util';
@@ -34,13 +35,13 @@ const buildLogicFunction = (
   builtHandlerPath: 'dist/answer.mjs',
   builtHandlerChecksum: 'checksum',
   handlerName: 'handler',
-  ...(onFailureUniversalIdentifier === undefined
-    ? {}
-    : {
+  ...(isDefined(onFailureUniversalIdentifier)
+    ? {
         onFailureLogicFunction: {
           universalIdentifier: onFailureUniversalIdentifier,
         },
-      }),
+      }
+    : {}),
 });
 
 const assertFailureHandler = ({
