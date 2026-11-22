@@ -10,6 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { EntityManager, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync-scheduler.service';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -40,6 +41,7 @@ export class ImapSmtpCalDavApiService {
   private readonly logger = new Logger(ImapSmtpCalDavApiService.name);
 
   constructor(
+    private readonly channelVisibilityRuleSyncSchedulerService: ChannelVisibilityRuleSyncSchedulerService,
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     @InjectRepository(ConnectedAccountEntity)
@@ -180,6 +182,10 @@ export class ImapSmtpCalDavApiService {
             );
         }
       },
+    );
+
+    await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+      workspaceId,
     );
 
     if (isDefined(existingAccount)) {

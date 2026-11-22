@@ -1,4 +1,6 @@
 import { type MarkdownDisplayMode } from '@/ai-chat/message-content/types/MarkdownDisplayMode';
+import { CHAT_MESSAGE_META_SPACER_HEIGHT } from '@/chat/constants/ChatMessageMetaSpacerHeight';
+import { CHAT_MESSAGE_META_SPACER_WIDTH } from '@/chat/constants/ChatMessageMetaSpacerWidth';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -19,6 +21,16 @@ export const StyledMarkdownContainer = styled.div<{
 
   &:empty {
     display: none;
+  }
+
+  > .markdown-paragraph:last-child::after {
+    content: '';
+    display: inline-block;
+    width: ${CHAT_MESSAGE_META_SPACER_WIDTH};
+  }
+
+  &:has(> :last-child:not(.markdown-paragraph)) {
+    padding-bottom: ${CHAT_MESSAGE_META_SPACER_HEIGHT};
   }
 
   .markdown-link {

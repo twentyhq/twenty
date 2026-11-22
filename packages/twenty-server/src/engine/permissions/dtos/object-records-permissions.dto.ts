@@ -41,4 +41,7 @@ export class ObjectRecordsPermissionsDTO {
 
   @Field(() => [RowLevelRecordsPermissionsDTO], { nullable: true })
   rowLevelRecordsPermissions?: RowLevelRecordsPermissionsDTO[] | null;
+
+  @Field(() => Boolean)
+  canReadSomeRecords: boolean;
 }
