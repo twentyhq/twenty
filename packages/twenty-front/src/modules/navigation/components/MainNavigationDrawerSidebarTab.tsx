@@ -4,7 +4,6 @@ import { type MouseEvent, useRef, useState } from 'react';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
@@ -13,8 +12,8 @@ import { NavigationMenuTabCustomizeMenuContent } from '@/navigation-menu-item/ed
 import { NavigationMenuTabMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuTabMenuContent';
 import { NavigationMenuItemDropdownOpenEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemDropdownOpenEffect';
 import { MainNavigationDrawerTab } from '@/navigation/components/MainNavigationDrawerTab';
+import { useCanCustomizeSidebar } from '@/navigation/hooks/useCanCustomizeSidebar';
 import { useSwitchNavigationDrawerTab } from '@/navigation/hooks/useSwitchNavigationDrawerTab';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -25,7 +24,6 @@ import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-draw
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const StyledUnreadDot = styled(StyledNavigationDrawerUnreadDot)`
   background: ${themeCssVariables.color.red};
@@ -56,13 +54,9 @@ export const MainNavigationDrawerSidebarTab = ({
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
-  const isLayoutCustomizationAllowedOnCurrentPage =
-    useIsLayoutCustomizationAllowedOnCurrentPage();
+  const canCustomizeSidebar = useCanCustomizeSidebar();
   const canOpenTabMenu =
-    hasLayoutsPermission &&
-    (isLayoutCustomizationModeEnabled ||
-      isLayoutCustomizationAllowedOnCurrentPage);
+    isLayoutCustomizationModeEnabled || canCustomizeSidebar;
   const [navigationMenuItemIdToRename, setNavigationMenuItemIdToRename] =
     useAtomState(navigationMenuItemIdToRenameState);
   const { switchToNavigationMenuTab } = useSwitchNavigationDrawerTab();

@@ -40,6 +40,10 @@ jest.mock(
   () => ({ WorkspaceSectionListReadOnly: () => null }),
 );
 
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => true,
+}));
+
 jest.mock('twenty-ui/utilities', () => ({
   ...jest.requireActual('twenty-ui/utilities'),
   useIsMobile: () => false,
