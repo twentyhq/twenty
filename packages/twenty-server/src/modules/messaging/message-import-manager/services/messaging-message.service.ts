@@ -66,7 +66,9 @@ export class MessagingMessageService {
     messageChannelId: string;
     transactionScope: WorkspaceTransactionScope;
     workspaceId: string;
-    accountOwner: { accountOwnerId?: string | null };
+    accountOwner: Partial<
+      Pick<MessageChannelMessageAssociationWorkspaceEntity, 'accountOwnerId'>
+    >;
   }): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
     refetchedMessageChannelMessageAssociationIds: string[];

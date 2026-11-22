@@ -15,8 +15,7 @@ export const computeChannelAssociationAccountOwner = ({
   flatWorkspaceMemberMaps: Pick<FlatWorkspaceMemberMaps, 'idByUserWorkspaceId'>;
   userWorkspaceId: string;
 }): { accountOwnerId?: string | null } => {
-  // accountOwnerId only exists once the 2.61 upgrade has added it to the workspace;
-  // drop this check, and make accountOwnerId required, once 2.61 leaves the upgrade window
+  // The field arrives with the 2.61 upgrade; drop this check once 2.61 leaves the upgrade window
   if (
     !isDefined(
       flatFieldMetadataMaps.byUniversalIdentifier[
