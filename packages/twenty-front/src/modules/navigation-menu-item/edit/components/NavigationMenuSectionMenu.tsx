@@ -34,6 +34,7 @@ export const NavigationMenuSectionMenu = ({
     `navigation-menu-section-${section.id}`,
   );
   const dropdownId = getNavigationMenuSectionMenuDropdownId(section.id);
+  const isBuiltInSection = isNavigationMenuItemBuiltInSection(section);
 
   return (
     <NavigationMenuItemMenu
@@ -51,20 +52,20 @@ export const NavigationMenuSectionMenu = ({
       mode={mode}
       onModeChange={setMode}
       onClose={() => setMode({ type: 'actions' })}
-      renderMenu={({ onClose, onAdd }) => (
-        <NavigationMenuSectionMenuContent
-          section={section}
-          onAddItem={
-            isNavigationMenuItemBuiltInSection(section)
-              ? undefined
-              : () => {
-                  openNavigationSection();
-                  onAdd({ parentId: section.id });
-                }
-          }
-          onClose={onClose}
-        />
-      )}
+      renderMenu={({ onClose, onAdd }) => {
+        const handleAddItem = () => {
+          openNavigationSection();
+          onAdd({ parentId: section.id });
+        };
+
+        return (
+          <NavigationMenuSectionMenuContent
+            section={section}
+            onAddItem={isBuiltInSection ? undefined : handleAddItem}
+            onClose={onClose}
+          />
+        );
+      }}
     >
       {navigationMenuItemIdToRename === section.id && (
         <NavigationMenuItemDropdownOpenEffect
