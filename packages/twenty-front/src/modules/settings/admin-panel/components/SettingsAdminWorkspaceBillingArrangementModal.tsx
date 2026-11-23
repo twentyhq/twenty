@@ -16,7 +16,6 @@ import { BILLING_ARRANGEMENT_COMMENT_MAX_LENGTH } from '@/settings/admin-panel/c
 import { BILLING_ARRANGEMENT_REASON_LABELS } from '@/settings/admin-panel/constants/BillingArrangementReasonLabels';
 import { BILLING_ARRANGEMENT_SEAT_CAP_MODE_LABELS } from '@/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels';
 import { BILLING_ARRANGEMENT_TYPE_LABELS } from '@/settings/admin-panel/constants/BillingArrangementTypeLabels';
-import { BILLING_ARRANGEMENT_TYPES_REFETCHING_BILLING } from '@/settings/admin-panel/constants/BillingArrangementTypesRefetchingBilling';
 import { CREATE_WORKSPACE_BILLING_ARRANGEMENT } from '@/settings/admin-panel/graphql/mutations/createWorkspaceBillingArrangement';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
 import { WORKSPACE_BILLING_ARRANGEMENTS } from '@/settings/admin-panel/graphql/queries/workspaceBillingArrangements';
@@ -148,11 +147,10 @@ export const SettingsAdminWorkspaceBillingArrangementModal = ({
           seatCapMode: isCommittedSeats ? seatCapMode : null,
           creditAllowance: isCreditAllowance ? parsedCreditAllowance : null,
         },
-        refetchQueries: BILLING_ARRANGEMENT_TYPES_REFETCHING_BILLING.includes(
-          type,
-        )
-          ? [WORKSPACE_BILLING_ARRANGEMENTS, GET_WORKSPACE_BILLING_ADMIN_PANEL]
-          : [WORKSPACE_BILLING_ARRANGEMENTS],
+        refetchQueries: [
+          WORKSPACE_BILLING_ARRANGEMENTS,
+          GET_WORKSPACE_BILLING_ADMIN_PANEL,
+        ],
       });
 
       enqueueToast({ status: 'success', children: t`Arrangement added.` });

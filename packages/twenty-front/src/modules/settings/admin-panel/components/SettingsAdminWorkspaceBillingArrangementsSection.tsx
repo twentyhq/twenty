@@ -16,7 +16,6 @@ import { SettingsAdminWorkspaceBillingArrangementRowDropdownMenu } from '@/setti
 import { BILLING_ARRANGEMENT_REASON_LABELS } from '@/settings/admin-panel/constants/BillingArrangementReasonLabels';
 import { BILLING_ARRANGEMENT_STATUS_TAGS } from '@/settings/admin-panel/constants/BillingArrangementStatusTags';
 import { BILLING_ARRANGEMENT_TYPE_LABELS } from '@/settings/admin-panel/constants/BillingArrangementTypeLabels';
-import { BILLING_ARRANGEMENT_TYPES_REFETCHING_BILLING } from '@/settings/admin-panel/constants/BillingArrangementTypesRefetchingBilling';
 import { END_BILLING_ARRANGEMENT_DIALOG_ID } from '@/settings/admin-panel/constants/EndBillingArrangementDialogId';
 import { END_WORKSPACE_BILLING_ARRANGEMENT } from '@/settings/admin-panel/graphql/mutations/endWorkspaceBillingArrangement';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
@@ -118,11 +117,10 @@ export const SettingsAdminWorkspaceBillingArrangementsSection = ({
     try {
       await endWorkspaceBillingArrangement({
         variables: { workspaceId, billingArrangementId: arrangement.id },
-        refetchQueries: BILLING_ARRANGEMENT_TYPES_REFETCHING_BILLING.includes(
-          arrangement.type,
-        )
-          ? [WORKSPACE_BILLING_ARRANGEMENTS, GET_WORKSPACE_BILLING_ADMIN_PANEL]
-          : [WORKSPACE_BILLING_ARRANGEMENTS],
+        refetchQueries: [
+          WORKSPACE_BILLING_ARRANGEMENTS,
+          GET_WORKSPACE_BILLING_ADMIN_PANEL,
+        ],
       });
 
       enqueueToast({ status: 'success', children: t`Arrangement ended.` });
