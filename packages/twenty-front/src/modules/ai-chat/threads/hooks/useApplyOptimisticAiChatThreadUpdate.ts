@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useApplyAiChatThreadUpdate } from '@/ai-chat/threads/hooks/useApplyAiChatThreadUpdate';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
-import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
+import { type AiChatThreadUpdate } from '@/ai-chat/threads/types/AiChatThreadUpdate';
 import { getAiChatThreadRollbackUpdate } from '@/ai-chat/threads/utils/getAiChatThreadRollbackUpdate';
 
 export const useApplyOptimisticAiChatThreadUpdate = () => {
@@ -12,7 +12,7 @@ export const useApplyOptimisticAiChatThreadUpdate = () => {
   const { applyAiChatThreadUpdate } = useApplyAiChatThreadUpdate();
 
   const applyOptimisticAiChatThreadUpdate = useCallback(
-    (update: Partial<AiChatThreadRecord> & { id: string }) => {
+    (update: AiChatThreadUpdate) => {
       const getThread = () =>
         store.get(aiChatThreadRecordFamilySelector.selectorFamily(update.id));
       const previousThread = getThread();

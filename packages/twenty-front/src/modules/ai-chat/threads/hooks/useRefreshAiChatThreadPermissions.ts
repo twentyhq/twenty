@@ -1,9 +1,8 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { aiChatThreadObjectMetadataItemSelector } from '@/ai-chat/threads/states/selectors/aiChatThreadObjectMetadataItemSelector';
 import { useRefreshRecordPermissions } from '@/object-record/record-sharing/hooks/useRefreshRecordPermissions';
 
 export const useRefreshAiChatThreadPermissions = () => {
@@ -11,18 +10,15 @@ export const useRefreshAiChatThreadPermissions = () => {
   const { refreshRecordPermissions } = useRefreshRecordPermissions();
   const refreshAiChatThreadPermissions = useCallback(
     async (threadIds: string[]) => {
-      const objectMetadata = store.get(
-        objectMetadataItemFamilySelector.selectorFamily({
-          objectName: StandardObjectNameSingular.AgentChatThread,
-          objectNameType: 'singular',
-        }),
+      const aiChatThreadObjectMetadataItem = store.get(
+        aiChatThreadObjectMetadataItemSelector.atom,
       );
-      if (!isDefined(objectMetadata)) {
+      if (!isDefined(aiChatThreadObjectMetadataItem)) {
         return;
       }
       await refreshRecordPermissions(
         threadIds.map((recordId) => ({
-          objectMetadataId: objectMetadata.id,
+          objectMetadataId: aiChatThreadObjectMetadataItem.id,
           recordId,
         })),
       );

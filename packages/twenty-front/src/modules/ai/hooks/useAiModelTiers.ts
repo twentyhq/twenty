@@ -17,7 +17,6 @@ import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
 
 const REFERENCE_TIER: AiModelTier = 'balanced';
 
-// One basis for every tier: cost per task when all have one, catalog price otherwise.
 const getCostDeltaPercent = ({
   model,
   referenceModel,

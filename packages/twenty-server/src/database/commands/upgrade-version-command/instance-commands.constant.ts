@@ -323,8 +323,10 @@ import { AddUserWorkspaceInboxNotificationSettingsFastInstanceCommand } from 'sr
 import { AddNavigationMenuItemOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795167647639-add-navigation-menu-item-overridable-entity';
 import { DropConnectedAccountVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795178831970-drop-connected-account-visibility';
 import { AddAcceptedBillingPricesToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795183195168-add-accepted-billing-prices-to-application';
-import { AddViewFieldRelationScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795270400632-add-view-field-relation-scope';
-import { AddViewFieldLabelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795270401632-add-view-field-label';
+import { AddWorkspaceMemberRelationToRowLevelPermissionPredicateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795297090000-add-workspace-member-relation-to-row-level-permission-predicate';
+import { AddWorkflowIsPrivateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-62/2-62-instance-command-fast-1795368198117-add-workflow-is-private';
+import { AddViewFieldRelationScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-62/2-62-instance-command-fast-1795423165199-add-view-field-relation-scope';
+import { AddViewFieldLabelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-62/2-62-instance-command-fast-1795423166199-add-view-field-label';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -650,6 +652,8 @@ export const INSTANCE_COMMANDS = [
   AddNavigationMenuItemOverridableEntityFastInstanceCommand,
   DropConnectedAccountVisibilityFastInstanceCommand,
   AddAcceptedBillingPricesToApplicationFastInstanceCommand,
+  AddWorkspaceMemberRelationToRowLevelPermissionPredicateFastInstanceCommand,
+  AddWorkflowIsPrivateFastInstanceCommand,
   AddViewFieldRelationScopeFastInstanceCommand,
   AddViewFieldLabelFastInstanceCommand,
 ];

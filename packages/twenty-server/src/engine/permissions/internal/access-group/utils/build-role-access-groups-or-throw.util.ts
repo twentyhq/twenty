@@ -76,9 +76,8 @@ export const buildRoleAccessGroupsOrThrow = ({
     return {
       type: 'ALL_RECORDS',
       groupHash: computeAccessGroupHash({
-        type: 'ALL_RECORDS',
         ruleShapeHash,
-        splitValue: null,
+        accessGroupSplitValue: { type: 'ALL_RECORDS' },
       }),
       objectMetadataId,
       ruleShapeHash,
@@ -103,9 +102,8 @@ export const buildRoleAccessGroupsOrThrow = ({
         ...groupShape,
         type: 'RLS_LITERAL_VALUE',
         groupHash: computeAccessGroupHash({
-          type: 'RLS_LITERAL_VALUE',
           ruleShapeHash,
-          splitValue: value,
+          accessGroupSplitValue: { type: 'RLS_LITERAL_VALUE', value },
         }),
         value,
       }));
@@ -123,9 +121,8 @@ export const buildRoleAccessGroupsOrThrow = ({
           ...groupShape,
           type: 'RLS_RULE',
           groupHash: computeAccessGroupHash({
-            type: 'RLS_RULE',
             ruleShapeHash,
-            splitValue: null,
+            accessGroupSplitValue: { type: 'RLS_RULE' },
           }),
         },
       ];
@@ -140,9 +137,11 @@ export const buildRoleAccessGroupsOrThrow = ({
         ...groupShape,
         type: 'RLS_MEMBER_VALUE' as const,
         groupHash: computeAccessGroupHash({
-          type: 'RLS_MEMBER_VALUE',
           ruleShapeHash,
-          splitValue: memberFieldValues,
+          accessGroupSplitValue: {
+            type: 'RLS_MEMBER_VALUE',
+            memberFieldValues,
+          },
         }),
         memberFieldValues,
       })),

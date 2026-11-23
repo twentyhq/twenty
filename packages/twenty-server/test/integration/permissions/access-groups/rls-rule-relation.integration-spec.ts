@@ -150,7 +150,7 @@ describe('RLS rules through a relation (integration)', () => {
     });
     await getAppProviderByClassName<AccessGroupSyncService>(
       'AccessGroupSyncService',
-    ).syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+    ).syncAccessGroups({ workspaceId: SEED_APPLE_WORKSPACE_ID });
     await getAppProviderByClassName<RecordAccessGroupComputationService>(
       'RecordAccessGroupComputationService',
     ).recomputeRecordAccessGroupIdsOfAllObjectRecords({

@@ -696,6 +696,11 @@ msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "Et arbeidsområdemedlem"
 
+#. js-lingui-id: /WlOrK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation needs the field to read on its related records"
+msgstr "En relasjon for arbeidsområdemedlem trenger feltet som skal leses på de relaterte postene"
+
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "A workspace-wide blocklist entry cannot target a workspace member."
@@ -3069,6 +3074,11 @@ msgstr "Velg en eksisterende tidslinjeaktivitetstype som skal overstyres."
 #: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Velg én person eller én rolle å dele med."
+
+#. js-lingui-id: IkeRn2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the field to read on the related records"
+msgstr "Velg feltet som skal leses på de relaterte postene"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5598,6 +5608,11 @@ msgstr "Feltet \"{relationFieldName}\" er ikke en relasjon"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "Feltet \"{workspaceMemberFieldName}\" er ikke et felt i workspaceMember-objektet, så predikatet vil aldri gjelde"
+
+#. js-lingui-id: moiE3i
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
+msgstr "Feltet \"{workspaceMemberRelationFieldName}\" er ikke en én-til-mange-relasjon for workspaceMember-objektet"
 
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
@@ -11126,6 +11141,11 @@ msgstr "Predikatverdien er ikke gyldig for denne operanden"
 msgid "Predicates reaching a field through a relation are not enabled for this workspace"
 msgstr "Predikater som når et felt via en relasjon, er ikke aktivert for dette arbeidsområdet"
 
+#. js-lingui-id: v5akl/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicates reading the current member through a relation are not enabled for this workspace"
+msgstr "Predikater som leser det gjeldende medlemmet gjennom en relasjon, er ikke aktivert for dette arbeidsområdet"
+
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -12351,6 +12371,7 @@ msgid "Rule"
 msgstr "Regel"
 
 #. js-lingui-id: zhLAHJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Rules through a relation are not enabled for this workspace"
 msgstr "Regler via en relasjon er ikke aktivert for dette arbeidsområdet"
@@ -15043,6 +15064,11 @@ msgstr "Dette feltet tilhører ikke arbeidsområdemedlemsobjektet"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "This field has no database column to index."
 msgstr "Dette feltet har ingen databasekolonne å indeksere."
+
+#. js-lingui-id: /62EJW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field is not a one-to-many relation of the workspace member object"
+msgstr "Dette feltet er ikke en én-til-mange-relasjon for arbeidsområdemedlemsobjektet"
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17957,6 +17983,12 @@ msgstr "Arbeidsområdemedlems posisjon"
 msgctxt "view.name"
 msgid "Workspace Member Record Page Fields"
 msgstr "Felt på oppføringssiden for arbeidsområdemedlem"
+
+#. js-lingui-id: VWPelK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Workspace member relation field metadata not found"
+msgstr "Metadata for relasjonsfelt for arbeidsområdemedlem ble ikke funnet"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

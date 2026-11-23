@@ -14,5 +14,5 @@ export const WORKSPACE_OWNED_PROPERTIES_BY_METADATA_NAME: Partial<{
   pageLayout: ['isFirstTabPinned'],
   role: ['canBeAssignedToApplications'],
   view: ['createdByUserWorkspaceId'],
-  workflow: ['createdByUserWorkspaceId', 'workspaceWorkflowId', 'visibility'],
+  workflow: ['createdByUserWorkspaceId', 'workspaceWorkflowId', 'isPrivate'],
 };

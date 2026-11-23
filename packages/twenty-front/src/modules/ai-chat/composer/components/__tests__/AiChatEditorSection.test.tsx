@@ -20,11 +20,10 @@ const useAiChatEditor = jest.fn();
 jest.mock('@/ai-chat/composer/hooks/useAiChatEditor', () => ({
   useAiChatEditor: () => useAiChatEditor(),
 }));
-jest.mock('@/ai-chat/usage/hooks/useHasReachedAiChatUsageLimit', () => ({
-  useHasReachedAiChatUsageLimit: () => false,
-}));
-jest.mock('@/ai-chat/composer/components/AiChatStandaloneError', () => ({
-  AiChatStandaloneError: () => null,
+jest.mock('@/ai-chat/composer/hooks/useSendAiChatComposerMessage', () => ({
+  useSendAiChatComposerMessage: () => ({
+    sendAiChatComposerMessage: jest.fn(),
+  }),
 }));
 jest.mock('@/ai-chat/tool-calls/components/AiChatPendingAskGate', () => ({
   AiChatPendingAskGate: ({ children }: { children: ReactNode }) => children,
