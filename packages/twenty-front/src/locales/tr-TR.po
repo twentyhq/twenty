@@ -16110,10 +16110,10 @@ msgstr "Bir günden az kaldı"
 msgid "In progress"
 msgstr "Devam Ediyor"
 
-#. js-lingui-id: 2zgsSp
+#. js-lingui-id: q6UzTa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops."
-msgstr "Devam ediyor: Kayıt düzeyindeki izin kurallarıyla mesaj ve takvim kanalı görünürlüğünü uygula. İlişki atlamaları gerekiyor."
+msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
+msgstr "Devam ediyor: kayıt düzeyi izin kurallarıyla ileti ve takvim kanalı görünürlüğünü zorunlu kılın. İlişki geçişleri ve ilgili kayıt yolları gerekiyor."
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx

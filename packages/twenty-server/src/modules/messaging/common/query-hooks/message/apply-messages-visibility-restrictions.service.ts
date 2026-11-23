@@ -15,8 +15,10 @@ import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 
 const RESTRICTED_MESSAGE_FIELD_NAMES = ['subject', 'text', 'attachments'];
@@ -30,6 +32,7 @@ export class ApplyMessagesVisibilityRestrictionsService
     private readonly commonRecordVisibilityService: CommonRecordVisibilityService,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   onModuleInit() {
@@ -46,6 +49,15 @@ export class ApplyMessagesVisibilityRestrictionsService
     records: ObjectRecord[];
     authContext: WorkspaceAuthContext;
   }): Promise<void> {
+    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
+      authContext.workspace.id,
+      ['featureFlagsMap'],
+    );
+
+    if (isChannelVisibilityRlsEnabled(featureFlagsMap)) {
+      return;
+    }
+
     const restrictableMessages = records.filter((message) =>
       RESTRICTED_MESSAGE_FIELD_NAMES.some((fieldName) => fieldName in message),
     );

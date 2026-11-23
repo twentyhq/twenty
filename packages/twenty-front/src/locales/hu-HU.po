@@ -16110,10 +16110,10 @@ msgstr "Kevesebb mint egy nap múlva"
 msgid "In progress"
 msgstr "Folyamatban"
 
-#. js-lingui-id: 2zgsSp
+#. js-lingui-id: q6UzTa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops."
-msgstr "Folyamatban: az üzenet- és naptárcsatornák láthatóságának érvényesítése rekordszintű jogosultsági szabályokkal. Relációs ugrások szükségesek."
+msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
+msgstr "Folyamatban: az üzenet- és naptárcsatornák láthatóságának érvényesítése rekordszintű engedélyszabályokkal. Kapcsolati ugrásokra és kapcsolódó rekordútvonalakra van szükség."
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
