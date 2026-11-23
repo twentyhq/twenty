@@ -1,7 +1,6 @@
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { isDefined } from 'twenty-shared/utils';
 
-import { canPlaceNavigationMenuItemInContainer } from '@/navigation-menu-item/common/utils/canPlaceNavigationMenuItemInContainer';
 import { getNavigationMenuItemDescendantIds } from '@/navigation-menu-item/common/utils/getNavigationMenuItemDescendantIds';
 import { getNavigationMenuItemMovedPosition } from '@/navigation-menu-item/common/utils/getNavigationMenuItemMovedPosition';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
@@ -111,16 +110,6 @@ export const useNavigationMenuItemMoveRemove = (
       if (descendantFolderIds.has(targetFolderId)) {
         return;
       }
-    }
-
-    if (
-      !canPlaceNavigationMenuItemInContainer({
-        itemId: navigationMenuItemId,
-        containerId: targetFolderId,
-        items: currentItems,
-      })
-    ) {
-      return;
     }
 
     const itemsInTargetFolder = currentItems.filter((item) =>

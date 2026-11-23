@@ -9,7 +9,6 @@ import { useUpdateManyNavigationMenuItems } from '@/navigation-menu-item/common/
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
-import { canPlaceNavigationMenuItemInContainer } from '@/navigation-menu-item/common/utils/canPlaceNavigationMenuItemInContainer';
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
 import { computeNavigationMenuItemDropPlacement } from '@/navigation-menu-item/common/utils/computeNavigationMenuItemDropPlacement';
 import { resolveNavigationMenuItemDroppableId } from '@/navigation-menu-item/common/utils/resolveNavigationMenuItemDroppableId';
@@ -150,19 +149,6 @@ export const useHandleNavigationMenuItemDragAndDrop = (
     });
 
     if (!isDefined(placement)) {
-      return;
-    }
-
-    const isChangingParent = placement.parentId !== undefined;
-
-    if (
-      isChangingParent &&
-      !canPlaceNavigationMenuItemInContainer({
-        itemId: draggableId,
-        containerId: placement.parentId ?? null,
-        items: allItems,
-      })
-    ) {
       return;
     }
 

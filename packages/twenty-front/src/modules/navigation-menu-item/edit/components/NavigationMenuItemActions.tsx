@@ -23,7 +23,6 @@ import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hoo
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { type NavigationMenuItemMoveDestination } from '@/navigation-menu-item/common/types/NavigationMenuItemMoveDestination';
 import { type NavigationMenuItemAddTarget } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddTarget';
-import { canPlaceNavigationMenuItemInContainer } from '@/navigation-menu-item/common/utils/canPlaceNavigationMenuItemInContainer';
 import { getNavigationMenuItemContainerId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemContainerId';
 import { getNavigationMenuItemMoveDestinations } from '@/navigation-menu-item/common/utils/getNavigationMenuItemMoveDestinations';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
@@ -46,8 +45,7 @@ export const NavigationMenuItemActions = ({
 }: NavigationMenuItemActionsProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const { navigationMenuItems, workspaceNavigationMenuItems } =
-    useNavigationMenuItemsData();
+  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
@@ -73,15 +71,6 @@ export const NavigationMenuItemActions = ({
     tabs.find((tab) => tab.id === tabId)?.name ?? t`Home`;
   const moveToLabel = isMovingAcrossTabs ? t`Move to` : t`Move to folder`;
   const index = siblings.findIndex((sibling) => sibling.id === item.id);
-  const canPlaceIn = (targetContainerId: string | null) =>
-    canPlaceNavigationMenuItemInContainer({
-      itemId: item.id,
-      containerId: targetContainerId,
-      items:
-        section === 'workspace'
-          ? workspaceNavigationMenuItems
-          : navigationMenuItems,
-    });
   const run = (action: () => Promise<void>) => {
     void action();
     onClose();
@@ -98,9 +87,7 @@ export const NavigationMenuItemActions = ({
     const moveOption = {
       id: destination.containerId ?? 'home',
       contextualText: getTabName(destination.tabId),
-      isDisabled:
-        (item.parentId ?? null) === destination.containerId ||
-        !canPlaceIn(destination.containerId),
+      isDisabled: (item.parentId ?? null) === destination.containerId,
       onClick: () => run(() => moveToFolder(item.id, destination.containerId)),
     };
 
@@ -180,8 +167,7 @@ export const NavigationMenuItemActions = ({
       id: 'root',
       label: t`Root level`,
       Icon: IconHierarchy2,
-      isDisabled:
-        (item.parentId ?? null) === containerId || !canPlaceIn(containerId),
+      isDisabled: (item.parentId ?? null) === containerId,
       onClick: () => run(() => moveToFolder(item.id, containerId)),
     },
     ...items
@@ -192,7 +178,7 @@ export const NavigationMenuItemActions = ({
         id: folder.id,
         label: folder.name ?? t`Folder`,
         icon: getFolderIcon(folder),
-        isDisabled: folder.id === item.parentId || !canPlaceIn(folder.id),
+        isDisabled: folder.id === item.parentId,
         onClick: () => run(() => moveToFolder(item.id, folder.id)),
       })),
   ];
