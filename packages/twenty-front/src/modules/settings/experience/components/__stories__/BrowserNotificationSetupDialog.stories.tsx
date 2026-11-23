@@ -148,7 +148,9 @@ export const SystemSettingsOnWindows: Story = {
       title: 'Allow Google Chrome in Windows settings',
     });
 
-    await expect(within(dialog).getByText('Do not disturb')).toBeVisible();
+    await waitFor(() =>
+      expect(within(dialog).getByText('Do not disturb')).toBeVisible(),
+    );
   },
 };
 
