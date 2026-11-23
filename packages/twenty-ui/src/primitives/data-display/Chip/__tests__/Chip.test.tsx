@@ -15,6 +15,25 @@ runComponentConformance({
 });
 
 describe('Chip content and composition', () => {
+  it('exposes the padding option only when it is set', () => {
+    render(
+      <>
+        <Chip data-testid="default-chip">Label</Chip>
+        <Chip padding="md" data-testid="padded-chip">
+          Label
+        </Chip>
+      </>,
+    );
+
+    expect(screen.getByTestId('default-chip')).not.toHaveAttribute(
+      'data-padding',
+    );
+    expect(screen.getByTestId('padded-chip')).toHaveAttribute(
+      'data-padding',
+      'md',
+    );
+  });
+
   it('keeps the default element when a click handler is supplied', () => {
     render(
       <Chip onClick={vi.fn()} data-testid="chip">

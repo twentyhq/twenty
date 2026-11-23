@@ -11576,6 +11576,13 @@
         "description": "Maximum rendered chip width in pixels, including its leading and trailing padding and any outline border."
       },
       {
+        "name": "padding",
+        "type": "\"md\" | \"sm\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline padding on each side: `sm` is 4px and `md` is 8px. When omitted, the variant sets it."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,

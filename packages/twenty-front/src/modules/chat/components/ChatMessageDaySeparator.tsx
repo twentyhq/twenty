@@ -22,26 +22,14 @@ const StyledDaySeparator = styled.div`
 
 const StyledNewDaySeparator = styled(StyledDaySeparator)`
   align-items: center;
-  min-height: ${themeCssVariables.spacing[6]};
-  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
 `;
 
-const StyledDayChip = styled.span`
+const StyledNewLabelCell = styled.span`
   display: flex;
-
-  & > * {
-    --tw-chip-padding-end: ${themeCssVariables.spacing[2]};
-    --tw-chip-padding-start: ${themeCssVariables.spacing[2]};
-  }
-`;
-
-const StyledCenteredDayChip = styled.span`
-  background: ${themeCssVariables.background.primary};
-  left: 50%;
-  padding-inline: ${themeCssVariables.spacing[2]};
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  min-width: 0;
+  padding-inline-start: ${themeCssVariables.spacing[2]};
 `;
 
 type ChatMessageDaySeparatorProps = {
@@ -63,17 +51,16 @@ export const ChatMessageDaySeparator = ({
     localeCatalog,
   });
   const dayChip = (
-    <StyledDayChip>
-      <Chip
-        variant="soft"
-        shape="round"
-        size="md"
-        color="secondary"
-        weight="medium"
-      >
-        {dayLabel}
-      </Chip>
-    </StyledDayChip>
+    <Chip
+      variant="soft"
+      shape="round"
+      size="md"
+      color="secondary"
+      weight="medium"
+      padding="md"
+    >
+      {dayLabel}
+    </Chip>
   );
 
   if (isFirstUnread) {
@@ -90,9 +77,14 @@ export const ChatMessageDaySeparator = ({
           hasStartMarker
           aria-hidden
         >
-          {newLabel}
+          {''}
         </LabeledSeparator>
-        <StyledCenteredDayChip>{dayChip}</StyledCenteredDayChip>
+        {dayChip}
+        <StyledNewLabelCell>
+          <LabeledSeparator labelPosition="end" tone="danger" aria-hidden>
+            {newLabel}
+          </LabeledSeparator>
+        </StyledNewLabelCell>
       </StyledNewDaySeparator>
     );
   }

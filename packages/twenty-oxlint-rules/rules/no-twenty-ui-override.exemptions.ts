@@ -16,11 +16,6 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
-      'packages/twenty-front/src/modules/chat/components/ChatMessageDaySeparator.tsx',
-    reason: 'Chip inline padding of the day label between messages',
-  },
-  {
-    filePath:
       'packages/twenty-front/src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx',
     reason: 'Separator spacing inside the sign-in form',
   },

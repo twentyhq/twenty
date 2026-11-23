@@ -48,12 +48,6 @@ export const StyledChatMessageRow = styled.div<{
     z-index: -1;
   }
 
-  &[data-hover-card]:hover {
-    --chat-message-own-bubble-background: ${
-      themeCssVariables.background.quaternary
-    };
-  }
-
   &[data-hover-card]:hover::before {
     opacity: 1;
   }

@@ -1,23 +1,36 @@
 import { styled } from '@linaria/react';
 
-import { CHAT_MESSAGE_OWN_BUBBLE_BACKGROUND } from '@/chat/constants/ChatMessageOwnBubbleBackground';
+import { StyledChatMessageRow } from '@/chat/components/StyledChatMessageRow';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-export const StyledChatMessageBubble = styled.div<{
+type ChatMessageBubbleProps = {
   isUser?: boolean;
   isOtherMember?: boolean;
-}>`
-  background: ${({ isUser, isOtherMember }) => {
-    if (isOtherMember) {
-      return themeCssVariables.background.secondary;
-    }
+};
 
-    if (isUser) {
-      return CHAT_MESSAGE_OWN_BUBBLE_BACKGROUND;
-    }
+const getBubbleBackground = ({
+  isUser,
+  isOtherMember,
+  ownBackground,
+}: ChatMessageBubbleProps & { ownBackground: string }) => {
+  if (isOtherMember === true) {
+    return themeCssVariables.background.secondary;
+  }
 
-    return 'transparent';
-  }};
+  if (isUser === true) {
+    return ownBackground;
+  }
+
+  return 'transparent';
+};
+
+export const StyledChatMessageBubble = styled.div<ChatMessageBubbleProps>`
+  background: ${({ isUser, isOtherMember }) =>
+    getBubbleBackground({
+      isUser,
+      isOtherMember,
+      ownBackground: themeCssVariables.background.tertiary,
+    })};
   border-radius: ${({ isUser }) =>
     isUser ? themeCssVariables.border.radius.lgRound : '0'};
   box-shadow: ${({ isOtherMember }) =>
@@ -80,5 +93,14 @@ export const StyledChatMessageBubble = styled.div<{
     color: ${themeCssVariables.font.color.secondary};
     margin: ${themeCssVariables.spacing[2]} 0;
     padding-left: ${themeCssVariables.spacing[2]};
+  }
+
+  ${StyledChatMessageRow}[data-hover-card]:hover & {
+    background: ${({ isUser, isOtherMember }) =>
+      getBubbleBackground({
+        isUser,
+        isOtherMember,
+        ownBackground: themeCssVariables.background.quaternary,
+      })};
   }
 `;
