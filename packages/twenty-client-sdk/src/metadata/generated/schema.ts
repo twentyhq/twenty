@@ -1651,7 +1651,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APPLICATION_PRICE_BILLING_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CHANNEL_VISIBILITY_RLS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_LOOKUP_COLUMNS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
+export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APPLICATION_PRICE_BILLING_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS' | 'IS_CHANNEL_VISIBILITY_RLS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_LOOKUP_COLUMNS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -3025,7 +3025,10 @@ export interface PageLayoutWidget {
     applicationGrantedIframeMediaPermissions?: IframeMediaPermission[]
     applicationId: Scalars['UUID']
     applicationName?: Scalars['String']
+    conditionalAvailability?: Scalars['JSON']
+    /** @deprecated Use conditionalAvailability instead */
     conditionalAvailabilityExpression?: Scalars['String']
+    /** @deprecated Use conditionalAvailability instead */
     conditionalDisplay?: Scalars['JSON']
     configuration: WidgetConfiguration
     createdAt: Scalars['DateTime']
@@ -6197,7 +6200,7 @@ export interface CreatePageLayoutInput {name: Scalars['String'],objectMetadataId
 
 export interface CreatePageLayoutTabInput {layoutMode?: (PageLayoutTabLayoutMode | null),pageLayoutId: Scalars['UUID'],position?: (Scalars['Float'] | null),title: Scalars['String']}
 
-export interface CreatePageLayoutWidgetInput {configuration: Scalars['JSON'],objectMetadataId?: (Scalars['UUID'] | null),pageLayoutTabId: Scalars['UUID'],position?: (Scalars['JSON'] | null),title: Scalars['String'],type: WidgetType}
+export interface CreatePageLayoutWidgetInput {conditionalAvailability?: (Scalars['JSON'] | null),configuration: Scalars['JSON'],objectMetadataId?: (Scalars['UUID'] | null),pageLayoutTabId: Scalars['UUID'],position?: (Scalars['JSON'] | null),title: Scalars['String'],type: WidgetType}
 
 export interface CreateRecordExportInput {fieldMetadataIds: Scalars['UUID'][],filter?: (Scalars['JSON'] | null),objectMetadataId: Scalars['UUID'],orderBy?: (Scalars['JSON'] | null)}
 
@@ -7970,7 +7973,10 @@ export interface PageLayoutWidgetGenqlSelection{
     applicationGrantedIframeMediaPermissions?: IframeMediaPermissionGenqlSelection
     applicationId?: boolean | number
     applicationName?: boolean | number
+    conditionalAvailability?: boolean | number
+    /** @deprecated Use conditionalAvailability instead */
     conditionalAvailabilityExpression?: boolean | number
+    /** @deprecated Use conditionalAvailability instead */
     conditionalDisplay?: boolean | number
     configuration?: WidgetConfigurationGenqlSelection
     createdAt?: boolean | number
@@ -9132,9 +9138,9 @@ export interface UpdatePageLayoutTabInput {icon?: (Scalars['String'] | null),lay
 
 export interface UpdatePageLayoutTabWithWidgetsInput {icon?: (Scalars['String'] | null),id: Scalars['UUID'],layoutMode?: (PageLayoutTabLayoutMode | null),position: Scalars['Float'],title: Scalars['String'],widgets: UpdatePageLayoutWidgetWithIdInput[]}
 
-export interface UpdatePageLayoutWidgetInput {conditionalAvailabilityExpression?: (Scalars['String'] | null),conditionalDisplay?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),isActive?: (Scalars['Boolean'] | null),objectMetadataId?: (Scalars['UUID'] | null),pageLayoutTabId?: (Scalars['UUID'] | null),position?: (Scalars['JSON'] | null),title?: (Scalars['String'] | null),type?: (WidgetType | null)}
+export interface UpdatePageLayoutWidgetInput {conditionalAvailability?: (Scalars['JSON'] | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),conditionalDisplay?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),isActive?: (Scalars['Boolean'] | null),objectMetadataId?: (Scalars['UUID'] | null),pageLayoutTabId?: (Scalars['UUID'] | null),position?: (Scalars['JSON'] | null),title?: (Scalars['String'] | null),type?: (WidgetType | null)}
 
-export interface UpdatePageLayoutWidgetWithIdInput {conditionalAvailabilityExpression?: (Scalars['String'] | null),conditionalDisplay?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),id: Scalars['UUID'],objectMetadataId?: (Scalars['UUID'] | null),pageLayoutTabId: Scalars['UUID'],position?: (Scalars['JSON'] | null),title: Scalars['String'],type: WidgetType}
+export interface UpdatePageLayoutWidgetWithIdInput {conditionalAvailability?: (Scalars['JSON'] | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),conditionalDisplay?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),id: Scalars['UUID'],objectMetadataId?: (Scalars['UUID'] | null),pageLayoutTabId: Scalars['UUID'],position?: (Scalars['JSON'] | null),title: Scalars['String'],type: WidgetType}
 
 export interface UpdatePageLayoutWithTabsInput {isFirstTabPinned?: (Scalars['Boolean'] | null),name: Scalars['String'],objectMetadataId?: (Scalars['UUID'] | null),tabs: UpdatePageLayoutTabWithWidgetsInput[],type: PageLayoutType}
 
@@ -13418,6 +13424,7 @@ export const enumFeatureFlagKey = {
    IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED: 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' as const,
    IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED: 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' as const,
    IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED: 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' as const,
+   IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS: 'IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS' as const,
    IS_CHANNEL_VISIBILITY_RLS_ENABLED: 'IS_CHANNEL_VISIBILITY_RLS_ENABLED' as const,
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_CREATE_RECORDS_PERMISSION_ENABLED: 'IS_CREATE_RECORDS_PERMISSION_ENABLED' as const,
