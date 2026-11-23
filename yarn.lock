@@ -46501,15 +46501,12 @@ __metadata:
     dotenv: "npm:^16.4.5"
     jest: "npm:29.7.0"
     jest-environment-node: "npm:^29.4.1"
-    libphonenumber-js: "npm:^1.10.26"
     rimraf: "npm:^3.0.2"
     ts-jest: "npm:^29.1.1"
     twenty-shared: "workspace:*"
     vite: "npm:^8.0.0"
-    vite-plugin-dts: "npm:^4.5.4"
     zapier-platform-cli: "npm:^19.3.0"
     zapier-platform-core: "npm:19.3.0"
-    zod: "npm:^4.6.6"
   languageName: unknown
   linkType: soft
 
