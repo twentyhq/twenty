@@ -62,6 +62,24 @@ describe('generateFindManyRecordsQuery with relations with arguments', () => {
     });
   });
 
+  it('selects the aggregates of the relation beside its edges', () => {
+    const peopleInParisWithTotalCount: RecordGqlFieldsRelationWithArguments = {
+      ...peopleInParis,
+      aggregateGqlFieldNames: ['totalCount'],
+    };
+
+    expect(generateQuery().query).not.toMatch(/totalCount\s+edges/);
+    expect(
+      generateQuery({
+        extraRecordGqlFields: {
+          [computeRelationWithArgumentsResponseKey(
+            peopleInParisWithTotalCount,
+          )]: peopleInParisWithTotalCount,
+        },
+      }).query,
+    ).toMatch(/totalCount\s+edges/);
+  });
+
   it('selects and declares nothing for an unreadable target', () => {
     expect(generateQuery({ canReadPeople: false })).toEqual(
       generateQuery({ extraRecordGqlFields: {}, canReadPeople: false }),

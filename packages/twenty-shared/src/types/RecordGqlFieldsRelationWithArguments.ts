@@ -8,5 +8,6 @@ export type RecordGqlFieldsRelationWithArguments = {
   filter?: RecordGqlOperationFilter;
   orderBy?: RecordGqlOperationOrderBy;
   first?: number;
+  aggregateGqlFieldNames?: string[];
   recordGqlFields: RecordGqlFields;
 };

@@ -5,6 +5,7 @@ export type ReadableRelationWithArguments = {
   fieldMetadataItem: FieldMetadataItem;
   recordGqlFields: RecordGqlFields;
   selectionHead: string;
+  connectionGqlFieldNames: string[];
   variableDefinitions: string;
   variables: Record<string, unknown>;
 };
