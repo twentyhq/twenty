@@ -2,7 +2,7 @@ import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/ho
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
-import { getScopedRelationFieldNamesShowingObject } from '@/object-record/record-column-scope/utils/getScopedRelationFieldNamesShowingObject';
+import { getScopedRelationFieldNamesReachingObject } from '@/object-record/record-column-scope/utils/getScopedRelationFieldNamesReachingObject';
 import { invalidateCachedScopedRelations } from '@/object-record/record-column-scope/utils/invalidateCachedScopedRelations';
 import { useContext } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
@@ -21,7 +21,7 @@ export const useListenToScopedRelationRecordOperation = ({
   const handleRecordOperation = ({
     objectMetadataItem,
   }: ObjectRecordOperationBrowserEventDetail) => {
-    const relationFieldNames = getScopedRelationFieldNamesShowingObject({
+    const relationFieldNames = getScopedRelationFieldNamesReachingObject({
       scopedRelationAliases,
       objectMetadataItemId: objectMetadataItem.id,
     });

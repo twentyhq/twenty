@@ -4,6 +4,8 @@ import { generateJunctionRelationGqlFields } from '@/object-record/graphql/recor
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ScopedRelationAlias } from '@/object-record/record-column-scope/types/ScopedRelationAlias';
+import { isLookupTargetFieldReadable } from '@/object-record/record-column-lookup/utils/isLookupTargetFieldReadable';
+import { getRelationScopeReachedFields } from '@/object-record/record-column-scope/utils/getRelationScopeReachedFields';
 import { getRelationScopeRecordFiltersAndSorts } from '@/object-record/record-column-scope/utils/getRelationScopeRecordFiltersAndSorts';
 import { getScopedRelationColumn } from '@/object-record/record-column-scope/utils/getScopedRelationColumn';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
@@ -15,8 +17,8 @@ import {
 } from 'twenty-shared/types';
 import {
   computeRelationWithArgumentsResponseKey,
+  findById,
   isDefined,
-  isNonEmptyArray,
 } from 'twenty-shared/utils';
 
 const getRelatedRecordGqlFields = ({
@@ -96,19 +98,13 @@ export const getScopedRelationAliases = ({
       filterValueDependencies,
     });
 
-    const aggregateGqlFieldNames = [
-      // Only a limit can leave matching records out of the loaded ones
-      ...(isDefined(relationScope.limit) ? [TOTAL_COUNT_GQL_FIELD_NAME] : []),
-    ];
-
     const relationWithArguments: RecordGqlFieldsRelationWithArguments = {
       relationFieldName: fieldMetadataItem.name,
       filter,
       orderBy,
       first: relationScope.limit ?? undefined,
-      ...(isNonEmptyArray(aggregateGqlFieldNames) && {
-        aggregateGqlFieldNames,
-      }),
+      // The server caps the related records even without a limit, so the count of the left out ones is always needed
+      aggregateGqlFieldNames: [TOTAL_COUNT_GQL_FIELD_NAME],
       recordGqlFields: {
         ...getRelatedRecordGqlFields({
           scopedRelationColumn,
@@ -120,6 +116,12 @@ export const getScopedRelationAliases = ({
       },
     };
 
+    const reachedFields = getRelationScopeReachedFields({
+      relationScope,
+      relationObjectMetadataItem,
+      objectMetadataItems,
+    });
+
     return [
       {
         recordFieldId: recordField.id,
@@ -130,6 +132,27 @@ export const getScopedRelationAliases = ({
         relationWithArguments,
         lookupTarget,
         scopedRelationJunction,
+        reachedObjectMetadataItemIds: [
+          ...new Set([
+            relationObjectMetadataItem.id,
+            // A join object column also lists its target records, which carry no reference to the rows showing them
+            ...(isDefined(scopedRelationJunction)
+              ? [scopedRelationJunction.targetObjectMetadataItem.id]
+              : []),
+            ...reachedFields.flatMap(({ objectMetadataItem }) =>
+              isDefined(objectMetadataItem) ? [objectMetadataItem.id] : [],
+            ),
+          ]),
+        ],
+        isRestricted:
+          (isDefined(lookupTarget) &&
+            !isLookupTargetFieldReadable(lookupTarget)) ||
+          !reachedFields.every(
+            ({ objectMetadataItem, fieldMetadataId }) =>
+              objectMetadataItem?.readableFields.some(
+                findById(fieldMetadataId),
+              ) ?? false,
+          ),
       },
     ];
   });
