@@ -1,8 +1,8 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { getNavigationMenuContainersInDisplayOrder } from '@/navigation-menu-item/common/utils/getNavigationMenuContainersInDisplayOrder';
-import { isNavigationMenuTabWithOnlyUnavailableSections } from '@/navigation-menu-item/common/utils/isNavigationMenuTabWithOnlyUnavailableSections';
 import { useNavigationMenuBuiltInSectionAvailability } from '@/navigation-menu-item/display/hooks/useNavigationMenuBuiltInSectionAvailability';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -40,12 +40,18 @@ export const useWorkspaceNavigationMenuContainers = ({
     return containers;
   }
 
-  return containers.filter(
-    (tab) =>
-      !isNavigationMenuTabWithOnlyUnavailableSections({
-        tabId: tab.id,
-        navigationMenuItems: workspaceNavigationMenuItems,
-        isBuiltInSectionAvailable,
-      }),
-  );
+  return containers.filter((tab) => {
+    const tabChildren = workspaceNavigationMenuItems.filter(
+      (item) => item.parentId === tab.id,
+    );
+
+    return (
+      tabChildren.length === 0 ||
+      tabChildren.some(
+        (child) =>
+          !isDefined(child.builtInSectionKey) ||
+          isBuiltInSectionAvailable(child.builtInSectionKey),
+      )
+    );
+  });
 };

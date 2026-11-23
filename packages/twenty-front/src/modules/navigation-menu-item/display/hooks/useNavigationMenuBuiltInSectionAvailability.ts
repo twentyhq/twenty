@@ -1,4 +1,6 @@
-import { isNavigationMenuBuiltInSectionAvailable } from '@/navigation-menu-item/common/utils/isNavigationMenuBuiltInSectionAvailable';
+import { isDefined } from 'twenty-shared/utils';
+
+import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
@@ -14,12 +16,20 @@ export const useNavigationMenuBuiltInSectionAvailability = () => {
 
   const isBuiltInSectionAvailable = (
     builtInSectionKey: string | null | undefined,
-  ) =>
-    isNavigationMenuBuiltInSectionAvailable({
-      builtInSectionKey,
-      hasAiPermission,
-      isAiChatInboxEnabled,
-    });
+  ) => {
+    const builtInSection = NAVIGATION_MENU_BUILT_IN_SECTIONS.find(
+      ({ key }) => key === builtInSectionKey,
+    );
+
+    if (!isDefined(builtInSection)) {
+      return false;
+    }
+
+    return (
+      (!builtInSection.isAiPermissionRequired || hasAiPermission) &&
+      (!builtInSection.isAiChatInboxRequired || isAiChatInboxEnabled)
+    );
+  };
 
   return { isBuiltInSectionAvailable };
 };
