@@ -46050,7 +46050,6 @@ __metadata:
   resolution: "twenty-monorepo@workspace:."
   dependencies:
     "@nx/jest": "npm:24.0.6"
-    "@nx/js": "npm:24.0.6"
     "@nx/react": "npm:24.0.6"
     "@nx/storybook": "npm:24.0.6"
     "@nx/web": "npm:24.0.6"

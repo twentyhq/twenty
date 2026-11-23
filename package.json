@@ -2,7 +2,6 @@
   "private": true,
   "devDependencies": {
     "@nx/jest": "24.0.6",
-    "@nx/js": "24.0.6",
     "@nx/react": "24.0.6",
     "@nx/storybook": "24.0.6",
     "@nx/web": "24.0.6",
