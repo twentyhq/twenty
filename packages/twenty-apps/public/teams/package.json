@@ -27,7 +27,8 @@
     "typecheck": "tsgo --noEmit -p tsconfig.spec.json",
     "test": "vitest run",
     "test:unit": "vitest run --config vitest.unit.config.ts",
-    "test:watch": "vitest --config vitest.unit.config.ts"
+    "test:watch": "vitest --config vitest.unit.config.ts",
+    "teams-app:package": "node scripts/build-teams-app-package.mjs"
   },
   "dependencies": {
     "@sniptt/guards": "^0.2.0",

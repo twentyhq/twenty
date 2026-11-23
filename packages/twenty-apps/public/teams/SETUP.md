@@ -84,8 +84,22 @@ and DoD tenants are not supported.
    and enable the Microsoft Teams channel. See [where to find the application
    registration id](#application-registration-id). The Twenty server must be
    reachable from the internet over HTTPS.
-2. Add the bot to a Teams app (for example in the Teams Developer Portal, using
-   `TEAMS_BOT_APP_ID` as the bot ID) and install it for your users.
+2. Build the Teams app package and install it for your users:
+
+   ```bash
+   yarn teams-app:package --bot-app-id <TEAMS_BOT_APP_ID>
+   ```
+
+   This writes `dist/teams-app-package.zip` from
+   [`teams-app-package/`](./teams-app-package): the manifest, with the bot ID
+   filled in, and the two icons. A Teams admin uploads it in Teams admin
+   center > Teams apps > Manage apps > Upload new app, then allows it for the
+   users who need it. For a quick test, upload it from the Teams client under
+   Apps > Manage your apps > Upload an app, where custom app upload is
+   allowed. For users of other Microsoft organizations to install the bot,
+   the bot's Entra app registration must support **Accounts in any
+   organizational directory**; the Azure Bot stays **Single Tenant**.
+
 3. Turn on **Enable chat**, then add a **workspace-shared** Microsoft connection.
    Adding it claims the connection's Microsoft tenant for this workspace, so
    activities from that tenant route here, and links every directory user whose
