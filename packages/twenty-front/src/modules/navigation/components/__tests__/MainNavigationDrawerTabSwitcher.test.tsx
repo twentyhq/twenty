@@ -375,4 +375,17 @@ describe('MainNavigationDrawerTabSwitcher', () => {
       expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
     );
   });
+
+  it('switches to an inactive sidebar tab without opening its menu', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+
+    renderTabSwitcher({ permissionFlags: [PermissionFlagType.LAYOUTS] });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Sales' }));
+
+    expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith('sales-tab-id');
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+  });
 });

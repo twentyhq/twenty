@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type MouseEvent, useRef, useState } from 'react';
+import { type MouseEvent } from 'react';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -62,30 +63,23 @@ export const MainNavigationDrawerSidebarTab = ({
   const { switchToNavigationMenuTab } = useSwitchNavigationDrawerTab();
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
-  const anchorRef = useRef<HTMLSpanElement>(null);
-  const [wasTabMenuOpenOnPointerDown, setWasTabMenuOpenOnPointerDown] =
-    useState(false);
   const dropdownId = `navigation-menu-tab-menu-${tab.id}`;
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
   );
 
-  const openTabMenu = () =>
-    openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
-
-  const handleClick = () => {
-    if (!isActive || !canOpenTabMenu) {
-      switchToNavigationMenuTab(tab.id);
+  const handleClick = (
+    event: MouseEvent<HTMLButtonElement> & {
+      preventBaseUIHandler?: () => void;
+    },
+  ) => {
+    if (isActive && canOpenTabMenu) {
       return;
     }
 
-    if (wasTabMenuOpenOnPointerDown) {
-      closeDropdown(dropdownId);
-      return;
-    }
-
-    openTabMenu();
+    event.preventBaseUIHandler?.();
+    switchToNavigationMenuTab(tab.id);
   };
 
   const handleContextMenu = (event: MouseEvent<HTMLButtonElement>) => {
@@ -95,7 +89,7 @@ export const MainNavigationDrawerSidebarTab = ({
       switchToNavigationMenuTab(tab.id);
     }
 
-    openTabMenu();
+    openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
   };
 
   const tabButton = (
@@ -127,14 +121,10 @@ export const MainNavigationDrawerSidebarTab = ({
           onOpen={() => setNavigationMenuItemIdToRename(null)}
         />
       )}
-      <StyledAnchor
-        ref={anchorRef}
-        onPointerDown={() => setWasTabMenuOpenOnPointerDown(isDropdownOpen)}
-      >
-        {tabButton}
+      <StyledAnchor>
+        <Dropdown.Trigger render={tabButton} />
       </StyledAnchor>
       <DropdownContent
-        anchor={anchorRef}
         side="bottom"
         align="start"
         width={GenericDropdownContentWidth.Large}
