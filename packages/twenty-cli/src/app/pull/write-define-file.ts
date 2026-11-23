@@ -150,8 +150,30 @@ const buildAggregateOperationBinding = (path: string[]): EnumBinding => ({
   members: AggregateOperations,
 });
 
+const buildViewFieldRelationScopeEnumBindings = (
+  prefix: string[],
+): EnumBinding[] => [
+  {
+    path: [...prefix, 'filters', '[]', 'operand'],
+    symbol: 'ViewFilterOperand',
+    members: ViewFilterOperand,
+  },
+  {
+    path: [...prefix, 'filterGroups', '[]', 'logicalOperator'],
+    symbol: 'ViewFilterGroupLogicalOperator',
+    members: ViewFilterGroupLogicalOperator,
+  },
+  {
+    path: [...prefix, 'sorts', '[]', 'direction'],
+    symbol: 'ViewSortDirection',
+    members: ViewSortDirection,
+  },
+  buildAggregateOperationBinding([...prefix, 'aggregateOperation']),
+];
+
 export const VIEW_FIELD_ENUM_BINDINGS: EnumBinding[] = [
   buildAggregateOperationBinding(['aggregateOperation']),
+  ...buildViewFieldRelationScopeEnumBindings(['relationScope']),
 ];
 
 export const VIEW_ENUM_BINDINGS: EnumBinding[] = [
@@ -169,6 +191,7 @@ export const VIEW_ENUM_BINDINGS: EnumBinding[] = [
     members: ViewCalendarLayout,
   },
   buildAggregateOperationBinding(['fields', '[]', 'aggregateOperation']),
+  ...buildViewFieldRelationScopeEnumBindings(['fields', '[]', 'relationScope']),
   {
     path: ['filters', '[]', 'operand'],
     symbol: 'ViewFilterOperand',

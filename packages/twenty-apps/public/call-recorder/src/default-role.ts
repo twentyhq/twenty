@@ -11,7 +11,7 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: `${APP_DISPLAY_NAME} default role`,
   description:
-    'Reads calendar events to decide whether the call recorder should attend a meeting and sets their Recording Bot field; writes the resulting CallRecording records, uploads recording media, and fills transcripts and summaries. Also reads meeting participants and targets so record pages can show who was on a call and which calls involved a record.',
+    'Reads calendar events and which member calendar each one is on to decide whether the call recorder should attend a meeting, and sets their Recording Bot field; writes the resulting CallRecording records, uploads recording media, and fills transcripts and summaries. Also reads meeting participants and targets so record pages can show who was on a call and which calls involved a record.',
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
@@ -26,6 +26,15 @@ export default defineApplicationRole({
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEvent.universalIdentifier,
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarChannelEventAssociation
+          .universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: false,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     },
@@ -80,5 +89,6 @@ export default defineApplicationRole({
     // The settings front component reads and writes the app's own application
     // variables through the metadata API, which is gated behind this flag.
     SystemPermissionFlag.APPLICATIONS,
+    SystemPermissionFlag.READ_PRIVATE_CHANNELS,
   ],
 });

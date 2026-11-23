@@ -26,9 +26,6 @@ export class CoreWorkflowVersionDTO {
   status: WorkflowVersionStatus;
 
   @Field(() => UUIDScalarType, { nullable: true })
-  workspaceWorkflowVersionId: string | null;
-
-  @Field(() => UUIDScalarType, { nullable: true })
   workspaceWorkflowId: string | null;
 
   @Field(() => GraphQLJSON, { nullable: true })
