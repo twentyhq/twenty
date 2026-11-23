@@ -425,6 +425,24 @@ describe('validateFlatViewFieldRelationScope', () => {
       expectedMessage: 'filter group parent not found',
     }));
 
+  it('rejects a second root filter group, which the query would drop', () =>
+    expectOneErrorContaining({
+      universalRelationScope: {
+        ...OPEN_TASKS_SCOPE,
+        filterGroups: [
+          {
+            id: FILTER_GROUP_ID,
+            logicalOperator: ViewFilterGroupLogicalOperator.AND,
+          },
+          {
+            id: OTHER_FILTER_GROUP_ID,
+            logicalOperator: ViewFilterGroupLogicalOperator.OR,
+          },
+        ],
+      },
+      expectedMessage: 'one root filter group',
+    }));
+
   it('rejects filter groups nested in each other', () => {
     expect(
       validate({
