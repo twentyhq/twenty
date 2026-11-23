@@ -6250,6 +6250,11 @@ msgstr "Csatornabeállítások"
 msgid "channel role"
 msgstr "csatornaszerepkör"
 
+#. js-lingui-id: oFZSaN
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Channel visibility on API keys"
+msgstr "Csatornák láthatósága API-kulcsok esetén"
+
 #. js-lingui-id: Kjphnm
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Channel visibility through rules"
@@ -8366,7 +8371,7 @@ msgstr "Nem sikerült hozzáadni a kedvencekhez"
 #. js-lingui-id: l5bv5j
 #: src/modules/ai-chat/composer/hooks/useAiChatFileUpload.ts
 msgid "Couldn't attach \"{fileName}\". Files must be {maxUploadSize} or smaller."
-msgstr ""
+msgstr "Nem sikerült csatolni a(z) \"{fileName}\" fájlt. A fájlok mérete legfeljebb {maxUploadSize} lehet."
 
 #. js-lingui-id: OkB1TC
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
@@ -19999,7 +20004,7 @@ msgstr "Új fiók"
 #. js-lingui-id: PlBr35
 #: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiAgentsSection.tsx
 msgid "New agent"
-msgstr ""
+msgstr "Új ügynök"
 
 #. js-lingui-id: mJIA0/
 #: src/pages/object-core/AgentCoreIndexPage.tsx
@@ -21981,7 +21986,7 @@ msgstr "Hivatalos alkalmazás"
 #. js-lingui-id: 6Aih4U
 #: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Offline"
-msgstr ""
+msgstr "Kapcsolat გარეშე"
 
 #. js-lingui-id: Zd5vVt
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -22123,7 +22128,7 @@ msgstr "Két ember közötti beszélgetések"
 #. js-lingui-id: oXOSPE
 #: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Online"
-msgstr ""
+msgstr "Online"
 
 #. js-lingui-id: P/Sdzf
 #: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
@@ -25262,6 +25267,11 @@ msgstr "Rendezés eltávolítása"
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
 msgid "Remove sorting?"
 msgstr "Rendezés eltávolítása?"
+
+#. js-lingui-id: J8gtSc
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would."
+msgstr "Távolítsa el az üzenetekhez és a naptárhoz való hozzáférést a felhasználókhoz hozzárendelhető szerepkörök API-kulcsaitól. Kikapcsolt állapotban ezek az API-kulcsok úgy olvassák ezeket, mint egy olyan tag, aki nem birtokolja a csatornát."
 
 #. js-lingui-id: yBC05U
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx

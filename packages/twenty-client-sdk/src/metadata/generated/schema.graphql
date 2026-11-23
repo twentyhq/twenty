@@ -574,6 +574,7 @@ type Application {
 
 type ApplicationAuthorization {
   applicationId: UUID!
+  applicationLogoUrl: String
   applicationName: String!
   applicationUniversalIdentifier: String
   createdAt: DateTime!

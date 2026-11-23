@@ -7,7 +7,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type CopyPageLayoutWidgetRulesToConditionalAvailabilityCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795440949532-copy-page-layout-widget-rules-to-conditional-availability.command';
+import { type CopyPageLayoutWidgetRulesToConditionalAvailabilityCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795454532415-copy-page-layout-widget-rules-to-conditional-availability.command';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';

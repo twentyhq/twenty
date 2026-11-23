@@ -45,7 +45,7 @@ msgstr "「{fieldName}」的值無效。"
 #. js-lingui-id: fx2IXJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "\"{name}\" cannot be used in this visibility restriction"
-msgstr ""
+msgstr "「{name}」無法用於此可見性限制"
 
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
@@ -7875,7 +7875,7 @@ msgstr "欄位小工具「{widgetTitle}」的 viewUniversalIdentifier 無效。�
 #. js-lingui-id: PwvY87
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "Invalid visibility restriction: {untranslatedErrorMessage}"
-msgstr ""
+msgstr "無效的可見性限制：{untranslatedErrorMessage}"
 
 #. js-lingui-id: z68tnU
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
@@ -17489,12 +17489,12 @@ msgstr "建立檢視排序需要 ViewId。"
 #. js-lingui-id: 6TF7+T
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "Visibility restriction cannot be read"
-msgstr ""
+msgstr "無法讀取可見性限制"
 
 #. js-lingui-id: N6vpsk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "Visibility restriction has too many conditions"
-msgstr ""
+msgstr "可見性限制的條件過多"
 
 #. js-lingui-id: 4KUXUa
 #: src/modules/workflow/workflow-trigger/utils/assert-wait-for-event-step-is-valid.util.ts

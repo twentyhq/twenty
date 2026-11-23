@@ -16,7 +16,7 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 // Nothing is emptied: a workspace whose flag is turned off again reads its legacy values as before
-@RegisteredWorkspaceCommand('2.63.0', 1795440949532)
+@RegisteredWorkspaceCommand('2.63.0', 1795454532415)
 @Command({
   name: 'upgrade:2-63:copy-page-layout-widget-rules-to-conditional-availability',
   description:
