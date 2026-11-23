@@ -112,9 +112,8 @@ export const WithSelectForm: Story = {
         name: 'Add description',
       }),
     );
-    const descriptionInput = await body.findByPlaceholderText(
-      'Add a description',
-    );
+    const descriptionInput =
+      await body.findByPlaceholderText('Add a description');
 
     await userEvent.type(descriptionInput, 'Shown in pickers');
     expect(descriptionInput).toHaveValue('Shown in pickers');
