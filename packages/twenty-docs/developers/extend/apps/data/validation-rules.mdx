@@ -75,7 +75,7 @@ The builder outputs a plain string, which is what [`twenty app pull`](/developer
 expression: 'amount > 0 and isNonEmptyString(reference)',
 ```
 
-Strings use `and`, `or`, `not`, `==`, `!=`, `<`, `<=`, `>`, `>=`, `+`, `-`, `*`, `/` and `in [...]`, not `&&` or `||`. Text goes in single or double quotes. A previous value is written `previous.stage`:
+Strings use `and`, `or`, `not`, `==`, `!=`, `<`, `<=`, `>`, `>=`, `+`, `-`, `*`, `/` and `in [...]`, not `&&` or `||`. `||` joins two values as one text and skips a value that is not set. Text goes in single or double quotes. A previous value is written `previous.stage`:
 
 ```ts
 // A proposal only follows a meeting
