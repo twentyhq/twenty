@@ -13,7 +13,7 @@ import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildAxiosFetch } from '@lifeomic/axios-fetch';
-import { type FetchLike } from '@modelcontextprotocol/sdk/shared/transport.js';
+import { type FetchLike } from '@modelcontextprotocol/client';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { type OutboundRequestOutcomeDetails } from 'src/engine/core-modules/secure-http-client/outbound-request-outcome-details.type';
