@@ -9,7 +9,7 @@ import { IconPlus } from 'twenty-ui/icon';
 import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
 import { canAddBuiltInSectionToContainer } from '@/navigation-menu-item/common/utils/canAddBuiltInSectionToContainer';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
-import { useIsNavigationMenuBuiltInSectionAvailable } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuBuiltInSectionAvailable';
+import { useNavigationMenuBuiltInSectionAvailability } from '@/navigation-menu-item/display/hooks/useNavigationMenuBuiltInSectionAvailability';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { NavigationMenuAddSectionHiddenItems } from '@/navigation-menu-item/edit/components/NavigationMenuAddSectionHiddenItems';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
@@ -38,8 +38,8 @@ export const NavigationMenuAddSectionButton = ({
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
-  const isBuiltInSectionAvailable =
-    useIsNavigationMenuBuiltInSectionAvailable();
+  const { isBuiltInSectionAvailable } =
+    useNavigationMenuBuiltInSectionAvailability();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const hiddenNavigationMenuItems =
     useHiddenNavigationMenuItemsInTab(containerId);

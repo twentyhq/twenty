@@ -6,16 +6,20 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
-export const useIsNavigationMenuBuiltInSectionAvailable = () => {
+export const useNavigationMenuBuiltInSectionAvailability = () => {
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
 
-  return (builtInSectionKey: string | null | undefined) =>
+  const isBuiltInSectionAvailable = (
+    builtInSectionKey: string | null | undefined,
+  ) =>
     isNavigationMenuBuiltInSectionAvailable({
       builtInSectionKey,
       hasAiPermission,
       isAiChatInboxEnabled,
     });
+
+  return { isBuiltInSectionAvailable };
 };

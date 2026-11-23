@@ -3,7 +3,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { getNavigationMenuContainersInDisplayOrder } from '@/navigation-menu-item/common/utils/getNavigationMenuContainersInDisplayOrder';
 import { isNavigationMenuTabWithOnlyUnavailableSections } from '@/navigation-menu-item/common/utils/isNavigationMenuTabWithOnlyUnavailableSections';
-import { useIsNavigationMenuBuiltInSectionAvailable } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuBuiltInSectionAvailable';
+import { useNavigationMenuBuiltInSectionAvailability } from '@/navigation-menu-item/display/hooks/useNavigationMenuBuiltInSectionAvailability';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -20,8 +20,8 @@ export const useWorkspaceNavigationMenuContainers = ({
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
-  const isBuiltInSectionAvailable =
-    useIsNavigationMenuBuiltInSectionAvailable();
+  const { isBuiltInSectionAvailable } =
+    useNavigationMenuBuiltInSectionAvailability();
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
