@@ -6,7 +6,6 @@ export const DISCARD_CORE_WORKFLOW_DRAFT = gql`
       id
       name
       statuses
-      lastPublishedVersionId
       workspaceWorkflowId
       updatedAt
     }
