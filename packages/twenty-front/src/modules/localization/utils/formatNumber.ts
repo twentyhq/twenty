@@ -84,7 +84,6 @@ const getLocaleForFormat = (format?: NumberFormat): string => {
   );
 };
 
-// Callers may pass `decimals: undefined`, which overrides the default
 const getMinimumFractionDigits = ({
   minimumDecimals,
   decimals,
