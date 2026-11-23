@@ -1,7 +1,9 @@
+import { AI_CHAT_ATTACHMENT_MAX_SIZE } from '@/ai-chat/composer/constants/AiChatAttachmentMaxSize';
 import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/composer/states/aiChatComposerUploadingFilesFamilyState';
 import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/composer/states/aiChatComposerAttachmentsFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
+import { formatFileSize } from '@/file/utils/formatFileSize';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
@@ -89,14 +91,34 @@ export const useAiChatFileUpload = () => {
       return [];
     }
 
+    const acceptedFiles = files.filter((file) => {
+      if (file.size <= AI_CHAT_ATTACHMENT_MAX_SIZE) {
+        return true;
+      }
+
+      const fileName = file.name;
+      const maxUploadSize = formatFileSize(AI_CHAT_ATTACHMENT_MAX_SIZE);
+
+      enqueueToast({
+        status: 'error',
+        children: t`File "${fileName}" exceeds ${maxUploadSize}`,
+      });
+
+      return false;
+    });
+
+    if (!isNonEmptyArray(acceptedFiles)) {
+      return [];
+    }
+
     store.set(
       aiChatComposerUploadingFilesFamilyState.atomFamily({ threadId }),
-      (previousUploadingFiles) => [...previousUploadingFiles, ...files],
+      (previousUploadingFiles) => [...previousUploadingFiles, ...acceptedFiles],
     );
 
     const successfulUploads = (
       await Promise.all(
-        files.map((file) => uploadComposerFile({ file, threadId })),
+        acceptedFiles.map((file) => uploadComposerFile({ file, threadId })),
       )
     ).filter(isDefined);
 

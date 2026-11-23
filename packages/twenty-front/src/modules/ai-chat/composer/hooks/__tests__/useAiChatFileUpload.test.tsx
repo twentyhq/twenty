@@ -98,4 +98,38 @@ describe('useAiChatFileUpload', () => {
       jotaiStore.set(directMessageAtom, previousDirectMessage);
     }
   });
+
+  it('refuses a file over the size limit with a message and does not upload it', async () => {
+    putFile.mockClear();
+    const { result } = renderHook(() => useAiChatFileUpload(), {
+      wrapper: Wrapper,
+    });
+    const oversizedFile = new File(['big'], 'big.pdf');
+    Object.defineProperty(oversizedFile, 'size', {
+      value: 51 * 1024 * 1024,
+    });
+
+    let uploadedFiles: Awaited<ReturnType<typeof result.current.uploadFiles>> =
+      [];
+
+    await act(async () => {
+      uploadedFiles = await result.current.uploadFiles({
+        files: [oversizedFile],
+        threadId: NEW_THREAD_ID,
+      });
+    });
+
+    expect(uploadedFiles).toEqual([]);
+    expect(putFile).not.toHaveBeenCalled();
+    expect(
+      await screen.findByText('File "big.pdf" exceeds 50.0 MB'),
+    ).toBeInTheDocument();
+    expect(
+      jotaiStore.get(
+        aiChatComposerUploadingFilesFamilyState.atomFamily({
+          threadId: NEW_THREAD_ID,
+        }),
+      ),
+    ).toEqual([]);
+  });
 });
