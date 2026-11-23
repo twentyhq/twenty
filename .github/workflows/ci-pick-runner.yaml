@@ -1,0 +1,38 @@
+name: CI Pick Runner
+
+on:
+  workflow_call:
+    outputs:
+      runner:
+        value: ${{ jobs.pick-runner.outputs.runner }}
+
+permissions:
+  actions: read
+
+jobs:
+  pick-runner:
+    timeout-minutes: 2
+    # Must not run on the pool it is measuring, or it queues behind the jobs it routes
+    runs-on: ubuntu-latest-2-cores
+    outputs:
+      runner: ${{ steps.pick.outputs.runner }}
+    steps:
+      - name: Pick runner from the current queue
+        id: pick
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          DEFAULT_RUNNER: ubuntu-latest
+          FALLBACK_RUNNER: ${{ vars.CI_FALLBACK_RUNNER || 'ubuntu-latest-2-cores' }}
+          QUEUE_THRESHOLD: ${{ vars.CI_FALLBACK_QUEUE_THRESHOLD || '10' }}
+        run: |
+          queued=$(gh api "repos/$REPOSITORY/actions/runs?status=queued&per_page=1" --jq '.total_count' || echo 0)
+
+          if [ "$queued" -gt "$QUEUE_THRESHOLD" ]; then
+            runner="$FALLBACK_RUNNER"
+          else
+            runner="$DEFAULT_RUNNER"
+          fi
+
+          echo "$queued queued runs (threshold $QUEUE_THRESHOLD), using $runner"
+          echo "runner=$runner" >> "$GITHUB_OUTPUT"
