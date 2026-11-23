@@ -8,7 +8,6 @@ import { uploadApplicationFile } from 'test/integration/metadata/suites/applicat
 import { findLogicFunctionId } from 'test/integration/server-route-trigger/utils/find-logic-function-id.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { type LogicFunctionManifest } from 'twenty-shared/application';
-import { type LogicFunctionFailureHandlerPayload } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -28,8 +27,6 @@ const FAILURE_HANDLER_UNIVERSAL_IDENTIFIER =
   '6bde7857-4021-41e5-bf75-d473c8bfcf4f';
 const UNKNOWN_FUNCTION_UNIVERSAL_IDENTIFIER =
   'b1a95f51-73fa-4842-ab54-1e4e419b053c';
-
-type CrashedRunPayload = { requestId: string };
 
 const FAILING_HANDLER_CODE = `export const main = async () => {
   throw new Error('Agent run crashed');
@@ -221,9 +218,13 @@ describe('Logic function failure handler (integration)', () => {
         },
       );
 
+    if (!isDefined(queueJobId)) {
+      throw new Error('The crashed run job was not enqueued');
+    }
+
     // BullMQ flags a job this way once it stalled more than maxStalledCount times.
     await redisConnection.hset(
-      logicFunctionInspectionQueue.toKey(queueJobId ?? ''),
+      logicFunctionInspectionQueue.toKey(queueJobId),
       'defa',
       'job stalled more than allowable limit',
     );
@@ -232,10 +233,9 @@ describe('Logic function failure handler (integration)', () => {
 
     const crashedRunHandlerJobs = (await getFailureHandlerJobs()).filter(
       (job) =>
-        (
-          job.data
-            .payload as LogicFunctionFailureHandlerPayload<CrashedRunPayload>
-        ).payload.requestId === 'request-crashed',
+        isDefined(job.data.payload) &&
+        'jobId' in job.data.payload &&
+        job.data.payload.jobId === queueJobId,
     );
 
     expect(crashedRunHandlerJobs).toHaveLength(1);

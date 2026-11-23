@@ -507,8 +507,8 @@ export class BullMQDriver
           attemptsMade: job.attemptsMade,
         },
         error: {
-          name: error?.name ?? 'Error',
-          message: error?.message ?? '',
+          name: error.name,
+          message: error.message,
         },
       } satisfies QueueJobFailedEvent);
     });

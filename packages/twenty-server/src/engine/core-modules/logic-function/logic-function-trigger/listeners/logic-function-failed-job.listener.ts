@@ -40,7 +40,7 @@ export class LogicFunctionFailedJobListener {
       job.data,
     )
       ? job.data
-      : [job.data as LogicFunctionJobPayload];
+      : [job.data];
 
     for (const logicFunctionPayload of logicFunctionPayloads) {
       await this.logicFunctionJobRunnerService.enqueueFailureHandlerIfDeclared({
