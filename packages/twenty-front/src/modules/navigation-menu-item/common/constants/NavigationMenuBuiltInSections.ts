@@ -7,6 +7,11 @@ import {
   IconMessage,
 } from 'twenty-ui/icon';
 
+import { INBOX_CHANNELS_NAVIGATION_SECTION_ID } from '@/inbox/constants/InboxChannelsNavigationSectionId';
+import { INBOX_FAVORITES_NAVIGATION_SECTION_ID } from '@/inbox/constants/InboxFavoritesNavigationSectionId';
+import { INBOX_TRIAGE_NAVIGATION_SECTION_ID } from '@/inbox/constants/InboxTriageNavigationSectionId';
+import { FAVORITES_NAVIGATION_SECTION_ID } from '@/navigation-menu-item/display/sections/favorites/constants/FavoritesNavigationSectionId';
+
 export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
   {
     key: 'favorites',
@@ -14,6 +19,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconHeart,
     color: 'red',
     isAi: false,
+    navigationSectionId: FAVORITES_NAVIGATION_SECTION_ID,
   },
   {
     key: 'aiChatInbox',
@@ -21,6 +27,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconInbox,
     color: 'blue',
     isAi: true,
+    navigationSectionId: INBOX_TRIAGE_NAVIGATION_SECTION_ID,
   },
   {
     key: 'aiChatFavorites',
@@ -28,6 +35,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconMessage,
     color: 'pink',
     isAi: true,
+    navigationSectionId: INBOX_FAVORITES_NAVIGATION_SECTION_ID,
   },
   {
     key: 'aiChatChannels',
@@ -35,6 +43,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconHash,
     color: 'green',
     isAi: true,
+    navigationSectionId: INBOX_CHANNELS_NAVIGATION_SECTION_ID,
   },
   {
     key: 'aiChatRecents',
@@ -42,5 +51,6 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconHistory,
     color: 'orange',
     isAi: true,
+    navigationSectionId: null,
   },
 ] as const;

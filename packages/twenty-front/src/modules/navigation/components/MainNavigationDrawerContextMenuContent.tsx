@@ -13,7 +13,7 @@ import {
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { type NavigationMenuDropdownOpenRequest } from '@/navigation-menu-item/common/types/NavigationMenuDropdownOpenRequest';
 import { navigationMenuDropdownOpenRequestState } from '@/navigation-menu-item/common/states/navigationMenuDropdownOpenRequestState';
-import { NAVIGATION_SECTION_ID_BY_BUILT_IN_SECTION_KEY } from '@/navigation-menu-item/common/constants/NavigationSectionIdByBuiltInSectionKey';
+import { FAVORITES_NAVIGATION_SECTION_ID } from '@/navigation-menu-item/display/sections/favorites/constants/FavoritesNavigationSectionId';
 import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
@@ -51,11 +51,9 @@ export const MainNavigationDrawerContextMenuContent = ({
   );
 
   const navigationSectionIds = [
-    ...(isDefined(containerId)
-      ? []
-      : [NAVIGATION_SECTION_ID_BY_BUILT_IN_SECTION_KEY.favorites]),
+    ...(isDefined(containerId) ? [] : [FAVORITES_NAVIGATION_SECTION_ID]),
     ...sections.map(getNavigationMenuSectionNavigationSectionId),
-  ].filter(isDefined);
+  ];
 
   const customizeAndOpenDropdown = (
     navigationMenuDropdownOpenRequest: NavigationMenuDropdownOpenRequest,
