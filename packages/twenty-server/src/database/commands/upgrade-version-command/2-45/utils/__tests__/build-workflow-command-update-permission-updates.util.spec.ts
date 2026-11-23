@@ -39,15 +39,15 @@ const getStandardItem = (universalIdentifier: string): FlatCommandMenuItem => {
   }
 
   // Rewritten by the 2-62 privacy command, so reverted to the expression this one handles
-  const privacyExpressions = WORKFLOW_PRIVACY_COMMAND_MENU_ITEM_EXPRESSIONS.find(
-    (privacyExpression) =>
-      privacyExpression.universalIdentifier === universalIdentifier,
+  const privacyExpression = WORKFLOW_PRIVACY_COMMAND_MENU_ITEM_EXPRESSIONS.find(
+    (workflowPrivacyExpression) =>
+      workflowPrivacyExpression.universalIdentifier === universalIdentifier,
   );
 
   return {
     ...commandMenuItem,
     conditionalAvailabilityExpression:
-      privacyExpressions?.legacyExpression ??
+      privacyExpression?.legacyExpression ??
       commandMenuItem.conditionalAvailabilityExpression?.replace(
         MANUAL_LAYOUT_CONDITION,
         '',
