@@ -5633,6 +5633,7 @@ export type NavigationMenuItem = {
   targetRecordId?: Maybe<Scalars['UUID']['output']>;
   targetRecordIdentifier?: Maybe<RecordIdentifier>;
   type: NavigationMenuItemType;
+  universalIdentifier?: Maybe<Scalars['UUID']['output']>;
   updatedAt: Scalars['DateTime']['output'];
   userWorkspaceId?: Maybe<Scalars['UUID']['output']>;
   viewId?: Maybe<Scalars['UUID']['output']>;
