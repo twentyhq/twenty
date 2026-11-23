@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { UnipileHostedAuth } from '@unipile/sdk';
 
 import { UNIPILE_HOSTED_AUTH_LINK_TTL_MILLISECONDS } from 'src/unipile/constants/unipile-hosted-auth-link-ttl-milliseconds.constant';
@@ -13,6 +14,7 @@ export const createUnipileHostedAuthLink = async ({
   callbackUrl: string;
 }): Promise<string> => {
   const { redirectUri, state } = splitCallbackUrlStateOrThrow(callbackUrl);
+  const hostedAuthDomain = process.env.UNIPILE_HOSTED_AUTH_DOMAIN;
 
   const { data } = await new UnipileHostedAuth().createAuthLink({
     ...getUnipileRequestOptions(),
@@ -20,6 +22,9 @@ export const createUnipileHostedAuthLink = async ({
       providers: [provider],
       redirect_uri: redirectUri,
       state,
+      ...(isNonEmptyString(hostedAuthDomain)
+        ? { domain: hostedAuthDomain }
+        : {}),
       expires_on: new Date(
         Date.now() + UNIPILE_HOSTED_AUTH_LINK_TTL_MILLISECONDS,
       ).toISOString(),

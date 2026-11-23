@@ -22,12 +22,16 @@ LinkedIn accounts are connected through [Unipile](https://www.unipile.com) (API 
    - **Events**: `message.new`, `account.status.disconnected`, `account.status.errored`
    - **Accounts**: leave empty so every connected account is covered, including future ones.
 
+3. Optionally, brand the sign-in page members see, in **Configuration → Hosted auth**: brand name, logo, primary color, shapes and font. Branding applies to the whole Unipile application; Unipile has no dark mode and no per-link theme, so the page looks the same whatever the member's Twenty theme.
+4. Optionally, serve the sign-in page from your own domain instead of `auth.unipile.com`: add it in **Configuration → Custom domains** and wait for Unipile to verify it.
+
 ## 2. Configure Twenty
 
 1. Install the app on its owner workspace; the webhook URL only answers once it is installed there.
 2. In **Settings → Applications → LinkedIn → Application registration**, set:
    - `UNIPILE_API_KEY`: the Unipile account key
    - `UNIPILE_WEBHOOK_SECRET`: the webhook endpoint's signing secret
+   - `UNIPILE_HOSTED_AUTH_DOMAIN` (optional): the verified custom domain, such as `auth.example.com`
 3. Members connect from **Settings → App preferences → LinkedIn**.
 
 ## How it works
