@@ -9,6 +9,7 @@ import {
 } from 'twenty-shared/types';
 import {
   canAccessThroughAllRecordsOrRlsPermission,
+  canAccessThroughAllRecordsPermission,
   isDefined,
 } from 'twenty-shared/utils';
 
@@ -663,19 +664,15 @@ export class RecordPermissionsReadService {
       relationTargetObjectMetadataId,
       relationTargetRecordIds,
     ] of relationTargetRecordIdsByObjectMetadataId) {
-      const relationTargetFlatObjectMetadata = this.findFlatObjectMetadata({
-        metadataMaps,
-        objectMetadataId: relationTargetObjectMetadataId,
-      });
-
+      // Private records keep their own grants, which the services writing links to them check
       if (
-        !isDefined(relationTargetFlatObjectMetadata) ||
-        this.buildSelectableRecordsSQLCondition({
-          principals,
-          metadataMaps,
-          flatObjectMetadata: relationTargetFlatObjectMetadata,
+        canAccessThroughAllRecordsPermission({
+          objectRecordsPermissions: getPermissionsPrincipalsRecordsPermissions({
+            principals,
+            metadataMaps,
+          }).objects[relationTargetObjectMetadataId],
           operationType: 'read',
-        }) === true
+        })
       ) {
         continue;
       }
