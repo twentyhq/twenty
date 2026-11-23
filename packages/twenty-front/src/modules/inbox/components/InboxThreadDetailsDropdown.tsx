@@ -19,13 +19,13 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { AiChatChannelIcon } from '@/ai-chat/threads/components/AiChatChannelIcon';
 import { InboxThreadChannelPicker } from '@/inbox/components/InboxThreadChannelPicker';
-import { AiChatThreadDetailsFollowing } from '@/ai-chat/threads/components/AiChatThreadDetailsFollowing';
+import { AiChatThreadDetailsFollowing } from '@/inbox/components/AiChatThreadDetailsFollowing';
 import { InboxThreadDetailsStatus } from '@/inbox/components/InboxThreadDetailsStatus';
 import { AiChatThreadLabelsField } from '@/ai-chat/threads/components/AiChatThreadLabelsField';
 import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai-chat/threads/constants/AiChatThreadDetailsLabelWidthInPx';
-import { aiChatChannelsState } from '@/ai-chat/threads/states/aiChatChannelsState';
+import { aiChatChannelFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatChannelFamilySelector';
 import { useAiChatThreadRecordTargets } from '@/ai-chat/threads/hooks/useAiChatThreadRecordTargets';
-import { useChatTargetNavigation } from '@/ai-chat/threads/hooks/useChatTargetNavigation';
+import { useAiChatTargetNavigation } from '@/ai-chat/threads/hooks/useAiChatTargetNavigation';
 import { useIsAiChatArtifactSurface } from '@/ai-chat/hooks/useIsAiChatArtifactSurface';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { aiChatThreadPermissionsFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadPermissionsFamilySelector';
@@ -96,15 +96,16 @@ export const InboxThreadDetailsDropdown = ({
   const assignee = currentWorkspaceMembers.find(
     (workspaceMember) => workspaceMember.id === thread?.assigneeId,
   );
-  const channel = useAtomStateValue(aiChatChannelsState)?.find(
-    ({ id }) => id === thread?.channelId,
+  const aiChatChannel = useAtomFamilySelectorValue(
+    aiChatChannelFamilySelector,
+    thread?.channelId,
   );
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
   const { closeDropdown } = useCloseDropdown();
   const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
-  const { openRecordTarget } = useChatTargetNavigation();
+  const { openRecordTarget } = useAiChatTargetNavigation();
   const dropdownContentRef = useRef<HTMLDivElement>(null);
   const detailsTriggerRef = useRef<HTMLButtonElement>(null);
   const recordPickerContentRef = useRef<HTMLDivElement>(null);
@@ -126,7 +127,6 @@ export const InboxThreadDetailsDropdown = ({
     : t`Link to a record`;
   const EditRecordTargetsIcon = hasTargetRecords ? IconPencil : IconPlus;
 
-  // The picker is a dropdown of its own, so it opens where the details were
   const editRecordTargets = () => {
     closeDropdown(dropdownId);
     openRecordPicker();
@@ -159,7 +159,6 @@ export const InboxThreadDetailsDropdown = ({
         />
         <DropdownContent
           ref={dropdownContentRef}
-          // The details are read first, so focus stays off the first chip
           initialFocus={() => dropdownContentRef.current}
           align="start"
           width={GenericDropdownContentWidth.ExtraExtraLarge}
@@ -194,7 +193,6 @@ export const InboxThreadDetailsDropdown = ({
                       key={`${objectNameSingular}-${record.id}`}
                       objectNameSingular={objectNameSingular}
                       record={record}
-                      // Linked records open like the records the chat mentions
                       onClick={
                         isAiChatArtifactSurface
                           ? () => {
@@ -226,13 +224,13 @@ export const InboxThreadDetailsDropdown = ({
                 )
               }
             >
-              {isDefined(channel) ? (
+              {isDefined(aiChatChannel) ? (
                 <StyledChannel>
                   <AiChatChannelIcon
-                    channel={channel}
+                    channel={aiChatChannel}
                     size={theme.icon.size.sm}
                   />
-                  {channel.name}
+                  {aiChatChannel.name}
                 </StyledChannel>
               ) : (
                 <StyledEmptyValue>{t`None`}</StyledEmptyValue>

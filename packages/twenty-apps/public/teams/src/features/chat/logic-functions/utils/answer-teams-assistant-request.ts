@@ -3,6 +3,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { TEAMS_ASSISTANT_REQUEST_STATUS } from 'src/features/chat/logic-functions/constants/teams-assistant-request-status';
+import { TEAMS_ASSISTANT_UNMATCHED_REQUEST_NAME } from 'src/features/chat/logic-functions/constants/teams-assistant-unmatched-request-name';
 import { TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-unmatched-sender-text';
 import { claimTeamsAssistantRequest } from 'src/features/chat/logic-functions/data/claim-teams-assistant-request';
 import { findTeamsAssistantHistory } from 'src/features/chat/logic-functions/data/find-teams-assistant-history';
@@ -10,6 +11,7 @@ import { updateTeamsAssistantRequest } from 'src/features/chat/logic-functions/d
 import { type TeamsAssistantAnswerResult } from 'src/features/chat/logic-functions/types/teams-assistant-answer-result.type';
 import { type TeamsAssistantRequestRecord } from 'src/features/chat/logic-functions/types/teams-assistant-request-record.type';
 import { buildTeamsAssistantAnswerText } from 'src/features/chat/logic-functions/utils/build-teams-assistant-answer-text';
+import { buildTeamsAssistantRequestName } from 'src/features/chat/logic-functions/utils/build-teams-assistant-request-name';
 import { fetchWorkspaceBaseUrl } from 'src/features/chat/logic-functions/utils/fetch-workspace-base-url';
 import { getTeamsAssistantFailureText } from 'src/features/chat/logic-functions/utils/get-teams-assistant-failure-text';
 import { getTeamsConnectorAccessTokenOrThrow } from 'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw';
@@ -74,6 +76,7 @@ export const answerTeamsAssistantRequest = async ({
         id: request.id,
         status: TEAMS_ASSISTANT_REQUEST_STATUS.DONE,
         responseText: TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT,
+        name: TEAMS_ASSISTANT_UNMATCHED_REQUEST_NAME,
       }).catch(() => undefined);
 
       return { status: 'declined', reason: 'Sender is not a workspace member' };
@@ -83,6 +86,8 @@ export const answerTeamsAssistantRequest = async ({
       client,
       id: request.id,
       workspaceMemberId,
+      requestText,
+      name: buildTeamsAssistantRequestName(requestText),
     });
 
     const [history, workspaceBaseUrl] = await Promise.all([

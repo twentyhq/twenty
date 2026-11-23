@@ -1,4 +1,3 @@
-import { WorkspaceSetupChatSidePanelEffect } from '@/onboarding/effect-components/WorkspaceSetupChatSidePanelEffect';
 import { CommandMenuForMobile } from '@/command-menu/components/CommandMenuForMobile';
 import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { RouteContextStoreProvider } from '@/context-store/components/RouteContextStoreProvider';
@@ -65,7 +64,6 @@ export const MainAppLayoutWithSidePanel = () => {
     <StyledRow>
       <RouteContextStoreProvider />
       <SidePanelPathUrlSyncEffect />
-      <WorkspaceSetupChatSidePanelEffect />
       <StyledMainColumn>
         <StyledContent>
           <Outlet />
