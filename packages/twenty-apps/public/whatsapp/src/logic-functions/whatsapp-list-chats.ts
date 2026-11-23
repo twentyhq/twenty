@@ -7,7 +7,7 @@ import { WHATSAPP_CHAT_OPTIONS_MAX_COUNT } from 'src/constants/whatsapp-chat-opt
 import { WHATSAPP_CHAT_OPTIONS_PAGE_SIZE } from 'src/constants/whatsapp-chat-options-page-size.constant';
 import { WHATSAPP_SETTINGS_ROUTE_PATHS } from 'src/constants/whatsapp-settings-route-paths.constant';
 import { WHATSAPP_LIST_CHATS_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { buildWhatsappChatOption } from 'src/logic-functions/utils/build-whatsapp-chat-option.util';
+import { buildWhatsappChatOptions } from 'src/logic-functions/utils/build-whatsapp-chat-options.util';
 import { findOwnWhatsappConnection } from 'src/logic-functions/utils/find-own-whatsapp-connection.util';
 import { type WhatsappChatOptionsPage } from 'src/types/whatsapp-chat-options-page.type';
 import { listMostRecentUnipileChats } from 'src/unipile/utils/list-most-recent-unipile-chats.util';
@@ -43,7 +43,7 @@ export const whatsappListChatsHandler = async (
   });
 
   return {
-    chats: chats.map(buildWhatsappChatOption),
+    chats: buildWhatsappChatOptions(chats),
     hasMore: chats.length === limit && limit < WHATSAPP_CHAT_OPTIONS_MAX_COUNT,
   };
 };

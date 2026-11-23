@@ -4,8 +4,8 @@ export const isWhatsappChatSelected = ({
   settings,
   chatId,
 }: {
-  settings: Pick<WhatsappSettings, 'importPolicy' | 'selectedChatIds'>;
+  settings: Pick<WhatsappSettings, 'importPolicy' | 'selectedChats'>;
   chatId: string;
 }): boolean =>
   settings.importPolicy !== 'SELECTED' ||
-  settings.selectedChatIds.includes(chatId);
+  settings.selectedChats.some((chat) => chat.id === chatId);

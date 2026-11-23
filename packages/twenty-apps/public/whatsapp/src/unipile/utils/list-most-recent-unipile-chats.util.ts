@@ -13,18 +13,21 @@ export const listMostRecentUnipileChats = async ({
   limit: number;
   deadlineAtMs?: number;
 }): Promise<UnipileChat[]> => {
-  const chats: UnipileChat[] = [];
+  // Keyed by id: a chat can come back on two pages when one moves between the requests
+  const chatById = new Map<string, UnipileChat>();
   let cursor: string | undefined;
 
-  while (chats.length < limit) {
+  while (chatById.size < limit) {
     const page = await listUnipileChats({
       accountId,
       cursor,
-      limit: limit - chats.length,
+      limit: limit - chatById.size,
       deadlineAtMs,
     });
 
-    chats.push(...page.items);
+    for (const chat of page.items) {
+      chatById.set(chat.id, chat);
+    }
 
     if (
       page.items.length === 0 ||
@@ -37,5 +40,5 @@ export const listMostRecentUnipileChats = async ({
     cursor = page.nextCursor;
   }
 
-  return sortUnipileChatsByLastMessage(chats).slice(0, limit);
+  return sortUnipileChatsByLastMessage([...chatById.values()]).slice(0, limit);
 };

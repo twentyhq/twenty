@@ -140,7 +140,7 @@ describe('whatsappPlanHistoryImportHandler', () => {
     });
     mocks.kvStore.set('whatsapp-settings:connection-id', {
       importPolicy: 'SELECTED',
-      selectedChatIds: buildChatIds(25),
+      selectedChats: buildChatIds(25).map((id) => ({ id, name: id })),
     });
 
     await expect(whatsappPlanHistoryImportHandler(PAYLOAD)).resolves.toEqual({

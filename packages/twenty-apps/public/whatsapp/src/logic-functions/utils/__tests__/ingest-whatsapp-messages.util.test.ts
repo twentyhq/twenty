@@ -304,7 +304,7 @@ describe('ingestWhatsappMessages', () => {
         settings: {
           ...DEFAULT_WHATSAPP_SETTINGS,
           importPolicy: 'SELECTED',
-          selectedChatIds: ['chat-2'],
+          selectedChats: [{ id: 'chat-2', name: 'chat-2' }],
         },
       }),
     ).resolves.toMatchObject({
@@ -323,7 +323,7 @@ describe('ingestWhatsappMessages', () => {
         settings: {
           ...DEFAULT_WHATSAPP_SETTINGS,
           importPolicy: 'SELECTED',
-          selectedChatIds: ['chat-2'],
+          selectedChats: [{ id: 'chat-2', name: 'chat-2' }],
           areGroupChatsImported: false,
         },
       }),

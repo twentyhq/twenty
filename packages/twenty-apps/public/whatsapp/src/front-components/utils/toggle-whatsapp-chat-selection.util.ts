@@ -1,10 +1,15 @@
+import { type WhatsappSelectedChat } from 'src/types/whatsapp-selected-chat.type';
+
 export const toggleWhatsappChatSelection = ({
-  selectedChatIds,
-  chatId,
+  selectedChats,
+  chats,
 }: {
-  selectedChatIds: string[];
-  chatId: string;
-}): string[] =>
-  selectedChatIds.includes(chatId)
-    ? selectedChatIds.filter((selectedChatId) => selectedChatId !== chatId)
-    : [...selectedChatIds, chatId];
+  selectedChats: WhatsappSelectedChat[];
+  chats: WhatsappSelectedChat[];
+}): WhatsappSelectedChat[] => {
+  const toggledChatIds = new Set(chats.map((chat) => chat.id));
+
+  return selectedChats.some((chat) => toggledChatIds.has(chat.id))
+    ? selectedChats.filter((chat) => !toggledChatIds.has(chat.id))
+    : [...selectedChats, ...chats];
+};

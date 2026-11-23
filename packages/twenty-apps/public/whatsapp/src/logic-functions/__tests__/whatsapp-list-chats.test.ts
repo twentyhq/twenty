@@ -74,18 +74,83 @@ describe('whatsappListChatsHandler', () => {
       chats: [
         {
           id: 'chat-1',
+          chatIds: ['chat-1'],
           name: 'Priya Nair',
           isGroup: false,
           lastMessageAt: '2026-10-29T07:44:08.382Z',
         },
-        { id: 'chat-2', name: 'Q4 hiring', isGroup: true },
-        { id: 'chat-3', name: '+33633333333', isGroup: false },
+        { id: 'chat-2', chatIds: ['chat-2'], name: 'Q4 hiring', isGroup: true },
+        {
+          id: 'chat-3',
+          chatIds: ['chat-3'],
+          name: '+33633333333',
+          isGroup: false,
+        },
       ],
       hasMore: false,
     });
     expect(mocks.listMostRecentUnipileChats).toHaveBeenCalledWith(
       expect.objectContaining({ accountId: 'acc_1', limit: 50 }),
     );
+  });
+
+  it('shows the two chats WhatsApp keeps with one person as a single conversation', async () => {
+    mocks.listMostRecentUnipileChats.mockResolvedValue([
+      {
+        id: 'chat-lid',
+        name: 'Priya',
+        is_group: false,
+        is_1to1: true,
+        last_message_timestamp: '2026-10-29T07:44:08.382Z',
+        user: {
+          id: '199912345678901@lid',
+          public_identifier: '33622222222',
+          display_name: 'Priya Nair',
+        },
+      },
+      {
+        id: 'chat-phone',
+        name: 'Priya',
+        is_group: false,
+        is_1to1: true,
+        last_message_timestamp: '2026-10-01T00:00:00.000Z',
+        user: { id: '33622222222@s.whatsapp.net', display_name: 'Priya Nair' },
+      },
+    ]);
+
+    await expect(listChats()).resolves.toMatchObject({
+      chats: [
+        {
+          id: 'chat-lid',
+          chatIds: ['chat-lid', 'chat-phone'],
+          name: 'Priya Nair',
+          lastMessageAt: '2026-10-29T07:44:08.382Z',
+        },
+      ],
+    });
+  });
+
+  it('keeps two people who share a name apart', async () => {
+    mocks.listMostRecentUnipileChats.mockResolvedValue([
+      {
+        id: 'chat-1',
+        name: 'Alex',
+        is_group: false,
+        is_1to1: true,
+        user: { id: '33622222222@s.whatsapp.net', display_name: 'Alex' },
+      },
+      {
+        id: 'chat-2',
+        name: 'Alex',
+        is_group: false,
+        is_1to1: true,
+        user: { id: '33633333333@s.whatsapp.net', display_name: 'Alex' },
+      },
+    ]);
+
+    await expect(listChats()).resolves.toMatchObject({
+      chats: [{ chatIds: ['chat-1'] }, { chatIds: ['chat-2'] }],
+    });
   });
 
   it('says more conversations can be loaded when the page came back full', async () => {

@@ -16,6 +16,7 @@ import { SettingsRadioCard } from 'src/front-components/components/SettingsRadio
 import { type WhatsappHistoryConversationLimit } from 'src/types/whatsapp-history-conversation-limit.type';
 import { type WhatsappHistoryImportState } from 'src/types/whatsapp-history-import-state.type';
 import { type WhatsappImportPolicy } from 'src/types/whatsapp-import-policy.type';
+import { type WhatsappSelectedChat } from 'src/types/whatsapp-selected-chat.type';
 
 const StyledStack = styled.div`
   display: flex;
@@ -25,7 +26,7 @@ const StyledStack = styled.div`
 
 type WhatsappImportSectionProps = {
   importPolicy: WhatsappImportPolicy;
-  selectedChatIds: string[];
+  selectedChats: WhatsappSelectedChat[];
   areGroupChatsImported: boolean;
   historyConversationLimit: WhatsappHistoryConversationLimit;
   historyImport: WhatsappHistoryImportState | null;
@@ -33,7 +34,7 @@ type WhatsappImportSectionProps = {
   isSyncStarting: boolean;
   isSyncCancelling: boolean;
   onChange: (importPolicy: WhatsappImportPolicy) => void;
-  onSelectedChatIdsChange: (selectedChatIds: string[]) => void;
+  onSelectedChatsChange: (selectedChats: WhatsappSelectedChat[]) => void;
   onGroupChatsImportChange: (areGroupChatsImported: boolean) => void;
   onHistoryConversationLimitChange: (
     historyConversationLimit: WhatsappHistoryConversationLimit,
@@ -44,7 +45,7 @@ type WhatsappImportSectionProps = {
 
 export const WhatsappImportSection = ({
   importPolicy,
-  selectedChatIds,
+  selectedChats,
   areGroupChatsImported,
   historyConversationLimit,
   historyImport,
@@ -52,7 +53,7 @@ export const WhatsappImportSection = ({
   isSyncStarting,
   isSyncCancelling,
   onChange,
-  onSelectedChatIdsChange,
+  onSelectedChatsChange,
   onGroupChatsImportChange,
   onHistoryConversationLimitChange,
   onSync,
@@ -91,8 +92,8 @@ export const WhatsappImportSection = ({
             description: t('Import only the conversations you pick'),
             cardContentExpanded: (
               <WhatsappChatPicker
-                selectedChatIds={selectedChatIds}
-                onChange={onSelectedChatIdsChange}
+                selectedChats={selectedChats}
+                onChange={onSelectedChatsChange}
               />
             ),
           },
@@ -130,7 +131,7 @@ export const WhatsappImportSection = ({
         </Card.Root>
       )}
       {((importPolicy === 'SELECTED'
-        ? selectedChatIds.length > 0
+        ? selectedChats.length > 0
         : historyConversationLimit > 0) ||
         historyImport?.status === 'IMPORTING') && (
         <WhatsappSyncButton

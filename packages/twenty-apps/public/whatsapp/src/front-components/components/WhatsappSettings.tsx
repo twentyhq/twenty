@@ -230,7 +230,7 @@ export const WhatsappSettings = () => {
             />
             <WhatsappImportSection
               importPolicy={view.settings.importPolicy}
-              selectedChatIds={view.settings.selectedChatIds}
+              selectedChats={view.settings.selectedChats}
               areGroupChatsImported={view.settings.areGroupChatsImported}
               historyConversationLimit={view.settings.historyConversationLimit}
               historyImport={view.historyImport}
@@ -244,8 +244,8 @@ export const WhatsappSettings = () => {
               onChange={(importPolicy) =>
                 handleSettingsChange({ importPolicy })
               }
-              onSelectedChatIdsChange={(selectedChatIds) =>
-                handleSettingsChange({ selectedChatIds })
+              onSelectedChatsChange={(selectedChats) =>
+                handleSettingsChange({ selectedChats })
               }
               onGroupChatsImportChange={(areGroupChatsImported) =>
                 handleSettingsChange({ areGroupChatsImported })

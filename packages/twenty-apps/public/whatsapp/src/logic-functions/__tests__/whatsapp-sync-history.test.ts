@@ -126,7 +126,7 @@ describe('whatsappSyncHistoryHandler', () => {
   it('imports the selected conversations, whatever the number of past conversations', async () => {
     mocks.kvStore.set('whatsapp-settings:connection-id', {
       importPolicy: 'SELECTED',
-      selectedChatIds: ['chat-1'],
+      selectedChats: [{ id: 'chat-1', name: 'chat-1' }],
       historyConversationLimit: 0,
     });
 
@@ -144,7 +144,7 @@ describe('whatsappSyncHistoryHandler', () => {
   it('imports nothing while no conversation is selected', async () => {
     mocks.kvStore.set('whatsapp-settings:connection-id', {
       importPolicy: 'SELECTED',
-      selectedChatIds: [],
+      selectedChats: [],
     });
 
     await syncHistory();

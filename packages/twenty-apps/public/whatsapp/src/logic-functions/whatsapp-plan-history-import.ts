@@ -159,8 +159,8 @@ const planHistoryImport = async ({
     // The import job reads each selected conversation itself, so none is read here
     chats =
       importPolicy === 'SELECTED'
-        ? (await getWhatsappSettings(connectedAccountId)).selectedChatIds.map(
-            (id) => ({ id, name: '', is_group: false, is_1to1: false }),
+        ? (await getWhatsappSettings(connectedAccountId)).selectedChats.map(
+            ({ id, name }) => ({ id, name, is_group: false, is_1to1: false }),
           )
         : await listMostRecentUnipileChats({
             accountId: unipileAccountId,
