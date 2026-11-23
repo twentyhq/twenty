@@ -17,10 +17,12 @@ describe('findWorkspaceFromInviteHash should succeed (integration)', () => {
     });
 
     expect(data.findWorkspaceFromInviteHash.id).toBe(SEED_APPLE_WORKSPACE_ID);
-    expect(data.findWorkspaceFromInviteHash).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny({
+    expect(data.findWorkspaceFromInviteHash).toMatchSnapshot({
+      ...extractRecordIdsAndDatesAsExpectAny({
         ...data.findWorkspaceFromInviteHash,
       }),
-    );
+      // Other specs upload an Apple logo, so its value depends on test order
+      logo: expect.any(String),
+    });
   });
 });

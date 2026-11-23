@@ -10,6 +10,10 @@ const RECORD_UPDATE_PERMISSION_CONDITION =
 // Added to the tidy up command by a later upgrade command, so absent from the expressions this one handles
 const MANUAL_LAYOUT_CONDITION =
   ' and every(selectedRecords, "currentVersion.hasManualLayout")';
+// Rewritten to isPrivate by a 2.62 upgrade command
+const IS_PRIVATE_CONDITION = 'none(selectedRecords, "isPrivate")';
+const VISIBILITY_CONDITION =
+  'everyEquals(selectedRecords, "visibility", "WORKSPACE")';
 const WORKFLOW_COMMAND_UNIVERSAL_IDENTIFIERS = [
   '57f21a06-a17a-47b1-a123-90d90dbdf0b7',
   '91094438-b4c2-46ad-a23b-8af4b23ba514',
@@ -40,10 +44,9 @@ const getStandardItem = (universalIdentifier: string): FlatCommandMenuItem => {
   return {
     ...commandMenuItem,
     conditionalAvailabilityExpression:
-      commandMenuItem.conditionalAvailabilityExpression?.replace(
-        MANUAL_LAYOUT_CONDITION,
-        '',
-      ) ?? null,
+      commandMenuItem.conditionalAvailabilityExpression
+        ?.replace(MANUAL_LAYOUT_CONDITION, '')
+        .replace(IS_PRIVATE_CONDITION, VISIBILITY_CONDITION) ?? null,
   };
 };
 
