@@ -110,9 +110,8 @@ export class ViewDTO {
   @Field(() => String, { nullable: true })
   anyFieldFilterValue?: string | null;
 
-  // Nullable since cached views can predate the column and [ViewPresetFilter!]! fails the query
-  @Field(() => [ViewPresetFilter], { nullable: true })
-  presetFilters?: ViewPresetFilter[] | null;
+  @Field(() => ViewPresetFilter, { nullable: true })
+  presetFilter?: ViewPresetFilter | null;
 
   @Field(() => ViewCalendarLayout, { nullable: true })
   calendarLayout: ViewCalendarLayout | null;

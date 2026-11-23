@@ -91,7 +91,7 @@ export type ViewManifest = SyncableEntityOptions & {
   mainGroupByFieldMetadataUniversalIdentifier?: string;
   shouldHideEmptyGroups?: boolean;
   shouldDisplayGroupsAsTabs?: boolean;
-  presetFilters?: ViewPresetFilter[];
+  presetFilter?: ViewPresetFilter;
   groupLoadLimit?: number;
   anyFieldFilterValue?: string | null;
   kanbanColumnWidth?: number | null;

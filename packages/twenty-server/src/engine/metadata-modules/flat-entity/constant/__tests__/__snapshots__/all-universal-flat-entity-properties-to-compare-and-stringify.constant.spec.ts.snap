@@ -521,7 +521,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "kanbanAggregateOperation",
       "kanbanAggregateOperationFieldMetadataUniversalIdentifier",
       "anyFieldFilterValue",
-      "presetFilters",
+      "presetFilter",
       "calendarLayout",
       "calendarFieldMetadataUniversalIdentifier",
       "calendarEndFieldMetadataUniversalIdentifier",
@@ -535,7 +535,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "universalOverrides",
     ],
     "propertiesToStringify": [
-      "presetFilters",
       "universalOverrides",
     ],
   },

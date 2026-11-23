@@ -10,8 +10,8 @@ exports[`Create core view should refuse preset filters on a view of another obje
           "errors": [
             {
               "code": "INVALID_VIEW_DATA",
-              "message": "View preset filters must belong to the view object",
-              "userFriendlyMessage": "These preset filters are not available on this object",
+              "message": "View preset filter must belong to the view object",
+              "userFriendlyMessage": "This preset filter is not available on this object",
             },
           ],
           "flatEntityMinimalInformation": {
@@ -28,7 +28,7 @@ exports[`Create core view should refuse preset filters on a view of another obje
       "totalErrors": 1,
       "view": 1,
     },
-    "userFriendlyMessage": "These preset filters are not available on this object",
+    "userFriendlyMessage": "This preset filter is not available on this object",
   },
   "message": "Multiple validation errors occurred while creating view",
   "name": "GraphQLError",

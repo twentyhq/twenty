@@ -39,7 +39,7 @@ export const buildBaseUniversalFlatView = ({
     updatedAt: createdAt,
     deletedAt: null,
     anyFieldFilterValue: null,
-    presetFilters: [],
+    presetFilter: null,
     calendarFieldMetadataUniversalIdentifier: null,
     calendarEndFieldMetadataUniversalIdentifier: null,
     calendarLayout: null,

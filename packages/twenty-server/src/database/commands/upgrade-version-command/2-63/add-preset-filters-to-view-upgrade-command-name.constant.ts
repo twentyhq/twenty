@@ -1,2 +1,0 @@
-export const ADD_PRESET_FILTERS_TO_VIEW_UPGRADE_COMMAND_NAME =
-  '2.63.0_AddPresetFiltersToViewFastInstanceCommand_1795445246325';

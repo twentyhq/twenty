@@ -120,7 +120,7 @@ describe('Create core view', () => {
         name: 'Preset View',
         objectMetadataId: testObjectMetadataId,
         icon: 'IconList',
-        presetFilters: [ViewPresetFilter.INBOX_OPEN],
+        presetFilter: ViewPresetFilter.INBOX_OPEN,
       },
       expectToFail: true,
     });

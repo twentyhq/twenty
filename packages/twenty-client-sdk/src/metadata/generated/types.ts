@@ -4509,7 +4509,7 @@ export default {
             "position": [
                 8
             ],
-            "presetFilters": [
+            "presetFilter": [
                 698
             ],
             "shouldDisplayGroupsAsTabs": [
@@ -16740,7 +16740,7 @@ export default {
             "position": [
                 8
             ],
-            "presetFilters": [
+            "presetFilter": [
                 698
             ],
             "shouldDisplayGroupsAsTabs": [

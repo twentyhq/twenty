@@ -2007,7 +2007,7 @@ input CreateViewInput {
   """
   openRecordIn: ViewOpenRecordIn = SIDE_PANEL
   position: Float = 0
-  presetFilters: [ViewPresetFilter!]
+  presetFilter: ViewPresetFilter
   shouldDisplayGroupsAsTabs: Boolean = false
   shouldHideEmptyGroups: Boolean = false
   type: ViewType = TABLE
@@ -6429,7 +6429,7 @@ type View {
   objectMetadataId: UUID!
   openRecordIn: ViewOpenRecordIn! @deprecated(reason: "Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.")
   position: Float!
-  presetFilters: [ViewPresetFilter!]
+  presetFilter: ViewPresetFilter
   shouldDisplayGroupsAsTabs: Boolean
   shouldHideEmptyGroups: Boolean!
   type: ViewType!
@@ -6635,7 +6635,7 @@ enum ViewPresetFilter {
   INBOX_CHANNEL_OPEN
   INBOX_CHANNEL_SNOOZED
   INBOX_DONE
-  INBOX_MENTIONED
+  INBOX_MENTIONS
   INBOX_OPEN
   INBOX_SNOOZED
 }

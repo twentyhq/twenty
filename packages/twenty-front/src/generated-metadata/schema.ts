@@ -2121,7 +2121,7 @@ export type CreateViewInput = {
   /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
   position?: InputMaybe<Scalars['Float']['input']>;
-  presetFilters?: InputMaybe<Array<ViewPresetFilter>>;
+  presetFilter?: InputMaybe<ViewPresetFilter>;
   shouldDisplayGroupsAsTabs?: InputMaybe<Scalars['Boolean']['input']>;
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
   type?: InputMaybe<ViewType>;
@@ -8848,7 +8848,7 @@ export type View = {
   /** @deprecated Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn: ViewOpenRecordIn;
   position: Scalars['Float']['output'];
-  presetFilters?: Maybe<Array<ViewPresetFilter>>;
+  presetFilter?: Maybe<ViewPresetFilter>;
   shouldDisplayGroupsAsTabs?: Maybe<Scalars['Boolean']['output']>;
   shouldHideEmptyGroups: Scalars['Boolean']['output'];
   type: ViewType;
@@ -9066,7 +9066,7 @@ export enum ViewPresetFilter {
   INBOX_CHANNEL_OPEN = 'INBOX_CHANNEL_OPEN',
   INBOX_CHANNEL_SNOOZED = 'INBOX_CHANNEL_SNOOZED',
   INBOX_DONE = 'INBOX_DONE',
-  INBOX_MENTIONED = 'INBOX_MENTIONED',
+  INBOX_MENTIONS = 'INBOX_MENTIONS',
   INBOX_OPEN = 'INBOX_OPEN',
   INBOX_SNOOZED = 'INBOX_SNOOZED'
 }

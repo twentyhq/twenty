@@ -410,9 +410,9 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
       isOverridable: true,
     },
-    presetFilters: {
+    presetFilter: {
       toCompare: true,
-      toStringify: true,
+      toStringify: false,
       universalProperty: undefined,
     },
     calendarLayout: {
