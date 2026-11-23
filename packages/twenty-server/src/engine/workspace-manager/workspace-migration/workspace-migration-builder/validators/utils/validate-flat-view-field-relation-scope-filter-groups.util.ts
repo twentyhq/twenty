@@ -48,6 +48,20 @@ export const validateFlatViewFieldRelationScopeFilterGroups = (
     );
   }
 
+  // The front applies a single root filter group, so a second one would be dropped from the query
+  if (
+    filterGroups.filter(
+      ({ parentFilterGroupId }) => !isDefined(parentFilterGroupId),
+    ).length > 1
+  ) {
+    errors.push(
+      getInvalidFlatViewFieldRelationScopeError({
+        message: t`Relation scope can only have one root filter group`,
+        userFriendlyMessage: msg`Related records filter groups are invalid`,
+      }),
+    );
+  }
+
   for (const { parentFilterGroupId } of filterGroups) {
     if (!isDefined(parentFilterGroupId)) {
       continue;
