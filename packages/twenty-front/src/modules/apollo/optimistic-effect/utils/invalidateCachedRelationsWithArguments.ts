@@ -1,7 +1,8 @@
 import { type ApolloCache, type StoreObject } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 
-// Only the server applies a relation's filter, sort and limit, so its copies with arguments are dropped for the next read to refetch them
+import { isCachedRelationCopyWithArguments } from '@/apollo/optimistic-effect/utils/isCachedRelationCopyWithArguments';
+
 export const invalidateCachedRelationsWithArguments = ({
   cache,
   recordCacheId,
@@ -20,7 +21,9 @@ export const invalidateCachedRelationsWithArguments = ({
     id: recordCacheId,
     fields: {
       [relationFieldName]: (relationFieldValue, { storeFieldName, DELETE }) =>
-        storeFieldName === relationFieldName ? relationFieldValue : DELETE,
+        isCachedRelationCopyWithArguments({ storeFieldName, relationFieldName })
+          ? DELETE
+          : relationFieldValue,
     },
   });
 };
