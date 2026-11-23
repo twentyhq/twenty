@@ -70,11 +70,20 @@ describe('formatFieldMetadataItemInput', () => {
     });
   });
 
-  it('should clear the formula when it is emptied', () => {
+  it('should clear the formula of a formula field when it is emptied', () => {
     expect(
-      formatFieldMetadataItemInput({ settings: { decimals: 2 }, formula: ' ' })
-        .settings,
+      formatFieldMetadataItemInput({
+        settings: { decimals: 2, formula: { expression: 'price * 2' } },
+        formula: ' ',
+      }).settings,
     ).toEqual({ decimals: 2, formula: null });
+  });
+
+  it('should not add an empty formula to a field that has none', () => {
+    expect(
+      formatFieldMetadataItemInput({ settings: { decimals: 2 }, formula: '' })
+        .settings,
+    ).toEqual({ decimals: 2 });
   });
 
   it('should leave settings as they are when no formula is given', () => {

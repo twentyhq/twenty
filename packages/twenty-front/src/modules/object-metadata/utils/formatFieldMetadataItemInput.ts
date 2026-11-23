@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFormulaFieldMetadata } from 'twenty-shared/utils';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
@@ -28,8 +28,11 @@ export const formatFieldMetadataItemInput = (
       return input.settings;
     }
 
+    // Only a field that had a formula has one to clear
     if (!isNonEmptyString(formulaExpression)) {
-      return { ...input.settings, formula: null };
+      return isFormulaFieldMetadata({ settings: input.settings })
+        ? { ...input.settings, formula: null }
+        : input.settings;
     }
 
     const formula = isNonEmptyString(formulaCurrencyCodeExpression)

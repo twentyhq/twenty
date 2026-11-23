@@ -34,7 +34,6 @@ export const SettingsDataModelFieldFormulaForm = ({
   const { control } = useFormContext<SettingsDataModelFieldFormulaFormValues>();
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  // Rebuilding walks every field of the workspace, and the form re-renders on each keystroke
   const { fields, editorFields } = useMemo(
     () =>
       buildFormulaFieldEditorInputs({
