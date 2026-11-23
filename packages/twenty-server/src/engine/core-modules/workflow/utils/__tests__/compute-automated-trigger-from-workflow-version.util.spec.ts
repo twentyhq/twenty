@@ -25,7 +25,6 @@ describe('computeAutomatedTriggerFromWorkflowVersion', () => {
       computeAutomatedTriggerFromWorkflowVersion({ workflowVersion }),
     ).toEqual({
       workflowId: 'core-workflow-1',
-      legacyWorkflowId: 'workspace-workflow-1',
       applicationId: 'application-1',
       coreWorkflowVersionId: 'core-version-1',
       type: AutomatedTriggerType.DATABASE_EVENT,
