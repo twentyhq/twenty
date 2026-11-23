@@ -44,10 +44,11 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const apolloCoreClient = useApolloCoreClient();
 
-  const { findManyRecordsQuery } = useFindManyRecordsQuery({
-    objectNameSingular,
-    recordGqlFields,
-  });
+  const { findManyRecordsQuery, relationsWithArgumentsVariables } =
+    useFindManyRecordsQuery({
+      objectNameSingular,
+      recordGqlFields,
+    });
 
   const { handleFindManyRecordsError } = useHandleFindManyRecordsError({
     objectMetadataItem,
@@ -74,8 +75,9 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       filter,
       limit,
       orderBy,
+      ...relationsWithArgumentsVariables,
     }),
-    [filter, limit, orderBy],
+    [filter, limit, orderBy, relationsWithArgumentsVariables],
   );
 
   const [findManyRecords, { data, error, fetchMore }] =

@@ -16,8 +16,23 @@ const buildCalendarEventInput = (
   iCalUid: 'ical-uid-1',
   conferenceLinkUrl: 'https://meet.google.com/customer-sync',
   callRecorderPreference: undefined,
+  calendarChannelIds: ['calendar-channel-1'],
   ...overrides,
 });
+
+const OWNER_USER_WORKSPACE_ID_BY_CALENDAR_CHANNEL_ID = new Map([
+  ['calendar-channel-1', 'user-workspace-1'],
+]);
+
+const buildPolicyResult = (
+  overrides: Partial<CallRecorderPolicyCalendarEventInput>,
+) =>
+  buildCallRecorderPolicyResult({
+    calendarEvent: buildCalendarEventInput(overrides),
+    ownerUserWorkspaceIdByCalendarChannelId:
+      OWNER_USER_WORKSPACE_ID_BY_CALENDAR_CHANNEL_ID,
+    now: NOW,
+  });
 
 describe('buildCallRecorderPolicyResult', () => {
   afterEach(() => {
@@ -27,12 +42,9 @@ describe('buildCallRecorderPolicyResult', () => {
   });
 
   it('requests a bot for the ON wire value', () => {
-    const policyResult = buildCallRecorderPolicyResult(
-      buildCalendarEventInput({
-        callRecorderPreference: 'ON',
-      }),
-      NOW,
-    );
+    const policyResult = buildPolicyResult({
+      callRecorderPreference: 'ON',
+    });
 
     expect(policyResult.callRecorderPreference).toBe('ON');
     expect(policyResult.shouldRequestBot).toBe(true);
@@ -40,12 +52,9 @@ describe('buildCallRecorderPolicyResult', () => {
   });
 
   it('does not request a bot for the OFF wire value', () => {
-    const policyResult = buildCallRecorderPolicyResult(
-      buildCalendarEventInput({
-        callRecorderPreference: 'OFF',
-      }),
-      NOW,
-    );
+    const policyResult = buildPolicyResult({
+      callRecorderPreference: 'OFF',
+    });
 
     expect(policyResult.callRecorderPreference).toBe('OFF');
     expect(policyResult.shouldRequestBot).toBe(false);
@@ -56,14 +65,34 @@ describe('buildCallRecorderPolicyResult', () => {
     process.env[CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME] =
       'false';
 
-    const policyResult = buildCallRecorderPolicyResult(
-      buildCalendarEventInput({
-        callRecorderPreference: 'ON',
-      }),
-      NOW,
-    );
+    const policyResult = buildPolicyResult({
+      callRecorderPreference: 'ON',
+    });
 
     expect(policyResult.shouldRequestBot).toBe(false);
     expect(policyResult.reason).toBe('CALENDAR_BOT_SCHEDULING_DISABLED');
+  });
+
+  it('requests a bot for a meeting on a member calendar', () => {
+    const policyResult = buildPolicyResult({});
+
+    expect(policyResult.shouldRequestBot).toBe(true);
+    expect(policyResult.reason).toBe('RECORDING_ENABLED');
+  });
+
+  it('does not request a bot for a meeting linked to no calendar channel', () => {
+    const policyResult = buildPolicyResult({ calendarChannelIds: [] });
+
+    expect(policyResult.shouldRequestBot).toBe(false);
+    expect(policyResult.reason).toBe('NO_OWNER');
+  });
+
+  it('does not request a bot when the calendar channel of the meeting is gone', () => {
+    const policyResult = buildPolicyResult({
+      calendarChannelIds: ['deleted-calendar-channel'],
+    });
+
+    expect(policyResult.shouldRequestBot).toBe(false);
+    expect(policyResult.reason).toBe('NO_OWNER');
   });
 });

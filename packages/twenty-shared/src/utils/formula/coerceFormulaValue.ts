@@ -35,14 +35,14 @@ const coerceToDateTime = (value: unknown): string | null => {
     return null;
   }
 
-  return formatExpressionDate(
-    expressionDate.isDateOnly
-      ? {
-          isDateOnly: false,
-          dateTime: expressionDate.date.toZonedDateTime('UTC'),
-        }
-      : expressionDate,
-  );
+  if (!expressionDate.isDateOnly) {
+    return formatExpressionDate(expressionDate);
+  }
+
+  return formatExpressionDate({
+    isDateOnly: false,
+    dateTime: expressionDate.date.toZonedDateTime('UTC'),
+  });
 };
 
 export const coerceFormulaValue = ({
