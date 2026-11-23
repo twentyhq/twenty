@@ -324,7 +324,7 @@ describe('channel visibility through row level rules (integration)', () => {
     });
   });
 
-  it('lets an API key keep the access of its role, masked by channel visibility, until channel visibility is enforced on API keys', async () => {
+  it('lets an API key on a role assignable to users read each channel as a member who does not own it, until channel visibility is enforced on API keys', async () => {
     const findJonyMessagesAsApiKey = async () => {
       const response = await makeGraphqlApiRequest(
         findManyOperationFactory({

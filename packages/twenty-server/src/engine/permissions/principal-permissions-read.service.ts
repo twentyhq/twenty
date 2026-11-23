@@ -9,6 +9,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { getWorkspaceMemberIndividualRoleUniversalIdentifier } from 'src/engine/permissions/workspace-member-individual-role/utils/get-workspace-member-individual-role-universal-identifier.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
@@ -132,10 +133,25 @@ export class PrincipalPermissionsReadService {
       return undefined;
     }
 
-    const { flatRoleMaps } = await this.workspaceCacheService.getOrRecompute(
-      authContext.workspace.id,
-      ['flatRoleMaps'],
-    );
+    const { flatRoleMaps, apiKeyRoleMap } =
+      await this.workspaceCacheService.getOrRecompute(
+        authContext.workspace.id,
+        ['flatRoleMaps', 'apiKeyRoleMap'],
+      );
+    const apiKeyRoleId = apiKeyRoleMap[authContext.apiKey.id];
+    const apiKeyFlatRole = isDefined(apiKeyRoleId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: apiKeyRoleId,
+          flatEntityMaps: flatRoleMaps,
+        })
+      : undefined;
+
+    if (
+      !apiKeyFlatRole?.canBeAssignedToUsers ||
+      !apiKeyFlatRole.canReadAllObjectRecords
+    ) {
+      return undefined;
+    }
 
     return flatRoleMaps.byUniversalIdentifier[
       getWorkspaceMemberIndividualRoleUniversalIdentifier({
