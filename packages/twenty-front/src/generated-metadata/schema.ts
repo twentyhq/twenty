@@ -615,6 +615,7 @@ export type Application = {
 export type ApplicationAuthorization = {
   __typename?: 'ApplicationAuthorization';
   applicationId: Scalars['UUID']['output'];
+  applicationLogoUrl?: Maybe<Scalars['String']['output']>;
   applicationName: Scalars['String']['output'];
   applicationUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
@@ -1971,6 +1972,7 @@ export type CreatePageLayoutTabInput = {
 };
 
 export type CreatePageLayoutWidgetInput = {
+  conditionalAvailability?: InputMaybe<Scalars['JSON']['input']>;
   configuration: Scalars['JSON']['input'];
   objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   pageLayoutTabId: Scalars['UUID']['input'];
@@ -2626,6 +2628,7 @@ export enum FeatureFlagKey {
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
   IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED = 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED',
   IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED = 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED',
+  IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS = 'IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS',
   IS_CHANNEL_VISIBILITY_RLS_ENABLED = 'IS_CHANNEL_VISIBILITY_RLS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CREATE_RECORDS_PERMISSION_ENABLED = 'IS_CREATE_RECORDS_PERMISSION_ENABLED',
@@ -3960,7 +3963,6 @@ export type Mutation = {
   updateCalendarChannel: CalendarChannel;
   updateCommandMenuItem: CommandMenuItem;
   updateEmailGroupChannel: MessageChannel;
-  updateFocusedTab: Scalars['Boolean']['output'];
   updateFrontComponent: FrontComponent;
   updateGettingStarted: GettingStartedProgress;
   updateInboxNotificationSettings: UserWorkspace;
@@ -3986,6 +3988,7 @@ export type Mutation = {
   updatePageLayoutWithTabsAndWidgets: PageLayout;
   updatePasswordViaResetToken: InvalidatePassword;
   updateSkill: Skill;
+  updateTabPresence: Scalars['Boolean']['output'];
   updateTimelineActivityType: TimelineActivityType;
   updateUnsubscribeTopic: UnsubscribeTopic;
   updateUsageLimit: UsageLimit;
@@ -5268,11 +5271,6 @@ export type MutationUpdateEmailGroupChannelArgs = {
 };
 
 
-export type MutationUpdateFocusedTabArgs = {
-  input: UpdateFocusedTabInput;
-};
-
-
 export type MutationUpdateFrontComponentArgs = {
   input: UpdateFrontComponentInput;
 };
@@ -5404,6 +5402,11 @@ export type MutationUpdatePasswordViaResetTokenArgs = {
 
 export type MutationUpdateSkillArgs = {
   input: UpdateSkillInput;
+};
+
+
+export type MutationUpdateTabPresenceArgs = {
+  input: UpdateTabPresenceInput;
 };
 
 
@@ -5949,7 +5952,10 @@ export type PageLayoutWidget = {
   applicationGrantedIframeMediaPermissions?: Maybe<Array<IframeMediaPermission>>;
   applicationId: Scalars['UUID']['output'];
   applicationName?: Maybe<Scalars['String']['output']>;
+  conditionalAvailability?: Maybe<Scalars['JSON']['output']>;
+  /** @deprecated Use conditionalAvailability instead */
   conditionalAvailabilityExpression?: Maybe<Scalars['String']['output']>;
+  /** @deprecated Use conditionalAvailability instead */
   conditionalDisplay?: Maybe<Scalars['JSON']['output']>;
   configuration: WidgetConfiguration;
   createdAt: Scalars['DateTime']['output'];
@@ -6333,6 +6339,7 @@ export type Query = {
   object: Object;
   objectRecordCounts: Array<ObjectRecordCount>;
   objects: ObjectConnection;
+  onlineWorkspaceMemberIds: Array<Scalars['UUID']['output']>;
   pieChartData: PieChartData;
   previewMessageCampaignAudience: CampaignAudiencePreviewDto;
   previewMessageCampaignSend: PreviewMessageCampaignSendOutputDto;
@@ -7619,6 +7626,11 @@ export type SyncAppMessageFoldersInput = {
   messageChannelId: Scalars['UUID']['input'];
 };
 
+export enum TabPresenceStatus {
+  FOCUSED = 'FOCUSED',
+  OPEN = 'OPEN'
+}
+
 export type TasksConfiguration = {
   __typename?: 'TasksConfiguration';
   configurationType: WidgetConfigurationType;
@@ -7935,11 +7947,6 @@ export type UpdateFieldInput = {
   universalIdentifier?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type UpdateFocusedTabInput = {
-  isFocused: Scalars['Boolean']['input'];
-  tabId: Scalars['String']['input'];
-};
-
 export type UpdateFrontComponentInput = {
   /** The id of the front component to update */
   id: Scalars['UUID']['input'];
@@ -8106,6 +8113,7 @@ export type UpdatePageLayoutTabWithWidgetsInput = {
 };
 
 export type UpdatePageLayoutWidgetInput = {
+  conditionalAvailability?: InputMaybe<Scalars['JSON']['input']>;
   conditionalAvailabilityExpression?: InputMaybe<Scalars['String']['input']>;
   conditionalDisplay?: InputMaybe<Scalars['JSON']['input']>;
   configuration?: InputMaybe<Scalars['JSON']['input']>;
@@ -8118,6 +8126,7 @@ export type UpdatePageLayoutWidgetInput = {
 };
 
 export type UpdatePageLayoutWidgetWithIdInput = {
+  conditionalAvailability?: InputMaybe<Scalars['JSON']['input']>;
   conditionalAvailabilityExpression?: InputMaybe<Scalars['String']['input']>;
   conditionalDisplay?: InputMaybe<Scalars['JSON']['input']>;
   configuration?: InputMaybe<Scalars['JSON']['input']>;
@@ -8167,6 +8176,11 @@ export type UpdateSkillInput = {
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateTabPresenceInput = {
+  status: TabPresenceStatus;
+  tabId: Scalars['String']['input'];
 };
 
 export type UpdateTimelineActivityTypeInput = {

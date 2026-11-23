@@ -6,6 +6,7 @@ import { type NavigationMenuItemAddStep } from '@/navigation-menu-item/edit/type
 import { navigationMenuItemsWithHiddenSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsWithHiddenSelector';
 import { getHiddenWorkspaceNavigationMenuItems } from '@/navigation-menu-item/common/utils/getHiddenWorkspaceNavigationMenuItems';
 import { getNavigationMenuItemTabId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemTabId';
+import { getNavigationMenuItemContainerId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemContainerId';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { NavigationMenuAddSectionHiddenItems } from '@/navigation-menu-item/edit/components/NavigationMenuAddSectionHiddenItems';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
@@ -99,6 +100,13 @@ export const NavigationMenuItemAddDropdownContent = ({
           tabId: targetTabId,
         })
       : [];
+  const targetContainerId = getNavigationMenuItemContainerId({
+    item: { parentId },
+    items: currentItems,
+  });
+  const isInTargetContainer = (item: (typeof currentItems)[number]) =>
+    getNavigationMenuItemContainerId({ item, items: currentItems }) ===
+    targetContainerId;
 
   const navigate = (next: Step) => {
     goToPage(next);
@@ -129,8 +137,8 @@ export const NavigationMenuItemAddDropdownContent = ({
     search,
     objectId,
     parentId,
-    currentItems: currentTabItems,
-    hiddenItems: hiddenNavigationMenuItemsInTab,
+    currentItems: currentTabItems.filter(isInTargetContainer),
+    hiddenItems: hiddenNavigationMenuItemsInTab.filter(isInTargetContainer),
     isSearchingAllItems,
     addItem,
     navigateToStep: navigate,
@@ -142,7 +150,7 @@ export const NavigationMenuItemAddDropdownContent = ({
   });
 
   const titles: Record<Step, string> = {
-    main: t`Add menu item`,
+    main: t`Add item`,
     object: t`Object`,
     view: t`View`,
     record: t`Record`,

@@ -40,8 +40,11 @@ export default defineView({
 * Vizualizarea principală a listei obiectului aparține serverului: `key` este învechit și este ignorat, astfel încât o vizualizare din manifest nu o poate revendica niciodată. Livrați un element de navigare `VIEW` dacă doriți ca vizualizarea dvs. să fie la un singur clic distanță în bara laterală.
 * `fields` controlează ce coloane apar și ordinea acestora. Fiecare câmp face referire la un `fieldMetadataUniversalIdentifier`. Pentru a face referire la un câmp de sistem creat automat, cum ar fi `createdAt`, consultă [Țintirea metadatelor de sistem](/ro/developers/extend/apps/data/system-fields).
 * Setați `isCanonical: false` pe un câmp pentru a adăuga o coloană suplimentară pentru un câmp pe care vizualizarea îl afișează deja. O vizualizare are cel mult o coloană canonică per câmp, dar oricâte coloane necanonice. Acestea nu sunt permise pe câmpul identificator al etichetei obiectului sau în vizualizările widgeturilor, iar `isCanonical` este setat atunci când este creată coloana: modificarea lui ulterior nu are niciun efect.
-* O coloană necanonică dintr-un câmp de relație many-to-one poate seta `relationTargetFieldMetadataUniversalIdentifier` pentru a afișa un câmp al înregistrării asociate în locul înregistrării în sine. Ținta trebuie să fie un câmp fără relație al obiectului asociat.
+* O coloană necanonică dintr-un câmp de relație de tip many-to-one sau dintr-un câmp de relație de tip one-to-many cu un `relationScope` poate seta `relationTargetFieldMetadataUniversalIdentifier` pentru a afișa un câmp al înregistrărilor asociate în locul înregistrărilor înseși. Ținta trebuie să fie un câmp fără relație al obiectului asociat.
 * O sortare după un câmp de relație de tip many-to-one poate seta `relationTargetFieldMetadataUniversalIdentifier` pentru a ordona înregistrările după un câmp al înregistrării asociate, cum ar fi persoanele după angajații companiei lor. Ținta trebuie să fie un câmp care nu este de relație al obiectului asociat.
+* O coloană necanonică dintr-un câmp de relație de tip one-to-many poate seta `relationScope` pentru a filtra, sorta și limita înregistrările asociate pe care le afișează. Consultați [Domeniul relației](#relation-scope).
+* O coloană necanonică dintr-un câmp de relație unu-la-mai-mulți cu un `relationScope` poate seta `aggregateOperation` în cadrul `relationScope` pentru a afișa, pe fiecare rând, un rezumat al înregistrărilor asociate pe care domeniul le păstrează în locul înregistrărilor, cum ar fi numărul de sarcini deschise sau suma valorilor oportunităților deschise. `COUNT` nu acceptă nicio țintă, în timp ce `SUM`, `AVG`, `MIN` și `MAX` necesită ca `relationTargetFieldMetadataUniversalIdentifier` să fie setat la un câmp al obiectului asociat care acceptă operația (un câmp numeric sau de monedă ori o dată pentru `MIN` și `MAX`). Domeniul său păstrează doar filtre: sortările și o limită sunt respinse. Aceste coloane sunt doar pentru afișare. Aceasta este separată de propriul `aggregateOperation` al vizualizării, care stabilește totalul afișat în subsolul coloanei.
+* Setați `label` pentru un câmp pentru a înlocui antetul implicit al coloanei. Este trunchiată la cel mult 63 de caractere, iar o etichetă goală afișează antetul implicit. Un spațiu de lucru poate redenumi o coloană deținută de aplicația dvs. fără a modifica manifestul.
 * Puteți declara, de asemenea, `filters`, `filterGroups`, `sorts`, `groups` și `fieldGroups` pentru configurații avansate.
 * `position` controlează ordonarea atunci când există mai multe vizualizări pentru același obiect.
 
@@ -127,6 +130,50 @@ Câmpul `value` este întotdeauna o valoare serializabilă JSON, dar forma sa a�
 | `IS`, `IS_BEFORE`, `IS_AFTER` pe `DATE` / `DATE_TIME` | șir în format ISO 8601                         | `'2025-01-01T00:00:00Z'` |
 | `IS_EMPTY`, `IS_NOT_EMPTY`                            | șir gol                                        | `''`                     |
 | `IS` pe `BOOLEAN`                                     | `'true'` sau `'false'`                         | `'true'`                 |
+
+## Domeniu de relație
+
+Un `relationScope` într-o coloană necanonică unu-la-mai-mulți, cum ar fi "Sarcini deschise" pentru companii, restrânge înregistrările asociate pe care le afișează coloana. Filtrele și sortările urmează structurile de filtrare și sortare ale vizualizării de mai sus, cu referințe la câmpuri ca identificatori universali:
+
+```ts
+fields: [
+  {
+    universalIdentifier: '...',
+    fieldMetadataUniversalIdentifier: COMPANY_TASK_TARGETS_FIELD_UNIVERSAL_IDENTIFIER,
+    isCanonical: false,
+    position: 5,
+    relationScope: {
+      filters: [
+        {
+          id: '0f7d3a52-4d1e-4c38-9a59-0a3c2e1b8f11',
+          fieldMetadataUniversalIdentifier: TASK_TARGET_TASK_FIELD_UNIVERSAL_IDENTIFIER,
+          relationTargetFieldMetadataUniversalIdentifier: TASK_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+          operand: ViewFilterOperand.IS_NOT,
+          value: ['DONE'],
+        },
+      ],
+      filterGroups: [],
+      sorts: [
+        {
+          fieldMetadataUniversalIdentifier: TASK_TARGET_TASK_FIELD_UNIVERSAL_IDENTIFIER,
+          relationTargetFieldMetadataUniversalIdentifier: TASK_DUE_AT_FIELD_UNIVERSAL_IDENTIFIER,
+          direction: ViewSortDirection.ASC,
+        },
+      ],
+      limit: 1,
+    },
+  },
+],
+```
+
+| Proprietate    | Descriere                                                                                                                                                                                                                                                                                                   |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `filtre`       | Fiecare filtru are un `id` local (un UUID), un `fieldMetadataUniversalIdentifier` al obiectului asociat, un `operand`, o `value` și, opțional, `subFieldName`, `relationTargetFieldMetadataUniversalIdentifier` (un câmp al înregistrării către care indică o relație mai-mulți-la-unu) și `filterGroupId`. |
+| `filterGroups` | Fiecare grup are un `id` local, un `logicalOperator` de tip `AND`, `OR` sau `NOT` și un `parentFilterGroupId` opțional. Filtrele fără grup sunt combinate cu `AND`.                                                                                                                                         |
+| `sorts`        | Fiecare sortare are un `fieldMetadataUniversalIdentifier`, o `direction` și, opțional, `subFieldName` și `relationTargetFieldMetadataUniversalIdentifier`.                                                                                                                                                  |
+| `limită`       | Câte înregistrări asociate să fie afișate, de la 1 la 60.                                                                                                                                                                                                                                                   |
+
+Ștergerea sau dezactivarea unui câmp pe care îl utilizează un domeniu elimină coloana, în loc să elimine condiția și să afișeze mai multe înregistrări.
 
 ## Cum apar vizualizările în interfața utilizatorului
 

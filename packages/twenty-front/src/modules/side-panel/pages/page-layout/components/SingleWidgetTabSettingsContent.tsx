@@ -4,7 +4,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { TabSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/TabSettingsPlacementSection';
-import { SingleWidgetTabVisibilityDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/SingleWidgetTabVisibilityDropdownContent';
+import { WidgetVisibilityOptionsList } from '@/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityOptionsList';
 import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
 import { useTranslatedVisibilityLabel } from '@/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel';
 import { getTabSettingsPlacementItems } from '@/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems';
@@ -61,9 +61,7 @@ export const SingleWidgetTabSettingsContent = ({
   const { openDialog } = useDialog();
   const { openDropdown } = useOpenDropdown();
 
-  const visibilityLabel = useTranslatedVisibilityLabel(
-    singleWidget.conditionalAvailabilityExpression,
-  );
+  const visibilityLabel = useTranslatedVisibilityLabel(singleWidget);
 
   const handleResetToDefault = () => {
     if (isResetToDefaultDisabled) {
@@ -122,12 +120,9 @@ export const SingleWidgetTabSettingsContent = ({
                 align="end"
                 collisionPadding={{ left: 0, right: 0 }}
               >
-                <SingleWidgetTabVisibilityDropdownContent
-                  widgetId={singleWidget.id}
-                  currentExpression={
-                    singleWidget.conditionalAvailabilityExpression
-                  }
+                <WidgetVisibilityOptionsList
                   pageLayoutId={pageLayoutId}
+                  widget={singleWidget}
                 />
               </DropdownContent>
             </DropdownRoot>
