@@ -9,7 +9,7 @@ export const isChannelVisibilityEnforcedThroughRules = ({
   authContext,
 }: {
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
-  authContext: WorkspaceAuthContext;
+  authContext: Pick<WorkspaceAuthContext, 'type'>;
 }): boolean =>
   isChannelVisibilityRlsEnabled(featureFlagsMap) &&
   !(

@@ -18,7 +18,6 @@ type RolesPermissionsContext = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 };
 
-// TODO(@charlesBochet): delete once channel visibility is enforced on API keys everywhere
 @Injectable()
 export class ApiKeyChannelVisibilityExemptionService {
   constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
@@ -43,8 +42,6 @@ export class ApiKeyChannelVisibilityExemptionService {
     });
   }
 
-  // Access groups are built from every entry, so the exempt API key permissions
-  // join under their own keys to keep the groups they read through
   async findRolesPermissionsWithApiKeyEntries(
     context: RolesPermissionsContext,
   ): Promise<Record<string, RoleRecordsPermissions>> {
@@ -95,11 +92,15 @@ export class ApiKeyChannelVisibilityExemptionService {
       return rolesPermissions;
     }
 
-    const { flatRoleMaps, flatRowLevelPermissionRuleMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatRoleMaps',
-        'flatRowLevelPermissionRuleMaps',
-      ]);
+    const {
+      flatRoleMaps,
+      flatRowLevelPermissionRuleMaps,
+      flatObjectPermissionMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatRoleMaps',
+      'flatRowLevelPermissionRuleMaps',
+      'flatObjectPermissionMaps',
+    ]);
 
     return buildApiKeyExemptRolesPermissions({
       rolesPermissions,
@@ -107,6 +108,7 @@ export class ApiKeyChannelVisibilityExemptionService {
       flatRoleMaps,
       flatObjectMetadataMaps,
       flatRowLevelPermissionRuleMaps,
+      flatObjectPermissionMaps,
     });
   }
 }

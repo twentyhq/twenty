@@ -1,5 +1,4 @@
 import { Command } from 'nest-commander';
-import { getObjectPermissionUniversalIdentifier } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   RowLevelPermissionPredicateGroupLogicalOperator,
@@ -14,6 +13,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { CHANNEL_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-object-universal-identifiers.constant';
+import { getRevokedChannelObjectPermissionUniversalIdentifier } from 'src/engine/permissions/channel-visibility/utils/get-revoked-channel-object-permission-universal-identifier.util';
 import { getAttachmentNotOfMessageUniversalIdentifier } from 'src/engine/permissions/channel-visibility/utils/get-attachment-not-of-message-universal-identifier.util';
 import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -142,11 +142,11 @@ export class RevokeRoleWideAccessToChannelObjectsCommand extends ProvisionedWork
         if (!isDefined(existingObjectPermission)) {
           operations.flatEntityToCreate.push({
             id: v4(),
-            universalIdentifier: getObjectPermissionUniversalIdentifier({
-              applicationUniversalIdentifier,
-              roleUniversalIdentifier,
-              objectUniversalIdentifier: objectMetadataUniversalIdentifier,
-            }),
+            universalIdentifier:
+              getRevokedChannelObjectPermissionUniversalIdentifier({
+                objectUniversalIdentifier: objectMetadataUniversalIdentifier,
+                roleUniversalIdentifier,
+              }),
             applicationUniversalIdentifier,
             roleUniversalIdentifier,
             objectMetadataUniversalIdentifier,

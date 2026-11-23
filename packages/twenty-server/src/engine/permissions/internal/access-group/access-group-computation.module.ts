@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { ApiKeyChannelVisibilityExemptionService } from 'src/engine/permissions/channel-visibility/services/api-key-channel-visibility-exemption.service';
+import { ApiKeyChannelVisibilityExemptionModule } from 'src/engine/permissions/channel-visibility/api-key-channel-visibility-exemption.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RecomputeRecordAccessGroupIdsOfRecordsJob } from 'src/engine/permissions/internal/access-group/jobs/recompute-record-access-group-ids-of-records.job';
@@ -21,6 +21,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
 
 @Module({
   imports: [
+    ApiKeyChannelVisibilityExemptionModule,
     CacheLockModule,
     MetricsModule,
     RecordPermissionRepositoryModule,
@@ -29,7 +30,6 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     WorkspaceMigrationRunnerModule,
   ],
   providers: [
-    ApiKeyChannelVisibilityExemptionService,
     AccessGroupPropagationPlanService,
     RecordAccessGroupComputationService,
     RecordAccessGroupMetadataMapsService,
