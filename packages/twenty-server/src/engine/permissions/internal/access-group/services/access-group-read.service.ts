@@ -68,6 +68,36 @@ export class AccessGroupReadService {
   async findPrincipalsRelatedRecordPathAccessGroupCompactIds(
     request: PermissionsObjectAccessRequest,
   ): Promise<number[]> {
+    return this.findRelatedRecordPathAccessGroupCompactIds({
+      request,
+      isAccessGroupKept: () => true,
+    });
+  }
+
+  async findPrincipalsRelatedRecordPathAccessGroupCompactIdsShowingField({
+    request,
+    sourceObjectMetadataId,
+    sourceFieldMetadataId,
+  }: {
+    request: PermissionsObjectAccessRequest;
+    sourceObjectMetadataId: string;
+    sourceFieldMetadataId: string;
+  }): Promise<number[]> {
+    return this.findRelatedRecordPathAccessGroupCompactIds({
+      request,
+      isAccessGroupKept: ({ objectMetadataId, unreadableFieldIds }) =>
+        objectMetadataId !== sourceObjectMetadataId ||
+        !unreadableFieldIds.includes(sourceFieldMetadataId),
+    });
+  }
+
+  private async findRelatedRecordPathAccessGroupCompactIds({
+    request,
+    isAccessGroupKept,
+  }: {
+    request: PermissionsObjectAccessRequest;
+    isAccessGroupKept: (accessGroup: AccessGroupWithoutCompactId) => boolean;
+  }): Promise<number[]> {
     if (!canRelatedRecordPathExtendAccess(request)) {
       return [];
     }
@@ -86,7 +116,7 @@ export class AccessGroupReadService {
           await this.findPrincipalWorkspaceMember(request.principals),
         ].filter(isDefined),
         flatFieldMetadataMaps,
-      }),
+      }).filter(isAccessGroupKept),
     });
   }
 

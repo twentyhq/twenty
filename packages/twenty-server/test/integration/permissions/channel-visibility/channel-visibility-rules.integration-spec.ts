@@ -12,6 +12,7 @@ import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type RevokeRoleWideAccessToChannelObjectsCommand } from 'src/engine/permissions/channel-visibility/commands/revoke-role-wide-access-to-channel-objects.command';
 import { CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-child-object-universal-identifiers.constant';
@@ -267,6 +268,100 @@ describe('channel visibility through row level rules (integration)', () => {
     expect(await findAttachmentIds()).toEqual(
       [companyAttachmentId, messageAttachmentId].sort(),
     );
+  });
+
+  it('shows a thread subject only through a message whose subject the reader can read', async () => {
+    await setJonyChannelVisibility('METADATA');
+
+    const findJonyMessageThreads = async (token: string) => {
+      const messagesResponse = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'message',
+          objectMetadataPluralName: 'messages',
+          gqlFields: 'id messageThreadId',
+          filter: {
+            messageChannelMessageAssociations: {
+              messageChannelId: { eq: MESSAGE_CHANNEL_DATA_SEED_IDS.JONY },
+            },
+          },
+        }),
+        token,
+      );
+
+      expect(messagesResponse.body.errors).toBeUndefined();
+
+      const messageThreadIds = [
+        ...new Set<string>(
+          messagesResponse.body.data.messages.edges
+            .map(
+              ({ node }: { node: { messageThreadId: string | null } }) =>
+                node.messageThreadId,
+            )
+            .filter(isDefined),
+        ),
+      ];
+      const messageThreadsResponse = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'messageThread',
+          objectMetadataPluralName: 'messageThreads',
+          gqlFields: 'id subject messages { edges { node { subject } } }',
+          filter: { id: { in: messageThreadIds } },
+        }),
+        token,
+      );
+
+      expect(messageThreadsResponse.body.errors).toBeUndefined();
+
+      return messageThreadsResponse.body.data.messageThreads.edges.map(
+        ({
+          node,
+        }: {
+          node: {
+            subject: string;
+            messages: { edges: { node: { subject: string } }[] };
+          };
+        }) => ({
+          subject: node.subject,
+          hasMessageWithReadableSubject: node.messages.edges.some(
+            ({ node: message }) =>
+              message.subject !==
+              FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+          ),
+        }),
+      );
+    };
+
+    const ownerMessageThreads = await findJonyMessageThreads(
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(ownerMessageThreads.length).toBeGreaterThan(0);
+    expect(
+      ownerMessageThreads.some(
+        ({ subject }: { subject: string }) =>
+          subject === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+      ),
+    ).toBe(false);
+
+    const guestMessageThreads = await findJonyMessageThreads(
+      APPLE_PHIL_GUEST_ACCESS_TOKEN,
+    );
+
+    expect(
+      guestMessageThreads.some(
+        ({ subject }: { subject: string }) =>
+          subject === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+      ),
+    ).toBe(true);
+
+    for (const {
+      subject,
+      hasMessageWithReadableSubject,
+    } of guestMessageThreads) {
+      expect(subject !== FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED).toBe(
+        hasMessageWithReadableSubject,
+      );
+    }
   });
 
   it('lets the owner of a metadata channel read every field', async () => {
