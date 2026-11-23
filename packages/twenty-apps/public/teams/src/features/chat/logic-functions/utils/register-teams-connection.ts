@@ -45,8 +45,7 @@ const matchTeamsDirectoryOnConnect = async ({
   }
 };
 
-// The claim follows the connection, not the Enable chat setting: nothing runs when that setting
-// changes, so a claim tied to it would go stale. The setting only gates message handling.
+// Claimed whatever the Enable chat setting: nothing runs when it changes, so a claim tied to it would go stale.
 export const registerTeamsConnection = async ({
   connectedAccountId,
   workspaceId,
