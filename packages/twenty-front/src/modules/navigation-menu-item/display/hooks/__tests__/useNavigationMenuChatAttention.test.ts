@@ -37,6 +37,7 @@ const mockSummary = (
   summary: Partial<ReturnType<typeof useInboxOpenThreadsSummary>>,
 ) =>
   jest.mocked(useInboxOpenThreadsSummary).mockReturnValue({
+    isOpenThreadsSummaryLoaded: true,
     openThreadCount: 0,
     unreadOpenThreadCount: 0,
     needsInputThreadCount: 0,
