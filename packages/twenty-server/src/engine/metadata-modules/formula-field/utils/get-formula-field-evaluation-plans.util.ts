@@ -1,5 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -12,42 +10,28 @@ const formulaFieldEvaluationPlansCache = new WeakMap<
   WeakMap<FlatObjectMetadata, FormulaFieldEvaluationPlan[]>
 >();
 
-export const getFormulaFieldEvaluationPlans = ({
-  flatObjectMetadata,
-  flatObjectMetadataMaps,
-  flatFieldMetadataMaps,
-}: {
+type GetFormulaFieldEvaluationPlansArgs = {
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-}): FormulaFieldEvaluationPlan[] => {
-  const existingPlansByObjectMetadata = formulaFieldEvaluationPlansCache.get(
-    flatFieldMetadataMaps,
-  );
-  const cachedPlansByObjectMetadata =
-    existingPlansByObjectMetadata ??
+};
+
+export const getFormulaFieldEvaluationPlans = (
+  args: GetFormulaFieldEvaluationPlansArgs,
+): FormulaFieldEvaluationPlan[] => {
+  const { flatObjectMetadata, flatFieldMetadataMaps } = args;
+  const plansByObjectMetadata =
+    formulaFieldEvaluationPlansCache.get(flatFieldMetadataMaps) ??
     new WeakMap<FlatObjectMetadata, FormulaFieldEvaluationPlan[]>();
+  const plans =
+    plansByObjectMetadata.get(flatObjectMetadata) ??
+    buildFormulaFieldEvaluationPlans(args);
 
-  if (!isDefined(existingPlansByObjectMetadata)) {
-    formulaFieldEvaluationPlansCache.set(
-      flatFieldMetadataMaps,
-      cachedPlansByObjectMetadata,
-    );
-  }
-
-  const cachedPlans = cachedPlansByObjectMetadata.get(flatObjectMetadata);
-
-  if (cachedPlans) {
-    return cachedPlans;
-  }
-
-  const plans = buildFormulaFieldEvaluationPlans({
-    flatObjectMetadata,
-    flatObjectMetadataMaps,
+  formulaFieldEvaluationPlansCache.set(
     flatFieldMetadataMaps,
-  });
-
-  cachedPlansByObjectMetadata.set(flatObjectMetadata, plans);
+    plansByObjectMetadata,
+  );
+  plansByObjectMetadata.set(flatObjectMetadata, plans);
 
   return plans;
 };

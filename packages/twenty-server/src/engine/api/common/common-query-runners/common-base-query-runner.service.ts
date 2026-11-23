@@ -280,23 +280,22 @@ export abstract class CommonBaseQueryRunnerService<
         queryRunnerContext,
       );
 
+    const selectContext = {
+      flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
+      recordReadRestrictions: extendedQueryRunnerContext.recordReadRestrictions,
+      flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+    };
+
     const { result, relationAggregatedValues } = await this.run(
       {
         ...processedArgs,
         selectedFieldsResult: addFormulaFieldDependenciesToSelect({
           selection: addTimelineActivityObjectColumnsToSelect({
             selection: processedArgs.selectedFieldsResult,
-            flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
-            recordReadRestrictions:
-              extendedQueryRunnerContext.recordReadRestrictions,
-            flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
-            flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+            ...selectContext,
           }),
-          flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
-          recordReadRestrictions:
-            extendedQueryRunnerContext.recordReadRestrictions,
-          flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
-          flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+          ...selectContext,
         }),
       },
       {

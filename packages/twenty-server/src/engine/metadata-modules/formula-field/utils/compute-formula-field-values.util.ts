@@ -33,10 +33,6 @@ export const computeFormulaFieldValues = <TRecord extends ObjectRecord>({
   formulaFieldEvaluationPlans: FormulaFieldEvaluationPlan[];
   now: string;
 }): TRecord => {
-  if (formulaFieldEvaluationPlans.length === 0) {
-    return record;
-  }
-
   const selectedFormulaFieldEvaluationPlans =
     formulaFieldEvaluationPlans.filter(({ fieldName }) => fieldName in record);
 
