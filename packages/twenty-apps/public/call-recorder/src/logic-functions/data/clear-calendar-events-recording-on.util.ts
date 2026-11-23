@@ -23,9 +23,7 @@ export const clearCalendarEventsRecordingOn = async (
           __args: {
             filter: {
               id: { in: calendarEventIdBatch },
-              callRecorderPreference: {
-                in: [CallRecorderPreference.ON, CallRecorderPreference.AUTO],
-              },
+              callRecorderPreference: { eq: CallRecorderPreference.AUTO },
             },
             data: {
               callRecorderPreference: null,

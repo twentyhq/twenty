@@ -236,9 +236,8 @@ class FakeCoreApiClient {
           filter.id.in.includes(calendarEvent.id) &&
           (filter.callRecorderPreference.is === 'NULL'
             ? (calendarEvent.callRecorderPreference ?? null) === null
-            : filter.callRecorderPreference.in.includes(
-                calendarEvent.callRecorderPreference,
-              )),
+            : calendarEvent.callRecorderPreference ===
+              filter.callRecorderPreference.eq),
       );
 
       for (const calendarEvent of updatedCalendarEvents) {
@@ -522,6 +521,38 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     expect(client.calendarEvents[0].callRecorderPreference).toBeNull();
   });
 
+  it.each([
+    ['is canceled', { isCanceled: true }],
+    [
+      'starts beyond the scheduling horizon',
+      {
+        startsAt: '2026-01-08T13:00:00.000Z',
+        endsAt: '2026-01-08T14:00:00.000Z',
+      },
+    ],
+  ])(
+    'keeps an On set by hand on a meeting that %s',
+    async (_situation, calendarEventOverrides) => {
+      const client = buildFakeCoreApiClient({
+        calendarEvents: [
+          buildCalendarEvent({
+            ...calendarEventOverrides,
+            callRecorderPreference: 'ON',
+          }),
+        ],
+      });
+
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: ['calendar-event-1'],
+        now: NOW,
+      });
+
+      expect(recallBotCreateCalls()).toEqual([]);
+      expect(client.calendarEvents[0].callRecorderPreference).toBe('ON');
+    },
+  );
+
   it('books no bot for a meeting with no preference that is on no member calendar', async () => {
     const client = buildFakeCoreApiClient({
       calendarEvents: [
@@ -779,7 +810,10 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
   it('clears recordingOn before an enqueue failure and re-arms the canceled request on retry', async () => {
     const client = buildFakeCoreApiClient({
       calendarEvents: [
-        buildCalendarEvent({ isCanceled: true, callRecorderPreference: 'ON' }),
+        buildCalendarEvent({
+          isCanceled: true,
+          callRecorderPreference: 'AUTO',
+        }),
       ],
       callRecordings: [
         {
