@@ -60,6 +60,7 @@ const Card = styled.article`
 // point, with a halftone sized for the card (<region>-card.webp) so the dots
 // stay crisp instead of blurring when the band's still is shrunk.
 const Cover = styled.div`
+  background-color: ${color('black')};
   border-bottom: 1px solid ${semanticColor.line};
   height: 160px;
   overflow: hidden;

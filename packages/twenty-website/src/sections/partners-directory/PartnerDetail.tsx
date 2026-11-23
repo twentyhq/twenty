@@ -46,8 +46,10 @@ import { partnerBaseRegion } from './partner-base-region';
 import { RegionMapPoint } from './RegionMapPoint';
 
 // The partner's region: the same still as its directory card
-// (public/images/partners/regions), with the partner's place on it.
+// (public/images/partners/regions), dashes in the region's accent on black like
+// the customer story covers, with the partner's place on it.
 const MapBand = styled.div`
+  background-color: ${color('black')};
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(2)};
   height: 200px;

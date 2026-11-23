@@ -69,7 +69,7 @@ export function PartnersDirectory({
   const { i18n } = useLingui();
 
   return (
-    <SectionShell rhythm="section" scheme="muted">
+    <SectionShell rhythm="section" scheme="light">
       <SectionStack>
         <Header id={PARTNER_DIRECTORY_ANCHOR_ID} tabIndex={-1}>
           <SectionIntro>

@@ -20,11 +20,11 @@ const MapFrame = styled.div`
   transform: translateX(-50%);
 `;
 
-// As on the earlier globe: a green dot, cut out of the blue dots by a white
-// edge, ringed in green.
+// A white dot, cut out of the region's dashes by a black edge, ringed in
+// white: it stays readable whatever the region's accent.
 const Point = styled.span`
-  background-color: ${color('green')};
-  border: 2px solid ${color('white')};
+  background-color: ${color('white')};
+  border: 2px solid ${color('black')};
   border-radius: 50%;
   height: ${spacing(4)};
   position: absolute;
@@ -32,7 +32,7 @@ const Point = styled.span`
   width: ${spacing(4)};
 
   &::after {
-    border: 1px solid ${color('green')};
+    border: 1px solid ${color('white')};
     border-radius: 50%;
     content: '';
     inset: calc(-1 * ${spacing(2)});
