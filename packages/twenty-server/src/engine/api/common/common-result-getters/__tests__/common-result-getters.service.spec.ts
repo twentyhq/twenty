@@ -14,7 +14,6 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const buildFlatEntityMaps = <
   TFlatEntity extends FlatFieldMetadata | FlatObjectMetadata,
@@ -64,7 +63,6 @@ describe('CommonResultGettersService', () => {
       providers: [
         CommonResultGettersService,
         { provide: FileUrlService, useValue: { signFileByIdUrl } },
-        { provide: WorkspaceCacheService, useValue: {} },
       ],
     }).compile();
     const service = module.get(CommonResultGettersService);

@@ -150,7 +150,6 @@ const validateAndTransformSingleGroupByFieldOrThrow = ({
       name: fieldMetadata.name,
       isSystem: fieldMetadata.isSystem,
       relationType,
-      settings: fieldMetadata.settings,
     })
   ) {
     throw new CommonQueryRunnerException(

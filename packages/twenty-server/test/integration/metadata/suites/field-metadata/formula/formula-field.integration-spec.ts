@@ -329,7 +329,7 @@ describe('Formula fields', () => {
       ),
     ).toEqual({
       totalValue: { amountMicros: 50000000, currencyCode: 'USD' },
-      unknownCurrencyValue: null,
+      unknownCurrencyValue: { amountMicros: null, currencyCode: null },
     });
     expect(await findGadget('totalValue { currencyCode }')).toEqual({
       totalValue: { currencyCode: 'USD' },
@@ -430,14 +430,14 @@ describe('Formula fields', () => {
     );
   });
 
-  it('should reject filtering on a formula field', async () => {
+  const findGadgetNames = async (queryArguments: string) => {
     const response = await makeGraphqlApiRequest({
       query: gql`
         query {
-          formulaGadgets(filter: { total: { gt: 10 } }) {
+          formulaGadgets(${queryArguments}) {
             edges {
               node {
-                id
+                name
               }
             }
           }
@@ -445,29 +445,139 @@ describe('Formula fields', () => {
       `,
     });
 
-    expect(response.body.errors[0].message).toBe(
-      'Field "total" is a formula field and cannot be filtered on',
+    expect(response.body.errors).toBeUndefined();
+
+    return response.body.data.formulaGadgets.edges.map(
+      ({ node }: { node: { name: string } }) => node.name,
     );
+  };
+
+  it('should filter on formula fields, including one read through a lookup', async () => {
+    expect(await findGadgetNames('filter: { total: { gt: 10 } }')).toEqual([
+      'Widget',
+    ]);
+    expect(
+      await findGadgetNames('filter: { supplierLabel: { like: "Acme%" } }'),
+    ).toEqual(['Widget']);
+    expect(
+      await findGadgetNames('filter: { isExpensive: { eq: false } }'),
+    ).toEqual(['Orphan']);
+    expect(
+      await findGadgetNames(
+        'filter: { or: [{ total: { lt: 10 } }, { isExpensive: { eq: true } }] }, orderBy: [{ name: AscNullsLast }]',
+      ),
+    ).toEqual(['Orphan', 'Widget']);
   });
 
-  it('should reject sorting on a formula field', async () => {
+  it('should sort on a formula field', async () => {
+    expect(await findGadgetNames('orderBy: [{ total: AscNullsLast }]')).toEqual(
+      ['Orphan', 'Widget'],
+    );
+    expect(
+      await findGadgetNames('orderBy: [{ total: DescNullsLast }]'),
+    ).toEqual(['Widget', 'Orphan']);
+    expect(
+      await findGadgetNames('orderBy: [{ supplierLabel: DescNullsLast }]'),
+    ).toEqual(['Widget', 'Orphan']);
+  });
+
+  it('should aggregate a formula field', async () => {
     const response = await makeGraphqlApiRequest({
       query: gql`
         query {
-          formulaGadgets(orderBy: [{ total: AscNullsLast }]) {
-            edges {
-              node {
-                id
-              }
-            }
+          formulaGadgets(filter: { total: { gt: 0 } }) {
+            totalCount
+            sumTotal
+            avgTotal
+            minTotal
+            maxTotal
           }
         }
       `,
     });
 
-    expect(response.body.errors[0].message).toBe(
-      'Field "total" is a formula field and cannot be sorted on',
-    );
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.formulaGadgets).toEqual({
+      totalCount: 2,
+      sumTotal: 126,
+      avgTotal: 63,
+      minTotal: 1,
+      maxTotal: 125,
+    });
+  });
+
+  it('should group records by a formula field', async () => {
+    const response = await makeGraphqlApiRequest({
+      query: gql`
+        query {
+          formulaGadgetsGroupBy(
+            groupBy: [{ isExpensive: true }]
+            orderBy: [{ isExpensive: AscNullsLast }]
+          ) {
+            groupByDimensionValues
+            totalCount
+            sumTotal
+          }
+        }
+      `,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.formulaGadgetsGroupBy).toEqual([
+      { groupByDimensionValues: [false], totalCount: 1, sumTotal: 1 },
+      { groupByDimensionValues: [true], totalCount: 1, sumTotal: 125 },
+    ]);
+  });
+
+  it('should filter records by the formula of their related records', async () => {
+    const findSupplierNames = async (minimumTotal: number) => {
+      const response = await makeGraphqlApiRequest({
+        query: gql`
+          query FormulaSuppliers($minimumTotal: Float!) {
+            formulaSuppliers(
+              filter: { gadgets: { total: { gt: $minimumTotal } } }
+            ) {
+              edges {
+                node {
+                  name
+                }
+              }
+            }
+          }
+        `,
+        variables: { minimumTotal },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+
+      return response.body.data.formulaSuppliers.edges.map(
+        ({ node }: { node: { name: string } }) => node.name,
+      );
+    };
+
+    expect(await findSupplierNames(100)).toEqual(['Acme']);
+    expect(await findSupplierNames(1000)).toEqual([]);
+  });
+
+  it('should only write the records a formula filter matches', async () => {
+    const response = await makeGraphqlApiRequest({
+      query: gql`
+        mutation {
+          updateFormulaGadgets(
+            filter: { total: { lt: 10 } }
+            data: { quantity: 3 }
+          ) {
+            name
+            total
+          }
+        }
+      `,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.updateFormulaGadgets).toEqual([
+      { name: 'Orphan', total: 3 },
+    ]);
   });
 
   it.each([
@@ -488,6 +598,18 @@ describe('Formula fields', () => {
       type: FieldMetadataType.NUMBER,
       expression: 'arrayLength(noteTargets)',
       message: 'Invalid formula: "noteTargets" is not a to-one relation',
+    },
+    {
+      reason: 'a value of another type than the field',
+      type: FieldMetadataType.NUMBER,
+      expression: 'name',
+      message: 'Invalid formula: This field needs a number, but got text',
+    },
+    {
+      reason: 'operands of types that cannot be compared',
+      type: FieldMetadataType.BOOLEAN,
+      expression: 'price > name',
+      message: 'Invalid formula: ">" cannot mix a number and text',
     },
     {
       reason: 'a field type that does not support formulas',

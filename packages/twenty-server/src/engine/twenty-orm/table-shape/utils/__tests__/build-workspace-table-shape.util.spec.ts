@@ -1,6 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/utils/build-workspace-table-shape.util';
@@ -91,6 +92,7 @@ describe('buildWorkspaceTableShape', () => {
   const tableShape = buildWorkspaceTableShape({
     workspaceId: WORKSPACE_ID,
     flatObjectMetadata,
+    flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
     flatFieldMetadataMaps: buildFlatFieldMetadataMaps(flatFieldMetadatas),
   });
 
@@ -107,6 +109,7 @@ describe('buildWorkspaceTableShape', () => {
         applicationUniversalIdentifier: 'a-custom-application',
         nameSingular: 'rocket',
       }),
+      flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
       flatFieldMetadataMaps: buildFlatFieldMetadataMaps(flatFieldMetadatas),
     });
 

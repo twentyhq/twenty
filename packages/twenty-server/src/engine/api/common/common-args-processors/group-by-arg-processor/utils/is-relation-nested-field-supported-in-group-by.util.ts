@@ -23,6 +23,5 @@ export const isRelationNestedFieldSupportedInGroupBy = ({
     name: nestedFieldMetadata.name,
     isSystem: nestedFieldMetadata.isSystem,
     relationType,
-    settings: nestedFieldMetadata.settings,
   });
 };

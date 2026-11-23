@@ -4,11 +4,7 @@ import { AggregateOperations } from '@/object-record/record-table/constants/Aggr
 import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
-import {
-  capitalize,
-  isFieldMetadataDateKind,
-  isFormulaFieldMetadata,
-} from 'twenty-shared/utils';
+import { capitalize, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type NameForAggregation = {
@@ -30,8 +26,7 @@ export const getAvailableAggregationsFromObjectFields = (
 
       if (
         field.type === FieldMetadataType.RELATION ||
-        field.type === FieldMetadataType.MORPH_RELATION ||
-        isFormulaFieldMetadata(field)
+        field.type === FieldMetadataType.MORPH_RELATION
       ) {
         acc[field.name] = {
           [AggregateOperations.COUNT]: 'totalCount',

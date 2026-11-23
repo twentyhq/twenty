@@ -95,6 +95,30 @@ describe('validateFlatFieldMetadataFormula', () => {
     ).toEqual([]);
   });
 
+  it('should refuse a formula whose value does not fit the field type', () => {
+    expect(
+      validate({
+        flatFieldMetadataToValidate: {
+          universalSettings: { formula: { expression: 'supplier.name' } },
+        },
+      }),
+    ).toEqual([
+      {
+        message: 'Invalid formula: This field needs a number, but got text',
+      },
+    ]);
+    expect(
+      validate({
+        flatFieldMetadataToValidate: {
+          type: FieldMetadataType.BOOLEAN,
+          universalSettings: { formula: { expression: 'price > "cheap"' } },
+        },
+      }),
+    ).toEqual([
+      { message: 'Invalid formula: ">" cannot mix a number and text' },
+    ]);
+  });
+
   it('should refuse a formula on a field type that cannot hold one', () => {
     expect(
       validate({

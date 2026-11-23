@@ -92,6 +92,7 @@ export { truncateTowardZero } from './expression-date/truncateTowardZero';
 export { compileExpression } from './expression/compileExpression';
 export { createExpressionEvaluator } from './expression/createExpressionEvaluator';
 export { getExpressionSyntaxError } from './expression/getExpressionSyntaxError';
+export { parseExpressionInstructions } from './expression/parseExpressionInstructions';
 export { reduceExpressionNumbers } from './expression/reduceExpressionNumbers';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { computeMorphRelationGqlFieldName } from './fieldMetadata/compute-morph-relation-gql-field-name';
@@ -241,10 +242,7 @@ export {
 } from './filter/utils/validation-schemas/jsonRelationFilterValueSchema';
 export { formatBytes } from './format/formatBytes';
 export { formatToShortNumber } from './format/formatToShortNumber';
-export { coerceFormulaCurrencyCode } from './formula/coerceFormulaCurrencyCode';
-export { coerceFormulaValue } from './formula/coerceFormulaValue';
 export { compileFormulaExpression } from './formula/compileFormulaExpression';
-export { createFormulaEvaluator } from './formula/createFormulaEvaluator';
 export { getFieldMetadataFormulaBindings } from './formula/getFieldMetadataFormulaBindings';
 export { getFieldMetadataFormulaCurrencyCodeExpression } from './formula/getFieldMetadataFormulaCurrencyCodeExpression';
 export { getFieldMetadataFormulaExpression } from './formula/getFieldMetadataFormulaExpression';

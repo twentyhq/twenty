@@ -97,6 +97,7 @@ export type { ExpressionDate } from './ExpressionDate';
 export type { ExpressionDatePart } from './ExpressionDatePart';
 export type { ExpressionDateUnit } from './ExpressionDateUnit';
 export type { ExpressionEvaluationResult } from './ExpressionEvaluationResult';
+export type { ExpressionInstruction } from './ExpressionInstruction';
 export type { ExpressionSyntaxError } from './ExpressionSyntaxError';
 export type { ExpressionSyntaxErrorCode } from './ExpressionSyntaxErrorCode';
 export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEndsWithId';
@@ -162,10 +163,7 @@ export type {
 export { FILTERABLE_FIELD_TYPES } from './FilterableFieldType';
 export { FirstDayOfTheWeek } from './FirstDayOfTheWeek';
 export type { FormatRecordSerializedRelationProperties } from './FormatRecordSerializedRelationProperties';
-export type { FormulaCurrencyValue } from './FormulaCurrencyValue';
-export type { FormulaEvaluator } from './FormulaEvaluator';
 export type { FormulaFieldMetadataType } from './FormulaFieldMetadataType';
-export type { FormulaValue } from './FormulaValue';
 export type { FromTo } from './FromToType';
 export { HTTPMethod } from './HttpMethod';
 export type { IframeMediaPermission } from './IframeMediaPermission';

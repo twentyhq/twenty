@@ -6,11 +6,7 @@ import {
   FieldMetadataType,
   RelationType,
 } from 'twenty-shared/types';
-import {
-  isDefined,
-  isFieldReferenceFilterOperator,
-  isFormulaFieldMetadata,
-} from 'twenty-shared/utils';
+import { isDefined, isFieldReferenceFilterOperator } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -375,16 +371,6 @@ export class FilterArgProcessorService {
         `Field metadata not found for field ${key}`,
         CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-      );
-    }
-
-    if (isFormulaFieldMetadata(fieldMetadata)) {
-      throw new CommonQueryRunnerException(
-        `Field "${key}" is a formula field and cannot be filtered on`,
-        CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
-        {
-          userFriendlyMessage: msg`Invalid filter : "${key}" is a formula field and cannot be filtered on.`,
-        },
       );
     }
 

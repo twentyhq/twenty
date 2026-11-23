@@ -52,7 +52,6 @@ export const ChartGroupByFieldSelectionDropdownContentBase = ({
           name: field.name,
           isSystem: field.isSystem ?? false,
           relationType: field.settings?.relationType ?? null,
-          settings: field.settings,
         });
       }),
     [sourceObjectMetadataItem?.fields],

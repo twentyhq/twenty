@@ -15,6 +15,8 @@ import {
   type FormulaSourceUniversalFlatFieldMetadata,
   type FormulaSourceUniversalFlatObjectMetadata,
 } from 'src/engine/metadata-modules/formula-field/utils/build-formula-field-descriptors-from-universal-flat-entity-maps.util';
+import { buildFormulaSqlReferenceResolverFromDescriptors } from 'src/engine/metadata-modules/formula-field/utils/build-formula-sql-reference-resolver-from-descriptors.util';
+import { compileFormulaFieldToSql } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-field-to-sql.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
@@ -185,26 +187,55 @@ export const validateFlatFieldMetadataFormula = ({
     });
   }
 
-  for (const formulaExpression of [expression, currencyCodeExpression]) {
-    if (!isDefined(formulaExpression)) {
-      continue;
-    }
+  const toInvalidFormulaError = ({
+    errorMessage,
+    value,
+  }: {
+    errorMessage: string;
+    value: string;
+  }): FlatFieldMetadataValidationError => ({
+    code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+    message: `Invalid formula: ${errorMessage}`,
+    userFriendlyMessage: msg`Invalid formula: ${errorMessage}`,
+    value,
+  });
+  const syntaxErrors = [expression, currencyCodeExpression]
+    .filter(isDefined)
+    .flatMap((formulaExpression) => {
+      const compilation = compileFormulaExpression({
+        expression: formulaExpression,
+        fields,
+      });
 
-    const compilation = compileFormulaExpression({
-      expression: formulaExpression,
-      fields,
+      return compilation.isValid
+        ? []
+        : [
+            toInvalidFormulaError({
+              errorMessage: compilation.errorMessage,
+              value: formulaExpression,
+            }),
+          ];
     });
 
-    if (!compilation.isValid) {
-      const errorMessage = compilation.errorMessage;
+  if (errors.length > 0 || syntaxErrors.length > 0) {
+    return [...errors, ...syntaxErrors];
+  }
 
-      errors.push({
-        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: `Invalid formula: ${errorMessage}`,
-        userFriendlyMessage: msg`Invalid formula: ${errorMessage}`,
-        value: formulaExpression,
-      });
-    }
+  const sqlCompilation = compileFormulaFieldToSql({
+    fieldMetadataType: type,
+    expression,
+    currencyCodeExpression,
+    selectEnumSqlType: 'text',
+    resolveReference: buildFormulaSqlReferenceResolverFromDescriptors(fields),
+  });
+
+  if (!sqlCompilation.isValid) {
+    return [
+      toInvalidFormulaError({
+        errorMessage: sqlCompilation.errorMessage,
+        value: expression,
+      }),
+    ];
   }
 
   return errors;

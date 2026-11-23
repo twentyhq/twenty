@@ -4,12 +4,7 @@ import {
   type OrderByDirection,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
-import {
-  isDefined,
-  isFormulaFieldMetadata,
-  isNonEmptyArray,
-  isPlainObject,
-} from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -143,16 +138,6 @@ const resolveRelationLeaf = ({
     flatFieldMetadata: targetFieldMetadata,
   });
 
-  if (isFormulaFieldMetadata(targetFieldMetadata)) {
-    if (strictValidation) {
-      throwInvalidOrderByInput(
-        `Field "${path[0]}.${targetFieldName}" is a formula field and cannot be sorted on`,
-      );
-    }
-
-    return null;
-  }
-
   if (isCompositeFieldMetadataType(targetFieldMetadata.type)) {
     const targetCompositeProperty = compositeTypeDefinitions
       .get(targetFieldMetadata.type)
@@ -265,15 +250,6 @@ export const resolveOrderByLeaves = ({
         flatObjectMetadata,
         flatFieldMetadata: fieldMetadata,
       });
-
-      if (isFormulaFieldMetadata(fieldMetadata)) {
-        if (strictValidation) {
-          throwInvalidOrderByInput(
-            `Field "${fieldName}" is a formula field and cannot be sorted on`,
-          );
-        }
-        continue;
-      }
 
       if (
         isReferencedByFieldName &&

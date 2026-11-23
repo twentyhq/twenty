@@ -13,7 +13,7 @@ import { Fragment, useState } from 'react';
 import { IconCheck } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { isNonEmptyArray, isFormulaFieldMetadata } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useLingui } from '@lingui/react/macro';
@@ -51,12 +51,7 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
 
   const availableFieldMetadataItems = (
     sourceObjectMetadataItem?.fields ?? []
-  ).filter(
-    (field) =>
-      !isFieldRelation(field) &&
-      !isHiddenSystemField(field) &&
-      !isFormulaFieldMetadata(field),
-  );
+  ).filter((field) => !isFieldRelation(field) && !isHiddenSystemField(field));
   const filteredFieldMetadataItems = filterBySearchQuery({
     items: availableFieldMetadataItems,
     searchQuery,
