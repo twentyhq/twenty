@@ -11,6 +11,10 @@ const companyPeopleField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: companyObjectMetadataItem,
   fieldName: 'people',
 });
+const emailsField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: personObjectMetadataItem,
+  fieldName: 'emails',
+});
 
 const EMPTY_RELATION_SCOPE = { filters: [], filterGroups: [], sorts: [] };
 
@@ -80,5 +84,36 @@ describe('getScopedRelationColumn', () => {
     },
   ])('is not scoped for $title', ({ args }) => {
     expect(getColumn(args)).toBeUndefined();
+  });
+
+  it('resolves the field of the related records a scoped column shows', () => {
+    expect(
+      getColumn({
+        recordField: {
+          ...SCOPED_RECORD_FIELD,
+          relationTargetFieldMetadataId: emailsField.id,
+        },
+      })?.lookupTarget,
+    ).toMatchObject({
+      relationFieldName: 'people',
+      relationObjectMetadataItem: { id: personObjectMetadataItem.id },
+      lookupTargetFieldMetadataItem: { id: emailsField.id },
+      lookupTargetFieldDefinition: { metadata: { fieldName: 'emails' } },
+    });
+  });
+
+  it('has no lookup target for a field that is not on the related object', () => {
+    const scopedRelationColumn = getColumn({
+      recordField: {
+        ...SCOPED_RECORD_FIELD,
+        relationTargetFieldMetadataId: getMockFieldMetadataItemOrThrow({
+          objectMetadataItem: companyObjectMetadataItem,
+          fieldName: 'name',
+        }).id,
+      },
+    });
+
+    expect(scopedRelationColumn).toBeDefined();
+    expect(scopedRelationColumn?.lookupTarget).toBeUndefined();
   });
 });

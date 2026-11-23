@@ -1,5 +1,6 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { getRelationLookupTarget } from '@/object-record/record-column-lookup/utils/getRelationLookupTarget';
 import { type ScopedRelationAlias } from '@/object-record/record-column-scope/types/ScopedRelationAlias';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
@@ -13,11 +14,16 @@ export const getScopedRelationColumn = ({
   objectMetadataItems,
   isLookupColumnsEnabled,
 }: {
-  recordField: Pick<RecordField, 'isCanonical' | 'relationScope'>;
+  recordField: Pick<
+    RecordField,
+    'isCanonical' | 'relationScope' | 'relationTargetFieldMetadataId'
+  >;
   fieldMetadataItem: FieldMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
   isLookupColumnsEnabled: boolean;
-}): Pick<ScopedRelationAlias, 'relationObjectMetadataItem'> | undefined => {
+}):
+  | Pick<ScopedRelationAlias, 'relationObjectMetadataItem' | 'lookupTarget'>
+  | undefined => {
   if (
     !isLookupColumnsEnabled ||
     isCanonicalRecordField(recordField) ||
@@ -36,5 +42,16 @@ export const getScopedRelationColumn = ({
     return undefined;
   }
 
-  return { relationObjectMetadataItem };
+  if (!isDefined(recordField.relationTargetFieldMetadataId)) {
+    return { relationObjectMetadataItem };
+  }
+
+  return {
+    relationObjectMetadataItem,
+    lookupTarget: getRelationLookupTarget({
+      relationFieldMetadataItem: fieldMetadataItem,
+      relationTargetFieldMetadataId: recordField.relationTargetFieldMetadataId,
+      objectMetadataItems,
+    }),
+  };
 };

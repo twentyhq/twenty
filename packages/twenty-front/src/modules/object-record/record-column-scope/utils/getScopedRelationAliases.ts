@@ -3,12 +3,16 @@ import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fie
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ScopedRelationAlias } from '@/object-record/record-column-scope/types/ScopedRelationAlias';
+import { isLookupTargetFieldReadable } from '@/object-record/record-column-lookup/utils/isLookupTargetFieldReadable';
 import { getRelationScopeReachedFields } from '@/object-record/record-column-scope/utils/getRelationScopeReachedFields';
 import { getRelationScopeRecordFiltersAndSorts } from '@/object-record/record-column-scope/utils/getRelationScopeRecordFiltersAndSorts';
 import { getScopedRelationColumn } from '@/object-record/record-column-scope/utils/getScopedRelationColumn';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { getQueryVariablesFromFiltersAndSorts } from '@/views/utils/getQueryVariablesFromFiltersAndSorts';
-import { type RecordFilterValueDependencies } from 'twenty-shared/types';
+import {
+  type RecordFilterValueDependencies,
+  type RecordGqlFieldsRelationWithArguments,
+} from 'twenty-shared/types';
 import {
   computeRelationWithArgumentsResponseKey,
   findById,
@@ -25,7 +29,11 @@ export const getScopedRelationAliases = ({
 }: {
   recordFields: Pick<
     RecordField,
-    'id' | 'fieldMetadataItemId' | 'isCanonical' | 'relationScope'
+    | 'id'
+    | 'fieldMetadataItemId'
+    | 'isCanonical'
+    | 'relationScope'
+    | 'relationTargetFieldMetadataId'
   >[];
   fieldMetadataItemByFieldMetadataItemId: Record<string, FieldMetadataItem>;
   objectMetadataItems: EnrichedObjectMetadataItem[];
@@ -54,7 +62,7 @@ export const getScopedRelationAliases = ({
       return [];
     }
 
-    const { relationObjectMetadataItem } = scopedRelationColumn;
+    const { relationObjectMetadataItem, lookupTarget } = scopedRelationColumn;
 
     const { filter, orderBy } = getQueryVariablesFromFiltersAndSorts({
       ...getRelationScopeRecordFiltersAndSorts({
@@ -67,14 +75,19 @@ export const getScopedRelationAliases = ({
       filterValueDependencies,
     });
 
-    const relationWithArguments = {
+    const relationWithArguments: RecordGqlFieldsRelationWithArguments = {
       relationFieldName: fieldMetadataItem.name,
       filter,
       orderBy,
       first: relationScope.limit ?? undefined,
       // The server caps the related records even without a limit, so the count of the left out ones is always needed
       aggregateGqlFieldNames: [TOTAL_COUNT_GQL_FIELD_NAME],
-      recordGqlFields: buildIdentifierGqlFields(relationObjectMetadataItem),
+      recordGqlFields: {
+        ...buildIdentifierGqlFields(relationObjectMetadataItem),
+        ...(isDefined(lookupTarget) && {
+          [lookupTarget.lookupTargetFieldMetadataItem.name]: true,
+        }),
+      },
     };
 
     const reachedFields = getRelationScopeReachedFields({
@@ -91,6 +104,7 @@ export const getScopedRelationAliases = ({
         ),
         relationObjectMetadataItem,
         relationWithArguments,
+        lookupTarget,
         reachedObjectMetadataItemIds: [
           ...new Set([
             relationObjectMetadataItem.id,
@@ -99,12 +113,15 @@ export const getScopedRelationAliases = ({
             ),
           ]),
         ],
-        isRestricted: !reachedFields.every(
-          ({ objectMetadataItem, fieldMetadataId }) =>
-            objectMetadataItem?.readableFields.some(
-              findById(fieldMetadataId),
-            ) ?? false,
-        ),
+        isRestricted:
+          (isDefined(lookupTarget) &&
+            !isLookupTargetFieldReadable(lookupTarget)) ||
+          !reachedFields.every(
+            ({ objectMetadataItem, fieldMetadataId }) =>
+              objectMetadataItem?.readableFields.some(
+                findById(fieldMetadataId),
+              ) ?? false,
+          ),
       },
     ];
   });

@@ -1,6 +1,7 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { AdvancedFilterSidePanelContainer } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelContainer';
+import { getLookupTargetFieldMetadataItems } from '@/object-record/record-column-lookup/utils/getLookupTargetFieldMetadataItems';
 import { getRecordFieldColumnHeader } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnHeader';
 import { useSaveScopedRelationColumn } from '@/object-record/record-column-scope/hooks/useSaveScopedRelationColumn';
 import { getRelationScopeFromRecordFiltersAndSorts } from '@/object-record/record-column-scope/utils/getRelationScopeFromRecordFiltersAndSorts';
@@ -13,6 +14,7 @@ import { RecordTableSettingsSortsContent } from '@/side-panel/pages/page-layout/
 import { SidePanelEditColumnHeader } from '@/side-panel/pages/edit-column/components/SidePanelEditColumnHeader';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
@@ -27,7 +29,7 @@ import { useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { type ViewFieldRelationScope } from 'twenty-shared/types';
-import { isValidRelationScopeLimit } from 'twenty-shared/utils';
+import { isDefined, isValidRelationScopeLimit } from 'twenty-shared/utils';
 import { IconCheck } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { Button, Field } from 'twenty-ui/primitives/input';
@@ -56,6 +58,7 @@ type SidePanelEditColumnFormProps = {
   relationObjectMetadataItem: EnrichedObjectMetadataItem;
   recordFieldId?: string;
   storedRelationScope?: ViewFieldRelationScope | null;
+  storedRelationTargetFieldMetadataId?: string | null;
 };
 
 export const SidePanelEditColumnForm = ({
@@ -64,6 +67,7 @@ export const SidePanelEditColumnForm = ({
   relationObjectMetadataItem,
   recordFieldId,
   storedRelationScope,
+  storedRelationTargetFieldMetadataId,
 }: SidePanelEditColumnFormProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -92,15 +96,27 @@ export const SidePanelEditColumnForm = ({
   const [limitInput, setLimitInput] = useState(
     storedRelationScope?.limit?.toString() ?? '',
   );
+  const [relationTargetFieldMetadataId, setRelationTargetFieldMetadataId] =
+    useState(storedRelationTargetFieldMetadataId ?? null);
   const [isSaving, setIsSaving] = useState(false);
 
   const trimmedLimitInput = limitInput.trim();
   const limit = trimmedLimitInput === '' ? null : Number(trimmedLimitInput);
   const isLimitValid = isValidRelationScopeLimit(limit);
 
+  const lookupTargetFieldMetadataItems = getLookupTargetFieldMetadataItems(
+    relationObjectMetadataItem,
+  );
+  const selectedLookupTargetFieldMetadataItem =
+    lookupTargetFieldMetadataItems.find(
+      ({ id }) => id === relationTargetFieldMetadataId,
+    );
+
   const columnHeader = getRecordFieldColumnHeader({
     fieldMetadataItem,
-    lookupTarget: undefined,
+    lookupTarget: isDefined(selectedLookupTargetFieldMetadataItem)
+      ? { lookupTargetFieldMetadataItem: selectedLookupTargetFieldMetadataItem }
+      : undefined,
     isScopedRelationColumn: true,
   });
 
@@ -122,6 +138,7 @@ export const SidePanelEditColumnForm = ({
       fieldMetadataItemId: fieldMetadataItem.id,
       recordFieldId,
       relationScope,
+      relationTargetFieldMetadataId,
     });
 
     if (!isSaved) {
@@ -151,6 +168,28 @@ export const SidePanelEditColumnForm = ({
         defaultLabel={columnHeader.label}
       />
       <StyledContent>
+        <FormFieldInputContainer>
+          <Field.Label>{t`Show`}</Field.Label>
+          <Select
+            dropdownId={`edit-column-show-${sidePanelPageId}`}
+            fullWidth
+            value={relationTargetFieldMetadataId}
+            pinnedOption={{
+              Icon: getIcon(relationObjectMetadataItem.icon),
+              label: relationObjectMetadataItem.labelPlural,
+              value: null,
+            }}
+            options={lookupTargetFieldMetadataItems.map(
+              (lookupTargetFieldMetadataItem) => ({
+                Icon: getIcon(lookupTargetFieldMetadataItem.icon),
+                label: lookupTargetFieldMetadataItem.label,
+                value: lookupTargetFieldMetadataItem.id,
+              }),
+            )}
+            onChange={setRelationTargetFieldMetadataId}
+            withSearchInput
+          />
+        </FormFieldInputContainer>
         <FormFieldInputContainer>
           <Field.Label>{t`Filter`}</Field.Label>
           <AdvancedFilterSidePanelContainer

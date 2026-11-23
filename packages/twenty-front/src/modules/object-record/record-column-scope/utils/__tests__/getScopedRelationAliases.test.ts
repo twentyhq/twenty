@@ -16,6 +16,10 @@ const peopleField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: getMockObjectMetadataItemOrThrow('company'),
   fieldName: 'people',
 });
+const emailsField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: personObjectMetadataItem,
+  fieldName: 'emails',
+});
 const jobTitleField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: personObjectMetadataItem,
   fieldName: 'jobTitle',
@@ -74,14 +78,17 @@ const getAliases = ({
 const getPeopleColumn = ({
   relationScope,
   id = PEOPLE_COLUMN_ID,
+  relationTargetFieldMetadataId,
 }: {
   relationScope: ViewFieldRelationScope;
   id?: string;
+  relationTargetFieldMetadataId?: string;
 }) => ({
   id,
   fieldMetadataItemId: peopleField.id,
   isCanonical: false,
   relationScope,
+  relationTargetFieldMetadataId,
 });
 
 const CTO_RELATION_WITH_ARGUMENTS: Omit<
@@ -192,6 +199,22 @@ describe('getScopedRelationAliases', () => {
     });
 
     expect(isRestricted).toBe(true);
+  });
+
+  it('carries the field of the related records a column shows', () => {
+    const [{ lookupTarget }] = getAliases({
+      recordFields: [
+        getPeopleColumn({
+          relationScope: CTO_RELATION_SCOPE,
+          relationTargetFieldMetadataId: emailsField.id,
+        }),
+      ],
+    });
+
+    expect(lookupTarget?.lookupTargetFieldMetadataItem.id).toBe(emailsField.id);
+    expect(lookupTarget?.lookupTargetFieldDefinition.metadata.fieldName).toBe(
+      'emails',
+    );
   });
 
   it('gives two columns of one relation their own response key', () => {

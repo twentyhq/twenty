@@ -137,6 +137,78 @@ describe('useSaveCurrentViewFields', () => {
     ]);
   });
 
+  it('sends a changed related record field with the update, null to show the records again', async () => {
+    await saveViewFields([
+      { ...scopedViewField, relationTargetFieldMetadataId: 'emails-field' },
+    ]);
+
+    expect(performViewFieldApiUpdateMock).toHaveBeenLastCalledWith([
+      {
+        input: {
+          id: scopedViewField.id,
+          update: {
+            aggregateOperation: null,
+            isVisible: true,
+            position: 4,
+            size: 240,
+            relationTargetFieldMetadataId: 'emails-field',
+          },
+        },
+      },
+    ]);
+
+    mockGetViewFromState.mockReturnValue({
+      id: VIEW_ID,
+      viewFields: [
+        { ...scopedViewField, relationTargetFieldMetadataId: 'emails-field' },
+      ],
+    });
+
+    await saveViewFields([scopedViewField]);
+
+    expect(performViewFieldApiUpdateMock).toHaveBeenLastCalledWith([
+      {
+        input: {
+          id: scopedViewField.id,
+          update: expect.objectContaining({
+            relationTargetFieldMetadataId: null,
+          }),
+        },
+      },
+    ]);
+  });
+
+  it('leaves an unchanged related record field out of the update', async () => {
+    mockGetViewFromState.mockReturnValue({
+      id: VIEW_ID,
+      viewFields: [
+        { ...scopedViewField, relationTargetFieldMetadataId: 'emails-field' },
+      ],
+    });
+
+    await saveViewFields([
+      {
+        ...scopedViewField,
+        relationTargetFieldMetadataId: 'emails-field',
+        size: 300,
+      },
+    ]);
+
+    expect(performViewFieldApiUpdateMock).toHaveBeenCalledWith([
+      {
+        input: {
+          id: scopedViewField.id,
+          update: {
+            aggregateOperation: null,
+            isVisible: true,
+            position: 4,
+            size: 300,
+          },
+        },
+      },
+    ]);
+  });
+
   it('leaves an unchanged relation scope out of the update', async () => {
     await saveViewFields([{ ...scopedViewField, size: 300 }]);
 
