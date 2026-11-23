@@ -6,6 +6,9 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 
+const LEGACY_APPLICATION_RECURRING_CHARGE_CRON_JOB_NAME =
+  'ApplicationRecurringChargeCronJob';
+
 @Command({
   name: 'cron:billing:reminder',
   description:
@@ -20,6 +23,9 @@ export class BillingReminderCronCommand extends CommandRunner {
   }
 
   async run(): Promise<void> {
+    await this.messageQueueService.removeCron({
+      jobName: LEGACY_APPLICATION_RECURRING_CHARGE_CRON_JOB_NAME,
+    });
     await this.messageQueueService.addCron<undefined>({
       jobName: BillingReminderCronJob.name,
       data: undefined,

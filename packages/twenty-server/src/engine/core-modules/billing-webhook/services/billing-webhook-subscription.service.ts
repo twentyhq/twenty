@@ -25,6 +25,12 @@ import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import {
+  SyncSubscriptionApplicationsJob,
+  type SyncSubscriptionApplicationsJobData,
+} from 'src/engine/core-modules/billing/jobs/sync-subscription-applications.job';
+import { UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS } from 'src/engine/core-modules/billing/constants/update-subscription-quantity-job-retry-options.constant';
+import { BillingApplicationProductService } from 'src/engine/core-modules/billing/services/billing-application-product.service';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
@@ -56,6 +62,9 @@ export class BillingWebhookSubscriptionService {
     private readonly stripeCustomerService: StripeCustomerService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.billingQueue)
+    private readonly billingMessageQueueService: MessageQueueService,
+    private readonly billingApplicationProductService: BillingApplicationProductService,
     // Stripe webhook upserts conflict-resolve globally on stripeSubscriptionId.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
@@ -276,6 +285,24 @@ export class BillingWebhookSubscriptionService {
       workspaceId,
     );
 
+    if (
+      this.isSubscriptionStarting(event, incomingSubscription.status) &&
+      (await this.billingApplicationProductService.isApplicationPriceBillingEnabled(
+        workspaceId,
+      ))
+    ) {
+      // Apps installed or uninstalled while checkout was open are not in its line items
+      await this.billingMessageQueueService.add<SyncSubscriptionApplicationsJobData>(
+        SyncSubscriptionApplicationsJob.name,
+        { workspaceId },
+        {
+          ...UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS,
+          workspaceId,
+          isWorkspaceJob: true,
+        },
+      );
+    }
+
     if (shouldSetPendingInvoiceItemInterval(subscriptionWithSchedule)) {
       await this.stripeSubscriptionService.updateSubscription(
         subscriptionWithSchedule.id,
@@ -287,6 +314,29 @@ export class BillingWebhookSubscriptionService {
       stripeSubscriptionId: data.object.id,
       stripeCustomerId: data.object.customer,
     };
+  }
+
+  private isSubscriptionStarting(
+    event:
+      | Stripe.CustomerSubscriptionUpdatedEvent
+      | Stripe.CustomerSubscriptionCreatedEvent
+      | Stripe.CustomerSubscriptionDeletedEvent,
+    status: SubscriptionStatus,
+  ): boolean {
+    if (!WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES.includes(status)) {
+      return false;
+    }
+
+    switch (event.type) {
+      case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED:
+        return true;
+      case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED:
+        return (
+          event.data.previous_attributes?.status === SubscriptionStatus.Incomplete
+        );
+      default:
+        return false;
+    }
   }
 
   shouldSuspendWorkspace(subscription: SubscriptionWithSchedule): boolean {

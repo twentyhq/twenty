@@ -312,6 +312,10 @@ export class BillingSubscriptionUpdateService {
     workspaceId: string;
     update: () => Promise<void>;
   }): Promise<void> {
+    await this.billingApplicationProductService.createMissingProducts(
+      workspaceId,
+    );
+
     await this.cacheLockService.withLock(
       update,
       buildBillingSubscriptionUpdateLockKey(workspaceId),
@@ -653,17 +657,15 @@ export class BillingSubscriptionUpdateService {
       });
     }
 
-    const { proration, anchor, metadata } = computeSubscriptionUpdateOptions(
-      subscriptionUpdate,
-      {
+    const { proration, anchor, metadata, paymentBehavior } =
+      computeSubscriptionUpdateOptions(subscriptionUpdate, {
         isQuantityIncrease: isSubscriptionQuantityIncrease({
           currentPrices,
           toUpdatePrices: toUpdateCurrentPrices,
         }),
         isTrialing: subscription.status === SubscriptionStatus.Trialing,
         isSendInvoice: isSendInvoiceSubscription(subscription),
-      },
-    );
+      });
 
     return await this.stripeSubscriptionService.updateSubscription(
       subscription.stripeSubscriptionId,
@@ -677,6 +679,7 @@ export class BillingSubscriptionUpdateService {
         proration_behavior: proration,
         billing_cycle_anchor: anchor,
         metadata,
+        payment_behavior: paymentBehavior,
       },
     );
   }

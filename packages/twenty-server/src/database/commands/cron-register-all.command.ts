@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MarketplaceCatalogSyncCronCommand } from 'src/engine/core-modules/application/application-marketplace/crons/commands/marketplace-catalog-sync.cron.command';
 import { StaleRegistrationCleanupCronCommand } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/commands/stale-registration-cleanup.cron.command';
-import { ApplicationRecurringChargeCronCommand } from 'src/engine/core-modules/billing/app-billing/crons/commands/application-recurring-charge.cron.command';
 import { BillingReminderCronCommand } from 'src/engine/core-modules/billing/reminders/crons/commands/billing-reminder.cron.command';
 import { CheckEmailingDomainVerificationCronCommand } from 'src/engine/core-modules/emailing-domain/crons/commands/check-emailing-domain-verification.cron.command';
 import { EnterpriseKeyValidationCronCommand } from 'src/engine/core-modules/enterprise/cron/command/organization-key-validation.cron.command';
@@ -86,7 +85,6 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly deferredWorkspaceOperationRecoveryCronCommand: DeferredWorkspaceOperationRecoveryCronCommand,
     private readonly billingReminderCronCommand: BillingReminderCronCommand,
     private readonly usageLimitInstanceOverrideExpiryCronCommand: UsageLimitInstanceOverrideExpiryCronCommand,
-    private readonly applicationRecurringChargeCronCommand: ApplicationRecurringChargeCronCommand,
     private readonly userSessionCleanupCronCommand: UserSessionCleanupCronCommand,
     private readonly twentyConfigService: TwentyConfigService,
   ) {
@@ -241,11 +239,6 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'UsageLimitInstanceOverrideExpiry',
         command: this.usageLimitInstanceOverrideExpiryCronCommand,
-        isEnabled: isBillingEnabled,
-      },
-      {
-        name: 'ApplicationRecurringCharge',
-        command: this.applicationRecurringChargeCronCommand,
         isEnabled: isBillingEnabled,
       },
       {

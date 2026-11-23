@@ -18,6 +18,7 @@ export const computeSubscriptionUpdateOptions = (
   proration: Stripe.SubscriptionUpdateParams.ProrationBehavior;
   metadata?: Record<string, string>;
   anchor?: Stripe.SubscriptionUpdateParams.BillingCycleAnchor;
+  paymentBehavior?: Stripe.SubscriptionUpdateParams.PaymentBehavior;
 } => {
   switch (subscriptionUpdate.type) {
     case SubscriptionUpdateType.PLAN:
@@ -40,8 +41,7 @@ export const computeSubscriptionUpdateOptions = (
             proration: 'create_prorations',
             anchor: 'now',
           };
-    case SubscriptionUpdateType.QUANTITIES:
-    case SubscriptionUpdateType.APPLICATIONS: {
+    case SubscriptionUpdateType.QUANTITIES: {
       const shouldInvoiceImmediately =
         context?.isQuantityIncrease && !context?.isSendInvoice;
 
@@ -50,6 +50,18 @@ export const computeSubscriptionUpdateOptions = (
           ? 'always_invoice'
           : 'create_prorations',
       };
+    }
+    case SubscriptionUpdateType.APPLICATIONS: {
+      const shouldInvoiceImmediately =
+        context?.isQuantityIncrease && !context?.isSendInvoice;
+
+      // A declined app charge leaves the subscription as it was instead of past_due
+      return shouldInvoiceImmediately
+        ? {
+            proration: 'always_invoice',
+            paymentBehavior: 'pending_if_incomplete',
+          }
+        : { proration: 'create_prorations' };
     }
     default:
       return assertUnreachable(
