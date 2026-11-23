@@ -27,10 +27,11 @@ const FLAT_NAVIGATION_MENU_ITEM_NAMES = [
 
 const FOLDERS = [
   {
-    folderName: 'workflowsFolder',
+    folderName: 'automationsFolder',
     itemNames: [
-      'workflowsFolderAllWorkflows',
-      'workflowsFolderAllWorkflowRuns',
+      'automationsFolderAllWorkflows',
+      'automationsFolderAllWorkflowRuns',
+      'automationsFolderAllAgents',
     ],
   },
   {
