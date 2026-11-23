@@ -49,7 +49,7 @@ export const RecordTableCellFieldContextWrapper = ({
   const isLabelIdentifier =
     labelIdentifierFieldMetadataItem?.id === recordField.fieldMetadataItemId;
 
-  const isScopedRelationRestricted = scopedRelationAlias?.isRestricted === true;
+  const isScopedRelationRestricted = scopedRelationAlias?.isRestricted ?? false;
 
   if (isDefined(lookupTarget)) {
     return (
