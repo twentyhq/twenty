@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { gql } from 'graphql-tag';
 import request from 'supertest';
 import { MAX_ALLOWED_IFRAME_ORIGINS } from 'twenty-shared/constants';
@@ -84,7 +85,7 @@ describe('Security permissions', () => {
           updateWorkspace(data: {
             displayName: "${originalWorkspaceState.displayName}",
             subdomain: "${originalWorkspaceState.subdomain}",
-            logo: "${originalWorkspaceState.logo}",
+            logo: ${isNonEmptyString(originalWorkspaceState.logo) ? `"${originalWorkspaceState.logo}"` : 'null'},
             isGoogleAuthEnabled: ${originalWorkspaceState.isGoogleAuthEnabled},
             isMicrosoftAuthEnabled: ${originalWorkspaceState.isMicrosoftAuthEnabled},
             isPasswordAuthEnabled: ${originalWorkspaceState.isPasswordAuthEnabled}

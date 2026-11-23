@@ -1,3 +1,4 @@
+import { type ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
 import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
 
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
@@ -70,6 +71,32 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     expect(result.tabs).toHaveLength(1);
     expect(result.tabs[0].widgets).toHaveLength(1);
     expect(result.tabs[0].widgets[0].id).toBe('w1');
+  });
+
+  it('should send the visibility rules the draft holds', () => {
+    const conditionalDisplay = { '===': [{ var: 'device' }, 'MOBILE'] };
+    const conditionalAvailability: ConditionalAvailabilityNode = {
+      type: 'VARIABLE',
+      path: 'featureFlags.A',
+    };
+    const draft = makeDraft([
+      makeTab('tab-1', [
+        makeWidget({ id: 'w1', conditionalDisplay }),
+        makeWidget({ id: 'w2', conditionalAvailability }),
+      ]),
+    ]);
+
+    const [firstWidget, secondWidget] =
+      convertPageLayoutDraftToUpdateInput(draft).tabs[0].widgets;
+
+    expect(firstWidget).toMatchObject({
+      conditionalDisplay,
+      conditionalAvailability: null,
+    });
+    expect(secondWidget).toMatchObject({
+      conditionalDisplay: null,
+      conditionalAvailability,
+    });
   });
 
   it('should handle multiple widget types', () => {

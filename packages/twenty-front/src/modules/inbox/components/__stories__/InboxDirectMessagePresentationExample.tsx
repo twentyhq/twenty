@@ -6,6 +6,7 @@ import { IconHash, IconMessage } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { InboxDirectMessageMemberPicker } from '@/inbox/components/InboxDirectMessageMemberPicker';
+import { onlineWorkspaceMemberIdsState } from '@/tab-presence/states/onlineWorkspaceMemberIdsState';
 import { NavigationDrawerInboxDirectMessagesSection } from '@/inbox/components/NavigationDrawerInboxDirectMessagesSection';
 import { INBOX_DIRECT_MESSAGE_PRESENTATION_FIXTURE } from '@/inbox/components/__stories__/inboxDirectMessagePresentationFixture';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
@@ -29,16 +30,22 @@ type InboxDirectMessagePresentationExampleProps = {
   onSelectThread: (threadId: string) => void;
   onSelectMember: (workspaceMemberId: string) => void;
   memberState?: 'loading' | 'refreshing' | 'results';
+  onlineWorkspaceMemberIds?: string[];
 };
 
 export const InboxDirectMessagePresentationExample = ({
   onSelectThread,
   onSelectMember,
   memberState = 'results',
+  onlineWorkspaceMemberIds,
 }: InboxDirectMessagePresentationExampleProps) => {
   const [store] = useState(() => {
     const initialStore = createStore();
     initialStore.set(isNavigationDrawerExpandedState.atom, true);
+    initialStore.set(
+      onlineWorkspaceMemberIdsState.atom,
+      onlineWorkspaceMemberIds ?? null,
+    );
     return initialStore;
   });
   const [currentThreadId, setCurrentThreadId] = useState('dm-anna');

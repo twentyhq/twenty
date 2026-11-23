@@ -1,2 +1,2 @@
 export const ADD_LOGIC_FUNCTION_ON_FAILURE_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME =
-  '2.63.0_AddLogicFunctionOnFailureLogicFunctionFastInstanceCommand_1795431147332';
+  '2.63.0_AddLogicFunctionOnFailureLogicFunctionFastInstanceCommand_1795450528425';
