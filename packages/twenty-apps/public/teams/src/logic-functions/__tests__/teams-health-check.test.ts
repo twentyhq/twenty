@@ -156,8 +156,10 @@ describe('teamsHealthCheckHandler', () => {
     await expect(teamsHealthCheckHandler()).resolves.toEqual({
       status: 'WARNING',
       title: 'Microsoft Teams chat is not active',
-      description: expect.stringContaining('Turn Enable chat off and on again'),
-      action: { label: 'Open settings' },
+      description: expect.stringContaining(
+        'Remove the workspace connection and add it again',
+      ),
+      action: { label: 'Open connections', location: '#general/connections' },
     });
 
     expect(kvGetMock).toHaveBeenCalledWith(

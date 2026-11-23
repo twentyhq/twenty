@@ -90,8 +90,8 @@ export const teamsHealthCheckHandler =
         status: 'WARNING',
         title: 'Microsoft Teams chat is not active',
         description:
-          'Chat is enabled, but this workspace has not registered its Microsoft organization, so the bot ignores every Teams message. Turn Enable chat off and on again in the Teams settings. If this stays, remove the workspace connection and add it again.',
-        action: { label: 'Open settings' },
+          'Chat is enabled, but this workspace has not registered its Microsoft organization, so the bot cannot answer Teams messages. Remove the workspace connection and add it again.',
+        action: { label: 'Open connections', location: '#general/connections' },
       };
     }
 

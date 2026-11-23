@@ -205,8 +205,21 @@ describe('registerTeamsConnection', () => {
     expect(matchTeamsDirectoryByEmailMock).not.toHaveBeenCalled();
   });
 
-  it('should release the claim instead of claiming while chat is disabled for the workspace', async () => {
+  it('should claim the tenant while chat is turned off, without linking the directory', async () => {
     process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = 'false';
+
+    expect(
+      await registerTeamsConnection({
+        connectedAccountId: CONNECTED_ACCOUNT_ID,
+        workspaceId: WORKSPACE_ID,
+      }),
+    ).toEqual({ claimedTenantId: TENANT_ID });
+    expect(releaseMock).not.toHaveBeenCalled();
+    expect(matchTeamsDirectoryByEmailMock).not.toHaveBeenCalled();
+  });
+
+  it('should release the claim instead of claiming while chat is unreleased', async () => {
+    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = false;
 
     expect(
       await registerTeamsConnection({
@@ -222,17 +235,15 @@ describe('registerTeamsConnection', () => {
     expect(kvDeleteMock).toHaveBeenCalledExactlyOnceWith(CLAIM_CONFLICT_KV_KEY);
   });
 
-  it('should claim on an explicit enabled state while the injected setting still reads disabled', async () => {
-    process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = 'false';
-
+  it('should claim without the directory match when asked to skip it', async () => {
     expect(
       await registerTeamsConnection({
         connectedAccountId: CONNECTED_ACCOUNT_ID,
         workspaceId: WORKSPACE_ID,
-        isChatEnabled: true,
+        shouldMatchDirectory: false,
       }),
     ).toEqual({ claimedTenantId: TENANT_ID });
-    expect(releaseMock).not.toHaveBeenCalled();
+    expect(matchTeamsDirectoryByEmailMock).not.toHaveBeenCalled();
   });
 
   it('should link directory users by email once the tenant is claimed', async () => {
@@ -248,17 +259,6 @@ describe('registerTeamsConnection', () => {
     expect(kvSetMock.mock.invocationCallOrder[1]).toBeLessThan(
       matchTeamsDirectoryByEmailMock.mock.invocationCallOrder[0],
     );
-  });
-
-  it('should claim without the directory match when asked to skip it', async () => {
-    expect(
-      await registerTeamsConnection({
-        connectedAccountId: CONNECTED_ACCOUNT_ID,
-        workspaceId: WORKSPACE_ID,
-        shouldMatchDirectory: false,
-      }),
-    ).toEqual({ claimedTenantId: TENANT_ID });
-    expect(matchTeamsDirectoryByEmailMock).not.toHaveBeenCalled();
   });
 
   it('should keep the claim when the directory match fails', async () => {

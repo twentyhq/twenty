@@ -86,18 +86,19 @@ and DoD tenants are not supported.
    reachable from the internet over HTTPS.
 2. Add the bot to a Teams app (for example in the Teams Developer Portal, using
    `TEAMS_BOT_APP_ID` as the bot ID) and install it for your users.
-3. Turn on **Enable chat** and add a **workspace-shared** Microsoft connection,
-   in either order. Whichever comes last claims the connection's Microsoft
-   tenant for this workspace, so activities from that tenant route here. Adding
-   the connection also links every directory user whose email matches a
-   workspace member; turning the setting on does not run that scan, so members
-   link on their first message or from **Auto-link by email**. Turning
-   **Enable chat** off releases the tenant. Personal connections do not claim a
-   tenant, and a tenant can only be claimed by one workspace. When another
-   workspace already holds the tenant, the connection is kept for transcripts
-   and the app settings page shows an error banner until that workspace
-   disconnects or turns chat off; then turn **Enable chat** off and on again
-   here. A warning banner shows when chat is on but the tenant is not claimed.
+3. Add a **workspace-shared** Microsoft connection and turn on **Enable chat**,
+   in either order. The connection claims its Microsoft tenant for this
+   workspace, whatever the setting, so activities from that tenant route here;
+   **Enable chat** only decides whether the bot answers them. Connections that
+   existed before chat was released are claimed when the app is upgraded.
+   Adding a connection while chat is on also links every directory user whose
+   email matches a workspace member; otherwise members link on their first
+   message or from **Auto-link by email**. Personal connections do not claim a
+   tenant, and a tenant can only be claimed by one workspace, even one that has
+   chat turned off. When another workspace already holds the tenant, the
+   connection is kept for transcripts and the app settings page shows an error
+   banner until that workspace disconnects and this one reconnects. A warning
+   banner shows when chat is on but the tenant is not claimed.
 
 The route verifies the Bot Framework token on every activity and ignores
 activities from tenants no workspace has claimed. The bot answers direct
@@ -257,12 +258,7 @@ queued workers must check feature availability before starting work and then
 validate that feature's credentials. Keep disconnect, uninstall, and cleanup
 paths available even when a feature is disabled. When a setting starts managing
 external resources, add its enable/disable reconciliation alongside that
-feature's handlers, as chat does: after saving **Enable chat**, the settings
-page posts the saved state to `/s/teams-chat/reconcile`, which claims or
-releases the workspace's tenants and requires permission to manage
-applications. The route takes the state in the request because the variable a
-logic function reads from `process.env` can lag a save by a few seconds. The
-shared settings component composes each feature's
+feature's handlers. The shared settings component composes each feature's
 section; the app's single uninstall hook will compose their cleanup.
 
 Release flags gate behavior at runtime, not installation. The build puts every
