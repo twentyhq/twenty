@@ -5,8 +5,8 @@ import { Injectable } from '@nestjs/common';
 import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
-  RecordShareAccessLevel,
-  RecordSharePrincipalType,
+  type RecordShareAccessLevel,
+  type RecordSharePrincipalType,
   RecordShareRowCause,
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -19,6 +19,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
 import { type RuleRecordSharesScope } from 'src/engine/permissions/internal/record-permission-repository/utils/build-find-rule-record-shares-query.util';
 import { RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
+import { buildApplicationCreatorRecordShare } from 'src/engine/permissions/internal/record-share/utils/build-application-creator-record-share.util';
 import { diffRuleRecordShares } from 'src/engine/permissions/internal/record-share/utils/diff-rule-record-shares.util';
 import { type RuleRecordShareGrant } from 'src/engine/permissions/record-share/types/rule-record-share-grant.type';
 import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/utils/is-private-by-default-object.util';
@@ -43,7 +44,6 @@ export class RecordShareSystemWriteService {
     private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
   ) {}
 
-  // The grant an application gets on a record it creates through the API, for records a service creates on its behalf
   async grantApplicationCreatorAccess({
     workspaceId,
     objectMetadataId,
@@ -74,11 +74,10 @@ export class RecordShareSystemWriteService {
         {
           objectMetadataId,
           recordId,
-          principalId: applicationRoleId,
-          principalType: RecordSharePrincipalType.ROLE,
-          accessLevel: RecordShareAccessLevel.FULL,
-          rowCause: RecordShareRowCause.APPLICATION,
-          sourceId: flatApplication.id,
+          ...buildApplicationCreatorRecordShare({
+            applicationRoleId,
+            applicationId: flatApplication.id,
+          }),
         },
       ],
     });
