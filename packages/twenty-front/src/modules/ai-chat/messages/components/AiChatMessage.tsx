@@ -4,7 +4,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useIsCurrentAiChatThreadReadOnly } from '@/ai-chat/threads/hooks/useIsCurrentAiChatThreadReadOnly';
 import { useAiChatSentMessageHandOff } from '@/ai-chat/messages/hooks/useAiChatSentMessageHandOff';
-import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
@@ -162,10 +161,6 @@ export const AiChatMessage = ({
   );
   const isReadOnly = useIsCurrentAiChatThreadReadOnly();
   const isTouchDevice = useIsTouchDevice();
-  const isDirectMessage = useAtomFamilySelectorValue(
-    aiChatThreadIsDirectMessageFamilySelector,
-    threadId,
-  );
 
   const aiChatMessageGroupPosition = useAtomFamilySelectorValue(
     aiChatMessageGroupPositionFamilySelector,
@@ -213,9 +208,7 @@ export const AiChatMessage = ({
   const hasVisibleTimeInBubble = hasTimeInBubble && !isTimeSharedWithNext;
   const hasFooterTimestamp = !isOtherMemberMessage && !hasTimeInBubble;
   const hasReactions =
-    isAiChatInboxEnabled &&
-    !isDirectMessage &&
-    isNonEmptyArray(aiChatMessageReactions);
+    isAiChatInboxEnabled && isNonEmptyArray(aiChatMessageReactions);
   const hasContent = isNonEmptyArray(aiChatMessage.parts);
   const hasFloatingActions = isAiChatInboxEnabled && hasContent;
   const hasFooter =
@@ -264,9 +257,7 @@ export const AiChatMessage = ({
       messageText={messageText}
       isRightAligned={shouldMirrorMessageActions}
       isFloating={hasFloatingActions}
-      canReact={
-        isAiChatInboxEnabled && !isDirectMessage && !isLastMessageStreaming
-      }
+      canReact={isAiChatInboxEnabled && !isLastMessageStreaming}
       canReply={canReply}
       onEdit={canManageMessage ? onEdit : undefined}
       onDelete={canManageMessage ? onDelete : undefined}
@@ -345,7 +336,7 @@ export const AiChatMessage = ({
             isSpreadOut={!isAiChatInboxEnabled}
             isRightAligned={shouldMirrorMessageActions}
           >
-            {isAiChatInboxEnabled && !isDirectMessage && (
+            {isAiChatInboxEnabled && (
               <AiChatMessageReactions messageId={messageId} />
             )}
             {hasFooterTimestamp && (

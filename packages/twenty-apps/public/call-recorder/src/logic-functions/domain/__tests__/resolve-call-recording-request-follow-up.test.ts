@@ -42,6 +42,7 @@ const buildCalendarEvent = (
   endsAt: minutesFromNow(120),
   iCalUid: undefined,
   conferenceLinkUrl: 'https://meet.example.com/customer-sync',
+  calendarChannelIds: [],
   callRecorderPreference: undefined,
   ...overrides,
 });
