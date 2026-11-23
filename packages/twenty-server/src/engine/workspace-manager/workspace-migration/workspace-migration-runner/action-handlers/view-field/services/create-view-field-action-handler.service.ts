@@ -12,6 +12,7 @@ import {
   UniversalCreateViewFieldAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/types/workspace-migration-view-field-action.type';
 import { fromUniversalOverridesToViewFieldOverrides } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-field/services/utils/from-universal-overrides-to-view-field-overrides.util';
+import { fromUniversalRelationScopeToViewFieldRelationScope } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-field/services/utils/from-universal-relation-scope-to-view-field-relation-scope.util';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -50,6 +51,13 @@ export class CreateViewFieldActionHandlerService extends WorkspaceMigrationRunne
         })
       : null;
 
+    const relationScope = isDefined(action.flatEntity.universalRelationScope)
+      ? fromUniversalRelationScopeToViewFieldRelationScope({
+          universalRelationScope: action.flatEntity.universalRelationScope,
+          flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+        })
+      : null;
+
     const emptyUniversalForeignKeyAggregators =
       getUniversalFlatEntityEmptyForeignKeyAggregators({
         metadataName: 'viewField',
@@ -64,6 +72,7 @@ export class CreateViewFieldActionHandlerService extends WorkspaceMigrationRunne
         viewFieldGroupId,
         relationTargetFieldMetadataId,
         overrides,
+        relationScope,
         id: action.id ?? v4(),
         applicationId: flatApplication.id,
         workspaceId,
