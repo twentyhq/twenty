@@ -36,8 +36,6 @@ export class GoogleCalendarCreateEventService implements CalendarEventCreationDr
       auth: oAuth2Client,
     });
 
-    let createdEvent: calendarV3.Schema$Event;
-
     try {
       const { data } = await googleCalendarClient.events.insert({
         calendarId: GOOGLE_CALENDAR_ID,
@@ -46,22 +44,32 @@ export class GoogleCalendarCreateEventService implements CalendarEventCreationDr
         requestBody: toGoogleEventInput(input),
       });
 
-      createdEvent = data;
+      return formatGoogleCalendarEvents([
+        (await this.findFirstOccurrenceAsListedBySync(
+          googleCalendarClient,
+          data,
+        )) ?? data,
+      ])[0];
     } catch (error) {
       throw new CalendarEventCreationException(
         `Failed to create Google calendar event: ${error instanceof Error ? error.message : 'unknown error'}`,
         CalendarEventCreationExceptionCode.PROVIDER_REQUEST_FAILED,
       );
     }
+  }
 
+  private async findFirstOccurrenceAsListedBySync(
+    googleCalendarClient: calendarV3.Calendar,
+    createdEvent: calendarV3.Schema$Event,
+  ): Promise<calendarV3.Schema$Event | undefined> {
     if (
       !isNonEmptyArray(createdEvent.recurrence) ||
       !isNonEmptyString(createdEvent.id)
     ) {
-      return formatGoogleCalendarEvents([createdEvent])[0];
+      return undefined;
     }
 
-    const firstOccurrenceAsListedBySync = await googleCalendarClient.events
+    return googleCalendarClient.events
       .instances({
         calendarId: GOOGLE_CALENDAR_ID,
         eventId: createdEvent.id,
@@ -69,9 +77,5 @@ export class GoogleCalendarCreateEventService implements CalendarEventCreationDr
       })
       .then(({ data }) => data.items?.[0])
       .catch(() => undefined);
-
-    return formatGoogleCalendarEvents([
-      firstOccurrenceAsListedBySync ?? createdEvent,
-    ])[0];
   }
 }

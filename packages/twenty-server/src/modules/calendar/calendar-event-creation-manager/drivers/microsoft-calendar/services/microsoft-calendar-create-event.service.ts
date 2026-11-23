@@ -31,21 +31,36 @@ export class MicrosoftCalendarCreateEventService implements CalendarEventCreatio
       connectedAccount.id,
     );
 
-    let createdEvent: Event;
-
     try {
-      createdEvent = await microsoftClient
+      // Request the created event back in UTC so its start/end are absolute
+      // instants. Graph otherwise echoes the request time zone, which the shared
+      // formatter would persist as an ambiguous wall-clock time. This matches how
+      // the import path consumes Graph datetimes.
+      const createdEvent: Event = await microsoftClient
         .api('/me/calendar/events')
+        .header('Prefer', 'outlook.timezone="UTC"')
         .post(toMicrosoftEventInput(input));
+
+      return (
+        (await this.findCreatedEventAsListedBySync(
+          connectedAccount,
+          createdEvent,
+        )) ?? formatMicrosoftCalendarEvents([createdEvent])[0]
+      );
     } catch (error) {
       throw new CalendarEventCreationException(
         `Failed to create Microsoft calendar event: ${error instanceof Error ? error.message : 'unknown error'}`,
         CalendarEventCreationExceptionCode.PROVIDER_REQUEST_FAILED,
       );
     }
+  }
 
+  private async findCreatedEventAsListedBySync(
+    connectedAccount: Pick<ConnectedAccountEntity, 'id' | 'provider'>,
+    createdEvent: Event,
+  ): Promise<FetchedCalendarEvent | undefined> {
     if (!isNonEmptyString(createdEvent.id)) {
-      return formatMicrosoftCalendarEvents([createdEvent])[0];
+      return undefined;
     }
 
     const [createdEventAsListedBySync] =
@@ -53,9 +68,6 @@ export class MicrosoftCalendarCreateEventService implements CalendarEventCreatio
         .getCalendarEvents(connectedAccount, [createdEvent.id])
         .catch(() => []);
 
-    return (
-      createdEventAsListedBySync ??
-      formatMicrosoftCalendarEvents([createdEvent])[0]
-    );
+    return createdEventAsListedBySync;
   }
 }

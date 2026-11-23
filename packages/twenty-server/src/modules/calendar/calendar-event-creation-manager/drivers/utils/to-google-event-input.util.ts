@@ -5,6 +5,8 @@ import { v4 as uuid } from 'uuid';
 import { type CalendarEventToCreate } from 'src/modules/calendar/calendar-event-creation-manager/types/calendar-event-to-create.type';
 import { toICalRecurrenceRule } from 'src/modules/calendar/calendar-event-creation-manager/utils/to-ical-recurrence-rule.util';
 
+// Google represents all-day events with a date-only boundary, and timed events
+// with an RFC 3339 dateTime paired with an IANA time zone.
 const toGoogleEventDateTime = (
   isoDateTime: string,
   isFullDay: boolean,
