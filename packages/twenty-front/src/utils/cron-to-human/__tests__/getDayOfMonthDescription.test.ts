@@ -78,18 +78,6 @@ describe('getDayOfMonthDescription', () => {
     expect(getDayOfMonthDescription('1-3,15', options)).toBe(
       'on the 1st, 2nd, 3rd and 15th of the month',
     );
-    expect(getDayOfMonthDescription('1-2,2-3', options)).toBe(
-      'on the 1st, 2nd and 3rd of the month',
-    );
-  });
-
-  it('should describe a list that reduces to a single day as that day', () => {
-    expect(getDayOfMonthDescription('1,1', options)).toBe(
-      'on the 1st of the month',
-    );
-    expect(getDayOfMonthDescription('1-1,1', options)).toBe(
-      'on the 1st of the month',
-    );
   });
 
   it('should handle weekday specifier', () => {

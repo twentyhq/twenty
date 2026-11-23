@@ -1,8 +1,7 @@
 import { isNumericRange } from '~/utils/validation/isNumericRange';
 
-// Ranges inside a list ("1-3,5") are expanded so each value gets described
-export const expandCronListValues = (listValue: string): string[] => {
-  const values = listValue
+export const expandCronListValues = (listValue: string): string[] =>
+  listValue
     .split(',')
     .map((value) => value.trim())
     .flatMap((value) => {
@@ -20,6 +19,3 @@ export const expandCronListValues = (listValue: string): string[] => {
         String(start + index),
       );
     });
-
-  return [...new Set(values)];
-};

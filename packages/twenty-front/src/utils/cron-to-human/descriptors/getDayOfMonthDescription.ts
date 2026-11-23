@@ -74,11 +74,6 @@ export const getDayOfMonthDescription = (
 
   if (isListValue(dayOfMonth)) {
     const values = expandCronListValues(dayOfMonth);
-
-    if (values.length === 1) {
-      return getDayOfMonthDescription(values[0], _options);
-    }
-
     const ordinalDays = values.map((day) => {
       const dayNum = parseInt(day, 10);
       return !isNaN(dayNum) ? getOrdinalNumber(dayNum) : day;

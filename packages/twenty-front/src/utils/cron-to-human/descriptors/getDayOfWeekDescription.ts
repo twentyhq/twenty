@@ -124,11 +124,6 @@ export const getDayOfWeekDescription = (
 
   if (isListValue(dayOfWeek)) {
     const values = expandCronListValues(dayOfWeek);
-
-    if (values.length === 1) {
-      return getDayOfWeekDescription(values[0], options, localeCatalog);
-    }
-
     const dayNames = values.map((day) => {
       const dayNum = parseInt(day, 10);
       return !isNaN(dayNum)

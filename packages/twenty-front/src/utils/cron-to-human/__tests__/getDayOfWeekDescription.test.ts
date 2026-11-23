@@ -52,11 +52,6 @@ describe('getDayOfWeekDescription', () => {
     );
   });
 
-  it('should describe a list that reduces to a single day as that day', () => {
-    expect(getDayOfWeekDescription('1,1', options)).toBe('only on Monday');
-    expect(getDayOfWeekDescription('1-1,1', options)).toBe('only on Monday');
-  });
-
   it('should handle step values', () => {
     expect(getDayOfWeekDescription('*/2', options)).toBe('every 2 days');
     expect(getDayOfWeekDescription('*/1', options)).toBe('every day');
