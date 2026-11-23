@@ -2,13 +2,8 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-
-export type RelatedRecordPathInheritedFieldDefinition = {
-  fieldUniversalIdentifier: string;
-  sourceFieldUniversalIdentifier: string;
-};
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 
 export type RelatedRecordPathInheritedField = {
   fieldMetadataId: string;
@@ -17,40 +12,40 @@ export type RelatedRecordPathInheritedField = {
 };
 
 export const findRelatedRecordPathInheritedFields = ({
-  inheritedFieldDefinitions,
-  objectMetadataId,
-  flatFieldMetadataMaps,
-}: {
-  inheritedFieldDefinitions: RelatedRecordPathInheritedFieldDefinition[];
-  objectMetadataId: string;
-  flatFieldMetadataMaps: Pick<
-    FlatEntityMaps<OrmFlatFieldMetadata>,
-    'byUniversalIdentifier'
-  >;
-}): RelatedRecordPathInheritedField[] =>
-  inheritedFieldDefinitions.flatMap(
-    ({ fieldUniversalIdentifier, sourceFieldUniversalIdentifier }) => {
-      const flatFieldMetadata =
-        flatFieldMetadataMaps.byUniversalIdentifier[fieldUniversalIdentifier];
-      const sourceFlatFieldMetadata =
-        flatFieldMetadataMaps.byUniversalIdentifier[
-          sourceFieldUniversalIdentifier
-        ];
+  principals,
+  metadataMaps: { rolesPermissions, flatFieldMetadataMaps },
+  flatObjectMetadata,
+}: PermissionsObjectAccessRequest): RelatedRecordPathInheritedField[] => {
+  const inheritedFieldBySourceKey = new Map<
+    string,
+    RelatedRecordPathInheritedField
+  >();
 
-      if (
-        !isDefined(flatFieldMetadata) ||
-        !isDefined(sourceFlatFieldMetadata) ||
-        flatFieldMetadata.objectMetadataId !== objectMetadataId
-      ) {
-        return [];
+  for (const roleId of principals.mainPrincipal.roleIds) {
+    const inheritedFields =
+      rolesPermissions[roleId]?.objects[flatObjectMetadata.id]
+        ?.inheritedFields ?? [];
+
+    for (const { fieldMetadataId, sourceFieldMetadataId } of inheritedFields) {
+      const sourceFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: sourceFieldMetadataId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      });
+
+      if (!isDefined(sourceFlatFieldMetadata)) {
+        continue;
       }
 
-      return [
+      inheritedFieldBySourceKey.set(
+        `${fieldMetadataId}:${sourceFieldMetadataId}`,
         {
-          fieldMetadataId: flatFieldMetadata.id,
+          fieldMetadataId,
           sourceObjectMetadataId: sourceFlatFieldMetadata.objectMetadataId,
-          sourceFieldMetadataId: sourceFlatFieldMetadata.id,
+          sourceFieldMetadataId,
         },
-      ];
-    },
-  );
+      );
+    }
+  }
+
+  return [...inheritedFieldBySourceKey.values()];
+};

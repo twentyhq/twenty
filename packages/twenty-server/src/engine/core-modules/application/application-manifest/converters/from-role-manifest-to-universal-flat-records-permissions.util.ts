@@ -56,6 +56,7 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
     objectUniversalIdentifier,
     unreadableFields = [],
     uneditableFields = [],
+    inheritedFields = [],
     fieldPermissionIdentifiers = [],
     rowLevelPermissionRuleUniversalIdentifier,
     rowLevelPermissionPredicateGroupUniversalIdentifier,
@@ -69,6 +70,9 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
       ...new Set([
         ...unreadableFields,
         ...uneditableFields,
+        ...inheritedFields.map(
+          ({ fieldUniversalIdentifier }) => fieldUniversalIdentifier,
+        ),
         ...fieldPermissionIdentifiers.map(
           ({ fieldUniversalIdentifier }) => fieldUniversalIdentifier,
         ),
@@ -92,6 +96,12 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
       fieldMetadataUniversalIdentifier: fieldUniversalIdentifier,
       rowLevelPermissionPredicateGroupUniversalIdentifier,
       rowLevelPermissionRuleUniversalIdentifier,
+      sourceFieldMetadataUniversalIdentifier:
+        inheritedFields.find(
+          (inheritedField) =>
+            inheritedField.fieldUniversalIdentifier ===
+            fieldUniversalIdentifier,
+        )?.sourceFieldUniversalIdentifier ?? null,
       canReadFieldValue: unreadableFields.includes(fieldUniversalIdentifier)
         ? false
         : null,

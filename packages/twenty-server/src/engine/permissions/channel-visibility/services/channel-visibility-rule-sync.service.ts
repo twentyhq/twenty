@@ -19,7 +19,7 @@ import { type WorkspaceMemberIndividualRoleHolder } from 'src/engine/permissions
 import { WorkspaceMemberIndividualRoleService } from 'src/engine/permissions/workspace-member-individual-role/services/workspace-member-individual-role.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-const { message, calendarEvent } = STANDARD_OBJECTS;
+const { message, messageThread, calendarEvent } = STANDARD_OBJECTS;
 
 @Injectable()
 export class ChannelVisibilityRuleSyncService {
@@ -130,6 +130,17 @@ export class ChannelVisibilityRuleSyncService {
               STANDARD_OBJECTS.attachment.universalIdentifier,
             ].map((objectUniversalIdentifier) => ({
               objectUniversalIdentifier,
+              ...(objectUniversalIdentifier ===
+                messageThread.universalIdentifier && {
+                inheritedFields: [
+                  {
+                    fieldUniversalIdentifier:
+                      messageThread.fields.subject.universalIdentifier,
+                    sourceFieldUniversalIdentifier:
+                      message.fields.subject.universalIdentifier,
+                  },
+                ],
+              }),
             })),
           ].map((objectRecordsPermissions) => ({
             ...objectRecordsPermissions,

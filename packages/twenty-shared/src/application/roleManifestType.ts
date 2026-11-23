@@ -52,9 +52,15 @@ export type RowLevelPermissionRulePredicateGroupManifest =
   };
 
 // fieldPermissionIdentifiers names a stored field permission whose identifier is not the derived one
+export type InheritedFieldManifest = {
+  fieldUniversalIdentifier: string;
+  sourceFieldUniversalIdentifier: string;
+};
+
 export type FieldRestrictionsManifest = {
   unreadableFields?: string[];
   uneditableFields?: string[];
+  inheritedFields?: InheritedFieldManifest[];
   fieldPermissionIdentifiers?: {
     fieldUniversalIdentifier: string;
     universalIdentifier: string;

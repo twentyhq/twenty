@@ -279,6 +279,7 @@ export type {
   RowLevelPermissionRulePredicateManifest,
   LegacyRowLevelPermissionPredicateManifest,
   RowLevelPermissionRulePredicateGroupManifest,
+  InheritedFieldManifest,
   FieldRestrictionsManifest,
   RowLevelRecordsPermissionsManifest,
   AllRecordsPermissionsManifest,

@@ -4,7 +4,7 @@ import {
   type ObjectRecordsPermissionsManifest,
   type RowLevelPermissionRuleManifest,
 } from 'twenty-shared/application';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 type AllRecordsPermissionsManifest = Omit<
   ObjectRecordsPermissionsManifest,
@@ -15,6 +15,7 @@ type FieldRestriction = {
   objectUniversalIdentifier: string;
   fieldUniversalIdentifier: string;
   rowLevelPermissionRuleUniversalIdentifier: string | null;
+  sourceFieldUniversalIdentifier: string | null;
   canReadFieldValue: boolean | null;
   canUpdateFieldValue: boolean | null;
   universalIdentifier: string;
@@ -36,6 +37,12 @@ const buildFieldLists = ({
   const uneditableFields = fieldRestrictions
     .filter(({ canUpdateFieldValue }) => canUpdateFieldValue === false)
     .map(({ fieldUniversalIdentifier }) => fieldUniversalIdentifier);
+  const inheritedFields = fieldRestrictions.flatMap(
+    ({ fieldUniversalIdentifier, sourceFieldUniversalIdentifier }) =>
+      isDefined(sourceFieldUniversalIdentifier)
+        ? [{ fieldUniversalIdentifier, sourceFieldUniversalIdentifier }]
+        : [],
+  );
   const fieldPermissionIdentifiers = fieldRestrictions
     .filter(
       ({
@@ -61,6 +68,7 @@ const buildFieldLists = ({
   return {
     ...(isNonEmptyArray(unreadableFields) ? { unreadableFields } : {}),
     ...(isNonEmptyArray(uneditableFields) ? { uneditableFields } : {}),
+    ...(isNonEmptyArray(inheritedFields) ? { inheritedFields } : {}),
     ...(isNonEmptyArray(fieldPermissionIdentifiers)
       ? { fieldPermissionIdentifiers }
       : {}),
