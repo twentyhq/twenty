@@ -46,7 +46,12 @@ export const NavigationMenuAiChatRecentsSection = ({
   });
 
   if (recentThreads.length === 0 && !isDefined(headerAction)) {
-    return null;
+    return (
+      <InboxThreadListFetchMoreTrigger
+        key={inboxThreadList?.endCursor ?? ''}
+        source={INBOX_RECENT_THREAD_LIST_SOURCE}
+      />
+    );
   }
 
   const hasHiddenThreads =
