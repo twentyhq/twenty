@@ -1,3 +1,4 @@
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { getRecordFieldColumnHeader } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnHeader';
 import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
@@ -102,5 +103,49 @@ describe('getRecordFieldColumnHeader', () => {
         customLabel: null,
       }).label,
     ).toBe(`${employeesField.label} · Filtered`);
+  });
+
+  it('names a summary column after its relation and its operation', () => {
+    expect(
+      getRecordFieldColumnHeader({
+        fieldMetadataItem: employeesField,
+        lookupTarget: undefined,
+        isScopedRelationColumn: true,
+        summary: { aggregateOperation: AggregateOperations.COUNT },
+        customLabel: undefined,
+      }).label,
+    ).toBe(`${employeesField.label} · Count all`);
+  });
+
+  it('names a summary column after the field it summarizes', () => {
+    const amountField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: getMockObjectMetadataItemOrThrow('opportunity'),
+      fieldName: 'amount',
+    });
+
+    expect(
+      getRecordFieldColumnHeader({
+        fieldMetadataItem: employeesField,
+        lookupTarget: undefined,
+        isScopedRelationColumn: true,
+        summary: {
+          aggregateOperation: AggregateOperations.SUM,
+          aggregatedFieldMetadataItem: amountField,
+        },
+        customLabel: undefined,
+      }).label,
+    ).toBe(`${employeesField.label} · Sum of ${amountField.label}`);
+  });
+
+  it('shows the custom label of a summary column instead', () => {
+    expect(
+      getRecordFieldColumnHeader({
+        fieldMetadataItem: employeesField,
+        lookupTarget: undefined,
+        isScopedRelationColumn: true,
+        summary: { aggregateOperation: AggregateOperations.COUNT },
+        customLabel: 'Team size',
+      }).label,
+    ).toBe('Team size');
   });
 });
