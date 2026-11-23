@@ -36,6 +36,11 @@ sets it to On when it actually schedules the recorder for that meeting, which
 happens once the meeting is less than a day away. Set it to Off to skip a
 meeting. Past meetings the recorder never joined simply stay blank.
 
+The app schedules the recorder on its own only for meetings that are on a
+calendar a workspace member connected. A meeting on no member's calendar, such
+as one created through the API, stays blank until you set its Recording Bot
+field to On.
+
 ## 👥 Calls on record pages
 
 The app provides two record page widgets. Both read the meeting the recording
