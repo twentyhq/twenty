@@ -9421,7 +9421,7 @@ msgstr "Zijbalk aanpassen"
 #. js-lingui-id: CZs1kG
 #: src/modules/navigation-menu-item/display/containers/components/NavigationMenuTabContent.tsx
 msgid "Customize tab"
-msgstr ""
+msgstr "Tabblad aanpassen"
 
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
