@@ -22,11 +22,9 @@ export class BillingApplicationSyncService {
 
   async enqueueApplicationsSync({
     workspaceId,
-    delay,
     isRetryAfterExpiredPendingUpdate,
   }: {
     workspaceId: string;
-    delay?: number;
     isRetryAfterExpiredPendingUpdate?: boolean;
   }): Promise<void> {
     if (
@@ -43,7 +41,6 @@ export class BillingApplicationSyncService {
       { workspaceId, isRetryAfterExpiredPendingUpdate },
       {
         ...UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS,
-        delay,
         workspaceId,
         isWorkspaceJob: true,
       },

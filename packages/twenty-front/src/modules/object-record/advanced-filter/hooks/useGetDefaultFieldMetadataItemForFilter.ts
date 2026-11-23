@@ -1,40 +1,26 @@
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { getDefaultFieldMetadataItemForFilter } from '@/object-record/advanced-filter/utils/getDefaultFieldMetadataItemForFilter';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
 export const useGetDefaultFieldMetadataItemForFilter = () => {
   const store = useStore();
-  const getDefaultFieldMetadataItemForFilter = useCallback(
-    (objectMetadataItem: EnrichedObjectMetadataItem) => {
-      const availableFieldMetadataItemsForFilter = store.get(
-        availableFieldMetadataItemsForFilterFamilySelector.selectorFamily({
-          objectMetadataItemId: objectMetadataItem.id,
-        }),
-      );
-
-      const fieldMetadataItemForLabelIdentifier =
-        availableFieldMetadataItemsForFilter.find(
-          (fieldMetadataItem) =>
-            fieldMetadataItem.id ===
-            objectMetadataItem?.labelIdentifierFieldMetadataId,
-        );
-
-      const firstFieldMetadataItem =
-        availableFieldMetadataItemsForFilter?.[0] as
-          | FieldMetadataItem
-          | undefined;
-
-      const defaultFieldMetadataItemForFilter =
-        fieldMetadataItemForLabelIdentifier ?? firstFieldMetadataItem;
-
-      return { defaultFieldMetadataItemForFilter };
-    },
+  const getDefaultFieldMetadataItemOfObject = useCallback(
+    (objectMetadataItem: EnrichedObjectMetadataItem) => ({
+      defaultFieldMetadataItemForFilter: getDefaultFieldMetadataItemForFilter({
+        objectMetadataItem,
+        filterableFieldMetadataItems: store.get(
+          availableFieldMetadataItemsForFilterFamilySelector.selectorFamily({
+            objectMetadataItemId: objectMetadataItem.id,
+          }),
+        ),
+      }),
+    }),
     [store],
   );
 
   return {
-    getDefaultFieldMetadataItemForFilter,
+    getDefaultFieldMetadataItemForFilter: getDefaultFieldMetadataItemOfObject,
   };
 };

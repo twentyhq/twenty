@@ -8,6 +8,7 @@ import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { type WorkflowTool } from 'src/modules/workflow/workflow-tools/types/workflow-tool.type';
 
 const baseStepFields = {
   coreWorkflowVersionId: z
@@ -98,62 +99,65 @@ export const createCreateWorkflowVersionStepTool = (
     'coreWorkflowVersionMutationService' | 'coreWorkflowVersionWriteService'
   >,
   context: WorkflowToolContext,
-) => ({
-  name: 'create_workflow_version_step' as const,
-  description:
-    'Create a new step in a workflow version. This adds a step to the specified workflow version with the given configuration. If parentStepId is not provided, the step will be appended at the end of the workflow.',
-  inputSchema: createWorkflowVersionStepSchema,
-  execute: async (parameters: CreateCoreWorkflowVersionStepInput) => {
-    try {
-      const { workspaceId } = context;
-      const { coreWorkflowVersionId } = parameters;
+) =>
+  ({
+    name: 'create_workflow_version_step' as const,
+    description:
+      'Create a new step in a workflow version. This adds a step to the specified workflow version with the given configuration. If parentStepId is not provided, the step will be appended at the end of the workflow.',
+    inputSchema: createWorkflowVersionStepSchema,
+    execute: async (parameters: CreateCoreWorkflowVersionStepInput) => {
+      try {
+        const { workspaceId } = context;
+        const { coreWorkflowVersionId } = parameters;
 
-      let effectiveParentStepId = parameters.parentStepId;
+        let effectiveParentStepId = parameters.parentStepId;
 
-      if (!isDefined(effectiveParentStepId)) {
-        const { steps } =
-          await deps.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
-            {
-              workspaceId,
-              userWorkspaceId: context.userWorkspaceId,
-              coreWorkflowVersionId,
-            },
-          );
+        if (!isDefined(effectiveParentStepId)) {
+          const { steps } =
+            await deps.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
+              {
+                workspaceId,
+                userWorkspaceId: context.userWorkspaceId,
+                coreWorkflowVersionId,
+              },
+            );
 
-        const existingSteps = steps ?? [];
+          const existingSteps = steps ?? [];
 
-        if (existingSteps.length === 0) {
-          effectiveParentStepId = TRIGGER_STEP_ID;
-        } else {
-          const leafSteps = existingSteps.filter(
-            (step) =>
-              !isDefined(step.nextStepIds) || step.nextStepIds.length === 0,
-          );
+          if (existingSteps.length === 0) {
+            effectiveParentStepId = TRIGGER_STEP_ID;
+          } else {
+            const leafSteps = existingSteps.filter(
+              (step) =>
+                !isDefined(step.nextStepIds) || step.nextStepIds.length === 0,
+            );
 
-          effectiveParentStepId =
-            leafSteps.length > 1 ? undefined : leafSteps[0]?.id;
+            effectiveParentStepId =
+              leafSteps.length > 1 ? undefined : leafSteps[0]?.id;
+          }
         }
+
+        const result = await deps.coreWorkflowVersionMutationService.createStep(
+          {
+            workspaceId,
+            userWorkspaceId: context.userWorkspaceId,
+            input: {
+              ...parameters,
+              parentStepId: effectiveParentStepId,
+            },
+          },
+        );
+
+        return enrichResultWithNextStep({
+          result,
+          stepType: parameters.stepType,
+        });
+      } catch (error) {
+        return {
+          success: false,
+          error: error.message,
+          message: `Failed to create workflow version step: ${error.message}`,
+        };
       }
-
-      const result = await deps.coreWorkflowVersionMutationService.createStep({
-        workspaceId,
-        userWorkspaceId: context.userWorkspaceId,
-        input: {
-          ...parameters,
-          parentStepId: effectiveParentStepId,
-        },
-      });
-
-      return enrichResultWithNextStep({
-        result,
-        stepType: parameters.stepType,
-      });
-    } catch (error) {
-      return {
-        success: false,
-        error: error.message,
-        message: `Failed to create workflow version step: ${error.message}`,
-      };
-    }
-  },
-});
+    },
+  }) satisfies WorkflowTool;
